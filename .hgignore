@@ -1,0 +1,12 @@
+syntax: glob
+*.suo
+obj
+bin/Debug
+bin/Release
+MySql.Data.dll
+SDNSAPI.dll
+bin
+*.vshost.*
+*.pdb
+*.vs10x
+*.user
