@@ -10,3 +10,7 @@ bin
 *.pdb
 *.vs10x
 *.user
+OrderBoxDomainsLib.dll
+OrderBoxCoreLib.dll
+WebsitePanel/Bin/*.*
+WebsitePanel.Installer/Build/*

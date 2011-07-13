@@ -33,20 +33,32 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_45A3E875D680CE36CC218E529218AA6D"
+        "MsmKey" = "8:_225B2C569ED23E963FBD5A961A0D3B23"
         "OwnerKey" = "8:_05F59A142DD147798C90054A203C0EE9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_45A3E875D680CE36CC218E529218AA6D"
+        "MsmKey" = "8:_225B2C569ED23E963FBD5A961A0D3B23"
         "OwnerKey" = "8:_1239E87E938248B1BAF9BF75C32D3EDC"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_45A3E875D680CE36CC218E529218AA6D"
-        "OwnerKey" = "8:_C4154BF32895E002441CEDCBEC58054A"
+        "MsmKey" = "8:_3FE8A1704B90098231CE54C0A887C0F9"
+        "OwnerKey" = "8:_05F59A142DD147798C90054A203C0EE9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3FE8A1704B90098231CE54C0A887C0F9"
+        "OwnerKey" = "8:_1239E87E938248B1BAF9BF75C32D3EDC"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3FE8A1704B90098231CE54C0A887C0F9"
+        "OwnerKey" = "8:_225B2C569ED23E963FBD5A961A0D3B23"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -69,18 +81,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_C4154BF32895E002441CEDCBEC58054A"
-        "OwnerKey" = "8:_05F59A142DD147798C90054A203C0EE9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C4154BF32895E002441CEDCBEC58054A"
-        "OwnerKey" = "8:_1239E87E938248B1BAF9BF75C32D3EDC"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_1239E87E938248B1BAF9BF75C32D3EDC"
         "MsmSig" = "8:_UNDEFINED"
@@ -94,13 +94,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C4154BF32895E002441CEDCBEC58054A"
+        "OwnerKey" = "8:_225B2C569ED23E963FBD5A961A0D3B23"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_45A3E875D680CE36CC218E529218AA6D"
+        "OwnerKey" = "8:_3FE8A1704B90098231CE54C0A887C0F9"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -228,14 +228,45 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_45A3E875D680CE36CC218E529218AA6D"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_225B2C569ED23E963FBD5A961A0D3B23"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:WebsitePanel.Installer.Core, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_225B2C569ED23E963FBD5A961A0D3B23"
+                    {
+                    "Name" = "8:WebsitePanel.Installer.Core.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:WebsitePanel.Installer.Core.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_E742E59BFE4D43C59AA65A07792B89FB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_3FE8A1704B90098231CE54C0A887C0F9"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:Ionic.Zip.Reduced, Version=1.8.4.28, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_45A3E875D680CE36CC218E529218AA6D"
+                    "_3FE8A1704B90098231CE54C0A887C0F9"
                     {
                     "Name" = "8:Ionic.Zip.Reduced.dll"
                     "Attributes" = "3:512"
@@ -319,37 +350,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C4154BF32895E002441CEDCBEC58054A"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:WebsitePanel.Installer.Core, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_C4154BF32895E002441CEDCBEC58054A"
-                    {
-                    "Name" = "8:WebsitePanel.Installer.Core.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:WebsitePanel.Installer.Core.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_E742E59BFE4D43C59AA65A07792B89FB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
         }
         "FileType"
         {
@@ -418,7 +418,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:WebsitePanel Installer"
         "ProductCode" = "8:{09BCDF68-1964-4FC6-9570-9AB3B8512CF6}"
-        "PackageCode" = "8:{52C96B0C-A0EB-48A8-AA2F-2C75B5804666}"
+        "PackageCode" = "8:{A8C23AB2-A737-4D67-8570-F2C5F1309672}"
         "UpgradeCode" = "8:{2950A907-11E7-436C-86CE-049C414AFD08}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

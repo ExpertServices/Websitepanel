@@ -85,16 +85,16 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WebsitePanel.EnterpriseServer.Base, Version=1.1.1.0, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\WebsitePanel\Trunk\Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
+      <HintPath>..\..\..\WebsitePanel\Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="WebsitePanel.EnterpriseServer.Client, Version=1.1.1.0, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\WebsitePanel\Trunk\Bin\WebsitePanel.EnterpriseServer.Client.dll</HintPath>
+      <HintPath>..\..\..\WebsitePanel\Bin\WebsitePanel.EnterpriseServer.Client.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="WebsitePanel.Providers.Base">
-      <HintPath>..\..\..\..\WebsitePanel\Trunk\Bin\WebsitePanel.Providers.Base.dll</HintPath>
+      <HintPath>..\..\..\WebsitePanel\Bin\WebsitePanel.Providers.Base.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
