@@ -4,13 +4,12 @@
 		<Version>1.2.0.0</Version>
 		<FileVersion>1.2.0.38</FileVersion>
 		<VersionLabel>1.2.0</VersionLabel>
-		<ReleaseDate>2011-07-11</ReleaseDate>
+		<ReleaseDate>2011-07-13</ReleaseDate>
 		<BuildConfiguration>Release</BuildConfiguration>
-		<SourcesPath>https://websitepanel.svn.sourceforge.net/svnroot/websitepanel/WebsitePanel/Trunk</SourcesPath>
-		<RootFolder>C:\Backup\WebsitePanel</RootFolder>
-		<TrunkFolder>$(RootFolder)\Trunk</TrunkFolder>
+		<RootFolder>..</RootFolder>
+		<TrunkFolder>$(RootFolder)\WebsitePanel</TrunkFolder>
 
-		<SetupTrunkFolder>C:\Backup\WebsitePanel.Installer\Trunk</SetupTrunkFolder>
+		<SetupTrunkFolder>$(RootFolder)\WebsitePanel.Installer</SetupTrunkFolder>
 		<SetupBuildFolder>$(SetupTrunkFolder)\Build\$(BuildConfiguration)</SetupBuildFolder>
 
 		<BuildFolder>$(TrunkFolder)\Build\$(BuildConfiguration)</BuildFolder>
@@ -341,7 +340,11 @@
 	</Target>
 
 	<Target Name="ScriptEnterpriseServerDatabase" DependsOnTargets="CreateEnterpriseServerDatabase">
-		<Exec Command="$(MSDeployPath) -verb:sync -source:dbFullSql=&quot;$(MSDeployConnectionString)&quot; -dest:dbFullSql=&quot;$(DatabaseFolder)\install_db_temp.sql&quot;"/>
+		<ConvertToAbsolutePath Paths="$(DatabaseFolder)">
+			<Output TaskParameter="AbsolutePaths" PropertyName="DatabaseFolderAbsolute"/>
+		</ConvertToAbsolutePath>
+		
+		<Exec Command="$(MSDeployPath) -verb:sync -source:dbFullSql=&quot;$(MSDeployConnectionString)&quot; -dest:dbFullSql=&quot;$(DatabaseFolderAbsolute)\install_db_temp.sql&quot;"/>
 		<Exec Command="copy $(TrunkFolder)\Resources\database_header.sql+$(DatabaseFolder)\install_db_temp.sql $(DatabaseFolder)\install_db.sql" />
 
 		<MakeDir Directories="$(EnterpriseServerInstall)\Setup"/>

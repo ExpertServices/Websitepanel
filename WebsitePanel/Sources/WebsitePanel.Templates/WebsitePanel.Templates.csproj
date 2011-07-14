@@ -66,6 +66,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\VersionInfo.cs">
+      <Link>VersionInfo.cs</Link>
+    </Compile>
     <Compile Include="AST\BinaryExpression.cs" />
     <Compile Include="AST\CallTemplateStatement.cs" />
     <Compile Include="AST\ElseIfStatement.cs" />
