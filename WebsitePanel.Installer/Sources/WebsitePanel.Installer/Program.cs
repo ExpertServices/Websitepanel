@@ -49,7 +49,7 @@ using System.Reflection;
 namespace WebsitePanel.Installer
 {
 	/// <summary>
-	/// Entry point class
+	/// Entry point class 
 	/// </summary>
 	static class Program
 	{

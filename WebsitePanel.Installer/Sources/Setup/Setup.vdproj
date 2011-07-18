@@ -418,7 +418,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:WebsitePanel Installer"
         "ProductCode" = "8:{09BCDF68-1964-4FC6-9570-9AB3B8512CF6}"
-        "PackageCode" = "8:{F42246DB-297B-4D7C-A985-D17A6C21BBC9}"
+        "PackageCode" = "8:{D94FF2E6-1D7D-4E33-8528-C7B6BFADEC99}"
         "UpgradeCode" = "8:{2950A907-11E7-436C-86CE-049C414AFD08}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
