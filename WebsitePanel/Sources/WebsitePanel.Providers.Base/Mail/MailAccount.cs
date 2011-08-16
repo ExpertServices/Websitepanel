@@ -62,6 +62,13 @@ namespace WebsitePanel.Providers.Mail
 			{
 				return (maxMailboxSize < 0);
 			}
+            set
+            {
+                if (value)
+                {
+                    maxMailboxSize = 0;
+                }
+            }
 		}
 
 		public string ReplyTo
