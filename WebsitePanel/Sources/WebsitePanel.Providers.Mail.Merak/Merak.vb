@@ -188,6 +188,9 @@ Public Class Merak
 		domainItem.CatchAllAccount = GetEmailAlias(CStr(domainObjectClass.GetProperty("D_UnknownForwardTo")))
         domainItem.AbuseAccount = ""
 
+        domainItem.Enabled = CInt(domainObjectClass.GetProperty("D_DisableLogin")) = 0
+        domainItem.MaxMailboxSizeInMB = CStr(domainObjectClass.GetProperty("D_UserMailbox"))
+
         'Dim abuseEmail As String = "abuse@" + domainName
 
         'If MailboxExists(abuseEmail) Then
@@ -251,7 +254,9 @@ Public Class Merak
 		Dim apiObject = CreateObject(API_PROGID)
 		apiObject.SetProperty(MerakInterop.C_Config_UseDomainLimits, 1)
 
-		domainObject.SetProperty(MerakInterop.D_DisableLogin, IIf(domain.Enabled, 0, 1))
+        domainObject.SetProperty(MerakInterop.D_DisableLogin, IIf(domain.Enabled, 0, 1))
+        domainObject.SetProperty("D_UnknownUsersType", domain.MaxMailboxSizeInMB)
+
 
 		'create abuse account mailbox
 		'If Not Utils.IsStringNullOrEmpty(domain.AbuseAccount, True) Then
