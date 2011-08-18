@@ -44,19 +44,19 @@ Public Class Merak
     Const DOMAIN_PROGID As String = "IceWarpServer.DomainObject"
     Const ACCOUNT_PROGID As String = "IceWarpServer.AccountObject"
 
-	Friend ReadOnly Property AccountType As MailType
-		Get
-			Dim mType As MailType = MailType.POP
+    Friend ReadOnly Property AccountType As MailType
+        Get
+            Dim mType As MailType = MailType.POP
 
-			Try
-				mType = CType(ProviderSettings("ServerAccountType"), MailType)
-			Catch ex As Exception
+            Try
+                mType = CType(ProviderSettings("ServerAccountType"), MailType)
+            Catch ex As Exception
 
-			End Try
+            End Try
 
-			Return mType
-		End Get
-	End Property
+            Return mType
+        End Get
+    End Property
 
     Private Function GetDomainName(ByVal email As String) As String
         Return email.Substring((email.IndexOf("@"c) + 1))
@@ -85,22 +85,22 @@ Public Class Merak
         Get
             Dim apiObject = CreateObject(API_PROGID)
 
-			Try
-				Return CStr(apiObject.GetProperty(MerakInterop.C_System_Storage_Dir_MailPath))
-			Catch ex1 As Exception
-				'Log.WriteError(ex1)
-				Try
-					Return CStr(apiObject.GetProperty(MerakInterop.C_MailPath))
-				Catch ex2 As Exception
-					'Log.WriteError(ex2)
-					Try
-						Return CStr(apiObject.GetProperty(MerakInterop.C_XMailPath))
-					Catch ex3 As Exception
-						Log.WriteError(ex3)
-						Throw New Exception("Couldn't obtain mail folder path (version compatibility issue).", ex3)
-					End Try
-				End Try
-			End Try
+            Try
+                Return CStr(apiObject.GetProperty(MerakInterop.C_System_Storage_Dir_MailPath))
+            Catch ex1 As Exception
+                'Log.WriteError(ex1)
+                Try
+                    Return CStr(apiObject.GetProperty(MerakInterop.C_MailPath))
+                Catch ex2 As Exception
+                    'Log.WriteError(ex2)
+                    Try
+                        Return CStr(apiObject.GetProperty(MerakInterop.C_XMailPath))
+                    Catch ex3 As Exception
+                        Log.WriteError(ex3)
+                        Throw New Exception("Couldn't obtain mail folder path (version compatibility issue).", ex3)
+                    End Try
+                End Try
+            End Try
         End Get
     End Property
 
@@ -150,31 +150,31 @@ Public Class Merak
 
     Public Overridable Function DomainExists(ByVal domainName As String) As Boolean Implements IMailServer.DomainExists
         Return Not (OpenDomain(domainName) Is Nothing)
-	End Function 'DomainExists
+    End Function 'DomainExists
 
-	Public Overridable Function GetDomains() As String() Implements IMailServer.GetDomains
-		Dim apiObject = CreateObject(API_PROGID)
+    Public Overridable Function GetDomains() As String() Implements IMailServer.GetDomains
+        Dim apiObject = CreateObject(API_PROGID)
 
-		Dim domainList As String = apiObject.GetDomainList()
+        Dim domainList As String = apiObject.GetDomainList()
 
-		Dim domains As New List(Of String)
+        Dim domains As New List(Of String)
 
-		Dim indexOf As Integer = domainList.IndexOf(";")
+        Dim indexOf As Integer = domainList.IndexOf(";")
 
-		While (indexOf > -1)
-			Dim domain As String = domainList.Substring(0, indexOf)
+        While (indexOf > -1)
+            Dim domain As String = domainList.Substring(0, indexOf)
 
-			If Not String.IsNullOrEmpty(domain) Then
-				domains.Add(domain.Trim())
-			End If
+            If Not String.IsNullOrEmpty(domain) Then
+                domains.Add(domain.Trim())
+            End If
 
-			domainList = domainList.Substring(indexOf + 1)
+            domainList = domainList.Substring(indexOf + 1)
 
-			indexOf = domainList.IndexOf(";")
-		End While
+            indexOf = domainList.IndexOf(";")
+        End While
 
-		Return domains.ToArray()
-	End Function
+        Return domains.ToArray()
+    End Function
 
     Public Overridable Function GetDomain(ByVal domainName As String) As MailDomain Implements IMailServer.GetDomain
         CheckIfDomainExists(domainName)
@@ -185,11 +185,11 @@ Public Class Merak
 
         domainItem.Name = domainObjectClass.Name
         domainItem.PostmasterAccount = GetEmailAlias(CStr(domainObjectClass.GetProperty("D_AdminEmail")))
-		domainItem.CatchAllAccount = GetEmailAlias(CStr(domainObjectClass.GetProperty("D_UnknownForwardTo")))
+        domainItem.CatchAllAccount = GetEmailAlias(CStr(domainObjectClass.GetProperty("D_UnknownForwardTo")))
         domainItem.AbuseAccount = ""
 
         domainItem.Enabled = CInt(domainObjectClass.GetProperty("D_DisableLogin")) = 0
-        domainItem.MaxMailboxSizeInMB = CStr(domainObjectClass.GetProperty("D_UserMailbox"))
+        domainItem.MaxMailboxSizeInMB = CInt(domainObjectClass.GetProperty("D_UserMailbox"))
 
         'Dim abuseEmail As String = "abuse@" + domainName
 
@@ -248,36 +248,36 @@ Public Class Merak
             domainObject.SetProperty("D_UnknownForwardTo", domain.CatchAllAccount & "@" & domain.Name)
             domainObject.SetProperty("D_UnknownUsersType", 1)
             'domainObject.SetProperty(MerakInterop.D_UnknownForwardTo, 1)
-		End If
+        End If
 
-		' enable user limits
-		Dim apiObject = CreateObject(API_PROGID)
-		apiObject.SetProperty(MerakInterop.C_Config_UseDomainLimits, 1)
+        ' enable user limits
+        Dim apiObject = CreateObject(API_PROGID)
+        apiObject.SetProperty(MerakInterop.C_Config_UseDomainLimits, 1)
 
         domainObject.SetProperty(MerakInterop.D_DisableLogin, IIf(domain.Enabled, 0, 1))
         domainObject.SetProperty("D_UnknownUsersType", domain.MaxMailboxSizeInMB)
 
 
-		'create abuse account mailbox
-		'If Not Utils.IsStringNullOrEmpty(domain.AbuseAccount, True) Then
-		'    Dim abuseName As String = "abuse@" + domain.Name
+        'create abuse account mailbox
+        'If Not Utils.IsStringNullOrEmpty(domain.AbuseAccount, True) Then
+        '    Dim abuseName As String = "abuse@" + domain.Name
 
-		'    Dim mailbox As New MailAccount
-		'    mailbox.Name = abuseName
-		'    mailbox.Enabled = True
+        '    Dim mailbox As New MailAccount
+        '    mailbox.Name = abuseName
+        '    mailbox.Enabled = True
 
-		'    If String.Compare(domain.AbuseAccount, abuseName, False) <> 0 Then
-		'        'done redirect to itself
-		'        mailbox.ForwardingAddresses = New String() {domain.AbuseAccount}
-		'    End If
-		'    If Not MailboxExists(abuseName) Then
-		'        CreateMailbox(mailbox)
-		'    Else
-		'        UpdateMailbox(mailbox)
-		'    End If
-		'End If
-		SaveDomain(domainObject)
-	End Sub	'UpdateDomain
+        '    If String.Compare(domain.AbuseAccount, abuseName, False) <> 0 Then
+        '        'done redirect to itself
+        '        mailbox.ForwardingAddresses = New String() {domain.AbuseAccount}
+        '    End If
+        '    If Not MailboxExists(abuseName) Then
+        '        CreateMailbox(mailbox)
+        '    Else
+        '        UpdateMailbox(mailbox)
+        '    End If
+        'End If
+        SaveDomain(domainObject)
+    End Sub 'UpdateDomain
 
     Public Overridable Sub DeleteDomain(ByVal domainName As String) Implements IMailServer.DeleteDomain
         CheckIfDomainExists(domainName)
@@ -292,15 +292,15 @@ Public Class Merak
         Implements IMailServer.DomainAliasExists
         If DomainExists(aliasName) Then
             Dim domainObject = OpenDomain(aliasName)
-			If CInt(domainObject.GetProperty(MerakInterop.D_Type)) = 2 And String.Compare(CStr(domainObject.GetProperty(MerakInterop.D_DomainValue)), domainName, False) = 0 Then
-				Return True
-			End If
+            If CInt(domainObject.GetProperty(MerakInterop.D_Type)) = 2 And String.Compare(CStr(domainObject.GetProperty(MerakInterop.D_DomainValue)), domainName, False) = 0 Then
+                Return True
+            End If
         End If
         Return False
     End Function 'DomainAliasExists
 
     Public Overridable Function GetDomainAliases(ByVal domainName As String) As String() Implements IMailServer.GetDomainAliases
-		Dim domainNameCollection As New List(Of String)
+        Dim domainNameCollection As New List(Of String)
         Dim numberOfDomains As Integer = GetNumberOfDomains()
 
         Dim apiObject = CreateObject(API_PROGID)
@@ -312,7 +312,7 @@ Public Class Merak
                 domainNameCollection.Add(aliasName)
             End If
         Next i
-		Return domainNameCollection.ToArray()
+        Return domainNameCollection.ToArray()
     End Function 'GetDomainAliases
 
     Public Overridable Sub AddDomainAlias(ByVal domainName As String, ByVal aliasName As String) Implements IMailServer.AddDomainAlias
@@ -321,7 +321,7 @@ Public Class Merak
         CreateDomain(MailDomain)
         Dim domainObject = OpenDomain(aliasName)
         domainObject.SetProperty(MerakInterop.D_Type, 2)
-		domainObject.SetProperty(MerakInterop.D_DomainValue, domainName)
+        domainObject.SetProperty(MerakInterop.D_DomainValue, domainName)
         SaveDomain(domainObject)
     End Sub 'AddDomainAlias
 
@@ -334,13 +334,13 @@ Public Class Merak
     Public Overridable Function AccountExists(ByVal mailboxName As String) As Boolean Implements IMailServer.AccountExists
         Dim accountObject = CreateObject(ACCOUNT_PROGID)
 
-		If Not accountObject.Open(mailboxName) Or MerakInterop.GetIntSettingValue(CStr(accountObject.GetProperty(MerakInterop.U_Type))) <> 0 Or String.Compare(CStr(accountObject.GetProperty("U_Comment")), GroupIdentifier, False) = 0 Then
-			'maillist?
-			'group?
-			Return False
-		End If
+        If Not accountObject.Open(mailboxName) Or MerakInterop.GetIntSettingValue(CStr(accountObject.GetProperty(MerakInterop.U_Type))) <> 0 Or String.Compare(CStr(accountObject.GetProperty("U_Comment")), GroupIdentifier, False) = 0 Then
+            'maillist?
+            'group?
+            Return False
+        End If
 
-		Return True
+        Return True
     End Function 'MailboxExists
 
     Public Overridable Function GetAccounts(ByVal domainName As String) As MailAccount() Implements IMailServer.GetAccounts
@@ -440,8 +440,8 @@ ContinueFor1:
         Dim accountObject = CreateObject(ACCOUNT_PROGID)
         accountObject.[New](mailbox.Name)
 
-		' Account type
-		accountObject.SetProperty(MerakInterop.U_AccountType, AccountType)
+        ' Account type
+        accountObject.SetProperty(MerakInterop.U_AccountType, AccountType)
 
         SaveMailbox(accountObject)
 
@@ -1129,7 +1129,7 @@ ContinueFor1:
         Return New String(0) {}
     End Function 'GetMaillistMembers
 
-    
+
 
 
     Private Sub UpdateMailGroupMembers(ByVal groupName As String, ByVal domainName As String, ByVal members() As String)
@@ -1141,33 +1141,33 @@ ContinueFor1:
         End If
 
         Dim fs As FileStream = File.Open(filePath, FileMode.OpenOrCreate)
-		'clean all old members
-		Try
-			fs.SetLength(0)
-		Catch ex As Exception
-			Log.WriteError(String.Format("Error deleting old mail list memebers  for '{0}' mail list", groupName), ex)
-		Finally
-			fs.Close()
-		End Try
-		'reopen file for new members
-		fs = File.Open(filePath, FileMode.OpenOrCreate)
-		Try
-			Dim sw As New StreamWriter(fs)
-			Try
-				Dim str As String
-				For Each str In members
-					sw.WriteLine(str)
-				Next str
-				sw.Flush()
-				sw.Close()
-			Catch ex As Exception
-				Log.WriteError(String.Format("Unable to update new mail group members  for '{0}' group", groupName), ex)
-			Finally
-				sw.Close()
-			End Try
-		Finally
-			fs.Close()
-		End Try
+        'clean all old members
+        Try
+            fs.SetLength(0)
+        Catch ex As Exception
+            Log.WriteError(String.Format("Error deleting old mail list memebers  for '{0}' mail list", groupName), ex)
+        Finally
+            fs.Close()
+        End Try
+        'reopen file for new members
+        fs = File.Open(filePath, FileMode.OpenOrCreate)
+        Try
+            Dim sw As New StreamWriter(fs)
+            Try
+                Dim str As String
+                For Each str In members
+                    sw.WriteLine(str)
+                Next str
+                sw.Flush()
+                sw.Close()
+            Catch ex As Exception
+                Log.WriteError(String.Format("Unable to update new mail group members  for '{0}' group", groupName), ex)
+            Finally
+                sw.Close()
+            End Try
+        Finally
+            fs.Close()
+        End Try
     End Sub 'UpdateMaillistMembers
 
 
@@ -1180,33 +1180,33 @@ ContinueFor1:
         End If
 
         Dim fs As FileStream = File.Open(filePath, FileMode.OpenOrCreate)
-		'clean all old members
-		Try
-			fs.SetLength(0)
-		Catch ex As Exception
-			Log.WriteError(String.Format("Error deleting old mail list members  for '{0}' mail list", listName), ex)
-		Finally
-			fs.Close()
-		End Try
-		'reopen file for new members
-		fs = File.Open(filePath, FileMode.OpenOrCreate)
-		Try
-			Dim sw As New StreamWriter(fs)
-			Try
-				Dim str As String
-				For Each str In members
-					sw.WriteLine(str)
-				Next str
-				sw.Flush()
-				sw.Close()
-			Catch ex As Exception
-				Log.WriteError(String.Format("Unable to update new mail list memebers  for '{0}' mail list", listName), ex)
-			Finally
-				sw.Close()
-			End Try
-		Finally
-			fs.Close()
-		End Try
+        'clean all old members
+        Try
+            fs.SetLength(0)
+        Catch ex As Exception
+            Log.WriteError(String.Format("Error deleting old mail list members  for '{0}' mail list", listName), ex)
+        Finally
+            fs.Close()
+        End Try
+        'reopen file for new members
+        fs = File.Open(filePath, FileMode.OpenOrCreate)
+        Try
+            Dim sw As New StreamWriter(fs)
+            Try
+                Dim str As String
+                For Each str In members
+                    sw.WriteLine(str)
+                Next str
+                sw.Flush()
+                sw.Close()
+            Catch ex As Exception
+                Log.WriteError(String.Format("Unable to update new mail list memebers  for '{0}' mail list", listName), ex)
+            Finally
+                sw.Close()
+            End Try
+        Finally
+            fs.Close()
+        End Try
     End Sub 'UpdateMaillistMembers
 #End Region
 
@@ -1238,6 +1238,76 @@ ContinueFor1:
             End If
         Next
     End Sub
+
+    Public Overrides Function GetServiceItemsBandwidth(items() As ServiceProviderItem, since As Date) As ServiceProviderItemBandwidth()
+        Dim itemsBandwidth As List(Of ServiceProviderItemBandwidth) = New List(Of ServiceProviderItemBandwidth)
+        Dim item As ServiceProviderItem
+
+        For Each item In items
+            If TypeOf item Is MailAccount Then
+                Dim name As String = item.Name
+
+                Dim bandwidth As New ServiceProviderItemBandwidth()
+
+                bandwidth.ItemId = item.Id
+                bandwidth.Days = GetDailyStatistics(since, name)
+
+                itemsBandwidth.Add(bandwidth)
+
+            End If
+        Next item
+        Return itemsBandwidth.ToArray()
+
+    End Function
+
+    Public Function GetDailyStatistics(since As Date, mailAccount As String) As DailyStatistics()
+        Dim days As List(Of DailyStatistics) = New List(Of DailyStatistics)
+
+
+        Dim currentDate As DateTime = since
+        Dim now As DateTime = DateTime.Now
+
+
+        While currentDate < now
+            days.Add(GetSingleDayBandwidthStatistics(currentDate, mailAccount))
+
+            ' advance day
+            currentDate = currentDate.AddDays(1)
+        End While
+
+
+        Return days.ToArray()
+    End Function
+
+
+    Public Function GetSingleDayBandwidthStatistics(day As Date, mailAccount As String) As DailyStatistics
+        Const ReceivedAmmountPositionInString As Int32 = 18
+        Const SentOutAmmountPositionInString As Int32 = 22
+
+        Dim apiObject = CreateObject(API_PROGID)
+        Dim result As New DailyStatistics()
+        Dim formatedDate As String
+        formatedDate = Format(day, "yyyy/MM/dd")
+
+        result.Day = day.Day
+        result.Month = day.Month
+        result.Year = day.Year
+        result.BytesReceived = 0
+        result.BytesSent = 0
+
+        Try
+            Dim apiResult As String = apiObject.GetUserStatistics(formatedDate, formatedDate, mailAccount)
+
+            Dim apiResultSplit As String() = apiResult.Split(",")
+
+            result.BytesReceived = apiResultSplit(ReceivedAmmountPositionInString)
+            result.BytesSent = apiResultSplit(SentOutAmmountPositionInString)
+        Catch ex As Exception
+            Log.WriteError(String.Format("Merak: Error calculating '{0}' bandwidth at {1}", mailAccount, day.ToShortDateString()), ex)
+        End Try
+
+        Return result
+    End Function
 
     Public Overrides Function GetServiceItemsDiskSpace(ByVal items() As ServiceProviderItem) As ServiceProviderItemDiskSpace()
         Dim itemsDiskspace As List(Of ServiceProviderItemDiskSpace) = New List(Of ServiceProviderItemDiskSpace)
@@ -1301,8 +1371,6 @@ ContinueFor1:
     End Function
 
 #End Region
-
-
 
     '/ Provides constant values for easier interoperability with Merak COM library
     '/ </summary>
@@ -1794,12 +1862,12 @@ Public Class Utils
 End Class 'Utils
 
 Friend Class Service
-	Public ComObject As Object
-	Public Succeed As Boolean
+    Public ComObject As Object
+    Public Succeed As Boolean
 End Class
 
 Friend Enum MailType
-	POP = 0
-	IMAP_POP = 1
-	IMAP = 2
+    POP = 0
+    IMAP_POP = 1
+    IMAP = 2
 End Enum
