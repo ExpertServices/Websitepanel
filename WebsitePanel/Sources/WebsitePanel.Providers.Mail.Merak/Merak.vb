@@ -189,7 +189,7 @@ Public Class Merak
         domainItem.AbuseAccount = ""
 
         domainItem.Enabled = CInt(domainObjectClass.GetProperty("D_DisableLogin")) = 0
-        domainItem.MaxMailboxSizeInMB = CInt(domainObjectClass.GetProperty("D_UserMailbox"))
+        domainItem.MaxMailboxSizeInMB = CInt(domainObjectClass.GetProperty("D_UserMailbox")) / 1024
 
         'Dim abuseEmail As String = "abuse@" + domainName
 
