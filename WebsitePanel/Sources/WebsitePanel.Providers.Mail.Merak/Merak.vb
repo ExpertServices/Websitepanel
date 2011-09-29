@@ -255,7 +255,7 @@ Public Class Merak
         apiObject.SetProperty(MerakInterop.C_Config_UseDomainLimits, 1)
 
         domainObject.SetProperty(MerakInterop.D_DisableLogin, IIf(domain.Enabled, 0, 1))
-        domainObject.SetProperty("D_UnknownUsersType", domain.MaxMailboxSizeInMB)
+        domainObject.SetProperty("D_UserMailbox", domain.MaxMailboxSizeInMB * 1024)
 
 
         'create abuse account mailbox
