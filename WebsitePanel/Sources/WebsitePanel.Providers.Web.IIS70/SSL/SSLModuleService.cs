@@ -66,9 +66,13 @@ namespace WebsitePanel.Providers.Web.Iis
 
 				//  Provide key container name, key length and key spec to the private key object
 				privateKey.Length = cert.CSRLength;
-				privateKey.KeySpec = X509KeySpec.XCN_AT_SIGNATURE;
+				privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE;
 				privateKey.KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_ALL_USAGES;
-				privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_PLAINTEXT_EXPORT_FLAG | X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
+				privateKey.ExportPolicy =
+                    X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_PLAINTEXT_EXPORT_FLAG
+                    | X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_ARCHIVING_FLAG
+                    | X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_PLAINTEXT_ARCHIVING_FLAG
+                    | X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
 				privateKey.MachineContext = true;
 
 				//  Provide the CSP collection object (in this case containing only 1 CSP object)
