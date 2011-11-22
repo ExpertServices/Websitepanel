@@ -53,8 +53,7 @@ namespace WebsitePanel.Providers.Web.Iis
 			CX500DistinguishedName dn = new CX500DistinguishedName();
 			CX509Enrollment enroll = new CX509Enrollment();
 			CObjectIds objectIds = new CObjectIds();
-			CObjectId clientObjectId = new CObjectId();
-			CObjectId serverObjectId = new CObjectId();
+			CObjectId objectId = new CObjectId();
 			CX509ExtensionKeyUsage extensionKeyUsage = new CX509ExtensionKeyUsage();
 			CX509ExtensionEnhancedKeyUsage x509ExtensionEnhancedKeyUsage = new CX509ExtensionEnhancedKeyUsage();
 
@@ -66,11 +65,14 @@ namespace WebsitePanel.Providers.Web.Iis
 				csPs.Add(csp);
 
 				//  Provide key container name, key length and key spec to the private key object
-				//objPrivateKey.ContainerName = "AlejaCMa";
 				privateKey.Length = cert.CSRLength;
-				privateKey.KeySpec = X509KeySpec.XCN_AT_SIGNATURE;
+				privateKey.KeySpec = X509KeySpec.XCN_AT_KEYEXCHANGE;
 				privateKey.KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_ALL_USAGES;
-				privateKey.ExportPolicy = X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_PLAINTEXT_EXPORT_FLAG | X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
+				privateKey.ExportPolicy =
+                    X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_PLAINTEXT_EXPORT_FLAG
+                    | X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_ARCHIVING_FLAG
+                    | X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_PLAINTEXT_ARCHIVING_FLAG
+                    | X509PrivateKeyExportFlags.XCN_NCRYPT_ALLOW_EXPORT_FLAG;
 				privateKey.MachineContext = true;
 
 				//  Provide the CSP collection object (in this case containing only 1 CSP object)
@@ -97,16 +99,18 @@ namespace WebsitePanel.Providers.Web.Iis
 				pkcs10.X509Extensions.Add((CX509Extension)extensionKeyUsage);
 
 				// Enhanced Key Usage Extension
-				clientObjectId.InitializeFromValue("1.3.6.1.5.5.7.3.2");
-				objectIds.Add(clientObjectId);
-				serverObjectId.InitializeFromValue("1.3.6.1.5.5.7.3.1");
-				objectIds.Add(serverObjectId);
+
+				objectId.InitializeFromName(CERTENROLLLib.CERTENROLL_OBJECTID.XCN_OID_PKIX_KP_SERVER_AUTH);
+				objectIds.Add(objectId);
 				x509ExtensionEnhancedKeyUsage.InitializeEncode(objectIds);
 				pkcs10.X509Extensions.Add((CX509Extension)x509ExtensionEnhancedKeyUsage);
 
 				//  Encode the name in using the Distinguished Name object
 				string request = String.Format(@"CN={0}, O={1}, OU={2}, L={3}, S={4}, C={5}", cert.Hostname, cert.Organisation, cert.OrganisationUnit, cert.City, cert.State, cert.Country);
 				dn.Encode(request, X500NameFlags.XCN_CERT_NAME_STR_NONE);
+
+                // enable SMIME capabilities
+                pkcs10.SmimeCapabilities = true;
 
 				//  Assing the subject name by using the Distinguished Name object initialized above
 				pkcs10.Subject = dn;
