@@ -17391,6 +17391,8 @@ INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName]
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (300, 30, N'HyperV', N'Microsoft Hyper-V', N'WebsitePanel.Providers.Virtualization.HyperV, WebsitePanel.Providers.Virtualization.HyperV', N'HyperV', 1)
 GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (301, 11, N'MySQL', N'MySQL Server 5.5', N'WebsitePanel.Providers.Database.MySqlServer55, WebsitePanel.Providers.Database.MySQL', N'MySQL', NULL)
+GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (400, 40, N'HyperVForPC', N'Microsoft Hyper-V For Private Cloud', N'WebsitePanel.Providers.VirtualizationForPC.HyperVForPC, WebsitePanel.Providers.VirtualizationForPC.HyperVForPC', N'HyperVForPrivateCloud', 1)
 GO
 SET ANSI_NULLS ON
@@ -30790,6 +30792,16 @@ GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (300, N'StopAction', N'shutDown')
 GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (300, N'VirtualDiskType', N'dynamic')
+GO
+INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (301, N'ExternalAddress', N'localhost')
+GO
+INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (301, N'InstallFolder', N'%PROGRAMFILES%\MySQL\MySQL Server 5.5')
+GO
+INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (301, N'InternalAddress', N'localhost,3306')
+GO
+INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (301, N'RootLogin', N'root')
+GO
+INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (301, N'RootPassword', N'')
 GO
 SET ANSI_NULLS ON
 GO
