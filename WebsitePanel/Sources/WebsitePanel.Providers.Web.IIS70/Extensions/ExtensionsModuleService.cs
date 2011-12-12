@@ -58,36 +58,33 @@ using System.Collections.Specialized;
 			{ Constants.AspNet40x64PathSetting, @"\Framework64\v4.0.30128\aspnet_isapi.dll" }
 		};
 		
-        public SettingPair[] GetISAPIExtensionsInstalled()
+        public SettingPair[] GetISAPIExtensionsInstalled(ServerManager srvman)
         {
             List<SettingPair> settings = new List<SettingPair>();
 			//
-			using (var srvman = GetServerManager())
+			var config = srvman.GetApplicationHostConfiguration();
+			//
+			var section = config.GetSection(Constants.IsapiCgiRestrictionSection);
+			//
+			foreach (var item in section.GetCollection())
 			{
-				var config = srvman.GetApplicationHostConfiguration();
+				var isapiModulePath = Convert.ToString(item.GetAttributeValue(PathAttribute));
 				//
-				var section = config.GetSection(Constants.IsapiCgiRestrictionSection);
-				//
-				foreach (var item in section.GetCollection())
+				for (int i = 0; i < ISAPI_MODULES.Keys.Count; i++)
 				{
-					var isapiModulePath = Convert.ToString(item.GetAttributeValue(PathAttribute));
+					var pathExt = ISAPI_MODULES.Get(i);
 					//
-					for (int i = 0; i < ISAPI_MODULES.Keys.Count; i++)
+					if (isapiModulePath.EndsWith(pathExt))
 					{
-						var pathExt = ISAPI_MODULES.Get(i);
-						//
-						if (isapiModulePath.EndsWith(pathExt))
+						settings.Add(new SettingPair
 						{
-							settings.Add(new SettingPair
-							{
-								// Retrieve key name
-								Name = ISAPI_MODULES.GetKey(i),
-								// Evaluate ISAPI module path
-								Value = isapiModulePath
-							});
-							//
-							break;
-						}
+							// Retrieve key name
+							Name = ISAPI_MODULES.GetKey(i),
+							// Evaluate ISAPI module path
+							Value = isapiModulePath
+						});
+						//
+						break;
 					}
 				}
 			}

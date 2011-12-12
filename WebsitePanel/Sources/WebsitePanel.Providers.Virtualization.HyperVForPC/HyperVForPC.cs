@@ -908,7 +908,7 @@ namespace WebsitePanel.Providers.VirtualizationForPC
 					steps.AppendLine("VM created");
 				}
 			}
-			catch (System.TimeoutException ex)
+			catch (System.TimeoutException)
 			{
 				vmTemplate.ProvisioningStatus = VirtualMachineProvisioningStatus.InProgress;
 			}
@@ -1064,37 +1064,31 @@ namespace WebsitePanel.Providers.VirtualizationForPC
 		{
 			List<Virtualization.VirtualNetworkInfo> result = new List<Virtualization.VirtualNetworkInfo>();
 
-			try
+			using (WSPVirtualMachineManagementServiceClient client = GetVMMSClient())
 			{
-				using (WSPVirtualMachineManagementServiceClient client = GetVMMSClient())
+				VirtualizationForPC.SVMMService.VirtualNetworkInfo[] networks = client.GetVirtualNetworkByHost(hostInfo);
+				foreach (var item in networks)
 				{
-					VirtualizationForPC.SVMMService.VirtualNetworkInfo[] networks = client.GetVirtualNetworkByHost(hostInfo);
-					foreach (var item in networks)
-					{
-						result.Add(
-							new Virtualization.VirtualNetworkInfo
-							{
-								BoundToVMHost = item.BoundToVMHost,
-								DefaultGatewayAddress = item.DefaultGatewayAddress,
-								Description = item.Description,
-								DNSServers = item.DNSServers,
-								EnablingIPAddress = item.EnablingIPAddress,
-								HighlyAvailable = item.HighlyAvailable,
-								HostBoundVlanId = item.HostBoundVlanId,
-								Id = item.Id,
-								Name = item.Name,
-								NetworkAddress = item.NetworkAddress,
-								NetworkMask = item.NetworkMask,
-								Tag = item.Tag,
-								VMHost = item.VMHost.ComputerName,
-								VMHostId = item.VMHostId,
-								WINServers = item.WINServers
-							});
-					}
+					result.Add(
+						new Virtualization.VirtualNetworkInfo
+						{
+							BoundToVMHost = item.BoundToVMHost,
+							DefaultGatewayAddress = item.DefaultGatewayAddress,
+							Description = item.Description,
+							DNSServers = item.DNSServers,
+							EnablingIPAddress = item.EnablingIPAddress,
+							HighlyAvailable = item.HighlyAvailable,
+							HostBoundVlanId = item.HostBoundVlanId,
+							Id = item.Id,
+							Name = item.Name,
+							NetworkAddress = item.NetworkAddress,
+							NetworkMask = item.NetworkMask,
+							Tag = item.Tag,
+							VMHost = item.VMHost.ComputerName,
+							VMHostId = item.VMHostId,
+							WINServers = item.WINServers
+						});
 				}
-			}
-			catch (Exception ex)
-			{
 			}
 
 			return result.ToArray();
@@ -1287,34 +1281,28 @@ namespace WebsitePanel.Providers.VirtualizationForPC
 
 			List<VirtualMachineSnapshot> ret = new List<VirtualMachineSnapshot>();
 
-			try
+			using (WSPVirtualMachineManagementServiceClient client = GetVMMSClient())
 			{
-				using (WSPVirtualMachineManagementServiceClient client = GetVMMSClient())
-				{
-					VMCheckpointInfo[] chkPtnList = client.GetVirtualMachineByName(vmId).VMCheckpoints;
+				VMCheckpointInfo[] chkPtnList = client.GetVirtualMachineByName(vmId).VMCheckpoints;
 
-					if (chkPtnList != null)
+				if (chkPtnList != null)
+				{
+					foreach (VMCheckpointInfo curr in chkPtnList)
 					{
-						foreach (VMCheckpointInfo curr in chkPtnList)
+						ret.Add(new VirtualMachineSnapshot()
 						{
-							ret.Add(new VirtualMachineSnapshot()
-							{
-								Created = curr.AddedTime
-							,
-								Id = curr.Id.ToString()
-							,
-								Name = curr.Name
-							,
-								CheckPointId = curr.CheckpointID
-							,
-								ParentId = curr.ParentCheckpointID
-							});
-						}
+							Created = curr.AddedTime
+						,
+							Id = curr.Id.ToString()
+						,
+							Name = curr.Name
+						,
+							CheckPointId = curr.CheckpointID
+						,
+							ParentId = curr.ParentCheckpointID
+						});
 					}
 				}
-			}
-			catch (Exception e)
-			{
 			}
 
 			return ret;
@@ -1338,7 +1326,7 @@ namespace WebsitePanel.Providers.VirtualizationForPC
 					client.NewVirtualMachineCheckpoint(vm.Id, String.Format("{0} - {1}", vm.Name, DateTime.Now), String.Empty);
 				}
 			}
-			catch (TimeoutException ext)
+			catch (TimeoutException)
 			{
 				ret.ReturnValue = ReturnCode.JobStarted;
 			}
@@ -1368,7 +1356,7 @@ namespace WebsitePanel.Providers.VirtualizationForPC
 					client.RestoreVirtualMachineCheckpoint(snapshotId);
 				}
 			}
-			catch (TimeoutException ext)
+			catch (TimeoutException)
 			{
 				error = true;
 				ret.ReturnValue = ReturnCode.JobStarted;
@@ -1856,25 +1844,19 @@ namespace WebsitePanel.Providers.VirtualizationForPC
 		public WSPVirtualMachineManagementServiceClient GetVMMSClient()
 		{
 			WSPVirtualMachineManagementServiceClient ret;
-			try
+
+			if (!String.IsNullOrWhiteSpace(SCVMMServer)
+				&& !String.IsNullOrWhiteSpace(SCVMMPrincipalName))
 			{
-				if (!String.IsNullOrWhiteSpace(SCVMMServer)
-					&& !String.IsNullOrWhiteSpace(SCVMMPrincipalName))
-				{
-					EndpointAddress endPointAddress = GetEndPointAddress(SCVMMServer, SCVMMPrincipalName);
+				EndpointAddress endPointAddress = GetEndPointAddress(SCVMMServer, SCVMMPrincipalName);
 
-					ret = new WSPVirtualMachineManagementServiceClient(new WSHttpBinding("WSHttpBinding_IVirtualMachineManagementService"), endPointAddress);
+				ret = new WSPVirtualMachineManagementServiceClient(new WSHttpBinding("WSHttpBinding_IVirtualMachineManagementService"), endPointAddress);
 
-					VersionInfo ver = new VersionInfo();
-				}
-				else
-				{
-					throw new Exception("SCVMMServer or SCVMMPrincipalName is empty");
-				}
+				VersionInfo ver = new VersionInfo();
 			}
-			catch (Exception ex)
+			else
 			{
-				throw;
+				throw new Exception("SCVMMServer or SCVMMPrincipalName is empty");
 			}
 
 			return ret;
@@ -1884,23 +1866,16 @@ namespace WebsitePanel.Providers.VirtualizationForPC
 		{
 			WSPMonitoringServiceClient ret;
 
-			try
+			if (!String.IsNullOrWhiteSpace(SCOMServer)
+				&& !String.IsNullOrWhiteSpace(SCOMPrincipalName))
 			{
-				if (!String.IsNullOrWhiteSpace(SCOMServer)
-					&& !String.IsNullOrWhiteSpace(SCOMPrincipalName))
-				{
-					EndpointAddress endPointAddress = GetEndPointAddress(SCOMServer, SCOMPrincipalName);
+				EndpointAddress endPointAddress = GetEndPointAddress(SCOMServer, SCOMPrincipalName);
 
-					ret = new WSPMonitoringServiceClient(new WSHttpBinding("WSHttpBinding_IMonitoringService"), endPointAddress);
-				}
-				else
-				{
-					throw new Exception("MonitoringServer or MonitoringPrincipalName is empty");
-				}
+				ret = new WSPMonitoringServiceClient(new WSHttpBinding("WSHttpBinding_IMonitoringService"), endPointAddress);
 			}
-			catch (Exception ex)
+			else
 			{
-				throw;
+				throw new Exception("MonitoringServer or MonitoringPrincipalName is empty");
 			}
 
 			return ret;

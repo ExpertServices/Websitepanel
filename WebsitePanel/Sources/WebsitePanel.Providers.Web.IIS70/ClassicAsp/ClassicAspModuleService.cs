@@ -40,20 +40,17 @@ namespace WebsitePanel.Providers.Web.Iis.ClassicAsp
 		public const string SectionName = "system.webServer/asp";
 		public const string EnableParentPathsAttribute = "enableParentPaths";
 
-		public PropertyBag GetClassicAspSettings(string siteId)
+		public PropertyBag GetClassicAspSettings(ServerManager srvman, string siteId)
         {
-			using (var srvman = GetServerManager())
-			{
-				var config = srvman.GetApplicationHostConfiguration();
-				//
-				var aspSection = config.GetSection(SectionName, siteId);
-				//
-				PropertyBag bag = new PropertyBag();
-				//
-				bag[ClassicAspGlobals.EnableParentPaths] = Convert.ToBoolean(aspSection.GetAttributeValue(EnableParentPathsAttribute));
-				//
-				return bag;
-			}
+			var config = srvman.GetApplicationHostConfiguration();
+			//
+			var aspSection = config.GetSection(SectionName, siteId);
+			//
+			PropertyBag bag = new PropertyBag();
+			//
+			bag[ClassicAspGlobals.EnableParentPaths] = Convert.ToBoolean(aspSection.GetAttributeValue(EnableParentPathsAttribute));
+			//
+			return bag;
         }
 
         public void SetClassicAspSettings(WebVirtualDirectory virtualDir)

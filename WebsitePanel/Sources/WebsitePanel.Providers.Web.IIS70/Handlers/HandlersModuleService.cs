@@ -87,45 +87,22 @@ namespace WebsitePanel.Providers.Web.Handlers
 			}
         }
 
-		public void SetHandlersAccessPolicy(string fqPath, HandlerAccessPolicy policy)
+		public void SetHandlersAccessPolicy(ServerManager srvman, string fqPath, HandlerAccessPolicy policy)
 		{
+			var config = srvman.GetWebConfiguration(fqPath);
 			//
-			using (var srvman = GetServerManager())
-			{
-				var config = srvman.GetWebConfiguration(fqPath);
-				//
-				HandlersSection section = (HandlersSection)config.GetSection(Constants.HandlersSection, typeof(HandlersSection));
-				//
-				section.AccessPolicy = policy;
-				//
-				srvman.CommitChanges();
-			}
+			HandlersSection section = (HandlersSection)config.GetSection(Constants.HandlersSection, typeof(HandlersSection));
+			//
+			section.AccessPolicy = policy;
 		}
 
-		public HandlerAccessPolicy GetHandlersAccessPolicy(string fqPath)
+		public HandlerAccessPolicy GetHandlersAccessPolicy(ServerManager srvman, string fqPath)
 		{
+			var config = srvman.GetWebConfiguration(fqPath);
 			//
-			using (var srvman = GetServerManager())
-			{
-				var config = srvman.GetWebConfiguration(fqPath);
-				//
-				HandlersSection section = (HandlersSection)config.GetSection(Constants.HandlersSection, typeof(HandlersSection));
-				//
-				return section.AccessPolicy;
-			}
-		}
-
-		internal ConfigurationElementCollection GetHandlers(WebVirtualDirectory virtualDir)
-		{
-            //
-			using (var srvman = GetServerManager())
-			{
-				var config = srvman.GetWebConfiguration(virtualDir.FullQualifiedPath);
-				//
-				var section = config.GetSection(Constants.HandlersSection);
-				//
-				return section.GetCollection();
-			}
+			HandlersSection section = (HandlersSection)config.GetSection(Constants.HandlersSection, typeof(HandlersSection));
+			//
+			return section.AccessPolicy;
 		}
 
 		/// <summary>

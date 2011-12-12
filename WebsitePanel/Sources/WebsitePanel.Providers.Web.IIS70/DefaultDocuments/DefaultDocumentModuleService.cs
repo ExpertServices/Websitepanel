@@ -43,31 +43,28 @@ namespace WebsitePanel.Providers.Web.Iis.DefaultDocuments
 	{
 		public const string ValueAttribute = "value";
 
-		public string GetDefaultDocumentSettings(string siteId)
+		public string GetDefaultDocumentSettings(ServerManager srvman, string siteId)
 		{
-			using (var srvman = GetServerManager())
+			// Load web site configuration
+			var config = srvman.GetWebConfiguration(siteId);
+			// Load corresponding section
+			var section = config.GetSection(Constants.DefaultDocumentsSection);
+			//
+			var filesCollection = section.GetCollection("files");
+			// Build default documents
+			var defaultDocs = new List<String>();
+			//
+			foreach (var item in filesCollection)
 			{
-				// Load web site configuration
-				var config = srvman.GetWebConfiguration(siteId);
-				// Load corresponding section
-				var section = config.GetSection(Constants.DefaultDocumentsSection);
+				var item2Get = GetDefaultDocument(item);
 				//
-				var filesCollection = section.GetCollection("files");
-				// Build default documents
-				var defaultDocs = new List<String>();
+				if (String.IsNullOrEmpty(item2Get))
+					continue;
 				//
-				foreach (var item in filesCollection)
-				{
-					var item2Get = GetDefaultDocument(item);
-					//
-					if (String.IsNullOrEmpty(item2Get))
-						continue;
-					//
-					defaultDocs.Add(item2Get);
-				}
-				//
-				return String.Join(",", defaultDocs.ToArray());
+				defaultDocs.Add(item2Get);
 			}
+			//
+			return String.Join(",", defaultDocs.ToArray());
 		}
 
 		public void SetDefaultDocumentsEnabled(string siteId, bool enabled)

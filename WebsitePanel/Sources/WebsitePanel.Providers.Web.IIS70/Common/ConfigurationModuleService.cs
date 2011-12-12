@@ -31,12 +31,14 @@ namespace WebsitePanel.Providers.Web.Iis.Common
     using System;
     using System.Collections.Generic;
     using System.Text;
+    using System.Web;
 
     using Microsoft.Web.Administration;
     using Microsoft.Web.Management.Server;
 
 	public abstract class ConfigurationModuleService
     {
+        private const string ServerManagerContextKey = "ServerManagerContextKey";
 		/// <summary>
 		/// We'll use it in the future to implement management of web farm with shared configuration enabled
 		/// </summary>

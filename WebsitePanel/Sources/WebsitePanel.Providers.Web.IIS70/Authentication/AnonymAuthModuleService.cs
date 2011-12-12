@@ -41,23 +41,20 @@ namespace WebsitePanel.Providers.Web.Iis.Authentication
 		public const string UserNameAttribute = "userName";
 		public const string PasswordAttribute = "password";
 
-		public PropertyBag GetAuthenticationSettings(string siteId)
+		public PropertyBag GetAuthenticationSettings(ServerManager srvman, string siteId)
         {
-			using (var srvman = GetServerManager())
-			{
-				var config = srvman.GetApplicationHostConfiguration();
-				//
-				var section = config.GetSection(Constants.AnonymousAuthenticationSection, siteId);
-				//
-				PropertyBag bag = new PropertyBag();
-				//
-				bag[AuthenticationGlobals.AnonymousAuthenticationUserName] = Convert.ToString(section.GetAttributeValue(UserNameAttribute));
-				bag[AuthenticationGlobals.AnonymousAuthenticationPassword] = Convert.ToString(section.GetAttributeValue(PasswordAttribute));
-				bag[AuthenticationGlobals.Enabled] = Convert.ToBoolean(section.GetAttributeValue(EnabledAttribute));
-				bag[AuthenticationGlobals.IsLocked] = section.IsLocked;
-				//
-				return bag;
-			}
+			var config = srvman.GetApplicationHostConfiguration();
+			//
+			var section = config.GetSection(Constants.AnonymousAuthenticationSection, siteId);
+			//
+			PropertyBag bag = new PropertyBag();
+			//
+			bag[AuthenticationGlobals.AnonymousAuthenticationUserName] = Convert.ToString(section.GetAttributeValue(UserNameAttribute));
+			bag[AuthenticationGlobals.AnonymousAuthenticationPassword] = Convert.ToString(section.GetAttributeValue(PasswordAttribute));
+			bag[AuthenticationGlobals.Enabled] = Convert.ToBoolean(section.GetAttributeValue(EnabledAttribute));
+			bag[AuthenticationGlobals.IsLocked] = section.IsLocked;
+			//
+			return bag;
         }
 
         public void SetAuthenticationSettings(string virtualPath, string userName, 

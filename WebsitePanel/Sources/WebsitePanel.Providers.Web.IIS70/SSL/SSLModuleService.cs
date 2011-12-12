@@ -339,7 +339,7 @@ namespace WebsitePanel.Providers.Web.Iis
 
 		public void AddBinding(SSLCertificate certificate, WebSite website)
 		{
-			using (ServerManager sm = GetServerManager())
+			using (ServerManager srvman = GetServerManager())
 			{
 				// Not sure why do we need to work with X.509 store here, so commented it out and lets see what happens
 				X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
@@ -348,7 +348,7 @@ namespace WebsitePanel.Providers.Web.Iis
 				List<ServerBinding> bindings = new List<ServerBinding>();
 				// Retrieve existing site bindings to figure out what do we have here
 				WebObjectsModuleService webObjSvc = new WebObjectsModuleService();
-				bindings.AddRange(webObjSvc.GetSiteBindings(website.SiteId));
+				bindings.AddRange(webObjSvc.GetSiteBindings(srvman, website.SiteId));
 				// Look for dedicated ip
 				bool dedicatedIp = bindings.Exists(binding => String.IsNullOrEmpty(binding.Host) && binding.IP != "*");
 				//
@@ -357,11 +357,11 @@ namespace WebsitePanel.Providers.Web.Iis
 				bindingInformation = dedicatedIp ? string.Format("{0}:443:", website.SiteIPAddress)
 												 : string.Format("{0}:443:{1}", website.SiteIPAddress, certificate.Hostname);
 				//
-				sm.Sites[website.SiteId].Bindings.Add(bindingInformation, certificate.Hash, store.Name);
+				srvman.Sites[website.SiteId].Bindings.Add(bindingInformation, certificate.Hash, store.Name);
 				//
 				store.Close();
 				//
-				sm.CommitChanges();
+				srvman.CommitChanges();
 			}
 		}
 

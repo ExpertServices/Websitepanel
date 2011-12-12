@@ -154,7 +154,7 @@ namespace WebsitePanel.Server
                 Log.WriteEnd("'{0}' CreateVMFromVM", ProviderSettings.ProviderName);
                 return result;
             }
-            catch (System.TimeoutException ex)
+            catch (System.TimeoutException)
             {
                 return result;
             }

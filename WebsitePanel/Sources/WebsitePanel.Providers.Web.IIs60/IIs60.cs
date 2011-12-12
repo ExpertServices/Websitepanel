@@ -2392,37 +2392,37 @@ namespace WebsitePanel.Providers.Web
 			throw new NotImplementedException();
 		}
 
-		public List<HtaccessUser> GetHeliconApeUsers(string siteId)
+		public virtual List<HtaccessUser> GetHeliconApeUsers(string siteId)
 		{
 			throw new NotImplementedException();
 		}
 
-		public HtaccessUser GetHeliconApeUser(string siteId, string userName)
+		public virtual HtaccessUser GetHeliconApeUser(string siteId, string userName)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void UpdateHeliconApeUser(string siteId, HtaccessUser user)
+		public virtual void UpdateHeliconApeUser(string siteId, HtaccessUser user)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void DeleteHeliconApeUser(string siteId, string userName)
+		public virtual void DeleteHeliconApeUser(string siteId, string userName)
 		{
 			throw new NotImplementedException();
 		}
 
-		public List<WebGroup> GetHeliconApeGroups(string siteId)
+		public virtual List<WebGroup> GetHeliconApeGroups(string siteId)
 		{
 			throw new NotImplementedException();
 		}
 
-		public WebGroup GetHeliconApeGroup(string siteId, string groupName)
+		public virtual WebGroup GetHeliconApeGroup(string siteId, string groupName)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void UpdateHeliconApeGroup(string siteId, WebGroup group)
+		public virtual void UpdateHeliconApeGroup(string siteId, WebGroup group)
 		{
 			throw new NotImplementedException();
 		}
@@ -2437,7 +2437,7 @@ namespace WebsitePanel.Providers.Web
 			throw new NotSupportedException();
 		}
 
-		public void DeleteHeliconApeGroup(string siteId, string groupName)
+		public virtual void DeleteHeliconApeGroup(string siteId, string groupName)
 		{
 			throw new NotImplementedException();
 		}
@@ -3630,27 +3630,27 @@ namespace WebsitePanel.Providers.Web
 		#endregion
 
 		#region Remote Management Access
-		public void GrantWebManagementAccess(string siteName, string accountName, string accountPassword)
+		public virtual void GrantWebManagementAccess(string siteName, string accountName, string accountPassword)
 		{
 			throw new NotSupportedException();
 		}
 
-		public void RevokeWebManagementAccess(string siteName, string accountName)
+        public virtual void RevokeWebManagementAccess(string siteName, string accountName)
 		{
 			throw new NotSupportedException();
 		}
 
-		public void ChangeWebManagementAccessPassword(string accountName, string accountPassword)
+        public virtual void ChangeWebManagementAccessPassword(string accountName, string accountPassword)
 		{
 			throw new NotSupportedException();
 		}
 
-		public bool CheckWebManagementAccountExists(string accountName)
+        public virtual bool CheckWebManagementAccountExists(string accountName)
 		{
 			throw new NotSupportedException();
 		}
 
-		public ResultObject CheckWebManagementPasswordComplexity(string accountPassword)
+        public virtual ResultObject CheckWebManagementPasswordComplexity(string accountPassword)
 		{
 			throw new NotSupportedException();
 		}
