@@ -23,7 +23,7 @@ namespace WebsitePanel.Providers.Mail.SM9.Extensions
                         "replytoaddress=" + (mailbox.ReplyTo != null ? mailbox.ReplyTo : ""),
                         "signature=" + (mailbox.Signature != null ? mailbox.Signature : ""),
 						"spamforwardoption=none",
-                        // ZMIANA dodanie encoding
+                        // Set UTF8 as default encoding for webmail
                         "textencoding=65001"
 			};
 		}
