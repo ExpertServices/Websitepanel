@@ -25,3 +25,17 @@ BEGIN
 	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (301, N'RootPassword', N'')
 END
 GO
+
+-- registering SmarterMail 9.x provider
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'SmarterMail 9.x')
+BEGIN
+	-- provider
+	INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (65, 4, N'SmarterMail', N'SmarterMail 9.x', N'WebsitePanel.Providers.Mail.SmarterMail9, WebsitePanel.Providers.Mail.SmarterMail9', N'SmarterMail60', NULL)
+	-- properties
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (65, N'AdminPassword', N'')
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (65, N'AdminUsername', N'admin')
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (65, N'DomainsPath', N'%SYSTEMDRIVE%\SmarterMail')
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (65, N'ServerIPAddress', N'127.0.0.1;127.0.0.1')
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (65, N'ServiceUrl', N'http://localhost:9998/services/')
+END
+GO
