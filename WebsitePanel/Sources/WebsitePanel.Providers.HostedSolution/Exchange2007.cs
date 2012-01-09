@@ -754,6 +754,7 @@ namespace WebsitePanel.Providers.HostedSolution
 				info.GlobalAddressList = galId;
 				info.OrganizationId = organizationId;
 				info.Database = databaseId;
+
 			}
 			catch (Exception ex)
 			{
@@ -838,6 +839,12 @@ namespace WebsitePanel.Providers.HostedSolution
 				transaction.RegisterNewOfflineAddressBook(oabId);
 				UpdateOfflineAddressBook(runSpace, oabId, securityGroupId);
 				info.OfflineAddressBook = oabId;
+
+                //create ABP
+                string abpId = CreateAddressPolicy(runSpace, organizationId);
+                transaction.RegisterNewAddressPolicy(abpId);
+                ExchangeLog.LogInfo("  Address Policy: {0}", abpId);
+
 			}
 			catch (Exception ex)
 			{
@@ -851,6 +858,8 @@ namespace WebsitePanel.Providers.HostedSolution
 				CloseRunspace(runSpace);
 			}
 			ExchangeLog.LogEnd("CreateOrganizationOfflineAddressBookInternal");
+            
+
 			return info;
 		}
 
@@ -919,6 +928,19 @@ namespace WebsitePanel.Providers.HostedSolution
 				if (!DeleteOrganizationPublicFolders(runSpace, organizationId))
 					ret = false;
 
+                //delete ABP
+
+                string adpstring = GetAddressPolicyName(organizationId);
+                try
+                {
+                    if (!string.IsNullOrEmpty(adpstring))
+                        DeleteAddressPolicy(runSpace, adpstring);
+                }
+                catch (Exception ex)
+                {
+                    ret = false;
+                    ExchangeLog.LogError("Could not delete Address Policy " + globalAddressList, ex);
+                }
 
 				//delete OAB
 				try
@@ -1795,6 +1817,7 @@ namespace WebsitePanel.Providers.HostedSolution
 				//transaction.RegisterNewMailbox(id);
 
 				string windowsEmailAddress = ObjToString(GetPSObjectProperty(result[0], "WindowsEmailAddress"));
+                string adpstring = GetAddressPolicyName(organizationId);
 
 				//update mailbox
 				cmd = new Command("Set-Mailbox");
@@ -1805,7 +1828,7 @@ namespace WebsitePanel.Providers.HostedSolution
 				cmd.Parameters.Add("CustomAttribute3", windowsEmailAddress);
 				cmd.Parameters.Add("PrimarySmtpAddress", upn);
 				cmd.Parameters.Add("WindowsEmailAddress", upn);
-
+                cmd.Parameters.Add("AddressBookPolicy", adpstring);
 				cmd.Parameters.Add("UseDatabaseQuotaDefaults", new bool?(false));
 				cmd.Parameters.Add("UseDatabaseRetentionDefaults", false);
 				cmd.Parameters.Add("IssueWarningQuota", ConvertKBToUnlimited(issueWarningKB));
@@ -1813,6 +1836,8 @@ namespace WebsitePanel.Providers.HostedSolution
 				cmd.Parameters.Add("ProhibitSendReceiveQuota", ConvertKBToUnlimited(prohibitSendReceiveKB));
 				cmd.Parameters.Add("RetainDeletedItemsFor", ConvertDaysToEnhancedTimeSpan(keepDeletedItemsDays));
 				ExecuteShellCommand(runSpace, cmd);
+
+
 
 				//update AD object
 				string globalAddressListName = this.GetGlobalAddressListName(organizationId);
@@ -1916,6 +1941,7 @@ namespace WebsitePanel.Providers.HostedSolution
 				transaction.RegisterNewMailbox(id);
 
 				string windowsEmailAddress = ObjToString(GetPSObjectProperty(result[0], "WindowsEmailAddress"));
+                string adpstring = GetAddressPolicyName(organizationId);
 
 				//update mailbox
 				cmd = new Command("Set-Mailbox");
@@ -1926,7 +1952,7 @@ namespace WebsitePanel.Providers.HostedSolution
 				cmd.Parameters.Add("CustomAttribute3", windowsEmailAddress);
 				cmd.Parameters.Add("PrimarySmtpAddress", upn);
 				cmd.Parameters.Add("WindowsEmailAddress", upn);
-
+                cmd.Parameters.Add("AddressBookPolicy", adpstring);
 				cmd.Parameters.Add("UseDatabaseQuotaDefaults", new bool?(false));
 				cmd.Parameters.Add("UseDatabaseRetentionDefaults", false);
 				cmd.Parameters.Add("IssueWarningQuota", ConvertKBToUnlimited(issueWarningKB));
@@ -4671,7 +4697,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
 		#endregion
 
-		#region Address Lists (GAL, AL, OAB)
+		#region Address Lists (GAL, AL, OAB, ABP)
 
 		private string GetAddressListDN(Runspace runSpace, string id)
 		{
@@ -4755,7 +4781,6 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogEnd("UpdateAddressList");
 		}
 
-
 		private void DeleteAddressList(Runspace runSpace, string id)
 		{
 			ExchangeLog.LogStart("DeleteAddressList");
@@ -4813,7 +4838,6 @@ namespace WebsitePanel.Providers.HostedSolution
 
 			ExchangeLog.LogEnd("UpdateGlobalAddressList");
 		}
-
 
 		private void DeleteGlobalAddressList(Runspace runSpace, string id)
 		{
@@ -4880,6 +4904,41 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogEnd("DeleteOfflineAddressBook");
 		}
 
+        private string CreateAddressPolicy(Runspace runSpace, string organizationId) 
+        {
+            ExchangeLog.LogStart("CreateAddressPolicy");
+
+            string ABP = GetAddressPolicyName(organizationId);
+            string AL = GetAddressListName(organizationId);
+            string GAL = GetGlobalAddressListName(organizationId);
+            string OAB = GetOfflineAddressBookName(organizationId);
+            string RL = "All Rooms";
+
+            Command cmd = new Command("New-AddressBookPolicy");
+            cmd.Parameters.Add("Name", ABP);
+            cmd.Parameters.Add("GlobalAddressList", GAL);
+            cmd.Parameters.Add("OfflineAddressBook", OAB);
+            cmd.Parameters.Add("AddressLists", AL);
+            cmd.Parameters.Add("RoomList", RL);
+
+
+            Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+            string id = GetResultObjectDN(result);
+
+            ExchangeLog.LogEnd("CreateAddressPolicy");
+            return id;
+        }
+
+        private void DeleteAddressPolicy(Runspace runSpace, string id)
+        {
+            ExchangeLog.LogStart("DeleteAddressPolicy");
+            Command cmd = new Command("Remove-AddressBookPolicy");
+            cmd.Parameters.Add("Identity", id);
+            cmd.Parameters.Add("Confirm", false);
+            ExecuteShellCommand(runSpace, cmd);
+            ExchangeLog.LogEnd("DeleteAddressList");
+        }
+
 		private string GetAddressListName(string orgName)
 		{
 			return orgName + " Address List";
@@ -4894,6 +4953,10 @@ namespace WebsitePanel.Providers.HostedSolution
 		{
 			return orgName + " Offline Address Book";
 		}
+        private string GetAddressPolicyName(string orgName)
+        {
+            return orgName + " Address Policy";
+        }
 
 		#endregion
 
