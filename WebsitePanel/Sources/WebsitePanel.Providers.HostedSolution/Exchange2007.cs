@@ -4969,7 +4969,7 @@ namespace WebsitePanel.Providers.HostedSolution
             cmd.Parameters.Add("Identity", id);
             cmd.Parameters.Add("Confirm", false);
             ExecuteShellCommand(runSpace, cmd);
-            ExchangeLog.LogEnd("DeleteAddressList");
+            ExchangeLog.LogEnd("DeleteAddressPolicy");
         }
 
 		private string GetAddressListName(string orgName)
