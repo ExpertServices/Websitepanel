@@ -67,6 +67,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
 		#region Constants
 		private const string CONFIG_CLEAR_QUERYBASEDN = "WebsitePanel.Exchange.ClearQueryBaseDN";
+        private const string CONFIG_ENABLESP2ABP = "WebsitePanel.Exchange.enableSP2abp";
 		#endregion
 
 		#region Properties
@@ -841,11 +842,19 @@ namespace WebsitePanel.Providers.HostedSolution
 				info.OfflineAddressBook = oabId;
 
                 //create ABP
-                string abpId = CreateAddressPolicy(runSpace, organizationId);
-                transaction.RegisterNewAddressPolicy(abpId);
-                ExchangeLog.LogInfo("  Address Policy: {0}", abpId);
 
-			}
+                bool enableSP2abp = false;
+				if (ConfigurationManager.AppSettings[CONFIG_ENABLESP2ABP] != null)
+					enableSP2abp = Boolean.Parse(ConfigurationManager.AppSettings[CONFIG_ENABLESP2ABP]);
+				Version exchangeVersion = GetExchangeVersion();
+
+                if (enableSP2abp && (exchangeVersion >= new Version(14, 2)))
+                {                                        
+                    string abpId = CreateAddressPolicy(runSpace, organizationId);
+                    transaction.RegisterNewAddressPolicy(abpId);
+                    ExchangeLog.LogInfo("  Address Policy: {0}", abpId);
+                }
+            }
 			catch (Exception ex)
 			{
 				ExchangeLog.LogError("CreateOrganizationOfflineAddressBookInternal", ex);
@@ -930,16 +939,27 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 //delete ABP
 
-                string adpstring = GetAddressPolicyName(organizationId);
-                try
+                bool enableSP2abp = false;
+				if (ConfigurationManager.AppSettings[CONFIG_ENABLESP2ABP] != null)
+				enableSP2abp = Boolean.Parse(ConfigurationManager.AppSettings[CONFIG_ENABLESP2ABP]);
+				Version exchangeVersion = GetExchangeVersion();
+
+                if (enableSP2abp && (exchangeVersion >= new Version(14, 2)))
                 {
-                    if (!string.IsNullOrEmpty(adpstring))
-                        DeleteAddressPolicy(runSpace, adpstring);
-                }
-                catch (Exception ex)
-                {
-                    ret = false;
-                    ExchangeLog.LogError("Could not delete Address Policy " + globalAddressList, ex);
+
+
+                    string adpstring = GetAddressPolicyName(organizationId);
+
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(adpstring))
+                            DeleteAddressPolicy(runSpace, adpstring);
+                    }
+                    catch (Exception ex)
+                    {
+                        ret = false;
+                        ExchangeLog.LogError("Could not delete Address Policy " + globalAddressList, ex);
+                    }
                 }
 
 				//delete OAB
@@ -1770,6 +1790,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			int attempts = 0;
 			string id = null;
 
+            Version exchangeVersion = GetExchangeVersion();
 
 
 			try
@@ -1828,7 +1849,13 @@ namespace WebsitePanel.Providers.HostedSolution
 				cmd.Parameters.Add("CustomAttribute3", windowsEmailAddress);
 				cmd.Parameters.Add("PrimarySmtpAddress", upn);
 				cmd.Parameters.Add("WindowsEmailAddress", upn);
-                cmd.Parameters.Add("AddressBookPolicy", adpstring);
+                
+                bool enableSP2abp = false;
+				if (ConfigurationManager.AppSettings[CONFIG_ENABLESP2ABP] != null)
+					enableSP2abp = Boolean.Parse(ConfigurationManager.AppSettings[CONFIG_ENABLESP2ABP]);
+				if (enableSP2abp && (exchangeVersion >= new Version(14, 2)))
+					cmd.Parameters.Add("AddressBookPolicy", adpstring);
+
 				cmd.Parameters.Add("UseDatabaseQuotaDefaults", new bool?(false));
 				cmd.Parameters.Add("UseDatabaseRetentionDefaults", false);
 				cmd.Parameters.Add("IssueWarningQuota", ConvertKBToUnlimited(issueWarningKB));
@@ -1849,7 +1876,6 @@ namespace WebsitePanel.Providers.HostedSolution
 				bool clearQueryBaseDN = false;
 				if (ConfigurationManager.AppSettings[CONFIG_CLEAR_QUERYBASEDN] != null)
 					clearQueryBaseDN = Boolean.Parse(ConfigurationManager.AppSettings[CONFIG_CLEAR_QUERYBASEDN]);
-				Version exchangeVersion = GetExchangeVersion();
 
 				if (!(clearQueryBaseDN && (exchangeVersion >= new Version(14, 1))))
 					SetADObjectPropertyValue(mailbox, "msExchQueryBaseDN", globalAddressListDN);
@@ -1910,6 +1936,8 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeTransaction transaction = StartTransaction();
 			Runspace runSpace = null;
 
+            Version exchangeVersion = GetExchangeVersion();
+
 			try
 			{
 				runSpace = OpenRunspace();
@@ -1952,7 +1980,13 @@ namespace WebsitePanel.Providers.HostedSolution
 				cmd.Parameters.Add("CustomAttribute3", windowsEmailAddress);
 				cmd.Parameters.Add("PrimarySmtpAddress", upn);
 				cmd.Parameters.Add("WindowsEmailAddress", upn);
-                cmd.Parameters.Add("AddressBookPolicy", adpstring);
+                
+                bool enableSP2abp = false;
+                if (ConfigurationManager.AppSettings[CONFIG_ENABLESP2ABP] != null)
+                    enableSP2abp = Boolean.Parse(ConfigurationManager.AppSettings[CONFIG_ENABLESP2ABP]);
+                if (enableSP2abp && (exchangeVersion >= new Version(14, 2)))
+                    cmd.Parameters.Add("AddressBookPolicy", adpstring);
+
 				cmd.Parameters.Add("UseDatabaseQuotaDefaults", new bool?(false));
 				cmd.Parameters.Add("UseDatabaseRetentionDefaults", false);
 				cmd.Parameters.Add("IssueWarningQuota", ConvertKBToUnlimited(issueWarningKB));
@@ -1970,7 +2004,6 @@ namespace WebsitePanel.Providers.HostedSolution
 				bool clearQueryBaseDN = false;
 				if (ConfigurationManager.AppSettings[CONFIG_CLEAR_QUERYBASEDN] != null)
 					clearQueryBaseDN = Boolean.Parse(ConfigurationManager.AppSettings[CONFIG_CLEAR_QUERYBASEDN]);
-				Version exchangeVersion = GetExchangeVersion();
 
 				if (!(clearQueryBaseDN && (exchangeVersion >= new Version(14, 1))))
 					SetADObjectPropertyValue(mailbox, "msExchQueryBaseDN", globalAddressListDN);
