@@ -85,7 +85,7 @@ namespace WebsitePanel.Portal.VPSForPC
                 listOperatingSystems.Enabled = false;
                 txtVmName.Enabled = false;
                 btnCreate.Enabled = false;
-                messageBox.ShowErrorMessage("VPS_ERROR_CREATE", new Exception("no VM"));
+                messageBox.ShowErrorMessage("VPS_ERROR_CREATE", new Exception("no VM", ex));
             }
         }
 

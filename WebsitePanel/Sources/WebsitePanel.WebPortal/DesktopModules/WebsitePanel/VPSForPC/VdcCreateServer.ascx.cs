@@ -130,7 +130,7 @@ namespace WebsitePanel.Portal.VPSForPC
 					btn.Enabled = false;
 				}
 
-				messageBox.ShowErrorMessage("VPS_ERROR_CREATE", new Exception("no templates"));
+				messageBox.ShowErrorMessage("VPS_ERROR_CREATE", new Exception("no templates", ex));
 			}
 			// summary letter e-mail
 			PackageInfo package = ES.Services.Packages.GetPackage(PanelSecurity.PackageId);

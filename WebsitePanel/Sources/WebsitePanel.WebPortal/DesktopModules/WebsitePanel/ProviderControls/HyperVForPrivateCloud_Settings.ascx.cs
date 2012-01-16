@@ -68,7 +68,7 @@ namespace WebsitePanel.Portal.ProviderControls
                         hosts = ES.Services.VPSPC.GetClusters(PanelRequest.ServiceId);
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
                     hosts = null;
                 }
