@@ -1,10 +1,10 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<Import Project="C:\Program Files (x86)\MSBuild\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
 	<PropertyGroup>
-		<Version>1.2.0.0</Version>
-		<FileVersion>1.2.0.38</FileVersion>
-		<VersionLabel>1.2.0</VersionLabel>
-		<ReleaseDate>2011-07-13</ReleaseDate>
+		<Version>1.2.1.0</Version>
+		<FileVersion>1.2.1.0</FileVersion>
+		<VersionLabel>1.2.1</VersionLabel>
+		<ReleaseDate>2012-01-19</ReleaseDate>
 		<BuildConfiguration>Release</BuildConfiguration>
 		<RootFolder>..</RootFolder>
 		<TrunkFolder>$(RootFolder)\WebsitePanel</TrunkFolder>
