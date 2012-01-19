@@ -37,16 +37,13 @@ namespace WebsitePanel.Providers.Web.Iis.Authentication
     {
 		public const string EnabledAttribute = "enabled";
 
-        public void GetAuthenticationSettings(WebVirtualDirectory virtualDir)
+        public void GetAuthenticationSettings(ServerManager srvman, WebVirtualDirectory virtualDir)
         {
-			using (var srvman = GetServerManager())
-			{
-				var config = srvman.GetApplicationHostConfiguration();
-				//
-				var section = config.GetSection(Constants.BasicAuthenticationSection, virtualDir.FullQualifiedPath);
-				//
-				virtualDir.EnableBasicAuthentication = Convert.ToBoolean(section.GetAttributeValue(EnabledAttribute));
-			}
+			var config = srvman.GetApplicationHostConfiguration();
+			//
+			var section = config.GetSection(Constants.BasicAuthenticationSection, virtualDir.FullQualifiedPath);
+			//
+			virtualDir.EnableBasicAuthentication = Convert.ToBoolean(section.GetAttributeValue(EnabledAttribute));
         }
 
         public void SetAuthenticationSettings(WebVirtualDirectory virtualDir)

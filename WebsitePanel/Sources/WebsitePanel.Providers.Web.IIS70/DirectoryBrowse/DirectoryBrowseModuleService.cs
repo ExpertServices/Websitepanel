@@ -35,20 +35,17 @@ namespace WebsitePanel.Providers.Web.Iis.DirectoryBrowse
 
     internal sealed class DirectoryBrowseModuleService : ConfigurationModuleService
     {
-        public PropertyBag GetDirectoryBrowseSettings(string siteId)
+        public PropertyBag GetDirectoryBrowseSettings(ServerManager srvman, string siteId)
         {
-			using (var srvman = GetServerManager())
-			{
-				var config = srvman.GetWebConfiguration(siteId);
-				//
-				DirectoryBrowseSection directoryBrowseSection = (DirectoryBrowseSection)config.GetSection(Constants.DirectoryBrowseSection, typeof(DirectoryBrowseSection));
-				//
-				PropertyBag bag = new PropertyBag();
-				bag[DirectoryBrowseGlobals.Enabled] = directoryBrowseSection.Enabled;
-				bag[DirectoryBrowseGlobals.ShowFlags] = (int)directoryBrowseSection.ShowFlags;
-				bag[DirectoryBrowseGlobals.ReadOnly] = directoryBrowseSection.IsLocked;
-				return bag;
-			}
+			var config = srvman.GetWebConfiguration(siteId);
+			//
+			DirectoryBrowseSection directoryBrowseSection = (DirectoryBrowseSection)config.GetSection(Constants.DirectoryBrowseSection, typeof(DirectoryBrowseSection));
+			//
+			PropertyBag bag = new PropertyBag();
+			bag[DirectoryBrowseGlobals.Enabled] = directoryBrowseSection.Enabled;
+			bag[DirectoryBrowseGlobals.ShowFlags] = (int)directoryBrowseSection.ShowFlags;
+			bag[DirectoryBrowseGlobals.ReadOnly] = directoryBrowseSection.IsLocked;
+			return bag;
         }
 
         public void SetDirectoryBrowseEnabled(string siteId, bool enabled)

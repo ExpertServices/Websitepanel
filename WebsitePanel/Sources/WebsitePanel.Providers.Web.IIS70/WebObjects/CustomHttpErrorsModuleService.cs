@@ -49,31 +49,27 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 		public const string ResponseModeAttribute = "responseMode";
 		public const string PrefixLanguageFilePath = "prefixLanguageFilePath";
 
-		public void GetCustomErrors(WebVirtualDirectory virtualDir)
+		public void GetCustomErrors(ServerManager srvman, WebVirtualDirectory virtualDir)
 		{
+			var config = srvman.GetWebConfiguration(virtualDir.FullQualifiedPath);
 			//
-			using (var srvman = GetServerManager())
+			var httpErrorsSection = config.GetSection(Constants.HttpErrorsSection);
+			//
+			var errorsCollection = httpErrorsSection.GetCollection();
+			//
+			var errors = new List<HttpError>();
+			//
+			foreach (var item in errorsCollection)
 			{
-				var config = srvman.GetWebConfiguration(virtualDir.FullQualifiedPath);
+				var item2Get = GetHttpError(item, virtualDir);
 				//
-				var httpErrorsSection = config.GetSection(Constants.HttpErrorsSection);
+				if (item2Get == null)
+					continue;
 				//
-				var errorsCollection = httpErrorsSection.GetCollection();
-				//
-				var errors = new List<HttpError>();
-				//
-				foreach (var item in errorsCollection)
-				{
-					var item2Get = GetHttpError(item, virtualDir);
-					//
-					if (item2Get == null)
-						continue;
-					//
-					errors.Add(item2Get);
-				}
-				//
-				virtualDir.HttpErrors = errors.ToArray();
+				errors.Add(item2Get);
 			}
+			//
+			virtualDir.HttpErrors = errors.ToArray();
 		}
 
 		public void SetCustomErrors(WebVirtualDirectory virtualDir)

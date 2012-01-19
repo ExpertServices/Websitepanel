@@ -44,23 +44,20 @@ namespace WebsitePanel.Providers.Web.HttpRedirect
 		public const string DestinationAttribute = "destination";
 		public const string HttpResponseStatusAttribute = "httpResponseStatus";
 
-		public void LoadHttpRedirectSettings(WebVirtualDirectory virtualDir)
+		public void GetHttpRedirectSettings(ServerManager srvman, WebVirtualDirectory virtualDir)
 		{
-			using (var srvman = GetServerManager())
-			{
-				// Load web site configuration
-				var config = srvman.GetWebConfiguration(virtualDir.FullQualifiedPath);
-				// Load corresponding section
-				var section = config.GetSection(Constants.HttpRedirectSection);
-				//
-				if (!Convert.ToBoolean(section.GetAttributeValue(EnabledAttribute)))
-					return;
-				//
-				virtualDir.RedirectExactUrl = Convert.ToBoolean(section.GetAttributeValue(ExactDestinationAttribute));
-				virtualDir.RedirectDirectoryBelow = Convert.ToBoolean(section.GetAttributeValue(ChildOnlyAttribute));
-				virtualDir.HttpRedirect = Convert.ToString(section.GetAttributeValue(DestinationAttribute));
-				virtualDir.RedirectPermanent = String.Equals("301", Convert.ToString(section.GetAttributeValue(HttpResponseStatusAttribute)));
-			}			
+			// Load web site configuration
+			var config = srvman.GetWebConfiguration(virtualDir.FullQualifiedPath);
+			// Load corresponding section
+			var section = config.GetSection(Constants.HttpRedirectSection);
+			//
+			if (!Convert.ToBoolean(section.GetAttributeValue(EnabledAttribute)))
+				return;
+			//
+			virtualDir.RedirectExactUrl = Convert.ToBoolean(section.GetAttributeValue(ExactDestinationAttribute));
+			virtualDir.RedirectDirectoryBelow = Convert.ToBoolean(section.GetAttributeValue(ChildOnlyAttribute));
+			virtualDir.HttpRedirect = Convert.ToString(section.GetAttributeValue(DestinationAttribute));
+			virtualDir.RedirectPermanent = String.Equals("301", Convert.ToString(section.GetAttributeValue(HttpResponseStatusAttribute)));		
 		}
 
 		public void SetHttpRedirectSettings(WebVirtualDirectory virtualDir)

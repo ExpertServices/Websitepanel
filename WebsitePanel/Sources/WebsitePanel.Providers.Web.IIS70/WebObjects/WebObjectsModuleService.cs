@@ -133,7 +133,7 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 							//
 							if (virtualDir.DedicatedApplicationPool)
 							{
-								var appPool = GetApplicationPool(virtualDir);
+								var appPool = GetApplicationPool(srvman, virtualDir);
 								vdir.UserName = appPool.ProcessModel.UserName;
 								vdir.Password = appPool.ProcessModel.Password;
 							}
@@ -150,20 +150,17 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 			}
 		}
 
-        public ApplicationPool GetApplicationPool(WebVirtualDirectory virtualDir)
+        public ApplicationPool GetApplicationPool(ServerManager srvman, WebVirtualDirectory virtualDir)
         {
             if (virtualDir == null)
                 throw new ArgumentNullException("vdir");
             // read app pool
-			using (var srvman = GetServerManager())
-			{
-				var appPool = srvman.ApplicationPools[virtualDir.ApplicationPool];
-				//
-				if (appPool == null)
-					throw new ApplicationException("ApplicationPoolNotFound");
-				//
-				return appPool;
-			}
+			var appPool = srvman.ApplicationPools[virtualDir.ApplicationPool];
+			//
+			if (appPool == null)
+				throw new ApplicationException("ApplicationPoolNotFound");
+			//
+			return appPool;
         }
 
         public void CreateApplicationPool(string appPoolName, string appPoolUsername, 
@@ -324,126 +321,105 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 			}
         }
 
-        public ServerState GetSiteState(string siteId)
+        public ServerState GetSiteState(ServerManager srvman, string siteId)
         {
-			using (var srvman = GetServerManager())
+			// ensure website exists
+			if (srvman.Sites[siteId] == null)
+				return ServerState.Unknown;
+			//
+			var siteState = ServerState.Unknown;
+			//
+			switch (srvman.Sites[siteId].State)
 			{
-				// ensure website exists
-				if (srvman.Sites[siteId] == null)
-					return ServerState.Unknown;
-				//
-				var siteState = ServerState.Unknown;
-				//
-				switch (srvman.Sites[siteId].State)
-				{
-					case ObjectState.Started:
-						siteState = ServerState.Started;
-						break;
-					case ObjectState.Starting:
-						siteState = ServerState.Starting;
-						break;
-					case ObjectState.Stopped:
-						siteState = ServerState.Stopped;
-						break;
-					case ObjectState.Stopping:
-						siteState = ServerState.Stopping;
-						break;
-				}
-				//
-				return siteState;
+				case ObjectState.Started:
+					siteState = ServerState.Started;
+					break;
+				case ObjectState.Starting:
+					siteState = ServerState.Starting;
+					break;
+				case ObjectState.Stopped:
+					siteState = ServerState.Stopped;
+					break;
+				case ObjectState.Stopping:
+					siteState = ServerState.Stopping;
+					break;
 			}
+			//
+			return siteState;
         }
 
-        public bool SiteExists(string siteId)
+        public bool SiteExists(ServerManager srvman, string siteId)
         {
-			using (var srvman = GetServerManager())
-			{
-				return (srvman.Sites[siteId] != null);
-			}
+            return (srvman.Sites[siteId] != null);
         }
 
-        public string[] GetSites()
+        public string[] GetSites(ServerManager srvman)
         {
-			using (var srvman = GetServerManager())
-			{
-				var iisObjects = new List<string>();
-				//
-				foreach (var item in srvman.Sites)
-					iisObjects.Add(item.Name);
-				//
-				return iisObjects.ToArray();
-			}
+			var iisObjects = new List<string>();
+			//
+			foreach (var item in srvman.Sites)
+				iisObjects.Add(item.Name);
+			//
+			return iisObjects.ToArray();
         }
 
-        public string GetWebSiteNameFromIIS(string siteName)
+        public string GetWebSiteNameFromIIS(ServerManager srvman, string siteName)
         {
-			using (var srvman = GetServerManager())
-			{
-				if (srvman.Sites[siteName] != null)
-					return srvman.Sites[siteName].Name;
-				//
-				return null;
-			}
+			if (srvman.Sites[siteName] != null)
+				return srvman.Sites[siteName].Name;
+			//
+			return null;
         }
 
-		public string GetWebSiteIdFromIIS(string siteId, string format)
+        public string GetWebSiteIdFromIIS(ServerManager srvman, string siteId, string format)
 		{
-			using (var srvman = GetServerManager())
-			{
-				var iisObject = srvman.Sites[siteId];
-				// Format string is empty
-				if (String.IsNullOrEmpty(format))
-					return Convert.ToString(iisObject.Id);
-				//
-				return String.Format(format, iisObject.Id);
-			}
+			var iisObject = srvman.Sites[siteId];
+			// Format string is empty
+			if (String.IsNullOrEmpty(format))
+				return Convert.ToString(iisObject.Id);
+			//
+			return String.Format(format, iisObject.Id);
 		}
 
-        public WebSite GetWebSiteFromIIS(string siteId)
+        public WebSite GetWebSiteFromIIS(ServerManager srvman, string siteId)
         {
-			using (var srvman = GetServerManager())
+			var webSite = new WebSite();
+			//
+			var iisObject = srvman.Sites[siteId];
+			//
+			webSite.SiteId = webSite.Name = iisObject.Name;
+			//
+			if (iisObject.LogFile.Enabled)
 			{
-				var webSite = new WebSite();
-				//
-				var iisObject = srvman.Sites[siteId];
-				//
-				webSite.SiteId = webSite.Name = iisObject.Name;
-				//
-				if (iisObject.LogFile.Enabled)
-				{
-					webSite.LogsPath = iisObject.LogFile.Directory;
-					webSite[WebSite.IIS7_LOG_EXT_FILE_FIELDS] = iisObject.LogFile.LogExtFileFlags.ToString();
-				}
-				// Read instant website id
-				webSite[WebSite.IIS7_SITE_ID] = GetWebSiteIdFromIIS(siteId, "W3SVC{0}");
-				// Read web site iisAppObject pool name
-				webSite.ApplicationPool = iisObject.Applications["/"].ApplicationPoolName;
-				//
-				return webSite;
+				webSite.LogsPath = iisObject.LogFile.Directory;
+				webSite[WebSite.IIS7_LOG_EXT_FILE_FIELDS] = iisObject.LogFile.LogExtFileFlags.ToString();
 			}
+			// Read instant website id
+			webSite[WebSite.IIS7_SITE_ID] = GetWebSiteIdFromIIS(srvman, siteId, "W3SVC{0}");
+			// Read web site iisAppObject pool name
+			webSite.ApplicationPool = iisObject.Applications["/"].ApplicationPoolName;
+			//
+			return webSite;
         }
 
-        public ServerBinding[] GetSiteBindings(string siteId)
+        public ServerBinding[] GetSiteBindings(ServerManager srvman, string siteId)
         {
-			using (var srvman = GetServerManager())
+			var iisObject = srvman.Sites[siteId];
+			// get server bingings
+			var bindings = new List<ServerBinding>();
+			//
+			foreach (var bindingObj in iisObject.Bindings)
 			{
-				var iisObject = srvman.Sites[siteId];
-				// get server bingings
-				var bindings = new List<ServerBinding>();
-				//
-				foreach (var bindingObj in iisObject.Bindings)
-				{
-                    // return only "http" bindings
-                    if (String.Equals(bindingObj.Protocol, Uri.UriSchemeHttp, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        string[] parts = bindingObj.BindingInformation.Split(':');
-                        // append binding
-                        bindings.Add(new ServerBinding(bindingObj.Protocol, parts[0], parts[1], parts[2]));
-                    }
-				}
-				//
-				return bindings.ToArray();
+                // return only "http" bindings
+                if (String.Equals(bindingObj.Protocol, Uri.UriSchemeHttp, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    string[] parts = bindingObj.BindingInformation.Split(':');
+                    // append binding
+                    bindings.Add(new ServerBinding(bindingObj.Protocol, parts[0], parts[1], parts[2]));
+                }
 			}
+			//
+			return bindings.ToArray();
         }
 
 		private void SyncWebSiteBindingsChanges(string siteId, ServerBinding[] bindings)
@@ -487,40 +463,40 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 
 		public void UpdateSiteBindings(string siteId, ServerBinding[] bindings)
 		{
-			// Ensure web site exists
-			if (!SiteExists(siteId))
-				return;
+            using (ServerManager srvman = GetServerManager())
+            {
+                // Ensure web site exists
+                if (!SiteExists(srvman, siteId))
+                    return;
+            }
 			//
 			SyncWebSiteBindingsChanges(siteId, bindings);
 		}
 
-    	public string GetPhysicalPath(WebVirtualDirectory virtualDir)
+    	public string GetPhysicalPath(ServerManager srvman, WebVirtualDirectory virtualDir)
         {
-			using (var srvman = GetServerManager())
-			{
-				string siteId = (virtualDir.ParentSiteName == null) 
-					? virtualDir.Name : virtualDir.ParentSiteName;
-				//
-				var iisObject = srvman.Sites[siteId];
+			string siteId = (virtualDir.ParentSiteName == null) 
+				? virtualDir.Name : virtualDir.ParentSiteName;
+			//
+			var iisObject = srvman.Sites[siteId];
 				
-				if (iisObject == null)
-					return null;
+			if (iisObject == null)
+				return null;
 
-				//
-				var iisAppObject = iisObject.Applications[virtualDir.VirtualPath];
+			//
+			var iisAppObject = iisObject.Applications[virtualDir.VirtualPath];
 
-				if (iisAppObject == null)
-					return null;
+			if (iisAppObject == null)
+				return null;
 
-				//
-				var iisDirObject = iisAppObject.VirtualDirectories["/"];
+			//
+			var iisDirObject = iisAppObject.VirtualDirectories["/"];
 
-				if (iisDirObject == null)
-					return null;
+			if (iisDirObject == null)
+				return null;
 
-				//
-				return iisDirObject.PhysicalPath;
-			}
+			//
+			return iisDirObject.PhysicalPath;
         }
 
 		public void DeleteApplicationPool(params string[] appPoolNames)
@@ -552,11 +528,11 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 
     	public void DeleteSite(string siteId)
 		{
-			if (!SiteExists(siteId))
-				return;
-			//
 			using (var srvman = GetServerManager())
 			{
+                if (!SiteExists(srvman, siteId))
+                    return;
+
 				//
 				var indexOf = srvman.Sites.IndexOf(srvman.Sites[siteId]);
 				srvman.Sites.RemoveAt(indexOf);
@@ -565,31 +541,28 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 			}
 		}
 
-    	public WebVirtualDirectory[] GetVirtualDirectories(string siteId)
+    	public WebVirtualDirectory[] GetVirtualDirectories(ServerManager srvman, string siteId)
 		{
-			if (!SiteExists(siteId))
-				return new WebVirtualDirectory[] { };
+            if (!SiteExists(srvman, siteId))
+                return new WebVirtualDirectory[] { };
 
-			using (var srvman = GetServerManager())
+			var vdirs = new List<WebVirtualDirectory>();
+			var iisObject = srvman.Sites[siteId];
+			//
+			foreach (var item in iisObject.Applications)
 			{
-				var vdirs = new List<WebVirtualDirectory>();
-				var iisObject = srvman.Sites[siteId];
+				// Skip root application which is web site itself
+				if (item.Path == "/")
+					continue;
 				//
-				foreach (var item in iisObject.Applications)
+				vdirs.Add(new WebVirtualDirectory
 				{
-					// Skip root application which is web site itself
-					if (item.Path == "/")
-						continue;
-					//
-					vdirs.Add(new WebVirtualDirectory
-					{
-						Name = ConfigurationUtility.GetNonQualifiedVirtualPath(item.Path),
-						ContentPath = item.VirtualDirectories[0].PhysicalPath
-					});
-				}
-				//
-				return vdirs.ToArray();
+					Name = ConfigurationUtility.GetNonQualifiedVirtualPath(item.Path),
+					ContentPath = item.VirtualDirectories[0].PhysicalPath
+				});
 			}
+			//
+			return vdirs.ToArray();
 		}
 
 		public WebVirtualDirectory GetVirtualDirectory(string siteId, string directoryName)
@@ -601,11 +574,11 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 			if (String.IsNullOrEmpty(directoryName))
 				throw new ArgumentNullException("directoryName");
 			//
-			if (!SiteExists(siteId))
-				return null;
-			//
 			using (var srvman = GetServerManager())
 			{
+                if (!SiteExists(srvman, siteId))
+                    return null;
+
 				var site = srvman.Sites[siteId];
 				//
 				var vdir = new WebVirtualDirectory
@@ -622,11 +595,11 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 
 		public void CreateVirtualDirectory(string siteId, string directoryName, string physicalPath)
 		{
-			if (!SiteExists(siteId))
-				throw new ApplicationException();
-			//
 			using (var srvman = GetServerManager())
 			{
+                if (!SiteExists(srvman, siteId))
+                    throw new ApplicationException();
+
 				var iisSiteObject = srvman.Sites[siteId];
 				var iisAppObject = iisSiteObject.Applications.Add(directoryName, physicalPath);
 				//
@@ -636,11 +609,11 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 
     	public bool VirtualDirectoryExists(string siteId, string directoryName)
 		{
-			if (!SiteExists(siteId))
-				return false;
-
 			using (var srvman = GetServerManager())
 			{
+                if (!SiteExists(srvman, siteId))
+                    return false;
+
 				var vdir = new WebVirtualDirectory
 				{
 					Name = directoryName,
@@ -653,11 +626,11 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 
     	public void DeleteVirtualDirectory(WebVirtualDirectory virtualDir)
 		{
-			if (!SiteExists(virtualDir.ParentSiteName))
-				return;
-			//
 			using (var srvman = GetServerManager())
 			{
+                if (!SiteExists(srvman, virtualDir.ParentSiteName))
+                    return;
+
 				var iisSiteObject = srvman.Sites[virtualDir.ParentSiteName];
 				var iisAppObject = iisSiteObject.Applications[virtualDir.VirtualPath];
 				//

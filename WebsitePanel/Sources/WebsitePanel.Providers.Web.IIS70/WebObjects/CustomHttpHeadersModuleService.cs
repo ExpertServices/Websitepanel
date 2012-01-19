@@ -40,33 +40,30 @@ namespace WebsitePanel.Providers.Web.WebObjects
 		public const string NameAttribute = "name";
 		public const string ValueAttribute = "value";
 
-		public void GetCustomHttpHeaders(WebVirtualDirectory virtualDir)
+		public void GetCustomHttpHeaders(ServerManager srvman, WebVirtualDirectory virtualDir)
 		{
-			using (var srvman = GetServerManager())
+			var config = srvman.GetApplicationHostConfiguration();
+			//
+			var httpProtocolSection = config.GetSection(Constants.HttpProtocolSection, virtualDir.FullQualifiedPath);
+			//
+			if (httpProtocolSection == null)
+				return;
+			//
+			var headersCollection = httpProtocolSection.GetCollection("customHeaders");
+			//
+			var headers = new List<HttpHeader>();
+			//
+			foreach (var item in headersCollection)
 			{
-				var config = srvman.GetApplicationHostConfiguration();
+				var item2Get = GetCustomHttpHeader(item);
 				//
-				var httpProtocolSection = config.GetSection(Constants.HttpProtocolSection, virtualDir.FullQualifiedPath);
+				if (item2Get == null)
+					continue;
 				//
-				if (httpProtocolSection == null)
-					return;
-				//
-				var headersCollection = httpProtocolSection.GetCollection("customHeaders");
-				//
-				var headers = new List<HttpHeader>();
-				//
-				foreach (var item in headersCollection)
-				{
-					var item2Get = GetCustomHttpHeader(item);
-					//
-					if (item2Get == null)
-						continue;
-					//
-					headers.Add(item2Get);
-				}
-				//
-				virtualDir.HttpHeaders = headers.ToArray();
+				headers.Add(item2Get);
 			}
+			//
+			virtualDir.HttpHeaders = headers.ToArray();
 		}
 
 		public void SetCustomHttpHeaders(WebVirtualDirectory virtualDir)

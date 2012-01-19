@@ -37,20 +37,15 @@ namespace WebsitePanel.Providers.Web.Iis.Authentication
     {
 		public const string EnabledAttribute = "enabled";
 
-        public PropertyBag GetAuthenticationSettings(string siteId)
+        public PropertyBag GetAuthenticationSettings(ServerManager srvman, string siteId)
         {
             PropertyBag bag = new PropertyBag();
-            //
-			using (var srvman = GetServerManager())
-			{
-				var config = srvman.GetApplicationHostConfiguration();
-				//
-				var section = config.GetSection(Constants.WindowsAuthenticationSection, siteId);
-				//
-				bag[AuthenticationGlobals.IsLocked] = section.IsLocked;
-				bag[AuthenticationGlobals.Enabled] = Convert.ToBoolean(section.GetAttributeValue(EnabledAttribute));
-			}
-            //
+			var config = srvman.GetApplicationHostConfiguration();
+			//
+			var section = config.GetSection(Constants.WindowsAuthenticationSection, siteId);
+			//
+			bag[AuthenticationGlobals.IsLocked] = section.IsLocked;
+			bag[AuthenticationGlobals.Enabled] = Convert.ToBoolean(section.GetAttributeValue(EnabledAttribute));
             return bag;
         }
 

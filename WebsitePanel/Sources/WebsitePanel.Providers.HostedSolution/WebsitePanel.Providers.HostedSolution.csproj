@@ -80,31 +80,31 @@
     </Reference>
     <Reference Include="Microsoft.Exchange.Common, Version=8.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\WebsitePanel.bak\WebsitePanel\Branches\1.2.0\Lib\References\Microsoft\Microsoft.Exchange.Common.dll</HintPath>
+      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Exchange.Common.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Exchange.Data, Version=8.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\WebsitePanel.bak\WebsitePanel\Branches\1.2.0\Lib\References\Microsoft\Microsoft.Exchange.Data.dll</HintPath>
+      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Exchange.Data.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Exchange.Data.Directory, Version=8.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\WebsitePanel.bak\WebsitePanel\Branches\1.2.0\Lib\References\Microsoft\Microsoft.Exchange.Data.Directory.dll</HintPath>
+      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Exchange.Data.Directory.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Exchange.Data.Storage, Version=8.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\WebsitePanel.bak\WebsitePanel\Branches\1.2.0\Lib\References\Microsoft\Microsoft.Exchange.Data.Storage.dll</HintPath>
+      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Exchange.Data.Storage.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Exchange.Diagnostics, Version=8.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\WebsitePanel.bak\WebsitePanel\Branches\1.2.0\Lib\References\Microsoft\Microsoft.Exchange.Diagnostics.dll</HintPath>
+      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Exchange.Diagnostics.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Exchange.Extensibility.Internal, Version=8.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\WebsitePanel.bak\WebsitePanel\Branches\1.2.0\Lib\References\Microsoft\Microsoft.Exchange.Extensibility.Internal.dll</HintPath>
+      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Exchange.Extensibility.Internal.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Exchange.Net, Version=8.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\WebsitePanel.bak\WebsitePanel\Branches\1.2.0\Lib\References\Microsoft\Microsoft.Exchange.Net.dll</HintPath>
+      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Exchange.Net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint">
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.SharePoint.dll</HintPath>
