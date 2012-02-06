@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<Import Project="C:\Program Files (x86)\MSBuild\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
 	<PropertyGroup>
 		<Version>1.2.1.0</Version>
@@ -20,7 +20,7 @@
 		<DiffCmd>$(TrunkFolder)\Tools\Diff.exe</DiffCmd>
 		<SqlCmd>"C:\Program Files\Microsoft SQL Server\100\Tools\Binn\sqlcmd.exe" -S (local)\SQLEXPRESS -E</SqlCmd>
 
-		<MSDeployPath>"C:\Program Files\IIS\Microsoft Web Deploy\msdeploy.exe"</MSDeployPath>
+		<MSDeployPath>"C:\Program Files\IIS\Microsoft Web Deploy V2\msdeploy.exe"</MSDeployPath>
 
 		<DataBaseName>WebsitePanel_build</DataBaseName>
 		<MSDeployConnectionString>server=(local)\SQLEXPRESS;database=$(DataBaseName);Integrated Security=true;</MSDeployConnectionString>
