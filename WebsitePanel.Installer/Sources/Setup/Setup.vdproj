@@ -40,13 +40,13 @@
         "Entry"
         {
         "MsmKey" = "8:_3FE8A1704B90098231CE54C0A887C0F9"
-        "OwnerKey" = "8:_1239E87E938248B1BAF9BF75C32D3EDC"
+        "OwnerKey" = "8:_EAE1EA76C9D31E75B8631E8C4E874282"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_3FE8A1704B90098231CE54C0A887C0F9"
-        "OwnerKey" = "8:_EAE1EA76C9D31E75B8631E8C4E874282"
+        "OwnerKey" = "8:_1239E87E938248B1BAF9BF75C32D3EDC"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -88,7 +88,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_05F59A142DD147798C90054A203C0EE9"
+        "OwnerKey" = "8:_3FE8A1704B90098231CE54C0A887C0F9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -100,7 +100,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3FE8A1704B90098231CE54C0A887C0F9"
+        "OwnerKey" = "8:_05F59A142DD147798C90054A203C0EE9"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -111,7 +111,7 @@
         "DisplayName" = "8:Debug"
         "IsDebugOnly" = "11:TRUE"
         "IsReleaseOnly" = "11:FALSE"
-        "OutputFilename" = "8:..\\..\\Build\\debug\\WebsitePanelInstaller12.msi"
+        "OutputFilename" = "8:..\\..\\..\\WebsitePanel\\Deploy\\Debug\\WebsitePanelInstaller12.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -153,7 +153,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:..\\..\\Build\\release\\WebsitePanelInstaller12.msi"
+        "OutputFilename" = "8:..\\..\\..\\WebsitePanel\\Deploy\\Release\\WebsitePanelInstaller12.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -235,11 +235,6 @@
             "AssemblyAsmDisplayName" = "8:Ionic.Zip.Reduced, Version=1.8.4.28, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_3FE8A1704B90098231CE54C0A887C0F9"
-                    {
-                    "Name" = "8:Ionic.Zip.Reduced.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Ionic.Zip.Reduced.dll"
             "TargetName" = "8:"
@@ -326,11 +321,6 @@
             "AssemblyAsmDisplayName" = "8:WebsitePanel.Installer.Core, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_EAE1EA76C9D31E75B8631E8C4E874282"
-                    {
-                    "Name" = "8:WebsitePanel.Installer.Core.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:WebsitePanel.Installer.Core.dll"
             "TargetName" = "8:"
@@ -977,7 +967,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_05F59A142DD147798C90054A203C0EE9"
             {
-            "SourcePath" = "8:..\\WebsitePanel.Installer\\obj\\Release\\WebsitePanel.Installer.exe"
+            "SourcePath" = "8:..\\WebsitePanel.Installer\\obj\\Debug\\WebsitePanel.Installer.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_E742E59BFE4D43C59AA65A07792B89FB"
@@ -1005,7 +995,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_1239E87E938248B1BAF9BF75C32D3EDC"
             {
-            "SourcePath" = "8:..\\WebsitePanel.SilentInstaller\\obj\\x86\\Release\\WebsitePanel.SilentInstaller.exe"
+            "SourcePath" = "8:..\\WebsitePanel.SilentInstaller\\obj\\x86\\Debug\\WebsitePanel.SilentInstaller.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_E742E59BFE4D43C59AA65A07792B89FB"
