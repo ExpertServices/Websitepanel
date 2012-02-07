@@ -29,7 +29,7 @@ namespace WebsitePanel.Setup
 
 		public static new object Update(object obj)
 		{
-			return Server.UpdateBase(obj, "1.2.0", "1.1.2", false, new InstallAction(ActionTypes.SwitchServer2AspNet40));
+			return Server.UpdateBase(obj, "1.2.0", "1.1.2,1.2.0", false, new InstallAction(ActionTypes.SwitchServer2AspNet40));
 		}
 	}
 

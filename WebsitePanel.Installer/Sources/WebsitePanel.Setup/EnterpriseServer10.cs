@@ -29,7 +29,7 @@ namespace WebsitePanel.Setup
 
 		public static new DialogResult Update(object obj)
 		{
-			return UpdateBase(obj, "1.2.0", "1.1.2", true, new InstallAction(ActionTypes.SwitchEntServer2AspNet40));
+            return UpdateBase(obj, "1.2.0", "1.1.2,1.2.0", true, new InstallAction(ActionTypes.SwitchEntServer2AspNet40));
 		}
 	}
 
