@@ -47,7 +47,7 @@ namespace WebsitePanel.Portal
     /// </summary
     public class Utils
     {
-		public const string ModuleName = "WebsitePanel";
+        public const string ModuleName = "WebsitePanel";
 
         public const Int32 MAX_DIR_LENGTH = 248;
         public const Int32 MAX_FILE_LENGTH = 260;
@@ -56,8 +56,18 @@ namespace WebsitePanel.Portal
 
         public static DateTime ParseDate(string val)
         {
-            try { return DateTime.Parse(val); }
-            catch { /* do nothing */ }
+            // Perf: allow only non-empty strings to go through
+            if (!String.IsNullOrEmpty(val))
+            {
+                try
+                {
+                    return DateTime.Parse(val);
+                }
+                catch
+                {
+                    /* do nothing */
+                }
+            }
             return DateTime.MinValue;
         }
 
@@ -65,35 +75,66 @@ namespace WebsitePanel.Portal
         {
             return ParseInt(val, 0);
         }
-        
+
         public static int ParseInt(object val, int defaultValue)
         {
             int result = defaultValue;
-            try { result = Int32.Parse(val.ToString()); }
-            catch { /* do nothing */ }
+            // Perf: allow only non-empty values to go through
+            if (val != null && val != String.Empty)
+            {
+                try
+                {
+                    result = Int32.Parse(val.ToString());
+                }
+                catch
+                {
+                    /* do nothing */
+                }
+            }
             return result;
         }
 
         public static bool ParseBool(string val, bool defaultValue)
         {
             bool result = defaultValue;
-            try { result = Boolean.Parse(val); }
-            catch { /* do nothing */ }
+            // Perf: allow only non-empty strings to go through
+            if (!String.IsNullOrEmpty(val))
+            {
+                try
+                {
+                    result = Boolean.Parse(val);
+                }
+                catch
+                {
+                    /* do nothing */
+                }
+            }
+
             return result;
         }
 
         public static decimal ParseDecimal(string val, decimal defaultValue)
         {
             decimal result = defaultValue;
-            try { result = Decimal.Parse(val); }
-            catch { /* do nothing */ }
+            // Perf: allow only non-empty strings to go through
+            if (!String.IsNullOrEmpty(val))
+            {
+                try
+                {
+                    result = Decimal.Parse(val);
+                }
+                catch
+                {
+                    /* do nothing */
+                }
+            }
             return result;
         }
 
-		public static string FormatDateTime(DateTime dt)
-		{
-			return dt == DateTime.MinValue ? "" : dt.ToString();
-		}
+        public static string FormatDateTime(DateTime dt)
+        {
+            return dt == DateTime.MinValue ? "" : dt.ToString();
+        }
 
         public static string FixRelativePath(string path)
         {
@@ -137,31 +178,31 @@ namespace WebsitePanel.Portal
         }
 
 
-		/// <summary>
-		/// Builds list of items from supplied group string.
-		/// </summary>
-		/// <param name="group">Group string.</param>
-		/// <returns>List of items.</returns>
-		public static List<KeyValuePair<string, string>> ParseGroup(string group)
-		{
-			List<KeyValuePair<string, string>> items = new List<KeyValuePair<string, string>>();
-			string[] vals = group.Split(';');
-			foreach (string v in vals)
-			{
-				string itemValue = v;
-				string itemText = v;
+        /// <summary>
+        /// Builds list of items from supplied group string.
+        /// </summary>
+        /// <param name="group">Group string.</param>
+        /// <returns>List of items.</returns>
+        public static List<KeyValuePair<string, string>> ParseGroup(string group)
+        {
+            List<KeyValuePair<string, string>> items = new List<KeyValuePair<string, string>>();
+            string[] vals = group.Split(';');
+            foreach (string v in vals)
+            {
+                string itemValue = v;
+                string itemText = v;
 
-				int eqIdx = v.IndexOf("=");
-				if (eqIdx != -1)
-				{
-					itemValue = v.Substring(0, eqIdx);
-					itemText = v.Substring(eqIdx + 1);
-				}
+                int eqIdx = v.IndexOf("=");
+                if (eqIdx != -1)
+                {
+                    itemValue = v.Substring(0, eqIdx);
+                    itemText = v.Substring(eqIdx + 1);
+                }
 
-				items.Add(new KeyValuePair<string, string>(itemText, itemValue));
-			}
-			return items;
-		}
+                items.Add(new KeyValuePair<string, string>(itemText, itemValue));
+            }
+            return items;
+        }
 
 
         public static void SelectListItem(ListControl ctrl, object value)
@@ -215,13 +256,13 @@ namespace WebsitePanel.Portal
             }
         }
 
-		public static string EllipsisString(string str, int maxLen)
-		{
-			if (String.IsNullOrEmpty(str) || str.Length <= maxLen)
-				return str;
+        public static string EllipsisString(string str, int maxLen)
+        {
+            if (String.IsNullOrEmpty(str) || str.Length <= maxLen)
+                return str;
 
-			return str.Substring(0, maxLen) + "...";
-		}
+            return str.Substring(0, maxLen) + "...";
+        }
 
         public static string GetRandomString(int length)
         {
