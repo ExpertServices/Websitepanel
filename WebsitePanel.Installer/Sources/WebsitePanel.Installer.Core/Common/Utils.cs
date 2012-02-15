@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -45,6 +45,7 @@ using System.Threading;
 using WebsitePanel.Installer.Core;
 using WebsitePanel.Installer.Configuration;
 using System.Xml;
+using System.Data;
 
 namespace WebsitePanel.Installer.Common
 {
@@ -389,5 +390,23 @@ namespace WebsitePanel.Installer.Common
 			mutex = new Mutex(true, "WebsitePanel Installer", out createdNew);
 			return createdNew;
 		}
+
+        public static string GetDistributiveLocationInfo(string ccode, string cversion)
+        {
+            var service = ServiceProviderProxy.GetInstallerWebService();
+            //
+            DataSet ds = service.GetReleaseFileInfo(ccode, cversion);
+            //
+            if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+            {
+                Log.WriteInfo("Component code: {0}; Component version: {1};", ccode, cversion);
+                //
+                throw new ServiceComponentNotFoundException("Seems that the Service has no idea about the component requested.");
+            }
+            //
+            DataRow row = ds.Tables[0].Rows[0];
+            //
+            return row["FullFilePath"].ToString();
+        }
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -39,118 +39,156 @@ using Ionic.Zip;
 
 using WebsitePanel.Installer.Services;
 using WebsitePanel.Installer.Common;
+using WebsitePanel.Installer.Core;
 
 namespace WebsitePanel.Installer.Controls
 {
-	public delegate void OperationProgressDelegate(int percentage);
+    public delegate void OperationProgressDelegate(int percentage);
 
-	/// <summary>
-	/// Loader form.
-	/// </summary>
-	internal partial class Loader : Form
-	{
-		private AppContext appContext;
-		private Core.Loader appLoader;
+    /// <summary>
+    /// Loader form.
+    /// </summary>
+    internal partial class Loader : Form
+    {
+        private Core.Loader appLoader;
 
-		public Loader()
-		{
-			InitializeComponent();
-			DialogResult = DialogResult.Cancel;
-		}
+        public Loader()
+        {
+            InitializeComponent();
+            DialogResult = DialogResult.Cancel;
+        }
 
-		public Loader(AppContext context, string remoteFile)
-			: this()
-		{
-			this.appContext = context;
-			//
-			appLoader = new Core.Loader(remoteFile);
-			//
-			Start();
-		}
+        public Loader(string remoteFile, Action<Exception> callback)
+            : this()
+        {
+            Start(remoteFile, callback);
+        }
 
-		public Loader(AppContext context, string localFile, string componentCode, string version)
-			: this()
-		{
-			this.appContext = context;
-			//
-			appLoader = new Core.Loader(localFile, componentCode, version);
-			//
-			Start();
-		}
+        public Loader(string localFile, string componentCode, string version, Action<Exception> callback)
+            : this()
+        {
+            Start(componentCode, version, callback);
+        }
 
-		private void Start()
-		{
-			//
-			appLoader.OperationFailed += new EventHandler<Core.LoaderEventArgs<Exception>>(appLoader_OperationFailed);
-			appLoader.ProgressChanged += new EventHandler<Core.LoaderEventArgs<Int32>>(appLoader_ProgressChanged);
-			appLoader.StatusChanged += new EventHandler<Core.LoaderEventArgs<String>>(appLoader_StatusChanged);
-			appLoader.OperationCompleted += new EventHandler<EventArgs>(appLoader_OperationCompleted);
-			//
-			appLoader.LoadAppDistributive();
-		}
+        /// <summary>
+        /// Resolves URL of the component's distributive and initiates download process.
+        /// </summary>
+        /// <param name="componentCode">Component code to resolve</param>
+        /// <param name="version">Component version to resolve</param>
+        private void Start(string componentCode, string version, Action<Exception> callback)
+        {
+            string remoteFile = Utils.GetDistributiveLocationInfo(componentCode, version);
 
-		void appLoader_OperationCompleted(object sender, EventArgs e)
-		{
-			DialogResult = DialogResult.OK;
-			Close();
-		}
+            Start(remoteFile, callback);
+        }
 
-		void appLoader_StatusChanged(object sender, Core.LoaderEventArgs<String> e)
-		{
-			lblProcess.Text = e.StatusMessage;
-			lblValue.Text = e.EventData;
-			// Adjust Cancel button availability for an operation being performed
-			if (btnCancel.Enabled != e.Cancellable)
-			{
-				btnCancel.Enabled = e.Cancellable;
-			}
-			// This check allows to avoid extra form redrawing operations
-			if (ControlBox != e.Cancellable)
-			{
-				ControlBox = e.Cancellable;
-			}
-		}
+        /// <summary>
+        /// Initializes and starts the app distributive download process.
+        /// </summary>
+        /// <param name="remoteFile">URL of the file to be downloaded</param>
+        private void Start(string remoteFile, Action<Exception> callback)
+        {
+            appLoader = Core.LoaderFactory.CreateFileLoader(remoteFile);
 
-		void appLoader_ProgressChanged(object sender, Core.LoaderEventArgs<Int32> e)
-		{
-			progressBar.Value = e.EventData;
-			// Adjust Cancel button availability for an operation being performed
-			if (btnCancel.Enabled != e.Cancellable)
-			{
-				btnCancel.Enabled = e.Cancellable;
-			}
-			// This check allows to avoid extra form redrawing operations
-			if (ControlBox != e.Cancellable)
-			{
-				ControlBox = e.Cancellable;
-			}
-		}
+            appLoader.OperationFailed += new EventHandler<Core.LoaderEventArgs<Exception>>(appLoader_OperationFailed);
+            appLoader.OperationFailed += (object sender, Core.LoaderEventArgs<Exception> e) => {
+                if (callback != null)
+                {
+                    try
+                    {
+                        callback(e.EventData);
+                    }
+                    catch
+                    {
+                        // Just swallow the exception as we have no interest in it.
+                    }
+                }
+            };
+            appLoader.ProgressChanged += new EventHandler<Core.LoaderEventArgs<Int32>>(appLoader_ProgressChanged);
+            appLoader.StatusChanged += new EventHandler<Core.LoaderEventArgs<String>>(appLoader_StatusChanged);
+            appLoader.OperationCompleted += new EventHandler<EventArgs>(appLoader_OperationCompleted);
 
-		void appLoader_OperationFailed(object sender, Core.LoaderEventArgs<Exception> e)
-		{
-			appContext.AppForm.ShowError(e.EventData);
-			//
-			DialogResult = DialogResult.Abort;
-			Close();
-		}
+            appLoader.LoadAppDistributive();
+        }
 
-		private void btnCancel_Click(object sender, EventArgs e)
-		{
-			Log.WriteInfo("Execution was canceled by user");
-			Close();
-		}
+        void appLoader_OperationCompleted(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.OK;
+            Close();
+        }
 
-		private void OnLoaderFormClosing(object sender, FormClosingEventArgs e)
-		{
-			if (this.DialogResult == DialogResult.Cancel)
-			{
-				appLoader.AbortOperation();
-			}
-			// Remove event handlers
-			appLoader.OperationFailed -= new EventHandler<Core.LoaderEventArgs<Exception>>(appLoader_OperationFailed);
-			appLoader.ProgressChanged -= new EventHandler<Core.LoaderEventArgs<Int32>>(appLoader_ProgressChanged);
-			appLoader.StatusChanged -= new EventHandler<Core.LoaderEventArgs<String>>(appLoader_StatusChanged);
-			appLoader.OperationCompleted -= new EventHandler<EventArgs>(appLoader_OperationCompleted);
-		}
-	}
+        void appLoader_StatusChanged(object sender, Core.LoaderEventArgs<String> e)
+        {
+            lblProcess.Text = e.StatusMessage;
+            lblValue.Text = e.EventData;
+            // Adjust Cancel button availability for an operation being performed
+            if (btnCancel.Enabled != e.Cancellable)
+            {
+                btnCancel.Enabled = e.Cancellable;
+            }
+            // This check allows to avoid extra form redrawing operations
+            if (ControlBox != e.Cancellable)
+            {
+                ControlBox = e.Cancellable;
+            }
+        }
+
+        void appLoader_ProgressChanged(object sender, Core.LoaderEventArgs<Int32> e)
+        {
+            bool updateControl = (progressBar.Value != e.EventData);
+            progressBar.Value = e.EventData;
+            // Adjust Cancel button availability for an operation being performed
+            if (btnCancel.Enabled != e.Cancellable)
+            {
+                btnCancel.Enabled = e.Cancellable;
+            }
+            // This check allows to avoid extra form redrawing operations
+            if (ControlBox != e.Cancellable)
+            {
+                ControlBox = e.Cancellable;
+            }
+            //
+            if (updateControl)
+            {
+                progressBar.Update();
+            }
+        }
+
+        void appLoader_OperationFailed(object sender, Core.LoaderEventArgs<Exception> e)
+        {
+            DialogResult = DialogResult.Abort;
+            Close();
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            DetachEventHandlers();
+            Log.WriteInfo("Execution was canceled by user");
+            Close();
+        }
+
+        private void DetachEventHandlers()
+        {
+            // Detach event handlers
+            if (appLoader != null)
+            {
+                appLoader.OperationFailed -= new EventHandler<Core.LoaderEventArgs<Exception>>(appLoader_OperationFailed);
+                appLoader.ProgressChanged -= new EventHandler<Core.LoaderEventArgs<Int32>>(appLoader_ProgressChanged);
+                appLoader.StatusChanged -= new EventHandler<Core.LoaderEventArgs<String>>(appLoader_StatusChanged);
+                appLoader.OperationCompleted -= new EventHandler<EventArgs>(appLoader_OperationCompleted);
+            }
+        }
+
+        private void OnLoaderFormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (this.DialogResult == DialogResult.Cancel)
+            {
+                if (appLoader != null)
+                {
+                    appLoader.AbortOperation();
+                    appLoader = null;
+                }
+            }
+        }
+    }
 }

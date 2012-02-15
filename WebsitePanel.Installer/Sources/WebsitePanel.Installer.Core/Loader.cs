@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011, Outercurve Foundation.
+﻿// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -36,380 +36,495 @@ using System.Text;
 using Ionic.Zip;
 
 using WebsitePanel.Installer.Common;
+using System.Net;
+using System.Text.RegularExpressions;
+using System.Collections;
+using System.Threading.Tasks;
+using System.Reflection;
+using System.Diagnostics;
 
 namespace WebsitePanel.Installer.Core
 {
-	public class LoaderEventArgs<T> : EventArgs
-	{
-		public string StatusMessage { get; set; }
-		public T EventData { get; set; }
-		public bool Cancellable { get; set; }
-	}
+    public class LoaderEventArgs<T> : EventArgs
+    {
+        public string StatusMessage { get; set; }
+        public T EventData { get; set; }
+        public bool Cancellable { get; set; }
+    }
 
-	/// <summary>
-	/// Loader form.
-	/// </summary>
-	public partial class Loader
-	{
-		public const string ConnectingRemotServiceMessage = "Connecting...";
-		public const string DownloadingSetupFilesMessage = "Downloading setup files...";
-		public const string CopyingSetupFilesMessage = "Copying setup files...";
-		public const string PreparingSetupFilesMessage = "Please wait while Setup prepares the necessary files...";
-		public const string DownloadProgressMessage = "{0} KB of {1} KB";
-		public const string PrepareSetupProgressMessage = "{0}%";
+    public static class LoaderFactory
+    {
+        /// <summary>
+        /// Instantiates either BitlyLoader or InstallerServiceLoader based on remote file format.
+        /// </summary>
+        /// <param name="remoteFile"></param>
+        /// <returns></returns>
+        public static Loader CreateFileLoader(string remoteFile)
+        {
+            Debug.Assert(!String.IsNullOrEmpty(remoteFile), "Remote file is empty");
 
-		private const int ChunkSize = 262144;
-		private Thread thread;
-		private string localFile;
-		private string remoteFile;
-		private string componentCode;
-		private string version;
+            if (remoteFile.StartsWith("http://bit.ly/"))
+            {
+                return new BitlyLoader(remoteFile);
+            }
+            else
+            {
+                return new Loader(remoteFile);
+            }
+        }
+    }
 
-		public event EventHandler<LoaderEventArgs<String>> StatusChanged;
-		public event EventHandler<LoaderEventArgs<Exception>> OperationFailed;
-		public event EventHandler<LoaderEventArgs<Int32>> ProgressChanged;
-		public event EventHandler<EventArgs> OperationCompleted;
+    public class BitlyLoader : Loader
+    {
+        public const string WEB_PI_USER_AGENT_HEADER = "PI-Integrator/3.0.0.0({0})";
 
-		public Loader(string remoteFile)
-		{
-			this.remoteFile = remoteFile;
-		}
+        private WebClient fileLoader;
 
-		public Loader(string localFile, string componentCode, string version)
-		{
-			this.localFile = localFile;
-			this.componentCode = componentCode;
-			this.version = version;
-		}
+        public BitlyLoader(string remoteFile) 
+            : base(remoteFile)
+        {
+            InitFileLoader();
+        }
 
-		public void LoadAppDistributive()
-		{
-			thread = new Thread(new ThreadStart(LoadAppDistributiveInternal));
-			thread.Start();
-		}
+        private void InitFileLoader()
+        {
+            fileLoader = new WebClient();
+            // Set HTTP header for Codeplex to allow direct downloads
+            fileLoader.Headers.Add("User-Agent", String.Format(WEB_PI_USER_AGENT_HEADER, Assembly.GetExecutingAssembly().FullName));
+        }
 
-		private void RaiseOnStatusChangedEvent(string statusMessage)
-		{
-			RaiseOnStatusChangedEvent(statusMessage, String.Empty);
-		}
+        protected override Task GetDownloadFileTask(string remoteFile, string tmpFile, CancellationToken ct)
+        {
+            var downloadFileTask = new Task(() =>
+            {
+                if (!File.Exists(tmpFile))
+                {
+                    // Mimic synchronous file download operation because we need to track the download progress
+                    // and be able to cancel the operation in progress
+                    AutoResetEvent autoEvent = new AutoResetEvent(false);
 
-		private void RaiseOnStatusChangedEvent(string statusMessage, string eventData)
-		{
-			RaiseOnStatusChangedEvent(statusMessage, eventData, true);
-		}
+                    if (fileLoader.IsBusy.Equals(true))
+                    {
+                        return;
+                    }
 
-		private void RaiseOnStatusChangedEvent(string statusMessage, string eventData, bool cancellable)
-		{
-			if (StatusChanged == null)
-			{
-				return;
-			}
-			// No event data for status updates
-			StatusChanged(this, new LoaderEventArgs<String> { 
-				StatusMessage = statusMessage, 
-				EventData = eventData, 
-				Cancellable = cancellable 
-			});
-		}
+                    ct.Register(() =>
+                    {
+                        fileLoader.CancelAsync();
+                    });
 
-		private void RaiseOnProgressChangedEvent(int eventData)
-		{
-			RaiseOnProgressChangedEvent(eventData, true);
-		}
+                    Log.WriteStart("Downloading file");
+                    Log.WriteInfo("Downloading file \"{0}\" to \"{1}\"", remoteFile, tmpFile);
+                    
+                    // Attach event handlers to track status of the download process
+                    fileLoader.DownloadProgressChanged += (obj, e) =>
+                    {
+                        if (ct.IsCancellationRequested)
+                            return;
 
-		private void RaiseOnProgressChangedEvent(int eventData, bool cancellable)
-		{
-			if (ProgressChanged == null)
-			{
-				return;
-			}
-			//
-			ProgressChanged(this, new LoaderEventArgs<int> {
-				EventData = eventData,
-				Cancellable = cancellable
-			});
-		}
+                        RaiseOnProgressChangedEvent(e.ProgressPercentage);
+                        RaiseOnStatusChangedEvent(DownloadingSetupFilesMessage,
+                                String.Format(DownloadProgressMessage, e.BytesReceived / 1024, e.TotalBytesToReceive / 1024));
+                    };
 
-		private void RaiseOnOperationFailedEvent(Exception ex)
-		{
-			if (OperationFailed == null)
-			{
-				return;
-			}
-			//
-			OperationFailed(this, new LoaderEventArgs<Exception> { EventData = ex });
-		}
+                    fileLoader.DownloadFileCompleted += (obj, e) =>
+                    {
+                        if (ct.IsCancellationRequested == false)
+                        {
+                            RaiseOnProgressChangedEvent(100);
+                            RaiseOnStatusChangedEvent(DownloadingSetupFilesMessage, "100%");
+                        }
 
-		private void RaiseOnOperationCompletedEvent()
-		{
-			if (OperationCompleted == null)
-			{
-				return;
-			}
-			//
-			OperationCompleted(this, EventArgs.Empty);
-		}
+                        if (e.Cancelled)
+                        {
+                            CancelDownload(tmpFile);
+                        }
 
-		/// <summary>
-		/// Displays process progress.
-		/// </summary>
-		private void LoadAppDistributiveInternal()
-		{
-			//
-			try
-			{
-				var service = ServiceProviderProxy.GetInstallerWebService();
-				//
-				string dataFolder = FileUtils.GetDataDirectory();
-				string tmpFolder = FileUtils.GetTempDirectory();
+                        autoEvent.Set();
+                    };
 
-				if (!Directory.Exists(dataFolder))
-				{
-					Directory.CreateDirectory(dataFolder);
-					Log.WriteInfo("Data directory created");
-				}
+                    fileLoader.DownloadFileAsync(new Uri(remoteFile), tmpFile);
+                    RaiseOnStatusChangedEvent(DownloadingSetupFilesMessage);
+                    
+                    autoEvent.WaitOne();
+                }
+            }, ct);
 
-				if (Directory.Exists(tmpFolder))
-				{
-					FileUtils.DeleteTempDirectory();
-				}
+            return downloadFileTask;
+        }
+    }
 
-				if (!Directory.Exists(tmpFolder))
-				{
-					Directory.CreateDirectory(tmpFolder);
-					Log.WriteInfo("Tmp directory created");
-				}
+    /// <summary>
+    /// Loader form.
+    /// </summary>
+    public class Loader
+    {
+        public const string ConnectingRemotServiceMessage = "Connecting...";
+        public const string DownloadingSetupFilesMessage = "Downloading setup files...";
+        public const string CopyingSetupFilesMessage = "Copying setup files...";
+        public const string PreparingSetupFilesMessage = "Please wait while Setup prepares the necessary files...";
+        public const string DownloadProgressMessage = "{0} KB of {1} KB";
+        public const string PrepareSetupProgressMessage = "{0}%";
 
-				string fileToDownload = null;
-				if (!string.IsNullOrEmpty(localFile))
-				{
-					fileToDownload = localFile;
-				}
-				else
-				{
-					fileToDownload = Path.GetFileName(remoteFile);
-				}
+        private const int ChunkSize = 262144;
+        private string remoteFile;
+        private CancellationTokenSource cts;
 
-				string destinationFile = Path.Combine(dataFolder, fileToDownload);
-				string tmpFile = Path.Combine(tmpFolder, fileToDownload);
+        public event EventHandler<LoaderEventArgs<String>> StatusChanged;
+        public event EventHandler<LoaderEventArgs<Exception>> OperationFailed;
+        public event EventHandler<LoaderEventArgs<Int32>> ProgressChanged;
+        public event EventHandler<EventArgs> OperationCompleted;
 
-				//check whether file already downloaded
-				if (!File.Exists(destinationFile))
-				{
-					if (string.IsNullOrEmpty(remoteFile))
-					{
-						//need to get remote file name
-						RaiseOnStatusChangedEvent(ConnectingRemotServiceMessage);
-						//
-						RaiseOnProgressChangedEvent(0);
-						//
-						DataSet ds = service.GetReleaseFileInfo(componentCode, version);
-						//
-						RaiseOnProgressChangedEvent(100);
-						//
-						if (ds != null &&
-							ds.Tables.Count > 0 &&
-							ds.Tables[0].Rows.Count > 0)
-						{
-							DataRow row = ds.Tables[0].Rows[0];
-							remoteFile = row["FullFilePath"].ToString();
-							fileToDownload = Path.GetFileName(remoteFile);
-							destinationFile = Path.Combine(dataFolder, fileToDownload);
-							tmpFile = Path.Combine(tmpFolder, fileToDownload);
-						}
-						else
-						{
-							throw new Exception("Installer not found");
-						}
-					}
+        public Loader(string remoteFile)
+        {
+            this.remoteFile = remoteFile;
+        }
 
-					// download file to tmp folder
-					RaiseOnStatusChangedEvent(DownloadingSetupFilesMessage);
-					//
-					RaiseOnProgressChangedEvent(0);
-					//
-					DownloadFile(remoteFile, tmpFile);
-					//
-					RaiseOnProgressChangedEvent(100);
+        public void LoadAppDistributive()
+        {
+            ThreadPool.QueueUserWorkItem(q => LoadAppDistributiveInternal());
+        }
 
-					// copy downloaded file to data folder
-					RaiseOnStatusChangedEvent(CopyingSetupFilesMessage);
-					//
-					RaiseOnProgressChangedEvent(0);
+        protected void RaiseOnStatusChangedEvent(string statusMessage)
+        {
+            RaiseOnStatusChangedEvent(statusMessage, String.Empty);
+        }
 
-					// Ensure that the target does not exist.
-					if (File.Exists(destinationFile))
-						FileUtils.DeleteFile(destinationFile);
-					File.Move(tmpFile, destinationFile);
-					//
-					RaiseOnProgressChangedEvent(100);
-				}
+        protected void RaiseOnStatusChangedEvent(string statusMessage, string eventData)
+        {
+            RaiseOnStatusChangedEvent(statusMessage, eventData, true);
+        }
 
-				// unzip file
-				RaiseOnStatusChangedEvent(PreparingSetupFilesMessage);
-				//
-				RaiseOnProgressChangedEvent(0);
-				//
-				UnzipFile(destinationFile, tmpFolder);
-				//
-				RaiseOnProgressChangedEvent(100);
-				//
-				RaiseOnOperationCompletedEvent();
-			}
-			catch (Exception ex)
-			{
-				if (Utils.IsThreadAbortException(ex))
-					return;
+        protected void RaiseOnStatusChangedEvent(string statusMessage, string eventData, bool cancellable)
+        {
+            if (StatusChanged == null)
+            {
+                return;
+            }
+            // No event data for status updates
+            StatusChanged(this, new LoaderEventArgs<String>
+            {
+                StatusMessage = statusMessage,
+                EventData = eventData,
+                Cancellable = cancellable
+            });
+        }
 
-				Log.WriteError("Loader module error", ex);
-				//
-				RaiseOnOperationFailedEvent(ex);
-			}
-		}
+        protected void RaiseOnProgressChangedEvent(int eventData)
+        {
+            RaiseOnProgressChangedEvent(eventData, true);
+        }
 
-		private void DownloadFile(string sourceFile, string destinationFile)
-		{
-			try
-			{
-				var service = ServiceProviderProxy.GetInstallerWebService();
-				//
-				Log.WriteStart("Downloading file");
-				Log.WriteInfo(string.Format("Downloading file \"{0}\" to \"{1}\"", sourceFile, destinationFile));
+        protected void RaiseOnProgressChangedEvent(int eventData, bool cancellable)
+        {
+            if (ProgressChanged == null)
+            {
+                return;
+            }
+            //
+            ProgressChanged(this, new LoaderEventArgs<int>
+            {
+                EventData = eventData,
+                Cancellable = cancellable
+            });
+        }
 
-				long downloaded = 0;
-				long fileSize = service.GetFileSize(sourceFile);
-				if (fileSize == 0)
-				{
-					throw new FileNotFoundException("Service returned empty file.", sourceFile);
-				}
+        protected void RaiseOnOperationFailedEvent(Exception ex)
+        {
+            if (OperationFailed == null)
+            {
+                return;
+            }
+            //
+            OperationFailed(this, new LoaderEventArgs<Exception> { EventData = ex });
+        }
 
-				byte[] content;
+        protected void RaiseOnOperationCompletedEvent()
+        {
+            if (OperationCompleted == null)
+            {
+                return;
+            }
+            //
+            OperationCompleted(this, EventArgs.Empty);
+        }
 
-				while (downloaded < fileSize)
-				{
-					content = service.GetFileChunk(sourceFile, (int)downloaded, ChunkSize);
-					if (content == null)
-					{
-						throw new FileNotFoundException("Service returned NULL file content.", sourceFile);
-					}
-					FileUtils.AppendFileContent(destinationFile, content);
-					downloaded += content.Length;
-					//update progress bar
-					RaiseOnStatusChangedEvent(DownloadingSetupFilesMessage,
-						string.Format(DownloadProgressMessage, downloaded / 1024, fileSize / 1024));
-					//
-					RaiseOnProgressChangedEvent(Convert.ToInt32((downloaded * 100) / fileSize));
+        /// <summary>
+        /// Executes a file download request asynchronously
+        /// </summary>
+        private void LoadAppDistributiveInternal()
+        {
+            try
+            {
+                string dataFolder;
+                string tmpFolder;
+                // Retrieve local storage configuration
+                GetLocalStorageInfo(out dataFolder, out tmpFolder);
+                // Initialize storage
+                InitializeLocalStorage(dataFolder, tmpFolder);
 
-					if (content.Length < ChunkSize)
-						break;
-				}
-				//
-				RaiseOnStatusChangedEvent(DownloadingSetupFilesMessage, "100%");
-				//
-				Log.WriteEnd(string.Format("Downloaded {0} bytes", downloaded));
-			}
-			catch (Exception ex)
-			{
-				if (Utils.IsThreadAbortException(ex))
-					return;
+                string fileToDownload = Path.GetFileName(remoteFile);
 
-				throw;
-			}
-		}
+                string destinationFile = Path.Combine(dataFolder, fileToDownload);
+                string tmpFile = Path.Combine(tmpFolder, fileToDownload);
 
-		private void UnzipFile(string zipFile, string destFolder)
-		{
-			try
-			{
-				int val = 0;
-				// Negative value means no progress made yet
-				int progress = -1;
-				//
-				Log.WriteStart("Unzipping file");
-				Log.WriteInfo(string.Format("Unzipping file \"{0}\" to the folder \"{1}\"", zipFile, destFolder));
+                cts = new CancellationTokenSource();
+                CancellationToken token = cts.Token;
 
-				long zipSize = 0;
-				var zipInfo = ZipFile.Read(zipFile);
-				try
-				{
-					foreach (ZipEntry entry in zipInfo)
-					{
-						if (!entry.IsDirectory)
-							zipSize += entry.UncompressedSize;
-					}
-				}
-				finally
-				{
-					if (zipInfo != null)
-					{
-						zipInfo.Dispose();
-					}
-				}
+                try
+                {
+                    // Download the file requested
+                    Task downloadFileTask = GetDownloadFileTask(remoteFile, tmpFile, token);
+                    // Move the file downloaded from temporary location to Data folder
+                    var moveFileTask = downloadFileTask.ContinueWith((t) => 
+                    {
+                        if (File.Exists(tmpFile))
+                        {
+                            // copy downloaded file to data folder
+                            RaiseOnStatusChangedEvent(CopyingSetupFilesMessage);
+                            //
+                            RaiseOnProgressChangedEvent(0);
 
-				long unzipped = 0;
-				//
-				var zip = ZipFile.Read(zipFile);
-				//
-				try
-				{
-					foreach (ZipEntry entry in zip)
-					{
-						//
-						entry.Extract(destFolder, ExtractExistingFileAction.OverwriteSilently);
-						//
-						if (!entry.IsDirectory)
-							unzipped += entry.UncompressedSize;
+                            // Ensure that the target does not exist.
+                            if (File.Exists(destinationFile))
+                                FileUtils.DeleteFile(destinationFile);
+                            File.Move(tmpFile, destinationFile);
+                            //
+                            RaiseOnProgressChangedEvent(100);
+                        }
+                    }, TaskContinuationOptions.NotOnCanceled);
+                    // Unzip file downloaded
+                    var unzipFileTask = moveFileTask.ContinueWith((t) =>
+                    {
+                        if (File.Exists(destinationFile))
+                        {
+                            RaiseOnStatusChangedEvent(PreparingSetupFilesMessage);
+                            //
+                            RaiseOnProgressChangedEvent(0);
+                            //
+                            UnzipFile(destinationFile, tmpFolder);
+                            //
+                            RaiseOnProgressChangedEvent(100);
+                        }
+                    }, token);
+                    //
+                    var notifyCompletionTask = unzipFileTask.ContinueWith((t) =>
+                    {
+                        RaiseOnOperationCompletedEvent();
+                    }, token);
+                    
+                    downloadFileTask.Start();
+                    downloadFileTask.Wait();
+                }
+                catch (AggregateException ae)
+                {
+                    ae.Handle((e) =>
+                    {
+                        // We handle cancellation requests
+                        if (e is OperationCanceledException)
+                        {
+                            CancelDownload(tmpFile);
+                            Log.WriteInfo("Download has been cancelled by the user");
+                            return true;
+                        }
+                        // But other issues just being logged
+                        Log.WriteError("Could not download the file", e);
+                        return false;
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                if (Utils.IsThreadAbortException(ex))
+                    return;
 
-						if (zipSize != 0)
-						{
-							val = Convert.ToInt32(unzipped * 100 / zipSize);
-							// Skip to raise the progress event change when calculated progress 
-							// and the current progress value are even
-							if (val == progress)
-							{
-								continue;
-							}
-							//
-							RaiseOnStatusChangedEvent(
-								PreparingSetupFilesMessage, 
-								String.Format(PrepareSetupProgressMessage, val),
-								false);
-							//
-							RaiseOnProgressChangedEvent(val, false);
-						}
-					}
-					// Notify client the operation can be cancelled at this time
-					RaiseOnProgressChangedEvent(100);
-					//
-					Log.WriteEnd("Unzipped file");
-				}
-				finally
-				{
-					if (zip != null)
-					{
-						zip.Dispose();
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				if (Utils.IsThreadAbortException(ex))
-					return;
-				//
-				RaiseOnOperationFailedEvent(ex);
-			}
-		}
+                Log.WriteError("Loader module error", ex);
+                //
+                RaiseOnOperationFailedEvent(ex);
+            }
+        }
 
-		public void AbortOperation()
-		{
-			if (thread != null)
-			{
-				if (thread.IsAlive)
-				{
-					thread.Abort();
-				}
-				thread.Join();
-			}
-		}
-	}
+        protected virtual Task GetDownloadFileTask(string sourceFile, string tmpFile, CancellationToken ct)
+        {
+            var downloadFileTask = new Task(() =>
+            {
+                if (!File.Exists(tmpFile))
+                {
+                    var service = ServiceProviderProxy.GetInstallerWebService();
+
+                    RaiseOnProgressChangedEvent(0);
+                    RaiseOnStatusChangedEvent(DownloadingSetupFilesMessage);
+
+                    Log.WriteStart("Downloading file");
+                    Log.WriteInfo(string.Format("Downloading file \"{0}\" to \"{1}\"", sourceFile, tmpFile));
+
+                    long downloaded = 0;
+                    long fileSize = service.GetFileSize(sourceFile);
+                    if (fileSize == 0)
+                    {
+                        throw new FileNotFoundException("Service returned empty file.", sourceFile);
+                    }
+
+                    byte[] content;
+
+                    while (downloaded < fileSize)
+                    {
+                        // Throw OperationCancelledException if there is an incoming cancel request
+                        ct.ThrowIfCancellationRequested();
+
+                        content = service.GetFileChunk(sourceFile, (int)downloaded, ChunkSize);
+                        if (content == null)
+                        {
+                            throw new FileNotFoundException("Service returned NULL file content.", sourceFile);
+                        }
+                        FileUtils.AppendFileContent(tmpFile, content);
+                        downloaded += content.Length;
+                        // Update download progress
+                        RaiseOnStatusChangedEvent(DownloadingSetupFilesMessage,
+                            string.Format(DownloadProgressMessage, downloaded / 1024, fileSize / 1024));
+
+                        RaiseOnProgressChangedEvent(Convert.ToInt32((downloaded * 100) / fileSize));
+
+                        if (content.Length < ChunkSize)
+                            break;
+                    }
+
+                    RaiseOnStatusChangedEvent(DownloadingSetupFilesMessage, "100%");
+                    Log.WriteEnd(string.Format("Downloaded {0} bytes", downloaded));
+                }
+            }, ct);
+
+            return downloadFileTask;
+        }
+
+        private static void InitializeLocalStorage(string dataFolder, string tmpFolder)
+        {
+            if (!Directory.Exists(dataFolder))
+            {
+                Directory.CreateDirectory(dataFolder);
+                Log.WriteInfo("Data directory created");
+            }
+
+            if (Directory.Exists(tmpFolder))
+            {
+                Directory.Delete(tmpFolder, true);
+            }
+
+            if (!Directory.Exists(tmpFolder))
+            {
+                Directory.CreateDirectory(tmpFolder);
+                Log.WriteInfo("Tmp directory created");
+            }
+        }
+
+        private static void GetLocalStorageInfo(out string dataFolder, out string tmpFolder)
+        {
+            dataFolder = FileUtils.GetDataDirectory();
+            tmpFolder = FileUtils.GetTempDirectory();
+        }
+
+        private void UnzipFile(string zipFile, string destFolder)
+        {
+            try
+            {
+                int val = 0;
+                // Negative value means no progress made yet
+                int progress = -1;
+                //
+                Log.WriteStart("Unzipping file");
+                Log.WriteInfo(string.Format("Unzipping file \"{0}\" to the folder \"{1}\"", zipFile, destFolder));
+
+                long zipSize = 0;
+                var zipInfo = ZipFile.Read(zipFile);
+                try
+                {
+                    foreach (ZipEntry entry in zipInfo)
+                    {
+                        if (!entry.IsDirectory)
+                            zipSize += entry.UncompressedSize;
+                    }
+                }
+                finally
+                {
+                    if (zipInfo != null)
+                    {
+                        zipInfo.Dispose();
+                    }
+                }
+
+                long unzipped = 0;
+                //
+                var zip = ZipFile.Read(zipFile);
+                //
+                try
+                {
+                    foreach (ZipEntry entry in zip)
+                    {
+                        //
+                        entry.Extract(destFolder, ExtractExistingFileAction.OverwriteSilently);
+                        //
+                        if (!entry.IsDirectory)
+                            unzipped += entry.UncompressedSize;
+
+                        if (zipSize != 0)
+                        {
+                            val = Convert.ToInt32(unzipped * 100 / zipSize);
+                            // Skip to raise the progress event change when calculated progress 
+                            // and the current progress value are even
+                            if (val == progress)
+                            {
+                                continue;
+                            }
+                            //
+                            RaiseOnStatusChangedEvent(
+                                PreparingSetupFilesMessage,
+                                String.Format(PrepareSetupProgressMessage, val),
+                                false);
+                            //
+                            RaiseOnProgressChangedEvent(val, false);
+                        }
+                    }
+                    // Notify client the operation can be cancelled at this time
+                    RaiseOnProgressChangedEvent(100);
+                    //
+                    Log.WriteEnd("Unzipped file");
+                }
+                finally
+                {
+                    if (zip != null)
+                    {
+                        zip.Dispose();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (Utils.IsThreadAbortException(ex))
+                    return;
+                //
+                RaiseOnOperationFailedEvent(ex);
+            }
+        }
+
+        /// <summary>
+        /// Cleans up temporary file if the download process has been cancelled.
+        /// </summary>
+        /// <param name="tmpFile">Path to the temporary file to cleanup</param>
+        protected virtual void CancelDownload(string tmpFile)
+        {
+            if (File.Exists(tmpFile))
+            {
+                File.Delete(tmpFile);
+            }
+        }
+
+        public void AbortOperation()
+        {
+            // Make sure we are in business
+            if (cts != null)
+            {
+                cts.Cancel();
+            }
+        }
+    }
 }

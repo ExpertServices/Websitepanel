@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011, Outercurve Foundation.
+﻿// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -35,7 +35,7 @@ using System.Reflection;
 //      Revision
 //
 [assembly: AssemblyCompany("Outercurve Foundation")]
-[assembly: AssemblyCopyright("Copyright © 2011 Outercurve Foundation.")]
-[assembly: AssemblyVersion("1.2.0.0")]
-[assembly: AssemblyFileVersion("1.2.0.38")]
-[assembly: AssemblyInformationalVersion("1.2.0")]
+[assembly: AssemblyCopyright("Copyright © 2012 Outercurve Foundation.")]
+[assembly: AssemblyVersion("1.2.1.0")]
+[assembly: AssemblyFileVersion("1.2.1.0")]
+[assembly: AssemblyInformationalVersion("1.2.1")]

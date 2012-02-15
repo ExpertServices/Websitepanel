@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -211,7 +211,7 @@ namespace WebsitePanel.Installer.Controls
 				{
 					Log.WriteInfo(string.Format("Updating {0}", componentName));
 					//download installer
-					Loader form = new Loader(this.AppContext, fileName);
+					Loader form = new Loader(fileName, (e) => AppContext.AppForm.ShowError(e));
 					DialogResult result = form.ShowDialog(this);
 					if (result == DialogResult.OK)
 					{
@@ -273,7 +273,7 @@ namespace WebsitePanel.Installer.Controls
 			{
 				Log.WriteInfo(string.Format("Uninstalling {0}", componentName));
 				//download installer
-				Loader form = new Loader(this.AppContext, installer, componentCode, release);
+				Loader form = new Loader(installer, componentCode, release, (e) => AppContext.AppForm.ShowError(e));
 				DialogResult result = form.ShowDialog(this);
 				if (result == DialogResult.OK)
 				{
@@ -326,15 +326,15 @@ namespace WebsitePanel.Installer.Controls
 			string path = element.GetStringSetting("InstallerPath");
 			string type = element.GetStringSetting("InstallerType");
 			string componentId = element.ID;
-			string componentCode = element.GetStringSetting("ComponentCode");
+			string ccode = element.GetStringSetting("ComponentCode");
 			string componentName = element.GetStringSetting("ComponentName");
-			string release = element.GetStringSetting("Release");
+			string cversion = element.GetStringSetting("Release");
 
 			try
 			{
-				Log.WriteInfo(string.Format("Setup {0} {1}", componentName, release));
-				//download installer
-				Loader form = new Loader(this.AppContext, installer, componentCode, release);
+				Log.WriteInfo(string.Format("Setup {0} {1}", componentName, cversion));
+                //download installer
+				Loader form = new Loader(installer, ccode, cversion, (e) => AppContext.AppForm.ShowError(e));
 				DialogResult result = form.ShowDialog(this);
 				if (result == DialogResult.OK)
 				{
