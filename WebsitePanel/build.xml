@@ -2,7 +2,7 @@
 	<Import Project="C:\Program Files (x86)\MSBuild\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
 	<PropertyGroup>
 		<Version>1.2.1.0</Version>
-		<FileVersion>1.2.1.0</FileVersion>
+		<FileVersion>1.2.1.2</FileVersion>
 		<VersionLabel>1.2.1</VersionLabel>
 		<ReleaseDate>2012-01-19</ReleaseDate>
 		<BuildConfiguration>Release</BuildConfiguration>
@@ -15,7 +15,7 @@
 		<BuildFolder>$(TrunkFolder)\Build\$(BuildConfiguration)</BuildFolder>
 		<DeployFolder>$(TrunkFolder)\Deploy\$(BuildConfiguration)</DeployFolder>
 
-		<PreviousBuildFolder>C:\Projects\Sourceforge\WebsitePanel\Releases\1.1.2\Build\$(BuildConfiguration)</PreviousBuildFolder>
+		<PreviousBuildFolder>C:\Projects\WebsitePanel-1.2.0-distr\$(BuildConfiguration)</PreviousBuildFolder>
 
 		<DiffCmd>$(TrunkFolder)\Tools\Diff.exe</DiffCmd>
 		<SqlCmd>"C:\Program Files\Microsoft SQL Server\100\Tools\Binn\sqlcmd.exe" -S (local)\SQLEXPRESS -E</SqlCmd>
