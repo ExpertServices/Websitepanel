@@ -35,7 +35,7 @@
     function HighlightRow(chkB)
     {
 		var xState=chkB.checked;    
-		var row = chkB.parentElement.parentElement;
+		var row = chkB.parentNode.parentNode;
 		if(xState)
 		{
 			row.setAttribute("temp_class", row.className);

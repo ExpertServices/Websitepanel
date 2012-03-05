@@ -50,40 +50,40 @@ using WebsitePanel.WebPortal;
 
 namespace WebsitePanel.Portal
 {
-	public class PortalUtils
-	{
-		public const string SharedResourcesFile = "SharedResources.ascx.resx";
+    public class PortalUtils
+    {
+        public const string SharedResourcesFile = "SharedResources.ascx.resx";
         public const string CONFIG_FOLDER = "~/App_Data/";
-	    public const string SUPPORTED_THEMES_FILE = "SupportedThemes.config";
-	    public const string SUPPORTED_LOCALES_FILE = "SupportedLocales.config";
+        public const string SUPPORTED_THEMES_FILE = "SupportedThemes.config";
+        public const string SUPPORTED_LOCALES_FILE = "SupportedLocales.config";
         public const string USER_ID_PARAM = "UserID";
         public const string SPACE_ID_PARAM = "SpaceID";
         public const string SEARCH_QUERY_PARAM = "Query";
 
-		public static string CultureCookieName
-		{
-			get { return PortalConfiguration.SiteSettings["CultureCookieName"]; }
-		}
+        public static string CultureCookieName
+        {
+            get { return PortalConfiguration.SiteSettings["CultureCookieName"]; }
+        }
 
-		public static string ThemeCookieName
-		{
-			get { return PortalConfiguration.SiteSettings["ThemeCookieName"]; }
-		}
+        public static string ThemeCookieName
+        {
+            get { return PortalConfiguration.SiteSettings["ThemeCookieName"]; }
+        }
 
-		public static System.Globalization.CultureInfo CurrentCulture
-		{
-			get { return GetCurrentCulture(); }
-		}
+        public static System.Globalization.CultureInfo CurrentCulture
+        {
+            get { return GetCurrentCulture(); }
+        }
 
-		public static System.Globalization.CultureInfo CurrentUICulture
-		{
-			get { return GetCurrentCulture(); }
-		}
+        public static System.Globalization.CultureInfo CurrentUICulture
+        {
+            get { return GetCurrentCulture(); }
+        }
 
-		public static string CurrentTheme
-		{
-			get { return GetCurrentTheme(); }
-		}
+        public static string CurrentTheme
+        {
+            get { return GetCurrentTheme(); }
+        }
 
         internal static string GetCurrentTheme()
         {
@@ -131,51 +131,51 @@ namespace WebsitePanel.Portal
             return String.IsNullOrEmpty(theme) ? "Default" : theme;
         }
 
-	    public static void SetCurrentTheme(string theme)
-		{
-			// theme
-			if (!String.IsNullOrEmpty(theme))
-			{
-				HttpCookie cookieTheme = new HttpCookie(ThemeCookieName, theme);
-				cookieTheme.Expires = DateTime.Now.AddMonths(2);
-				HttpContext.Current.Response.Cookies.Add(cookieTheme);
-			}
-		}
+        public static void SetCurrentTheme(string theme)
+        {
+            // theme
+            if (!String.IsNullOrEmpty(theme))
+            {
+                HttpCookie cookieTheme = new HttpCookie(ThemeCookieName, theme);
+                cookieTheme.Expires = DateTime.Now.AddMonths(2);
+                HttpContext.Current.Response.Cookies.Add(cookieTheme);
+            }
+        }
 
-		internal static System.Globalization.CultureInfo GetCurrentCulture()
-		{
-			System.Globalization.CultureInfo ci = (System.Globalization.CultureInfo)
-					HttpContext.Current.Items[CultureCookieName];
+        internal static System.Globalization.CultureInfo GetCurrentCulture()
+        {
+            System.Globalization.CultureInfo ci = (System.Globalization.CultureInfo)
+                    HttpContext.Current.Items[CultureCookieName];
 
-			if (ci == null)
-			{
-				HttpCookie localeCrumb = HttpContext.Current.Request.Cookies[CultureCookieName];
-				if (localeCrumb != null)
-				{
-					ci = System.Globalization.CultureInfo.CreateSpecificCulture(localeCrumb.Value);
+            if (ci == null)
+            {
+                HttpCookie localeCrumb = HttpContext.Current.Request.Cookies[CultureCookieName];
+                if (localeCrumb != null)
+                {
+                    ci = System.Globalization.CultureInfo.CreateSpecificCulture(localeCrumb.Value);
 
-					if (ci != null)
-					{
-						HttpContext.Current.Items[CultureCookieName] = ci;
-						return ci;
-					}
-				}
-			}
-			else
-				return ci;
+                    if (ci != null)
+                    {
+                        HttpContext.Current.Items[CultureCookieName] = ci;
+                        return ci;
+                    }
+                }
+            }
+            else
+                return ci;
 
-			return System.Threading.Thread.CurrentThread.CurrentCulture;
-		}
+            return System.Threading.Thread.CurrentThread.CurrentCulture;
+        }
 
-		public static string AdminEmail
-		{
-			get { return PortalConfiguration.SiteSettings["AdminEmail"]; }
-		}
+        public static string AdminEmail
+        {
+            get { return PortalConfiguration.SiteSettings["AdminEmail"]; }
+        }
 
-		public static string FromEmail
-		{
-			get { return PortalConfiguration.SiteSettings["FromEmail"]; }
-		}
+        public static string FromEmail
+        {
+            get { return PortalConfiguration.SiteSettings["FromEmail"]; }
+        }
 
         public static void SendMail(string from, string to, string bcc, string subject, string body)
         {
@@ -214,87 +214,87 @@ namespace WebsitePanel.Portal
             }
         }
 
-		public static void UserSignOut()
-		{
-			FormsAuthentication.SignOut();
+        public static void UserSignOut()
+        {
+            FormsAuthentication.SignOut();
             HttpContext.Current.Response.Redirect(LoginRedirectUrl);
-		}
+        }
 
-		public static MenuItem GetSpaceMenuItem(string menuItemKey)
-		{
-			MenuItem item = new MenuItem();
-			item.Value = menuItemKey;
+        public static MenuItem GetSpaceMenuItem(string menuItemKey)
+        {
+            MenuItem item = new MenuItem();
+            item.Value = menuItemKey;
 
-			menuItemKey = String.Concat("Space", menuItemKey);
+            menuItemKey = String.Concat("Space", menuItemKey);
 
-			PortalPage page = PortalConfiguration.Site.Pages[menuItemKey];
+            PortalPage page = PortalConfiguration.Site.Pages[menuItemKey];
 
-			if (page != null)
+            if (page != null)
                 item.NavigateUrl = DefaultPage.GetPageUrl(menuItemKey);
 
-			return item;
-		}
+            return item;
+        }
 
-		private static FormsAuthenticationTicket AuthTicket
-		{
-			get
-			{
-				FormsAuthenticationTicket authTicket = (FormsAuthenticationTicket)HttpContext.Current.Items[FormsAuthentication.FormsCookieName];
+        private static FormsAuthenticationTicket AuthTicket
+        {
+            get
+            {
+                FormsAuthenticationTicket authTicket = (FormsAuthenticationTicket)HttpContext.Current.Items[FormsAuthentication.FormsCookieName];
 
-				if (authTicket == null)
-				{
-					// original code
-					HttpCookie authCookie = HttpContext.Current.Request.Cookies[FormsAuthentication.FormsCookieName];
-					// workaround for cases when AuthTicket is required before round-trip
-					if (authCookie == null || String.IsNullOrEmpty(authCookie.Value))
-						authCookie = HttpContext.Current.Response.Cookies[FormsAuthentication.FormsCookieName];
-					//
-					if (authCookie != null)
-					{
-						authTicket = FormsAuthentication.Decrypt(authCookie.Value);
-						HttpContext.Current.Items[FormsAuthentication.FormsCookieName] = authTicket;
-					}
-				}
+                if (authTicket == null)
+                {
+                    // original code
+                    HttpCookie authCookie = HttpContext.Current.Request.Cookies[FormsAuthentication.FormsCookieName];
+                    // workaround for cases when AuthTicket is required before round-trip
+                    if (authCookie == null || String.IsNullOrEmpty(authCookie.Value))
+                        authCookie = HttpContext.Current.Response.Cookies[FormsAuthentication.FormsCookieName];
+                    //
+                    if (authCookie != null)
+                    {
+                        authTicket = FormsAuthentication.Decrypt(authCookie.Value);
+                        HttpContext.Current.Items[FormsAuthentication.FormsCookieName] = authTicket;
+                    }
+                }
 
-				return authTicket;
-			}
-		}
+                return authTicket;
+            }
+        }
 
-		private static void SetAuthTicket(FormsAuthenticationTicket ticket, bool persistent)
-		{
-			// issue authentication cookie
-			HttpCookie authCookie = new HttpCookie(FormsAuthentication.FormsCookieName);
-			authCookie.Domain = FormsAuthentication.CookieDomain;
-			authCookie.Secure = FormsAuthentication.RequireSSL;
-			authCookie.Path = FormsAuthentication.FormsCookiePath;
-			authCookie.Value = FormsAuthentication.Encrypt(ticket);
+        private static void SetAuthTicket(FormsAuthenticationTicket ticket, bool persistent)
+        {
+            // issue authentication cookie
+            HttpCookie authCookie = new HttpCookie(FormsAuthentication.FormsCookieName);
+            authCookie.Domain = FormsAuthentication.CookieDomain;
+            authCookie.Secure = FormsAuthentication.RequireSSL;
+            authCookie.Path = FormsAuthentication.FormsCookiePath;
+            authCookie.Value = FormsAuthentication.Encrypt(ticket);
 
-			if (persistent)
-				authCookie.Expires = DateTime.Now.AddMonths(1);
+            if (persistent)
+                authCookie.Expires = DateTime.Now.AddMonths(1);
 
-			HttpContext.Current.Response.Cookies.Add(authCookie);
-		}
+            HttpContext.Current.Response.Cookies.Add(authCookie);
+        }
 
-		public static string ApplicationPath
-		{
-			get
-			{
-				if (HttpContext.Current.Request.ApplicationPath == "/")
-					return "";
-				else
-					return HttpContext.Current.Request.ApplicationPath;
-			}
-		}
+        public static string ApplicationPath
+        {
+            get
+            {
+                if (HttpContext.Current.Request.ApplicationPath == "/")
+                    return "";
+                else
+                    return HttpContext.Current.Request.ApplicationPath;
+            }
+        }
 
-		public static string GetSharedLocalizedString(string moduleName, string resourceKey)
-		{
-			string className = SharedResourcesFile.Replace(".resx", "");
+        public static string GetSharedLocalizedString(string moduleName, string resourceKey)
+        {
+            string className = SharedResourcesFile.Replace(".resx", "");
 
-			if (!String.IsNullOrEmpty(moduleName))
-				className = String.Concat(moduleName, "_", className);
-			
-			return (string)HttpContext.GetGlobalResourceObject(className, resourceKey);
-		}
+            if (!String.IsNullOrEmpty(moduleName))
+                className = String.Concat(moduleName, "_", className);
+            
+            return (string)HttpContext.GetGlobalResourceObject(className, resourceKey);
+        }
 
         public static string GetCurrentPageId()
         {
@@ -311,40 +311,40 @@ namespace WebsitePanel.Portal
             return DefaultPage.GetLocalizedPageName(pageId);
         }
 
-		public static int AuthenticateUser(string username, string password, string ipAddress,
-			bool rememberLogin, string preferredLocale, string theme)
-		{
-			esAuthentication authService = new esAuthentication();
-			ConfigureEnterpriseServerProxy(authService, false);
+        public static int AuthenticateUser(string username, string password, string ipAddress,
+            bool rememberLogin, string preferredLocale, string theme)
+        {
+            esAuthentication authService = new esAuthentication();
+            ConfigureEnterpriseServerProxy(authService, false);
 
-			try
-			{
-				int authResult = authService.AuthenticateUser(username, password, ipAddress);
+            try
+            {
+                int authResult = authService.AuthenticateUser(username, password, ipAddress);
 
-				if (authResult < 0)
-				{
-					return authResult;
-				}
-				else
-				{
-					UserInfo user = authService.GetUserByUsernamePassword(username, password, ipAddress);
-					if (user != null)
-					{
-						// issue authentication ticket
-						FormsAuthenticationTicket ticket = CreateAuthTicket(user.Username, user.Password, user.Role, rememberLogin);
-						SetAuthTicket(ticket, rememberLogin);
+                if (authResult < 0)
+                {
+                    return authResult;
+                }
+                else
+                {
+                    UserInfo user = authService.GetUserByUsernamePassword(username, password, ipAddress);
+                    if (user != null)
+                    {
+                        // issue authentication ticket
+                        FormsAuthenticationTicket ticket = CreateAuthTicket(user.Username, user.Password, user.Role, rememberLogin);
+                        SetAuthTicket(ticket, rememberLogin);
 
-						CompleteUserLogin(username, rememberLogin, preferredLocale, theme);
-					}
+                        CompleteUserLogin(username, rememberLogin, preferredLocale, theme);
+                    }
 
-					return 0;
-				}
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
-		}
+                    return 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         private static int GetAuthenticationFormsTimeout()
         {
@@ -381,18 +381,18 @@ namespace WebsitePanel.Portal
             );
         }
 
-		public static int ChangeUserPassword(int userId, string newPassword)
-		{
-			// load user account
-			esUsers usersService = new esUsers();
-			ConfigureEnterpriseServerProxy(usersService, true);
+        public static int ChangeUserPassword(int userId, string newPassword)
+        {
+            // load user account
+            esUsers usersService = new esUsers();
+            ConfigureEnterpriseServerProxy(usersService, true);
 
             try
-			{
-				UserInfo user = usersService.GetUserById(userId);
+            {
+                UserInfo user = usersService.GetUserById(userId);
 
-				// change WebsitePanel account password
-				int result = usersService.ChangeUserPassword(userId, newPassword);
+                // change WebsitePanel account password
+                int result = usersService.ChangeUserPassword(userId, newPassword);
                 if (result < 0)
                     return result;
 
@@ -400,15 +400,15 @@ namespace WebsitePanel.Portal
                 if (String.Compare(user.Username, AuthTicket.Name, true) == 0)
                 {
                     FormsAuthenticationTicket ticket = CreateAuthTicket(user.Username, newPassword, user.Role, AuthTicket.IsPersistent);
-					SetAuthTicket(ticket, AuthTicket.IsPersistent);
+                    SetAuthTicket(ticket, AuthTicket.IsPersistent);
                 }
                 return result;
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
-		}
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         public static int UpdateUserAccount(UserInfo user)
         {
@@ -416,138 +416,138 @@ namespace WebsitePanel.Portal
         }
 
         public static int UpdateUserAccount(string taskId, UserInfo user)
-		{
-			esUsers usersService = new esUsers();
-			ConfigureEnterpriseServerProxy(usersService, true);
+        {
+            esUsers usersService = new esUsers();
+            ConfigureEnterpriseServerProxy(usersService, true);
 
-			try
-			{
-				// update user in WebsitePanel
-				return usersService.UpdateUserTask(taskId, user);
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
-		}
+            try
+            {
+                // update user in WebsitePanel
+                return usersService.UpdateUserTask(taskId, user);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
-		public static int AddUserAccount(List<string> log, UserInfo user, bool sendLetter)
-		{
-			esUsers usersService = new esUsers();
-			ConfigureEnterpriseServerProxy(usersService, true);
+        public static int AddUserAccount(List<string> log, UserInfo user, bool sendLetter)
+        {
+            esUsers usersService = new esUsers();
+            ConfigureEnterpriseServerProxy(usersService, true);
 
-			try
-			{
-				// add user to WebsitePanel server
+            try
+            {
+                // add user to WebsitePanel server
                 return usersService.AddUser(user, sendLetter);
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
-		}
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
-		public static int DeleteUserAccount(int userId)
-		{
-			esUsers usersService = new esUsers();
-			ConfigureEnterpriseServerProxy(usersService, true);
+        public static int DeleteUserAccount(int userId)
+        {
+            esUsers usersService = new esUsers();
+            ConfigureEnterpriseServerProxy(usersService, true);
 
-			try
-			{
-				// add user to WebsitePanel server
-				return usersService.DeleteUser(userId);
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
-		}
+            try
+            {
+                // add user to WebsitePanel server
+                return usersService.DeleteUser(userId);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
-		public static int ChangeUserStatus(int userId, UserStatus status)
-		{
-			esUsers usersService = new esUsers();
-			ConfigureEnterpriseServerProxy(usersService, true);
+        public static int ChangeUserStatus(int userId, UserStatus status)
+        {
+            esUsers usersService = new esUsers();
+            ConfigureEnterpriseServerProxy(usersService, true);
 
-			try
-			{
-				// add user to WebsitePanel server
-				return usersService.ChangeUserStatus(userId, status);
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
-		}
+            try
+            {
+                // add user to WebsitePanel server
+                return usersService.ChangeUserStatus(userId, status);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
-		public static UserInfo GetCurrentUser()
-		{
-			UserInfo user = null;
+        public static UserInfo GetCurrentUser()
+        {
+            UserInfo user = null;
 
-			if (AuthTicket != null)
-			{
-				esUsers usersService = new esUsers();
-				ConfigureEnterpriseServerProxy(usersService);
+            if (AuthTicket != null)
+            {
+                esUsers usersService = new esUsers();
+                ConfigureEnterpriseServerProxy(usersService);
 
-				user = usersService.GetUserByUsername(AuthTicket.Name);
-			}
+                user = usersService.GetUserByUsername(AuthTicket.Name);
+            }
 
-			return user;
-		}
+            return user;
+        }
 
-		private static void CompleteUserLogin(string username, bool rememberLogin,
-			string preferredLocale, string theme)
-		{
-			// store last successful username in the cookie
-			HttpCookie cookie = new HttpCookie("WebsitePanelLogin", username);
-			cookie.Expires = DateTime.Now.AddDays(7);
-			HttpContext.Current.Response.Cookies.Add(cookie);
+        private static void CompleteUserLogin(string username, bool rememberLogin,
+            string preferredLocale, string theme)
+        {
+            // store last successful username in the cookie
+            HttpCookie cookie = new HttpCookie("WebsitePanelLogin", username);
+            cookie.Expires = DateTime.Now.AddDays(7);
+            HttpContext.Current.Response.Cookies.Add(cookie);
 
-			// set language
-			SetCurrentLanguage(preferredLocale);
+            // set language
+            SetCurrentLanguage(preferredLocale);
 
-			// set theme
-			SetCurrentTheme(theme);
+            // set theme
+            SetCurrentTheme(theme);
 
-			// remember me
-			if (rememberLogin)
-				HttpContext.Current.Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddMonths(1);
-		}
+            // remember me
+            if (rememberLogin)
+                HttpContext.Current.Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddMonths(1);
+        }
 
-		public static void SetCurrentLanguage(string preferredLocale)
-		{
-			if (!String.IsNullOrEmpty(preferredLocale))
-			{
-				HttpCookie localeCrumb = new HttpCookie(CultureCookieName, preferredLocale);
-				localeCrumb.Expires = DateTime.Now.AddMonths(2);
-				HttpContext.Current.Response.Cookies.Add(localeCrumb);
-			}
-		}
+        public static void SetCurrentLanguage(string preferredLocale)
+        {
+            if (!String.IsNullOrEmpty(preferredLocale))
+            {
+                HttpCookie localeCrumb = new HttpCookie(CultureCookieName, preferredLocale);
+                localeCrumb.Expires = DateTime.Now.AddMonths(2);
+                HttpContext.Current.Response.Cookies.Add(localeCrumb);
+            }
+        }
 
-		public static void ConfigureEnterpriseServerProxy(WebServicesClientProtocol proxy)
-		{
-			ConfigureEnterpriseServerProxy(proxy, true);
-		}
+        public static void ConfigureEnterpriseServerProxy(WebServicesClientProtocol proxy)
+        {
+            ConfigureEnterpriseServerProxy(proxy, true);
+        }
 
-		public static void ConfigureEnterpriseServerProxy(WebServicesClientProtocol proxy, bool applyPolicy)
-		{
-			// load ES properties
-			string serverUrl = PortalConfiguration.SiteSettings["EnterpriseServer"];
+        public static void ConfigureEnterpriseServerProxy(WebServicesClientProtocol proxy, bool applyPolicy)
+        {
+            // load ES properties
+            string serverUrl = PortalConfiguration.SiteSettings["EnterpriseServer"];
 
-			EnterpriseServerProxyConfigurator cnfg = new EnterpriseServerProxyConfigurator();
-			cnfg.EnterpriseServerUrl = serverUrl;
+            EnterpriseServerProxyConfigurator cnfg = new EnterpriseServerProxyConfigurator();
+            cnfg.EnterpriseServerUrl = serverUrl;
 
-			// create assertion
-			if (applyPolicy)
-			{
-				if (AuthTicket != null)
-				{
-					cnfg.Username = AuthTicket.Name;
-					cnfg.Password = AuthTicket.UserData.Substring(0, AuthTicket.UserData.IndexOf(Environment.NewLine));
-				}
-			}
+            // create assertion
+            if (applyPolicy)
+            {
+                if (AuthTicket != null)
+                {
+                    cnfg.Username = AuthTicket.Name;
+                    cnfg.Password = AuthTicket.UserData.Substring(0, AuthTicket.UserData.IndexOf(Environment.NewLine));
+                }
+            }
 
-			cnfg.Configure(proxy);
-		}
+            cnfg.Configure(proxy);
+        }
 
         public static XmlNode GetModuleContentNode(WebPortalControlBase module)
         {
@@ -560,15 +560,15 @@ namespace WebsitePanel.Portal
             return module.Module.SelectNodes("MenuItem");
         }
 
-		public static string FormatIconImageUrl(string url)
-		{
-			return url;
-		}
+        public static string FormatIconImageUrl(string url)
+        {
+            return url;
+        }
 
-		public static string FormatIconLinkUrl(object url)
-		{
-			return DefaultPage.GetPageUrl(url.ToString());
-		}
+        public static string FormatIconLinkUrl(object url)
+        {
+            return DefaultPage.GetPageUrl(url.ToString());
+        }
 
         public static string GetThemedImage(string imageUrl)
         {
@@ -582,76 +582,76 @@ namespace WebsitePanel.Portal
             return page.ResolveUrl("~/App_Themes/" + page.Theme + "/" + iconUrl);
         }
 
-		public static void LoadStatesDropDownList(DropDownList list, string countryCode)
-		{
+        public static void LoadStatesDropDownList(DropDownList list, string countryCode)
+        {
             string xmlFilePath = HttpContext.Current.Server.MapPath(CONFIG_FOLDER + "CountryStates.config");
-			list.Items.Clear();
-			if (File.Exists(xmlFilePath))
-			{
-				try
-				{
-					XmlDocument xmlDoc = new XmlDocument();
-					xmlDoc.Load(xmlFilePath);
+            list.Items.Clear();
+            if (File.Exists(xmlFilePath))
+            {
+                try
+                {
+                    XmlDocument xmlDoc = new XmlDocument();
+                    xmlDoc.Load(xmlFilePath);
 
-					List<ListItem> items = new List<ListItem>();
+                    List<ListItem> items = new List<ListItem>();
 
-					XmlNodeList xmlNodes = xmlDoc.SelectNodes("//State[@countryCode='" + countryCode + "']");
-					foreach (XmlElement xmlNode in xmlNodes)
-					{
-						string nodeName = xmlNode.GetAttribute("name");
-						string nodeKey = xmlNode.GetAttribute("key");
+                    XmlNodeList xmlNodes = xmlDoc.SelectNodes("//State[@countryCode='" + countryCode + "']");
+                    foreach (XmlElement xmlNode in xmlNodes)
+                    {
+                        string nodeName = xmlNode.GetAttribute("name");
+                        string nodeKey = xmlNode.GetAttribute("key");
 
-						items.Add(new ListItem(nodeName, nodeKey));
-					}
+                        items.Add(new ListItem(nodeName, nodeKey));
+                    }
 
-					list.Items.AddRange(items.ToArray());
-				}
-				catch
-				{
-				}
-			}
-		}
+                    list.Items.AddRange(items.ToArray());
+                }
+                catch
+                {
+                }
+            }
+        }
 
-		public static void LoadCountriesDropDownList(DropDownList list, string countryToSelect)
-		{
+        public static void LoadCountriesDropDownList(DropDownList list, string countryToSelect)
+        {
             string countriesPath = HttpContext.Current.Server.MapPath(CONFIG_FOLDER + "Countries.config");
-			
-			if (File.Exists(countriesPath))
-			{
-				try
-				{
-					XmlDocument xmlCountriesDoc = new XmlDocument();
-					xmlCountriesDoc.Load(countriesPath);
+            
+            if (File.Exists(countriesPath))
+            {
+                try
+                {
+                    XmlDocument xmlCountriesDoc = new XmlDocument();
+                    xmlCountriesDoc.Load(countriesPath);
 
-					List<ListItem> items = new List<ListItem>();
+                    List<ListItem> items = new List<ListItem>();
 
-					XmlNodeList xmlCountries = xmlCountriesDoc.SelectNodes("//Country");
-					foreach (XmlElement xmlCountry in xmlCountries)
-					{
-						string countryName = xmlCountry.GetAttribute("name");
-						string countryKey = xmlCountry.GetAttribute("key");
+                    XmlNodeList xmlCountries = xmlCountriesDoc.SelectNodes("//Country");
+                    foreach (XmlElement xmlCountry in xmlCountries)
+                    {
+                        string countryName = xmlCountry.GetAttribute("name");
+                        string countryKey = xmlCountry.GetAttribute("key");
 
-						if (String.Compare(countryKey, countryToSelect) == 0)
-						{
-							ListItem li = new ListItem(countryName, countryKey);
-							li.Selected = true;
-							items.Add(li);
-						}
-						else
-							items.Add(new ListItem(countryName, countryKey));
-					}
+                        if (String.Compare(countryKey, countryToSelect) == 0)
+                        {
+                            ListItem li = new ListItem(countryName, countryKey);
+                            li.Selected = true;
+                            items.Add(li);
+                        }
+                        else
+                            items.Add(new ListItem(countryName, countryKey));
+                    }
 
-					list.Items.AddRange(items.ToArray());
-				}
-				catch
-				{
-				}
-			}
-		}
+                    list.Items.AddRange(items.ToArray());
+                }
+                catch
+                {
+                }
+            }
+        }
 
 
-		public static void LoadCultureDropDownList(DropDownList list)
-		{
+        public static void LoadCultureDropDownList(DropDownList list)
+        {
             string localesPath = HttpContext.Current.Server.MapPath(CONFIG_FOLDER + "SupportedLocales.config");
 
             if (File.Exists(localesPath))
@@ -696,39 +696,39 @@ namespace WebsitePanel.Portal
                 {
                 }
             }
-		}
+        }
 
-		public static void LoadThemesDropDownList(DropDownList list)
-		{
-			string localesPath = HttpContext.Current.Server.MapPath(CONFIG_FOLDER + "SupportedThemes.config");
+        public static void LoadThemesDropDownList(DropDownList list)
+        {
+            string localesPath = HttpContext.Current.Server.MapPath(CONFIG_FOLDER + "SupportedThemes.config");
 
-			if (File.Exists(localesPath))
-			{
-				string themeToSelect = CurrentTheme;
+            if (File.Exists(localesPath))
+            {
+                string themeToSelect = CurrentTheme;
 
-				try
-				{
-					XmlDocument doc = new XmlDocument();
-					doc.Load(localesPath);
+                try
+                {
+                    XmlDocument doc = new XmlDocument();
+                    doc.Load(localesPath);
 
-					XmlNodeList xmlThemes = doc.SelectNodes("//Theme");
-					for (int i = 0; i < xmlThemes.Count; i++)
-					{
-						XmlElement xmlTheme = (XmlElement)xmlThemes[i];
-						string themeName = xmlTheme.GetAttribute("name");
-						string themeTitle = xmlTheme.GetAttribute("title");
+                    XmlNodeList xmlThemes = doc.SelectNodes("//Theme");
+                    for (int i = 0; i < xmlThemes.Count; i++)
+                    {
+                        XmlElement xmlTheme = (XmlElement)xmlThemes[i];
+                        string themeName = xmlTheme.GetAttribute("name");
+                        string themeTitle = xmlTheme.GetAttribute("title");
 
-						list.Items.Add(new ListItem(themeTitle, themeName));
+                        list.Items.Add(new ListItem(themeTitle, themeName));
 
-						if (String.Compare(themeName, themeToSelect) == 0)
-							list.Items[i].Selected = true;
-					}
-				}
-				catch
-				{
-				}
-			}
-		}
+                        if (String.Compare(themeName, themeToSelect) == 0)
+                            list.Items[i].Selected = true;
+                    }
+                }
+                catch
+                {
+                }
+            }
+        }
 
         #region Navigation Routines
         public static string LoginRedirectUrl
@@ -805,23 +805,23 @@ namespace WebsitePanel.Portal
                 urlBuilder.Add(String.Concat(keyName, "=", keyValue));
 
             // load additional params
-			if (additionalParams != null)
-			{
+            if (additionalParams != null)
+            {
                 string controlId = null;
                 string moduleDefinitionId = null;
                 //
-				foreach (string paramStr in additionalParams)
-				{
-					if (paramStr.StartsWith("ctl=", StringComparison.InvariantCultureIgnoreCase))
-					{
-						// ensure page exists and avoid unnecessary exceptions throw
-						if (PortalConfiguration.Site.Pages.ContainsKey(pageId))
-						{
-							string[] pair = paramStr.Split('=');
+                foreach (string paramStr in additionalParams)
+                {
+                    if (paramStr.StartsWith("ctl=", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        // ensure page exists and avoid unnecessary exceptions throw
+                        if (PortalConfiguration.Site.Pages.ContainsKey(pageId))
+                        {
+                            string[] pair = paramStr.Split('=');
                             controlId = pair[1];
                         }
  
-					}
+                    }
                     else if (paramStr.StartsWith("moduleDefId=", StringComparison.InvariantCultureIgnoreCase))
                     {
                         // ensure page exists and avoid unnecessary exceptions throw
@@ -832,8 +832,8 @@ namespace WebsitePanel.Portal
                         }
                         continue;
                     }
-					urlBuilder.Add(paramStr);
-				}
+                    urlBuilder.Add(paramStr);
+                }
                 if (!String.IsNullOrEmpty(moduleDefinitionId) && !String.IsNullOrEmpty(controlId))
                 {
                     // 1. Read module controls first information first
@@ -864,7 +864,7 @@ namespace WebsitePanel.Portal
                         }
                     }
                 }
-			}
+            }
 
             End:
             if (urlBuilder.Count > 0)

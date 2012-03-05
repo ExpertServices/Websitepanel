@@ -67,12 +67,7 @@ namespace WebsitePanel.Portal.VPSForPC
                 }
                 catch (Exception ex)
                 {
-                    vm = null;
-                }
-
-                if (vm == null)
-                {
-                    messageBox.ShowErrorMessage("VPS_LOAD_VM_META_ITEM");
+                    messageBox.ShowErrorMessage("VPS_LOAD_VM_META_ITEM", ex);
                     return;
                 }
 

@@ -107,15 +107,23 @@ namespace WebsitePanel.Portal
 			}
 		}
 
-		private void BindListOfAvailableSslDomains(ServerBinding[] siteBindings, SSLCertificate[] siteCertificates)
+        private void BindListOfAvailableSslDomains(ServerBinding[] siteBindings, SSLCertificate[] siteCertificates, string websiteName = "")
 		{
-			lstDomains.Items.Clear();
-			//
-			foreach (ServerBinding binding in siteBindings)
-			{
-				//
-				lstDomains.Items.Add(new ListItem(binding.Host, binding.Host));
-			}
+            lstDomains.Items.Clear();
+            //
+            foreach (ServerBinding binding in siteBindings)
+            {
+                //
+                if (binding.IP.ToString().Length > 0 && binding.Host.Length == 0)
+                {
+                    lstDomains.Items.Add(new ListItem(websiteName, websiteName));
+                    lstDomains.Items.Add(new ListItem(String.Format("www.{0}", websiteName), String.Format("www.{0}", websiteName)));
+                }
+                else
+                {
+                    lstDomains.Items.Add(new ListItem(binding.Host, binding.Host));
+                }
+            }
 		}
 
 		public void BindWebItem(WebVirtualDirectory item)
@@ -137,7 +145,7 @@ namespace WebsitePanel.Portal
 
 				SSLNotInstalled.Visible = true;
 				//
-				BindListOfAvailableSslDomains(webSite.Bindings, certificates);
+                BindListOfAvailableSslDomains(webSite.Bindings, certificates, webSite.Name);
 
 				if (certificates.Length > 0)
 				{
@@ -560,7 +568,7 @@ namespace WebsitePanel.Portal
 
 				SSLNotInstalled.Visible = true;
 				//
-				BindListOfAvailableSslDomains(item.Bindings, certificates);
+				BindListOfAvailableSslDomains(item.Bindings, certificates, item.Name);
 
 				if (certificates.Length > 0)
 				{

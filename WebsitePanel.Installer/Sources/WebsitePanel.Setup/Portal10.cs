@@ -6,58 +6,85 @@ using WebsitePanel.Setup.Actions;
 
 namespace WebsitePanel.Setup
 {
-	/// <summary>
-	/// Release 1.2.0
-	/// </summary>
-	public class Portal120 : Portal
-	{
-		public static new object Install(object obj)
-		{
-			//
-			return Portal.InstallBase(obj, "1.1.0");
-		}
+    /// <summary>
+    /// Release 1.2.1
+    /// </summary>
+    public class Portal121 : Portal
+    {
+        public static new object Install(object obj)
+        {
+            //
+            return Portal.InstallBase(obj, "1.2.1");
+        }
 
-		public static new DialogResult Uninstall(object obj)
-		{
-			return Portal.Uninstall(obj);
-		}
+        public static new DialogResult Uninstall(object obj)
+        {
+            return Portal.Uninstall(obj);
+        }
 
-		public static new DialogResult Setup(object obj)
-		{
-			return Portal.Setup(obj);
-		}
+        public static new DialogResult Setup(object obj)
+        {
+            return Portal.Setup(obj);
+        }
 
-		public static new DialogResult Update(object obj)
-		{
-			return UpdateBase(obj, "1.2.0", "1.1.2", false, new InstallAction(ActionTypes.SwitchWebPortal2AspNet40));
-		}
-	}
+        public static new DialogResult Update(object obj)
+        {
+            return UpdateBase(obj, "1.2.1", "1.2.0", false);
+        }
+    }
 
-	/// <summary>
-	/// Release 1.1.0
-	/// </summary>
-	public class Portal110 : Portal
-	{
-		public static new object Install(object obj)
-		{
-			return Portal.InstallBase(obj, "1.1.0");
-		}
+    /// <summary>
+    /// Release 1.2.0
+    /// </summary>
+    public class Portal120 : Portal
+    {
+        public static new object Install(object obj)
+        {
+            //
+            return Portal.InstallBase(obj, "1.1.0");
+        }
 
-		public static new DialogResult Uninstall(object obj)
-		{
-			return Portal.Uninstall(obj);
-		}
+        public static new DialogResult Uninstall(object obj)
+        {
+            return Portal.Uninstall(obj);
+        }
 
-		public static new DialogResult Setup(object obj)
-		{
-			return Portal.Setup(obj);
-		}
+        public static new DialogResult Setup(object obj)
+        {
+            return Portal.Setup(obj);
+        }
 
-		public static new DialogResult Update(object obj)
-		{
-			return UpdateBase(obj, "1.1.0", "1.0.2", false, new InstallAction(ActionTypes.AddCustomErrorsPage));
-		}
-	}
+        public static new DialogResult Update(object obj)
+        {
+            return UpdateBase(obj, "1.2.0", "1.1.2,1.2.0", false, new InstallAction(ActionTypes.SwitchWebPortal2AspNet40));
+        }
+    }
+
+    /// <summary>
+    /// Release 1.1.0
+    /// </summary>
+    public class Portal110 : Portal
+    {
+        public static new object Install(object obj)
+        {
+            return Portal.InstallBase(obj, "1.1.0");
+        }
+
+        public static new DialogResult Uninstall(object obj)
+        {
+            return Portal.Uninstall(obj);
+        }
+
+        public static new DialogResult Setup(object obj)
+        {
+            return Portal.Setup(obj);
+        }
+
+        public static new DialogResult Update(object obj)
+        {
+            return UpdateBase(obj, "1.1.0", "1.0.2", false, new InstallAction(ActionTypes.AddCustomErrorsPage));
+        }
+    }
     /// Release 1.0.2
     /// </summary>
     public class Portal102 : Portal101

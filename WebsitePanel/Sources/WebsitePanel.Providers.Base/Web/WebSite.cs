@@ -47,7 +47,6 @@ namespace WebsitePanel.Providers.Web
         private string siteId;
 		private string siteIPAddress;
         private int siteIPAddressId;
-		private string logsPath;
         private string dataPath;
 		private ServerBinding[] bindings;
         private bool frontPageAvailable;

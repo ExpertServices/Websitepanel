@@ -66,44 +66,47 @@ namespace WebsitePanel.Portal
         {
             if (IsHeliconApeInstalled)
             {
-                WebSite site = null;
-                try
+                if (!IsPostBack)
                 {
-                    site = ES.Services.WebServers.GetWebSite(PanelRequest.ItemID);
-                }
-                catch (Exception ex)
-                {
-					HostModule.ShowErrorMessage("WEB_GET_SITE", ex);
-                    return;
-                }
+                    WebSite site = null;
+                    try
+                    {
+                        site = ES.Services.WebServers.GetWebSite(PanelRequest.ItemID);
+                    }
+                    catch (Exception ex)
+                    {
+                        HostModule.ShowErrorMessage("WEB_GET_SITE", ex);
+                        return;
+                    }
 
-                if (site == null)
-                    RedirectToBrowsePage();
+                    if (site == null)
+                        RedirectToBrowsePage();
 
-                BindHeliconApe(site);
+                    BindHeliconApe(site);
+                }
             }
         }
 
-		public void BindHeliconApe(WebSite site)
+        public void BindHeliconApe(WebSite site)
         {
             // save initial state
             IsHeliconApeInstalled = site.HeliconApeInstalled;
             IsHeliconApeEnabled = site.HeliconApeEnabled;
             IsSecuredFoldersInstalled = site.SecuredFoldersInstalled;
             
-			// Render a warning message about the automatic site's settings change
-			if (!IsHeliconApeEnabled && site.IIs7)
-			{
-				// Ensure the message is displayed only when neccessary
-				if (site.EnableWindowsAuthentication || !site.AspNetInstalled.EndsWith("I") || site.SecuredFoldersInstalled)
-				{
-					// TODO: show warning, do not force to enable integrated pool
+            // Render a warning message about the automatic site's settings change
+            if (!IsHeliconApeEnabled && site.IIs7)
+            {
+                // Ensure the message is displayed only when neccessary
+                if (site.EnableWindowsAuthentication || !site.AspNetInstalled.EndsWith("I") || site.SecuredFoldersInstalled)
+                {
+                    // TODO: show warning, do not force to enable integrated pool
                     string warningStr = GetLocalizedString("EnableFoldersIIs7Warning.Text");
-					// Render a warning only if specified
-					if (!String.IsNullOrEmpty(warningStr))
+                    // Render a warning only if specified
+                    if (!String.IsNullOrEmpty(warningStr))
                         btnToggleHeliconApe.OnClientClick = String.Format("return confirm('{0}')", warningStr);
-				}
-			}
+                }
+            }
             // toggle
             ToggleControls();
         }
@@ -112,7 +115,7 @@ namespace WebsitePanel.Portal
         {
             if (IsHeliconApeInstalled)
             {
-				// toggle button
+                // toggle button
                 btnToggleHeliconApe.Text = GetLocalizedString(
                     IsHeliconApeEnabled ? "DisableHeliconApe.Text" : "EnableHeliconApe.Text");
 
@@ -130,9 +133,9 @@ namespace WebsitePanel.Portal
             }
             else
             {
-				// Display the module not installed message for informational purposes.
-    			panelHeliconApeIsNotInstalledMessage.Visible = true;
-				//
+                // Display the module not installed message for informational purposes.
+                panelHeliconApeIsNotInstalledMessage.Visible = true;
+                //
                 btnToggleHeliconApe.Visible = false;
                 HeliconApeFoldersPanel.Visible = false;
             }

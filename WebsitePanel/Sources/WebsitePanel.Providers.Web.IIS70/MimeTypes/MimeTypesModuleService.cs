@@ -44,28 +44,25 @@ namespace WebsitePanel.Providers.Web.MimeTypes
 		/// Loads available mime maps into supplied virtual iisDirObject description.
 		/// </summary>
 		/// <param name="vdir">Virtual iisDirObject description.</param>
-		public void GetMimeMaps(WebVirtualDirectory virtualDir)
+		public void GetMimeMaps(ServerManager srvman, WebVirtualDirectory virtualDir)
 		{
-			using (var srvman = GetServerManager())
+			var config = srvman.GetWebConfiguration(virtualDir.FullQualifiedPath);
+			//
+			var section = config.GetSection(Constants.StaticContentSection);
+			//
+			var mappings = new List<MimeMap>();
+			//
+			foreach (var item in section.GetCollection())
 			{
-				var config = srvman.GetWebConfiguration(virtualDir.FullQualifiedPath);
+				var item2Get = GetMimeMap(item);
 				//
-				var section = config.GetSection(Constants.StaticContentSection);
+				if (item2Get == null)
+					continue;
 				//
-				var mappings = new List<MimeMap>();
-				//
-				foreach (var item in section.GetCollection())
-				{
-					var item2Get = GetMimeMap(item);
-					//
-					if (item2Get == null)
-						continue;
-					//
-					mappings.Add(item2Get);
-				}
-				//
-				virtualDir.MimeMaps = mappings.ToArray();
+				mappings.Add(item2Get);
 			}
+			//
+			virtualDir.MimeMaps = mappings.ToArray();
 		}
 
 		/// <summary>

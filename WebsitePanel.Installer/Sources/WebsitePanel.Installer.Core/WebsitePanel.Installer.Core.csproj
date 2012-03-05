@@ -35,6 +35,7 @@
     <Reference Include="Ionic.Zip.Reduced">
       <HintPath>..\..\Lib\Ionic.Zip.Reduced.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -80,6 +81,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ServiceComponentNotFoundException.cs" />
     <Compile Include="ServiceProviderProxy.cs">
       <SubType>Code</SubType>
     </Compile>

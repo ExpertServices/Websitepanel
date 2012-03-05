@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -1901,52 +1901,52 @@ namespace WebsitePanel.Setup
 			}
 		}
 
-        private void UpdateWebConfigNamespaces()
-        {
-            try
-            {
-                // find all .config files in the installation directory
-                string[] configFiles = Directory.GetFiles(Wizard.SetupVariables.InstallationFolder,
-                    "*.config", SearchOption.TopDirectoryOnly);
+		private void UpdateWebConfigNamespaces()
+		{
+			try
+			{
+				// find all .config files in the installation directory
+				string[] configFiles = Directory.GetFiles(Wizard.SetupVariables.InstallationFolder,
+					"*.config", SearchOption.TopDirectoryOnly);
 
-                if (configFiles != null && configFiles.Length > 0)
-                {
-                    foreach (string path in configFiles)
-                    {
-                        try
-                        {
-                            Log.WriteStart(String.Format("Updating '{0}' file", path));
+				if (configFiles != null && configFiles.Length > 0)
+				{
+					foreach (string path in configFiles)
+					{
+						try
+						{
+							Log.WriteStart(String.Format("Updating '{0}' file", path));
 
-                            // load configuration file in memory
-                            string content = File.ReadAllText(path);
+							// load configuration file in memory
+							string content = File.ReadAllText(path);
 
-                            // replace DotNetPark. to empty strings
-                            content = Regex.Replace(content, "dotnetpark\\.", "", RegexOptions.IgnoreCase);
+							// replace DotNetPark. to empty strings
+							content = Regex.Replace(content, "dotnetpark\\.", "", RegexOptions.IgnoreCase);
 
-                            // save updated config
-                            File.WriteAllText(path, content);
+							// save updated config
+							File.WriteAllText(path, content);
 
-                            Log.WriteEnd(String.Format("Updated '{0}' file", path));
-                            InstallLog.AppendLine(String.Format("- Updated {0} file", path));
-                        }
-                        catch (Exception ex)
-                        {
-                            if (Utils.IsThreadAbortException(ex))
-                                return;
-                            Log.WriteError(String.Format("Error updating '{0}' file", path), ex);
-                            throw;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                if (Utils.IsThreadAbortException(ex))
-                    return;
-                Log.WriteError("Error listing *.config files", ex);
-                throw;
-            }
-        }
+							Log.WriteEnd(String.Format("Updated '{0}' file", path));
+							InstallLog.AppendLine(String.Format("- Updated {0} file", path));
+						}
+						catch (Exception ex)
+						{
+							if (Utils.IsThreadAbortException(ex))
+								return;
+							Log.WriteError(String.Format("Error updating '{0}' file", path), ex);
+							throw;
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				if (Utils.IsThreadAbortException(ex))
+					return;
+				Log.WriteError("Error listing *.config files", ex);
+				throw;
+			}
+		}
 
 		private void UpdateEnterpriseServerUrl()
 		{
