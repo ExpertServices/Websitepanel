@@ -2496,7 +2496,7 @@ exit", Convert.ToInt32(objDisk["Index"])));
         #region Hyper-V Cloud
         public bool CheckServerState(string connString)
         {
-            return !String.IsNullOrWhiteSpace(connString);
+            return !String.IsNullOrEmpty(connString);
         }
         #endregion Hyper-V Cloud
     }

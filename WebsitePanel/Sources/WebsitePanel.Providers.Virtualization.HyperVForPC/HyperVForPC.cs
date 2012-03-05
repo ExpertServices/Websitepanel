@@ -634,7 +634,7 @@ namespace WebsitePanel.Providers.VirtualizationForPC
 					{
 						try
 						{
-							hostInfo = client.GetHostByName(String.IsNullOrWhiteSpace(ServerNameSettings)
+                            hostInfo = client.GetHostByName(IsNullOrWhiteSpaceString(ServerNameSettings)
 								? selTemplate.HostName : ServerNameSettings);
 						}
 						catch (Exception ex)
@@ -1593,8 +1593,8 @@ namespace WebsitePanel.Providers.VirtualizationForPC
 				{
 					case VMForPCSettingsName.SCVMMServer:
 						{
-							if (!String.IsNullOrWhiteSpace(connString)
-								&& !String.IsNullOrWhiteSpace(connName))
+							if (!IsNullOrWhiteSpaceString(connString)
+								&& !IsNullOrWhiteSpaceString(connName))
 							{
 								EndpointAddress endPointAddress = GetEndPointAddress(connString, connName);
 
@@ -1609,8 +1609,8 @@ namespace WebsitePanel.Providers.VirtualizationForPC
 						}
 					case VMForPCSettingsName.SCOMServer:
 						{
-							if (!String.IsNullOrWhiteSpace(connString)
-								&& !String.IsNullOrWhiteSpace(connName))
+							if (!IsNullOrWhiteSpaceString(connString)
+								&& !IsNullOrWhiteSpaceString(connName))
 							{
 								EndpointAddress endPointAddress = GetEndPointAddress(connString, connName);
 
@@ -1845,8 +1845,8 @@ namespace WebsitePanel.Providers.VirtualizationForPC
 		{
 			WSPVirtualMachineManagementServiceClient ret;
 
-			if (!String.IsNullOrWhiteSpace(SCVMMServer)
-				&& !String.IsNullOrWhiteSpace(SCVMMPrincipalName))
+			if (!IsNullOrWhiteSpaceString(SCVMMServer)
+				&& !IsNullOrWhiteSpaceString(SCVMMPrincipalName))
 			{
 				EndpointAddress endPointAddress = GetEndPointAddress(SCVMMServer, SCVMMPrincipalName);
 
@@ -1866,8 +1866,8 @@ namespace WebsitePanel.Providers.VirtualizationForPC
 		{
 			WSPMonitoringServiceClient ret;
 
-			if (!String.IsNullOrWhiteSpace(SCOMServer)
-				&& !String.IsNullOrWhiteSpace(SCOMPrincipalName))
+			if (!IsNullOrWhiteSpaceString(SCOMServer)
+				&& !IsNullOrWhiteSpaceString(SCOMPrincipalName))
 			{
 				EndpointAddress endPointAddress = GetEndPointAddress(SCOMServer, SCOMPrincipalName);
 
@@ -2047,5 +2047,10 @@ namespace WebsitePanel.Providers.VirtualizationForPC
 		{
 			throw new NotImplementedException();
 		}
+
+        private bool IsNullOrWhiteSpaceString(string value)
+        {
+            return String.IsNullOrEmpty(value) || (value.Trim().Length == 0);
+        }
 	}
 }

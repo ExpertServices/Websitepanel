@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WebsitePanel.Providers.VirtualizationForPC</RootNamespace>
     <AssemblyName>WebsitePanel.Providers.VirtualizationForPC.HyperVForPC</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,7 +40,6 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -106,6 +106,51 @@
     <None Include="Service References\MonitoringWebService\MonitoringService9.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\MonitoringWebService\WebsitePanel.Providers.VirtualizationForPC.MonitoringWebService.Alert.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MonitoringWebService\WebsitePanel.Providers.VirtualizationForPC.MonitoringWebService.Device.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MonitoringWebService\WebsitePanel.Providers.VirtualizationForPC.MonitoringWebService.ManagementPackRule.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MonitoringWebService\WebsitePanel.Providers.VirtualizationForPC.MonitoringWebService.ManagementPackUnitMonitor.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MonitoringWebService\WebsitePanel.Providers.VirtualizationForPC.MonitoringWebService.MonitoredObject.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MonitoringWebService\WebsitePanel.Providers.VirtualizationForPC.MonitoringWebService.MonitorHealthState.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MonitoringWebService\WebsitePanel.Providers.VirtualizationForPC.MonitoringWebService.MonitorInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MonitoringWebService\WebsitePanel.Providers.VirtualizationForPC.MonitoringWebService.MonitoringObject.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MonitoringWebService\WebsitePanel.Providers.VirtualizationForPC.MonitoringWebService.Pack.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MonitoringWebService\WebsitePanel.Providers.VirtualizationForPC.MonitoringWebService.PerformanceCounterCategoryInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MonitoringWebService\WebsitePanel.Providers.VirtualizationForPC.MonitoringWebService.PerformanceData.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MonitoringWebService\WebsitePanel.Providers.VirtualizationForPC.MonitoringWebService.PerformanceDataValue.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MonitoringWebService\WebsitePanel.Providers.VirtualizationForPC.MonitoringWebService.TaskResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MonitoringWebService\WebsitePanel.Providers.VirtualizationForPC.MonitoringWebService.Template.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\MonitoringWebService\WebsitePanel.Providers.VirtualizationForPC.MonitoringWebService.WindowsService.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\SVMMService\VirtualMachineManagementService.wsdl" />
     <None Include="Service References\SVMMService\VirtualMachineManagementService.xsd">
       <SubType>Designer</SubType>
@@ -127,6 +172,78 @@
     </None>
     <None Include="Service References\SVMMService\VirtualMachineManagementService6.xsd">
       <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.GuestOSProfileInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.HardwareProfileInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.HostClusterInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.HostDiskInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.HostInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.HostVolumeInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.ISOInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.LibraryServerInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.MemorySettingInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.OperatingSystemInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.ProcessorTypeInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.ScriptInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.TaskInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.TemplateInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.VirtualCOMPortInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.VirtualDiskDriveInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.VirtualDVDDriveInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.VirtualHardDiskInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.VirtualMachineInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.VirtualNetworkAdapterInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.VirtualNetworkInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.VirtualSCSIAdapterInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.VMCheckpointInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SVMMService\WebsitePanel.Providers.VirtualizationForPC.SVMMService.VMHostRatingInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>

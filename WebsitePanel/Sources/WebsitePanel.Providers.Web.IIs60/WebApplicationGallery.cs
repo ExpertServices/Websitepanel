@@ -120,7 +120,7 @@ namespace WebsitePanel.Providers.Web
 			// Log all version keys found
 			Array.ForEach(versionKeys, (x) => { Log.WriteInfo("MSDeploy version key found: {0}", x); });
 			// Determine appropriate key name to query for
-			var installPathKey = Environment.Is64BitProcess ? "InstallPath" : "InstallPath_x86";
+            var installPathKey = (IntPtr.Size == 8) ? "InstallPath" : "InstallPath_x86";
 			var fileVersion = String.Empty;
 			//
 			var libPath = String.Empty;

@@ -18,6 +18,6 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyCompany("Outercurve Foundation"),  _
  Assembly: AssemblyCopyright("Copyright © 2011 Outercurve Foundation."),  _
  Assembly: AssemblyVersion("1.2.1.0"),  _
- Assembly: AssemblyFileVersion("1.2.1.0"),  _
+ Assembly: AssemblyFileVersion("1.2.1.3"),  _
  Assembly: AssemblyInformationalVersion("1.2.1")> 
 

@@ -1990,7 +1990,7 @@ namespace WebsitePanel.Providers.Mail
                 settings.Add(string.Concat("disablelistcommand=", list.DisableListcommand));
                 settings.Add(string.Concat("disablesubscribecommand=", list.DisableSubscribecommand));
 
-                Log.WriteWarning(string.Join(" , ", settings));
+                Log.WriteWarning(string.Join(" , ", settings.ToArray()));
 
                 GenericResult result = lists.SetRequestedListSettings(AdminUsername, AdminPassword,
                                                                       domain,
