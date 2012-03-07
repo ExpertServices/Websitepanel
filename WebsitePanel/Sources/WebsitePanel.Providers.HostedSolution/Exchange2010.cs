@@ -202,18 +202,24 @@ namespace WebsitePanel.Providers.HostedSolution
 		{
 			ExchangeLog.LogStart("CreateMailboxDatabase");
 			string id;
-			Command cmd = new Command("Get-MailboxDatabase");
-			cmd.Parameters.Add("Identity", name);
-			Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
-			if (result != null && result.Count > 0)
-			{
-				id = GetResultObjectIdentity(result);
-			}
-			else
-			{
-				throw new Exception(string.Format("Mailbox database {0} not found", name));
-			}
-
+            if (name != "*")
+            {
+                Command cmd = new Command("Get-MailboxDatabase");
+                cmd.Parameters.Add("Identity", name);
+                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+                if (result != null && result.Count > 0)
+                {
+                    id = GetResultObjectIdentity(result);
+                }
+                else
+                {
+                    throw new Exception(string.Format("Mailbox database {0} not found", name));
+                }
+            }
+            else
+            {
+                id = "*";
+            }
 			ExchangeLog.LogEnd("CreateMailboxDatabase");
 			return id;
 		}

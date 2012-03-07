@@ -809,7 +809,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
 				if (result.Count > 0)
 				{
-					virtualDir = ObjToString(GetPSObjectProperty(result[0], "Identity"));
+                    virtualDir = ObjToString(GetPSObjectProperty(result[0], "Identity"));
 				}
 			}
 			finally
@@ -1827,7 +1827,8 @@ namespace WebsitePanel.Providers.HostedSolution
 						cmd = new Command("Enable-Mailbox");
 						cmd.Parameters.Add("Identity", upn);
 						cmd.Parameters.Add("Alias", accountName);
-						cmd.Parameters.Add("Database", mailboxDatabase);
+                        if (!(mailboxDatabase == "*" && exchangeVersion >= new Version(14, 0)))
+                            cmd.Parameters.Add("Database", mailboxDatabase);
 						if (accountType == ExchangeAccountType.Equipment)
 							cmd.Parameters.Add("Equipment");
 						else if (accountType == ExchangeAccountType.Room)
@@ -1976,7 +1977,8 @@ namespace WebsitePanel.Providers.HostedSolution
 				cmd.Parameters.Add("DisplayName", displayName);
 				cmd.Parameters.Add("Password", securePassword);
 				cmd.Parameters.Add("ResetPasswordOnNextLogon", false);
-				cmd.Parameters.Add("Database", mailboxDatabase);
+                if (!(mailboxDatabase == "*" && exchangeVersion >= new Version(14, 0)))
+                    cmd.Parameters.Add("Database", mailboxDatabase);
 				if (accountType == ExchangeAccountType.Equipment)
 					cmd.Parameters.Add("Equipment");
 				else if (accountType == ExchangeAccountType.Room)
@@ -5007,13 +5009,10 @@ namespace WebsitePanel.Providers.HostedSolution
 			cmd.Parameters.Add("AddressLists", addressListName);
 			cmd.Parameters.Add("PublicFolderDistributionEnabled", true);
 			cmd.Parameters.Add("IsDefault", false);
-
-
-			//TODO: fix web distribution
-			/*if (!string.IsNullOrEmpty(oabVirtualDir))
+			if (!string.IsNullOrEmpty(oabVirtualDirs))
 			{
 				cmd.Parameters.Add("VirtualDirectories", oabVirtualDirs);
-			}*/
+			}
 
 			Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
 			string id = GetResultObjectDN(result);
