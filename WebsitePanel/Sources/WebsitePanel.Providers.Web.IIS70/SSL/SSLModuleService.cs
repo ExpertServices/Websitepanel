@@ -31,8 +31,7 @@ using WebsitePanel.Providers.Common;
 using WebsitePanel.Server.Utils;
 using System;
 using System.Linq;
-using CERTENROLLLib;
-using CERTCLIENTLib;
+using CertEnrollInterop;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using WebsitePanel.Providers.Web.Iis.Common;
@@ -46,16 +45,16 @@ namespace WebsitePanel.Providers.Web.Iis
 		public void GenerateCsr(SSLCertificate cert)
 		{
 			//  Create all the objects that will be required
-			CX509CertificateRequestPkcs10 pkcs10 = new CX509CertificateRequestPkcs10();
-			CX509PrivateKey privateKey = new CX509PrivateKey();
-			CCspInformation csp = new CCspInformation();
-			CCspInformations csPs = new CCspInformations();
-			CX500DistinguishedName dn = new CX500DistinguishedName();
-			CX509Enrollment enroll = new CX509Enrollment();
-			CObjectIds objectIds = new CObjectIds();
-			CObjectId objectId = new CObjectId();
-			CX509ExtensionKeyUsage extensionKeyUsage = new CX509ExtensionKeyUsage();
-			CX509ExtensionEnhancedKeyUsage x509ExtensionEnhancedKeyUsage = new CX509ExtensionEnhancedKeyUsage();
+            CX509CertificateRequestPkcs10 pkcs10 = Activator.CreateInstance(Type.GetTypeFromProgID("X509Enrollment.CX509CertificateRequestPkcs10", true)) as CX509CertificateRequestPkcs10;
+            CX509PrivateKey privateKey = Activator.CreateInstance(Type.GetTypeFromProgID("X509Enrollment.CX509PrivateKey", true)) as CX509PrivateKey;
+            CCspInformation csp = Activator.CreateInstance(Type.GetTypeFromProgID("X509Enrollment.CCspInformation", true)) as CCspInformation;
+            CCspInformations csPs = Activator.CreateInstance(Type.GetTypeFromProgID("X509Enrollment.CCspInformations", true)) as CCspInformations;
+            CX500DistinguishedName dn = Activator.CreateInstance(Type.GetTypeFromProgID("X509Enrollment.CX500DistinguishedName", true)) as CX500DistinguishedName;
+            CX509Enrollment enroll = Activator.CreateInstance(Type.GetTypeFromProgID("X509Enrollment.CX509Enrollment", true)) as CX509Enrollment;
+            CObjectIds objectIds = Activator.CreateInstance(Type.GetTypeFromProgID("X509Enrollment.CObjectIds", true)) as CObjectIds;
+            CObjectId objectId = Activator.CreateInstance(Type.GetTypeFromProgID("X509Enrollment.CObjectId", true)) as CObjectId;
+            CX509ExtensionKeyUsage extensionKeyUsage = Activator.CreateInstance(Type.GetTypeFromProgID("X509Enrollment.CX509ExtensionKeyUsage", true)) as CX509ExtensionKeyUsage;
+            CX509ExtensionEnhancedKeyUsage x509ExtensionEnhancedKeyUsage = Activator.CreateInstance(Type.GetTypeFromProgID("X509Enrollment.CX509ExtensionEnhancedKeyUsage", true)) as CX509ExtensionEnhancedKeyUsage;
 
 			try
 			{
@@ -90,17 +89,17 @@ namespace WebsitePanel.Providers.Web.Iis
 				cert.PrivateKey = privateKey.ToString();
 				// Key Usage Extension 
 				extensionKeyUsage.InitializeEncode(
-					CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_DIGITAL_SIGNATURE_KEY_USAGE |
-					CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_NON_REPUDIATION_KEY_USAGE |
-					CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_KEY_ENCIPHERMENT_KEY_USAGE |
-					CERTENROLLLib.X509KeyUsageFlags.XCN_CERT_DATA_ENCIPHERMENT_KEY_USAGE
+					CertEnrollInterop.X509KeyUsageFlags.XCN_CERT_DIGITAL_SIGNATURE_KEY_USAGE |
+                    CertEnrollInterop.X509KeyUsageFlags.XCN_CERT_NON_REPUDIATION_KEY_USAGE |
+                    CertEnrollInterop.X509KeyUsageFlags.XCN_CERT_KEY_ENCIPHERMENT_KEY_USAGE |
+                    CertEnrollInterop.X509KeyUsageFlags.XCN_CERT_DATA_ENCIPHERMENT_KEY_USAGE
 				);
 
 				pkcs10.X509Extensions.Add((CX509Extension)extensionKeyUsage);
 
 				// Enhanced Key Usage Extension
 
-				objectId.InitializeFromName(CERTENROLLLib.CERTENROLL_OBJECTID.XCN_OID_PKIX_KP_SERVER_AUTH);
+                objectId.InitializeFromName(CertEnrollInterop.CERTENROLL_OBJECTID.XCN_OID_PKIX_KP_SERVER_AUTH);
 				objectIds.Add(objectId);
 				x509ExtensionEnhancedKeyUsage.InitializeEncode(objectIds);
 				pkcs10.X509Extensions.Add((CX509Extension)x509ExtensionEnhancedKeyUsage);
@@ -131,7 +130,7 @@ namespace WebsitePanel.Providers.Web.Iis
 
 		public SSLCertificate InstallCertificate(SSLCertificate cert, WebSite website)
 		{
-			CX509Enrollment response = new CX509Enrollment();
+            CX509Enrollment response = Activator.CreateInstance(Type.GetTypeFromProgID("X509Enrollment.CX509Enrollment", true)) as CX509Enrollment;
 			try
 			{
 
