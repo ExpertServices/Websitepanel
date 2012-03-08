@@ -101,6 +101,7 @@
     <Content Include="App_Themes\Default\Icons\block.png" />
     <Content Include="App_Themes\Default\Icons\configureVLan.png" />
     <Content Include="App_Themes\Default\Icons\OK.png" />
+    <Content Include="App_Themes\Default\Images\Exchange\disabled_16.png" />
     <Content Include="App_Themes\Default\Images\FileManager\vbhtml.png" />
     <Content Include="App_Themes\Default\Images\VPSForPC\vlan_icon.png" />
     <Content Include="App_Themes\Default\Images\VPSForPC\private_cloud_module_header_vps.gif" />
@@ -675,9 +676,7 @@
     <Content Include="App_Themes\Default\Images\warning_icon_small.gif" />
     <EmbeddedResource Include="Code\Adapters\empty.gif" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DesktopModules\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -705,28 +704,28 @@
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
-	<PropertyGroup>
-		<IncludeSetAclProviderOnDestination>False</IncludeSetAclProviderOnDestination>
-		<ExcludeFilesFromPackage>True</ExcludeFilesFromPackage>
-		<CopyAllFilesToSingleFolderForPackageDependsOn>
+  <PropertyGroup>
+    <IncludeSetAclProviderOnDestination>False</IncludeSetAclProviderOnDestination>
+    <ExcludeFilesFromPackage>True</ExcludeFilesFromPackage>
+    <CopyAllFilesToSingleFolderForPackageDependsOn>
 			PreDeployWebsitePanelProjectBinaries;
 			$(CopyAllFilesToSingleFolderForPackageDependsOn);
 		</CopyAllFilesToSingleFolderForPackageDependsOn>
-	</PropertyGroup>
-	<ItemGroup>
-		<ExcludeFromPackageFiles Include="**\SiteSettings.config">
-			<FromTarget>Project</FromTarget>
-		</ExcludeFromPackageFiles>
-		<ExcludeFromPackageFiles Include="**\Web.config">
-			<FromTarget>Project</FromTarget>
-		</ExcludeFromPackageFiles>
-	</ItemGroup>
-	<Target Name="PreDeployWebsitePanelProjectBinaries">
-		<ItemGroup>
-			<_CustomFiles Include="$(TargetDir)\WebsitePanel.*" />
-			<FilesForPackagingFromProject Include="@(_CustomFiles)">
-				<DestinationRelativePath>bin\%(Filename)%(Extension)</DestinationRelativePath>
-			</FilesForPackagingFromProject>
-		</ItemGroup>
-	</Target>
+  </PropertyGroup>
+  <ItemGroup>
+    <ExcludeFromPackageFiles Include="**\SiteSettings.config">
+      <FromTarget>Project</FromTarget>
+    </ExcludeFromPackageFiles>
+    <ExcludeFromPackageFiles Include="**\Web.config">
+      <FromTarget>Project</FromTarget>
+    </ExcludeFromPackageFiles>
+  </ItemGroup>
+  <Target Name="PreDeployWebsitePanelProjectBinaries">
+    <ItemGroup>
+      <_CustomFiles Include="$(TargetDir)\WebsitePanel.*" />
+      <FilesForPackagingFromProject Include="@(_CustomFiles)">
+        <DestinationRelativePath>bin\%(Filename)%(Extension)</DestinationRelativePath>
+      </FilesForPackagingFromProject>
+    </ItemGroup>
+  </Target>
 </Project>

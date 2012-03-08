@@ -109,5 +109,17 @@ namespace WebsitePanel.Portal.ExchangeServer
                 }
             }
         }
+
+        protected void ddlPageSize_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            gvLists.PageSize = Convert.ToInt16(ddlPageSize.SelectedValue);
+
+            // rebind grid
+            gvLists.DataBind();
+
+            // bind stats
+            BindStats();
+
+        }
 	}
 }
