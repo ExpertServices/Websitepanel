@@ -49,6 +49,7 @@ namespace WebsitePanel.Portal.HostedSolution
                 ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
             usersQuota.QuotaUsedValue = stats.CreatedUsers;
             usersQuota.QuotaValue = stats.AllocatedUsers;
+ 
         }
 
         protected void btnCreateUser_Click(object sender, EventArgs e)
@@ -102,15 +103,26 @@ namespace WebsitePanel.Portal.HostedSolution
             }
         }
 
-        
+
         public string GetAccountImage(int accountTypeId)
         {
             ExchangeAccountType accountType = (ExchangeAccountType)accountTypeId;
             string imgName = "accounting_mail_16.png";
             if (accountType == ExchangeAccountType.User)
                 imgName = "admin_16.png";
-            
             return GetThemedImage("Exchange/" + imgName);
+        }
+
+        protected void ddlPageSize_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            gvUsers.PageSize = Convert.ToInt16(ddlPageSize.SelectedValue);
+           
+            // rebind grid
+            gvUsers.DataBind();
+
+            // bind stats
+            BindStats();
+
         }
     }
 }

@@ -33,6 +33,13 @@
                         </div>
                         <div class="FormButtonsBarCleanRight">
                             <asp:Panel ID="SearchPanel" runat="server" DefaultButton="cmdSearch">
+                                <asp:DropDownList ID="ddlPageSize" runat="server" AutoPostBack="True" 
+                                    onselectedindexchanged="ddlPageSize_SelectedIndexChanged">
+                                    <asp:ListItem>10</asp:ListItem>
+                                    <asp:ListItem Selected="True">20</asp:ListItem>
+                                    <asp:ListItem>50</asp:ListItem>
+                                    <asp:ListItem>100</asp:ListItem>
+                                </asp:DropDownList>
                                 <asp:DropDownList ID="ddlSearchColumn" runat="server" CssClass="NormalTextBox">
                                     <asp:ListItem Value="DisplayName" meta:resourcekey="ddlSearchColumnDisplayName">DisplayName</asp:ListItem>
                                     <asp:ListItem Value="PrimaryEmailAddress" meta:resourcekey="ddlSearchColumnEmail">Email</asp:ListItem>
@@ -46,7 +53,8 @@
                     <div class="FormButtonsBarCleanRight">
                         <asp:GridView ID="gvUsers" runat="server" AutoGenerateColumns="False" EnableViewState="true"
                             Width="100%" CssSelectorClass="NormalGridView" DataSourceID="odsAccountsPaged"
-                            meta:resourcekey="gvUsers" AllowPaging="true" AllowSorting="true" OnRowCommand="gvUsers_RowCommand">
+                            meta:resourcekey="gvUsers" AllowPaging="true" AllowSorting="true" 
+                            OnRowCommand="gvUsers_RowCommand" PageSize="20">
                             <Columns>
                                 <asp:TemplateField HeaderText="gvUsersDisplayName" meta:resourcekey="gvUsersDisplayName"
                                     SortExpression="DisplayName">

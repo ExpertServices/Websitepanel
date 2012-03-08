@@ -79,8 +79,7 @@ namespace WebsitePanel.Portal
         public static int ParseInt(object val, int defaultValue)
         {
             int result = defaultValue;
-            // Perf: allow only non-empty values to go through
-            if (val != null && val != String.Empty)
+            if (val != null && !String.IsNullOrEmpty(val.ToString()))
             {
                 try
                 {

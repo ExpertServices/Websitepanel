@@ -76,7 +76,7 @@ namespace WebsitePanel.Portal.ExchangeServer
         public string GetAccountImage(int accountTypeId)
         {
             ExchangeAccountType accountType = (ExchangeAccountType)accountTypeId;
-            string imgName = "mailbox_16.gif";
+            string imgName = "accounting_mail_16.png";
             if (accountType == ExchangeAccountType.Contact)
                 imgName = "contact_16.gif";
             else if (accountType == ExchangeAccountType.DistributionList)
@@ -85,7 +85,6 @@ namespace WebsitePanel.Portal.ExchangeServer
                 imgName = "room_16.gif";
             else if (accountType == ExchangeAccountType.Equipment)
                 imgName = "equipment_16.gif";
-
             return GetThemedImage("Exchange/" + imgName);
         }
 
@@ -116,6 +115,18 @@ namespace WebsitePanel.Portal.ExchangeServer
 					messageBox.ShowErrorMessage("EXCHANGE_DELETE_MAILBOX", ex);
                 }
             }
+        }
+
+        protected void ddlPageSize_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            gvMailboxes.PageSize = Convert.ToInt16(ddlPageSize.SelectedValue);
+
+            // rebind grid
+            gvMailboxes.DataBind();
+
+            // bind stats
+            BindStats();
+
         }
 	}
 }
