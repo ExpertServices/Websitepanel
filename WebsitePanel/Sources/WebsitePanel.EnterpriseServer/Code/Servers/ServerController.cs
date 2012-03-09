@@ -1822,6 +1822,8 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             TaskManager.StartTask("DOMAIN", "ADD", domainName);
+            TaskManager.PackageId = packageId;
+            TaskManager.TaskParameters["CreateZone"] = createDnsZone;
 
             // create DNS zone
             int zoneItemId = 0;
