@@ -232,7 +232,7 @@ namespace WebsitePanel.EnterpriseServer
                 );
 
                 if (user == null)
-                    throw new Exception("Authentication token is invalid or borken");
+                    throw new Exception("Authentication token is invalid or broken");
 
                 SecurityContext.SetThreadPrincipal(user);
             }
