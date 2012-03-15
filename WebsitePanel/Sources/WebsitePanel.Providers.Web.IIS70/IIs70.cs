@@ -1959,15 +1959,36 @@ namespace WebsitePanel.Providers.Web
             if (version.Equals(HELICON_APE_NOT_REGISTERED))
             {
                 // Ape installed for site
-                return "Helicon.Ape.Module";
+                return "Helicon.Ape.ApeModule";
             }
             else
             {
                 // Ape installed globally in GAC
-                // return fiil type with version
+                // return full type with version
                 return
                     string.Format(
                         "Helicon.Ape.ApeModule, Helicon.Ape, Version={0}, Culture=neutral, PublicKeyToken=95bfbfd1a38437eb",
+                        version);
+            }
+        }
+
+        private string GetHeliconApeHandlerType(string siteId)
+        {
+            string installDir = GetHeliconApeInstallDir(siteId);
+            string version = GetHeliconApeVersion(siteId, installDir);
+            
+            if (version.Equals(HELICON_APE_NOT_REGISTERED))
+            {
+                // Ape installed for site
+                return "Helicon.Ape.Handler";
+            }
+            else
+            {
+                // Ape installed globally in GAC
+                // return full type with version
+                return
+                    string.Format(
+                        "Helicon.Ape.Handler, Helicon.Ape, Version={0}, Culture=neutral, PublicKeyToken=95bfbfd1a38437eb",
                         version);
             }
         }
@@ -2158,7 +2179,7 @@ namespace WebsitePanel.Providers.Web
                 ConfigurationElementCollection handlersCollection = handlersSection.GetCollection();
                 ConfigurationElement handlerAdd = handlersCollection.CreateElement("add");
                 handlerAdd["name"] = Constants.HeliconApeModule;
-                handlerAdd["type"] = GetHeliconApeModuleType(siteId);
+                handlerAdd["type"] = GetHeliconApeHandlerType(siteId);
                 handlerAdd["path"] = Constants.HeliconApeHandlerPath;
                 handlerAdd["verb"] = "*";
                 handlerAdd["resourceType"] = "Unspecified";
