@@ -2,7 +2,7 @@
 	<Import Project="C:\Program Files (x86)\MSBuild\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
 	<PropertyGroup>
 		<Version>1.2.1.0</Version>
-		<FileVersion>1.2.1.4</FileVersion>
+		<FileVersion>1.2.1.5</FileVersion>
 		<VersionLabel>1.2.1</VersionLabel>
 		<ReleaseDate>2012-01-19</ReleaseDate>
 		<BuildConfiguration>Release</BuildConfiguration>
