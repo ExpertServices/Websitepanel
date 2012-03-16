@@ -622,6 +622,7 @@ namespace WebsitePanel.Providers.Utils
             ProcessStartInfo startInfo = new ProcessStartInfo(cmd, args);
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             startInfo.RedirectStandardOutput = true;
+            startInfo.StandardOutputEncoding = Encoding.UTF8;
             startInfo.UseShellExecute = false;
             startInfo.CreateNoWindow = true;
 
