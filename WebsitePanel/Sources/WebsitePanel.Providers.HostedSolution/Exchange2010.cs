@@ -72,7 +72,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogStart("SetCalendarSettings");
 			Command cmd = new Command("Set-CalendarProcessing");
 			cmd.Parameters.Add("Identity", id);
-			cmd.Parameters.Add("AutomateProcessing", CalendarProcessingFlags.AutoAccept);
+			cmd.Parameters.Add("AutomateProcessing", ObjToString(CalendarProcessingFlags.AutoAccept));
 			ExecuteShellCommand(runspace, cmd);
 			ExchangeLog.LogEnd("SetCalendarSettings");
 		}
