@@ -5001,7 +5001,22 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogStart("CreateOfflineAddressBook");
 
 			string oabName = GetOfflineAddressBookName(organizationId);
-			string addressListName = GetGlobalAddressListName(organizationId);
+
+			bool enableSP2abp = false;
+			if (ConfigurationManager.AppSettings[CONFIG_ENABLESP2ABP] != null)
+				enableSP2abp = Boolean.Parse(ConfigurationManager.AppSettings[CONFIG_ENABLESP2ABP]);
+			Version exchangeVersion = GetExchangeVersion();
+			string addressListName;
+			if (enableSP2abp && (exchangeVersion >= new Version(14, 2)))
+			{
+				// Ex2010SP2 with ABP support, want to use GAL for OAB
+				addressListName = GetGlobalAddressListName(organizationId);
+			}
+			else
+			{
+				// Ex2007 or Ex2010 without ABP support, have to use AL for OAB
+				addressListName = GetAddressListName(organizationId);
+			}
 
 			Command cmd = new Command("New-OfflineAddressBook");
 			cmd.Parameters.Add("Name", oabName);
