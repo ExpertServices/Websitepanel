@@ -1878,10 +1878,10 @@ namespace WebsitePanel.Providers.HostedSolution
 
 				cmd.Parameters.Add("UseDatabaseQuotaDefaults", new bool?(false));
 				cmd.Parameters.Add("UseDatabaseRetentionDefaults", false);
-				cmd.Parameters.Add("IssueWarningQuota", ObjToString(ConvertKBToUnlimited(issueWarningKB)));
-				cmd.Parameters.Add("ProhibitSendQuota", ObjToString(ConvertKBToUnlimited(prohibitSendKB)));
-				cmd.Parameters.Add("ProhibitSendReceiveQuota", ObjToString(ConvertKBToUnlimited(prohibitSendReceiveKB)));
-				cmd.Parameters.Add("RetainDeletedItemsFor", ObjToString(ConvertDaysToEnhancedTimeSpan(keepDeletedItemsDays)));
+				cmd.Parameters.Add("IssueWarningQuota", ConvertKBToUnlimited(issueWarningKB));
+				cmd.Parameters.Add("ProhibitSendQuota", ConvertKBToUnlimited(prohibitSendKB));
+				cmd.Parameters.Add("ProhibitSendReceiveQuota", ConvertKBToUnlimited(prohibitSendReceiveKB));
+				cmd.Parameters.Add("RetainDeletedItemsFor", ConvertDaysToEnhancedTimeSpan(keepDeletedItemsDays));
 				ExecuteShellCommand(runSpace, cmd);
 
 
