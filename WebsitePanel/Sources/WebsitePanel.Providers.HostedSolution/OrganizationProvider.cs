@@ -469,7 +469,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
             string path = GetUserPath(organizationId, loginName);                        
             if (ActiveDirectoryUtils.AdObjectExists(path))
-                ActiveDirectoryUtils.DeleteADObject(path);
+                ActiveDirectoryUtils.DeleteADObject(path,true);
 
             HostedSolutionLog.LogEnd("DeleteUserInternal");
         }
