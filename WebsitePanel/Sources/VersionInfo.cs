@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany("Outercurve Foundation")]
 [assembly: AssemblyCopyright("Copyright © 2011 Outercurve Foundation.")]
 [assembly: AssemblyVersion("1.2.1.0")]
-[assembly: AssemblyFileVersion("1.2.1.4")]
+[assembly: AssemblyFileVersion("1.2.1.6")]
 [assembly: AssemblyInformationalVersion("1.2.1")]
 
 
