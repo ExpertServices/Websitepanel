@@ -37,8 +37,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using Ionic.Zip;
 using WebsitePanel.Providers.OS;
-using System.Diagnostics.Contracts;
-
 
 namespace WebsitePanel.Providers.Utils
 {
@@ -128,7 +126,7 @@ namespace WebsitePanel.Providers.Utils
         /// <param name="provider">An instance of a command-line provider to initialize the utility with.</param>
         public static void SetDefaultCliProvider(ICommandLineProvider provider)
         {
-            Contract.Requires(provider != null);
+            Debug.Assert(provider != null, "Command line provider is null");
             CliProvider = provider;
         }
 
