@@ -1,0 +1,141 @@
+﻿Namespace WebsitePanel.Providers.Mail
+
+    Public Class MailEnableGroupMember
+        Inherits MarshalByRefObject
+
+        Private AddressVal As String
+        Private PostofficeVal As String
+        Private MailboxVal As String
+        Private HostVal As String
+
+        Private Structure IGROUPMEMBERTYPE
+            <VBFixedString(256), System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValTStr, SizeConst:=256)> Public Address As String
+            <VBFixedString(128), System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValTStr, SizeConst:=128)> Public Postoffice As String
+            <VBFixedString(128), System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValTStr, SizeConst:=128)> Public Mailbox As String
+        End Structure
+
+        Private Declare Function GroupMemberGet Lib "MEAIPO.DLL" (ByRef lpGroupMember As IGROUPMEMBERTYPE) As Integer
+        Private Declare Function GroupMemberFindFirst Lib "MEAIPO.DLL" (ByRef lpGroupMember As IGROUPMEMBERTYPE) As Integer
+        Private Declare Function GroupMemberFindNext Lib "MEAIPO.DLL" (ByRef lpGroupMember As IGROUPMEMBERTYPE) As Integer
+        Private Declare Function GroupMemberAdd Lib "MEAIPO.DLL" (ByRef lpGroupMember As IGROUPMEMBERTYPE) As Integer
+        Private Declare Function GroupMemberEdit Lib "MEAIPO.DLL" (ByRef TargetGroupMember As IGROUPMEMBERTYPE, ByRef NewGroupMember As IGROUPMEMBERTYPE) As Integer
+        Private Declare Function GroupMemberRemove Lib "MEAIPO.DLL" (ByRef lpGroupMember As IGROUPMEMBERTYPE) As Integer
+        Private Declare Function SetCurrentHost Lib "MEAIPO.DLL" (ByVal CurrentHost As String) As Integer
+
+        Public Function SetHost() As Integer
+            SetHost = SetCurrentHost(Host)
+        End Function
+
+
+        Public Function FindFirstGroupMember() As Integer
+            Dim CGroupMember As IGROUPMEMBERTYPE
+
+            CGroupMember.Address = Address
+            CGroupMember.Postoffice = Postoffice
+            CGroupMember.Mailbox = Mailbox
+            FindFirstGroupMember = GroupMemberFindFirst(CGroupMember)
+            Address = CGroupMember.Address
+            Postoffice = CGroupMember.Postoffice
+            Mailbox = CGroupMember.Mailbox
+
+        End Function
+
+        Public Function FindNextGroupMember() As Integer
+            Dim CGroupMember As IGROUPMEMBERTYPE
+            CGroupMember.Address = Address
+            CGroupMember.Postoffice = Postoffice
+            CGroupMember.Mailbox = Mailbox
+            FindNextGroupMember = GroupMemberFindNext(CGroupMember)
+            Address = CGroupMember.Address
+            Postoffice = CGroupMember.Postoffice
+            Mailbox = CGroupMember.Mailbox
+        End Function
+
+        Public Function AddGroupMember() As Integer
+            Dim CGroupMember As IGROUPMEMBERTYPE
+            CGroupMember.Address = Address
+            CGroupMember.Postoffice = Postoffice
+            CGroupMember.Mailbox = Mailbox
+            AddGroupMember = GroupMemberAdd(CGroupMember)
+            Address = CGroupMember.Address
+            Postoffice = CGroupMember.Postoffice
+            Mailbox = CGroupMember.Mailbox
+        End Function
+
+        Public Function GetGroupMember() As Integer
+            Dim CGroupMember As IGROUPMEMBERTYPE
+            CGroupMember.Address = Address
+            CGroupMember.Postoffice = Postoffice
+            CGroupMember.Mailbox = Mailbox
+            GetGroupMember = GroupMemberGet(CGroupMember)
+            Address = CGroupMember.Address
+            Postoffice = CGroupMember.Postoffice
+            Mailbox = CGroupMember.Mailbox
+        End Function
+        Public Function RemoveGroupMember() As Integer
+            Dim CGroupMember As IGROUPMEMBERTYPE
+            CGroupMember.Address = Address
+            CGroupMember.Postoffice = Postoffice
+            CGroupMember.Mailbox = Mailbox
+            RemoveGroupMember = GroupMemberRemove(CGroupMember)
+            Address = CGroupMember.Address
+            Postoffice = CGroupMember.Postoffice
+            Mailbox = CGroupMember.Mailbox
+        End Function
+        Public Function EditGroupMember(ByVal NewAddress As String, ByVal NewPostoffice As String, ByVal NewMailbox As String) As Integer
+
+            Dim CGroupMember As IGROUPMEMBERTYPE
+            Dim CGroupMemberData As IGROUPMEMBERTYPE
+            ' Get the Find Stuff Set up
+            CGroupMember.Address = Address
+            CGroupMember.Postoffice = Postoffice
+            CGroupMember.Mailbox = Mailbox
+            ' Get the Data Set up
+            CGroupMemberData.Address = NewAddress
+            CGroupMemberData.Postoffice = NewPostoffice
+            CGroupMemberData.Mailbox = NewMailbox
+            EditGroupMember = GroupMemberEdit(CGroupMember, CGroupMemberData)
+
+            CGroupMemberData.Address = CGroupMemberData.Address
+            CGroupMemberData.Postoffice = CGroupMemberData.Postoffice
+            CGroupMemberData.Mailbox = CGroupMemberData.Mailbox
+        End Function
+
+        Public Property Address() As String
+            Get
+                Return Me.AddressVal
+            End Get
+            Set(ByVal value As String)
+                Me.AddressVal = value
+            End Set
+        End Property
+
+        Public Property Postoffice() As String
+            Get
+                Return Me.PostofficeVal
+            End Get
+            Set(ByVal value As String)
+                Me.PostofficeVal = value
+            End Set
+        End Property
+
+        Public Property Mailbox() As String
+            Get
+                Return Me.MailboxVal
+            End Get
+            Set(ByVal value As String)
+                Me.MailboxVal = value
+            End Set
+        End Property
+
+        Public Property Host() As String
+            Get
+                Return Me.HostVal
+            End Get
+            Set(ByVal value As String)
+                Me.HostVal = value
+            End Set
+        End Property
+    End Class
+
+End Namespace
