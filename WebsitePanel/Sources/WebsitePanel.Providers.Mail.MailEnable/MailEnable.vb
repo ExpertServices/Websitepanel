@@ -341,7 +341,7 @@ Public Class MailEnable
         Dim map As New WebsitePanel.Providers.Mail.MailEnableAddressMap
         ResetAddressMap(map)
         map.Account = domainName
-        map.RemoveAddressMap()
+        map.RemoveAddressMap(True)
 
         'delete all the blacklists
         Dim blacklist As New WebsitePanel.Providers.Mail.MailEnableDomainBlacklist
@@ -541,7 +541,7 @@ Public Class MailEnable
         ResetAddressMap(map)
         map.Account = domainName
         map.SourceAddress = "[SMTP:*@" + aliasName + "]"
-        map.RemoveAddressMap()
+        map.RemoveAddressMap(True)
 
         'delete all the blacklists
         Dim blacklist As New WebsitePanel.Providers.Mail.MailEnableDomainBlacklist
@@ -1930,19 +1930,23 @@ Public Class MailEnable
     End Function
 
     Private Function GetAnnotationPath(ByVal postOfficeName As String) As String
+
+        'the annotation paths are in the configuration directory
+
         Dim programPath As String = ""
-        Dim key32bit As RegistryKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\Mail Enable\Mail Enable")
-        If (key32bit Is Nothing) Then
-            Dim key64bit As RegistryKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\Wow6432Node\Mail Enable\Mail Enable")
-            If (key64bit Is Nothing) Then
-                Return String.Empty
-            Else
-                programPath = CStr(key64bit.GetValue("Data Directory"))
-                Return Path.Combine(programPath, String.Format("Config\Postoffices\{0}\ANNOTATIONS", postOfficeName))
-            End If
+        Dim key As RegistryKey
+
+        If IntPtr.Size > 4 Then
+            key = Registry.LocalMachine.OpenSubKey("SOFTWARE\Wow6432Node\Mail Enable\Mail Enable")
         Else
-            programPath = CStr(key32bit.GetValue("Data Directory"))
-            Return Path.Combine(programPath, String.Format("Config\Postoffices\{0}\ANNOTATIONS", postOfficeName))
+            key = Registry.LocalMachine.OpenSubKey("SOFTWARE\Mail Enable\Mail Enable")
+        End If
+
+        If (key Is Nothing) Then          
+            Return String.Empty
+        Else
+            programPath = CStr(key.GetValue("Configuration Directory"))
+            Return Path.Combine(programPath, String.Format("Postoffices\{0}\ANNOTATIONS", postOfficeName))
         End If
 
     End Function
@@ -1964,16 +1968,18 @@ Public Class MailEnable
     Private Function GetLoggingPath() As String
 
         Dim programPath As String = ""
-        Dim key32bit As RegistryKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\Mail Enable\Mail Enable")
-        If (key32bit Is Nothing) Then
-            Dim key64bit As RegistryKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\Wow6432Node\Mail Enable\Mail Enable")
-            If (key64bit Is Nothing) Then
-                Return String.Empty
-            Else
-                Return CStr(key64bit.GetValue("W3C Logging Directory"))
-            End If
+        Dim key As RegistryKey
+
+        If IntPtr.Size > 4 Then
+            key = Registry.LocalMachine.OpenSubKey("SOFTWARE\Wow6432Node\Mail Enable\Mail Enable")
         Else
-            Return CStr(key32bit.GetValue("W3C Logging Directory"))
+            key = Registry.LocalMachine.OpenSubKey("SOFTWARE\Mail Enable\Mail Enable")
+        End If
+
+        If (key Is Nothing) Then
+            Return String.Empty
+        Else
+            Return CStr(key.GetValue("W3C Logging Directory"))
         End If
 
     End Function
