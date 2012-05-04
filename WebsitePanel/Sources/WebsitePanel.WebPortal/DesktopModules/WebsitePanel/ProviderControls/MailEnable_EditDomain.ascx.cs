@@ -39,6 +39,7 @@ using System.Web.UI.HtmlControls;
 
 using WebsitePanel.Providers.Mail;
 
+
 namespace WebsitePanel.Portal.ProviderControls
 {
     public partial class MailEnable_EditDomain : WebsitePanelControlBase, IMailEditDomainControl
@@ -50,13 +51,26 @@ namespace WebsitePanel.Portal.ProviderControls
         public void BindItem(MailDomain item)
         {
             BindMailboxes(item);
+
+            chkDomainSmartHostEnabled.Checked = Convert.ToBoolean(item["MailEnable_SmartHostEnabled"]);
+            chkDomainSmartHostAuthSenders.Checked = Convert.ToBoolean(item["MailEnable_SmartHostAuth"]);
+            txtDestination.Text = item.RedirectionHosts;
         }
 
         public void SaveItem(MailDomain item)
         {
-            item.CatchAllAccount = ddlCatchAllAccount.SelectedValue;
             item.AbuseAccount = ddlAbuseAccount.SelectedValue;
             item.PostmasterAccount = ddlPostmasterAccount.SelectedValue;
+
+            // if we have a smarthost we need to clear the catchall
+            if (chkDomainSmartHostEnabled.Checked)
+                item.CatchAllAccount= "";
+            else
+                item.CatchAllAccount = ddlCatchAllAccount.SelectedValue;
+
+            item["MailEnable_SmartHostEnabled"] = chkDomainSmartHostEnabled.Checked.ToString();
+            item["MailEnable_SmartHostAuth"] = chkDomainSmartHostAuthSenders.Checked.ToString(); 
+            item.RedirectionHosts = txtDestination.Text;
         }
 
         private void BindMailboxes(MailDomain item)
