@@ -137,8 +137,21 @@ Public Class MailEnable
         domain.Status = -1
 
         If (domain.GetDomain() = 1) Then
+
             Dim newStatus As Integer = IIf(info.Enabled, 1, 0)
             Dim newRedirectionStatus As Integer = IIf(info.RedirectionActive, 1, 0)
+
+            'redirection status has 3 states, so we don't use redirectionaction
+            '0=off, 1=on, 2=on for authenticated only
+            If info("MailEnable_SmartHostEnabled") Then
+                If info("MailEnable_SmartHostAuth") Then
+                    newRedirectionStatus = 2
+                Else
+                    newRedirectionStatus = 1
+                End If
+            Else
+                newRedirectionStatus = 0
+            End If
 
             domain.EditDomain( _
                                info.Name, _
@@ -280,6 +293,7 @@ Public Class MailEnable
                 blacklist.AddBlacklist()
             Next
 
+
         End If
     End Sub
 
@@ -377,6 +391,18 @@ Public Class MailEnable
         info.Name = domain.DomainName
         info.RedirectionHosts = domain.DomainRedirectionHosts
         info.RedirectionActive = (domain.DomainRedirectionStatus = 1)
+
+        If domain.DomainRedirectionStatus = 2 Then
+            info("MailEnable_SmartHostAuth") = True
+            info("MailEnable_SmartHostEnabled") = True
+        ElseIf domain.DomainRedirectionStatus = 1 Then
+            info("MailEnable_SmartHostEnabled") = True
+            info("MailEnable_SmartHostAuth") = False
+        Else
+            info("MailEnable_SmartHostEnabled") = false
+            info("MailEnable_SmartHostAuth") = False
+        End If
+
         info.Enabled = (domain.Status = 1)
 
         '
@@ -842,6 +868,8 @@ Public Class MailEnable
 
         ' build autoresponder file
         WriteMailboxAutoresponderFile(info)
+
+
     End Sub
 
     Public Overridable Sub DeleteAccount(ByVal name As String) Implements IMailServer.DeleteAccount
