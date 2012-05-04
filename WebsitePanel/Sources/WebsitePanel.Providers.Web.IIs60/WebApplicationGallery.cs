@@ -121,6 +121,13 @@ namespace WebsitePanel.Providers.Web
 			Array.ForEach(versionKeys, (x) => { Log.WriteInfo("MSDeploy version key found: {0}", x); });
 			// Determine appropriate key name to query for
             var installPathKey = (IntPtr.Size == 8) ? "InstallPath" : "InstallPath_x86";
+
+            // Check if running in 32bit mode under 64bit Windows (WOW64) - works with .NET 2.0+
+            if (Environment.GetEnvironmentVariable("PROCESSOR_ARCHITEW6432") == "AMD64")
+            {
+                installPathKey = "InstallPath_x64";
+            }
+
 			var fileVersion = String.Empty;
 			//
 			var libPath = String.Empty;
