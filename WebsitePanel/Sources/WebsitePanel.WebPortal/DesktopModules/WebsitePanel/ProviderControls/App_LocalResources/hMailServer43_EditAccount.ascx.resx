@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="cbSignatureEnabled.Text" xml:space="preserve">
     <value>Yes</value>
@@ -164,5 +164,38 @@
   </data>
   <data name="Signature.Text" xml:space="preserve">
     <value>Signature</value>
+  </data>
+  <data name="chkEnabled.Text" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="chkForwardingEnabled.Text" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="chkResponderExpires.Text" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="lblEnabled.Text" xml:space="preserve">
+    <value>Mailbox Enabled:</value>
+  </data>
+  <data name="lblForwardingEnabled.Text" xml:space="preserve">
+    <value>Forwarding Enabled:</value>
+  </data>
+  <data name="lblLastLoginDate.Text" xml:space="preserve">
+    <value>Last Login Date:</value>
+  </data>
+  <data name="lblQuotaUsed.Text" xml:space="preserve">
+    <value>Quota Used:</value>
+  </data>
+  <data name="lblResponderExpireDate.Text" xml:space="preserve">
+    <value>Autoresponder Expire Date:</value>
+  </data>
+  <data name="lblResponderExpires.Text" xml:space="preserve">
+    <value>Autoresponder Expires:</value>
+  </data>
+  <data name="lblSize.Text" xml:space="preserve">
+    <value>Current Size:</value>
+  </data>
+  <data name="secStatusInfo.Text" xml:space="preserve">
+    <value>Account Information</value>
   </data>
 </root>

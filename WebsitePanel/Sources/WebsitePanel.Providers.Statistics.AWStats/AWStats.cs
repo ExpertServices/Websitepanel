@@ -343,7 +343,7 @@ namespace WebsitePanel.Providers.Statistics
 
             string[] split = versionNumber.Split(new char[] { '.' });
 
-            return split[0].Equals("6");
+            return split[0].Equals("6") | split[0].Equals("7");
         }
 
     }

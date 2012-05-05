@@ -50,12 +50,8 @@ namespace WebsitePanel.Providers.Mail
 		private bool isDomainAdmin;
 		private bool isDomainAdminEnabled;
 		private bool retainLocalCopy;
-		private bool signatureEnabled;
-		private string signatureHTML;
 
-		/// <summary>
-		/// 
-		/// </summary>
+
 		public bool UnlimitedSize
 		{
 			get
@@ -184,19 +180,17 @@ namespace WebsitePanel.Providers.Mail
 
 		#endregion
 
-		#region hMail
-		public bool SignatureEnabled
-		{
-			get { return signatureEnabled; }
-			set { signatureEnabled = value; }
-		}
+		#region hMailServer
 
-		public string SignatureHTML
-		{
-			get { return signatureHTML; }
-			set { signatureHTML = value; }
-		}
-
+		public bool SignatureEnabled { get; set; }
+        public string SignatureHTML { get; set; }		
+        public bool ForwardingEnabled { get; set; }
+        public long Size { get; set; }
+        public string LastLogonTime { get; set; }
+        public long QuotaUsed { get; set; }
+        public bool ResponderExpires {get;set;}
+        public string ResponderExpirationDate { get; set; }
+        
 		#endregion
 	}
 }

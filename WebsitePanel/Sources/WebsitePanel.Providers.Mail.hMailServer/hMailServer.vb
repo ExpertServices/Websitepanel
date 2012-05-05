@@ -109,11 +109,25 @@ Public Class hMailServer
 			objDomain.ComObject = hMailServer.Utilities
 			objDomain.Succeed = True
 		Catch ex As Exception
-			Log.WriteError("Couldn't create hMailServer.Application ActiveX object.", ex)
+            Log.WriteError("Couldn't create hMailServer.Application Utilities ActiveX object.", ex)
 		End Try
 
 		Return objDomain
-	End Function
+    End Function
+
+    Private Function GetSettingsObject() As Service
+        Dim objSettings As New Service()
+        objSettings.Succeed = False
+
+        Try
+            objSettings.ComObject = hMailServer.Settings
+            objSettings.Succeed = True
+        Catch ex As Exception
+            Log.WriteError("Couldn't create hMailServer.Application Settings ActiveX object.", ex)
+        End Try
+
+        Return objSettings
+    End Function
 
 	Private Function GetDomainObject(ByVal domainName As String) As Service
 		' find existing domain
@@ -124,7 +138,7 @@ Public Class hMailServer
 			objDomain.ComObject = hMailServer.Domains.ItemByName(domainName)
 			objDomain.Succeed = True
 		Catch ex As Exception
-			Log.WriteError("Couldn't create hMailServer.Application ActiveX object.", ex)
+            Log.WriteError("Couldn't create hMailServer.Application Domain ActiveX object.", ex)
 		End Try
 
 		Return objDomain
@@ -139,7 +153,7 @@ Public Class hMailServer
 			objDomain.ComObject = hMailServer.Domains
 			objDomain.Succeed = True
 		Catch ex As Exception
-			Log.WriteError("Couldn't create hMailServer.Application ActiveX object.", ex)
+            Log.WriteError("Couldn't create hMailServer.Application Domains ActiveX object.", ex)
 		End Try
 
 		Return objDomain
@@ -285,19 +299,26 @@ Public Class hMailServer
 			If mailbox.ResponderEnabled Then
 				objAccount.VacationMessageIsOn = True
 				objAccount.VacationSubject = mailbox.ResponderSubject
-				objAccount.VacationMessage = mailbox.ResponderMessage
-			End If
+                objAccount.VacationMessage = mailbox.ResponderMessage
+                objAccount.VacationMessageExpires = False
+                If mailbox.ResponderExpires Then
+                    If IsDate(mailbox.ResponderExpirationDate) Then
+                        objAccount.VacationMessageExpires = True
+                        objAccount.VacationMessageExpiresDate = mailbox.ResponderExpirationDate.Substring(0, 10)
+                    End If
+                End If
+            End If
 
 			'set forwarding address
-			If mailbox.ForwardingAddresses.Length > 0 Then
-				objAccount.ForwardAddress = mailbox.ForwardingAddresses(0)
-				objAccount.ForwardEnabled = True
-				objAccount.ForwardKeepOriginal = mailbox.RetainLocalCopy
-			End If
+            If mailbox.ForwardingEnabled Then
+                objAccount.ForwardAddress = mailbox.ForwardingAddresses(0)
+                objAccount.ForwardEnabled = True
+                objAccount.ForwardKeepOriginal = mailbox.RetainLocalCopy
+            End If
 
 			objAccount.Save()
 
-			' set account rules
+            ' set account rules
 			SetAccountRules(mailbox, objAccount)
 
 
@@ -322,43 +343,43 @@ Public Class hMailServer
 			' delete rule
 			objAccount.Rules.DeleteByDBID(objRule.ID)
 		End If
+        '// Removed to use built-in forwarding:
+        'If Not mailbox.ForwardingAddresses Is Nothing _
+        ' And mailbox.ForwardingAddresses.Length > 0 Then
+        '	' create rule
 
-		If Not mailbox.ForwardingAddresses Is Nothing _
-		 And mailbox.ForwardingAddresses.Length > 0 Then
-			' create rule
+        '	' add "default" rule
+        '	objRule = objAccount.Rules.Add()
+        '	objRule.AccountID = objAccount.ID
+        '	objRule.Active = True
+        '	objRule.Name = WEBSITEPANEL_RULE_NAME
+        '	objRule.Save()
 
-			' add "default" rule
-			objRule = objAccount.Rules.Add()
-			objRule.AccountID = objAccount.ID
-			objRule.Active = True
-			objRule.Name = WEBSITEPANEL_RULE_NAME
-			objRule.Save()
+        '	' Add criteria
+        '	Dim objCriteria As Object = objRule.Criterias.Add()
+        '	objCriteria.RuleID = objRule.ID
+        '	objCriteria.PredefinedField = 6	' hMailServer.eRulePredefinedField.eFTMessageSize
+        '	objCriteria.MatchType = 4 ' hMailServer.eRuleMatchType.eMTGreaterThan
+        '	objCriteria.MatchValue = "0"
+        '	objCriteria.Save()
 
-			' Add criteria
-			Dim objCriteria As Object = objRule.Criterias.Add()
-			objCriteria.RuleID = objRule.ID
-			objCriteria.PredefinedField = 6	' hMailServer.eRulePredefinedField.eFTMessageSize
-			objCriteria.MatchType = 4 ' hMailServer.eRuleMatchType.eMTGreaterThan
-			objCriteria.MatchValue = "0"
-			objCriteria.Save()
+        '	' add forwarding addresses
+        '	Dim forwarding As String
+        '	For Each forwarding In mailbox.ForwardingAddresses
+        '		Dim objRuleAction As Object = objRule.Actions.Add()
+        '		objRuleAction.RuleID = objRule.ID
+        '		objRuleAction.Type = 2 'eRAForwardEmail 
+        '		objRuleAction.To = forwarding
+        '		objRuleAction.Save()
+        '	Next
 
-			' add forwarding addresses
-			Dim forwarding As String
-			For Each forwarding In mailbox.ForwardingAddresses
-				Dim objRuleAction As Object = objRule.Actions.Add()
-				objRuleAction.RuleID = objRule.ID
-				objRuleAction.Type = 2 'eRAForwardEmail 
-				objRuleAction.To = forwarding
-				objRuleAction.Save()
-			Next
-
-			If mailbox.DeleteOnForward Then
-				Dim objRuleAction As Object = objRule.Actions.Add()
-				objRuleAction.RuleID = objRule.ID
-				objRuleAction.RuleID = 1 'eRADeleteEmail
-				objRuleAction.Save()
-			End If
-		End If
+        '	If mailbox.DeleteOnForward Then
+        '		Dim objRuleAction As Object = objRule.Actions.Add()
+        '		objRuleAction.RuleID = objRule.ID
+        '		objRuleAction.RuleID = 1 'eRADeleteEmail
+        '		objRuleAction.Save()
+        '	End If
+        'End If
 	End Sub
 
 	Public Sub CreateDomain(ByVal domain As MailDomain) Implements IMailServer.CreateDomain
@@ -743,11 +764,19 @@ Public Class hMailServer
 					account.LastName = objAccount.PersonLastName
 					account.Enabled = objAccount.Active
 					account.MaxMailboxSize = objAccount.MaxSize
-					account.Password = objAccount.Password
-					account.ResponderEnabled = objAccount.VacationMessageIsOn
+                    account.Password = objAccount.Password
+                    account.Size = objAccount.Size()
+                    account.QuotaUsed = objAccount.QuotaUsed()
+                    account.LastLogonTime = CType(objAccount.LastLogonTime(), DateTime)
+                    'auto-responder
+                    account.ResponderEnabled = objAccount.VacationMessageIsOn
 					account.ResponderSubject = objAccount.VacationSubject
-					account.ResponderMessage = objAccount.VacationMessage
-					Dim forwardings As List(Of String) = New List(Of String)
+                    account.ResponderMessage = objAccount.VacationMessage
+                    account.ResponderExpires = objAccount.VacationMessageExpires
+                    account.ResponderExpirationDate = objAccount.VacationMessageExpiresDate
+                    'forwarding
+                    account.ForwardingEnabled = objAccount.ForwardEnabled
+                    Dim forwardings As List(Of String) = New List(Of String)
 					forwardings.Add(objAccount.ForwardAddress)
 					account.ForwardingAddresses = forwardings.ToArray
 					account.RetainLocalCopy = objAccount.ForwardKeepOriginal
@@ -793,24 +822,32 @@ Public Class hMailServer
 				End If
 
 				' get account details
-				Dim account As MailAccount = New MailAccount()
-				account.Name = objAccount.Address
-				account.FirstName = objAccount.PersonFirstName
-				account.LastName = objAccount.PersonLastName
-				account.Enabled = objAccount.Active
-				account.MaxMailboxSize = objAccount.MaxSize
-				account.Password = objAccount.Password
-				account.ResponderEnabled = objAccount.VacationMessageIsOn
-				account.ResponderSubject = objAccount.VacationSubject
-				account.ResponderMessage = objAccount.VacationMessage
-				Dim forwardings As List(Of String) = New List(Of String)
-				forwardings.Add(objAccount.ForwardAddress)
-				account.ForwardingAddresses = forwardings.ToArray
-				account.RetainLocalCopy = objAccount.ForwardKeepOriginal
-				'Signature
-				account.SignatureEnabled = objAccount.SignatureEnabled
-				account.Signature = objAccount.SignaturePlainText
-				account.SignatureHTML = objAccount.SignatureHTML
+                Dim account As MailAccount = New MailAccount()
+                account.Name = objAccount.Address
+                account.FirstName = objAccount.PersonFirstName
+                account.LastName = objAccount.PersonLastName
+                account.Enabled = objAccount.Active
+                account.MaxMailboxSize = objAccount.MaxSize
+                account.Password = objAccount.Password
+                account.Size = objAccount.Size()
+                account.QuotaUsed = objAccount.QuotaUsed()
+                account.LastLogonTime = CType(objAccount.LastLogonTime(), DateTime)
+                'auto-responder
+                account.ResponderEnabled = objAccount.VacationMessageIsOn
+                account.ResponderSubject = objAccount.VacationSubject
+                account.ResponderMessage = objAccount.VacationMessage
+                account.ResponderExpires = objAccount.VacationMessageExpires
+                account.ResponderExpirationDate = objAccount.VacationMessageExpiresDate
+                'forwarding
+                account.ForwardingEnabled = objAccount.ForwardEnabled
+                Dim forwardings As List(Of String) = New List(Of String)
+                forwardings.Add(objAccount.ForwardAddress)
+                account.ForwardingAddresses = forwardings.ToArray
+                account.RetainLocalCopy = objAccount.ForwardKeepOriginal
+                'Signature
+                account.SignatureEnabled = objAccount.SignatureEnabled
+                account.Signature = objAccount.SignaturePlainText
+                account.SignatureHTML = objAccount.SignatureHTML
 				accounts.Add(account)
 			Next
 		End If
@@ -975,31 +1012,42 @@ Public Class hMailServer
 				objAccount.Active = mailbox.Enabled
 				objAccount.Password = mailbox.Password
 				objAccount.MaxSize = mailbox.MaxMailboxSize
-				objAccount.VacationMessageIsOn = mailbox.ResponderEnabled
+                'Auto-Responder
+                objAccount.VacationMessageIsOn = mailbox.ResponderEnabled
 				objAccount.VacationSubject = mailbox.ResponderSubject
-				objAccount.VacationMessage = mailbox.ResponderMessage
-				'Personal Information
-				objAccount.PersonFirstName = mailbox.FirstName
-				objAccount.PersonLastName = mailbox.LastName
-				'Signature
-				objAccount.SignatureEnabled = mailbox.SignatureEnabled
-				objAccount.SignaturePlainText = mailbox.Signature
-				objAccount.SignatureHTML = mailbox.SignatureHTML
+                objAccount.VacationMessage = mailbox.ResponderMessage
+                objAccount.VacationMessageExpires = False
+                If mailbox.ResponderExpires Then
+                    If IsDate(mailbox.ResponderExpirationDate) Then
+                        objAccount.VacationMessageExpires = True
+                        objAccount.VacationMessageExpiresDate = mailbox.ResponderExpirationDate.Substring(0, 10)
+                    End If
+                End If
+                'Personal Information
+                objAccount.PersonFirstName = mailbox.FirstName
+                objAccount.PersonLastName = mailbox.LastName
+                'Signature
+                objAccount.SignatureEnabled = mailbox.SignatureEnabled
+                objAccount.SignaturePlainText = mailbox.Signature
+                objAccount.SignatureHTML = mailbox.SignatureHTML
+                'Forwarding
+                If mailbox.ForwardingEnabled Then
+                    If mailbox.ForwardingAddresses.Length > 0 Then
+                        objAccount.ForwardAddress = mailbox.ForwardingAddresses(0)
+                        objAccount.ForwardKeepOriginal = mailbox.RetainLocalCopy
+                        objAccount.ForwardEnabled = True
+                    End If
+                Else
+                    objAccount.ForwardEnabled = False
+                End If
+                objAccount.Save()
 
-				If mailbox.ForwardingAddresses.Length > 0 Then
-					objAccount.ForwardAddress = mailbox.ForwardingAddresses(0)
-					objAccount.ForwardKeepOriginal = mailbox.RetainLocalCopy
-					objAccount.ForwardEnabled = True
-				End If
+                ' set account rules
+                SetAccountRules(mailbox, objAccount)
 
-				objAccount.Save()
-
-				' set account rules
-				SetAccountRules(mailbox, objAccount)
-
-			Catch ex As Exception
-				Log.WriteError("Couldn't update an account.", ex)
-			End Try
+            Catch ex As Exception
+                Log.WriteError("Couldn't update an account.", ex)
+            End Try
 		End If
 	End Sub
 
@@ -1177,10 +1225,8 @@ Public Class hMailServer
         For Each item In items
             If TypeOf item Is MailAccount Then
                 Try
-                    Dim name As String = item.Name
-                    Dim domainName As String = name.Substring((name.IndexOf("@") + 1))
-                    Dim objDomain As Service = GetDomainObject(domainName)
-                    Dim objAccount = objDomain.ComObject.Accounts.ItemByAddress(name)
+                    Dim objDomain As Service = GetDomainObject(GetDomainName(item.Name))
+                    Dim objAccount = objDomain.ComObject.Accounts.ItemByAddress(item.Name)
                     Dim objAccountSize As Long = objAccount.Size() * 1048576
                     Dim diskspace As New ServiceProviderItemDiskSpace()
                     diskspace.ItemId = item.Id
@@ -1193,6 +1239,97 @@ Public Class hMailServer
         Next item
         Return itemsDiskspace.ToArray()
     End Function
+
+    Public Overrides Function GetServiceItemsBandwidth(ByVal items() As ServiceProviderItem, ByVal since As Date) As ServiceProviderItemBandwidth()
+        Dim itemsBandwidth(items.Length) As ServiceProviderItemBandwidth
+        Dim objSets As Service = GetSettingsObject()
+        If objSets.ComObject.Logging.AWStatsEnabled Then
+            Dim logsPath As String = objSets.ComObject.Logging.CurrentAwstatsLog()
+
+            Dim i As Integer
+            For i = 0 To items.Length - 1
+                Dim item As ServiceProviderItem = items(i)
+
+                itemsBandwidth(i) = New ServiceProviderItemBandwidth()
+                itemsBandwidth(i).ItemId = item.Id
+                itemsBandwidth(i).Days = New DailyStatistics(0) {}
+
+                If TypeOf item Is MailDomain Then
+                    Try
+                        itemsBandwidth(i).Days = GetDailyStatistics(since, item.Name, logsPath)
+                    Catch ex As Exception
+                        Log.WriteError("Error calculating bandwidth for mail domain: " + item.Name, ex)
+                    End Try
+                End If
+            Next i
+        End If
+        Return itemsBandwidth
+    End Function
+
+    Private Function GetDailyStatistics(ByVal since As DateTime, ByVal mailDomainName As String, ByVal logpath As String) As DailyStatistics()
+        Dim days As New ArrayList()
+        Dim now As DateTime = DateTime.Now
+        Dim [date] As DateTime = since
+        Dim mailDomainBytesReceived As Long = 0
+        Dim mailDomainBytesSent As Long = 0
+
+        Try
+            While [date] < now
+                If File.Exists(logpath) Then
+
+                    Using r As StreamReader = New StreamReader(logpath)
+                        Dim line As String
+                        ' Read first line.
+                        line = r.ReadLine
+
+                        Do While (Not line Is Nothing)
+                            Dim vals As String() = line.Split(vbTab)
+                            If vals.Length = 9 Then
+                                Dim logDate As DateTime = CType(vals(0), DateTime)
+                                If logDate >= [date] Then
+                                    'get sent bytes
+                                    If InStr(vals(1), mailDomainName) Then
+                                        mailDomainBytesSent += Int32.Parse(vals(8))
+                                    End If
+
+                                    'get received bytes
+                                    If InStr(vals(2), mailDomainName) Then
+                                        mailDomainBytesReceived += Int32.Parse(vals(8))
+                                    End If
+                                End If
+                                If logDate.Date > [date].Date Then
+                                    Exit Do
+                                End If
+
+                            End If
+
+                            line = r.ReadLine
+
+                        Loop
+                    End Using
+                End If
+
+                If mailDomainBytesReceived <> 0 Or mailDomainBytesSent <> 0 Then
+                    Dim dailyStats As New DailyStatistics()
+                    dailyStats.Year = [date].Year
+                    dailyStats.Month = [date].Month
+                    dailyStats.Day = [date].Day
+                    dailyStats.BytesSent = mailDomainBytesSent
+                    dailyStats.BytesReceived = mailDomainBytesReceived
+                    days.Add(dailyStats)
+                End If
+
+                ' advance day
+                [date] = [date].AddDays(1)
+                mailDomainBytesReceived = 0
+                mailDomainBytesSent = 0
+            End While
+        Catch ex As Exception
+            Log.WriteError("Could't parse hMailServer Log", ex)
+        End Try
+        Return DirectCast(days.ToArray(GetType(DailyStatistics)), DailyStatistics())
+    End Function
+
 
 	Public Overrides Sub DeleteServiceItems(ByVal items() As ServiceProviderItem)
 		For Each item As ServiceProviderItem In items

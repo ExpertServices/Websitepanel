@@ -50,9 +50,16 @@ namespace WebsitePanel.Portal.ProviderControls
 
 		public void BindItem(MailAccount item)
 		{
-			chkResponderEnabled.Checked = item.ResponderEnabled;
+            chkEnabled.Checked = item.Enabled;
+            lblSizeInfo.Text = item.Size.ToString() + " MB";
+            lblQuotaUsedInfo.Text = item.QuotaUsed.ToString() + " %";
+            lblLastLoginDateInfo.Text = item.LastLogonTime;
+            chkResponderEnabled.Checked = item.ResponderEnabled;
+            chkResponderExpires.Checked = item.ResponderExpires;
+            txtResponderExireDate.Text = item.ResponderExpirationDate;
 			txtSubject.Text = item.ResponderSubject;
 			txtMessage.Text = item.ResponderMessage;
+            chkForwardingEnabled.Checked = item.ForwardingEnabled;
 			txtForward.Text = item.ForwardingAddresses[0];
             chkOriginalMessage.Checked = item.RetainLocalCopy;
             txtFirstName.Text = item.FirstName;
@@ -60,16 +67,21 @@ namespace WebsitePanel.Portal.ProviderControls
             cbSignatureEnabled.Checked = item.SignatureEnabled;
             txtPlainSignature.Text = item.Signature;
             txtHtmlSignature.Text = item.SignatureHTML;
+            secStatusInfo.IsCollapsed = false;            
 		}
 
 		public void SaveItem(MailAccount item)
 		{
+            item.Enabled = chkEnabled.Checked;
 			item.ResponderEnabled = chkResponderEnabled.Checked;
 			item.ResponderSubject = txtSubject.Text;
 			item.ResponderMessage = txtMessage.Text;
-            if (txtForward.Text.Length > 0) {
-			    item.ForwardingAddresses = new string[] { txtForward.Text };
-            }
+            item.ResponderExpires = chkResponderExpires.Checked;
+            if (txtResponderExireDate.Text.Trim().Length >= 10) {
+                item.ResponderExpirationDate = txtResponderExireDate.Text.Trim().Substring(0, 10);}
+            item.ForwardingEnabled = chkForwardingEnabled.Checked;
+            if (txtForward.Text.Trim().Length > 0) {
+                item.ForwardingAddresses = new string[] { txtForward.Text.Trim() };}
             item.RetainLocalCopy = chkOriginalMessage.Checked;
             item.FirstName = txtFirstName.Text;
             item.LastName = txtLastName.Text;
