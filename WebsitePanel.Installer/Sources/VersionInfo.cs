@@ -37,5 +37,5 @@ using System.Reflection;
 [assembly: AssemblyCompany("Outercurve Foundation")]
 [assembly: AssemblyCopyright("Copyright © 2012 Outercurve Foundation.")]
 [assembly: AssemblyVersion("1.2.1.0")]
-[assembly: AssemblyFileVersion("1.2.1.0")]
+[assembly: AssemblyFileVersion("1.2.1.1")]
 [assembly: AssemblyInformationalVersion("1.2.1")]
