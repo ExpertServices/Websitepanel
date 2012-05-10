@@ -25,6 +25,465 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+CREATE TABLE [dbo].[ExchangeAccounts](
+	[AccountID] [int] IDENTITY(1,1) NOT NULL,
+	[ItemID] [int] NOT NULL,
+	[AccountType] [int] NOT NULL,
+	[AccountName] [nvarchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
+	[DisplayName] [nvarchar](300) COLLATE Latin1_General_CI_AS NOT NULL,
+	[PrimaryEmailAddress] [nvarchar](300) COLLATE Latin1_General_CI_AS NULL,
+	[MailEnabledPublicFolder] [bit] NULL,
+	[MailboxManagerActions] [varchar](200) COLLATE Latin1_General_CI_AS NULL,
+	[SamAccountName] [nvarchar](100) COLLATE Latin1_General_CI_AS NULL,
+	[AccountPassword] [nvarchar](200) COLLATE Latin1_General_CI_AS NULL,
+	[CreatedDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_ExchangeAccounts] PRIMARY KEY CLUSTERED 
+(
+	[AccountID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON),
+ CONSTRAINT [IX_ExchangeAccounts_UniqueAccountName] UNIQUE NONCLUSTERED 
+(
+	[AccountName] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetExchangeMailboxes]
+	@ItemID int
+AS
+BEGIN
+SELECT
+	AccountID,
+	ItemID,
+	AccountType,
+	AccountName,
+	DisplayName,
+	PrimaryEmailAddress,
+	MailEnabledPublicFolder
+FROM
+	ExchangeAccounts
+WHERE
+	ItemID = @ItemID AND
+	(AccountType =1  OR AccountType=5 OR AccountType=6) 
+ORDER BY 1
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetExchangeAccounts]
+(
+	@ItemID int,
+	@AccountType int
+)
+AS
+SELECT
+	AccountID,
+	ItemID,
+	AccountType,
+	AccountName,
+	DisplayName,
+	PrimaryEmailAddress,
+	MailEnabledPublicFolder
+FROM
+	ExchangeAccounts
+WHERE
+	ItemID = @ItemID AND
+	(AccountType = @AccountType OR @AccountType IS NULL) 
+ORDER BY DisplayName
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetExchangeAccount] 
+(
+	@ItemID int,
+	@AccountID int
+)
+AS
+SELECT
+	AccountID,
+	ItemID,
+	AccountType,
+	AccountName,
+	DisplayName,
+	PrimaryEmailAddress,
+	MailEnabledPublicFolder,
+	MailboxManagerActions,
+	SamAccountName,
+	AccountPassword 
+FROM
+	ExchangeAccounts
+WHERE
+	ItemID = @ItemID AND
+	AccountID = @AccountID
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE ExchangeAccountExists 
+(
+	@AccountName nvarchar(20),
+	@Exists bit OUTPUT
+)
+AS
+SET @Exists = 0
+IF EXISTS(SELECT * FROM ExchangeAccounts WHERE AccountName = @AccountName)
+BEGIN
+	SET @Exists = 1
+END
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[HostingPlans](
+	[PlanID] [int] IDENTITY(1,1) NOT NULL,
+	[UserID] [int] NULL,
+	[PackageID] [int] NULL,
+	[ServerID] [int] NULL,
+	[PlanName] [nvarchar](200) COLLATE Latin1_General_CI_AS NOT NULL,
+	[PlanDescription] [ntext] COLLATE Latin1_General_CI_AS NULL,
+	[Available] [bit] NOT NULL,
+	[SetupPrice] [money] NULL,
+	[RecurringPrice] [money] NULL,
+	[RecurrenceUnit] [int] NULL,
+	[RecurrenceLength] [int] NULL,
+	[IsAddon] [bit] NULL,
+ CONSTRAINT [PK_HostingPlans] PRIMARY KEY CLUSTERED 
+(
+	[PlanID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetHostingPlan
+(
+	@ActorID int,
+	@PlanID int
+)
+AS
+
+SELECT
+	PlanID,
+	UserID,
+	PackageID,
+	ServerID,
+	PlanName,
+	PlanDescription,
+	Available,
+	SetupPrice,
+	RecurringPrice,
+	RecurrenceLength,
+	RecurrenceUnit,
+	IsAddon
+FROM HostingPlans AS HP
+WHERE HP.PlanID = @PlanID
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 CREATE TABLE [dbo].[Users](
 	[UserID] [int] IDENTITY(1,1) NOT NULL,
 	[OwnerID] [int] NULL,
@@ -122,6 +581,7 @@ RETURN 1
 
 RETURN 0
 END
+
 
 
 
@@ -295,6 +755,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -390,6 +851,7 @@ RETURN dbo.CheckActorUserRights(@ActorID, @UserID)
 
 RETURN 0
 END
+
 
 
 
@@ -565,6 +1027,226 @@ RETURN
 
 
 
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+CREATE PROCEDURE [dbo].[GetExchangeAccountsPaged]
+(
+	@ActorID int,
+	@ItemID int,
+	@AccountTypes nvarchar(30),
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+
+DECLARE @PackageID int
+SELECT @PackageID = PackageID FROM ServiceItems
+WHERE ItemID = @ItemID
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- start
+DECLARE @condition nvarchar(700)
+SET @condition = '
+EA.AccountType IN (' + @AccountTypes + ')
+AND EA.ItemID = @ItemID
+'
+
+IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+AND @FilterValue <> '' AND @FilterValue IS NOT NULL
+BEGIN
+	IF @FilterColumn = 'PrimaryEmailAddress' AND @AccountTypes <> '2'
+	BEGIN		
+		SET @condition = @condition + ' AND EA.AccountID IN (SELECT EAEA.AccountID FROM ExchangeAccountEmailAddresses EAEA WHERE EAEA.EmailAddress LIKE ''' + @FilterValue + ''')'
+	END
+	ELSE
+	BEGIN		
+		SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+	END
+END
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'EA.DisplayName ASC'
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+SELECT COUNT(EA.AccountID) FROM ExchangeAccounts AS EA
+WHERE ' + @condition + ';
+
+WITH Accounts AS (
+	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
+		EA.AccountID,
+		EA.ItemID,
+		EA.AccountType,
+		EA.AccountName,
+		EA.DisplayName,
+		EA.PrimaryEmailAddress,
+		EA.MailEnabledPublicFolder
+	FROM ExchangeAccounts AS EA
+	WHERE ' + @condition + '
+)
+
+SELECT * FROM Accounts
+WHERE Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
+'
+
+print @sql
+
+exec sp_executesql @sql, N'@ItemID int, @StartRow int, @MaximumRows int',
+@ItemID, @StartRow, @MaximumRows
+
+RETURN 
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetDomainsPaged]
+(
+	@ActorID int,
+	@PackageID int,
+	@ServerID int,
+	@Recursive bit,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+SET NOCOUNT ON
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- build query and run it to the temporary table
+DECLARE @sql nvarchar(2000)
+
+IF @SortColumn = '' OR @SortColumn IS NULL
+SET @SortColumn = 'DomainName'
+
+SET @sql = '
+DECLARE @Domains TABLE
+(
+	ItemPosition int IDENTITY(1,1),
+	DomainID int
+)
+INSERT INTO @Domains (DomainID)
+SELECT
+	D.DomainID
+FROM Domains AS D
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
+LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+WHERE D.IsInstantAlias = 0 AND
+		((@Recursive = 0 AND D.PackageID = @PackageID)
+		OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, D.PackageID) = 1))
+AND (@ServerID = 0 OR (@ServerID > 0 AND S.ServerID = @ServerID))
+'
+
+IF @FilterColumn <> '' AND @FilterValue <> ''
+SET @sql = @sql + ' AND ' + @FilterColumn + ' LIKE @FilterValue '
+
+IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
+
+SET @sql = @sql + ' SELECT COUNT(DomainID) FROM @Domains;SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(WS.ItemID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(MD.ItemID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.IsDomainPointer,
+	
+	-- packages
+	P.PackageName,
+	
+	-- server
+	ISNULL(SRV.ServerID, 0) AS ServerID,
+	ISNULL(SRV.ServerName, '''') AS ServerName,
+	ISNULL(SRV.Comments, '''') AS ServerComments,
+	ISNULL(SRV.VirtualServer, 0) AS VirtualServer,
+	
+	-- user
+	P.UserID,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.FullName,
+	U.RoleID,
+	U.Email
+FROM @Domains AS SD
+INNER JOIN Domains AS D ON SD.DomainID = D.DomainID
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
+LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+WHERE SD.ItemPosition BETWEEN @StartRow + 1 AND @StartRow + @MaximumRows'
+
+exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @PackageID int, @FilterValue nvarchar(50), @ServerID int, @Recursive bit',
+@StartRow, @MaximumRows, @PackageID, @FilterValue, @ServerID, @Recursive
+
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -613,6 +1295,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -640,18 +1323,53 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[ExchangeOrganizations](
-	[ItemID] [int] NOT NULL,
-	[OrganizationID] [nvarchar](10) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_ExchangeOrganizations] PRIMARY KEY CLUSTERED 
-(
-	[ItemID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON),
- CONSTRAINT [IX_ExchangeOrganizations_UniqueOrg] UNIQUE NONCLUSTERED 
-(
-	[OrganizationID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[DeleteOrganizationUsers]
+	@ItemID int 
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+    DELETE FROM ExchangeAccounts WHERE ItemID = @ItemID
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 GO
 SET ANSI_NULLS ON
@@ -684,401 +1402,24 @@ GO
 
 
 
-
-
-CREATE PROCEDURE AddExchangeOrganization
+CREATE PROCEDURE [dbo].[AddExchangeAccount] 
 (
+	@AccountID int OUTPUT,
 	@ItemID int,
-	@OrganizationID nvarchar(10)
+	@AccountType int,
+	@AccountName nvarchar(20),
+	@DisplayName nvarchar(300),
+	@PrimaryEmailAddress nvarchar(300),
+	@MailEnabledPublicFolder bit,
+	@MailboxManagerActions varchar(200),
+	@SamAccountName nvarchar(100),
+	@AccountPassword nvarchar(200) 
 )
 AS
 
-IF NOT EXISTS(SELECT * FROM ExchangeOrganizations WHERE OrganizationID = @OrganizationID)
-BEGIN
-	INSERT INTO ExchangeOrganizations
-	(ItemID, OrganizationID)
-	VALUES
-	(@ItemID, @OrganizationID)
-END
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE ExchangeOrganizationExists
+INSERT INTO ExchangeAccounts
 (
-	@OrganizationID nvarchar(10),
-	@Exists bit OUTPUT
-)
-AS
-SET @Exists = 0
-IF EXISTS(SELECT * FROM ExchangeOrganizations WHERE OrganizationID = @OrganizationID)
-BEGIN
-	SET @Exists = 1
-END
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ExchangeOrganizationDomains](
-	[OrganizationDomainID] [int] IDENTITY(1,1) NOT NULL,
-	[ItemID] [int] NOT NULL,
-	[DomainID] [int] NULL,
-	[IsHost] [bit] NULL,
- CONSTRAINT [PK_ExchangeOrganizationDomains] PRIMARY KEY CLUSTERED 
-(
-	[OrganizationDomainID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON),
- CONSTRAINT [IX_ExchangeOrganizationDomains_UniqueDomain] UNIQUE NONCLUSTERED 
-(
-	[DomainID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE AddExchangeOrganizationDomain 
-(
-	@ItemID int,
-	@DomainID int,
-	@IsHost bit
-)
-AS
-INSERT INTO ExchangeOrganizationDomains
-(ItemID, DomainID, IsHost)
-VALUES
-(@ItemID, @DomainID, @IsHost)
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE ExchangeOrganizationDomainExists 
-(
-	@DomainID int,
-	@Exists bit OUTPUT
-)
-AS
-SET @Exists = 0
-IF EXISTS(SELECT * FROM ExchangeOrganizationDomains WHERE DomainID = @DomainID)
-BEGIN
-	SET @Exists = 1
-END
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ExchangeAccounts](
-	[AccountID] [int] IDENTITY(1,1) NOT NULL,
-	[ItemID] [int] NOT NULL,
-	[AccountType] [int] NOT NULL,
-	[AccountName] [nvarchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
-	[DisplayName] [nvarchar](300) COLLATE Latin1_General_CI_AS NOT NULL,
-	[PrimaryEmailAddress] [nvarchar](300) COLLATE Latin1_General_CI_AS NULL,
-	[MailEnabledPublicFolder] [bit] NULL,
-	[MailboxManagerActions] [varchar](200) COLLATE Latin1_General_CI_AS NULL,
-	[SamAccountName] [nvarchar](100) COLLATE Latin1_General_CI_AS NULL,
-	[AccountPassword] [nvarchar](200) COLLATE Latin1_General_CI_AS NULL,
-	[CreatedDate] [datetime] NOT NULL,
- CONSTRAINT [PK_ExchangeAccounts] PRIMARY KEY CLUSTERED 
-(
-	[AccountID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON),
- CONSTRAINT [IX_ExchangeAccounts_UniqueAccountName] UNIQUE NONCLUSTERED 
-(
-	[AccountName] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[SearchExchangeAccount]
-(
-      @ActorID int,
-      @AccountType int,
-      @PrimaryEmailAddress nvarchar(300)
-)
-AS
-
-DECLARE @PackageID int
-DECLARE @ItemID int
-DECLARE @AccountID int
-
-SELECT
-      @AccountID = AccountID,
-      @ItemID = ItemID
-FROM ExchangeAccounts
-WHERE PrimaryEmailAddress = @PrimaryEmailAddress
-AND AccountType = @AccountType
-
-
--- check space rights
-SELECT @PackageID = PackageID FROM ServiceItems
-WHERE ItemID = @ItemID
-
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-SELECT
-	AccountID,
 	ItemID,
-	@PackageID AS PackageID,
 	AccountType,
 	AccountName,
 	DisplayName,
@@ -1086,11 +1427,24 @@ SELECT
 	MailEnabledPublicFolder,
 	MailboxManagerActions,
 	SamAccountName,
-	AccountPassword 
-FROM ExchangeAccounts
-WHERE AccountID = @AccountID
+	AccountPassword
+)
+VALUES
+(
+	@ItemID,
+	@AccountType,
+	@AccountName,
+	@DisplayName,
+	@PrimaryEmailAddress,
+	@MailEnabledPublicFolder,
+	@MailboxManagerActions,
+	@SamAccountName,
+	@AccountPassword
+)
 
-RETURN 
+SET @AccountID = SCOPE_IDENTITY()
+
+RETURN
 
 
 
@@ -1107,6 +1461,90 @@ RETURN
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE AddDomain 
+(
+	@DomainID int OUTPUT,
+	@ActorID int,
+	@PackageID int,
+	@ZoneItemID int,
+	@DomainName nvarchar(200),
+	@HostingAllowed bit,
+	@WebSiteID int,
+	@MailDomainID int,
+	@IsSubDomain bit,
+	@IsInstantAlias bit,
+	@IsDomainPointer bit
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+IF @ZoneItemID = 0 SET @ZoneItemID = NULL
+IF @WebSiteID = 0 SET @WebSiteID = NULL
+IF @MailDomainID = 0 SET @MailDomainID = NULL
+
+-- insert record
+INSERT INTO Domains
+(
+	PackageID,
+	ZoneItemID,
+	DomainName,
+	HostingAllowed,
+	WebSiteID,
+	MailDomainID,
+	IsSubDomain,
+	IsInstantAlias,
+	IsDomainPointer
+)
+VALUES
+(
+	@PackageID,
+	@ZoneItemID,
+	@DomainName,
+	@HostingAllowed,
+	@WebSiteID,
+	@MailDomainID,
+	@IsSubDomain,
+	@IsInstantAlias,
+	@IsDomainPointer
+)
+
+SET @DomainID = SCOPE_IDENTITY()
+RETURN
 
 
 
@@ -1191,759 +1629,102 @@ GO
 
 
 
-CREATE PROCEDURE DeleteSchedule
+CREATE PROCEDURE AddSchedule
 (
 	@ActorID int,
-	@ScheduleID int
+	@ScheduleID int OUTPUT,
+	@TaskID nvarchar(100),
+	@PackageID int,
+	@ScheduleName nvarchar(100),
+	@ScheduleTypeID nvarchar(50),
+	@Interval int,
+	@FromTime datetime,
+	@ToTime datetime,
+	@StartTime datetime,
+	@NextRun datetime,
+	@Enabled bit,
+	@PriorityID nvarchar(50),
+	@HistoriesNumber int,
+	@MaxExecutionTime int,
+	@WeekMonthDay int,
+	@XmlParameters ntext
 )
 AS
 
 -- check rights
-DECLARE @PackageID int
-SELECT @PackageID = PackageID FROM Schedule
-WHERE ScheduleID = @ScheduleID
-
 IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
 RAISERROR('You are not allowed to access this package', 16, 1)
 
+-- insert record
 BEGIN TRAN
--- delete schedule parameters
+INSERT INTO Schedule
+(
+	TaskID,
+	PackageID,
+	ScheduleName,
+	ScheduleTypeID,
+	Interval,
+	FromTime,
+	ToTime,
+	StartTime,
+	NextRun,
+	Enabled,
+	PriorityID,
+	HistoriesNumber,
+	MaxExecutionTime,
+	WeekMonthDay
+)
+VALUES
+(
+	@TaskID,
+	@PackageID,
+	@ScheduleName,
+	@ScheduleTypeID,
+	@Interval,
+	@FromTime,
+	@ToTime,
+	@StartTime,
+	@NextRun,
+	@Enabled,
+	@PriorityID,
+	@HistoriesNumber,
+	@MaxExecutionTime,
+	@WeekMonthDay
+)
+
+SET @ScheduleID = SCOPE_IDENTITY()
+
+DECLARE @idoc int
+--Create an internal representation of the XML document.
+EXEC sp_xml_preparedocument @idoc OUTPUT, @XmlParameters
+
+-- Execute a SELECT statement that uses the OPENXML rowset provider.
 DELETE FROM ScheduleParameters
 WHERE ScheduleID = @ScheduleID
 
--- delete schedule
-DELETE FROM Schedule
-WHERE ScheduleID = @ScheduleID
+INSERT INTO ScheduleParameters
+(
+	ScheduleID,
+	ParameterID,
+	ParameterValue
+)
+SELECT
+	@ScheduleID,
+	ParameterID,
+	ParameterValue
+FROM OPENXML(@idoc, '/parameters/parameter',1) WITH 
+(
+	ParameterID nvarchar(50) '@id',
+	ParameterValue nvarchar(3000) '@value'
+) as PV
+
+-- remove document
+exec sp_xml_removedocument @idoc
 
 COMMIT TRAN
 
 RETURN
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[SearchOrganizationAccounts]
-(
-	@ActorID int,
-	@ItemID int,
-	@FilterColumn nvarchar(50) = '',
-	@FilterValue nvarchar(50) = '',
-	@SortColumn nvarchar(50),
-	@IncludeMailboxes bit
-)
-AS
-DECLARE @PackageID int
-SELECT @PackageID = PackageID FROM ServiceItems
-WHERE ItemID = @ItemID
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
--- start
-DECLARE @condition nvarchar(700)
-SET @condition = '
-(EA.AccountType = 7 OR (EA.AccountType = 1 AND @IncludeMailboxes = 1)  )
-AND EA.ItemID = @ItemID
-'
-
-IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
-AND @FilterValue <> '' AND @FilterValue IS NOT NULL
-SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
-
-IF @SortColumn IS NULL OR @SortColumn = ''
-SET @SortColumn = 'EA.DisplayName ASC'
-
-DECLARE @sql nvarchar(3500)
-
-set @sql = '
-SELECT
-	EA.AccountID,
-	EA.ItemID,
-	EA.AccountType,
-	EA.AccountName,
-	EA.DisplayName,
-	EA.PrimaryEmailAddress
-FROM ExchangeAccounts AS EA
-WHERE ' + @condition
-
-print @sql
-
-exec sp_executesql @sql, N'@ItemID int, @IncludeMailboxes bit', 
-@ItemID, @IncludeMailboxes
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[PrivateIPAddresses](
-	[PrivateAddressID] [int] IDENTITY(1,1) NOT NULL,
-	[ItemID] [int] NOT NULL,
-	[IPAddress] [varchar](15) COLLATE Latin1_General_CI_AS NOT NULL,
-	[IsPrimary] [bit] NOT NULL,
- CONSTRAINT [PK_PrivateIPAddresses] PRIMARY KEY CLUSTERED 
-(
-	[PrivateAddressID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[UpdateExchangeAccount] 
-(
-	@AccountID int,
-	@AccountName nvarchar(20),
-	@DisplayName nvarchar(300),
-	@PrimaryEmailAddress nvarchar(300),
-	@AccountType int,
-	@SamAccountName nvarchar(100),
-	@MailEnabledPublicFolder bit,
-	@MailboxManagerActions varchar(200),
-	@Password varchar(200)
-)
-AS
-
-BEGIN TRAN	
-UPDATE ExchangeAccounts SET
-	AccountName = @AccountName,
-	DisplayName = @DisplayName,
-	PrimaryEmailAddress = @PrimaryEmailAddress,
-	MailEnabledPublicFolder = @MailEnabledPublicFolder,
-	MailboxManagerActions = @MailboxManagerActions,	
-	AccountType =@AccountType,
-	SamAccountName = @SamAccountName
-
-WHERE
-	AccountID = @AccountID
-
-IF (@@ERROR <> 0 )
-	BEGIN
-		ROLLBACK TRANSACTION
-		RETURN -1
-	END
-
-UPDATE ExchangeAccounts SET 
-	AccountPassword = @Password WHERE AccountID = @AccountID AND @Password IS NOT NULL
-
-IF (@@ERROR <> 0 )
-	BEGIN
-		ROLLBACK TRANSACTION
-		RETURN -1
-	END
-COMMIT TRAN
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE UpdateDomain
-(
-	@DomainID int,
-	@ActorID int,
-	@ZoneItemID int,
-	@HostingAllowed bit,
-	@WebSiteID int,
-	@MailDomainID int
-)
-AS
-
--- check rights
-DECLARE @PackageID int
-SELECT @PackageID = PackageID FROM Domains
-WHERE DomainID = @DomainID
-
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-IF @ZoneItemID = 0 SET @ZoneItemID = NULL
-IF @WebSiteID = 0 SET @WebSiteID = NULL
-IF @MailDomainID = 0 SET @MailDomainID = NULL
-
--- update record
-UPDATE Domains
-SET
-	ZoneItemID = @ZoneItemID,
-	HostingAllowed = @HostingAllowed,
-	WebSiteID = @WebSiteID,
-	MailDomainID = @MailDomainID
-WHERE
-	DomainID = @DomainID
-	RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[SetItemPrivatePrimaryIPAddress]
-(
-	@ActorID int,
-	@ItemID int,
-	@PrivateAddressID int
-)
-AS
-BEGIN
-	UPDATE PrivateIPAddresses
-	SET IsPrimary = CASE PIP.PrivateAddressID WHEN @PrivateAddressID THEN 1 ELSE 0 END
-	FROM PrivateIPAddresses AS PIP
-	INNER JOIN ServiceItems AS SI ON PIP.ItemID = SI.ItemID
-	WHERE PIP.ItemID = @ItemID
-	AND dbo.CheckActorPackageRights(@ActorID, SI.PackageID) = 1
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetItemPrivateIPAddresses]
-(
-	@ActorID int,
-	@ItemID int
-)
-AS
-
-SELECT
-	PIP.PrivateAddressID AS AddressID,
-	PIP.IPAddress,
-	PIP.IsPrimary
-FROM PrivateIPAddresses AS PIP
-INNER JOIN ServiceItems AS SI ON PIP.ItemID = SI.ItemID
-WHERE PIP.ItemID = @ItemID
-AND dbo.CheckActorPackageRights(@ActorID, SI.PackageID) = 1
-ORDER BY PIP.IsPrimary DESC
-
-RETURN
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetItemIdByOrganizationId] 	
-	@OrganizationId nvarchar(10)
-AS
-BEGIN
-	SET NOCOUNT ON;
-    
-	SELECT 
-		ItemID
-	FROM 
-		dbo.ExchangeOrganizations
-	WHERE 
-		OrganizationId = @OrganizationId
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetPackage]
-(
-	@PackageID int,
-	@ActorID int
-)
-AS
-
--- Note: ActorID is not verified
--- check both requested and parent package
-
-SELECT
-	P.PackageID,
-	P.ParentPackageID,
-	P.UserID,
-	P.PackageName,
-	P.PackageComments,
-	P.ServerID,
-	P.StatusID,
-	P.PlanID,
-	P.PurchaseDate,
-	P.OverrideQuotas
-FROM Packages AS P
-WHERE P.PackageID = @PackageID
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetOrganizationStatistics] 
-(
-	@ItemID int
-)
-AS
-SELECT
-	(SELECT COUNT(*) FROM ExchangeAccounts WHERE (AccountType = 7 OR AccountType = 1 OR AccountType = 6 OR AccountType = 5)  AND ItemID = @ItemID) AS CreatedUsers,
-	(SELECT COUNT(*) FROM ExchangeOrganizationDomains WHERE ItemID = @ItemID) AS CreatedDomains
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetNestedPackagesSummary
-(
-	@ActorID int,
-	@PackageID int
-)
-AS
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
--- ALL spaces
-SELECT COUNT(PackageID) AS PackagesNumber FROM Packages
-WHERE ParentPackageID = @PackageID
-
--- BY STATUS spaces
-SELECT StatusID, COUNT(PackageID) AS PackagesNumber FROM Packages
-WHERE ParentPackageID = @PackageID AND StatusID > 0
-GROUP BY StatusID
-ORDER BY StatusID
-
-RETURN
 
 
 
@@ -2142,6 +1923,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -2175,85 +1957,34 @@ GO
 
 
 
-CREATE PROCEDURE UpdateSchedule
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetPackage]
 (
-	@ActorID int,
-	@ScheduleID int,
-	@TaskID nvarchar(100),
-	@ScheduleName nvarchar(100),
-	@ScheduleTypeID nvarchar(50),
-	@Interval int,
-	@FromTime datetime,
-	@ToTime datetime,
-	@StartTime datetime,
-	@LastRun datetime,
-	@NextRun datetime,
-	@Enabled bit,
-	@PriorityID nvarchar(50),
-	@HistoriesNumber int,
-	@MaxExecutionTime int,
-	@WeekMonthDay int,
-	@XmlParameters ntext
+	@PackageID int,
+	@ActorID int
 )
 AS
 
--- check rights
-DECLARE @PackageID int
-SELECT @PackageID = PackageID FROM Schedule
-WHERE ScheduleID = @ScheduleID
+-- Note: ActorID is not verified
+-- check both requested and parent package
 
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-BEGIN TRAN
-
-UPDATE Schedule
-SET
-	TaskID = @TaskID,
-	ScheduleName = @ScheduleName,
-	ScheduleTypeID = @ScheduleTypeID,
-	Interval = @Interval,
-	FromTime = @FromTime,
-	ToTime = @ToTime,
-	StartTime = @StartTime,
-	LastRun = @LastRun,
-	NextRun = @NextRun,
-	Enabled = @Enabled,
-	PriorityID = @PriorityID,
-	HistoriesNumber = @HistoriesNumber,
-	MaxExecutionTime = @MaxExecutionTime,
-	WeekMonthDay = @WeekMonthDay
-WHERE
-	ScheduleID = @ScheduleID
-	
-DECLARE @idoc int
---Create an internal representation of the XML document.
-EXEC sp_xml_preparedocument @idoc OUTPUT, @XmlParameters
-
--- Execute a SELECT statement that uses the OPENXML rowset provider.
-DELETE FROM ScheduleParameters
-WHERE ScheduleID = @ScheduleID
-
-INSERT INTO ScheduleParameters
-(
-	ScheduleID,
-	ParameterID,
-	ParameterValue
-)
 SELECT
-	@ScheduleID,
-	ParameterID,
-	ParameterValue
-FROM OPENXML(@idoc, '/parameters/parameter',1) WITH 
-(
-	ParameterID nvarchar(50) '@id',
-	ParameterValue nvarchar(3000) '@value'
-) as PV
-
--- remove document
-exec sp_xml_removedocument @idoc
-
-COMMIT TRAN
+	P.PackageID,
+	P.ParentPackageID,
+	P.UserID,
+	P.PackageName,
+	P.PackageComments,
+	P.ServerID,
+	P.StatusID,
+	P.PlanID,
+	P.PurchaseDate,
+	P.OverrideQuotas
+FROM Packages AS P
+WHERE P.PackageID = @PackageID
 RETURN
 
 
@@ -2288,76 +2019,6 @@ RETURN
 
 
 
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE UpdatePackageBandwidthUpdate
-(
-	@PackageID int,
-	@UpdateDate datetime
-)
-AS
-
-UPDATE Packages SET BandwidthUpdated = @UpdateDate
-WHERE PackageID = @PackageID
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2369,18 +2030,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[PackagesTreeCache](
-	[ParentPackageID] [int] NOT NULL,
-	[PackageID] [int] NOT NULL
-)
 
-GO
-INSERT [dbo].[PackagesTreeCache] ([ParentPackageID], [PackageID]) VALUES (1, 1)
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 
 
 
@@ -2408,382 +2058,25 @@ GO
 
 
 
-
-
-
-
-
-CREATE FUNCTION dbo.PackagesTree
-(
-	@PackageID int,
-	@Recursive bit = 0
-)
-RETURNS @T TABLE (PackageID int)
-AS
-BEGIN
-
-INSERT INTO @T VALUES (@PackageID)
-
-IF @Recursive = 1
-BEGIN
-	WITH RecursivePackages(ParentPackageID, PackageID, PackageLevel) AS 
-	(
-		SELECT ParentPackageID, PackageID, 0 AS PackageLevel
-		FROM Packages
-		WHERE ParentPackageID = @PackageID
-		UNION ALL
-		SELECT p.ParentPackageID, p.PackageID, PackageLevel + 1
-		FROM Packages p
-			INNER JOIN RecursivePackages d
-			ON p.ParentPackageID = d.PackageID
-		WHERE @Recursive = 1
-	)
-	INSERT INTO @T
-	SELECT PackageID
-	FROM RecursivePackages
-END
-	
-RETURN
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetResellerDomains
+CREATE PROCEDURE GetNestedPackagesSummary
 (
 	@ActorID int,
 	@PackageID int
 )
 AS
-
 -- check rights
 IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
 RAISERROR('You are not allowed to access this package', 16, 1)
 
--- load parent package
-DECLARE @ParentPackageID int
-SELECT @ParentPackageID = ParentPackageID FROM Packages
-WHERE PackageID = @PackageID
-
-SELECT
-	D.DomainID,
-	D.PackageID,
-	D.ZoneItemID,
-	D.DomainName,
-	D.HostingAllowed,
-	D.WebSiteID,
-	WS.ItemName,
-	D.MailDomainID,
-	MD.ItemName
-FROM Domains AS D
-INNER JOIN PackagesTree(@ParentPackageID, 0) AS PT ON D.PackageID = PT.PackageID
-LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
-LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
-WHERE HostingAllowed = 1
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE DeleteExchangeOrganizationDomain 
-(
-	@ItemID int,
-	@DomainID int
-)
-AS
-DELETE FROM ExchangeOrganizationDomains
-WHERE DomainID = @DomainID AND ItemID = @ItemID
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE DeleteExchangeOrganization 
-(
-	@ItemID int
-)
-AS
-DELETE FROM ExchangeOrganizations
-WHERE ItemID = @ItemID
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE DeleteDomain
-(
-	@DomainID int,
-	@ActorID int
-)
-AS
-
--- check rights
-DECLARE @PackageID int
-SELECT @PackageID = PackageID FROM Domains
-WHERE DomainID = @DomainID
-
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-DELETE FROM Domains
-WHERE DomainID = @DomainID
+-- ALL spaces
+SELECT COUNT(PackageID) AS PackagesNumber FROM Packages
+WHERE ParentPackageID = @PackageID
+
+-- BY STATUS spaces
+SELECT StatusID, COUNT(PackageID) AS PackagesNumber FROM Packages
+WHERE ParentPackageID = @PackageID AND StatusID > 0
+GROUP BY StatusID
+ORDER BY StatusID
 
 RETURN
 
@@ -2802,282 +2095,6 @@ RETURN
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[CRMUsers](
-	[CRMUserID] [int] IDENTITY(1,1) NOT NULL,
-	[AccountID] [int] NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[ChangedDate] [datetime] NOT NULL,
-	[CRMUserGuid] [uniqueidentifier] NULL,
-	[BusinessUnitID] [uniqueidentifier] NULL,
- CONSTRAINT [PK_CRMUsers] PRIMARY KEY CLUSTERED 
-(
-	[CRMUserID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[InsertCRMUser]
-	@ItemID int,
-	@CrmUserID uniqueidentifier,
-	@BusinessUnitID uniqueidentifier
-AS
-BEGIN
-	SET NOCOUNT ON;
-
-INSERT INTO
-	CRMUsers
-(
-	AccountID,
-	CRMUserGuid,
-	BusinessUnitID
-)
-VALUES 
-(
-	@ItemID, 
-	@CrmUserID,
-	@BusinessUnitID
-)
-
-	
-    
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetOrganizationCRMUserCount]
-	@ItemID int
-AS
-BEGIN
-SELECT 
- COUNT(CRMUserID) 
-FROM 
-	CrmUsers CU
-INNER JOIN 
-	ExchangeAccounts EA
-ON 
-	CU.AccountID = EA.AccountID
-WHERE EA.ItemID = @ItemID
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetCRMUser]
-	@AccountID int
-AS
-BEGIN
-	SET NOCOUNT ON;
-SELECT
-	CRMUserGUID as CRMUserID,
-	BusinessUnitID
-FROM
-	CRMUsers
-WHERE
-	AccountID = @AccountID		
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[BlackBerryUsers](
-	[BlackBerryUserId] [int] IDENTITY(1,1) NOT NULL,
-	[AccountId] [int] NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[ModifiedDate] [datetime] NOT NULL,
- CONSTRAINT [PK_BlackBerryUsers] PRIMARY KEY CLUSTERED 
-(
-	[BlackBerryUserId] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[DeleteBlackBerryUser]
-(	
-	@AccountID int
-)
-AS
-
-DELETE FROM 
-	BlackBerryUsers
-WHERE 
-	AccountID = @AccountID
-
-RETURN 
 
 
 
@@ -3102,205 +2119,142 @@ GO
 SET QUOTED_IDENTIFIER OFF
 GO
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[CheckBlackBerryUserExists] 
-	@AccountID int
-AS
-BEGIN	
-	SELECT 
-		COUNT(AccountID)
-	FROM 
-		dbo.BlackBerryUsers
-	WHERE AccountID = @AccountID
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[AddBlackBerryUser]	
-	@AccountID int
-AS
-BEGIN	
-	SET NOCOUNT ON;
-
-INSERT INTO
-	dbo.BlackBerryUsers
-	(	 
-	 
-	 AccountID,
-	 CreatedDate,
-	 ModifiedDate)
-VALUES
-(		
-	@AccountID,
-	getdate(),
-	getdate()
-)		
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetExchangeOrganizationDomains 
-(
-	@ItemID int
-)
-AS
-SELECT
-	ED.DomainID,
-	D.DomainName,
-	ED.IsHost
-FROM
-	ExchangeOrganizationDomains AS ED
-INNER JOIN Domains AS D ON ED.DomainID = D.DomainID
-WHERE ED.ItemID = @ItemID
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-CREATE PROCEDURE [dbo].[GetExchangeAccountsPaged]
+CREATE PROCEDURE [dbo].[GetVirtualMachinesPagedForPC]
 (
 	@ActorID int,
-	@ItemID int,
-	@AccountTypes nvarchar(30),
+	@PackageID int,
 	@FilterColumn nvarchar(50) = '',
 	@FilterValue nvarchar(50) = '',
 	@SortColumn nvarchar(50),
 	@StartRow int,
-	@MaximumRows int
+	@MaximumRows int,
+	@Recursive bit
 )
 AS
 
-DECLARE @PackageID int
-SELECT @PackageID = PackageID FROM ServiceItems
-WHERE ItemID = @ItemID
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+BEGIN
+	RAISERROR('You are not allowed to access this package', 16, 1)
+	RETURN
+END
+
+-- start
+DECLARE @condition nvarchar(700)
+SET @condition = '
+SI.ItemTypeID = 35 -- VPS
+AND ((@Recursive = 0 AND P.PackageID = @PackageID)
+OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, P.PackageID) = 1))
+'
+
+IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+AND @FilterValue <> '' AND @FilterValue IS NOT NULL
+SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'SI.ItemName ASC'
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+SELECT COUNT(SI.ItemID) FROM Packages AS P
+INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
+INNER JOIN Users AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN (
+	SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+	INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+	WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+) AS EIP ON SI.ItemID = EIP.ItemID
+LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
+WHERE ' + @condition + '
+
+DECLARE @Items AS TABLE
+(
+	ItemID int
+);
+
+WITH TempItems AS (
+	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
+		SI.ItemID
+	FROM Packages AS P
+	INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
+	INNER JOIN Users AS U ON P.UserID = U.UserID
+	LEFT OUTER JOIN (
+		SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+		INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+		WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+	) AS EIP ON SI.ItemID = EIP.ItemID
+	LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
+	WHERE ' + @condition + '
+)
+
+INSERT INTO @Items
+SELECT ItemID FROM TempItems
+WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
+
+SELECT
+	SI.ItemID,
+	SI.ItemName,
+	SI.PackageID,
+	P.PackageName,
+	P.UserID,
+	U.Username,
+
+	EIP.ExternalIP,
+	PIP.IPAddress
+FROM @Items AS TSI
+INNER JOIN ServiceItems AS SI ON TSI.ItemID = SI.ItemID
+INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
+INNER JOIN Users AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN (
+	SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+	INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+	WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+) AS EIP ON SI.ItemID = EIP.ItemID
+LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
+'
+
+--print @sql
+
+exec sp_executesql @sql, N'@PackageID int, @StartRow int, @MaximumRows int, @Recursive bit',
+@PackageID, @StartRow, @MaximumRows, @Recursive
+
+RETURN
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetVirtualMachinesPaged]
+(
+	@ActorID int,
+	@PackageID int,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int,
+	@Recursive bit
+)
+AS
+
 
 -- check rights
 IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
@@ -3309,53 +2263,82 @@ RAISERROR('You are not allowed to access this package', 16, 1)
 -- start
 DECLARE @condition nvarchar(700)
 SET @condition = '
-EA.AccountType IN (' + @AccountTypes + ')
-AND EA.ItemID = @ItemID
+SI.ItemTypeID = 33 -- VPS
+AND ((@Recursive = 0 AND P.PackageID = @PackageID)
+OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, P.PackageID) = 1))
 '
 
 IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
 AND @FilterValue <> '' AND @FilterValue IS NOT NULL
-BEGIN
-	IF @FilterColumn = 'PrimaryEmailAddress' AND @AccountTypes <> '2'
-	BEGIN		
-		SET @condition = @condition + ' AND EA.AccountID IN (SELECT EAEA.AccountID FROM ExchangeAccountEmailAddresses EAEA WHERE EAEA.EmailAddress LIKE ''' + @FilterValue + ''')'
-	END
-	ELSE
-	BEGIN		
-		SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
-	END
-END
+SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
 
 IF @SortColumn IS NULL OR @SortColumn = ''
-SET @SortColumn = 'EA.DisplayName ASC'
+SET @SortColumn = 'SI.ItemName ASC'
 
 DECLARE @sql nvarchar(3500)
 
 set @sql = '
-SELECT COUNT(EA.AccountID) FROM ExchangeAccounts AS EA
-WHERE ' + @condition + ';
+SELECT COUNT(SI.ItemID) FROM Packages AS P
+INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
+INNER JOIN Users AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN (
+	SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+	INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+	WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+) AS EIP ON SI.ItemID = EIP.ItemID
+LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
+WHERE ' + @condition + '
 
-WITH Accounts AS (
+DECLARE @Items AS TABLE
+(
+	ItemID int
+);
+
+WITH TempItems AS (
 	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
-		EA.AccountID,
-		EA.ItemID,
-		EA.AccountType,
-		EA.AccountName,
-		EA.DisplayName,
-		EA.PrimaryEmailAddress,
-		EA.MailEnabledPublicFolder
-	FROM ExchangeAccounts AS EA
+		SI.ItemID
+	FROM Packages AS P
+	INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
+	INNER JOIN Users AS U ON P.UserID = U.UserID
+	LEFT OUTER JOIN (
+		SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+		INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+		WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+	) AS EIP ON SI.ItemID = EIP.ItemID
+	LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
 	WHERE ' + @condition + '
 )
 
-SELECT * FROM Accounts
-WHERE Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
+INSERT INTO @Items
+SELECT ItemID FROM TempItems
+WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
+
+SELECT
+	SI.ItemID,
+	SI.ItemName,
+	SI.PackageID,
+	P.PackageName,
+	P.UserID,
+	U.Username,
+
+	EIP.ExternalIP,
+	PIP.IPAddress
+FROM @Items AS TSI
+INNER JOIN ServiceItems AS SI ON TSI.ItemID = SI.ItemID
+INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
+INNER JOIN Users AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN (
+	SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
+	INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+	WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
+) AS EIP ON SI.ItemID = EIP.ItemID
+LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
 '
 
-print @sql
+--print @sql
 
-exec sp_executesql @sql, N'@ItemID int, @StartRow int, @MaximumRows int',
-@ItemID, @StartRow, @MaximumRows
+exec sp_executesql @sql, N'@PackageID int, @StartRow int, @MaximumRows int, @Recursive bit',
+@PackageID, @StartRow, @MaximumRows, @Recursive
 
 RETURN 
 
@@ -3366,302 +2349,6 @@ RETURN
 
 
 
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetDomainsPaged]
-(
-	@ActorID int,
-	@PackageID int,
-	@ServerID int,
-	@Recursive bit,
-	@FilterColumn nvarchar(50) = '',
-	@FilterValue nvarchar(50) = '',
-	@SortColumn nvarchar(50),
-	@StartRow int,
-	@MaximumRows int
-)
-AS
-SET NOCOUNT ON
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
--- build query and run it to the temporary table
-DECLARE @sql nvarchar(2000)
-
-IF @SortColumn = '' OR @SortColumn IS NULL
-SET @SortColumn = 'DomainName'
-
-SET @sql = '
-DECLARE @Domains TABLE
-(
-	ItemPosition int IDENTITY(1,1),
-	DomainID int
-)
-INSERT INTO @Domains (DomainID)
-SELECT
-	D.DomainID
-FROM Domains AS D
-INNER JOIN Packages AS P ON D.PackageID = P.PackageID
-INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
-LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
-LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
-LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
-WHERE D.IsInstantAlias = 0 AND
-		((@Recursive = 0 AND D.PackageID = @PackageID)
-		OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, D.PackageID) = 1))
-AND (@ServerID = 0 OR (@ServerID > 0 AND S.ServerID = @ServerID))
-'
-
-IF @FilterColumn <> '' AND @FilterValue <> ''
-SET @sql = @sql + ' AND ' + @FilterColumn + ' LIKE @FilterValue '
-
-IF @SortColumn <> '' AND @SortColumn IS NOT NULL
-SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
-
-SET @sql = @sql + ' SELECT COUNT(DomainID) FROM @Domains;SELECT
-	D.DomainID,
-	D.PackageID,
-	D.ZoneItemID,
-	D.DomainName,
-	D.HostingAllowed,
-	ISNULL(WS.ItemID, 0) AS WebSiteID,
-	WS.ItemName AS WebSiteName,
-	ISNULL(MD.ItemID, 0) AS MailDomainID,
-	MD.ItemName AS MailDomainName,
-	D.IsSubDomain,
-	D.IsInstantAlias,
-	D.IsDomainPointer,
-	
-	-- packages
-	P.PackageName,
-	
-	-- server
-	ISNULL(SRV.ServerID, 0) AS ServerID,
-	ISNULL(SRV.ServerName, '''') AS ServerName,
-	ISNULL(SRV.Comments, '''') AS ServerComments,
-	ISNULL(SRV.VirtualServer, 0) AS VirtualServer,
-	
-	-- user
-	P.UserID,
-	U.Username,
-	U.FirstName,
-	U.LastName,
-	U.FullName,
-	U.RoleID,
-	U.Email
-FROM @Domains AS SD
-INNER JOIN Domains AS D ON SD.DomainID = D.DomainID
-INNER JOIN Packages AS P ON D.PackageID = P.PackageID
-INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
-LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
-LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
-LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
-LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
-LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
-WHERE SD.ItemPosition BETWEEN @StartRow + 1 AND @StartRow + @MaximumRows'
-
-exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @PackageID int, @FilterValue nvarchar(50), @ServerID int, @Recursive bit',
-@StartRow, @MaximumRows, @PackageID, @FilterValue, @ServerID, @Recursive
-
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetDomains
-(
-	@ActorID int,
-	@PackageID int,
-	@Recursive bit = 1
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-SELECT
-	D.DomainID,
-	D.PackageID,
-	D.ZoneItemID,
-	D.DomainName,
-	D.HostingAllowed,
-	ISNULL(WS.ItemID, 0) AS WebSiteID,
-	WS.ItemName AS WebSiteName,
-	ISNULL(MD.ItemID, 0) AS MailDomainID,
-	MD.ItemName AS MailDomainName,
-	Z.ItemName AS ZoneName,
-	D.IsSubDomain,
-	D.IsInstantAlias,
-	D.IsDomainPointer
-FROM Domains AS D
-INNER JOIN PackagesTree(@PackageID, @Recursive) AS PT ON D.PackageID = PT.PackageID
-LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
-LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
-LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetDomainByName
-(
-	@ActorID int,
-	@DomainName nvarchar(100)
-)
-AS
-
-SELECT
-	D.DomainID,
-	D.PackageID,
-	D.ZoneItemID,
-	D.DomainName,
-	D.HostingAllowed,
-	ISNULL(D.WebSiteID, 0) AS WebSiteID,
-	WS.ItemName AS WebSiteName,
-	ISNULL(D.MailDomainID, 0) AS MailDomainID,
-	MD.ItemName AS MailDomainName,
-	Z.ItemName AS ZoneName,
-	D.IsSubDomain,
-	D.IsInstantAlias,
-	D.IsDomainPointer
-FROM Domains AS D
-INNER JOIN Packages AS P ON D.PackageID = P.PackageID
-LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
-LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
-LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
-WHERE
-	D.DomainName = @DomainName
-	AND dbo.CheckActorPackageRights(@ActorID, P.PackageID) = 1
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetDomain
-(
-	@ActorID int,
-	@DomainID int
-)
-AS
-
-SELECT
-	D.DomainID,
-	D.PackageID,
-	D.ZoneItemID,
-	D.DomainName,
-	D.HostingAllowed,
-	ISNULL(WS.ItemID, 0) AS WebSiteID,
-	WS.ItemName AS WebSiteName,
-	ISNULL(MD.ItemID, 0) AS MailDomainID,
-	MD.ItemName AS MailDomainName,
-	Z.ItemName AS ZoneName,
-	D.IsSubDomain,
-	D.IsInstantAlias,
-	D.IsDomainPointer
-FROM Domains AS D
-INNER JOIN Packages AS P ON D.PackageID = P.PackageID
-LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
-LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
-LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
-WHERE
-	D.DomainID = @DomainID
-	AND dbo.CheckActorPackageRights(@ActorID, P.PackageID) = 1
-RETURN
-
-
 
 
 
@@ -3678,137 +2365,19 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetExchangeOrganizationStatistics] 
+CREATE TABLE [dbo].[ExchangeAccountEmailAddresses](
+	[AddressID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int] NOT NULL,
+	[EmailAddress] [nvarchar](300) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_ExchangeAccountEmailAddresses] PRIMARY KEY CLUSTERED 
 (
-	@ItemID int
+	[AddressID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON),
+ CONSTRAINT [IX_ExchangeAccountEmailAddresses_UniqueEmail] UNIQUE NONCLUSTERED 
+(
+	[EmailAddress] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
 )
-AS
-SELECT
-	(SELECT COUNT(*) FROM ExchangeAccounts WHERE (AccountType = 1 OR AccountType = 5 OR AccountType = 6) AND ItemID = @ItemID) AS CreatedMailboxes,
-	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 2 AND ItemID = @ItemID) AS CreatedContacts,
-	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 3 AND ItemID = @ItemID) AS CreatedDistributionLists,
-	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 4 AND ItemID = @ItemID) AS CreatedPublicFolders,
-	(SELECT COUNT(*) FROM ExchangeOrganizationDomains WHERE ItemID = @ItemID) AS CreatedDomains
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetExchangeMailboxes]
-	@ItemID int
-AS
-BEGIN
-SELECT
-	AccountID,
-	ItemID,
-	AccountType,
-	AccountName,
-	DisplayName,
-	PrimaryEmailAddress,
-	MailEnabledPublicFolder
-FROM
-	ExchangeAccounts
-WHERE
-	ItemID = @ItemID AND
-	(AccountType =1  OR AccountType=5 OR AccountType=6) 
-ORDER BY 1
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 GO
 SET ANSI_NULLS ON
@@ -3842,107 +2411,19 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetExchangeAccounts]
+
+CREATE PROCEDURE GetExchangeAccountEmailAddresses
 (
-	@ItemID int,
-	@AccountType int
-)
-AS
-SELECT
-	AccountID,
-	ItemID,
-	AccountType,
-	AccountName,
-	DisplayName,
-	PrimaryEmailAddress,
-	MailEnabledPublicFolder
-FROM
-	ExchangeAccounts
-WHERE
-	ItemID = @ItemID AND
-	(AccountType = @AccountType OR @AccountType IS NULL) 
-ORDER BY DisplayName
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetExchangeAccount] 
-(
-	@ItemID int,
 	@AccountID int
 )
 AS
 SELECT
+	AddressID,
 	AccountID,
-	ItemID,
-	AccountType,
-	AccountName,
-	DisplayName,
-	PrimaryEmailAddress,
-	MailEnabledPublicFolder,
-	MailboxManagerActions,
-	SamAccountName,
-	AccountPassword 
+	EmailAddress
 FROM
-	ExchangeAccounts
+	ExchangeAccountEmailAddresses
 WHERE
-	ItemID = @ItemID AND
 	AccountID = @AccountID
 RETURN
 
@@ -3975,78 +2456,6 @@ RETURN
 
 
 
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetCRMUsersCount] 
-(
-	@ItemID int,
-	@Name nvarchar(400),
-	@Email nvarchar(400)
-	
-)
-AS
-
-IF (@Name IS NULL)
-BEGIN
-	SET @Name = '%'
-END
-
-IF (@Email IS NULL)
-BEGIN
-	SET @Email = '%'
-END
-
-SELECT 
-	COUNT(ea.AccountID)		
-FROM 
-	ExchangeAccounts ea 
-INNER JOIN 
-	CRMUsers cu 
-ON 
-	ea.AccountID = cu.AccountID
-WHERE 
-	ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -4057,680 +2466,69 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetCRMUsers]
+CREATE PROCEDURE [dbo].[ExchangeAccountEmailAddressExists]
 (
-	@ItemID int,
-	@SortColumn nvarchar(40),
-	@SortDirection nvarchar(20),
-	@Name nvarchar(400),
-	@Email nvarchar(400),
-	@StartRow int,
-	@Count int	
-)
-AS
-
-IF (@Name IS NULL)
-BEGIN
-	SET @Name = '%'
-END
-
-IF (@Email IS NULL)
-BEGIN
-	SET @Email = '%'
-END
-
-CREATE TABLE #TempCRMUsers 
-(	
-	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[AccountID] [int],	
-	[ItemID] [int] NOT NULL,
-	[AccountName] [nvarchar](20) NOT NULL,
-	[DisplayName] [nvarchar](300) NOT NULL,
-	[PrimaryEmailAddress] [nvarchar](300) NULL,
-	[SamAccountName] [nvarchar](100) NULL	
-)
-
-
-IF (@SortColumn = 'DisplayName')
-BEGIN
-	INSERT INTO 
-		#TempCRMUsers
-	SELECT 
-		ea.AccountID,
-		ea.ItemID,
-		ea.AccountName,
-		ea.DisplayName,
-		ea.PrimaryEmailAddress,
-		ea.SamAccountName 
-	FROM 
-		ExchangeAccounts ea 
-	INNER JOIN 
-		CRMUsers cu 
-	ON 
-		ea.AccountID = cu.AccountID
-	WHERE 
-		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
-	ORDER BY 
-		ea.DisplayName
-END
-ELSE
-BEGIN
-	INSERT INTO 
-		#TempCRMUsers
-	SELECT 
-		ea.AccountID,
-		ea.ItemID,
-		ea.AccountName,
-		ea.DisplayName,
-		ea.PrimaryEmailAddress,
-		ea.SamAccountName 
-	FROM 
-		ExchangeAccounts ea 
-	INNER JOIN 
-		CRMUsers cu 
-	ON 
-		ea.AccountID = cu.AccountID
-	WHERE 
-		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
-	ORDER BY 
-		ea.PrimaryEmailAddress 
-END
-
-DECLARE @RetCount int
-SELECT @RetCount = COUNT(ID) FROM #TempCRMUsers
-
-IF (@SortDirection = 'ASC')
-BEGIN
-	SELECT * FROM #TempCRMUsers
-	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
-END
-ELSE
-BEGIN
-	IF (@SortColumn = 'DisplayName')
-	BEGIN
-		SELECT * FROM #TempCRMUsers
-			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
-	END
-	ELSE
-	BEGIN
-		SELECT * FROM #TempCRMUsers
-			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
-	END
-	
-END
-
-
-
-DROP TABLE #TempCRMUsers
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetCRMOrganizationUsers]
-	@ItemID int
-AS
-BEGIN
-	SELECT 
-		ea.AccountID,
-		ea.ItemID,
-		ea.AccountName,
-		ea.DisplayName,
-		ea.PrimaryEmailAddress,
-		ea.SamAccountName 
-	FROM 
-		ExchangeAccounts ea 
-	INNER JOIN 
-		CRMUsers cu 
-	ON 
-		ea.AccountID = cu.AccountID
-	WHERE 
-		ea.ItemID = @ItemID
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetBlackBerryUsersCount] 
-(
-	@ItemID int,
-	@Name nvarchar(400),
-	@Email nvarchar(400)
-	
-)
-AS
-
-IF (@Name IS NULL)
-BEGIN
-	SET @Name = '%'
-END
-
-IF (@Email IS NULL)
-BEGIN
-	SET @Email = '%'
-END
-
-SELECT 
-	COUNT(ea.AccountID)		
-FROM 
-	ExchangeAccounts ea 
-INNER JOIN 
-	BlackBerryUsers bu 
-ON 
-	ea.AccountID = bu.AccountID
-WHERE 
-	ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetBlackBerryUsers]
-(
-	@ItemID int,
-	@SortColumn nvarchar(40),
-	@SortDirection nvarchar(20),
-	@Name nvarchar(400),
-	@Email nvarchar(400),
-	@StartRow int,
-	@Count int	
-)
-AS
-
-IF (@Name IS NULL)
-BEGIN
-	SET @Name = '%'
-END
-
-IF (@Email IS NULL)
-BEGIN
-	SET @Email = '%'
-END
-
-CREATE TABLE #TempBlackBerryUsers 
-(	
-	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[AccountID] [int],	
-	[ItemID] [int] NOT NULL,
-	[AccountName] [nvarchar](20) NOT NULL,
-	[DisplayName] [nvarchar](300) NOT NULL,
-	[PrimaryEmailAddress] [nvarchar](300) NULL,
-	[SamAccountName] [nvarchar](100) NULL	
-)
-
-
-IF (@SortColumn = 'DisplayName')
-BEGIN
-	INSERT INTO 
-		#TempBlackBerryUsers 
-	SELECT 
-		ea.AccountID,
-		ea.ItemID,
-		ea.AccountName,
-		ea.DisplayName,
-		ea.PrimaryEmailAddress,
-		ea.SamAccountName 
-	FROM 
-		ExchangeAccounts ea 
-	INNER JOIN 
-		BlackBerryUsers bu 
-	ON 
-		ea.AccountID = bu.AccountID
-	WHERE 
-		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
-	ORDER BY 
-		ea.DisplayName
-END
-ELSE
-BEGIN
-	INSERT INTO 
-		#TempBlackBerryUsers
-	SELECT 
-		ea.AccountID,
-		ea.ItemID,
-		ea.AccountName,
-		ea.DisplayName,
-		ea.PrimaryEmailAddress,
-		ea.SamAccountName 
-	FROM 
-		ExchangeAccounts ea 
-	INNER JOIN 
-		BlackBerryUsers bu 
-	ON 
-		ea.AccountID = bu.AccountID
-	WHERE 
-		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
-	ORDER BY 
-		ea.PrimaryEmailAddress 
-END
-
-DECLARE @RetCount int
-SELECT @RetCount = COUNT(ID) FROM #TempBlackBerryUsers 
-
-IF (@SortDirection = 'ASC')
-BEGIN
-	SELECT * FROM #TempBlackBerryUsers 
-	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
-END
-ELSE
-BEGIN
-	IF (@SortColumn = 'DisplayName')
-	BEGIN
-		SELECT * FROM #TempBlackBerryUsers 
-			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
-	END
-	ELSE
-	BEGIN
-		SELECT * FROM #TempBlackBerryUsers 
-			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
-	END
-	
-END
-
-
-DROP TABLE #TempBlackBerryUsers
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[DeleteOrganizationUsers]
-	@ItemID int 
-AS
-BEGIN
-	SET NOCOUNT ON;
-
-    DELETE FROM ExchangeAccounts WHERE ItemID = @ItemID
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[DeleteCRMOrganization]
-	@ItemID int
-AS
-BEGIN
-	SET NOCOUNT ON
-DELETE FROM dbo.CRMUsers WHERE AccountID IN (SELECT AccountID FROM dbo.ExchangeAccounts WHERE ItemID = @ItemID)
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[AddExchangeAccount] 
-(
-	@AccountID int OUTPUT,
-	@ItemID int,
-	@AccountType int,
-	@AccountName nvarchar(20),
-	@DisplayName nvarchar(300),
-	@PrimaryEmailAddress nvarchar(300),
-	@MailEnabledPublicFolder bit,
-	@MailboxManagerActions varchar(200),
-	@SamAccountName nvarchar(100),
-	@AccountPassword nvarchar(200) 
-)
-AS
-
-INSERT INTO ExchangeAccounts
-(
-	ItemID,
-	AccountType,
-	AccountName,
-	DisplayName,
-	PrimaryEmailAddress,
-	MailEnabledPublicFolder,
-	MailboxManagerActions,
-	SamAccountName,
-	AccountPassword
-)
-VALUES
-(
-	@ItemID,
-	@AccountType,
-	@AccountName,
-	@DisplayName,
-	@PrimaryEmailAddress,
-	@MailEnabledPublicFolder,
-	@MailboxManagerActions,
-	@SamAccountName,
-	@AccountPassword
-)
-
-SET @AccountID = SCOPE_IDENTITY()
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE ExchangeAccountExists 
-(
-	@AccountName nvarchar(20),
+	@EmailAddress nvarchar(300),
 	@Exists bit OUTPUT
 )
 AS
-SET @Exists = 0
-IF EXISTS(SELECT * FROM ExchangeAccounts WHERE AccountName = @AccountName)
+
+	SET @Exists = 0
+	IF EXISTS(SELECT * FROM [dbo].[ExchangeAccountEmailAddresses] WHERE [EmailAddress] = @EmailAddress)
+		BEGIN
+			SET @Exists = 1
+		END
+	ELSE IF EXISTS(SELECT * FROM [dbo].[ExchangeAccounts] WHERE [PrimaryEmailAddress] = @EmailAddress AND [AccountType] <> 2)
+		BEGIN
+			SET @Exists = 1
+		END
+
+	RETURN
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- =============================================
+-- Description:	Delete user email addresses except primary email
+-- =============================================
+CREATE PROCEDURE [dbo].[DeleteUserEmailAddresses] 
+	@AccountId int,
+	@PrimaryEmailAddress nvarchar(300)
+AS
 BEGIN
-	SET @Exists = 1
+	
+DELETE FROM 
+	ExchangeAccountEmailAddresses 
+WHERE
+	AccountID = @AccountID AND LOWER(EmailAddress) <> LOWER(@PrimaryEmailAddress)
 END
 
-RETURN
 
 
 
@@ -4757,35 +2555,6 @@ RETURN
 
 
 
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[HostingPlans](
-	[PlanID] [int] IDENTITY(1,1) NOT NULL,
-	[UserID] [int] NULL,
-	[PackageID] [int] NULL,
-	[ServerID] [int] NULL,
-	[PlanName] [nvarchar](200) COLLATE Latin1_General_CI_AS NOT NULL,
-	[PlanDescription] [ntext] COLLATE Latin1_General_CI_AS NULL,
-	[Available] [bit] NOT NULL,
-	[SetupPrice] [money] NULL,
-	[RecurringPrice] [money] NULL,
-	[RecurrenceUnit] [int] NULL,
-	[RecurrenceLength] [int] NULL,
-	[IsAddon] [bit] NULL,
- CONSTRAINT [PK_HostingPlans] PRIMARY KEY CLUSTERED 
-(
-	[PlanID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
 
 GO
 SET ANSI_NULLS ON
@@ -4820,711 +2589,23 @@ GO
 
 
 
-
-
-CREATE PROCEDURE GetHostingPlan
+CREATE PROCEDURE AddExchangeAccountEmailAddress
 (
-	@ActorID int,
-	@PlanID int
+	@AccountID int,
+	@EmailAddress nvarchar(300)
 )
 AS
-
-SELECT
-	PlanID,
-	UserID,
-	PackageID,
-	ServerID,
-	PlanName,
-	PlanDescription,
-	Available,
-	SetupPrice,
-	RecurringPrice,
-	RecurrenceLength,
-	RecurrenceUnit,
-	IsAddon
-FROM HostingPlans AS HP
-WHERE HP.PlanID = @PlanID
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE AddSchedule
+INSERT INTO ExchangeAccountEmailAddresses
 (
-	@ActorID int,
-	@ScheduleID int OUTPUT,
-	@TaskID nvarchar(100),
-	@PackageID int,
-	@ScheduleName nvarchar(100),
-	@ScheduleTypeID nvarchar(50),
-	@Interval int,
-	@FromTime datetime,
-	@ToTime datetime,
-	@StartTime datetime,
-	@NextRun datetime,
-	@Enabled bit,
-	@PriorityID nvarchar(50),
-	@HistoriesNumber int,
-	@MaxExecutionTime int,
-	@WeekMonthDay int,
-	@XmlParameters ntext
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
--- insert record
-BEGIN TRAN
-INSERT INTO Schedule
-(
-	TaskID,
-	PackageID,
-	ScheduleName,
-	ScheduleTypeID,
-	Interval,
-	FromTime,
-	ToTime,
-	StartTime,
-	NextRun,
-	Enabled,
-	PriorityID,
-	HistoriesNumber,
-	MaxExecutionTime,
-	WeekMonthDay
+	AccountID,
+	EmailAddress
 )
 VALUES
 (
-	@TaskID,
-	@PackageID,
-	@ScheduleName,
-	@ScheduleTypeID,
-	@Interval,
-	@FromTime,
-	@ToTime,
-	@StartTime,
-	@NextRun,
-	@Enabled,
-	@PriorityID,
-	@HistoriesNumber,
-	@MaxExecutionTime,
-	@WeekMonthDay
+	@AccountID,
+	@EmailAddress
 )
-
-SET @ScheduleID = SCOPE_IDENTITY()
-
-DECLARE @idoc int
---Create an internal representation of the XML document.
-EXEC sp_xml_preparedocument @idoc OUTPUT, @XmlParameters
-
--- Execute a SELECT statement that uses the OPENXML rowset provider.
-DELETE FROM ScheduleParameters
-WHERE ScheduleID = @ScheduleID
-
-INSERT INTO ScheduleParameters
-(
-	ScheduleID,
-	ParameterID,
-	ParameterValue
-)
-SELECT
-	@ScheduleID,
-	ParameterID,
-	ParameterValue
-FROM OPENXML(@idoc, '/parameters/parameter',1) WITH 
-(
-	ParameterID nvarchar(50) '@id',
-	ParameterValue nvarchar(3000) '@value'
-) as PV
-
--- remove document
-exec sp_xml_removedocument @idoc
-
-COMMIT TRAN
-
 RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE AddDomain 
-(
-	@DomainID int OUTPUT,
-	@ActorID int,
-	@PackageID int,
-	@ZoneItemID int,
-	@DomainName nvarchar(200),
-	@HostingAllowed bit,
-	@WebSiteID int,
-	@MailDomainID int,
-	@IsSubDomain bit,
-	@IsInstantAlias bit,
-	@IsDomainPointer bit
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-IF @ZoneItemID = 0 SET @ZoneItemID = NULL
-IF @WebSiteID = 0 SET @WebSiteID = NULL
-IF @MailDomainID = 0 SET @MailDomainID = NULL
-
--- insert record
-INSERT INTO Domains
-(
-	PackageID,
-	ZoneItemID,
-	DomainName,
-	HostingAllowed,
-	WebSiteID,
-	MailDomainID,
-	IsSubDomain,
-	IsInstantAlias,
-	IsDomainPointer
-)
-VALUES
-(
-	@PackageID,
-	@ZoneItemID,
-	@DomainName,
-	@HostingAllowed,
-	@WebSiteID,
-	@MailDomainID,
-	@IsSubDomain,
-	@IsInstantAlias,
-	@IsDomainPointer
-)
-
-SET @DomainID = SCOPE_IDENTITY()
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE FUNCTION [dbo].[CheckPackageParent]
-(
-	@ParentPackageID int,
-	@PackageID int
-)
-RETURNS bit
-AS
-BEGIN
-
--- check if the user requests hiself
-IF @ParentPackageID = @PackageID
-BEGIN
-	RETURN 1
-END
-
-DECLARE @TmpParentPackageID int, @TmpPackageID int
-SET @TmpPackageID = @PackageID
-
-WHILE 10 = 10
-BEGIN
-
-	SET @TmpParentPackageID = NULL --reset var
-
-	-- get owner
-	SELECT
-		@TmpParentPackageID = ParentPackageID
-	FROM Packages
-	WHERE PackageID = @TmpPackageID
-
-	IF @TmpParentPackageID IS NULL -- the last parent package
-		BREAK
-	
-	IF @TmpParentPackageID = @ParentPackageID
-	RETURN 1
-	
-	SET @TmpPackageID = @TmpParentPackageID
-END
-
-
-RETURN 0
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE CheckDomain
-(
-	@PackageID int,
-	@DomainName nvarchar(100),
-	@Result int OUTPUT
-)
-AS
-
-/*
-@Result values:
-	0 - OK
-	-1 - already exists
-	-2 - sub-domain of prohibited domain
-*/
-
-SET @Result = 0 -- OK
-
--- check if the domain already exists
-IF EXISTS(
-SELECT DomainID FROM Domains
-WHERE DomainName = @DomainName
-)
-BEGIN
-	SET @Result = -1
-	RETURN
-END
-
--- check if this is a sub-domain of other domain
--- that is not allowed for 3rd level hosting
-
-DECLARE @UserID int
-SELECT @UserID = UserID FROM Packages
-WHERE PackageID = @PackageID
-
--- find sub-domains
-DECLARE @DomainUserID int, @HostingAllowed bit
-SELECT
-	@DomainUserID = P.UserID,
-	@HostingAllowed = D.HostingAllowed
-FROM Domains AS D
-INNER JOIN Packages AS P ON D.PackageID = P.PackageID
-WHERE CHARINDEX('.' + DomainName, @DomainName) > 0
-AND (CHARINDEX('.' + DomainName, @DomainName) + LEN('.' + DomainName)) = LEN(@DomainName) + 1
-
--- this is a domain of other user
-IF @UserID <> @DomainUserID AND @HostingAllowed = 0
-BEGIN
-	SET @Result = -2
-	RETURN
-END
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[PackageQuotas](
-	[PackageID] [int] NOT NULL,
-	[QuotaID] [int] NOT NULL,
-	[QuotaValue] [int] NOT NULL,
- CONSTRAINT [PK_PackageQuotas] PRIMARY KEY CLUSTERED 
-(
-	[PackageID] ASC,
-	[QuotaID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[PackageResources](
-	[PackageID] [int] NOT NULL,
-	[GroupID] [int] NOT NULL,
-	[CalculateDiskspace] [bit] NOT NULL,
-	[CalculateBandwidth] [bit] NOT NULL,
- CONSTRAINT [PK_PackageResources_1] PRIMARY KEY CLUSTERED 
-(
-	[PackageID] ASC,
-	[GroupID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE UpdatePackageQuotas
-(
-	@ActorID int,
-	@PackageID int,
-	@Xml ntext
-)
-AS
-
-/*
-XML Format:
-
-<plan>
-	<groups>
-		<group id="16" enabled="1" calculateDiskSpace="1" calculateBandwidth="1"/>
-	</groups>
-	<quotas>
-		<quota id="2" value="2"/>
-	</quotas>
-</plan>
-
-*/
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-DECLARE @OverrideQuotas bit
-SELECT @OverrideQuotas = OverrideQuotas FROM Packages
-WHERE PackageID = @PackageID
-
-IF @OverrideQuotas = 0
-BEGIN
-	-- delete old Package resources
-	DELETE FROM PackageResources
-	WHERE PackageID = @PackageID
-
-	-- delete old Package quotas
-	DELETE FROM PackageQuotas
-	WHERE PackageID = @PackageID
-END
-
-IF @OverrideQuotas = 1 AND @Xml IS NOT NULL
-BEGIN
-	-- delete old Package resources
-	DELETE FROM PackageResources
-	WHERE PackageID = @PackageID
-
-	-- delete old Package quotas
-	DELETE FROM PackageQuotas
-	WHERE PackageID = @PackageID
-	
-	DECLARE @idoc int
-	--Create an internal representation of the XML document.
-	EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
-
-	-- update Package resources
-	INSERT INTO PackageResources
-	(
-		PackageID,
-		GroupID,
-		CalculateDiskSpace,
-		CalculateBandwidth
-	)
-	SELECT
-		@PackageID,
-		GroupID,
-		CalculateDiskSpace,
-		CalculateBandwidth
-	FROM OPENXML(@idoc, '/plan/groups/group',1) WITH 
-	(
-		GroupID int '@id',
-		CalculateDiskSpace bit '@calculateDiskSpace',
-		CalculateBandwidth bit '@calculateBandwidth'
-	) as XRG
-
-	-- update Package quotas
-	INSERT INTO PackageQuotas
-	(
-		PackageID,
-		QuotaID,
-		QuotaValue
-	)
-	SELECT
-		@PackageID,
-		QuotaID,
-		QuotaValue
-	FROM OPENXML(@idoc, '/plan/quotas/quota',1) WITH 
-	(
-		QuotaID int '@id',
-		QuotaValue int '@value'
-	) as PV
-	
-	-- remove document
-	exec sp_xml_removedocument @idoc
-END
-RETURN 
 
 
 
@@ -5691,6 +2772,7 @@ exec sp_executesql @sql, N'@ActorID int, @UserID int, @PackageID int, @StartRow 
 @ActorID, @UserID, @PackageID, @StartRow, @MaximumRows
 
 RETURN 
+
 
 
 
@@ -5892,843 +2974,6 @@ RETURN
 
 
 
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-CREATE PROCEDURE [dbo].[GetVirtualMachinesPagedForPC]
-(
-	@ActorID int,
-	@PackageID int,
-	@FilterColumn nvarchar(50) = '',
-	@FilterValue nvarchar(50) = '',
-	@SortColumn nvarchar(50),
-	@StartRow int,
-	@MaximumRows int,
-	@Recursive bit
-)
-AS
-
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-BEGIN
-	RAISERROR('You are not allowed to access this package', 16, 1)
-	RETURN
-END
-
--- start
-DECLARE @condition nvarchar(700)
-SET @condition = '
-SI.ItemTypeID = 35 -- VPS
-AND ((@Recursive = 0 AND P.PackageID = @PackageID)
-OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, P.PackageID) = 1))
-'
-
-IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
-AND @FilterValue <> '' AND @FilterValue IS NOT NULL
-SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
-
-IF @SortColumn IS NULL OR @SortColumn = ''
-SET @SortColumn = 'SI.ItemName ASC'
-
-DECLARE @sql nvarchar(3500)
-
-set @sql = '
-SELECT COUNT(SI.ItemID) FROM Packages AS P
-INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
-INNER JOIN Users AS U ON P.UserID = U.UserID
-LEFT OUTER JOIN (
-	SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
-	INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
-	WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
-) AS EIP ON SI.ItemID = EIP.ItemID
-LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
-WHERE ' + @condition + '
-
-DECLARE @Items AS TABLE
-(
-	ItemID int
-);
-
-WITH TempItems AS (
-	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
-		SI.ItemID
-	FROM Packages AS P
-	INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
-	INNER JOIN Users AS U ON P.UserID = U.UserID
-	LEFT OUTER JOIN (
-		SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
-		INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
-		WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
-	) AS EIP ON SI.ItemID = EIP.ItemID
-	LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
-	WHERE ' + @condition + '
-)
-
-INSERT INTO @Items
-SELECT ItemID FROM TempItems
-WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
-
-SELECT
-	SI.ItemID,
-	SI.ItemName,
-	SI.PackageID,
-	P.PackageName,
-	P.UserID,
-	U.Username,
-
-	EIP.ExternalIP,
-	PIP.IPAddress
-FROM @Items AS TSI
-INNER JOIN ServiceItems AS SI ON TSI.ItemID = SI.ItemID
-INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
-INNER JOIN Users AS U ON P.UserID = U.UserID
-LEFT OUTER JOIN (
-	SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
-	INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
-	WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
-) AS EIP ON SI.ItemID = EIP.ItemID
-LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
-'
-
---print @sql
-
-exec sp_executesql @sql, N'@PackageID int, @StartRow int, @MaximumRows int, @Recursive bit',
-@PackageID, @StartRow, @MaximumRows, @Recursive
-
-RETURN
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetVirtualMachinesPaged]
-(
-	@ActorID int,
-	@PackageID int,
-	@FilterColumn nvarchar(50) = '',
-	@FilterValue nvarchar(50) = '',
-	@SortColumn nvarchar(50),
-	@StartRow int,
-	@MaximumRows int,
-	@Recursive bit
-)
-AS
-
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
--- start
-DECLARE @condition nvarchar(700)
-SET @condition = '
-SI.ItemTypeID = 33 -- VPS
-AND ((@Recursive = 0 AND P.PackageID = @PackageID)
-OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, P.PackageID) = 1))
-'
-
-IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
-AND @FilterValue <> '' AND @FilterValue IS NOT NULL
-SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
-
-IF @SortColumn IS NULL OR @SortColumn = ''
-SET @SortColumn = 'SI.ItemName ASC'
-
-DECLARE @sql nvarchar(3500)
-
-set @sql = '
-SELECT COUNT(SI.ItemID) FROM Packages AS P
-INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
-INNER JOIN Users AS U ON P.UserID = U.UserID
-LEFT OUTER JOIN (
-	SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
-	INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
-	WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
-) AS EIP ON SI.ItemID = EIP.ItemID
-LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
-WHERE ' + @condition + '
-
-DECLARE @Items AS TABLE
-(
-	ItemID int
-);
-
-WITH TempItems AS (
-	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
-		SI.ItemID
-	FROM Packages AS P
-	INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
-	INNER JOIN Users AS U ON P.UserID = U.UserID
-	LEFT OUTER JOIN (
-		SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
-		INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
-		WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
-	) AS EIP ON SI.ItemID = EIP.ItemID
-	LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
-	WHERE ' + @condition + '
-)
-
-INSERT INTO @Items
-SELECT ItemID FROM TempItems
-WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
-
-SELECT
-	SI.ItemID,
-	SI.ItemName,
-	SI.PackageID,
-	P.PackageName,
-	P.UserID,
-	U.Username,
-
-	EIP.ExternalIP,
-	PIP.IPAddress
-FROM @Items AS TSI
-INNER JOIN ServiceItems AS SI ON TSI.ItemID = SI.ItemID
-INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
-INNER JOIN Users AS U ON P.UserID = U.UserID
-LEFT OUTER JOIN (
-	SELECT PIP.ItemID, IP.ExternalIP FROM PackageIPAddresses AS PIP
-	INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
-	WHERE PIP.IsPrimary = 1 AND IP.PoolID = 3 -- external IP addresses
-) AS EIP ON SI.ItemID = EIP.ItemID
-LEFT OUTER JOIN PrivateIPAddresses AS PIP ON PIP.ItemID = SI.ItemID AND PIP.IsPrimary = 1
-'
-
---print @sql
-
-exec sp_executesql @sql, N'@PackageID int, @StartRow int, @MaximumRows int, @Recursive bit',
-@PackageID, @StartRow, @MaximumRows, @Recursive
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ExchangeAccountEmailAddresses](
-	[AddressID] [int] IDENTITY(1,1) NOT NULL,
-	[AccountID] [int] NOT NULL,
-	[EmailAddress] [nvarchar](300) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_ExchangeAccountEmailAddresses] PRIMARY KEY CLUSTERED 
-(
-	[AddressID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON),
- CONSTRAINT [IX_ExchangeAccountEmailAddresses_UniqueEmail] UNIQUE NONCLUSTERED 
-(
-	[EmailAddress] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetExchangeAccountEmailAddresses
-(
-	@AccountID int
-)
-AS
-SELECT
-	AddressID,
-	AccountID,
-	EmailAddress
-FROM
-	ExchangeAccountEmailAddresses
-WHERE
-	AccountID = @AccountID
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[ExchangeAccountEmailAddressExists]
-(
-	@EmailAddress nvarchar(300),
-	@Exists bit OUTPUT
-)
-AS
-
-	SET @Exists = 0
-	IF EXISTS(SELECT * FROM [dbo].[ExchangeAccountEmailAddresses] WHERE [EmailAddress] = @EmailAddress)
-		BEGIN
-			SET @Exists = 1
-		END
-	ELSE IF EXISTS(SELECT * FROM [dbo].[ExchangeAccounts] WHERE [PrimaryEmailAddress] = @EmailAddress AND [AccountType] <> 2)
-		BEGIN
-			SET @Exists = 1
-		END
-
-	RETURN
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
--- =============================================
--- Description:	Delete user email addresses except primary email
--- =============================================
-CREATE PROCEDURE [dbo].[DeleteUserEmailAddresses] 
-	@AccountId int,
-	@PrimaryEmailAddress nvarchar(300)
-AS
-BEGIN
-	
-DELETE FROM 
-	ExchangeAccountEmailAddresses 
-WHERE
-	AccountID = @AccountID AND LOWER(EmailAddress) <> LOWER(@PrimaryEmailAddress)
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE DeleteExchangeAccountEmailAddress
-(
-	@AccountID int,
-	@EmailAddress nvarchar(300)
-)
-AS
-DELETE FROM ExchangeAccountEmailAddresses
-WHERE AccountID = @AccountID AND EmailAddress = @EmailAddress
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE DeleteExchangeAccount
-(
-	@ItemID int,
-	@AccountID int
-)
-AS
-
--- delete e-mail addresses
-DELETE FROM ExchangeAccountEmailAddresses
-WHERE AccountID = @AccountID
-
--- delete account
-DELETE FROM ExchangeAccounts
-WHERE ItemID = @ItemID AND AccountID = @AccountID
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE AddExchangeAccountEmailAddress
-(
-	@AccountID int,
-	@EmailAddress nvarchar(300)
-)
-AS
-INSERT INTO ExchangeAccountEmailAddresses
-(
-	AccountID,
-	EmailAddress
-)
-VALUES
-(
-	@AccountID,
-	@EmailAddress
-)
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetPackagePrivateIPAddresses]
-	@PackageID int
-AS
-BEGIN
-
-	SELECT
-		PA.PrivateAddressID,
-		PA.IPAddress,
-		PA.ItemID,
-		SI.ItemName,
-		PA.IsPrimary
-	FROM PrivateIPAddresses AS PA
-	INNER JOIN ServiceItems AS SI ON PA.ItemID = SI.ItemID
-	WHERE SI.PackageID = @PackageID
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS OFF
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE FUNCTION dbo.PackageParents
-(
-	@PackageID int
-)
-RETURNS @T TABLE (PackageOrder int IDENTITY(1,1), PackageID int)
-AS
-BEGIN
-	-- insert current user
-	INSERT @T VALUES (@PackageID)
-
-	-- owner
-	DECLARE @ParentPackageID int, @TmpPackageID int
-	SET @TmpPackageID = @PackageID
-	
-	WHILE 10 = 10
-	BEGIN
-	
-		SET @ParentPackageID = NULL --reset var
-		SELECT @ParentPackageID = ParentPackageID FROM Packages
-		WHERE PackageID = @TmpPackageID
-		
-		IF @ParentPackageID IS NULL -- parent not found
-		BREAK
-	
-		INSERT @T VALUES (@ParentPackageID)
-		
-		SET @TmpPackageID = @ParentPackageID
-	END
-
-RETURN
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 GO
 SET ANSI_NULLS ON
@@ -6766,258 +3011,6 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[DeleteItemIPAddresses]
-(
-	@ActorID int,
-	@ItemID int
-)
-AS
-BEGIN
-	UPDATE PackageIPAddresses
-	SET
-		ItemID = NULL,
-		IsPrimary = 0
-	FROM PackageIPAddresses AS PIP
-	WHERE
-		PIP.ItemID = @ItemID
-		AND dbo.CheckActorPackageRights(@ActorID, PIP.PackageID) = 1
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[DeleteItemIPAddress]
-(
-	@ActorID int,
-	@ItemID int,
-	@PackageAddressID int
-)
-AS
-BEGIN
-	UPDATE PackageIPAddresses
-	SET
-		ItemID = NULL,
-		IsPrimary = 0
-	FROM PackageIPAddresses AS PIP
-	WHERE
-		PIP.PackageAddressID = @PackageAddressID
-		AND dbo.CheckActorPackageRights(@ActorID, PIP.PackageID) = 1
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[DeallocatePackageIPAddress]
-	@PackageAddressID int
-AS
-BEGIN
-
-	SET NOCOUNT ON;
-
-	-- check parent package
-	DECLARE @ParentPackageID int
-
-	SELECT @ParentPackageID = P.ParentPackageID
-	FROM PackageIPAddresses AS PIP
-	INNER JOIN Packages AS P ON PIP.PackageID = P.PackageId
-	WHERE PIP.PackageAddressID = @PackageAddressID
-
-	IF (@ParentPackageID = 1) -- "System" space
-	BEGIN
-		DELETE FROM dbo.PackageIPAddresses
-		WHERE PackageAddressID = @PackageAddressID
-	END
-	ELSE -- 2rd level space and below
-	BEGIN
-		UPDATE PackageIPAddresses
-		SET PackageID = @ParentPackageID
-		WHERE PackageAddressID = @PackageAddressID
-	END
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[AllocatePackageIPAddresses]
-(
-	@PackageID int,
-	@xml ntext
-)
-AS
-BEGIN
-	SET NOCOUNT ON;
-
-	DECLARE @idoc int
-	--Create an internal representation of the XML document.
-	EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
-
-	-- delete
-	DELETE FROM PackageIPAddresses
-	FROM PackageIPAddresses AS PIP
-	INNER JOIN OPENXML(@idoc, '/items/item', 1) WITH 
-	(
-		AddressID int '@id'
-	) as PV ON PIP.AddressID = PV.AddressID
-
-
-	-- insert
-	INSERT INTO dbo.PackageIPAddresses
-	(		
-		PackageID,
-		AddressID	
-	)
-	SELECT		
-		@PackageID,
-		AddressID
-
-	FROM OPENXML(@idoc, '/items/item', 1) WITH 
-	(
-		AddressID int '@id'
-	) as PV
-
-	-- remove document
-	exec sp_xml_removedocument @idoc
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 CREATE PROCEDURE [dbo].[AddItemIPAddress]
 (
 	@ActorID int,
@@ -7035,6 +3028,7 @@ BEGIN
 		PIP.PackageAddressID = @PackageAddressID
 		AND dbo.CheckActorPackageRights(@ActorID, PIP.PackageID) = 1
 END
+
 
 
 
@@ -7134,6 +3128,7 @@ FROM PackageAddons AS PA
 INNER JOIN HostingPlans AS HP ON PA.PlanID = HP.PlanID
 WHERE PA.PackageID = @PackageID
 RETURN
+
 
 
 
@@ -7271,99 +3266,6 @@ RETURN
 
 
 
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE DeletePackageAddon
-(
-	@ActorID int,
-	@PackageAddonID int
-)
-AS
-
-DECLARE @PackageID int
-SELECT @PackageID = PackageID FROM PackageAddons
-WHERE PackageAddonID = @PackageAddonID
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
--- delete record
-DELETE FROM PackageAddons
-WHERE PackageAddonID = @PackageAddonID
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 GO
 SET ANSI_NULLS ON
@@ -7400,128 +3302,63 @@ GO
 
 
 
-
-
-
-CREATE PROCEDURE DeleteHostingPlan
+CREATE PROCEDURE CheckDomain
 (
-	@ActorID int,
-	@PlanID int,
+	@PackageID int,
+	@DomainName nvarchar(100),
 	@Result int OUTPUT
 )
 AS
-SET @Result = 0
 
--- check rights
-DECLARE @PackageID int
-SELECT @PackageID = PackageID FROM HostingPlans
-WHERE PlanID = @PlanID
+/*
+@Result values:
+	0 - OK
+	-1 - already exists
+	-2 - sub-domain of prohibited domain
+*/
 
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
+SET @Result = 0 -- OK
 
--- check if some packages uses this plan
-IF EXISTS (SELECT PackageID FROM Packages WHERE PlanID = @PlanID)
+-- check if the domain already exists
+IF EXISTS(
+SELECT DomainID FROM Domains
+WHERE DomainName = @DomainName
+)
 BEGIN
 	SET @Result = -1
 	RETURN
 END
 
--- check if some package addons uses this plan
-IF EXISTS (SELECT PackageID FROM PackageAddons WHERE PlanID = @PlanID)
+-- check if this is a sub-domain of other domain
+-- that is not allowed for 3rd level hosting
+
+DECLARE @UserID int
+SELECT @UserID = UserID FROM Packages
+WHERE PackageID = @PackageID
+
+-- find sub-domains
+DECLARE @DomainUserID int, @HostingAllowed bit
+SELECT
+	@DomainUserID = P.UserID,
+	@HostingAllowed = D.HostingAllowed
+FROM Domains AS D
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+WHERE CHARINDEX('.' + DomainName, @DomainName) > 0
+AND (CHARINDEX('.' + DomainName, @DomainName) + LEN('.' + DomainName)) = LEN(@DomainName) + 1
+
+-- this is a domain of other user
+IF @UserID <> @DomainUserID AND @HostingAllowed = 0
 BEGIN
 	SET @Result = -2
 	RETURN
 END
 
--- delete hosting plan
-DELETE FROM HostingPlans
-WHERE PlanID = @PlanID
-
 RETURN
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[OrganizationUserExists] 
-(
-	@LoginName nvarchar(20),
-	@Exists bit OUTPUT
-)
-AS
-SET @Exists = 0
-IF EXISTS(SELECT * FROM ExchangeAccounts WHERE AccountName = @LoginName)
-BEGIN
-	SET @Exists = 1
-END
-
-RETURN
 
 
 
@@ -7924,6 +3761,22 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+CREATE TABLE [dbo].[PackageQuotas](
+	[PackageID] [int] NOT NULL,
+	[QuotaID] [int] NOT NULL,
+	[QuotaValue] [int] NOT NULL,
+ CONSTRAINT [PK_PackageQuotas] PRIMARY KEY CLUSTERED 
+(
+	[PackageID] ASC,
+	[QuotaID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 
 
 
@@ -8093,6 +3946,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -8168,6 +4022,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -8225,204 +4080,6 @@ END -- if 'root' package
 RETURN
 END
 
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE UpdatePackageAddon
-(
-	@ActorID int,
-	@PackageAddonID int,
-	@PlanID int,
-	@Quantity int,
-	@PurchaseDate datetime,
-	@StatusID int,
-	@Comments ntext
-)
-AS
-
-DECLARE @PackageID int
-SELECT @PackageID = PackageID FROM PackageAddons
-WHERE PackageAddonID = @PackageAddonID
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-BEGIN TRAN
-
-DECLARE @ParentPackageID int
-SELECT @ParentPackageID = ParentPackageID FROM Packages
-WHERE PackageID = @PackageID
-
--- update record
-UPDATE PackageAddons SET
-	PlanID = @PlanID,
-	Quantity = @Quantity,
-	PurchaseDate = @PurchaseDate,
-	StatusID = @StatusID,
-	Comments = @Comments
-WHERE PackageAddonID = @PackageAddonID
-
-DECLARE @ExceedingQuotas AS TABLE (QuotaID int, QuotaName nvarchar(50), QuotaValue int)
-INSERT INTO @ExceedingQuotas
-SELECT * FROM dbo.GetPackageExceedingQuotas(@ParentPackageID) WHERE QuotaValue > 0
-
-SELECT * FROM @ExceedingQuotas
-
-IF EXISTS(SELECT * FROM @ExceedingQuotas)
-BEGIN
-	ROLLBACK TRAN
-	RETURN
-END
-
-COMMIT TRAN
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-CREATE PROCEDURE [dbo].[UpdatePackage]
-(
-	@ActorID int,
-	@PackageID int,
-	@PackageName nvarchar(300),
-	@PackageComments ntext,
-	@StatusID int,
-	@PlanID int,
-	@PurchaseDate datetime,
-	@OverrideQuotas bit,
-	@QuotasXml ntext
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-BEGIN TRAN
-
-DECLARE @ParentPackageID int
-DECLARE @OldPlanID int
-
-SELECT @ParentPackageID = ParentPackageID, @OldPlanID = PlanID FROM Packages
-WHERE PackageID = @PackageID
-
--- update package
-UPDATE Packages SET
-	PackageName = @PackageName,
-	PackageComments = @PackageComments,
-	StatusID = @StatusID,
-	PlanID = @PlanID,
-	PurchaseDate = @PurchaseDate,
-	OverrideQuotas = @OverrideQuotas
-WHERE
-	PackageID = @PackageID
-
--- update quotas (if required)
-EXEC UpdatePackageQuotas @ActorID, @PackageID, @QuotasXml
-
--- check resulting quotas
-DECLARE @ExceedingQuotas AS TABLE (QuotaID int, QuotaName nvarchar(50), QuotaValue int)
-
--- check exceeding quotas if plan has been changed
-IF (@OldPlanID <> @PlanID) OR (@OverrideQuotas = 1)
-BEGIN
-	INSERT INTO @ExceedingQuotas
-	SELECT * FROM dbo.GetPackageExceedingQuotas(@ParentPackageID) WHERE QuotaValue > 0
-END
-
-SELECT * FROM @ExceedingQuotas
-
-IF EXISTS(SELECT * FROM @ExceedingQuotas)
-BEGIN
-	ROLLBACK TRAN
-	RETURN
-END
-
-
-COMMIT TRAN
-RETURN
 
 
 
@@ -8562,6 +4219,125 @@ RETURN
 
 
 
+
+GO
+SET ANSI_NULLS OFF
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE FUNCTION dbo.PackageParents
+(
+	@PackageID int
+)
+RETURNS @T TABLE (PackageOrder int IDENTITY(1,1), PackageID int)
+AS
+BEGIN
+	-- insert current user
+	INSERT @T VALUES (@PackageID)
+
+	-- owner
+	DECLARE @ParentPackageID int, @TmpPackageID int
+	SET @TmpPackageID = @PackageID
+	
+	WHILE 10 = 10
+	BEGIN
+	
+		SET @ParentPackageID = NULL --reset var
+		SELECT @ParentPackageID = ParentPackageID FROM Packages
+		WHERE PackageID = @TmpPackageID
+		
+		IF @ParentPackageID IS NULL -- parent not found
+		BREAK
+	
+		INSERT @T VALUES (@ParentPackageID)
+		
+		SET @TmpPackageID = @ParentPackageID
+	END
+
+RETURN
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PackagesTreeCache](
+	[ParentPackageID] [int] NOT NULL,
+	[PackageID] [int] NOT NULL
+)
+
+GO
+INSERT [dbo].[PackagesTreeCache] ([ParentPackageID], [PackageID]) VALUES (1, 1)
 GO
 SET ANSI_NULLS ON
 GO
@@ -8713,6 +4489,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -8774,97 +4551,6 @@ RETURN
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE DeleteItemPrivateIPAddresses
-(
-	@ActorID int,
-	@ItemID int
-)
-AS
-BEGIN
-	DELETE FROM PrivateIPAddresses
-	FROM PrivateIPAddresses AS PIP
-	INNER JOIN ServiceItems AS SI ON PIP.ItemID = SI.ItemID
-	WHERE PIP.ItemID = @ItemID
-	AND dbo.CheckActorPackageRights(@ActorID, SI.PackageID) = 1
-END
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE DeleteItemPrivateIPAddress
-(
-	@ActorID int,
-	@ItemID int,
-	@PrivateAddressID int
-)
-AS
-BEGIN
-	DELETE FROM PrivateIPAddresses
-	FROM PrivateIPAddresses AS PIP
-	INNER JOIN ServiceItems AS SI ON PIP.ItemID = SI.ItemID
-	WHERE PIP.PrivateAddressID = @PrivateAddressID
-	AND dbo.CheckActorPackageRights(@ActorID, SI.PackageID) = 1
-END
 
 
 
@@ -8960,6 +4646,3333 @@ RETURN
 
 
 
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ServiceItemProperties](
+	[ItemID] [int] NOT NULL,
+	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[PropertyValue] [nvarchar](3000) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_ServiceItemProperties] PRIMARY KEY CLUSTERED 
+(
+	[ItemID] ASC,
+	[PropertyName] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[DeallocatePackageIPAddress]
+	@PackageAddressID int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	-- check parent package
+	DECLARE @ParentPackageID int
+
+	SELECT @ParentPackageID = P.ParentPackageID
+	FROM PackageIPAddresses AS PIP
+	INNER JOIN Packages AS P ON PIP.PackageID = P.PackageId
+	WHERE PIP.PackageAddressID = @PackageAddressID
+
+	IF (@ParentPackageID = 1) -- "System" space
+	BEGIN
+		DELETE FROM dbo.PackageIPAddresses
+		WHERE PackageAddressID = @PackageAddressID
+	END
+	ELSE -- 2rd level space and below
+	BEGIN
+		UPDATE PackageIPAddresses
+		SET PackageID = @ParentPackageID
+		WHERE PackageAddressID = @PackageAddressID
+	END
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[CRMUsers](
+	[CRMUserID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[ChangedDate] [datetime] NOT NULL,
+	[CRMUserGuid] [uniqueidentifier] NULL,
+	[BusinessUnitID] [uniqueidentifier] NULL,
+ CONSTRAINT [PK_CRMUsers] PRIMARY KEY CLUSTERED 
+(
+	[CRMUserID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[InsertCRMUser]
+	@ItemID int,
+	@CrmUserID uniqueidentifier,
+	@BusinessUnitID uniqueidentifier
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+INSERT INTO
+	CRMUsers
+(
+	AccountID,
+	CRMUserGuid,
+	BusinessUnitID
+)
+VALUES 
+(
+	@ItemID, 
+	@CrmUserID,
+	@BusinessUnitID
+)
+
+	
+    
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetCRMUsersCount] 
+(
+	@ItemID int,
+	@Name nvarchar(400),
+	@Email nvarchar(400)
+	
+)
+AS
+
+IF (@Name IS NULL)
+BEGIN
+	SET @Name = '%'
+END
+
+IF (@Email IS NULL)
+BEGIN
+	SET @Email = '%'
+END
+
+SELECT 
+	COUNT(ea.AccountID)		
+FROM 
+	ExchangeAccounts ea 
+INNER JOIN 
+	CRMUsers cu 
+ON 
+	ea.AccountID = cu.AccountID
+WHERE 
+	ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetCRMUsers]
+(
+	@ItemID int,
+	@SortColumn nvarchar(40),
+	@SortDirection nvarchar(20),
+	@Name nvarchar(400),
+	@Email nvarchar(400),
+	@StartRow int,
+	@Count int	
+)
+AS
+
+IF (@Name IS NULL)
+BEGIN
+	SET @Name = '%'
+END
+
+IF (@Email IS NULL)
+BEGIN
+	SET @Email = '%'
+END
+
+CREATE TABLE #TempCRMUsers 
+(	
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int],	
+	[ItemID] [int] NOT NULL,
+	[AccountName] [nvarchar](20) NOT NULL,
+	[DisplayName] [nvarchar](300) NOT NULL,
+	[PrimaryEmailAddress] [nvarchar](300) NULL,
+	[SamAccountName] [nvarchar](100) NULL	
+)
+
+
+IF (@SortColumn = 'DisplayName')
+BEGIN
+	INSERT INTO 
+		#TempCRMUsers
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName 
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		CRMUsers cu 
+	ON 
+		ea.AccountID = cu.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.DisplayName
+END
+ELSE
+BEGIN
+	INSERT INTO 
+		#TempCRMUsers
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName 
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		CRMUsers cu 
+	ON 
+		ea.AccountID = cu.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.PrimaryEmailAddress 
+END
+
+DECLARE @RetCount int
+SELECT @RetCount = COUNT(ID) FROM #TempCRMUsers
+
+IF (@SortDirection = 'ASC')
+BEGIN
+	SELECT * FROM #TempCRMUsers
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+END
+ELSE
+BEGIN
+	IF (@SortColumn = 'DisplayName')
+	BEGIN
+		SELECT * FROM #TempCRMUsers
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
+	END
+	ELSE
+	BEGIN
+		SELECT * FROM #TempCRMUsers
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
+	END
+	
+END
+
+
+
+DROP TABLE #TempCRMUsers
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetCRMUser]
+	@AccountID int
+AS
+BEGIN
+	SET NOCOUNT ON;
+SELECT
+	CRMUserGUID as CRMUserID,
+	BusinessUnitID
+FROM
+	CRMUsers
+WHERE
+	AccountID = @AccountID		
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetCRMOrganizationUsers]
+	@ItemID int
+AS
+BEGIN
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName 
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		CRMUsers cu 
+	ON 
+		ea.AccountID = cu.AccountID
+	WHERE 
+		ea.ItemID = @ItemID
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[BlackBerryUsers](
+	[BlackBerryUserId] [int] IDENTITY(1,1) NOT NULL,
+	[AccountId] [int] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[ModifiedDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_BlackBerryUsers] PRIMARY KEY CLUSTERED 
+(
+	[BlackBerryUserId] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetBlackBerryUsersCount] 
+(
+	@ItemID int,
+	@Name nvarchar(400),
+	@Email nvarchar(400)
+	
+)
+AS
+
+IF (@Name IS NULL)
+BEGIN
+	SET @Name = '%'
+END
+
+IF (@Email IS NULL)
+BEGIN
+	SET @Email = '%'
+END
+
+SELECT 
+	COUNT(ea.AccountID)		
+FROM 
+	ExchangeAccounts ea 
+INNER JOIN 
+	BlackBerryUsers bu 
+ON 
+	ea.AccountID = bu.AccountID
+WHERE 
+	ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetBlackBerryUsers]
+(
+	@ItemID int,
+	@SortColumn nvarchar(40),
+	@SortDirection nvarchar(20),
+	@Name nvarchar(400),
+	@Email nvarchar(400),
+	@StartRow int,
+	@Count int	
+)
+AS
+
+IF (@Name IS NULL)
+BEGIN
+	SET @Name = '%'
+END
+
+IF (@Email IS NULL)
+BEGIN
+	SET @Email = '%'
+END
+
+CREATE TABLE #TempBlackBerryUsers 
+(	
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int],	
+	[ItemID] [int] NOT NULL,
+	[AccountName] [nvarchar](20) NOT NULL,
+	[DisplayName] [nvarchar](300) NOT NULL,
+	[PrimaryEmailAddress] [nvarchar](300) NULL,
+	[SamAccountName] [nvarchar](100) NULL	
+)
+
+
+IF (@SortColumn = 'DisplayName')
+BEGIN
+	INSERT INTO 
+		#TempBlackBerryUsers 
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName 
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		BlackBerryUsers bu 
+	ON 
+		ea.AccountID = bu.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.DisplayName
+END
+ELSE
+BEGIN
+	INSERT INTO 
+		#TempBlackBerryUsers
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName 
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		BlackBerryUsers bu 
+	ON 
+		ea.AccountID = bu.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.PrimaryEmailAddress 
+END
+
+DECLARE @RetCount int
+SELECT @RetCount = COUNT(ID) FROM #TempBlackBerryUsers 
+
+IF (@SortDirection = 'ASC')
+BEGIN
+	SELECT * FROM #TempBlackBerryUsers 
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+END
+ELSE
+BEGIN
+	IF (@SortColumn = 'DisplayName')
+	BEGIN
+		SELECT * FROM #TempBlackBerryUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
+	END
+	ELSE
+	BEGIN
+		SELECT * FROM #TempBlackBerryUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
+	END
+	
+END
+
+
+DROP TABLE #TempBlackBerryUsers
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[DeleteBlackBerryUser]
+(	
+	@AccountID int
+)
+AS
+
+DELETE FROM 
+	BlackBerryUsers
+WHERE 
+	AccountID = @AccountID
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[CheckBlackBerryUserExists] 
+	@AccountID int
+AS
+BEGIN	
+	SELECT 
+		COUNT(AccountID)
+	FROM 
+		dbo.BlackBerryUsers
+	WHERE AccountID = @AccountID
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[AddBlackBerryUser]	
+	@AccountID int
+AS
+BEGIN	
+	SET NOCOUNT ON;
+
+INSERT INTO
+	dbo.BlackBerryUsers
+	(	 
+	 
+	 AccountID,
+	 CreatedDate,
+	 ModifiedDate)
+VALUES
+(		
+	@AccountID,
+	getdate(),
+	getdate()
+)		
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE DeleteExchangeAccountEmailAddress
+(
+	@AccountID int,
+	@EmailAddress nvarchar(300)
+)
+AS
+DELETE FROM ExchangeAccountEmailAddresses
+WHERE AccountID = @AccountID AND EmailAddress = @EmailAddress
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE DeleteExchangeAccount
+(
+	@ItemID int,
+	@AccountID int
+)
+AS
+
+-- delete e-mail addresses
+DELETE FROM ExchangeAccountEmailAddresses
+WHERE AccountID = @AccountID
+
+-- delete account
+DELETE FROM ExchangeAccounts
+WHERE ItemID = @ItemID AND AccountID = @AccountID
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[DeleteCRMOrganization]
+	@ItemID int
+AS
+BEGIN
+	SET NOCOUNT ON
+DELETE FROM dbo.CRMUsers WHERE AccountID IN (SELECT AccountID FROM dbo.ExchangeAccounts WHERE ItemID = @ItemID)
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[AllocatePackageIPAddresses]
+(
+	@PackageID int,
+	@xml ntext
+)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	DECLARE @idoc int
+	--Create an internal representation of the XML document.
+	EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
+
+	-- delete
+	DELETE FROM PackageIPAddresses
+	FROM PackageIPAddresses AS PIP
+	INNER JOIN OPENXML(@idoc, '/items/item', 1) WITH 
+	(
+		AddressID int '@id'
+	) as PV ON PIP.AddressID = PV.AddressID
+
+
+	-- insert
+	INSERT INTO dbo.PackageIPAddresses
+	(		
+		PackageID,
+		AddressID	
+	)
+	SELECT		
+		@PackageID,
+		AddressID
+
+	FROM OPENXML(@idoc, '/items/item', 1) WITH 
+	(
+		AddressID int '@id'
+	) as PV
+
+	-- remove document
+	exec sp_xml_removedocument @idoc
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ExchangeOrganizations](
+	[ItemID] [int] NOT NULL,
+	[OrganizationID] [nvarchar](10) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_ExchangeOrganizations] PRIMARY KEY CLUSTERED 
+(
+	[ItemID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON),
+ CONSTRAINT [IX_ExchangeOrganizations_UniqueOrg] UNIQUE NONCLUSTERED 
+(
+	[OrganizationID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetItemIdByOrganizationId] 	
+	@OrganizationId nvarchar(10)
+AS
+BEGIN
+	SET NOCOUNT ON;
+    
+	SELECT 
+		ItemID
+	FROM 
+		dbo.ExchangeOrganizations
+	WHERE 
+		OrganizationId = @OrganizationId
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE DeleteExchangeOrganization 
+(
+	@ItemID int
+)
+AS
+DELETE FROM ExchangeOrganizations
+WHERE ItemID = @ItemID
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE AddExchangeOrganization
+(
+	@ItemID int,
+	@OrganizationID nvarchar(10)
+)
+AS
+
+IF NOT EXISTS(SELECT * FROM ExchangeOrganizations WHERE OrganizationID = @OrganizationID)
+BEGIN
+	INSERT INTO ExchangeOrganizations
+	(ItemID, OrganizationID)
+	VALUES
+	(@ItemID, @OrganizationID)
+END
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE ExchangeOrganizationExists
+(
+	@OrganizationID nvarchar(10),
+	@Exists bit OUTPUT
+)
+AS
+SET @Exists = 0
+IF EXISTS(SELECT * FROM ExchangeOrganizations WHERE OrganizationID = @OrganizationID)
+BEGIN
+	SET @Exists = 1
+END
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ExchangeOrganizationDomains](
+	[OrganizationDomainID] [int] IDENTITY(1,1) NOT NULL,
+	[ItemID] [int] NOT NULL,
+	[DomainID] [int] NULL,
+	[IsHost] [bit] NULL,
+ CONSTRAINT [PK_ExchangeOrganizationDomains] PRIMARY KEY CLUSTERED 
+(
+	[OrganizationDomainID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON),
+ CONSTRAINT [IX_ExchangeOrganizationDomains_UniqueDomain] UNIQUE NONCLUSTERED 
+(
+	[DomainID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetExchangeOrganizationStatistics] 
+(
+	@ItemID int
+)
+AS
+SELECT
+	(SELECT COUNT(*) FROM ExchangeAccounts WHERE (AccountType = 1 OR AccountType = 5 OR AccountType = 6) AND ItemID = @ItemID) AS CreatedMailboxes,
+	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 2 AND ItemID = @ItemID) AS CreatedContacts,
+	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 3 AND ItemID = @ItemID) AS CreatedDistributionLists,
+	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 4 AND ItemID = @ItemID) AS CreatedPublicFolders,
+	(SELECT COUNT(*) FROM ExchangeOrganizationDomains WHERE ItemID = @ItemID) AS CreatedDomains
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetExchangeOrganizationDomains 
+(
+	@ItemID int
+)
+AS
+SELECT
+	ED.DomainID,
+	D.DomainName,
+	ED.IsHost
+FROM
+	ExchangeOrganizationDomains AS ED
+INNER JOIN Domains AS D ON ED.DomainID = D.DomainID
+WHERE ED.ItemID = @ItemID
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE DeleteExchangeOrganizationDomain 
+(
+	@ItemID int,
+	@DomainID int
+)
+AS
+DELETE FROM ExchangeOrganizationDomains
+WHERE DomainID = @DomainID AND ItemID = @ItemID
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE AddExchangeOrganizationDomain 
+(
+	@ItemID int,
+	@DomainID int,
+	@IsHost bit
+)
+AS
+INSERT INTO ExchangeOrganizationDomains
+(ItemID, DomainID, IsHost)
+VALUES
+(@ItemID, @DomainID, @IsHost)
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE ExchangeOrganizationDomainExists 
+(
+	@DomainID int,
+	@Exists bit OUTPUT
+)
+AS
+SET @Exists = 0
+IF EXISTS(SELECT * FROM ExchangeOrganizationDomains WHERE DomainID = @DomainID)
+BEGIN
+	SET @Exists = 1
+END
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[UpdateExchangeAccount] 
+(
+	@AccountID int,
+	@AccountName nvarchar(20),
+	@DisplayName nvarchar(300),
+	@PrimaryEmailAddress nvarchar(300),
+	@AccountType int,
+	@SamAccountName nvarchar(100),
+	@MailEnabledPublicFolder bit,
+	@MailboxManagerActions varchar(200),
+	@Password varchar(200)
+)
+AS
+
+BEGIN TRAN	
+UPDATE ExchangeAccounts SET
+	AccountName = @AccountName,
+	DisplayName = @DisplayName,
+	PrimaryEmailAddress = @PrimaryEmailAddress,
+	MailEnabledPublicFolder = @MailEnabledPublicFolder,
+	MailboxManagerActions = @MailboxManagerActions,	
+	AccountType =@AccountType,
+	SamAccountName = @SamAccountName
+
+WHERE
+	AccountID = @AccountID
+
+IF (@@ERROR <> 0 )
+	BEGIN
+		ROLLBACK TRANSACTION
+		RETURN -1
+	END
+
+UPDATE ExchangeAccounts SET 
+	AccountPassword = @Password WHERE AccountID = @AccountID AND @Password IS NOT NULL
+
+IF (@@ERROR <> 0 )
+	BEGIN
+		ROLLBACK TRANSACTION
+		RETURN -1
+	END
+COMMIT TRAN
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[SearchExchangeAccount]
+(
+      @ActorID int,
+      @AccountType int,
+      @PrimaryEmailAddress nvarchar(300)
+)
+AS
+
+DECLARE @PackageID int
+DECLARE @ItemID int
+DECLARE @AccountID int
+
+SELECT
+      @AccountID = AccountID,
+      @ItemID = ItemID
+FROM ExchangeAccounts
+WHERE PrimaryEmailAddress = @PrimaryEmailAddress
+AND AccountType = @AccountType
+
+
+-- check space rights
+SELECT @PackageID = PackageID FROM ServiceItems
+WHERE ItemID = @ItemID
+
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+SELECT
+	AccountID,
+	ItemID,
+	@PackageID AS PackageID,
+	AccountType,
+	AccountName,
+	DisplayName,
+	PrimaryEmailAddress,
+	MailEnabledPublicFolder,
+	MailboxManagerActions,
+	SamAccountName,
+	AccountPassword 
+FROM ExchangeAccounts
+WHERE AccountID = @AccountID
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[OrganizationUserExists] 
+(
+	@LoginName nvarchar(20),
+	@Exists bit OUTPUT
+)
+AS
+SET @Exists = 0
+IF EXISTS(SELECT * FROM ExchangeAccounts WHERE AccountName = @LoginName)
+BEGIN
+	SET @Exists = 1
+END
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetOrganizationStatistics] 
+(
+	@ItemID int
+)
+AS
+SELECT
+	(SELECT COUNT(*) FROM ExchangeAccounts WHERE (AccountType = 7 OR AccountType = 1 OR AccountType = 6 OR AccountType = 5)  AND ItemID = @ItemID) AS CreatedUsers,
+	(SELECT COUNT(*) FROM ExchangeOrganizationDomains WHERE ItemID = @ItemID) AS CreatedDomains
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetOrganizationCRMUserCount]
+	@ItemID int
+AS
+BEGIN
+SELECT 
+ COUNT(CRMUserID) 
+FROM 
+	CrmUsers CU
+INNER JOIN 
+	ExchangeAccounts EA
+ON 
+	CU.AccountID = EA.AccountID
+WHERE EA.ItemID = @ItemID
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE FUNCTION dbo.PackagesTree
+(
+	@PackageID int,
+	@Recursive bit = 0
+)
+RETURNS @T TABLE (PackageID int)
+AS
+BEGIN
+
+INSERT INTO @T VALUES (@PackageID)
+
+IF @Recursive = 1
+BEGIN
+	WITH RecursivePackages(ParentPackageID, PackageID, PackageLevel) AS 
+	(
+		SELECT ParentPackageID, PackageID, 0 AS PackageLevel
+		FROM Packages
+		WHERE ParentPackageID = @PackageID
+		UNION ALL
+		SELECT p.ParentPackageID, p.PackageID, PackageLevel + 1
+		FROM Packages p
+			INNER JOIN RecursivePackages d
+			ON p.ParentPackageID = d.PackageID
+		WHERE @Recursive = 1
+	)
+	INSERT INTO @T
+	SELECT PackageID
+	FROM RecursivePackages
+END
+	
+RETURN
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetDomains
+(
+	@ActorID int,
+	@PackageID int,
+	@Recursive bit = 1
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(WS.ItemID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(MD.ItemID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	Z.ItemName AS ZoneName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.IsDomainPointer
+FROM Domains AS D
+INNER JOIN PackagesTree(@PackageID, @Recursive) AS PT ON D.PackageID = PT.PackageID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetDomainByName
+(
+	@ActorID int,
+	@DomainName nvarchar(100)
+)
+AS
+
+SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(D.WebSiteID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(D.MailDomainID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	Z.ItemName AS ZoneName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.IsDomainPointer
+FROM Domains AS D
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+WHERE
+	D.DomainName = @DomainName
+	AND dbo.CheckActorPackageRights(@ActorID, P.PackageID) = 1
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetDomain
+(
+	@ActorID int,
+	@DomainID int
+)
+AS
+
+SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(WS.ItemID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(MD.ItemID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	Z.ItemName AS ZoneName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.IsDomainPointer
+FROM Domains AS D
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+WHERE
+	D.DomainID = @DomainID
+	AND dbo.CheckActorPackageRights(@ActorID, P.PackageID) = 1
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE DeleteSchedule
+(
+	@ActorID int,
+	@ScheduleID int
+)
+AS
+
+-- check rights
+DECLARE @PackageID int
+SELECT @PackageID = PackageID FROM Schedule
+WHERE ScheduleID = @ScheduleID
+
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+BEGIN TRAN
+-- delete schedule parameters
+DELETE FROM ScheduleParameters
+WHERE ScheduleID = @ScheduleID
+
+-- delete schedule
+DELETE FROM Schedule
+WHERE ScheduleID = @ScheduleID
+
+COMMIT TRAN
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE DeletePackageAddon
+(
+	@ActorID int,
+	@PackageAddonID int
+)
+AS
+
+DECLARE @PackageID int
+SELECT @PackageID = PackageID FROM PackageAddons
+WHERE PackageAddonID = @PackageAddonID
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- delete record
+DELETE FROM PackageAddons
+WHERE PackageAddonID = @PackageAddonID
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[DeleteItemIPAddresses]
+(
+	@ActorID int,
+	@ItemID int
+)
+AS
+BEGIN
+	UPDATE PackageIPAddresses
+	SET
+		ItemID = NULL,
+		IsPrimary = 0
+	FROM PackageIPAddresses AS PIP
+	WHERE
+		PIP.ItemID = @ItemID
+		AND dbo.CheckActorPackageRights(@ActorID, PIP.PackageID) = 1
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[DeleteItemIPAddress]
+(
+	@ActorID int,
+	@ItemID int,
+	@PackageAddressID int
+)
+AS
+BEGIN
+	UPDATE PackageIPAddresses
+	SET
+		ItemID = NULL,
+		IsPrimary = 0
+	FROM PackageIPAddresses AS PIP
+	WHERE
+		PIP.PackageAddressID = @PackageAddressID
+		AND dbo.CheckActorPackageRights(@ActorID, PIP.PackageID) = 1
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE DeleteHostingPlan
+(
+	@ActorID int,
+	@PlanID int,
+	@Result int OUTPUT
+)
+AS
+SET @Result = 0
+
+-- check rights
+DECLARE @PackageID int
+SELECT @PackageID = PackageID FROM HostingPlans
+WHERE PlanID = @PlanID
+
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- check if some packages uses this plan
+IF EXISTS (SELECT PackageID FROM Packages WHERE PlanID = @PlanID)
+BEGIN
+	SET @Result = -1
+	RETURN
+END
+
+-- check if some package addons uses this plan
+IF EXISTS (SELECT PackageID FROM PackageAddons WHERE PlanID = @PlanID)
+BEGIN
+	SET @Result = -2
+	RETURN
+END
+
+-- delete hosting plan
+DELETE FROM HostingPlans
+WHERE PlanID = @PlanID
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE DeleteDomain
+(
+	@DomainID int,
+	@ActorID int
+)
+AS
+
+-- check rights
+DECLARE @PackageID int
+SELECT @PackageID = PackageID FROM Domains
+WHERE DomainID = @DomainID
+
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+DELETE FROM Domains
+WHERE DomainID = @DomainID
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PrivateIPAddresses](
+	[PrivateAddressID] [int] IDENTITY(1,1) NOT NULL,
+	[ItemID] [int] NOT NULL,
+	[IPAddress] [varchar](15) COLLATE Latin1_General_CI_AS NOT NULL,
+	[IsPrimary] [bit] NOT NULL,
+ CONSTRAINT [PK_PrivateIPAddresses] PRIMARY KEY CLUSTERED 
+(
+	[PrivateAddressID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetPackagePrivateIPAddresses]
+	@PackageID int
+AS
+BEGIN
+
+	SELECT
+		PA.PrivateAddressID,
+		PA.IPAddress,
+		PA.ItemID,
+		SI.ItemName,
+		PA.IsPrimary
+	FROM PrivateIPAddresses AS PA
+	INNER JOIN ServiceItems AS SI ON PA.ItemID = SI.ItemID
+	WHERE SI.PackageID = @PackageID
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetItemPrivateIPAddresses]
+(
+	@ActorID int,
+	@ItemID int
+)
+AS
+
+SELECT
+	PIP.PrivateAddressID AS AddressID,
+	PIP.IPAddress,
+	PIP.IsPrimary
+FROM PrivateIPAddresses AS PIP
+INNER JOIN ServiceItems AS SI ON PIP.ItemID = SI.ItemID
+WHERE PIP.ItemID = @ItemID
+AND dbo.CheckActorPackageRights(@ActorID, SI.PackageID) = 1
+ORDER BY PIP.IsPrimary DESC
+
+RETURN
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE DeleteItemPrivateIPAddresses
+(
+	@ActorID int,
+	@ItemID int
+)
+AS
+BEGIN
+	DELETE FROM PrivateIPAddresses
+	FROM PrivateIPAddresses AS PIP
+	INNER JOIN ServiceItems AS SI ON PIP.ItemID = SI.ItemID
+	WHERE PIP.ItemID = @ItemID
+	AND dbo.CheckActorPackageRights(@ActorID, SI.PackageID) = 1
+END
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE DeleteItemPrivateIPAddress
+(
+	@ActorID int,
+	@ItemID int,
+	@PrivateAddressID int
+)
+AS
+BEGIN
+	DELETE FROM PrivateIPAddresses
+	FROM PrivateIPAddresses AS PIP
+	INNER JOIN ServiceItems AS SI ON PIP.ItemID = SI.ItemID
+	WHERE PIP.PrivateAddressID = @PrivateAddressID
+	AND dbo.CheckActorPackageRights(@ActorID, SI.PackageID) = 1
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -9014,149 +8027,136 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[ServiceItemProperties](
-	[ItemID] [int] NOT NULL,
-	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[PropertyValue] [nvarchar](3000) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ServiceItemProperties] PRIMARY KEY CLUSTERED 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE FUNCTION [dbo].[CheckPackageParent]
 (
-	[ItemID] ASC,
-	[PropertyName] ASC
+	@ParentPackageID int,
+	@PackageID int
+)
+RETURNS bit
+AS
+BEGIN
+
+-- check if the user requests hiself
+IF @ParentPackageID = @PackageID
+BEGIN
+	RETURN 1
+END
+
+DECLARE @TmpParentPackageID int, @TmpPackageID int
+SET @TmpPackageID = @PackageID
+
+WHILE 10 = 10
+BEGIN
+
+	SET @TmpParentPackageID = NULL --reset var
+
+	-- get owner
+	SELECT
+		@TmpParentPackageID = ParentPackageID
+	FROM Packages
+	WHERE PackageID = @TmpPackageID
+
+	IF @TmpParentPackageID IS NULL -- the last parent package
+		BREAK
+	
+	IF @TmpParentPackageID = @ParentPackageID
+	RETURN 1
+	
+	SET @TmpPackageID = @TmpParentPackageID
+END
+
+
+RETURN 0
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PackagesDiskspace](
+	[PackageID] [int] NOT NULL,
+	[GroupID] [int] NOT NULL,
+	[DiskSpace] [bigint] NOT NULL,
+ CONSTRAINT [PK_PackagesDiskspace] PRIMARY KEY CLUSTERED 
+(
+	[PackageID] ASC,
+	[GroupID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
 )
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE UpdateServiceItem
-(
-	@ActorID int,
-	@ItemID int,
-	@ItemName nvarchar(500),
-	@XmlProperties ntext
-)
-AS
-BEGIN TRAN
-
--- check rights
-DECLARE @PackageID int
-SELECT PackageID = @PackageID FROM ServiceItems
-WHERE ItemID = @ItemID
-
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
--- update item
-UPDATE ServiceItems SET ItemName = @ItemName
-WHERE ItemID=@ItemID
-
-DECLARE @idoc int
---Create an internal representation of the XML document.
-EXEC sp_xml_preparedocument @idoc OUTPUT, @XmlProperties
-
--- Execute a SELECT statement that uses the OPENXML rowset provider.
-DELETE FROM ServiceItemProperties
-WHERE ItemID = @ItemID
-
-INSERT INTO ServiceItemProperties
-(
-	ItemID,
-	PropertyName,
-	PropertyValue
-)
-SELECT
-	@ItemID,
-	PropertyName,
-	PropertyValue
-FROM OPENXML(@idoc, '/properties/property',1) WITH 
-(
-	PropertyName nvarchar(50) '@name',
-	PropertyValue nvarchar(3000) '@value'
-) as PV
-
--- remove document
-exec sp_xml_removedocument @idoc
-
-COMMIT TRAN
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 GO
 SET ANSI_NULLS ON
@@ -9171,22 +8171,6 @@ CREATE TABLE [dbo].[HostingPlanResources](
  CONSTRAINT [PK_HostingPlanResources] PRIMARY KEY CLUSTERED 
 (
 	[PlanID] ASC,
-	[GroupID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[PackagesDiskspace](
-	[PackageID] [int] NOT NULL,
-	[GroupID] [int] NOT NULL,
-	[DiskSpace] [bigint] NOT NULL,
- CONSTRAINT [PK_PackagesDiskspace] PRIMARY KEY CLUSTERED 
-(
-	[PackageID] ASC,
 	[GroupID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
 )
@@ -9245,6 +8229,7 @@ WHERE PT.ParentPackageID = @PackageID
 
 RETURN @Diskspace
 END
+
 
 
 
@@ -9397,6 +8382,1192 @@ END
 
 
 
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE UpdateServiceItem
+(
+	@ActorID int,
+	@ItemID int,
+	@ItemName nvarchar(500),
+	@XmlProperties ntext
+)
+AS
+BEGIN TRAN
+
+-- check rights
+DECLARE @PackageID int
+SELECT PackageID = @PackageID FROM ServiceItems
+WHERE ItemID = @ItemID
+
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- update item
+UPDATE ServiceItems SET ItemName = @ItemName
+WHERE ItemID=@ItemID
+
+DECLARE @idoc int
+--Create an internal representation of the XML document.
+EXEC sp_xml_preparedocument @idoc OUTPUT, @XmlProperties
+
+-- Execute a SELECT statement that uses the OPENXML rowset provider.
+DELETE FROM ServiceItemProperties
+WHERE ItemID = @ItemID
+
+INSERT INTO ServiceItemProperties
+(
+	ItemID,
+	PropertyName,
+	PropertyValue
+)
+SELECT
+	@ItemID,
+	PropertyName,
+	PropertyValue
+FROM OPENXML(@idoc, '/properties/property',1) WITH 
+(
+	PropertyName nvarchar(50) '@name',
+	PropertyValue nvarchar(3000) '@value'
+) as PV
+
+-- remove document
+exec sp_xml_removedocument @idoc
+
+COMMIT TRAN
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE UpdateSchedule
+(
+	@ActorID int,
+	@ScheduleID int,
+	@TaskID nvarchar(100),
+	@ScheduleName nvarchar(100),
+	@ScheduleTypeID nvarchar(50),
+	@Interval int,
+	@FromTime datetime,
+	@ToTime datetime,
+	@StartTime datetime,
+	@LastRun datetime,
+	@NextRun datetime,
+	@Enabled bit,
+	@PriorityID nvarchar(50),
+	@HistoriesNumber int,
+	@MaxExecutionTime int,
+	@WeekMonthDay int,
+	@XmlParameters ntext
+)
+AS
+
+-- check rights
+DECLARE @PackageID int
+SELECT @PackageID = PackageID FROM Schedule
+WHERE ScheduleID = @ScheduleID
+
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+BEGIN TRAN
+
+UPDATE Schedule
+SET
+	TaskID = @TaskID,
+	ScheduleName = @ScheduleName,
+	ScheduleTypeID = @ScheduleTypeID,
+	Interval = @Interval,
+	FromTime = @FromTime,
+	ToTime = @ToTime,
+	StartTime = @StartTime,
+	LastRun = @LastRun,
+	NextRun = @NextRun,
+	Enabled = @Enabled,
+	PriorityID = @PriorityID,
+	HistoriesNumber = @HistoriesNumber,
+	MaxExecutionTime = @MaxExecutionTime,
+	WeekMonthDay = @WeekMonthDay
+WHERE
+	ScheduleID = @ScheduleID
+	
+DECLARE @idoc int
+--Create an internal representation of the XML document.
+EXEC sp_xml_preparedocument @idoc OUTPUT, @XmlParameters
+
+-- Execute a SELECT statement that uses the OPENXML rowset provider.
+DELETE FROM ScheduleParameters
+WHERE ScheduleID = @ScheduleID
+
+INSERT INTO ScheduleParameters
+(
+	ScheduleID,
+	ParameterID,
+	ParameterValue
+)
+SELECT
+	@ScheduleID,
+	ParameterID,
+	ParameterValue
+FROM OPENXML(@idoc, '/parameters/parameter',1) WITH 
+(
+	ParameterID nvarchar(50) '@id',
+	ParameterValue nvarchar(3000) '@value'
+) as PV
+
+-- remove document
+exec sp_xml_removedocument @idoc
+
+COMMIT TRAN
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE UpdateDomain
+(
+	@DomainID int,
+	@ActorID int,
+	@ZoneItemID int,
+	@HostingAllowed bit,
+	@WebSiteID int,
+	@MailDomainID int
+)
+AS
+
+-- check rights
+DECLARE @PackageID int
+SELECT @PackageID = PackageID FROM Domains
+WHERE DomainID = @DomainID
+
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+IF @ZoneItemID = 0 SET @ZoneItemID = NULL
+IF @WebSiteID = 0 SET @WebSiteID = NULL
+IF @MailDomainID = 0 SET @MailDomainID = NULL
+
+-- update record
+UPDATE Domains
+SET
+	ZoneItemID = @ZoneItemID,
+	HostingAllowed = @HostingAllowed,
+	WebSiteID = @WebSiteID,
+	MailDomainID = @MailDomainID
+WHERE
+	DomainID = @DomainID
+	RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[SetItemPrivatePrimaryIPAddress]
+(
+	@ActorID int,
+	@ItemID int,
+	@PrivateAddressID int
+)
+AS
+BEGIN
+	UPDATE PrivateIPAddresses
+	SET IsPrimary = CASE PIP.PrivateAddressID WHEN @PrivateAddressID THEN 1 ELSE 0 END
+	FROM PrivateIPAddresses AS PIP
+	INNER JOIN ServiceItems AS SI ON PIP.ItemID = SI.ItemID
+	WHERE PIP.ItemID = @ItemID
+	AND dbo.CheckActorPackageRights(@ActorID, SI.PackageID) = 1
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[SearchOrganizationAccounts]
+(
+	@ActorID int,
+	@ItemID int,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@IncludeMailboxes bit
+)
+AS
+DECLARE @PackageID int
+SELECT @PackageID = PackageID FROM ServiceItems
+WHERE ItemID = @ItemID
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- start
+DECLARE @condition nvarchar(700)
+SET @condition = '
+(EA.AccountType = 7 OR (EA.AccountType = 1 AND @IncludeMailboxes = 1)  )
+AND EA.ItemID = @ItemID
+'
+
+IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+AND @FilterValue <> '' AND @FilterValue IS NOT NULL
+SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'EA.DisplayName ASC'
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+SELECT
+	EA.AccountID,
+	EA.ItemID,
+	EA.AccountType,
+	EA.AccountName,
+	EA.DisplayName,
+	EA.PrimaryEmailAddress
+FROM ExchangeAccounts AS EA
+WHERE ' + @condition
+
+print @sql
+
+exec sp_executesql @sql, N'@ItemID int, @IncludeMailboxes bit', 
+@ItemID, @IncludeMailboxes
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PackageResources](
+	[PackageID] [int] NOT NULL,
+	[GroupID] [int] NOT NULL,
+	[CalculateDiskspace] [bit] NOT NULL,
+	[CalculateBandwidth] [bit] NOT NULL,
+ CONSTRAINT [PK_PackageResources_1] PRIMARY KEY CLUSTERED 
+(
+	[PackageID] ASC,
+	[GroupID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE UpdatePackageQuotas
+(
+	@ActorID int,
+	@PackageID int,
+	@Xml ntext
+)
+AS
+
+/*
+XML Format:
+
+<plan>
+	<groups>
+		<group id="16" enabled="1" calculateDiskSpace="1" calculateBandwidth="1"/>
+	</groups>
+	<quotas>
+		<quota id="2" value="2"/>
+	</quotas>
+</plan>
+
+*/
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+DECLARE @OverrideQuotas bit
+SELECT @OverrideQuotas = OverrideQuotas FROM Packages
+WHERE PackageID = @PackageID
+
+IF @OverrideQuotas = 0
+BEGIN
+	-- delete old Package resources
+	DELETE FROM PackageResources
+	WHERE PackageID = @PackageID
+
+	-- delete old Package quotas
+	DELETE FROM PackageQuotas
+	WHERE PackageID = @PackageID
+END
+
+IF @OverrideQuotas = 1 AND @Xml IS NOT NULL
+BEGIN
+	-- delete old Package resources
+	DELETE FROM PackageResources
+	WHERE PackageID = @PackageID
+
+	-- delete old Package quotas
+	DELETE FROM PackageQuotas
+	WHERE PackageID = @PackageID
+	
+	DECLARE @idoc int
+	--Create an internal representation of the XML document.
+	EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
+
+	-- update Package resources
+	INSERT INTO PackageResources
+	(
+		PackageID,
+		GroupID,
+		CalculateDiskSpace,
+		CalculateBandwidth
+	)
+	SELECT
+		@PackageID,
+		GroupID,
+		CalculateDiskSpace,
+		CalculateBandwidth
+	FROM OPENXML(@idoc, '/plan/groups/group',1) WITH 
+	(
+		GroupID int '@id',
+		CalculateDiskSpace bit '@calculateDiskSpace',
+		CalculateBandwidth bit '@calculateBandwidth'
+	) as XRG
+
+	-- update Package quotas
+	INSERT INTO PackageQuotas
+	(
+		PackageID,
+		QuotaID,
+		QuotaValue
+	)
+	SELECT
+		@PackageID,
+		QuotaID,
+		QuotaValue
+	FROM OPENXML(@idoc, '/plan/quotas/quota',1) WITH 
+	(
+		QuotaID int '@id',
+		QuotaValue int '@value'
+	) as PV
+	
+	-- remove document
+	exec sp_xml_removedocument @idoc
+END
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE UpdatePackageBandwidthUpdate
+(
+	@PackageID int,
+	@UpdateDate datetime
+)
+AS
+
+UPDATE Packages SET BandwidthUpdated = @UpdateDate
+WHERE PackageID = @PackageID
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE UpdatePackageAddon
+(
+	@ActorID int,
+	@PackageAddonID int,
+	@PlanID int,
+	@Quantity int,
+	@PurchaseDate datetime,
+	@StatusID int,
+	@Comments ntext
+)
+AS
+
+DECLARE @PackageID int
+SELECT @PackageID = PackageID FROM PackageAddons
+WHERE PackageAddonID = @PackageAddonID
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+BEGIN TRAN
+
+DECLARE @ParentPackageID int
+SELECT @ParentPackageID = ParentPackageID FROM Packages
+WHERE PackageID = @PackageID
+
+-- update record
+UPDATE PackageAddons SET
+	PlanID = @PlanID,
+	Quantity = @Quantity,
+	PurchaseDate = @PurchaseDate,
+	StatusID = @StatusID,
+	Comments = @Comments
+WHERE PackageAddonID = @PackageAddonID
+
+DECLARE @ExceedingQuotas AS TABLE (QuotaID int, QuotaName nvarchar(50), QuotaValue int)
+INSERT INTO @ExceedingQuotas
+SELECT * FROM dbo.GetPackageExceedingQuotas(@ParentPackageID) WHERE QuotaValue > 0
+
+SELECT * FROM @ExceedingQuotas
+
+IF EXISTS(SELECT * FROM @ExceedingQuotas)
+BEGIN
+	ROLLBACK TRAN
+	RETURN
+END
+
+COMMIT TRAN
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+CREATE PROCEDURE [dbo].[UpdatePackage]
+(
+	@ActorID int,
+	@PackageID int,
+	@PackageName nvarchar(300),
+	@PackageComments ntext,
+	@StatusID int,
+	@PlanID int,
+	@PurchaseDate datetime,
+	@OverrideQuotas bit,
+	@QuotasXml ntext
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+BEGIN TRAN
+
+DECLARE @ParentPackageID int
+DECLARE @OldPlanID int
+
+SELECT @ParentPackageID = ParentPackageID, @OldPlanID = PlanID FROM Packages
+WHERE PackageID = @PackageID
+
+-- update package
+UPDATE Packages SET
+	PackageName = @PackageName,
+	PackageComments = @PackageComments,
+	StatusID = @StatusID,
+	PlanID = @PlanID,
+	PurchaseDate = @PurchaseDate,
+	OverrideQuotas = @OverrideQuotas
+WHERE
+	PackageID = @PackageID
+
+-- update quotas (if required)
+EXEC UpdatePackageQuotas @ActorID, @PackageID, @QuotasXml
+
+-- check resulting quotas
+DECLARE @ExceedingQuotas AS TABLE (QuotaID int, QuotaName nvarchar(50), QuotaValue int)
+
+-- check exceeding quotas if plan has been changed
+IF (@OldPlanID <> @PlanID) OR (@OverrideQuotas = 1)
+BEGIN
+	INSERT INTO @ExceedingQuotas
+	SELECT * FROM dbo.GetPackageExceedingQuotas(@ParentPackageID) WHERE QuotaValue > 0
+END
+
+SELECT * FROM @ExceedingQuotas
+
+IF EXISTS(SELECT * FROM @ExceedingQuotas)
+BEGIN
+	ROLLBACK TRAN
+	RETURN
+END
+
+
+COMMIT TRAN
+RETURN
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetResellerDomains
+(
+	@ActorID int,
+	@PackageID int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- load parent package
+DECLARE @ParentPackageID int
+SELECT @ParentPackageID = ParentPackageID FROM Packages
+WHERE PackageID = @PackageID
+
+SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	D.WebSiteID,
+	WS.ItemName,
+	D.MailDomainID,
+	MD.ItemName
+FROM Domains AS D
+INNER JOIN PackagesTree(@ParentPackageID, 0) AS PT ON D.PackageID = PT.PackageID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+WHERE HostingAllowed = 1
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE VIEW [dbo].[UsersDetailed]
+AS
+SELECT     U.UserID, U.RoleID, U.StatusID, U.OwnerID, U.Created, U.Changed, U.IsDemo, U.Comments, U.IsPeer, U.Username, U.FirstName, U.LastName, U.Email, 
+                      U.CompanyName, U.FirstName + ' ' + U.LastName AS FullName, UP.Username AS OwnerUsername, UP.FirstName AS OwnerFirstName, 
+                      UP.LastName AS OwnerLastName, UP.RoleID AS OwnerRoleID, UP.FirstName + ' ' + UP.LastName AS OwnerFullName, UP.Email AS OwnerEmail, UP.RoleID AS Expr1,
+                          (SELECT     COUNT(PackageID) AS Expr1
+                            FROM          dbo.Packages AS P
+                            WHERE      (UserID = U.UserID)) AS PackagesNumber, U.EcommerceEnabled
+FROM         dbo.Users AS U LEFT OUTER JOIN
+                      dbo.Users AS UP ON U.OwnerID = UP.UserID
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -9414,1500 +9585,6 @@ CREATE TABLE [dbo].[ecBillingCycles](
 	[CycleID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
 )
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[OrganizationExists]
-(
-	@OrganizationID nvarchar(10),
-	@Exists bit OUTPUT
-)
-AS
-SET @Exists = 0
-IF EXISTS(SELECT * FROM Organizations WHERE OrganizationID = @OrganizationID)
-BEGIN
-	SET @Exists = 1
-END
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[OCSUsers](
-	[OCSUserID] [int] IDENTITY(1,1) NOT NULL,
-	[AccountID] [int] NOT NULL,
-	[InstanceID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[ModifiedDate] [datetime] NOT NULL,
- CONSTRAINT [PK_OCSUsers] PRIMARY KEY CLUSTERED 
-(
-	[OCSUserID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetOCSUsersCount] 
-(
-	@ItemID int,
-	@Name nvarchar(400),
-	@Email nvarchar(400)
-	
-)
-AS
-
-IF (@Name IS NULL)
-BEGIN
-	SET @Name = '%'
-END
-
-IF (@Email IS NULL)
-BEGIN
-	SET @Email = '%'
-END
-
-SELECT 
-	COUNT(ea.AccountID)		
-FROM 
-	ExchangeAccounts ea 
-INNER JOIN 
-	OCSUsers ou 
-ON 
-	ea.AccountID = ou.AccountID
-WHERE 
-	ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetOCSUsers]
-(
-	@ItemID int,
-	@SortColumn nvarchar(40),
-	@SortDirection nvarchar(20),
-	@Name nvarchar(400),
-	@Email nvarchar(400),
-	@StartRow int,
-	@Count int	
-)
-AS
-
-IF (@Name IS NULL)
-BEGIN
-	SET @Name = '%'
-END
-
-IF (@Email IS NULL)
-BEGIN
-	SET @Email = '%'
-END
-
-CREATE TABLE #TempOCSUsers 
-(	
-	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[AccountID] [int],	
-	[ItemID] [int] NOT NULL,
-	[AccountName] [nvarchar](20)  NOT NULL,
-	[DisplayName] [nvarchar](300)  NOT NULL,
-	[InstanceID] [nvarchar](50)  NOT NULL,
-	[PrimaryEmailAddress] [nvarchar](300) NULL,
-	[SamAccountName] [nvarchar](100) NULL	
-)
-
-
-IF (@SortColumn = 'DisplayName')
-BEGIN
-	INSERT INTO 
-		#TempOCSUsers 
-	SELECT 
-		ea.AccountID,
-		ea.ItemID,
-		ea.AccountName,
-		ea.DisplayName,
-		ou.InstanceID,
-		ea.PrimaryEmailAddress,
-		ea.SamAccountName		
-	FROM 
-		ExchangeAccounts ea 
-	INNER JOIN 
-		OCSUsers ou 
-	ON 
-		ea.AccountID = ou.AccountID
-	WHERE 
-		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
-	ORDER BY 
-		ea.DisplayName
-END
-ELSE
-BEGIN
-	INSERT INTO 
-		#TempOCSUsers
-	SELECT 
-		ea.AccountID,
-		ea.ItemID,
-		ea.AccountName,
-		ea.DisplayName,
-		ou.InstanceID,
-		ea.PrimaryEmailAddress,
-		ea.SamAccountName		
-	FROM 
-		ExchangeAccounts ea 
-	INNER JOIN 
-		OCSUsers ou 
-	ON 
-		ea.AccountID = ou.AccountID
-	WHERE 
-		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
-	ORDER BY 
-		ea.PrimaryEmailAddress 
-END
-
-DECLARE @RetCount int
-SELECT @RetCount = COUNT(ID) FROM #TempOCSUsers 
-
-IF (@SortDirection = 'ASC')
-BEGIN
-	SELECT * FROM #TempOCSUsers 
-	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
-END
-ELSE
-BEGIN
-	IF (@SortColumn = 'DisplayName')
-	BEGIN
-		SELECT * FROM #TempOCSUsers 
-			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
-	END
-	ELSE
-	BEGIN
-		SELECT * FROM #TempOCSUsers 
-			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
-	END
-	
-END
-
-
-DROP TABLE #TempOCSUsers
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetPackageIPAddresses]
-(
-	@PackageID int,
-	@FilterColumn nvarchar(50) = '',
-	@FilterValue nvarchar(50) = '',
-	@SortColumn nvarchar(50),
-	@StartRow int,
-	@MaximumRows int,
-	@PoolID int = 0,
-	@Recursive bit = 0
-)
-AS
-BEGIN
-
-
--- start
-DECLARE @condition nvarchar(700)
-SET @condition = '
-((@Recursive = 0 AND PA.PackageID = @PackageID)
-OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, PA.PackageID) = 1))
-AND (@PoolID = 0 OR @PoolID <> 0 AND IP.PoolID = @PoolID)
-'
-
-IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
-AND @FilterValue <> '' AND @FilterValue IS NOT NULL
-SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
-
-IF @SortColumn IS NULL OR @SortColumn = ''
-SET @SortColumn = 'IP.ExternalIP ASC'
-
-DECLARE @sql nvarchar(3500)
-
-set @sql = '
-SELECT COUNT(PA.PackageAddressID)
-FROM dbo.PackageIPAddresses PA
-INNER JOIN dbo.IPAddresses AS IP ON PA.AddressID = IP.AddressID
-INNER JOIN dbo.Packages P ON PA.PackageID = P.PackageID
-INNER JOIN dbo.Users U ON U.UserID = P.UserID
-LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
-WHERE ' + @condition + '
-
-DECLARE @Addresses AS TABLE
-(
-	PackageAddressID int
-);
-
-WITH TempItems AS (
-	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
-		PA.PackageAddressID
-	FROM dbo.PackageIPAddresses PA
-	INNER JOIN dbo.IPAddresses AS IP ON PA.AddressID = IP.AddressID
-	INNER JOIN dbo.Packages P ON PA.PackageID = P.PackageID
-	INNER JOIN dbo.Users U ON U.UserID = P.UserID
-	LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
-	WHERE ' + @condition + '
-)
-
-INSERT INTO @Addresses
-SELECT PackageAddressID FROM TempItems
-WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
-
-SELECT
-	PA.PackageAddressID,
-	PA.AddressID,
-	IP.ExternalIP,
-	IP.InternalIP,
-	IP.SubnetMask,
-	IP.DefaultGateway,
-	PA.ItemID,
-	SI.ItemName,
-	PA.PackageID,
-	P.PackageName,
-	P.UserID,
-	U.UserName,
-	PA.IsPrimary
-FROM @Addresses AS TA
-INNER JOIN dbo.PackageIPAddresses AS PA ON TA.PackageAddressID = PA.PackageAddressID
-INNER JOIN dbo.IPAddresses AS IP ON PA.AddressID = IP.AddressID
-INNER JOIN dbo.Packages P ON PA.PackageID = P.PackageID
-INNER JOIN dbo.Users U ON U.UserID = P.UserID
-LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
-'
-
-print @sql
-
-exec sp_executesql @sql, N'@PackageID int, @StartRow int, @MaximumRows int, @Recursive bit, @PoolID int',
-@PackageID, @StartRow, @MaximumRows, @Recursive, @PoolID
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetPackagePrivateIPAddressesPaged]
-	@PackageID int,
-	@FilterColumn nvarchar(50) = '',
-	@FilterValue nvarchar(50) = '',
-	@SortColumn nvarchar(50),
-	@StartRow int,
-	@MaximumRows int
-AS
-BEGIN
-
-
--- start
-DECLARE @condition nvarchar(700)
-SET @condition = '
-SI.PackageID = @PackageID
-'
-
-IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
-AND @FilterValue <> '' AND @FilterValue IS NOT NULL
-SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
-
-IF @SortColumn IS NULL OR @SortColumn = ''
-SET @SortColumn = 'PA.IPAddress ASC'
-
-DECLARE @sql nvarchar(3500)
-
-set @sql = '
-SELECT COUNT(PA.PrivateAddressID)
-FROM dbo.PrivateIPAddresses AS PA
-INNER JOIN dbo.ServiceItems AS SI ON PA.ItemID = SI.ItemID
-WHERE ' + @condition + '
-
-DECLARE @Addresses AS TABLE
-(
-	PrivateAddressID int
-);
-
-WITH TempItems AS (
-	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
-		PA.PrivateAddressID
-	FROM dbo.PrivateIPAddresses AS PA
-	INNER JOIN dbo.ServiceItems AS SI ON PA.ItemID = SI.ItemID
-	WHERE ' + @condition + '
-)
-
-INSERT INTO @Addresses
-SELECT PrivateAddressID FROM TempItems
-WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
-
-SELECT
-	PA.PrivateAddressID,
-	PA.IPAddress,
-	PA.ItemID,
-	SI.ItemName,
-	PA.IsPrimary
-FROM @Addresses AS TA
-INNER JOIN dbo.PrivateIPAddresses AS PA ON TA.PrivateAddressID = PA.PrivateAddressID
-INNER JOIN dbo.ServiceItems AS SI ON PA.ItemID = SI.ItemID
-'
-
-print @sql
-
-exec sp_executesql @sql, N'@PackageID int, @StartRow int, @MaximumRows int',
-@PackageID, @StartRow, @MaximumRows
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE UpdatePackageName
-(
-	@ActorID int,
-	@PackageID int,
-	@PackageName nvarchar(300),
-	@PackageComments ntext
-)
-AS
-
--- check rights
-DECLARE @UserID int
-SELECT @UserID = UserID FROM Packages
-WHERE PackageID = @PackageID
-
-IF NOT(dbo.CheckActorPackageRights(@ActorID, @PackageID) = 1
-	OR @UserID = @ActorID
-	OR EXISTS(SELECT UserID FROM Users WHERE UserID = @ActorID AND OwnerID = @UserID AND IsPeer = 1))
-RAISERROR('You are not allowed to access this package', 16, 1)
-
--- update package
-UPDATE Packages SET
-	PackageName = @PackageName,
-	PackageComments = @PackageComments
-WHERE
-	PackageID = @PackageID
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE FUNCTION [dbo].[CanUpdatePackageDetails]
-(
-	@ActorID int,
-	@PackageID int
-)
-RETURNS bit
-AS
-BEGIN
-
-IF @ActorID = -1
-RETURN 1
-
-DECLARE @UserID int
-SELECT @UserID = UserID FROM Packages
-WHERE PackageID = @PackageID
-
--- check if the user requests himself
-IF @ActorID = @UserID
-RETURN 1
-
-
-DECLARE @IsPeer bit
-DECLARE @OwnerID int
-
-SELECT @IsPeer = IsPeer, @OwnerID = OwnerID FROM Users
-WHERE UserID = @ActorID
-
-IF @IsPeer = 1
-SET @ActorID = @OwnerID
-
-IF @ActorID = @UserID
-RETURN 1
-
-DECLARE @ParentUserID int, @TmpUserID int
-SET @TmpUserID = @UserID
-
-WHILE 10 = 10
-BEGIN
-
-	SET @ParentUserID = NULL --reset var
-
-	-- get owner
-	SELECT
-		@ParentUserID = OwnerID
-	FROM Users
-	WHERE UserID = @TmpUserID
-
-	IF @ParentUserID IS NULL -- the last parent
-		BREAK
-	
-	IF @ParentUserID = @ActorID
-	RETURN 1
-	
-	SET @TmpUserID = @ParentUserID
-END
-
-RETURN 0
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ResourceGroups](
-	[GroupID] [int] NOT NULL,
-	[GroupName] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
-	[GroupOrder] [int] NOT NULL,
-	[GroupController] [nvarchar](1000) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ResourceGroups] PRIMARY KEY CLUSTERED 
-(
-	[GroupID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (1, N'OS', 1, N'WebsitePanel.EnterpriseServer.OperatingSystemController')
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (2, N'Web', 2, N'WebsitePanel.EnterpriseServer.WebServerController')
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (3, N'FTP', 3, N'WebsitePanel.EnterpriseServer.FtpServerController')
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (4, N'Mail', 4, N'WebsitePanel.EnterpriseServer.MailServerController')
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (5, N'MsSQL2000', 8, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (6, N'MySQL4', 11, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (7, N'DNS', 16, N'WebsitePanel.EnterpriseServer.DnsServerController')
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (8, N'Statistics', 17, N'WebsitePanel.EnterpriseServer.StatisticsServerController')
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (9, N'SharePoint', 13, N'WebsitePanel.EnterpriseServer.SharePointServerController')
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (10, N'MsSQL2005', 9, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (11, N'MySQL5', 12, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (12, N'Exchange', 5, NULL)
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (13, N'Hosted Organizations', 6, NULL)
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (20, N'Hosted SharePoint', 14, N'WebsitePanel.EnterpriseServer.HostedSharePointServerController')
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (21, N'Hosted CRM', 15, NULL)
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (22, N'MsSQL2008', 10, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (30, N'VPS', 18, NULL)
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (31, N'BlackBerry', 20, NULL)
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (32, N'OCS', 21, NULL)
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (33, N'ExchangeHostedEdition', 7, N'WebsitePanel.EnterpriseServer.ExchangeHostedEditionController')
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (40, N'VPSForPC', 19, NULL)
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetPackageDiskspace
-(
-	@ActorID int,
-	@PackageID int
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-SELECT
-	RG.GroupID,
-	RG.GroupName,
-	ROUND(CONVERT(float, ISNULL(GD.Diskspace, 0)) / 1024 / 1024, 0) AS Diskspace,
-	ISNULL(GD.Diskspace, 0) AS DiskspaceBytes
-FROM ResourceGroups AS RG
-LEFT OUTER JOIN
-(
-	SELECT
-		PD.GroupID,
-		SUM(ISNULL(PD.DiskSpace, 0)) AS Diskspace -- in megabytes
-	FROM PackagesTreeCache AS PT
-	INNER JOIN PackagesDiskspace AS PD ON PT.PackageID = PD.PackageID
-	INNER JOIN Packages AS P ON PT.PackageID = P.PackageID
-	INNER JOIN HostingPlanResources AS HPR ON PD.GroupID = HPR.GroupID
-		AND HPR.PlanID = P.PlanID AND HPR.CalculateDiskspace = 1
-	WHERE PT.ParentPackageID = @PackageID
-	GROUP BY PD.GroupID
-) AS GD ON RG.GroupID = GD.GroupID
-WHERE GD.Diskspace <> 0
-ORDER BY RG.GroupOrder
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetPackageBandwidth
-(
-	@ActorID int,
-	@PackageID int,
-	@StartDate datetime,
-	@EndDate datetime
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-SELECT
-	RG.GroupID,
-	RG.GroupName,
-	ROUND(CONVERT(float, ISNULL(GB.BytesSent, 0)) / 1024 / 1024, 0) AS MegaBytesSent,
-	ROUND(CONVERT(float, ISNULL(GB.BytesReceived, 0)) / 1024 / 1024, 0) AS MegaBytesReceived,
-	ROUND(CONVERT(float, ISNULL(GB.BytesTotal, 0)) / 1024 / 1024, 0) AS MegaBytesTotal,
-	ISNULL(GB.BytesSent, 0) AS BytesSent,
-	ISNULL(GB.BytesReceived, 0) AS BytesReceived,
-	ISNULL(GB.BytesTotal, 0) AS BytesTotal
-FROM ResourceGroups AS RG
-LEFT OUTER JOIN
-(
-	SELECT
-		PB.GroupID,
-		SUM(ISNULL(PB.BytesSent, 0)) AS BytesSent,
-		SUM(ISNULL(PB.BytesReceived, 0)) AS BytesReceived,
-		SUM(ISNULL(PB.BytesSent, 0)) + SUM(ISNULL(PB.BytesReceived, 0)) AS BytesTotal
-	FROM PackagesTreeCache AS PT
-	INNER JOIN PackagesBandwidth AS PB ON PT.PackageID = PB.PackageID
-	INNER JOIN Packages AS P ON PB.PackageID = P.PackageID
-	INNER JOIN HostingPlanResources AS HPR ON PB.GroupID = HPR.GroupID AND HPR.PlanID = P.PlanID
-		AND HPR.CalculateBandwidth = 1
-	WHERE
-		PT.ParentPackageID = @PackageID
-		AND PB.LogDate BETWEEN @StartDate AND @EndDate
-	GROUP BY PB.GroupID
-) AS GB ON RG.GroupID = GB.GroupID
-WHERE GB.BytesTotal > 0
-ORDER BY RG.GroupOrder
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetPackagesPaged]
-(
-	@ActorID int,
-	@UserID int,
-	@FilterColumn nvarchar(50) = '',
-	@FilterValue nvarchar(50) = '',
-	@SortColumn nvarchar(50),
-	@StartRow int,
-	@MaximumRows int
-)
-AS
-
--- build query and run it to the temporary table
-DECLARE @sql nvarchar(2000)
-
-SET @sql = '
-DECLARE @HasUserRights bit
-SET @HasUserRights = dbo.CheckActorUserRights(@ActorID, @UserID)
-
-DECLARE @EndRow int
-SET @EndRow = @StartRow + @MaximumRows
-DECLARE @Packages TABLE
-(
-	ItemPosition int IDENTITY(1,1),
-	PackageID int
-)
-INSERT INTO @Packages (PackageID)
-SELECT
-	P.PackageID
-FROM Packages AS P
---INNER JOIN UsersTree(@UserID, 1) AS UT ON P.UserID = UT.UserID
-INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
-INNER JOIN Servers AS S ON P.ServerID = S.ServerID
-INNER JOIN HostingPlans AS HP ON P.PlanID = HP.PlanID
-WHERE
-	P.UserID <> @UserID AND dbo.CheckUserParent(@UserID, P.UserID) = 1
-	AND @HasUserRights = 1 '
-
-IF @FilterColumn <> '' AND @FilterValue <> ''
-SET @sql = @sql + ' AND ' + @FilterColumn + ' LIKE @FilterValue '
-
-IF @SortColumn <> '' AND @SortColumn IS NOT NULL
-SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
-
-SET @sql = @sql + ' SELECT COUNT(PackageID) FROM @Packages;
-SELECT
-	P.PackageID,
-	P.PackageName,
-	P.StatusID,
-	P.PurchaseDate,
-	
-	dbo.GetItemComments(P.PackageID, ''PACKAGE'', @ActorID) AS Comments,
-	
-	-- server
-	P.ServerID,
-	ISNULL(S.ServerName, ''None'') AS ServerName,
-	ISNULL(S.Comments, '''') AS ServerComments,
-	ISNULL(S.VirtualServer, 1) AS VirtualServer,
-	
-	-- hosting plan
-	P.PlanID,
-	HP.PlanName,
-	
-	-- user
-	P.UserID,
-	U.Username,
-	U.FirstName,
-	U.LastName,
-	U.FullName,
-	U.RoleID,
-	U.Email
-FROM @Packages AS TP
-INNER JOIN Packages AS P ON TP.PackageID = P.PackageID
-INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
-INNER JOIN Servers AS S ON P.ServerID = S.ServerID
-INNER JOIN HostingPlans AS HP ON P.PlanID = HP.PlanID
-WHERE TP.ItemPosition BETWEEN @StartRow AND @EndRow'
-
-exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @UserID int, @FilterValue nvarchar(50), @ActorID int',
-@StartRow, @MaximumRows, @UserID, @FilterValue, @ActorID
-
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Clusters](
-	[ClusterID] [int] IDENTITY(1,1) NOT NULL,
-	[ClusterName] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_Clusters] PRIMARY KEY CLUSTERED 
-(
-	[ClusterID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecCategory](
-	[CategoryID] [int] IDENTITY(1,1) NOT NULL,
-	[CategoryName] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
-	[CategorySku] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ParentID] [int] NULL,
-	[Level] [int] NOT NULL,
-	[ShortDescription] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[FullDescription] [ntext] COLLATE Latin1_General_CI_AS NULL,
-	[Created] [datetime] NOT NULL,
-	[Modified] [datetime] NULL,
-	[CreatorID] [int] NOT NULL,
-	[ModifierID] [int] NULL,
-	[ItemOrder] [int] NULL,
-	[ResellerID] [int] NOT NULL,
- CONSTRAINT [PK_EC_Categories] PRIMARY KEY CLUSTERED 
-(
-	[CategoryID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecServiceHandlersResponses](
-	[ResponseID] [int] IDENTITY(1,1) NOT NULL,
-	[ServiceID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ContractID] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[InvoiceID] [int] NULL,
-	[TextResponse] [ntext] COLLATE Latin1_General_CI_AS NULL,
-	[Received] [datetime] NOT NULL,
-	[ErrorMessage] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ecServiceHandlersResponses] PRIMARY KEY CLUSTERED 
-(
-	[ResponseID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecProductTypeControls](
-	[TypeID] [int] NOT NULL,
-	[ControlKey] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ControlSrc] [nvarchar](512) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_ecProductTypeControls] PRIMARY KEY CLUSTERED 
-(
-	[TypeID] ASC,
-	[ControlKey] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecContracts](
-	[ContractID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[CustomerID] [int] NULL,
-	[ResellerID] [int] NOT NULL,
-	[AccountName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[OpenedDate] [datetime] NOT NULL,
-	[Status] [int] NOT NULL,
-	[ClosedDate] [datetime] NULL,
-	[Balance] [money] NOT NULL,
-	[FirstName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[LastName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Email] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
-	[CompanyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[PropertyNames] [ntext] COLLATE Latin1_General_CI_AS NULL,
-	[PropertyValues] [ntext] COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ecContracts] PRIMARY KEY CLUSTERED 
-(
-	[ContractID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON),
- CONSTRAINT [UQ_ecContracts_ContractID] UNIQUE NONCLUSTERED 
-(
-	[ContractID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecPluginsProperties](
-	[PluginID] [int] NOT NULL,
-	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[PropertyValue] [nvarchar](512) COLLATE Latin1_General_CI_AS NULL,
-	[ResellerID] [int] NOT NULL,
- CONSTRAINT [PK_ecPluginsSettings] PRIMARY KEY CLUSTERED 
-(
-	[PluginID] ASC,
-	[ResellerID] ASC,
-	[PropertyName] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecPaymentProfiles](
-	[PropertyNames] [ntext] COLLATE Latin1_General_CI_AS NOT NULL,
-	[PropertyValues] [ntext] COLLATE Latin1_General_CI_AS NOT NULL,
-	[Created] [datetime] NOT NULL,
-	[ContractID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_ecPaymentProfiles] PRIMARY KEY CLUSTERED 
-(
-	[ContractID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecCustomersPayments](
-	[PaymentID] [int] IDENTITY(1,1) NOT NULL,
-	[InvoiceID] [int] NOT NULL,
-	[TransactionID] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Total] [money] NOT NULL,
-	[Currency] [nvarchar](3) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Created] [datetime] NOT NULL,
-	[MethodName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[PluginID] [int] NOT NULL,
-	[StatusID] [int] NOT NULL,
-	[ContractID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_EC_Payments] PRIMARY KEY CLUSTERED 
-(
-	[PaymentID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON),
- CONSTRAINT [IX_ecCustomersPayments] UNIQUE NONCLUSTERED 
-(
-	[TransactionID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecInvoice](
-	[InvoiceID] [int] IDENTITY(1,1) NOT NULL,
-	[Created] [datetime] NOT NULL,
-	[DueDate] [datetime] NOT NULL,
-	[Total] [money] NOT NULL,
-	[SubTotal] [money] NOT NULL,
-	[TaxAmount] [money] NULL,
-	[Currency] [nvarchar](3) COLLATE Latin1_General_CI_AS NOT NULL,
-	[InvoiceNumber] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[TaxationID] [int] NULL,
-	[ContractID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_EC_Invoices] PRIMARY KEY CLUSTERED 
-(
-	[InvoiceID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecTaxations](
-	[TaxationID] [int] IDENTITY(1,1) NOT NULL,
-	[ResellerID] [int] NOT NULL,
-	[Country] [nvarchar](3) COLLATE Latin1_General_CI_AS NOT NULL,
-	[State] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Description] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[TypeID] [int] NOT NULL,
-	[Amount] [decimal](5, 2) NOT NULL,
-	[Active] [bit] NOT NULL,
- CONSTRAINT [PK_ecTaxations_1] PRIMARY KEY CLUSTERED 
-(
-	[TaxationID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-
-CREATE UNIQUE NONCLUSTERED INDEX [IX_ecTaxations] ON [dbo].[ecTaxations] 
-(
-	[ResellerID] ASC,
-	[Country] ASC,
-	[State] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecSystemTriggers](
-	[TriggerID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[OwnerID] [int] NOT NULL,
-	[TriggerHandler] [nvarchar](512) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ReferenceID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Namespace] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Status] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ecSystemTriggers] PRIMARY KEY CLUSTERED 
-(
-	[TriggerID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE FUNCTION GetFullIPAddress
-(
-	@ExternalIP varchar(24),
-	@InternalIP varchar(24)
-)
-RETURNS varchar(60)
-AS
-BEGIN
-DECLARE @IP varchar(60)
-SET @IP = ''
-
-IF @ExternalIP IS NOT NULL AND @ExternalIP <> ''
-SET @IP = @ExternalIP
-
-IF @InternalIP IS NOT NULL AND @InternalIP <> ''
-SET @IP = @IP + ' (' + @InternalIP + ')'
-
-RETURN @IP
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 GO
 SET ANSI_NULLS ON
@@ -11466,16 +10143,41 @@ GO
 
 
 
-CREATE VIEW [dbo].[UsersDetailed]
+
+CREATE PROCEDURE [dbo].[GetAuditLogRecord]
+(
+	@RecordID varchar(32)
+)
 AS
-SELECT     U.UserID, U.RoleID, U.StatusID, U.OwnerID, U.Created, U.Changed, U.IsDemo, U.Comments, U.IsPeer, U.Username, U.FirstName, U.LastName, U.Email, 
-                      U.CompanyName, U.FirstName + ' ' + U.LastName AS FullName, UP.Username AS OwnerUsername, UP.FirstName AS OwnerFirstName, 
-                      UP.LastName AS OwnerLastName, UP.RoleID AS OwnerRoleID, UP.FirstName + ' ' + UP.LastName AS OwnerFullName, UP.Email AS OwnerEmail, UP.RoleID AS Expr1,
-                          (SELECT     COUNT(PackageID) AS Expr1
-                            FROM          dbo.Packages AS P
-                            WHERE      (UserID = U.UserID)) AS PackagesNumber, U.EcommerceEnabled
-FROM         dbo.Users AS U LEFT OUTER JOIN
-                      dbo.Users AS UP ON U.OwnerID = UP.UserID
+
+SELECT
+	L.RecordID,
+    L.SeverityID,
+    L.StartDate,
+    L.FinishDate,
+    L.ItemID,
+    L.SourceName,
+    L.TaskName,
+    L.ItemName,
+    L.ExecutionLog,
+    
+    ISNULL(L.UserID, 0) AS UserID,
+	L.Username,
+	U.FirstName,
+	U.LastName,
+	U.FullName,
+	ISNULL(U.RoleID, 0) AS RoleID,
+	U.Email
+FROM AuditLog AS L
+LEFT OUTER JOIN UsersDetailed AS U ON L.UserID = U.UserID
+WHERE RecordID = @RecordID
+RETURN 
+
+
+
+
+
+
 
 
 
@@ -11541,34 +10243,1392 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetAuditLogRecord]
+
+
+
+
+CREATE PROCEDURE UpdatePackageName
 (
-	@RecordID varchar(32)
+	@ActorID int,
+	@PackageID int,
+	@PackageName nvarchar(300),
+	@PackageComments ntext
 )
 AS
 
+-- check rights
+DECLARE @UserID int
+SELECT @UserID = UserID FROM Packages
+WHERE PackageID = @PackageID
+
+IF NOT(dbo.CheckActorPackageRights(@ActorID, @PackageID) = 1
+	OR @UserID = @ActorID
+	OR EXISTS(SELECT UserID FROM Users WHERE UserID = @ActorID AND OwnerID = @UserID AND IsPeer = 1))
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- update package
+UPDATE Packages SET
+	PackageName = @PackageName,
+	PackageComments = @PackageComments
+WHERE
+	PackageID = @PackageID
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE FUNCTION [dbo].[CanUpdatePackageDetails]
+(
+	@ActorID int,
+	@PackageID int
+)
+RETURNS bit
+AS
+BEGIN
+
+IF @ActorID = -1
+RETURN 1
+
+DECLARE @UserID int
+SELECT @UserID = UserID FROM Packages
+WHERE PackageID = @PackageID
+
+-- check if the user requests himself
+IF @ActorID = @UserID
+RETURN 1
+
+
+DECLARE @IsPeer bit
+DECLARE @OwnerID int
+
+SELECT @IsPeer = IsPeer, @OwnerID = OwnerID FROM Users
+WHERE UserID = @ActorID
+
+IF @IsPeer = 1
+SET @ActorID = @OwnerID
+
+IF @ActorID = @UserID
+RETURN 1
+
+DECLARE @ParentUserID int, @TmpUserID int
+SET @TmpUserID = @UserID
+
+WHILE 10 = 10
+BEGIN
+
+	SET @ParentUserID = NULL --reset var
+
+	-- get owner
+	SELECT
+		@ParentUserID = OwnerID
+	FROM Users
+	WHERE UserID = @TmpUserID
+
+	IF @ParentUserID IS NULL -- the last parent
+		BREAK
+	
+	IF @ParentUserID = @ActorID
+	RETURN 1
+	
+	SET @TmpUserID = @ParentUserID
+END
+
+RETURN 0
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ResourceGroups](
+	[GroupID] [int] NOT NULL,
+	[GroupName] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
+	[GroupOrder] [int] NOT NULL,
+	[GroupController] [nvarchar](1000) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_ResourceGroups] PRIMARY KEY CLUSTERED 
+(
+	[GroupID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (1, N'OS', 1, N'WebsitePanel.EnterpriseServer.OperatingSystemController')
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (2, N'Web', 2, N'WebsitePanel.EnterpriseServer.WebServerController')
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (3, N'FTP', 3, N'WebsitePanel.EnterpriseServer.FtpServerController')
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (4, N'Mail', 4, N'WebsitePanel.EnterpriseServer.MailServerController')
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (5, N'MsSQL2000', 8, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (6, N'MySQL4', 11, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (7, N'DNS', 16, N'WebsitePanel.EnterpriseServer.DnsServerController')
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (8, N'Statistics', 17, N'WebsitePanel.EnterpriseServer.StatisticsServerController')
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (9, N'SharePoint', 13, N'WebsitePanel.EnterpriseServer.SharePointServerController')
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (10, N'MsSQL2005', 9, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (11, N'MySQL5', 12, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (12, N'Exchange', 5, NULL)
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (13, N'Hosted Organizations', 6, NULL)
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (20, N'Hosted SharePoint', 14, N'WebsitePanel.EnterpriseServer.HostedSharePointServerController')
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (21, N'Hosted CRM', 15, NULL)
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (22, N'MsSQL2008', 10, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (30, N'VPS', 18, NULL)
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (31, N'BlackBerry', 20, NULL)
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (32, N'OCS', 21, NULL)
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (33, N'ExchangeHostedEdition', 7, N'WebsitePanel.EnterpriseServer.ExchangeHostedEditionController')
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (40, N'VPSForPC', 19, NULL)
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetPackageDiskspace
+(
+	@ActorID int,
+	@PackageID int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
 SELECT
-	L.RecordID,
-    L.SeverityID,
-    L.StartDate,
-    L.FinishDate,
-    L.ItemID,
-    L.SourceName,
-    L.TaskName,
-    L.ItemName,
-    L.ExecutionLog,
-    
-    ISNULL(L.UserID, 0) AS UserID,
-	L.Username,
+	RG.GroupID,
+	RG.GroupName,
+	ROUND(CONVERT(float, ISNULL(GD.Diskspace, 0)) / 1024 / 1024, 0) AS Diskspace,
+	ISNULL(GD.Diskspace, 0) AS DiskspaceBytes
+FROM ResourceGroups AS RG
+LEFT OUTER JOIN
+(
+	SELECT
+		PD.GroupID,
+		SUM(ISNULL(PD.DiskSpace, 0)) AS Diskspace -- in megabytes
+	FROM PackagesTreeCache AS PT
+	INNER JOIN PackagesDiskspace AS PD ON PT.PackageID = PD.PackageID
+	INNER JOIN Packages AS P ON PT.PackageID = P.PackageID
+	INNER JOIN HostingPlanResources AS HPR ON PD.GroupID = HPR.GroupID
+		AND HPR.PlanID = P.PlanID AND HPR.CalculateDiskspace = 1
+	WHERE PT.ParentPackageID = @PackageID
+	GROUP BY PD.GroupID
+) AS GD ON RG.GroupID = GD.GroupID
+WHERE GD.Diskspace <> 0
+ORDER BY RG.GroupOrder
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetPackageBandwidth
+(
+	@ActorID int,
+	@PackageID int,
+	@StartDate datetime,
+	@EndDate datetime
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+SELECT
+	RG.GroupID,
+	RG.GroupName,
+	ROUND(CONVERT(float, ISNULL(GB.BytesSent, 0)) / 1024 / 1024, 0) AS MegaBytesSent,
+	ROUND(CONVERT(float, ISNULL(GB.BytesReceived, 0)) / 1024 / 1024, 0) AS MegaBytesReceived,
+	ROUND(CONVERT(float, ISNULL(GB.BytesTotal, 0)) / 1024 / 1024, 0) AS MegaBytesTotal,
+	ISNULL(GB.BytesSent, 0) AS BytesSent,
+	ISNULL(GB.BytesReceived, 0) AS BytesReceived,
+	ISNULL(GB.BytesTotal, 0) AS BytesTotal
+FROM ResourceGroups AS RG
+LEFT OUTER JOIN
+(
+	SELECT
+		PB.GroupID,
+		SUM(ISNULL(PB.BytesSent, 0)) AS BytesSent,
+		SUM(ISNULL(PB.BytesReceived, 0)) AS BytesReceived,
+		SUM(ISNULL(PB.BytesSent, 0)) + SUM(ISNULL(PB.BytesReceived, 0)) AS BytesTotal
+	FROM PackagesTreeCache AS PT
+	INNER JOIN PackagesBandwidth AS PB ON PT.PackageID = PB.PackageID
+	INNER JOIN Packages AS P ON PB.PackageID = P.PackageID
+	INNER JOIN HostingPlanResources AS HPR ON PB.GroupID = HPR.GroupID AND HPR.PlanID = P.PlanID
+		AND HPR.CalculateBandwidth = 1
+	WHERE
+		PT.ParentPackageID = @PackageID
+		AND PB.LogDate BETWEEN @StartDate AND @EndDate
+	GROUP BY PB.GroupID
+) AS GB ON RG.GroupID = GB.GroupID
+WHERE GB.BytesTotal > 0
+ORDER BY RG.GroupOrder
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[OrganizationExists]
+(
+	@OrganizationID nvarchar(10),
+	@Exists bit OUTPUT
+)
+AS
+SET @Exists = 0
+IF EXISTS(SELECT * FROM Organizations WHERE OrganizationID = @OrganizationID)
+BEGIN
+	SET @Exists = 1
+END
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[OCSUsers](
+	[OCSUserID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int] NOT NULL,
+	[InstanceID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[ModifiedDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_OCSUsers] PRIMARY KEY CLUSTERED 
+(
+	[OCSUserID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetOCSUsersCount] 
+(
+	@ItemID int,
+	@Name nvarchar(400),
+	@Email nvarchar(400)
+	
+)
+AS
+
+IF (@Name IS NULL)
+BEGIN
+	SET @Name = '%'
+END
+
+IF (@Email IS NULL)
+BEGIN
+	SET @Email = '%'
+END
+
+SELECT 
+	COUNT(ea.AccountID)		
+FROM 
+	ExchangeAccounts ea 
+INNER JOIN 
+	OCSUsers ou 
+ON 
+	ea.AccountID = ou.AccountID
+WHERE 
+	ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetOCSUsers]
+(
+	@ItemID int,
+	@SortColumn nvarchar(40),
+	@SortDirection nvarchar(20),
+	@Name nvarchar(400),
+	@Email nvarchar(400),
+	@StartRow int,
+	@Count int	
+)
+AS
+
+IF (@Name IS NULL)
+BEGIN
+	SET @Name = '%'
+END
+
+IF (@Email IS NULL)
+BEGIN
+	SET @Email = '%'
+END
+
+CREATE TABLE #TempOCSUsers 
+(	
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int],	
+	[ItemID] [int] NOT NULL,
+	[AccountName] [nvarchar](20)  NOT NULL,
+	[DisplayName] [nvarchar](300)  NOT NULL,
+	[InstanceID] [nvarchar](50)  NOT NULL,
+	[PrimaryEmailAddress] [nvarchar](300) NULL,
+	[SamAccountName] [nvarchar](100) NULL	
+)
+
+
+IF (@SortColumn = 'DisplayName')
+BEGIN
+	INSERT INTO 
+		#TempOCSUsers 
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ou.InstanceID,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName		
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		OCSUsers ou 
+	ON 
+		ea.AccountID = ou.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.DisplayName
+END
+ELSE
+BEGIN
+	INSERT INTO 
+		#TempOCSUsers
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ou.InstanceID,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName		
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		OCSUsers ou 
+	ON 
+		ea.AccountID = ou.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.PrimaryEmailAddress 
+END
+
+DECLARE @RetCount int
+SELECT @RetCount = COUNT(ID) FROM #TempOCSUsers 
+
+IF (@SortDirection = 'ASC')
+BEGIN
+	SELECT * FROM #TempOCSUsers 
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+END
+ELSE
+BEGIN
+	IF (@SortColumn = 'DisplayName')
+	BEGIN
+		SELECT * FROM #TempOCSUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
+	END
+	ELSE
+	BEGIN
+		SELECT * FROM #TempOCSUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
+	END
+	
+END
+
+
+DROP TABLE #TempOCSUsers
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetPackagePrivateIPAddressesPaged]
+	@PackageID int,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+AS
+BEGIN
+
+
+-- start
+DECLARE @condition nvarchar(700)
+SET @condition = '
+SI.PackageID = @PackageID
+'
+
+IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+AND @FilterValue <> '' AND @FilterValue IS NOT NULL
+SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'PA.IPAddress ASC'
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+SELECT COUNT(PA.PrivateAddressID)
+FROM dbo.PrivateIPAddresses AS PA
+INNER JOIN dbo.ServiceItems AS SI ON PA.ItemID = SI.ItemID
+WHERE ' + @condition + '
+
+DECLARE @Addresses AS TABLE
+(
+	PrivateAddressID int
+);
+
+WITH TempItems AS (
+	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
+		PA.PrivateAddressID
+	FROM dbo.PrivateIPAddresses AS PA
+	INNER JOIN dbo.ServiceItems AS SI ON PA.ItemID = SI.ItemID
+	WHERE ' + @condition + '
+)
+
+INSERT INTO @Addresses
+SELECT PrivateAddressID FROM TempItems
+WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
+
+SELECT
+	PA.PrivateAddressID,
+	PA.IPAddress,
+	PA.ItemID,
+	SI.ItemName,
+	PA.IsPrimary
+FROM @Addresses AS TA
+INNER JOIN dbo.PrivateIPAddresses AS PA ON TA.PrivateAddressID = PA.PrivateAddressID
+INNER JOIN dbo.ServiceItems AS SI ON PA.ItemID = SI.ItemID
+'
+
+print @sql
+
+exec sp_executesql @sql, N'@PackageID int, @StartRow int, @MaximumRows int',
+@PackageID, @StartRow, @MaximumRows
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetPackagesPaged]
+(
+	@ActorID int,
+	@UserID int,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+
+-- build query and run it to the temporary table
+DECLARE @sql nvarchar(2000)
+
+SET @sql = '
+DECLARE @HasUserRights bit
+SET @HasUserRights = dbo.CheckActorUserRights(@ActorID, @UserID)
+
+DECLARE @EndRow int
+SET @EndRow = @StartRow + @MaximumRows
+DECLARE @Packages TABLE
+(
+	ItemPosition int IDENTITY(1,1),
+	PackageID int
+)
+INSERT INTO @Packages (PackageID)
+SELECT
+	P.PackageID
+FROM Packages AS P
+--INNER JOIN UsersTree(@UserID, 1) AS UT ON P.UserID = UT.UserID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+INNER JOIN Servers AS S ON P.ServerID = S.ServerID
+INNER JOIN HostingPlans AS HP ON P.PlanID = HP.PlanID
+WHERE
+	P.UserID <> @UserID AND dbo.CheckUserParent(@UserID, P.UserID) = 1
+	AND @HasUserRights = 1 '
+
+IF @FilterColumn <> '' AND @FilterValue <> ''
+SET @sql = @sql + ' AND ' + @FilterColumn + ' LIKE @FilterValue '
+
+IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
+
+SET @sql = @sql + ' SELECT COUNT(PackageID) FROM @Packages;
+SELECT
+	P.PackageID,
+	P.PackageName,
+	P.StatusID,
+	P.PurchaseDate,
+	
+	dbo.GetItemComments(P.PackageID, ''PACKAGE'', @ActorID) AS Comments,
+	
+	-- server
+	P.ServerID,
+	ISNULL(S.ServerName, ''None'') AS ServerName,
+	ISNULL(S.Comments, '''') AS ServerComments,
+	ISNULL(S.VirtualServer, 1) AS VirtualServer,
+	
+	-- hosting plan
+	P.PlanID,
+	HP.PlanName,
+	
+	-- user
+	P.UserID,
+	U.Username,
 	U.FirstName,
 	U.LastName,
 	U.FullName,
-	ISNULL(U.RoleID, 0) AS RoleID,
+	U.RoleID,
 	U.Email
-FROM AuditLog AS L
-LEFT OUTER JOIN UsersDetailed AS U ON L.UserID = U.UserID
-WHERE RecordID = @RecordID
+FROM @Packages AS TP
+INNER JOIN Packages AS P ON TP.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+INNER JOIN Servers AS S ON P.ServerID = S.ServerID
+INNER JOIN HostingPlans AS HP ON P.PlanID = HP.PlanID
+WHERE TP.ItemPosition BETWEEN @StartRow AND @EndRow'
+
+exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @UserID int, @FilterValue nvarchar(50), @ActorID int',
+@StartRow, @MaximumRows, @UserID, @FilterValue, @ActorID
+
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetPackageIPAddresses]
+(
+	@PackageID int,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int,
+	@PoolID int = 0,
+	@Recursive bit = 0
+)
+AS
+BEGIN
+
+
+-- start
+DECLARE @condition nvarchar(700)
+SET @condition = '
+((@Recursive = 0 AND PA.PackageID = @PackageID)
+OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, PA.PackageID) = 1))
+AND (@PoolID = 0 OR @PoolID <> 0 AND IP.PoolID = @PoolID)
+'
+
+IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+AND @FilterValue <> '' AND @FilterValue IS NOT NULL
+SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'IP.ExternalIP ASC'
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+SELECT COUNT(PA.PackageAddressID)
+FROM dbo.PackageIPAddresses PA
+INNER JOIN dbo.IPAddresses AS IP ON PA.AddressID = IP.AddressID
+INNER JOIN dbo.Packages P ON PA.PackageID = P.PackageID
+INNER JOIN dbo.Users U ON U.UserID = P.UserID
+LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
+WHERE ' + @condition + '
+
+DECLARE @Addresses AS TABLE
+(
+	PackageAddressID int
+);
+
+WITH TempItems AS (
+	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
+		PA.PackageAddressID
+	FROM dbo.PackageIPAddresses PA
+	INNER JOIN dbo.IPAddresses AS IP ON PA.AddressID = IP.AddressID
+	INNER JOIN dbo.Packages P ON PA.PackageID = P.PackageID
+	INNER JOIN dbo.Users U ON U.UserID = P.UserID
+	LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
+	WHERE ' + @condition + '
+)
+
+INSERT INTO @Addresses
+SELECT PackageAddressID FROM TempItems
+WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
+
+SELECT
+	PA.PackageAddressID,
+	PA.AddressID,
+	IP.ExternalIP,
+	IP.InternalIP,
+	IP.SubnetMask,
+	IP.DefaultGateway,
+	PA.ItemID,
+	SI.ItemName,
+	PA.PackageID,
+	P.PackageName,
+	P.UserID,
+	U.UserName,
+	PA.IsPrimary
+FROM @Addresses AS TA
+INNER JOIN dbo.PackageIPAddresses AS PA ON TA.PackageAddressID = PA.PackageAddressID
+INNER JOIN dbo.IPAddresses AS IP ON PA.AddressID = IP.AddressID
+INNER JOIN dbo.Packages P ON PA.PackageID = P.PackageID
+INNER JOIN dbo.Users U ON U.UserID = P.UserID
+LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
+'
+
+print @sql
+
+exec sp_executesql @sql, N'@PackageID int, @StartRow int, @MaximumRows int, @Recursive bit, @PoolID int',
+@PackageID, @StartRow, @MaximumRows, @Recursive, @PoolID
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PackageSettings](
+	[PackageID] [int] NOT NULL,
+	[SettingsName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[PropertyValue] [ntext] COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_PackageSettings] PRIMARY KEY CLUSTERED 
+(
+	[PackageID] ASC,
+	[SettingsName] ASC,
+	[PropertyName] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE UpdatePackageSettings
+(
+	@ActorID int,
+	@PackageID int,
+	@SettingsName nvarchar(50),
+	@Xml ntext
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- delete old properties
+BEGIN TRAN
+DECLARE @idoc int
+--Create an internal representation of the XML document.
+EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
+
+-- Execute a SELECT statement that uses the OPENXML rowset provider.
+DELETE FROM PackageSettings
+WHERE PackageID = @PackageID AND SettingsName = @SettingsName
+
+INSERT INTO PackageSettings
+(
+	PackageID,
+	SettingsName,
+	PropertyName,
+	PropertyValue
+)
+SELECT
+	@PackageID,
+	@SettingsName,
+	PropertyName,
+	PropertyValue
+FROM OPENXML(@idoc, '/properties/property',1) WITH 
+(
+	PropertyName nvarchar(50) '@name',
+	PropertyValue ntext '@value'
+) as PV
+
+-- remove document
+exec sp_xml_removedocument @idoc
+
+COMMIT TRAN
+
 RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetPackageSettings
+(
+	@ActorID int,
+	@PackageID int,
+	@SettingsName nvarchar(50)
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+DECLARE @ParentPackageID int, @TmpPackageID int
+SET @TmpPackageID = @PackageID
+
+WHILE 10 = 10
+BEGIN
+	IF @TmpPackageID < 2 -- system package
+	BEGIN
+		SELECT
+			@TmpPackageID AS PackageID,
+			'Dump' AS PropertyName,
+			'' AS PropertyValue
+	END
+	ELSE
+	BEGIN
+		-- user package
+		IF EXISTS
+		(
+			SELECT PropertyName FROM PackageSettings
+			WHERE SettingsName = @SettingsName AND PackageID = @TmpPackageID
+		)
+		BEGIN
+			SELECT
+				PackageID,
+				PropertyName,
+				PropertyValue
+			FROM
+				PackageSettings
+			WHERE
+				PackageID = @TmpPackageID AND
+				SettingsName = @SettingsName
+				
+			BREAK
+		END
+	END
+
+
+	SET @ParentPackageID = NULL --reset var
+	
+	-- get owner
+	SELECT
+		@ParentPackageID = ParentPackageID
+	FROM Packages
+	WHERE PackageID = @TmpPackageID
+	
+	IF @ParentPackageID IS NULL -- the last parent
+	BREAK
+	
+	SET @TmpPackageID = @ParentPackageID
+END
+
+RETURN 
+
+
 
 
 
@@ -11764,275 +11824,6 @@ RETURN
 
 
 
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[PackageSettings](
-	[PackageID] [int] NOT NULL,
-	[SettingsName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[PropertyValue] [ntext] COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_PackageSettings] PRIMARY KEY CLUSTERED 
-(
-	[PackageID] ASC,
-	[SettingsName] ASC,
-	[PropertyName] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE UpdatePackageSettings
-(
-	@ActorID int,
-	@PackageID int,
-	@SettingsName nvarchar(50),
-	@Xml ntext
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
--- delete old properties
-BEGIN TRAN
-DECLARE @idoc int
---Create an internal representation of the XML document.
-EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
-
--- Execute a SELECT statement that uses the OPENXML rowset provider.
-DELETE FROM PackageSettings
-WHERE PackageID = @PackageID AND SettingsName = @SettingsName
-
-INSERT INTO PackageSettings
-(
-	PackageID,
-	SettingsName,
-	PropertyName,
-	PropertyValue
-)
-SELECT
-	@PackageID,
-	@SettingsName,
-	PropertyName,
-	PropertyValue
-FROM OPENXML(@idoc, '/properties/property',1) WITH 
-(
-	PropertyName nvarchar(50) '@name',
-	PropertyValue ntext '@value'
-) as PV
-
--- remove document
-exec sp_xml_removedocument @idoc
-
-COMMIT TRAN
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetPackageSettings
-(
-	@ActorID int,
-	@PackageID int,
-	@SettingsName nvarchar(50)
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-DECLARE @ParentPackageID int, @TmpPackageID int
-SET @TmpPackageID = @PackageID
-
-WHILE 10 = 10
-BEGIN
-	IF @TmpPackageID < 2 -- system package
-	BEGIN
-		SELECT
-			@TmpPackageID AS PackageID,
-			'Dump' AS PropertyName,
-			'' AS PropertyValue
-	END
-	ELSE
-	BEGIN
-		-- user package
-		IF EXISTS
-		(
-			SELECT PropertyName FROM PackageSettings
-			WHERE SettingsName = @SettingsName AND PackageID = @TmpPackageID
-		)
-		BEGIN
-			SELECT
-				PackageID,
-				PropertyName,
-				PropertyValue
-			FROM
-				PackageSettings
-			WHERE
-				PackageID = @TmpPackageID AND
-				SettingsName = @SettingsName
-				
-			BREAK
-		END
-	END
-
-
-	SET @ParentPackageID = NULL --reset var
-	
-	-- get owner
-	SELECT
-		@ParentPackageID = ParentPackageID
-	FROM Packages
-	WHERE PackageID = @TmpPackageID
-	
-	IF @ParentPackageID IS NULL -- the last parent
-	BREAK
-	
-	SET @TmpPackageID = @ParentPackageID
-END
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 GO
 SET ANSI_NULLS ON
@@ -12173,35 +11964,7 @@ RETURN
 
 
 
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecProductType](
-	[TypeID] [int] IDENTITY(1,1) NOT NULL,
-	[TypeName] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[ProvisioningController] [nvarchar](512) COLLATE Latin1_General_CI_AS NULL,
-	[Created] [datetime] NOT NULL,
-	[NativeItemType] [nvarchar](512) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ServiceItemType] [nvarchar](512) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_EC_ProductTypes] PRIMARY KEY CLUSTERED 
-(
-	[TypeID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
 
-GO
-SET IDENTITY_INSERT [dbo].[ecProductType] ON 
-
-GO
-INSERT [dbo].[ecProductType] ([TypeID], [TypeName], [ProvisioningController], [Created], [NativeItemType], [ServiceItemType]) VALUES (1, N'Hosting Plan', N'WebsitePanel.Ecommerce.EnterpriseServer.HostingPackageController,WebsitePanel.EnterpriseServer', CAST(0x0000993E010F2F0C AS DateTime), N'WebsitePanel.Ecommerce.EnterpriseServer.HostingPlan, WebsitePanel.EnterpriseServer', N'WebsitePanel.Ecommerce.EnterpriseServer.HostingPackageSvc, WebsitePanel.EnterpriseServer')
-GO
-INSERT [dbo].[ecProductType] ([TypeID], [TypeName], [ProvisioningController], [Created], [NativeItemType], [ServiceItemType]) VALUES (2, N'Hosting Add-On', N'WebsitePanel.Ecommerce.EnterpriseServer.HostingAddonController,WebsitePanel.EnterpriseServer', CAST(0x0000993E010F2F0C AS DateTime), N'WebsitePanel.Ecommerce.EnterpriseServer.HostingAddon, WebsitePanel.EnterpriseServer', N'WebsitePanel.Ecommerce.EnterpriseServer.HostingAddonSvc, WebsitePanel.EnterpriseServer')
-GO
-INSERT [dbo].[ecProductType] ([TypeID], [TypeName], [ProvisioningController], [Created], [NativeItemType], [ServiceItemType]) VALUES (3, N'Domain Name', N'WebsitePanel.Ecommerce.EnterpriseServer.DomainNameController,WebsitePanel.EnterpriseServer', CAST(0x0000993E010F2F0C AS DateTime), N'WebsitePanel.Ecommerce.EnterpriseServer.DomainName, WebsitePanel.EnterpriseServer', N'WebsitePanel.Ecommerce.EnterpriseServer.DomainNameSvc, WebsitePanel.EnterpriseServer')
-GO
-SET IDENTITY_INSERT [dbo].[ecProductType] OFF
 GO
 SET ANSI_NULLS ON
 GO
@@ -12356,343 +12119,6 @@ RETURN
 
 
 
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[SystemSettings](
-	[SettingsName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[PropertyValue] [ntext] COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_SystemSettings] PRIMARY KEY CLUSTERED 
-(
-	[SettingsName] ASC,
-	[PropertyName] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-INSERT [dbo].[SystemSettings] ([SettingsName], [PropertyName], [PropertyValue]) VALUES (N'BackupSettings', N'BackupsPath', N'c:\HostingBackups')
-GO
-INSERT [dbo].[SystemSettings] ([SettingsName], [PropertyName], [PropertyValue]) VALUES (N'SmtpSettings', N'SmtpEnableSsl', N'False')
-GO
-INSERT [dbo].[SystemSettings] ([SettingsName], [PropertyName], [PropertyValue]) VALUES (N'SmtpSettings', N'SmtpPort', N'25')
-GO
-INSERT [dbo].[SystemSettings] ([SettingsName], [PropertyName], [PropertyValue]) VALUES (N'SmtpSettings', N'SmtpServer', N'127.0.0.1')
-GO
-INSERT [dbo].[SystemSettings] ([SettingsName], [PropertyName], [PropertyValue]) VALUES (N'SmtpSettings', N'SmtpUsername', N'postmaster')
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[SSLCertificates](
-	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[UserID] [int] NOT NULL,
-	[SiteID] [int] NOT NULL,
-	[FriendlyName] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Hostname] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[DistinguishedName] [nvarchar](500) COLLATE Latin1_General_CI_AS NULL,
-	[CSR] [ntext] COLLATE Latin1_General_CI_AS NULL,
-	[CSRLength] [int] NULL,
-	[Certificate] [ntext] COLLATE Latin1_General_CI_AS NULL,
-	[Hash] [ntext] COLLATE Latin1_General_CI_AS NULL,
-	[Installed] [bit] NULL,
-	[IsRenewal] [bit] NULL,
-	[ValidFrom] [datetime] NULL,
-	[ExpiryDate] [datetime] NULL,
-	[SerialNumber] [nvarchar](250) COLLATE Latin1_General_CI_AS NULL,
-	[Pfx] [ntext] COLLATE Latin1_General_CI_AS NULL,
-	[PreviousId] [int] NULL
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-CREATE PROCEDURE [dbo].[GetSSLCertificateByID]
-(
-	@ActorID int,
-	@ID int
-)
-AS
-
-SELECT
-	[ID], [UserID], [SiteID], [Hostname], [FriendlyName], [CSR], [Certificate], [Hash], [Installed], [IsRenewal], [PreviousId]
-FROM
-	[dbo].[SSLCertificates]
-INNER JOIN
-	[dbo].[ServiceItems] AS [SI] ON [SSLCertificates].[SiteID] = [SI].[ItemID]
-WHERE
-	[ID] = @ID AND [dbo].CheckActorPackageRights(@ActorID, [SI].[PackageID]) = 1
-
-RETURN
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-CREATE PROCEDURE [dbo].[GetSiteCert]
-(
-	@ActorID int,
-	@ID int
-)
-AS
-
-SELECT
-	[UserID], [SiteID], [Hostname], [CSR], [Certificate], [Hash], [Installed], [IsRenewal]
-FROM
-	[dbo].[SSLCertificates]
-INNER JOIN
-	[dbo].[ServiceItems] AS [SI] ON [SSLCertificates].[SiteID] = [SI].[ItemID]
-WHERE
-	[SiteID] = @ID AND [Installed] = 1 AND [dbo].CheckActorPackageRights(@ActorID, [SI].[PackageID]) = 1
-RETURN
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-CREATE PROCEDURE [dbo].[GetPendingSSLForWebsite]
-(
-	@ActorID int,
-	@PackageID int,
-	@websiteid int,
-	@Recursive bit = 1
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-BEGIN
-	RAISERROR('You are not allowed to access this package', 16, 1)
-	RETURN
-END
-
-SELECT
-	[ID], [UserID], [SiteID], [Hostname], [CSR], [Certificate], [Hash], [Installed]
-FROM
-	[dbo].[SSLCertificates]
-WHERE
-	@websiteid = 2 AND [Installed] = 0 AND [IsRenewal] = 0
-
-RETURN
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-CREATE PROCEDURE [dbo].[GetCertificatesForSite]
-(
-	@ActorID int,
-	@PackageID int,
-	@websiteid int
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-BEGIN
-	RAISERROR('You are not allowed to access this package', 16, 1)
-	RETURN
-END
-
-SELECT
-	[ID], [UserID], [SiteID], [FriendlyName], [Hostname], [DistinguishedName], 
-	[CSR], [CSRLength], [ValidFrom], [ExpiryDate], [Installed], [IsRenewal], 
-	[PreviousId], [SerialNumber]
-FROM
-	[dbo].[SSLCertificates]
-WHERE
-	[SiteID] = @websiteid
-RETURN
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-CREATE PROCEDURE [dbo].[DeleteCertificate] 
-(
-	@ActorID int,
-	@PackageID int,
-	@id int
-	
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-BEGIN
-	RAISERROR('You are not allowed to access this package', 16, 1)
-	RETURN
-END
-
--- insert record
-DELETE FROM
-	[dbo].[SSLCertificates]
-WHERE
-	[ID] = @id
-           
-RETURN
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-CREATE PROCEDURE [dbo].[CompleteSSLRequest] 
-(
-	@ActorID int,
-	@PackageID int,
-	@ID int,	
-	@Certificate ntext,
-	@SerialNumber nvarchar(250),
-	@Hash ntext,
-	@DistinguishedName nvarchar(500),
-	@ValidFrom datetime,
-	@ExpiryDate datetime
-	
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-BEGIN
-	RAISERROR('You are not allowed to access this package', 16, 1)
-	RETURN
-END
-
--- insert record
-UPDATE
-	[dbo].[SSLCertificates]
-SET	
-	[Certificate] = @Certificate,
-	[Installed] = 1,
-	[SerialNumber] = @SerialNumber,
-	[DistinguishedName] = @DistinguishedName,
-	[Hash] = @Hash,
-	[ValidFrom] = @ValidFrom,
-	[ExpiryDate] = @ExpiryDate 
-WHERE
-	[ID] = @ID;           
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-CREATE PROCEDURE [dbo].[AddSSLRequest] 
-(
-	@SSLID int OUTPUT,
-	@ActorID int,
-	@PackageID int,
-	@UserID int,
-	@WebSiteID int,
-	@FriendlyName nvarchar(255),
-	@HostName nvarchar(255),
-	@CSR ntext,
-	@CSRLength int,
-	@DistinguishedName nvarchar(500),
-	@IsRenewal bit = 0,
-	@PreviousId int = NULL
-	
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-BEGIN
-	RAISERROR('You are not allowed to access this package', 16, 1)
-	RETURN
-END
-
--- insert record
-INSERT INTO [dbo].[SSLCertificates]
-	([UserID], [SiteID], [FriendlyName], [Hostname], [DistinguishedName], [CSR], [CSRLength], [IsRenewal], [PreviousId])
-VALUES
-	(@UserID, @WebSiteID, @FriendlyName, @HostName, @DistinguishedName, @CSR, @CSRLength, @IsRenewal, @PreviousId)
-
-SET @SSLID = SCOPE_IDENTITY()
-RETURN
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-CREATE PROCEDURE [dbo].[AddPFX] 
-(
-	@ActorID int,
-	@PackageID int,
-	@UserID int,
-	@WebSiteID int,
-	@FriendlyName nvarchar(255),
-	@HostName nvarchar(255),	
-	@CSRLength int,
-	@DistinguishedName nvarchar(500),
-	@SerialNumber nvarchar(250),
-	@ValidFrom datetime,
-	@ExpiryDate datetime
-	
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-BEGIN
-	RAISERROR('You are not allowed to access this package', 16, 1)
-	RETURN
-END
-
--- insert record
-INSERT INTO [dbo].[SSLCertificates]
-	([UserID], [SiteID], [FriendlyName], [Hostname], [DistinguishedName], [CSRLength], [SerialNumber], [ValidFrom], [ExpiryDate], [Installed])
-VALUES
-	(@UserID, @WebSiteID, @FriendlyName, @HostName, @DistinguishedName, @CSRLength, @SerialNumber, @ValidFrom, @ExpiryDate, 1)
-
-RETURN
 
 
 
@@ -13404,6 +12830,267 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+CREATE TABLE [dbo].[Clusters](
+	[ClusterID] [int] IDENTITY(1,1) NOT NULL,
+	[ClusterName] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_Clusters] PRIMARY KEY CLUSTERED 
+(
+	[ClusterID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecProductTypeControls](
+	[TypeID] [int] NOT NULL,
+	[ControlKey] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ControlSrc] [nvarchar](512) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_ecProductTypeControls] PRIMARY KEY CLUSTERED 
+(
+	[TypeID] ASC,
+	[ControlKey] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecProductType](
+	[TypeID] [int] IDENTITY(1,1) NOT NULL,
+	[TypeName] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[ProvisioningController] [nvarchar](512) COLLATE Latin1_General_CI_AS NULL,
+	[Created] [datetime] NOT NULL,
+	[NativeItemType] [nvarchar](512) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ServiceItemType] [nvarchar](512) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_EC_ProductTypes] PRIMARY KEY CLUSTERED 
+(
+	[TypeID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET IDENTITY_INSERT [dbo].[ecProductType] ON 
+
+GO
+INSERT [dbo].[ecProductType] ([TypeID], [TypeName], [ProvisioningController], [Created], [NativeItemType], [ServiceItemType]) VALUES (1, N'Hosting Plan', N'WebsitePanel.Ecommerce.EnterpriseServer.HostingPackageController,WebsitePanel.EnterpriseServer', CAST(0x0000993E010F2F0C AS DateTime), N'WebsitePanel.Ecommerce.EnterpriseServer.HostingPlan, WebsitePanel.EnterpriseServer', N'WebsitePanel.Ecommerce.EnterpriseServer.HostingPackageSvc, WebsitePanel.EnterpriseServer')
+GO
+INSERT [dbo].[ecProductType] ([TypeID], [TypeName], [ProvisioningController], [Created], [NativeItemType], [ServiceItemType]) VALUES (2, N'Hosting Add-On', N'WebsitePanel.Ecommerce.EnterpriseServer.HostingAddonController,WebsitePanel.EnterpriseServer', CAST(0x0000993E010F2F0C AS DateTime), N'WebsitePanel.Ecommerce.EnterpriseServer.HostingAddon, WebsitePanel.EnterpriseServer', N'WebsitePanel.Ecommerce.EnterpriseServer.HostingAddonSvc, WebsitePanel.EnterpriseServer')
+GO
+INSERT [dbo].[ecProductType] ([TypeID], [TypeName], [ProvisioningController], [Created], [NativeItemType], [ServiceItemType]) VALUES (3, N'Domain Name', N'WebsitePanel.Ecommerce.EnterpriseServer.DomainNameController,WebsitePanel.EnterpriseServer', CAST(0x0000993E010F2F0C AS DateTime), N'WebsitePanel.Ecommerce.EnterpriseServer.DomainName, WebsitePanel.EnterpriseServer', N'WebsitePanel.Ecommerce.EnterpriseServer.DomainNameSvc, WebsitePanel.EnterpriseServer')
+GO
+SET IDENTITY_INSERT [dbo].[ecProductType] OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecCategory](
+	[CategoryID] [int] IDENTITY(1,1) NOT NULL,
+	[CategoryName] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+	[CategorySku] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ParentID] [int] NULL,
+	[Level] [int] NOT NULL,
+	[ShortDescription] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[FullDescription] [ntext] COLLATE Latin1_General_CI_AS NULL,
+	[Created] [datetime] NOT NULL,
+	[Modified] [datetime] NULL,
+	[CreatorID] [int] NOT NULL,
+	[ModifierID] [int] NULL,
+	[ItemOrder] [int] NULL,
+	[ResellerID] [int] NOT NULL,
+ CONSTRAINT [PK_EC_Categories] PRIMARY KEY CLUSTERED 
+(
+	[CategoryID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecTaxations](
+	[TaxationID] [int] IDENTITY(1,1) NOT NULL,
+	[ResellerID] [int] NOT NULL,
+	[Country] [nvarchar](3) COLLATE Latin1_General_CI_AS NOT NULL,
+	[State] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Description] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[TypeID] [int] NOT NULL,
+	[Amount] [decimal](5, 2) NOT NULL,
+	[Active] [bit] NOT NULL,
+ CONSTRAINT [PK_ecTaxations_1] PRIMARY KEY CLUSTERED 
+(
+	[TaxationID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+
+CREATE UNIQUE NONCLUSTERED INDEX [IX_ecTaxations] ON [dbo].[ecTaxations] 
+(
+	[ResellerID] ASC,
+	[Country] ASC,
+	[State] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecSystemTriggers](
+	[TriggerID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[OwnerID] [int] NOT NULL,
+	[TriggerHandler] [nvarchar](512) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ReferenceID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Namespace] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Status] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_ecSystemTriggers] PRIMARY KEY CLUSTERED 
+(
+	[TriggerID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecContracts](
+	[ContractID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[CustomerID] [int] NULL,
+	[ResellerID] [int] NOT NULL,
+	[AccountName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[OpenedDate] [datetime] NOT NULL,
+	[Status] [int] NOT NULL,
+	[ClosedDate] [datetime] NULL,
+	[Balance] [money] NOT NULL,
+	[FirstName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[LastName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Email] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+	[CompanyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[PropertyNames] [ntext] COLLATE Latin1_General_CI_AS NULL,
+	[PropertyValues] [ntext] COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_ecContracts] PRIMARY KEY CLUSTERED 
+(
+	[ContractID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON),
+ CONSTRAINT [UQ_ecContracts_ContractID] UNIQUE NONCLUSTERED 
+(
+	[ContractID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecServiceHandlersResponses](
+	[ResponseID] [int] IDENTITY(1,1) NOT NULL,
+	[ServiceID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ContractID] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[InvoiceID] [int] NULL,
+	[TextResponse] [ntext] COLLATE Latin1_General_CI_AS NULL,
+	[Received] [datetime] NOT NULL,
+	[ErrorMessage] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_ecServiceHandlersResponses] PRIMARY KEY CLUSTERED 
+(
+	[ResponseID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecPluginsProperties](
+	[PluginID] [int] NOT NULL,
+	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[PropertyValue] [nvarchar](512) COLLATE Latin1_General_CI_AS NULL,
+	[ResellerID] [int] NOT NULL,
+ CONSTRAINT [PK_ecPluginsSettings] PRIMARY KEY CLUSTERED 
+(
+	[PluginID] ASC,
+	[ResellerID] ASC,
+	[PropertyName] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecPaymentProfiles](
+	[PropertyNames] [ntext] COLLATE Latin1_General_CI_AS NOT NULL,
+	[PropertyValues] [ntext] COLLATE Latin1_General_CI_AS NOT NULL,
+	[Created] [datetime] NOT NULL,
+	[ContractID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_ecPaymentProfiles] PRIMARY KEY CLUSTERED 
+(
+	[ContractID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecCustomersPayments](
+	[PaymentID] [int] IDENTITY(1,1) NOT NULL,
+	[InvoiceID] [int] NOT NULL,
+	[TransactionID] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Total] [money] NOT NULL,
+	[Currency] [nvarchar](3) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Created] [datetime] NOT NULL,
+	[MethodName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[PluginID] [int] NOT NULL,
+	[StatusID] [int] NOT NULL,
+	[ContractID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_EC_Payments] PRIMARY KEY CLUSTERED 
+(
+	[PaymentID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON),
+ CONSTRAINT [IX_ecCustomersPayments] UNIQUE NONCLUSTERED 
+(
+	[TransactionID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecInvoice](
+	[InvoiceID] [int] IDENTITY(1,1) NOT NULL,
+	[Created] [datetime] NOT NULL,
+	[DueDate] [datetime] NOT NULL,
+	[Total] [money] NOT NULL,
+	[SubTotal] [money] NOT NULL,
+	[TaxAmount] [money] NULL,
+	[Currency] [nvarchar](3) COLLATE Latin1_General_CI_AS NOT NULL,
+	[InvoiceNumber] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[TaxationID] [int] NULL,
+	[ContractID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_EC_Invoices] PRIMARY KEY CLUSTERED 
+(
+	[InvoiceID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 
 
 
@@ -13475,32 +13162,96 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[Versions](
-	[DatabaseVersion] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[BuildDate] [datetime] NOT NULL,
- CONSTRAINT [PK_Versions] PRIMARY KEY CLUSTERED 
-(
-	[DatabaseVersion] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
 
-GO
-INSERT [dbo].[Versions] ([DatabaseVersion], [BuildDate]) VALUES (N'1.0', CAST(0x00009D5400000000 AS DateTime))
-GO
-INSERT [dbo].[Versions] ([DatabaseVersion], [BuildDate]) VALUES (N'1.0.1.0', CAST(0x00009DB500D453BD AS DateTime))
-GO
-INSERT [dbo].[Versions] ([DatabaseVersion], [BuildDate]) VALUES (N'1.0.2.0', CAST(0x00009DE600000000 AS DateTime))
-GO
-INSERT [dbo].[Versions] ([DatabaseVersion], [BuildDate]) VALUES (N'1.1.0.9', CAST(0x00009E3000000000 AS DateTime))
-GO
-INSERT [dbo].[Versions] ([DatabaseVersion], [BuildDate]) VALUES (N'1.1.2.13', CAST(0x00009EC600000000 AS DateTime))
-GO
-INSERT [dbo].[Versions] ([DatabaseVersion], [BuildDate]) VALUES (N'1.2.0.38', CAST(0x00009F1F00000000 AS DateTime))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE FUNCTION GetFullIPAddress
+(
+	@ExternalIP varchar(24),
+	@InternalIP varchar(24)
+)
+RETURNS varchar(60)
+AS
+BEGIN
+DECLARE @IP varchar(60)
+SET @IP = ''
+
+IF @ExternalIP IS NOT NULL AND @ExternalIP <> ''
+SET @IP = @ExternalIP
+
+IF @InternalIP IS NOT NULL AND @InternalIP <> ''
+SET @IP = @IP + ' (' + @InternalIP + ')'
+
+RETURN @IP
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -13649,61 +13400,383 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[ScheduleTaskViewConfiguration](
-	[TaskID] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ConfigurationID] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Environment] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Description] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_ScheduleTaskViewConfiguration] PRIMARY KEY CLUSTERED 
+CREATE TABLE [dbo].[Versions](
+	[DatabaseVersion] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[BuildDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_Versions] PRIMARY KEY CLUSTERED 
 (
-	[ConfigurationID] ASC,
-	[TaskID] ASC
+	[DatabaseVersion] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
 )
 
 GO
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_ACTIVATE_PAID_INVOICES', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/EmptyView.ascx')
+INSERT [dbo].[Versions] ([DatabaseVersion], [BuildDate]) VALUES (N'1.0', CAST(0x00009D5400000000 AS DateTime))
 GO
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_BACKUP', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/Backup.ascx')
+INSERT [dbo].[Versions] ([DatabaseVersion], [BuildDate]) VALUES (N'1.0.1.0', CAST(0x00009DB500D453BD AS DateTime))
 GO
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_BACKUP_DATABASE', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/BackupDatabase.ascx')
+INSERT [dbo].[Versions] ([DatabaseVersion], [BuildDate]) VALUES (N'1.0.2.0', CAST(0x00009DE600000000 AS DateTime))
 GO
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_CALCULATE_EXCHANGE_DISKSPACE', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/EmptyView.ascx')
+INSERT [dbo].[Versions] ([DatabaseVersion], [BuildDate]) VALUES (N'1.1.0.9', CAST(0x00009E3000000000 AS DateTime))
 GO
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_CALCULATE_PACKAGES_BANDWIDTH', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/EmptyView.ascx')
+INSERT [dbo].[Versions] ([DatabaseVersion], [BuildDate]) VALUES (N'1.1.2.13', CAST(0x00009EC600000000 AS DateTime))
 GO
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_CALCULATE_PACKAGES_DISKSPACE', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/EmptyView.ascx')
+INSERT [dbo].[Versions] ([DatabaseVersion], [BuildDate]) VALUES (N'1.2.0.38', CAST(0x00009F1F00000000 AS DateTime))
 GO
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_CANCEL_OVERDUE_INVOICES', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/EmptyView.ascx')
+INSERT [dbo].[Versions] ([DatabaseVersion], [BuildDate]) VALUES (N'1.2.1.6', CAST(0x0000A02300000000 AS DateTime))
 GO
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_CHECK_WEBSITE', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/CheckWebsite.ascx')
+SET ANSI_NULLS ON
 GO
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_FTP_FILES', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/SendFilesViaFtp.ascx')
+SET QUOTED_IDENTIFIER ON
 GO
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_GENERATE_INVOICES', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/EmptyView.ascx')
+CREATE TABLE [dbo].[SystemSettings](
+	[SettingsName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[PropertyValue] [ntext] COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_SystemSettings] PRIMARY KEY CLUSTERED 
+(
+	[SettingsName] ASC,
+	[PropertyName] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
 GO
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_HOSTED_SOLUTION_REPORT', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/HostedSolutionReport.ascx')
+INSERT [dbo].[SystemSettings] ([SettingsName], [PropertyName], [PropertyValue]) VALUES (N'BackupSettings', N'BackupsPath', N'c:\HostingBackups')
 GO
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_NOTIFY_OVERUSED_DATABASES', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/NotifyOverusedDatabases.ascx')
+INSERT [dbo].[SystemSettings] ([SettingsName], [PropertyName], [PropertyValue]) VALUES (N'SmtpSettings', N'SmtpEnableSsl', N'False')
 GO
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_RUN_PAYMENT_QUEUE', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/EmptyView.ascx')
+INSERT [dbo].[SystemSettings] ([SettingsName], [PropertyName], [PropertyValue]) VALUES (N'SmtpSettings', N'SmtpPort', N'25')
 GO
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_RUN_SYSTEM_COMMAND', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/ExecuteSystemCommand.ascx')
+INSERT [dbo].[SystemSettings] ([SettingsName], [PropertyName], [PropertyValue]) VALUES (N'SmtpSettings', N'SmtpServer', N'127.0.0.1')
 GO
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_SEND_MAIL', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/SendEmailNotification.ascx')
+INSERT [dbo].[SystemSettings] ([SettingsName], [PropertyName], [PropertyValue]) VALUES (N'SmtpSettings', N'SmtpUsername', N'postmaster')
 GO
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_SUSPEND_OVERDUE_INVOICES', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/EmptyView.ascx')
+SET ANSI_NULLS ON
 GO
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_SUSPEND_PACKAGES', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/SuspendOverusedSpaces.ascx')
+SET QUOTED_IDENTIFIER ON
 GO
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_ZIP_FILES', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/ZipFiles.ascx')
+CREATE TABLE [dbo].[SSLCertificates](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[UserID] [int] NOT NULL,
+	[SiteID] [int] NOT NULL,
+	[FriendlyName] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Hostname] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[DistinguishedName] [nvarchar](500) COLLATE Latin1_General_CI_AS NULL,
+	[CSR] [ntext] COLLATE Latin1_General_CI_AS NULL,
+	[CSRLength] [int] NULL,
+	[Certificate] [ntext] COLLATE Latin1_General_CI_AS NULL,
+	[Hash] [ntext] COLLATE Latin1_General_CI_AS NULL,
+	[Installed] [bit] NULL,
+	[IsRenewal] [bit] NULL,
+	[ValidFrom] [datetime] NULL,
+	[ExpiryDate] [datetime] NULL,
+	[SerialNumber] [nvarchar](250) COLLATE Latin1_General_CI_AS NULL,
+	[Pfx] [ntext] COLLATE Latin1_General_CI_AS NULL,
+	[PreviousId] [int] NULL
+)
+
 GO
-SET ANSI_NULLS OFF
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+CREATE PROCEDURE [dbo].[GetSSLCertificateByID]
+(
+	@ActorID int,
+	@ID int
+)
+AS
+
+SELECT
+	[ID], [UserID], [SiteID], [Hostname], [FriendlyName], [CSR], [Certificate], [Hash], [Installed], [IsRenewal], [PreviousId]
+FROM
+	[dbo].[SSLCertificates]
+INNER JOIN
+	[dbo].[ServiceItems] AS [SI] ON [SSLCertificates].[SiteID] = [SI].[ItemID]
+WHERE
+	[ID] = @ID AND [dbo].CheckActorPackageRights(@ActorID, [SI].[PackageID]) = 1
+
+RETURN
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+CREATE PROCEDURE [dbo].[GetSiteCert]
+(
+	@ActorID int,
+	@ID int
+)
+AS
+
+SELECT
+	[UserID], [SiteID], [Hostname], [CSR], [Certificate], [Hash], [Installed], [IsRenewal]
+FROM
+	[dbo].[SSLCertificates]
+INNER JOIN
+	[dbo].[ServiceItems] AS [SI] ON [SSLCertificates].[SiteID] = [SI].[ItemID]
+WHERE
+	[SiteID] = @ID AND [Installed] = 1 AND [dbo].CheckActorPackageRights(@ActorID, [SI].[PackageID]) = 1
+RETURN
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+CREATE PROCEDURE [dbo].[GetPendingSSLForWebsite]
+(
+	@ActorID int,
+	@PackageID int,
+	@websiteid int,
+	@Recursive bit = 1
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+BEGIN
+	RAISERROR('You are not allowed to access this package', 16, 1)
+	RETURN
+END
+
+SELECT
+	[ID], [UserID], [SiteID], [Hostname], [CSR], [Certificate], [Hash], [Installed]
+FROM
+	[dbo].[SSLCertificates]
+WHERE
+	@websiteid = 2 AND [Installed] = 0 AND [IsRenewal] = 0
+
+RETURN
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+CREATE PROCEDURE [dbo].[GetCertificatesForSite]
+(
+	@ActorID int,
+	@PackageID int,
+	@websiteid int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+BEGIN
+	RAISERROR('You are not allowed to access this package', 16, 1)
+	RETURN
+END
+
+SELECT
+	[ID], [UserID], [SiteID], [FriendlyName], [Hostname], [DistinguishedName], 
+	[CSR], [CSRLength], [ValidFrom], [ExpiryDate], [Installed], [IsRenewal], 
+	[PreviousId], [SerialNumber]
+FROM
+	[dbo].[SSLCertificates]
+WHERE
+	[SiteID] = @websiteid
+RETURN
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+CREATE PROCEDURE [dbo].[DeleteCertificate] 
+(
+	@ActorID int,
+	@PackageID int,
+	@id int
+	
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+BEGIN
+	RAISERROR('You are not allowed to access this package', 16, 1)
+	RETURN
+END
+
+-- insert record
+DELETE FROM
+	[dbo].[SSLCertificates]
+WHERE
+	[ID] = @id
+           
+RETURN
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+CREATE PROCEDURE [dbo].[CompleteSSLRequest] 
+(
+	@ActorID int,
+	@PackageID int,
+	@ID int,	
+	@Certificate ntext,
+	@SerialNumber nvarchar(250),
+	@Hash ntext,
+	@DistinguishedName nvarchar(500),
+	@ValidFrom datetime,
+	@ExpiryDate datetime
+	
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+BEGIN
+	RAISERROR('You are not allowed to access this package', 16, 1)
+	RETURN
+END
+
+-- insert record
+UPDATE
+	[dbo].[SSLCertificates]
+SET	
+	[Certificate] = @Certificate,
+	[Installed] = 1,
+	[SerialNumber] = @SerialNumber,
+	[DistinguishedName] = @DistinguishedName,
+	[Hash] = @Hash,
+	[ValidFrom] = @ValidFrom,
+	[ExpiryDate] = @ExpiryDate 
+WHERE
+	[ID] = @ID;           
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+CREATE PROCEDURE [dbo].[AddSSLRequest] 
+(
+	@SSLID int OUTPUT,
+	@ActorID int,
+	@PackageID int,
+	@UserID int,
+	@WebSiteID int,
+	@FriendlyName nvarchar(255),
+	@HostName nvarchar(255),
+	@CSR ntext,
+	@CSRLength int,
+	@DistinguishedName nvarchar(500),
+	@IsRenewal bit = 0,
+	@PreviousId int = NULL
+	
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+BEGIN
+	RAISERROR('You are not allowed to access this package', 16, 1)
+	RETURN
+END
+
+-- insert record
+INSERT INTO [dbo].[SSLCertificates]
+	([UserID], [SiteID], [FriendlyName], [Hostname], [DistinguishedName], [CSR], [CSRLength], [IsRenewal], [PreviousId])
+VALUES
+	(@UserID, @WebSiteID, @FriendlyName, @HostName, @DistinguishedName, @CSR, @CSRLength, @IsRenewal, @PreviousId)
+
+SET @SSLID = SCOPE_IDENTITY()
+RETURN
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+CREATE PROCEDURE [dbo].[AddPFX] 
+(
+	@ActorID int,
+	@PackageID int,
+	@UserID int,
+	@WebSiteID int,
+	@FriendlyName nvarchar(255),
+	@HostName nvarchar(255),	
+	@CSRLength int,
+	@DistinguishedName nvarchar(500),
+	@SerialNumber nvarchar(250),
+	@ValidFrom datetime,
+	@ExpiryDate datetime
+	
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+BEGIN
+	RAISERROR('You are not allowed to access this package', 16, 1)
+	RETURN
+END
+
+-- insert record
+INSERT INTO [dbo].[SSLCertificates]
+	([UserID], [SiteID], [FriendlyName], [Hostname], [DistinguishedName], [CSRLength], [SerialNumber], [ValidFrom], [ExpiryDate], [Installed])
+VALUES
+	(@UserID, @WebSiteID, @FriendlyName, @HostName, @DistinguishedName, @CSRLength, @SerialNumber, @ValidFrom, @ExpiryDate, 1)
+
+RETURN
+
+
+
+
+GO
+SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
@@ -13737,38 +13810,48 @@ GO
 
 
 
-
-
-CREATE FUNCTION dbo.UsersTree
-(
-	@OwnerID int,
-	@Recursive bit = 0
-)
-RETURNS @T TABLE (UserID int)
+CREATE PROCEDURE [dbo].[SetSystemSettings]
+	@SettingsName nvarchar(50),
+	@Xml ntext
 AS
 BEGIN
+/*
+XML Format:
+<properties>
+	<property name="" value=""/>
+</properties>
+*/
+	SET NOCOUNT ON;
 
-	IF @Recursive = 1
-	BEGIN
-		-- insert "root" user
-		INSERT @T VALUES(@OwnerID)
+	BEGIN TRAN
+		DECLARE @idoc int;
+		--Create an internal representation of the XML document.
+		EXEC sp_xml_preparedocument @idoc OUTPUT, @xml;
 	
-		-- get all children recursively
-		WHILE @@ROWCOUNT > 0
-		BEGIN
-			INSERT @T SELECT UserID
-			FROM Users
-			WHERE OwnerID IN(SELECT UserID from @T) AND UserID NOT IN(SELECT UserID FROM @T)
-		END
-	END
-	ELSE
-	BEGIN
-		INSERT @T VALUES(@OwnerID)
-	END
-	
-RETURN
+		DELETE FROM [dbo].[SystemSettings] WHERE [SettingsName] = @SettingsName;
+
+		INSERT INTO [dbo].[SystemSettings]
+		(
+			[SettingsName],
+			[PropertyName],
+			[PropertyValue]
+		)
+		SELECT
+			@SettingsName,
+			[XML].[PropertyName],
+			[XML].[PropertyValue]
+		FROM OPENXML(@idoc, '/properties/property',1) WITH 
+		(
+			[PropertyName] nvarchar(50) '@name',
+			[PropertyValue] ntext '@value'
+		) AS XML;
+
+		-- remove document
+		EXEC sp_xml_removedocument @idoc;
+
+	COMMIT TRAN;
+
 END
-
 
 
 
@@ -14100,6 +14183,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -14162,6 +14246,7 @@ WHERE STP.TaskID = @TaskID
 ORDER BY STP.ParameterOrder
 
 RETURN
+
 
 
 
@@ -14318,6 +14403,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -14415,6 +14501,241 @@ RETURN
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS OFF
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE FUNCTION dbo.UsersTree
+(
+	@OwnerID int,
+	@Recursive bit = 0
+)
+RETURNS @T TABLE (UserID int)
+AS
+BEGIN
+
+	IF @Recursive = 1
+	BEGIN
+		-- insert "root" user
+		INSERT @T VALUES(@OwnerID)
+	
+		-- get all children recursively
+		WHILE @@ROWCOUNT > 0
+		BEGIN
+			INSERT @T SELECT UserID
+			FROM Users
+			WHERE OwnerID IN(SELECT UserID from @T) AND UserID NOT IN(SELECT UserID FROM @T)
+		END
+	END
+	ELSE
+	BEGIN
+		INSERT @T VALUES(@OwnerID)
+	END
+	
+RETURN
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ScheduleTaskViewConfiguration](
+	[TaskID] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ConfigurationID] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Environment] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Description] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_ScheduleTaskViewConfiguration] PRIMARY KEY CLUSTERED 
+(
+	[ConfigurationID] ASC,
+	[TaskID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_ACTIVATE_PAID_INVOICES', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/EmptyView.ascx')
+GO
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_BACKUP', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/Backup.ascx')
+GO
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_BACKUP_DATABASE', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/BackupDatabase.ascx')
+GO
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_CALCULATE_EXCHANGE_DISKSPACE', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/EmptyView.ascx')
+GO
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_CALCULATE_PACKAGES_BANDWIDTH', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/EmptyView.ascx')
+GO
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_CALCULATE_PACKAGES_DISKSPACE', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/EmptyView.ascx')
+GO
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_CANCEL_OVERDUE_INVOICES', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/EmptyView.ascx')
+GO
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_CHECK_WEBSITE', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/CheckWebsite.ascx')
+GO
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_FTP_FILES', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/SendFilesViaFtp.ascx')
+GO
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_GENERATE_INVOICES', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/EmptyView.ascx')
+GO
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_HOSTED_SOLUTION_REPORT', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/HostedSolutionReport.ascx')
+GO
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_NOTIFY_OVERUSED_DATABASES', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/NotifyOverusedDatabases.ascx')
+GO
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_RUN_PAYMENT_QUEUE', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/EmptyView.ascx')
+GO
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_RUN_SYSTEM_COMMAND', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/ExecuteSystemCommand.ascx')
+GO
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_SEND_MAIL', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/SendEmailNotification.ascx')
+GO
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_SUSPEND_OVERDUE_INVOICES', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/EmptyView.ascx')
+GO
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_SUSPEND_PACKAGES', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/SuspendOverusedSpaces.ascx')
+GO
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_ZIP_FILES', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/ZipFiles.ascx')
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetCustomerTaxation]
+	@ContractID nvarchar(50),
+	@Country nvarchar(50),
+	@State nvarchar(50)
+AS
+BEGIN
+	DECLARE @ResellerID int;
+	SELECT
+		@ResellerID = [ResellerID] FROM [dbo].[ecContracts]
+	WHERE
+		[ContractID] = @ContractID;
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	--
+    SELECT TOP 1
+		ROW_NUMBER() OVER (ORDER BY [TypeId] DESC, [State] ASC),
+		*
+	FROM
+		[dbo].[ecTaxations]
+	WHERE 
+		[ResellerID] = @ResellerID
+	AND
+		([Country] = @Country OR [Country] = '*')
+	AND
+		([State] = @State OR [State] = '*')
+	AND
+		[Active] = 1;
+
+END
 
 
 
@@ -14558,6 +14879,7 @@ FROM OPENXML(@idoc, '/plan/quotas/quota',1) WITH
 exec sp_xml_removedocument @idoc
 
 RETURN 
+
 
 
 
@@ -14738,6 +15060,1251 @@ RETURN
 
 
 
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecUpdateContract]
+	@ContractID nvarchar(50),
+	@CustomerID int,
+	@AccountName nvarchar(50),
+	@Status int,
+	@Balance money,
+	@FirstName nvarchar(50),
+	@LastName nvarchar(50),
+	@Email nvarchar(255),
+	@CompanyName nvarchar(50),
+	@PropertyNames ntext,
+	@PropertyValues ntext,
+	@Result int OUTPUT
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	
+	SET @Result = 0;
+
+	IF @CustomerID < 1
+		SET @CustomerID = NULL;
+
+	UPDATE [dbo].[ecContracts] SET
+		[CustomerID] = @CustomerID,
+		[AccountName] = @AccountName,
+		[Status] = @Status,
+		[Balance] = @Balance,
+		[FirstName] = @FirstName,
+		[LastName] = @LastName,
+		[Email] = @Email,
+		[CompanyName] = @CompanyName,
+		[PropertyNames] = @PropertyNames,
+		[PropertyValues] = @PropertyValues
+	WHERE
+		[ContractID] = @ContractID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecInvoiceItems](
+	[ItemID] [int] IDENTITY(1,1) NOT NULL,
+	[InvoiceID] [int] NOT NULL,
+	[ServiceID] [int] NULL,
+	[ItemName] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+	[TypeName] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Quantity] [int] NOT NULL,
+	[Total] [money] NOT NULL,
+	[SubTotal] [money] NOT NULL,
+	[UnitPrice] [money] NOT NULL,
+	[Processed] [bit] NOT NULL,
+ CONSTRAINT [PK_EC_InvoiceItems] PRIMARY KEY CLUSTERED 
+(
+	[ItemID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecPaymentMethods](
+	[ResellerID] [int] NOT NULL,
+	[MethodName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[PluginID] [int] NOT NULL,
+	[DisplayName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[SupportedItems] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_ecPaymentMethods] PRIMARY KEY CLUSTERED 
+(
+	[ResellerID] ASC,
+	[MethodName] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecLookupForTransaction]
+	@TransactionID nvarchar(255)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT * FROM [dbo].[ecCustomersPayments] WHERE [TransactionID] = @TransactionID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecService](
+	[ServiceID] [int] IDENTITY(1,1) NOT NULL,
+	[ServiceName] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+	[TypeID] [int] NULL,
+	[Status] [int] NOT NULL,
+	[Created] [datetime] NOT NULL,
+	[Modified] [datetime] NULL,
+	[ParentID] [int] NULL,
+	[ContractID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_SpaceInstances] PRIMARY KEY CLUSTERED 
+(
+	[ServiceID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecCheckCustomerContractExists]
+	@CustomerID int,
+	@Result bit OUTPUT
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    IF EXISTS (SELECT * FROM [ecContracts] WHERE [CustomerID] = @CustomerID)
+	BEGIN
+		SET @Result = 1;
+		RETURN;
+	END
+
+	SET @Result = 0;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE VIEW [dbo].[ContractsInvoicesDetailed]
+AS
+SELECT dbo.ecInvoice.InvoiceID, dbo.ecInvoice.ContractID, dbo.ecContracts.ResellerID, dbo.ecContracts.CustomerID, ISNULL(dbo.Users.Username, 
+dbo.ecContracts.AccountName) AS Username, dbo.ecContracts.Status, dbo.ecInvoice.Created, dbo.ecInvoice.DueDate, dbo.ecInvoice.Total, dbo.ecInvoice.SubTotal, 
+dbo.ecInvoice.TaxAmount, dbo.ecInvoice.Currency, dbo.ecInvoice.InvoiceNumber, dbo.ecInvoice.TaxationID, dbo.ecCustomersPayments.PaymentID, 
+dbo.ecCustomersPayments.StatusID, dbo.ecCustomersPayments.TransactionID, (CASE WHEN dbo.ecCustomersPayments.PaymentID IS NOT NULL AND 
+dbo.ecCustomersPayments.StatusID = 1 THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END) AS Paid
+FROM dbo.ecInvoice INNER JOIN 
+dbo.ecContracts ON dbo.ecInvoice.ContractID = dbo.ecContracts.ContractID LEFT OUTER JOIN 
+dbo.ecCustomersPayments ON dbo.ecInvoice.InvoiceID = dbo.ecCustomersPayments.InvoiceID LEFT OUTER JOIN 
+dbo.Users ON dbo.ecContracts.CustomerID = dbo.Users.UserID
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Comments](
+	[CommentID] [int] IDENTITY(1,1) NOT NULL,
+	[ItemTypeID] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ItemID] [int] NOT NULL,
+	[UserID] [int] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[CommentText] [nvarchar](1000) COLLATE Latin1_General_CI_AS NULL,
+	[SeverityID] [int] NULL,
+ CONSTRAINT [PK_Comments] PRIMARY KEY CLUSTERED 
+(
+	[CommentID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE FUNCTION [dbo].[CheckUserParent]
+(
+	@OwnerID int,
+	@UserID int
+)
+RETURNS bit
+AS
+BEGIN
+
+-- check if the user requests himself
+IF @OwnerID = @UserID
+BEGIN
+	RETURN 1
+END
+
+-- check if the owner is peer
+DECLARE @IsPeer int, @TmpOwnerID int
+SELECT @IsPeer = IsPeer, @TmpOwnerID = OwnerID FROM Users
+WHERE UserID = @OwnerID
+
+IF @IsPeer = 1
+SET @OwnerID = @TmpOwnerID
+
+-- check if the user requests himself
+IF @OwnerID = @UserID
+BEGIN
+	RETURN 1
+END
+
+DECLARE @ParentUserID int, @TmpUserID int
+SET @TmpUserID = @UserID
+
+WHILE 10 = 10
+BEGIN
+
+	SET @ParentUserID = NULL --reset var
+
+	-- get owner
+	SELECT
+		@ParentUserID = OwnerID
+	FROM Users
+	WHERE UserID = @TmpUserID
+
+	IF @ParentUserID IS NULL -- the last parent
+		BREAK
+	
+	IF @ParentUserID = @OwnerID
+	RETURN 1
+	
+	SET @TmpUserID = @ParentUserID
+END
+
+
+RETURN 0
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE FUNCTION GetItemComments
+(
+	@ItemID int,
+	@ItemTypeID varchar(50),
+	@ActorID int
+)
+RETURNS nvarchar(3000)
+AS
+BEGIN
+DECLARE @text nvarchar(3000)
+SET @text = ''
+
+SELECT @text = @text + U.Username + ' - ' + CONVERT(nvarchar(50), C.CreatedDate) + '
+' + CommentText + '
+--------------------------------------
+' FROM Comments AS C
+INNER JOIN UsersDetailed AS U ON C.UserID = U.UserID
+WHERE
+	ItemID = @ItemID
+	AND ItemTypeID = @ItemTypeID
+	AND dbo.CheckUserParent(@ActorID, C.UserID) = 1
+ORDER BY C.CreatedDate DESC
+
+RETURN @text
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[DeleteServiceItem]
+(
+	@ActorID int,
+	@ItemID int
+)
+AS
+
+-- check rights
+DECLARE @PackageID int
+SELECT PackageID = @PackageID FROM ServiceItems
+WHERE ItemID = @ItemID
+
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+BEGIN TRAN
+
+UPDATE Domains
+SET ZoneItemID = NULL
+WHERE ZoneItemID = @ItemID
+
+UPDATE Domains
+SET WebSiteID = NULL
+WHERE WebSiteID = @ItemID
+
+UPDATE Domains
+SET MailDomainID = NULL
+WHERE MailDomainID = @ItemID
+
+-- delete item comments
+DELETE FROM Comments
+WHERE ItemID = @ItemID AND ItemTypeID = 'SERVICE_ITEM'
+
+-- delete item properties
+DELETE FROM ServiceItemProperties
+WHERE ItemID = @ItemID
+
+-- delete external IP addresses
+EXEC dbo.DeleteItemIPAddresses @ActorID, @ItemID
+
+-- delete item
+DELETE FROM ServiceItems
+WHERE ItemID = @ItemID
+
+COMMIT TRAN
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[GlobalDnsRecords](
+	[RecordID] [int] IDENTITY(1,1) NOT NULL,
+	[RecordType] [varchar](10) COLLATE Latin1_General_CI_AS NOT NULL,
+	[RecordName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[RecordData] [nvarchar](500) COLLATE Latin1_General_CI_AS NOT NULL,
+	[MXPriority] [int] NOT NULL,
+	[ServiceID] [int] NULL,
+	[ServerID] [int] NULL,
+	[PackageID] [int] NULL,
+	[IPAddressID] [int] NULL,
+ CONSTRAINT [PK_GlobalDnsRecords] PRIMARY KEY CLUSTERED 
+(
+	[RecordID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PackageServices](
+	[PackageID] [int] NOT NULL,
+	[ServiceID] [int] NOT NULL,
+ CONSTRAINT [PK_PackageServices] PRIMARY KEY CLUSTERED 
+(
+	[PackageID] ASC,
+	[ServiceID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[DeletePackage]
+(
+	@ActorID int,
+	@PackageID int
+)
+AS
+BEGIN
+	-- check rights
+	IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+	RAISERROR('You are not allowed to access this package', 16, 1)
+
+	BEGIN TRAN
+
+	-- remove package from cache
+	DELETE FROM PackagesTreeCache
+	WHERE
+		ParentPackageID = @PackageID OR
+		PackageID = @PackageID
+
+	-- delete package comments
+	DELETE FROM Comments
+	WHERE ItemID = @PackageID AND ItemTypeID = 'PACKAGE'
+
+	-- delete diskspace
+	DELETE FROM PackagesDiskspace
+	WHERE PackageID = @PackageID
+
+	-- delete bandwidth
+	DELETE FROM PackagesBandwidth
+	WHERE PackageID = @PackageID
+
+	-- delete settings
+	DELETE FROM PackageSettings
+	WHERE PackageID = @PackageID
+
+	-- delete domains
+	DELETE FROM Domains
+	WHERE PackageID = @PackageID
+
+	-- delete package IP addresses
+	DELETE FROM PackageIPAddresses
+	WHERE PackageID = @PackageID
+
+	-- delete service items
+	DELETE FROM ServiceItems
+	WHERE PackageID = @PackageID
+
+	-- delete global DNS records
+	DELETE FROM GlobalDnsRecords
+	WHERE PackageID = @PackageID
+
+	-- delete package services
+	DELETE FROM PackageServices
+	WHERE PackageID = @PackageID
+
+	-- delete package quotas
+	DELETE FROM PackageQuotas
+	WHERE PackageID = @PackageID
+
+	-- delete package resources
+	DELETE FROM PackageResources
+	WHERE PackageID = @PackageID
+
+	-- delete package
+	DELETE FROM Packages
+	WHERE PackageID = @PackageID
+
+	COMMIT TRAN
+END 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE FUNCTION [dbo].[CanUpdateUserDetails]
+(
+	@ActorID int,
+	@UserID int
+)
+RETURNS bit
+AS
+BEGIN
+
+IF @ActorID = -1
+RETURN 1
+
+-- check if the user requests himself
+IF @ActorID = @UserID
+BEGIN
+	RETURN 1
+END
+
+DECLARE @IsPeer bit
+DECLARE @OwnerID int
+
+SELECT @IsPeer = IsPeer, @OwnerID = OwnerID FROM Users
+WHERE UserID = @ActorID
+
+IF @IsPeer = 1
+BEGIN
+	-- check if the peer is trying to update his owner
+	IF @UserID = @OwnerID
+	RETURN 0
+	
+	-- check if the peer is trying to update his peers
+	IF EXISTS (SELECT UserID FROM Users
+	WHERE IsPeer = 1 AND OwnerID = @OwnerID AND UserID = @UserID)
+	RETURN 0
+	
+	SET @ActorID = @OwnerID
+END
+
+DECLARE @ParentUserID int, @TmpUserID int
+SET @TmpUserID = @UserID
+
+WHILE 10 = 10
+BEGIN
+
+	SET @ParentUserID = NULL --reset var
+
+	-- get owner
+	SELECT
+		@ParentUserID = OwnerID
+	FROM Users
+	WHERE UserID = @TmpUserID
+
+	IF @ParentUserID IS NULL -- the last parent
+		BREAK
+	
+	IF @ParentUserID = @ActorID
+	RETURN 1
+	
+	SET @TmpUserID = @ParentUserID
+END
+
+RETURN 0
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[DeleteUser]
+(
+	@ActorID int,
+	@UserID int
+)
+AS
+
+-- check actor rights
+IF dbo.CanUpdateUserDetails(@ActorID, @UserID) = 0
+RETURN
+
+BEGIN TRAN
+-- delete user comments
+DELETE FROM Comments
+WHERE ItemID = @UserID AND ItemTypeID = 'USER'
+
+IF (@@ERROR <> 0 )
+      BEGIN
+            ROLLBACK TRANSACTION
+            RETURN -1
+      END
+
+--delete reseller addon  
+DELETE FROM HostingPlans WHERE UserID = @UserID AND IsAddon = 'True'
+
+IF (@@ERROR <> 0 )
+      BEGIN
+            ROLLBACK TRANSACTION
+            RETURN -1
+      END
+
+-- delete user peers
+DELETE FROM Users
+WHERE IsPeer = 1 AND OwnerID = @UserID
+
+IF (@@ERROR <> 0 )
+      BEGIN
+            ROLLBACK TRANSACTION
+            RETURN -1
+      END
+
+-- delete user
+DELETE FROM Users
+WHERE UserID = @UserID
+
+IF (@@ERROR <> 0 )
+      BEGIN
+            ROLLBACK TRANSACTION
+            RETURN -1
+      END
+
+COMMIT TRAN
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetCustomerContract]
+	@CustomerID int
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT * FROM [dbo].[ecContracts] WHERE [CustomerID] = @CustomerID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetContract]
+	@ContractID nvarchar(50)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT * FROM [dbo].[ecContracts] WHERE [ContractID] = @ContractID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetCustomerPayment]
+	@ActorID int,
+	@PaymentID int
+AS
+BEGIN
+	-- read an issuer information
+	DECLARE @ContractID nvarchar(50);
+	SELECT
+		@ContractID = [ContractID] FROM [dbo].[ecCustomersPayments]
+	WHERE
+		[PaymentID] = @PaymentID;
+	
+	SET NOCOUNT ON;
+
+    SELECT
+		[P].*, [INV].[InvoiceNumber] FROM [dbo].[ecCustomersPayments] AS [P]
+	LEFT OUTER JOIN
+		[dbo].[ecInvoice] AS [INV] ON [INV].[InvoiceID] = [P].[InvoiceID]
+	WHERE
+		[P].[PaymentID] = @PaymentID AND [P].[ContractID] = @ContractID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -14781,6 +16348,7 @@ BEGIN
 	ORDER BY [DisplayName];
 
 END
+
 
 
 
@@ -14889,6 +16457,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -14932,6 +16501,7 @@ BEGIN
 	WHERE [PluginName] = @PluginName AND [PluginGroup] = @GroupName;
 
 END
+
 
 
 
@@ -15013,6 +16583,7 @@ BEGIN
 		WHERE [SettingsName] = @SettingsName AND [ResellerID] = @ResellerID;
 
 END
+
 
 
 
@@ -15151,6 +16722,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -15202,6 +16774,7 @@ BEGIN
 		[CategoryID] = @CategoryID;
 
 END
+
 
 
 
@@ -15326,6 +16899,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -15370,6 +16944,7 @@ BEGIN
     SELECT * FROM [dbo].[ecStoreDefaultSettings]
 		WHERE [SettingsName] = @SettingsName;
 END
+
 
 
 
@@ -15497,6 +17072,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -15551,6 +17127,7 @@ BEGIN
 		[ControlKey] = @ControlKey;
 
 END
+
 
 
 
@@ -15658,6 +17235,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -15720,6 +17298,7 @@ AS
 		END
 
 RETURN
+
 
 
 
@@ -15894,6 +17473,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -15970,6 +17550,7 @@ WHERE HP.UserID = @OwnerID
 AND HP.IsAddon = 0
 ORDER BY PlanName
 RETURN
+
 
 
 
@@ -16115,6 +17696,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -16139,240 +17721,6 @@ CREATE TABLE [dbo].[Servers](
 	[ServerID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
 )
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Comments](
-	[CommentID] [int] IDENTITY(1,1) NOT NULL,
-	[ItemTypeID] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ItemID] [int] NOT NULL,
-	[UserID] [int] NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[CommentText] [nvarchar](1000) COLLATE Latin1_General_CI_AS NULL,
-	[SeverityID] [int] NULL,
- CONSTRAINT [PK_Comments] PRIMARY KEY CLUSTERED 
-(
-	[CommentID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE FUNCTION [dbo].[CheckUserParent]
-(
-	@OwnerID int,
-	@UserID int
-)
-RETURNS bit
-AS
-BEGIN
-
--- check if the user requests himself
-IF @OwnerID = @UserID
-BEGIN
-	RETURN 1
-END
-
--- check if the owner is peer
-DECLARE @IsPeer int, @TmpOwnerID int
-SELECT @IsPeer = IsPeer, @TmpOwnerID = OwnerID FROM Users
-WHERE UserID = @OwnerID
-
-IF @IsPeer = 1
-SET @OwnerID = @TmpOwnerID
-
--- check if the user requests himself
-IF @OwnerID = @UserID
-BEGIN
-	RETURN 1
-END
-
-DECLARE @ParentUserID int, @TmpUserID int
-SET @TmpUserID = @UserID
-
-WHILE 10 = 10
-BEGIN
-
-	SET @ParentUserID = NULL --reset var
-
-	-- get owner
-	SELECT
-		@ParentUserID = OwnerID
-	FROM Users
-	WHERE UserID = @TmpUserID
-
-	IF @ParentUserID IS NULL -- the last parent
-		BREAK
-	
-	IF @ParentUserID = @OwnerID
-	RETURN 1
-	
-	SET @TmpUserID = @ParentUserID
-END
-
-
-RETURN 0
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE FUNCTION GetItemComments
-(
-	@ItemID int,
-	@ItemTypeID varchar(50),
-	@ActorID int
-)
-RETURNS nvarchar(3000)
-AS
-BEGIN
-DECLARE @text nvarchar(3000)
-SET @text = ''
-
-SELECT @text = @text + U.Username + ' - ' + CONVERT(nvarchar(50), C.CreatedDate) + '
-' + CommentText + '
---------------------------------------
-' FROM Comments AS C
-INNER JOIN UsersDetailed AS U ON C.UserID = U.UserID
-WHERE
-	ItemID = @ItemID
-	AND ItemTypeID = @ItemTypeID
-	AND dbo.CheckUserParent(@ActorID, C.UserID) = 1
-ORDER BY C.CreatedDate DESC
-
-RETURN @text
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 GO
 SET ANSI_NULLS ON
@@ -16425,6 +17773,7 @@ LEFT OUTER JOIN Servers AS S ON P.ServerID = S.ServerID
 LEFT OUTER JOIN HostingPlans AS HP ON P.PlanID = HP.PlanID
 WHERE P.UserID = @UserID
 RETURN
+
 
 
 
@@ -16580,6 +17929,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -16689,6 +18039,111 @@ RETURN
 
 
 
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetComments
+(
+	@ActorID int,
+	@UserID int,
+	@ItemTypeID varchar(50),
+	@ItemID int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
+RAISERROR('You are not allowed to access this account', 16, 1)
+
+SELECT
+	C.CommentID,
+	C.ItemTypeID,
+	C.ItemID,
+	C.UserID,
+	C.CreatedDate,
+	C.CommentText,
+	C.SeverityID,
+	
+	-- user
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.FullName,
+	U.RoleID,
+	U.Email
+FROM Comments AS C
+INNER JOIN UsersDetailed AS U ON C.UserID = U.UserID
+WHERE
+	ItemTypeID = @ItemTypeID
+	AND ItemID = @ItemID
+	AND dbo.CheckUserParent(@UserID, C.UserID) = 1
+ORDER BY C.CreatedDate ASC
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -16719,6 +18174,7 @@ VALUES
 	getdate()
 )		
 END
+
 
 
 
@@ -16825,6 +18281,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -16844,6 +18301,7 @@ WHERE
 	InstanceId = @InstanceId
 
 RETURN 
+
 
 
 
@@ -16894,6 +18352,7 @@ BEGIN
 	DELETE FROM [dbo].[ecContracts]  WHERE [ContractID] = @ContractID;
 
 END
+
 
 
 
@@ -16971,6 +18430,7 @@ VALUES
 
 SET @ClusterID = SCOPE_IDENTITY()
 RETURN
+
 
 
 
@@ -17088,6 +18548,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -17121,50 +18582,105 @@ GO
 
 
 
-
-
-CREATE PROCEDURE [dbo].[SetSystemSettings]
-	@SettingsName nvarchar(50),
-	@Xml ntext
+CREATE PROCEDURE GetResourceGroups
 AS
-BEGIN
-/*
-XML Format:
-<properties>
-	<property name="" value=""/>
-</properties>
-*/
-	SET NOCOUNT ON;
+SELECT
+	GroupID,
+	GroupName,
+	GroupController
+FROM ResourceGroups
+ORDER BY GroupOrder
+RETURN 
 
-	BEGIN TRAN
-		DECLARE @idoc int;
-		--Create an internal representation of the XML document.
-		EXEC sp_xml_preparedocument @idoc OUTPUT, @xml;
-	
-		DELETE FROM [dbo].[SystemSettings] WHERE [SettingsName] = @SettingsName;
 
-		INSERT INTO [dbo].[SystemSettings]
-		(
-			[SettingsName],
-			[PropertyName],
-			[PropertyValue]
-		)
-		SELECT
-			@SettingsName,
-			[XML].[PropertyName],
-			[XML].[PropertyValue]
-		FROM OPENXML(@idoc, '/properties/property',1) WITH 
-		(
-			[PropertyName] nvarchar(50) '@name',
-			[PropertyValue] ntext '@value'
-		) AS XML;
 
-		-- remove document
-		EXEC sp_xml_removedocument @idoc;
 
-	COMMIT TRAN;
 
-END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetResourceGroup
+(
+	@GroupID int
+)
+AS
+SELECT
+	RG.GroupID,
+	RG.GroupOrder,
+	RG.GroupName,
+	RG.GroupController
+FROM ResourceGroups AS RG
+WHERE RG.GroupID = @GroupID
+
+RETURN 
+
+
+
+
+
 
 
 
@@ -17265,231 +18781,7 @@ END
 
 
 
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Providers](
-	[ProviderID] [int] NOT NULL,
-	[GroupID] [int] NOT NULL,
-	[ProviderName] [nvarchar](100) COLLATE Latin1_General_CI_AS NULL,
-	[DisplayName] [nvarchar](200) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ProviderType] [nvarchar](400) COLLATE Latin1_General_CI_AS NULL,
-	[EditorControl] [nvarchar](100) COLLATE Latin1_General_CI_AS NULL,
-	[DisableAutoDiscovery] [bit] NULL,
- CONSTRAINT [PK_ServiceTypes] PRIMARY KEY CLUSTERED 
-(
-	[ProviderID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
 
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (1, 1, N'Windows2003', N'Windows Server 2003', N'WebsitePanel.Providers.OS.Windows2003, WebsitePanel.Providers.OS.Windows2003', N'Windows2003', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (2, 2, N'IIS60', N'Internet Information Services 6.0', N'WebsitePanel.Providers.Web.IIs60, WebsitePanel.Providers.Web.IIs60', N'IIS60', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (3, 3, N'MSFTP60', N'Microsoft FTP Server 6.0', N'WebsitePanel.Providers.FTP.MsFTP, WebsitePanel.Providers.FTP.IIs60', N'MSFTP60', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (4, 4, N'MailEnable', N'MailEnable Server 1.x - 4.x', N'WebsitePanel.Providers.Mail.MailEnable, WebsitePanel.Providers.Mail.MailEnable', N'MailEnable', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (5, 5, N'MSSQL', N'Microsoft SQL Server 2000', N'WebsitePanel.Providers.Database.MsSqlServer, WebsitePanel.Providers.Database.SqlServer', N'MSSQL', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (6, 6, N'MySQL', N'MySQL Server 4.x', N'WebsitePanel.Providers.Database.MySqlServer, WebsitePanel.Providers.Database.MySQL', N'MySQL', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (7, 7, N'MSDNS', N'Microsoft DNS Server', N'WebsitePanel.Providers.DNS.MsDNS, WebsitePanel.Providers.DNS.MsDNS', N'MSDNS', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (8, 8, N'AWStats', N'AWStats Statistics Service', N'WebsitePanel.Providers.Statistics.AWStats, WebsitePanel.Providers.Statistics.AWStats', N'AWStats', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (9, 7, N'SimpleDNS', N'SimpleDNS Plus 4.x', N'WebsitePanel.Providers.DNS.SimpleDNS, WebsitePanel.Providers.DNS.SimpleDNS', N'SimpleDNS', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (10, 8, N'SmarterStats', N'SmarterStats 3.x', N'WebsitePanel.Providers.Statistics.SmarterStats, WebsitePanel.Providers.Statistics.SmarterStats', N'SmarterStats', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (11, 4, N'SmarterMail', N'SmarterMail 2.x', N'WebsitePanel.Providers.Mail.SmarterMail2, WebsitePanel.Providers.Mail.SmarterMail2', N'SmarterMail', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (12, 3, N'Gene6FTP', N'Gene6 FTP Server 3.x', N'WebsitePanel.Providers.FTP.Gene6, WebsitePanel.Providers.FTP.Gene6', N'Gene6FTP', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (13, 4, N'Merak', N'Merak Mail Server 8.0.3 - 9.2.x', N'WebsitePanel.Providers.Mail.Merak, WebsitePanel.Providers.Mail.Merak', N'Merak', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (14, 4, N'SmarterMail', N'SmarterMail 3.x - 4.x', N'WebsitePanel.Providers.Mail.SmarterMail3, WebsitePanel.Providers.Mail.SmarterMail3', N'SmarterMail', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (15, 9, N'Sps20', N'Windows SharePoint Services 2.0', N'WebsitePanel.Providers.SharePoint.Sps20, WebsitePanel.Providers.SharePoint.Sps20', N'Sps20', 1)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (16, 10, N'MSSQL', N'Microsoft SQL Server 2005', N'WebsitePanel.Providers.Database.MsSqlServer2005, WebsitePanel.Providers.Database.SqlServer', N'MSSQL', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (17, 11, N'MySQL', N'MySQL Server 5.0', N'WebsitePanel.Providers.Database.MySqlServer50, WebsitePanel.Providers.Database.MySQL', N'MySQL', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (18, 4, N'MDaemon', N'MDaemon 9.x - 11.x', N'WebsitePanel.Providers.Mail.MDaemon, WebsitePanel.Providers.Mail.MDaemon', N'MDaemon', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (19, 4, N'ArgoMail', N'ArGoSoft Mail Server 1.x', N'WebsitePanel.Providers.Mail.ArgoMail, WebsitePanel.Providers.Mail.ArgoMail', N'ArgoMail', 1)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (20, 4, N'hMailServer', N'hMailServer 4.2', N'WebsitePanel.Providers.Mail.hMailServer, WebsitePanel.Providers.Mail.hMailServer', N'hMailServer', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (21, 4, N'AbilityMailServer', N'Ability Mail Server 2.x', N'WebsitePanel.Providers.Mail.AbilityMailServer, WebsitePanel.Providers.Mail.AbilityMailServer', N'AbilityMailServer', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (22, 4, N'hMailServer43', N'hMailServer 4.3', N'WebsitePanel.Providers.Mail.hMailServer43, WebsitePanel.Providers.Mail.hMailServer43', N'hMailServer43', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (23, 9, N'Sps20', N'Windows SharePoint Services 3.0', N'WebsitePanel.Providers.SharePoint.Sps30, WebsitePanel.Providers.SharePoint.Sps30', N'Sps20', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (24, 7, N'Bind', N'ISC BIND 8.x - 9.x', N'WebsitePanel.Providers.DNS.IscBind, WebsitePanel.Providers.DNS.Bind', N'Bind', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (25, 3, N'ServU', N'Serv-U FTP 6.x', N'WebsitePanel.Providers.FTP.ServU, WebsitePanel.Providers.FTP.ServU', N'ServU', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (26, 3, N'FileZilla', N'FileZilla FTP Server 0.9', N'WebsitePanel.Providers.FTP.FileZilla, WebsitePanel.Providers.FTP.FileZilla', N'FileZilla', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (27, 12, N'Exchange2007', N'Hosted Microsoft Exchange Server 2007', N'WebsitePanel.Providers.HostedSolution.Exchange2007, WebsitePanel.Providers.HostedSolution', N'Exchange', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (28, 7, N'SimpleDNS', N'SimpleDNS Plus 5.x', N'WebsitePanel.Providers.DNS.SimpleDNS5, WebsitePanel.Providers.DNS.SimpleDNS50', N'SimpleDNS', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (29, 4, N'SmarterMail', N'SmarterMail 5.x', N'WebsitePanel.Providers.Mail.SmarterMail5, WebsitePanel.Providers.Mail.SmarterMail5', N'SmarterMail50', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (30, 11, N'MySQL', N'MySQL Server 5.1', N'WebsitePanel.Providers.Database.MySqlServer51, WebsitePanel.Providers.Database.MySQL', N'MySQL', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (31, 8, N'SmarterStats', N'SmarterStats 4.x', N'WebsitePanel.Providers.Statistics.SmarterStats4, WebsitePanel.Providers.Statistics.SmarterStats', N'SmarterStats', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (32, 12, N'Exchange2010', N'Hosted Microsoft Exchange Server 2010', N'WebsitePanel.Providers.HostedSolution.Exchange2010, WebsitePanel.Providers.HostedSolution', N'Exchange', 1)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (55, 7, N'NetticaDNS', N'Nettica DNS', N'WebsitePanel.Providers.DNS.Nettica, WebsitePanel.Providers.DNS.Nettica', N'NetticaDNS', 1)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (56, 7, N'PowerDNS', N'PowerDNS', N'WebsitePanel.Providers.DNS.PowerDNS, WebsitePanel.Providers.DNS.PowerDNS', N'PowerDNS', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (60, 4, N'SmarterMail', N'SmarterMail 6.x', N'WebsitePanel.Providers.Mail.SmarterMail6, WebsitePanel.Providers.Mail.SmarterMail6', N'SmarterMail60', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (61, 4, N'Merak', N'Merak Mail Server 10.x', N'WebsitePanel.Providers.Mail.Merak10, WebsitePanel.Providers.Mail.Merak10', N'Merak', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (62, 8, N'SmarterStats', N'SmarterStats 5.x-6.x', N'WebsitePanel.Providers.Statistics.SmarterStats5, WebsitePanel.Providers.Statistics.SmarterStats', N'SmarterStats', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (63, 4, N'hMailServer5', N'hMailServer 5.x', N'WebsitePanel.Providers.Mail.hMailServer5, WebsitePanel.Providers.Mail.hMailServer5', N'hMailServer43', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (64, 4, N'SmarterMail', N'SmarterMail 7.x', N'WebsitePanel.Providers.Mail.SmarterMail7, WebsitePanel.Providers.Mail.SmarterMail7', N'SmarterMail60', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (65, 4, N'SmarterMail', N'SmarterMail 9.x', N'WebsitePanel.Providers.Mail.SmarterMail9, WebsitePanel.Providers.Mail.SmarterMail9', N'SmarterMail60', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (100, 1, N'Windows2008', N'Windows Server 2008', N'WebsitePanel.Providers.OS.Windows2008, WebsitePanel.Providers.OS.Windows2008', N'Windows2008', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (101, 2, N'IIS70', N'Internet Information Services 7.0', N'WebsitePanel.Providers.Web.IIs70, WebsitePanel.Providers.Web.IIs70', N'IIS70', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (102, 3, N'MSFTP70', N'Microsoft FTP Server 7.0', N'WebsitePanel.Providers.FTP.MsFTP, WebsitePanel.Providers.FTP.IIs70', N'MSFTP70', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (103, 13, N'Organizations', N'Hosted Organizations', N'WebsitePanel.Providers.HostedSolution.OrganizationProvider, WebsitePanel.Providers.HostedSolution', N'Organizations', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (200, 20, N'HostedSharePoint30', N'Hosted Windows SharePoint Services 3.0', N'WebsitePanel.Providers.HostedSolution.HostedSharePointServer, WebsitePanel.Providers.HostedSolution', N'HostedSharePoint30', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (201, 21, N'CRM', N'Hosted MS CRM 4.0', N'WebsitePanel.Providers.HostedSolution.CRMProvider, WebsitePanel.Providers.HostedSolution', N'CRM', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (202, 22, N'MsSQL', N'Microsoft SQL Server 2008', N'WebsitePanel.Providers.Database.MsSqlServer2008, WebsitePanel.Providers.Database.SqlServer', N'MSSQL', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (203, 31, N'BlackBerry 4.1', N'BlackBerry 4.1', N'WebsitePanel.Providers.HostedSolution.BlackBerryProvider, WebsitePanel.Providers.HostedSolution', N'BlackBerry', 1)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (204, 31, N'BlackBerry 5.0', N'BlackBerry 5.0', N'WebsitePanel.Providers.HostedSolution.BlackBerry5Provider, WebsitePanel.Providers.HostedSolution', N'BlackBerry5', 1)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (205, 32, N'OCS', N'Office Communications Server 2007 R2', N'WebsitePanel.Providers.HostedSolution.OCS2007R2, WebsitePanel.Providers.HostedSolution', N'OCS', 1)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (206, 32, N'OCSEdge', N'OCS Edge server', N'WebsitePanel.Providers.HostedSolution.OCSEdge2007R2, WebsitePanel.Providers.HostedSolution', N'OCS_Edge', 1)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (207, 33, N'Exchange2010SP1', N'Exchange Server 2010 SP1 Hosting Mode', N'WebsitePanel.Providers.ExchangeHostedEdition.Exchange2010SP1, WebsitePanel.Providers.ExchangeHostedEdition', N'Exchange2010SP1', 1)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (208, 20, N'HostedSharePoint2010', N'Hosted SharePoint Foundation 2010', N'WebsitePanel.Providers.HostedSolution.HostedSharePointServer2010, WebsitePanel.Providers.HostedSolution', N'HostedSharePoint30', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (300, 30, N'HyperV', N'Microsoft Hyper-V', N'WebsitePanel.Providers.Virtualization.HyperV, WebsitePanel.Providers.Virtualization.HyperV', N'HyperV', 1)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (301, 11, N'MySQL', N'MySQL Server 5.5', N'WebsitePanel.Providers.Database.MySqlServer55, WebsitePanel.Providers.Database.MySQL', N'MySQL', NULL)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (400, 40, N'HyperVForPC', N'Microsoft Hyper-V For Private Cloud', N'WebsitePanel.Providers.VirtualizationForPC.HyperVForPC, WebsitePanel.Providers.VirtualizationForPC.HyperVForPC', N'HyperVForPrivateCloud', 1)
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ServiceItemTypes](
-	[ItemTypeID] [int] NOT NULL,
-	[GroupID] [int] NULL,
-	[DisplayName] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[TypeName] [nvarchar](200) COLLATE Latin1_General_CI_AS NULL,
-	[TypeOrder] [int] NOT NULL,
-	[CalculateDiskspace] [bit] NULL,
-	[CalculateBandwidth] [bit] NULL,
-	[Suspendable] [bit] NULL,
-	[Disposable] [bit] NULL,
-	[Searchable] [bit] NULL,
-	[Importable] [bit] NOT NULL,
-	[Backupable] [bit] NOT NULL,
- CONSTRAINT [PK_ServiceItemTypes] PRIMARY KEY CLUSTERED 
-(
-	[ItemTypeID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (1, 9, N'SharePointUser', N'WebsitePanel.Providers.OS.SystemUser, WebsitePanel.Providers.Base', 19, 0, 0, 1, 1, 1, 1, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (2, 1, N'HomeFolder', N'WebsitePanel.Providers.OS.HomeFolder, WebsitePanel.Providers.Base', 15, 1, 0, 0, 1, 0, 0, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (3, 9, N'SharePointGroup', N'WebsitePanel.Providers.OS.SystemGroup, WebsitePanel.Providers.Base', 20, 0, 0, 0, 1, 1, 1, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (5, 5, N'MsSQL2000Database', N'WebsitePanel.Providers.Database.SqlDatabase, WebsitePanel.Providers.Base', 9, 1, 0, 0, 1, 1, 1, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (6, 5, N'MsSQL2000User', N'WebsitePanel.Providers.Database.SqlUser, WebsitePanel.Providers.Base', 10, 0, 0, 1, 1, 1, 1, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (7, 6, N'MySQL4Database', N'WebsitePanel.Providers.Database.SqlDatabase, WebsitePanel.Providers.Base', 13, 1, 0, 0, 1, 1, 1, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (8, 6, N'MySQL4User', N'WebsitePanel.Providers.Database.SqlUser, WebsitePanel.Providers.Base', 14, 0, 0, 0, 1, 1, 1, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (9, 3, N'FTPAccount', N'WebsitePanel.Providers.FTP.FtpAccount, WebsitePanel.Providers.Base', 3, 0, 1, 1, 1, 1, 1, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (10, 2, N'WebSite', N'WebsitePanel.Providers.Web.WebSite, WebsitePanel.Providers.Base', 2, 1, 1, 1, 1, 1, 1, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (11, 4, N'MailDomain', N'WebsitePanel.Providers.Mail.MailDomain, WebsitePanel.Providers.Base', 8, 0, 1, 1, 1, 1, 1, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (12, 7, N'DNSZone', N'WebsitePanel.Providers.DNS.DnsZone, WebsitePanel.Providers.Base', 0, 0, 0, 1, 1, 0, 1, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (13, 1, N'Domain', N'WebsitePanel.Providers.OS.Domain, WebsitePanel.Providers.Base', 1, 0, 0, 0, 0, 1, 0, 0)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (14, 8, N'StatisticsSite', N'WebsitePanel.Providers.Statistics.StatsSite, WebsitePanel.Providers.Base', 17, 0, 0, 0, 1, 1, 1, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (15, 4, N'MailAccount', N'WebsitePanel.Providers.Mail.MailAccount, WebsitePanel.Providers.Base', 4, 1, 0, 0, 0, 1, 0, 0)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (16, 4, N'MailAlias', N'WebsitePanel.Providers.Mail.MailAlias, WebsitePanel.Providers.Base', 5, 0, 0, 0, 0, 1, 0, 0)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (17, 4, N'MailList', N'WebsitePanel.Providers.Mail.MailList, WebsitePanel.Providers.Base', 7, 0, 0, 0, 0, 1, 0, 0)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (18, 4, N'MailGroup', N'WebsitePanel.Providers.Mail.MailGroup, WebsitePanel.Providers.Base', 6, 0, 0, 0, 0, 1, 0, 0)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (19, 9, N'SharePointSite', N'WebsitePanel.Providers.SharePoint.SharePointSite, WebsitePanel.Providers.Base', 18, 0, 0, 0, 1, 1, 0, 0)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (20, 1, N'ODBCDSN', N'WebsitePanel.Providers.OS.SystemDSN, WebsitePanel.Providers.Base', 22, 0, 0, 0, 1, 1, 1, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (21, 10, N'MsSQL2005Database', N'WebsitePanel.Providers.Database.SqlDatabase, WebsitePanel.Providers.Base', 11, 1, 0, 0, 1, 1, 1, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (22, 10, N'MsSQL2005User', N'WebsitePanel.Providers.Database.SqlUser, WebsitePanel.Providers.Base', 12, 0, 0, 1, 1, 1, 1, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (23, 11, N'MySQL5Database', N'WebsitePanel.Providers.Database.SqlDatabase, WebsitePanel.Providers.Base', 15, 1, 0, 0, 1, 1, 1, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (24, 11, N'MySQL5User', N'WebsitePanel.Providers.Database.SqlUser, WebsitePanel.Providers.Base', 16, 0, 0, 0, 1, 1, 1, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (25, 2, N'SharedSSLFolder', N'WebsitePanel.Providers.Web.SharedSSLFolder, WebsitePanel.Providers.Base', 21, 0, 0, 0, 1, 1, 0, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (28, 7, N'SecondaryDNSZone', N'WebsitePanel.Providers.DNS.SecondaryDnsZone, WebsitePanel.Providers.Base', 0, 0, 0, 1, 1, 0, 0, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (29, 13, N'Organization', N'WebsitePanel.Providers.HostedSolution.Organization, WebsitePanel.Providers.Base', 1, 1, 0, 1, 1, 1, 0, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (30, 13, N'OrganizationDomain', N'WebsitePanel.Providers.HostedSolution.OrganizationDomain, WebsitePanel.Providers.Base', 1, NULL, NULL, NULL, NULL, NULL, 0, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (31, 22, N'MsSQL2008Database', N'WebsitePanel.Providers.Database.SqlDatabase, WebsitePanel.Providers.Base', 1, 1, 0, 0, 1, 1, 1, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (32, 22, N'MsSQL2008User', N'WebsitePanel.Providers.Database.SqlUser, WebsitePanel.Providers.Base', 1, 0, 0, 0, 1, 1, 1, 1)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (33, 30, N'VirtualMachine', N'WebsitePanel.Providers.Virtualization.VirtualMachine, WebsitePanel.Providers.Base', 1, 0, 0, 1, 1, 1, 0, 0)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (34, 30, N'VirtualSwitch', N'WebsitePanel.Providers.Virtualization.VirtualSwitch, WebsitePanel.Providers.Base', 2, 0, 0, 1, 1, 1, 0, 0)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (35, 40, N'VMInfo', N'WebsitePanel.Providers.Virtualization.VMInfo, WebsitePanel.Providers.Base', 1, 0, 0, 1, 1, 1, 0, 0)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (36, 40, N'VirtualSwitch', N'WebsitePanel.Providers.Virtualization.VirtualSwitch, WebsitePanel.Providers.Base', 2, 0, 0, 1, 1, 1, 0, 0)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (40, 33, N'ExchangeOrganization', N'WebsitePanel.Providers.ExchangeHostedEdition.ExchangeOrganization, WebsitePanel.Providers.Base', 1, 0, 0, 1, 1, 1, 0, 0)
-GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (200, 20, N'SharePointSiteCollection', N'WebsitePanel.Providers.SharePoint.SharePointSiteCollection, WebsitePanel.Providers.Base', 25, 1, 0, 0, 1, 1, 1, 1)
 GO
 SET ANSI_NULLS ON
 GO
@@ -17523,52 +18815,16 @@ GO
 
 
 
-
-
-
-
-CREATE PROCEDURE UpdatePackageDiskSpace
+CREATE PROCEDURE GetAuditLogTasks
 (
-	@PackageID int,
-	@xml ntext
+	@SourceName varchar(100)
 )
 AS
-DECLARE @idoc int
---Create an internal representation of the XML document.
-EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
--- Execute a SELECT statement that uses the OPENXML rowset provider.
 
-DECLARE @Items TABLE
-(
-	ItemID int,
-	Bytes bigint
-)
+IF @SourceName = '' SET @SourceName = NULL
 
-INSERT INTO @Items (ItemID, Bytes)
-SELECT ItemID, DiskSpace FROM OPENXML (@idoc, '/items/item',1) 
-WITH
-(
-	ItemID int '@id',
-	DiskSpace bigint '@bytes'
-) as XSI
-
--- remove current diskspace
-DELETE FROM PackagesDiskspace
-WHERE PackageID = @PackageID
-
--- update package diskspace
-INSERT INTO PackagesDiskspace (PackageID, GroupID, Diskspace)
-SELECT
-	@PackageID,
-	SIT.GroupID,
-	SUM(I.Bytes)
-FROM @Items AS I
-INNER JOIN ServiceItems AS SI ON I.ItemID = SI.ItemID
-INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
-GROUP BY SIT.GroupID
-
--- remove document
-exec sp_xml_removedocument @idoc
+SELECT SourceName, TaskName FROM AuditLogTasks
+WHERE (@SourceName = NULL OR @SourceName IS NOT NULL AND SourceName = @SourceName)
 
 RETURN
 
@@ -17603,6 +18859,8 @@ RETURN
 
 
 
+
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -17636,74 +18894,750 @@ GO
 
 
 
-CREATE PROCEDURE UpdatePackageBandwidth
+CREATE PROCEDURE GetAuditLogSources
+AS
+
+SELECT SourceName FROM AuditLogSources
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetScheduleTasks 
 (
-	@PackageID int,
-	@xml ntext
+	@ActorID int
 )
 AS
-DECLARE @idoc int
---Create an internal representation of the XML document.
-EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
 
+-- get user role
+DECLARE @RoleID int
+SELECT @RoleID = RoleID FROM Users
+WHERE UserID = @ActorID
 
-DECLARE @Items TABLE
-(
-	ItemID int,
-	LogDate datetime,
-	BytesSent bigint,
-	BytesReceived bigint
-)
-
-INSERT INTO @Items
-(
-	ItemID,
-	LogDate,
-	BytesSent,
-	BytesReceived	
-)
 SELECT
-	ItemID,
-	CONVERT(datetime, LogDate, 101),
-	BytesSent,
-	BytesReceived
-FROM OPENXML(@idoc, '/items/item',1) WITH 
-(
-	ItemID int '@id',
-	LogDate nvarchar(10) '@date',
-    BytesSent bigint '@sent',
-    BytesReceived bigint '@received'
-)
+	TaskID,
+	TaskType,
+	RoleID
+FROM ScheduleTasks
+WHERE @RoleID <= RoleID
+RETURN
 
--- delete current statistics
-DELETE FROM PackagesBandwidth
-FROM PackagesBandwidth AS PB
-INNER JOIN (
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetScheduleTask
+(
+	@ActorID int,
+	@TaskID nvarchar(100)
+)
+AS
+
+-- get user role
+DECLARE @RoleID int
+SELECT @RoleID = RoleID FROM Users
+WHERE UserID = @ActorID
+
+SELECT
+	TaskID,
+	TaskType,
+	RoleID
+FROM ScheduleTasks
+WHERE
+	TaskID = @TaskID
+	AND @RoleID >= RoleID
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetSystemSettings
+	@SettingsName nvarchar(50)
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+    SELECT
+		[PropertyName],
+		[PropertyValue]
+	FROM
+		[dbo].[SystemSettings]
+	WHERE
+		[SettingsName] = @SettingsName;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[GetUserByIdInternally]
+(
+	@UserID int
+)
+AS
 	SELECT
-		SIT.GroupID,
-		I.LogDate
-	FROM @Items AS I
-	INNER JOIN ServiceItems AS SI ON I.ItemID = SI.ItemID
-	INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
-	GROUP BY I.LogDate, SIT.GroupID
-) AS STAT ON PB.LogDate = STAT.LogDate AND PB.GroupID = STAT.GroupID
-WHERE PB.PackageID = @PackageID
+		U.UserID,
+		U.RoleID,
+		U.StatusID,
+		U.OwnerID,
+		U.Created,
+		U.Changed,
+		U.IsDemo,
+		U.Comments,
+		U.IsPeer,
+		U.Username,
+		U.Password,
+		U.FirstName,
+		U.LastName,
+		U.Email,
+		U.SecondaryEmail,
+		U.Address,
+		U.City,
+		U.State,
+		U.Country,
+		U.Zip,
+		U.PrimaryPhone,
+		U.SecondaryPhone,
+		U.Fax,
+		U.InstantMessenger,
+		U.HtmlMail,
+		U.CompanyName,
+		U.EcommerceEnabled,
+		U.[AdditionalParams]
+	FROM Users AS U
+	WHERE U.UserID = @UserID
 
--- insert new statistics
-INSERT INTO PackagesBandwidth (PackageID, GroupID, LogDate, BytesSent, BytesReceived)
+	RETURN
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[GetUserByUsernameInternally]
+(
+	@Username nvarchar(50)
+)
+AS
+	SELECT
+		U.UserID,
+		U.RoleID,
+		U.StatusID,
+		U.OwnerID,
+		U.Created,
+		U.Changed,
+		U.IsDemo,
+		U.Comments,
+		U.IsPeer,
+		U.Username,
+		U.Password,
+		U.FirstName,
+		U.LastName,
+		U.Email,
+		U.SecondaryEmail,
+		U.Address,
+		U.City,
+		U.State,
+		U.Country,
+		U.Zip,
+		U.PrimaryPhone,
+		U.SecondaryPhone,
+		U.Fax,
+		U.InstantMessenger,
+		U.HtmlMail,
+		U.CompanyName,
+		U.EcommerceEnabled,
+		U.[AdditionalParams]
+	FROM Users AS U
+	WHERE U.Username = @Username
+
+	RETURN
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE FUNCTION [dbo].[CanGetUserPassword]
+(
+	@ActorID int,
+	@UserID int
+)
+RETURNS bit
+AS
+BEGIN
+
+IF @ActorID = -1
+RETURN 1 -- unauthenticated mode
+
+-- check if the user requests himself
+IF @ActorID = @UserID
+BEGIN
+	RETURN 1
+END
+
+DECLARE @IsPeer bit
+DECLARE @OwnerID int
+
+SELECT @IsPeer = IsPeer, @OwnerID = OwnerID FROM Users
+WHERE UserID = @ActorID
+
+IF @IsPeer = 1
+BEGIN
+	-- peer can't get the password of his peers
+	-- and his owner
+	IF @UserID = @OwnerID
+	RETURN 0
+	
+	IF EXISTS (
+		SELECT UserID FROM Users
+		WHERE IsPeer = 1 AND OwnerID = @OwnerID AND UserID = @UserID
+	) RETURN 0
+	
+	-- set actor to his owner
+	SET @ActorID = @OwnerID
+END
+
+-- get user's owner
+SELECT @OwnerID = OwnerID FROM Users
+WHERE UserID = @ActorID
+
+IF @UserID = @OwnerID
+RETURN 0 -- user can't get the password of his owner
+
+DECLARE @ParentUserID int, @TmpUserID int
+SET @TmpUserID = @UserID
+
+WHILE 10 = 10
+BEGIN
+
+	SET @ParentUserID = NULL --reset var
+
+	-- get owner
+	SELECT
+		@ParentUserID = OwnerID
+	FROM Users
+	WHERE UserID = @TmpUserID
+
+	IF @ParentUserID IS NULL -- the last parent
+		BREAK
+	
+	IF @ParentUserID = @ActorID
+	RETURN 1
+	
+	SET @TmpUserID = @ParentUserID
+END
+
+RETURN 0
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE FUNCTION [dbo].[CanGetUserDetails]
+(
+	@ActorID int,
+	@UserID int
+)
+RETURNS bit
+AS
+BEGIN
+
+IF @ActorID = -1
+RETURN 1
+
+-- check if the user requests himself
+IF @ActorID = @UserID
+BEGIN
+	RETURN 1
+END
+
+DECLARE @IsPeer bit
+DECLARE @OwnerID int
+
+SELECT @IsPeer = IsPeer, @OwnerID = OwnerID FROM Users
+WHERE UserID = @ActorID
+
+IF @IsPeer = 1
+SET @ActorID = @OwnerID
+
+-- get user's owner
+SELECT @OwnerID = OwnerID FROM Users
+WHERE UserID = @ActorID
+
+IF @UserID = @OwnerID
+RETURN 1 -- user can get the details of his owner
+
+-- check if the user requests himself
+IF @ActorID = @UserID
+BEGIN
+	RETURN 1
+END
+
+DECLARE @ParentUserID int, @TmpUserID int
+SET @TmpUserID = @UserID
+
+WHILE 10 = 10
+BEGIN
+
+	SET @ParentUserID = NULL --reset var
+
+	-- get owner
+	SELECT
+		@ParentUserID = OwnerID
+	FROM Users
+	WHERE UserID = @TmpUserID
+
+	IF @ParentUserID IS NULL -- the last parent
+		BREAK
+	
+	IF @ParentUserID = @ActorID
+	RETURN 1
+	
+	SET @TmpUserID = @ParentUserID
+END
+
+RETURN 0
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetUsers]
+(
+	@ActorID int,
+	@OwnerID int,
+	@Recursive bit = 0
+)
+AS
+
+DECLARE @CanGetDetails bit
+SET @CanGetDetails = dbo.CanGetUserDetails(@ActorID, @OwnerID)
+
 SELECT
-	@PackageID,
-	SIT.GroupID,
-	I.LogDate,
-	SUM(I.BytesSent),
-	SUM(I.BytesReceived)
-FROM @Items AS I
-INNER JOIN ServiceItems AS SI ON I.ItemID = SI.ItemID
-INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
-GROUP BY I.LogDate, SIT.GroupID
-
--- remove document
-exec sp_xml_removedocument @idoc
+	U.UserID,
+	U.RoleID,
+	U.StatusID,
+	U.OwnerID,
+	U.Created,
+	U.Changed,
+	U.IsDemo,
+	U.Comments,
+	U.IsPeer,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.Email,
+	U.FullName,
+	U.OwnerUsername,
+	U.OwnerFirstName,
+	U.OwnerLastName,
+	U.OwnerRoleID,
+	U.OwnerFullName,
+	U.PackagesNumber,
+	U.CompanyName,
+	U.EcommerceEnabled
+FROM UsersDetailed AS U
+WHERE U.UserID <> @OwnerID AND
+((@Recursive = 1 AND dbo.CheckUserParent(@OwnerID, U.UserID) = 1) OR 
+(@Recursive = 0 AND U.OwnerID = @OwnerID))
+AND U.IsPeer = 0
+AND @CanGetDetails = 1 -- actor user rights
 
 RETURN 
 
@@ -17743,10 +19677,12 @@ RETURN
 
 
 
+
+
 GO
 SET ANSI_NULLS ON
 GO
-SET QUOTED_IDENTIFIER OFF
+SET QUOTED_IDENTIFIER ON
 GO
 
 
@@ -17763,367 +19699,886 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetServiceItemsPaged]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetUserPeers]
 (
 	@ActorID int,
-	@PackageID int,
-	@ItemTypeName nvarchar(200),
-	@GroupName nvarchar(100) = NULL,
-	@ServerID int,
-	@Recursive bit,
-	@FilterColumn nvarchar(50) = '',
-	@FilterValue nvarchar(50) = '',
-	@SortColumn nvarchar(50),
-	@StartRow int,
-	@MaximumRows int
+	@UserID int
 )
 AS
 
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
--- start
-DECLARE @GroupID int
-SELECT @GroupID = GroupID FROM ResourceGroups
-WHERE GroupName = @GroupName
-
-DECLARE @ItemTypeID int
-SELECT @ItemTypeID = ItemTypeID FROM ServiceItemTypes
-WHERE TypeName = @ItemTypeName
-AND ((@GroupID IS NULL) OR (@GroupID IS NOT NULL AND GroupID = @GroupID))
-
-DECLARE @condition nvarchar(700)
-SET @condition = 'SI.ItemTypeID = @ItemTypeID
-AND ((@Recursive = 0 AND P.PackageID = @PackageID)
-		OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, P.PackageID) = 1))
-AND ((@GroupID IS NULL) OR (@GroupID IS NOT NULL AND IT.GroupID = @GroupID))
-AND (@ServerID = 0 OR (@ServerID > 0 AND S.ServerID = @ServerID))
-'
-
-IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
-AND @FilterValue <> '' AND @FilterValue IS NOT NULL
-SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
-
-IF @SortColumn IS NULL OR @SortColumn = ''
-SET @SortColumn = 'SI.ItemName ASC'
-
-DECLARE @sql nvarchar(3500)
-
-set @sql = '
-SELECT COUNT(SI.ItemID) FROM Packages AS P
-INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
-INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
-INNER JOIN ServiceItemTypes AS IT ON SI.ItemTypeID = IT.ItemTypeID
-INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
-WHERE ' + @condition + '
-
-DECLARE @Items AS TABLE
-(
-	ItemID int
-);
-
-WITH TempItems AS (
-	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
-		SI.ItemID
-	FROM Packages AS P
-	INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
-	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
-	INNER JOIN ServiceItemTypes AS IT ON SI.ItemTypeID = IT.ItemTypeID
-	INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
-	INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
-	WHERE ' + @condition + '
-)
-
-INSERT INTO @Items
-SELECT ItemID FROM TempItems
-WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
+DECLARE @CanGetDetails bit
+SET @CanGetDetails = dbo.CanGetUserDetails(@ActorID, @UserID)
 
 SELECT
-	SI.ItemID,
-	SI.ItemName,
-	SI.ItemTypeID,
-	IT.TypeName,
-	SI.ServiceID,
-	SI.PackageID,
-	SI.CreatedDate,
-	RG.GroupName,
+	U.UserID,
+	U.RoleID,
+	U.StatusID,
+	U.OwnerID,
+	U.Created,
+	U.Changed,
+	U.IsDemo,
+	U.Comments,
+	U.IsPeer,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.Email,
+	U.FullName,
+	(U.FirstName + ' ' + U.LastName) AS FullName,
+	U.CompanyName,
+	U.EcommerceEnabled
+FROM UsersDetailed AS U
+WHERE U.OwnerID = @UserID AND IsPeer = 1
+AND @CanGetDetails = 1 -- actor rights
 
-	-- packages
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE FUNCTION [dbo].[CheckActorParentPackageRights]
+(
+	@ActorID int,
+	@PackageID int
+)
+RETURNS bit
+AS
+BEGIN
+
+IF @ActorID = -1 OR @PackageID IS NULL
+RETURN 1
+
+-- get package owner
+DECLARE @UserID int
+SELECT @UserID = UserID FROM Packages
+WHERE PackageID = @PackageID
+
+IF @UserID IS NULL
+RETURN 1 -- unexisting package
+
+-- check user
+RETURN dbo.CanGetUserDetails(@ActorID, @UserID)
+
+RETURN 0
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecWriteSupportedPluginLog]
+	@ContractID nvarchar(50),
+	@PluginID int,
+	@RecordType int,
+	@RawData ntext,
+	@Result int OUTPUT
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+    INSERT INTO [dbo].[ecSupportedPluginLog]
+	(
+		[PluginID],
+		[ContractID],
+		[RecordType],
+		[RawData]
+	)
+	VALUES
+	(
+		@PluginID,
+		@ContractID,
+		@RecordType,
+		@RawData
+	);
+
+	SET @Result = SCOPE_IDENTITY();
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ResourceGroupDnsRecords](
+	[RecordID] [int] IDENTITY(1,1) NOT NULL,
+	[RecordOrder] [int] NOT NULL,
+	[GroupID] [int] NOT NULL,
+	[RecordType] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[RecordName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[RecordData] [nvarchar](200) COLLATE Latin1_General_CI_AS NOT NULL,
+	[MXPriority] [int] NULL,
+ CONSTRAINT [PK_ResourceGroupDnsRecords] PRIMARY KEY CLUSTERED 
+(
+	[RecordID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET IDENTITY_INSERT [dbo].[ResourceGroupDnsRecords] ON 
+
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (1, 1, 2, N'A', N'', N'[IP]', 0)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (2, 2, 2, N'A', N'*', N'[IP]', 0)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (3, 3, 2, N'A', N'www', N'[IP]', 0)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (4, 1, 3, N'A', N'ftp', N'[IP]', 0)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (5, 1, 4, N'A', N'mail', N'[IP]', 0)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (6, 2, 4, N'A', N'mail2', N'[IP]', 0)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (7, 3, 4, N'MX', N'', N'mail.[DOMAIN_NAME]', 10)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (9, 4, 4, N'MX', N'', N'mail2.[DOMAIN_NAME]', 21)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (10, 1, 5, N'A', N'mssql', N'[IP]', 0)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (11, 1, 6, N'A', N'mysql', N'[IP]', 0)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (12, 1, 8, N'A', N'stats', N'[IP]', 0)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (13, 5, 4, N'TXT', N'', N'v=spf1 a mx -all', 0)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (14, 1, 12, N'A', N'smtp', N'[IP]', 0)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (15, 2, 12, N'MX', N'', N'smtp.[DOMAIN_NAME]', 10)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (16, 3, 12, N'CNAME', N'autodiscover', N'', 0)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (17, 4, 12, N'CNAME', N'owa', N'', 0)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (18, 1, 33, N'A', N'smtp', N'[IP]', 0)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (19, 2, 33, N'MX', N'', N'smtp.[DOMAIN_NAME]', 10)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (20, 3, 33, N'CNAME', N'autodiscover', N'', 0)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (21, 4, 33, N'CNAME', N'owa', N'', 0)
+GO
+INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (22, 5, 33, N'CNAME', N'ecp', N'', 0)
+GO
+SET IDENTITY_INSERT [dbo].[ResourceGroupDnsRecords] OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE FUNCTION [dbo].[CanCreateUser]
+(
+	@ActorID int,
+	@UserID int
+)
+RETURNS bit
+AS
+BEGIN
+
+IF @ActorID = -1
+RETURN 1
+
+-- check if the user requests himself
+IF @ActorID = @UserID
+RETURN 1
+
+DECLARE @IsPeer bit
+DECLARE @OwnerID int
+
+SELECT @IsPeer = IsPeer, @OwnerID = OwnerID FROM Users
+WHERE UserID = @ActorID
+
+IF @IsPeer = 1
+BEGIN
+	SET @ActorID = @OwnerID
+END
+
+IF @ActorID = @UserID
+RETURN 1
+
+DECLARE @ParentUserID int, @TmpUserID int
+SET @TmpUserID = @UserID
+
+WHILE 10 = 10
+BEGIN
+
+	SET @ParentUserID = NULL --reset var
+
+	-- get owner
+	SELECT
+		@ParentUserID = OwnerID
+	FROM Users
+	WHERE UserID = @TmpUserID
+
+	IF @ParentUserID IS NULL -- the last parent
+		BREAK
+	
+	IF @ParentUserID = @ActorID
+	RETURN 1
+	
+	SET @TmpUserID = @ParentUserID
+END
+
+RETURN 0
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE FUNCTION dbo.UserParents
+(
+	@ActorID int,
+	@UserID int
+)
+RETURNS @T TABLE (UserOrder int IDENTITY(1,1), UserID int)
+AS
+BEGIN
+	-- insert current user
+	INSERT @T VALUES (@UserID)
+	
+	DECLARE @TopUserID int
+	IF @ActorID = -1
+	BEGIN
+		SELECT @TopUserID = UserID FROM Users WHERE OwnerID IS NULL
+	END
+	ELSE
+	BEGIN
+		SET @TopUserID = @ActorID
+		
+		IF EXISTS (SELECT UserID FROM Users WHERE UserID = @ActorID AND IsPeer = 1)
+		SELECT @TopUserID = OwnerID FROM Users WHERE UserID = @ActorID AND IsPeer = 1
+	END
+
+	-- owner
+	DECLARE @OwnerID int, @TmpUserID int
+	
+	SET @TmpUserID = @UserID
+
+	WHILE (@TmpUserID <> @TopUserID)
+	BEGIN
+
+		SET @OwnerID = NULL
+		SELECT @OwnerID = OwnerID FROM Users WHERE UserID = @TmpUserID
+		
+		IF @OwnerID IS NOT NULL
+		BEGIN
+			INSERT @T VALUES (@OwnerID)
+			SET @TmpUserID = @OwnerID
+		END
+	END
+
+RETURN
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecUpdateServiceHandlersResponses] 
+	@ResellerID int,
+	@XmlData xml
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+/*
+<Succeed>
+	<Response ID="" />
+</Succeed>
+<Failed>
+	<Response ID="" Error="" />
+</Failed>
+*/
+	DELETE
+		FROM [ecServiceHandlersResponses]
+	WHERE
+		[ResponseID] IN (SELECT [SXML].[Data].value('@ID','int') FROM @XmlData.nodes('/Succeed/Response') [SXML]([Data]))
+
+	UPDATE 
+		[ecServiceHandlersResponses]
+	SET
+		[ErrorMessage] = [SXML].[Data].value('@Error','nvarchar(255)')
+	FROM @XmlData.nodes('/Failed/Response') [SXML]([Data])
+	WHERE
+		[ResponseID] = [SXML].[Data].value('@ID', 'int')
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE DeleteAuditLogRecordsComplete
+AS
+
+TRUNCATE TABLE AuditLog
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecAddServiceHandlerTextResponse]
+	@ServiceID nvarchar(50),
+	@ContractID nvarchar(50),
+	@InvoiceID int,
+	@DataReceived ntext
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	IF @InvoiceID = 0
+		SET @InvoiceID = NULL;
+
+    INSERT INTO [ecServiceHandlersResponses] ([ServiceID],[ContractID],[InvoiceID],[TextResponse])
+	VALUES (@ServiceID,@ContractID,@InvoiceID,@DataReceived);
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetPackages
+(
+	@ActorID int,
+	@UserID int
+)
+AS
+
+IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
+RAISERROR('You are not allowed to access this account', 16, 1)
+
+SELECT
+	P.PackageID,
+	P.ParentPackageID,
 	P.PackageName,
-
+	P.StatusID,
+	P.PurchaseDate,
+	
 	-- server
-	ISNULL(SRV.ServerID, 0) AS ServerID,
-	ISNULL(SRV.ServerName, '''') AS ServerName,
-	ISNULL(SRV.Comments, '''') AS ServerComments,
-	ISNULL(SRV.VirtualServer, 0) AS VirtualServer,
-
+	ISNULL(P.ServerID, 0) AS ServerID,
+	ISNULL(S.ServerName, 'None') AS ServerName,
+	ISNULL(S.Comments, '') AS ServerComments,
+	ISNULL(S.VirtualServer, 1) AS VirtualServer,
+	
+	-- hosting plan
+	P.PlanID,
+	HP.PlanName,
+	
 	-- user
 	P.UserID,
 	U.Username,
 	U.FirstName,
 	U.LastName,
-	U.FullName,
 	U.RoleID,
 	U.Email
-FROM @Items AS TSI
-INNER JOIN ServiceItems AS SI ON TSI.ItemID = SI.ItemID
-INNER JOIN ServiceItemTypes AS IT ON SI.ItemTypeID = IT.ItemTypeID
-INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
-INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
-INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
-INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
-INNER JOIN ResourceGroups AS RG ON IT.GroupID = RG.GroupID
-
-
-SELECT
-	IP.ItemID,
-	IP.PropertyName,
-	IP.PropertyValue
-FROM ServiceItemProperties AS IP
-INNER JOIN @Items AS TSI ON IP.ItemID = TSI.ItemID'
-
---print @sql
-
-exec sp_executesql @sql, N'@ItemTypeID int, @PackageID int, @GroupID int, @StartRow int, @MaximumRows int, @Recursive bit, @ServerID int',
-@ItemTypeID, @PackageID, @GroupID, @StartRow, @MaximumRows, @Recursive, @ServerID
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetServiceItemsForStatistics]
-(
-	@ActorID int,
-	@ServiceID int,
-	@PackageID int,
-	@CalculateDiskspace bit,
-	@CalculateBandwidth bit,
-	@Suspendable bit,
-	@Disposable bit
-)
-AS
-DECLARE @Items TABLE
-(
-	ItemID int
-)
-
--- find service items
-INSERT INTO @Items
-SELECT
-	SI.ItemID
-FROM ServiceItems AS SI
-INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
+FROM Packages AS P
+INNER JOIN Users AS U ON P.UserID = U.UserID
+INNER JOIN Servers AS S ON P.ServerID = S.ServerID
+INNER JOIN HostingPlans AS HP ON P.PlanID = HP.PlanID
 WHERE
-	((@ServiceID = 0) OR (@ServiceID > 0 AND SI.ServiceID = @ServiceID))
-	AND ((@PackageID = 0) OR (@PackageID > 0 AND SI.PackageID = @PackageID))
-	AND ((@CalculateDiskspace = 0) OR (@CalculateDiskspace = 1 AND SIT.CalculateDiskspace = @CalculateDiskspace))
-	AND ((@CalculateBandwidth = 0) OR (@CalculateBandwidth = 1 AND SIT.CalculateBandwidth = @CalculateBandwidth))
-	AND ((@Suspendable = 0) OR (@Suspendable = 1 AND SIT.Suspendable = @Suspendable))
-	AND ((@Disposable = 0) OR (@Disposable = 1 AND SIT.Disposable = @Disposable))
-
--- select service items
-SELECT
-	SI.ItemID,
-	SI.ItemName,
-	SI.ItemTypeID,
-	RG.GroupName,
-	SIT.TypeName,
-	SI.ServiceID,
-	SI.PackageID,
-	SI.CreatedDate
-FROM @Items AS FI
-INNER JOIN ServiceItems AS SI ON FI.ItemID = SI.ItemID
-INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
-INNER JOIN ResourceGroups AS RG ON SIT.GroupID = RG.GroupID
-ORDER BY RG.GroupOrder DESC, SI.ItemName
-
--- select item properties
--- get corresponding item properties
-SELECT
-	IP.ItemID,
-	IP.PropertyName,
-	IP.PropertyValue
-FROM ServiceItemProperties AS IP
-INNER JOIN @Items AS FI ON IP.ItemID = FI.ItemID
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetServiceItemsCount]
-(
-	@ItemTypeName nvarchar(200),
-	@GroupName nvarchar(100) = NULL,
-	@ServiceID int = 0,
-	@TotalNumber int OUTPUT
-)
-AS
-
-SET @TotalNumber = 0
-
--- find service items
-SELECT
-	@TotalNumber = COUNT(SI.ItemID)
-FROM ServiceItems AS SI
-INNER JOIN ServiceItemTypes AS IT ON SI.ItemTypeID = IT.ItemTypeID
-INNER JOIN ResourceGroups AS RG ON IT.GroupID = RG.GroupID
-WHERE IT.TypeName = @ItemTypeName
-AND ((@GroupName IS NULL) OR (@GroupName IS NOT NULL AND RG.GroupName = @GroupName))
-AND ((@ServiceID = 0) OR (@ServiceID > 0 AND SI.ServiceID = @ServiceID))
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE CheckServiceItemExistsInService
-(
-	@Exists bit OUTPUT,
-	@ServiceID int,
-	@ItemName nvarchar(500),
-	@ItemTypeName nvarchar(200)
-)
-AS
-
-SET @Exists = 0
-
-DECLARE @ItemTypeID int
-SELECT @ItemTypeID = ItemTypeID FROM ServiceItemTypes
-WHERE TypeName = @ItemTypeName
-
-IF EXISTS (SELECT ItemID FROM ServiceItems
-WHERE ItemName = @ItemName AND ItemTypeID = @ItemTypeID AND ServiceID = @ServiceID)
-SET @Exists = 1
-
+	P.UserID <> @UserID
+	AND dbo.CheckUserParent(@UserID, P.UserID) = 1
 RETURN
 
 
@@ -18148,197 +20603,6 @@ RETURN
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE CheckUserExists
-(
-	@Exists bit OUTPUT,
-	@Username nvarchar(100)
-)
-AS
-
-SET @Exists = 0
-
-IF EXISTS (SELECT UserID FROM Users
-WHERE Username = @Username)
-SET @Exists = 1
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[CheckSSLExistsForWebsite]
-(
-	@siteID int,	
-	@SerialNumber nvarchar(250),
-	@Result bit OUTPUT
-)
-AS
-
-/*
-@Result values:
-	0 - OK
-	-1 - already exists
-*/
-
-SET @Result = 0 -- OK
-
--- check if a SSL Certificate is installed for domain
-IF EXISTS(SELECT [ID] FROM [dbo].[SSLCertificates] WHERE [SiteID] = @siteID 
---AND SerialNumber=@SerialNumber
-)
-BEGIN
-	SET @Result = 1
-	RETURN
-END
-
-RETURN
-
-SET ANSI_NULLS ON
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[CheckSSL]
-(
-	@siteID int,
-	@Renewal bit = 0,	
-	@Result int OUTPUT
-)
-AS
-
-/*
-@Result values:
-	0 - OK
-	-1 - already exists
-*/
-
-SET @Result = 0 -- OK
-
--- check if a SSL Certificate is installed for domain
-IF EXISTS(SELECT [ID] FROM [dbo].[SSLCertificates] WHERE [SiteID] = @siteID)
-BEGIN
-	SET @Result = -1
-	RETURN
-END
-
---To Do add renewal stuff
-
-RETURN
-
-SET ANSI_NULLS ON
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[CheckOCSUserExists] 
-	@AccountID int
-AS
-BEGIN	
-	SELECT 
-		COUNT(AccountID)
-	FROM 
-		dbo.OCSUsers
-	WHERE AccountID = @AccountID
-END
 
 
 
@@ -18470,6 +20734,28 @@ RETURN
 
 
 
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecProduct](
+	[ProductID] [int] IDENTITY(1,1) NOT NULL,
+	[ProductName] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ProductSKU] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[TypeID] [int] NULL,
+	[Description] [ntext] COLLATE Latin1_General_CI_AS NULL,
+	[Created] [datetime] NOT NULL,
+	[Enabled] [bit] NOT NULL,
+	[ResellerID] [int] NOT NULL,
+	[TaxInclusive] [bit] NULL,
+ CONSTRAINT [PK_EC_Products] PRIMARY KEY CLUSTERED 
+(
+	[ProductID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
 
 GO
 SET ANSI_NULLS ON
@@ -19836,21 +22122,1131 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[GlobalDnsRecords](
-	[RecordID] [int] IDENTITY(1,1) NOT NULL,
-	[RecordType] [varchar](10) COLLATE Latin1_General_CI_AS NOT NULL,
-	[RecordName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[RecordData] [nvarchar](500) COLLATE Latin1_General_CI_AS NOT NULL,
-	[MXPriority] [int] NOT NULL,
-	[ServiceID] [int] NULL,
-	[ServerID] [int] NULL,
-	[PackageID] [int] NULL,
-	[IPAddressID] [int] NULL,
- CONSTRAINT [PK_GlobalDnsRecords] PRIMARY KEY CLUSTERED 
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetInstanceID]
+	 @AccountID int
+AS
+BEGIN	
+	SET NOCOUNT ON;
+    
+	SELECT InstanceID FROM OCSUsers WHERE AccountID = @AccountID
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ServiceItemTypes](
+	[ItemTypeID] [int] NOT NULL,
+	[GroupID] [int] NULL,
+	[DisplayName] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[TypeName] [nvarchar](200) COLLATE Latin1_General_CI_AS NULL,
+	[TypeOrder] [int] NOT NULL,
+	[CalculateDiskspace] [bit] NULL,
+	[CalculateBandwidth] [bit] NULL,
+	[Suspendable] [bit] NULL,
+	[Disposable] [bit] NULL,
+	[Searchable] [bit] NULL,
+	[Importable] [bit] NOT NULL,
+	[Backupable] [bit] NOT NULL,
+ CONSTRAINT [PK_ServiceItemTypes] PRIMARY KEY CLUSTERED 
 (
-	[RecordID] ASC
+	[ItemTypeID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
 )
+
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (1, 9, N'SharePointUser', N'WebsitePanel.Providers.OS.SystemUser, WebsitePanel.Providers.Base', 19, 0, 0, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (2, 1, N'HomeFolder', N'WebsitePanel.Providers.OS.HomeFolder, WebsitePanel.Providers.Base', 15, 1, 0, 0, 1, 0, 0, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (3, 9, N'SharePointGroup', N'WebsitePanel.Providers.OS.SystemGroup, WebsitePanel.Providers.Base', 20, 0, 0, 0, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (5, 5, N'MsSQL2000Database', N'WebsitePanel.Providers.Database.SqlDatabase, WebsitePanel.Providers.Base', 9, 1, 0, 0, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (6, 5, N'MsSQL2000User', N'WebsitePanel.Providers.Database.SqlUser, WebsitePanel.Providers.Base', 10, 0, 0, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (7, 6, N'MySQL4Database', N'WebsitePanel.Providers.Database.SqlDatabase, WebsitePanel.Providers.Base', 13, 1, 0, 0, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (8, 6, N'MySQL4User', N'WebsitePanel.Providers.Database.SqlUser, WebsitePanel.Providers.Base', 14, 0, 0, 0, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (9, 3, N'FTPAccount', N'WebsitePanel.Providers.FTP.FtpAccount, WebsitePanel.Providers.Base', 3, 0, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (10, 2, N'WebSite', N'WebsitePanel.Providers.Web.WebSite, WebsitePanel.Providers.Base', 2, 1, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (11, 4, N'MailDomain', N'WebsitePanel.Providers.Mail.MailDomain, WebsitePanel.Providers.Base', 8, 0, 1, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (12, 7, N'DNSZone', N'WebsitePanel.Providers.DNS.DnsZone, WebsitePanel.Providers.Base', 0, 0, 0, 1, 1, 0, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (13, 1, N'Domain', N'WebsitePanel.Providers.OS.Domain, WebsitePanel.Providers.Base', 1, 0, 0, 0, 0, 1, 0, 0)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (14, 8, N'StatisticsSite', N'WebsitePanel.Providers.Statistics.StatsSite, WebsitePanel.Providers.Base', 17, 0, 0, 0, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (15, 4, N'MailAccount', N'WebsitePanel.Providers.Mail.MailAccount, WebsitePanel.Providers.Base', 4, 1, 0, 0, 0, 1, 0, 0)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (16, 4, N'MailAlias', N'WebsitePanel.Providers.Mail.MailAlias, WebsitePanel.Providers.Base', 5, 0, 0, 0, 0, 1, 0, 0)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (17, 4, N'MailList', N'WebsitePanel.Providers.Mail.MailList, WebsitePanel.Providers.Base', 7, 0, 0, 0, 0, 1, 0, 0)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (18, 4, N'MailGroup', N'WebsitePanel.Providers.Mail.MailGroup, WebsitePanel.Providers.Base', 6, 0, 0, 0, 0, 1, 0, 0)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (19, 9, N'SharePointSite', N'WebsitePanel.Providers.SharePoint.SharePointSite, WebsitePanel.Providers.Base', 18, 0, 0, 0, 1, 1, 0, 0)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (20, 1, N'ODBCDSN', N'WebsitePanel.Providers.OS.SystemDSN, WebsitePanel.Providers.Base', 22, 0, 0, 0, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (21, 10, N'MsSQL2005Database', N'WebsitePanel.Providers.Database.SqlDatabase, WebsitePanel.Providers.Base', 11, 1, 0, 0, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (22, 10, N'MsSQL2005User', N'WebsitePanel.Providers.Database.SqlUser, WebsitePanel.Providers.Base', 12, 0, 0, 1, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (23, 11, N'MySQL5Database', N'WebsitePanel.Providers.Database.SqlDatabase, WebsitePanel.Providers.Base', 15, 1, 0, 0, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (24, 11, N'MySQL5User', N'WebsitePanel.Providers.Database.SqlUser, WebsitePanel.Providers.Base', 16, 0, 0, 0, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (25, 2, N'SharedSSLFolder', N'WebsitePanel.Providers.Web.SharedSSLFolder, WebsitePanel.Providers.Base', 21, 0, 0, 0, 1, 1, 0, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (28, 7, N'SecondaryDNSZone', N'WebsitePanel.Providers.DNS.SecondaryDnsZone, WebsitePanel.Providers.Base', 0, 0, 0, 1, 1, 0, 0, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (29, 13, N'Organization', N'WebsitePanel.Providers.HostedSolution.Organization, WebsitePanel.Providers.Base', 1, 1, 0, 1, 1, 1, 0, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (30, 13, N'OrganizationDomain', N'WebsitePanel.Providers.HostedSolution.OrganizationDomain, WebsitePanel.Providers.Base', 1, NULL, NULL, NULL, NULL, NULL, 0, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (31, 22, N'MsSQL2008Database', N'WebsitePanel.Providers.Database.SqlDatabase, WebsitePanel.Providers.Base', 1, 1, 0, 0, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (32, 22, N'MsSQL2008User', N'WebsitePanel.Providers.Database.SqlUser, WebsitePanel.Providers.Base', 1, 0, 0, 0, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (33, 30, N'VirtualMachine', N'WebsitePanel.Providers.Virtualization.VirtualMachine, WebsitePanel.Providers.Base', 1, 0, 0, 1, 1, 1, 0, 0)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (34, 30, N'VirtualSwitch', N'WebsitePanel.Providers.Virtualization.VirtualSwitch, WebsitePanel.Providers.Base', 2, 0, 0, 1, 1, 1, 0, 0)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (35, 40, N'VMInfo', N'WebsitePanel.Providers.Virtualization.VMInfo, WebsitePanel.Providers.Base', 1, 0, 0, 1, 1, 1, 0, 0)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (36, 40, N'VirtualSwitch', N'WebsitePanel.Providers.Virtualization.VirtualSwitch, WebsitePanel.Providers.Base', 2, 0, 0, 1, 1, 1, 0, 0)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (40, 33, N'ExchangeOrganization', N'WebsitePanel.Providers.ExchangeHostedEdition.ExchangeOrganization, WebsitePanel.Providers.Base', 1, 0, 0, 1, 1, 1, 0, 0)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (200, 20, N'SharePointSiteCollection', N'WebsitePanel.Providers.SharePoint.SharePointSiteCollection, WebsitePanel.Providers.Base', 25, 1, 0, 0, 1, 1, 1, 1)
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE UpdatePackageDiskSpace
+(
+	@PackageID int,
+	@xml ntext
+)
+AS
+DECLARE @idoc int
+--Create an internal representation of the XML document.
+EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
+-- Execute a SELECT statement that uses the OPENXML rowset provider.
+
+DECLARE @Items TABLE
+(
+	ItemID int,
+	Bytes bigint
+)
+
+INSERT INTO @Items (ItemID, Bytes)
+SELECT ItemID, DiskSpace FROM OPENXML (@idoc, '/items/item',1) 
+WITH
+(
+	ItemID int '@id',
+	DiskSpace bigint '@bytes'
+) as XSI
+
+-- remove current diskspace
+DELETE FROM PackagesDiskspace
+WHERE PackageID = @PackageID
+
+-- update package diskspace
+INSERT INTO PackagesDiskspace (PackageID, GroupID, Diskspace)
+SELECT
+	@PackageID,
+	SIT.GroupID,
+	SUM(I.Bytes)
+FROM @Items AS I
+INNER JOIN ServiceItems AS SI ON I.ItemID = SI.ItemID
+INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
+GROUP BY SIT.GroupID
+
+-- remove document
+exec sp_xml_removedocument @idoc
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE UpdatePackageBandwidth
+(
+	@PackageID int,
+	@xml ntext
+)
+AS
+DECLARE @idoc int
+--Create an internal representation of the XML document.
+EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
+
+
+DECLARE @Items TABLE
+(
+	ItemID int,
+	LogDate datetime,
+	BytesSent bigint,
+	BytesReceived bigint
+)
+
+INSERT INTO @Items
+(
+	ItemID,
+	LogDate,
+	BytesSent,
+	BytesReceived	
+)
+SELECT
+	ItemID,
+	CONVERT(datetime, LogDate, 101),
+	BytesSent,
+	BytesReceived
+FROM OPENXML(@idoc, '/items/item',1) WITH 
+(
+	ItemID int '@id',
+	LogDate nvarchar(10) '@date',
+    BytesSent bigint '@sent',
+    BytesReceived bigint '@received'
+)
+
+-- delete current statistics
+DELETE FROM PackagesBandwidth
+FROM PackagesBandwidth AS PB
+INNER JOIN (
+	SELECT
+		SIT.GroupID,
+		I.LogDate
+	FROM @Items AS I
+	INNER JOIN ServiceItems AS SI ON I.ItemID = SI.ItemID
+	INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
+	GROUP BY I.LogDate, SIT.GroupID
+) AS STAT ON PB.LogDate = STAT.LogDate AND PB.GroupID = STAT.GroupID
+WHERE PB.PackageID = @PackageID
+
+-- insert new statistics
+INSERT INTO PackagesBandwidth (PackageID, GroupID, LogDate, BytesSent, BytesReceived)
+SELECT
+	@PackageID,
+	SIT.GroupID,
+	I.LogDate,
+	SUM(I.BytesSent),
+	SUM(I.BytesReceived)
+FROM @Items AS I
+INNER JOIN ServiceItems AS SI ON I.ItemID = SI.ItemID
+INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
+GROUP BY I.LogDate, SIT.GroupID
+
+-- remove document
+exec sp_xml_removedocument @idoc
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetServiceItemsPaged]
+(
+	@ActorID int,
+	@PackageID int,
+	@ItemTypeName nvarchar(200),
+	@GroupName nvarchar(100) = NULL,
+	@ServerID int,
+	@Recursive bit,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- start
+DECLARE @GroupID int
+SELECT @GroupID = GroupID FROM ResourceGroups
+WHERE GroupName = @GroupName
+
+DECLARE @ItemTypeID int
+SELECT @ItemTypeID = ItemTypeID FROM ServiceItemTypes
+WHERE TypeName = @ItemTypeName
+AND ((@GroupID IS NULL) OR (@GroupID IS NOT NULL AND GroupID = @GroupID))
+
+DECLARE @condition nvarchar(700)
+SET @condition = 'SI.ItemTypeID = @ItemTypeID
+AND ((@Recursive = 0 AND P.PackageID = @PackageID)
+		OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, P.PackageID) = 1))
+AND ((@GroupID IS NULL) OR (@GroupID IS NOT NULL AND IT.GroupID = @GroupID))
+AND (@ServerID = 0 OR (@ServerID > 0 AND S.ServerID = @ServerID))
+'
+
+IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+AND @FilterValue <> '' AND @FilterValue IS NOT NULL
+SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'SI.ItemName ASC'
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+SELECT COUNT(SI.ItemID) FROM Packages AS P
+INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+INNER JOIN ServiceItemTypes AS IT ON SI.ItemTypeID = IT.ItemTypeID
+INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
+WHERE ' + @condition + '
+
+DECLARE @Items AS TABLE
+(
+	ItemID int
+);
+
+WITH TempItems AS (
+	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
+		SI.ItemID
+	FROM Packages AS P
+	INNER JOIN ServiceItems AS SI ON P.PackageID = SI.PackageID
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	INNER JOIN ServiceItemTypes AS IT ON SI.ItemTypeID = IT.ItemTypeID
+	INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
+	INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+	WHERE ' + @condition + '
+)
+
+INSERT INTO @Items
+SELECT ItemID FROM TempItems
+WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
+
+SELECT
+	SI.ItemID,
+	SI.ItemName,
+	SI.ItemTypeID,
+	IT.TypeName,
+	SI.ServiceID,
+	SI.PackageID,
+	SI.CreatedDate,
+	RG.GroupName,
+
+	-- packages
+	P.PackageName,
+
+	-- server
+	ISNULL(SRV.ServerID, 0) AS ServerID,
+	ISNULL(SRV.ServerName, '''') AS ServerName,
+	ISNULL(SRV.Comments, '''') AS ServerComments,
+	ISNULL(SRV.VirtualServer, 0) AS VirtualServer,
+
+	-- user
+	P.UserID,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.FullName,
+	U.RoleID,
+	U.Email
+FROM @Items AS TSI
+INNER JOIN ServiceItems AS SI ON TSI.ItemID = SI.ItemID
+INNER JOIN ServiceItemTypes AS IT ON SI.ItemTypeID = IT.ItemTypeID
+INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
+INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+INNER JOIN ResourceGroups AS RG ON IT.GroupID = RG.GroupID
+
+
+SELECT
+	IP.ItemID,
+	IP.PropertyName,
+	IP.PropertyValue
+FROM ServiceItemProperties AS IP
+INNER JOIN @Items AS TSI ON IP.ItemID = TSI.ItemID'
+
+--print @sql
+
+exec sp_executesql @sql, N'@ItemTypeID int, @PackageID int, @GroupID int, @StartRow int, @MaximumRows int, @Recursive bit, @ServerID int',
+@ItemTypeID, @PackageID, @GroupID, @StartRow, @MaximumRows, @Recursive, @ServerID
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetServiceItemsForStatistics]
+(
+	@ActorID int,
+	@ServiceID int,
+	@PackageID int,
+	@CalculateDiskspace bit,
+	@CalculateBandwidth bit,
+	@Suspendable bit,
+	@Disposable bit
+)
+AS
+DECLARE @Items TABLE
+(
+	ItemID int
+)
+
+-- find service items
+INSERT INTO @Items
+SELECT
+	SI.ItemID
+FROM ServiceItems AS SI
+INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
+WHERE
+	((@ServiceID = 0) OR (@ServiceID > 0 AND SI.ServiceID = @ServiceID))
+	AND ((@PackageID = 0) OR (@PackageID > 0 AND SI.PackageID = @PackageID))
+	AND ((@CalculateDiskspace = 0) OR (@CalculateDiskspace = 1 AND SIT.CalculateDiskspace = @CalculateDiskspace))
+	AND ((@CalculateBandwidth = 0) OR (@CalculateBandwidth = 1 AND SIT.CalculateBandwidth = @CalculateBandwidth))
+	AND ((@Suspendable = 0) OR (@Suspendable = 1 AND SIT.Suspendable = @Suspendable))
+	AND ((@Disposable = 0) OR (@Disposable = 1 AND SIT.Disposable = @Disposable))
+
+-- select service items
+SELECT
+	SI.ItemID,
+	SI.ItemName,
+	SI.ItemTypeID,
+	RG.GroupName,
+	SIT.TypeName,
+	SI.ServiceID,
+	SI.PackageID,
+	SI.CreatedDate
+FROM @Items AS FI
+INNER JOIN ServiceItems AS SI ON FI.ItemID = SI.ItemID
+INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
+INNER JOIN ResourceGroups AS RG ON SIT.GroupID = RG.GroupID
+ORDER BY RG.GroupOrder DESC, SI.ItemName
+
+-- select item properties
+-- get corresponding item properties
+SELECT
+	IP.ItemID,
+	IP.PropertyName,
+	IP.PropertyValue
+FROM ServiceItemProperties AS IP
+INNER JOIN @Items AS FI ON IP.ItemID = FI.ItemID
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetServiceItemsCount]
+(
+	@ItemTypeName nvarchar(200),
+	@GroupName nvarchar(100) = NULL,
+	@ServiceID int = 0,
+	@TotalNumber int OUTPUT
+)
+AS
+
+SET @TotalNumber = 0
+
+-- find service items
+SELECT
+	@TotalNumber = COUNT(SI.ItemID)
+FROM ServiceItems AS SI
+INNER JOIN ServiceItemTypes AS IT ON SI.ItemTypeID = IT.ItemTypeID
+INNER JOIN ResourceGroups AS RG ON IT.GroupID = RG.GroupID
+WHERE IT.TypeName = @ItemTypeName
+AND ((@GroupName IS NULL) OR (@GroupName IS NOT NULL AND RG.GroupName = @GroupName))
+AND ((@ServiceID = 0) OR (@ServiceID > 0 AND SI.ServiceID = @ServiceID))
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE CheckServiceItemExistsInService
+(
+	@Exists bit OUTPUT,
+	@ServiceID int,
+	@ItemName nvarchar(500),
+	@ItemTypeName nvarchar(200)
+)
+AS
+
+SET @Exists = 0
+
+DECLARE @ItemTypeID int
+SELECT @ItemTypeID = ItemTypeID FROM ServiceItemTypes
+WHERE TypeName = @ItemTypeName
+
+IF EXISTS (SELECT ItemID FROM ServiceItems
+WHERE ItemName = @ItemName AND ItemTypeID = @ItemTypeID AND ServiceID = @ServiceID)
+SET @Exists = 1
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE CheckUserExists
+(
+	@Exists bit OUTPUT,
+	@Username nvarchar(100)
+)
+AS
+
+SET @Exists = 0
+
+IF EXISTS (SELECT UserID FROM Users
+WHERE Username = @Username)
+SET @Exists = 1
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[CheckSSLExistsForWebsite]
+(
+	@siteID int,	
+	@SerialNumber nvarchar(250),
+	@Result bit OUTPUT
+)
+AS
+
+/*
+@Result values:
+	0 - OK
+	-1 - already exists
+*/
+
+SET @Result = 0 -- OK
+
+-- check if a SSL Certificate is installed for domain
+IF EXISTS(SELECT [ID] FROM [dbo].[SSLCertificates] WHERE [SiteID] = @siteID 
+--AND SerialNumber=@SerialNumber
+)
+BEGIN
+	SET @Result = 1
+	RETURN
+END
+
+RETURN
+
+SET ANSI_NULLS ON
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[CheckSSL]
+(
+	@siteID int,
+	@Renewal bit = 0,	
+	@Result int OUTPUT
+)
+AS
+
+/*
+@Result values:
+	0 - OK
+	-1 - already exists
+*/
+
+SET @Result = 0 -- OK
+
+-- check if a SSL Certificate is installed for domain
+IF EXISTS(SELECT [ID] FROM [dbo].[SSLCertificates] WHERE [SiteID] = @siteID)
+BEGIN
+	SET @Result = -1
+	RETURN
+END
+
+--To Do add renewal stuff
+
+RETURN
+
+SET ANSI_NULLS ON
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Providers](
+	[ProviderID] [int] NOT NULL,
+	[GroupID] [int] NOT NULL,
+	[ProviderName] [nvarchar](100) COLLATE Latin1_General_CI_AS NULL,
+	[DisplayName] [nvarchar](200) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ProviderType] [nvarchar](400) COLLATE Latin1_General_CI_AS NULL,
+	[EditorControl] [nvarchar](100) COLLATE Latin1_General_CI_AS NULL,
+	[DisableAutoDiscovery] [bit] NULL,
+ CONSTRAINT [PK_ServiceTypes] PRIMARY KEY CLUSTERED 
+(
+	[ProviderID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (1, 1, N'Windows2003', N'Windows Server 2003', N'WebsitePanel.Providers.OS.Windows2003, WebsitePanel.Providers.OS.Windows2003', N'Windows2003', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (2, 2, N'IIS60', N'Internet Information Services 6.0', N'WebsitePanel.Providers.Web.IIs60, WebsitePanel.Providers.Web.IIs60', N'IIS60', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (3, 3, N'MSFTP60', N'Microsoft FTP Server 6.0', N'WebsitePanel.Providers.FTP.MsFTP, WebsitePanel.Providers.FTP.IIs60', N'MSFTP60', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (4, 4, N'MailEnable', N'MailEnable Server 1.x - 4.x', N'WebsitePanel.Providers.Mail.MailEnable, WebsitePanel.Providers.Mail.MailEnable', N'MailEnable', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (5, 5, N'MSSQL', N'Microsoft SQL Server 2000', N'WebsitePanel.Providers.Database.MsSqlServer, WebsitePanel.Providers.Database.SqlServer', N'MSSQL', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (6, 6, N'MySQL', N'MySQL Server 4.x', N'WebsitePanel.Providers.Database.MySqlServer, WebsitePanel.Providers.Database.MySQL', N'MySQL', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (7, 7, N'MSDNS', N'Microsoft DNS Server', N'WebsitePanel.Providers.DNS.MsDNS, WebsitePanel.Providers.DNS.MsDNS', N'MSDNS', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (8, 8, N'AWStats', N'AWStats Statistics Service', N'WebsitePanel.Providers.Statistics.AWStats, WebsitePanel.Providers.Statistics.AWStats', N'AWStats', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (9, 7, N'SimpleDNS', N'SimpleDNS Plus 4.x', N'WebsitePanel.Providers.DNS.SimpleDNS, WebsitePanel.Providers.DNS.SimpleDNS', N'SimpleDNS', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (10, 8, N'SmarterStats', N'SmarterStats 3.x', N'WebsitePanel.Providers.Statistics.SmarterStats, WebsitePanel.Providers.Statistics.SmarterStats', N'SmarterStats', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (11, 4, N'SmarterMail', N'SmarterMail 2.x', N'WebsitePanel.Providers.Mail.SmarterMail2, WebsitePanel.Providers.Mail.SmarterMail2', N'SmarterMail', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (12, 3, N'Gene6FTP', N'Gene6 FTP Server 3.x', N'WebsitePanel.Providers.FTP.Gene6, WebsitePanel.Providers.FTP.Gene6', N'Gene6FTP', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (13, 4, N'Merak', N'Merak Mail Server 8.0.3 - 9.2.x', N'WebsitePanel.Providers.Mail.Merak, WebsitePanel.Providers.Mail.Merak', N'Merak', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (14, 4, N'SmarterMail', N'SmarterMail 3.x - 4.x', N'WebsitePanel.Providers.Mail.SmarterMail3, WebsitePanel.Providers.Mail.SmarterMail3', N'SmarterMail', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (15, 9, N'Sps20', N'Windows SharePoint Services 2.0', N'WebsitePanel.Providers.SharePoint.Sps20, WebsitePanel.Providers.SharePoint.Sps20', N'Sps20', 1)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (16, 10, N'MSSQL', N'Microsoft SQL Server 2005', N'WebsitePanel.Providers.Database.MsSqlServer2005, WebsitePanel.Providers.Database.SqlServer', N'MSSQL', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (17, 11, N'MySQL', N'MySQL Server 5.0', N'WebsitePanel.Providers.Database.MySqlServer50, WebsitePanel.Providers.Database.MySQL', N'MySQL', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (18, 4, N'MDaemon', N'MDaemon 9.x - 11.x', N'WebsitePanel.Providers.Mail.MDaemon, WebsitePanel.Providers.Mail.MDaemon', N'MDaemon', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (19, 4, N'ArgoMail', N'ArGoSoft Mail Server 1.x', N'WebsitePanel.Providers.Mail.ArgoMail, WebsitePanel.Providers.Mail.ArgoMail', N'ArgoMail', 1)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (20, 4, N'hMailServer', N'hMailServer 4.2', N'WebsitePanel.Providers.Mail.hMailServer, WebsitePanel.Providers.Mail.hMailServer', N'hMailServer', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (21, 4, N'AbilityMailServer', N'Ability Mail Server 2.x', N'WebsitePanel.Providers.Mail.AbilityMailServer, WebsitePanel.Providers.Mail.AbilityMailServer', N'AbilityMailServer', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (22, 4, N'hMailServer43', N'hMailServer 4.3', N'WebsitePanel.Providers.Mail.hMailServer43, WebsitePanel.Providers.Mail.hMailServer43', N'hMailServer43', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (23, 9, N'Sps20', N'Windows SharePoint Services 3.0', N'WebsitePanel.Providers.SharePoint.Sps30, WebsitePanel.Providers.SharePoint.Sps30', N'Sps20', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (24, 7, N'Bind', N'ISC BIND 8.x - 9.x', N'WebsitePanel.Providers.DNS.IscBind, WebsitePanel.Providers.DNS.Bind', N'Bind', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (25, 3, N'ServU', N'Serv-U FTP 6.x', N'WebsitePanel.Providers.FTP.ServU, WebsitePanel.Providers.FTP.ServU', N'ServU', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (26, 3, N'FileZilla', N'FileZilla FTP Server 0.9', N'WebsitePanel.Providers.FTP.FileZilla, WebsitePanel.Providers.FTP.FileZilla', N'FileZilla', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (27, 12, N'Exchange2007', N'Hosted Microsoft Exchange Server 2007', N'WebsitePanel.Providers.HostedSolution.Exchange2007, WebsitePanel.Providers.HostedSolution', N'Exchange', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (28, 7, N'SimpleDNS', N'SimpleDNS Plus 5.x', N'WebsitePanel.Providers.DNS.SimpleDNS5, WebsitePanel.Providers.DNS.SimpleDNS50', N'SimpleDNS', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (29, 4, N'SmarterMail', N'SmarterMail 5.x', N'WebsitePanel.Providers.Mail.SmarterMail5, WebsitePanel.Providers.Mail.SmarterMail5', N'SmarterMail50', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (30, 11, N'MySQL', N'MySQL Server 5.1', N'WebsitePanel.Providers.Database.MySqlServer51, WebsitePanel.Providers.Database.MySQL', N'MySQL', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (31, 8, N'SmarterStats', N'SmarterStats 4.x', N'WebsitePanel.Providers.Statistics.SmarterStats4, WebsitePanel.Providers.Statistics.SmarterStats', N'SmarterStats', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (32, 12, N'Exchange2010', N'Hosted Microsoft Exchange Server 2010', N'WebsitePanel.Providers.HostedSolution.Exchange2010, WebsitePanel.Providers.HostedSolution', N'Exchange', 1)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (55, 7, N'NetticaDNS', N'Nettica DNS', N'WebsitePanel.Providers.DNS.Nettica, WebsitePanel.Providers.DNS.Nettica', N'NetticaDNS', 1)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (56, 7, N'PowerDNS', N'PowerDNS', N'WebsitePanel.Providers.DNS.PowerDNS, WebsitePanel.Providers.DNS.PowerDNS', N'PowerDNS', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (60, 4, N'SmarterMail', N'SmarterMail 6.x', N'WebsitePanel.Providers.Mail.SmarterMail6, WebsitePanel.Providers.Mail.SmarterMail6', N'SmarterMail60', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (61, 4, N'Merak', N'Merak Mail Server 10.x', N'WebsitePanel.Providers.Mail.Merak10, WebsitePanel.Providers.Mail.Merak10', N'Merak', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (62, 8, N'SmarterStats', N'SmarterStats 5.x-6.x', N'WebsitePanel.Providers.Statistics.SmarterStats5, WebsitePanel.Providers.Statistics.SmarterStats', N'SmarterStats', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (63, 4, N'hMailServer5', N'hMailServer 5.x', N'WebsitePanel.Providers.Mail.hMailServer5, WebsitePanel.Providers.Mail.hMailServer5', N'hMailServer43', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (64, 4, N'SmarterMail', N'SmarterMail 7.x', N'WebsitePanel.Providers.Mail.SmarterMail7, WebsitePanel.Providers.Mail.SmarterMail7', N'SmarterMail60', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (65, 4, N'SmarterMail', N'SmarterMail 9.x', N'WebsitePanel.Providers.Mail.SmarterMail9, WebsitePanel.Providers.Mail.SmarterMail9', N'SmarterMail60', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (100, 1, N'Windows2008', N'Windows Server 2008', N'WebsitePanel.Providers.OS.Windows2008, WebsitePanel.Providers.OS.Windows2008', N'Windows2008', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (101, 2, N'IIS70', N'Internet Information Services 7.0', N'WebsitePanel.Providers.Web.IIs70, WebsitePanel.Providers.Web.IIs70', N'IIS70', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (102, 3, N'MSFTP70', N'Microsoft FTP Server 7.0', N'WebsitePanel.Providers.FTP.MsFTP, WebsitePanel.Providers.FTP.IIs70', N'MSFTP70', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (103, 13, N'Organizations', N'Hosted Organizations', N'WebsitePanel.Providers.HostedSolution.OrganizationProvider, WebsitePanel.Providers.HostedSolution', N'Organizations', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (200, 20, N'HostedSharePoint30', N'Hosted Windows SharePoint Services 3.0', N'WebsitePanel.Providers.HostedSolution.HostedSharePointServer, WebsitePanel.Providers.HostedSolution', N'HostedSharePoint30', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (201, 21, N'CRM', N'Hosted MS CRM 4.0', N'WebsitePanel.Providers.HostedSolution.CRMProvider, WebsitePanel.Providers.HostedSolution', N'CRM', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (202, 22, N'MsSQL', N'Microsoft SQL Server 2008', N'WebsitePanel.Providers.Database.MsSqlServer2008, WebsitePanel.Providers.Database.SqlServer', N'MSSQL', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (203, 31, N'BlackBerry 4.1', N'BlackBerry 4.1', N'WebsitePanel.Providers.HostedSolution.BlackBerryProvider, WebsitePanel.Providers.HostedSolution', N'BlackBerry', 1)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (204, 31, N'BlackBerry 5.0', N'BlackBerry 5.0', N'WebsitePanel.Providers.HostedSolution.BlackBerry5Provider, WebsitePanel.Providers.HostedSolution', N'BlackBerry5', 1)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (205, 32, N'OCS', N'Office Communications Server 2007 R2', N'WebsitePanel.Providers.HostedSolution.OCS2007R2, WebsitePanel.Providers.HostedSolution', N'OCS', 1)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (206, 32, N'OCSEdge', N'OCS Edge server', N'WebsitePanel.Providers.HostedSolution.OCSEdge2007R2, WebsitePanel.Providers.HostedSolution', N'OCS_Edge', 1)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (207, 33, N'Exchange2010SP1', N'Exchange Server 2010 SP1 Hosting Mode', N'WebsitePanel.Providers.ExchangeHostedEdition.Exchange2010SP1, WebsitePanel.Providers.ExchangeHostedEdition', N'Exchange2010SP1', 1)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (208, 20, N'HostedSharePoint2010', N'Hosted SharePoint Foundation 2010', N'WebsitePanel.Providers.HostedSolution.HostedSharePointServer2010, WebsitePanel.Providers.HostedSolution', N'HostedSharePoint30', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (300, 30, N'HyperV', N'Microsoft Hyper-V', N'WebsitePanel.Providers.Virtualization.HyperV, WebsitePanel.Providers.Virtualization.HyperV', N'HyperV', 1)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (301, 11, N'MySQL', N'MySQL Server 5.5', N'WebsitePanel.Providers.Database.MySqlServer55, WebsitePanel.Providers.Database.MySQL', N'MySQL', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (400, 40, N'HyperVForPC', N'Microsoft Hyper-V For Private Cloud', N'WebsitePanel.Providers.VirtualizationForPC.HyperVForPC, WebsitePanel.Providers.VirtualizationForPC.HyperVForPC', N'HyperVForPrivateCloud', 1)
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[CheckOCSUserExists] 
+	@AccountID int
+AS
+BEGIN	
+	SELECT 
+		COUNT(AccountID)
+	FROM 
+		dbo.OCSUsers
+	WHERE AccountID = @AccountID
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 GO
 SET ANSI_NULLS ON
@@ -19929,6 +23325,7 @@ SET
 WHERE
 	RecordID = @RecordID
 RETURN
+
 
 
 
@@ -20071,6 +23468,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -20134,6 +23532,7 @@ DELETE FROM GlobalDnsRecords
 WHERE RecordID = @RecordID
 
 RETURN
+
 
 
 
@@ -20303,1071 +23702,16 @@ RETURN
 
 
 
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetAuditLogTasks
-(
-	@SourceName varchar(100)
-)
-AS
-
-IF @SourceName = '' SET @SourceName = NULL
-
-SELECT SourceName, TaskName FROM AuditLogTasks
-WHERE (@SourceName = NULL OR @SourceName IS NOT NULL AND SourceName = @SourceName)
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetAuditLogSources
-AS
-
-SELECT SourceName FROM AuditLogSources
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetResourceGroups
-AS
-SELECT
-	GroupID,
-	GroupName,
-	GroupController
-FROM ResourceGroups
-ORDER BY GroupOrder
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetResourceGroup
-(
-	@GroupID int
-)
-AS
-SELECT
-	RG.GroupID,
-	RG.GroupOrder,
-	RG.GroupName,
-	RG.GroupController
-FROM ResourceGroups AS RG
-WHERE RG.GroupID = @GroupID
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetScheduleTasks 
-(
-	@ActorID int
-)
-AS
-
--- get user role
-DECLARE @RoleID int
-SELECT @RoleID = RoleID FROM Users
-WHERE UserID = @ActorID
-
-SELECT
-	TaskID,
-	TaskType,
-	RoleID
-FROM ScheduleTasks
-WHERE @RoleID <= RoleID
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetScheduleTask
-(
-	@ActorID int,
-	@TaskID nvarchar(100)
-)
-AS
-
--- get user role
-DECLARE @RoleID int
-SELECT @RoleID = RoleID FROM Users
-WHERE UserID = @ActorID
-
-SELECT
-	TaskID,
-	TaskType,
-	RoleID
-FROM ScheduleTasks
-WHERE
-	TaskID = @TaskID
-	AND @RoleID >= RoleID
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetSystemSettings
-	@SettingsName nvarchar(50)
-AS
-BEGIN
-
-	SET NOCOUNT ON;
-
-    SELECT
-		[PropertyName],
-		[PropertyValue]
-	FROM
-		[dbo].[SystemSettings]
-	WHERE
-		[SettingsName] = @SettingsName;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[GetUserByIdInternally]
-(
-	@UserID int
-)
-AS
-	SELECT
-		U.UserID,
-		U.RoleID,
-		U.StatusID,
-		U.OwnerID,
-		U.Created,
-		U.Changed,
-		U.IsDemo,
-		U.Comments,
-		U.IsPeer,
-		U.Username,
-		U.Password,
-		U.FirstName,
-		U.LastName,
-		U.Email,
-		U.SecondaryEmail,
-		U.Address,
-		U.City,
-		U.State,
-		U.Country,
-		U.Zip,
-		U.PrimaryPhone,
-		U.SecondaryPhone,
-		U.Fax,
-		U.InstantMessenger,
-		U.HtmlMail,
-		U.CompanyName,
-		U.EcommerceEnabled,
-		U.[AdditionalParams]
-	FROM Users AS U
-	WHERE U.UserID = @UserID
-
-	RETURN
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[GetUserByUsernameInternally]
-(
-	@Username nvarchar(50)
-)
-AS
-	SELECT
-		U.UserID,
-		U.RoleID,
-		U.StatusID,
-		U.OwnerID,
-		U.Created,
-		U.Changed,
-		U.IsDemo,
-		U.Comments,
-		U.IsPeer,
-		U.Username,
-		U.Password,
-		U.FirstName,
-		U.LastName,
-		U.Email,
-		U.SecondaryEmail,
-		U.Address,
-		U.City,
-		U.State,
-		U.Country,
-		U.Zip,
-		U.PrimaryPhone,
-		U.SecondaryPhone,
-		U.Fax,
-		U.InstantMessenger,
-		U.HtmlMail,
-		U.CompanyName,
-		U.EcommerceEnabled,
-		U.[AdditionalParams]
-	FROM Users AS U
-	WHERE U.Username = @Username
-
-	RETURN
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE FUNCTION dbo.UserParents
-(
-	@ActorID int,
-	@UserID int
-)
-RETURNS @T TABLE (UserOrder int IDENTITY(1,1), UserID int)
-AS
-BEGIN
-	-- insert current user
-	INSERT @T VALUES (@UserID)
-	
-	DECLARE @TopUserID int
-	IF @ActorID = -1
-	BEGIN
-		SELECT @TopUserID = UserID FROM Users WHERE OwnerID IS NULL
-	END
-	ELSE
-	BEGIN
-		SET @TopUserID = @ActorID
-		
-		IF EXISTS (SELECT UserID FROM Users WHERE UserID = @ActorID AND IsPeer = 1)
-		SELECT @TopUserID = OwnerID FROM Users WHERE UserID = @ActorID AND IsPeer = 1
-	END
-
-	-- owner
-	DECLARE @OwnerID int, @TmpUserID int
-	
-	SET @TmpUserID = @UserID
-
-	WHILE (@TmpUserID <> @TopUserID)
-	BEGIN
-
-		SET @OwnerID = NULL
-		SELECT @OwnerID = OwnerID FROM Users WHERE UserID = @TmpUserID
-		
-		IF @OwnerID IS NOT NULL
-		BEGIN
-			INSERT @T VALUES (@OwnerID)
-			SET @TmpUserID = @OwnerID
-		END
-	END
-
-RETURN
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE FUNCTION [dbo].[CanCreateUser]
-(
-	@ActorID int,
-	@UserID int
-)
-RETURNS bit
-AS
-BEGIN
-
-IF @ActorID = -1
-RETURN 1
-
--- check if the user requests himself
-IF @ActorID = @UserID
-RETURN 1
-
-DECLARE @IsPeer bit
-DECLARE @OwnerID int
-
-SELECT @IsPeer = IsPeer, @OwnerID = OwnerID FROM Users
-WHERE UserID = @ActorID
-
-IF @IsPeer = 1
-BEGIN
-	SET @ActorID = @OwnerID
-END
-
-IF @ActorID = @UserID
-RETURN 1
-
-DECLARE @ParentUserID int, @TmpUserID int
-SET @TmpUserID = @UserID
-
-WHILE 10 = 10
-BEGIN
-
-	SET @ParentUserID = NULL --reset var
-
-	-- get owner
-	SELECT
-		@ParentUserID = OwnerID
-	FROM Users
-	WHERE UserID = @TmpUserID
-
-	IF @ParentUserID IS NULL -- the last parent
-		BREAK
-	
-	IF @ParentUserID = @ActorID
-	RETURN 1
-	
-	SET @TmpUserID = @ParentUserID
-END
-
-RETURN 0
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecAddServiceHandlerTextResponse]
-	@ServiceID nvarchar(50),
-	@ContractID nvarchar(50),
-	@InvoiceID int,
-	@DataReceived ntext
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-	IF @InvoiceID = 0
-		SET @InvoiceID = NULL;
-
-    INSERT INTO [ecServiceHandlersResponses] ([ServiceID],[ContractID],[InvoiceID],[TextResponse])
-	VALUES (@ServiceID,@ContractID,@InvoiceID,@DataReceived);
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE DeleteAuditLogRecordsComplete
-AS
-
-TRUNCATE TABLE AuditLog
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecInvoiceItems](
-	[ItemID] [int] IDENTITY(1,1) NOT NULL,
-	[InvoiceID] [int] NOT NULL,
-	[ServiceID] [int] NULL,
-	[ItemName] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
-	[TypeName] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Quantity] [int] NOT NULL,
-	[Total] [money] NOT NULL,
-	[SubTotal] [money] NOT NULL,
-	[UnitPrice] [money] NOT NULL,
-	[Processed] [bit] NOT NULL,
- CONSTRAINT [PK_EC_InvoiceItems] PRIMARY KEY CLUSTERED 
-(
-	[ItemID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+CREATE TABLE [dbo].[ecProductsHighlights](
+	[ProductID] [int] NOT NULL,
+	[HighlightText] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+	[SortOrder] [int] NOT NULL
 )
 
 GO
@@ -21375,252 +23719,15 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetInstanceID]
-	 @AccountID int
-AS
-BEGIN	
-	SET NOCOUNT ON;
-    
-	SELECT InstanceID FROM OCSUsers WHERE AccountID = @AccountID
-END
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecUpdateContract]
-	@ContractID nvarchar(50),
-	@CustomerID int,
-	@AccountName nvarchar(50),
-	@Status int,
-	@Balance money,
-	@FirstName nvarchar(50),
-	@LastName nvarchar(50),
-	@Email nvarchar(255),
-	@CompanyName nvarchar(50),
-	@PropertyNames ntext,
-	@PropertyValues ntext,
-	@Result int OUTPUT
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-	
-	SET @Result = 0;
-
-	IF @CustomerID < 1
-		SET @CustomerID = NULL;
-
-	UPDATE [dbo].[ecContracts] SET
-		[CustomerID] = @CustomerID,
-		[AccountName] = @AccountName,
-		[Status] = @Status,
-		[Balance] = @Balance,
-		[FirstName] = @FirstName,
-		[LastName] = @LastName,
-		[Email] = @Email,
-		[CompanyName] = @CompanyName,
-		[PropertyNames] = @PropertyNames,
-		[PropertyValues] = @PropertyValues
-	WHERE
-		[ContractID] = @ContractID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetPackages
-(
-	@ActorID int,
-	@UserID int
-)
-AS
-
-IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
-RAISERROR('You are not allowed to access this account', 16, 1)
-
-SELECT
-	P.PackageID,
-	P.ParentPackageID,
-	P.PackageName,
-	P.StatusID,
-	P.PurchaseDate,
-	
-	-- server
-	ISNULL(P.ServerID, 0) AS ServerID,
-	ISNULL(S.ServerName, 'None') AS ServerName,
-	ISNULL(S.Comments, '') AS ServerComments,
-	ISNULL(S.VirtualServer, 1) AS VirtualServer,
-	
-	-- hosting plan
-	P.PlanID,
-	HP.PlanName,
-	
-	-- user
-	P.UserID,
-	U.Username,
-	U.FirstName,
-	U.LastName,
-	U.RoleID,
-	U.Email
-FROM Packages AS P
-INNER JOIN Users AS U ON P.UserID = U.UserID
-INNER JOIN Servers AS S ON P.ServerID = S.ServerID
-INNER JOIN HostingPlans AS HP ON P.PlanID = HP.PlanID
-WHERE
-	P.UserID <> @UserID
-	AND dbo.CheckUserParent(@UserID, P.UserID) = 1
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecPaymentMethods](
+CREATE TABLE [dbo].[ecProductCategories](
+	[ProductID] [int] NOT NULL,
+	[CategoryID] [int] NOT NULL,
 	[ResellerID] [int] NOT NULL,
-	[MethodName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[PluginID] [int] NOT NULL,
-	[DisplayName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[SupportedItems] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ecPaymentMethods] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ecProductCategories] PRIMARY KEY CLUSTERED 
 (
-	[ResellerID] ASC,
-	[MethodName] ASC
+	[ProductID] ASC,
+	[CategoryID] ASC,
+	[ResellerID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
 )
 
@@ -21629,92 +23736,15 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecLookupForTransaction]
-	@TransactionID nvarchar(255)
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    SELECT * FROM [dbo].[ecCustomersPayments] WHERE [TransactionID] = @TransactionID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecService](
+CREATE TABLE [dbo].[Services](
 	[ServiceID] [int] IDENTITY(1,1) NOT NULL,
-	[ServiceName] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
-	[TypeID] [int] NULL,
-	[Status] [int] NOT NULL,
-	[Created] [datetime] NOT NULL,
-	[Modified] [datetime] NULL,
-	[ParentID] [int] NULL,
-	[ContractID] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_SpaceInstances] PRIMARY KEY CLUSTERED 
+	[ServerID] [int] NOT NULL,
+	[ProviderID] [int] NOT NULL,
+	[ServiceName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Comments] [ntext] COLLATE Latin1_General_CI_AS NULL,
+	[ServiceQuotaValue] [int] NULL,
+	[ClusterID] [int] NULL,
+ CONSTRAINT [PK_Services] PRIMARY KEY CLUSTERED 
 (
 	[ServiceID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
@@ -21742,1734 +23772,86 @@ GO
 
 
 
-
-
-CREATE PROCEDURE [dbo].[ecCheckCustomerContractExists]
-	@CustomerID int,
-	@Result bit OUTPUT
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    IF EXISTS (SELECT * FROM [ecContracts] WHERE [CustomerID] = @CustomerID)
-	BEGIN
-		SET @Result = 1;
-		RETURN;
-	END
-
-	SET @Result = 0;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetComments
+CREATE PROCEDURE [dbo].[AddServiceItem]
 (
 	@ActorID int,
-	@UserID int,
-	@ItemTypeID varchar(50),
-	@ItemID int
+	@PackageID int,
+	@ServiceID int,
+	@ItemName nvarchar(500),
+	@ItemTypeName nvarchar(200),
+	@ItemID int OUTPUT,
+	@XmlProperties ntext,
+	@CreatedDate datetime
 )
 AS
+BEGIN TRAN
 
 -- check rights
-IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
-RAISERROR('You are not allowed to access this account', 16, 1)
-
-SELECT
-	C.CommentID,
-	C.ItemTypeID,
-	C.ItemID,
-	C.UserID,
-	C.CreatedDate,
-	C.CommentText,
-	C.SeverityID,
-	
-	-- user
-	U.Username,
-	U.FirstName,
-	U.LastName,
-	U.FullName,
-	U.RoleID,
-	U.Email
-FROM Comments AS C
-INNER JOIN UsersDetailed AS U ON C.UserID = U.UserID
-WHERE
-	ItemTypeID = @ItemTypeID
-	AND ItemID = @ItemID
-	AND dbo.CheckUserParent(@UserID, C.UserID) = 1
-ORDER BY C.CreatedDate ASC
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[DeleteServiceItem]
-(
-	@ActorID int,
-	@ItemID int
-)
-AS
-
--- check rights
-DECLARE @PackageID int
-SELECT PackageID = @PackageID FROM ServiceItems
-WHERE ItemID = @ItemID
-
 IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
 RAISERROR('You are not allowed to access this package', 16, 1)
 
-BEGIN TRAN
+-- get GroupID
+DECLARE @GroupID int
+SELECT
+	@GroupID = PROV.GroupID
+FROM Services AS S
+INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
+WHERE S.ServiceID = @ServiceID
 
-UPDATE Domains
-SET ZoneItemID = NULL
-WHERE ZoneItemID = @ItemID
+DECLARE @ItemTypeID int
+SELECT @ItemTypeID = ItemTypeID FROM ServiceItemTypes
+WHERE TypeName = @ItemTypeName
+AND ((@GroupID IS NULL) OR (@GroupID IS NOT NULL AND GroupID = @GroupID))
 
-UPDATE Domains
-SET WebSiteID = NULL
-WHERE WebSiteID = @ItemID
+-- add item
+INSERT INTO ServiceItems
+(
+	PackageID,
+	ServiceID,
+	ItemName,
+	ItemTypeID,
+	CreatedDate
+)
+VALUES
+(
+	@PackageID,
+	@ServiceID,
+	@ItemName,
+	@ItemTypeID,
+	@CreatedDate
+)
 
-UPDATE Domains
-SET MailDomainID = NULL
-WHERE MailDomainID = @ItemID
+SET @ItemID = SCOPE_IDENTITY()
 
--- delete item comments
-DELETE FROM Comments
-WHERE ItemID = @ItemID AND ItemTypeID = 'SERVICE_ITEM'
+DECLARE @idoc int
+--Create an internal representation of the XML document.
+EXEC sp_xml_preparedocument @idoc OUTPUT, @XmlProperties
 
--- delete item properties
+-- Execute a SELECT statement that uses the OPENXML rowset provider.
 DELETE FROM ServiceItemProperties
 WHERE ItemID = @ItemID
 
--- delete external IP addresses
-EXEC dbo.DeleteItemIPAddresses @ActorID, @ItemID
+INSERT INTO ServiceItemProperties
+(
+	ItemID,
+	PropertyName,
+	PropertyValue
+)
+SELECT
+	@ItemID,
+	PropertyName,
+	PropertyValue
+FROM OPENXML(@idoc, '/properties/property',1) WITH 
+(
+	PropertyName nvarchar(50) '@name',
+	PropertyValue nvarchar(3000) '@value'
+) as PV
 
--- delete item
-DELETE FROM ServiceItems
-WHERE ItemID = @ItemID
+-- remove document
+exec sp_xml_removedocument @idoc
 
 COMMIT TRAN
-
 RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[PackageServices](
-	[PackageID] [int] NOT NULL,
-	[ServiceID] [int] NOT NULL,
- CONSTRAINT [PK_PackageServices] PRIMARY KEY CLUSTERED 
-(
-	[PackageID] ASC,
-	[ServiceID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[DeletePackage]
-(
-	@ActorID int,
-	@PackageID int
-)
-AS
-BEGIN
-	-- check rights
-	IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-	RAISERROR('You are not allowed to access this package', 16, 1)
-
-	BEGIN TRAN
-
-	-- remove package from cache
-	DELETE FROM PackagesTreeCache
-	WHERE
-		ParentPackageID = @PackageID OR
-		PackageID = @PackageID
-
-	-- delete package comments
-	DELETE FROM Comments
-	WHERE ItemID = @PackageID AND ItemTypeID = 'PACKAGE'
-
-	-- delete diskspace
-	DELETE FROM PackagesDiskspace
-	WHERE PackageID = @PackageID
-
-	-- delete bandwidth
-	DELETE FROM PackagesBandwidth
-	WHERE PackageID = @PackageID
-
-	-- delete settings
-	DELETE FROM PackageSettings
-	WHERE PackageID = @PackageID
-
-	-- delete domains
-	DELETE FROM Domains
-	WHERE PackageID = @PackageID
-
-	-- delete package IP addresses
-	DELETE FROM PackageIPAddresses
-	WHERE PackageID = @PackageID
-
-	-- delete service items
-	DELETE FROM ServiceItems
-	WHERE PackageID = @PackageID
-
-	-- delete global DNS records
-	DELETE FROM GlobalDnsRecords
-	WHERE PackageID = @PackageID
-
-	-- delete package services
-	DELETE FROM PackageServices
-	WHERE PackageID = @PackageID
-
-	-- delete package quotas
-	DELETE FROM PackageQuotas
-	WHERE PackageID = @PackageID
-
-	-- delete package resources
-	DELETE FROM PackageResources
-	WHERE PackageID = @PackageID
-
-	-- delete package
-	DELETE FROM Packages
-	WHERE PackageID = @PackageID
-
-	COMMIT TRAN
-END 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE VIEW [dbo].[ContractsInvoicesDetailed]
-AS
-SELECT dbo.ecInvoice.InvoiceID, dbo.ecInvoice.ContractID, dbo.ecContracts.ResellerID, dbo.ecContracts.CustomerID, ISNULL(dbo.Users.Username, 
-dbo.ecContracts.AccountName) AS Username, dbo.ecContracts.Status, dbo.ecInvoice.Created, dbo.ecInvoice.DueDate, dbo.ecInvoice.Total, dbo.ecInvoice.SubTotal, 
-dbo.ecInvoice.TaxAmount, dbo.ecInvoice.Currency, dbo.ecInvoice.InvoiceNumber, dbo.ecInvoice.TaxationID, dbo.ecCustomersPayments.PaymentID, 
-dbo.ecCustomersPayments.StatusID, dbo.ecCustomersPayments.TransactionID, (CASE WHEN dbo.ecCustomersPayments.PaymentID IS NOT NULL AND 
-dbo.ecCustomersPayments.StatusID = 1 THEN CAST(1 AS bit) ELSE CAST(0 AS bit) END) AS Paid
-FROM dbo.ecInvoice INNER JOIN 
-dbo.ecContracts ON dbo.ecInvoice.ContractID = dbo.ecContracts.ContractID LEFT OUTER JOIN 
-dbo.ecCustomersPayments ON dbo.ecInvoice.InvoiceID = dbo.ecCustomersPayments.InvoiceID LEFT OUTER JOIN 
-dbo.Users ON dbo.ecContracts.CustomerID = dbo.Users.UserID
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecProduct](
-	[ProductID] [int] IDENTITY(1,1) NOT NULL,
-	[ProductName] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ProductSKU] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[TypeID] [int] NULL,
-	[Description] [ntext] COLLATE Latin1_General_CI_AS NULL,
-	[Created] [datetime] NOT NULL,
-	[Enabled] [bit] NOT NULL,
-	[ResellerID] [int] NOT NULL,
-	[TaxInclusive] [bit] NULL,
- CONSTRAINT [PK_EC_Products] PRIMARY KEY CLUSTERED 
-(
-	[ProductID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetCustomerTaxation]
-	@ContractID nvarchar(50),
-	@Country nvarchar(50),
-	@State nvarchar(50)
-AS
-BEGIN
-	DECLARE @ResellerID int;
-	SELECT
-		@ResellerID = [ResellerID] FROM [dbo].[ecContracts]
-	WHERE
-		[ContractID] = @ContractID;
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-	--
-    SELECT TOP 1
-		ROW_NUMBER() OVER (ORDER BY [TypeId] DESC, [State] ASC),
-		*
-	FROM
-		[dbo].[ecTaxations]
-	WHERE 
-		[ResellerID] = @ResellerID
-	AND
-		([Country] = @Country OR [Country] = '*')
-	AND
-		([State] = @State OR [State] = '*')
-	AND
-		[Active] = 1;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetCustomerPayment]
-	@ActorID int,
-	@PaymentID int
-AS
-BEGIN
-	-- read an issuer information
-	DECLARE @ContractID nvarchar(50);
-	SELECT
-		@ContractID = [ContractID] FROM [dbo].[ecCustomersPayments]
-	WHERE
-		[PaymentID] = @PaymentID;
-	
-	SET NOCOUNT ON;
-
-    SELECT
-		[P].*, [INV].[InvoiceNumber] FROM [dbo].[ecCustomersPayments] AS [P]
-	LEFT OUTER JOIN
-		[dbo].[ecInvoice] AS [INV] ON [INV].[InvoiceID] = [P].[InvoiceID]
-	WHERE
-		[P].[PaymentID] = @PaymentID AND [P].[ContractID] = @ContractID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetCustomerContract]
-	@CustomerID int
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    SELECT * FROM [dbo].[ecContracts] WHERE [CustomerID] = @CustomerID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetContract]
-	@ContractID nvarchar(50)
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    SELECT * FROM [dbo].[ecContracts] WHERE [ContractID] = @ContractID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE FUNCTION [dbo].[CanUpdateUserDetails]
-(
-	@ActorID int,
-	@UserID int
-)
-RETURNS bit
-AS
-BEGIN
-
-IF @ActorID = -1
-RETURN 1
-
--- check if the user requests himself
-IF @ActorID = @UserID
-BEGIN
-	RETURN 1
-END
-
-DECLARE @IsPeer bit
-DECLARE @OwnerID int
-
-SELECT @IsPeer = IsPeer, @OwnerID = OwnerID FROM Users
-WHERE UserID = @ActorID
-
-IF @IsPeer = 1
-BEGIN
-	-- check if the peer is trying to update his owner
-	IF @UserID = @OwnerID
-	RETURN 0
-	
-	-- check if the peer is trying to update his peers
-	IF EXISTS (SELECT UserID FROM Users
-	WHERE IsPeer = 1 AND OwnerID = @OwnerID AND UserID = @UserID)
-	RETURN 0
-	
-	SET @ActorID = @OwnerID
-END
-
-DECLARE @ParentUserID int, @TmpUserID int
-SET @TmpUserID = @UserID
-
-WHILE 10 = 10
-BEGIN
-
-	SET @ParentUserID = NULL --reset var
-
-	-- get owner
-	SELECT
-		@ParentUserID = OwnerID
-	FROM Users
-	WHERE UserID = @TmpUserID
-
-	IF @ParentUserID IS NULL -- the last parent
-		BREAK
-	
-	IF @ParentUserID = @ActorID
-	RETURN 1
-	
-	SET @TmpUserID = @ParentUserID
-END
-
-RETURN 0
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[DeleteUser]
-(
-	@ActorID int,
-	@UserID int
-)
-AS
-
--- check actor rights
-IF dbo.CanUpdateUserDetails(@ActorID, @UserID) = 0
-RETURN
-
-BEGIN TRAN
--- delete user comments
-DELETE FROM Comments
-WHERE ItemID = @UserID AND ItemTypeID = 'USER'
-
-IF (@@ERROR <> 0 )
-      BEGIN
-            ROLLBACK TRANSACTION
-            RETURN -1
-      END
-
---delete reseller addon  
-DELETE FROM HostingPlans WHERE UserID = @UserID AND IsAddon = 'True'
-
-IF (@@ERROR <> 0 )
-      BEGIN
-            ROLLBACK TRANSACTION
-            RETURN -1
-      END
-
--- delete user peers
-DELETE FROM Users
-WHERE IsPeer = 1 AND OwnerID = @UserID
-
-IF (@@ERROR <> 0 )
-      BEGIN
-            ROLLBACK TRANSACTION
-            RETURN -1
-      END
-
--- delete user
-DELETE FROM Users
-WHERE UserID = @UserID
-
-IF (@@ERROR <> 0 )
-      BEGIN
-            ROLLBACK TRANSACTION
-            RETURN -1
-      END
-
-COMMIT TRAN
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ResourceGroupDnsRecords](
-	[RecordID] [int] IDENTITY(1,1) NOT NULL,
-	[RecordOrder] [int] NOT NULL,
-	[GroupID] [int] NOT NULL,
-	[RecordType] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[RecordName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[RecordData] [nvarchar](200) COLLATE Latin1_General_CI_AS NOT NULL,
-	[MXPriority] [int] NULL,
- CONSTRAINT [PK_ResourceGroupDnsRecords] PRIMARY KEY CLUSTERED 
-(
-	[RecordID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET IDENTITY_INSERT [dbo].[ResourceGroupDnsRecords] ON 
-
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (1, 1, 2, N'A', N'', N'[IP]', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (2, 2, 2, N'A', N'*', N'[IP]', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (3, 3, 2, N'A', N'www', N'[IP]', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (4, 1, 3, N'A', N'ftp', N'[IP]', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (5, 1, 4, N'A', N'mail', N'[IP]', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (6, 2, 4, N'A', N'mail2', N'[IP]', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (7, 3, 4, N'MX', N'', N'mail.[DOMAIN_NAME]', 10)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (9, 4, 4, N'MX', N'', N'mail2.[DOMAIN_NAME]', 21)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (10, 1, 5, N'A', N'mssql', N'[IP]', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (11, 1, 6, N'A', N'mysql', N'[IP]', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (12, 1, 8, N'A', N'stats', N'[IP]', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (13, 5, 4, N'TXT', N'', N'v=spf1 a mx -all', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (14, 1, 12, N'A', N'smtp', N'[IP]', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (15, 2, 12, N'MX', N'', N'smtp.[DOMAIN_NAME]', 10)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (16, 3, 12, N'CNAME', N'autodiscover', N'', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (17, 4, 12, N'CNAME', N'owa', N'', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (18, 1, 33, N'A', N'smtp', N'[IP]', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (19, 2, 33, N'MX', N'', N'smtp.[DOMAIN_NAME]', 10)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (20, 3, 33, N'CNAME', N'autodiscover', N'', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (21, 4, 33, N'CNAME', N'owa', N'', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (22, 5, 33, N'CNAME', N'ecp', N'', 0)
-GO
-SET IDENTITY_INSERT [dbo].[ResourceGroupDnsRecords] OFF
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE FUNCTION [dbo].[CanGetUserPassword]
-(
-	@ActorID int,
-	@UserID int
-)
-RETURNS bit
-AS
-BEGIN
-
-IF @ActorID = -1
-RETURN 1 -- unauthenticated mode
-
--- check if the user requests himself
-IF @ActorID = @UserID
-BEGIN
-	RETURN 1
-END
-
-DECLARE @IsPeer bit
-DECLARE @OwnerID int
-
-SELECT @IsPeer = IsPeer, @OwnerID = OwnerID FROM Users
-WHERE UserID = @ActorID
-
-IF @IsPeer = 1
-BEGIN
-	-- peer can't get the password of his peers
-	-- and his owner
-	IF @UserID = @OwnerID
-	RETURN 0
-	
-	IF EXISTS (
-		SELECT UserID FROM Users
-		WHERE IsPeer = 1 AND OwnerID = @OwnerID AND UserID = @UserID
-	) RETURN 0
-	
-	-- set actor to his owner
-	SET @ActorID = @OwnerID
-END
-
--- get user's owner
-SELECT @OwnerID = OwnerID FROM Users
-WHERE UserID = @ActorID
-
-IF @UserID = @OwnerID
-RETURN 0 -- user can't get the password of his owner
-
-DECLARE @ParentUserID int, @TmpUserID int
-SET @TmpUserID = @UserID
-
-WHILE 10 = 10
-BEGIN
-
-	SET @ParentUserID = NULL --reset var
-
-	-- get owner
-	SELECT
-		@ParentUserID = OwnerID
-	FROM Users
-	WHERE UserID = @TmpUserID
-
-	IF @ParentUserID IS NULL -- the last parent
-		BREAK
-	
-	IF @ParentUserID = @ActorID
-	RETURN 1
-	
-	SET @TmpUserID = @ParentUserID
-END
-
-RETURN 0
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE FUNCTION [dbo].[CanGetUserDetails]
-(
-	@ActorID int,
-	@UserID int
-)
-RETURNS bit
-AS
-BEGIN
-
-IF @ActorID = -1
-RETURN 1
-
--- check if the user requests himself
-IF @ActorID = @UserID
-BEGIN
-	RETURN 1
-END
-
-DECLARE @IsPeer bit
-DECLARE @OwnerID int
-
-SELECT @IsPeer = IsPeer, @OwnerID = OwnerID FROM Users
-WHERE UserID = @ActorID
-
-IF @IsPeer = 1
-SET @ActorID = @OwnerID
-
--- get user's owner
-SELECT @OwnerID = OwnerID FROM Users
-WHERE UserID = @ActorID
-
-IF @UserID = @OwnerID
-RETURN 1 -- user can get the details of his owner
-
--- check if the user requests himself
-IF @ActorID = @UserID
-BEGIN
-	RETURN 1
-END
-
-DECLARE @ParentUserID int, @TmpUserID int
-SET @TmpUserID = @UserID
-
-WHILE 10 = 10
-BEGIN
-
-	SET @ParentUserID = NULL --reset var
-
-	-- get owner
-	SELECT
-		@ParentUserID = OwnerID
-	FROM Users
-	WHERE UserID = @TmpUserID
-
-	IF @ParentUserID IS NULL -- the last parent
-		BREAK
-	
-	IF @ParentUserID = @ActorID
-	RETURN 1
-	
-	SET @TmpUserID = @ParentUserID
-END
-
-RETURN 0
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetUsers]
-(
-	@ActorID int,
-	@OwnerID int,
-	@Recursive bit = 0
-)
-AS
-
-DECLARE @CanGetDetails bit
-SET @CanGetDetails = dbo.CanGetUserDetails(@ActorID, @OwnerID)
-
-SELECT
-	U.UserID,
-	U.RoleID,
-	U.StatusID,
-	U.OwnerID,
-	U.Created,
-	U.Changed,
-	U.IsDemo,
-	U.Comments,
-	U.IsPeer,
-	U.Username,
-	U.FirstName,
-	U.LastName,
-	U.Email,
-	U.FullName,
-	U.OwnerUsername,
-	U.OwnerFirstName,
-	U.OwnerLastName,
-	U.OwnerRoleID,
-	U.OwnerFullName,
-	U.PackagesNumber,
-	U.CompanyName,
-	U.EcommerceEnabled
-FROM UsersDetailed AS U
-WHERE U.UserID <> @OwnerID AND
-((@Recursive = 1 AND dbo.CheckUserParent(@OwnerID, U.UserID) = 1) OR 
-(@Recursive = 0 AND U.OwnerID = @OwnerID))
-AND U.IsPeer = 0
-AND @CanGetDetails = 1 -- actor user rights
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetUserPeers]
-(
-	@ActorID int,
-	@UserID int
-)
-AS
-
-DECLARE @CanGetDetails bit
-SET @CanGetDetails = dbo.CanGetUserDetails(@ActorID, @UserID)
-
-SELECT
-	U.UserID,
-	U.RoleID,
-	U.StatusID,
-	U.OwnerID,
-	U.Created,
-	U.Changed,
-	U.IsDemo,
-	U.Comments,
-	U.IsPeer,
-	U.Username,
-	U.FirstName,
-	U.LastName,
-	U.Email,
-	U.FullName,
-	(U.FirstName + ' ' + U.LastName) AS FullName,
-	U.CompanyName,
-	U.EcommerceEnabled
-FROM UsersDetailed AS U
-WHERE U.OwnerID = @UserID AND IsPeer = 1
-AND @CanGetDetails = 1 -- actor rights
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE FUNCTION [dbo].[CheckActorParentPackageRights]
-(
-	@ActorID int,
-	@PackageID int
-)
-RETURNS bit
-AS
-BEGIN
-
-IF @ActorID = -1 OR @PackageID IS NULL
-RETURN 1
-
--- get package owner
-DECLARE @UserID int
-SELECT @UserID = UserID FROM Packages
-WHERE PackageID = @PackageID
-
-IF @UserID IS NULL
-RETURN 1 -- unexisting package
-
--- check user
-RETURN dbo.CanGetUserDetails(@ActorID, @UserID)
-
-RETURN 0
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecUpdateServiceHandlersResponses] 
-	@ResellerID int,
-	@XmlData xml
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-/*
-<Succeed>
-	<Response ID="" />
-</Succeed>
-<Failed>
-	<Response ID="" Error="" />
-</Failed>
-*/
-	DELETE
-		FROM [ecServiceHandlersResponses]
-	WHERE
-		[ResponseID] IN (SELECT [SXML].[Data].value('@ID','int') FROM @XmlData.nodes('/Succeed/Response') [SXML]([Data]))
-
-	UPDATE 
-		[ecServiceHandlersResponses]
-	SET
-		[ErrorMessage] = [SXML].[Data].value('@Error','nvarchar(255)')
-	FROM @XmlData.nodes('/Failed/Response') [SXML]([Data])
-	WHERE
-		[ResponseID] = [SXML].[Data].value('@ID', 'int')
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecWriteSupportedPluginLog]
-	@ContractID nvarchar(50),
-	@PluginID int,
-	@RecordType int,
-	@RawData ntext,
-	@Result int OUTPUT
-AS
-BEGIN
-
-	SET NOCOUNT ON;
-
-    INSERT INTO [dbo].[ecSupportedPluginLog]
-	(
-		[PluginID],
-		[ContractID],
-		[RecordType],
-		[RawData]
-	)
-	VALUES
-	(
-		@PluginID,
-		@ContractID,
-		@RecordType,
-		@RawData
-	);
-
-	SET @Result = SCOPE_IDENTITY();
-END
-
-
-
 
 
 
@@ -23532,6777 +23914,6 @@ FROM         dbo.ecContracts RIGHT OUTER JOIN
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecVoidCustomerInvoice]
-	@ActorID int,
-	@InvoiceID int
-AS
-BEGIN
-	-- load customer and reseller identities
-	DECLARE @ContractID nvarchar(50), @IssuerID int;
-	SELECT
-		@ContractID = [ContractID] FROM [dbo].[ecInvoice]
-	WHERE
-		[InvoiceID] = @InvoiceID;
-	SELECT
-		@IssuerID = [ResellerID] FROM [dbo].[ecContracts]
-	WHERE
-		[ContractID] = @ContractID;
-	-- check actor rights
-	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access the contract', 16, 1);
-		RETURN;
-	END
-	-- 
-	SET NOCOUNT ON;
-	-- void invoice
-	DELETE FROM [dbo].[ecInvoice] WHERE [InvoiceID] = @InvoiceID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecUpdateTaxation]
-	@ActorID int,
-	@UserID int,
-	@TaxationID int,
-	@Country nvarchar(3),
-	@State nvarchar(50),
-	@Description nvarchar(50),
-	@TypeID int,
-	@Amount decimal(5,2),
-	@Active bit,
-	@Result int OUTPUT
-AS
-BEGIN
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this account', 16, 1);
-		RETURN;
-	END
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-	
-	--
-	DECLARE @T_TaxationID int;
-	--
-	SELECT @T_TaxationID = [TaxationID] FROM [dbo].[ecTaxations] WHERE [ResellerID] = @UserID AND [Country] = @Country AND [State] = @State;
-	--
-	SET @T_TaxationID = ISNULL(@T_TaxationID, @TaxationID);
-	--
-	IF @T_TaxationID = @TaxationID
-	BEGIN
-		-- insert
-		UPDATE
-			[dbo].[ecTaxations]
-		SET
-			[Country] = @Country,
-			[State] = @State,
-			[Description] = @Description,
-			[TypeID] = @TypeID,
-			[Amount] = @Amount,
-			[Active] = @Active
-		WHERE
-			[ResellerID] = @UserID
-		AND
-			[TaxationID] = @TaxationID;
-		--
-		SET @Result = 0;
-		--
-		RETURN;
-	END
-
-	-- taxation update error
-	SET @Result = -202;
-	
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecUpdateSystemTrigger]
-	@ActorID int,
-	@TriggerID nvarchar(50),
-	@TriggerHandler nvarchar(512),
-	@ReferenceID nvarchar(50),
-	@Namespace nvarchar(255),
-	@Status nvarchar(50)
-AS
-BEGIN
-	DECLARE @OwnerID int;
-	SELECT
-		@OwnerID = [OwnerID] FROM [dbo].[ecSystemTriggers]
-	WHERE
-		[TriggerID] = @TriggerID;
-	--
-	IF [dbo].[CheckUserParent](@ActorID, @OwnerID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to perform this action', 16, 1);
-		RETURN;
-	END
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    UPDATE [dbo].[ecSystemTriggers] SET
-		[TriggerHandler] = @TriggerHandler,
-		[ReferenceID] = @ReferenceID,
-		[Namespace] = @Namespace,
-		[Status] = @Status
-	WHERE
-		[TriggerID] = @TriggerID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecUpdateInvoice] 
-	@ActorID int,
-	@InvoiceID int,
-	@InvoiceNumber nvarchar(50),
-	@DueDate datetime,
-	@TaxationID int,
-	@Total money,
-	@SubTotal money,
-	@TaxAmount money,
-	@Currency nvarchar(3),
-	@Result int OUTPUT
-AS
-BEGIN
-	-- ensure an update request has been issued by the right person
-	DECLARE @ContractID nvarchar(50), @IssuerID int;
-	SELECT
-		@ContractID = [ContractID] FROM [dbo].[ecInvoice]
-	WHERE
-		[InvoiceID] = @InvoiceID;
-	SELECT
-		@IssuerID = [ResellerID] FROM [dbo].[ecContracts]
-	WHERE
-		[ContractID] = @ContractID;
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this account', 16, 1);
-		RETURN;
-	END
-
-	SET NOCOUNT ON;
-
-	SET @Result = 0;
-
-    UPDATE
-		[dbo].[ecInvoice]
-	SET
-		[InvoiceNumber] = @InvoiceNumber,
-		[DueDate] = @DueDate,
-		[Total] = @Total,
-		[SubTotal] = @SubTotal,
-		[TaxationID] = @TaxationID,
-		[TaxAmount] = @TaxAmount,
-		[Currency] = @Currency
-	WHERE
-		[InvoiceID] = @InvoiceID
-	AND
-		[ContractID] = @ContractID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[VirtualServices](
-	[VirtualServiceID] [int] IDENTITY(1,1) NOT NULL,
-	[ServerID] [int] NOT NULL,
-	[ServiceID] [int] NOT NULL,
- CONSTRAINT [PK_VirtualServices] PRIMARY KEY CLUSTERED 
-(
-	[VirtualServiceID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Services](
-	[ServiceID] [int] IDENTITY(1,1) NOT NULL,
-	[ServerID] [int] NOT NULL,
-	[ProviderID] [int] NOT NULL,
-	[ServiceName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Comments] [ntext] COLLATE Latin1_General_CI_AS NULL,
-	[ServiceQuotaValue] [int] NULL,
-	[ClusterID] [int] NULL,
- CONSTRAINT [PK_Services] PRIMARY KEY CLUSTERED 
-(
-	[ServiceID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE FUNCTION dbo.GetPackageAllocatedResource
-(
-	@PackageID int,
-	@GroupID int,
-	@ServerID int
-)
-RETURNS bit
-AS
-BEGIN
-
-IF @PackageID IS NULL
-RETURN 1
-
-DECLARE @Result bit
-SET @Result = 1 -- enabled
-
-DECLARE @PID int, @ParentPackageID int
-SET @PID = @PackageID
-
-DECLARE @OverrideQuotas bit
-
-IF @ServerID IS NULL OR @ServerID = 0
-SELECT @ServerID = ServerID FROM Packages
-WHERE PackageID = @PackageID
-
-WHILE 1 = 1
-BEGIN
-
-	DECLARE @GroupEnabled int
-	
-	-- get package info
-	SELECT
-		@ParentPackageID = ParentPackageID,
-		@OverrideQuotas = OverrideQuotas
-	FROM Packages WHERE PackageID = @PID
-
-	-- check if this is a root 'System' package
-	SET @GroupEnabled = 1 -- enabled
-	IF @ParentPackageID IS NULL
-	BEGIN
-	
-		IF @ServerID = -1 OR @ServerID IS NULL
-		RETURN 1
-	
-		IF EXISTS (SELECT VirtualServer FROM Servers WHERE ServerID = @ServerID AND VirtualServer = 1)
-		BEGIN
-			IF NOT EXISTS(
-				SELECT 
-					DISTINCT(PROV.GroupID)
-				FROM VirtualServices AS VS
-				INNER JOIN Services AS S ON VS.ServiceID = S.ServiceID
-				INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
-				WHERE PROV.GroupID = @GroupID AND VS.ServerID = @ServerID
-			)
-			SET @GroupEnabled = 0
-		END
-		ELSE
-		BEGIN
-			IF NOT EXISTS(
-				SELECT 
-					DISTINCT(PROV.GroupID)
-				FROM Services AS S
-				INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
-				WHERE PROV.GroupID = @GroupID AND  S.ServerID = @ServerID
-			)
-			SET @GroupEnabled = 0
-		END
-		
-		RETURN @GroupEnabled -- exit from the loop
-	END
-	ELSE -- parentpackage is not null
-	BEGIN
-		-- check the current package
-		IF @OverrideQuotas = 1
-		BEGIN
-			IF NOT EXISTS(
-				SELECT GroupID FROM PackageResources WHERE GroupID = @GroupID AND PackageID = @PID
-			)
-			SET @GroupEnabled = 0
-		END
-		ELSE
-		BEGIN
-			IF NOT EXISTS(
-				SELECT HPR.GroupID FROM Packages AS P
-				INNER JOIN HostingPlanResources AS HPR ON P.PlanID = HPR.PlanID
-				WHERE HPR.GroupID = @GroupID AND P.PackageID = @PID
-			)
-			SET @GroupEnabled = 0
-		END
-		
-		-- check addons
-		IF EXISTS(
-			SELECT HPR.GroupID FROM PackageAddons AS PA
-			INNER JOIN HostingPlanResources AS HPR ON PA.PlanID = HPR.PlanID
-			WHERE HPR.GroupID = @GroupID AND PA.PackageID = @PID
-			AND PA.StatusID = 1 -- active add-on
-		)
-		SET @GroupEnabled = 1
-	END
-	
-	IF @GroupEnabled = 0
-		RETURN 0
-	
-	SET @PID = @ParentPackageID
-
-END -- end while
-
-RETURN @Result
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetPackageQuotasForEdit
-(
-	@ActorID int,
-	@PackageID int
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-DECLARE @ServerID int, @ParentPackageID int, @PlanID int
-SELECT @ServerID = ServerID, @ParentPackageID = ParentPackageID, @PlanID = PlanID FROM Packages
-WHERE PackageID = @PackageID
-
--- get resource groups
-SELECT
-	RG.GroupID,
-	RG.GroupName,
-	ISNULL(PR.CalculateDiskSpace, ISNULL(HPR.CalculateDiskSpace, 0)) AS CalculateDiskSpace,
-	ISNULL(PR.CalculateBandwidth, ISNULL(HPR.CalculateBandwidth, 0)) AS CalculateBandwidth,
-	dbo.GetPackageAllocatedResource(@PackageID, RG.GroupID, @ServerID) AS Enabled,
-	dbo.GetPackageAllocatedResource(@ParentPackageID, RG.GroupID, @ServerID) AS ParentEnabled
-FROM ResourceGroups AS RG
-LEFT OUTER JOIN PackageResources AS PR ON RG.GroupID = PR.GroupID AND PR.PackageID = @PackageID
-LEFT OUTER JOIN HostingPlanResources AS HPR ON RG.GroupID = HPR.GroupID AND HPR.PlanID = @PlanID
-ORDER BY RG.GroupOrder
-
-
--- return quotas
-SELECT
-	Q.QuotaID,
-	Q.GroupID,
-	Q.QuotaName,
-	Q.QuotaDescription,
-	Q.QuotaTypeID,
-	CASE
-		WHEN PQ.QuotaValue IS NULL THEN dbo.GetPackageAllocatedQuota(@PackageID, Q.QuotaID)
-		ELSE PQ.QuotaValue
-	END QuotaValue,
-	dbo.GetPackageAllocatedQuota(@ParentPackageID, Q.QuotaID) AS ParentQuotaValue
-FROM Quotas AS Q
-LEFT OUTER JOIN PackageQuotas AS PQ ON PQ.QuotaID = Q.QuotaID AND PQ.PackageID = @PackageID
-ORDER BY Q.QuotaOrder
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[IPAddresses](
-	[AddressID] [int] IDENTITY(1,1) NOT NULL,
-	[ExternalIP] [varchar](24) COLLATE Latin1_General_CI_AS NOT NULL,
-	[InternalIP] [varchar](24) COLLATE Latin1_General_CI_AS NULL,
-	[ServerID] [int] NULL,
-	[Comments] [ntext] COLLATE Latin1_General_CI_AS NULL,
-	[SubnetMask] [varchar](15) COLLATE Latin1_General_CI_AS NULL,
-	[DefaultGateway] [varchar](15) COLLATE Latin1_General_CI_AS NULL,
-	[PoolID] [int] NULL,
- CONSTRAINT [PK_IPAddresses] PRIMARY KEY CLUSTERED 
-(
-	[AddressID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-CREATE FUNCTION [dbo].[CalculateQuotaUsage]
-(
-	@PackageID int,
-	@QuotaID int
-)
-RETURNS int
-AS
-	BEGIN
-
-		DECLARE @QuotaTypeID int
-		SELECT @QuotaTypeID = QuotaTypeID FROM Quotas
-		WHERE QuotaID = @QuotaID
-
-		IF @QuotaTypeID <> 2
-			RETURN 0
-
-		DECLARE @Result int
-
-		IF @QuotaID = 52 -- diskspace
-			SET @Result = dbo.CalculatePackageDiskspace(@PackageID)
-		ELSE IF @QuotaID = 51 -- bandwidth
-			SET @Result = dbo.CalculatePackageBandwidth(@PackageID)
-		ELSE IF @QuotaID = 53 -- domains
-			SET @Result = (SELECT COUNT(D.DomainID) FROM PackagesTreeCache AS PT
-				INNER JOIN Domains AS D ON D.PackageID = PT.PackageID
-				WHERE IsSubDomain = 0 AND IsInstantAlias = 0 AND IsDomainPointer = 0 AND PT.ParentPackageID = @PackageID)
-		ELSE IF @QuotaID = 54 -- sub-domains
-			SET @Result = (SELECT COUNT(D.DomainID) FROM PackagesTreeCache AS PT
-				INNER JOIN Domains AS D ON D.PackageID = PT.PackageID
-				WHERE IsSubDomain = 1 AND IsInstantAlias = 0 AND PT.ParentPackageID = @PackageID)
-		ELSE IF @QuotaID = 220 -- domain pointers
-			SET @Result = (SELECT COUNT(D.DomainID) FROM PackagesTreeCache AS PT
-				INNER JOIN Domains AS D ON D.PackageID = PT.PackageID
-				WHERE IsDomainPointer = 1 AND PT.ParentPackageID = @PackageID)
-		ELSE IF @QuotaID = 71 -- scheduled tasks
-			SET @Result = (SELECT COUNT(S.ScheduleID) FROM PackagesTreeCache AS PT
-				INNER JOIN Schedule AS S ON S.PackageID = PT.PackageID
-				WHERE PT.ParentPackageID = @PackageID)
-		ELSE IF @QuotaID = 305 -- RAM of VPS
-			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
-							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
-							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
-							WHERE SIP.PropertyName = 'RamSize' AND PT.ParentPackageID = @PackageID)
-		ELSE IF @QuotaID = 306 -- HDD of VPS
-			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
-							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
-							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
-							WHERE SIP.PropertyName = 'HddSize' AND PT.ParentPackageID = @PackageID)
-		ELSE IF @QuotaID = 309 -- External IP addresses of VPS
-			SET @Result = (SELECT COUNT(PIP.PackageAddressID) FROM PackageIPAddresses AS PIP
-							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
-							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
-							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 3)
-		ELSE IF @QuotaID = 100 -- Dedicated Web IP addresses
-			SET @Result = (SELECT COUNT(PIP.PackageAddressID) FROM PackageIPAddresses AS PIP
-							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
-							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
-							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 2)
-		ELSE IF @QuotaID = 350 -- RAM of VPSforPc
-			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
-							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
-							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
-							WHERE SIP.PropertyName = 'Memory' AND PT.ParentPackageID = @PackageID)
-		ELSE IF @QuotaID = 351 -- HDD of VPSforPc
-			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
-							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
-							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
-							WHERE SIP.PropertyName = 'HddSize' AND PT.ParentPackageID = @PackageID)
-		ELSE IF @QuotaID = 354 -- External IP addresses of VPSforPc
-			SET @Result = (SELECT COUNT(PIP.PackageAddressID) FROM PackageIPAddresses AS PIP
-							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
-							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
-							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 3)
-		ELSE IF @QuotaID = 319 -- BB Users
-			SET @Result = (SELECT COUNT(ea.AccountID) 
-								FROM 
-									ExchangeAccounts ea 
-								INNER JOIN 
-									BlackBerryUsers bu 
-								ON 
-									ea.AccountID = bu.AccountID
-								INNER JOIN 
-									ServiceItems  si 
-								ON 
-									ea.ItemID = si.ItemID
-								INNER JOIN 
-									PackagesTreeCache pt ON si.PackageID = pt.PackageID
-								WHERE 
-									pt.ParentPackageID = @PackageID)
-		ELSE
-			SET @Result = (SELECT COUNT(SI.ItemID) FROM Quotas AS Q
-			INNER JOIN ServiceItems AS SI ON SI.ItemTypeID = Q.ItemTypeID
-			INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID AND PT.ParentPackageID = @PackageID
-			WHERE Q.QuotaID = @QuotaID)
-
-		RETURN @Result
-	END
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetPackageQuotas
-(
-	@ActorID int,
-	@PackageID int
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-DECLARE @PlanID int, @ParentPackageID int
-SELECT @PlanID = PlanID, @ParentPackageID = ParentPackageID FROM Packages
-WHERE PackageID = @PackageID
-
--- get resource groups
-SELECT
-	RG.GroupID,
-	RG.GroupName,
-	ISNULL(HPR.CalculateDiskSpace, 0) AS CalculateDiskSpace,
-	ISNULL(HPR.CalculateBandwidth, 0) AS CalculateBandwidth,
-	dbo.GetPackageAllocatedResource(@ParentPackageID, RG.GroupID, 0) AS ParentEnabled
-FROM ResourceGroups AS RG
-LEFT OUTER JOIN HostingPlanResources AS HPR ON RG.GroupID = HPR.GroupID AND HPR.PlanID = @PlanID
-WHERE dbo.GetPackageAllocatedResource(@PackageID, RG.GroupID, 0) = 1
-ORDER BY RG.GroupOrder
-
-
--- return quotas
-SELECT
-	Q.QuotaID,
-	Q.GroupID,
-	Q.QuotaName,
-	Q.QuotaDescription,
-	Q.QuotaTypeID,
-	dbo.GetPackageAllocatedQuota(@PackageID, Q.QuotaID) AS QuotaValue,
-	dbo.GetPackageAllocatedQuota(@ParentPackageID, Q.QuotaID) AS ParentQuotaValue,
-	ISNULL(dbo.CalculateQuotaUsage(@PackageID, Q.QuotaID), 0) AS QuotaUsedValue
-FROM Quotas AS Q
-ORDER BY Q.QuotaOrder
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetPackageQuota]
-(
-	@ActorID int,
-	@PackageID int,
-	@QuotaName nvarchar(50)
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
--- return quota
-SELECT
-	Q.QuotaID,
-	Q.QuotaName,
-	Q.QuotaDescription,
-	Q.QuotaTypeID,
-	ISNULL(dbo.GetPackageAllocatedQuota(@PackageId, Q.QuotaID), 0) AS QuotaAllocatedValue,
-	ISNULL(dbo.CalculateQuotaUsage(@PackageId, Q.QuotaID), 0) AS QuotaUsedValue
-FROM Quotas AS Q
-WHERE Q.QuotaName = @QuotaName
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetHostingPlanQuotas
-(
-	@ActorID int,
-	@PlanID int,
-	@PackageID int,
-	@ServerID int
-)
-AS
-
--- check rights
-IF dbo.CheckActorParentPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-DECLARE @IsAddon bit
-
-IF @ServerID = 0
-SELECT @ServerID = ServerID FROM Packages
-WHERE PackageID = @PackageID
-
--- get resource groups
-SELECT
-	RG.GroupID,
-	RG.GroupName,
-	CASE
-		WHEN HPR.CalculateDiskSpace IS NULL THEN CAST(0 as bit)
-		ELSE CAST(1 as bit)
-	END AS Enabled,
-	dbo.GetPackageAllocatedResource(@PackageID, RG.GroupID, @ServerID) AS ParentEnabled,
-	ISNULL(HPR.CalculateDiskSpace, 1) AS CalculateDiskSpace,
-	ISNULL(HPR.CalculateBandwidth, 1) AS CalculateBandwidth
-FROM ResourceGroups AS RG
-LEFT OUTER JOIN HostingPlanResources AS HPR ON RG.GroupID = HPR.GroupID AND HPR.PlanID = @PlanID
-ORDER BY RG.GroupOrder
-
--- get quotas by groups
-SELECT
-	Q.QuotaID,
-	Q.GroupID,
-	Q.QuotaName,
-	Q.QuotaDescription,
-	Q.QuotaTypeID,
-	ISNULL(HPQ.QuotaValue, 0) AS QuotaValue,
-	dbo.GetPackageAllocatedQuota(@PackageID, Q.QuotaID) AS ParentQuotaValue
-FROM Quotas AS Q
-LEFT OUTER JOIN HostingPlanQuotas AS HPQ ON Q.QuotaID = HPQ.QuotaID AND HPQ.PlanID = @PlanID
-ORDER BY Q.QuotaOrder
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-Algorythm:
-	0. Get the primary distribution resource from hosting plan
-	1. Check whether user has Resource of requested type in his user plans/add-ons
-		EXCEPTION "The requested service is not available for the user. The resource of the requested type {type} should be assigned to him through hosting plan or add-on"
-		1.1 If the number of returned reources is greater than 1
-			EXCEPTION "User has several resources assigned of the requested type"
-
-	2. If the requested resource has 0 services
-		EXCEPTION "The resource {name} of type {type} should contain atleast one service
-	3. If the requested resource has one service
-		remember the ID of this single service
-	4. If the requested resource has several services DO distribution:
-		
-		4.1. If the resource is NOT BOUNDED or is PRIMARY DISTRIBUTION RESOURCE
-			if PRIMARY DISTRIBUTION RESOURCE and exists in UserServices
-				return serviceId from UserServices table
-				
-			remember any service from that resource according to distribution type ("BALANCED" or "RANDOM") - get the number of ServiceItems for each service
-			
-		4.2. If the resource is BOUNDED to primary distribution resource
-			- If the primary distribution resource is NULL
-			EXCEPTION "Requested resource marked as bound to primary distribution resource, but there is no any resources in hosting plan marked as primary"
-			
-			- Get the service id of the primary distribution resource
-			GetServiceId(userId, primaryResourceId)
-			
-		
-		Get from user assigned hosting plan 
-		
-	5. If it is PRIMARY DISTRIBUTION RESOURCE
-		Save it's ID to UserServices table
-	
-	6. return serviceId
-	
-ERROR CODES:
-	-1 - there are several hosting plans with PDR assigned to that user
-	-2 - The requested service is not available for the user. The resource of the
-		requested type {type} should be assigned to him through hosting plan or add-on
-	-3 - several resources of the same type was assigned through hosting plan or add-on
-	-4 - The resource {name} of type {type} should contain atleast one service
-	-5 - Requested resource marked as bound to primary distribution resource,
-		but there is no any resources in hosting plan marked as primary
-	-6 - the server where PDR is located doesn't contain the service of requested resource type
-*/
-CREATE PROCEDURE GetUserServiceID
-(
-	@UserID int,
-	@TypeName nvarchar(1000),
-	@ServiceID int OUTPUT
-)
-AS
-	DECLARE @PrimaryResourceID int -- primary distribution resource assigned through hosting plan
-	
-	----------------------------------------
-	-- Get the primary distribution resource
-	----------------------------------------
-	IF (SELECT COUNT (HP.PrimaryResourceID) FROM PurchasedHostingPlans AS PHP
-	INNER JOIN HostingPlans AS HP ON PHP.PlanID = HP.PlanID
-	WHERE PHP.UserID = @UserID AND HP.PrimaryResourceID IS NOT NULL AND HP.PrimaryResourceID <> 0) > 1
-	BEGIN
-		SET @ServiceID = -1
-		RETURN
-	END
-		
-	SELECT @PrimaryResourceID = HP.PrimaryResourceID FROM PurchasedHostingPlans AS PHP
-	INNER JOIN HostingPlans AS HP ON PHP.PlanID = HP.PlanID
-	WHERE PHP.UserID = @UserID AND HP.PrimaryResourceID IS NOT NULL AND HP.PrimaryResourceID <> 0
-
-	
-	----------------------------------------------
-	-- Check whether user has a resource 
-	-- of this type in his hosting plans or addons
-	----------------------------------------------
-	DECLARE @UserResourcesTable TABLE
-	(
-		ResourceID int
-	)
-	INSERT INTO @UserResourcesTable
-	SELECT DISTINCT HPR.ResourceID FROM PurchasedHostingPlans AS PHP
-		INNER JOIN HostingPlans AS HP ON PHP.PlanID = HP.PlanID
-		INNER JOIN HostingPlanResources AS HPR ON HP.PlanID = HPR.PlanID
-		INNER JOIN Resources AS R ON HPR.ResourceID = R.ResourceID
-		INNER JOIN ServiceTypes AS ST ON R.ServiceTypeID = ST.ServiceTypeID
-		WHERE PHP.UserID = @UserID AND (ST.ImplementedTypeNames LIKE @TypeName OR ST.TypeName LIKE @TypeName)
-
-	----------------------------------------
-	-- Check resources number
-	----------------------------------------
-	DECLARE @ResourcesCount int
-	SET @ResourcesCount = @@ROWCOUNT
-	IF @ResourcesCount = 0
-	BEGIN
-		SET @ServiceID = -2 -- user doesn't have requested service assigned
-		RETURN
-	END
-	IF @ResourcesCount > 1
-	BEGIN
-		SET @ServiceID = -3 -- several resources of the same type was assigned
-		RETURN
-	END
-	
-	----------------------------------------
-	-- Check services number
-	----------------------------------------
-	DECLARE @ResourceID int
-	SET @ResourceID = (SELECT TOP 1 ResourceID FROM @UserResourcesTable)
-	
-	DECLARE @UserServicesTable TABLE
-	(
-		ServiceID int,
-		ServerID int,
-		ItemsNumber int,
-		Randomizer float
-	)
-	INSERT INTO @UserServicesTable
-	SELECT
-		RS.ServiceID,
-		S.ServerID,
-		(SELECT COUNT(ItemID) FROM ServiceItems AS SI WHERE SI.ServiceID = RS.ServiceID),
-		RAND()
-	FROM ResourceServices AS RS
-	INNER JOIN Services AS S ON RS.ServiceID = S.ServiceID
-	WHERE RS.ResourceID = @ResourceID
-	
-	DECLARE @ServicesCount int
-	SET @ServicesCount = @@ROWCOUNT
-	IF @ServicesCount = 0
-	BEGIN
-		SET @ServiceID = -4 -- The resource {name} of type {type} should contain atleast one service
-		RETURN
-	END
-	
-	-- try to return from UserServices
-	-- if it is a PDR
-	IF @ResourceID = @PrimaryResourceID
-	BEGIN
-		-- check in UserServices table
-		SELECT @ServiceID = US.ServiceID FROM ResourceServices AS RS
-		INNER JOIN UserServices AS US ON RS.ServiceID = US.ServiceID
-		WHERE RS.ResourceID = @ResourceID AND US.UserID = @UserID
-		
-		-- check validness of the current primary service id
-		IF @ServiceID IS NOT NULL
-		BEGIN
-			IF EXISTS(SELECT ResourceServiceID FROM ResourceServices
-			WHERE ResourceID = @ResourceID AND ServiceID = @ServiceID)
-				RETURN
-			ELSE -- invalidate service
-				DELETE FROM UserServices WHERE UserID = @UserID
-		END
-	END
-	
-	IF @ServicesCount = 1
-	BEGIN
-		-- nothing to distribute
-		-- just remember this single service id
-		SET @ServiceID = (SELECT TOP 1 ServiceID FROM @UserServicesTable)
-	END
-	ELSE
-	BEGIN
-		-- the service should be distributed
-		DECLARE @DistributionTypeID int
-		DECLARE @BoundToPrimaryResource bit
-		SELECT @DistributionTypeID = R.DistributionTypeID, @BoundToPrimaryResource = R.BoundToPrimaryResource
-		FROM Resources AS R WHERE R.ResourceID = @ResourceID
-	
-		IF @BoundToPrimaryResource = 0 OR @ResourceID = @PrimaryResourceID
-		BEGIN
-			IF @ResourceID = @PrimaryResourceID -- it's PDR itself
-			BEGIN
-				-- check in UserServices table
-				SELECT @ServiceID = US.ServiceID FROM ResourceServices AS RS
-				INNER JOIN UserServices AS US ON RS.ServiceID = US.ServiceID
-				WHERE RS.ResourceID = @ResourceID AND US.UserID = @UserID
-				
-				-- check validness of the current primary service id
-				IF @ServiceID IS NOT NULL
-				BEGIN
-					IF EXISTS(SELECT ResourceServiceID FROM ResourceServices
-					WHERE ResourceID = @ResourceID AND ServiceID = @ServiceID)
-						RETURN
-					ELSE -- invalidate service
-						DELETE FROM UserServices WHERE UserID = @UserID
-				END
-			END
-			
-			-- distribute
-			IF @DistributionTypeID = 1 -- BALANCED distribution
-				SELECT @ServiceID = ServiceID FROM @UserServicesTable
-				ORDER BY ItemsNumber ASC
-			ELSE -- RANDOM distribution
-				SELECT @ServiceID = ServiceID FROM @UserServicesTable
-				ORDER BY Randomizer
-		END
-		ELSE -- BOUND to PDR resource
-		BEGIN
-			IF @PrimaryResourceID IS NULL
-			BEGIN
-				SET @ServiceID = -5 -- Requested resource marked as bound to primary distribution resource,
-									-- but there is no any resources in hosting plan marked as primary
-				RETURN
-			END
-			
-			-- get the type of primary resource
-			DECLARE @PrimaryTypeName nvarchar(200)
-			SELECT @PrimaryTypeName = ST.TypeName FROM  Resources AS R
-			INNER JOIN ServiceTypes AS ST ON R.ServiceTypeID = ST.ServiceTypeID
-			WHERE R.ResourceID = @PrimaryResourceID
-			
-			
-			DECLARE @PrimaryServiceID int
-			EXEC GetUserServiceID @UserID, @PrimaryTypeName, @PrimaryServiceID OUTPUT
-
-			IF @PrimaryServiceID < 0
-			BEGIN
-				SET @ServiceID = @PrimaryServiceID
-				RETURN
-			END
-			
-			DECLARE @ServerID int
-			SET @ServerID = (SELECT ServerID FROM Services WHERE ServiceID = @PrimaryServiceID)
-			
-			-- try to get the service of the requested type on PDR server
-			SET @ServiceID = (SELECT ServiceID FROM @UserServicesTable WHERE ServerID = @ServerID)
-			
-			IF @ServiceID IS NULL
-			BEGIN
-				SET @ServiceID = -6 -- the server where PDR is located doesn't contain the service of requested resource type
-			END
-		END
-	END
-	
-	IF @ResourceID = @PrimaryResourceID -- it's PDR
-	BEGIN
-		DELETE FROM UserServices WHERE UserID = @UserID
-		
-		INSERT INTO UserServices (UserID, ServiceID)
-		VALUES (@UserID, @ServiceID)
-	END
-	
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetServiceItemsByService]
-(
-	@ActorID int,
-	@ServiceID int
-)
-AS
-
--- check rights
-DECLARE @IsAdmin bit
-SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
-
-DECLARE @Items TABLE
-(
-	ItemID int
-)
-
--- find service items
-INSERT INTO @Items
-SELECT
-	SI.ItemID
-FROM ServiceItems AS SI
-WHERE SI.ServiceID = @ServiceID
-
-
--- select service items
-SELECT
-	SI.ItemID,
-	SI.ItemName,
-	SI.ItemTypeID,
-	SIT.TypeName,
-	SI.ServiceID,
-	SI.PackageID,
-	P.PackageName,
-	S.ServiceID,
-	S.ServiceName,
-	SRV.ServerID,
-	SRV.ServerName,
-	RG.GroupName,
-	U.UserID,
-	U.Username,
-	(U.FirstName + U.LastName) AS UserFullName,
-	SI.CreatedDate
-FROM @Items AS FI
-INNER JOIN ServiceItems AS SI ON FI.ItemID = SI.ItemID
-INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
-INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
-INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
-INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
-INNER JOIN ResourceGroups AS RG ON SIT.GroupID = RG.GroupID
-INNER JOIN Users AS U ON P.UserID = U.UserID
-WHERE @IsAdmin = 1
-
--- select item properties
--- get corresponding item properties
-SELECT
-	IP.ItemID,
-	IP.PropertyName,
-	IP.PropertyValue
-FROM ServiceItemProperties AS IP
-INNER JOIN @Items AS FI ON IP.ItemID = FI.ItemID
-WHERE @IsAdmin = 1
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetServiceItemsByPackage]
-(
-	@ActorID int,
-	@PackageID int
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-DECLARE @Items TABLE
-(
-	ItemID int
-)
-
--- find service items
-INSERT INTO @Items
-SELECT
-	SI.ItemID
-FROM ServiceItems AS SI
-WHERE SI.PackageID = @PackageID
-
-
--- select service items
-SELECT
-	SI.ItemID,
-	SI.ItemName,
-	SI.ItemTypeID,
-	SIT.TypeName,
-	SIT.DisplayName,
-	SI.ServiceID,
-	SI.PackageID,
-	P.PackageName,
-	S.ServiceID,
-	S.ServiceName,
-	SRV.ServerID,
-	SRV.ServerName,
-	RG.GroupName,
-	U.UserID,
-	U.Username,
-	(U.FirstName + U.LastName) AS UserFullName,
-	SI.CreatedDate
-FROM @Items AS FI
-INNER JOIN ServiceItems AS SI ON FI.ItemID = SI.ItemID
-INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
-INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
-INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
-INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
-INNER JOIN ResourceGroups AS RG ON SIT.GroupID = RG.GroupID
-INNER JOIN Users AS U ON P.UserID = U.UserID
-
--- select item properties
--- get corresponding item properties
-SELECT
-	IP.ItemID,
-	IP.PropertyName,
-	IP.PropertyValue
-FROM ServiceItemProperties AS IP
-INNER JOIN @Items AS FI ON IP.ItemID = FI.ItemID
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetServiceItemsByName]
-(
-	@ActorID int,
-	@PackageID int,
-	@ItemName nvarchar(500)
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-DECLARE @Items TABLE
-(
-	ItemID int
-)
-
--- find service items
-INSERT INTO @Items
-SELECT
-	SI.ItemID
-FROM ServiceItems AS SI
-INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
-WHERE SI.PackageID = @PackageID
-AND SI.ItemName LIKE @ItemName
-
-
--- select service items
-SELECT
-	SI.ItemID,
-	SI.ItemName,
-	SI.ItemTypeID,
-	SIT.TypeName,
-	SI.ServiceID,
-	SI.PackageID,
-	P.PackageName,
-	S.ServiceID,
-	S.ServiceName,
-	SRV.ServerID,
-	SRV.ServerName,
-	RG.GroupName,
-	U.UserID,
-	U.Username,
-	U.FullName AS UserFullName,
-	SI.CreatedDate
-FROM @Items AS FI
-INNER JOIN ServiceItems AS SI ON FI.ItemID = SI.ItemID
-INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
-INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
-INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
-INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
-INNER JOIN ResourceGroups AS RG ON SIT.GroupID = RG.GroupID
-INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
-
--- select item properties
--- get corresponding item properties
-SELECT
-	IP.ItemID,
-	IP.PropertyName,
-	IP.PropertyValue
-FROM ServiceItemProperties AS IP
-INNER JOIN @Items AS FI ON IP.ItemID = FI.ItemID
-
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetServiceItems]
-(
-	@ActorID int,
-	@PackageID int,
-	@ItemTypeName nvarchar(200),
-	@GroupName nvarchar(100) = NULL,
-	@Recursive bit
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-DECLARE @Items TABLE
-(
-	ItemID int
-)
-
--- find service items
-INSERT INTO @Items
-SELECT
-	SI.ItemID
-FROM ServiceItems AS SI
-INNER JOIN PackagesTree(@PackageID, @Recursive) AS PT ON SI.PackageID = PT.PackageID
-INNER JOIN ServiceItemTypes AS IT ON SI.ItemTypeID = IT.ItemTypeID
-INNER JOIN ResourceGroups AS RG ON IT.GroupID = RG.GroupID
-WHERE IT.TypeName = @ItemTypeName
-AND ((@GroupName IS NULL) OR (@GroupName IS NOT NULL AND RG.GroupName = @GroupName))
-
-
--- select service items
-SELECT
-	SI.ItemID,
-	SI.ItemName,
-	SI.ItemTypeID,
-	SIT.TypeName,
-	SI.ServiceID,
-	SI.PackageID,
-	P.PackageName,
-	S.ServiceID,
-	S.ServiceName,
-	SRV.ServerID,
-	SRV.ServerName,
-	RG.GroupName,
-	U.UserID,
-	U.Username,
-	(U.FirstName + U.LastName) AS UserFullName,
-	SI.CreatedDate
-FROM @Items AS FI
-INNER JOIN ServiceItems AS SI ON FI.ItemID = SI.ItemID
-INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
-INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
-INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
-INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
-INNER JOIN ResourceGroups AS RG ON SIT.GroupID = RG.GroupID
-INNER JOIN Users AS U ON P.UserID = U.UserID
-
--- select item properties
--- get corresponding item properties
-SELECT
-	IP.ItemID,
-	IP.PropertyName,
-	IP.PropertyValue
-FROM ServiceItemProperties AS IP
-INNER JOIN @Items AS FI ON IP.ItemID = FI.ItemID
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetServiceItemByName]
-(
-	@ActorID int,
-	@PackageID int,
-	@ItemName nvarchar(500),
-	@GroupName nvarchar(100) = NULL,
-	@ItemTypeName nvarchar(200)
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-DECLARE @Items TABLE
-(
-	ItemID int
-)
-
--- find service items
-INSERT INTO @Items
-SELECT
-	SI.ItemID
-FROM ServiceItems AS SI
-INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
-INNER JOIN ResourceGroups AS RG ON SIT.GroupID = RG.GroupID
-WHERE SI.PackageID = @PackageID AND SIT.TypeName = @ItemTypeName
-AND SI.ItemName = @ItemName
-AND ((@GroupName IS NULL) OR (@GroupName IS NOT NULL AND RG.GroupName = @GroupName))
-
-
--- select service items
-SELECT
-	SI.ItemID,
-	SI.ItemName,
-	SI.ItemTypeID,
-	SIT.TypeName,
-	SI.ServiceID,
-	SI.PackageID,
-	P.PackageName,
-	S.ServiceID,
-	S.ServiceName,
-	SRV.ServerID,
-	SRV.ServerName,
-	RG.GroupName,
-	U.UserID,
-	U.Username,
-	U.FullName AS UserFullName,
-	SI.CreatedDate
-FROM @Items AS FI
-INNER JOIN ServiceItems AS SI ON FI.ItemID = SI.ItemID
-INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
-INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
-INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
-INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
-INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
-INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
-INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
-
--- select item properties
--- get corresponding item properties
-SELECT
-	IP.ItemID,
-	IP.PropertyName,
-	IP.PropertyValue
-FROM ServiceItemProperties AS IP
-INNER JOIN @Items AS FI ON IP.ItemID = FI.ItemID
-
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetServiceItem]
-(
-	@ActorID int,
-	@ItemID int
-)
-AS
-
-DECLARE @Items TABLE
-(
-	ItemID int
-)
-
--- find service items
-INSERT INTO @Items
-SELECT
-	SI.ItemID
-FROM ServiceItems AS SI
-INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
-WHERE
-	SI.ItemID = @ItemID
-	AND dbo.CheckActorPackageRights(@ActorID, SI.PackageID) = 1
-
-
--- select service items
-SELECT
-	SI.ItemID,
-	SI.ItemName,
-	SI.ItemTypeID,
-	SIT.TypeName,
-	SI.ServiceID,
-	SI.PackageID,
-	P.PackageName,
-	S.ServiceID,
-	S.ServiceName,
-	SRV.ServerID,
-	SRV.ServerName,
-	RG.GroupName,
-	U.UserID,
-	U.Username,
-	U.FullName AS UserFullName,
-	SI.CreatedDate
-FROM @Items AS FI
-INNER JOIN ServiceItems AS SI ON FI.ItemID = SI.ItemID
-INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
-INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
-INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
-INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
-INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
-INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
-INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
-
--- select item properties
--- get corresponding item properties
-SELECT
-	IP.ItemID,
-	IP.PropertyName,
-	IP.PropertyValue
-FROM ServiceItemProperties AS IP
-INNER JOIN @Items AS FI ON IP.ItemID = FI.ItemID
-
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[VirtualGroups](
-	[VirtualGroupID] [int] IDENTITY(1,1) NOT NULL,
-	[ServerID] [int] NOT NULL,
-	[GroupID] [int] NOT NULL,
-	[DistributionType] [int] NULL,
-	[BindDistributionToPrimary] [bit] NULL,
- CONSTRAINT [PK_VirtualGroups] PRIMARY KEY CLUSTERED 
-(
-	[VirtualGroupID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[DistributePackageServices]
-(
-	@ActorID int,
-	@PackageID int
-)
-AS
-
--- get primary distribution group
-DECLARE @PrimaryGroupID int
-DECLARE @VirtualServer bit
-DECLARE @PlanID int
-DECLARE @ServerID int
-SELECT
-	@PrimaryGroupID = ISNULL(S.PrimaryGroupID, 0),
-	@VirtualServer = S.VirtualServer,
-	@PlanID = P.PlanID,
-	@ServerID = P.ServerID
-FROM Packages AS P
-INNER JOIN Servers AS S ON P.ServerID = S.ServerID
-WHERE P.PackageID = @PackageID
-
-
--- get the list of available groups from hosting plan
-DECLARE @Groups TABLE
-(
-	GroupID int,
-	PrimaryGroup bit
-)
-
-INSERT INTO @Groups (GroupID, PrimaryGroup)
-SELECT
-	RG.GroupID,
-	CASE WHEN RG.GroupID = @PrimaryGroupID THEN 1 -- mark primary group
-	ELSE 0
-	END
-FROM ResourceGroups AS RG
-WHERE dbo.GetPackageAllocatedResource(@PackageID, RG.GroupID, NULL) = 1
-AND RG.GroupID NOT IN 
-(
-	SELECT P.GroupID
-	FROM PackageServices AS PS
-	INNER JOIN Services AS S ON PS.ServiceID = S.ServiceID
-	INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
-	WHERE PS.PackageID = @PackageID
-)
-
-IF @VirtualServer <> 1
-BEGIN
-	-- PHYSICAL SERVER
-	-- just return the list of services based on the plan
-	INSERT INTO PackageServices (PackageID, ServiceID)
-	SELECT
-		@PackageID,
-		S.ServiceID
-	FROM Services AS S
-	INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
-	INNER JOIN @Groups AS G ON P.GroupID = G.GroupID
-	WHERE S.ServerID = @ServerID
-		AND S.ServiceID NOT IN (SELECT ServiceID FROM PackageServices WHERE PackageID = @PackageID)
-END
-ELSE
-BEGIN
-	-- VIRTUAL SERVER
-	
-	DECLARE @GroupID int, @PrimaryGroup int
-	DECLARE GroupsCursor CURSOR FOR
-	SELECT GroupID, PrimaryGroup FROM @Groups
-	ORDER BY PrimaryGroup DESC
-
-	OPEN GroupsCursor
-
-	WHILE (10 = 10)
-	BEGIN    --LOOP 10: thru groups
-		FETCH NEXT FROM GroupsCursor
-		INTO @GroupID, @PrimaryGroup
-
-		IF (@@fetch_status <> 0)
-		BEGIN
-			DEALLOCATE GroupsCursor
-			BREAK
-		END
-		
-		-- read group information
-		DECLARE @DistributionType int, @BindDistributionToPrimary int
-		SELECT
-			@DistributionType = DistributionType,
-			@BindDistributionToPrimary = BindDistributionToPrimary
-		FROM VirtualGroups AS VG
-		WHERE ServerID = @ServerID AND GroupID = @GroupID
-		
-		-- bind distribution to primary
-		IF @BindDistributionToPrimary = 1 AND @PrimaryGroup = 0 AND @PrimaryGroupID <> 0
-		BEGIN
-			-- if only one service found just use it and do not distribute			
-			IF (SELECT COUNT(*) FROM VirtualServices AS VS
-				INNER JOIN Services AS S ON VS.ServiceID = S.ServiceID
-				INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
-				WHERE VS.ServerID = @ServerID AND P.GroupID = @GroupID) = 1
-				BEGIN
-					INSERT INTO PackageServices (PackageID, ServiceID)
-					SELECT
-						@PackageID,
-						VS.ServiceID
-					FROM VirtualServices AS VS
-					INNER JOIN Services AS S ON VS.ServiceID = S.ServiceID
-					INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
-					WHERE VS.ServerID = @ServerID AND P.GroupID = @GroupID
-				END
-			ELSE
-				BEGIN
-					DECLARE @PrimaryServerID int
-					-- try to get primary distribution server
-					SELECT
-						@PrimaryServerID = S.ServerID
-					FROM PackageServices AS PS
-					INNER JOIN Services AS S ON PS.ServiceID = S.ServiceID
-					INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
-					WHERE PS.PackageID = @PackageID AND P.GroupID = @PrimaryGroupID
-					
-					INSERT INTO PackageServices (PackageID, ServiceID)
-					SELECT
-						@PackageID,
-						VS.ServiceID
-					FROM VirtualServices AS VS
-					INNER JOIN Services AS S ON VS.ServiceID = S.ServiceID
-					INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
-					WHERE VS.ServerID = @ServerID AND P.GroupID = @GroupID AND S.ServerID = @PrimaryServerID
-				END
-		END
-		ELSE
-		BEGIN
-			
-			-- DISTRIBUTION
-			DECLARE @Services TABLE
-			(
-				ServiceID int,
-				ItemsNumber int,
-				RandomNumber int
-			)
-			
-			DELETE FROM @Services
-			
-			INSERT INTO @Services (ServiceID, ItemsNumber, RandomNumber)
-			SELECT
-				VS.ServiceID,
-				(SELECT COUNT(ItemID) FROM ServiceItems WHERE ServiceID = VS.ServiceID),
-				RAND()
-			FROM VirtualServices AS VS
-			INNER JOIN Services AS S ON VS.ServiceID = S.ServiceID
-			INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
-			WHERE VS.ServerID = @ServerID AND P.GroupID = @GroupID
-			
-			-- BALANCED DISTRIBUTION
-			IF @DistributionType = 1
-			BEGIN
-				-- get the less allocated service
-				INSERT INTO PackageServices (PackageID, ServiceID)
-				SELECT TOP 1
-					@PackageID,
-					ServiceID
-				FROM @Services
-				ORDER BY ItemsNumber
-			END
-			ELSE
-			-- RANDOMIZED DISTRIBUTION
-			BEGIN
-				-- get the less allocated service
-				INSERT INTO PackageServices (PackageID, ServiceID)
-				SELECT TOP 1
-					@PackageID,
-					ServiceID
-				FROM @Services
-				ORDER BY RandomNumber
-			END
-		END
-		
-		IF @PrimaryGroup = 1
-		SET @PrimaryGroupID = @GroupID
-
-	END -- while groups
-	
-END -- end virtual server
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetPackageServiceID
-(
-	@ActorID int,
-	@PackageID int,
-	@GroupName nvarchar(100),
-	@ServiceID int OUTPUT
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-SET @ServiceID = 0
-
--- load group info
-DECLARE @GroupID int
-SELECT @GroupID = GroupID FROM ResourceGroups
-WHERE GroupName = @GroupName
-
--- check if user has this resource enabled
-IF dbo.GetPackageAllocatedResource(@PackageID, @GroupID, NULL) = 0
-BEGIN
-	-- remove all resource services from the space
-	DELETE FROM PackageServices FROM PackageServices AS PS
-	INNER JOIN Services AS S ON PS.ServiceID = S.ServiceID
-	INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
-	WHERE P.GroupID = @GroupID AND PS.PackageID = @PackageID
-	RETURN
-END
-
--- check if the service is already distributed
-SELECT
-	@ServiceID = PS.ServiceID
-FROM PackageServices AS PS
-INNER JOIN Services AS S ON PS.ServiceID = S.ServiceID
-INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
-WHERE PS.PackageID = @PackageID AND P.GroupID = @GroupID
-
-IF @ServiceID <> 0
-RETURN
-
--- distribute services
-EXEC DistributePackageServices @ActorID, @PackageID
-
--- get distributed service again
-SELECT
-	@ServiceID = PS.ServiceID
-FROM PackageServices AS PS
-INNER JOIN Services AS S ON PS.ServiceID = S.ServiceID
-INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
-WHERE PS.PackageID = @PackageID AND P.GroupID = @GroupID
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE CheckServiceItemExists
-(
-	@Exists bit OUTPUT,
-	@ItemName nvarchar(500),
-	@ItemTypeName nvarchar(200),
-	@GroupName nvarchar(100) = NULL
-)
-AS
-
-SET @Exists = 0
-
-DECLARE @ItemTypeID int
-SELECT @ItemTypeID = ItemTypeID FROM ServiceItemTypes
-WHERE TypeName = @ItemTypeName
-
-IF EXISTS (
-SELECT ItemID FROM ServiceItems AS SI
-INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
-INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
-INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
-WHERE SI.ItemName = @ItemName AND SI.ItemTypeID = @ItemTypeID
-AND ((@GroupName IS NULL) OR (@GroupName IS NOT NULL AND RG.GroupName = @GroupName))
-)
-SET @Exists = 1
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ChangeUserPassword]
-(
-	@ActorID int,
-	@UserID int,
-	@Password nvarchar(200)
-)
-AS
-
--- check actor rights
-IF dbo.CanUpdateUserDetails(@ActorID, @UserID) = 0
-RETURN
-
-UPDATE Users
-SET Password = @Password
-WHERE UserID = @UserID
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecHostingPlansBillingCycles](
-	[ProductID] [int] NOT NULL,
-	[CycleID] [int] NOT NULL,
-	[SetupFee] [money] NOT NULL,
-	[RecurringFee] [money] NOT NULL,
-	[SortOrder] [int] NOT NULL,
- CONSTRAINT [PK_ecHostingPlansBillingCycles] PRIMARY KEY CLUSTERED 
-(
-	[ProductID] ASC,
-	[CycleID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecHostingPlans](
-	[ProductID] [int] NOT NULL,
-	[ResellerID] [int] NOT NULL,
-	[PlanID] [int] NOT NULL,
-	[UserRole] [int] NOT NULL,
-	[InitialStatus] [int] NOT NULL,
-	[DomainOption] [int] NOT NULL,
- CONSTRAINT [PK_ecHostingPlans] PRIMARY KEY CLUSTERED 
-(
-	[ProductID] ASC,
-	[ResellerID] ASC,
-	[PlanID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetCustomersPaymentsPaged]
-	@ActorID int,
-	@UserID int,
-	@IsReseller bit,
-	@MaximumRows int,
-	@StartRowIndex int
-AS
-BEGIN
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this information', 16, 1);
-		RETURN;
-	END
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    DECLARE @EndIndex int;
-
-	SET @EndIndex = @MaximumRows + @StartRowIndex;
-	SET @StartRowIndex = @StartRowIndex + 1;
-
-	IF @IsReseller = 1
-	BEGIN
-		WITH [PAYMENTS] AS (
-			SELECT
-				ROW_NUMBER() OVER(ORDER BY [CP].[Created] DESC) AS [RowIndex], [CP].* FROM [dbo].[ecCustomersPayments] AS [CP]
-			INNER JOIN
-				[dbo].[ecContracts] AS [C] ON [C].[ContractID] = [CP].[ContractID]
-			WHERE
-				[C].[ResellerID] = @UserID
-		)
-		
-		SELECT
-			[P].*, [INV].[InvoiceNumber], [SP].[DisplayName] AS [ProviderName] FROM [PAYMENTS] AS [P]
-		LEFT OUTER JOIN
-			[dbo].[ecSupportedPlugins] AS [SP] ON [SP].[PluginID] = [P].[PluginID]
-		LEFT OUTER JOIN
-			[dbo].[ecInvoice] AS [INV] ON [INV].[InvoiceID] = [P].[InvoiceID]
-		WHERE
-			[RowIndex] BETWEEN @StartRowIndex AND @EndIndex 
-		ORDER BY
-			[Created] DESC;
-		
-		RETURN;
-	END;
-	
-	WITH [PAYMENTS] AS (
-		SELECT
-			ROW_NUMBER() OVER(ORDER BY [CP].[Created] DESC) AS [RowIndex], [CP].* FROM [dbo].[ecCustomersPayments] AS [CP]
-		INNER JOIN
-			[dbo].[ecContracts] AS [C] ON [C].[ContractID] = [CP].[ContractID]
-		WHERE
-			[C].[CustomerID] = @UserID
-	)
-	
-	SELECT
-		[P].*, [INV].[InvoiceNumber], [SP].[DisplayName] AS [ProviderName] FROM [PAYMENTS] AS [P]
-	LEFT OUTER JOIN
-		[dbo].[ecSupportedPlugins] AS [SP] ON [SP].[PluginID] = [P].[PluginID]
-	LEFT OUTER JOIN
-		[dbo].[ecInvoice] AS [INV] ON [INV].[InvoiceID] = [P].[InvoiceID] 
-	WHERE
-		[RowIndex] BETWEEN @StartRowIndex AND @EndIndex 
-	ORDER BY
-		[Created] DESC;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetCustomersPaymentsCount]
-	@ActorID int,
-	@UserID int,
-	@IsReseller bit,
-	@Result int OUTPUT
-AS
-BEGIN
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this information', 16, 1);
-		RETURN;
-	END
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-	IF @IsReseller = 1
-	BEGIN
-		SELECT
-			@Result = COUNT([CP].[PaymentID]) FROM [dbo].[ecCustomersPayments] AS [CP]
-		INNER JOIN
-			[dbo].[ecContracts] AS [C] ON [C].[ContractID] = [CP].[ContractID]
-		WHERE
-			[C].[ResellerID] = @UserID;
-		RETURN;
-	END
-
-	SELECT
-		@Result = COUNT([CP].[PaymentID]) FROM [dbo].[ecCustomersPayments] AS [CP]
-	INNER JOIN
-		[dbo].[ecContracts] AS [C] ON [C].[ContractID] = [CP].[ContractID]
-	WHERE
-		[C].[CustomerID] = @UserID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetCustomersInvoicesPaged]
-	@ActorID int,
-	@UserID int,
-	@IsReseller bit,
-	@MaximumRows int,
-	@StartRowIndex int
-AS
-BEGIN
-	-- check actor rights
-	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this information', 16, 1);
-		RETURN;
-	END
-
-	SET NOCOUNT ON;
-
-    DECLARE @EndIndex int;
-
-	SET @EndIndex = @MaximumRows + @StartRowIndex;
-	SET @StartRowIndex = @StartRowIndex + 1;
-
-	IF @IsReseller = 1
-	BEGIN
-		-- get reseller invoices
-		WITH [INVOICES] AS (
-			SELECT
-				ROW_NUMBER() OVER(ORDER BY [Created] DESC) AS [RowIndex], * FROM [dbo].[ContractsInvoicesDetailed]
-			WHERE
-				[ResellerID] = @UserID
-		)
-
-		SELECT * FROM [INVOICES]
-			WHERE [RowIndex] BETWEEN @StartRowIndex AND @EndIndex
-				ORDER BY [Created] DESC;
-
-		RETURN;
-	END;
-	
-	-- get customer invoices
-	WITH [INVOICES] AS (
-		SELECT
-			ROW_NUMBER() OVER(ORDER BY [Created] DESC) AS [RowIndex], * FROM [dbo].[ContractsInvoicesDetailed]
-		WHERE
-			[CustomerID] = @UserID
-	)
-
-	SELECT * FROM [INVOICES] 
-		WHERE [RowIndex] BETWEEN @StartRowIndex AND @EndIndex
-			ORDER BY [Created] DESC;
-
-	RETURN;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetCustomersInvoicesCount]
-	@ActorID int,
-	@UserID int,
-	@IsReseller bit,
-	@Result int OUTPUT
-AS
-BEGIN
-
-	-- check user parent
-	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this information', 16, 1);
-		RETURN;
-	END
-
-	SET NOCOUNT ON;
-
-	IF @IsReseller = 1
-	BEGIN
-		SELECT
-			@Result = COUNT([InvoiceID]) FROM [dbo].[ContractsInvoicesDetailed]
-		WHERE
-			[ResellerID] = @UserID;
-		RETURN;
-	END
-	
-	SELECT
-		@Result = COUNT([InvoiceID]) FROM [dbo].[ContractsInvoicesDetailed]
-	WHERE
-		[CustomerID] = @UserID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetCustomerService]
-	@ActorID int,
-	@ServiceID int
-AS
-BEGIN
-	DECLARE @IssuerID int, @ContractID nvarchar(50);
-	SELECT
-		@ContractID = [ContractID] FROM [dbo].[ecService]
-	WHERE
-		[ServiceID] = @ServiceID;
-	SELECT
-		@IssuerID = ISNULL([CustomerID],[ResellerID]) FROM [dbo].[ecContracts]
-	WHERE
-		[ContractID] = @ContractID;
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this information', 16, 1);
-		RETURN;
-	END
-
-    SELECT * FROM [dbo].[ecService] WHERE [ServiceID] = @ServiceID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetCustomerInvoiceItems] 
-	@ActorID int,
-	@InvoiceID int
-AS
-BEGIN
-	DECLARE @IssuerID int, @ContractID nvarchar(50);
-	SELECT
-		@ContractID = [ContractID] FROM [dbo].[ecInvoice]
-	WHERE
-		[InvoiceID] = @InvoiceID;
-	SELECT
-		@IssuerID = ISNULL([CustomerID],[ResellerID]) FROM [dbo].[ecContracts]
-	WHERE
-		[ContractID] = @ContractID;
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID,@IssuerID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access the contract', 16, 1);
-		RETURN;
-	END
-	--
-	SET NOCOUNT ON;
-	--
-    SELECT
-		* FROM [dbo].[ecInvoiceItems] AS [II]
-	INNER JOIN
-		[ecInvoice] AS [I] ON [I].[InvoiceID] = [II].[InvoiceID]
-	WHERE
-		[I].[InvoiceID] = @InvoiceID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetCustomerInvoice]
-	@ActorID int,
-	@InvoiceID int
-AS
-BEGIN
-	DECLARE @IssuerID int, @ContractID nvarchar(50);
-	SELECT
-		@ContractID = [ContractID] FROM [dbo].[ecInvoice]
-	WHERE
-		[InvoiceID] = @InvoiceID;
-	SELECT
-		@IssuerID = ISNULL([CustomerID],[ResellerID]) FROM [dbo].[ecContracts]
-	WHERE
-		[ContractID] = @ContractID;
-	-- check actor rights
-	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access the contract', 16, 1);
-		RETURN;
-	END
-	--
-	SET NOCOUNT ON;
-	--
-	SELECT
-		* FROM [dbo].[ContractsInvoicesDetailed]
-	WHERE
-		[InvoiceID] = @InvoiceID AND [ContractID] = @ContractID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE VIEW [dbo].[ContractsServicesDetailed]
-AS
-SELECT dbo.ecService.ServiceID, ISNULL(dbo.Users.Username, dbo.ecContracts.AccountName) AS Username, dbo.ecContracts.CustomerID, dbo.ecService.ContractID, 
-dbo.ecContracts.ResellerID, dbo.ecService.ServiceName, dbo.ecService.TypeID, dbo.ecService.Status, dbo.ecService.Created, dbo.ecService.Modified, 
-dbo.ecService.ParentID
-FROM dbo.ecContracts INNER JOIN 
-dbo.ecService ON dbo.ecContracts.ContractID = dbo.ecService.ContractID LEFT OUTER JOIN 
-dbo.Users ON dbo.ecContracts.CustomerID = dbo.Users.UserID
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecBulkServiceDelete]
-	@ActorID int,
-	@ContractID nvarchar(50),
-	@SvcsXml xml,
-	@Result int OUTPUT
-AS
-BEGIN
-	DECLARE @IssuerID int;
-	SELECT
-		@IssuerID = ISNULL([CustomerID],[ResellerID]) FROM [dbo].[ecContracts]
-	WHERE
-		[ContractID] = @ContractID;
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this information', 16, 1);
-		RETURN;
-	END
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    DELETE
-		FROM [dbo].[ecService]
-	WHERE
-		[ServiceID] IN(SELECT [SXML].[Data].value('@id','int') FROM @SvcsXml.nodes('/Svcs/Svc') [SXML]([Data]));
-	--
-	SET @Result = 0;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecPaymentProfileExists]
-	@ActorID int,
-	@ContractID nvarchar(50),
-	@Result bit OUTPUT
-AS
-BEGIN
-	DECLARE @IssuerID int;
-	SELECT
-		@IssuerID = ISNULL([CustomerID],[ResellerID]) FROM [dbo].[ecContracts]
-	WHERE
-		[ContractID] = @ContractID;
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this account', 16, 1);
-		RETURN;
-	END
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    IF EXISTS (SELECT [ContractID] FROM [dbo].[ecPaymentProfiles] WHERE [ContractID] = @ContractID)
-	BEGIN
-		SET @Result = 1;
-		RETURN;
-	END
-	--
-	SET @Result = 0;
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecIsSupportedPluginActive]
-	@ActorID int,
-	@ResellerID int,
-	@PluginID int,
-	@Active bit OUTPUT
-AS
-BEGIN
-	-- check user parent
-	IF [dbo].[CheckUserParent](@ActorID, @ResellerID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this account', 16, 1);
-		RETURN;
-	END
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    IF EXISTS(SELECT * FROM [dbo].[ecPluginsProperties] 
-		WHERE [ResellerID] = @ResellerID AND [PluginID] = @PluginID)
-	BEGIN
-		SET @Active = 1;
-		RETURN;
-	END
-
-	SET @Active = 0;
-	RETURN;
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecUpdateCategory] 
-	@ActorID int,
-	@UserID int,
-	@CategoryID int,
-	@CategoryName nvarchar(255),
-	@CategorySku nvarchar(50),
-	@ParentID int,
-	@ShortDescription ntext,
-	@FullDescription ntext,
-	@Result int OUTPUT
-AS
-BEGIN
-	-- check actor rights
-	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
-	BEGIN
-		SET @Result = -1;
-		RAISERROR('You are not allowed to access this account', 16, 1);
-		RETURN;
-	END
-
-	SET NOCOUNT ON;
-
-	SET @Result = 0;
-
-	DECLARE @Level int;
-
-	IF @ParentID <= 0
-		SET @ParentID = NULL;
-
-	-- check whether a category exists
-	IF NOT EXISTS(
-		SELECT
-			[CategoryName]
-		FROM
-			[dbo].[ecCategory]
-		WHERE
-			[CategoryID] = @CategoryID
-			AND
-			[ResellerID] = @UserID
-	)
-	BEGIN
-		SET @Result = -1;
-		RETURN;
-	END
-
-	-- check whether the update is correct
-	IF @ParentID = @CategoryID
-		BEGIN
-			SET @Result = -1;
-			RETURN;
-		END
-
-	-- check consistency: sub-categories won't include a parent category
-	IF @ParentID IN (
-		SELECT
-			[CategoryID]
-		FROM
-			[dbo].[ecCategory]
-		WHERE
-			[ParentID] = @CategoryID
-			AND
-			[ResellerID] = @UserID
-	)
-	BEGIN
-		SET @Result = -1;
-		RETURN;
-	END
-
-	-- category level updates
-	IF @ParentID = 0
-		BEGIN
-			SET @ParentID = NULL;
-			SET @Level = 0;
-		END
-	ELSE
-		BEGIN
-			-- identify parent level
-			SELECT
-				@Level = [Level]
-			FROM
-				[dbo].[ecCategory]
-			WHERE
-				[CategoryID] = @ParentID
-				AND
-				[ResellerID] = @UserID;
-
-			-- increase if necessary
-			IF @Level >= 0
-				SET @Level = @Level + 1;
-			ELSE
-				SET @Level = 0;
-		END
-
-	-- update a category
-    UPDATE 
-		[dbo].[ecCategory]
-	SET 
-		[CategoryName] = @CategoryName,
-		[CategorySku] = @CategorySku,
-		[ParentID] = @ParentID,
-		[Level] = @Level,
-		[ShortDescription] = @ShortDescription,
-		[FullDescription] = @FullDescription,
-		[Modified] = GETUTCDATE(),
-		[ModifierID] = @ActorID
-	WHERE 
-		[CategoryID] = @CategoryID 
-		AND 
-		[ResellerID] = @UserID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecUpdateBillingCycle]
-	@ActorID int,
-	@UserID int,
-	@CycleID int,
-	@CycleName nvarchar(255),
-	@BillingPeriod nvarchar(50),
-	@PeriodLength int,
-	@Result int OUTPUT
-AS
-BEGIN
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
-	BEGIN
-		SET @Result = -1;
-		RAISERROR('You are not allowed to access this account', 16, 1);
-		RETURN;
-	END
-	-- update cycle details
-    UPDATE
-		[dbo].[ecBillingCycles]
-	SET
-		[CycleName] = @CycleName,
-		[BillingPeriod] = @BillingPeriod,
-		[PeriodLength] = @PeriodLength
-	WHERE
-		[ResellerID] = @UserID
-	AND
-		[CycleID] = @CycleID;
-
-	SET @Result = 0;
-	RETURN;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecTopLevelDomainsCycles](
-	[ProductID] [int] NOT NULL,
-	[CycleID] [int] NOT NULL,
-	[SetupFee] [money] NOT NULL,
-	[RecurringFee] [money] NOT NULL,
-	[TransferFee] [money] NULL,
-	[SortOrder] [int] NOT NULL
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecTopLevelDomains](
-	[TopLevelDomain] [nvarchar](10) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ProductID] [int] NOT NULL,
-	[PluginID] [int] NOT NULL,
-	[ResellerID] [int] NOT NULL,
-	[WhoisEnabled] [bit] NULL,
- CONSTRAINT [PK_ecTopLevelDomains] PRIMARY KEY CLUSTERED 
-(
-	[TopLevelDomain] ASC,
-	[ResellerID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecSetPaymentMethod]
-	@ActorID int,
-	@UserID int,
-	@MethodName nvarchar(50),
-	@DisplayName nvarchar(50),
-	@PluginID int,
-	@Result int OUTPUT
-AS
-BEGIN
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
-	BEGIN
-		SET @Result = -1;
-		RAISERROR('You are not allowed to access this account', 16, 1);
-		RETURN;
-	END
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-	-- cleanup
-    DELETE FROM [dbo].[ecPaymentMethods]
-	WHERE [ResellerID] = @UserID AND [MethodName] = @MethodName;
-	-- add
-	INSERT INTO [dbo].[ecPaymentMethods]
-	(
-		[ResellerID],
-		[MethodName],
-		[PluginID],
-		[DisplayName],
-		[SupportedItems]
-	)
-	SELECT
-		@UserID,
-		@MethodName,
-		@PluginID,
-		@DisplayName,
-		[SupportedItems]
-	FROM
-		[dbo].[ecSupportedPlugins]
-	WHERE
-		[PluginID] = @PluginID;
-	--
-	SET @Result = 0;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecSetInvoiceItemProcessed]
-	@InvoiceID int,
-	@ItemID int,
-	@Result int OUTPUT
-AS
-BEGIN
-
-	SET NOCOUNT ON;
-
-	SET @Result = 0;
-
-    UPDATE
-		[dbo].[ecInvoiceItems]
-	SET
-		[Processed] = 1
-	WHERE
-		[InvoiceID] = @InvoiceID
-	AND
-		[ItemID] = @ItemID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecHostingPackageSvcsCycles](
-	[SvcCycleID] [int] IDENTITY(1,1) NOT NULL,
-	[ServiceID] [int] NOT NULL,
-	[CycleName] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
-	[BillingPeriod] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[PeriodLength] [int] NOT NULL,
-	[SetupFee] [money] NULL,
-	[RecurringFee] [money] NOT NULL,
-	[Currency] [nvarchar](3) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_ecPackagesSvcsCycles] PRIMARY KEY CLUSTERED 
-(
-	[SvcCycleID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecHostingPackageSvcs](
-	[ServiceID] [int] NOT NULL,
-	[ProductID] [int] NOT NULL,
-	[PlanID] [int] NOT NULL,
-	[PackageID] [int] NULL,
-	[UserRole] [int] NOT NULL,
-	[InitialStatus] [int] NOT NULL,
-	[SvcCycleID] [int] NOT NULL,
- CONSTRAINT [PK_ecPackagesSvcs] PRIMARY KEY CLUSTERED 
-(
-	[ServiceID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecHostingAddonSvcsCycles](
-	[SvcCycleID] [int] IDENTITY(1,1) NOT NULL,
-	[ServiceID] [int] NOT NULL,
-	[CycleName] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[BillingPeriod] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[PeriodLength] [int] NULL,
-	[SetupFee] [money] NULL,
-	[CyclePrice] [money] NOT NULL,
-	[Currency] [nvarchar](3) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_ecAddonPackagesSvcsCycles] PRIMARY KEY CLUSTERED 
-(
-	[SvcCycleID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecHostingAddonSvcs](
-	[ServiceID] [int] NOT NULL,
-	[ProductID] [int] NOT NULL,
-	[PlanID] [int] NULL,
-	[PackageAddonID] [int] NULL,
-	[Quantity] [int] NOT NULL,
-	[Recurring] [bit] NOT NULL,
-	[DummyAddon] [bit] NOT NULL,
-	[SvcCycleID] [int] NOT NULL,
- CONSTRAINT [PK_ecAddonPackagesSvcs] PRIMARY KEY CLUSTERED 
-(
-	[ServiceID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecHostingAddonsCycles](
-	[ProductID] [int] NOT NULL,
-	[CycleID] [int] NOT NULL,
-	[SetupFee] [money] NOT NULL,
-	[RecurringFee] [money] NOT NULL,
-	[SortOrder] [int] NOT NULL,
- CONSTRAINT [PK_ecHostingAddonsCycles] PRIMARY KEY CLUSTERED 
-(
-	[ProductID] ASC,
-	[CycleID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecDeleteBillingCycle]
-	@ActorID int,
-	@UserID int,
-	@CycleID int,
-	@Result int OUTPUT
-AS
-BEGIN
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
-	BEGIN
-		SET @Result = -1;
-		RAISERROR('You are not allowed to access this account', 16, 1);
-		RETURN;
-	END
-
-    DELETE FROM [dbo].[ecBillingCycles] WHERE [ResellerID] = @UserID AND [CycleID] = @CycleID;
-
-	SET @Result = 0;
-	RETURN;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecUpdateCustomerPayment]
-	@ActorID int,
-	@PaymentID int,
-	@InvoiceID int,
-	@TransactionID nvarchar(255),
-	@Total money,
-	@Currency nvarchar(3),
-	@MethodName nvarchar(50),
-	@PluginID int,
-	@StatusID int,
-	@Result int OUTPUT
-AS
-BEGIN
-	DECLARE @IssuerID int, @ContractID nvarchar(50);
-	SELECT
-		@ContractID = [ContractID] FROM [dbo].[ecCustomersPayments]
-	WHERE
-		[PaymentID] = @PaymentID;
-	SELECT
-		@IssuerID = ISNULL([CustomerID],[ResellerID]) FROM [dbo].[ecContracts]
-	WHERE
-		[ContractID] = @ContractID;
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this account', 16, 1);
-		RETURN;
-	END
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-	SET @Result = 0;
-
-    UPDATE [dbo].[ecCustomersPayments]
-	SET
-		[InvoiceID] = @InvoiceID,
-		[TransactionID] = @TransactionID,
-		[Total] = @Total,
-		[Currency] = @Currency,
-		[MethodName] = @MethodName,
-		[PluginID] = @PluginID,
-		[StatusID] = @StatusID
-	WHERE
-		[PaymentID] = @PaymentID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetGroupProviders
-(
-	@GroupID int
-)
-AS
-SELECT
-	PROV.ProviderID,
-	PROV.GroupID,
-	PROV.ProviderName,
-	PROV.DisplayName,
-	PROV.ProviderType,
-	RG.GroupName + ' - ' + PROV.DisplayName AS ProviderName
-FROM Providers AS PROV
-INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
-WHERE RG.GroupID = @GroupId
-ORDER BY RG.GroupOrder, PROV.DisplayName
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE DeleteAuditLogRecords
-(
-	@ActorID int,
-	@UserID int,
-	@ItemID int,
-	@ItemName nvarchar(100),
-	@StartDate datetime,
-	@EndDate datetime,
-	@SeverityID int,
-	@SourceName varchar(100),
-	@TaskName varchar(100)
-)
-AS
-
--- check rights
-IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
-RAISERROR('You are not allowed to access this account', 16, 1)
-
-DECLARE @IsAdmin bit
-SET @IsAdmin = 0
-IF EXISTS(SELECT UserID FROM Users WHERE UserID = @ActorID AND RoleID = 1)
-SET @IsAdmin = 1
-
-DELETE FROM AuditLog
-WHERE (dbo.CheckUserParent(@UserID, UserID) = 1 OR (UserID IS NULL AND @IsAdmin = 1))
-AND StartDate BETWEEN @StartDate AND @EndDate
-AND ((@SourceName = '') OR (@SourceName <> '' AND SourceName = @SourceName))
-AND ((@TaskName = '') OR (@TaskName <> '' AND TaskName = @TaskName))
-AND ((@ItemID = 0) OR (@ItemID > 0 AND ItemID = @ItemID))
-AND ((@ItemName = '') OR (@ItemName <> '' AND ItemName LIKE @ItemName))
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecAddTaxation]
-	@ActorID int,
-	@UserID int,
-	@Country nvarchar(3),
-	@State nvarchar(50),
-	@Description nvarchar(50),
-	@TypeID int,
-	@Amount decimal(5,2),
-	@Active bit,
-	@Result int OUTPUT
-AS
-BEGIN
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this account', 16, 1);
-		RETURN;
-	END
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-	-- check before insert
-	IF EXISTS (SELECT [TaxationID] FROM [dbo].[ecTaxations] 
-		WHERE [ResellerID] = @UserID AND [Country] = @Country AND [State] = @State)
-	BEGIN
-		SET @Result = -202;
-		RETURN;
-	END
-
-	-- insert
-    INSERT INTO [dbo].[ecTaxations]
-	(
-		[ResellerID],
-		[Country],
-		[State],
-		[Description],
-		[TypeID],
-		[Amount],
-		[Active]
-	)
-	VALUES
-	(
-		@UserID,
-		@Country,
-		@State,
-		@Description,
-		@TypeID,
-		@Amount,
-		@Active
-	);
-	--
-	SET @Result = SCOPE_IDENTITY();
-	
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecAddSystemTrigger]
-	@ActorID int,
-	@OwnerID int,
-	@TriggerHandler nvarchar(512),
-	@ReferenceID nvarchar(50),
-	@Namespace nvarchar(255),
-	@Status nvarchar(50)
-AS
-BEGIN
-	IF [dbo].[CheckUserParent](@ActorID, @OwnerID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to perform this action', 16, 1);
-		RETURN;
-	END
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-	IF NOT EXISTS(SELECT * FROM [dbo].[ecSystemTriggers] WHERE [OwnerID] = @OwnerID AND 
-		[TriggerHandler] = @TriggerHandler AND [ReferenceID] = @ReferenceID AND
-		[Namespace] = @Namespace AND [Status] = @Status)
-	BEGIN
-		INSERT INTO [dbo].[ecSystemTriggers]
-			([OwnerID], [TriggerHandler], [ReferenceID], [Namespace], [Status])
-		VALUES
-			(@OwnerID, @TriggerHandler, @ReferenceID, @Namespace, @Status);
-	END
-
-END
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ecAddonProducts](
-	[AddonID] [int] NOT NULL,
-	[ProductID] [int] NOT NULL,
-	[ResellerID] [int] NOT NULL,
- CONSTRAINT [PK_ecAddonProducts] PRIMARY KEY CLUSTERED 
-(
-	[AddonID] ASC,
-	[ProductID] ASC,
-	[ResellerID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecAddInvoice] 
-	@ContractID nvarchar(50),
-	@Created datetime,
-	@DueDate datetime,
-	@TaxationID int,
-	@TotalAmount money,
-	@SubTotalAmount money,
-	@TaxAmount money,
-	@Xml ntext,
-	@Currency nvarchar(3),
-	@Result int OUTPUT
-AS
-BEGIN
-/*
-	XML Format:
-	<items>
-		<item serviceid="" itemname="" typename="" quantity="" total="" subtotal="" unitprice="" />
-	</items>
-*/
-
-BEGIN TRAN ADD_INVOICE
-		DECLARE @XmlDocID int;
-		SET @XmlDocID = NULL;
-		--
-		IF @TaxationID < 1
-			SET @TaxationID = NULL;
-		-- emit invoice
-		INSERT INTO [dbo].[ecInvoice]
-			([ContractID], [Created], [DueDate], [TaxationID], [Total], [SubTotal], [TaxAmount], [Currency])
-		VALUES
-			(@ContractID, @Created, @DueDate, @TaxationID, @TotalAmount, @SubTotalAmount, @TaxAmount, @Currency);
-		-- obtain result
-		SET @Result = SCOPE_IDENTITY();
-
-		--Create an internal representation of the XML document.
-		EXEC sp_xml_preparedocument @XmlDocID OUTPUT, @Xml;;
-		-- 
-		INSERT INTO [dbo].[ecInvoiceItems]
-		(
-			[InvoiceID],
-			[ServiceID],
-			[ItemName],
-			[TypeName],
-			[Quantity],
-			[Total],
-			[SubTotal],
-			[UnitPrice]
-		)
-		SELECT
-			@Result,
-			CASE [XML].[ServiceID] 
-				WHEN 0 THEN NULL
-				ELSE [XML].[ServiceID]
-			END,
-			[XML].[ItemName],
-			[XML].[TypeName],
-			[XML].[Quantity],
-			[XML].[Total],
-			[XML].[SubTotal],
-			[XML].[UnitPrice]
-		FROM OPENXML(@XmlDocID, '/items/item',1) WITH 
-		(
-			[ServiceID] int '@serviceid',
-			[ItemName] nvarchar(255) '@itemname',
-			[TypeName] nvarchar(255) '@typename',
-			[Quantity] int '@quantity',
-			[Total] money '@total',
-			[SubTotal] money '@subtotal',
-			[UnitPrice] money '@unitprice'
-		) AS [XML];
-		-- check errors
-		IF @@ERROR <> 0
-			GOTO ERROR_HANDLE;
-		-- remove document
-		EXEC sp_xml_removedocument @XmlDocID;
-
-	-- commit
-	COMMIT TRAN ADD_INVOICE;
-	-- exit
-	RETURN;
--- error handle
-ERROR_HANDLE:
-BEGIN
-	IF NOT @XmlDocID IS NULL
-		EXEC sp_xml_removedocument @XmlDocID;
-
-	SET @Result = -1;
-	ROLLBACK TRAN ADD_INVOICE;
-	RETURN;
-END
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE DeleteComment
-(
-	@ActorID int,
-	@CommentID int
-)
-AS
-
--- check rights
-DECLARE @UserID int
-SELECT @UserID = UserID FROM Comments
-WHERE CommentID = @CommentID
-
--- check rights
-IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
-RAISERROR('You are not allowed to perform this operation', 16, 1)
-
-
--- delete comment
-DELETE FROM Comments
-WHERE CommentID = @CommentID
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[AddUser]
-(
-	@ActorID int,
-	@UserID int OUTPUT,
-	@OwnerID int,
-	@RoleID int,
-	@StatusID int,
-	@IsDemo bit,
-	@IsPeer bit,
-	@Comments ntext,
-	@Username nvarchar(50),
-	@Password nvarchar(200),
-	@FirstName nvarchar(50),
-	@LastName nvarchar(50),
-	@Email nvarchar(255),
-	@SecondaryEmail nvarchar(255),
-	@Address nvarchar(200),
-	@City nvarchar(50),
-	@State nvarchar(50),
-	@Country nvarchar(50),
-	@Zip varchar(20),
-	@PrimaryPhone varchar(30),
-	@SecondaryPhone varchar(30),
-	@Fax varchar(30),
-	@InstantMessenger nvarchar(200),
-	@HtmlMail bit,
-	@CompanyName nvarchar(100),
-	@EcommerceEnabled bit
-)
-AS
-
--- check if the user already exists
-IF EXISTS(SELECT UserID FROM Users WHERE Username = @Username)
-BEGIN
-	SET @UserID = -1
-	RETURN
-END
-
--- check actor rights
-IF dbo.CanCreateUser(@ActorID, @OwnerID) = 0
-BEGIN
-	SET @UserID = -2
-	RETURN
-END
-
-INSERT INTO Users
-(
-	OwnerID,
-	RoleID,
-	StatusID,
-	Created,
-	Changed,
-	IsDemo,
-	IsPeer,
-	Comments,
-	Username,
-	Password,
-	FirstName,
-	LastName,
-	Email,
-	SecondaryEmail,
-	Address,
-	City,
-	State,
-	Country,
-	Zip,
-	PrimaryPhone,
-	SecondaryPhone,
-	Fax,
-	InstantMessenger,
-	HtmlMail,
-	CompanyName,
-	EcommerceEnabled
-)
-VALUES
-(
-	@OwnerID,
-	@RoleID,
-	@StatusID,
-	GetDate(),
-	GetDate(),
-	@IsDemo,
-	@IsPeer,
-	@Comments,
-	@Username,
-	@Password,
-	@FirstName,
-	@LastName,
-	@Email,
-	@SecondaryEmail,
-	@Address,
-	@City,
-	@State,
-	@Country,
-	@Zip,
-	@PrimaryPhone,
-	@SecondaryPhone,
-	@Fax,
-	@InstantMessenger,
-	@HtmlMail,
-	@CompanyName,
-	@EcommerceEnabled
-)
-
-SET @UserID = SCOPE_IDENTITY()
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE UpdateServer
-(
-	@ServerID int,
-	@ServerName nvarchar(100),
-	@ServerUrl nvarchar(100),
-	@Password nvarchar(100),
-	@Comments ntext,
-	@InstantDomainAlias nvarchar(200),
-	@PrimaryGroupID int,
-	@ADEnabled bit,
-	@ADRootDomain nvarchar(200),
-	@ADUsername nvarchar(100),
-	@ADPassword nvarchar(100),
-	@ADAuthenticationType varchar(50)
-)
-AS
-
-IF @PrimaryGroupID = 0
-SET @PrimaryGroupID = NULL
-
-UPDATE Servers SET
-	ServerName = @ServerName,
-	ServerUrl = @ServerUrl,
-	Password = @Password,
-	Comments = @Comments,
-	InstantDomainAlias = @InstantDomainAlias,
-	PrimaryGroupID = @PrimaryGroupID,
-	ADEnabled = @ADEnabled,
-	ADRootDomain = @ADRootDomain,
-	ADUsername = @ADUsername,
-	ADPassword = @ADPassword,
-	ADAuthenticationType = @ADAuthenticationType
-WHERE ServerID = @ServerID
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE UpdateUserSettings
-(
-	@ActorID int,
-	@UserID int,
-	@SettingsName nvarchar(50),
-	@Xml ntext
-)
-AS
-
--- check rights
-IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
-RAISERROR('You are not allowed to access this account', 16, 1)
-
--- delete old properties
-BEGIN TRAN
-DECLARE @idoc int
---Create an internal representation of the XML document.
-EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
-
--- Execute a SELECT statement that uses the OPENXML rowset provider.
-DELETE FROM UserSettings
-WHERE UserID = @UserID AND SettingsName = @SettingsName
-
-INSERT INTO UserSettings
-(
-	UserID,
-	SettingsName,
-	PropertyName,
-	PropertyValue
-)
-SELECT
-	@UserID,
-	@SettingsName,
-	PropertyName,
-	PropertyValue
-FROM OPENXML(@idoc, '/properties/property',1) WITH 
-(
-	PropertyName nvarchar(50) '@name',
-	PropertyValue ntext '@value'
-) as PV
-
--- remove document
-exec sp_xml_removedocument @idoc
-
-COMMIT TRAN
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[UpdateUser]
-(
-	@ActorID int,
-	@UserID int,
-	@RoleID int,
-	@StatusID int,
-	@IsDemo bit,
-	@IsPeer bit,
-	@Comments ntext,
-	@FirstName nvarchar(50),
-	@LastName nvarchar(50),
-	@Email nvarchar(255),
-	@SecondaryEmail nvarchar(255),
-	@Address nvarchar(200),
-	@City nvarchar(50),
-	@State nvarchar(50),
-	@Country nvarchar(50),
-	@Zip varchar(20),
-	@PrimaryPhone varchar(30),
-	@SecondaryPhone varchar(30),
-	@Fax varchar(30),
-	@InstantMessenger nvarchar(200),
-	@HtmlMail bit,
-	@CompanyName nvarchar(100),
-	@EcommerceEnabled BIT,
-	@AdditionalParams NVARCHAR(max)
-)
-AS
-
-	-- check actor rights
-	IF dbo.CanUpdateUserDetails(@ActorID, @UserID) = 0
-	BEGIN
-		RETURN
-	END
-
-	UPDATE Users SET 
-		RoleID = @RoleID,
-		StatusID = @StatusID,
-		Changed = GetDate(),
-		IsDemo = @IsDemo,
-		IsPeer = @IsPeer,
-		Comments = @Comments,
-		FirstName = @FirstName,
-		LastName = @LastName,
-		Email = @Email,
-		SecondaryEmail = @SecondaryEmail,
-		Address = @Address,
-		City = @City,
-		State = @State,
-		Country = @Country,
-		Zip = @Zip,
-		PrimaryPhone = @PrimaryPhone,
-		SecondaryPhone = @SecondaryPhone,
-		Fax = @Fax,
-		InstantMessenger = @InstantMessenger,
-		HtmlMail = @HtmlMail,
-		CompanyName = @CompanyName,
-		EcommerceEnabled = @EcommerceEnabled,
-		[AdditionalParams] = @AdditionalParams
-	WHERE UserID = @UserID
-
-	RETURN
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetUserSettings
-(
-	@ActorID int,
-	@UserID int,
-	@SettingsName nvarchar(50)
-)
-AS
-
--- check rights
-IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
-RAISERROR('You are not allowed to access this account', 16, 1)
-
--- find which parent package has overriden NS
-DECLARE @ParentUserID int, @TmpUserID int
-SET @TmpUserID = @UserID
-
-WHILE 10 = 10
-BEGIN
-
-	IF EXISTS
-	(
-		SELECT PropertyName FROM UserSettings
-		WHERE SettingsName = @SettingsName AND UserID = @TmpUserID
-	)
-	BEGIN
-		SELECT
-			UserID,
-			PropertyName,
-			PropertyValue
-		FROM
-			UserSettings
-		WHERE
-			UserID = @TmpUserID AND
-			SettingsName = @SettingsName
-			
-		BREAK
-	END
-
-	SET @ParentUserID = NULL --reset var
-	
-	-- get owner
-	SELECT
-		@ParentUserID = OwnerID
-	FROM Users
-	WHERE UserID = @TmpUserID
-	
-	IF @ParentUserID IS NULL -- the last parent
-	BREAK
-	
-	SET @TmpUserID = @ParentUserID
-END
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetUsersSummary
-(
-	@ActorID int,
-	@UserID int
-)
-AS
--- check rights
-IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
-RAISERROR('You are not allowed to access this account', 16, 1)
-
--- ALL users
-SELECT COUNT(UserID) AS UsersNumber FROM Users
-WHERE OwnerID = @UserID AND IsPeer = 0
-
--- BY STATUS users
-SELECT StatusID, COUNT(UserID) AS UsersNumber FROM Users
-WHERE OwnerID = @UserID AND IsPeer = 0
-GROUP BY StatusID
-ORDER BY StatusID
-
--- BY ROLE users
-SELECT RoleID, COUNT(UserID) AS UsersNumber FROM Users
-WHERE OwnerID = @UserID AND IsPeer = 0
-GROUP BY RoleID
-ORDER BY RoleID DESC
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetUserParents]
-(
-	@ActorID int,
-	@UserID int
-)
-AS
-
--- check rights
-IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
-RAISERROR('You are not allowed to access this account', 16, 1)
-
-SELECT
-	U.UserID,
-	U.RoleID,
-	U.StatusID,
-	U.OwnerID,
-	U.Created,
-	U.Changed,
-	U.IsDemo,
-	U.Comments,
-	U.IsPeer,
-	U.Username,
-	U.FirstName,
-	U.LastName,
-	U.Email,
-	U.CompanyName,
-	U.EcommerceEnabled
-FROM UserParents(@ActorID, @UserID) AS UP
-INNER JOIN Users AS U ON UP.UserID = U.UserID
-ORDER BY UP.UserOrder DESC
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[GetUserByUsername]
-(
-	@ActorID int,
-	@Username nvarchar(50)
-)
-AS
-
-	SELECT
-		U.UserID,
-		U.RoleID,
-		U.StatusID,
-		U.OwnerID,
-		U.Created,
-		U.Changed,
-		U.IsDemo,
-		U.Comments,
-		U.IsPeer,
-		U.Username,
-		CASE WHEN dbo.CanGetUserPassword(@ActorID, UserID) = 1 THEN U.Password
-		ELSE '' END AS Password,
-		U.FirstName,
-		U.LastName,
-		U.Email,
-		U.SecondaryEmail,
-		U.Address,
-		U.City,
-		U.State,
-		U.Country,
-		U.Zip,
-		U.PrimaryPhone,
-		U.SecondaryPhone,
-		U.Fax,
-		U.InstantMessenger,
-		U.HtmlMail,
-		U.CompanyName,
-		U.EcommerceEnabled,
-		U.[AdditionalParams]
-	FROM Users AS U
-	WHERE U.Username = @Username
-	AND dbo.CanGetUserDetails(@ActorID, UserID) = 1 -- actor user rights
-
-	RETURN
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[GetUserById]
-(
-	@ActorID int,
-	@UserID int
-)
-AS
-	-- user can retrieve his own account, his users accounts
-	-- and his reseller account (without pasword)
-	SELECT
-		U.UserID,
-		U.RoleID,
-		U.StatusID,
-		U.OwnerID,
-		U.Created,
-		U.Changed,
-		U.IsDemo,
-		U.Comments,
-		U.IsPeer,
-		U.Username,
-		CASE WHEN dbo.CanGetUserPassword(@ActorID, @UserID) = 1 THEN U.Password
-		ELSE '' END AS Password,
-		U.FirstName,
-		U.LastName,
-		U.Email,
-		U.SecondaryEmail,
-		U.Address,
-		U.City,
-		U.State,
-		U.Country,
-		U.Zip,
-		U.PrimaryPhone,
-		U.SecondaryPhone,
-		U.Fax,
-		U.InstantMessenger,
-		U.HtmlMail,
-		U.CompanyName,
-		U.EcommerceEnabled,
-		U.[AdditionalParams]
-	FROM Users AS U
-	WHERE U.UserID = @UserID
-	AND dbo.CanGetUserDetails(@ActorID, @UserID) = 1 -- actor user rights
-
-	RETURN
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetServerInternal
-(
-	@ServerID int
-)
-AS
-SELECT
-	ServerID,
-	ServerName,
-	ServerUrl,
-	Password,
-	Comments,
-	VirtualServer,
-	InstantDomainAlias,
-	PrimaryGroupID,
-	ADEnabled,
-	ADRootDomain,
-	ADUsername,
-	ADPassword,
-	ADAuthenticationType
-FROM Servers
-WHERE
-	ServerID = @ServerID
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetServerByName
-(
-	@ActorID int,
-	@ServerName nvarchar(100)
-)
-AS
--- check rights
-DECLARE @IsAdmin bit
-SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
-
-SELECT
-	ServerID,
-	ServerName,
-	ServerUrl,
-	Password,
-	Comments,
-	VirtualServer,
-	InstantDomainAlias,
-	PrimaryGroupID,
-	ADRootDomain,
-	ADUsername,
-	ADPassword,
-	ADAuthenticationType
-FROM Servers
-WHERE
-	ServerName = @ServerName
-	AND @IsAdmin = 1
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetServer]
-(
-	@ActorID int,
-	@ServerID int
-)
-AS
--- check rights
-DECLARE @IsAdmin bit
-SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
-
-SELECT
-	ServerID,
-	ServerName,
-	ServerUrl,
-	Password,
-	Comments,
-	VirtualServer,
-	InstantDomainAlias,
-	PrimaryGroupID,
-	ADEnabled,
-	ADRootDomain,
-	ADUsername,
-	ADPassword,
-	ADAuthenticationType
-FROM Servers
-WHERE
-	ServerID = @ServerID
-	AND @IsAdmin = 1
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetSearchableServiceItemTypes
-
-AS
-SELECT
-	ItemTypeID,
-	DisplayName
-FROM
-	ServiceItemTypes
-WHERE Searchable = 1
-ORDER BY TypeOrder
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/****** Object:  StoredProcedure [dbo].[GetScheduleTaskViewConfigurations]    Script Date: 09/10/2007 17:53:56 ******/
-
-CREATE PROCEDURE [dbo].[GetScheduleTaskViewConfigurations]
-(
-	@TaskID nvarchar(100)
-)
-AS
-
-SELECT
-	@TaskID AS TaskID,
-	STVC.ConfigurationID,
-	STVC.Environment,
-	STVC.Description
-FROM ScheduleTaskViewConfiguration AS STVC
-WHERE STVC.TaskID = @TaskID
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetServiceItemTypes]
-AS
-SELECT
-	[ItemTypeID],
-	[GroupID],
-	[DisplayName],
-	[TypeName],
-	[TypeOrder],
-	[CalculateDiskspace],
-	[CalculateBandwidth],
-	[Suspendable],
-	[Disposable],
-	[Searchable],
-	[Importable],
-	[Backupable]
-FROM
-	[ServiceItemTypes]
-ORDER BY TypeOrder
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetServiceItemType]
-(
-	@ItemTypeID int
-)
-AS
-SELECT
-	[ItemTypeID],
-	[GroupID],
-	[DisplayName],
-	[TypeName],
-	[TypeOrder],
-	[CalculateDiskspace],
-	[CalculateBandwidth],
-	[Suspendable],
-	[Disposable],
-	[Searchable],
-	[Importable],
-	[Backupable]
-FROM
-	[ServiceItemTypes]
-WHERE
-	[ItemTypeID] = @ItemTypeID
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetServerShortDetails
-(
-	@ServerID int
-)
-AS
-
-SELECT
-	ServerID,
-	ServerName,
-	Comments,
-	VirtualServer,
-	InstantDomainAlias
-FROM Servers
-WHERE
-	ServerID = @ServerID
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetProviders]
-AS
-SELECT
-	PROV.ProviderID,
-	PROV.GroupID,
-	PROV.ProviderName,
-	PROV.EditorControl,
-	PROV.DisplayName,
-	PROV.ProviderType,
-	RG.GroupName + ' - ' + PROV.DisplayName AS ProviderName,
-	PROV.DisableAutoDiscovery
-FROM Providers AS PROV
-INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
-ORDER BY RG.GroupOrder, PROV.DisplayName
-RETURN
 
 
 
@@ -30819,10 +24430,16 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[ecProductsHighlights](
+CREATE TABLE [dbo].[ecAddonProducts](
+	[AddonID] [int] NOT NULL,
 	[ProductID] [int] NOT NULL,
-	[HighlightText] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
-	[SortOrder] [int] NOT NULL
+	[ResellerID] [int] NOT NULL,
+ CONSTRAINT [PK_ecAddonProducts] PRIMARY KEY CLUSTERED 
+(
+	[AddonID] ASC,
+	[ProductID] ASC,
+	[ResellerID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
 )
 
 GO
@@ -30830,15 +24447,2582 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[ecProductCategories](
-	[ProductID] [int] NOT NULL,
-	[CategoryID] [int] NOT NULL,
-	[ResellerID] [int] NOT NULL,
- CONSTRAINT [PK_ecProductCategories] PRIMARY KEY CLUSTERED 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecAddInvoice] 
+	@ContractID nvarchar(50),
+	@Created datetime,
+	@DueDate datetime,
+	@TaxationID int,
+	@TotalAmount money,
+	@SubTotalAmount money,
+	@TaxAmount money,
+	@Xml ntext,
+	@Currency nvarchar(3),
+	@Result int OUTPUT
+AS
+BEGIN
+/*
+	XML Format:
+	<items>
+		<item serviceid="" itemname="" typename="" quantity="" total="" subtotal="" unitprice="" />
+	</items>
+*/
+
+BEGIN TRAN ADD_INVOICE
+		DECLARE @XmlDocID int;
+		SET @XmlDocID = NULL;
+		--
+		IF @TaxationID < 1
+			SET @TaxationID = NULL;
+		-- emit invoice
+		INSERT INTO [dbo].[ecInvoice]
+			([ContractID], [Created], [DueDate], [TaxationID], [Total], [SubTotal], [TaxAmount], [Currency])
+		VALUES
+			(@ContractID, @Created, @DueDate, @TaxationID, @TotalAmount, @SubTotalAmount, @TaxAmount, @Currency);
+		-- obtain result
+		SET @Result = SCOPE_IDENTITY();
+
+		--Create an internal representation of the XML document.
+		EXEC sp_xml_preparedocument @XmlDocID OUTPUT, @Xml;;
+		-- 
+		INSERT INTO [dbo].[ecInvoiceItems]
+		(
+			[InvoiceID],
+			[ServiceID],
+			[ItemName],
+			[TypeName],
+			[Quantity],
+			[Total],
+			[SubTotal],
+			[UnitPrice]
+		)
+		SELECT
+			@Result,
+			CASE [XML].[ServiceID] 
+				WHEN 0 THEN NULL
+				ELSE [XML].[ServiceID]
+			END,
+			[XML].[ItemName],
+			[XML].[TypeName],
+			[XML].[Quantity],
+			[XML].[Total],
+			[XML].[SubTotal],
+			[XML].[UnitPrice]
+		FROM OPENXML(@XmlDocID, '/items/item',1) WITH 
+		(
+			[ServiceID] int '@serviceid',
+			[ItemName] nvarchar(255) '@itemname',
+			[TypeName] nvarchar(255) '@typename',
+			[Quantity] int '@quantity',
+			[Total] money '@total',
+			[SubTotal] money '@subtotal',
+			[UnitPrice] money '@unitprice'
+		) AS [XML];
+		-- check errors
+		IF @@ERROR <> 0
+			GOTO ERROR_HANDLE;
+		-- remove document
+		EXEC sp_xml_removedocument @XmlDocID;
+
+	-- commit
+	COMMIT TRAN ADD_INVOICE;
+	-- exit
+	RETURN;
+-- error handle
+ERROR_HANDLE:
+BEGIN
+	IF NOT @XmlDocID IS NULL
+		EXEC sp_xml_removedocument @XmlDocID;
+
+	SET @Result = -1;
+	ROLLBACK TRAN ADD_INVOICE;
+	RETURN;
+END
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE DeleteAuditLogRecords
 (
-	[ProductID] ASC,
-	[CategoryID] ASC,
-	[ResellerID] ASC
+	@ActorID int,
+	@UserID int,
+	@ItemID int,
+	@ItemName nvarchar(100),
+	@StartDate datetime,
+	@EndDate datetime,
+	@SeverityID int,
+	@SourceName varchar(100),
+	@TaskName varchar(100)
+)
+AS
+
+-- check rights
+IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
+RAISERROR('You are not allowed to access this account', 16, 1)
+
+DECLARE @IsAdmin bit
+SET @IsAdmin = 0
+IF EXISTS(SELECT UserID FROM Users WHERE UserID = @ActorID AND RoleID = 1)
+SET @IsAdmin = 1
+
+DELETE FROM AuditLog
+WHERE (dbo.CheckUserParent(@UserID, UserID) = 1 OR (UserID IS NULL AND @IsAdmin = 1))
+AND StartDate BETWEEN @StartDate AND @EndDate
+AND ((@SourceName = '') OR (@SourceName <> '' AND SourceName = @SourceName))
+AND ((@TaskName = '') OR (@TaskName <> '' AND TaskName = @TaskName))
+AND ((@ItemID = 0) OR (@ItemID > 0 AND ItemID = @ItemID))
+AND ((@ItemName = '') OR (@ItemName <> '' AND ItemName LIKE @ItemName))
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecUpdateInvoice] 
+	@ActorID int,
+	@InvoiceID int,
+	@InvoiceNumber nvarchar(50),
+	@DueDate datetime,
+	@TaxationID int,
+	@Total money,
+	@SubTotal money,
+	@TaxAmount money,
+	@Currency nvarchar(3),
+	@Result int OUTPUT
+AS
+BEGIN
+	-- ensure an update request has been issued by the right person
+	DECLARE @ContractID nvarchar(50), @IssuerID int;
+	SELECT
+		@ContractID = [ContractID] FROM [dbo].[ecInvoice]
+	WHERE
+		[InvoiceID] = @InvoiceID;
+	SELECT
+		@IssuerID = [ResellerID] FROM [dbo].[ecContracts]
+	WHERE
+		[ContractID] = @ContractID;
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this account', 16, 1);
+		RETURN;
+	END
+
+	SET NOCOUNT ON;
+
+	SET @Result = 0;
+
+    UPDATE
+		[dbo].[ecInvoice]
+	SET
+		[InvoiceNumber] = @InvoiceNumber,
+		[DueDate] = @DueDate,
+		[Total] = @Total,
+		[SubTotal] = @SubTotal,
+		[TaxationID] = @TaxationID,
+		[TaxAmount] = @TaxAmount,
+		[Currency] = @Currency
+	WHERE
+		[InvoiceID] = @InvoiceID
+	AND
+		[ContractID] = @ContractID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[AddUser]
+(
+	@ActorID int,
+	@UserID int OUTPUT,
+	@OwnerID int,
+	@RoleID int,
+	@StatusID int,
+	@IsDemo bit,
+	@IsPeer bit,
+	@Comments ntext,
+	@Username nvarchar(50),
+	@Password nvarchar(200),
+	@FirstName nvarchar(50),
+	@LastName nvarchar(50),
+	@Email nvarchar(255),
+	@SecondaryEmail nvarchar(255),
+	@Address nvarchar(200),
+	@City nvarchar(50),
+	@State nvarchar(50),
+	@Country nvarchar(50),
+	@Zip varchar(20),
+	@PrimaryPhone varchar(30),
+	@SecondaryPhone varchar(30),
+	@Fax varchar(30),
+	@InstantMessenger nvarchar(200),
+	@HtmlMail bit,
+	@CompanyName nvarchar(100),
+	@EcommerceEnabled bit
+)
+AS
+
+-- check if the user already exists
+IF EXISTS(SELECT UserID FROM Users WHERE Username = @Username)
+BEGIN
+	SET @UserID = -1
+	RETURN
+END
+
+-- check actor rights
+IF dbo.CanCreateUser(@ActorID, @OwnerID) = 0
+BEGIN
+	SET @UserID = -2
+	RETURN
+END
+
+INSERT INTO Users
+(
+	OwnerID,
+	RoleID,
+	StatusID,
+	Created,
+	Changed,
+	IsDemo,
+	IsPeer,
+	Comments,
+	Username,
+	Password,
+	FirstName,
+	LastName,
+	Email,
+	SecondaryEmail,
+	Address,
+	City,
+	State,
+	Country,
+	Zip,
+	PrimaryPhone,
+	SecondaryPhone,
+	Fax,
+	InstantMessenger,
+	HtmlMail,
+	CompanyName,
+	EcommerceEnabled
+)
+VALUES
+(
+	@OwnerID,
+	@RoleID,
+	@StatusID,
+	GetDate(),
+	GetDate(),
+	@IsDemo,
+	@IsPeer,
+	@Comments,
+	@Username,
+	@Password,
+	@FirstName,
+	@LastName,
+	@Email,
+	@SecondaryEmail,
+	@Address,
+	@City,
+	@State,
+	@Country,
+	@Zip,
+	@PrimaryPhone,
+	@SecondaryPhone,
+	@Fax,
+	@InstantMessenger,
+	@HtmlMail,
+	@CompanyName,
+	@EcommerceEnabled
+)
+
+SET @UserID = SCOPE_IDENTITY()
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE UpdateUserSettings
+(
+	@ActorID int,
+	@UserID int,
+	@SettingsName nvarchar(50),
+	@Xml ntext
+)
+AS
+
+-- check rights
+IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
+RAISERROR('You are not allowed to access this account', 16, 1)
+
+-- delete old properties
+BEGIN TRAN
+DECLARE @idoc int
+--Create an internal representation of the XML document.
+EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
+
+-- Execute a SELECT statement that uses the OPENXML rowset provider.
+DELETE FROM UserSettings
+WHERE UserID = @UserID AND SettingsName = @SettingsName
+
+INSERT INTO UserSettings
+(
+	UserID,
+	SettingsName,
+	PropertyName,
+	PropertyValue
+)
+SELECT
+	@UserID,
+	@SettingsName,
+	PropertyName,
+	PropertyValue
+FROM OPENXML(@idoc, '/properties/property',1) WITH 
+(
+	PropertyName nvarchar(50) '@name',
+	PropertyValue ntext '@value'
+) as PV
+
+-- remove document
+exec sp_xml_removedocument @idoc
+
+COMMIT TRAN
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[UpdateUser]
+(
+	@ActorID int,
+	@UserID int,
+	@RoleID int,
+	@StatusID int,
+	@IsDemo bit,
+	@IsPeer bit,
+	@Comments ntext,
+	@FirstName nvarchar(50),
+	@LastName nvarchar(50),
+	@Email nvarchar(255),
+	@SecondaryEmail nvarchar(255),
+	@Address nvarchar(200),
+	@City nvarchar(50),
+	@State nvarchar(50),
+	@Country nvarchar(50),
+	@Zip varchar(20),
+	@PrimaryPhone varchar(30),
+	@SecondaryPhone varchar(30),
+	@Fax varchar(30),
+	@InstantMessenger nvarchar(200),
+	@HtmlMail bit,
+	@CompanyName nvarchar(100),
+	@EcommerceEnabled BIT,
+	@AdditionalParams NVARCHAR(max)
+)
+AS
+
+	-- check actor rights
+	IF dbo.CanUpdateUserDetails(@ActorID, @UserID) = 0
+	BEGIN
+		RETURN
+	END
+
+	UPDATE Users SET 
+		RoleID = @RoleID,
+		StatusID = @StatusID,
+		Changed = GetDate(),
+		IsDemo = @IsDemo,
+		IsPeer = @IsPeer,
+		Comments = @Comments,
+		FirstName = @FirstName,
+		LastName = @LastName,
+		Email = @Email,
+		SecondaryEmail = @SecondaryEmail,
+		Address = @Address,
+		City = @City,
+		State = @State,
+		Country = @Country,
+		Zip = @Zip,
+		PrimaryPhone = @PrimaryPhone,
+		SecondaryPhone = @SecondaryPhone,
+		Fax = @Fax,
+		InstantMessenger = @InstantMessenger,
+		HtmlMail = @HtmlMail,
+		CompanyName = @CompanyName,
+		EcommerceEnabled = @EcommerceEnabled,
+		[AdditionalParams] = @AdditionalParams
+	WHERE UserID = @UserID
+
+	RETURN
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE DeleteComment
+(
+	@ActorID int,
+	@CommentID int
+)
+AS
+
+-- check rights
+DECLARE @UserID int
+SELECT @UserID = UserID FROM Comments
+WHERE CommentID = @CommentID
+
+-- check rights
+IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
+RAISERROR('You are not allowed to perform this operation', 16, 1)
+
+
+-- delete comment
+DELETE FROM Comments
+WHERE CommentID = @CommentID
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[VirtualServices](
+	[VirtualServiceID] [int] IDENTITY(1,1) NOT NULL,
+	[ServerID] [int] NOT NULL,
+	[ServiceID] [int] NOT NULL,
+ CONSTRAINT [PK_VirtualServices] PRIMARY KEY CLUSTERED 
+(
+	[VirtualServiceID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE FUNCTION dbo.GetPackageAllocatedResource
+(
+	@PackageID int,
+	@GroupID int,
+	@ServerID int
+)
+RETURNS bit
+AS
+BEGIN
+
+IF @PackageID IS NULL
+RETURN 1
+
+DECLARE @Result bit
+SET @Result = 1 -- enabled
+
+DECLARE @PID int, @ParentPackageID int
+SET @PID = @PackageID
+
+DECLARE @OverrideQuotas bit
+
+IF @ServerID IS NULL OR @ServerID = 0
+SELECT @ServerID = ServerID FROM Packages
+WHERE PackageID = @PackageID
+
+WHILE 1 = 1
+BEGIN
+
+	DECLARE @GroupEnabled int
+	
+	-- get package info
+	SELECT
+		@ParentPackageID = ParentPackageID,
+		@OverrideQuotas = OverrideQuotas
+	FROM Packages WHERE PackageID = @PID
+
+	-- check if this is a root 'System' package
+	SET @GroupEnabled = 1 -- enabled
+	IF @ParentPackageID IS NULL
+	BEGIN
+	
+		IF @ServerID = -1 OR @ServerID IS NULL
+		RETURN 1
+	
+		IF EXISTS (SELECT VirtualServer FROM Servers WHERE ServerID = @ServerID AND VirtualServer = 1)
+		BEGIN
+			IF NOT EXISTS(
+				SELECT 
+					DISTINCT(PROV.GroupID)
+				FROM VirtualServices AS VS
+				INNER JOIN Services AS S ON VS.ServiceID = S.ServiceID
+				INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
+				WHERE PROV.GroupID = @GroupID AND VS.ServerID = @ServerID
+			)
+			SET @GroupEnabled = 0
+		END
+		ELSE
+		BEGIN
+			IF NOT EXISTS(
+				SELECT 
+					DISTINCT(PROV.GroupID)
+				FROM Services AS S
+				INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
+				WHERE PROV.GroupID = @GroupID AND  S.ServerID = @ServerID
+			)
+			SET @GroupEnabled = 0
+		END
+		
+		RETURN @GroupEnabled -- exit from the loop
+	END
+	ELSE -- parentpackage is not null
+	BEGIN
+		-- check the current package
+		IF @OverrideQuotas = 1
+		BEGIN
+			IF NOT EXISTS(
+				SELECT GroupID FROM PackageResources WHERE GroupID = @GroupID AND PackageID = @PID
+			)
+			SET @GroupEnabled = 0
+		END
+		ELSE
+		BEGIN
+			IF NOT EXISTS(
+				SELECT HPR.GroupID FROM Packages AS P
+				INNER JOIN HostingPlanResources AS HPR ON P.PlanID = HPR.PlanID
+				WHERE HPR.GroupID = @GroupID AND P.PackageID = @PID
+			)
+			SET @GroupEnabled = 0
+		END
+		
+		-- check addons
+		IF EXISTS(
+			SELECT HPR.GroupID FROM PackageAddons AS PA
+			INNER JOIN HostingPlanResources AS HPR ON PA.PlanID = HPR.PlanID
+			WHERE HPR.GroupID = @GroupID AND PA.PackageID = @PID
+			AND PA.StatusID = 1 -- active add-on
+		)
+		SET @GroupEnabled = 1
+	END
+	
+	IF @GroupEnabled = 0
+		RETURN 0
+	
+	SET @PID = @ParentPackageID
+
+END -- end while
+
+RETURN @Result
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetPackageQuotasForEdit
+(
+	@ActorID int,
+	@PackageID int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+DECLARE @ServerID int, @ParentPackageID int, @PlanID int
+SELECT @ServerID = ServerID, @ParentPackageID = ParentPackageID, @PlanID = PlanID FROM Packages
+WHERE PackageID = @PackageID
+
+-- get resource groups
+SELECT
+	RG.GroupID,
+	RG.GroupName,
+	ISNULL(PR.CalculateDiskSpace, ISNULL(HPR.CalculateDiskSpace, 0)) AS CalculateDiskSpace,
+	ISNULL(PR.CalculateBandwidth, ISNULL(HPR.CalculateBandwidth, 0)) AS CalculateBandwidth,
+	dbo.GetPackageAllocatedResource(@PackageID, RG.GroupID, @ServerID) AS Enabled,
+	dbo.GetPackageAllocatedResource(@ParentPackageID, RG.GroupID, @ServerID) AS ParentEnabled
+FROM ResourceGroups AS RG
+LEFT OUTER JOIN PackageResources AS PR ON RG.GroupID = PR.GroupID AND PR.PackageID = @PackageID
+LEFT OUTER JOIN HostingPlanResources AS HPR ON RG.GroupID = HPR.GroupID AND HPR.PlanID = @PlanID
+ORDER BY RG.GroupOrder
+
+
+-- return quotas
+SELECT
+	Q.QuotaID,
+	Q.GroupID,
+	Q.QuotaName,
+	Q.QuotaDescription,
+	Q.QuotaTypeID,
+	CASE
+		WHEN PQ.QuotaValue IS NULL THEN dbo.GetPackageAllocatedQuota(@PackageID, Q.QuotaID)
+		ELSE PQ.QuotaValue
+	END QuotaValue,
+	dbo.GetPackageAllocatedQuota(@ParentPackageID, Q.QuotaID) AS ParentQuotaValue
+FROM Quotas AS Q
+LEFT OUTER JOIN PackageQuotas AS PQ ON PQ.QuotaID = Q.QuotaID AND PQ.PackageID = @PackageID
+ORDER BY Q.QuotaOrder
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[IPAddresses](
+	[AddressID] [int] IDENTITY(1,1) NOT NULL,
+	[ExternalIP] [varchar](24) COLLATE Latin1_General_CI_AS NOT NULL,
+	[InternalIP] [varchar](24) COLLATE Latin1_General_CI_AS NULL,
+	[ServerID] [int] NULL,
+	[Comments] [ntext] COLLATE Latin1_General_CI_AS NULL,
+	[SubnetMask] [varchar](15) COLLATE Latin1_General_CI_AS NULL,
+	[DefaultGateway] [varchar](15) COLLATE Latin1_General_CI_AS NULL,
+	[PoolID] [int] NULL,
+ CONSTRAINT [PK_IPAddresses] PRIMARY KEY CLUSTERED 
+(
+	[AddressID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+CREATE FUNCTION [dbo].[CalculateQuotaUsage]
+(
+	@PackageID int,
+	@QuotaID int
+)
+RETURNS int
+AS
+	BEGIN
+
+		DECLARE @QuotaTypeID int
+		SELECT @QuotaTypeID = QuotaTypeID FROM Quotas
+		WHERE QuotaID = @QuotaID
+
+		IF @QuotaTypeID <> 2
+			RETURN 0
+
+		DECLARE @Result int
+
+		IF @QuotaID = 52 -- diskspace
+			SET @Result = dbo.CalculatePackageDiskspace(@PackageID)
+		ELSE IF @QuotaID = 51 -- bandwidth
+			SET @Result = dbo.CalculatePackageBandwidth(@PackageID)
+		ELSE IF @QuotaID = 53 -- domains
+			SET @Result = (SELECT COUNT(D.DomainID) FROM PackagesTreeCache AS PT
+				INNER JOIN Domains AS D ON D.PackageID = PT.PackageID
+				WHERE IsSubDomain = 0 AND IsInstantAlias = 0 AND IsDomainPointer = 0 AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 54 -- sub-domains
+			SET @Result = (SELECT COUNT(D.DomainID) FROM PackagesTreeCache AS PT
+				INNER JOIN Domains AS D ON D.PackageID = PT.PackageID
+				WHERE IsSubDomain = 1 AND IsInstantAlias = 0 AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 220 -- domain pointers
+			SET @Result = (SELECT COUNT(D.DomainID) FROM PackagesTreeCache AS PT
+				INNER JOIN Domains AS D ON D.PackageID = PT.PackageID
+				WHERE IsDomainPointer = 1 AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 71 -- scheduled tasks
+			SET @Result = (SELECT COUNT(S.ScheduleID) FROM PackagesTreeCache AS PT
+				INNER JOIN Schedule AS S ON S.PackageID = PT.PackageID
+				WHERE PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 305 -- RAM of VPS
+			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'RamSize' AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 306 -- HDD of VPS
+			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'HddSize' AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 309 -- External IP addresses of VPS
+			SET @Result = (SELECT COUNT(PIP.PackageAddressID) FROM PackageIPAddresses AS PIP
+							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
+							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 3)
+		ELSE IF @QuotaID = 100 -- Dedicated Web IP addresses
+			SET @Result = (SELECT COUNT(PIP.PackageAddressID) FROM PackageIPAddresses AS PIP
+							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
+							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 2)
+		ELSE IF @QuotaID = 350 -- RAM of VPSforPc
+			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'Memory' AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 351 -- HDD of VPSforPc
+			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'HddSize' AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 354 -- External IP addresses of VPSforPc
+			SET @Result = (SELECT COUNT(PIP.PackageAddressID) FROM PackageIPAddresses AS PIP
+							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
+							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 3)
+		ELSE IF @QuotaID = 319 -- BB Users
+			SET @Result = (SELECT COUNT(ea.AccountID) 
+								FROM 
+									ExchangeAccounts ea 
+								INNER JOIN 
+									BlackBerryUsers bu 
+								ON 
+									ea.AccountID = bu.AccountID
+								INNER JOIN 
+									ServiceItems  si 
+								ON 
+									ea.ItemID = si.ItemID
+								INNER JOIN 
+									PackagesTreeCache pt ON si.PackageID = pt.PackageID
+								WHERE 
+									pt.ParentPackageID = @PackageID)
+		ELSE
+			SET @Result = (SELECT COUNT(SI.ItemID) FROM Quotas AS Q
+			INNER JOIN ServiceItems AS SI ON SI.ItemTypeID = Q.ItemTypeID
+			INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID AND PT.ParentPackageID = @PackageID
+			WHERE Q.QuotaID = @QuotaID)
+
+		RETURN @Result
+	END
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetPackageQuotas
+(
+	@ActorID int,
+	@PackageID int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+DECLARE @PlanID int, @ParentPackageID int
+SELECT @PlanID = PlanID, @ParentPackageID = ParentPackageID FROM Packages
+WHERE PackageID = @PackageID
+
+-- get resource groups
+SELECT
+	RG.GroupID,
+	RG.GroupName,
+	ISNULL(HPR.CalculateDiskSpace, 0) AS CalculateDiskSpace,
+	ISNULL(HPR.CalculateBandwidth, 0) AS CalculateBandwidth,
+	dbo.GetPackageAllocatedResource(@ParentPackageID, RG.GroupID, 0) AS ParentEnabled
+FROM ResourceGroups AS RG
+LEFT OUTER JOIN HostingPlanResources AS HPR ON RG.GroupID = HPR.GroupID AND HPR.PlanID = @PlanID
+WHERE dbo.GetPackageAllocatedResource(@PackageID, RG.GroupID, 0) = 1
+ORDER BY RG.GroupOrder
+
+
+-- return quotas
+SELECT
+	Q.QuotaID,
+	Q.GroupID,
+	Q.QuotaName,
+	Q.QuotaDescription,
+	Q.QuotaTypeID,
+	dbo.GetPackageAllocatedQuota(@PackageID, Q.QuotaID) AS QuotaValue,
+	dbo.GetPackageAllocatedQuota(@ParentPackageID, Q.QuotaID) AS ParentQuotaValue,
+	ISNULL(dbo.CalculateQuotaUsage(@PackageID, Q.QuotaID), 0) AS QuotaUsedValue
+FROM Quotas AS Q
+ORDER BY Q.QuotaOrder
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetPackageQuota]
+(
+	@ActorID int,
+	@PackageID int,
+	@QuotaName nvarchar(50)
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- return quota
+SELECT
+	Q.QuotaID,
+	Q.QuotaName,
+	Q.QuotaDescription,
+	Q.QuotaTypeID,
+	ISNULL(dbo.GetPackageAllocatedQuota(@PackageId, Q.QuotaID), 0) AS QuotaAllocatedValue,
+	ISNULL(dbo.CalculateQuotaUsage(@PackageId, Q.QuotaID), 0) AS QuotaUsedValue
+FROM Quotas AS Q
+WHERE Q.QuotaName = @QuotaName
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetHostingPlanQuotas
+(
+	@ActorID int,
+	@PlanID int,
+	@PackageID int,
+	@ServerID int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorParentPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+DECLARE @IsAddon bit
+
+IF @ServerID = 0
+SELECT @ServerID = ServerID FROM Packages
+WHERE PackageID = @PackageID
+
+-- get resource groups
+SELECT
+	RG.GroupID,
+	RG.GroupName,
+	CASE
+		WHEN HPR.CalculateDiskSpace IS NULL THEN CAST(0 as bit)
+		ELSE CAST(1 as bit)
+	END AS Enabled,
+	dbo.GetPackageAllocatedResource(@PackageID, RG.GroupID, @ServerID) AS ParentEnabled,
+	ISNULL(HPR.CalculateDiskSpace, 1) AS CalculateDiskSpace,
+	ISNULL(HPR.CalculateBandwidth, 1) AS CalculateBandwidth
+FROM ResourceGroups AS RG
+LEFT OUTER JOIN HostingPlanResources AS HPR ON RG.GroupID = HPR.GroupID AND HPR.PlanID = @PlanID
+ORDER BY RG.GroupOrder
+
+-- get quotas by groups
+SELECT
+	Q.QuotaID,
+	Q.GroupID,
+	Q.QuotaName,
+	Q.QuotaDescription,
+	Q.QuotaTypeID,
+	ISNULL(HPQ.QuotaValue, 0) AS QuotaValue,
+	dbo.GetPackageAllocatedQuota(@PackageID, Q.QuotaID) AS ParentQuotaValue
+FROM Quotas AS Q
+LEFT OUTER JOIN HostingPlanQuotas AS HPQ ON Q.QuotaID = HPQ.QuotaID AND HPQ.PlanID = @PlanID
+ORDER BY Q.QuotaOrder
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+Algorythm:
+	0. Get the primary distribution resource from hosting plan
+	1. Check whether user has Resource of requested type in his user plans/add-ons
+		EXCEPTION "The requested service is not available for the user. The resource of the requested type {type} should be assigned to him through hosting plan or add-on"
+		1.1 If the number of returned reources is greater than 1
+			EXCEPTION "User has several resources assigned of the requested type"
+
+	2. If the requested resource has 0 services
+		EXCEPTION "The resource {name} of type {type} should contain atleast one service
+	3. If the requested resource has one service
+		remember the ID of this single service
+	4. If the requested resource has several services DO distribution:
+		
+		4.1. If the resource is NOT BOUNDED or is PRIMARY DISTRIBUTION RESOURCE
+			if PRIMARY DISTRIBUTION RESOURCE and exists in UserServices
+				return serviceId from UserServices table
+				
+			remember any service from that resource according to distribution type ("BALANCED" or "RANDOM") - get the number of ServiceItems for each service
+			
+		4.2. If the resource is BOUNDED to primary distribution resource
+			- If the primary distribution resource is NULL
+			EXCEPTION "Requested resource marked as bound to primary distribution resource, but there is no any resources in hosting plan marked as primary"
+			
+			- Get the service id of the primary distribution resource
+			GetServiceId(userId, primaryResourceId)
+			
+		
+		Get from user assigned hosting plan 
+		
+	5. If it is PRIMARY DISTRIBUTION RESOURCE
+		Save it's ID to UserServices table
+	
+	6. return serviceId
+	
+ERROR CODES:
+	-1 - there are several hosting plans with PDR assigned to that user
+	-2 - The requested service is not available for the user. The resource of the
+		requested type {type} should be assigned to him through hosting plan or add-on
+	-3 - several resources of the same type was assigned through hosting plan or add-on
+	-4 - The resource {name} of type {type} should contain atleast one service
+	-5 - Requested resource marked as bound to primary distribution resource,
+		but there is no any resources in hosting plan marked as primary
+	-6 - the server where PDR is located doesn't contain the service of requested resource type
+*/
+CREATE PROCEDURE GetUserServiceID
+(
+	@UserID int,
+	@TypeName nvarchar(1000),
+	@ServiceID int OUTPUT
+)
+AS
+	DECLARE @PrimaryResourceID int -- primary distribution resource assigned through hosting plan
+	
+	----------------------------------------
+	-- Get the primary distribution resource
+	----------------------------------------
+	IF (SELECT COUNT (HP.PrimaryResourceID) FROM PurchasedHostingPlans AS PHP
+	INNER JOIN HostingPlans AS HP ON PHP.PlanID = HP.PlanID
+	WHERE PHP.UserID = @UserID AND HP.PrimaryResourceID IS NOT NULL AND HP.PrimaryResourceID <> 0) > 1
+	BEGIN
+		SET @ServiceID = -1
+		RETURN
+	END
+		
+	SELECT @PrimaryResourceID = HP.PrimaryResourceID FROM PurchasedHostingPlans AS PHP
+	INNER JOIN HostingPlans AS HP ON PHP.PlanID = HP.PlanID
+	WHERE PHP.UserID = @UserID AND HP.PrimaryResourceID IS NOT NULL AND HP.PrimaryResourceID <> 0
+
+	
+	----------------------------------------------
+	-- Check whether user has a resource 
+	-- of this type in his hosting plans or addons
+	----------------------------------------------
+	DECLARE @UserResourcesTable TABLE
+	(
+		ResourceID int
+	)
+	INSERT INTO @UserResourcesTable
+	SELECT DISTINCT HPR.ResourceID FROM PurchasedHostingPlans AS PHP
+		INNER JOIN HostingPlans AS HP ON PHP.PlanID = HP.PlanID
+		INNER JOIN HostingPlanResources AS HPR ON HP.PlanID = HPR.PlanID
+		INNER JOIN Resources AS R ON HPR.ResourceID = R.ResourceID
+		INNER JOIN ServiceTypes AS ST ON R.ServiceTypeID = ST.ServiceTypeID
+		WHERE PHP.UserID = @UserID AND (ST.ImplementedTypeNames LIKE @TypeName OR ST.TypeName LIKE @TypeName)
+
+	----------------------------------------
+	-- Check resources number
+	----------------------------------------
+	DECLARE @ResourcesCount int
+	SET @ResourcesCount = @@ROWCOUNT
+	IF @ResourcesCount = 0
+	BEGIN
+		SET @ServiceID = -2 -- user doesn't have requested service assigned
+		RETURN
+	END
+	IF @ResourcesCount > 1
+	BEGIN
+		SET @ServiceID = -3 -- several resources of the same type was assigned
+		RETURN
+	END
+	
+	----------------------------------------
+	-- Check services number
+	----------------------------------------
+	DECLARE @ResourceID int
+	SET @ResourceID = (SELECT TOP 1 ResourceID FROM @UserResourcesTable)
+	
+	DECLARE @UserServicesTable TABLE
+	(
+		ServiceID int,
+		ServerID int,
+		ItemsNumber int,
+		Randomizer float
+	)
+	INSERT INTO @UserServicesTable
+	SELECT
+		RS.ServiceID,
+		S.ServerID,
+		(SELECT COUNT(ItemID) FROM ServiceItems AS SI WHERE SI.ServiceID = RS.ServiceID),
+		RAND()
+	FROM ResourceServices AS RS
+	INNER JOIN Services AS S ON RS.ServiceID = S.ServiceID
+	WHERE RS.ResourceID = @ResourceID
+	
+	DECLARE @ServicesCount int
+	SET @ServicesCount = @@ROWCOUNT
+	IF @ServicesCount = 0
+	BEGIN
+		SET @ServiceID = -4 -- The resource {name} of type {type} should contain atleast one service
+		RETURN
+	END
+	
+	-- try to return from UserServices
+	-- if it is a PDR
+	IF @ResourceID = @PrimaryResourceID
+	BEGIN
+		-- check in UserServices table
+		SELECT @ServiceID = US.ServiceID FROM ResourceServices AS RS
+		INNER JOIN UserServices AS US ON RS.ServiceID = US.ServiceID
+		WHERE RS.ResourceID = @ResourceID AND US.UserID = @UserID
+		
+		-- check validness of the current primary service id
+		IF @ServiceID IS NOT NULL
+		BEGIN
+			IF EXISTS(SELECT ResourceServiceID FROM ResourceServices
+			WHERE ResourceID = @ResourceID AND ServiceID = @ServiceID)
+				RETURN
+			ELSE -- invalidate service
+				DELETE FROM UserServices WHERE UserID = @UserID
+		END
+	END
+	
+	IF @ServicesCount = 1
+	BEGIN
+		-- nothing to distribute
+		-- just remember this single service id
+		SET @ServiceID = (SELECT TOP 1 ServiceID FROM @UserServicesTable)
+	END
+	ELSE
+	BEGIN
+		-- the service should be distributed
+		DECLARE @DistributionTypeID int
+		DECLARE @BoundToPrimaryResource bit
+		SELECT @DistributionTypeID = R.DistributionTypeID, @BoundToPrimaryResource = R.BoundToPrimaryResource
+		FROM Resources AS R WHERE R.ResourceID = @ResourceID
+	
+		IF @BoundToPrimaryResource = 0 OR @ResourceID = @PrimaryResourceID
+		BEGIN
+			IF @ResourceID = @PrimaryResourceID -- it's PDR itself
+			BEGIN
+				-- check in UserServices table
+				SELECT @ServiceID = US.ServiceID FROM ResourceServices AS RS
+				INNER JOIN UserServices AS US ON RS.ServiceID = US.ServiceID
+				WHERE RS.ResourceID = @ResourceID AND US.UserID = @UserID
+				
+				-- check validness of the current primary service id
+				IF @ServiceID IS NOT NULL
+				BEGIN
+					IF EXISTS(SELECT ResourceServiceID FROM ResourceServices
+					WHERE ResourceID = @ResourceID AND ServiceID = @ServiceID)
+						RETURN
+					ELSE -- invalidate service
+						DELETE FROM UserServices WHERE UserID = @UserID
+				END
+			END
+			
+			-- distribute
+			IF @DistributionTypeID = 1 -- BALANCED distribution
+				SELECT @ServiceID = ServiceID FROM @UserServicesTable
+				ORDER BY ItemsNumber ASC
+			ELSE -- RANDOM distribution
+				SELECT @ServiceID = ServiceID FROM @UserServicesTable
+				ORDER BY Randomizer
+		END
+		ELSE -- BOUND to PDR resource
+		BEGIN
+			IF @PrimaryResourceID IS NULL
+			BEGIN
+				SET @ServiceID = -5 -- Requested resource marked as bound to primary distribution resource,
+									-- but there is no any resources in hosting plan marked as primary
+				RETURN
+			END
+			
+			-- get the type of primary resource
+			DECLARE @PrimaryTypeName nvarchar(200)
+			SELECT @PrimaryTypeName = ST.TypeName FROM  Resources AS R
+			INNER JOIN ServiceTypes AS ST ON R.ServiceTypeID = ST.ServiceTypeID
+			WHERE R.ResourceID = @PrimaryResourceID
+			
+			
+			DECLARE @PrimaryServiceID int
+			EXEC GetUserServiceID @UserID, @PrimaryTypeName, @PrimaryServiceID OUTPUT
+
+			IF @PrimaryServiceID < 0
+			BEGIN
+				SET @ServiceID = @PrimaryServiceID
+				RETURN
+			END
+			
+			DECLARE @ServerID int
+			SET @ServerID = (SELECT ServerID FROM Services WHERE ServiceID = @PrimaryServiceID)
+			
+			-- try to get the service of the requested type on PDR server
+			SET @ServiceID = (SELECT ServiceID FROM @UserServicesTable WHERE ServerID = @ServerID)
+			
+			IF @ServiceID IS NULL
+			BEGIN
+				SET @ServiceID = -6 -- the server where PDR is located doesn't contain the service of requested resource type
+			END
+		END
+	END
+	
+	IF @ResourceID = @PrimaryResourceID -- it's PDR
+	BEGIN
+		DELETE FROM UserServices WHERE UserID = @UserID
+		
+		INSERT INTO UserServices (UserID, ServiceID)
+		VALUES (@UserID, @ServiceID)
+	END
+	
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetServiceItemsByService]
+(
+	@ActorID int,
+	@ServiceID int
+)
+AS
+
+-- check rights
+DECLARE @IsAdmin bit
+SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
+
+DECLARE @Items TABLE
+(
+	ItemID int
+)
+
+-- find service items
+INSERT INTO @Items
+SELECT
+	SI.ItemID
+FROM ServiceItems AS SI
+WHERE SI.ServiceID = @ServiceID
+
+
+-- select service items
+SELECT
+	SI.ItemID,
+	SI.ItemName,
+	SI.ItemTypeID,
+	SIT.TypeName,
+	SI.ServiceID,
+	SI.PackageID,
+	P.PackageName,
+	S.ServiceID,
+	S.ServiceName,
+	SRV.ServerID,
+	SRV.ServerName,
+	RG.GroupName,
+	U.UserID,
+	U.Username,
+	(U.FirstName + U.LastName) AS UserFullName,
+	SI.CreatedDate
+FROM @Items AS FI
+INNER JOIN ServiceItems AS SI ON FI.ItemID = SI.ItemID
+INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
+INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
+INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
+INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+INNER JOIN ResourceGroups AS RG ON SIT.GroupID = RG.GroupID
+INNER JOIN Users AS U ON P.UserID = U.UserID
+WHERE @IsAdmin = 1
+
+-- select item properties
+-- get corresponding item properties
+SELECT
+	IP.ItemID,
+	IP.PropertyName,
+	IP.PropertyValue
+FROM ServiceItemProperties AS IP
+INNER JOIN @Items AS FI ON IP.ItemID = FI.ItemID
+WHERE @IsAdmin = 1
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetServiceItemsByPackage]
+(
+	@ActorID int,
+	@PackageID int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+DECLARE @Items TABLE
+(
+	ItemID int
+)
+
+-- find service items
+INSERT INTO @Items
+SELECT
+	SI.ItemID
+FROM ServiceItems AS SI
+WHERE SI.PackageID = @PackageID
+
+
+-- select service items
+SELECT
+	SI.ItemID,
+	SI.ItemName,
+	SI.ItemTypeID,
+	SIT.TypeName,
+	SIT.DisplayName,
+	SI.ServiceID,
+	SI.PackageID,
+	P.PackageName,
+	S.ServiceID,
+	S.ServiceName,
+	SRV.ServerID,
+	SRV.ServerName,
+	RG.GroupName,
+	U.UserID,
+	U.Username,
+	(U.FirstName + U.LastName) AS UserFullName,
+	SI.CreatedDate
+FROM @Items AS FI
+INNER JOIN ServiceItems AS SI ON FI.ItemID = SI.ItemID
+INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
+INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
+INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
+INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+INNER JOIN ResourceGroups AS RG ON SIT.GroupID = RG.GroupID
+INNER JOIN Users AS U ON P.UserID = U.UserID
+
+-- select item properties
+-- get corresponding item properties
+SELECT
+	IP.ItemID,
+	IP.PropertyName,
+	IP.PropertyValue
+FROM ServiceItemProperties AS IP
+INNER JOIN @Items AS FI ON IP.ItemID = FI.ItemID
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetServiceItemsByName]
+(
+	@ActorID int,
+	@PackageID int,
+	@ItemName nvarchar(500)
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+DECLARE @Items TABLE
+(
+	ItemID int
+)
+
+-- find service items
+INSERT INTO @Items
+SELECT
+	SI.ItemID
+FROM ServiceItems AS SI
+INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
+WHERE SI.PackageID = @PackageID
+AND SI.ItemName LIKE @ItemName
+
+
+-- select service items
+SELECT
+	SI.ItemID,
+	SI.ItemName,
+	SI.ItemTypeID,
+	SIT.TypeName,
+	SI.ServiceID,
+	SI.PackageID,
+	P.PackageName,
+	S.ServiceID,
+	S.ServiceName,
+	SRV.ServerID,
+	SRV.ServerName,
+	RG.GroupName,
+	U.UserID,
+	U.Username,
+	U.FullName AS UserFullName,
+	SI.CreatedDate
+FROM @Items AS FI
+INNER JOIN ServiceItems AS SI ON FI.ItemID = SI.ItemID
+INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
+INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
+INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
+INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+INNER JOIN ResourceGroups AS RG ON SIT.GroupID = RG.GroupID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+
+-- select item properties
+-- get corresponding item properties
+SELECT
+	IP.ItemID,
+	IP.PropertyName,
+	IP.PropertyValue
+FROM ServiceItemProperties AS IP
+INNER JOIN @Items AS FI ON IP.ItemID = FI.ItemID
+
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetServiceItems]
+(
+	@ActorID int,
+	@PackageID int,
+	@ItemTypeName nvarchar(200),
+	@GroupName nvarchar(100) = NULL,
+	@Recursive bit
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+DECLARE @Items TABLE
+(
+	ItemID int
+)
+
+-- find service items
+INSERT INTO @Items
+SELECT
+	SI.ItemID
+FROM ServiceItems AS SI
+INNER JOIN PackagesTree(@PackageID, @Recursive) AS PT ON SI.PackageID = PT.PackageID
+INNER JOIN ServiceItemTypes AS IT ON SI.ItemTypeID = IT.ItemTypeID
+INNER JOIN ResourceGroups AS RG ON IT.GroupID = RG.GroupID
+WHERE IT.TypeName = @ItemTypeName
+AND ((@GroupName IS NULL) OR (@GroupName IS NOT NULL AND RG.GroupName = @GroupName))
+
+
+-- select service items
+SELECT
+	SI.ItemID,
+	SI.ItemName,
+	SI.ItemTypeID,
+	SIT.TypeName,
+	SI.ServiceID,
+	SI.PackageID,
+	P.PackageName,
+	S.ServiceID,
+	S.ServiceName,
+	SRV.ServerID,
+	SRV.ServerName,
+	RG.GroupName,
+	U.UserID,
+	U.Username,
+	(U.FirstName + U.LastName) AS UserFullName,
+	SI.CreatedDate
+FROM @Items AS FI
+INNER JOIN ServiceItems AS SI ON FI.ItemID = SI.ItemID
+INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
+INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
+INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
+INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+INNER JOIN ResourceGroups AS RG ON SIT.GroupID = RG.GroupID
+INNER JOIN Users AS U ON P.UserID = U.UserID
+
+-- select item properties
+-- get corresponding item properties
+SELECT
+	IP.ItemID,
+	IP.PropertyName,
+	IP.PropertyValue
+FROM ServiceItemProperties AS IP
+INNER JOIN @Items AS FI ON IP.ItemID = FI.ItemID
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetServiceItemByName]
+(
+	@ActorID int,
+	@PackageID int,
+	@ItemName nvarchar(500),
+	@GroupName nvarchar(100) = NULL,
+	@ItemTypeName nvarchar(200)
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+DECLARE @Items TABLE
+(
+	ItemID int
+)
+
+-- find service items
+INSERT INTO @Items
+SELECT
+	SI.ItemID
+FROM ServiceItems AS SI
+INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
+INNER JOIN ResourceGroups AS RG ON SIT.GroupID = RG.GroupID
+WHERE SI.PackageID = @PackageID AND SIT.TypeName = @ItemTypeName
+AND SI.ItemName = @ItemName
+AND ((@GroupName IS NULL) OR (@GroupName IS NOT NULL AND RG.GroupName = @GroupName))
+
+
+-- select service items
+SELECT
+	SI.ItemID,
+	SI.ItemName,
+	SI.ItemTypeID,
+	SIT.TypeName,
+	SI.ServiceID,
+	SI.PackageID,
+	P.PackageName,
+	S.ServiceID,
+	S.ServiceName,
+	SRV.ServerID,
+	SRV.ServerName,
+	RG.GroupName,
+	U.UserID,
+	U.Username,
+	U.FullName AS UserFullName,
+	SI.CreatedDate
+FROM @Items AS FI
+INNER JOIN ServiceItems AS SI ON FI.ItemID = SI.ItemID
+INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
+INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
+INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
+INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
+INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+
+-- select item properties
+-- get corresponding item properties
+SELECT
+	IP.ItemID,
+	IP.PropertyName,
+	IP.PropertyValue
+FROM ServiceItemProperties AS IP
+INNER JOIN @Items AS FI ON IP.ItemID = FI.ItemID
+
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetServiceItem]
+(
+	@ActorID int,
+	@ItemID int
+)
+AS
+
+DECLARE @Items TABLE
+(
+	ItemID int
+)
+
+-- find service items
+INSERT INTO @Items
+SELECT
+	SI.ItemID
+FROM ServiceItems AS SI
+INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
+WHERE
+	SI.ItemID = @ItemID
+	AND dbo.CheckActorPackageRights(@ActorID, SI.PackageID) = 1
+
+
+-- select service items
+SELECT
+	SI.ItemID,
+	SI.ItemName,
+	SI.ItemTypeID,
+	SIT.TypeName,
+	SI.ServiceID,
+	SI.PackageID,
+	P.PackageName,
+	S.ServiceID,
+	S.ServiceName,
+	SRV.ServerID,
+	SRV.ServerName,
+	RG.GroupName,
+	U.UserID,
+	U.Username,
+	U.FullName AS UserFullName,
+	SI.CreatedDate
+FROM @Items AS FI
+INNER JOIN ServiceItems AS SI ON FI.ItemID = SI.ItemID
+INNER JOIN ServiceItemTypes AS SIT ON SI.ItemTypeID = SIT.ItemTypeID
+INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
+INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
+INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
+INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+
+-- select item properties
+-- get corresponding item properties
+SELECT
+	IP.ItemID,
+	IP.PropertyName,
+	IP.PropertyValue
+FROM ServiceItemProperties AS IP
+INNER JOIN @Items AS FI ON IP.ItemID = FI.ItemID
+
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[VirtualGroups](
+	[VirtualGroupID] [int] IDENTITY(1,1) NOT NULL,
+	[ServerID] [int] NOT NULL,
+	[GroupID] [int] NOT NULL,
+	[DistributionType] [int] NULL,
+	[BindDistributionToPrimary] [bit] NULL,
+ CONSTRAINT [PK_VirtualGroups] PRIMARY KEY CLUSTERED 
+(
+	[VirtualGroupID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
 )
 
@@ -30877,24 +27061,824 @@ GO
 
 
 
-CREATE PROCEDURE GetClusters
+CREATE PROCEDURE [dbo].[DistributePackageServices]
 (
-	@ActorID int
+	@ActorID int,
+	@PackageID int
+)
+AS
+
+-- get primary distribution group
+DECLARE @PrimaryGroupID int
+DECLARE @VirtualServer bit
+DECLARE @PlanID int
+DECLARE @ServerID int
+SELECT
+	@PrimaryGroupID = ISNULL(S.PrimaryGroupID, 0),
+	@VirtualServer = S.VirtualServer,
+	@PlanID = P.PlanID,
+	@ServerID = P.ServerID
+FROM Packages AS P
+INNER JOIN Servers AS S ON P.ServerID = S.ServerID
+WHERE P.PackageID = @PackageID
+
+
+-- get the list of available groups from hosting plan
+DECLARE @Groups TABLE
+(
+	GroupID int,
+	PrimaryGroup bit
+)
+
+INSERT INTO @Groups (GroupID, PrimaryGroup)
+SELECT
+	RG.GroupID,
+	CASE WHEN RG.GroupID = @PrimaryGroupID THEN 1 -- mark primary group
+	ELSE 0
+	END
+FROM ResourceGroups AS RG
+WHERE dbo.GetPackageAllocatedResource(@PackageID, RG.GroupID, NULL) = 1
+AND RG.GroupID NOT IN 
+(
+	SELECT P.GroupID
+	FROM PackageServices AS PS
+	INNER JOIN Services AS S ON PS.ServiceID = S.ServiceID
+	INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
+	WHERE PS.PackageID = @PackageID
+)
+
+IF @VirtualServer <> 1
+BEGIN
+	-- PHYSICAL SERVER
+	-- just return the list of services based on the plan
+	INSERT INTO PackageServices (PackageID, ServiceID)
+	SELECT
+		@PackageID,
+		S.ServiceID
+	FROM Services AS S
+	INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
+	INNER JOIN @Groups AS G ON P.GroupID = G.GroupID
+	WHERE S.ServerID = @ServerID
+		AND S.ServiceID NOT IN (SELECT ServiceID FROM PackageServices WHERE PackageID = @PackageID)
+END
+ELSE
+BEGIN
+	-- VIRTUAL SERVER
+	
+	DECLARE @GroupID int, @PrimaryGroup int
+	DECLARE GroupsCursor CURSOR FOR
+	SELECT GroupID, PrimaryGroup FROM @Groups
+	ORDER BY PrimaryGroup DESC
+
+	OPEN GroupsCursor
+
+	WHILE (10 = 10)
+	BEGIN    --LOOP 10: thru groups
+		FETCH NEXT FROM GroupsCursor
+		INTO @GroupID, @PrimaryGroup
+
+		IF (@@fetch_status <> 0)
+		BEGIN
+			DEALLOCATE GroupsCursor
+			BREAK
+		END
+		
+		-- read group information
+		DECLARE @DistributionType int, @BindDistributionToPrimary int
+		SELECT
+			@DistributionType = DistributionType,
+			@BindDistributionToPrimary = BindDistributionToPrimary
+		FROM VirtualGroups AS VG
+		WHERE ServerID = @ServerID AND GroupID = @GroupID
+		
+		-- bind distribution to primary
+		IF @BindDistributionToPrimary = 1 AND @PrimaryGroup = 0 AND @PrimaryGroupID <> 0
+		BEGIN
+			-- if only one service found just use it and do not distribute			
+			IF (SELECT COUNT(*) FROM VirtualServices AS VS
+				INNER JOIN Services AS S ON VS.ServiceID = S.ServiceID
+				INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
+				WHERE VS.ServerID = @ServerID AND P.GroupID = @GroupID) = 1
+				BEGIN
+					INSERT INTO PackageServices (PackageID, ServiceID)
+					SELECT
+						@PackageID,
+						VS.ServiceID
+					FROM VirtualServices AS VS
+					INNER JOIN Services AS S ON VS.ServiceID = S.ServiceID
+					INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
+					WHERE VS.ServerID = @ServerID AND P.GroupID = @GroupID
+				END
+			ELSE
+				BEGIN
+					DECLARE @PrimaryServerID int
+					-- try to get primary distribution server
+					SELECT
+						@PrimaryServerID = S.ServerID
+					FROM PackageServices AS PS
+					INNER JOIN Services AS S ON PS.ServiceID = S.ServiceID
+					INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
+					WHERE PS.PackageID = @PackageID AND P.GroupID = @PrimaryGroupID
+					
+					INSERT INTO PackageServices (PackageID, ServiceID)
+					SELECT
+						@PackageID,
+						VS.ServiceID
+					FROM VirtualServices AS VS
+					INNER JOIN Services AS S ON VS.ServiceID = S.ServiceID
+					INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
+					WHERE VS.ServerID = @ServerID AND P.GroupID = @GroupID AND S.ServerID = @PrimaryServerID
+				END
+		END
+		ELSE
+		BEGIN
+			
+			-- DISTRIBUTION
+			DECLARE @Services TABLE
+			(
+				ServiceID int,
+				ItemsNumber int,
+				RandomNumber int
+			)
+			
+			DELETE FROM @Services
+			
+			INSERT INTO @Services (ServiceID, ItemsNumber, RandomNumber)
+			SELECT
+				VS.ServiceID,
+				(SELECT COUNT(ItemID) FROM ServiceItems WHERE ServiceID = VS.ServiceID),
+				RAND()
+			FROM VirtualServices AS VS
+			INNER JOIN Services AS S ON VS.ServiceID = S.ServiceID
+			INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
+			WHERE VS.ServerID = @ServerID AND P.GroupID = @GroupID
+			
+			-- BALANCED DISTRIBUTION
+			IF @DistributionType = 1
+			BEGIN
+				-- get the less allocated service
+				INSERT INTO PackageServices (PackageID, ServiceID)
+				SELECT TOP 1
+					@PackageID,
+					ServiceID
+				FROM @Services
+				ORDER BY ItemsNumber
+			END
+			ELSE
+			-- RANDOMIZED DISTRIBUTION
+			BEGIN
+				-- get the less allocated service
+				INSERT INTO PackageServices (PackageID, ServiceID)
+				SELECT TOP 1
+					@PackageID,
+					ServiceID
+				FROM @Services
+				ORDER BY RandomNumber
+			END
+		END
+		
+		IF @PrimaryGroup = 1
+		SET @PrimaryGroupID = @GroupID
+
+	END -- while groups
+	
+END -- end virtual server
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetPackageServiceID
+(
+	@ActorID int,
+	@PackageID int,
+	@GroupName nvarchar(100),
+	@ServiceID int OUTPUT
 )
 AS
 
 -- check rights
-DECLARE @IsAdmin bit
-SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
 
--- get the list
+SET @ServiceID = 0
+
+-- load group info
+DECLARE @GroupID int
+SELECT @GroupID = GroupID FROM ResourceGroups
+WHERE GroupName = @GroupName
+
+-- check if user has this resource enabled
+IF dbo.GetPackageAllocatedResource(@PackageID, @GroupID, NULL) = 0
+BEGIN
+	-- remove all resource services from the space
+	DELETE FROM PackageServices FROM PackageServices AS PS
+	INNER JOIN Services AS S ON PS.ServiceID = S.ServiceID
+	INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
+	WHERE P.GroupID = @GroupID AND PS.PackageID = @PackageID
+	RETURN
+END
+
+-- check if the service is already distributed
 SELECT
-	ClusterID,
-	ClusterName
-FROM Clusters
-WHERE @IsAdmin = 1
+	@ServiceID = PS.ServiceID
+FROM PackageServices AS PS
+INNER JOIN Services AS S ON PS.ServiceID = S.ServiceID
+INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
+WHERE PS.PackageID = @PackageID AND P.GroupID = @GroupID
+
+IF @ServiceID <> 0
+RETURN
+
+-- distribute services
+EXEC DistributePackageServices @ActorID, @PackageID
+
+-- get distributed service again
+SELECT
+	@ServiceID = PS.ServiceID
+FROM PackageServices AS PS
+INNER JOIN Services AS S ON PS.ServiceID = S.ServiceID
+INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
+WHERE PS.PackageID = @PackageID AND P.GroupID = @GroupID
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE CheckServiceItemExists
+(
+	@Exists bit OUTPUT,
+	@ItemName nvarchar(500),
+	@ItemTypeName nvarchar(200),
+	@GroupName nvarchar(100) = NULL
+)
+AS
+
+SET @Exists = 0
+
+DECLARE @ItemTypeID int
+SELECT @ItemTypeID = ItemTypeID FROM ServiceItemTypes
+WHERE TypeName = @ItemTypeName
+
+IF EXISTS (
+SELECT ItemID FROM ServiceItems AS SI
+INNER JOIN Services AS S ON SI.ServiceID = S.ServiceID
+INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
+INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
+WHERE SI.ItemName = @ItemName AND SI.ItemTypeID = @ItemTypeID
+AND ((@GroupName IS NULL) OR (@GroupName IS NOT NULL AND RG.GroupName = @GroupName))
+)
+SET @Exists = 1
 
 RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecVoidCustomerInvoice]
+	@ActorID int,
+	@InvoiceID int
+AS
+BEGIN
+	-- load customer and reseller identities
+	DECLARE @ContractID nvarchar(50), @IssuerID int;
+	SELECT
+		@ContractID = [ContractID] FROM [dbo].[ecInvoice]
+	WHERE
+		[InvoiceID] = @InvoiceID;
+	SELECT
+		@IssuerID = [ResellerID] FROM [dbo].[ecContracts]
+	WHERE
+		[ContractID] = @ContractID;
+	-- check actor rights
+	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access the contract', 16, 1);
+		RETURN;
+	END
+	-- 
+	SET NOCOUNT ON;
+	-- void invoice
+	DELETE FROM [dbo].[ecInvoice] WHERE [InvoiceID] = @InvoiceID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecUpdateTaxation]
+	@ActorID int,
+	@UserID int,
+	@TaxationID int,
+	@Country nvarchar(3),
+	@State nvarchar(50),
+	@Description nvarchar(50),
+	@TypeID int,
+	@Amount decimal(5,2),
+	@Active bit,
+	@Result int OUTPUT
+AS
+BEGIN
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this account', 16, 1);
+		RETURN;
+	END
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	
+	--
+	DECLARE @T_TaxationID int;
+	--
+	SELECT @T_TaxationID = [TaxationID] FROM [dbo].[ecTaxations] WHERE [ResellerID] = @UserID AND [Country] = @Country AND [State] = @State;
+	--
+	SET @T_TaxationID = ISNULL(@T_TaxationID, @TaxationID);
+	--
+	IF @T_TaxationID = @TaxationID
+	BEGIN
+		-- insert
+		UPDATE
+			[dbo].[ecTaxations]
+		SET
+			[Country] = @Country,
+			[State] = @State,
+			[Description] = @Description,
+			[TypeID] = @TypeID,
+			[Amount] = @Amount,
+			[Active] = @Active
+		WHERE
+			[ResellerID] = @UserID
+		AND
+			[TaxationID] = @TaxationID;
+		--
+		SET @Result = 0;
+		--
+		RETURN;
+	END
+
+	-- taxation update error
+	SET @Result = -202;
+	
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecUpdateSystemTrigger]
+	@ActorID int,
+	@TriggerID nvarchar(50),
+	@TriggerHandler nvarchar(512),
+	@ReferenceID nvarchar(50),
+	@Namespace nvarchar(255),
+	@Status nvarchar(50)
+AS
+BEGIN
+	DECLARE @OwnerID int;
+	SELECT
+		@OwnerID = [OwnerID] FROM [dbo].[ecSystemTriggers]
+	WHERE
+		[TriggerID] = @TriggerID;
+	--
+	IF [dbo].[CheckUserParent](@ActorID, @OwnerID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to perform this action', 16, 1);
+		RETURN;
+	END
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    UPDATE [dbo].[ecSystemTriggers] SET
+		[TriggerHandler] = @TriggerHandler,
+		[ReferenceID] = @ReferenceID,
+		[Namespace] = @Namespace,
+		[Status] = @Status
+	WHERE
+		[TriggerID] = @TriggerID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecAddTaxation]
+	@ActorID int,
+	@UserID int,
+	@Country nvarchar(3),
+	@State nvarchar(50),
+	@Description nvarchar(50),
+	@TypeID int,
+	@Amount decimal(5,2),
+	@Active bit,
+	@Result int OUTPUT
+AS
+BEGIN
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this account', 16, 1);
+		RETURN;
+	END
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	-- check before insert
+	IF EXISTS (SELECT [TaxationID] FROM [dbo].[ecTaxations] 
+		WHERE [ResellerID] = @UserID AND [Country] = @Country AND [State] = @State)
+	BEGIN
+		SET @Result = -202;
+		RETURN;
+	END
+
+	-- insert
+    INSERT INTO [dbo].[ecTaxations]
+	(
+		[ResellerID],
+		[Country],
+		[State],
+		[Description],
+		[TypeID],
+		[Amount],
+		[Active]
+	)
+	VALUES
+	(
+		@UserID,
+		@Country,
+		@State,
+		@Description,
+		@TypeID,
+		@Amount,
+		@Active
+	);
+	--
+	SET @Result = SCOPE_IDENTITY();
+	
+END
 
 
 
@@ -30940,122 +27924,35 @@ GO
 
 
 
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetIPAddressesPaged]	
-(
+CREATE PROCEDURE [dbo].[ecAddSystemTrigger]
 	@ActorID int,
-	@PoolID int,
-	@ServerID int,
-	@FilterColumn nvarchar(50) = '',
-	@FilterValue nvarchar(50) = '',
-	@SortColumn nvarchar(50),
-	@StartRow int,
-	@MaximumRows int
-)
+	@OwnerID int,
+	@TriggerHandler nvarchar(512),
+	@ReferenceID nvarchar(50),
+	@Namespace nvarchar(255),
+	@Status nvarchar(50)
 AS
 BEGIN
+	IF [dbo].[CheckUserParent](@ActorID, @OwnerID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to perform this action', 16, 1);
+		RETURN;
+	END
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
 
--- check rights
-DECLARE @IsAdmin bit
-SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
-
--- start
-DECLARE @condition nvarchar(700)
-SET @condition = '
-@IsAdmin = 1
-AND (@PoolID = 0 OR @PoolID <> 0 AND IP.PoolID = @PoolID)
-AND (@ServerID = 0 OR @ServerID <> 0 AND IP.ServerID = @ServerID)
-'
-
-IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
-AND @FilterValue <> '' AND @FilterValue IS NOT NULL
-SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
-
-IF @SortColumn IS NULL OR @SortColumn = ''
-SET @SortColumn = 'IP.ExternalIP ASC'
-
-DECLARE @sql nvarchar(3500)
-
-set @sql = '
-SELECT COUNT(IP.AddressID)
-FROM dbo.IPAddresses AS IP
-LEFT JOIN Servers AS S ON IP.ServerID = S.ServerID
-LEFT JOIN PackageIPAddresses AS PA ON IP.AddressID = PA.AddressID
-LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
-LEFT JOIN dbo.Packages P ON PA.PackageID = P.PackageID
-LEFT JOIN dbo.Users U ON P.UserID = U.UserID
-WHERE ' + @condition + '
-
-DECLARE @Addresses AS TABLE
-(
-	AddressID int
-);
-
-WITH TempItems AS (
-	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
-		IP.AddressID
-	FROM dbo.IPAddresses AS IP
-	LEFT JOIN Servers AS S ON IP.ServerID = S.ServerID
-	LEFT JOIN PackageIPAddresses AS PA ON IP.AddressID = PA.AddressID
-	LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
-	LEFT JOIN dbo.Packages P ON PA.PackageID = P.PackageID
-	LEFT JOIN dbo.Users U ON U.UserID = P.UserID
-	WHERE ' + @condition + '
-)
-
-INSERT INTO @Addresses
-SELECT AddressID FROM TempItems
-WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
-
-SELECT
-	IP.AddressID,
-	IP.PoolID,
-	IP.ExternalIP,
-	IP.InternalIP,
-	IP.SubnetMask,
-	IP.DefaultGateway,
-	IP.Comments,
-
-	IP.ServerID,
-	S.ServerName,
-
-	PA.ItemID,
-	SI.ItemName,
-
-	PA.PackageID,
-	P.PackageName,
-
-	P.UserID,
-	U.UserName
-FROM @Addresses AS TA
-INNER JOIN dbo.IPAddresses AS IP ON TA.AddressID = IP.AddressID
-LEFT JOIN Servers AS S ON IP.ServerID = S.ServerID
-LEFT JOIN PackageIPAddresses AS PA ON IP.AddressID = PA.AddressID
-LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
-LEFT JOIN dbo.Packages P ON PA.PackageID = P.PackageID
-LEFT JOIN dbo.Users U ON U.UserID = P.UserID
-'
-
-exec sp_executesql @sql, N'@IsAdmin bit, @PoolID int, @ServerID int, @StartRow int, @MaximumRows int',
-@IsAdmin, @PoolID, @ServerID, @StartRow, @MaximumRows
+	IF NOT EXISTS(SELECT * FROM [dbo].[ecSystemTriggers] WHERE [OwnerID] = @OwnerID AND 
+		[TriggerHandler] = @TriggerHandler AND [ReferenceID] = @ReferenceID AND
+		[Namespace] = @Namespace AND [Status] = @Status)
+	BEGIN
+		INSERT INTO [dbo].[ecSystemTriggers]
+			([OwnerID], [TriggerHandler], [ReferenceID], [Namespace], [Status])
+		VALUES
+			(@OwnerID, @TriggerHandler, @ReferenceID, @Namespace, @Status);
+	END
 
 END
-
-
-
-
-
-
-
-
 
 
 
@@ -31099,26 +27996,43 @@ GO
 
 
 
-
-
-CREATE PROCEDURE GetDnsRecordsByGroup
+CREATE PROCEDURE UpdateServer
 (
-	@GroupID int
+	@ServerID int,
+	@ServerName nvarchar(100),
+	@ServerUrl nvarchar(100),
+	@Password nvarchar(100),
+	@Comments ntext,
+	@InstantDomainAlias nvarchar(200),
+	@PrimaryGroupID int,
+	@ADEnabled bit,
+	@ADRootDomain nvarchar(200),
+	@ADUsername nvarchar(100),
+	@ADPassword nvarchar(100),
+	@ADAuthenticationType varchar(50)
 )
 AS
-SELECT
-	RGR.RecordID,
-	RGR.RecordOrder,
-	RGR.GroupID,
-	RGR.RecordType,
-	RGR.RecordName,
-	RGR.RecordData,
-	RGR.MXPriority
-FROM
-	ResourceGroupDnsRecords AS RGR
-WHERE RGR.GroupID = @GroupID
-ORDER BY RGR.RecordOrder
+
+IF @PrimaryGroupID = 0
+SET @PrimaryGroupID = NULL
+
+UPDATE Servers SET
+	ServerName = @ServerName,
+	ServerUrl = @ServerUrl,
+	Password = @Password,
+	Comments = @Comments,
+	InstantDomainAlias = @InstantDomainAlias,
+	PrimaryGroupID = @PrimaryGroupID,
+	ADEnabled = @ADEnabled,
+	ADRootDomain = @ADRootDomain,
+	ADUsername = @ADUsername,
+	ADPassword = @ADPassword,
+	ADAuthenticationType = @ADAuthenticationType
+WHERE ServerID = @ServerID
 RETURN
+
+
+
 
 
 
@@ -31211,6 +28125,1300 @@ WHERE
 RETURN 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetUserSettings
+(
+	@ActorID int,
+	@UserID int,
+	@SettingsName nvarchar(50)
+)
+AS
+
+-- check rights
+IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
+RAISERROR('You are not allowed to access this account', 16, 1)
+
+-- find which parent package has overriden NS
+DECLARE @ParentUserID int, @TmpUserID int
+SET @TmpUserID = @UserID
+
+WHILE 10 = 10
+BEGIN
+
+	IF EXISTS
+	(
+		SELECT PropertyName FROM UserSettings
+		WHERE SettingsName = @SettingsName AND UserID = @TmpUserID
+	)
+	BEGIN
+		SELECT
+			UserID,
+			PropertyName,
+			PropertyValue
+		FROM
+			UserSettings
+		WHERE
+			UserID = @TmpUserID AND
+			SettingsName = @SettingsName
+			
+		BREAK
+	END
+
+	SET @ParentUserID = NULL --reset var
+	
+	-- get owner
+	SELECT
+		@ParentUserID = OwnerID
+	FROM Users
+	WHERE UserID = @TmpUserID
+	
+	IF @ParentUserID IS NULL -- the last parent
+	BREAK
+	
+	SET @TmpUserID = @ParentUserID
+END
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetUserParents]
+(
+	@ActorID int,
+	@UserID int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
+RAISERROR('You are not allowed to access this account', 16, 1)
+
+SELECT
+	U.UserID,
+	U.RoleID,
+	U.StatusID,
+	U.OwnerID,
+	U.Created,
+	U.Changed,
+	U.IsDemo,
+	U.Comments,
+	U.IsPeer,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.Email,
+	U.CompanyName,
+	U.EcommerceEnabled
+FROM UserParents(@ActorID, @UserID) AS UP
+INNER JOIN Users AS U ON UP.UserID = U.UserID
+ORDER BY UP.UserOrder DESC
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetUsersSummary
+(
+	@ActorID int,
+	@UserID int
+)
+AS
+-- check rights
+IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
+RAISERROR('You are not allowed to access this account', 16, 1)
+
+-- ALL users
+SELECT COUNT(UserID) AS UsersNumber FROM Users
+WHERE OwnerID = @UserID AND IsPeer = 0
+
+-- BY STATUS users
+SELECT StatusID, COUNT(UserID) AS UsersNumber FROM Users
+WHERE OwnerID = @UserID AND IsPeer = 0
+GROUP BY StatusID
+ORDER BY StatusID
+
+-- BY ROLE users
+SELECT RoleID, COUNT(UserID) AS UsersNumber FROM Users
+WHERE OwnerID = @UserID AND IsPeer = 0
+GROUP BY RoleID
+ORDER BY RoleID DESC
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[GetUserByUsername]
+(
+	@ActorID int,
+	@Username nvarchar(50)
+)
+AS
+
+	SELECT
+		U.UserID,
+		U.RoleID,
+		U.StatusID,
+		U.OwnerID,
+		U.Created,
+		U.Changed,
+		U.IsDemo,
+		U.Comments,
+		U.IsPeer,
+		U.Username,
+		CASE WHEN dbo.CanGetUserPassword(@ActorID, UserID) = 1 THEN U.Password
+		ELSE '' END AS Password,
+		U.FirstName,
+		U.LastName,
+		U.Email,
+		U.SecondaryEmail,
+		U.Address,
+		U.City,
+		U.State,
+		U.Country,
+		U.Zip,
+		U.PrimaryPhone,
+		U.SecondaryPhone,
+		U.Fax,
+		U.InstantMessenger,
+		U.HtmlMail,
+		U.CompanyName,
+		U.EcommerceEnabled,
+		U.[AdditionalParams]
+	FROM Users AS U
+	WHERE U.Username = @Username
+	AND dbo.CanGetUserDetails(@ActorID, UserID) = 1 -- actor user rights
+
+	RETURN
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[GetUserById]
+(
+	@ActorID int,
+	@UserID int
+)
+AS
+	-- user can retrieve his own account, his users accounts
+	-- and his reseller account (without pasword)
+	SELECT
+		U.UserID,
+		U.RoleID,
+		U.StatusID,
+		U.OwnerID,
+		U.Created,
+		U.Changed,
+		U.IsDemo,
+		U.Comments,
+		U.IsPeer,
+		U.Username,
+		CASE WHEN dbo.CanGetUserPassword(@ActorID, @UserID) = 1 THEN U.Password
+		ELSE '' END AS Password,
+		U.FirstName,
+		U.LastName,
+		U.Email,
+		U.SecondaryEmail,
+		U.Address,
+		U.City,
+		U.State,
+		U.Country,
+		U.Zip,
+		U.PrimaryPhone,
+		U.SecondaryPhone,
+		U.Fax,
+		U.InstantMessenger,
+		U.HtmlMail,
+		U.CompanyName,
+		U.EcommerceEnabled,
+		U.[AdditionalParams]
+	FROM Users AS U
+	WHERE U.UserID = @UserID
+	AND dbo.CanGetUserDetails(@ActorID, @UserID) = 1 -- actor user rights
+
+	RETURN
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetServiceItemTypes]
+AS
+SELECT
+	[ItemTypeID],
+	[GroupID],
+	[DisplayName],
+	[TypeName],
+	[TypeOrder],
+	[CalculateDiskspace],
+	[CalculateBandwidth],
+	[Suspendable],
+	[Disposable],
+	[Searchable],
+	[Importable],
+	[Backupable]
+FROM
+	[ServiceItemTypes]
+ORDER BY TypeOrder
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetServiceItemType]
+(
+	@ItemTypeID int
+)
+AS
+SELECT
+	[ItemTypeID],
+	[GroupID],
+	[DisplayName],
+	[TypeName],
+	[TypeOrder],
+	[CalculateDiskspace],
+	[CalculateBandwidth],
+	[Suspendable],
+	[Disposable],
+	[Searchable],
+	[Importable],
+	[Backupable]
+FROM
+	[ServiceItemTypes]
+WHERE
+	[ItemTypeID] = @ItemTypeID
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetServerShortDetails
+(
+	@ServerID int
+)
+AS
+
+SELECT
+	ServerID,
+	ServerName,
+	Comments,
+	VirtualServer,
+	InstantDomainAlias
+FROM Servers
+WHERE
+	ServerID = @ServerID
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetServerInternal
+(
+	@ServerID int
+)
+AS
+SELECT
+	ServerID,
+	ServerName,
+	ServerUrl,
+	Password,
+	Comments,
+	VirtualServer,
+	InstantDomainAlias,
+	PrimaryGroupID,
+	ADEnabled,
+	ADRootDomain,
+	ADUsername,
+	ADPassword,
+	ADAuthenticationType
+FROM Servers
+WHERE
+	ServerID = @ServerID
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetServerByName
+(
+	@ActorID int,
+	@ServerName nvarchar(100)
+)
+AS
+-- check rights
+DECLARE @IsAdmin bit
+SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
+
+SELECT
+	ServerID,
+	ServerName,
+	ServerUrl,
+	Password,
+	Comments,
+	VirtualServer,
+	InstantDomainAlias,
+	PrimaryGroupID,
+	ADRootDomain,
+	ADUsername,
+	ADPassword,
+	ADAuthenticationType
+FROM Servers
+WHERE
+	ServerName = @ServerName
+	AND @IsAdmin = 1
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetServer]
+(
+	@ActorID int,
+	@ServerID int
+)
+AS
+-- check rights
+DECLARE @IsAdmin bit
+SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
+
+SELECT
+	ServerID,
+	ServerName,
+	ServerUrl,
+	Password,
+	Comments,
+	VirtualServer,
+	InstantDomainAlias,
+	PrimaryGroupID,
+	ADEnabled,
+	ADRootDomain,
+	ADUsername,
+	ADPassword,
+	ADAuthenticationType
+FROM Servers
+WHERE
+	ServerID = @ServerID
+	AND @IsAdmin = 1
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetSearchableServiceItemTypes
+
+AS
+SELECT
+	ItemTypeID,
+	DisplayName
+FROM
+	ServiceItemTypes
+WHERE Searchable = 1
+ORDER BY TypeOrder
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/****** Object:  StoredProcedure [dbo].[GetScheduleTaskViewConfigurations]    Script Date: 09/10/2007 17:53:56 ******/
+
+CREATE PROCEDURE [dbo].[GetScheduleTaskViewConfigurations]
+(
+	@TaskID nvarchar(100)
+)
+AS
+
+SELECT
+	@TaskID AS TaskID,
+	STVC.ConfigurationID,
+	STVC.Environment,
+	STVC.Description
+FROM ScheduleTaskViewConfiguration AS STVC
+WHERE STVC.TaskID = @TaskID
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetProviders]
+AS
+SELECT
+	PROV.ProviderID,
+	PROV.GroupID,
+	PROV.ProviderName,
+	PROV.EditorControl,
+	PROV.DisplayName,
+	PROV.ProviderType,
+	RG.GroupName + ' - ' + PROV.DisplayName AS ProviderName,
+	PROV.DisableAutoDiscovery
+FROM Providers AS PROV
+INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
+ORDER BY RG.GroupOrder, PROV.DisplayName
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetClusters
+(
+	@ActorID int
+)
+AS
+
+-- check rights
+DECLARE @IsAdmin bit
+SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
+
+-- get the list
+SELECT
+	ClusterID,
+	ClusterName
+FROM Clusters
+WHERE @IsAdmin = 1
+
+RETURN
 
 
 
@@ -31383,6 +29591,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -31483,6 +29692,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -31535,6 +29745,7 @@ BEGIN
     SELECT @Result = COUNT([TaxationID]) FROM [dbo].[ecTaxations] WHERE [ResellerID] = @UserID;
 
 END
+
 
 
 
@@ -31652,6 +29863,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -31674,86 +29886,142 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[AddServiceItem]
-(
-	@ActorID int,
-	@PackageID int,
-	@ServiceID int,
-	@ItemName nvarchar(500),
-	@ItemTypeName nvarchar(200),
-	@ItemID int OUTPUT,
-	@XmlProperties ntext,
-	@CreatedDate datetime
-)
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetStorefrontProductsByType]
+	@UserID int,
+	@TypeID int
 AS
-BEGIN TRAN
+BEGIN
 
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
+	SELECT 
+		*
+	FROM 
+		[dbo].[ecProduct]
+	WHERE
+		[ResellerID] = @UserID
+	AND
+		[TypeID] = @TypeID
+	AND
+		[Enabled] = 1
+	ORDER BY
+		[ProductName] ASC;
 
--- get GroupID
-DECLARE @GroupID int
-SELECT
-	@GroupID = PROV.GroupID
-FROM Services AS S
-INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
-WHERE S.ServiceID = @ServiceID
+END
 
-DECLARE @ItemTypeID int
-SELECT @ItemTypeID = ItemTypeID FROM ServiceItemTypes
-WHERE TypeName = @ItemTypeName
-AND ((@GroupID IS NULL) OR (@GroupID IS NOT NULL AND GroupID = @GroupID))
 
--- add item
-INSERT INTO ServiceItems
-(
-	PackageID,
-	ServiceID,
-	ItemName,
-	ItemTypeID,
-	CreatedDate
-)
-VALUES
-(
-	@PackageID,
-	@ServiceID,
-	@ItemName,
-	@ItemTypeID,
-	@CreatedDate
-)
 
-SET @ItemID = SCOPE_IDENTITY()
 
-DECLARE @idoc int
---Create an internal representation of the XML document.
-EXEC sp_xml_preparedocument @idoc OUTPUT, @XmlProperties
 
--- Execute a SELECT statement that uses the OPENXML rowset provider.
-DELETE FROM ServiceItemProperties
-WHERE ItemID = @ItemID
 
-INSERT INTO ServiceItemProperties
-(
-	ItemID,
-	PropertyName,
-	PropertyValue
-)
-SELECT
-	@ItemID,
-	PropertyName,
-	PropertyValue
-FROM OPENXML(@idoc, '/properties/property',1) WITH 
-(
-	PropertyName nvarchar(50) '@name',
-	PropertyValue nvarchar(3000) '@value'
-) as PV
 
--- remove document
-exec sp_xml_removedocument @idoc
 
-COMMIT TRAN
-RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetStorefrontProduct]
+	@ResellerID int,
+	@ProductID int
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+    SELECT 
+		*
+	FROM 
+		[dbo].[ecProduct]
+	WHERE 
+		[ProductID] = @ProductID 
+	AND 
+		[ResellerID] = @ResellerID
+	AND
+		[Enabled] = 1;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -31913,6 +30181,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -32037,6 +30306,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -32127,6 +30397,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -32190,6 +30461,7 @@ AS
 	SELECT * FROM [dbo].[ecCategory] WHERE [ResellerID] = @UserID ORDER BY [CategoryName];
 
 RETURN
+
 
 
 
@@ -32316,6 +30588,144 @@ END
 
 
 
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetIPAddressesPaged]	
+(
+	@ActorID int,
+	@PoolID int,
+	@ServerID int,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+BEGIN
+
+-- check rights
+DECLARE @IsAdmin bit
+SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
+
+-- start
+DECLARE @condition nvarchar(700)
+SET @condition = '
+@IsAdmin = 1
+AND (@PoolID = 0 OR @PoolID <> 0 AND IP.PoolID = @PoolID)
+AND (@ServerID = 0 OR @ServerID <> 0 AND IP.ServerID = @ServerID)
+'
+
+IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+AND @FilterValue <> '' AND @FilterValue IS NOT NULL
+SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'IP.ExternalIP ASC'
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+SELECT COUNT(IP.AddressID)
+FROM dbo.IPAddresses AS IP
+LEFT JOIN Servers AS S ON IP.ServerID = S.ServerID
+LEFT JOIN PackageIPAddresses AS PA ON IP.AddressID = PA.AddressID
+LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
+LEFT JOIN dbo.Packages P ON PA.PackageID = P.PackageID
+LEFT JOIN dbo.Users U ON P.UserID = U.UserID
+WHERE ' + @condition + '
+
+DECLARE @Addresses AS TABLE
+(
+	AddressID int
+);
+
+WITH TempItems AS (
+	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
+		IP.AddressID
+	FROM dbo.IPAddresses AS IP
+	LEFT JOIN Servers AS S ON IP.ServerID = S.ServerID
+	LEFT JOIN PackageIPAddresses AS PA ON IP.AddressID = PA.AddressID
+	LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
+	LEFT JOIN dbo.Packages P ON PA.PackageID = P.PackageID
+	LEFT JOIN dbo.Users U ON U.UserID = P.UserID
+	WHERE ' + @condition + '
+)
+
+INSERT INTO @Addresses
+SELECT AddressID FROM TempItems
+WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
+
+SELECT
+	IP.AddressID,
+	IP.PoolID,
+	IP.ExternalIP,
+	IP.InternalIP,
+	IP.SubnetMask,
+	IP.DefaultGateway,
+	IP.Comments,
+
+	IP.ServerID,
+	S.ServerName,
+
+	PA.ItemID,
+	SI.ItemName,
+
+	PA.PackageID,
+	P.PackageName,
+
+	P.UserID,
+	U.UserName
+FROM @Addresses AS TA
+INNER JOIN dbo.IPAddresses AS IP ON TA.AddressID = IP.AddressID
+LEFT JOIN Servers AS S ON IP.ServerID = S.ServerID
+LEFT JOIN PackageIPAddresses AS PA ON IP.AddressID = PA.AddressID
+LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
+LEFT JOIN dbo.Packages P ON PA.PackageID = P.PackageID
+LEFT JOIN dbo.Users U ON U.UserID = P.UserID
+'
+
+exec sp_executesql @sql, N'@IsAdmin bit, @PoolID int, @ServerID int, @StartRow int, @MaximumRows int',
+@IsAdmin, @PoolID, @ServerID, @StartRow, @MaximumRows
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -32351,115 +30761,27 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecGetStorefrontProductsByType]
-	@UserID int,
-	@TypeID int
+CREATE PROCEDURE GetDnsRecordsByGroup
+(
+	@GroupID int
+)
 AS
-BEGIN
+SELECT
+	RGR.RecordID,
+	RGR.RecordOrder,
+	RGR.GroupID,
+	RGR.RecordType,
+	RGR.RecordName,
+	RGR.RecordData,
+	RGR.MXPriority
+FROM
+	ResourceGroupDnsRecords AS RGR
+WHERE RGR.GroupID = @GroupID
+ORDER BY RGR.RecordOrder
+RETURN
 
-	SELECT 
-		*
-	FROM 
-		[dbo].[ecProduct]
-	WHERE
-		[ResellerID] = @UserID
-	AND
-		[TypeID] = @TypeID
-	AND
-		[Enabled] = 1
-	ORDER BY
-		[ProductName] ASC;
 
-END
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetStorefrontProduct]
-	@ResellerID int,
-	@ProductID int
-AS
-BEGIN
-
-	SET NOCOUNT ON;
-
-    SELECT 
-		*
-	FROM 
-		[dbo].[ecProduct]
-	WHERE 
-		[ProductID] = @ProductID 
-	AND 
-		[ResellerID] = @ResellerID
-	AND
-		[Enabled] = 1;
-
-END
 
 
 
@@ -32640,6 +30962,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -32711,6 +31034,7 @@ BEGIN
 	SET @Result = SCOPE_IDENTITY();
 
 END
+
 
 
 
@@ -32870,6 +31194,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -32977,6 +31302,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -33038,6 +31364,7 @@ VALUES
 	@SeverityID
 )
 RETURN
+
 
 
 
@@ -33198,6 +31525,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -33271,6 +31599,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -33319,6 +31648,7 @@ BEGIN
     DELETE FROM [dbo].[ecPaymentProfiles] WHERE [ContractID] = @ContractID;
 
 END
+
 
 
 
@@ -33433,6 +31763,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -33488,6 +31819,7 @@ BEGIN
     DELETE FROM [dbo].[ecService] WHERE	[ServiceID] = @ServiceID;
 
 END
+
 
 
 
@@ -33571,6 +31903,7 @@ BEGIN
 		[PaymentID] = @PaymentID;
 
 END
+
 
 
 
@@ -33701,6 +32034,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -33762,6 +32096,7 @@ BEGIN
 	EXEC sp_xml_removedocument @DocID;
 
 END
+
 
 
 
@@ -33876,6 +32211,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -33926,6 +32262,7 @@ BEGIN
     SELECT * FROM [dbo].[ecBillingCycles] WHERE [ResellerID] = @UserID AND [CycleID] = @CycleID;
 
 END
+
 
 
 
@@ -34061,6 +32398,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -34109,6 +32447,7 @@ BEGIN
 	SELECT * FROM [dbo].[ecPaymentProfiles] WHERE [ContractID] = @ContractID;
 
 END
+
 
 
 
@@ -34188,6 +32527,7 @@ BEGIN
 	WHERE [MethodName] = @MethodName AND [ResellerID] = @UserID;
 
 END
+
 
 
 
@@ -34302,6 +32642,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -34375,6 +32716,7 @@ BEGIN
 			);
 
 END
+
 
 
 
@@ -34500,6 +32842,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -34583,6 +32926,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -34625,6 +32969,7 @@ BEGIN
     SELECT * FROM [dbo].[ecProduct] WHERE [ResellerID] = @UserID AND [TypeID] = @TypeID ORDER BY [ProductName];
 
 END
+
 
 
 
@@ -34745,6 +33090,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -34788,6 +33134,7 @@ BEGIN
 	WHERE [ResellerID] = @ResellerID;
 
 END
+
 
 
 
@@ -34882,6 +33229,7 @@ BEGIN
 		[PM].[MethodName] = @MethodName;
 
 END
+
 
 
 
@@ -35034,6 +33382,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -35097,6 +33446,1696 @@ END
 
 
 
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetCustomerInvoiceItems] 
+	@ActorID int,
+	@InvoiceID int
+AS
+BEGIN
+	DECLARE @IssuerID int, @ContractID nvarchar(50);
+	SELECT
+		@ContractID = [ContractID] FROM [dbo].[ecInvoice]
+	WHERE
+		[InvoiceID] = @InvoiceID;
+	SELECT
+		@IssuerID = ISNULL([CustomerID],[ResellerID]) FROM [dbo].[ecContracts]
+	WHERE
+		[ContractID] = @ContractID;
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID,@IssuerID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access the contract', 16, 1);
+		RETURN;
+	END
+	--
+	SET NOCOUNT ON;
+	--
+    SELECT
+		* FROM [dbo].[ecInvoiceItems] AS [II]
+	INNER JOIN
+		[ecInvoice] AS [I] ON [I].[InvoiceID] = [II].[InvoiceID]
+	WHERE
+		[I].[InvoiceID] = @InvoiceID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetCustomerInvoice]
+	@ActorID int,
+	@InvoiceID int
+AS
+BEGIN
+	DECLARE @IssuerID int, @ContractID nvarchar(50);
+	SELECT
+		@ContractID = [ContractID] FROM [dbo].[ecInvoice]
+	WHERE
+		[InvoiceID] = @InvoiceID;
+	SELECT
+		@IssuerID = ISNULL([CustomerID],[ResellerID]) FROM [dbo].[ecContracts]
+	WHERE
+		[ContractID] = @ContractID;
+	-- check actor rights
+	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access the contract', 16, 1);
+		RETURN;
+	END
+	--
+	SET NOCOUNT ON;
+	--
+	SELECT
+		* FROM [dbo].[ContractsInvoicesDetailed]
+	WHERE
+		[InvoiceID] = @InvoiceID AND [ContractID] = @ContractID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ChangeUserPassword]
+(
+	@ActorID int,
+	@UserID int,
+	@Password nvarchar(200)
+)
+AS
+
+-- check actor rights
+IF dbo.CanUpdateUserDetails(@ActorID, @UserID) = 0
+RETURN
+
+UPDATE Users
+SET Password = @Password
+WHERE UserID = @UserID
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecHostingPlansBillingCycles](
+	[ProductID] [int] NOT NULL,
+	[CycleID] [int] NOT NULL,
+	[SetupFee] [money] NOT NULL,
+	[RecurringFee] [money] NOT NULL,
+	[SortOrder] [int] NOT NULL,
+ CONSTRAINT [PK_ecHostingPlansBillingCycles] PRIMARY KEY CLUSTERED 
+(
+	[ProductID] ASC,
+	[CycleID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecHostingPlans](
+	[ProductID] [int] NOT NULL,
+	[ResellerID] [int] NOT NULL,
+	[PlanID] [int] NOT NULL,
+	[UserRole] [int] NOT NULL,
+	[InitialStatus] [int] NOT NULL,
+	[DomainOption] [int] NOT NULL,
+ CONSTRAINT [PK_ecHostingPlans] PRIMARY KEY CLUSTERED 
+(
+	[ProductID] ASC,
+	[ResellerID] ASC,
+	[PlanID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecBulkServiceDelete]
+	@ActorID int,
+	@ContractID nvarchar(50),
+	@SvcsXml xml,
+	@Result int OUTPUT
+AS
+BEGIN
+	DECLARE @IssuerID int;
+	SELECT
+		@IssuerID = ISNULL([CustomerID],[ResellerID]) FROM [dbo].[ecContracts]
+	WHERE
+		[ContractID] = @ContractID;
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this information', 16, 1);
+		RETURN;
+	END
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    DELETE
+		FROM [dbo].[ecService]
+	WHERE
+		[ServiceID] IN(SELECT [SXML].[Data].value('@id','int') FROM @SvcsXml.nodes('/Svcs/Svc') [SXML]([Data]));
+	--
+	SET @Result = 0;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetCustomersPaymentsPaged]
+	@ActorID int,
+	@UserID int,
+	@IsReseller bit,
+	@MaximumRows int,
+	@StartRowIndex int
+AS
+BEGIN
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this information', 16, 1);
+		RETURN;
+	END
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    DECLARE @EndIndex int;
+
+	SET @EndIndex = @MaximumRows + @StartRowIndex;
+	SET @StartRowIndex = @StartRowIndex + 1;
+
+	IF @IsReseller = 1
+	BEGIN
+		WITH [PAYMENTS] AS (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY [CP].[Created] DESC) AS [RowIndex], [CP].* FROM [dbo].[ecCustomersPayments] AS [CP]
+			INNER JOIN
+				[dbo].[ecContracts] AS [C] ON [C].[ContractID] = [CP].[ContractID]
+			WHERE
+				[C].[ResellerID] = @UserID
+		)
+		
+		SELECT
+			[P].*, [INV].[InvoiceNumber], [SP].[DisplayName] AS [ProviderName] FROM [PAYMENTS] AS [P]
+		LEFT OUTER JOIN
+			[dbo].[ecSupportedPlugins] AS [SP] ON [SP].[PluginID] = [P].[PluginID]
+		LEFT OUTER JOIN
+			[dbo].[ecInvoice] AS [INV] ON [INV].[InvoiceID] = [P].[InvoiceID]
+		WHERE
+			[RowIndex] BETWEEN @StartRowIndex AND @EndIndex 
+		ORDER BY
+			[Created] DESC;
+		
+		RETURN;
+	END;
+	
+	WITH [PAYMENTS] AS (
+		SELECT
+			ROW_NUMBER() OVER(ORDER BY [CP].[Created] DESC) AS [RowIndex], [CP].* FROM [dbo].[ecCustomersPayments] AS [CP]
+		INNER JOIN
+			[dbo].[ecContracts] AS [C] ON [C].[ContractID] = [CP].[ContractID]
+		WHERE
+			[C].[CustomerID] = @UserID
+	)
+	
+	SELECT
+		[P].*, [INV].[InvoiceNumber], [SP].[DisplayName] AS [ProviderName] FROM [PAYMENTS] AS [P]
+	LEFT OUTER JOIN
+		[dbo].[ecSupportedPlugins] AS [SP] ON [SP].[PluginID] = [P].[PluginID]
+	LEFT OUTER JOIN
+		[dbo].[ecInvoice] AS [INV] ON [INV].[InvoiceID] = [P].[InvoiceID] 
+	WHERE
+		[RowIndex] BETWEEN @StartRowIndex AND @EndIndex 
+	ORDER BY
+		[Created] DESC;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetCustomersPaymentsCount]
+	@ActorID int,
+	@UserID int,
+	@IsReseller bit,
+	@Result int OUTPUT
+AS
+BEGIN
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this information', 16, 1);
+		RETURN;
+	END
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	IF @IsReseller = 1
+	BEGIN
+		SELECT
+			@Result = COUNT([CP].[PaymentID]) FROM [dbo].[ecCustomersPayments] AS [CP]
+		INNER JOIN
+			[dbo].[ecContracts] AS [C] ON [C].[ContractID] = [CP].[ContractID]
+		WHERE
+			[C].[ResellerID] = @UserID;
+		RETURN;
+	END
+
+	SELECT
+		@Result = COUNT([CP].[PaymentID]) FROM [dbo].[ecCustomersPayments] AS [CP]
+	INNER JOIN
+		[dbo].[ecContracts] AS [C] ON [C].[ContractID] = [CP].[ContractID]
+	WHERE
+		[C].[CustomerID] = @UserID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetCustomersInvoicesPaged]
+	@ActorID int,
+	@UserID int,
+	@IsReseller bit,
+	@MaximumRows int,
+	@StartRowIndex int
+AS
+BEGIN
+	-- check actor rights
+	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this information', 16, 1);
+		RETURN;
+	END
+
+	SET NOCOUNT ON;
+
+    DECLARE @EndIndex int;
+
+	SET @EndIndex = @MaximumRows + @StartRowIndex;
+	SET @StartRowIndex = @StartRowIndex + 1;
+
+	IF @IsReseller = 1
+	BEGIN
+		-- get reseller invoices
+		WITH [INVOICES] AS (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY [Created] DESC) AS [RowIndex], * FROM [dbo].[ContractsInvoicesDetailed]
+			WHERE
+				[ResellerID] = @UserID
+		)
+
+		SELECT * FROM [INVOICES]
+			WHERE [RowIndex] BETWEEN @StartRowIndex AND @EndIndex
+				ORDER BY [Created] DESC;
+
+		RETURN;
+	END;
+	
+	-- get customer invoices
+	WITH [INVOICES] AS (
+		SELECT
+			ROW_NUMBER() OVER(ORDER BY [Created] DESC) AS [RowIndex], * FROM [dbo].[ContractsInvoicesDetailed]
+		WHERE
+			[CustomerID] = @UserID
+	)
+
+	SELECT * FROM [INVOICES] 
+		WHERE [RowIndex] BETWEEN @StartRowIndex AND @EndIndex
+			ORDER BY [Created] DESC;
+
+	RETURN;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetCustomersInvoicesCount]
+	@ActorID int,
+	@UserID int,
+	@IsReseller bit,
+	@Result int OUTPUT
+AS
+BEGIN
+
+	-- check user parent
+	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this information', 16, 1);
+		RETURN;
+	END
+
+	SET NOCOUNT ON;
+
+	IF @IsReseller = 1
+	BEGIN
+		SELECT
+			@Result = COUNT([InvoiceID]) FROM [dbo].[ContractsInvoicesDetailed]
+		WHERE
+			[ResellerID] = @UserID;
+		RETURN;
+	END
+	
+	SELECT
+		@Result = COUNT([InvoiceID]) FROM [dbo].[ContractsInvoicesDetailed]
+	WHERE
+		[CustomerID] = @UserID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetCustomerService]
+	@ActorID int,
+	@ServiceID int
+AS
+BEGIN
+	DECLARE @IssuerID int, @ContractID nvarchar(50);
+	SELECT
+		@ContractID = [ContractID] FROM [dbo].[ecService]
+	WHERE
+		[ServiceID] = @ServiceID;
+	SELECT
+		@IssuerID = ISNULL([CustomerID],[ResellerID]) FROM [dbo].[ecContracts]
+	WHERE
+		[ContractID] = @ContractID;
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this information', 16, 1);
+		RETURN;
+	END
+
+    SELECT * FROM [dbo].[ecService] WHERE [ServiceID] = @ServiceID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecSetPaymentMethod]
+	@ActorID int,
+	@UserID int,
+	@MethodName nvarchar(50),
+	@DisplayName nvarchar(50),
+	@PluginID int,
+	@Result int OUTPUT
+AS
+BEGIN
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+	BEGIN
+		SET @Result = -1;
+		RAISERROR('You are not allowed to access this account', 16, 1);
+		RETURN;
+	END
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	-- cleanup
+    DELETE FROM [dbo].[ecPaymentMethods]
+	WHERE [ResellerID] = @UserID AND [MethodName] = @MethodName;
+	-- add
+	INSERT INTO [dbo].[ecPaymentMethods]
+	(
+		[ResellerID],
+		[MethodName],
+		[PluginID],
+		[DisplayName],
+		[SupportedItems]
+	)
+	SELECT
+		@UserID,
+		@MethodName,
+		@PluginID,
+		@DisplayName,
+		[SupportedItems]
+	FROM
+		[dbo].[ecSupportedPlugins]
+	WHERE
+		[PluginID] = @PluginID;
+	--
+	SET @Result = 0;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecSetInvoiceItemProcessed]
+	@InvoiceID int,
+	@ItemID int,
+	@Result int OUTPUT
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	SET @Result = 0;
+
+    UPDATE
+		[dbo].[ecInvoiceItems]
+	SET
+		[Processed] = 1
+	WHERE
+		[InvoiceID] = @InvoiceID
+	AND
+		[ItemID] = @ItemID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecPaymentProfileExists]
+	@ActorID int,
+	@ContractID nvarchar(50),
+	@Result bit OUTPUT
+AS
+BEGIN
+	DECLARE @IssuerID int;
+	SELECT
+		@IssuerID = ISNULL([CustomerID],[ResellerID]) FROM [dbo].[ecContracts]
+	WHERE
+		[ContractID] = @ContractID;
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this account', 16, 1);
+		RETURN;
+	END
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    IF EXISTS (SELECT [ContractID] FROM [dbo].[ecPaymentProfiles] WHERE [ContractID] = @ContractID)
+	BEGIN
+		SET @Result = 1;
+		RETURN;
+	END
+	--
+	SET @Result = 0;
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecIsSupportedPluginActive]
+	@ActorID int,
+	@ResellerID int,
+	@PluginID int,
+	@Active bit OUTPUT
+AS
+BEGIN
+	-- check user parent
+	IF [dbo].[CheckUserParent](@ActorID, @ResellerID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this account', 16, 1);
+		RETURN;
+	END
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    IF EXISTS(SELECT * FROM [dbo].[ecPluginsProperties] 
+		WHERE [ResellerID] = @ResellerID AND [PluginID] = @PluginID)
+	BEGIN
+		SET @Active = 1;
+		RETURN;
+	END
+
+	SET @Active = 0;
+	RETURN;
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE VIEW [dbo].[ContractsServicesDetailed]
+AS
+SELECT dbo.ecService.ServiceID, ISNULL(dbo.Users.Username, dbo.ecContracts.AccountName) AS Username, dbo.ecContracts.CustomerID, dbo.ecService.ContractID, 
+dbo.ecContracts.ResellerID, dbo.ecService.ServiceName, dbo.ecService.TypeID, dbo.ecService.Status, dbo.ecService.Created, dbo.ecService.Modified, 
+dbo.ecService.ParentID
+FROM dbo.ecContracts INNER JOIN 
+dbo.ecService ON dbo.ecContracts.ContractID = dbo.ecService.ContractID LEFT OUTER JOIN 
+dbo.Users ON dbo.ecContracts.CustomerID = dbo.Users.UserID
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecUpdateCategory] 
+	@ActorID int,
+	@UserID int,
+	@CategoryID int,
+	@CategoryName nvarchar(255),
+	@CategorySku nvarchar(50),
+	@ParentID int,
+	@ShortDescription ntext,
+	@FullDescription ntext,
+	@Result int OUTPUT
+AS
+BEGIN
+	-- check actor rights
+	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+	BEGIN
+		SET @Result = -1;
+		RAISERROR('You are not allowed to access this account', 16, 1);
+		RETURN;
+	END
+
+	SET NOCOUNT ON;
+
+	SET @Result = 0;
+
+	DECLARE @Level int;
+
+	IF @ParentID <= 0
+		SET @ParentID = NULL;
+
+	-- check whether a category exists
+	IF NOT EXISTS(
+		SELECT
+			[CategoryName]
+		FROM
+			[dbo].[ecCategory]
+		WHERE
+			[CategoryID] = @CategoryID
+			AND
+			[ResellerID] = @UserID
+	)
+	BEGIN
+		SET @Result = -1;
+		RETURN;
+	END
+
+	-- check whether the update is correct
+	IF @ParentID = @CategoryID
+		BEGIN
+			SET @Result = -1;
+			RETURN;
+		END
+
+	-- check consistency: sub-categories won't include a parent category
+	IF @ParentID IN (
+		SELECT
+			[CategoryID]
+		FROM
+			[dbo].[ecCategory]
+		WHERE
+			[ParentID] = @CategoryID
+			AND
+			[ResellerID] = @UserID
+	)
+	BEGIN
+		SET @Result = -1;
+		RETURN;
+	END
+
+	-- category level updates
+	IF @ParentID = 0
+		BEGIN
+			SET @ParentID = NULL;
+			SET @Level = 0;
+		END
+	ELSE
+		BEGIN
+			-- identify parent level
+			SELECT
+				@Level = [Level]
+			FROM
+				[dbo].[ecCategory]
+			WHERE
+				[CategoryID] = @ParentID
+				AND
+				[ResellerID] = @UserID;
+
+			-- increase if necessary
+			IF @Level >= 0
+				SET @Level = @Level + 1;
+			ELSE
+				SET @Level = 0;
+		END
+
+	-- update a category
+    UPDATE 
+		[dbo].[ecCategory]
+	SET 
+		[CategoryName] = @CategoryName,
+		[CategorySku] = @CategorySku,
+		[ParentID] = @ParentID,
+		[Level] = @Level,
+		[ShortDescription] = @ShortDescription,
+		[FullDescription] = @FullDescription,
+		[Modified] = GETUTCDATE(),
+		[ModifierID] = @ActorID
+	WHERE 
+		[CategoryID] = @CategoryID 
+		AND 
+		[ResellerID] = @UserID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecUpdateBillingCycle]
+	@ActorID int,
+	@UserID int,
+	@CycleID int,
+	@CycleName nvarchar(255),
+	@BillingPeriod nvarchar(50),
+	@PeriodLength int,
+	@Result int OUTPUT
+AS
+BEGIN
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+	BEGIN
+		SET @Result = -1;
+		RAISERROR('You are not allowed to access this account', 16, 1);
+		RETURN;
+	END
+	-- update cycle details
+    UPDATE
+		[dbo].[ecBillingCycles]
+	SET
+		[CycleName] = @CycleName,
+		[BillingPeriod] = @BillingPeriod,
+		[PeriodLength] = @PeriodLength
+	WHERE
+		[ResellerID] = @UserID
+	AND
+		[CycleID] = @CycleID;
+
+	SET @Result = 0;
+	RETURN;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecTopLevelDomainsCycles](
+	[ProductID] [int] NOT NULL,
+	[CycleID] [int] NOT NULL,
+	[SetupFee] [money] NOT NULL,
+	[RecurringFee] [money] NOT NULL,
+	[TransferFee] [money] NULL,
+	[SortOrder] [int] NOT NULL
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecTopLevelDomains](
+	[TopLevelDomain] [nvarchar](10) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ProductID] [int] NOT NULL,
+	[PluginID] [int] NOT NULL,
+	[ResellerID] [int] NOT NULL,
+	[WhoisEnabled] [bit] NULL,
+ CONSTRAINT [PK_ecTopLevelDomains] PRIMARY KEY CLUSTERED 
+(
+	[TopLevelDomain] ASC,
+	[ResellerID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecHostingPackageSvcsCycles](
+	[SvcCycleID] [int] IDENTITY(1,1) NOT NULL,
+	[ServiceID] [int] NOT NULL,
+	[CycleName] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+	[BillingPeriod] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[PeriodLength] [int] NOT NULL,
+	[SetupFee] [money] NULL,
+	[RecurringFee] [money] NOT NULL,
+	[Currency] [nvarchar](3) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_ecPackagesSvcsCycles] PRIMARY KEY CLUSTERED 
+(
+	[SvcCycleID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecHostingPackageSvcs](
+	[ServiceID] [int] NOT NULL,
+	[ProductID] [int] NOT NULL,
+	[PlanID] [int] NOT NULL,
+	[PackageID] [int] NULL,
+	[UserRole] [int] NOT NULL,
+	[InitialStatus] [int] NOT NULL,
+	[SvcCycleID] [int] NOT NULL,
+ CONSTRAINT [PK_ecPackagesSvcs] PRIMARY KEY CLUSTERED 
+(
+	[ServiceID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecHostingAddonSvcsCycles](
+	[SvcCycleID] [int] IDENTITY(1,1) NOT NULL,
+	[ServiceID] [int] NOT NULL,
+	[CycleName] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[BillingPeriod] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[PeriodLength] [int] NULL,
+	[SetupFee] [money] NULL,
+	[CyclePrice] [money] NOT NULL,
+	[Currency] [nvarchar](3) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_ecAddonPackagesSvcsCycles] PRIMARY KEY CLUSTERED 
+(
+	[SvcCycleID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecHostingAddonSvcs](
+	[ServiceID] [int] NOT NULL,
+	[ProductID] [int] NOT NULL,
+	[PlanID] [int] NULL,
+	[PackageAddonID] [int] NULL,
+	[Quantity] [int] NOT NULL,
+	[Recurring] [bit] NOT NULL,
+	[DummyAddon] [bit] NOT NULL,
+	[SvcCycleID] [int] NOT NULL,
+ CONSTRAINT [PK_ecAddonPackagesSvcs] PRIMARY KEY CLUSTERED 
+(
+	[ServiceID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ecHostingAddonsCycles](
+	[ProductID] [int] NOT NULL,
+	[CycleID] [int] NOT NULL,
+	[SetupFee] [money] NOT NULL,
+	[RecurringFee] [money] NOT NULL,
+	[SortOrder] [int] NOT NULL,
+ CONSTRAINT [PK_ecHostingAddonsCycles] PRIMARY KEY CLUSTERED 
+(
+	[ProductID] ASC,
+	[CycleID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -35140,6 +35179,7 @@ BEGIN
 	AND IP.PoolID = @PoolID
 	AND dbo.CheckActorPackageRights(@ActorID, PIP.PackageID) = 1
 END
+
 
 
 
@@ -35255,6 +35295,7 @@ BEGIN
 	END
 END
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -35301,6 +35342,7 @@ BEGIN
 		AND dbo.CheckActorPackageRights(@ActorID, PIP.PackageID) = 1
 	ORDER BY IP.DefaultGateway, IP.ExternalIP
 END
+
 
 
 
@@ -35384,6 +35426,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -35424,6 +35467,7 @@ AND (@PoolID = 0 OR @PoolID <> 0 AND IP.PoolID = @PoolID)
 ORDER BY PIP.IsPrimary DESC
 
 RETURN
+
 
 
 
@@ -35503,6 +35547,7 @@ AND (@PoolID = 0 OR @PoolID <> 0 AND IP.PoolID = @PoolID)
 AND (@ServerID = 0 OR @ServerID <> 0 AND IP.ServerID = @ServerID)
 
 END
+
 
 
 
@@ -35693,6 +35738,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -35794,6 +35840,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -35860,6 +35907,7 @@ LEFT OUTER JOIN IPAddresses AS IP ON NR.IPAddressID = IP.AddressID
 WHERE
 	NR.ServerID = @ServerID
 RETURN
+
 
 
 
@@ -35999,6 +36047,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -36050,6 +36099,286 @@ DELETE FROM IPAddresses
 WHERE AddressID = @AddressID
 
 RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecDeleteBillingCycle]
+	@ActorID int,
+	@UserID int,
+	@CycleID int,
+	@Result int OUTPUT
+AS
+BEGIN
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+	BEGIN
+		SET @Result = -1;
+		RAISERROR('You are not allowed to access this account', 16, 1);
+		RETURN;
+	END
+
+    DELETE FROM [dbo].[ecBillingCycles] WHERE [ResellerID] = @UserID AND [CycleID] = @CycleID;
+
+	SET @Result = 0;
+	RETURN;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecUpdateCustomerPayment]
+	@ActorID int,
+	@PaymentID int,
+	@InvoiceID int,
+	@TransactionID nvarchar(255),
+	@Total money,
+	@Currency nvarchar(3),
+	@MethodName nvarchar(50),
+	@PluginID int,
+	@StatusID int,
+	@Result int OUTPUT
+AS
+BEGIN
+	DECLARE @IssuerID int, @ContractID nvarchar(50);
+	SELECT
+		@ContractID = [ContractID] FROM [dbo].[ecCustomersPayments]
+	WHERE
+		[PaymentID] = @PaymentID;
+	SELECT
+		@IssuerID = ISNULL([CustomerID],[ResellerID]) FROM [dbo].[ecContracts]
+	WHERE
+		[ContractID] = @ContractID;
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this account', 16, 1);
+		RETURN;
+	END
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	SET @Result = 0;
+
+    UPDATE [dbo].[ecCustomersPayments]
+	SET
+		[InvoiceID] = @InvoiceID,
+		[TransactionID] = @TransactionID,
+		[Total] = @Total,
+		[Currency] = @Currency,
+		[MethodName] = @MethodName,
+		[PluginID] = @PluginID,
+		[StatusID] = @StatusID
+	WHERE
+		[PaymentID] = @PaymentID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetGroupProviders
+(
+	@GroupID int
+)
+AS
+SELECT
+	PROV.ProviderID,
+	PROV.GroupID,
+	PROV.ProviderName,
+	PROV.DisplayName,
+	PROV.ProviderType,
+	RG.GroupName + ' - ' + PROV.DisplayName AS ProviderName
+FROM Providers AS PROV
+INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
+WHERE RG.GroupID = @GroupId
+ORDER BY RG.GroupOrder, PROV.DisplayName
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -36269,6 +36598,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -36341,6 +36671,7 @@ WHERE ServiceID = @ServiceID
 COMMIT TRAN
 
 RETURN 
+
 
 
 
@@ -36499,6 +36830,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -36559,78 +36891,6 @@ END
 
 
 
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecSetSvcsUsageRecordsClosed]
-	@ActorID int,
-	@XmlSvcs xml,
-	@Result int OUTPUT
-AS
-BEGIN
-
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-	-- result is ok
-	SET @Result = 0;
-	-- update all svc records
-	UPDATE
-		[dbo].[ecSvcsUsageLog]
-	SET
-		[PeriodClosed] = 1
-	WHERE
-		[ServiceID] IN (
-			SELECT [SXML].[Data].value('@id','int') FROM @XmlSvcs.nodes('/records/record') [SXML]([Data]));
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 GO
 SET ANSI_NULLS ON
@@ -36657,2069 +36917,59 @@ GO
 
 
 
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetStorefrontProductsInCategory]
-	@ResellerID int,
-	@CategoryID int
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    SELECT
-		[P].*
-	FROM
-		[dbo].[ecProduct] AS [P]
-	INNER JOIN
-		[dbo].[ecProductCategories] AS [PC]
-	ON
-		[P].[ProductID] = [PC].[ProductID]
-	WHERE
-		[PC].[CategoryID] = @CategoryID
-	AND
-		[P].[ResellerID] = @ResellerID
-	AND
-		[P].[Enabled] = 1;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetStorefrontHostingPlanAddons]
-	@ResellerID int,
-	@PlanID int
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    SELECT
-		[P].*,
-		[HA].*,
-		[HA].[2COID] AS [TCOID]
-	FROM
-		[dbo].[ecHostingAddons] AS [HA]
-	INNER JOIN
-		[dbo].[ecProduct] AS [P]
-	ON
-		[P].[ProductID] = [HA].[ProductID]
-	INNER JOIN
-		[dbo].[ecAddonProducts] AS [AP]
-	ON
-		[P].[ProductID] = [AP].[AddonID]
-	WHERE
-		[AP].[ResellerID] = @ResellerID
-	AND
-		[P].[Enabled] = 1
-	AND
-		[AP].[ProductID] = @PlanID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetServiceHandlersResponsesByReseller]
-	@ResellerID int
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    SELECT 
-		* FROM [ServiceHandlersResponsesDetailed]
-	WHERE
-		[ResellerID] = @ResellerID AND [ErrorMessage] IS NULL
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetResellerTopLevelDomain]
-	@ResellerID int,
-	@TLD nvarchar(10)
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    SELECT
-		[P].*,
-		[Tlds].[PluginID],
-		[Tlds].[WhoisEnabled]
-	FROM
-		[dbo].[ecProduct] AS [P]
-	INNER JOIN
-		[dbo].[ecTopLevelDomains] AS [Tlds]
-	ON
-		[Tlds].[ProductID] = [P].[ProductID]
-	WHERE
-		[P].[ResellerID] = @ResellerID
-	AND
-		[Tlds].[TopLevelDomain] = @TLD;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetServiceSuspendDate]
-	@ActorID int,
-	@ServiceID int,
-	@SuspendDate datetime OUTPUT
-AS
-BEGIN
-	DECLARE @IssuerID int, @ContractID nvarchar(50);
-	SELECT
-		@ContractID = [ContractID] FROM [dbo].[ecService]
-	WHERE
-		[ServiceID] = @ServiceID;
-	SELECT
-		@IssuerID = [ResellerID] FROM [dbo].[ecContracts]
-	WHERE
-		[ContractID] = @ContractID;
-	-- check actor rights
-	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this information', 16, 1);
-		RETURN;
-	END
-
-	SET NOCOUNT ON;
-
-    SELECT @SuspendDate = ISNULL(MAX([EndDate]), GETDATE()) FROM [dbo].[ecSvcsUsageLog]
-		WHERE [ServiceID] = @ServiceID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetServicesToInvoice] 
-	@ActorID int,
-	@ResellerID int,
-	@TodayDate datetime,
-	@DaysOffset int
-AS
-BEGIN
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @ResellerID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this information', 16, 1);
-		RETURN;
-	END
-
-	SET NOCOUNT ON;
-
-	DECLARE @Svcs TABLE(
-		[ServiceID] int NOT NULL,
-		[MaxStartDate] datetime NOT NULL,
-		[MaxEndDate] datetime NOT NULL
-	);
-
-	-- filter service that don't have corresponding unpaid invoice and expired
-	INSERT INTO
-		@Svcs ([ServiceID], [MaxStartDate], [MaxEndDate])
-	SELECT
-		[SUL].[ServiceID], MAX([SUL].[StartDate]), MAX([SUL].[EndDate]) FROM [dbo].[ecSvcsUsageLog] AS [SUL]
-	INNER JOIN
-		[dbo].[ecService] AS [S] ON [SUL].[ServiceID] = [S].[ServiceID]
-	INNER JOIN
-		[dbo].[ecContracts] AS [C] ON [C].[ContractID] = [S].[ContractID]
-	WHERE
-		[C].[ResellerID] = @ResellerID
-	AND
-		ISNULL([SUL].[PeriodClosed], 0) = 0
-	GROUP BY
-		[SUL].[ServiceID];
-
-	SELECT
-		[S].* FROM [dbo].[ecService] AS [S]
-	INNER JOIN
-		@Svcs AS [SVCS] ON [S].[ServiceID] = [SVCS].[ServiceID]
-	WHERE
-		[S].[Status] = 1 AND @DaysOffset >= DATEDIFF(d, @TodayDate, [SVCS].[MaxEndDate]) 
-	ORDER BY
-		[ContractID];
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetProductHighlights]
-	@ResellerID int,
-	@ProductID int
-AS
-BEGIN
-	
-	SELECT
-		[PH].[HighlightText]
-	FROM
-		[dbo].[ecProductsHighlights] AS [PH]
-	INNER JOIN
-		[dbo].[ecProduct] AS [P]
-	ON
-		[PH].[ProductID] = [P].[ProductID]
-	WHERE
-		[P].[ProductID] = @ProductID
-	AND
-		[P].[ResellerID] = @ResellerID
-	ORDER BY
-		[SortOrder];
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetProductCategoriesIds]
-	@UserID int,
-	@ProductID int
-AS
-BEGIN
-
-	SELECT [CategoryID] FROM [dbo].[ecProductCategories] WHERE [ResellerID] = @UserID AND [ProductID] = @ProductID;	
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetProductCategories]
-	@UserID int,
-	@ProductID int
-AS
-BEGIN
-
-    SELECT
-		[C].*
-	FROM
-		[dbo].[ecCategories] AS [C]
-	INNER JOIN
-		[dbo].[ecProductCategories] AS [PC]
-	ON
-		[C].[CategoryID] = [PC].[CategoryID]
-	WHERE
-		[PC].[ProductID] = @ProductID
-	AND
-		[PC].[ResellerID] = @UserID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetHostingPlansTaken]
-	@ActorID int,
-	@UserID int
-AS
-BEGIN
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this account', 16, 1);
-		RETURN;
-	END
-
-    SELECT [PlanID] FROM [dbo].[ecHostingPlans] WHERE [ResellerID] = @UserID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetHostingPlanCycles]
-	@UserID int,
-	@ProductID int
-AS
-BEGIN
-
-	SELECT
-		[BC].*, [HPC].[ProductID], [HPC].[SetupFee], [HPC].[RecurringFee]  FROM [dbo].[ecHostingPlansBillingCycles] AS [HPC]
-	INNER JOIN
-		[dbo].[ecBillingCycles] AS [BC] ON [BC].[CycleID] = [HPC].[CycleID]
-	INNER JOIN
-		[dbo].[ecProduct] AS [PR] ON [HPC].[ProductID] = [PR].[ProductID]
-	WHERE
-		[PR].[ResellerID] = @UserID AND [HPC].[ProductID] = @ProductID
-	ORDER BY
-		[HPC].[SortOrder];
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetHostingPlan]
-	@UserID int,
-	@ProductID int
-AS
-BEGIN
-
-    SELECT
-		[PR].*,
-		[HP].[PlanID],
-		[HP].[UserRole],
-		[HP].[InitialStatus],
-		[HP].[DomainOption]
-	FROM
-		[dbo].[ecHostingPlans] AS [HP]
-	INNER JOIN
-		[dbo].[ecProduct] AS [PR]
-	ON
-		[PR].[ProductID] = [HP].[ProductID]
-	WHERE
-		[HP].[ResellerID] = @UserID
-	AND
-		[HP].[ProductID] = @ProductID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetHostingPackageSvcHistory]
-	@ActorID int,
-	@ServiceID int
-AS
-BEGIN
-	DECLARE @IssuerID int, @ContractID nvarchar(50);
-	SELECT
-		@ContractID = [ContractID] FROM [dbo].[ecService]
-	WHERE
-		[ServiceID] = @ServiceID;
-	SELECT
-		@IssuerID = ISNULL([CustomerID],[ResellerID]) FROM [dbo].[ecContracts]
-	WHERE
-		[ContractID] = @ContractID;
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this information', 16, 1);
-		RETURN;
-	END
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    SELECT
-		[HPC].[CycleName],
-		[HPC].[BillingPeriod],
-		[HPC].[PeriodLength],
-		[HPC].[SetupFee],
-		[HPC].[RecurringFee],
-		[HPC].[Currency],
-		[SUL].[StartDate],
-		[SUL].[EndDate]
-	FROM
-		[dbo].[ecHostingPackageSvcsCycles] AS [HPC]
-	INNER JOIN
-		[dbo].[ecSvcsUsageLog] AS [SUL]
-	ON
-		[SUL].[ServiceID] = [HPC].[ServiceID]
-	AND
-		[SUL].[SvcCycleID] = [HPC].[SvcCycleID]
-	WHERE
-		[HPC].[ServiceID] = @ServiceID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetHostingPackageSvc] 
-	@ActorID int,
-	@ServiceID int
-AS
-BEGIN
-	DECLARE @IssuerID int, @ContractID nvarchar(50);
-	SELECT
-		@ContractID = [ContractID] FROM [dbo].[ecService]
-	WHERE
-		[ServiceID] = @ServiceID;
-	SELECT
-		@IssuerID = ISNULL([CustomerID],[ResellerID]) FROM [dbo].[ecContracts]
-	WHERE
-		[ContractID] = @ContractID;
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this information', 16, 1);
-		RETURN;
-	END
-
-	-- 
-	SET NOCOUNT ON;
-
-    SELECT
-		[SVC].*,
-		[HPSVC].[ProductID],
-		[HPSVC].[PlanID],
-		[HPSVC].[PackageID],
-		[HPSVC].[UserRole],
-		[HPSVC].[InitialStatus],
-		[HPSVC].[SvcCycleID],
-		[HPSC].[CycleName],
-		[HPSC].[BillingPeriod],
-		[HPSC].[PeriodLength],
-		[HPSC].[SetupFee],
-		[HPSC].[RecurringFee],
-		[HPSC].[Currency]
-	FROM
-		[dbo].[ecService] AS [SVC]
-	INNER JOIN
-		[dbo].[ecHostingPackageSvcs] AS [HPSVC]
-	ON
-		[HPSVC].[ServiceID] = [SVC].[ServiceID]
-	INNER JOIN
-		[dbo].[ecHostingPackageSvcsCycles] AS [HPSC]
-	ON
-		[HPSC].[SvcCycleID] = [HPSVC].[SvcCycleID]
-	WHERE
-		[SVC].[ServiceID] = @ServiceID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetHostingAddonSvcHistory]
-	@ActorID int,
-	@ServiceID int
-AS
-BEGIN
-	DECLARE @IssuerID int, @ContractID nvarchar(50);
-	SELECT
-		@ContractID = [ContractID] FROM [dbo].[ecService]
-	WHERE
-		[ServiceID] = @ServiceID;
-	SELECT
-		@IssuerID = ISNULL([CustomerID],[ResellerID]) FROM [dbo].[ecContracts]
-	WHERE
-		[ContractID] = @ContractID;
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this information', 16, 1);
-		RETURN;
-	END
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    SELECT
-		[HAC].[CycleName],
-		[HAC].[BillingPeriod],
-		[HAC].[PeriodLength],
-		[HAC].[SetupFee],
-		[HAC].[CyclePrice] AS [RecurringFee],
-		[HAC].[Currency],
-		[SUL].[StartDate],
-		[SUL].[EndDate]
-	FROM
-		[dbo].[ecHostingAddonSvcsCycles] AS [HAC]
-	INNER JOIN
-		[dbo].[ecSvcsUsageLog] AS [SUL]
-	ON
-		[SUL].[ServiceID] = [HAC].[ServiceID]
-	AND
-		[SUL].[SvcCycleID] = [HAC].[SvcCycleID]
-	WHERE
-		[HAC].[ServiceID] = @ServiceID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetAddonProductsIds]
-	@UserID int,
-	@ProductID int
-AS
-BEGIN
-	
-	SELECT 
-		[P].[ProductID]
-	FROM
-		[dbo].[ecProduct] AS [P]
-		INNER JOIN [dbo].[ecAddonProducts] AS [ATP]
-		ON [P].[ProductID] = [ATP].[ProductID]
-	WHERE
-		[ATP].[AddonID] = @ProductID
-		AND
-		[P].[ResellerID] = @UserID;	
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetAddonProducts] 
-	@UserID int,
-	@ProductID int
-AS
-BEGIN
-
-    SELECT 
-		[P].*
-	FROM
-		[dbo].[ecProduct] AS [P]
-		INNER JOIN [dbo].[ecAddonProducts] AS [ATP]
-		ON [P].[ProductID] = [ATP].[ProductID]
-	WHERE
-		[ATP].[AddonID] = @ProductID
-		AND
-		[P].[ResellerID] = @UserID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecDeleteProduct] 
+CREATE PROCEDURE [dbo].[ecGetCustomersServicesPaged]
 	@ActorID int,
 	@UserID int,
-	@ProductID int,
-	@Result int OUTPUT
-AS
-BEGIN
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
-	BEGIN
-		SET @Result = -1;
-		RAISERROR('You are not allowed to access this account', 16, 1);
-		RETURN;
-	END
-
-BEGIN TRAN RMV_PRODUCT    
-	-- remove product
-	DELETE FROM [dbo].[ecProduct] WHERE [ProductID] = @ProductID AND [ResellerID] = @UserID;
-	-- check errors
-	IF @@ERROR <> 0
-		GOTO ERROR_HANDLE;
-	-- workaround for cyclic cascades
-	DELETE FROM [dbo].[ecAddonProducts] WHERE [ProductID] = @ProductID AND [ResellerID] = @UserID;
-	-- check errors
-	IF @@ERROR <> 0
-		GOTO ERROR_HANDLE;
-	-- set result ok
-	SET @Result = 0;
-	-- commit actions
-	COMMIT TRAN RMV_PRODUCT;
-	-- exit routine
-	RETURN;
-
-ERROR_HANDLE:
-BEGIN
-	SET @Result = -1;
-	ROLLBACK TRAN RMV_PRODUCT;
-	RETURN;
-END
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[AddIPAddress]	
-(
-	@AddressID int OUTPUT,
-	@ServerID int,
-	@ExternalIP varchar(24),
-	@InternalIP varchar(24),
-	@PoolID int,
-	@SubnetMask varchar(15),
-	@DefaultGateway varchar(15),
-	@Comments ntext
-)
-AS
-BEGIN
-	IF @ServerID = 0
-	SET @ServerID = NULL
-
-	INSERT INTO IPAddresses (ServerID, ExternalIP, InternalIP, PoolID, SubnetMask, DefaultGateway, Comments)
-	VALUES (@ServerID, @ExternalIP, @InternalIP, @PoolID, @SubnetMask, @DefaultGateway, @Comments)
-
-	SET @AddressID = SCOPE_IDENTITY()
-
-	RETURN
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecAddDomainNameSvc] 
-	@ContractID nvarchar(50),
-	@ParentID int,
-	@ProductID int,
-	@FQDN nvarchar(64),
-	@CycleID int,
-	@Currency nvarchar(10),
-	@PropertyNames ntext,
-	@PropertyValues ntext,
-	@Result int OUTPUT
-AS
-BEGIN
-	DECLARE @ResellerID int;
-	SELECT
-		@ResellerID = [ResellerID] FROM [dbo].[ecContracts]
-	WHERE
-		[ContractID] = @ContractID;
-	
-BEGIN TRAN ADD_TLD_SVC
-	-- add service
-	INSERT INTO [dbo].[ecService]
-		([ContractID], [ParentID], [ServiceName], [TypeID], [Status], [Created])
-	VALUES
-		(@ContractID, @ParentID, @FQDN, 3, 0, GETDATE());
-	-- check error
-	IF @@ERROR <> 0
-		GOTO ERROR_HANDLE;
-	-- obtain result
-	SET @Result = SCOPE_IDENTITY();
-
-	-- if product and cycle are defined
-	IF @ProductID > 0 OR @CycleID > 0
-	BEGIN
-		DECLARE @SvcCycleID int;
-		-- insert svc life-cycle
-		INSERT INTO [dbo].[ecDomainSvcsCycles]
-		(
-			[ServiceID],
-			[CycleName],
-			[BillingPeriod],
-			[PeriodLength],
-			[SetupFee],
-			[RecurringFee],
-			[Currency]
-		)
-		SELECT
-			@Result,
-			[BC].[CycleName],
-			[BC].[BillingPeriod],
-			[BC].[PeriodLength],
-			[TLDC].[SetupFee],
-			[TLDC].[RecurringFee],
-			@Currency
-		FROM
-			[dbo].[ecTopLevelDomainsCycles] AS [TLDC]
-		INNER JOIN
-			[dbo].[ecBillingCycles] AS [BC]
-		ON
-			[BC].[CycleID] = [TLDC].[CycleID]
-		WHERE
-			[TLDC].[CycleID] = @CycleID
-		AND
-			[TLDC].[ProductID] = @ProductID
-		AND
-			[BC].[ResellerID] = @ResellerID;
-		-- check error
-		IF @@ROWCOUNT = 0
-			GOTO ERROR_HANDLE;
-		-- obtain result
-		SET @SvcCycleID = SCOPE_IDENTITY();
-
-		-- add domain details
-		INSERT INTO [dbo].[ecDomainSvcs]
-		(
-			[ServiceID],
-			[ProductID],
-			[PluginID],
-			[FQDN],
-			[SvcCycleID],
-			[PropertyNames],
-			[PropertyValues]
-		)
-		SELECT
-			@Result,
-			@ProductID,
-			[PluginID],
-			@FQDN,
-			@SvcCycleID,
-			@PropertyNames,
-			@PropertyValues
-		FROM
-			[dbo].[ecTopLevelDomains]
-		WHERE
-			[ProductID] = @ProductID
-		AND
-			[ResellerID] = @ResellerID;
-		-- check error
-		IF @@ROWCOUNT = 0
-			GOTO ERROR_HANDLE;
-	END
-	ELSE
-	BEGIN
-		INSERT INTO [dbo].[ecDomainSvcs]
-		(
-			[ServiceID],
-			[ProductID],
-			[FQDN],
-			[SvcCycleID],
-			[PropertyNames],
-			[PropertyValues]
-		)
-		SELECT @Result, NULL, @FQDN, NULL, @PropertyNames, @PropertyValues;
-		-- check error
-		IF @@ROWCOUNT = 0
-			GOTO ERROR_HANDLE;
-	END
-
-	-- commit
-	COMMIT TRAN ADD_TLD_SVC;
-	-- exit
-	RETURN;
-
--- error handler
-ERROR_HANDLE:
-BEGIN
-	SET @Result = -1;
-	ROLLBACK TRAN ADD_TLD_SVC;
-	RETURN;
-END
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetSvcsSuspendDateAligned]
-	@ResellerID int,
-	@SvcsXml xml,
-	@DefaultValue datetime,
-	@Result datetime OUTPUT
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-	SELECT
-		@Result = MAX([SUL].[EndDate]) FROM [dbo].[ecSvcsUsageLog] AS [SUL]
-	INNER JOIN
-		[dbo].[ecService] AS [S] ON [SUL].[ServiceID] = [S].[ServiceID]
-	INNER JOIn
-		[dbo].[ecContracts] AS [C] ON [C].[ContractID] = [S].[ContractID]
-	WHERE
-		[C].[ResellerID] = @ResellerID
-		AND
-		[S].[ServiceID] IN (SELECT [SXML].[Data].value('@id','int') FROM @SvcsXml.nodes('/Svcs/Svc') [SXML]([Data]));
-	
-	-- result is empty	
-	SET @Result = ISNULL(@Result, @DefaultValue);
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetTopLevelDomainsPaged]
-	@ActorID int,
-	@UserID int,
+	@IsReseller bit,
 	@MaximumRows int,
 	@StartRowIndex int
 AS
 BEGIN
+	-- check user parent
+	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this information', 16, 1);
+		RETURN;
+	END
+
+	SET NOCOUNT ON;
 
 	DECLARE @EndIndex int;
 
 	SET @EndIndex = @MaximumRows + @StartRowIndex;
 	SET @StartRowIndex = @StartRowIndex + 1;
 
-	WITH [TldsCTE] AS (
+	IF @IsReseller = 1
+	BEGIN
+		WITH [SERVICES] AS (
+			SELECT
+				ROW_NUMBER() OVER(ORDER BY [Created] DESC) AS [RowIndex], * FROM [dbo].[ContractsServicesDetailed]
+			WHERE
+				[ResellerID] = @UserID
+		)
+
 		SELECT
-			ROW_NUMBER() OVER(ORDER BY [Created] DESC) AS [RowIndex],
-			*
-		FROM 
-			[dbo].[ecProduct]
+			* FROM [SERVICES]
 		WHERE
-			[ResellerID] = @UserID
-		AND
-			[TypeID] = 3 -- Top Level Domain
+			[RowIndex] BETWEEN @StartRowIndex AND @EndIndex ORDER BY [Created] DESC;
+		-- exit
+		RETURN;
+	END;
+	
+	WITH [SERVICES] AS (
+		SELECT
+			ROW_NUMBER() OVER(ORDER BY [Created] DESC) AS [RowIndex], * FROM [dbo].[ContractsServicesDetailed]
+		WHERE
+			[CustomerID] = @UserID
 	)
 
-	SELECT 
-		[TldsCTE].*,
-		[Tlds].[PluginId],
-		[PLG].[DisplayName]
-	FROM
-		[TldsCTE]
-	INNER JOIN
-		[dbo].[ecTopLevelDomains] AS [Tlds]
-	ON
-		[Tlds].[ProductID] = [TldsCTE].[ProductID]
-	INNER JOIN
-		[dbo].[ecSupportedPlugins] AS [PLG]
-	ON
-		[PLG].[PluginID] = [Tlds].[PluginID]
-	WHERE
-		[TldsCTE].[RowIndex] BETWEEN @StartRowIndex AND @EndIndex;
-    
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetTopLevelDomainCycles]
-	@UserID int,
-	@ProductID int
-AS
-BEGIN
-
 	SELECT
-		[BC].*,
-		[TLDC].[ProductID],
-		[TLDC].[SetupFee],
-		[TLDC].[RecurringFee],
-		[TLDC].[TransferFee]
-	FROM
-		[dbo].[ecTopLevelDomainsCycles] AS [TLDC]
-	INNER JOIN
-		[dbo].[ecBillingCycles] AS [BC]
-	ON
-		[BC].[CycleID] = [TLDC].[CycleID]
-	INNER JOIN
-		[dbo].[ecProduct] AS [PR]
-	ON
-		[TLDC].[ProductID] = [PR].[ProductID]
+		* FROM [SERVICES]
 	WHERE
-		[PR].[ResellerID] = @UserID
-	AND
-		[TLDC].[ProductID] = @ProductID
-	ORDER BY
-		[TLDC].[SortOrder];	
+		[RowIndex] BETWEEN @StartRowIndex AND @EndIndex ORDER BY [Created] DESC;
 
 END
+
 
 
 
@@ -38770,2328 +37020,37 @@ GO
 
 
 
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecGetTopLevelDomain]
+CREATE PROCEDURE [dbo].[ecGetCustomersServicesCount]
 	@ActorID int,
 	@UserID int,
-	@ProductID int
+	@IsReseller bit,
+	@Result int OUTPUT
 AS
 BEGIN
-	-- check actor user rights
+	-- check user parent
 	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
 	BEGIN
-		RAISERROR('You are not allowed to access this account', 16, 1);
+		RAISERROR('You are not allowed to access this information', 16, 1);
 		RETURN;
 	END
 
-	SELECT
-		[P].*,
-		[Tlds].[PluginID],
-		[Tlds].[WhoisEnabled],
-		[PLG].[DisplayName]
-	FROM
-		[dbo].[ecProduct] AS [P]
-	INNER JOIN
-		[dbo].[ecTopLevelDomains] AS [Tlds]
-	ON
-		[Tlds].[ProductID] = [P].[ProductID]
-	INNER JOIN
-		[dbo].[ecSupportedPlugins] AS [PLG]
-	ON
-		[PLG].[PluginID] = [Tlds].[PluginID]
-	WHERE
-		[P].[ResellerID] = @UserID
-	AND
-		[P].[ProductID] = @ProductID;
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[ServiceProperties](
-	[ServiceID] [int] NOT NULL,
-	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[PropertyValue] [nvarchar](1000) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_ServiceProperties_1] PRIMARY KEY CLUSTERED 
-(
-	[ServiceID] ASC,
-	[PropertyName] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
-)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE AddService
-(
-	@ServiceID int OUTPUT,
-	@ServerID int,
-	@ProviderID int,
-	@ServiceQuotaValue int,
-	@ServiceName nvarchar(50),
-	@ClusterID int,
-	@Comments ntext
-)
-AS
-BEGIN
-
-BEGIN TRAN
-IF @ClusterID = 0 SET @ClusterID = NULL
-
-INSERT INTO Services
-(
-	ServerID,
-	ProviderID,
-	ServiceName,
-	ServiceQuotaValue,
-	ClusterID,
-	Comments
-)
-VALUES
-(
-	@ServerID,
-	@ProviderID,
-	@ServiceName,
-	@ServiceQuotaValue,
-	@ClusterID,
-	@Comments
-)
-
-SET @ServiceID = SCOPE_IDENTITY()
-
--- copy default service settings
-INSERT INTO ServiceProperties (ServiceID, PropertyName, PropertyValue)
-SELECT @ServiceID, PropertyName, PropertyValue
-FROM ServiceDefaultProperties
-WHERE ProviderID = @ProviderID
-
--- copy all default DNS records for the given service
-DECLARE @GroupID int
-SELECT @GroupID = GroupID FROM Providers
-WHERE ProviderID = @ProviderID
-
--- default IP address for added records
-DECLARE @AddressID int
-SELECT TOP 1 @AddressID = AddressID FROM IPAddresses
-WHERE ServerID = @ServerID
-
-INSERT INTO GlobalDnsRecords
-(
-	RecordType,
-	RecordName,
-	RecordData,
-	MXPriority,
-	IPAddressID,
-	ServiceID,
-	ServerID,
-	PackageID
-)
-SELECT
-	RecordType,
-	RecordName,
-	CASE WHEN RecordData = '[ip]' THEN ''
-	ELSE RecordData END,
-	MXPriority,
-	CASE WHEN RecordData = '[ip]' THEN @AddressID
-	ELSE NULL END,
-	@ServiceID,
-	NULL, -- server
-	NULL -- package
-FROM
-	ResourceGroupDnsRecords
-WHERE GroupID = @GroupID
-ORDER BY RecordOrder
-COMMIT TRAN
-
-END
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[UpdateIPAddresses]
-(
-	@xml ntext,
-	@PoolID int,
-	@ServerID int,
-	@SubnetMask varchar(15),
-	@DefaultGateway varchar(15),
-	@Comments ntext
-)
-AS
-BEGIN
 	SET NOCOUNT ON;
 
-	IF @ServerID = 0
-	SET @ServerID = NULL
-
-	DECLARE @idoc int
-	--Create an internal representation of the XML document.
-	EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
-
-	-- update
-	UPDATE IPAddresses SET
-		ServerID = @ServerID,
-		PoolID = @PoolID,
-		SubnetMask = @SubnetMask,
-		DefaultGateway = @DefaultGateway,
-		Comments = @Comments
-	FROM IPAddresses AS IP
-	INNER JOIN OPENXML(@idoc, '/items/item', 1) WITH 
-	(
-		AddressID int '@id'
-	) as PV ON IP.AddressID = PV.AddressID
-
-	-- remove document
-	exec sp_xml_removedocument @idoc
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[UpdateIPAddress]	
-(
-	@AddressID int,
-	@ServerID int,
-	@ExternalIP varchar(24),
-	@InternalIP varchar(24),
-	@PoolID int,
-	@SubnetMask varchar(15),
-	@DefaultGateway varchar(15),
-	@Comments ntext
-)
-AS
-BEGIN
-	IF @ServerID = 0
-	SET @ServerID = NULL
-
-	UPDATE IPAddresses SET
-		ExternalIP = @ExternalIP,
-		InternalIP = @InternalIP,
-		ServerID = @ServerID,
-		PoolID = @PoolID,
-		SubnetMask = @SubnetMask,
-		DefaultGateway = @DefaultGateway,
-		Comments = @Comments
-	WHERE AddressID = @AddressID
-
-	RETURN
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetRawServicesByServerID
-(
-	@ActorID int,
-	@ServerID int
-)
-AS
-
--- check rights
-DECLARE @IsAdmin bit
-SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
-
--- resource groups
-SELECT
-	GroupID,
-	GroupName
-FROM ResourceGroups
-WHERE @IsAdmin = 1
-ORDER BY GroupOrder
-
--- services
-SELECT
-	S.ServiceID,
-	S.ServerID,
-	S.ServiceName,
-	S.Comments,
-	RG.GroupID,
-	PROV.DisplayName AS ProviderName
-FROM Services AS S
-INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
-INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
-WHERE
-	S.ServerID = @ServerID
-	AND @IsAdmin = 1
-ORDER BY RG.GroupOrder
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetQuotas
-AS
-SELECT
-	Q.GroupID,
-	Q.QuotaID,
-	RG.GroupName,
-	Q.QuotaDescription,
-	Q.QuotaTypeID
-FROM Quotas AS Q
-INNER JOIN ResourceGroups AS RG ON Q.GroupID = RG.GroupID
-ORDER BY RG.GroupOrder, Q.QuotaOrder
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetProviderServiceQuota
-(
-	@ProviderID int
-)
-AS
-
-SELECT TOP 1
-	Q.QuotaID,
-	Q.GroupID,
-	Q.QuotaName,
-	Q.QuotaDescription,
-	Q.QuotaTypeID,
-	Q.ServiceQuota
-FROM Providers AS P
-INNER JOIN Quotas AS Q ON P.GroupID = Q.GroupID
-WHERE P.ProviderID = @ProviderID AND Q.ServiceQuota = 1
-
-
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetService]
-(
-	@ActorID int,
-	@ServiceID int
-)
-AS
-
-SELECT
-	ServiceID,
-	Services.ServerID,
-	ProviderID,
-	ServiceName,
-	ServiceQuotaValue,
-	ClusterID,
-	Services.Comments,
-	Servers.ServerName
-FROM Services INNER JOIN Servers ON Services.ServerID = Servers.ServerID
-WHERE
-	ServiceID = @ServiceID
-
-RETURN 
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetProviderByServiceID
-(
-	@ServiceID int
-)
-AS
-SELECT
-	P.ProviderID,
-	P.GroupID,
-	P.DisplayName,
-	P.EditorControl,
-	P.ProviderType
-FROM Services AS S
-INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
-WHERE
-	S.ServiceID = @ServiceID
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetServers
-(
-	@ActorID int
-)
-AS
--- check rights
-DECLARE @IsAdmin bit
-SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
-
-SELECT
-	S.ServerID,
-	S.ServerName,
-	S.ServerUrl,
-	(SELECT COUNT(SRV.ServiceID) FROM Services AS SRV WHERE S.ServerID = SRV.ServerID) AS ServicesNumber,
-	S.Comments,
-	PrimaryGroupID,
-	S.ADEnabled
-FROM Servers AS S
-WHERE VirtualServer = 0
-AND @IsAdmin = 1
-ORDER BY S.ServerName
-
--- services
-SELECT
-	S.ServiceID,
-	S.ServerID,
-	S.ProviderID,
-	S.ServiceName,
-	S.Comments
-FROM Services AS S
-INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
-INNER JOIN ResourceGroups AS RG ON P.GroupID = RG.GroupID
-WHERE @IsAdmin = 1
-ORDER BY RG.GroupOrder
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetServicesByServerIDGroupName
-(
-	@ActorID int,
-	@ServerID int,
-	@GroupName nvarchar(50)
-)
-AS
-
--- check rights
-DECLARE @IsAdmin bit
-SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
-
-SELECT
-	S.ServiceID,
-	S.ServerID,
-	S.ServiceName,
-	S.Comments,
-	S.ServiceQuotaValue,
-	RG.GroupName,
-	PROV.DisplayName AS ProviderName
-FROM Services AS S
-INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
-INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
-WHERE
-	S.ServerID = @ServerID AND RG.GroupName = @GroupName
-	AND @IsAdmin = 1
-ORDER BY RG.GroupOrder
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetServicesByServerID
-(
-	@ActorID int,
-	@ServerID int
-)
-AS
-
--- check rights
-DECLARE @IsAdmin bit
-SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
-
-
-SELECT
-	S.ServiceID,
-	S.ServerID,
-	S.ServiceName,
-	S.Comments,
-	S.ServiceQuotaValue,
-	RG.GroupName,
-	S.ProviderID,
-	PROV.DisplayName AS ProviderName
-FROM Services AS S
-INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
-INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
-WHERE
-	S.ServerID = @ServerID
-	AND @IsAdmin = 1
-ORDER BY RG.GroupOrder
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetServicesByGroupName]
-(
-	@ActorID int,
-	@GroupName nvarchar(100)
-)
-AS
--- check rights
-DECLARE @IsAdmin bit
-SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
-
-SELECT
-	S.ServiceID,
-	S.ServiceName,
-	S.ServerID,
-	S.ServiceQuotaValue,
-	SRV.ServerName,
-	S.ProviderID,
-    PROV.ProviderName,
-	S.ServiceName + ' on ' + SRV.ServerName AS FullServiceName
-FROM Services AS S
-INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
-INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
-INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
-WHERE
-	RG.GroupName = @GroupName
-	AND @IsAdmin = 1
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE GetServicesByGroupID
-(
-	@ActorID int,
-	@GroupID int
-)
-AS
--- check rights
-DECLARE @IsAdmin bit
-SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
-
-SELECT
-	S.ServiceID,
-	S.ServiceName,
-	S.ServerID,
-	S.ServiceQuotaValue,
-	SRV.ServerName,
-	S.ProviderID,
-	S.ServiceName+' on '+SRV.ServerName AS FullServiceName
-FROM Services AS S
-INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
-INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
-WHERE
-	PROV.GroupID = @GroupID
-	AND @IsAdmin = 1
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE UpdateVirtualGroups
-(
-	@ServerID int,
-	@Xml ntext
-)
-AS
-
-
-/*
-XML Format:
-
-<groups>
-	<group id="16" distributionType="1" bindDistributionToPrimary="1"/>
-</groups>
-
-*/
-
-BEGIN TRAN
-DECLARE @idoc int
---Create an internal representation of the XML document.
-EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
-
--- delete old virtual groups
-DELETE FROM VirtualGroups
-WHERE ServerID = @ServerID
-
--- update HP resources
-INSERT INTO VirtualGroups
-(
-	ServerID,
-	GroupID,
-	DistributionType,
-	BindDistributionToPrimary
-)
-SELECT
-	@ServerID,
-	GroupID,
-	DistributionType,
-	BindDistributionToPrimary
-FROM OPENXML(@idoc, '/groups/group',1) WITH 
-(
-	GroupID int '@id',
-	DistributionType int '@distributionType',
-	BindDistributionToPrimary bit '@bindDistributionToPrimary'
-) as XRG
-
--- remove document
-exec sp_xml_removedocument @idoc
-
-COMMIT TRAN
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE UpdateService
-(
-	@ServiceID int,
-	@ServiceName nvarchar(50),
-	@Comments ntext,
-	@ServiceQuotaValue int,
-	@ClusterID int
-)
-AS
-
-IF @ClusterID = 0 SET @ClusterID = NULL
-
-UPDATE Services
-SET
-	ServiceName = @ServiceName,
-	ServiceQuotaValue = @ServiceQuotaValue,
-	Comments = @Comments,
-	ClusterID = @ClusterID
-WHERE ServiceID = @ServiceID
-
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE DeleteCluster
-(
-	@ClusterID int
-)
-AS
-
--- reset cluster in services
-UPDATE Services
-SET ClusterID = NULL
-WHERE ClusterID = @ClusterID
-
--- delete cluster
-DELETE FROM Clusters
-WHERE ClusterID = @ClusterID
-RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecAddHostingPlanSvc]
-	@ContractID nvarchar(50),
-	@ProductID int,
-	@PlanName nvarchar(255),
-	@CycleID int,
-	@Currency nvarchar(10),
-	@Result int OUTPUT
-AS
-BEGIN
-	DECLARE @ResellerID int;
-	SELECT
-		@ResellerID = [ResellerID] FROM [dbo].[ecContracts]
-	WHERE
-		[ContractID] = @ContractID;
-
-BEGIN TRAN ADD_HPLAN_SVC
-	-- add service
-	INSERT INTO [dbo].[ecService]
-		([ContractID], [ServiceName], [TypeID], [Status], [Created])
-	VALUES
-		(@ContractID, @PlanName, 1, 0, GETDATE());
-	-- check error
-	IF @@ERROR <> 0
-		GOTO ERROR_HANDLE;
-	-- obtain result
-	SET @Result = SCOPE_IDENTITY();
-
-	DECLARE @SvcCycleID int;
-	-- insert svc life-cycle
-	INSERT INTO [dbo].[ecHostingPackageSvcsCycles]
-	(
-		[ServiceID],
-		[CycleName],
-		[BillingPeriod],
-		[PeriodLength],
-		[SetupFee],
-		[RecurringFee],
-		[Currency]
-	)
-	SELECT
-		@Result,
-		[BC].[CycleName],
-		[BC].[BillingPeriod],
-		[BC].[PeriodLength],
-		[HPBC].[SetupFee],
-		[HPBC].[RecurringFee],
-		@Currency
-	FROM
-		[dbo].[ecHostingPlansBillingCycles] AS [HPBC]
-	INNER JOIN
-		[dbo].[ecBillingCycles] AS [BC]
-	ON
-		[BC].[CycleID] = [HPBC].[CycleID]
-	WHERE
-		[HPBC].[CycleID] = @CycleID
-	AND
-		[HPBC].[ProductID] = @ProductID
-	AND
-		[BC].[ResellerID] = @ResellerID;
-	-- check error
-	IF @@ROWCOUNT = 0
-		GOTO ERROR_HANDLE;
-	-- obtain result
-	SET @SvcCycleID = SCOPE_IDENTITY();
-	
-	-- add plan details
-	INSERT INTO [dbo].[ecHostingPackageSvcs]
-	(
-		[ServiceID],
-		[ProductID],
-		[PlanID],
-		[UserRole],
-		[InitialStatus],
-		[SvcCycleID]
-	)
-	SELECT
-		@Result,
-		@ProductID,
-		[PlanID],
-		[UserRole],
-		[InitialStatus],
-		@SvcCycleID
-	FROM
-		[dbo].[ecHostingPlans]
-	WHERE
-		[ProductID] = @ProductID
-	AND
-		[ResellerID] = @ResellerID;
-	-- check error
-	IF @@ROWCOUNT = 0
-		GOTO ERROR_HANDLE;
-	
-
-	-- commit tran
-	COMMIT TRAN ADD_HPLAN_SVC;
-	-- exit
-	RETURN;
--- error handler
-ERROR_HANDLE:
-BEGIN
-	SET @Result = -1;
-	ROLLBACK TRAN ADD_HPLAN_SVC;
-	RETURN;
-END
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecAddHostingPlan]
-	@ActorID int,
-	@UserID int,
-	@PlanName nvarchar(255),
-	@ProductSku nvarchar(50),
-	@TaxInclusive bit,
-	@PlanID int,
-	@UserRole int,
-	@InitialStatus int,
-	@DomainOption int,
-	@Enabled bit,
-	@PlanDescription ntext,
-	@PlanCyclesXml xml,
-	@PlanHighlightsXml xml,
-	@PlanCategoriesXml xml,
-	@Result int OUTPUT
-AS
-BEGIN
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+	IF @IsReseller = 1
 	BEGIN
-		SET @Result = -1;
-		RAISERROR('You are not allowed to access this account', 16, 1);
+		SELECT
+			@Result = COUNT([ServiceID]) FROM [dbo].[ContractsServicesDetailed]
+		WHERE
+			[ResellerID] = @UserID;
 		RETURN;
 	END
-
-BEGIN TRAN ADD_PLAN
-	-- insert product first
-	INSERT INTO [dbo].[ecProduct]
-		([ProductName], [ProductSKU], [TypeID], [TaxInclusive], [Description], [Created], [Enabled], [ResellerID])
-	VALUES
-		(@PlanName, @ProductSku, 1, @TaxInclusive, @PlanDescription, GETDATE(), @Enabled, @UserID);
-	-- set product id created
-	SET @Result = SCOPE_IDENTITY();
-	-- save hosting plan details
-	INSERT INTO [dbo].[ecHostingPlans]
-		([ProductID], [ResellerID], [PlanID], [UserRole], [InitialStatus], [DomainOption])
-	VALUES
-		(@Result, @UserID, @PlanID, @UserRole, @InitialStatus, @DomainOption);
-	-- check errors
-	IF @@ERROR <> 0
-	BEGIN
-		GOTO ERROR_HANDLE;
-	END
-
-/*
-XML Format:
-
-<PlanCycles>
-	<Cycle ID="2" SetupFee="2.99" RecurringFee="3.99" SortOrder="1" />
-</PlanCycles>
-*/
-	-- insert cycles
-	INSERT INTO [dbo].[ecHostingPlansBillingCycles]
-		([ProductID], [CycleID], [SetupFee], [RecurringFee], [SortOrder])
+	
 	SELECT
-		@Result, [SXML].[Data].value('@ID','int'), [SXML].[Data].value('@SetupFee','money'),
-		[SXML].[Data].value('@RecurringFee','money'), [SXML].[Data].value('@SortOrder','int')
-	FROM @PlanCyclesXml.nodes('/PlanCycles/Cycle') [SXML]([Data])
-	-- check errors
-	IF @@ERROR <> 0
-	BEGIN
-		GOTO ERROR_HANDLE;
-	END
-
-/*
-XML Format:
-
-<PlanHighlights>
-	<Item Text="My Highlight Text" SortOrder="0" />
-</PlanHighlights>
-*/
-	-- insert cycles
-	INSERT INTO [dbo].[ecProductsHighlights]
-		([ProductID], [HighlightText], [SortOrder])
-	SELECT
-		@Result, [SXML].[Data].value('@Text','nvarchar(255)'), [SXML].[Data].value('@SortOrder','int')
-	FROM @PlanHighlightsXml.nodes('/PlanHighlights/Item') [SXML]([Data])
-	-- check errors
-	IF @@ERROR <> 0
-	BEGIN
-		GOTO ERROR_HANDLE;
-	END
-/*
-XML Format:
-
-<PlanCategories>
-	<Category ID="2" />
-</PlanCategories>
-*/
-	-- insert categories
-	INSERT INTO [dbo].[ecProductCategories]
-		([ProductID], [CategoryID], [ResellerID])
-	SELECT
-		@Result, [SXML].[Data].value('@ID','int'), @UserID FROM @PlanCategoriesXml.nodes('/PlanCategories/Category') [SXML]([Data])
-	-- check errors
-	IF @@ERROR <> 0
-		GOTO ERROR_HANDLE;
-	-- commit changes
-	COMMIT TRAN ADD_PLAN;
-	-- return result
-	RETURN;
-
-ERROR_HANDLE:
-BEGIN
-	SET @Result = -1;
-	ROLLBACK TRAN ADD_PLAN;
-	RETURN;
-END
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecAddHostingAddonSvc]
-	@ContractID nvarchar(50),
-	@ParentID int,
-	@ProductID int,
-	@Quantity int,
-	@AddonName nvarchar(255),
-	@CycleID int,
-	@Currency nvarchar(10),
-	@Result int OUTPUT
-AS
-BEGIN
-	DECLARE @ResellerID int;
-	SELECT
-		@ResellerID = [ResellerID] FROM [dbo].[ecContracts]
+		@Result = COUNT([ServiceID]) FROM [dbo].[ContractsServicesDetailed]
 	WHERE
-		[ContractID] = @ContractID;
-
-BEGIN TRAN ADD_ADDON_SVC
-	--
-	INSERT INTO [dbo].[ecService]
-		([ContractID], [ParentID], [ServiceName], [TypeID], [Status], [Created])
-	VALUES
-		(@ContractID, @ParentID, @AddonName, 2, 0, GETDATE());
-	-- obtain result
-	SET @Result = SCOPE_IDENTITY();
-
-	DECLARE @SvcCycleID int;
-	-- insert svc life-cycle
-	IF @CycleID > 0
-	BEGIN
-		INSERT INTO [dbo].[ecHostingAddonSvcsCycles]
-		(
-			[ServiceID],
-			[CycleName],
-			[BillingPeriod],
-			[PeriodLength],
-			[SetupFee],
-			[CyclePrice],
-			[Currency]
-		)
-		SELECT
-			@Result,
-			[BC].[CycleName],
-			[BC].[BillingPeriod],
-			[BC].[PeriodLength],
-			[HAC].[SetupFee],
-			[HAC].[RecurringFee],
-			@Currency
-		FROM
-			[dbo].[ecHostingAddonsCycles] AS [HAC]
-		INNER JOIN
-			[dbo].[ecBillingCycles] AS [BC]
-		ON
-			[BC].[CycleID] = [HAC].[CycleID]
-		WHERE
-			[HAC].[CycleID] = @CycleID
-		AND
-			[HAC].[ProductID] = @ProductID
-		AND
-			[BC].[ResellerID] = @ResellerID;
-		-- check error
-		IF @@ROWCOUNT = 0
-			GOTO ERROR_HANDLE;
-		-- obtain result
-		SET @SvcCycleID = SCOPE_IDENTITY();
-	END
-	ELSE
-	BEGIN
-		INSERT INTO [dbo].[ecHostingAddonSvcsCycles]
-		(
-			[ServiceID],
-			[CycleName],
-			[BillingPeriod],
-			[PeriodLength],
-			[SetupFee],
-			[CyclePrice],
-			[Currency]
-		)
-		SELECT
-			@Result,
-			NULL,
-			NULL,
-			NULL,
-			[SetupFee],
-			[OneTimeFee],
-			@Currency
-		FROM
-			[dbo].[ecHostingAddons]
-		WHERE
-			[ProductID] = @ProductID
-		AND
-			[ResellerID] = @ResellerID;
-		-- check error
-		IF @@ROWCOUNT = 0
-			GOTO ERROR_HANDLE;
-		-- obtain result
-		SET @SvcCycleID = SCOPE_IDENTITY();
-	END
-
-	-- insert addon svc details
-	INSERT INTO [dbo].[ecHostingAddonSvcs]
-	(
-		[ServiceID],
-		[ProductID],
-		[PlanID],
-		[Quantity],
-		[Recurring],
-		[DummyAddon],
-		[SvcCycleID]
-	)
-	SELECT
-		@Result,
-		@ProductID,
-		[PlanID],
-		@Quantity,
-		[Recurring],
-		[DummyAddon],
-		@SvcCycleID
-	FROM
-		[dbo].[ecHostingAddons]
-	WHERE
-		[ProductID] = @ProductID
-	AND
-		[ResellerID] = @ResellerID;
-	-- check error
-	IF @@ROWCOUNT = 0
-		GOTO ERROR_HANDLE;
-
-	-- commit tran
-	COMMIT TRAN ADD_ADDON_SVC;
-	-- exit
-	RETURN;
--- error handler
-ERROR_HANDLE:
-BEGIN
-	SET @Result = -1;
-	ROLLBACK TRAN ADD_ADDON_SVC;
-	RETURN;
-END
+		[CustomerID] = @UserID;
 
 END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecAddHostingAddon]
-	@ActorID int,
-	@UserID int,
-	@AddonName nvarchar(255),
-	@ProductSku nvarchar(50),
-	@TaxInclusive bit,
-	@Enabled bit,
-	@PlanID int,
-	@Recurring bit,
-	@DummyAddon bit,
-	@Countable bit,
-	@Description ntext,
-	@AddonCyclesXml xml,
-	@AssignedProductsXml xml,
-	@Result int OUTPUT
-AS
-BEGIN
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
-	BEGIN
-		SET @Result = -1;
-		RAISERROR('You are not allowed to access this account', 16, 1);
-		RETURN;
-	END
-	-- dummy addon clause
-	IF @DummyAddon = 1
-		SET @PlanID = NULL;
-
-BEGIN TRAN ADD_ADDON
-	DECLARE @XmlDocID int;
-	SET @XmlDocID = NULL;
-
-	-- insert product first
-	INSERT INTO [dbo].[ecProduct]
-		([ProductName], [ProductSKU], [TypeID], [TaxInclusive], [Description], [Created], [Enabled], [ResellerID])
-	VALUES
-		(@AddonName, @ProductSku, 2, @TaxInclusive, @Description, GETDATE(), @Enabled, @UserID);
-	-- check errors
-	IF @@ERROR <> 0
-	BEGIN
-		GOTO ERROR_HANDLE;
-	END
-	-- set product id created
-	SET @Result = SCOPE_IDENTITY();
-	-- insert hosting addon details
-	INSERT INTO [dbo].[ecHostingAddons]
-		([ProductID], [PlanID], [Recurring], [ResellerID], [DummyAddon], [Countable])
-	VALUES
-		(@Result, @PlanID, @Recurring, @UserID, @DummyAddon, @Countable);
-	-- check errors
-	IF @@ERROR <> 0
-	BEGIN
-		GOTO ERROR_HANDLE;
-	END
-/*
-XML Format:
-
-<PlanCycles>
-	<Cycle ID="2" SetupFee="2.99" RecurringFee="3.99" SortOrder="1" />
-</PlanCycles>
-*/
-	-- save hosting addon cycles
-	IF @Recurring = 1
-		-- insert cycles
-		INSERT INTO [dbo].[ecHostingAddonsCycles]
-			([ProductID], [CycleID], [SetupFee], [RecurringFee], [SortOrder])
-		SELECT
-			@Result, [SXML].[Data].value('@ID','int'), [SXML].[Data].value('@SetupFee','money'),
-			[SXML].[Data].value('@RecurringFee','money'), [SXML].[Data].value('@SortOrder','int')
-		FROM @AddonCyclesXml.nodes('/PlanCycles/Cycle') [SXML]([Data])
-	ELSE
-		UPDATE
-			[dbo].[ecHostingAddons]
-		SET
-			[SetupFee] = [SXML].[Data].value('@SetupFee','money'),
-			[OneTimeFee] = [SXML].[Data].value('@RecurringFee','money') 
-		FROM
-			@AddonCyclesXml.nodes('/PlanCycles/Cycle') [SXML]([Data])
-		WHERE
-			[ResellerID] = @UserID AND [ProductID] = @Result;
-	-- check errors
-	IF @@ERROR <> 0
-	BEGIN
-		GOTO ERROR_HANDLE;
-	END
-/*
-XML Format:
-
-<AssignedProducts>
-	<Product ID="25" />
-</AssignedProducts>
-*/
-	-- insert cycles
-	INSERT INTO [dbo].[ecAddonProducts]
-		([AddonID], [ProductID], [ResellerID])
-	SELECT
-		@Result, [SXML].[Data].value('@ID','int'), @UserID
-	FROM
-		@AssignedProductsXml.nodes('/AssignedProducts/Product') [SXML]([Data])
-	-- check errors
-	IF @@ERROR <> 0
-	BEGIN
-		GOTO ERROR_HANDLE;
-	END
-	--
-	COMMIT TRAN ADD_ADDON;
-	-- 
-	RETURN;
-	
-
-ERROR_HANDLE:
-BEGIN
-	SET @Result = -1;
-	ROLLBACK TRAN ADD_ADDON;
-	RETURN;	
-END
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecAddServiceUsageRecord]
-	@ActorID int,
-	@ServiceID int,
-	@SvcCycleID int,
-	@StartDate datetime,
-	@EndDate datetime,
-	@Result int OUTPUT
-AS
-BEGIN
-	
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-	SET @Result = 0;
-
-    INSERT INTO [dbo].[ecSvcsUsageLog]
-	(
-		[ServiceID],
-		[SvcCycleID],
-		[StartDate],
-		[EndDate]
-	)
-	VALUES
-	(
-		@ServiceID,
-		@SvcCycleID,
-		@StartDate,
-		@EndDate
-	);
-	
-END
-
-
-
-
-
-
-
-
 
 
 
@@ -41219,6 +37178,7 @@ BEGIN
 		[ResellerID] = @UserID;
 
 END
+
 
 
 
@@ -41443,6 +37403,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -41544,6 +37505,7 @@ BEGIN
 END
 
 END
+
 
 
 
@@ -41706,6 +37668,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -41777,6 +37740,7 @@ BEGIN
 	WHERE
 		[SVC].[ServiceID] = @ServiceID;
 END
+
 
 
 
@@ -41882,6 +37846,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -41925,6 +37890,7 @@ BEGIN
 		[HAC].[SortOrder];
 
 END
+
 
 
 
@@ -42040,6 +38006,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -42109,6 +38076,7 @@ BEGIN
 	WHERE
 		[DNC].[ServiceID] = @ServiceID;
 END
+
 
 
 
@@ -42243,6 +38211,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -42268,58 +38237,2293 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecGetCustomersServicesPaged]
+CREATE PROCEDURE [dbo].[ecSetSvcsUsageRecordsClosed]
 	@ActorID int,
-	@UserID int,
-	@IsReseller bit,
-	@MaximumRows int,
-	@StartRowIndex int
+	@XmlSvcs xml,
+	@Result int OUTPUT
 AS
 BEGIN
-	-- check user parent
-	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	-- result is ok
+	SET @Result = 0;
+	-- update all svc records
+	UPDATE
+		[dbo].[ecSvcsUsageLog]
+	SET
+		[PeriodClosed] = 1
+	WHERE
+		[ServiceID] IN (
+			SELECT [SXML].[Data].value('@id','int') FROM @XmlSvcs.nodes('/records/record') [SXML]([Data]));
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetStorefrontProductsInCategory]
+	@ResellerID int,
+	@CategoryID int
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT
+		[P].*
+	FROM
+		[dbo].[ecProduct] AS [P]
+	INNER JOIN
+		[dbo].[ecProductCategories] AS [PC]
+	ON
+		[P].[ProductID] = [PC].[ProductID]
+	WHERE
+		[PC].[CategoryID] = @CategoryID
+	AND
+		[P].[ResellerID] = @ResellerID
+	AND
+		[P].[Enabled] = 1;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetStorefrontHostingPlanAddons]
+	@ResellerID int,
+	@PlanID int
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT
+		[P].*,
+		[HA].*,
+		[HA].[2COID] AS [TCOID]
+	FROM
+		[dbo].[ecHostingAddons] AS [HA]
+	INNER JOIN
+		[dbo].[ecProduct] AS [P]
+	ON
+		[P].[ProductID] = [HA].[ProductID]
+	INNER JOIN
+		[dbo].[ecAddonProducts] AS [AP]
+	ON
+		[P].[ProductID] = [AP].[AddonID]
+	WHERE
+		[AP].[ResellerID] = @ResellerID
+	AND
+		[P].[Enabled] = 1
+	AND
+		[AP].[ProductID] = @PlanID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetServiceHandlersResponsesByReseller]
+	@ResellerID int
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT 
+		* FROM [ServiceHandlersResponsesDetailed]
+	WHERE
+		[ResellerID] = @ResellerID AND [ErrorMessage] IS NULL
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetResellerTopLevelDomain]
+	@ResellerID int,
+	@TLD nvarchar(10)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT
+		[P].*,
+		[Tlds].[PluginID],
+		[Tlds].[WhoisEnabled]
+	FROM
+		[dbo].[ecProduct] AS [P]
+	INNER JOIN
+		[dbo].[ecTopLevelDomains] AS [Tlds]
+	ON
+		[Tlds].[ProductID] = [P].[ProductID]
+	WHERE
+		[P].[ResellerID] = @ResellerID
+	AND
+		[Tlds].[TopLevelDomain] = @TLD;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetServiceSuspendDate]
+	@ActorID int,
+	@ServiceID int,
+	@SuspendDate datetime OUTPUT
+AS
+BEGIN
+	DECLARE @IssuerID int, @ContractID nvarchar(50);
+	SELECT
+		@ContractID = [ContractID] FROM [dbo].[ecService]
+	WHERE
+		[ServiceID] = @ServiceID;
+	SELECT
+		@IssuerID = [ResellerID] FROM [dbo].[ecContracts]
+	WHERE
+		[ContractID] = @ContractID;
+	-- check actor rights
+	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
 	BEGIN
 		RAISERROR('You are not allowed to access this information', 16, 1);
 		RETURN;
 	END
 
 	SET NOCOUNT ON;
+
+    SELECT @SuspendDate = ISNULL(MAX([EndDate]), GETDATE()) FROM [dbo].[ecSvcsUsageLog]
+		WHERE [ServiceID] = @ServiceID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetServicesToInvoice] 
+	@ActorID int,
+	@ResellerID int,
+	@TodayDate datetime,
+	@DaysOffset int
+AS
+BEGIN
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @ResellerID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this information', 16, 1);
+		RETURN;
+	END
+
+	SET NOCOUNT ON;
+
+	DECLARE @Svcs TABLE(
+		[ServiceID] int NOT NULL,
+		[MaxStartDate] datetime NOT NULL,
+		[MaxEndDate] datetime NOT NULL
+	);
+
+	-- filter service that don't have corresponding unpaid invoice and expired
+	INSERT INTO
+		@Svcs ([ServiceID], [MaxStartDate], [MaxEndDate])
+	SELECT
+		[SUL].[ServiceID], MAX([SUL].[StartDate]), MAX([SUL].[EndDate]) FROM [dbo].[ecSvcsUsageLog] AS [SUL]
+	INNER JOIN
+		[dbo].[ecService] AS [S] ON [SUL].[ServiceID] = [S].[ServiceID]
+	INNER JOIN
+		[dbo].[ecContracts] AS [C] ON [C].[ContractID] = [S].[ContractID]
+	WHERE
+		[C].[ResellerID] = @ResellerID
+	AND
+		ISNULL([SUL].[PeriodClosed], 0) = 0
+	GROUP BY
+		[SUL].[ServiceID];
+
+	SELECT
+		[S].* FROM [dbo].[ecService] AS [S]
+	INNER JOIN
+		@Svcs AS [SVCS] ON [S].[ServiceID] = [SVCS].[ServiceID]
+	WHERE
+		[S].[Status] = 1 AND @DaysOffset >= DATEDIFF(d, @TodayDate, [SVCS].[MaxEndDate]) 
+	ORDER BY
+		[ContractID];
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetProductHighlights]
+	@ResellerID int,
+	@ProductID int
+AS
+BEGIN
+	
+	SELECT
+		[PH].[HighlightText]
+	FROM
+		[dbo].[ecProductsHighlights] AS [PH]
+	INNER JOIN
+		[dbo].[ecProduct] AS [P]
+	ON
+		[PH].[ProductID] = [P].[ProductID]
+	WHERE
+		[P].[ProductID] = @ProductID
+	AND
+		[P].[ResellerID] = @ResellerID
+	ORDER BY
+		[SortOrder];
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetProductCategoriesIds]
+	@UserID int,
+	@ProductID int
+AS
+BEGIN
+
+	SELECT [CategoryID] FROM [dbo].[ecProductCategories] WHERE [ResellerID] = @UserID AND [ProductID] = @ProductID;	
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetProductCategories]
+	@UserID int,
+	@ProductID int
+AS
+BEGIN
+
+    SELECT
+		[C].*
+	FROM
+		[dbo].[ecCategories] AS [C]
+	INNER JOIN
+		[dbo].[ecProductCategories] AS [PC]
+	ON
+		[C].[CategoryID] = [PC].[CategoryID]
+	WHERE
+		[PC].[ProductID] = @ProductID
+	AND
+		[PC].[ResellerID] = @UserID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetHostingPlansTaken]
+	@ActorID int,
+	@UserID int
+AS
+BEGIN
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this account', 16, 1);
+		RETURN;
+	END
+
+    SELECT [PlanID] FROM [dbo].[ecHostingPlans] WHERE [ResellerID] = @UserID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetHostingPlanCycles]
+	@UserID int,
+	@ProductID int
+AS
+BEGIN
+
+	SELECT
+		[BC].*, [HPC].[ProductID], [HPC].[SetupFee], [HPC].[RecurringFee]  FROM [dbo].[ecHostingPlansBillingCycles] AS [HPC]
+	INNER JOIN
+		[dbo].[ecBillingCycles] AS [BC] ON [BC].[CycleID] = [HPC].[CycleID]
+	INNER JOIN
+		[dbo].[ecProduct] AS [PR] ON [HPC].[ProductID] = [PR].[ProductID]
+	WHERE
+		[PR].[ResellerID] = @UserID AND [HPC].[ProductID] = @ProductID
+	ORDER BY
+		[HPC].[SortOrder];
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetHostingPlan]
+	@UserID int,
+	@ProductID int
+AS
+BEGIN
+
+    SELECT
+		[PR].*,
+		[HP].[PlanID],
+		[HP].[UserRole],
+		[HP].[InitialStatus],
+		[HP].[DomainOption]
+	FROM
+		[dbo].[ecHostingPlans] AS [HP]
+	INNER JOIN
+		[dbo].[ecProduct] AS [PR]
+	ON
+		[PR].[ProductID] = [HP].[ProductID]
+	WHERE
+		[HP].[ResellerID] = @UserID
+	AND
+		[HP].[ProductID] = @ProductID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetHostingPackageSvcHistory]
+	@ActorID int,
+	@ServiceID int
+AS
+BEGIN
+	DECLARE @IssuerID int, @ContractID nvarchar(50);
+	SELECT
+		@ContractID = [ContractID] FROM [dbo].[ecService]
+	WHERE
+		[ServiceID] = @ServiceID;
+	SELECT
+		@IssuerID = ISNULL([CustomerID],[ResellerID]) FROM [dbo].[ecContracts]
+	WHERE
+		[ContractID] = @ContractID;
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this information', 16, 1);
+		RETURN;
+	END
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT
+		[HPC].[CycleName],
+		[HPC].[BillingPeriod],
+		[HPC].[PeriodLength],
+		[HPC].[SetupFee],
+		[HPC].[RecurringFee],
+		[HPC].[Currency],
+		[SUL].[StartDate],
+		[SUL].[EndDate]
+	FROM
+		[dbo].[ecHostingPackageSvcsCycles] AS [HPC]
+	INNER JOIN
+		[dbo].[ecSvcsUsageLog] AS [SUL]
+	ON
+		[SUL].[ServiceID] = [HPC].[ServiceID]
+	AND
+		[SUL].[SvcCycleID] = [HPC].[SvcCycleID]
+	WHERE
+		[HPC].[ServiceID] = @ServiceID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetHostingPackageSvc] 
+	@ActorID int,
+	@ServiceID int
+AS
+BEGIN
+	DECLARE @IssuerID int, @ContractID nvarchar(50);
+	SELECT
+		@ContractID = [ContractID] FROM [dbo].[ecService]
+	WHERE
+		[ServiceID] = @ServiceID;
+	SELECT
+		@IssuerID = ISNULL([CustomerID],[ResellerID]) FROM [dbo].[ecContracts]
+	WHERE
+		[ContractID] = @ContractID;
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this information', 16, 1);
+		RETURN;
+	END
+
+	-- 
+	SET NOCOUNT ON;
+
+    SELECT
+		[SVC].*,
+		[HPSVC].[ProductID],
+		[HPSVC].[PlanID],
+		[HPSVC].[PackageID],
+		[HPSVC].[UserRole],
+		[HPSVC].[InitialStatus],
+		[HPSVC].[SvcCycleID],
+		[HPSC].[CycleName],
+		[HPSC].[BillingPeriod],
+		[HPSC].[PeriodLength],
+		[HPSC].[SetupFee],
+		[HPSC].[RecurringFee],
+		[HPSC].[Currency]
+	FROM
+		[dbo].[ecService] AS [SVC]
+	INNER JOIN
+		[dbo].[ecHostingPackageSvcs] AS [HPSVC]
+	ON
+		[HPSVC].[ServiceID] = [SVC].[ServiceID]
+	INNER JOIN
+		[dbo].[ecHostingPackageSvcsCycles] AS [HPSC]
+	ON
+		[HPSC].[SvcCycleID] = [HPSVC].[SvcCycleID]
+	WHERE
+		[SVC].[ServiceID] = @ServiceID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetHostingAddonSvcHistory]
+	@ActorID int,
+	@ServiceID int
+AS
+BEGIN
+	DECLARE @IssuerID int, @ContractID nvarchar(50);
+	SELECT
+		@ContractID = [ContractID] FROM [dbo].[ecService]
+	WHERE
+		[ServiceID] = @ServiceID;
+	SELECT
+		@IssuerID = ISNULL([CustomerID],[ResellerID]) FROM [dbo].[ecContracts]
+	WHERE
+		[ContractID] = @ContractID;
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @IssuerID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this information', 16, 1);
+		RETURN;
+	END
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT
+		[HAC].[CycleName],
+		[HAC].[BillingPeriod],
+		[HAC].[PeriodLength],
+		[HAC].[SetupFee],
+		[HAC].[CyclePrice] AS [RecurringFee],
+		[HAC].[Currency],
+		[SUL].[StartDate],
+		[SUL].[EndDate]
+	FROM
+		[dbo].[ecHostingAddonSvcsCycles] AS [HAC]
+	INNER JOIN
+		[dbo].[ecSvcsUsageLog] AS [SUL]
+	ON
+		[SUL].[ServiceID] = [HAC].[ServiceID]
+	AND
+		[SUL].[SvcCycleID] = [HAC].[SvcCycleID]
+	WHERE
+		[HAC].[ServiceID] = @ServiceID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetAddonProductsIds]
+	@UserID int,
+	@ProductID int
+AS
+BEGIN
+	
+	SELECT 
+		[P].[ProductID]
+	FROM
+		[dbo].[ecProduct] AS [P]
+		INNER JOIN [dbo].[ecAddonProducts] AS [ATP]
+		ON [P].[ProductID] = [ATP].[ProductID]
+	WHERE
+		[ATP].[AddonID] = @ProductID
+		AND
+		[P].[ResellerID] = @UserID;	
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetAddonProducts] 
+	@UserID int,
+	@ProductID int
+AS
+BEGIN
+
+    SELECT 
+		[P].*
+	FROM
+		[dbo].[ecProduct] AS [P]
+		INNER JOIN [dbo].[ecAddonProducts] AS [ATP]
+		ON [P].[ProductID] = [ATP].[ProductID]
+	WHERE
+		[ATP].[AddonID] = @ProductID
+		AND
+		[P].[ResellerID] = @UserID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecDeleteProduct] 
+	@ActorID int,
+	@UserID int,
+	@ProductID int,
+	@Result int OUTPUT
+AS
+BEGIN
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+	BEGIN
+		SET @Result = -1;
+		RAISERROR('You are not allowed to access this account', 16, 1);
+		RETURN;
+	END
+
+BEGIN TRAN RMV_PRODUCT    
+	-- remove product
+	DELETE FROM [dbo].[ecProduct] WHERE [ProductID] = @ProductID AND [ResellerID] = @UserID;
+	-- check errors
+	IF @@ERROR <> 0
+		GOTO ERROR_HANDLE;
+	-- workaround for cyclic cascades
+	DELETE FROM [dbo].[ecAddonProducts] WHERE [ProductID] = @ProductID AND [ResellerID] = @UserID;
+	-- check errors
+	IF @@ERROR <> 0
+		GOTO ERROR_HANDLE;
+	-- set result ok
+	SET @Result = 0;
+	-- commit actions
+	COMMIT TRAN RMV_PRODUCT;
+	-- exit routine
+	RETURN;
+
+ERROR_HANDLE:
+BEGIN
+	SET @Result = -1;
+	ROLLBACK TRAN RMV_PRODUCT;
+	RETURN;
+END
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[AddIPAddress]	
+(
+	@AddressID int OUTPUT,
+	@ServerID int,
+	@ExternalIP varchar(24),
+	@InternalIP varchar(24),
+	@PoolID int,
+	@SubnetMask varchar(15),
+	@DefaultGateway varchar(15),
+	@Comments ntext
+)
+AS
+BEGIN
+	IF @ServerID = 0
+	SET @ServerID = NULL
+
+	INSERT INTO IPAddresses (ServerID, ExternalIP, InternalIP, PoolID, SubnetMask, DefaultGateway, Comments)
+	VALUES (@ServerID, @ExternalIP, @InternalIP, @PoolID, @SubnetMask, @DefaultGateway, @Comments)
+
+	SET @AddressID = SCOPE_IDENTITY()
+
+	RETURN
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecAddDomainNameSvc] 
+	@ContractID nvarchar(50),
+	@ParentID int,
+	@ProductID int,
+	@FQDN nvarchar(64),
+	@CycleID int,
+	@Currency nvarchar(10),
+	@PropertyNames ntext,
+	@PropertyValues ntext,
+	@Result int OUTPUT
+AS
+BEGIN
+	DECLARE @ResellerID int;
+	SELECT
+		@ResellerID = [ResellerID] FROM [dbo].[ecContracts]
+	WHERE
+		[ContractID] = @ContractID;
+	
+BEGIN TRAN ADD_TLD_SVC
+	-- add service
+	INSERT INTO [dbo].[ecService]
+		([ContractID], [ParentID], [ServiceName], [TypeID], [Status], [Created])
+	VALUES
+		(@ContractID, @ParentID, @FQDN, 3, 0, GETDATE());
+	-- check error
+	IF @@ERROR <> 0
+		GOTO ERROR_HANDLE;
+	-- obtain result
+	SET @Result = SCOPE_IDENTITY();
+
+	-- if product and cycle are defined
+	IF @ProductID > 0 OR @CycleID > 0
+	BEGIN
+		DECLARE @SvcCycleID int;
+		-- insert svc life-cycle
+		INSERT INTO [dbo].[ecDomainSvcsCycles]
+		(
+			[ServiceID],
+			[CycleName],
+			[BillingPeriod],
+			[PeriodLength],
+			[SetupFee],
+			[RecurringFee],
+			[Currency]
+		)
+		SELECT
+			@Result,
+			[BC].[CycleName],
+			[BC].[BillingPeriod],
+			[BC].[PeriodLength],
+			[TLDC].[SetupFee],
+			[TLDC].[RecurringFee],
+			@Currency
+		FROM
+			[dbo].[ecTopLevelDomainsCycles] AS [TLDC]
+		INNER JOIN
+			[dbo].[ecBillingCycles] AS [BC]
+		ON
+			[BC].[CycleID] = [TLDC].[CycleID]
+		WHERE
+			[TLDC].[CycleID] = @CycleID
+		AND
+			[TLDC].[ProductID] = @ProductID
+		AND
+			[BC].[ResellerID] = @ResellerID;
+		-- check error
+		IF @@ROWCOUNT = 0
+			GOTO ERROR_HANDLE;
+		-- obtain result
+		SET @SvcCycleID = SCOPE_IDENTITY();
+
+		-- add domain details
+		INSERT INTO [dbo].[ecDomainSvcs]
+		(
+			[ServiceID],
+			[ProductID],
+			[PluginID],
+			[FQDN],
+			[SvcCycleID],
+			[PropertyNames],
+			[PropertyValues]
+		)
+		SELECT
+			@Result,
+			@ProductID,
+			[PluginID],
+			@FQDN,
+			@SvcCycleID,
+			@PropertyNames,
+			@PropertyValues
+		FROM
+			[dbo].[ecTopLevelDomains]
+		WHERE
+			[ProductID] = @ProductID
+		AND
+			[ResellerID] = @ResellerID;
+		-- check error
+		IF @@ROWCOUNT = 0
+			GOTO ERROR_HANDLE;
+	END
+	ELSE
+	BEGIN
+		INSERT INTO [dbo].[ecDomainSvcs]
+		(
+			[ServiceID],
+			[ProductID],
+			[FQDN],
+			[SvcCycleID],
+			[PropertyNames],
+			[PropertyValues]
+		)
+		SELECT @Result, NULL, @FQDN, NULL, @PropertyNames, @PropertyValues;
+		-- check error
+		IF @@ROWCOUNT = 0
+			GOTO ERROR_HANDLE;
+	END
+
+	-- commit
+	COMMIT TRAN ADD_TLD_SVC;
+	-- exit
+	RETURN;
+
+-- error handler
+ERROR_HANDLE:
+BEGIN
+	SET @Result = -1;
+	ROLLBACK TRAN ADD_TLD_SVC;
+	RETURN;
+END
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetRawServicesByServerID
+(
+	@ActorID int,
+	@ServerID int
+)
+AS
+
+-- check rights
+DECLARE @IsAdmin bit
+SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
+
+-- resource groups
+SELECT
+	GroupID,
+	GroupName
+FROM ResourceGroups
+WHERE @IsAdmin = 1
+ORDER BY GroupOrder
+
+-- services
+SELECT
+	S.ServiceID,
+	S.ServerID,
+	S.ServiceName,
+	S.Comments,
+	RG.GroupID,
+	PROV.DisplayName AS ProviderName
+FROM Services AS S
+INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
+INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
+WHERE
+	S.ServerID = @ServerID
+	AND @IsAdmin = 1
+ORDER BY RG.GroupOrder
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetQuotas
+AS
+SELECT
+	Q.GroupID,
+	Q.QuotaID,
+	RG.GroupName,
+	Q.QuotaDescription,
+	Q.QuotaTypeID
+FROM Quotas AS Q
+INNER JOIN ResourceGroups AS RG ON Q.GroupID = RG.GroupID
+ORDER BY RG.GroupOrder, Q.QuotaOrder
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetProviderServiceQuota
+(
+	@ProviderID int
+)
+AS
+
+SELECT TOP 1
+	Q.QuotaID,
+	Q.GroupID,
+	Q.QuotaName,
+	Q.QuotaDescription,
+	Q.QuotaTypeID,
+	Q.ServiceQuota
+FROM Providers AS P
+INNER JOIN Quotas AS Q ON P.GroupID = Q.GroupID
+WHERE P.ProviderID = @ProviderID AND Q.ServiceQuota = 1
+
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetTopLevelDomainsPaged]
+	@ActorID int,
+	@UserID int,
+	@MaximumRows int,
+	@StartRowIndex int
+AS
+BEGIN
 
 	DECLARE @EndIndex int;
 
 	SET @EndIndex = @MaximumRows + @StartRowIndex;
 	SET @StartRowIndex = @StartRowIndex + 1;
 
-	IF @IsReseller = 1
-	BEGIN
-		WITH [SERVICES] AS (
-			SELECT
-				ROW_NUMBER() OVER(ORDER BY [Created] DESC) AS [RowIndex], * FROM [dbo].[ContractsServicesDetailed]
-			WHERE
-				[ResellerID] = @UserID
-		)
-
+	WITH [TldsCTE] AS (
 		SELECT
-			* FROM [SERVICES]
+			ROW_NUMBER() OVER(ORDER BY [Created] DESC) AS [RowIndex],
+			*
+		FROM 
+			[dbo].[ecProduct]
 		WHERE
-			[RowIndex] BETWEEN @StartRowIndex AND @EndIndex ORDER BY [Created] DESC;
-		-- exit
-		RETURN;
-	END;
-	
-	WITH [SERVICES] AS (
-		SELECT
-			ROW_NUMBER() OVER(ORDER BY [Created] DESC) AS [RowIndex], * FROM [dbo].[ContractsServicesDetailed]
-		WHERE
-			[CustomerID] = @UserID
+			[ResellerID] = @UserID
+		AND
+			[TypeID] = 3 -- Top Level Domain
 	)
 
-	SELECT
-		* FROM [SERVICES]
+	SELECT 
+		[TldsCTE].*,
+		[Tlds].[PluginId],
+		[PLG].[DisplayName]
+	FROM
+		[TldsCTE]
+	INNER JOIN
+		[dbo].[ecTopLevelDomains] AS [Tlds]
+	ON
+		[Tlds].[ProductID] = [TldsCTE].[ProductID]
+	INNER JOIN
+		[dbo].[ecSupportedPlugins] AS [PLG]
+	ON
+		[PLG].[PluginID] = [Tlds].[PluginID]
 	WHERE
-		[RowIndex] BETWEEN @StartRowIndex AND @EndIndex ORDER BY [Created] DESC;
-
+		[TldsCTE].[RowIndex] BETWEEN @StartRowIndex AND @EndIndex;
+    
 END
+
+
+
+
+
+
+
+
+
 
 
 
@@ -42370,37 +40574,1543 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecGetCustomersServicesCount]
+CREATE PROCEDURE [dbo].[ecGetTopLevelDomainCycles]
+	@UserID int,
+	@ProductID int
+AS
+BEGIN
+
+	SELECT
+		[BC].*,
+		[TLDC].[ProductID],
+		[TLDC].[SetupFee],
+		[TLDC].[RecurringFee],
+		[TLDC].[TransferFee]
+	FROM
+		[dbo].[ecTopLevelDomainsCycles] AS [TLDC]
+	INNER JOIN
+		[dbo].[ecBillingCycles] AS [BC]
+	ON
+		[BC].[CycleID] = [TLDC].[CycleID]
+	INNER JOIN
+		[dbo].[ecProduct] AS [PR]
+	ON
+		[TLDC].[ProductID] = [PR].[ProductID]
+	WHERE
+		[PR].[ResellerID] = @UserID
+	AND
+		[TLDC].[ProductID] = @ProductID
+	ORDER BY
+		[TLDC].[SortOrder];	
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetTopLevelDomain]
 	@ActorID int,
 	@UserID int,
-	@IsReseller bit,
+	@ProductID int
+AS
+BEGIN
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+	BEGIN
+		RAISERROR('You are not allowed to access this account', 16, 1);
+		RETURN;
+	END
+
+	SELECT
+		[P].*,
+		[Tlds].[PluginID],
+		[Tlds].[WhoisEnabled],
+		[PLG].[DisplayName]
+	FROM
+		[dbo].[ecProduct] AS [P]
+	INNER JOIN
+		[dbo].[ecTopLevelDomains] AS [Tlds]
+	ON
+		[Tlds].[ProductID] = [P].[ProductID]
+	INNER JOIN
+		[dbo].[ecSupportedPlugins] AS [PLG]
+	ON
+		[PLG].[PluginID] = [Tlds].[PluginID]
+	WHERE
+		[P].[ResellerID] = @UserID
+	AND
+		[P].[ProductID] = @ProductID;
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecGetSvcsSuspendDateAligned]
+	@ResellerID int,
+	@SvcsXml xml,
+	@DefaultValue datetime,
+	@Result datetime OUTPUT
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	SELECT
+		@Result = MAX([SUL].[EndDate]) FROM [dbo].[ecSvcsUsageLog] AS [SUL]
+	INNER JOIN
+		[dbo].[ecService] AS [S] ON [SUL].[ServiceID] = [S].[ServiceID]
+	INNER JOIn
+		[dbo].[ecContracts] AS [C] ON [C].[ContractID] = [S].[ContractID]
+	WHERE
+		[C].[ResellerID] = @ResellerID
+		AND
+		[S].[ServiceID] IN (SELECT [SXML].[Data].value('@id','int') FROM @SvcsXml.nodes('/Svcs/Svc') [SXML]([Data]));
+	
+	-- result is empty	
+	SET @Result = ISNULL(@Result, @DefaultValue);
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetService]
+(
+	@ActorID int,
+	@ServiceID int
+)
+AS
+
+SELECT
+	ServiceID,
+	Services.ServerID,
+	ProviderID,
+	ServiceName,
+	ServiceQuotaValue,
+	ClusterID,
+	Services.Comments,
+	Servers.ServerName
+FROM Services INNER JOIN Servers ON Services.ServerID = Servers.ServerID
+WHERE
+	ServiceID = @ServiceID
+
+RETURN 
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetProviderByServiceID
+(
+	@ServiceID int
+)
+AS
+SELECT
+	P.ProviderID,
+	P.GroupID,
+	P.DisplayName,
+	P.EditorControl,
+	P.ProviderType
+FROM Services AS S
+INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
+WHERE
+	S.ServiceID = @ServiceID
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetServers
+(
+	@ActorID int
+)
+AS
+-- check rights
+DECLARE @IsAdmin bit
+SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
+
+SELECT
+	S.ServerID,
+	S.ServerName,
+	S.ServerUrl,
+	(SELECT COUNT(SRV.ServiceID) FROM Services AS SRV WHERE S.ServerID = SRV.ServerID) AS ServicesNumber,
+	S.Comments,
+	PrimaryGroupID,
+	S.ADEnabled
+FROM Servers AS S
+WHERE VirtualServer = 0
+AND @IsAdmin = 1
+ORDER BY S.ServerName
+
+-- services
+SELECT
+	S.ServiceID,
+	S.ServerID,
+	S.ProviderID,
+	S.ServiceName,
+	S.Comments
+FROM Services AS S
+INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
+INNER JOIN ResourceGroups AS RG ON P.GroupID = RG.GroupID
+WHERE @IsAdmin = 1
+ORDER BY RG.GroupOrder
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetServicesByServerIDGroupName
+(
+	@ActorID int,
+	@ServerID int,
+	@GroupName nvarchar(50)
+)
+AS
+
+-- check rights
+DECLARE @IsAdmin bit
+SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
+
+SELECT
+	S.ServiceID,
+	S.ServerID,
+	S.ServiceName,
+	S.Comments,
+	S.ServiceQuotaValue,
+	RG.GroupName,
+	PROV.DisplayName AS ProviderName
+FROM Services AS S
+INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
+INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
+WHERE
+	S.ServerID = @ServerID AND RG.GroupName = @GroupName
+	AND @IsAdmin = 1
+ORDER BY RG.GroupOrder
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetServicesByServerID
+(
+	@ActorID int,
+	@ServerID int
+)
+AS
+
+-- check rights
+DECLARE @IsAdmin bit
+SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
+
+
+SELECT
+	S.ServiceID,
+	S.ServerID,
+	S.ServiceName,
+	S.Comments,
+	S.ServiceQuotaValue,
+	RG.GroupName,
+	S.ProviderID,
+	PROV.DisplayName AS ProviderName
+FROM Services AS S
+INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
+INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
+WHERE
+	S.ServerID = @ServerID
+	AND @IsAdmin = 1
+ORDER BY RG.GroupOrder
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetServicesByGroupName]
+(
+	@ActorID int,
+	@GroupName nvarchar(100)
+)
+AS
+-- check rights
+DECLARE @IsAdmin bit
+SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
+
+SELECT
+	S.ServiceID,
+	S.ServiceName,
+	S.ServerID,
+	S.ServiceQuotaValue,
+	SRV.ServerName,
+	S.ProviderID,
+    PROV.ProviderName,
+	S.ServiceName + ' on ' + SRV.ServerName AS FullServiceName
+FROM Services AS S
+INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
+INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
+WHERE
+	RG.GroupName = @GroupName
+	AND @IsAdmin = 1
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE GetServicesByGroupID
+(
+	@ActorID int,
+	@GroupID int
+)
+AS
+-- check rights
+DECLARE @IsAdmin bit
+SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
+
+SELECT
+	S.ServiceID,
+	S.ServiceName,
+	S.ServerID,
+	S.ServiceQuotaValue,
+	SRV.ServerName,
+	S.ProviderID,
+	S.ServiceName+' on '+SRV.ServerName AS FullServiceName
+FROM Services AS S
+INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
+INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+WHERE
+	PROV.GroupID = @GroupID
+	AND @IsAdmin = 1
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecAddServiceUsageRecord]
+	@ActorID int,
+	@ServiceID int,
+	@SvcCycleID int,
+	@StartDate datetime,
+	@EndDate datetime,
 	@Result int OUTPUT
 AS
 BEGIN
-	-- check user parent
-	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
-	BEGIN
-		RAISERROR('You are not allowed to access this information', 16, 1);
-		RETURN;
-	END
-
+	
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	IF @IsReseller = 1
+	SET @Result = 0;
+
+    INSERT INTO [dbo].[ecSvcsUsageLog]
+	(
+		[ServiceID],
+		[SvcCycleID],
+		[StartDate],
+		[EndDate]
+	)
+	VALUES
+	(
+		@ServiceID,
+		@SvcCycleID,
+		@StartDate,
+		@EndDate
+	);
+	
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecUpdateTopLevelDomain]
+	@ActorID int,
+	@UserID int,
+	@ProductID int,
+	@TopLevelDomain nvarchar(10),
+	@ProductSku nvarchar(50),
+	@TaxInclusive bit,
+	@PluginID int,
+	@Enabled bit,
+	@WhoisEnabled bit,
+	@DomainCyclesXml xml,
+	@Result int OUTPUT
+AS
+BEGIN
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
 	BEGIN
-		SELECT
-			@Result = COUNT([ServiceID]) FROM [dbo].[ContractsServicesDetailed]
-		WHERE
-			[ResellerID] = @UserID;
+		SET @Result = -1;
+		RAISERROR('You are not allowed to access this account', 16, 1);
 		RETURN;
 	END
-	
-	SELECT
-		@Result = COUNT([ServiceID]) FROM [dbo].[ContractsServicesDetailed]
+
+BEGIN TRAN UPDATE_DOMAIN
+	-- insert product first
+	UPDATE
+		[dbo].[ecProduct]
+	SET
+		[ProductName] = @TopLevelDomain,
+		[ProductSKU] = @ProductSku,
+		[Enabled] = @Enabled,
+		[TaxInclusive] = @TaxInclusive
 	WHERE
-		[CustomerID] = @UserID;
+		[ResellerID] = @UserID
+	AND
+		[ProductID] = @ProductID;
+
+	-- save top level domain details
+	UPDATE
+		[dbo].[ecTopLevelDomains]
+	SET
+		[TopLevelDomain] = @TopLevelDomain,
+		[PluginID] = @PluginID,
+		[WhoisEnabled] = @WhoisEnabled
+	WHERE
+		[ResellerID] = @UserID
+	AND
+		[ProductID] = @ProductID;
+	-- check errors
+	IF @@ERROR <> 0
+	BEGIN
+		GOTO ERROR_HANDLE;
+	END
+
+/*
+XML Format:
+
+<DomainCycles>
+	<Cycle ID="2" SetupFee="2.99" RecurringFee="3.99" TransferFee="3.99" TCOID="1005" SortOrder="1" />
+</DomainCycles>
+*/
+	-- cleanup cycles
+	DELETE FROM [dbo].[ecTopLevelDomainsCycles] WHERE [ProductID] = @ProductID;
+	-- insert cycles
+	INSERT INTO [dbo].[ecTopLevelDomainsCycles]
+	(
+		[ProductID],
+		[CycleID],
+		[SetupFee],
+		[RecurringFee],
+		[TransferFee],
+		[SortOrder]
+	)
+	SELECT
+		@ProductID,
+		[SXML].[Data].value('@ID','int'),
+		[SXML].[Data].value('@SetupFee','money'),
+		[SXML].[Data].value('@RecurringFee','money'),
+		[SXML].[Data].value('@TransferFee','money'),
+		[SXML].[Data].value('@SortOrder','int')
+	FROM @DomainCyclesXml.nodes('/DomainCycles/Cycle') [SXML]([Data]);
+	-- check errors
+	IF @@ERROR <> 0
+	BEGIN
+		GOTO ERROR_HANDLE;
+	END
+	--
+	SET @Result = 0;
+	--
+	COMMIT TRAN UPDATE_DOMAIN;
+	-- 
+	RETURN;
+
+ERROR_HANDLE:
+BEGIN
+	SET @Result = -1;
+	ROLLBACK TRAN UPDATE_DOMAIN;
+	RETURN;
+END
 
 END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE UpdateVirtualGroups
+(
+	@ServerID int,
+	@Xml ntext
+)
+AS
+
+
+/*
+XML Format:
+
+<groups>
+	<group id="16" distributionType="1" bindDistributionToPrimary="1"/>
+</groups>
+
+*/
+
+BEGIN TRAN
+DECLARE @idoc int
+--Create an internal representation of the XML document.
+EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
+
+-- delete old virtual groups
+DELETE FROM VirtualGroups
+WHERE ServerID = @ServerID
+
+-- update HP resources
+INSERT INTO VirtualGroups
+(
+	ServerID,
+	GroupID,
+	DistributionType,
+	BindDistributionToPrimary
+)
+SELECT
+	@ServerID,
+	GroupID,
+	DistributionType,
+	BindDistributionToPrimary
+FROM OPENXML(@idoc, '/groups/group',1) WITH 
+(
+	GroupID int '@id',
+	DistributionType int '@distributionType',
+	BindDistributionToPrimary bit '@bindDistributionToPrimary'
+) as XRG
+
+-- remove document
+exec sp_xml_removedocument @idoc
+
+COMMIT TRAN
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecAddTopLevelDomain]
+	@ActorID int,
+	@UserID int,
+	@TopLevelDomain nvarchar(10),
+	@ProductSku nvarchar(50),
+	@TaxInclusive bit,
+	@PluginID int,
+	@Enabled bit,
+	@WhoisEnabled bit,
+	@DomainCyclesXml xml,
+	@Result int OUTPUT
+AS
+BEGIN
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+	BEGIN
+		SET @Result = -1;
+		RAISERROR('You are not allowed to access this account', 16, 1);
+		RETURN;
+	END
+
+BEGIN TRAN ADD_DOMAIN
+	-- insert product first
+	INSERT INTO [dbo].[ecProduct]
+	(
+		[ProductName],
+		[ProductSKU],
+		[TypeID],
+		[Description],
+		[Created],
+		[Enabled],
+		[ResellerID],
+		[TaxInclusive]
+	)
+	VALUES
+	(
+		@TopLevelDomain,
+		@ProductSku,
+		3, -- Domain Name type
+		NULL,
+		GETDATE(),
+		@Enabled,
+		@UserID,
+		@TaxInclusive
+	);
+
+	-- set product id created
+	SET @Result = SCOPE_IDENTITY();
+
+	-- save top level domain details
+	INSERT INTO [dbo].[ecTopLevelDomains]
+	(
+		[ProductID],
+		[ResellerID],
+		[TopLevelDomain],
+		[PluginID],
+		[WhoisEnabled]
+	)
+	VALUES
+	(
+		@Result,
+		@UserID,
+		@TopLevelDomain,
+		@PluginID,
+		@WhoisEnabled
+	);
+	-- check errors
+	IF @@ERROR <> 0
+	BEGIN
+		GOTO ERROR_HANDLE;
+	END
+
+/*
+XML Format:
+
+<DomainCycles>
+	<Cycle ID="2" SetupFee="2.99" RecurringFee="3.99" TransferFee="3.99" SortOrder="1" />
+</DomainCycles>
+*/
+	-- insert cycles
+	INSERT INTO [dbo].[ecTopLevelDomainsCycles]
+	(
+		[ProductID],
+		[CycleID],
+		[SetupFee],
+		[RecurringFee],
+		[TransferFee],
+		[SortOrder]
+	)
+	SELECT
+		@Result,
+		[SXML].[Data].value('@ID','int'),
+		[SXML].[Data].value('@SetupFee','money'),
+		[SXML].[Data].value('@RecurringFee','money'),
+		[SXML].[Data].value('@TransferFee','money'),
+		[SXML].[Data].value('@SortOrder','int')
+	FROM @DomainCyclesXml.nodes('/DomainCycles/Cycle') [SXML]([Data]);
+	-- check errors
+	IF @@ERROR <> 0
+		GOTO ERROR_HANDLE;
+	--
+	COMMIT TRAN ADD_DOMAIN;
+	-- 
+	RETURN;
+
+ERROR_HANDLE:
+BEGIN
+	SET @Result = -1;
+	ROLLBACK TRAN ADD_DOMAIN;
+	RETURN;
+END
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE DeleteCluster
+(
+	@ClusterID int
+)
+AS
+
+-- reset cluster in services
+UPDATE Services
+SET ClusterID = NULL
+WHERE ClusterID = @ClusterID
+
+-- delete cluster
+DELETE FROM Clusters
+WHERE ClusterID = @ClusterID
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE UpdateService
+(
+	@ServiceID int,
+	@ServiceName nvarchar(50),
+	@Comments ntext,
+	@ServiceQuotaValue int,
+	@ClusterID int
+)
+AS
+
+IF @ClusterID = 0 SET @ClusterID = NULL
+
+UPDATE Services
+SET
+	ServiceName = @ServiceName,
+	ServiceQuotaValue = @ServiceQuotaValue,
+	Comments = @Comments,
+	ClusterID = @ClusterID
+WHERE ServiceID = @ServiceID
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -42528,6 +42238,7 @@ BEGIN
 END
 
 END
+
 
 
 
@@ -42731,6 +42442,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -42852,6 +42564,7 @@ END
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -42877,222 +42590,202 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[ecUpdateTopLevelDomain]
-	@ActorID int,
-	@UserID int,
+CREATE PROCEDURE [dbo].[ecAddHostingPlanSvc]
+	@ContractID nvarchar(50),
 	@ProductID int,
-	@TopLevelDomain nvarchar(10),
-	@ProductSku nvarchar(50),
-	@TaxInclusive bit,
-	@PluginID int,
-	@Enabled bit,
-	@WhoisEnabled bit,
-	@DomainCyclesXml xml,
+	@PlanName nvarchar(255),
+	@CycleID int,
+	@Currency nvarchar(10),
 	@Result int OUTPUT
 AS
 BEGIN
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
-	BEGIN
-		SET @Result = -1;
-		RAISERROR('You are not allowed to access this account', 16, 1);
-		RETURN;
-	END
-
-BEGIN TRAN UPDATE_DOMAIN
-	-- insert product first
-	UPDATE
-		[dbo].[ecProduct]
-	SET
-		[ProductName] = @TopLevelDomain,
-		[ProductSKU] = @ProductSku,
-		[Enabled] = @Enabled,
-		[TaxInclusive] = @TaxInclusive
-	WHERE
-		[ResellerID] = @UserID
-	AND
-		[ProductID] = @ProductID;
-
-	-- save top level domain details
-	UPDATE
-		[dbo].[ecTopLevelDomains]
-	SET
-		[TopLevelDomain] = @TopLevelDomain,
-		[PluginID] = @PluginID,
-		[WhoisEnabled] = @WhoisEnabled
-	WHERE
-		[ResellerID] = @UserID
-	AND
-		[ProductID] = @ProductID;
-	-- check errors
-	IF @@ERROR <> 0
-	BEGIN
-		GOTO ERROR_HANDLE;
-	END
-
-/*
-XML Format:
-
-<DomainCycles>
-	<Cycle ID="2" SetupFee="2.99" RecurringFee="3.99" TransferFee="3.99" TCOID="1005" SortOrder="1" />
-</DomainCycles>
-*/
-	-- cleanup cycles
-	DELETE FROM [dbo].[ecTopLevelDomainsCycles] WHERE [ProductID] = @ProductID;
-	-- insert cycles
-	INSERT INTO [dbo].[ecTopLevelDomainsCycles]
-	(
-		[ProductID],
-		[CycleID],
-		[SetupFee],
-		[RecurringFee],
-		[TransferFee],
-		[SortOrder]
-	)
+	DECLARE @ResellerID int;
 	SELECT
-		@ProductID,
-		[SXML].[Data].value('@ID','int'),
-		[SXML].[Data].value('@SetupFee','money'),
-		[SXML].[Data].value('@RecurringFee','money'),
-		[SXML].[Data].value('@TransferFee','money'),
-		[SXML].[Data].value('@SortOrder','int')
-	FROM @DomainCyclesXml.nodes('/DomainCycles/Cycle') [SXML]([Data]);
-	-- check errors
-	IF @@ERROR <> 0
-	BEGIN
-		GOTO ERROR_HANDLE;
-	END
-	--
-	SET @Result = 0;
-	--
-	COMMIT TRAN UPDATE_DOMAIN;
-	-- 
-	RETURN;
+		@ResellerID = [ResellerID] FROM [dbo].[ecContracts]
+	WHERE
+		[ContractID] = @ContractID;
 
-ERROR_HANDLE:
-BEGIN
-	SET @Result = -1;
-	ROLLBACK TRAN UPDATE_DOMAIN;
-	RETURN;
-END
-
-END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[ecAddTopLevelDomain]
-	@ActorID int,
-	@UserID int,
-	@TopLevelDomain nvarchar(10),
-	@ProductSku nvarchar(50),
-	@TaxInclusive bit,
-	@PluginID int,
-	@Enabled bit,
-	@WhoisEnabled bit,
-	@DomainCyclesXml xml,
-	@Result int OUTPUT
-AS
-BEGIN
-	-- check actor user rights
-	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
-	BEGIN
-		SET @Result = -1;
-		RAISERROR('You are not allowed to access this account', 16, 1);
-		RETURN;
-	END
-
-BEGIN TRAN ADD_DOMAIN
-	-- insert product first
-	INSERT INTO [dbo].[ecProduct]
-	(
-		[ProductName],
-		[ProductSKU],
-		[TypeID],
-		[Description],
-		[Created],
-		[Enabled],
-		[ResellerID],
-		[TaxInclusive]
-	)
+BEGIN TRAN ADD_HPLAN_SVC
+	-- add service
+	INSERT INTO [dbo].[ecService]
+		([ContractID], [ServiceName], [TypeID], [Status], [Created])
 	VALUES
-	(
-		@TopLevelDomain,
-		@ProductSku,
-		3, -- Domain Name type
-		NULL,
-		GETDATE(),
-		@Enabled,
-		@UserID,
-		@TaxInclusive
-	);
-
-	-- set product id created
+		(@ContractID, @PlanName, 1, 0, GETDATE());
+	-- check error
+	IF @@ERROR <> 0
+		GOTO ERROR_HANDLE;
+	-- obtain result
 	SET @Result = SCOPE_IDENTITY();
 
-	-- save top level domain details
-	INSERT INTO [dbo].[ecTopLevelDomains]
+	DECLARE @SvcCycleID int;
+	-- insert svc life-cycle
+	INSERT INTO [dbo].[ecHostingPackageSvcsCycles]
 	(
-		[ProductID],
-		[ResellerID],
-		[TopLevelDomain],
-		[PluginID],
-		[WhoisEnabled]
+		[ServiceID],
+		[CycleName],
+		[BillingPeriod],
+		[PeriodLength],
+		[SetupFee],
+		[RecurringFee],
+		[Currency]
 	)
-	VALUES
-	(
+	SELECT
 		@Result,
-		@UserID,
-		@TopLevelDomain,
-		@PluginID,
-		@WhoisEnabled
-	);
+		[BC].[CycleName],
+		[BC].[BillingPeriod],
+		[BC].[PeriodLength],
+		[HPBC].[SetupFee],
+		[HPBC].[RecurringFee],
+		@Currency
+	FROM
+		[dbo].[ecHostingPlansBillingCycles] AS [HPBC]
+	INNER JOIN
+		[dbo].[ecBillingCycles] AS [BC]
+	ON
+		[BC].[CycleID] = [HPBC].[CycleID]
+	WHERE
+		[HPBC].[CycleID] = @CycleID
+	AND
+		[HPBC].[ProductID] = @ProductID
+	AND
+		[BC].[ResellerID] = @ResellerID;
+	-- check error
+	IF @@ROWCOUNT = 0
+		GOTO ERROR_HANDLE;
+	-- obtain result
+	SET @SvcCycleID = SCOPE_IDENTITY();
+	
+	-- add plan details
+	INSERT INTO [dbo].[ecHostingPackageSvcs]
+	(
+		[ServiceID],
+		[ProductID],
+		[PlanID],
+		[UserRole],
+		[InitialStatus],
+		[SvcCycleID]
+	)
+	SELECT
+		@Result,
+		@ProductID,
+		[PlanID],
+		[UserRole],
+		[InitialStatus],
+		@SvcCycleID
+	FROM
+		[dbo].[ecHostingPlans]
+	WHERE
+		[ProductID] = @ProductID
+	AND
+		[ResellerID] = @ResellerID;
+	-- check error
+	IF @@ROWCOUNT = 0
+		GOTO ERROR_HANDLE;
+	
+
+	-- commit tran
+	COMMIT TRAN ADD_HPLAN_SVC;
+	-- exit
+	RETURN;
+-- error handler
+ERROR_HANDLE:
+BEGIN
+	SET @Result = -1;
+	ROLLBACK TRAN ADD_HPLAN_SVC;
+	RETURN;
+END
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecAddHostingPlan]
+	@ActorID int,
+	@UserID int,
+	@PlanName nvarchar(255),
+	@ProductSku nvarchar(50),
+	@TaxInclusive bit,
+	@PlanID int,
+	@UserRole int,
+	@InitialStatus int,
+	@DomainOption int,
+	@Enabled bit,
+	@PlanDescription ntext,
+	@PlanCyclesXml xml,
+	@PlanHighlightsXml xml,
+	@PlanCategoriesXml xml,
+	@Result int OUTPUT
+AS
+BEGIN
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+	BEGIN
+		SET @Result = -1;
+		RAISERROR('You are not allowed to access this account', 16, 1);
+		RETURN;
+	END
+
+BEGIN TRAN ADD_PLAN
+	-- insert product first
+	INSERT INTO [dbo].[ecProduct]
+		([ProductName], [ProductSKU], [TypeID], [TaxInclusive], [Description], [Created], [Enabled], [ResellerID])
+	VALUES
+		(@PlanName, @ProductSku, 1, @TaxInclusive, @PlanDescription, GETDATE(), @Enabled, @UserID);
+	-- set product id created
+	SET @Result = SCOPE_IDENTITY();
+	-- save hosting plan details
+	INSERT INTO [dbo].[ecHostingPlans]
+		([ProductID], [ResellerID], [PlanID], [UserRole], [InitialStatus], [DomainOption])
+	VALUES
+		(@Result, @UserID, @PlanID, @UserRole, @InitialStatus, @DomainOption);
 	-- check errors
 	IF @@ERROR <> 0
 	BEGIN
@@ -43102,44 +42795,840 @@ BEGIN TRAN ADD_DOMAIN
 /*
 XML Format:
 
-<DomainCycles>
-	<Cycle ID="2" SetupFee="2.99" RecurringFee="3.99" TransferFee="3.99" SortOrder="1" />
-</DomainCycles>
+<PlanCycles>
+	<Cycle ID="2" SetupFee="2.99" RecurringFee="3.99" SortOrder="1" />
+</PlanCycles>
 */
 	-- insert cycles
-	INSERT INTO [dbo].[ecTopLevelDomainsCycles]
-	(
-		[ProductID],
-		[CycleID],
-		[SetupFee],
-		[RecurringFee],
-		[TransferFee],
-		[SortOrder]
-	)
+	INSERT INTO [dbo].[ecHostingPlansBillingCycles]
+		([ProductID], [CycleID], [SetupFee], [RecurringFee], [SortOrder])
 	SELECT
-		@Result,
-		[SXML].[Data].value('@ID','int'),
-		[SXML].[Data].value('@SetupFee','money'),
-		[SXML].[Data].value('@RecurringFee','money'),
-		[SXML].[Data].value('@TransferFee','money'),
-		[SXML].[Data].value('@SortOrder','int')
-	FROM @DomainCyclesXml.nodes('/DomainCycles/Cycle') [SXML]([Data]);
+		@Result, [SXML].[Data].value('@ID','int'), [SXML].[Data].value('@SetupFee','money'),
+		[SXML].[Data].value('@RecurringFee','money'), [SXML].[Data].value('@SortOrder','int')
+	FROM @PlanCyclesXml.nodes('/PlanCycles/Cycle') [SXML]([Data])
+	-- check errors
+	IF @@ERROR <> 0
+	BEGIN
+		GOTO ERROR_HANDLE;
+	END
+
+/*
+XML Format:
+
+<PlanHighlights>
+	<Item Text="My Highlight Text" SortOrder="0" />
+</PlanHighlights>
+*/
+	-- insert cycles
+	INSERT INTO [dbo].[ecProductsHighlights]
+		([ProductID], [HighlightText], [SortOrder])
+	SELECT
+		@Result, [SXML].[Data].value('@Text','nvarchar(255)'), [SXML].[Data].value('@SortOrder','int')
+	FROM @PlanHighlightsXml.nodes('/PlanHighlights/Item') [SXML]([Data])
+	-- check errors
+	IF @@ERROR <> 0
+	BEGIN
+		GOTO ERROR_HANDLE;
+	END
+/*
+XML Format:
+
+<PlanCategories>
+	<Category ID="2" />
+</PlanCategories>
+*/
+	-- insert categories
+	INSERT INTO [dbo].[ecProductCategories]
+		([ProductID], [CategoryID], [ResellerID])
+	SELECT
+		@Result, [SXML].[Data].value('@ID','int'), @UserID FROM @PlanCategoriesXml.nodes('/PlanCategories/Category') [SXML]([Data])
 	-- check errors
 	IF @@ERROR <> 0
 		GOTO ERROR_HANDLE;
-	--
-	COMMIT TRAN ADD_DOMAIN;
-	-- 
+	-- commit changes
+	COMMIT TRAN ADD_PLAN;
+	-- return result
 	RETURN;
 
 ERROR_HANDLE:
 BEGIN
 	SET @Result = -1;
-	ROLLBACK TRAN ADD_DOMAIN;
+	ROLLBACK TRAN ADD_PLAN;
 	RETURN;
 END
 
 END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecAddHostingAddonSvc]
+	@ContractID nvarchar(50),
+	@ParentID int,
+	@ProductID int,
+	@Quantity int,
+	@AddonName nvarchar(255),
+	@CycleID int,
+	@Currency nvarchar(10),
+	@Result int OUTPUT
+AS
+BEGIN
+	DECLARE @ResellerID int;
+	SELECT
+		@ResellerID = [ResellerID] FROM [dbo].[ecContracts]
+	WHERE
+		[ContractID] = @ContractID;
+
+BEGIN TRAN ADD_ADDON_SVC
+	--
+	INSERT INTO [dbo].[ecService]
+		([ContractID], [ParentID], [ServiceName], [TypeID], [Status], [Created])
+	VALUES
+		(@ContractID, @ParentID, @AddonName, 2, 0, GETDATE());
+	-- obtain result
+	SET @Result = SCOPE_IDENTITY();
+
+	DECLARE @SvcCycleID int;
+	-- insert svc life-cycle
+	IF @CycleID > 0
+	BEGIN
+		INSERT INTO [dbo].[ecHostingAddonSvcsCycles]
+		(
+			[ServiceID],
+			[CycleName],
+			[BillingPeriod],
+			[PeriodLength],
+			[SetupFee],
+			[CyclePrice],
+			[Currency]
+		)
+		SELECT
+			@Result,
+			[BC].[CycleName],
+			[BC].[BillingPeriod],
+			[BC].[PeriodLength],
+			[HAC].[SetupFee],
+			[HAC].[RecurringFee],
+			@Currency
+		FROM
+			[dbo].[ecHostingAddonsCycles] AS [HAC]
+		INNER JOIN
+			[dbo].[ecBillingCycles] AS [BC]
+		ON
+			[BC].[CycleID] = [HAC].[CycleID]
+		WHERE
+			[HAC].[CycleID] = @CycleID
+		AND
+			[HAC].[ProductID] = @ProductID
+		AND
+			[BC].[ResellerID] = @ResellerID;
+		-- check error
+		IF @@ROWCOUNT = 0
+			GOTO ERROR_HANDLE;
+		-- obtain result
+		SET @SvcCycleID = SCOPE_IDENTITY();
+	END
+	ELSE
+	BEGIN
+		INSERT INTO [dbo].[ecHostingAddonSvcsCycles]
+		(
+			[ServiceID],
+			[CycleName],
+			[BillingPeriod],
+			[PeriodLength],
+			[SetupFee],
+			[CyclePrice],
+			[Currency]
+		)
+		SELECT
+			@Result,
+			NULL,
+			NULL,
+			NULL,
+			[SetupFee],
+			[OneTimeFee],
+			@Currency
+		FROM
+			[dbo].[ecHostingAddons]
+		WHERE
+			[ProductID] = @ProductID
+		AND
+			[ResellerID] = @ResellerID;
+		-- check error
+		IF @@ROWCOUNT = 0
+			GOTO ERROR_HANDLE;
+		-- obtain result
+		SET @SvcCycleID = SCOPE_IDENTITY();
+	END
+
+	-- insert addon svc details
+	INSERT INTO [dbo].[ecHostingAddonSvcs]
+	(
+		[ServiceID],
+		[ProductID],
+		[PlanID],
+		[Quantity],
+		[Recurring],
+		[DummyAddon],
+		[SvcCycleID]
+	)
+	SELECT
+		@Result,
+		@ProductID,
+		[PlanID],
+		@Quantity,
+		[Recurring],
+		[DummyAddon],
+		@SvcCycleID
+	FROM
+		[dbo].[ecHostingAddons]
+	WHERE
+		[ProductID] = @ProductID
+	AND
+		[ResellerID] = @ResellerID;
+	-- check error
+	IF @@ROWCOUNT = 0
+		GOTO ERROR_HANDLE;
+
+	-- commit tran
+	COMMIT TRAN ADD_ADDON_SVC;
+	-- exit
+	RETURN;
+-- error handler
+ERROR_HANDLE:
+BEGIN
+	SET @Result = -1;
+	ROLLBACK TRAN ADD_ADDON_SVC;
+	RETURN;
+END
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[ecAddHostingAddon]
+	@ActorID int,
+	@UserID int,
+	@AddonName nvarchar(255),
+	@ProductSku nvarchar(50),
+	@TaxInclusive bit,
+	@Enabled bit,
+	@PlanID int,
+	@Recurring bit,
+	@DummyAddon bit,
+	@Countable bit,
+	@Description ntext,
+	@AddonCyclesXml xml,
+	@AssignedProductsXml xml,
+	@Result int OUTPUT
+AS
+BEGIN
+	-- check actor user rights
+	IF [dbo].[CheckUserParent](@ActorID, @UserID) = 0
+	BEGIN
+		SET @Result = -1;
+		RAISERROR('You are not allowed to access this account', 16, 1);
+		RETURN;
+	END
+	-- dummy addon clause
+	IF @DummyAddon = 1
+		SET @PlanID = NULL;
+
+BEGIN TRAN ADD_ADDON
+	DECLARE @XmlDocID int;
+	SET @XmlDocID = NULL;
+
+	-- insert product first
+	INSERT INTO [dbo].[ecProduct]
+		([ProductName], [ProductSKU], [TypeID], [TaxInclusive], [Description], [Created], [Enabled], [ResellerID])
+	VALUES
+		(@AddonName, @ProductSku, 2, @TaxInclusive, @Description, GETDATE(), @Enabled, @UserID);
+	-- check errors
+	IF @@ERROR <> 0
+	BEGIN
+		GOTO ERROR_HANDLE;
+	END
+	-- set product id created
+	SET @Result = SCOPE_IDENTITY();
+	-- insert hosting addon details
+	INSERT INTO [dbo].[ecHostingAddons]
+		([ProductID], [PlanID], [Recurring], [ResellerID], [DummyAddon], [Countable])
+	VALUES
+		(@Result, @PlanID, @Recurring, @UserID, @DummyAddon, @Countable);
+	-- check errors
+	IF @@ERROR <> 0
+	BEGIN
+		GOTO ERROR_HANDLE;
+	END
+/*
+XML Format:
+
+<PlanCycles>
+	<Cycle ID="2" SetupFee="2.99" RecurringFee="3.99" SortOrder="1" />
+</PlanCycles>
+*/
+	-- save hosting addon cycles
+	IF @Recurring = 1
+		-- insert cycles
+		INSERT INTO [dbo].[ecHostingAddonsCycles]
+			([ProductID], [CycleID], [SetupFee], [RecurringFee], [SortOrder])
+		SELECT
+			@Result, [SXML].[Data].value('@ID','int'), [SXML].[Data].value('@SetupFee','money'),
+			[SXML].[Data].value('@RecurringFee','money'), [SXML].[Data].value('@SortOrder','int')
+		FROM @AddonCyclesXml.nodes('/PlanCycles/Cycle') [SXML]([Data])
+	ELSE
+		UPDATE
+			[dbo].[ecHostingAddons]
+		SET
+			[SetupFee] = [SXML].[Data].value('@SetupFee','money'),
+			[OneTimeFee] = [SXML].[Data].value('@RecurringFee','money') 
+		FROM
+			@AddonCyclesXml.nodes('/PlanCycles/Cycle') [SXML]([Data])
+		WHERE
+			[ResellerID] = @UserID AND [ProductID] = @Result;
+	-- check errors
+	IF @@ERROR <> 0
+	BEGIN
+		GOTO ERROR_HANDLE;
+	END
+/*
+XML Format:
+
+<AssignedProducts>
+	<Product ID="25" />
+</AssignedProducts>
+*/
+	-- insert cycles
+	INSERT INTO [dbo].[ecAddonProducts]
+		([AddonID], [ProductID], [ResellerID])
+	SELECT
+		@Result, [SXML].[Data].value('@ID','int'), @UserID
+	FROM
+		@AssignedProductsXml.nodes('/AssignedProducts/Product') [SXML]([Data])
+	-- check errors
+	IF @@ERROR <> 0
+	BEGIN
+		GOTO ERROR_HANDLE;
+	END
+	--
+	COMMIT TRAN ADD_ADDON;
+	-- 
+	RETURN;
+	
+
+ERROR_HANDLE:
+BEGIN
+	SET @Result = -1;
+	ROLLBACK TRAN ADD_ADDON;
+	RETURN;	
+END
+
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[UpdateIPAddresses]
+(
+	@xml ntext,
+	@PoolID int,
+	@ServerID int,
+	@SubnetMask varchar(15),
+	@DefaultGateway varchar(15),
+	@Comments ntext
+)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	IF @ServerID = 0
+	SET @ServerID = NULL
+
+	DECLARE @idoc int
+	--Create an internal representation of the XML document.
+	EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
+
+	-- update
+	UPDATE IPAddresses SET
+		ServerID = @ServerID,
+		PoolID = @PoolID,
+		SubnetMask = @SubnetMask,
+		DefaultGateway = @DefaultGateway,
+		Comments = @Comments
+	FROM IPAddresses AS IP
+	INNER JOIN OPENXML(@idoc, '/items/item', 1) WITH 
+	(
+		AddressID int '@id'
+	) as PV ON IP.AddressID = PV.AddressID
+
+	-- remove document
+	exec sp_xml_removedocument @idoc
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[UpdateIPAddress]	
+(
+	@AddressID int,
+	@ServerID int,
+	@ExternalIP varchar(24),
+	@InternalIP varchar(24),
+	@PoolID int,
+	@SubnetMask varchar(15),
+	@DefaultGateway varchar(15),
+	@Comments ntext
+)
+AS
+BEGIN
+	IF @ServerID = 0
+	SET @ServerID = NULL
+
+	UPDATE IPAddresses SET
+		ExternalIP = @ExternalIP,
+		InternalIP = @InternalIP,
+		ServerID = @ServerID,
+		PoolID = @PoolID,
+		SubnetMask = @SubnetMask,
+		DefaultGateway = @DefaultGateway,
+		Comments = @Comments
+	WHERE AddressID = @AddressID
+
+	RETURN
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ServiceProperties](
+	[ServiceID] [int] NOT NULL,
+	[PropertyName] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[PropertyValue] [nvarchar](1000) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_ServiceProperties_1] PRIMARY KEY CLUSTERED 
+(
+	[ServiceID] ASC,
+	[PropertyName] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON)
+)
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE AddService
+(
+	@ServiceID int OUTPUT,
+	@ServerID int,
+	@ProviderID int,
+	@ServiceQuotaValue int,
+	@ServiceName nvarchar(50),
+	@ClusterID int,
+	@Comments ntext
+)
+AS
+BEGIN
+
+BEGIN TRAN
+IF @ClusterID = 0 SET @ClusterID = NULL
+
+INSERT INTO Services
+(
+	ServerID,
+	ProviderID,
+	ServiceName,
+	ServiceQuotaValue,
+	ClusterID,
+	Comments
+)
+VALUES
+(
+	@ServerID,
+	@ProviderID,
+	@ServiceName,
+	@ServiceQuotaValue,
+	@ClusterID,
+	@Comments
+)
+
+SET @ServiceID = SCOPE_IDENTITY()
+
+-- copy default service settings
+INSERT INTO ServiceProperties (ServiceID, PropertyName, PropertyValue)
+SELECT @ServiceID, PropertyName, PropertyValue
+FROM ServiceDefaultProperties
+WHERE ProviderID = @ProviderID
+
+-- copy all default DNS records for the given service
+DECLARE @GroupID int
+SELECT @GroupID = GroupID FROM Providers
+WHERE ProviderID = @ProviderID
+
+-- default IP address for added records
+DECLARE @AddressID int
+SELECT TOP 1 @AddressID = AddressID FROM IPAddresses
+WHERE ServerID = @ServerID
+
+INSERT INTO GlobalDnsRecords
+(
+	RecordType,
+	RecordName,
+	RecordData,
+	MXPriority,
+	IPAddressID,
+	ServiceID,
+	ServerID,
+	PackageID
+)
+SELECT
+	RecordType,
+	RecordName,
+	CASE WHEN RecordData = '[ip]' THEN ''
+	ELSE RecordData END,
+	MXPriority,
+	CASE WHEN RecordData = '[ip]' THEN @AddressID
+	ELSE NULL END,
+	@ServiceID,
+	NULL, -- server
+	NULL -- package
+FROM
+	ResourceGroupDnsRecords
+WHERE GroupID = @GroupID
+ORDER BY RecordOrder
+COMMIT TRAN
+
+END
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetAllServers]
+(
+	@ActorID int
+)
+AS
+
+-- check rights
+DECLARE @IsAdmin bit
+SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
+
+SELECT
+	S.ServerID,
+	S.ServerName,
+	S.ServerUrl,
+	(SELECT COUNT(SRV.ServiceID) FROM VirtualServices AS SRV WHERE S.ServerID = SRV.ServerID) AS ServicesNumber,
+	S.Comments
+FROM Servers AS S
+WHERE @IsAdmin = 1
+ORDER BY S.VirtualServer, S.ServerName
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -43279,6 +43768,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -43337,6 +43827,7 @@ WHERE
 ORDER BY S.ServerName
 
 RETURN 
+
 
 
 
@@ -43487,6 +43978,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -43596,6 +44088,7 @@ RETURN
 
 
 
+
 GO
 SET ANSI_NULLS ON
 GO
@@ -43644,6 +44137,7 @@ WHERE
 	ServiceID = @ServiceID
 
 RETURN 
+
 
 
 
@@ -43789,97 +44283,6 @@ RETURN
 
 
 
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE [dbo].[GetAllServers]
-(
-	@ActorID int
-)
-AS
-
--- check rights
-DECLARE @IsAdmin bit
-SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
-
-SELECT
-	S.ServerID,
-	S.ServerName,
-	S.ServerUrl,
-	(SELECT COUNT(SRV.ServiceID) FROM VirtualServices AS SRV WHERE S.ServerID = SRV.ServerID) AS ServicesNumber,
-	S.Comments
-FROM Servers AS S
-WHERE @IsAdmin = 1
-ORDER BY S.VirtualServer, S.ServerName
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 GO
 SET ANSI_NULLS ON
@@ -43990,12 +44393,37 @@ RETURN
 
 
 
+
 GO
 ALTER TABLE [dbo].[ScheduleParameters]  WITH CHECK ADD  CONSTRAINT [FK_ScheduleParameters_Schedule] FOREIGN KEY([ScheduleID])
 REFERENCES [dbo].[Schedule] ([ScheduleID])
 ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[ScheduleParameters] CHECK CONSTRAINT [FK_ScheduleParameters_Schedule]
+GO
+ALTER TABLE [dbo].[ExchangeAccounts]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeAccounts_ServiceItems] FOREIGN KEY([ItemID])
+REFERENCES [dbo].[ServiceItems] ([ItemID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[ExchangeAccounts] CHECK CONSTRAINT [FK_ExchangeAccounts_ServiceItems]
+GO
+ALTER TABLE [dbo].[ExchangeAccounts] ADD  CONSTRAINT [DF__ExchangeA__Creat__59B045BD]  DEFAULT (getdate()) FOR [CreatedDate]
+GO
+ALTER TABLE [dbo].[HostingPlans]  WITH CHECK ADD  CONSTRAINT [FK_HostingPlans_Packages] FOREIGN KEY([PackageID])
+REFERENCES [dbo].[Packages] ([PackageID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[HostingPlans] CHECK CONSTRAINT [FK_HostingPlans_Packages]
+GO
+ALTER TABLE [dbo].[HostingPlans]  WITH CHECK ADD  CONSTRAINT [FK_HostingPlans_Servers] FOREIGN KEY([ServerID])
+REFERENCES [dbo].[Servers] ([ServerID])
+GO
+ALTER TABLE [dbo].[HostingPlans] CHECK CONSTRAINT [FK_HostingPlans_Servers]
+GO
+ALTER TABLE [dbo].[HostingPlans]  WITH CHECK ADD  CONSTRAINT [FK_HostingPlans_Users] FOREIGN KEY([UserID])
+REFERENCES [dbo].[Users] ([UserID])
+GO
+ALTER TABLE [dbo].[HostingPlans] CHECK CONSTRAINT [FK_HostingPlans_Users]
 GO
 ALTER TABLE [dbo].[Users]  WITH CHECK ADD  CONSTRAINT [FK_Users_Users] FOREIGN KEY([OwnerID])
 REFERENCES [dbo].[Users] ([UserID])
@@ -44072,28 +44500,6 @@ ALTER TABLE [dbo].[Domains] ADD  CONSTRAINT [DF_Domains_SubDomainID]  DEFAULT ((
 GO
 ALTER TABLE [dbo].[Domains] ADD  CONSTRAINT [DF_Domains_IsInstantAlias]  DEFAULT ((0)) FOR [IsInstantAlias]
 GO
-ALTER TABLE [dbo].[ExchangeOrganizations]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeOrganizations_ServiceItems] FOREIGN KEY([ItemID])
-REFERENCES [dbo].[ServiceItems] ([ItemID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[ExchangeOrganizations] CHECK CONSTRAINT [FK_ExchangeOrganizations_ServiceItems]
-GO
-ALTER TABLE [dbo].[ExchangeOrganizationDomains]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeOrganizationDomains_ServiceItems] FOREIGN KEY([ItemID])
-REFERENCES [dbo].[ServiceItems] ([ItemID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[ExchangeOrganizationDomains] CHECK CONSTRAINT [FK_ExchangeOrganizationDomains_ServiceItems]
-GO
-ALTER TABLE [dbo].[ExchangeOrganizationDomains] ADD  CONSTRAINT [DF_ExchangeOrganizationDomains_IsHost]  DEFAULT ((0)) FOR [IsHost]
-GO
-ALTER TABLE [dbo].[ExchangeAccounts]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeAccounts_ServiceItems] FOREIGN KEY([ItemID])
-REFERENCES [dbo].[ServiceItems] ([ItemID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[ExchangeAccounts] CHECK CONSTRAINT [FK_ExchangeAccounts_ServiceItems]
-GO
-ALTER TABLE [dbo].[ExchangeAccounts] ADD  CONSTRAINT [DF__ExchangeA__Creat__59B045BD]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
 ALTER TABLE [dbo].[Schedule]  WITH CHECK ADD  CONSTRAINT [FK_Schedule_Packages] FOREIGN KEY([PackageID])
 REFERENCES [dbo].[Packages] ([PackageID])
 ON DELETE CASCADE
@@ -44104,74 +44510,6 @@ ALTER TABLE [dbo].[Schedule]  WITH CHECK ADD  CONSTRAINT [FK_Schedule_ScheduleTa
 REFERENCES [dbo].[ScheduleTasks] ([TaskID])
 GO
 ALTER TABLE [dbo].[Schedule] CHECK CONSTRAINT [FK_Schedule_ScheduleTasks]
-GO
-ALTER TABLE [dbo].[PrivateIPAddresses]  WITH CHECK ADD  CONSTRAINT [FK_PrivateIPAddresses_ServiceItems] FOREIGN KEY([ItemID])
-REFERENCES [dbo].[ServiceItems] ([ItemID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[PrivateIPAddresses] CHECK CONSTRAINT [FK_PrivateIPAddresses_ServiceItems]
-GO
-ALTER TABLE [dbo].[PackagesTreeCache]  WITH CHECK ADD  CONSTRAINT [FK_PackagesTreeCache_Packages] FOREIGN KEY([ParentPackageID])
-REFERENCES [dbo].[Packages] ([PackageID])
-GO
-ALTER TABLE [dbo].[PackagesTreeCache] CHECK CONSTRAINT [FK_PackagesTreeCache_Packages]
-GO
-ALTER TABLE [dbo].[PackagesTreeCache]  WITH CHECK ADD  CONSTRAINT [FK_PackagesTreeCache_Packages1] FOREIGN KEY([PackageID])
-REFERENCES [dbo].[Packages] ([PackageID])
-GO
-ALTER TABLE [dbo].[PackagesTreeCache] CHECK CONSTRAINT [FK_PackagesTreeCache_Packages1]
-GO
-ALTER TABLE [dbo].[CRMUsers]  WITH CHECK ADD  CONSTRAINT [FK_CRMUsers_ExchangeAccounts] FOREIGN KEY([AccountID])
-REFERENCES [dbo].[ExchangeAccounts] ([AccountID])
-GO
-ALTER TABLE [dbo].[CRMUsers] CHECK CONSTRAINT [FK_CRMUsers_ExchangeAccounts]
-GO
-ALTER TABLE [dbo].[CRMUsers] ADD  CONSTRAINT [DF_Table_1_CreateDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[CRMUsers] ADD  CONSTRAINT [DF_CRMUsers_ChangedDate]  DEFAULT (getdate()) FOR [ChangedDate]
-GO
-ALTER TABLE [dbo].[BlackBerryUsers]  WITH CHECK ADD  CONSTRAINT [FK_BlackBerryUsers_ExchangeAccounts] FOREIGN KEY([AccountId])
-REFERENCES [dbo].[ExchangeAccounts] ([AccountID])
-GO
-ALTER TABLE [dbo].[BlackBerryUsers] CHECK CONSTRAINT [FK_BlackBerryUsers_ExchangeAccounts]
-GO
-ALTER TABLE [dbo].[BlackBerryUsers] ADD  CONSTRAINT [DF_BlackBerryUsers_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[HostingPlans]  WITH CHECK ADD  CONSTRAINT [FK_HostingPlans_Packages] FOREIGN KEY([PackageID])
-REFERENCES [dbo].[Packages] ([PackageID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[HostingPlans] CHECK CONSTRAINT [FK_HostingPlans_Packages]
-GO
-ALTER TABLE [dbo].[HostingPlans]  WITH CHECK ADD  CONSTRAINT [FK_HostingPlans_Servers] FOREIGN KEY([ServerID])
-REFERENCES [dbo].[Servers] ([ServerID])
-GO
-ALTER TABLE [dbo].[HostingPlans] CHECK CONSTRAINT [FK_HostingPlans_Servers]
-GO
-ALTER TABLE [dbo].[HostingPlans]  WITH CHECK ADD  CONSTRAINT [FK_HostingPlans_Users] FOREIGN KEY([UserID])
-REFERENCES [dbo].[Users] ([UserID])
-GO
-ALTER TABLE [dbo].[HostingPlans] CHECK CONSTRAINT [FK_HostingPlans_Users]
-GO
-ALTER TABLE [dbo].[PackageQuotas]  WITH CHECK ADD  CONSTRAINT [FK_PackageQuotas_Packages] FOREIGN KEY([PackageID])
-REFERENCES [dbo].[Packages] ([PackageID])
-GO
-ALTER TABLE [dbo].[PackageQuotas] CHECK CONSTRAINT [FK_PackageQuotas_Packages]
-GO
-ALTER TABLE [dbo].[PackageQuotas]  WITH CHECK ADD  CONSTRAINT [FK_PackageQuotas_Quotas] FOREIGN KEY([QuotaID])
-REFERENCES [dbo].[Quotas] ([QuotaID])
-GO
-ALTER TABLE [dbo].[PackageQuotas] CHECK CONSTRAINT [FK_PackageQuotas_Quotas]
-GO
-ALTER TABLE [dbo].[PackageResources]  WITH CHECK ADD  CONSTRAINT [FK_PackageResources_Packages] FOREIGN KEY([PackageID])
-REFERENCES [dbo].[Packages] ([PackageID])
-GO
-ALTER TABLE [dbo].[PackageResources] CHECK CONSTRAINT [FK_PackageResources_Packages]
-GO
-ALTER TABLE [dbo].[PackageResources]  WITH CHECK ADD  CONSTRAINT [FK_PackageResources_ResourceGroups] FOREIGN KEY([GroupID])
-REFERENCES [dbo].[ResourceGroups] ([GroupID])
-GO
-ALTER TABLE [dbo].[PackageResources] CHECK CONSTRAINT [FK_PackageResources_ResourceGroups]
 GO
 ALTER TABLE [dbo].[ExchangeAccountEmailAddresses]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeAccountEmailAddresses_ExchangeAccounts] FOREIGN KEY([AccountID])
 REFERENCES [dbo].[ExchangeAccounts] ([AccountID])
@@ -44234,11 +44572,77 @@ REFERENCES [dbo].[Quotas] ([QuotaID])
 GO
 ALTER TABLE [dbo].[HostingPlanQuotas] CHECK CONSTRAINT [FK_HostingPlanQuotas_Quotas]
 GO
+ALTER TABLE [dbo].[PackageQuotas]  WITH CHECK ADD  CONSTRAINT [FK_PackageQuotas_Packages] FOREIGN KEY([PackageID])
+REFERENCES [dbo].[Packages] ([PackageID])
+GO
+ALTER TABLE [dbo].[PackageQuotas] CHECK CONSTRAINT [FK_PackageQuotas_Packages]
+GO
+ALTER TABLE [dbo].[PackageQuotas]  WITH CHECK ADD  CONSTRAINT [FK_PackageQuotas_Quotas] FOREIGN KEY([QuotaID])
+REFERENCES [dbo].[Quotas] ([QuotaID])
+GO
+ALTER TABLE [dbo].[PackageQuotas] CHECK CONSTRAINT [FK_PackageQuotas_Quotas]
+GO
+ALTER TABLE [dbo].[PackagesTreeCache]  WITH CHECK ADD  CONSTRAINT [FK_PackagesTreeCache_Packages] FOREIGN KEY([ParentPackageID])
+REFERENCES [dbo].[Packages] ([PackageID])
+GO
+ALTER TABLE [dbo].[PackagesTreeCache] CHECK CONSTRAINT [FK_PackagesTreeCache_Packages]
+GO
+ALTER TABLE [dbo].[PackagesTreeCache]  WITH CHECK ADD  CONSTRAINT [FK_PackagesTreeCache_Packages1] FOREIGN KEY([PackageID])
+REFERENCES [dbo].[Packages] ([PackageID])
+GO
+ALTER TABLE [dbo].[PackagesTreeCache] CHECK CONSTRAINT [FK_PackagesTreeCache_Packages1]
+GO
 ALTER TABLE [dbo].[ServiceItemProperties]  WITH CHECK ADD  CONSTRAINT [FK_ServiceItemProperties_ServiceItems] FOREIGN KEY([ItemID])
 REFERENCES [dbo].[ServiceItems] ([ItemID])
 ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[ServiceItemProperties] CHECK CONSTRAINT [FK_ServiceItemProperties_ServiceItems]
+GO
+ALTER TABLE [dbo].[CRMUsers]  WITH CHECK ADD  CONSTRAINT [FK_CRMUsers_ExchangeAccounts] FOREIGN KEY([AccountID])
+REFERENCES [dbo].[ExchangeAccounts] ([AccountID])
+GO
+ALTER TABLE [dbo].[CRMUsers] CHECK CONSTRAINT [FK_CRMUsers_ExchangeAccounts]
+GO
+ALTER TABLE [dbo].[CRMUsers] ADD  CONSTRAINT [DF_Table_1_CreateDate]  DEFAULT (getdate()) FOR [CreatedDate]
+GO
+ALTER TABLE [dbo].[CRMUsers] ADD  CONSTRAINT [DF_CRMUsers_ChangedDate]  DEFAULT (getdate()) FOR [ChangedDate]
+GO
+ALTER TABLE [dbo].[BlackBerryUsers]  WITH CHECK ADD  CONSTRAINT [FK_BlackBerryUsers_ExchangeAccounts] FOREIGN KEY([AccountId])
+REFERENCES [dbo].[ExchangeAccounts] ([AccountID])
+GO
+ALTER TABLE [dbo].[BlackBerryUsers] CHECK CONSTRAINT [FK_BlackBerryUsers_ExchangeAccounts]
+GO
+ALTER TABLE [dbo].[BlackBerryUsers] ADD  CONSTRAINT [DF_BlackBerryUsers_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
+GO
+ALTER TABLE [dbo].[ExchangeOrganizations]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeOrganizations_ServiceItems] FOREIGN KEY([ItemID])
+REFERENCES [dbo].[ServiceItems] ([ItemID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[ExchangeOrganizations] CHECK CONSTRAINT [FK_ExchangeOrganizations_ServiceItems]
+GO
+ALTER TABLE [dbo].[ExchangeOrganizationDomains]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeOrganizationDomains_ServiceItems] FOREIGN KEY([ItemID])
+REFERENCES [dbo].[ServiceItems] ([ItemID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[ExchangeOrganizationDomains] CHECK CONSTRAINT [FK_ExchangeOrganizationDomains_ServiceItems]
+GO
+ALTER TABLE [dbo].[ExchangeOrganizationDomains] ADD  CONSTRAINT [DF_ExchangeOrganizationDomains_IsHost]  DEFAULT ((0)) FOR [IsHost]
+GO
+ALTER TABLE [dbo].[PrivateIPAddresses]  WITH CHECK ADD  CONSTRAINT [FK_PrivateIPAddresses_ServiceItems] FOREIGN KEY([ItemID])
+REFERENCES [dbo].[ServiceItems] ([ItemID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[PrivateIPAddresses] CHECK CONSTRAINT [FK_PrivateIPAddresses_ServiceItems]
+GO
+ALTER TABLE [dbo].[PackagesDiskspace]  WITH CHECK ADD  CONSTRAINT [FK_PackagesDiskspace_Packages] FOREIGN KEY([PackageID])
+REFERENCES [dbo].[Packages] ([PackageID])
+GO
+ALTER TABLE [dbo].[PackagesDiskspace] CHECK CONSTRAINT [FK_PackagesDiskspace_Packages]
+GO
+ALTER TABLE [dbo].[PackagesDiskspace]  WITH CHECK ADD  CONSTRAINT [FK_PackagesDiskspace_ResourceGroups] FOREIGN KEY([GroupID])
+REFERENCES [dbo].[ResourceGroups] ([GroupID])
+GO
+ALTER TABLE [dbo].[PackagesDiskspace] CHECK CONSTRAINT [FK_PackagesDiskspace_ResourceGroups]
 GO
 ALTER TABLE [dbo].[HostingPlanResources]  WITH CHECK ADD  CONSTRAINT [FK_HostingPlanResources_HostingPlans] FOREIGN KEY([PlanID])
 REFERENCES [dbo].[HostingPlans] ([PlanID])
@@ -44251,16 +44655,6 @@ REFERENCES [dbo].[ResourceGroups] ([GroupID])
 GO
 ALTER TABLE [dbo].[HostingPlanResources] CHECK CONSTRAINT [FK_HostingPlanResources_ResourceGroups]
 GO
-ALTER TABLE [dbo].[PackagesDiskspace]  WITH CHECK ADD  CONSTRAINT [FK_PackagesDiskspace_Packages] FOREIGN KEY([PackageID])
-REFERENCES [dbo].[Packages] ([PackageID])
-GO
-ALTER TABLE [dbo].[PackagesDiskspace] CHECK CONSTRAINT [FK_PackagesDiskspace_Packages]
-GO
-ALTER TABLE [dbo].[PackagesDiskspace]  WITH CHECK ADD  CONSTRAINT [FK_PackagesDiskspace_ResourceGroups] FOREIGN KEY([GroupID])
-REFERENCES [dbo].[ResourceGroups] ([GroupID])
-GO
-ALTER TABLE [dbo].[PackagesDiskspace] CHECK CONSTRAINT [FK_PackagesDiskspace_ResourceGroups]
-GO
 ALTER TABLE [dbo].[PackagesBandwidth]  WITH CHECK ADD  CONSTRAINT [FK_PackagesBandwidth_Packages] FOREIGN KEY([PackageID])
 REFERENCES [dbo].[Packages] ([PackageID])
 GO
@@ -44271,13 +44665,27 @@ REFERENCES [dbo].[ResourceGroups] ([GroupID])
 GO
 ALTER TABLE [dbo].[PackagesBandwidth] CHECK CONSTRAINT [FK_PackagesBandwidth_ResourceGroups]
 GO
+ALTER TABLE [dbo].[PackageResources]  WITH CHECK ADD  CONSTRAINT [FK_PackageResources_Packages] FOREIGN KEY([PackageID])
+REFERENCES [dbo].[Packages] ([PackageID])
+GO
+ALTER TABLE [dbo].[PackageResources] CHECK CONSTRAINT [FK_PackageResources_Packages]
+GO
+ALTER TABLE [dbo].[PackageResources]  WITH CHECK ADD  CONSTRAINT [FK_PackageResources_ResourceGroups] FOREIGN KEY([GroupID])
+REFERENCES [dbo].[ResourceGroups] ([GroupID])
+GO
+ALTER TABLE [dbo].[PackageResources] CHECK CONSTRAINT [FK_PackageResources_ResourceGroups]
+GO
 ALTER TABLE [dbo].[ecBillingCycles] ADD  CONSTRAINT [DF_ecBillingCycles_Created]  DEFAULT (getdate()) FOR [Created]
+GO
+ALTER TABLE [dbo].[ResourceGroups] ADD  CONSTRAINT [DF_ResourceGroups_GroupOrder]  DEFAULT ((1)) FOR [GroupOrder]
 GO
 ALTER TABLE [dbo].[OCSUsers] ADD  CONSTRAINT [DF_OCSUsers_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
 GO
 ALTER TABLE [dbo].[OCSUsers] ADD  CONSTRAINT [DF_OCSUsers_ChangedDate]  DEFAULT (getdate()) FOR [ModifiedDate]
 GO
-ALTER TABLE [dbo].[ResourceGroups] ADD  CONSTRAINT [DF_ResourceGroups_GroupOrder]  DEFAULT ((1)) FOR [GroupOrder]
+ALTER TABLE [dbo].[ecSupportedPluginLog] ADD  CONSTRAINT [DF_ecSpacePluginLog_Created]  DEFAULT (getdate()) FOR [Created]
+GO
+ALTER TABLE [dbo].[ecProductType] ADD  CONSTRAINT [DF_ecProductType_Created]  DEFAULT (getutcdate()) FOR [Created]
 GO
 ALTER TABLE [dbo].[ecCategory]  WITH CHECK ADD  CONSTRAINT [FK_ecCategory_ecCategory] FOREIGN KEY([ParentID])
 REFERENCES [dbo].[ecCategory] ([CategoryID])
@@ -44290,11 +44698,13 @@ ALTER TABLE [dbo].[ecCategory] ADD  CONSTRAINT [DF_ecCategory_Created]  DEFAULT 
 GO
 ALTER TABLE [dbo].[ecCategory] ADD  CONSTRAINT [DF_EC_Categories_CategoryOrder]  DEFAULT ((0)) FOR [ItemOrder]
 GO
-ALTER TABLE [dbo].[ecServiceHandlersResponses] ADD  CONSTRAINT [DF_ecServiceHandlerResponses_Received]  DEFAULT (getdate()) FOR [Received]
+ALTER TABLE [dbo].[ecSystemTriggers] ADD  CONSTRAINT [DF_ecSystemTriggers_TriggerID]  DEFAULT (newid()) FOR [TriggerID]
 GO
 ALTER TABLE [dbo].[ecContracts] ADD  CONSTRAINT [DF__ecContrac__Opene__668030F6]  DEFAULT (getdate()) FOR [OpenedDate]
 GO
 ALTER TABLE [dbo].[ecContracts] ADD  CONSTRAINT [DF__ecContrac__Balan__6774552F]  DEFAULT ((0)) FOR [Balance]
+GO
+ALTER TABLE [dbo].[ecServiceHandlersResponses] ADD  CONSTRAINT [DF_ecServiceHandlerResponses_Received]  DEFAULT (getdate()) FOR [Received]
 GO
 ALTER TABLE [dbo].[ecPaymentProfiles] ADD  CONSTRAINT [DF_ecPaymentProfiles_Created]  DEFAULT (getdate()) FOR [Created]
 GO
@@ -44310,17 +44720,6 @@ ALTER TABLE [dbo].[ecInvoice] ADD  CONSTRAINT [DF_ecInvoice_SubTotal]  DEFAULT (
 GO
 ALTER TABLE [dbo].[ecInvoice] ADD  CONSTRAINT [DF__ecInvoice__Taxat__4119A21D]  DEFAULT ((0)) FOR [TaxationID]
 GO
-ALTER TABLE [dbo].[ecSystemTriggers] ADD  CONSTRAINT [DF_ecSystemTriggers_TriggerID]  DEFAULT (newid()) FOR [TriggerID]
-GO
-ALTER TABLE [dbo].[ecProductType] ADD  CONSTRAINT [DF_ecProductType_Created]  DEFAULT (getutcdate()) FOR [Created]
-GO
-ALTER TABLE [dbo].[ecSupportedPluginLog] ADD  CONSTRAINT [DF_ecSpacePluginLog_Created]  DEFAULT (getdate()) FOR [Created]
-GO
-ALTER TABLE [dbo].[ScheduleTaskViewConfiguration]  WITH CHECK ADD  CONSTRAINT [FK_ScheduleTaskViewConfiguration_ScheduleTaskViewConfiguration] FOREIGN KEY([TaskID])
-REFERENCES [dbo].[ScheduleTasks] ([TaskID])
-GO
-ALTER TABLE [dbo].[ScheduleTaskViewConfiguration] CHECK CONSTRAINT [FK_ScheduleTaskViewConfiguration_ScheduleTaskViewConfiguration]
-GO
 ALTER TABLE [dbo].[ScheduleTaskParameters]  WITH CHECK ADD  CONSTRAINT [FK_ScheduleTaskParameters_ScheduleTasks] FOREIGN KEY([TaskID])
 REFERENCES [dbo].[ScheduleTasks] ([TaskID])
 GO
@@ -44328,68 +44727,10 @@ ALTER TABLE [dbo].[ScheduleTaskParameters] CHECK CONSTRAINT [FK_ScheduleTaskPara
 GO
 ALTER TABLE [dbo].[ScheduleTaskParameters] ADD  CONSTRAINT [DF_ScheduleTaskParameters_ParameterOrder]  DEFAULT ((0)) FOR [ParameterOrder]
 GO
-ALTER TABLE [dbo].[Servers]  WITH CHECK ADD  CONSTRAINT [FK_Servers_ResourceGroups] FOREIGN KEY([PrimaryGroupID])
-REFERENCES [dbo].[ResourceGroups] ([GroupID])
+ALTER TABLE [dbo].[ScheduleTaskViewConfiguration]  WITH CHECK ADD  CONSTRAINT [FK_ScheduleTaskViewConfiguration_ScheduleTaskViewConfiguration] FOREIGN KEY([TaskID])
+REFERENCES [dbo].[ScheduleTasks] ([TaskID])
 GO
-ALTER TABLE [dbo].[Servers] CHECK CONSTRAINT [FK_Servers_ResourceGroups]
-GO
-ALTER TABLE [dbo].[Servers] ADD  CONSTRAINT [DF_Servers_DisplayName]  DEFAULT ('') FOR [ServerUrl]
-GO
-ALTER TABLE [dbo].[Servers] ADD  CONSTRAINT [DF_Servers_VirtualServer]  DEFAULT ((0)) FOR [VirtualServer]
-GO
-ALTER TABLE [dbo].[Servers] ADD  CONSTRAINT [DF_Servers_ADEnabled]  DEFAULT ((0)) FOR [ADEnabled]
-GO
-ALTER TABLE [dbo].[Comments]  WITH CHECK ADD  CONSTRAINT [FK_Comments_Users] FOREIGN KEY([UserID])
-REFERENCES [dbo].[Users] ([UserID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[Comments] CHECK CONSTRAINT [FK_Comments_Users]
-GO
-ALTER TABLE [dbo].[Comments] ADD  CONSTRAINT [DF_Comments_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
-GO
-ALTER TABLE [dbo].[Providers]  WITH CHECK ADD  CONSTRAINT [FK_Providers_ResourceGroups] FOREIGN KEY([GroupID])
-REFERENCES [dbo].[ResourceGroups] ([GroupID])
-GO
-ALTER TABLE [dbo].[Providers] CHECK CONSTRAINT [FK_Providers_ResourceGroups]
-GO
-ALTER TABLE [dbo].[ServiceItemTypes]  WITH CHECK ADD  CONSTRAINT [FK_ServiceItemTypes_ResourceGroups] FOREIGN KEY([GroupID])
-REFERENCES [dbo].[ResourceGroups] ([GroupID])
-GO
-ALTER TABLE [dbo].[ServiceItemTypes] CHECK CONSTRAINT [FK_ServiceItemTypes_ResourceGroups]
-GO
-ALTER TABLE [dbo].[ServiceItemTypes] ADD  CONSTRAINT [DF_ServiceItemTypes_TypeOrder]  DEFAULT ((1)) FOR [TypeOrder]
-GO
-ALTER TABLE [dbo].[ServiceItemTypes] ADD  CONSTRAINT [DF_ServiceItemTypes_Importable]  DEFAULT ((1)) FOR [Importable]
-GO
-ALTER TABLE [dbo].[ServiceItemTypes] ADD  CONSTRAINT [DF_ServiceItemTypes_Backup]  DEFAULT ((1)) FOR [Backupable]
-GO
-ALTER TABLE [dbo].[UserSettings]  WITH CHECK ADD  CONSTRAINT [FK_UserSettings_Users] FOREIGN KEY([UserID])
-REFERENCES [dbo].[Users] ([UserID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[UserSettings] CHECK CONSTRAINT [FK_UserSettings_Users]
-GO
-ALTER TABLE [dbo].[GlobalDnsRecords]  WITH CHECK ADD  CONSTRAINT [FK_GlobalDnsRecords_IPAddresses] FOREIGN KEY([IPAddressID])
-REFERENCES [dbo].[IPAddresses] ([AddressID])
-GO
-ALTER TABLE [dbo].[GlobalDnsRecords] CHECK CONSTRAINT [FK_GlobalDnsRecords_IPAddresses]
-GO
-ALTER TABLE [dbo].[GlobalDnsRecords]  WITH CHECK ADD  CONSTRAINT [FK_GlobalDnsRecords_Packages] FOREIGN KEY([PackageID])
-REFERENCES [dbo].[Packages] ([PackageID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[GlobalDnsRecords] CHECK CONSTRAINT [FK_GlobalDnsRecords_Packages]
-GO
-ALTER TABLE [dbo].[GlobalDnsRecords]  WITH CHECK ADD  CONSTRAINT [FK_GlobalDnsRecords_Servers] FOREIGN KEY([ServerID])
-REFERENCES [dbo].[Servers] ([ServerID])
-GO
-ALTER TABLE [dbo].[GlobalDnsRecords] CHECK CONSTRAINT [FK_GlobalDnsRecords_Servers]
-GO
-ALTER TABLE [dbo].[GlobalDnsRecords]  WITH CHECK ADD  CONSTRAINT [FK_GlobalDnsRecords_Services] FOREIGN KEY([ServiceID])
-REFERENCES [dbo].[Services] ([ServiceID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[GlobalDnsRecords] CHECK CONSTRAINT [FK_GlobalDnsRecords_Services]
+ALTER TABLE [dbo].[ScheduleTaskViewConfiguration] CHECK CONSTRAINT [FK_ScheduleTaskViewConfiguration_ScheduleTaskViewConfiguration]
 GO
 ALTER TABLE [dbo].[ecInvoiceItems]  WITH CHECK ADD  CONSTRAINT [FK_ecInvoiceItems_ecInvoice] FOREIGN KEY([InvoiceID])
 REFERENCES [dbo].[ecInvoice] ([InvoiceID])
@@ -44421,6 +44762,36 @@ ALTER TABLE [dbo].[ecService] ADD  CONSTRAINT [DF_SpaceInstance_CreatedDate]  DE
 GO
 ALTER TABLE [dbo].[ecService] ADD  CONSTRAINT [DF_SpaceInstance_ModifiedDate]  DEFAULT (getutcdate()) FOR [Modified]
 GO
+ALTER TABLE [dbo].[Comments]  WITH CHECK ADD  CONSTRAINT [FK_Comments_Users] FOREIGN KEY([UserID])
+REFERENCES [dbo].[Users] ([UserID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Comments] CHECK CONSTRAINT [FK_Comments_Users]
+GO
+ALTER TABLE [dbo].[Comments] ADD  CONSTRAINT [DF_Comments_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
+GO
+ALTER TABLE [dbo].[GlobalDnsRecords]  WITH CHECK ADD  CONSTRAINT [FK_GlobalDnsRecords_IPAddresses] FOREIGN KEY([IPAddressID])
+REFERENCES [dbo].[IPAddresses] ([AddressID])
+GO
+ALTER TABLE [dbo].[GlobalDnsRecords] CHECK CONSTRAINT [FK_GlobalDnsRecords_IPAddresses]
+GO
+ALTER TABLE [dbo].[GlobalDnsRecords]  WITH CHECK ADD  CONSTRAINT [FK_GlobalDnsRecords_Packages] FOREIGN KEY([PackageID])
+REFERENCES [dbo].[Packages] ([PackageID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[GlobalDnsRecords] CHECK CONSTRAINT [FK_GlobalDnsRecords_Packages]
+GO
+ALTER TABLE [dbo].[GlobalDnsRecords]  WITH CHECK ADD  CONSTRAINT [FK_GlobalDnsRecords_Servers] FOREIGN KEY([ServerID])
+REFERENCES [dbo].[Servers] ([ServerID])
+GO
+ALTER TABLE [dbo].[GlobalDnsRecords] CHECK CONSTRAINT [FK_GlobalDnsRecords_Servers]
+GO
+ALTER TABLE [dbo].[GlobalDnsRecords]  WITH CHECK ADD  CONSTRAINT [FK_GlobalDnsRecords_Services] FOREIGN KEY([ServiceID])
+REFERENCES [dbo].[Services] ([ServiceID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[GlobalDnsRecords] CHECK CONSTRAINT [FK_GlobalDnsRecords_Services]
+GO
 ALTER TABLE [dbo].[PackageServices]  WITH CHECK ADD  CONSTRAINT [FK_PackageServices_Packages] FOREIGN KEY([PackageID])
 REFERENCES [dbo].[Packages] ([PackageID])
 ON DELETE CASCADE
@@ -44433,12 +44804,16 @@ ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[PackageServices] CHECK CONSTRAINT [FK_PackageServices_Services]
 GO
-ALTER TABLE [dbo].[ecProduct]  WITH CHECK ADD  CONSTRAINT [FK_ecProduct_ecProductType] FOREIGN KEY([TypeID])
-REFERENCES [dbo].[ecProductType] ([TypeID])
+ALTER TABLE [dbo].[Servers]  WITH CHECK ADD  CONSTRAINT [FK_Servers_ResourceGroups] FOREIGN KEY([PrimaryGroupID])
+REFERENCES [dbo].[ResourceGroups] ([GroupID])
 GO
-ALTER TABLE [dbo].[ecProduct] CHECK CONSTRAINT [FK_ecProduct_ecProductType]
+ALTER TABLE [dbo].[Servers] CHECK CONSTRAINT [FK_Servers_ResourceGroups]
 GO
-ALTER TABLE [dbo].[ecProduct] ADD  CONSTRAINT [DF_ecProduct_Created]  DEFAULT (getutcdate()) FOR [Created]
+ALTER TABLE [dbo].[Servers] ADD  CONSTRAINT [DF_Servers_DisplayName]  DEFAULT ('') FOR [ServerUrl]
+GO
+ALTER TABLE [dbo].[Servers] ADD  CONSTRAINT [DF_Servers_VirtualServer]  DEFAULT ((0)) FOR [VirtualServer]
+GO
+ALTER TABLE [dbo].[Servers] ADD  CONSTRAINT [DF_Servers_ADEnabled]  DEFAULT ((0)) FOR [ADEnabled]
 GO
 ALTER TABLE [dbo].[ResourceGroupDnsRecords]  WITH CHECK ADD  CONSTRAINT [FK_ResourceGroupDnsRecords_ResourceGroups] FOREIGN KEY([GroupID])
 REFERENCES [dbo].[ResourceGroups] ([GroupID])
@@ -44448,16 +44823,52 @@ ALTER TABLE [dbo].[ResourceGroupDnsRecords] CHECK CONSTRAINT [FK_ResourceGroupDn
 GO
 ALTER TABLE [dbo].[ResourceGroupDnsRecords] ADD  CONSTRAINT [DF_ResourceGroupDnsRecords_RecordOrder]  DEFAULT ((1)) FOR [RecordOrder]
 GO
-ALTER TABLE [dbo].[VirtualServices]  WITH CHECK ADD  CONSTRAINT [FK_VirtualServices_Servers] FOREIGN KEY([ServerID])
-REFERENCES [dbo].[Servers] ([ServerID])
+ALTER TABLE [dbo].[ecProduct]  WITH CHECK ADD  CONSTRAINT [FK_ecProduct_ecProductType] FOREIGN KEY([TypeID])
+REFERENCES [dbo].[ecProductType] ([TypeID])
+GO
+ALTER TABLE [dbo].[ecProduct] CHECK CONSTRAINT [FK_ecProduct_ecProductType]
+GO
+ALTER TABLE [dbo].[ecProduct] ADD  CONSTRAINT [DF_ecProduct_Created]  DEFAULT (getutcdate()) FOR [Created]
+GO
+ALTER TABLE [dbo].[UserSettings]  WITH CHECK ADD  CONSTRAINT [FK_UserSettings_Users] FOREIGN KEY([UserID])
+REFERENCES [dbo].[Users] ([UserID])
 ON DELETE CASCADE
 GO
-ALTER TABLE [dbo].[VirtualServices] CHECK CONSTRAINT [FK_VirtualServices_Servers]
+ALTER TABLE [dbo].[UserSettings] CHECK CONSTRAINT [FK_UserSettings_Users]
 GO
-ALTER TABLE [dbo].[VirtualServices]  WITH CHECK ADD  CONSTRAINT [FK_VirtualServices_Services] FOREIGN KEY([ServiceID])
-REFERENCES [dbo].[Services] ([ServiceID])
+ALTER TABLE [dbo].[ServiceItemTypes]  WITH CHECK ADD  CONSTRAINT [FK_ServiceItemTypes_ResourceGroups] FOREIGN KEY([GroupID])
+REFERENCES [dbo].[ResourceGroups] ([GroupID])
 GO
-ALTER TABLE [dbo].[VirtualServices] CHECK CONSTRAINT [FK_VirtualServices_Services]
+ALTER TABLE [dbo].[ServiceItemTypes] CHECK CONSTRAINT [FK_ServiceItemTypes_ResourceGroups]
+GO
+ALTER TABLE [dbo].[ServiceItemTypes] ADD  CONSTRAINT [DF_ServiceItemTypes_TypeOrder]  DEFAULT ((1)) FOR [TypeOrder]
+GO
+ALTER TABLE [dbo].[ServiceItemTypes] ADD  CONSTRAINT [DF_ServiceItemTypes_Importable]  DEFAULT ((1)) FOR [Importable]
+GO
+ALTER TABLE [dbo].[ServiceItemTypes] ADD  CONSTRAINT [DF_ServiceItemTypes_Backup]  DEFAULT ((1)) FOR [Backupable]
+GO
+ALTER TABLE [dbo].[Providers]  WITH CHECK ADD  CONSTRAINT [FK_Providers_ResourceGroups] FOREIGN KEY([GroupID])
+REFERENCES [dbo].[ResourceGroups] ([GroupID])
+GO
+ALTER TABLE [dbo].[Providers] CHECK CONSTRAINT [FK_Providers_ResourceGroups]
+GO
+ALTER TABLE [dbo].[ecProductsHighlights]  WITH CHECK ADD  CONSTRAINT [FK_ecProductsHighlights_ecProduct] FOREIGN KEY([ProductID])
+REFERENCES [dbo].[ecProduct] ([ProductID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[ecProductsHighlights] CHECK CONSTRAINT [FK_ecProductsHighlights_ecProduct]
+GO
+ALTER TABLE [dbo].[ecProductCategories]  WITH CHECK ADD  CONSTRAINT [FK_EC_ProductsToCategories_EC_Categories] FOREIGN KEY([CategoryID])
+REFERENCES [dbo].[ecCategory] ([CategoryID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[ecProductCategories] CHECK CONSTRAINT [FK_EC_ProductsToCategories_EC_Categories]
+GO
+ALTER TABLE [dbo].[ecProductCategories]  WITH CHECK ADD  CONSTRAINT [FK_EC_ProductsToCategories_EC_Products] FOREIGN KEY([ProductID])
+REFERENCES [dbo].[ecProduct] ([ProductID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[ecProductCategories] CHECK CONSTRAINT [FK_EC_ProductsToCategories_EC_Products]
 GO
 ALTER TABLE [dbo].[Services]  WITH CHECK ADD  CONSTRAINT [FK_Services_Clusters] FOREIGN KEY([ClusterID])
 REFERENCES [dbo].[Clusters] ([ClusterID])
@@ -44473,6 +44884,28 @@ ALTER TABLE [dbo].[Services]  WITH CHECK ADD  CONSTRAINT [FK_Services_Servers] F
 REFERENCES [dbo].[Servers] ([ServerID])
 GO
 ALTER TABLE [dbo].[Services] CHECK CONSTRAINT [FK_Services_Servers]
+GO
+ALTER TABLE [dbo].[ServiceDefaultProperties]  WITH CHECK ADD  CONSTRAINT [FK_ServiceDefaultProperties_Providers] FOREIGN KEY([ProviderID])
+REFERENCES [dbo].[Providers] ([ProviderID])
+GO
+ALTER TABLE [dbo].[ServiceDefaultProperties] CHECK CONSTRAINT [FK_ServiceDefaultProperties_Providers]
+GO
+ALTER TABLE [dbo].[ecAddonProducts]  WITH CHECK ADD  CONSTRAINT [FK_ecAddonProducts_ecProduct] FOREIGN KEY([AddonID])
+REFERENCES [dbo].[ecProduct] ([ProductID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[ecAddonProducts] CHECK CONSTRAINT [FK_ecAddonProducts_ecProduct]
+GO
+ALTER TABLE [dbo].[VirtualServices]  WITH CHECK ADD  CONSTRAINT [FK_VirtualServices_Servers] FOREIGN KEY([ServerID])
+REFERENCES [dbo].[Servers] ([ServerID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[VirtualServices] CHECK CONSTRAINT [FK_VirtualServices_Servers]
+GO
+ALTER TABLE [dbo].[VirtualServices]  WITH CHECK ADD  CONSTRAINT [FK_VirtualServices_Services] FOREIGN KEY([ServiceID])
+REFERENCES [dbo].[Services] ([ServiceID])
+GO
+ALTER TABLE [dbo].[VirtualServices] CHECK CONSTRAINT [FK_VirtualServices_Services]
 GO
 ALTER TABLE [dbo].[IPAddresses]  WITH CHECK ADD  CONSTRAINT [FK_IPAddresses_Servers] FOREIGN KEY([ServerID])
 REFERENCES [dbo].[Servers] ([ServerID])
@@ -44490,6 +44923,30 @@ REFERENCES [dbo].[Servers] ([ServerID])
 ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[VirtualGroups] CHECK CONSTRAINT [FK_VirtualGroups_Servers]
+GO
+ALTER TABLE [dbo].[ecSvcsUsageLog]  WITH CHECK ADD  CONSTRAINT [FK_ecSvcsUsageLog_ecService] FOREIGN KEY([ServiceID])
+REFERENCES [dbo].[ecService] ([ServiceID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[ecSvcsUsageLog] CHECK CONSTRAINT [FK_ecSvcsUsageLog_ecService]
+GO
+ALTER TABLE [dbo].[ecHostingAddons]  WITH CHECK ADD  CONSTRAINT [FK_ecHostingAddons_ecProduct] FOREIGN KEY([ProductID])
+REFERENCES [dbo].[ecProduct] ([ProductID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[ecHostingAddons] CHECK CONSTRAINT [FK_ecHostingAddons_ecProduct]
+GO
+ALTER TABLE [dbo].[ecDomainSvcsCycles]  WITH CHECK ADD  CONSTRAINT [FK_ecDomainsSvcsCycles_ecService] FOREIGN KEY([ServiceID])
+REFERENCES [dbo].[ecService] ([ServiceID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[ecDomainSvcsCycles] CHECK CONSTRAINT [FK_ecDomainsSvcsCycles_ecService]
+GO
+ALTER TABLE [dbo].[ecDomainSvcs]  WITH CHECK ADD  CONSTRAINT [FK_ecDomainsSvcs_ecService] FOREIGN KEY([ServiceID])
+REFERENCES [dbo].[ecService] ([ServiceID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[ecDomainSvcs] CHECK CONSTRAINT [FK_ecDomainsSvcs_ecService]
 GO
 ALTER TABLE [dbo].[ecHostingPlansBillingCycles]  WITH CHECK ADD  CONSTRAINT [FK_ecHostingPlansBillingCycles_ecBillingCycles] FOREIGN KEY([CycleID])
 REFERENCES [dbo].[ecBillingCycles] ([CycleID])
@@ -44560,59 +45017,6 @@ REFERENCES [dbo].[ecProduct] ([ProductID])
 ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[ecHostingAddonsCycles] CHECK CONSTRAINT [FK_ecHostingAddonsCycles_ecProduct]
-GO
-ALTER TABLE [dbo].[ecAddonProducts]  WITH CHECK ADD  CONSTRAINT [FK_ecAddonProducts_ecProduct] FOREIGN KEY([AddonID])
-REFERENCES [dbo].[ecProduct] ([ProductID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[ecAddonProducts] CHECK CONSTRAINT [FK_ecAddonProducts_ecProduct]
-GO
-ALTER TABLE [dbo].[ServiceDefaultProperties]  WITH CHECK ADD  CONSTRAINT [FK_ServiceDefaultProperties_Providers] FOREIGN KEY([ProviderID])
-REFERENCES [dbo].[Providers] ([ProviderID])
-GO
-ALTER TABLE [dbo].[ServiceDefaultProperties] CHECK CONSTRAINT [FK_ServiceDefaultProperties_Providers]
-GO
-ALTER TABLE [dbo].[ecProductsHighlights]  WITH CHECK ADD  CONSTRAINT [FK_ecProductsHighlights_ecProduct] FOREIGN KEY([ProductID])
-REFERENCES [dbo].[ecProduct] ([ProductID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[ecProductsHighlights] CHECK CONSTRAINT [FK_ecProductsHighlights_ecProduct]
-GO
-ALTER TABLE [dbo].[ecProductCategories]  WITH CHECK ADD  CONSTRAINT [FK_EC_ProductsToCategories_EC_Categories] FOREIGN KEY([CategoryID])
-REFERENCES [dbo].[ecCategory] ([CategoryID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[ecProductCategories] CHECK CONSTRAINT [FK_EC_ProductsToCategories_EC_Categories]
-GO
-ALTER TABLE [dbo].[ecProductCategories]  WITH CHECK ADD  CONSTRAINT [FK_EC_ProductsToCategories_EC_Products] FOREIGN KEY([ProductID])
-REFERENCES [dbo].[ecProduct] ([ProductID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[ecProductCategories] CHECK CONSTRAINT [FK_EC_ProductsToCategories_EC_Products]
-GO
-ALTER TABLE [dbo].[ecSvcsUsageLog]  WITH CHECK ADD  CONSTRAINT [FK_ecSvcsUsageLog_ecService] FOREIGN KEY([ServiceID])
-REFERENCES [dbo].[ecService] ([ServiceID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[ecSvcsUsageLog] CHECK CONSTRAINT [FK_ecSvcsUsageLog_ecService]
-GO
-ALTER TABLE [dbo].[ecHostingAddons]  WITH CHECK ADD  CONSTRAINT [FK_ecHostingAddons_ecProduct] FOREIGN KEY([ProductID])
-REFERENCES [dbo].[ecProduct] ([ProductID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[ecHostingAddons] CHECK CONSTRAINT [FK_ecHostingAddons_ecProduct]
-GO
-ALTER TABLE [dbo].[ecDomainSvcsCycles]  WITH CHECK ADD  CONSTRAINT [FK_ecDomainsSvcsCycles_ecService] FOREIGN KEY([ServiceID])
-REFERENCES [dbo].[ecService] ([ServiceID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[ecDomainSvcsCycles] CHECK CONSTRAINT [FK_ecDomainsSvcsCycles_ecService]
-GO
-ALTER TABLE [dbo].[ecDomainSvcs]  WITH CHECK ADD  CONSTRAINT [FK_ecDomainsSvcs_ecService] FOREIGN KEY([ServiceID])
-REFERENCES [dbo].[ecService] ([ServiceID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[ecDomainSvcs] CHECK CONSTRAINT [FK_ecDomainsSvcs_ecService]
 GO
 ALTER TABLE [dbo].[ServiceProperties]  WITH CHECK ADD  CONSTRAINT [FK_ServiceProperties_Services] FOREIGN KEY([ServiceID])
 REFERENCES [dbo].[Services] ([ServiceID])
