@@ -41,42 +41,31 @@ Public Class MailEnable
     Inherits HostingServiceProviderBase
     Implements IMailServer
 
-    Private Const DOMAIN_PROG_ID As String = "MEAOSM.Domain"
-    Private Const BLACKLIST_PROG_ID As String = "MEAOSM.Blacklist"
-    Private Const POSTOFFICE_PROG_ID As String = "MEAOPO.Postoffice"
-    Private Const LOGIN_PROG_ID As String = "MEAOAU.Login"
-    Private Const MAILBOX_PROG_ID As String = "MEAOPO.Mailbox"
-    Private Const MAILLIST_PROG_ID As String = "MEAOLS.List"
-    Private Const LIST_MEMBER_PROG_ID As String = "MEAOLS.ListMember"
-    Private Const ADDRESS_MAP_PROG_ID As String = "MEAOAM.AddressMap"
-    Private Const GROUP_PROG_ID As String = "MEAOPO.Group"
-    Private Const GROUP_MEMBER_PROG_ID As String = "MEAOPO.GroupMember"
-
 #Region "Domains"
 
-	Public Overridable Function GetDomains() As String() Implements IMailServer.GetDomains
+    Public Overridable Function GetDomains() As String() Implements IMailServer.GetDomains
 
-		Dim domainList As List(Of String) = New List(Of String)
-		Dim po As Object = CreateObject(POSTOFFICE_PROG_ID)
+        Dim domainList As List(Of String) = New List(Of String)
+        Dim po As New WebsitePanel.Providers.Mail.MailEnablePostoffice
 
-		po.Account = ""
-		po.Name = ""
-		po.Status = -1
-		If po.FindFirstPostoffice() = 1 Then
-			Do
-				domainList.Add(po.Name)
-				po.Account = ""
-				po.Name = ""
-				po.Status = -1
-			Loop While po.FindNextPostoffice() = 1
-		End If
+        po.Account = ""
+        po.Name = ""
+        po.Status = -1
+        If po.FindFirstPostoffice() = 1 Then
+            Do
+                domainList.Add(po.Name)
+                po.Account = ""
+                po.Name = ""
+                po.Status = -1
+            Loop While po.FindNextPostoffice() = 1
+        End If
 
-		Return domainList.ToArray()
+        Return domainList.ToArray()
 
-	End Function
+    End Function
 
     Public Overridable Function DomainExists(ByVal domainName As String) As Boolean Implements IMailServer.DomainExists
-        Dim domain As Object = CreateObject(DOMAIN_PROG_ID)
+        Dim domain As New WebsitePanel.Providers.Mail.MailEnableDomain
 
         ResetDomain(domain)
         domain.AccountName = domainName
@@ -87,7 +76,7 @@ Public Class MailEnable
 
     Public Overridable Function GetDomain(ByVal domainName As String) As MailDomain Implements IMailServer.GetDomain
         Dim info As MailDomain = Nothing
-        Dim domain As Object = CreateObject(DOMAIN_PROG_ID)
+        Dim domain As New WebsitePanel.Providers.Mail.MailEnableDomain
 
         ResetDomain(domain)
         domain.AccountName = domainName
@@ -104,7 +93,7 @@ Public Class MailEnable
 
     Public Overridable Sub CreateDomain(ByVal domainInfo As MailDomain) Implements IMailServer.CreateDomain
         'create a new postoffice for each account
-        Dim postoffice As Object = CreateObject(POSTOFFICE_PROG_ID)
+        Dim postoffice As New WebsitePanel.Providers.Mail.MailEnablePostoffice
         postoffice.Account = domainInfo.Name
         postoffice.Name = domainInfo.Name
         postoffice.Status = IIf((domainInfo.Enabled), 1, 0)
@@ -113,7 +102,7 @@ Public Class MailEnable
             Throw New Exception("Postoffice creation failedNot ")
         End If
 
-        Dim domain As Object = CreateObject(DOMAIN_PROG_ID)
+        Dim domain As New WebsitePanel.Providers.Mail.MailEnableDomain
         domain.AccountName = domainInfo.Name
         domain.DomainName = domainInfo.Name
         domain.DomainRedirectionHosts = domainInfo.RedirectionHosts
@@ -127,7 +116,7 @@ Public Class MailEnable
         Dim blackListedDomain As String
         For Each blackListedDomain In domainInfo.BlackList
 
-            Dim blacklist As Object = CreateObject(BLACKLIST_PROG_ID)
+            Dim blacklist As New WebsitePanel.Providers.Mail.MailEnableDomainBlacklist
             blacklist.Account = domainInfo.Name
             blacklist.Status = 1
             blacklist.TargetDomainName = domainInfo.Name
@@ -139,7 +128,7 @@ Public Class MailEnable
     End Sub
 
     Public Overridable Sub UpdateDomain(ByVal info As MailDomain) Implements IMailServer.UpdateDomain
-        Dim domain As Object = CreateObject(DOMAIN_PROG_ID)
+        Dim domain As New WebsitePanel.Providers.Mail.MailEnableDomain
         domain.AccountName = info.Name
         domain.DomainName = info.Name
         domain.DomainRedirectionHosts = String.Empty
@@ -148,8 +137,21 @@ Public Class MailEnable
         domain.Status = -1
 
         If (domain.GetDomain() = 1) Then
+
             Dim newStatus As Integer = IIf(info.Enabled, 1, 0)
             Dim newRedirectionStatus As Integer = IIf(info.RedirectionActive, 1, 0)
+
+            'redirection status has 3 states, so we don't use redirectionaction
+            '0=off, 1=on, 2=on for authenticated only
+            If info("MailEnable_SmartHostEnabled") Then
+                If info("MailEnable_SmartHostAuth") Then
+                    newRedirectionStatus = 2
+                Else
+                    newRedirectionStatus = 1
+                End If
+            Else
+                newRedirectionStatus = 0
+            End If
 
             domain.EditDomain( _
                                info.Name, _
@@ -161,12 +163,13 @@ Public Class MailEnable
             '
             ' Update the Catch All Account
             '
-            Dim oAddressMap As Object = CreateObject(ADDRESS_MAP_PROG_ID)
+            Dim oAddressMap As New WebsitePanel.Providers.Mail.MailEnableAddressMap
 
             oAddressMap.Account = info.Name ' account
             oAddressMap.DestinationAddress = ""
             oAddressMap.SourceAddress = "[SMTP:*@" & info.Name & "]"
             oAddressMap.Scope = ""
+
             If info.CatchAllAccount = "" Then
                 ' things are tricky here because we want to change it so we know what we are deleting
                 oAddressMap.SourceAddress = "[SMTP:*@" & info.Name & "]"
@@ -175,7 +178,7 @@ Public Class MailEnable
                 '
                 ' Change its value if it exists
                 '
-                If oAddressMap.EditAddressMap(info.Name, "[DELETE:ME]", "[DELETE:ME]", "0") Then
+                If oAddressMap.EditAddressMap(info.Name, "[DELETE:ME]", "[DELETE:ME]", "0", oAddressMap.Status) Then
                     oAddressMap.Account = info.Name
                     oAddressMap.DestinationAddress = "[DELETE:ME]"
                     oAddressMap.SourceAddress = "[DELETE:ME]"
@@ -187,7 +190,8 @@ Public Class MailEnable
                 Dim NewSourceAddress As String = "[SMTP:*@" & info.Name & "]"
                 Dim NewDestinationAddress As String = "[SF:" & info.Name & "/" & GetMailboxName(info.CatchAllAccount) & "]"
                 Dim NewScope As String = "0"
-                If oAddressMap.EditAddressMap(NewAccount, NewSourceAddress, NewDestinationAddress, NewScope) <> 1 Then
+
+                If oAddressMap.EditAddressMap(NewAccount, NewSourceAddress, NewDestinationAddress, NewScope, 0) <> 1 Then
                     '
                     ' We need to add it because there was not one defined  
                     '
@@ -216,7 +220,7 @@ Public Class MailEnable
                 Dim NewSourceAddress = "[SMTP:postmaster@" & info.Name & "]"
                 Dim NewDestinationAddress = "[SF:" & info.Name & "/" & GetMailboxName(info.PostmasterAccount) & "]"
                 Dim NewScope = "0"
-                If oAddressMap.EditAddressMap(NewAccount, NewSourceAddress, NewDestinationAddress, NewScope) <> 1 Then
+                If oAddressMap.EditAddressMap(NewAccount, NewSourceAddress, NewDestinationAddress, NewScope, 0) <> 1 Then
                     '
                     ' We need to add it because there was not one defined  
                     '
@@ -245,7 +249,7 @@ Public Class MailEnable
                 Dim NewSourceAddress = "[SMTP:Abuse@" & info.Name & "]"
                 Dim NewDestinationAddress = "[SF:" & info.Name & "/" & GetMailboxName(info.AbuseAccount) & "]"
                 Dim NewScope = "0"
-                If oAddressMap.EditAddressMap(NewAccount, NewSourceAddress, NewDestinationAddress, NewScope) <> 1 Then
+                If oAddressMap.EditAddressMap(NewAccount, NewSourceAddress, NewDestinationAddress, NewScope, 0) <> 1 Then
                     '
                     ' We need to add it because there was not one defined  
                     '
@@ -260,7 +264,7 @@ Public Class MailEnable
 
             'edit blacklists 
             'delete all the blacklists
-            Dim blacklist As Object = CreateObject(BLACKLIST_PROG_ID)
+            Dim blacklist As New WebsitePanel.Providers.Mail.MailEnableDomainBlacklist
             ResetBlacklist(blacklist)
             blacklist.Account = info.Name
             blacklist.TargetDomainName = info.Name
@@ -270,7 +274,7 @@ Public Class MailEnable
                 blacklist.RemoveBlacklist()
 
                 ' initialize blacklist again
-                blacklist = CreateObject(BLACKLIST_PROG_ID)
+                blacklist = New WebsitePanel.Providers.Mail.MailEnableDomainBlacklist
                 ResetBlacklist(blacklist)
                 blacklist.Account = info.Name
                 blacklist.TargetDomainName = info.Name
@@ -279,7 +283,7 @@ Public Class MailEnable
             'add new blacklists
             Dim blacklistedDomainName As String
             For Each blacklistedDomainName In info.BlackList
-                blacklist = CreateObject(BLACKLIST_PROG_ID)
+                blacklist = New WebsitePanel.Providers.Mail.MailEnableDomainBlacklist
                 blacklist.Account = info.Name
                 blacklist.TargetDomainName = info.Name
                 blacklist.BannedDomainName = blacklistedDomainName
@@ -289,18 +293,20 @@ Public Class MailEnable
                 blacklist.AddBlacklist()
             Next
 
+
         End If
     End Sub
 
     Public Overridable Sub DeleteDomain(ByVal domainName As String) Implements IMailServer.DeleteDomain
         'delete all postoffice logins
-        Dim login As Object = CreateObject(LOGIN_PROG_ID)
+        Dim login As New WebsitePanel.Providers.Mail.MailEnableLogin
         ResetLogin(login)
         login.Account = domainName
         login.RemoveLogin()
 
         'delete all the mailboxes
-        Dim mailbox As Object = CreateObject(MAILBOX_PROG_ID)
+        Dim mailbox As New WebsitePanel.Providers.Mail.MailEnableMailbox
+
         ResetMailbox(mailbox)
         mailbox.Postoffice = domainName
         mailbox.RemoveMailbox()
@@ -310,7 +316,7 @@ Public Class MailEnable
         Dim list As MailList
         For Each list In lists
             ' remove list members
-            Dim listMember As Object = CreateObject(LIST_MEMBER_PROG_ID)
+            Dim listMember As New WebsitePanel.Providers.Mail.MailEnableListMember
             listMember.AccountName = domainName
             listMember.ListName = GetMailboxName(list.Name)
             listMember.Address = ""
@@ -319,7 +325,7 @@ Public Class MailEnable
             listMember.RemoveListMember()
 
             ' delete maillist
-            Dim mailList As Object = CreateObject(MAILLIST_PROG_ID)
+            Dim mailList As New WebsitePanel.Providers.Mail.MailEnableList
             ResetMaillist(mailList)
             mailList.AccountName = domainName
             mailList.ListName = GetMailboxName(list.Name)
@@ -331,14 +337,14 @@ Public Class MailEnable
         Dim group As MailGroup
         For Each group In groups
             ' remove group members
-            Dim groupMember As Object = CreateObject(GROUP_MEMBER_PROG_ID)
+            Dim groupMember As New WebsitePanel.Providers.Mail.MailEnableGroupMember
             groupMember.Postoffice = domainName
             groupMember.Mailbox = GetMailboxName(group.Name)
             groupMember.Address = ""
             groupMember.RemoveGroupMember()
 
             ' delete group
-            Dim objGroup As Object = CreateObject(GROUP_PROG_ID)
+            Dim objGroup As New WebsitePanel.Providers.Mail.MailEnableGroup
             ResetGroup(objGroup)
             objGroup.Postoffice = domainName
             objGroup.GroupName = GetMailboxName(group.Name)
@@ -346,25 +352,25 @@ Public Class MailEnable
         Next
 
         'delete all address mappings
-        Dim map As Object = CreateObject(ADDRESS_MAP_PROG_ID)
+        Dim map As New WebsitePanel.Providers.Mail.MailEnableAddressMap
         ResetAddressMap(map)
         map.Account = domainName
-        map.RemoveAddressMap()
+        map.RemoveAddressMap(True)
 
         'delete all the blacklists
-        Dim blacklist As Object = CreateObject(BLACKLIST_PROG_ID)
+        Dim blacklist As New WebsitePanel.Providers.Mail.MailEnableDomainBlacklist
         ResetBlacklist(blacklist)
         blacklist.Account = domainName
         blacklist.RemoveBlacklist()
 
         'delete all domains
-        Dim domain As Object = CreateObject(DOMAIN_PROG_ID)
+        Dim domain As New WebsitePanel.Providers.Mail.MailEnableDomain
         ResetDomain(domain)
         domain.AccountName = domainName
         domain.RemoveDomain()
 
         'delete postoffice
-        Dim po As Object = CreateObject(POSTOFFICE_PROG_ID)
+        Dim po As New WebsitePanel.Providers.Mail.MailEnablePostoffice
         po.Account = domainName
         po.Name = domainName
         po.Host = ""
@@ -385,12 +391,24 @@ Public Class MailEnable
         info.Name = domain.DomainName
         info.RedirectionHosts = domain.DomainRedirectionHosts
         info.RedirectionActive = (domain.DomainRedirectionStatus = 1)
+
+        If domain.DomainRedirectionStatus = 2 Then
+            info("MailEnable_SmartHostAuth") = True
+            info("MailEnable_SmartHostEnabled") = True
+        ElseIf domain.DomainRedirectionStatus = 1 Then
+            info("MailEnable_SmartHostEnabled") = True
+            info("MailEnable_SmartHostAuth") = False
+        Else
+            info("MailEnable_SmartHostEnabled") = false
+            info("MailEnable_SmartHostAuth") = False
+        End If
+
         info.Enabled = (domain.Status = 1)
 
         '
         ' We need to get the catch all account for the domain
         '
-        Dim oAddressMap As Object = CreateObject(ADDRESS_MAP_PROG_ID)
+        Dim oAddressMap As New WebsitePanel.Providers.Mail.MailEnableAddressMap
         oAddressMap.Account = info.Name
         oAddressMap.DestinationAddress = ""
         oAddressMap.SourceAddress = "[SMTP:*@" & info.Name & "]"
@@ -432,7 +450,7 @@ Public Class MailEnable
         'getting black mail list
         Dim blacklists As ArrayList = New ArrayList
 
-        Dim blacklist As Object = CreateObject(BLACKLIST_PROG_ID)
+        Dim blacklist As New WebsitePanel.Providers.Mail.MailEnableDomainBlacklist
         blacklist.Account = domain.AccountName
         blacklist.Host = domain.Host
         blacklist.TargetDomainName = domain.DomainName
@@ -461,7 +479,7 @@ Public Class MailEnable
 
 #Region "Domain Aliases"
     Public Overridable Function DomainAliasExists(ByVal domainName As String, ByVal aliasName As String) As Boolean Implements IMailServer.DomainAliasExists
-        Dim domain As Object = CreateObject(DOMAIN_PROG_ID)
+        Dim domain As New WebsitePanel.Providers.Mail.MailEnableDomain
 
         ResetDomain(domain)
         domain.AccountName = domainName
@@ -472,7 +490,7 @@ Public Class MailEnable
 
     Public Overridable Function GetDomainAliases(ByVal domainName As String) As String() Implements IMailServer.GetDomainAliases
         Dim aliases As List(Of String) = New List(Of String)
-        Dim domain As Object = CreateObject(DOMAIN_PROG_ID)
+        Dim domain As New WebsitePanel.Providers.Mail.MailEnableDomain
 
         ResetDomain(domain)
         domain.AccountName = domainName
@@ -498,7 +516,7 @@ Public Class MailEnable
 
     Public Overridable Sub AddDomainAlias(ByVal domainName As String, ByVal aliasName As String) Implements IMailServer.AddDomainAlias
         ' add new domain
-        Dim domain As Object = CreateObject(DOMAIN_PROG_ID)
+        Dim domain As New WebsitePanel.Providers.Mail.MailEnableDomain
         domain.AccountName = domainName
         domain.DomainName = aliasName
         domain.DomainRedirectionHosts = ""
@@ -513,7 +531,7 @@ Public Class MailEnable
         ' get current "main domain" address mappings
         Dim srcAddr As String = "@" + domainName + "]"
         Dim maps As ArrayList = New ArrayList
-        Dim map As Object = CreateObject(ADDRESS_MAP_PROG_ID)
+        Dim map As New WebsitePanel.Providers.Mail.MailEnableAddressMap
 
         ResetAddressMap(map)
         map.Account = domainName
@@ -545,21 +563,21 @@ Public Class MailEnable
         'delete all address mappings
         Dim addr As String = "@" + aliasName.ToLower() + "]"
         Dim maps As ArrayList = New ArrayList
-        Dim map As Object = CreateObject(ADDRESS_MAP_PROG_ID)
+        Dim map As New WebsitePanel.Providers.Mail.MailEnableAddressMap
         ResetAddressMap(map)
         map.Account = domainName
         map.SourceAddress = "[SMTP:*@" + aliasName + "]"
-        map.RemoveAddressMap()
+        map.RemoveAddressMap(True)
 
         'delete all the blacklists
-        Dim blacklist As Object = CreateObject(BLACKLIST_PROG_ID)
+        Dim blacklist As New WebsitePanel.Providers.Mail.MailEnableDomainBlacklist
         ResetBlacklist(blacklist)
         blacklist.Account = domainName
         blacklist.TargetDomainName = aliasName
         blacklist.RemoveBlacklist()
 
         'delete all domains
-        Dim domain As Object = CreateObject(DOMAIN_PROG_ID)
+        Dim domain As New WebsitePanel.Providers.Mail.MailEnableDomain
         ResetDomain(domain)
         domain.AccountName = domainName
         domain.DomainName = aliasName
@@ -568,11 +586,15 @@ Public Class MailEnable
 #End Region
 
 #Region "Accounts"
+
     Public Overridable Function GetAccounts(ByVal domainName As String) As MailAccount() Implements IMailServer.GetAccounts
+
         Dim mailboxes As List(Of MailAccount) = New List(Of MailAccount)
-        Dim mailbox As Object = CreateObject(MAILBOX_PROG_ID)
+        Dim mailbox As New WebsitePanel.Providers.Mail.MailEnableMailbox
+
         ResetMailbox(mailbox)
         mailbox.Postoffice = domainName
+        mailbox.Size = -4                   'we use -4 since this prevents the function from calculating quotas, which is slow
 
         If mailbox.FindFirstMailbox() = 1 Then
             Do
@@ -583,6 +605,7 @@ Public Class MailEnable
                 End If
                 ResetMailbox(mailbox)
                 mailbox.Postoffice = domainName
+                mailbox.Size = -4
             Loop While mailbox.FindNextMailbox() = 1
         End If
 
@@ -591,10 +614,10 @@ Public Class MailEnable
 
     Public Overridable Function GetAccount(ByVal mailboxName As String) As MailAccount Implements IMailServer.GetAccount
         Dim info As MailAccount = Nothing
-        Dim mailbox As Object = CreateObject(MAILBOX_PROG_ID)
+        Dim mailbox As New WebsitePanel.Providers.Mail.MailEnableMailbox
         ResetMailbox(mailbox)
         mailbox.Postoffice = GetDomainName(mailboxName)
-        mailbox.Mailbox = GetMailboxName(mailboxName)
+        mailbox.MailboxName = GetMailboxName(mailboxName)
 
         If (mailbox.GetMailbox() <> 1) Then
             Throw New Exception("Could not find the mailbox")
@@ -607,10 +630,10 @@ Public Class MailEnable
         Return info
     End Function
 
-    Private Function GetMailboxInfo(ByVal mailbox As Object) As MailAccount
+    Private Function GetMailboxInfo(ByVal mailbox As WebsitePanel.Providers.Mail.MailEnableMailbox) As MailAccount
         Dim info As MailAccount = New MailAccount
         info.MaxMailboxSize = IIf(mailbox.Limit = -1, 0, mailbox.Limit / 1024)
-        info.Name = mailbox.Mailbox + "@" + mailbox.Postoffice
+        info.Name = mailbox.MailboxName + "@" + mailbox.Postoffice
 
         Dim redirectAddrs As ArrayList = New ArrayList
         Dim smtpAddress As String
@@ -633,12 +656,12 @@ Public Class MailEnable
         info.ResponderMessage = mailbox.GetAutoResponderContents()
         info.ReplyTo = GetMailBoxReplyToAddress(info.Name)
 
-        Dim map As Object = CreateObject(ADDRESS_MAP_PROG_ID)
+        Dim map As New WebsitePanel.Providers.Mail.MailEnableAddressMap
         map.Account = info.Name
         map.DestinationAddress = String.Format("[SF:{0}/{1}]", info.Name, info.Name)
         map.SourceAddress = ""
 
-        Dim login As Object = CreateObject(LOGIN_PROG_ID)
+        Dim login As New WebsitePanel.Providers.Mail.MailEnableLogin
         ResetLogin(login)
         login.Account = mailbox.Postoffice
         login.UserName = info.Name
@@ -651,9 +674,9 @@ Public Class MailEnable
         Return info
     End Function
 
-    Private Function GetMailAliasInfo(ByVal mailbox As Object) As MailAlias
+    Private Function GetMailAliasInfo(ByVal mailbox As WebsitePanel.Providers.Mail.MailEnableMailbox) As MailAlias
         Dim info As MailAlias = New MailAlias
-        info.Name = mailbox.Mailbox + "@" + mailbox.Postoffice
+        info.Name = mailbox.MailboxName + "@" + mailbox.Postoffice
 
         Dim redirectAddrs As ArrayList = New ArrayList
         Dim smtpAddress As String
@@ -673,12 +696,12 @@ Public Class MailEnable
         info.DeleteOnForward = (mailbox.RedirectStatus.Equals(1))
         info.Enabled = (mailbox.Status = 1)
 
-        Dim map As Object = CreateObject(ADDRESS_MAP_PROG_ID)
+        Dim map As New WebsitePanel.Providers.Mail.MailEnableAddressMap
         map.Account = info.Name
         map.DestinationAddress = String.Format("[SF:{0}/{1}]", info.Name, info.Name)
         map.SourceAddress = ""
 
-        Dim login As Object = CreateObject(LOGIN_PROG_ID)
+        Dim login As New WebsitePanel.Providers.Mail.MailEnableLogin
         ResetLogin(login)
         login.Account = mailbox.Postoffice
         login.UserName = info.Name
@@ -692,22 +715,22 @@ Public Class MailEnable
     End Function
 
     Public Overridable Function AccountExists(ByVal mailboxName As String) As Boolean Implements IMailServer.AccountExists
-        Dim mailbox As Object = CreateObject(MAILBOX_PROG_ID)
+        Dim mailbox As New WebsitePanel.Providers.Mail.MailEnableMailbox
         ResetMailbox(mailbox)
         mailbox.Postoffice = GetDomainName(mailboxName)
-        mailbox.Mailbox = GetMailboxName(mailboxName)
+        mailbox.MailboxName = GetMailboxName(mailboxName)
 
         Return (mailbox.GetMailbox() = 1)
     End Function
 
     Public Overridable Sub CreateAccount(ByVal info As MailAccount) Implements IMailServer.CreateAccount
-        Dim mailbox As Object = CreateObject(MAILBOX_PROG_ID)
+        Dim mailbox As New WebsitePanel.Providers.Mail.MailEnableMailbox
         Dim domainName As String = GetDomainName(info.Name)
         Dim mailboxName As String = GetMailboxName(info.Name)
         mailbox.Postoffice = domainName
 
         mailbox.Limit = IIf(info.MaxMailboxSize = 0, -1, info.MaxMailboxSize * 1024) ' convert to kilobytes
-        mailbox.Mailbox = GetMailboxName(info.Name)
+        mailbox.MailboxName = GetMailboxName(info.Name)
 
         If info.ForwardingAddresses Is Nothing Then
             info.ForwardingAddresses = New String() {}
@@ -749,7 +772,7 @@ Public Class MailEnable
         CreateAddressMapsForAllDomains(domainName, mailboxName, destinationAddress)
 
         ' create login
-        Dim login As Object = CreateObject(LOGIN_PROG_ID)
+        Dim login As New WebsitePanel.Providers.Mail.MailEnableLogin
         login.Account = domainName
         login.Password = info.Password
         login.Status = IIf(info.Enabled, 1, 0)
@@ -770,9 +793,9 @@ Public Class MailEnable
         Dim domainName As String = GetDomainName(info.Name)
         Dim mailboxName As String = GetMailboxName(info.Name)
 
-        Dim mailbox As Object = CreateObject(MAILBOX_PROG_ID)
+        Dim mailbox As New WebsitePanel.Providers.Mail.MailEnableMailbox
         mailbox.Postoffice = domainName
-        mailbox.Mailbox = mailboxName
+        mailbox.MailboxName = mailboxName
 
         If info.ForwardingAddresses Is Nothing Then
             info.ForwardingAddresses = New String() {}
@@ -811,6 +834,8 @@ Public Class MailEnable
 
         If (String.IsNullOrEmpty(info.ReplyTo) = False) Then
             SetMailBoxReplyToAddress(info.Name, info.ReplyTo)
+        Else
+            SetMailBoxReplyToAddress(info.Name, "")
         End If
 
         mailbox.SetAutoResponderStatus(info.ResponderEnabled)
@@ -824,7 +849,7 @@ Public Class MailEnable
 
         ' change login password
         If (info.Password.Length > 0) Then
-            Dim login As Object = CreateObject(LOGIN_PROG_ID)
+            Dim login As New WebsitePanel.Providers.Mail.MailEnableLogin
             ResetLogin(login)
             login.Account = domainName
             login.UserName = info.Name
@@ -843,23 +868,25 @@ Public Class MailEnable
 
         ' build autoresponder file
         WriteMailboxAutoresponderFile(info)
+
+
     End Sub
 
     Public Overridable Sub DeleteAccount(ByVal name As String) Implements IMailServer.DeleteAccount
         Dim domainName As String = GetDomainName(name)
         Dim mailboxName As String = GetMailboxName(name)
 
-        Dim mailbox As Object = CreateObject(MAILBOX_PROG_ID)
+        Dim mailbox As New WebsitePanel.Providers.Mail.MailEnableMailbox
         ResetMailbox(mailbox)
         mailbox.Postoffice = domainName
-        mailbox.Mailbox = mailboxName
+        mailbox.MailboxName = mailboxName
 
         If (mailbox.RemoveMailbox() <> 1) Then
             Throw New Exception(String.Format("Could not delete mailbox '{0}'", mailboxName))
         End If
 
         'delete the login for this mailbox
-        Dim login As Object = CreateObject(LOGIN_PROG_ID)
+        Dim login As New WebsitePanel.Providers.Mail.MailEnableLogin
         ResetLogin(login)
         login.Account = domainName
         login.UserName = name
@@ -870,7 +897,7 @@ Public Class MailEnable
 
 
         'delete the address map for this mailbox
-        Dim map As Object = CreateObject(ADDRESS_MAP_PROG_ID)
+        Dim map As New WebsitePanel.Providers.Mail.MailEnableAddressMap
         ResetAddressMap(map)
         map.Account = domainName
         map.DestinationAddress = String.Format("[SF:{0}/{1}]", domainName, mailboxName)
@@ -885,10 +912,13 @@ Public Class MailEnable
     End Function
 
     Public Function GetMailAliases(ByVal domainName As String) As MailAlias() Implements IMailServer.GetMailAliases
+
         Dim mailAliases As List(Of MailAlias) = New List(Of MailAlias)
-        Dim mailbox As Object = CreateObject(MAILBOX_PROG_ID)
+        Dim mailbox As New WebsitePanel.Providers.Mail.MailEnableMailbox
+
         ResetMailbox(mailbox)
         mailbox.Postoffice = domainName
+        mailbox.Size = -4
 
         If mailbox.FindFirstMailbox() = 1 Then
             Do
@@ -898,18 +928,20 @@ Public Class MailEnable
                 End If
                 ResetMailbox(mailbox)
                 mailbox.Postoffice = domainName
+                mailbox.Size = -4
             Loop While mailbox.FindNextMailbox() = 1
         End If
 
         Return mailAliases.ToArray()
     End Function
 
+
     Public Function GetMailAlias(ByVal mailAliasName As String) As MailAlias Implements IMailServer.GetMailAlias
         Dim info As MailAlias = Nothing
-        Dim mailAlias As Object = CreateObject(MAILBOX_PROG_ID)
+        Dim mailAlias As New WebsitePanel.Providers.Mail.MailEnableMailbox
         ResetMailbox(mailAlias)
         mailAlias.Postoffice = GetDomainName(mailAliasName)
-        mailAlias.Mailbox = GetMailboxName(mailAliasName)
+        mailAlias.MailboxName = GetMailboxName(mailAliasName)
 
         If (mailAlias.GetMailbox() <> 1) Then
             Throw New Exception("Could not find the mailbox")
@@ -942,7 +974,7 @@ Public Class MailEnable
     ' ============================
 
     Public Overridable Function GroupExists(ByVal groupName As String) As Boolean Implements IMailServer.GroupExists
-        Dim group As Object = CreateObject(GROUP_PROG_ID)
+        Dim group As New WebsitePanel.Providers.Mail.MailEnableGroup
         ResetGroup(group)
         group.Postoffice = GetDomainName(groupName)
         group.GroupName = GetMailboxName(groupName)
@@ -951,7 +983,7 @@ Public Class MailEnable
     End Function
 
     Public Overridable Function GetGroup(ByVal groupName As String) As MailGroup Implements IMailServer.GetGroup
-        Dim objGroup As Object = CreateObject(GROUP_PROG_ID)
+        Dim objGroup As New WebsitePanel.Providers.Mail.MailEnableGroup
         ResetGroup(objGroup)
         objGroup.Postoffice = GetDomainName(groupName)
         objGroup.GroupName = GetMailboxName(groupName)
@@ -966,7 +998,7 @@ Public Class MailEnable
     Public Overridable Function GetGroups(ByVal domainName As String) As MailGroup() Implements IMailServer.GetGroups
         Dim groups As List(Of MailGroup) = New List(Of MailGroup)
 
-        Dim objGroup As Object = CreateObject(GROUP_PROG_ID)
+        Dim objGroup As New WebsitePanel.Providers.Mail.MailEnableGroup
         ResetGroup(objGroup)
         objGroup.Postoffice = domainName
 
@@ -992,7 +1024,7 @@ Public Class MailEnable
             group.Members = New String() {}
         End If
 
-        Dim objGroup As Object = CreateObject(GROUP_PROG_ID)
+        Dim objGroup As New WebsitePanel.Providers.Mail.MailEnableGroup
         ResetGroup(objGroup)
 
         objGroup.Postoffice = domainName
@@ -1007,7 +1039,7 @@ Public Class MailEnable
             ' add group members
             Dim member As String
             For Each member In group.Members
-                Dim groupMember As Object = CreateObject(GROUP_MEMBER_PROG_ID)
+                Dim groupMember As New WebsitePanel.Providers.Mail.MailEnableGroupMember
                 groupMember.Postoffice = domainName
                 groupMember.Address = String.Format("[SMTP:{0}]", member)
                 groupMember.Mailbox = groupName
@@ -1028,7 +1060,7 @@ Public Class MailEnable
             group.Members = New String() {}
         End If
 
-        Dim objGroup As Object = CreateObject(GROUP_PROG_ID)
+        Dim objGroup As New WebsitePanel.Providers.Mail.MailEnableGroup
         ResetGroup(objGroup)
 
         objGroup.Postoffice = domainName
@@ -1046,7 +1078,7 @@ Public Class MailEnable
             IIf(group.Enabled, 1, 0))
 
         'delete group members
-        Dim objMember As Object = CreateObject(GROUP_MEMBER_PROG_ID)
+        Dim objMember As New WebsitePanel.Providers.Mail.MailEnableGroupMember
         objMember.Postoffice = domainName
         objMember.Mailbox = groupName
         objMember.Address = ""
@@ -1055,7 +1087,7 @@ Public Class MailEnable
         ' add group members
         Dim member As String
         For Each member In group.Members
-            Dim groupMember As Object = CreateObject(GROUP_MEMBER_PROG_ID)
+            Dim groupMember As New WebsitePanel.Providers.Mail.MailEnableGroupMember
             groupMember.Postoffice = domainName
             groupMember.Address = String.Format("[SMTP:{0}]", member)
             groupMember.Mailbox = groupName
@@ -1071,21 +1103,21 @@ Public Class MailEnable
         Dim groupName As String = GetMailboxName(name)
 
         ' remove group
-        Dim objGroup As Object = CreateObject(GROUP_PROG_ID)
+        Dim objGroup As New WebsitePanel.Providers.Mail.MailEnableGroup
         ResetGroup(objGroup)
         objGroup.Postoffice = domainName
         objGroup.GroupName = groupName
         objGroup.RemoveGroup()
 
         'delete group members
-        Dim objMember As Object = CreateObject(GROUP_MEMBER_PROG_ID)
+        Dim objMember As New WebsitePanel.Providers.Mail.MailEnableGroupMember
         objMember.Postoffice = domainName
         objMember.Mailbox = groupName
         objMember.Address = ""
         objMember.RemoveGroupMember()
 
         ' delete address maps
-        Dim map As Object = CreateObject(ADDRESS_MAP_PROG_ID)
+        Dim map As New WebsitePanel.Providers.Mail.MailEnableAddressMap
         ResetAddressMap(map)
         map.Account = domainName
         map.DestinationAddress = String.Format("[SF:{0}/{1}]", domainName, groupName)
@@ -1096,7 +1128,7 @@ Public Class MailEnable
 #Region "Lists"
 
     Public Overridable Function GetList(ByVal maillistName As String) As MailList Implements IMailServer.GetList
-        Dim mailList As Object = CreateObject(MAILLIST_PROG_ID)
+        Dim mailList As New WebsitePanel.Providers.Mail.MailEnableList
         ResetMaillist(mailList)
         mailList.AccountName = GetDomainName(maillistName)
         mailList.ListName = GetMailboxName(maillistName)
@@ -1112,7 +1144,7 @@ Public Class MailEnable
         Dim maillists As List(Of MailList) = New List(Of MailList)
 
         Try
-            Dim mailList As Object = CreateObject(MAILLIST_PROG_ID)
+            Dim mailList As New WebsitePanel.Providers.Mail.MailEnableList
             ResetMaillist(mailList)
             mailList.AccountName = domainName
 
@@ -1165,7 +1197,7 @@ Public Class MailEnable
         Dim domainName As String = GetDomainName(name)
         Dim mailListName As String = GetMailboxName(name)
 
-        Dim listMember As Object = CreateObject(LIST_MEMBER_PROG_ID)
+        Dim listMember As New WebsitePanel.Providers.Mail.MailEnableListMember
         listMember.AccountName = domainName
         listMember.ListName = mailListName
         listMember.Address = ""
@@ -1192,7 +1224,7 @@ Public Class MailEnable
     End Function
 
     Public Overridable Function ListExists(ByVal maillistName As String) As Boolean Implements IMailServer.ListExists
-        Dim mailList As Object = CreateObject(MAILLIST_PROG_ID)
+        Dim mailList As New WebsitePanel.Providers.Mail.MailEnableList
         ResetMaillist(mailList)
         mailList.AccountName = GetDomainName(maillistName)
         mailList.ListName = GetMailboxName(maillistName)
@@ -1210,7 +1242,7 @@ Public Class MailEnable
             info.Members = New String() {}
         End If
 
-        Dim mailList As Object = CreateObject(MAILLIST_PROG_ID)
+        Dim mailList As New WebsitePanel.Providers.Mail.MailEnableList
         ResetMaillist(mailList)
 
         mailList.AccountName = domainName
@@ -1239,7 +1271,7 @@ Public Class MailEnable
         'create mail list members
         Dim member As String
         For Each member In info.Members
-            Dim listMember As Object = CreateObject(LIST_MEMBER_PROG_ID)
+            Dim listMember As New WebsitePanel.Providers.Mail.MailEnableListMember
             listMember.AccountName = domainName
             listMember.Address = String.Format("[SMTP:{0}]", member)
             listMember.ListMemberType = 0
@@ -1265,7 +1297,7 @@ Public Class MailEnable
             info.Members = New String() {}
         End If
 
-        Dim mailList As Object = CreateObject(MAILLIST_PROG_ID)
+        Dim mailList As New WebsitePanel.Providers.Mail.MailEnableList
         ResetMaillist(mailList)
 
         mailList.AccountName = domainName
@@ -1318,7 +1350,7 @@ Public Class MailEnable
          -1)
 
         'delete list members
-        Dim listMember As Object = CreateObject(LIST_MEMBER_PROG_ID)
+        Dim listMember As New WebsitePanel.Providers.Mail.MailEnableListMember
         listMember.AccountName = domainName
         listMember.ListName = maillistName
         listMember.Address = ""
@@ -1329,7 +1361,7 @@ Public Class MailEnable
         'create mail list members
         Dim member As String
         For Each member In info.Members
-            listMember = CreateObject(LIST_MEMBER_PROG_ID)
+            listMember = New WebsitePanel.Providers.Mail.MailEnableListMember
             listMember.AccountName = domainName
             listMember.ListName = maillistName
             listMember.Address = String.Format("[SMTP:{0}]", member)
@@ -1353,14 +1385,14 @@ Public Class MailEnable
         Dim maillistName As String = GetMailboxName(name)
 
         ' remove mailing list
-        Dim mailList As Object = CreateObject(MAILLIST_PROG_ID)
+        Dim mailList As New WebsitePanel.Providers.Mail.MailEnableList
         ResetMaillist(mailList)
         mailList.ListName = maillistName
         mailList.AccountName = domainName
         mailList.RemoveList()
 
         ' delete list members
-        Dim listMember As Object = CreateObject(LIST_MEMBER_PROG_ID)
+        Dim listMember As New WebsitePanel.Providers.Mail.MailEnableListMember
         listMember.AccountName = domainName
         listMember.ListName = maillistName
         listMember.Address = ""
@@ -1370,7 +1402,7 @@ Public Class MailEnable
         listMember.RemoveListMember()
 
         ' delete address maps
-        Dim map As Object = CreateObject(ADDRESS_MAP_PROG_ID)
+        Dim map As New WebsitePanel.Providers.Mail.MailEnableAddressMap
         ResetAddressMap(map)
         map.Account = domainName
         map.DestinationAddress = String.Format("[LS:{0}/{1}]", domainName, maillistName)
@@ -1415,10 +1447,10 @@ Public Class MailEnable
         login.Status = -1
     End Sub
 
-    Private Sub ResetMailbox(ByVal mailbox As Object)
+    Private Sub ResetMailbox(ByVal mailbox As WebsitePanel.Providers.Mail.MailEnableMailbox)
         mailbox.Postoffice = ""
         mailbox.Host = ""
-        mailbox.Mailbox = ""
+        mailbox.MailboxName = ""
         mailbox.RedirectAddress = ""
         mailbox.Limit = -1
         mailbox.RedirectStatus = -1
@@ -1495,7 +1527,7 @@ Public Class MailEnable
         Dim domainName As String = GetDomainName(name)
         Dim groupName As String = GetMailboxName(name)
 
-        Dim groupMember As Object = CreateObject(GROUP_MEMBER_PROG_ID)
+        Dim groupMember As New WebsitePanel.Providers.Mail.MailEnableGroupMember
         groupMember.Postoffice = domainName
         groupMember.Mailbox = groupName
         groupMember.Address = ""
@@ -1516,8 +1548,8 @@ Public Class MailEnable
     End Function
 
     Private Sub CreateAddressMapsForAllDomains(ByVal domainName As String, ByVal aliasName As String, ByVal targetAddress As String)
-        Dim oDomain As Object = CreateObject(DOMAIN_PROG_ID)
-        Dim oAddressMap As Object = CreateObject(ADDRESS_MAP_PROG_ID)
+        Dim oDomain As New WebsitePanel.Providers.Mail.MailEnableDomain
+        Dim oAddressMap As New WebsitePanel.Providers.Mail.MailEnableAddressMap
         oDomain.AccountName = domainName
         oDomain.DomainName = ""
         oDomain.Status = -1
@@ -1586,88 +1618,88 @@ Public Class MailEnable
     End Sub
 
     Public Overrides Sub DeleteServiceItems(ByVal items() As ServiceProviderItem)
-		For Each item As ServiceProviderItem In items
-			If TypeOf item Is MailDomain Then
-				Try
-					DeleteDomain(item.Name)
-				Catch ex As Exception
-					Log.WriteError(String.Format("Error deleting '{0}' mail domain", item.Name), ex)
-				End Try
-			End If
-		Next
-	End Sub
+        For Each item As ServiceProviderItem In items
+            If TypeOf item Is MailDomain Then
+                Try
+                    DeleteDomain(item.Name)
+                Catch ex As Exception
+                    Log.WriteError(String.Format("Error deleting '{0}' mail domain", item.Name), ex)
+                End Try
+            End If
+        Next
+    End Sub
 
     Public Overrides Function GetServiceItemsDiskSpace(ByVal items() As ServiceProviderItem) As ServiceProviderItemDiskSpace()
-		Dim itemsDiskspace As List(Of ServiceProviderItemDiskSpace) = New List(Of ServiceProviderItemDiskSpace)
+        Dim itemsDiskspace As List(Of ServiceProviderItemDiskSpace) = New List(Of ServiceProviderItemDiskSpace)
 
-		' update items with diskspace
-		Dim item As ServiceProviderItem
-		For Each item In items
-			If TypeOf item Is MailAccount Then
-				Try
-					' get mailbox size
-					Dim name As String = item.Name
+        ' update items with diskspace
+        Dim item As ServiceProviderItem
+        For Each item In items
+            If TypeOf item Is MailAccount Then
+                Try
+                    ' get mailbox size
+                    Dim name As String = item.Name
 
-					' try to get MailEnable postoffices path
-					Dim poPath As String = GetPostofficesPath()
-					If poPath Is Nothing Then
-						Continue For
-					End If
-					Dim mailboxName As String = name.Substring(0, name.IndexOf("@"))
-					Dim domainName As String = name.Substring((name.IndexOf("@") + 1))
+                    ' try to get MailEnable postoffices path
+                    Dim poPath As String = GetPostofficesPath()
+                    If poPath Is Nothing Then
+                        Continue For
+                    End If
+                    Dim mailboxName As String = name.Substring(0, name.IndexOf("@"))
+                    Dim domainName As String = name.Substring((name.IndexOf("@") + 1))
 
-					Dim mailboxPath As String = [String].Format("{0}\{1}\Mailroot\{2}", poPath, domainName, mailboxName)
+                    Dim mailboxPath As String = [String].Format("{0}\{1}\Mailroot\{2}", poPath, domainName, mailboxName)
 
-					' calculate disk space
-					Dim diskspace As New ServiceProviderItemDiskSpace()
-					diskspace.ItemId = item.Id
-					diskspace.DiskSpace = FileUtils.CalculateFolderSize(mailboxPath)
-					itemsDiskspace.Add(diskspace)
-				Catch ex As Exception
-					Log.WriteError("Error calculating disk space for mail account: " + item.Name, ex)
-				End Try
-			End If
-		Next item
+                    ' calculate disk space
+                    Dim diskspace As New ServiceProviderItemDiskSpace()
+                    diskspace.ItemId = item.Id
+                    diskspace.DiskSpace = FileUtils.CalculateFolderSize(mailboxPath)
+                    itemsDiskspace.Add(diskspace)
+                Catch ex As Exception
+                    Log.WriteError("Error calculating disk space for mail account: " + item.Name, ex)
+                End Try
+            End If
+        Next item
 
-		Return itemsDiskspace.ToArray()
+        Return itemsDiskspace.ToArray()
     End Function
 
     Public Overrides Function GetServiceItemsBandwidth(ByVal items() As ServiceProviderItem, ByVal since As Date) As ServiceProviderItemBandwidth()
-		Dim itemsBandwidth(items.Length) As ServiceProviderItemBandwidth
+        Dim itemsBandwidth(items.Length) As ServiceProviderItemBandwidth
 
-		Dim logsPath As String = GetLoggingPath()
-		If logsPath Is Nothing Then
-			Return Nothing
-		End If
-		' calculate bandwidth for mail enable
-		' parse mail logs
-		Dim parser As New LogParser("Mail", "mailenable_pop", Path.Combine(logsPath, "pop"), "account")
+        Dim logsPath As String = GetLoggingPath()
+        If logsPath Is Nothing Then
+            Return Nothing
+        End If
+        ' calculate bandwidth for mail enable
+        ' parse mail logs
+        Dim parser As New LogParser("Mail", "mailenable_pop", Path.Combine(logsPath, "pop"), "account")
         parser.ParseLogs(Of LogReader)()
 
-		parser = New LogParser("Mail", "mailenable_smtp", Path.Combine(logsPath, "smtp"), "account")
+        parser = New LogParser("Mail", "mailenable_smtp", Path.Combine(logsPath, "smtp"), "account")
         parser.ParseLogs(Of MELogReader)()
 
 
-		' update items with diskspace
-		Dim i As Integer
-		For i = 0 To items.Length - 1
-			Dim item As ServiceProviderItem = items(i)
+        ' update items with diskspace
+        Dim i As Integer
+        For i = 0 To items.Length - 1
+            Dim item As ServiceProviderItem = items(i)
 
-			' create new bandwidth object
-			itemsBandwidth(i) = New ServiceProviderItemBandwidth()
-			itemsBandwidth(i).ItemId = item.Id
-			itemsBandwidth(i).Days = New DailyStatistics(0) {}
+            ' create new bandwidth object
+            itemsBandwidth(i) = New ServiceProviderItemBandwidth()
+            itemsBandwidth(i).ItemId = item.Id
+            itemsBandwidth(i).Days = New DailyStatistics(0) {}
 
-			If TypeOf item Is MailDomain Then
-				Try
-					' get daily statistics
-					itemsBandwidth(i).Days = parser.GetDailyStatistics(since, New String() {item.Name})
-				Catch ex As Exception
-					Log.WriteError("Error calculating bandwidth for mail domain: " + item.Name, ex)
-				End Try
-			End If
-		Next i
-		Return itemsBandwidth
+            If TypeOf item Is MailDomain Then
+                Try
+                    ' get daily statistics
+                    itemsBandwidth(i).Days = parser.GetDailyStatistics(since, New String() {item.Name})
+                Catch ex As Exception
+                    Log.WriteError("Error calculating bandwidth for mail domain: " + item.Name, ex)
+                End Try
+            End If
+        Next i
+        Return itemsBandwidth
     End Function
 
     Private Sub DeleteMailBoxDirectory(ByVal name As String)
@@ -1772,87 +1804,60 @@ Public Class MailEnable
     End Sub
 
     Private Sub SetMailBoxReplyToAddress(ByVal mailbox As String, ByVal replyToAddress As String)
-        Dim mailBoxFile As String = String.Format("Config\PostOffices\{0}\MAILBOXES\{1}.sys", GetDomainName(mailbox), GetMailboxName(mailbox))
-        Dim mailboxPath As String = Path.Combine(GetInstallPath(), mailBoxFile)
 
-        If (File.Exists(mailboxPath) <> True) Then
-            Dim stream As New IO.FileStream(mailboxPath, IO.FileMode.OpenOrCreate, IO.FileAccess.ReadWrite, IO.FileShare.None)
-            Dim writer As New StreamWriter(stream)
-            writer.WriteLine("[General]")
-            writer.Dispose()
-            stream.Dispose()
-        End If
+        Dim oMEAOSO As New WebsitePanel.Providers.Mail.MailEnableOption
 
-        Dim reader As New StreamReader(mailboxPath)
+        With oMEAOSO
+            .Scope = 2
+            .Query = GetDomainName(mailbox) & "/" & GetMailboxName(mailbox)
+            .ValueName = "ReplyAddress"
+            .Value = replyToAddress
+            .SetOption()
+        End With
 
-        Dim Count As Integer = 0
-        While reader.Peek <> -1
-            Dim line As String = reader.ReadLine()
-            If line.Contains("ReplyAddress") Then
-                reader.Dispose()
-                ReplaceLine(mailboxPath, Count, String.Format("ReplyAddress={0}", replyToAddress))
-                Exit Sub
-            End If
-            Count = Count + 1
-        End While
-
-        reader.Dispose()
-        AppendLine(mailboxPath, String.Format("ReplyAddress={0}", replyToAddress))
-
-        'Dim writer As New StreamWriter(mailboxPath)
-        'writer.WriteLine(String.Format("ReplyAddress={0}", replyToAddress))
-        'writer.Close()
-        'writer.Dispose()
-
-    End Sub
-
-
-    Private Sub ReplaceLine(ByRef FileAddress As String, ByRef line As Integer, ByVal address As String)
-        Dim TheFileLines As New List(Of String)
-        TheFileLines.AddRange(System.IO.File.ReadAllLines(FileAddress))
-        If line >= TheFileLines.Count Then Exit Sub
-        TheFileLines.RemoveAt(line)
-        TheFileLines.Add(address)
-        File.WriteAllLines(FileAddress, TheFileLines.ToArray)
-    End Sub
-
-    Private Sub AppendLine(ByRef FileAddress As String, ByRef line As String)
-        Dim TheFileLines As New List(Of String)
-        TheFileLines.AddRange(System.IO.File.ReadAllLines(FileAddress))
-        TheFileLines.Add(line)
-        File.WriteAllLines(FileAddress, TheFileLines.ToArray)
     End Sub
 
     Private Function GetMailBoxReplyToAddress(ByVal mailbox As String)
-        Dim mailBoxFile As String = String.Format("Config\PostOffices\{0}\MAILBOXES\{1}.sys", GetDomainName(mailbox), GetMailboxName(mailbox))
-        Dim mailboxPath As String = Path.Combine(GetInstallPath(), mailBoxFile)
 
-        If (File.Exists(mailboxPath) = False) Then
-            Return String.Empty
-        End If
+        Dim oMEAOSO As New WebsitePanel.Providers.Mail.MailEnableOption
 
-        Dim reader As New StreamReader(mailboxPath)
+        With oMEAOSO
+            .Scope = 2
+            .Query = GetDomainName(mailbox) & "/" & GetMailboxName(mailbox)
+            .ValueName = "ReplyAddress"
+            .GetOption()
+            Return .Value
+        End With
 
-        While reader.Peek <> -1
-            Dim line As String = reader.ReadLine()
-            If line.Contains("ReplyAddress") Then
-                Dim split As String() = line.Split(New [Char]() {"="c})
-                Return split(1)
-            End If
-        End While
-        reader.Dispose()
-        Return String.Empty
     End Function
 
-    Private Function GetPostofficesPath() As String
-        Dim key As RegistryKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\Mail Enable\Mail Enable")
-        Return CStr(key.GetValue("Mail Root"))
+    Function GetMailEnableRegistryItem(item As String) As String
+
+        Dim key As RegistryKey
+
+        If IntPtr.Size > 4 Then
+            key = Registry.LocalMachine.OpenSubKey("SOFTWARE\Wow6432Node\Mail Enable\Mail Enable")
+        Else
+            key = Registry.LocalMachine.OpenSubKey("SOFTWARE\Mail Enable\Mail Enable")
+        End If
+
+        Return CStr(key.GetValue(item))
+
+    End Function
+
+
+    Shared Function GetPostofficesPath() As String
+
+        Dim oLocal As New MailEnable
+        Return oLocal.GetMailEnableRegistryItem("Mail Root")
+
     End Function
 
 
     Private Function GetInstallPath() As String
-        Dim key As RegistryKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\Mail Enable\Mail Enable")
-        Return CStr(key.GetValue("Program Directory"))
+
+        Return GetMailEnableRegistryItem("Program Directory")
+
     End Function
 
 
@@ -1953,69 +1958,84 @@ Public Class MailEnable
     End Function
 
     Private Function GetAnnotationPath(ByVal postOfficeName As String) As String
+
+        'the annotation paths are in the configuration directory
+
         Dim programPath As String = ""
-        Dim key32bit As RegistryKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\Mail Enable\Mail Enable")
-        If (key32bit Is Nothing) Then
-            Dim key64bit As RegistryKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\Wow6432Node\Mail Enable\Mail Enable")
-            If (key64bit Is Nothing) Then
-                Return String.Empty
-            Else
-                programPath = CStr(key64bit.GetValue("Data Directory"))
-                Return Path.Combine(programPath, String.Format("Config\Postoffices\{0}\ANNOTATIONS", postOfficeName))
-            End If
+        Dim key As RegistryKey
+
+        If IntPtr.Size > 4 Then
+            key = Registry.LocalMachine.OpenSubKey("SOFTWARE\Wow6432Node\Mail Enable\Mail Enable")
         Else
-            programPath = CStr(key32bit.GetValue("Data Directory"))
-            Return Path.Combine(programPath, String.Format("Config\Postoffices\{0}\ANNOTATIONS", postOfficeName))
+            key = Registry.LocalMachine.OpenSubKey("SOFTWARE\Mail Enable\Mail Enable")
         End If
 
+        If (key Is Nothing) Then          
+            Return String.Empty
+        Else
+            programPath = CStr(key.GetValue("Configuration Directory"))
+            Return Path.Combine(programPath, String.Format("Postoffices\{0}\ANNOTATIONS", postOfficeName))
+        End If
+
+    End Function
+
+    Private Function NonCString(ByVal InString As String) As String
+        Dim NTPos As Integer
+        NTPos = InStr(1, InString, Chr(0), CompareMethod.Binary)
+        If NTPos > 0 Then
+            NonCString = Left(InString, NTPos - 1)
+        Else
+            NonCString = InString
+        End If
+    End Function
+
+    Private Function CString(ByVal InString As String) As String
+        CString = InString & Chr(0)
     End Function
 
     Private Function GetLoggingPath() As String
 
         Dim programPath As String = ""
-        Dim key32bit As RegistryKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\Mail Enable\Mail Enable")
-        If (key32bit Is Nothing) Then
-            Dim key64bit As RegistryKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\Wow6432Node\Mail Enable\Mail Enable")
-            If (key64bit Is Nothing) Then
-                Return String.Empty
-            Else
-                Return CStr(key64bit.GetValue("W3C Logging Directory"))
-            End If
+        Dim key As RegistryKey
+
+        If IntPtr.Size > 4 Then
+            key = Registry.LocalMachine.OpenSubKey("SOFTWARE\Wow6432Node\Mail Enable\Mail Enable")
         Else
-            Return CStr(key32bit.GetValue("W3C Logging Directory"))
+            key = Registry.LocalMachine.OpenSubKey("SOFTWARE\Mail Enable\Mail Enable")
+        End If
+
+        If (key Is Nothing) Then
+            Return String.Empty
+        Else
+            Return CStr(key.GetValue("W3C Logging Directory"))
         End If
 
     End Function
+
 #End Region
 
     Public Overrides Function IsInstalled() As Boolean
+
         Dim version As String = ""
-        Dim key32bit As RegistryKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\Mail Enable\Mail Enable")
-        If (key32bit Is Nothing) Then
-            Dim key64bit As RegistryKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\Wow6432Node\Mail Enable\Mail Enable")
-            If (key64bit Is Nothing) Then
-                Return False
-            Else
-                version = CStr(key64bit.GetValue("Enterprise Version"))
-                If (version Is Nothing) Then
-                    version = CStr(key64bit.GetValue("Version"))
-                    If (version Is Nothing Or version.Equals("0")) Then
-                        version = CStr(key64bit.GetValue("Professional Version"))
-                    End If
-                End If
-            End If
+        Dim key As RegistryKey
+
+        If IntPtr.Size > 4 Then
+            key = Registry.LocalMachine.OpenSubKey("SOFTWARE\Wow6432Node\Mail Enable\Mail Enable")
         Else
-            version = CStr(key32bit.GetValue("Enterprise Version"))
-            If (version Is Nothing) Then
-                version = CStr(key32bit.GetValue("Version"))
-                If (version Is Nothing Or version.Equals("0")) Then
-                    version = CStr(key32bit.GetValue("Professional Version"))
-                End If
+            key = Registry.LocalMachine.OpenSubKey("SOFTWARE\Mail Enable\Mail Enable")
+        End If
+
+        version = CStr(key.GetValue("Enterprise Version"))
+        If (version Is Nothing) Then
+            version = CStr(key.GetValue("Version"))
+            If (version Is Nothing Or version.Equals("0")) Then
+                version = CStr(key.GetValue("Professional Version"))
             End If
         End If
+
         If [String].IsNullOrEmpty(version) = False Then
             Dim split As String() = version.Split(New [Char]() {"."c})
-            Return split(0).Equals("1") Or split(0).Equals("2") Or split(0).Equals("3") Or split(0).Equals("4")
+            Return split(0).Equals("1") Or split(0).Equals("2") Or split(0).Equals("3") Or split(0).Equals("4") Or split(0).Equals("5") Or split(0).Equals("6")
         Else
             Return False
         End If
