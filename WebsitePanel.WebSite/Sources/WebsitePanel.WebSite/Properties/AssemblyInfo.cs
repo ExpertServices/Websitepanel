@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("WebsitePanel.WebSite")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("SMB SAAS Systems Inc.")]
+[assembly: AssemblyCompany("Outercurve Foundation")]
 [assembly: AssemblyProduct("WebsitePanel Web Site")]
-[assembly: AssemblyCopyright("Copyright © 2010 SMB SAAS Systems Inc.")]
+[assembly: AssemblyCopyright("Copyright © 2012 Outercurve Foundation.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
