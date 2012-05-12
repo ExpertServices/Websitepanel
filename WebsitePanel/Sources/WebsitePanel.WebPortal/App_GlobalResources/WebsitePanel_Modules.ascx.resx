@@ -522,6 +522,12 @@
   <data name="ModuleTitle.Sql2008Users" xml:space="preserve">
     <value>SQL Server 2008 Logins</value>
   </data>
+  <data name="ModuleTitle.Sql2012Databases" xml:space="preserve">
+    <value>SQL Server 2012 Databases</value>
+  </data>
+  <data name="ModuleTitle.Sql2012Users" xml:space="preserve">
+    <value>SQL Server 2012 Logins</value>
+  </data>
   <data name="ModuleTitle.SQLDatabaseProperties" xml:space="preserve">
     <value>SQL Database Properties</value>
   </data>

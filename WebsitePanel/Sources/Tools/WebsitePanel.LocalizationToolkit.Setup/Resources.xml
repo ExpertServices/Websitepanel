@@ -1,4 +1,4 @@
-<?xml version="1.0" standalone="yes"?>
+﻿<?xml version="1.0" standalone="yes"?>
 <Resources xmlns="http://tempuri.org/Resources.xsd">
   <Resource>
     <File>App_GlobalResources\Ecommerce_Modules.ascx.resx</File>
@@ -3336,6 +3336,16 @@
   </Resource>
   <Resource>
     <File>App_GlobalResources\WebsitePanel_Modules.ascx.resx</File>
+    <Key>ModuleTitle.Sql2012Databases</Key>
+    <DefaultValue>SQL Server 2012 Databases</DefaultValue>
+  </Resource>
+  <Resource>
+    <File>App_GlobalResources\WebsitePanel_Modules.ascx.resx</File>
+    <Key>ModuleTitle.Sql2012Users</Key>
+    <DefaultValue>SQL Server 2012 Logins</DefaultValue>
+  </Resource>
+  <Resource>
+    <File>App_GlobalResources\WebsitePanel_Modules.ascx.resx</File>
     <Key>ModuleTitle.SQLDatabaseProperties</Key>
     <DefaultValue>SQL Database Properties</DefaultValue>
   </Resource>
@@ -3993,6 +4003,16 @@
     <File>App_GlobalResources\WebsitePanel_Pages.ascx.resx</File>
     <Key>PageTitle.SpaceMsSql2008</Key>
     <DefaultValue>{user} - {space} - SQL Server 2008</DefaultValue>
+  </Resource>
+  <Resource>
+    <File>App_GlobalResources\WebsitePanel_Pages.ascx.resx</File>
+    <Key>PageName.SpaceMsSql2012</Key>
+    <DefaultValue>SQL Server 2012</DefaultValue>
+  </Resource>
+  <Resource>
+    <File>App_GlobalResources\WebsitePanel_Pages.ascx.resx</File>
+    <Key>PageTitle.SpaceMsSql2012</Key>
+    <DefaultValue>{user} - {space} - SQL Server 2012</DefaultValue>
   </Resource>
   <Resource>
     <File>App_GlobalResources\WebsitePanel_Pages.ascx.resx</File>
@@ -7096,6 +7116,36 @@
   </Resource>
   <Resource>
     <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
+    <Key>Quota.MsSQL2012.Backup</Key>
+    <DefaultValue>Database Backups</DefaultValue>
+  </Resource>
+  <Resource>
+    <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
+    <Key>Quota.MsSQL2012.Databases</Key>
+    <DefaultValue>Databases</DefaultValue>
+  </Resource>
+  <Resource>
+    <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
+    <Key>Quota.MsSQL2012.MaxDatabaseSize</Key>
+    <DefaultValue>Max Database Size, MB</DefaultValue>
+  </Resource>
+  <Resource>
+    <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
+    <Key>Quota.MsSQL2012.Restore</Key>
+    <DefaultValue>Database Restores</DefaultValue>
+  </Resource>
+  <Resource>
+    <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
+    <Key>Quota.MsSQL2012.Truncate</Key>
+    <DefaultValue>Database Truncate</DefaultValue>
+  </Resource>
+  <Resource>
+    <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
+    <Key>Quota.MsSQL2012.Users</Key>
+    <DefaultValue>Users</DefaultValue>
+  </Resource>
+  <Resource>
+    <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
     <Key>Quota.MySQL5.Backup</Key>
     <DefaultValue>Database Backups</DefaultValue>
   </Resource>
@@ -7128,6 +7178,11 @@
     <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
     <Key>ResourceGroup.MsSQL2008</Key>
     <DefaultValue>SQL Server 2008</DefaultValue>
+  </Resource>
+  <Resource>
+    <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
+    <Key>ResourceGroup.MsSQL2012</Key>
+    <DefaultValue>SQL Server 2012</DefaultValue>
   </Resource>
   <Resource>
     <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
@@ -7448,6 +7503,16 @@
     <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
     <Key>ServiceItemType.MsSQL2008User</Key>
     <DefaultValue>MS SQL 2008 User</DefaultValue>
+  </Resource>
+  <Resource>
+    <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
+    <Key>ServiceItemType.MsSQL2012Database</Key>
+    <DefaultValue>MS SQL 2012 Database</DefaultValue>
+  </Resource>
+  <Resource>
+    <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
+    <Key>ServiceItemType.MsSQL2012User</Key>
+    <DefaultValue>MS SQL 2012 User</DefaultValue>
   </Resource>
   <Resource>
     <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
@@ -9298,6 +9363,11 @@
   <Resource>
     <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
     <Key>Quota.MsSQL2008.MaxLogSize</Key>
+    <DefaultValue>Max Log Size, MB</DefaultValue>
+  </Resource>
+  <Resource>
+    <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
+    <Key>Quota.MsSQL2012.MaxLogSize</Key>
     <DefaultValue>Max Log Size, MB</DefaultValue>
   </Resource>
   <Resource>
@@ -11874,6 +11944,11 @@
     <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
     <Key>ReportResourceGroup.MsSQL2008</Key>
     <DefaultValue>SQL Server 2008</DefaultValue>
+  </Resource>
+  <Resource>
+    <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
+    <Key>ReportResourceGroup.MsSQL2012</Key>
+    <DefaultValue>SQL Server 2012</DefaultValue>
   </Resource>
   <Resource>
     <File>App_GlobalResources\WebsitePanel_SharedResources.ascx.resx</File>
@@ -15761,6 +15836,11 @@ for your installation of ResellerClub .NET API Kit.&lt;/div&gt;</DefaultValue>
     <File>DesktopModules\Ecommerce\UserControls\App_LocalResources\HostingPlanQuotas.ascx.resx</File>
     <Key>lclMSSQL2008Resources.Text</Key>
     <DefaultValue>Microsoft SQL 2008 Quotas</DefaultValue>
+  </Resource>
+  <Resource>
+    <File>DesktopModules\Ecommerce\UserControls\App_LocalResources\HostingPlanQuotas.ascx.resx</File>
+    <Key>lclMSSQL2012Resources.Text</Key>
+    <DefaultValue>Microsoft SQL 2012 Quotas</DefaultValue>
   </Resource>
   <Resource>
     <File>DesktopModules\Ecommerce\UserControls\App_LocalResources\LoginUserAccount.ascx.resx</File>

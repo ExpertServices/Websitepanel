@@ -862,6 +862,10 @@ namespace WebsitePanel.Setup
 						{
 							serviceInfo.ProviderId = 202;
 						}
+						else if (sqlVersion.StartsWith("11."))
+						{
+							serviceInfo.ProviderId = 209;
+						}
 						serviceId = ES.Services.Servers.AddService(serviceInfo);
 					}
 					else

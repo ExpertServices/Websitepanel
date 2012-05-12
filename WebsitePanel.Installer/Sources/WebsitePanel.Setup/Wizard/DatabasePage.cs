@@ -124,11 +124,11 @@ namespace WebsitePanel.Setup
 				{
 					// check SQL server version
 					string sqlVersion = GetSqlServerVersion(connectionString);
-					if (!sqlVersion.StartsWith("9.") && !sqlVersion.StartsWith("10."))
+					if (!sqlVersion.StartsWith("9.") && !sqlVersion.StartsWith("10.") && !sqlVersion.StartsWith("11."))
 					{
 						// SQL Server 2005 engine required
 						e.Cancel = true;
-						ShowWarning("This program can be installed on SQL Server 2005/2008 only.");
+						ShowWarning("This program can be installed on SQL Server 2005/2008/2012 only.");
 						return;
 					}
 					int securityMode = GetSqlServerSecurityMode(connectionString);

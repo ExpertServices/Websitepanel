@@ -3625,7 +3625,21 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (217, 22, 4, N'MsSQL2008.MaxLogSize', N'Max Log Size', 3, 0, NULL)
 GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (218, 23, 1, N'MsSQL2012.Databases', N'Databases', 2, 0, 37)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (219, 23, 2, N'MsSQL2012.Users', N'Users', 2, 0, 38)
+GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (220, 1, 5, N'OS.DomainPointers', N'Domain Pointers', 2, 0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (221, 23, 3, N'MsSQL2012.MaxDatabaseSize', N'Max Database Size', 3, 0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (222, 23, 5, N'MsSQL2012.Backup', N'Database Backups', 1, 0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (223, 23, 6, N'MsSQL2012.Restore', N'Database Restores', 1, 0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (224, 23, 7, N'MsSQL2012.Truncate', N'Database Truncate', 1, 0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (225, 23, 4, N'MsSQL2012.MaxLogSize', N'Max Log Size', 3, 0, NULL)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (300, 30, 1, N'VPS.ServersNumber', N'Number of VPS', 2, 0, 33)
 GO
@@ -10469,37 +10483,39 @@ INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupContr
 GO
 INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (5, N'MsSQL2000', 8, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (6, N'MySQL4', 11, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (6, N'MySQL4', 12, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (7, N'DNS', 16, N'WebsitePanel.EnterpriseServer.DnsServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (7, N'DNS', 17, N'WebsitePanel.EnterpriseServer.DnsServerController')
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (8, N'Statistics', 17, N'WebsitePanel.EnterpriseServer.StatisticsServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (8, N'Statistics', 18, N'WebsitePanel.EnterpriseServer.StatisticsServerController')
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (9, N'SharePoint', 13, N'WebsitePanel.EnterpriseServer.SharePointServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (9, N'SharePoint', 14, N'WebsitePanel.EnterpriseServer.SharePointServerController')
 GO
 INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (10, N'MsSQL2005', 9, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (11, N'MySQL5', 12, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (11, N'MySQL5', 13, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
 GO
 INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (12, N'Exchange', 5, NULL)
 GO
 INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (13, N'Hosted Organizations', 6, NULL)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (20, N'Hosted SharePoint', 14, N'WebsitePanel.EnterpriseServer.HostedSharePointServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (20, N'Hosted SharePoint', 15, N'WebsitePanel.EnterpriseServer.HostedSharePointServerController')
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (21, N'Hosted CRM', 15, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (21, N'Hosted CRM', 16, NULL)
 GO
 INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (22, N'MsSQL2008', 10, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (30, N'VPS', 18, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (23, N'MsSQL2012', 11, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (31, N'BlackBerry', 20, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (30, N'VPS', 19, NULL)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (32, N'OCS', 21, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (31, N'BlackBerry', 21, NULL)
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (32, N'OCS', 22, NULL)
 GO
 INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (33, N'ExchangeHostedEdition', 7, N'WebsitePanel.EnterpriseServer.ExchangeHostedEditionController')
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (40, N'VPSForPC', 19, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (40, N'VPSForPC', 20, NULL)
 GO
 SET ANSI_NULLS ON
 GO
@@ -13920,7 +13936,7 @@ INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [D
 GO
 INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_BACKUP_DATABASE', N'BACKUP_NAME', N'String', N'database_backup.bak', 4)
 GO
-INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_BACKUP_DATABASE', N'DATABASE_GROUP', N'List', N'MsSQL2000=SQL Server 2000;MsSQL2005=SQL Server 2005;MsSQL2008=SQL Server 2008;MySQL4=MySQL 4.0;MySQL5=MySQL 5.0', 1)
+INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_BACKUP_DATABASE', N'DATABASE_GROUP', N'List', N'MsSQL2000=SQL Server 2000;MsSQL2005=SQL Server 2005;MsSQL2008=SQL Server 2008;MsSQL2012=SQL Server 2012;MySQL4=MySQL 4.0;MySQL5=MySQL 5.0', 1)
 GO
 INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_BACKUP_DATABASE', N'DATABASE_NAME', N'String', N'', 2)
 GO
@@ -21050,6 +21066,7 @@ and below is the summary information for its resources.
         <ad:if test="#space.Groups.ContainsKey("MsSQL2000")#"><li><a href="##mssql2000">SQL Server 2000</a></li></ad:if>
         <ad:if test="#space.Groups.ContainsKey("MsSQL2005")#"><li><a href="##mssql2005">SQL Server 2005</a></li></ad:if>
         <ad:if test="#space.Groups.ContainsKey("MsSQL2008")#"><li><a href="##mssql2008">SQL Server 2008</a></li></ad:if>
+	<ad:if test="#space.Groups.ContainsKey("MsSQL2012")#"><li><a href="##mssql2012">SQL Server 2012</a></li></ad:if>
         <ad:if test="#space.Groups.ContainsKey("MySQL4")#"><li><a href="##mysql4">My SQL 4.x</a></li></ad:if>
         <ad:if test="#space.Groups.ContainsKey("MySQL5")#"><li><a href="##mysql5">My SQL 5.x</a></li></ad:if>
         <li><a href="##msaccess">Microsoft Access</a></li>
@@ -21495,6 +21512,34 @@ using this IP address instead of actual POP3/SMTP/IMAP servers name:
 	</tr>
 </table>
 <ad:MsSqlConnectionStrings server="#MsSQL2008Address#" />
+</ad:if>
+
+<ad:if test="#space.Groups.ContainsKey("MsSQL2012")#">
+<a name="mssql2012"></a>
+
+<h2>SQL Server 2012</h2>
+
+<table>
+    <tr>
+        <td class="Label">Maximum Number of Databases:</td>
+        <td><ad:NumericQuota quota="MsSQL2012.Databases" /></td>
+    </tr>
+    <tr>
+        <td class="Label">Maximum Number of Users:</td>
+        <td><ad:NumericQuota quota="MsSQL2012.Users" /></td>
+    </tr>
+</table>
+
+<p>
+	In order to connect to SQL Server 2012 from Management Studio, Enterprise Manager, Query Analyzer
+	or other client software you can use the following SQL Server address:
+</p>
+<table>
+	<tr>
+		<td>#MsSQL2012Address#</td>
+	</tr>
+</table>
+<ad:MsSqlConnectionStrings server="#MsSQL2012Address#" />
 </ad:if>
 
 <ad:if test="#space.Groups.ContainsKey("MySQL4")#">
@@ -22241,6 +22286,10 @@ GO
 INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (35, 40, N'VMInfo', N'WebsitePanel.Providers.Virtualization.VMInfo, WebsitePanel.Providers.Base', 1, 0, 0, 1, 1, 1, 0, 0)
 GO
 INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (36, 40, N'VirtualSwitch', N'WebsitePanel.Providers.Virtualization.VirtualSwitch, WebsitePanel.Providers.Base', 2, 0, 0, 1, 1, 1, 0, 0)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (37, 23, N'MsSQL2012Database', N'WebsitePanel.Providers.Database.SqlDatabase, WebsitePanel.Providers.Base', 1, 1, 0, 0, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (38, 23, N'MsSQL2012User', N'WebsitePanel.Providers.Database.SqlUser, WebsitePanel.Providers.Base', 1, 0, 0, 0, 1, 1, 1, 1)
 GO
 INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (40, 33, N'ExchangeOrganization', N'WebsitePanel.Providers.ExchangeHostedEdition.ExchangeOrganization, WebsitePanel.Providers.Base', 1, 0, 0, 1, 1, 1, 0, 0)
 GO
@@ -23204,6 +23253,8 @@ GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (207, 33, N'Exchange2010SP1', N'Exchange Server 2010 SP1 Hosting Mode', N'WebsitePanel.Providers.ExchangeHostedEdition.Exchange2010SP1, WebsitePanel.Providers.ExchangeHostedEdition', N'Exchange2010SP1', 1)
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (208, 20, N'HostedSharePoint2010', N'Hosted SharePoint Foundation 2010', N'WebsitePanel.Providers.HostedSolution.HostedSharePointServer2010, WebsitePanel.Providers.HostedSolution', N'HostedSharePoint30', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (209, 23, N'MsSQL', N'Microsoft SQL Server 2012', N'WebsitePanel.Providers.Database.MsSqlServer2012, WebsitePanel.Providers.Database.SqlServer', N'MSSQL', NULL)
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (300, 30, N'HyperV', N'Microsoft Hyper-V', N'WebsitePanel.Providers.Virtualization.HyperV, WebsitePanel.Providers.Virtualization.HyperV', N'HyperV', 1)
 GO

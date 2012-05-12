@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -26,31 +26,22 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-namespace WebsitePanel.EnterpriseServer
+﻿using System;
+
+namespace WebsitePanel.Providers.Database
 {
-    public class ResourceGroups
+    public class MsSqlServer2012 : MsSqlServer2005
     {
-        public const string Os = "OS";
-        public const string Web = "Web";
-        public const string Ftp = "FTP";
-        public const string Mail = "Mail";
-        public const string MsSql2000 = "MsSQL2000";
-        public const string MySql4 = "MySQL4";
-        public const string MsSql2005 = "MsSQL2005";
-        public const string MsSql2008 = "MsSQL2008";
-        public const string MsSql2012 = "MsSQL2012";
-        public const string MySql5 = "MySQL5";
-        public const string Dns = "DNS";
-        public const string Statistics = "Statistics";
-        public const string SharePoint = "SharePoint";
-		public const string HostedSharePoint = "Hosted SharePoint";
-		public const string Exchange = "Exchange";
-        public const string ExchangeHostedEdition = "ExchangeHostedEdition";
-        public const string HostedOrganizations = "Hosted Organizations";
-        public const string HostedCRM = "Hosted CRM";
-        public const string VPS = "VPS";
-        public const string BlackBerry = "BlackBerry";
-        public const string OCS = "OCS";
-        public const string VPSForPC = "VPSForPC";
+        public override bool IsInstalled()
+        {
+            return CheckVersion("11.");
+        }
+
+        public override void TruncateDatabase(string databaseName)
+        {
+            SqlDatabase database = GetDatabase(databaseName);
+            ExecuteNonQuery(String.Format(@"USE [{0}];DBCC SHRINKFILE ('{1}', 1);",
+                databaseName,  database.LogName));
+        }
     }
 }

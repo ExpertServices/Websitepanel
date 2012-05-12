@@ -1875,6 +1875,7 @@ namespace WebsitePanel.EnterpriseServer
             SetSqlServerExternalAddress(packageId, items, ResourceGroups.MsSql2000);
             SetSqlServerExternalAddress(packageId, items, ResourceGroups.MsSql2005);
             SetSqlServerExternalAddress(packageId, items, ResourceGroups.MsSql2008);
+            SetSqlServerExternalAddress(packageId, items, ResourceGroups.MsSql2012);
             SetSqlServerExternalAddress(packageId, items, ResourceGroups.MySql4);
             SetSqlServerExternalAddress(packageId, items, ResourceGroups.MySql5);
 

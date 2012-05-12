@@ -69,6 +69,7 @@ namespace WebsitePanel.Portal
             versions.Add(ResourceGroups.MsSql2000);
             versions.Add(ResourceGroups.MsSql2005);
             versions.Add(ResourceGroups.MsSql2008);
+            versions.Add(ResourceGroups.MsSql2012);
 
             FillDatabaseVersions(PanelSecurity.PackageId, ddlDatabaseVersion.Items, versions);
         }

@@ -169,10 +169,11 @@ namespace WebsitePanel.EnterpriseServer
                 //{
                 //    appsFilter.AddRange(SupportedAppDependencies.PHP_SCRIPTING);
                 //}
-                //// if either MSSQL 2000, 2005 or 2008 enabled in the hosting plan
+                //// if either MSSQL 2000, 2005, 2008 or 2012 enabled in the hosting plan
                 //if (context.Groups.ContainsKey(ResourceGroups.MsSql2000) ||
                 //    context.Groups.ContainsKey(ResourceGroups.MsSql2005) ||
-                //    context.Groups.ContainsKey(ResourceGroups.MsSql2008))
+                //    context.Groups.ContainsKey(ResourceGroups.MsSql2008) ||
+                //    context.Groups.ContainsKey(ResourceGroups.MsSql2012))
                 //{
                 //    appsFilter.AddRange(SupportedAppDependencies.MSSQL_DATABASE);
                 //}
@@ -342,6 +343,7 @@ namespace WebsitePanel.EnterpriseServer
                     !(context.Groups.ContainsKey(ResourceGroups.MsSql2000)
                     || context.Groups.ContainsKey(ResourceGroups.MsSql2005)
                     || context.Groups.ContainsKey(ResourceGroups.MsSql2008)
+                    || context.Groups.ContainsKey(ResourceGroups.MsSql2012)
                     || context.Groups.ContainsKey(ResourceGroups.MySql4)
                     || context.Groups.ContainsKey(ResourceGroups.MySql5)))
                     result.ErrorCodes.Add(GalleryErrors.DatabaseRequired);
@@ -350,7 +352,8 @@ namespace WebsitePanel.EnterpriseServer
                 else if ((app.WellKnownDependencies & GalleryApplicationWellKnownDependency.SQL) == GalleryApplicationWellKnownDependency.SQL
                     && !(context.Groups.ContainsKey(ResourceGroups.MsSql2000)
                     || context.Groups.ContainsKey(ResourceGroups.MsSql2005)
-                    || context.Groups.ContainsKey(ResourceGroups.MsSql2008)))
+                    || context.Groups.ContainsKey(ResourceGroups.MsSql2008)
+                    || context.Groups.ContainsKey(ResourceGroups.MsSql2012)))
                     result.ErrorCodes.Add(GalleryErrors.SQLRequired);
 
                 // MySQL

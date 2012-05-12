@@ -158,6 +158,15 @@ namespace WebsitePanel.Ecommerce.Portal.UserControls {
         protected global::System.Web.UI.WebControls.PlaceHolder MsSQL2008;
         
         /// <summary>
+        /// MsSQL2012 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder MsSQL2012;
+        
+        /// <summary>
         /// Localize3 control.
         /// </summary>
         /// <remarks>
@@ -174,6 +183,15 @@ namespace WebsitePanel.Ecommerce.Portal.UserControls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Repeater MsSQL2008_Quotas;
+        
+        /// <summary>
+        /// MsSQL2012_Quotas control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater MsSQL2012_Quotas;
         
         /// <summary>
         /// MySQL4 control.

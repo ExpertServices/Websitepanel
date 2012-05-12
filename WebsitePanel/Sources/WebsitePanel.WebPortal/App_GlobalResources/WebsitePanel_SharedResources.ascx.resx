@@ -1809,6 +1809,24 @@
   <data name="Quota.MsSQL2008.Users" xml:space="preserve">
     <value>Users</value>
   </data>
+  <data name="Quota.MsSQL2012.Backup" xml:space="preserve">
+    <value>Database Backups</value>
+  </data>
+  <data name="Quota.MsSQL2012.Databases" xml:space="preserve">
+    <value>Databases</value>
+  </data>
+  <data name="Quota.MsSQL2012.MaxDatabaseSize" xml:space="preserve">
+    <value>Max Database Size, MB</value>
+  </data>
+  <data name="Quota.MsSQL2012.Restore" xml:space="preserve">
+    <value>Database Restores</value>
+  </data>
+  <data name="Quota.MsSQL2012.Truncate" xml:space="preserve">
+    <value>Database Truncate</value>
+  </data>
+  <data name="Quota.MsSQL2012.Users" xml:space="preserve">
+    <value>Users</value>
+  </data>
   <data name="Quota.MySQL5.Backup" xml:space="preserve">
     <value>Database Backups</value>
   </data>
@@ -1847,6 +1865,9 @@
   </data>
   <data name="ResourceGroup.MsSQL2008" xml:space="preserve">
     <value>SQL Server 2008</value>
+  </data>
+  <data name="ResourceGroup.MsSQL2012" xml:space="preserve">
+    <value>SQL Server 2012</value>
   </data>
   <data name="ResourceGroup.MySQL5" xml:space="preserve">
     <value>MySQL 5</value>
@@ -2039,6 +2060,12 @@
   </data>
   <data name="ServiceItemType.MsSQL2008User" xml:space="preserve">
     <value>MS SQL 2008 User</value>
+  </data>
+  <data name="ServiceItemType.MsSQL2012Database" xml:space="preserve">
+    <value>MS SQL 2012 Database</value>
+  </data>
+  <data name="ServiceItemType.MsSQL2012User" xml:space="preserve">
+    <value>MS SQL 2012 User</value>
   </data>
   <data name="ServiceItemType.MySQL4Database" xml:space="preserve">
     <value>MySQL 4 Database</value>
@@ -3149,6 +3176,9 @@
     <value>Max Log Size, MB</value>
   </data>
   <data name="Quota.MsSQL2008.MaxLogSize" xml:space="preserve">
+    <value>Max Log Size, MB</value>
+  </data>
+  <data name="Quota.MsSQL2012.MaxLogSize" xml:space="preserve">
     <value>Max Log Size, MB</value>
   </data>
   <data name="Error.EXCHANGE_UPDATE_MAILBOX_PERMISSIONS" xml:space="preserve">
@@ -4692,6 +4722,9 @@
   </data>
   <data name="ReportResourceGroup.MsSQL2008" xml:space="preserve">
     <value>SQL Server 2008</value>
+  </data>
+  <data name="ReportResourceGroup.MsSQL2012" xml:space="preserve">
+    <value>SQL Server 2012</value>
   </data>
   <data name="WebAppGallery.ApplicationInstallationError" xml:space="preserve">
     <value>Error while install application pack</value>
