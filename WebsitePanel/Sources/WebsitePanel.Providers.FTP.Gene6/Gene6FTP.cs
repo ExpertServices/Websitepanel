@@ -52,6 +52,11 @@ namespace WebsitePanel.Providers.FTP
         {
             get { return FileUtils.EvaluateSystemVariables(ProviderSettings["InstallFolder"]); }
         }
+
+        protected string LogsFolder
+        {
+            get { return FileUtils.EvaluateSystemVariables(ProviderSettings["LogsFolder"]); }
+        }
         #endregion
 
         #region Sites
@@ -589,7 +594,13 @@ TransferLimitType=never");
 
         private string GetLogsPath()
         {
-            return GetInstallFolder() + "Log";
+            if (String.IsNullOrEmpty(LogsFolder))
+                return GetInstallFolder() + "Log";
+            else
+            {
+                string folder = LogsFolder.Replace("/", "\\");
+                return folder.TrimEnd('\\');
+            }
         }
 
         private void WriteTextFile(string path, string content)

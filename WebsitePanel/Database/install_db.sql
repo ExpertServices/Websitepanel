@@ -24160,6 +24160,8 @@ INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [Property
 GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (12, N'InstallFolder', N'%PROGRAMFILES%\Gene6 FTP Server')
 GO
+INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (12, N'LogsFolder', N'%PROGRAMFILES%\Gene6 FTP Server\Log')
+GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (14, N'AdminPassword', N'')
 GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (14, N'AdminUsername', N'admin')

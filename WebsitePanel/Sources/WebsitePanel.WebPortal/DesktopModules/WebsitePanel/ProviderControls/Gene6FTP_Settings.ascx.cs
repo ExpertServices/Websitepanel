@@ -64,14 +64,16 @@ namespace WebsitePanel.Portal.ProviderControls
             Utils.SelectListItem(ddlFtpSite, settings["SiteId"]);
 
             txtInstallFolder.Text = settings["InstallFolder"];
-			chkBuildUncFilesPath.Checked = Utils.ParseBool(settings["BuildUncFilesPath"], false);
+            txtLogsFolder.Text = settings["LogsFolder"];
+            chkBuildUncFilesPath.Checked = Utils.ParseBool(settings["BuildUncFilesPath"], false);
         }
 
         public void SaveSettings(StringDictionary settings)
         {
             settings["SiteId"] = ddlFtpSite.SelectedValue;
             settings["InstallFolder"] = txtInstallFolder.Text.Trim();
-			settings["BuildUncFilesPath"] = chkBuildUncFilesPath.Checked.ToString();
+            settings["LogsFolder"] = txtLogsFolder.Text.Trim();
+            settings["BuildUncFilesPath"] = chkBuildUncFilesPath.Checked.ToString();
         }
     }
 }

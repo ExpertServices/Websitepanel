@@ -827,3 +827,9 @@ BEGIN
 END
 GO
 
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 12 AND [PropertyName] = 'LogsFolder')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (12, N'LogsFolder', N'%PROGRAMFILES%\Gene6 FTP Server\Log')
+END
+GO
+
