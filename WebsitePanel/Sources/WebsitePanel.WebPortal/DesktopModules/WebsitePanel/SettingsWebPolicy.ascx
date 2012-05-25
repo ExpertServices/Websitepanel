@@ -21,6 +21,10 @@
             <td class="Normal" valign=top>
                 <asp:TextBox ID="txtPageContent" runat="server" Rows="10" TextMode="MultiLine" Width="100%" CssClass="NormalTextBox" Wrap="False"></asp:TextBox></td>
         </tr>
+        <tr>
+            <td class="SubHead" valign=top></td>
+            <td><asp:checkbox id="chkEnableParkingPageTokens" meta:resourcekey="chkEnableParkingPageTokens" Text="Allow tokens" Runat="server"></asp:checkbox></td>
+        </tr>
     </table>
 </asp:Panel>
 

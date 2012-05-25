@@ -404,6 +404,13 @@ namespace WebsitePanel.EnterpriseServer
                         if (!String.IsNullOrEmpty(pageName)
                             && pageContent != null)
                         {
+
+                            if (Utils.ParseBool(webPolicy["EnableParkingPageTokens"], false))
+                            {
+                                pageContent = pageContent.Replace("[DOMAIN_NAME]", site.Name);
+                                pageContent = pageContent.Replace("[SITE_IP]", site.SiteIPAddress);
+
+                            }
                             string path = Path.Combine(
                                  FilesController.GetVirtualPackagePath(packageId, site.ContentPath), pageName);
 

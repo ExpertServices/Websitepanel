@@ -76,6 +76,15 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.TextBox txtPageContent;
         
         /// <summary>
+        /// chkEnableParkingPageTokens control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkEnableParkingPageTokens;
+        
+        /// <summary>
         /// WebPublishingProfile control.
         /// </summary>
         /// <remarks>
