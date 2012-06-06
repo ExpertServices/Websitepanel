@@ -45,6 +45,7 @@ namespace WebsitePanel.Providers.HostedSolution
         MailboxManagerActions mailboxManagerActions;
         string accountPassword;
         string samAccountName;
+        string publicFolderPermission;
 
 		public int AccountId
 		{
@@ -110,6 +111,12 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             get { return this.mailboxManagerActions; }
             set { this.mailboxManagerActions = value; }
+        }
+
+        public string PublicFolderPermission
+        {
+            get { return this.publicFolderPermission; }
+            set { this.publicFolderPermission = value; }
         }
 	}
 }

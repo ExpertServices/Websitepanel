@@ -30,6 +30,9 @@ using System;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.EnterpriseServer;
 using Microsoft.Security.Application;
+using System.Collections.Generic;
+using System.Text;
+using System.Reflection;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
@@ -65,15 +68,33 @@ namespace WebsitePanel.Portal.ExchangeServer
                 // bind form
                 txtName.Text = folder.Name;
                 chkHideAddressBook.Checked = folder.HideFromAddressBook;
-
-                authors.SetAccounts(folder.AuthorsAccounts);
+				List<ExchangeAccount> list = new List<ExchangeAccount>();
+				
+					foreach (ExchangeAccount ex in folder.Accounts)
+					{ 
+                      try
+                        {
+                            if (ex != null) 
+                            { 
+                            list.Add(ex);
+                           
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            continue;
+                        }
+					}
+				
+                    ExchangeAccount[] accounts = list.ToArray();
+                    allAccounts.SetAccounts(accounts);                   	
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("EXCHANGE_GET_PFOLDER_SETTINGS", ex);
+				messageBox.ShowErrorMessage("EXCHANGE_GET_PFOLDER_SETTINGS", ex);              
             }
         }
-
+       
         private void SaveSettings()
         {
             if (!Page.IsValid)
@@ -81,26 +102,27 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             try
             {
-                int result = ES.Services.ExchangeServer.SetPublicFolderGeneralSettings(
+               int result = ES.Services.ExchangeServer.SetPublicFolderGeneralSettings(
                     PanelRequest.ItemID, PanelRequest.AccountID,
                     txtName.Text,
                     chkHideAddressBook.Checked,
-
-                    authors.GetAccounts());
-
+					allAccounts.GetAccounts());
+               
                 if (result < 0)
                 {
                     messageBox.ShowResultMessage(result);
                     return;
                 }
 
-				messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_PFOLDER_SETTINGS");
+                messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_PFOLDER_SETTINGS");
 
-				// folder name
-				string origName = litDisplayName.Text;
-				origName = origName.Substring(0, origName.LastIndexOf("\\"));
-				
+                // folder name
+                string origName = litDisplayName.Text;
+                origName = origName.Substring(0, origName.LastIndexOf("\\"));
+
                 litDisplayName.Text = AntiXss.HtmlEncode(origName + txtName.Text);
+
+				BindSettings();
             }
             catch (Exception ex)
             {

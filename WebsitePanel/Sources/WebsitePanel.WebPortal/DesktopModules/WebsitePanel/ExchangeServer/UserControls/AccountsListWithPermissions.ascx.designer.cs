@@ -7,180 +7,207 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal.ExchangeServer {
+namespace WebsitePanel.Portal.ExchangeServer.UserControls {
     
     
-    public partial class ExchangePublicFolderGeneralSettings {
+    public partial class AccountsListWithPermissions {
         
         /// <summary>
-        /// asyncTasks control.
+        /// AccountsUpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.EnableAsyncTasksSupport asyncTasks;
+        protected global::System.Web.UI.UpdatePanel AccountsUpdatePanel;
         
         /// <summary>
-        /// breadcrumb control.
+        /// btnAdd control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.Breadcrumb breadcrumb;
+        protected global::System.Web.UI.WebControls.Button btnAdd;
         
         /// <summary>
-        /// menu control.
+        /// btnDelete control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.Menu menu;
+        protected global::System.Web.UI.WebControls.Button btnDelete;
         
         /// <summary>
-        /// Image1 control.
+        /// gvAccounts control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Image Image1;
+        protected global::System.Web.UI.WebControls.GridView gvAccounts;
         
         /// <summary>
-        /// locTitle control.
+        /// AddAccountsPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locTitle;
+        protected global::System.Web.UI.WebControls.Panel AddAccountsPanel;
         
         /// <summary>
-        /// litDisplayName control.
+        /// headerAddAccounts control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litDisplayName;
+        protected global::System.Web.UI.WebControls.Localize headerAddAccounts;
         
         /// <summary>
-        /// tabs control.
+        /// AddAccountsUpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.PublicFolderTabs tabs;
+        protected global::System.Web.UI.UpdatePanel AddAccountsUpdatePanel;
         
         /// <summary>
-        /// messageBox control.
+        /// locIncludeSearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox messageBox;
+        protected global::System.Web.UI.WebControls.Localize locIncludeSearch;
         
         /// <summary>
-        /// locName control.
+        /// chkIncludeMailboxes control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locName;
+        protected global::System.Web.UI.WebControls.CheckBox chkIncludeMailboxes;
         
         /// <summary>
-        /// txtName control.
+        /// chkIncludeRooms control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtName;
+        protected global::System.Web.UI.WebControls.CheckBox chkIncludeRooms;
         
         /// <summary>
-        /// valDisplayName control.
+        /// chkIncludeEquipment control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator valDisplayName;
+        protected global::System.Web.UI.WebControls.CheckBox chkIncludeEquipment;
         
         /// <summary>
-        /// btnMailEnable control.
+        /// chkIncludeContacts control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnMailEnable;
+        protected global::System.Web.UI.WebControls.CheckBox chkIncludeContacts;
         
         /// <summary>
-        /// btnMailDisable control.
+        /// chkIncludeLists control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnMailDisable;
+        protected global::System.Web.UI.WebControls.CheckBox chkIncludeLists;
         
         /// <summary>
-        /// locAllAccounts control.
+        /// SearchPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locAllAccounts;
+        protected global::System.Web.UI.WebControls.Panel SearchPanel;
         
         /// <summary>
-        /// allAccounts control.
+        /// ddlSearchColumn control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.AccountsListWithPermissions allAccounts;
+        protected global::System.Web.UI.WebControls.DropDownList ddlSearchColumn;
         
         /// <summary>
-        /// chkHideAddressBook control.
+        /// txtSearchValue control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkHideAddressBook;
+        protected global::System.Web.UI.WebControls.TextBox txtSearchValue;
         
         /// <summary>
-        /// btnSave control.
+        /// cmdSearch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSave;
+        protected global::System.Web.UI.WebControls.ImageButton cmdSearch;
         
         /// <summary>
-        /// ValidationSummary1 control.
+        /// gvPopupAccounts control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ValidationSummary ValidationSummary1;
+        protected global::System.Web.UI.WebControls.GridView gvPopupAccounts;
         
         /// <summary>
-        /// FormComments control.
+        /// btnAddSelected control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize FormComments;
+        protected global::System.Web.UI.WebControls.Button btnAddSelected;
+        
+        /// <summary>
+        /// btnCancelAdd control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCancelAdd;
+        
+        /// <summary>
+        /// btnAddAccountsFake control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnAddAccountsFake;
+        
+        /// <summary>
+        /// AddAccountsModal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::AjaxControlToolkit.ModalPopupExtender AddAccountsModal;
     }
 }

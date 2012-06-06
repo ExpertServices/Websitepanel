@@ -896,12 +896,12 @@ namespace WebsitePanel.Server
 
 		[WebMethod, SoapHeader("settings")]
 		public void SetPublicFolderGeneralSettings(string folder, string newFolderName,
-			string[] authorAccounts, bool hideFromAddressBook)
+			 bool hideFromAddressBook, ExchangeAccount[] accounts)
 		{
 			try
 			{
 				LogStart("SetPublicFolderGeneralSettings");
-				ES.SetPublicFolderGeneralSettings(folder, newFolderName, authorAccounts, hideFromAddressBook);
+				ES.SetPublicFolderGeneralSettings(folder, newFolderName, hideFromAddressBook,  accounts);
 				LogEnd("SetPublicFolderGeneralSettings");
 			}
 			catch (Exception ex)

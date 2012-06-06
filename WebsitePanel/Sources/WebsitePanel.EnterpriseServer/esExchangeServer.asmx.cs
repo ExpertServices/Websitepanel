@@ -515,10 +515,10 @@ namespace WebsitePanel.EnterpriseServer
 
 		[WebMethod]
 		public int SetPublicFolderGeneralSettings(int itemId, int accountId, string newName,
-			bool hideAddressBook, string[] authorAccounts)
+			bool hideAddressBook, ExchangeAccount[] accounts)
 		{
 			return ExchangeServerController.SetPublicFolderGeneralSettings(itemId, accountId, newName,
-				hideAddressBook, authorAccounts);
+				hideAddressBook, accounts);
 		}
 
 		[WebMethod]

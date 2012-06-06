@@ -35,8 +35,8 @@ namespace WebsitePanel.Providers.HostedSolution
 		bool hideFromAddressBook;
 		bool mailEnabled;
 
-		ExchangeAccount[] authorsAccounts;
-
+		ExchangeAccount[] accounts;	
+		
 		ExchangeAccount[] acceptAccounts;
 		ExchangeAccount[] rejectAccounts;
 		bool requireSenderAuthentication;
@@ -59,12 +59,13 @@ namespace WebsitePanel.Providers.HostedSolution
 			set { this.mailEnabled = value; }
 		}
 
-		public WebsitePanel.Providers.HostedSolution.ExchangeAccount[] AuthorsAccounts
-		{
-			get { return this.authorsAccounts; }
-			set { this.authorsAccounts = value; }
-		}
-
+		        
+		public WebsitePanel.Providers.HostedSolution.ExchangeAccount[] Accounts
+        {
+            get { return this.accounts; }
+            set { this.accounts = value; }
+        }
+        
 		public WebsitePanel.Providers.HostedSolution.ExchangeAccount[] AcceptAccounts
 		{
 			get { return this.acceptAccounts; }

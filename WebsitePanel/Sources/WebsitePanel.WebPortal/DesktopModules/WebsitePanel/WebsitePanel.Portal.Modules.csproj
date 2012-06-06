@@ -75,15 +75,15 @@
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Web.Mobile" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="WebsitePanel.EnterpriseServer.Base, Version=1.0.1.0, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
+    <Reference Include="WebsitePanel.EnterpriseServer.Base, Version=1.2.2.0, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
     </Reference>
-    <Reference Include="WebsitePanel.EnterpriseServer.Client, Version=1.0.1.0, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
+    <Reference Include="WebsitePanel.EnterpriseServer.Client, Version=1.2.2.0, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Bin\WebsitePanel.EnterpriseServer.Client.dll</HintPath>
     </Reference>
-    <Reference Include="WebsitePanel.Providers.Base, Version=1.0.1.0, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
+    <Reference Include="WebsitePanel.Providers.Base, Version=1.2.2.0, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Bin\WebsitePanel.Providers.Base.dll</HintPath>
     </Reference>
@@ -199,9 +199,16 @@
     <Compile Include="Code\ReportingServices\FileSystemReportLocalizer.cs" />
     <Compile Include="Code\ReportingServices\IResourceStorage.cs" />
     <Compile Include="Code\ReportingServices\ReportingServicesUtils.cs" />
+    <Compile Include="ExchangeServer\UserControls\AccountsListWithPermissions.ascx.cs">
+      <DependentUpon>AccountsListWithPermissions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="ProviderControls\hMailServer5_EditAccount.ascx.cs">
       <DependentUpon>hMailServer5_EditAccount.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\AccountsListWithPermissions.ascx.designer.cs">
+      <DependentUpon>AccountsListWithPermissions.ascx</DependentUpon>
     </Compile>
     <Compile Include="ProviderControls\hMailServer5_EditAccount.ascx.designer.cs">
       <DependentUpon>hMailServer5_EditAccount.ascx</DependentUpon>
@@ -3749,6 +3756,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ExchangeServer\UserControls\AccountsListWithPermissions.ascx" />
     <Content Include="ProviderControls\hMailServer5_EditAccount.ascx" />
     <Content Include="ProviderControls\hMailServer5_EditDomain.ascx" />
     <Content Include="ProviderControls\hMailServer5_EditForwarding.ascx" />

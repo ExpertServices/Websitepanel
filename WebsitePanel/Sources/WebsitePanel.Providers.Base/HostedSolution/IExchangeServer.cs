@@ -101,7 +101,7 @@ namespace WebsitePanel.Providers.HostedSolution
 		void EnableMailPublicFolder(string organizationId, string folder, string accountName, string name, string domain);
 		void DisableMailPublicFolder(string folder);
 		ExchangePublicFolder GetPublicFolderGeneralSettings(string folder);
-		void SetPublicFolderGeneralSettings(string folder, string newFolderName, string[] authorAccounts, bool hideFromAddressBook);
+		void SetPublicFolderGeneralSettings(string folder, string newFolderName, bool hideFromAddressBook, ExchangeAccount[] accounts );
 		ExchangePublicFolder GetPublicFolderMailFlowSettings(string folder);
 		void SetPublicFolderMailFlowSettings(string folder, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication);
 		ExchangeEmailAddress[] GetPublicFolderEmailAddresses(string folder);

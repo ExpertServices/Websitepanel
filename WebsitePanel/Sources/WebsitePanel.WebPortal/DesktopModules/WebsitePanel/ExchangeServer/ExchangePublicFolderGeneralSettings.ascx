@@ -7,6 +7,7 @@
 <%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="../UserControls/CollapsiblePanel.ascx" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
+<%@ Register src="UserControls/AccountsListWithPermissions.ascx" tagname="AccountsListWithPermissions" tagprefix="wsp" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
@@ -48,17 +49,20 @@
 							    <asp:Button ID="btnMailDisable" runat="server" Text="Mail Disable Folder" meta:resourcekey="btnMailDisable" CssClass="Button1" CausesValidation="false" OnClick="btnMailDisable_Click" />
 							</td>
 						</tr>
+					    
 					    <tr><td>&nbsp;</td></tr>
+                        					    <tr><td>&nbsp;</td></tr>
 						<tr>
-							<td colspan="2"><asp:Localize ID="locAuthors" runat="server" meta:resourcekey="locAuthors" Text="Authors:"></asp:Localize></td>
+							<td colspan="2"><asp:Localize ID="locAllAccounts" runat="server" meta:resourcekey="locAllAccounts" Text="Accounts:"></asp:Localize></td>
 						</tr>
 						<tr>
-						    <td colspan="2">
-                                <wsp:AccountsList id="authors" runat="server"
-										MailboxesEnabled="true" />
+						    <td colspan="2">                                
+                            	<wsp:AccountsListWithPermissions ID="allAccounts" runat="server" MailboxesEnabled="true"/>
+                                
                             </td>
 						</tr>
-					    <tr><td>&nbsp;</td></tr>
+						<tr><td>&nbsp;</td></tr>
+						
 						<tr>
 						    <td>
 						        <br />

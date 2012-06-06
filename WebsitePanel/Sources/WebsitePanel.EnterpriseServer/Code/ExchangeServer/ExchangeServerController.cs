@@ -3636,7 +3636,7 @@ namespace WebsitePanel.EnterpriseServer
 			c.DisplayName = "\\fabrikam\\Documents";
 			c.MailEnabled = true;
 			c.Name = "Documents";
-			c.AuthorsAccounts = GetAccounts(0, ExchangeAccountType.Mailbox).ToArray();
+			c.Accounts = GetAccounts(0, ExchangeAccountType.Mailbox).ToArray();
 			c.AcceptAccounts = GetAccounts(0, ExchangeAccountType.Mailbox).ToArray();
 			return c;
 		}
@@ -3683,7 +3683,7 @@ namespace WebsitePanel.EnterpriseServer
 		}
 
 		public static int SetPublicFolderGeneralSettings(int itemId, int accountId, string newName,
-			bool hideAddressBook, string[] authorAccounts)
+			bool hideAddressBook, ExchangeAccount[] accounts)
 		{
 			// check account
 			int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -3714,8 +3714,9 @@ namespace WebsitePanel.EnterpriseServer
 				exchange.SetPublicFolderGeneralSettings(
 					account.DisplayName,
 					newName,
-					authorAccounts,
-					hideAddressBook);
+					hideAddressBook,
+                    accounts
+                    );
 
 				// update folder name
 				string origName = account.DisplayName;

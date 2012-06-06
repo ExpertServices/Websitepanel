@@ -489,9 +489,9 @@ namespace WebsitePanel.Providers.HostedSolution
 		}
 
 		public void SetPublicFolderGeneralSettings(string folder, string newFolderName,
-			string[] authorAccounts, bool hideFromAddressBook)
+			 bool hideFromAddressBook, ExchangeAccount[] accounts)
 		{
-			SetPublicFolderGeneralSettingsInternal(folder, newFolderName, authorAccounts, hideFromAddressBook);
+			SetPublicFolderGeneralSettingsInternal(folder, newFolderName, hideFromAddressBook, accounts);
 		}
 		public ExchangePublicFolder GetPublicFolderMailFlowSettings(string folder)
 		{
@@ -4142,8 +4142,8 @@ namespace WebsitePanel.Providers.HostedSolution
 
 		private void SetPublicFolderPermissions(Runspace runSpace, string folder, string securityGroup)
 		{
-			RemovePublicFolderClientPermission(runSpace, folder, "Default", "Author");
-			//RemovePublicFolderClientPermission(runSpace, folder, "Anonymous", "CreateItems");
+			//set the default Permission to 'Reviewer'
+            RemovePublicFolderClientPermission(runSpace, folder, "Default", "Author");
 			AddPublicFolderClientPermission(runSpace, folder, securityGroup, "Reviewer");
 		}
 
@@ -4325,7 +4325,8 @@ namespace WebsitePanel.Providers.HostedSolution
 				info.Name = (string)GetPSObjectProperty(publicFolder, "Name");
 				info.MailEnabled = (bool)GetPSObjectProperty(publicFolder, "MailEnabled");
 				info.HideFromAddressBook = (bool)GetPSObjectProperty(publicFolder, "HiddenFromAddressListsEnabled");
-				info.AuthorsAccounts = GetPublicFolderAuthors(runSpace, folder);
+
+				info.Accounts = GetPublicFolderAccounts(runSpace, folder);				
 			}
 			finally
 			{
@@ -4335,47 +4336,45 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogEnd("GetPublicFolderGeneralSettingsInternal");
 			return info;
 		}
+		
+        private ExchangeAccount[] GetPublicFolderAccounts(Runspace runSpace, string folder)
+        {
+            ExchangeLog.LogStart("GetPublicFolderAccounts");
+            ExchangeLog.DebugInfo("Folder: {0}", folder);
 
-		private ExchangeAccount[] GetPublicFolderAuthors(Runspace runSpace, string folder)
-		{
-			ExchangeLog.LogStart("GetPublicFolderAuthors");
-			ExchangeLog.DebugInfo("Folder: {0}", folder);
+            List<ExchangeAccount> list = new List<ExchangeAccount>();
+            ExchangeAccount account = null;
 
-			List<ExchangeAccount> list = new List<ExchangeAccount>();
-			ExchangeAccount account = null;
+            Command cmd = new Command("Get-PublicFolderClientPermission");
+            cmd.Parameters.Add("Identity", folder);
+            if (!string.IsNullOrEmpty(PublicFolderServer))
+                cmd.Parameters.Add("Server", PublicFolderServer);
+            Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
 
-			Command cmd = new Command("Get-PublicFolderClientPermission");
-			cmd.Parameters.Add("Identity", folder);
-			if (!string.IsNullOrEmpty(PublicFolderServer))
-				cmd.Parameters.Add("Server", PublicFolderServer);
-			Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+            foreach (PSObject obj in result)
+            {
+                string userId = ObjToString(GetPSObjectProperty(obj, "User"));
+                if (userId == "Default" || userId == "Anonymous" || userId.StartsWith("NT User:") == true)
+                    continue;
 
-			foreach (PSObject obj in result)
-			{
-				string userId = ObjToString(GetPSObjectProperty(obj, "User"));
-				if (userId == "Default" || userId == "Anonymous")
-					continue;
-
-				object rights = GetPSObjectProperty(obj, "AccessRights");
-				int count = (int)GetObjectPropertyValue(rights, "Count");
-				for (int i = 0; i < count; i++)
-				{
-					string right = ObjToString(GetObjectIndexerValue(rights, i));
-					if (right == "Author")
-					{
-						account = GetExchangeAccount(runSpace, userId);
-						if (account != null)
-							list.Add(account);
-						break;
-					}
-				}
-			}
-			ExchangeLog.LogEnd("GetPublicFolderAuthors");
-			return list.ToArray();
-		}
+                object rights = GetPSObjectProperty(obj, "AccessRights");
+                int count = (int)GetObjectPropertyValue(rights, "Count");
+                for (int i = 0; i < count; i++)
+                {
+                    account = GetExchangeAccount(runSpace, userId);
+                    string permission = ObjToString(GetObjectIndexerValue(rights, i));
+                    if (account != null)
+                        account.PublicFolderPermission = permission;
+                        list.Add(account);
+                    break;                   
+                }
+            }
+            ExchangeLog.LogEnd("GetPublicFolderAccounts");
+            return list.ToArray();
+        }
 
 		private void SetPublicFolderGeneralSettingsInternal(string folder, string newFolderName,
-			string[] authorAccounts, bool hideFromAddressBook)
+			bool hideFromAddressBook, ExchangeAccount[] accounts)
 		{
 			ExchangeLog.LogStart("SetPublicFolderGeneralSettingsInternal");
 			ExchangeLog.DebugInfo("Folder: {0}", folder);
@@ -4389,46 +4388,38 @@ namespace WebsitePanel.Providers.HostedSolution
 				Collection<PSObject> result = GetPublicFolderObject(runSpace, folder);
 				PSObject publicFolder = result[0];
 				string folderName = (string)GetPSObjectProperty(publicFolder, "Name");
-				ExchangeAccount[] accounts = GetPublicFolderAuthors(runSpace, folder);
+				ExchangeAccount[] allAccounts = GetPublicFolderAccounts(runSpace, folder);
+								
+                //Remove all accounts and re-apply               
+                List<ExchangeAccount> accountsToDelete = new List<ExchangeAccount>();
+                List<ExchangeAccount> accountsToAdd = new List<ExchangeAccount>();
+                               
+                foreach (ExchangeAccount existingAccount in allAccounts)
+                {
+                    try
+                    {
+                        RemovePublicFolderClientPermission(runSpace, folder, @"\" + existingAccount.AccountName, existingAccount.PublicFolderPermission);
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                    
+                }
 
-				//authors
-				Dictionary<string, string> existingAuthors = new Dictionary<string, string>();
-				Dictionary<string, string> newAuthors = new Dictionary<string, string>();
-				List<string> authorsToDelete = new List<string>();
-				List<string> authorsToAdd = new List<string>();
-
-				foreach (ExchangeAccount account in accounts)
-				{
-					existingAuthors.Add(account.AccountName.ToLower(), account.AccountName);
-				}
-
-				foreach (string newAuthor in authorAccounts)
-				{
-					newAuthors.Add(newAuthor.ToLower(), newAuthor);
-					if (!existingAuthors.ContainsKey(newAuthor.ToLower()))
-					{
-						authorsToAdd.Add(newAuthor);
-					}
-				}
-
-				foreach (string existingAuthor in existingAuthors.Keys)
-				{
-					if (!newAuthors.ContainsKey(existingAuthor))
-					{
-						authorsToDelete.Add(existingAuthors[existingAuthor]);
-					}
-				}
-
-				foreach (string user in authorsToAdd)
-				{
-					AddPublicFolderClientPermission(runSpace, folder, user, "Author");
-				}
-
-				foreach (string user in authorsToDelete)
-				{
-					RemovePublicFolderClientPermission(runSpace, folder, user, "Author");
-				}
-
+                foreach (ExchangeAccount newAccount in accounts)
+                {
+                    try
+                    {
+                        AddPublicFolderClientPermission(runSpace, folder, @"\" + newAccount.AccountName, newAccount.PublicFolderPermission);
+                    }
+                    catch (Exception)
+                    {                        
+                        throw;
+                    }
+                    
+                }
+               	
 				//general settings
 				Command cmd = new Command("Set-PublicFolder");
 				cmd.Parameters.Add("Identity", folder);
