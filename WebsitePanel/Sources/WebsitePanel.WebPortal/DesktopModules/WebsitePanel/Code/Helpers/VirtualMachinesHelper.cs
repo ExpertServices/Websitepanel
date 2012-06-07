@@ -29,9 +29,54 @@
 ﻿using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.Virtualization;
 using System.Web;
+using System;
 
 namespace WebsitePanel.Portal
 {
+    // TODO: Move this extension to a separate file later.
+    public static class VirtualMachinesExtensions
+    {
+        #region Privates with specific purposes (eq. caching, usability, performance and etc)
+        /// <summary>
+        /// This method supports the Portal internal infrastructure and is not intended to be used directly from your code. Gets a cached copy of virtual machine object of the specified type or retrieves it for the first time and then caches it.
+        /// </summary>
+        /// <typeparam name="T">Type of virtual machine to be retrieved (possible types are VirtualMachine|VMInfo)</typeparam>
+        /// <param name="cacheIdentityKey">Virtual machine item id</param>
+        /// <param name="getVmFunc">Function to retrieve the virtual machine data from Enterprise Server</param>
+        /// <returns>An instance of the specified virtual machine</returns>
+        internal static T GetCachedVirtualMachine<T>(object cacheIdentityKey, Func<T> getVmFunc)
+        {
+            // TODO: Make this method private when all dependents will be consolidated in the extension.
+            string cacheKey = "CachedVirtualMachine_" + cacheIdentityKey;
+            if (HttpContext.Current.Items[cacheKey] != null)
+                return (T)HttpContext.Current.Items[cacheKey];
+
+            // load virtual machine
+            T virtualMachine = getVmFunc();
+
+            // place to cache
+            if (virtualMachine != null)
+                HttpContext.Current.Items[cacheKey] = virtualMachine;
+
+            return virtualMachine;
+        }
+        #endregion
+
+        #region Extension methods
+        /// <summary>
+        /// Gets a cached copy of virtual machine object of the specified type or retrieves it for the first time and then caches it.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="itemId">Virtual machine id</param>
+        /// <returns>An instance of the virtual machine speficied</returns>
+        public static VMInfo GetCachedVirtualMachine(this esVirtualizationServerForPrivateCloud client, int itemId)
+        {
+            return GetCachedVirtualMachine<VMInfo>(
+                itemId, () => ES.Services.VPSPC.GetVirtualMachineItem(itemId));
+        }
+        #endregion
+    }
+
     public class VirtualMachinesHelper
     {
         public static bool IsVirtualMachineManagementAllowed(int packageId)
@@ -57,20 +102,11 @@ namespace WebsitePanel.Portal
             return manageAllowed;
         }
 
+        // TODO: Move this method to the corresponding extension later.
         public static VirtualMachine GetCachedVirtualMachine(int itemId)
         {
-            string key = "CachedVirtualMachine" + itemId;
-            if (HttpContext.Current.Items[key] != null)
-                return (VirtualMachine)HttpContext.Current.Items[key];
-
-            // load virtual machine
-            VirtualMachine vm = ES.Services.VPS.GetVirtualMachineItem(itemId);
-
-            // place to cache
-            if (vm != null)
-                HttpContext.Current.Items[key] = vm;
-
-            return vm;
+            return VirtualMachinesExtensions.GetCachedVirtualMachine<VirtualMachine>(
+                itemId, () => ES.Services.VPS.GetVirtualMachineItem(itemId));
         }
 
         #region Virtual Machines

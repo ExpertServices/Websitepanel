@@ -40,13 +40,14 @@ namespace WebsitePanel.Portal.VPSForPC.RemoteDesktop
             resolution.Text = Request["Resolution"];
 
             // load server info
-            VirtualMachine vm = VirtualMachinesHelper.GetCachedVirtualMachine(PanelRequest.ItemID);
+            VMInfo vm = ES.Services.VPSPC.GetCachedVirtualMachine(PanelRequest.ItemID);
             litServerName.Text = vm.Name + " - ";
             username.Text = "Administrator";
-            password.Text = vm.AdministratorPassword;
+            // TODO: Review VMInfo class fields and underlying data for correctness
+            password.Text = vm.AdminPassword;
             
             // load external network parameters
-            NetworkAdapterDetails nic = ES.Services.VPS.GetExternalNetworkAdapterDetails(PanelRequest.ItemID);
+            NetworkAdapterDetails nic = ES.Services.VPSPC.GetExternalNetworkAdapterDetails(PanelRequest.ItemID);
             if (nic.IPAddresses.Length > 0)
             {
                 NetworkAdapterIPAddress ip = nic.IPAddresses[0];
