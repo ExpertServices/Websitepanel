@@ -35694,7 +35694,7 @@ BEGIN
 		GR.RecordName
 	FROM GlobalDNSRecords AS GR
 	WHERE GR.PackageID = @TmpPackageID
-	AND GR.RecordType + GR.RecordName NOT IN (SELECT RecordType + RecordName FROM @Records)
+	AND GR.RecordType COLLATE DATABASE_DEFAULT + GR.RecordName COLLATE DATABASE_DEFAULT NOT IN (SELECT RecordType + RecordName FROM @Records)
 
 	SET @ParentPackageID = NULL
 
@@ -35722,7 +35722,7 @@ SELECT
 	GR.RecordName
 FROM GlobalDNSRecords AS GR
 WHERE GR.ServerID = @ServerID
-AND GR.RecordType + GR.RecordName NOT IN (SELECT RecordType + RecordName FROM @Records)
+AND GR.RecordType COLLATE DATABASE_DEFAULT + GR.RecordName COLLATE DATABASE_DEFAULT NOT IN (SELECT RecordType + RecordName FROM @Records)
 
 
 -- select SERVICES DNS records
@@ -35736,7 +35736,7 @@ SELECT
 	GR.RecordName
 FROM GlobalDNSRecords AS GR
 WHERE GR.ServiceID IN (SELECT ServiceID FROM PackageServices WHERE PackageID = @PackageID)
-AND GR.RecordType + GR.RecordName NOT IN (SELECT RecordType + RecordName FROM @Records)
+AND GR.RecordType COLLATE DATABASE_DEFAULT + GR.RecordName COLLATE DATABASE_DEFAULT NOT IN (SELECT RecordType + RecordName FROM @Records)
 
 
 SELECT
@@ -35762,6 +35762,8 @@ INNER JOIN GlobalDnsRecords AS NR ON TR.RecordID = NR.RecordID
 LEFT OUTER JOIN IPAddresses AS IP ON NR.IPAddressID = IP.AddressID
 
 RETURN
+
+
 
 
 
@@ -44088,8 +44090,8 @@ EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
 
 -- Execute a SELECT statement that uses the OPENXML rowset provider.
 DELETE FROM ServiceProperties
-WHERE ServiceID = @ServiceID
-AND PropertyName IN
+WHERE ServiceID = @ServiceID 
+AND PropertyName COLLATE DATABASE_DEFAULT IN
 (
 	SELECT PropertyName
 	FROM OPENXML(@idoc, '/properties/property', 1)
