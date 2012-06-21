@@ -268,6 +268,7 @@ namespace WebsitePanel.Portal
             authCookie.Secure = FormsAuthentication.RequireSSL;
             authCookie.Path = FormsAuthentication.FormsCookiePath;
             authCookie.Value = FormsAuthentication.Encrypt(ticket);
+            authCookie.HttpOnly = true;
 
             if (persistent)
                 authCookie.Expires = DateTime.Now.AddMonths(1);
@@ -500,6 +501,8 @@ namespace WebsitePanel.Portal
             // store last successful username in the cookie
             HttpCookie cookie = new HttpCookie("WebsitePanelLogin", username);
             cookie.Expires = DateTime.Now.AddDays(7);
+            cookie.Secure = FormsAuthentication.RequireSSL;
+            cookie.HttpOnly = true;
             HttpContext.Current.Response.Cookies.Add(cookie);
 
             // set language

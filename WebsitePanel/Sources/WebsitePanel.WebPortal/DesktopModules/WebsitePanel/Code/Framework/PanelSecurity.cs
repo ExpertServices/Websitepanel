@@ -130,6 +130,7 @@ namespace WebsitePanel.Portal
             HttpContext.Current.Items[key] = s;
 
             HttpCookie cookie = new HttpCookie(key, s);
+            cookie.HttpOnly = true;
             HttpContext.Current.Response.Cookies.Remove(key);
             HttpContext.Current.Response.Cookies.Add(cookie);
         }

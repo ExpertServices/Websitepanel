@@ -157,6 +157,7 @@
     <Compile Include="Code\ContentPane.cs" />
     <Compile Include="Code\Controls\DesktopContextValidator.cs" />
     <Compile Include="Code\PortalUtils.cs" />
+    <Compile Include="Code\SecureSessionModule.cs" />
     <Compile Include="Code\WebPortalControlBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

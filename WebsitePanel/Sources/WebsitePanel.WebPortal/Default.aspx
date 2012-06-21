@@ -13,7 +13,7 @@
 <![endif]--> 
 </head>
 <body>
-    <form id="form1" runat="server">
+    <form id="form1" runat="server"  autocomplete="off">
         <asp:PlaceHolder ID="skinPlaceHolder" runat="server"></asp:PlaceHolder>
     </form>
 </body>
