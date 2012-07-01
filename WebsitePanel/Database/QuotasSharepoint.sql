@@ -1,0 +1,1 @@
+﻿INSERT INTO Quotas (QuotaID, GroupID, QuotaOrder, QuotaName,QuotaDescription, QuotaTypeID, ServiceQuota) VALUES (400,	20,	3,	'HostedSharePoint.UseSharedSSL'	,'Use shared SSL Root',	1,	0)
