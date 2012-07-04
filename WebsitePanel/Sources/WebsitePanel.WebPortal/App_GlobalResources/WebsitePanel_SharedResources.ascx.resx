@@ -5113,4 +5113,7 @@
   <data name="Success.WPUB_PROFILE_SAVE" xml:space="preserve">
     <value>Web Publishing profile for this web site has been successfully saved</value>
   </data>
+  <data name="Quota.HostedSharePoint.UseSharedSSL" xml:space="preserve">
+    <value>Use shared SSL Root</value>
+  </data>
 </root>

@@ -1507,3 +1507,9 @@ WHERE
 RETURN
 
 GO
+
+
+
+
+UPDATE dbo.Quotas SET QuotaTypeID = 2 WHERE QuotaName = 'HostedSharePoint.Sites'
+GO

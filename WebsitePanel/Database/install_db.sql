@@ -3594,7 +3594,7 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (108, 11, 6, N'MySQL5.Truncate', N'Database Truncate', 1, 0, NULL)
 GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (200, 20, 1, N'HostedSharePoint.Sites', N'SharePoint Site Collections', 3, 0, 200)
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (200, 20, 1, N'HostedSharePoint.Sites', N'SharePoint Site Collections', 2, 0, 200)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (203, 10, 4, N'MsSQL2005.MaxLogSize', N'Max Log Size', 3, 0, NULL)
 GO
