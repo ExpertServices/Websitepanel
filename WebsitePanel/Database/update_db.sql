@@ -125,6 +125,13 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 END
 GO
 
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedSharePoint.UseSharedSSL')
+BEGIN
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (400, 20, 3, N'HostedSharePoint.UseSharedSSL', N'Use shared SSL Root', 1, 0, NULL)
+END
+GO
+
+
 UPDATE [dbo].[ScheduleTaskParameters] SET DefaultValue = N'MsSQL2000=SQL Server 2000;MsSQL2005=SQL Server 2005;MsSQL2008=SQL Server 2008;MsSQL2012=SQL Server 2012;MySQL4=MySQL 4.0;MySQL5=MySQL 5.0' WHERE [ParameterID] = N'DATABASE_GROUP'
 GO
 
