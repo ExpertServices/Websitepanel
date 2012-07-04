@@ -9,9 +9,14 @@ SET @build_date = '${release.date}T00:00:00' -- ISO 8601 Format (YYYY-MM-DDTHH:M
 IF NOT EXISTS (SELECT * FROM [dbo].[Versions] WHERE [DatabaseVersion] = @build_version)
 BEGIN
 	INSERT [dbo].[Versions] ([DatabaseVersion], [BuildDate]) VALUES (@build_version, @build_date)
-	INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'WebPolicy', N'EnableParkingPageTokens', N'False')
 END
 GO
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSetting] WHERE ([GroupName] = 1) AND  ([SettingsName] = 'WebPolicy') AND ([PropertyName] = 'EnableParkingPageTokens'))
+BEGIN
+	INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'WebPolicy', N'EnableParkingPageTokens', N'False')
+END
 
 IF NOT EXISTS (SELECT * FROM [dbo].[ResourceGroups] WHERE [GroupName] = 'MsSQL2012')
 BEGIN
