@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012, Outercurve Foundation.
+﻿﻿// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -80,7 +80,7 @@ namespace WebsitePanel.Installer.Core
 
         private WebClient fileLoader;
 
-        internal BitlyLoader(string remoteFile) 
+        public BitlyLoader(string remoteFile)
             : base(remoteFile)
         {
             InitFileLoader();
@@ -115,7 +115,7 @@ namespace WebsitePanel.Installer.Core
 
                     Log.WriteStart("Downloading file");
                     Log.WriteInfo("Downloading file \"{0}\" to \"{1}\"", remoteFile, tmpFile);
-                    
+
                     // Attach event handlers to track status of the download process
                     fileLoader.DownloadProgressChanged += (obj, e) =>
                     {
@@ -145,7 +145,7 @@ namespace WebsitePanel.Installer.Core
 
                     fileLoader.DownloadFileAsync(new Uri(remoteFile), tmpFile);
                     RaiseOnStatusChangedEvent(DownloadingSetupFilesMessage);
-                    
+
                     autoEvent.WaitOne();
                 }
             }, ct);
@@ -175,7 +175,7 @@ namespace WebsitePanel.Installer.Core
         public event EventHandler<LoaderEventArgs<Int32>> ProgressChanged;
         public event EventHandler<EventArgs> OperationCompleted;
 
-        internal Loader(string remoteFile)
+        public Loader(string remoteFile)
         {
             this.remoteFile = remoteFile;
         }
@@ -276,7 +276,7 @@ namespace WebsitePanel.Installer.Core
                     // Download the file requested
                     Task downloadFileTask = GetDownloadFileTask(remoteFile, tmpFile, token);
                     // Move the file downloaded from temporary location to Data folder
-                    var moveFileTask = downloadFileTask.ContinueWith((t) => 
+                    var moveFileTask = downloadFileTask.ContinueWith((t) =>
                     {
                         if (File.Exists(tmpFile))
                         {
@@ -312,7 +312,7 @@ namespace WebsitePanel.Installer.Core
                     {
                         RaiseOnOperationCompletedEvent();
                     }, token);
-                    
+
                     downloadFileTask.Start();
                     downloadFileTask.Wait();
                 }
