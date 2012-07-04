@@ -1244,8 +1244,8 @@ RAISERROR('You are not allowed to access this package', 16, 1)
 DECLARE @Records TABLE
 (
 	RecordID int,
-	RecordType nvarchar(10) COLLATE DATABASE_DEFAULT,
-	RecordName nvarchar(50) COLLATE DATABASE_DEFAULT
+	RecordType nvarchar(10) COLLATE Latin1_General_CI_AS,
+	RecordName nvarchar(50) COLLATE Latin1_General_CI_AS
 )
 
 -- select PACKAGES DNS records

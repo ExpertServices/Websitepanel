@@ -80,7 +80,7 @@ namespace WebsitePanel.Installer.Core
 
         private WebClient fileLoader;
 
-        public BitlyLoader(string remoteFile) 
+        internal BitlyLoader(string remoteFile) 
             : base(remoteFile)
         {
             InitFileLoader();
@@ -175,7 +175,7 @@ namespace WebsitePanel.Installer.Core
         public event EventHandler<LoaderEventArgs<Int32>> ProgressChanged;
         public event EventHandler<EventArgs> OperationCompleted;
 
-        public Loader(string remoteFile)
+        internal Loader(string remoteFile)
         {
             this.remoteFile = remoteFile;
         }

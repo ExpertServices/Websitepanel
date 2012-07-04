@@ -35704,8 +35704,8 @@ RAISERROR('You are not allowed to access this package', 16, 1)
 DECLARE @Records TABLE
 (
 	RecordID int,
-	RecordType nvarchar(10) COLLATE DATABASE_DEFAULT,
-	RecordName nvarchar(50) COLLATE DATABASE_DEFAULT
+	RecordType nvarchar(10) COLLATE Latin1_General_CI_AS,
+	RecordName nvarchar(50) COLLATE Latin1_General_CI_AS
 )
 
 -- select PACKAGES DNS records
@@ -44137,7 +44137,7 @@ EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
 -- Execute a SELECT statement that uses the OPENXML rowset provider.
 DELETE FROM ServiceProperties
 WHERE ServiceID = @ServiceID 
-AND PropertyName COLLATE DATABASE_DEFAULT IN
+AND PropertyName COLLATE Latin1_General_CI_AS IN
 (
 	SELECT PropertyName
 	FROM OPENXML(@idoc, '/properties/property', 1)
