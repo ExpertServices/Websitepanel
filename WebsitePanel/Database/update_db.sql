@@ -856,28 +856,14 @@ END
 GO
 
 
-
-
-
-
-
-
-
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='GlobalDnsRecords' AND COLS.name='SrvPriority')
+BEGIN
 ALTER TABLE [dbo].[GlobalDnsRecords] ADD
 	[SrvPriority] [int] NULL,
 	[SrvWeight] [int] NULL,
 	[SrvPort] [int] NULL
-
+END
 GO
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1129,13 +1115,7 @@ GO
 
 
 
-USE [WebsitePanel]
-GO
-/****** Object:  StoredProcedure [dbo].[GetDnsRecordsByServer]    Script Date: 06/01/2011 23:42:41 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
+
 
 ALTER PROCEDURE [dbo].[GetDnsRecordsByServer]
 (
