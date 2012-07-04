@@ -74,7 +74,7 @@ namespace WebsitePanel.EnterpriseServer
 					}
 				}
 
-				int res = ServerController.AddDnsZoneRecord(domainId, recordName, DnsRecordType.A, ip, 0);
+                int res = ServerController.AddDnsZoneRecord(domainId, recordName, DnsRecordType.A, ip, 0, 0, 0, 0);
 				if (res != 0)
 				{
 					CompleteTask(ret, CrmErrorCodes.CANNOT_CREATE_DNS_ZONE, null,

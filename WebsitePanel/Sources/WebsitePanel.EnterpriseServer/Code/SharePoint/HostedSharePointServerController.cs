@@ -346,7 +346,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
                             }
                         }
 
-                        ServerController.AddDnsZoneRecord(domain.DomainId, hostName, DnsRecordType.A, hostedSharePointSettings["RootWebApplicationIpAddress"], 0);
+                        ServerController.AddDnsZoneRecord(domain.DomainId, hostName, DnsRecordType.A, hostedSharePointSettings["RootWebApplicationIpAddress"], 0, 0, 0, 0);
                     }
                 }
 

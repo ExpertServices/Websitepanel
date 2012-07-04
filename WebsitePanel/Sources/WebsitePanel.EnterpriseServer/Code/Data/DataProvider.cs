@@ -675,7 +675,7 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         public static void AddDnsRecord(int actorId, int serviceId, int serverId, int packageId, string recordType,
-            string recordName, string recordData, int mxPriority, int ipAddressId)
+            string recordName, string recordData, int mxPriority, int SrvPriority, int SrvWeight, int SrvPort, int ipAddressId)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
                 ObjectQualifier + "AddDnsRecord",
@@ -687,11 +687,14 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@RecordName", recordName),
                 new SqlParameter("@RecordData", recordData),
                 new SqlParameter("@MXPriority", mxPriority),
+                new SqlParameter("@SrvPriority", SrvPriority),
+                new SqlParameter("@SrvWeight", SrvWeight),
+                new SqlParameter("@SrvPort", SrvPort),
                 new SqlParameter("@IpAddressId", ipAddressId));
         }
 
         public static void UpdateDnsRecord(int actorId, int recordId, string recordType,
-            string recordName, string recordData, int mxPriority, int ipAddressId)
+            string recordName, string recordData, int mxPriority, int SrvPriority, int SrvWeight, int SrvPort, int ipAddressId)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
                 ObjectQualifier + "UpdateDnsRecord",
@@ -701,8 +704,12 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@RecordName", recordName),
                 new SqlParameter("@RecordData", recordData),
                 new SqlParameter("@MXPriority", mxPriority),
+                new SqlParameter("@SrvPriority", SrvPriority),
+                new SqlParameter("@SrvWeight", SrvWeight),
+                new SqlParameter("@SrvPort", SrvPort),
                 new SqlParameter("@IpAddressId", ipAddressId));
         }
+
 
         public static void DeleteDnsRecord(int actorId, int recordId)
         {
@@ -763,7 +770,7 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@domainName", domainName));
         }
 
-        public static int CheckDomain(int packageId, string domainName)
+        public static int CheckDomain(int packageId, string domainName, bool isDomainPointer)
         {
             SqlParameter prmId = new SqlParameter("@Result", SqlDbType.Int);
             prmId.Direction = ParameterDirection.Output;
@@ -772,7 +779,8 @@ namespace WebsitePanel.EnterpriseServer
                 ObjectQualifier + "CheckDomain",
                 prmId,
                 new SqlParameter("@packageId", packageId),
-                new SqlParameter("@domainName", domainName));
+                new SqlParameter("@domainName", domainName),
+                new SqlParameter("@isDomainPointer", isDomainPointer));
 
             return Convert.ToInt32(prmId.Value);
         }

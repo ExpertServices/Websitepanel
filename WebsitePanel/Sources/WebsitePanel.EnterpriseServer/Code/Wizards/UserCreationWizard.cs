@@ -173,7 +173,7 @@ namespace WebsitePanel.EnterpriseServer
                         domain.PackageId = createdPackageId;
                         domain.DomainName = domainName;
                         domain.HostingAllowed = false;
-                        domainId = ServerController.AddDomain(domain, !tempDomain);
+                        domainId = ServerController.AddDomain(domain, false, !tempDomain);
                         if (domainId < 0)
                         {
                             // rollback wizard

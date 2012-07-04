@@ -1174,7 +1174,7 @@ INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
 LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
 LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
 LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
-WHERE D.IsInstantAlias = 0 AND
+WHERE (D.IsInstantAlias = 0 AND D.IsDomainPointer = 0) AND
 		((@Recursive = 0 AND D.PackageID = @PackageID)
 		OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, D.PackageID) = 1))
 AND (@ServerID = 0 OR (@ServerID > 0 AND S.ServerID = @ServerID))
@@ -3306,6 +3306,7 @@ CREATE PROCEDURE CheckDomain
 (
 	@PackageID int,
 	@DomainName nvarchar(100),
+	@IsDomainPointer bit,
 	@Result int OUTPUT
 )
 AS
@@ -3322,7 +3323,7 @@ SET @Result = 0 -- OK
 -- check if the domain already exists
 IF EXISTS(
 SELECT DomainID FROM Domains
-WHERE DomainName = @DomainName
+WHERE DomainName = @DomainName AND IsDomainPointer = @IsDomainPointer
 )
 BEGIN
 	SET @Result = -1
@@ -15772,6 +15773,9 @@ CREATE TABLE [dbo].[GlobalDnsRecords](
 	[ServerID] [int] NULL,
 	[PackageID] [int] NULL,
 	[IPAddressID] [int] NULL,
+	[SrvPriority] [int] NULL,
+	[SrvWeight] [int] NULL,
+	[SrvPort] [int] NULL,
  CONSTRAINT [PK_GlobalDnsRecords] PRIMARY KEY CLUSTERED 
 (
 	[RecordID] ASC
@@ -23347,6 +23351,9 @@ CREATE PROCEDURE UpdateDnsRecord
 	@RecordName nvarchar(50),
 	@RecordData nvarchar(500),
 	@MXPriority int,
+	@SrvPriority int,
+	@SrvWeight int, 
+	@SrvPort int,	
 	@IPAddressID int
 )
 AS
@@ -23377,6 +23384,9 @@ SET
 	RecordName = @RecordName,
 	RecordData = @RecordData,
 	MXPriority = @MXPriority,
+	SrvPriority = @SrvPriority,
+	SrvWeight = @SrvWeight,
+	SrvPort = @SrvPort,
 	IPAddressID = @IPAddressID
 WHERE
 	RecordID = @RecordID
@@ -23484,6 +23494,9 @@ SELECT
 	NR.RecordName,
 	NR.RecordData,
 	NR.MXPriority,
+	NR.SrvPriority,
+	NR.SrvWeight,
+	NR.SrvPort,	
 	NR.IPAddressID
 FROM
 	GlobalDnsRecords AS NR
@@ -23669,6 +23682,9 @@ CREATE PROCEDURE AddDnsRecord
 	@RecordName nvarchar(50),
 	@RecordData nvarchar(500),
 	@MXPriority int,
+	@SrvPriority int,
+	@SrvWeight int, 
+	@SrvPort int,
 	@IPAddressID int
 )
 AS
@@ -23693,8 +23709,12 @@ IF EXISTS
 	
 	UPDATE GlobalDnsRecords
 	SET
-		RecordData = RecordData,
-		MXPriority = MXPriority,
+		RecordData = @RecordData,
+		MXPriority = @MXPriority,
+		SrvPriority = @SrvPriority,
+		SrvWeight = @SrvWeight,
+		SrvPort = @SrvPort,
+	
 		IPAddressID = @IPAddressID
 	WHERE
 		ServiceID = @ServiceID AND ServerID = @ServerID AND PackageID = @PackageID
@@ -23708,6 +23728,9 @@ ELSE
 		RecordName,
 		RecordData,
 		MXPriority,
+		SrvPriority,
+		SrvWeight,
+		SrvPort,
 		IPAddressID
 	)
 	VALUES
@@ -23719,6 +23742,9 @@ ELSE
 		@RecordName,
 		@RecordData,
 		@MXPriority,
+		@SrvPriority,
+		@SrvWeight,
+		@SrvPort,
 		@IPAddressID
 	)
 
@@ -35697,7 +35723,7 @@ BEGIN
 		GR.RecordName
 	FROM GlobalDNSRecords AS GR
 	WHERE GR.PackageID = @TmpPackageID
-	AND GR.RecordType COLLATE DATABASE_DEFAULT + GR.RecordName COLLATE DATABASE_DEFAULT NOT IN (SELECT RecordType + RecordName FROM @Records)
+	AND GR.RecordType + GR.RecordName NOT IN (SELECT RecordType + RecordName FROM @Records)
 
 	SET @ParentPackageID = NULL
 
@@ -35725,7 +35751,7 @@ SELECT
 	GR.RecordName
 FROM GlobalDNSRecords AS GR
 WHERE GR.ServerID = @ServerID
-AND GR.RecordType COLLATE DATABASE_DEFAULT + GR.RecordName COLLATE DATABASE_DEFAULT NOT IN (SELECT RecordType + RecordName FROM @Records)
+AND GR.RecordType + GR.RecordName NOT IN (SELECT RecordType + RecordName FROM @Records)
 
 
 -- select SERVICES DNS records
@@ -35739,7 +35765,7 @@ SELECT
 	GR.RecordName
 FROM GlobalDNSRecords AS GR
 WHERE GR.ServiceID IN (SELECT ServiceID FROM PackageServices WHERE PackageID = @PackageID)
-AND GR.RecordType COLLATE DATABASE_DEFAULT + GR.RecordName COLLATE DATABASE_DEFAULT NOT IN (SELECT RecordType + RecordName FROM @Records)
+AND GR.RecordType + GR.RecordName NOT IN (SELECT RecordType + RecordName FROM @Records)
 
 
 SELECT
@@ -35751,12 +35777,16 @@ SELECT
 	NR.RecordName,
 	NR.RecordData,
 	NR.MXPriority,
+	NR.SrvPriority,
+	NR.SrvWeight,
+	NR.SrvPort,	
 	NR.IPAddressID,
 	ISNULL(IP.ExternalIP, '') AS ExternalIP,
 	ISNULL(IP.InternalIP, '') AS InternalIP,
 	CASE
 		WHEN NR.RecordType = 'A' AND NR.RecordData = '' THEN dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP)
 		WHEN NR.RecordType = 'MX' THEN CONVERT(varchar(3), NR.MXPriority) + ', ' + NR.RecordData
+		WHEN NR.RecordType = 'SRV' THEN CONVERT(varchar(3), NR.SrvPort) + ', ' + NR.RecordData
 		ELSE NR.RecordData
 	END AS FullRecordData,
 	dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP) AS IPAddress
@@ -35855,10 +35885,14 @@ SELECT
 	CASE
 		WHEN NR.RecordType = 'A' AND NR.RecordData = '' THEN dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP)
 		WHEN NR.RecordType = 'MX' THEN CONVERT(varchar(3), NR.MXPriority) + ', ' + NR.RecordData
+		WHEN NR.RecordType = 'SRV' THEN CONVERT(varchar(3), NR.SrvPort) + ', ' + NR.RecordData
 		ELSE NR.RecordData
 	END AS FullRecordData,
 	NR.RecordData,
 	NR.MXPriority,
+	NR.SrvPriority,
+	NR.SrvWeight,
+	NR.SrvPort,			
 	NR.IPAddressID,
 	dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP) AS IPAddress,
 	IP.ExternalIP,
@@ -35958,9 +35992,13 @@ SELECT
 	CASE
 		WHEN NR.RecordType = 'A' AND NR.RecordData = '' THEN dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP)
 		WHEN NR.RecordType = 'MX' THEN CONVERT(varchar(3), NR.MXPriority) + ', ' + NR.RecordData
+		WHEN NR.RecordType = 'SRV' THEN CONVERT(varchar(3), NR.SrvPort) + ', ' + NR.RecordData
 		ELSE NR.RecordData
 	END AS FullRecordData,
 	NR.MXPriority,
+	NR.SrvPriority,
+	NR.SrvWeight,
+	NR.SrvPort,		
 	NR.IPAddressID,
 	dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP) AS IPAddress,
 	IP.ExternalIP,
@@ -35971,6 +36009,7 @@ LEFT OUTER JOIN IPAddresses AS IP ON NR.IPAddressID = IP.AddressID
 WHERE
 	NR.ServerID = @ServerID
 RETURN
+
 
 
 
@@ -36062,10 +36101,14 @@ SELECT
 	NR.RecordName,
 	NR.RecordData,
 	NR.MXPriority,
+	NR.SrvPriority,
+	NR.SrvWeight,
+	NR.SrvPort,	
 	NR.IPAddressID,
 	CASE
 		WHEN NR.RecordType = 'A' AND NR.RecordData = '' THEN dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP)
 		WHEN NR.RecordType = 'MX' THEN CONVERT(varchar(3), NR.MXPriority) + ', ' + NR.RecordData
+		WHEN NR.RecordType = 'SRV' THEN CONVERT(varchar(3), NR.SrvPort) + ', ' + NR.RecordData
 		ELSE NR.RecordData
 	END AS FullRecordData,
 	dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP) AS IPAddress,

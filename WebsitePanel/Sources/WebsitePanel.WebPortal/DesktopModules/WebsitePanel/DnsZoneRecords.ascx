@@ -1,15 +1,13 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DnsZoneRecords.ascx.cs" Inherits="WebsitePanel.Portal.DnsZoneRecords" %>
-<%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport"
-	TagPrefix="wsp" %>
+<%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server" />
 
 <script type="text/javascript">
 
-function confirmation() 
-{
-	if (!confirm('Are you sure you want to delete this DNS Zone Record?')) return false; else ShowProgressDialog('Deleting DNS Zone Record...');
-}
+    function confirmation() {
+        if (!confirm('Are you sure you want to delete this DNS Zone Record?')) return false; else ShowProgressDialog('Deleting DNS Zone Record...');
+    }
 </script>
 <asp:Panel ID="pnlRecords" runat="server">
 	<div class="FormBody">
@@ -33,6 +31,9 @@ function confirmation()
                     <asp:Literal ID="litRecordName" runat="server" Text='<%# Eval("RecordName") %>' Visible="false"></asp:Literal>
                     <asp:Literal ID="litRecordType" runat="server" Text='<%# Eval("RecordType") %>' Visible="false"></asp:Literal>
                     <asp:Literal ID="litRecordData" runat="server" Text='<%# Eval("RecordData") %>' Visible="false"></asp:Literal>
+                    <asp:Literal ID="litSrvPriority" runat="server" Text='<%# Eval("SrvPriority") %>' Visible="false"></asp:Literal>
+                    <asp:Literal ID="litSrvWeight" runat="server" Text='<%# Eval("SrvWeight") %>' Visible="false"></asp:Literal>
+                    <asp:Literal ID="litSrvPort" runat="server" Text='<%# Eval("SrvPort") %>' Visible="false"></asp:Literal>
                 </ItemTemplate>
                 <ItemStyle CssClass="NormalBold" Wrap="False" />
             </asp:TemplateField>
@@ -41,7 +42,7 @@ function confirmation()
             <asp:TemplateField SortExpression="RecordData" HeaderText="gvRecordsData" >
                 <ItemStyle Width="100%" />
                 <ItemTemplate>
-                    <%# GetRecordFullData((string)Eval("RecordType"), (string)Eval("RecordData"), (int)Eval("MxPriority"))  %>
+                    <%# GetRecordFullData((string)Eval("RecordType"), (string)Eval("RecordData"), (int)Eval("MxPriority"), (int)Eval("SrvPort"))%>
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:TemplateField>
@@ -77,6 +78,7 @@ function confirmation()
                         <asp:ListItem>NS</asp:ListItem>
                         <asp:ListItem>TXT</asp:ListItem>
                         <asp:ListItem>CNAME</asp:ListItem>
+                        <asp:ListItem>SRV</asp:ListItem>
                     </asp:DropDownList><asp:Literal ID="litRecordType" runat="server"></asp:Literal>
                 </td>
             </tr>
@@ -106,10 +108,43 @@ function confirmation()
                     <asp:RegularExpressionValidator ID="valRequireCorrectPriority" runat="server" ControlToValidate="txtMXPriority"
                         ErrorMessage="*" ValidationExpression="\d{1,3}"></asp:RegularExpressionValidator></td>
             </tr>
+
+            <tr id="rowSRVPriority" runat="server">
+                <td class="SubHead"><asp:Label ID="lblSRVPriority" runat="server" meta:resourcekey="lblSRVPriority" Text="Priority:"></asp:Label></td>
+                <td class="NormalBold">
+                    <asp:TextBox ID="txtSRVPriority" runat="server" Width="30" CssClass="NormalTextBox"></asp:TextBox>
+                    <asp:RequiredFieldValidator ID="valRequireSrvPriority" runat="server" ControlToValidate="txtSRVPriority"
+                        ErrorMessage="*" ValidationGroup="DnsZoneRecord" Display="Dynamic"></asp:RequiredFieldValidator>
+                    <asp:RegularExpressionValidator ID="valRequireCorrectSrvPriority" runat="server" ControlToValidate="txtSRVPriority"
+                        ErrorMessage="*" ValidationExpression="\d{1,3}"></asp:RegularExpressionValidator></td>
+            </tr>
+
+            <tr id="rowSRVWeight" runat="server">
+                <td class="SubHead"><asp:Label ID="lblSRVWeight" runat="server" meta:resourcekey="lblSRVWeight" Text="Weight:"></asp:Label></td>
+                <td class="NormalBold">
+                    <asp:TextBox ID="txtSRVWeight" runat="server" Width="30" CssClass="NormalTextBox"></asp:TextBox>
+                    <asp:RequiredFieldValidator ID="valRequireSrvWeight" runat="server" ControlToValidate="txtSRVWeight"
+                        ErrorMessage="*" ValidationGroup="DnsZoneRecord" Display="Dynamic"></asp:RequiredFieldValidator>
+                    <asp:RegularExpressionValidator ID="valRequireCorrectSrvWeight" runat="server" ControlToValidate="txtSRVWeight"
+                        ErrorMessage="*" ValidationExpression="\d{1,3}"></asp:RegularExpressionValidator></td>
+            </tr>
+
+            <tr id="rowSRVPort" runat="server">
+                <td class="SubHead"><asp:Label ID="lblSRVPort" runat="server" meta:resourcekey="lblSRVPort" Text="Port Number:"></asp:Label></td>
+                <td class="NormalBold">
+                    <asp:TextBox ID="txtSRVPort" runat="server" Width="30" CssClass="NormalTextBox"></asp:TextBox>
+                    <asp:RequiredFieldValidator ID="valRequireSrvPort" runat="server" ControlToValidate="txtSRVPort"
+                        ErrorMessage="*" ValidationGroup="DnsZoneRecord" Display="Dynamic"></asp:RequiredFieldValidator>
+                    <asp:RegularExpressionValidator ID="valRequireCorrectSrvPort" runat="server" ControlToValidate="txtSRVPort"
+                        ErrorMessage="*" ValidationExpression="\d{1,3}"></asp:RegularExpressionValidator></td>
+            </tr>
+
+
+
         </table>
     </div>
     <div class="FormFooter">
         <asp:Button ID="btnSave" runat="server" meta:resourcekey="btnSave" Text="Save" CssClass="Button1" OnClick="btnSave_Click" OnClientClick = "ShowProgressDialog('Saving DNS Zone Record ...');" ValidationGroup="DnsZoneRecord" />
-        <asp:Button ID="btnCancel" runat="server" meta:resourcekey="btnCancel" Text="Cancel" CssClass="Button1" OnClick="btnCancel_Click" CausesValidation="False" /></td>
+        <asp:Button ID="btnCancel" runat="server" meta:resourcekey="btnCancel" Text="Cancel" CssClass="Button1" OnClick="btnCancel_Click" CausesValidation="False" />
     </div>
 </asp:Panel>

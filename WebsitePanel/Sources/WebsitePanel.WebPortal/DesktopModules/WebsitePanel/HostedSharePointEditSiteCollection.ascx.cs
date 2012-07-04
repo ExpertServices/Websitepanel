@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -273,7 +273,7 @@ namespace WebsitePanel.Portal
 
         private void AddDnsRecord(int domainId, string recordName, string recordData)
         {
-            int result = ES.Services.Servers.AddDnsZoneRecord(domainId, recordName, DnsRecordType.A, recordData, 0);
+            int result = ES.Services.Servers.AddDnsZoneRecord(domainId, recordName, DnsRecordType.A, recordData, 0, 0, 0, 0);
             if (result < 0)
             {
                 ShowResultMessage(result);

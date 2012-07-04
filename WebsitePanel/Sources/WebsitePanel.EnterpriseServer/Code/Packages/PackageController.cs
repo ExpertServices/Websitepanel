@@ -460,7 +460,7 @@ namespace WebsitePanel.EnterpriseServer
                             domain.PackageId = packageId;
                             domain.DomainName = domainName;
                             domain.HostingAllowed = false;
-                            domainId = ServerController.AddDomain(domain, createInstantAlias);
+                            domainId = ServerController.AddDomain(domain, createInstantAlias, true);
                             if (domainId < 0)
                             {
                                 result.Result = domainId;

@@ -40,6 +40,8 @@ namespace WebsitePanel.Providers.DNS
         CNAME,
         SOA,
         TXT,
+        SRV,
         Other
     }
 }
+

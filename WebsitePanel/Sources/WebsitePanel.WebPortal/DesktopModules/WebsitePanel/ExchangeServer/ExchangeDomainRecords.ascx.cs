@@ -59,44 +59,53 @@ namespace WebsitePanel.Portal.ExchangeServer
 			}
 		}
 
-		public string GetRecordFullData(string recordType, string recordData, int mxPriority)
+        public string GetRecordFullData(string recordType, string recordData, int mxPriority, int port)
 		{
-			return (String.Compare(recordType, "mx", true) == 0)
-				? String.Format("[{0}], {1}", mxPriority, recordData) : recordData;
-		}
+            switch (recordType)
+            {
+                case "MX":
+                    return String.Format("[{0}], {1}", mxPriority, recordData);
+                case "SRV":
+                    return String.Format("[{0}], {1}", port, recordData);
+                default:
+                    return recordData;
+            }
+        }
 
 		private void GetRecordsDetails(int recordIndex)
 		{
-			GridViewRow row = gvRecords.Rows[recordIndex];
-			ViewState["MxPriority"] = ((Literal)row.Cells[0].FindControl("litMxPriority")).Text;
-			ViewState["RecordName"] = ((Literal)row.Cells[0].FindControl("litRecordName")).Text; ;
-			ViewState["RecordType"] = (DnsRecordType)Enum.Parse(typeof(DnsRecordType),
-					((Literal)row.Cells[0].FindControl("litRecordType")).Text, true);
-			ViewState["RecordData"] = ((Literal)row.Cells[0].FindControl("litRecordData")).Text;
-		}
+            GridViewRow row = gvRecords.Rows[recordIndex];
+            ViewState["SrvPort"] = ((Literal)row.Cells[0].FindControl("litSrvPort")).Text;
+            ViewState["SrvWeight"] = ((Literal)row.Cells[0].FindControl("litSrvWeight")).Text;
+            ViewState["SrvPriority"] = ((Literal)row.Cells[0].FindControl("litSrvPriority")).Text;
+            ViewState["MxPriority"] = ((Literal)row.Cells[0].FindControl("litMxPriority")).Text;
+            ViewState["RecordName"] = ((Literal)row.Cells[0].FindControl("litRecordName")).Text; ;
+            ViewState["RecordType"] = (DnsRecordType)Enum.Parse(typeof(DnsRecordType), ((Literal)row.Cells[0].FindControl("litRecordType")).Text, true);
+            ViewState["RecordData"] = ((Literal)row.Cells[0].FindControl("litRecordData")).Text;
+        }
 
 		private void BindDnsRecord(int recordIndex)
 		{
-			try
-			{
-				litRecordType.Visible = true;
-				ddlRecordType.Visible = false;
+            try
+            {
+                ViewState["NewRecord"] = false;
+                GetRecordsDetails(recordIndex);
 
-				GetRecordsDetails(recordIndex);
-
-				ddlRecordType.SelectedValue = ViewState["RecordType"].ToString();
-				litRecordType.Text = ViewState["RecordType"].ToString();
-				txtRecordName.Text = ViewState["RecordName"].ToString();
-				txtRecordData.Text = ViewState["RecordData"].ToString();
-				txtMXPriority.Text = ViewState["MxPriority"].ToString();
-                ToggleRecordControls();
-			}
-			catch (Exception ex)
-			{
-				messageBox.ShowErrorMessage("GDNS_GET_RECORD", ex);
-				return;
-			}
-		}
+                ddlRecordType.SelectedValue = ViewState["RecordType"].ToString();
+                litRecordType.Text = ViewState["RecordType"].ToString();
+                txtRecordName.Text = ViewState["RecordName"].ToString();
+                txtRecordData.Text = ViewState["RecordData"].ToString();
+                txtMXPriority.Text = ViewState["MxPriority"].ToString();
+                txtSRVPriority.Text = ViewState["SrvPriority"].ToString();
+                txtSRVWeight.Text = ViewState["SrvWeight"].ToString();
+                txtSRVPort.Text = ViewState["SrvPort"].ToString();
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage("GDNS_GET_RECORD", ex);
+                return;
+            }
+        }
 
 		protected void ddlRecordType_SelectedIndexChanged(object sender, EventArgs e)
 		{
@@ -105,19 +114,32 @@ namespace WebsitePanel.Portal.ExchangeServer
 
 		private void ToggleRecordControls()
 		{
-			rowMXPriority.Visible = (ddlRecordType.SelectedValue == "MX");
-            
-            if (ddlRecordType.SelectedValue == "A")
+            rowMXPriority.Visible = false;
+            rowSRVPriority.Visible = false;
+            rowSRVWeight.Visible = false;
+            rowSRVPort.Visible = false;
+            lblRecordData.Text = "Record Data:";
+            IPValidator.Enabled = false;
+
+            switch (ddlRecordType.SelectedValue)
             {
-                lblRecordData.Text = "IP:";
-                IPValidator1.Enabled = true;
+                case "A":
+                    lblRecordData.Text = "IP:";
+                    IPValidator.Enabled = true;
+                    break;
+                case "MX":
+                    rowMXPriority.Visible = true;
+                    break;
+                case "SRV":
+                    rowSRVPriority.Visible = true;
+                    rowSRVWeight.Visible = true;
+                    rowSRVPort.Visible = true;
+                    lblRecordData.Text = "Host offering this service:";
+                    break;
+                default:
+                    break;
             }
-            else
-            {
-                lblRecordData.Text = "Record Data:";
-                IPValidator1.Enabled = false;
-            }
-		}
+        }
 
 		private void SaveRecord()
 		{
@@ -131,11 +153,16 @@ namespace WebsitePanel.Portal.ExchangeServer
 				// add record
 				try
 				{
-					int result = ES.Services.Servers.AddDnsZoneRecord(PanelRequest.DomainID,
-						txtRecordName.Text.Trim(),
-						(DnsRecordType)Enum.Parse(typeof(DnsRecordType), ddlRecordType.SelectedValue, true),
-						txtRecordData.Text.Trim(),
-						Utils.ParseInt(txtMXPriority.Text.Trim(), 0));
+                    int result = ES.Services.Servers.AddDnsZoneRecord(PanelRequest.DomainID,
+                                                                      txtRecordName.Text.Trim(),
+                                                                      (DnsRecordType)
+                                                                      Enum.Parse(typeof(DnsRecordType),
+                                                                                 ddlRecordType.SelectedValue, true),
+                                                                      txtRecordData.Text.Trim(),
+                                                                      Int32.Parse(txtMXPriority.Text.Trim()),
+                                                                      Int32.Parse(txtSRVPriority.Text.Trim()),
+                                                                      Int32.Parse(txtSRVWeight.Text.Trim()),
+                                                                      Int32.Parse(txtSRVPort.Text.Trim()));
 
 					if (result < 0)
 					{
@@ -154,13 +181,16 @@ namespace WebsitePanel.Portal.ExchangeServer
 				// update record
 				try
 				{
-					int result = ES.Services.Servers.UpdateDnsZoneRecord(PanelRequest.DomainID,
-						ViewState["RecordName"].ToString(),
-						ViewState["RecordData"].ToString(),
-						txtRecordName.Text.Trim(),
-						(DnsRecordType)ViewState["RecordType"],
-						txtRecordData.Text.Trim(),
-						Utils.ParseInt(txtMXPriority.Text.Trim(), 0));
+                    int result = ES.Services.Servers.UpdateDnsZoneRecord(PanelRequest.DomainID,
+                                                                         ViewState["RecordName"].ToString(),
+                                                                         ViewState["RecordData"].ToString(),
+                                                                         txtRecordName.Text.Trim(),
+                                                                         (DnsRecordType)ViewState["RecordType"],
+                                                                         txtRecordData.Text.Trim(),
+                                                                         Int32.Parse(txtMXPriority.Text.Trim()),
+                                                                         Int32.Parse(txtSRVPriority.Text.Trim()),
+                                                                         Int32.Parse(txtSRVWeight.Text.Trim()),
+                                                                         Int32.Parse(txtSRVPort.Text.Trim()));
 
 					if (result < 0)
 					{
@@ -220,18 +250,21 @@ namespace WebsitePanel.Portal.ExchangeServer
 
 		private void ResetPopup()
 		{
-			EditRecordModal.Hide();
-			ViewState["ExistingRecord"] = null;
+            EditRecordModal.Hide();
+            ViewState["ExistingRecord"] = null;
 
-			// erase fields
-			litRecordType.Visible = false;
-			ddlRecordType.Visible = true;
-			ddlRecordType.SelectedIndex = 0;
-			txtRecordName.Text = "";
-			txtRecordData.Text = "";
-			txtMXPriority.Text = "1";
-			ToggleRecordControls();
-		}
+            // erase fields
+            litRecordType.Visible = false;
+            ddlRecordType.Visible = true;
+            ddlRecordType.SelectedIndex = 0;
+            txtRecordName.Text = "";
+            txtRecordData.Text = "";
+            txtMXPriority.Text = "1";
+            txtSRVPriority.Text = "0";
+            txtSRVWeight.Text = "0";
+            txtSRVPort.Text = "0";
+            ToggleRecordControls();
+        }
 
 		protected void gvRecords_RowEditing(object sender, GridViewEditEventArgs e)
 		{

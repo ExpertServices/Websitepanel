@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2011, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -249,7 +249,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             return ServerController.GetProviderServiceQuota(providerId);
         }
-       
+
         #endregion
 
         #region Providers
@@ -301,7 +301,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             return ServerController.IsInstalled(serverId, providerId);
         }
-        
+
         [WebMethod]
         public string GetServerVersion(int serverId)
         {
@@ -568,11 +568,11 @@ namespace WebsitePanel.EnterpriseServer
             return ServerController.DeleteDomain(domainId);
         }
 
-		[WebMethod]
-		public int DetachDomain(int domainId)
-		{
-			return ServerController.DetachDomain(domainId);
-		}
+        [WebMethod]
+        public int DetachDomain(int domainId)
+        {
+            return ServerController.DetachDomain(domainId);
+        }
 
         [WebMethod]
         public int EnableDomainDns(int domainId)
@@ -587,9 +587,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public int CreateDomainInstantAlias(int domainId)
+        public int CreateDomainInstantAlias(string hostName, int domainId)
         {
-            return ServerController.CreateDomainInstantAlias(domainId);
+            return ServerController.CreateDomainInstantAlias(hostName, domainId);
         }
 
         [WebMethod]
@@ -614,18 +614,18 @@ namespace WebsitePanel.EnterpriseServer
 
         [WebMethod]
         public int AddDnsZoneRecord(int domainId, string recordName, DnsRecordType recordType,
-            string recordData, int mxPriority)
+            string recordData, int mxPriority, int srvPriority, int srvWeight, int srvPortNumber)
         {
-            return ServerController.AddDnsZoneRecord(domainId, recordName, recordType, recordData, mxPriority);
+            return ServerController.AddDnsZoneRecord(domainId, recordName, recordType, recordData, mxPriority, srvPriority, srvWeight, srvPortNumber);
         }
 
         [WebMethod]
         public int UpdateDnsZoneRecord(int domainId,
             string originalRecordName, string originalRecordData,
-            string recordName, DnsRecordType recordType, string recordData, int mxPriority)
+            string recordName, DnsRecordType recordType, string recordData, int mxPriority, int srvPriority, int srvWeight, int srvPortNumber)
         {
             return ServerController.UpdateDnsZoneRecord(domainId, originalRecordName, originalRecordData,
-                recordName, recordType, recordData, mxPriority);
+                recordName, recordType, recordData, mxPriority, srvPriority, srvWeight, srvPortNumber);
         }
 
         [WebMethod]

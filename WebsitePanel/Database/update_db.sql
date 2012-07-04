@@ -854,3 +854,656 @@ BEGIN
 	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (63, N'AdminPassword', N'')
 END
 GO
+
+
+
+
+
+
+
+
+
+ALTER TABLE [dbo].[GlobalDnsRecords] ADD
+	[SrvPriority] [int] NULL,
+	[SrvWeight] [int] NULL,
+	[SrvPort] [int] NULL
+
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[AddDnsRecord]
+(
+	@ActorID int,
+	@ServiceID int,
+	@ServerID int,
+	@PackageID int,
+	@RecordType nvarchar(10),
+	@RecordName nvarchar(50),
+	@RecordData nvarchar(500),
+	@MXPriority int,
+	@SrvPriority int,
+	@SrvWeight int, 
+	@SrvPort int,
+	@IPAddressID int
+)
+AS
+
+IF (@ServiceID > 0 OR @ServerID > 0) AND dbo.CheckIsUserAdmin(@ActorID) = 0
+RAISERROR('You should have administrator role to perform such operation', 16, 1)
+
+IF (@PackageID > 0) AND dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+IF @ServiceID = 0 SET @ServiceID = NULL
+IF @ServerID = 0 SET @ServerID = NULL
+IF @PackageID = 0 SET @PackageID = NULL
+IF @IPAddressID = 0 SET @IPAddressID = NULL
+
+IF EXISTS
+(
+	SELECT RecordID FROM GlobalDnsRecords WHERE
+	ServiceID = @ServiceID AND ServerID = @ServerID AND PackageID = @PackageID
+	AND RecordName = @RecordName AND RecordType = @RecordType
+)
+	
+	UPDATE GlobalDnsRecords
+	SET
+		RecordData = RecordData,
+		MXPriority = MXPriority,
+		SrvPriority = SrvPriority,
+		SrvWeight = SrvWeight,
+		SrvPort = SrvPort,
+	
+		IPAddressID = @IPAddressID
+	WHERE
+		ServiceID = @ServiceID AND ServerID = @ServerID AND PackageID = @PackageID
+ELSE
+	INSERT INTO GlobalDnsRecords
+	(
+		ServiceID,
+		ServerID,
+		PackageID,
+		RecordType,
+		RecordName,
+		RecordData,
+		MXPriority,
+		SrvPriority,
+		SrvWeight,
+		SrvPort,
+		IPAddressID
+	)
+	VALUES
+	(
+		@ServiceID,
+		@ServerID,
+		@PackageID,
+		@RecordType,
+		@RecordName,
+		@RecordData,
+		@MXPriority,
+		@SrvPriority,
+		@SrvWeight,
+		@SrvPort,
+		@IPAddressID
+	)
+
+RETURN
+
+GO
+
+
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[CheckDomain]
+(
+	@PackageID int,
+	@DomainName nvarchar(100),
+	@IsDomainPointer bit,
+	@Result int OUTPUT
+)
+AS
+
+/*
+@Result values:
+	0 - OK
+	-1 - already exists
+	-2 - sub-domain of prohibited domain
+*/
+
+SET @Result = 0 -- OK
+
+-- check if the domain already exists
+IF EXISTS(
+SELECT DomainID FROM Domains
+WHERE DomainName = @DomainName AND IsDomainPointer = @IsDomainPointer
+)
+BEGIN
+	SET @Result = -1
+	RETURN
+END
+
+-- check if this is a sub-domain of other domain
+-- that is not allowed for 3rd level hosting
+
+DECLARE @UserID int
+SELECT @UserID = UserID FROM Packages
+WHERE PackageID = @PackageID
+
+-- find sub-domains
+DECLARE @DomainUserID int, @HostingAllowed bit
+SELECT
+	@DomainUserID = P.UserID,
+	@HostingAllowed = D.HostingAllowed
+FROM Domains AS D
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+WHERE CHARINDEX('.' + DomainName, @DomainName) > 0
+AND (CHARINDEX('.' + DomainName, @DomainName) + LEN('.' + DomainName)) = LEN(@DomainName) + 1
+
+-- this is a domain of other user
+IF @UserID <> @DomainUserID AND @HostingAllowed = 0
+BEGIN
+	SET @Result = -2
+	RETURN
+END
+
+RETURN
+
+GO
+
+
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetDnsRecord]
+(
+	@ActorID int,
+	@RecordID int
+)
+AS
+
+-- check rights
+DECLARE @ServiceID int, @ServerID int, @PackageID int
+SELECT
+	@ServiceID = ServiceID,
+	@ServerID = ServerID,
+	@PackageID = PackageID
+FROM GlobalDnsRecords
+WHERE
+	RecordID = @RecordID
+
+IF (@ServiceID > 0 OR @ServerID > 0) AND dbo.CheckIsUserAdmin(@ActorID) = 0
+RAISERROR('You are not allowed to perform this operation', 16, 1)
+
+IF (@PackageID > 0) AND dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+SELECT
+	NR.RecordID,
+	NR.ServiceID,
+	NR.ServerID,
+	NR.PackageID,
+	NR.RecordType,
+	NR.RecordName,
+	NR.RecordData,
+	NR.MXPriority,
+	NR.SrvPriority,
+	NR.SrvWeight,
+	NR.SrvPort,	
+	NR.IPAddressID
+FROM
+	GlobalDnsRecords AS NR
+WHERE NR.RecordID = @RecordID
+RETURN
+
+GO
+
+
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetDnsRecordsByPackage]
+(
+	@ActorID int,
+	@PackageID int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+SELECT
+	NR.RecordID,
+	NR.ServiceID,
+	NR.ServerID,
+	NR.PackageID,
+	NR.RecordType,
+	NR.RecordName,
+	NR.RecordData,
+	NR.MXPriority,
+	NR.SrvPriority,
+	NR.SrvWeight,
+	NR.SrvPort,	
+	NR.IPAddressID,
+	CASE
+		WHEN NR.RecordType = 'A' AND NR.RecordData = '' THEN dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP)
+		WHEN NR.RecordType = 'MX' THEN CONVERT(varchar(3), NR.MXPriority) + ', ' + NR.RecordData
+		WHEN NR.RecordType = 'SRV' THEN CONVERT(varchar(3), NR.SrvPort) + ', ' + NR.RecordData
+		ELSE NR.RecordData
+	END AS FullRecordData,
+	dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP) AS IPAddress,
+	IP.ExternalIP,
+	IP.InternalIP
+FROM
+	GlobalDnsRecords AS NR
+LEFT OUTER JOIN IPAddresses AS IP ON NR.IPAddressID = IP.AddressID
+WHERE NR.PackageID = @PackageID
+RETURN
+
+GO
+
+
+
+
+
+
+
+
+USE [WebsitePanel]
+GO
+/****** Object:  StoredProcedure [dbo].[GetDnsRecordsByServer]    Script Date: 06/01/2011 23:42:41 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER PROCEDURE [dbo].[GetDnsRecordsByServer]
+(
+	@ActorID int,
+	@ServerID int
+)
+AS
+
+SELECT
+	NR.RecordID,
+	NR.ServiceID,
+	NR.ServerID,
+	NR.PackageID,
+	NR.RecordType,
+	NR.RecordName,
+	NR.RecordData,
+	CASE
+		WHEN NR.RecordType = 'A' AND NR.RecordData = '' THEN dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP)
+		WHEN NR.RecordType = 'MX' THEN CONVERT(varchar(3), NR.MXPriority) + ', ' + NR.RecordData
+		WHEN NR.RecordType = 'SRV' THEN CONVERT(varchar(3), NR.SrvPort) + ', ' + NR.RecordData
+		ELSE NR.RecordData
+	END AS FullRecordData,
+	NR.MXPriority,
+	NR.SrvPriority,
+	NR.SrvWeight,
+	NR.SrvPort,		
+	NR.IPAddressID,
+	dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP) AS IPAddress,
+	IP.ExternalIP,
+	IP.InternalIP
+FROM
+	GlobalDnsRecords AS NR
+LEFT OUTER JOIN IPAddresses AS IP ON NR.IPAddressID = IP.AddressID
+WHERE
+	NR.ServerID = @ServerID
+RETURN
+
+GO
+
+
+
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetDnsRecordsByService]
+(
+	@ActorID int,
+	@ServiceID int
+)
+AS
+
+SELECT
+	NR.RecordID,
+	NR.ServiceID,
+	NR.ServerID,
+	NR.PackageID,
+	NR.RecordType,
+	NR.RecordName,
+	CASE
+		WHEN NR.RecordType = 'A' AND NR.RecordData = '' THEN dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP)
+		WHEN NR.RecordType = 'MX' THEN CONVERT(varchar(3), NR.MXPriority) + ', ' + NR.RecordData
+		WHEN NR.RecordType = 'SRV' THEN CONVERT(varchar(3), NR.SrvPort) + ', ' + NR.RecordData
+		ELSE NR.RecordData
+	END AS FullRecordData,
+	NR.RecordData,
+	NR.MXPriority,
+	NR.SrvPriority,
+	NR.SrvWeight,
+	NR.SrvPort,			
+	NR.IPAddressID,
+	dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP) AS IPAddress,
+	IP.ExternalIP,
+	IP.InternalIP
+FROM
+	GlobalDnsRecords AS NR
+LEFT OUTER JOIN IPAddresses AS IP ON NR.IPAddressID = IP.AddressID
+WHERE
+	NR.ServiceID = @ServiceID
+RETURN
+
+GO
+
+
+
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetDnsRecordsTotal]
+(
+	@ActorID int,
+	@PackageID int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- create temp table for DNS records
+DECLARE @Records TABLE
+(
+	RecordID int,
+	RecordType nvarchar(10) COLLATE DATABASE_DEFAULT,
+	RecordName nvarchar(50) COLLATE DATABASE_DEFAULT
+)
+
+-- select PACKAGES DNS records
+DECLARE @ParentPackageID int, @TmpPackageID int
+SET @TmpPackageID = @PackageID
+
+WHILE 10 = 10
+BEGIN
+
+	-- get DNS records for the current package
+	INSERT INTO @Records (RecordID, RecordType, RecordName)
+	SELECT
+		GR.RecordID,
+		GR.RecordType,
+		GR.RecordName
+	FROM GlobalDNSRecords AS GR
+	WHERE GR.PackageID = @TmpPackageID
+	AND GR.RecordType + GR.RecordName NOT IN (SELECT RecordType + RecordName FROM @Records)
+
+	SET @ParentPackageID = NULL
+
+	-- get parent package
+	SELECT
+		@ParentPackageID = ParentPackageID
+	FROM Packages
+	WHERE PackageID = @TmpPackageID
+	
+	IF @ParentPackageID IS NULL -- the last parent
+	BREAK
+	
+	SET @TmpPackageID = @ParentPackageID
+END
+
+-- select SERVER DNS records
+DECLARE @ServerID int
+SELECT @ServerID = ServerID FROM Packages
+WHERE PackageID = @PackageID
+
+INSERT INTO @Records (RecordID, RecordType, RecordName)
+SELECT
+	GR.RecordID,
+	GR.RecordType,
+	GR.RecordName
+FROM GlobalDNSRecords AS GR
+WHERE GR.ServerID = @ServerID
+AND GR.RecordType + GR.RecordName NOT IN (SELECT RecordType + RecordName FROM @Records)
+
+
+-- select SERVICES DNS records
+-- re-distribute package services
+EXEC DistributePackageServices @ActorID, @PackageID
+
+INSERT INTO @Records (RecordID, RecordType, RecordName)
+SELECT
+	GR.RecordID,
+	GR.RecordType,
+	GR.RecordName
+FROM GlobalDNSRecords AS GR
+WHERE GR.ServiceID IN (SELECT ServiceID FROM PackageServices WHERE PackageID = @PackageID)
+AND GR.RecordType + GR.RecordName NOT IN (SELECT RecordType + RecordName FROM @Records)
+
+
+SELECT
+	NR.RecordID,
+	NR.ServiceID,
+	NR.ServerID,
+	NR.PackageID,
+	NR.RecordType,
+	NR.RecordName,
+	NR.RecordData,
+	NR.MXPriority,
+	NR.SrvPriority,
+	NR.SrvWeight,
+	NR.SrvPort,	
+	NR.IPAddressID,
+	ISNULL(IP.ExternalIP, '') AS ExternalIP,
+	ISNULL(IP.InternalIP, '') AS InternalIP,
+	CASE
+		WHEN NR.RecordType = 'A' AND NR.RecordData = '' THEN dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP)
+		WHEN NR.RecordType = 'MX' THEN CONVERT(varchar(3), NR.MXPriority) + ', ' + NR.RecordData
+		WHEN NR.RecordType = 'SRV' THEN CONVERT(varchar(3), NR.SrvPort) + ', ' + NR.RecordData
+		ELSE NR.RecordData
+	END AS FullRecordData,
+	dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP) AS IPAddress
+FROM @Records AS TR
+INNER JOIN GlobalDnsRecords AS NR ON TR.RecordID = NR.RecordID
+LEFT OUTER JOIN IPAddresses AS IP ON NR.IPAddressID = IP.AddressID
+
+RETURN
+
+GO
+
+
+
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetDomainsPaged]
+(
+	@ActorID int,
+	@PackageID int,
+	@ServerID int,
+	@Recursive bit,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+SET NOCOUNT ON
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- build query and run it to the temporary table
+DECLARE @sql nvarchar(2000)
+
+IF @SortColumn = '' OR @SortColumn IS NULL
+SET @SortColumn = 'DomainName'
+
+SET @sql = '
+DECLARE @Domains TABLE
+(
+	ItemPosition int IDENTITY(1,1),
+	DomainID int
+)
+INSERT INTO @Domains (DomainID)
+SELECT
+	D.DomainID
+FROM Domains AS D
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
+LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+WHERE (D.IsInstantAlias = 0 AND D.IsDomainPointer = 0) AND
+		((@Recursive = 0 AND D.PackageID = @PackageID)
+		OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, D.PackageID) = 1))
+AND (@ServerID = 0 OR (@ServerID > 0 AND S.ServerID = @ServerID))
+'
+
+IF @FilterColumn <> '' AND @FilterValue <> ''
+SET @sql = @sql + ' AND ' + @FilterColumn + ' LIKE @FilterValue '
+
+IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
+
+SET @sql = @sql + ' SELECT COUNT(DomainID) FROM @Domains;SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(WS.ItemID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(MD.ItemID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.IsDomainPointer,
+	
+	-- packages
+	P.PackageName,
+	
+	-- server
+	ISNULL(SRV.ServerID, 0) AS ServerID,
+	ISNULL(SRV.ServerName, '''') AS ServerName,
+	ISNULL(SRV.Comments, '''') AS ServerComments,
+	ISNULL(SRV.VirtualServer, 0) AS VirtualServer,
+	
+	-- user
+	P.UserID,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.FullName,
+	U.RoleID,
+	U.Email
+FROM @Domains AS SD
+INNER JOIN Domains AS D ON SD.DomainID = D.DomainID
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
+LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+WHERE SD.ItemPosition BETWEEN @StartRow + 1 AND @StartRow + @MaximumRows'
+
+exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @PackageID int, @FilterValue nvarchar(50), @ServerID int, @Recursive bit',
+@StartRow, @MaximumRows, @PackageID, @FilterValue, @ServerID, @Recursive
+
+
+RETURN
+
+GO
+
+
+
+
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[UpdateDnsRecord]
+(
+	@ActorID int,
+	@RecordID int,
+	@RecordType nvarchar(10),
+	@RecordName nvarchar(50),
+	@RecordData nvarchar(500),
+	@MXPriority int,
+	@SrvPriority int,
+	@SrvWeight int, 
+	@SrvPort int,	
+	@IPAddressID int
+)
+AS
+
+IF @IPAddressID = 0 SET @IPAddressID = NULL
+
+-- check rights
+DECLARE @ServiceID int, @ServerID int, @PackageID int
+SELECT
+	@ServiceID = ServiceID,
+	@ServerID = ServerID,
+	@PackageID = PackageID
+FROM GlobalDnsRecords
+WHERE
+	RecordID = @RecordID
+
+IF (@ServiceID > 0 OR @ServerID > 0) AND dbo.CheckIsUserAdmin(@ActorID) = 0
+RAISERROR('You are not allowed to perform this operation', 16, 1)
+
+IF (@PackageID > 0) AND dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+
+-- update record
+UPDATE GlobalDnsRecords
+SET
+	RecordType = @RecordType,
+	RecordName = @RecordName,
+	RecordData = @RecordData,
+	MXPriority = @MXPriority,
+	SrvPriority = @SrvPriority,
+	SrvWeight = @SrvWeight,
+	SrvPort = @SrvPort,
+	IPAddressID = @IPAddressID
+WHERE
+	RecordID = @RecordID
+RETURN
+
+GO
