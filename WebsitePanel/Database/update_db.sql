@@ -36,37 +36,35 @@ UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 5 WHERE [GroupName] = N'Exchang
 GO
 UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 6 WHERE [GroupName] = N'Hosted Organizations'
 GO
-UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 7 WHERE [GroupName] = N'ExchangeHostedEdition'
+UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 7 WHERE [GroupName] = N'MsSQL2000'
 GO
-UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 8 WHERE [GroupName] = N'MsSQL2000'
+UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 8 WHERE [GroupName] = N'MsSQL2005'
 GO
-UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 9 WHERE [GroupName] = N'MsSQL2005'
+UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 9 WHERE [GroupName] = N'MsSQL2008'
 GO
-UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 10 WHERE [GroupName] = N'MsSQL2008'
+UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 10 WHERE [GroupName] = N'MsSQL2012'
 GO
-UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 11 WHERE [GroupName] = N'MsSQL2012'
+UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 11 WHERE [GroupName] = N'MySQL4'
 GO
-UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 12 WHERE [GroupName] = N'MySQL4'
+UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 12 WHERE [GroupName] = N'MySQL5'
 GO
-UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 13 WHERE [GroupName] = N'MySQL5'
+UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 13 WHERE [GroupName] = N'SharePoint'
 GO
-UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 14 WHERE [GroupName] = N'SharePoint'
+UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 14 WHERE [GroupName] = N'Hosted SharePoint'
 GO
-UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 15 WHERE [GroupName] = N'Hosted SharePoint'
+UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 15 WHERE [GroupName] = N'Hosted CRM'
 GO
-UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 16 WHERE [GroupName] = N'Hosted CRM'
+UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 16 WHERE [GroupName] = N'DNS'
 GO
-UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 17 WHERE [GroupName] = N'DNS'
+UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 17 WHERE [GroupName] = N'Statistics'
 GO
-UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 18 WHERE [GroupName] = N'Statistics'
+UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 18 WHERE [GroupName] = N'VPS'
 GO
-UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 19 WHERE [GroupName] = N'VPS'
+UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 19 WHERE [GroupName] = N'VPSForPC'
 GO
-UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 20 WHERE [GroupName] = N'VPSForPC'
+UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 20 WHERE [GroupName] = N'BlackBerry'
 GO
-UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 21 WHERE [GroupName] = N'BlackBerry'
-GO
-UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 22 WHERE [GroupName] = N'OCS'
+UPDATE [dbo].[ResourceGroups] SET [GroupOrder] = 21 WHERE [GroupName] = N'OCS'
 GO
 
 IF NOT EXISTS (SELECT * FROM [dbo].[ServiceItemTypes] WHERE [DisplayName] = 'MsSQL2012Database')
@@ -1497,4 +1495,38 @@ GO
 
 
 UPDATE dbo.Quotas SET QuotaTypeID = 2 WHERE QuotaName = 'HostedSharePoint.Sites'
+GO
+
+
+
+
+-- Remove ExchangeHostedEdition Quotas
+DELETE FROM Quotas WHERE QuotaID = 340
+GO
+DELETE FROM Quotas WHERE QuotaID = 341
+GO
+DELETE FROM Quotas WHERE QuotaID = 342
+GO
+DELETE FROM Quotas WHERE QuotaID = 343
+GO
+
+
+-- Remove ExchangeHostedEdition ServiceItemType
+DELETE FROM ServiceItemTypes WHERE ItemTypeID = 40
+GO
+
+
+-- Remove ExchangeHostedEdition ServiceDefaultProperties
+DELETE FROM ServiceDefaultProperties WHERE ProviderID = 207
+GO
+
+
+
+-- Remove ExchangeHostedEdition Provider
+DELETE FROM Providers WHERE ProviderID = 207
+GO
+
+
+-- Remove ExchangeHostedEdition ResourceGroups
+DELETE FROM ResourceGroups WHERE GRoupID = 33
 GO

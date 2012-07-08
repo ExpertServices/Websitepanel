@@ -141,7 +141,4 @@
   <data name="lnkVpsSummaryLetter.Text" xml:space="preserve">
     <value>VPS Summary Letter</value>
   </data>
-  <data name="lnkExchangeHostedEditionOrganizationSummary.Text" xml:space="preserve">
-    <value>Exchange Hosting Mode Organization Summary</value>
-  </data>
 </root>

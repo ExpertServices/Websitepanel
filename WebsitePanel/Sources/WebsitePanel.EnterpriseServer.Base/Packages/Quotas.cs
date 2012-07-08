@@ -105,10 +105,6 @@ order by rg.groupOrder
 		public const string EXCHANGE2007_OWAENABLED = "Exchange2007.OWAEnabled";  // OWA  Enabled by default
 		public const string EXCHANGE2007_MAPIENABLED = "Exchange2007.MAPIEnabled";  // MAPI  Enabled by default
 		public const string EXCHANGE2007_ACTIVESYNCENABLED = "Exchange2007.ActiveSyncEnabled";  // ActiveSync Enabled by default
-        public const string EXCHANGEHOSTEDEDITION_DOMAINS = "ExchangeHostedEdition.Domains";
-        public const string EXCHANGEHOSTEDEDITION_MAILBOXES = "ExchangeHostedEdition.Mailboxes";
-        public const string EXCHANGEHOSTEDEDITION_CONTACTS = "ExchangeHostedEdition.Contacts";
-        public const string EXCHANGEHOSTEDEDITION_DISTRIBUTIONLISTS = "ExchangeHostedEdition.DistributionLists";
 		public const string MSSQL2000_DATABASES = "MsSQL2000.Databases";  // Databases
 		public const string MSSQL2000_USERS = "MsSQL2000.Users";  // Users
 		public const string MSSQL2000_MAXDATABASESIZE = "MsSQL2000.MaxDatabaseSize";  // Max Database Size

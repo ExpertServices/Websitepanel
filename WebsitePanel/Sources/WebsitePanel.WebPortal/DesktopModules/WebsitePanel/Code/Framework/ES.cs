@@ -206,11 +206,6 @@ namespace WebsitePanel.Portal
 			get { return GetCachedProxy<esExchangeServer>(); }
 		}
 
-        public esExchangeHostedEdition ExchangeHostedEdition
-        {
-            get { return GetCachedProxy<esExchangeHostedEdition>(); }
-        }
-
         protected ES()
         {
         }

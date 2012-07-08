@@ -74,9 +74,6 @@
     <Compile Include="Common\ByteOperations.cs" />
     <Compile Include="Common\ErrorCodes.cs" />
     <Compile Include="Common\PasswdHelper.cs" />
-    <Compile Include="ExchangeHostedEdition\ExchangeOrganization.cs" />
-    <Compile Include="ExchangeHostedEdition\ExchangeOrganizationDomain.cs" />
-    <Compile Include="ExchangeHostedEdition\IExchangeHostedEdition.cs" />
     <Compile Include="HostedSolution\BaseReport.cs" />
     <Compile Include="HostedSolution\BaseStatistics.cs" />
     <Compile Include="HostedSolution\BlackBerryErrorsCodes.cs" />

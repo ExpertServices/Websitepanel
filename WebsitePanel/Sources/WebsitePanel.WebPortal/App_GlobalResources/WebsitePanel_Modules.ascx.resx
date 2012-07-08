@@ -735,9 +735,6 @@
   <data name="ModuleTitle.WebSitesAllocateIPAddresses" xml:space="preserve">
     <value>Allocate Web Site IP Addresses</value>
   </data>
-  <data name="ModuleTitle.ExchangeHostedEdition" xml:space="preserve">
-    <value>Exchange Hosting Mode</value>
-  </data>
   <data name="ModuleTitle.HostedExchangeAddOrganizationDomain" xml:space="preserve">
     <value>Add Organization Domain</value>
   </data>

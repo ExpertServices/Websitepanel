@@ -3708,14 +3708,6 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (332, 2, 21, N'Web.SSL', N'SSL', 1, 0, NULL)
 GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (340, 33, 1, N'ExchangeHostedEdition.Domains', N'Domains', 3, 0, NULL)
-GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (341, 33, 2, N'ExchangeHostedEdition.Mailboxes', N'Mailboxes', 3, 0, NULL)
-GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (342, 33, 3, N'ExchangeHostedEdition.Contacts', N'Contacts', 3, 0, NULL)
-GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (343, 33, 4, N'ExchangeHostedEdition.DistributionLists', N'Distribution Lists', 3, 0, NULL)
-GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (344, 2, 9, N'Web.Htaccess', N'htaccess', 1, 0, NULL)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (345, 40, 1, N'VPSForPC.ServersNumber', N'Number of VPS', 2, 0, 35)
@@ -10516,8 +10508,6 @@ GO
 INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (31, N'BlackBerry', 21, NULL)
 GO
 INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (32, N'OCS', 22, NULL)
-GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (33, N'ExchangeHostedEdition', 7, N'WebsitePanel.EnterpriseServer.ExchangeHostedEditionController')
 GO
 INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (40, N'VPSForPC', 20, NULL)
 GO
@@ -22300,8 +22290,6 @@ INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeNa
 GO
 INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (38, 23, N'MsSQL2012User', N'WebsitePanel.Providers.Database.SqlUser, WebsitePanel.Providers.Base', 1, 0, 0, 0, 1, 1, 1, 1)
 GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (40, 33, N'ExchangeOrganization', N'WebsitePanel.Providers.ExchangeHostedEdition.ExchangeOrganization, WebsitePanel.Providers.Base', 1, 0, 0, 1, 1, 1, 0, 0)
-GO
 INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (200, 20, N'SharePointSiteCollection', N'WebsitePanel.Providers.SharePoint.SharePointSiteCollection, WebsitePanel.Providers.Base', 25, 1, 0, 0, 1, 1, 1, 1)
 GO
 SET ANSI_NULLS ON
@@ -23258,8 +23246,6 @@ GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (205, 32, N'OCS', N'Office Communications Server 2007 R2', N'WebsitePanel.Providers.HostedSolution.OCS2007R2, WebsitePanel.Providers.HostedSolution', N'OCS', 1)
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (206, 32, N'OCSEdge', N'OCS Edge server', N'WebsitePanel.Providers.HostedSolution.OCSEdge2007R2, WebsitePanel.Providers.HostedSolution', N'OCS_Edge', 1)
-GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (207, 33, N'Exchange2010SP1', N'Exchange Server 2010 SP1 Hosting Mode', N'WebsitePanel.Providers.ExchangeHostedEdition.Exchange2010SP1, WebsitePanel.Providers.ExchangeHostedEdition', N'Exchange2010SP1', 1)
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (208, 20, N'HostedSharePoint2010', N'Hosted SharePoint Foundation 2010', N'WebsitePanel.Providers.HostedSolution.HostedSharePointServer2010, WebsitePanel.Providers.HostedSolution', N'HostedSharePoint30', NULL)
 GO
