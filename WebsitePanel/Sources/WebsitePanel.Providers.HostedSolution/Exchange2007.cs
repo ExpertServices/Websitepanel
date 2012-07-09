@@ -28,6 +28,7 @@
 
 using System;
 using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
@@ -67,7 +68,6 @@ namespace WebsitePanel.Providers.HostedSolution
 
 		#region Constants
 		private const string CONFIG_CLEAR_QUERYBASEDN = "WebsitePanel.Exchange.ClearQueryBaseDN";
-        private const string CONFIG_ENABLESP2ABP = "WebsitePanel.Exchange.enableSP2abp";
 		#endregion
 
 		#region Properties
@@ -87,7 +87,12 @@ namespace WebsitePanel.Providers.HostedSolution
 			get { return ProviderSettings["MailboxDatabase"]; }
 		}
 
-		internal int KeepDeletedItemsDays
+        internal bool PublicFolderDistributionEnabled
+        {
+            get { return ProviderSettings.GetBool("PublicFolderDistributionEnabled"); }
+        }
+
+        internal int KeepDeletedItemsDays
 		{
 			get { return Int32.Parse(ProviderSettings["KeepDeletedItemsDays"]); }
 		}
@@ -152,10 +157,10 @@ namespace WebsitePanel.Providers.HostedSolution
 		/// <param name="organizationId"></param>
 		/// <param name="securityGroup"></param>
 		/// <returns></returns>
-		public Organization ExtendToExchangeOrganization(string organizationId, string securityGroup)
-		{
-			return ExtendToExchangeOrganizationInternal(organizationId, securityGroup);
-		}
+        public Organization ExtendToExchangeOrganization(string organizationId, string securityGroup, bool IsConsumer)
+        {
+            return ExtendToExchangeOrganizationInternal(organizationId, securityGroup, IsConsumer);
+        }
 
 		/// <summary>
 		/// Creates organization OAB on the Client Access Server
@@ -183,13 +188,18 @@ namespace WebsitePanel.Providers.HostedSolution
 			return GetOABVirtualDirectoryInternal();
 		}
 
-		public bool DeleteOrganization(string organizationId, string distinguishedName,
-			string globalAddressList, string addressList, string roomsAddressList, string offlineAddressBook,
-			string securityGroup)
-		{
-			return DeleteOrganizationInternal(organizationId, distinguishedName, globalAddressList,
-				addressList, roomsAddressList, offlineAddressBook, securityGroup);
-		}
+        public Organization CreateOrganizationAddressBookPolicy(string organizationId, string gal, string addressBook, string roomList, string oab)
+        {
+            return CreateOrganizationAddressBookPolicyInternal(organizationId, gal, addressBook, roomList, oab);
+        }
+
+        public bool DeleteOrganization(string organizationId, string distinguishedName,
+            string globalAddressList, string addressList, string roomList, string offlineAddressBook,
+            string securityGroup, string addressBookPolicy)
+        {
+            return DeleteOrganizationInternal(organizationId, distinguishedName, globalAddressList,
+                addressList, roomList, offlineAddressBook, securityGroup, addressBookPolicy);
+        }
 
 		public void SetOrganizationStorageLimits(string organizationDistinguishedName, int issueWarningKB, int prohibitSendKB,
 			int prohibitSendReceiveKB, int keepDeletedItemsDays)
@@ -234,7 +244,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			SetMailboxPermissionsInternal(organizationId, accountName, sendAsAccounts, fullAccessAccounts);
 		}
 
-
+/*
 		public string CreateMailbox(string organizationId, string organizationDistinguishedName,
 			string mailboxDatabase, string securityGroup, string offlineAddressBook, ExchangeAccountType accountType,
 			 string displayName,
@@ -247,7 +257,7 @@ namespace WebsitePanel.Providers.HostedSolution
 				enableOWA, enableMAPI, enableActiveSync,
 				issueWarningKB, prohibitSendKB, prohibitSendReceiveKB, keepDeletedItemsDays);
 		}
-
+*/
 		public void DeleteMailbox(string accountName)
 		{
 			DeleteMailboxInternal(accountName);
@@ -258,17 +268,9 @@ namespace WebsitePanel.Providers.HostedSolution
 			return GetMailboxGeneralSettingsInternal(accountName);
 		}
 
-		public void SetMailboxGeneralSettings(string accountName, string displayName, string password,
-			bool hideFromAddressBook, bool disabled, string firstName, string initials, string lastName,
-			string address, string city, string state, string zip, string country, string jobTitle,
-			string company, string department, string office, string managerAccountName,
-			string businessPhone, string fax, string homePhone, string mobilePhone, string pager,
-			string webPage, string notes)
+		public void SetMailboxGeneralSettings(string accountName, bool hideFromAddressBook, bool disabled)
 		{
-			SetMailboxGeneralSettingsInternal(accountName, displayName, password, hideFromAddressBook,
-				disabled, firstName, initials, lastName, address, city, state, zip, country, jobTitle,
-				company, department, office, managerAccountName, businessPhone, fax, homePhone,
-				mobilePhone, pager, webPage, notes);
+			SetMailboxGeneralSettingsInternal(accountName, hideFromAddressBook,	disabled);
 		}
 
 		public ExchangeMailbox GetMailboxMailFlowSettings(string accountName)
@@ -276,29 +278,28 @@ namespace WebsitePanel.Providers.HostedSolution
 			return GetMailboxMailFlowSettingsInternal(accountName);
 		}
 
-		public void SetMailboxMailFlowSettings(string accountName, bool enableForwarding,
-			string forwardingAccountName, bool forwardToBoth, string[] sendOnBehalfAccounts,
-			string[] acceptAccounts, string[] rejectAccounts, int maxRecipients, int maxSendMessageSizeKB,
-			int maxReceiveMessageSizeKB, bool requireSenderAuthentication)
-		{
-			SetMailboxMailFlowSettingsInternal(accountName, enableForwarding, forwardingAccountName,
-				forwardToBoth, sendOnBehalfAccounts, acceptAccounts, rejectAccounts, maxRecipients,
-				maxSendMessageSizeKB, maxReceiveMessageSizeKB, requireSenderAuthentication);
-		}
+        public void SetMailboxMailFlowSettings(string accountName, bool enableForwarding,
+            string forwardingAccountName, bool forwardToBoth, string[] sendOnBehalfAccounts,
+            string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication)
+        {
+            SetMailboxMailFlowSettingsInternal(accountName, enableForwarding, forwardingAccountName,
+                forwardToBoth, sendOnBehalfAccounts, acceptAccounts, rejectAccounts, requireSenderAuthentication);
+        }
 
 		public ExchangeMailbox GetMailboxAdvancedSettings(string accountName)
 		{
 			return GetMailboxAdvancedSettingsInternal(accountName);
 		}
 
-		public void SetMailboxAdvancedSettings(string organizationId, string accountName, bool enablePOP,
-			bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync,
-			int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays)
-		{
-			SetMailboxAdvancedSettingsInternal(organizationId, accountName, enablePOP, enableIMAP, enableOWA,
-				enableMAPI, enableActiveSync, issueWarningKB,
-				prohibitSendKB, prohibitSendReceiveKB, keepDeletedItemsDays);
-		}
+        public void SetMailboxAdvancedSettings(string organizationId, string accountName, bool enablePOP,
+            bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync,
+            int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB,
+            int maxReceiveMessageSizeKB)
+        {
+            SetMailboxAdvancedSettingsInternal(organizationId, accountName, enablePOP, enableIMAP, enableOWA,
+                enableMAPI, enableActiveSync, issueWarningKB,
+                prohibitSendKB, prohibitSendReceiveKB, keepDeletedItemsDays, maxRecipients, maxSendMessageSizeKB, maxReceiveMessageSizeKB);
+        }
 
 		public ExchangeEmailAddress[] GetMailboxEmailAddresses(string accountName)
 		{
@@ -363,12 +364,12 @@ namespace WebsitePanel.Providers.HostedSolution
 		#endregion
 
 		#region Distribution lists
-		public void CreateDistributionList(string organizationId, string organizationDistinguishedName,
-			string displayName, string accountName, string name, string domain, string managedBy)
-		{
-			CreateDistributionListInternal(organizationId, organizationDistinguishedName, displayName,
-				accountName, name, domain, managedBy);
-		}
+        public void CreateDistributionList(string organizationId, string organizationDistinguishedName,
+            string displayName, string accountName, string name, string domain, string managedBy, string[] addressLists)
+        {
+            CreateDistributionListInternal(organizationId, organizationDistinguishedName, displayName,
+                accountName, name, domain, managedBy, addressLists);
+        }
 
 		public void DeleteDistributionList(string accountName)
 		{
@@ -380,58 +381,59 @@ namespace WebsitePanel.Providers.HostedSolution
 			return GetDistributionListGeneralSettingsInternal(accountName);
 		}
 
-		public void SetDistributionListGeneralSettings(string accountName, string displayName,
-			bool hideFromAddressBook, string managedBy, string[] members, string notes)
-		{
-			SetDistributionListGeneralSettingsInternal(accountName, displayName, hideFromAddressBook,
-				managedBy, members, notes);
-		}
+        public void SetDistributionListGeneralSettings(string accountName, string displayName,
+            bool hideFromAddressBook, string managedBy, string[] members, string notes, string[] addressLists)
+        {
+            SetDistributionListGeneralSettingsInternal(accountName, displayName, hideFromAddressBook,
+                managedBy, members, notes, addressLists);
+        }
 
-		public void AddDistributionListMembers(string accountName, string[] memberAccounts)
-		{
-			AddDistributionListMembersInternal(accountName, memberAccounts);
-		}
+        public void AddDistributionListMembers(string accountName, string[] memberAccounts, string[] addressLists)
+        {
+            AddDistributionListMembersInternal(accountName, memberAccounts, addressLists);
+        }
 
-		public void RemoveDistributionListMembers(string accountName, string[] memberAccounts)
-		{
-			RemoveDistributionListMembersInternal(accountName, memberAccounts);
-		}
+
+        public void RemoveDistributionListMembers(string accountName, string[] memberAccounts, string[] addressLists)
+        {
+            RemoveDistributionListMembersInternal(accountName, memberAccounts, addressLists);
+        }
 
 		public ExchangeDistributionList GetDistributionListMailFlowSettings(string accountName)
 		{
 			return GetDistributionListMailFlowSettingsInternal(accountName);
 		}
 
-		public void SetDistributionListMailFlowSettings(string accountName, string[] acceptAccounts,
-			string[] rejectAccounts, bool requireSenderAuthentication)
-		{
-			SetDistributionListMailFlowSettingsInternal(accountName, acceptAccounts, rejectAccounts, requireSenderAuthentication);
-		}
+        public void SetDistributionListMailFlowSettings(string accountName, string[] acceptAccounts,
+            string[] rejectAccounts, bool requireSenderAuthentication, string[] addressLists)
+        {
+            SetDistributionListMailFlowSettingsInternal(accountName, acceptAccounts, rejectAccounts, requireSenderAuthentication, addressLists);
+        }
 
 		public ExchangeEmailAddress[] GetDistributionListEmailAddresses(string accountName)
 		{
 			return GetDistributionListEmailAddressesInternal(accountName);
 		}
 
-		public void SetDistributionListEmailAddresses(string accountName, string[] emailAddresses)
-		{
-			SetDistributionListEmailAddressesInternal(accountName, emailAddresses);
-		}
+        public void SetDistributionListEmailAddresses(string accountName, string[] emailAddresses, string[] addressLists)
+        {
+            SetDistributionListEmailAddressesInternal(accountName, emailAddresses, addressLists);
+        }
 
-		public void SetDistributionListPrimaryEmailAddress(string accountName, string emailAddress)
-		{
-			SetDistributionListPrimaryEmailAddressInternal(accountName, emailAddress);
-		}
+        public void SetDistributionListPrimaryEmailAddress(string accountName, string emailAddress, string[] addressLists)
+        {
+            SetDistributionListPrimaryEmailAddressInternal(accountName, emailAddress, addressLists);
+        }
 
 		public ExchangeDistributionList GetDistributionListPermissions(string organizationId, string accountName)
 		{
 			return GetDistributionListPermissionsInternal(organizationId, accountName, null);
 		}
 
-		public void SetDistributionListPermissions(string organizationId, string accountName, string[] sendAsAccounts, string[] sendOnBehalfAccounts)
-		{
-			SetDistributionListPermissionsInternal(organizationId, accountName, sendAsAccounts, sendOnBehalfAccounts);
-		}
+        public void SetDistributionListPermissions(string organizationId, string accountName, string[] sendAsAccounts, string[] sendOnBehalfAccounts, string[] addressLists)
+        {
+            SetDistributionListPermissionsInternal(organizationId, accountName, sendAsAccounts, sendOnBehalfAccounts, addressLists);
+        }
 		#endregion
 
 		#region Public folders
@@ -455,10 +457,10 @@ namespace WebsitePanel.Providers.HostedSolution
 
 		public void DisableMailbox(string id)
 		{
-			DisableMailboxIntenal(id);
+			DisableMailboxInternal(id);
 		}
 
-		private void DisableMailboxIntenal(string id)
+        internal virtual void DisableMailboxInternal(string id)
 		{
 			ExchangeLog.LogStart("DisableMailboxIntenal");
 			Runspace runSpace = null;
@@ -617,9 +619,9 @@ namespace WebsitePanel.Providers.HostedSolution
 					if (item is Organization)
 					{
 						Organization org = item as Organization;
-						DeleteOrganization(org.OrganizationId, org.DistinguishedName, org.GlobalAddressList,
-							org.AddressList, org.RoomsAddressList, org.OfflineAddressBook, org.SecurityGroup);
-					}
+                        DeleteOrganization(org.OrganizationId, org.DistinguishedName, org.GlobalAddressList,
+                            org.AddressList, org.RoomsAddressList, org.OfflineAddressBook, org.SecurityGroup, org.AddressBookPolicy);
+                    }
 					else if (item is ExchangeDomain)
 					{
 						DeleteAcceptedDomain(item.Name);
@@ -706,9 +708,9 @@ namespace WebsitePanel.Providers.HostedSolution
 		/// </summary>
 		/// <param name="organizationId"></param>
 		/// <returns></returns>
-		private Organization ExtendToExchangeOrganizationInternal(string organizationId, string securityGroup)
-		{
-			ExchangeLog.LogStart("CreateOrganizationInternal");
+        internal virtual Organization ExtendToExchangeOrganizationInternal(string organizationId, string securityGroup, bool IsConsumer)
+        {
+            ExchangeLog.LogStart("CreateOrganizationInternal");
 			ExchangeLog.DebugInfo("  Organization Id: {0}", organizationId);
 
 			ExchangeTransaction transaction = StartTransaction();
@@ -724,7 +726,7 @@ namespace WebsitePanel.Providers.HostedSolution
 				//Create mail enabled organization security group
 				EnableMailSecurityDistributionGroup(runSpace, securityGroup, organizationId);
 				transaction.RegisterMailEnabledDistributionGroup(securityGroup);
-				UpdateSecurityDistributionGroup(runSpace, securityGroup, organizationId);
+                UpdateSecurityDistributionGroup(runSpace, securityGroup, organizationId, IsConsumer);
 
 				//create GAL
 				string galId = CreateGlobalAddressList(runSpace, organizationId);
@@ -742,7 +744,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 string ralId = CreateRoomsAddressList(runSpace, organizationId);
                 transaction.RegisterNewRoomsAddressList(ralId);
                 ExchangeLog.LogInfo("  Rooms Address List: {0}", ralId);
-                UpdateRoomsAddressList(runSpace, ralId, securityGroupPath);
+                UpdateAddressList(runSpace, ralId, securityGroupPath);
 
 				//create ActiveSync policy
 				string asId = CreateActiveSyncPolicy(runSpace, organizationId);
@@ -847,20 +849,6 @@ namespace WebsitePanel.Providers.HostedSolution
 				transaction.RegisterNewOfflineAddressBook(oabId);
 				UpdateOfflineAddressBook(runSpace, oabId, securityGroupId);
 				info.OfflineAddressBook = oabId;
-
-                //create ABP
-
-                bool enableSP2abp = false;
-				if (ConfigurationManager.AppSettings[CONFIG_ENABLESP2ABP] != null)
-					enableSP2abp = Boolean.Parse(ConfigurationManager.AppSettings[CONFIG_ENABLESP2ABP]);
-				Version exchangeVersion = GetExchangeVersion();
-
-                if (enableSP2abp && (exchangeVersion >= new Version(14, 2)))
-                {                                        
-                    string abpId = CreateAddressPolicy(runSpace, organizationId);
-                    transaction.RegisterNewAddressPolicy(abpId);
-                    ExchangeLog.LogInfo("  Address Policy: {0}", abpId);
-                }
             }
 			catch (Exception ex)
 			{
@@ -908,11 +896,17 @@ namespace WebsitePanel.Providers.HostedSolution
 			}
 			ExchangeLog.LogEnd("UpdateOrganizationOfflineAddressBookInternal");
 		}
+        
+        internal virtual Organization CreateOrganizationAddressBookPolicyInternal(string organizationId, string gal, string addressBook, string roomList, string oab)
+        {
+            Organization info = new Organization();
+            return info;
+        }
 
 
-		private bool DeleteOrganizationInternal(string organizationId, string distinguishedName,
-			string globalAddressList, string addressList, string roomsAddressList, string offlineAddressBook, string securityGroup)
-		{
+        internal virtual bool DeleteOrganizationInternal(string organizationId, string distinguishedName,
+            string globalAddressList, string addressList, string roomsAddressList, string offlineAddressBook, string securityGroup, string addressBookPolicy)
+        {
 			ExchangeLog.LogStart("DeleteOrganizationInternal");
 			bool ret = true;
 
@@ -944,30 +938,6 @@ namespace WebsitePanel.Providers.HostedSolution
 				if (!DeleteOrganizationPublicFolders(runSpace, organizationId))
 					ret = false;
 
-                //delete ABP
-
-                bool enableSP2abp = false;
-				if (ConfigurationManager.AppSettings[CONFIG_ENABLESP2ABP] != null)
-				enableSP2abp = Boolean.Parse(ConfigurationManager.AppSettings[CONFIG_ENABLESP2ABP]);
-				Version exchangeVersion = GetExchangeVersion();
-
-                if (enableSP2abp && (exchangeVersion >= new Version(14, 2)))
-                {
-
-
-                    string adpstring = GetAddressPolicyName(organizationId);
-
-                    try
-                    {
-                        if (!string.IsNullOrEmpty(adpstring))
-                            DeleteAddressPolicy(runSpace, adpstring);
-                    }
-                    catch (Exception ex)
-                    {
-                        ret = false;
-                        ExchangeLog.LogError("Could not delete Address Policy " + globalAddressList, ex);
-                    }
-                }
 
 				//delete OAB
 				try
@@ -997,7 +967,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 try
                 {
                     if (!string.IsNullOrEmpty(roomsAddressList))
-                        DeleteRoomsAddressList(runSpace, roomsAddressList);
+                        DeleteAddressList(runSpace, roomsAddressList);
                 }
                 catch (Exception ex)
                 {
@@ -1101,7 +1071,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return ret;
 		}
 
-		private bool DeleteOrganizationMailboxes(Runspace runSpace, string ou)
+		internal bool DeleteOrganizationMailboxes(Runspace runSpace, string ou)
 		{
 			ExchangeLog.LogStart("DeleteOrganizationMailboxes");
 			bool ret = true;
@@ -1131,7 +1101,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return ret;
 		}
 
-		private bool DeleteOrganizationContacts(Runspace runSpace, string ou)
+		internal bool DeleteOrganizationContacts(Runspace runSpace, string ou)
 		{
 			ExchangeLog.LogStart("DeleteOrganizationContacts");
 			bool ret = true;
@@ -1161,7 +1131,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return ret;
 		}
 
-		private bool DeleteOrganizationDistributionLists(Runspace runSpace, string ou)
+		internal bool DeleteOrganizationDistributionLists(Runspace runSpace, string ou)
 		{
 			ExchangeLog.LogStart("DeleteOrganizationDistributionLists");
 			bool ret = true;
@@ -1392,7 +1362,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return size;
 		}
 
-		private long CalculatePublicFolderDiskSpace(Runspace runSpace, string folder)
+		internal virtual long CalculatePublicFolderDiskSpace(Runspace runSpace, string folder)
 		{
 			ExchangeLog.LogStart("CalculatePublicFolderDiskSpace");
 			ExchangeLog.DebugInfo("Folder: {0}", folder);
@@ -1649,7 +1619,7 @@ namespace WebsitePanel.Providers.HostedSolution
 		}
 
 
-		private void RemoveMailboxAccessPermission(Runspace runSpace, string accountName, string account, string accessRights)
+		internal void RemoveMailboxAccessPermission(Runspace runSpace, string accountName, string account, string accessRights)
 		{
 			ExchangeLog.LogStart("RemoveMailboxFullAccessPermission");
 
@@ -1779,167 +1749,165 @@ namespace WebsitePanel.Providers.HostedSolution
 
 
 		public string CreateMailEnableUser(string upn, string organizationId, string organizationDistinguishedName, ExchangeAccountType accountType,
-			string mailboxDatabase, string offlineAddressBook,
+			string mailboxDatabase, string offlineAddressBook,string addressBookPolicy,
 			string accountName, bool enablePOP, bool enableIMAP,
 			bool enableOWA, bool enableMAPI, bool enableActiveSync,
-			int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays)
+			int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays,
+            int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool IsConsumer)
 		{
 			return CreateMailEnableUserInternal(upn, organizationId, organizationDistinguishedName, accountType,
-												mailboxDatabase, offlineAddressBook,
+												mailboxDatabase, offlineAddressBook,addressBookPolicy,
 												accountName, enablePOP, enableIMAP,
 												enableOWA, enableMAPI, enableActiveSync,
 												issueWarningKB, prohibitSendKB, prohibitSendReceiveKB,
-												keepDeletedItemsDays);
+                                                keepDeletedItemsDays, maxRecipients, maxSendMessageSizeKB, maxReceiveMessageSizeKB, hideFromAddressBook, IsConsumer);
 		}
 
-		private string CreateMailEnableUserInternal(string upn, string organizationId, string organizationDistinguishedName, ExchangeAccountType accountType,
-			string mailboxDatabase, string offlineAddressBook,
-			string accountName, bool enablePOP, bool enableIMAP,
-			bool enableOWA, bool enableMAPI, bool enableActiveSync,
-			int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays)
-		{
+        internal virtual string CreateMailEnableUserInternal(string upn, string organizationId, string organizationDistinguishedName, ExchangeAccountType accountType,
+            string mailboxDatabase, string offlineAddressBook, string addressBookPolicy,
+            string accountName, bool enablePOP, bool enableIMAP,
+            bool enableOWA, bool enableMAPI, bool enableActiveSync,
+            int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays,
+            int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool IsConsumer)
+        {
 
-			ExchangeLog.LogStart("CreateMailEnableUserInternal");
-			ExchangeLog.DebugInfo("Organization Id: {0}", organizationId);
+            ExchangeLog.LogStart("CreateMailEnableUserInternal");
+            ExchangeLog.DebugInfo("Organization Id: {0}", organizationId);
 
-			string ret = null;
-			ExchangeTransaction transaction = StartTransaction();
-			Runspace runSpace = null;
+            string ret = null;
+            ExchangeTransaction transaction = StartTransaction();
+            Runspace runSpace = null;
 
-			int attempts = 0;
-			string id = null;
+            int attempts = 0;
+            string id = null;
 
             Version exchangeVersion = GetExchangeVersion();
+            
+            try
+            {
+                runSpace = OpenRunspace();
+                Command cmd = null;
+                Collection<PSObject> result = null;
 
+                //try to enable mail user for 10 times
+                while (true)
+                {
+                    try
+                    {
 
-			try
-			{
-				runSpace = OpenRunspace();
-				Command cmd = null;
-				Collection<PSObject> result = null;
-
-				//try to enable mail user for 10 times
-				while (true)
-				{
-					try
-					{
-						//create mailbox
-						cmd = new Command("Enable-Mailbox");
-						cmd.Parameters.Add("Identity", upn);
-						cmd.Parameters.Add("Alias", accountName);
+                        //create mailbox
+                        cmd = new Command("Enable-Mailbox");
+                        cmd.Parameters.Add("Identity", upn);
+                        cmd.Parameters.Add("Alias", accountName);
                         if (!(mailboxDatabase == "*" && exchangeVersion >= new Version(14, 0)))
                             cmd.Parameters.Add("Database", mailboxDatabase);
-						if (accountType == ExchangeAccountType.Equipment)
-							cmd.Parameters.Add("Equipment");
-						else if (accountType == ExchangeAccountType.Room)
-							cmd.Parameters.Add("Room");
+                        if (accountType == ExchangeAccountType.Equipment)
+                            cmd.Parameters.Add("Equipment");
+                        else if (accountType == ExchangeAccountType.Room)
+                            cmd.Parameters.Add("Room");
 
-						result = ExecuteShellCommand(runSpace, cmd);
+                        result = ExecuteShellCommand(runSpace, cmd);
 
-						id = CheckResultObjectDN(result);
-					}
-					catch (Exception ex)
-					{
-						ExchangeLog.LogError(ex);
-					}
-					if (id != null)
-						break;
+                        id = CheckResultObjectDN(result);
+                    }
+                    catch (Exception ex)
+                    {
+                        ExchangeLog.LogError(ex);
+                    }
+                    if (id != null)
+                        break;
 
-					if (attempts > 9)
-						throw new Exception(
-							string.Format("Could not enable mail user '{0}' ", accountName));
+                    if (attempts > 9)
+                        throw new Exception(
+                            string.Format("Could not enable mail user '{0}' ", accountName));
 
-					attempts++;
-					ExchangeLog.LogWarning("Attempt #{0} to enable mail user failed!", attempts);
-					// wait 5 sec
-					System.Threading.Thread.Sleep(5000);
-				}
+                    attempts++;
+                    ExchangeLog.LogWarning("Attempt #{0} to enable mail user failed!", attempts);
+                    // wait 5 sec
+                    System.Threading.Thread.Sleep(5000);
+                }
 
-				//transaction.RegisterNewMailbox(id);
+                //transaction.RegisterNewMailbox(id);
 
-				string windowsEmailAddress = ObjToString(GetPSObjectProperty(result[0], "WindowsEmailAddress"));
-                string adpstring = GetAddressPolicyName(organizationId);
+                string windowsEmailAddress = ObjToString(GetPSObjectProperty(result[0], "WindowsEmailAddress"));
 
-				//update mailbox
-				cmd = new Command("Set-Mailbox");
-				cmd.Parameters.Add("Identity", id);
-				cmd.Parameters.Add("OfflineAddressBook", offlineAddressBook);
-				cmd.Parameters.Add("EmailAddressPolicyEnabled", false);
-				cmd.Parameters.Add("CustomAttribute1", organizationId);
-				cmd.Parameters.Add("CustomAttribute3", windowsEmailAddress);
-				cmd.Parameters.Add("PrimarySmtpAddress", upn);
-				cmd.Parameters.Add("WindowsEmailAddress", upn);
-                
-                bool enableSP2abp = false;
-				if (ConfigurationManager.AppSettings[CONFIG_ENABLESP2ABP] != null)
-					enableSP2abp = Boolean.Parse(ConfigurationManager.AppSettings[CONFIG_ENABLESP2ABP]);
-				if (enableSP2abp && (exchangeVersion >= new Version(14, 2)))
-					cmd.Parameters.Add("AddressBookPolicy", adpstring);
+                //update mailbox
+                cmd = new Command("Set-Mailbox");
+                cmd.Parameters.Add("Identity", id);
+                cmd.Parameters.Add("OfflineAddressBook", offlineAddressBook);
+                cmd.Parameters.Add("EmailAddressPolicyEnabled", false);
+                cmd.Parameters.Add("CustomAttribute1", organizationId);
+                cmd.Parameters.Add("CustomAttribute3", windowsEmailAddress);
+                cmd.Parameters.Add("PrimarySmtpAddress", upn);
+                cmd.Parameters.Add("WindowsEmailAddress", upn);
 
-				cmd.Parameters.Add("UseDatabaseQuotaDefaults", new bool?(false));
-				cmd.Parameters.Add("UseDatabaseRetentionDefaults", false);
-				cmd.Parameters.Add("IssueWarningQuota", ConvertKBToUnlimited(issueWarningKB));
-				cmd.Parameters.Add("ProhibitSendQuota", ConvertKBToUnlimited(prohibitSendKB));
-				cmd.Parameters.Add("ProhibitSendReceiveQuota", ConvertKBToUnlimited(prohibitSendReceiveKB));
-				cmd.Parameters.Add("RetainDeletedItemsFor", ConvertDaysToEnhancedTimeSpan(keepDeletedItemsDays));
-				ExecuteShellCommand(runSpace, cmd);
+                cmd.Parameters.Add("UseDatabaseQuotaDefaults", new bool?(false));
+                cmd.Parameters.Add("UseDatabaseRetentionDefaults", false);
+                cmd.Parameters.Add("IssueWarningQuota", ConvertKBToUnlimited(issueWarningKB));
+                cmd.Parameters.Add("ProhibitSendQuota", ConvertKBToUnlimited(prohibitSendKB));
+                cmd.Parameters.Add("ProhibitSendReceiveQuota", ConvertKBToUnlimited(prohibitSendReceiveKB));
+                cmd.Parameters.Add("RetainDeletedItemsFor", ConvertDaysToEnhancedTimeSpan(keepDeletedItemsDays));
+                cmd.Parameters.Add("RecipientLimits", ConvertInt32ToUnlimited(maxRecipients));
+                cmd.Parameters.Add("MaxSendSize", ConvertKBToUnlimited(maxSendMessageSizeKB));
+                cmd.Parameters.Add("MaxReceiveSize", ConvertKBToUnlimited(maxReceiveMessageSizeKB));
+                cmd.Parameters.Add("HiddenFromAddressListsEnabled", hideFromAddressBook);
+                ExecuteShellCommand(runSpace, cmd);
 
+                //update AD object
+                string globalAddressListName = this.GetGlobalAddressListName(organizationId);
+                string globalAddressListDN = this.GetGlobalAddressListDN(runSpace, globalAddressListName);
+                string path = AddADPrefix(id);
+                DirectoryEntry mailbox = GetADObject(path);
 
+                // check if msExchQueryBaseDN must be cleared for Exchange 2010 SP1
+                bool clearQueryBaseDN = false;
+                if (ConfigurationManager.AppSettings[CONFIG_CLEAR_QUERYBASEDN] != null)
+                    clearQueryBaseDN = Boolean.Parse(ConfigurationManager.AppSettings[CONFIG_CLEAR_QUERYBASEDN]);
 
-				//update AD object
-				string globalAddressListName = this.GetGlobalAddressListName(organizationId);
-				string globalAddressListDN = this.GetGlobalAddressListDN(runSpace, globalAddressListName);
-				string path = AddADPrefix(id);
-				DirectoryEntry mailbox = GetADObject(path);
+                if (!(clearQueryBaseDN && (exchangeVersion >= new Version(14, 1))))
+                    SetADObjectPropertyValue(mailbox, "msExchQueryBaseDN", globalAddressListDN);
 
-				// check if msExchQueryBaseDN must be cleared for Exchange 2010 SP1
-				bool clearQueryBaseDN = false;
-				if (ConfigurationManager.AppSettings[CONFIG_CLEAR_QUERYBASEDN] != null)
-					clearQueryBaseDN = Boolean.Parse(ConfigurationManager.AppSettings[CONFIG_CLEAR_QUERYBASEDN]);
+                //SetADObjectPropertyValue(mailbox, "msExchUseOAB", offlineAddressBook);
+                mailbox.CommitChanges();
+                mailbox.Close();
 
-				if (!(clearQueryBaseDN && (exchangeVersion >= new Version(14, 1))))
-					SetADObjectPropertyValue(mailbox, "msExchQueryBaseDN", globalAddressListDN);
+                //Client Access
+                cmd = new Command("Set-CASMailbox");
+                cmd.Parameters.Add("Identity", id);
+                cmd.Parameters.Add("ActiveSyncEnabled", enableActiveSync);
+                if (enableActiveSync)
+                {
+                    cmd.Parameters.Add("ActiveSyncMailboxPolicy", organizationId);
+                }
+                cmd.Parameters.Add("OWAEnabled", enableOWA);
+                cmd.Parameters.Add("MAPIEnabled", enableMAPI);
+                cmd.Parameters.Add("PopEnabled", enablePOP);
+                cmd.Parameters.Add("ImapEnabled", enableIMAP);
+                ExecuteShellCommand(runSpace, cmd);
 
-				//SetADObjectPropertyValue(mailbox, "msExchUseOAB", offlineAddressBook);
-				mailbox.CommitChanges();
-				mailbox.Close();
+                //calendar settings
+                if (accountType == ExchangeAccountType.Equipment || accountType == ExchangeAccountType.Room)
+                {
+                    //SetCalendarSettings(runSpace, id);
+                }
 
-				//Client Access
-				cmd = new Command("Set-CASMailbox");
-				cmd.Parameters.Add("Identity", id);
-				cmd.Parameters.Add("ActiveSyncEnabled", enableActiveSync);
-				if (enableActiveSync)
-				{
-					cmd.Parameters.Add("ActiveSyncMailboxPolicy", organizationId);
-				}
-				cmd.Parameters.Add("OWAEnabled", enableOWA);
-				cmd.Parameters.Add("MAPIEnabled", enableMAPI);
-				cmd.Parameters.Add("PopEnabled", enablePOP);
-				cmd.Parameters.Add("ImapEnabled", enableIMAP);
-				ExecuteShellCommand(runSpace, cmd);
+                ret = string.Format("{0}\\{1}", GetNETBIOSDomainName(), accountName);
+                ExchangeLog.LogEnd("CreateMailEnableUserInternal");
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                ExchangeLog.LogError("CreateMailEnableUserInternal", ex);
+                RollbackTransaction(transaction);
+                throw;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+        }
 
-				//calendar settings
-				if (accountType == ExchangeAccountType.Equipment || accountType == ExchangeAccountType.Room)
-				{
-					SetCalendarSettings(runSpace, id);
-				}
-
-				ret = string.Format("{0}\\{1}", GetNETBIOSDomainName(), accountName);
-				ExchangeLog.LogEnd("CreateMailEnableUserInternal");
-				return ret;
-			}
-			catch (Exception ex)
-			{
-				ExchangeLog.LogError("CreateMailEnableUserInternal", ex);
-				RollbackTransaction(transaction);
-				throw;
-			}
-			finally
-			{
-				CloseRunspace(runSpace);
-			}
-		}
-
+        /*
 		private string CreateMailboxInternal(string organizationId, string organizationDistinguishedName,
 			string mailboxDatabase, string securityGroup, string offlineAddressBook, ExchangeAccountType accountType,
 			 string displayName,
@@ -2074,7 +2042,7 @@ namespace WebsitePanel.Providers.HostedSolution
 				CloseRunspace(runSpace);
 			}
 		}
-
+*/
 		internal virtual void SetCalendarSettings(Runspace runspace, string id)
 		{
 			ExchangeLog.LogStart("SetCalendarSettings");
@@ -2085,7 +2053,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogEnd("SetCalendarSettings");
 		}
 
-		private void DeleteMailboxInternal(string accountName)
+		internal virtual void DeleteMailboxInternal(string accountName)
 		{
 			ExchangeLog.LogStart("DeleteMailboxInternal");
 			ExchangeLog.DebugInfo("Account Name: {0}", accountName);
@@ -2105,7 +2073,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogEnd("DeleteMailboxInternal");
 		}
 
-		private void RemoveMailbox(Runspace runSpace, string id)
+		internal void RemoveMailbox(Runspace runSpace, string id)
 		{
 			ExchangeLog.LogStart("RemoveMailbox");
 			Command cmd = new Command("Remove-Mailbox");
@@ -2115,6 +2083,16 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExecuteShellCommand(runSpace, cmd);
 			ExchangeLog.LogEnd("RemoveMailbox");
 		}
+
+        private void DisableMailbox(Runspace runSpace, string id)
+        {
+            ExchangeLog.LogStart("DisableMailbox");
+            Command cmd = new Command("Disable-Mailbox");
+            cmd.Parameters.Add("Identity", id);
+            cmd.Parameters.Add("Confirm", false);
+            ExecuteShellCommand(runSpace, cmd);
+            ExchangeLog.LogEnd("DisableMailbox");
+        }
 
 		private string GetMailboxCommonName(Runspace runSpace, string accountName)
 		{
@@ -2212,71 +2190,39 @@ namespace WebsitePanel.Providers.HostedSolution
 		}
 
 
-		private void SetMailboxGeneralSettingsInternal(string accountName, string displayName, string password,
-			bool hideFromAddressBook, bool disabled, string firstName, string initials, string lastName,
-			string address, string city, string state, string zip, string country, string jobTitle,
-			string company, string department, string office, string managerAccountName, string businessPhone,
-			string fax, string homePhone, string mobilePhone, string pager, string webPage, string notes)
-		{
-			ExchangeLog.LogStart("SetMailboxGeneralSettingsInternal");
-			ExchangeLog.DebugInfo("Account: {0}", accountName);
+        private void SetMailboxGeneralSettingsInternal(string accountName, bool hideFromAddressBook, bool disabled)
+        {
+            ExchangeLog.LogStart("SetMailboxGeneralSettingsInternal");
+            ExchangeLog.DebugInfo("Account: {0}", accountName);
 
-			Runspace runSpace = null;
-			try
-			{
-				runSpace = OpenRunspace();
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
 
-				Collection<PSObject> result = GetMailboxObject(runSpace, accountName);
-				PSObject mailbox = result[0];
+                Collection<PSObject> result = GetMailboxObject(runSpace, accountName);
+                PSObject mailbox = result[0];
 
-				string id = GetResultObjectDN(result);
-				string path = AddADPrefix(id);
-				DirectoryEntry entry = GetADObject(path);
-				entry.InvokeSet("AccountDisabled", disabled);
-				if (!string.IsNullOrEmpty(password))
-					entry.Invoke("SetPassword", password);
-				entry.CommitChanges();
+                string id = GetResultObjectDN(result);
+                string path = AddADPrefix(id);
+                DirectoryEntry entry = GetADObject(path);
+                entry.InvokeSet("AccountDisabled", disabled);
+                entry.CommitChanges();
 
-				Command cmd = new Command("Set-Mailbox");
-				cmd.Parameters.Add("Identity", accountName);
-				cmd.Parameters.Add("DisplayName", displayName);
-				cmd.Parameters.Add("HiddenFromAddressListsEnabled", hideFromAddressBook);
-				cmd.Parameters.Add("CustomAttribute2", (disabled ? "disabled" : null));
-				ExecuteShellCommand(runSpace, cmd);
+                Command cmd = new Command("Set-Mailbox");
+                cmd.Parameters.Add("Identity", accountName);
+                cmd.Parameters.Add("HiddenFromAddressListsEnabled", hideFromAddressBook);
+                cmd.Parameters.Add("CustomAttribute2", (disabled ? "disabled" : null));
+                ExecuteShellCommand(runSpace, cmd);
 
-				cmd = new Command("Set-User");
-				cmd.Parameters.Add("Identity", accountName);
-				cmd.Parameters.Add("FirstName", firstName);
-				cmd.Parameters.Add("Initials", initials);
-				cmd.Parameters.Add("LastName", lastName);
-				cmd.Parameters.Add("StreetAddress", address);
-				cmd.Parameters.Add("City", city);
-				cmd.Parameters.Add("StateOrProvince", state);
-				cmd.Parameters.Add("PostalCode", zip);
-				cmd.Parameters.Add("CountryOrRegion", ParseCountryInfo(country));
-				cmd.Parameters.Add("Title", jobTitle);
-				cmd.Parameters.Add("Company", company);
-				cmd.Parameters.Add("Department", department);
-				cmd.Parameters.Add("Office", office);
-				cmd.Parameters.Add("Manager", managerAccountName);
-				cmd.Parameters.Add("Phone", businessPhone);
-				cmd.Parameters.Add("Fax", fax);
-				cmd.Parameters.Add("HomePhone", homePhone);
-				cmd.Parameters.Add("MobilePhone", mobilePhone);
-				cmd.Parameters.Add("Pager", pager);
-				cmd.Parameters.Add("WebPage", webPage);
-				cmd.Parameters.Add("Notes", notes);
+            }
+            finally
+            {
 
-				ExecuteShellCommand(runSpace, cmd);
-
-			}
-			finally
-			{
-
-				CloseRunspace(runSpace);
-			}
-			ExchangeLog.LogEnd("SetMailboxGeneralSettingsInternal");
-		}
+                CloseRunspace(runSpace);
+            }
+            ExchangeLog.LogEnd("SetMailboxGeneralSettingsInternal");
+        }
 
 		private void ChangeMailboxState(string id, bool enabled)
 		{
@@ -2334,62 +2280,58 @@ namespace WebsitePanel.Providers.HostedSolution
 			return info;
 		}
 
-		private void SetMailboxMailFlowSettingsInternal(string accountName, bool enableForwarding,
-			string forwardingAccountName, bool forwardToBoth, string[] sendOnBehalfAccounts,
-			string[] acceptAccounts, string[] rejectAccounts, int maxRecipients, int maxSendMessageSizeKB,
-			int maxReceiveMessageSizeKB, bool requireSenderAuthentication)
-		{
-			ExchangeLog.LogStart("SetMailboxMailFlowSettingsInternal");
-			ExchangeLog.DebugInfo("Account: {0}", accountName);
+        private void SetMailboxMailFlowSettingsInternal(string accountName, bool enableForwarding,
+            string forwardingAccountName, bool forwardToBoth, string[] sendOnBehalfAccounts,
+            string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication)
+        {
+            ExchangeLog.LogStart("SetMailboxMailFlowSettingsInternal");
+            ExchangeLog.DebugInfo("Account: {0}", accountName);
 
-			Runspace runSpace = null;
-			try
-			{
-				runSpace = OpenRunspace();
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
 
 
-				Command cmd = new Command("Set-Mailbox");
-				cmd.Parameters.Add("Identity", accountName);
+                Command cmd = new Command("Set-Mailbox");
+                cmd.Parameters.Add("Identity", accountName);
 
-				if (enableForwarding)
-				{
-					cmd.Parameters.Add("ForwardingAddress", forwardingAccountName);
-					cmd.Parameters.Add("DeliverToMailboxAndForward", forwardToBoth);
-				}
-				else
-				{
-					cmd.Parameters.Add("ForwardingAddress", null);
-					cmd.Parameters.Add("DeliverToMailboxAndForward", false);
-				}
+                if (enableForwarding)
+                {
+                    cmd.Parameters.Add("ForwardingAddress", forwardingAccountName);
+                    cmd.Parameters.Add("DeliverToMailboxAndForward", forwardToBoth);
+                }
+                else
+                {
+                    cmd.Parameters.Add("ForwardingAddress", null);
+                    cmd.Parameters.Add("DeliverToMailboxAndForward", false);
+                }
 
-				cmd.Parameters.Add("GrantSendOnBehalfTo", SetSendOnBehalfAccounts(runSpace, sendOnBehalfAccounts));
+                cmd.Parameters.Add("GrantSendOnBehalfTo", SetSendOnBehalfAccounts(runSpace, sendOnBehalfAccounts));
 
-				MultiValuedProperty<ADObjectId> ids = null;
-				MultiValuedProperty<ADObjectId> dlIds = null;
+                MultiValuedProperty<ADObjectId> ids = null;
+                MultiValuedProperty<ADObjectId> dlIds = null;
 
-				SetAccountIds(runSpace, acceptAccounts, out ids, out dlIds);
-				cmd.Parameters.Add("AcceptMessagesOnlyFrom", ids);
-				cmd.Parameters.Add("AcceptMessagesOnlyFromDLMembers", dlIds);
+                SetAccountIds(runSpace, acceptAccounts, out ids, out dlIds);
+                cmd.Parameters.Add("AcceptMessagesOnlyFrom", ids);
+                cmd.Parameters.Add("AcceptMessagesOnlyFromDLMembers", dlIds);
 
-				SetAccountIds(runSpace, rejectAccounts, out ids, out dlIds);
-				cmd.Parameters.Add("RejectMessagesFrom", ids);
-				cmd.Parameters.Add("RejectMessagesFromDLMembers", dlIds);
+                SetAccountIds(runSpace, rejectAccounts, out ids, out dlIds);
+                cmd.Parameters.Add("RejectMessagesFrom", ids);
+                cmd.Parameters.Add("RejectMessagesFromDLMembers", dlIds);
 
-				cmd.Parameters.Add("RecipientLimits", ConvertInt32ToUnlimited(maxRecipients));
-				cmd.Parameters.Add("MaxSendSize", ConvertKBToUnlimited(maxSendMessageSizeKB));
-				cmd.Parameters.Add("MaxReceiveSize", ConvertKBToUnlimited(maxReceiveMessageSizeKB));
-				cmd.Parameters.Add("RequireSenderAuthenticationEnabled", requireSenderAuthentication);
+                cmd.Parameters.Add("RequireSenderAuthenticationEnabled", requireSenderAuthentication);
 
-				ExecuteShellCommand(runSpace, cmd);
+                ExecuteShellCommand(runSpace, cmd);
 
-			}
-			finally
-			{
+            }
+            finally
+            {
 
-				CloseRunspace(runSpace);
-			}
-			ExchangeLog.LogEnd("SetMailboxMailFlowSettingsInternal");
-		}
+                CloseRunspace(runSpace);
+            }
+            ExchangeLog.LogEnd("SetMailboxMailFlowSettingsInternal");
+        }
 
 		private ExchangeMailbox GetMailboxAdvancedSettingsInternal(string accountName)
 		{
@@ -2464,48 +2406,52 @@ namespace WebsitePanel.Providers.HostedSolution
 			return info;
 		}
 
-		private void SetMailboxAdvancedSettingsInternal(string organizationId, string accountName, bool enablePOP, bool enableIMAP,
-			bool enableOWA, bool enableMAPI, bool enableActiveSync, int issueWarningKB, int prohibitSendKB,
-			int prohibitSendReceiveKB, int keepDeletedItemsDays)
-		{
-			ExchangeLog.LogStart("SetMailboxAdvancedSettingsInternal");
-			ExchangeLog.DebugInfo("Account: {0}", accountName);
+        private void SetMailboxAdvancedSettingsInternal(string organizationId, string accountName, bool enablePOP, bool enableIMAP,
+            bool enableOWA, bool enableMAPI, bool enableActiveSync, int issueWarningKB, int prohibitSendKB,
+            int prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB,
+            int maxReceiveMessageSizeKB)
+        {
+            ExchangeLog.LogStart("SetMailboxAdvancedSettingsInternal");
+            ExchangeLog.DebugInfo("Account: {0}", accountName);
 
-			Runspace runSpace = null;
-			try
-			{
-				runSpace = OpenRunspace();
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
 
 
-				Command cmd = new Command("Set-Mailbox");
-				cmd.Parameters.Add("Identity", accountName);
-				cmd.Parameters.Add("IssueWarningQuota", ConvertKBToUnlimited(issueWarningKB));
-				cmd.Parameters.Add("ProhibitSendQuota", ConvertKBToUnlimited(prohibitSendKB));
-				cmd.Parameters.Add("ProhibitSendReceiveQuota", ConvertKBToUnlimited(prohibitSendReceiveKB));
-				cmd.Parameters.Add("RetainDeletedItemsFor", ConvertDaysToEnhancedTimeSpan(keepDeletedItemsDays));
-				ExecuteShellCommand(runSpace, cmd);
+                Command cmd = new Command("Set-Mailbox");
+                cmd.Parameters.Add("Identity", accountName);
+                cmd.Parameters.Add("IssueWarningQuota", ConvertKBToUnlimited(issueWarningKB));
+                cmd.Parameters.Add("ProhibitSendQuota", ConvertKBToUnlimited(prohibitSendKB));
+                cmd.Parameters.Add("ProhibitSendReceiveQuota", ConvertKBToUnlimited(prohibitSendReceiveKB));
+                cmd.Parameters.Add("RetainDeletedItemsFor", ConvertDaysToEnhancedTimeSpan(keepDeletedItemsDays));
+                cmd.Parameters.Add("RecipientLimits", ConvertInt32ToUnlimited(maxRecipients));
+                cmd.Parameters.Add("MaxSendSize", ConvertKBToUnlimited(maxSendMessageSizeKB));
+                cmd.Parameters.Add("MaxReceiveSize", ConvertKBToUnlimited(maxReceiveMessageSizeKB));
+                ExecuteShellCommand(runSpace, cmd);
 
-				//Client Access
-				cmd = new Command("Set-CASMailbox");
-				cmd.Parameters.Add("Identity", accountName);
-				cmd.Parameters.Add("ActiveSyncEnabled", enableActiveSync);
-				if (enableActiveSync)
-				{
-					cmd.Parameters.Add("ActiveSyncMailboxPolicy", organizationId);
-				}
-				cmd.Parameters.Add("OWAEnabled", enableOWA);
-				cmd.Parameters.Add("MAPIEnabled", enableMAPI);
-				cmd.Parameters.Add("PopEnabled", enablePOP);
-				cmd.Parameters.Add("ImapEnabled", enableIMAP);
-				ExecuteShellCommand(runSpace, cmd);
-			}
-			finally
-			{
+                //Client Access
+                cmd = new Command("Set-CASMailbox");
+                cmd.Parameters.Add("Identity", accountName);
+                cmd.Parameters.Add("ActiveSyncEnabled", enableActiveSync);
+                if (enableActiveSync)
+                {
+                    cmd.Parameters.Add("ActiveSyncMailboxPolicy", organizationId);
+                }
+                cmd.Parameters.Add("OWAEnabled", enableOWA);
+                cmd.Parameters.Add("MAPIEnabled", enableMAPI);
+                cmd.Parameters.Add("PopEnabled", enablePOP);
+                cmd.Parameters.Add("ImapEnabled", enableIMAP);
+                ExecuteShellCommand(runSpace, cmd);
+            }
+            finally
+            {
 
-				CloseRunspace(runSpace);
-			}
-			ExchangeLog.LogEnd("SetMailboxAdvancedSettingsInternal");
-		}
+                CloseRunspace(runSpace);
+            }
+            ExchangeLog.LogEnd("SetMailboxAdvancedSettingsInternal");
+        }
 
 		private ExchangeEmailAddress[] GetMailboxEmailAddressesInternal(string accountName)
 		{
@@ -3267,7 +3213,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return id;
 		}
 
-		private string EnableMailSecurityDistributionGroup(Runspace runSpace, string distName, string groupName)
+        internal string EnableMailSecurityDistributionGroup(Runspace runSpace, string distName, string groupName)
 		{
 			ExchangeLog.LogStart("EnableMailSecurityDistributionGroup");
 			ExchangeLog.DebugInfo("Group Distinguished Name: {0}", distName);
@@ -3312,7 +3258,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return securityGroupId;
 		}
 
-		private void DisableMailSecurityDistributionGroup(Runspace runSpace, string id)
+        internal void DisableMailSecurityDistributionGroup(Runspace runSpace, string id)
 		{
 			ExchangeLog.LogStart("DisableMailSecurityDistributionGroup");
 			ExchangeLog.DebugInfo("Group Id: {0}", id);
@@ -3324,7 +3270,7 @@ namespace WebsitePanel.Providers.HostedSolution
 		}
 
 
-		private void UpdateSecurityDistributionGroup(Runspace runSpace, string id, string groupName)
+        internal void UpdateSecurityDistributionGroup(Runspace runSpace, string id, string groupName, bool isConsumer)
 		{
 			ExchangeLog.LogStart("UpdateSecurityDistributionGroup");
 
@@ -3332,21 +3278,22 @@ namespace WebsitePanel.Providers.HostedSolution
 			cmd.Parameters.Add("Identity", id);
 			cmd.Parameters.Add("EmailAddressPolicyEnabled", false);
 			cmd.Parameters.Add("CustomAttribute1", groupName);
-			cmd.Parameters.Add("HiddenFromAddressListsEnabled", true);
+            cmd.Parameters.Add("HiddenFromAddressListsEnabled", !isConsumer);
 			ExecuteShellCommand(runSpace, cmd);
 
 			ExchangeLog.LogEnd("UpdateSecurityDistributionGroup");
 		}
 
-		private void CreateDistributionListInternal(
-			string organizationId,
-			string organizationDistinguishedName,
-			string displayName,
-			string accountName,
-			string name,
-			string domain,
-			string managedBy)
-		{
+        private void CreateDistributionListInternal(
+            string organizationId,
+            string organizationDistinguishedName,
+            string displayName,
+            string accountName,
+            string name,
+            string domain,
+            string managedBy,
+            string[] addressLists)
+        {
 			ExchangeLog.LogStart("CreateDistributionListInternal");
 			ExchangeLog.DebugInfo("Organization Id: {0}", organizationId);
 			ExchangeLog.DebugInfo("Name: {0}", name);
@@ -3395,6 +3342,11 @@ namespace WebsitePanel.Providers.HostedSolution
 				cmd.Parameters.Add("WindowsEmailAddress", email);
 				cmd.Parameters.Add("RequireSenderAuthenticationEnabled", false);
 				ExecuteShellCommand(runSpace, cmd);
+
+                //fix showInAddressBook Attribute
+                if (addressLists.Length > 0)
+                    FixShowInAddressBook(runSpace, email, addressLists);
+
 			}
 			catch (Exception ex)
 			{
@@ -3409,6 +3361,23 @@ namespace WebsitePanel.Providers.HostedSolution
 			}
 			ExchangeLog.LogEnd("CreateDistributionListInternal");
 		}
+
+        private void FixShowInAddressBook(Runspace runSpace, string accountName, string[] addressLists)
+        {
+            Command cmd = new Command("Get-DistributionGroup");
+            cmd.Parameters.Add("Identity", accountName);
+
+            Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+            string id = GetResultObjectDN(result);
+
+            DirectoryEntry dlDEEntry = GetADObject(AddADPrefix(id));
+            dlDEEntry.Properties["showInAddressBook"].Clear();
+            foreach (string addressList in addressLists)
+            {
+                dlDEEntry.Properties["showInAddressBook"].Add(addressList);
+            }
+            dlDEEntry.CommitChanges();
+        }
 
 		private void DeleteDistributionListInternal(string accountName)
 		{
@@ -3490,9 +3459,9 @@ namespace WebsitePanel.Providers.HostedSolution
 			return ObjToString(GetPSObjectProperty(group, "ManagedBy"));
 		}
 
-		private void SetDistributionListGeneralSettingsInternal(string accountName, string displayName,
-			bool hideFromAddressBook, string managedBy, string[] memberAccounts, string notes)
-		{
+        private void SetDistributionListGeneralSettingsInternal(string accountName, string displayName,
+            bool hideFromAddressBook, string managedBy, string[] memberAccounts, string notes, string[] addressLists)
+        {
 			ExchangeLog.LogStart("SetDistributionListGeneralSettingsInternal");
 			ExchangeLog.DebugInfo("Account: {0}", accountName);
 
@@ -3561,6 +3530,10 @@ namespace WebsitePanel.Providers.HostedSolution
 				{
 					AddADPermission(runSpace, accountName, managedBy, "WriteProperty", null, "Member");
 				}
+
+                if (addressLists.Length > 0)
+                    FixShowInAddressBook(runSpace, accountName, addressLists);
+
 			}
 			finally
 			{
@@ -3605,7 +3578,7 @@ namespace WebsitePanel.Providers.HostedSolution
 		}
 
 
-		private void AddDistributionListMembersInternal(string accountName, string[] memberAccounts)
+        private void AddDistributionListMembersInternal(string accountName, string[] memberAccounts, string[] addressLists)
 		{
 			ExchangeLog.LogStart("AddDistributionListMembersInternal");
 			ExchangeLog.DebugInfo("Account: {0}", accountName);
@@ -3624,8 +3597,13 @@ namespace WebsitePanel.Providers.HostedSolution
 						cmd = new Command("Add-DistributionGroupMember");
 						cmd.Parameters.Add("Identity", accountName);
 						cmd.Parameters.Add("Member", member);
+                        cmd.Parameters.Add("BypassSecurityGroupManagerCheck", true);
 						ExecuteShellCommand(runSpace, cmd);
 					}
+
+                    if (addressLists.Length > 0)
+                        FixShowInAddressBook(runSpace, accountName, addressLists);
+
 				}
 				finally
 				{
@@ -3636,7 +3614,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogEnd("AddDistributionListMembersInternal");
 		}
 
-		private void RemoveDistributionListMembersInternal(string accountName, string[] memberAccounts)
+        private void RemoveDistributionListMembersInternal(string accountName, string[] memberAccounts, string[] addressLists)
 		{
 			ExchangeLog.LogStart("RemoveDistributionListMembersInternal");
 			ExchangeLog.DebugInfo("Account: {0}", accountName);
@@ -3658,6 +3636,10 @@ namespace WebsitePanel.Providers.HostedSolution
 						cmd.Parameters.Add("Confirm", false);
 						ExecuteShellCommand(runSpace, cmd);
 					}
+
+                    if (addressLists.Length > 0)
+                        FixShowInAddressBook(runSpace, accountName, addressLists);
+
 				}
 				finally
 				{
@@ -3698,9 +3680,9 @@ namespace WebsitePanel.Providers.HostedSolution
 			return info;
 		}
 
-		private void SetDistributionListMailFlowSettingsInternal(string accountName,
-			string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication)
-		{
+        private void SetDistributionListMailFlowSettingsInternal(string accountName,
+            string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication, string[] addressLists)
+        {
 			ExchangeLog.LogStart("SetDistributionListMailFlowSettingsInternal");
 			ExchangeLog.DebugInfo("Account: {0}", accountName);
 
@@ -3726,6 +3708,9 @@ namespace WebsitePanel.Providers.HostedSolution
 				cmd.Parameters.Add("RequireSenderAuthenticationEnabled", requireSenderAuthentication);
 
 				ExecuteShellCommand(runSpace, cmd);
+
+                if (addressLists.Length > 0)
+                    FixShowInAddressBook(runSpace, accountName, addressLists);
 
 			}
 			finally
@@ -3809,7 +3794,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return list.ToArray();
 		}
 
-		private void SetDistributionListEmailAddressesInternal(string accountName, string[] emailAddresses)
+        private void SetDistributionListEmailAddressesInternal(string accountName, string[] emailAddresses, string[] addressLists)
 		{
 			ExchangeLog.LogStart("SetDistributionListEmailAddressesInternal");
 			ExchangeLog.DebugInfo("Account: {0}", accountName);
@@ -3859,6 +3844,9 @@ namespace WebsitePanel.Providers.HostedSolution
 					cmd.Parameters.Add("WindowsEmailAddress", primaryEmail);
 				}
 				ExecuteShellCommand(runSpace, cmd);
+
+                if (addressLists.Length > 0)
+                    FixShowInAddressBook(runSpace, accountName, addressLists);
 			}
 			finally
 			{
@@ -3868,7 +3856,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogEnd("SetDistributionListEmailAddressesInternal");
 		}
 
-		private void SetDistributionListPrimaryEmailAddressInternal(string accountName, string emailAddress)
+        private void SetDistributionListPrimaryEmailAddressInternal(string accountName, string emailAddress, string[] addressLists)
 		{
 			ExchangeLog.LogStart("SetDistributionListPrimaryEmailAddressInternal");
 			ExchangeLog.DebugInfo("Account: {0}", accountName);
@@ -3886,6 +3874,8 @@ namespace WebsitePanel.Providers.HostedSolution
 				cmd.Parameters.Add("WindowsEmailAddress", primaryEmail);
 
 				ExecuteShellCommand(runSpace, cmd);
+
+
 			}
 			finally
 			{
@@ -3941,7 +3931,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return exchangeDistributionList;
 		}
 
-		private void SetDistributionListPermissionsInternal(string organizationId, string accountName, string[] sendAsAccounts, string[] sendOnBehalfAccounts)
+        private void SetDistributionListPermissionsInternal(string organizationId, string accountName, string[] sendAsAccounts, string[] sendOnBehalfAccounts, string[] addressLists)
 		{
 			ExchangeLog.LogStart("SetDistributionListPermissionsInternal");
 
@@ -3963,6 +3953,9 @@ namespace WebsitePanel.Providers.HostedSolution
 				ExchangeDistributionList distributionList = GetDistributionListPermissionsInternal(organizationId, accountName, runspace);
 				SetSendAsPermissions(runspace, distributionList.SendAsAccounts, cn, sendAsAccounts);
 				SetDistributionListSendOnBehalfAccounts(runspace, accountName, sendOnBehalfAccounts);
+
+                if (addressLists.Length > 0)
+                    FixShowInAddressBook(runspace, accountName, addressLists);
 
 			}
 			catch (Exception ex)
@@ -4760,7 +4753,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return resultObjectDN;
 		}
 
-		private string CreateAddressList(Runspace runSpace, string organizationId)
+        internal string CreateAddressList(Runspace runSpace, string organizationId)
 		{
 			ExchangeLog.LogStart("CreateAddressList");
 			string addressListName = this.GetAddressListName(organizationId);
@@ -4812,7 +4805,60 @@ namespace WebsitePanel.Providers.HostedSolution
 			return addressListDN;
 		}
 
-		private void UpdateAddressList(Runspace runSpace, string id, string securityGroup)
+        internal string CreateRoomsAddressList(Runspace runSpace, string organizationId)
+        {
+            ExchangeLog.LogStart("CreateRoomList");
+            string addressListName = this.GetRoomsAddressListName(organizationId);
+            string addressListDN = this.GetAddressListDN(runSpace, addressListName);
+            if (!string.IsNullOrEmpty(addressListDN))
+            {
+                //address list already exists - we will use it
+                ExchangeLog.LogWarning("Room List '{0}' already exists", new object[] { addressListName });
+            }
+            else
+            {
+                //try to create a new address list (10 attempts)
+                int attempts = 0;
+                Command cmd = null;
+                Collection<PSObject> result = null;
+
+                while (true)
+                {
+                    try
+                    {
+                        //try to create address list
+                        cmd = new Command("New-AddressList");
+                        cmd.Parameters.Add("Name", addressListName);
+                        cmd.Parameters.Add("IncludedRecipients", "Resources");
+                        cmd.Parameters.Add("ConditionalCustomAttribute1", organizationId);
+
+                        result = ExecuteShellCommand(runSpace, cmd);
+                        addressListDN = CheckResultObjectDN(result);
+                    }
+                    catch (Exception ex)
+                    {
+                        ExchangeLog.LogError(ex);
+                    }
+                    if (addressListDN != null)
+                        break;
+
+                    if (attempts > 9)
+                        throw new Exception(
+                            string.Format("Could not create Room List '{0}' ", addressListName));
+
+                    attempts++;
+                    ExchangeLog.LogWarning("Attempt #{0} to create room list failed!", attempts);
+                    // wait 1 sec
+                    System.Threading.Thread.Sleep(1000);
+                }
+            }
+
+            ExchangeLog.LogEnd("CreateRoomList");
+            return addressListDN;
+        }
+
+
+        internal void UpdateAddressList(Runspace runSpace, string id, string securityGroup)
 		{
 			ExchangeLog.LogStart("UpdateAddressList");
 
@@ -4826,7 +4872,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogEnd("UpdateAddressList");
 		}
 
-		private void DeleteAddressList(Runspace runSpace, string id)
+        internal void DeleteAddressList(Runspace runSpace, string id)
 		{
 			ExchangeLog.LogStart("DeleteAddressList");
 			Command cmd = new Command("Remove-AddressList");
@@ -4836,116 +4882,33 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogEnd("DeleteAddressList");
 		}
 
-        private string GetRoomsAddressListDN(Runspace runSpace, string id)
+
+        internal virtual void DeleteAddressBookPolicy(Runspace runSpace, string id)
         {
-            ExchangeLog.LogStart("GetRoomsAddressListDN");
+            ExchangeLog.LogStart("DeleteAddressBookPolicy");
+            ExchangeLog.LogEnd("DeleteAddressBookPolicy");
+        }
+
+
+
+        internal string GetGlobalAddressListDN(Runspace runSpace, string id)
+        {
+            ExchangeLog.LogStart("GetGlobalAddressListDN");
             string resultObjectDN = null;
-            Command cmd = new Command("Get-AddressList");
+            Command cmd = new Command("Get-GlobalAddressList");
             cmd.Parameters.Add("Identity", id);
             Collection<PSObject> result = this.ExecuteShellCommand(runSpace, cmd);
             if ((result != null) && (result.Count > 0))
             {
                 resultObjectDN = this.GetResultObjectDN(result);
-                ExchangeLog.DebugInfo("RAL DN: {0}", new object[] { resultObjectDN });
+                ExchangeLog.DebugInfo("GAL DN: {0}", new object[] { resultObjectDN });
             }
-            ExchangeLog.DebugInfo("GetRommsAddressListDN, cmd = {0}", cmd.CommandText);
-            ExchangeLog.LogEnd("GetRoomsAddressListDN");
+            ExchangeLog.LogEnd("GetGlobalAddressListDN");
             return resultObjectDN;
         }
 
-        private string CreateRoomsAddressList(Runspace runSpace, string organizationId)
-        {
-            ExchangeLog.LogStart("CreateRoomsAddressList");
-            string roomsAddressListName = this.GetRoomsAddressListName(organizationId);
-            string roomsAddressListDN = this.GetRoomsAddressListDN(runSpace, roomsAddressListName);
-            if (!string.IsNullOrEmpty(roomsAddressListDN))
-            {
-                //rooms address list already exists - we will use it
-                ExchangeLog.LogWarning("Rooms Address List '{0}' already exists", new object[] { roomsAddressListName });
-            }
-            else
-            {
-                //try to create a new rooms address list (10 attempts)
-                int attempts = 0;
-                Command cmd = null;
-                Collection<PSObject> result = null;
 
-                while (true)
-                {
-                    try
-                    {
-                        //try to create address list
-                        cmd = new Command("New-AddressList");
-                        cmd.Parameters.Add("Name", roomsAddressListName);
-                        cmd.Parameters.Add("IncludedRecipients", "Resources");
-                        cmd.Parameters.Add("ConditionalCustomAttribute1", organizationId);
-
-                        result = ExecuteShellCommand(runSpace, cmd);
-                        roomsAddressListDN = CheckResultObjectDN(result);
-                    }
-                    catch (Exception ex)
-                    {
-                        ExchangeLog.LogError(ex);
-                    }
-                    if (roomsAddressListDN != null)
-                        break;
-
-                    if (attempts > 9)
-                        throw new Exception(
-                            string.Format("Could not create Rooms Address List '{0}' cmd = '{1}'", roomsAddressListName, cmd));
-
-                    attempts++;
-                    ExchangeLog.LogWarning("Attempt #{0} to create rooms address list failed!", attempts);
-                    // wait 1 sec
-                    System.Threading.Thread.Sleep(1000);
-                }
-            }
-
-            ExchangeLog.LogEnd("CreateRoomsAddressList");
-            return roomsAddressListDN;
-        }
-
-        private void UpdateRoomsAddressList(Runspace runSpace, string id, string securityGroup)
-        {
-            ExchangeLog.LogStart("UpdateRoomsAddressList");
-
-            string path = AddADPrefix(id);
-            Command cmd = new Command("Update-AddressList");
-            cmd.Parameters.Add("Identity", id);
-            ExecuteShellCommand(runSpace, cmd);
-
-            AdjustADSecurity(path, securityGroup, false);
-
-            ExchangeLog.LogEnd("UpdateRoomsAddressList");
-        }
-
-        private void DeleteRoomsAddressList(Runspace runSpace, string id)
-        {
-            ExchangeLog.LogStart("DeleteRoomsAddressList");
-            Command cmd = new Command("Remove-AddressList");
-            cmd.Parameters.Add("Identity", id);
-            cmd.Parameters.Add("Confirm", false);
-            ExecuteShellCommand(runSpace, cmd);
-            ExchangeLog.LogEnd("DeleteRoomsAddressList");
-        }
-
-		private string GetGlobalAddressListDN(Runspace runSpace, string id)
-		{
-			ExchangeLog.LogStart("GetGlobalAddressListDN");
-			string resultObjectDN = null;
-			Command cmd = new Command("Get-GlobalAddressList");
-			cmd.Parameters.Add("Identity", id);
-			Collection<PSObject> result = this.ExecuteShellCommand(runSpace, cmd);
-			if ((result != null) && (result.Count > 0))
-			{
-				resultObjectDN = this.GetResultObjectDN(result);
-				ExchangeLog.DebugInfo("GAL DN: {0}", new object[] { resultObjectDN });
-			}
-			ExchangeLog.LogEnd("GetGlobalAddressListDN");
-			return resultObjectDN;
-		}
-
-		private string CreateGlobalAddressList(Runspace runSpace, string organizationId)
+		internal string CreateGlobalAddressList(Runspace runSpace, string organizationId)
 		{
 			ExchangeLog.LogStart("CreateGlobalAddressList");
 
@@ -4962,7 +4925,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return id;
 		}
 
-		private void UpdateGlobalAddressList(Runspace runSpace, string id, string securityGroup)
+		internal void UpdateGlobalAddressList(Runspace runSpace, string id, string securityGroup)
 		{
 			ExchangeLog.LogStart("UpdateGlobalAddressList");
 
@@ -4977,7 +4940,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogEnd("UpdateGlobalAddressList");
 		}
 
-		private void DeleteGlobalAddressList(Runspace runSpace, string id)
+		internal void DeleteGlobalAddressList(Runspace runSpace, string id)
 		{
 			ExchangeLog.LogStart("DeleteGlobalAddressList");
 			Command cmd = new Command("Remove-GlobalAddressList");
@@ -4989,44 +4952,39 @@ namespace WebsitePanel.Providers.HostedSolution
 
 		private string CreateOfflineAddressBook(Runspace runSpace, string organizationId, string server, string oabVirtualDirs)
 		{
-			ExchangeLog.LogStart("CreateOfflineAddressBook");
+            ExchangeLog.LogStart("CreateOfflineAddressBook");
 
-			string oabName = GetOfflineAddressBookName(organizationId);
+            string oabName = GetOfflineAddressBookName(organizationId);
+            string addressListName = GetAddressListName(organizationId);
 
-			bool enableSP2abp = false;
-			if (ConfigurationManager.AppSettings[CONFIG_ENABLESP2ABP] != null)
-				enableSP2abp = Boolean.Parse(ConfigurationManager.AppSettings[CONFIG_ENABLESP2ABP]);
-			Version exchangeVersion = GetExchangeVersion();
-			string addressListName;
-			if (enableSP2abp && (exchangeVersion >= new Version(14, 2)))
-			{
-				// Ex2010SP2 with ABP support, want to use GAL for OAB
-				addressListName = GetGlobalAddressListName(organizationId);
-			}
-			else
-			{
-				// Ex2007 or Ex2010 without ABP support, have to use AL for OAB
-				addressListName = GetAddressListName(organizationId);
-			}
+            Command cmd = new Command("New-OfflineAddressBook");
+            cmd.Parameters.Add("Name", oabName);
+            cmd.Parameters.Add("Server", server);
+            cmd.Parameters.Add("AddressLists", addressListName);
+            cmd.Parameters.Add("PublicFolderDistributionEnabled", PublicFolderDistributionEnabled);
+            cmd.Parameters.Add("IsDefault", false);
 
-			Command cmd = new Command("New-OfflineAddressBook");
-			cmd.Parameters.Add("Name", oabName);
-			cmd.Parameters.Add("Server", server);
-			cmd.Parameters.Add("AddressLists", addressListName);
-			cmd.Parameters.Add("PublicFolderDistributionEnabled", true);
-			cmd.Parameters.Add("IsDefault", false);
-			if (!string.IsNullOrEmpty(oabVirtualDirs))
-			{
-				cmd.Parameters.Add("VirtualDirectories", oabVirtualDirs);
-			}
 
-			Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
-			string id = GetResultObjectDN(result);
+            //TODO: fix web distribution
+            if (!string.IsNullOrEmpty(oabVirtualDirs))
+            {
+                ArrayList virtualDirs = new ArrayList();
+                string[] strTmp = oabVirtualDirs.Split(',');
+                foreach (string s in strTmp)
+                {
+                    virtualDirs.Add(s);
+                }
 
-			ExchangeLog.LogEnd("CreateOfflineAddressBook");
+                cmd.Parameters.Add("VirtualDirectories", (String[])virtualDirs.ToArray(typeof(string)));
+            }
 
-			return id;
-		}
+            Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+            string id = GetResultObjectDN(result);
+
+            ExchangeLog.LogEnd("CreateOfflineAddressBook");
+
+            return id;
+        }
 
 		private void UpdateOfflineAddressBook(Runspace runSpace, string id, string securityGroup)
 		{
@@ -5044,7 +5002,7 @@ namespace WebsitePanel.Providers.HostedSolution
 		}
 
 
-		private void DeleteOfflineAddressBook(Runspace runSpace, string id)
+		internal void DeleteOfflineAddressBook(Runspace runSpace, string id)
 		{
 			ExchangeLog.LogStart("DeleteOfflineAddressBook");
 			Command cmd = new Command("Remove-OfflineAddressBook");
@@ -5053,31 +5011,6 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExecuteShellCommand(runSpace, cmd);
 			ExchangeLog.LogEnd("DeleteOfflineAddressBook");
 		}
-
-        private string CreateAddressPolicy(Runspace runSpace, string organizationId) 
-        {
-            ExchangeLog.LogStart("CreateAddressPolicy");
-
-            string ABP = GetAddressPolicyName(organizationId);
-            string AL = GetAddressListName(organizationId);
-            string GAL = GetGlobalAddressListName(organizationId);
-            string OAB = GetOfflineAddressBookName(organizationId);
-            string RL = GetRoomsAddressListName(organizationId);
-
-            Command cmd = new Command("New-AddressBookPolicy");
-            cmd.Parameters.Add("Name", ABP);
-            cmd.Parameters.Add("GlobalAddressList", GAL);
-            cmd.Parameters.Add("OfflineAddressBook", OAB);
-            cmd.Parameters.Add("AddressLists", AL);
-            cmd.Parameters.Add("RoomList", RL);
-
-
-            Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
-            string id = GetResultObjectDN(result);
-
-            ExchangeLog.LogEnd("CreateAddressPolicy");
-            return id;
-        }
 
         private void DeleteAddressPolicy(Runspace runSpace, string id)
         {
@@ -5094,7 +5027,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return orgName + " Address List";
 		}
 
-		private string GetGlobalAddressListName(string orgName)
+		internal string GetGlobalAddressListName(string orgName)
 		{
 			return orgName + " Global Address List";
 		}
@@ -5103,7 +5036,8 @@ namespace WebsitePanel.Providers.HostedSolution
 		{
 			return orgName + " Offline Address Book";
 		}
-        private string GetAddressPolicyName(string orgName)
+
+        internal string GetAddressBookPolicyName(string orgName)
         {
             return orgName + " Address Policy";
         }
@@ -5162,7 +5096,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogEnd("DeleteADObject");
 		}
 
-		private DirectoryEntry GetRootOU()
+        private DirectoryEntry GetRootOU()
 		{
 			ExchangeLog.LogStart("GetRootOU");
 			StringBuilder sb = new StringBuilder();
@@ -5177,7 +5111,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return de;
 		}
 
-		private void SetADObjectProperty(DirectoryEntry oDE, string name, string value)
+        private void SetADObjectProperty(DirectoryEntry oDE, string name, string value)
 		{
 			if (!string.IsNullOrEmpty(value))
 			{
@@ -5192,14 +5126,14 @@ namespace WebsitePanel.Providers.HostedSolution
 			}
 		}
 
-		private void SetADObjectPropertyValue(DirectoryEntry oDE, string name, string value)
+        internal void SetADObjectPropertyValue(DirectoryEntry oDE, string name, string value)
 		{
 			PropertyValueCollection collection = oDE.Properties[name];
 			collection.Value = value;
 		}
 
 
-		private void AddADObjectProperty(DirectoryEntry oDE, string name, string value)
+        internal void AddADObjectProperty(DirectoryEntry oDE, string name, string value)
 		{
 			if (!string.IsNullOrEmpty(value))
 			{
@@ -5208,7 +5142,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			}
 		}
 
-		private DirectoryEntry GetADObject(string path)
+		internal DirectoryEntry GetADObject(string path)
 		{
 			DirectoryEntry de = null;
 			if (path.StartsWith("LDAP://" + PrimaryDomainController + "/", true, CultureInfo.InvariantCulture))
@@ -5226,13 +5160,25 @@ namespace WebsitePanel.Providers.HostedSolution
 			return de;
 		}
 
-		private object GetADObjectProperty(DirectoryEntry entry, string name)
+        internal object GetADObjectProperty(DirectoryEntry entry, string name)
 		{
 			if (entry.Properties.Contains(name))
 				return entry.Properties[name][0];
 			else
 				return String.Empty;
 		}
+
+
+        private string GetOrganizationPath(string organizationId)
+        {
+            StringBuilder sb = new StringBuilder();
+            // append provider
+            AppendOUPath(sb, organizationId);
+            AppendOUPath(sb, RootOU);
+            AppendDomainPath(sb, RootDomain);
+
+            return sb.ToString();
+        }
 
 		private void AppendProtocol(StringBuilder sb)
 		{
@@ -5270,7 +5216,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			}
 		}
 
-		private string AddADPrefix(string path)
+		internal string AddADPrefix(string path)
 		{
 			string dn = path;
 			if (!dn.ToUpper().StartsWith("LDAP://"))
@@ -5296,7 +5242,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return dn;
 		}
 
-		private string ConvertADPathToCanonicalName(string name)
+		internal string ConvertADPathToCanonicalName(string name)
 		{
 
 			if (string.IsNullOrEmpty(name))
@@ -5355,7 +5301,7 @@ namespace WebsitePanel.Providers.HostedSolution
 		}
 
 
-		private void AdjustADSecurity(string objPath, string securityGroupPath, bool isAddressBook)
+		internal virtual void AdjustADSecurity(string objPath, string securityGroupPath, bool isAddressBook)
 		{
 			ExchangeLog.LogStart("AdjustADSecurity");
 			ExchangeLog.DebugInfo("  Active Direcory object: {0}", objPath);
@@ -5487,7 +5433,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogEnd("AddGlobalUPNSuffix");
 		}*/
 
-		private string GetNETBIOSDomainName()
+		internal string GetNETBIOSDomainName()
 		{
 			ExchangeLog.LogStart("GetNETBIOSDomainName");
 			string ret = string.Empty;
@@ -6026,7 +5972,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogEnd("CreateOrganizationActiveSyncPolicyInternal");
 		}
 
-		private string CreateActiveSyncPolicy(Runspace runSpace, string organizationId)
+		internal string CreateActiveSyncPolicy(Runspace runSpace, string organizationId)
 		{
 			ExchangeLog.LogStart("CreateActiveSyncPolicy");
 			Command cmd = new Command("New-ActiveSyncMailboxPolicy");
@@ -6039,7 +5985,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return id;
 		}
 
-		private void DeleteActiveSyncPolicy(Runspace runSpace, string id)
+		internal void DeleteActiveSyncPolicy(Runspace runSpace, string id)
 		{
 			ExchangeLog.LogStart("DeleteActiveSyncPolicy");
 			Command cmd = new Command("Remove-ActiveSyncMailboxPolicy");
@@ -6175,35 +6121,43 @@ namespace WebsitePanel.Providers.HostedSolution
 
 		private ExchangeMobileDevice[] GetMobileDevicesInternal(string accountName)
 		{
-			ExchangeLog.LogStart("GetMobileDevicesInternal");
-			ExchangeLog.DebugInfo("Account name: {0}", accountName);
+            ExchangeLog.LogStart("GetMobileDevicesInternal");
+            ExchangeLog.DebugInfo("Account name: {0}", accountName);
 
-			List<ExchangeMobileDevice> devices = new List<ExchangeMobileDevice>();
-			ExchangeMobileDevice device = null;
+            List<ExchangeMobileDevice> devices = new List<ExchangeMobileDevice>();
+            ExchangeMobileDevice device = null;
 
-			Runspace runSpace = null;
-			try
-			{
-				runSpace = OpenRunspace();
-				Command cmd = new Command("Get-ActiveSyncDeviceStatistics");
-				cmd.Parameters.Add("Mailbox", accountName);
-				Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+                Command cmd = new Command("Get-ActiveSyncDeviceStatistics");
+                cmd.Parameters.Add("Mailbox", accountName);
 
-				if (result != null)
-				{
-					foreach (PSObject obj in result)
-					{
-						device = GetMobileDeviceObject(obj);
-						devices.Add(device);
-					}
-				}
-			}
-			finally
-			{
-				CloseRunspace(runSpace);
-			}
-			ExchangeLog.LogEnd("GetMobileDevicesInternal");
-			return devices.ToArray();
+                Collection<PSObject> result = null;
+                try
+                {
+                    result = ExecuteShellCommand(runSpace, cmd);
+                }
+                catch (Exception)
+                {
+                }
+
+                if (result != null)
+                {
+                    foreach (PSObject obj in result)
+                    {
+                        device = GetMobileDeviceObject(obj);
+                        devices.Add(device);
+                    }
+                }
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+            ExchangeLog.LogEnd("GetMobileDevicesInternal");
+            return devices.ToArray();
 		}
 
 		private ExchangeMobileDevice GetMobileDeviceObject(PSObject obj)
@@ -6616,7 +6570,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return ret;
 		}
 
-		private string GetServerName()
+		internal string GetServerName()
 		{
 			string ret = null;
 			if (!string.IsNullOrEmpty(MailboxCluster))
@@ -6659,12 +6613,12 @@ namespace WebsitePanel.Providers.HostedSolution
 
 		#region Transactions
 
-		private ExchangeTransaction StartTransaction()
+		internal ExchangeTransaction StartTransaction()
 		{
 			return new ExchangeTransaction();
 		}
 
-		private void RollbackTransaction(ExchangeTransaction transaction)
+		internal void RollbackTransaction(ExchangeTransaction transaction)
 		{
 			ExchangeLog.LogStart("RollbackTransaction");
 			Runspace runSpace = null;
@@ -6703,58 +6657,61 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogInfo("Rollback action: {0}", action.ActionType);
 			switch (action.ActionType)
 			{
-				case TransactionAction.TransactionActionTypes.CreateOrganizationUnit:
-					DeleteADObject(action.Id);
-					break;
-				case TransactionAction.TransactionActionTypes.CreateDistributionGroup:
-					RemoveDistributionGroup(runspace, action.Id);
-					break;
-				case TransactionAction.TransactionActionTypes.EnableDistributionGroup:
-					DisableMailSecurityDistributionGroup(runspace, action.Id);
-					break;
-				case TransactionAction.TransactionActionTypes.CreateGlobalAddressList:
-					DeleteGlobalAddressList(runspace, action.Id);
-					break;
-				case TransactionAction.TransactionActionTypes.CreateAddressList:
-					DeleteAddressList(runspace, action.Id);
-					break;
-                case TransactionAction.TransactionActionTypes.CreateRoomsAddressList:
-                    DeleteRoomsAddressList(runspace, action.Id);
+                case TransactionAction.TransactionActionTypes.CreateOrganizationUnit:
+                    DeleteADObject(action.Id);
                     break;
-				case TransactionAction.TransactionActionTypes.CreateOfflineAddressBook:
-					DeleteOfflineAddressBook(runspace, action.Id);
-					break;
-				case TransactionAction.TransactionActionTypes.CreateActiveSyncPolicy:
-					DeleteActiveSyncPolicy(runspace, action.Id);
-					break;
-				case TransactionAction.TransactionActionTypes.CreateAcceptedDomain:
-					RemoveAcceptedDomain(runspace, action.Id);
-					break;
-				case TransactionAction.TransactionActionTypes.AddUPNSuffix:
-					RemoveUPNSuffix(action.Id, action.Suffix);
-					break;
-				case TransactionAction.TransactionActionTypes.CreateMailbox:
-					RemoveMailbox(runspace, action.Id);
-					break;
-				case TransactionAction.TransactionActionTypes.CreateContact:
-					RemoveContact(runspace, action.Id);
-					break;
-				case TransactionAction.TransactionActionTypes.CreatePublicFolder:
-					RemovePublicFolder(runspace, action.Id);
-					break;
-				case TransactionAction.TransactionActionTypes.AddMailboxFullAccessPermission:
-					RemoveMailboxAccessPermission(runspace, action.Account, action.Id, "FullAccess");
-					break;
-				case TransactionAction.TransactionActionTypes.AddSendAsPermission:
-					RemoveADPermission(runspace, action.Account, action.Id, null, "Send-as", null);
-					break;
-				case TransactionAction.TransactionActionTypes.RemoveMailboxFullAccessPermission:
-					SetMailboxPermission(runspace, action.Account, action.Id, "FullAccess");
-					break;
-				case TransactionAction.TransactionActionTypes.RemoveSendAsPermission:
-					SetExtendedRights(runspace, action.Account, action.Id, "Send-as");
-					break;
-			}
+                case TransactionAction.TransactionActionTypes.CreateDistributionGroup:
+                    RemoveDistributionGroup(runspace, action.Id);
+                    break;
+                case TransactionAction.TransactionActionTypes.EnableDistributionGroup:
+                    DisableMailSecurityDistributionGroup(runspace, action.Id);
+                    break;
+                case TransactionAction.TransactionActionTypes.CreateGlobalAddressList:
+                    DeleteGlobalAddressList(runspace, action.Id);
+                    break;
+                case TransactionAction.TransactionActionTypes.CreateAddressList:
+                    DeleteAddressList(runspace, action.Id);
+                    break;
+                case TransactionAction.TransactionActionTypes.CreateAddressBookPolicy:
+                    DeleteAddressBookPolicy(runspace, action.Id);
+                    break;
+                case TransactionAction.TransactionActionTypes.CreateOfflineAddressBook:
+                    DeleteOfflineAddressBook(runspace, action.Id);
+                    break;
+                case TransactionAction.TransactionActionTypes.CreateActiveSyncPolicy:
+                    DeleteActiveSyncPolicy(runspace, action.Id);
+                    break;
+                case TransactionAction.TransactionActionTypes.CreateAcceptedDomain:
+                    RemoveAcceptedDomain(runspace, action.Id);
+                    break;
+                case TransactionAction.TransactionActionTypes.AddUPNSuffix:
+                    RemoveUPNSuffix(action.Id, action.Suffix);
+                    break;
+                case TransactionAction.TransactionActionTypes.CreateMailbox:
+                    RemoveMailbox(runspace, action.Id);
+                    break;
+                case TransactionAction.TransactionActionTypes.EnableMailbox:
+                    DisableMailbox(runspace, action.Id);
+                    break;
+                case TransactionAction.TransactionActionTypes.CreateContact:
+                    RemoveContact(runspace, action.Id);
+                    break;
+                case TransactionAction.TransactionActionTypes.CreatePublicFolder:
+                    RemovePublicFolder(runspace, action.Id);
+                    break;
+                case TransactionAction.TransactionActionTypes.AddMailboxFullAccessPermission:
+                    RemoveMailboxAccessPermission(runspace, action.Account, action.Id, "FullAccess");
+                    break;
+                case TransactionAction.TransactionActionTypes.AddSendAsPermission:
+                    RemoveADPermission(runspace, action.Account, action.Id, null, "Send-as", null);
+                    break;
+                case TransactionAction.TransactionActionTypes.RemoveMailboxFullAccessPermission:
+                    SetMailboxPermission(runspace, action.Account, action.Id, "FullAccess");
+                    break;
+                case TransactionAction.TransactionActionTypes.RemoveSendAsPermission:
+                    SetExtendedRights(runspace, action.Account, action.Id, "Send-as");
+                    break;
+            }
 		}
 		#endregion
 	}

@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2011, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -33,6 +33,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using WebsitePanel.Providers.HostedSolution;
 using System.Drawing;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
@@ -48,26 +49,26 @@ namespace WebsitePanel.Portal.ExchangeServer
             if (device != null)
             {
                 lblStatus.Text = GetLocalizedString(device.Status.ToString());
-				switch (device.Status)
-				{
-					case MobileDeviceStatus.PendingWipe:
-						lblStatus.ForeColor = Color.Red;
-						break;
-					case MobileDeviceStatus.WipeSuccessful:
-						lblStatus.ForeColor = Color.Green;
-						break;
-					default:
-						lblStatus.ForeColor = Color.Black;
-						break;
-				}
+                switch (device.Status)
+                {
+                    case MobileDeviceStatus.PendingWipe:
+                        lblStatus.ForeColor = Color.Red;
+                        break;
+                    case MobileDeviceStatus.WipeSuccessful:
+                        lblStatus.ForeColor = Color.Green;
+                        break;
+                    default:
+                        lblStatus.ForeColor = Color.Black;
+                        break;
+                }
                 lblDeviceModel.Text = device.DeviceModel;
                 lblDeviceType.Text = device.DeviceType;
-				lblFirstSyncTime.Text = DateTimeToString(device.FirstSyncTime);
-				lblDeviceWipeRequestTime.Text = DateTimeToString(device.DeviceWipeRequestTime);
-				lblDeviceAcnowledgeTime.Text = DateTimeToString(device.DeviceWipeAckTime);
-				lblLastSync.Text = DateTimeToString(device.LastSyncAttemptTime);
-				lblLastUpdate.Text = DateTimeToString(device.LastPolicyUpdateTime);
-				lblLastPing.Text = device.LastPingHeartbeat == 0 ? string.Empty : device.LastPingHeartbeat.ToString();
+                lblFirstSyncTime.Text = DateTimeToString(device.FirstSyncTime);
+                lblDeviceWipeRequestTime.Text = DateTimeToString(device.DeviceWipeRequestTime);
+                lblDeviceAcnowledgeTime.Text = DateTimeToString(device.DeviceWipeAckTime);
+                lblLastSync.Text = DateTimeToString(device.LastSyncAttemptTime);
+                lblLastUpdate.Text = DateTimeToString(device.LastPolicyUpdateTime);
+                lblLastPing.Text = device.LastPingHeartbeat == 0 ? string.Empty : device.LastPingHeartbeat.ToString();
                 lblDeviceFriendlyName.Text = device.DeviceFriendlyName;
                 lblDeviceId.Text = device.DeviceID;
                 lblDeviceUserAgent.Text = device.DeviceUserAgent;
@@ -78,20 +79,22 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 UpdateButtons(device.Status);
 
-				// form title
-				ExchangeAccount account = ES.Services.ExchangeServer.GetAccount(PanelRequest.ItemID, PanelRequest.AccountID);
-				litDisplayName.Text = account.DisplayName;
-            }        
+                // form title
+                ExchangeAccount account = ES.Services.ExchangeServer.GetAccount(PanelRequest.ItemID, PanelRequest.AccountID);
+                litDisplayName.Text = account.DisplayName;
+            }
         }
 
-		private string DateTimeToString(DateTime dateTime)
-		{
-			return dateTime == DateTime.MinValue ? string.Empty : dateTime.ToString("g");
-		}
-        
+        private string DateTimeToString(DateTime dateTime)
+        {
+            return dateTime == DateTime.MinValue ? string.Empty : dateTime.ToString("g");
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             BindData();
+
+            
         }
 
         private void UpdateButtons(MobileDeviceStatus status)
@@ -111,12 +114,12 @@ namespace WebsitePanel.Portal.ExchangeServer
                 {
                     btnWipeAllData.Visible = false;
                     btnCancel.Visible = false;
-                }                    
+                }
         }
 
         protected void btnBack_Click(object sender, EventArgs e)
-        {                  
-            string str = EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "mailbox_mobile",                        
+        {
+            string str = EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "mailbox_mobile",
                         "ItemID=" + PanelRequest.ItemID, "AccountID=" + PanelRequest.AccountID);
             Response.Redirect(str);
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2011, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -28,6 +28,7 @@
 
 using System;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
@@ -37,8 +38,9 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             if (!IsPostBack)
                 BindPermissions();
+
         }
-        
+
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
@@ -56,15 +58,15 @@ namespace WebsitePanel.Portal.ExchangeServer
                 sendAsPermission.SetAccounts(mailbox.SendAsAccounts);
                 fullAccessPermission.SetAccounts(mailbox.FullAccessAccounts);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 messageBox.ShowErrorMessage("EXCHANGE_GET_MAILBOX_PERMISSIONS", ex);
             }
         }
 
-        
+
         private void SavePermissions()
-        {            
+        {
             try
             {
                 string[] fullAccess = fullAccessPermission.GetAccounts();
@@ -72,16 +74,16 @@ namespace WebsitePanel.Portal.ExchangeServer
                 int result =
                     ES.Services.ExchangeServer.SetMailboxPermissions(PanelRequest.ItemID, PanelRequest.AccountID, sendAs,
                                                                      fullAccess);
-                    
-          
+
+
                 if (result < 0)
                 {
                     messageBox.ShowResultMessage(result);
                     return;
                 }
 
-                 
-                          
+
+
                 messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_MAILBOX_PERMISSIONS");
             }
             catch (Exception ex)

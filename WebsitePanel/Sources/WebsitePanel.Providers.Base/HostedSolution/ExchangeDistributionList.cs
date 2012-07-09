@@ -32,72 +32,79 @@ using System.Text;
 
 namespace WebsitePanel.Providers.HostedSolution
 {
-	public class ExchangeDistributionList
-	{
-		public string DisplayName
-		{
-			get;
-			set;
-		}
+    public class ExchangeDistributionList
+    {
+        public string DisplayName
+        {
+            get;
+            set;
+        }
 
-		public string AccountName
-		{
-			get; 
-			set; 
-		}
+        public string AccountName
+        {
+            get;
+            set;
+        }
 
-		public bool HideFromAddressBook
-		{
-			get; 
-			set;
-		}
+        public bool HideFromAddressBook
+        {
+            get;
+            set;
+        }
 
-		public ExchangeAccount[] MembersAccounts
-		{
-			get; 
-			set; 
-		}
+        public ExchangeAccount[] MembersAccounts
+        {
+            get;
+            set;
+        }
 
-		public ExchangeAccount ManagerAccount
-		{
-			get; 
-			set; 
-		}
+        public ExchangeAccount ManagerAccount
+        {
+            get;
+            set;
+        }
 
-		public string Notes
-		{
-			get; 
-			set; 
-		}
+        public string Notes
+        {
+            get;
+            set;
+        }
 
-		public ExchangeAccount[] AcceptAccounts
-		{
-			get; 
-			set; 
-		}
+        public ExchangeAccount[] AcceptAccounts
+        {
+            get;
+            set;
+        }
 
-		public ExchangeAccount[] RejectAccounts
-		{
-			get; 
-			set;
-		}
+        public ExchangeAccount[] RejectAccounts
+        {
+            get;
+            set;
+        }
 
-		public bool RequireSenderAuthentication
-		{
-			get; 
-			set; 
-		}
-		
-		public ExchangeAccount[] SendAsAccounts
-		{
-			get; 
-			set; 
-		}
+        public bool RequireSenderAuthentication
+        {
+            get;
+            set;
+        }
 
-		public ExchangeAccount[] SendOnBehalfAccounts
-		{
-			get; 
-			set;
-		}
-	}
+        public ExchangeAccount[] SendAsAccounts
+        {
+            get;
+            set;
+        }
+
+        public ExchangeAccount[] SendOnBehalfAccounts
+        {
+            get;
+            set;
+        }
+
+        public string SAMAccountName
+        {
+            get;
+            set;
+        }
+
+    }
 }

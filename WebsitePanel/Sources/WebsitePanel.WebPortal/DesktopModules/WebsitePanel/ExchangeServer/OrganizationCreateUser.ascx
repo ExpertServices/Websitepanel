@@ -36,6 +36,14 @@
 							</td>
 						</tr>
 						<tr>
+							<td class="FormLabel150"><asp:Localize ID="locSubscriberNumber" runat="server" meta:resourcekey="locSubscriberNumber" Text="Subscriber Number: *"></asp:Localize></td>
+							<td>
+								<asp:TextBox ID="txtSubscriberNumber" runat="server" CssClass="HugeTextBox200"></asp:TextBox>
+								<asp:RequiredFieldValidator ID="valRequireSubscriberNumber" runat="server" meta:resourcekey="valRequireSubscriberNumber" ControlToValidate="txtSubscriberNumber"
+									ErrorMessage="Enter Subscriber Number" ValidationGroup="CreateMailbox" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
+							</td>
+						</tr>
+						<tr>
 							<td class="FormLabel150"><asp:Localize ID="locAccount" runat="server" meta:resourcekey="locAccount" Text="E-mail Address: *"></asp:Localize></td>
 							<td>
                                 <wsp:EmailAddress id="email" runat="server" ValidationGroup="CreateMailbox">
@@ -52,15 +60,6 @@
 						
 					</table>
 					
-					 <table>
-					        <tr>						        
-						        <td class="FormLabel150">						        
-						            <asp:CheckBox ID="chkSendInstructions"  runat="server" meta:resourcekey="chkSendInstructions" Text="Send Setup Instructions" Checked="true" />
-						        </td>
-						        <td><wsp:EmailControl id="sendInstructionEmail" runat="server" RequiredEnabled="true" ValidationGroup="CreateMailbox"></wsp:EmailControl></td>
-						        						        
-						    </tr>						    					
-					    </table>
 				    <div class="FormFooterClean">
 					    <asp:Button id="btnCreate" runat="server" Text="Create Mailbox"
 					    CssClass="Button1" meta:resourcekey="btnCreate" ValidationGroup="CreateMailbox"

@@ -105,6 +105,11 @@ order by rg.groupOrder
 		public const string EXCHANGE2007_OWAENABLED = "Exchange2007.OWAEnabled";  // OWA  Enabled by default
 		public const string EXCHANGE2007_MAPIENABLED = "Exchange2007.MAPIEnabled";  // MAPI  Enabled by default
 		public const string EXCHANGE2007_ACTIVESYNCENABLED = "Exchange2007.ActiveSyncEnabled";  // ActiveSync Enabled by default
+        public const string EXCHANGE2007_KEEPDELETEDITEMSDAYS = "Exchange2007.KeepDeletedItemsDays";  // Keep deleted items
+        public const string EXCHANGE2007_MAXRECIPIENTS = "Exchange2007.MaxRecipients";  // Max Recipients
+        public const string EXCHANGE2007_MAXSENDMESSAGESIZEKB = "Exchange2007.MaxSendMessageSizeKB";  // Max Send Message Size
+        public const string EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB = "Exchange2007.MaxReceiveMessageSizeKB";  // Max Receive Message Size
+        public const string EXCHANGE2007_ISCONSUMER = "Exchange2007.IsConsumer";  // Is Consumer Organization
 		public const string MSSQL2000_DATABASES = "MsSQL2000.Databases";  // Databases
 		public const string MSSQL2000_USERS = "MsSQL2000.Users";  // Users
 		public const string MSSQL2000_MAXDATABASESIZE = "MsSQL2000.MaxDatabaseSize";  // Max Database Size

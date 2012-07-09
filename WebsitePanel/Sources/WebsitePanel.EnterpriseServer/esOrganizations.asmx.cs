@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2011, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -46,10 +46,10 @@ namespace WebsitePanel.EnterpriseServer
         #region Organizations
 
         [WebMethod]
-        public int CreateOrganization(int packageId,  string organizationID, string organizationName)
+        public int CreateOrganization(int packageId, string organizationID, string organizationName)
         {
             return OrganizationController.CreateOrganization(packageId, organizationID, organizationName);
-            
+
         }
 
         [WebMethod]
@@ -60,7 +60,7 @@ namespace WebsitePanel.EnterpriseServer
                 filterColumn, filterValue, sortColumn, startRow, maximumRows);
         }
 
-               
+
         [WebMethod]
         public List<Organization> GetOrganizations(int packageId, bool recursive)
         {
@@ -72,13 +72,13 @@ namespace WebsitePanel.EnterpriseServer
         {
             return OrganizationController.GetOrganizationUserSummuryLetter(itemId, accountId, pmm, emailMode, signup);
         }
-        
+
         [WebMethod]
         public int SendOrganizationUserSummuryLetter(int itemId, int accountId, bool signup, string to, string cc)
         {
             return OrganizationController.SendSummaryLetter(itemId, accountId, signup, to, cc);
         }
-        
+
         [WebMethod]
         public int DeleteOrganization(int itemId)
         {
@@ -97,6 +97,13 @@ namespace WebsitePanel.EnterpriseServer
             return OrganizationController.GetOrganization(itemId);
         }
 
+        [WebMethod]
+        public int GetAccountIdByUserPrincipalName(int itemId, string userPrincipalName)
+        {
+            return OrganizationController.GetAccountIdByUserPrincipalName(itemId, userPrincipalName);
+        }
+
+
         #endregion
 
 
@@ -107,13 +114,13 @@ namespace WebsitePanel.EnterpriseServer
         {
             return OrganizationController.AddOrganizationDomain(itemId, domainName);
         }
-        
+
         [WebMethod]
         public List<OrganizationDomainName> GetOrganizationDomains(int itemId)
         {
             return OrganizationController.GetOrganizationDomains(itemId);
         }
-        
+
         [WebMethod]
         public int DeleteOrganizationDomain(int itemId, int domainId)
         {
@@ -132,15 +139,22 @@ namespace WebsitePanel.EnterpriseServer
         #region Users
 
         [WebMethod]
-        public int CreateUser(int itemId, string displayName, string name, string domain, string password, bool sendNotification, string to)
+        public int CreateUser(int itemId, string displayName, string name, string domain, string password, string subscriberNumber, bool sendNotification, string to)
         {
             string accountName;
-            return OrganizationController.CreateUser(itemId, displayName, name, domain, password, true, sendNotification, to, out accountName);
+            return OrganizationController.CreateUser(itemId, displayName, name, domain, password, subscriberNumber, true, sendNotification, to, out accountName);
         }
 
         [WebMethod]
+        public int ImportUser(int itemId, string accountName, string displayName, string name, string domain, string password, string subscriberNumber)
+        {
+            return OrganizationController.ImportUser(itemId, accountName, displayName, name, domain, password, subscriberNumber);
+        }
+
+
+        [WebMethod]
         public OrganizationUsersPaged GetOrganizationUsersPaged(int itemId, string filterColumn, string filterValue, string sortColumn,
-			int startRow, int maximumRows)
+            int startRow, int maximumRows)
         {
             return OrganizationController.GetOrganizationUsersPaged(itemId, filterColumn, filterValue, sortColumn, startRow, maximumRows);
         }
@@ -157,30 +171,30 @@ namespace WebsitePanel.EnterpriseServer
             string lastName, string address, string city, string state, string zip, string country,
             string jobTitle, string company, string department, string office, string managerAccountName,
             string businessPhone, string fax, string homePhone, string mobilePhone, string pager,
-            string webPage, string notes, string externalEmail)
+            string webPage, string notes, string externalEmail, string subscriberNumber)
         {
             return OrganizationController.SetUserGeneralSettings(itemId, accountId, displayName,
                 password, hideAddressBook, disabled, locked, firstName, initials,
                 lastName, address, city, state, zip, country,
                 jobTitle, company, department, office, managerAccountName,
                 businessPhone, fax, homePhone, mobilePhone, pager,
-                webPage, notes, externalEmail);
+                webPage, notes, externalEmail, subscriberNumber);
         }
 
 
         [WebMethod]
-        public List<OrganizationUser> SearchAccounts(int itemId,            
+        public List<OrganizationUser> SearchAccounts(int itemId,
             string filterColumn, string filterValue, string sortColumn, bool includeMailboxes)
         {
             return OrganizationController.SearchAccounts(itemId,
                 filterColumn, filterValue, sortColumn, includeMailboxes);
         }
-                
+
 
         [WebMethod]
         public int DeleteUser(int itemId, int accountId)
         {
-            return OrganizationController.DeleteUser(itemId, accountId); 
+            return OrganizationController.DeleteUser(itemId, accountId);
         }
 
 

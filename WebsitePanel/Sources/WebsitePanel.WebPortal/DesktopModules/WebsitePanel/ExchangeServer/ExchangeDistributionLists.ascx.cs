@@ -38,27 +38,30 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class ExchangeDistributionLists : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
+    public partial class ExchangeDistributionLists : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
             if (!IsPostBack)
             {
-				BindStats();
+                BindStats();
             }
-		}
 
-		private void BindStats()
-		{
-			// quota values
-			OrganizationStatistics stats =
-				ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
-			listsQuota.QuotaUsedValue = stats.CreatedDistributionLists;
-			listsQuota.QuotaValue = stats.AllocatedDistributionLists;
-		}
+
+        }
+
+        private void BindStats()
+        {
+            // quota values
+            OrganizationStatistics stats =
+                ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
+            listsQuota.QuotaUsedValue = stats.CreatedDistributionLists;
+            listsQuota.QuotaValue = stats.AllocatedDistributionLists;
+        }
 
         protected void btnCreateList_Click(object sender, EventArgs e)
         {
@@ -66,21 +69,21 @@ namespace WebsitePanel.Portal.ExchangeServer
                 "SpaceID=" + PanelSecurity.PackageId.ToString()));
         }
 
-		public string GetListEditUrl(string accountId)
-		{
-			return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "dlist_settings",
-					"AccountID=" + accountId,
-					"ItemID=" + PanelRequest.ItemID.ToString());
-		}
+        public string GetListEditUrl(string accountId)
+        {
+            return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "dlist_settings",
+                    "AccountID=" + accountId,
+                    "ItemID=" + PanelRequest.ItemID.ToString());
+        }
 
-		protected void odsAccountsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)
-		{
-			if (e.Exception != null)
-			{
-				messageBox.ShowErrorMessage("EXCHANGE_GET_LISTS", e.Exception);
-				e.ExceptionHandled = true;
-			}
-		}
+        protected void odsAccountsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)
+        {
+            if (e.Exception != null)
+            {
+                messageBox.ShowErrorMessage("EXCHANGE_GET_LISTS", e.Exception);
+                e.ExceptionHandled = true;
+            }
+        }
 
         protected void gvLists_RowCommand(object sender, GridViewCommandEventArgs e)
         {
@@ -101,25 +104,13 @@ namespace WebsitePanel.Portal.ExchangeServer
                     // rebind grid
                     gvLists.DataBind();
 
-					BindStats();
+                    BindStats();
                 }
                 catch (Exception ex)
                 {
-					messageBox.ShowErrorMessage("EXCHANGE_DELETE_DISTRIBUTION_LIST", ex);
+                    messageBox.ShowErrorMessage("EXCHANGE_DELETE_DISTRIBUTION_LIST", ex);
                 }
             }
         }
-
-        protected void ddlPageSize_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            gvLists.PageSize = Convert.ToInt16(ddlPageSize.SelectedValue);
-
-            // rebind grid
-            gvLists.DataBind();
-
-            // bind stats
-            BindStats();
-
-        }
-	}
+    }
 }

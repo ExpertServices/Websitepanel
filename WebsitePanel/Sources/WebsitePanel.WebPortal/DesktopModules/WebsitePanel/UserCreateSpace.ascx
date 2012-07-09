@@ -51,6 +51,14 @@
                 Text="Create Space Resources" Checked="True" AutoPostBack="True" OnCheckedChanged="chkCreateResources_CheckedChanged" />
         </td>
     </tr>
+    <tr>
+        <td class="Normal" colspan="2">
+            <br />
+            <asp:CheckBox ID="chkIntegratedOUProvisioning" runat="server" meta:resourcekey="chkIntegratedOUProvisioning"
+                Text="Automated Hosted Organization Provisioning" Checked="True" />
+        </td>
+    </tr>
+
 </table>
 
 <asp:Panel ID="ResourcesPanel" runat="server">

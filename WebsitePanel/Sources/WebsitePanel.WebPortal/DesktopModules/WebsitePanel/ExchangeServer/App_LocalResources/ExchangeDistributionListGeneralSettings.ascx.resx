@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnSave.OnClientClick" xml:space="preserve">
     <value>ShowProgressDialog('Updating distribution list settings...');</value>
@@ -144,13 +144,13 @@
   <data name="Text.PageName" xml:space="preserve">
     <value>Distribution Lists</value>
   </data>
+  <data name="valManager.ErrorMessage" xml:space="preserve">
+    <value>Please specify a manager</value>
+  </data>
   <data name="valRequireDisplayName.ErrorMessage" xml:space="preserve">
     <value>Enter Display Name</value>
   </data>
   <data name="valRequireDisplayName.Text" xml:space="preserve">
     <value>*</value>
-  </data>
-  <data name="valManager.ErrorMessage" xml:space="preserve">
-    <value>Please specify a manager</value>
   </data>
 </root>

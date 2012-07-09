@@ -42,25 +42,38 @@ using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class ExchangeDomainRecords : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
-			if (!IsPostBack)
-			{
-				// save return URL
-				ViewState["ReturnUrl"] = Request.UrlReferrer.ToString();
+    public partial class ExchangeDomainRecords : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                // save return URL
+                ViewState["ReturnUrl"] = Request.UrlReferrer.ToString();
 
-				ToggleRecordControls();
+                ToggleRecordControls();
 
-				// domain name
-				DomainInfo domain = ES.Services.Servers.GetDomain(PanelRequest.DomainID);
-				litDomainName.Text = domain.DomainName;
-			}
-		}
+                // domain name
+                DomainInfo domain = ES.Services.Servers.GetDomain(PanelRequest.DomainID);
+                litDomainName.Text = domain.DomainName;
+            }
+
+            
+            if (PanelSecurity.LoggedUser.Role == UserRole.User)
+            {
+                if (!PackagesHelper.CheckGroupQuotaEnabled(PanelSecurity.PackageId, ResourceGroups.Dns, Quotas.DNS_EDITOR))
+                {
+                    this.ExcludeDisableControls.Add(btnBack);
+                    this.DisableControls = true;
+                }
+            }
+
+
+
+        }
 
         public string GetRecordFullData(string recordType, string recordData, int mxPriority, int port)
-		{
+        {
             switch (recordType)
             {
                 case "MX":
@@ -72,8 +85,8 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
         }
 
-		private void GetRecordsDetails(int recordIndex)
-		{
+        private void GetRecordsDetails(int recordIndex)
+        {
             GridViewRow row = gvRecords.Rows[recordIndex];
             ViewState["SrvPort"] = ((Literal)row.Cells[0].FindControl("litSrvPort")).Text;
             ViewState["SrvWeight"] = ((Literal)row.Cells[0].FindControl("litSrvWeight")).Text;
@@ -84,8 +97,8 @@ namespace WebsitePanel.Portal.ExchangeServer
             ViewState["RecordData"] = ((Literal)row.Cells[0].FindControl("litRecordData")).Text;
         }
 
-		private void BindDnsRecord(int recordIndex)
-		{
+        private void BindDnsRecord(int recordIndex)
+        {
             try
             {
                 ViewState["NewRecord"] = false;
@@ -107,13 +120,13 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
         }
 
-		protected void ddlRecordType_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			ToggleRecordControls();
-		}
+        protected void ddlRecordType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ToggleRecordControls();
+        }
 
-		private void ToggleRecordControls()
-		{
+        private void ToggleRecordControls()
+        {
             rowMXPriority.Visible = false;
             rowSRVPriority.Visible = false;
             rowSRVWeight.Visible = false;
@@ -141,18 +154,18 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
         }
 
-		private void SaveRecord()
-		{
-			if (!Page.IsValid)
-				return;
+        private void SaveRecord()
+        {
+            if (!Page.IsValid)
+                return;
 
-			bool existingRecord = ViewState["ExistingRecord"] != null;
+            bool existingRecord = ViewState["ExistingRecord"] != null;
 
-			if (!existingRecord)
-			{
-				// add record
-				try
-				{
+            if (!existingRecord)
+            {
+                // add record
+                try
+                {
                     int result = ES.Services.Servers.AddDnsZoneRecord(PanelRequest.DomainID,
                                                                       txtRecordName.Text.Trim(),
                                                                       (DnsRecordType)
@@ -164,23 +177,23 @@ namespace WebsitePanel.Portal.ExchangeServer
                                                                       Int32.Parse(txtSRVWeight.Text.Trim()),
                                                                       Int32.Parse(txtSRVPort.Text.Trim()));
 
-					if (result < 0)
-					{
-						messageBox.ShowResultMessage(result);
-						return;
-					}
-				}
-				catch (Exception ex)
-				{
-					messageBox.ShowErrorMessage("GDNS_ADD_RECORD", ex);
-					return;
-				}
-			}
-			else
-			{
-				// update record
-				try
-				{
+                    if (result < 0)
+                    {
+                        messageBox.ShowResultMessage(result);
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    messageBox.ShowErrorMessage("GDNS_ADD_RECORD", ex);
+                    return;
+                }
+            }
+            else
+            {
+                // update record
+                try
+                {
                     int result = ES.Services.Servers.UpdateDnsZoneRecord(PanelRequest.DomainID,
                                                                          ViewState["RecordName"].ToString(),
                                                                          ViewState["RecordData"].ToString(),
@@ -192,64 +205,64 @@ namespace WebsitePanel.Portal.ExchangeServer
                                                                          Int32.Parse(txtSRVWeight.Text.Trim()),
                                                                          Int32.Parse(txtSRVPort.Text.Trim()));
 
-					if (result < 0)
-					{
-						messageBox.ShowResultMessage(result);
-						return;
-					}
-				}
-				catch (Exception ex)
-				{
-					messageBox.ShowErrorMessage("GDNS_UPDATE_RECORD", ex);
-					return;
-				}
-			}
+                    if (result < 0)
+                    {
+                        messageBox.ShowResultMessage(result);
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    messageBox.ShowErrorMessage("GDNS_UPDATE_RECORD", ex);
+                    return;
+                }
+            }
 
-			ResetPopup();
+            ResetPopup();
 
-			// rebind and switch
-			gvRecords.DataBind();
-		}
+            // rebind and switch
+            gvRecords.DataBind();
+        }
 
-		private void DeleteRecord(int recordIndex)
-		{
-			try
-			{
-				GetRecordsDetails(recordIndex);
+        private void DeleteRecord(int recordIndex)
+        {
+            try
+            {
+                GetRecordsDetails(recordIndex);
 
-				int result = ES.Services.Servers.DeleteDnsZoneRecord(PanelRequest.DomainID,
-					ViewState["RecordName"].ToString(),
-					(DnsRecordType)ViewState["RecordType"],
-					ViewState["RecordData"].ToString());
+                int result = ES.Services.Servers.DeleteDnsZoneRecord(PanelRequest.DomainID,
+                    ViewState["RecordName"].ToString(),
+                    (DnsRecordType)ViewState["RecordType"],
+                    ViewState["RecordData"].ToString());
 
-				if (result < 0)
-				{
-					messageBox.ShowResultMessage(result);
-					return;
-				}
-			}
-			catch (Exception ex)
-			{
-				messageBox.ShowErrorMessage("GDNS_DELETE_RECORD", ex);
-				return;
-			}
+                if (result < 0)
+                {
+                    messageBox.ShowResultMessage(result);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage("GDNS_DELETE_RECORD", ex);
+                return;
+            }
 
-			// rebind grid
-			gvRecords.DataBind();
-		}
+            // rebind grid
+            gvRecords.DataBind();
+        }
 
-		protected void btnSave_Click(object sender, EventArgs e)
-		{
-			SaveRecord();
-		}
+        protected void btnSave_Click(object sender, EventArgs e)
+        {
+            SaveRecord();
+        }
 
-		protected void btnCancel_Click(object sender, EventArgs e)
-		{
-			ResetPopup();
-		}
+        protected void btnCancel_Click(object sender, EventArgs e)
+        {
+            ResetPopup();
+        }
 
-		private void ResetPopup()
-		{
+        private void ResetPopup()
+        {
             EditRecordModal.Hide();
             ViewState["ExistingRecord"] = null;
 
@@ -266,36 +279,36 @@ namespace WebsitePanel.Portal.ExchangeServer
             ToggleRecordControls();
         }
 
-		protected void gvRecords_RowEditing(object sender, GridViewEditEventArgs e)
-		{
-			ViewState["ExistingRecord"] = true;
-			BindDnsRecord(e.NewEditIndex);
-			EditRecordModal.Show();
-			e.Cancel = true;
-		}
+        protected void gvRecords_RowEditing(object sender, GridViewEditEventArgs e)
+        {
+            ViewState["ExistingRecord"] = true;
+            BindDnsRecord(e.NewEditIndex);
+            EditRecordModal.Show();
+            e.Cancel = true;
+        }
 
-		protected void gvRecords_RowDeleting(object sender, GridViewDeleteEventArgs e)
-		{
-			DeleteRecord(e.RowIndex);
-			e.Cancel = true;
-		}
+        protected void gvRecords_RowDeleting(object sender, GridViewDeleteEventArgs e)
+        {
+            DeleteRecord(e.RowIndex);
+            e.Cancel = true;
+        }
 
-		protected void odsDnsRecords_Selected(object sender, ObjectDataSourceStatusEventArgs e)
-		{
-			if (e.Exception != null)
-			{
-				messageBox.ShowErrorMessage("GDNS_GET_RECORD", e.Exception);
-				//this.DisableControls = true;
-				e.ExceptionHandled = true;
-			}
-		}
+        protected void odsDnsRecords_Selected(object sender, ObjectDataSourceStatusEventArgs e)
+        {
+            if (e.Exception != null)
+            {
+                messageBox.ShowErrorMessage("GDNS_GET_RECORD", e.Exception);
+                //this.DisableControls = true;
+                e.ExceptionHandled = true;
+            }
+        }
 
-		protected void btnBack_Click(object sender, EventArgs e)
-		{
-			if (ViewState["ReturnUrl"] != null)
-				Response.Redirect(ViewState["ReturnUrl"].ToString());
-			else
-				RedirectToBrowsePage();
-		}
-	}
+        protected void btnBack_Click(object sender, EventArgs e)
+        {
+            if (ViewState["ReturnUrl"] != null)
+                Response.Redirect(ViewState["ReturnUrl"].ToString());
+            else
+                RedirectToBrowsePage();
+        }
+    }
 }

@@ -39,54 +39,54 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             get { return ddlDomain.SelectedItem.Text; }
         }
 
-		public int DomainId
-		{
-			get
-			{
-				return Convert.ToInt32(ddlDomain.SelectedValue);
-			}
-		}
+        public int DomainId
+        {
+            get
+            {
+                return Convert.ToInt32(ddlDomain.SelectedValue);
+            }
+        }
 
-		public int DomainsCount
-		{
-			get
-			{
-				return this.ddlDomain.Items.Count;
-			}
-		}
+        public int DomainsCount
+        {
+            get
+            {
+                return this.ddlDomain.Items.Count;
+            }
+        }
 
-		public bool ShowAt
-		{
-			get
-			{
-				return this.litAt.Visible;
-			}
-			set
-			{
-				this.litAt.Visible = value;
-			}
-		}
+        public bool ShowAt
+        {
+            get
+            {
+                return this.litAt.Visible;
+            }
+            set
+            {
+                this.litAt.Visible = value;
+            }
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-			if (!IsPostBack)
-			{
-				BindDomains();
-			}
+            if (!IsPostBack)
+            {
+                BindDomains();
+            }
         }
 
-		private void BindDomains()
-		{
-			// get domains
-			OrganizationDomainName[] domains = ES.Services.Organizations.GetOrganizationDomains(PanelRequest.ItemID);
+        private void BindDomains()
+        {
+            // get domains
+            OrganizationDomainName[] domains = ES.Services.Organizations.GetOrganizationDomains(PanelRequest.ItemID);
 
-			// bind domains
-			foreach (OrganizationDomainName domain in domains)
-			{
-				ListItem li = new ListItem(domain.DomainName, domain.DomainId.ToString());
-				li.Selected = domain.IsDefault;
-				ddlDomain.Items.Add(li);
-			}
-		}
+            // bind domains
+            foreach (OrganizationDomainName domain in domains)
+            {
+                ListItem li = new ListItem(domain.DomainName, domain.DomainId.ToString());
+                li.Selected = domain.IsDefault;
+                ddlDomain.Items.Add(li);
+            }
+        }
     }
 }

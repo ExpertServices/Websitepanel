@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnCreate.OnClientClick" xml:space="preserve">
     <value>ShowProgressDialog('Creating distribution list...');</value>
@@ -124,7 +124,7 @@
     <value>Create Distribution List</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;&lt;b&gt;Display Name&lt;/b&gt; will be shown in the GAL in Outlook and OWA.&lt;/p&gt;&lt;p&gt;You can add new Domain Names on "Domain Names" page. We always provide you with a free domain that would allow your organization migrating to Exchange as soon as possible.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Primary E-Mail Address&lt;/b&gt; is shown in the GAL and in "From" field of all messages sent from this DL.&lt;/p&gt;</value>
+    <value>&lt;p&gt;&lt;b&gt;Display Name&lt;/b&gt; will be shown in the GAL in Outlook and OWA.&lt;/p&gt;&lt;p&gt;You can add new Domain Names on "Domain Names" page. &lt;/p&gt;&lt;p&gt;&lt;b&gt;Primary E-Mail Address&lt;/b&gt; is shown in the GAL and in "From" field of all messages sent from this DL.&lt;/p&gt;</value>
   </data>
   <data name="locAccount.Text" xml:space="preserve">
     <value>E-mail Address: *</value>
@@ -132,22 +132,22 @@
   <data name="locDisplayName.Text" xml:space="preserve">
     <value>Display Name: *</value>
   </data>
+  <data name="locManagedBy.Text" xml:space="preserve">
+    <value>Managed by: *</value>
+  </data>
   <data name="locTitle.Text" xml:space="preserve">
     <value>Create New Distribution List</value>
   </data>
   <data name="Text.PageName" xml:space="preserve">
     <value>Distribution Lists</value>
   </data>
+  <data name="valManager.ErrorMessage" xml:space="preserve">
+    <value>Please specify a manager</value>
+  </data>
   <data name="valRequireDisplayName.ErrorMessage" xml:space="preserve">
     <value>Enter Display Name</value>
   </data>
   <data name="valRequireDisplayName.Text" xml:space="preserve">
     <value>*</value>
-  </data>
-  <data name="locManagedBy.Text" xml:space="preserve">
-    <value>Managed by: *</value>
-  </data>
-  <data name="valManager.ErrorMessage" xml:space="preserve">
-    <value>Please specify a manager</value>
   </data>
 </root>

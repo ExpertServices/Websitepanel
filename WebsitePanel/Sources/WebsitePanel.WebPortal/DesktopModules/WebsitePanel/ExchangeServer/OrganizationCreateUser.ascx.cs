@@ -33,15 +33,15 @@ using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Portal.HostedSolution
 {
-	public partial class OrganizationCreateUser : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
-			if (!IsPostBack)
-			{
-				password.SetPackagePolicy(PanelSecurity.PackageId, UserSettings.EXCHANGE_POLICY, "MailboxPasswordPolicy");
+    public partial class OrganizationCreateUser : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                password.SetPackagePolicy(PanelSecurity.PackageId, UserSettings.EXCHANGE_POLICY, "MailboxPasswordPolicy");
 
-			    PasswordPolicyResult passwordPolicy =  ES.Services.Organizations.GetPasswordPolicy(PanelRequest.ItemID);
+                PasswordPolicyResult passwordPolicy = ES.Services.Organizations.GetPasswordPolicy(PanelRequest.ItemID);
                 if (passwordPolicy.IsSuccess)
                 {
                     password.MinimumLength = passwordPolicy.Value.MinLength;
@@ -54,18 +54,29 @@ namespace WebsitePanel.Portal.HostedSolution
                 }
                 else
                 {
-                    messageBox.ShowMessage(passwordPolicy, "CREATE_ORGANIZATION_USER", "HostedOrganization" );
+                    messageBox.ShowMessage(passwordPolicy, "CREATE_ORGANIZATION_USER", "HostedOrganization");
                 }
-                
+
                 PackageInfo package = ES.Services.Packages.GetPackage(PanelSecurity.PackageId);
                 if (package != null)
                 {
-                    UserInfo user = ES.Services.Users.GetUserById(package.UserId);
-                    if (user != null)
-                        sendInstructionEmail.Text = user.Email;
+                    //UserInfo user = ES.Services.Users.GetUserById(package.UserId);
+                    //if (user != null)
+                    //sendInstructionEmail.Text = user.Email;
                 }
-			}
-		}
+            }
+
+
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
+            {
+                if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
+                {
+                    locSubscriberNumber.Visible = txtSubscriberNumber.Visible = valRequireSubscriberNumber.Enabled = false;
+                }
+            }
+
+        }
 
         protected void btnCreate_Click(object sender, EventArgs e)
         {
@@ -78,14 +89,15 @@ namespace WebsitePanel.Portal.HostedSolution
                 return;
 
             try
-            {                
-                int accountId = ES.Services.Organizations.CreateUser(PanelRequest.ItemID, txtDisplayName.Text.Trim(), 
-                    email.AccountName, 
-                    email.DomainName, 
-                    password.Password, 
-                    chkSendInstructions.Checked,
-                    sendInstructionEmail.Text);
-                                       
+            {
+                int accountId = ES.Services.Organizations.CreateUser(PanelRequest.ItemID, txtDisplayName.Text.Trim(),
+                    email.AccountName,
+                    email.DomainName,
+                    password.Password,
+                    txtSubscriberNumber.Text.Trim(),
+                    false,
+                    "");
+
                 if (accountId < 0)
                 {
                     messageBox.ShowResultMessage(accountId);
@@ -101,5 +113,5 @@ namespace WebsitePanel.Portal.HostedSolution
                 messageBox.ShowErrorMessage("EXCHANGE_CREATE_MAILBOX", ex);
             }
         }
-	}
+    }
 }

@@ -29,7 +29,7 @@ CREATE TABLE [dbo].[ExchangeAccounts](
 	[AccountID] [int] IDENTITY(1,1) NOT NULL,
 	[ItemID] [int] NOT NULL,
 	[AccountType] [int] NOT NULL,
-	[AccountName] [nvarchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
+	[AccountName] [nvarchar](300) COLLATE Latin1_General_CI_AS NOT NULL,
 	[DisplayName] [nvarchar](300) COLLATE Latin1_General_CI_AS NOT NULL,
 	[PrimaryEmailAddress] [nvarchar](300) COLLATE Latin1_General_CI_AS NULL,
 	[MailEnabledPublicFolder] [bit] NULL,
@@ -37,6 +37,8 @@ CREATE TABLE [dbo].[ExchangeAccounts](
 	[SamAccountName] [nvarchar](100) COLLATE Latin1_General_CI_AS NULL,
 	[AccountPassword] [nvarchar](200) COLLATE Latin1_General_CI_AS NULL,
 	[CreatedDate] [datetime] NOT NULL,
+	[MailboxPlanId] [int] NULL,
+	[SubscriberNumber] [nvarchar] (32) COLLATE Latin1_General_CI_AS NULL,
  CONSTRAINT [PK_ExchangeAccounts] PRIMARY KEY CLUSTERED 
 (
 	[AccountID] ASC
@@ -54,6 +56,32 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+CREATE TABLE [dbo].[ExchangeMailboxPlans](
+	[MailboxPlanId] [int] IDENTITY(1,1) NOT NULL,
+	[ItemID] [int] NOT NULL,
+	[MailboxPlan] [nvarchar](300) COLLATE Latin1_General_CI_AS NOT NULL,
+	[EnableActiveSync] [bit] NOT NULL,
+	[EnableIMAP] [bit] NOT NULL,
+	[EnableMAPI] [bit] NOT NULL,
+	[EnableOWA] [bit] NOT NULL,
+	[EnablePOP] [bit] NOT NULL,
+	[IsDefault] [bit] NOT NULL,
+	[IssueWarningPct] [int] NOT NULL,
+	[KeepDeletedItemsDays] [int] NOT NULL,
+	[MailboxSizeMB] [int] NOT NULL,
+	[MaxReceiveMessageSizeKB] [int] NOT NULL,
+	[MaxRecipients] [int] NOT NULL,
+	[MaxSendMessageSizeKB] [int] NOT NULL,
+	[ProhibitSendPct] [int] NOT NULL,
+	[ProhibitSendReceivePct] [int] NOT NULL,
+	[HideFromAddressBook] [bit] NOT NULL,
+ CONSTRAINT [PK_ExchangeMailboxPlans] PRIMARY KEY CLUSTERED 
+(
+	[MailboxPlanId] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
 
 
 
@@ -80,7 +108,8 @@ SELECT
 	AccountName,
 	DisplayName,
 	PrimaryEmailAddress,
-	MailEnabledPublicFolder
+	MailEnabledPublicFolder,
+	SubscriberNumber
 FROM
 	ExchangeAccounts
 WHERE
@@ -89,6 +118,7 @@ WHERE
 ORDER BY 1
 
 END
+
 
 
 
@@ -150,21 +180,71 @@ CREATE PROCEDURE [dbo].[GetExchangeAccounts]
 )
 AS
 SELECT
-	AccountID,
-	ItemID,
-	AccountType,
-	AccountName,
-	DisplayName,
-	PrimaryEmailAddress,
-	MailEnabledPublicFolder
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxPlanId,
+	P.MailboxPlan, 
+	E.SubscriberNumber
 FROM
-	ExchangeAccounts
+	ExchangeAccounts  AS E
+INNER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId		
 WHERE
-	ItemID = @ItemID AND
-	(AccountType = @AccountType OR @AccountType IS NULL) 
+	E.ItemID = @ItemID AND
+	(E.AccountType = @AccountType OR @AccountType IS NULL) 
 ORDER BY DisplayName
 RETURN
 
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetExchangeAccountByAccountName] 
+(
+	@ItemID int,
+	@AccountName nvarchar(300)
+)
+AS
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber 
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+WHERE
+	E.ItemID = @ItemID AND
+	E.AccountName = @AccountName
+RETURN
 
 
 
@@ -231,21 +311,25 @@ CREATE PROCEDURE [dbo].[GetExchangeAccount]
 )
 AS
 SELECT
-	AccountID,
-	ItemID,
-	AccountType,
-	AccountName,
-	DisplayName,
-	PrimaryEmailAddress,
-	MailEnabledPublicFolder,
-	MailboxManagerActions,
-	SamAccountName,
-	AccountPassword 
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber 
 FROM
-	ExchangeAccounts
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
 WHERE
-	ItemID = @ItemID AND
-	AccountID = @AccountID
+	E.ItemID = @ItemID AND
+	E.AccountID = @AccountID
 RETURN
 
 
@@ -311,19 +395,23 @@ GO
 
 
 
-CREATE PROCEDURE ExchangeAccountExists 
+CREATE PROCEDURE [dbo].[ExchangeAccountExists] 
 (
 	@AccountName nvarchar(20),
 	@Exists bit OUTPUT
 )
 AS
 SET @Exists = 0
-IF EXISTS(SELECT * FROM ExchangeAccounts WHERE AccountName = @AccountName)
+IF EXISTS(SELECT * FROM ExchangeAccounts WHERE sAMAccountName LIKE '%\'+@AccountName)
 BEGIN
 	SET @Exists = 1
 END
 
 RETURN
+
+
+
+
 
 
 
@@ -936,7 +1024,7 @@ GO
 
 
 
-CREATE PROCEDURE SearchExchangeAccounts
+CREATE PROCEDURE [dbo].[SearchExchangeAccounts]
 (
 	@ActorID int,
 	@ItemID int,
@@ -986,7 +1074,8 @@ SELECT
 	EA.AccountName,
 	EA.DisplayName,
 	EA.PrimaryEmailAddress,
-	EA.MailEnabledPublicFolder
+	EA.MailEnabledPublicFolder,
+	EA.SubscriberNumber
 FROM ExchangeAccounts AS EA
 WHERE ' + @condition
 
@@ -997,6 +1086,7 @@ exec sp_executesql @sql, N'@ItemID int, @IncludeMailboxes int, @IncludeContacts 
 @ItemID, @IncludeMailboxes, @IncludeContacts, @IncludeDistributionLists, @IncludeRooms, @IncludeEquipment
 
 RETURN 
+
 
 
 
@@ -1080,6 +1170,10 @@ END
 IF @SortColumn IS NULL OR @SortColumn = ''
 SET @SortColumn = 'EA.DisplayName ASC'
 
+DECLARE @joincondition nvarchar(700)
+	SET @joincondition = ',P.MailboxPlan FROM ExchangeAccounts AS EA
+	LEFT OUTER JOIN ExchangeMailboxPlans AS P ON EA.MailboxPlanId = P.MailboxPlanId'
+
 DECLARE @sql nvarchar(3500)
 
 set @sql = '
@@ -1094,9 +1188,10 @@ WITH Accounts AS (
 		EA.AccountName,
 		EA.DisplayName,
 		EA.PrimaryEmailAddress,
-		EA.MailEnabledPublicFolder
-	FROM ExchangeAccounts AS EA
-	WHERE ' + @condition + '
+		EA.MailEnabledPublicFolder,
+		EA.MailboxPlanId,
+		EA.SubscriberNumber ' + @joincondition +
+	' WHERE ' + @condition + '
 )
 
 SELECT * FROM Accounts
@@ -1109,6 +1204,7 @@ exec sp_executesql @sql, N'@ItemID int, @StartRow int, @MaximumRows int',
 @ItemID, @StartRow, @MaximumRows
 
 RETURN 
+
 
 
 
@@ -1407,13 +1503,15 @@ CREATE PROCEDURE [dbo].[AddExchangeAccount]
 	@AccountID int OUTPUT,
 	@ItemID int,
 	@AccountType int,
-	@AccountName nvarchar(20),
+	@AccountName nvarchar(300),
 	@DisplayName nvarchar(300),
 	@PrimaryEmailAddress nvarchar(300),
 	@MailEnabledPublicFolder bit,
 	@MailboxManagerActions varchar(200),
 	@SamAccountName nvarchar(100),
-	@AccountPassword nvarchar(200) 
+	@AccountPassword nvarchar(200),
+	@MailboxPlanId int,
+	@SubscriberNumber nvarchar(32)
 )
 AS
 
@@ -1427,7 +1525,9 @@ INSERT INTO ExchangeAccounts
 	MailEnabledPublicFolder,
 	MailboxManagerActions,
 	SamAccountName,
-	AccountPassword
+	AccountPassword,
+	MailboxPlanId,
+	SubscriberNumber
 )
 VALUES
 (
@@ -1439,12 +1539,15 @@ VALUES
 	@MailEnabledPublicFolder,
 	@MailboxManagerActions,
 	@SamAccountName,
-	@AccountPassword
+	@AccountPassword,
+	@MailboxPlanId,
+	@SubscriberNumber
 )
 
 SET @AccountID = SCOPE_IDENTITY()
 
 RETURN
+
 
 
 
@@ -3538,9 +3641,9 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (75, 1, 8, N'OS.ExtraApplications', N'Extra Application Packs', 1, 0, NULL)
 GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (77, 12, 2, N'Exchange2007.DiskSpace', N'Organization Disk Space, MB', 3, 0, NULL)
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (77, 12, 2, N'Exchange2007.DiskSpace', N'Organization Disk Space, MB', 21, 0, NULL)
 GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (78, 12, 3, N'Exchange2007.Mailboxes', N'Mailboxes per Organization', 3, 0, NULL)
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (78, 12, 3, N'Exchange2007.Mailboxes', N'Mailboxes per Organization', 2, 0, NULL)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (79, 12, 4, N'Exchange2007.Contacts', N'Contacts per Organization', 3, 0, NULL)
 GO
@@ -3559,16 +3662,6 @@ GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (87, 12, 17, N'Exchange2007.ActiveSyncAllowed', N'ActiveSync Access', 1, 0, NULL)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (88, 12, 8, N'Exchange2007.MailEnabledPublicFolders', N'Mail Enabled Public Folders Allowed', 1, 0, NULL)
-GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (89, 12, 10, N'Exchange2007.POP3Enabled', N'POP3 Enabled by default', 1, 0, NULL)
-GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (90, 12, 12, N'Exchange2007.IMAPEnabled', N'IMAP Enabled by default', 1, 0, NULL)
-GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (91, 12, 14, N'Exchange2007.OWAEnabled', N'OWA  Enabled by default', 1, 0, NULL)
-GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (92, 12, 16, N'Exchange2007.MAPIEnabled', N'MAPI  Enabled by default', 1, 0, NULL)
-GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (93, 12, 18, N'Exchange2007.ActiveSyncEnabled', N'ActiveSync Enabled by default', 1, 0, NULL)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (94, 2, 17, N'Web.ColdFusion', N'ColdFusion', 1, 0, NULL)
 GO
@@ -3602,7 +3695,7 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (205, 13, 1, N'HostedSolution.Organizations', N'Organizations', 2, 0, 29)
 GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (206, 13, 2, N'HostedSolution.Users', N'Users', 3, 0, 30)
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (206, 13, 2, N'HostedSolution.Users', N'Users', 2, 0, 30)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (207, 13, 3, N'HostedSolution.Domains', N'Domains per Organizations', 3, 0, NULL)
 GO
@@ -3747,6 +3840,16 @@ GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (362, 40, 19, N'VPSForPC.ReinstallAllowed', N'Allow user to Re-install VPS', 1, 0, NULL)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (363, 40, 12, N'VPSForPC.Bandwidth', N'Monthly bandwidth, GB', 2, 0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (364, 12, 19, N'Exchange2007.KeepDeletedItemsDays',	N'Keep Deleted Items (days)', 3, 0,	NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (365, 12, 20, N'Exchange2007.MaxRecipients', N'Maximum Recipients',	3,	0,	NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (366, 12, 21, N'Exchange2007.MaxSendMessageSizeKB',	N'Maximum Send Message Size (Kb)', 3, 0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (367, 12, 22, N'Exchange2007.MaxReceiveMessageSizeKB', N'Maximum Receive Message Size (Kb)', 3,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (368, 12, 1, N'Exchange2007.IsConsumer',N'Is Consumer Organization',1, 0 , NULL)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (400, 20, 3, N'HostedSharePoint.UseSharedSSL', N'Use shared SSL Root', 1, 0, NULL)
 GO
@@ -5866,7 +5969,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[ExchangeOrganizations](
 	[ItemID] [int] NOT NULL,
-	[OrganizationID] [nvarchar](10) COLLATE Latin1_General_CI_AS NOT NULL,
+	[OrganizationID] [nvarchar](128) COLLATE Latin1_General_CI_AS NOT NULL,
  CONSTRAINT [PK_ExchangeOrganizations] PRIMARY KEY CLUSTERED 
 (
 	[ItemID] ASC
@@ -5980,8 +6083,10 @@ CREATE PROCEDURE DeleteExchangeOrganization
 	@ItemID int
 )
 AS
-DELETE FROM ExchangeOrganizations
-WHERE ItemID = @ItemID
+BEGIN TRAN
+	DELETE FROM ExchangeMailboxPlans WHERE ItemID = @ItemID
+	DELETE FROM ExchangeOrganizations WHERE ItemID = @ItemID
+COMMIT TRAN
 RETURN
 
 
@@ -6053,7 +6158,7 @@ GO
 CREATE PROCEDURE AddExchangeOrganization
 (
 	@ItemID int,
-	@OrganizationID nvarchar(10)
+	@OrganizationID nvarchar(128)
 )
 AS
 
@@ -6241,10 +6346,10 @@ SELECT
 	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 2 AND ItemID = @ItemID) AS CreatedContacts,
 	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 3 AND ItemID = @ItemID) AS CreatedDistributionLists,
 	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 4 AND ItemID = @ItemID) AS CreatedPublicFolders,
-	(SELECT COUNT(*) FROM ExchangeOrganizationDomains WHERE ItemID = @ItemID) AS CreatedDomains
+	(SELECT COUNT(*) FROM ExchangeOrganizationDomains WHERE ItemID = @ItemID) AS CreatedDomains,
+	(SELECT SUM(B.MailboxSizeMB) FROM ExchangeAccounts AS A INNER JOIN ExchangeMailboxPlans AS B ON A.MailboxPlanId = B.MailboxPlanId WHERE A.ItemID=@ItemID) AS UsedDiskSpace
 
 RETURN
-
 
 
 
@@ -6611,18 +6716,26 @@ GO
 CREATE PROCEDURE [dbo].[UpdateExchangeAccount] 
 (
 	@AccountID int,
-	@AccountName nvarchar(20),
+	@AccountName nvarchar(300),
 	@DisplayName nvarchar(300),
 	@PrimaryEmailAddress nvarchar(300),
 	@AccountType int,
 	@SamAccountName nvarchar(100),
 	@MailEnabledPublicFolder bit,
 	@MailboxManagerActions varchar(200),
-	@Password varchar(200)
+	@Password varchar(200),
+	@MailboxPlanId int,
+	@SubscriberNumber varchar(32)
 )
 AS
 
 BEGIN TRAN	
+
+IF (@MailboxPlanId = -1) 
+BEGIN
+	SET @MailboxPlanId = NULL
+END
+
 UPDATE ExchangeAccounts SET
 	AccountName = @AccountName,
 	DisplayName = @DisplayName,
@@ -6630,7 +6743,9 @@ UPDATE ExchangeAccounts SET
 	MailEnabledPublicFolder = @MailEnabledPublicFolder,
 	MailboxManagerActions = @MailboxManagerActions,	
 	AccountType =@AccountType,
-	SamAccountName = @SamAccountName
+	SamAccountName = @SamAccountName,
+	MailboxPlanId = @MailboxPlanId,
+	SubscriberNumber = @SubscriberNumber
 
 WHERE
 	AccountID = @AccountID
@@ -6651,6 +6766,10 @@ IF (@@ERROR <> 0 )
 	END
 COMMIT TRAN
 RETURN
+
+
+
+
 
 
 
@@ -8899,7 +9018,8 @@ SELECT
 	EA.AccountType,
 	EA.AccountName,
 	EA.DisplayName,
-	EA.PrimaryEmailAddress
+	EA.PrimaryEmailAddress,
+	EA.SubscriberNumber
 FROM ExchangeAccounts AS EA
 WHERE ' + @condition
 
@@ -8909,6 +9029,8 @@ exec sp_executesql @sql, N'@ItemID int, @IncludeMailboxes bit',
 @ItemID, @IncludeMailboxes
 
 RETURN 
+
+
 
 
 
@@ -20551,7 +20673,7 @@ GO
 
 
 
-CREATE PROCEDURE GetPackages
+CREATE PROCEDURE [dbo].[GetPackages]
 (
 	@ActorID int,
 	@UserID int
@@ -20590,8 +20712,7 @@ INNER JOIN Users AS U ON P.UserID = U.UserID
 INNER JOIN Servers AS S ON P.ServerID = S.ServerID
 INNER JOIN HostingPlans AS HP ON P.PlanID = HP.PlanID
 WHERE
-	P.UserID <> @UserID
-	AND dbo.CheckUserParent(@UserID, P.UserID) = 1
+	P.UserID = @UserID	
 RETURN
 
 
@@ -23257,6 +23378,8 @@ INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName]
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (400, 40, N'HyperVForPC', N'Microsoft Hyper-V For Private Cloud', N'WebsitePanel.Providers.VirtualizationForPC.HyperVForPC, WebsitePanel.Providers.VirtualizationForPC.HyperVForPC', N'HyperVForPrivateCloud', 1)
 GO
+INSERT [dbo].[Providers] ([ProviderId], [GroupId], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES(90, 12, N'Exchange2010SP2', N'Hosted Microsoft Exchange Server 2010 SP2', N'WebsitePanel.Providers.HostedSolution.Exchange2010SP2, WebsitePanel.Providers.HostedSolution', N'Exchange',	1)
+GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -25738,21 +25861,27 @@ AS
 							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
 							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 3)
 		ELSE IF @QuotaID = 319 -- BB Users
-			SET @Result = (SELECT COUNT(ea.AccountID) 
-								FROM 
-									ExchangeAccounts ea 
-								INNER JOIN 
-									BlackBerryUsers bu 
-								ON 
-									ea.AccountID = bu.AccountID
-								INNER JOIN 
-									ServiceItems  si 
-								ON 
-									ea.ItemID = si.ItemID
-								INNER JOIN 
-									PackagesTreeCache pt ON si.PackageID = pt.PackageID
-								WHERE 
-									pt.ParentPackageID = @PackageID)
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts ea 
+							INNER JOIN BlackBerryUsers bu ON ea.AccountID = bu.AccountID
+							INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+							INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+							WHERE pt.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 206 -- HostedSolution.Users
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE pt.ParentPackageID = @PackageID AND ea.AccountType IN (1,5,6,7))
+		ELSE IF @QuotaID = 78 -- Exchange2007.Mailboxes
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE pt.ParentPackageID = @PackageID AND ea.MailboxPlanId IS NOT NULL)
+		ELSE IF @QuotaID = 77 -- Exchange2007.DiskSpace
+			SET @Result = (SELECT SUM(B.MailboxSizeMB) FROM ExchangeAccounts AS ea 
+			INNER JOIN ExchangeMailboxPlans AS B ON ea.MailboxPlanId = B.MailboxPlanId 
+			INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+			INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+			WHERE pt.ParentPackageID = @PackageID)
 		ELSE
 			SET @Result = (SELECT COUNT(SI.ItemID) FROM Quotas AS Q
 			INNER JOIN ServiceItems AS SI ON SI.ItemTypeID = Q.ItemTypeID
@@ -25761,14 +25890,10 @@ AS
 
 		RETURN @Result
 	END
+GO
 
 
 
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 
 
 
@@ -44451,6 +44576,7 @@ EXEC sp_xml_removedocument @idoc
 COMMIT TRAN
 RETURN
 
+GO
 
 
 
@@ -44473,26 +44599,279 @@ RETURN
 
 
 
+CREATE PROCEDURE [dbo].[AddExchangeMailboxPlan] 
+(
+	@MailboxPlanId int OUTPUT,
+	@ItemID int,
+	@MailboxPlan	nvarchar(300),
+	@EnableActiveSync bit,
+	@EnableIMAP bit,
+	@EnableMAPI bit,
+	@EnableOWA bit,
+	@EnablePOP bit,
+	@IsDefault bit,
+	@IssueWarningPct int,
+	@KeepDeletedItemsDays int,
+	@MailboxSizeMB int,
+	@MaxReceiveMessageSizeKB int,
+	@MaxRecipients int,
+	@MaxSendMessageSizeKB int,
+	@ProhibitSendPct int,
+	@ProhibitSendReceivePct int	,
+	@HideFromAddressBook bit
+)
+AS
 
+INSERT INTO ExchangeMailboxPlans
+(
+	ItemID,
+	MailboxPlan,
+	EnableActiveSync,
+	EnableIMAP,
+	EnableMAPI,
+	EnableOWA,
+	EnablePOP,
+	IsDefault,
+	IssueWarningPct,
+	KeepDeletedItemsDays,
+	MailboxSizeMB,
+	MaxReceiveMessageSizeKB,
+	MaxRecipients,
+	MaxSendMessageSizeKB,
+	ProhibitSendPct,
+	ProhibitSendReceivePct,
+	HideFromAddressBook
+)
+VALUES
+(
+	@ItemID,
+	@MailboxPlan,
+	@EnableActiveSync,
+	@EnableIMAP,
+	@EnableMAPI,
+	@EnableOWA,
+	@EnablePOP,
+	@IsDefault,
+	@IssueWarningPct,
+	@KeepDeletedItemsDays,
+	@MailboxSizeMB,
+	@MaxReceiveMessageSizeKB,
+	@MaxRecipients,
+	@MaxSendMessageSizeKB,
+	@ProhibitSendPct,
+	@ProhibitSendReceivePct,
+	@HideFromAddressBook
+)
 
+SET @MailboxPlanId = SCOPE_IDENTITY()
 
-
-
-
-
-
-
-
-
-
-
+RETURN
 
 GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[SetExchangeAccountMailboxplan] 
+(
+	@AccountID int,
+	@MailboxPlanId int
+)
+AS
+
+UPDATE ExchangeAccounts SET
+	MailboxPlanId = @MailboxPlanId
+WHERE
+	AccountID = @AccountID
+
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[SetOrganizationDefaultExchangeMailboxPlan]
+(
+	@ItemId int,
+	@MailboxPlanId int
+)
+AS
+
+UPDATE ExchangeMailboxPlans SET IsDefault=0 WHERE ItemId=@ItemId
+UPDATE ExchangeMailboxPlans SET IsDefault=1 WHERE MailboxPlanId=@MailboxPlanId
+
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetExchangeMailboxPlan] 
+(
+	@MailboxPlanId int
+)
+AS
+SELECT
+	MailboxPlanId,
+	ItemID,
+	MailboxPlan,
+	EnableActiveSync,
+	EnableIMAP,
+	EnableMAPI,
+	EnableOWA,
+	EnablePOP,
+	IsDefault,
+	IssueWarningPct,
+	KeepDeletedItemsDays,
+	MailboxSizeMB,
+	MaxReceiveMessageSizeKB,
+	MaxRecipients,
+	MaxSendMessageSizeKB,
+	ProhibitSendPct,
+	ProhibitSendReceivePct,
+	HideFromAddressBook
+FROM
+	ExchangeMailboxPlans
+WHERE
+	MailboxPlanId = @MailboxPlanId
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetExchangeMailboxPlans]
+(
+	@ItemID int
+)
+AS
+SELECT
+	MailboxPlanId,
+	ItemID,
+	MailboxPlan,
+	EnableActiveSync,
+	EnableIMAP,
+	EnableMAPI,
+	EnableOWA,
+	EnablePOP,
+	IsDefault,
+	IssueWarningPct,
+	KeepDeletedItemsDays,
+	MailboxSizeMB,
+	MaxReceiveMessageSizeKB,
+	MaxRecipients,
+	MaxSendMessageSizeKB,
+	ProhibitSendPct,
+	ProhibitSendReceivePct,
+	HideFromAddressBook
+FROM
+	ExchangeMailboxPlans
+WHERE
+	ItemID = @ItemID 
+ORDER BY MailboxPlan
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[DeleteExchangeMailboxPlan]
+(
+	@MailboxPlanId int
+)
+AS
+
+-- delete mailboxplan
+DELETE FROM ExchangeMailboxPlans
+WHERE MailboxPlanId = @MailboxPlanId
+
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
 ALTER TABLE [dbo].[ScheduleParameters]  WITH CHECK ADD  CONSTRAINT [FK_ScheduleParameters_Schedule] FOREIGN KEY([ScheduleID])
 REFERENCES [dbo].[Schedule] ([ScheduleID])
 ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[ScheduleParameters] CHECK CONSTRAINT [FK_ScheduleParameters_Schedule]
+GO
+ALTER TABLE dbo.ExchangeMailboxPlans ADD CONSTRAINT
+	IX_ExchangeMailboxPlans UNIQUE NONCLUSTERED 
+	(
+	MailboxPlanId
+	) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+GO
+ALTER TABLE dbo.ExchangeMailboxPlans ADD CONSTRAINT
+	FK_ExchangeMailboxPlans_ExchangeOrganizations FOREIGN KEY
+	(
+	ItemID
+	) REFERENCES dbo.ExchangeOrganizations
+	(
+	ItemID
+	) ON UPDATE  NO ACTION 
+	 ON DELETE  CASCADE 
+GO
+
+ALTER TABLE [dbo].[ExchangeAccounts]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeAccounts_ExchangeMailboxPlans] FOREIGN KEY([MailboxPlanId])
+REFERENCES [dbo].[ExchangeMailboxPlans] ([MailboxPlanId])
+GO
+ALTER TABLE [dbo].[ExchangeAccounts] CHECK CONSTRAINT [FK_ExchangeAccounts_ExchangeMailboxPlans]
 GO
 ALTER TABLE [dbo].[ExchangeAccounts]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeAccounts_ServiceItems] FOREIGN KEY([ItemID])
 REFERENCES [dbo].[ServiceItems] ([ItemID])
@@ -44712,6 +45091,12 @@ REFERENCES [dbo].[ServiceItems] ([ItemID])
 ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[ExchangeOrganizations] CHECK CONSTRAINT [FK_ExchangeOrganizations_ServiceItems]
+GO
+ALTER TABLE [dbo].[ExchangeOrganizations]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeOrganizations_ExchangeMailboxPlans] FOREIGN KEY([ItemID])
+REFERENCES [dbo].[ExchangeMailboxPlans] ([ItemID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[ExchangeOrganizations] CHECK CONSTRAINT [FK_ExchangeOrganizations_ExchangeMailboxPlans]
 GO
 ALTER TABLE [dbo].[ExchangeOrganizationDomains]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeOrganizationDomains_ServiceItems] FOREIGN KEY([ItemID])
 REFERENCES [dbo].[ServiceItems] ([ItemID])
@@ -45118,3 +45503,4 @@ GO
 ALTER TABLE [dbo].[ServiceProperties] CHECK CONSTRAINT [FK_ServiceProperties_Services]
 GO
 
+

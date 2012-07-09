@@ -102,7 +102,10 @@
     <Content Include="App_Themes\Default\Icons\block.png" />
     <Content Include="App_Themes\Default\Icons\configureVLan.png" />
     <Content Include="App_Themes\Default\Icons\OK.png" />
+    <Content Include="App_Themes\Default\Images\Exchange\blank16.gif" />
+    <Content Include="App_Themes\Default\Images\Exchange\disabled.png" />
     <Content Include="App_Themes\Default\Images\Exchange\disabled_16.png" />
+    <Content Include="App_Themes\Default\Images\Exchange\enabled.png" />
     <Content Include="App_Themes\Default\Images\FileManager\vbhtml.png" />
     <Content Include="App_Themes\Default\Images\VPSForPC\vlan_icon.png" />
     <Content Include="App_Themes\Default\Images\VPSForPC\private_cloud_module_header_vps.gif" />

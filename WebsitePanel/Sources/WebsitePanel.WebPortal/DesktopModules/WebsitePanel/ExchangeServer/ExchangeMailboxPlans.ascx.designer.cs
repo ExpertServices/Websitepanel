@@ -7,126 +7,99 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal.ProviderControls {
+namespace WebsitePanel.Portal.ExchangeServer {
     
     
-    public partial class Exchange2010SP1_Settings {
+    public partial class ExchangeMailboxPlans {
         
         /// <summary>
-        /// locOrganizationTemplate control.
+        /// asyncTasks control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locOrganizationTemplate;
+        protected global::WebsitePanel.Portal.EnableAsyncTasksSupport asyncTasks;
         
         /// <summary>
-        /// locProgramID control.
+        /// breadcrumb control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locProgramID;
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.Breadcrumb breadcrumb;
         
         /// <summary>
-        /// programID control.
+        /// menu control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox programID;
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.Menu menu;
         
         /// <summary>
-        /// requireProgramID control.
+        /// Image1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator requireProgramID;
+        protected global::System.Web.UI.WebControls.Image Image1;
         
         /// <summary>
-        /// locOfferID control.
+        /// locTitle control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locOfferID;
+        protected global::System.Web.UI.WebControls.Localize locTitle;
         
         /// <summary>
-        /// offerID control.
+        /// messageBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox offerID;
+        protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox messageBox;
         
         /// <summary>
-        /// requireOfferID control.
+        /// btnAddMailboxPlan control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator requireOfferID;
+        protected global::System.Web.UI.WebControls.Button btnAddMailboxPlan;
         
         /// <summary>
-        /// locDomainTemplates control.
+        /// gvMailboxPlans control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locDomainTemplates;
+        protected global::System.Web.UI.WebControls.GridView gvMailboxPlans;
         
         /// <summary>
-        /// locTemporaryDomain control.
+        /// btnSetDefaultMailboxPlan control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locTemporaryDomain;
+        protected global::System.Web.UI.WebControls.Button btnSetDefaultMailboxPlan;
         
         /// <summary>
-        /// temporaryDomain control.
+        /// FormComments control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox temporaryDomain;
-        
-        /// <summary>
-        /// locEcpURL control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locEcpURL;
-        
-        /// <summary>
-        /// ecpURL control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox ecpURL;
-        
-        /// <summary>
-        /// locEcpURLDescr control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locEcpURLDescr;
+        protected global::System.Web.UI.WebControls.Localize FormComments;
     }
 }

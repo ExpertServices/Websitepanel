@@ -90,11 +90,10 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
         private void BindTabs()
         {
             List<Tab> tabsList = new List<Tab>();
-            tabsList.Add(CreateTab("mailbox_settings", "Tab.Settings"));
+            tabsList.Add(CreateTab("mailbox_settings", "Tab.Mailbox"));
             tabsList.Add(CreateTab("mailbox_addresses", "Tab.Addresses"));
             tabsList.Add(CreateTab("mailbox_mailflow", "Tab.Mailflow"));
             tabsList.Add(CreateTab("mailbox_permissions", "Tab.Permissions"));
-            tabsList.Add(CreateTab("mailbox_advanced", "Tab.Advanced"));
             tabsList.Add(CreateTab("mailbox_setup", "Tab.Setup"));
             tabsList.Add(CreateTab("mailbox_mobile", "Tab.Mobile"));
             //tabsList.Add(CreateTab("mailbddox_spam", "Tab.Spam"));

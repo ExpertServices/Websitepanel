@@ -79,6 +79,8 @@
     <Compile Include="HostedSolution\BlackBerryErrorsCodes.cs" />
     <Compile Include="HostedSolution\BlackBerryStatsItem.cs" />
     <Compile Include="HostedSolution\BlackBerryUserDeleteState.cs" />
+    <Compile Include="HostedSolution\ExchangeMailboxPlan.cs" />
+    <Compile Include="HostedSolution\TransactionAction.cs" />
     <Compile Include="ResultObjects\HeliconApe.cs" />
     <Compile Include="HostedSolution\ExchangeMobileDevice.cs" />
     <Compile Include="HostedSolution\IOCSEdgeServer.cs" />

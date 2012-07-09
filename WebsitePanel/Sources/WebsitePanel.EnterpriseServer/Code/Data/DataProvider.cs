@@ -2065,33 +2065,36 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
 		#region Exchange Server
-        
 
-		public static int AddExchangeAccount(int itemId, int accountType, string accountName,
+
+        public static int AddExchangeAccount(int itemId, int accountType, string accountName,
             string displayName, string primaryEmailAddress, bool mailEnabledPublicFolder,
-            string mailboxManagerActions, string samAccountName, string accountPassword)
-		{
-			SqlParameter outParam = new SqlParameter("@AccountID", SqlDbType.Int);
-			outParam.Direction = ParameterDirection.Output;
+            string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, string subscriberNumber)
+        {
+            SqlParameter outParam = new SqlParameter("@AccountID", SqlDbType.Int);
+            outParam.Direction = ParameterDirection.Output;
 
-			SqlHelper.ExecuteNonQuery(
-				ConnectionString,
-				CommandType.StoredProcedure,
-				"AddExchangeAccount",
-				outParam,
-				new SqlParameter("@ItemID", itemId),
-				new SqlParameter("@AccountType", accountType),
-				new SqlParameter("@AccountName", accountName),
-				new SqlParameter("@DisplayName", displayName),
-				new SqlParameter("@PrimaryEmailAddress", primaryEmailAddress),
-				new SqlParameter("@MailEnabledPublicFolder", mailEnabledPublicFolder),
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddExchangeAccount",
+                outParam,
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@AccountType", accountType),
+                new SqlParameter("@AccountName", accountName),
+                new SqlParameter("@DisplayName", displayName),
+                new SqlParameter("@PrimaryEmailAddress", primaryEmailAddress),
+                new SqlParameter("@MailEnabledPublicFolder", mailEnabledPublicFolder),
                 new SqlParameter("@MailboxManagerActions", mailboxManagerActions),
                 new SqlParameter("@SamAccountName", samAccountName),
-                new SqlParameter("@AccountPassword", accountPassword)
-			);
+                new SqlParameter("@AccountPassword", accountPassword),
+                new SqlParameter("@MailboxPlanId", (mailboxPlanId == 0) ? (object)DBNull.Value : (object)mailboxPlanId),
+                new SqlParameter("@SubscriberNumber", (string.IsNullOrEmpty(subscriberNumber) ? (object)DBNull.Value : (object)subscriberNumber))
+            );
 
-			return Convert.ToInt32(outParam.Value);
-		}
+            return Convert.ToInt32(outParam.Value);
+        }
+
 
 		public static void AddExchangeAccountEmailAddress(int accountId, string emailAddress)
 		{
@@ -2158,6 +2161,7 @@ namespace WebsitePanel.EnterpriseServer
 				new SqlParameter("@AccountID", accountId)
 			);
 		}
+
 
 		public static void DeleteExchangeAccountEmailAddress(int accountId, string emailAddress)
 		{
@@ -2255,26 +2259,27 @@ namespace WebsitePanel.EnterpriseServer
 			return Convert.ToBoolean(outParam.Value);
 		}
 
-		public static void UpdateExchangeAccount(int accountId, string accountName, ExchangeAccountType accountType,
+        public static void UpdateExchangeAccount(int accountId, string accountName, ExchangeAccountType accountType,
             string displayName, string primaryEmailAddress, bool mailEnabledPublicFolder,
-            string mailboxManagerActions, string samAccountName, string accountPassword)
-		{
-			SqlHelper.ExecuteNonQuery(
-				ConnectionString,
-				CommandType.StoredProcedure,
-				"UpdateExchangeAccount",
-				new SqlParameter("@AccountID", accountId),
-				new SqlParameter("@AccountName", accountName),
-				new SqlParameter("@DisplayName", displayName),
+            string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, string subscriberNumber)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateExchangeAccount",
+                new SqlParameter("@AccountID", accountId),
+                new SqlParameter("@AccountName", accountName),
+                new SqlParameter("@DisplayName", displayName),
                 new SqlParameter("@AccountType", (int)accountType),
-				new SqlParameter("@PrimaryEmailAddress", primaryEmailAddress),
-				new SqlParameter("@MailEnabledPublicFolder", mailEnabledPublicFolder),
+                new SqlParameter("@PrimaryEmailAddress", primaryEmailAddress),
+                new SqlParameter("@MailEnabledPublicFolder", mailEnabledPublicFolder),
                 new SqlParameter("@MailboxManagerActions", mailboxManagerActions),
                 new SqlParameter("@Password", string.IsNullOrEmpty(accountPassword) ? (object)DBNull.Value : (object)accountPassword),
-                new SqlParameter("@SamAccountName", samAccountName)
-
-			);
-		}
+                new SqlParameter("@SamAccountName", samAccountName),
+                new SqlParameter("@MailboxPlanId", (mailboxPlanId == 0) ? (object)DBNull.Value : (object)mailboxPlanId),
+                new SqlParameter("@SubscriberNumber", (string.IsNullOrEmpty(subscriberNumber) ? (object)DBNull.Value : (object)subscriberNumber))
+            );
+        }
 
 		public static IDataReader GetExchangeAccount(int itemId, int accountId)
 		{
@@ -2286,6 +2291,17 @@ namespace WebsitePanel.EnterpriseServer
 				new SqlParameter("@AccountID", accountId)
 			);
 		}
+
+        public static IDataReader GetExchangeAccountByAccountName(int itemId, string accountName)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetExchangeAccountByAccountName",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@AccountName", accountName)
+            );
+        }
 
 		public static IDataReader GetExchangeAccountEmailAddresses(int accountId)
 		{
@@ -2397,6 +2413,97 @@ namespace WebsitePanel.EnterpriseServer
         }
 
 		#endregion
+
+        #region Exchange Mailbox Plans
+        public static int AddExchangeMailboxPlan(int itemID, string mailboxPlan, bool enableActiveSync, bool enableIMAP, bool enableMAPI, bool enableOWA, bool enablePOP,
+                                                    bool isDefault, int issueWarningPct, int keepDeletedItemsDays, int mailboxSizeMB, int maxReceiveMessageSizeKB, int maxRecipients,
+                                                    int maxSendMessageSizeKB, int prohibitSendPct, int prohibitSendReceivePct, bool hideFromAddressBook)
+        {
+            SqlParameter outParam = new SqlParameter("@MailboxPlanId", SqlDbType.Int);
+            outParam.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddExchangeMailboxPlan",
+                outParam,
+                new SqlParameter("@ItemID", itemID),
+                new SqlParameter("@MailboxPlan", mailboxPlan),
+                new SqlParameter("@EnableActiveSync", enableActiveSync),
+                new SqlParameter("@EnableIMAP", enableIMAP),
+                new SqlParameter("@EnableMAPI", enableMAPI),
+                new SqlParameter("@EnableOWA", enableOWA),
+                new SqlParameter("@EnablePOP", enablePOP),
+                new SqlParameter("@IsDefault", isDefault),
+                new SqlParameter("@IssueWarningPct", issueWarningPct),
+                new SqlParameter("@KeepDeletedItemsDays", keepDeletedItemsDays),
+                new SqlParameter("@MailboxSizeMB", mailboxSizeMB),
+                new SqlParameter("@MaxReceiveMessageSizeKB", maxReceiveMessageSizeKB),
+                new SqlParameter("@MaxRecipients", maxRecipients),
+                new SqlParameter("@MaxSendMessageSizeKB", maxSendMessageSizeKB),
+                new SqlParameter("@ProhibitSendPct", prohibitSendPct),
+                new SqlParameter("@ProhibitSendReceivePct", prohibitSendReceivePct),
+                new SqlParameter("@HideFromAddressBook", hideFromAddressBook)
+            );
+
+            return Convert.ToInt32(outParam.Value);
+        }
+
+
+        public static void DeleteExchangeMailboxPlan(int mailboxPlanId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteExchangeMailboxPlan",
+                new SqlParameter("@MailboxPlanId", mailboxPlanId)
+            );
+        }
+
+
+        public static IDataReader GetExchangeMailboxPlan(int mailboxPlanId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetExchangeMailboxPlan",
+                new SqlParameter("@MailboxPlanId", mailboxPlanId)
+            );
+        }
+
+        public static IDataReader GetExchangeMailboxPlans(int itemId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetExchangeMailboxPlans",
+                new SqlParameter("@ItemID", itemId)
+            );
+        }
+
+        public static void SetOrganizationDefaultExchangeMailboxPlan(int itemId, int mailboxPlanId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "SetOrganizationDefaultExchangeMailboxPlan",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@MailboxPlanId", mailboxPlanId)
+            );
+        }
+
+        public static void SetExchangeAccountMailboxPlan(int accountId, int mailboxPlanId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "SetExchangeAccountMailboxplan",
+                new SqlParameter("@AccountID", accountId),
+                new SqlParameter("@MailboxPlanId", (mailboxPlanId == 0) ? (object)DBNull.Value : (object)mailboxPlanId)
+            );
+        }
+
+        #endregion
 
         #region Organizations
 

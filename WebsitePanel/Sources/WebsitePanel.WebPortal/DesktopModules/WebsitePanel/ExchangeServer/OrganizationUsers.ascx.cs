@@ -11,7 +11,7 @@
 //   this list of conditions  and  the  following  disclaimer in  the documentation
 //   and/or other materials provided with the distribution.
 //
-// - Neither  the  name  of  the  Outercurve Foundation  nor   the   names  of  its
+// - Neither  the  name  of  the  SMB SAAS Systems Inc.  nor   the   names  of  its
 //   contributors may be used to endorse or  promote  products  derived  from  this
 //   software without specific prior written permission.
 //
@@ -29,6 +29,7 @@
 using System;
 using System.Web.UI.WebControls;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.HostedSolution
 {
@@ -40,6 +41,18 @@ namespace WebsitePanel.Portal.HostedSolution
             {
                 BindStats();
             }
+
+
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
+            {
+                if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
+                {
+                    gvUsers.Columns[3].Visible = false;
+                }
+            }
+
+
         }
 
         private void BindStats()
@@ -49,7 +62,6 @@ namespace WebsitePanel.Portal.HostedSolution
                 ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
             usersQuota.QuotaUsedValue = stats.CreatedUsers;
             usersQuota.QuotaValue = stats.AllocatedUsers;
- 
         }
 
         protected void btnCreateUser_Click(object sender, EventArgs e)
@@ -72,7 +84,7 @@ namespace WebsitePanel.Portal.HostedSolution
                 messageBox.ShowErrorMessage("ORGANZATION_GET_USERS", e.Exception);
                 e.ExceptionHandled = true;
             }
-        }        
+        }
 
         protected void gvUsers_RowCommand(object sender, GridViewCommandEventArgs e)
         {
@@ -106,23 +118,83 @@ namespace WebsitePanel.Portal.HostedSolution
 
         public string GetAccountImage(int accountTypeId)
         {
+            string imgName = string.Empty;
+
             ExchangeAccountType accountType = (ExchangeAccountType)accountTypeId;
-            string imgName = "accounting_mail_16.png";
-            if (accountType == ExchangeAccountType.User)
-                imgName = "admin_16.png";
+            switch (accountType)
+            {
+                case ExchangeAccountType.Room:
+                    imgName = "room_16.gif";
+                    break;
+                case ExchangeAccountType.Equipment:
+                    imgName = "equipment_16.gif";
+                    break;
+                default:
+                    imgName = "admin_16.png";
+                    break;
+            }
+
             return GetThemedImage("Exchange/" + imgName);
         }
 
-        protected void ddlPageSize_SelectedIndexChanged(object sender, EventArgs e)
+        public string GetStateImage(bool locked, bool disabled)
         {
-            gvUsers.PageSize = Convert.ToInt16(ddlPageSize.SelectedValue);
-           
-            // rebind grid
-            gvUsers.DataBind();
+            string imgName = "enabled.png";
 
-            // bind stats
-            BindStats();
+            if (locked)
+                imgName = "locked.png";
+            else
+                if (disabled)
+                    imgName = "disabled.png";
 
+            return GetThemedImage("Exchange/" + imgName);
         }
+
+
+        public string GetMailImage(int accountTypeId)
+        {
+            string imgName = "exchange24.png";
+
+            ExchangeAccountType accountType = (ExchangeAccountType)accountTypeId;
+
+            if (accountType == ExchangeAccountType.User)
+                imgName = "blank16.gif";
+
+            return GetThemedImage("Exchange/" + imgName);
+        }
+
+        public string GetOCSImage(bool IsOCSUser, bool IsLyncUser)
+        {
+            string imgName = "blank16.gif";
+
+            if (IsLyncUser)
+                imgName = "lync16.png";
+            else
+                if ((IsOCSUser))
+                    imgName = "ocs16.png";
+
+            return GetThemedImage("Exchange/" + imgName);
+        }
+
+        public string GetBlackBerryImage(bool IsBlackBerryUser)
+        {
+            string imgName = "blank16.gif";
+
+            if (IsBlackBerryUser)
+                imgName = "blackberry16.png";
+
+            return GetThemedImage("Exchange/" + imgName);
+        }
+
+        public string GetCRMImage(Guid CrmUserId)
+        {
+            string imgName = "blank16.gif";
+
+            if (CrmUserId != Guid.Empty)
+                imgName = "crm_16.png";
+
+            return GetThemedImage("Exchange/" + imgName);
+        }
+
     }
 }

@@ -2806,7 +2806,7 @@
     <value>Contacts per Organization</value>
   </data>
   <data name="Quota.Exchange2007.DiskSpace" xml:space="preserve">
-    <value>Max mailbox size, MB</value>
+    <value>Mailbox storage, MB</value>
   </data>
   <data name="Quota.Exchange2007.DistributionLists" xml:space="preserve">
     <value>Distribution Lists per Organization</value>
@@ -2849,6 +2849,18 @@
   </data>
   <data name="Quota.Exchange2007.PublicFolders" xml:space="preserve">
     <value>Public Folders per Organization</value>
+  </data>
+  <data name="Quota.Exchange2007.KeepDeletedItemsDays" xml:space="preserve">
+    <value>Keep Deleted Items (Days)</value>
+  </data>
+  <data name="Quota.Exchange2007.MaxRecipients" xml:space="preserve">
+    <value>Maximum Recipients</value>
+  </data>
+  <data name="Quota.Exchange2007.MaxSendMessageSizeKB" xml:space="preserve">
+    <value>Maximum Send Message Size (Kb)</value>
+  </data>
+  <data name="Quota.Exchange2007.MaxReceiveMessageSizeKB" xml:space="preserve">
+    <value>Maximum Receive Message Size (Kb)</value>
   </data>
   <data name="ResourceGroup.Exchange" xml:space="preserve">
     <value>Hosted Exchange</value>
@@ -4989,5 +5001,8 @@
   </data>
   <data name="Quota.HostedSharePoint.UseSharedSSL" xml:space="preserve">
     <value>Use shared SSL Root</value>
+  </data>
+  <data name="Quota.Exchange2007.IsConsumer" xml:space="preserve">
+    <value>Consumer Organization Support</value>
   </data>
 </root>

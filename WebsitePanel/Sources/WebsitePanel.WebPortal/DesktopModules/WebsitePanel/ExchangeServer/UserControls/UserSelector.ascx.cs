@@ -11,7 +11,7 @@
 //   this list of conditions  and  the  following  disclaimer in  the documentation
 //   and/or other materials provided with the distribution.
 //
-// - Neither  the  name  of  the  Outercurve Foundation  nor   the   names  of  its
+// - Neither  the  name  of  the  SMB SAAS Systems Inc.  nor   the   names  of  its
 //   contributors may be used to endorse or  promote  products  derived  from  this
 //   software without specific prior written permission.
 //
@@ -137,6 +137,12 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             return (string)ViewState["PrimaryEmailAddress"];
         }
 
+        public string GetSubscriberNumber()
+        {
+            return (string)ViewState["SubscriberNumber"];
+        }
+
+
         public int GetAccountId()
         {
             return Utils.ParseInt(ViewState["AccountId"], 0);
@@ -158,6 +164,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 ViewState["PrimaryEmailAddress"] = account.PrimaryEmailAddress;
                 ViewState["AccountId"] = account.AccountId;
                 ViewState["SAMAccountName"] = account.SamAccountName;
+                ViewState["SubscriberNumber"] = account.SubscriberNumber;
             }
             else
             {
@@ -167,7 +174,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 ViewState["PrimaryEmailAddress"] = null;
                 ViewState["AccountId"] = null;
                 ViewState["SAMAccountName"] = null;
-
+                ViewState["SubscriberNumber"] = null;
             }
         }
 
@@ -287,6 +294,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 account.PrimaryEmailAddress = parts[2];
                 account.AccountId = Utils.ParseInt(parts[3]);
                 account.SamAccountName = parts[4];
+                account.SubscriberNumber = parts[5];
 
                 // set account
                 BindSelectedAccount(account);

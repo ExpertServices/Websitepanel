@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnSave.OnClientClick" xml:space="preserve">
     <value>ShowProgressDialog('Updating ActiveSync settings...');</value>
@@ -151,7 +151,7 @@
     <value>Windows SharePoint Services</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;Exchange Server 2007 enables users who have mobile devices to synchronize mailbox data by using Exchange ActiveSync. Users can synchronize e-mail, contacts, calendars, and task folders. &lt;/p&gt;&lt;p&gt;
+    <value>&lt;p&gt;Exchange Server enables users who have mobile devices to synchronize mailbox data by using Exchange ActiveSync. Users can synchronize e-mail, contacts, calendars, and task folders. &lt;/p&gt;&lt;p&gt;
 ActiveSync mailbox policy allows you to apply a common set of security settings to all users in organization.
 &lt;/p&gt;</value>
   </data>

@@ -29,6 +29,7 @@
 ﻿using System;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.ResultObjects;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
@@ -43,24 +44,26 @@ namespace WebsitePanel.Portal.ExchangeServer
                 {
                     litDisplayName.Text = res.Value.DisplayName;
                     sendBehalfList.SetAccounts(res.Value.SendOnBehalfAccounts);
-                    sendAsList.SetAccounts(res.Value.SendAsAccounts);    
+                    sendAsList.SetAccounts(res.Value.SendAsAccounts);
                 }
                 else
                 {
                     messageBox.ShowMessage(res, "SET_DISTRIBUTION_LIST_PERMISSIONS", "HostedOrganization");
                 }
-                
-                
+
+
             }
+
             
+
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            string []sendBehalfAccouts = sendBehalfList.GetAccounts();
-            string []sendAsAccounts = sendAsList.GetAccounts();
+            string[] sendBehalfAccouts = sendBehalfList.GetAccounts();
+            string[] sendAsAccounts = sendAsList.GetAccounts();
 
-            ResultObject res = ES.Services.ExchangeServer.SetDistributionListPermissions(PanelRequest.ItemID, PanelRequest.AccountID,  sendAsAccounts, sendBehalfAccouts);
+            ResultObject res = ES.Services.ExchangeServer.SetDistributionListPermissions(PanelRequest.ItemID, PanelRequest.AccountID, sendAsAccounts, sendBehalfAccouts);
             messageBox.ShowMessage(res, "SET_DISTRIBUTION_LIST_PERMISSIONS", "");
         }
     }

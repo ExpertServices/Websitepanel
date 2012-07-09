@@ -199,9 +199,30 @@
     <Compile Include="Code\ReportingServices\FileSystemReportLocalizer.cs" />
     <Compile Include="Code\ReportingServices\IResourceStorage.cs" />
     <Compile Include="Code\ReportingServices\ReportingServicesUtils.cs" />
+    <Compile Include="ExchangeServer\ExchangeAddMailboxPlan.ascx.cs">
+      <DependentUpon>ExchangeAddMailboxPlan.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\ExchangeAddMailboxPlan.ascx.designer.cs">
+      <DependentUpon>ExchangeAddMailboxPlan.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\ExchangeMailboxPlans.ascx.cs">
+      <DependentUpon>ExchangeMailboxPlans.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\ExchangeMailboxPlans.ascx.designer.cs">
+      <DependentUpon>ExchangeMailboxPlans.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ExchangeServer\UserControls\AccountsListWithPermissions.ascx.cs">
       <DependentUpon>AccountsListWithPermissions.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\MailboxPlanSelector.ascx.cs">
+      <DependentUpon>MailboxPlanSelector.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\MailboxPlanSelector.ascx.designer.cs">
+      <DependentUpon>MailboxPlanSelector.ascx</DependentUpon>
     </Compile>
     <Compile Include="ProviderControls\hMailServer5_EditAccount.ascx.cs">
       <DependentUpon>hMailServer5_EditAccount.ascx</DependentUpon>
@@ -745,13 +766,6 @@
     <Compile Include="ProviderControls\BlackBerry_Settings.ascx.designer.cs">
       <DependentUpon>BlackBerry_Settings.ascx</DependentUpon>
     </Compile>
-    <Compile Include="ProviderControls\Exchange2010SP1_Settings.ascx.cs">
-      <DependentUpon>Exchange2010SP1_Settings.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="ProviderControls\Exchange2010SP1_Settings.ascx.designer.cs">
-      <DependentUpon>Exchange2010SP1_Settings.ascx</DependentUpon>
-    </Compile>
     <Compile Include="ProviderControls\Exchange_Settings.ascx.cs">
       <DependentUpon>Exchange_Settings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1189,13 +1203,6 @@
     <Compile Include="ExchangeServer\ExchangeDomainRecords.ascx.designer.cs">
       <DependentUpon>ExchangeDomainRecords.ascx</DependentUpon>
     </Compile>
-    <Compile Include="ExchangeServer\ExchangeMailboxAdvancedSettings.ascx.cs">
-      <DependentUpon>ExchangeMailboxAdvancedSettings.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="ExchangeServer\ExchangeMailboxAdvancedSettings.ascx.designer.cs">
-      <DependentUpon>ExchangeMailboxAdvancedSettings.ascx</DependentUpon>
-    </Compile>
     <Compile Include="ExchangeServer\ExchangeMailboxEmailAddresses.ascx.cs">
       <DependentUpon>ExchangeMailboxEmailAddresses.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1258,13 +1265,6 @@
     </Compile>
     <Compile Include="ExchangeServer\ExchangePublicFolders.ascx.designer.cs">
       <DependentUpon>ExchangePublicFolders.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="ExchangeServer\ExchangeStorageLimits.ascx.cs">
-      <DependentUpon>ExchangeStorageLimits.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="ExchangeServer\ExchangeStorageLimits.ascx.designer.cs">
-      <DependentUpon>ExchangeStorageLimits.ascx</DependentUpon>
     </Compile>
     <Compile Include="ExchangeServer\ExchangeStorageUsage.ascx.cs">
       <DependentUpon>ExchangeStorageUsage.ascx</DependentUpon>
@@ -3686,7 +3686,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ExchangeServer\ExchangeAddMailboxPlan.ascx" />
+    <Content Include="ExchangeServer\ExchangeMailboxPlans.ascx" />
     <Content Include="ExchangeServer\UserControls\AccountsListWithPermissions.ascx" />
+    <Content Include="ExchangeServer\UserControls\MailboxPlanSelector.ascx" />
     <Content Include="ProviderControls\hMailServer5_EditAccount.ascx" />
     <Content Include="ProviderControls\hMailServer5_EditDomain.ascx" />
     <Content Include="ProviderControls\hMailServer5_EditForwarding.ascx" />
@@ -3736,7 +3739,6 @@
     <Content Include="ProviderControls\HyperVForPrivateCloud_Settings.ascx" />
     <Content Include="SetupControlPanelAccounts.ascx" />
     <Content Include="LoginForgotPassword.ascx" />
-    <Content Include="ProviderControls\Exchange2010SP1_Settings.ascx" />
     <Content Include="UserControls\CalendarControl.ascx" />
     <Content Include="UserControls\Comments.ascx" />
     <Content Include="UserControls\ContactDetails.ascx" />
@@ -4685,9 +4687,6 @@
     <Content Include="App_LocalResources\SettingsOrganizationUserSummaryLetter.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="ProviderControls\App_LocalResources\Exchange2010SP1_Settings.ascx.resx">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="App_LocalResources\SettingsExchangeHostedEditionPolicy.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
@@ -4812,6 +4811,8 @@
     <Content Include="ProviderControls\App_LocalResources\hMailServer5_EditList.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="ExchangeServer\App_LocalResources\ExchangeAddMailboxPlan.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\ExchangeMailboxPlans.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -5193,9 +5194,6 @@
     <Content Include="ExchangeServer\App_LocalResources\ExchangeDistributionListMailFlowSettings.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="ExchangeServer\App_LocalResources\ExchangeMailboxAdvancedSettings.ascx.resx">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="ExchangeServer\App_LocalResources\ExchangeMailboxEmailAddresses.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
@@ -5233,7 +5231,6 @@
     <Content Include="ExchangeServer\ExchangeDistributionLists.ascx" />
     <Content Include="ExchangeServer\ExchangeDomainNames.ascx" />
     <Content Include="ExchangeServer\ExchangeDomainRecords.ascx" />
-    <Content Include="ExchangeServer\ExchangeMailboxAdvancedSettings.ascx" />
     <Content Include="ExchangeServer\ExchangeMailboxEmailAddresses.ascx" />
     <Content Include="ExchangeServer\ExchangeMailboxes.ascx" />
     <Content Include="ExchangeServer\ExchangeMailboxGeneralSettings.ascx" />
@@ -5243,7 +5240,6 @@
     <Content Include="ExchangeServer\ExchangePublicFolderMailEnable.ascx" />
     <Content Include="ExchangeServer\ExchangePublicFolderMailFlowSettings.ascx" />
     <Content Include="ExchangeServer\ExchangePublicFolders.ascx" />
-    <Content Include="ExchangeServer\ExchangeStorageLimits.ascx" />
     <Content Include="ExchangeServer\ExchangeStorageUsage.ascx" />
     <Content Include="ExchangeServer\ExchangeStorageUsageBreakdown.ascx" />
     <Content Include="ExchangeServer\UserControls\AcceptedSenders.ascx" />
@@ -5343,9 +5339,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="ExchangeServer\App_LocalResources\ExchangeStorageUsage.ascx.resx">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="ExchangeServer\App_LocalResources\ExchangeStorageLimits.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="ExchangeServer\UserControls\App_LocalResources\CountrySelector.ascx.resx">
