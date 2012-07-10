@@ -3419,27 +3419,29 @@ namespace WebsitePanel.Providers.HostedSolution
 			Runspace runSpace = null;
 			try
 			{
-				runSpace = OpenRunspace();
+                runSpace = OpenRunspace();
 
 
-				Command cmd = new Command("Get-DistributionGroup");
-				cmd.Parameters.Add("Identity", accountName);
-				Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
-				PSObject distributionGroup = result[0];
+                Command cmd = new Command("Get-DistributionGroup");
+                cmd.Parameters.Add("Identity", accountName);
+                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+                PSObject distributionGroup = result[0];
 
-				info.DisplayName = (string)GetPSObjectProperty(distributionGroup, "DisplayName");
-				info.HideFromAddressBook =
-					(bool)GetPSObjectProperty(distributionGroup, "HiddenFromAddressListsEnabled");
+                info.DisplayName = (string)GetPSObjectProperty(distributionGroup, "DisplayName");
+                info.HideFromAddressBook =
+                    (bool)GetPSObjectProperty(distributionGroup, "HiddenFromAddressListsEnabled");
 
-				cmd = new Command("Get-Group");
-				cmd.Parameters.Add("Identity", accountName);
-				result = ExecuteShellCommand(runSpace, cmd);
-				PSObject group = result[0];
+                info.SAMAccountName = string.Format("{0}\\{1}", GetNETBIOSDomainName(), (string)GetPSObjectProperty(distributionGroup, "SamAccountName"));
 
-				info.ManagerAccount = GetGroupManagerAccount(runSpace, group);
-				info.MembersAccounts = GetGroupMembers(runSpace, accountName);
-				info.Notes = (string)GetPSObjectProperty(group, "Notes");
-			}
+                cmd = new Command("Get-Group");
+                cmd.Parameters.Add("Identity", accountName);
+                result = ExecuteShellCommand(runSpace, cmd);
+                PSObject group = result[0];
+
+                info.ManagerAccount = GetGroupManagerAccount(runSpace, group);
+                info.MembersAccounts = GetGroupMembers(runSpace, accountName);
+                info.Notes = (string)GetPSObjectProperty(group, "Notes");
+            }
 			finally
 			{
 

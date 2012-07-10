@@ -1121,7 +1121,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             return DataProvider.AddExchangeAccount(itemId, (int)accountType,
                 accountName, displayName, primaryEmailAddress, mailEnabledPublicFolder,
-                mailboxManagerActions.ToString(), samAccountName, CryptoUtils.Encrypt(accountPassword), mailboxPlanId, subscriberNumber.Trim());
+                mailboxManagerActions.ToString(), samAccountName, CryptoUtils.Encrypt(accountPassword), mailboxPlanId, (string.IsNullOrEmpty(subscriberNumber) ? null : subscriberNumber.Trim()));
         }
 
         private static void UpdateAccount(ExchangeAccount account)
