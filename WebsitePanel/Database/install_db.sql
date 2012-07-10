@@ -10604,6 +10604,7 @@ CREATE TABLE [dbo].[ResourceGroups](
 	[GroupName] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
 	[GroupOrder] [int] NOT NULL,
 	[GroupController] [nvarchar](1000) COLLATE Latin1_General_CI_AS NULL,
+	[ShowGroup] [bit] NULL,
  CONSTRAINT [PK_ResourceGroups] PRIMARY KEY CLUSTERED 
 (
 	[GroupID] ASC
@@ -10611,49 +10612,49 @@ CREATE TABLE [dbo].[ResourceGroups](
 )
 
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (1, N'OS', 1, N'WebsitePanel.EnterpriseServer.OperatingSystemController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (1, N'OS', 1, N'WebsitePanel.EnterpriseServer.OperatingSystemController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (2, N'Web', 2, N'WebsitePanel.EnterpriseServer.WebServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (2, N'Web', 2, N'WebsitePanel.EnterpriseServer.WebServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (3, N'FTP', 3, N'WebsitePanel.EnterpriseServer.FtpServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (3, N'FTP', 3, N'WebsitePanel.EnterpriseServer.FtpServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (4, N'Mail', 4, N'WebsitePanel.EnterpriseServer.MailServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (4, N'Mail', 4, N'WebsitePanel.EnterpriseServer.MailServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (5, N'MsSQL2000', 8, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (5, N'MsSQL2000', 8, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (6, N'MySQL4', 12, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (6, N'MySQL4', 12, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (7, N'DNS', 17, N'WebsitePanel.EnterpriseServer.DnsServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (7, N'DNS', 17, N'WebsitePanel.EnterpriseServer.DnsServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (8, N'Statistics', 18, N'WebsitePanel.EnterpriseServer.StatisticsServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (8, N'Statistics', 18, N'WebsitePanel.EnterpriseServer.StatisticsServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (9, N'SharePoint', 14, N'WebsitePanel.EnterpriseServer.SharePointServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (9, N'SharePoint', 14, N'WebsitePanel.EnterpriseServer.SharePointServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (10, N'MsSQL2005', 9, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (10, N'MsSQL2005', 9, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (11, N'MySQL5', 13, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (11, N'MySQL5', 13, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (12, N'Exchange', 5, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (12, N'Exchange', 5, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (13, N'Hosted Organizations', 6, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (13, N'Hosted Organizations', 6, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (20, N'Hosted SharePoint', 15, N'WebsitePanel.EnterpriseServer.HostedSharePointServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (20, N'Hosted SharePoint', 15, N'WebsitePanel.EnterpriseServer.HostedSharePointServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (21, N'Hosted CRM', 16, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (21, N'Hosted CRM', 16, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (22, N'MsSQL2008', 10, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (22, N'MsSQL2008', 10, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (23, N'MsSQL2012', 11, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (23, N'MsSQL2012', 11, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (30, N'VPS', 19, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (30, N'VPS', 19, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (31, N'BlackBerry', 21, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (31, N'BlackBerry', 21, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (32, N'OCS', 22, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (32, N'OCS', 22, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (41, N'Lync',23, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (41, N'Lync',23, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (40, N'VPSForPC', 20, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (40, N'VPSForPC', 20, NULL, 1)
 GO
 SET ANSI_NULLS ON
 GO
@@ -26230,7 +26231,7 @@ GO
 
 
 
-CREATE PROCEDURE GetHostingPlanQuotas
+CREATE PROCEDURE [dbo].[GetHostingPlanQuotas]
 (
 	@ActorID int,
 	@PlanID int,
@@ -26260,8 +26261,9 @@ SELECT
 	dbo.GetPackageAllocatedResource(@PackageID, RG.GroupID, @ServerID) AS ParentEnabled,
 	ISNULL(HPR.CalculateDiskSpace, 1) AS CalculateDiskSpace,
 	ISNULL(HPR.CalculateBandwidth, 1) AS CalculateBandwidth
-FROM ResourceGroups AS RG
+FROM ResourceGroups AS RG 
 LEFT OUTER JOIN HostingPlanResources AS HPR ON RG.GroupID = HPR.GroupID AND HPR.PlanID = @PlanID
+WHERE (ShowGroup = 1)
 ORDER BY RG.GroupOrder
 
 -- get quotas by groups
@@ -26277,7 +26279,6 @@ FROM Quotas AS Q
 LEFT OUTER JOIN HostingPlanQuotas AS HPQ ON Q.QuotaID = HPQ.QuotaID AND HPQ.PlanID = @PlanID
 ORDER BY Q.QuotaOrder
 RETURN
-
 
 
 
@@ -40497,7 +40498,7 @@ GO
 
 
 
-CREATE PROCEDURE GetRawServicesByServerID
+CREATE PROCEDURE [dbo].[GetRawServicesByServerID]
 (
 	@ActorID int,
 	@ServerID int
@@ -40513,7 +40514,7 @@ SELECT
 	GroupID,
 	GroupName
 FROM ResourceGroups
-WHERE @IsAdmin = 1
+WHERE @IsAdmin = 1 AND (ShowGroup = 1)
 ORDER BY GroupOrder
 
 -- services
@@ -40532,7 +40533,7 @@ WHERE
 	AND @IsAdmin = 1
 ORDER BY RG.GroupOrder
 
-RETURN 
+RETURN
 
 
 
@@ -44000,7 +44001,7 @@ GO
 
 
 
-CREATE PROCEDURE GetVirtualServices
+CREATE PROCEDURE [dbo].[GetVirtualServices]
 (
 	@ActorID int,
 	@ServerID int
@@ -44021,7 +44022,7 @@ SELECT
 FROM ResourceGroups AS RG
 LEFT OUTER JOIN VirtualGroups AS VRG ON RG.GroupID = VRG.GroupID AND VRG.ServerID = @ServerID
 WHERE
-	@IsAdmin = 1
+	@IsAdmin = 1 AND (ShowGroup = 1)
 ORDER BY RG.GroupOrder
 
 -- services
@@ -44040,7 +44041,7 @@ WHERE
 	VS.ServerID = @ServerID
 	AND @IsAdmin = 1
 
-RETURN 
+RETURN
 
 
 

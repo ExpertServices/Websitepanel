@@ -987,6 +987,14 @@ ALTER TABLE [dbo].[GlobalDnsRecords] ADD
 END
 GO
 
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ResourceGroups' AND COLS.name='ShowGroup')
+BEGIN
+ALTER TABLE [dbo].[ResourceGroups] ADD [ShowGroup] [bit] NULL
+
+UPDATE [dbo].[ResourceGroups] SET ShowGRoup=1 
+END
+GO
+
 
 
 ALTER PROCEDURE [dbo].[AddDnsRecord]
@@ -3444,3 +3452,192 @@ UPDATE LyncUserPlans SET IsDefault=1 WHERE LyncUserPlanId=@LyncUserPlanId
 RETURN'
 END
 GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetHostingPlanQuotas]
+(
+	@ActorID int,
+	@PlanID int,
+	@PackageID int,
+	@ServerID int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorParentPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+DECLARE @IsAddon bit
+
+IF @ServerID = 0
+SELECT @ServerID = ServerID FROM Packages
+WHERE PackageID = @PackageID
+
+-- get resource groups
+SELECT
+	RG.GroupID,
+	RG.GroupName,
+	CASE
+		WHEN HPR.CalculateDiskSpace IS NULL THEN CAST(0 as bit)
+		ELSE CAST(1 as bit)
+	END AS Enabled,
+	dbo.GetPackageAllocatedResource(@PackageID, RG.GroupID, @ServerID) AS ParentEnabled,
+	ISNULL(HPR.CalculateDiskSpace, 1) AS CalculateDiskSpace,
+	ISNULL(HPR.CalculateBandwidth, 1) AS CalculateBandwidth
+FROM ResourceGroups AS RG 
+LEFT OUTER JOIN HostingPlanResources AS HPR ON RG.GroupID = HPR.GroupID AND HPR.PlanID = @PlanID
+WHERE (ShowGroup = 1)
+ORDER BY RG.GroupOrder
+
+-- get quotas by groups
+SELECT
+	Q.QuotaID,
+	Q.GroupID,
+	Q.QuotaName,
+	Q.QuotaDescription,
+	Q.QuotaTypeID,
+	ISNULL(HPQ.QuotaValue, 0) AS QuotaValue,
+	dbo.GetPackageAllocatedQuota(@PackageID, Q.QuotaID) AS ParentQuotaValue
+FROM Quotas AS Q
+LEFT OUTER JOIN HostingPlanQuotas AS HPQ ON Q.QuotaID = HPQ.QuotaID AND HPQ.PlanID = @PlanID
+ORDER BY Q.QuotaOrder
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetRawServicesByServerID]
+(
+	@ActorID int,
+	@ServerID int
+)
+AS
+
+-- check rights
+DECLARE @IsAdmin bit
+SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
+
+-- resource groups
+SELECT
+	GroupID,
+	GroupName
+FROM ResourceGroups
+WHERE @IsAdmin = 1 AND (ShowGroup = 1)
+ORDER BY GroupOrder
+
+-- services
+SELECT
+	S.ServiceID,
+	S.ServerID,
+	S.ServiceName,
+	S.Comments,
+	RG.GroupID,
+	PROV.DisplayName AS ProviderName
+FROM Services AS S
+INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
+INNER JOIN ResourceGroups AS RG ON PROV.GroupID = RG.GroupID
+WHERE
+	S.ServerID = @ServerID
+	AND @IsAdmin = 1
+ORDER BY RG.GroupOrder
+
+RETURN 
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetVirtualServices]
+(
+	@ActorID int,
+	@ServerID int
+)
+AS
+
+-- check rights
+DECLARE @IsAdmin bit
+SET @IsAdmin = dbo.CheckIsUserAdmin(@ActorID)
+
+-- virtual groups
+SELECT
+	VRG.VirtualGroupID,
+	RG.GroupID,
+	RG.GroupName,
+	ISNULL(VRG.DistributionType, 1) AS DistributionType,
+	ISNULL(VRG.BindDistributionToPrimary, 1) AS BindDistributionToPrimary
+FROM ResourceGroups AS RG
+LEFT OUTER JOIN VirtualGroups AS VRG ON RG.GroupID = VRG.GroupID AND VRG.ServerID = @ServerID
+WHERE
+	@IsAdmin = 1 AND (ShowGroup = 1)
+ORDER BY RG.GroupOrder
+
+-- services
+SELECT
+	VS.ServiceID,
+	S.ServiceName,
+	S.Comments,
+	P.GroupID,
+	P.DisplayName,
+	SRV.ServerName
+FROM VirtualServices AS VS
+INNER JOIN Services AS S ON VS.ServiceID = S.ServiceID
+INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+INNER JOIN Providers AS P ON S.ProviderID = P.ProviderID
+WHERE
+	VS.ServerID = @ServerID
+	AND @IsAdmin = 1
+
+RETURN 
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
