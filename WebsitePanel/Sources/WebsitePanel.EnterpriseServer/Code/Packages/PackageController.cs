@@ -1952,6 +1952,21 @@ namespace WebsitePanel.EnterpriseServer
             }
             items["Plans"] = plans;
 
+            //Add ons
+            Hashtable addOns = new Hashtable();
+            int i = 0;
+            foreach (PackageInfo package in packages)
+            {
+                List<PackageAddonInfo> lstAddOns = ObjectUtils.CreateListFromDataSet<PackageAddonInfo>(GetPackageAddons(package.PackageId));
+                foreach (PackageAddonInfo addOn in lstAddOns)
+                {
+                    addOns.Add(i, addOn);
+                    i++;
+                }
+
+            }
+            items["Addons"] = addOns;
+            
             // package contexts
             Hashtable cntxs = new Hashtable();
             foreach (PackageInfo package in packages)
