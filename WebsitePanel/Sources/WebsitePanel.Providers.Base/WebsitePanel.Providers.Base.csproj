@@ -80,6 +80,14 @@
     <Compile Include="HostedSolution\BlackBerryStatsItem.cs" />
     <Compile Include="HostedSolution\BlackBerryUserDeleteState.cs" />
     <Compile Include="HostedSolution\ExchangeMailboxPlan.cs" />
+    <Compile Include="HostedSolution\ILyncServer.cs" />
+    <Compile Include="HostedSolution\LyncConstants.cs" />
+    <Compile Include="HostedSolution\LyncErrorCodes.cs" />
+    <Compile Include="HostedSolution\LyncFederationDomain.cs" />
+    <Compile Include="HostedSolution\LyncUser.cs" />
+    <Compile Include="HostedSolution\LyncUserPlan.cs" />
+    <Compile Include="HostedSolution\LyncUsersPaged.cs" />
+    <Compile Include="HostedSolution\LyncVoicePolicyType.cs" />
     <Compile Include="HostedSolution\TransactionAction.cs" />
     <Compile Include="ResultObjects\HeliconApe.cs" />
     <Compile Include="HostedSolution\ExchangeMobileDevice.cs" />
@@ -118,6 +126,8 @@
     <Compile Include="ResultObjects\IntResult.cs" />
     <Compile Include="ResultObjects\JobsValue.cs" />
     <Compile Include="HostedSolution\OCSUsersPaged.cs" />
+    <Compile Include="ResultObjects\LyncUserResult.cs" />
+    <Compile Include="ResultObjects\LyncUsersPagedResult.cs" />
     <Compile Include="ResultObjects\OCSUserResult.cs" />
     <Compile Include="ResultObjects\OCSUsersPagedResult.cs" />
     <Compile Include="ResultObjects\OrganizationResult.cs" />

@@ -66,6 +66,13 @@ Default skin template. The following skins are provided as examples only.
 <asp:Image SkinID="CRMLogo" runat="server" ImageUrl="images/crm_48.png" ImageAlign="AbsMiddle"/>
 <asp:Image SkinID="OCSLogo" runat="server" ImageUrl="images/ocs48.png" ImageAlign="AbsMiddle"/>
 
+<%--  Lync Icons --%>
+<asp:Image SkinID="LyncLogo" runat="server" ImageUrl="images/lync48.png" ImageAlign="AbsMiddle"/>
+<asp:Image SkinID="LyncUserPlan48" runat="server" ImageUrl="images/lyncuserplan48.png" ImageAlign="AbsMiddle" Width="48" Height="48"></asp:Image>
+<asp:Image SkinID="LyncUserPlanAdd48" runat="server" ImageUrl="images/lyncuserplanadd48.png" ImageAlign="AbsMiddle" Width="48" Height="48"></asp:Image>
+<asp:Image SkinID="LyncUser" runat="server" ImageUrl="images/lyncuser.png" ImageAlign="AbsMiddle" Width="48" Height="48"/>
+<asp:Image SkinID="LyncFederationDomains48" runat="server" ImageUrl="images/LyncFederationDomains48.png" ImageAlign="AbsMiddle" Width="48" Height="48"></asp:Image>
+
 <%--  BlackBerry Icons --%>
 <asp:Image SkinID="BlackBerryUsersLogo" runat="server" ImageUrl="images/bbuser48.png" ImageAlign="AbsMiddle"/>
 <%--  VPS Icons --%>

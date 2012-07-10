@@ -148,6 +148,168 @@ namespace WebsitePanel.Portal {
         protected global::WebsitePanel.Portal.Quota quotaDomainPointers;
         
         /// <summary>
+        /// pnlUserAccounts control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow pnlUserAccounts;
+        
+        /// <summary>
+        /// lblUserAccounts control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblUserAccounts;
+        
+        /// <summary>
+        /// quotaUserAccounts control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.Quota quotaUserAccounts;
+        
+        /// <summary>
+        /// pnlMailAccounts control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow pnlMailAccounts;
+        
+        /// <summary>
+        /// lblMailAccounts control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMailAccounts;
+        
+        /// <summary>
+        /// quotaMailAccounts control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.Quota quotaMailAccounts;
+        
+        /// <summary>
+        /// pnlOCSUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow pnlOCSUsers;
+        
+        /// <summary>
+        /// lblOCSUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblOCSUsers;
+        
+        /// <summary>
+        /// quotaOCSUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.Quota quotaOCSUsers;
+        
+        /// <summary>
+        /// pnlLyncUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow pnlLyncUsers;
+        
+        /// <summary>
+        /// lblLyncUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblLyncUsers;
+        
+        /// <summary>
+        /// quotaLyncUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.Quota quotaLyncUsers;
+        
+        /// <summary>
+        /// pnlBlackBerryUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow pnlBlackBerryUsers;
+        
+        /// <summary>
+        /// lblBlackBerryUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblBlackBerryUsers;
+        
+        /// <summary>
+        /// quotaBlackBerryUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.Quota quotaBlackBerryUsers;
+        
+        /// <summary>
+        /// pnlSharepointSites control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow pnlSharepointSites;
+        
+        /// <summary>
+        /// lblSharepointSites control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblSharepointSites;
+        
+        /// <summary>
+        /// quotaSharepointSites control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.Quota quotaSharepointSites;
+        
+        /// <summary>
         /// pnlWebSites control.
         /// </summary>
         /// <remarks>
@@ -202,31 +364,31 @@ namespace WebsitePanel.Portal {
         protected global::WebsitePanel.Portal.Quota quotaFtpAccounts;
         
         /// <summary>
-        /// pnlMailAccounts control.
+        /// pnlDatabases control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow pnlMailAccounts;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow pnlDatabases;
         
         /// <summary>
-        /// lblMailAccounts control.
+        /// lblDatabases control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblMailAccounts;
+        protected global::System.Web.UI.WebControls.Label lblDatabases;
         
         /// <summary>
-        /// quotaMailAccounts control.
+        /// quotaDatabases control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.Quota quotaMailAccounts;
+        protected global::WebsitePanel.Portal.Quota quotaDatabases;
         
         /// <summary>
         /// pnlHyperVForPC control.

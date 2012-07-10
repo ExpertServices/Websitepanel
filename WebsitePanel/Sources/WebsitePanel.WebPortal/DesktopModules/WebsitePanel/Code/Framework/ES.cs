@@ -82,7 +82,14 @@ namespace WebsitePanel.Portal
         {
             get { return GetCachedProxy<esOCS>(); }
         }
-        
+
+
+        public esLync Lync
+        {
+            get { return GetCachedProxy<esLync>(); }
+        }
+
+
         public esOrganizations Organizations
         {
             get

@@ -107,6 +107,12 @@
     <Content Include="App_Themes\Default\Images\Exchange\disabled_16.png" />
     <Content Include="App_Themes\Default\Images\Exchange\enabled.png" />
     <Content Include="App_Themes\Default\Images\FileManager\vbhtml.png" />
+    <Content Include="App_Themes\Default\Images\lync16.png" />
+    <Content Include="App_Themes\Default\Images\lync48.png" />
+    <Content Include="App_Themes\Default\Images\lyncfederationdomains48.png" />
+    <Content Include="App_Themes\Default\Images\lyncuser.png" />
+    <Content Include="App_Themes\Default\Images\lyncuserplan48.png" />
+    <Content Include="App_Themes\Default\Images\lyncuserplanadd48.png" />
     <Content Include="App_Themes\Default\Images\VPSForPC\vlan_icon.png" />
     <Content Include="App_Themes\Default\Images\VPSForPC\private_cloud_module_header_vps.gif" />
     <Content Include="App_Themes\Default\Images\FileManager\cshtml.png" />

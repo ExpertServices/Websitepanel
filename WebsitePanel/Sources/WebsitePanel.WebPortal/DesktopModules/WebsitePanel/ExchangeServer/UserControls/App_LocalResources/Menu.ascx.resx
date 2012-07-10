@@ -183,4 +183,16 @@
   <data name="Text.MailboxPlans" xml:space="preserve">
     <value>Mailbox Plans</value>
   </data>
+  <data name="Text.LyncGroup" xml:space="preserve">
+    <value>Lync</value>
+  </data>
+  <data name="Text.LyncUserPlans" xml:space="preserve">
+    <value>Lync User Plans</value>
+  </data>
+  <data name="Text.LyncUsers" xml:space="preserve">
+    <value>Lync Users</value>
+  </data>
+  <data name="Text.LyncFederationDomains" xml:space="preserve">
+    <value>Lync Federation Domains</value>
+  </data>
 </root>

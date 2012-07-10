@@ -78,6 +78,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="esLync.asmx" />
     <Content Include="esVirtualizationServerForPrivateCloud.asmx" />
     <Content Include="Default.aspx" />
     <Content Include="ecStorefront.asmx" />
@@ -130,6 +131,8 @@
     <Compile Include="Code\Common\ServiceUsernameTokenManager.cs" />
     <Compile Include="Code\Common\UsernameAssertion.cs" />
     <Compile Include="Code\Common\Utils.cs" />
+    <Compile Include="Code\HostedSolution\LyncController.cs" />
+    <Compile Include="Code\HostedSolution\LyncControllerAsync.cs" />
     <Compile Include="Code\VirtualizationForPrivateCloud\CreateAsyncVMfromVM.cs" />
     <Compile Include="Code\VirtualizationForPrivateCloud\CreateServerAsyncWorkerForPrivateCloud.cs" />
     <Compile Include="Code\VirtualizationForPrivateCloud\VirtualizationServerControllerForPrivateCloud.cs" />
@@ -235,6 +238,10 @@
     <Compile Include="Code\WebServers\WebServerController.cs" />
     <Compile Include="Code\Wizards\UserCreationWizard.cs" />
     <Compile Include="Code\Wizards\WebApplicationsInstaller.cs" />
+    <Compile Include="esLync.asmx.cs">
+      <DependentUpon>esLync.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="esVirtualizationServerForPrivateCloud.asmx.cs">
       <DependentUpon>esVirtualizationServerForPrivateCloud.asmx</DependentUpon>
       <SubType>Component</SubType>

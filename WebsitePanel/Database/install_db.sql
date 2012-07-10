@@ -3641,7 +3641,7 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (75, 1, 8, N'OS.ExtraApplications', N'Extra Application Packs', 1, 0, NULL)
 GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (77, 12, 2, N'Exchange2007.DiskSpace', N'Organization Disk Space, MB', 21, 0, NULL)
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (77, 12, 2, N'Exchange2007.DiskSpace', N'Organization Disk Space, MB', 2, 0, NULL)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (78, 12, 3, N'Exchange2007.Mailboxes', N'Mailboxes per Organization', 2, 0, NULL)
 GO
@@ -3850,6 +3850,26 @@ GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (367, 12, 22, N'Exchange2007.MaxReceiveMessageSizeKB', N'Maximum Receive Message Size (Kb)', 3,	0, NULL)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (368, 12, 1, N'Exchange2007.IsConsumer',N'Is Consumer Organization',1, 0 , NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (370, 41, 1, N'Lync.Users', N'Users',2 ,0 , NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (371,	41,	2,	N'Lync.Federation'	, N'Allow Federation',	1,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (372,	41,	3,	N'Lync.Conferencing', N'Allow Conferencing',	1,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (373,	41,	4,	N'Lync.MaxParticipants', N'Maximum Conference Particiapants',	3,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (374,	41,	5,	N'Lync.AllowVideo', N'Allow Video in Conference',	1,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (375,	41,	6,	N'Lync.EnterpriseVoice', N'Allow EnterpriseVoice',	1,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (376,	41,	7,	N'Lync.EVUsers', N'Number of Enterprise Voice Users',	2,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (377,	41,	8,	N'Lync.EVNational', N'Allow National Calls',	1,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (378,	41,	9,	N'Lync.EVMobile', N'Allow Mobile Calls',	1,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (379,	41,	10,	N'Lync.EVInternational', N'Allow International Calls',	1,	0, NULL)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (400, 20, 3, N'HostedSharePoint.UseSharedSSL', N'Use shared SSL Root', 1, 0, NULL)
 GO
@@ -10631,6 +10651,8 @@ INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupContr
 GO
 INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (32, N'OCS', 22, NULL)
 GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (41, N'Lync',23, NULL)
+GO
 INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (40, N'VPSForPC', 20, NULL)
 GO
 SET ANSI_NULLS ON
@@ -13223,6 +13245,62 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE TABLE [dbo].[LyncUserPlans](
+	[LyncUserPlanId] [int] IDENTITY(1,1) NOT NULL,
+	[ItemID] [int] NOT NULL,
+	[LyncUserPlanName] [nvarchar](300) COLLATE Latin1_General_CI_AS NOT NULL,
+	[IM] [bit] NOT NULL,
+	[Mobility] [bit] NOT NULL,
+	[MobilityEnableOutsideVoice] [bit] NOT NULL,
+	[Federation] [bit] NOT NULL,
+	[Conferencing] [bit] NOT NULL,
+	[EnterpriseVoice] [bit] NOT NULL,
+	[VoicePolicy] [int] NOT NULL,
+	[IsDefault] [bit] NOT NULL,
+ CONSTRAINT [PK_LyncUserPlans] PRIMARY KEY CLUSTERED 
+(
+	[LyncUserPlanId] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
+
+
+
+
+
+
+
+CREATE TABLE [dbo].[LyncUsers](
+	[LyncUserID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int] NOT NULL,
+	[LyncUserPlanID] [int] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[ModifiedDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_LyncUsers] PRIMARY KEY CLUSTERED 
+(
+	[LyncUserID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
 
 
 
@@ -23372,6 +23450,8 @@ INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName]
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (209, 23, N'MsSQL', N'Microsoft SQL Server 2012', N'WebsitePanel.Providers.Database.MsSqlServer2012, WebsitePanel.Providers.Database.SqlServer', N'MSSQL', NULL)
 GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (250, 41, N'Lync2010', N'Microsoft Lync Server 2010 Multitenant Hosting Pack', 'WebsitePanel.Providers.HostedSolution.Lync2010, WebsitePanel.Providers.HostedSolution', 'Lync', 1)
+GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (300, 30, N'HyperV', N'Microsoft Hyper-V', N'WebsitePanel.Providers.Virtualization.HyperV, WebsitePanel.Providers.Virtualization.HyperV', N'HyperV', 1)
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (301, 11, N'MySQL', N'MySQL Server 5.5', N'WebsitePanel.Providers.Database.MySqlServer55, WebsitePanel.Providers.Database.MySQL', N'MySQL', NULL)
@@ -25882,6 +25962,19 @@ AS
 			INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
 			INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
 			WHERE pt.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 370 -- Lync.Users
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
+				INNER JOIN LyncUsers lu ON ea.AccountID = lu.AccountID
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE pt.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 376 -- Lync.EVUsers
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
+				INNER JOIN LyncUsers lu ON ea.AccountID = lu.AccountID
+				INNER JOIN LyncUserPlans lp ON lu.LyncUserPlanId = lp.LyncUserPlanId
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE pt.ParentPackageID = @PackageID AND lp.EnterpriseVoice = 1)
 		ELSE
 			SET @Result = (SELECT COUNT(SI.ItemID) FROM Quotas AS Q
 			INNER JOIN ServiceItems AS SI ON SI.ItemTypeID = Q.ItemTypeID
@@ -44842,6 +44935,496 @@ GO
 
 
 
+CREATE PROCEDURE [dbo].[AddLyncUser]	
+	@AccountID int,
+	@LyncUserPlanID int
+AS
+BEGIN	
+	SET NOCOUNT ON;
+
+INSERT INTO
+	dbo.LyncUsers
+	(	 
+	 
+	 AccountID,
+	 LyncUserPlanID,
+	 CreatedDate,
+	 ModifiedDate)
+VALUES
+(		
+	@AccountID,
+	@LyncUserPlanID,
+	getdate(),
+	getdate()
+)		
+END
+GO
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[AddLyncUserPlan] 
+(
+	@LyncUserPlanId int OUTPUT,
+	@ItemID int,
+	@LyncUserPlanName	nvarchar(300),
+	@IM bit,
+	@Mobility bit,
+	@MobilityEnableOutsideVoice bit,
+	@Federation bit,
+	@Conferencing bit,
+	@EnterpriseVoice bit,
+	@VoicePolicy int,
+	@IsDefault bit
+)
+AS
+
+INSERT INTO LyncUserPlans
+(
+	ItemID,
+	LyncUserPlanName,
+	IM,
+	Mobility,
+	MobilityEnableOutsideVoice,
+	Federation,
+	Conferencing,
+	EnterpriseVoice,
+	VoicePolicy,
+	IsDefault
+)
+VALUES
+(
+	@ItemID,
+	@LyncUserPlanName,
+	@IM,
+	@Mobility,
+	@MobilityEnableOutsideVoice,
+	@Federation,
+	@Conferencing,
+	@EnterpriseVoice,
+	@VoicePolicy,
+	@IsDefault
+)
+
+SET @LyncUserPlanId = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[CheckLyncUserExists] 
+	@AccountID int
+AS
+BEGIN	
+	SELECT 
+		COUNT(AccountID)
+	FROM 
+		dbo.LyncUsers
+	WHERE AccountID = @AccountID
+END
+GO
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[DeleteLyncUser]
+(	
+	@AccountId int
+)
+AS
+
+DELETE FROM 
+	LyncUsers
+WHERE 
+	AccountId = @AccountId
+
+RETURN 
+GO
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[DeleteLyncUserPlan]
+(
+	@LyncUserPlanId int
+)
+AS
+
+-- delete lyncuserplan
+DELETE FROM LyncUserPlans
+WHERE LyncUserPlanId = @LyncUserPlanId
+
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetLyncUserPlan] 
+(
+	@LyncUserPlanId int
+)
+AS
+SELECT
+	LyncUserPlanId,
+	ItemID,
+	LyncUserPlanName,
+	IM,
+	Mobility,
+	MobilityEnableOutsideVoice,
+	Federation,
+	Conferencing,
+	EnterpriseVoice,
+	VoicePolicy,
+	IsDefault
+FROM
+	LyncUserPlans
+WHERE
+	LyncUserPlanId = @LyncUserPlanId
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetLyncUserPlanByAccountId] 
+(
+	@AccountID int
+)
+AS
+SELECT
+	LyncUserPlanId,
+	ItemID,
+	LyncUserPlanName,
+	IM,
+	Mobility,
+	MobilityEnableOutsideVoice,
+	Federation,
+	Conferencing,
+	EnterpriseVoice,
+	VoicePolicy,
+	IsDefault
+FROM
+	LyncUserPlans
+WHERE
+	LyncUserPlanId IN (SELECT LyncUserPlanId FROM LyncUsers WHERE AccountID = @AccountID)
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetLyncUserPlans]
+(
+	@ItemID int
+)
+AS
+SELECT
+	LyncUserPlanId,
+	ItemID,
+	LyncUserPlanName,
+	IM,
+	Mobility,
+	MobilityEnableOutsideVoice,
+	Federation,
+	Conferencing,
+	EnterpriseVoice,
+	VoicePolicy,
+	IsDefault
+FROM
+	LyncUserPlans
+WHERE
+	ItemID = @ItemID 
+ORDER BY LyncUserPlanName
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetLyncUsers]
+(
+	@ItemID int,
+	@SortColumn nvarchar(40),
+	@SortDirection nvarchar(20),
+	@StartRow int,
+	@Count int	
+)
+AS
+
+CREATE TABLE #TempLyncUsers 
+(	
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int],	
+	[ItemID] [int] NOT NULL,
+	[AccountName] [nvarchar](300)  NOT NULL,
+	[DisplayName] [nvarchar](300)  NOT NULL,
+	[PrimaryEmailAddress] [nvarchar](300) NULL,
+	[SamAccountName] [nvarchar](100) NULL,
+	[LyncUserPlanId] [int] NOT NULL,		
+	[LyncUserPlanName] [nvarchar] (300) NOT NULL,		
+)
+
+
+DECLARE @condition nvarchar(700)
+SET @condition = ''
+
+IF (@SortColumn = 'DisplayName')
+BEGIN
+	SET @condition = 'ORDER BY ea.DisplayName'
+END
+
+IF (@SortColumn = 'PrimaryEmailAddress')
+BEGIN
+	SET @condition = 'ORDER BY ea.PrimaryEmailAddress'
+END
+
+IF (@SortColumn = 'LyncUserPlanName')
+BEGIN
+	SET @condition = 'ORDER BY lp.LyncUserPlanName'
+END
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+	INSERT INTO 
+		#TempLyncUsers 
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName,
+		ou.LyncUserPlanId,
+		lp.LyncUserPlanName				
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		LyncUsers ou
+	INNER JOIN
+		LyncUserPlans lp 
+	ON
+		ou.LyncUserPlanId = lp.LyncUserPlanId				
+	ON 
+		ea.AccountID = ou.AccountID
+	WHERE 
+		ea.ItemID = @ItemID ' + @condition
+
+exec sp_executesql @sql, N'@ItemID int',@ItemID
+
+DECLARE @RetCount int
+SELECT @RetCount = COUNT(ID) FROM #TempLyncUsers 
+
+IF (@SortDirection = 'ASC')
+BEGIN
+	SELECT * FROM #TempLyncUsers 
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+END
+ELSE
+BEGIN
+	IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+	BEGIN
+		IF (@SortColumn = 'DisplayName')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
+		END
+		IF (@SortColumn = 'PrimaryEmailAddress')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
+		END
+		IF (@SortColumn = 'LyncUserPlanName')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY LyncUserPlanName DESC
+		END
+	END
+	ELSE
+	BEGIN
+		SELECT * FROM #TempLyncUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
+	END
+
+	
+END
+
+
+DROP TABLE #TempLyncUsers
+GO
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetLyncUsersCount] 
+(
+	@ItemID int
+)
+AS
+
+SELECT 
+	COUNT(ea.AccountID)		
+FROM 
+	ExchangeAccounts ea 
+INNER JOIN 
+	LyncUsers ou 
+ON 
+	ea.AccountID = ou.AccountID
+WHERE 
+	ea.ItemID = @ItemID
+GO
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[SetLyncUserLyncUserPlan] 
+(
+	@AccountID int,
+	@LyncUserPlanId int
+)
+AS
+
+UPDATE LyncUsers SET
+	LyncUserPlanId = @LyncUserPlanId
+WHERE
+	AccountID = @AccountID
+
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[SetOrganizationDefaultLyncUserPlan]
+(
+	@ItemId int,
+	@LyncUserPlanId int
+)
+AS
+
+UPDATE LyncUserPlans SET IsDefault=0 WHERE ItemId=@ItemId
+UPDATE LyncUserPlans SET IsDefault=1 WHERE LyncUserPlanId=@LyncUserPlanId
+
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ALTER TABLE [dbo].[ScheduleParameters]  WITH CHECK ADD  CONSTRAINT [FK_ScheduleParameters_Schedule] FOREIGN KEY([ScheduleID])
@@ -45502,5 +46085,34 @@ ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[ServiceProperties] CHECK CONSTRAINT [FK_ServiceProperties_Services]
 GO
-
+
+ALTER TABLE [dbo].[LyncUsers] ADD  CONSTRAINT [DF_LyncUsers_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
+GO
+
+ALTER TABLE [dbo].[LyncUsers] ADD  CONSTRAINT [DF_LyncUsers_ChangedDate]  DEFAULT (getdate()) FOR [ModifiedDate]
+GO
+
+ALTER TABLE [dbo].[LyncUsers]  WITH CHECK ADD  CONSTRAINT [FK_LyncUsers_LyncUserPlans] FOREIGN KEY([LyncUserPlanId])
+REFERENCES [dbo].[LyncUserPlans] ([LyncUserPlanId])
+GO
+
+ALTER TABLE [dbo].[LyncUsers] CHECK CONSTRAINT [FK_LyncUsers_LyncUserPlans]
+GO
+
+ALTER TABLE dbo.LyncUserPlans ADD CONSTRAINT
+	IX_LyncUserPlans UNIQUE NONCLUSTERED 
+	(
+	LyncUserPlanId
+	) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+GO
+ALTER TABLE dbo.LyncUserPlans ADD CONSTRAINT
+	FK_LyncUserPlans_ExchangeOrganizations FOREIGN KEY
+	(
+	ItemID
+	) REFERENCES dbo.ExchangeOrganizations
+	(
+	ItemID
+	) ON UPDATE  NO ACTION 
+	 ON DELETE  CASCADE 
 

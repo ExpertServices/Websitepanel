@@ -143,14 +143,13 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
             else
                 besStatsPanel.Visible = false;
-/*
+
             if (cntx.Groups.ContainsKey(ResourceGroups.Lync))
             {
                 lyncStatsPanel.Visible = true;
                 BindLyncStats();
             }
             else
- */
                 lyncStatsPanel.Visible = false;
 
 

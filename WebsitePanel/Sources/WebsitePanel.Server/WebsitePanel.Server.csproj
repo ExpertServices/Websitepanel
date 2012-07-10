@@ -68,6 +68,7 @@
     <Content Include="AutoDiscovery.asmx" />
     <Content Include="BlackBerry.asmx" />
     <EmbeddedResource Include="Images\logo.png" />
+    <Content Include="LyncServer.asmx" />
     <Content Include="OCSEdgeServer.asmx" />
     <Content Include="OCSServer.asmx" />
     <Content Include="CRM.asmx" />
@@ -108,6 +109,10 @@
     <Compile Include="Code\ServerConfiguration.cs" />
     <Compile Include="Code\ServerUsernameTokenManager.cs" />
     <Compile Include="Code\UsernameAssertion.cs" />
+    <Compile Include="LyncServer.asmx.cs">
+      <DependentUpon>LyncServer.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="OCSEdgeServer.asmx.cs">
       <DependentUpon>OCSEdgeServer.asmx</DependentUpon>
       <SubType>Component</SubType>

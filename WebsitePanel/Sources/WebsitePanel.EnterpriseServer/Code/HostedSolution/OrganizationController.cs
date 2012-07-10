@@ -482,6 +482,66 @@ namespace WebsitePanel.EnterpriseServer
                 }
         }
 
+
+        private static bool DeleteLyncUsers(int itemId)
+        {
+            bool successful = false;
+
+            try
+            {
+                LyncUsersPagedResult res = LyncController.GetLyncUsers(itemId, string.Empty, string.Empty, 0, int.MaxValue);
+
+                if (res.IsSuccess)
+                {
+                    successful = true;
+                    foreach (LyncUser user in res.Value.PageUsers)
+                    {
+                        try
+                        {
+                            ResultObject delUserResult = LyncController.DeleteLyncUser(itemId, user.AccountID);
+                            if (!delUserResult.IsSuccess)
+                            {
+                                StringBuilder sb = new StringBuilder();
+                                foreach (string str in delUserResult.ErrorCodes)
+                                {
+                                    sb.Append(str);
+                                    sb.Append('\n');
+                                }
+
+                                throw new ApplicationException(sb.ToString());
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            successful = false;
+                            TaskManager.WriteError(ex);
+                        }
+                    }
+
+                    return successful;
+                }
+                else
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (string str in res.ErrorCodes)
+                    {
+                        sb.Append(str);
+                        sb.Append('\n');
+                    }
+
+                    throw new ApplicationException(sb.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                successful = false;
+                TaskManager.WriteError(ex);
+            }
+
+            return successful;
+        }
+
+
         public static int DeleteOrganization(int itemId)
         {
             // check account
@@ -570,7 +630,22 @@ namespace WebsitePanel.EnterpriseServer
                     successful = false;
                     TaskManager.WriteError(ex);
                 }
-                
+
+                //Cleanup Lync
+                try
+                {
+                    if (!string.IsNullOrEmpty(org.LyncTenantId))
+                        if (DeleteLyncUsers(itemId))
+                            LyncController.DeleteOrganization(itemId);
+                }
+                catch (Exception ex)
+                {
+                    successful = false;
+                    TaskManager.WriteError(ex);
+                }
+
+
+                //Cleanup Exchange
                 try
                 {
                     if (!string.IsNullOrEmpty(org.GlobalAddressList))
@@ -791,6 +866,11 @@ namespace WebsitePanel.EnterpriseServer
                     stats.AllocatedOCSUsers = cntx.Quotas[Quotas.OCS_USERS].QuotaAllocatedValue;
                 }
 
+                if (cntx.Groups.ContainsKey(ResourceGroups.Lync))
+                {
+                    stats.CreatedLyncUsers = LyncController.GetLyncUsersCount(org.Id).Value;
+                    stats.AllocatedLyncUsers = cntx.Quotas[Quotas.LYNC_USERS].QuotaAllocatedValue;
+                }
 
                 return stats;
             }
@@ -1371,7 +1451,7 @@ namespace WebsitePanel.EnterpriseServer
                 retUser.AccountType = account.AccountType;
                 retUser.CrmUserId = CRMController.GetCrmUserId(accountId);
                 retUser.IsOCSUser = DataProvider.CheckOCSUserExists(accountId);
-                //retUser.IsLyncUser = DataProvider.CheckLyncUserExists(accountId);
+                retUser.IsLyncUser = DataProvider.CheckLyncUserExists(accountId);
                 retUser.IsBlackBerryUser = BlackBerryController.CheckBlackBerryUserExists(accountId);
                 retUser.SubscriberNumber = account.SubscriberNumber;
                 

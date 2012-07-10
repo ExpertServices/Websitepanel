@@ -202,6 +202,21 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             groups.Add(ocsGroup);
         }
 
+        private void PrepareLyncMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath)
+        {
+            MenuGroup lyncGroup =
+                   new MenuGroup(GetLocalizedString("Text.LyncGroup"), imagePath + "lync16.png");
+            lyncGroup.MenuItems.Add(CreateMenuItem("LyncUsers", "lync_users"));
+
+            lyncGroup.MenuItems.Add(CreateMenuItem("LyncUserPlans", "lync_userplans"));
+
+
+            if (CheckQouta(Quotas.LYNC_FEDERATION, cntx))
+                lyncGroup.MenuItems.Add(CreateMenuItem("LyncFederationDomains", "lync_federationdomains"));
+
+            groups.Add(lyncGroup);
+        }
+
         private List<MenuGroup> PrepareMenu()
 		{
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
@@ -238,6 +253,9 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             if (cntx.Groups.ContainsKey(ResourceGroups.OCS))
                 PrepareOCSMenu(cntx, groups, imagePath);
 
+            //Lync Menu
+            if (cntx.Groups.ContainsKey(ResourceGroups.Lync))
+                PrepareLyncMenu(cntx, groups, imagePath);
 		    
             return groups;
 		}

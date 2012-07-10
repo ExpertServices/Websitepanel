@@ -51,5 +51,6 @@ namespace WebsitePanel.EnterpriseServer
         public const string BlackBerry = "BlackBerry";
         public const string OCS = "OCS";
         public const string VPSForPC = "VPSForPC";
+        public const string Lync = "Lync";
     }
 }

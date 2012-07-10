@@ -3140,5 +3140,163 @@ namespace WebsitePanel.EnterpriseServer
 			return Convert.ToBoolean(prmId.Value);
 		}
 		#endregion
+
+        #region Lync
+
+        public static void AddLyncUser(int accountId, int lyncUserPlanId)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString,
+                                      CommandType.StoredProcedure,
+                                      "AddLyncUser",
+                                      new[]
+                                          {                                              
+                                              new SqlParameter("@AccountID", accountId),
+                                              new SqlParameter("@LyncUserPlanID", lyncUserPlanId)
+                                          });
+        }
+
+        public static bool CheckLyncUserExists(int accountId)
+        {
+            int res = (int)SqlHelper.ExecuteScalar(ConnectionString, CommandType.StoredProcedure, "CheckLyncUserExists",
+                                    new SqlParameter("@AccountID", accountId));
+            return res > 0;
+        }
+
+        public static IDataReader GetLyncUsers(int itemId, string sortColumn, string sortDirection, int startRow, int count)
+        {
+            SqlParameter[] sqlParams = new SqlParameter[]
+                {
+                    new SqlParameter("@ItemID", itemId),
+                    new SqlParameter("@SortColumn", sortColumn),
+                    new SqlParameter("@SortDirection", sortDirection),                    
+                    new SqlParameter("@StartRow", startRow),
+                    new SqlParameter("Count", count)
+                };
+
+
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetLyncUsers", sqlParams);
+        }
+
+        public static int GetLyncUsersCount(int itemId)
+        {
+            SqlParameter[] sqlParams = new SqlParameter[]
+                                           {
+                                               new SqlParameter("@ItemID", itemId)
+                                           };
+
+            return
+                (int)
+                SqlHelper.ExecuteScalar(ConnectionString, CommandType.StoredProcedure, "GetLyncUsersCount", sqlParams);
+        }
+
+        public static void DeleteLyncUser(int accountId)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString,
+                                      CommandType.StoredProcedure,
+                                      "DeleteLyncUser",
+                                      new[]
+                                          {                                              
+                                              new SqlParameter("@AccountId", accountId)
+                                          });
+
+        }
+
+        public static int AddLyncUserPlan(int itemID, LyncUserPlan lyncUserPlan)
+        {
+            SqlParameter outParam = new SqlParameter("@LyncUserPlanId", SqlDbType.Int);
+            outParam.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddLyncUserPlan",
+                outParam,
+
+                new SqlParameter("@ItemID", itemID),
+                new SqlParameter("@LyncUserPlanName", lyncUserPlan.LyncUserPlanName),
+                new SqlParameter("@IM", lyncUserPlan.IM),
+                new SqlParameter("@Mobility", lyncUserPlan.Mobility),
+                new SqlParameter("@MobilityEnableOutsideVoice", lyncUserPlan.MobilityEnableOutsideVoice),
+                new SqlParameter("@Federation", lyncUserPlan.Federation),
+                new SqlParameter("@Conferencing", lyncUserPlan.Conferencing),
+                new SqlParameter("@EnterpriseVoice", lyncUserPlan.EnterpriseVoice),
+                new SqlParameter("@VoicePolicy", lyncUserPlan.VoicePolicy),
+                new SqlParameter("@IsDefault", lyncUserPlan.IsDefault)
+            );
+
+            return Convert.ToInt32(outParam.Value);
+        }
+
+        public static void DeleteLyncUserPlan(int lyncUserPlanId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteLyncUserPlan",
+                new SqlParameter("@LyncUserPlanId", lyncUserPlanId)
+            );
+        }
+
+        public static IDataReader GetLyncUserPlan(int lyncUserPlanId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetLyncUserPlan",
+                new SqlParameter("@LyncUserPlanId", lyncUserPlanId)
+            );
+        }
+
+
+        public static IDataReader GetLyncUserPlans(int itemId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetLyncUserPlans",
+                new SqlParameter("@ItemID", itemId)
+            );
+        }
+
+
+        public static void SetOrganizationDefaultLyncUserPlan(int itemId, int lyncUserPlanId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "SetOrganizationDefaultLyncUserPlan",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@LyncUserPlanId", lyncUserPlanId)
+            );
+        }
+
+        public static IDataReader GetLyncUserPlanByAccountId(int AccountId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetLyncUserPlanByAccountId",
+                new SqlParameter("@AccountID", AccountId)
+            );
+        }
+
+
+        public static void SetLyncUserLyncUserplan(int accountId, int lyncUserPlanId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "SetLyncUserLyncUserplan",
+                new SqlParameter("@AccountID", accountId),
+                new SqlParameter("@LyncUserPlanId", (lyncUserPlanId == 0) ? (object)DBNull.Value : (object)lyncUserPlanId)
+            );
+        }
+
+
+        #endregion
+
     }
 }

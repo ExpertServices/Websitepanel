@@ -336,6 +336,10 @@ namespace WebsitePanel.EnterpriseServer
         public const int ERROR_FILE_MOVE_PATH_ALREADY_EXISTS = -3004;
         #endregion
 
+        #region Lync Server
+        public const int ERROR_LYNC_DELETE_SOME_PROBLEMS = -2806;
+        #endregion
+
         public static string ToText(int code)
         {
             switch (code)

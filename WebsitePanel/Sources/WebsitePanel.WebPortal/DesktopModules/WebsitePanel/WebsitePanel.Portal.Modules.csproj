@@ -161,6 +161,7 @@
     <Compile Include="Code\Framework\Utils.cs" />
     <Compile Include="Code\Helpers\AuditLogHelper.cs" />
     <Compile Include="Code\Helpers\BlackBerryHelper.cs" />
+    <Compile Include="Code\Helpers\LyncHelper.cs" />
     <Compile Include="Code\Helpers\VirtualMachinesForPCHelper.cs" />
     <Compile Include="Code\Helpers\CRMHelper.cs" />
     <Compile Include="Code\Helpers\ExchangeHelper.cs" />
@@ -224,6 +225,62 @@
     <Compile Include="ExchangeServer\UserControls\MailboxPlanSelector.ascx.designer.cs">
       <DependentUpon>MailboxPlanSelector.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Lync\LyncAddFederationDomain.ascx.cs">
+      <DependentUpon>LyncAddFederationDomain.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Lync\LyncAddFederationDomain.ascx.designer.cs">
+      <DependentUpon>LyncAddFederationDomain.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Lync\LyncAddLyncUserPlan.ascx.cs">
+      <DependentUpon>LyncAddLyncUserPlan.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Lync\LyncAddLyncUserPlan.ascx.designer.cs">
+      <DependentUpon>LyncAddLyncUserPlan.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Lync\LyncCreateUser.ascx.cs">
+      <DependentUpon>LyncCreateUser.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Lync\LyncCreateUser.ascx.designer.cs">
+      <DependentUpon>LyncCreateUser.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Lync\LyncEditUser.ascx.cs">
+      <DependentUpon>LyncEditUser.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Lync\LyncEditUser.ascx.designer.cs">
+      <DependentUpon>LyncEditUser.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Lync\LyncFederationDomains.ascx.cs">
+      <DependentUpon>LyncFederationDomains.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Lync\LyncFederationDomains.ascx.designer.cs">
+      <DependentUpon>LyncFederationDomains.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Lync\LyncUserPlans.ascx.cs">
+      <DependentUpon>LyncUserPlans.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Lync\LyncUserPlans.ascx.designer.cs">
+      <DependentUpon>LyncUserPlans.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Lync\LyncUsers.ascx.cs">
+      <DependentUpon>LyncUsers.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Lync\LyncUsers.ascx.designer.cs">
+      <DependentUpon>LyncUsers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Lync\UserControls\LyncUserPlanSelector.ascx.cs">
+      <DependentUpon>LyncUserPlanSelector.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Lync\UserControls\LyncUserPlanSelector.ascx.designer.cs">
+      <DependentUpon>LyncUserPlanSelector.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ProviderControls\hMailServer5_EditAccount.ascx.cs">
       <DependentUpon>hMailServer5_EditAccount.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -268,6 +325,13 @@
     </Compile>
     <Compile Include="ProviderControls\hMailServer5_Settings.ascx.designer.cs">
       <DependentUpon>hMailServer5_Settings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\Lync_Settings.ascx.cs">
+      <DependentUpon>Lync_Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\Lync_Settings.ascx.designer.cs">
+      <DependentUpon>Lync_Settings.ascx</DependentUpon>
     </Compile>
     <Compile Include="ScheduleTaskControls\NotifyOverusedDatabases.ascx.cs">
       <DependentUpon>NotifyOverusedDatabases.ascx</DependentUpon>
@@ -3690,12 +3754,21 @@
     <Content Include="ExchangeServer\ExchangeMailboxPlans.ascx" />
     <Content Include="ExchangeServer\UserControls\AccountsListWithPermissions.ascx" />
     <Content Include="ExchangeServer\UserControls\MailboxPlanSelector.ascx" />
+    <Content Include="Lync\LyncAddFederationDomain.ascx" />
+    <Content Include="Lync\LyncAddLyncUserPlan.ascx" />
+    <Content Include="Lync\LyncCreateUser.ascx" />
+    <Content Include="Lync\LyncEditUser.ascx" />
+    <Content Include="Lync\LyncFederationDomains.ascx" />
+    <Content Include="Lync\LyncUserPlans.ascx" />
+    <Content Include="Lync\LyncUsers.ascx" />
+    <Content Include="Lync\UserControls\LyncUserPlanSelector.ascx" />
     <Content Include="ProviderControls\hMailServer5_EditAccount.ascx" />
     <Content Include="ProviderControls\hMailServer5_EditDomain.ascx" />
     <Content Include="ProviderControls\hMailServer5_EditForwarding.ascx" />
     <Content Include="ProviderControls\hMailServer5_EditGroup.ascx" />
     <Content Include="ProviderControls\hMailServer5_EditList.ascx" />
     <Content Include="ProviderControls\hMailServer5_Settings.ascx" />
+    <Content Include="ProviderControls\Lync_Settings.ascx" />
     <Content Include="ScheduleTaskControls\NotifyOverusedDatabases.ascx" />
     <Content Include="VPSForPC\MonitoringPage.aspx" />
     <Content Include="VPSForPC\VdcAccountVLanAdd.ascx" />
@@ -4813,6 +4886,14 @@
     </Content>
     <Content Include="ExchangeServer\App_LocalResources\ExchangeAddMailboxPlan.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\ExchangeMailboxPlans.ascx.resx" />
+    <Content Include="Lync\App_LocalResources\LyncAddFederationDomain.ascx.resx" />
+    <Content Include="Lync\App_LocalResources\LyncAddLyncUserPlan.ascx.resx" />
+    <Content Include="Lync\App_LocalResources\LyncCreateUser.ascx.resx" />
+    <Content Include="Lync\App_LocalResources\LyncEditUser.ascx.resx" />
+    <Content Include="Lync\App_LocalResources\LyncFederationDomains.ascx.resx" />
+    <Content Include="Lync\App_LocalResources\LyncUserPlans.ascx.resx" />
+    <Content Include="Lync\App_LocalResources\LyncUsers.ascx.resx" />
+    <Content Include="ProviderControls\App_LocalResources\Lync_Settings.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -5766,7 +5847,9 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Lync\UserControls\App_LocalResources\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
