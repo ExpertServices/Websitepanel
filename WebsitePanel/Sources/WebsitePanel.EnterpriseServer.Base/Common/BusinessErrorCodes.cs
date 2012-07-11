@@ -62,6 +62,7 @@ namespace WebsitePanel.EnterpriseServer
         public const int ERROR_USER_WRONG_USERNAME = -109;
         public const int ERROR_USER_WRONG_PASSWORD = -110;
         public const int ERROR_INVALID_USER_NAME = -111;
+        public const int ERROR_USER_ACCOUNT_NOT_ENOUGH_PERMISSIONS = -112;
         #endregion
 
         #region Packages

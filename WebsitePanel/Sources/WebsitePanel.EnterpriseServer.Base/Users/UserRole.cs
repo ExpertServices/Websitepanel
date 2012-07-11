@@ -37,6 +37,10 @@ namespace WebsitePanel.EnterpriseServer
 	{
 		Administrator = 1,
 		Reseller = 2,
-		User = 3
+		User = 3,
+        ResellerCSR = 4,
+        PlatformCSR = 5,
+        ResellerHelpdesk = 6,
+        PlatformHelpdesk = 7
 	}
 }

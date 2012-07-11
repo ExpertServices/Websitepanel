@@ -10,9 +10,14 @@
 	<Columns>
 		<asp:TemplateField SortExpression="Username" HeaderText="usersListUsername">
 			<ItemTemplate>
-				<asp:hyperlink id=lnkEdit runat="server" NavigateUrl='<%# EditUrl("PeerID", Eval("UserID").ToString(), "edit_peer", "UserID=" + PanelSecurity.SelectedUserId.ToString()) %>'>
+				<asp:hyperlink id="lnkEdit" runat="server" NavigateUrl='<%# EditUrl("PeerID", Eval("UserID").ToString(), "edit_peer", "UserID=" + PanelSecurity.SelectedUserId.ToString()) %>'>
 					<%# Eval("Username") %>
 				</asp:hyperlink>
+			</ItemTemplate>
+		</asp:TemplateField>
+		<asp:TemplateField HeaderText="usersListRole" SortExpression="RoleID">
+			<ItemTemplate>							        
+                <asp:Label runat="server" ID="lblRole" Text='<%# GetRoleName((int) Eval("RoleID")) %>' />
 			</ItemTemplate>
 		</asp:TemplateField>
 		<asp:BoundField DataField="FullName" SortExpression="FullName" HeaderText="usersListName">

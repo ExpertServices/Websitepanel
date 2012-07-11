@@ -399,7 +399,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 // check account
                 result.Result = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive
-                    | DemandAccount.IsReseller);
+                    | DemandAccount.IsResellerCSR);
                 if (result.Result < 0) return result;
 
                 // check if domain exists
@@ -652,7 +652,7 @@ namespace WebsitePanel.EnterpriseServer
             {
                 // check account
                 result.Result = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive
-                    | DemandAccount.IsReseller);
+                    | DemandAccount.IsResellerCSR);
                 if (result.Result < 0) return result;
 
                 int packageId = -1;
