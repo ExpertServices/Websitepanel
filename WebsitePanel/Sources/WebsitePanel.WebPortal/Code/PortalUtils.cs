@@ -331,11 +331,15 @@ namespace WebsitePanel.Portal
                     UserInfo user = authService.GetUserByUsernamePassword(username, password, ipAddress);
                     if (user != null)
                     {
-                        // issue authentication ticket
-                        FormsAuthenticationTicket ticket = CreateAuthTicket(user.Username, user.Password, user.Role, rememberLogin);
-                        SetAuthTicket(ticket, rememberLogin);
+                        if (IsRoleAllowedToLogin(user.Role))
+                        {
+                            // issue authentication ticket
+                            FormsAuthenticationTicket ticket = CreateAuthTicket(user.Username, user.Password, user.Role, rememberLogin);
+                            SetAuthTicket(ticket, rememberLogin);
 
-                        CompleteUserLogin(username, rememberLogin, preferredLocale, theme);
+                            CompleteUserLogin(username, rememberLogin, preferredLocale, theme);
+                        }
+                        else return BusinessErrorCodes.ERROR_USER_ACCOUNT_ROLE_NOT_ALLOWED;
                     }
 
                     return 0;
@@ -346,6 +350,25 @@ namespace WebsitePanel.Portal
                 throw ex;
             }
         }
+
+        private static bool IsRoleAllowedToLogin(UserRole role)
+        {
+
+            string tmp = GetExcludedRolesToLogin();
+
+            if (tmp == null) tmp = string.Empty;
+
+            string roleKey = ((UserRole)role).ToString();
+
+            return !tmp.Contains(roleKey);
+        }
+
+
+        public static string GetExcludedRolesToLogin()
+        {
+            return PortalConfiguration.SiteSettings["ExcludedRolesToLogin"];
+        }
+
 
         private static int GetAuthenticationFormsTimeout()
         {

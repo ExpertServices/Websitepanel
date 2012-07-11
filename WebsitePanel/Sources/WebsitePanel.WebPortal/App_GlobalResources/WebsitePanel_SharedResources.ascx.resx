@@ -5134,4 +5134,11 @@
   <data name="Error.LYNC_ADD_PLAN" xml:space="preserve">
     <value>Error creating organization plan. See audit log for more details.</value>
   </data>
+  <data name="Error.ERROR_USER_ACCOUNT_NOT_ENOUGH_PERMISSIONS" xml:space="preserve">
+    <value>User has not enough permissions to do this task.</value>
+  </data>
+  <data name="Error.ERROR_USER_ACCOUNT_ROLE_NOT_ALLOWED" xml:space="preserve">
+    <value>Wrong user name or password have been specified or account is locked.</value>
+  </data>
+
 </root>
