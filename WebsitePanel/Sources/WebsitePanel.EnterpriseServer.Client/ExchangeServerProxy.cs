@@ -20,14 +20,12 @@ namespace WebsitePanel.EnterpriseServer {
     using System.Diagnostics;
     using System.Data;
 
-
     using WebsitePanel.Providers;
     using WebsitePanel.Providers.Common;
     using WebsitePanel.Providers.HostedSolution;
     using WebsitePanel.Providers.ResultObjects;
 
-    
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -70,6 +68,8 @@ namespace WebsitePanel.EnterpriseServer {
         private System.Threading.SendOrPostCallback GetAccountsPagedOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetAccountsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetExchangeAccountByMailboxPlanIdOperationCompleted;
         
         private System.Threading.SendOrPostCallback SearchAccountsOperationCompleted;
         
@@ -250,6 +250,9 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         public event GetAccountsCompletedEventHandler GetAccountsCompleted;
+        
+        /// <remarks/>
+        public event GetExchangeAccountByMailboxPlanIdCompletedEventHandler GetExchangeAccountByMailboxPlanIdCompleted;
         
         /// <remarks/>
         public event SearchAccountsCompletedEventHandler SearchAccountsCompleted;
@@ -1334,6 +1337,50 @@ namespace WebsitePanel.EnterpriseServer {
             if ((this.GetAccountsCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.GetAccountsCompleted(this, new GetAccountsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetExchangeAccountByMailboxPlanId", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ExchangeAccount[] GetExchangeAccountByMailboxPlanId(int itemId, int mailboxPlanId) {
+            object[] results = this.Invoke("GetExchangeAccountByMailboxPlanId", new object[] {
+                        itemId,
+                        mailboxPlanId});
+            return ((ExchangeAccount[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetExchangeAccountByMailboxPlanId(int itemId, int mailboxPlanId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetExchangeAccountByMailboxPlanId", new object[] {
+                        itemId,
+                        mailboxPlanId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public ExchangeAccount[] EndGetExchangeAccountByMailboxPlanId(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ExchangeAccount[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetExchangeAccountByMailboxPlanIdAsync(int itemId, int mailboxPlanId) {
+            this.GetExchangeAccountByMailboxPlanIdAsync(itemId, mailboxPlanId, null);
+        }
+        
+        /// <remarks/>
+        public void GetExchangeAccountByMailboxPlanIdAsync(int itemId, int mailboxPlanId, object userState) {
+            if ((this.GetExchangeAccountByMailboxPlanIdOperationCompleted == null)) {
+                this.GetExchangeAccountByMailboxPlanIdOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetExchangeAccountByMailboxPlanIdOperationCompleted);
+            }
+            this.InvokeAsync("GetExchangeAccountByMailboxPlanId", new object[] {
+                        itemId,
+                        mailboxPlanId}, this.GetExchangeAccountByMailboxPlanIdOperationCompleted, userState);
+        }
+        
+        private void OnGetExchangeAccountByMailboxPlanIdOperationCompleted(object arg) {
+            if ((this.GetExchangeAccountByMailboxPlanIdCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetExchangeAccountByMailboxPlanIdCompleted(this, new GetExchangeAccountByMailboxPlanIdCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -4899,6 +4946,32 @@ namespace WebsitePanel.EnterpriseServer {
         private object[] results;
         
         internal GetAccountsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ExchangeAccount[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ExchangeAccount[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void GetExchangeAccountByMailboxPlanIdCompletedEventHandler(object sender, GetExchangeAccountByMailboxPlanIdCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetExchangeAccountByMailboxPlanIdCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetExchangeAccountByMailboxPlanIdCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }

@@ -944,6 +944,13 @@ namespace WebsitePanel.EnterpriseServer
 				DataProvider.GetExchangeAccounts(itemId, (int)accountType));
 		}
 
+
+        public static List<ExchangeAccount> GetExchangeAccountByMailboxPlanId(int itemId, int mailboxPlanId)
+        {
+            return ObjectUtils.CreateListFromDataReader<ExchangeAccount>(DataProvider.GetExchangeAccountByMailboxPlanId(itemId, mailboxPlanId));
+        }
+
+
         public static List<ExchangeAccount> GetExchangeMailboxes(int itemId)
         {
             return ObjectUtils.CreateListFromDataReader<ExchangeAccount>(DataProvider.GetExchangeMailboxes(itemId));

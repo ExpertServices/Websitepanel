@@ -35,6 +35,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
     {
 
         private string mailboxPlanToSelect;
+        private bool addNone;
 
         public string MailboxPlanId
         {
@@ -54,6 +55,13 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 }
             }
         }
+
+        public bool AddNone
+        {
+            get { return ViewState["AddNone"] != null ? (bool)ViewState["AddNone"] : false; }
+            set { ViewState["AddNone"] = value; }
+        }
+
 
         public int MailboxPlansCount
         {
@@ -85,20 +93,28 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 ddlMailboxPlan.Items.Add(li);
             }
 
-            foreach (ListItem li in ddlMailboxPlan.Items)
+            if (AddNone)
             {
-                if (li.Value == mailboxPlanToSelect)
-                {
-                    ddlMailboxPlan.ClearSelection();
-                    li.Selected = true;
-                    break;
-                }
+                ListItem li = new ListItem();
+                li.Text = "[None]";
+                li.Value = "-1";
+                li.Selected = false;
+                ddlMailboxPlan.Items.Add(li);
             }
 
-        }
 
-        protected void ddlMailboxPlan_SelectedIndexChanged(object sender, EventArgs e)
-        {
+            if (!string.IsNullOrEmpty(mailboxPlanToSelect))
+            {
+                foreach (ListItem li in ddlMailboxPlan.Items)
+                {
+                    if (li.Value == mailboxPlanToSelect)
+                    {
+                        ddlMailboxPlan.ClearSelection();
+                        li.Selected = true;
+                        break;
+                    }
+                }
+            }
 
         }
     }

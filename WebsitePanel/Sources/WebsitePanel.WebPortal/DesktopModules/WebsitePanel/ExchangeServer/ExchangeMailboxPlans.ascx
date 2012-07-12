@@ -3,6 +3,8 @@
 <%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/QuotaViewer.ascx" TagName="QuotaViewer" TagPrefix="wsp" %>
+<%@ Register Src="../UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/MailboxPlanSelector.ascx" TagName="MailboxPlanSelector" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
@@ -62,7 +64,44 @@
 				        <asp:Button ID="btnSetDefaultMailboxPlan" runat="server" meta:resourcekey="btnSetDefaultMailboxPlan"
                             Text="Set Default Mailboxplan" CssClass="Button1" OnClick="btnSetDefaultMailboxPlan_Click" />
                     </div>
-				    
+
+					<wsp:CollapsiblePanel id="secMainTools" runat="server" IsCollapsed="true" TargetControlID="ToolsPanel" meta:resourcekey="secMainTools" Text="Mailbox plan maintenance">
+					</wsp:CollapsiblePanel>
+					<asp:Panel ID="ToolsPanel" runat="server" Height="0" Style="overflow: hidden;">
+						<table id="tblMaintenance" runat="server" cellpadding="10">
+					        <tr>
+					            <td class="FormLabel150"><asp:Localize ID="lblSourcePlan" runat="server" meta:resourcekey="locSourcePlan" Text="Replace"></asp:Localize></td>
+					            <td>                                
+                                    <wsp:MailboxPlanSelector ID="mailboxPlanSelectorSource" runat="server" AddNone="true"/>
+                                </td>
+					        </tr>
+					        <tr>
+					            <td class="FormLabel150"><asp:Localize ID="lblTargetPlan" runat="server" meta:resourcekey="locTargetPlan" Text="With"></asp:Localize></td>
+					            <td>                                
+                                    <wsp:MailboxPlanSelector ID="mailboxPlanSelectorTarget" runat="server" AddNone="false"/>
+                                </td>
+					        </tr>
+                            <tr>
+                                <td>
+                                </td>
+                                <td>
+                                    <asp:TextBox ID="txtStatus" runat="server" CssClass="TextBox200" MaxLength="128" ReadOnly="true"></asp:TextBox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                </td>
+                            </tr>
+						</table>
+				        <div class="FormFooterClean">
+					        <asp:Button id="btnSave" runat="server" Text="Stamp mailboxes" CssClass="Button1"
+							    meta:resourcekey="btnSave" OnClick="btnSave_Click" OnClientClick = "ShowProgressDialog('Stamping mailboxes, this might take a while ...');"> </asp:Button>
+				        </div>
+
+
+					</asp:Panel>
+
+		    
 				</div>
 			</div>
 			<div class="Right">

@@ -175,6 +175,14 @@ namespace WebsitePanel.EnterpriseServer
             return ExchangeServerController.GetAccounts(itemId, accountType);
         }
 
+
+        [WebMethod]
+        public List<ExchangeAccount> GetExchangeAccountByMailboxPlanId(int itemId, int mailboxPlanId)
+        {
+            return ExchangeServerController.GetExchangeAccountByMailboxPlanId(itemId, mailboxPlanId);
+        }
+
+
         [WebMethod]
         public List<ExchangeAccount> SearchAccounts(int itemId,
             bool includeMailboxes, bool includeContacts, bool includeDistributionLists,

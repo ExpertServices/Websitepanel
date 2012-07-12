@@ -820,7 +820,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive
-                | DemandAccount.IsReseller);
+                | DemandAccount.IsResellerCSR);
             if (accountCheck < 0) return accountCheck;
 
             List<PackageInfo> packages = new List<PackageInfo>();

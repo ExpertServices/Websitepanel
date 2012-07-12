@@ -41,8 +41,9 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 // bind mailboxplans
                 BindMailboxPlans();
-            }
 
+                txtStatus.Visible = false;
+            }
         }
 
         public string GetMailboxPlanDisplayUrl(string MailboxPlanId)
@@ -65,6 +66,9 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 btnSetDefaultMailboxPlan.Enabled = false;
             }
+
+            btnSave.Enabled = (gvMailboxPlans.Rows.Count >= 1);
+
         }
 
         public string IsChecked(bool val)
@@ -120,6 +124,32 @@ namespace WebsitePanel.Portal.ExchangeServer
             catch (Exception ex)
             {
                 ShowErrorMessage("EXCHANGE_SET_DEFAULT_MAILBOXPLAN", ex);
+            }
+        }
+
+        protected void btnSave_Click(object sender, EventArgs e)
+        {
+            txtStatus.Visible = true;
+
+            try
+            {
+                ExchangeAccount[] Accounts = ES.Services.ExchangeServer.GetExchangeAccountByMailboxPlanId(PanelRequest.ItemID, Convert.ToInt32(mailboxPlanSelectorSource.MailboxPlanId));
+
+                foreach (ExchangeAccount a in Accounts)
+                {
+                    txtStatus.Text = "Completed";
+                    int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(PanelRequest.ItemID, a.AccountId, Convert.ToInt32(mailboxPlanSelectorTarget.MailboxPlanId));
+                    if (result < 0)
+                    {
+                        txtStatus.Text = "Error: " + a.AccountName;
+                        break;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage("EXCHANGE_FAILED_TO_STAMP", ex);
             }
         }
     }

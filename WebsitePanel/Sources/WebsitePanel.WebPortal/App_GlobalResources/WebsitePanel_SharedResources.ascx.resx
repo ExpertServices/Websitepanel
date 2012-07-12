@@ -5140,5 +5140,10 @@
   <data name="Error.ERROR_USER_ACCOUNT_ROLE_NOT_ALLOWED" xml:space="preserve">
     <value>Wrong user name or password have been specified or account is locked.</value>
   </data>
-
+  <data name="Error.EXCHANGE_SET_DEFAULT_MAILBOXPLAN" xml:space="preserve">
+    <value>Failed to set default mailbox plan.</value>
+  </data>
+  <data name="Error.EXCHANGE_FAILED_TO_STAMP" xml:space="preserve">
+    <value>Failed to stamp mailbox with a mailbox plan.</value>
+  </data>
 </root>

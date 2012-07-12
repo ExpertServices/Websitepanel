@@ -2303,6 +2303,18 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
+        public static IDataReader GetExchangeAccountByMailboxPlanId(int itemId, int MailboxPlanId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetExchangeAccountByMailboxPlanId",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@MailboxPlanId", MailboxPlanId)
+            );
+        }
+
+
 		public static IDataReader GetExchangeAccountEmailAddresses(int accountId)
 		{
 			return SqlHelper.ExecuteReader(
