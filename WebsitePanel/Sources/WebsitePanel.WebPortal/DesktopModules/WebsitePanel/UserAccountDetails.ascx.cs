@@ -97,7 +97,7 @@ namespace WebsitePanel.Portal
                 lnkChangePassword.Visible = !((PanelSecurity.SelectedUserId == PanelSecurity.EffectiveUserId) && PanelSecurity.LoggedUser.IsPeer);
 
                 lnkDelete.NavigateUrl = EditUrl("UserID", PanelSecurity.SelectedUserId.ToString(), "delete");
-                if (PanelSecurity.LoggedUser.Role != UserRole.Reseller) lnkDelete.Visible = false;
+                if ((PanelSecurity.LoggedUser.Role != UserRole.Reseller) | (PanelSecurity.LoggedUser.Role != UserRole.Administrator)) lnkDelete.Visible = false;
                 else lnkDelete.Visible = (PanelSecurity.SelectedUserId != PanelSecurity.EffectiveUserId);
             }
         }
