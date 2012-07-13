@@ -275,6 +275,7 @@ WHERE
 	E.AccountType IN (1,5) 
 RETURN
 END
+GO
 
 
 
@@ -10677,49 +10678,49 @@ CREATE TABLE [dbo].[ResourceGroups](
 )
 
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (1, N'OS', 1, N'WebsitePanel.EnterpriseServer.OperatingSystemController', 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (1, N'OS', 1, N'WebsitePanel.EnterpriseServer.OperatingSystemController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (2, N'Web', 2, N'WebsitePanel.EnterpriseServer.WebServerController', 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (2, N'Web', 2, N'WebsitePanel.EnterpriseServer.WebServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (3, N'FTP', 3, N'WebsitePanel.EnterpriseServer.FtpServerController', 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (3, N'FTP', 3, N'WebsitePanel.EnterpriseServer.FtpServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (4, N'Mail', 4, N'WebsitePanel.EnterpriseServer.MailServerController', 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (4, N'Mail', 4, N'WebsitePanel.EnterpriseServer.MailServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (5, N'MsSQL2000', 8, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (5, N'MsSQL2000', 8, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (6, N'MySQL4', 12, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (6, N'MySQL4', 12, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (7, N'DNS', 17, N'WebsitePanel.EnterpriseServer.DnsServerController', 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (7, N'DNS', 17, N'WebsitePanel.EnterpriseServer.DnsServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (8, N'Statistics', 18, N'WebsitePanel.EnterpriseServer.StatisticsServerController', 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (8, N'Statistics', 18, N'WebsitePanel.EnterpriseServer.StatisticsServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (9, N'SharePoint', 14, N'WebsitePanel.EnterpriseServer.SharePointServerController', 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (9, N'SharePoint', 14, N'WebsitePanel.EnterpriseServer.SharePointServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (10, N'MsSQL2005', 9, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (10, N'MsSQL2005', 9, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (11, N'MySQL5', 13, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (11, N'MySQL5', 13, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (12, N'Exchange', 5, NULL, 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (12, N'Exchange', 5, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (13, N'Hosted Organizations', 6, NULL, 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (13, N'Hosted Organizations', 6, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (20, N'Hosted SharePoint', 15, N'WebsitePanel.EnterpriseServer.HostedSharePointServerController', 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (20, N'Hosted SharePoint', 15, N'WebsitePanel.EnterpriseServer.HostedSharePointServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (21, N'Hosted CRM', 16, NULL, 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (21, N'Hosted CRM', 16, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (22, N'MsSQL2008', 10, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (22, N'MsSQL2008', 10, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (23, N'MsSQL2012', 11, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (23, N'MsSQL2012', 11, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (30, N'VPS', 19, NULL, 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (30, N'VPS', 19, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (31, N'BlackBerry', 21, NULL, 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (31, N'BlackBerry', 21, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (32, N'OCS', 22, NULL, 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (32, N'OCS', 22, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (41, N'Lync',23, NULL, 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (41, N'Lync',23, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (40, N'VPSForPC', 20, NULL, 1)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (40, N'VPSForPC', 20, NULL, 1)
 GO
 SET ANSI_NULLS ON
 GO
@@ -20298,16 +20299,6 @@ INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [R
 GO
 INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (17, 4, 12, N'CNAME', N'owa', N'', 0)
 GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (18, 1, 33, N'A', N'smtp', N'[IP]', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (19, 2, 33, N'MX', N'', N'smtp.[DOMAIN_NAME]', 10)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (20, 3, 33, N'CNAME', N'autodiscover', N'', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (21, 4, 33, N'CNAME', N'owa', N'', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (22, 5, 33, N'CNAME', N'ecp', N'', 0)
-GO
 SET IDENTITY_INSERT [dbo].[ResourceGroupDnsRecords] OFF
 GO
 SET ANSI_NULLS ON
@@ -24728,10 +24719,6 @@ GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (204, N'UserName', N'admin')
 GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (204, N'UtilityPath', N'C:\Program Files\Research In Motion\BlackBerry Enterprise Server Resource Kit\BlackBerry Enterprise Server User Administration Tool')
-GO
-INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (207, N'ecpURL', N'http://ecp.[DOMAIN_NAME]')
-GO
-INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (207, N'location', N'en-us')
 GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (300, N'CpuLimit', N'100')
 GO
@@ -45499,35 +45486,7 @@ ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[ScheduleParameters] CHECK CONSTRAINT [FK_ScheduleParameters_Schedule]
 GO
-ALTER TABLE dbo.ExchangeMailboxPlans ADD CONSTRAINT
-	IX_ExchangeMailboxPlans UNIQUE NONCLUSTERED 
-	(
-	MailboxPlanId
-	) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-GO
-ALTER TABLE dbo.ExchangeMailboxPlans ADD CONSTRAINT
-	FK_ExchangeMailboxPlans_ExchangeOrganizations FOREIGN KEY
-	(
-	ItemID
-	) REFERENCES dbo.ExchangeOrganizations
-	(
-	ItemID
-	) ON UPDATE  NO ACTION 
-	 ON DELETE  CASCADE 
-GO
-
-ALTER TABLE [dbo].[ExchangeAccounts]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeAccounts_ExchangeMailboxPlans] FOREIGN KEY([MailboxPlanId])
-REFERENCES [dbo].[ExchangeMailboxPlans] ([MailboxPlanId])
-GO
-ALTER TABLE [dbo].[ExchangeAccounts] CHECK CONSTRAINT [FK_ExchangeAccounts_ExchangeMailboxPlans]
-GO
-ALTER TABLE [dbo].[ExchangeAccounts]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeAccounts_ServiceItems] FOREIGN KEY([ItemID])
-REFERENCES [dbo].[ServiceItems] ([ItemID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[ExchangeAccounts] CHECK CONSTRAINT [FK_ExchangeAccounts_ServiceItems]
-GO
 ALTER TABLE [dbo].[ExchangeAccounts] ADD  CONSTRAINT [DF__ExchangeA__Creat__59B045BD]  DEFAULT (getdate()) FOR [CreatedDate]
 GO
 ALTER TABLE [dbo].[HostingPlans]  WITH CHECK ADD  CONSTRAINT [FK_HostingPlans_Packages] FOREIGN KEY([PackageID])
@@ -45735,18 +45694,21 @@ ALTER TABLE [dbo].[BlackBerryUsers] CHECK CONSTRAINT [FK_BlackBerryUsers_Exchang
 GO
 ALTER TABLE [dbo].[BlackBerryUsers] ADD  CONSTRAINT [DF_BlackBerryUsers_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
 GO
+
+ALTER TABLE [dbo].[ExchangeAccounts]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeAccounts_ServiceItems] FOREIGN KEY([ItemID])
+REFERENCES [dbo].[ServiceItems] ([ItemID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[ExchangeAccounts] CHECK CONSTRAINT [FK_ExchangeAccounts_ServiceItems]
+GO
+
 ALTER TABLE [dbo].[ExchangeOrganizations]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeOrganizations_ServiceItems] FOREIGN KEY([ItemID])
 REFERENCES [dbo].[ServiceItems] ([ItemID])
 ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[ExchangeOrganizations] CHECK CONSTRAINT [FK_ExchangeOrganizations_ServiceItems]
 GO
-ALTER TABLE [dbo].[ExchangeOrganizations]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeOrganizations_ExchangeMailboxPlans] FOREIGN KEY([ItemID])
-REFERENCES [dbo].[ExchangeMailboxPlans] ([ItemID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[ExchangeOrganizations] CHECK CONSTRAINT [FK_ExchangeOrganizations_ExchangeMailboxPlans]
-GO
+
 ALTER TABLE [dbo].[ExchangeOrganizationDomains]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeOrganizationDomains_ServiceItems] FOREIGN KEY([ItemID])
 REFERENCES [dbo].[ServiceItems] ([ItemID])
 ON DELETE CASCADE
@@ -45942,12 +45904,14 @@ ALTER TABLE [dbo].[Servers] ADD  CONSTRAINT [DF_Servers_VirtualServer]  DEFAULT 
 GO
 ALTER TABLE [dbo].[Servers] ADD  CONSTRAINT [DF_Servers_ADEnabled]  DEFAULT ((0)) FOR [ADEnabled]
 GO
+
 ALTER TABLE [dbo].[ResourceGroupDnsRecords]  WITH CHECK ADD  CONSTRAINT [FK_ResourceGroupDnsRecords_ResourceGroups] FOREIGN KEY([GroupID])
 REFERENCES [dbo].[ResourceGroups] ([GroupID])
 ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[ResourceGroupDnsRecords] CHECK CONSTRAINT [FK_ResourceGroupDnsRecords_ResourceGroups]
 GO
+
 ALTER TABLE [dbo].[ResourceGroupDnsRecords] ADD  CONSTRAINT [DF_ResourceGroupDnsRecords_RecordOrder]  DEFAULT ((1)) FOR [RecordOrder]
 GO
 ALTER TABLE [dbo].[ecProduct]  WITH CHECK ADD  CONSTRAINT [FK_ecProduct_ecProductType] FOREIGN KEY([TypeID])
@@ -46150,6 +46114,25 @@ REFERENCES [dbo].[Services] ([ServiceID])
 ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[ServiceProperties] CHECK CONSTRAINT [FK_ServiceProperties_Services]
+GO
+
+ALTER TABLE dbo.ExchangeMailboxPlans ADD CONSTRAINT
+	IX_ExchangeMailboxPlans UNIQUE NONCLUSTERED 
+	(
+	MailboxPlanId
+	) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[ExchangeAccounts]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeAccounts_ExchangeMailboxPlans] FOREIGN KEY([MailboxPlanId])
+REFERENCES [dbo].[ExchangeMailboxPlans] ([MailboxPlanId])
+GO
+ALTER TABLE [dbo].[ExchangeAccounts] CHECK CONSTRAINT [FK_ExchangeAccounts_ExchangeMailboxPlans]
+GO
+
+ALTER TABLE [dbo].[ExchangeMailboxPlans]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeMailboxPlans_ExchangeOrganizations] FOREIGN KEY([ItemID])
+REFERENCES [dbo].[ExchangeOrganizations] ([ItemID])
+ON DELETE CASCADE
 GO
 
 ALTER TABLE [dbo].[LyncUsers] ADD  CONSTRAINT [DF_LyncUsers_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]

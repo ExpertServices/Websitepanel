@@ -1005,11 +1005,11 @@ GO
 IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ResourceGroups' AND COLS.name='ShowGroup')
 BEGIN
 ALTER TABLE [dbo].[ResourceGroups] ADD [ShowGroup] [bit] NULL
-
-UPDATE [dbo].[ResourceGroups] SET ShowGRoup=1 
 END
 GO
 
+UPDATE [dbo].[ResourceGroups] SET ShowGroup=1 
+GO
 
 
 ALTER PROCEDURE [dbo].[AddDnsRecord]
@@ -1718,20 +1718,21 @@ CREATE TABLE [dbo].[ExchangeMailboxPlans](
 ) ON [PRIMARY]
 
 /****** Object:  Table [dbo].[ExchangeAccounts]    ******/
+ALTER TABLE [dbo].[ExchangeAccounts] ALTER COLUMN	[AccountName] [nvarchar](300) COLLATE Latin1_General_CI_AS NOT NULL
+
+/****** Object:  Table [dbo].[ExchangeAccounts]    ******/
+ALTER TABLE [dbo].[ExchangeAccounts] ADD	[MailboxPlanId] int NULL
+
+/****** Object:  Table [dbo].[ExchangeAccounts]    ******/
 ALTER TABLE [dbo].[ExchangeAccounts]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeAccounts_ExchangeMailboxPlans] FOREIGN KEY([MailboxPlanId])
 REFERENCES [dbo].[ExchangeMailboxPlans] ([MailboxPlanId])
 
-/****** Object:  Table [dbo].[ExchangeAccounts]    ******/
-ALTER TABLE [dbo].[ExchangeOrganizations] CHECK CONSTRAINT [FK_ExchangeOrganizations_ExchangeMailboxPlans]
+ALTER TABLE [dbo].[ExchangeAccounts] CHECK CONSTRAINT [FK_ExchangeAccounts_ExchangeMailboxPlans]
 
 /****** Object:  Table [dbo].[ExchangeAccounts]    ******/
-ALTER TABLE [dbo].[ExchangeOrganizations]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeOrganizations_ExchangeMailboxPlans] FOREIGN KEY([ItemID])
-REFERENCES [dbo].[ExchangeMailboxPlans] ([ItemID])
+ALTER TABLE [dbo].[ExchangeMailboxPlans]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeMailboxPlans_ExchangeOrganizations] FOREIGN KEY([ItemID])
+REFERENCES [dbo].[ExchangeOrganizations] ([ItemID])
 ON DELETE CASCADE
-
-/****** Object:  Table [dbo].[ExchangeAccounts]    ******/
-ALTER TABLE [dbo].[ExchangeAccounts]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeAccounts_ExchangeMailboxPlans] FOREIGN KEY([MailboxPlanId])
-REFERENCES [dbo].[ExchangeMailboxPlans] ([MailboxPlanId])
 
 /****** Object:  Table [dbo].[ExchangeAccounts]    ******/
 ALTER TABLE dbo.ExchangeMailboxPlans ADD CONSTRAINT
@@ -1740,21 +1741,7 @@ ALTER TABLE dbo.ExchangeMailboxPlans ADD CONSTRAINT
 	MailboxPlanId
 	) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-/****** Object:  Table [dbo].[ExchangeAccounts]    ******/
-ALTER TABLE dbo.ExchangeMailboxPlans ADD CONSTRAINT
-	FK_ExchangeMailboxPlans_ExchangeOrganizations FOREIGN KEY
-	(
-	ItemID
-	) REFERENCES dbo.ExchangeOrganizations
-	(
-	ItemID
-	) ON UPDATE  NO ACTION 
-	 ON DELETE  CASCADE 
 END
-GO
-
-/****** Object:  Table [dbo].[ExchangeAccounts]    ******/
-ALTER TABLE [dbo].[ExchangeAccounts] ALTER COLUMN	[AccountName] [nvarchar](300) COLLATE Latin1_General_CI_AS NOT NULL
 GO
 
 /****** Object:  Table [dbo].[ExchangeAccounts]    Extend Exchange Accounts with MailboxplanID ******/
@@ -3583,7 +3570,7 @@ SELECT
 	ISNULL(HPR.CalculateBandwidth, 1) AS CalculateBandwidth
 FROM ResourceGroups AS RG 
 LEFT OUTER JOIN HostingPlanResources AS HPR ON RG.GroupID = HPR.GroupID AND HPR.PlanID = @PlanID
-WHERE (ShowGroup = 1)
+WHERE (RG.ShowGroup = 1)
 ORDER BY RG.GroupOrder
 
 -- get quotas by groups
