@@ -59,8 +59,6 @@ namespace WebsitePanel.Portal
                 "edit_settings", "SettingsName=ChildSpacesFolder", "SpaceID=" + PanelSecurity.PackageId.ToString());
 			lnkExchangeServer.NavigateUrl = EditUrl("SettingsControl", "SpaceSettingsExchangeServer",
 				"edit_settings", "SettingsName=ExchangeServer", "SpaceID=" + PanelSecurity.PackageId.ToString());
-            lnkExchangeHostedEdition.NavigateUrl = EditUrl("SettingsControl", "SpaceSettingsExchangeHostedEdition",
-                "edit_settings", "SettingsName=ExchangeHostedEdition", "SpaceID=" + PanelSecurity.PackageId.ToString());
             lnkVps.NavigateUrl = EditUrl("SettingsControl", "SpaceSettingsVPS",
                 "edit_settings", "SettingsName=VirtualPrivateServers", "SpaceID=" + PanelSecurity.PackageId.ToString());
             lnkVpsForPC.NavigateUrl = EditUrl("SettingsControl", "SpaceSettingsVPSForPC",

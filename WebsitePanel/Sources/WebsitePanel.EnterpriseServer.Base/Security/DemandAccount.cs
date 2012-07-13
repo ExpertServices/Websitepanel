@@ -38,6 +38,10 @@ namespace WebsitePanel.EnterpriseServer
         NotDemo = 0x1,
         IsActive = 0x2,
         IsAdmin = 0x4,
-        IsReseller = 0x8
+        IsReseller = 0x8,
+        IsPlatformCSR = 0x10,
+        IsPlatformHelpdesk = 0x20,
+        IsResellerCSR = 0x40,
+        IsResellerHelpdesk = 0x80,
     }
 }

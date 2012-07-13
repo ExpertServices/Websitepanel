@@ -27,23 +27,24 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class OrganizationCreateOrganization : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
+    public partial class OrganizationCreateOrganization : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            
+        }
 
-		}
+        protected void btnCreate_Click(object sender, EventArgs e)
+        {
+            CreateOrganization();
+        }
 
-		protected void btnCreate_Click(object sender, EventArgs e)
-		{
-			CreateOrganization();
-		}
-
-		private void CreateOrganization()
-		{
+        private void CreateOrganization()
+        {
             if (!Page.IsValid)
                 return;
 
@@ -61,12 +62,12 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "organization_home",
                     "ItemID=" + itemId));
-               
+
             }
             catch (Exception ex)
             {
                 messageBox.ShowErrorMessage("ORGANIZATION_CREATE_ORG", ex);
             }
-		}
-	}
+        }
+    }
 }

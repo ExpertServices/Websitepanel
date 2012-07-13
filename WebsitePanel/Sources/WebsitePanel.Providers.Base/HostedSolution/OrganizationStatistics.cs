@@ -173,6 +173,8 @@ namespace WebsitePanel.Providers.HostedSolution
         public int CreatedOCSUsers { get; set; }
         public int AllocatedOCSUsers { get; set; }
 
+        public int CreatedLyncUsers { get; set; }
+        public int AllocatedLyncUsers { get; set; }
 	}
 }
 

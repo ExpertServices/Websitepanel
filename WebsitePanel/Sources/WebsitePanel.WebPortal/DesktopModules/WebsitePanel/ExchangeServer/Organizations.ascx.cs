@@ -32,53 +32,60 @@ using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class Organizations : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
-			// set display preferences
-			gvOrgs.PageSize = UsersHelper.GetDisplayItemsPerPage();
+    public partial class Organizations : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            // set display preferences
+            gvOrgs.PageSize = UsersHelper.GetDisplayItemsPerPage();
 
-			// visibility
-			chkRecursive.Visible = (PanelSecurity.SelectedUser.Role != UserRole.User);
-			gvOrgs.Columns[2].Visible = gvOrgs.Columns[3].Visible =
-				(PanelSecurity.SelectedUser.Role != UserRole.User) && chkRecursive.Checked;
-		    btnCreate.Enabled = (PanelSecurity.SelectedUser.Role != UserRole.Administrator);
-		}
+            // visibility
+            chkRecursive.Visible = (PanelSecurity.SelectedUser.Role != UserRole.User);
+            gvOrgs.Columns[2].Visible = gvOrgs.Columns[3].Visible = (PanelSecurity.SelectedUser.Role != UserRole.User) && chkRecursive.Checked;
 
-		protected void btnCreate_Click(object sender, EventArgs e)
-		{
-			Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "create_organization"));
-		}
+            if (PanelSecurity.LoggedUser.Role == UserRole.User)
+            {
+                gvOrgs.Columns[2].Visible = gvOrgs.Columns[3].Visible = gvOrgs.Columns[4].Visible = false;
+                btnCreate.Enabled = false;
+            }
+            else
+                if (gvOrgs.Rows.Count > 0) btnCreate.Enabled = false;
 
-		protected void odsOrgsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)
-		{
-			if (e.Exception != null)
-			{
-				messageBox.ShowErrorMessage("GET_ORGS", e.Exception);
-				e.ExceptionHandled = true;
-			}
-		}
+        }
 
-		public string GetOrganizationEditUrl(string itemId)
-		{
-			return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "organization_home",
+        protected void btnCreate_Click(object sender, EventArgs e)
+        {
+            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "create_organization"));
+        }
+
+        protected void odsOrgsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)
+        {
+            if (e.Exception != null)
+            {
+                messageBox.ShowErrorMessage("GET_ORGS", e.Exception);
+                e.ExceptionHandled = true;
+            }
+        }
+
+        public string GetOrganizationEditUrl(string itemId)
+        {
+            return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "organization_home",
                     "ItemID=" + itemId);
-		}
+        }
 
-		public string GetUserHomePageUrl(int userId)
-		{
-			return PortalUtils.GetUserHomePageUrl(userId);
-		}
+        public string GetUserHomePageUrl(int userId)
+        {
+            return PortalUtils.GetUserHomePageUrl(userId);
+        }
 
-		public string GetSpaceHomePageUrl(int spaceId)
-		{
-			return NavigateURL(PortalUtils.SPACE_ID_PARAM, spaceId.ToString());
-		}
+        public string GetSpaceHomePageUrl(int spaceId)
+        {
+            return NavigateURL(PortalUtils.SPACE_ID_PARAM, spaceId.ToString());
+        }
 
         protected void gvOrgs_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-			if (e.CommandName == "DeleteItem")
+            if (e.CommandName == "DeleteItem")
             {
                 // delete organization
                 int itemId = Utils.ParseInt(e.CommandArgument.ToString(), 0);
@@ -95,13 +102,13 @@ namespace WebsitePanel.Portal.ExchangeServer
                     // rebind grid
                     gvOrgs.DataBind();
 
-					orgsQuota.BindQuota();
+                    orgsQuota.BindQuota();
                 }
                 catch (Exception ex)
                 {
-					messageBox.ShowErrorMessage("DELETE_ORG", ex);
+                    messageBox.ShowErrorMessage("DELETE_ORG", ex);
                 }
             }
         }
-	}
+    }
 }

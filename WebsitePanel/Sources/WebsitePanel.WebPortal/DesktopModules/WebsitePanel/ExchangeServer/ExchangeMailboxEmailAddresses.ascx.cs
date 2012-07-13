@@ -40,34 +40,37 @@ using System.Web.UI.HtmlControls;
 
 using EntServer = WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class ExchangeMailboxEmailAddresses : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
-			if (!IsPostBack)
-			{
-				BindEmails();
-			}
-		}
+    public partial class ExchangeMailboxEmailAddresses : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                BindEmails();
+            }
+
+            
+        }
 
         private void BindEmails()
         {
             EntServer.ExchangeEmailAddress[] emails = ES.Services.ExchangeServer.GetMailboxEmailAddresses(
-				PanelRequest.ItemID, PanelRequest.AccountID);
+                PanelRequest.ItemID, PanelRequest.AccountID);
 
-			gvEmails.DataSource = emails;
+            gvEmails.DataSource = emails;
             gvEmails.DataBind();
 
-			lblTotal.Text = emails.Length.ToString();
+            lblTotal.Text = emails.Length.ToString();
 
-			// form title
+            // form title
             ExchangeAccount account = ES.Services.ExchangeServer.GetAccount(PanelRequest.ItemID, PanelRequest.AccountID);
             chkPmmAllowed.Checked = (account.MailboxManagerActions & MailboxManagerActions.EmailAddresses) > 0;
 
-			litDisplayName.Text = account.DisplayName;
+            litDisplayName.Text = account.DisplayName;
 
             //disable buttons if only one e-mail available, it is primary and cannot be deleted
             if (gvEmails.Rows.Count == 1)
@@ -88,7 +91,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             try
             {
                 int result = ES.Services.ExchangeServer.AddMailboxEmailAddress(
-					PanelRequest.ItemID, PanelRequest.AccountID, email.Email);
+                    PanelRequest.ItemID, PanelRequest.AccountID, email.Email);
 
                 if (result < 0)
                 {
@@ -96,16 +99,16 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-				// rebind
-				BindEmails();
+                // rebind
+                BindEmails();
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("EXCHANGE_MAILBOX_ADD_EMAIL", ex);
+                messageBox.ShowErrorMessage("EXCHANGE_MAILBOX_ADD_EMAIL", ex);
             }
 
-			// clear field
-			email.AccountName = "";
+            // clear field
+            email.AccountName = "";
         }
 
         protected void btnSetAsPrimary_Click(object sender, EventArgs e)
@@ -145,14 +148,14 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-				// rebind
-				BindEmails();
+                // rebind
+                BindEmails();
 
-				messageBox.ShowSuccessMessage("EXCHANGE_MAILBOX_SET_DEFAULT_EMAIL");
+                messageBox.ShowSuccessMessage("EXCHANGE_MAILBOX_SET_DEFAULT_EMAIL");
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("EXCHANGE_MAILBOX_SET_DEFAULT_EMAIL", ex);
+                messageBox.ShowErrorMessage("EXCHANGE_MAILBOX_SET_DEFAULT_EMAIL", ex);
             }
         }
 
@@ -185,12 +188,12 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-				// rebind
-				BindEmails();
+                // rebind
+                BindEmails();
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("EXCHANGE_MAILBOX_DELETE_EMAILS", ex);
+                messageBox.ShowErrorMessage("EXCHANGE_MAILBOX_DELETE_EMAILS", ex);
             }
         }
 
@@ -214,5 +217,5 @@ namespace WebsitePanel.Portal.ExchangeServer
                 messageBox.ShowErrorMessage("EXCHANGE_UPDATE_MAILMANAGER", ex);
             }
         }
-	}
+    }
 }

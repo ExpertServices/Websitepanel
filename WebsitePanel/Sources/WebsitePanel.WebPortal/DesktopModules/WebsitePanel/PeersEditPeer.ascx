@@ -44,6 +44,15 @@
 		<tr>
 			<td class="Normal">&nbsp;</td>
 		</tr>
+		<tr id="rowRole" runat="server">
+			<td class="SubHead" valign="top">
+			    <asp:Label ID="lblRole" runat="server" meta:resourcekey="lblRole" Text="Role:"></asp:Label>
+			</td>
+			<td class="NormalBold" valign="top">
+				<asp:DropDownList id="role" runat="server" resourcekey="role" AutoPostBack="true" CssClass="NormalTextBox">
+				</asp:DropDownList>
+			</td>
+		</tr>
 		<tr>
 			<td class="SubHead">
 				<asp:Label ID="lblFirstName" runat="server" meta:resourcekey="lblFirstName" Text="First name:"></asp:Label>
@@ -69,8 +78,7 @@
 				<asp:Label ID="lblEmail" runat="server" meta:resourcekey="lblEmail" Text="E-mail:"></asp:Label>
 			</td>
 			<td class="Normal">
-                <uc2:EmailControl id="txtEmail" runat="server">
-                </uc2:EmailControl>
+                <uc2:EmailControl id="txtEmail" runat="server"></uc2:EmailControl>
 			</td>
 		</tr>
 		<tr>
@@ -78,8 +86,7 @@
 				<asp:Label ID="lblSecondaryEmail" runat="server" meta:resourcekey="lblSecondaryEmail" Text="Secondary e-mail:"></asp:Label>
 			</td>
 			<td class="Normal">
-                <uc2:EmailControl id="txtSecondaryEmail" runat="server" RequiredEnabled="false">
-                </uc2:EmailControl>
+                <uc2:EmailControl id="txtSecondaryEmail" runat="server" RequiredEnabled="false"></uc2:EmailControl>
             </td>
 		</tr>
 		<tr>
@@ -105,8 +112,7 @@
 	</table>
 	
     <wsp:CollapsiblePanel id="headContact" runat="server" IsCollapsed="true"
-        TargetControlID="pnlContact" meta:resourcekey="secContact" Text="Contact">
-    </wsp:CollapsiblePanel>
+        TargetControlID="pnlContact" meta:resourcekey="secContact" Text="Contact"></wsp:CollapsiblePanel>
 	<asp:Panel ID="pnlContact" runat="server" Height="0" style="overflow:hidden;">
 	    <dnc:usercontact id="contact" runat="server"></dnc:usercontact>
 	</asp:Panel>

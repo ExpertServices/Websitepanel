@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnSave.OnClientClick" xml:space="preserve">
     <value>ShowProgressDialog('Updating mailbox settings...');</value>
@@ -133,85 +133,22 @@
     <value>Allow these settings to be managed from &lt;b&gt;Personal Mailbox Manager&lt;/b&gt;</value>
   </data>
   <data name="HSFormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;The General tab displays general information about the mailbox user. Use this tab to view or modify the display name, password, company information, contact information and address. You can also specify whether to disable the mailbox user or hide the mailbox user from Exchange address lists.&lt;/p&gt;</value>
+    <value>&lt;p&gt;The General tab displays general information about the mailbox Use this tab to view or modify the mailbox characteristics such as size and show in your address book in the Exchange address lists. You can also specify whether to disable the mailbox user.&lt;/p&gt;</value>
   </data>
-  <data name="locAddress.Text" xml:space="preserve">
-    <value>Address:</value>
+  <data name="locMailboxplanName.Text" xml:space="preserve">
+    <value>Mailbox plan:</value>
   </data>
-  <data name="locBusinessPhone.Text" xml:space="preserve">
-    <value>Business Phone:</value>
-  </data>
-  <data name="locCity.Text" xml:space="preserve">
-    <value>City:</value>
-  </data>
-  <data name="locCompany.Text" xml:space="preserve">
-    <value>Company:</value>
-  </data>
-  <data name="locCountry.Text" xml:space="preserve">
-    <value>Country/Region:</value>
-  </data>
-  <data name="locDepartment.Text" xml:space="preserve">
-    <value>Department:</value>
-  </data>
-  <data name="locDisplayName.Text" xml:space="preserve">
-    <value>Display Name: *</value>
-  </data>
-  <data name="locFax.Text" xml:space="preserve">
-    <value>Fax:</value>
-  </data>
-  <data name="locFirstName.Text" xml:space="preserve">
-    <value>First Name:</value>
-  </data>
-  <data name="locHomePhone.Text" xml:space="preserve">
-    <value>Home Phone:</value>
-  </data>
-  <data name="locInitials.Text" xml:space="preserve">
-    <value>Initials:</value>
-  </data>
-  <data name="locJobTitle.Text" xml:space="preserve">
-    <value>Job Title:</value>
-  </data>
-  <data name="locLastName.Text" xml:space="preserve">
-    <value>Last Name:</value>
-  </data>
-  <data name="locManager.Text" xml:space="preserve">
-    <value>Manager:</value>
-  </data>
-  <data name="locMobilePhone.Text" xml:space="preserve">
-    <value>Mobile Phone:</value>
-  </data>
-  <data name="locNotes.Text" xml:space="preserve">
-    <value>Notes:</value>
-  </data>
-  <data name="locOffice.Text" xml:space="preserve">
-    <value>Office:</value>
-  </data>
-  <data name="locPager.Text" xml:space="preserve">
-    <value>Pager:</value>
-  </data>
-  <data name="locPassword.Text" xml:space="preserve">
-    <value>Password:</value>
-  </data>
-  <data name="locState.Text" xml:space="preserve">
-    <value>State/Province:</value>
+  <data name="locQuota.Text" xml:space="preserve">
+    <value>Mailbox size:</value>
   </data>
   <data name="locTitle.Text" xml:space="preserve">
     <value>Edit Mailbox</value>
   </data>
-  <data name="locWebPage.Text" xml:space="preserve">
-    <value>Web Page:</value>
+  <data name="secCalendarSettings.Text" xml:space="preserve">
+    <value>Calendar Settings</value>
   </data>
-  <data name="locZip.Text" xml:space="preserve">
-    <value>Zip/Postal Code:</value>
-  </data>
-  <data name="secAddressInfo.Text" xml:space="preserve">
-    <value>Address</value>
-  </data>
-  <data name="secCompanyInfo.Text" xml:space="preserve">
-    <value>Company Information</value>
-  </data>
-  <data name="secContactInfo.Text" xml:space="preserve">
-    <value>Contact Information</value>
+  <data name="secGeneral.Text" xml:space="preserve">
+    <value>General</value>
   </data>
   <data name="Text.PageName" xml:space="preserve">
     <value>Mailboxes</value>

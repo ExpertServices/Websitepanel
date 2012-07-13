@@ -2806,7 +2806,7 @@
     <value>Contacts per Organization</value>
   </data>
   <data name="Quota.Exchange2007.DiskSpace" xml:space="preserve">
-    <value>Max mailbox size, MB</value>
+    <value>Mailbox storage, MB</value>
   </data>
   <data name="Quota.Exchange2007.DistributionLists" xml:space="preserve">
     <value>Distribution Lists per Organization</value>
@@ -2849,6 +2849,18 @@
   </data>
   <data name="Quota.Exchange2007.PublicFolders" xml:space="preserve">
     <value>Public Folders per Organization</value>
+  </data>
+  <data name="Quota.Exchange2007.KeepDeletedItemsDays" xml:space="preserve">
+    <value>Keep Deleted Items (Days)</value>
+  </data>
+  <data name="Quota.Exchange2007.MaxRecipients" xml:space="preserve">
+    <value>Maximum Recipients</value>
+  </data>
+  <data name="Quota.Exchange2007.MaxSendMessageSizeKB" xml:space="preserve">
+    <value>Maximum Send Message Size (Kb)</value>
+  </data>
+  <data name="Quota.Exchange2007.MaxReceiveMessageSizeKB" xml:space="preserve">
+    <value>Maximum Receive Message Size (Kb)</value>
   </data>
   <data name="ResourceGroup.Exchange" xml:space="preserve">
     <value>Hosted Exchange</value>
@@ -4822,137 +4834,11 @@
   <data name="Quota.Web.SSL" xml:space="preserve">
     <value>SSL</value>
   </data>
-  <data name="Quota.ExchangeHostedEdition.Contacts" xml:space="preserve">
-    <value>Contacts</value>
-  </data>
-  <data name="Quota.ExchangeHostedEdition.DistributionLists" xml:space="preserve">
-    <value>Distribution Lists</value>
-  </data>
-  <data name="Quota.ExchangeHostedEdition.Domains" xml:space="preserve">
-    <value>Domains</value>
-  </data>
-  <data name="Quota.ExchangeHostedEdition.Mailboxes" xml:space="preserve">
-    <value>Mailboxes</value>
-  </data>
-  <data name="ReportResourceGroup.ExchangeHostedEdition" xml:space="preserve">
-    <value>Exchange 2010 Hosting Mode</value>
-  </data>
-  <data name="ResourceGroup.ExchangeHostedEdition" xml:space="preserve">
-    <value>Exchange Hosting Mode</value>
-  </data>
-  <data name="Error.EXCHANGE_HOSTED_CREATE_ORGANIZATION" xml:space="preserve">
-    <value>Error creating Exchange organization</value>
-  </data>
-  <data name="Error.EXCHANGE_HOSTED_DELETE_ORGANIZATION" xml:space="preserve">
-    <value>Exchange organization cannot be deleted</value>
-  </data>
-  <data name="Error.EXCHANGE_HOSTED_SEND_SUMMARY" xml:space="preserve">
-    <value>Error sending Exchange organization summary information</value>
-  </data>
-  <data name="ErrorDescription.EXCHANGE_HOSTED_CREATE_ORGANIZATION" xml:space="preserve">
-    <value>Please contact your hosting provider.</value>
-  </data>
-  <data name="ErrorDescription.EXCHANGE_HOSTED_SEND_SUMMARY" xml:space="preserve">
-    <value>Please contact your hosting provider.</value>
-  </data>
   <data name="ServiceItemType.ExchangeOrganization" xml:space="preserve">
     <value>Exchange Organization</value>
   </data>
-  <data name="Success.EXCHANGE_HOSTED_SEND_SUMMARY" xml:space="preserve">
-    <value>Exchange organization summary information has been sent</value>
-  </data>
-  <data name="Warning.EXCHANGE_HOSTED_CONFIRM_DELETE_ORGANIZATION" xml:space="preserve">
-    <value>You have to tick a checkbox to confirm organization deletion</value>
-  </data>
-  <data name="Error.EXCHANGE_HOSTED_ADD_DOMAIN" xml:space="preserve">
-    <value>Organization domain cannot be added</value>
-  </data>
-  <data name="Error.EXCHANGE_HOSTED_CHANGE_QUOTAS" xml:space="preserve">
-    <value>Organization quotas cannot be changed</value>
-  </data>
-  <data name="Error.EXCHANGE_HOSTED_CHANGE_SERVICE_PLAN" xml:space="preserve">
-    <value>Organization Service Plan cannot be changed</value>
-  </data>
-  <data name="Error.EXCHANGE_HOSTED_GET_DOMAINS" xml:space="preserve">
-    <value>Error reading Exchange organization domains</value>
-  </data>
-  <data name="Error.EXCHANGE_HOSTED_GET_ORGANIZATION" xml:space="preserve">
-    <value>Organization details cannot be loaded.</value>
-  </data>
-  <data name="ErrorDescription.EXCHANGE_HOSTED_ADD_DOMAIN" xml:space="preserve">
-    <value>Please contact your hosting provider.</value>
-  </data>
-  <data name="ErrorDescription.EXCHANGE_HOSTED_CHANGE_QUOTAS" xml:space="preserve">
-    <value>Please contact your hosting provider.</value>
-  </data>
-  <data name="ErrorDescription.EXCHANGE_HOSTED_CHANGE_SERVICE_PLAN" xml:space="preserve">
-    <value>Please contact your hosting provider.</value>
-  </data>
-  <data name="ErrorDescription.EXCHANGE_HOSTED_GET_ORGANIZATION" xml:space="preserve">
-    <value>Please contact your hosting provider.</value>
-  </data>
-  <data name="Error.EXCHANGE_HOSTED_DELETE_DOMAIN" xml:space="preserve">
-    <value>Organization domain cannot be deleted</value>
-  </data>
-  <data name="ExchangeHostedEdition.AddDomainAlreadyUsedError" xml:space="preserve">
-    <value>Specified domain name already added into organization.</value>
-  </data>
-  <data name="ExchangeHostedEdition.AddDomainError" xml:space="preserve">
-    <value>Error adding organization domain.</value>
-  </data>
-  <data name="ExchangeHostedEdition.AddDomainExistsError" xml:space="preserve">
-    <value>Specified domain name already exists.</value>
-  </data>
-  <data name="ExchangeHostedEdition.AddDomainQuotaExceededError" xml:space="preserve">
-    <value>Maximum domains quota has been reached.</value>
-  </data>
-  <data name="ExchangeHostedEdition.CreateOrganizationError" xml:space="preserve">
-    <value>Error creating organization. See system logs for detailed messages.</value>
-  </data>
-  <data name="ExchangeHostedEdition.DeleteDomainError" xml:space="preserve">
-    <value>Error deleting organization domain.</value>
-  </data>
-  <data name="ExchangeHostedEdition.DeleteOrganizationError" xml:space="preserve">
-    <value>Error deleting organization. See system logs for detailed messages.</value>
-  </data>
-  <data name="ExchangeHostedEdition.ExchangeServiceNotEnabledError" xml:space="preserve">
-    <value>Exchange Hosting Mode service is not enabled for the hosting space.</value>
-  </data>
-  <data name="ExchangeHostedEdition.GeneralError" xml:space="preserve">
-    <value>General module error.</value>
-  </data>
-  <data name="ExchangeHostedEdition.OfferIdIsNotSetError" xml:space="preserve">
-    <value>Offer ID is not specified on Exchange service settings.</value>
-  </data>
-  <data name="ExchangeHostedEdition.OrganizationNotFoundError" xml:space="preserve">
-    <value>Organization not found.</value>
-  </data>
-  <data name="ExchangeHostedEdition.ProgramIdIsNotSetError" xml:space="preserve">
-    <value>Program ID is not specified on Exchange service settings.</value>
-  </data>
-  <data name="ExchangeHostedEdition.SendOrganizationSummaryError" xml:space="preserve">
-    <value>Error sending organization summary information.</value>
-  </data>
-  <data name="ExchangeHostedEdition.SendOrganizationTemplateNotSetError" xml:space="preserve">
-    <value>Organization summary information template is not set.</value>
-  </data>
-  <data name="ExchangeHostedEdition.UpdateCatchAllError" xml:space="preserve">
-    <value>Error updating catch-all account.</value>
-  </data>
-  <data name="ExchangeHostedEdition.UpdateQuotasError" xml:space="preserve">
-    <value>Error updating organization quotas.</value>
-  </data>
-  <data name="ExchangeHostedEdition.UpdateQuotasWrongQuotaError" xml:space="preserve">
-    <value>One of the specified quotas exceed maximum value allowed.</value>
-  </data>
-  <data name="ExchangeHostedEdition.UpdateServicePlanError" xml:space="preserve">
-    <value>Error changing organization service plan. See system logs for detailed messages.</value>
-  </data>
   <data name="Quota.Mail.DisableSizeEdit" xml:space="preserve">
     <value>Disable Mailbox Size Edit</value>
-  </data>
-  <data name="AuditLogSource.ExchangeHostedEdition" xml:space="preserve">
-    <value>Exchange Hosting Mode</value>
   </data>
   <data name="Text.Unlimited" xml:space="preserve">
     <value>Unlimited</value>
@@ -5115,5 +5001,149 @@
   </data>
   <data name="Quota.HostedSharePoint.UseSharedSSL" xml:space="preserve">
     <value>Use shared SSL Root</value>
+  </data>
+  <data name="Quota.Exchange2007.IsConsumer" xml:space="preserve">
+    <value>Consumer Organization Support</value>
+  </data>
+  <data name="Error.LYNC_DELETE_DOMAIN" xml:space="preserve">
+    <value>Error deleting organization domain name. See audit log for more details.</value>
+  </data>
+  <data name="Success.CREATE_LYNC_USER" xml:space="preserve">
+    <value>Lync successfully enabled for this user</value>
+  </data>
+  <data name="Error.CREATE_LYNC_USER" xml:space="preserve">
+    <value>Cannot enable Lync User. The following errors have been occured:</value>
+  </data>
+  <data name="Success.ADD_LYNC_FEDERATIONDOMAIN" xml:space="preserve">
+    <value>Lync successfully added the federation domain</value>
+  </data>
+  <data name="Error.ADD_LYNC_FEDERATIONDOMAIN" xml:space="preserve">
+    <value>Cannot add federation domain. The following errors have been occured:</value>
+  </data>
+  <data name="Success.DELETE_LYNC_USER" xml:space="preserve">
+    <value>Lync successfully disabled for this user</value>
+  </data>
+  <data name="Error.DELETE_LYNC_USER" xml:space="preserve">
+    <value>Cannot delete Lync User, the following errors have been occured:</value>
+  </data>
+  <data name="Success.UPDATE_LYNC_USER" xml:space="preserve">
+    <value>General Lync User settings have been successfully updated.</value>
+  </data>
+  <data name="Error.UPDATE_LYNC_USER" xml:space="preserve">
+    <value>Error updating general Lync User settings.</value>
+  </data>
+  <data name="Lync.CANNOT_ADD_LYNC_USER" xml:space="preserve">
+    <value>Unable to add Lync user.</value>
+  </data>
+  <data name="Lync.CANNOT_ADD_LYNC_USER_TO_DATABASE" xml:space="preserve">
+    <value>Unable to add Lync User to database.</value>
+  </data>
+  <data name="Lync.CANNOT_CHECK_IF_LYNC_USER_EXISTS" xml:space="preserve">
+    <value>Unable to check quota</value>
+  </data>
+  <data name="Lync.CANNOT_DELETE_LYNC_USER" xml:space="preserve">
+    <value>Unable to delete Lync User.</value>
+  </data>
+  <data name="Lync.CANNOT_DELETE_LYNC_USER_FROM_METADATA" xml:space="preserve">
+    <value>Unable to delete Lync User from metadata.</value>
+  </data>
+  <data name="Lync.CANNOT_GET_LYNC_PROXY" xml:space="preserve">
+    <value>Unable to get Lync proxy.</value>
+  </data>
+  <data name="Lync.CANNOT_GET_USER_GENERAL_SETTINGS" xml:space="preserve">
+    <value>Unable to get user general settings.</value>
+  </data>
+  <data name="Lync.CANNOT_SET_DEFAULT_SETTINGS" xml:space="preserve">
+    <value>Unable to set default settings.</value>
+  </data>
+  <data name="Lync.GET_LYNC_USERS" xml:space="preserve">
+    <value>Unable to get Lync Users.</value>
+  </data>
+  <data name="Lync.GET_LYNC_USER_COUNT" xml:space="preserve">
+    <value>Unable to get Lync Users count.</value>
+  </data>
+  <data name="Lync.USER_FIRST_NAME_IS_NOT_SPECIFIED" xml:space="preserve">
+    <value>User first name is not specified.</value>
+  </data>
+  <data name="Lync.USER_IS_ALREADY_LYNC_USER" xml:space="preserve">
+    <value>Current user account is already enabled for Office Communications Server.</value>
+  </data>
+  <data name="Lync.USER_LAST_NAME_IS_NOT_SPECIFIED" xml:space="preserve">
+    <value>User last name is not specified.</value>
+  </data>
+  <data name="Lync.USER_QUOTA_HAS_BEEN_REACHED" xml:space="preserve">
+    <value>Lync users quota has been reached.</value>
+  </data>
+  <data name="Quota.Lync.Federation" xml:space="preserve">
+    <value>Federation Allowed</value>
+  </data>
+  <data name="Quota.Lync.Users" xml:space="preserve">
+    <value>Lync Users per Organization</value>
+  </data>
+  <data name="Quota.Lync.Conferencing" xml:space="preserve">
+    <value>Conferencing Allowed</value>
+  </data>
+  <data name="Quota.Lync.MaxParticipants" xml:space="preserve">
+    <value>Maximum participants per conference</value>
+  </data>
+  <data name="Quota.Lync.AllowVideo" xml:space="preserve">
+    <value>Conference Video Allowed</value>
+  </data>
+  <data name="Quota.Lync.EnterpriseVoice" xml:space="preserve">
+    <value>Enterprise Voice Allowed</value>
+  </data>
+  <data name="Quota.Lync.EVUsers" xml:space="preserve">
+    <value>Enterprise Voice users</value>
+  </data>
+  <data name="Quota.Lync.EVNational" xml:space="preserve">
+    <value>National Calls Allowed</value>
+  </data>
+  <data name="Quota.Lync.EVMobile" xml:space="preserve">
+    <value>Mobile Calls Allowed</value>
+  </data>
+  <data name="Quota.Lync.EVInternational" xml:space="preserve">
+    <value>International Calls Allowed</value>
+  </data>
+  <data name="ResourceGroup.Lync" xml:space="preserve">
+    <value>Lync Server</value>
+  </data>
+  <data name="Success.UPDATE_LYNC_USER" xml:space="preserve">
+    <value>General Lync User settings have been successfully updated.</value>
+  </data>
+  <data name="Warning.CREATE_LYNC_USER" xml:space="preserve">
+    <value>Lync User has been successfully created but the following errors have been occured:</value>
+  </data>
+  <data name="Warning.ADD_LYNC_FEDERATIONDOMAIN" xml:space="preserve">
+    <value>Lync federation domain has been successfully created but the following errors have been occured:</value>
+  </data>
+  <data name="Warning.DELETE_LYNC_USER" xml:space="preserve">
+    <value>Lync User has been successfully deleted but the following errors have been occured:</value>
+  </data>
+  <data name="Error.LYNC_SET_DEFAULT_PLAN" xml:space="preserve">
+    <value>Error setting default organization lync user plan. See audit log for more details.</value>
+  </data>
+  <data name="AuditLogTask.LYNC_ADD_PLAN" xml:space="preserve">
+    <value>Add organization lync user plan</value>
+  </data>
+  <data name="AuditLogTask.LYNC_DELETE_PLAN" xml:space="preserve">
+    <value>Delete plan</value>
+  </data>
+  <data name="Error.LYNC_DELETE_PLAN" xml:space="preserve">
+    <value>Unable to delete plan. Make sure the plan is not assigned to any user</value>
+  </data>
+  <data name="Error.LYNC_ADD_PLAN" xml:space="preserve">
+    <value>Error creating organization plan. See audit log for more details.</value>
+  </data>
+  <data name="Error.ERROR_USER_ACCOUNT_NOT_ENOUGH_PERMISSIONS" xml:space="preserve">
+    <value>User has not enough permissions to do this task.</value>
+  </data>
+  <data name="Error.ERROR_USER_ACCOUNT_ROLE_NOT_ALLOWED" xml:space="preserve">
+    <value>Wrong user name or password have been specified or account is locked.</value>
+  </data>
+  <data name="Error.EXCHANGE_SET_DEFAULT_MAILBOXPLAN" xml:space="preserve">
+    <value>Failed to set default mailbox plan.</value>
+  </data>
+  <data name="Error.EXCHANGE_FAILED_TO_STAMP" xml:space="preserve">
+    <value>Failed to stamp mailbox with a mailbox plan.</value>
   </data>
 </root>

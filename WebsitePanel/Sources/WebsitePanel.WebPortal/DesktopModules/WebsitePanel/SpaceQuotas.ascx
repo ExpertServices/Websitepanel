@@ -26,6 +26,31 @@
         <td class="SubHead" nowrap><asp:Label ID="lblDomainPointers" runat="server" meta:resourcekey="lblDomainPointers" Text="Domain Pointers:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaDomainPointers" runat="server" QuotaName="OS.DomainPointers" DisplayGauge="True" /></td>
     </tr>
+    <tr ID="pnlUserAccounts" runat="server">
+        <td class="SubHead" nowrap><asp:Label ID="lblUserAccounts" runat="server" meta:resourcekey="lblUserAccounts" Text="User Accounts:"></asp:Label></td>
+        <td class="Normal"><wsp:Quota ID="quotaUserAccounts" runat="server" QuotaName="HostedSolution.Users" DisplayGauge="True" /></td>
+    </tr>
+    <tr ID="pnlMailAccounts" runat="server">
+        <td class="SubHead" nowrap><asp:Label ID="lblMailAccounts" runat="server" meta:resourcekey="lblMailAccounts" Text="Mail Accounts:"></asp:Label></td>
+        <td class="Normal"><wsp:Quota ID="quotaMailAccounts" runat="server" QuotaName="Mail.Accounts" DisplayGauge="True" /></td>
+    </tr>
+    <tr ID="pnlOCSUsers" runat="server">
+        <td class="SubHead" nowrap><asp:Label ID="lblOCSUsers" runat="server" meta:resourcekey="lblOCSUsers" Text="OCS Users:"></asp:Label></td>
+        <td class="Normal"><wsp:Quota ID="quotaOCSUsers" runat="server" QuotaName="OCS.Users" DisplayGauge="True" /></td>
+    </tr>
+    <tr ID="pnlLyncUsers" runat="server">
+        <td class="SubHead" nowrap><asp:Label ID="lblLyncUsers" runat="server" meta:resourcekey="lblLyncUsers" Text="Lync Users:"></asp:Label></td>
+        <td class="Normal"><wsp:Quota ID="quotaLyncUsers" runat="server" QuotaName="Lync.Users" DisplayGauge="True" /></td>
+    </tr>
+
+    <tr ID="pnlBlackBerryUsers" runat="server">
+        <td class="SubHead" nowrap><asp:Label ID="lblBlackBerryUsers" runat="server" meta:resourcekey="lblBlackBerryUsers" Text="BlackBerry Users:"></asp:Label></td>
+        <td class="Normal"><wsp:Quota ID="quotaBlackBerryUsers" runat="server" QuotaName="BlackBerry.Users" DisplayGauge="True" /></td>
+    </tr>
+    <tr ID="pnlSharepointSites" runat="server">
+        <td class="SubHead" nowrap><asp:Label ID="lblSharepointSites" runat="server" meta:resourcekey="lblSharepointSites" Text="Sharepoint Sites:"></asp:Label></td>
+        <td class="Normal"><wsp:Quota ID="quotaSharepointSites" runat="server" QuotaName="HostedSharePoint.Sites" DisplayGauge="True" /></td>
+    </tr>
     <tr ID="pnlWebSites" runat="server">
         <td class="SubHead" nowrap><asp:Label ID="lblWebSites" runat="server" meta:resourcekey="lblWebSites" Text="Web Sites:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaWebSites" runat="server" QuotaName="Web.Sites" DisplayGauge="True" /></td>
@@ -34,9 +59,9 @@
         <td class="SubHead" nowrap><asp:Label ID="lblFtpAccounts" runat="server" meta:resourcekey="lblFtpAccounts" Text="FTP Accounts:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaFtpAccounts" runat="server" QuotaName="FTP.Accounts" DisplayGauge="True"/></td>
     </tr>
-    <tr ID="pnlMailAccounts" runat="server">
-        <td class="SubHead" nowrap><asp:Label ID="lblMailAccounts" runat="server" meta:resourcekey="lblMailAccounts" Text="Mail Accounts:"></asp:Label></td>
-        <td class="Normal"><wsp:Quota ID="quotaMailAccounts" runat="server" QuotaName="Mail.Accounts" DisplayGauge="True" /></td>
+    <tr ID="pnlDatabases" runat="server">
+        <td class="SubHead" nowrap><asp:Label ID="lblDatabases" runat="server" meta:resourcekey="lblDatabases" Text="Databases:"></asp:Label></td>
+        <td class="Normal"><wsp:Quota ID="quotaDatabases" runat="server" QuotaName="MsSQL2008.Databases" DisplayGauge="True"/></td>
     </tr>
 	<tr id="pnlHyperVForPC" runat="server">
 		<td class="SubHead" nowrap><asp:Label ID="lblHyperVForPC" runat="server" meta:resourcekey="lblHyperVForPC" Text="Number of VM:" /></td>

@@ -165,6 +165,7 @@ namespace WebsitePanel.Portal.ProviderControls
 
 			//
 			txtWmSvcServicePort.Text = settings["WmSvc.Port"];
+            txtWmSvcNETBIOS.Text = settings["WmSvc.NETBIOS"];
 			//
 			string wmsvcServiceUrl = settings["WmSvc.ServiceUrl"];
 			//
@@ -235,6 +236,7 @@ namespace WebsitePanel.Portal.ProviderControls
 			settings["ProtectedGroupsFile"] = txtProtectedGroupsFile.Text.Trim();
 			settings["SecureFoldersModuleAssembly"] = txtSecureFoldersModuleAsm.Text.Trim();
 
+            settings["WmSvc.NETBIOS"] = txtWmSvcNETBIOS.Text.Trim();
 			settings["WmSvc.ServiceUrl"] = txtWmSvcServiceUrl.Text.Trim();
 			settings["WmSvc.Port"] = Utils.ParseInt(txtWmSvcServicePort.Text.Trim(), 0).ToString();
 			settings["WmSvc.CredentialsMode"] = ddlWmSvcCredentialsMode.SelectedValue;

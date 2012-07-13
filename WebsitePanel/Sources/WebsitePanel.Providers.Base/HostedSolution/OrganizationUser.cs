@@ -37,6 +37,7 @@ namespace WebsitePanel.Providers.HostedSolution
         private int accountId;
         private int itemId;
         private int packageId;
+        private string subscriberNumber;
 
         private string primaryEmailAddress;
         private string accountPassword;
@@ -297,6 +298,14 @@ namespace WebsitePanel.Providers.HostedSolution
             get { return isBlackBerryUser; }
             set { isBlackBerryUser = value; }
         }
+
+        public string SubscriberNumber
+        {
+            get { return subscriberNumber; }
+            set { subscriberNumber = value; }
+        }
+
+
 
     }
 }

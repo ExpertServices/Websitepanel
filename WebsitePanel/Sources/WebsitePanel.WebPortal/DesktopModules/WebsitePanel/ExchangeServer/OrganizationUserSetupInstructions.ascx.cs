@@ -40,6 +40,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 BindInstructions();
             }
+
         }
 
         private void BindInstructions()
@@ -53,7 +54,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             PackageInfo package = ES.Services.Packages.GetPackage(PanelSecurity.PackageId);
             if (package == null)
                 RedirectSpaceHomePage();
-            
+
             OrganizationUser account = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID,
                                                                                         PanelRequest.AccountID);
             if (account != null)

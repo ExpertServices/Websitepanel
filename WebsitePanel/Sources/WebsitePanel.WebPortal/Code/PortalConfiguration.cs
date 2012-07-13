@@ -343,6 +343,10 @@ namespace WebsitePanel.WebPortal
                         else
                             module.ViewRoles.AddRange(xmlModule.Attributes["viewRoles"].Value.Split(ROLES_DELIMITERS.ToCharArray()));
 
+                        if (xmlModule.Attributes["readOnlyRoles"] != null)
+                            module.ReadOnlyRoles.AddRange(xmlModule.Attributes["readOnlyRoles"].Value.Split(ROLES_DELIMITERS.ToCharArray()));
+
+
                         if (xmlModule.Attributes["editRoles"] == null)
                             module.EditRoles.Add("*");
                         else

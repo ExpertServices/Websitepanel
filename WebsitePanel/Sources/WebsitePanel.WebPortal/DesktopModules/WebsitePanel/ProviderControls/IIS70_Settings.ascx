@@ -312,6 +312,14 @@
                 </asp:DropDownList>
             </td>
 		</tr>
+		<tr>
+		    <td>
+		        <asp:Label ID="Label1" runat="server" meta:resourcekey="lblWmSvcNETBIOS" Text="NETBIOS Domain:"></asp:Label>
+		    </td>
+		    <td class="Normal">
+		        <asp:TextBox runat="server" ID="txtWmSvcNETBIOS" CssClass="NormalTextBox" Width="70px" />
+            </td>
+		</tr>
 	</table>
 </fieldset>
 

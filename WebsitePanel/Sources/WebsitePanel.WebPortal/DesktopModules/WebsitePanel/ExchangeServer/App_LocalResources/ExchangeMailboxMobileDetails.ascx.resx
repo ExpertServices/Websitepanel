@@ -112,11 +112,26 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="btnBack.Text" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="btnCancel.Text" xml:space="preserve">
+    <value>Cancel Pending Wipe Request</value>
+  </data>
+  <data name="btnWipeAllData.OnClientClick" xml:space="preserve">
+    <value>return confirm('Are you sure you want to wipe all data from your device?');</value>
+  </data>
+  <data name="btnWipeAllData.Text" xml:space="preserve">
+    <value>Wipe All Data from Device</value>
+  </data>
+  <data name="HSFormComments.Text" xml:space="preserve">
+    <value>&lt;p&gt;Manage the mobile device here.&lt;/p&gt;&lt;p&gt;If you forget your device password, you can access it here. If you lose your phone or mobile device, you can initiate a remote device wipe to protect your information . You can also cancel a wipe request if it was initiated by accident or the device was found subsequently.&lt;/p&gt;</value>
+  </data>
   <data name="locDeviceAcnowledgeTime.Text" xml:space="preserve">
     <value>Device wipe acnowledge time:</value>
   </data>
@@ -165,37 +180,22 @@
   <data name="locStatus.Text" xml:space="preserve">
     <value>Status:</value>
   </data>
+  <data name="locTitle.Text" xml:space="preserve">
+    <value>Edit Mailbox</value>
+  </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
   </data>
   <data name="PendingWipe" xml:space="preserve">
     <value>Pending wipe</value>
   </data>
+  <data name="Text.PageName" xml:space="preserve">
+    <value>Edit Mailbox</value>
+  </data>
   <data name="Unknown" xml:space="preserve">
     <value>Unknown</value>
   </data>
   <data name="WipeSuccessful" xml:space="preserve">
     <value>Wipe successful</value>
-  </data>
-  <data name="btnBack.Text" xml:space="preserve">
-    <value>Back</value>
-  </data>
-  <data name="btnCancel.Text" xml:space="preserve">
-    <value>Cancel Pending Wipe Request</value>
-  </data>
-  <data name="btnWipeAllData.Text" xml:space="preserve">
-    <value>Wipe All Data from Device</value>
-  </data>
-  <data name="locTitle.Text" xml:space="preserve">
-    <value>Edit Mailbox</value>
-  </data>
-  <data name="Text.PageName" xml:space="preserve">
-    <value>Edit Mailbox</value>
-  </data>
-  <data name="HSFormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;Manage the mobile device here.&lt;/p&gt;&lt;p&gt;If you forget your device password, you can access it here. If you lose your phone or mobile device, you can initiate a remote device wipe to protect your information . You can also cancel a wipe request if it was initiated by accident or the device was found subsequently.&lt;/p&gt;</value>
-  </data>
-  <data name="btnWipeAllData.OnClientClick" xml:space="preserve">
-    <value>return confirm('Are you sure you want to wipe all data from your device?');</value>
   </data>
 </root>

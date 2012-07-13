@@ -7,6 +7,7 @@
 <%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/MailboxPlanSelector.ascx" TagName="MailboxPlanSelector" TagPrefix="wsp" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
@@ -50,7 +51,7 @@
     			            </td>
 					    </tr>					  
 					   </table>
-					   
+                        				   
 					    
 						<table id="NewUserTable"  runat="server">
 						<tr>
@@ -59,6 +60,14 @@
 								<asp:TextBox ID="txtDisplayName" runat="server" CssClass="HugeTextBox200"></asp:TextBox>
 								<asp:RequiredFieldValidator ID="valRequireDisplayName" runat="server" meta:resourcekey="valRequireDisplayName" ControlToValidate="txtDisplayName"
 									ErrorMessage="Enter Display Name" ValidationGroup="CreateMailbox" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
+							</td>
+						</tr>
+						<tr>
+							<td class="FormLabel150"><asp:Localize ID="locSubscriberNumber" runat="server" meta:resourcekey="locSubscriberNumber" Text="Subscriber Number: *"></asp:Localize></td>
+							<td>
+								<asp:TextBox ID="txtSubscriberNumber" runat="server" CssClass="HugeTextBox200"></asp:TextBox>
+								<asp:RequiredFieldValidator ID="valRequireSubscriberNumber" runat="server" meta:resourcekey="valRequireSubscriberNumber" ControlToValidate="txtSubscriberNumber"
+									ErrorMessage="Enter Subscriber Number" ValidationGroup="CreateMailbox" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
 							</td>
 						</tr>
 						<tr>
@@ -91,21 +100,23 @@
 					        <td class="FormLabel150"><asp:Localize ID="Localize1" runat="server" meta:resourcekey="locDisplayName" Text="Display Name: *"></asp:Localize></td>
 					        <td><uc1:UserSelector id="userSelector" runat="server"></uc1:UserSelector></td>
 					    </tr>
+
 					</table>
 					</ContentTemplate>
 					</asp:UpdatePanel>
 					
 				
 					    <table>
-					        <tr>						        
-						        <td class="FormLabel150">						        
-						            <asp:CheckBox ID="chkSendInstructions"  runat="server" meta:resourcekey="chkSendInstructions" Text="Send Setup Instructions" Checked="true" />
-						        </td>
-						        <td><wsp:EmailControl id="sendInstructionEmail" runat="server" RequiredEnabled="true" ValidationGroup="CreateMailbox"></wsp:EmailControl></td>
-						        						        
-						    </tr>						    					
+                            <tr>
+                                <td class="FormLabel150">
+                                    <asp:Localize ID="locMailboxplanName" runat="server" meta:resourcekey="locMailboxplanName" Text="Mailboxplan Name: *"></asp:Localize>
+                                </td>
+                                <td>                                
+                                    <wsp:MailboxPlanSelector ID="mailboxPlanSelector" runat="server" />
+                                </td>
+					        </tr>
 					    </table>
-					
+				
 					
 					
 					<div class="FormFooterClean">

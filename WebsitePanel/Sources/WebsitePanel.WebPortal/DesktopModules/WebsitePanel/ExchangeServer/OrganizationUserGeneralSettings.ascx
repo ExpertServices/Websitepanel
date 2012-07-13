@@ -62,6 +62,10 @@
 						<tr>
 						    <td></td>
 						    <td>
+						        <asp:CheckBox ID="chkSetPassword" runat="server" 
+                                    meta:resourcekey="chkSetPassword" Text="Set Password" 
+                                    oncheckedchanged="chkSetPassword_CheckedChanged" AutoPostBack="True" />
+						        <br />
 						        <asp:CheckBox ID="chkDisable" runat="server" meta:resourcekey="chkDisable" Text="Disable User" />
 						        <br />
 						        <asp:CheckBox ID="chkLocked" runat="server" meta:resourcekey="chkLocked" Text="Lock User" />
@@ -82,6 +86,10 @@
 							<td>
 								<asp:TextBox ID="txtLastName" runat="server" CssClass="TextBox100"></asp:TextBox>
 							</td>
+						</tr>
+						<tr>
+						    <td class="FormLabel150" valign="top"><asp:Localize ID="locSubscriberNumber" runat="server" meta:resourcekey="locSubscriberNumber" ></asp:Localize></td>
+						    <td><asp:TextBox runat="server" ID="txtSubscriberNumber"  CssClass="TextBox200"/></td>
 						</tr>
 						<tr>
 						    <td class="FormLabel150" valign="top"><asp:Localize ID="locExternalEmailAddress" runat="server" meta:resourcekey="locExternalEmailAddress" ></asp:Localize></td>
@@ -205,8 +213,7 @@
 						    <tr>
 							    <td class="FormLabel150"><asp:Localize ID="locCountry" runat="server" meta:resourcekey="locCountry" Text="Country/Region:"></asp:Localize></td>
 							    <td>
-									<wsp:CountrySelector id="country" runat="server">
-									</wsp:CountrySelector>
+									<wsp:CountrySelector id="country" runat="server"></wsp:CountrySelector>
 								</td>
 						    </tr>
 					    </table>

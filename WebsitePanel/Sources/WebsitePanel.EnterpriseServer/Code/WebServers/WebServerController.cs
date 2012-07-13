@@ -2715,6 +2715,12 @@ namespace WebsitePanel.EnterpriseServer
 				//
 				WebServer server = GetWebServer(item.ServiceId);
 
+                StringDictionary webSettings = ServerController.GetServiceSettings(item.ServiceId);
+                if (webSettings["WmSvc.NETBIOS"] != null)
+                {
+                    accountName = webSettings["WmSvc.NETBIOS"].ToString() + "\\" + accountName;
+                }
+
 				//
 				if (server.CheckWebManagementAccountExists(accountName))
 				{

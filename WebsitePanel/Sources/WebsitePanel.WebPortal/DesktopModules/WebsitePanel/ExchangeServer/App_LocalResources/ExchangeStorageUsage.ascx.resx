@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnRecalculate.OnClientClick" xml:space="preserve">
     <value>return confirm('Recalculating organization disk space may require certain time to complete and this task will be performed asynchronously. New disk space value will be available in a few minutes. Proceed with disk space calculation?');</value>
@@ -123,8 +123,11 @@
   <data name="btnRecalculate.Text" xml:space="preserve">
     <value>Recalculate Disk Space</value>
   </data>
+  <data name="btnUsedSize.OnClientClick" xml:space="preserve">
+    <value>ShowProgressDialog('Please wait...');</value>
+  </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;Organization disk space usage is calculated on timely basis (usually once a day). You can recalculate it right now by clicking "Recalculate Disk Space" button.&lt;/p&gt;&lt;p&gt;Click on the link with used disk space to see usage breakdown by all organization mailboxes and public folders.&lt;/p&gt;</value>
+    <value>&lt;p&gt;Organization disk space actual usage is calculated on timely basis (usually once a day). You can recalculate it right now by clicking "Recalculate Disk Space" button.&lt;/p&gt;&lt;p&gt;Click on the link with used disk space to see actual usage breakdown by all organization mailboxes.&lt;/p&gt;</value>
   </data>
   <data name="locAllocatedSize.Text" xml:space="preserve">
     <value>Allocated Disk Space (MB):</value>
@@ -136,15 +139,12 @@
     <value>Storage Usage</value>
   </data>
   <data name="locUsedSize.Text" xml:space="preserve">
-    <value>Used Disk Space (MB):</value>
+    <value>Allocated Disk Space (MB):</value>
   </data>
   <data name="Text.PageName" xml:space="preserve">
     <value>Storage Usage</value>
   </data>
   <data name="Unlimited.Text" xml:space="preserve">
     <value>Unlimited</value>
-  </data>
-  <data name="btnUsedSize.OnClientClick" xml:space="preserve">
-    <value>ShowProgressDialog('Please wait...');</value>
   </data>
 </root>

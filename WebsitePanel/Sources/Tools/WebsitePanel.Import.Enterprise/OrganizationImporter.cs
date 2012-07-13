@@ -439,12 +439,14 @@ namespace WebsitePanel.Import.Enterprise
 
 			PackageContext cntx = PackageController.GetPackageContext(packageId);
 			// organization limits
+            /*
 			org.IssueWarningKB = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
 			if (org.IssueWarningKB > 0) org.IssueWarningKB *= 1024;
 			org.ProhibitSendKB = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
 			if (org.ProhibitSendKB > 0) org.ProhibitSendKB *= 1024;
 			org.ProhibitSendReceiveKB = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
 			if (org.ProhibitSendReceiveKB > 0) org.ProhibitSendReceiveKB *= 1024;
+             */
 
 			PackageSettings settings = PackageController.GetPackageSettings(packageId, PackageSettings.EXCHANGE_SERVER);
 			org.KeepDeletedItemsDays = Utils.ParseInt(settings["KeepDeletedItemsDays"], 14);
@@ -933,13 +935,13 @@ namespace WebsitePanel.Import.Enterprise
 		{
 			return DataProvider.AddExchangeAccount(itemId, (int)accountType,
 				accountName, displayName, primaryEmailAddress, mailEnabledPublicFolder,
-				mailboxManagerActions.ToString(), samAccountName, CryptoUtils.Encrypt(accountPassword));
+				mailboxManagerActions.ToString(), samAccountName, CryptoUtils.Encrypt(accountPassword),0, string.Empty);
 		}
 
 		private static int AddOrganizationUser(int itemId, string accountName, string displayName, string email, string accountPassword)
 		{
 			return DataProvider.AddExchangeAccount(itemId, (int)ExchangeAccountType.User, accountName, displayName, email, false, string.Empty,
-											string.Empty, CryptoUtils.Encrypt(accountPassword));
+                                            string.Empty, CryptoUtils.Encrypt(accountPassword),0 , string.Empty);
 
 		}
 
@@ -960,7 +962,7 @@ namespace WebsitePanel.Import.Enterprise
                 mailEnabledPublicFolder, 
                 mailboxManagerActions,
                 samAccountName,
-                CryptoUtils.Encrypt(accountPassword));
+                CryptoUtils.Encrypt(accountPassword), 0, string.Empty);
         }
 	}
 }

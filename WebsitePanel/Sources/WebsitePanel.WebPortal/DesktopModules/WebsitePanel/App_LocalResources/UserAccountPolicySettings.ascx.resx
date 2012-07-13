@@ -150,7 +150,4 @@
   <data name="lnkWebPolicy.Text" xml:space="preserve">
     <value>WEB Policy</value>
   </data>
-  <data name="lnkExchangeHostedEditionPolicy.Text" xml:space="preserve">
-    <value>Exchange Hosting Mode Policy</value>
-  </data>
 </root>

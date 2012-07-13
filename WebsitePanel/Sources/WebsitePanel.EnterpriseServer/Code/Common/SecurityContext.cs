@@ -45,6 +45,10 @@ namespace WebsitePanel.EnterpriseServer
         public const string ROLE_ADMINISTRATOR = "Administrator";
         public const string ROLE_RESELLER = "Reseller";
         public const string ROLE_USER = "User";
+        public const string ROLE_PLATFORMCSR = "PlatformCSR";
+        public const string ROLE_PLATFORMHELPDESK = "PlatformHelpdesk";
+        public const string ROLE_RESELLERCSR = "ResellerCSR";
+        public const string ROLE_RESELLERHELPDESK = "ResellerHelpdesk";
 
         public const string CONTEXT_USER_INFO = "CONTEXT_USER_INFO";
 
@@ -62,8 +66,26 @@ namespace WebsitePanel.EnterpriseServer
             // set roles array
             List<string> roles = new List<string>();
             roles.Add(SecurityContext.ROLE_USER);
+
+            if (user.Role == UserRole.Reseller || user.Role == UserRole.Administrator ||
+                user.Role == UserRole.PlatformHelpdesk || user.Role == UserRole.ResellerHelpdesk)
+                roles.Add(SecurityContext.ROLE_RESELLERHELPDESK);
+
+            if (user.Role == UserRole.Reseller || user.Role == UserRole.Administrator ||
+                user.Role == UserRole.PlatformCSR ||  user.Role == UserRole.ResellerCSR)
+                roles.Add(SecurityContext.ROLE_RESELLERCSR);
+
+            if (user.Role == UserRole.Reseller || user.Role == UserRole.Administrator ||
+                user.Role == UserRole.PlatformHelpdesk)
+                roles.Add(SecurityContext.ROLE_PLATFORMHELPDESK);
+
+            if (user.Role == UserRole.Reseller || user.Role == UserRole.Administrator ||
+                user.Role == UserRole.PlatformCSR)
+                roles.Add(SecurityContext.ROLE_PLATFORMCSR);
+            
             if (user.Role == UserRole.Reseller || user.Role == UserRole.Administrator)
                 roles.Add(SecurityContext.ROLE_RESELLER);
+
             if (user.Role == UserRole.Administrator)
                 roles.Add(SecurityContext.ROLE_ADMINISTRATOR);
 
@@ -152,8 +174,39 @@ namespace WebsitePanel.EnterpriseServer
             {
                 // should make a check if the account has Admin role
                 if (!User.IsInRole(ROLE_RESELLER))
-                    return BusinessErrorCodes.ERROR_USER_ACCOUNT_SHOULD_BE_RESELLER;
+                    return BusinessErrorCodes.ERROR_USER_ACCOUNT_NOT_ENOUGH_PERMISSIONS;
             }
+
+            if ((demand & DemandAccount.IsPlatformCSR) == DemandAccount.IsPlatformCSR)
+            {
+                // should make a check if the account has Admin role
+                if (!User.IsInRole(ROLE_PLATFORMCSR))
+                    return BusinessErrorCodes.ERROR_USER_ACCOUNT_NOT_ENOUGH_PERMISSIONS;
+            }
+
+            if ((demand & DemandAccount.IsPlatformHelpdesk) == DemandAccount.IsPlatformHelpdesk)
+            {
+                // should make a check if the account has Admin role
+                if (!User.IsInRole(ROLE_PLATFORMHELPDESK))
+                    return BusinessErrorCodes.ERROR_USER_ACCOUNT_NOT_ENOUGH_PERMISSIONS;
+            }
+
+
+            if ((demand & DemandAccount.IsResellerHelpdesk) == DemandAccount.IsResellerHelpdesk)
+            {
+                // should make a check if the account has Admin role
+                if (!User.IsInRole(ROLE_RESELLERHELPDESK))
+                    return BusinessErrorCodes.ERROR_USER_ACCOUNT_NOT_ENOUGH_PERMISSIONS;
+            }
+
+
+            if ((demand & DemandAccount.IsResellerCSR) == DemandAccount.IsResellerCSR)
+            {
+                // should make a check if the account has Admin role
+                if (!User.IsInRole(ROLE_RESELLERCSR))
+                    return BusinessErrorCodes.ERROR_USER_ACCOUNT_NOT_ENOUGH_PERMISSIONS;
+            }
+
 
             return 0;
         }

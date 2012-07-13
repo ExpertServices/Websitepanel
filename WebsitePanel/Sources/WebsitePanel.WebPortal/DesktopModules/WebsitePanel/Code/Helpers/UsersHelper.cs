@@ -46,6 +46,7 @@ namespace WebsitePanel.Portal
 
         private const string DEFAULT_ADMIN_ROLE = "WebsitePanel Administrators";
         private const string DEFAULT_RESELLER_ROLE = "WebsitePanel Resellers";
+        private const string DEFAULT_CSR_ROLE = "CSR";
         private const string DEFAULT_USER_ROLE = "WebsitePanel Users";
 
         #region Users ODS Methods (for Selected User)

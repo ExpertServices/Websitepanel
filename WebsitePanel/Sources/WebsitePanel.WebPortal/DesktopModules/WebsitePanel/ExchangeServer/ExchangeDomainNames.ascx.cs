@@ -33,34 +33,36 @@ using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class ExchangeDomainNames : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
-			if (!IsPostBack)
-			{
-				BindStats();
+    public partial class ExchangeDomainNames : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                BindStats();
 
                 // bind domain names
                 BindDomainNames();
-			}
-		}
+            }
+
+            
+        }
 
         private void BindStats()
-		{			
+        {
             // set quotas
-			OrganizationStatistics stats =
-				ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
-			domainsQuota.QuotaUsedValue = stats.CreatedDomains;
-			domainsQuota.QuotaValue = stats.AllocatedDomains;
-		}
+            OrganizationStatistics stats =
+                ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+            domainsQuota.QuotaUsedValue = stats.CreatedDomains;
+            domainsQuota.QuotaValue = stats.AllocatedDomains;
+        }
 
-		public string GetDomainRecordsEditUrl(string domainId)
-		{
-			return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "domain_records",
-					"DomainID=" + domainId,
-					"ItemID=" + PanelRequest.ItemID);
-		}
+        public string GetDomainRecordsEditUrl(string domainId)
+        {
+            return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "domain_records",
+                    "DomainID=" + domainId,
+                    "ItemID=" + PanelRequest.ItemID);
+        }
 
         private void BindDomainNames()
         {
@@ -107,7 +109,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     // rebind domains
                     BindDomainNames();
 
-					BindStats();
+                    BindStats();
                 }
                 catch (Exception ex)
                 {
@@ -140,5 +142,5 @@ namespace WebsitePanel.Portal.ExchangeServer
                 ShowErrorMessage("EXCHANGE_SET_DEFAULT_DOMAIN", ex);
             }
         }
-	}
+    }
 }

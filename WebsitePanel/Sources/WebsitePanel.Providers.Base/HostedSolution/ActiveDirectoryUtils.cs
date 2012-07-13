@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2011, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -39,7 +39,7 @@ namespace WebsitePanel.Providers.HostedSolution
     {
         public static DirectoryEntry GetADObject(string path)
         {
-            DirectoryEntry de = new DirectoryEntry(path);            
+            DirectoryEntry de = new DirectoryEntry(path);
             de.RefreshCache();
             return de;
         }
@@ -48,16 +48,16 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             bool res = false;
             DirectorySearcher deSearch = new DirectorySearcher
-                                             {
-                                                 Filter =
-                                                     ("(&(objectClass=user)(samaccountname=" + samAccountName + "))")
-                                             };
+            {
+                Filter =
+                    ("(&(objectClass=user)(samaccountname=" + samAccountName + "))")
+            };
 
             //get the group result
             SearchResult results = deSearch.FindOne();
             DirectoryEntry de = results.GetDirectoryEntry();
             PropertyValueCollection props = de.Properties["memberOf"];
-            
+
             foreach (string str in props)
             {
                 if (str.IndexOf(group) != -1)
@@ -81,8 +81,8 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 ou = parent.Children.Add(
                      string.Format("OU={0}", name),
-                     parent.SchemaClassName);                
-                
+                     parent.SchemaClassName);
+
                 ret = ou.Path;
                 ou.CommitChanges();
             }
@@ -100,13 +100,13 @@ namespace WebsitePanel.Providers.HostedSolution
         public static void DeleteADObject(string path, bool removeChild)
         {
             DirectoryEntry entry = GetADObject(path);
-            
+
             if (removeChild && entry.Children != null)
                 foreach (DirectoryEntry child in entry.Children)
                 {
                     entry.Children.Remove(child);
                 }
-            
+
             DirectoryEntry parent = entry.Parent;
             if (parent != null)
             {
@@ -115,7 +115,7 @@ namespace WebsitePanel.Providers.HostedSolution
             }
         }
 
-        
+
         public static void DeleteADObject(string path)
         {
             DirectoryEntry entry = GetADObject(path);
@@ -141,21 +141,34 @@ namespace WebsitePanel.Providers.HostedSolution
                 }
             }
             else
-            {                
+            {
                 if (oDE.Properties.Contains(name))
                 {
                     oDE.Properties[name].Remove(oDE.Properties[name][0]);
                 }
-                
+
             }
         }
 
-        public static void SetADObjectPropertyValue(DirectoryEntry oDE, string name, object value)
+        public static void SetADObjectPropertyValue(DirectoryEntry oDE, string name, string value)
         {
             PropertyValueCollection collection = oDE.Properties[name];
             collection.Value = value;
         }
-        
+
+        public static void SetADObjectPropertyValue(DirectoryEntry oDE, string name, Guid value)
+        {
+            PropertyValueCollection collection = oDE.Properties[name];
+            collection.Value = value.ToByteArray();
+        }
+
+        public static void ClearADObjectPropertyValue(DirectoryEntry oDE, string name)
+        {
+            PropertyValueCollection collection = oDE.Properties[name];
+            collection.Clear();
+        }
+
+
         public static object GetADObjectProperty(DirectoryEntry entry, string name)
         {
             return entry.Properties.Contains(name) ? entry.Properties[name][0] : null;
@@ -164,7 +177,7 @@ namespace WebsitePanel.Providers.HostedSolution
         public static string GetADObjectStringProperty(DirectoryEntry entry, string name)
         {
             object ret = GetADObjectProperty(entry, name);
-            return ret != null ? ret.ToString() : string.Empty; 
+            return ret != null ? ret.ToString() : string.Empty;
         }
 
         public static string ConvertADPathToCanonicalName(string name)
@@ -254,29 +267,38 @@ namespace WebsitePanel.Providers.HostedSolution
             return ret;
         }
 
+
         public static string CreateUser(string path, string user, string displayName, string password, bool enabled)
         {
-            DirectoryEntry currentADObject = new DirectoryEntry(path);            
+            return CreateUser(path, "", user, displayName, password, enabled);
+        }
 
-            DirectoryEntry newUserObject = currentADObject.Children.Add("CN=" + user, "User");
-           
-            newUserObject.Properties[ADAttributes.SAMAccountName].Add(user);          
+        public static string CreateUser(string path, string upn, string user, string displayName, string password, bool enabled)
+        {
+            DirectoryEntry currentADObject = new DirectoryEntry(path);
+
+            string cn = string.Empty;
+            if (string.IsNullOrEmpty(upn)) cn = user; else cn = upn;
+
+            DirectoryEntry newUserObject = currentADObject.Children.Add("CN=" + cn, "User");
+
+            newUserObject.Properties[ADAttributes.SAMAccountName].Add(user);
             SetADObjectProperty(newUserObject, ADAttributes.DisplayName, displayName);
             newUserObject.CommitChanges();
             newUserObject.Invoke(ADAttributes.SetPassword, password);
             newUserObject.InvokeSet(ADAttributes.AccountDisabled, !enabled);
 
             newUserObject.CommitChanges();
-            
+
             return newUserObject.Path;
         }
 
         public static void CreateGroup(string path, string group)
         {
-            DirectoryEntry currentADObject = new DirectoryEntry(path);           
+            DirectoryEntry currentADObject = new DirectoryEntry(path);
 
             DirectoryEntry newGroupObject = currentADObject.Children.Add("CN=" + group, "Group");
-           
+
             newGroupObject.Properties[ADAttributes.SAMAccountName].Add(group);
 
             newGroupObject.Properties[ADAttributes.GroupType].Add(-2147483640);
@@ -320,7 +342,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 if (string.IsNullOrEmpty(primaryDomainController))
                 {
                     dn = string.Format("LDAP://{0}", dn);
-                    
+
                 }
                 else
                     dn = string.Format("LDAP://{0}/{1}", primaryDomainController, dn);
@@ -358,7 +380,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 DirectoryEntry ou = GetADObject(ouPath);
                 PropertyValueCollection prop = null;
 
-                    prop = ou.Properties["uPNSuffixes"];
+                prop = ou.Properties["uPNSuffixes"];
 
                 if (prop != null)
                 {

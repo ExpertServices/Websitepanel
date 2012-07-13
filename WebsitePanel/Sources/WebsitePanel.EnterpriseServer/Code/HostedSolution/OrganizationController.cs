@@ -482,6 +482,66 @@ namespace WebsitePanel.EnterpriseServer
                 }
         }
 
+
+        private static bool DeleteLyncUsers(int itemId)
+        {
+            bool successful = false;
+
+            try
+            {
+                LyncUsersPagedResult res = LyncController.GetLyncUsers(itemId, string.Empty, string.Empty, 0, int.MaxValue);
+
+                if (res.IsSuccess)
+                {
+                    successful = true;
+                    foreach (LyncUser user in res.Value.PageUsers)
+                    {
+                        try
+                        {
+                            ResultObject delUserResult = LyncController.DeleteLyncUser(itemId, user.AccountID);
+                            if (!delUserResult.IsSuccess)
+                            {
+                                StringBuilder sb = new StringBuilder();
+                                foreach (string str in delUserResult.ErrorCodes)
+                                {
+                                    sb.Append(str);
+                                    sb.Append('\n');
+                                }
+
+                                throw new ApplicationException(sb.ToString());
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            successful = false;
+                            TaskManager.WriteError(ex);
+                        }
+                    }
+
+                    return successful;
+                }
+                else
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (string str in res.ErrorCodes)
+                    {
+                        sb.Append(str);
+                        sb.Append('\n');
+                    }
+
+                    throw new ApplicationException(sb.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                successful = false;
+                TaskManager.WriteError(ex);
+            }
+
+            return successful;
+        }
+
+
         public static int DeleteOrganization(int itemId)
         {
             // check account
@@ -570,7 +630,22 @@ namespace WebsitePanel.EnterpriseServer
                     successful = false;
                     TaskManager.WriteError(ex);
                 }
-                
+
+                //Cleanup Lync
+                try
+                {
+                    if (!string.IsNullOrEmpty(org.LyncTenantId))
+                        if (DeleteLyncUsers(itemId))
+                            LyncController.DeleteOrganization(itemId);
+                }
+                catch (Exception ex)
+                {
+                    successful = false;
+                    TaskManager.WriteError(ex);
+                }
+
+
+                //Cleanup Exchange
                 try
                 {
                     if (!string.IsNullOrEmpty(org.GlobalAddressList))
@@ -633,7 +708,7 @@ namespace WebsitePanel.EnterpriseServer
         }
 
        
-        private static Organizations GetOrganizationProxy(int serviceId)
+        public static Organizations GetOrganizationProxy(int serviceId)
         {            
             Organizations ws = new Organizations();
             ServiceProviderProxy.Init(ws, serviceId);            
@@ -710,9 +785,6 @@ namespace WebsitePanel.EnterpriseServer
                 org.Id = 1;
                 org.OrganizationId = "fabrikam";
                 org.Name = "Fabrikam Inc";
-                org.IssueWarningKB = 150000;
-                org.ProhibitSendKB = 170000;
-                org.ProhibitSendReceiveKB = 190000;
                 org.KeepDeletedItemsDays = 14;
                 org.GlobalAddressList = "FabrikamGAL";
                 return org;
@@ -794,6 +866,11 @@ namespace WebsitePanel.EnterpriseServer
                     stats.AllocatedOCSUsers = cntx.Quotas[Quotas.OCS_USERS].QuotaAllocatedValue;
                 }
 
+                if (cntx.Groups.ContainsKey(ResourceGroups.Lync))
+                {
+                    stats.CreatedLyncUsers = LyncController.GetLyncUsersCount(org.Id).Value;
+                    stats.AllocatedLyncUsers = cntx.Quotas[Quotas.LYNC_USERS].QuotaAllocatedValue;
+                }
 
                 return stats;
             }
@@ -980,8 +1057,17 @@ namespace WebsitePanel.EnterpriseServer
             OrganizationUsersPaged result = new OrganizationUsersPaged();
             result.RecordsCount = (int)ds.Tables[0].Rows[0][0];
 
+            List<OrganizationUser> Tmpaccounts = new List<OrganizationUser>();
+            ObjectUtils.FillCollectionFromDataView(Tmpaccounts, ds.Tables[1].DefaultView);
+            result.PageUsers = Tmpaccounts.ToArray();
+
             List<OrganizationUser> accounts = new List<OrganizationUser>();
-            ObjectUtils.FillCollectionFromDataView(accounts, ds.Tables[1].DefaultView);
+
+            foreach (OrganizationUser user in Tmpaccounts.ToArray())
+            {
+                accounts.Add(GetUserGeneralSettings(itemId, user.AccountId));
+            }
+
             result.PageUsers = accounts.ToArray();
             return result;
         }
@@ -993,22 +1079,23 @@ namespace WebsitePanel.EnterpriseServer
             return DataProvider.ExchangeAccountEmailAddressExists(emailAddress);		
         }
 
-        
-        private static int AddOrganizationUser(int itemId, string accountName, string displayName,  string email, string accountPassword)
-		{
+
+        private static int AddOrganizationUser(int itemId, string accountName, string displayName, string email, string sAMAccountName, string accountPassword, string subscriberNumber)
+        {
             return DataProvider.AddExchangeAccount(itemId, (int)ExchangeAccountType.User, accountName, displayName, email, false, string.Empty,
-                                            string.Empty, CryptoUtils.Encrypt(accountPassword));
-                       
-		}
+                                            sAMAccountName, CryptoUtils.Encrypt(accountPassword), 0, subscriberNumber.Trim());
+
+        }
 
         public static string GetAccountName(string loginName)
         {
-            string []parts = loginName.Split('@');
-            return parts != null && parts.Length > 1 ? parts[0] : loginName;
+            //string []parts = loginName.Split('@');
+            //return parts != null && parts.Length > 1 ? parts[0] : loginName;
+            return loginName;
                 
         }
 
-        public static int CreateUser(int itemId, string displayName, string name, string domain, string password, bool enabled, bool sendNotification, string to, out string accountName)
+        public static int CreateUser(int itemId, string displayName, string name, string domain, string password, string subscriberNumber, bool enabled, bool sendNotification, string to, out string accountName)
         {
             if (string.IsNullOrEmpty(displayName))
                 throw new ArgumentNullException("displayName");
@@ -1023,55 +1110,171 @@ namespace WebsitePanel.EnterpriseServer
                 throw new ArgumentNullException("password");
 
             accountName = string.Empty;
-            
+
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
             if (accountCheck < 0) return accountCheck;
 
-            
+
             // place log record
             TaskManager.StartTask("ORGANIZATION", "CREATE_USER");
             TaskManager.ItemId = itemId;
+            TaskManager.Write("Organization ID :" + itemId);
+            TaskManager.Write("name :" + name);
+            TaskManager.Write("domain :" + domain);
+            TaskManager.Write("subscriberNumber :" + subscriberNumber);
 
-            // e-mail
-            string email = name + "@" + domain;
+            int userId = -1;
 
-            if (EmailAddressExists(email))
-                return BusinessErrorCodes.ERROR_EXCHANGE_EMAIL_EXISTS;
-
-            // load organization
-            Organization org = GetOrganization(itemId);
-            if (org == null)
-                return -1;
-
-            // check package
-            int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
-            if (packageCheck < 0) return packageCheck;
-
-            int errorCode;
-            if (!CheckUserQuota(org.Id, out errorCode))
-                return errorCode;
-
-         
-            Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
-
-            string upn = string.Format("{0}@{1}", name, domain);
-            accountName = BuildAccountName(org.OrganizationId, name);            
-            orgProxy.CreateUser(org.OrganizationId, accountName, displayName, upn, password, enabled);
-
-            int userId = AddOrganizationUser(itemId, accountName, displayName, email, password);
-
-            // register email address
-            AddAccountEmailAddress(userId, email);
-
-            if (sendNotification)
+            try
             {
-                SendSummaryLetter(org.Id, userId, true, to, "");
+                displayName = displayName.Trim();
+                name = name.Trim();
+                domain = domain.Trim();
+
+                // e-mail
+                string email = name + "@" + domain;
+
+                if (EmailAddressExists(email))
+                    return BusinessErrorCodes.ERROR_EXCHANGE_EMAIL_EXISTS;
+
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return -1;
+
+                // check package
+                int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
+                if (packageCheck < 0) return packageCheck;
+
+                int errorCode;
+                if (!CheckUserQuota(org.Id, out errorCode))
+                    return errorCode;
+
+
+                Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+
+                string upn = string.Format("{0}@{1}", name, domain);
+                string sAMAccountName = BuildAccountName(org.OrganizationId, name);
+
+                TaskManager.Write("accountName :" + sAMAccountName);
+                TaskManager.Write("upn :" + upn);
+
+                if (orgProxy.CreateUser(org.OrganizationId, sAMAccountName, displayName, upn, password, enabled) == 0)
+                {
+                    OrganizationUser retUser = orgProxy.GetUserGeneralSettings(upn, org.OrganizationId);
+                    TaskManager.Write("sAMAccountName :" + retUser.DomainUserName);
+
+                    userId = AddOrganizationUser(itemId, upn, displayName, email, retUser.DomainUserName, password, subscriberNumber);
+                    accountName = upn;
+
+                    // register email address
+                    AddAccountEmailAddress(userId, email);
+
+                    if (sendNotification)
+                    {
+                        SendSummaryLetter(org.Id, userId, true, to, "");
+                    }
+                }
+                else
+                {
+                    TaskManager.WriteError("Failed to create user");
+                }
             }
+            catch (Exception ex)
+            {
+                TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
             return userId;
         }
 
-       
+
+
+        public static int ImportUser(int itemId, string accountName, string displayName, string name, string domain, string password, string subscriberNumber)
+        {
+            if (string.IsNullOrEmpty(accountName))
+                throw new ArgumentNullException("accountName");
+
+            if (string.IsNullOrEmpty(displayName))
+                throw new ArgumentNullException("displayName");
+
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException("name");
+
+            if (string.IsNullOrEmpty(domain))
+                throw new ArgumentNullException("domain");
+
+            if (string.IsNullOrEmpty(password))
+                throw new ArgumentNullException("password");
+
+
+            // place log record
+            TaskManager.StartTask("ORGANIZATION", "IMPORT_USER");
+            TaskManager.ItemId = itemId;
+            TaskManager.Write("Organization ID :" + itemId);
+            TaskManager.Write("account :" + accountName);
+            TaskManager.Write("name :" + name);
+            TaskManager.Write("domain :" + domain);
+
+            int userId = -1;
+
+            try
+            {
+                accountName = accountName.Trim();
+                displayName = displayName.Trim();
+                name = name.Trim();
+                domain = domain.Trim();
+
+                // e-mail
+                string email = name + "@" + domain;
+
+                if (EmailAddressExists(email))
+                    return BusinessErrorCodes.ERROR_EXCHANGE_EMAIL_EXISTS;
+
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return -1;
+
+                // check package
+                int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
+                if (packageCheck < 0) return packageCheck;
+
+                int errorCode;
+                if (!CheckUserQuota(org.Id, out errorCode))
+                    return errorCode;
+
+                Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+
+                string upn = string.Format("{0}@{1}", name, domain);
+                TaskManager.Write("upn :" + upn);
+
+                OrganizationUser retUser = orgProxy.GetUserGeneralSettings(accountName, org.OrganizationId);
+
+                TaskManager.Write("sAMAccountName :" + retUser.DomainUserName);
+
+                userId = AddOrganizationUser(itemId, accountName, displayName, email, retUser.DomainUserName, password, subscriberNumber);
+
+                AddAccountEmailAddress(userId, email);
+
+            }
+            catch (Exception ex)
+            {
+                TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+            return userId;
+        }
+
 
         private static void AddAccountEmailAddress(int accountId, string emailAddress)
         {
@@ -1080,27 +1283,39 @@ namespace WebsitePanel.EnterpriseServer
         
         private static string BuildAccountName(string orgId, string name)
         {
-            int maxLen = 19 - orgId.Length;
-
-            // try to choose name
-            int i = 0;
-            while (true)
+            string accountName = name = name.Replace(" ", "");
+            string CounterStr = "00000";
+            int counter = 0;
+            bool bFound = false;
+            do
             {
-                string num = i > 0 ? i.ToString() : "";
-                int len = maxLen - num.Length;
+                accountName = genSamLogin(name, CounterStr);
 
-                if (name.Length > len)
-                    name = name.Substring(0, len);
+                if (!AccountExists(accountName)) bFound = true;
 
-                string accountName = name + num + "_" + orgId;
-
-                // check if already exists
-                if (!AccountExists(accountName))
-                    return accountName;
-
-                i++;
+                CounterStr = counter.ToString("d5");
+                counter++;
             }
+            while (!bFound);
+
+            return accountName;
         }
+
+        private static string genSamLogin(string login, string strCounter)
+        {
+            int maxLogin = 20;
+            int fullLen = login.Length + strCounter.Length;
+            if (fullLen <= maxLogin)
+                return login + strCounter;
+            else
+            {
+                if (login.Length - (fullLen - maxLogin) > 0)
+                    return login.Substring(0, login.Length - (fullLen - maxLogin)) + strCounter;
+                else return strCounter; // ????
+            }
+
+        }
+
 
         private static bool AccountExists(string accountName)
         {
@@ -1180,6 +1395,18 @@ namespace WebsitePanel.EnterpriseServer
             return account;
         }
 
+        public static OrganizationUser GetAccountByAccountName(int itemId, string AccountName)
+        {
+            OrganizationUser account = ObjectUtils.FillObjectFromDataReader<OrganizationUser>(
+                DataProvider.GetExchangeAccountByAccountName(itemId, AccountName));
+
+            if (account == null)
+                return null;
+
+            return account;
+        }
+
+
         private static void DeleteUserFromMetabase(int itemId, int accountId)
         {
             // try to get organization
@@ -1217,11 +1444,16 @@ namespace WebsitePanel.EnterpriseServer
                 string accountName = GetAccountName(account.AccountName);
                 
                 
-                OrganizationUser retUser = orgProxy.GeUserGeneralSettings(accountName, org.OrganizationId);
+                OrganizationUser retUser = orgProxy.GetUserGeneralSettings(accountName, org.OrganizationId);
                 retUser.AccountId = accountId;
                 retUser.AccountName = account.AccountName;
                 retUser.PrimaryEmailAddress = account.PrimaryEmailAddress;
                 retUser.AccountType = account.AccountType;
+                retUser.CrmUserId = CRMController.GetCrmUserId(accountId);
+                retUser.IsOCSUser = DataProvider.CheckOCSUserExists(accountId);
+                retUser.IsLyncUser = DataProvider.CheckLyncUserExists(accountId);
+                retUser.IsBlackBerryUser = BlackBerryController.CheckBlackBerryUserExists(accountId);
+                retUser.SubscriberNumber = account.SubscriberNumber;
                 
                 return retUser;
             }
@@ -1240,7 +1472,7 @@ namespace WebsitePanel.EnterpriseServer
             string lastName, string address, string city, string state, string zip, string country,
             string jobTitle, string company, string department, string office, string managerAccountName,
             string businessPhone, string fax, string homePhone, string mobilePhone, string pager,
-            string webPage, string notes, string externalEmail)
+            string webPage, string notes, string externalEmail, string subscriberNumber)
         {
 
             // check account
@@ -1253,6 +1485,10 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
+                displayName = displayName.Trim();
+                firstName = firstName.Trim();
+                lastName = lastName.Trim();
+
                 // load organization
                 Organization org = GetOrganization(itemId);
                 if (org == null)
@@ -1303,6 +1539,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 // update account
                 account.DisplayName = displayName;
+                account.SubscriberNumber = subscriberNumber;
                 
                 //account.
                 if (!String.IsNullOrEmpty(password))
@@ -1329,7 +1566,8 @@ namespace WebsitePanel.EnterpriseServer
         {                        
             DataProvider.UpdateExchangeAccount(account.AccountId, account.AccountName, account.AccountType, account.DisplayName,
                 account.PrimaryEmailAddress, account.MailEnabledPublicFolder,
-                account.MailboxManagerActions.ToString(), account.SamAccountName, account.AccountPassword);
+                account.MailboxManagerActions.ToString(), account.SamAccountName, account.AccountPassword, account.MailboxPlanId, 
+                (string.IsNullOrEmpty(account.SubscriberNumber) ? null : account.SubscriberNumber.Trim()));
         }
 
 
@@ -1377,11 +1615,58 @@ namespace WebsitePanel.EnterpriseServer
             }
             #endregion
             
-            return ObjectUtils.CreateListFromDataReader<OrganizationUser>(
-                DataProvider.SearchOrganizationAccounts(SecurityContext.User.UserId, itemId, 
-                filterColumn, filterValue, sortColumn, includeMailboxes));
+            List<OrganizationUser> Tmpaccounts = ObjectUtils.CreateListFromDataReader<OrganizationUser>(
+                                                  DataProvider.SearchOrganizationAccounts(SecurityContext.User.UserId, itemId,
+                                                  filterColumn, filterValue, sortColumn, includeMailboxes));
+
+            List<OrganizationUser> Accounts = new List<OrganizationUser>();
+
+            foreach (OrganizationUser user in Tmpaccounts.ToArray())
+            {
+                Accounts.Add(GetUserGeneralSettings(itemId, user.AccountId));
+            }
+
+            return Accounts;
         }
         
+        public static int GetAccountIdByUserPrincipalName(int itemId, string userPrincipalName)
+        {
+            // place log record
+            TaskManager.StartTask("ORGANIZATION", "GET_ACCOUNT_BYUPN");
+            TaskManager.ItemId = itemId;
+
+            int accounId = -1;
+
+            try
+            {
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return 0;
+
+                // get samaccountName
+                //Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+                //string accountName = orgProxy.GetSamAccountNameByUserPrincipalName(org.OrganizationId, userPrincipalName);
+
+                // load account
+                OrganizationUser account = GetAccountByAccountName(itemId, userPrincipalName);
+
+                if (account != null)
+                    accounId = account.AccountId;
+
+                return accounId;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+
         #endregion
 
         public static List<OrganizationDomainName> GetOrganizationDomains(int itemId)

@@ -7,13 +7,12 @@
 <%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="../UserControls/CollapsiblePanel.ascx" %>
 
 <script language="javascript">
-    function SelectAllCheckboxes(box)
-    {
-		var state = box.checked;
+    function SelectAllCheckboxes(box) {
+        var state = box.checked;
         var elm = box.parentElement.parentElement.parentElement.parentElement.getElementsByTagName("INPUT");
-        for(i = 0; i < elm.length; i++)
-            if(elm[i].type == "checkbox" && elm[i].id != box.id && elm[i].checked != state && !elm[i].disabled)
-		        elm[i].checked = state;
+        for (i = 0; i < elm.length; i++)
+            if (elm[i].type == "checkbox" && elm[i].id != box.id && elm[i].checked != state && !elm[i].disabled)
+                elm[i].checked = state;
     }
 </script>
 
@@ -88,7 +87,7 @@
 							        <ItemTemplate>
 							            <div style="text-align:center">
 							                &nbsp;
-								            <asp:Image runat="server" SkinID="Checkbox16" Visible='<%# Eval("IsPrimary") %>' />
+								            <asp:Image ID="Image1" runat="server" SkinID="Checkbox16" Visible='<%# Eval("IsPrimary") %>' />
 								        </div>
 							        </ItemTemplate>
 						        </asp:TemplateField>

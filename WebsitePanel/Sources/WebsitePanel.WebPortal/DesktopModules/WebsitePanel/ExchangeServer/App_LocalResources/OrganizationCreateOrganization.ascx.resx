@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnCreate.OnClientClick" xml:space="preserve">
     <value>ShowProgressDialog('Creating Organization...');</value>
@@ -124,7 +124,7 @@
     <value>Create Organization</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;&lt;b&gt;Organization name&lt;/b&gt; is used just as display name for references purposes. It will not be used somewhere on Exchange Server.&lt;/p&gt; &lt;p&gt;&lt;b&gt;Organization ID&lt;/b&gt; is an unique organization identifier. It can contain only numbers and letters and cannot be longer than 9 symbols. Organization ID will be used as GAL name and as a root public folder.&lt;/p&gt;</value>
+    <value>&lt;p&gt;&lt;b&gt;Organization name&lt;/b&gt; is used just as display name for references purposes. It will not be used somewhere on Exchange Server.&lt;/p&gt; &lt;p&gt;&lt;b&gt;Organization ID&lt;/b&gt; is an unique organization identifier. Organization ID will be used as GAL name.&lt;/p&gt;</value>
   </data>
   <data name="locOrganizationID.Text" xml:space="preserve">
     <value>Organization ID: *</value>
