@@ -42,6 +42,8 @@ namespace WebsitePanel.Portal.HostedSolution
             {
                 BindSettings();
 
+                MailboxTabsId.Visible = (PanelRequest.Context == "Mailbox");
+                UserTabsId.Visible = (PanelRequest.Context == "User");
             }
         }
 

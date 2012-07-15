@@ -11,6 +11,7 @@
 
 
 
+<%@ Register src="UserControls/UserTabs.ascx" tagname="UserTabs" tagprefix="uc1" %>
 <%@ Register src="UserControls/MailboxTabs.ascx" tagname="MailboxTabs" tagprefix="uc1" %>
 
 
@@ -35,10 +36,9 @@
                 </div>
 
 				<div class="FormBody">
-                    <uc1:MailboxTabs ID="MailboxTabs1" runat="server" IsADUserTabs="true" SelectedTab="edit_user" />
+                    <uc1:UserTabs ID="UserTabsId" runat="server" SelectedTab="edit_user" />
+                    <uc1:MailboxTabs ID="MailboxTabsId" runat="server" SelectedTab="edit_user" />
                     <wsp:SimpleMessageBox id="messageBox" runat="server" />
-                    
-					
                     
 					<table>
 						<tr>
@@ -84,7 +84,7 @@
 						<tr>
 							<td class="FormLabel150"><asp:Localize ID="locLastName" runat="server" meta:resourcekey="locLastName" Text="Last Name:"></asp:Localize></td>
 							<td>
-								<asp:TextBox ID="txtLastName" runat="server" CssClass="TextBox100"></asp:TextBox>
+								<asp:TextBox ID="txtLastName" runat="server" CssClass="TextBox200"></asp:TextBox>
 							</td>
 						</tr>
 						<tr>

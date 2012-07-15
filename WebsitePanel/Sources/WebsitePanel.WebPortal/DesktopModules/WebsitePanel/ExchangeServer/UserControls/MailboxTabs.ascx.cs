@@ -28,44 +28,12 @@
 
 using System;
 using System.Collections.Generic;
+using WebsitePanel.Portal.Code.UserControls;
 
 namespace WebsitePanel.Portal.ExchangeServer.UserControls
 {
-    class Tab
-    {
-        string id;
-        string name;
-        string url;
-
-        public Tab(string id, string name, string url)
-        {
-            this.id = id;
-            this.name = name;
-            this.url = url;
-        }
-
-        public string Id
-        {
-            get { return this.id; }
-            set { this.id = value; }
-        }
-
-        public string Name
-        {
-            get { return this.name; }
-            set { this.name = value; }
-        }
-
-        public string Url
-        {
-            get { return this.url; }
-            set { this.url = value; }
-        }
-    }
-
     public partial class MailboxTabs : WebsitePanelControlBase
     {
-        public const string ADUserTabs = "ADUserTabs";
         private string selectedTab;
         public string SelectedTab
         {
@@ -73,31 +41,25 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             set { selectedTab = value; }
         }
 
-        public bool IsADUserTabs
-        {
-            get { return ViewState[ADUserTabs] != null ? Utils.ParseBool(ViewState[ADUserTabs].ToString(), false) : false; }
-            set { ViewState[ADUserTabs] = value; }
-        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (IsADUserTabs)
-                BindAdUserTabs();
-            else
-                BindTabs();
+            BindTabs();
         }
 
         private void BindTabs()
         {
             List<Tab> tabsList = new List<Tab>();
-            tabsList.Add(CreateTab("mailbox_settings", "Tab.Mailbox"));
+            tabsList.Add(CreateTab("edit_user", "Tab.General"));
+            tabsList.Add(CreateTab("mailbox_settings", "Tab.Settings"));
             tabsList.Add(CreateTab("mailbox_addresses", "Tab.Addresses"));
             tabsList.Add(CreateTab("mailbox_mailflow", "Tab.Mailflow"));
             tabsList.Add(CreateTab("mailbox_permissions", "Tab.Permissions"));
             tabsList.Add(CreateTab("mailbox_setup", "Tab.Setup"));
             tabsList.Add(CreateTab("mailbox_mobile", "Tab.Mobile"));
             //tabsList.Add(CreateTab("mailbddox_spam", "Tab.Spam"));
-            
+
+
 
             // find selected menu item
             int idx = 0;
@@ -113,32 +75,13 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             dlTabs.DataBind();
         }
 
-        private void BindAdUserTabs()
-        {
-            List<Tab> tabsList = new List<Tab>();
-            tabsList.Add(CreateTab("edit_user", "Tab.Settings"));
-            tabsList.Add(CreateTab("organization_user_setup", "Tab.Setup"));
-
-            // find selected menu item
-            int idx = 0;
-            foreach (Tab tab in tabsList)
-            {
-                if (String.Compare(tab.Id, SelectedTab, true) == 0)
-                    break;
-                idx++;
-            }
-            dlTabs.SelectedIndex = idx;
-
-            dlTabs.DataSource = tabsList;
-            dlTabs.DataBind();
-        }
-        
         private Tab CreateTab(string id, string text)
         {
             return new Tab(id, GetLocalizedString(text),
                 HostModule.EditUrl("AccountID", PanelRequest.AccountID.ToString(), id,
                 "SpaceID=" + PanelSecurity.PackageId.ToString(),
-                "ItemID=" + PanelRequest.ItemID.ToString()));
+                "ItemID=" + PanelRequest.ItemID.ToString(),
+                "Context=Mailbox"));
         }
     }
 }

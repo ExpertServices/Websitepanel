@@ -3917,6 +3917,8 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (368, 12, 1, N'Exchange2007.IsConsumer',N'Is Consumer Organization',1, 0 , NULL)
 GO
+INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (369, 12, 23,N'Exchange2007.EnablePlansEditing',N'Enable Plans Editing',1, 0 , NULL)
+GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (370, 41, 1, N'Lync.Users', N'Users',2 ,0 , NULL)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (371,	41,	2,	N'Lync.Federation'	, N'Allow Federation',	1,	0, NULL)

@@ -185,5 +185,11 @@ namespace WebsitePanel.Portal
             get { return HttpContext.Current.Request["Name"] != null
                 ? HttpContext.Current.Request["Name"].Trim() : ""; }
         }
+
+        public static string Context
+        {
+            get { return HttpContext.Current.Request["Context"]; }
+        }
+
     }
 }

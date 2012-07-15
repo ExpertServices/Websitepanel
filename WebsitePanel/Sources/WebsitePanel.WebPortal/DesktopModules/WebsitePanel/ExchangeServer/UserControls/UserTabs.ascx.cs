@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -27,21 +27,12 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
 using System.Collections.Generic;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using WebsitePanel.Portal.Code.UserControls;
 
 namespace WebsitePanel.Portal.ExchangeServer.UserControls
 {
-    public partial class PublicFolderTabs : WebsitePanelControlBase
+    public partial class UserTabs : WebsitePanelControlBase
     {
         private string selectedTab;
         public string SelectedTab
@@ -49,12 +40,6 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             get { return selectedTab; }
             set { selectedTab = value; }
         }
-
-		public bool MailEnabledFolder
-		{
-			get { return ViewState["MailEnabledFolder"] == null ? true : (bool)ViewState["MailEnabledFolder"]; }
-			set { ViewState["MailEnabledFolder"] = value; BindTabs(); }
-		}
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -64,12 +49,8 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
         private void BindTabs()
         {
             List<Tab> tabsList = new List<Tab>();
-            tabsList.Add(CreateTab("public_folder_settings", "Tab.Settings"));
-			if (MailEnabledFolder)
-			{
-				tabsList.Add(CreateTab("public_folder_addresses", "Tab.Addresses"));
-				tabsList.Add(CreateTab("public_folder_mailflow", "Tab.Mailflow"));
-			}
+            tabsList.Add(CreateTab("edit_user", "Tab.General"));
+            tabsList.Add(CreateTab("organization_user_setup", "Tab.Setup"));
 
             // find selected menu item
             int idx = 0;
@@ -90,7 +71,8 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             return new Tab(id, GetLocalizedString(text),
                 HostModule.EditUrl("AccountID", PanelRequest.AccountID.ToString(), id,
                 "SpaceID=" + PanelSecurity.PackageId.ToString(),
-                "ItemID=" + PanelRequest.ItemID.ToString()));
+                "ItemID=" + PanelRequest.ItemID.ToString(),
+                "Context=User"));
         }
     }
 }

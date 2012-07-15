@@ -67,13 +67,22 @@ namespace WebsitePanel.Portal.HostedSolution {
         protected global::System.Web.UI.WebControls.Literal litDisplayName;
         
         /// <summary>
-        /// MailboxTabs1 control.
+        /// UserTabsId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.MailboxTabs MailboxTabs1;
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.UserTabs UserTabsId;
+        
+        /// <summary>
+        /// MailboxTabsId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.MailboxTabs MailboxTabsId;
         
         /// <summary>
         /// messageBox control.

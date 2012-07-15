@@ -67,7 +67,15 @@ namespace WebsitePanel.Portal.ExchangeServer
                 ExchangeAccount account = ES.Services.ExchangeServer.GetAccount(PanelRequest.ItemID, PanelRequest.AccountID);
                 chkPmmAllowed.Checked = (account.MailboxManagerActions & MailboxManagerActions.GeneralSettings) > 0;
 
-                mailboxPlanSelector.MailboxPlanId = account.MailboxPlanId.ToString();
+                if (account.MailboxPlanId == 0)
+                {
+                    mailboxPlanSelector.AddNone = true;
+                    mailboxPlanSelector.MailboxPlanId = "-1";
+                }
+                else
+                {
+                    mailboxPlanSelector.MailboxPlanId = account.MailboxPlanId.ToString();
+                }
 
                 mailboxSize.QuotaUsedValue = Convert.ToInt32(stats.TotalSize / 1024 / 1024);
                 mailboxSize.QuotaValue = (int)Math.Round((double)(stats.MaxSize / 1024 / 1024));
@@ -92,6 +100,12 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             try
             {
+                if (mailboxPlanSelector.MailboxPlanId == "-1")
+                {
+                    messageBox.ShowErrorMessage("EXCHANGE_SPECIFY_PLAN");
+                    return;
+                }
+
                 int result = ES.Services.ExchangeServer.SetMailboxGeneralSettings(
                     PanelRequest.ItemID, PanelRequest.AccountID,
                     chkHideAddressBook.Checked,
