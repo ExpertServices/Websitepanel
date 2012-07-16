@@ -43,7 +43,22 @@ namespace WebsitePanel.Portal.ExchangeServer
                 BindMailboxPlans();
 
                 txtStatus.Visible = false;
+
+                if (PanelSecurity.LoggedUser.Role == UserRole.User)
+                {
+                    PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+                    if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ENABLEDPLANSEDITING))
+                    {
+                        if (cntx.Quotas[Quotas.EXCHANGE2007_ENABLEDPLANSEDITING].QuotaAllocatedValue != 1)
+                        {
+                            gvMailboxPlans.Columns[2].Visible = false;
+                            btnAddMailboxPlan.Enabled = btnAddMailboxPlan.Visible = false;
+                        }
+                    }
+                }
+
             }
+
         }
 
         public string GetMailboxPlanDisplayUrl(string MailboxPlanId)
@@ -68,7 +83,6 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
 
             btnSave.Enabled = (gvMailboxPlans.Rows.Count >= 1);
-
         }
 
         public string IsChecked(bool val)
@@ -141,8 +155,10 @@ namespace WebsitePanel.Portal.ExchangeServer
                     int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(PanelRequest.ItemID, a.AccountId, Convert.ToInt32(mailboxPlanSelectorTarget.MailboxPlanId));
                     if (result < 0)
                     {
+                        BindMailboxPlans();
                         txtStatus.Text = "Error: " + a.AccountName;
-                        break;
+                        ShowErrorMessage("EXCHANGE_FAILED_TO_STAMP");
+                        return;
                     }
                 }
 

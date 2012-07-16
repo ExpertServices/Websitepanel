@@ -74,7 +74,8 @@ namespace WebsitePanel.Portal.HostedSolution
         {
             return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "edit_user",
                     "AccountID=" + accountId,
-                    "ItemID=" + PanelRequest.ItemID);
+                    "ItemID=" + PanelRequest.ItemID,
+                    "Context=User");
         }
 
         protected void odsAccountsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)

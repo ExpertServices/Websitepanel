@@ -200,6 +200,7 @@
     <Compile Include="Code\ReportingServices\FileSystemReportLocalizer.cs" />
     <Compile Include="Code\ReportingServices\IResourceStorage.cs" />
     <Compile Include="Code\ReportingServices\ReportingServicesUtils.cs" />
+    <Compile Include="Code\UserControls\Tab.cs" />
     <Compile Include="ExchangeServer\ExchangeAddMailboxPlan.ascx.cs">
       <DependentUpon>ExchangeAddMailboxPlan.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -224,6 +225,13 @@
     </Compile>
     <Compile Include="ExchangeServer\UserControls\MailboxPlanSelector.ascx.designer.cs">
       <DependentUpon>MailboxPlanSelector.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\UserTabs.ascx.cs">
+      <DependentUpon>UserTabs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\UserTabs.ascx.designer.cs">
+      <DependentUpon>UserTabs.ascx</DependentUpon>
     </Compile>
     <Compile Include="Lync\LyncAddFederationDomain.ascx.cs">
       <DependentUpon>LyncAddFederationDomain.ascx</DependentUpon>
@@ -3754,6 +3762,7 @@
     <Content Include="ExchangeServer\ExchangeMailboxPlans.ascx" />
     <Content Include="ExchangeServer\UserControls\AccountsListWithPermissions.ascx" />
     <Content Include="ExchangeServer\UserControls\MailboxPlanSelector.ascx" />
+    <Content Include="ExchangeServer\UserControls\UserTabs.ascx" />
     <Content Include="Lync\LyncAddFederationDomain.ascx" />
     <Content Include="Lync\LyncAddLyncUserPlan.ascx" />
     <Content Include="Lync\LyncCreateUser.ascx" />
@@ -4894,6 +4903,7 @@
     <Content Include="Lync\App_LocalResources\LyncUserPlans.ascx.resx" />
     <Content Include="Lync\App_LocalResources\LyncUsers.ascx.resx" />
     <Content Include="ProviderControls\App_LocalResources\Lync_Settings.ascx.resx" />
+    <Content Include="ExchangeServer\UserControls\App_LocalResources\UserTabs.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

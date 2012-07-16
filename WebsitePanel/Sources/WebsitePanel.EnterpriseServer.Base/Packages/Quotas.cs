@@ -110,6 +110,7 @@ order by rg.groupOrder
         public const string EXCHANGE2007_MAXSENDMESSAGESIZEKB = "Exchange2007.MaxSendMessageSizeKB";  // Max Send Message Size
         public const string EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB = "Exchange2007.MaxReceiveMessageSizeKB";  // Max Receive Message Size
         public const string EXCHANGE2007_ISCONSUMER = "Exchange2007.IsConsumer";  // Is Consumer Organization
+        public const string EXCHANGE2007_ENABLEDPLANSEDITING = "Exchange2007.EnablePlansEditing";  // Enabled plans editing
 		public const string MSSQL2000_DATABASES = "MsSQL2000.Databases";  // Databases
 		public const string MSSQL2000_USERS = "MsSQL2000.Users";  // Users
 		public const string MSSQL2000_MAXDATABASESIZE = "MsSQL2000.MaxDatabaseSize";  // Max Database Size

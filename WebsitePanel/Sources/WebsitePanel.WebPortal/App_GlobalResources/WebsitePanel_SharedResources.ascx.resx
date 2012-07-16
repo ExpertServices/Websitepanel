@@ -5005,6 +5005,9 @@
   <data name="Quota.Exchange2007.IsConsumer" xml:space="preserve">
     <value>Consumer Organization Support</value>
   </data>
+  <data name="Quota.Exchange2007.EnablePlansEditing" xml:space="preserve">
+    <value>Enable Mailbox Plans Editing</value>
+  </data>
   <data name="Error.LYNC_DELETE_DOMAIN" xml:space="preserve">
     <value>Error deleting organization domain name. See audit log for more details.</value>
   </data>
@@ -5144,6 +5147,9 @@
     <value>Failed to set default mailbox plan.</value>
   </data>
   <data name="Error.EXCHANGE_FAILED_TO_STAMP" xml:space="preserve">
-    <value>Failed to stamp mailbox with a mailbox plan.</value>
+    <value>Failed to stamp mailbox with a mailbox plan. See storage allocation.</value>
+  </data>
+  <data name="Error.EXCHANGE_SPECIFY_PLAN" xml:space="preserve">
+    <value>Specify a plan</value>
   </data>
 </root>

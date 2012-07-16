@@ -117,31 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Tab.Addresses" xml:space="preserve">
-    <value>E-mail Addresses</value>
-  </data>
   <data name="Tab.Advanced" xml:space="preserve">
     <value>Advanced</value>
   </data>
   <data name="Tab.General" xml:space="preserve">
     <value>General</value>
   </data>
-  <data name="Tab.Mailflow" xml:space="preserve">
-    <value>Mail Flow Settings</value>
-  </data>
-  <data name="Tab.Mobile" xml:space="preserve">
-    <value>Mobile Devices</value>
-  </data>
-  <data name="Tab.Permissions" xml:space="preserve">
-    <value>Permissions</value>
-  </data>
   <data name="Tab.Settings" xml:space="preserve">
     <value>Settings</value>
   </data>
   <data name="Tab.Setup" xml:space="preserve">
     <value>Setup Instructions</value>
-  </data>
-  <data name="Tab.Spam" xml:space="preserve">
-    <value>Spam</value>
   </data>
 </root>

@@ -11,6 +11,23 @@
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
+<div runat="server" id="divWrapper">
+<script language="javascript" type="text/javascript">
+    function buildDisplayName() {
+        document.getElementById("<%= txtDisplayName.ClientID %>").value = '';
+
+        if (document.getElementById("<%= txtFirstName.ClientID %>").value != '')
+            document.getElementById("<%= txtDisplayName.ClientID %>").value = document.getElementById("<%= txtFirstName.ClientID %>").value + ' ';
+
+        if (document.getElementById("<%= txtInitials.ClientID %>").value != '')
+            document.getElementById("<%= txtDisplayName.ClientID %>").value = document.getElementById("<%= txtDisplayName.ClientID %>").value + document.getElementById("<%= txtInitials.ClientID %>").value + ' ';
+
+        if (document.getElementById("<%= txtLastName.ClientID %>").value != '')
+            document.getElementById("<%= txtDisplayName.ClientID %>").value = document.getElementById("<%= txtDisplayName.ClientID %>").value + document.getElementById("<%= txtLastName.ClientID %>").value;
+    }
+</script>
+</div>
+
 <div id="ExchangeContainer">
 	<div class="Module">
 		<div class="Header">
@@ -54,6 +71,21 @@
                         				   
 					    
 						<table id="NewUserTable"  runat="server">
+						<tr>
+							<td class="FormLabel150"><asp:Localize ID="locFirstName" runat="server" meta:resourcekey="locFirstName" Text="First Name: "></asp:Localize></td>
+							<td>
+								<asp:TextBox ID="txtFirstName" runat="server" CssClass="TextBox100"  onKeyUp="buildDisplayName();"></asp:TextBox>
+								&nbsp;
+								<asp:Localize ID="locInitials" runat="server" meta:resourcekey="locInitials" Text="Initials:" />
+								<asp:TextBox ID="txtInitials" runat="server" MaxLength="6" CssClass="TextBox100"  onKeyUp="buildDisplayName();"></asp:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td class="FormLabel150"><asp:Localize ID="locLastName" runat="server" meta:resourcekey="locLastName" Text="Last Name: "></asp:Localize></td>
+							<td>
+								<asp:TextBox ID="txtLastName" runat="server" CssClass="TextBox200"  onKeyUp="buildDisplayName();"></asp:TextBox>
+							</td>
+						</tr>
 						<tr>
 							<td class="FormLabel150"><asp:Localize ID="locDisplayName" runat="server" meta:resourcekey="locDisplayName" Text="Display Name: *"></asp:Localize></td>
 							<td>

@@ -29,6 +29,7 @@
 using System;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.ResultObjects;
+using WebsitePanel.Providers.HostedSolution;
 
 
 namespace WebsitePanel.Portal.HostedSolution
@@ -103,15 +104,61 @@ namespace WebsitePanel.Portal.HostedSolution
                     messageBox.ShowResultMessage(accountId);
                     return;
                 }
+                else
+                {
+                    if ((!string.IsNullOrEmpty(txtFirstName.Text)) | (!string.IsNullOrEmpty(txtLastName.Text)) | (!string.IsNullOrEmpty(txtInitials.Text)))
+                    {
+                        SetUserAttributes(accountId);
+                    }
+                }
 
                 Response.Redirect(EditUrl("AccountID", accountId.ToString(), "edit_user",
                     "SpaceID=" + PanelSecurity.PackageId,
-                    "ItemID=" + PanelRequest.ItemID));
+                    "ItemID=" + PanelRequest.ItemID,
+                    "Context=User"));
             }
             catch (Exception ex)
             {
                 messageBox.ShowErrorMessage("EXCHANGE_CREATE_MAILBOX", ex);
             }
+        }
+
+        private void SetUserAttributes(int accountId)
+        {
+            OrganizationUser user = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID, accountId);
+
+            ES.Services.Organizations.SetUserGeneralSettings(
+                    PanelRequest.ItemID, accountId,
+                    txtDisplayName.Text,
+                    null,
+                    false,
+                    user.Disabled,
+                    user.Locked,
+
+                    txtFirstName.Text,
+                    txtInitials.Text,
+                    txtLastName.Text,
+
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    user.ExternalEmail,
+                    txtSubscriberNumber.Text);
         }
     }
 }
