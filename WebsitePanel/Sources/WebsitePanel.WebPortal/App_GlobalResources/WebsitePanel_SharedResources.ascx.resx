@@ -2697,6 +2697,9 @@
   <data name="AuditLogTask.EXCHANGE_DELETE_MAILBOX" xml:space="preserve">
     <value>Delete mailbox</value>
   </data>
+  <data name="AuditLogTask.EXCHANGE_DELETE_MAILBOXPLAN" xml:space="preserve">
+    <value>Delete mailboxplan</value>
+  </data>
   <data name="AuditLogTask.EXCHANGE_DELETE_MAILBOX_ADDRESSES" xml:space="preserve">
     <value>Delete mailbox e-mail addresses</value>
   </data>
@@ -2888,6 +2891,9 @@
   </data>
   <data name="Error.EXCHANGE_DELETE_MAILBOX" xml:space="preserve">
     <value>Error deleting mailbox. See audit log for more details.</value>
+  </data>
+  <data name="Error.EXCHANGE_DELETE_MAILBOXPLAN" xml:space="preserve">
+    <value>Unable to delete mailboxplan. Make sure the mailbox plan is not assigned to any mailbox</value>
   </data>
   <data name="Error.EXCHANGE_DELETE_ORG" xml:space="preserve">
     <value>Error deleting Exchange organization. See audit log for more details.</value>
