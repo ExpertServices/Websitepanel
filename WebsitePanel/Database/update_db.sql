@@ -1931,6 +1931,11 @@ CREATE PROCEDURE [dbo].[AddExchangeMailboxPlan]
 )
 AS
 
+IF ((SELECT Count(*) FROM ExchangeMailboxPlans WHERE ItemId = @ItemID) = 0)
+BEGIN
+	SET @IsDefault = 1
+END
+
 INSERT INTO ExchangeMailboxPlans
 (
 	ItemID,
@@ -1980,6 +1985,83 @@ GO
 
 
 
+
+
+
+ALTER PROCEDURE [dbo].[AddExchangeMailboxPlan] 
+(
+	@MailboxPlanId int OUTPUT,
+	@ItemID int,
+	@MailboxPlan	nvarchar(300),
+	@EnableActiveSync bit,
+	@EnableIMAP bit,
+	@EnableMAPI bit,
+	@EnableOWA bit,
+	@EnablePOP bit,
+	@IsDefault bit,
+	@IssueWarningPct int,
+	@KeepDeletedItemsDays int,
+	@MailboxSizeMB int,
+	@MaxReceiveMessageSizeKB int,
+	@MaxRecipients int,
+	@MaxSendMessageSizeKB int,
+	@ProhibitSendPct int,
+	@ProhibitSendReceivePct int	,
+	@HideFromAddressBook bit
+)
+AS
+
+IF ((SELECT Count(*) FROM ExchangeMailboxPlans WHERE ItemId = @ItemID) = 0)
+BEGIN
+	SET @IsDefault = 1
+END
+
+INSERT INTO ExchangeMailboxPlans
+(
+	ItemID,
+	MailboxPlan,
+	EnableActiveSync,
+	EnableIMAP,
+	EnableMAPI,
+	EnableOWA,
+	EnablePOP,
+	IsDefault,
+	IssueWarningPct,
+	KeepDeletedItemsDays,
+	MailboxSizeMB,
+	MaxReceiveMessageSizeKB,
+	MaxRecipients,
+	MaxSendMessageSizeKB,
+	ProhibitSendPct,
+	ProhibitSendReceivePct,
+	HideFromAddressBook
+)
+VALUES
+(
+	@ItemID,
+	@MailboxPlan,
+	@EnableActiveSync,
+	@EnableIMAP,
+	@EnableMAPI,
+	@EnableOWA,
+	@EnablePOP,
+	@IsDefault,
+	@IssueWarningPct,
+	@KeepDeletedItemsDays,
+	@MailboxSizeMB,
+	@MaxReceiveMessageSizeKB,
+	@MaxRecipients,
+	@MaxSendMessageSizeKB,
+	@ProhibitSendPct,
+	@ProhibitSendReceivePct,
+	@HideFromAddressBook
+)
+
+SET @MailboxPlanId = SCOPE_IDENTITY()
+
+RETURN
+
+GO
 
 
 
@@ -3112,6 +3194,11 @@ EXEC sp_executesql N'CREATE PROCEDURE [dbo].[AddLyncUserPlan]
 )
 AS
 
+IF ((SELECT Count(*) FROM LyncUserPlans WHERE ItemId = @ItemID) = 0)
+BEGIN
+	SET @IsDefault = 1
+END
+
 INSERT INTO LyncUserPlans
 (
 	ItemID,
@@ -3143,6 +3230,62 @@ SET @LyncUserPlanId = SCOPE_IDENTITY()
 
 RETURN'		
 END
+GO
+
+
+
+ALTER PROCEDURE [dbo].[AddLyncUserPlan] 
+(
+	@LyncUserPlanId int OUTPUT,
+	@ItemID int,
+	@LyncUserPlanName	nvarchar(300),
+	@IM bit,
+	@Mobility bit,
+	@MobilityEnableOutsideVoice bit,
+	@Federation bit,
+	@Conferencing bit,
+	@EnterpriseVoice bit,
+	@VoicePolicy int,
+	@IsDefault bit
+)
+AS
+
+IF ((SELECT Count(*) FROM LyncUserPlans WHERE ItemId = @ItemID) = 0)
+BEGIN
+	SET @IsDefault = 1
+END
+
+
+INSERT INTO LyncUserPlans
+(
+	ItemID,
+	LyncUserPlanName,
+	IM,
+	Mobility,
+	MobilityEnableOutsideVoice,
+	Federation,
+	Conferencing,
+	EnterpriseVoice,
+	VoicePolicy,
+	IsDefault
+)
+VALUES
+(
+	@ItemID,
+	@LyncUserPlanName,
+	@IM,
+	@Mobility,
+	@MobilityEnableOutsideVoice,
+	@Federation,
+	@Conferencing,
+	@EnterpriseVoice,
+	@VoicePolicy,
+	@IsDefault
+)
+
+SET @LyncUserPlanId = SCOPE_IDENTITY()
+
+RETURN
 GO
 
 

@@ -35,7 +35,6 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
     {
 
         private string mailboxPlanToSelect;
-        private bool addNone;
 
         public string MailboxPlanId
         {

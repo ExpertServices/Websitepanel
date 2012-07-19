@@ -44770,6 +44770,11 @@ CREATE PROCEDURE [dbo].[AddExchangeMailboxPlan]
 )
 AS
 
+IF ((SELECT Count(*) FROM ExchangeMailboxPlans WHERE ItemId = @ItemID) = 0)
+BEGIN
+	SET @IsDefault = 1
+END
+
 INSERT INTO ExchangeMailboxPlans
 (
 	ItemID,
@@ -45037,6 +45042,12 @@ CREATE PROCEDURE [dbo].[AddLyncUserPlan]
 	@IsDefault bit
 )
 AS
+
+IF ((SELECT Count(*) FROM LyncUserPlans WHERE ItemId = @ItemID) = 0)
+BEGIN
+	SET @IsDefault = 1
+END
+
 
 INSERT INTO LyncUserPlans
 (

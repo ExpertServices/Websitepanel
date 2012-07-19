@@ -72,6 +72,8 @@ namespace WebsitePanel.WebPortal
                 {
                     FormsAuthentication.SignOut();
                     HttpContext.Current.Response.Redirect(DefaultPage.GetPageUrl(PortalConfiguration.SiteSettings["DefaultPage"]));
+                    cookie.Value = GetSessionIDMac(cookie.Value, request.UserHostAddress, request.UserAgent, _ValidationKey);
+                    return;
                 }
 
                 // Separate the session ID and the MAC 
@@ -87,6 +89,8 @@ namespace WebsitePanel.WebPortal
                 {
                     FormsAuthentication.SignOut();
                     HttpContext.Current.Response.Redirect(DefaultPage.GetPageUrl(PortalConfiguration.SiteSettings["DefaultPage"]));
+                    cookie.Value = GetSessionIDMac(cookie.Value, request.UserHostAddress, request.UserAgent, _ValidationKey);
+
                 }
 
                 // Strip the MAC from the cookie before ASP.NET sees it 
