@@ -337,7 +337,7 @@
     <value>Applications Installer</value>
   </data>
   <data name="PageName.SpaceWebApplicationsGallery" xml:space="preserve">
-    <value>Microsoft Web App Gallery</value>
+    <value>Web App Gallery</value>
   </data>
   <data name="PageTitle.SpaceApplicationsInstaller" xml:space="preserve">
     <value>{user} - {space} - Applications Installer</value>

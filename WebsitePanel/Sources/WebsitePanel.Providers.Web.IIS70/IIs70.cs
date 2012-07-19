@@ -59,6 +59,7 @@ using WebsitePanel.Providers.Web.WebObjects;
 using WebsitePanel.Providers.Web.Iis.Common;
 using WebsitePanel.Providers.Web.Iis;
 using Ionic.Zip;
+using WebsitePanel.Providers.WebAppGallery;
 using WebsitePanel.Server.Utils;
 using WebsitePanel.Providers.Web.Delegation;
 
@@ -3176,7 +3177,7 @@ namespace WebsitePanel.Providers.Web
 		public const string WDeployAppPoolConfigEditor = "WDeployAppPoolConfigEditor";
 
 
-		private void SetupWebDeployPublishingOnServer(List<string> messages)
+	    private void SetupWebDeployPublishingOnServer(List<string> messages)
 		{
 			if (IsWebDeployInstalled() == false
 				|| String.IsNullOrEmpty(ProviderSettings[WDeployEnabled]))
@@ -4026,5 +4027,11 @@ namespace WebsitePanel.Providers.Web
 			return sslObjectService.CheckCertificate(webSite);
 		}
 		#endregion
+
+        #region Web Platform Installer Application Gallery
+
+        // moved down to IIs60
+
+        #endregion
 	}
 }

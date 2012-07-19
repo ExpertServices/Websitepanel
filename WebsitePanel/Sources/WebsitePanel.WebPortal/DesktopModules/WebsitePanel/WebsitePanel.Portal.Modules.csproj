@@ -336,14 +336,31 @@
     </Compile>
     <Compile Include="ProviderControls\Lync_Settings.ascx.cs">
       <DependentUpon>Lync_Settings.ascx</DependentUpon>
+           <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ServersEditWebPlatformInstaller.ascx.cs">
+      <DependentUpon>ServersEditWebPlatformInstaller.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="ProviderControls\Lync_Settings.ascx.designer.cs">
       <DependentUpon>Lync_Settings.ascx</DependentUpon>
+      </Compile>
+    <Compile Include="ServersEditWebPlatformInstaller.ascx.designer.cs">
+      <DependentUpon>ServersEditWebPlatformInstaller.ascx</DependentUpon>
     </Compile>
     <Compile Include="ScheduleTaskControls\NotifyOverusedDatabases.ascx.cs">
       <DependentUpon>NotifyOverusedDatabases.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\DomainListControlBase.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\EditFeedsList.ascx.cs">
+      <DependentUpon>EditFeedsList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\EditFeedsList.ascx.designer.cs">
+      <DependentUpon>EditFeedsList.ascx</DependentUpon>
     </Compile>
     <Compile Include="VPSForPC\MonitoringPage.aspx.cs">
       <DependentUpon>MonitoringPage.aspx</DependentUpon>
@@ -3759,6 +3776,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ExchangeServer\ExchangeAddMailboxPlan.ascx" />
+    <Content Include="ServersEditWebPlatformInstaller.ascx" />
     <Content Include="ExchangeServer\ExchangeMailboxPlans.ascx" />
     <Content Include="ExchangeServer\UserControls\AccountsListWithPermissions.ascx" />
     <Content Include="ExchangeServer\UserControls\MailboxPlanSelector.ascx" />
@@ -3779,6 +3797,7 @@
     <Content Include="ProviderControls\hMailServer5_Settings.ascx" />
     <Content Include="ProviderControls\Lync_Settings.ascx" />
     <Content Include="ScheduleTaskControls\NotifyOverusedDatabases.ascx" />
+    <Content Include="UserControls\EditFeedsList.ascx" />
     <Content Include="VPSForPC\MonitoringPage.aspx" />
     <Content Include="VPSForPC\VdcAccountVLanAdd.ascx" />
     <Content Include="VPSForPC\VdcAccountVLanNetwork.ascx" />
@@ -4891,6 +4910,9 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="ProviderControls\App_LocalResources\hMailServer5_EditList.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_LocalResources\ServersEditWebPlatformInstaller.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="ExchangeServer\App_LocalResources\ExchangeAddMailboxPlan.ascx.resx" />

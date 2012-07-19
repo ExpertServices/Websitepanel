@@ -51,7 +51,8 @@ using System.Linq;
 
 namespace WebsitePanel.Providers.Web
 {
-	public sealed class WebApplicationGallery
+    [Obsolete]
+    public sealed class WebApplicationGallery
 	{
         // MS Deploy library
         private const string MS_DEPLOY_ASSEMBLY_NAME = "Microsoft.Web.Deployment";

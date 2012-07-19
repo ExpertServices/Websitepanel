@@ -62,6 +62,88 @@ namespace WebsitePanel.EnterpriseServer
 		public const string GET_GALLERY_CATEGORIES_TASK = "GET_GALLERY_CATEGORIES_TASK";
 		#endregion
 
+        private static string[] getFeedsFromSettings(int packageId)
+        {
+            int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Web);
+
+            return getFeedsFromSettingsByServiceId(serviceId);
+
+        }
+
+        private static string[] getFeedsFromSettingsByServiceId(int serviceId)
+        {
+            StringDictionary serviceSettings = ServerController.GetServiceSettings(serviceId);
+
+            List<string> arFeeds = new List<string>();
+
+            if (Utils.ParseBool(serviceSettings["FeedEnableMicrosoft"], true))
+            {
+                arFeeds.Add("https://www.microsoft.com/web/webpi/3.0/WebProductList.xml");
+            }
+
+            if (Utils.ParseBool(serviceSettings["FeedEnableHelicon"], true))
+            {
+                arFeeds.Add("http://www.helicontech.com/zoo/feed/wsp");
+            }
+
+            string additionalFeeds = serviceSettings["FeedUrls"];
+            if (!string.IsNullOrEmpty(additionalFeeds))
+            {
+                arFeeds.AddRange(additionalFeeds.Split(';'));
+            }
+
+            return arFeeds.ToArray();
+        }
+        public static void InitFeedsByServiceId(int UserId, int serviceId)
+        {
+            string[] feeds = getFeedsFromSettingsByServiceId(serviceId);
+
+            WebServer webServer = WebServerController.GetWebServer(serviceId);
+            webServer.InitFeeds(UserId, feeds);
+        }
+        
+
+
+        public static void InitFeeds(int UserId, int packageId)
+        {
+            string[] feeds = getFeedsFromSettings(packageId);
+            
+            // Set feeds
+            WebServer webServer = GetAssociatedWebServer(packageId);
+            webServer.InitFeeds(UserId, feeds);
+
+        }
+
+        public static void SetResourceLanguage(int packageId, string resourceLanguage)
+        {
+            GetAssociatedWebServer(packageId).SetResourceLanguage(SecurityContext.User.UserId,resourceLanguage);
+        }
+
+      
+        public static GalleryLanguagesResult GetGalleryLanguages(int packageId)
+        {
+            GalleryLanguagesResult result;
+
+            try
+            {
+                WebServer webServer = GetAssociatedWebServer(packageId);
+                result = webServer.GetGalleryLanguages(SecurityContext.User.UserId);
+
+                if (!result.IsSuccess)
+                    return Error<GalleryLanguagesResult>(result, GalleryErrors.GetLanguagesError);
+            }
+            catch (Exception ex)
+            {
+                return Error<GalleryLanguagesResult>(GalleryErrors.GetLanguagesError, ex.Message);
+            }
+            finally
+            {
+            }
+            //
+            return result;
+
+        }
+
 		public static GalleryCategoriesResult GetGalleryCategories(int packageId)
 		{
 			GalleryCategoriesResult result;
@@ -77,7 +159,7 @@ namespace WebsitePanel.EnterpriseServer
                     return Error<GalleryCategoriesResult>(GalleryErrors.MsDeployIsNotInstalled);
 
                 // get categories
-				result = webServer.GetGalleryCategories();
+                result = webServer.GetGalleryCategories(SecurityContext.User.UserId);
 				
 				if (!result.IsSuccess)
                     return Error<GalleryCategoriesResult>(result, GalleryErrors.GetCategoriesError);
@@ -114,7 +196,7 @@ namespace WebsitePanel.EnterpriseServer
                     return Error<GalleryApplicationsResult>(GalleryErrors.MsDeployIsNotInstalled);
 
 				// get applications
-				result = webServer.GetGalleryApplications(String.Empty);
+                result = webServer.GetGalleryApplications(SecurityContext.User.UserId,String.Empty);
 				
 				if (!result.IsSuccess)
 					return Error<GalleryApplicationsResult>(result, GalleryErrors.GetApplicationsError);
@@ -132,7 +214,7 @@ namespace WebsitePanel.EnterpriseServer
 			return result;
 		}
 
-		public static GalleryApplicationsResult GetGalleryApplications(int packageId, string categoryId)
+        public static GalleryApplicationsResult GetGalleryApplications(int packageId, string categoryId)
 		{
 			GalleryApplicationsResult result;
 			//
@@ -146,7 +228,7 @@ namespace WebsitePanel.EnterpriseServer
                     return Error<GalleryApplicationsResult>(GalleryErrors.MsDeployIsNotInstalled);
 
 				// get applications
-				result = webServer.GetGalleryApplications(categoryId);
+                result = webServer.GetGalleryApplications(SecurityContext.User.UserId,categoryId);
 
                 if (!result.IsSuccess)
                     return Error<GalleryApplicationsResult>(result, GalleryErrors.GetApplicationsError);
@@ -189,20 +271,8 @@ namespace WebsitePanel.EnterpriseServer
                 //        || MatchMenaltoGalleryApp(x, appsFilter.ToArray())));
 
 				{
-					int userId = SecurityContext.User.UserId;
-					//
-					SecurityContext.SetThreadSupervisorPrincipal();
-					//
-					string[] filteredApps = GetServiceAppsCatalogFilter(packageId);
-					//
-					if (filteredApps != null)
-					{
-						result.Value = new List<GalleryApplication>(Array.FindAll(result.Value.ToArray(),
-							x => !Array.Exists(filteredApps, 
-								z => z.Equals(x.Id, StringComparison.InvariantCultureIgnoreCase))));
-					}
-					//
-					SecurityContext.SetThreadPrincipal(userId);
+                    FilterResultApplications(packageId, result);
+
 				}
 			}
 			catch (Exception ex)
@@ -217,6 +287,61 @@ namespace WebsitePanel.EnterpriseServer
 			//
 			return result;
 		}
+
+        private static void FilterResultApplications(int packageId, GalleryApplicationsResult result)
+        {
+            int userId = SecurityContext.User.UserId;
+            //
+            SecurityContext.SetThreadSupervisorPrincipal();
+            //
+            string[] filteredApps = GetServiceAppsCatalogFilter(packageId);
+            //
+            if (filteredApps != null)
+            {
+                result.Value = new List<GalleryApplication>(Array.FindAll(result.Value.ToArray(),
+                    x => !Array.Exists(filteredApps,
+                        z => z.Equals(x.Id, StringComparison.InvariantCultureIgnoreCase))));
+            }
+            //
+            SecurityContext.SetThreadPrincipal(userId);
+        }
+
+        public static GalleryApplicationsResult GetGalleryApplicationsFiltered(int packageId, string pattern)
+        {
+            GalleryApplicationsResult result;
+            //
+            try
+            {
+                TaskManager.StartTask(TASK_MANAGER_SOURCE, GET_GALLERY_APPS_TASK);
+
+                // check if WAG is installed
+                WebServer webServer = GetAssociatedWebServer(packageId);
+                if (!webServer.IsMsDeployInstalled())
+                    return Error<GalleryApplicationsResult>(GalleryErrors.MsDeployIsNotInstalled);
+
+                // get applications
+                result = webServer.GetGalleryApplicationsFiltered(SecurityContext.User.UserId,pattern);
+
+                FilterResultApplications(packageId, result);
+
+                if (!result.IsSuccess)
+                    return Error<GalleryApplicationsResult>(result, GalleryErrors.GetApplicationsError);
+                
+            }
+            catch (Exception ex)
+            {
+                TaskManager.WriteError(ex);
+                return Error<GalleryApplicationsResult>(GalleryErrors.GeneralError, ex.Message);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+            //
+            return result;
+
+        }
+
 
 		internal static bool MatchParticularAppDependency(Dependency dependency, string[] dependencyIds)
 		{
@@ -311,7 +436,7 @@ namespace WebsitePanel.EnterpriseServer
                     return Error<GalleryApplicationResult>(GalleryErrors.MsDeployIsNotInstalled);
 				
                 // get application details
-				result = webServer.GetGalleryApplication(applicationId);
+                result = webServer.GetGalleryApplication(SecurityContext.User.UserId,applicationId);
 				
 				if (!result.IsSuccess)
                     return Error<GalleryApplicationResult>(result, GalleryErrors.GetApplicationError);
@@ -396,7 +521,7 @@ namespace WebsitePanel.EnterpriseServer
                     return Error<DeploymentParametersResult>(GalleryErrors.MsDeployIsNotInstalled);
 
 				// get parameters
-				result = webServer.GetGalleryApplicationParameters(webAppId);
+                result = webServer.GetGalleryApplicationParameters(SecurityContext.User.UserId,webAppId);
 				
 				if (!result.IsSuccess)
                     return Error<DeploymentParametersResult>(result, GalleryErrors.GetApplicationParametersError);
@@ -414,9 +539,10 @@ namespace WebsitePanel.EnterpriseServer
 			return result;
 		}
 
-		public static StringResultObject Install(int packageId, string webAppId, string siteName, string virtualDir, List<DeploymentParameter> parameters)
+		public static StringResultObject Install(int packageId, string webAppId, string siteName, string virtualDir, List<DeploymentParameter> parameters, string languageId )
 		{
 			StringResultObject result = new StringResultObject();
+		    int originalUserId = SecurityContext.User.UserId;
 
             try
             {
@@ -455,7 +581,7 @@ namespace WebsitePanel.EnterpriseServer
                     return Error<StringResultObject>(GalleryErrors.WebSiteNotFound, siteName);
 
 				// get application pack details
-				GalleryApplicationResult app = webServer.GetGalleryApplication(webAppId);
+                GalleryApplicationResult app = webServer.GetGalleryApplication(SecurityContext.User.UserId,webAppId);
                 if (!app.IsSuccess)
                     return Error<StringResultObject>(app, GalleryErrors.GeneralError);
                 if (app.Value == null)
@@ -643,7 +769,7 @@ namespace WebsitePanel.EnterpriseServer
                 }
 				
                 // install application
-				result = webServer.InstallGalleryApplication(webAppId, parameters.ToArray());
+                result = webServer.InstallGalleryApplication(originalUserId, webAppId, parameters.ToArray(), languageId);
 
 				#region Rollback in case of failure
 				// Rollback - remove resources have been created previously
@@ -665,12 +791,25 @@ namespace WebsitePanel.EnterpriseServer
                 #region Update Web Application settings
 
                 WebVirtualDirectory iisApp = null;
-                if(String.IsNullOrEmpty(virtualDir))
-                    // load web site
-                    iisApp = WebServerController.GetWebSite(packageId, siteName);
-                else
-                    // load virtual directory
-                    iisApp = WebServerController.GetVirtualDirectory(webSite.Id, virtualDir);
+                    if (String.IsNullOrEmpty(virtualDir))
+                        // load web site
+                        iisApp = WebServerController.GetWebSite(packageId, siteName);
+                    else
+                    {
+                        try
+                        {
+                            // load virtual directory
+                            iisApp = WebServerController.GetVirtualDirectory(webSite.Id, virtualDir);
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(
+                                string.Format(
+                                    "{0} on WebServerController.GetVirtualDirectory(\"{1}\", \"{2}\")", 
+                                    ex.GetType(), webSite.Id, virtualDir), 
+                                ex);
+                        }
+                    }
 
                 // put correct extensions
                 if ((app.Value.WellKnownDependencies & GalleryApplicationWellKnownDependency.AspNet20) == GalleryApplicationWellKnownDependency.AspNet20)
@@ -714,7 +853,10 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.WriteError(ex);
 
                 // exit with error code
-                return Error<StringResultObject>(GalleryErrors.GeneralError);
+                //return Error<StringResultObject>(GalleryErrors.GeneralError);
+                
+                result.AddError(GalleryErrors.GeneralError, ex);
+                return result;
             }
             finally
             {
@@ -746,11 +888,11 @@ namespace WebsitePanel.EnterpriseServer
 				if (!webServer.IsMsDeployInstalled())
                     return Error<GalleryWebAppStatus>(GalleryErrors.MsDeployIsNotInstalled);
 				//
-				GalleryWebAppStatus appStatus = webServer.GetGalleryApplicationStatus(webAppId);
+                GalleryWebAppStatus appStatus = webServer.GetGalleryApplicationStatus(SecurityContext.User.UserId,webAppId);
 				//
 				if (appStatus == GalleryWebAppStatus.NotDownloaded)
 				{
-					GalleryApplicationResult appResult = webServer.GetGalleryApplication(webAppId);
+                    GalleryApplicationResult appResult = webServer.GetGalleryApplication(SecurityContext.User.UserId,webAppId);
 					// Start app download in new thread
 					WebAppGalleryAsyncWorker async = new WebAppGalleryAsyncWorker();
 					async.GalleryApp = appResult.Value;
@@ -897,7 +1039,7 @@ namespace WebsitePanel.EnterpriseServer
 				//
 				TaskManager.Write("Application package download has been started");
 				//
-				GalleryWebAppStatus appStatus = webServer.DownloadGalleryApplication(WebAppId);
+                GalleryWebAppStatus appStatus = webServer.DownloadGalleryApplication(SecurityContext.User.UserId,WebAppId);
 				//
 				if (appStatus == GalleryWebAppStatus.Failed)
 				{

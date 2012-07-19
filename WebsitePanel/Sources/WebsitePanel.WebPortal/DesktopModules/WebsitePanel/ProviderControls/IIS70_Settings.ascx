@@ -4,6 +4,7 @@
 <%@ Register Src="../UserControls/EditDomainsList.ascx" TagName="EditDomainsList" TagPrefix="uc5" %>
 <%@ Register Src="../UserControls/CollapsiblePanel.ascx" TagPrefix="wsp" TagName="CollapsiblePanel" %>
 <%@ Register Src="../UserControls/PopupHeader.ascx" TagName="PopupHeader" TagPrefix="wsp" %>
+<%@ Register src="../UserControls/EditFeedsList.ascx" tagname="EditFeedsList" tagprefix="uc6" %>
 <%@ Import Namespace="WebsitePanel.Portal.ProviderControls" %>
 
 <fieldset>
@@ -175,25 +176,36 @@
         <asp:Label ID="lblWebAppGallery" runat="server" meta:resourcekey="lblWebAppGallery" Text="Pools" CssClass="NormalBold"></asp:Label>&nbsp;
     </legend>
 	<br />
+        
+
     <table width="100%" cellpadding="4">
 		<tr>
-		    <td class="Normal" valign="top" width="192">
-		        <asp:Label ID="lblGalleryFeed" runat="server" meta:resourcekey="lblGalleryFeed" Text="Gallery feed URL:"></asp:Label>
-		    </td>
-		    <td class="Normal" valign="top">
-                <asp:TextBox ID="txtGalleryFeedUrl" runat="server" CssClass="NormalTextBox" Width="300px"></asp:TextBox>
-                <p style="text-align: justify;"><i><asp:Localize runat="server" meta:resourcekey="lclGalleryFeedNote" /></i></p>
-			</td>
-		</tr>
-		<tr>
+
 			<td class="Normal" valign="top" width="192">
 		        <asp:Label runat="server" meta:resourcekey="GalleryFeedFilter" Text="Gallery feed filter:"></asp:Label>
 		    </td>
+
+
 		    <td class="Normal" valign="top">
                 <asp:LinkButton runat="server" ID="FilterDialogButton" meta:resourcekey="FilterDialogButton" Text="Click to apply a filter..." />
 			</td>
 		</tr>
+
+        <tr>
+				<td class="SubHead" style="width:200px;">Enable Microsoft feed</td>
+				<td class="Normal">
+                    <asp:CheckBox ID="wpiMicrosoftFeed" runat="server" Text="Yes" />
+                </td>
+			</tr>
+			
+            <tr>
+		        <td class="SubHead" style="width:200px;">Enable HeliconTech feed</td>
+                <td class="Normal">
+                    <asp:CheckBox ID="wpiHeliconTechFeed" runat="server" Text="Yes" />
+                </td>
+            </tr>
     </table>
+    <uc6:EditFeedsList ID="wpiEditFeedsList" runat="server" DisplayNames="false" />
 </fieldset>
 <br />
 

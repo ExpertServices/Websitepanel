@@ -1,5 +1,5 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<Import Project="C:\Program Files\MSBuild\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+	<Import Project="C:\Program Files (x86)\MSBuild\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
 	<PropertyGroup>
 		<Version>1.2.2.0</Version>
 		<FileVersion>1.2.2.1</FileVersion>
@@ -18,9 +18,9 @@
 		<PreviousBuildFolder>C:\Projects\WebsitePanel-1.2.1\$(BuildConfiguration)</PreviousBuildFolder>
 
 		<DiffCmd>$(TrunkFolder)\Tools\Diff.exe</DiffCmd>
-		<SqlCmd>"C:\Program Files\Microsoft SQL Server\100\Tools\Binn\sqlcmd.exe" -S (local)\SQLEXPRESS -E</SqlCmd>
+		<SqlCmd>"C:\Program Files\Microsoft SQL Server\110\Tools\Binn\sqlcmd.exe" -S (local)\SQLEXPRESS -E</SqlCmd>
 
-		<MSDeployPath>"C:\Program Files\IIS\Microsoft Web Deploy V2\msdeploy.exe"</MSDeployPath>
+		<MSDeployPath>"C:\Program Files (x86)\IIS\Microsoft Web Deploy V2\msdeploy.exe"</MSDeployPath>
 
 		<DataBaseName>WebsitePanel_build</DataBaseName>
 		<MSDeployConnectionString>server=(local)\SQLEXPRESS;database=$(DataBaseName);Integrated Security=true;</MSDeployConnectionString>

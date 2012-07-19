@@ -378,6 +378,9 @@
   <data name="ModuleTitle.ManageWindowsServices" xml:space="preserve">
     <value>Manage Windows Services</value>
   </data>
+  <data name="ModuleTitle.ManagePlatformInstaller" xml:space="preserve">
+    <value>Manage Web Platform Installer</value>
+  </data>
   <data name="ModuleTitle.MyDatabases" xml:space="preserve">
     <value>My Databases</value>
   </data>

@@ -47,4 +47,8 @@ namespace WebsitePanel.Providers.ResultObjects
 	public class DeploymentParametersResult : ValueResultObject<List<DeploymentParameter>>
 	{
 	}
+
+    public class GalleryLanguagesResult : ValueResultObject<List<SettingPair>>
+    {
+    }
 }

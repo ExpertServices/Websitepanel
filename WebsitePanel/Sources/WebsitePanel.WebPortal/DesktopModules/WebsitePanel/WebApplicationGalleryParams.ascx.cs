@@ -373,15 +373,28 @@ namespace WebsitePanel.Portal
             // collect parameters       
             List<DeploymentParameter> parameters = GetParameters();
 
+            string language = (string)Session["WebApplicationGaleryLanguage"];
             // install application
-            ResultObject res = ES.Services.WebApplicationGallery.Install(PanelSecurity.PackageId,
+            StringResultObject res = ES.Services.WebApplicationGallery.Install(PanelSecurity.PackageId,
                                                                          PanelRequest.ApplicationID,
                                                                          ddlWebSite.SelectedItem.Text,
                                                                          directoryName.Text.Trim(),
-                                                                         parameters.ToArray());
+                                                                         parameters.ToArray(),
+                                                                         language
+                                                                         );
+
+            InstallLogPanel.Visible = true;
+            InstallLog.InnerText = res.Value;
 
             // show message box with results
-            messageBox.ShowMessage(res, "WEB_APPLICATION_GALLERY_INSTALLED", "WebAppGallery");
+            if (res.IsSuccess)
+            {
+                messageBox.ShowMessage(res, "WEB_APPLICATION_GALLERY_INSTALLED", "WebAppGallery");
+            }
+            else
+            {
+                messageBox.ShowMessage(res, null, null);
+            }
 
             // toggle controls if there are no errors
             if (res.ErrorCodes.Count == 0)

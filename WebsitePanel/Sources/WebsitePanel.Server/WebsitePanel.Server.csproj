@@ -42,6 +42,14 @@
     <WarningsAsErrors>618</WarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Web.Deployment, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Web.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.PlatformInstaller, Version=3.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lib\Microsoft.Web.PlatformInstaller.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Web.Services3, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lib\Microsoft.Web.Services3.dll</HintPath>
@@ -52,6 +60,8 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.DynamicData" />
@@ -113,6 +123,7 @@
       <DependentUpon>LyncServer.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Code\WPIHelper.cs" />
     <Compile Include="OCSEdgeServer.asmx.cs">
       <DependentUpon>OCSEdgeServer.asmx</DependentUpon>
       <SubType>Component</SubType>
@@ -205,6 +216,10 @@
     <ProjectReference Include="..\WebsitePanel.Server.Utils\WebsitePanel.Server.Utils.csproj">
       <Project>{E91E52F3-9555-4D00-B577-2B1DBDD87CA7}</Project>
       <Name>WebsitePanel.Server.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebsitePanel.Server.WPIServiceContract\WebsitePanel.Server.WPIServiceContract.csproj">
+      <Project>{736FA0F0-ECA3-416E-B299-85CC425FFF44}</Project>
+      <Name>WebsitePanel.Server.WPIServiceContract</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

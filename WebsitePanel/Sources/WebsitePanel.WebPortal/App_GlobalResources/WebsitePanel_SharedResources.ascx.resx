@@ -873,6 +873,9 @@
   <data name="Error.SERVER_UPDATE_SERVICE_PROPS" xml:space="preserve">
     <value>Error saving server service settings</value>
   </data>
+  <data name="Error.WPI_LOAD_FEED" xml:space="preserve">
+    <value>Error loading feeds. Please check system settings</value>
+  </data>
   <data name="Error.SPACE_LETTER_GET" xml:space="preserve">
     <value>Error building hosting space summary letter</value>
   </data>
@@ -4604,7 +4607,7 @@
     <value>OCS users quota has been reached.</value>
   </data>
   <data name="Quota.Web.WebAppGallery" xml:space="preserve">
-    <value>Microsoft Web App Gallery</value>
+    <value>Web App Gallery</value>
   </data>
   <data name="Error.GALLERY_APP_DOWNLOAD_FAILED" xml:space="preserve">
     <value>We apologize for the inconvenience but the application download has been failed. Please contact your service provider to correct the issue.</value>

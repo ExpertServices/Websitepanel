@@ -51,6 +51,10 @@ namespace WebsitePanel.Portal
 
 		public const string BACKUPS_PATH = "BackupsPath";
 
+        public const string FEED_ULS = "FeedUrls";
+        public const string FEED_ENABLE_MICROSOFT = "FeedEnableMicrosoft";
+        public const string FEED_ENABLE_HELICON = "FeedEnableHelicon";
+
 		protected void Page_Load(object sender, EventArgs e)
 		{
 			if (!IsPostBack)
@@ -88,6 +92,26 @@ namespace WebsitePanel.Portal
 			{
 				txtBackupsPath.Text = settings["BackupsPath"];
 			}
+
+
+            // WPI
+            settings = ES.Services.System.GetSystemSettings(
+                WSP.SystemSettings.WPI_SETTINGS);
+
+            if (settings != null)
+            {
+                wpiMicrosoftFeed.Checked = Utils.ParseBool(settings[FEED_ENABLE_MICROSOFT],true);
+                wpiHeliconTechFeed.Checked = Utils.ParseBool(settings[FEED_ENABLE_HELICON],true);
+                wpiEditFeedsList.Value = settings[FEED_ULS];
+            }
+            else
+            {
+                wpiMicrosoftFeed.Checked = true;
+                wpiHeliconTechFeed.Checked = true;
+
+            }
+     
+
 		}
 
 		private void SaveSettings()
@@ -117,7 +141,6 @@ namespace WebsitePanel.Portal
 				settings = new WSP.SystemSettings();
 				settings[BACKUPS_PATH] = txtBackupsPath.Text.Trim();
 
-				// BACKUP
 				result = ES.Services.System.SetSystemSettings(
 					WSP.SystemSettings.BACKUP_SETTINGS, settings);
 
@@ -126,6 +149,23 @@ namespace WebsitePanel.Portal
 					ShowResultMessage(result);
 					return;
 				}
+
+
+                // WPI
+                settings[FEED_ULS] = wpiEditFeedsList.Value;
+                settings[FEED_ENABLE_MICROSOFT] = wpiMicrosoftFeed.Checked.ToString();
+                settings[FEED_ENABLE_HELICON] = wpiHeliconTechFeed.Checked.ToString();
+
+
+                result = ES.Services.System.SetSystemSettings(
+                    WSP.SystemSettings.WPI_SETTINGS, settings);
+
+                if (result < 0)
+                {
+                    ShowResultMessage(result);
+                    return;
+                }
+
 			}
 			catch (Exception ex)
 			{

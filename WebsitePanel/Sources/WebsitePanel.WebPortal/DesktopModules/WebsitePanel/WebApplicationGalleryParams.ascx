@@ -63,10 +63,10 @@
             <%-- database engine --%>
             <fieldset id="databaseEngineBlock" runat="server">
                 <legend>
-                    <asp:Localize ID="locDatabaseGroup" meta:resourcekey="locDatabaseGroup" runat="server"></asp:Localize>
+                    <asp:Localize ID="locDatabaseType" meta:resourcekey="locDatabaseType" runat="server"></asp:Localize>
                 </legend>
                 <div class="FormFieldDescription">
-                    <asp:Localize ID="locDatabaseGroupDescr" meta:resourcekey="locDatabaseGroupDescr" runat="server"></asp:Localize>
+                    <asp:Localize ID="locDatabaseTypeDescr" meta:resourcekey="locDatabaseTypeDescr" runat="server"></asp:Localize>
                 </div>
                 <div class="FormField">
                     <asp:DropDownList ID="databaseEngines" runat="server" AutoPostBack="true" Width="600px"
@@ -106,6 +106,18 @@
     </asp:Panel>
 </div>
 
+<asp:Panel runat="server" ID="InstallLogPanel" Visible="False" CssClass="FormBody">
+<script type="text/javascript">
+function showLogPre() {
+    document.getElementById('<%=InstallLog.ClientID%>').style.display = 'block';
+    return false;
+}
+</script>
+<asp:Button runat="server" CssClass="Button1" Text="Show Install Log" OnClientClick="return showLogPre();" />
+<pre runat="server" ID="InstallLog" style="white-space: pre-wrap; display: none;">
+Logs not found
+</pre>
+</asp:Panel>
 
 <div class="FormFooter">
     <asp:Button ID="btnInstall" runat="server" meta:resourcekey="btnInstall" Text="Install" ValidationGroup="wag"

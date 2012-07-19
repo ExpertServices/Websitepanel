@@ -53,6 +53,9 @@ namespace WebsitePanel.Providers.WebAppGallery
         public const string MsDeployIsNotInstalled = "MsDeployIsNotInstalled";
         public const string GeneralError = "GeneralError"; // + exception message
 
+        // Languages
+        public const string GetLanguagesError = "GetLanguagesError";
+        
         // Categories
         public const string GetCategoriesError = "GetCategoriesError";
 

@@ -48,11 +48,11 @@ namespace WebsitePanel.EnterpriseServer
     using System;
     using System.Diagnostics;
     using System.Data;
-
+    using WebsitePanel.Providers;
     using WebsitePanel.Providers.Common;
     using WebsitePanel.Server;
     using WebsitePanel.Providers.DNS;
-    using WebsitePanel.Providers.ResultObjects;
+    using WebsitePanel.Providers.ResultObjects;      
 
 
     /// <remarks/>
@@ -251,6 +251,28 @@ namespace WebsitePanel.EnterpriseServer
 
         private System.Threading.SendOrPostCallback TerminateWindowsProcessOperationCompleted;
 
+        private System.Threading.SendOrPostCallback InitWPIFeedsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetWPITabsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetWPIKeywordsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetWPIProductsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetWPIProductsFilteredOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetWPIProductsWithDependenciesOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback InstallWPIProductsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback CancelInstallWPIProductsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetWPIStatusOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback WpiGetLogFileDirectoryOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback WpiGetLogsInDirectoryOperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetWindowsServicesOperationCompleted;
 
         private System.Threading.SendOrPostCallback ChangeWindowsServiceStatusOperationCompleted;
@@ -553,6 +575,39 @@ namespace WebsitePanel.EnterpriseServer
         /// <remarks/>
         public event TerminateWindowsProcessCompletedEventHandler TerminateWindowsProcessCompleted;
 
+        /// <remarks/>
+        public event InitWPIFeedsCompletedEventHandler InitWPIFeedsCompleted;
+        
+        /// <remarks/>
+        public event GetWPITabsCompletedEventHandler GetWPITabsCompleted;
+        
+        /// <remarks/>
+        public event GetWPIKeywordsCompletedEventHandler GetWPIKeywordsCompleted;
+        
+        /// <remarks/>
+        public event GetWPIProductsCompletedEventHandler GetWPIProductsCompleted;
+        
+        /// <remarks/>
+        public event GetWPIProductsFilteredCompletedEventHandler GetWPIProductsFilteredCompleted;
+        
+        /// <remarks/>
+        public event GetWPIProductsWithDependenciesCompletedEventHandler GetWPIProductsWithDependenciesCompleted;
+        
+        /// <remarks/>
+        public event InstallWPIProductsCompletedEventHandler InstallWPIProductsCompleted;
+        
+        /// <remarks/>
+        public event CancelInstallWPIProductsCompletedEventHandler CancelInstallWPIProductsCompleted;
+        
+        /// <remarks/>
+        public event GetWPIStatusCompletedEventHandler GetWPIStatusCompleted;
+        
+        /// <remarks/>
+        public event WpiGetLogFileDirectoryCompletedEventHandler WpiGetLogFileDirectoryCompleted;
+        
+        /// <remarks/>
+        public event WpiGetLogsInDirectoryCompletedEventHandler WpiGetLogsInDirectoryCompleted;
+        
         /// <remarks/>
         public event GetWindowsServicesCompletedEventHandler GetWindowsServicesCompleted;
 
@@ -5451,9 +5506,471 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetWindowsServices", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public WindowsService[] GetWindowsServices(int serverId)
-        {
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/InitWPIFeeds", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void InitWPIFeeds(int serverId) {
+            this.Invoke("InitWPIFeeds", new object[] {
+                        serverId});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginInitWPIFeeds(int serverId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("InitWPIFeeds", new object[] {
+                        serverId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndInitWPIFeeds(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void InitWPIFeedsAsync(int serverId) {
+            this.InitWPIFeedsAsync(serverId, null);
+        }
+        
+        /// <remarks/>
+        public void InitWPIFeedsAsync(int serverId, object userState) {
+            if ((this.InitWPIFeedsOperationCompleted == null)) {
+                this.InitWPIFeedsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnInitWPIFeedsOperationCompleted);
+            }
+            this.InvokeAsync("InitWPIFeeds", new object[] {
+                        serverId}, this.InitWPIFeedsOperationCompleted, userState);
+        }
+        
+        private void OnInitWPIFeedsOperationCompleted(object arg) {
+            if ((this.InitWPIFeedsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.InitWPIFeedsCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetWPITabs", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public WPITab[] GetWPITabs(int serverId) {
+            object[] results = this.Invoke("GetWPITabs", new object[] {
+                        serverId});
+            return ((WPITab[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetWPITabs(int serverId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetWPITabs", new object[] {
+                        serverId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public WPITab[] EndGetWPITabs(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((WPITab[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetWPITabsAsync(int serverId) {
+            this.GetWPITabsAsync(serverId, null);
+        }
+        
+        /// <remarks/>
+        public void GetWPITabsAsync(int serverId, object userState) {
+            if ((this.GetWPITabsOperationCompleted == null)) {
+                this.GetWPITabsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetWPITabsOperationCompleted);
+            }
+            this.InvokeAsync("GetWPITabs", new object[] {
+                        serverId}, this.GetWPITabsOperationCompleted, userState);
+        }
+        
+        private void OnGetWPITabsOperationCompleted(object arg) {
+            if ((this.GetWPITabsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetWPITabsCompleted(this, new GetWPITabsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetWPIKeywords", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public WPIKeyword[] GetWPIKeywords(int serverId) {
+            object[] results = this.Invoke("GetWPIKeywords", new object[] {
+                        serverId});
+            return ((WPIKeyword[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetWPIKeywords(int serverId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetWPIKeywords", new object[] {
+                        serverId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public WPIKeyword[] EndGetWPIKeywords(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((WPIKeyword[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetWPIKeywordsAsync(int serverId) {
+            this.GetWPIKeywordsAsync(serverId, null);
+        }
+        
+        /// <remarks/>
+        public void GetWPIKeywordsAsync(int serverId, object userState) {
+            if ((this.GetWPIKeywordsOperationCompleted == null)) {
+                this.GetWPIKeywordsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetWPIKeywordsOperationCompleted);
+            }
+            this.InvokeAsync("GetWPIKeywords", new object[] {
+                        serverId}, this.GetWPIKeywordsOperationCompleted, userState);
+        }
+        
+        private void OnGetWPIKeywordsOperationCompleted(object arg) {
+            if ((this.GetWPIKeywordsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetWPIKeywordsCompleted(this, new GetWPIKeywordsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetWPIProducts", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public WPIProduct[] GetWPIProducts(int serverId, string tabId, string keywordId) {
+            object[] results = this.Invoke("GetWPIProducts", new object[] {
+                        serverId,
+                        tabId,
+                        keywordId});
+            return ((WPIProduct[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetWPIProducts(int serverId, string tabId, string keywordId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetWPIProducts", new object[] {
+                        serverId,
+                        tabId,
+                        keywordId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public WPIProduct[] EndGetWPIProducts(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((WPIProduct[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetWPIProductsAsync(int serverId, string tabId, string keywordId) {
+            this.GetWPIProductsAsync(serverId, tabId, keywordId, null);
+        }
+        
+        /// <remarks/>
+        public void GetWPIProductsAsync(int serverId, string tabId, string keywordId, object userState) {
+            if ((this.GetWPIProductsOperationCompleted == null)) {
+                this.GetWPIProductsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetWPIProductsOperationCompleted);
+            }
+            this.InvokeAsync("GetWPIProducts", new object[] {
+                        serverId,
+                        tabId,
+                        keywordId}, this.GetWPIProductsOperationCompleted, userState);
+        }
+        
+        private void OnGetWPIProductsOperationCompleted(object arg) {
+            if ((this.GetWPIProductsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetWPIProductsCompleted(this, new GetWPIProductsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetWPIProductsFiltered", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public WPIProduct[] GetWPIProductsFiltered(int serverId, string keywordId) {
+            object[] results = this.Invoke("GetWPIProductsFiltered", new object[] {
+                        serverId,
+                        keywordId});
+            return ((WPIProduct[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetWPIProductsFiltered(int serverId, string keywordId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetWPIProductsFiltered", new object[] {
+                        serverId,
+                        keywordId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public WPIProduct[] EndGetWPIProductsFiltered(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((WPIProduct[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetWPIProductsFilteredAsync(int serverId, string keywordId) {
+            this.GetWPIProductsFilteredAsync(serverId, keywordId, null);
+        }
+        
+        /// <remarks/>
+        public void GetWPIProductsFilteredAsync(int serverId, string keywordId, object userState) {
+            if ((this.GetWPIProductsFilteredOperationCompleted == null)) {
+                this.GetWPIProductsFilteredOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetWPIProductsFilteredOperationCompleted);
+            }
+            this.InvokeAsync("GetWPIProductsFiltered", new object[] {
+                        serverId,
+                        keywordId}, this.GetWPIProductsFilteredOperationCompleted, userState);
+        }
+        
+        private void OnGetWPIProductsFilteredOperationCompleted(object arg) {
+            if ((this.GetWPIProductsFilteredCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetWPIProductsFilteredCompleted(this, new GetWPIProductsFilteredCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetWPIProductsWithDependencies", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public WPIProduct[] GetWPIProductsWithDependencies(int serverId, string[] products) {
+            object[] results = this.Invoke("GetWPIProductsWithDependencies", new object[] {
+                        serverId,
+                        products});
+            return ((WPIProduct[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetWPIProductsWithDependencies(int serverId, string[] products, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetWPIProductsWithDependencies", new object[] {
+                        serverId,
+                        products}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public WPIProduct[] EndGetWPIProductsWithDependencies(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((WPIProduct[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetWPIProductsWithDependenciesAsync(int serverId, string[] products) {
+            this.GetWPIProductsWithDependenciesAsync(serverId, products, null);
+        }
+        
+        /// <remarks/>
+        public void GetWPIProductsWithDependenciesAsync(int serverId, string[] products, object userState) {
+            if ((this.GetWPIProductsWithDependenciesOperationCompleted == null)) {
+                this.GetWPIProductsWithDependenciesOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetWPIProductsWithDependenciesOperationCompleted);
+            }
+            this.InvokeAsync("GetWPIProductsWithDependencies", new object[] {
+                        serverId,
+                        products}, this.GetWPIProductsWithDependenciesOperationCompleted, userState);
+        }
+        
+        private void OnGetWPIProductsWithDependenciesOperationCompleted(object arg) {
+            if ((this.GetWPIProductsWithDependenciesCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetWPIProductsWithDependenciesCompleted(this, new GetWPIProductsWithDependenciesCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/InstallWPIProducts", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void InstallWPIProducts(int serverId, string[] products) {
+            this.Invoke("InstallWPIProducts", new object[] {
+                        serverId,
+                        products});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginInstallWPIProducts(int serverId, string[] products, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("InstallWPIProducts", new object[] {
+                        serverId,
+                        products}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndInstallWPIProducts(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void InstallWPIProductsAsync(int serverId, string[] products) {
+            this.InstallWPIProductsAsync(serverId, products, null);
+        }
+        
+        /// <remarks/>
+        public void InstallWPIProductsAsync(int serverId, string[] products, object userState) {
+            if ((this.InstallWPIProductsOperationCompleted == null)) {
+                this.InstallWPIProductsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnInstallWPIProductsOperationCompleted);
+            }
+            this.InvokeAsync("InstallWPIProducts", new object[] {
+                        serverId,
+                        products}, this.InstallWPIProductsOperationCompleted, userState);
+        }
+        
+        private void OnInstallWPIProductsOperationCompleted(object arg) {
+            if ((this.InstallWPIProductsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.InstallWPIProductsCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/CancelInstallWPIProducts", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void CancelInstallWPIProducts(int serviceId) {
+            this.Invoke("CancelInstallWPIProducts", new object[] {
+                        serviceId});
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginCancelInstallWPIProducts(int serviceId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("CancelInstallWPIProducts", new object[] {
+                        serviceId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndCancelInstallWPIProducts(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void CancelInstallWPIProductsAsync(int serviceId) {
+            this.CancelInstallWPIProductsAsync(serviceId, null);
+        }
+        
+        /// <remarks/>
+        public void CancelInstallWPIProductsAsync(int serviceId, object userState) {
+            if ((this.CancelInstallWPIProductsOperationCompleted == null)) {
+                this.CancelInstallWPIProductsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCancelInstallWPIProductsOperationCompleted);
+            }
+            this.InvokeAsync("CancelInstallWPIProducts", new object[] {
+                        serviceId}, this.CancelInstallWPIProductsOperationCompleted, userState);
+        }
+        
+        private void OnCancelInstallWPIProductsOperationCompleted(object arg) {
+            if ((this.CancelInstallWPIProductsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CancelInstallWPIProductsCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetWPIStatus", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string GetWPIStatus(int serverId) {
+            object[] results = this.Invoke("GetWPIStatus", new object[] {
+                        serverId});
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetWPIStatus(int serverId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetWPIStatus", new object[] {
+                        serverId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public string EndGetWPIStatus(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetWPIStatusAsync(int serverId) {
+            this.GetWPIStatusAsync(serverId, null);
+        }
+        
+        /// <remarks/>
+        public void GetWPIStatusAsync(int serverId, object userState) {
+            if ((this.GetWPIStatusOperationCompleted == null)) {
+                this.GetWPIStatusOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetWPIStatusOperationCompleted);
+            }
+            this.InvokeAsync("GetWPIStatus", new object[] {
+                        serverId}, this.GetWPIStatusOperationCompleted, userState);
+        }
+        
+        private void OnGetWPIStatusOperationCompleted(object arg) {
+            if ((this.GetWPIStatusCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetWPIStatusCompleted(this, new GetWPIStatusCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/WpiGetLogFileDirectory", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string WpiGetLogFileDirectory(int serverId) {
+            object[] results = this.Invoke("WpiGetLogFileDirectory", new object[] {
+                        serverId});
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginWpiGetLogFileDirectory(int serverId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("WpiGetLogFileDirectory", new object[] {
+                        serverId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public string EndWpiGetLogFileDirectory(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void WpiGetLogFileDirectoryAsync(int serverId) {
+            this.WpiGetLogFileDirectoryAsync(serverId, null);
+        }
+        
+        /// <remarks/>
+        public void WpiGetLogFileDirectoryAsync(int serverId, object userState) {
+            if ((this.WpiGetLogFileDirectoryOperationCompleted == null)) {
+                this.WpiGetLogFileDirectoryOperationCompleted = new System.Threading.SendOrPostCallback(this.OnWpiGetLogFileDirectoryOperationCompleted);
+            }
+            this.InvokeAsync("WpiGetLogFileDirectory", new object[] {
+                        serverId}, this.WpiGetLogFileDirectoryOperationCompleted, userState);
+        }
+        
+        private void OnWpiGetLogFileDirectoryOperationCompleted(object arg) {
+            if ((this.WpiGetLogFileDirectoryCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.WpiGetLogFileDirectoryCompleted(this, new WpiGetLogFileDirectoryCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/WpiGetLogsInDirectory", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public SettingPair[] WpiGetLogsInDirectory(int serverId, string Path) {
+            object[] results = this.Invoke("WpiGetLogsInDirectory", new object[] {
+                        serverId,
+                        Path});
+            return ((SettingPair[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginWpiGetLogsInDirectory(int serverId, string Path, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("WpiGetLogsInDirectory", new object[] {
+                        serverId,
+                        Path}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public SettingPair[] EndWpiGetLogsInDirectory(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((SettingPair[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void WpiGetLogsInDirectoryAsync(int serverId, string Path) {
+            this.WpiGetLogsInDirectoryAsync(serverId, Path, null);
+        }
+        
+        /// <remarks/>
+        public void WpiGetLogsInDirectoryAsync(int serverId, string Path, object userState) {
+            if ((this.WpiGetLogsInDirectoryOperationCompleted == null)) {
+                this.WpiGetLogsInDirectoryOperationCompleted = new System.Threading.SendOrPostCallback(this.OnWpiGetLogsInDirectoryOperationCompleted);
+            }
+            this.InvokeAsync("WpiGetLogsInDirectory", new object[] {
+                        serverId,
+                        Path}, this.WpiGetLogsInDirectoryOperationCompleted, userState);
+        }
+        
+        private void OnWpiGetLogsInDirectoryOperationCompleted(object arg) {
+            if ((this.WpiGetLogsInDirectoryCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.WpiGetLogsInDirectoryCompleted(this, new WpiGetLogsInDirectoryCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetWindowsServices", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public WindowsService[] GetWindowsServices(int serverId) {
             object[] results = this.Invoke("GetWindowsServices", new object[] {
                         serverId});
             return ((WindowsService[])(results[0]));
@@ -8641,6 +9158,226 @@ namespace WebsitePanel.EnterpriseServer
         }
     }
 
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void InitWPIFeedsCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void GetWPITabsCompletedEventHandler(object sender, GetWPITabsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetWPITabsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetWPITabsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public WPITab[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((WPITab[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void GetWPIKeywordsCompletedEventHandler(object sender, GetWPIKeywordsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetWPIKeywordsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetWPIKeywordsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public WPIKeyword[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((WPIKeyword[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void GetWPIProductsCompletedEventHandler(object sender, GetWPIProductsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetWPIProductsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetWPIProductsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public WPIProduct[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((WPIProduct[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void GetWPIProductsFilteredCompletedEventHandler(object sender, GetWPIProductsFilteredCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetWPIProductsFilteredCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetWPIProductsFilteredCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public WPIProduct[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((WPIProduct[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void GetWPIProductsWithDependenciesCompletedEventHandler(object sender, GetWPIProductsWithDependenciesCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetWPIProductsWithDependenciesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetWPIProductsWithDependenciesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public WPIProduct[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((WPIProduct[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void InstallWPIProductsCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void CancelInstallWPIProductsCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void GetWPIStatusCompletedEventHandler(object sender, GetWPIStatusCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetWPIStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetWPIStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void WpiGetLogFileDirectoryCompletedEventHandler(object sender, WpiGetLogFileDirectoryCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class WpiGetLogFileDirectoryCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal WpiGetLogFileDirectoryCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void WpiGetLogsInDirectoryCompletedEventHandler(object sender, WpiGetLogsInDirectoryCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class WpiGetLogsInDirectoryCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal WpiGetLogsInDirectoryCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public SettingPair[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((SettingPair[])(this.results[0]));
+            }
+        }
+    }
+    
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
     public delegate void GetWindowsServicesCompletedEventHandler(object sender, GetWindowsServicesCompletedEventArgs e);
