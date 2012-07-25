@@ -192,7 +192,7 @@ SELECT
 	E.SubscriberNumber
 FROM
 	ExchangeAccounts  AS E
-INNER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId		
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId		
 WHERE
 	E.ItemID = @ItemID AND
 	(E.AccountType = @AccountType OR @AccountType IS NULL) 

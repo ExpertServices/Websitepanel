@@ -4393,7 +4393,10 @@ namespace WebsitePanel.Providers.HostedSolution
                 {
                     try
                     {
-                        RemovePublicFolderClientPermission(runSpace, folder, @"\" + existingAccount.AccountName, existingAccount.PublicFolderPermission);
+                        RemovePublicFolderClientPermission( runSpace, 
+                                                            folder,
+                                                            existingAccount.AccountName.Contains("@") ? existingAccount.AccountName : @"\" + existingAccount.AccountName, 
+                                                            existingAccount.PublicFolderPermission);
                     }
                     catch (Exception)
                     {
@@ -4406,7 +4409,10 @@ namespace WebsitePanel.Providers.HostedSolution
                 {
                     try
                     {
-                        AddPublicFolderClientPermission(runSpace, folder, @"\" + newAccount.AccountName, newAccount.PublicFolderPermission);
+                        AddPublicFolderClientPermission(runSpace, 
+                                                        folder,
+                                                        newAccount.AccountName.Contains("@") ? newAccount.AccountName : @"\" + newAccount.AccountName, 
+                                                        newAccount.PublicFolderPermission);
                     }
                     catch (Exception)
                     {                        
