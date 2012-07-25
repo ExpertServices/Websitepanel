@@ -64,15 +64,17 @@ namespace WebsitePanel.WebPortal
             // Look for an incoming cookie named "ASP.NET_SessionID" 
             HttpRequest request = ((HttpApplication)sender).Request;
             HttpCookie cookie = GetCookie(request, "ASP.NET_SessionId");
+            HttpCookie authCookie = request.Cookies[FormsAuthentication.FormsCookieName];
 
             if (cookie != null)
             {
                 // Throw an exception if the cookie lacks a MAC 
                 if (cookie.Value.Length <= 24)
                 {
-                    FormsAuthentication.SignOut();
-                    HttpContext.Current.Response.Redirect(DefaultPage.GetPageUrl(PortalConfiguration.SiteSettings["DefaultPage"]));
-                    cookie.Value = GetSessionIDMac(cookie.Value, request.UserHostAddress, request.UserAgent, _ValidationKey);
+                    if ((authCookie != null))
+                    {
+                        WebsitePanel.Portal.PortalUtils.UserSignOut();
+                    } 
                     return;
                 }
 
@@ -87,10 +89,7 @@ namespace WebsitePanel.WebPortal
                 // Throw an exception if the MACs don't match 
                 if (String.CompareOrdinal(mac1, mac2) != 0)
                 {
-                    FormsAuthentication.SignOut();
-                    HttpContext.Current.Response.Redirect(DefaultPage.GetPageUrl(PortalConfiguration.SiteSettings["DefaultPage"]));
-                    cookie.Value = GetSessionIDMac(cookie.Value, request.UserHostAddress, request.UserAgent, _ValidationKey);
-
+                    WebsitePanel.Portal.PortalUtils.UserSignOut();
                 }
 
                 // Strip the MAC from the cookie before ASP.NET sees it 

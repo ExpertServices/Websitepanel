@@ -217,6 +217,23 @@ namespace WebsitePanel.Portal
         public static void UserSignOut()
         {
             FormsAuthentication.SignOut();
+
+            if (HttpContext.Current.Session != null)
+            {
+                HttpContext.Current.Session.Clear();
+                HttpContext.Current.Session.Abandon();
+            }
+
+            // Clear authentication cookie 
+            HttpCookie rFormsCookie = new HttpCookie(FormsAuthentication.FormsCookieName, "");
+            rFormsCookie.Expires = DateTime.Now.AddYears(-1);
+            HttpContext.Current.Response.Cookies.Add(rFormsCookie);
+
+            // Clear session cookie  
+            HttpCookie rSessionCookie = new HttpCookie("ASP.NET_SessionId", "");
+            rSessionCookie.Expires = DateTime.Now.AddYears(-1);
+            HttpContext.Current.Response.Cookies.Add(rSessionCookie); 
+
             HttpContext.Current.Response.Redirect(LoginRedirectUrl);
         }
 
