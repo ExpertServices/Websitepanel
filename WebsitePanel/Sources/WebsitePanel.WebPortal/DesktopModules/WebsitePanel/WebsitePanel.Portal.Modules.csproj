@@ -336,7 +336,7 @@
     </Compile>
     <Compile Include="ProviderControls\Lync_Settings.ascx.cs">
       <DependentUpon>Lync_Settings.ascx</DependentUpon>
-           <SubType>ASPXCodeBehind</SubType>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="ServersEditWebPlatformInstaller.ascx.cs">
       <DependentUpon>ServersEditWebPlatformInstaller.ascx</DependentUpon>
@@ -344,13 +344,27 @@
     </Compile>
     <Compile Include="ProviderControls\Lync_Settings.ascx.designer.cs">
       <DependentUpon>Lync_Settings.ascx</DependentUpon>
-      </Compile>
+    </Compile>
     <Compile Include="ServersEditWebPlatformInstaller.ascx.designer.cs">
       <DependentUpon>ServersEditWebPlatformInstaller.ascx</DependentUpon>
     </Compile>
     <Compile Include="ScheduleTaskControls\NotifyOverusedDatabases.ascx.cs">
       <DependentUpon>NotifyOverusedDatabases.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsExchangeMailboxPlansPolicy.ascx.cs">
+      <DependentUpon>SettingsExchangeMailboxPlansPolicy.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsExchangeMailboxPlansPolicy.ascx.designer.cs">
+      <DependentUpon>SettingsExchangeMailboxPlansPolicy.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsLyncUserPlansPolicy.ascx.cs">
+      <DependentUpon>SettingsLyncUserPlansPolicy.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsLyncUserPlansPolicy.ascx.designer.cs">
+      <DependentUpon>SettingsLyncUserPlansPolicy.ascx</DependentUpon>
     </Compile>
     <Compile Include="UserControls\DomainListControlBase.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -3797,6 +3811,8 @@
     <Content Include="ProviderControls\hMailServer5_Settings.ascx" />
     <Content Include="ProviderControls\Lync_Settings.ascx" />
     <Content Include="ScheduleTaskControls\NotifyOverusedDatabases.ascx" />
+    <Content Include="SettingsExchangeMailboxPlansPolicy.ascx" />
+    <Content Include="SettingsLyncUserPlansPolicy.ascx" />
     <Content Include="UserControls\EditFeedsList.ascx" />
     <Content Include="VPSForPC\MonitoringPage.aspx" />
     <Content Include="VPSForPC\VdcAccountVLanAdd.ascx" />
@@ -4926,6 +4942,8 @@
     <Content Include="Lync\App_LocalResources\LyncUsers.ascx.resx" />
     <Content Include="ProviderControls\App_LocalResources\Lync_Settings.ascx.resx" />
     <Content Include="ExchangeServer\UserControls\App_LocalResources\UserTabs.ascx.resx" />
+    <Content Include="App_LocalResources\SettingsExchangeMailboxPlansPolicy.ascx.resx" />
+    <Content Include="App_LocalResources\SettingsLyncUserPlansPolicy.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

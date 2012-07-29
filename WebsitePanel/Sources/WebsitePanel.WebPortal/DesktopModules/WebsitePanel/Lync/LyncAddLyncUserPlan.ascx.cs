@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -33,17 +33,17 @@ using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Portal.Lync
 {
-	public partial class LyncAddLyncUserPlan : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
+    public partial class LyncAddLyncUserPlan : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
 
             if (!IsPostBack)
             {
                 if (PanelRequest.GetInt("LyncUserPlanId") != 0)
                 {
                     Providers.HostedSolution.LyncUserPlan plan = ES.Services.Lync.GetLyncUserPlan(PanelRequest.ItemID, PanelRequest.GetInt("LyncUserPlanId"));
-                    
+
                     txtPlan.Text = plan.LyncUserPlanName;
                     chkIM.Checked = plan.IM;
                     chkIM.Enabled = false;
@@ -71,7 +71,7 @@ namespace WebsitePanel.Portal.Lync
                             chkNone.Checked = true;
                             break;
                     }
-                    
+
                     locTitle.Text = plan.LyncUserPlanName;
                     this.DisableControls = true;
 
@@ -108,7 +108,7 @@ namespace WebsitePanel.Portal.Lync
                 }
             }
 
-		}
+        }
 
         protected void btnAdd_Click(object sender, EventArgs e)
         {
@@ -120,7 +120,7 @@ namespace WebsitePanel.Portal.Lync
             try
             {
                 Providers.HostedSolution.LyncUserPlan plan = new Providers.HostedSolution.LyncUserPlan();
-                plan.LyncUserPlanName = txtPlan.Text; 
+                plan.LyncUserPlanName = txtPlan.Text;
                 plan.IsDefault = false;
 
                 plan.IM = true;
@@ -134,8 +134,22 @@ namespace WebsitePanel.Portal.Lync
                 {
                     plan.VoicePolicy = LyncVoicePolicyType.None;
                 }
+                else
+                {
+                    if (chkEmergency.Checked)
+                        plan.VoicePolicy = LyncVoicePolicyType.Emergency;
+                    else if (chkNational.Checked)
+                        plan.VoicePolicy = LyncVoicePolicyType.National;
+                    else if (chkMobile.Checked)
+                        plan.VoicePolicy = LyncVoicePolicyType.Mobile;
+                    else if (chkInternational.Checked)
+                        plan.VoicePolicy = LyncVoicePolicyType.International;
+                    else
+                        plan.VoicePolicy = LyncVoicePolicyType.None;
 
-                int result = ES.Services.Lync.AddLyncUserPlan( PanelRequest.ItemID,
+                }
+
+                int result = ES.Services.Lync.AddLyncUserPlan(PanelRequest.ItemID,
                                                                                 plan);
 
 
@@ -153,5 +167,5 @@ namespace WebsitePanel.Portal.Lync
                 messageBox.ShowErrorMessage("LYNC_ADD_PLAN", ex);
             }
         }
-	}
+    }
 }

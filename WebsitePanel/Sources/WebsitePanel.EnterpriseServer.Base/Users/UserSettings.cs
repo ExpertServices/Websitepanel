@@ -57,6 +57,9 @@ namespace WebsitePanel.EnterpriseServer
         public const string DISPLAY_PREFS = "DisplayPreferences";
         public const string GRID_ITEMS = "GridItems";
 
+        public const string DEFAULT_MAILBOXPLANS = "DefaultMailboxPlans";
+        public const string DEFAULT_LYNCUSERPLANS = "DefaultLyncUserPlans";
+
         public int UserId;
         public string SettingsName;
 

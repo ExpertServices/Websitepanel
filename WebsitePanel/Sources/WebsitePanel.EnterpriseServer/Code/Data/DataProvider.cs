@@ -3192,6 +3192,18 @@ namespace WebsitePanel.EnterpriseServer
                 "GetLyncUsers", sqlParams);
         }
 
+
+        public static IDataReader GetLyncUsersByPlanId(int itemId, int planId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetLyncUsersByPlanId",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@PlanId", planId)
+            );
+        }
+
         public static int GetLyncUsersCount(int itemId)
         {
             SqlParameter[] sqlParams = new SqlParameter[]

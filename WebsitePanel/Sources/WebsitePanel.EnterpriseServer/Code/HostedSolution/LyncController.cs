@@ -450,6 +450,11 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             return res;
         }
 
+        public static List<LyncUser> GetLyncUsersByPlanId(int itemId, int planId)
+        {
+            return ObjectUtils.CreateListFromDataReader<LyncUser>(DataProvider.GetLyncUsersByPlanId(itemId, planId));
+        }
+
         public static IntResult GetLyncUsersCount(int itemId)
         {
             IntResult res = TaskManager.StartResultTask<IntResult>("LYNC", "GET_LYNC_USERS_COUNT");

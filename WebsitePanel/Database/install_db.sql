@@ -3939,6 +3939,8 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (379,	41,	10,	N'Lync.EVInternational', N'Allow International Calls',	1,	0, NULL)
 GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (380, 41, 11, N'Lync.EnablePlansEditing', N'Enable Plans Editing', 1, 0, NULL)
+GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (400, 20, 3, N'HostedSharePoint.UseSharedSSL', N'Use shared SSL Root', 1, 0, NULL)
 GO
 
@@ -44774,6 +44776,15 @@ IF ((SELECT Count(*) FROM ExchangeMailboxPlans WHERE ItemId = @ItemID) = 0)
 BEGIN
 	SET @IsDefault = 1
 END
+ELSE
+BEGIN
+	IF @IsDefault = 1
+	BEGIN
+		UPDATE ExchangeMailboxPlans SET IsDefault = 0 WHERE ItemID = @ItemID
+	END
+END
+
+
 
 INSERT INTO ExchangeMailboxPlans
 (
@@ -45047,6 +45058,14 @@ IF ((SELECT Count(*) FROM LyncUserPlans WHERE ItemId = @ItemID) = 0)
 BEGIN
 	SET @IsDefault = 1
 END
+ELSE
+BEGIN
+	IF @IsDefault = 1
+	BEGIN
+		UPDATE LyncUserPlans SET IsDefault = 0 WHERE ItemID = @ItemID
+	END
+END
+
 
 
 INSERT INTO LyncUserPlans
@@ -45082,6 +45101,43 @@ RETURN
 GO
 
 
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetLyncUsersByPlanId]
+(
+	@ItemID int,
+	@PlanId int
+)
+AS
+
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName,
+		ou.LyncUserPlanId,
+		lp.LyncUserPlanName				
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		LyncUsers ou
+	INNER JOIN
+		LyncUserPlans lp 
+	ON
+		ou.LyncUserPlanId = lp.LyncUserPlanId				
+	ON 
+		ea.AccountID = ou.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND
+		ou.LyncUserPlanId = @PlanId 
+GO
 
 
 

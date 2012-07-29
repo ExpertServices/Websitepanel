@@ -249,6 +249,14 @@ GO
 
 
 
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Lync.EnablePlansEditing')
+BEGIN
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (380, 41, 11, N'Lync.EnablePlansEditing', N'Enable Plans Editing', 1, 0, NULL)
+END
+GO
+
+
+
 IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Hosted Microsoft Exchange Server 2010 SP2')
 BEGIN
 INSERT [dbo].[Providers] ([ProviderId], [GroupId], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES(90, 12, N'Exchange2010SP2', N'Hosted Microsoft Exchange Server 2010 SP2', N'WebsitePanel.Providers.HostedSolution.Exchange2010SP2, WebsitePanel.Providers.HostedSolution', N'Exchange',	1)
@@ -1935,6 +1943,14 @@ IF ((SELECT Count(*) FROM ExchangeMailboxPlans WHERE ItemId = @ItemID) = 0)
 BEGIN
 	SET @IsDefault = 1
 END
+ELSE
+BEGIN
+	IF @IsDefault = 1
+	BEGIN
+		UPDATE ExchangeMailboxPlans SET IsDefault = 0 WHERE ItemID = @ItemID
+	END
+END
+
 
 INSERT INTO ExchangeMailboxPlans
 (
@@ -3171,6 +3187,42 @@ GO
 
 
 
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetLyncUsersByPlanId')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[GetLyncUsersByPlanId]
+(
+	@ItemID int,
+	@PlanId int
+)
+AS
+
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName,
+		ou.LyncUserPlanId,
+		lp.LyncUserPlanName				
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		LyncUsers ou
+	INNER JOIN
+		LyncUserPlans lp 
+	ON
+		ou.LyncUserPlanId = lp.LyncUserPlanId				
+	ON 
+		ea.AccountID = ou.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND
+		ou.LyncUserPlanId = @PlanId'
+END
+GO
+
+
+
 
 
 
@@ -3198,6 +3250,14 @@ IF ((SELECT Count(*) FROM LyncUserPlans WHERE ItemId = @ItemID) = 0)
 BEGIN
 	SET @IsDefault = 1
 END
+ELSE
+BEGIN
+	IF @IsDefault = 1
+	BEGIN
+		UPDATE LyncUserPlans SET IsDefault = 0 WHERE ItemID = @ItemID
+	END
+END
+
 
 INSERT INTO LyncUserPlans
 (
@@ -3254,6 +3314,14 @@ IF ((SELECT Count(*) FROM LyncUserPlans WHERE ItemId = @ItemID) = 0)
 BEGIN
 	SET @IsDefault = 1
 END
+ELSE
+BEGIN
+	IF @IsDefault = 1
+	BEGIN
+		UPDATE LyncUserPlans SET IsDefault = 0 WHERE ItemID = @ItemID
+	END
+END
+
 
 
 INSERT INTO LyncUserPlans

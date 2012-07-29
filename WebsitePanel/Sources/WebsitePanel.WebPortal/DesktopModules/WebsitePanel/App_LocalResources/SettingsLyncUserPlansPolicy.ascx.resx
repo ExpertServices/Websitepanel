@@ -123,40 +123,70 @@
   <data name="btnSetDefaultPlan.Text" xml:space="preserve">
     <value>Set Default Plan</value>
   </data>
-  <data name="cmdDelete.OnClientClick" xml:space="preserve">
-    <value>if(!confirm('Are you sure you want to delete selected plan?')) return false; else ShowProgressDialog('Deleting plan...');</value>
+  <data name="chkConferencing.Text" xml:space="preserve">
+    <value>Conferencing</value>
   </data>
-  <data name="cmdDelete.Text" xml:space="preserve">
-    <value>Delete</value>
+  <data name="chkEmergency.Text" xml:space="preserve">
+    <value>Emergency Calls</value>
   </data>
-  <data name="cmdDelete.ToolTip" xml:space="preserve">
-    <value>Delete Plan</value>
+  <data name="chkEnterpriseVoice.Text" xml:space="preserve">
+    <value>Enterprise Voice</value>
+  </data>
+  <data name="chkFederation.Text" xml:space="preserve">
+    <value>Federation</value>
+  </data>
+  <data name="chkIM.Text" xml:space="preserve">
+    <value>Instant Messaging</value>
+  </data>
+  <data name="chkInternational.Text" xml:space="preserve">
+    <value>International Calls</value>
+  </data>
+  <data name="chkMobile.Text" xml:space="preserve">
+    <value>Mobile Calls</value>
+  </data>
+  <data name="chkMobility.Text" xml:space="preserve">
+    <value>Mobile Access</value>
+  </data>
+  <data name="chkNational.Text" xml:space="preserve">
+    <value>National Calls</value>
+  </data>
+  <data name="chkNone.Text" xml:space="preserve">
+    <value>None</value>
   </data>
   <data name="gvPlan.Header" xml:space="preserve">
     <value>Plan</value>
   </data>
   <data name="gvPlanDefault.Header" xml:space="preserve">
-    <value>Default Plan</value>
+    <value>Default plan</value>
+  </data>
+  <data name="gvPlanEdit.Header" xml:space="preserve">
+    <value>Select</value>
   </data>
   <data name="gvPlans.Empty" xml:space="preserve">
-    <value>No plans have been added yet. To add a new plan click "Add New Plan" button.</value>
+    <value>No plans have been added yet. To add a new plan click "Add New plan" button.</value>
   </data>
-  <data name="HSFormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt; A  plan is a template that defines the capabilities of a lync users &lt;/p&gt; &lt;p&gt;The plan name needs to be unique. A plan cannot be modified. In case a lync user needs a plan with another characteristics, a new plan needs to be created and assigned to the lync user. A plan can only be deleted when the plan is not assigned to any lync users. &lt;/p&gt;</value>
+  <data name="gvPlanSelect.Header" xml:space="preserve">
+    <value>Select</value>
   </data>
-  <data name="locSourcePlan.Text" xml:space="preserve">
-    <value>Source plan: </value>
+  <data name="locConferencingSize.Text" xml:space="preserve">
+    <value>Maximum Conference Size</value>
   </data>
-  <data name="locTargetPlan.Text" xml:space="preserve">
-    <value>Target plan: </value>
+  <data name="secConferencing.Text" xml:space="preserve">
+    <value>Conferencing Settings</value>
   </data>
-  <data name="locTitle.Text" xml:space="preserve">
-    <value>Lync User Plans</value>
+  <data name="secEnterpriseVoice.Text" xml:space="preserve">
+    <value>Enterprise Voice Policy</value>
   </data>
-  <data name="secMainTools.Text" xml:space="preserve">
-    <value>Lync User plan maintenance</value>
+  <data name="secPlan.Text" xml:space="preserve">
+    <value>Lync User Plan</value>
   </data>
-  <data name="Text.PageName" xml:space="preserve">
-    <value>Lync User Plans</value>
+  <data name="secPlanFeatures.Text" xml:space="preserve">
+    <value>Plan Features</value>
+  </data>
+  <data name="valRequirePlan.ErrorMessage" xml:space="preserve">
+    <value>Please enter correct plan</value>
+  </data>
+  <data name="valRequirePlan.Text" xml:space="preserve">
+    <value>*</value>
   </data>
 </root>

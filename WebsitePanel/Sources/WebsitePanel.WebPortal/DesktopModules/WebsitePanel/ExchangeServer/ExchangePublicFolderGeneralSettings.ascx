@@ -57,7 +57,7 @@
 						</tr>
 						<tr>
 						    <td colspan="2">                                
-                            	<wsp:AccountsListWithPermissions ID="allAccounts" runat="server" MailboxesEnabled="true"/>
+                            	<wsp:AccountsListWithPermissions ID="allAccounts" runat="server" MailboxesEnabled="true" EnableMailboxOnly="true" DistributionListsEnabled="true"/>
                                 
                             </td>
 						</tr>

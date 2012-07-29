@@ -5161,4 +5161,7 @@
   <data name="Error.EXCHANGE_SPECIFY_PLAN" xml:space="preserve">
     <value>Specify a plan</value>
   </data>
+  <data name="Quota.Lync.EnablePlansEditing" xml:space="preserve">
+    <value>Enable Lync User Plans Editing</value>
+  </data>
 </root>

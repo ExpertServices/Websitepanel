@@ -112,6 +112,7 @@
 							    <td class="FormLabel150"><asp:Localize ID="locManager" runat="server" meta:resourcekey="locManager" Text="Manager:"></asp:Localize></td>
 							    <td>
                                     <wsp:MailboxSelector id="manager" runat="server"
+                                            ShowOnlyMailboxes="true" 
 											MailboxesEnabled="true"
 											ContactsEnabled="true"/>
                                 </td>

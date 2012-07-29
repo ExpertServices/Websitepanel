@@ -63,6 +63,12 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public List<LyncUser> GetLyncUsersByPlanId(int itemId, int planId)
+        {
+            return LyncController.GetLyncUsersByPlanId(itemId, planId);
+        }
+
+        [WebMethod]
         public IntResult GetLyncUserCount(int itemId)
         {
             return LyncController.GetLyncUsersCount(itemId);

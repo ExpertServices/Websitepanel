@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -30,19 +30,37 @@ using System;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Portal.Lync
 {
     public partial class LyncUserPlans : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
-			if (!IsPostBack)
-			{
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
                 BindPlans();
-			}
 
-		}
+                txtStatus.Visible = false;
+
+                if (PanelSecurity.LoggedUser.Role == UserRole.User)
+                {
+                    PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+                    if (cntx.Quotas.ContainsKey(Quotas.LYNC_ENABLEDPLANSEDITING))
+                    {
+                        if (cntx.Quotas[Quotas.LYNC_ENABLEDPLANSEDITING].QuotaAllocatedValue != 1)
+                        {
+                            gvPlans.Columns[2].Visible = false;
+                            btnAddPlan.Enabled = btnAddPlan.Visible = false;
+                        }
+                    }
+                }
+
+
+            }
+
+        }
 
         public string GetPlanDisplayUrl(string LyncUserPlanId)
         {
@@ -64,6 +82,8 @@ namespace WebsitePanel.Portal.Lync
             {
                 btnSetDefaultPlan.Enabled = false;
             }
+
+            btnSave.Enabled = (gvPlans.Rows.Count >= 1);
         }
 
         public string IsChecked(bool val)
@@ -121,5 +141,34 @@ namespace WebsitePanel.Portal.Lync
                 ShowErrorMessage("LYNC_SET_DEFAULT_PLAN", ex);
             }
         }
-	}
+
+        protected void btnSave_Click(object sender, EventArgs e)
+        {
+            txtStatus.Visible = true;
+
+            try
+            {
+                LyncUser[] Accounts = ES.Services.Lync.GetLyncUsersByPlanId(PanelRequest.ItemID, Convert.ToInt32(lyncUserPlanSelectorSource.planId));
+
+                foreach (LyncUser a in Accounts)
+                {
+                    txtStatus.Text = "Completed";
+                    LyncUserResult result = ES.Services.Lync.SetUserLyncPlan(PanelRequest.ItemID, a.AccountID, Convert.ToInt32(lyncUserPlanSelectorTarget.planId));
+                    if (result.IsSuccess)
+                    {
+                        BindPlans();
+                        txtStatus.Text = "Error: " + a.DisplayName;
+                        ShowErrorMessage("LYNC_FAILED_TO_STAMP");
+                        return;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage("LYNC_FAILED_TO_STAMP", ex);
+            }
+        }
+
+    }
 }

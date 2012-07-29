@@ -40,6 +40,11 @@ using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.SharePoint;
 using WebsitePanel.Providers.Common;
+
+using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
+
 namespace WebsitePanel.EnterpriseServer
 {
     public class OrganizationController
@@ -351,6 +356,62 @@ namespace WebsitePanel.EnterpriseServer
 				                                   };
 
 			    PackageController.AddPackageItem(orgDomain);
+
+
+                if (cntx.Quotas[Quotas.EXCHANGE2007_MAILBOXES] != null)
+                {
+                    // 5) Create default mailbox plans
+                    // load user info
+                    UserInfo user = PackageController.GetPackageOwner(org.PackageId);
+
+                    // get  settings
+                    UserSettings userSettings = UserController.GetUserSettings(user.UserId, "ExchangeMailboxPlansPolicy");
+
+                    if (!string.IsNullOrEmpty(userSettings[UserSettings.DEFAULT_MAILBOXPLANS]))
+                    {
+
+                        List<ExchangeMailboxPlan> list = new List<ExchangeMailboxPlan>();
+
+                        XmlSerializer serializer = new XmlSerializer(list.GetType());
+
+                        StringReader reader = new StringReader(userSettings[UserSettings.DEFAULT_MAILBOXPLANS]);
+
+                        list = (List<ExchangeMailboxPlan>)serializer.Deserialize(reader);
+
+                        foreach (ExchangeMailboxPlan p in list)
+                        {
+                            ExchangeServerController.AddExchangeMailboxPlan(itemId, p);
+                        }
+                    }
+                }
+
+                if (cntx.Quotas[Quotas.LYNC_USERS] != null)
+                {
+                    // 5) Create default mailbox plans
+                    // load user info
+                    UserInfo user = PackageController.GetPackageOwner(org.PackageId);
+
+                    // get  settings
+                    UserSettings userSettings = UserController.GetUserSettings(user.UserId, "LyncUserPlansPolicy");
+
+                    if (!string.IsNullOrEmpty(userSettings[UserSettings.DEFAULT_LYNCUSERPLANS]))
+                    {
+
+                        List<LyncUserPlan> list = new List<LyncUserPlan>();
+
+                        XmlSerializer serializer = new XmlSerializer(list.GetType());
+
+                        StringReader reader = new StringReader(userSettings[UserSettings.DEFAULT_LYNCUSERPLANS]);
+
+                        list = (List<LyncUserPlan>)serializer.Deserialize(reader);
+
+                        foreach (LyncUserPlan p in list)
+                        {
+                            LyncController.AddLyncUserPlan(itemId, p);
+                        }
+                    }
+                }
+
 
 			}
 			catch (Exception ex)
