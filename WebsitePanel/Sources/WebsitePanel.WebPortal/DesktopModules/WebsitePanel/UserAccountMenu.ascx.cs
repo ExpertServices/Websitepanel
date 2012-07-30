@@ -85,6 +85,10 @@ namespace WebsitePanel.Portal
                 string roles = null;
                 if (node.Attributes["roles"] != null)
                     roles = node.Attributes["roles"].Value;
+
+                string selectedUserContext = null;
+                if (node.Attributes["selectedUserContext"] != null)
+                    selectedUserContext = node.Attributes["selectedUserContext"].Value;
                 
                 // get custom page parameters
                 XmlNodeList xmlParameters = node.SelectNodes("Parameters/Add");
@@ -97,7 +101,22 @@ namespace WebsitePanel.Portal
 
                 bool display = true;
 				// set user role visibility second
-                if (!String.IsNullOrEmpty(roles))
+                if (!String.IsNullOrEmpty(selectedUserContext))
+                {
+                    display = false;
+                    string[] arrRoles = selectedUserContext.Split(',');
+                    string userRole = PanelSecurity.SelectedUser.Role.ToString();
+                    foreach (string role in arrRoles)
+                    {
+                        if (String.Compare(userRole, role, true) == 0)
+                        {
+                            display = true;
+                            break;
+                        }
+                    }
+                }
+
+                if ((!String.IsNullOrEmpty(roles)) & display)
                 {
                     display = false;
                     string[] arrRoles = roles.Split(',');
