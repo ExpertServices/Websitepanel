@@ -72,6 +72,18 @@
             <asp:CheckBox id="chkNotEqualUsername" runat="server" meta:resourcekey="chkNotEqualUsername" Text="Should not be equal to username" />
         </td>
     </tr>
+
+    <tr>
+        <td class="Normal">
+            <asp:Label ID="lblLockedOut" runat="server"
+                meta:resourcekey="lblLockedOut" Text="Lock out after :"></asp:Label>
+        </td>
+        <td class="Normal"><asp:TextBox ID="txtLockedOut" runat="server" CssClass="NormalTextBox" Width="40px"></asp:TextBox>
+            <asp:RegularExpressionValidator ID="valCorrectLockedOut" runat="server" ControlToValidate="txtLockedOut" meta:resourcekey="valCorrectLockedOut"
+                Display="Dynamic" ErrorMessage="*" ValidationExpression="\d{1,10}" ValidationGroup="SettingsEditor"></asp:RegularExpressionValidator>
+        </td>
+    </tr>
+
 </table>
 
 	</ContentTemplate>

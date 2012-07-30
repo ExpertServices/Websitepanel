@@ -30,14 +30,14 @@ using System;
 
 namespace WebsitePanel.EnterpriseServer
 {
-	/// <summary>
-	/// Summary description for AccountStatus.
-	/// </summary>
-	public enum UserStatus
-	{
-		Active = 1,
-		Suspended = 2,
-		Cancelled = 3,
-		Pending = 4
-	}
+    /// <summary>
+    /// Summary description for AccountStatus.
+    /// </summary>
+    public enum UserStatus
+    {
+        Active = 1,
+        Suspended = 2,
+        Cancelled = 3,
+        Pending = 4
+    }
 }

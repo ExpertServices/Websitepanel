@@ -190,7 +190,7 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@Username", username));
         }
 
-        public static int AddUser(int actorId, int ownerId, int roleId, int statusId, bool isDemo,
+        public static int AddUser(int actorId, int ownerId, int roleId, int statusId, int loginStatusId, bool isDemo,
             bool isPeer, string comments, string username, string password,
             string firstName, string lastName, string email, string secondaryEmail,
             string address, string city, string country, string state, string zip,
@@ -208,6 +208,7 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@OwnerID", ownerId),
                 new SqlParameter("@RoleID", roleId),
                 new SqlParameter("@StatusId", statusId),
+                new SqlParameter("@LoginStatusId", loginStatusId),
                 new SqlParameter("@IsDemo", isDemo),
                 new SqlParameter("@IsPeer", isPeer),
                 new SqlParameter("@Comments", comments),
@@ -227,13 +228,13 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@fax", fax),
                 new SqlParameter("@instantMessenger", instantMessenger),
                 new SqlParameter("@htmlMail", htmlMail),
-				new SqlParameter("@CompanyName", companyName),
-				new SqlParameter("@EcommerceEnabled", ecommerceEnabled));
+                new SqlParameter("@CompanyName", companyName),
+                new SqlParameter("@EcommerceEnabled", ecommerceEnabled));
 
             return Convert.ToInt32(prmUserId.Value);
         }
 
-        public static void UpdateUser(int actorId, int userId, int roleId, int statusId, bool isDemo,
+        public static void UpdateUser(int actorId, int userId, int roleId, int statusId, int loginStatusId, bool isDemo,
             bool isPeer, string comments, string firstName, string lastName, string email, string secondaryEmail,
             string address, string city, string country, string state, string zip,
             string primaryPhone, string secondaryPhone, string fax, string instantMessenger, bool htmlMail,
@@ -245,6 +246,7 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@ActorId", actorId),
                 new SqlParameter("@RoleID", roleId),
                 new SqlParameter("@StatusId", statusId),
+                new SqlParameter("@LoginStatusId", loginStatusId),
                 new SqlParameter("@UserID", userId),
                 new SqlParameter("@IsDemo", isDemo),
                 new SqlParameter("@IsPeer", isPeer),
@@ -263,9 +265,18 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@fax", fax),
                 new SqlParameter("@instantMessenger", instantMessenger),
                 new SqlParameter("@htmlMail", htmlMail),
-				new SqlParameter("@CompanyName", companyName),
-				new SqlParameter("@EcommerceEnabled", ecommerceEnabled),
+                new SqlParameter("@CompanyName", companyName),
+                new SqlParameter("@EcommerceEnabled", ecommerceEnabled),
                 new SqlParameter("@AdditionalParams", additionalParams));
+        }
+
+        public static void UpdateUserFailedLoginAttempt(int userId, int lockOut, bool reset)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "UpdateUserFailedLoginAttempt",
+                new SqlParameter("@UserID", userId),
+                new SqlParameter("@LockOut", lockOut),
+                new SqlParameter("@Reset", reset));
         }
 
         public static void DeleteUser(int actorId, int userId)

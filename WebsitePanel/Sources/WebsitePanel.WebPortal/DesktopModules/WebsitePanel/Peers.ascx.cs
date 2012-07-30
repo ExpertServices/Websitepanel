@@ -86,5 +86,34 @@ namespace WebsitePanel.Portal
                     return "Unknown";
             }
         }
+
+
+        protected string GetStateImage(object status)
+        {
+            string imgName = "enabled.png";
+
+            if (status != null)
+            {
+                try
+                {
+                    switch ((int)status)
+                    {
+                        case (int)UserLoginStatus.Disabled:
+                            imgName = "disabled.png";
+                            break;
+                        case (int)UserLoginStatus.LockedOut:
+                            imgName = "locked.png";
+                            break;
+                        default:
+                            imgName = "enabled.png";
+                            break;
+                    }
+                }
+                catch (Exception) { }
+            }
+
+            return GetThemedImage("Exchange/" + imgName);
+        }
+
     }
 }

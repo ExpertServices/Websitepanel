@@ -88,6 +88,20 @@
 				<asp:CheckBox id="chkDemo" runat="server" meta:resourcekey="chkDemo" Text="Yes"></asp:CheckBox>
 			</td>
 		</tr>
+
+		<tr id="roleLoginStatus" runat="server">
+			<td class="SubHead" valign="top">
+			    <asp:Label ID="lblLoginStatus" runat="server" meta:resourcekey="lblLoginStatus" Text="Login Status:"></asp:Label>
+			</td>
+			<td class="NormalBold" valign="top">
+				<asp:DropDownList id="loginStatus" runat="server" resourcekey="loginStatus"  CssClass="NormalTextBox">
+			        <asp:ListItem Value="Enabled"></asp:ListItem>
+			        <asp:ListItem Value="Disabled"></asp:ListItem>
+				    <asp:ListItem Value="Locked Out"></asp:ListItem>
+				</asp:DropDownList>
+			</td>
+		</tr>
+
 		<tr id="rowEcommerceEnbl" runat="server">
 			<td class="SubHead"><asp:Localize runat="server" meta:resourcekey="lclEcommerceEnabled" /></td>
 		    <td class="Normal"><asp:CheckBox runat="server" ID="chkEcommerceEnbl" Text="Yes"/></td>

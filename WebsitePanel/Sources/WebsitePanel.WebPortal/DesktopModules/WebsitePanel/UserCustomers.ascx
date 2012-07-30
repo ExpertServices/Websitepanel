@@ -51,6 +51,11 @@
 	DataSourceID="odsUsersPaged" EnableViewState="False"
 	EmptyDataText="gvUsers">
 	<Columns>
+		<asp:TemplateField>
+			<ItemTemplate>							        
+				<asp:Image ID="img2" runat="server" Width="16px" Height="16px" ImageUrl='<%# GetStateImage(Eval("LoginStatusId")) %>' ImageAlign="AbsMiddle" />
+			</ItemTemplate>
+		</asp:TemplateField>
 		<asp:TemplateField SortExpression="Username" HeaderText="gvUsersUsername" HeaderStyle-Wrap="false">
 			<ItemTemplate>
 				<asp:hyperlink id=lnkEdit runat="server" NavigateUrl='<%# GetUserHomePageUrl((int)Eval("UserID")) %>'>

@@ -290,6 +290,9 @@ namespace WebsitePanel.WebPortal
                 else
                     page.Roles.AddRange(xmlPage.Attributes["roles"].Value.Split(ROLES_DELIMITERS.ToCharArray()));
 
+                if (xmlPage.Attributes["selectedUserContext"] != null)
+                    page.Roles.AddRange(xmlPage.Attributes["selectedUserContext"].Value.Split(ROLES_DELIMITERS.ToCharArray()));
+
                 page.Enabled = (xmlPage.Attributes["enabled"] != null) ? Boolean.Parse(xmlPage.Attributes["enabled"].Value) : true;
                 page.Hidden = (xmlPage.Attributes["hidden"] != null) ? Boolean.Parse(xmlPage.Attributes["hidden"].Value) : false;
                 page.SkinSrc = (xmlPage.Attributes["skin"] != null) ? xmlPage.Attributes["skin"].Value : null;

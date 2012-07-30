@@ -64,6 +64,9 @@ namespace WebsitePanel.EnterpriseServer
         public const int ERROR_INVALID_USER_NAME = -111;
         public const int ERROR_USER_ACCOUNT_NOT_ENOUGH_PERMISSIONS = -112;
         public const int ERROR_USER_ACCOUNT_ROLE_NOT_ALLOWED = -113;
+
+        public const int ERROR_USER_ACCOUNT_DISABLED = -114;
+        public const int ERROR_USER_ACCOUNT_LOCKEDOUT = -115;
         #endregion
 
         #region Packages

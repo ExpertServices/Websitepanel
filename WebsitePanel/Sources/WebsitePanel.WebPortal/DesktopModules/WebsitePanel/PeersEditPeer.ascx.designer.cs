@@ -303,6 +303,33 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.DropDownList ddlMailFormat;
         
         /// <summary>
+        /// roleLoginStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow roleLoginStatus;
+        
+        /// <summary>
+        /// lblLoginStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblLoginStatus;
+        
+        /// <summary>
+        /// loginStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList loginStatus;
+        
+        /// <summary>
         /// lblDemoAccount control.
         /// </summary>
         /// <remarks>

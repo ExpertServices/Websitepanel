@@ -101,6 +101,18 @@
 				</asp:DropDownList>
 			</td>
 		</tr>
+        <tr id="roleLoginStatus" runat="server">
+			<td class="SubHead" valign="top">
+			    <asp:Label ID="lblLoginStatus" runat="server" meta:resourcekey="lblLoginStatus" Text="Login Status:"></asp:Label>
+			</td>
+			<td class="NormalBold" valign="top">
+				<asp:DropDownList id="loginStatus" runat="server" resourcekey="loginStatus"  CssClass="NormalTextBox">
+			        <asp:ListItem Value="Enabled"></asp:ListItem>
+			        <asp:ListItem Value="Disabled"></asp:ListItem>
+				    <asp:ListItem Value="Locked Out"></asp:ListItem>
+				</asp:DropDownList>
+			</td>
+		</tr>
 		<tr>
 			<td class="SubHead">
                 <asp:Label ID="lblDemoAccount" runat="server" meta:resourcekey="lblDemoAccount" Text="Demo Account:"></asp:Label>  

@@ -156,6 +156,7 @@
     <Compile Include="Tasks\BackgroundTask.cs" />
     <Compile Include="Tasks\BackgroundTaskLogRecord.cs" />
     <Compile Include="Users\UserInfo.cs" />
+    <Compile Include="Users\UserLoginStatus.cs" />
     <Compile Include="Users\UsernamePolicy.cs" />
     <Compile Include="Users\UserRole.cs" />
     <Compile Include="Users\UserSettings.cs" />
