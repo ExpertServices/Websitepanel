@@ -3014,6 +3014,7 @@ namespace WebsitePanel.Providers.HostedSolution
 				info.WebPage = (string)GetPSObjectProperty(user, "WebPage");
 				info.Notes = (string)GetPSObjectProperty(user, "Notes");
 
+                info.SAMAccountName = string.Format("{0}\\{1}", GetNETBIOSDomainName(), (string)GetPSObjectProperty(user, "Name"));
 
 			}
 			finally
