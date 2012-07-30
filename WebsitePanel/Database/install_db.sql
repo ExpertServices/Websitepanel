@@ -667,6 +667,8 @@ CREATE TABLE [dbo].[Users](
 	[CompanyName] [nvarchar](100) COLLATE Latin1_General_CI_AS NULL,
 	[EcommerceEnabled] [bit] NULL,
 	[AdditionalParams] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[LoginStatusId] [int] NULL,
+	[FailedLogins] [int] NULL,
  CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
 (
 	[UserID] ASC
@@ -9749,7 +9751,7 @@ GO
 
 CREATE VIEW [dbo].[UsersDetailed]
 AS
-SELECT     U.UserID, U.RoleID, U.StatusID, U.OwnerID, U.Created, U.Changed, U.IsDemo, U.Comments, U.IsPeer, U.Username, U.FirstName, U.LastName, U.Email, 
+SELECT     U.UserID, U.RoleID, U.StatusID, U.LoginStatusId, U.FailedLogins, U.OwnerID, U.Created, U.Changed, U.IsDemo, U.Comments, U.IsPeer, U.Username, U.FirstName, U.LastName, U.Email, 
                       U.CompanyName, U.FirstName + ' ' + U.LastName AS FullName, UP.Username AS OwnerUsername, UP.FirstName AS OwnerFirstName, 
                       UP.LastName AS OwnerLastName, UP.RoleID AS OwnerRoleID, UP.FirstName + ' ' + UP.LastName AS OwnerFullName, UP.Email AS OwnerEmail, UP.RoleID AS Expr1,
                           (SELECT     COUNT(PackageID) AS Expr1
@@ -11983,6 +11985,8 @@ SELECT
 	U.UserID,
 	U.RoleID,
 	U.StatusID,
+	U.LoginStatusId,
+	U.FailedLogins,
 	U.OwnerID,
 	U.Created,
 	U.Changed,
@@ -12012,6 +12016,7 @@ exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @UserID int, @Filter
 
 
 RETURN
+
 
 
 
@@ -12085,7 +12090,7 @@ GO
 
 
 
-CREATE PROCEDURE GetUserDomainsPaged
+CREATE PROCEDURE [dbo].[GetUserDomainsPaged]
 (
 	@ActorID int,
 	@UserID int,
@@ -12134,6 +12139,8 @@ SELECT
 	U.UserID,
 	U.RoleID,
 	U.StatusID,
+	U.LoginStatusId,
+	U.FailedLogins,
 	U.OwnerID,
 	U.Created,
 	U.Changed,
@@ -12155,7 +12162,6 @@ exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @UserID int, @Filter
 
 
 RETURN
-
 
 
 
@@ -19490,6 +19496,8 @@ AS
 		U.UserID,
 		U.RoleID,
 		U.StatusID,
+		U.LoginStatusId,
+		U.FailedLogins,
 		U.OwnerID,
 		U.Created,
 		U.Changed,
@@ -19536,6 +19544,8 @@ AS
 		U.UserID,
 		U.RoleID,
 		U.StatusID,
+		U.LoginStatusId,
+		U.FailedLogins,
 		U.OwnerID,
 		U.Created,
 		U.Changed,
@@ -19897,6 +19907,8 @@ SELECT
 	U.UserID,
 	U.RoleID,
 	U.StatusID,
+	U.LoginStatusId,
+	U.FailedLogins,
 	U.OwnerID,
 	U.Created,
 	U.Changed,
@@ -19923,7 +19935,7 @@ WHERE U.UserID <> @OwnerID AND
 AND U.IsPeer = 0
 AND @CanGetDetails = 1 -- actor user rights
 
-RETURN 
+RETURN
 
 
 
@@ -20015,6 +20027,8 @@ SELECT
 	U.UserID,
 	U.RoleID,
 	U.StatusID,
+	U.LoginStatusId,
+	U.FailedLogins,
 	U.OwnerID,
 	U.Created,
 	U.Changed,
@@ -25166,6 +25180,7 @@ CREATE PROCEDURE [dbo].[AddUser]
 	@OwnerID int,
 	@RoleID int,
 	@StatusID int,
+	@LoginStatusID int,
 	@IsDemo bit,
 	@IsPeer bit,
 	@Comments ntext,
@@ -25209,6 +25224,7 @@ INSERT INTO Users
 	OwnerID,
 	RoleID,
 	StatusID,
+	LoginStatusID,
 	Created,
 	Changed,
 	IsDemo,
@@ -25238,6 +25254,7 @@ VALUES
 	@OwnerID,
 	@RoleID,
 	@StatusID,
+	@LoginStatusID,
 	GetDate(),
 	GetDate(),
 	@IsDemo,
@@ -25265,8 +25282,7 @@ VALUES
 
 SET @UserID = SCOPE_IDENTITY()
 
-RETURN 
-
+RETURN
 
 
 
@@ -25444,6 +25460,7 @@ CREATE PROCEDURE [dbo].[UpdateUser]
 	@UserID int,
 	@RoleID int,
 	@StatusID int,
+	@LoginStatusId int,
 	@IsDemo bit,
 	@IsPeer bit,
 	@Comments ntext,
@@ -25473,9 +25490,17 @@ AS
 		RETURN
 	END
 
+	IF @LoginStatusId = 0
+	BEGIN
+		UPDATE Users SET 
+			FailedLogins = 0
+		WHERE UserID = @UserID
+	END
+
 	UPDATE Users SET 
 		RoleID = @RoleID,
 		StatusID = @StatusID,
+		LoginStatusId = @LoginStatusId,
 		Changed = GetDate(),
 		IsDemo = @IsDemo,
 		IsPeer = @IsPeer,
@@ -25522,17 +25547,44 @@ GO
 
 
 
+CREATE PROCEDURE [dbo].[UpdateUserFailedLoginAttempt]
+(
+	@UserID int,
+	@LockOut int,
+	@Reset int
+)
+AS
+
+IF (@Reset = 1)
+BEGIN
+	UPDATE Users SET FailedLogins = 0 WHERE UserID = @UserID
+END
+ELSE
+BEGIN
+	IF (@LockOut <= (SELECT FailedLogins FROM USERS WHERE UserID = @UserID))
+	BEGIN
+		UPDATE Users SET LoginStatusId = 2 WHERE UserID = @UserID
+	END
+	ELSE
+	BEGIN
+		IF ((SELECT FailedLogins FROM Users WHERE UserID = @UserID) IS NULL)
+		BEGIN
+			UPDATE Users SET FailedLogins = 1 WHERE UserID = @UserID
+		END
+		ELSE
+			UPDATE Users SET FailedLogins = FailedLogins + 1 WHERE UserID = @UserID
+	END
+END
 
 
 
 
 
-
-
-
-
-
-
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 
 
 CREATE PROCEDURE DeleteComment
@@ -28695,6 +28747,8 @@ SELECT
 	U.UserID,
 	U.RoleID,
 	U.StatusID,
+	U.LoginStatusId,
+	U.FailedLogins,
 	U.OwnerID,
 	U.Created,
 	U.Changed,
@@ -28861,6 +28915,8 @@ AS
 		U.UserID,
 		U.RoleID,
 		U.StatusID,
+		U.LoginStatusId,
+		U.FailedLogins,
 		U.OwnerID,
 		U.Created,
 		U.Changed,
@@ -28912,6 +28968,8 @@ AS
 		U.UserID,
 		U.RoleID,
 		U.StatusID,
+		U.LoginStatusId,
+		U.FailedLogins,
 		U.OwnerID,
 		U.Created,
 		U.Changed,

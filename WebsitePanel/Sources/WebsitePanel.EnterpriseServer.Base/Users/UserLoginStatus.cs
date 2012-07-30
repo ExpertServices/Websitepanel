@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -31,13 +31,12 @@ using System;
 namespace WebsitePanel.EnterpriseServer
 {
     /// <summary>
-    /// Summary description for AccountStatus.
+    /// Summary description for AccountLoginStatus.
     /// </summary>
-    public enum UserStatus
+    public enum UserLoginStatus
     {
-        Active = 1,
-        Suspended = 2,
-        Cancelled = 3,
-        Pending = 4
+        Enabled = 0,
+        Disabled = 1,
+        LockedOut = 2
     }
 }

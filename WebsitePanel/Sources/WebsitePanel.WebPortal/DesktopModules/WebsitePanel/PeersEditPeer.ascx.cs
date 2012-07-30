@@ -127,6 +127,9 @@ namespace WebsitePanel.Portal
                 if (user.RoleId == (int)UserRole.Reseller) role.SelectedIndex = 2;
                 if (user.RoleId == (int)UserRole.Administrator) role.SelectedIndex = 2;
 
+                // select loginStatus
+                loginStatus.SelectedIndex = user.LoginStatusId;
+
                 // contact info
                 contact.CompanyName = user.CompanyName;
                 contact.Address = user.Address;
@@ -194,6 +197,8 @@ namespace WebsitePanel.Portal
                 user.Username = txtUsername.Text;
                 user.Password = userPassword.Password;
                 user.IsDemo = chkDemo.Checked;
+                
+                user.LoginStatusId = loginStatus.SelectedIndex;
 
                 // contact info
                 user.CompanyName = contact.CompanyName;

@@ -106,6 +106,7 @@
     <Content Include="App_Themes\Default\Images\Exchange\disabled.png" />
     <Content Include="App_Themes\Default\Images\Exchange\disabled_16.png" />
     <Content Include="App_Themes\Default\Images\Exchange\enabled.png" />
+    <Content Include="App_Themes\Default\Images\Exchange\locked.png" />
     <Content Include="App_Themes\Default\Images\Exchange\lync16.png" />
     <Content Include="App_Themes\Default\Images\FileManager\vbhtml.png" />
     <Content Include="App_Themes\Default\Images\lync16.png" />

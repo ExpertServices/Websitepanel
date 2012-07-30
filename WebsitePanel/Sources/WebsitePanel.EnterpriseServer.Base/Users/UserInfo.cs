@@ -33,225 +33,249 @@ using System.Xml.Linq;
 
 namespace WebsitePanel.EnterpriseServer
 {
-	/// <summary>
-	/// User account.
-	/// </summary>
-	[Serializable]
-	public class UserInfo
-	{
-		private int userId;
-		private int ownerId;
-		private int roleId;
-		private int statusId;
-		private DateTime created;
-		private DateTime changed;
-		private bool isPeer;
-		private bool isDemo;
-		private string comments;
-		private string username;
-		private string password;
-		private string firstName;
-		private string lastName;
-		private string email;
-		private string secondaryEmail;
-		private string address;
-		private string city;
-		private string country;
-		private string state;
-		private string zip;
-		private string primaryPhone;
-		private string secondaryPhone;
-		private string fax;
-		private string instantMessenger;
+    /// <summary>
+    /// User account.
+    /// </summary>
+    [Serializable]
+    public class UserInfo
+    {
+        private int userId;
+        private int ownerId;
+        private int roleId;
+        private int statusId;
+        private int loginStatusId;
+        private int failedLogins;
+        private DateTime created;
+        private DateTime changed;
+        private bool isPeer;
+        private bool isDemo;
+        private string comments;
+        private string username;
+        private string password;
+        private string firstName;
+        private string lastName;
+        private string email;
+        private string secondaryEmail;
+        private string address;
+        private string city;
+        private string country;
+        private string state;
+        private string zip;
+        private string primaryPhone;
+        private string secondaryPhone;
+        private string fax;
+        private string instantMessenger;
         private bool htmlMail;
-		private string companyName;
-		private bool ecommerceEnabled;	  
+        private string companyName;
+        private bool ecommerceEnabled;
 
 
-		/// <summary>
-		/// Creates a new instance of UserInfo class.
-		/// </summary>
-		public UserInfo()
-		{            
-		}
+        /// <summary>
+        /// Creates a new instance of UserInfo class.
+        /// </summary>
+        public UserInfo()
+        {
+        }
 
-		/// <summary>
-		/// User role ID:
-		/// 		Administrator = 1,
-		/// 		Reseller = 2,
-		/// 		User = 3
-		/// </summary>
-		public int RoleId
-		{
-			get { return roleId; }
-			set { roleId = value; }
-		}
+        /// <summary>
+        /// User role ID:
+        /// 		Administrator = 1,
+        /// 		Reseller = 2,
+        /// 		User = 3
+        /// </summary>
+        public int RoleId
+        {
+            get { return roleId; }
+            set { roleId = value; }
+        }
 
-		/// <summary>
-		/// User role.
-		/// </summary>
-		public UserRole Role
-		{
-			get { return (UserRole)roleId; }
-			set { roleId = (int)value; }
-		}
 
-		/// <summary>
-		/// User account status:
-		/// Active = 1,
-		/// Suspended = 2,
-		/// Cancelled = 3,
-		/// Pending = 4
-		/// </summary>
-		public int StatusId
-		{
-			get { return statusId; }
-			set { statusId = value; }
-		}
+        /// <summary>
+        /// User role.
+        /// </summary>
+        public UserRole Role
+        {
+            get { return (UserRole)roleId; }
+            set { roleId = (int)value; }
+        }
 
-		/// <summary>
-		/// User account status.
-		/// </summary>
-		public UserStatus Status
-		{
-			get { return (UserStatus)statusId; }
-			set { statusId = (int)value; }
-		}
+        /// <summary>
+        /// User account status:
+        /// Active = 1,
+        /// Suspended = 2,
+        /// Cancelled = 3,
+        /// Pending = 4
+        /// </summary>
+        public int StatusId
+        {
+            get { return statusId; }
+            set { statusId = value; }
+        }
 
-		/// <summary>
-		/// User account unique identifier.
-		/// </summary>
-		public int UserId
-		{
-			get { return userId; }
-			set { userId = value; }
-		}
+        /// <summary>
+        /// User account status.
+        /// </summary>
+        public UserStatus Status
+        {
+            get { return (UserStatus)statusId; }
+            set { statusId = (int)value; }
+        }
 
-		public int OwnerId
-		{
-			get { return ownerId; }
-			set { ownerId = value; }
-		}
 
-		public bool IsPeer
-		{
-			get { return isPeer; }
-			set { isPeer = value; }
-		}
+        public int LoginStatusId
+        {
+            get { return loginStatusId; }
+            set { loginStatusId = value; }
+        }
 
-		public DateTime Created
-		{
-			get { return created; }
-			set { created = value; }
-		}
+        public UserLoginStatus LoginStatus
+        {
+            get { return (UserLoginStatus)loginStatusId; }
+            set { loginStatusId = (int)value; }
+        }
 
-		public DateTime Changed
-		{
-			get { return changed; }
-			set { changed = value; }
-		}
+        public int FailedLogins
+        {
+            get { return failedLogins; }
+            set { failedLogins = value; }
+        }
 
-		public bool IsDemo
-		{
-			get { return isDemo; }
-			set { isDemo = value; }
-		}
 
-		public string Comments
-		{
-			get { return comments; }
-			set { comments = value; }
-		}
 
-		public string LastName
-		{
-			get { return this.lastName; }
-			set { this.lastName = value; }
-		}
+        /// <summary>
+        /// User account unique identifier.
+        /// </summary>
+        public int UserId
+        {
+            get { return userId; }
+            set { userId = value; }
+        }
 
-		public string Username
-		{
-			get { return this.username; }
-			set { this.username = value; }
-		}
+        public int OwnerId
+        {
+            get { return ownerId; }
+            set { ownerId = value; }
+        }
 
-		public string Password
-		{
-			get { return this.password; }
-			set { this.password = value; }
-		}
+        public bool IsPeer
+        {
+            get { return isPeer; }
+            set { isPeer = value; }
+        }
 
-		public string FirstName
-		{
-			get { return this.firstName; }
-			set { this.firstName = value; }
-		}
+        public DateTime Created
+        {
+            get { return created; }
+            set { created = value; }
+        }
 
-		public string Email
-		{
-			get { return this.email; }
-			set { this.email = value; }
-		}
+        public DateTime Changed
+        {
+            get { return changed; }
+            set { changed = value; }
+        }
 
-		public string PrimaryPhone
-		{
-			get { return this.primaryPhone; }
-			set { this.primaryPhone = value; }
-		}
+        public bool IsDemo
+        {
+            get { return isDemo; }
+            set { isDemo = value; }
+        }
 
-		public string Zip
-		{
-			get { return this.zip; }
-			set { this.zip = value; }
-		}
+        public string Comments
+        {
+            get { return comments; }
+            set { comments = value; }
+        }
 
-		public string InstantMessenger
-		{
-			get { return this.instantMessenger; }
-			set { this.instantMessenger = value; }
-		}
+        public string LastName
+        {
+            get { return this.lastName; }
+            set { this.lastName = value; }
+        }
 
-		public string Fax
-		{
-			get { return this.fax; }
-			set { this.fax = value; }
-		}
+        public string Username
+        {
+            get { return this.username; }
+            set { this.username = value; }
+        }
 
-		public string SecondaryPhone
-		{
-			get { return this.secondaryPhone; }
-			set { this.secondaryPhone = value; }
-		}
+        public string Password
+        {
+            get { return this.password; }
+            set { this.password = value; }
+        }
 
-		public string SecondaryEmail
-		{
-			get { return this.secondaryEmail; }
-			set { this.secondaryEmail = value; }
-		}
+        public string FirstName
+        {
+            get { return this.firstName; }
+            set { this.firstName = value; }
+        }
 
-		public string Country
-		{
-			get { return this.country; }
-			set { this.country = value; }
-		}
+        public string Email
+        {
+            get { return this.email; }
+            set { this.email = value; }
+        }
 
-		public string Address
-		{
-			get { return this.address; }
-			set { this.address = value; }
-		}
+        public string PrimaryPhone
+        {
+            get { return this.primaryPhone; }
+            set { this.primaryPhone = value; }
+        }
 
-		public string City
-		{
-			get { return this.city; }
-			set { this.city = value; }
-		}
+        public string Zip
+        {
+            get { return this.zip; }
+            set { this.zip = value; }
+        }
 
-		public string State
-		{
-			get { return this.state; }
-			set { this.state = value; }
-		}
+        public string InstantMessenger
+        {
+            get { return this.instantMessenger; }
+            set { this.instantMessenger = value; }
+        }
+
+        public string Fax
+        {
+            get { return this.fax; }
+            set { this.fax = value; }
+        }
+
+        public string SecondaryPhone
+        {
+            get { return this.secondaryPhone; }
+            set { this.secondaryPhone = value; }
+        }
+
+        public string SecondaryEmail
+        {
+            get { return this.secondaryEmail; }
+            set { this.secondaryEmail = value; }
+        }
+
+        public string Country
+        {
+            get { return this.country; }
+            set { this.country = value; }
+        }
+
+        public string Address
+        {
+            get { return this.address; }
+            set { this.address = value; }
+        }
+
+        public string City
+        {
+            get { return this.city; }
+            set { this.city = value; }
+        }
+
+        public string State
+        {
+            get { return this.state; }
+            set { this.state = value; }
+        }
 
         public bool HtmlMail
         {
@@ -259,17 +283,17 @@ namespace WebsitePanel.EnterpriseServer
             set { this.htmlMail = value; }
         }
 
-		public string CompanyName
-		{
-			get { return this.companyName; }
-			set { this.companyName = value; }
-		}
+        public string CompanyName
+        {
+            get { return this.companyName; }
+            set { this.companyName = value; }
+        }
 
-		public bool EcommerceEnabled
-		{
-			get { return this.ecommerceEnabled; }
-			set { this.ecommerceEnabled = value; }
-		}
+        public bool EcommerceEnabled
+        {
+            get { return this.ecommerceEnabled; }
+            set { this.ecommerceEnabled = value; }
+        }
 
         public string AdditionalParams { get; set; }
 
@@ -289,10 +313,10 @@ namespace WebsitePanel.EnterpriseServer
                             XElement vLansElement = doc.Root.Element("VLans");
                             if (vLansElement != null)
                             {
-                                foreach(var item in vLansElement.Elements("VLan"))
+                                foreach (var item in vLansElement.Elements("VLan"))
                                     result.Add(new UserVlan
                                     {
-                                        VLanID =  item.Attribute("VLanID") != null ? ushort.Parse(item.Attribute("VLanID").Value) : (ushort) 0,
+                                        VLanID = item.Attribute("VLanID") != null ? ushort.Parse(item.Attribute("VLanID").Value) : (ushort)0,
                                         Comment = item.Attribute("Comment") != null ? item.Attribute("Comment").Value : null
                                     });
                             }
@@ -304,7 +328,7 @@ namespace WebsitePanel.EnterpriseServer
                 return result;
             }
         }
-	}
+    }
 
     /// <summary>
     /// User's VLans

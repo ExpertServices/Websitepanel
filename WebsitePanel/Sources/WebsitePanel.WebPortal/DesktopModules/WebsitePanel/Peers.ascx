@@ -8,6 +8,11 @@
 	EnableViewState="False" EmptyDataText="usersList"
 	CssSelectorClass="NormalGridView">
 	<Columns>
+		<asp:TemplateField>
+			<ItemTemplate>							        
+				<asp:Image ID="img2" runat="server" Width="16px" Height="16px" ImageUrl='<%# GetStateImage(Eval("LoginStatusId")) %>' ImageAlign="AbsMiddle" />
+			</ItemTemplate>
+		</asp:TemplateField>
 		<asp:TemplateField SortExpression="Username" HeaderText="usersListUsername">
 			<ItemTemplate>
 				<asp:hyperlink id="lnkEdit" runat="server" NavigateUrl='<%# EditUrl("PeerID", Eval("UserID").ToString(), "edit_peer", "UserID=" + PanelSecurity.SelectedUserId.ToString()) %>'>

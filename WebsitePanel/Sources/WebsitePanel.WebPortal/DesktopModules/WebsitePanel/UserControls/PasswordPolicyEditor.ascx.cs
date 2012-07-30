@@ -53,7 +53,9 @@ namespace WebsitePanel.Portal
                 sb.Append(txtMinimumUppercase.Text).Append(";");
                 sb.Append(txtMinimumNumbers.Text).Append(";");
                 sb.Append(txtMinimumSymbols.Text).Append(";");
-                sb.Append(chkNotEqualUsername.Checked.ToString());
+                sb.Append(chkNotEqualUsername.Checked.ToString()).Append(";");
+                sb.Append(txtLockedOut.Text).Append(";");
+
                 return sb.ToString();
             }
             set
@@ -67,6 +69,7 @@ namespace WebsitePanel.Portal
                     txtMinimumUppercase.Text = "0";
                     txtMinimumNumbers.Text = "0";
                     txtMinimumSymbols.Text = "0";
+                    txtLockedOut.Text = "3";
                 }
                 else
                 {
@@ -81,10 +84,11 @@ namespace WebsitePanel.Portal
                         txtMinimumNumbers.Text = parts[4];
                         txtMinimumSymbols.Text = parts[5];
                         chkNotEqualUsername.Checked = Utils.ParseBool(parts[6], false);
+                        txtLockedOut.Text = parts[7];
                     }
                     catch { /* skip */ }
                 }
-				ToggleControls();
+                ToggleControls();
             }
         }
 
@@ -92,14 +96,14 @@ namespace WebsitePanel.Portal
         {
         }
 
-		private void ToggleControls()
-		{
-			PolicyTable.Visible = chkEnabled.Checked;
-		}
+        private void ToggleControls()
+        {
+            PolicyTable.Visible = chkEnabled.Checked;
+        }
 
-		protected void chkEnabled_CheckedChanged(object sender, EventArgs e)
-		{
-			ToggleControls();
-		}
+        protected void chkEnabled_CheckedChanged(object sender, EventArgs e)
+        {
+            ToggleControls();
+        }
     }
 }

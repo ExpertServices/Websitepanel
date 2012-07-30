@@ -37,6 +37,8 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
+using WebsitePanel.EnterpriseServer;
+
 namespace WebsitePanel.Portal
 {
 	public partial class UserCustomers : WebsitePanelModuleBase
@@ -85,5 +87,37 @@ namespace WebsitePanel.Portal
 			Response.Redirect(EditUrl(PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString(), "create_user",
 				"frm=customers"));
 		}
+
+        protected string GetStateImage(object status)
+        {
+            string imgName = "enabled.png";
+
+            if (status != null)
+            {
+                try
+                {
+                    switch ((int)status)
+                    {
+                        case (int)UserLoginStatus.Disabled:
+                            imgName = "disabled.png";
+                            break;
+                        case (int)UserLoginStatus.LockedOut:
+                            imgName = "locked.png";
+                            break;
+                        default:
+                            imgName = "enabled.png";
+                            break;
+                    }
+                }
+                catch (Exception)
+                {
+
+                }
+
+            }
+
+            return GetThemedImage("Exchange/" + imgName);
+        }
+
 	}
 }
