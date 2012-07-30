@@ -2053,6 +2053,13 @@ IF ((SELECT Count(*) FROM ExchangeMailboxPlans WHERE ItemId = @ItemID) = 0)
 BEGIN
 	SET @IsDefault = 1
 END
+ELSE
+BEGIN
+	IF @IsDefault = 1
+	BEGIN
+		UPDATE ExchangeMailboxPlans SET IsDefault = 0 WHERE ItemID = @ItemID
+	END
+END
 
 INSERT INTO ExchangeMailboxPlans
 (
