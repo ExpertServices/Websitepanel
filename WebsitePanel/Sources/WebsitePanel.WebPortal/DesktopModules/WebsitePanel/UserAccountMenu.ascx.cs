@@ -101,7 +101,7 @@ namespace WebsitePanel.Portal
                 {
                     display = false;
                     string[] arrRoles = roles.Split(',');
-                    string userRole = PanelSecurity.SelectedUser.Role.ToString();
+                    string userRole = PanelSecurity.LoggedUser.Role.ToString();
                     foreach (string role in arrRoles)
                     {
                         if (String.Compare(userRole, role, true) == 0)
