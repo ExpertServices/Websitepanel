@@ -4321,8 +4321,22 @@ namespace WebsitePanel.Providers.HostedSolution
 				info.Name = (string)GetPSObjectProperty(publicFolder, "Name");
 				info.MailEnabled = (bool)GetPSObjectProperty(publicFolder, "MailEnabled");
 				info.HideFromAddressBook = (bool)GetPSObjectProperty(publicFolder, "HiddenFromAddressListsEnabled");
+                info.NETBIOS = GetNETBIOSDomainName();
+				info.Accounts = GetPublicFolderAccounts(runSpace, folder);
 
-				info.Accounts = GetPublicFolderAccounts(runSpace, folder);				
+                if (info.MailEnabled)
+                {
+                    Command cmd = new Command("Get-MailPublicFolder");
+                    cmd.Parameters.Add("Identity", folder);
+                    if (!string.IsNullOrEmpty(PublicFolderServer))
+                        cmd.Parameters.Add("Server", PublicFolderServer);
+                    result = ExecuteShellCommand(runSpace, cmd);
+                    if (result.Count > 0)
+                    {
+                        publicFolder = result[0];
+                        info.SAMAccountName = string.Format("{0}\\{1}", GetNETBIOSDomainName(), (string)GetPSObjectProperty(publicFolder, "Alias"));
+                    }
+                }
 			}
 			finally
 			{

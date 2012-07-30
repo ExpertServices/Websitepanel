@@ -3674,10 +3674,13 @@ namespace WebsitePanel.EnterpriseServer
 					name,
 					domain);
 
+
+                ExchangePublicFolder folder = exchange.GetPublicFolderGeneralSettings(parentFolder + "\\" + folderName);
+
 				// add meta-item
 				int accountId = AddAccount(itemId, ExchangeAccountType.PublicFolder, accountName,
 					folderPath, email, mailEnabled,
-                    0, "", null, 0 , null);
+                    0, folder.NETBIOS+"\\"+accountName, null, 0, null);
 
 				// register email address
 				if(mailEnabled)
