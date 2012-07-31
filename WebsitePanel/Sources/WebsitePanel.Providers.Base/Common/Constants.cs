@@ -62,6 +62,8 @@ namespace WebsitePanel.Providers.Common
 
         public const string EnterpriseServer = "EnterpriseServer";
 
+        public const string EnterpriseServerFQDN = "EnterpriseServerFQDN";
+
         public const string AdministrationToolService = "AdministrationToolService";
 
         

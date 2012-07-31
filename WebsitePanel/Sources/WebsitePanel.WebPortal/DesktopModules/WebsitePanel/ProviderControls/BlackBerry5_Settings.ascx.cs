@@ -32,7 +32,7 @@ using WebsitePanel.Providers.Common;
 
 namespace WebsitePanel.Portal.ProviderControls
 {
-	public partial class BlackBerry5_Settings: WebsitePanelControlBase, IHostingServiceProviderSettings
+    public partial class BlackBerry5_Settings : WebsitePanelControlBase, IHostingServiceProviderSettings
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -44,6 +44,7 @@ namespace WebsitePanel.Portal.ProviderControls
             txtPath.Text = settings[Constants.UtilityPath];
             txtPassword.Text = settings[Constants.Password];
             txtEnterpriseServer.Text = settings[Constants.EnterpriseServer];
+            txtEnterpriseServerFQDN.Text = settings[Constants.EnterpriseServerFQDN];
             ViewState["PWD"] = settings[Constants.Password];
             txtUser.Text = settings[Constants.UserName];
         }
@@ -52,6 +53,7 @@ namespace WebsitePanel.Portal.ProviderControls
         {
             settings[Constants.UtilityPath] = txtPath.Text;
             settings[Constants.EnterpriseServer] = txtEnterpriseServer.Text;
+            settings[Constants.EnterpriseServerFQDN] = txtEnterpriseServerFQDN.Text;
             settings[Constants.Password] = (txtPassword.Text.Length > 0) ? txtPassword.Text : (string)ViewState["PWD"];
             settings[Constants.UserName] = txtUser.Text;
         }
