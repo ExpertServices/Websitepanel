@@ -67,8 +67,8 @@
 						<tr>
 						    <td colspan="2">
                                 <wsp:AccountsList id="members" runat="server"
+                                            ShowOnlyMailboxes="true" 
 											MailboxesEnabled="true"
-											ContactsEnabled="true"
 											DistributionListsEnabled="true"  />
                             </td>
 						</tr>
