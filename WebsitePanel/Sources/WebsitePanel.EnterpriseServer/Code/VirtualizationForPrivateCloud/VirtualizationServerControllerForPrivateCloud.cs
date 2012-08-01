@@ -2700,7 +2700,7 @@ namespace WebsitePanel.EnterpriseServer
         public static NetworkAdapterDetails GetExternalNetworkAdapterDetails(int itemId)
         {
             // load service item
-            VirtualMachine vm = (VirtualMachine)PackageController.GetPackageItem(itemId);
+            VMInfo vm = (VMInfo)PackageController.GetPackageItem(itemId);
             if (vm == null)
                 return null;
 

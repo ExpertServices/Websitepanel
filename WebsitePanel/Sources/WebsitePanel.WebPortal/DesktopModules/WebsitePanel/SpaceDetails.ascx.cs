@@ -88,7 +88,7 @@ namespace WebsitePanel.Portal
                 lnkEditSpaceDetails.Visible = (PanelSecurity.PackageId > 1 && !ownSpace);
 
                 lnkDelete.NavigateUrl = EditUrl(PortalUtils.SPACE_ID_PARAM, PanelSecurity.PackageId.ToString(), "delete");
-                if (PanelSecurity.LoggedUser.Role != UserRole.Reseller)
+                if (!((PanelSecurity.LoggedUser.Role == UserRole.Reseller) | (PanelSecurity.LoggedUser.Role == UserRole.Administrator))) 
                     lnkDelete.Visible = false;
                 else
                     lnkDelete.Visible = ((PanelSecurity.SelectedUserId != PanelSecurity.EffectiveUserId) && (PanelSecurity.PackageId > 1));

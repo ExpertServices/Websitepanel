@@ -2,8 +2,11 @@
 <%@ Register Src="ExchangeServer/UserControls/SizeBox.ascx" TagName="SizeBox" TagPrefix="wsp" %>
 <%@ Register Src="ExchangeServer/UserControls/DaysBox.ascx" TagName="DaysBox" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 
-
+    <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
+    <wsp:SimpleMessageBox id="messageBox" runat="server" />
 	<asp:GridView id="gvMailboxPlans" runat="server"  EnableViewState="true" AutoGenerateColumns="false"
 		Width="100%" EmptyDataText="gvMailboxPlans" CssSelectorClass="NormalGridView" OnRowCommand="gvMailboxPlan_RowCommand" >
 		<Columns>
@@ -184,5 +187,15 @@
             Text="Add New Mailboxplan" CssClass="Button1" OnClick="btnAddMailboxPlan_Click" />
     </div>
 
+    <div class="FormButtonsBarClean">
+        <asp:Button ID="btnAddMailboxPlanToOrganizations" runat="server" meta:resourcekey="btnAddMailboxPlanToOrganizations"
+            Text="Add Mailbox Plans Template to All Organizations" CssClass="Button1" OnClick="btnAddMailboxPlanToOrganizations_Click" OnClientClick="if (confirm('Plans with an existing name will not be added. \nAre you sure you want to add the plans template to all tenants ?')) ShowProgressDialog('Adding mailbox plans, this might take a while ...'); else return false;"/>
+    </div>
 
-
+    <div class="FormButtonsBarClean">
+        <asp:Button ID="btnMatchMailboxPlanToUser" runat="server" meta:resourcekey="btnMatchMailboxPlanToUser"
+            Text="Match Plan to User" CssClass="Button1" 
+            OnClientClick="if (confirm('Mail enabled users with no mailbox plan assigned will get a matching mailbox plan applied.\nMatching takes place on mailbox size and the MAPI properties.\n\nAre you sure you want to continue with this ?')) ShowProgressDialog('Applying mailbox plans, this might take a while ...'); else return false;" 
+            onclick="btnMatchMailboxPlanToUser_Click" />
+    </div>
+    

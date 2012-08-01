@@ -38,14 +38,98 @@ using System.Reflection;
 using Ionic.Zip;
 using WebsitePanel.Providers.OS;
 
-
 namespace WebsitePanel.Providers.Utils
 {
+    /// <summary>
+    /// Defines a contract that a system command provider needs to implement.
+    /// </summary>
+    public interface ICommandLineProvider
+    {
+        /// <summary>
+        /// Executes the file specifed as if you were executing it via command-line interface.
+        /// </summary>
+        /// <param name="filePath">Path to the executable file (eq. .exe, .bat, .cmd and etc).</param>
+        /// <param name="args">Arguments to pass to the executable file</param>
+        /// <param name="outputFile">Path to the output file if you want the output to be written somewhere.</param>
+        /// <returns>Output of the command being executed.</returns>
+        string Execute(string filePath, string args, string outputFile);
+    }
+
+    /// <summary>
+    /// Provides a default implementation of running system commands.
+    /// </summary>
+    public sealed class DefaultCommandLineProvider : ICommandLineProvider
+    {
+        /// <summary>
+        /// Creates a new process and executes the file specifed as if you were executing it via command-line interface.
+        /// </summary>
+        /// <param name="filePath">Path to the executable file (eq. .exe, .bat, .cmd and etc).</param>
+        /// <param name="args">Arguments to pass to the executable file</param>
+        /// <param name="outputFile">Path to the output file if you want the output to be written somewhere.</param>
+        /// <returns>Output of the command being executed.</returns>
+        public string Execute(string filePath, string args, string outputFile)
+        {
+            // launch system process
+            ProcessStartInfo startInfo = new ProcessStartInfo(filePath, args);
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.UseShellExecute = false;
+            startInfo.CreateNoWindow = true;
+
+            // get working directory from executable path
+            startInfo.WorkingDirectory = Path.GetDirectoryName(filePath);
+            Process proc = Process.Start(startInfo);
+
+            // analyze results
+            StreamReader reader = proc.StandardOutput;
+            string results = "";
+            if (!String.IsNullOrEmpty(outputFile))
+            {
+                // stream to writer
+                StreamWriter writer = new StreamWriter(outputFile);
+                int BUFFER_LENGTH = 2048;
+                int readBytes = 0;
+                char[] buffer = new char[BUFFER_LENGTH];
+                while ((readBytes = reader.Read(buffer, 0, BUFFER_LENGTH)) > 0)
+                {
+                    writer.Write(buffer, 0, readBytes);
+                }
+                writer.Close();
+            }
+            else
+            {
+                // return as string
+                results = reader.ReadToEnd();
+            }
+            reader.Close();
+
+            return results;
+        }
+    }
+
     /// <summary>
     /// Summary description for FileUtils.
     /// </summary>
     public class FileUtils
     {
+        private static ICommandLineProvider CliProvider;
+
+        static FileUtils()
+        {
+            SetDefaultCliProvider(new DefaultCommandLineProvider());
+        }
+
+        /// <summary>
+        /// Initializes command-line provider for the utility class. Yet this is not a perfect way to inverse control over CLI processing 
+        /// but it does its job for the testing purposes.
+        /// </summary>
+        /// <param name="provider">An instance of a command-line provider to initialize the utility with.</param>
+        public static void SetDefaultCliProvider(ICommandLineProvider provider)
+        {
+            Debug.Assert(provider != null, "Command line provider is null");
+            CliProvider = provider;
+        }
+
 		public static string EvaluateSystemVariables(string str)
         {
             if (String.IsNullOrEmpty(str))
@@ -616,45 +700,17 @@ namespace WebsitePanel.Providers.Utils
             return ExecuteSystemCommand(cmd, args, null);
         }
 
+        /// <summary>
+        /// Executes the file specifed as if you were executing it via command-line interface.
+        /// </summary>
+        /// <param name="filePath">Path to the executable file (eq. .exe, .bat, .cmd and etc).</param>
+        /// <param name="args">Arguments to pass to the executable file</param>
+        /// <param name="outputFile">Path to the output file if you want the output to be written somewhere.</param>
+        /// <returns>Output of the command being executed.</returns>
         public static string ExecuteSystemCommand(string cmd, string args, string outputFile)
         {
             // launch system process
-            ProcessStartInfo startInfo = new ProcessStartInfo(cmd, args);
-            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            startInfo.RedirectStandardOutput = true;
-            startInfo.StandardOutputEncoding = Encoding.UTF8;
-            startInfo.UseShellExecute = false;
-            startInfo.CreateNoWindow = true;
-
-            // get working directory from executable path
-			startInfo.WorkingDirectory = Path.GetDirectoryName(cmd);
-            Process proc = Process.Start(startInfo);
-
-
-            // analyze results
-            StreamReader reader = proc.StandardOutput;
-            string results = "";
-            if (!String.IsNullOrEmpty(outputFile))
-            {
-                // stream to writer
-                StreamWriter writer = new StreamWriter(outputFile);
-                int BUFFER_LENGTH = 2048;
-                int readBytes = 0;
-                char[] buffer = new char[BUFFER_LENGTH];
-                while ((readBytes = reader.Read(buffer, 0, BUFFER_LENGTH)) > 0)
-                {
-                    writer.Write(buffer, 0, readBytes);
-                }
-                writer.Close();
-            }
-            else
-            {
-                // return as string
-                results = reader.ReadToEnd();
-            }
-            reader.Close();
-
-            return results;
+            return CliProvider.Execute(cmd, args, outputFile);
         }
 
         public static void ExecuteCmdCommand(string command)

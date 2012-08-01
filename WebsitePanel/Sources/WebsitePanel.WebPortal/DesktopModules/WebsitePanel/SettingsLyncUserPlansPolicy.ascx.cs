@@ -256,6 +256,75 @@ namespace WebsitePanel.Portal
             settings[UserSettings.DEFAULT_LYNCUSERPLANS] = writer.ToString();
         }
 
+        protected void btnAddPlanToOrganizations_Click(object sender, EventArgs e)
+        {
+            AddPlanToOrganizations("ServerAdmin");
+        }
+
+
+        private void AddPlanToOrganizations(string serverAdmin)
+        {
+            UserInfo ServerAdminInfo = ES.Services.Users.GetUserByUsername(serverAdmin);
+
+            if (ServerAdminInfo == null) return;
+
+            UserInfo[] UsersInfo = ES.Services.Users.GetUsers(ServerAdminInfo.UserId, true);
+
+            try
+            {
+                foreach (UserInfo ui in UsersInfo)
+                {
+                    PackageInfo[] Packages = ES.Services.Packages.GetPackages(ui.UserId);
+
+                    if ((Packages != null) & (Packages.GetLength(0) > 0))
+                    {
+                        foreach (PackageInfo Package in Packages)
+                        {
+                            Providers.HostedSolution.Organization[] orgs = null;
+
+                            orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Package.PackageId, false);
+
+                            if ((orgs != null) & (orgs.GetLength(0) > 0))
+                            {
+                                foreach (Organization org in orgs)
+                                {
+                                    if (!string.IsNullOrEmpty(org.LyncTenantId))
+                                    {
+                                        LyncUserPlan[] plans = ES.Services.Lync.GetLyncUserPlans(org.Id);
+
+                                        foreach (LyncUserPlan p in list)
+                                        {
+                                            if (!PlanExists(p, plans)) ES.Services.Lync.AddLyncUserPlan(org.Id, p);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                messageBox.ShowSuccessMessage("LYNC_APPLYPLANTEMPLATE");
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage("LYNC_APPLYPLANTEMPLATE", ex);
+            }
+        }
+
+        private bool PlanExists(LyncUserPlan plan, LyncUserPlan[] plans)
+        {
+            bool result = false;
+
+            foreach (LyncUserPlan p in plans)
+            {
+                if (p.LyncUserPlanName.ToLower() == plan.LyncUserPlanName.ToLower())
+                {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        }
+
 
 
     }

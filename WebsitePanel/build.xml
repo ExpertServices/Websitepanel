@@ -1,10 +1,10 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<Import Project="C:\Program Files\MSBuild\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+	<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
 	<PropertyGroup>
 		<Version>1.2.2.0</Version>
 		<FileVersion>1.2.2.1</FileVersion>
 		<VersionLabel>1.2.2</VersionLabel>
-		<ReleaseDate>2012-05-13</ReleaseDate>
+		<ReleaseDate>2012-08-01</ReleaseDate>
 		<BuildConfiguration>Release</BuildConfiguration>
 		<RootFolder>..</RootFolder>
 		<TrunkFolder>$(RootFolder)\WebsitePanel</TrunkFolder>
@@ -15,12 +15,13 @@
 		<BuildFolder>$(TrunkFolder)\Build\$(BuildConfiguration)</BuildFolder>
 		<DeployFolder>$(TrunkFolder)\Deploy\$(BuildConfiguration)</DeployFolder>
 
-		<PreviousBuildFolder>C:\Projects\WebsitePanel-1.2.1\$(BuildConfiguration)</PreviousBuildFolder>
+    <PreviousBuildFolder>$(RootFolder)\..\prev\$(BuildConfiguration)</PreviousBuildFolder>
 
 		<DiffCmd>$(TrunkFolder)\Tools\Diff.exe</DiffCmd>
-		<SqlCmd>"C:\Program Files\Microsoft SQL Server\110\Tools\Binn\sqlcmd.exe" -S (local)\SQLEXPRESS -E</SqlCmd>
+		<SqlCmd>"$(ProgramFiles)\Microsoft SQL Server\100\Tools\Binn\sqlcmd.exe" -S (local)\SQLEXPRESS -E</SqlCmd>
 
-		<MSDeployPath>"C:\Program Files\IIS\Microsoft Web Deploy V2\msdeploy.exe"</MSDeployPath>
+    <MSDeployPath Condition="Exists('$(ProgramFiles)\IIS\Microsoft Web Deploy\msdeploy.exe')">"$(ProgramFiles)\IIS\Microsoft Web Deploy\msdeploy.exe"</MSDeployPath>
+		<MSDeployPath Condition="Exists('$(ProgramFiles)\IIS\Microsoft Web Deploy V2\msdeploy.exe')">"$(ProgramFiles)\IIS\Microsoft Web Deploy V2\msdeploy.exe"</MSDeployPath>
 
 		<DataBaseName>WebsitePanel_build</DataBaseName>
 		<MSDeployConnectionString>server=(local)\SQLEXPRESS;database=$(DataBaseName);Integrated Security=true;</MSDeployConnectionString>
@@ -31,7 +32,8 @@
 		<ImportCsvSrc>$(TrunkFolder)\Sources\Tools\WebsitePanel.Import.CsvBulk\bin\$(BuildConfiguration)</ImportCsvSrc>
 		<ImportEnterpriseSrc>$(TrunkFolder)\Sources\Tools\WebsitePanel.Import.Enterprise\bin\$(BuildConfiguration)</ImportEnterpriseSrc>
 		<AWStatsViewerSrc>$(TrunkFolder)\Sources\Tools\WebsitePanel.AWStats.Viewer</AWStatsViewerSrc>
-    <WSPTransportAgentSrc>$(TrunkFolder)\Sources\Tools\WSPTransportAgent</WSPTransportAgentSrc>
+
+<WSPTransportAgentSrc>$(TrunkFolder)\Sources\Tools\WSPTransportAgent</WSPTransportAgentSrc>
 
 		<ServerBuild>$(BuildFolder)\Server</ServerBuild>
 		<EnterpriseServerBuild>$(BuildFolder)\EnterpriseServer</EnterpriseServerBuild>
@@ -39,17 +41,14 @@
 		<ImportCsvBuild>$(BuildFolder)\Import.CsvBulk</ImportCsvBuild>
 		<ImportEnterpriseBuild>$(BuildFolder)\Import.Enterprise</ImportEnterpriseBuild>
 		<AWStatsViewerBuild>$(BuildFolder)\AWStats.Viewer</AWStatsViewerBuild>
-    <WSPTransportAgentBuild>$(BuildFolder)\WSPTransportAgent</WSPTransportAgentBuild>
 
-	
-</PropertyGroup>
+<WSPTransportAgentBuild>$(BuildFolder)\WSPTransportAgent</WSPTransportAgentBuild>
 
-	
-	<Target Name="GenerateBuildVersionFiles" Inputs="build.xml" Outputs="$(TrunkFolder)\Sources\VersionInfo.cs;$(TrunkFolder)\Sources\VersionInfo.vb"> 
-		<AssemblyInfo CodeLanguage="CS" OutputFile="$(TrunkFolder)\Sources\VersionInfo.cs" AssemblyCompany="Outercurve Foundation" AssemblyCopyright="Copyright © 2012 Outercurve Foundation."
-				AssemblyVersion="$(Version)" AssemblyFileVersion="$(FileVersion)" AssemblyInformationalVersion="$(VersionLabel)" />
-		<AssemblyInfo CodeLanguage="VB" OutputFile="$(TrunkFolder)\Sources\VersionInfo.vb" AssemblyCompany="Outercurve Foundation" AssemblyCopyright="Copyright © 2012 Outercurve Foundation."
-				AssemblyVersion="$(Version)" AssemblyFileVersion="$(FileVersion)" AssemblyInformationalVersion="$(VersionLabel)" />
+	</PropertyGroup>
+
+	<Target Name="GenerateBuildVersionFiles" Inputs="build.xml" Outputs="$(TrunkFolder)\Sources\VersionInfo.cs;$(TrunkFolder)\Sources\VersionInfo.vb">
+		<AssemblyInfo CodeLanguage="CS" OutputFile="$(TrunkFolder)\Sources\VersionInfo.cs" AssemblyCompany="Outercurve Foundation" AssemblyCopyright="Copyright © 2012 Outercurve Foundation." AssemblyVersion="$(Version)" AssemblyFileVersion="$(FileVersion)" AssemblyInformationalVersion="$(VersionLabel)" />
+		<AssemblyInfo CodeLanguage="VB" OutputFile="$(TrunkFolder)\Sources\VersionInfo.vb" AssemblyCompany="Outercurve Foundation" AssemblyCopyright="Copyright © 2012 Outercurve Foundation." AssemblyVersion="$(Version)" AssemblyFileVersion="$(FileVersion)" AssemblyInformationalVersion="$(VersionLabel)" />
 	</Target>
 
 	<Target Name="CompileSources" DependsOnTargets="GenerateBuildVersionFiles">
@@ -60,7 +59,7 @@
 		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.Import.CsvBulk.sln" Properties="Configuration=$(BuildConfiguration)" />
 		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.Import.Enterprise.sln" Properties="Configuration=$(BuildConfiguration)" />
 		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.AWStats.Viewer.sln" Properties="Configuration=$(BuildConfiguration)" />
-    <MSBuild Projects="$(TrunkFolder)\Sources\Tools\WSPTransportAgent.sln" Properties="Configuration=$(BuildConfiguration)" />
+	<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WSPTransportAgent.sln" Properties="Configuration=$(BuildConfiguration)" />
   </Target>
 
 	<Target Name="PrepareBuilds" DependsOnTargets="CompileSources">
@@ -71,7 +70,7 @@
 		<RemoveDir Directories="$(ImportCsvBuild)"/>
 		<RemoveDir Directories="$(ImportEnterpriseBuild)"/>
 		<RemoveDir Directories="$(AWStatsViewerBuild)"/>
-    <RemoveDir Directories="$(WSPTransportAgentBuild)"/>
+		<RemoveDir Directories="$(WSPTransportAgentBuild)"/>
 		<RemoveDir Directories="$(BuildFolder)"/>
 
 		<MakeDir Directories="$(BuildFolder)"/>
@@ -81,7 +80,7 @@
 		<MakeDir Directories="$(ImportCsvBuild)"/>
 		<MakeDir Directories="$(ImportEnterpriseBuild)"/>
 		<MakeDir Directories="$(AWStatsViewerBuild)"/>
-    <MakeDir Directories="$(WSPTransportAgentBuild)"/>
+	<MakeDir Directories="$(WSPTransportAgentBuild)"/>
 	</Target>
 
 	<Target Name="CreateServerBuild" DependsOnTargets="PrepareBuilds">
@@ -191,7 +190,7 @@
 		<!-- Do nothing -->
 	</Target>
 
-  <Target Name="CreateWSPTransportAgentBuild" DependsOnTargets="CreateImportEnterpriseBuild">
+	<Target Name="CreateWSPTransportAgentBuild" DependsOnTargets="CreateImportEnterpriseBuild">
     <ItemGroup>
       <WSPTransportAgentBuildExclude Include="$(WSPTransportAgentSrc)\**\.svn\**" />
       <WSPTransportAgentBuildExclude Include="$(WSPTransportAgentSrc)\**\obj\**" />
@@ -228,7 +227,7 @@
 		<ImportCsvInstall>$(ToolsFolder)\Import.CsvBulk</ImportCsvInstall>
 		<ImportEnterpriseInstall>$(ToolsFolder)\Import.Enterprise</ImportEnterpriseInstall>
 		<AWStatsViewerInstall>$(ToolsFolder)\AWStats.Viewer</AWStatsViewerInstall>
-    <WSPTransportAgentInstall>$(ToolsFolder)\WSPTransportAgent</WSPTransportAgentInstall>
+	<WSPTransportAgentInstall>$(ToolsFolder)\WSPTransportAgent</WSPTransportAgentInstall>
     
 	</PropertyGroup>
 
@@ -349,8 +348,8 @@
 	<PropertyGroup>
 		<DatabaseFolder>$(DeployFolder)\Database</DatabaseFolder>
 	</PropertyGroup>
-
-	<Target Name="CreateEnterpriseServerDatabase" DependsOnTargets="CreatePortalUpdate">
+  
+  <Target Name="CreateEnterpriseServerDatabase" DependsOnTargets="CreatePortalUpdate">
 		<MakeDir Directories="$(DatabaseFolder)"/>
 
 		<Exec Command="$(SqlCmd) -Q &quot;IF DB_ID (N'$(DataBaseName)') IS NOT NULL DROP DATABASE $(DataBaseName)&quot;" />
@@ -461,7 +460,7 @@
 		<Zip Files="@(ImportCsvInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-Import-CsvBulk-$(FileVersion).zip" WorkingDirectory="$(ImportCsvInstall)" />
 		<Zip Files="@(ImportEnterpriseInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-Import-Enterprise-$(FileVersion).zip" WorkingDirectory="$(ImportEnterpriseInstall)" />
 		<Zip Files="@(AWStatsViewerInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(FileVersion).zip" WorkingDirectory="$(AWStatsViewerInstall)" />
-    <Zip Files="@(WSPTransportAgentInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(FileVersion).zip" WorkingDirectory="$(WSPTransportAgentInstall)" />
+	<Zip Files="@(WSPTransportAgentInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(FileVersion).zip" WorkingDirectory="$(WSPTransportAgentInstall)" />
   </Target>
 
 </Project>
