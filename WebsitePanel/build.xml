@@ -2,7 +2,7 @@
 	<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
 	<PropertyGroup>
 		<Version>1.2.2.0</Version>
-		<FileVersion>1.2.2.0</FileVersion>
+		<FileVersion>1.2.2.1</FileVersion>
 		<VersionLabel>1.2.2</VersionLabel>
 		<ReleaseDate>2012-08-01</ReleaseDate>
 		<BuildConfiguration>Release</BuildConfiguration>
@@ -33,6 +33,8 @@
 		<ImportEnterpriseSrc>$(TrunkFolder)\Sources\Tools\WebsitePanel.Import.Enterprise\bin\$(BuildConfiguration)</ImportEnterpriseSrc>
 		<AWStatsViewerSrc>$(TrunkFolder)\Sources\Tools\WebsitePanel.AWStats.Viewer</AWStatsViewerSrc>
 
+<WSPTransportAgentSrc>$(TrunkFolder)\Sources\Tools\WSPTransportAgent</WSPTransportAgentSrc>
+
 		<ServerBuild>$(BuildFolder)\Server</ServerBuild>
 		<EnterpriseServerBuild>$(BuildFolder)\EnterpriseServer</EnterpriseServerBuild>
 		<PortalBuild>$(BuildFolder)\Portal</PortalBuild>
@@ -40,13 +42,13 @@
 		<ImportEnterpriseBuild>$(BuildFolder)\Import.Enterprise</ImportEnterpriseBuild>
 		<AWStatsViewerBuild>$(BuildFolder)\AWStats.Viewer</AWStatsViewerBuild>
 
+<WSPTransportAgentBuild>$(BuildFolder)\WSPTransportAgent</WSPTransportAgentBuild>
+
 	</PropertyGroup>
 
-	<Target Name="GenerateBuildVersionFiles">
-		<AssemblyInfo CodeLanguage="CS" OutputFile="$(TrunkFolder)\Sources\VersionInfo.cs" AssemblyCompany="Outercurve Foundation" AssemblyCopyright="Copyright © 2012 Outercurve Foundation."
-				AssemblyVersion="$(Version)" AssemblyFileVersion="$(FileVersion)" AssemblyInformationalVersion="$(VersionLabel)" />
-		<AssemblyInfo CodeLanguage="VB" OutputFile="$(TrunkFolder)\Sources\VersionInfo.vb" AssemblyCompany="Outercurve Foundation" AssemblyCopyright="Copyright © 2012 Outercurve Foundation."
-				AssemblyVersion="$(Version)" AssemblyFileVersion="$(FileVersion)" AssemblyInformationalVersion="$(VersionLabel)" />
+	<Target Name="GenerateBuildVersionFiles" Inputs="build.xml" Outputs="$(TrunkFolder)\Sources\VersionInfo.cs;$(TrunkFolder)\Sources\VersionInfo.vb">
+		<AssemblyInfo CodeLanguage="CS" OutputFile="$(TrunkFolder)\Sources\VersionInfo.cs" AssemblyCompany="Outercurve Foundation" AssemblyCopyright="Copyright © 2012 Outercurve Foundation." AssemblyVersion="$(Version)" AssemblyFileVersion="$(FileVersion)" AssemblyInformationalVersion="$(VersionLabel)" />
+		<AssemblyInfo CodeLanguage="VB" OutputFile="$(TrunkFolder)\Sources\VersionInfo.vb" AssemblyCompany="Outercurve Foundation" AssemblyCopyright="Copyright © 2012 Outercurve Foundation." AssemblyVersion="$(Version)" AssemblyFileVersion="$(FileVersion)" AssemblyInformationalVersion="$(VersionLabel)" />
 	</Target>
 
 	<Target Name="CompileSources" DependsOnTargets="GenerateBuildVersionFiles">
@@ -57,7 +59,8 @@
 		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.Import.CsvBulk.sln" Properties="Configuration=$(BuildConfiguration)" />
 		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.Import.Enterprise.sln" Properties="Configuration=$(BuildConfiguration)" />
 		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.AWStats.Viewer.sln" Properties="Configuration=$(BuildConfiguration)" />
-	</Target>
+	<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WSPTransportAgent.sln" Properties="Configuration=$(BuildConfiguration)" />
+  </Target>
 
 	<Target Name="PrepareBuilds" DependsOnTargets="CompileSources">
 		<!-- Remove build output folders in reversed order (e.q. root folder removed last) -->
@@ -67,6 +70,7 @@
 		<RemoveDir Directories="$(ImportCsvBuild)"/>
 		<RemoveDir Directories="$(ImportEnterpriseBuild)"/>
 		<RemoveDir Directories="$(AWStatsViewerBuild)"/>
+		<RemoveDir Directories="$(WSPTransportAgentBuild)"/>
 		<RemoveDir Directories="$(BuildFolder)"/>
 
 		<MakeDir Directories="$(BuildFolder)"/>
@@ -76,6 +80,7 @@
 		<MakeDir Directories="$(ImportCsvBuild)"/>
 		<MakeDir Directories="$(ImportEnterpriseBuild)"/>
 		<MakeDir Directories="$(AWStatsViewerBuild)"/>
+	<MakeDir Directories="$(WSPTransportAgentBuild)"/>
 	</Target>
 
 	<Target Name="CreateServerBuild" DependsOnTargets="PrepareBuilds">
@@ -185,7 +190,31 @@
 		<!-- Do nothing -->
 	</Target>
 
-	<!-- Create full distributives -->
+	<Target Name="CreateWSPTransportAgentBuild" DependsOnTargets="CreateImportEnterpriseBuild">
+    <ItemGroup>
+      <WSPTransportAgentBuildExclude Include="$(WSPTransportAgentSrc)\**\.svn\**" />
+      <WSPTransportAgentBuildExclude Include="$(WSPTransportAgentSrc)\**\obj\**" />
+      <WSPTransportAgentBuildExclude Include="$(WSPTransportAgentSrc)\bin\*.xml" />
+      <WSPTransportAgentBuildExclude Include="$(WSPTransportAgentSrc)\**\Release\**" />
+      <WSPTransportAgentBuildExclude Include="$(WSPTransportAgentSrc)\**\Debug\**" />
+      <WSPTransportAgentBuildExclude Include="$(WSPTransportAgentSrc)\**\*.pdb" Condition="'$(BuildConfiguration)' == 'Release'" />
+      <WSPTransportAgentBuildExclude Include="$(WSPTransportAgentSrc)\**\*.user" />
+      <WSPTransportAgentBuildExclude Include="$(WSPTransportAgentSrc)\**\*.suo" />
+      <WSPTransportAgentBuildExclude Include="$(WSPTransportAgentSrc)\**\*.cs" />
+      <WSPTransportAgentBuildExclude Include="$(WSPTransportAgentSrc)\**\*.csproj" />
+      <WSPTransportAgentBuildExclude Include="$(WSPTransportAgentSrc)\Code\**" />
+      <WSPTransportAgentBuildExclude Include="$(WSPTransportAgentSrc)\**\*.publish.xml" />
+      <WSPTransportAgentBuildFiles Include="$(WSPTransportAgentSrc)\**\*.*" Exclude="@(WSPTransportAgentBuildExclude)" />
+    </ItemGroup>
+    <Copy SourceFiles="@(WSPTransportAgentBuildFiles)" DestinationFolder="$(WSPTransportAgentBuild)\%(RecursiveDir)" />
+  </Target>
+
+  <Target Name="Build" DependsOnTargets="CreateWSPTransportAgentBuild">
+    <!-- Do nothing -->
+  </Target>
+
+
+  <!-- Create full distributives -->
 	<PropertyGroup>
 		<InstallFolder>$(DeployFolder)\Install</InstallFolder>
 		<ServerInstall>$(InstallFolder)\Server</ServerInstall>
@@ -198,6 +227,8 @@
 		<ImportCsvInstall>$(ToolsFolder)\Import.CsvBulk</ImportCsvInstall>
 		<ImportEnterpriseInstall>$(ToolsFolder)\Import.Enterprise</ImportEnterpriseInstall>
 		<AWStatsViewerInstall>$(ToolsFolder)\AWStats.Viewer</AWStatsViewerInstall>
+	<WSPTransportAgentInstall>$(ToolsFolder)\WSPTransportAgent</WSPTransportAgentInstall>
+    
 	</PropertyGroup>
 
 	<Target Name="PrepareInstalls" DependsOnTargets="Build">
@@ -429,6 +460,7 @@
 		<Zip Files="@(ImportCsvInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-Import-CsvBulk-$(FileVersion).zip" WorkingDirectory="$(ImportCsvInstall)" />
 		<Zip Files="@(ImportEnterpriseInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-Import-Enterprise-$(FileVersion).zip" WorkingDirectory="$(ImportEnterpriseInstall)" />
 		<Zip Files="@(AWStatsViewerInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(FileVersion).zip" WorkingDirectory="$(AWStatsViewerInstall)" />
-	</Target>
+	<Zip Files="@(WSPTransportAgentInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(FileVersion).zip" WorkingDirectory="$(WSPTransportAgentInstall)" />
+  </Target>
 
 </Project>
