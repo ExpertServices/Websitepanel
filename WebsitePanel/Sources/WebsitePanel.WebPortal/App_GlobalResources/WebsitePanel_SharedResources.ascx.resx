@@ -5164,4 +5164,22 @@
   <data name="Quota.Lync.EnablePlansEditing" xml:space="preserve">
     <value>Enable Lync User Plans Editing</value>
   </data>
+  <data name="Error.EXCHANGE_APPLYPLANTEMPLATE" xml:space="preserve">
+    <value>Failed to apply plans template</value>
+  </data>
+  <data name="Success.EXCHANGE_APPLYPLANTEMPLATE" xml:space="preserve">
+    <value>Succesfully applied plans template</value>
+  </data>
+  <data name="Error.EXCHANGE_MATCHPLANS" xml:space="preserve">
+    <value>Failed to match plans</value>
+  </data>
+  <data name="Success.EXCHANGE_MATCHPLANS" xml:space="preserve">
+    <value>Succesfully plans matched and applied</value>
+  </data>
+  <data name="Error.LYNC_APPLYPLANTEMPLATE" xml:space="preserve">
+    <value>Failed to apply plans template</value>
+  </data>
+  <data name="Success.LYNC_APPLYPLANTEMPLATE" xml:space="preserve">
+    <value>Succesfully applied plans template</value>
+  </data>
 </root>

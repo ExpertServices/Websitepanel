@@ -237,10 +237,17 @@ namespace WebsitePanel.EnterpriseServer
 
 
         [WebMethod]
+        public ExchangeMailbox GetMailboxAdvancedSettings(int itemId, int accountId)
+        {
+            return ExchangeServerController.GetMailboxAdvancedSettings(itemId, accountId);
+        }
+
+        [WebMethod]
         public ExchangeMailbox GetMailboxGeneralSettings(int itemId, int accountId)
         {
             return ExchangeServerController.GetMailboxGeneralSettings(itemId, accountId);
         }
+
 
         [WebMethod]
         public int SetMailboxGeneralSettings(int itemId, int accountId, bool hideAddressBook, bool disabled)
