@@ -108,7 +108,11 @@ namespace WebsitePanel.Portal
             chkDedicatedPool.Visible = PackagesHelper.CheckGroupQuotaEnabled(packageId, ResourceGroups.Web, Quotas.WEB_APPPOOLS);
             pnlDefaultDocuments.Visible = PackagesHelper.CheckGroupQuotaEnabled(packageId, ResourceGroups.Web, Quotas.WEB_DEFAULTDOCS);
 
-            
+            UserSettings settings = ES.Services.Users.GetUserSettings(PanelSecurity.SelectedUserId, "WebPolicy");
+            chkDedicatedPool.Checked = Utils.ParseBool(settings["EnableDedicatedPool"], false);
+
+            chkDedicatedPool.Enabled = !chkDedicatedPool.Checked;
+
         }
 
         public void SaveWebItem(WebVirtualDirectory item)
