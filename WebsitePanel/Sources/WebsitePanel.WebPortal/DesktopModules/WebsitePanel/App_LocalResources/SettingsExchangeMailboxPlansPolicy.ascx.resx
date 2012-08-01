@@ -213,4 +213,10 @@
   <data name="valRequireMailboxPlan.Text" xml:space="preserve">
     <value>*</value>
   </data>
+  <data name="btnAddMailboxPlanToOrganizations.Text" xml:space="preserve">
+    <value>Add Mailbox Plans Template to All Tenants</value>
+  </data>
+  <data name="btnMatchMailboxPlanToUser.Text" xml:space="preserve">
+    <value>Match Mailbox Plan to User</value>
+  </data>
 </root>

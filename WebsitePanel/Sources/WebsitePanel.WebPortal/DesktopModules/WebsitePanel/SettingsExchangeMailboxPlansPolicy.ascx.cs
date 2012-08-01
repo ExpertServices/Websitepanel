@@ -238,5 +238,188 @@ namespace WebsitePanel.Portal
             settings[UserSettings.DEFAULT_MAILBOXPLANS] = writer.ToString();
         }
 
+
+        protected void btnAddMailboxPlanToOrganizations_Click(object sender, EventArgs e)
+        {
+            AddMailboxPlanToOrganizations("ServerAdmin");
+        }
+
+        private void AddMailboxPlanToOrganizations(string serverAdmin)
+        {
+            UserInfo ServerAdminInfo = ES.Services.Users.GetUserByUsername(serverAdmin);
+
+            if (ServerAdminInfo == null) return;
+
+            UserInfo[] UsersInfo = ES.Services.Users.GetUsers(ServerAdminInfo.UserId, true);
+
+            try
+            {
+                foreach (UserInfo ui in UsersInfo)
+                {
+                    PackageInfo[] Packages = ES.Services.Packages.GetPackages(ui.UserId);
+
+                    if ((Packages != null) & (Packages.GetLength(0) > 0))
+                    {
+                        foreach (PackageInfo Package in Packages)
+                        {
+                            Providers.HostedSolution.Organization[] orgs = null;
+
+                            orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Package.PackageId, false);
+
+                            if ((orgs != null) & (orgs.GetLength(0) > 0))
+                            {
+                                foreach (Organization org in orgs)
+                                {
+                                    if (!string.IsNullOrEmpty(org.GlobalAddressList))
+                                    {
+                                        ExchangeMailboxPlan[] plans = ES.Services.ExchangeServer.GetExchangeMailboxPlans(org.Id);
+
+                                        foreach (ExchangeMailboxPlan p in list)
+                                        {
+                                            if (!PlanExists(p, plans)) ES.Services.ExchangeServer.AddExchangeMailboxPlan(org.Id, p);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                messageBox.ShowSuccessMessage("EXCHANGE_APPLYPLANTEMPLATE");
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage("EXCHANGE_APPLYPLANTEMPLATE", ex);
+            }
+        }
+
+        private bool PlanExists(ExchangeMailboxPlan plan, ExchangeMailboxPlan[] plans)
+        {
+            bool result = false;
+
+            foreach (ExchangeMailboxPlan p in plans)
+            {
+                if (p.MailboxPlan.ToLower() == plan.MailboxPlan.ToLower())
+                {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        }
+
+        protected void btnMatchMailboxPlanToUser_Click(object sender, EventArgs e)
+        {
+            MatchMailboxPlanToUser("serverAdmin");
+        }
+
+        private void MatchMailboxPlanToUser(string serverAdmin)
+        {
+            UserInfo ServerAdminInfo = ES.Services.Users.GetUserByUsername(serverAdmin);
+
+            if (ServerAdminInfo == null) return;
+
+            UserInfo[] UsersInfo = ES.Services.Users.GetUsers(ServerAdminInfo.UserId, true);
+
+            try
+            {
+                foreach (UserInfo ui in UsersInfo)
+                {
+                    PackageInfo[] Packages = ES.Services.Packages.GetPackages(ui.UserId);
+
+                    if ((Packages != null) & (Packages.GetLength(0) > 0))
+                    {
+                        foreach (PackageInfo Package in Packages)
+                        {
+                            Providers.HostedSolution.Organization[] orgs = null;
+
+                            orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Package.PackageId, false);
+
+                            if ((orgs != null) & (orgs.GetLength(0) > 0))
+                            {
+                                foreach (Organization org in orgs)
+                                {
+                                    if (!string.IsNullOrEmpty(org.GlobalAddressList))
+                                    {
+                                        ExchangeMailboxPlan[] plans = ES.Services.ExchangeServer.GetExchangeMailboxPlans(org.Id);
+
+                                        ExchangeAccount[] mailboxes = ES.Services.ExchangeServer.GetAccounts(org.Id, ExchangeAccountType.Mailbox);
+
+                                        ExchangeAccount[] rooms = ES.Services.ExchangeServer.GetAccounts(org.Id, ExchangeAccountType.Room);
+
+                                        ExchangeAccount[] equipment = ES.Services.ExchangeServer.GetAccounts(org.Id, ExchangeAccountType.Equipment);
+
+                                        MatchExchangeAccountToPlan(org.Id, mailboxes, plans);
+                                        MatchExchangeAccountToPlan(org.Id, rooms, plans);
+                                        MatchExchangeAccountToPlan(org.Id, equipment, plans);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                messageBox.ShowSuccessMessage("EXCHANGE_MATCHPLANS");
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage("EXCHANGE_MATCHPLANS", ex);
+            }
+        }
+
+        private void MatchExchangeAccountToPlan(int itemId, ExchangeAccount[] mailboxes, ExchangeMailboxPlan[] plans)
+        {
+
+            foreach (ExchangeAccount a in mailboxes)
+            {
+                if (string.IsNullOrEmpty(a.MailboxPlan))
+                {
+                    ExchangeMailbox mailbox = ES.Services.ExchangeServer.GetMailboxAdvancedSettings(itemId, a.AccountId);
+
+                    if (mailbox != null)
+                    {
+                        List<ExchangeMailboxPlan> pl = new List<ExchangeMailboxPlan>();
+                        //sort a list of similar MAPI
+                        foreach (ExchangeMailboxPlan p in plans)
+                        {
+                            if (p.EnableMAPI == mailbox.EnableMAPI)
+                                pl.Add(p);
+                        }
+
+                        //remove plans smaller than mailbox size
+                        ExchangeMailboxPlan p3 = null;
+                        foreach (ExchangeMailboxPlan p2 in pl)
+                        {
+                            if (p2.MailboxSizeMB >= (mailbox.ProhibitSendReceiveKB / 1024))
+                            {
+                                if (p3 == null)
+                                    p3 = p2;
+                                else
+                                    if ((p2.MailboxSizeMB) <= p3.MailboxSizeMB)
+                                        p3 = p2;
+                            }
+                        }
+
+                        // no matching plan, just match on size
+                        if (p3 == null)
+                        {
+                            foreach (ExchangeMailboxPlan p in plans)
+                            {
+                                if (p.MailboxSizeMB >= (mailbox.ProhibitSendReceiveKB / 1024))
+                                {
+                                    if (p3 == null)
+                                        p3 = p;
+                                    else
+                                        if ((p.MailboxSizeMB) <= p3.MailboxSizeMB)
+                                            p3 = p;
+                                }
+                            }
+                        }
+
+                        if (p3 != null)
+                            ES.Services.ExchangeServer.SetExchangeMailboxPlan(itemId, a.AccountId, p3.MailboxPlanId);
+                    }
+                }
+            }
+        }
+
     }
 }

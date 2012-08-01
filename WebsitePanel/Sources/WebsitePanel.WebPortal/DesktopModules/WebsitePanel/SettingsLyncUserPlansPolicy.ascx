@@ -1,7 +1,10 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SettingsLyncUserPlansPolicy.ascx.cs" Inherits="WebsitePanel.Portal.SettingsLyncUserPlansPolicy" %>
 <%@ Register Src="UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 
-
+    <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
+    <wsp:SimpleMessageBox id="messageBox" runat="server" />
 	<asp:GridView id="gvPlans" runat="server"  EnableViewState="true" AutoGenerateColumns="false"
 		Width="100%" EmptyDataText="gvPlans" CssSelectorClass="NormalGridView" OnRowCommand="gvPlan_RowCommand" >
 		<Columns>
@@ -133,5 +136,9 @@
             Text="Add New plan" CssClass="Button1" OnClick="btnAddPlan_Click" />
     </div>
 
+    <div class="FormButtonsBarClean">
+        <asp:Button ID="btnAddPlanToOrganizations" runat="server" meta:resourcekey="btnAddPlanToOrganizations"
+            Text="Add Plans Template to All Organizations" CssClass="Button1" OnClick="btnAddPlanToOrganizations_Click" OnClientClick="if (confirm('Plans with an existing name will not be added. \nAre you sure you want to add the plans template to all tenants ?')) ShowProgressDialog('Adding plans, this might take a while ...'); else return false;"/>
+    </div>
 
 
