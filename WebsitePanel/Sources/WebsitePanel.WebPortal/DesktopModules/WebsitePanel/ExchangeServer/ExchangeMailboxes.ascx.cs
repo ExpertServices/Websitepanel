@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -29,27 +29,37 @@
 using System;
 using System.Web.UI.WebControls;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class ExchangeMailboxes : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
+    public partial class ExchangeMailboxes : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
             if (!IsPostBack)
             {
-				BindStats();
+                BindStats();
             }
-		}
 
-		private void BindStats()
-		{
-			// quota values
-			OrganizationStatistics stats =
-				ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
-			mailboxesQuota.QuotaUsedValue = stats.CreatedMailboxes;
-			mailboxesQuota.QuotaValue = stats.AllocatedMailboxes;
-		}
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
+            {
+                if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
+                {
+                    gvMailboxes.Columns[2].Visible = false;
+                }
+            }
+        }
+
+        private void BindStats()
+        {
+            // quota values
+            OrganizationStatistics stats =
+                ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
+            mailboxesQuota.QuotaUsedValue = stats.CreatedMailboxes;
+            mailboxesQuota.QuotaValue = stats.AllocatedMailboxes;
+        }
 
         protected void btnCreateMailbox_Click(object sender, EventArgs e)
         {
@@ -57,26 +67,26 @@ namespace WebsitePanel.Portal.ExchangeServer
                 "SpaceID=" + PanelSecurity.PackageId));
         }
 
-		public string GetMailboxEditUrl(string accountId)
-		{
-			return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "mailbox_settings",
-					"AccountID=" + accountId,
-					"ItemID=" + PanelRequest.ItemID);
-		}
+        public string GetMailboxEditUrl(string accountId)
+        {
+            return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "mailbox_settings",
+                    "AccountID=" + accountId,
+                    "ItemID=" + PanelRequest.ItemID);
+        }
 
-		protected void odsAccountsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)
-		{
-			if (e.Exception != null)
-			{
-				messageBox.ShowErrorMessage("EXCHANGE_GET_MAILBOXES", e.Exception);
-				e.ExceptionHandled = true;
-			}
-		}
+        protected void odsAccountsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)
+        {
+            if (e.Exception != null)
+            {
+                messageBox.ShowErrorMessage("EXCHANGE_GET_MAILBOXES", e.Exception);
+                e.ExceptionHandled = true;
+            }
+        }
 
         public string GetAccountImage(int accountTypeId)
         {
             ExchangeAccountType accountType = (ExchangeAccountType)accountTypeId;
-            string imgName = "accounting_mail_16.png";
+            string imgName = "mailbox_16.gif";
             if (accountType == ExchangeAccountType.Contact)
                 imgName = "contact_16.gif";
             else if (accountType == ExchangeAccountType.DistributionList)
@@ -85,12 +95,13 @@ namespace WebsitePanel.Portal.ExchangeServer
                 imgName = "room_16.gif";
             else if (accountType == ExchangeAccountType.Equipment)
                 imgName = "equipment_16.gif";
+
             return GetThemedImage("Exchange/" + imgName);
         }
 
         protected void gvMailboxes_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-			if (e.CommandName == "DeleteItem")
+            if (e.CommandName == "DeleteItem")
             {
                 // delete mailbox
                 int accountId = Utils.ParseInt(e.CommandArgument.ToString(), 0);
@@ -107,26 +118,14 @@ namespace WebsitePanel.Portal.ExchangeServer
                     // rebind grid
                     gvMailboxes.DataBind();
 
-					// bind stats
-					BindStats();
+                    // bind stats
+                    BindStats();
                 }
                 catch (Exception ex)
                 {
-					messageBox.ShowErrorMessage("EXCHANGE_DELETE_MAILBOX", ex);
+                    messageBox.ShowErrorMessage("EXCHANGE_DELETE_MAILBOX", ex);
                 }
             }
         }
-
-        protected void ddlPageSize_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            gvMailboxes.PageSize = Convert.ToInt16(ddlPageSize.SelectedValue);
-
-            // rebind grid
-            gvMailboxes.DataBind();
-
-            // bind stats
-            BindStats();
-
-        }
-	}
+    }
 }

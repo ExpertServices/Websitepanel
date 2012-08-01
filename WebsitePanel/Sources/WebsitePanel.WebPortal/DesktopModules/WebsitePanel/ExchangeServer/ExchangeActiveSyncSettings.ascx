@@ -59,7 +59,7 @@
 							        <asp:Localize ID="locMaxAttachmentSize" runat="server"
 							            meta:resourcekey="locMaxAttachmentSize" Text="Maximum attachment size:"></asp:Localize></td>
 							    <td>
-									<wsp:SizeBox id="sizeMaxAttachmentSize" runat="server" ValidationGroup="EditMailbox" />
+									<wsp:SizeBox id="sizeMaxAttachmentSize" runat="server" ValidationGroup="EditMailbox" DisplayUnitsKB="true" DisplayUnitsMB="false" DisplayUnitsPct="false"/>
 								</td>
 						    </tr>
 						</table>
@@ -137,7 +137,7 @@
 							                    <asp:Localize ID="locNumberAttempts" runat="server"
 							                        meta:resourcekey="locNumberAttempts" Text="Number of failed attempts allowed:"></asp:Localize></td>
 							                <td>
-									            <wsp:SizeBox id="sizeNumberAttempts" runat="server" ValidationGroup="EditMailbox" DisplayUnits="false" />
+									            <wsp:SizeBox id="sizeNumberAttempts" runat="server" ValidationGroup="EditMailbox" DisplayUnits="false" DisplayUnitsKB="false" DisplayUnitsMB="false" DisplayUnitsPct="false"/>
 								            </td>
 						                </tr>
 						                <tr>
@@ -146,7 +146,7 @@
 							                        meta:resourcekey="locMinimumPasswordLength" Text="Minimum password length:"></asp:Localize></td>
 							                <td>
 									            <wsp:SizeBox id="sizeMinimumPasswordLength" runat="server" ValidationGroup="EditMailbox"
-									                DisplayUnits="false" EmptyValue="0" />
+									                DisplayUnits="false" EmptyValue="0"  DisplayUnitsKB="false" DisplayUnitsMB="false" DisplayUnitsPct="false"/>
 								            </td>
 						                </tr>
 						                <tr>
@@ -154,7 +154,7 @@
 							                    <asp:Localize ID="locTimeReenter" runat="server"
 							                        meta:resourcekey="locTimeReenter" Text="Time without user input before password must be re-entered:"></asp:Localize></td>
 							                <td>
-									            <wsp:SizeBox id="sizeTimeReenter" runat="server" ValidationGroup="EditMailbox" DisplayUnits="false" />
+									            <wsp:SizeBox id="sizeTimeReenter" runat="server" ValidationGroup="EditMailbox" DisplayUnits="false"  DisplayUnitsKB="false" DisplayUnitsMB="false" DisplayUnitsPct="false"/>
 									            <asp:Localize ID="locMinutes" runat="server"
 							                        meta:resourcekey="locMinutes" Text="minutes"></asp:Localize>
 								            </td>
@@ -164,7 +164,7 @@
 							                    <asp:Localize ID="locPasswordExpiration" runat="server"
 							                        meta:resourcekey="locPasswordExpiration" Text="Password expiration:"></asp:Localize></td>
 							                <td>
-									            <wsp:SizeBox id="sizePasswordExpiration" runat="server" ValidationGroup="EditMailbox" DisplayUnits="false" />
+									            <wsp:SizeBox id="sizePasswordExpiration" runat="server" ValidationGroup="EditMailbox" DisplayUnits="false"  DisplayUnitsKB="false" DisplayUnitsMB="false" DisplayUnitsPct="false"/>
 									            <asp:Localize ID="locDays" runat="server"
 							                        meta:resourcekey="locDays" Text="days"></asp:Localize>
 								            </td>
@@ -174,7 +174,7 @@
 							                    <asp:Localize ID="locPasswordHistory" runat="server"
 							                        meta:resourcekey="locPasswordHistory" Text="Enforce password history:"></asp:Localize></td>
 							                <td>
-									            <wsp:SizeBox id="sizePasswordHistory" runat="server" ValidationGroup="EditMailbox" DisplayUnits="false" RequireValidatorEnabled="true" />
+									            <wsp:SizeBox id="sizePasswordHistory" runat="server" ValidationGroup="EditMailbox" DisplayUnits="false" RequireValidatorEnabled="true"  DisplayUnitsKB="false" DisplayUnitsMB="false" DisplayUnitsPct="false"/>
 								            </td>
 						                </tr>
 					                </table>

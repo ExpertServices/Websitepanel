@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -53,6 +53,9 @@ namespace WebsitePanel.Providers.WebAppGallery
         public const string MsDeployIsNotInstalled = "MsDeployIsNotInstalled";
         public const string GeneralError = "GeneralError"; // + exception message
 
+        // Languages
+        public const string GetLanguagesError = "GetLanguagesError";
+        
         // Categories
         public const string GetCategoriesError = "GetCategoriesError";
 

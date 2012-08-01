@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -41,6 +41,7 @@ using Microsoft.Web.Services3;
 using WebsitePanel.Providers.DNS;
 using WebsitePanel.Server;
 using WebsitePanel.Providers.ResultObjects;
+using WebsitePanel.Providers;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -249,7 +250,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             return ServerController.GetProviderServiceQuota(providerId);
         }
-       
+
         #endregion
 
         #region Providers
@@ -301,7 +302,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             return ServerController.IsInstalled(serverId, providerId);
         }
-        
+
         [WebMethod]
         public string GetServerVersion(int serverId)
         {
@@ -568,11 +569,11 @@ namespace WebsitePanel.EnterpriseServer
             return ServerController.DeleteDomain(domainId);
         }
 
-		[WebMethod]
-		public int DetachDomain(int domainId)
-		{
-			return ServerController.DetachDomain(domainId);
-		}
+        [WebMethod]
+        public int DetachDomain(int domainId)
+        {
+            return ServerController.DetachDomain(domainId);
+        }
 
         [WebMethod]
         public int EnableDomainDns(int domainId)
@@ -587,9 +588,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public int CreateDomainInstantAlias(int domainId)
+        public int CreateDomainInstantAlias(string hostName, int domainId)
         {
-            return ServerController.CreateDomainInstantAlias(domainId);
+            return ServerController.CreateDomainInstantAlias(hostName, domainId);
         }
 
         [WebMethod]
@@ -614,18 +615,18 @@ namespace WebsitePanel.EnterpriseServer
 
         [WebMethod]
         public int AddDnsZoneRecord(int domainId, string recordName, DnsRecordType recordType,
-            string recordData, int mxPriority)
+            string recordData, int mxPriority, int srvPriority, int srvWeight, int srvPortNumber)
         {
-            return ServerController.AddDnsZoneRecord(domainId, recordName, recordType, recordData, mxPriority);
+            return ServerController.AddDnsZoneRecord(domainId, recordName, recordType, recordData, mxPriority, srvPriority, srvWeight, srvPortNumber);
         }
 
         [WebMethod]
         public int UpdateDnsZoneRecord(int domainId,
             string originalRecordName, string originalRecordData,
-            string recordName, DnsRecordType recordType, string recordData, int mxPriority)
+            string recordName, DnsRecordType recordType, string recordData, int mxPriority, int srvPriority, int srvWeight, int srvPortNumber)
         {
             return ServerController.UpdateDnsZoneRecord(domainId, originalRecordName, originalRecordData,
-                recordName, recordType, recordData, mxPriority);
+                recordName, recordType, recordData, mxPriority, srvPriority, srvWeight, srvPortNumber);
         }
 
         [WebMethod]
@@ -662,6 +663,108 @@ namespace WebsitePanel.EnterpriseServer
             return OperatingSystemController.TerminateWindowsProcess(serverId, pid);
         }
         #endregion
+
+
+        #region Web Platform Installer
+
+        [WebMethod]
+        public void InitWPIFeeds(int serverId)
+        {
+            var wpiSettings = SystemController.GetSystemSettings(SystemSettings.WPI_SETTINGS);
+            
+
+            List<string> arFeeds = new List<string>();
+            
+            if (Utils.ParseBool(wpiSettings["FeedEnableMicrosoft"] ,true))
+            {
+                arFeeds.Add( "https://www.microsoft.com/web/webpi/3.0/WebProductList.xml" );
+            }
+
+            if (Utils.ParseBool(wpiSettings["FeedEnableHelicon"] ,true))
+            {
+                arFeeds.Add( "http://www.helicontech.com/zoo/feed/wsp" );
+            }
+            
+            string additionalFeeds = wpiSettings["FeedUrls"];
+            if (!string.IsNullOrEmpty(additionalFeeds))
+            {
+                arFeeds.AddRange(additionalFeeds.Split(';'));
+            }
+
+            OperatingSystemController.InitWPIFeeds(serverId, string.Join(";", arFeeds));
+
+        }
+
+        [WebMethod]
+        public WPITab[] GetWPITabs(int serverId)
+        {
+            InitWPIFeeds(serverId);
+            return OperatingSystemController.GetWPITabs(serverId);
+        }
+
+        [WebMethod]
+        public WPIKeyword[] GetWPIKeywords(int serverId)
+        {
+            InitWPIFeeds(serverId);
+            return OperatingSystemController.GetWPIKeywords(serverId);
+        }
+
+        [WebMethod]
+        public WPIProduct[] GetWPIProducts(int serverId, string tabId, string keywordId)
+        {
+            InitWPIFeeds(serverId);
+            return OperatingSystemController.GetWPIProducts(serverId, tabId, keywordId);
+        }
+
+        [WebMethod]
+        public WPIProduct[] GetWPIProductsFiltered(int serverId, string keywordId)
+        {
+            InitWPIFeeds(serverId);
+            return OperatingSystemController.GetWPIProductsFiltered(serverId, keywordId);
+        }
+
+
+        [WebMethod]
+        public WPIProduct[] GetWPIProductsWithDependencies(int serverId, string[] products)
+        {
+            InitWPIFeeds(serverId);
+            return OperatingSystemController.GetWPIProductsWithDependencies(serverId, products);
+        }
+
+        [WebMethod]
+        public void InstallWPIProducts(int serverId, string[] products)
+        {
+            InitWPIFeeds(serverId);
+            OperatingSystemController.InstallWPIProducts(serverId, products);
+        }
+
+        [WebMethod]
+        public void CancelInstallWPIProducts(int serviceId)
+        {
+            OperatingSystemController.CancelInstallWPIProducts(serviceId);
+        }
+
+
+        [WebMethod]
+        public string GetWPIStatus(int serverId)
+        {
+            return OperatingSystemController.GetWPIStatus(serverId);
+        }
+
+        [WebMethod]
+        public string WpiGetLogFileDirectory(int serverId)
+        {
+            return OperatingSystemController.WpiGetLogFileDirectory(serverId);
+        }
+
+        [WebMethod]
+        public SettingPair[] WpiGetLogsInDirectory(int serverId, string Path)
+        {
+            return OperatingSystemController.WpiGetLogsInDirectory(serverId, Path);
+        }
+        #endregion
+
+
 
         #region Windows Services
         [WebMethod]

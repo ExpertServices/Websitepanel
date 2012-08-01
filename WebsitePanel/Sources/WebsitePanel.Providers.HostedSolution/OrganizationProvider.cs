@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -342,9 +342,9 @@ namespace WebsitePanel.Providers.HostedSolution
 
         #region Users
 
-        public void CreateUser(string organizationId, string loginName, string displayName, string upn, string password, bool enabled)
+        public int CreateUser(string organizationId, string loginName, string displayName, string upn, string password, bool enabled)
         {
-            CreateUserInternal(organizationId, loginName, displayName, upn, password, enabled);
+            return CreateUserInternal(organizationId, loginName, displayName, upn, password, enabled);
         }
 
         internal int CreateUserInternal(string organizationId, string loginName, string displayName, string upn, string password, bool enabled)
@@ -356,36 +356,43 @@ namespace WebsitePanel.Providers.HostedSolution
 
             if (string.IsNullOrEmpty(organizationId))
                 throw new ArgumentNullException("organizationId");
-            
+
             if (string.IsNullOrEmpty(loginName))
                 throw new ArgumentNullException("loginName");
 
             if (string.IsNullOrEmpty(password))
                 throw new ArgumentNullException("password");
 
-            bool userCreated = false;           
+            bool userCreated = false;
             string userPath = null;
             try
             {
                 string path = GetOrganizationPath(organizationId);
-                userPath= GetUserPath(organizationId, loginName);
+                userPath = GetUserPath(organizationId, loginName);
                 if (!ActiveDirectoryUtils.AdObjectExists(userPath))
                 {
-                    userPath = ActiveDirectoryUtils.CreateUser(path, loginName, displayName, password, enabled);
+                    userPath = ActiveDirectoryUtils.CreateUser(path, upn, loginName, displayName, password, enabled);
                     DirectoryEntry entry = new DirectoryEntry(userPath);
                     ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.UserPrincipalName, upn);
                     entry.CommitChanges();
                     userCreated = true;
+                    HostedSolutionLog.DebugInfo("User created: {0}", displayName);
                 }
                 else
+                {
+                    HostedSolutionLog.DebugInfo("AD_OBJECT_ALREADY_EXISTS: {0}", userPath);
+                    HostedSolutionLog.LogEnd("CreateUserInternal");
                     return Errors.AD_OBJECT_ALREADY_EXISTS;
-                
-                string groupPath = GetGroupPath(organizationId);
+                }
 
-                
+                string groupPath = GetGroupPath(organizationId);
+                HostedSolutionLog.DebugInfo("Group retrieved: {0}", groupPath);
+
+
                 ActiveDirectoryUtils.AddUserToGroup(userPath, groupPath);
+                HostedSolutionLog.DebugInfo("Added to group: {0}", groupPath);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 HostedSolutionLog.LogError(e);
                 try
@@ -393,10 +400,12 @@ namespace WebsitePanel.Providers.HostedSolution
                     if (userCreated)
                         ActiveDirectoryUtils.DeleteADObject(userPath);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     HostedSolutionLog.LogError(ex);
-                }                
+                }
+
+                return Errors.AD_OBJECT_ALREADY_EXISTS;
             }
 
             HostedSolutionLog.LogEnd("CreateUserInternal");
@@ -492,10 +501,10 @@ namespace WebsitePanel.Providers.HostedSolution
             DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
             
             OrganizationUser retUser = new OrganizationUser();
-            
+
             retUser.FirstName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.FirstName);
             retUser.LastName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.LastName);
-            retUser.DisplayName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.DisplayName);            
+            retUser.DisplayName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.DisplayName);
             retUser.Initials = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.Initials);
             retUser.JobTitle = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.JobTitle);
             retUser.Company = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.Company);
@@ -513,10 +522,11 @@ namespace WebsitePanel.Providers.HostedSolution
             retUser.Zip = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.Zip);
             retUser.Country = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.Country);
             retUser.Notes = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.Notes);
-			retUser.ExternalEmail = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.ExternalEmail);
-            retUser.Disabled =  (bool)entry.InvokeGet(ADAttributes.AccountDisabled);
+            retUser.ExternalEmail = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.ExternalEmail);
+            retUser.Disabled = (bool)entry.InvokeGet(ADAttributes.AccountDisabled);
             retUser.Manager = GetManager(entry);
-			retUser.DomainUserName = GetDomainName(loginName);
+            retUser.SamAccountName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName);
+            retUser.DomainUserName = GetDomainName(ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName));
             retUser.DistinguishedName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.DistinguishedName);
             retUser.Locked = (bool)entry.InvokeGet(ADAttributes.AccountLocked);
             
@@ -578,7 +588,7 @@ namespace WebsitePanel.Providers.HostedSolution
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.FirstName, firstName);                        
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.LastName, lastName);
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.DisplayName, displayName);
-            
+
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.Initials, initials);
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.JobTitle, jobTitle);
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.Company, company);
@@ -596,7 +606,7 @@ namespace WebsitePanel.Providers.HostedSolution
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.Zip, zip);
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.Country, country);
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.Notes, notes);
-			ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.ExternalEmail, externalEmail);
+            ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.ExternalEmail, externalEmail);
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.CustomAttribute2, (disabled ? "disabled" : null));
             
 
@@ -623,6 +633,48 @@ namespace WebsitePanel.Providers.HostedSolution
             
             
             entry.CommitChanges();
+        }
+
+
+        public string GetSamAccountNameByUserPrincipalName(string organizationId, string userPrincipalName)
+        {
+            return GetSamAccountNameByUserPrincipalNameInternal(organizationId, userPrincipalName);
+        }
+
+        private string GetSamAccountNameByUserPrincipalNameInternal(string organizationId, string userPrincipalName)
+        {
+            HostedSolutionLog.LogStart("GetSamAccountNameByUserPrincipalNameInternal");
+            HostedSolutionLog.DebugInfo("userPrincipalName : {0}", userPrincipalName);
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+
+            string accountName = string.Empty;
+
+            try
+            {
+
+                string path = GetOrganizationPath(organizationId);
+                DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
+
+                DirectorySearcher searcher = new DirectorySearcher(entry);
+                searcher.PropertiesToLoad.Add("userPrincipalName");
+                searcher.PropertiesToLoad.Add("sAMAccountName");
+                searcher.Filter = "(userPrincipalName=" + userPrincipalName + ")";
+                searcher.SearchScope = SearchScope.Subtree;
+
+                SearchResult resCollection = searcher.FindOne();
+                if (resCollection != null)
+                {
+                    accountName = resCollection.Properties["samaccountname"][0].ToString();
+                }
+
+                HostedSolutionLog.LogEnd("GetSamAccountNameByUserPrincipalNameInternal");
+            }
+            catch (Exception e)
+            {
+                HostedSolutionLog.DebugInfo("Failed : {0}", e.Message);
+            }
+
+            return accountName;
         }
 
 

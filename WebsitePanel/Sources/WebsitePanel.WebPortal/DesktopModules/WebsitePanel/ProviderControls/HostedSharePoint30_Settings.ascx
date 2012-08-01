@@ -17,7 +17,21 @@
 		<td width="100%">
 			 <wsp:SelectIPAddress ID="ddlRootWebApplicationIpAddress" runat="server" ServerIdParam="ServerID" AllowEmptySelection="false" />
         </td>
-        </tr>
+    </tr>
+	<tr>
+        <td colspan="2">
+	        <asp:CheckBox ID="chkLocalHostFile" runat="server" meta:resourcekey="chkLocalHostFile" Text="Provision localhost file" />
+	    </td>
+    </tr>
+	<tr>
+		<td class="SubHead" width="200" nowrap>
+		    <asp:Label ID="lblSharedSSLRoot" runat="server" meta:resourcekey="lblSharedSSLRoot" Text="Shared SSL Root:"></asp:Label>
+		</td>
+		<td width="100%">
+            <asp:TextBox ID="txtSharedSSLRoot" runat="server" CssClass="NormalTextBox" Width="200px"></asp:TextBox>
+        </td>
+	</tr>
+
 </table>
 
 <fieldset>
@@ -39,4 +53,5 @@
 				
     </table>
 </fieldset>
+
 <br />

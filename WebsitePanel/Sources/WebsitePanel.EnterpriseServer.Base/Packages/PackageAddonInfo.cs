@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -43,6 +43,8 @@ namespace WebsitePanel.EnterpriseServer
         int statusId;
 		DateTime purchaseDate;
 		string comments;
+        string planName;
+        string planDescription;
 
 
 		public PackageAddonInfo()
@@ -90,5 +92,18 @@ namespace WebsitePanel.EnterpriseServer
             get { return this.statusId; }
             set { this.statusId = value; }
         }
+
+        public string PlanName
+        {
+            get { return planName; }
+            set { planName = value; }
+        }
+
+        public string PlanDescription
+        {
+            get { return planDescription; }
+            set { planDescription = value; }
+        }
+
 	}
 }

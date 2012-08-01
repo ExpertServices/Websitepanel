@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -126,13 +126,16 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             if (CheckQouta(Quotas.EXCHANGE2007_PUBLICFOLDERS, cntx))
                 exchangeGroup.MenuItems.Add(CreateMenuItem("PublicFolders", "public_folders"));
 
-
-            
-            exchangeGroup.MenuItems.Add(CreateMenuItem("StorageUsage", "storage_usage"));
-            exchangeGroup.MenuItems.Add(CreateMenuItem("StorageLimits", "storage_limits"));
-
-            if (CheckQouta(Quotas.EXCHANGE2007_ACTIVESYNCENABLED, cntx))
+            if (CheckQouta(Quotas.EXCHANGE2007_ACTIVESYNCALLOWED, cntx))
                 exchangeGroup.MenuItems.Add(CreateMenuItem("ActiveSyncPolicy", "activesync_policy"));
+
+            if (CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
+                exchangeGroup.MenuItems.Add(CreateMenuItem("MailboxPlans", "mailboxplans"));
+
+            if (CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))
+                exchangeGroup.MenuItems.Add(CreateMenuItem("DomainNames", "domains"));
+
+            exchangeGroup.MenuItems.Add(CreateMenuItem("StorageUsage", "storage_usage"));
 
             if (exchangeGroup.MenuItems.Count > 0)
                 groups.Add(exchangeGroup);
@@ -142,8 +145,8 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
         private void PrepareOrganizationMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath)
         {
             MenuGroup organizationGroup = new MenuGroup(GetLocalizedString("Text.OrganizationGroup"), imagePath + "company24.png");
-            if (CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))
-                organizationGroup.MenuItems.Add(CreateMenuItem("DomainNames", "domains"));
+            //if (CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))
+            //    organizationGroup.MenuItems.Add(CreateMenuItem("DomainNames", "domains"));
             if (CheckQouta(Quotas.ORGANIZATION_USERS, cntx))
                 organizationGroup.MenuItems.Add(CreateMenuItem("Users", "users"));
             
@@ -199,6 +202,21 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             groups.Add(ocsGroup);
         }
 
+        private void PrepareLyncMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath)
+        {
+            MenuGroup lyncGroup =
+                   new MenuGroup(GetLocalizedString("Text.LyncGroup"), imagePath + "lync16.png");
+            lyncGroup.MenuItems.Add(CreateMenuItem("LyncUsers", "lync_users"));
+
+            lyncGroup.MenuItems.Add(CreateMenuItem("LyncUserPlans", "lync_userplans"));
+
+
+            if (CheckQouta(Quotas.LYNC_FEDERATION, cntx))
+                lyncGroup.MenuItems.Add(CreateMenuItem("LyncFederationDomains", "lync_federationdomains"));
+
+            groups.Add(lyncGroup);
+        }
+
         private List<MenuGroup> PrepareMenu()
 		{
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
@@ -235,6 +253,9 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             if (cntx.Groups.ContainsKey(ResourceGroups.OCS))
                 PrepareOCSMenu(cntx, groups, imagePath);
 
+            //Lync Menu
+            if (cntx.Groups.ContainsKey(ResourceGroups.Lync))
+                PrepareLyncMenu(cntx, groups, imagePath);
 		    
             return groups;
 		}

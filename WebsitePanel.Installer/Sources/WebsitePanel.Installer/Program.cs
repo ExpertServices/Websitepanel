@@ -148,7 +148,7 @@ namespace WebsitePanel.Installer
 		{
 			Log.WriteError("Fatal error occured.", e.Exception);
 			string message = "A fatal error has occurred. We apologize for this inconvenience.\n" +
-				"Please contact Technical Support at support@websitepanel.net.\n\n" +
+				"Please contact Technical Support at info@websitepanel.net.\n\n" +
 				"Make sure you include a copy of the Installer.log file from the\n" +
 				"WebsitePanel Installer home directory.";
 			MessageBox.Show(message, "WebsitePanel Installer", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -162,7 +162,7 @@ namespace WebsitePanel.Installer
 		{
 			Log.WriteError("Fatal error occured.", (Exception)e.ExceptionObject);
 			string message = "A fatal error has occurred. We apologize for this inconvenience.\n" +
-				"Please contact Technical Support at support@websitepanel.net.\n\n" +
+				"Please contact Technical Support at info@websitepanel.net.\n\n" +
 				"Make sure you include a copy of the Installer.log file from the\n" +
 				"WebsitePanel Installer home directory.";
 			MessageBox.Show(message, "WebsitePanel Installer", MessageBoxButtons.OK, MessageBoxIcon.Error);

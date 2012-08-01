@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -40,26 +40,26 @@ using WebsitePanel.Providers.SharePoint;
 
 namespace WebsitePanel.EnterpriseServer.Code.SharePoint
 {
-	/// <summary>
-	/// Exposes handful API on hosted SharePoint site collections management.
-	/// </summary>
-	public class HostedSharePointServerController : IImportController, IBackupController
-	{
-		private const int FILE_BUFFER_LENGTH = 5000000; // ~5MB
+    /// <summary>
+    /// Exposes handful API on hosted SharePoint site collections management.
+    /// </summary>
+    public class HostedSharePointServerController : IImportController, IBackupController
+    {
+        private const int FILE_BUFFER_LENGTH = 5000000; // ~5MB
 
-		/// <summary>
-		/// Gets site collections in raw form.
-		/// </summary>
-		/// <param name="packageId">Package to which desired site collections belong.</param>
-		/// <param name="organizationId">Organization to which desired site collections belong.</param>
-		/// <param name="filterColumn">Filter column name.</param>
-		/// <param name="filterValue">Filter value.</param>
-		/// <param name="sortColumn">Sort column name.</param>
-		/// <param name="startRow">Row index to start from.</param>
-		/// <param name="maximumRows">Maximum number of rows to retrieve.</param>
-		/// <returns>Site collections that match.</returns>
-		public static SharePointSiteCollectionListPaged GetSiteCollectionsPaged(int packageId, int organizationId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
-		{
+        /// <summary>
+        /// Gets site collections in raw form.
+        /// </summary>
+        /// <param name="packageId">Package to which desired site collections belong.</param>
+        /// <param name="organizationId">Organization to which desired site collections belong.</param>
+        /// <param name="filterColumn">Filter column name.</param>
+        /// <param name="filterValue">Filter value.</param>
+        /// <param name="sortColumn">Sort column name.</param>
+        /// <param name="startRow">Row index to start from.</param>
+        /// <param name="maximumRows">Maximum number of rows to retrieve.</param>
+        /// <returns>Site collections that match.</returns>
+        public static SharePointSiteCollectionListPaged GetSiteCollectionsPaged(int packageId, int organizationId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
+        {
             if (IsDemoMode)
             {
                 SharePointSiteCollectionListPaged demoResult = new SharePointSiteCollectionListPaged();
@@ -68,35 +68,35 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
                 return demoResult;
             }
 
-			SharePointSiteCollectionListPaged paged = new SharePointSiteCollectionListPaged();
-			DataSet result = PackageController.GetRawPackageItemsPaged(packageId, typeof(SharePointSiteCollection),
-				true, filterColumn, filterValue, sortColumn, startRow, Int32.MaxValue);
-			List<SharePointSiteCollection> items = PackageController.CreateServiceItemsList(result, 1).ConvertAll<SharePointSiteCollection>(delegate(ServiceProviderItem item) { return (SharePointSiteCollection)item; });
+            SharePointSiteCollectionListPaged paged = new SharePointSiteCollectionListPaged();
+            DataSet result = PackageController.GetRawPackageItemsPaged(packageId, typeof(SharePointSiteCollection),
+                true, filterColumn, filterValue, sortColumn, startRow, Int32.MaxValue);
+            List<SharePointSiteCollection> items = PackageController.CreateServiceItemsList(result, 1).ConvertAll<SharePointSiteCollection>(delegate(ServiceProviderItem item) { return (SharePointSiteCollection)item; });
 
-			if (organizationId > 0)
-			{
-				items = items.FindAll(delegate(SharePointSiteCollection siteCollection) { return siteCollection.OrganizationId == organizationId; });
-			}
-			paged.TotalRowCount = items.Count;
+            if (organizationId > 0)
+            {
+                items = items.FindAll(delegate(SharePointSiteCollection siteCollection) { return siteCollection.OrganizationId == organizationId; });
+            }
+            paged.TotalRowCount = items.Count;
 
-			if (items.Count > maximumRows)
-			{
-				items.RemoveRange(maximumRows, items.Count - maximumRows);
-			}
+            if (items.Count > maximumRows)
+            {
+                items.RemoveRange(maximumRows, items.Count - maximumRows);
+            }
 
-			paged.SiteCollections = items;
+            paged.SiteCollections = items;
 
-			return paged;
-		}
+            return paged;
+        }
 
         public static List<SharePointSiteCollection> GetSiteCollections(int organizationId)
         {
             Organization org = OrganizationController.GetOrganization(organizationId);
-            
-            List<ServiceProviderItem> items = PackageController.GetPackageItemsByType(org.PackageId, typeof(SharePointSiteCollection), false);            
+
+            List<ServiceProviderItem> items = PackageController.GetPackageItemsByType(org.PackageId, typeof(SharePointSiteCollection), false);
             items.ConvertAll<SharePointSiteCollection>(delegate(ServiceProviderItem item) { return (SharePointSiteCollection)item; });
             List<SharePointSiteCollection> ret = new List<SharePointSiteCollection>();
-            foreach(ServiceProviderItem item in items)
+            foreach (ServiceProviderItem item in items)
             {
                 SharePointSiteCollection siteCollection = item as SharePointSiteCollection;
                 if (siteCollection != null && siteCollection.OrganizationId == organizationId)
@@ -104,54 +104,54 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
                     ret.Add(siteCollection);
                 }
             }
-            
-            return ret;            
+
+            return ret;
         }
 
-		/// <summary>
-		/// Gets list of supported languages by this installation of SharePoint.
-		/// </summary>
-		/// <returns>List of supported languages</returns>
-		public static int[] GetSupportedLanguages(int packageId)
-		{
+        /// <summary>
+        /// Gets list of supported languages by this installation of SharePoint.
+        /// </summary>
+        /// <returns>List of supported languages</returns>
+        public static int[] GetSupportedLanguages(int packageId)
+        {
             if (IsDemoMode)
             {
-                return new int[] {1033};
+                return new int[] { 1033 };
             }
 
-			// Log operation.
-			TaskManager.StartTask("HOSTEDSHAREPOINT", "GET_LANGUAGES");
+            // Log operation.
+            TaskManager.StartTask("HOSTEDSHAREPOINT", "GET_LANGUAGES");
 
-			int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedSharePoint);
-			if (serviceId == 0)
-			{
-				return new int[]{};
-			}
+            int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedSharePoint);
+            if (serviceId == 0)
+            {
+                return new int[] { };
+            }
 
-			try
-			{
-				// Create site collection on server.
-				HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(serviceId);
-				return hostedSharePointServer.GetSupportedLanguages();
-			}
-			catch (Exception ex)
-			{
-				throw TaskManager.WriteError(ex);
-			}
-			finally
-			{
-				TaskManager.CompleteTask();
-			}
-		}
+            try
+            {
+                // Create site collection on server.
+                HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(serviceId);
+                return hostedSharePointServer.GetSupportedLanguages();
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
 
-		/// <summary>
-		///  Gets list of SharePoint site collections that belong to the package.
-		/// </summary>
-		/// <param name="packageId">Package that owns site collections.</param>
-		/// <param name="recursive">A value which shows whether nested spaces must be searched as well.</param>
-		/// <returns>List of found site collections.</returns>
-		public static List<SharePointSiteCollection> GetSiteCollections(int packageId, bool recursive)
-		{
+        /// <summary>
+        ///  Gets list of SharePoint site collections that belong to the package.
+        /// </summary>
+        /// <param name="packageId">Package that owns site collections.</param>
+        /// <param name="recursive">A value which shows whether nested spaces must be searched as well.</param>
+        /// <returns>List of found site collections.</returns>
+        public static List<SharePointSiteCollection> GetSiteCollections(int packageId, bool recursive)
+        {
             if (IsDemoMode)
             {
                 List<SharePointSiteCollection> demoResult = new List<SharePointSiteCollection>();
@@ -183,592 +183,626 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             }
 
 
-		    List<ServiceProviderItem> items = PackageController.GetPackageItemsByType(packageId, typeof(SharePointSiteCollection), recursive);
-			return items.ConvertAll<SharePointSiteCollection>(delegate(ServiceProviderItem item) { return (SharePointSiteCollection)item; });
-		}
+            List<ServiceProviderItem> items = PackageController.GetPackageItemsByType(packageId, typeof(SharePointSiteCollection), recursive);
+            return items.ConvertAll<SharePointSiteCollection>(delegate(ServiceProviderItem item) { return (SharePointSiteCollection)item; });
+        }
 
-		/// <summary>
-		/// Gets SharePoint site collection with given id.
-		/// </summary>
-		/// <param name="itemId">Site collection id within metabase.</param>
-		/// <returns>Site collection or null in case no such item exist.</returns>
-		public static SharePointSiteCollection GetSiteCollection(int itemId)
-		{
+        /// <summary>
+        /// Gets SharePoint site collection with given id.
+        /// </summary>
+        /// <param name="itemId">Site collection id within metabase.</param>
+        /// <returns>Site collection or null in case no such item exist.</returns>
+        public static SharePointSiteCollection GetSiteCollection(int itemId)
+        {
             if (IsDemoMode)
             {
-                return GetSiteCollections(1, false)[itemId-1];                
+                return GetSiteCollections(1, false)[itemId - 1];
             }
 
-		    SharePointSiteCollection item = PackageController.GetPackageItem(itemId) as SharePointSiteCollection;
-			return item;
-		}
+            SharePointSiteCollection item = PackageController.GetPackageItem(itemId) as SharePointSiteCollection;
+            return item;
+        }
 
-		/// <summary>
-		/// Adds SharePoint site collection.
-		/// </summary>
-		/// <param name="item">Site collection description.</param>
-		/// <returns>Created site collection id within metabase.</returns>
-		public static int AddSiteCollection(SharePointSiteCollection item)
-		{
-			string domainName = item.Name;
-			// Check account.
-			int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
-			if (accountCheck < 0)
-			{
-				return accountCheck;
-			}
+        /// <summary>
+        /// Adds SharePoint site collection.
+        /// </summary>
+        /// <param name="item">Site collection description.</param>
+        /// <returns>Created site collection id within metabase.</returns>
+        public static int AddSiteCollection(SharePointSiteCollection item)
+        {
 
-			// Check package.
-			int packageCheck = SecurityContext.CheckPackage(item.PackageId, DemandPackage.IsActive);
-			if (packageCheck < 0)
-			{
-				return packageCheck;
-			}
+            // Check account.
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0)
+            {
+                return accountCheck;
+            }
 
-			// Check quota.
-			OrganizationStatistics orgStats = OrganizationController.GetOrganizationStatistics(item.OrganizationId);
-			//QuotaValueInfo quota = PackageController.GetPackageQuota(item.PackageId, Quotas.HOSTED_SHAREPOINT_SITES);
+            // Check package.
+            int packageCheck = SecurityContext.CheckPackage(item.PackageId, DemandPackage.IsActive);
+            if (packageCheck < 0)
+            {
+                return packageCheck;
+            }
 
-			if (orgStats.AllocatedSharePointSiteCollections > -1
-				&& orgStats.CreatedSharePointSiteCollections >= orgStats.AllocatedSharePointSiteCollections)
-			{
-				return BusinessErrorCodes.ERROR_SHAREPOINT_RESOURCE_QUOTA_LIMIT;
-			}
+            // Check quota.
+            OrganizationStatistics orgStats = OrganizationController.GetOrganizationStatistics(item.OrganizationId);
+            //QuotaValueInfo quota = PackageController.GetPackageQuota(item.PackageId, Quotas.HOSTED_SHAREPOINT_SITES);
 
-			// Check if stats resource is available
-			int serviceId = PackageController.GetPackageServiceId(item.PackageId, ResourceGroups.HostedSharePoint);
-			if (serviceId == 0)
-			{
-				return BusinessErrorCodes.ERROR_SHAREPOINT_RESOURCE_UNAVAILABLE;
-			}
-			StringDictionary hostedSharePointSettings = ServerController.GetServiceSettings(serviceId);
-			Uri rootWebApplicationUri = new Uri(hostedSharePointSettings["RootWebApplicationUri"]);
-			item.Name = String.Format("{0}://{1}", rootWebApplicationUri.Scheme, item.Name);
-			if (rootWebApplicationUri.Port > 0 && rootWebApplicationUri.Port != 80 && rootWebApplicationUri.Port != 443)
-			{
-				item.PhysicalAddress = String.Format("{0}:{1}", item.Name, rootWebApplicationUri.Port);
-			}
-			else
-			{
-				item.PhysicalAddress = item.Name;
-			}
+            if (orgStats.AllocatedSharePointSiteCollections > -1
+                && orgStats.CreatedSharePointSiteCollections >= orgStats.AllocatedSharePointSiteCollections)
+            {
+                return BusinessErrorCodes.ERROR_SHAREPOINT_RESOURCE_QUOTA_LIMIT;
+            }
 
-		    Organization org = OrganizationController.GetOrganization(item.OrganizationId);
+            // Check if stats resource is available
+            int serviceId = PackageController.GetPackageServiceId(item.PackageId, ResourceGroups.HostedSharePoint);
+            if (serviceId == 0)
+            {
+                return BusinessErrorCodes.ERROR_SHAREPOINT_RESOURCE_UNAVAILABLE;
+            }
+
+            StringDictionary hostedSharePointSettings = ServerController.GetServiceSettings(serviceId);
+            QuotaValueInfo quota = PackageController.GetPackageQuota(item.PackageId, Quotas.HOSTED_SHAREPOINT_USESHAREDSSL);
+            Uri rootWebApplicationUri = new Uri(hostedSharePointSettings["RootWebApplicationUri"]);
+            Organization org = OrganizationController.GetOrganization(item.OrganizationId);
+            string siteName = item.Name;
+
+            if (quota.QuotaAllocatedValue == 1)
+            {
+                string sslRoot = hostedSharePointSettings["SharedSSLRoot"];
+
+
+                string defaultDomain = org.DefaultDomain;
+                string hostNameBase = string.Empty;
+
+                string[] tmp = defaultDomain.Split('.');
+                if (tmp.Length == 2)
+                {
+                    hostNameBase = tmp[0];
+                }
+                else
+                {
+                    if (tmp.Length > 2)
+                    {
+                        hostNameBase = tmp[0] + tmp[1];
+                    }
+                }
+
+                int counter = 0;
+                item.Name = String.Format("{0}://{1}", rootWebApplicationUri.Scheme, hostNameBase + "-" + counter.ToString() + "." + sslRoot);
+                siteName = String.Format("{0}", hostNameBase + "-" + counter.ToString() + "." + sslRoot);
+
+                while (DataProvider.CheckServiceItemExists(serviceId, item.Name, "WebsitePanel.Providers.SharePoint.SharePointSiteCollection, WebsitePanel.Providers.Base"))
+                {
+                    counter++;
+                    item.Name = String.Format("{0}://{1}", rootWebApplicationUri.Scheme, hostNameBase + "-" + counter.ToString() + "." + sslRoot);
+                    siteName = String.Format("{0}", hostNameBase + "-" + counter.ToString() + "." + sslRoot);
+                }
+            }
+            else
+                item.Name = String.Format("{0}://{1}", rootWebApplicationUri.Scheme, item.Name);
+
+            if (rootWebApplicationUri.Port > 0 && rootWebApplicationUri.Port != 80 && rootWebApplicationUri.Port != 443)
+            {
+                item.PhysicalAddress = String.Format("{0}:{1}", item.Name, rootWebApplicationUri.Port);
+            }
+            else
+            {
+                item.PhysicalAddress = item.Name;
+            }
+
+            if (Utils.ParseBool(hostedSharePointSettings["LocalHostFile"], false))
+            {
+                item.RootWebApplicationInteralIpAddress = hostedSharePointSettings["RootWebApplicationInteralIpAddress"];
+                item.RootWebApplicationFQDN = item.Name.Replace(rootWebApplicationUri.Scheme + "://", "");
+            }
 
             item.MaxSiteStorage = RecalculateMaxSize(org.MaxSharePointStorage, (int)item.MaxSiteStorage);
-		    item.WarningStorage = item.MaxSiteStorage == -1 ? -1 : Math.Min((int)item.WarningStorage, item.MaxSiteStorage) ;
-            
-            
+            item.WarningStorage = item.MaxSiteStorage == -1 ? -1 : Math.Min((int)item.WarningStorage, item.MaxSiteStorage);
+
+
             // Check package item with given name already exists.
-			if (PackageController.GetPackageItemByName(item.PackageId, item.Name, typeof(SharePointSiteCollection)) != null)
-			{
-				return BusinessErrorCodes.ERROR_SHAREPOINT_PACKAGE_ITEM_EXISTS;
-			}
-			
-			// Log operation.
-			TaskManager.StartTask("HOSTEDSHAREPOINT", "ADD_SITE_COLLECTION", item.Name);
+            if (PackageController.GetPackageItemByName(item.PackageId, item.Name, typeof(SharePointSiteCollection)) != null)
+            {
+                return BusinessErrorCodes.ERROR_SHAREPOINT_PACKAGE_ITEM_EXISTS;
+            }
 
-			try
-			{
-				// Create site collection on server.
-				HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(serviceId);
-				
+            // Log operation.
+            TaskManager.StartTask("HOSTEDSHAREPOINT", "ADD_SITE_COLLECTION", item.Name);
+
+            try
+            {
+                // Create site collection on server.
+                HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(serviceId);
+
                 hostedSharePointServer.CreateSiteCollection(item);
-				// Make record in metabase.
-				item.ServiceId = serviceId;
-				int itemId = PackageController.AddPackageItem(item);
 
-				int dnsServiceId = PackageController.GetPackageServiceId(item.PackageId, ResourceGroups.Dns);
-				if (dnsServiceId > 0)
-				{
-					DomainInfo domain = ServerController.GetDomain(domainName);
-					if (domain != null)
-					{
-					    string website = domain.WebSiteName;
-                        
-                        if (!String.IsNullOrEmpty(domain.WebSiteName))
+                // Make record in metabase.
+                item.ServiceId = serviceId;
+                int itemId = PackageController.AddPackageItem(item);
+
+                hostedSharePointServer.SetPeoplePickerOu(item.Name, org.DistinguishedName);
+
+                int dnsServiceId = PackageController.GetPackageServiceId(item.PackageId, ResourceGroups.Dns);
+                if (dnsServiceId > 0)
+                {
+                    string[] tmpStr = siteName.Split('.');
+                    string hostName = tmpStr[0];
+                    string domainName = siteName.Substring(hostName.Length + 1, siteName.Length - (hostName.Length + 1));
+
+                    DomainInfo domain = ServerController.GetDomain(domainName);
+                    if (domain != null)
+                    {
+                        string website = siteName;
+
+                        DnsRecord[] records = ServerController.GetDnsZoneRecords(domain.DomainId);
+                        foreach (DnsRecord record in records)
                         {
-                            DnsRecord[] records = ServerController.GetDnsZoneRecords(domain.DomainId);
-                            foreach (DnsRecord record in records)
+                            if (record.RecordType.Equals(DnsRecordType.A) && (record.RecordName == hostName))
                             {
-                                if (record.RecordType.Equals(DnsRecordType.A) && String.IsNullOrEmpty(record.RecordName))
-                                {
-                                    ServerController.DeleteDnsZoneRecord(domain.DomainId, String.Empty, DnsRecordType.A, record.RecordData);
-                                    break;
-                                }
-                            }
-                            
-                        }
-                        ServerController.AddDnsZoneRecord(domain.DomainId, String.Empty, DnsRecordType.A, hostedSharePointSettings["RootWebApplicationIpAddress"], 0);						
-					}
-				}
-                
-				TaskManager.ItemId = itemId;
-				return itemId;
-			}
-			catch(Exception ex)
-			{
-				throw TaskManager.WriteError(ex);
-			}
-			finally
-			{
-				TaskManager.CompleteTask();
-			}
-		}
-
-		/// <summary>
-		/// Deletes SharePoint site collection with given id.
-		/// </summary>
-		/// <param name="itemId">Site collection id within metabase.</param>
-		/// <returns>?</returns>
-		public static int DeleteSiteCollection(int itemId)
-		{
-			// Check account.
-			int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
-			if (accountCheck < 0)
-			{
-				return accountCheck;
-			}
-
-			// Load original meta item
-			SharePointSiteCollection origItem = (SharePointSiteCollection) PackageController.GetPackageItem(itemId);
-			if (origItem == null)
-			{
-				return BusinessErrorCodes.ERROR_SHAREPOINT_PACKAGE_ITEM_NOT_FOUND;
-			}
-
-			// Get service settings.
-			StringDictionary hostedSharePointSettings = ServerController.GetServiceSettings(origItem.ServiceId);
-			Uri rootWebApplicationUri = new Uri(hostedSharePointSettings["RootWebApplicationUri"]);
-			string domainName = origItem.Name.Replace(String.Format("{0}://", rootWebApplicationUri.Scheme), String.Empty);
-			
-			// Log operation.
-			TaskManager.StartTask("HOSTEDSHAREPOINT", "DELETE_SITE", origItem.Name);
-			TaskManager.ItemId = itemId;
-
-			try
-			{
-				// Delete site collection on server.
-				HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(origItem.ServiceId);
-				hostedSharePointServer.DeleteSiteCollection(origItem.Url);
-				// Delete record in metabase.
-				PackageController.DeletePackageItem(origItem.Id);
-
-				int dnsServiceId = PackageController.GetPackageServiceId(origItem.PackageId, ResourceGroups.Dns);
-				if (dnsServiceId > 0)
-				{
-					DomainInfo domain = ServerController.GetDomain(domainName);
-					if (domain != null)
-					{
-						ServerController.DeleteDnsZoneRecord(domain.DomainId, String.Empty, DnsRecordType.A, hostedSharePointSettings["RootWebApplicationIpAddress"]);
-						ServerController.DeleteDnsZoneRecord(domain.DomainId, "www", DnsRecordType.A, hostedSharePointSettings["RootWebApplicationIpAddress"]);
-
-                        if (!String.IsNullOrEmpty(domain.WebSiteName))
-                        {
-                            DnsRecord[] records = ServerController.GetDnsZoneRecords(domain.DomainId);
-                            foreach (DnsRecord record in records)
-                            {
-                                if (record.RecordType.Equals(DnsRecordType.A) && record.RecordName.Equals("www", StringComparison.CurrentCultureIgnoreCase))
-                                {
-                                    ServerController.AddDnsZoneRecord(domain.DomainId, String.Empty, DnsRecordType.A,
-                                                                      record.RecordData, 0);
-                                    break;
-                                }
+                                ServerController.DeleteDnsZoneRecord(domain.DomainId, hostName, DnsRecordType.A, record.RecordData);
+                                break;
                             }
                         }
 
-					}
-				}
+                        ServerController.AddDnsZoneRecord(domain.DomainId, hostName, DnsRecordType.A, hostedSharePointSettings["RootWebApplicationIpAddress"], 0, 0, 0, 0);
+                    }
+                }
 
+                TaskManager.ItemId = itemId;
+                return itemId;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
 
-				return 0;
-			}
-			catch (Exception ex)
-			{
-				throw TaskManager.WriteError(ex);
-			}
-			finally
-			{
-				TaskManager.CompleteTask();
-			}
-		}
+        /// <summary>
+        /// Deletes SharePoint site collection with given id.
+        /// </summary>
+        /// <param name="itemId">Site collection id within metabase.</param>
+        /// <returns>?</returns>
+        public static int DeleteSiteCollection(int itemId)
+        {
+            // Check account.
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0)
+            {
+                return accountCheck;
+            }
 
-		/// <summary>
-		/// Deletes SharePoint site collections which belong to organization.
-		/// </summary>
-		/// <param name="organizationId">Site collection id within metabase.</param>
-		public static void DeleteSiteCollections(int organizationId)
-		{
-			Organization org = OrganizationController.GetOrganization(organizationId);
-			SharePointSiteCollectionListPaged existentSiteCollections = GetSiteCollectionsPaged(org.PackageId, org.Id, String.Empty, String.Empty, String.Empty, 0, Int32.MaxValue);
-			foreach (SharePointSiteCollection existentSiteCollection in existentSiteCollections.SiteCollections)
-			{
-				DeleteSiteCollection(existentSiteCollection.Id);
-			}
-		}
+            // Load original meta item
+            SharePointSiteCollection origItem = (SharePointSiteCollection)PackageController.GetPackageItem(itemId);
+            if (origItem == null)
+            {
+                return BusinessErrorCodes.ERROR_SHAREPOINT_PACKAGE_ITEM_NOT_FOUND;
+            }
 
-		/// <summary>
-		/// Backups SharePoint site collection.
-		/// </summary>
-		/// <param name="itemId">Site collection id within metabase.</param>
-		/// <param name="fileName">Backed up site collection file name.</param>
-		/// <param name="zipBackup">A value which shows whether back up must be archived.</param>
-		/// <param name="download">A value which shows whether created back up must be downloaded.</param>
-		/// <param name="folderName">Local folder to store downloaded backup.</param>
-		/// <returns>Created backup file name. </returns>
-		public static string BackupSiteCollection(int itemId, string fileName, bool zipBackup, bool download, string folderName)
-		{
-			// Check account.
-			int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
-			if (accountCheck < 0)
-			{
-				return null;
-			}
+            // Get service settings.
+            StringDictionary hostedSharePointSettings = ServerController.GetServiceSettings(origItem.ServiceId);
+            Uri rootWebApplicationUri = new Uri(hostedSharePointSettings["RootWebApplicationUri"]);
+            string siteName = origItem.Name.Replace(String.Format("{0}://", rootWebApplicationUri.Scheme), String.Empty);
 
-			// Load original meta item
-			SharePointSiteCollection origItem = (SharePointSiteCollection)PackageController.GetPackageItem(itemId);
-			if (origItem == null)
-			{
-				return null;
-			}
+            // Log operation.
+            TaskManager.StartTask("HOSTEDSHAREPOINT", "DELETE_SITE", origItem.Name);
+            TaskManager.ItemId = itemId;
 
-			// Log operation.
-			TaskManager.StartTask("HOSTEDSHAREPOINT", "BACKUP_SITE_COLLECTION", origItem.Name);
-			TaskManager.ItemId = itemId;
+            try
+            {
+                // Delete site collection on server.
+                HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(origItem.ServiceId);
+                hostedSharePointServer.DeleteSiteCollection(origItem);
+                // Delete record in metabase.
+                PackageController.DeletePackageItem(origItem.Id);
 
-			try
-			{
-				// Create site collection on server.
-				HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(origItem.ServiceId);
-				string backFile = hostedSharePointServer.BackupSiteCollection(origItem.Name, fileName, zipBackup);
+                int dnsServiceId = PackageController.GetPackageServiceId(origItem.PackageId, ResourceGroups.Dns);
+                if (dnsServiceId > 0)
+                {
+                    string[] tmpStr = siteName.Split('.');
+                    string hostName = tmpStr[0];
+                    string domainName = siteName.Substring(hostName.Length + 1, siteName.Length - (hostName.Length + 1));
 
-				if (!download)
-				{
-					// Copy backup files to space folder.
-					string relFolderName = FilesController.CorrectRelativePath(folderName);
-					if (!relFolderName.EndsWith("\\"))
-					{
-						relFolderName = relFolderName + "\\";
-					}
+                    DomainInfo domain = ServerController.GetDomain(domainName);
+                    if (domain != null)
+                    {
+                        ServerController.DeleteDnsZoneRecord(domain.DomainId, hostName, DnsRecordType.A, hostedSharePointSettings["RootWebApplicationIpAddress"]);
+                    }
+                }
 
-					// Create backup folder if not exists
-					if (!FilesController.DirectoryExists(origItem.PackageId, relFolderName))
-					{
-						FilesController.CreateFolder(origItem.PackageId, relFolderName);
-					}
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
 
-					string packageFile = relFolderName + Path.GetFileName(backFile);
+        /// <summary>
+        /// Deletes SharePoint site collections which belong to organization.
+        /// </summary>
+        /// <param name="organizationId">Site collection id within metabase.</param>
+        public static void DeleteSiteCollections(int organizationId)
+        {
+            Organization org = OrganizationController.GetOrganization(organizationId);
+            SharePointSiteCollectionListPaged existentSiteCollections = GetSiteCollectionsPaged(org.PackageId, org.Id, String.Empty, String.Empty, String.Empty, 0, Int32.MaxValue);
+            foreach (SharePointSiteCollection existentSiteCollection in existentSiteCollections.SiteCollections)
+            {
+                DeleteSiteCollection(existentSiteCollection.Id);
+            }
+        }
 
-					// Delete destination file if exists
-					if (FilesController.FileExists(origItem.PackageId, packageFile))
-					{
-						FilesController.DeleteFiles(origItem.PackageId, new string[] { packageFile });
-					}
+        /// <summary>
+        /// Backups SharePoint site collection.
+        /// </summary>
+        /// <param name="itemId">Site collection id within metabase.</param>
+        /// <param name="fileName">Backed up site collection file name.</param>
+        /// <param name="zipBackup">A value which shows whether back up must be archived.</param>
+        /// <param name="download">A value which shows whether created back up must be downloaded.</param>
+        /// <param name="folderName">Local folder to store downloaded backup.</param>
+        /// <returns>Created backup file name. </returns>
+        public static string BackupSiteCollection(int itemId, string fileName, bool zipBackup, bool download, string folderName)
+        {
+            // Check account.
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0)
+            {
+                return null;
+            }
 
-					byte[] buffer = null;
+            // Load original meta item
+            SharePointSiteCollection origItem = (SharePointSiteCollection)PackageController.GetPackageItem(itemId);
+            if (origItem == null)
+            {
+                return null;
+            }
 
-					int offset = 0;
-					do
-					{
-						// Read remote content.
-						buffer = hostedSharePointServer.GetTempFileBinaryChunk(backFile, offset, FILE_BUFFER_LENGTH);
+            // Log operation.
+            TaskManager.StartTask("HOSTEDSHAREPOINT", "BACKUP_SITE_COLLECTION", origItem.Name);
+            TaskManager.ItemId = itemId;
 
-						// Write remote content.
-						FilesController.AppendFileBinaryChunk(origItem.PackageId, packageFile, buffer);
+            try
+            {
+                // Create site collection on server.
+                HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(origItem.ServiceId);
+                string backFile = hostedSharePointServer.BackupSiteCollection(origItem.Name, fileName, zipBackup);
 
-						offset += FILE_BUFFER_LENGTH;
-					}
-					while (buffer.Length == FILE_BUFFER_LENGTH);
-				}
+                if (!download)
+                {
+                    // Copy backup files to space folder.
+                    string relFolderName = FilesController.CorrectRelativePath(folderName);
+                    if (!relFolderName.EndsWith("\\"))
+                    {
+                        relFolderName = relFolderName + "\\";
+                    }
 
-				return backFile;
-			}
-			catch (Exception ex)
-			{
-				throw TaskManager.WriteError(ex);
-			}
-			finally
-			{
-				TaskManager.CompleteTask();
-			}
-		}
+                    // Create backup folder if not exists
+                    if (!FilesController.DirectoryExists(origItem.PackageId, relFolderName))
+                    {
+                        FilesController.CreateFolder(origItem.PackageId, relFolderName);
+                    }
 
-		/// <summary>
-		/// Restores SharePoint site collection.
-		/// </summary>
-		/// <param name="itemId">Site collection id within metabase.</param>
-		/// <param name="uploadedFile"></param>
-		/// <param name="packageFile"></param>
-		/// <returns></returns>
-		public static int RestoreSiteCollection(int itemId, string uploadedFile, string packageFile)
-		{
-			// Check account.
-			int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
-			if (accountCheck < 0)
-			{
-				return accountCheck;
-			}
+                    string packageFile = relFolderName + Path.GetFileName(backFile);
 
-			// Load original meta item.
-			SharePointSiteCollection origItem = (SharePointSiteCollection)PackageController.GetPackageItem(itemId);
-			if (origItem == null)
-			{
-				return BusinessErrorCodes.ERROR_SHAREPOINT_PACKAGE_ITEM_NOT_FOUND;
-			}
+                    // Delete destination file if exists
+                    if (FilesController.FileExists(origItem.PackageId, packageFile))
+                    {
+                        FilesController.DeleteFiles(origItem.PackageId, new string[] { packageFile });
+                    }
 
-			// Check package.
-			int packageCheck = SecurityContext.CheckPackage(origItem.PackageId, DemandPackage.IsActive);
-			if (packageCheck < 0)
-			{
-				return packageCheck;
-			}
+                    byte[] buffer = null;
 
-			// Log operation.
-			TaskManager.StartTask("HOSTEDSHAREPOINT", "BACKUP_SITE_COLLECTION", origItem.Name);
-			TaskManager.ItemId = itemId;
+                    int offset = 0;
+                    do
+                    {
+                        // Read remote content.
+                        buffer = hostedSharePointServer.GetTempFileBinaryChunk(backFile, offset, FILE_BUFFER_LENGTH);
 
-			try
-			{
-				// Create site collection on server.
-				HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(origItem.ServiceId);
+                        // Write remote content.
+                        FilesController.AppendFileBinaryChunk(origItem.PackageId, packageFile, buffer);
 
-				string backupFile = null;
-				if (!String.IsNullOrEmpty(packageFile))
-				{
-					// Copy package files to the remote SharePoint Server.
-					string path = null;
-					byte[] buffer = null;
+                        offset += FILE_BUFFER_LENGTH;
+                    }
+                    while (buffer.Length == FILE_BUFFER_LENGTH);
+                }
 
-					int offset = 0;
-					do
-					{
-						// Read package file.
-						buffer = FilesController.GetFileBinaryChunk(origItem.PackageId, packageFile, offset, FILE_BUFFER_LENGTH);
+                return backFile;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
 
-						// Write remote backup file
-						string tempPath = hostedSharePointServer.AppendTempFileBinaryChunk(Path.GetFileName(packageFile), path, buffer);
-						if (path == null)
-						{
-							path = tempPath;
-							backupFile = path;
-						}
+        /// <summary>
+        /// Restores SharePoint site collection.
+        /// </summary>
+        /// <param name="itemId">Site collection id within metabase.</param>
+        /// <param name="uploadedFile"></param>
+        /// <param name="packageFile"></param>
+        /// <returns></returns>
+        public static int RestoreSiteCollection(int itemId, string uploadedFile, string packageFile)
+        {
+            // Check account.
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0)
+            {
+                return accountCheck;
+            }
 
-						offset += FILE_BUFFER_LENGTH;
-					}
-					while (buffer.Length == FILE_BUFFER_LENGTH);
-				}
-				else if (!String.IsNullOrEmpty(uploadedFile))
-				{
-					// Upladed files.
-					backupFile = uploadedFile;
-				}
+            // Load original meta item.
+            SharePointSiteCollection origItem = (SharePointSiteCollection)PackageController.GetPackageItem(itemId);
+            if (origItem == null)
+            {
+                return BusinessErrorCodes.ERROR_SHAREPOINT_PACKAGE_ITEM_NOT_FOUND;
+            }
 
-				// Restore.
-				if (!String.IsNullOrEmpty(backupFile))
-				{
-					hostedSharePointServer.RestoreSiteCollection(origItem, backupFile);
-				}
+            // Check package.
+            int packageCheck = SecurityContext.CheckPackage(origItem.PackageId, DemandPackage.IsActive);
+            if (packageCheck < 0)
+            {
+                return packageCheck;
+            }
 
-				return 0;
-			}
-			catch (Exception ex)
-			{
-				throw TaskManager.WriteError(ex);
-			}
-			finally
-			{
-				TaskManager.CompleteTask();
-			}
-		}
+            // Log operation.
+            TaskManager.StartTask("HOSTEDSHAREPOINT", "BACKUP_SITE_COLLECTION", origItem.Name);
+            TaskManager.ItemId = itemId;
 
-		/// <summary>
-		/// Gets binary data chunk of specified size from specified offset.
-		/// </summary>
-		/// <param name="itemId">Item id to obtain realted service id.</param>
-		/// <param name="path">Path to file to get bunary data chunk from.</param>
-		/// <param name="offset">Offset from which to start data reading.</param>
-		/// <param name="length">Binary data chunk length.</param>
-		/// <returns>Binary data chunk read from file.</returns>
-		public static byte[] GetBackupBinaryChunk(int itemId, string path, int offset, int length)
-		{
-			// Load original meta item.
-			SharePointSiteCollection item = (SharePointSiteCollection)PackageController.GetPackageItem(itemId);
-			if (item == null)
-			{
-				return null;
-			}
+            try
+            {
+                // Create site collection on server.
+                HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(origItem.ServiceId);
 
-			HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(item.ServiceId);
-			return hostedSharePointServer.GetTempFileBinaryChunk(path, offset, length);
-		}
+                string backupFile = null;
+                if (!String.IsNullOrEmpty(packageFile))
+                {
+                    // Copy package files to the remote SharePoint Server.
+                    string path = null;
+                    byte[] buffer = null;
 
-		/// <summary>
-		/// Appends supplied binary data chunk to file.
-		/// </summary>
-		/// <param name="itemId">Item id to obtain realted service id.</param>
-		/// <param name="fileName">Non existent file name to append to.</param>
-		/// <param name="path">Full path to existent file to append to.</param>
-		/// <param name="chunk">Binary data chunk to append to.</param>
-		/// <returns>Path to file that was appended with chunk.</returns>
-		public static string AppendBackupBinaryChunk(int itemId, string fileName, string path, byte[] chunk)
-		{
-			// Load original meta item.
-			SharePointSiteCollection item = (SharePointSiteCollection)PackageController.GetPackageItem(itemId);
-			if (item == null)
-			{
-				return null;
-			}
+                    int offset = 0;
+                    do
+                    {
+                        // Read package file.
+                        buffer = FilesController.GetFileBinaryChunk(origItem.PackageId, packageFile, offset, FILE_BUFFER_LENGTH);
 
-			HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(item.ServiceId);
-			return hostedSharePointServer.AppendTempFileBinaryChunk(fileName, path, chunk);
-		}
+                        // Write remote backup file
+                        string tempPath = hostedSharePointServer.AppendTempFileBinaryChunk(Path.GetFileName(packageFile), path, buffer);
+                        if (path == null)
+                        {
+                            path = tempPath;
+                            backupFile = path;
+                        }
 
-		/// <summary>
-		/// Initializes a new hosted SharePoint server proxy.
-		///  </summary>
-		/// <param name="serviceId">Hosted SharePoint service id.</param>
-		/// <returns>Hosted SharePoint server proxy.</returns>
-		private static HostedSharePointServer GetHostedSharePointServer(int serviceId)
-		{
-			
+                        offset += FILE_BUFFER_LENGTH;
+                    }
+                    while (buffer.Length == FILE_BUFFER_LENGTH);
+                }
+                else if (!String.IsNullOrEmpty(uploadedFile))
+                {
+                    // Upladed files.
+                    backupFile = uploadedFile;
+                }
+
+                // Restore.
+                if (!String.IsNullOrEmpty(backupFile))
+                {
+                    hostedSharePointServer.RestoreSiteCollection(origItem, backupFile);
+                }
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        /// <summary>
+        /// Gets binary data chunk of specified size from specified offset.
+        /// </summary>
+        /// <param name="itemId">Item id to obtain realted service id.</param>
+        /// <param name="path">Path to file to get bunary data chunk from.</param>
+        /// <param name="offset">Offset from which to start data reading.</param>
+        /// <param name="length">Binary data chunk length.</param>
+        /// <returns>Binary data chunk read from file.</returns>
+        public static byte[] GetBackupBinaryChunk(int itemId, string path, int offset, int length)
+        {
+            // Load original meta item.
+            SharePointSiteCollection item = (SharePointSiteCollection)PackageController.GetPackageItem(itemId);
+            if (item == null)
+            {
+                return null;
+            }
+
+            HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(item.ServiceId);
+            return hostedSharePointServer.GetTempFileBinaryChunk(path, offset, length);
+        }
+
+        /// <summary>
+        /// Appends supplied binary data chunk to file.
+        /// </summary>
+        /// <param name="itemId">Item id to obtain realted service id.</param>
+        /// <param name="fileName">Non existent file name to append to.</param>
+        /// <param name="path">Full path to existent file to append to.</param>
+        /// <param name="chunk">Binary data chunk to append to.</param>
+        /// <returns>Path to file that was appended with chunk.</returns>
+        public static string AppendBackupBinaryChunk(int itemId, string fileName, string path, byte[] chunk)
+        {
+            // Load original meta item.
+            SharePointSiteCollection item = (SharePointSiteCollection)PackageController.GetPackageItem(itemId);
+            if (item == null)
+            {
+                return null;
+            }
+
+            HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(item.ServiceId);
+            return hostedSharePointServer.AppendTempFileBinaryChunk(fileName, path, chunk);
+        }
+
+        /// <summary>
+        /// Initializes a new hosted SharePoint server proxy.
+        ///  </summary>
+        /// <param name="serviceId">Hosted SharePoint service id.</param>
+        /// <returns>Hosted SharePoint server proxy.</returns>
+        private static HostedSharePointServer GetHostedSharePointServer(int serviceId)
+        {
+
             HostedSharePointServer sps = new HostedSharePointServer();
-			ServiceProviderProxy.Init(sps, serviceId);
-			return sps;
-		}
+            ServiceProviderProxy.Init(sps, serviceId);
+            return sps;
+        }
 
-		/// <summary>
-		/// Gets list of importable items.
-		/// </summary>
-		/// <param name="packageId">Package that owns importable items.</param>
-		/// <param name="itemTypeId">Item type id.</param>
-		/// <param name="itemType">Item type.</param>
-		/// <param name="group">Item resource group.</param>
-		/// <returns>List of importable item names.</returns>
-		public List<string> GetImportableItems(int packageId, int itemTypeId, Type itemType, ResourceGroupInfo group)
-		{
-			List<string> items = new List<string>();
+        /// <summary>
+        /// Gets list of importable items.
+        /// </summary>
+        /// <param name="packageId">Package that owns importable items.</param>
+        /// <param name="itemTypeId">Item type id.</param>
+        /// <param name="itemType">Item type.</param>
+        /// <param name="group">Item resource group.</param>
+        /// <returns>List of importable item names.</returns>
+        public List<string> GetImportableItems(int packageId, int itemTypeId, Type itemType, ResourceGroupInfo group)
+        {
+            List<string> items = new List<string>();
 
-			// Get service id
-			int serviceId = PackageController.GetPackageServiceId(packageId, group.GroupName);
-			if (serviceId == 0)
-			{
-				return items;
-			}
+            // Get service id
+            int serviceId = PackageController.GetPackageServiceId(packageId, group.GroupName);
+            if (serviceId == 0)
+            {
+                return items;
+            }
 
-			HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(serviceId);
-			if (itemType == typeof(SharePointSiteCollection))
-			{
-				foreach (SharePointSiteCollection siteCollection in hostedSharePointServer.GetSiteCollections())
-				{
-					items.Add(siteCollection.Url);
-				}
-			}
+            HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(serviceId);
+            if (itemType == typeof(SharePointSiteCollection))
+            {
+                foreach (SharePointSiteCollection siteCollection in hostedSharePointServer.GetSiteCollections())
+                {
+                    items.Add(siteCollection.Url);
+                }
+            }
 
-			return items;
-		}
+            return items;
+        }
 
-		/// <summary>
-		/// Imports selected item into metabase.
-		/// </summary>
-		/// <param name="packageId">Package to which items must be imported.</param>
-		/// <param name="itemTypeId">Item type id.</param>
-		/// <param name="itemType">Item type.</param>
-		/// <param name="group">Item resource group.</param>
-		/// <param name="itemName">Item name to import.</param>
-		public void ImportItem(int packageId, int itemTypeId, Type itemType, ResourceGroupInfo group, string itemName)
-		{
-			// Get service id
-			int serviceId = PackageController.GetPackageServiceId(packageId, group.GroupName);
-			if (serviceId == 0)
-			{
-				return;
-			}
+        /// <summary>
+        /// Imports selected item into metabase.
+        /// </summary>
+        /// <param name="packageId">Package to which items must be imported.</param>
+        /// <param name="itemTypeId">Item type id.</param>
+        /// <param name="itemType">Item type.</param>
+        /// <param name="group">Item resource group.</param>
+        /// <param name="itemName">Item name to import.</param>
+        public void ImportItem(int packageId, int itemTypeId, Type itemType, ResourceGroupInfo group, string itemName)
+        {
+            // Get service id
+            int serviceId = PackageController.GetPackageServiceId(packageId, group.GroupName);
+            if (serviceId == 0)
+            {
+                return;
+            }
 
-			HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(serviceId);
-			if (itemType == typeof(SharePointSiteCollection))
-			{
-				SharePointSiteCollection siteCollection = hostedSharePointServer.GetSiteCollection(itemName);
-				PackageController.AddPackageItem(siteCollection);
-			}
-		}
+            HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(serviceId);
+            if (itemType == typeof(SharePointSiteCollection))
+            {
+                SharePointSiteCollection siteCollection = hostedSharePointServer.GetSiteCollection(itemName);
+                PackageController.AddPackageItem(siteCollection);
+            }
+        }
 
-		/// <summary>
-		/// Backups service item by serializing it into supplied writer.
-		/// </summary>
-		/// <param name="tempFolder">Temporary directory path.</param>
-		/// <param name="writer">Xml wirter used to store backuped service provider items.</param>
-		/// <param name="item">Service provider item to be backed up..</param>
-		/// <param name="group">Service provider resource group.</param>
-		/// <returns>Resulting code.</returns>
-		public int BackupItem(string tempFolder, XmlWriter writer, ServiceProviderItem item, ResourceGroupInfo group)
-		{
-			SharePointSiteCollection siteCollection = item as SharePointSiteCollection;
-			if (siteCollection != null)
-			{
-				HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(siteCollection.ServiceId);
-				SharePointSiteCollection loadedSiteCollection = hostedSharePointServer.GetSiteCollection(siteCollection.Url);
-				// Update item
-				siteCollection.Url = loadedSiteCollection.Url;
-				siteCollection.OwnerLogin = loadedSiteCollection.OwnerLogin;
-				siteCollection.OwnerName = loadedSiteCollection.OwnerName;
-				siteCollection.OwnerEmail = loadedSiteCollection.OwnerEmail;
-				siteCollection.LocaleId = loadedSiteCollection.LocaleId;
-				siteCollection.Title = loadedSiteCollection.Title;
-				siteCollection.Description = loadedSiteCollection.Description;
-				// Serialize it.
-				XmlSerializer serializer = new XmlSerializer(typeof(SharePointSiteCollection));
-				serializer.Serialize(writer, siteCollection);
+        /// <summary>
+        /// Backups service item by serializing it into supplied writer.
+        /// </summary>
+        /// <param name="tempFolder">Temporary directory path.</param>
+        /// <param name="writer">Xml wirter used to store backuped service provider items.</param>
+        /// <param name="item">Service provider item to be backed up..</param>
+        /// <param name="group">Service provider resource group.</param>
+        /// <returns>Resulting code.</returns>
+        public int BackupItem(string tempFolder, XmlWriter writer, ServiceProviderItem item, ResourceGroupInfo group)
+        {
+            SharePointSiteCollection siteCollection = item as SharePointSiteCollection;
+            if (siteCollection != null)
+            {
+                HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(siteCollection.ServiceId);
+                SharePointSiteCollection loadedSiteCollection = hostedSharePointServer.GetSiteCollection(siteCollection.Url);
+                // Update item
+                siteCollection.Url = loadedSiteCollection.Url;
+                siteCollection.OwnerLogin = loadedSiteCollection.OwnerLogin;
+                siteCollection.OwnerName = loadedSiteCollection.OwnerName;
+                siteCollection.OwnerEmail = loadedSiteCollection.OwnerEmail;
+                siteCollection.LocaleId = loadedSiteCollection.LocaleId;
+                siteCollection.Title = loadedSiteCollection.Title;
+                siteCollection.Description = loadedSiteCollection.Description;
+                // Serialize it.
+                XmlSerializer serializer = new XmlSerializer(typeof(SharePointSiteCollection));
+                serializer.Serialize(writer, siteCollection);
 
-			}
-			return 0;
-		}
+            }
+            return 0;
+        }
 
-		/// <summary>
-		/// Restore backed up previously service provider item.
-		/// </summary>
-		/// <param name="tempFolder">Temporary directory path.</param>
-		/// <param name="itemNode">Serialized service provider item.</param>
-		/// <param name="itemId">Service provider item id.</param>
-		/// <param name="itemType">Service provider item type.</param>
-		/// <param name="itemName">Service provider item name.</param>
-		/// <param name="packageId">Service provider item package.</param>
-		/// <param name="serviceId">Service provider item service id.</param>
-		/// <param name="group">Service provider item resource group.</param>
-		/// <returns>Resulting code.</returns>
-		public int RestoreItem(string tempFolder, XmlNode itemNode, int itemId, Type itemType, string itemName, int packageId, int serviceId, ResourceGroupInfo group)
-		{
-			if (itemType == typeof(SharePointSiteCollection))
-			{
-				HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(serviceId);
-				// Deserialize item.								                 
-				XmlSerializer serializer = new XmlSerializer(typeof(SharePointSiteCollection));
-				SharePointSiteCollection siteCollection = (SharePointSiteCollection)serializer.Deserialize(new XmlNodeReader(itemNode.SelectSingleNode("SharePointSiteCollection")));
-				siteCollection.PackageId = packageId;
-				siteCollection.ServiceId = serviceId;
+        /// <summary>
+        /// Restore backed up previously service provider item.
+        /// </summary>
+        /// <param name="tempFolder">Temporary directory path.</param>
+        /// <param name="itemNode">Serialized service provider item.</param>
+        /// <param name="itemId">Service provider item id.</param>
+        /// <param name="itemType">Service provider item type.</param>
+        /// <param name="itemName">Service provider item name.</param>
+        /// <param name="packageId">Service provider item package.</param>
+        /// <param name="serviceId">Service provider item service id.</param>
+        /// <param name="group">Service provider item resource group.</param>
+        /// <returns>Resulting code.</returns>
+        public int RestoreItem(string tempFolder, XmlNode itemNode, int itemId, Type itemType, string itemName, int packageId, int serviceId, ResourceGroupInfo group)
+        {
+            if (itemType == typeof(SharePointSiteCollection))
+            {
+                HostedSharePointServer hostedSharePointServer = GetHostedSharePointServer(serviceId);
+                // Deserialize item.								                 
+                XmlSerializer serializer = new XmlSerializer(typeof(SharePointSiteCollection));
+                SharePointSiteCollection siteCollection = (SharePointSiteCollection)serializer.Deserialize(new XmlNodeReader(itemNode.SelectSingleNode("SharePointSiteCollection")));
+                siteCollection.PackageId = packageId;
+                siteCollection.ServiceId = serviceId;
 
-				// Create site collection if needed.
-				if (hostedSharePointServer.GetSiteCollection(siteCollection.Url) == null)
-				{
-					hostedSharePointServer.CreateSiteCollection(siteCollection);
-				}
+                // Create site collection if needed.
+                if (hostedSharePointServer.GetSiteCollection(siteCollection.Url) == null)
+                {
+                    hostedSharePointServer.CreateSiteCollection(siteCollection);
+                }
 
-				// Add metabase record if needed.
-				SharePointSiteCollection metaSiteCollection = (SharePointSiteCollection)PackageController.GetPackageItemByName(packageId, itemName, typeof(SharePointSiteCollection));
-				if (metaSiteCollection == null)
-				{
-					PackageController.AddPackageItem(siteCollection);
-				}
-			}
+                // Add metabase record if needed.
+                SharePointSiteCollection metaSiteCollection = (SharePointSiteCollection)PackageController.GetPackageItemByName(packageId, itemName, typeof(SharePointSiteCollection));
+                if (metaSiteCollection == null)
+                {
+                    PackageController.AddPackageItem(siteCollection);
+                }
+            }
 
-			return 0;
-		}
-                 
-        
+            return 0;
+        }
+
+
         private static int GetHostedSharePointServiceId(int packageId)
         {
             return PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedSharePoint);
         }
-        
+
         private static List<SharePointSiteCollection> GetOrganizationSharePointSiteCollections(int orgId)
         {
             Organization org = OrganizationController.GetOrganization(orgId);
@@ -776,18 +810,18 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             SharePointSiteCollectionListPaged siteCollections = GetSiteCollectionsPaged(org.PackageId, org.Id, String.Empty, String.Empty, String.Empty, 0, Int32.MaxValue);
             return siteCollections.SiteCollections;
         }
-        
+
         private static int RecalculateStorageMaxSize(int size, int packageId)
-        {            
+        {
             PackageContext cntx = PackageController.GetPackageContext(packageId);
-            QuotaValueInfo quota = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_STORAGE_SIZE];            
+            QuotaValueInfo quota = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_STORAGE_SIZE];
 
             if (quota.QuotaAllocatedValue == -1)
             {
                 if (size == -1)//Unlimited 
                     return -1;
                 else
-                    return size;                
+                    return size;
             }
             else
             {
@@ -795,7 +829,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
                     return quota.QuotaAllocatedValue;
 
                 return Math.Min(size, quota.QuotaAllocatedValue);
-            }                        
+            }
         }
 
         private static int RecalculateMaxSize(int parentSize, int realSize)
@@ -815,8 +849,8 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             return Math.Min(parentSize, realSize);
 
         }
-       
-        
+
+
         public static int SetStorageSettings(int itemId, int maxStorage, int warningStorage, bool applyToSiteCollections)
         {
             // check account
@@ -831,15 +865,15 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             {
                 Organization org = (Organization)PackageController.GetPackageItem(itemId);
                 if (org == null)
-                    return 0;              
+                    return 0;
 
                 // set limits
                 int realMaxSizeValue = RecalculateStorageMaxSize(maxStorage, org.PackageId);
 
                 org.MaxSharePointStorage = realMaxSizeValue;
 
-                org.WarningSharePointStorage =  realMaxSizeValue == -1 ? -1 : Math.Min(warningStorage, realMaxSizeValue);                                
-                                                
+                org.WarningSharePointStorage = realMaxSizeValue == -1 ? -1 : Math.Min(warningStorage, realMaxSizeValue);
+
                 // save organization
                 UpdateOrganization(org);
 
@@ -851,9 +885,9 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
 
                     List<SharePointSiteCollection> currentOrgSiteCollection =
                         GetOrganizationSharePointSiteCollections(org.Id);
-                                                            
-                                        
-                    foreach( SharePointSiteCollection siteCollection in currentOrgSiteCollection)
+
+
+                    foreach (SharePointSiteCollection siteCollection in currentOrgSiteCollection)
                     {
                         try
                         {
@@ -861,17 +895,17 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
                             sc.MaxSiteStorage = realMaxSizeValue;
                             sc.WarningStorage = realMaxSizeValue == -1 ? -1 : warningStorage;
                             PackageController.UpdatePackageItem(sc);
-                            
+
                             hostedSharePointServer.UpdateQuotas(siteCollection.PhysicalAddress, realMaxSizeValue,
                                                                 warningStorage);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             TaskManager.WriteError(ex);
                         }
-                    }                                        
+                    }
                 }
-                
+
                 return 0;
             }
             catch (Exception ex)
@@ -894,14 +928,14 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             {
                 errorCode = accountCheck;
                 return null;
-            }                
+            }
 
             // place log record
             TaskManager.StartTask("HOSTED_SHAREPOINT", "CALCULATE_DISK_SPACE");
             TaskManager.ItemId = itemId;
             try
             {
-                Organization org = (Organization) PackageController.GetPackageItem(itemId);
+                Organization org = (Organization)PackageController.GetPackageItem(itemId);
                 if (org == null)
                     return null;
 
@@ -917,7 +951,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
                 {
                     urls.Add(siteCollection.PhysicalAddress);
                 }
-                if (urls.Count > 0)                
+                if (urls.Count > 0)
                     retDiskSpace = hostedSharePointServer.CalculateSiteCollectionsDiskSpace(urls.ToArray());
                 else
                 {
@@ -927,7 +961,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
                     retDiskSpace[0].Url = string.Empty;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw TaskManager.WriteError(ex);
             }
@@ -935,10 +969,10 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             {
                 TaskManager.CompleteTask();
             }
-            return retDiskSpace;            
+            return retDiskSpace;
         }
 
-	    private static void UpdateOrganization(Organization organization)
+        private static void UpdateOrganization(Organization organization)
         {
             PackageController.UpdatePackageItem(organization);
         }
@@ -949,7 +983,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             TaskManager.StartTask("HOSTED_SHAREPOINT", "UPDATE_QUOTA");
             try
             {
-                Organization org = (Organization) PackageController.GetPackageItem(itemId);
+                Organization org = (Organization)PackageController.GetPackageItem(itemId);
                 if (org == null)
                     return;
 
@@ -960,7 +994,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
                 SharePointSiteCollection sc = GetSiteCollection(siteCollectionId);
 
                 int maxSize = RecalculateMaxSize(org.MaxSharePointStorage, maxStorage);
-                int warningSize =  warningStorage;
+                int warningSize = warningStorage;
 
 
                 sc.MaxSiteStorage = maxSize;
@@ -970,7 +1004,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
                 hostedSharePointServer.UpdateQuotas(sc.PhysicalAddress, maxSize,
                                                     warningStorage);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw TaskManager.WriteError(ex);
             }
@@ -989,5 +1023,5 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
                 return (SecurityContext.CheckAccount(DemandAccount.NotDemo) < 0);
             }
         }
-	}
+    }
 }

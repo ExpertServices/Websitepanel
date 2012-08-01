@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -38,56 +38,40 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class ExchangeStorageUsageBreakdown : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
-			if (!IsPostBack)
-			{
-				BindStatistics();
-			}
-		}
+    public partial class ExchangeStorageUsageBreakdown : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                BindStatistics();
+            }
 
-		private void BindStatistics()
-		{
-			// total counters
-			int totalMailboxItems = 0;
-			int totalMailboxesSizeMB = 0;
-			int totalFolderItems = 0;
-			int totalFoldersSizeMB = 0;
+        }
 
-			// mailboxes
-			ExchangeItemStatistics[] mailboxes = ES.Services.ExchangeServer.GetMailboxesStatistics(PanelRequest.ItemID);
-			gvMailboxes.DataSource = mailboxes;
-			gvMailboxes.DataBind();
+        private void BindStatistics()
+        {
+            // total counters
+            int totalMailboxItems = 0;
+            int totalMailboxesSizeMB = 0;
 
-			foreach (ExchangeItemStatistics item in mailboxes)
-			{
-				totalMailboxItems += item.TotalItems;
-				totalMailboxesSizeMB += item.TotalSizeMB;
-			}
+            // mailboxes
+            ExchangeItemStatistics[] mailboxes = ES.Services.ExchangeServer.GetMailboxesStatistics(PanelRequest.ItemID);
+            gvMailboxes.DataSource = mailboxes;
+            gvMailboxes.DataBind();
 
-			lblTotalMailboxItems.Text = totalMailboxItems.ToString();
-			lblTotalMailboxSize.Text = totalMailboxesSizeMB.ToString();
+            foreach (ExchangeItemStatistics item in mailboxes)
+            {
+                totalMailboxItems += item.TotalItems;
+                totalMailboxesSizeMB += item.TotalSizeMB;
+            }
 
-
-
-			// public folders
-			ExchangeItemStatistics[] folders = ES.Services.ExchangeServer.GetPublicFoldersStatistics(PanelRequest.ItemID);
-			gvFolders.DataSource = folders;
-			gvFolders.DataBind();
-
-			foreach (ExchangeItemStatistics item in folders)
-			{
-				totalFolderItems += item.TotalItems;
-				totalFoldersSizeMB += item.TotalSizeMB;
-			}
-
-			lblTotalFolderItems.Text = totalFolderItems.ToString();
-			lblTotalFolderSize.Text = totalFoldersSizeMB.ToString();
-		}
-	}
+            lblTotalMailboxItems.Text = totalMailboxItems.ToString();
+            lblTotalMailboxSize.Text = totalMailboxesSizeMB.ToString();
+        }
+    }
 }

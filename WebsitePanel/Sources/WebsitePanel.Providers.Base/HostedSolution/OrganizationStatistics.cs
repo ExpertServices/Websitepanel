@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -173,6 +173,8 @@ namespace WebsitePanel.Providers.HostedSolution
         public int CreatedOCSUsers { get; set; }
         public int AllocatedOCSUsers { get; set; }
 
+        public int CreatedLyncUsers { get; set; }
+        public int AllocatedLyncUsers { get; set; }
 	}
 }
 

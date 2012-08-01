@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -32,13 +32,14 @@ using WebsitePanel.EnterpriseServer;
 namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class ExchangeMailboxSetupInstructions : WebsitePanelModuleBase
-	{
+    {
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
                 BindInstructions();
             }
+
         }
 
         private void BindInstructions()
@@ -56,7 +57,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             // load user details
             UserInfo user = ES.Services.Users.GetUserById(package.UserId);
             txtTo.Text = user.Email;
-                        
+
         }
 
         protected void btnSend_Click(object sender, EventArgs e)
@@ -81,5 +82,5 @@ namespace WebsitePanel.Portal.ExchangeServer
                 return;
             }
         }
-	}
+    }
 }

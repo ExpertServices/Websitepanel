@@ -31,22 +31,12 @@
                         </div>
                         <div class="FormButtonsBarCleanRight">
                             <asp:Panel ID="SearchPanel" runat="server" DefaultButton="cmdSearch">
-                                <asp:DropDownList ID="ddlPageSize" runat="server" AutoPostBack="True" 
-                                    onselectedindexchanged="ddlPageSize_SelectedIndexChanged">
-                                    <asp:ListItem>10</asp:ListItem>
-                                    <asp:ListItem Selected="True">20</asp:ListItem>
-                                    <asp:ListItem>50</asp:ListItem>
-                                    
-                                    <asp:ListItem>100</asp:ListItem>
-                                    
-                                </asp:DropDownList>
                                 <asp:DropDownList ID="ddlSearchColumn" runat="server" CssClass="NormalTextBox">
-                                    <asp:ListItem meta:resourcekey="ddlSearchColumnDisplayName" Value="DisplayName">DisplayName</asp:ListItem>
-                                    <asp:ListItem meta:resourcekey="ddlSearchColumnEmail" 
-                                        Value="PrimaryEmailAddress">Email</asp:ListItem>
-                                    <asp:ListItem meta:resourcekey="ddlSearchColumnAccountName" Value="AccountName">AccountName</asp:ListItem>
-                                </asp:DropDownList>
-                                <asp:TextBox ID="txtSearchValue" runat="server" CssClass="NormalTextBox" Width="100"></asp:TextBox><asp:ImageButton ID="cmdSearch" Runat="server" meta:resourcekey="cmdSearch" SkinID="SearchButton"
+                                    <asp:ListItem Value="DisplayName" meta:resourcekey="ddlSearchColumnDisplayName">DisplayName</asp:ListItem>
+                                    <asp:ListItem Value="PrimaryEmailAddress" meta:resourcekey="ddlSearchColumnEmail">Email</asp:ListItem>
+                                    <asp:ListItem Value="AccountName" meta:resourcekey="ddlSearchColumnAccountName">AccountName</asp:ListItem>
+                                    <asp:ListItem Value="SubscriberNumber" meta:resourcekey="ddlSearchColumnSubscriberNumber">Subscriber Number</asp:ListItem>
+                                </asp:DropDownList><asp:TextBox ID="txtSearchValue" runat="server" CssClass="NormalTextBox" Width="100"></asp:TextBox><asp:ImageButton ID="cmdSearch" Runat="server" meta:resourcekey="cmdSearch" SkinID="SearchButton"
 		                            CausesValidation="false"/>
                             </asp:Panel>
                         </div>
@@ -55,10 +45,10 @@
 				    <asp:GridView ID="gvMailboxes" runat="server" AutoGenerateColumns="False" EnableViewState="true"
 					    Width="100%" EmptyDataText="gvMailboxes" CssSelectorClass="NormalGridView"
 					    OnRowCommand="gvMailboxes_RowCommand" AllowPaging="True" AllowSorting="True"
-					    DataSourceID="odsAccountsPaged" PageSize="20">
+					    DataSourceID="odsAccountsPaged">
 					    <Columns>
 						    <asp:TemplateField HeaderText="gvMailboxesDisplayName" SortExpression="DisplayName">
-							    <ItemStyle Width="50%"></ItemStyle>
+							    <ItemStyle Width="40%"></ItemStyle>
 							    <ItemTemplate>
 							        <asp:Image ID="img1" runat="server" ImageUrl='<%# GetAccountImage((int)Eval("AccountType")) %>' ImageAlign="AbsMiddle" />
 								    <asp:hyperlink id="lnk1" runat="server"
@@ -67,7 +57,9 @@
 								    </asp:hyperlink>
 							    </ItemTemplate>
 						    </asp:TemplateField>
-						    <asp:BoundField HeaderText="gvMailboxesEmail" DataField="PrimaryEmailAddress" SortExpression="PrimaryEmailAddress" ItemStyle-Width="50%" />
+						    <asp:BoundField HeaderText="gvMailboxesEmail" DataField="PrimaryEmailAddress" SortExpression="PrimaryEmailAddress" ItemStyle-Width="25%" />
+                            <asp:BoundField HeaderText="gvSubscriberNumber" DataField="SubscriberNumber" ItemStyle-Width="10%" />
+                            <asp:BoundField HeaderText="gvMailboxesMailboxPlan" DataField="MailboxPlan" SortExpression="MailboxPlan" ItemStyle-Width="50%" />
 						    <asp:TemplateField>
 							    <ItemTemplate>
 								    <asp:ImageButton ID="cmdDelete" runat="server" Text="Delete" SkinID="ExchangeDelete"

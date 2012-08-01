@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -51,6 +51,9 @@ namespace WebsitePanel.Providers.SharePoint
 		private long diskspace;
 	    private long maxSiteStorage;
 	    private long warningStorage;
+        private string rootWebApplicationInteralIpAddress;
+        private string rootWebApplicationFQDN;
+
 
 
 	    [Persistent]
@@ -177,6 +180,39 @@ namespace WebsitePanel.Providers.SharePoint
 				this.ownerEmail = value;
 			}
 		}
+
+        /// <summary>
+        /// Gets or sets the internal ip address
+        /// </summary>
+        [Persistent]
+        public string RootWebApplicationInteralIpAddress
+        {
+            get
+            {
+                return this.rootWebApplicationInteralIpAddress;
+            }
+            set
+            {
+                this.rootWebApplicationInteralIpAddress = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the internal ip address
+        /// </summary>
+        [Persistent]
+        public string RootWebApplicationFQDN
+        {
+            get
+            {
+                return this.rootWebApplicationFQDN;
+            }
+            set
+            {
+                this.rootWebApplicationFQDN = value;
+            }
+        }
+
 
 		/// <summary>
 		/// Gets or sets locale id of the site collection to be created.

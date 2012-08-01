@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -41,12 +41,12 @@ namespace WebsitePanel.Providers.HostedSolution
         private string addressList;
         private string roomsAddressList;
         private string globalAddressList;
+        private string addressBookPolicy;
+
         private string database;
         private string securityGroup;
+        private string lyncTenantId;
         private int diskSpace;
-        private int issueWarningKB;
-        private int prohibitSendKB;
-        private int prohibitSendReceiveKB;
         private int keepDeletedItemsDays;
 
 
@@ -125,7 +125,7 @@ namespace WebsitePanel.Providers.HostedSolution
             get { return crmCurrency; }
             set { crmCurrency = value; }
         }
-        
+
         [Persistent]
         public string DistinguishedName
         {
@@ -151,7 +151,7 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 return defaultDomain;
             }
-        }      
+        }
 
 
         [Persistent]
@@ -183,6 +183,13 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         [Persistent]
+        public string AddressBookPolicy
+        {
+            get { return addressBookPolicy; }
+            set { addressBookPolicy = value; }
+        }
+
+        [Persistent]
         public string Database
         {
             get { return database; }
@@ -204,27 +211,6 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         [Persistent]
-        public int IssueWarningKB
-        {
-            get { return issueWarningKB; }
-            set { issueWarningKB = value; }
-        }
-
-        [Persistent]
-        public int ProhibitSendKB
-        {
-            get { return prohibitSendKB; }
-            set { prohibitSendKB = value; }
-        }
-
-        [Persistent]
-        public int ProhibitSendReceiveKB
-        {
-            get { return prohibitSendReceiveKB; }
-            set { prohibitSendReceiveKB = value; }
-        }
-
-        [Persistent]
         public int KeepDeletedItemsDays
         {
             get { return keepDeletedItemsDays; }
@@ -233,5 +219,15 @@ namespace WebsitePanel.Providers.HostedSolution
 
         [Persistent]
         public bool IsOCSOrganization { get; set; }
+
+
+        [Persistent]
+        public string LyncTenantId
+        {
+            get { return lyncTenantId; }
+            set { lyncTenantId = value; }
+        }
+
+
     }
 }

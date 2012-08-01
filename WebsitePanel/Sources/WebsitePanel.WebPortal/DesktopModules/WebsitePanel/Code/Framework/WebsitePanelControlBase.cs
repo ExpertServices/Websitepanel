@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -302,6 +302,7 @@ namespace WebsitePanel.Portal
             AddDatabaseVersion(cntx, ResourceGroups.MsSql2000, items, versions);
             AddDatabaseVersion(cntx, ResourceGroups.MsSql2005, items, versions);
             AddDatabaseVersion(cntx, ResourceGroups.MsSql2008, items, versions);
+            AddDatabaseVersion(cntx, ResourceGroups.MsSql2012, items, versions);
             AddDatabaseVersion(cntx, ResourceGroups.MySql4, items, versions);
             AddDatabaseVersion(cntx, ResourceGroups.MySql5, items, versions);
         }
@@ -325,6 +326,9 @@ namespace WebsitePanel.Portal
             // localize grid viewes
             LocalizeGridViews(this);
 
+            //if (PanelSecurity.LoggedUser != null)
+                //if (PanelSecurity.LoggedUser.Role == UserRole.CSR) DisableControls = false;
+
             // call base handler
             base.OnLoad(e);
         }
@@ -333,6 +337,43 @@ namespace WebsitePanel.Portal
         {
             // localize all controls
             LocalizeModuleControls(this);
+
+
+            string role = string.Empty;
+            if (PanelSecurity.LoggedUser != null)
+            {
+                switch (PanelSecurity.LoggedUser.Role)
+                {
+                    case UserRole.Administrator:
+                        role = "Administrator";
+                        break;
+                    case UserRole.Reseller:
+                        role = "Reseller";
+                        break;
+                    case UserRole.User:
+                        role = "User";
+                        break;
+                    case UserRole.PlatformCSR:
+                        role = "PlatformCSR";
+                        break;
+                    case UserRole.PlatformHelpdesk:
+                        role = "PlatformHelpdesk";
+                        break;
+                    case UserRole.ResellerCSR:
+                        role = "ResellerCSR";
+                        break;
+                    case UserRole.ResellerHelpdesk:
+                        role = "ResellerHelpdesk";
+                        break;
+                }
+            }
+
+            if (Module != null)
+            {
+                if (Module.ReadOnlyRoles != null)
+                    if (Module.ReadOnlyRoles.Contains(role))
+                        DisableControls = true;
+            }
 
             // disable controls (if required)
             if (DisableControls)

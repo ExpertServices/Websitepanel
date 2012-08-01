@@ -106,33 +106,6 @@
 					    <wsp:RejectedSenders id="rejectAccounts" runat="server" />
 					</asp:Panel>
 					
-					
-					<wsp:CollapsiblePanel id="secDeliveryOptions" runat="server"
-                        TargetControlID="DeliveryOptions" meta:resourcekey="secDeliveryOptions" Text="Delivery Options">
-                    </wsp:CollapsiblePanel>
-                    <asp:Panel ID="DeliveryOptions" runat="server" Height="0" style="overflow:hidden;">
-					    <table>
-						    <tr>
-							    <td class="FormLabel200"><asp:Localize ID="locMaxRecipients" runat="server" meta:resourcekey="locMaxRecipients" Text="Maximum Recipients:"></asp:Localize></td>
-							    <td>
-									<wsp:SizeBox id="sizeMaxRecipients" runat="server" DisplayUnits="false" ValidationGroup="EditMailbox" />
-								</td>
-						    </tr>
-						    <tr>
-							    <td class="FormLabel200"><asp:Localize ID="locMaxSendingSize" runat="server" meta:resourcekey="locMaxSendingSize" Text="Maximum Sending Message Size:"></asp:Localize></td>
-							    <td>
-									<wsp:SizeBox id="sizeMaxSendingSize" runat="server" ValidationGroup="EditMailbox" />
-								</td>
-						    </tr>
-						    <tr>
-							    <td class="FormLabel200"><asp:Localize ID="locMaxReceivingSize" runat="server" meta:resourcekey="locMaxReceivingSize" Text="Maximum Receiving Message Size:"></asp:Localize></td>
-							    <td>
-									<wsp:SizeBox id="sizeMaxReceivingSize" runat="server" ValidationGroup="EditMailbox" />
-								</td>
-						    </tr>
-					    </table>
-					</asp:Panel>
-					
 					<table style="width:100%;margin-top:10px;">
 					    <tr>
 					        <td align="center">

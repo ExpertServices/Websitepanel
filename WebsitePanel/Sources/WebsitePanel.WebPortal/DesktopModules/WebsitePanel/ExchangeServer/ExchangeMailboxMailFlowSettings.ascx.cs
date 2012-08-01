@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -38,17 +38,19 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class ExchangeMailboxMailFlowSettings : WebsitePanelModuleBase
-	{
+    public partial class ExchangeMailboxMailFlowSettings : WebsitePanelModuleBase
+    {
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
                 BindSettings();
             }
+
         }
 
         private void BindSettings()
@@ -59,8 +61,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                 ExchangeMailbox mailbox = ES.Services.ExchangeServer.GetMailboxMailFlowSettings(
                     PanelRequest.ItemID, PanelRequest.AccountID);
 
-				// title
-				litDisplayName.Text = mailbox.DisplayName;
+                // title
+                litDisplayName.Text = mailbox.DisplayName;
 
                 // bind form
                 chkEnabledForwarding.Checked = mailbox.EnableForwarding;
@@ -73,12 +75,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                 chkSendersAuthenticated.Checked = mailbox.RequireSenderAuthentication;
                 rejectAccounts.SetAccounts(mailbox.RejectAccounts);
 
-                sizeMaxRecipients.ValueKB = mailbox.MaxRecipients;
-				sizeMaxSendingSize.ValueKB = mailbox.MaxSendMessageSizeKB;
-				sizeMaxReceivingSize.ValueKB = mailbox.MaxReceiveMessageSizeKB;
-
-				// toggle
-				ToggleControls();
+                // toggle
+                ToggleControls();
 
                 // get account meta
                 ExchangeAccount account = ES.Services.ExchangeServer.GetAccount(PanelRequest.ItemID, PanelRequest.AccountID);
@@ -87,7 +85,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("EXCHANGE_GET_MAILBOX_MAILFLOW", ex);
+                messageBox.ShowErrorMessage("EXCHANGE_GET_MAILBOX_MAILFLOW", ex);
             }
         }
 
@@ -106,12 +104,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                     chkDoNotDeleteOnForward.Checked,
 
                     accessAccounts.GetAccounts(),
-					acceptAccounts.GetAccounts(),
-					rejectAccounts.GetAccounts(),
-                    
-                    sizeMaxRecipients.ValueKB,
-                    sizeMaxSendingSize.ValueKB,
-                    sizeMaxReceivingSize.ValueKB,
+                    acceptAccounts.GetAccounts(),
+                    rejectAccounts.GetAccounts(),
 
                     chkSendersAuthenticated.Checked);
 
@@ -121,11 +115,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-				messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_MAILBOX_MAILFLOW");
+                messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_MAILBOX_MAILFLOW");
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("EXCHANGE_UPDATE_MAILBOX_MAILFLOW", ex);
+                messageBox.ShowErrorMessage("EXCHANGE_UPDATE_MAILBOX_MAILFLOW", ex);
             }
         }
 
@@ -134,15 +128,15 @@ namespace WebsitePanel.Portal.ExchangeServer
             SaveSettings();
         }
 
-		private void ToggleControls()
-		{
-			ForwardSettingsPanel.Visible = chkEnabledForwarding.Checked;
-		}
+        private void ToggleControls()
+        {
+            ForwardSettingsPanel.Visible = chkEnabledForwarding.Checked;
+        }
 
-		protected void chkEnabledForwarding_CheckedChanged(object sender, EventArgs e)
-		{
-			ToggleControls();
-		}
+        protected void chkEnabledForwarding_CheckedChanged(object sender, EventArgs e)
+        {
+            ToggleControls();
+        }
 
         protected void chkPmmAllowed_CheckedChanged(object sender, EventArgs e)
         {
@@ -164,5 +158,5 @@ namespace WebsitePanel.Portal.ExchangeServer
                 messageBox.ShowErrorMessage("EXCHANGE_UPDATE_MAILMANAGER", ex);
             }
         }
-	}
+    }
 }

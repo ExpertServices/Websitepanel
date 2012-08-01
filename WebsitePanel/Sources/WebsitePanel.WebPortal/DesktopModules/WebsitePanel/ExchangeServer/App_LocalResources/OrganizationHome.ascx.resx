@@ -112,56 +112,15 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="HSFormComments.Text" xml:space="preserve">
     <value>&lt;p&gt;Welcome to the organization home page!&lt;/p&gt; 
-
 &lt;p&gt;Using the left menu you can manage organization domain names and users.&lt;/p&gt; 
-
 &lt;p&gt;Organization statistics displays current status of the organization.&lt;/p&gt;</value>
-  </data>
-  <data name="lnkAllocatedDiskspace.Text" xml:space="preserve">
-    <value>Allocated Diskspace (MB)</value>
-  </data>
-  <data name="lnkContacts.Text" xml:space="preserve">
-    <value>Contacts:</value>
-  </data>
-  <data name="lnkDomains.Text" xml:space="preserve">
-    <value>Domain Names:</value>
-  </data>
-  <data name="lnkFolders.Text" xml:space="preserve">
-    <value>Public Folders:</value>
-  </data>
-  <data name="lnkLists.Text" xml:space="preserve">
-    <value>Distribution Lists:</value>
-  </data>
-  <data name="lnkMailboxes.Text" xml:space="preserve">
-    <value>Mailboxes:</value>
-  </data>
-  <data name="lnkSiteCollections.Text" xml:space="preserve">
-    <value>Site Collections:</value>
-  </data>
-  <data name="lnkUsedDiskspace.Text" xml:space="preserve">
-    <value>Used Diskspace (MB)</value>
-  </data>
-  <data name="lnkUsers.Text" xml:space="preserve">
-    <value>Users:</value>
-  </data>
-  <data name="locHeadStatistics.Text" xml:space="preserve">
-    <value>Organization Statistics</value>
-  </data>
-  <data name="locTitle.Text" xml:space="preserve">
-    <value>Home</value>
-  </data>
-  <data name="Text.PageName" xml:space="preserve">
-    <value>Home</value>
-  </data>
-  <data name="Unlimited.Text" xml:space="preserve">
-    <value>Unlimited</value>
   </data>
   <data name="lblCreated.Text" xml:space="preserve">
     <value>Created:</value>
@@ -172,14 +131,56 @@
   <data name="lblOrganizationName.Text" xml:space="preserve">
     <value>Organization Name:</value>
   </data>
-  <data name="lnkCRMUsers.Text" xml:space="preserve">
-    <value>CRM Users:</value>
-  </data>
   <data name="litTotalUserDiskSpace.Text" xml:space="preserve">
     <value>Total Used Disk Space, MB:</value>
   </data>
   <data name="litUsedDiskSpace.Text" xml:space="preserve">
     <value>Used Disk Space, MB:</value>
+  </data>
+  <data name="lnkAllocatedDiskspace.Text" xml:space="preserve">
+    <value>Allocated Diskspace (MB)</value>
+  </data>
+  <data name="lnkBESUsers.Text" xml:space="preserve">
+    <value>BlackBerry Users:</value>
+  </data>
+  <data name="lnkContacts.Text" xml:space="preserve">
+    <value>Contacts:</value>
+  </data>
+  <data name="lnkCRMUsers.Text" xml:space="preserve">
+    <value>CRM Users:</value>
+  </data>
+  <data name="lnkDomains.Text" xml:space="preserve">
+    <value>Domain Names:</value>
+  </data>
+  <data name="lnkExchangeStorage.Text" xml:space="preserve">
+    <value>Storage (Mb):</value>
+  </data>
+  <data name="lnkFolders.Text" xml:space="preserve">
+    <value>Public Folders:</value>
+  </data>
+  <data name="lnkLists.Text" xml:space="preserve">
+    <value>Distribution Lists:</value>
+  </data>
+  <data name="lnkLyncUsers.Text" xml:space="preserve">
+    <value>Users:</value>
+  </data>
+  <data name="lnkMailboxes.Text" xml:space="preserve">
+    <value>Mailboxes:</value>
+  </data>
+  <data name="lnkOCSUsers.Text" xml:space="preserve">
+    <value>OCS Users:</value>
+  </data>
+  <data name="lnkSiteCollections.Text" xml:space="preserve">
+    <value>Site Collections:</value>
+  </data>
+  <data name="lnkUsedDiskspace.Text" xml:space="preserve">
+    <value>Used Diskspace (MB)</value>
+  </data>
+  <data name="lnkUsers.Text" xml:space="preserve">
+    <value>Users:</value>
+  </data>
+  <data name="locBESStatistics.Text" xml:space="preserve">
+    <value>BlackBerry</value>
   </data>
   <data name="locCRM.Text" xml:space="preserve">
     <value>CRM</value>
@@ -187,7 +188,25 @@
   <data name="locExchangeStatistics.Text" xml:space="preserve">
     <value>Exchange</value>
   </data>
+  <data name="locHeadStatistics.Text" xml:space="preserve">
+    <value>Organization</value>
+  </data>
+  <data name="locLyncStatistics.Text" xml:space="preserve">
+    <value>Lync</value>
+  </data>
+  <data name="locOCSStatistics.Text" xml:space="preserve">
+    <value>OCS</value>
+  </data>
   <data name="locSharePoint.Text" xml:space="preserve">
     <value>SharePoint</value>
+  </data>
+  <data name="locTitle.Text" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Text.PageName" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Unlimited.Text" xml:space="preserve">
+    <value>Unlimited</value>
   </data>
 </root>

@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -1062,12 +1062,62 @@ namespace WebsitePanel.Server
 
         #region Web Application Gallery
         [WebMethod, SoapHeader("settings")]
-		public GalleryCategoriesResult GetGalleryCategories()
+        public void InitFeeds(int UserId, string[] feeds)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' InitFeeds", ProviderSettings.ProviderName);
+                WebProvider.InitFeeds(UserId, feeds);
+                Log.WriteEnd("'{0}' InitFeeds", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' InitFeeds", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void SetResourceLanguage(int UserId, string resourceLanguage)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' SetResourceLanguage", ProviderSettings.ProviderName);
+                WebProvider.SetResourceLanguage(UserId,resourceLanguage);
+                Log.WriteEnd("'{0}' SetResourceLanguage", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' SetResourceLanguage", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+
+        [WebMethod, SoapHeader("settings")]
+        public GalleryLanguagesResult GetGalleryLanguages(int UserId)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GalleryLanguagesResult", ProviderSettings.ProviderName);
+                GalleryLanguagesResult result = WebProvider.GetGalleryLanguages(UserId);
+                Log.WriteEnd("'{0}' GalleryLanguagesResult", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GalleryLanguagesResult", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+		public GalleryCategoriesResult GetGalleryCategories(int UserId)
 		{
 			try
 			{
 				Log.WriteStart("'{0}' GalleryCategoriesResult", ProviderSettings.ProviderName);
-				GalleryCategoriesResult result = WebProvider.GetGalleryCategories();
+                GalleryCategoriesResult result = WebProvider.GetGalleryCategories(UserId);
 				Log.WriteEnd("'{0}' GalleryCategoriesResult", ProviderSettings.ProviderName);
 				return result;
 			}
@@ -1079,12 +1129,12 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public GalleryApplicationsResult GetGalleryApplications(string categoryId)
+        public GalleryApplicationsResult GetGalleryApplications(int UserId, string categoryId)
 		{
 			try
 			{
 				Log.WriteStart("'{0}' GetGalleryApplications", ProviderSettings.ProviderName);
-				GalleryApplicationsResult result = WebProvider.GetGalleryApplications(categoryId);
+                GalleryApplicationsResult result = WebProvider.GetGalleryApplications(UserId,categoryId);
 				Log.WriteEnd("'{0}' GetGalleryApplications", ProviderSettings.ProviderName);
 				return result;
 			}
@@ -1094,7 +1144,26 @@ namespace WebsitePanel.Server
 				throw;
 			}
 		}
-		[WebMethod, SoapHeader("settings")]
+
+        [WebMethod, SoapHeader("settings")]
+        public GalleryApplicationsResult GetGalleryApplicationsFiltered(int UserId, string pattern)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetGalleryApplicationsFiltered", ProviderSettings.ProviderName);
+                GalleryApplicationsResult result = WebProvider.GetGalleryApplicationsFiltered(UserId,pattern);
+                Log.WriteEnd("'{0}' GetGalleryApplicationsFiltered", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetGalleryApplicationsFiltered", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+
+        [WebMethod, SoapHeader("settings")]
 		public bool IsMsDeployInstalled()
 		{
 			try
@@ -1111,13 +1180,13 @@ namespace WebsitePanel.Server
 			}
 		}
 
-		[WebMethod, SoapHeader("settings")]
-		public GalleryApplicationResult GetGalleryApplication(string id)
+        [WebMethod, SoapHeader("settings")]
+        public GalleryApplicationResult GetGalleryApplication(int UserId, string id)
 		{
 			try
 			{
 				Log.WriteStart("'{0}' GetGalleryApplication", ProviderSettings.ProviderName);
-				GalleryApplicationResult result = WebProvider.GetGalleryApplication(id);
+                GalleryApplicationResult result = WebProvider.GetGalleryApplication(UserId,id);
 				Log.WriteEnd("'{0}' GetGalleryApplication", ProviderSettings.ProviderName);
 				return result;
 			}
@@ -1128,13 +1197,13 @@ namespace WebsitePanel.Server
 			}
 		}
 
-		[WebMethod, SoapHeader("settings")]
-		public GalleryWebAppStatus GetGalleryApplicationStatus(string id)
+        [WebMethod, SoapHeader("settings")]
+        public GalleryWebAppStatus GetGalleryApplicationStatus(int UserId, string id)
 		{
 			try
 			{
 				Log.WriteStart("'{0}' GetGalleryApplicationStatus", ProviderSettings.ProviderName);
-				GalleryWebAppStatus result = WebProvider.GetGalleryApplicationStatus(id);
+                GalleryWebAppStatus result = WebProvider.GetGalleryApplicationStatus(UserId,id);
 				Log.WriteEnd("'{0}' GetGalleryApplicationStatus", ProviderSettings.ProviderName);
 				return result;
 			}
@@ -1144,14 +1213,14 @@ namespace WebsitePanel.Server
 				throw;
 			}
 		}
-		
-		[WebMethod, SoapHeader("settings")]
-		public GalleryWebAppStatus DownloadGalleryApplication(string id)
+
+        [WebMethod, SoapHeader("settings")]
+        public GalleryWebAppStatus DownloadGalleryApplication(int UserId, string id)
 		{
 			try
 			{
 				Log.WriteStart("'{0}' DownloadGalleryApplication", ProviderSettings.ProviderName);
-				GalleryWebAppStatus result = WebProvider.DownloadGalleryApplication(id);
+                GalleryWebAppStatus result = WebProvider.DownloadGalleryApplication(UserId,id);
 				Log.WriteEnd("'{0}' DownloadGalleryApplication", ProviderSettings.ProviderName);
 				return result;
 			}
@@ -1162,13 +1231,13 @@ namespace WebsitePanel.Server
 			}
 		}
 
-		[WebMethod, SoapHeader("settings")]
-		public DeploymentParametersResult GetGalleryApplicationParameters(string id)
+        [WebMethod, SoapHeader("settings")]
+        public DeploymentParametersResult GetGalleryApplicationParameters(int UserId, string id)
 		{
 			try
 			{
 				Log.WriteStart("'{0}' GetGalleryApplicationParameters", ProviderSettings.ProviderName);
-				DeploymentParametersResult result = WebProvider.GetGalleryApplicationParameters(id);
+                DeploymentParametersResult result = WebProvider.GetGalleryApplicationParameters(UserId,id);
 				Log.WriteEnd("'{0}' GetGalleryApplicationParameters", ProviderSettings.ProviderName);
 				return result;
 			}
@@ -1179,13 +1248,13 @@ namespace WebsitePanel.Server
 			}
 		}
 
-		[WebMethod, SoapHeader("settings")]
-		public StringResultObject InstallGalleryApplication(string id, List<DeploymentParameter> updatedValues)
+        [WebMethod, SoapHeader("settings")]
+        public StringResultObject InstallGalleryApplication(int UserId, string id, List<DeploymentParameter> updatedValues, string languageId)
 		{
 			try
 			{
 				Log.WriteStart("'{0}' InstallGalleryApplication", ProviderSettings.ProviderName);
-				StringResultObject result = WebProvider.InstallGalleryApplication(id, updatedValues);
+                StringResultObject result = WebProvider.InstallGalleryApplication(UserId,id, updatedValues, languageId);
 				Log.WriteEnd("'{0}' InstallGalleryApplication", ProviderSettings.ProviderName);
 				return result;
 			}

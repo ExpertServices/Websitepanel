@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -67,7 +67,10 @@ namespace WebsitePanel.Portal.ProviderControls
 			item.ResponderEnabled = chkResponderEnabled.Checked;
 			item.ResponderSubject = txtSubject.Text;
 			item.ResponderMessage = txtMessage.Text;
-			item.ForwardingAddresses = new string[] { txtForward.Text };
+            if (txtForward.Text.Length > 0)
+            {
+                item.ForwardingAddresses = new string[] { txtForward.Text };
+            }
             item.RetainLocalCopy = chkOriginalMessage.Checked;
             item.FirstName = txtFirstName.Text;
             item.LastName = txtLastName.Text;

@@ -339,7 +339,7 @@ namespace WebsitePanel.Installer
 		internal void ShowError()
 		{
 			ShowError("An unexpected error has occurred. We apologize for this inconvenience.\n" +
-				"Please contact Technical Support at support@websitepanel.net.\n\n" +
+				"Please contact Technical Support at info@websitepanel.net.\n\n" +
 				"Make sure you include a copy of the Installer.log file from the\n" +
 				"WebsitePanel Installer home directory.");
 		}

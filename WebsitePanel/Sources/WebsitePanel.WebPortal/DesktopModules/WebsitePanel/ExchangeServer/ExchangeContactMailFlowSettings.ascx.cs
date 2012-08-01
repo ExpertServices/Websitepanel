@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -38,17 +38,20 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class ExchangeContactMailFlowSettings : WebsitePanelModuleBase
-	{
+    public partial class ExchangeContactMailFlowSettings : WebsitePanelModuleBase
+    {
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
                 BindSettings();
             }
+
+            
         }
 
         private void BindSettings()
@@ -59,12 +62,12 @@ namespace WebsitePanel.Portal.ExchangeServer
                 ExchangeContact contact = ES.Services.ExchangeServer.GetContactMailFlowSettings(
                     PanelRequest.ItemID, PanelRequest.AccountID);
 
-				litDisplayName.Text = contact.DisplayName;
+                litDisplayName.Text = contact.DisplayName;
 
                 // bind form
                 acceptAccounts.SetAccounts(contact.AcceptAccounts);
                 chkSendersAuthenticated.Checked = contact.RequireSenderAuthentication;
-				rejectAccounts.SetAccounts(contact.RejectAccounts);
+                rejectAccounts.SetAccounts(contact.RejectAccounts);
             }
             catch (Exception ex)
             {
@@ -92,11 +95,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-				messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_CONTACT_MAILFLOW");
+                messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_CONTACT_MAILFLOW");
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("EXCHANGE_UPDATE_CONTACT_MAILFLOW", ex);
+                messageBox.ShowErrorMessage("EXCHANGE_UPDATE_CONTACT_MAILFLOW", ex);
             }
         }
 
@@ -104,5 +107,5 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             SaveSettings();
         }
-	}
+    }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -40,6 +40,8 @@ namespace WebsitePanel.Providers.OS
 		private string fullName;
 		private string description = "WebsitePanel system account";
 		private string password;
+        private string msIIS_FTPDir = "";
+        private string msIIS_FTPRoot = "";
 		private bool passwordCantChange;
 		private bool passwordNeverExpires;
 		private bool accountDisabled;
@@ -98,5 +100,18 @@ namespace WebsitePanel.Providers.OS
 			get { return memberOf; }
 			set { memberOf = value; }
 		}
+
+        public string MsIIS_FTPDir
+        {
+            get { return msIIS_FTPDir; }
+            set { msIIS_FTPDir = value; }
+        }
+
+        public string MsIIS_FTPRoot
+        {
+            get { return msIIS_FTPRoot; }
+            set { msIIS_FTPRoot = value; }
+        }
+
 	}
 }

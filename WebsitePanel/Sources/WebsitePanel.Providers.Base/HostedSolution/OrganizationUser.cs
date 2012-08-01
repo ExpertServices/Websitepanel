@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -30,15 +30,16 @@ using System;
 
 namespace WebsitePanel.Providers.HostedSolution
 {
-   
-    
+
+
     public class OrganizationUser
     {
         private int accountId;
         private int itemId;
         private int packageId;
+        private string subscriberNumber;
 
-        private string primaryEmailAddress;        
+        private string primaryEmailAddress;
         private string accountPassword;
         private string samAccountName;
         private string displayName;
@@ -65,18 +66,23 @@ namespace WebsitePanel.Providers.HostedSolution
         private string domainUserName;
 
         private bool disabled;
+        private bool locked;
+        private bool isOCSUser;
+        private bool isBlackBerryUser;
+        private bool isLyncUser;
+
         ExchangeAccountType accountType;
 
         private OrganizationUser manager;
         private Guid crmUserId;
 
-        
+
         public Guid CrmUserId
         {
             get { return crmUserId; }
             set { crmUserId = value; }
         }
-    
+
 
         public string DomainUserName
         {
@@ -98,10 +104,10 @@ namespace WebsitePanel.Providers.HostedSolution
 
         public bool Disabled
         {
-            get { return disabled;}
-            set { disabled = value;}
+            get { return disabled; }
+            set { disabled = value; }
         }
-        
+
         public string FirstName
         {
             get { return firstName; }
@@ -258,17 +264,48 @@ namespace WebsitePanel.Providers.HostedSolution
             set { primaryEmailAddress = value; }
         }
 
-        
+
         public string AccountPassword
         {
             get { return accountPassword; }
             set { accountPassword = value; }
         }
 
-		public string ExternalEmail  { get; set; }
+        public string ExternalEmail { get; set; }
 
         public string DistinguishedName { get; set; }
 
-        public bool Locked { get; set; }
+        public bool Locked
+        {
+            get { return locked; }
+            set { locked = value; }
+        }
+
+        public bool IsOCSUser
+        {
+            get { return isOCSUser; }
+            set { isOCSUser = value; }
+        }
+
+        public bool IsLyncUser
+        {
+            get { return isLyncUser; }
+            set { isLyncUser = value; }
+        }
+
+        public bool IsBlackBerryUser
+        {
+            get { return isBlackBerryUser; }
+            set { isBlackBerryUser = value; }
+        }
+
+        public string SubscriberNumber
+        {
+            get { return subscriberNumber; }
+            set { subscriberNumber = value; }
+        }
+
+
+
     }
 }

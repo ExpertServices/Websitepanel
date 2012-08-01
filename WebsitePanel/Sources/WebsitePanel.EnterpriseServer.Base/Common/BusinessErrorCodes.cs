@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -62,6 +62,11 @@ namespace WebsitePanel.EnterpriseServer
         public const int ERROR_USER_WRONG_USERNAME = -109;
         public const int ERROR_USER_WRONG_PASSWORD = -110;
         public const int ERROR_INVALID_USER_NAME = -111;
+        public const int ERROR_USER_ACCOUNT_NOT_ENOUGH_PERMISSIONS = -112;
+        public const int ERROR_USER_ACCOUNT_ROLE_NOT_ALLOWED = -113;
+
+        public const int ERROR_USER_ACCOUNT_DISABLED = -114;
+        public const int ERROR_USER_ACCOUNT_LOCKEDOUT = -115;
         #endregion
 
         #region Packages
@@ -334,6 +339,10 @@ namespace WebsitePanel.EnterpriseServer
         public const int ERROR_FILE_DEST_FOLDER_NONEXISTENT = -3002;
         public const int ERROR_FILE_CREATE_FILE_WITH_DIR_NAME = -3003;
         public const int ERROR_FILE_MOVE_PATH_ALREADY_EXISTS = -3004;
+        #endregion
+
+        #region Lync Server
+        public const int ERROR_LYNC_DELETE_SOME_PROBLEMS = -2806;
         #endregion
 
         public static string ToText(int code)

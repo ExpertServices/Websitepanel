@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -203,7 +203,7 @@ namespace WebsitePanel.Providers.WebAppGallery
 			}
 		}
 
-		[XmlIgnore]
+        [XmlIgnore]
         public string Size
 		{
 			get
@@ -216,6 +216,10 @@ namespace WebsitePanel.Providers.WebAppGallery
 					return "0";
 			}
 		}
+
+        [XmlElement(ElementName = "installerFileSize", Namespace = "http://www.w3.org/2005/Atom")]
+        public int InstallerFileSize { get; set; }
+
 
 		public string AuthorName {
 			get { return Author.Name; }

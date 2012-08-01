@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -167,7 +167,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return runspace;
 		}
 
-		private static Assembly ResolveExchangeAssembly(object p, ResolveEventArgs args)
+		internal static Assembly ResolveExchangeAssembly(object p, ResolveEventArgs args)
 		{
 			//Add path for the Exchange 2007 DLLs
 			if (args.Name.Contains("Microsoft.Exchange"))

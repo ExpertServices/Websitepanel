@@ -73,6 +73,17 @@
       <Link>VersionInfo.vb</Link>
     </Compile>
     <Compile Include="MailEnable.vb" />
+    <Compile Include="MailEnableAddressMap.vb" />
+    <Compile Include="MailEnableBlacklist.vb" />
+    <Compile Include="MailEnableDomain.vb" />
+    <Compile Include="MailEnableGroup.vb" />
+    <Compile Include="MailEnableGroupMember.vb" />
+    <Compile Include="MailEnableList.vb" />
+    <Compile Include="MailEnableListMember.vb" />
+    <Compile Include="MailEnableLogin.vb" />
+    <Compile Include="MailEnableMailbox.vb" />
+    <Compile Include="MailEnableOption.vb" />
+    <Compile Include="MailEnablePostoffice.vb" />
     <Compile Include="MELogReader.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">

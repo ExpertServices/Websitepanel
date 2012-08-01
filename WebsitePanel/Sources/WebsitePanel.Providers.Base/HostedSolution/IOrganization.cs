@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -33,10 +33,10 @@ namespace WebsitePanel.Providers.HostedSolution
     public interface IOrganization
     {
         Organization CreateOrganization(string organizationId);
-        
+
         void DeleteOrganization(string organizationId);
 
-        void CreateUser(string organizationId, string loginName, string displayName, string upn, string password, bool enabled);
+        int CreateUser(string organizationId, string loginName, string displayName, string upn, string password, bool enabled);
 
         void DeleteUser(string loginName, string organizationId);
 
@@ -49,7 +49,7 @@ namespace WebsitePanel.Providers.HostedSolution
                                     string jobTitle,
                                     string company, string department, string office, string managerAccountName,
                                     string businessPhone, string fax, string homePhone, string mobilePhone, string pager,
-									string webPage, string notes, string externalEmail);
+                                    string webPage, string notes, string externalEmail);
 
         bool OrganizationExists(string organizationId);
 
@@ -58,5 +58,7 @@ namespace WebsitePanel.Providers.HostedSolution
         void CreateOrganizationDomain(string organizationDistinguishedName, string domain);
 
         PasswordPolicyResult GetPasswordPolicy();
+
+        string GetSamAccountNameByUserPrincipalName(string organizationId, string userPrincipalName);
     }
 }

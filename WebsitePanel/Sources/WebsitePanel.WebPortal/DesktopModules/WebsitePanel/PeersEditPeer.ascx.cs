@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -25,6 +25,7 @@
 // ANY  THEORY  OF  LIABILITY,  WHETHER  IN  CONTRACT,  STRICT  LIABILITY,  OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 
 using System;
 using System.Data;
@@ -60,15 +61,52 @@ namespace WebsitePanel.Portal
             {
                 userPassword.SetUserPolicy(PanelSecurity.SelectedUserId, UserSettings.WEBSITEPANEL_POLICY, "PasswordPolicy");
                 userPassword.ValidationGroup = "";
+
+                if (PanelSecurity.SelectedUser.RoleId == (int)UserRole.Administrator)
+                {
+                    role.Items.Add("CSR");
+                    role.Items.Add("Helpdesk");
+                    role.Items.Add("Administrator");
+                }
+                else
+                    if (PanelSecurity.SelectedUser.RoleId == (int)UserRole.Reseller)
+                    {
+                        role.Items.Add("CSR");
+                        role.Items.Add("Helpdesk");
+                        role.Items.Add("Reseller");
+                    }
+                    else
+                        rowRole.Visible = false;
+
                 return; // it's a new user
             }
 
             if (PanelSecurity.LoggedUser.IsPeer && PanelSecurity.LoggedUserId == PanelRequest.PeerID)
                 btnDelete.Visible = false; // peer can't delete his own account
-
+            
             UserInfo user = UsersHelper.GetUser(PanelRequest.PeerID);
             if (user != null)
             {
+                if ((PanelSecurity.SelectedUser.RoleId == (int)UserRole.Administrator)|
+                    (PanelSecurity.SelectedUser.RoleId == (int)UserRole.PlatformCSR)|
+                    (PanelSecurity.SelectedUser.RoleId == (int)UserRole.PlatformHelpdesk))
+                {
+                    role.Items.Add("CSR");
+                    role.Items.Add("Helpdesk");
+                    role.Items.Add("Administrator");
+                }
+                else
+                    if ((PanelSecurity.SelectedUser.RoleId == (int)UserRole.Reseller)|
+                        (PanelSecurity.SelectedUser.RoleId == (int)UserRole.ResellerCSR)|
+                        (PanelSecurity.SelectedUser.RoleId == (int)UserRole.ResellerHelpdesk))
+                    {
+                        role.Items.Add("CSR");
+                        role.Items.Add("Helpdesk");
+                        role.Items.Add("Reseller");
+                    }
+                    else
+                        rowRole.Visible = false;
+
                 userPassword.SetUserPolicy(PanelSecurity.SelectedUserId, UserSettings.WEBSITEPANEL_POLICY, "PasswordPolicy");
                 userPassword.ValidationGroup = "NewPassword";
 
@@ -82,8 +120,18 @@ namespace WebsitePanel.Portal
                 lblUsername.Text = user.Username;
                 chkDemo.Checked = user.IsDemo;
 
+                if (user.RoleId == (int)UserRole.ResellerCSR) role.SelectedIndex = 0;
+                if (user.RoleId == (int)UserRole.PlatformCSR) role.SelectedIndex = 0;
+                if (user.RoleId == (int)UserRole.PlatformHelpdesk) role.SelectedIndex = 1;
+                if (user.RoleId == (int)UserRole.ResellerHelpdesk) role.SelectedIndex = 1;
+                if (user.RoleId == (int)UserRole.Reseller) role.SelectedIndex = 2;
+                if (user.RoleId == (int)UserRole.Administrator) role.SelectedIndex = 2;
+
+                // select loginStatus
+                loginStatus.SelectedIndex = user.LoginStatusId;
+
                 // contact info
-				contact.CompanyName = user.CompanyName;
+                contact.CompanyName = user.CompanyName;
                 contact.Address = user.Address;
                 contact.City = user.City;
                 contact.Country = user.Country;
@@ -111,8 +159,31 @@ namespace WebsitePanel.Portal
                 // gather data from form
                 UserInfo user = new UserInfo();
                 user.UserId = PanelRequest.PeerID;
-                user.RoleId = owner.RoleId;
+
+                if (PanelSecurity.SelectedUser.RoleId == (int)UserRole.Administrator)
+                {
+                    if (role.SelectedIndex == 0)
+                        user.RoleId = (int)UserRole.PlatformCSR;
+                    if (role.SelectedIndex == 1)
+                        user.RoleId = (int)UserRole.PlatformHelpdesk;
+                    if (role.SelectedIndex == 2)
+                        user.RoleId = (int)UserRole.Administrator;
+                }
+                else
+                    if (PanelSecurity.SelectedUser.RoleId == (int)UserRole.Reseller)
+                    {
+                        if (role.SelectedIndex == 0)
+                            user.RoleId = (int)UserRole.ResellerCSR;
+                        if (role.SelectedIndex == 1)
+                            user.RoleId = (int)UserRole.ResellerHelpdesk;
+                        if (role.SelectedIndex == 2)
+                            user.RoleId = (int)UserRole.Reseller;
+                    }
+                    else
+                        user.RoleId = owner.RoleId;
+
                 user.StatusId = owner.StatusId;
+
                 user.OwnerId = owner.UserId;
                 user.IsDemo = owner.IsDemo;
                 user.IsPeer = true;
@@ -126,9 +197,11 @@ namespace WebsitePanel.Portal
                 user.Username = txtUsername.Text;
                 user.Password = userPassword.Password;
                 user.IsDemo = chkDemo.Checked;
+                
+                user.LoginStatusId = loginStatus.SelectedIndex;
 
                 // contact info
-				user.CompanyName = contact.CompanyName;
+                user.CompanyName = contact.CompanyName;
                 user.Address = contact.Address;
                 user.City = contact.City;
                 user.Country = contact.Country;
@@ -147,7 +220,7 @@ namespace WebsitePanel.Portal
                     try
                     {
                         //int userId = UsersHelper.AddUser(log, PortalId, user);
-						int userId = PortalUtils.AddUserAccount(log, user, false);
+                        int userId = PortalUtils.AddUserAccount(log, user, false);
 
                         if (userId < 0)
                         {
@@ -177,7 +250,7 @@ namespace WebsitePanel.Portal
                     try
                     {
                         //int result = UsersHelper.UpdateUser(PortalId, user);
-						int result = PortalUtils.UpdateUserAccount(user);
+                        int result = PortalUtils.UpdateUserAccount(user);
 
                         if (result < 0)
                         {
@@ -202,7 +275,7 @@ namespace WebsitePanel.Portal
             try
             {
                 //int result = UsersHelper.DeleteUser(PortalId, PanelRequest.UserID);
-				int result = PortalUtils.DeleteUserAccount(PanelRequest.PeerID);
+                int result = PortalUtils.DeleteUserAccount(PanelRequest.PeerID);
 
                 if (result < 0)
                 {
@@ -228,7 +301,7 @@ namespace WebsitePanel.Portal
             try
             {
                 //int result = UsersHelper.ChangeUserPassword(PortalId, PanelRequest.UserID, userPassword.Password);
-				int result = PortalUtils.ChangeUserPassword(PanelRequest.PeerID, userPassword.Password);
+                int result = PortalUtils.ChangeUserPassword(PanelRequest.PeerID, userPassword.Password);
 
                 if (result < 0)
                 {

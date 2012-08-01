@@ -31,125 +31,125 @@ using System.Diagnostics;
 
 namespace WebsitePanel.Server.Utils
 {
-	/// <summary>
-	/// Application log.
-	/// </summary>
-	public sealed class Log
-	{
+    /// <summary>
+    /// Application log.
+    /// </summary>
+    public sealed class Log
+    {
         private static TraceSwitch logSeverity = new TraceSwitch("Log", "General trace switch");
-		
-		private Log()
-		{
-		}
 
-		/// <summary>
-		/// Write error to the log.
-		/// </summary>
-		/// <param name="message">Error message.</param>
-		/// <param name="ex">Exception.</param>
-		public static void WriteError(string message, Exception ex)
-		{
-			try
-			{
-				if (logSeverity.TraceError)
-				{
-					string line = string.Format("[{0:G}] ERROR: {1}\n{2}\n", DateTime.Now, message, ex);
-					Trace.TraceError(line);
-				}
-			}
-			catch { }
-		}
+        private Log()
+        {
+        }
 
-		/// <summary>
-		/// Write error to the log.
-		/// </summary>
-		/// <param name="ex">Exception.</param>
-		public static void WriteError(Exception ex)
-		{
+        /// <summary>
+        /// Write error to the log.
+        /// </summary>
+        /// <param name="message">Error message.</param>
+        /// <param name="ex">Exception.</param>
+        public static void WriteError(string message, Exception ex)
+        {
+            try
+            {
+                if (logSeverity.TraceError)
+                {
+                    string line = string.Format("[{0:G}] ERROR: {1}\n{2}\n", DateTime.Now, message, ex);
+                    Trace.TraceError(line);
+                }
+            }
+            catch { }
+        }
 
-			try
-			{
-				if (ex != null)
-				{
-					WriteError(ex.Message, ex);
-				}
-			}
-			catch { }
-		}
+        /// <summary>
+        /// Write error to the log.
+        /// </summary>
+        /// <param name="ex">Exception.</param>
+        public static void WriteError(Exception ex)
+        {
 
-		/// <summary>
-		/// Write info message to log
-		/// </summary>
-		/// <param name="message"></param>
-		public static void WriteInfo(string message, params object[] args)
-		{
-			try
-			{
-				if (logSeverity.TraceInfo)
-				{
-					Trace.TraceInformation(FormatIncomingMessage(message, args));
-				}
-			}
-			catch { }
-		}
+            try
+            {
+                if (ex != null)
+                {
+                    WriteError(ex.Message, ex);
+                }
+            }
+            catch { }
+        }
 
-		/// <summary>
-		/// Write info message to log
-		/// </summary>
-		/// <param name="message"></param>
-		public static void WriteWarning(string message, params object[] args)
-		{
-			try
-			{
-				if (logSeverity.TraceWarning)
-				{
-					Trace.TraceWarning(FormatIncomingMessage(message, args));
-				}
-			}
-			catch { }
-		}
+        /// <summary>
+        /// Write info message to log
+        /// </summary>
+        /// <param name="message"></param>
+        public static void WriteInfo(string message, params object[] args)
+        {
+            try
+            {
+                if (logSeverity.TraceInfo)
+                {
+                    Trace.TraceInformation(FormatIncomingMessage(message, "INFO", args));
+                }
+            }
+            catch { }
+        }
 
-		/// <summary>
-		/// Write start message to log
-		/// </summary>
-		/// <param name="message"></param>
+        /// <summary>
+        /// Write info message to log
+        /// </summary>
+        /// <param name="message"></param>
+        public static void WriteWarning(string message, params object[] args)
+        {
+            try
+            {
+                if (logSeverity.TraceWarning)
+                {
+                    Trace.TraceWarning(FormatIncomingMessage(message, "WARNING", args));
+                }
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Write start message to log
+        /// </summary>
+        /// <param name="message"></param>
         public static void WriteStart(string message, params object[] args)
-		{
-			try
-			{
-				if (logSeverity.TraceInfo)
-				{
-					Trace.TraceInformation(FormatIncomingMessage(message, args));
-				}
-			}
-			catch { }
-		}
-		
-		/// <summary>
-		/// Write end message to log
-		/// </summary>
-		/// <param name="message"></param>
-        public static void WriteEnd(string message, params object[] args)
-		{
-			try
-			{
-				if (logSeverity.TraceInfo)
-				{
-					Trace.TraceInformation(FormatIncomingMessage(message, args));
-				}
-			}
-			catch { }
-		}
+        {
+            try
+            {
+                if (logSeverity.TraceInfo)
+                {
+                    Trace.TraceInformation(FormatIncomingMessage(message, "START", args));
+                }
+            }
+            catch { }
+        }
 
-		private static string FormatIncomingMessage(string message, params object[] args)
-		{
-			//
-			if (args.Length > 0)
-			{
-				message = String.Format(message, args);
-			}
-			//
-			return String.Concat(String.Format("[{0:G}] END: ", DateTime.Now), message);
-		}
-	}
+        /// <summary>
+        /// Write end message to log
+        /// </summary>
+        /// <param name="message"></param>
+        public static void WriteEnd(string message, params object[] args)
+        {
+            try
+            {
+                if (logSeverity.TraceInfo)
+                {
+                    Trace.TraceInformation(FormatIncomingMessage(message, "END", args));
+                }
+            }
+            catch { }
+        }
+
+        private static string FormatIncomingMessage(string message, string tag, params object[] args)
+        {
+            //
+            if (args.Length > 0)
+            {
+                message = String.Format(message, args);
+            }
+            //
+            return String.Concat(String.Format("[{0:G}] {1}: ", DateTime.Now, tag), message);
+        }
+    }
 }

@@ -272,7 +272,7 @@ namespace WebsitePanel.Updater
 		private void ShowError()
 		{
 			string message = "An unexpected error has occurred. We apologize for this inconvenience.\n" +
-				"Please contact Technical Support at support@websitepanel.net";
+				"Please contact Technical Support at info@websitepanel.net";
 			MessageBox.Show(this, message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 	}

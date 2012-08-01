@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -35,331 +35,378 @@ using WebsitePanel.Providers.DNS;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.SharePoint;
 
+
 namespace WebsitePanel.Portal
 {
-	public partial class HostedSharePointEditSiteCollection : WebsitePanelModuleBase
-	{
-		SharePointSiteCollection item = null;
+    public partial class HostedSharePointEditSiteCollection : WebsitePanelModuleBase
+    {
+        SharePointSiteCollection item = null;
 
-		private int OrganizationId
-		{
-			get
-			{
-				return PanelRequest.GetInt("ItemID");
-			}
-		}
+        private int OrganizationId
+        {
+            get
+            {
+                return PanelRequest.GetInt("ItemID");
+            }
+        }
 
-		private int SiteCollectionId
-		{
-			get
-			{
-				return PanelRequest.GetInt("SiteCollectionID");
-			}
-		}
+        private int SiteCollectionId
+        {
+            get
+            {
+                return PanelRequest.GetInt("SiteCollectionID");
+            }
+        }
 
-		protected void Page_Load(object sender, EventArgs e)
-		{
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            domain.PackageId = PanelSecurity.PackageId;
+
             warningStorage.UnlimitedText = GetLocalizedString("WarningUnlimitedValue");
             editWarningStorage.UnlimitedText = GetLocalizedString("WarningUnlimitedValue");
-            
+
             bool newItem = (this.SiteCollectionId == 0);
 
-			tblEditItem.Visible = newItem;
-			tblViewItem.Visible = !newItem;
+            tblEditItem.Visible = newItem;
+            tblViewItem.Visible = !newItem;
 
-			//btnUpdate.Visible = newItem;
-			btnDelete.Visible = !newItem;
-			btnUpdate.Text = newItem ? GetLocalizedString("Text.Add") : GetLocalizedString("Text.Update");
+            //btnUpdate.Visible = newItem;
+            btnDelete.Visible = !newItem;
+            btnUpdate.Text = newItem ? GetLocalizedString("Text.Add") : GetLocalizedString("Text.Update");
             btnUpdate.OnClientClick = newItem ? GetLocalizedString("btnCreate.OnClientClick") : GetLocalizedString("btnUpdate.OnClientClick");
 
-			btnBackup.Enabled = btnRestore.Enabled = !newItem;
+            btnBackup.Enabled = btnRestore.Enabled = !newItem;
 
-			// bind item
-			BindItem();            
+            // bind item
+            BindItem();
 
-			//this.RegisterOwnerSelector();
-           
-		}
+        }
 
-		private void BindItem()
-		{
-			try
-			{
-				if (!IsPostBack)
-				{
-					if (!this.IsDnsServiceAvailable())
-					{
-						localMessageBox.ShowWarningMessage("HOSTEDSHAREPOINT_NO_DNS");
-					}
+        private void BindItem()
+        {
+            try
+            {
+                if (!IsPostBack)
+                {
+                    if (!this.IsDnsServiceAvailable())
+                    {
+                        localMessageBox.ShowWarningMessage("HOSTEDSHAREPOINT_NO_DNS");
+                    }
 
-					// load item if required
-					if (this.SiteCollectionId > 0)
-					{
-						// existing item
-						item = ES.Services.HostedSharePointServers.GetSiteCollection(this.SiteCollectionId);
-						if (item != null)
-						{
-							// save package info
-							ViewState["PackageId"] = item.PackageId;
-						}
-						else
-							RedirectToBrowsePage();
-					}
-					else
-					{
-						// new item
-						ViewState["PackageId"] = PanelSecurity.PackageId;
-					}
-
-					//this.gvUsers.DataBind();
-
-					List<CultureInfo> cultures = new List<CultureInfo>();
-					foreach (int localeId in ES.Services.HostedSharePointServers.GetSupportedLanguages(PanelSecurity.PackageId))
-					{
-						cultures.Add(new CultureInfo(localeId, false));
-					}
-
-					this.ddlLocaleID.DataSource = cultures;
-					this.ddlLocaleID.DataBind();
-				}
-
-				if (!IsPostBack)
-				{
-					// bind item to controls
-					if (item != null)
-					{
-						// bind item to controls
-						lnkUrl.Text = item.PhysicalAddress;
-                        lnkUrl.NavigateUrl = item.PhysicalAddress;
-						litSiteCollectionOwner.Text = String.Format("{0} ({1})", item.OwnerName, item.OwnerEmail);
-						litLocaleID.Text = new CultureInfo(item.LocaleId, false).DisplayName;
-						litTitle.Text = item.Title;
-						litDescription.Text = item.Description;
-					    editWarningStorage.QuotaValue = (int)item.WarningStorage;
-					    editMaxStorage.QuotaValue = (int)item.MaxSiteStorage;
-					}
-                    
-                    Organization org = ES.Services.Organizations.GetOrganization(OrganizationId);
-                        if (org != null)
+                    // load item if required
+                    if (this.SiteCollectionId > 0)
+                    {
+                        // existing item
+                        item = ES.Services.HostedSharePointServers.GetSiteCollection(this.SiteCollectionId);
+                        if (item != null)
                         {
-                            maxStorage.ParentQuotaValue = org.MaxSharePointStorage;
-                            maxStorage.QuotaValue = org.MaxSharePointStorage;
-
-                            editMaxStorage.ParentQuotaValue = org.MaxSharePointStorage;
-                            
-
-
-                            warningStorage.ParentQuotaValue = org.WarningSharePointStorage;
-                            warningStorage.QuotaValue = org.WarningSharePointStorage;
-                            editWarningStorage.ParentQuotaValue = org.WarningSharePointStorage;
+                            // save package info
+                            ViewState["PackageId"] = item.PackageId;
                         }
-					
-				}
-				OrganizationDomainName[] domains = ES.Services.Organizations.GetOrganizationDomains(PanelRequest.ItemID);
+                        else
+                            RedirectToBrowsePage();
+                    }
+                    else
+                    {
+                        // new item
+                        ViewState["PackageId"] = PanelSecurity.PackageId;
+                        if (UseSharedSLL(PanelSecurity.PackageId))
+                        {
 
-				if (domains.Length == 0)
-				{
-					localMessageBox.ShowWarningMessage("HOSTEDSHAREPOINT_NO_DOMAINS");
-					DisableFormControls(this, btnCancel);
-					return;
-				}
-				//if (this.gvUsers.Rows.Count == 0)
-				//{
-				//    localMessageBox.ShowWarningMessage("HOSTEDSHAREPOINT_NO_USERS");
-				//    DisableFormControls(this, btnCancel);
-				//    return;
-				//}
-			}
-			catch
-			{
-				                
+                            rowUrl.Visible = false;
+                            valRequireHostName.Enabled = false;
+                            valRequireCorrectHostName.Enabled = false;
+                        }
+                    }
+
+                    //this.gvUsers.DataBind();
+
+                    List<CultureInfo> cultures = new List<CultureInfo>();
+                    foreach (int localeId in ES.Services.HostedSharePointServers.GetSupportedLanguages(PanelSecurity.PackageId))
+                    {
+                        cultures.Add(new CultureInfo(localeId, false));
+                    }
+
+                    this.ddlLocaleID.DataSource = cultures;
+                    this.ddlLocaleID.DataBind();
+                }
+
+                if (!IsPostBack)
+                {
+                    // bind item to controls
+                    if (item != null)
+                    {
+                        // bind item to controls
+                        lnkUrl.Text = item.PhysicalAddress;
+                        lnkUrl.NavigateUrl = item.PhysicalAddress;
+                        litSiteCollectionOwner.Text = String.Format("{0} ({1})", item.OwnerName, item.OwnerEmail);
+                        litLocaleID.Text = new CultureInfo(item.LocaleId, false).DisplayName;
+                        litTitle.Text = item.Title;
+                        litDescription.Text = item.Description;
+                        editWarningStorage.QuotaValue = (int)item.WarningStorage;
+                        editMaxStorage.QuotaValue = (int)item.MaxSiteStorage;
+                    }
+
+                    Organization org = ES.Services.Organizations.GetOrganization(OrganizationId);
+                    if (org != null)
+                    {
+                        maxStorage.ParentQuotaValue = org.MaxSharePointStorage;
+                        maxStorage.QuotaValue = org.MaxSharePointStorage;
+
+                        editMaxStorage.ParentQuotaValue = org.MaxSharePointStorage;
+
+
+
+                        warningStorage.ParentQuotaValue = org.WarningSharePointStorage;
+                        warningStorage.QuotaValue = org.WarningSharePointStorage;
+                        editWarningStorage.ParentQuotaValue = org.WarningSharePointStorage;
+                    }
+
+                }
+                //OrganizationDomainName[] domains = ES.Services.Organizations.GetOrganizationDomains(PanelRequest.ItemID);
+
+                //DomainInfo[] domains = ES.Services.Servers.GetMyDomains(PanelSecurity.PackageId);
+
+                EnterpriseServer.DomainInfo[] domains = ES.Services.Servers.GetDomains(PanelSecurity.PackageId);
+
+                if (domains.Length == 0)
+                {
+                    localMessageBox.ShowWarningMessage("HOSTEDSHAREPOINT_NO_DOMAINS");
+                    DisableFormControls(this, btnCancel);
+                    return;
+                }
+                //if (this.gvUsers.Rows.Count == 0)
+                //{
+                //    localMessageBox.ShowWarningMessage("HOSTEDSHAREPOINT_NO_USERS");
+                //    DisableFormControls(this, btnCancel);
+                //    return;
+                //}
+            }
+            catch
+            {
+
                 localMessageBox.ShowWarningMessage("INIT_SERVICE_ITEM_FORM");
-                
-			     DisableFormControls(this, btnCancel);
-				return;
-			}
-		}
 
-		private void SaveItem()
-		{
-			if (!Page.IsValid)
-			{
-				return;
-			}
+                DisableFormControls(this, btnCancel);
+                return;
+            }
+        }
 
-			
-			if (this.SiteCollectionId == 0)
-			{
+        private void SaveItem()
+        {
+            if (!Page.IsValid)
+            {
+                return;
+            }
+
+
+            if (this.SiteCollectionId == 0)
+            {
                 if (this.userSelector.GetAccount() == null)
                 {
                     localMessageBox.ShowWarningMessage("HOSTEDSHAREPOINT_NO_USERS");
                     return;
                 }
 
-                
+
                 // new item
-				try
-				{
-					SharePointSiteCollectionListPaged existentSiteCollections = ES.Services.HostedSharePointServers.GetSiteCollectionsPaged(PanelSecurity.PackageId, this.OrganizationId, "ItemName", String.Format("%{0}", this.domain.DomainName), String.Empty, 0, Int32.MaxValue);
-					foreach (SharePointSiteCollection existentSiteCollection in existentSiteCollections.SiteCollections)
-					{
-						Uri existentSiteCollectionUri = new Uri(existentSiteCollection.Name);
-						if (existentSiteCollection.Name == String.Format("{0}://{1}", existentSiteCollectionUri.Scheme, this.domain.DomainName))
-						{
-							localMessageBox.ShowWarningMessage("HOSTEDSHAREPOINT_DOMAIN_IN_USE");
-							return;				
-						}
-					}
+                try
+                {
+                    item = new SharePointSiteCollection();
 
-					// get form data
-					item = new SharePointSiteCollection();
-					item.OrganizationId = this.OrganizationId;
-					item.Id = this.SiteCollectionId;
-					item.PackageId = PanelSecurity.PackageId;
-					item.Name = this.domain.DomainName;
-					item.LocaleId = Int32.Parse(this.ddlLocaleID.SelectedValue);
-					item.OwnerLogin = this.userSelector.GetAccount();
-					item.OwnerEmail = this.userSelector.GetPrimaryEmailAddress();
-					item.OwnerName = this.userSelector.GetDisplayName();
-					item.Title = txtTitle.Text;
-					item.Description = txtDescription.Text;
-				    
-                    
+                    if (!UseSharedSLL(PanelSecurity.PackageId))
+                    {
+                        SharePointSiteCollectionListPaged existentSiteCollections = ES.Services.HostedSharePointServers.GetSiteCollectionsPaged(PanelSecurity.PackageId, this.OrganizationId, "ItemName", String.Format("%{0}", this.domain.DomainName), String.Empty, 0, Int32.MaxValue);
+                        foreach (SharePointSiteCollection existentSiteCollection in existentSiteCollections.SiteCollections)
+                        {
+                            Uri existentSiteCollectionUri = new Uri(existentSiteCollection.Name);
+                            if (existentSiteCollection.Name == String.Format("{0}://{1}", existentSiteCollectionUri.Scheme, this.txtHostName.Text.ToLower() + "." + this.domain.DomainName))
+                            {
+                                localMessageBox.ShowWarningMessage("HOSTEDSHAREPOINT_DOMAIN_IN_USE");
+                                return;
+                            }
+                        }
+
+                        item.Name = this.txtHostName.Text.ToLower() + "." + this.domain.DomainName;
+                    }
+                    else
+                        item.Name = string.Empty;
+
+                    // get form data
+
+                    item.OrganizationId = this.OrganizationId;
+                    item.Id = this.SiteCollectionId;
+                    item.PackageId = PanelSecurity.PackageId;
+
+                    item.LocaleId = Int32.Parse(this.ddlLocaleID.SelectedValue);
+                    item.OwnerLogin = this.userSelector.GetSAMAccountName();
+                    item.OwnerEmail = this.userSelector.GetPrimaryEmailAddress();
+                    item.OwnerName = this.userSelector.GetDisplayName();
+                    item.Title = txtTitle.Text;
+                    item.Description = txtDescription.Text;
+
+
                     item.MaxSiteStorage = maxStorage.QuotaValue;
-				    item.WarningStorage = warningStorage.QuotaValue;
+                    item.WarningStorage = warningStorage.QuotaValue;
 
-					int result = ES.Services.HostedSharePointServers.AddSiteCollection(item);
-					if (result < 0)
-					{
-						localMessageBox.ShowResultMessage(result);
-						return;
-					}
-				}
-				catch (Exception ex)
-				{
-					localMessageBox.ShowErrorMessage("HOSTEDSHAREPOINT_ADD_SITECOLLECTION", ex);
-					return;
-				}
-			}
+                    int result = ES.Services.HostedSharePointServers.AddSiteCollection(item);
+                    if (result < 0)
+                    {
+                        localMessageBox.ShowResultMessage(result);
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    localMessageBox.ShowErrorMessage("HOSTEDSHAREPOINT_ADD_SITECOLLECTION", ex);
+                    return;
+                }
+            }
             else
-			{
-                ES.Services.HostedSharePointServers.UpdateQuota(PanelRequest.ItemID, SiteCollectionId, editMaxStorage.QuotaValue, editWarningStorage.QuotaValue);                
-			}
+            {
+                ES.Services.HostedSharePointServers.UpdateQuota(PanelRequest.ItemID, SiteCollectionId, editMaxStorage.QuotaValue, editWarningStorage.QuotaValue);
+            }
 
-			// return
-			RedirectToSiteCollectionsList();
-		}
+            // return
+            RedirectToSiteCollectionsList();
+        }
 
-		private void AddDnsRecord(int domainId, string recordName, string recordData)
-		{
-			int result = ES.Services.Servers.AddDnsZoneRecord(domainId, recordName, DnsRecordType.A, recordData, 0);
-			if (result < 0)
-			{
-				ShowResultMessage(result);
-			}
-		}
+        private void AddDnsRecord(int domainId, string recordName, string recordData)
+        {
+            int result = ES.Services.Servers.AddDnsZoneRecord(domainId, recordName, DnsRecordType.A, recordData, 0, 0, 0, 0);
+            if (result < 0)
+            {
+                ShowResultMessage(result);
+            }
+        }
 
-		private bool IsDnsServiceAvailable()
-		{
-			ProviderInfo dnsProvider = ES.Services.Servers.GetPackageServiceProvider(PanelSecurity.PackageId, ResourceGroups.Dns);
-			return dnsProvider != null;
-		}
+        private bool IsDnsServiceAvailable()
+        {
+            ProviderInfo dnsProvider = ES.Services.Servers.GetPackageServiceProvider(PanelSecurity.PackageId, ResourceGroups.Dns);
+            return dnsProvider != null;
+        }
 
-		private void DeleteItem()
-		{
-			// delete
-			try
-			{
-				int result = ES.Services.HostedSharePointServers.DeleteSiteCollection(this.SiteCollectionId);
-				if (result < 0)
-				{
-					ShowResultMessage(result);
-					return;
-				}
-			}
-			catch (Exception ex)
-			{
-				localMessageBox.ShowErrorMessage("HOSTEDSHAREPOINT_DELETE_SITECOLLECTION", ex);
-				return;
-			}
+        private void DeleteItem()
+        {
+            // delete
+            try
+            {
+                int result = ES.Services.HostedSharePointServers.DeleteSiteCollection(this.SiteCollectionId);
+                if (result < 0)
+                {
+                    ShowResultMessage(result);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                localMessageBox.ShowErrorMessage("HOSTEDSHAREPOINT_DELETE_SITECOLLECTION", ex);
+                return;
+            }
 
-			// return
-			RedirectToSiteCollectionsList();
-		}
+            // return
+            RedirectToSiteCollectionsList();
+        }
 
-		protected void odsAccountsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)
-		{
-			if (e.Exception != null)
-			{
-				localMessageBox.ShowErrorMessage("ORGANIZATION_GET_USERS", e.Exception);
-				e.ExceptionHandled = true;
-			}
-		}
-
-
-		protected void btnCancel_Click(object sender, EventArgs e)
-		{
-			// return
-			RedirectToSiteCollectionsList();
-		}
-
-		protected void btnDelete_Click(object sender, EventArgs e)
-		{
-			DeleteItem();	
-		}
-
-		protected void btnUpdate_Click(object sender, EventArgs e)
-		{
-			SaveItem();
-		}
-		protected void btnBackup_Click(object sender, EventArgs e)
-		{
-			Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "sharepoint_backup_sitecollection", "SiteCollectionID=" + this.SiteCollectionId,"ItemID=" + PanelRequest.ItemID.ToString()));
-		}
-
-		protected void btnRestore_Click(object sender, EventArgs e)
-		{
-			Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "sharepoint_restore_sitecollection", "SiteCollectionID=" + this.SiteCollectionId, "ItemID=" + PanelRequest.ItemID.ToString()));
-		}
+        protected void odsAccountsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)
+        {
+            if (e.Exception != null)
+            {
+                localMessageBox.ShowErrorMessage("ORGANIZATION_GET_USERS", e.Exception);
+                e.ExceptionHandled = true;
+            }
+        }
 
 
-		private void RedirectToSiteCollectionsList()
-		{
-			Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "sharepoint_sitecollections", "ItemID=" + PanelRequest.ItemID.ToString()));
-		}
+        protected void btnCancel_Click(object sender, EventArgs e)
+        {
+            // return
+            RedirectToSiteCollectionsList();
+        }
 
-		//private void RegisterOwnerSelector()
-		//{
-		//    // Define the name and type of the client scripts on the page.
-		//    String csname = "OwnerSelectorScript";
-		//    Type cstype = this.GetType();
+        protected void btnDelete_Click(object sender, EventArgs e)
+        {
+            DeleteItem();
+        }
 
-		//    // Get a ClientScriptManager reference from the Page class.
-		//    ClientScriptManager cs = Page.ClientScript;
+        protected void btnUpdate_Click(object sender, EventArgs e)
+        {
+            SaveItem();
+        }
 
-		//    // Check to see if the client script is already registered.
-		//    if (!cs.IsClientScriptBlockRegistered(cstype, csname))
-		//    {
-		//        StringBuilder ownerSelector = new StringBuilder();
-		//        ownerSelector.Append("<script type=text/javascript> function DoSelectOwner(ownerId, ownerDisplayName, email) {");
-		//        ownerSelector.AppendFormat("{0}.{1}.value=ownerId;", this.Page.Form.ID, this.hdnSiteCollectionOwner.ClientID);
-		//        ownerSelector.AppendFormat("{0}.{1}.value=ownerDisplayName;", this.Page.Form.ID, this.txtSiteCollectionOwner.ClientID);
-		//        ownerSelector.AppendFormat("{0}.{1}.value=email;", this.Page.Form.ID, this.hdnSiteCollectionOwnerEmail.ClientID);
-		//        ownerSelector.Append("} </script>");
-		//        cs.RegisterClientScriptBlock(cstype, csname, ownerSelector.ToString(), false);
-		//    }
+        protected void btnBackup_Click(object sender, EventArgs e)
+        {
+            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "sharepoint_backup_sitecollection", "SiteCollectionID=" + this.SiteCollectionId, "ItemID=" + PanelRequest.ItemID.ToString()));
+        }
 
-		//}
+        protected void btnRestore_Click(object sender, EventArgs e)
+        {
+            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "sharepoint_restore_sitecollection", "SiteCollectionID=" + this.SiteCollectionId, "ItemID=" + PanelRequest.ItemID.ToString()));
+        }
 
-		//private StringDictionary ConvertArrayToDictionary(string[] settings)
-		//{
-		//    StringDictionary r = new StringDictionary();
-		//    foreach (string setting in settings)
-		//    {
-		//        int idx = setting.IndexOf('=');
-		//        r.Add(setting.Substring(0, idx), setting.Substring(idx + 1));
-		//    }
-		//    return r;
-		//}
-	}
+
+
+        private void RedirectToSiteCollectionsList()
+        {
+            Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "sharepoint_sitecollections", "ItemID=" + PanelRequest.ItemID.ToString()));
+        }
+
+        private bool UseSharedSLL(int packageID)
+        {
+            PackageContext cntx = ES.Services.Packages.GetPackageContext(PanelSecurity.PackageId);
+            if (cntx != null)
+            {
+                foreach (QuotaValueInfo quota in cntx.QuotasArray)
+                {
+                    switch (quota.QuotaId)
+                    {
+                        case 400:
+                            if (Convert.ToBoolean(quota.QuotaAllocatedValue))
+                            {
+                                return true;
+                            }
+
+                            break;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+
+        //private void RegisterOwnerSelector()
+        //{
+        //    // Define the name and type of the client scripts on the page.
+        //    String csname = "OwnerSelectorScript";
+        //    Type cstype = this.GetType();
+
+        //    // Get a ClientScriptManager reference from the Page class.
+        //    ClientScriptManager cs = Page.ClientScript;
+
+        //    // Check to see if the client script is already registered.
+        //    if (!cs.IsClientScriptBlockRegistered(cstype, csname))
+        //    {
+        //        StringBuilder ownerSelector = new StringBuilder();
+        //        ownerSelector.Append("<script type=text/javascript> function DoSelectOwner(ownerId, ownerDisplayName, email) {");
+        //        ownerSelector.AppendFormat("{0}.{1}.value=ownerId;", this.Page.Form.ID, this.hdnSiteCollectionOwner.ClientID);
+        //        ownerSelector.AppendFormat("{0}.{1}.value=ownerDisplayName;", this.Page.Form.ID, this.txtSiteCollectionOwner.ClientID);
+        //        ownerSelector.AppendFormat("{0}.{1}.value=email;", this.Page.Form.ID, this.hdnSiteCollectionOwnerEmail.ClientID);
+        //        ownerSelector.Append("} </script>");
+        //        cs.RegisterClientScriptBlock(cstype, csname, ownerSelector.ToString(), false);
+        //    }
+
+        //}
+
+        //private StringDictionary ConvertArrayToDictionary(string[] settings)
+        //{
+        //    StringDictionary r = new StringDictionary();
+        //    foreach (string setting in settings)
+        //    {
+        //        int idx = setting.IndexOf('=');
+        //        r.Add(setting.Substring(0, idx), setting.Substring(idx + 1));
+        //    }
+        //    return r;
+        //}
+    }
 }

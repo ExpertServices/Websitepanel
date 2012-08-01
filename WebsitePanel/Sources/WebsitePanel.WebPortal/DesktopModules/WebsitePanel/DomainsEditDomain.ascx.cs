@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -304,7 +304,7 @@ namespace WebsitePanel.Portal
             try
             {
                 // create instant alias
-                int result = ES.Services.Servers.CreateDomainInstantAlias(PanelRequest.DomainID);
+                int result = ES.Services.Servers.CreateDomainInstantAlias("", PanelRequest.DomainID);
                 if (result < 0)
                 {
                     ShowResultMessage(result);

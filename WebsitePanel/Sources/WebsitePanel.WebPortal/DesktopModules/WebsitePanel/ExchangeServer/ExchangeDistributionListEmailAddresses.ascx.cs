@@ -42,16 +42,17 @@ using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class ExchangeDistributionListEmailAddresses : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
+    public partial class ExchangeDistributionListEmailAddresses : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
             if (!IsPostBack)
             {
                 BindEmails();
             }
+
             
-		}
+        }
 
         private void BindEmails()
         {
@@ -79,11 +80,11 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             if (!Page.IsValid)
                 return;
-           
-           btnDeleteAddresses.Enabled = true;
-           btnSetAsPrimary.Enabled = true;
 
-           try
+            btnDeleteAddresses.Enabled = true;
+            btnSetAsPrimary.Enabled = true;
+
+            try
             {
                 int result = ES.Services.ExchangeServer.AddDistributionListEmailAddress(
                     PanelRequest.ItemID, PanelRequest.AccountID, email.Email);
@@ -94,17 +95,17 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-				// rebind
-				BindEmails();
+                // rebind
+                BindEmails();
 
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("EXCHANGE_DLIST_ADD_EMAIL", ex);
+                messageBox.ShowErrorMessage("EXCHANGE_DLIST_ADD_EMAIL", ex);
             }
 
-			// clear field
-			email.AccountName = "";
+            // clear field
+            email.AccountName = "";
         }
 
         protected void btnSetAsPrimary_Click(object sender, EventArgs e)
@@ -113,10 +114,10 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 string email = null;
                 bool Checked = false;
-                
+
                 for (int i = 0; i < gvEmails.Rows.Count; i++)
                 {
-                    
+
                     GridViewRow row = gvEmails.Rows[i];
                     CheckBox chkSelect = (CheckBox)row.FindControl("chkSelect");
                     if (chkSelect.Checked)
@@ -145,14 +146,14 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-				// rebind
-				BindEmails();
+                // rebind
+                BindEmails();
 
                 messageBox.ShowSuccessMessage("EXCHANGE_MAILBOX_SET_DEFAULT_EMAIL");
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("EXCHANGE_DLIST_SET_DEFAULT_EMAIL", ex);
+                messageBox.ShowErrorMessage("EXCHANGE_DLIST_SET_DEFAULT_EMAIL", ex);
             }
         }
 
@@ -187,13 +188,13 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-				// rebind
-				BindEmails();
+                // rebind
+                BindEmails();
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("EXCHANGE_DLIST_DELETE_EMAILS", ex);
+                messageBox.ShowErrorMessage("EXCHANGE_DLIST_DELETE_EMAILS", ex);
             }
         }
-	}
+    }
 }

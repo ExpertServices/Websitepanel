@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -28,6 +28,7 @@
 
 using System;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
@@ -39,6 +40,9 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 BindPolicy();
             }
+
+            
+
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
@@ -55,7 +59,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 // bind data
                 chkAllowNonProvisionable.Checked = policy.AllowNonProvisionableDevices;
-                
+
                 chkAllowAttachments.Checked = policy.AttachmentsEnabled;
                 sizeMaxAttachmentSize.ValueKB = policy.MaxAttachmentSizeKB;
 

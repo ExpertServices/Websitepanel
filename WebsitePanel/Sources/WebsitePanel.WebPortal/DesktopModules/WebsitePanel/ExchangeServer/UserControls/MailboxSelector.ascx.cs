@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -37,24 +37,24 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
     public partial class MailboxSelector : WebsitePanelControlBase
     {
         public const string DirectionString = "DirectionString";
-        
+
         public bool MailboxesEnabled
-		{
-			get { return ViewState["MailboxesEnabled"] != null ? (bool)ViewState["MailboxesEnabled"] : false; }
-			set { ViewState["MailboxesEnabled"] = value; }
-		}
+        {
+            get { return ViewState["MailboxesEnabled"] != null ? (bool)ViewState["MailboxesEnabled"] : false; }
+            set { ViewState["MailboxesEnabled"] = value; }
+        }
 
-		public bool ContactsEnabled
-		{
-			get { return ViewState["ContactsEnabled"] != null ? (bool)ViewState["ContactsEnabled"] : false; }
-			set { ViewState["ContactsEnabled"] = value; }
-		}
+        public bool ContactsEnabled
+        {
+            get { return ViewState["ContactsEnabled"] != null ? (bool)ViewState["ContactsEnabled"] : false; }
+            set { ViewState["ContactsEnabled"] = value; }
+        }
 
-		public bool DistributionListsEnabled
-		{
-			get { return ViewState["DistributionListsEnabled"] != null ? (bool)ViewState["DistributionListsEnabled"] : false; }
-			set { ViewState["DistributionListsEnabled"] = value; }
-		}
+        public bool DistributionListsEnabled
+        {
+            get { return ViewState["DistributionListsEnabled"] != null ? (bool)ViewState["DistributionListsEnabled"] : false; }
+            set { ViewState["DistributionListsEnabled"] = value; }
+        }
 
         public bool ShowOnlyMailboxes
         {
@@ -62,20 +62,20 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             set { ViewState["ShowOnlyMailboxes"] = value; }
         }
 
-		public int ExcludeAccountId
-		{
-			get { return PanelRequest.AccountID; }
-		}
+        public int ExcludeAccountId
+        {
+            get { return PanelRequest.AccountID; }
+        }
 
-		public void SetAccount(ExchangeAccount account)
-		{
-			BindSelectedAccount(account);
-		}
+        public void SetAccount(ExchangeAccount account)
+        {
+            BindSelectedAccount(account);
+        }
 
-		public string GetAccount()
-		{
-			return (string)ViewState["AccountName"];
-		}
+        public string GetAccount()
+        {
+            return (string)ViewState["AccountName"];
+        }
         public int GetAccountId()
         {
             return Utils.ParseInt(ViewState["AccountId"], 0);
@@ -84,11 +84,11 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
         protected void Page_Load(object sender, EventArgs e)
         {
-			// toggle controls
-			if (!IsPostBack)
-			{
+            // toggle controls
+            if (!IsPostBack)
+            {
                 chkIncludeMailboxes.Visible = MailboxesEnabled;
-			    
+
                 chkIncludeRooms.Visible = MailboxesEnabled && !ShowOnlyMailboxes;
 
                 chkIncludeEquipment.Visible = MailboxesEnabled && !ShowOnlyMailboxes;
@@ -98,47 +98,47 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 chkIncludeRooms.Checked = MailboxesEnabled && !ShowOnlyMailboxes;
 
                 chkIncludeEquipment.Checked = MailboxesEnabled && !ShowOnlyMailboxes;
-                
+
                 chkIncludeContacts.Visible = ContactsEnabled;
-				chkIncludeContacts.Checked = ContactsEnabled;
-				chkIncludeLists.Visible = DistributionListsEnabled;
-				chkIncludeLists.Checked = DistributionListsEnabled;
-			}
+                chkIncludeContacts.Checked = ContactsEnabled;
+                chkIncludeLists.Visible = DistributionListsEnabled;
+                chkIncludeLists.Checked = DistributionListsEnabled;
+            }
         }
 
-		private void BindSelectedAccount(ExchangeAccount account)
-		{
-			if (account != null)
-			{
-				txtDisplayName.Text = account.DisplayName;
-				ViewState["AccountName"] = account.AccountName;
+        private void BindSelectedAccount(ExchangeAccount account)
+        {
+            if (account != null)
+            {
+                txtDisplayName.Text = account.DisplayName;
+                ViewState["AccountName"] = account.AccountName;
                 ViewState["PrimaryEmailAddress"] = account.PrimaryEmailAddress;
                 ViewState["AccountId"] = account.AccountId;
-			}
-			else
-			{
-				txtDisplayName.Text = "";
-				ViewState["AccountName"] = null;
+            }
+            else
+            {
+                txtDisplayName.Text = "";
+                ViewState["AccountName"] = null;
                 ViewState["PrimaryEmailAddress"] = null;
                 ViewState["AccountId"] = null;
-			}
-		}
+            }
+        }
 
-		public string GetAccountImage(int accountTypeId)
-		{
-			ExchangeAccountType accountType = (ExchangeAccountType)accountTypeId;
-			string imgName = "mailbox_16.gif";
-			if (accountType == ExchangeAccountType.Contact)
-				imgName = "contact_16.gif";
-			else if (accountType == ExchangeAccountType.DistributionList)
-				imgName = "dlist_16.gif";
+        public string GetAccountImage(int accountTypeId)
+        {
+            ExchangeAccountType accountType = (ExchangeAccountType)accountTypeId;
+            string imgName = "mailbox_16.gif";
+            if (accountType == ExchangeAccountType.Contact)
+                imgName = "contact_16.gif";
+            else if (accountType == ExchangeAccountType.DistributionList)
+                imgName = "dlist_16.gif";
             else if (accountType == ExchangeAccountType.Room)
                 imgName = "room_16.gif";
             else if (accountType == ExchangeAccountType.Equipment)
                 imgName = "equipment_16.gif";
 
-			return GetThemedImage("Exchange/" + imgName);
-		}
+            return GetThemedImage("Exchange/" + imgName);
+        }
 
 
         private SortDirection Direction
@@ -152,26 +152,26 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             return string.Compare(user1.DisplayName, user2.DisplayName);
         }
 
-        
+
         private void BindPopupAccounts()
-		{
-			ExchangeAccount[] accounts = ES.Services.ExchangeServer.SearchAccounts(PanelRequest.ItemID,
-				chkIncludeMailboxes.Checked, chkIncludeContacts.Checked, chkIncludeLists.Checked,
+        {
+            ExchangeAccount[] accounts = ES.Services.ExchangeServer.SearchAccounts(PanelRequest.ItemID,
+                chkIncludeMailboxes.Checked, chkIncludeContacts.Checked, chkIncludeLists.Checked,
                 chkIncludeRooms.Checked, chkIncludeEquipment.Checked,
-				ddlSearchColumn.SelectedValue, txtSearchValue.Text + "%", "");
+                ddlSearchColumn.SelectedValue, txtSearchValue.Text + "%", "");
 
-			if (ExcludeAccountId > 0)
-			{
-				List<ExchangeAccount> updatedAccounts = new List<ExchangeAccount>();
-				foreach (ExchangeAccount account in accounts)
-					if (account.AccountId != ExcludeAccountId)
-						updatedAccounts.Add(account);
+            if (ExcludeAccountId > 0)
+            {
+                List<ExchangeAccount> updatedAccounts = new List<ExchangeAccount>();
+                foreach (ExchangeAccount account in accounts)
+                    if (account.AccountId != ExcludeAccountId)
+                        updatedAccounts.Add(account);
 
-				accounts = updatedAccounts.ToArray();
-			}
+                accounts = updatedAccounts.ToArray();
+            }
 
             Array.Sort(accounts, CompareAccount);
-            
+
             if (Direction == SortDirection.Ascending)
             {
                 Array.Reverse(accounts);
@@ -182,56 +182,56 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
             gvPopupAccounts.DataSource = accounts;
             gvPopupAccounts.DataBind();
-            
-            
-		}
 
-		protected void chkIncludeMailboxes_CheckedChanged(object sender, EventArgs e)
-		{
-			BindPopupAccounts();
-		}
 
-		protected void cmdSearch_Click(object sender, ImageClickEventArgs e)
-		{
-			BindPopupAccounts();
-		}
+        }
 
-		protected void cmdClear_Click(object sender, EventArgs e)
-		{
-			BindSelectedAccount(null);
-		}
+        protected void chkIncludeMailboxes_CheckedChanged(object sender, EventArgs e)
+        {
+            BindPopupAccounts();
+        }
 
-		protected void ImageButton1_Click(object sender, ImageClickEventArgs e)
-		{
-			// bind all accounts
-			BindPopupAccounts();
+        protected void cmdSearch_Click(object sender, ImageClickEventArgs e)
+        {
+            BindPopupAccounts();
+        }
 
-			// show modal
-			SelectAccountsModal.Show();
-		}
+        protected void cmdClear_Click(object sender, EventArgs e)
+        {
+            BindSelectedAccount(null);
+        }
 
-		protected void gvPopupAccounts_RowCommand(object sender, GridViewCommandEventArgs e)
-		{
-			if (e.CommandName == "SelectAccount")
-			{
-				string[] parts = e.CommandArgument.ToString().Split('|');
-				ExchangeAccount account = new ExchangeAccount();
-				account.AccountName = parts[0];
-				account.DisplayName = parts[1];
+        protected void ImageButton1_Click(object sender, ImageClickEventArgs e)
+        {
+            // bind all accounts
+            BindPopupAccounts();
+
+            // show modal
+            SelectAccountsModal.Show();
+        }
+
+        protected void gvPopupAccounts_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "SelectAccount")
+            {
+                string[] parts = e.CommandArgument.ToString().Split('|');
+                ExchangeAccount account = new ExchangeAccount();
+                account.AccountName = parts[0];
+                account.DisplayName = parts[1];
                 account.PrimaryEmailAddress = parts[2];
                 account.AccountId = Utils.ParseInt(parts[3]);
 
 
-				// set account
-				BindSelectedAccount(account);
+                // set account
+                BindSelectedAccount(account);
 
-				// hide popup
-				SelectAccountsModal.Hide();
+                // hide popup
+                SelectAccountsModal.Hide();
 
-				// update parent panel
-				MainUpdatePanel.Update();
-			}
-		}
+                // update parent panel
+                MainUpdatePanel.Update();
+            }
+        }
 
         protected void OnSorting(object sender, GridViewSortEventArgs e)
         {

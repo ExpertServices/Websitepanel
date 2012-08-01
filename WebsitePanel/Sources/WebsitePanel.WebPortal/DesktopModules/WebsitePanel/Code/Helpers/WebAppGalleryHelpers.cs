@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -38,6 +38,12 @@ namespace WebsitePanel.Portal
         {         
             return ES.Services.WebApplicationGallery.GetGalleryApplications(packageId,  categoryId);
         }
+
+        public GalleryApplicationsResult GetGalleryApplicationsFiltered(string pattern, int packageId)
+        {
+            return ES.Services.WebApplicationGallery.GetGalleryApplicationsFiltered(packageId, pattern);
+        }
+
 
 		public List<GalleryApplication> GetGalleryApplicationsByServiceId(int serviceId)
 		{

@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -32,31 +32,35 @@ using System.Text;
 
 namespace WebsitePanel.Providers.HostedSolution
 {
-	public class ExchangeAccount
-	{
-		int accountId;
-		int itemId;
+    public class ExchangeAccount
+    {
+        int accountId;
+        int itemId;
         int packageId;
-		ExchangeAccountType accountType;
-		string accountName;
-		string displayName;
-		string primaryEmailAddress;
-		bool mailEnabledPublicFolder;
+        string subscriberNumber;
+        ExchangeAccountType accountType;
+        string accountName;
+        string displayName;
+        string primaryEmailAddress;
+        bool mailEnabledPublicFolder;
         MailboxManagerActions mailboxManagerActions;
         string accountPassword;
         string samAccountName;
+        int mailboxPlanId;
+        string mailboxPlan;
+        string publicFolderPermission;
 
-		public int AccountId
-		{
-			get { return this.accountId; }
-			set { this.accountId = value; }
-		}
+        public int AccountId
+        {
+            get { return this.accountId; }
+            set { this.accountId = value; }
+        }
 
-		public int ItemId
-		{
+        public int ItemId
+        {
             get { return this.itemId; }
             set { this.itemId = value; }
-		}
+        }
 
         public int PackageId
         {
@@ -64,17 +68,17 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.packageId = value; }
         }
 
-		public ExchangeAccountType AccountType
-		{
-			get { return this.accountType; }
-			set { this.accountType = value; }
-		}
+        public ExchangeAccountType AccountType
+        {
+            get { return this.accountType; }
+            set { this.accountType = value; }
+        }
 
-		public string AccountName
-		{
-			get { return this.accountName; }
-			set { this.accountName = value; }
-		}
+        public string AccountName
+        {
+            get { return this.accountName; }
+            set { this.accountName = value; }
+        }
 
         public string SamAccountName
         {
@@ -82,23 +86,23 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.samAccountName = value; }
         }
 
-		public string DisplayName
-		{
-			get { return this.displayName; }
-			set { this.displayName = value; }
-		}
+        public string DisplayName
+        {
+            get { return this.displayName; }
+            set { this.displayName = value; }
+        }
 
-		public string PrimaryEmailAddress
-		{
-			get { return this.primaryEmailAddress; }
-			set { this.primaryEmailAddress = value; }
-		}
+        public string PrimaryEmailAddress
+        {
+            get { return this.primaryEmailAddress; }
+            set { this.primaryEmailAddress = value; }
+        }
 
-		public bool MailEnabledPublicFolder
-		{
-			get { return this.mailEnabledPublicFolder; }
-			set { this.mailEnabledPublicFolder = value; }
-		}
+        public bool MailEnabledPublicFolder
+        {
+            get { return this.mailEnabledPublicFolder; }
+            set { this.mailEnabledPublicFolder = value; }
+        }
 
         public string AccountPassword
         {
@@ -111,5 +115,32 @@ namespace WebsitePanel.Providers.HostedSolution
             get { return this.mailboxManagerActions; }
             set { this.mailboxManagerActions = value; }
         }
-	}
+
+        public int MailboxPlanId
+        {
+            get { return this.mailboxPlanId; }
+            set { this.mailboxPlanId = value; }
+        }
+
+        public string MailboxPlan
+        {
+            get { return this.mailboxPlan; }
+            set { this.mailboxPlan = value; }
+        }
+
+
+        public string SubscriberNumber
+        {
+            get { return this.subscriberNumber; }
+            set { this.subscriberNumber = value; }
+        }
+
+        public string PublicFolderPermission
+        {
+            get { return this.publicFolderPermission; }
+            set { this.publicFolderPermission = value; }
+        }
+
+
+    }
 }

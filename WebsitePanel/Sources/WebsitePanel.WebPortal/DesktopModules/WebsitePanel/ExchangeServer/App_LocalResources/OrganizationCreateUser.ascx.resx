@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnCreate.OnClientClick" xml:space="preserve">
     <value>ShowProgressDialog('Creating user...');</value>
@@ -131,7 +131,7 @@
 
 &lt;p&gt;&lt;b&gt;E-Mail Address&lt;/b&gt; is a User Principal Name (UPN). It is used as a logon name in Outlook, Outlook Web Access (OWA) or SharePoint.&lt;/p&gt;
 
-&lt;p&gt;New organization domains can be added on "Domain Names" page. Temporary domain name is provided by default to allow creating new users as soon as possible.&lt;/p&gt;
+&lt;p&gt;New organization domains can be added on "Domain Names" page.&lt;/p&gt;
 
 &lt;p&gt;Make sure your password is strong enough, i.e. contains lower and capital letters, numbers and symbols.&lt;/p&gt;</value>
   </data>
@@ -144,6 +144,9 @@
   <data name="locPassword.Text" xml:space="preserve">
     <value>Password: *</value>
   </data>
+  <data name="locSubscriberNumber.Text" xml:space="preserve">
+    <value>Subscriber Number: *</value>
+  </data>
   <data name="locTitle.Text" xml:space="preserve">
     <value>Create New User</value>
   </data>
@@ -154,6 +157,12 @@
     <value>Enter Display Name</value>
   </data>
   <data name="valRequireDisplayName.Text" xml:space="preserve">
+    <value>*</value>
+  </data>
+  <data name="valRequireSubscriberNumber.ErrorMessage" xml:space="preserve">
+    <value>Enter Subscriber Number</value>
+  </data>
+  <data name="valRequireSubscriberNumber.Text" xml:space="preserve">
     <value>*</value>
   </data>
 </root>

@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -31,12 +31,14 @@ namespace WebsitePanel.Providers.HostedSolution
 	public class ExchangePublicFolder
 	{
 		string name;
+        string netbios;
 		string displayName;
+        string sAMAccountName;
 		bool hideFromAddressBook;
 		bool mailEnabled;
 
-		ExchangeAccount[] authorsAccounts;
-
+		ExchangeAccount[] accounts;	
+		
 		ExchangeAccount[] acceptAccounts;
 		ExchangeAccount[] rejectAccounts;
 		bool requireSenderAuthentication;
@@ -59,12 +61,13 @@ namespace WebsitePanel.Providers.HostedSolution
 			set { this.mailEnabled = value; }
 		}
 
-		public WebsitePanel.Providers.HostedSolution.ExchangeAccount[] AuthorsAccounts
-		{
-			get { return this.authorsAccounts; }
-			set { this.authorsAccounts = value; }
-		}
-
+		        
+		public WebsitePanel.Providers.HostedSolution.ExchangeAccount[] Accounts
+        {
+            get { return this.accounts; }
+            set { this.accounts = value; }
+        }
+        
 		public WebsitePanel.Providers.HostedSolution.ExchangeAccount[] AcceptAccounts
 		{
 			get { return this.acceptAccounts; }
@@ -88,5 +91,19 @@ namespace WebsitePanel.Providers.HostedSolution
 			get { return requireSenderAuthentication; }
 			set { requireSenderAuthentication = value; }
 		}
+
+        public string SAMAccountName
+        {
+            get { return this.sAMAccountName; }
+            set { this.sAMAccountName = value; }
+        }
+
+        public string NETBIOS
+        {
+            get { return this.netbios; }
+            set { this.netbios = value; }
+        }
+
+
 	}
 }

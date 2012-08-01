@@ -10,6 +10,16 @@
                     Text="WEB Policy" NavigateUrl='<%# GetSettingsLink("WebPolicy", "SettingsWebPolicy") %>'></asp:HyperLink>
         </li>
         <li>
+            <asp:HyperLink ID="lnkExchangeMailboxPlansPolicy" runat="server" meta:resourcekey="lnkExchangeMailboxPlansPolicy"
+                    Text="Exchange Mailboxplan Policy" NavigateUrl='<%# GetSettingsLink("ExchangeMailboxPlansPolicy", "SettingsExchangeMailboxPlansPolicy") %>'></asp:HyperLink>
+        </li>
+
+        <li>
+            <asp:HyperLink ID="lnkLyncUserPlansPolicy" runat="server" meta:resourcekey="lnkLyncUserPlansPolicy"
+                    Text="Lync Userplan Policy" NavigateUrl='<%# GetSettingsLink("LyncUserPlansPolicy", "SettingsLyncUserPlansPolicy") %>'></asp:HyperLink>
+        </li>
+
+        <li>
             <asp:HyperLink ID="lnkFtpPolicy" runat="server" meta:resourcekey="lnkFtpPolicy"
                     Text="FTP Policy" NavigateUrl='<%# GetSettingsLink("FtpPolicy", "SettingsFtpPolicy") %>'></asp:HyperLink>
         </li>
@@ -36,10 +46,6 @@
         <li>
             <asp:HyperLink ID="lnkExchangePolicy" runat="server" meta:resourcekey="lnkExchangePolicy"
                     Text="Exchange Server Policy" NavigateUrl='<%# GetSettingsLink("ExchangePolicy", "SettingsExchangePolicy") %>'></asp:HyperLink>
-        </li>
-        <li>
-            <asp:HyperLink ID="lnkExchangeHostedEditionPolicy" runat="server" meta:resourcekey="lnkExchangeHostedEditionPolicy"
-                    Text="Exchange Hosting Mode Policy" NavigateUrl='<%# GetSettingsLink("ExchangeHostedEditionPolicy", "SettingsExchangeHostedEditionPolicy") %>'></asp:HyperLink>
         </li>
         <li>
             <asp:HyperLink ID="lnkVpsPolicy" runat="server" meta:resourcekey="lnkVpsPolicy"

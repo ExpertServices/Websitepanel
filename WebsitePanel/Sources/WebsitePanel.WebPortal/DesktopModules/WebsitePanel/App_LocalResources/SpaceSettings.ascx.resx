@@ -141,9 +141,6 @@
   <data name="lnkVps.Text" xml:space="preserve">
     <value>Virtual Private Servers</value>
   </data>
-  <data name="lnkExchangeHostedEdition.Text" xml:space="preserve">
-    <value>Exchange Hosting Mode</value>
-  </data>
   <data name="lnkVpsForPC.Text" xml:space="preserve">
     <value>Virtual Private Servers for Private Cloud</value>
   </data>

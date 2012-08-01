@@ -228,6 +228,7 @@ and below is the summary information for its resources.
         &lt;ad:if test="#space.Groups.ContainsKey("MsSQL2000")#"&gt;&lt;li&gt;&lt;a href="##mssql2000"&gt;SQL Server 2000&lt;/a&gt;&lt;/li&gt;&lt;/ad:if&gt;
         &lt;ad:if test="#space.Groups.ContainsKey("MsSQL2005")#"&gt;&lt;li&gt;&lt;a href="##mssql2005"&gt;SQL Server 2005&lt;/a&gt;&lt;/li&gt;&lt;/ad:if&gt;
         &lt;ad:if test="#space.Groups.ContainsKey("MsSQL2008")#"&gt;&lt;li&gt;&lt;a href="##mssql2008"&gt;SQL Server 2008&lt;/a&gt;&lt;/li&gt;&lt;/ad:if&gt;
+        &lt;ad:if test="#space.Groups.ContainsKey("MsSQL2012")#"&gt;&lt;li&gt;&lt;a href="##mssql2012"&gt;SQL Server 2012&lt;/a&gt;&lt;/li&gt;&lt;/ad:if&gt;
         &lt;ad:if test="#space.Groups.ContainsKey("MySQL4")#"&gt;&lt;li&gt;&lt;a href="##mysql4"&gt;My SQL 4.x&lt;/a&gt;&lt;/li&gt;&lt;/ad:if&gt;
         &lt;ad:if test="#space.Groups.ContainsKey("MySQL5")#"&gt;&lt;li&gt;&lt;a href="##mysql5"&gt;My SQL 5.x&lt;/a&gt;&lt;/li&gt;&lt;/ad:if&gt;
         &lt;li&gt;&lt;a href="##msaccess"&gt;Microsoft Access&lt;/a&gt;&lt;/li&gt;
@@ -675,6 +676,34 @@ using this IP address instead of actual POP3/SMTP/IMAP servers name:
 &lt;ad:MsSqlConnectionStrings server="#MsSQL2008Address#" /&gt;
 &lt;/ad:if&gt;
 
+&lt;ad:if test="#space.Groups.ContainsKey("MsSQL2012")#"&gt;
+&lt;a name="mssql2012"&gt;&lt;/a&gt;
+
+&lt;h2&gt;SQL Server 2012&lt;/h2&gt;
+
+&lt;table&gt;
+    &lt;tr&gt;
+        &lt;td class="Label"&gt;Maximum Number of Databases:&lt;/td&gt;
+        &lt;td&gt;&lt;ad:NumericQuota quota="MsSQL2012.Databases" /&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td class="Label"&gt;Maximum Number of Users:&lt;/td&gt;
+        &lt;td&gt;&lt;ad:NumericQuota quota="MsSQL2012.Users" /&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;
+	In order to connect to SQL Server 2012 from Management Studio, Enterprise Manager, Query Analyzer
+	or other client software you can use the following SQL Server address:
+&lt;/p&gt;
+&lt;table&gt;
+	&lt;tr&gt;
+		&lt;td&gt;#MsSQL2012Address#&lt;/td&gt;
+	&lt;/tr&gt;
+&lt;/table&gt;
+&lt;ad:MsSqlConnectionStrings server="#MsSQL2012Address#" /&gt;
+&lt;/ad:if&gt;
+
 &lt;ad:if test="#space.Groups.ContainsKey("MySQL4")#"&gt;
 &lt;a name="mysql4"&gt;&lt;/a&gt;
 &lt;h2&gt;MySQL 4.x&lt;/h2&gt;
@@ -1007,6 +1036,18 @@ In order to connect to SQL Server 2008 from Management Studio, Enterprise Manage
     #MsSQL2008Address#&lt;/td&gt;
 
 &lt;ad:MsSqlConnectionStrings server="#MsSQL2008Address#" /&gt;
+&lt;/ad:if&gt;
+
+&lt;ad:if test="#space.Groups.ContainsKey("MsSQL2012")#"&gt;SQL Server 2012
+---------------
+Maximum Number of Databases: &lt;ad:NumericQuota quota="MsSQL2012.Databases" /&gt;
+Maximum Number of Users: &lt;ad:NumericQuota quota="MsSQL2012.Users" /&gt;
+
+In order to connect to SQL Server 2012 from Management Studio, Enterprise Manager, Query Analyzer or other client software you can use the following SQL Server address:
+    
+    #MsSQL2012Address#&lt;/td&gt;
+
+&lt;ad:MsSqlConnectionStrings server="#MsSQL2012Address#" /&gt;
 &lt;/ad:if&gt;
 
 

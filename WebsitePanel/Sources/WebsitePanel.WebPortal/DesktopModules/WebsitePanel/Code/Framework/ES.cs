@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -82,7 +82,14 @@ namespace WebsitePanel.Portal
         {
             get { return GetCachedProxy<esOCS>(); }
         }
-        
+
+
+        public esLync Lync
+        {
+            get { return GetCachedProxy<esLync>(); }
+        }
+
+
         public esOrganizations Organizations
         {
             get
@@ -205,11 +212,6 @@ namespace WebsitePanel.Portal
 		{
 			get { return GetCachedProxy<esExchangeServer>(); }
 		}
-
-        public esExchangeHostedEdition ExchangeHostedEdition
-        {
-            get { return GetCachedProxy<esExchangeHostedEdition>(); }
-        }
 
         protected ES()
         {

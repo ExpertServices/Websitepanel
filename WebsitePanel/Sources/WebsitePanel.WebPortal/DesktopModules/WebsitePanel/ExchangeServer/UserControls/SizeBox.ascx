@@ -1,6 +1,8 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SizeBox.ascx.cs" Inherits="WebsitePanel.Portal.ExchangeServer.UserControls.SizeBox" %>
 <asp:TextBox ID="txtValue" runat="server" CssClass="TextBox100" MaxLength="15"></asp:TextBox>
 <asp:Localize ID="locKB" runat="server" meta:resourcekey="locKB" Text="KB"></asp:Localize>
+<asp:Localize ID="locMB" runat="server" meta:resourcekey="locMB" Text="MB"></asp:Localize>
+<asp:Localize ID="locPct" runat="server" meta:resourcekey="locPct" Text="%"></asp:Localize>
 
 <ajaxtoolkit:ValidatorCalloutExtender ID="_ValidatorCalloutExtender" runat="server"
                             TargetControlID="valRequireNumber"

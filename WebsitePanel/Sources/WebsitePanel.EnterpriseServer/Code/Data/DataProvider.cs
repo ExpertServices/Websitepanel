@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -190,7 +190,7 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@Username", username));
         }
 
-        public static int AddUser(int actorId, int ownerId, int roleId, int statusId, bool isDemo,
+        public static int AddUser(int actorId, int ownerId, int roleId, int statusId, int loginStatusId, bool isDemo,
             bool isPeer, string comments, string username, string password,
             string firstName, string lastName, string email, string secondaryEmail,
             string address, string city, string country, string state, string zip,
@@ -208,6 +208,7 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@OwnerID", ownerId),
                 new SqlParameter("@RoleID", roleId),
                 new SqlParameter("@StatusId", statusId),
+                new SqlParameter("@LoginStatusId", loginStatusId),
                 new SqlParameter("@IsDemo", isDemo),
                 new SqlParameter("@IsPeer", isPeer),
                 new SqlParameter("@Comments", comments),
@@ -227,13 +228,13 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@fax", fax),
                 new SqlParameter("@instantMessenger", instantMessenger),
                 new SqlParameter("@htmlMail", htmlMail),
-				new SqlParameter("@CompanyName", companyName),
-				new SqlParameter("@EcommerceEnabled", ecommerceEnabled));
+                new SqlParameter("@CompanyName", companyName),
+                new SqlParameter("@EcommerceEnabled", ecommerceEnabled));
 
             return Convert.ToInt32(prmUserId.Value);
         }
 
-        public static void UpdateUser(int actorId, int userId, int roleId, int statusId, bool isDemo,
+        public static void UpdateUser(int actorId, int userId, int roleId, int statusId, int loginStatusId, bool isDemo,
             bool isPeer, string comments, string firstName, string lastName, string email, string secondaryEmail,
             string address, string city, string country, string state, string zip,
             string primaryPhone, string secondaryPhone, string fax, string instantMessenger, bool htmlMail,
@@ -245,6 +246,7 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@ActorId", actorId),
                 new SqlParameter("@RoleID", roleId),
                 new SqlParameter("@StatusId", statusId),
+                new SqlParameter("@LoginStatusId", loginStatusId),
                 new SqlParameter("@UserID", userId),
                 new SqlParameter("@IsDemo", isDemo),
                 new SqlParameter("@IsPeer", isPeer),
@@ -263,9 +265,18 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@fax", fax),
                 new SqlParameter("@instantMessenger", instantMessenger),
                 new SqlParameter("@htmlMail", htmlMail),
-				new SqlParameter("@CompanyName", companyName),
-				new SqlParameter("@EcommerceEnabled", ecommerceEnabled),
+                new SqlParameter("@CompanyName", companyName),
+                new SqlParameter("@EcommerceEnabled", ecommerceEnabled),
                 new SqlParameter("@AdditionalParams", additionalParams));
+        }
+
+        public static void UpdateUserFailedLoginAttempt(int userId, int lockOut, bool reset)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "UpdateUserFailedLoginAttempt",
+                new SqlParameter("@UserID", userId),
+                new SqlParameter("@LockOut", lockOut),
+                new SqlParameter("@Reset", reset));
         }
 
         public static void DeleteUser(int actorId, int userId)
@@ -675,7 +686,7 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         public static void AddDnsRecord(int actorId, int serviceId, int serverId, int packageId, string recordType,
-            string recordName, string recordData, int mxPriority, int ipAddressId)
+            string recordName, string recordData, int mxPriority, int SrvPriority, int SrvWeight, int SrvPort, int ipAddressId)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
                 ObjectQualifier + "AddDnsRecord",
@@ -687,11 +698,14 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@RecordName", recordName),
                 new SqlParameter("@RecordData", recordData),
                 new SqlParameter("@MXPriority", mxPriority),
+                new SqlParameter("@SrvPriority", SrvPriority),
+                new SqlParameter("@SrvWeight", SrvWeight),
+                new SqlParameter("@SrvPort", SrvPort),
                 new SqlParameter("@IpAddressId", ipAddressId));
         }
 
         public static void UpdateDnsRecord(int actorId, int recordId, string recordType,
-            string recordName, string recordData, int mxPriority, int ipAddressId)
+            string recordName, string recordData, int mxPriority, int SrvPriority, int SrvWeight, int SrvPort, int ipAddressId)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
                 ObjectQualifier + "UpdateDnsRecord",
@@ -701,8 +715,12 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@RecordName", recordName),
                 new SqlParameter("@RecordData", recordData),
                 new SqlParameter("@MXPriority", mxPriority),
+                new SqlParameter("@SrvPriority", SrvPriority),
+                new SqlParameter("@SrvWeight", SrvWeight),
+                new SqlParameter("@SrvPort", SrvPort),
                 new SqlParameter("@IpAddressId", ipAddressId));
         }
+
 
         public static void DeleteDnsRecord(int actorId, int recordId)
         {
@@ -763,7 +781,7 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@domainName", domainName));
         }
 
-        public static int CheckDomain(int packageId, string domainName)
+        public static int CheckDomain(int packageId, string domainName, bool isDomainPointer)
         {
             SqlParameter prmId = new SqlParameter("@Result", SqlDbType.Int);
             prmId.Direction = ParameterDirection.Output;
@@ -772,7 +790,8 @@ namespace WebsitePanel.EnterpriseServer
                 ObjectQualifier + "CheckDomain",
                 prmId,
                 new SqlParameter("@packageId", packageId),
-                new SqlParameter("@domainName", domainName));
+                new SqlParameter("@domainName", domainName),
+                new SqlParameter("@isDomainPointer", isDomainPointer));
 
             return Convert.ToInt32(prmId.Value);
         }
@@ -2057,33 +2076,36 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
 		#region Exchange Server
-        
 
-		public static int AddExchangeAccount(int itemId, int accountType, string accountName,
+
+        public static int AddExchangeAccount(int itemId, int accountType, string accountName,
             string displayName, string primaryEmailAddress, bool mailEnabledPublicFolder,
-            string mailboxManagerActions, string samAccountName, string accountPassword)
-		{
-			SqlParameter outParam = new SqlParameter("@AccountID", SqlDbType.Int);
-			outParam.Direction = ParameterDirection.Output;
+            string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, string subscriberNumber)
+        {
+            SqlParameter outParam = new SqlParameter("@AccountID", SqlDbType.Int);
+            outParam.Direction = ParameterDirection.Output;
 
-			SqlHelper.ExecuteNonQuery(
-				ConnectionString,
-				CommandType.StoredProcedure,
-				"AddExchangeAccount",
-				outParam,
-				new SqlParameter("@ItemID", itemId),
-				new SqlParameter("@AccountType", accountType),
-				new SqlParameter("@AccountName", accountName),
-				new SqlParameter("@DisplayName", displayName),
-				new SqlParameter("@PrimaryEmailAddress", primaryEmailAddress),
-				new SqlParameter("@MailEnabledPublicFolder", mailEnabledPublicFolder),
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddExchangeAccount",
+                outParam,
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@AccountType", accountType),
+                new SqlParameter("@AccountName", accountName),
+                new SqlParameter("@DisplayName", displayName),
+                new SqlParameter("@PrimaryEmailAddress", primaryEmailAddress),
+                new SqlParameter("@MailEnabledPublicFolder", mailEnabledPublicFolder),
                 new SqlParameter("@MailboxManagerActions", mailboxManagerActions),
                 new SqlParameter("@SamAccountName", samAccountName),
-                new SqlParameter("@AccountPassword", accountPassword)
-			);
+                new SqlParameter("@AccountPassword", accountPassword),
+                new SqlParameter("@MailboxPlanId", (mailboxPlanId == 0) ? (object)DBNull.Value : (object)mailboxPlanId),
+                new SqlParameter("@SubscriberNumber", (string.IsNullOrEmpty(subscriberNumber) ? (object)DBNull.Value : (object)subscriberNumber))
+            );
 
-			return Convert.ToInt32(outParam.Value);
-		}
+            return Convert.ToInt32(outParam.Value);
+        }
+
 
 		public static void AddExchangeAccountEmailAddress(int accountId, string emailAddress)
 		{
@@ -2150,6 +2172,7 @@ namespace WebsitePanel.EnterpriseServer
 				new SqlParameter("@AccountID", accountId)
 			);
 		}
+
 
 		public static void DeleteExchangeAccountEmailAddress(int accountId, string emailAddress)
 		{
@@ -2247,26 +2270,27 @@ namespace WebsitePanel.EnterpriseServer
 			return Convert.ToBoolean(outParam.Value);
 		}
 
-		public static void UpdateExchangeAccount(int accountId, string accountName, ExchangeAccountType accountType,
+        public static void UpdateExchangeAccount(int accountId, string accountName, ExchangeAccountType accountType,
             string displayName, string primaryEmailAddress, bool mailEnabledPublicFolder,
-            string mailboxManagerActions, string samAccountName, string accountPassword)
-		{
-			SqlHelper.ExecuteNonQuery(
-				ConnectionString,
-				CommandType.StoredProcedure,
-				"UpdateExchangeAccount",
-				new SqlParameter("@AccountID", accountId),
-				new SqlParameter("@AccountName", accountName),
-				new SqlParameter("@DisplayName", displayName),
+            string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, string subscriberNumber)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateExchangeAccount",
+                new SqlParameter("@AccountID", accountId),
+                new SqlParameter("@AccountName", accountName),
+                new SqlParameter("@DisplayName", displayName),
                 new SqlParameter("@AccountType", (int)accountType),
-				new SqlParameter("@PrimaryEmailAddress", primaryEmailAddress),
-				new SqlParameter("@MailEnabledPublicFolder", mailEnabledPublicFolder),
+                new SqlParameter("@PrimaryEmailAddress", primaryEmailAddress),
+                new SqlParameter("@MailEnabledPublicFolder", mailEnabledPublicFolder),
                 new SqlParameter("@MailboxManagerActions", mailboxManagerActions),
                 new SqlParameter("@Password", string.IsNullOrEmpty(accountPassword) ? (object)DBNull.Value : (object)accountPassword),
-                new SqlParameter("@SamAccountName", samAccountName)
-
-			);
-		}
+                new SqlParameter("@SamAccountName", samAccountName),
+                new SqlParameter("@MailboxPlanId", (mailboxPlanId == 0) ? (object)DBNull.Value : (object)mailboxPlanId),
+                new SqlParameter("@SubscriberNumber", (string.IsNullOrEmpty(subscriberNumber) ? (object)DBNull.Value : (object)subscriberNumber))
+            );
+        }
 
 		public static IDataReader GetExchangeAccount(int itemId, int accountId)
 		{
@@ -2278,6 +2302,29 @@ namespace WebsitePanel.EnterpriseServer
 				new SqlParameter("@AccountID", accountId)
 			);
 		}
+
+        public static IDataReader GetExchangeAccountByAccountName(int itemId, string accountName)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetExchangeAccountByAccountName",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@AccountName", accountName)
+            );
+        }
+
+        public static IDataReader GetExchangeAccountByMailboxPlanId(int itemId, int MailboxPlanId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetExchangeAccountByMailboxPlanId",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@MailboxPlanId", MailboxPlanId)
+            );
+        }
+
 
 		public static IDataReader GetExchangeAccountEmailAddresses(int accountId)
 		{
@@ -2389,6 +2436,97 @@ namespace WebsitePanel.EnterpriseServer
         }
 
 		#endregion
+
+        #region Exchange Mailbox Plans
+        public static int AddExchangeMailboxPlan(int itemID, string mailboxPlan, bool enableActiveSync, bool enableIMAP, bool enableMAPI, bool enableOWA, bool enablePOP,
+                                                    bool isDefault, int issueWarningPct, int keepDeletedItemsDays, int mailboxSizeMB, int maxReceiveMessageSizeKB, int maxRecipients,
+                                                    int maxSendMessageSizeKB, int prohibitSendPct, int prohibitSendReceivePct, bool hideFromAddressBook)
+        {
+            SqlParameter outParam = new SqlParameter("@MailboxPlanId", SqlDbType.Int);
+            outParam.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddExchangeMailboxPlan",
+                outParam,
+                new SqlParameter("@ItemID", itemID),
+                new SqlParameter("@MailboxPlan", mailboxPlan),
+                new SqlParameter("@EnableActiveSync", enableActiveSync),
+                new SqlParameter("@EnableIMAP", enableIMAP),
+                new SqlParameter("@EnableMAPI", enableMAPI),
+                new SqlParameter("@EnableOWA", enableOWA),
+                new SqlParameter("@EnablePOP", enablePOP),
+                new SqlParameter("@IsDefault", isDefault),
+                new SqlParameter("@IssueWarningPct", issueWarningPct),
+                new SqlParameter("@KeepDeletedItemsDays", keepDeletedItemsDays),
+                new SqlParameter("@MailboxSizeMB", mailboxSizeMB),
+                new SqlParameter("@MaxReceiveMessageSizeKB", maxReceiveMessageSizeKB),
+                new SqlParameter("@MaxRecipients", maxRecipients),
+                new SqlParameter("@MaxSendMessageSizeKB", maxSendMessageSizeKB),
+                new SqlParameter("@ProhibitSendPct", prohibitSendPct),
+                new SqlParameter("@ProhibitSendReceivePct", prohibitSendReceivePct),
+                new SqlParameter("@HideFromAddressBook", hideFromAddressBook)
+            );
+
+            return Convert.ToInt32(outParam.Value);
+        }
+
+
+        public static void DeleteExchangeMailboxPlan(int mailboxPlanId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteExchangeMailboxPlan",
+                new SqlParameter("@MailboxPlanId", mailboxPlanId)
+            );
+        }
+
+
+        public static IDataReader GetExchangeMailboxPlan(int mailboxPlanId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetExchangeMailboxPlan",
+                new SqlParameter("@MailboxPlanId", mailboxPlanId)
+            );
+        }
+
+        public static IDataReader GetExchangeMailboxPlans(int itemId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetExchangeMailboxPlans",
+                new SqlParameter("@ItemID", itemId)
+            );
+        }
+
+        public static void SetOrganizationDefaultExchangeMailboxPlan(int itemId, int mailboxPlanId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "SetOrganizationDefaultExchangeMailboxPlan",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@MailboxPlanId", mailboxPlanId)
+            );
+        }
+
+        public static void SetExchangeAccountMailboxPlan(int accountId, int mailboxPlanId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "SetExchangeAccountMailboxplan",
+                new SqlParameter("@AccountID", accountId),
+                new SqlParameter("@MailboxPlanId", (mailboxPlanId == 0) ? (object)DBNull.Value : (object)mailboxPlanId)
+            );
+        }
+
+        #endregion
 
         #region Organizations
 
@@ -3025,5 +3163,175 @@ namespace WebsitePanel.EnterpriseServer
 			return Convert.ToBoolean(prmId.Value);
 		}
 		#endregion
+
+        #region Lync
+
+        public static void AddLyncUser(int accountId, int lyncUserPlanId)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString,
+                                      CommandType.StoredProcedure,
+                                      "AddLyncUser",
+                                      new[]
+                                          {                                              
+                                              new SqlParameter("@AccountID", accountId),
+                                              new SqlParameter("@LyncUserPlanID", lyncUserPlanId)
+                                          });
+        }
+
+        public static bool CheckLyncUserExists(int accountId)
+        {
+            int res = (int)SqlHelper.ExecuteScalar(ConnectionString, CommandType.StoredProcedure, "CheckLyncUserExists",
+                                    new SqlParameter("@AccountID", accountId));
+            return res > 0;
+        }
+
+        public static IDataReader GetLyncUsers(int itemId, string sortColumn, string sortDirection, int startRow, int count)
+        {
+            SqlParameter[] sqlParams = new SqlParameter[]
+                {
+                    new SqlParameter("@ItemID", itemId),
+                    new SqlParameter("@SortColumn", sortColumn),
+                    new SqlParameter("@SortDirection", sortDirection),                    
+                    new SqlParameter("@StartRow", startRow),
+                    new SqlParameter("Count", count)
+                };
+
+
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetLyncUsers", sqlParams);
+        }
+
+
+        public static IDataReader GetLyncUsersByPlanId(int itemId, int planId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetLyncUsersByPlanId",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@PlanId", planId)
+            );
+        }
+
+        public static int GetLyncUsersCount(int itemId)
+        {
+            SqlParameter[] sqlParams = new SqlParameter[]
+                                           {
+                                               new SqlParameter("@ItemID", itemId)
+                                           };
+
+            return
+                (int)
+                SqlHelper.ExecuteScalar(ConnectionString, CommandType.StoredProcedure, "GetLyncUsersCount", sqlParams);
+        }
+
+        public static void DeleteLyncUser(int accountId)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString,
+                                      CommandType.StoredProcedure,
+                                      "DeleteLyncUser",
+                                      new[]
+                                          {                                              
+                                              new SqlParameter("@AccountId", accountId)
+                                          });
+
+        }
+
+        public static int AddLyncUserPlan(int itemID, LyncUserPlan lyncUserPlan)
+        {
+            SqlParameter outParam = new SqlParameter("@LyncUserPlanId", SqlDbType.Int);
+            outParam.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddLyncUserPlan",
+                outParam,
+
+                new SqlParameter("@ItemID", itemID),
+                new SqlParameter("@LyncUserPlanName", lyncUserPlan.LyncUserPlanName),
+                new SqlParameter("@IM", lyncUserPlan.IM),
+                new SqlParameter("@Mobility", lyncUserPlan.Mobility),
+                new SqlParameter("@MobilityEnableOutsideVoice", lyncUserPlan.MobilityEnableOutsideVoice),
+                new SqlParameter("@Federation", lyncUserPlan.Federation),
+                new SqlParameter("@Conferencing", lyncUserPlan.Conferencing),
+                new SqlParameter("@EnterpriseVoice", lyncUserPlan.EnterpriseVoice),
+                new SqlParameter("@VoicePolicy", lyncUserPlan.VoicePolicy),
+                new SqlParameter("@IsDefault", lyncUserPlan.IsDefault)
+            );
+
+            return Convert.ToInt32(outParam.Value);
+        }
+
+        public static void DeleteLyncUserPlan(int lyncUserPlanId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteLyncUserPlan",
+                new SqlParameter("@LyncUserPlanId", lyncUserPlanId)
+            );
+        }
+
+        public static IDataReader GetLyncUserPlan(int lyncUserPlanId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetLyncUserPlan",
+                new SqlParameter("@LyncUserPlanId", lyncUserPlanId)
+            );
+        }
+
+
+        public static IDataReader GetLyncUserPlans(int itemId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetLyncUserPlans",
+                new SqlParameter("@ItemID", itemId)
+            );
+        }
+
+
+        public static void SetOrganizationDefaultLyncUserPlan(int itemId, int lyncUserPlanId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "SetOrganizationDefaultLyncUserPlan",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@LyncUserPlanId", lyncUserPlanId)
+            );
+        }
+
+        public static IDataReader GetLyncUserPlanByAccountId(int AccountId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetLyncUserPlanByAccountId",
+                new SqlParameter("@AccountID", AccountId)
+            );
+        }
+
+
+        public static void SetLyncUserLyncUserplan(int accountId, int lyncUserPlanId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "SetLyncUserLyncUserplan",
+                new SqlParameter("@AccountID", accountId),
+                new SqlParameter("@LyncUserPlanId", (lyncUserPlanId == 0) ? (object)DBNull.Value : (object)lyncUserPlanId)
+            );
+        }
+
+
+        #endregion
+
     }
 }

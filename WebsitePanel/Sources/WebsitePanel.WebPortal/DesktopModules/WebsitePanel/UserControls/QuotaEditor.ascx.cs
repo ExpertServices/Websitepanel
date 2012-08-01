@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -80,7 +80,7 @@ namespace WebsitePanel.Portal
                                 ? ParentQuotaValue
                                 : Math.Min(Utils.ParseInt(txtQuotaValue.Text, 0), ParentQuotaValue);
                     }
-                }                
+                }
             }
             set
             {
@@ -108,10 +108,10 @@ namespace WebsitePanel.Portal
             }
             get
             {
-                return ViewState["ParentQuotaValue"] != null ? (int) ViewState["ParentQuotaValue"] : 0;
+                return ViewState["ParentQuotaValue"] != null ? (int)ViewState["ParentQuotaValue"] : 0;
             }
         }
-        
+
         protected void Page_Load(object sender, EventArgs e)
         {
             WriteScriptBlock();
@@ -122,19 +122,19 @@ namespace WebsitePanel.Portal
             // set textbox attributes
             txtQuotaValue.Style["display"] = (txtQuotaValue.Text == "-1") ? "none" : "inline";
 
-            
-            
+
+
             chkQuotaUnlimited.Attributes["onclick"] = String.Format("ToggleQuota('{0}', '{1}');",
                 txtQuotaValue.ClientID, chkQuotaUnlimited.ClientID);
 
-            
+
             // call base handler
             base.OnPreRender(e);
         }
 
         private void WriteScriptBlock()
         {
-            string scriptKey = "QuataScript";            
+            string scriptKey = "QuataScript";
             if (!Page.ClientScript.IsClientScriptBlockRegistered(scriptKey))
             {
                 Page.ClientScript.RegisterClientScriptBlock(GetType(), scriptKey, @"<script language='javascript' type='text/javascript'>
@@ -146,7 +146,7 @@ namespace WebsitePanel.Portal
                         }
                         </script>");
             }
-            
+
         }
     }
 }

@@ -378,6 +378,9 @@
   <data name="ModuleTitle.ManageWindowsServices" xml:space="preserve">
     <value>Manage Windows Services</value>
   </data>
+  <data name="ModuleTitle.ManagePlatformInstaller" xml:space="preserve">
+    <value>Manage Web Platform Installer</value>
+  </data>
   <data name="ModuleTitle.MyDatabases" xml:space="preserve">
     <value>My Databases</value>
   </data>
@@ -521,6 +524,12 @@
   </data>
   <data name="ModuleTitle.Sql2008Users" xml:space="preserve">
     <value>SQL Server 2008 Logins</value>
+  </data>
+  <data name="ModuleTitle.Sql2012Databases" xml:space="preserve">
+    <value>SQL Server 2012 Databases</value>
+  </data>
+  <data name="ModuleTitle.Sql2012Users" xml:space="preserve">
+    <value>SQL Server 2012 Logins</value>
   </data>
   <data name="ModuleTitle.SQLDatabaseProperties" xml:space="preserve">
     <value>SQL Database Properties</value>
@@ -728,9 +737,6 @@
   </data>
   <data name="ModuleTitle.WebSitesAllocateIPAddresses" xml:space="preserve">
     <value>Allocate Web Site IP Addresses</value>
-  </data>
-  <data name="ModuleTitle.ExchangeHostedEdition" xml:space="preserve">
-    <value>Exchange Hosting Mode</value>
   </data>
   <data name="ModuleTitle.HostedExchangeAddOrganizationDomain" xml:space="preserve">
     <value>Add Organization Domain</value>

@@ -247,10 +247,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>ProgressIcon.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Updater.exe" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="application.ico" />
+    <Content Include="Updater.exe" />
     <Content Include="websitepanel.ico" />
   </ItemGroup>
   <ItemGroup>

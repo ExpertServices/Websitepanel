@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -39,6 +39,10 @@ namespace WebsitePanel.Providers.DNS
         private string recordData;
         private int mxPriority;
         private string recordText;
+        private int srvPriority;
+        private int srvWeight;
+        private int srvPort;
+
 
         public string RecordName
         {
@@ -69,5 +73,25 @@ namespace WebsitePanel.Providers.DNS
             get { return this.recordText; }
             set { this.recordText = value; }
         }
+
+
+        public int SrvPriority
+        {
+            get { return this.srvPriority; }
+            set { this.srvPriority = value; }
+        }
+
+        public int SrvWeight
+        {
+            get { return this.srvWeight; }
+            set { this.srvWeight = value; }
+        }
+
+        public int SrvPort
+        {
+            get { return this.srvPort; }
+            set { this.srvPort = value; }
+        }
+
     }
 }

@@ -30,8 +30,8 @@ using System;
 
 namespace WebsitePanel.Portal.ExchangeServer.UserControls
 {
-	public partial class SizeBox : System.Web.UI.UserControl
-	{
+    public partial class SizeBox : System.Web.UI.UserControl
+    {
         int emptyValue = -1;
 
         public int EmptyValue
@@ -40,21 +40,21 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             set { emptyValue = value; }
         }
 
-		public string ValidationGroup
-		{
-			get { return valRequireCorrectNumber.ValidationGroup; }
-			set { valRequireCorrectNumber.ValidationGroup = valRequireNumber.ValidationGroup = value; }
-		}
+        public string ValidationGroup
+        {
+            get { return valRequireCorrectNumber.ValidationGroup; }
+            set { valRequireCorrectNumber.ValidationGroup = valRequireNumber.ValidationGroup = value; }
+        }
 
-		public bool Enabled
-		{
-			get { return txtValue.Enabled; }
-			set
-			{
-				txtValue.Enabled = value;
-				valRequireCorrectNumber.Enabled = value;
-			}
-		}
+        public bool Enabled
+        {
+            get { return txtValue.Enabled; }
+            set
+            {
+                txtValue.Enabled = value;
+                valRequireCorrectNumber.Enabled = value;
+            }
+        }
 
         public bool RequireValidatorEnabled
         {
@@ -62,28 +62,40 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             set { valRequireNumber.Enabled = value; }
         }
 
-		public int ValueKB
-		{
-			get
-			{
-				string val = txtValue.Text.Trim();
+        public int ValueKB
+        {
+            get
+            {
+                string val = txtValue.Text.Trim();
                 return val == "" ? emptyValue : Utils.ParseInt(val, 0);
-			}
-			set
-			{
+            }
+            set
+            {
                 txtValue.Text = value == emptyValue ? "" : value.ToString();
-			}
-		}
+            }
+        }
 
-		public bool DisplayUnits
-		{
-			get { return locKB.Visible; }
-			set { locKB.Visible = value; }
-		}
+        public bool DisplayUnitsKB
+        {
+            get { return locKB.Visible; }
+            set { locKB.Visible = value; }
+        }
 
-		protected void Page_Load(object sender, EventArgs e)
-		{
+        public bool DisplayUnitsMB
+        {
+            get { return locMB.Visible; }
+            set { locMB.Visible = value; }
+        }
 
-		}
-	}
+        public bool DisplayUnitsPct
+        {
+            get { return locPct.Visible; }
+            set { locPct.Visible = value; }
+        }
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
+    }
 }

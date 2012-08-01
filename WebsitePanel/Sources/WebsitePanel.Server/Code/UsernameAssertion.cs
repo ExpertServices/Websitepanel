@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -38,6 +38,7 @@ using Microsoft.Web.Services3;
 using Microsoft.Web.Services3.Design;
 using Microsoft.Web.Services3.Security;
 using Microsoft.Web.Services3.Security.Tokens;
+using WebSecurity=Microsoft.Web.Services3.Security.Security;
 
 namespace WebsitePanel.Server
 {
@@ -105,7 +106,7 @@ namespace WebsitePanel.Server
                 this.filterContext = filterContext;
             }
 
-            public override void ValidateMessageSecurity(SoapEnvelope envelope, Security security)
+            public override void ValidateMessageSecurity(SoapEnvelope envelope, WebSecurity security)
             {
                 if (!ServerConfiguration.Security.SecurityEnabled)
                     return;
@@ -145,7 +146,7 @@ namespace WebsitePanel.Server
                     throw new SecurityFault("Message did not meet security requirements.");
             }
 
-            private bool CheckSignature(SoapEnvelope envelope, Security security, MessageSignature signature)
+            private bool CheckSignature(SoapEnvelope envelope, WebSecurity security, MessageSignature signature)
             {
                 //
                 // Now verify which parts of the message were actually signed.

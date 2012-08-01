@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -61,6 +61,8 @@ namespace WebsitePanel.Providers.Common
         public const string UtilityPath = "UtilityPath";
 
         public const string EnterpriseServer = "EnterpriseServer";
+
+        public const string EnterpriseServerFQDN = "EnterpriseServerFQDN";
 
         public const string AdministrationToolService = "AdministrationToolService";
 

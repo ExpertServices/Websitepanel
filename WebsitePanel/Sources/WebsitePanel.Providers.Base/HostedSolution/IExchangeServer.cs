@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -30,70 +30,71 @@ namespace WebsitePanel.Providers.HostedSolution
 {
 	public interface IExchangeServer
 	{
-	    
+
         bool CheckAccountCredentials(string username, string password);
-		// Organizations
+        // Organizations
 
-        string CreateMailEnableUser(string upn, string organizationId, string organizationDistinguishedName, ExchangeAccountType accountType, 
-	                                string mailboxDatabase, string offlineAddressBook,
-	                                string accountName, bool enablePOP, bool enableIMAP,
-	                                bool enableOWA, bool enableMAPI, bool enableActiveSync,
-	                                int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB,
-	                                int keepDeletedItemsDays);
-        
-        Organization ExtendToExchangeOrganization(string organizationId, string securityGroup);
-		string GetOABVirtualDirectory();
-		Organization CreateOrganizationOfflineAddressBook(string organizationId, string securityGroup, string oabVirtualDir);
-		void UpdateOrganizationOfflineAddressBook(string id);
-		bool DeleteOrganization(string organizationId, string distinguishedName, string globalAddressList, string addressList, string roomsAddressList, string offlineAddressBook, string securityGroup);
-		void SetOrganizationStorageLimits(string organizationDistinguishedName, int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays);
-		ExchangeItemStatistics[] GetMailboxesStatistics(string organizationDistinguishedName);
+        string CreateMailEnableUser(string upn, string organizationId, string organizationDistinguishedName, ExchangeAccountType accountType,
+                                    string mailboxDatabase, string offlineAddressBook, string addressBookPolicy,
+                                    string accountName, bool enablePOP, bool enableIMAP,
+                                    bool enableOWA, bool enableMAPI, bool enableActiveSync,
+                                    int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB,
+                                    int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool isConsumer);
 
-		// Domains
+        Organization ExtendToExchangeOrganization(string organizationId, string securityGroup, bool IsConsumer);
+        string GetOABVirtualDirectory();
+        Organization CreateOrganizationOfflineAddressBook(string organizationId, string securityGroup, string oabVirtualDir);
+        Organization CreateOrganizationAddressBookPolicy(string organizationId, string gal, string addressBook, string roomList, string oab);
+        void UpdateOrganizationOfflineAddressBook(string id);
+        bool DeleteOrganization(string organizationId, string distinguishedName, string globalAddressList, string addressList, string roomList, string offlineAddressBook, string securityGroup, string addressBookPolicy);
+        void SetOrganizationStorageLimits(string organizationDistinguishedName, int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays);
+        ExchangeItemStatistics[] GetMailboxesStatistics(string organizationDistinguishedName);
+
+        // Domains
         void AddAuthoritativeDomain(string domain);
         void DeleteAuthoritativeDomain(string domain);
-	    string[] GetAuthoritativeDomains();
+        string[] GetAuthoritativeDomains();
 
-		// Mailboxes
-		string CreateMailbox(string organizationId, string organizationDistinguishedName, string mailboxDatabase, string securityGroup, string offlineAddressBook, ExchangeAccountType accountType, string displayName, string accountName, string name, string domain, string password, bool enablePOP, bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync,
-			int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays); 
-		void DeleteMailbox(string accountName);
+        // Mailboxes
+        //string CreateMailbox(string organizationId, string organizationDistinguishedName, string mailboxDatabase, string securityGroup, string offlineAddressBook, string addressBookPolicy, ExchangeAccountType accountType, string displayName, string accountName, string name, string domain, string password, bool enablePOP, bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync,
+        //    int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB,bool hideFromAddressBook); 
+        void DeleteMailbox(string accountName);
         void DisableMailbox(string id);
-		ExchangeMailbox GetMailboxGeneralSettings(string accountName);
-		void SetMailboxGeneralSettings(string accountName, string displayName, string password, bool hideFromAddressBook, bool disabled, string firstName, string initials, string lastName, string address, string city, string state, string zip, string country, string jobTitle, string company, string department, string office, string managerAccountName, string businessPhone, string fax, string homePhone, string mobilePhone, string pager, string webPage, string notes);
-		ExchangeMailbox GetMailboxMailFlowSettings(string accountName);
-		void SetMailboxMailFlowSettings(string accountName, bool enableForwarding, string forwardingAccountName, bool forwardToBoth, string[] sendOnBehalfAccounts, string[] acceptAccounts, string[] rejectAccounts, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool requireSenderAuthentication);
-		ExchangeMailbox GetMailboxAdvancedSettings(string accountName);
-		void SetMailboxAdvancedSettings(string organizationId, string accountName, bool enablePOP, bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync, int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays);
-		ExchangeEmailAddress[] GetMailboxEmailAddresses(string accountName);
-		void SetMailboxEmailAddresses(string accountName, string[] emailAddresses);
-		void SetMailboxPrimaryEmailAddress(string accountName, string emailAddress);
-	    void SetMailboxPermissions(string organizationId, string accountName, string[] sendAsAccounts, string[] fullAccessAccounts);
-		ExchangeMailbox GetMailboxPermissions(string organizationId, string accountName);
-		ExchangeMailboxStatistics GetMailboxStatistics(string accountName);
+        ExchangeMailbox GetMailboxGeneralSettings(string accountName);
+        void SetMailboxGeneralSettings(string accountName, bool hideFromAddressBook, bool disabled);
+        ExchangeMailbox GetMailboxMailFlowSettings(string accountName);
+        void SetMailboxMailFlowSettings(string accountName, bool enableForwarding, string forwardingAccountName, bool forwardToBoth, string[] sendOnBehalfAccounts, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication);
+        ExchangeMailbox GetMailboxAdvancedSettings(string accountName);
+        void SetMailboxAdvancedSettings(string organizationId, string accountName, bool enablePOP, bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync, int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB);
+        ExchangeEmailAddress[] GetMailboxEmailAddresses(string accountName);
+        void SetMailboxEmailAddresses(string accountName, string[] emailAddresses);
+        void SetMailboxPrimaryEmailAddress(string accountName, string emailAddress);
+        void SetMailboxPermissions(string organizationId, string accountName, string[] sendAsAccounts, string[] fullAccessAccounts);
+        ExchangeMailbox GetMailboxPermissions(string organizationId, string accountName);
+        ExchangeMailboxStatistics GetMailboxStatistics(string accountName);
 
-		// Contacts
-        void CreateContact(string organizationId, string organizationDistinguishedName, string contactDisplayName, string contactAccountName, string contactEmail, string defaultOrganizationDomain); 
-		void DeleteContact(string accountName);
-		ExchangeContact GetContactGeneralSettings(string accountName);
+        // Contacts
+        void CreateContact(string organizationId, string organizationDistinguishedName, string contactDisplayName, string contactAccountName, string contactEmail, string defaultOrganizationDomain);
+        void DeleteContact(string accountName);
+        ExchangeContact GetContactGeneralSettings(string accountName);
         void SetContactGeneralSettings(string accountName, string displayName, string email, bool hideFromAddressBook, string firstName, string initials, string lastName, string address, string city, string state, string zip, string country, string jobTitle, string company, string department, string office, string managerAccountName, string businessPhone, string fax, string homePhone, string mobilePhone, string pager, string webPage, string notes, int useMapiRichTextFormat, string defaultDomain);
-		ExchangeContact GetContactMailFlowSettings(string accountName);
-		void SetContactMailFlowSettings(string accountName, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication);
+        ExchangeContact GetContactMailFlowSettings(string accountName);
+        void SetContactMailFlowSettings(string accountName, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication);
 
-		// Distribution Lists
-		void CreateDistributionList(string organizationId, string organizationDistinguishedName, string displayName, string accountName, string name, string domain, string managedBy);
-		void DeleteDistributionList(string accountName);
-		ExchangeDistributionList GetDistributionListGeneralSettings(string accountName);
-		void SetDistributionListGeneralSettings(string accountName, string displayName, bool hideFromAddressBook, string managedBy, string[] memebers, string notes);
-		void AddDistributionListMembers(string accountName, string[] memberAccounts);
-		void RemoveDistributionListMembers(string accountName, string[] memberAccounts);
-		ExchangeDistributionList GetDistributionListMailFlowSettings(string accountName);
-		void SetDistributionListMailFlowSettings(string accountName, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication);
-		ExchangeEmailAddress[] GetDistributionListEmailAddresses(string accountName);
-		void SetDistributionListEmailAddresses(string accountName, string[] emailAddresses);
-		void SetDistributionListPrimaryEmailAddress(string accountName, string emailAddress);
-		ExchangeDistributionList GetDistributionListPermissions(string organizationId, string accountName);
-		void SetDistributionListPermissions(string organizationId, string accountName, string[] sendAsAccounts, string[] sendOnBehalfAccounts);
+        // Distribution Lists
+        void CreateDistributionList(string organizationId, string organizationDistinguishedName, string displayName, string accountName, string name, string domain, string managedBy, string[] addressLists);
+        void DeleteDistributionList(string accountName);
+        ExchangeDistributionList GetDistributionListGeneralSettings(string accountName);
+        void SetDistributionListGeneralSettings(string accountName, string displayName, bool hideFromAddressBook, string managedBy, string[] memebers, string notes, string[] addressLists);
+        void AddDistributionListMembers(string accountName, string[] memberAccounts, string[] addressLists);
+        void RemoveDistributionListMembers(string accountName, string[] memberAccounts, string[] addressLists);
+        ExchangeDistributionList GetDistributionListMailFlowSettings(string accountName);
+        void SetDistributionListMailFlowSettings(string accountName, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication, string[] addressLists);
+        ExchangeEmailAddress[] GetDistributionListEmailAddresses(string accountName);
+        void SetDistributionListEmailAddresses(string accountName, string[] emailAddresses, string[] addressLists);
+        void SetDistributionListPrimaryEmailAddress(string accountName, string emailAddress, string[] addressLists);
+        ExchangeDistributionList GetDistributionListPermissions(string organizationId, string accountName);
+        void SetDistributionListPermissions(string organizationId, string accountName, string[] sendAsAccounts, string[] sendOnBehalfAccounts, string[] addressLists);
 
 		// Public Folders
 		void CreatePublicFolder(string organizationId, string securityGroup, string parentFolder, string folderName, bool mailEnabled, string accountName, string name, string domain);
@@ -101,7 +102,7 @@ namespace WebsitePanel.Providers.HostedSolution
 		void EnableMailPublicFolder(string organizationId, string folder, string accountName, string name, string domain);
 		void DisableMailPublicFolder(string folder);
 		ExchangePublicFolder GetPublicFolderGeneralSettings(string folder);
-		void SetPublicFolderGeneralSettings(string folder, string newFolderName, string[] authorAccounts, bool hideFromAddressBook);
+		void SetPublicFolderGeneralSettings(string folder, string newFolderName, bool hideFromAddressBook, ExchangeAccount[] accounts );
 		ExchangePublicFolder GetPublicFolderMailFlowSettings(string folder);
 		void SetPublicFolderMailFlowSettings(string folder, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication);
 		ExchangeEmailAddress[] GetPublicFolderEmailAddresses(string folder);
@@ -111,20 +112,20 @@ namespace WebsitePanel.Providers.HostedSolution
 		string[] GetPublicFoldersRecursive(string parent);
 		long GetPublicFolderSize(string folder);
 
-		//ActiveSync
-		void CreateOrganizationActiveSyncPolicy(string organizationId);
-		ExchangeActiveSyncPolicy GetActiveSyncPolicy(string organizationId);
-		void SetActiveSyncPolicy(string organizationId, bool allowNonProvisionableDevices, bool attachmentsEnabled,
-			int maxAttachmentSizeKB, bool uncAccessEnabled, bool wssAccessEnabled, bool devicePasswordEnabled,
-			bool alphanumericPasswordRequired, bool passwordRecoveryEnabled, bool deviceEncryptionEnabled,
-			bool allowSimplePassword, int maxPasswordFailedAttempts, int minPasswordLength, int inactivityLockMin,
-			int passwordExpirationDays, int passwordHistory, int refreshInterval);
+        //ActiveSync
+        void CreateOrganizationActiveSyncPolicy(string organizationId);
+        ExchangeActiveSyncPolicy GetActiveSyncPolicy(string organizationId);
+        void SetActiveSyncPolicy(string organizationId, bool allowNonProvisionableDevices, bool attachmentsEnabled,
+            int maxAttachmentSizeKB, bool uncAccessEnabled, bool wssAccessEnabled, bool devicePasswordEnabled,
+            bool alphanumericPasswordRequired, bool passwordRecoveryEnabled, bool deviceEncryptionEnabled,
+            bool allowSimplePassword, int maxPasswordFailedAttempts, int minPasswordLength, int inactivityLockMin,
+            int passwordExpirationDays, int passwordHistory, int refreshInterval);
 
-		//Mobile Devices
-		ExchangeMobileDevice[] GetMobileDevices(string accountName);
-		ExchangeMobileDevice GetMobileDevice(string id);
-		void WipeDataFromDevice(string id);
-		void CancelRemoteWipeRequest(string id);
-		void RemoveDevice(string id); 
-	}
+        //Mobile Devices
+        ExchangeMobileDevice[] GetMobileDevices(string accountName);
+        ExchangeMobileDevice GetMobileDevice(string id);
+        void WipeDataFromDevice(string id);
+        void CancelRemoteWipeRequest(string id);
+        void RemoveDevice(string id);
+    }
 }

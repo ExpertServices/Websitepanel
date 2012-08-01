@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -32,209 +32,219 @@ using System.Text;
 
 namespace WebsitePanel.Providers.HostedSolution
 {
-	public class ExchangeContact
-	{
-		string displayName;
-		string accountName;
-		string emailAddress;
-		bool hideFromAddressBook;
+    public class ExchangeContact
+    {
+        string displayName;
+        string accountName;
+        string emailAddress;
+        bool hideFromAddressBook;
 
-		string firstName;
-		string initials;
-		string lastName;
+        string firstName;
+        string initials;
+        string lastName;
 
-		string jobTitle;
-		string company;
-		string department;
-		string office;
-		ExchangeAccount managerAccount;
+        string jobTitle;
+        string company;
+        string department;
+        string office;
+        ExchangeAccount managerAccount;
 
-		string businessPhone;
-		string fax;
-		string homePhone;
-		string mobilePhone;
-		string pager;
-		string webPage;
+        string businessPhone;
+        string fax;
+        string homePhone;
+        string mobilePhone;
+        string pager;
+        string webPage;
 
-		string address;
-		string city;
-		string state;
-		string zip;
-		string country;
+        string address;
+        string city;
+        string state;
+        string zip;
+        string country;
 
-		string notes;
-	    private int useMapiRichTextFormat;
-		
-		ExchangeAccount[] acceptAccounts;
-		ExchangeAccount[] rejectAccounts;
-		bool requireSenderAuthentication;
+        string notes;
+        string sAMAccountName;
+        private int useMapiRichTextFormat;
 
-		public string DisplayName
-		{
-			get { return this.displayName; }
-			set { this.displayName = value; }
-		}
+        ExchangeAccount[] acceptAccounts;
+        ExchangeAccount[] rejectAccounts;
+        bool requireSenderAuthentication;
 
-		public string AccountName
-		{
-			get { return this.accountName; }
-			set { this.accountName = value; }
-		}
+        public string DisplayName
+        {
+            get { return this.displayName; }
+            set { this.displayName = value; }
+        }
 
-		public string EmailAddress
-		{
-			get { return this.emailAddress; }
-			set { this.emailAddress = value; }
-		}
+        public string AccountName
+        {
+            get { return this.accountName; }
+            set { this.accountName = value; }
+        }
 
-		public bool HideFromAddressBook
-		{
-			get { return this.hideFromAddressBook; }
-			set { this.hideFromAddressBook = value; }
-		}
+        public string EmailAddress
+        {
+            get { return this.emailAddress; }
+            set { this.emailAddress = value; }
+        }
 
-		public string FirstName
-		{
-			get { return this.firstName; }
-			set { this.firstName = value; }
-		}
+        public bool HideFromAddressBook
+        {
+            get { return this.hideFromAddressBook; }
+            set { this.hideFromAddressBook = value; }
+        }
 
-		public string Initials
-		{
-			get { return this.initials; }
-			set { this.initials = value; }
-		}
+        public string FirstName
+        {
+            get { return this.firstName; }
+            set { this.firstName = value; }
+        }
 
-		public string LastName
-		{
-			get { return this.lastName; }
-			set { this.lastName = value; }
-		}
+        public string Initials
+        {
+            get { return this.initials; }
+            set { this.initials = value; }
+        }
 
-		public string JobTitle
-		{
-			get { return this.jobTitle; }
-			set { this.jobTitle = value; }
-		}
+        public string LastName
+        {
+            get { return this.lastName; }
+            set { this.lastName = value; }
+        }
 
-		public string Company
-		{
-			get { return this.company; }
-			set { this.company = value; }
-		}
+        public string JobTitle
+        {
+            get { return this.jobTitle; }
+            set { this.jobTitle = value; }
+        }
 
-		public string Department
-		{
-			get { return this.department; }
-			set { this.department = value; }
-		}
+        public string Company
+        {
+            get { return this.company; }
+            set { this.company = value; }
+        }
 
-		public string Office
-		{
-			get { return this.office; }
-			set { this.office = value; }
-		}
+        public string Department
+        {
+            get { return this.department; }
+            set { this.department = value; }
+        }
 
-		public ExchangeAccount ManagerAccount
-		{
-			get { return this.managerAccount; }
-			set { this.managerAccount = value; }
-		}
+        public string Office
+        {
+            get { return this.office; }
+            set { this.office = value; }
+        }
 
-		public string BusinessPhone
-		{
-			get { return this.businessPhone; }
-			set { this.businessPhone = value; }
-		}
+        public ExchangeAccount ManagerAccount
+        {
+            get { return this.managerAccount; }
+            set { this.managerAccount = value; }
+        }
 
-		public string Fax
-		{
-			get { return this.fax; }
-			set { this.fax = value; }
-		}
+        public string BusinessPhone
+        {
+            get { return this.businessPhone; }
+            set { this.businessPhone = value; }
+        }
 
-		public string HomePhone
-		{
-			get { return this.homePhone; }
-			set { this.homePhone = value; }
-		}
+        public string Fax
+        {
+            get { return this.fax; }
+            set { this.fax = value; }
+        }
 
-		public string MobilePhone
-		{
-			get { return this.mobilePhone; }
-			set { this.mobilePhone = value; }
-		}
+        public string HomePhone
+        {
+            get { return this.homePhone; }
+            set { this.homePhone = value; }
+        }
 
-		public string Pager
-		{
-			get { return this.pager; }
-			set { this.pager = value; }
-		}
+        public string MobilePhone
+        {
+            get { return this.mobilePhone; }
+            set { this.mobilePhone = value; }
+        }
 
-		public string WebPage
-		{
-			get { return this.webPage; }
-			set { this.webPage = value; }
-		}
+        public string Pager
+        {
+            get { return this.pager; }
+            set { this.pager = value; }
+        }
 
-		public string Address
-		{
-			get { return this.address; }
-			set { this.address = value; }
-		}
+        public string WebPage
+        {
+            get { return this.webPage; }
+            set { this.webPage = value; }
+        }
 
-		public string City
-		{
-			get { return this.city; }
-			set { this.city = value; }
-		}
+        public string Address
+        {
+            get { return this.address; }
+            set { this.address = value; }
+        }
 
-		public string State
-		{
-			get { return this.state; }
-			set { this.state = value; }
-		}
+        public string City
+        {
+            get { return this.city; }
+            set { this.city = value; }
+        }
 
-		public string Zip
-		{
-			get { return this.zip; }
-			set { this.zip = value; }
-		}
+        public string State
+        {
+            get { return this.state; }
+            set { this.state = value; }
+        }
 
-		public string Country
-		{
-			get { return this.country; }
-			set { this.country = value; }
-		}
+        public string Zip
+        {
+            get { return this.zip; }
+            set { this.zip = value; }
+        }
 
-		public string Notes
-		{
-			get { return this.notes; }
-			set { this.notes = value; }
-		}
+        public string Country
+        {
+            get { return this.country; }
+            set { this.country = value; }
+        }
 
-		public ExchangeAccount[] AcceptAccounts
-		{
-			get { return this.acceptAccounts; }
-			set { this.acceptAccounts = value; }
-		}
+        public string Notes
+        {
+            get { return this.notes; }
+            set { this.notes = value; }
+        }
 
-		public ExchangeAccount[] RejectAccounts
-		{
-			get { return this.rejectAccounts; }
-			set { this.rejectAccounts = value; }
-		}
+        public ExchangeAccount[] AcceptAccounts
+        {
+            get { return this.acceptAccounts; }
+            set { this.acceptAccounts = value; }
+        }
 
-		public bool RequireSenderAuthentication
-		{
-			get { return requireSenderAuthentication; }
-			set { requireSenderAuthentication = value; }
-		}
+        public ExchangeAccount[] RejectAccounts
+        {
+            get { return this.rejectAccounts; }
+            set { this.rejectAccounts = value; }
+        }
 
-	    public int UseMapiRichTextFormat
-	    {
+        public bool RequireSenderAuthentication
+        {
+            get { return requireSenderAuthentication; }
+            set { requireSenderAuthentication = value; }
+        }
+
+        public int UseMapiRichTextFormat
+        {
             get { return useMapiRichTextFormat; }
             set { useMapiRichTextFormat = value; }
-	    }
-	}
+        }
+
+        public string SAMAccountName
+        {
+            get { return sAMAccountName; }
+            set { sAMAccountName = value; }
+        }
+
+
+
+    }
 }

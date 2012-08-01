@@ -29,7 +29,7 @@ CREATE TABLE [dbo].[ExchangeAccounts](
 	[AccountID] [int] IDENTITY(1,1) NOT NULL,
 	[ItemID] [int] NOT NULL,
 	[AccountType] [int] NOT NULL,
-	[AccountName] [nvarchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
+	[AccountName] [nvarchar](300) COLLATE Latin1_General_CI_AS NOT NULL,
 	[DisplayName] [nvarchar](300) COLLATE Latin1_General_CI_AS NOT NULL,
 	[PrimaryEmailAddress] [nvarchar](300) COLLATE Latin1_General_CI_AS NULL,
 	[MailEnabledPublicFolder] [bit] NULL,
@@ -37,6 +37,8 @@ CREATE TABLE [dbo].[ExchangeAccounts](
 	[SamAccountName] [nvarchar](100) COLLATE Latin1_General_CI_AS NULL,
 	[AccountPassword] [nvarchar](200) COLLATE Latin1_General_CI_AS NULL,
 	[CreatedDate] [datetime] NOT NULL,
+	[MailboxPlanId] [int] NULL,
+	[SubscriberNumber] [nvarchar] (32) COLLATE Latin1_General_CI_AS NULL,
  CONSTRAINT [PK_ExchangeAccounts] PRIMARY KEY CLUSTERED 
 (
 	[AccountID] ASC
@@ -54,6 +56,32 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+CREATE TABLE [dbo].[ExchangeMailboxPlans](
+	[MailboxPlanId] [int] IDENTITY(1,1) NOT NULL,
+	[ItemID] [int] NOT NULL,
+	[MailboxPlan] [nvarchar](300) COLLATE Latin1_General_CI_AS NOT NULL,
+	[EnableActiveSync] [bit] NOT NULL,
+	[EnableIMAP] [bit] NOT NULL,
+	[EnableMAPI] [bit] NOT NULL,
+	[EnableOWA] [bit] NOT NULL,
+	[EnablePOP] [bit] NOT NULL,
+	[IsDefault] [bit] NOT NULL,
+	[IssueWarningPct] [int] NOT NULL,
+	[KeepDeletedItemsDays] [int] NOT NULL,
+	[MailboxSizeMB] [int] NOT NULL,
+	[MaxReceiveMessageSizeKB] [int] NOT NULL,
+	[MaxRecipients] [int] NOT NULL,
+	[MaxSendMessageSizeKB] [int] NOT NULL,
+	[ProhibitSendPct] [int] NOT NULL,
+	[ProhibitSendReceivePct] [int] NOT NULL,
+	[HideFromAddressBook] [bit] NOT NULL,
+ CONSTRAINT [PK_ExchangeMailboxPlans] PRIMARY KEY CLUSTERED 
+(
+	[MailboxPlanId] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
 
 
 
@@ -80,7 +108,8 @@ SELECT
 	AccountName,
 	DisplayName,
 	PrimaryEmailAddress,
-	MailEnabledPublicFolder
+	MailEnabledPublicFolder,
+	SubscriberNumber
 FROM
 	ExchangeAccounts
 WHERE
@@ -89,6 +118,7 @@ WHERE
 ORDER BY 1
 
 END
+
 
 
 
@@ -150,21 +180,137 @@ CREATE PROCEDURE [dbo].[GetExchangeAccounts]
 )
 AS
 SELECT
-	AccountID,
-	ItemID,
-	AccountType,
-	AccountName,
-	DisplayName,
-	PrimaryEmailAddress,
-	MailEnabledPublicFolder
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxPlanId,
+	P.MailboxPlan, 
+	E.SubscriberNumber
 FROM
-	ExchangeAccounts
+	ExchangeAccounts  AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId		
 WHERE
-	ItemID = @ItemID AND
-	(AccountType = @AccountType OR @AccountType IS NULL) 
+	E.ItemID = @ItemID AND
+	(E.AccountType = @AccountType OR @AccountType IS NULL) 
 ORDER BY DisplayName
 RETURN
 
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetExchangeAccountByMailboxPlanId] 
+(
+	@ItemID int,
+	@MailboxPlanId int
+)
+AS
+
+DECLARE @condition nvarchar(64)
+
+IF (@MailboxPlanId < 0)
+BEGIN
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber 
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+WHERE
+	E.ItemID = @ItemID AND
+	E.MailboxPlanId IS NULL AND
+	E.AccountType IN (1,5) 
+RETURN
+
+END
+ELSE
+BEGIN
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber 
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+WHERE
+	E.ItemID = @ItemID AND
+	E.MailboxPlanId = @MailboxPlanId AND
+	E.AccountType IN (1,5) 
+RETURN
+END
+GO
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetExchangeAccountByAccountName] 
+(
+	@ItemID int,
+	@AccountName nvarchar(300)
+)
+AS
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber 
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+WHERE
+	E.ItemID = @ItemID AND
+	E.AccountName = @AccountName
+RETURN
 
 
 
@@ -231,21 +377,25 @@ CREATE PROCEDURE [dbo].[GetExchangeAccount]
 )
 AS
 SELECT
-	AccountID,
-	ItemID,
-	AccountType,
-	AccountName,
-	DisplayName,
-	PrimaryEmailAddress,
-	MailEnabledPublicFolder,
-	MailboxManagerActions,
-	SamAccountName,
-	AccountPassword 
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber 
 FROM
-	ExchangeAccounts
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
 WHERE
-	ItemID = @ItemID AND
-	AccountID = @AccountID
+	E.ItemID = @ItemID AND
+	E.AccountID = @AccountID
 RETURN
 
 
@@ -311,19 +461,23 @@ GO
 
 
 
-CREATE PROCEDURE ExchangeAccountExists 
+CREATE PROCEDURE [dbo].[ExchangeAccountExists] 
 (
 	@AccountName nvarchar(20),
 	@Exists bit OUTPUT
 )
 AS
 SET @Exists = 0
-IF EXISTS(SELECT * FROM ExchangeAccounts WHERE AccountName = @AccountName)
+IF EXISTS(SELECT * FROM ExchangeAccounts WHERE sAMAccountName LIKE '%\'+@AccountName)
 BEGIN
 	SET @Exists = 1
 END
 
 RETURN
+
+
+
+
 
 
 
@@ -513,6 +667,8 @@ CREATE TABLE [dbo].[Users](
 	[CompanyName] [nvarchar](100) COLLATE Latin1_General_CI_AS NULL,
 	[EcommerceEnabled] [bit] NULL,
 	[AdditionalParams] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[LoginStatusId] [int] NULL,
+	[FailedLogins] [int] NULL,
  CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
 (
 	[UserID] ASC
@@ -936,7 +1092,7 @@ GO
 
 
 
-CREATE PROCEDURE SearchExchangeAccounts
+CREATE PROCEDURE [dbo].[SearchExchangeAccounts]
 (
 	@ActorID int,
 	@ItemID int,
@@ -986,7 +1142,8 @@ SELECT
 	EA.AccountName,
 	EA.DisplayName,
 	EA.PrimaryEmailAddress,
-	EA.MailEnabledPublicFolder
+	EA.MailEnabledPublicFolder,
+	EA.SubscriberNumber
 FROM ExchangeAccounts AS EA
 WHERE ' + @condition
 
@@ -997,6 +1154,7 @@ exec sp_executesql @sql, N'@ItemID int, @IncludeMailboxes int, @IncludeContacts 
 @ItemID, @IncludeMailboxes, @IncludeContacts, @IncludeDistributionLists, @IncludeRooms, @IncludeEquipment
 
 RETURN 
+
 
 
 
@@ -1080,6 +1238,10 @@ END
 IF @SortColumn IS NULL OR @SortColumn = ''
 SET @SortColumn = 'EA.DisplayName ASC'
 
+DECLARE @joincondition nvarchar(700)
+	SET @joincondition = ',P.MailboxPlan FROM ExchangeAccounts AS EA
+	LEFT OUTER JOIN ExchangeMailboxPlans AS P ON EA.MailboxPlanId = P.MailboxPlanId'
+
 DECLARE @sql nvarchar(3500)
 
 set @sql = '
@@ -1094,9 +1256,10 @@ WITH Accounts AS (
 		EA.AccountName,
 		EA.DisplayName,
 		EA.PrimaryEmailAddress,
-		EA.MailEnabledPublicFolder
-	FROM ExchangeAccounts AS EA
-	WHERE ' + @condition + '
+		EA.MailEnabledPublicFolder,
+		EA.MailboxPlanId,
+		EA.SubscriberNumber ' + @joincondition +
+	' WHERE ' + @condition + '
 )
 
 SELECT * FROM Accounts
@@ -1109,6 +1272,7 @@ exec sp_executesql @sql, N'@ItemID int, @StartRow int, @MaximumRows int',
 @ItemID, @StartRow, @MaximumRows
 
 RETURN 
+
 
 
 
@@ -1174,7 +1338,7 @@ INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
 LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
 LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
 LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
-WHERE D.IsInstantAlias = 0 AND
+WHERE (D.IsInstantAlias = 0 AND D.IsDomainPointer = 0) AND
 		((@Recursive = 0 AND D.PackageID = @PackageID)
 		OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, D.PackageID) = 1))
 AND (@ServerID = 0 OR (@ServerID > 0 AND S.ServerID = @ServerID))
@@ -1407,13 +1571,15 @@ CREATE PROCEDURE [dbo].[AddExchangeAccount]
 	@AccountID int OUTPUT,
 	@ItemID int,
 	@AccountType int,
-	@AccountName nvarchar(20),
+	@AccountName nvarchar(300),
 	@DisplayName nvarchar(300),
 	@PrimaryEmailAddress nvarchar(300),
 	@MailEnabledPublicFolder bit,
 	@MailboxManagerActions varchar(200),
 	@SamAccountName nvarchar(100),
-	@AccountPassword nvarchar(200) 
+	@AccountPassword nvarchar(200),
+	@MailboxPlanId int,
+	@SubscriberNumber nvarchar(32)
 )
 AS
 
@@ -1427,7 +1593,9 @@ INSERT INTO ExchangeAccounts
 	MailEnabledPublicFolder,
 	MailboxManagerActions,
 	SamAccountName,
-	AccountPassword
+	AccountPassword,
+	MailboxPlanId,
+	SubscriberNumber
 )
 VALUES
 (
@@ -1439,12 +1607,15 @@ VALUES
 	@MailEnabledPublicFolder,
 	@MailboxManagerActions,
 	@SamAccountName,
-	@AccountPassword
+	@AccountPassword,
+	@MailboxPlanId,
+	@SubscriberNumber
 )
 
 SET @AccountID = SCOPE_IDENTITY()
 
 RETURN
+
 
 
 
@@ -3306,6 +3477,7 @@ CREATE PROCEDURE CheckDomain
 (
 	@PackageID int,
 	@DomainName nvarchar(100),
+	@IsDomainPointer bit,
 	@Result int OUTPUT
 )
 AS
@@ -3322,7 +3494,7 @@ SET @Result = 0 -- OK
 -- check if the domain already exists
 IF EXISTS(
 SELECT DomainID FROM Domains
-WHERE DomainName = @DomainName
+WHERE DomainName = @DomainName AND IsDomainPointer = @IsDomainPointer
 )
 BEGIN
 	SET @Result = -1
@@ -3537,9 +3709,9 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (75, 1, 8, N'OS.ExtraApplications', N'Extra Application Packs', 1, 0, NULL)
 GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (77, 12, 2, N'Exchange2007.DiskSpace', N'Organization Disk Space, MB', 3, 0, NULL)
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (77, 12, 2, N'Exchange2007.DiskSpace', N'Organization Disk Space, MB', 2, 0, NULL)
 GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (78, 12, 3, N'Exchange2007.Mailboxes', N'Mailboxes per Organization', 3, 0, NULL)
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (78, 12, 3, N'Exchange2007.Mailboxes', N'Mailboxes per Organization', 2, 0, NULL)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (79, 12, 4, N'Exchange2007.Contacts', N'Contacts per Organization', 3, 0, NULL)
 GO
@@ -3558,16 +3730,6 @@ GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (87, 12, 17, N'Exchange2007.ActiveSyncAllowed', N'ActiveSync Access', 1, 0, NULL)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (88, 12, 8, N'Exchange2007.MailEnabledPublicFolders', N'Mail Enabled Public Folders Allowed', 1, 0, NULL)
-GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (89, 12, 10, N'Exchange2007.POP3Enabled', N'POP3 Enabled by default', 1, 0, NULL)
-GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (90, 12, 12, N'Exchange2007.IMAPEnabled', N'IMAP Enabled by default', 1, 0, NULL)
-GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (91, 12, 14, N'Exchange2007.OWAEnabled', N'OWA  Enabled by default', 1, 0, NULL)
-GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (92, 12, 16, N'Exchange2007.MAPIEnabled', N'MAPI  Enabled by default', 1, 0, NULL)
-GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (93, 12, 18, N'Exchange2007.ActiveSyncEnabled', N'ActiveSync Enabled by default', 1, 0, NULL)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (94, 2, 17, N'Web.ColdFusion', N'ColdFusion', 1, 0, NULL)
 GO
@@ -3593,7 +3755,7 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (108, 11, 6, N'MySQL5.Truncate', N'Database Truncate', 1, 0, NULL)
 GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (200, 20, 1, N'HostedSharePoint.Sites', N'SharePoint Site Collections', 3, 0, 200)
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (200, 20, 1, N'HostedSharePoint.Sites', N'SharePoint Site Collections', 2, 0, 200)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (203, 10, 4, N'MsSQL2005.MaxLogSize', N'Max Log Size', 3, 0, NULL)
 GO
@@ -3601,7 +3763,7 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (205, 13, 1, N'HostedSolution.Organizations', N'Organizations', 2, 0, 29)
 GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (206, 13, 2, N'HostedSolution.Users', N'Users', 3, 0, 30)
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (206, 13, 2, N'HostedSolution.Users', N'Users', 2, 0, 30)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (207, 13, 3, N'HostedSolution.Domains', N'Domains per Organizations', 3, 0, NULL)
 GO
@@ -3625,7 +3787,21 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (217, 22, 4, N'MsSQL2008.MaxLogSize', N'Max Log Size', 3, 0, NULL)
 GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (218, 23, 1, N'MsSQL2012.Databases', N'Databases', 2, 0, 37)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (219, 23, 2, N'MsSQL2012.Users', N'Users', 2, 0, 38)
+GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (220, 1, 5, N'OS.DomainPointers', N'Domain Pointers', 2, 0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (221, 23, 3, N'MsSQL2012.MaxDatabaseSize', N'Max Database Size', 3, 0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (222, 23, 5, N'MsSQL2012.Backup', N'Database Backups', 1, 0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (223, 23, 6, N'MsSQL2012.Restore', N'Database Restores', 1, 0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (224, 23, 7, N'MsSQL2012.Truncate', N'Database Truncate', 1, 0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (225, 23, 4, N'MsSQL2012.MaxLogSize', N'Max Log Size', 3, 0, NULL)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (300, 30, 1, N'VPS.ServersNumber', N'Number of VPS', 2, 0, 33)
 GO
@@ -3693,14 +3869,6 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (332, 2, 21, N'Web.SSL', N'SSL', 1, 0, NULL)
 GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (340, 33, 1, N'ExchangeHostedEdition.Domains', N'Domains', 3, 0, NULL)
-GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (341, 33, 2, N'ExchangeHostedEdition.Mailboxes', N'Mailboxes', 3, 0, NULL)
-GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (342, 33, 3, N'ExchangeHostedEdition.Contacts', N'Contacts', 3, 0, NULL)
-GO
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (343, 33, 4, N'ExchangeHostedEdition.DistributionLists', N'Distribution Lists', 3, 0, NULL)
-GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (344, 2, 9, N'Web.Htaccess', N'htaccess', 1, 0, NULL)
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (345, 40, 1, N'VPSForPC.ServersNumber', N'Number of VPS', 2, 0, 35)
@@ -3741,6 +3909,43 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 GO
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (363, 40, 12, N'VPSForPC.Bandwidth', N'Monthly bandwidth, GB', 2, 0, NULL)
 GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (364, 12, 19, N'Exchange2007.KeepDeletedItemsDays',	N'Keep Deleted Items (days)', 3, 0,	NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (365, 12, 20, N'Exchange2007.MaxRecipients', N'Maximum Recipients',	3,	0,	NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (366, 12, 21, N'Exchange2007.MaxSendMessageSizeKB',	N'Maximum Send Message Size (Kb)', 3, 0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (367, 12, 22, N'Exchange2007.MaxReceiveMessageSizeKB', N'Maximum Receive Message Size (Kb)', 3,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (368, 12, 1, N'Exchange2007.IsConsumer',N'Is Consumer Organization',1, 0 , NULL)
+GO
+INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (369, 12, 23,N'Exchange2007.EnablePlansEditing',N'Enable Plans Editing',1, 0 , NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (370, 41, 1, N'Lync.Users', N'Users',2 ,0 , NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (371,	41,	2,	N'Lync.Federation'	, N'Allow Federation',	1,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (372,	41,	3,	N'Lync.Conferencing', N'Allow Conferencing',	1,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (373,	41,	4,	N'Lync.MaxParticipants', N'Maximum Conference Particiapants',	3,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (374,	41,	5,	N'Lync.AllowVideo', N'Allow Video in Conference',	1,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (375,	41,	6,	N'Lync.EnterpriseVoice', N'Allow EnterpriseVoice',	1,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (376,	41,	7,	N'Lync.EVUsers', N'Number of Enterprise Voice Users',	2,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (377,	41,	8,	N'Lync.EVNational', N'Allow National Calls',	1,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (378,	41,	9,	N'Lync.EVMobile', N'Allow Mobile Calls',	1,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (379,	41,	10,	N'Lync.EVInternational', N'Allow International Calls',	1,	0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (380, 41, 11, N'Lync.EnablePlansEditing', N'Enable Plans Editing', 1, 0, NULL)
+GO
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (400, 20, 3, N'HostedSharePoint.UseSharedSSL', N'Use shared SSL Root', 1, 0, NULL)
+GO
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5856,7 +6061,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[ExchangeOrganizations](
 	[ItemID] [int] NOT NULL,
-	[OrganizationID] [nvarchar](10) COLLATE Latin1_General_CI_AS NOT NULL,
+	[OrganizationID] [nvarchar](128) COLLATE Latin1_General_CI_AS NOT NULL,
  CONSTRAINT [PK_ExchangeOrganizations] PRIMARY KEY CLUSTERED 
 (
 	[ItemID] ASC
@@ -5970,8 +6175,10 @@ CREATE PROCEDURE DeleteExchangeOrganization
 	@ItemID int
 )
 AS
-DELETE FROM ExchangeOrganizations
-WHERE ItemID = @ItemID
+BEGIN TRAN
+	DELETE FROM ExchangeMailboxPlans WHERE ItemID = @ItemID
+	DELETE FROM ExchangeOrganizations WHERE ItemID = @ItemID
+COMMIT TRAN
 RETURN
 
 
@@ -6043,7 +6250,7 @@ GO
 CREATE PROCEDURE AddExchangeOrganization
 (
 	@ItemID int,
-	@OrganizationID nvarchar(10)
+	@OrganizationID nvarchar(128)
 )
 AS
 
@@ -6231,10 +6438,10 @@ SELECT
 	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 2 AND ItemID = @ItemID) AS CreatedContacts,
 	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 3 AND ItemID = @ItemID) AS CreatedDistributionLists,
 	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 4 AND ItemID = @ItemID) AS CreatedPublicFolders,
-	(SELECT COUNT(*) FROM ExchangeOrganizationDomains WHERE ItemID = @ItemID) AS CreatedDomains
+	(SELECT COUNT(*) FROM ExchangeOrganizationDomains WHERE ItemID = @ItemID) AS CreatedDomains,
+	(SELECT SUM(B.MailboxSizeMB) FROM ExchangeAccounts AS A INNER JOIN ExchangeMailboxPlans AS B ON A.MailboxPlanId = B.MailboxPlanId WHERE A.ItemID=@ItemID) AS UsedDiskSpace
 
 RETURN
-
 
 
 
@@ -6601,18 +6808,26 @@ GO
 CREATE PROCEDURE [dbo].[UpdateExchangeAccount] 
 (
 	@AccountID int,
-	@AccountName nvarchar(20),
+	@AccountName nvarchar(300),
 	@DisplayName nvarchar(300),
 	@PrimaryEmailAddress nvarchar(300),
 	@AccountType int,
 	@SamAccountName nvarchar(100),
 	@MailEnabledPublicFolder bit,
 	@MailboxManagerActions varchar(200),
-	@Password varchar(200)
+	@Password varchar(200),
+	@MailboxPlanId int,
+	@SubscriberNumber varchar(32)
 )
 AS
 
 BEGIN TRAN	
+
+IF (@MailboxPlanId = -1) 
+BEGIN
+	SET @MailboxPlanId = NULL
+END
+
 UPDATE ExchangeAccounts SET
 	AccountName = @AccountName,
 	DisplayName = @DisplayName,
@@ -6620,7 +6835,9 @@ UPDATE ExchangeAccounts SET
 	MailEnabledPublicFolder = @MailEnabledPublicFolder,
 	MailboxManagerActions = @MailboxManagerActions,	
 	AccountType =@AccountType,
-	SamAccountName = @SamAccountName
+	SamAccountName = @SamAccountName,
+	MailboxPlanId = @MailboxPlanId,
+	SubscriberNumber = @SubscriberNumber
 
 WHERE
 	AccountID = @AccountID
@@ -6641,6 +6858,10 @@ IF (@@ERROR <> 0 )
 	END
 COMMIT TRAN
 RETURN
+
+
+
+
 
 
 
@@ -8889,7 +9110,8 @@ SELECT
 	EA.AccountType,
 	EA.AccountName,
 	EA.DisplayName,
-	EA.PrimaryEmailAddress
+	EA.PrimaryEmailAddress,
+	EA.SubscriberNumber
 FROM ExchangeAccounts AS EA
 WHERE ' + @condition
 
@@ -8899,6 +9121,8 @@ exec sp_executesql @sql, N'@ItemID int, @IncludeMailboxes bit',
 @ItemID, @IncludeMailboxes
 
 RETURN 
+
+
 
 
 
@@ -9527,7 +9751,7 @@ GO
 
 CREATE VIEW [dbo].[UsersDetailed]
 AS
-SELECT     U.UserID, U.RoleID, U.StatusID, U.OwnerID, U.Created, U.Changed, U.IsDemo, U.Comments, U.IsPeer, U.Username, U.FirstName, U.LastName, U.Email, 
+SELECT     U.UserID, U.RoleID, U.StatusID, U.LoginStatusId, U.FailedLogins, U.OwnerID, U.Created, U.Changed, U.IsDemo, U.Comments, U.IsPeer, U.Username, U.FirstName, U.LastName, U.Email, 
                       U.CompanyName, U.FirstName + ' ' + U.LastName AS FullName, UP.Username AS OwnerUsername, UP.FirstName AS OwnerFirstName, 
                       UP.LastName AS OwnerLastName, UP.RoleID AS OwnerRoleID, UP.FirstName + ' ' + UP.LastName AS OwnerFullName, UP.Email AS OwnerEmail, UP.RoleID AS Expr1,
                           (SELECT     COUNT(PackageID) AS Expr1
@@ -10452,6 +10676,7 @@ CREATE TABLE [dbo].[ResourceGroups](
 	[GroupName] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
 	[GroupOrder] [int] NOT NULL,
 	[GroupController] [nvarchar](1000) COLLATE Latin1_General_CI_AS NULL,
+	[ShowGroup] [bit] NULL,
  CONSTRAINT [PK_ResourceGroups] PRIMARY KEY CLUSTERED 
 (
 	[GroupID] ASC
@@ -10459,47 +10684,49 @@ CREATE TABLE [dbo].[ResourceGroups](
 )
 
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (1, N'OS', 1, N'WebsitePanel.EnterpriseServer.OperatingSystemController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (1, N'OS', 1, N'WebsitePanel.EnterpriseServer.OperatingSystemController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (2, N'Web', 2, N'WebsitePanel.EnterpriseServer.WebServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (2, N'Web', 2, N'WebsitePanel.EnterpriseServer.WebServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (3, N'FTP', 3, N'WebsitePanel.EnterpriseServer.FtpServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (3, N'FTP', 3, N'WebsitePanel.EnterpriseServer.FtpServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (4, N'Mail', 4, N'WebsitePanel.EnterpriseServer.MailServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (4, N'Mail', 4, N'WebsitePanel.EnterpriseServer.MailServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (5, N'MsSQL2000', 8, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (5, N'MsSQL2000', 8, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (6, N'MySQL4', 11, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (6, N'MySQL4', 12, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (7, N'DNS', 16, N'WebsitePanel.EnterpriseServer.DnsServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (7, N'DNS', 17, N'WebsitePanel.EnterpriseServer.DnsServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (8, N'Statistics', 17, N'WebsitePanel.EnterpriseServer.StatisticsServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (8, N'Statistics', 18, N'WebsitePanel.EnterpriseServer.StatisticsServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (9, N'SharePoint', 13, N'WebsitePanel.EnterpriseServer.SharePointServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (9, N'SharePoint', 14, N'WebsitePanel.EnterpriseServer.SharePointServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (10, N'MsSQL2005', 9, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (10, N'MsSQL2005', 9, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (11, N'MySQL5', 12, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (11, N'MySQL5', 13, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (12, N'Exchange', 5, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (12, N'Exchange', 5, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (13, N'Hosted Organizations', 6, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (13, N'Hosted Organizations', 6, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (20, N'Hosted SharePoint', 14, N'WebsitePanel.EnterpriseServer.HostedSharePointServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (20, N'Hosted SharePoint', 15, N'WebsitePanel.EnterpriseServer.HostedSharePointServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (21, N'Hosted CRM', 15, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (21, N'Hosted CRM', 16, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (22, N'MsSQL2008', 10, N'WebsitePanel.EnterpriseServer.DatabaseServerController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (22, N'MsSQL2008', 10, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (30, N'VPS', 18, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (23, N'MsSQL2012', 11, N'WebsitePanel.EnterpriseServer.DatabaseServerController', 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (31, N'BlackBerry', 20, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (30, N'VPS', 19, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (32, N'OCS', 21, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (31, N'BlackBerry', 21, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (33, N'ExchangeHostedEdition', 7, N'WebsitePanel.EnterpriseServer.ExchangeHostedEditionController')
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (32, N'OCS', 22, NULL, 1)
 GO
-INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController]) VALUES (40, N'VPSForPC', 19, NULL)
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (41, N'Lync',23, NULL, 1)
+GO
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (40, N'VPSForPC', 20, NULL, 1)
 GO
 SET ANSI_NULLS ON
 GO
@@ -11758,6 +11985,8 @@ SELECT
 	U.UserID,
 	U.RoleID,
 	U.StatusID,
+	U.LoginStatusId,
+	U.FailedLogins,
 	U.OwnerID,
 	U.Created,
 	U.Changed,
@@ -11787,6 +12016,7 @@ exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @UserID int, @Filter
 
 
 RETURN
+
 
 
 
@@ -11860,7 +12090,7 @@ GO
 
 
 
-CREATE PROCEDURE GetUserDomainsPaged
+CREATE PROCEDURE [dbo].[GetUserDomainsPaged]
 (
 	@ActorID int,
 	@UserID int,
@@ -11909,6 +12139,8 @@ SELECT
 	U.UserID,
 	U.RoleID,
 	U.StatusID,
+	U.LoginStatusId,
+	U.FailedLogins,
 	U.OwnerID,
 	U.Created,
 	U.Changed,
@@ -11930,7 +12162,6 @@ exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @UserID int, @Filter
 
 
 RETURN
-
 
 
 
@@ -13105,6 +13336,62 @@ GO
 
 
 
+CREATE TABLE [dbo].[LyncUserPlans](
+	[LyncUserPlanId] [int] IDENTITY(1,1) NOT NULL,
+	[ItemID] [int] NOT NULL,
+	[LyncUserPlanName] [nvarchar](300) COLLATE Latin1_General_CI_AS NOT NULL,
+	[IM] [bit] NOT NULL,
+	[Mobility] [bit] NOT NULL,
+	[MobilityEnableOutsideVoice] [bit] NOT NULL,
+	[Federation] [bit] NOT NULL,
+	[Conferencing] [bit] NOT NULL,
+	[EnterpriseVoice] [bit] NOT NULL,
+	[VoicePolicy] [int] NOT NULL,
+	[IsDefault] [bit] NOT NULL,
+ CONSTRAINT [PK_LyncUserPlans] PRIMARY KEY CLUSTERED 
+(
+	[LyncUserPlanId] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
+
+
+
+
+
+
+
+CREATE TABLE [dbo].[LyncUsers](
+	[LyncUserID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int] NOT NULL,
+	[LyncUserPlanID] [int] NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+	[ModifiedDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_LyncUsers] PRIMARY KEY CLUSTERED 
+(
+	[LyncUserID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -13920,7 +14207,7 @@ INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [D
 GO
 INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_BACKUP_DATABASE', N'BACKUP_NAME', N'String', N'database_backup.bak', 4)
 GO
-INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_BACKUP_DATABASE', N'DATABASE_GROUP', N'List', N'MsSQL2000=SQL Server 2000;MsSQL2005=SQL Server 2005;MsSQL2008=SQL Server 2008;MySQL4=MySQL 4.0;MySQL5=MySQL 5.0', 1)
+INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_BACKUP_DATABASE', N'DATABASE_GROUP', N'List', N'MsSQL2000=SQL Server 2000;MsSQL2005=SQL Server 2005;MsSQL2008=SQL Server 2008;MsSQL2012=SQL Server 2012;MySQL4=MySQL 4.0;MySQL5=MySQL 5.0', 1)
 GO
 INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_BACKUP_DATABASE', N'DATABASE_NAME', N'String', N'', 2)
 GO
@@ -15753,6 +16040,9 @@ CREATE TABLE [dbo].[GlobalDnsRecords](
 	[ServerID] [int] NULL,
 	[PackageID] [int] NULL,
 	[IPAddressID] [int] NULL,
+	[SrvPriority] [int] NULL,
+	[SrvWeight] [int] NULL,
+	[SrvPort] [int] NULL,
  CONSTRAINT [PK_GlobalDnsRecords] PRIMARY KEY CLUSTERED 
 (
 	[RecordID] ASC
@@ -19206,6 +19496,8 @@ AS
 		U.UserID,
 		U.RoleID,
 		U.StatusID,
+		U.LoginStatusId,
+		U.FailedLogins,
 		U.OwnerID,
 		U.Created,
 		U.Changed,
@@ -19252,6 +19544,8 @@ AS
 		U.UserID,
 		U.RoleID,
 		U.StatusID,
+		U.LoginStatusId,
+		U.FailedLogins,
 		U.OwnerID,
 		U.Created,
 		U.Changed,
@@ -19613,6 +19907,8 @@ SELECT
 	U.UserID,
 	U.RoleID,
 	U.StatusID,
+	U.LoginStatusId,
+	U.FailedLogins,
 	U.OwnerID,
 	U.Created,
 	U.Changed,
@@ -19639,7 +19935,7 @@ WHERE U.UserID <> @OwnerID AND
 AND U.IsPeer = 0
 AND @CanGetDetails = 1 -- actor user rights
 
-RETURN 
+RETURN
 
 
 
@@ -19731,6 +20027,8 @@ SELECT
 	U.UserID,
 	U.RoleID,
 	U.StatusID,
+	U.LoginStatusId,
+	U.FailedLogins,
 	U.OwnerID,
 	U.Created,
 	U.Changed,
@@ -20018,16 +20316,6 @@ GO
 INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (16, 3, 12, N'CNAME', N'autodiscover', N'', 0)
 GO
 INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (17, 4, 12, N'CNAME', N'owa', N'', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (18, 1, 33, N'A', N'smtp', N'[IP]', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (19, 2, 33, N'MX', N'', N'smtp.[DOMAIN_NAME]', 10)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (20, 3, 33, N'CNAME', N'autodiscover', N'', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (21, 4, 33, N'CNAME', N'owa', N'', 0)
-GO
-INSERT [dbo].[ResourceGroupDnsRecords] ([RecordID], [RecordOrder], [GroupID], [RecordType], [RecordName], [RecordData], [MXPriority]) VALUES (22, 5, 33, N'CNAME', N'ecp', N'', 0)
 GO
 SET IDENTITY_INSERT [dbo].[ResourceGroupDnsRecords] OFF
 GO
@@ -20538,7 +20826,7 @@ GO
 
 
 
-CREATE PROCEDURE GetPackages
+CREATE PROCEDURE [dbo].[GetPackages]
 (
 	@ActorID int,
 	@UserID int
@@ -20577,8 +20865,7 @@ INNER JOIN Users AS U ON P.UserID = U.UserID
 INNER JOIN Servers AS S ON P.ServerID = S.ServerID
 INNER JOIN HostingPlans AS HP ON P.PlanID = HP.PlanID
 WHERE
-	P.UserID <> @UserID
-	AND dbo.CheckUserParent(@UserID, P.UserID) = 1
+	P.UserID = @UserID	
 RETURN
 
 
@@ -21050,6 +21337,7 @@ and below is the summary information for its resources.
         <ad:if test="#space.Groups.ContainsKey("MsSQL2000")#"><li><a href="##mssql2000">SQL Server 2000</a></li></ad:if>
         <ad:if test="#space.Groups.ContainsKey("MsSQL2005")#"><li><a href="##mssql2005">SQL Server 2005</a></li></ad:if>
         <ad:if test="#space.Groups.ContainsKey("MsSQL2008")#"><li><a href="##mssql2008">SQL Server 2008</a></li></ad:if>
+	<ad:if test="#space.Groups.ContainsKey("MsSQL2012")#"><li><a href="##mssql2012">SQL Server 2012</a></li></ad:if>
         <ad:if test="#space.Groups.ContainsKey("MySQL4")#"><li><a href="##mysql4">My SQL 4.x</a></li></ad:if>
         <ad:if test="#space.Groups.ContainsKey("MySQL5")#"><li><a href="##mysql5">My SQL 5.x</a></li></ad:if>
         <li><a href="##msaccess">Microsoft Access</a></li>
@@ -21495,6 +21783,34 @@ using this IP address instead of actual POP3/SMTP/IMAP servers name:
 	</tr>
 </table>
 <ad:MsSqlConnectionStrings server="#MsSQL2008Address#" />
+</ad:if>
+
+<ad:if test="#space.Groups.ContainsKey("MsSQL2012")#">
+<a name="mssql2012"></a>
+
+<h2>SQL Server 2012</h2>
+
+<table>
+    <tr>
+        <td class="Label">Maximum Number of Databases:</td>
+        <td><ad:NumericQuota quota="MsSQL2012.Databases" /></td>
+    </tr>
+    <tr>
+        <td class="Label">Maximum Number of Users:</td>
+        <td><ad:NumericQuota quota="MsSQL2012.Users" /></td>
+    </tr>
+</table>
+
+<p>
+	In order to connect to SQL Server 2012 from Management Studio, Enterprise Manager, Query Analyzer
+	or other client software you can use the following SQL Server address:
+</p>
+<table>
+	<tr>
+		<td>#MsSQL2012Address#</td>
+	</tr>
+</table>
+<ad:MsSqlConnectionStrings server="#MsSQL2012Address#" />
 </ad:if>
 
 <ad:if test="#space.Groups.ContainsKey("MySQL4")#">
@@ -22006,6 +22322,8 @@ INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [Property
 GO
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'WebPolicy', N'DefaultDocuments', N'Default.htm,Default.asp,index.htm,Default.aspx')
 GO
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'WebPolicy', N'EnableParkingPageTokens', N'False')
+GO
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'WebPolicy', N'EnableAnonymousAccess', N'True')
 GO
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'WebPolicy', N'EnableBasicAuthentication', N'False')
@@ -22242,7 +22560,9 @@ INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeNa
 GO
 INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (36, 40, N'VirtualSwitch', N'WebsitePanel.Providers.Virtualization.VirtualSwitch, WebsitePanel.Providers.Base', 2, 0, 0, 1, 1, 1, 0, 0)
 GO
-INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (40, 33, N'ExchangeOrganization', N'WebsitePanel.Providers.ExchangeHostedEdition.ExchangeOrganization, WebsitePanel.Providers.Base', 1, 0, 0, 1, 1, 1, 0, 0)
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (37, 23, N'MsSQL2012Database', N'WebsitePanel.Providers.Database.SqlDatabase, WebsitePanel.Providers.Base', 1, 1, 0, 0, 1, 1, 1, 1)
+GO
+INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (38, 23, N'MsSQL2012User', N'WebsitePanel.Providers.Database.SqlUser, WebsitePanel.Providers.Base', 1, 0, 0, 0, 1, 1, 1, 1)
 GO
 INSERT [dbo].[ServiceItemTypes] ([ItemTypeID], [GroupID], [DisplayName], [TypeName], [TypeOrder], [CalculateDiskspace], [CalculateBandwidth], [Suspendable], [Disposable], [Searchable], [Importable], [Backupable]) VALUES (200, 20, N'SharePointSiteCollection', N'WebsitePanel.Providers.SharePoint.SharePointSiteCollection, WebsitePanel.Providers.Base', 25, 1, 0, 0, 1, 1, 1, 1)
 GO
@@ -23173,7 +23493,7 @@ INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName]
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (62, 8, N'SmarterStats', N'SmarterStats 5.x-6.x', N'WebsitePanel.Providers.Statistics.SmarterStats5, WebsitePanel.Providers.Statistics.SmarterStats', N'SmarterStats', NULL)
 GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (63, 4, N'hMailServer5', N'hMailServer 5.x', N'WebsitePanel.Providers.Mail.hMailServer5, WebsitePanel.Providers.Mail.hMailServer5', N'hMailServer43', NULL)
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (63, 4, N'hMailServer5', N'hMailServer 5.x', N'WebsitePanel.Providers.Mail.hMailServer5, WebsitePanel.Providers.Mail.hMailServer5', N'hMailServer5', NULL)
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (64, 4, N'SmarterMail', N'SmarterMail 7.x', N'WebsitePanel.Providers.Mail.SmarterMail7, WebsitePanel.Providers.Mail.SmarterMail7', N'SmarterMail60', NULL)
 GO
@@ -23201,15 +23521,19 @@ INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName]
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (206, 32, N'OCSEdge', N'OCS Edge server', N'WebsitePanel.Providers.HostedSolution.OCSEdge2007R2, WebsitePanel.Providers.HostedSolution', N'OCS_Edge', 1)
 GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (207, 33, N'Exchange2010SP1', N'Exchange Server 2010 SP1 Hosting Mode', N'WebsitePanel.Providers.ExchangeHostedEdition.Exchange2010SP1, WebsitePanel.Providers.ExchangeHostedEdition', N'Exchange2010SP1', 1)
-GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (208, 20, N'HostedSharePoint2010', N'Hosted SharePoint Foundation 2010', N'WebsitePanel.Providers.HostedSolution.HostedSharePointServer2010, WebsitePanel.Providers.HostedSolution', N'HostedSharePoint30', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (209, 23, N'MsSQL', N'Microsoft SQL Server 2012', N'WebsitePanel.Providers.Database.MsSqlServer2012, WebsitePanel.Providers.Database.SqlServer', N'MSSQL', NULL)
+GO
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (250, 41, N'Lync2010', N'Microsoft Lync Server 2010 Multitenant Hosting Pack', 'WebsitePanel.Providers.HostedSolution.Lync2010, WebsitePanel.Providers.HostedSolution', 'Lync', 1)
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (300, 30, N'HyperV', N'Microsoft Hyper-V', N'WebsitePanel.Providers.Virtualization.HyperV, WebsitePanel.Providers.Virtualization.HyperV', N'HyperV', 1)
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (301, 11, N'MySQL', N'MySQL Server 5.5', N'WebsitePanel.Providers.Database.MySqlServer55, WebsitePanel.Providers.Database.MySQL', N'MySQL', NULL)
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (400, 40, N'HyperVForPC', N'Microsoft Hyper-V For Private Cloud', N'WebsitePanel.Providers.VirtualizationForPC.HyperVForPC, WebsitePanel.Providers.VirtualizationForPC.HyperVForPC', N'HyperVForPrivateCloud', 1)
+GO
+INSERT [dbo].[Providers] ([ProviderId], [GroupId], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES(90, 12, N'Exchange2010SP2', N'Hosted Microsoft Exchange Server 2010 SP2', N'WebsitePanel.Providers.HostedSolution.Exchange2010SP2, WebsitePanel.Providers.HostedSolution', N'Exchange',	1)
 GO
 SET ANSI_NULLS ON
 GO
@@ -23291,6 +23615,9 @@ CREATE PROCEDURE UpdateDnsRecord
 	@RecordName nvarchar(50),
 	@RecordData nvarchar(500),
 	@MXPriority int,
+	@SrvPriority int,
+	@SrvWeight int, 
+	@SrvPort int,	
 	@IPAddressID int
 )
 AS
@@ -23321,6 +23648,9 @@ SET
 	RecordName = @RecordName,
 	RecordData = @RecordData,
 	MXPriority = @MXPriority,
+	SrvPriority = @SrvPriority,
+	SrvWeight = @SrvWeight,
+	SrvPort = @SrvPort,
 	IPAddressID = @IPAddressID
 WHERE
 	RecordID = @RecordID
@@ -23428,6 +23758,9 @@ SELECT
 	NR.RecordName,
 	NR.RecordData,
 	NR.MXPriority,
+	NR.SrvPriority,
+	NR.SrvWeight,
+	NR.SrvPort,	
 	NR.IPAddressID
 FROM
 	GlobalDnsRecords AS NR
@@ -23613,6 +23946,9 @@ CREATE PROCEDURE AddDnsRecord
 	@RecordName nvarchar(50),
 	@RecordData nvarchar(500),
 	@MXPriority int,
+	@SrvPriority int,
+	@SrvWeight int, 
+	@SrvPort int,
 	@IPAddressID int
 )
 AS
@@ -23637,8 +23973,12 @@ IF EXISTS
 	
 	UPDATE GlobalDnsRecords
 	SET
-		RecordData = RecordData,
-		MXPriority = MXPriority,
+		RecordData = @RecordData,
+		MXPriority = @MXPriority,
+		SrvPriority = @SrvPriority,
+		SrvWeight = @SrvWeight,
+		SrvPort = @SrvPort,
+	
 		IPAddressID = @IPAddressID
 	WHERE
 		ServiceID = @ServiceID AND ServerID = @ServerID AND PackageID = @PackageID
@@ -23652,6 +23992,9 @@ ELSE
 		RecordName,
 		RecordData,
 		MXPriority,
+		SrvPriority,
+		SrvWeight,
+		SrvPort,
 		IPAddressID
 	)
 	VALUES
@@ -23663,6 +24006,9 @@ ELSE
 		@RecordName,
 		@RecordData,
 		@MXPriority,
+		@SrvPriority,
+		@SrvWeight,
+		@SrvPort,
 		@IPAddressID
 	)
 
@@ -24109,6 +24455,8 @@ INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [Property
 GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (12, N'InstallFolder', N'%PROGRAMFILES%\Gene6 FTP Server')
 GO
+INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (12, N'LogsFolder', N'%PROGRAMFILES%\Gene6 FTP Server\Log')
+GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (14, N'AdminPassword', N'')
 GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (14, N'AdminUsername', N'admin')
@@ -24310,6 +24658,10 @@ INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [Property
 GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (62, N'Username', N'Admin')
 GO
+INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (63, N'AdminPassword', N'')
+GO
+INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (63, N'AdminUsername', N'Administrator')
+GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (64, N'AdminPassword', N'')
 GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (64, N'AdminUsername', N'admin')
@@ -24385,10 +24737,6 @@ GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (204, N'UserName', N'admin')
 GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (204, N'UtilityPath', N'C:\Program Files\Research In Motion\BlackBerry Enterprise Server Resource Kit\BlackBerry Enterprise Server User Administration Tool')
-GO
-INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (207, N'ecpURL', N'http://ecp.[DOMAIN_NAME]')
-GO
-INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (207, N'location', N'en-us')
 GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (300, N'CpuLimit', N'100')
 GO
@@ -24832,6 +25180,7 @@ CREATE PROCEDURE [dbo].[AddUser]
 	@OwnerID int,
 	@RoleID int,
 	@StatusID int,
+	@LoginStatusID int,
 	@IsDemo bit,
 	@IsPeer bit,
 	@Comments ntext,
@@ -24875,6 +25224,7 @@ INSERT INTO Users
 	OwnerID,
 	RoleID,
 	StatusID,
+	LoginStatusID,
 	Created,
 	Changed,
 	IsDemo,
@@ -24904,6 +25254,7 @@ VALUES
 	@OwnerID,
 	@RoleID,
 	@StatusID,
+	@LoginStatusID,
 	GetDate(),
 	GetDate(),
 	@IsDemo,
@@ -24931,8 +25282,7 @@ VALUES
 
 SET @UserID = SCOPE_IDENTITY()
 
-RETURN 
-
+RETURN
 
 
 
@@ -25110,6 +25460,7 @@ CREATE PROCEDURE [dbo].[UpdateUser]
 	@UserID int,
 	@RoleID int,
 	@StatusID int,
+	@LoginStatusId int,
 	@IsDemo bit,
 	@IsPeer bit,
 	@Comments ntext,
@@ -25139,9 +25490,17 @@ AS
 		RETURN
 	END
 
+	IF @LoginStatusId = 0
+	BEGIN
+		UPDATE Users SET 
+			FailedLogins = 0
+		WHERE UserID = @UserID
+	END
+
 	UPDATE Users SET 
 		RoleID = @RoleID,
 		StatusID = @StatusID,
+		LoginStatusId = @LoginStatusId,
 		Changed = GetDate(),
 		IsDemo = @IsDemo,
 		IsPeer = @IsPeer,
@@ -25188,17 +25547,44 @@ GO
 
 
 
+CREATE PROCEDURE [dbo].[UpdateUserFailedLoginAttempt]
+(
+	@UserID int,
+	@LockOut int,
+	@Reset int
+)
+AS
+
+IF (@Reset = 1)
+BEGIN
+	UPDATE Users SET FailedLogins = 0 WHERE UserID = @UserID
+END
+ELSE
+BEGIN
+	IF (@LockOut <= (SELECT FailedLogins FROM USERS WHERE UserID = @UserID))
+	BEGIN
+		UPDATE Users SET LoginStatusId = 2 WHERE UserID = @UserID
+	END
+	ELSE
+	BEGIN
+		IF ((SELECT FailedLogins FROM Users WHERE UserID = @UserID) IS NULL)
+		BEGIN
+			UPDATE Users SET FailedLogins = 1 WHERE UserID = @UserID
+		END
+		ELSE
+			UPDATE Users SET FailedLogins = FailedLogins + 1 WHERE UserID = @UserID
+	END
+END
 
 
 
 
 
-
-
-
-
-
-
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 
 
 CREATE PROCEDURE DeleteComment
@@ -25664,21 +26050,40 @@ AS
 							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
 							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 3)
 		ELSE IF @QuotaID = 319 -- BB Users
-			SET @Result = (SELECT COUNT(ea.AccountID) 
-								FROM 
-									ExchangeAccounts ea 
-								INNER JOIN 
-									BlackBerryUsers bu 
-								ON 
-									ea.AccountID = bu.AccountID
-								INNER JOIN 
-									ServiceItems  si 
-								ON 
-									ea.ItemID = si.ItemID
-								INNER JOIN 
-									PackagesTreeCache pt ON si.PackageID = pt.PackageID
-								WHERE 
-									pt.ParentPackageID = @PackageID)
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts ea 
+							INNER JOIN BlackBerryUsers bu ON ea.AccountID = bu.AccountID
+							INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+							INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+							WHERE pt.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 206 -- HostedSolution.Users
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE pt.ParentPackageID = @PackageID AND ea.AccountType IN (1,5,6,7))
+		ELSE IF @QuotaID = 78 -- Exchange2007.Mailboxes
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE pt.ParentPackageID = @PackageID AND ea.MailboxPlanId IS NOT NULL)
+		ELSE IF @QuotaID = 77 -- Exchange2007.DiskSpace
+			SET @Result = (SELECT SUM(B.MailboxSizeMB) FROM ExchangeAccounts AS ea 
+			INNER JOIN ExchangeMailboxPlans AS B ON ea.MailboxPlanId = B.MailboxPlanId 
+			INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+			INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+			WHERE pt.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 370 -- Lync.Users
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
+				INNER JOIN LyncUsers lu ON ea.AccountID = lu.AccountID
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE pt.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 376 -- Lync.EVUsers
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
+				INNER JOIN LyncUsers lu ON ea.AccountID = lu.AccountID
+				INNER JOIN LyncUserPlans lp ON lu.LyncUserPlanId = lp.LyncUserPlanId
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE pt.ParentPackageID = @PackageID AND lp.EnterpriseVoice = 1)
 		ELSE
 			SET @Result = (SELECT COUNT(SI.ItemID) FROM Quotas AS Q
 			INNER JOIN ServiceItems AS SI ON SI.ItemTypeID = Q.ItemTypeID
@@ -25687,14 +26092,10 @@ AS
 
 		RETURN @Result
 	END
+GO
 
 
 
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 
 
 
@@ -25938,7 +26339,7 @@ GO
 
 
 
-CREATE PROCEDURE GetHostingPlanQuotas
+CREATE PROCEDURE [dbo].[GetHostingPlanQuotas]
 (
 	@ActorID int,
 	@PlanID int,
@@ -25968,8 +26369,9 @@ SELECT
 	dbo.GetPackageAllocatedResource(@PackageID, RG.GroupID, @ServerID) AS ParentEnabled,
 	ISNULL(HPR.CalculateDiskSpace, 1) AS CalculateDiskSpace,
 	ISNULL(HPR.CalculateBandwidth, 1) AS CalculateBandwidth
-FROM ResourceGroups AS RG
+FROM ResourceGroups AS RG 
 LEFT OUTER JOIN HostingPlanResources AS HPR ON RG.GroupID = HPR.GroupID AND HPR.PlanID = @PlanID
+WHERE (ShowGroup = 1)
 ORDER BY RG.GroupOrder
 
 -- get quotas by groups
@@ -25985,7 +26387,6 @@ FROM Quotas AS Q
 LEFT OUTER JOIN HostingPlanQuotas AS HPQ ON Q.QuotaID = HPQ.QuotaID AND HPQ.PlanID = @PlanID
 ORDER BY Q.QuotaOrder
 RETURN
-
 
 
 
@@ -28346,6 +28747,8 @@ SELECT
 	U.UserID,
 	U.RoleID,
 	U.StatusID,
+	U.LoginStatusId,
+	U.FailedLogins,
 	U.OwnerID,
 	U.Created,
 	U.Changed,
@@ -28512,6 +28915,8 @@ AS
 		U.UserID,
 		U.RoleID,
 		U.StatusID,
+		U.LoginStatusId,
+		U.FailedLogins,
 		U.OwnerID,
 		U.Created,
 		U.Changed,
@@ -28563,6 +28968,8 @@ AS
 		U.UserID,
 		U.RoleID,
 		U.StatusID,
+		U.LoginStatusId,
+		U.FailedLogins,
 		U.OwnerID,
 		U.Created,
 		U.Changed,
@@ -35616,8 +36023,8 @@ RAISERROR('You are not allowed to access this package', 16, 1)
 DECLARE @Records TABLE
 (
 	RecordID int,
-	RecordType nvarchar(10) COLLATE DATABASE_DEFAULT,
-	RecordName nvarchar(50) COLLATE DATABASE_DEFAULT
+	RecordType nvarchar(10) COLLATE Latin1_General_CI_AS,
+	RecordName nvarchar(50) COLLATE Latin1_General_CI_AS
 )
 
 -- select PACKAGES DNS records
@@ -35689,12 +36096,16 @@ SELECT
 	NR.RecordName,
 	NR.RecordData,
 	NR.MXPriority,
+	NR.SrvPriority,
+	NR.SrvWeight,
+	NR.SrvPort,	
 	NR.IPAddressID,
 	ISNULL(IP.ExternalIP, '') AS ExternalIP,
 	ISNULL(IP.InternalIP, '') AS InternalIP,
 	CASE
 		WHEN NR.RecordType = 'A' AND NR.RecordData = '' THEN dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP)
 		WHEN NR.RecordType = 'MX' THEN CONVERT(varchar(3), NR.MXPriority) + ', ' + NR.RecordData
+		WHEN NR.RecordType = 'SRV' THEN CONVERT(varchar(3), NR.SrvPort) + ', ' + NR.RecordData
 		ELSE NR.RecordData
 	END AS FullRecordData,
 	dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP) AS IPAddress
@@ -35703,6 +36114,8 @@ INNER JOIN GlobalDnsRecords AS NR ON TR.RecordID = NR.RecordID
 LEFT OUTER JOIN IPAddresses AS IP ON NR.IPAddressID = IP.AddressID
 
 RETURN
+
+
 
 
 
@@ -35791,10 +36204,14 @@ SELECT
 	CASE
 		WHEN NR.RecordType = 'A' AND NR.RecordData = '' THEN dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP)
 		WHEN NR.RecordType = 'MX' THEN CONVERT(varchar(3), NR.MXPriority) + ', ' + NR.RecordData
+		WHEN NR.RecordType = 'SRV' THEN CONVERT(varchar(3), NR.SrvPort) + ', ' + NR.RecordData
 		ELSE NR.RecordData
 	END AS FullRecordData,
 	NR.RecordData,
 	NR.MXPriority,
+	NR.SrvPriority,
+	NR.SrvWeight,
+	NR.SrvPort,			
 	NR.IPAddressID,
 	dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP) AS IPAddress,
 	IP.ExternalIP,
@@ -35894,9 +36311,13 @@ SELECT
 	CASE
 		WHEN NR.RecordType = 'A' AND NR.RecordData = '' THEN dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP)
 		WHEN NR.RecordType = 'MX' THEN CONVERT(varchar(3), NR.MXPriority) + ', ' + NR.RecordData
+		WHEN NR.RecordType = 'SRV' THEN CONVERT(varchar(3), NR.SrvPort) + ', ' + NR.RecordData
 		ELSE NR.RecordData
 	END AS FullRecordData,
 	NR.MXPriority,
+	NR.SrvPriority,
+	NR.SrvWeight,
+	NR.SrvPort,		
 	NR.IPAddressID,
 	dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP) AS IPAddress,
 	IP.ExternalIP,
@@ -35907,6 +36328,7 @@ LEFT OUTER JOIN IPAddresses AS IP ON NR.IPAddressID = IP.AddressID
 WHERE
 	NR.ServerID = @ServerID
 RETURN
+
 
 
 
@@ -35998,10 +36420,14 @@ SELECT
 	NR.RecordName,
 	NR.RecordData,
 	NR.MXPriority,
+	NR.SrvPriority,
+	NR.SrvWeight,
+	NR.SrvPort,	
 	NR.IPAddressID,
 	CASE
 		WHEN NR.RecordType = 'A' AND NR.RecordData = '' THEN dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP)
 		WHEN NR.RecordType = 'MX' THEN CONVERT(varchar(3), NR.MXPriority) + ', ' + NR.RecordData
+		WHEN NR.RecordType = 'SRV' THEN CONVERT(varchar(3), NR.SrvPort) + ', ' + NR.RecordData
 		ELSE NR.RecordData
 	END AS FullRecordData,
 	dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP) AS IPAddress,
@@ -40186,7 +40612,7 @@ GO
 
 
 
-CREATE PROCEDURE GetRawServicesByServerID
+CREATE PROCEDURE [dbo].[GetRawServicesByServerID]
 (
 	@ActorID int,
 	@ServerID int
@@ -40202,7 +40628,7 @@ SELECT
 	GroupID,
 	GroupName
 FROM ResourceGroups
-WHERE @IsAdmin = 1
+WHERE @IsAdmin = 1 AND (ShowGroup = 1)
 ORDER BY GroupOrder
 
 -- services
@@ -40221,7 +40647,7 @@ WHERE
 	AND @IsAdmin = 1
 ORDER BY RG.GroupOrder
 
-RETURN 
+RETURN
 
 
 
@@ -43689,7 +44115,7 @@ GO
 
 
 
-CREATE PROCEDURE GetVirtualServices
+CREATE PROCEDURE [dbo].[GetVirtualServices]
 (
 	@ActorID int,
 	@ServerID int
@@ -43710,7 +44136,7 @@ SELECT
 FROM ResourceGroups AS RG
 LEFT OUTER JOIN VirtualGroups AS VRG ON RG.GroupID = VRG.GroupID AND VRG.ServerID = @ServerID
 WHERE
-	@IsAdmin = 1
+	@IsAdmin = 1 AND (ShowGroup = 1)
 ORDER BY RG.GroupOrder
 
 -- services
@@ -43729,7 +44155,7 @@ WHERE
 	VS.ServerID = @ServerID
 	AND @IsAdmin = 1
 
-RETURN 
+RETURN
 
 
 
@@ -44029,8 +44455,8 @@ EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
 
 -- Execute a SELECT statement that uses the OPENXML rowset provider.
 DELETE FROM ServiceProperties
-WHERE ServiceID = @ServiceID
-AND PropertyName IN
+WHERE ServiceID = @ServiceID 
+AND PropertyName COLLATE Latin1_General_CI_AS IN
 (
 	SELECT PropertyName
 	FROM OPENXML(@idoc, '/properties/property', 1)
@@ -44358,6 +44784,7 @@ EXEC sp_xml_removedocument @idoc
 COMMIT TRAN
 RETURN
 
+GO
 
 
 
@@ -44380,33 +44807,813 @@ RETURN
 
 
 
+CREATE PROCEDURE [dbo].[AddExchangeMailboxPlan] 
+(
+	@MailboxPlanId int OUTPUT,
+	@ItemID int,
+	@MailboxPlan	nvarchar(300),
+	@EnableActiveSync bit,
+	@EnableIMAP bit,
+	@EnableMAPI bit,
+	@EnableOWA bit,
+	@EnablePOP bit,
+	@IsDefault bit,
+	@IssueWarningPct int,
+	@KeepDeletedItemsDays int,
+	@MailboxSizeMB int,
+	@MaxReceiveMessageSizeKB int,
+	@MaxRecipients int,
+	@MaxSendMessageSizeKB int,
+	@ProhibitSendPct int,
+	@ProhibitSendReceivePct int	,
+	@HideFromAddressBook bit
+)
+AS
+
+IF ((SELECT Count(*) FROM ExchangeMailboxPlans WHERE ItemId = @ItemID) = 0)
+BEGIN
+	SET @IsDefault = 1
+END
+ELSE
+BEGIN
+	IF @IsDefault = 1
+	BEGIN
+		UPDATE ExchangeMailboxPlans SET IsDefault = 0 WHERE ItemID = @ItemID
+	END
+END
 
 
 
+INSERT INTO ExchangeMailboxPlans
+(
+	ItemID,
+	MailboxPlan,
+	EnableActiveSync,
+	EnableIMAP,
+	EnableMAPI,
+	EnableOWA,
+	EnablePOP,
+	IsDefault,
+	IssueWarningPct,
+	KeepDeletedItemsDays,
+	MailboxSizeMB,
+	MaxReceiveMessageSizeKB,
+	MaxRecipients,
+	MaxSendMessageSizeKB,
+	ProhibitSendPct,
+	ProhibitSendReceivePct,
+	HideFromAddressBook
+)
+VALUES
+(
+	@ItemID,
+	@MailboxPlan,
+	@EnableActiveSync,
+	@EnableIMAP,
+	@EnableMAPI,
+	@EnableOWA,
+	@EnablePOP,
+	@IsDefault,
+	@IssueWarningPct,
+	@KeepDeletedItemsDays,
+	@MailboxSizeMB,
+	@MaxReceiveMessageSizeKB,
+	@MaxRecipients,
+	@MaxSendMessageSizeKB,
+	@ProhibitSendPct,
+	@ProhibitSendReceivePct,
+	@HideFromAddressBook
+)
 
+SET @MailboxPlanId = SCOPE_IDENTITY()
 
-
-
-
-
-
-
-
-
+RETURN
 
 GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[SetExchangeAccountMailboxplan] 
+(
+	@AccountID int,
+	@MailboxPlanId int
+)
+AS
+
+UPDATE ExchangeAccounts SET
+	MailboxPlanId = @MailboxPlanId
+WHERE
+	AccountID = @AccountID
+
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[SetOrganizationDefaultExchangeMailboxPlan]
+(
+	@ItemId int,
+	@MailboxPlanId int
+)
+AS
+
+UPDATE ExchangeMailboxPlans SET IsDefault=0 WHERE ItemId=@ItemId
+UPDATE ExchangeMailboxPlans SET IsDefault=1 WHERE MailboxPlanId=@MailboxPlanId
+
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetExchangeMailboxPlan] 
+(
+	@MailboxPlanId int
+)
+AS
+SELECT
+	MailboxPlanId,
+	ItemID,
+	MailboxPlan,
+	EnableActiveSync,
+	EnableIMAP,
+	EnableMAPI,
+	EnableOWA,
+	EnablePOP,
+	IsDefault,
+	IssueWarningPct,
+	KeepDeletedItemsDays,
+	MailboxSizeMB,
+	MaxReceiveMessageSizeKB,
+	MaxRecipients,
+	MaxSendMessageSizeKB,
+	ProhibitSendPct,
+	ProhibitSendReceivePct,
+	HideFromAddressBook
+FROM
+	ExchangeMailboxPlans
+WHERE
+	MailboxPlanId = @MailboxPlanId
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetExchangeMailboxPlans]
+(
+	@ItemID int
+)
+AS
+SELECT
+	MailboxPlanId,
+	ItemID,
+	MailboxPlan,
+	EnableActiveSync,
+	EnableIMAP,
+	EnableMAPI,
+	EnableOWA,
+	EnablePOP,
+	IsDefault,
+	IssueWarningPct,
+	KeepDeletedItemsDays,
+	MailboxSizeMB,
+	MaxReceiveMessageSizeKB,
+	MaxRecipients,
+	MaxSendMessageSizeKB,
+	ProhibitSendPct,
+	ProhibitSendReceivePct,
+	HideFromAddressBook
+FROM
+	ExchangeMailboxPlans
+WHERE
+	ItemID = @ItemID 
+ORDER BY MailboxPlan
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[DeleteExchangeMailboxPlan]
+(
+	@MailboxPlanId int
+)
+AS
+
+-- delete mailboxplan
+DELETE FROM ExchangeMailboxPlans
+WHERE MailboxPlanId = @MailboxPlanId
+
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[AddLyncUser]	
+	@AccountID int,
+	@LyncUserPlanID int
+AS
+BEGIN	
+	SET NOCOUNT ON;
+
+INSERT INTO
+	dbo.LyncUsers
+	(	 
+	 
+	 AccountID,
+	 LyncUserPlanID,
+	 CreatedDate,
+	 ModifiedDate)
+VALUES
+(		
+	@AccountID,
+	@LyncUserPlanID,
+	getdate(),
+	getdate()
+)		
+END
+GO
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[AddLyncUserPlan] 
+(
+	@LyncUserPlanId int OUTPUT,
+	@ItemID int,
+	@LyncUserPlanName	nvarchar(300),
+	@IM bit,
+	@Mobility bit,
+	@MobilityEnableOutsideVoice bit,
+	@Federation bit,
+	@Conferencing bit,
+	@EnterpriseVoice bit,
+	@VoicePolicy int,
+	@IsDefault bit
+)
+AS
+
+IF ((SELECT Count(*) FROM LyncUserPlans WHERE ItemId = @ItemID) = 0)
+BEGIN
+	SET @IsDefault = 1
+END
+ELSE
+BEGIN
+	IF @IsDefault = 1
+	BEGIN
+		UPDATE LyncUserPlans SET IsDefault = 0 WHERE ItemID = @ItemID
+	END
+END
+
+
+
+INSERT INTO LyncUserPlans
+(
+	ItemID,
+	LyncUserPlanName,
+	IM,
+	Mobility,
+	MobilityEnableOutsideVoice,
+	Federation,
+	Conferencing,
+	EnterpriseVoice,
+	VoicePolicy,
+	IsDefault
+)
+VALUES
+(
+	@ItemID,
+	@LyncUserPlanName,
+	@IM,
+	@Mobility,
+	@MobilityEnableOutsideVoice,
+	@Federation,
+	@Conferencing,
+	@EnterpriseVoice,
+	@VoicePolicy,
+	@IsDefault
+)
+
+SET @LyncUserPlanId = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetLyncUsersByPlanId]
+(
+	@ItemID int,
+	@PlanId int
+)
+AS
+
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName,
+		ou.LyncUserPlanId,
+		lp.LyncUserPlanName				
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		LyncUsers ou
+	INNER JOIN
+		LyncUserPlans lp 
+	ON
+		ou.LyncUserPlanId = lp.LyncUserPlanId				
+	ON 
+		ea.AccountID = ou.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND
+		ou.LyncUserPlanId = @PlanId 
+GO
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[CheckLyncUserExists] 
+	@AccountID int
+AS
+BEGIN	
+	SELECT 
+		COUNT(AccountID)
+	FROM 
+		dbo.LyncUsers
+	WHERE AccountID = @AccountID
+END
+GO
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[DeleteLyncUser]
+(	
+	@AccountId int
+)
+AS
+
+DELETE FROM 
+	LyncUsers
+WHERE 
+	AccountId = @AccountId
+
+RETURN 
+GO
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[DeleteLyncUserPlan]
+(
+	@LyncUserPlanId int
+)
+AS
+
+-- delete lyncuserplan
+DELETE FROM LyncUserPlans
+WHERE LyncUserPlanId = @LyncUserPlanId
+
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetLyncUserPlan] 
+(
+	@LyncUserPlanId int
+)
+AS
+SELECT
+	LyncUserPlanId,
+	ItemID,
+	LyncUserPlanName,
+	IM,
+	Mobility,
+	MobilityEnableOutsideVoice,
+	Federation,
+	Conferencing,
+	EnterpriseVoice,
+	VoicePolicy,
+	IsDefault
+FROM
+	LyncUserPlans
+WHERE
+	LyncUserPlanId = @LyncUserPlanId
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetLyncUserPlanByAccountId] 
+(
+	@AccountID int
+)
+AS
+SELECT
+	LyncUserPlanId,
+	ItemID,
+	LyncUserPlanName,
+	IM,
+	Mobility,
+	MobilityEnableOutsideVoice,
+	Federation,
+	Conferencing,
+	EnterpriseVoice,
+	VoicePolicy,
+	IsDefault
+FROM
+	LyncUserPlans
+WHERE
+	LyncUserPlanId IN (SELECT LyncUserPlanId FROM LyncUsers WHERE AccountID = @AccountID)
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetLyncUserPlans]
+(
+	@ItemID int
+)
+AS
+SELECT
+	LyncUserPlanId,
+	ItemID,
+	LyncUserPlanName,
+	IM,
+	Mobility,
+	MobilityEnableOutsideVoice,
+	Federation,
+	Conferencing,
+	EnterpriseVoice,
+	VoicePolicy,
+	IsDefault
+FROM
+	LyncUserPlans
+WHERE
+	ItemID = @ItemID 
+ORDER BY LyncUserPlanName
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetLyncUsers]
+(
+	@ItemID int,
+	@SortColumn nvarchar(40),
+	@SortDirection nvarchar(20),
+	@StartRow int,
+	@Count int	
+)
+AS
+
+CREATE TABLE #TempLyncUsers 
+(	
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int],	
+	[ItemID] [int] NOT NULL,
+	[AccountName] [nvarchar](300)  NOT NULL,
+	[DisplayName] [nvarchar](300)  NOT NULL,
+	[PrimaryEmailAddress] [nvarchar](300) NULL,
+	[SamAccountName] [nvarchar](100) NULL,
+	[LyncUserPlanId] [int] NOT NULL,		
+	[LyncUserPlanName] [nvarchar] (300) NOT NULL,		
+)
+
+
+DECLARE @condition nvarchar(700)
+SET @condition = ''
+
+IF (@SortColumn = 'DisplayName')
+BEGIN
+	SET @condition = 'ORDER BY ea.DisplayName'
+END
+
+IF (@SortColumn = 'PrimaryEmailAddress')
+BEGIN
+	SET @condition = 'ORDER BY ea.PrimaryEmailAddress'
+END
+
+IF (@SortColumn = 'LyncUserPlanName')
+BEGIN
+	SET @condition = 'ORDER BY lp.LyncUserPlanName'
+END
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+	INSERT INTO 
+		#TempLyncUsers 
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName,
+		ou.LyncUserPlanId,
+		lp.LyncUserPlanName				
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		LyncUsers ou
+	INNER JOIN
+		LyncUserPlans lp 
+	ON
+		ou.LyncUserPlanId = lp.LyncUserPlanId				
+	ON 
+		ea.AccountID = ou.AccountID
+	WHERE 
+		ea.ItemID = @ItemID ' + @condition
+
+exec sp_executesql @sql, N'@ItemID int',@ItemID
+
+DECLARE @RetCount int
+SELECT @RetCount = COUNT(ID) FROM #TempLyncUsers 
+
+IF (@SortDirection = 'ASC')
+BEGIN
+	SELECT * FROM #TempLyncUsers 
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+END
+ELSE
+BEGIN
+	IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+	BEGIN
+		IF (@SortColumn = 'DisplayName')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
+		END
+		IF (@SortColumn = 'PrimaryEmailAddress')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
+		END
+		IF (@SortColumn = 'LyncUserPlanName')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY LyncUserPlanName DESC
+		END
+	END
+	ELSE
+	BEGIN
+		SELECT * FROM #TempLyncUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
+	END
+
+	
+END
+
+
+DROP TABLE #TempLyncUsers
+GO
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[GetLyncUsersCount] 
+(
+	@ItemID int
+)
+AS
+
+SELECT 
+	COUNT(ea.AccountID)		
+FROM 
+	ExchangeAccounts ea 
+INNER JOIN 
+	LyncUsers ou 
+ON 
+	ea.AccountID = ou.AccountID
+WHERE 
+	ea.ItemID = @ItemID
+GO
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[SetLyncUserLyncUserPlan] 
+(
+	@AccountID int,
+	@LyncUserPlanId int
+)
+AS
+
+UPDATE LyncUsers SET
+	LyncUserPlanId = @LyncUserPlanId
+WHERE
+	AccountID = @AccountID
+
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[SetOrganizationDefaultLyncUserPlan]
+(
+	@ItemId int,
+	@LyncUserPlanId int
+)
+AS
+
+UPDATE LyncUserPlans SET IsDefault=0 WHERE ItemId=@ItemId
+UPDATE LyncUserPlans SET IsDefault=1 WHERE LyncUserPlanId=@LyncUserPlanId
+
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ALTER TABLE [dbo].[ScheduleParameters]  WITH CHECK ADD  CONSTRAINT [FK_ScheduleParameters_Schedule] FOREIGN KEY([ScheduleID])
 REFERENCES [dbo].[Schedule] ([ScheduleID])
 ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[ScheduleParameters] CHECK CONSTRAINT [FK_ScheduleParameters_Schedule]
 GO
-ALTER TABLE [dbo].[ExchangeAccounts]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeAccounts_ServiceItems] FOREIGN KEY([ItemID])
-REFERENCES [dbo].[ServiceItems] ([ItemID])
-ON DELETE CASCADE
-GO
-ALTER TABLE [dbo].[ExchangeAccounts] CHECK CONSTRAINT [FK_ExchangeAccounts_ServiceItems]
-GO
+
 ALTER TABLE [dbo].[ExchangeAccounts] ADD  CONSTRAINT [DF__ExchangeA__Creat__59B045BD]  DEFAULT (getdate()) FOR [CreatedDate]
 GO
 ALTER TABLE [dbo].[HostingPlans]  WITH CHECK ADD  CONSTRAINT [FK_HostingPlans_Packages] FOREIGN KEY([PackageID])
@@ -44614,12 +45821,21 @@ ALTER TABLE [dbo].[BlackBerryUsers] CHECK CONSTRAINT [FK_BlackBerryUsers_Exchang
 GO
 ALTER TABLE [dbo].[BlackBerryUsers] ADD  CONSTRAINT [DF_BlackBerryUsers_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
 GO
+
+ALTER TABLE [dbo].[ExchangeAccounts]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeAccounts_ServiceItems] FOREIGN KEY([ItemID])
+REFERENCES [dbo].[ServiceItems] ([ItemID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[ExchangeAccounts] CHECK CONSTRAINT [FK_ExchangeAccounts_ServiceItems]
+GO
+
 ALTER TABLE [dbo].[ExchangeOrganizations]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeOrganizations_ServiceItems] FOREIGN KEY([ItemID])
 REFERENCES [dbo].[ServiceItems] ([ItemID])
 ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[ExchangeOrganizations] CHECK CONSTRAINT [FK_ExchangeOrganizations_ServiceItems]
 GO
+
 ALTER TABLE [dbo].[ExchangeOrganizationDomains]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeOrganizationDomains_ServiceItems] FOREIGN KEY([ItemID])
 REFERENCES [dbo].[ServiceItems] ([ItemID])
 ON DELETE CASCADE
@@ -44815,12 +46031,14 @@ ALTER TABLE [dbo].[Servers] ADD  CONSTRAINT [DF_Servers_VirtualServer]  DEFAULT 
 GO
 ALTER TABLE [dbo].[Servers] ADD  CONSTRAINT [DF_Servers_ADEnabled]  DEFAULT ((0)) FOR [ADEnabled]
 GO
+
 ALTER TABLE [dbo].[ResourceGroupDnsRecords]  WITH CHECK ADD  CONSTRAINT [FK_ResourceGroupDnsRecords_ResourceGroups] FOREIGN KEY([GroupID])
 REFERENCES [dbo].[ResourceGroups] ([GroupID])
 ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[ResourceGroupDnsRecords] CHECK CONSTRAINT [FK_ResourceGroupDnsRecords_ResourceGroups]
 GO
+
 ALTER TABLE [dbo].[ResourceGroupDnsRecords] ADD  CONSTRAINT [DF_ResourceGroupDnsRecords_RecordOrder]  DEFAULT ((1)) FOR [RecordOrder]
 GO
 ALTER TABLE [dbo].[ecProduct]  WITH CHECK ADD  CONSTRAINT [FK_ecProduct_ecProductType] FOREIGN KEY([TypeID])
@@ -45024,4 +46242,53 @@ ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[ServiceProperties] CHECK CONSTRAINT [FK_ServiceProperties_Services]
 GO
-
+
+ALTER TABLE dbo.ExchangeMailboxPlans ADD CONSTRAINT
+	IX_ExchangeMailboxPlans UNIQUE NONCLUSTERED 
+	(
+	MailboxPlanId
+	) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[ExchangeAccounts]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeAccounts_ExchangeMailboxPlans] FOREIGN KEY([MailboxPlanId])
+REFERENCES [dbo].[ExchangeMailboxPlans] ([MailboxPlanId])
+GO
+ALTER TABLE [dbo].[ExchangeAccounts] CHECK CONSTRAINT [FK_ExchangeAccounts_ExchangeMailboxPlans]
+GO
+
+ALTER TABLE [dbo].[ExchangeMailboxPlans]  WITH CHECK ADD  CONSTRAINT [FK_ExchangeMailboxPlans_ExchangeOrganizations] FOREIGN KEY([ItemID])
+REFERENCES [dbo].[ExchangeOrganizations] ([ItemID])
+ON DELETE CASCADE
+GO
+
+ALTER TABLE [dbo].[LyncUsers] ADD  CONSTRAINT [DF_LyncUsers_CreatedDate]  DEFAULT (getdate()) FOR [CreatedDate]
+GO
+
+ALTER TABLE [dbo].[LyncUsers] ADD  CONSTRAINT [DF_LyncUsers_ChangedDate]  DEFAULT (getdate()) FOR [ModifiedDate]
+GO
+
+ALTER TABLE [dbo].[LyncUsers]  WITH CHECK ADD  CONSTRAINT [FK_LyncUsers_LyncUserPlans] FOREIGN KEY([LyncUserPlanId])
+REFERENCES [dbo].[LyncUserPlans] ([LyncUserPlanId])
+GO
+
+ALTER TABLE [dbo].[LyncUsers] CHECK CONSTRAINT [FK_LyncUsers_LyncUserPlans]
+GO
+
+ALTER TABLE dbo.LyncUserPlans ADD CONSTRAINT
+	IX_LyncUserPlans UNIQUE NONCLUSTERED 
+	(
+	LyncUserPlanId
+	) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+GO
+ALTER TABLE dbo.LyncUserPlans ADD CONSTRAINT
+	FK_LyncUserPlans_ExchangeOrganizations FOREIGN KEY
+	(
+	ItemID
+	) REFERENCES dbo.ExchangeOrganizations
+	(
+	ItemID
+	) ON UPDATE  NO ACTION 
+	 ON DELETE  CASCADE 
+

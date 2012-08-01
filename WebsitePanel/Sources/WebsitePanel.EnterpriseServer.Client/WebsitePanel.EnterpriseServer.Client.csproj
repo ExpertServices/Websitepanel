@@ -84,14 +84,16 @@
     <Compile Include="CommentsProxy.cs" />
     <Compile Include="Common\EnterpriseServerProxyConfigurator.cs" />
     <Compile Include="Common\UsernameAssertion.cs" />
+    <Compile Include="ExchangeServerProxy.cs">
+      <SubType>code</SubType>
+    </Compile>
+    <Compile Include="LyncProxy.cs" />
     <Compile Include="VirtualizationServerProxyForPrivateCloud.cs" />
     <Compile Include="CRMProxy.cs" />
     <Compile Include="DatabaseServersProxy.cs" />
     <Compile Include="ecServiceHandlerProxy.cs" />
     <Compile Include="ecStorefrontProxy.cs" />
     <Compile Include="ecStorehouseProxy.cs" />
-    <Compile Include="ExchangeHostedEditionProxy.cs" />
-    <Compile Include="ExchangeServerProxy.cs" />
     <Compile Include="FilesProxy.cs" />
     <Compile Include="FtpServersProxy.cs" />
     <Compile Include="HostedSharePointServersProxy.cs" />

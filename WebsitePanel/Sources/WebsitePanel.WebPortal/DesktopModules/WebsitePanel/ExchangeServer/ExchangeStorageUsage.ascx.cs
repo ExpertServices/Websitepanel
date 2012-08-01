@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -29,38 +29,40 @@
 using System;
 using System.Web;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class ExchangeStorageUsage : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
-			if (!IsPostBack)
-			{
-				// bind quotas
-				BindQuotas();
-				
-                
-			}
-		}
+    public partial class ExchangeStorageUsage : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                // bind quotas
+                BindQuotas();
 
-		private void BindQuotas()
-		{
-			OrganizationStatistics stats = ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
 
-            btnUsedSize.Text = stats.UsedDiskSpace.ToString();		    			
-		}
+            }
 
-		protected void btnRecalculate_Click(object sender, EventArgs e)
-		{
-			ES.Services.ExchangeServer.CalculateOrganizationDiskspace(PanelRequest.ItemID);
-		}
+        }
+
+        private void BindQuotas()
+        {
+            OrganizationStatistics stats = ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
+
+            btnUsedSize.Text = stats.UsedDiskSpace.ToString();
+        }
+
+        protected void btnRecalculate_Click(object sender, EventArgs e)
+        {
+            ES.Services.ExchangeServer.CalculateOrganizationDiskspace(PanelRequest.ItemID);
+        }
 
         protected void btnUsedSize_Click(object sender, EventArgs e)
         {
             HttpContext.Current.Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "storage_usage_details",
-					"SpaceID=" + PanelSecurity.PackageId.ToString()));
+                    "SpaceID=" + PanelSecurity.PackageId.ToString()));
         }
-	}
+    }
 }

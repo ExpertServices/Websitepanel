@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -51,5 +52,18 @@ namespace WebsitePanel.Providers.Utils
 
 			return Regex.Replace(str, "\\W+", "_", RegexOptions.Compiled);
 		}
+
+        public static string CleanupASCIIControlCharacters(string s)
+        {
+            byte[] invalidCharacters = { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0xB, 
+                             0xC, 0xE, 0xF, 0x10, 0x11, 0x12, 0x14, 0x15, 0x16, 
+                             0x17, 0x18, 0x1A, 0x1B, 0x1E, 0x1F, 0x7F };
+
+            byte[] sanitizedBytes = (from a in Encoding.UTF8.GetBytes(s)
+                                        where !invalidCharacters.Contains(a)
+                                        select a).ToArray();
+
+            return Encoding.UTF8.GetString(sanitizedBytes);
+        }
 	}
 }

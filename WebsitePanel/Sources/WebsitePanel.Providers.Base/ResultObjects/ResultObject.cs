@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -57,7 +57,7 @@ namespace WebsitePanel.Providers.Common
         public void AddError(string errorCode, Exception ex)
         {
             if(ex != null)
-                errorCode += ":" + ex.Message;
+                errorCode += ":" + ex.Message + "; " + ex.StackTrace;
 
             this.ErrorCodes.Add(errorCode);
             this.IsSuccess = false;

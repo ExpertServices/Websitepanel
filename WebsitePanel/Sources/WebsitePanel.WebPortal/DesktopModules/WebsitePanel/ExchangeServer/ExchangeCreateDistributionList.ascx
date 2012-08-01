@@ -47,8 +47,8 @@
 							<td class="FormLabel150"><asp:Localize ID="Localize1" runat="server" meta:resourcekey="locManagedBy" ></asp:Localize></td>
 							<td>                                
                                  <wsp:mailboxselector id="manager" runat="server"
+                                            ShowOnlyMailboxes="true" 
 											MailboxesEnabled="true"
-											ContactsEnabled="true"
 											DistributionListsEnabled="true" />											
 											<asp:CustomValidator runat="server" 
                                      ValidationGroup="CreateList"  meta:resourcekey="valManager" ID="valManager" 

@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -54,25 +54,35 @@ namespace WebsitePanel.Portal
                 // toggle panels
                 ShowPanels(false);
 
-				// domain name
-				DomainInfo domain = ES.Services.Servers.GetDomain(PanelRequest.DomainID);
-				litDomainName.Text = domain.DomainName;
+                // domain name
+                DomainInfo domain = ES.Services.Servers.GetDomain(PanelRequest.DomainID);
+                litDomainName.Text = domain.DomainName;
             }
         }
 
-        public string GetRecordFullData(string recordType, string recordData, int mxPriority)
+        public string GetRecordFullData(string recordType, string recordData, int mxPriority, int port)
         {
-            return (String.Compare(recordType, "mx", true) == 0)
-                ? String.Format("[{0}], {1}", mxPriority, recordData) : recordData;
+
+            switch (recordType)
+            {
+                case "MX":
+                    return String.Format("[{0}], {1}", mxPriority, recordData);
+                case "SRV":
+                    return String.Format("[{0}], {1}", port, recordData);
+                default:
+                    return recordData;
+            }
         }
 
         private void GetRecordsDetails(int recordIndex)
         {
             GridViewRow row = gvRecords.Rows[recordIndex];
+            ViewState["SrvPort"] = ((Literal)row.Cells[0].FindControl("litSrvPort")).Text;
+            ViewState["SrvWeight"] = ((Literal)row.Cells[0].FindControl("litSrvWeight")).Text;
+            ViewState["SrvPriority"] = ((Literal)row.Cells[0].FindControl("litSrvPriority")).Text;
             ViewState["MxPriority"] = ((Literal)row.Cells[0].FindControl("litMxPriority")).Text;
             ViewState["RecordName"] = ((Literal)row.Cells[0].FindControl("litRecordName")).Text; ;
-            ViewState["RecordType"] = (DnsRecordType)Enum.Parse(typeof(DnsRecordType),
-                    ((Literal)row.Cells[0].FindControl("litRecordType")).Text, true);
+            ViewState["RecordType"] = (DnsRecordType)Enum.Parse(typeof(DnsRecordType), ((Literal)row.Cells[0].FindControl("litRecordType")).Text, true);
             ViewState["RecordData"] = ((Literal)row.Cells[0].FindControl("litRecordData")).Text;
         }
 
@@ -88,6 +98,9 @@ namespace WebsitePanel.Portal
                 txtRecordName.Text = ViewState["RecordName"].ToString();
                 txtRecordData.Text = ViewState["RecordData"].ToString();
                 txtMXPriority.Text = ViewState["MxPriority"].ToString();
+                txtSRVPriority.Text = ViewState["SrvPriority"].ToString();
+                txtSRVWeight.Text = ViewState["SrvWeight"].ToString();
+                txtSRVPort.Text = ViewState["SrvPort"].ToString();
             }
             catch (Exception ex)
             {
@@ -103,24 +116,39 @@ namespace WebsitePanel.Portal
 
         private void ToggleRecordControls()
         {
-            rowMXPriority.Visible = (ddlRecordType.SelectedValue == "MX");
-            if (ddlRecordType.SelectedValue == "A")
+            rowMXPriority.Visible = false;
+            rowSRVPriority.Visible = false;
+            rowSRVWeight.Visible = false;
+            rowSRVPort.Visible = false;
+            lblRecordData.Text = "Record Data:";
+            IPValidator.Enabled = false;
+
+            switch (ddlRecordType.SelectedValue)
             {
-                lblRecordData.Text = "IP:";
-                IPValidator.Enabled = true;
+                case "A":
+                    lblRecordData.Text = "IP:";
+                    IPValidator.Enabled = true;
+                    break;
+                case "MX":
+                    rowMXPriority.Visible = true;
+                    break;
+                case "SRV":
+                    rowSRVPriority.Visible = true;
+                    rowSRVWeight.Visible = true;
+                    rowSRVPort.Visible = true;
+                    lblRecordData.Text = "Host offering this service:";
+                    break;
+                default:
+                    break;
             }
-            else
-            {
-                lblRecordData.Text = "Record Data:";
-                IPValidator.Enabled = false;
-            }
+
         }
 
         private void SaveRecord()
         {
             if (Page.IsValid)
             {
-                bool newRecord = (bool) ViewState["NewRecord"];
+                bool newRecord = (bool)ViewState["NewRecord"];
 
                 if (newRecord)
                 {
@@ -130,10 +158,13 @@ namespace WebsitePanel.Portal
                         int result = ES.Services.Servers.AddDnsZoneRecord(PanelRequest.DomainID,
                                                                           txtRecordName.Text.Trim(),
                                                                           (DnsRecordType)
-                                                                          Enum.Parse(typeof (DnsRecordType),
+                                                                          Enum.Parse(typeof(DnsRecordType),
                                                                                      ddlRecordType.SelectedValue, true),
                                                                           txtRecordData.Text.Trim(),
-                                                                          Int32.Parse(txtMXPriority.Text.Trim()));
+                                                                          Int32.Parse(txtMXPriority.Text.Trim()),
+                                                                          Int32.Parse(txtSRVPriority.Text.Trim()),
+                                                                          Int32.Parse(txtSRVWeight.Text.Trim()),
+                                                                          Int32.Parse(txtSRVPort.Text.Trim()));
 
                         if (result < 0)
                         {
@@ -156,9 +187,12 @@ namespace WebsitePanel.Portal
                                                                              ViewState["RecordName"].ToString(),
                                                                              ViewState["RecordData"].ToString(),
                                                                              txtRecordName.Text.Trim(),
-                                                                             (DnsRecordType) ViewState["RecordType"],
+                                                                             (DnsRecordType)ViewState["RecordType"],
                                                                              txtRecordData.Text.Trim(),
-                                                                             Int32.Parse(txtMXPriority.Text.Trim()));
+                                                                             Int32.Parse(txtMXPriority.Text.Trim()),
+                                                                             Int32.Parse(txtSRVPriority.Text.Trim()),
+                                                                             Int32.Parse(txtSRVWeight.Text.Trim()),
+                                                                             Int32.Parse(txtSRVPort.Text.Trim()));
 
                         if (result < 0)
                         {
@@ -217,6 +251,10 @@ namespace WebsitePanel.Portal
             txtRecordName.Text = "";
             txtRecordData.Text = "";
             txtMXPriority.Text = "1";
+            txtSRVPriority.Text = "0";
+            txtSRVWeight.Text = "0";
+            txtSRVPort.Text = "0";
+
 
             ShowPanels(true);
         }
@@ -253,7 +291,7 @@ namespace WebsitePanel.Portal
         {
             if (e.Exception != null)
             {
-				ShowErrorMessage("GDNS_GET_RECORD", e.Exception);
+                ShowErrorMessage("GDNS_GET_RECORD", e.Exception);
                 //this.DisableControls = true;
                 e.ExceptionHandled = true;
             }

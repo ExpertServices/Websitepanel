@@ -18,6 +18,7 @@
     </UpgradeBackupLocation>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -87,11 +88,11 @@
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Web.Mobile" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="WebsitePanel.EnterpriseServer.Base, Version=1.0.1.0, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
+    <Reference Include="WebsitePanel.EnterpriseServer.Base, Version=1.2.2.0, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
     </Reference>
-    <Reference Include="WebsitePanel.EnterpriseServer.Client, Version=1.0.1.0, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
+    <Reference Include="WebsitePanel.EnterpriseServer.Client, Version=1.2.2.0, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Bin\WebsitePanel.EnterpriseServer.Client.dll</HintPath>
     </Reference>
@@ -101,8 +102,19 @@
     <Content Include="App_Themes\Default\Icons\block.png" />
     <Content Include="App_Themes\Default\Icons\configureVLan.png" />
     <Content Include="App_Themes\Default\Icons\OK.png" />
+    <Content Include="App_Themes\Default\Images\Exchange\blank16.gif" />
+    <Content Include="App_Themes\Default\Images\Exchange\disabled.png" />
     <Content Include="App_Themes\Default\Images\Exchange\disabled_16.png" />
+    <Content Include="App_Themes\Default\Images\Exchange\enabled.png" />
+    <Content Include="App_Themes\Default\Images\Exchange\locked.png" />
+    <Content Include="App_Themes\Default\Images\Exchange\lync16.png" />
     <Content Include="App_Themes\Default\Images\FileManager\vbhtml.png" />
+    <Content Include="App_Themes\Default\Images\lync16.png" />
+    <Content Include="App_Themes\Default\Images\lync48.png" />
+    <Content Include="App_Themes\Default\Images\lyncfederationdomains48.png" />
+    <Content Include="App_Themes\Default\Images\lyncuser.png" />
+    <Content Include="App_Themes\Default\Images\lyncuserplan48.png" />
+    <Content Include="App_Themes\Default\Images\lyncuserplanadd48.png" />
     <Content Include="App_Themes\Default\Images\VPSForPC\vlan_icon.png" />
     <Content Include="App_Themes\Default\Images\VPSForPC\private_cloud_module_header_vps.gif" />
     <Content Include="App_Themes\Default\Images\FileManager\cshtml.png" />
@@ -156,6 +168,7 @@
     <Compile Include="Code\ContentPane.cs" />
     <Compile Include="Code\Controls\DesktopContextValidator.cs" />
     <Compile Include="Code\PortalUtils.cs" />
+    <Compile Include="Code\SecureSessionModule.cs" />
     <Compile Include="Code\WebPortalControlBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -209,8 +222,12 @@
     <None Include="App_Data\SupportedThemes.config" />
     <None Include="App_Data\Countries.config" />
     <None Include="App_Data\CountryStates.config" />
-    <None Include="App_Data\WebsitePanel_Modules.config" />
-    <None Include="App_Data\WebsitePanel_Pages.config" />
+    <None Include="App_Data\WebsitePanel_Modules.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="App_Data\WebsitePanel_Pages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="App_Data\Ecommerce_Modules.config" />
     <None Include="App_Data\Ecommerce_Pages.config" />
     <None Include="App_Data\SupportedLocales.config" />

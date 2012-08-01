@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -130,6 +130,7 @@ namespace WebsitePanel.Portal
             HttpContext.Current.Items[key] = s;
 
             HttpCookie cookie = new HttpCookie(key, s);
+            cookie.HttpOnly = true;
             HttpContext.Current.Response.Cookies.Remove(key);
             HttpContext.Current.Response.Cookies.Add(cookie);
         }

@@ -282,6 +282,12 @@
   <data name="PageTitle.SpaceMsSql2008" xml:space="preserve">
     <value>{user} - {space} - SQL Server 2008</value>
   </data>
+  <data name="PageName.SpaceMsSql2012" xml:space="preserve">
+    <value>SQL Server 2012</value>
+  </data>
+  <data name="PageTitle.SpaceMsSql2012" xml:space="preserve">
+    <value>{user} - {space} - SQL Server 2012</value>
+  </data>
   <data name="PageTitle.SpaceMsSql2005" xml:space="preserve">
     <value>{user} - {space} - SQL Server 2005</value>
   </data>
@@ -331,7 +337,7 @@
     <value>Applications Installer</value>
   </data>
   <data name="PageName.SpaceWebApplicationsGallery" xml:space="preserve">
-    <value>Microsoft Web App Gallery</value>
+    <value>Web App Gallery</value>
   </data>
   <data name="PageTitle.SpaceApplicationsInstaller" xml:space="preserve">
     <value>{user} - {space} - Applications Installer</value>
@@ -446,12 +452,6 @@
   </data>
   <data name="PageTitle.SpaceWeb" xml:space="preserve">
     <value>{user} - {space} - Web</value>
-  </data>
-  <data name="PageName.SpaceExchangeHostedEdition" xml:space="preserve">
-    <value>Exchange Hosting Mode</value>
-  </data>
-  <data name="PageTitle.SpaceExchangeHostedEdition" xml:space="preserve">
-    <value>{user} - {space} - Exchange Hosting Mode</value>
   </data>
   <data name="PageName.SpaceVPSForPC" xml:space="preserve">
     <value>Virtual Private Cloud</value>

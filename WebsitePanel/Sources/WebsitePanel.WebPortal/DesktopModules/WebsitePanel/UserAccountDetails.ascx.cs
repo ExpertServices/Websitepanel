@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -97,7 +97,11 @@ namespace WebsitePanel.Portal
                 lnkChangePassword.Visible = !((PanelSecurity.SelectedUserId == PanelSecurity.EffectiveUserId) && PanelSecurity.LoggedUser.IsPeer);
 
                 lnkDelete.NavigateUrl = EditUrl("UserID", PanelSecurity.SelectedUserId.ToString(), "delete");
-                lnkDelete.Visible = (PanelSecurity.SelectedUserId != PanelSecurity.EffectiveUserId);
+
+                if (!((PanelSecurity.LoggedUser.Role == UserRole.Reseller) | (PanelSecurity.LoggedUser.Role == UserRole.Administrator))) 
+                    lnkDelete.Visible = false;
+                else 
+                    lnkDelete.Visible = (PanelSecurity.SelectedUserId != PanelSecurity.EffectiveUserId);
             }
         }
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -39,6 +39,7 @@ using WebsitePanel.Server;
 using WebsitePanel.Providers;
 using WebsitePanel.Providers.OS;
 using OS = WebsitePanel.Providers.OS;
+using System.Collections;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -406,6 +407,67 @@ namespace WebsitePanel.EnterpriseServer
         }
         #endregion
 
+        #region Web Platform Installer
+
+        public static void InitWPIFeeds(int serverId, string feedUrls)
+        {
+            GetServerService(serverId).InitWPIFeeds(feedUrls);
+        }
+
+        public static WPITab[] GetWPITabs(int serverId)
+        {
+            return GetServerService(serverId).GetWPITabs();
+        }
+
+        public static WPIKeyword[] GetWPIKeywords(int serverId)
+        {
+            return GetServerService(serverId).GetWPIKeywords();
+        }
+
+        public static WPIProduct[] GetWPIProducts(int serverId, string tabId, string keywordId)
+        {
+            return GetServerService(serverId).GetWPIProducts(tabId, keywordId);
+        }
+
+        public static WPIProduct[] GetWPIProductsFiltered(int serverId, string keywordId)
+        {
+            return GetServerService(serverId).GetWPIProductsFiltered(keywordId);
+        }
+
+        
+
+        public static WPIProduct[] GetWPIProductsWithDependencies(int serverId, string[] products)
+        {
+            return GetServerService(serverId).GetWPIProductsWithDependencies(products);
+        }
+        public static void InstallWPIProducts(int serverId, string[] products)
+        {
+            GetServerService(serverId).InstallWPIProducts(products);
+        }
+
+        public static void CancelInstallWPIProducts(int serverId)
+        {
+            GetServerService(serverId).CancelInstallWPIProducts();
+        }
+
+        public static string GetWPIStatus(int serverId)
+        {
+            return GetServerService(serverId).GetWPIStatus();
+        }
+
+        public static string WpiGetLogFileDirectory(int serverId)
+        {
+            return GetServerService(serverId).WpiGetLogFileDirectory();
+        }
+
+        public static SettingPair[] WpiGetLogsInDirectory(int serverId, string Path)
+        {
+            return GetServerService(serverId).WpiGetLogsInDirectory(Path);
+        }
+        
+
+        #endregion
+
         #region Event Viewer
         public static string[] GetLogNames(int serverId)
         {
@@ -684,6 +746,7 @@ namespace WebsitePanel.EnterpriseServer
             return 0;
         }
 
+       
         #endregion
     }
 }

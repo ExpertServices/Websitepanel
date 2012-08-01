@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -64,18 +64,30 @@ namespace WebsitePanel.WebPortal
 
 				string[] roles = null;
 
-				switch (roleName)
-				{
-					case "Administrator":
-						roles = new string[] { "Administrator", "Reseller", "User" };
-						break;
-					case "Reseller":
-						roles = new string[] { "Reseller", "User" };
-						break;
-					default:
-						roles = new string[] { "User" };
-						break;
-				}
+                switch (roleName)
+                {
+                    case "Administrator":
+                        roles = new string[] { "Administrator", "PlatformHelpdesk", "PlatformCSR", "Reseller", "ResellerCSR", "ResellerHelpdesk", "User" };
+                        break;
+                    case "Reseller":
+                        roles = new string[] { "Reseller", "ResellerCSR", "ResellerHelpdesk", "User" };
+                        break;
+                    case "PlatformCSR":
+                        roles = new string[] { "PlatformCSR", "ResellerCSR", "ResellerHelpdesk", "User" };
+                        break;
+                    case "PlatformHelpdesk":
+                        roles = new string[] { "PlatformHelpdesk", "ResellerHelpdesk", "User" };
+                        break;
+                    case "ResellerCSR":
+                        roles = new string[] { "ResellerCSR", "User" };
+                        break;
+                    case "ResellerHelpdesk":
+                        roles = new string[] { "ResellerHelpdesk", "User" };
+                        break;
+                    default:
+                        roles = new string[] { "User" };
+                        break;
+                }
 
 				HttpContext.Current.User = new GenericPrincipal(HttpContext.Current.User.Identity, roles);
             }

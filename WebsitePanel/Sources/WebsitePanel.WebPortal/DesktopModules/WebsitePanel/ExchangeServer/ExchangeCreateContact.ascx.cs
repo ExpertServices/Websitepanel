@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -40,12 +40,12 @@ using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class ExchangeCreateContact : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
-
-		}
+    public partial class ExchangeCreateContact : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            
+        }
 
         protected void btnCreate_Click(object sender, EventArgs e)
         {
@@ -68,7 +68,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 {
                     messageBox.ShowResultMessage(BusinessErrorCodes.ERROR_EXCHANGE_EMAIL_EXISTS);
                     return;
-                
+
                 }
 
                 if (accountId < 0)
@@ -86,5 +86,5 @@ namespace WebsitePanel.Portal.ExchangeServer
                 messageBox.ShowErrorMessage("EXCHANGE_CREATE_CONTACT", ex);
             }
         }
-	}
+    }
 }

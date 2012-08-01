@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -50,6 +50,7 @@ namespace WebsitePanel.Portal
             txtPageName.Text = settings["ParkingPageName"];
             txtPageContent.Text = settings["ParkingPageContent"];
 			PublishingProfileTextBox.Text = settings["PublishingProfile"];
+            chkEnableParkingPageTokens.Checked = Utils.ParseBool(settings["EnableParkingPageTokens"], false);
 
             // default documents
             if (!String.IsNullOrEmpty(settings["DefaultDocuments"]))
@@ -102,6 +103,7 @@ namespace WebsitePanel.Portal
             settings["ParkingPageName"] = txtPageName.Text;
             settings["ParkingPageContent"] = txtPageContent.Text;
 			settings["PublishingProfile"] = PublishingProfileTextBox.Text;
+            settings["EnableParkingPageTokens"] = chkEnableParkingPageTokens.Checked.ToString();
 
             // default documents
             settings["DefaultDocuments"] = String.Join(",", Utils.ParseDelimitedString(txtDefaultDocs.Text, '\n', '\r', ';', ',')); ;

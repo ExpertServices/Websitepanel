@@ -7,6 +7,33 @@ using WebsitePanel.Setup.Actions;
 namespace WebsitePanel.Setup
 {
     /// <summary>
+    /// Release 1.2.2
+    /// </summary>
+    public class Server122 : Server
+    {
+        public static new object Install(object obj)
+        {
+            //
+            return Server.InstallBase(obj, "1.2.2");
+        }
+
+        public static new object Uninstall(object obj)
+        {
+            return Server.Uninstall(obj);
+        }
+
+        public static new object Setup(object obj)
+        {
+            return Server.Setup(obj);
+        }
+
+        public static new object Update(object obj)
+        {
+            return Server.UpdateBase(obj, "1.2.2", "1.2.1", false);
+        }
+    }
+
+    /// <summary>
     /// Release 1.2.1
     /// </summary>
     public class Server121 : Server

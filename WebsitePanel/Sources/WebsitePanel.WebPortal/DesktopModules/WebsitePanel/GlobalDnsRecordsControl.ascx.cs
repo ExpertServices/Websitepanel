@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -86,6 +86,7 @@ namespace WebsitePanel.Portal
                     return;
                 }
             }
+
         }
 
         private void BindDnsRecords()
@@ -104,6 +105,8 @@ namespace WebsitePanel.Portal
                 gvRecords.DataSource = ds;
                 gvRecords.DataBind();
             }
+
+            ToggleRecordControls();
         }
 
         private void BindDnsRecord(int recordId)
@@ -119,6 +122,9 @@ namespace WebsitePanel.Portal
                     txtRecordName.Text = record.RecordName;
                     txtRecordData.Text = record.RecordData;
                     txtMXPriority.Text = record.MxPriority.ToString();
+                    txtSRVPriority.Text = record.SrvPriority.ToString();
+                    txtSRVWeight.Text = record.SrvWeight.ToString();
+                    txtSRVPort.Text = record.SrvPort.ToString();
                     ipAddress.AddressId = record.IpAddressId;
                 }
 
@@ -138,9 +144,32 @@ namespace WebsitePanel.Portal
 
         private void ToggleRecordControls()
         {
-            ipAddress.Visible = (ddlRecordType.SelectedValue == "A");
-            //rowData.Visible = (ddlRecordType.SelectedValue != "A");
-            rowMXPriority.Visible = (ddlRecordType.SelectedValue == "MX");
+
+            rowMXPriority.Visible = false;
+            rowSRVPriority.Visible = false;
+            rowSRVWeight.Visible = false;
+            rowSRVPort.Visible = false;
+            lblRecordData.Text = "Record Data:";
+            ipAddress.Visible = false;
+
+            switch (ddlRecordType.SelectedValue)
+            {
+                case "A":
+                    lblRecordData.Text = "IP:";
+                    ipAddress.Visible = true;
+                    break;
+                case "MX":
+                    rowMXPriority.Visible = true;
+                    break;
+                case "SRV":
+                    rowSRVPriority.Visible = true;
+                    rowSRVWeight.Visible = true;
+                    rowSRVPort.Visible = true;
+                    lblRecordData.Text = "Host offering this service:";
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void SaveRecord()
@@ -151,6 +180,9 @@ namespace WebsitePanel.Portal
             record.RecordName = txtRecordName.Text.Trim();
             record.RecordData = txtRecordData.Text.Trim();
             record.MxPriority = Utils.ParseInt(txtMXPriority.Text, 0);
+            record.SrvPriority = Utils.ParseInt(txtSRVPriority.Text, 0);
+            record.SrvWeight = Utils.ParseInt(txtSRVWeight.Text, 0);
+            record.SrvPort = Utils.ParseInt(txtSRVPort.Text, 0);
             record.IpAddressId = ipAddress.AddressId;
 
             if (ServiceIdParam != null)
@@ -230,6 +262,11 @@ namespace WebsitePanel.Portal
             txtRecordName.Text = "";
             txtRecordData.Text = "";
             txtMXPriority.Text = "0";
+            txtSRVPriority.Text = "0";
+            txtSRVWeight.Text = "0";
+            txtSRVPort.Text = "0";
+
+            ToggleRecordControls();
 
             ShowPanels(true);
         }

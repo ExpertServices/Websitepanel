@@ -39,6 +39,7 @@
                     <asp:ListItem>NS</asp:ListItem>
                     <asp:ListItem>TXT</asp:ListItem>
                     <asp:ListItem>CNAME</asp:ListItem>
+                    <asp:ListItem>SRV</asp:ListItem>
                 </asp:DropDownList>
             </td>
         </tr>
@@ -60,6 +61,28 @@
                 <asp:TextBox ID="txtMXPriority" runat="server" Width="30" CssClass="NormalTextBox"></asp:TextBox>
             </td>
         </tr>
+
+        <tr id="rowSRVPriority" runat="server">
+            <td class="SubHead"><asp:Label ID="lblSRVPriority" runat="server" meta:resourcekey="lblSRVPriority" Text="SRV Priority:"></asp:Label></td>
+            <td class="Normal">
+                <asp:TextBox ID="txtSRVPriority" runat="server" Width="30" CssClass="NormalTextBox"></asp:TextBox>
+            </td>
+        </tr>
+
+        <tr id="rowSRVWeight" runat="server">
+            <td class="SubHead"><asp:Label ID="lblSRVWeight" runat="server" meta:resourcekey="lblSRVWeight" Text="Weight:"></asp:Label></td>
+            <td class="Normal">
+                <asp:TextBox ID="txtSRVWeight" runat="server" Width="30" CssClass="NormalTextBox"></asp:TextBox>
+            </td>
+        </tr>
+
+        <tr id="rowSRVPort" runat="server">
+            <td class="SubHead"><asp:Label ID="lblSRVPort" runat="server" meta:resourcekey="lblSRVPort" Text="Port Number:"></asp:Label></td>
+            <td class="Normal">
+                <asp:TextBox ID="txtSRVPort" runat="server" Width="30" CssClass="NormalTextBox"></asp:TextBox>
+            </td>
+        </tr>
+
         <tr>
             <td colspan="2">
                 <asp:Button ID="btnSave" runat="server" meta:resourcekey="btnSave" Text="Save" CssClass="Button1" OnClick="btnSave_Click" ValidationGroup="DnsRecord" />

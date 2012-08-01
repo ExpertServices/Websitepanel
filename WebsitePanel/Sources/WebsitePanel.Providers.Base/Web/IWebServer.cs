@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -119,14 +119,18 @@ namespace WebsitePanel.Providers.Web
 
 
 		// web app gallery
+        void InitFeeds(int UserId, string[] feeds);
+        void SetResourceLanguage(int UserId, string resourceLanguage);
 		bool IsMsDeployInstalled();
-		GalleryCategoriesResult GetGalleryCategories();
-		GalleryApplicationsResult GetGalleryApplications(string categoryId);
-		GalleryApplicationResult GetGalleryApplication(string id);
-		GalleryWebAppStatus GetGalleryApplicationStatus(string id);
-		GalleryWebAppStatus DownloadGalleryApplication(string id);
-		DeploymentParametersResult GetGalleryApplicationParameters(string id);
-		StringResultObject InstallGalleryApplication(string id, List<DeploymentParameter> updatedValues);
+        GalleryLanguagesResult GetGalleryLanguages(int UserId);
+        GalleryCategoriesResult GetGalleryCategories(int UserId);
+        GalleryApplicationsResult GetGalleryApplications(int UserId, string categoryId);
+        GalleryApplicationsResult GetGalleryApplicationsFiltered(int UserId, string pattern);
+        GalleryApplicationResult GetGalleryApplication(int UserId, string id);
+        GalleryWebAppStatus GetGalleryApplicationStatus(int UserId, string id);
+        GalleryWebAppStatus DownloadGalleryApplication(int UserId, string id);
+        DeploymentParametersResult GetGalleryApplicationParameters(int UserId, string id);
+        StringResultObject InstallGalleryApplication(int UserId, string id, List<DeploymentParameter> updatedValues, string languageId);
 
 		//
 		void GrantWebManagementAccess(string siteId, string accountName, string accountPassword);

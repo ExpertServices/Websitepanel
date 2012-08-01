@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -30,37 +30,53 @@ using System;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
 using Microsoft.Security.Application;
+using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Portal.HostedSolution
 {
-	public partial class UserGeneralSettings : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
+    public partial class UserGeneralSettings : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
             if (!IsPostBack)
             {
                 BindSettings();
+
+                MailboxTabsId.Visible = (PanelRequest.Context == "Mailbox");
+                UserTabsId.Visible = (PanelRequest.Context == "User");
             }
-		}
+        }
 
         private void BindSettings()
         {
             try
             {
                 password.SetPackagePolicy(PanelSecurity.PackageId, UserSettings.EXCHANGE_POLICY, "MailboxPasswordPolicy");
-                password.EditMode = true;
+                PasswordPolicyResult passwordPolicy = ES.Services.Organizations.GetPasswordPolicy(PanelRequest.ItemID);
+                if (passwordPolicy.IsSuccess)
+                {
+                    password.MinimumLength = passwordPolicy.Value.MinLength;
+                    if (passwordPolicy.Value.IsComplexityEnable)
+                    {
+                        password.MinimumNumbers = 1;
+                        password.MinimumSymbols = 1;
+                        password.MinimumUppercase = 1;
+                    }
+                }
+
+                password.EditMode = password.ValidationEnabled = false;
 
                 // get settings
                 OrganizationUser user = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID,
                     PanelRequest.AccountID);
 
-                litDisplayName.Text =  AntiXss.HtmlEncode(user.DisplayName);
+                litDisplayName.Text = AntiXss.HtmlEncode(user.DisplayName);
 
                 lblUserDomainName.Text = user.DomainUserName;
-                
+
                 // bind form
                 txtDisplayName.Text = user.DisplayName;
-                
+
                 chkDisable.Checked = user.Disabled;
 
                 txtFirstName.Text = user.FirstName;
@@ -92,17 +108,29 @@ namespace WebsitePanel.Portal.HostedSolution
                 txtExternalEmailAddress.Enabled = user.AccountType == ExchangeAccountType.User;
                 lblUserDomainName.Text = user.DomainUserName;
 
+                txtSubscriberNumber.Text = user.SubscriberNumber;
+
+                PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
+                {
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
+                    {
+                        locSubscriberNumber.Visible = false;
+                        txtSubscriberNumber.Visible = false;
+                    }
+                }
+
                 if (user.Locked)
                     chkLocked.Enabled = true;
                 else
                     chkLocked.Enabled = false;
-                    
+
                 chkLocked.Checked = user.Locked;
-             
+
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("ORGANIZATION_GET_USER_SETTINGS", ex);
+                messageBox.ShowErrorMessage("ORGANIZATION_GET_USER_SETTINGS", ex);
             }
         }
 
@@ -111,40 +139,46 @@ namespace WebsitePanel.Portal.HostedSolution
             if (!Page.IsValid)
                 return;
 
+            string pwd = password.Password;
+
+            if (!chkSetPassword.Checked)
+                pwd = string.Empty;
+
             try
             {
                 int result = ES.Services.Organizations.SetUserGeneralSettings(
                     PanelRequest.ItemID, PanelRequest.AccountID,
                     txtDisplayName.Text,
-                    password.Password,
+                    pwd,
                     false,
                     chkDisable.Checked,
                     chkLocked.Checked,
-                    
+
                     txtFirstName.Text,
                     txtInitials.Text,
                     txtLastName.Text,
-                    
+
                     txtAddress.Text,
                     txtCity.Text,
                     txtState.Text,
                     txtZip.Text,
                     country.Country,
-                    
+
                     txtJobTitle.Text,
                     txtCompany.Text,
                     txtDepartment.Text,
                     txtOffice.Text,
                     manager.GetAccount(),
-                    
+
                     txtBusinessPhone.Text,
                     txtFax.Text,
                     txtHomePhone.Text,
                     txtMobilePhone.Text,
                     txtPager.Text,
                     txtWebPage.Text,
-                    txtNotes.Text, 
-                    txtExternalEmailAddress.Text);
+                    txtNotes.Text,
+                    txtExternalEmailAddress.Text,
+                    txtSubscriberNumber.Text);
 
                 if (result < 0)
                 {
@@ -152,16 +186,16 @@ namespace WebsitePanel.Portal.HostedSolution
                     return;
                 }
 
-				// update title
-				litDisplayName.Text = txtDisplayName.Text;
+                // update title
+                litDisplayName.Text = txtDisplayName.Text;
                 if (!chkLocked.Checked)
                     chkLocked.Enabled = false;
 
-				messageBox.ShowSuccessMessage("ORGANIZATION_UPDATE_USER_SETTINGS");
+                messageBox.ShowSuccessMessage("ORGANIZATION_UPDATE_USER_SETTINGS");
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("ORGANIZATION_UPDATE_USER_SETTINGS", ex);
+                messageBox.ShowErrorMessage("ORGANIZATION_UPDATE_USER_SETTINGS", ex);
             }
         }
 
@@ -169,6 +203,12 @@ namespace WebsitePanel.Portal.HostedSolution
         {
             SaveSettings();
         }
-        
-	}
+
+        protected void chkSetPassword_CheckedChanged(object sender, EventArgs e)
+        {
+
+            password.EditMode = password.ValidationEnabled = chkSetPassword.Checked;
+        }
+
+    }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -343,7 +343,7 @@ namespace WebsitePanel.Providers.Statistics
 
             string[] split = versionNumber.Split(new char[] { '.' });
 
-            return split[0].Equals("6");
+            return split[0].Equals("6") || split[0].Equals("7");
         }
 
     }

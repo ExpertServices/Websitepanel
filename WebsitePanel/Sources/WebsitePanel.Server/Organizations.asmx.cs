@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -67,14 +67,14 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
-        
-        
+
+
         [WebMethod, SoapHeader("settings")]
         public Organization CreateOrganization(string organizationId)
         {
             try
             {
-                Log.WriteStart("'{0}' CreateOrganization", ProviderSettings.ProviderName);                
+                Log.WriteStart("'{0}' CreateOrganization", ProviderSettings.ProviderName);
                 Organization ret = Organization.CreateOrganization(organizationId);
                 Log.WriteEnd("'{0}' CreateOrganization", ProviderSettings.ProviderName);
                 return ret;
@@ -85,21 +85,17 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
-        
+
         [WebMethod, SoapHeader("settings")]
         public void DeleteOrganization(string organizationId)
         {
-             Organization.DeleteOrganization(organizationId);
+            Organization.DeleteOrganization(organizationId);
         }
 
         [WebMethod, SoapHeader("settings")]
-        public void CreateUser(string organizationId, string loginName, string displayName, string upn, string password, bool enabled)
+        public int CreateUser(string organizationId, string loginName, string displayName, string upn, string password, bool enabled)
         {
-            Log.WriteStart("'{0} CreateUser", ProviderSettings.ProviderName);
-
-            Organization.CreateUser(organizationId, loginName, displayName, upn, password, enabled);                        
-            
-            Log.WriteEnd("'{0}' CreateUser", ProviderSettings.ProviderName);
+            return Organization.CreateUser(organizationId, loginName, displayName, upn, password, enabled);
         }
 
         [WebMethod, SoapHeader("settings")]
@@ -109,7 +105,7 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public OrganizationUser GeUserGeneralSettings(string loginName, string organizationId)
+        public OrganizationUser GetUserGeneralSettings(string loginName, string organizationId)
         {
             return Organization.GetUserGeneralSettings(loginName, organizationId);
         }
@@ -132,9 +128,9 @@ namespace WebsitePanel.Server
         [WebMethod, SoapHeader("settings")]
         public void DeleteOrganizationDomain(string organizationDistinguishedName, string domain)
         {
-            Organization.DeleteOrganizationDomain(organizationDistinguishedName, domain);    
+            Organization.DeleteOrganizationDomain(organizationDistinguishedName, domain);
         }
-        
+
         [WebMethod, SoapHeader("settings")]
         public void CreateOrganizationDomain(string organizationDistinguishedName, string domain)
         {
@@ -147,5 +143,10 @@ namespace WebsitePanel.Server
             return Organization.GetPasswordPolicy();
         }
 
+        [WebMethod, SoapHeader("settings")]
+        public string GetSamAccountNameByUserPrincipalName(string organizationId, string userPrincipalName)
+        {
+            return Organization.GetSamAccountNameByUserPrincipalName(organizationId, userPrincipalName);
+        }
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -404,6 +404,13 @@ namespace WebsitePanel.EnterpriseServer
                         if (!String.IsNullOrEmpty(pageName)
                             && pageContent != null)
                         {
+
+                            if (Utils.ParseBool(webPolicy["EnableParkingPageTokens"], false))
+                            {
+                                pageContent = pageContent.Replace("[DOMAIN_NAME]", site.Name);
+                                pageContent = pageContent.Replace("[SITE_IP]", site.SiteIPAddress);
+
+                            }
                             string path = Path.Combine(
                                  FilesController.GetVirtualPackagePath(packageId, site.ContentPath), pageName);
 
@@ -2707,6 +2714,12 @@ namespace WebsitePanel.EnterpriseServer
 				
 				//
 				WebServer server = GetWebServer(item.ServiceId);
+
+                StringDictionary webSettings = ServerController.GetServiceSettings(item.ServiceId);
+                if (webSettings["WmSvc.NETBIOS"] != null)
+                {
+                    accountName = webSettings["WmSvc.NETBIOS"].ToString() + "\\" + accountName;
+                }
 
 				//
 				if (server.CheckWebManagementAccountExists(accountName))

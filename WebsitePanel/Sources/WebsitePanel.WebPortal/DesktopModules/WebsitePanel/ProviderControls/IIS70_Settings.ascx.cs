@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -127,7 +127,13 @@ namespace WebsitePanel.Portal.ProviderControls
 			// ASP.NET 2.0 & 4.0 Bitness Mode
 			Utils.SelectListItem(AspNetBitnessMode, settings[AspNetBitnessMode.ID]);
 
-			txtGalleryFeedUrl.Text = settings["GalleryXmlFeedUrl"];
+			
+
+            // WPI
+            wpiMicrosoftFeed.Checked = Utils.ParseBool(settings["FeedEnableMicrosoft"], true);
+            wpiHeliconTechFeed.Checked = Utils.ParseBool(settings["FeedEnableHelicon"], true);
+            wpiEditFeedsList.Value = settings["FeedUrls"];
+
 
 			txtAspPath.Text = settings["AspPath"];
 			php4Path.Text = settings["Php4Path"];
@@ -165,6 +171,7 @@ namespace WebsitePanel.Portal.ProviderControls
 
 			//
 			txtWmSvcServicePort.Text = settings["WmSvc.Port"];
+            txtWmSvcNETBIOS.Text = settings["WmSvc.NETBIOS"];
 			//
 			string wmsvcServiceUrl = settings["WmSvc.ServiceUrl"];
 			//
@@ -218,8 +225,6 @@ namespace WebsitePanel.Portal.ProviderControls
 			// ASP.NET 2.0 & 4.0 Bitness Mode
 			settings[AspNetBitnessMode.ID] = AspNetBitnessMode.SelectedValue;
 
-			settings["GalleryXmlFeedUrl"] = txtGalleryFeedUrl.Text.Trim();
-
             settings["AspPath"] = txtAspPath.Text.Trim();
 			settings["Php4Path"] = php4Path.Text.Trim();
 			settings["PhpPath"] = txtPhpPath.Text.Trim();
@@ -235,13 +240,19 @@ namespace WebsitePanel.Portal.ProviderControls
 			settings["ProtectedGroupsFile"] = txtProtectedGroupsFile.Text.Trim();
 			settings["SecureFoldersModuleAssembly"] = txtSecureFoldersModuleAsm.Text.Trim();
 
+            settings["WmSvc.NETBIOS"] = txtWmSvcNETBIOS.Text.Trim();
 			settings["WmSvc.ServiceUrl"] = txtWmSvcServiceUrl.Text.Trim();
 			settings["WmSvc.Port"] = Utils.ParseInt(txtWmSvcServicePort.Text.Trim(), 0).ToString();
 			settings["WmSvc.CredentialsMode"] = ddlWmSvcCredentialsMode.SelectedValue;
 
 			ActiveDirectoryIntegration.SaveSettings(settings);
 
-			settings["GalleryAppsFilter"] = GetAppsCatalogFilter();
+			
+
+            settings["FeedEnableMicrosoft"] = wpiMicrosoftFeed.Checked.ToString();
+            settings["FeedEnableHelicon"] = wpiHeliconTechFeed.Checked.ToString();
+            settings["FeedUrls"] = wpiEditFeedsList.Value;
+            settings["GalleryAppsFilter"] = GetAppsCatalogFilter();
 
 			if (WDeployEnabledCheckBox.Checked)
 			{

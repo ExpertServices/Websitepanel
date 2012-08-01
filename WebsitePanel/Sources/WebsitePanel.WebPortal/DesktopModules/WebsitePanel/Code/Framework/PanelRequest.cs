@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -185,5 +185,11 @@ namespace WebsitePanel.Portal
             get { return HttpContext.Current.Request["Name"] != null
                 ? HttpContext.Current.Request["Name"].Trim() : ""; }
         }
+
+        public static string Context
+        {
+            get { return HttpContext.Current.Request["Context"]; }
+        }
+
     }
 }

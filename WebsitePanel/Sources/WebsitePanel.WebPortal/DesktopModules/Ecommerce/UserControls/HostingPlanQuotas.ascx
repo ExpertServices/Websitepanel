@@ -160,6 +160,24 @@
 	</asp:Repeater>
 </asp:PlaceHolder>
 
+<asp:PlaceHolder runat="server" ID="MsSQL2012" Visible="false">
+	<tr>
+		<th colspan="2">
+			<br />
+			<div class="FormButtonsBar">
+				<div class="FormSectionHeader"><asp:Localize ID="Localize3" runat="server" meta:resourcekey="lclMSSQL2012Resources" /></div>
+			</div>
+		</th>
+	</tr>
+	<asp:Repeater runat="server" ID="MsSQL2012_Quotas">
+		<ItemTemplate>
+			<tr>
+				<td class="Width20Pcs" style="white-space: nowrap;"><strong><%# GetSharedLocalizedString("Quota." + GetQuotaItemName((string)Container.DataItem)) %>:</strong></td>
+				<td><%# GetQuotaItemAllocatedValue((string)Container.DataItem) %></td>
+			</tr>
+		</ItemTemplate>
+	</asp:Repeater>
+</asp:PlaceHolder>
 
 <asp:PlaceHolder runat="server" ID="MySQL4" Visible="false">
 	<tr>

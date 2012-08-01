@@ -13,6 +13,8 @@ namespace WebsitePanel.Portal.ProviderControls {
     public partial class Gene6FTP_Settings {
         protected System.Web.UI.WebControls.Label lblInstallFolder;
         protected System.Web.UI.WebControls.TextBox txtInstallFolder;
+        protected System.Web.UI.WebControls.Label lblLogsFolder;
+        protected System.Web.UI.WebControls.TextBox txtLogsFolder;
         protected System.Web.UI.WebControls.Label lblSite;
         protected System.Web.UI.WebControls.DropDownList ddlFtpSite;
         protected System.Web.UI.WebControls.Label lblBuildUncFilesPath;

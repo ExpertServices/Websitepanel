@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -61,6 +61,9 @@ namespace WebsitePanel.Portal
                     // select role
                     Utils.SelectListItem(role, user.Role.ToString());
 
+                    // select loginStatus
+                    loginStatus.SelectedIndex = user.LoginStatusId;
+
 					// bind ec
 					chkEcommerceEnbl.Checked = user.EcommerceEnabled;
 					BindEcommerceEnabled();
@@ -120,6 +123,8 @@ namespace WebsitePanel.Portal
 				//
 				user.EcommerceEnabled = chkEcommerceEnbl.Checked;
 
+                user.LoginStatusId = loginStatus.SelectedIndex;
+                
                 // account info
                 user.FirstName = Server.HtmlEncode(txtFirstName.Text);
                 user.LastName = Server.HtmlEncode(txtLastName.Text);

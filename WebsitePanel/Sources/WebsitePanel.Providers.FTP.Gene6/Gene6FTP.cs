@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -51,6 +51,11 @@ namespace WebsitePanel.Providers.FTP
         protected string InstallFolder
         {
             get { return FileUtils.EvaluateSystemVariables(ProviderSettings["InstallFolder"]); }
+        }
+
+        protected string LogsFolder
+        {
+            get { return FileUtils.EvaluateSystemVariables(ProviderSettings["LogsFolder"]); }
         }
         #endregion
 
@@ -589,7 +594,13 @@ TransferLimitType=never");
 
         private string GetLogsPath()
         {
-            return GetInstallFolder() + "Log";
+            if (String.IsNullOrEmpty(LogsFolder))
+                return GetInstallFolder() + "Log";
+            else
+            {
+                string folder = LogsFolder.Replace("/", "\\");
+                return folder.TrimEnd('\\');
+            }
         }
 
         private void WriteTextFile(string path, string content)

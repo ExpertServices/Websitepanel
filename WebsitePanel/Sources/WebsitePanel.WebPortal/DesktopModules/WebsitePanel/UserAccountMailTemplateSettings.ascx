@@ -27,10 +27,6 @@
                 Text="Exchange Mailbox Setup Letter" NavigateUrl='<%# GetSettingsLink("HostedSoluitonReportSummaryLetter", "HostedSoluitonReportSummaryLetter") %>'></asp:HyperLink>
         </li>
         <li>
-            <asp:HyperLink ID="lnkExchangeHostedEditionOrganizationSummary" runat="server" meta:resourcekey="lnkExchangeHostedEditionOrganizationSummary"
-                Text="Exchange Hosting Mode Organization Summary" NavigateUrl='<%# GetSettingsLink("ExchangeHostedEditionOrganizationSummary", "SettingsExchangeHostedEditionOrganizationSummary") %>'></asp:HyperLink>
-        </li>           
-        <li>
             <asp:HyperLink ID="lnkVpsSummaryLetter" runat="server" meta:resourcekey="lnkVpsSummaryLetter"
                 Text="VPS Summary Letter" NavigateUrl='<%# GetSettingsLink("VpsSummaryLetter", "SettingsVpsSummaryLetter") %>'></asp:HyperLink>
         </li> 

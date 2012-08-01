@@ -112,13 +112,13 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="deviceUserAgentColumn.HeaderText" xml:space="preserve">
-    <value>User Agent</value>
+  <data name="cmdDelete.OnClientClick" xml:space="preserve">
+    <value>return confirm('Are you sure you want to remove the device partnership?');</value>
   </data>
   <data name="deviceStatus.HeaderText" xml:space="preserve">
     <value>Status</value>
@@ -126,11 +126,20 @@
   <data name="deviceTypeColumn.HeaderText" xml:space="preserve">
     <value>Type</value>
   </data>
+  <data name="deviceUserAgentColumn.HeaderText" xml:space="preserve">
+    <value>User Agent</value>
+  </data>
   <data name="gvMobile.EmptyDataText" xml:space="preserve">
     <value>There are no mobile devices.</value>
   </data>
+  <data name="HSFormComments.Text" xml:space="preserve">
+    <value>&lt;p&gt;Manage mobile devices here.&lt;/p&gt;&lt;p&gt;To add a new device, begin a partnership with Microsoft Exchange from the device and it will appear in the device list.&lt;/p&gt;&lt;p&gt;You can remove devices that you are no longer using. If you forget your device password, you can access it here. If you lose your phone or mobile device, you can initiate a remote device wipe to protect your information.&lt;/p&gt;</value>
+  </data>
   <data name="lastSyncTimeColumn.HeaderText" xml:space="preserve">
     <value>Last Sync Time</value>
+  </data>
+  <data name="locTitle.Text" xml:space="preserve">
+    <value>Edit Mailbox</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
@@ -138,22 +147,13 @@
   <data name="PendingWipe" xml:space="preserve">
     <value>Pending Wipe</value>
   </data>
+  <data name="Text.PageName" xml:space="preserve">
+    <value>Edit Mailbox</value>
+  </data>
   <data name="Unknown" xml:space="preserve">
     <value>Unknown</value>
   </data>
   <data name="WipeSuccessful" xml:space="preserve">
     <value>Wipe Successful</value>
-  </data>
-  <data name="cmdDelete.OnClientClick" xml:space="preserve">
-    <value>return confirm('Are you sure you want to remove the device partnership?');</value>
-  </data>
-  <data name="Text.PageName" xml:space="preserve">
-    <value>Edit Mailbox</value>
-  </data>
-  <data name="locTitle.Text" xml:space="preserve">
-    <value>Edit Mailbox</value>
-  </data>
-  <data name="HSFormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;Manage mobile devices here.&lt;/p&gt;&lt;p&gt;To add a new device, begin a partnership with Microsoft Exchange from the device and it will appear in the device list.&lt;/p&gt;&lt;p&gt;You can remove devices that you are no longer using. If you forget your device password, you can access it here. If you lose your phone or mobile device, you can initiate a remote device wipe to protect your information.&lt;/p&gt;</value>
   </data>
 </root>

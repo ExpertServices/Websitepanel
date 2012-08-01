@@ -5,7 +5,34 @@ using System.Windows.Forms;
 using WebsitePanel.Setup.Actions;
 
 namespace WebsitePanel.Setup
+
 {
+    /// <summary>
+    /// Release 1.2.2
+    /// </summary>
+    public class EnterpriseServer122 : EnterpriseServer
+    {
+        public static new object Install(object obj)
+        {
+            //
+            return EnterpriseServer.InstallBase(obj, "1.2.2");
+        }
+
+        public static new DialogResult Uninstall(object obj)
+        {
+            return EnterpriseServer.Uninstall(obj);
+        }
+
+        public static new DialogResult Setup(object obj)
+        {
+            return EnterpriseServer.Setup(obj);
+        }
+
+        public static new DialogResult Update(object obj)
+        {
+            return UpdateBase(obj, "1.2.2", "1.2.1", true);
+        }
+    }
     /// <summary>
     /// Release 1.2.1
     /// </summary>

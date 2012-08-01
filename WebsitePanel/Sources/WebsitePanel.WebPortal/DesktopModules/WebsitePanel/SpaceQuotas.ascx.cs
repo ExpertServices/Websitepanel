@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -54,13 +54,18 @@ namespace WebsitePanel.Portal
 		{
 			// QUOTA CONTROL ID <=> TABLE ROW CONTROL ID
 			{ "quotaDiskspace", "pnlDiskspace" },
-			{ "quotaBandwidth", "pnlBandwidth" },
-			{ "quotaFtpAccounts", "pnlFtpAccounts" },
+            { "quotaBandwidth", "pnlBandwidth" },
 			{ "quotaDomains", "pnlDomains" },
 			{ "quotaSubDomains", "pnlSubDomains" },
 			{ "quotaDomainPointers", "pnlDomainPointers" },
-			{ "quotaMailAccounts", "pnlMailAccounts" },
+            { "quotaUserAccounts", "pnlUserAccounts" },
+			{ "quotaMailAccounts", "pnlMailboxes" },
+            { "quotaOCSUsers", "pnlOCSUsers" },
+            { "quotaLyncUsers", "pnlLyncUsers" },
+            { "quotaBlackBerryUsers", "pnlBlackBerryUsers" },
+            { "quotaSharepointSites", "pnlSharepointSites" },
 			{ "quotaWebSites", "pnlWebSites" },
+            { "quotaDatabases", "pnlDatabases" },
 			{ "quotaNumberOfVm", "pnlHyperVForPC" }
 		};
 

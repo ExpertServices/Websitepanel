@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -36,6 +36,22 @@ namespace WebsitePanel.EnterpriseServer
     public class GlobalDnsRecord
     {
         private int recordId;
+        private string internalIP;
+        private string externalIP;
+        private int recordOrder;
+        private int groupId;
+        private int serviceId;
+        private int serverId;
+        private int packageId;
+        private string recordType;
+        private string recordName;
+        private string recordData;
+        private int mxPriority;
+        private int ipAddressId;
+        private int srvPriority;
+        private int srvWeight;
+        private int srvPort;
+
 
         public int RecordId
         {
@@ -43,63 +59,54 @@ namespace WebsitePanel.EnterpriseServer
             set { recordId = value; }
         }
 
-        private int recordOrder;
 
         public int RecordOrder
         {
             get { return recordOrder; }
             set { recordOrder = value; }
         }
-        private int groupId;
 
         public int GroupId
         {
             get { return groupId; }
             set { groupId = value; }
         }
-        private int serviceId;
 
         public int ServiceId
         {
             get { return serviceId; }
             set { serviceId = value; }
         }
-        private int serverId;
 
         public int ServerId
         {
             get { return serverId; }
             set { serverId = value; }
         }
-        private int packageId;
 
         public int PackageId
         {
             get { return packageId; }
             set { packageId = value; }
         }
-        private string recordType;
 
         public string RecordType
         {
             get { return recordType; }
             set { recordType = value; }
         }
-        private string recordName;
 
         public string RecordName
         {
             get { return recordName; }
             set { recordName = value; }
         }
-        private string recordData;
 
         public string RecordData
         {
             get { return recordData; }
             set { recordData = value; }
         }
-        private int mxPriority;
 
         public int MxPriority
         {
@@ -107,16 +114,12 @@ namespace WebsitePanel.EnterpriseServer
             set { mxPriority = value; }
         }
 
-        private int ipAddressId;
 
         public int IpAddressId
         {
             get { return ipAddressId; }
             set { ipAddressId = value; }
         }
-
-        private string internalIP;
-        private string externalIP;
 
         public GlobalDnsRecord()
         {
@@ -132,6 +135,25 @@ namespace WebsitePanel.EnterpriseServer
         {
             get { return this.externalIP; }
             set { this.externalIP = value; }
+        }
+
+
+        public int SrvPriority
+        {
+            get { return srvPriority; }
+            set { srvPriority = value; }
+        }
+
+        public int SrvWeight
+        {
+            get { return srvWeight; }
+            set { srvWeight = value; }
+        }
+
+        public int SrvPort
+        {
+            get { return srvPort; }
+            set { srvPort = value; }
         }
     }
 }
