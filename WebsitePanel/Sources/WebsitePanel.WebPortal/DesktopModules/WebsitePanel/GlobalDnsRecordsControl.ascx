@@ -46,13 +46,13 @@
         <tr>
             <td class="SubHead"><asp:Label ID="lblRecordName" runat="server" meta:resourcekey="lblRecordName" Text="Record Name:"></asp:Label></td>
             <td class="Normal">
-                <asp:TextBox ID="txtRecordName" runat="server" Width="100px" CssClass="NormalTextBox"></asp:TextBox>
+                <asp:TextBox ID="txtRecordName" runat="server" Width="200px" CssClass="NormalTextBox"></asp:TextBox>
             </td>
         </tr>
         <tr id="rowData" runat="server">
             <td class="SubHead"><asp:Label ID="lblRecordData" runat="server" meta:resourcekey="lblRecordData" Text="Record Data:"></asp:Label></td>
             <td class="Normal" nowrap>
-                <asp:TextBox ID="txtRecordData" runat="server" Width="100px" CssClass="NormalTextBox"></asp:TextBox><uc1:SelectIPAddress ID="ipAddress" runat="server" />
+                <asp:TextBox ID="txtRecordData" runat="server" Width="200px" CssClass="NormalTextBox"></asp:TextBox><uc1:SelectIPAddress ID="ipAddress" runat="server" />
             </td>
         </tr>
         <tr id="rowMXPriority" runat="server">

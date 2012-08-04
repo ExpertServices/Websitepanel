@@ -85,7 +85,7 @@
             <tr>
                 <td class="SubHead"><asp:Label ID="lblRecordName" runat="server" meta:resourcekey="lblRecordName" Text="Record Name:"></asp:Label></td>
                 <td class="NormalBold">
-                    <asp:TextBox ID="txtRecordName" runat="server" Width="100px" CssClass="NormalTextBox"></asp:TextBox>
+                    <asp:TextBox ID="txtRecordName" runat="server" Width="200px" CssClass="NormalTextBox"></asp:TextBox>
                 </td>
             </tr>
             <tr id="rowData" runat="server">

@@ -1,6 +1,6 @@
 SET WSDL="C:\Program Files (x86)\Microsoft WSE\v3.0\Tools\WseWsdl3.exe"
 SET WSE_CLEAN=..\Tools\WseClean.exe
-SET SERVER_URL=http://localhost:9005
+SET SERVER_URL=http://localhost:9002
 
 REM %WSDL% %SERVER_URL%/esApplicationsInstaller.asmx /out:.\WebsitePanel.EnterpriseServer.Client\ApplicationsInstallerProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\ApplicationsInstallerProxy.cs
