@@ -149,10 +149,16 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 END
 GO
 
+UPDATE [dbo].[Quotas] SET [QuotaTypeID] = 1 WHERE [QuotaID] = 364
+GO
+
 IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Exchange2007.MaxRecipients')
 BEGIN
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (365, 12, 20, N'Exchange2007.MaxRecipients', N'Maximum Recipients',	3,	0,	NULL)
 END
+GO
+
+UPDATE [dbo].[Quotas] SET [QuotaTypeID] = 3 WHERE [QuotaID] = 365
 GO
 
 IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Exchange2007.MaxSendMessageSizeKB')
@@ -161,11 +167,19 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 END
 GO
 
+UPDATE [dbo].[Quotas] SET [QuotaTypeID] = 3 WHERE [QuotaID] = 366
+GO
+
+
 IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Exchange2007.MaxReceiveMessageSizeKB')
 BEGIN
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (367, 12, 22, N'Exchange2007.MaxReceiveMessageSizeKB', N'Maximum Receive Message Size (Kb)', 3,	0, NULL)
 END
 GO
+
+UPDATE [dbo].[Quotas] SET [QuotaTypeID] = 3 WHERE [QuotaID] = 367
+GO
+
 
 IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Exchange2007.IsConsumer')
 BEGIN
@@ -273,14 +287,23 @@ GO
 
 
 
+DELETE FROM [dbo].[PackageQuotas] WHERE [QuotaID] IN (SELECT [QuotaID] FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.POP3Enabled')
 DELETE FROM [dbo].[HostingPlanQuotas] WHERE [QuotaID] IN (SELECT [QuotaID] FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.POP3Enabled')
 DELETE FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.POP3Enabled'
+
+DELETE FROM [dbo].[PackageQuotas] WHERE [QuotaID] IN (SELECT [QuotaID] FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.IMAPEnabled')
 DELETE FROM [dbo].[HostingPlanQuotas] WHERE [QuotaID] IN (SELECT [QuotaID] FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.IMAPEnabled')
 DELETE FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.IMAPEnabled'
+
+DELETE FROM [dbo].[PackageQuotas] WHERE [QuotaID] IN (SELECT [QuotaID] FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.OWAEnabled')
 DELETE FROM [dbo].[HostingPlanQuotas] WHERE [QuotaID] IN (SELECT [QuotaID] FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.OWAEnabled')
 DELETE FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.OWAEnabled'
+
+DELETE FROM [dbo].[PackageQuotas] WHERE [QuotaID] IN (SELECT [QuotaID] FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.MAPIEnabled')
 DELETE FROM [dbo].[HostingPlanQuotas] WHERE [QuotaID] IN (SELECT [QuotaID] FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.MAPIEnabled')
 DELETE FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.MAPIEnabled'
+
+DELETE FROM [dbo].[PackageQuotas] WHERE [QuotaID] IN (SELECT [QuotaID] FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.ActiveSyncEnabled')
 DELETE FROM [dbo].[HostingPlanQuotas] WHERE [QuotaID] IN (SELECT [QuotaID] FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.ActiveSyncEnabled')
 DELETE FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.ActiveSyncEnabled'
 
@@ -1033,6 +1056,7 @@ ALTER TABLE [dbo].[ResourceGroups] ADD [ShowGroup] [bit] NULL
 END
 GO
 
+
 UPDATE [dbo].[ResourceGroups] SET ShowGroup=1 
 GO
 
@@ -1734,6 +1758,7 @@ CREATE TABLE [dbo].[ExchangeMailboxPlans](
 	[MailboxPlanId] [int] IDENTITY(1,1) NOT NULL,
 	[ItemID] [int] NOT NULL,
 	[MailboxPlan] [nvarchar](300) COLLATE Latin1_General_CI_AS NOT NULL,
+	[MailboxPlanType] [int] NULL,
 	[EnableActiveSync] [bit] NOT NULL,
 	[EnableIMAP] [bit] NOT NULL,
 	[EnableMAPI] [bit] NOT NULL,
@@ -1800,7 +1825,12 @@ GO
 ALTER TABLE [dbo].[ExchangeOrganizations] ALTER COLUMN	[OrganizationID] [nvarchar](128) COLLATE Latin1_General_CI_AS NOT NULL
 GO
 
-
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeMailboxPlans' AND COLS.name='MailboxPlanType')
+BEGIN
+ALTER TABLE [dbo].[ExchangeMailboxPlans] ADD
+	[MailboxPlanType] [int] NULL
+END
+GO
 
 -- LyncUsers
 IF  NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[LyncUsers]') AND type in (N'U'))
@@ -1957,17 +1987,18 @@ CREATE PROCEDURE [dbo].[AddExchangeMailboxPlan]
 	@MaxSendMessageSizeKB int,
 	@ProhibitSendPct int,
 	@ProhibitSendReceivePct int	,
-	@HideFromAddressBook bit
+	@HideFromAddressBook bit,
+	@MailboxPlanType int
 )
 AS
 
-IF ((SELECT Count(*) FROM ExchangeMailboxPlans WHERE ItemId = @ItemID) = 0)
+IF (((SELECT Count(*) FROM ExchangeMailboxPlans WHERE ItemId = @ItemID) = 0) AND (@MailboxPlanType=0))
 BEGIN
 	SET @IsDefault = 1
 END
 ELSE
 BEGIN
-	IF @IsDefault = 1
+	IF ((@IsDefault = 1) AND (@MailboxPlanType=0))
 	BEGIN
 		UPDATE ExchangeMailboxPlans SET IsDefault = 0 WHERE ItemID = @ItemID
 	END
@@ -1992,7 +2023,8 @@ INSERT INTO ExchangeMailboxPlans
 	MaxSendMessageSizeKB,
 	ProhibitSendPct,
 	ProhibitSendReceivePct,
-	HideFromAddressBook
+	HideFromAddressBook,
+	MailboxPlanType
 )
 VALUES
 (
@@ -2012,7 +2044,8 @@ VALUES
 	@MaxSendMessageSizeKB,
 	@ProhibitSendPct,
 	@ProhibitSendReceivePct,
-	@HideFromAddressBook
+	@HideFromAddressBook,
+	@MailboxPlanType
 )
 
 SET @MailboxPlanId = SCOPE_IDENTITY()
@@ -2045,17 +2078,18 @@ ALTER PROCEDURE [dbo].[AddExchangeMailboxPlan]
 	@MaxSendMessageSizeKB int,
 	@ProhibitSendPct int,
 	@ProhibitSendReceivePct int	,
-	@HideFromAddressBook bit
+	@HideFromAddressBook bit,
+	@MailboxPlanType int
 )
 AS
 
-IF ((SELECT Count(*) FROM ExchangeMailboxPlans WHERE ItemId = @ItemID) = 0)
+IF (((SELECT Count(*) FROM ExchangeMailboxPlans WHERE ItemId = @ItemID) = 0) AND (@MailboxPlanType=0))
 BEGIN
 	SET @IsDefault = 1
 END
 ELSE
 BEGIN
-	IF @IsDefault = 1
+	IF ((@IsDefault = 1) AND (@MailboxPlanType=0))
 	BEGIN
 		UPDATE ExchangeMailboxPlans SET IsDefault = 0 WHERE ItemID = @ItemID
 	END
@@ -2079,7 +2113,8 @@ INSERT INTO ExchangeMailboxPlans
 	MaxSendMessageSizeKB,
 	ProhibitSendPct,
 	ProhibitSendReceivePct,
-	HideFromAddressBook
+	HideFromAddressBook,
+	MailboxPlanType
 )
 VALUES
 (
@@ -2099,7 +2134,8 @@ VALUES
 	@MaxSendMessageSizeKB,
 	@ProhibitSendPct,
 	@ProhibitSendReceivePct,
-	@HideFromAddressBook
+	@HideFromAddressBook,
+	@MailboxPlanType
 )
 
 SET @MailboxPlanId = SCOPE_IDENTITY()
@@ -2325,6 +2361,112 @@ GO
 
 
 
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'UpdateExchangeMailboxPlan')
+BEGIN
+EXEC sp_executesql N'
+CREATE PROCEDURE [dbo].[UpdateExchangeMailboxPlan] 
+(
+	@MailboxPlanId int,
+	@MailboxPlan	nvarchar(300),
+	@EnableActiveSync bit,
+	@EnableIMAP bit,
+	@EnableMAPI bit,
+	@EnableOWA bit,
+	@EnablePOP bit,
+	@IsDefault bit,
+	@IssueWarningPct int,
+	@KeepDeletedItemsDays int,
+	@MailboxSizeMB int,
+	@MaxReceiveMessageSizeKB int,
+	@MaxRecipients int,
+	@MaxSendMessageSizeKB int,
+	@ProhibitSendPct int,
+	@ProhibitSendReceivePct int	,
+	@HideFromAddressBook bit,
+	@MailboxPlanType int
+)
+AS
+
+UPDATE ExchangeMailboxPlans SET
+	MailboxPlan = @MailboxPlan,
+	EnableActiveSync = @EnableActiveSync,
+	EnableIMAP = @EnableIMAP,
+	EnableMAPI = @EnableMAPI,
+	EnableOWA = @EnableOWA,
+	EnablePOP = @EnablePOP,
+	IsDefault = @IsDefault,
+	IssueWarningPct= @IssueWarningPct,
+	KeepDeletedItemsDays = @KeepDeletedItemsDays,
+	MailboxSizeMB= @MailboxSizeMB,
+	MaxReceiveMessageSizeKB= @MaxReceiveMessageSizeKB,
+	MaxRecipients= @MaxRecipients,
+	MaxSendMessageSizeKB= @MaxSendMessageSizeKB,
+	ProhibitSendPct= @ProhibitSendPct,
+	ProhibitSendReceivePct = @ProhibitSendReceivePct,
+	HideFromAddressBook = @HideFromAddressBook,
+	MailboxPlanType = @MailboxPlanType
+WHERE MailboxPlanId = @MailboxPlanId
+
+RETURN'
+END
+GO
+
+
+
+
+
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetUserByExchangeOrganizationIdInternally')
+BEGIN
+EXEC sp_executesql N'
+CREATE PROCEDURE [dbo].[GetUserByExchangeOrganizationIdInternally]
+(
+	@ItemID int
+)
+AS
+	SELECT
+		U.UserID,
+		U.RoleID,
+		U.StatusID,
+		U.LoginStatusId,
+		U.FailedLogins,
+		U.OwnerID,
+		U.Created,
+		U.Changed,
+		U.IsDemo,
+		U.Comments,
+		U.IsPeer,
+		U.Username,
+		U.Password,
+		U.FirstName,
+		U.LastName,
+		U.Email,
+		U.SecondaryEmail,
+		U.Address,
+		U.City,
+		U.State,
+		U.Country,
+		U.Zip,
+		U.PrimaryPhone,
+		U.SecondaryPhone,
+		U.Fax,
+		U.InstantMessenger,
+		U.HtmlMail,
+		U.CompanyName,
+		U.EcommerceEnabled,
+		U.[AdditionalParams]
+	FROM Users AS U
+	WHERE U.UserID IN (SELECT UserID FROM Packages WHERE PackageID IN (
+	SELECT PackageID FROM ServiceItems WHERE ItemID = @ItemID))
+	
+RETURN'
+END
+GO
+
+
+
+
 
 
 
@@ -2523,10 +2665,6 @@ GO
 
 
 
-
-
-
-
 IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetExchangeAccountByMailboxPlanId')
 BEGIN
 EXEC sp_executesql N'CREATE PROCEDURE [dbo].[GetExchangeAccountByMailboxPlanId] 
@@ -2563,6 +2701,30 @@ RETURN
 
 END
 ELSE
+IF (@ItemId = 0)
+BEGIN
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber 
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+WHERE
+	E.MailboxPlanId = @MailboxPlanId AND
+	E.AccountType IN (1,5) 
+END
+ELSE
 BEGIN
 SELECT
 	E.AccountID,
@@ -2595,11 +2757,98 @@ GO
 
 
 
+ALTER PROCEDURE [dbo].[GetExchangeAccountByMailboxPlanId] 
+(
+	@ItemID int,
+	@MailboxPlanId int
+)
+AS
+
+IF (@MailboxPlanId < 0)
+BEGIN
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber 
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+WHERE
+	E.ItemID = @ItemID AND
+	E.MailboxPlanId IS NULL AND
+	E.AccountType IN (1,5) 
+RETURN
+
+END
+ELSE
+IF (@ItemId = 0)
+BEGIN
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber 
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+WHERE
+	E.MailboxPlanId = @MailboxPlanId AND
+	E.AccountType IN (1,5) 
+END
+ELSE
+BEGIN
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber 
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+WHERE
+	E.ItemID = @ItemID AND
+	E.MailboxPlanId = @MailboxPlanId AND
+	E.AccountType IN (1,5) 
+RETURN
+END
+GO
+
+
+
+
 
 
 IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetExchangeMailboxPlan')
 BEGIN
-EXEC sp_executesql N' CREATE PROCEDURE [dbo].[GetExchangeMailboxPlan] 
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[GetExchangeMailboxPlan] 
 (
 	@MailboxPlanId int
 )
@@ -2622,7 +2871,8 @@ SELECT
 	MaxSendMessageSizeKB,
 	ProhibitSendPct,
 	ProhibitSendReceivePct,
-	HideFromAddressBook
+	HideFromAddressBook,
+	MailboxPlanType
 FROM
 	ExchangeMailboxPlans
 WHERE
@@ -2631,6 +2881,42 @@ RETURN'
 END
 GO
 
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetExchangeMailboxPlan] 
+(
+	@MailboxPlanId int
+)
+AS
+SELECT
+	MailboxPlanId,
+	ItemID,
+	MailboxPlan,
+	EnableActiveSync,
+	EnableIMAP,
+	EnableMAPI,
+	EnableOWA,
+	EnablePOP,
+	IsDefault,
+	IssueWarningPct,
+	KeepDeletedItemsDays,
+	MailboxSizeMB,
+	MaxReceiveMessageSizeKB,
+	MaxRecipients,
+	MaxSendMessageSizeKB,
+	ProhibitSendPct,
+	ProhibitSendReceivePct,
+	HideFromAddressBook,
+	MailboxPlanType
+FROM
+	ExchangeMailboxPlans
+WHERE
+	MailboxPlanId = @MailboxPlanId
+RETURN
+GO
 
 
 
@@ -2674,7 +2960,8 @@ SELECT
 	MaxSendMessageSizeKB,
 	ProhibitSendPct,
 	ProhibitSendReceivePct,
-	HideFromAddressBook
+	HideFromAddressBook,
+	MailboxPlanType
 FROM
 	ExchangeMailboxPlans
 WHERE
@@ -2685,6 +2972,44 @@ END
 GO
 
 
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetExchangeMailboxPlans]
+(
+	@ItemID int
+)
+AS
+SELECT
+	MailboxPlanId,
+	ItemID,
+	MailboxPlan,
+	EnableActiveSync,
+	EnableIMAP,
+	EnableMAPI,
+	EnableOWA,
+	EnablePOP,
+	IsDefault,
+	IssueWarningPct,
+	KeepDeletedItemsDays,
+	MailboxSizeMB,
+	MaxReceiveMessageSizeKB,
+	MaxRecipients,
+	MaxSendMessageSizeKB,
+	ProhibitSendPct,
+	ProhibitSendReceivePct,
+	HideFromAddressBook,
+	MailboxPlanType
+FROM
+	ExchangeMailboxPlans
+WHERE
+	ItemID = @ItemID 
+ORDER BY MailboxPlan
+RETURN
+GO
 
 
 
@@ -4740,3 +5065,105 @@ BEGIN
 	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (66, N'ServiceUrl', N'http://localhost:9998/services/')
 END
 GO
+
+
+ALTER PROCEDURE [dbo].[AddServiceItem]
+(
+	@ActorID int,
+	@PackageID int,
+	@ServiceID int,
+	@ItemName nvarchar(500),
+	@ItemTypeName nvarchar(200),
+	@ItemID int OUTPUT,
+	@XmlProperties ntext,
+	@CreatedDate datetime
+)
+AS
+BEGIN TRAN
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- get GroupID
+DECLARE @GroupID int
+SELECT
+	@GroupID = PROV.GroupID
+FROM Services AS S
+INNER JOIN Providers AS PROV ON S.ProviderID = PROV.ProviderID
+WHERE S.ServiceID = @ServiceID
+
+DECLARE @ItemTypeID int
+SELECT @ItemTypeID = ItemTypeID FROM ServiceItemTypes
+WHERE TypeName = @ItemTypeName
+AND ((@GroupID IS NULL) OR (@GroupID IS NOT NULL AND GroupID = @GroupID))
+
+-- Fix to allow plans assigned to serveradmin
+IF (@ItemTypeName = 'WebsitePanel.Providers.HostedSolution.Organization, WebsitePanel.Providers.Base')
+BEGIN
+	IF NOT EXISTS (SELECT * FROM ServiceItems WHERE PackageID = 1)
+	BEGIN
+		INSERT INTO ServiceItems (PackageID, ItemTypeID,ServiceID,ItemName,CreatedDate)
+		VALUES(1, @ItemTypeID, @ServiceID, 'System',  @CreatedDate)
+		
+		DECLARE @TempItemID int
+		
+		SET @TempItemID = SCOPE_IDENTITY()
+		INSERT INTO ExchangeOrganizations (ItemID, OrganizationID)
+		VALUES(@TempItemID, 'System')
+	END
+END
+
+
+-- add item
+INSERT INTO ServiceItems
+(
+	PackageID,
+	ServiceID,
+	ItemName,
+	ItemTypeID,
+	CreatedDate
+)
+VALUES
+(
+	@PackageID,
+	@ServiceID,
+	@ItemName,
+	@ItemTypeID,
+	@CreatedDate
+)
+
+SET @ItemID = SCOPE_IDENTITY()
+
+DECLARE @idoc int
+--Create an internal representation of the XML document.
+EXEC sp_xml_preparedocument @idoc OUTPUT, @XmlProperties
+
+-- Execute a SELECT statement that uses the OPENXML rowset provider.
+DELETE FROM ServiceItemProperties
+WHERE ItemID = @ItemID
+
+INSERT INTO ServiceItemProperties
+(
+	ItemID,
+	PropertyName,
+	PropertyValue
+)
+SELECT
+	@ItemID,
+	PropertyName,
+	PropertyValue
+FROM OPENXML(@idoc, '/properties/property',1) WITH 
+(
+	PropertyName nvarchar(50) '@name',
+	PropertyValue nvarchar(3000) '@value'
+) as PV
+
+-- remove document
+exec sp_xml_removedocument @idoc
+
+COMMIT TRAN
+RETURN 
+
+GO
+

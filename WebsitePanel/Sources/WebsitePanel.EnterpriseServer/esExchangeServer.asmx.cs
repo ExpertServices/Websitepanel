@@ -522,6 +522,13 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public int UpdateExchangeMailboxPlan(int itemId, ExchangeMailboxPlan mailboxPlan)
+        {
+            return ExchangeServerController.UpdateExchangeMailboxPlan(itemId, mailboxPlan);
+        }
+
+
+        [WebMethod]
         public int DeleteExchangeMailboxPlan(int itemId, int mailboxPlanId)
         {
             return ExchangeServerController.DeleteExchangeMailboxPlan(itemId, mailboxPlanId);

@@ -5155,6 +5155,9 @@
   <data name="Error.EXCHANGE_SET_DEFAULT_MAILBOXPLAN" xml:space="preserve">
     <value>Failed to set default mailbox plan.</value>
   </data>
+  <data name="Error.EXCHANGE_UNABLE_USE_SYSTEMPLAN" xml:space="preserve">
+    <value>Not possible to perform requested action on a system defined plan.</value>
+  </data>
   <data name="Error.EXCHANGE_FAILED_TO_STAMP" xml:space="preserve">
     <value>Failed to stamp mailbox with a mailbox plan. See storage allocation.</value>
   </data>
@@ -5176,10 +5179,30 @@
   <data name="Success.EXCHANGE_MATCHPLANS" xml:space="preserve">
     <value>Succesfully plans matched and applied</value>
   </data>
+  <data name="Error.EXCHANGE_STAMPMAILBOXES" xml:space="preserve">
+    <value>Failed to stamp mailboxes</value>
+  </data>
+  <data name="Success.EXCHANGE_STAMPMAILBOXES" xml:space="preserve">
+    <value>Succesfully stamp mailboxes</value>
+  </data>
+
+  <data name="Error.EXCHANGE_UPDATEPLANS" xml:space="preserve">
+    <value>Mailbox plan update failed</value>
+  </data>
+  <data name="Success.EXCHANGE_UPDATEPLANS" xml:space="preserve">
+    <value>Mailbox plan updated</value>
+  </data>
+
   <data name="Error.LYNC_APPLYPLANTEMPLATE" xml:space="preserve">
     <value>Failed to apply plans template</value>
   </data>
   <data name="Success.LYNC_APPLYPLANTEMPLATE" xml:space="preserve">
     <value>Succesfully applied plans template</value>
   </data>
+  <data name="Success.REQUEST_COMPLETED_SUCCESFULLY" xml:space="preserve">
+    <value>Request Completed Succesfully</value>
+  </data>
+
+
+  
 </root>

@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -26,69 +26,12 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-
-namespace WebsitePanel.Portal.ExchangeServer.UserControls
+namespace WebsitePanel.Providers.HostedSolution
 {
-	public partial class DaysBox : System.Web.UI.UserControl
-	{
-        int emptyValue = -1;
-
-        public int EmptyValue
-        {
-            get { return emptyValue; }
-            set { emptyValue = value; }
-        }
-        
-        public string ValidationGroup
-		{
-			get { return valRequireCorrectNumber.ValidationGroup; }
-			set { valRequireCorrectNumber.ValidationGroup = valRequireNumber.ValidationGroup = value; }
-		}
-
-		public bool Enabled
-		{
-			get { return txtValue.Enabled; }
-			set
-			{
-				txtValue.Enabled = value;
-				valRequireCorrectNumber.Enabled = value;
-				valRequireNumber.Enabled = value;
-			}
-		}
-
-        public bool RequireValidatorEnabled
-        {
-            get { return valRequireNumber.Enabled; }
-            set { valRequireNumber.Enabled = value; }
-        }
-
-
-		public int ValueDays
-		{
-            get
-            {
-                string val = txtValue.Text.Trim();
-                return val == "" ? emptyValue : Utils.ParseInt(val, 0);
-            }
-            set
-            {
-                txtValue.Text = value == emptyValue ? "" : value.ToString();
-            }
-        }
-
-		protected void Page_Load(object sender, EventArgs e)
-		{
-
-		}
-	}
+    public enum ExchangeMailboxPlanType
+    {
+        User = 0,
+        Reseller = 1,
+        Administrator = 2
+    }
 }

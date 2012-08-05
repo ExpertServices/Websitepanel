@@ -18,4 +18,4 @@
 <asp:RequiredFieldValidator ID="valRequireNumber" runat="server" meta:resourcekey="valRequireNumber" Enabled="false"
     ErrorMessage="Please enter value" ControlToValidate="txtValue" Display="None" SetFocusOnError="True"></asp:RequiredFieldValidator>
 <asp:RegularExpressionValidator ID="valRequireCorrectNumber" runat="server" meta:resourcekey="valRequireCorrectNumber"
-	ErrorMessage="Enter correct number" ControlToValidate="txtValue" Display="None" ValidationExpression="[0-9]{0,15}" SetFocusOnError="True"></asp:RegularExpressionValidator>
+	ErrorMessage="Enter correct number" ControlToValidate="txtValue" Display="None" SetFocusOnError="True"></asp:RegularExpressionValidator>

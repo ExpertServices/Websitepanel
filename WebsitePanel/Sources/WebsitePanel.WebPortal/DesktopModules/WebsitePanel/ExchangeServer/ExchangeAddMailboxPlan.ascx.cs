@@ -40,14 +40,20 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             if (!IsPostBack)
             {
+                PackageContext cntx = ES.Services.Packages.GetPackageContext(PanelSecurity.PackageId);
+
                 if (PanelRequest.GetInt("MailboxPlanId") != 0)
                 {
                     Providers.HostedSolution.ExchangeMailboxPlan plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(PanelRequest.ItemID, PanelRequest.GetInt("MailboxPlanId"));
                     txtMailboxPlan.Text = plan.MailboxPlan;
-                    mailboxSize.ValueKB = plan.MailboxSizeMB;
-                    maxRecipients.ValueKB = plan.MaxRecipients;
-                    maxSendMessageSizeKB.ValueKB = plan.MaxSendMessageSizeKB;
-                    maxReceiveMessageSizeKB.ValueKB = plan.MaxReceiveMessageSizeKB;
+                    if (plan.MailboxSizeMB != -1)
+                        mailboxSize.ValueKB = plan.MailboxSizeMB;
+                    if (plan.MaxRecipients != -1)
+                        maxRecipients.ValueKB = plan.MaxRecipients;
+                    if (plan.MaxSendMessageSizeKB != -1)
+                        maxSendMessageSizeKB.ValueKB = plan.MaxSendMessageSizeKB;
+                    if (plan.MaxReceiveMessageSizeKB != -1)
+                        maxReceiveMessageSizeKB.ValueKB = plan.MaxReceiveMessageSizeKB;
                     chkPOP3.Checked = plan.EnablePOP;
                     chkIMAP.Checked = plan.EnableIMAP;
                     chkOWA.Checked = plan.EnableOWA;
@@ -85,21 +91,47 @@ namespace WebsitePanel.Portal.ExchangeServer
                 }
                 else
                 {
-                    PackageContext cntx = ES.Services.Packages.GetPackageContext(PanelSecurity.PackageId);
+
                     if (cntx != null)
                     {
                         foreach (QuotaValueInfo quota in cntx.QuotasArray)
                         {
                             switch (quota.QuotaId)
                             {
+                                case 77:
+                                    if (quota.QuotaAllocatedValue != -1)
+                                    {
+                                        mailboxSize.RequireValidatorEnabled = true;
+                                    }
+                                    else
+                                        mailboxSize.RequireValidatorEnabled = false;
+                                    break;
                                 case 365:
-                                    maxRecipients.ValueKB = quota.QuotaAllocatedValue;
+                                    if (quota.QuotaAllocatedValue != -1)
+                                    {
+                                        maxRecipients.ValueKB = quota.QuotaAllocatedValue;
+                                        maxRecipients.RequireValidatorEnabled = true;
+                                    }
+                                    else
+                                        maxRecipients.RequireValidatorEnabled = false;
                                     break;
                                 case 366:
-                                    maxSendMessageSizeKB.ValueKB = quota.QuotaAllocatedValue;
+                                    if (quota.QuotaAllocatedValue != -1)
+                                    {
+                                        maxSendMessageSizeKB.ValueKB = quota.QuotaAllocatedValue;
+                                        maxSendMessageSizeKB.RequireValidatorEnabled = true;
+                                    }
+                                    else
+                                        maxSendMessageSizeKB.RequireValidatorEnabled = false;
                                     break;
                                 case 367:
-                                    maxReceiveMessageSizeKB.ValueKB = quota.QuotaAllocatedValue;
+                                    if (quota.QuotaAllocatedValue != -1)
+                                    {
+                                        maxReceiveMessageSizeKB.ValueKB = quota.QuotaAllocatedValue;
+                                        maxReceiveMessageSizeKB.RequireValidatorEnabled = true;
+                                    }
+                                    else
+                                        maxReceiveMessageSizeKB.RequireValidatorEnabled = false;
                                     break;
                                 case 83:
                                     chkPOP3.Checked = Convert.ToBoolean(quota.QuotaAllocatedValue);
@@ -123,6 +155,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                                     break;
                                 case 364:
                                     daysKeepDeletedItems.ValueDays = quota.QuotaAllocatedValue;
+                                    daysKeepDeletedItems.RequireValidatorEnabled = true;
                                     break;
                             }
 
@@ -149,13 +182,13 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 Providers.HostedSolution.ExchangeMailboxPlan plan = new Providers.HostedSolution.ExchangeMailboxPlan();
                 plan.MailboxPlan = txtMailboxPlan.Text;
+
                 plan.MailboxSizeMB = mailboxSize.ValueKB;
-                if ((plan.MailboxSizeMB == 0)) plan.MailboxSizeMB = 1;
 
                 plan.IsDefault = false;
                 plan.MaxRecipients = maxRecipients.ValueKB;
                 plan.MaxSendMessageSizeKB = maxSendMessageSizeKB.ValueKB;
-                plan.MaxReceiveMessageSizeKB = maxReceiveMessageSizeKB.ValueKB;
+                plan.MaxReceiveMessageSizeKB =  maxReceiveMessageSizeKB.ValueKB; 
                 plan.EnablePOP = chkPOP3.Checked;
                 plan.EnableIMAP = chkIMAP.Checked;
                 plan.EnableOWA = chkOWA.Checked;

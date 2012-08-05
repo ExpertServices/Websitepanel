@@ -102,9 +102,19 @@ namespace WebsitePanel.Portal.ExchangeServer
             if (e.CommandName == "DeleteItem")
             {
                 int mailboxPlanId = Utils.ParseInt(e.CommandArgument.ToString(), 0);
+                
 
                 try
                 {
+                    ExchangeMailboxPlan plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(PanelRequest.ItemID, mailboxPlanId);
+
+                    if (plan.MailboxPlanType > 0)
+                    {
+                        ShowErrorMessage("EXCHANGE_UNABLE_USE_SYSTEMPLAN");
+                        BindMailboxPlans();
+                        return;
+                    }
+
                     int result = ES.Services.ExchangeServer.DeleteExchangeMailboxPlan(PanelRequest.ItemID, mailboxPlanId);
 
                     if (result < 0)
@@ -112,6 +122,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                         messageBox.ShowResultMessage(result);
                         return;
                     }
+                    else
+                        ShowSuccessMessage("REQUEST_COMPLETED_SUCCESFULLY");
 
                 }
                 catch (Exception)
@@ -130,7 +142,19 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             try
             {
+                ExchangeMailboxPlan plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(PanelRequest.ItemID, mailboxPlanId);
+
+                if (plan.MailboxPlanType > 0)
+                {
+                    ShowErrorMessage("EXCHANGE_UNABLE_USE_SYSTEMPLAN");
+                    BindMailboxPlans();
+                    return;
+                }
+
+
                 ES.Services.ExchangeServer.SetOrganizationDefaultExchangeMailboxPlan(PanelRequest.ItemID, mailboxPlanId);
+
+                ShowSuccessMessage("REQUEST_COMPLETED_SUCCESFULLY");
 
                 // rebind domains
                 BindMailboxPlans();
@@ -167,6 +191,31 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 ShowErrorMessage("EXCHANGE_FAILED_TO_STAMP", ex);
             }
+
+            BindMailboxPlans();
         }
+
+
+        public string GetPlanType(int mailboxPlanType)
+        {
+            string imgName = string.Empty;
+
+            ExchangeMailboxPlanType planType = (ExchangeMailboxPlanType)mailboxPlanType;
+            switch (planType)
+            {
+                case ExchangeMailboxPlanType.Reseller:
+                    imgName = "company24.png";
+                    break;
+                case ExchangeMailboxPlanType.Administrator:
+                    imgName = "company24.png";
+                    break;
+                default:
+                    imgName = "admin_16.png";
+                    break;
+            }
+
+            return GetThemedImage("Exchange/" + imgName);
+        }
+
     }
 }

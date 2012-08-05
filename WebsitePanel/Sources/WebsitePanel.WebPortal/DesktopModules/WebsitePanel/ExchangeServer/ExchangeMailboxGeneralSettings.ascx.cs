@@ -78,7 +78,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 }
 
                 mailboxSize.QuotaUsedValue = Convert.ToInt32(stats.TotalSize / 1024 / 1024);
-                mailboxSize.QuotaValue = (int)Math.Round((double)(stats.MaxSize / 1024 / 1024));
+                mailboxSize.QuotaValue = (stats.MaxSize == -1) ? -1: (int)Math.Round((double)(stats.MaxSize / 1024 / 1024));
 
                 if ((account.AccountType == ExchangeAccountType.Equipment) | (account.AccountType == ExchangeAccountType.Room))
                     secCalendarSettings.Visible = true;

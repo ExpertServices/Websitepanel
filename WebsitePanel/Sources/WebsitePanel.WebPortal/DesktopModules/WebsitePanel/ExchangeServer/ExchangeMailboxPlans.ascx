@@ -34,6 +34,12 @@
 				    <asp:GridView ID="gvMailboxPlans" runat="server" AutoGenerateColumns="False" EnableViewState="true"
 					    Width="100%" EmptyDataText="gvMailboxPlans" CssSelectorClass="NormalGridView" OnRowCommand="gvMailboxPlan_RowCommand">
 					    <Columns>
+						    <asp:TemplateField>
+							    <ItemTemplate>							        
+								    <asp:Image ID="img2" runat="server" Width="16px" Height="16px" ImageUrl='<%# GetPlanType((int)Eval("MailboxPlanType")) %>' ImageAlign="AbsMiddle" />
+							    </ItemTemplate>
+						    </asp:TemplateField>
+
 						    <asp:TemplateField HeaderText="gvMailboxPlan">
 							    <ItemStyle Width="70%"></ItemStyle>
 							    <ItemTemplate>
@@ -50,11 +56,11 @@
 								    </div>
 							    </ItemTemplate>
 						    </asp:TemplateField>
-						    <asp:TemplateField>
+						    <asp:TemplateField >
 							    <ItemTemplate>
 									&nbsp;<asp:ImageButton ID="imgDelMailboxPlan" runat="server" Text="Delete" SkinID="ExchangeDelete"
 									    CommandName="DeleteItem" CommandArgument='<%# Eval("MailboxPlanId") %>' 
-									    meta:resourcekey="cmdDelete" OnClientClick="return confirm('Are you sure you want to delete selected mailbox plan?')"></asp:ImageButton>
+									    meta:resourcekey="cmdDelete" OnClientClick="return confirm('Are you sure you want to delete selected mailbox plan?')" ></asp:ImageButton>
 							    </ItemTemplate>
 						    </asp:TemplateField>
 					    </Columns>
@@ -85,7 +91,7 @@
                                 <td>
                                 </td>
                                 <td>
-                                    <asp:TextBox ID="txtStatus" runat="server" CssClass="TextBox200" MaxLength="128" ReadOnly="true"></asp:TextBox>
+                                    <asp:TextBox ID="txtStatus" runat="server" CssClass="TextBox400" MaxLength="128" ReadOnly="true"></asp:TextBox>
                                 </td>
                             </tr>
                             <tr>

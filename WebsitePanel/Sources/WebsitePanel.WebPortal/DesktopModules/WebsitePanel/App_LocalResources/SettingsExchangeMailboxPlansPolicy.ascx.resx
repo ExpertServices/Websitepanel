@@ -219,4 +219,13 @@
   <data name="btnMatchMailboxPlanToUser.Text" xml:space="preserve">
     <value>Match Mailbox Plan to User</value>
   </data>
+  <data name="secTools.Text" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="btnStamp.Text" xml:space="preserve">
+    <value>Restamp all mailboxes</value>
+  </data>
+  <data name="btnUpdateMailboxPlan.Text" xml:space="preserve">
+    <value>Update Mailbox Plan</value>
+  </data>
 </root>

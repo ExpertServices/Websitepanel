@@ -101,25 +101,25 @@
 							<tr>
 								<td class="FormLabel200" align="right"><asp:Localize ID="locMailboxSize" runat="server" meta:resourcekey="locMailboxSize" Text="Mailbox size:"></asp:Localize></td>
 								<td>
-									<wsp:SizeBox id="mailboxSize" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="false"  DisplayUnitsMB="true" DisplayUnitsPct="false" RequireValidatorEnabled="true"/>
+									<wsp:SizeBox id="mailboxSize" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="false"  DisplayUnitsMB="true" DisplayUnitsPct="false"/>
 								</td>
 							</tr>
 							<tr>
 								<td class="FormLabel200" align="right"><asp:Localize ID="locMaxRecipients" runat="server" meta:resourcekey="locMaxRecipients" Text="Maximum Recipients:"></asp:Localize></td>
 								<td>
-									<wsp:SizeBox id="maxRecipients" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="false" DisplayUnitsMB="false" DisplayUnitsPct="false" RequireValidatorEnabled="true"/>
+									<wsp:SizeBox id="maxRecipients" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="false" DisplayUnitsMB="false" DisplayUnitsPct="false"/>
 								</td>
 							</tr>
 							<tr>
 								<td class="FormLabel200" align="right"><asp:Localize ID="locMaxSendMessageSizeKB" runat="server" meta:resourcekey="locMaxSendMessageSizeKB" Text="Maximum Send Message Size (Kb):"></asp:Localize></td>
 								<td>
-									<wsp:SizeBox id="maxSendMessageSizeKB" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="true" DisplayUnitsMB="false" DisplayUnitsPct="false" RequireValidatorEnabled="true"/>
+									<wsp:SizeBox id="maxSendMessageSizeKB" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="true" DisplayUnitsMB="false" DisplayUnitsPct="false"/>
 								</td>
 							</tr>
 							<tr>
 								<td class="FormLabel200" align="right"><asp:Localize ID="locMaxReceiveMessageSizeKB" runat="server" meta:resourcekey="locMaxReceiveMessageSizeKB" Text="Maximum Receive Message Size (Kb):"></asp:Localize></td>
 								<td>
-									<wsp:SizeBox id="maxReceiveMessageSizeKB" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="true"  DisplayUnitsMB="false" DisplayUnitsPct="false" RequireValidatorEnabled="true"/>
+									<wsp:SizeBox id="maxReceiveMessageSizeKB" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="true"  DisplayUnitsMB="false" DisplayUnitsPct="false"/>
 								</td>
 							</tr>
 

@@ -34,6 +34,7 @@ namespace WebsitePanel.Providers.HostedSolution
 {
     public class ExchangeMailboxPlan
     {
+        int itemId;
         int mailboxPlanId;
         string mailboxPlan;
         int mailboxSizeMB;
@@ -53,6 +54,15 @@ namespace WebsitePanel.Providers.HostedSolution
         int keepDeletedItemsDays;
         bool isDefault;
         bool hideFromAddressBook;
+        int mailboxPlanType;
+
+
+        public int ItemId
+        {
+            get { return this.itemId; }
+            set { this.itemId = value; }
+        }
+
 
         public int MailboxPlanId
         {
@@ -65,6 +75,13 @@ namespace WebsitePanel.Providers.HostedSolution
             get { return this.mailboxPlan; }
             set { this.mailboxPlan = value; }
         }
+
+        public int MailboxPlanType
+        {
+            get { return this.mailboxPlanType; }
+            set { this.mailboxPlanType = value; }
+        }
+
 
         public int MailboxSizeMB
         {

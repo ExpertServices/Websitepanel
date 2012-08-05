@@ -139,7 +139,7 @@
     <value>Mailbox plan</value>
   </data>
   <data name="gvMailboxPlanDefault.Header" xml:space="preserve">
-    <value>Default Mailbox plan</value>
+    <value>Default</value>
   </data>
   <data name="gvMailboxPlans.Empty" xml:space="preserve">
     <value>No mailbox plans have been added yet. To add a new mailbox plan click "Add New Mailbox plan" button.</value>

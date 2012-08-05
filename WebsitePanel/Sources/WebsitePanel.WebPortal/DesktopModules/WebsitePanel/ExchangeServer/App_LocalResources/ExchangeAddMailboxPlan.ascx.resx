@@ -136,7 +136,7 @@
     <value>POP3</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt; A Mailbox plan is a template that defines the characteristics of a mailbox &lt;/p&gt; &lt;p&gt;The mailbox plan name needs to be unique. A mailbox plan cannot be modified. In case a mailbox needs a mailbox plan with another characteristics, a new mailbox plan needs to be created and assigned to the mailbox. A mailbox plan can only be deleted when the plan is not assigned to any mailboxes. &lt;/p&gt;</value>
+    <value>&lt;p&gt; A Mailbox plan is a template that defines the characteristics of a mailbox &lt;/p&gt; &lt;p&gt;The mailbox plan name needs to be unique. A mailbox plan cannot be modified. In case a mailbox needs a mailbox plan with another characteristics, a new mailbox plan needs to be created and assigned to the mailbox. A mailbox plan can only be deleted when the plan is not assigned to any mailboxes. &lt;/p&gt;&lt;p&gt; Empty value indicates &lt;b&gt;'Unlimited'&lt;/b&gt;, percentages have to be a value between 0 and 100 (a value of 0 can block the mailbox from sending and receiving email) &lt;/p&gt; &lt;p&gt; Unllimited values can only be used when the hosting plan allows to do so&lt;/p&gt;</value>
   </data>
   <data name="locDays.Text" xml:space="preserve">
     <value>days</value>

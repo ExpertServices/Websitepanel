@@ -112,16 +112,16 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="locKB.Text" xml:space="preserve">
     <value>KB</value>
   </data>
   <data name="valRequireCorrectNumber.ErrorMessage" xml:space="preserve">
-    <value>Please enter correct number. The number should be positive. Empty value = "Unlimited".</value>
+    <value>Please enter correct number. The number should be positive. Percentage should be between 0 and 100. Empty value = "Unlimited".</value>
   </data>
   <data name="valRequireCorrectNumber.Text" xml:space="preserve">
     <value />

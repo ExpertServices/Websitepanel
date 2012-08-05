@@ -78,23 +78,37 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
         public bool DisplayUnitsKB
         {
             get { return locKB.Visible; }
-            set { locKB.Visible = value; }
+            set {
+                locKB.Visible = value;
+            }
         }
 
         public bool DisplayUnitsMB
         {
             get { return locMB.Visible; }
-            set { locMB.Visible = value; }
+            set {
+                locMB.Visible = value;
+            }
         }
 
         public bool DisplayUnitsPct
         {
             get { return locPct.Visible; }
-            set { locPct.Visible = value; }
+            set { 
+                
+                locPct.Visible = value;
+                }
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
+
+            if (locPct.Visible)
+            {
+                valRequireCorrectNumber.ValidationExpression = @"(^100)$|^([0-9]{1,2})$";
+            }
+            else
+                valRequireCorrectNumber.ValidationExpression = @"[0-9]{0,15}";
 
         }
     }

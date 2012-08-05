@@ -160,6 +160,15 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@userId", userId));
         }
 
+        public static IDataReader GetUserByExchangeOrganizationIdInternally(int itemId)
+        {
+            return (IDataReader)SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetUserByExchangeOrganizationIdInternally",
+                new SqlParameter("@ItemID", itemId));
+        }
+
+
+
         public static IDataReader GetUserByIdInternally(int userId)
         {
             return (IDataReader)SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
@@ -2440,7 +2449,7 @@ namespace WebsitePanel.EnterpriseServer
         #region Exchange Mailbox Plans
         public static int AddExchangeMailboxPlan(int itemID, string mailboxPlan, bool enableActiveSync, bool enableIMAP, bool enableMAPI, bool enableOWA, bool enablePOP,
                                                     bool isDefault, int issueWarningPct, int keepDeletedItemsDays, int mailboxSizeMB, int maxReceiveMessageSizeKB, int maxRecipients,
-                                                    int maxSendMessageSizeKB, int prohibitSendPct, int prohibitSendReceivePct, bool hideFromAddressBook)
+                                                    int maxSendMessageSizeKB, int prohibitSendPct, int prohibitSendReceivePct, bool hideFromAddressBook, int mailboxPlanType)
         {
             SqlParameter outParam = new SqlParameter("@MailboxPlanId", SqlDbType.Int);
             outParam.Direction = ParameterDirection.Output;
@@ -2466,11 +2475,44 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@MaxSendMessageSizeKB", maxSendMessageSizeKB),
                 new SqlParameter("@ProhibitSendPct", prohibitSendPct),
                 new SqlParameter("@ProhibitSendReceivePct", prohibitSendReceivePct),
-                new SqlParameter("@HideFromAddressBook", hideFromAddressBook)
+                new SqlParameter("@HideFromAddressBook", hideFromAddressBook),
+                new SqlParameter("@MailboxPlanType", mailboxPlanType)
             );
 
             return Convert.ToInt32(outParam.Value);
         }
+
+
+
+        public static void UpdateExchangeMailboxPlan(int mailboxPlanID, string mailboxPlan, bool enableActiveSync, bool enableIMAP, bool enableMAPI, bool enableOWA, bool enablePOP,
+                                            bool isDefault, int issueWarningPct, int keepDeletedItemsDays, int mailboxSizeMB, int maxReceiveMessageSizeKB, int maxRecipients,
+                                            int maxSendMessageSizeKB, int prohibitSendPct, int prohibitSendReceivePct, bool hideFromAddressBook, int mailboxPlanType)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateExchangeMailboxPlan",
+                new SqlParameter("@MailboxPlanID", mailboxPlanID),
+                new SqlParameter("@MailboxPlan", mailboxPlan),
+                new SqlParameter("@EnableActiveSync", enableActiveSync),
+                new SqlParameter("@EnableIMAP", enableIMAP),
+                new SqlParameter("@EnableMAPI", enableMAPI),
+                new SqlParameter("@EnableOWA", enableOWA),
+                new SqlParameter("@EnablePOP", enablePOP),
+                new SqlParameter("@IsDefault", isDefault),
+                new SqlParameter("@IssueWarningPct", issueWarningPct),
+                new SqlParameter("@KeepDeletedItemsDays", keepDeletedItemsDays),
+                new SqlParameter("@MailboxSizeMB", mailboxSizeMB),
+                new SqlParameter("@MaxReceiveMessageSizeKB", maxReceiveMessageSizeKB),
+                new SqlParameter("@MaxRecipients", maxRecipients),
+                new SqlParameter("@MaxSendMessageSizeKB", maxSendMessageSizeKB),
+                new SqlParameter("@ProhibitSendPct", prohibitSendPct),
+                new SqlParameter("@ProhibitSendReceivePct", prohibitSendReceivePct),
+                new SqlParameter("@HideFromAddressBook", hideFromAddressBook),
+                new SqlParameter("@MailboxPlanType", mailboxPlanType)
+            );
+        }
+
 
 
         public static void DeleteExchangeMailboxPlan(int mailboxPlanId)

@@ -219,6 +219,22 @@ TEXTAREA.TextBox200
 	width: 200px;
 }
 
+TEXTAREA.TextBox300
+{
+	border: solid 1px #909090;
+	padding-left: 2px;
+	padding-top: 1px;
+	width: 300px;
+}
+
+TEXTAREA.TextBox400
+{
+	border: solid 1px #909090;
+	padding-left: 2px;
+	padding-top: 1px;
+	width: 400px;
+}
+
 .HugeTextBox
 {
 	font-family: Tahoma;

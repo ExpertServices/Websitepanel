@@ -53,63 +53,56 @@ namespace WebsitePanel.Portal
     public partial class SettingsExchangeMailboxPlansPolicy : WebsitePanelControlBase, IUserSettingsEditorControl
     {
 
-        internal static List<ExchangeMailboxPlan> list;
-
         public void BindSettings(UserSettings settings)
         {
+            BindMailboxPlans();
 
-            if (list == null)
-                list = new List<ExchangeMailboxPlan>();
-
-            if (!string.IsNullOrEmpty(settings[UserSettings.DEFAULT_MAILBOXPLANS]))
-            {
-
-                XmlSerializer serializer = new XmlSerializer(list.GetType());
-
-                StringReader reader = new StringReader(settings[UserSettings.DEFAULT_MAILBOXPLANS]);
-
-                list = (List<ExchangeMailboxPlan>)serializer.Deserialize(reader);
-            }
-
-            gvMailboxPlans.DataSource = list;
-            gvMailboxPlans.DataBind();
-
-            if (gvMailboxPlans.Rows.Count <= 1)
-            {
-                btnSetDefaultMailboxPlan.Enabled = false;
-            }
-            else
-                btnSetDefaultMailboxPlan.Enabled = true;
+            txtStatus.Visible = false;
         }
 
 
-
-
-
-        public string IsChecked(bool val)
+        private void BindMailboxPlans()
         {
-            return val ? "checked" : "";
+            Providers.HostedSolution.Organization[] orgs = null;
+
+            if (PanelSecurity.SelectedUserId != 1)
+            {
+                PackageInfo[] Packages = ES.Services.Packages.GetPackages(PanelSecurity.SelectedUserId);
+
+                if ((Packages != null) & (Packages.GetLength(0) > 0))
+                {
+                    orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Packages[0].PackageId, false);
+                }
+            }
+            else
+            {
+                orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(1, false);
+            }
+
+            if ((orgs != null) & (orgs.GetLength(0) > 0))
+            {
+                ExchangeMailboxPlan[] list = ES.Services.ExchangeServer.GetExchangeMailboxPlans(orgs[0].Id);
+
+                gvMailboxPlans.DataSource = list;
+                gvMailboxPlans.DataBind();
+            }
+
+            btnUpdateMailboxPlan.Enabled = (string.IsNullOrEmpty(txtMailboxPlan.Text)) ? false : true;
         }
 
 
         public void btnAddMailboxPlan_Click(object sender, EventArgs e)
         {
-            int count = 0;
-            if (list != null)
-            {
-                foreach (ExchangeMailboxPlan p in list)
-                {
-                    p.MailboxPlanId = count;
-                    count++;
-                }
-            }
+            Page.Validate("CreateMailboxPlan");
 
-
-            ExchangeMailboxPlan plan = new ExchangeMailboxPlan();
+            if (!Page.IsValid)
+                return;
+                        
+            Providers.HostedSolution.ExchangeMailboxPlan plan = new Providers.HostedSolution.ExchangeMailboxPlan();
             plan.MailboxPlan = txtMailboxPlan.Text;
+
             plan.MailboxSizeMB = mailboxSize.ValueKB;
-            if ((plan.MailboxSizeMB == 0)) plan.MailboxSizeMB = 1;
-            plan.MailboxPlanId = count;
+
             plan.IsDefault = false;
             plan.MaxRecipients = maxRecipients.ValueKB;
             plan.MaxSendMessageSizeKB = maxSendMessageSizeKB.ValueKB;
@@ -128,169 +121,276 @@ namespace WebsitePanel.Portal
             plan.KeepDeletedItemsDays = daysKeepDeletedItems.ValueDays;
             plan.HideFromAddressBook = chkHideFromAddressBook.Checked;
 
-            if (list == null)
-                list = new List<ExchangeMailboxPlan>();
+            if (PanelSecurity.SelectedUser.Role == UserRole.Administrator)
+                plan.MailboxPlanType = (int)ExchangeMailboxPlanType.Administrator;
+            else
+                if (PanelSecurity.SelectedUser.Role == UserRole.Reseller)
+                    plan.MailboxPlanType = (int)ExchangeMailboxPlanType.Reseller;
 
-            list.Add(plan);
-            gvMailboxPlans.DataSource = list;
-            gvMailboxPlans.DataBind();
+            Providers.HostedSolution.Organization[] orgs = null;
 
-            if (gvMailboxPlans.Rows.Count <= 1)
+            if (PanelSecurity.SelectedUserId != 1)
             {
-                btnSetDefaultMailboxPlan.Enabled = false;
+                PackageInfo[] Packages = ES.Services.Packages.GetPackages(PanelSecurity.SelectedUserId);
+
+                if ((Packages != null) & (Packages.GetLength(0) > 0))
+                {
+                    orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Packages[0].PackageId, false);
+                }
             }
             else
-                btnSetDefaultMailboxPlan.Enabled = true;
+            {
+                orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(1, false);
+            }
+
+
+            if ((orgs != null) & (orgs.GetLength(0) > 0))
+            {
+                int result = ES.Services.ExchangeServer.AddExchangeMailboxPlan(orgs[0].Id, plan);
+
+                if (result < 0)
+                {
+                    messageBox.ShowResultMessage(result);
+                    return;
+                }
+            }
+
+            BindMailboxPlans();
 
         }
 
         protected void gvMailboxPlan_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             int mailboxPlanId = Utils.ParseInt(e.CommandArgument.ToString(), 0);
+            Providers.HostedSolution.Organization[] orgs = null;
+            Providers.HostedSolution.ExchangeMailboxPlan plan;
 
             switch (e.CommandName)
             {
                 case "DeleteItem":
-
-                    foreach (ExchangeMailboxPlan p in list)
+                    try
                     {
-                        if (p.MailboxPlanId == mailboxPlanId)
+
+                        if (PanelSecurity.SelectedUserId != 1)
                         {
-                            list.Remove(p);
-                            break;
+                            PackageInfo[] Packages = ES.Services.Packages.GetPackages(PanelSecurity.SelectedUserId);
+
+                            if ((Packages != null) & (Packages.GetLength(0) > 0))
+                            {
+                                orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Packages[0].PackageId, false);
+                            }
                         }
+                        else
+                        {
+                            orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(1, false);
+                        }
+
+                        plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(orgs[0].Id, mailboxPlanId);
+
+                        if (plan.ItemId != orgs[0].Id)
+                        {
+                            messageBox.ShowErrorMessage("EXCHANGE_UNABLE_USE_SYSTEMPLAN");
+                            BindMailboxPlans();
+                            return;
+                        }
+
+
+                        int result = ES.Services.ExchangeServer.DeleteExchangeMailboxPlan(orgs[0].Id, mailboxPlanId);
+                        if (result < 0)
+                        {
+                            messageBox.ShowResultMessage(result);
+                            return;
+                        }
+                        ViewState["MailboxPlanID"] = null; 
+
+                        txtMailboxPlan.Text = string.Empty;
+                        mailboxSize.ValueKB = -1;
+                        maxRecipients.ValueKB = -1;
+                        maxSendMessageSizeKB.ValueKB = -1;
+                        maxReceiveMessageSizeKB.ValueKB = 01;
+                        chkPOP3.Checked = false;
+                        chkIMAP.Checked = false;
+                        chkOWA.Checked = false;
+                        chkMAPI.Checked = false;
+                        chkActiveSync.Checked = false;
+                        sizeIssueWarning.ValueKB = -1;
+                        sizeProhibitSend.ValueKB = -1;
+                        sizeProhibitSendReceive.ValueKB = -1;
+                        daysKeepDeletedItems.ValueDays = -1;
+                        chkHideFromAddressBook.Checked = false;
+
+                        btnUpdateMailboxPlan.Enabled = (string.IsNullOrEmpty(txtMailboxPlan.Text)) ? false : true;
+
                     }
-
-                    gvMailboxPlans.DataSource = list;
-                    gvMailboxPlans.DataBind();
-
-                    if (gvMailboxPlans.Rows.Count <= 1)
+                    catch (Exception)
                     {
-                        btnSetDefaultMailboxPlan.Enabled = false;
+                        messageBox.ShowErrorMessage("EXCHANGE_DELETE_MAILBOXPLAN");
                     }
-                    else
-                        btnSetDefaultMailboxPlan.Enabled = true;
-                    break;
+
+                    BindMailboxPlans();
+                break;
 
                 case "EditItem":
-                    foreach (ExchangeMailboxPlan p in list)
-                    {
-                        if (p.MailboxPlanId == mailboxPlanId)
+                        ViewState["MailboxPlanID"] = mailboxPlanId;
+
+                        if (PanelSecurity.SelectedUserId != 1)
                         {
+                            PackageInfo[] Packages = ES.Services.Packages.GetPackages(PanelSecurity.SelectedUserId);
 
-                            txtMailboxPlan.Text = p.MailboxPlan;
-                            mailboxSize.ValueKB = p.MailboxSizeMB;
-                            maxRecipients.ValueKB = p.MaxRecipients;
-                            maxSendMessageSizeKB.ValueKB = p.MaxSendMessageSizeKB;
-                            maxReceiveMessageSizeKB.ValueKB = p.MaxReceiveMessageSizeKB;
-                            chkPOP3.Checked = p.EnablePOP;
-                            chkIMAP.Checked = p.EnableIMAP;
-                            chkOWA.Checked = p.EnableOWA;
-                            chkMAPI.Checked = p.EnableMAPI;
-                            chkActiveSync.Checked = p.EnableActiveSync;
-                            sizeIssueWarning.ValueKB = p.IssueWarningPct;
-                            sizeProhibitSend.ValueKB = p.ProhibitSendPct;
-                            sizeProhibitSendReceive.ValueKB = p.ProhibitSendReceivePct;
-                            daysKeepDeletedItems.ValueDays = p.KeepDeletedItemsDays;
-                            chkHideFromAddressBook.Checked = p.HideFromAddressBook;
-
-                            break;
+                            if ((Packages != null) & (Packages.GetLength(0) > 0))
+                            {
+                                orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Packages[0].PackageId, false);
+                            }
                         }
-                    }
+                        else
+                        {
+                            orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(1, false);
+                        }
+
+
+                        plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(orgs[0].Id, mailboxPlanId);
+                    
+                        txtMailboxPlan.Text = plan.MailboxPlan;
+                        if (plan.MailboxSizeMB != -1)
+                            mailboxSize.ValueKB = plan.MailboxSizeMB;
+                        if (plan.MaxRecipients != -1)
+                            maxRecipients.ValueKB = plan.MaxRecipients;
+                        if (plan.MaxSendMessageSizeKB != -1)
+                            maxSendMessageSizeKB.ValueKB = plan.MaxSendMessageSizeKB;
+                        if (plan.MaxReceiveMessageSizeKB != -1)
+                            maxReceiveMessageSizeKB.ValueKB = plan.MaxReceiveMessageSizeKB;
+                        chkPOP3.Checked = plan.EnablePOP;
+                        chkIMAP.Checked = plan.EnableIMAP;
+                        chkOWA.Checked = plan.EnableOWA;
+                        chkMAPI.Checked = plan.EnableMAPI;
+                        chkActiveSync.Checked = plan.EnableActiveSync;
+                        sizeIssueWarning.ValueKB = plan.IssueWarningPct;
+                        sizeProhibitSend.ValueKB = plan.ProhibitSendPct;
+                        sizeProhibitSendReceive.ValueKB = plan.ProhibitSendReceivePct;
+                        if (plan.KeepDeletedItemsDays != -1)
+                            daysKeepDeletedItems.ValueDays = plan.KeepDeletedItemsDays;
+                        chkHideFromAddressBook.Checked = plan.HideFromAddressBook;
+
+                        
+                        btnUpdateMailboxPlan.Enabled  = (string.IsNullOrEmpty(txtMailboxPlan.Text)) ? false : true;
 
                     break;
             }
         }
 
-        protected void btnSetDefaultMailboxPlan_Click(object sender, EventArgs e)
+
+        public string GetPlanType(int mailboxPlanType)
         {
-            // get domain
-            int mailboxPlanId = Utils.ParseInt(Request.Form["DefaultMailboxPlan"], 0);
+            string imgName = string.Empty;
 
-
-
-            foreach (ExchangeMailboxPlan p in list)
+            ExchangeMailboxPlanType planType = (ExchangeMailboxPlanType)mailboxPlanType;
+            switch (planType)
             {
-                p.IsDefault = false;
-            }
-
-            foreach (ExchangeMailboxPlan p in list)
-            {
-                if (p.MailboxPlanId == mailboxPlanId)
-                {
-                    p.IsDefault = true;
+                case ExchangeMailboxPlanType.Reseller:
+                    imgName = "company24.png";
                     break;
-                }
+                case ExchangeMailboxPlanType.Administrator:
+                    imgName = "company24.png";
+                    break;
+                default:
+                    imgName = "admin_16.png";
+                    break;
             }
 
-            gvMailboxPlans.DataSource = list;
-            gvMailboxPlans.DataBind();
+            return GetThemedImage("Exchange/" + imgName);
         }
+
 
         public void SaveSettings(UserSettings settings)
         {
-            XmlSerializer serializer = new XmlSerializer(list.GetType());
-
-            StringWriter writer = new StringWriter();
-
-            serializer.Serialize(writer, list);
-
-            settings[UserSettings.DEFAULT_MAILBOXPLANS] = writer.ToString();
+            settings["ExchangeMailboxPlansPolicy"] = "";
         }
 
 
-        protected void btnAddMailboxPlanToOrganizations_Click(object sender, EventArgs e)
+        protected void btnUpdateMailboxPlan_Click(object sender, EventArgs e)
         {
-            AddMailboxPlanToOrganizations("ServerAdmin");
-        }
 
-        private void AddMailboxPlanToOrganizations(string serverAdmin)
-        {
-            UserInfo ServerAdminInfo = ES.Services.Users.GetUserByUsername(serverAdmin);
+            if (ViewState["MailboxPlanID"] == null)
+                return;
 
-            if (ServerAdminInfo == null) return;
+            int mailboxPlanId = (int)ViewState["MailboxPlanID"];
+            Providers.HostedSolution.Organization[] orgs = null;
+            Providers.HostedSolution.ExchangeMailboxPlan plan;
 
-            UserInfo[] UsersInfo = ES.Services.Users.GetUsers(ServerAdminInfo.UserId, true);
 
-            try
+            if (PanelSecurity.SelectedUserId != 1)
             {
-                foreach (UserInfo ui in UsersInfo)
+                PackageInfo[] Packages = ES.Services.Packages.GetPackages(PanelSecurity.SelectedUserId);
+
+                if ((Packages != null) & (Packages.GetLength(0) > 0))
                 {
-                    PackageInfo[] Packages = ES.Services.Packages.GetPackages(ui.UserId);
-
-                    if ((Packages != null) & (Packages.GetLength(0) > 0))
-                    {
-                        foreach (PackageInfo Package in Packages)
-                        {
-                            Providers.HostedSolution.Organization[] orgs = null;
-
-                            orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Package.PackageId, false);
-
-                            if ((orgs != null) & (orgs.GetLength(0) > 0))
-                            {
-                                foreach (Organization org in orgs)
-                                {
-                                    if (!string.IsNullOrEmpty(org.GlobalAddressList))
-                                    {
-                                        ExchangeMailboxPlan[] plans = ES.Services.ExchangeServer.GetExchangeMailboxPlans(org.Id);
-
-                                        foreach (ExchangeMailboxPlan p in list)
-                                        {
-                                            if (!PlanExists(p, plans)) ES.Services.ExchangeServer.AddExchangeMailboxPlan(org.Id, p);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Packages[0].PackageId, false);
                 }
-                messageBox.ShowSuccessMessage("EXCHANGE_APPLYPLANTEMPLATE");
             }
-            catch (Exception ex)
+            else
             {
-                messageBox.ShowErrorMessage("EXCHANGE_APPLYPLANTEMPLATE", ex);
+                orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(1, false);
             }
+
+            plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(orgs[0].Id, mailboxPlanId);
+
+            if (plan.ItemId != orgs[0].Id)
+            {
+                messageBox.ShowErrorMessage("EXCHANGE_UNABLE_USE_SYSTEMPLAN");
+                BindMailboxPlans();
+                return;
+            }
+
+
+
+            plan = new Providers.HostedSolution.ExchangeMailboxPlan();
+            plan.MailboxPlanId = (int)ViewState["MailboxPlanID"];
+            plan.MailboxPlan = txtMailboxPlan.Text;
+
+            plan.MailboxSizeMB = mailboxSize.ValueKB;
+
+            plan.IsDefault = false;
+            plan.MaxRecipients = maxRecipients.ValueKB;
+            plan.MaxSendMessageSizeKB = maxSendMessageSizeKB.ValueKB;
+            plan.MaxReceiveMessageSizeKB = maxReceiveMessageSizeKB.ValueKB;
+            plan.EnablePOP = chkPOP3.Checked;
+            plan.EnableIMAP = chkIMAP.Checked;
+            plan.EnableOWA = chkOWA.Checked;
+            plan.EnableMAPI = chkMAPI.Checked;
+            plan.EnableActiveSync = chkActiveSync.Checked;
+            plan.IssueWarningPct = sizeIssueWarning.ValueKB;
+            if ((plan.IssueWarningPct == 0)) plan.IssueWarningPct = 100;
+            plan.ProhibitSendPct = sizeProhibitSend.ValueKB;
+            if ((plan.ProhibitSendPct == 0)) plan.ProhibitSendPct = 100;
+            plan.ProhibitSendReceivePct = sizeProhibitSendReceive.ValueKB;
+            if ((plan.ProhibitSendReceivePct == 0)) plan.ProhibitSendReceivePct = 100;
+            plan.KeepDeletedItemsDays = daysKeepDeletedItems.ValueDays;
+            plan.HideFromAddressBook = chkHideFromAddressBook.Checked;
+
+            if (PanelSecurity.SelectedUser.Role == UserRole.Administrator)
+                plan.MailboxPlanType = (int)ExchangeMailboxPlanType.Administrator;
+            else
+                if (PanelSecurity.SelectedUser.Role == UserRole.Reseller)
+                    plan.MailboxPlanType = (int)ExchangeMailboxPlanType.Reseller;
+
+
+            if ((orgs != null) & (orgs.GetLength(0) > 0))
+            {
+                int result = ES.Services.ExchangeServer.UpdateExchangeMailboxPlan(orgs[0].Id, plan);
+
+                if (result < 0)
+                {
+                    messageBox.ShowErrorMessage("EXCHANGE_UPDATEPLANS");
+                }
+                else
+                {
+                    messageBox.ShowSuccessMessage("EXCHANGE_UPDATEPLANS");
+                }
+            }
+
+            BindMailboxPlans();
         }
+
 
         private bool PlanExists(ExchangeMailboxPlan plan, ExchangeMailboxPlan[] plans)
         {
@@ -388,6 +488,13 @@ namespace WebsitePanel.Portal
                         ExchangeMailboxPlan p3 = null;
                         foreach (ExchangeMailboxPlan p2 in pl)
                         {
+                            if ((p2.MailboxSizeMB == -1) & (mailbox.ProhibitSendReceiveKB == -1))
+                            {
+                                p3 = p2;
+                                break;
+                            }
+
+
                             if (p2.MailboxSizeMB >= (mailbox.ProhibitSendReceiveKB / 1024))
                             {
                                 if (p3 == null)
@@ -403,6 +510,12 @@ namespace WebsitePanel.Portal
                         {
                             foreach (ExchangeMailboxPlan p in plans)
                             {
+                                if ((p.MailboxSizeMB == -1) & (mailbox.ProhibitSendReceiveKB == -1))
+                                {
+                                    p3 = p;
+                                    break;
+                                }
+
                                 if (p.MailboxSizeMB >= (mailbox.ProhibitSendReceiveKB / 1024))
                                 {
                                     if (p3 == null)
@@ -420,6 +533,67 @@ namespace WebsitePanel.Portal
                 }
             }
         }
+
+        protected void txtMailboxPlan_TextChanged(object sender, EventArgs e)
+        {
+            btnUpdateMailboxPlan.Enabled = (string.IsNullOrEmpty(txtMailboxPlan.Text)) ? false : true;
+        }
+
+        protected void btnStampClick(object sender, EventArgs e)
+        {
+            txtStatus.Visible = true;
+
+            try
+            {
+                Providers.HostedSolution.Organization[] orgs = null;
+
+                if (PanelSecurity.SelectedUserId != 1)
+                {
+                    PackageInfo[] Packages = ES.Services.Packages.GetPackages(PanelSecurity.SelectedUserId);
+
+                    if ((Packages != null) & (Packages.GetLength(0) > 0))
+                    {
+                        orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Packages[0].PackageId, false);
+                    }
+                }
+                else
+                {
+                    orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(1, false);
+                }
+
+                if ((orgs != null) & (orgs.GetLength(0) > 0))
+                {
+                    ExchangeMailboxPlan[] list = ES.Services.ExchangeServer.GetExchangeMailboxPlans(orgs[0].Id);
+
+                    foreach (ExchangeMailboxPlan p in list)
+                    {
+                        ExchangeAccount[] Accounts = ES.Services.ExchangeServer.GetExchangeAccountByMailboxPlanId(0, p.MailboxPlanId);
+
+                        foreach (ExchangeAccount a in Accounts)
+                        {
+                            txtStatus.Text = "Completed";
+                            int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(a.ItemId, a.AccountId, p.MailboxPlanId);
+                            if (result < 0)
+                            {
+                                BindMailboxPlans();
+                                txtStatus.Text = "Error: " + a.AccountName;
+                                messageBox.ShowErrorMessage("EXCHANGE_STAMPMAILBOXES");
+                                return;
+                            }
+                        }
+                    }
+                }
+
+                messageBox.ShowSuccessMessage("EXCHANGE_STAMPMAILBOXES");
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage("EXCHANGE_STAMPMAILBOXES",ex);
+            }
+
+            BindMailboxPlans();
+        }
+
 
     }
 }

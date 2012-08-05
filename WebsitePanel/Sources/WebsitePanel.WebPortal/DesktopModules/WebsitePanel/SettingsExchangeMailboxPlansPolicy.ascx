@@ -15,18 +15,16 @@
                     <asp:ImageButton ID="cmdEdit" runat="server" SkinID="EditSmall" CommandName="EditItem" AlternateText="Edit record" CommandArgument='<%# Eval("MailboxPlanId") %>' ></asp:ImageButton>
                 </ItemTemplate>
              </asp:TemplateField>
+			<asp:TemplateField>
+				<ItemTemplate>							        
+					<asp:Image ID="img2" runat="server" Width="16px" Height="16px" ImageUrl='<%# GetPlanType((int)Eval("MailboxPlanType")) %>' ImageAlign="AbsMiddle" />
+				</ItemTemplate>
+			</asp:TemplateField>
 			<asp:TemplateField HeaderText="gvMailboxPlan">
 				<ItemStyle Width="70%"></ItemStyle>
 				<ItemTemplate>
 					<asp:Label id="lnkDisplayMailboxPlan" runat="server" EnableViewState="true" ><%# Eval("MailboxPlan")%></asp:Label>
                  </ItemTemplate>
-			</asp:TemplateField>
-			<asp:TemplateField HeaderText="gvMailboxPlanDefault">
-				<ItemTemplate>
-					<div style="text-align:center">
-						<input type="radio" name="DefaultMailboxPlan" value='<%# Eval("MailboxPlanId") %>' <%# IsChecked((bool)Eval("IsDefault")) %> />
-					</div>
-				</ItemTemplate>
 			</asp:TemplateField>
 			<asp:TemplateField>
 				<ItemTemplate>
@@ -38,10 +36,6 @@
 		</Columns>
 	</asp:GridView>
 	<br />
-	<div style="text-align: center">
-		<asp:Button ID="btnSetDefaultMailboxPlan" runat="server" meta:resourcekey="btnSetDefaultMailboxPlan"
-            Text="Set Default Mailboxplan" CssClass="Button1" OnClick="btnSetDefaultMailboxPlan_Click" />
-    </div>
     	<wsp:CollapsiblePanel id="secMailboxPlan" runat="server"
             TargetControlID="MailboxPlan" meta:resourcekey="secMailboxPlan" Text="Mailboxplan">
         </wsp:CollapsiblePanel>
@@ -52,7 +46,8 @@
 									
 					</td>
 					<td>
-						<asp:TextBox ID="txtMailboxPlan" runat="server" CssClass="TextBox200" ></asp:TextBox>
+						<asp:TextBox ID="txtMailboxPlan" runat="server" CssClass="TextBox200" 
+                            ontextchanged="txtMailboxPlan_TextChanged" ></asp:TextBox>
                         <asp:RequiredFieldValidator ID="valRequireMailboxPlan" runat="server" meta:resourcekey="valRequireMailboxPlan" ControlToValidate="txtMailboxPlan"
 						ErrorMessage="Enter mailbox plan name" ValidationGroup="CreateMailboxPlan" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
 					</td>
@@ -117,25 +112,25 @@
 				<tr>
 					<td class="FormLabel200" align="right"><asp:Localize ID="locMailboxSize" runat="server" meta:resourcekey="locMailboxSize" Text="Mailbox size:"></asp:Localize></td>
 					<td>
-						<wsp:SizeBox id="mailboxSize" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="false"  DisplayUnitsMB="true" DisplayUnitsPct="false" RequireValidatorEnabled="true"/>
+						<wsp:SizeBox id="mailboxSize" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="false"  DisplayUnitsMB="true" DisplayUnitsPct="false" RequireValidatorEnabled="false"/>
 					</td>
 				</tr>
 				<tr>
 					<td class="FormLabel200" align="right"><asp:Localize ID="locMaxRecipients" runat="server" meta:resourcekey="locMaxRecipients" Text="Maximum Recipients:"></asp:Localize></td>
 					<td>
-						<wsp:SizeBox id="maxRecipients" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="false" DisplayUnitsMB="false" DisplayUnitsPct="false" RequireValidatorEnabled="true"/>
+						<wsp:SizeBox id="maxRecipients" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="false" DisplayUnitsMB="false" DisplayUnitsPct="false" RequireValidatorEnabled="false"/>
 					</td>
 				</tr>
 				<tr>
 					<td class="FormLabel200" align="right"><asp:Localize ID="locMaxSendMessageSizeKB" runat="server" meta:resourcekey="locMaxSendMessageSizeKB" Text="Maximum Send Message Size (Kb):"></asp:Localize></td>
 					<td>
-						<wsp:SizeBox id="maxSendMessageSizeKB" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="true" DisplayUnitsMB="false" DisplayUnitsPct="false" RequireValidatorEnabled="true"/>
+						<wsp:SizeBox id="maxSendMessageSizeKB" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="true" DisplayUnitsMB="false" DisplayUnitsPct="false" RequireValidatorEnabled="false"/>
 					</td>
 				</tr>
 				<tr>
 					<td class="FormLabel200" align="right"><asp:Localize ID="locMaxReceiveMessageSizeKB" runat="server" meta:resourcekey="locMaxReceiveMessageSizeKB" Text="Maximum Receive Message Size (Kb):"></asp:Localize></td>
 					<td>
-						<wsp:SizeBox id="maxReceiveMessageSizeKB" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="true"  DisplayUnitsMB="false" DisplayUnitsPct="false" RequireValidatorEnabled="true"/>
+						<wsp:SizeBox id="maxReceiveMessageSizeKB" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="true"  DisplayUnitsMB="false" DisplayUnitsPct="false" RequireValidatorEnabled="false"/>
 					</td>
 				</tr>
 
@@ -165,37 +160,61 @@
 		</asp:Panel>
 					
 					
-		<wsp:CollapsiblePanel id="secDeleteRetention" runat="server"
-            TargetControlID="DeleteRetention" meta:resourcekey="secDeleteRetention" Text="Delete Item Retention">
+		<wsp:CollapsiblePanel id="secDeleteRetention" runat="server" TargetControlID="DeleteRetention" meta:resourcekey="secDeleteRetention" Text="Delete Item Retention">
         </wsp:CollapsiblePanel>
         <asp:Panel ID="DeleteRetention" runat="server" Height="0" style="overflow:hidden;">
 			<table>
 				<tr>
 					<td class="FormLabel200" align="right"><asp:Localize ID="locKeepDeletedItems" runat="server" meta:resourcekey="locKeepDeletedItems" Text="Keep deleted items for:"></asp:Localize></td>
 					<td>
-						<wsp:DaysBox id="daysKeepDeletedItems" runat="server" ValidationGroup="CreateMailboxPlan" />
+						<wsp:DaysBox id="daysKeepDeletedItems" runat="server" ValidationGroup="CreateMailboxPlan" RequireValidatorEnabled="true"/>
 					</td>
 				</tr>
 			</table>
 			<br />
 		</asp:Panel>
 
-		<br />
+    <table>
+        <tr>
+            <td>
+                <div class="FormButtonsBarClean">
+                    <asp:Button ID="btnAddMailboxPlan" runat="server" meta:resourcekey="btnAddMailboxPlan"
+                        Text="Add New Mailboxplan" CssClass="Button1" OnClick="btnAddMailboxPlan_Click" />
+                </div>
+            </td>
+            <td>
+                <div class="FormButtonsBarClean">
+                        <asp:Button ID="btnUpdateMailboxPlan" runat="server" meta:resourcekey="btnUpdateMailboxPlan"
+                            Text="Update Mailboxplan" CssClass="Button1" OnClick="btnUpdateMailboxPlan_Click" />
+            </td>
+        </tr>
+    </table>
 
-    <div class="FormButtonsBarClean">
-        <asp:Button ID="btnAddMailboxPlan" runat="server" meta:resourcekey="btnAddMailboxPlan"
-            Text="Add New Mailboxplan" CssClass="Button1" OnClick="btnAddMailboxPlan_Click" />
-    </div>
+    <br />
 
-    <div class="FormButtonsBarClean">
-        <asp:Button ID="btnAddMailboxPlanToOrganizations" runat="server" meta:resourcekey="btnAddMailboxPlanToOrganizations"
-            Text="Add Mailbox Plans Template to All Organizations" CssClass="Button1" OnClick="btnAddMailboxPlanToOrganizations_Click" OnClientClick="if (confirm('Plans with an existing name will not be added. \nAre you sure you want to add the plans template to all tenants ?')) ShowProgressDialog('Adding mailbox plans, this might take a while ...'); else return false;"/>
-    </div>
+    <wsp:CollapsiblePanel id="secTools" runat="server" TargetControlID="Tools" meta:resourcekey="secTools" Text="Tools">
+        </wsp:CollapsiblePanel>
+        <asp:Panel ID="Tools" runat="server" Height="0" style="overflow:hidden;">
+			<table>
+				<tr>
+					<td>
+                        <asp:Button ID="btnStamp" runat="server" meta:resourcekey="btnStamp"
+                        Text="Restamp all mailboxes" CssClass="Button1" OnClick="btnStampClick" OnClientClick="if (confirm('Restamp mailboxes with these plans. \nAre you sure you want to restamp the mailbox plans ?')) ShowProgressDialog('Stamping mailboxes, this might take a while ...'); else return false;"/>
+					</td>
+                    <td>
+                        <asp:TextBox ID="txtStatus" runat="server" CssClass="TextBox400" MaxLength="128" ReadOnly="true"></asp:TextBox>
+                    </td>
+				</tr>
+				<tr>
+					<td>
+                        <asp:Button ID="btnMatchMailboxPlanToUser" runat="server" meta:resourcekey="btnMatchMailboxPlanToUser"
+                            Text="Match Plan to User" CssClass="Button1" 
+                            OnClientClick="if (confirm('Mail enabled users with no mailbox plan assigned will get a matching mailbox plan applied.\nMatching takes place on mailbox size and the MAPI properties.\n\nAre you sure you want to continue with this ?')) ShowProgressDialog('Applying mailbox plans, this might take a while ...'); else return false;" 
+                            onclick="btnMatchMailboxPlanToUser_Click" />
+					</td>
+				</tr>
+			</table>
+			<br />
+		</asp:Panel>
 
-    <div class="FormButtonsBarClean">
-        <asp:Button ID="btnMatchMailboxPlanToUser" runat="server" meta:resourcekey="btnMatchMailboxPlanToUser"
-            Text="Match Plan to User" CssClass="Button1" 
-            OnClientClick="if (confirm('Mail enabled users with no mailbox plan assigned will get a matching mailbox plan applied.\nMatching takes place on mailbox size and the MAPI properties.\n\nAre you sure you want to continue with this ?')) ShowProgressDialog('Applying mailbox plans, this might take a while ...'); else return false;" 
-            onclick="btnMatchMailboxPlanToUser_Click" />
-    </div>
     

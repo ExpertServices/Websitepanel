@@ -60,6 +60,7 @@ CREATE TABLE [dbo].[ExchangeMailboxPlans](
 	[MailboxPlanId] [int] IDENTITY(1,1) NOT NULL,
 	[ItemID] [int] NOT NULL,
 	[MailboxPlan] [nvarchar](300) COLLATE Latin1_General_CI_AS NOT NULL,
+	[MailboxPlanType] [int] NULL,
 	[EnableActiveSync] [bit] NOT NULL,
 	[EnableIMAP] [bit] NOT NULL,
 	[EnableMAPI] [bit] NOT NULL,
@@ -211,6 +212,101 @@ GO
 
 
 
+CREATE PROCEDURE [dbo].[GetUserByExchangeOrganizationIdInternally]
+(
+	@ItemID int
+)
+AS
+	SELECT
+		U.UserID,
+		U.RoleID,
+		U.StatusID,
+		U.LoginStatusId,
+		U.FailedLogins,
+		U.OwnerID,
+		U.Created,
+		U.Changed,
+		U.IsDemo,
+		U.Comments,
+		U.IsPeer,
+		U.Username,
+		U.Password,
+		U.FirstName,
+		U.LastName,
+		U.Email,
+		U.SecondaryEmail,
+		U.Address,
+		U.City,
+		U.State,
+		U.Country,
+		U.Zip,
+		U.PrimaryPhone,
+		U.SecondaryPhone,
+		U.Fax,
+		U.InstantMessenger,
+		U.HtmlMail,
+		U.CompanyName,
+		U.EcommerceEnabled,
+		U.[AdditionalParams]
+	FROM Users AS U
+	WHERE U.UserID IN (SELECT UserID FROM Packages WHERE PackageID IN (
+	SELECT PackageID FROM ServiceItems WHERE ItemID = @ItemID))
+	
+RETURN
+GO
+
+
+
+
+
+
+
+CREATE PROCEDURE [dbo].[UpdateExchangeMailboxPlan] 
+(
+	@MailboxPlanId int,
+	@MailboxPlan	nvarchar(300),
+	@EnableActiveSync bit,
+	@EnableIMAP bit,
+	@EnableMAPI bit,
+	@EnableOWA bit,
+	@EnablePOP bit,
+	@IsDefault bit,
+	@IssueWarningPct int,
+	@KeepDeletedItemsDays int,
+	@MailboxSizeMB int,
+	@MaxReceiveMessageSizeKB int,
+	@MaxRecipients int,
+	@MaxSendMessageSizeKB int,
+	@ProhibitSendPct int,
+	@ProhibitSendReceivePct int	,
+	@HideFromAddressBook bit,
+	@MailboxPlanType int
+)
+AS
+
+UPDATE ExchangeMailboxPlans SET
+	MailboxPlan = @MailboxPlan,
+	EnableActiveSync = @EnableActiveSync,
+	EnableIMAP = @EnableIMAP,
+	EnableMAPI = @EnableMAPI,
+	EnableOWA = @EnableOWA,
+	EnablePOP = @EnablePOP,
+	IsDefault = @IsDefault,
+	IssueWarningPct= @IssueWarningPct,
+	KeepDeletedItemsDays = @KeepDeletedItemsDays,
+	MailboxSizeMB= @MailboxSizeMB,
+	MaxReceiveMessageSizeKB= @MaxReceiveMessageSizeKB,
+	MaxRecipients= @MaxRecipients,
+	MaxSendMessageSizeKB= @MaxSendMessageSizeKB,
+	ProhibitSendPct= @ProhibitSendPct,
+	ProhibitSendReceivePct = @ProhibitSendReceivePct,
+	HideFromAddressBook = @HideFromAddressBook,
+	MailboxPlanType = @MailboxPlanType
+WHERE MailboxPlanId = @MailboxPlanId
+
+RETURN
+GO
+
 
 
 
@@ -221,8 +317,6 @@ CREATE PROCEDURE [dbo].[GetExchangeAccountByMailboxPlanId]
 	@MailboxPlanId int
 )
 AS
-
-DECLARE @condition nvarchar(64)
 
 IF (@MailboxPlanId < 0)
 BEGIN
@@ -251,6 +345,30 @@ RETURN
 
 END
 ELSE
+IF (@ItemId = 0)
+BEGIN
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber 
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+WHERE
+	E.MailboxPlanId = @MailboxPlanId AND
+	E.AccountType IN (1,5) 
+END
+ELSE
 BEGIN
 SELECT
 	E.AccountID,
@@ -275,8 +393,6 @@ WHERE
 	E.AccountType IN (1,5) 
 RETURN
 END
-GO
-
 
 
 
@@ -24151,6 +24267,23 @@ SELECT @ItemTypeID = ItemTypeID FROM ServiceItemTypes
 WHERE TypeName = @ItemTypeName
 AND ((@GroupID IS NULL) OR (@GroupID IS NOT NULL AND GroupID = @GroupID))
 
+-- Fix to allow plans assigned to serveradmin
+IF (@ItemTypeName = 'WebsitePanel.Providers.HostedSolution.Organization, WebsitePanel.Providers.Base')
+BEGIN
+	IF NOT EXISTS (SELECT * FROM ServiceItems WHERE PackageID = 1)
+	BEGIN
+		INSERT INTO ServiceItems (PackageID, ItemTypeID,ServiceID,ItemName,CreatedDate)
+		VALUES(1, @ItemTypeID, @ServiceID, 'System',  @CreatedDate)
+		
+		DECLARE @TempItemID int
+		
+		SET @TempItemID = SCOPE_IDENTITY()
+		INSERT INTO ExchangeOrganizations (ItemID, OrganizationID)
+		VALUES(@TempItemID, 'System')
+	END
+END
+
+
 -- add item
 INSERT INTO ServiceItems
 (
@@ -24200,6 +24333,9 @@ exec sp_xml_removedocument @idoc
 
 COMMIT TRAN
 RETURN 
+
+
+
 
 
 
@@ -44838,17 +44974,18 @@ CREATE PROCEDURE [dbo].[AddExchangeMailboxPlan]
 	@MaxSendMessageSizeKB int,
 	@ProhibitSendPct int,
 	@ProhibitSendReceivePct int	,
-	@HideFromAddressBook bit
+	@HideFromAddressBook bit,
+	@MailboxPlanType int
 )
 AS
 
-IF ((SELECT Count(*) FROM ExchangeMailboxPlans WHERE ItemId = @ItemID) = 0)
+IF (((SELECT Count(*) FROM ExchangeMailboxPlans WHERE ItemId = @ItemID) = 0) AND (@MailboxPlanType=0))
 BEGIN
 	SET @IsDefault = 1
 END
 ELSE
 BEGIN
-	IF @IsDefault = 1
+	IF ((@IsDefault = 1) AND (@MailboxPlanType=0))
 	BEGIN
 		UPDATE ExchangeMailboxPlans SET IsDefault = 0 WHERE ItemID = @ItemID
 	END
@@ -44874,7 +45011,8 @@ INSERT INTO ExchangeMailboxPlans
 	MaxSendMessageSizeKB,
 	ProhibitSendPct,
 	ProhibitSendReceivePct,
-	HideFromAddressBook
+	HideFromAddressBook,
+	MailboxPlanType
 )
 VALUES
 (
@@ -44894,7 +45032,8 @@ VALUES
 	@MaxSendMessageSizeKB,
 	@ProhibitSendPct,
 	@ProhibitSendReceivePct,
-	@HideFromAddressBook
+	@HideFromAddressBook,
+	@MailboxPlanType
 )
 
 SET @MailboxPlanId = SCOPE_IDENTITY()
@@ -44991,7 +45130,8 @@ SELECT
 	MaxSendMessageSizeKB,
 	ProhibitSendPct,
 	ProhibitSendReceivePct,
-	HideFromAddressBook
+	HideFromAddressBook,
+	MailboxPlanType
 FROM
 	ExchangeMailboxPlans
 WHERE
@@ -45032,7 +45172,8 @@ SELECT
 	MaxSendMessageSizeKB,
 	ProhibitSendPct,
 	ProhibitSendReceivePct,
-	HideFromAddressBook
+	HideFromAddressBook,
+	MailboxPlanType
 FROM
 	ExchangeMailboxPlans
 WHERE

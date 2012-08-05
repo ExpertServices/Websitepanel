@@ -1543,9 +1543,9 @@ namespace WebsitePanel.EnterpriseServer
                                                 plan.EnableOWA,
                                                 plan.EnableMAPI,
                                                 plan.EnableActiveSync,
-                                                (int)Math.Round((double)((plan.IssueWarningPct * plan.MailboxSizeMB * 1024) / 100)),
-                                                (int)Math.Round((double)((plan.ProhibitSendPct * plan.MailboxSizeMB * 1024) / 100)),
-                                                (int)Math.Round((double)((plan.ProhibitSendReceivePct * plan.MailboxSizeMB * 1024) / 100)),
+                                                plan.MailboxSizeMB != -1 ? (int)Math.Round((double)((plan.IssueWarningPct * plan.MailboxSizeMB * 1024) / 100)) : -1,
+                                                plan.MailboxSizeMB != -1 ? (int)Math.Round((double)((plan.ProhibitSendPct * plan.MailboxSizeMB * 1024) / 100)) : -1,
+                                                plan.MailboxSizeMB != -1 ? (int)Math.Round((double)((plan.ProhibitSendReceivePct * plan.MailboxSizeMB * 1024) / 100)) : -1,
                                                 plan.KeepDeletedItemsDays,
                                                 plan.MaxRecipients,
                                                 plan.MaxSendMessageSizeKB,
@@ -2463,9 +2463,9 @@ namespace WebsitePanel.EnterpriseServer
                     plan.EnableOWA,
                     plan.EnableMAPI,
                     plan.EnableActiveSync,
-                    (int)Math.Round((double)((plan.IssueWarningPct * plan.MailboxSizeMB * 1024) / 100)),
-                    (int)Math.Round((double)((plan.ProhibitSendPct * plan.MailboxSizeMB * 1024) / 100)),
-                    (int)Math.Round((double)((plan.ProhibitSendReceivePct * plan.MailboxSizeMB * 1024) / 100)),
+                    plan.MailboxSizeMB != -1 ? (int)Math.Round((double)((plan.IssueWarningPct * plan.MailboxSizeMB * 1024) / 100)) : -1,
+                    plan.MailboxSizeMB != -1 ? (int)Math.Round((double)((plan.ProhibitSendPct * plan.MailboxSizeMB * 1024) / 100)) : -1,
+                    plan.MailboxSizeMB != -1 ? (int)Math.Round((double)((plan.ProhibitSendReceivePct * plan.MailboxSizeMB * 1024) / 100)) : -1,
                     plan.KeepDeletedItemsDays,
                     plan.MaxRecipients,
                     plan.MaxSendMessageSizeKB,
@@ -2493,8 +2493,13 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-                return ObjectUtils.CreateListFromDataReader<ExchangeMailboxPlan>(
-                    DataProvider.GetExchangeMailboxPlans(itemId));
+                List<ExchangeMailboxPlan> mailboxPlans = new List<ExchangeMailboxPlan>();
+
+                UserInfo user = ObjectUtils.FillObjectFromDataReader<UserInfo>(DataProvider.GetUserByExchangeOrganizationIdInternally(itemId));
+
+                ExchangeServerController.GetExchangeMailboxPlansByUser(user, ref mailboxPlans);
+
+                return mailboxPlans;
             }
             catch (Exception ex)
             {
@@ -2505,6 +2510,43 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.CompleteTask();
             }
         }
+
+        private static void GetExchangeMailboxPlansByUser(UserInfo user, ref List<ExchangeMailboxPlan>mailboxPlans)
+        {
+            if ((user != null))
+            {
+                List<Organization> orgs = null;
+
+                if (user.UserId != 1)
+                {
+                    List<PackageInfo> Packages = PackageController.GetPackages(user.UserId);
+                
+                    if ((Packages != null) & (Packages.Count > 0))
+                    {
+                        orgs = GetExchangeOrganizations(Packages[0].PackageId, false);
+                    }
+                }
+                else
+                {
+                    orgs = GetExchangeOrganizations(1, false);
+                }
+
+                if ((orgs != null) &(orgs.Count > 0))
+                {
+                    List<ExchangeMailboxPlan> Plans = ObjectUtils.CreateListFromDataReader<ExchangeMailboxPlan>(DataProvider.GetExchangeMailboxPlans(orgs[0].Id));
+
+                    foreach (ExchangeMailboxPlan p in Plans)
+                    {
+                        mailboxPlans.Add(p);
+                    }
+                }
+
+                UserInfo owner = UserController.GetUserInternally(user.OwnerId);
+
+                GetExchangeMailboxPlansByUser(owner, ref mailboxPlans);
+            }
+        }
+
 
         public static ExchangeMailboxPlan GetExchangeMailboxPlan(int itemID, int mailboxPlanId)
         {
@@ -2543,28 +2585,40 @@ namespace WebsitePanel.EnterpriseServer
                 // load package context
                 PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
 
-                mailboxPlan.EnableActiveSync = mailboxPlan.EnableActiveSync & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_ACTIVESYNCALLOWED].QuotaAllocatedValue);
-                mailboxPlan.EnableIMAP = mailboxPlan.EnableIMAP & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_IMAPALLOWED].QuotaAllocatedValue);
-                mailboxPlan.EnableMAPI = mailboxPlan.EnableMAPI & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_MAPIALLOWED].QuotaAllocatedValue);
-                mailboxPlan.EnableOWA = mailboxPlan.EnableOWA & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_OWAALLOWED].QuotaAllocatedValue);
-                mailboxPlan.EnablePOP = mailboxPlan.EnablePOP & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_POP3ALLOWED].QuotaAllocatedValue);
-                if (mailboxPlan.KeepDeletedItemsDays > cntx.Quotas[Quotas.EXCHANGE2007_KEEPDELETEDITEMSDAYS].QuotaAllocatedValue)
-                    mailboxPlan.KeepDeletedItemsDays = cntx.Quotas[Quotas.EXCHANGE2007_KEEPDELETEDITEMSDAYS].QuotaAllocatedValue;
-                if (cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue != -1)
-                    if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue)
-                        mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
-                if (mailboxPlan.MaxReceiveMessageSizeKB > cntx.Quotas[Quotas.EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB].QuotaAllocatedValue)
-                    mailboxPlan.MaxReceiveMessageSizeKB = cntx.Quotas[Quotas.EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB].QuotaAllocatedValue;
-                if (mailboxPlan.MaxSendMessageSizeKB > cntx.Quotas[Quotas.EXCHANGE2007_MAXSENDMESSAGESIZEKB].QuotaAllocatedValue)
-                    mailboxPlan.MaxSendMessageSizeKB = cntx.Quotas[Quotas.EXCHANGE2007_MAXSENDMESSAGESIZEKB].QuotaAllocatedValue;
-                if (cntx.Quotas[Quotas.EXCHANGE2007_MAXRECIPIENTS].QuotaAllocatedValue != -1)
-                    if (mailboxPlan.MaxRecipients > cntx.Quotas[Quotas.EXCHANGE2007_MAXRECIPIENTS].QuotaAllocatedValue)
-                        mailboxPlan.MaxRecipients = cntx.Quotas[Quotas.EXCHANGE2007_MAXRECIPIENTS].QuotaAllocatedValue;
-                if (Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue)) mailboxPlan.HideFromAddressBook = true;
+                if (org.PackageId > 1)
+                {
+                    mailboxPlan.EnableActiveSync = mailboxPlan.EnableActiveSync & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_ACTIVESYNCALLOWED].QuotaAllocatedValue);
+                    mailboxPlan.EnableIMAP = mailboxPlan.EnableIMAP & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_IMAPALLOWED].QuotaAllocatedValue);
+                    mailboxPlan.EnableMAPI = mailboxPlan.EnableMAPI & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_MAPIALLOWED].QuotaAllocatedValue);
+                    mailboxPlan.EnableOWA = mailboxPlan.EnableOWA & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_OWAALLOWED].QuotaAllocatedValue);
+                    mailboxPlan.EnablePOP = mailboxPlan.EnablePOP & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_POP3ALLOWED].QuotaAllocatedValue);
+
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_KEEPDELETEDITEMSDAYS].QuotaAllocatedValue != -1)
+                        if (mailboxPlan.KeepDeletedItemsDays > cntx.Quotas[Quotas.EXCHANGE2007_KEEPDELETEDITEMSDAYS].QuotaAllocatedValue)
+                            mailboxPlan.KeepDeletedItemsDays = cntx.Quotas[Quotas.EXCHANGE2007_KEEPDELETEDITEMSDAYS].QuotaAllocatedValue;
+
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue != -1)
+                        if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue)
+                            mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
+
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB].QuotaAllocatedValue != -1)
+                        if (mailboxPlan.MaxReceiveMessageSizeKB > cntx.Quotas[Quotas.EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB].QuotaAllocatedValue)
+                            mailboxPlan.MaxReceiveMessageSizeKB = cntx.Quotas[Quotas.EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB].QuotaAllocatedValue;
+
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_MAXSENDMESSAGESIZEKB].QuotaAllocatedValue != -1)
+                        if (mailboxPlan.MaxSendMessageSizeKB > cntx.Quotas[Quotas.EXCHANGE2007_MAXSENDMESSAGESIZEKB].QuotaAllocatedValue)
+                            mailboxPlan.MaxSendMessageSizeKB = cntx.Quotas[Quotas.EXCHANGE2007_MAXSENDMESSAGESIZEKB].QuotaAllocatedValue;
+
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_MAXRECIPIENTS].QuotaAllocatedValue != -1)
+                        if (mailboxPlan.MaxRecipients > cntx.Quotas[Quotas.EXCHANGE2007_MAXRECIPIENTS].QuotaAllocatedValue)
+                            mailboxPlan.MaxRecipients = cntx.Quotas[Quotas.EXCHANGE2007_MAXRECIPIENTS].QuotaAllocatedValue;
+
+                    if (Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue)) mailboxPlan.HideFromAddressBook = true;
+                }
 
                 return DataProvider.AddExchangeMailboxPlan(itemID, mailboxPlan.MailboxPlan, mailboxPlan.EnableActiveSync, mailboxPlan.EnableIMAP, mailboxPlan.EnableMAPI, mailboxPlan.EnableOWA, mailboxPlan.EnablePOP,
                                                         mailboxPlan.IsDefault, mailboxPlan.IssueWarningPct, mailboxPlan.KeepDeletedItemsDays, mailboxPlan.MailboxSizeMB, mailboxPlan.MaxReceiveMessageSizeKB, mailboxPlan.MaxRecipients,
-                                                        mailboxPlan.MaxSendMessageSizeKB, mailboxPlan.ProhibitSendPct, mailboxPlan.ProhibitSendReceivePct, mailboxPlan.HideFromAddressBook);
+                                                        mailboxPlan.MaxSendMessageSizeKB, mailboxPlan.ProhibitSendPct, mailboxPlan.ProhibitSendReceivePct, mailboxPlan.HideFromAddressBook, mailboxPlan.MailboxPlanType);
             }
             catch (Exception ex)
             {
@@ -2576,6 +2630,72 @@ namespace WebsitePanel.EnterpriseServer
             }
 
         }
+
+
+        public static int UpdateExchangeMailboxPlan(int itemID, ExchangeMailboxPlan mailboxPlan)
+        {
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "UPDATE_EXCHANGE_MAILBOXPLAN");
+            TaskManager.ItemId = itemID;
+
+            try
+            {
+                Organization org = GetOrganization(itemID);
+                if (org == null)
+                    return -1;
+
+                // load package context
+                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
+
+                if (org.PackageId > 1)
+                {
+                    mailboxPlan.EnableActiveSync = mailboxPlan.EnableActiveSync & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_ACTIVESYNCALLOWED].QuotaAllocatedValue);
+                    mailboxPlan.EnableIMAP = mailboxPlan.EnableIMAP & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_IMAPALLOWED].QuotaAllocatedValue);
+                    mailboxPlan.EnableMAPI = mailboxPlan.EnableMAPI & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_MAPIALLOWED].QuotaAllocatedValue);
+                    mailboxPlan.EnableOWA = mailboxPlan.EnableOWA & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_OWAALLOWED].QuotaAllocatedValue);
+                    mailboxPlan.EnablePOP = mailboxPlan.EnablePOP & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_POP3ALLOWED].QuotaAllocatedValue);
+
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_KEEPDELETEDITEMSDAYS].QuotaAllocatedValue != -1)
+                        if (mailboxPlan.KeepDeletedItemsDays > cntx.Quotas[Quotas.EXCHANGE2007_KEEPDELETEDITEMSDAYS].QuotaAllocatedValue)
+                            mailboxPlan.KeepDeletedItemsDays = cntx.Quotas[Quotas.EXCHANGE2007_KEEPDELETEDITEMSDAYS].QuotaAllocatedValue;
+
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue != -1)
+                        if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue)
+                            mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
+
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB].QuotaAllocatedValue != -1)
+                        if (mailboxPlan.MaxReceiveMessageSizeKB > cntx.Quotas[Quotas.EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB].QuotaAllocatedValue)
+                            mailboxPlan.MaxReceiveMessageSizeKB = cntx.Quotas[Quotas.EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB].QuotaAllocatedValue;
+
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_MAXSENDMESSAGESIZEKB].QuotaAllocatedValue != -1)
+                        if (mailboxPlan.MaxSendMessageSizeKB > cntx.Quotas[Quotas.EXCHANGE2007_MAXSENDMESSAGESIZEKB].QuotaAllocatedValue)
+                            mailboxPlan.MaxSendMessageSizeKB = cntx.Quotas[Quotas.EXCHANGE2007_MAXSENDMESSAGESIZEKB].QuotaAllocatedValue;
+
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_MAXRECIPIENTS].QuotaAllocatedValue != -1)
+                        if (mailboxPlan.MaxRecipients > cntx.Quotas[Quotas.EXCHANGE2007_MAXRECIPIENTS].QuotaAllocatedValue)
+                            mailboxPlan.MaxRecipients = cntx.Quotas[Quotas.EXCHANGE2007_MAXRECIPIENTS].QuotaAllocatedValue;
+
+                    if (Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue)) mailboxPlan.HideFromAddressBook = true;
+                }
+
+                DataProvider.UpdateExchangeMailboxPlan(mailboxPlan.MailboxPlanId, mailboxPlan.MailboxPlan, mailboxPlan.EnableActiveSync, mailboxPlan.EnableIMAP, mailboxPlan.EnableMAPI, mailboxPlan.EnableOWA, mailboxPlan.EnablePOP,
+                                                        mailboxPlan.IsDefault, mailboxPlan.IssueWarningPct, mailboxPlan.KeepDeletedItemsDays, mailboxPlan.MailboxSizeMB, mailboxPlan.MaxReceiveMessageSizeKB, mailboxPlan.MaxRecipients,
+                                                        mailboxPlan.MaxSendMessageSizeKB, mailboxPlan.ProhibitSendPct, mailboxPlan.ProhibitSendReceivePct, mailboxPlan.HideFromAddressBook, mailboxPlan.MailboxPlanType);
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+
+            return 0;
+        }
+
+
 
         public static int DeleteExchangeMailboxPlan(int itemID, int mailboxPlanId)
         {

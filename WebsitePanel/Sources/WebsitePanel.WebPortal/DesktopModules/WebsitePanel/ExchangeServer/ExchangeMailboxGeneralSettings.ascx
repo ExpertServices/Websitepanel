@@ -62,7 +62,7 @@
                                     <tr>
                                         <td class="FormLabel150"><asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Mailbox Size:"></asp:Localize></td>
 					                    <td>                                
-                                            <wsp:QuotaViewer ID="mailboxSize" runat="server" QuotaTypeId="2" /> MB
+                                            <wsp:QuotaViewer ID="mailboxSize" runat="server" QuotaTypeId="2" DisplayGauge="true" /> MB
                                         </td>
 					                </tr>
 

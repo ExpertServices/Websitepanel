@@ -11,7 +11,7 @@
         </li>
         <li>
             <asp:HyperLink ID="lnkExchangeMailboxPlansPolicy" runat="server" meta:resourcekey="lnkExchangeMailboxPlansPolicy"
-                    Text="Exchange Mailboxplan Policy" NavigateUrl='<%# GetSettingsLink("ExchangeMailboxPlansPolicy", "SettingsExchangeMailboxPlansPolicy") %>'></asp:HyperLink>
+                    Text="Global Exchange Mailbox Plans" NavigateUrl='<%# GetSettingsLink("ExchangeMailboxPlansPolicy", "SettingsExchangeMailboxPlansPolicy") %>'></asp:HyperLink>
         </li>
 
         <li>
