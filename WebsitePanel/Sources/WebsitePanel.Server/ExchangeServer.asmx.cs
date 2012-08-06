@@ -92,7 +92,7 @@ namespace WebsitePanel.Server
             string mailboxDatabase, string offlineAddressBook, string addressBookPolicy,
             string accountName, bool enablePOP, bool enableIMAP,
             bool enableOWA, bool enableMAPI, bool enableActiveSync,
-            int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays,
+            long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays,
             int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool isConsumer)
         {
             try
@@ -215,7 +215,7 @@ namespace WebsitePanel.Server
 
 
         [WebMethod, SoapHeader("settings")]
-        public void SetOrganizationStorageLimits(string organizationDistinguishedName, int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays)
+        public void SetOrganizationStorageLimits(string organizationDistinguishedName, long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays)
         {
             try
             {
@@ -446,7 +446,7 @@ namespace WebsitePanel.Server
 
         [WebMethod, SoapHeader("settings")]
         public void SetMailboxAdvancedSettings(string organizationId, string accountName, bool enablePOP, bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync,
-            int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB)
+            long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB)
         {
             try
             {

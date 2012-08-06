@@ -326,7 +326,7 @@ namespace WebsitePanel.Providers.HostedSolution
             string mailboxDatabase, string offlineAddressBook, string addressBookPolicy,
             string accountName, bool enablePOP, bool enableIMAP,
             bool enableOWA, bool enableMAPI, bool enableActiveSync,
-            int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays,
+            long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays,
             int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool IsConsumer)
         {
 
