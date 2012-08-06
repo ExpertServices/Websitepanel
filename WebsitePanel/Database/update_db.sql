@@ -4775,7 +4775,6 @@ SELECT
 	U.UserID,
 	U.RoleID,
 	U.StatusID,
-	U.SubscriberNumber,
 	U.LoginStatusId,
 	U.FailedLogins,
 	U.OwnerID,
