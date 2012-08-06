@@ -18,7 +18,7 @@
     <PreviousBuildFolder>$(RootFolder)\..\prev\$(BuildConfiguration)</PreviousBuildFolder>
 
 		<DiffCmd>$(TrunkFolder)\Tools\Diff.exe</DiffCmd>
-		<SqlCmd>"$(ProgramFiles)\Microsoft SQL Server\100\Tools\Binn\sqlcmd.exe" -S (local)\SQLEXPRESS -E</SqlCmd>
+		<SqlCmd>"C:\Program Files\Microsoft SQL Server\110\Tools\Binn\sqlcmd.exe" -S (local)\SQLEXPRESS -E</SqlCmd>
 
     <MSDeployPath Condition="Exists('$(ProgramFiles)\IIS\Microsoft Web Deploy\msdeploy.exe')">"$(ProgramFiles)\IIS\Microsoft Web Deploy\msdeploy.exe"</MSDeployPath>
 		<MSDeployPath Condition="Exists('$(ProgramFiles)\IIS\Microsoft Web Deploy V2\msdeploy.exe')">"$(ProgramFiles)\IIS\Microsoft Web Deploy V2\msdeploy.exe"</MSDeployPath>
