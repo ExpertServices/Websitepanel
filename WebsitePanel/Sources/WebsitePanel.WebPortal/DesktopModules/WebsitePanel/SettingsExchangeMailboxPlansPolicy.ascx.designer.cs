@@ -373,33 +373,6 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.Button btnUpdateMailboxPlan;
         
         /// <summary>
-        /// secTools control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.CollapsiblePanel secTools;
-        
-        /// <summary>
-        /// Tools control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Tools;
-        
-        /// <summary>
-        /// btnStamp control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnStamp;
-        
-        /// <summary>
         /// txtStatus control.
         /// </summary>
         /// <remarks>
@@ -407,14 +380,5 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtStatus;
-        
-        /// <summary>
-        /// btnMatchMailboxPlanToUser control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnMatchMailboxPlanToUser;
     }
 }

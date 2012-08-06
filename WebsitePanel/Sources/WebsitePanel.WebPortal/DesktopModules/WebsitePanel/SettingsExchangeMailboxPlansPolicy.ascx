@@ -33,6 +33,21 @@
 						meta:resourcekey="cmdDelete" OnClientClick="return confirm('Are you sure you want to delete selected mailbox plan?')"></asp:ImageButton>
 				</ItemTemplate>
 			</asp:TemplateField>
+			<asp:TemplateField>
+				<ItemTemplate>
+                        <asp:Button ID="btnStamp" runat="server" meta:resourcekey="btnStamp"
+                        Text="Restamp all mailboxes with this plan" CssClass="Button1"  CommandName="RestampItem" CommandArgument='<%# Eval("MailboxPlanId") %>' OnClientClick="if (confirm('Restamp mailboxes with this plan.\n\nAre you sure you want to restamp the mailboxes ?')) ShowProgressDialog('Stamping mailboxes, this might take a while ...'); else return false;"/>
+				</ItemTemplate>
+			</asp:TemplateField>
+			<asp:TemplateField>
+				<ItemTemplate>
+                        <asp:Button ID="btnStampUnassigned" runat="server" meta:resourcekey="btnStampUnassigned"
+                            Text="Stamp unassigned mailboxes" CssClass="Button1" 
+                            CommandName="StampUnassigned" CommandArgument='<%# Eval("MailboxPlanId") %>'
+                            OnClientClick="if (confirm('Stamp unassigned mailboxes with this mailbox plan.\n\nAre you sure you want to continue with this ?')) ShowProgressDialog('Applying mailbox plans, this might take a while ...'); else return false;" />
+				</ItemTemplate>
+			</asp:TemplateField>
+
 		</Columns>
 	</asp:GridView>
 	<br />
@@ -192,29 +207,5 @@
 
     <br />
 
-    <wsp:CollapsiblePanel id="secTools" runat="server" TargetControlID="Tools" meta:resourcekey="secTools" Text="Tools">
-        </wsp:CollapsiblePanel>
-        <asp:Panel ID="Tools" runat="server" Height="0" style="overflow:hidden;">
-			<table>
-				<tr>
-					<td>
-                        <asp:Button ID="btnStamp" runat="server" meta:resourcekey="btnStamp"
-                        Text="Restamp all mailboxes" CssClass="Button1" OnClick="btnStampClick" OnClientClick="if (confirm('Restamp mailboxes with these plans. \nAre you sure you want to restamp the mailbox plans ?')) ShowProgressDialog('Stamping mailboxes, this might take a while ...'); else return false;"/>
-					</td>
-                    <td>
-                        <asp:TextBox ID="txtStatus" runat="server" CssClass="TextBox400" MaxLength="128" ReadOnly="true"></asp:TextBox>
-                    </td>
-				</tr>
-				<tr>
-					<td>
-                        <asp:Button ID="btnMatchMailboxPlanToUser" runat="server" meta:resourcekey="btnMatchMailboxPlanToUser"
-                            Text="Match Plan to User" CssClass="Button1" 
-                            OnClientClick="if (confirm('Mail enabled users with no mailbox plan assigned will get a matching mailbox plan applied.\nMatching takes place on mailbox size and the MAPI properties.\n\nAre you sure you want to continue with this ?')) ShowProgressDialog('Applying mailbox plans, this might take a while ...'); else return false;" 
-                            onclick="btnMatchMailboxPlanToUser_Click" />
-					</td>
-				</tr>
-			</table>
-			<br />
-		</asp:Panel>
-
+    <asp:TextBox ID="txtStatus" runat="server" CssClass="TextBox400" MaxLength="128" ReadOnly="true"></asp:TextBox>
     
