@@ -201,8 +201,8 @@ namespace WebsitePanel.Providers.HostedSolution
                 addressList, roomList, offlineAddressBook, securityGroup, addressBookPolicy);
         }
 
-		public void SetOrganizationStorageLimits(string organizationDistinguishedName, int issueWarningKB, int prohibitSendKB,
-			int prohibitSendReceiveKB, int keepDeletedItemsDays)
+		public void SetOrganizationStorageLimits(string organizationDistinguishedName, long issueWarningKB, long prohibitSendKB,
+			long prohibitSendReceiveKB, int keepDeletedItemsDays)
 		{
 			SetOrganizationStorageLimitsInternal(organizationDistinguishedName, issueWarningKB, prohibitSendKB,
 				prohibitSendReceiveKB, keepDeletedItemsDays);
@@ -293,7 +293,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
         public void SetMailboxAdvancedSettings(string organizationId, string accountName, bool enablePOP,
             bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync,
-            int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB,
+            long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB,
             int maxReceiveMessageSizeKB)
         {
             SetMailboxAdvancedSettingsInternal(organizationId, accountName, enablePOP, enableIMAP, enableOWA,
@@ -1182,8 +1182,8 @@ namespace WebsitePanel.Providers.HostedSolution
 			return ret;
 		}
 
-		private void SetOrganizationStorageLimitsInternal(string organizationDistinguishedName, int issueWarningKB,
-			int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays)
+		private void SetOrganizationStorageLimitsInternal(string organizationDistinguishedName, long issueWarningKB,
+			long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays)
 		{
 			ExchangeLog.LogStart("SetOrganizationStorageLimitsInternal");
 			ExchangeLog.DebugInfo("Organization Id: {0}", organizationDistinguishedName);
@@ -1752,7 +1752,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			string mailboxDatabase, string offlineAddressBook,string addressBookPolicy,
 			string accountName, bool enablePOP, bool enableIMAP,
 			bool enableOWA, bool enableMAPI, bool enableActiveSync,
-			int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays,
+			long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays,
             int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool IsConsumer)
 		{
 			return CreateMailEnableUserInternal(upn, organizationId, organizationDistinguishedName, accountType,
@@ -1767,7 +1767,7 @@ namespace WebsitePanel.Providers.HostedSolution
             string mailboxDatabase, string offlineAddressBook, string addressBookPolicy,
             string accountName, bool enablePOP, bool enableIMAP,
             bool enableOWA, bool enableMAPI, bool enableActiveSync,
-            int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays,
+            long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays,
             int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool IsConsumer)
         {
 
@@ -2407,8 +2407,8 @@ namespace WebsitePanel.Providers.HostedSolution
 		}
 
         private void SetMailboxAdvancedSettingsInternal(string organizationId, string accountName, bool enablePOP, bool enableIMAP,
-            bool enableOWA, bool enableMAPI, bool enableActiveSync, int issueWarningKB, int prohibitSendKB,
-            int prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB,
+            bool enableOWA, bool enableMAPI, bool enableActiveSync, long issueWarningKB, long prohibitSendKB,
+            long prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB,
             int maxReceiveMessageSizeKB)
         {
             ExchangeLog.LogStart("SetMailboxAdvancedSettingsInternal");
@@ -6532,6 +6532,19 @@ namespace WebsitePanel.Providers.HostedSolution
 				return ret;
 			}
 		}
+
+        internal Unlimited<ByteQuantifiedSize> ConvertKBToUnlimited(long kb)
+        {
+            if (kb == -1)
+                return Unlimited<ByteQuantifiedSize>.UnlimitedValue;
+            else
+            {
+                Unlimited<ByteQuantifiedSize> ret = new Unlimited<ByteQuantifiedSize>();
+                ret.Value = ByteQuantifiedSize.FromKB(Convert.ToUInt64(kb));
+                return ret;
+            }
+        }
+
 
 		internal string ProxyAddressToString(ProxyAddress proxyAddress)
 		{

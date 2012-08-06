@@ -86,9 +86,9 @@ namespace WebsitePanel.Providers.HostedSolution
 		bool enableMAPI;
 		bool enableActiveSync;
 		
-		int issueWarningKB;
-		int prohibitSendKB;
-		int prohibitSendReceiveKB;
+		long issueWarningKB;
+        long prohibitSendKB;
+        long prohibitSendReceiveKB;
 		int keepDeletedItemsDays;
 
 		private string domain;
@@ -328,19 +328,19 @@ namespace WebsitePanel.Providers.HostedSolution
 			set { this.enableActiveSync = value; }
 		}
 
-		public int IssueWarningKB
+		public long IssueWarningKB
 		{
 			get { return this.issueWarningKB; }
 			set { this.issueWarningKB = value; }
 		}
 
-		public int ProhibitSendKB
+		public long ProhibitSendKB
 		{
 			get { return this.prohibitSendKB; }
 			set { this.prohibitSendKB = value; }
 		}
 
-		public int ProhibitSendReceiveKB
+		public long ProhibitSendReceiveKB
 		{
 			get { return this.prohibitSendReceiveKB; }
 			set { this.prohibitSendReceiveKB = value; }

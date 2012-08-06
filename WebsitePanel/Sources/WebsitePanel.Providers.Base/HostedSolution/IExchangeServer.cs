@@ -38,7 +38,7 @@ namespace WebsitePanel.Providers.HostedSolution
                                     string mailboxDatabase, string offlineAddressBook, string addressBookPolicy,
                                     string accountName, bool enablePOP, bool enableIMAP,
                                     bool enableOWA, bool enableMAPI, bool enableActiveSync,
-                                    int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB,
+                                    long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB,
                                     int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool isConsumer);
 
         Organization ExtendToExchangeOrganization(string organizationId, string securityGroup, bool IsConsumer);
@@ -47,7 +47,7 @@ namespace WebsitePanel.Providers.HostedSolution
         Organization CreateOrganizationAddressBookPolicy(string organizationId, string gal, string addressBook, string roomList, string oab);
         void UpdateOrganizationOfflineAddressBook(string id);
         bool DeleteOrganization(string organizationId, string distinguishedName, string globalAddressList, string addressList, string roomList, string offlineAddressBook, string securityGroup, string addressBookPolicy);
-        void SetOrganizationStorageLimits(string organizationDistinguishedName, int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays);
+        void SetOrganizationStorageLimits(string organizationDistinguishedName, long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays);
         ExchangeItemStatistics[] GetMailboxesStatistics(string organizationDistinguishedName);
 
         // Domains
@@ -65,7 +65,7 @@ namespace WebsitePanel.Providers.HostedSolution
         ExchangeMailbox GetMailboxMailFlowSettings(string accountName);
         void SetMailboxMailFlowSettings(string accountName, bool enableForwarding, string forwardingAccountName, bool forwardToBoth, string[] sendOnBehalfAccounts, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication);
         ExchangeMailbox GetMailboxAdvancedSettings(string accountName);
-        void SetMailboxAdvancedSettings(string organizationId, string accountName, bool enablePOP, bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync, int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB);
+        void SetMailboxAdvancedSettings(string organizationId, string accountName, bool enablePOP, bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync, long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB);
         ExchangeEmailAddress[] GetMailboxEmailAddresses(string accountName);
         void SetMailboxEmailAddresses(string accountName, string[] emailAddresses);
         void SetMailboxPrimaryEmailAddress(string accountName, string emailAddress);
