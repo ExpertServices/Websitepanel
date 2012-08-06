@@ -35,6 +35,16 @@
 					ControlToValidate="txtLastName"></asp:RequiredFieldValidator>
 			</td>
 		</tr>
+
+		<tr>
+			<td class="SubHead">
+				<asp:Label ID="lblSubscriberNumber" runat="server" meta:resourcekey="lblSubscriberNumber" Text="Subscriber Number:"></asp:Label>
+			</td>
+			<td class="NormalBold">
+				<asp:TextBox id="txtSubscriberNumber" runat="server" CssClass="NormalTextBox"></asp:TextBox>
+			</td>
+		</tr>
+        
 		<tr>
 			<td class="SubHead">
 				<asp:Label ID="lblEmail" runat="server" meta:resourcekey="lblEmail" Text="E-mail:"></asp:Label>

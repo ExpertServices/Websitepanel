@@ -93,6 +93,7 @@ namespace WebsitePanel.Portal
             // account info
             user.FirstName = txtFirstName.Text;
             user.LastName = txtLastName.Text;
+            user.SubscriberNumber = txtSubscriberNumber.Text;
             user.Email = txtEmail.Text;
             user.SecondaryEmail = txtSecondaryEmail.Text;
             user.HtmlMail = ddlMailFormat.SelectedIndex == 1;

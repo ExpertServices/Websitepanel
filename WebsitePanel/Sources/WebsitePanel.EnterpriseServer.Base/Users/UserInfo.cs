@@ -68,6 +68,7 @@ namespace WebsitePanel.EnterpriseServer
         private bool htmlMail;
         private string companyName;
         private bool ecommerceEnabled;
+        private string subscriberNumber;
 
 
         /// <summary>
@@ -294,6 +295,14 @@ namespace WebsitePanel.EnterpriseServer
             get { return this.ecommerceEnabled; }
             set { this.ecommerceEnabled = value; }
         }
+
+        public string SubscriberNumber
+        {
+            get { return this.subscriberNumber; }
+            set { this.subscriberNumber = value; }
+        }
+
+        
 
         public string AdditionalParams { get; set; }
 

@@ -1063,7 +1063,7 @@ GO
 
 ALTER VIEW [dbo].[UsersDetailed]
 AS
-SELECT     U.UserID, U.RoleID, U.StatusID, U.LoginStatusId, U.FailedLogins, U.OwnerID, U.Created, U.Changed, U.IsDemo, U.Comments, U.IsPeer, U.Username, U.FirstName, U.LastName, U.Email, 
+SELECT     U.UserID, U.RoleID, U.StatusID, U.LoginStatusId, U.SubscriberNumber, U.FailedLogins, U.OwnerID, U.Created, U.Changed, U.IsDemo, U.Comments, U.IsPeer, U.Username, U.FirstName, U.LastName, U.Email, 
                       U.CompanyName, U.FirstName + ' ' + U.LastName AS FullName, UP.Username AS OwnerUsername, UP.FirstName AS OwnerFirstName, 
                       UP.LastName AS OwnerLastName, UP.RoleID AS OwnerRoleID, UP.FirstName + ' ' + UP.LastName AS OwnerFullName, UP.Email AS OwnerEmail, UP.RoleID AS Expr1,
                           (SELECT     COUNT(PackageID) AS Expr1
@@ -1821,6 +1821,15 @@ ALTER TABLE [dbo].[ExchangeAccounts] ADD [SubscriberNumber] [nvarchar] (32) COLL
 END
 GO
 
+
+/****** Object:  Table [dbo].[ExchangeAccounts]    Extend Exchange Accounts with SubscriberNumber ******/
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='Users' AND COLS.name='SubscriberNumber')
+BEGIN
+ALTER TABLE [dbo].[Users] ADD [SubscriberNumber] [nvarchar] (32) COLLATE Latin1_General_CI_AS NULL
+END
+GO
+
+
 /****** Object:  Table [dbo].[ExchangeOrganizations]    ******/
 ALTER TABLE [dbo].[ExchangeOrganizations] ALTER COLUMN	[OrganizationID] [nvarchar](128) COLLATE Latin1_General_CI_AS NOT NULL
 GO
@@ -2429,6 +2438,7 @@ AS
 		U.UserID,
 		U.RoleID,
 		U.StatusID,
+		U.SubscriberNumber,
 		U.LoginStatusId,
 		U.FailedLogins,
 		U.OwnerID,
@@ -4281,6 +4291,7 @@ ALTER PROCEDURE [dbo].[AddUser]
 	@OwnerID int,
 	@RoleID int,
 	@StatusID int,
+	@SubscriberNumber nvarchar(32),
 	@LoginStatusID int,
 	@IsDemo bit,
 	@IsPeer bit,
@@ -4325,6 +4336,7 @@ INSERT INTO Users
 	OwnerID,
 	RoleID,
 	StatusID,
+	SubscriberNumber,
 	LoginStatusID,
 	Created,
 	Changed,
@@ -4355,6 +4367,7 @@ VALUES
 	@OwnerID,
 	@RoleID,
 	@StatusID,
+	@SubscriberNumber,
 	@LoginStatusID,
 	GetDate(),
 	GetDate(),
@@ -4403,6 +4416,7 @@ AS
 		U.UserID,
 		U.RoleID,
 		U.StatusID,
+		U.SubscriberNumber,
 		U.LoginStatusId,
 		U.FailedLogins,
 		U.OwnerID,
@@ -4459,6 +4473,7 @@ AS
 		U.UserID,
 		U.RoleID,
 		U.StatusID,
+		U.SubscriberNumber,
 		U.LoginStatusId,
 		U.FailedLogins,
 		U.OwnerID,
@@ -4513,6 +4528,7 @@ AS
 		U.UserID,
 		U.RoleID,
 		U.StatusID,
+		U.SubscriberNumber,
 		U.LoginStatusId,
 		U.FailedLogins,
 		U.OwnerID,
@@ -4564,6 +4580,7 @@ AS
 		U.UserID,
 		U.RoleID,
 		U.StatusID,
+		U.SubscriberNumber,
 		U.LoginStatusId,
 		U.FailedLogins,
 		U.OwnerID,
@@ -4659,6 +4676,7 @@ SELECT
 	U.UserID,
 	U.RoleID,
 	U.StatusID,
+	U.SubscriberNumber,
 	U.LoginStatusId,
 	U.FailedLogins,
 	U.OwnerID,
@@ -4710,6 +4728,7 @@ SELECT
 	U.UserID,
 	U.RoleID,
 	U.StatusID,
+	U.SubscriberNumber,
 	U.LoginStatusId,
 	U.FailedLogins,
 	U.OwnerID,
@@ -4756,6 +4775,7 @@ SELECT
 	U.UserID,
 	U.RoleID,
 	U.StatusID,
+	U.SubscriberNumber,
 	U.LoginStatusId,
 	U.FailedLogins,
 	U.OwnerID,
@@ -4807,6 +4827,7 @@ SELECT
 	U.UserID,
 	U.RoleID,
 	U.StatusID,
+	U.SubscriberNumber,
 	U.LoginStatusId,
 	U.FailedLogins,
 	U.OwnerID,
@@ -4901,6 +4922,7 @@ SELECT
 	U.UserID,
 	U.RoleID,
 	U.StatusID,
+	U.SubscriberNumber,
 	U.LoginStatusId,
 	U.FailedLogins,
 	U.OwnerID,
@@ -4947,6 +4969,7 @@ ALTER PROCEDURE [dbo].[UpdateUser]
 	@UserID int,
 	@RoleID int,
 	@StatusID int,
+	@SubscriberNumber nvarchar(32),
 	@LoginStatusId int,
 	@IsDemo bit,
 	@IsPeer bit,
@@ -4987,6 +5010,7 @@ AS
 	UPDATE Users SET 
 		RoleID = @RoleID,
 		StatusID = @StatusID,
+		SubscriberNumber = @SubscriberNumber,
 		LoginStatusId = @LoginStatusId,
 		Changed = GetDate(),
 		IsDemo = @IsDemo,
