@@ -199,7 +199,7 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@Username", username));
         }
 
-        public static int AddUser(int actorId, int ownerId, int roleId, int statusId, int loginStatusId, bool isDemo,
+        public static int AddUser(int actorId, int ownerId, int roleId, int statusId, string subscriberNumber, int loginStatusId, bool isDemo,
             bool isPeer, string comments, string username, string password,
             string firstName, string lastName, string email, string secondaryEmail,
             string address, string city, string country, string state, string zip,
@@ -217,6 +217,7 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@OwnerID", ownerId),
                 new SqlParameter("@RoleID", roleId),
                 new SqlParameter("@StatusId", statusId),
+                new SqlParameter("@SubscriberNumber", subscriberNumber),
                 new SqlParameter("@LoginStatusId", loginStatusId),
                 new SqlParameter("@IsDemo", isDemo),
                 new SqlParameter("@IsPeer", isPeer),
@@ -243,7 +244,7 @@ namespace WebsitePanel.EnterpriseServer
             return Convert.ToInt32(prmUserId.Value);
         }
 
-        public static void UpdateUser(int actorId, int userId, int roleId, int statusId, int loginStatusId, bool isDemo,
+        public static void UpdateUser(int actorId, int userId, int roleId, int statusId, string subscriberNumber, int loginStatusId, bool isDemo,
             bool isPeer, string comments, string firstName, string lastName, string email, string secondaryEmail,
             string address, string city, string country, string state, string zip,
             string primaryPhone, string secondaryPhone, string fax, string instantMessenger, bool htmlMail,
@@ -255,6 +256,7 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@ActorId", actorId),
                 new SqlParameter("@RoleID", roleId),
                 new SqlParameter("@StatusId", statusId),
+                new SqlParameter("@SubscriberNumber", subscriberNumber),
                 new SqlParameter("@LoginStatusId", loginStatusId),
                 new SqlParameter("@UserID", userId),
                 new SqlParameter("@IsDemo", isDemo),

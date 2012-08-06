@@ -77,6 +77,7 @@ namespace WebsitePanel.Portal
                     // account info
                     txtFirstName.Text = Server.HtmlDecode(user.FirstName);
                     txtLastName.Text = Server.HtmlDecode(user.LastName);
+                    txtSubscriberNumber.Text = Server.HtmlDecode(user.SubscriberNumber);
                     txtEmail.Text = user.Email;
                     txtSecondaryEmail.Text = user.SecondaryEmail;
                     ddlMailFormat.SelectedIndex = user.HtmlMail ? 1 : 0;
@@ -128,6 +129,7 @@ namespace WebsitePanel.Portal
                 // account info
                 user.FirstName = Server.HtmlEncode(txtFirstName.Text);
                 user.LastName = Server.HtmlEncode(txtLastName.Text);
+                user.SubscriberNumber = Server.HtmlEncode(txtSubscriberNumber.Text);
                 user.Email = txtEmail.Text;
                 user.SecondaryEmail = txtSecondaryEmail.Text;
                 user.HtmlMail = ddlMailFormat.SelectedIndex == 1;
