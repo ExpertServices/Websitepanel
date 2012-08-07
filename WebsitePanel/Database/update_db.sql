@@ -1061,17 +1061,6 @@ UPDATE [dbo].[ResourceGroups] SET ShowGroup=1
 GO
 
 
-ALTER VIEW [dbo].[UsersDetailed]
-AS
-SELECT     U.UserID, U.RoleID, U.StatusID, U.LoginStatusId, U.SubscriberNumber, U.FailedLogins, U.OwnerID, U.Created, U.Changed, U.IsDemo, U.Comments, U.IsPeer, U.Username, U.FirstName, U.LastName, U.Email, 
-                      U.CompanyName, U.FirstName + ' ' + U.LastName AS FullName, UP.Username AS OwnerUsername, UP.FirstName AS OwnerFirstName, 
-                      UP.LastName AS OwnerLastName, UP.RoleID AS OwnerRoleID, UP.FirstName + ' ' + UP.LastName AS OwnerFullName, UP.Email AS OwnerEmail, UP.RoleID AS Expr1,
-                          (SELECT     COUNT(PackageID) AS Expr1
-                            FROM          dbo.Packages AS P
-                            WHERE      (UserID = U.UserID)) AS PackagesNumber, U.EcommerceEnabled
-FROM         dbo.Users AS U LEFT OUTER JOIN
-                      dbo.Users AS UP ON U.OwnerID = UP.UserID
-GO
 
 
 ALTER PROCEDURE [dbo].[AddDnsRecord]
@@ -1830,6 +1819,19 @@ END
 GO
 
 
+ALTER VIEW [dbo].[UsersDetailed]
+AS
+SELECT     U.UserID, U.RoleID, U.StatusID, U.LoginStatusId, U.SubscriberNumber, U.FailedLogins, U.OwnerID, U.Created, U.Changed, U.IsDemo, U.Comments, U.IsPeer, U.Username, U.FirstName, U.LastName, U.Email, 
+                      U.CompanyName, U.FirstName + ' ' + U.LastName AS FullName, UP.Username AS OwnerUsername, UP.FirstName AS OwnerFirstName, 
+                      UP.LastName AS OwnerLastName, UP.RoleID AS OwnerRoleID, UP.FirstName + ' ' + UP.LastName AS OwnerFullName, UP.Email AS OwnerEmail, UP.RoleID AS Expr1,
+                          (SELECT     COUNT(PackageID) AS Expr1
+                            FROM          dbo.Packages AS P
+                            WHERE      (UserID = U.UserID)) AS PackagesNumber, U.EcommerceEnabled
+FROM         dbo.Users AS U LEFT OUTER JOIN
+                      dbo.Users AS UP ON U.OwnerID = UP.UserID
+GO
+
+
 /****** Object:  Table [dbo].[ExchangeOrganizations]    ******/
 ALTER TABLE [dbo].[ExchangeOrganizations] ALTER COLUMN	[OrganizationID] [nvarchar](128) COLLATE Latin1_General_CI_AS NOT NULL
 GO
@@ -2475,6 +2477,54 @@ END
 GO
 
 
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetUserByExchangeOrganizationIdInternally]
+(
+	@ItemID int
+)
+AS
+	SELECT
+		U.UserID,
+		U.RoleID,
+		U.StatusID,
+		U.SubscriberNumber,
+		U.LoginStatusId,
+		U.FailedLogins,
+		U.OwnerID,
+		U.Created,
+		U.Changed,
+		U.IsDemo,
+		U.Comments,
+		U.IsPeer,
+		U.Username,
+		U.Password,
+		U.FirstName,
+		U.LastName,
+		U.Email,
+		U.SecondaryEmail,
+		U.Address,
+		U.City,
+		U.State,
+		U.Country,
+		U.Zip,
+		U.PrimaryPhone,
+		U.SecondaryPhone,
+		U.Fax,
+		U.InstantMessenger,
+		U.HtmlMail,
+		U.CompanyName,
+		U.EcommerceEnabled,
+		U.[AdditionalParams]
+	FROM Users AS U
+	WHERE U.UserID IN (SELECT UserID FROM Packages WHERE PackageID IN (
+	SELECT PackageID FROM ServiceItems WHERE ItemID = @ItemID))
+	
+RETURN
+GO
 
 
 
