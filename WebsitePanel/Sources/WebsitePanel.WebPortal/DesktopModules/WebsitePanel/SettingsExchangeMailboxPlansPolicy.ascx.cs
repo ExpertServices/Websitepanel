@@ -419,107 +419,113 @@ namespace WebsitePanel.Portal
             btnUpdateMailboxPlan.Enabled = (string.IsNullOrEmpty(txtMailboxPlan.Text)) ? false : true;
         }
 
+
         private void RestampMailboxes(int mailboxPlanId)
         {
-            txtStatus.Visible = true;
+            UserInfo[] UsersInfo = ES.Services.Users.GetUsers(PanelSecurity.SelectedUserId, true);
 
             try
             {
-                Providers.HostedSolution.Organization[] orgs = null;
-
-                if (PanelSecurity.SelectedUserId != 1)
+                foreach (UserInfo ui in UsersInfo)
                 {
-                    PackageInfo[] Packages = ES.Services.Packages.GetPackages(PanelSecurity.SelectedUserId);
+                    PackageInfo[] Packages = ES.Services.Packages.GetPackages(ui.UserId);
 
                     if ((Packages != null) & (Packages.GetLength(0) > 0))
                     {
-                        orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Packages[0].PackageId, false);
-                    }
-                }
-                else
-                {
-                    orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(1, false);
-                }
-
-                if ((orgs != null) & (orgs.GetLength(0) > 0))
-                {
-                    ExchangeAccount[] Accounts = ES.Services.ExchangeServer.GetExchangeAccountByMailboxPlanId(0, mailboxPlanId);
-
-                    foreach (ExchangeAccount a in Accounts)
-                    {
-                        txtStatus.Text = "Completed";
-                        int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(a.ItemId, a.AccountId, mailboxPlanId);
-                        if (result < 0)
+                        foreach (PackageInfo Package in Packages)
                         {
-                            BindMailboxPlans();
-                            txtStatus.Text = "Error: " + a.AccountName;
-                            messageBox.ShowErrorMessage("EXCHANGE_STAMPMAILBOXES");
-                            return;
-                        }
-                    }
-                }
+                            Providers.HostedSolution.Organization[] orgs = null;
 
-                messageBox.ShowSuccessMessage("EXCHANGE_STAMPMAILBOXES");
-            }
-            catch (Exception ex)
-            {
-                messageBox.ShowErrorMessage("EXCHANGE_STAMPMAILBOXES",ex);
-            }
+                            orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Package.PackageId, false);
 
-            BindMailboxPlans();
-        }
+                            if ((orgs != null) & (orgs.GetLength(0) > 0))
+                            {
+                                foreach (Organization org in orgs)
+                                {
+                                    if (!string.IsNullOrEmpty(org.GlobalAddressList))
+                                    {
+                                        ExchangeAccount[] Accounts = ES.Services.ExchangeServer.GetExchangeAccountByMailboxPlanId(org.Id, mailboxPlanId);
 
-
-        private void StampUnAssigned(int mailboxPlanId)
-        {
-
-            txtStatus.Visible = true;
-
-            try
-            {
-                Providers.HostedSolution.Organization[] orgs = null;
-
-                if (PanelSecurity.SelectedUserId != 1)
-                {
-                    PackageInfo[] Packages = ES.Services.Packages.GetPackages(PanelSecurity.SelectedUserId);
-
-                    if ((Packages != null) & (Packages.GetLength(0) > 0))
-                    {
-                        orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Packages[0].PackageId, false);
-                    }
-                }
-                else
-                {
-                    orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(1, false);
-                }
-
-                if ((orgs != null) & (orgs.GetLength(0) > 0))
-                {
-                    ExchangeAccount[] Accounts = ES.Services.ExchangeServer.GetExchangeAccountByMailboxPlanId(PanelRequest.ItemID, -1);
-
-                    foreach (ExchangeAccount a in Accounts)
-                    {
-                        txtStatus.Text = "Completed";
-                        int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(PanelRequest.ItemID, a.AccountId, mailboxPlanId);
-                        if (result < 0)
-                        {
-                            BindMailboxPlans();
-                            txtStatus.Text = "Error: " + a.AccountName;
-                            messageBox.ShowErrorMessage("EXCHANGE_FAILED_TO_STAMP");
-                            return;
+                                        foreach (ExchangeAccount a in Accounts)
+                                        {
+                                            txtStatus.Text = "Completed";
+                                            int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(org.Id, a.AccountId, mailboxPlanId);
+                                            if (result < 0)
+                                            {
+                                                BindMailboxPlans();
+                                                txtStatus.Text = "Error: " + a.AccountName;
+                                                messageBox.ShowErrorMessage("EXCHANGE_STAMPMAILBOXES");
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
                 messageBox.ShowSuccessMessage("EXCHANGE_STAMPMAILBOXES");
-
             }
             catch (Exception ex)
             {
                 messageBox.ShowErrorMessage("EXCHANGE_FAILED_TO_STAMP", ex);
             }
-
-            BindMailboxPlans();
         }
+
+
+
+        private void StampUnAssigned(int mailboxPlanId)
+        {
+            UserInfo[] UsersInfo = ES.Services.Users.GetUsers(PanelSecurity.SelectedUserId, true);
+
+            try
+            {
+                foreach (UserInfo ui in UsersInfo)
+                {
+                    PackageInfo[] Packages = ES.Services.Packages.GetPackages(ui.UserId);
+
+                    if ((Packages != null) & (Packages.GetLength(0) > 0))
+                    {
+                        foreach (PackageInfo Package in Packages)
+                        {
+                            Providers.HostedSolution.Organization[] orgs = null;
+
+                            orgs = ES.Services.ExchangeServer.GetExchangeOrganizations(Package.PackageId, false);
+
+                            if ((orgs != null) & (orgs.GetLength(0) > 0))
+                            {
+                                foreach (Organization org in orgs)
+                                {
+                                    if (!string.IsNullOrEmpty(org.GlobalAddressList))
+                                    {
+                                        ExchangeAccount[] Accounts = ES.Services.ExchangeServer.GetExchangeAccountByMailboxPlanId(org.Id, -1);
+
+                                        foreach (ExchangeAccount a in Accounts)
+                                        {
+                                            txtStatus.Text = "Completed";
+                                            int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(org.Id, a.AccountId, mailboxPlanId);
+                                            if (result < 0)
+                                            {
+                                                BindMailboxPlans();
+                                                txtStatus.Text = "Error: " + a.AccountName;
+                                                messageBox.ShowErrorMessage("EXCHANGE_FAILED_TO_STAMP");
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                messageBox.ShowSuccessMessage("EXCHANGE_STAMPMAILBOXES");
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage("EXCHANGE_FAILED_TO_STAMP", ex);
+            }
+        }
+
     }
 
 }
