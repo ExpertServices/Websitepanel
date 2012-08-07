@@ -470,6 +470,8 @@ namespace WebsitePanel.Portal
             {
                 messageBox.ShowErrorMessage("EXCHANGE_FAILED_TO_STAMP", ex);
             }
+
+            BindMailboxPlans();
         }
 
 
@@ -524,6 +526,8 @@ namespace WebsitePanel.Portal
             {
                 messageBox.ShowErrorMessage("EXCHANGE_FAILED_TO_STAMP", ex);
             }
+
+            BindMailboxPlans();
         }
 
     }
