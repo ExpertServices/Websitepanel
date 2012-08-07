@@ -1061,6 +1061,14 @@ UPDATE [dbo].[ResourceGroups] SET ShowGroup=1
 GO
 
 
+/****** Object:  Table [dbo].[ExchangeAccounts]    Extend Exchange Accounts with SubscriberNumber ******/
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='Users' AND COLS.name='SubscriberNumber')
+BEGIN
+ALTER TABLE [dbo].[Users] ADD [SubscriberNumber] [nvarchar] (32) COLLATE Latin1_General_CI_AS NULL
+END
+GO
+
+
 ALTER VIEW [dbo].[UsersDetailed]
 AS
 SELECT     U.UserID, U.RoleID, U.StatusID, U.LoginStatusId, U.SubscriberNumber, U.FailedLogins, U.OwnerID, U.Created, U.Changed, U.IsDemo, U.Comments, U.IsPeer, U.Username, U.FirstName, U.LastName, U.Email, 
@@ -1822,14 +1830,6 @@ END
 GO
 
 
-/****** Object:  Table [dbo].[ExchangeAccounts]    Extend Exchange Accounts with SubscriberNumber ******/
-IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='Users' AND COLS.name='SubscriberNumber')
-BEGIN
-ALTER TABLE [dbo].[Users] ADD [SubscriberNumber] [nvarchar] (32) COLLATE Latin1_General_CI_AS NULL
-END
-GO
-
-
 /****** Object:  Table [dbo].[ExchangeOrganizations]    ******/
 ALTER TABLE [dbo].[ExchangeOrganizations] ALTER COLUMN	[OrganizationID] [nvarchar](128) COLLATE Latin1_General_CI_AS NOT NULL
 GO
@@ -2474,6 +2474,59 @@ RETURN'
 END
 GO
 
+
+
+
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetUserByExchangeOrganizationIdInternally]
+(
+	@ItemID int
+)
+AS
+	SELECT
+		U.UserID,
+		U.RoleID,
+		U.StatusID,
+		U.SubscriberNumber,
+		U.LoginStatusId,
+		U.FailedLogins,
+		U.OwnerID,
+		U.Created,
+		U.Changed,
+		U.IsDemo,
+		U.Comments,
+		U.IsPeer,
+		U.Username,
+		U.Password,
+		U.FirstName,
+		U.LastName,
+		U.Email,
+		U.SecondaryEmail,
+		U.Address,
+		U.City,
+		U.State,
+		U.Country,
+		U.Zip,
+		U.PrimaryPhone,
+		U.SecondaryPhone,
+		U.Fax,
+		U.InstantMessenger,
+		U.HtmlMail,
+		U.CompanyName,
+		U.EcommerceEnabled,
+		U.[AdditionalParams]
+	FROM Users AS U
+	WHERE U.UserID IN (SELECT UserID FROM Packages WHERE PackageID IN (
+	SELECT PackageID FROM ServiceItems WHERE ItemID = @ItemID))
+	
+RETURN
+
+GO
 
 
 
