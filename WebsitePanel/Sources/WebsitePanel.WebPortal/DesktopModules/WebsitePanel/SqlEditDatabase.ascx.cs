@@ -125,6 +125,19 @@ namespace WebsitePanel.Portal
 
                         if (item != null)
                         {
+                            
+                            if (!string.IsNullOrEmpty(item.ExternalServerName))
+                            {
+                                lblDBExternalServer.Visible =litDBExternalServer.Visible = true;
+                                litDBExternalServer.Text = item.ExternalServerName;
+                            }
+
+                            if (!string.IsNullOrEmpty(item.InternalServerName))
+                            {
+                                lblDBInternalServer.Visible = litDBInternalServer.Visible = true;
+                                litDBInternalServer.Text = item.InternalServerName;
+                            }
+
                             // save package info
                             ViewState["PackageId"] = item.PackageId;
                             usernameControl.SetPackagePolicy(item.PackageId, policyName, "DatabaseNamePolicy");
@@ -135,6 +148,9 @@ namespace WebsitePanel.Portal
                     }
                     else
                     {
+                        lblDBExternalServer.Visible = lblDBInternalServer.Visible = false;
+                        litDBExternalServer.Visible = litDBInternalServer.Visible = false;
+
                         // new item
                         ViewState["PackageId"] = PanelSecurity.PackageId;
                         usernameControl.SetPackagePolicy(PanelSecurity.PackageId, policyName, "DatabaseNamePolicy");
@@ -149,29 +165,11 @@ namespace WebsitePanel.Portal
                 if (!IsPostBack)
                 {
                     // bind item to controls
-                    string myintserveraddress = "";
-                    string myextserveraddress = "";
                     if (item != null)
                     {
-                        
-                        string[] mysettings = ES.Services.Servers.GetServiceSettings(item.ServiceId);
-                        foreach (string setting in mysettings)
-                        {
-                             string[] pair = setting.Split('=');
-                             if(String.Equals(pair[0], "ExternalAddress", StringComparison.InvariantCultureIgnoreCase))
-                                 myextserveraddress = pair[1];
-                             if (String.Equals(pair[0], "InternalAddress", StringComparison.InvariantCultureIgnoreCase))
-                                 myintserveraddress = pair[1];
-                            
-                        }
-                        
                         // bind item to controls
                         usernameControl.Text = item.Name;
                         usernameControl.EditMode = true;
-                        usernameControl3.Text = myextserveraddress;
-                        usernameControl3.EditMode = true;
-                        usernameControl2.Text = myintserveraddress;
-                        usernameControl2.EditMode = true;
                         foreach (string user in item.Users)
                         {
                             ListItem li = dlUsers.Items.FindByValue(user);
