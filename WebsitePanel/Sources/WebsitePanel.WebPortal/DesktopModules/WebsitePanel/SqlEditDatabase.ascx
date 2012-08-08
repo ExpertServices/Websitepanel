@@ -23,6 +23,16 @@ function confirmation()
 			<td class="NormalBold">
                 <uc2:UsernameControl ID="usernameControl" runat="server" />
 			</td>
+		</tr>		<tr>
+			<td class="SubHead" style="width: 150px;"><asp:Label ID="lblDBInternalServer" runat="server" meta:resourcekey="lblDBInternalServer" Text="Internal Server:"></asp:Label></td>
+			<td class="NormalBold">
+                <uc2:UsernameControl ID="usernameControl2" runat="server" />
+			</td>
+		</tr></tr>		<tr>
+			<td class="SubHead" style="width: 150px;"><asp:Label ID="lblDBExternalServer" runat="server" meta:resourcekey="lblDBExternalServer" Text="External Server:"></asp:Label></td>
+			<td class="NormalBold">
+                <uc2:UsernameControl ID="usernameControl3" runat="server" />
+			</td>
 		</tr>
 	</table>
 	<br />
@@ -33,7 +43,7 @@ function confirmation()
     <asp:Panel ID="UsersPanel" runat="server" Height="0" style="overflow:hidden;">
 	    <table cellspacing="0" cellpadding="3" width="100%">
 		    <tr>
-			    <td colspan="2">
+			    <td>
 				    <asp:CheckBoxList ID="dlUsers" runat="server" CssClass="NormalBold" DataTextField="Name" DataValueField="Name"
 					    RepeatColumns="2" CellPadding="3"></asp:CheckBoxList>
 			    </td>
