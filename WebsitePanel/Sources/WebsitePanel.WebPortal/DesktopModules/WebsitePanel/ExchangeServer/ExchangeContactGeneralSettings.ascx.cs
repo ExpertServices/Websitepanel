@@ -64,7 +64,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 ExchangeContact contact = ES.Services.ExchangeServer.GetContactGeneralSettings(PanelRequest.ItemID,
                     PanelRequest.AccountID);
 
-                litDisplayName.Text = AntiXss.HtmlEncode(contact.DisplayName);
+                litDisplayName.Text = Microsoft.Security.Application.Encoder.HtmlEncode(contact.DisplayName);
 
                 // bind form
                 txtDisplayName.Text = contact.DisplayName;
@@ -146,7 +146,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-                litDisplayName.Text = AntiXss.HtmlEncode(txtDisplayName.Text);
+                litDisplayName.Text = Microsoft.Security.Application.Encoder.HtmlEncode(txtDisplayName.Text);
 
                 messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_CONTACT_SETTINGS");
             }

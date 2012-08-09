@@ -52,7 +52,7 @@ namespace WebsitePanel.Portal
             DataSet dsUsers = ES.Services.Users.GetUsersSummary(PanelSecurity.SelectedUserId);
 
             // all customers
-			lnkAllCustomers.Text = AntiXss.HtmlEncode(String.Format(GetLocalizedString("AllCustomers.Text"),
+			lnkAllCustomers.Text = Microsoft.Security.Application.Encoder.HtmlEncode(String.Format(GetLocalizedString("AllCustomers.Text"),
 				dsUsers.Tables[0].Rows[0]["UsersNumber"]));
 
             // by status

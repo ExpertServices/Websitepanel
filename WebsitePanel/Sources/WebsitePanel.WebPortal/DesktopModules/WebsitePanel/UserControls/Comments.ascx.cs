@@ -66,8 +66,8 @@ namespace WebsitePanel.Portal
             if (!String.IsNullOrEmpty(Comments))
             {
                 // escape symbols
-				imgView.AlternateText = Comments;// Comments.Replace("\n", "<br/>").Replace("\r", "");//.Replace(" ", "&nbsp;");
-				imgView.ToolTip = Comments;
+                imgView.AlternateText = Server.HtmlDecode(Comments);// Comments.Replace("\n", "<br/>").Replace("\r", "");//.Replace(" ", "&nbsp;");
+				imgView.ToolTip = Server.HtmlDecode(Comments);
                     //.Replace("\n", "<br/>");
             }
             else

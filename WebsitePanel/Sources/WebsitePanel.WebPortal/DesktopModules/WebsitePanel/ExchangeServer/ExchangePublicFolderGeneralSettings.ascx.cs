@@ -120,7 +120,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 string origName = litDisplayName.Text;
                 origName = origName.Substring(0, origName.LastIndexOf("\\"));
 
-                litDisplayName.Text = AntiXss.HtmlEncode(origName + txtName.Text);
+                litDisplayName.Text = Microsoft.Security.Application.Encoder.HtmlEncode(origName + txtName.Text);
 
 				BindSettings();
             }

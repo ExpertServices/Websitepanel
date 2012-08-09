@@ -151,7 +151,7 @@ namespace WebsitePanel.Portal
 					// The view does not provide ability to set and get parameters.
 					return null;
 				}
-				view.ID = AntiXss.HtmlEncode(taskId);
+				view.ID = Microsoft.Security.Application.Encoder.HtmlEncode(taskId);
 				view.Visible = visible;
 				view.EnableTheming = true;
 				this.TaskParametersPlaceHolder.Controls.Add(view);

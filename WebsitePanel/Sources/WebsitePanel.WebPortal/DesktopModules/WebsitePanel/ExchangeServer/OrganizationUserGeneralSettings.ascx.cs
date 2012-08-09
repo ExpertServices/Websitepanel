@@ -70,7 +70,7 @@ namespace WebsitePanel.Portal.HostedSolution
                 OrganizationUser user = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID,
                     PanelRequest.AccountID);
 
-                litDisplayName.Text = AntiXss.HtmlEncode(user.DisplayName);
+                litDisplayName.Text = Microsoft.Security.Application.Encoder.HtmlEncode(user.DisplayName);
 
                 lblUserDomainName.Text = user.DomainUserName;
 

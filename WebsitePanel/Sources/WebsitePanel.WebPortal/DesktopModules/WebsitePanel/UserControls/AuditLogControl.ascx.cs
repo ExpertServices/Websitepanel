@@ -185,9 +185,9 @@ namespace WebsitePanel.Portal.UserControls
 					GetAuditLogSourceName((string)dr["SourceName"]));
                 // Task
 				sb.AppendFormat("\"{0}\",", 
-					AntiXss.HtmlEncode(GetAuditLogTaskName((string)dr["SourceName"], (string)dr["TaskName"])));
+					Microsoft.Security.Application.Encoder.HtmlEncode(GetAuditLogTaskName((string)dr["SourceName"], (string)dr["TaskName"])));
 				// Item-Name
-                sb.AppendFormat("\"{0}\",", AntiXss.HtmlEncode(dr["ItemName"].ToString()));
+                sb.AppendFormat("\"{0}\",", Microsoft.Security.Application.Encoder.HtmlEncode(dr["ItemName"].ToString()));
 				// Execution-Log
 				string executionLog = FormatPlainTextExecutionLog(
 					dr["ExecutionLog"].ToString(), DateTime.Parse(dr["StartDate"].ToString()));

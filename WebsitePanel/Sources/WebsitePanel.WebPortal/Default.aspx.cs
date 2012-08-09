@@ -387,7 +387,7 @@ namespace WebsitePanel.WebPortal
         {
             Label lbl = new Label();
             lbl.Text =
-                AntiXss.HtmlEncode("<div style=\"height:300px;overflow:auto;\">" + message.Replace("\n", "<br>") +
+                Microsoft.Security.Application.Encoder.HtmlEncode("<div style=\"height:300px;overflow:auto;\">" + message.Replace("\n", "<br>") +
                                    "</div>");
             lbl.ForeColor = Color.Red;
             lbl.Font.Bold = true;

@@ -264,17 +264,17 @@ namespace WebsitePanel.Portal.VPSForPC
 		{
 			// general
 			litHostname.Text = txtVmName.Text.Trim();
-			//            litHostname.Text =  AntiXss.HtmlEncode(String.Format("{0}.{1}", txtHostname.Text.Trim(), txtDomain.Text.Trim()));
+			//            litHostname.Text =  Microsoft.Security.Application.Encoder.HtmlEncode(String.Format("{0}.{1}", txtHostname.Text.Trim(), txtDomain.Text.Trim()));
 			litOperatingSystem.Text = listOperatingSystems.SelectedItem.Text;
 
-			litSummaryEmail.Text = AntiXss.HtmlEncode(txtSummaryEmail.Text.Trim());
+			litSummaryEmail.Text = Microsoft.Security.Application.Encoder.HtmlEncode(txtSummaryEmail.Text.Trim());
 			SummSummaryEmailRow.Visible = chkSendSummary.Checked;
 
 			// config
-			litCpu.Text = AntiXss.HtmlEncode(ddlCpu.SelectedValue);
-			litRam.Text = AntiXss.HtmlEncode(txtRam.Text.Trim());
-			litHdd.Text = AntiXss.HtmlEncode(txtHdd.Text.Trim());
-			//litSnapshots.Text = AntiXss.HtmlEncode(txtSnapshots.Text.Trim());
+			litCpu.Text = Microsoft.Security.Application.Encoder.HtmlEncode(ddlCpu.SelectedValue);
+			litRam.Text = Microsoft.Security.Application.Encoder.HtmlEncode(txtRam.Text.Trim());
+			litHdd.Text = Microsoft.Security.Application.Encoder.HtmlEncode(txtHdd.Text.Trim());
+			//litSnapshots.Text = Microsoft.Security.Application.Encoder.HtmlEncode(txtSnapshots.Text.Trim());
 			//optionDvdInstalled.Value = chkDvdInstalled.Checked;
 			//optionBootFromCd.Value = chkBootFromCd.Checked;
 			//optionNumLock.Value = chkNumLock.Checked;
