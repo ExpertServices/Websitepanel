@@ -136,9 +136,5 @@
     <value>Users</value>
   </data>
     <data name="lblDBInternalServer.Text" xml:space="preserve">
-    <value>Internal DB Server:</value>
-  </data>
-  <data name="lblDBExternalServer.Text" xml:space="preserve">
-    <value>External DB Server:</value>
   </data>
 </root>

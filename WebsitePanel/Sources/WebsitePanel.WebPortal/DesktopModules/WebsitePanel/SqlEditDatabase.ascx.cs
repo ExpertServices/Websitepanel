@@ -170,6 +170,7 @@ namespace WebsitePanel.Portal
                         // bind item to controls
                         usernameControl.Text = item.Name;
                         usernameControl.EditMode = true;
+
                         foreach (string user in item.Users)
                         {
                             ListItem li = dlUsers.Items.FindByValue(user);
