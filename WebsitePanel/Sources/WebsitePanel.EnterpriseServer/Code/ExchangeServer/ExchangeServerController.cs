@@ -273,19 +273,22 @@ namespace WebsitePanel.EnterpriseServer
 
                 int exchangeServiceId = PackageController.GetPackageServiceId(org.PackageId, ResourceGroups.Exchange);
 
-                ServiceProvider exchange = GetServiceProvider(exchangeServiceId, org.ServiceId);
-                
-				ServiceProviderItemDiskSpace[] itemsDiskspace = exchange.GetServiceItemsDiskSpace(new SoapServiceProviderItem[] { soapOrg });
+                if (exchangeServiceId != 0)
+                {
+                    ServiceProvider exchange = GetServiceProvider(exchangeServiceId, org.ServiceId);
 
-				
-                if (itemsDiskspace != null && itemsDiskspace.Length > 0)
-				{
-					// set disk space
-					org.DiskSpace = (int)Math.Round(((float)itemsDiskspace[0].DiskSpace / 1024 / 1024));
+                    ServiceProviderItemDiskSpace[] itemsDiskspace = exchange.GetServiceItemsDiskSpace(new SoapServiceProviderItem[] { soapOrg });
 
-					// save organization
-					UpdateOrganization(org);
-				}
+
+                    if (itemsDiskspace != null && itemsDiskspace.Length > 0)
+                    {
+                        // set disk space
+                        org.DiskSpace = (int)Math.Round(((float)itemsDiskspace[0].DiskSpace / 1024 / 1024));
+
+                        // save organization
+                        UpdateOrganization(org);
+                    }
+                }
 			}
 			catch (Exception ex)
 			{

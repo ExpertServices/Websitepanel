@@ -487,10 +487,13 @@ namespace WebsitePanel.Providers.HostedSolution
 
                     string addressbookPolicy = ObjToString(GetPSObjectProperty(result[0], "AddressBookPolicy"));
 
+                    RemoveDevicesInternal(runSpace, id);
+
                     cmd = new Command("Disable-Mailbox");
                     cmd.Parameters.Add("Identity", id);
                     cmd.Parameters.Add("Confirm", false);
                     ExecuteShellCommand(runSpace, cmd);
+                                       
 
                     if (addressbookPolicy == (upn + " AP"))
                     {
@@ -551,6 +554,8 @@ namespace WebsitePanel.Providers.HostedSolution
                 {
                     string upn = ObjToString(GetPSObjectProperty(result[0], "UserPrincipalName"));
                     string addressbookPolicy = ObjToString(GetPSObjectProperty(result[0], "AddressBookPolicy"));
+
+                    RemoveDevicesInternal(runSpace, accountName);
 
                     RemoveMailbox(runSpace, accountName);
 

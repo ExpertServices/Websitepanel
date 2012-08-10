@@ -24,6 +24,14 @@ function confirmation()
                 <uc2:UsernameControl ID="usernameControl" runat="server" />
 			</td>
 		</tr>
+        <tr>
+            <td class="SubHead" style="width: 150px;"><asp:Label ID="lblDBInternalServer" runat="server" meta:resourcekey="lblDBInternalServer" Text="Internal Server:"></asp:Label></td>
+			<td class="Normal"><asp:Literal ID="litDBInternalServer" runat="server"></asp:Literal></td>
+        </tr>
+        <tr>
+            <td class="SubHead" style="width: 150px;"><asp:Label ID="lblDBExternalServer" runat="server" meta:resourcekey="lblDBExternalServer" Text="External Server:"></asp:Label></td>		
+			<td class="Normal"><asp:Literal ID="litDBExternalServer" runat="server"></asp:Literal></td>
+        </tr>
 	</table>
 	<br />
 	

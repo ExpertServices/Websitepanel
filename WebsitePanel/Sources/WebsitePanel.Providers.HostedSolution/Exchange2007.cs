@@ -467,6 +467,9 @@ namespace WebsitePanel.Providers.HostedSolution
 			try
 			{
 				runSpace = OpenRunspace();
+
+                RemoveDevicesInternal(runSpace, id);
+
 				Command cmd = new Command("Disable-Mailbox");
 				cmd.Parameters.Add("Identity", id);
 				cmd.Parameters.Add("Confirm", false);
@@ -1087,6 +1090,8 @@ namespace WebsitePanel.Providers.HostedSolution
 					try
 					{
 						id = ObjToString(GetPSObjectProperty(obj, "Identity"));
+                        RemoveDevicesInternal(runSpace, id);
+
 						RemoveMailbox(runSpace, id);
 					}
 					catch (Exception ex)
@@ -2062,6 +2067,8 @@ namespace WebsitePanel.Providers.HostedSolution
 			try
 			{
 				runSpace = OpenRunspace();
+
+                RemoveDevicesInternal(runSpace, accountName);
 
 				RemoveMailbox(runSpace, accountName);
 			}
@@ -6295,6 +6302,48 @@ namespace WebsitePanel.Providers.HostedSolution
 
 			ExchangeLog.LogEnd("CancelRemoteWipeRequestInternal");
 		}
+
+
+        internal void RemoveDevicesInternal(Runspace runSpace, string accountName)
+        {
+            ExchangeLog.LogStart("RemoveDevicesInternal");
+            ExchangeLog.DebugInfo("Account name: {0}", accountName);
+
+            try
+            {
+                runSpace = OpenRunspace();
+                Command cmd = new Command("Get-ActiveSyncDeviceStatistics");
+                cmd.Parameters.Add("Mailbox", accountName);
+
+                Collection<PSObject> result = null;
+                try
+                {
+                    result = ExecuteShellCommand(runSpace, cmd);
+                }
+                catch (Exception)
+                {
+                }
+
+                if (result != null)
+                {
+                    foreach (PSObject obj in result)
+                    {
+                        ExchangeMobileDevice device = GetMobileDeviceObject(obj);
+
+                        cmd = new Command("Remove-ActiveSyncDevice");
+                        cmd.Parameters.Add("Identity", device.DeviceID);
+                        cmd.Parameters.Add("Confirm", false);
+                        ExecuteShellCommand(runSpace, cmd);
+                    }
+                }
+            }
+            finally
+            {
+
+            }
+            ExchangeLog.LogEnd("RemoveDevicesInternal");
+        }
+
 
 		private void RemoveDeviceInternal(string id)
 		{
