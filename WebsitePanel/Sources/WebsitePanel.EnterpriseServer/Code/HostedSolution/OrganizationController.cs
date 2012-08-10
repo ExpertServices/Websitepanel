@@ -1172,7 +1172,10 @@ namespace WebsitePanel.EnterpriseServer
 
             foreach (OrganizationUser user in Tmpaccounts.ToArray())
             {
-                accounts.Add(GetUserGeneralSettings(itemId, user.AccountId));
+                OrganizationUser tmpUser = GetUserGeneralSettings(itemId, user.AccountId);
+
+                if (tmpUser != null)
+                    accounts.Add(tmpUser);
             }
 
             result.PageUsers = accounts.ToArray();
@@ -1536,15 +1539,23 @@ namespace WebsitePanel.EnterpriseServer
             TaskManager.StartTask("ORGANIZATION", "GET_USER_GENERAL");
             TaskManager.ItemId = itemId;
 
+            OrganizationUser account = null;
+            Organization org = null;
+
             try
             {
                 // load organization
-                Organization org = GetOrganization(itemId);
+                org = GetOrganization(itemId);
                 if (org == null)
                     return null;
 
                 // load account
-                OrganizationUser account = GetAccount(itemId, accountId);
+                account = GetAccount(itemId, accountId);
+            }
+            catch (Exception){}
+
+            try
+            {
 
                 // get mailbox settings
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
@@ -1566,12 +1577,14 @@ namespace WebsitePanel.EnterpriseServer
             }
             catch (Exception ex)
             {
-                throw TaskManager.WriteError(ex);
+                //throw TaskManager.WriteError(ex);
             }
             finally
             {
                 TaskManager.CompleteTask();
             }
+
+            return (account);
         }
        
         public static int SetUserGeneralSettings(int itemId, int accountId, string displayName,
