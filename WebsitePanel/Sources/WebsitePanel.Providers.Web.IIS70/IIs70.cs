@@ -98,6 +98,8 @@ namespace WebsitePanel.Providers.Web
 		public const string AspNet40x64PathSetting = "AspNet40x64Path";
 
 		public const string WEBSITEPANEL_IISMODULES = "WebsitePanel.IIsModules";
+        public const string DOTNETPANEL_IISMODULES = "DotNetPanel.IIsModules";
+        
 
         public const string HeliconApeModule = "Helicon Ape";
         public const string HeliconApeHandlerPath = "*.apehandler";
@@ -1691,7 +1693,10 @@ namespace WebsitePanel.Providers.Web
             //
             foreach (var moduleEntry in modulesCollection)
             {
-                if (String.Equals(moduleEntry["name"].ToString(), Constants.WEBSITEPANEL_IISMODULES, StringComparison.InvariantCultureIgnoreCase))
+                if (
+                    String.Equals(moduleEntry["name"].ToString(), Constants.WEBSITEPANEL_IISMODULES, StringComparison.InvariantCultureIgnoreCase)
+                    || String.Equals(moduleEntry["name"].ToString(), Constants.DOTNETPANEL_IISMODULES, StringComparison.InvariantCultureIgnoreCase)
+                    )
                     return true;
             }
             //
@@ -1829,22 +1834,27 @@ namespace WebsitePanel.Providers.Web
 				//
 				ConfigurationElementCollection modulesCollection = modulesSection.GetCollection();
 				//
-				ConfigurationElement iisModulesEntry = null;
-				//
 				foreach (ConfigurationElement moduleEntry in modulesCollection)
 				{
 					if (String.Equals(moduleEntry["name"].ToString(), Constants.WEBSITEPANEL_IISMODULES, StringComparison.InvariantCultureIgnoreCase))
 					{
-						iisModulesEntry = moduleEntry;
-						break;
+                        modulesCollection.Remove(moduleEntry);
+                        break;
 					}
+
 				}
-				//
-				if (iisModulesEntry != null)
-				{
-					modulesCollection.Remove(iisModulesEntry);
-					srvman.CommitChanges();
-				}
+
+                foreach (ConfigurationElement moduleEntry in modulesCollection)
+                {
+                    if (String.Equals(moduleEntry["name"].ToString(), Constants.DOTNETPANEL_IISMODULES, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        modulesCollection.Remove(moduleEntry);
+                        break;
+                    }
+                }
+
+                srvman.CommitChanges();
+                
 			}
 		}
 
