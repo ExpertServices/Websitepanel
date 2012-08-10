@@ -81,7 +81,7 @@ namespace WebsitePanel.Portal
                 try
                 {
                     // technical details
-                    litPageUrl.Text = AntiXss.HtmlEncode(Request.Url.ToString());
+                    litPageUrl.Text = Microsoft.Security.Application.Encoder.HtmlEncode(Request.Url.ToString());
                     litLoggedUser.Text = PanelSecurity.LoggedUser.Username;
                     litSelectedUser.Text = PanelSecurity.SelectedUser.Username;
                     litPackageName.Text = PanelSecurity.PackageId.ToString();

@@ -144,7 +144,7 @@ namespace WebsitePanel.Portal
                 try
                 {
                     PackageResult result = ES.Services.Packages.UpdateHostingPlan(plan);
-                    lblMessage.Text = AntiXss.HtmlEncode(GetExceedingQuotasMessage(result.ExceedingQuotas));
+                    lblMessage.Text = Microsoft.Security.Application.Encoder.HtmlEncode(GetExceedingQuotasMessage(result.ExceedingQuotas));
                     if (result.Result < 0)
                     {
                         ShowResultMessage(result.Result);

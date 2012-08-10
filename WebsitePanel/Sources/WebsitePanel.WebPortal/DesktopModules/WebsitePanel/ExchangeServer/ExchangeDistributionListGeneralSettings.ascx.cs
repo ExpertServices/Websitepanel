@@ -105,7 +105,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-                litDisplayName.Text = AntiXss.HtmlEncode(txtDisplayName.Text);
+                litDisplayName.Text = Microsoft.Security.Application.Encoder.HtmlEncode(txtDisplayName.Text);
 
                 messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_DLIST_SETTINGS");
             }

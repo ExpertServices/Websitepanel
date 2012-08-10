@@ -71,7 +71,7 @@ namespace WebsitePanel.Portal
         public string Text
         {
             get { return EditMode ? txtName.Text.Trim() : litPrefix.Text + txtName.Text.Trim() + litSuffix.Text; }
-            set { txtName.Text = value; lblName.Text = AntiXss.HtmlEncode(value); }
+            set { txtName.Text = value; lblName.Text = Microsoft.Security.Application.Encoder.HtmlEncode(value); }
         }
 
         private UserInfo PolicyUser

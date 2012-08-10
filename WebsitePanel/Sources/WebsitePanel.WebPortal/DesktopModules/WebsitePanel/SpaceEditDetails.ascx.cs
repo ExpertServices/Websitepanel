@@ -129,7 +129,7 @@ namespace WebsitePanel.Portal
                 if (result.Result < 0)
                 {
                     ShowResultMessage(result.Result);
-                    lblMessage.Text = AntiXss.HtmlEncode(GetExceedingQuotasMessage(result.ExceedingQuotas));
+                    lblMessage.Text = Microsoft.Security.Application.Encoder.HtmlEncode(GetExceedingQuotasMessage(result.ExceedingQuotas));
                     return;
                 }
             }

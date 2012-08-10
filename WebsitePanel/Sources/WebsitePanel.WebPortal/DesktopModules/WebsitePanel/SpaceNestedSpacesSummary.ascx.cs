@@ -60,7 +60,7 @@ namespace WebsitePanel.Portal
             DataSet dsSpaces = ES.Services.Packages.GetNestedPackagesSummary(PanelSecurity.PackageId);
 
             // all customers
-            lnkAllSpaces.Text = AntiXss.HtmlEncode(String.Format("All Spaces ({0})", dsSpaces.Tables[0].Rows[0]["PackagesNumber"]));
+            lnkAllSpaces.Text = Microsoft.Security.Application.Encoder.HtmlEncode(String.Format("All Spaces ({0})", dsSpaces.Tables[0].Rows[0]["PackagesNumber"]));
 
             // by status
             repSpaceStatuses.DataSource = dsSpaces.Tables[1];
