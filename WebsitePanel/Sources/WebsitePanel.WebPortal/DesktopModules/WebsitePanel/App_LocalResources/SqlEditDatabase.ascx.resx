@@ -135,6 +135,10 @@
   <data name="secUsers.Text" xml:space="preserve">
     <value>Users</value>
   </data>
-    <data name="lblDBInternalServer.Text" xml:space="preserve">
+  <data name="lblDBInternalServer.Text" xml:space="preserve">
+    <value>Internal Server:</value>
+  </data>
+  <data name="lblDBExternalServer.Text" xml:space="preserve">
+    <value>External Server:</value>
   </data>
 </root>
