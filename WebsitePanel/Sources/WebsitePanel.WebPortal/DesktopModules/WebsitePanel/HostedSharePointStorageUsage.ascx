@@ -58,11 +58,6 @@
 					    <asp:Button id="btnRecalculateDiscSpace" runat="server" Text="Recalculate Disk Space" CssClass="Button1" meta:resourcekey="btnRecalculateDiscSpace" OnClick="btnRecalculateDiscSpace_Click" ></asp:Button>						
 				    </div>
 				</div>
-				
-			</div>
-			
-			<div class="Right">
-				<asp:Localize ID="FormComments" runat="server" meta:resourcekey="FormComments"></asp:Localize>
 			</div>
 		</div>
 	</div>
