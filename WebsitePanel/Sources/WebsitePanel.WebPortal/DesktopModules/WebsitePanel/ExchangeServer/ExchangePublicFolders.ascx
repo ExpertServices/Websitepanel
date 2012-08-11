@@ -34,7 +34,7 @@
 				    <asp:TreeView ID="FoldersTree" runat="server">
 				    </asp:TreeView>
 				    <br />
-				    <div style="text-align: center">
+				    <div style="text-align: left">
 				        <asp:Button ID="btnDeleteFolders" runat="server" meta:resourcekey="btnDeleteFolders"
                             Text="Delete Selected Folders" CssClass="Button1" OnClick="btnDeleteFolders_Click" />
                     </div>
@@ -47,9 +47,6 @@
 				    
 				    
 				</div>
-			</div>
-			<div class="Right">
-				<asp:Localize ID="FormComments" runat="server" meta:resourcekey="FormComments"></asp:Localize>
 			</div>
 		</div>
 	</div>
