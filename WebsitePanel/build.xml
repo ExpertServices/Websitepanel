@@ -46,6 +46,11 @@
 		<ftpUsername></ftpUsername>
 		<ftpPassword></ftpPassword>
 
+		<codeplexProjectName></codeplexProjectName>
+		<codeplexReleaseName></codeplexReleaseName>
+		<codeplexUser></codeplexUser>
+		<codeplexPassword></codeplexPassword>
+
 	</PropertyGroup>
 
 	<Target Name="GenerateBuildVersionFiles" Inputs="build.xml" Outputs="$(TrunkFolder)\Sources\VersionInfo.cs;$(TrunkFolder)\Sources\VersionInfo.vb">
@@ -489,5 +494,19 @@
 	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" RemoteFiles="WebsitePanel-WSPTransportAgent-$(Version).zip" />
 
 	</Target>
+
+	<Target Name="uploadtocodeplex">
+		<UsingTask TaskName="UploadFiles" AssemblyFile="$(TrunkFolder)\Bin\CodePlex.WebServices.Client.dll" />
+
+		<ItemGroup>
+			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-Portal-$(Version).zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile>
+		</ItemGroup>
+
+		<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile)" User="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
+
+	</Target>
+
 
 </Project>
