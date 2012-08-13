@@ -682,9 +682,11 @@ namespace WebsitePanel.Server.Code
 
         private static bool IsAlienDbTaggedParameter(DeploymentWellKnownTag dbTag, DeclaredParameter parameter)
         {
+#pragma warning disable 612,618
             return (parameter.Tags & databaseEngineTags) != DeploymentWellKnownTag.None 
                    && 
                    (parameter.Tags & dbTag) == DeploymentWellKnownTag.None;
+#pragma warning restore 612,618
         }
 
         private static void RemoveUnusedProviders(MSDeployPackage msDeployPackage, DeploymentWellKnownTag dbTag)

@@ -19,3 +19,4 @@ WebsitePanel/Build
 WebsitePanel.Installer/Build
 WebsitePanel/Bin
 msbuild.log
+_ReSharper.*

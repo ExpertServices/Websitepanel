@@ -43,6 +43,7 @@ using WebsitePanel.Server.Utils;
 using System.Web;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Expirations;
+using DeploymentParameter = WebsitePanel.Providers.WebAppGallery.DeploymentParameter;
 
 namespace WebsitePanel.Providers.Web.WPIWebApplicationGallery
 {
@@ -399,6 +400,7 @@ namespace WebsitePanel.Providers.Web.WPIWebApplicationGallery
             r.FriendlyName = d.FriendlyName;
             r.DefaultValue = d.DefaultValue;
             r.Description = d.Description;
+#pragma warning disable 612,618
             r.WellKnownTags = (DeploymentParameterWellKnownTag) d.Tags;
             if (null != d.Validation)
             {
@@ -409,6 +411,7 @@ namespace WebsitePanel.Providers.Web.WPIWebApplicationGallery
             {
                 r.ValidationKind = DeploymentParameterValidationKind.None;
             }
+#pragma warning restore 612,618
 
             return r;
         }
