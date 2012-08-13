@@ -472,8 +472,13 @@
 		<Zip Files="@(AWStatsViewerInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(Version).zip" WorkingDirectory="$(AWStatsViewerInstall)" />
 		<Zip Files="@(WSPTransportAgentInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" WorkingDirectory="$(WSPTransportAgentInstall)" />
 
-	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" RemoteFiles="WebsitePanel-WSPTransportAgent-$(Version).zip" />
 
   </Target>
+
+	<Target Name="uploadtoftp">
+
+	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" RemoteFiles="WebsitePanel-WSPTransportAgent-$(Version).zip" />
+
+	</Target>
 
 </Project>
