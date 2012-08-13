@@ -496,7 +496,7 @@
 	</Target>
 
 	<Target Name="uploadtocodeplex">
-		<UsingTask TaskName="UploadFiles" AssemblyFile="$(SolutionDir)Bin\CodePlex.WebServices.Client.dll" />
+		<UsingTask TaskName="UploadFiles" AssemblyFile="Bin\CodePlex.WebServices.Client.dll" />
 
 		<ItemGroup>
 			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-Portal-$(Version).zip">
