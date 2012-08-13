@@ -42,6 +42,10 @@
 		<AWStatsViewerBuild>$(BuildFolder)\AWStats.Viewer</AWStatsViewerBuild>
 		<WSPTransportAgentBuild>$(BuildFolder)\WSPTransportAgent</WSPTransportAgentBuild>
 
+		<ftphost></ftphost>
+		<ftpUsername></ftpUsername>
+		<ftpPassword></ftpPassword>
+
 	</PropertyGroup>
 
 	<Target Name="GenerateBuildVersionFiles" Inputs="build.xml" Outputs="$(TrunkFolder)\Sources\VersionInfo.cs;$(TrunkFolder)\Sources\VersionInfo.vb">
@@ -467,6 +471,9 @@
 		<Zip Files="@(ImportEnterpriseInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-Import-Enterprise-$(Version).zip" WorkingDirectory="$(ImportEnterpriseInstall)" />
 		<Zip Files="@(AWStatsViewerInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(Version).zip" WorkingDirectory="$(AWStatsViewerInstall)" />
 		<Zip Files="@(WSPTransportAgentInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" WorkingDirectory="$(WSPTransportAgentInstall)" />
+
+	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/WebsitePanel-WSPTransportAgent-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" />
+
   </Target>
 
 </Project>
