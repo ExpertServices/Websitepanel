@@ -501,7 +501,7 @@
 		<ItemGroup>
 			<ReleaseFile1 Include="$(DeployFolder)\WebsitePanel-Portal-$(Version).zip">
 			<FileType>RuntimeBinary</FileType>
-			</ReleaseFile>
+			</ReleaseFile1>
 		</ItemGroup>
 
 			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile1)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
@@ -509,7 +509,7 @@
 		<ItemGroup>
 			<ReleaseFile2 Include="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version).zip">
 			<FileType>RuntimeBinary</FileType>
-			</ReleaseFile>
+			</ReleaseFile2>
 		</ItemGroup>
 
 			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile2)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
@@ -517,7 +517,7 @@
 		<ItemGroup>
 			<ReleaseFile3 Include="$(DeployFolder)\WebsitePanel-Server-$(Version).zip">
 			<FileType>RuntimeBinary</FileType>
-			</ReleaseFile>
+			</ReleaseFile3>
 		</ItemGroup>
 
 			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile3)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
@@ -525,7 +525,7 @@
 		<ItemGroup>
 			<ReleaseFile4 Include="$(DeployFolder)\WebsitePanel-StandaloneServerSetup-$(Version).zip">
 			<FileType>RuntimeBinary</FileType>
-			</ReleaseFile>
+			</ReleaseFile4>
 		</ItemGroup>
 
 			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile4)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
@@ -533,7 +533,7 @@
 		<ItemGroup>
 			<ReleaseFile5 Include="$(DeployFolder)\WebsitePanel-Portal-$(Version)-Update.zip">
 			<FileType>RuntimeBinary</FileType>
-			</ReleaseFile>
+			</ReleaseFile5>
 		</ItemGroup>
 
 			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile5)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
@@ -541,7 +541,7 @@
 		<ItemGroup>
 			<ReleaseFile6 Include="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version)-Update.zip">
 			<FileType>RuntimeBinary</FileType>
-			</ReleaseFile>
+			</ReleaseFile6>
 		</ItemGroup>
 
 			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile6)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
@@ -549,7 +549,7 @@
 		<ItemGroup>
 			<ReleaseFile7 Include="$(DeployFolder)\WebsitePanel-Server-$(Version)-Update.zip">
 			<FileType>RuntimeBinary</FileType>
-			</ReleaseFile>
+			</ReleaseFile7>
 		</ItemGroup>
 
 			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile7)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
@@ -557,7 +557,7 @@
 		<ItemGroup>
 			<ReleaseFile8 Include="$(ToolsFolder)\WebsitePanel-Import-CsvBulk-$(Version).zip">
 			<FileType>RuntimeBinary</FileType>
-			</ReleaseFile>
+			</ReleaseFile8>
 		</ItemGroup>
 
 			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile8)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
@@ -565,7 +565,7 @@
 		<ItemGroup>
 			<ReleaseFile9 Include="$(ToolsFolder)\WebsitePanel-Import-Enterprise-$(Version).zip">
 			<FileType>RuntimeBinary</FileType>
-			</ReleaseFile>
+			</ReleaseFile9>
 		</ItemGroup>
 
 			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile9)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
@@ -573,15 +573,15 @@
 		<ItemGroup>
 			<ReleaseFile10 Include="$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(Version).zip">
 			<FileType>RuntimeBinary</FileType>
-			</ReleaseFile>			
+			</ReleaseFile10>			
 		</ItemGroup>
 
-			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile19)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
+			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile10)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
 
 		<ItemGroup>
 			<ReleaseFile11 Include="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip">
 			<FileType>RuntimeBinary</FileType>
-			</ReleaseFile>
+			</ReleaseFile11>
 		</ItemGroup>
 
 		<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile11)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
