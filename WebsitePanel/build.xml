@@ -520,16 +520,16 @@
 			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-Server-$(Version)-Update.zip">
 			<FileType>RuntimeBinary</FileType>
 			</ReleaseFile>
-			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-Import-CsvBulk-$(Version).zip">
+			<ReleaseFile Include="$(DeployFolder)\$(ToolsFolder)\WebsitePanel-Import-CsvBulk-$(Version).zip">
 			<FileType>RuntimeBinary</FileType>
 			</ReleaseFile>
-			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-Import-Enterprise-$(Version).zip">
+			<ReleaseFile Include="$(DeployFolder)\$(ToolsFolder)\WebsitePanel-Import-Enterprise-$(Version).zip">
 			<FileType>RuntimeBinary</FileType>
 			</ReleaseFile>
-			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-AWStatsViewer-$(Version).zip">
+			<ReleaseFile Include="$(DeployFolder)\$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(Version).zip">
 			<FileType>RuntimeBinary</FileType>
 			</ReleaseFile>			
-			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip">
+			<ReleaseFile Include="$(DeployFolder)\$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip">
 			<FileType>RuntimeBinary</FileType>
 			</ReleaseFile>
 		</ItemGroup>
