@@ -502,6 +502,36 @@
 			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-Portal-$(Version).zip">
 			<FileType>RuntimeBinary</FileType>
 			</ReleaseFile>
+			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version).zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile>
+			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-Server-$(Version).zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile>
+			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-StandaloneServerSetup-$(Version).zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile>
+			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-Portal-$(Version)-Update.zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile>
+			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version)-Update.zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile>
+			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-Server-$(Version)-Update.zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile>
+			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-Import-CsvBulk-$(Version).zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile>
+			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-Import-Enterprise-$(Version).zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile>
+			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-AWStatsViewer-$(Version).zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile>			
+			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile>
 		</ItemGroup>
 
 		<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
