@@ -1,11 +1,12 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+	<UsingTask TaskName="UploadFiles" AssemblyFile="lib\CodePlex.WebServices.Client.dll" />
 	<PropertyGroup>
 		<Version></Version>
 		<FileVersion></FileVersion>
 		<VersionLabel></VersionLabel>
 		<ReleaseDate>2012-08-13</ReleaseDate>
-		<BuildConfiguration>Release</BuildConfiguration>
+		<BuildConfiguration></BuildConfiguration>
 		<RootFolder>..</RootFolder>
 		<TrunkFolder>$(RootFolder)\WebsitePanel</TrunkFolder>
 
@@ -45,6 +46,11 @@
 		<ftphost></ftphost>
 		<ftpUsername></ftpUsername>
 		<ftpPassword></ftpPassword>
+
+		<codeplexProjectName></codeplexProjectName>
+		<codeplexReleaseName></codeplexReleaseName>
+		<codeplexUser></codeplexUser>
+		<codeplexPassword></codeplexPassword>
 
 	</PropertyGroup>
 
@@ -472,8 +478,115 @@
 		<Zip Files="@(AWStatsViewerInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(Version).zip" WorkingDirectory="$(AWStatsViewerInstall)" />
 		<Zip Files="@(WSPTransportAgentInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" WorkingDirectory="$(WSPTransportAgentInstall)" />
 
-	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" RemoteFiles="WebsitePanel-WSPTransportAgent-$(Version).zip" />
 
   </Target>
+
+	<Target Name="uploadtoftp">
+	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(DeployFolder)\WebsitePanel-Portal-$(Version).zip" RemoteFiles="WebsitePanel-Portal-$(Version).zip" />
+	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version).zip" RemoteFiles="WebsitePanel-EnterpriseServer-$(Version).zip" />
+	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(DeployFolder)\WebsitePanel-Server-$(Version).zip" RemoteFiles="WebsitePanel-Server-$(Version).zip" />
+	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(DeployFolder)\WebsitePanel-StandaloneServerSetup-$(Version).zip" RemoteFiles="WebsitePanel-StandaloneServerSetup-$(Version).zip" />
+	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(DeployFolder)\WebsitePanel-Portal-$(Version)-Update.zip" RemoteFiles="WebsitePanel-Portal-$(Version)-Update.zip" />
+	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version)-Update.zip" RemoteFiles="WebsitePanel-EnterpriseServer-$(Version)-Update.zip" />
+	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(DeployFolder)\WebsitePanel-Server-$(Version)-Update.zip" RemoteFiles="WebsitePanel-Server-$(Version)-Update.zip" />
+	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(ToolsFolder)\WebsitePanel-Import-CsvBulk-$(Version).zip" RemoteFiles="WebsitePanel-Import-CsvBulk-$(Version).zip" />
+	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(ToolsFolder)\WebsitePanel-Import-Enterprise-$(Version).zip" RemoteFiles="WebsitePanel-Import-Enterprise-$(Version).zip" />
+	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(Version).zip" RemoteFiles="WebsitePanel-AWStatsViewer-$(Version).zip" />
+	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" RemoteFiles="WebsitePanel-WSPTransportAgent-$(Version).zip" />
+
+	</Target>
+
+	<Target Name="uploadtocodeplex">
+
+		<ItemGroup>
+			<ReleaseFile1 Include="$(DeployFolder)\WebsitePanel-Portal-$(Version).zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile1>
+		</ItemGroup>
+
+			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile1)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
+
+		<ItemGroup>
+			<ReleaseFile2 Include="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version).zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile2>
+		</ItemGroup>
+
+			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile2)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
+
+		<ItemGroup>
+			<ReleaseFile3 Include="$(DeployFolder)\WebsitePanel-Server-$(Version).zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile3>
+		</ItemGroup>
+
+			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile3)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
+
+		<ItemGroup>
+			<ReleaseFile4 Include="$(DeployFolder)\WebsitePanel-StandaloneServerSetup-$(Version).zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile4>
+		</ItemGroup>
+
+			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile4)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
+
+		<ItemGroup>
+			<ReleaseFile5 Include="$(DeployFolder)\WebsitePanel-Portal-$(Version)-Update.zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile5>
+		</ItemGroup>
+
+			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile5)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
+
+		<ItemGroup>
+			<ReleaseFile6 Include="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version)-Update.zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile6>
+		</ItemGroup>
+
+			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile6)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
+
+		<ItemGroup>
+			<ReleaseFile7 Include="$(DeployFolder)\WebsitePanel-Server-$(Version)-Update.zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile7>
+		</ItemGroup>
+
+			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile7)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
+
+		<ItemGroup>
+			<ReleaseFile8 Include="$(ToolsFolder)\WebsitePanel-Import-CsvBulk-$(Version).zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile8>
+		</ItemGroup>
+
+			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile8)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
+
+		<ItemGroup>
+			<ReleaseFile9 Include="$(ToolsFolder)\WebsitePanel-Import-Enterprise-$(Version).zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile9>
+		</ItemGroup>
+
+			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile9)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
+
+		<ItemGroup>
+			<ReleaseFile10 Include="$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(Version).zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile10>			
+		</ItemGroup>
+
+			<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile10)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
+
+		<ItemGroup>
+			<ReleaseFile11 Include="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip">
+			<FileType>RuntimeBinary</FileType>
+			</ReleaseFile11>
+		</ItemGroup>
+
+		<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile11)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
+
+	</Target>
+
 
 </Project>
