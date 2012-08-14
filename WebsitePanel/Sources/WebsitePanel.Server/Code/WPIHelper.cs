@@ -60,7 +60,8 @@ namespace WebsitePanel.Server.Code
 
         private readonly List<string> _feeds;
         private string _webPIinstallersFolder;
-        private const string MainWpiFeed = "https://www.microsoft.com/web/webpi/3.0/webproductlist.xml";
+        //private const string MainWpiFeed = "https://www.microsoft.com/web/webpi/3.0/webproductlist.xml";
+        private const string MainWpiFeed = "https://www.microsoft.com/web/webpi/4.0/WebProductList.xml";
         private const string IisChoiceProduct = "StaticContent";
         private const string WebMatrixChoiceProduct = "WebMatrix";
         private ProductManager _productManager;
