@@ -57,13 +57,7 @@ namespace WebsitePanel.Providers.Web.WPIWebApplicationGallery
         public WPIApplicationGallery(string sufix)
         {
             _sufix = sufix;
-            //_feeds = new[]
-            //             {
-            //                 "https://www.microsoft.com/web/webpi/3.0/webproductlist.xml",
-            //                 "http://www.helicontech.com/zoo/feed/wsp"
-            //             };
             _cache = CacheFactory.GetCacheManager();
-            //_wpi = GetWpiHelper();
         }
 
 
@@ -80,8 +74,6 @@ namespace WebsitePanel.Providers.Web.WPIWebApplicationGallery
 
         public void InitFeeds(int UserId, string[] feeds)
         {
-            //Log.WriteInfo("InitFeeds {0} ", UserId);
-
             string CACHE_KEY = GetKey_Feeds(UserId);
 
             if (_cache.Contains(CACHE_KEY))
