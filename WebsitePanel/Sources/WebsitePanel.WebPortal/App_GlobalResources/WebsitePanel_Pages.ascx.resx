@@ -445,7 +445,7 @@
     <value>{user} - {space} - Web Site IP Addresses</value>
   </data>
   <data name="PageTitle.SpaceWebApplicationsGallery" xml:space="preserve">
-    <value>{user} - {space} - Microsoft Web Application Gallery</value>
+    <value>{user} - {space} - Web Application Gallery</value>
   </data>
   <data name="PageName.SpaceWeb" xml:space="preserve">
     <value>Web</value>

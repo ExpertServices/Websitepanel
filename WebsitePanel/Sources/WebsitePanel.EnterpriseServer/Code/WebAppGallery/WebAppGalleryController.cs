@@ -78,12 +78,12 @@ namespace WebsitePanel.EnterpriseServer
 
             if (Utils.ParseBool(serviceSettings["FeedEnableMicrosoft"], true))
             {
-                arFeeds.Add("https://www.microsoft.com/web/webpi/3.0/WebProductList.xml");
+                arFeeds.Add(esServers.MAIN_WPI_FEED);
             }
 
             if (Utils.ParseBool(serviceSettings["FeedEnableHelicon"], true))
             {
-                arFeeds.Add("http://www.helicontech.com/zoo/feed/wsp");
+                arFeeds.Add(esServers.HELICON_WPI_FEED);
             }
 
             string additionalFeeds = serviceSettings["FeedUrls"];
