@@ -1072,6 +1072,14 @@ namespace WebsitePanel.EnterpriseServer
             return CreateServiceItemsList(dsItems, 0);
         }
 
+        public static List<ServiceProviderItem> GetPackageItemsByTypeInternal(int packageId, string groupName, Type itemType, bool recursive)
+        {
+            string typeName = ObjectUtils.GetTypeFullName(itemType);
+            DataSet dsItems = DataProvider.GetServiceItems(-1, packageId, groupName, typeName, recursive);
+
+            return CreateServiceItemsList(dsItems, 0);
+        }
+
         public static DataSet GetRawPackageItemsByType(int packageId, Type itemType, bool recursive)
         {
             return GetRawPackageItemsByType(packageId, null, itemType, recursive);
