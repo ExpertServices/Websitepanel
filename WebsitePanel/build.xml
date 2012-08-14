@@ -489,10 +489,10 @@
 	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(DeployFolder)\WebsitePanel-Portal-$(Version)-Update.zip" RemoteFiles="WebsitePanel-Portal-$(Version)-Update.zip" />
 	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version)-Update.zip" RemoteFiles="WebsitePanel-EnterpriseServer-$(Version)-Update.zip" />
 	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(DeployFolder)\WebsitePanel-Server-$(Version)-Update.zip" RemoteFiles="WebsitePanel-Server-$(Version)-Update.zip" />
-	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(ToolsFolder)\WebsitePanel-Import-CsvBulk-$(Version).zip" RemoteFiles="WebsitePanel-Import-CsvBulk-$(Version).zip" />
-	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(ToolsFolder)\WebsitePanel-Import-Enterprise-$(Version).zip" RemoteFiles="WebsitePanel-Import-Enterprise-$(Version).zip" />
-	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(Version).zip" RemoteFiles="WebsitePanel-AWStatsViewer-$(Version).zip" />
-	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" RemoteFiles="WebsitePanel-WSPTransportAgent-$(Version).zip" />
+	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(DeployFolder)\$(ToolsFolder)\WebsitePanel-Import-CsvBulk-$(Version).zip" RemoteFiles="WebsitePanel-Import-CsvBulk-$(Version).zip" />
+	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(DeployFolder)\$(ToolsFolder)\WebsitePanel-Import-Enterprise-$(Version).zip" RemoteFiles="WebsitePanel-Import-Enterprise-$(Version).zip" />
+	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(DeployFolder)\$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(Version).zip" RemoteFiles="WebsitePanel-AWStatsViewer-$(Version).zip" />
+	    	<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/beta/" LocalFiles="$(DeployFolder)\$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" RemoteFiles="WebsitePanel-WSPTransportAgent-$(Version).zip" />
 
 	</Target>
 
