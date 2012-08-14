@@ -327,7 +327,10 @@ namespace WebsitePanel.Portal
                 if (string.IsNullOrEmpty(wpiLogsDir))
                 {
                     wpiLogsDir = ES.Services.Servers.WpiGetLogFileDirectory(PanelRequest.ServerId);
-                    ViewState[_wpiLogsDirViewStateKey] = wpiLogsDir;
+                    if (!string.IsNullOrEmpty(wpiLogsDir))
+                    {
+                        ViewState[_wpiLogsDirViewStateKey] = wpiLogsDir;
+                    }
                 }
             }
             catch 
@@ -532,37 +535,51 @@ namespace WebsitePanel.Portal
         protected void ShowLogsButton_OnClick(object sender, EventArgs e)
         {
             //show logs
+
+            string wpiLogsDir = null;
+            object[] logsEntrys = null;
             try
             {
-                string wpiLogsDir = ViewState[_wpiLogsDirViewStateKey] as string;
+                wpiLogsDir = ViewState[_wpiLogsDirViewStateKey] as string;
 
                 if (!string.IsNullOrEmpty(wpiLogsDir))
                 {
                     //Get logs !!!
-                    object[] logsEntrys = ES.Services.Servers.WpiGetLogsInDirectory(PanelRequest.ServerId, wpiLogsDir);
+                    logsEntrys = ES.Services.Servers.WpiGetLogsInDirectory(PanelRequest.ServerId, wpiLogsDir);
 
-                    WpiLogsPanel.Visible = true;
-
-                    StringBuilder sb = new StringBuilder();
-
-                    foreach (SettingPair entry in logsEntrys)
+                    if (null == logsEntrys)
                     {
-                        string fileName = (string)entry.Name;
-                        string fileContent = (string)entry.Value;
-                        sb.AppendLine().AppendFormat("<h3>{0}</h3>", fileName).AppendLine().Append(fileContent).AppendLine();
+                        WpiLogsPanel.Visible = true;
+                        string msg = string.Format("Could not get logs files. Log files folder:\n{0}", wpiLogsDir);
+                        WpiLogsPre.InnerText = msg;
                     }
+                    else
+                    {
+                        WpiLogsPanel.Visible = true;
 
-                    WpiLogsPre.InnerHtml = sb.ToString();
+                        StringBuilder sb = new StringBuilder();
 
-                    ShowLogsButton.Visible = false;
-                    ProgressTimer.Enabled = false;
+                        foreach (SettingPair entry in logsEntrys)
+                        {
+                            string fileName = (string) entry.Name;
+                            string fileContent = (string) entry.Value;
+                            sb.AppendLine().AppendFormat("<h3>{0}</h3>", fileName).AppendLine().Append(fileContent).
+                                AppendLine();
+                        }
+
+                        WpiLogsPre.InnerHtml = sb.ToString();
+
+                        ShowLogsButton.Visible = false;
+                        ProgressTimer.Enabled = false;
+                    }
                 }
 
             }
             catch (Exception ex)
             {
                 WpiLogsPanel.Visible = true;
-                WpiLogsPre.InnerText = ex.ToString();
+                string msg = string.Format("wpiLogsDir: {0}\nlogsEntrys is null: {1}\n{2}", wpiLogsDir, logsEntrys == null, ex);
+                WpiLogsPre.InnerText = msg;
             }
         }
     }
