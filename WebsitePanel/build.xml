@@ -1,5 +1,6 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+	<UsingTask TaskName="UploadFiles" AssemblyFile="lib\CodePlex.WebServices.Client.dll" />
 	<PropertyGroup>
 		<Version></Version>
 		<FileVersion></FileVersion>
@@ -496,7 +497,6 @@
 	</Target>
 
 	<Target Name="uploadtocodeplex">
-		<UsingTask TaskName="UploadFiles" AssemblyFile="Bin\CodePlex.WebServices.Client.dll" />
 
 		<ItemGroup>
 			<ReleaseFile Include="$(DeployFolder)\WebsitePanel-Portal-$(Version).zip">
@@ -504,7 +504,7 @@
 			</ReleaseFile>
 		</ItemGroup>
 
-		<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile)" User="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
+		<UploadFiles ProjectName="$(codeplexProjectName)" ReleaseName="$(codeplexReleaseName)" ReleaseFiles="@(ReleaseFile)" Username="$(codeplexUser)" Password="$(codeplexPassword)"></UploadFiles>
 
 	</Target>
 
