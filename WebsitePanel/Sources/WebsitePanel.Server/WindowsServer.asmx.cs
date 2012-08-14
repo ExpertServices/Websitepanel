@@ -31,6 +31,7 @@ using System.IO;
 using System.Data;
 using System.Security;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
 using System.Diagnostics;
@@ -39,7 +40,6 @@ using System.Collections.Generic;
 using System.Web.Services;
 using System.Web.Services.Protocols;
 using System.ComponentModel;
-using System.Text.RegularExpressions;
 using System.ServiceProcess;
 using System.ServiceModel;
 using System.Runtime.Remoting;
@@ -54,6 +54,11 @@ using WebsitePanel.Server.Code;
 using WebsitePanel.Server.Utils;
 using WebsitePanel.Providers;
 using WebsitePanel.Server.WPIService;
+
+
+
+
+
 
 
 namespace WebsitePanel.Server
@@ -615,31 +620,35 @@ namespace WebsitePanel.Server
             }
         }
 
+     
         private void StartWpiService()
         {
             string binFolder = HttpContext.Current.Server.MapPath("/bin/");
+            string workingDirectory = Path.Combine(Environment.ExpandEnvironmentVariables("%SystemRoot%"), "Temp\\zoo.wpi");
 
-            string newUserProfile = Path.Combine(Environment.ExpandEnvironmentVariables("%SystemRoot%"), "Temp\\zoo.wpi");
-            string newAppData = Path.Combine(newUserProfile, "Roaming");
-            string newLocalAppData = Path.Combine(newUserProfile, "Local");
-            try
-            {
-                Directory.CreateDirectory(newUserProfile);
-                Directory.CreateDirectory(newAppData);
-                Directory.CreateDirectory(newLocalAppData);
-            }
-            catch (Exception)
-            {
-                //throw;
-            }
+            //string newUserProfile = Path.Combine(Environment.ExpandEnvironmentVariables("%SystemRoot%"), "Temp\\zoo.wpi");
+            //string newAppData = Path.Combine(newUserProfile, "Roaming");
+            //string newLocalAppData = Path.Combine(newUserProfile, "Local");
+            //try
+            //{
+            //    Directory.CreateDirectory(newUserProfile);
+            //    Directory.CreateDirectory(newAppData);
+            //    Directory.CreateDirectory(newLocalAppData);
+            //}
+            //catch (Exception)
+            //{
+            //    //throw;
+            //}
 
 
             Process wpiServiceExe = new Process();
             wpiServiceExe.StartInfo = new ProcessStartInfo(Path.Combine(binFolder, "WebsitePanel.Server.WPIService.exe"));
+            wpiServiceExe.StartInfo.WorkingDirectory = workingDirectory;
             wpiServiceExe.StartInfo.UseShellExecute = false;
-            wpiServiceExe.StartInfo.EnvironmentVariables["UserProfile"] = newUserProfile;
-            wpiServiceExe.StartInfo.EnvironmentVariables["LocalAppData"] = newLocalAppData;
-            wpiServiceExe.StartInfo.EnvironmentVariables["AppData"] = newAppData;
+            wpiServiceExe.StartInfo.LoadUserProfile = true;
+            //wpiServiceExe.StartInfo.EnvironmentVariables["UserProfile"] = newUserProfile;
+            //wpiServiceExe.StartInfo.EnvironmentVariables["LocalAppData"] = newLocalAppData;
+            //wpiServiceExe.StartInfo.EnvironmentVariables["AppData"] = newAppData;
             if (wpiServiceExe.Start())
             {
                 _WpiServiceExe = wpiServiceExe;
@@ -981,4 +990,6 @@ namespace WebsitePanel.Server
         }
         #endregion
     }
+
+ 
 }
