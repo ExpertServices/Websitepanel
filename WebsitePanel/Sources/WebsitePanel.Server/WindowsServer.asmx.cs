@@ -749,12 +749,13 @@ namespace WebsitePanel.Server
 
                 Log.WriteError("WpiGetLogFileDirectory", ex);
 
-                throw;
+                //throw;
+                return string.Empty;
             }
         }
 
         [WebMethod]
-        public SettingPair[] WpiGetLogsInDirectory(string Path)
+        public SettingPair[] WpiGetLogsInDirectory(string path)
         {
             try
             {
@@ -762,7 +763,7 @@ namespace WebsitePanel.Server
 
                 ArrayList result = new ArrayList();
 
-                string[] filePaths = Directory.GetFiles(Path);
+                string[] filePaths = Directory.GetFiles(path);
                 foreach (string filePath in filePaths)
                 {
                     using (StreamReader streamReader = new StreamReader(filePath))
@@ -782,7 +783,8 @@ namespace WebsitePanel.Server
 
                 Log.WriteError("WpiGetLogFileDirectory", ex);
 
-                throw;
+                //throw;
+                return null;
             }
         }
 
