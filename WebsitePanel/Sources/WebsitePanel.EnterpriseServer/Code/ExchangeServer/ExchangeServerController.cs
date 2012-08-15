@@ -109,6 +109,15 @@ namespace WebsitePanel.EnterpriseServer
 				delegate(ServiceProviderItem item) { return (Organization)item; }));
 		}
 
+        public static List<Organization> GetExchangeOrganizationsInternal(int packageId, bool recursive)
+        {
+            List<ServiceProviderItem> items = PackageController.GetPackageItemsByTypeInternal(packageId, null, typeof(Organization), recursive);
+
+            return items.ConvertAll<Organization>(
+                new Converter<ServiceProviderItem, Organization>(
+                delegate(ServiceProviderItem item) { return (Organization)item; }));
+        }
+
 		public static Organization GetOrganization(int itemId)
 		{
 			#region Demo Mode
@@ -2554,12 +2563,12 @@ namespace WebsitePanel.EnterpriseServer
                 
                     if ((Packages != null) & (Packages.Count > 0))
                     {
-                        orgs = GetExchangeOrganizations(Packages[0].PackageId, false);
+                        orgs = GetExchangeOrganizationsInternal(Packages[0].PackageId, false);
                     }
                 }
                 else
                 {
-                    orgs = GetExchangeOrganizations(1, false);
+                    orgs = GetExchangeOrganizationsInternal(1, false);
                 }
 
                 if ((orgs != null) &(orgs.Count > 0))
