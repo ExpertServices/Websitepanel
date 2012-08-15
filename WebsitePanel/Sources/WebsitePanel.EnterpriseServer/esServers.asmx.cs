@@ -54,6 +54,9 @@ namespace WebsitePanel.EnterpriseServer
     [ToolboxItem(false)]
     public class esServers : System.Web.Services.WebService
     {
+        public const string MAIN_WPI_FEED = "https://www.microsoft.com/web/webpi/4.0/WebProductList.xml";
+        public const string HELICON_WPI_FEED = "http://www.helicontech.com/zoo/feed/wsp4";
+
         #region Servers
         [WebMethod]
         public List<ServerInfo> GetAllServers()
@@ -677,12 +680,12 @@ namespace WebsitePanel.EnterpriseServer
             
             if (Utils.ParseBool(wpiSettings["FeedEnableMicrosoft"] ,true))
             {
-                arFeeds.Add( "https://www.microsoft.com/web/webpi/3.0/WebProductList.xml" );
+                arFeeds.Add( MAIN_WPI_FEED );
             }
 
             if (Utils.ParseBool(wpiSettings["FeedEnableHelicon"] ,true))
             {
-                arFeeds.Add( "http://www.helicontech.com/zoo/feed/wsp" );
+                arFeeds.Add( HELICON_WPI_FEED );
             }
             
             string additionalFeeds = wpiSettings["FeedUrls"];

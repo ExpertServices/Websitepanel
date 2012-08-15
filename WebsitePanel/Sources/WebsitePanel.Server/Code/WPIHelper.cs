@@ -60,7 +60,8 @@ namespace WebsitePanel.Server.Code
 
         private readonly List<string> _feeds;
         private string _webPIinstallersFolder;
-        private const string MainWpiFeed = "https://www.microsoft.com/web/webpi/3.0/webproductlist.xml";
+        //private const string MainWpiFeed = "https://www.microsoft.com/web/webpi/3.0/webproductlist.xml";
+        private const string MainWpiFeed = "https://www.microsoft.com/web/webpi/4.0/WebProductList.xml";
         private const string IisChoiceProduct = "StaticContent";
         private const string WebMatrixChoiceProduct = "WebMatrix";
         private ProductManager _productManager;
@@ -682,9 +683,11 @@ namespace WebsitePanel.Server.Code
 
         private static bool IsAlienDbTaggedParameter(DeploymentWellKnownTag dbTag, DeclaredParameter parameter)
         {
+#pragma warning disable 612,618
             return (parameter.Tags & databaseEngineTags) != DeploymentWellKnownTag.None 
                    && 
                    (parameter.Tags & dbTag) == DeploymentWellKnownTag.None;
+#pragma warning restore 612,618
         }
 
         private static void RemoveUnusedProviders(MSDeployPackage msDeployPackage, DeploymentWellKnownTag dbTag)

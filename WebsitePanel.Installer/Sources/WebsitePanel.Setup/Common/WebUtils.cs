@@ -864,12 +864,13 @@ namespace WebsitePanel.Setup
 			ServerManager serverManager = new ServerManager();
 			ApplicationPool pool = serverManager.ApplicationPools.Add(name);
 
-			if (!String.IsNullOrEmpty(username))
-			{
-				pool.ProcessModel.IdentityType = ProcessModelIdentityType.SpecificUser;
-				pool.ProcessModel.UserName = username;
-				pool.ProcessModel.Password = password;
-			}
+            if (!String.IsNullOrEmpty(username))
+            {
+                pool.ProcessModel.IdentityType = ProcessModelIdentityType.SpecificUser;
+                pool.ProcessModel.UserName = username;
+                pool.ProcessModel.Password = password;
+                pool.ProcessModel.LoadUserProfile = true;
+            }
 			else
 			{
 				pool.ProcessModel.IdentityType = ProcessModelIdentityType.NetworkService;
@@ -961,6 +962,7 @@ namespace WebsitePanel.Setup
 				pool.ProcessModel.IdentityType = ProcessModelIdentityType.SpecificUser;
 				pool.ProcessModel.UserName = username;
 				pool.ProcessModel.Password = password;
+                pool.ProcessModel.LoadUserProfile = true;
 			}
 			else
 			{

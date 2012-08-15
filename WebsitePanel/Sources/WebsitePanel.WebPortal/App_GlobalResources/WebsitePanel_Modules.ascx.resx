@@ -187,7 +187,7 @@
     <value>Applications Installer</value>
   </data>
   <data name="ModuleTitle.WebApplicationsGallery" xml:space="preserve">
-    <value>Microsoft Web Application Gallery</value>
+    <value>Web Application Gallery</value>
   </data>
   <data name="ModuleTitle.AuditLog" xml:space="preserve">
     <value>Audit Log</value>

@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using Microsoft.Web.PlatformInstaller;
@@ -188,9 +189,11 @@ namespace WebsitePanel.Server.WPIService
             {
                 _installationStatus = EWPIServiceStatus.InstallationComplete;
             }
+
+            CheckIISAlive();
         }
 
-        
+
         private void InstallStatusUpdatedHandler(object sender, InstallStatusEventArgs e)
         {
             StringBuilder sb = new StringBuilder();
@@ -242,6 +245,27 @@ namespace WebsitePanel.Server.WPIService
                 _statusMessage = sb.ToString();
             }
         }
+
+        private void CheckIISAlive()
+        {
+            // run iisreset /start
+            ProcessStartInfo processStartInfo = new ProcessStartInfo(@"C:\Windows\System32\iisreset.exe", "/start");
+            processStartInfo.UseShellExecute = false;
+
+            try
+            {
+                using (Process exeProcess = Process.Start(processStartInfo))
+                {
+                    exeProcess.WaitForExit();
+                    Debug.Write("WPIService: iisreset /start returns "+exeProcess.ExitCode);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.Write("WPIService: iisreset /start exception: "+ex.ToString());
+            }
+        }
+
         #endregion
     }
 }

@@ -178,5 +178,15 @@ namespace WebsitePanel.Portal
             }
             ES.Services.WebApplicationGallery.SetResourceLanguage(PanelSecurity.PackageId, lang);
         }
+
+        protected string GetIconUrlOrDefault(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+            {
+                return "/App_Themes/Default/icons/sphere_128.png";
+            }
+            
+            return "~/DesktopModules/WebsitePanel/ResizeImage.ashx?width=120&height=120&url=" + Server.UrlEncode(url);
+        }
     }
 }
