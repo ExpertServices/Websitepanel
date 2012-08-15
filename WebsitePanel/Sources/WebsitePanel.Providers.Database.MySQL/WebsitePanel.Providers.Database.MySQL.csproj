@@ -55,9 +55,9 @@
     <WarningsAsErrors>618</WarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MySql.Data, Version=6.3.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Lib\References\MySQL\MySql.Data.dll</HintPath>
+    <Reference Include="MySql.Data">
+	<SpecificVersion>False</SpecificVersion>
+        <HintPath>C:\Program Files (x86)\MySQL\MySQL Connector Net 6.4.4\Assemblies\v2.0\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
