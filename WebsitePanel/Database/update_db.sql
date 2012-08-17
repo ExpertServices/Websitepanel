@@ -4772,3 +4772,12 @@ RETURN
 
 GO
 
+
+IF EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'SmarterStats 5.x-6.x')
+BEGIN
+	UPDATE [dbo].[Providers]
+	SET [DisplayName] = 'SmarterStats 5.x +'
+	WHERE [DisplayName] = 'SmarterStats 5.x-6.x'
+END
+GO
+
