@@ -53,46 +53,8 @@
 				        </table>
 				        <br />
 				    </asp:Panel>
-    				
-    				
-				    <wsp:CollapsiblePanel id="secPublicFoldersReport" runat="server"
-                        TargetControlID="PublicFoldersReport" meta:resourcekey="secPublicFoldersReport" Text="Public Folders">
-                    </wsp:CollapsiblePanel>
-                    <asp:Panel ID="PublicFoldersReport" runat="server" Height="0" style="overflow:hidden;">
-				        <asp:GridView ID="gvFolders" runat="server" AutoGenerateColumns="False"
-					        Width="100%" EmptyDataText="gvFolders" CssSelectorClass="NormalGridView">
-					        <Columns>
-						        <asp:BoundField HeaderText="gvFoldersName" DataField="ItemName" />
-						        <asp:BoundField HeaderText="gvFoldersItems" DataField="TotalItems" />
-						        <asp:BoundField HeaderText="gvFoldersSize" DataField="TotalSizeMB" />
-						        <asp:TemplateField HeaderText="gvFoldersLastAccess">
-									<ItemTemplate>&nbsp;<%# Utils.FormatDateTime((DateTime)Eval("LastAccessTime"))%></ItemTemplate>
-						        </asp:TemplateField>
-						        <asp:TemplateField HeaderText="gvFoldersLastModification">
-									<ItemTemplate>&nbsp;<%# Utils.FormatDateTime((DateTime)Eval("LastModificationTime")) %></ItemTemplate>
-						        </asp:TemplateField>
-					        </Columns>
-				        </asp:GridView>
-				        <br />
-			            <table cellpadding="2">
-					        <tr>
-					            <td class="FormLabel150"><asp:Localize ID="locTotalFolderItems" runat="server" meta:resourcekey="locTotalFolderItems" Text="Total Items:"></asp:Localize></td>
-					            <td><asp:Label ID="lblTotalFolderItems" runat="server" CssClass="NormalBold">177</asp:Label></td>
-					        </tr>
-					        <tr>
-					            <td class="FormLabel150"><asp:Localize ID="locTotalFoldersSize" runat="server" meta:resourcekey="locTotalFoldersSize" Text="Total Size (MB):"></asp:Localize></td>
-					            <td><asp:Label ID="lblTotalFolderSize" runat="server" CssClass="NormalBold">100</asp:Label></td>
-					        </tr>
-				        </table>
-				        <br />
-				    </asp:Panel>
-
-
 			        <br />
                 </div>
-			</div>
-			<div class="Right">
-				<asp:Localize ID="FormComments" runat="server" meta:resourcekey="FormComments"></asp:Localize>
 			</div>
 		</div>
 	</div>

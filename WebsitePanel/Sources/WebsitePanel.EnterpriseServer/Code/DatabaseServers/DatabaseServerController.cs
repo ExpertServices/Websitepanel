@@ -96,6 +96,12 @@ namespace WebsitePanel.EnterpriseServer
             database.ServiceId = item.ServiceId;
             database.GroupName = item.GroupName;
 
+            StringDictionary settings = ServerController.GetServiceSettings(item.ServiceId);
+
+
+            if (settings["InternalAddress"] != null) database.InternalServerName = settings["InternalAddress"];
+            if (settings["ExternalAddress"] != null) database.ExternalServerName = settings["ExternalAddress"];
+
             return database;
         }
 

@@ -10,7 +10,7 @@
 		<div class="Header">
 			<wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName" />
 		</div>
-        <div class="Left">
+		<div class="Left">
             &nbsp;
         </div>
 		<div class="Content">
@@ -108,9 +108,6 @@
 				    <br />
 				    <br />
 				</div>
-			</div>
-			<div class="Right">
-				<asp:Localize ID="FormComments" runat="server" meta:resourcekey="HSFormComments"></asp:Localize>
 			</div>
 		</div>
 	</div>

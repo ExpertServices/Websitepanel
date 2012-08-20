@@ -44,6 +44,7 @@ namespace WebsitePanel.WebPortal
 		private string adminContainerSrc;
         private List<string> viewRoles = new List<string>();
         private List<string> editRoles = new List<string>();
+        private List<string> readOnlyRoles = new List<string>();
         private Hashtable settings = new Hashtable();
 		private XmlDocument xmlModuleData = new XmlDocument();
         private PortalPage page;
@@ -81,6 +82,12 @@ namespace WebsitePanel.WebPortal
         {
             get { return this.editRoles; }
         }
+
+        public List<string> ReadOnlyRoles
+        {
+            get { return this.readOnlyRoles; }
+        }
+
 
         public Hashtable Settings
         {

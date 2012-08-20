@@ -78,6 +78,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="esLync.asmx" />
     <Content Include="esVirtualizationServerForPrivateCloud.asmx" />
     <Content Include="Default.aspx" />
     <Content Include="ecStorefront.asmx" />
@@ -89,7 +90,6 @@
     <Content Include="esComments.asmx" />
     <Content Include="esCRM.asmx" />
     <Content Include="esDatabaseServers.asmx" />
-    <Content Include="esExchangeHostedEdition.asmx" />
     <Content Include="esExchangeServer.asmx" />
     <Content Include="esFiles.asmx" />
     <Content Include="esFtpServers.asmx" />
@@ -133,6 +133,8 @@
     <Compile Include="Code\Common\ServiceUsernameTokenManager.cs" />
     <Compile Include="Code\Common\UsernameAssertion.cs" />
     <Compile Include="Code\Common\Utils.cs" />
+    <Compile Include="Code\HostedSolution\LyncController.cs" />
+    <Compile Include="Code\HostedSolution\LyncControllerAsync.cs" />
     <Compile Include="Code\VirtualizationForPrivateCloud\CreateAsyncVMfromVM.cs" />
     <Compile Include="Code\VirtualizationForPrivateCloud\CreateServerAsyncWorkerForPrivateCloud.cs" />
     <Compile Include="Code\VirtualizationForPrivateCloud\VirtualizationServerControllerForPrivateCloud.cs" />
@@ -166,7 +168,6 @@
     <Compile Include="Code\Ecommerce\TaskEventHandlers\SystemTriggersAgent.cs" />
     <Compile Include="Code\Ecommerce\TriggerSystem\CommonTrigger.cs" />
     <Compile Include="Code\Ecommerce\TriggerSystem\TriggerController.cs" />
-    <Compile Include="Code\ExchangeHostedEdition\ExchangeHostedEditionController.cs" />
     <Compile Include="Code\ExchangeServer\ExchangeServerController.cs" />
     <Compile Include="Code\Files\FilesController.cs" />
     <Compile Include="Code\FtpServers\FtpServerController.cs" />
@@ -239,6 +240,10 @@
     <Compile Include="Code\WebServers\WebServerController.cs" />
     <Compile Include="Code\Wizards\UserCreationWizard.cs" />
     <Compile Include="Code\Wizards\WebApplicationsInstaller.cs" />
+    <Compile Include="esLync.asmx.cs">
+      <DependentUpon>esLync.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="esVirtualizationServerForPrivateCloud.asmx.cs">
       <DependentUpon>esVirtualizationServerForPrivateCloud.asmx</DependentUpon>
       <SubType>Component</SubType>
@@ -292,10 +297,6 @@
     </Compile>
     <Compile Include="esDatabaseServers.asmx.cs">
       <DependentUpon>esDatabaseServers.asmx</DependentUpon>
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="esExchangeHostedEdition.asmx.cs">
-      <DependentUpon>esExchangeHostedEdition.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="esExchangeServer.asmx.cs">

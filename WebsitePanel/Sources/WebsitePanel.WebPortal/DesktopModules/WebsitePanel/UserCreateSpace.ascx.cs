@@ -41,6 +41,7 @@ namespace WebsitePanel.Portal
             {
                 if (!IsPostBack)
                 {
+                    chkIntegratedOUProvisioning.Visible = false;
                     ftpAccountName.SetUserPolicy(PanelSecurity.SelectedUserId, UserSettings.FTP_POLICY, "UserNamePolicy");
                     BindHostingPlans(PanelSecurity.SelectedUserId);
                     BindHostingPlan();
@@ -106,6 +107,8 @@ namespace WebsitePanel.Portal
             chkCreateMailAccount.Checked &= mailEnabled;
 
             ftpAccountName.Visible = (rbFtpAccountName.SelectedIndex == 1);
+
+            chkIntegratedOUProvisioning.Visible = chkCreateResources.Visible;
         }
 
         private void CreateHostingSpace()
@@ -133,8 +136,30 @@ namespace WebsitePanel.Portal
                 if (result.Result < 0)
                 {
                     ShowResultMessage(result.Result);
-                    lblMessage.Text = AntiXss.HtmlEncode(GetExceedingQuotasMessage(result.ExceedingQuotas));
+                    lblMessage.Text = Microsoft.Security.Application.Encoder.HtmlEncode(GetExceedingQuotasMessage(result.ExceedingQuotas));
                     return;
+                }
+                else
+                {
+                    if ((chkIntegratedOUProvisioning.Checked) & !string.IsNullOrEmpty(domainName))
+                    {
+                        UserInfo user = UsersHelper.GetUser(PanelSecurity.SelectedUserId);
+
+                        if (user != null)
+                        {
+                            if (user.Role != UserRole.Reseller)
+                            {
+
+                                ES.Services.Organizations.CreateOrganization(result.Result, domainName.ToLower(), domainName.ToLower());
+
+                                if (result.Result < 0)
+                                {
+                                    ShowErrorMessage("USERWIZARD_CREATE_ACCOUNT");
+                                    return;
+                                }
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)

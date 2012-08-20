@@ -38,17 +38,20 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class ExchangeDistributionListMailFlowSettings : WebsitePanelModuleBase
-	{
+    public partial class ExchangeDistributionListMailFlowSettings : WebsitePanelModuleBase
+    {
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
                 BindSettings();
             }
+
+
         }
 
         private void BindSettings()
@@ -59,7 +62,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 ExchangeDistributionList dlist = ES.Services.ExchangeServer.GetDistributionListMailFlowSettings(
                     PanelRequest.ItemID, PanelRequest.AccountID);
 
-				litDisplayName.Text = dlist.DisplayName;
+                litDisplayName.Text = dlist.DisplayName;
 
                 // bind form
                 acceptAccounts.SetAccounts(dlist.AcceptAccounts);
@@ -68,7 +71,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("EXCHANGE_GET_DLIST_MAILFLOW", ex);
+                messageBox.ShowErrorMessage("EXCHANGE_GET_DLIST_MAILFLOW", ex);
             }
         }
 
@@ -92,11 +95,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-				messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_DLIST_MAILFLOW");
+                messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_DLIST_MAILFLOW");
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("EXCHANGE_UPDATE_DLIST_MAILFLOW", ex);
+                messageBox.ShowErrorMessage("EXCHANGE_UPDATE_DLIST_MAILFLOW", ex);
             }
         }
 
@@ -104,5 +107,5 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             SaveSettings();
         }
-	}
+    }
 }

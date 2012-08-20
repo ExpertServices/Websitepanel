@@ -47,15 +47,19 @@ namespace WebsitePanel.Portal
 				//
 				if (!result.IsSuccess)
 				{
-					ddlCategory.Visible = false;
+					rbsCategory.Visible = false;
 					messageBox.ShowMessage(result, "WAG_NOT_AVAILABLE", "ModuleWAG");
 					return;
 				}
 
                 if (!IsPostBack)
                 {
+                    //
+                    SetLanguage();
+                    BindLanguages();
                     BindCategories();
 					BindApplications();
+                    ViewState["IsSearchResults"] = false;
                 }
             }
             catch(Exception ex)
@@ -67,49 +71,122 @@ namespace WebsitePanel.Portal
 		protected void gvApplications_PageIndexChanging(object sender, GridViewPageEventArgs e)
 		{
 			gvApplications.PageIndex = e.NewPageIndex;
-			//
-			BindApplications();
+            if ((bool)ViewState["IsSearchResults"] == false)
+            {
+                // categorized app list
+                BindApplications();
+                if (null != rbsCategory.SelectedItem)
+                {
+                    rbsCategory.SelectedItem.Attributes["class"] = "selected";
+                }
+            }
+            else
+            {
+                // search result app list
+                SearchButton_Click(sender, null);
+            }
 		}
+
+        private void BindLanguages()
+        {
+            GalleryLanguagesResult result = ES.Services.WebApplicationGallery.GetGalleryLanguages(PanelSecurity.PackageId);
+            dropDownLanguages.DataSource = result.Value;
+            //dropDownLanguages.SelectedIndex = 0;
+            dropDownLanguages.SelectedValue = (string)Session["WebApplicationGaleryLanguage"];
+            dropDownLanguages.DataTextField = "Value";
+            dropDownLanguages.DataValueField = "Name";
+            dropDownLanguages.DataBind();
+
+        }
 
         private void BindCategories()
         {
 			GalleryCategoriesResult result = ES.Services.WebApplicationGallery.GetGalleryCategories(PanelSecurity.PackageId);
 			//
-			ddlCategory.DataSource = result.Value;
-            ddlCategory.DataTextField = "Name";
-            ddlCategory.DataValueField = "Id";
-            ddlCategory.DataBind();
+			rbsCategory.DataSource = result.Value;
+            rbsCategory.DataTextField = "Name";
+            rbsCategory.DataValueField = "Id";
+            rbsCategory.DataBind();
 
             // add empty
-            ddlCategory.Items.Insert(0, new ListItem(GetLocalizedString("SelectCategory.Text"), ""));
+            ListItem listItem = new ListItem("All", "");
+            listItem.Attributes["class"] = "selected";
+            rbsCategory.Items.Insert(0, listItem);
         }
 
 		private void BindApplications()
 		{
-			WebAppGalleryHelpers helper = new WebAppGalleryHelpers();
+            ViewState["IsSearchResults"] = false;
+            WebAppGalleryHelpers helper = new WebAppGalleryHelpers();
 			//
-			GalleryApplicationsResult result = helper.GetGalleryApplications(ddlCategory.SelectedValue, PanelSecurity.PackageId);
+			GalleryApplicationsResult result = helper.GetGalleryApplications(rbsCategory.SelectedValue, PanelSecurity.PackageId);
 			//
 			gvApplications.DataSource = result.Value;
 			gvApplications.DataBind();
 		}
 
-		protected void ddlCategory_SelectedIndexChanged(object sender, EventArgs e)
+		protected void CategorySelectedIndexChanged(object sender, EventArgs e)
 		{
-			gvApplications.PageIndex = 0;
-			//
-			BindApplications();
-		}
+		    ViewState["IsSearchResults"] = false;
+		    searchBox.Text = "";
+            gvApplications.PageIndex = 0;
+            rbsCategory.SelectedItem.Attributes["class"] = "selected";
 
-        protected void odsApplications_Selected(object sender, ObjectDataSourceStatusEventArgs e)
-        {            
-        }
+            BindApplications();
+		}
 
         protected void gvApplications_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             if (e.CommandName == "Install")
                 Response.Redirect(EditUrl("ApplicationID", e.CommandArgument.ToString(), "edit",
                     "SpaceID=" + PanelSecurity.PackageId.ToString()));
+        }
+
+        protected void SearchButton_Click(object sender, System.Web.UI.ImageClickEventArgs e)
+        {
+            if ((bool)ViewState["IsSearchResults"] == false)
+            {
+                gvApplications.PageIndex = 0;
+            }
+            ViewState["IsSearchResults"] = true;
+
+            WebAppGalleryHelpers helper = new WebAppGalleryHelpers();
+            GalleryApplicationsResult result = helper.GetGalleryApplicationsFiltered(searchBox.Text, PanelSecurity.PackageId);
+
+            gvApplications.DataSource = result.Value ;
+            gvApplications.DataBind();
+        }
+
+        protected void dropDownLanguages_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Session["WebApplicationGaleryLanguage"] = dropDownLanguages.SelectedValue;
+
+            SetLanguage();
+
+            BindLanguages();
+            BindCategories();
+            BindApplications();
+
+        }
+
+        private void SetLanguage()
+        {
+            string lang = (string)Session["WebApplicationGaleryLanguage"];
+            if (string.IsNullOrEmpty(lang))
+            {
+                lang = "en";
+            }
+            ES.Services.WebApplicationGallery.SetResourceLanguage(PanelSecurity.PackageId, lang);
+        }
+
+        protected string GetIconUrlOrDefault(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+            {
+                return "/App_Themes/Default/icons/sphere_128.png";
+            }
+            
+            return "~/DesktopModules/WebsitePanel/ResizeImage.ashx?width=120&height=120&url=" + Server.UrlEncode(url);
         }
     }
 }

@@ -40,6 +40,8 @@ namespace WebsitePanel.Providers.Database
 		private int logSize;
 		private string[] users;
         private string location;
+        private string internalServerName;
+        private string externalServerName;
 
 		public SqlDatabase()
 		{
@@ -92,5 +94,19 @@ namespace WebsitePanel.Providers.Database
             get { return this.location; }
             set { this.location = value; }
         }
+
+        public string InternalServerName
+        {
+            get { return this.internalServerName; }
+            set { this.internalServerName = value; }
+        }
+
+        public string ExternalServerName
+        {
+            get { return this.externalServerName; }
+            set { this.externalServerName = value; }
+        }
+
+
 	}
 }

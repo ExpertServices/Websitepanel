@@ -94,7 +94,7 @@ namespace WebsitePanel.Portal
                 i++;
             }
 
-            litTotal.Text = AntiXss.HtmlEncode(DiskspaceTotal.ToString());
+            litTotal.Text = Microsoft.Security.Application.Encoder.HtmlEncode(DiskspaceTotal.ToString());
 
             // get summary
             gvSummary.DataSource = ds;

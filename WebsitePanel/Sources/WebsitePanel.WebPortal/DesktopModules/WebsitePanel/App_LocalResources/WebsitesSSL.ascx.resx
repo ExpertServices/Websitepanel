@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnCSR.Text" xml:space="preserve">
     <value>Generate CSR</value>
@@ -160,7 +160,7 @@
     <value>Enter a password for the PFX</value>
   </data>
   <data name="InstallCSRCertificate.Text" xml:space="preserve">
-    <value>Paste your certificate form your CA into to the text area below and click on “Complete Installation” button.</value>
+    <value>Paste your certificate from your CA into to the text area below and click on “Install Certificate” button.</value>
   </data>
   <data name="InstallCSRDescription.Text" xml:space="preserve">
     <value>A CSR for your Website was generated successfully and is shown below. Copy the text below and paste it to a CA to request the certificate.</value>

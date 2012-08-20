@@ -74,7 +74,16 @@ namespace WebsitePanel.Providers.HostedSolution
                 return ProviderSettings[Constants.EnterpriseServer];
             }
         }
-        
+
+        public string EnterpriseServerFQDN
+        {
+            get
+            {
+                return ProviderSettings[Constants.EnterpriseServerFQDN];
+            }
+        }
+
+
         public ResultObject CreateBlackBerryUser(string primaryEmailAddress)
         {
             return CreateBlackBerryUserInternal(primaryEmailAddress);

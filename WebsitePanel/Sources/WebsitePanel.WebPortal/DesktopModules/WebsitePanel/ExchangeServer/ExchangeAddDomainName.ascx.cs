@@ -27,20 +27,54 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using WebsitePanel.EnterpriseServer;
+using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class ExchangeAddDomainName : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
+    public partial class ExchangeAddDomainName : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            DomainInfo[] domains = ES.Services.Servers.GetMyDomains(PanelSecurity.PackageId);
 
-		}
+            OrganizationDomainName[] list = ES.Services.Organizations.GetOrganizationDomains(PanelRequest.ItemID);
+
+            foreach (DomainInfo d in domains)
+            {
+                if (!d.IsDomainPointer & !d.IsInstantAlias)
+                {
+                    bool bAdd = true;
+                    foreach (OrganizationDomainName acceptedDomain in list)
+                    {
+                        if (d.DomainName.ToLower() == acceptedDomain.DomainName.ToLower())
+                        {
+                            bAdd = false;
+                            break;
+                        }
+
+                    }
+                    if (bAdd) ddlDomains.Items.Add(d.DomainName.ToLower());
+                }
+            }
+
+            if (ddlDomains.Items.Count == 0) btnAdd.Enabled = false;
+
+            
+
+        }
 
         protected void btnAdd_Click(object sender, EventArgs e)
         {
             AddDomain();
         }
+
+        protected void btnCancel_Click(object sender, EventArgs e)
+        {
+            Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "domains", "SpaceID=" + PanelSecurity.PackageId));
+
+        }
+
 
         private void AddDomain()
         {
@@ -51,7 +85,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
 
                 int result = ES.Services.Organizations.AddOrganizationDomain(PanelRequest.ItemID,
-                    txtDomainName.Text.Trim());
+                    ddlDomains.SelectedValue.Trim());
 
                 if (result < 0)
                 {
@@ -67,5 +101,5 @@ namespace WebsitePanel.Portal.ExchangeServer
                 messageBox.ShowErrorMessage("EXCHANGE_ADD_DOMAIN", ex);
             }
         }
-	}
+    }
 }

@@ -106,6 +106,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Exchange.Net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Rtc.Management.Core">
+      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Rtc.Management.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Rtc.Management.Hosted">
+      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Rtc.Management.Hosted.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Rtc.Management.WritableConfig">
+      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Rtc.Management.WritableConfig.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.SharePoint">
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.SharePoint.dll</HintPath>
       <Private>False</Private>
@@ -131,7 +140,10 @@
     <Compile Include="BlackBerry5Provider.cs" />
     <Compile Include="BlackBerryProvider.cs" />
     <Compile Include="Exchange2010.cs" />
+    <Compile Include="Exchange2010SP2.cs" />
     <Compile Include="HostedSharePointServer2010.cs" />
+    <Compile Include="Lync2010.cs" />
+    <Compile Include="LyncTransaction.cs" />
     <Compile Include="OCSEdge2007R2.cs" />
     <Compile Include="OCS2007R2.cs" />
     <Compile Include="CRMProvider.cs" />

@@ -26,12 +26,7 @@
 						<tr>
 							<td class="FormLabel150"><asp:Localize ID="locDomainName" runat="server" meta:resourcekey="locDomainName" Text="Domain Name:"></asp:Localize></td>
 							<td>
-								<asp:TextBox ID="txtDomainName" runat="server" CssClass="HugeTextBox200"></asp:TextBox>
-								<asp:RequiredFieldValidator ID="valRequireDomainName" runat="server" meta:resourcekey="valRequireDomainName" ControlToValidate="txtDomainName"
-									ErrorMessage="Enter Domain Name" ValidationGroup="CreateDomain" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
-								<asp:RegularExpressionValidator id="valRequireCorrectDomain" runat="server" ValidationExpression="^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.){1,10}[a-zA-Z]{2,6}$"
-									ErrorMessage='Please, enter correct domain name in the form "mydomain.com" or "sub.mydomain.com"' ControlToValidate="txtDomainName"
-									Display="Dynamic" meta:resourcekey="valRequireCorrectDomain" ValidationGroup="CreateDomain">*</asp:RegularExpressionValidator>
+                            <asp:DropDownList id="ddlDomains" runat="server" CssClass="NormalTextBox" DataTextField="DomainName" DataValueField="DomainID" style="vertical-align:middle;"></asp:DropDownList>
 							</td>
 						</tr>
 					</table>
@@ -39,12 +34,11 @@
 				    <div class="FormFooterClean">
 					    <asp:Button id="btnAdd" runat="server" Text="Add Domain" CssClass="Button1" meta:resourcekey="btnAdd" ValidationGroup="CreateDomain" OnClick="btnAdd_Click" OnClientClick="ShowProgressDialog('Creating Domain...');"></asp:Button>
 					    <asp:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="CreateDomain" />
+                        <asp:Button id="btnCancel" runat="server" Text="Cancel" CssClass="Button1" meta:resourcekey="btnCancel" OnClick="btnCancel_Click"></asp:Button>
 				    </div>
 				</div>
 			</div>
-			<div class="Right">
-				<asp:Localize ID="FormComments" runat="server" meta:resourcekey="FormComments"></asp:Localize>
-			</div>
+
 		</div>
 	</div>
 </div>

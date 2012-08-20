@@ -507,6 +507,11 @@ namespace WebsitePanel.Providers.Utils
             {
                 if (serverSettings.ADEnabled)
                 {
+                    if (user.Name.IndexOf("\\") != -1)
+                    {
+                        string[] tmpStr = user.Name.Split('\\');
+                        user.Name = tmpStr[1];
+                    }
 
                     //check is user name less than 20 symbols
                     if (user.Name.Length > 20)
@@ -538,6 +543,13 @@ namespace WebsitePanel.Providers.Utils
                     SetObjectProperty(objUser, "UserPrincipalName", user.Name);
                     SetObjectProperty(objUser, "sAMAccountName", user.Name);
                     SetObjectProperty(objUser, "UserPassword", user.Password);
+
+                    if (user.MsIIS_FTPDir != string.Empty)
+                    {
+                        SetObjectProperty(objUser, "msIIS-FTPDir", user.MsIIS_FTPDir);
+                        SetObjectProperty(objUser, "msIIS-FTPRoot", user.MsIIS_FTPRoot);
+                    }
+
                     objUser.Properties["userAccountControl"].Value =
                         ADAccountOptions.UF_NORMAL_ACCOUNT | ADAccountOptions.UF_PASSWD_NOTREQD;
                     objUser.CommitChanges();

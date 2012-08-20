@@ -337,10 +337,13 @@ namespace WebsitePanel.SilentInstaller
 			string installerPath = Utils.GetDbString(row["InstallerPath"]);
 			string installerType = Utils.GetDbString(row["InstallerType"]);
 
+            // Get appropriate loader to download the app distributive
+            var loader = LoaderFactory.CreateFileLoader(fileName);
+            // Mimic synchronous download process for the console app
+            AutoResetEvent autoEvent = new AutoResetEvent(false);
+
 			try
 			{
-				// download installer
-				var loader = new Loader(fileName);
 				//
 				loader.OperationCompleted += new EventHandler<EventArgs>((object sender, EventArgs e) =>
 				{
@@ -374,25 +377,26 @@ namespace WebsitePanel.SilentInstaller
 					Log.WriteEnd("Installer finished");
 					// Remove temporary directory
 					FileUtils.DeleteTempDirectory();
+                    // We are done
+                    autoEvent.Set();
 				});
-
+                // TODO: Add cleanup for events.
 				loader.OperationFailed += new EventHandler<LoaderEventArgs<Exception>>(loader_OperationFailed);
 				loader.ProgressChanged += new EventHandler<LoaderEventArgs<int>>(loader_ProgressChanged);
 				loader.StatusChanged += new EventHandler<LoaderEventArgs<string>>(loader_StatusChanged);
 				//
 				loader.LoadAppDistributive();
+                // Wait until the download is complete
+                autoEvent.WaitOne();
 			}
 			catch (Exception ex)
 			{
 				Log.WriteError("Installer error", ex);
-				//AppContext.AppForm.ShowError(ex);
 			}
 			finally
 			{
-				//this.componentSettingsXml = null;
-				//this.componentCode = null;
+                autoEvent.Set();
 			}
-
 		}
 
 		static void loader_StatusChanged(object sender, LoaderEventArgs<string> e)

@@ -112,9 +112,6 @@
 
 				</div>
 			</div>
-			<div class="Right">
-				<asp:Localize ID="FormComments" runat="server" meta:resourcekey="FormComments"></asp:Localize>
-			</div>
 		</div>
 	</div>
 </div>

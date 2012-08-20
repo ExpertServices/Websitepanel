@@ -49,7 +49,7 @@
 									
 									<asp:Image ID="img1" runat="server" ImageUrl='<%# GetAccountImage() %>' ImageAlign="AbsMiddle" />
 									<asp:LinkButton ID="cmdSelectAccount" CommandName="SelectAccount"
-									CommandArgument='<%# Eval("AccountName").ToString() + "|" + Eval("DisplayName").ToString() + "|" + Eval("PrimaryEmailAddress")+ "|" + Eval("AccountId")%>'
+									CommandArgument='<%# Eval("AccountName").ToString() + "|" + Eval("DisplayName").ToString() + "|" + Eval("PrimaryEmailAddress")+ "|" + Eval("AccountId")+ "|" + Eval("SamAccountName")+ "|" + Eval("SubscriberNumber")%>'
 									runat="server" Text='<%# Eval("DisplayName") %>'></asp:LinkButton>
 								</ItemTemplate>
 							</asp:TemplateField>

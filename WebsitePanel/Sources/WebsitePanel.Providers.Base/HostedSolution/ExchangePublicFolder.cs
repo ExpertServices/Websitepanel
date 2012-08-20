@@ -31,7 +31,9 @@ namespace WebsitePanel.Providers.HostedSolution
 	public class ExchangePublicFolder
 	{
 		string name;
+        string netbios;
 		string displayName;
+        string sAMAccountName;
 		bool hideFromAddressBook;
 		bool mailEnabled;
 
@@ -89,5 +91,19 @@ namespace WebsitePanel.Providers.HostedSolution
 			get { return requireSenderAuthentication; }
 			set { requireSenderAuthentication = value; }
 		}
+
+        public string SAMAccountName
+        {
+            get { return this.sAMAccountName; }
+            set { this.sAMAccountName = value; }
+        }
+
+        public string NETBIOS
+        {
+            get { return this.netbios; }
+            set { this.netbios = value; }
+        }
+
+
 	}
 }

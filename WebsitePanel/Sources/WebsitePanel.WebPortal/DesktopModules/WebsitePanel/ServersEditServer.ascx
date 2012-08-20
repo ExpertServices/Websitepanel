@@ -198,6 +198,12 @@
                 </tr>
                 <tr>
                     <td class="Normal">
+                        &nbsp;&nbsp;&nbsp;<asp:HyperLink ID="lnkPlatformInstaller" runat="server"
+                            meta:resourcekey="lnkPlatformInstaller" Text="Web Platform Installer"></asp:HyperLink>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="Normal">
                         &nbsp;&nbsp;&nbsp;<asp:HyperLink ID="lnkServerReboot" runat="server"
                             meta:resourcekey="lnkServerReboot" Text="Server Reboot"></asp:HyperLink>
                     </td>

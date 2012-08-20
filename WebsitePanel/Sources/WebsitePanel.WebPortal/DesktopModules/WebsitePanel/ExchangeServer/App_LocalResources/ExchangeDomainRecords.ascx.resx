@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnAdd.Text" xml:space="preserve">
     <value>Add record</value>
@@ -130,7 +130,7 @@
     <value>Save</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;For each domain name WebsitePanel creates a corresponding DNS Zone. If you are unsure about the structure of DNS zone, please do not modify zone records.&lt;/p&gt;</value>
+    <value>&lt;p&gt;For each domain name a corresponding DNS Zone is created. If you are unsure about the structure of DNS zone, please do not modify zone records.&lt;/p&gt;</value>
   </data>
   <data name="gvRecords.Empty" xml:space="preserve">
     <value>No DNS records defined.</value>

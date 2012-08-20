@@ -399,7 +399,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 // check account
                 result.Result = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive
-                    | DemandAccount.IsReseller);
+                    | DemandAccount.IsResellerCSR);
                 if (result.Result < 0) return result;
 
                 // check if domain exists
@@ -460,7 +460,7 @@ namespace WebsitePanel.EnterpriseServer
                             domain.PackageId = packageId;
                             domain.DomainName = domainName;
                             domain.HostingAllowed = false;
-                            domainId = ServerController.AddDomain(domain, createInstantAlias);
+                            domainId = ServerController.AddDomain(domain, createInstantAlias, true);
                             if (domainId < 0)
                             {
                                 result.Result = domainId;
@@ -652,7 +652,7 @@ namespace WebsitePanel.EnterpriseServer
             {
                 // check account
                 result.Result = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive
-                    | DemandAccount.IsReseller);
+                    | DemandAccount.IsResellerCSR);
                 if (result.Result < 0) return result;
 
                 int packageId = -1;
@@ -820,7 +820,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive
-                | DemandAccount.IsReseller);
+                | DemandAccount.IsResellerCSR);
             if (accountCheck < 0) return accountCheck;
 
             List<PackageInfo> packages = new List<PackageInfo>();
@@ -1068,6 +1068,14 @@ namespace WebsitePanel.EnterpriseServer
             string typeName = ObjectUtils.GetTypeFullName(itemType);
             DataSet dsItems = DataProvider.GetServiceItems(SecurityContext.User.UserId,
                 packageId, groupName, typeName, recursive);
+
+            return CreateServiceItemsList(dsItems, 0);
+        }
+
+        public static List<ServiceProviderItem> GetPackageItemsByTypeInternal(int packageId, string groupName, Type itemType, bool recursive)
+        {
+            string typeName = ObjectUtils.GetTypeFullName(itemType);
+            DataSet dsItems = DataProvider.GetServiceItems(-1, packageId, groupName, typeName, recursive);
 
             return CreateServiceItemsList(dsItems, 0);
         }
@@ -1521,19 +1529,6 @@ namespace WebsitePanel.EnterpriseServer
                     }
                 }
 
-                // Exchange Hosted Edition
-                else if (String.Compare(PackageSettings.EXCHANGE_HOSTED_EDITION, settingsName, true) == 0)
-                {
-                    // load Exchange service settings
-                    int exchServiceId = GetPackageServiceId(packageId, ResourceGroups.ExchangeHostedEdition);
-                    if (exchServiceId > 0)
-                    {
-                        StringDictionary exchSettings = ServerController.GetServiceSettings(exchServiceId);
-                        settings["temporaryDomain"] = exchSettings["temporaryDomain"];
-                        settings["ecpURL"] = exchSettings["ecpURL"];
-                    }
-                }
-
                 // VPS
                 else if (String.Compare(PackageSettings.VIRTUAL_PRIVATE_SERVERS, settingsName, true) == 0)
                 {
@@ -1965,6 +1960,21 @@ namespace WebsitePanel.EnterpriseServer
             }
             items["Plans"] = plans;
 
+            //Add ons
+            Hashtable addOns = new Hashtable();
+            int i = 0;
+            foreach (PackageInfo package in packages)
+            {
+                List<PackageAddonInfo> lstAddOns = ObjectUtils.CreateListFromDataSet<PackageAddonInfo>(GetPackageAddons(package.PackageId));
+                foreach (PackageAddonInfo addOn in lstAddOns)
+                {
+                    addOns.Add(i, addOn);
+                    i++;
+                }
+
+            }
+            items["Addons"] = addOns;
+            
             // package contexts
             Hashtable cntxs = new Hashtable();
             foreach (PackageInfo package in packages)

@@ -167,7 +167,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return runspace;
 		}
 
-		private static Assembly ResolveExchangeAssembly(object p, ResolveEventArgs args)
+		internal static Assembly ResolveExchangeAssembly(object p, ResolveEventArgs args)
 		{
 			//Add path for the Exchange 2007 DLLs
 			if (args.Name.Contains("Microsoft.Exchange"))

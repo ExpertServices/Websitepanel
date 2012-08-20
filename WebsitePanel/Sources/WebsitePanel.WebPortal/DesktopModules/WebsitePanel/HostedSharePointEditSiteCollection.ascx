@@ -1,24 +1,17 @@
-<%@ Control Language="C#" AutoEventWireup="true" Codebehind="HostedSharePointEditSiteCollection.ascx.cs"
-	Inherits="WebsitePanel.Portal.HostedSharePointEditSiteCollection" %>
+<%@ Control Language="C#" AutoEventWireup="true" Codebehind="HostedSharePointEditSiteCollection.ascx.cs" Inherits="WebsitePanel.Portal.HostedSharePointEditSiteCollection" %>
 <%@ Register Src="ExchangeServer/UserControls/SizeBox.ascx" TagName="SizeBox" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox"
-    TagPrefix="wsp" %>
-<%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="UserControls/CollapsiblePanel.ascx" %>
+<%@ Register Src="UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/PopupHeader.ascx" TagName="PopupHeader" TagPrefix="wsp" %>
 <%@ Register Src="ExchangeServer/UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
-<%@ Register Src="ExchangeServer/UserControls/Breadcrumb.ascx" TagName="Breadcrumb"
-	TagPrefix="wsp" %>
-<%@ Register Src="ExchangeServer/UserControls/DomainSelector.ascx" TagName="DomainSelector" TagPrefix="wsp" %>	
+<%@ Register Src="ExchangeServer/UserControls/Breadcrumb.ascx" TagName="Breadcrumb"	TagPrefix="wsp" %>
+<%@ Register Src="UserControls/AllocatePackageIPAddresses.ascx" TagName="SiteUrlBuilder" TagPrefix="wsp" %>	
 <%@ Register Src="ExchangeServer/UserControls/UserSelector.ascx" TagName="UserSelector" TagPrefix="wsp" %>	
-
-
-<%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport"
-	TagPrefix="wsp" %>
-
+<%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 <%@ Register src="UserControls/QuotaEditor.ascx" tagname="QuotaEditor" tagprefix="uc1" %>
+<%@ Register Src="DomainsSelectDomainControl.ascx" TagName="DomainsSelectDomainControl" TagPrefix="uc1" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server" />
-
 
 <div id="ExchangeContainer">
 	<div class="Module">
@@ -39,13 +32,18 @@
 					<wsp:SimpleMessageBox id="localMessageBox" runat="server">
                     </wsp:SimpleMessageBox>					
 					<table id="tblEditItem" runat="server" cellspacing="0" cellpadding="5" width="100%">
-						<tr>
+						<tr id="rowUrl">
 							<td class="SubHead" nowrap width="200">
 								<asp:Label ID="lblSiteCollectionUrl" runat="server" meta:resourcekey="lblSiteCollectionUrl"
 									Text="Url:"></asp:Label>
 							</td>
 							<td width="100%" class="NormalBold">
-								<wsp:DomainSelector id="domain" runat="server" ShowAt="false"/>								
+			                    <asp:TextBox ID="txtHostName" runat="server" CssClass="TextBox100" MaxLength="64"></asp:TextBox>.<uc1:DomainsSelectDomainControl ID="domain" runat="server" HideWebSites="true" HideDomainPointers="true" />
+                                <asp:RequiredFieldValidator ID="valRequireHostName" runat="server" meta:resourcekey="valRequireHostName" ControlToValidate="txtHostName"
+	                                ErrorMessage="Enter hostname" ValidationGroup="CreateSite" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
+                                <asp:RegularExpressionValidator ID="valRequireCorrectHostName" runat="server"
+	                                ErrorMessage="Enter valid hostname" ControlToValidate="txtHostName" Display="Dynamic"
+	                                meta:resourcekey="valRequireCorrectHostName" ValidationExpression="^([0-9a-zA-Z])*[0-9a-zA-Z]+$" SetFocusOnError="True"></asp:RegularExpressionValidator>
 							</td>
 						</tr>
 						<tr>
@@ -211,9 +209,6 @@
 							OnClick="btnDelete_Click" />
 					</div>
 				</div>
-			</div>
-			<div class="Right">
-				<asp:Localize ID="FormComments" runat="server" meta:resourcekey="FormComments"></asp:Localize>
 			</div>
 		</div>
 	</div>

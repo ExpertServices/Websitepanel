@@ -57,7 +57,7 @@
 						</tr>
 						<tr>
 						    <td colspan="2">                                
-                            	<wsp:AccountsListWithPermissions ID="allAccounts" runat="server" MailboxesEnabled="true"/>
+                            	<wsp:AccountsListWithPermissions ID="allAccounts" runat="server" MailboxesEnabled="true" EnableMailboxOnly="true" DistributionListsEnabled="true"/>
                                 
                             </td>
 						</tr>
@@ -76,9 +76,6 @@
 					    <asp:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="EditPublicFolder" />
 				    </div>
 				</div>
-			</div>
-			<div class="Right">
-				<asp:Localize ID="FormComments" runat="server" meta:resourcekey="FormComments"></asp:Localize>
 			</div>
 		</div>
 	</div>

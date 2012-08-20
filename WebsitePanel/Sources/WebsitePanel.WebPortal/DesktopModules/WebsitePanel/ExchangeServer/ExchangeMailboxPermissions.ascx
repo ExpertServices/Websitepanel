@@ -53,10 +53,7 @@
 					    <asp:Button id="btnSave" runat="server" Text="Save Changes" CssClass="Button1" meta:resourcekey="btnSave" ValidationGroup="EditMailbox" OnClick="btnSave_Click" ></asp:Button>					    
 			        </div>
 				</div>										
-			</div>
-			<div class="Right">
-				<asp:Localize ID="FormComments" runat="server" meta:resourcekey="FormComments"></asp:Localize>
-			</div>									
+			</div>							
 		</div>		
 	</div>
 </div>

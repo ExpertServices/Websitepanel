@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2011, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -33,6 +33,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Drawing;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
@@ -51,22 +52,23 @@ namespace WebsitePanel.Portal.ExchangeServer
             gvMobile.DataSource = devices;
             gvMobile.DataBind();
 
-			// form title
-			ExchangeAccount account = ES.Services.ExchangeServer.GetAccount(PanelRequest.ItemID, PanelRequest.AccountID);
-			litDisplayName.Text = account.DisplayName;
+            // form title
+            ExchangeAccount account = ES.Services.ExchangeServer.GetAccount(PanelRequest.ItemID, PanelRequest.AccountID);
+            litDisplayName.Text = account.DisplayName;
         }
-        
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-               // ExchangeMailbox mailbox = ES.Services.ExchangeServer.GetMailboxGeneralSettings(PanelRequest.ItemID, PanelRequest.AccountID);
+                // ExchangeMailbox mailbox = ES.Services.ExchangeServer.GetMailboxGeneralSettings(PanelRequest.ItemID, PanelRequest.AccountID);
 
-               // if (mailbox != null)
-                 //   litDisplayName.Text = mailbox.DisplayName;
+                // if (mailbox != null)
+                //   litDisplayName.Text = mailbox.DisplayName;
 
                 BindGrid();
             }
+
         }
 
         protected void gvMobile_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -103,7 +105,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     if (lblStatus != null)
                     {
                         switch (current.Status)
-                        {                             
+                        {
                             case MobileDeviceStatus.PendingWipe:
                                 lblStatus.ForeColor = Color.Red;
                                 lblStatus.Text = GetLocalizedString(PendingWipe);

@@ -28,7 +28,7 @@
 				       
 			            <table cellpadding="2">					        
 					        <tr>
-					            <td class="FormLabel150"><asp:Localize ID="locUsedSize" runat="server" meta:resourcekey="locUsedSize" Text="Used Disk Space:"></asp:Localize></td>
+					            <td class="FormLabel150"><asp:Localize ID="locUsedSize" runat="server" meta:resourcekey="locUsedSize" Text="Allocated Disk Space:"></asp:Localize></td>
 					            <td>
 						            <asp:LinkButton runat="server" CssClass="NormalBold" Text="100"  meta:resourcekey="btnUsedSize"  ID="btnUsedSize" onclick="btnUsedSize_Click"  />						            
 					            </td>
@@ -40,9 +40,6 @@
 							CssClass="Button1" Text="Recalculate Disk Space" CausesValidation="false" OnClick="btnRecalculate_Click" />							
 				    </div>
 				</div>
-			</div>
-			<div class="Right">
-				<asp:Localize ID="FormComments" runat="server" meta:resourcekey="FormComments"></asp:Localize>
 			</div>
 		</div>
 	</div>

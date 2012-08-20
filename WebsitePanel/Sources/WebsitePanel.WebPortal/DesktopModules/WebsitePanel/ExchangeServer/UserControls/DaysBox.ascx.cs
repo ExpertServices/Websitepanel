@@ -41,7 +41,15 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 {
 	public partial class DaysBox : System.Web.UI.UserControl
 	{
-		public string ValidationGroup
+        int emptyValue = -1;
+
+        public int EmptyValue
+        {
+            get { return emptyValue; }
+            set { emptyValue = value; }
+        }
+        
+        public string ValidationGroup
 		{
 			get { return valRequireCorrectNumber.ValidationGroup; }
 			set { valRequireCorrectNumber.ValidationGroup = valRequireNumber.ValidationGroup = value; }
@@ -58,18 +66,25 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 			}
 		}
 
+        public bool RequireValidatorEnabled
+        {
+            get { return valRequireNumber.Enabled; }
+            set { valRequireNumber.Enabled = value; }
+        }
+
+
 		public int ValueDays
 		{
-			get
-			{
-				string val = txtValue.Text.Trim();
-				return Utils.ParseInt(val, 0);
-			}
-			set
-			{
-				txtValue.Text = value.ToString();
-			}
-		}
+            get
+            {
+                string val = txtValue.Text.Trim();
+                return val == "" ? emptyValue : Utils.ParseInt(val, 0);
+            }
+            set
+            {
+                txtValue.Text = value == emptyValue ? "" : value.ToString();
+            }
+        }
 
 		protected void Page_Load(object sender, EventArgs e)
 		{

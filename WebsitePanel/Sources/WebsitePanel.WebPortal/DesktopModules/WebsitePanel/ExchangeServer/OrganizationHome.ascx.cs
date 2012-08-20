@@ -32,15 +32,16 @@ using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class OrganizationHome : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
-			if (!IsPostBack)
-			{
-				BindOrgStats();
-			}
-		}
+    public partial class OrganizationHome : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                BindOrgStats();
+            }
+
+        }
 
         private void BindExchangeStats()
         {
@@ -54,13 +55,8 @@ namespace WebsitePanel.Portal.ExchangeServer
             lnkLists.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "dlists",
             "SpaceID=" + PanelSecurity.PackageId.ToString());
 
-            lnkFolders.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "public_folders",
+            lnkExchangeStorage.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "storage_usage",
             "SpaceID=" + PanelSecurity.PackageId.ToString());
-
-
-            
-            
-            
 
             mailboxesStats.QuotaUsedValue = exchangeOrgStats.CreatedMailboxes;
             mailboxesStats.QuotaValue = exchangeOrgStats.AllocatedMailboxes;
@@ -71,78 +67,91 @@ namespace WebsitePanel.Portal.ExchangeServer
             listsStats.QuotaUsedValue = exchangeOrgStats.CreatedDistributionLists;
             listsStats.QuotaValue = exchangeOrgStats.AllocatedDistributionLists;
 
+            exchangeStorageStats.QuotaUsedValue = exchangeOrgStats.UsedDiskSpace;
+            exchangeStorageStats.QuotaValue = exchangeOrgStats.AllocatedDiskSpace;
 
-            foldersStats.QuotaUsedValue = exchangeOrgStats.CreatedPublicFolders;
-            foldersStats.QuotaValue = exchangeOrgStats.AllocatedPublicFolders;
 
-            
-            lnkUsedExchangeDiskSpace.Text = exchangeOrgStats.UsedDiskSpace.ToString();
-            lnkUsedExchangeDiskSpace.NavigateUrl
-                = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "storage_usage",
-                "SpaceID=" + PanelSecurity.PackageId.ToString());
-            
-            
-        
         }
-        
+
         private void BindOrgStats()
-		{
-            Organization org =  ES.Services.Organizations.GetOrganization(PanelRequest.ItemID);
+        {
+            Organization org = ES.Services.Organizations.GetOrganization(PanelRequest.ItemID);
 
 
             lblOrganizationNameValue.Text = org.Name;
             lblOrganizationIDValue.Text = org.OrganizationId;
             lblCreatedValue.Text = org.CreatedDate.Date.ToShortDateString();
 
-            
+
             OrganizationStatistics orgStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
-			if (orgStats == null)
-				return;
-
-
-            litTotalDiskSpaceValue.Text = orgStats.UsedDiskSpace.ToString();
+            if (orgStats == null)
+                return;
 
             domainStats.QuotaUsedValue = orgStats.CreatedDomains;
             domainStats.QuotaValue = orgStats.AllocatedDomains;
 
             userStats.QuotaUsedValue = orgStats.CreatedUsers;
             userStats.QuotaValue = orgStats.AllocatedUsers;
-            
-            
-            
+
+
+
             lnkDomains.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "domains",
                 "SpaceID=" + PanelSecurity.PackageId);
 
             lnkUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "users",
                 "SpaceID=" + PanelSecurity.PackageId);
 
-            
-            
-            //If Organization is ExchangeOrganization show exchage specific statistics
-            if (!string.IsNullOrEmpty(org.GlobalAddressList))
+
+
+
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            if (cntx.Groups.ContainsKey(ResourceGroups.Exchange))
             {
                 exchangeStatsPanel.Visible = true;
                 BindExchangeStats();
-
             }
             else
                 exchangeStatsPanel.Visible = false;
-                                    
 
-            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);            
+
             //Show SharePoint statistics
             if (cntx.Groups.ContainsKey(ResourceGroups.HostedSharePoint))
             {
                 sharePointStatsPanel.Visible = true;
-				
+
                 lnkSiteCollections.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "sharepoint_sitecollections",
                 "SpaceID=" + PanelSecurity.PackageId);
                 siteCollectionsStats.QuotaUsedValue = orgStats.CreatedSharePointSiteCollections;
                 siteCollectionsStats.QuotaValue = orgStats.AllocatedSharePointSiteCollections;
-                
+
             }
             else
                 sharePointStatsPanel.Visible = false;
+
+            if (cntx.Groups.ContainsKey(ResourceGroups.OCS))
+            {
+                ocsStatsPanel.Visible = true;
+                BindOCSStats();
+            }
+            else
+                ocsStatsPanel.Visible = false;
+
+            if (cntx.Groups.ContainsKey(ResourceGroups.BlackBerry))
+            {
+                besStatsPanel.Visible = true;
+                BindBESStats();
+            }
+            else
+                besStatsPanel.Visible = false;
+
+            if (cntx.Groups.ContainsKey(ResourceGroups.Lync))
+            {
+                lyncStatsPanel.Visible = true;
+                BindLyncStats();
+            }
+            else
+                lyncStatsPanel.Visible = false;
+
 
 
             if (org.CrmOrganizationId != Guid.Empty)
@@ -153,18 +162,51 @@ namespace WebsitePanel.Portal.ExchangeServer
             else
                 crmStatsPanel.Visible = false;
 
-            
-		}
 
-		private void BindCRMStats(OrganizationStatistics orgStats)
-		{
+        }
+
+        private void BindCRMStats(OrganizationStatistics orgStats)
+        {
             lnkCRMUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "crmusers",
                 "SpaceID=" + PanelSecurity.PackageId);
 
-		    crmUsersStats.QuotaUsedValue = orgStats.CreatedCRMUsers;
-		    crmUsersStats.QuotaValue = orgStats.AllocatedCRMUsers;
-		}
-        
-        
-	}
+            crmUsersStats.QuotaUsedValue = orgStats.CreatedCRMUsers;
+            crmUsersStats.QuotaValue = orgStats.AllocatedCRMUsers;
+        }
+
+        private void BindOCSStats()
+        {
+            OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+            ocsUsersStats.QuotaValue = stats.AllocatedOCSUsers;
+            ocsUsersStats.QuotaUsedValue = stats.CreatedOCSUsers;
+
+            lnkOCSUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "ocs_users",
+            "SpaceID=" + PanelSecurity.PackageId.ToString());
+        }
+
+        private void BindLyncStats()
+        {
+            /*
+            OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+            lyncUsersStats.QuotaValue = stats.AllocatedLyncUsers;
+            lyncUsersStats.QuotaUsedValue = stats.CreatedLyncUsers;
+
+            lnkLyncUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "lync_users",
+            "SpaceID=" + PanelSecurity.PackageId.ToString());
+             */
+        }
+
+
+        private void BindBESStats()
+        {
+            OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+            besUsersStats.QuotaValue = stats.AllocatedBlackBerryUsers;
+            besUsersStats.QuotaUsedValue = stats.CreatedBlackBerryUsers;
+
+            lnkBESUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "blackberry_users",
+            "SpaceID=" + PanelSecurity.PackageId.ToString());
+        }
+
+
+    }
 }

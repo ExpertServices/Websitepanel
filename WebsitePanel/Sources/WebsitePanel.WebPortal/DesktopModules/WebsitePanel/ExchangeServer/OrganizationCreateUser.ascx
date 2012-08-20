@@ -10,6 +10,23 @@
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
+<div runat="server" id="divWrapper">
+<script language="javascript" type="text/javascript">
+    function buildDisplayName() {
+        document.getElementById("<%= txtDisplayName.ClientID %>").value = '';
+
+        if (document.getElementById("<%= txtFirstName.ClientID %>").value != '')
+            document.getElementById("<%= txtDisplayName.ClientID %>").value = document.getElementById("<%= txtFirstName.ClientID %>").value + ' ';
+
+        if (document.getElementById("<%= txtInitials.ClientID %>").value != '')
+            document.getElementById("<%= txtDisplayName.ClientID %>").value = document.getElementById("<%= txtDisplayName.ClientID %>").value + document.getElementById("<%= txtInitials.ClientID %>").value + ' ';
+
+        if (document.getElementById("<%= txtLastName.ClientID %>").value != '')
+            document.getElementById("<%= txtDisplayName.ClientID %>").value = document.getElementById("<%= txtDisplayName.ClientID %>").value + document.getElementById("<%= txtLastName.ClientID %>").value;
+    }
+</script>
+</div>
+
 <div id="ExchangeContainer">
 	<div class="Module">
 		<div class="Header">
@@ -28,11 +45,34 @@
 				    <wsp:SimpleMessageBox id="messageBox" runat="server" />
 					<table>
 						<tr>
+							<td class="FormLabel150"><asp:Localize ID="locFirstName" runat="server" meta:resourcekey="locFirstName" Text="First Name: "></asp:Localize></td>
+							<td>
+								<asp:TextBox ID="txtFirstName" runat="server" CssClass="TextBox100" onKeyUp="buildDisplayName();" ></asp:TextBox>
+								&nbsp;
+								<asp:Localize ID="locInitials" runat="server" meta:resourcekey="locInitials" Text="Initials:" />
+								<asp:TextBox ID="txtInitials" runat="server" MaxLength="6" CssClass="TextBox100" onKeyUp="buildDisplayName();"></asp:TextBox>
+							</td>
+						</tr>
+						<tr>
+							<td class="FormLabel150"><asp:Localize ID="locLastName" runat="server" meta:resourcekey="locLastName" Text="Last Name: "></asp:Localize></td>
+							<td>
+								<asp:TextBox ID="txtLastName" runat="server" CssClass="TextBox200" onKeyUp="buildDisplayName();"></asp:TextBox>
+							</td>
+						</tr>
+						<tr>
 							<td class="FormLabel150"><asp:Localize ID="locDisplayName" runat="server" meta:resourcekey="locDisplayName" Text="Display Name: *"></asp:Localize></td>
 							<td>
 								<asp:TextBox ID="txtDisplayName" runat="server" CssClass="HugeTextBox200"></asp:TextBox>
 								<asp:RequiredFieldValidator ID="valRequireDisplayName" runat="server" meta:resourcekey="valRequireDisplayName" ControlToValidate="txtDisplayName"
 									ErrorMessage="Enter Display Name" ValidationGroup="CreateMailbox" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
+							</td>
+						</tr>
+						<tr>
+							<td class="FormLabel150"><asp:Localize ID="locSubscriberNumber" runat="server" meta:resourcekey="locSubscriberNumber" Text="Subscriber Number: *"></asp:Localize></td>
+							<td>
+								<asp:TextBox ID="txtSubscriberNumber" runat="server" CssClass="HugeTextBox200"></asp:TextBox>
+								<asp:RequiredFieldValidator ID="valRequireSubscriberNumber" runat="server" meta:resourcekey="valRequireSubscriberNumber" ControlToValidate="txtSubscriberNumber"
+									ErrorMessage="Enter Subscriber Number" ValidationGroup="CreateMailbox" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
 							</td>
 						</tr>
 						<tr>
@@ -52,15 +92,6 @@
 						
 					</table>
 					
-					 <table>
-					        <tr>						        
-						        <td class="FormLabel150">						        
-						            <asp:CheckBox ID="chkSendInstructions"  runat="server" meta:resourcekey="chkSendInstructions" Text="Send Setup Instructions" Checked="true" />
-						        </td>
-						        <td><wsp:EmailControl id="sendInstructionEmail" runat="server" RequiredEnabled="true" ValidationGroup="CreateMailbox"></wsp:EmailControl></td>
-						        						        
-						    </tr>						    					
-					    </table>
 				    <div class="FormFooterClean">
 					    <asp:Button id="btnCreate" runat="server" Text="Create Mailbox"
 					    CssClass="Button1" meta:resourcekey="btnCreate" ValidationGroup="CreateMailbox"
@@ -69,9 +100,6 @@
 					    <asp:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="CreateMailbox" />
                         </div>
 				</div>
-			</div>
-			<div class="Right">
-				<asp:Localize ID="FormComments" runat="server" meta:resourcekey="HSFormComments"></asp:Localize>
 			</div>
 		</div>
 	</div>

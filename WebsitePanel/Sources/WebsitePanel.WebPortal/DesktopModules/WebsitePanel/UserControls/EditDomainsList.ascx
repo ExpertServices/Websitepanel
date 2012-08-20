@@ -2,12 +2,12 @@
 <div style="width:400px;">
 	<div class="FormButtonsBar">
 		<asp:Button id="btnAddDomain" runat="server" meta:resourcekey="btnAddDomain" Text="Add"
-			CssClass="Button2" CausesValidation="false" OnClick="btnAddDomain_Click"/>
+			CssClass="Button2" CausesValidation="false" OnClick="BtnAddClick"/>
 	</div>
 
 	<asp:GridView id="gvDomains" Runat="server" AutoGenerateColumns="False"
 		CssSelectorClass="NormalGridView"
-		OnRowCommand="gvDomains_RowCommand" OnRowDataBound="gvDomains_RowDataBound"
+		OnRowCommand="ListRowCommand" OnRowDataBound="ListRowDataBound"
 		EmptyDataText="gvDomains" ShowHeader="False">
 		<columns>
 			<asp:TemplateField HeaderText="gvDomainsLabel" ItemStyle-Wrap="false">

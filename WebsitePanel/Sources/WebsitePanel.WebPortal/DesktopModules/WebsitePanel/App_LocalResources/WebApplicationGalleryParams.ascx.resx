@@ -226,6 +226,12 @@
   <data name="locDatabaseGroupDescr.Text" xml:space="preserve">
     <value>Choose your database:</value>
   </data>
+  <data name="locDatabaseType.Text" xml:space="preserve">
+    <value>Database type</value>
+  </data>
+  <data name="locDatabaseTypeDescr.Text" xml:space="preserve">
+    <value>Choose your database type:</value>
+  </data>
   <data name="locNewDatabase.Text" xml:space="preserve">
     <value>Create a new or use an existing database</value>
   </data>

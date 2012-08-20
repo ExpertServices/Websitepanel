@@ -39,6 +39,12 @@ namespace WebsitePanel.Portal
             return ES.Services.WebApplicationGallery.GetGalleryApplications(packageId,  categoryId);
         }
 
+        public GalleryApplicationsResult GetGalleryApplicationsFiltered(string pattern, int packageId)
+        {
+            return ES.Services.WebApplicationGallery.GetGalleryApplicationsFiltered(packageId, pattern);
+        }
+
+
 		public List<GalleryApplication> GetGalleryApplicationsByServiceId(int serviceId)
 		{
 			GalleryApplicationsResult result = ES.Services.WebApplicationGallery.GetGalleryApplicationsByServiceId(serviceId);

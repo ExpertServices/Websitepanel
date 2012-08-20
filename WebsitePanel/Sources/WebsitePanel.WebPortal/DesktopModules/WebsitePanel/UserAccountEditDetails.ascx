@@ -35,6 +35,16 @@
 					ControlToValidate="txtLastName"></asp:RequiredFieldValidator>
 			</td>
 		</tr>
+
+		<tr>
+			<td class="SubHead">
+				<asp:Label ID="lblSubscriberNumber" runat="server" meta:resourcekey="lblSubscriberNumber" Text="Subscriber Number:"></asp:Label>
+			</td>
+			<td class="NormalBold">
+				<asp:TextBox id="txtSubscriberNumber" runat="server" CssClass="NormalTextBox"></asp:TextBox>
+			</td>
+		</tr>
+        
 		<tr>
 			<td class="SubHead">
 				<asp:Label ID="lblEmail" runat="server" meta:resourcekey="lblEmail" Text="E-mail:"></asp:Label>
@@ -88,6 +98,20 @@
 				<asp:CheckBox id="chkDemo" runat="server" meta:resourcekey="chkDemo" Text="Yes"></asp:CheckBox>
 			</td>
 		</tr>
+
+		<tr id="roleLoginStatus" runat="server">
+			<td class="SubHead" valign="top">
+			    <asp:Label ID="lblLoginStatus" runat="server" meta:resourcekey="lblLoginStatus" Text="Login Status:"></asp:Label>
+			</td>
+			<td class="NormalBold" valign="top">
+				<asp:DropDownList id="loginStatus" runat="server" resourcekey="loginStatus"  CssClass="NormalTextBox">
+			        <asp:ListItem Value="Enabled"></asp:ListItem>
+			        <asp:ListItem Value="Disabled"></asp:ListItem>
+				    <asp:ListItem Value="Locked Out"></asp:ListItem>
+				</asp:DropDownList>
+			</td>
+		</tr>
+
 		<tr id="rowEcommerceEnbl" runat="server">
 			<td class="SubHead"><asp:Localize runat="server" meta:resourcekey="lclEcommerceEnabled" /></td>
 		    <td class="Normal"><asp:CheckBox runat="server" ID="chkEcommerceEnbl" Text="Yes"/></td>

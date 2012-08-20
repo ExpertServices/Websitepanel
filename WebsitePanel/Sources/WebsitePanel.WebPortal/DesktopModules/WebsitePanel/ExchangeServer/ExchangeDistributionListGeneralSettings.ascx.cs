@@ -39,18 +39,21 @@ using System.Web.UI.HtmlControls;
 
 using WebsitePanel.Providers.HostedSolution;
 using Microsoft.Security.Application;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class ExchangeDistributionListGeneralSettings : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
+    public partial class ExchangeDistributionListGeneralSettings : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
             if (!IsPostBack)
             {
                 BindSettings();
             }
-		}
+
+            
+        }
 
         private void BindSettings()
         {
@@ -60,7 +63,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 ExchangeDistributionList dlist = ES.Services.ExchangeServer.GetDistributionListGeneralSettings(
                     PanelRequest.ItemID, PanelRequest.AccountID);
 
-				litDisplayName.Text = dlist.DisplayName;
+                litDisplayName.Text = dlist.DisplayName;
 
                 // bind form
                 txtDisplayName.Text = dlist.DisplayName;
@@ -74,7 +77,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("EXCHANGE_GET_DLIST_SETTINGS", ex);
+                messageBox.ShowErrorMessage("EXCHANGE_GET_DLIST_SETTINGS", ex);
             }
         }
 
@@ -102,13 +105,13 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-				litDisplayName.Text = AntiXss.HtmlEncode(txtDisplayName.Text);
+                litDisplayName.Text = Microsoft.Security.Application.Encoder.HtmlEncode(txtDisplayName.Text);
 
-				messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_DLIST_SETTINGS");
+                messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_DLIST_SETTINGS");
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("EXCHANGE_UPDATE_DLIST_SETTINGS", ex);
+                messageBox.ShowErrorMessage("EXCHANGE_UPDATE_DLIST_SETTINGS", ex);
             }
         }
 
@@ -122,5 +125,5 @@ namespace WebsitePanel.Portal.ExchangeServer
             args.IsValid = manager.GetAccount() != null;
 
         }
-	}
+    }
 }

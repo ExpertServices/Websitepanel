@@ -26,134 +26,29 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Collections.Generic;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 
 namespace WebsitePanel.Portal.UserControls
 {
-    public partial class EditDomainsList : WebsitePanelControlBase
+    public partial class EditDomainsList : DomainListControlBase
     {
-        public bool DisplayNames
+        public EditDomainsList()
         {
-            get { return gvDomains.Columns[0].Visible; }
-            set { gvDomains.Columns[0].Visible = value; }
+            _txt_control_name = "txtDomainName";
+            _lbl_control_name = "lblDomainName";
+            _delete_control_name = "cmdDeleteDomain";
         }
 
-        public string Value
+
+        protected override Button AddButton
         {
-            get { return GetDomainsValue(); }
-            set { SetDomainsValue(value); }
+            get { return btnAddDomain; }
         }
 
-        private string GetDomainsValue()
+
+        protected override GridView Grid
         {
-            List<string> items = CollectFormData(false);
-            return String.Join(";", items.ToArray());
-        }
-
-        private void SetDomainsValue(string s)
-        {
-            List<string> items = new List<string>();
-            if (!String.IsNullOrEmpty(s))
-            {
-                string[] parts = s.Split(';');
-                foreach (string part in parts)
-                {
-                    if (part.Trim() != "")
-                        items.Add(part.Trim());
-                }
-            }
-
-            // save items
-            loadItems = items.ToArray();
-
-            if (IsPostBack)
-            {
-                BindItems(loadItems);
-            }
-        }
-
-        private string[] loadItems = new string[] { };
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            if (!IsPostBack)
-            {
-                BindItems(loadItems); // empty list
-            }
-        }
-
-        private void BindItems(string[] items)
-        {
-            gvDomains.DataSource = items;
-            gvDomains.DataBind();
-        }
-
-        public List<string> CollectFormData(bool includeEmpty)
-        {
-            List<string> items = new List<string>();
-            foreach (GridViewRow row in gvDomains.Rows)
-            {
-                TextBox txtDomainName = (TextBox)row.FindControl("txtDomainName");
-                string val = txtDomainName.Text.Trim();
-
-                if (includeEmpty || val != "")
-                    items.Add(val);
-            }
-
-            return items;
-        }
-
-        protected void btnAddDomain_Click(object sender, EventArgs e)
-        {
-            List<string> items = CollectFormData(true);
-
-            // add empty string
-            items.Add("");
-
-            // bind items
-            BindItems(items.ToArray());
-        }
-
-        protected void gvDomains_RowCommand(object sender, GridViewCommandEventArgs e)
-        {
-            if (e.CommandName == "delete_item")
-            {
-                List<string> items = CollectFormData(true);
-
-                // remove error
-                items.RemoveAt(Utils.ParseInt((string)e.CommandArgument, 0));
-
-                // bind items
-                BindItems(items.ToArray());
-            }
-        }
-
-        protected void gvDomains_RowDataBound(object sender, GridViewRowEventArgs e)
-        {
-            Label lblDomainName = (Label)e.Row.FindControl("lblDomainName");
-            TextBox txtDomainName = (TextBox)e.Row.FindControl("txtDomainName");
-            ImageButton cmdDeleteDomain = (ImageButton)e.Row.FindControl("cmdDeleteDomain");
-
-            if (lblDomainName != null)
-            {
-                string val = (string)e.Row.DataItem;
-                txtDomainName.Text = val;
-
-                string pos = (e.Row.RowIndex < 2) ? e.Row.RowIndex.ToString() : "";
-                lblDomainName.Text = GetLocalizedString("Item" + pos + ".Text");
-
-                cmdDeleteDomain.CommandArgument = e.Row.RowIndex.ToString();
-            }
+            get { return gvDomains; }
         }
     }
 }

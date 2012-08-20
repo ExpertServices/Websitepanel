@@ -49,56 +49,92 @@ namespace WebsitePanel.EnterpriseServer
 			return (user != null);
 		}
 
-		public static int AuthenticateUser(string username, string password, string ip)
-		{
-			// start task
-			TaskManager.StartTask("USER", "AUTHENTICATE", username);
-			TaskManager.WriteParameter("IP", ip);
+        public static int AuthenticateUser(string username, string password, string ip)
+        {
+            // start task
+            TaskManager.StartTask("USER", "AUTHENTICATE", username);
+            TaskManager.WriteParameter("IP", ip);
 
-			try
-			{
-				// try to get user from database
-				UserInfo user = GetUserInternally(username);
+            try
+            {
+                // try to get user from database
+                UserInfo user = GetUserInternally(username);
 
-				// check if the user exists
-				if (user == null)
-				{
-					TaskManager.WriteWarning("Wrong username");
-					return BusinessErrorCodes.ERROR_USER_WRONG_USERNAME;
-				}
+                // check if the user exists
+                if (user == null)
+                {
+                    TaskManager.WriteWarning("Wrong username");
+                    return BusinessErrorCodes.ERROR_USER_WRONG_USERNAME;
+                }
 
-				// compare user passwords
-				if (user.Password != password)
-				{
-					TaskManager.WriteWarning("Wrong password");
-					return BusinessErrorCodes.ERROR_USER_WRONG_PASSWORD;
-				}
+                // check if the user is disabled
+                if (user.LoginStatus == UserLoginStatus.Disabled)
+                {
+                    TaskManager.WriteWarning("User disabled");
+                    return BusinessErrorCodes.ERROR_USER_ACCOUNT_DISABLED;
+                }
 
-				// check status
-				if (user.Status == UserStatus.Cancelled)
-				{
-					TaskManager.WriteWarning("Account cancelled");
-					return BusinessErrorCodes.ERROR_USER_ACCOUNT_CANCELLED;
-				}
+                // check if the user is locked out
+                if (user.LoginStatus == UserLoginStatus.LockedOut)
+                {
+                    TaskManager.WriteWarning("User locked out");
+                    return BusinessErrorCodes.ERROR_USER_ACCOUNT_LOCKEDOUT;
+                }
 
-				if (user.Status == UserStatus.Pending)
-				{
-					TaskManager.WriteWarning("Account pending");
-					return BusinessErrorCodes.ERROR_USER_ACCOUNT_PENDING;
-				}
+                //Get the password policy
+                UserSettings userSettings = UserController.GetUserSettings(user.UserId, UserSettings.WEBSITEPANEL_POLICY);
+                int lockOut = -1;
 
-				return 0;
+                if (!string.IsNullOrEmpty(userSettings["PasswordPolicy"]))
+                {
+                    string passwordPolicy = userSettings["PasswordPolicy"];
+                    try
+                    {
+                        // parse settings
+                        string[] parts = passwordPolicy.Split(';');
+                        lockOut = Convert.ToInt32(parts[7]);
+                    }
+                    catch { /* skip */ }
+                }
 
-			}
-			catch (Exception ex)
-			{
-				throw TaskManager.WriteError(ex);
-			}
-			finally
-			{
-				TaskManager.CompleteTask();
-			}
-		}
+
+                // compare user passwords
+                if (user.Password != password)
+                {
+                    if (lockOut >= 0)
+                        DataProvider.UpdateUserFailedLoginAttempt(user.UserId, lockOut, false);
+
+                    TaskManager.WriteWarning("Wrong password");
+                    return BusinessErrorCodes.ERROR_USER_WRONG_PASSWORD;
+                }
+                else
+                    DataProvider.UpdateUserFailedLoginAttempt(user.UserId, lockOut, true);
+
+                // check status
+                if (user.Status == UserStatus.Cancelled)
+                {
+                    TaskManager.WriteWarning("Account cancelled");
+                    return BusinessErrorCodes.ERROR_USER_ACCOUNT_CANCELLED;
+                }
+
+                if (user.Status == UserStatus.Pending)
+                {
+                    TaskManager.WriteWarning("Account pending");
+                    return BusinessErrorCodes.ERROR_USER_ACCOUNT_PENDING;
+                }
+
+                return 0;
+
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
 
 		public static UserInfo GetUserByUsernamePassword(string username, string password, string ip)
 		{
@@ -382,6 +418,8 @@ namespace WebsitePanel.EnterpriseServer
 					user.OwnerId,
 					user.RoleId,
 					user.StatusId,
+                    user.SubscriberNumber,
+                    user.LoginStatusId,
 					user.IsDemo,
 					user.IsPeer,
 					user.Comments,
@@ -525,6 +563,8 @@ namespace WebsitePanel.EnterpriseServer
 					user.UserId,
 					user.RoleId,
 					user.StatusId,
+                    user.SubscriberNumber,
+                    user.LoginStatusId,
 					user.IsDemo,
 					user.IsPeer,
 					user.Comments,

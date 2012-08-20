@@ -45,12 +45,12 @@ namespace WebsitePanel.EnterpriseServer
         public const string SharePoint = "SharePoint";
 		public const string HostedSharePoint = "Hosted SharePoint";
 		public const string Exchange = "Exchange";
-        public const string ExchangeHostedEdition = "ExchangeHostedEdition";
         public const string HostedOrganizations = "Hosted Organizations";
         public const string HostedCRM = "Hosted CRM";
         public const string VPS = "VPS";
         public const string BlackBerry = "BlackBerry";
         public const string OCS = "OCS";
         public const string VPSForPC = "VPSForPC";
+        public const string Lync = "Lync";
     }
 }

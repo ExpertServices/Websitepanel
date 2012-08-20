@@ -38,158 +38,157 @@ namespace WebsitePanel.EnterpriseServer
 {
     public class DnsServerController : IImportController, IBackupController
     {
-		private static DNSServer GetDNSServer(int serviceId)
-		{
-			DNSServer dns = new DNSServer();
-			ServiceProviderProxy.Init(dns, serviceId);
-			return dns;
-		}
+        private static DNSServer GetDNSServer(int serviceId)
+        {
+            DNSServer dns = new DNSServer();
+            ServiceProviderProxy.Init(dns, serviceId);
+            return dns;
+        }
 
-		public static int AddZone(int packageId, int serviceId, string zoneName)
-		{
-			return AddZone(packageId, serviceId, zoneName, true);
-		}
+        public static int AddZone(int packageId, int serviceId, string zoneName)
+        {
+            return AddZone(packageId, serviceId, zoneName, true);
+        }
 
-		public static int AddZone(int packageId, int serviceId, string zoneName, bool addPackageItem)
-		{
-			// get DNS provider
-			DNSServer dns = GetDNSServer(serviceId);
+        public static int AddZone(int packageId, int serviceId, string zoneName, bool addPackageItem)
+        {
+            // get DNS provider
+            DNSServer dns = GetDNSServer(serviceId);
 
-			// check if zone already exists
-			if (dns.ZoneExists(zoneName))
-				return BusinessErrorCodes.ERROR_DNS_ZONE_EXISTS;
+            // check if zone already exists
+            if (dns.ZoneExists(zoneName))
+                return BusinessErrorCodes.ERROR_DNS_ZONE_EXISTS;
 
-			//
-			TaskManager.StartTask("DNS_ZONE", "ADD", zoneName);
-			//
-			int zoneItemId = default(int);
-			//
-			try
-			{
-				// get secondary DNS services
-				StringDictionary primSettings = ServerController.GetServiceSettings(serviceId);
-				string[] primaryIPAddresses = GetExternalIPAddressesFromString(primSettings["ListeningIPAddresses"]);
+            //
+            TaskManager.StartTask("DNS_ZONE", "ADD", zoneName);
+            //
+            int zoneItemId = default(int);
+            //
+            try
+            {
+                // get secondary DNS services
+                StringDictionary primSettings = ServerController.GetServiceSettings(serviceId);
+                string[] primaryIPAddresses = GetExternalIPAddressesFromString(primSettings["ListeningIPAddresses"]);
 
-				List<string> secondaryIPAddresses = new List<string>();
-				List<int> secondaryServiceIds = new List<int>();
-				string strSecondaryServices = primSettings["SecondaryDNSServices"];
-				if (!String.IsNullOrEmpty(strSecondaryServices))
-				{
-					string[] secondaryServices = strSecondaryServices.Split(',');
-					foreach (string strSecondaryId in secondaryServices)
-					{
-						int secondaryId = Utils.ParseInt(strSecondaryId, 0);
-						if (secondaryId == 0)
-							continue;
+                List<string> secondaryIPAddresses = new List<string>();
+                List<int> secondaryServiceIds = new List<int>();
+                string strSecondaryServices = primSettings["SecondaryDNSServices"];
+                if (!String.IsNullOrEmpty(strSecondaryServices))
+                {
+                    string[] secondaryServices = strSecondaryServices.Split(',');
+                    foreach (string strSecondaryId in secondaryServices)
+                    {
+                        int secondaryId = Utils.ParseInt(strSecondaryId, 0);
+                        if (secondaryId == 0)
+                            continue;
 
-						secondaryServiceIds.Add(secondaryId);
-						StringDictionary secondarySettings = ServerController.GetServiceSettings(secondaryId);
+                        secondaryServiceIds.Add(secondaryId);
+                        StringDictionary secondarySettings = ServerController.GetServiceSettings(secondaryId);
 
-						// add secondary IPs to the master array
-						secondaryIPAddresses.AddRange(
-							GetExternalIPAddressesFromString(secondarySettings["ListeningIPAddresses"]));
-					}
-				}
+                        // add secondary IPs to the master array
+                        secondaryIPAddresses.AddRange(
+                            GetExternalIPAddressesFromString(secondarySettings["ListeningIPAddresses"]));
+                    }
+                }
 
-				// add "Allow zone transfers"
-				string allowTransfers = primSettings["AllowZoneTransfers"];
-				if (!String.IsNullOrEmpty(allowTransfers))
-				{
-					string[] ips = Utils.ParseDelimitedString(allowTransfers, '\n', ' ', ',', ';');
-					foreach (string ip in ips)
-					{
-						if (!secondaryIPAddresses.Contains(ip))
-							secondaryIPAddresses.Add(ip);
-					}
-				}
+                // add "Allow zone transfers"
+                string allowTransfers = primSettings["AllowZoneTransfers"];
+                if (!String.IsNullOrEmpty(allowTransfers))
+                {
+                    string[] ips = Utils.ParseDelimitedString(allowTransfers, '\n', ' ', ',', ';');
+                    foreach (string ip in ips)
+                    {
+                        if (!secondaryIPAddresses.Contains(ip))
+                            secondaryIPAddresses.Add(ip);
+                    }
+                }
 
-				// add primary zone
-				dns.AddPrimaryZone(zoneName, secondaryIPAddresses.ToArray());
+                // add primary zone
+                dns.AddPrimaryZone(zoneName, secondaryIPAddresses.ToArray());
 
-				// get DNS zone records
-				List<GlobalDnsRecord> records = ServerController.GetDnsRecordsTotal(packageId);
+                // get DNS zone records
+                List<GlobalDnsRecord> records = ServerController.GetDnsRecordsTotal(packageId);
 
-				// get name servers
-				PackageSettings packageSettings = PackageController.GetPackageSettings(packageId, PackageSettings.NAME_SERVERS);
-				string[] nameServers = new string[] { };
-				if (!String.IsNullOrEmpty(packageSettings["NameServers"]))
-					nameServers = packageSettings["NameServers"].Split(';');
+                // get name servers
+                PackageSettings packageSettings = PackageController.GetPackageSettings(packageId, PackageSettings.NAME_SERVERS);
+                string[] nameServers = new string[] { };
+                if (!String.IsNullOrEmpty(packageSettings["NameServers"]))
+                    nameServers = packageSettings["NameServers"].Split(';');
 
-				// build records list
-				List<DnsRecord> zoneRecords = new List<DnsRecord>();
+                // build records list
+                List<DnsRecord> zoneRecords = new List<DnsRecord>();
 
-				string primaryNameServer = "ns." + zoneName;
+                string primaryNameServer = "ns." + zoneName;
 
-				if (nameServers.Length > 0)
-					primaryNameServer = nameServers[0];
+                if (nameServers.Length > 0)
+                    primaryNameServer = nameServers[0];
 
-				// update SOA record
+                // update SOA record
 
-				string hostmaster = primSettings["ResponsiblePerson"];
-				if (String.IsNullOrEmpty(hostmaster))
-				{
-					hostmaster = "hostmaster." + zoneName;
-				}
-				else
-				{
-					hostmaster = Utils.ReplaceStringVariable(hostmaster, "domain_name", zoneName);
-				}
+                string hostmaster = primSettings["ResponsiblePerson"];
+                if (String.IsNullOrEmpty(hostmaster))
+                {
+                    hostmaster = "hostmaster." + zoneName;
+                }
+                else
+                {
+                    hostmaster = Utils.ReplaceStringVariable(hostmaster, "domain_name", zoneName);
+                }
 
-				dns.UpdateSoaRecord(zoneName, "", primaryNameServer, hostmaster);
+                dns.UpdateSoaRecord(zoneName, "", primaryNameServer, hostmaster);
 
-				// add name servers
-				foreach (string nameServer in nameServers)
-				{
-					DnsRecord ns = new DnsRecord();
-					ns.RecordType = DnsRecordType.NS;
-					ns.RecordName = "";
-					ns.RecordData = nameServer;
+                // add name servers
+                foreach (string nameServer in nameServers)
+                {
+                    DnsRecord ns = new DnsRecord();
+                    ns.RecordType = DnsRecordType.NS;
+                    ns.RecordName = "";
+                    ns.RecordData = nameServer;
 
-					zoneRecords.Add(ns);
-				}
+                    zoneRecords.Add(ns);
+                }
 
-				// add all other records
-				zoneRecords.AddRange(
-					BuildDnsResourceRecords(records, zoneName, ""));
+                // add all other records
+                zoneRecords.AddRange(BuildDnsResourceRecords(records, zoneName, ""));
 
-				// add zone records
-				dns.AddZoneRecords(zoneName, zoneRecords.ToArray());
+                // add zone records
+                dns.AddZoneRecords(zoneName, zoneRecords.ToArray());
 
 
-				// add secondary zones
-				foreach (int secondaryId in secondaryServiceIds)
-				{
-					try
-					{
-						// add secondary zone
-						DNSServer secDns = GetDNSServer(secondaryId);
-						secDns.AddSecondaryZone(zoneName, primaryIPAddresses);
-						RegisterZoneItems(packageId, secondaryId, zoneName, false);
-					}
-					catch (Exception ex)
-					{
-						TaskManager.WriteError(ex, "Error adding secondary zone (service ID = " + secondaryId + ")");
-					}
-				}
+                // add secondary zones
+                foreach (int secondaryId in secondaryServiceIds)
+                {
+                    try
+                    {
+                        // add secondary zone
+                        DNSServer secDns = GetDNSServer(secondaryId);
+                        secDns.AddSecondaryZone(zoneName, primaryIPAddresses);
+                        RegisterZoneItems(packageId, secondaryId, zoneName, false);
+                    }
+                    catch (Exception ex)
+                    {
+                        TaskManager.WriteError(ex, "Error adding secondary zone (service ID = " + secondaryId + ")");
+                    }
+                }
 
-				if (!addPackageItem)
-					return 0;
-				// add service item
-				zoneItemId = RegisterZoneItems(packageId, serviceId, zoneName, true);
-				//
-				TaskManager.ItemId = zoneItemId;
-			}
-			catch (Exception ex)
-			{
-				TaskManager.WriteError(ex);
-			}
-			finally
-			{
-				TaskManager.CompleteTask();
-			}
-			//
-			return zoneItemId;
-		}
+                if (!addPackageItem)
+                    return 0;
+                // add service item
+                zoneItemId = RegisterZoneItems(packageId, serviceId, zoneName, true);
+                //
+                TaskManager.ItemId = zoneItemId;
+            }
+            catch (Exception ex)
+            {
+                TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+            //
+            return zoneItemId;
+        }
 
 
         private static int RegisterZoneItems(int spaceId, int serviceId, string zoneName, bool primaryZone)
@@ -202,131 +201,138 @@ namespace WebsitePanel.EnterpriseServer
             int zoneItemId = PackageController.AddPackageItem(zone);
             return zoneItemId;
         }
-        
+
         public static int DeleteZone(int zoneItemId)
-		{
-		    // delete DNS zone if applicable
+        {
+            // delete DNS zone if applicable
             DnsZone zoneItem = (DnsZone)PackageController.GetPackageItem(zoneItemId);
-			//
-			if (zoneItem != null)
-			{
-				TaskManager.StartTask("DNS_ZONE", "DELETE", zoneItem.Name);
-				//
-				try
-				{
-					//
-					TaskManager.ItemId = zoneItemId;
-					// delete DNS zone
-					DNSServer dns = new DNSServer();
-					ServiceProviderProxy.Init(dns, zoneItem.ServiceId);
+            //
+            if (zoneItem != null)
+            {
+                TaskManager.StartTask("DNS_ZONE", "DELETE", zoneItem.Name);
+                //
+                try
+                {
+                    //
+                    TaskManager.ItemId = zoneItemId;
+                    // delete DNS zone
+                    DNSServer dns = new DNSServer();
+                    ServiceProviderProxy.Init(dns, zoneItem.ServiceId);
 
-					// delete secondary zones
-					StringDictionary primSettings = ServerController.GetServiceSettings(zoneItem.ServiceId);
-					string strSecondaryServices = primSettings["SecondaryDNSServices"];
-					if (!String.IsNullOrEmpty(strSecondaryServices))
-					{
-						string[] secondaryServices = strSecondaryServices.Split(',');
-						foreach (string strSecondaryId in secondaryServices)
-						{
-							try
-							{
-								int secondaryId = Utils.ParseInt(strSecondaryId, 0);
-								if (secondaryId == 0)
-									continue;
+                    // delete secondary zones
+                    StringDictionary primSettings = ServerController.GetServiceSettings(zoneItem.ServiceId);
+                    string strSecondaryServices = primSettings["SecondaryDNSServices"];
+                    if (!String.IsNullOrEmpty(strSecondaryServices))
+                    {
+                        string[] secondaryServices = strSecondaryServices.Split(',');
+                        foreach (string strSecondaryId in secondaryServices)
+                        {
+                            try
+                            {
+                                int secondaryId = Utils.ParseInt(strSecondaryId, 0);
+                                if (secondaryId == 0)
+                                    continue;
 
-								DNSServer secDns = new DNSServer();
-								ServiceProviderProxy.Init(secDns, secondaryId);
+                                DNSServer secDns = new DNSServer();
+                                ServiceProviderProxy.Init(secDns, secondaryId);
 
-								secDns.DeleteZone(zoneItem.Name);
-							}
-							catch (Exception ex1)
-							{
-								// problem when deleting secondary zone
-								TaskManager.WriteError(ex1, "Error deleting secondary DNS zone");
-							}
-						}
-					}
+                                secDns.DeleteZone(zoneItem.Name);
+                            }
+                            catch (Exception ex1)
+                            {
+                                // problem when deleting secondary zone
+                                TaskManager.WriteError(ex1, "Error deleting secondary DNS zone");
+                            }
+                        }
+                    }
 
-					try
-					{
-						dns.DeleteZone(zoneItem.Name);
-					}
-					catch (Exception ex2)
-					{
-						TaskManager.WriteError(ex2, "Error deleting primary DNS zone");
-					}
+                    try
+                    {
+                        dns.DeleteZone(zoneItem.Name);
+                    }
+                    catch (Exception ex2)
+                    {
+                        TaskManager.WriteError(ex2, "Error deleting primary DNS zone");
+                    }
 
-					// delete service item
-					PackageController.DeletePackageItem(zoneItemId);
-				}
-				catch (Exception ex)
-				{
-					TaskManager.WriteError(ex);
-				}
-				finally
-				{
-					TaskManager.CompleteTask();
-				}
-			}
-			//
-			return 0;
-		}
+                    // delete service item
+                    PackageController.DeletePackageItem(zoneItemId);
+                }
+                catch (Exception ex)
+                {
+                    TaskManager.WriteError(ex);
+                }
+                finally
+                {
+                    TaskManager.CompleteTask();
+                }
+            }
+            //
+            return 0;
+        }
 
-		public static List<DnsRecord> BuildDnsResourceRecords(List<GlobalDnsRecord> records,
-			string domainName, string serviceIP)
-		{
-			List<DnsRecord> zoneRecords = new List<DnsRecord>();
+        public static List<DnsRecord> BuildDnsResourceRecords(List<GlobalDnsRecord> records, string domainName, string serviceIP)
+        {
+            List<DnsRecord> zoneRecords = new List<DnsRecord>();
 
-			foreach (GlobalDnsRecord record in records)
-			{
-				DnsRecord rr = new DnsRecord();
-				rr.RecordType = (DnsRecordType)Enum.Parse(typeof(DnsRecordType), record.RecordType, true);
-				rr.RecordName = record.RecordName;
+            foreach (GlobalDnsRecord record in records)
+            {
+                DnsRecord rr = new DnsRecord();
+                rr.RecordType = (DnsRecordType)Enum.Parse(typeof(DnsRecordType), record.RecordType, true);
+                rr.RecordName = record.RecordName;
+                
+		if (record.RecordType == "A" || record.RecordType == "AAAA")
+                {
+                    rr.RecordData = String.IsNullOrEmpty(record.RecordData) ? record.ExternalIP : record.RecordData;
+                    rr.RecordData = Utils.ReplaceStringVariable(rr.RecordData, "ip", record.ExternalIP);
 
-				if (record.RecordType == "A" || record.RecordType == "AAAA")
-				{
-					rr.RecordData = String.IsNullOrEmpty(record.RecordData) ? record.ExternalIP : record.RecordData;
-					rr.RecordData = Utils.ReplaceStringVariable(rr.RecordData, "ip", record.ExternalIP);
+                    if (String.IsNullOrEmpty(rr.RecordData) && !String.IsNullOrEmpty(serviceIP))
+                        rr.RecordData = serviceIP;
+                }
+                else if (record.RecordType == "SRV")
+                {
+                    rr.SrvPriority = record.SrvPriority;
+                    rr.SrvWeight = record.SrvWeight;
+                    rr.SrvPort = record.SrvPort;
+                    rr.RecordText = record.RecordData;
+                    rr.RecordData = record.RecordData;
+                }
+                else
+                {
+                    rr.RecordData = record.RecordData;
+                }
 
-					if (String.IsNullOrEmpty(rr.RecordData) && !String.IsNullOrEmpty(serviceIP))
-						rr.RecordData = serviceIP;
-				}
-				else
-				{
-					rr.RecordData = record.RecordData;
-				}
+                // substitute variables
+                rr.RecordData = Utils.ReplaceStringVariable(rr.RecordData, "domain_name", domainName);
 
-				// substitute variables
-				rr.RecordData = Utils.ReplaceStringVariable(rr.RecordData, "domain_name", domainName);
+                // add MX priority
+                if (record.RecordType == "MX")
+                    rr.MxPriority = record.MxPriority;
 
-				// add MX priority
-				if (record.RecordType == "MX")
-					rr.MxPriority = record.MxPriority;
+                if (!String.IsNullOrEmpty(rr.RecordData))
+                    zoneRecords.Add(rr);
+            }
 
-				if (!String.IsNullOrEmpty(rr.RecordData))
-					zoneRecords.Add(rr);
-			}
+            return zoneRecords;
+        }
 
-			return zoneRecords;
-		}
+        public static string[] GetExternalIPAddressesFromString(string str)
+        {
+            List<string> ips = new List<string>();
 
-		public static string[] GetExternalIPAddressesFromString(string str)
-		{
-			List<string> ips = new List<string>();
+            if (str != null && str.Trim() != "")
+            {
+                string[] sips = str.Split(',');
+                foreach (string sip in sips)
+                {
+                    IPAddressInfo ip = ServerController.GetIPAddress(Int32.Parse(sip));
+                    if (ip != null)
+                        ips.Add(ip.ExternalIP);
+                }
+            }
 
-			if (str != null && str.Trim() != "")
-			{
-				string[] sips = str.Split(',');
-				foreach (string sip in sips)
-				{
-					IPAddressInfo ip = ServerController.GetIPAddress(Int32.Parse(sip));
-					if (ip != null)
-						ips.Add(ip.ExternalIP);
-				}
-			}
-
-			return ips.ToArray();
-		}
+            return ips.ToArray();
+        }
 
         #region IImportController Members
 
@@ -350,7 +356,7 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         public void ImportItem(int packageId, int itemTypeId, Type itemType,
-			ResourceGroupInfo group, string itemName)
+            ResourceGroupInfo group, string itemName)
         {
             // get service id
             int serviceId = PackageController.GetPackageServiceId(packageId, group.GroupName);
@@ -395,11 +401,11 @@ namespace WebsitePanel.EnterpriseServer
 
         public int BackupItem(string tempFolder, XmlWriter writer, ServiceProviderItem item, ResourceGroupInfo group)
         {
-			if (!(item is DnsZone))
-				return 0;
+            if (!(item is DnsZone))
+                return 0;
 
             // DNS provider
-			DNSServer dns = GetDNSServer(item.ServiceId);
+            DNSServer dns = GetDNSServer(item.ServiceId);
 
             // zone records serialized
             XmlSerializer serializer = new XmlSerializer(typeof(DnsRecord));
@@ -424,31 +430,31 @@ namespace WebsitePanel.EnterpriseServer
         public int RestoreItem(string tempFolder, XmlNode itemNode, int itemId, Type itemType,
             string itemName, int packageId, int serviceId, ResourceGroupInfo group)
         {
-			if (itemType != typeof(DnsZone))
-				return 0;
+            if (itemType != typeof(DnsZone))
+                return 0;
 
-			// DNS provider
-			DNSServer dns = GetDNSServer(serviceId);
+            // DNS provider
+            DNSServer dns = GetDNSServer(serviceId);
 
-			// check service item
-			if (!dns.ZoneExists(itemName))
-			{
-				// create primary and secondary zones
-				AddZone(packageId, serviceId, itemName, false);
+            // check service item
+            if (!dns.ZoneExists(itemName))
+            {
+                // create primary and secondary zones
+                AddZone(packageId, serviceId, itemName, false);
 
-				// restore records
-				XmlSerializer serializer = new XmlSerializer(typeof(DnsRecord));
-				List<DnsRecord> records = new List<DnsRecord>();
-				foreach (XmlNode childNode in itemNode.ChildNodes)
-				{
-					if (childNode.Name == "DnsRecord")
-					{
-						records.Add((DnsRecord)serializer.Deserialize(new XmlNodeReader(childNode)));
-					}
-				}
+                // restore records
+                XmlSerializer serializer = new XmlSerializer(typeof(DnsRecord));
+                List<DnsRecord> records = new List<DnsRecord>();
+                foreach (XmlNode childNode in itemNode.ChildNodes)
+                {
+                    if (childNode.Name == "DnsRecord")
+                    {
+                        records.Add((DnsRecord)serializer.Deserialize(new XmlNodeReader(childNode)));
+                    }
+                }
 
-				dns.AddZoneRecords(itemName, records.ToArray());
-			}
+                dns.AddZoneRecords(itemName, records.ToArray());
+            }
 
             // check if meta-item exists
             int zoneId = 0;
@@ -470,7 +476,7 @@ namespace WebsitePanel.EnterpriseServer
             // restore domains
             RestoreDomainByZone(itemName, packageId, zoneId);
 
-			return 0;
+            return 0;
         }
 
         #endregion

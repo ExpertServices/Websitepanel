@@ -29,6 +29,8 @@
 using System;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Server.Utils;
+using System.Text;
+using System.Management.Automation.Runspaces;
 
 namespace WebsitePanel.Providers.HostedSolution
 {
@@ -121,6 +123,22 @@ namespace WebsitePanel.Providers.HostedSolution
             res.IsSuccess = true;
             return res;
         }
+
+        internal static void DebugCommand(Command cmd)
+        {
+            StringBuilder sb = new StringBuilder(cmd.CommandText);
+            foreach (CommandParameter parameter in cmd.Parameters)
+            {
+                string formatString = " -{0} {1}";
+                if (parameter.Value is string)
+                    formatString = " -{0} '{1}'";
+                else if (parameter.Value is bool)
+                    formatString = " -{0} ${1}";
+                sb.AppendFormat(formatString, parameter.Name, parameter.Value);
+            }
+            Log.WriteInfo("{0} {1}", LogPrefix, sb.ToString());
+        }
+
 		
 	}
 }

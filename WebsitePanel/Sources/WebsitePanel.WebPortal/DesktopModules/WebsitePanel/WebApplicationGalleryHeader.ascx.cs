@@ -27,7 +27,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ﻿using System;
-using WebsitePanel.Providers.WebAppGallery;
+﻿using System.Globalization;
+﻿using WebsitePanel.Providers.WebAppGallery;
 using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Portal
@@ -39,7 +40,7 @@ namespace WebsitePanel.Portal
             lblVersion.Text = application.Version;
             lblDescription.Text = application.Description;
             lblTitle.Text = application.Title;
-            lblSize.Text = application.Size;
+            lblSize.Text = application.InstallerFileSize.ToString(CultureInfo.InvariantCulture);
             imgLogo.ImageUrl = "~/DesktopModules/WebsitePanel/resizeimage.ashx?url=" + Server.UrlEncode(application.IconUrl) +
                                "&width=200&height=200";
 

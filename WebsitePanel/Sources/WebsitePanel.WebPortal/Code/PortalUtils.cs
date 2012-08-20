@@ -217,6 +217,23 @@ namespace WebsitePanel.Portal
         public static void UserSignOut()
         {
             FormsAuthentication.SignOut();
+
+            if (HttpContext.Current.Session != null)
+            {
+                HttpContext.Current.Session.Clear();
+                HttpContext.Current.Session.Abandon();
+            }
+
+            // Clear authentication cookie 
+            HttpCookie rFormsCookie = new HttpCookie(FormsAuthentication.FormsCookieName, "");
+            rFormsCookie.Expires = DateTime.Now.AddYears(-1);
+            HttpContext.Current.Response.Cookies.Add(rFormsCookie);
+
+            // Clear session cookie  
+            HttpCookie rSessionCookie = new HttpCookie("ASP.NET_SessionId", "");
+            rSessionCookie.Expires = DateTime.Now.AddYears(-1);
+            HttpContext.Current.Response.Cookies.Add(rSessionCookie); 
+
             HttpContext.Current.Response.Redirect(LoginRedirectUrl);
         }
 
@@ -268,6 +285,7 @@ namespace WebsitePanel.Portal
             authCookie.Secure = FormsAuthentication.RequireSSL;
             authCookie.Path = FormsAuthentication.FormsCookiePath;
             authCookie.Value = FormsAuthentication.Encrypt(ticket);
+            authCookie.HttpOnly = true;
 
             if (persistent)
                 authCookie.Expires = DateTime.Now.AddMonths(1);
@@ -330,11 +348,15 @@ namespace WebsitePanel.Portal
                     UserInfo user = authService.GetUserByUsernamePassword(username, password, ipAddress);
                     if (user != null)
                     {
-                        // issue authentication ticket
-                        FormsAuthenticationTicket ticket = CreateAuthTicket(user.Username, user.Password, user.Role, rememberLogin);
-                        SetAuthTicket(ticket, rememberLogin);
+                        if (IsRoleAllowedToLogin(user.Role))
+                        {
+                            // issue authentication ticket
+                            FormsAuthenticationTicket ticket = CreateAuthTicket(user.Username, user.Password, user.Role, rememberLogin);
+                            SetAuthTicket(ticket, rememberLogin);
 
-                        CompleteUserLogin(username, rememberLogin, preferredLocale, theme);
+                            CompleteUserLogin(username, rememberLogin, preferredLocale, theme);
+                        }
+                        else return BusinessErrorCodes.ERROR_USER_ACCOUNT_ROLE_NOT_ALLOWED;
                     }
 
                     return 0;
@@ -345,6 +367,25 @@ namespace WebsitePanel.Portal
                 throw ex;
             }
         }
+
+        private static bool IsRoleAllowedToLogin(UserRole role)
+        {
+
+            string tmp = GetExcludedRolesToLogin();
+
+            if (tmp == null) tmp = string.Empty;
+
+            string roleKey = ((UserRole)role).ToString();
+
+            return !tmp.Contains(roleKey);
+        }
+
+
+        public static string GetExcludedRolesToLogin()
+        {
+            return PortalConfiguration.SiteSettings["ExcludedRolesToLogin"];
+        }
+
 
         private static int GetAuthenticationFormsTimeout()
         {
@@ -500,6 +541,8 @@ namespace WebsitePanel.Portal
             // store last successful username in the cookie
             HttpCookie cookie = new HttpCookie("WebsitePanelLogin", username);
             cookie.Expires = DateTime.Now.AddDays(7);
+            cookie.Secure = FormsAuthentication.RequireSSL;
+            cookie.HttpOnly = true;
             HttpContext.Current.Response.Cookies.Add(cookie);
 
             // set language

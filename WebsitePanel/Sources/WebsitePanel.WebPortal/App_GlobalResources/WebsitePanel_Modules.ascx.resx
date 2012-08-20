@@ -187,7 +187,7 @@
     <value>Applications Installer</value>
   </data>
   <data name="ModuleTitle.WebApplicationsGallery" xml:space="preserve">
-    <value>Microsoft Web Application Gallery</value>
+    <value>Web Application Gallery</value>
   </data>
   <data name="ModuleTitle.AuditLog" xml:space="preserve">
     <value>Audit Log</value>
@@ -377,6 +377,9 @@
   </data>
   <data name="ModuleTitle.ManageWindowsServices" xml:space="preserve">
     <value>Manage Windows Services</value>
+  </data>
+  <data name="ModuleTitle.ManagePlatformInstaller" xml:space="preserve">
+    <value>Manage Web Platform Installer</value>
   </data>
   <data name="ModuleTitle.MyDatabases" xml:space="preserve">
     <value>My Databases</value>
@@ -734,9 +737,6 @@
   </data>
   <data name="ModuleTitle.WebSitesAllocateIPAddresses" xml:space="preserve">
     <value>Allocate Web Site IP Addresses</value>
-  </data>
-  <data name="ModuleTitle.ExchangeHostedEdition" xml:space="preserve">
-    <value>Exchange Hosting Mode</value>
   </data>
   <data name="ModuleTitle.HostedExchangeAddOrganizationDomain" xml:space="preserve">
     <value>Add Organization Domain</value>

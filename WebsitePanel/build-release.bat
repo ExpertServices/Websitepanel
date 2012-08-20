@@ -1,1 +1,1 @@
-%windir%\Microsoft.NET\Framework\v4.0.30319\msbuild.exe build.xml /target:Build /property:BuildConfiguration=Release /v:n /fileLogger
+%windir%\Microsoft.NET\Framework\v4.0.30319\msbuild.exe build.xml /target:Build /p:BuildConfiguration=Release /p:Version="1.2.2" /p:FileVersion="1.2.2.1" /p:VersionLabel="1.2.2.1" /v:n /fileLogger /m

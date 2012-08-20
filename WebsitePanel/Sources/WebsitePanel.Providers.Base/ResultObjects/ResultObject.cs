@@ -57,7 +57,7 @@ namespace WebsitePanel.Providers.Common
         public void AddError(string errorCode, Exception ex)
         {
             if(ex != null)
-                errorCode += ":" + ex.Message;
+                errorCode += ":" + ex.Message + "; " + ex.StackTrace;
 
             this.ErrorCodes.Add(errorCode);
             this.IsSuccess = false;

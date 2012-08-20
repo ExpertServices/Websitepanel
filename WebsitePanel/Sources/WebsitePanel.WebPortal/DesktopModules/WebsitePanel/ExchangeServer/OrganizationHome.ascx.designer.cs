@@ -148,24 +148,6 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::WebsitePanel.Portal.QuotaViewer userStats;
         
         /// <summary>
-        /// litTotalUserDiskSpace control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litTotalUserDiskSpace;
-        
-        /// <summary>
-        /// litTotalDiskSpaceValue control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litTotalDiskSpaceValue;
-        
-        /// <summary>
         /// exchangeStatsPanel control.
         /// </summary>
         /// <remarks>
@@ -238,40 +220,94 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::WebsitePanel.Portal.QuotaViewer listsStats;
         
         /// <summary>
-        /// lnkFolders control.
+        /// lnkExchangeStorage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkFolders;
+        protected global::System.Web.UI.WebControls.HyperLink lnkExchangeStorage;
         
         /// <summary>
-        /// foldersStats control.
+        /// exchangeStorageStats control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.QuotaViewer foldersStats;
+        protected global::WebsitePanel.Portal.QuotaViewer exchangeStorageStats;
         
         /// <summary>
-        /// Literal1 control.
+        /// besStatsPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal Literal1;
+        protected global::System.Web.UI.WebControls.Panel besStatsPanel;
         
         /// <summary>
-        /// lnkUsedExchangeDiskSpace control.
+        /// locBESStatistics control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink lnkUsedExchangeDiskSpace;
+        protected global::System.Web.UI.WebControls.Localize locBESStatistics;
+        
+        /// <summary>
+        /// lnkBESUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkBESUsers;
+        
+        /// <summary>
+        /// besUsersStats control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaViewer besUsersStats;
+        
+        /// <summary>
+        /// lyncStatsPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel lyncStatsPanel;
+        
+        /// <summary>
+        /// locLyncStatistics control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locLyncStatistics;
+        
+        /// <summary>
+        /// lnkLyncUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkLyncUsers;
+        
+        /// <summary>
+        /// lyncUsersStats control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaViewer lyncUsersStats;
         
         /// <summary>
         /// sharePointStatsPanel control.
@@ -308,6 +344,42 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.QuotaViewer siteCollectionsStats;
+        
+        /// <summary>
+        /// ocsStatsPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel ocsStatsPanel;
+        
+        /// <summary>
+        /// locOCSStatistics control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locOCSStatistics;
+        
+        /// <summary>
+        /// lnkOCSUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkOCSUsers;
+        
+        /// <summary>
+        /// ocsUsersStats control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaViewer ocsUsersStats;
         
         /// <summary>
         /// crmStatsPanel control.

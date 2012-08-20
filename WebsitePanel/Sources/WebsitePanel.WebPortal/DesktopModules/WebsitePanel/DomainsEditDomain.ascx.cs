@@ -304,7 +304,7 @@ namespace WebsitePanel.Portal
             try
             {
                 // create instant alias
-                int result = ES.Services.Servers.CreateDomainInstantAlias(PanelRequest.DomainID);
+                int result = ES.Services.Servers.CreateDomainInstantAlias("", PanelRequest.DomainID);
                 if (result < 0)
                 {
                     ShowResultMessage(result);

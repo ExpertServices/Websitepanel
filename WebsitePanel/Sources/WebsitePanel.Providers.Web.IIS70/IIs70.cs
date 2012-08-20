@@ -59,6 +59,7 @@ using WebsitePanel.Providers.Web.WebObjects;
 using WebsitePanel.Providers.Web.Iis.Common;
 using WebsitePanel.Providers.Web.Iis;
 using Ionic.Zip;
+using WebsitePanel.Providers.WebAppGallery;
 using WebsitePanel.Server.Utils;
 using WebsitePanel.Providers.Web.Delegation;
 
@@ -97,6 +98,8 @@ namespace WebsitePanel.Providers.Web
 		public const string AspNet40x64PathSetting = "AspNet40x64Path";
 
 		public const string WEBSITEPANEL_IISMODULES = "WebsitePanel.IIsModules";
+        public const string DOTNETPANEL_IISMODULES = "DotNetPanel.IIsModules";
+        
 
         public const string HeliconApeModule = "Helicon Ape";
         public const string HeliconApeHandlerPath = "*.apehandler";
@@ -325,6 +328,7 @@ namespace WebsitePanel.Providers.Web
 	public class WebManagementServiceSettings
 	{
 		public string Port { get; set; }
+        public string NETBIOS { get; set; }
 		public string ServiceUrl { get; set; }
 		public int RequiresWindowsCredentials { get; set; }
 	}
@@ -1689,7 +1693,10 @@ namespace WebsitePanel.Providers.Web
             //
             foreach (var moduleEntry in modulesCollection)
             {
-                if (String.Equals(moduleEntry["name"].ToString(), Constants.WEBSITEPANEL_IISMODULES, StringComparison.InvariantCultureIgnoreCase))
+                if (
+                    String.Equals(moduleEntry["name"].ToString(), Constants.WEBSITEPANEL_IISMODULES, StringComparison.InvariantCultureIgnoreCase)
+                    || String.Equals(moduleEntry["name"].ToString(), Constants.DOTNETPANEL_IISMODULES, StringComparison.InvariantCultureIgnoreCase)
+                    )
                     return true;
             }
             //
@@ -1827,22 +1834,27 @@ namespace WebsitePanel.Providers.Web
 				//
 				ConfigurationElementCollection modulesCollection = modulesSection.GetCollection();
 				//
-				ConfigurationElement iisModulesEntry = null;
-				//
 				foreach (ConfigurationElement moduleEntry in modulesCollection)
 				{
 					if (String.Equals(moduleEntry["name"].ToString(), Constants.WEBSITEPANEL_IISMODULES, StringComparison.InvariantCultureIgnoreCase))
 					{
-						iisModulesEntry = moduleEntry;
-						break;
+                        modulesCollection.Remove(moduleEntry);
+                        break;
 					}
+
 				}
-				//
-				if (iisModulesEntry != null)
-				{
-					modulesCollection.Remove(iisModulesEntry);
-					srvman.CommitChanges();
-				}
+
+                foreach (ConfigurationElement moduleEntry in modulesCollection)
+                {
+                    if (String.Equals(moduleEntry["name"].ToString(), Constants.DOTNETPANEL_IISMODULES, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        modulesCollection.Remove(moduleEntry);
+                        break;
+                    }
+                }
+
+                srvman.CommitChanges();
+                
 			}
 		}
 
@@ -3175,7 +3187,7 @@ namespace WebsitePanel.Providers.Web
 		public const string WDeployAppPoolConfigEditor = "WDeployAppPoolConfigEditor";
 
 
-		private void SetupWebDeployPublishingOnServer(List<string> messages)
+	    private void SetupWebDeployPublishingOnServer(List<string> messages)
 		{
 			if (IsWebDeployInstalled() == false
 				|| String.IsNullOrEmpty(ProviderSettings[WDeployEnabled]))
@@ -3500,7 +3512,7 @@ namespace WebsitePanel.Providers.Web
 			bool adEnabled = ServerSettings.ADEnabled;
 			// !!! Bypass AD for WMSVC as it requires full-qualified username to authenticate user
 			// against the web server
-			ServerSettings.ADEnabled = false;
+			//ServerSettings.ADEnabled = false;
 
 			if (IdentityCredentialsMode == "IISMNGR")
 			{
@@ -3521,7 +3533,7 @@ namespace WebsitePanel.Providers.Web
 			bool adEnabled = ServerSettings.ADEnabled;
 			// !!! Bypass AD for WMSVC as it requires full-qualified username to authenticate user
 			// against the web server
-			ServerSettings.ADEnabled = false;
+			//ServerSettings.ADEnabled = false;
 
 			//
 			ResultObject result = new ResultObject { IsSuccess = true };
@@ -3556,7 +3568,7 @@ namespace WebsitePanel.Providers.Web
 			bool adEnabled = ServerSettings.ADEnabled;
 			// !!! Bypass AD for WMSVC as it requires full-qualified username to authenticate user
 			// against the web server
-			ServerSettings.ADEnabled = false;
+			//ServerSettings.ADEnabled = false;
 
 			//
 			string fqWebPath = String.Format("/{0}", siteName);
@@ -3564,6 +3576,32 @@ namespace WebsitePanel.Providers.Web
 			// Trace input parameters
 			Log.WriteInfo("Site Name: {0}; Account Name: {1}; Account Password: {2}; FqWebPath: {3};",
 				siteName, accountName, accountPassword, fqWebPath);
+
+
+            string contentPath = string.Empty;
+            using (ServerManager srvman = webObjectsSvc.GetServerManager())
+            {
+                WebSite site = webObjectsSvc.GetWebSiteFromIIS(srvman, siteName);
+                //
+                contentPath = webObjectsSvc.GetPhysicalPath(srvman, site);
+                //
+                Log.WriteInfo("Site Content Path: {0};", contentPath);
+            }
+
+            string FTPRoot = string.Empty;
+            string FTPDir = string.Empty;
+
+
+            if (contentPath.IndexOf("\\\\") != -1)
+            {
+                string[] Tmp = contentPath.Split('\\');
+                FTPRoot = "\\\\" + Tmp[2] + "\\" + Tmp[3];
+                FTPDir = contentPath.Replace(FTPRoot, "");
+            }
+
+            //
+            string accountNameSid = string.Empty;
+
 
 			//
 			if (IdentityCredentialsMode == "IISMNGR")
@@ -3583,40 +3621,33 @@ namespace WebsitePanel.Providers.Web
 						PasswordNeverExpires = true,
 						AccountDisabled = false,
 						Password = accountPassword,
-						System = true
+						System = true,
+                        MsIIS_FTPDir = FTPDir,
+                        MsIIS_FTPRoot = FTPRoot
 					},
 					ServerSettings,
-					String.Empty,
-					String.Empty);
+                    UsersOU,
+                    GroupsOU);
 
 				// Convert account name to the full-qualified one
-				accountName = GetFullQualifiedAccountName(accountName);
+                accountName = GetFullQualifiedAccountName(accountName);
+                accountNameSid = GetFullQualifiedAccountNameSid(accountName);
 				//
 				Log.WriteInfo("FQ Account Name: {0};", accountName);
 			}
-            using (ServerManager srvman = webObjectsSvc.GetServerManager())
+
+            ManagementAuthorization.Grant(accountName, fqWebPath, false);
+            //
+
+            if (IdentityCredentialsMode == "IISMNGR")
             {
-                //
-                ManagementAuthorization.Grant(accountName, fqWebPath, false);
-                //
-                WebSite site = webObjectsSvc.GetWebSiteFromIIS(srvman, siteName);
-                //
-                string contentPath = webObjectsSvc.GetPhysicalPath(srvman, site);
-                //
-                Log.WriteInfo("Site Content Path: {0};", contentPath);
-                //
-                if (IdentityCredentialsMode == "IISMNGR")
-                {
-                    SecurityUtils.GrantNtfsPermissionsBySid(contentPath, SystemSID.LOCAL_SERVICE, permissions, true, true);
-                }
-                else
-                {
-                    SecurityUtils.GrantNtfsPermissions(contentPath, accountName, permissions, true, true, ServerSettings, String.Empty, String.Empty);
-                }
-                // Restore setting back
-                ServerSettings.ADEnabled = adEnabled;
+                SecurityUtils.GrantNtfsPermissionsBySid(contentPath, SystemSID.LOCAL_SERVICE, permissions, true, true);
             }
-		}
+            else
+            {
+                SecurityUtils.GrantNtfsPermissions(contentPath, accountNameSid, NTFSPermission.Modify, true, true, ServerSettings, UsersOU, GroupsOU);
+            }
+        }
 
 
         public override void ChangeWebManagementAccessPassword(string accountName, string accountPassword)
@@ -3625,7 +3656,7 @@ namespace WebsitePanel.Providers.Web
 			bool adEnabled = ServerSettings.ADEnabled;
 			// !!! Bypass AD for WMSVC as it requires full-qualified username to authenticate user
 			// against the web server
-			ServerSettings.ADEnabled = false;
+			//ServerSettings.ADEnabled = false;
 
 			// Trace input parameters
 			Log.WriteInfo("Account Name: {0}; Account Password: {1};", accountName, accountPassword);
@@ -3653,7 +3684,7 @@ namespace WebsitePanel.Providers.Web
 			bool adEnabled = ServerSettings.ADEnabled;
 			// !!! Bypass AD for WMSVC as it requires full-qualified username to authenticate user
 			// against the web server
-			ServerSettings.ADEnabled = false;
+			//ServerSettings.ADEnabled = false;
 			//
 			string fqWebPath = String.Format("/{0}", siteName);
 			// Trace input parameters
@@ -3677,9 +3708,18 @@ namespace WebsitePanel.Providers.Web
                 }
                 else
                 {
-                    ManagementAuthorization.Revoke(GetFullQualifiedAccountName(accountName), fqWebPath);
-                    SecurityUtils.RemoveNtfsPermissions(contentPath, accountName, ServerSettings, String.Empty, String.Empty);
-                    SecurityUtils.DeleteUser(accountName, ServerSettings, String.Empty);
+                    if (adEnabled)
+                    {
+                        ManagementAuthorization.Revoke(GetFullQualifiedAccountName(accountName), fqWebPath);
+                        SecurityUtils.RemoveNtfsPermissions(contentPath, accountName, ServerSettings, UsersOU, GroupsOU);
+                        SecurityUtils.DeleteUser(accountName, ServerSettings, UsersOU);
+                    }
+                    else
+                    {
+                        ManagementAuthorization.Revoke(GetFullQualifiedAccountName(accountName), fqWebPath);
+                        SecurityUtils.RemoveNtfsPermissions(contentPath, accountName, ServerSettings, String.Empty, String.Empty);
+                        SecurityUtils.DeleteUser(accountName, ServerSettings, String.Empty);
+                    }
                 }
                 // Restore setting back
                 ServerSettings.ADEnabled = adEnabled;
@@ -3749,10 +3789,14 @@ namespace WebsitePanel.Providers.Web
 					// Retrieve account name
 					if (scopeCollection.Count > 0)
 					{
-						iisObject.SetValue<string>(
+						/*
+                        iisObject.SetValue<string>(
 							WebSite.WmSvcAccountName,
 							GetNonQualifiedAccountName((String)scopeCollection[0]["name"]));
-						//
+                         */
+                        iisObject.SetValue<string>(
+                            WebSite.WmSvcAccountName, (String)scopeCollection[0]["name"]);
+                        						//
 						iisObject.SetValue<string>(
 							WebSite.WmSvcServiceUrl, ProviderSettings["WmSvc.ServiceUrl"]);
 						//
@@ -3906,6 +3950,31 @@ namespace WebsitePanel.Providers.Web
 			return domainName != null ? domainName + "\\" + accountName : accountName;
 		}
 
+
+        protected string GetFullQualifiedAccountNameSid(string accountName)
+        {
+            //
+            if (!ServerSettings.ADEnabled)
+                return String.Format(@"{0}\{1}", Environment.MachineName, accountName);
+
+            if (accountName.IndexOf("\\") != -1)
+                return accountName; // already has domain information
+
+            // DO IT FOR ACTIVE DIRECTORY MODE ONLY
+            string domainName = null;
+            try
+            {
+                DirectoryContext objContext = new DirectoryContext(DirectoryContextType.Domain, ServerSettings.ADRootDomain);
+                Domain objDomain = Domain.GetDomain(objContext);
+                domainName = objDomain.Name;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("Get domain name error", ex);
+            }
+
+            return domainName != null ? domainName + "\\" + accountName : accountName;
+        }
 		#endregion
 
 		#region SSL
@@ -3968,5 +4037,11 @@ namespace WebsitePanel.Providers.Web
 			return sslObjectService.CheckCertificate(webSite);
 		}
 		#endregion
+
+        #region Web Platform Installer Application Gallery
+
+        // moved down to IIs60
+
+        #endregion
 	}
 }

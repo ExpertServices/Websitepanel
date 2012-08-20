@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Text.ActiveSyncPolicy" xml:space="preserve">
     <value>ActiveSync Policy</value>
@@ -127,17 +127,15 @@
     <value>Distribution Lists</value>
   </data>
   <data name="Text.DomainNames" xml:space="preserve">
-    <value>Domain Names</value>
+    <value>Accepted Domains</value>
   </data>
-<data name="Text.CRMOrganization" xml:space="preserve">
+  <data name="Text.CRMOrganization" xml:space="preserve">
     <value>CRM Organization</value>
   </data>
-
-	<data name="Text.CRMUsers" xml:space="preserve">
-		 <value>CRM Users</value>
-	 </data>
-
-	<data name="Text.ExchangeGroup" xml:space="preserve">
+  <data name="Text.CRMUsers" xml:space="preserve">
+    <value>CRM Users</value>
+  </data>
+  <data name="Text.ExchangeGroup" xml:space="preserve">
     <value>Exchange</value>
   </data>
   <data name="Text.Mailboxes" xml:space="preserve">
@@ -146,18 +144,16 @@
   <data name="Text.OrganizationGroup" xml:space="preserve">
     <value>Organization's</value>
   </data>
-<data name="Text.CRMGroup" xml:space="preserve">
+  <data name="Text.CRMGroup" xml:space="preserve">
     <value>CRM</value>
   </data>
-
-	<data name="Text.BlackBerryGroup" xml:space="preserve">
+  <data name="Text.BlackBerryGroup" xml:space="preserve">
     <value>BlackBerry</value>
   </data>
-	<data name="Text.BlackBerryUsers" xml:space="preserve">
-		 <value>BlackBerry Users</value>
-	 </data>
-
-	<data name="Text.PublicFolders" xml:space="preserve">
+  <data name="Text.BlackBerryUsers" xml:space="preserve">
+    <value>BlackBerry Users</value>
+  </data>
+  <data name="Text.PublicFolders" xml:space="preserve">
     <value>Public Folders</value>
   </data>
   <data name="Text.Setup" xml:space="preserve">
@@ -166,14 +162,13 @@
   <data name="Text.SharePointGroup" xml:space="preserve">
     <value>SharePoint</value>
   </data>
-	<data name="Text.OCSGroup" xml:space="preserve">
+  <data name="Text.OCSGroup" xml:space="preserve">
     <value>OCS</value>
   </data>
-
-	<data name="Text.OCSUsers" xml:space="preserve">
+  <data name="Text.OCSUsers" xml:space="preserve">
     <value>OCS Users</value>
   </data>
-	<data name="Text.SiteCollections" xml:space="preserve">
+  <data name="Text.SiteCollections" xml:space="preserve">
     <value>Site Collections</value>
   </data>
   <data name="Text.StorageLimits" xml:space="preserve">
@@ -184,5 +179,20 @@
   </data>
   <data name="Text.Users" xml:space="preserve">
     <value>Users</value>
+  </data>
+  <data name="Text.MailboxPlans" xml:space="preserve">
+    <value>Mailbox Plans</value>
+  </data>
+  <data name="Text.LyncGroup" xml:space="preserve">
+    <value>Lync</value>
+  </data>
+  <data name="Text.LyncUserPlans" xml:space="preserve">
+    <value>Lync User Plans</value>
+  </data>
+  <data name="Text.LyncUsers" xml:space="preserve">
+    <value>Lync Users</value>
+  </data>
+  <data name="Text.LyncFederationDomains" xml:space="preserve">
+    <value>Lync Federation Domains</value>
   </data>
 </root>

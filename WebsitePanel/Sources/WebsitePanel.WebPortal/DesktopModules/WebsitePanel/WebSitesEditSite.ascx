@@ -153,7 +153,7 @@
 				</table>
 			</td>
 			<td nowrap valign="top" align="right">
-				<table class="Toolbox" cellpadding="7" width="150px">
+				<table cellpadding="7" width="150px">
 					<tr>
 						<td class="MediumBold" align="center">
 							<asp:Literal ID="litStatus" runat="server"></asp:Literal>

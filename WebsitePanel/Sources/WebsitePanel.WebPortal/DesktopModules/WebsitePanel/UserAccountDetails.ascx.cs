@@ -61,6 +61,7 @@ namespace WebsitePanel.Portal
                 // bind account details
                 litUsername.Text = user.Username;
                 litFullName.Text = Utils.EllipsisString(user.FirstName + " " + user.LastName, 25);
+                litSubscriberNumber.Text = Server.HtmlDecode(user.SubscriberNumber);
                 litRole.Text = PanelFormatter.GetUserRoleName(user.RoleId);
                 litCreated.Text = user.Created.ToString();
                 litUpdated.Text = user.Changed.ToString();
@@ -97,7 +98,11 @@ namespace WebsitePanel.Portal
                 lnkChangePassword.Visible = !((PanelSecurity.SelectedUserId == PanelSecurity.EffectiveUserId) && PanelSecurity.LoggedUser.IsPeer);
 
                 lnkDelete.NavigateUrl = EditUrl("UserID", PanelSecurity.SelectedUserId.ToString(), "delete");
-                lnkDelete.Visible = (PanelSecurity.SelectedUserId != PanelSecurity.EffectiveUserId);
+
+                if (!((PanelSecurity.LoggedUser.Role == UserRole.Reseller) | (PanelSecurity.LoggedUser.Role == UserRole.Administrator))) 
+                    lnkDelete.Visible = false;
+                else 
+                    lnkDelete.Visible = (PanelSecurity.SelectedUserId != PanelSecurity.EffectiveUserId);
             }
         }
 

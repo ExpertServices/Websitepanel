@@ -148,24 +148,30 @@ namespace WebsitePanel.Providers.Database
 				Log.WriteInfo("Connector location is either null or empty");
 				return null;
 			}
-			//
-			string assemblyFile = String.Empty;
-			// Versions 5.x.x compatibility
-			if (connectorVersion.StartsWith("5."))
-				assemblyFile = Path.Combine(connectorLocation, @"Binaries\.NET 2.0\" + args.Name.Split(',')[0] + ".dll");
-			// Newest versions compatibility
-			else
-				assemblyFile = Path.Combine(connectorLocation, @"Assemblies\" + args.Name.Split(',')[0] + ".dll");
-			//
-			Log.WriteInfo(assemblyFile);
-			//
-			if (!File.Exists(assemblyFile))
-			{
-				Log.WriteInfo("Connector assembly could not be found or does not exist");
-				return null;
-			}
-			//
-			return Assembly.LoadFrom(assemblyFile);
+			
+			string assemblyFile = args.Name.Split(',')[0] + ".dll";
+            
+            // 1st location
+            string assemblyPath = Path.Combine(connectorLocation, @"Binaries\.NET 2.0\" + assemblyFile);
+            if (!File.Exists(assemblyPath))
+            {
+                // 2nd location
+                assemblyPath = Path.Combine(connectorLocation, @"Assemblies\" + assemblyFile);
+
+                if (!File.Exists(assemblyPath))
+                {
+                    // 3rd location
+                    assemblyPath = Path.Combine(connectorLocation, @"Assemblies\v2.0" + assemblyFile);
+
+                    if (!File.Exists(assemblyPath))
+                    {
+                        Log.WriteInfo("Connector assembly could not be found or does not exist");
+                        return null; // sorry, cannot find
+                    }
+                }
+            }
+
+			return Assembly.LoadFrom(assemblyPath);
 		}
 
 		#endregion
@@ -762,7 +768,15 @@ namespace WebsitePanel.Providers.Database
             DataView dvProcesses = new DataView(dtProcesses);
             foreach (DataRowView rowSid in dvProcesses)
             {
-                ExecuteNonQuery(String.Format("KILL {0}", rowSid["Id"]));
+                string cmdText = String.Format("KILL {0}", rowSid["Id"]);
+                try
+                {
+                    ExecuteNonQuery(cmdText);
+                }
+                catch(Exception ex)
+                {
+                    Log.WriteError("Cannot drop MySQL connection: " + cmdText, ex);
+                }
             }
         }
 

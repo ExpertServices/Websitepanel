@@ -43,6 +43,7 @@ using System.IO;
 using Microsoft.Win32;
 using Microsoft.Web.Deployment;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.Providers.Web.WPIWebApplicationGallery;
 using WebsitePanel.Server.Utils;
 using WebsitePanel.Providers.OS;
 using WebsitePanel.Providers.Utils;
@@ -283,7 +284,7 @@ namespace WebsitePanel.Providers.Web
 			get
 			{
 				string ret = ProviderSettings["GalleryXmlFeedUrl"];
-				if (string.IsNullOrEmpty(ret))
+				if (String.IsNullOrEmpty(ret))
 					ret = WebApplicationGallery.WAG_DEFAULT_FEED_URL;
 				return ret;
 			}
@@ -3386,246 +3387,209 @@ namespace WebsitePanel.Providers.Web
 			return IsIISInstalled();
 		}
 
-		#region Microsoft Web Application Gallery
+		
+        #region Microsoft Web Application Gallery
 
-		public GalleryCategoriesResult GetGalleryCategories()
-		{
-			GalleryCategoriesResult result = new GalleryCategoriesResult();
+        private const string MS_DEPLOY_ASSEMBLY_NAME = "Microsoft.Web.Deployment";
+        private const string WPI_INSTANCE_VIEWER = "viewer";
+	    private const string WPI_INSTANCE_INSTALLER = "installer";
 
-			try
-			{
-				WebApplicationGallery module = new WebApplicationGallery(GalleryXmlFeedUrl);
-				//
-				result.Value = module.GetCategories();
-				result.IsSuccess = true;
-			}
-			catch (Exception ex)
-			{
-				result.IsSuccess = false;
-				result.AddError(GalleryErrors.ProcessingFeedXMLError, ex);
-			}
-			//
-			return result;
-		}
+	    public void InitFeeds(int UserId, string[] feeds)
+        {
+            //need to call InitFeeds() before any operation with WPIApplicationGallery()
+            WPIApplicationGallery module = new WPIApplicationGallery(WPI_INSTANCE_VIEWER);
+            module.InitFeeds(UserId, feeds);
+        }
 
-		public GalleryApplicationsResult GetGalleryApplications(string categoryId)
-		{
-			GalleryApplicationsResult result = new GalleryApplicationsResult();
+        public void SetResourceLanguage(int UserId, string resourceLanguage)
+        {
+            WPIApplicationGallery module = new WPIApplicationGallery(WPI_INSTANCE_VIEWER);
+            module.SetResourceLanguage(UserId, resourceLanguage);
+        }
 
-			try
-			{
-				WebApplicationGallery module = new WebApplicationGallery(GalleryXmlFeedUrl);
-				//
-				result.Value = module.GetApplications(categoryId);
-				result.IsSuccess = true;
-			}
-			catch (Exception ex)
-			{
-				result.IsSuccess = false;
-				result.AddError(GalleryErrors.ProcessingFeedXMLError, ex);
-			}
-			//
-			return result;
-		}
+	    public bool IsMsDeployInstalled()
+        {
+            // project has reference to Microsoft.Web.Deployment, so
+	        return true;
+	        /*
+            try
+            {
+                Assembly.Load(MS_DEPLOY_ASSEMBLY_NAME);
+                return true;
+            }
+            catch
+            {
+                // type could not be instantiated
+                return false;
+            }
+            */
+        }
 
-		public GalleryApplicationResult GetGalleryApplication(string id)
-		{
-			GalleryApplicationResult result = new GalleryApplicationResult();
-			//
-			try
-			{
-				WebApplicationGallery module = new WebApplicationGallery(GalleryXmlFeedUrl);
-				//
-				result.Value = module.GetApplicationByProductId(id);
-				result.IsSuccess = true;
-			}
-			catch (Exception ex)
-			{
-				result.IsSuccess = false;
-				result.AddError(GalleryErrors.ProcessingFeedXMLError, ex);
-			}
-			//
-			return result;
-		}
+	    public GalleryLanguagesResult GetGalleryLanguages(int UserId)
+        {
+            GalleryLanguagesResult result = new GalleryLanguagesResult();
+            WPIApplicationGallery module = new WPIApplicationGallery(WPI_INSTANCE_VIEWER);
+            try
+            {
+                result.Value = module.GetLanguages(UserId);
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccess = false;
+                result.AddError(GalleryErrors.GetLanguagesError, ex);
+            }
 
-		public GalleryWebAppStatus GetGalleryApplicationStatus(string id)
-		{
-			GalleryWebAppStatus status = GalleryWebAppStatus.NotDownloaded;
-			//
-			try
-			{
-				WebApplicationGallery module = new WebApplicationGallery(GalleryXmlFeedUrl);
-				//
-				GalleryApplication appObject = module.GetApplicationByProductId(id);
-				//
-				if (appObject == null)
-					return GalleryWebAppStatus.Failed;
-				//
-				string appPackageDistr = module.GetApplicationPackagePath(appObject);
-				// Check whether distributive exists locally
-				if (!File.Exists(appPackageDistr))
-					return GalleryWebAppStatus.NotDownloaded;
-				// Check whether distributive is in download queue
-				if (AppPackagesDownloader.IsApplicationInDownloadQueue(id))
-					return GalleryWebAppStatus.Downloading;
-				// From this point distibutive is considered as existed locally and it's not in download queue,
-				// so lets ensure the downloaded file either is not corrupted during the download process
-				#region Atom Feed Version 0.2
-				if (appObject.InstallerItems.Count > 0)
-				{
-					string md5CheckSum = appObject.InstallerItems[0].InstallerFile.MD5;
-					// Check MD5 check sum of the distributive
-					if (AppPackagesDownloader.CheckApplicationPackageHashSum_MD5(appPackageDistr, md5CheckSum))
-						status = GalleryWebAppStatus.Downloaded;
-				}
-				#endregion
+            return result;
+        }
 
-				#region Atom Feed Version 2.0.1.0
-				else if (appObject.Installers.Count > 0)
-				{
-					string sha1CheckSum = appObject.Installers[0].InstallerFile.SHA1;
-					// Check SHA1 check sum of the distributive
-					if (AppPackagesDownloader.CheckApplicationPackageHashSum_SHA1(appPackageDistr, sha1CheckSum))
-						status = GalleryWebAppStatus.Downloaded;
-				}
-				#endregion
-				// If MD5 check sum is failed then we have to resume distibutive download
-				else
-					status = GalleryWebAppStatus.NotDownloaded;
-			}
-			catch (Exception ex)
-			{
-				Log.WriteError(ex);
-				//
-				return GalleryWebAppStatus.Failed;
-			}
-			//
-			return status;
-		}
+        public GalleryCategoriesResult GetGalleryCategories(int UserId)
+        {
+            GalleryCategoriesResult result = new GalleryCategoriesResult();
 
-		public GalleryWebAppStatus DownloadGalleryApplication(string id)
-		{
-			WebApplicationGallery module = new WebApplicationGallery(GalleryXmlFeedUrl);
-			//
-			GalleryApplication appObject = module.GetApplicationByProductId(id);
-			if (appObject == null)
-				return GalleryWebAppStatus.Failed;
-			//
-			string localAppDistr = module.GetApplicationPackagePath(appObject);
-			//
-			InstallerFile installerFile = null;
+            //try
+            //{
+            WPIApplicationGallery module = new WPIApplicationGallery(WPI_INSTANCE_VIEWER);
+            //
+            result.Value = module.GetCategories(UserId);
+            result.IsSuccess = true;
+            //}
+            //catch (Exception ex)
+            //{
+            //    result.IsSuccess = false;
+            //    result.AddError(GalleryErrors.ProcessingFeedXMLError, ex);
+            //}
+            ////
+            return result;
+        }
 
-			#region Atom Feed Version 0.2
-			//
-			if (appObject.InstallerItems.Count > 0)
-			{
-				InstallerItem installerItem_0 = appObject.InstallerItems[0];
-				//
-				if (installerItem_0 == null)
-				{
-					Log.WriteWarning(WEB_PI_APP_PACK_ROOT_INSTALLER_ITEM_MISSING, appObject.Title);
-					return GalleryWebAppStatus.Failed;
-				}
-				//
-				installerFile = installerItem_0.InstallerFile;
-			}
-			#endregion
+        public GalleryApplicationsResult GetGalleryApplications(int UserId, string categoryId)
+        {
+            GalleryApplicationsResult result = new GalleryApplicationsResult();
 
-			#region Atom Feed Version 2.0.1.0
-			//
-			if (appObject.Installers.Count > 0)
-			{
-				Installer installerItem_0 = appObject.Installers[0];
-				//
-				if (installerItem_0 == null)
-				{
-					Log.WriteWarning(WEB_PI_APP_PACK_ROOT_INSTALLER_ITEM_MISSING, appObject.Title);
-					return GalleryWebAppStatus.Failed;
-				}
-				//
-				installerFile = installerItem_0.InstallerFile;
-			}
-			#endregion
+            try
+            {
+                WPIApplicationGallery module = new WPIApplicationGallery(WPI_INSTANCE_VIEWER);
+                //
+                result.Value = module.GetApplications(UserId, categoryId);
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccess = false;
+                result.AddError(GalleryErrors.ProcessingFeedXMLError, ex);
+            }
+            //
+            return result;
+        }
 
-			//
-			if (installerFile == null || String.IsNullOrEmpty(installerFile.InstallerUrl))
-			{
-				Log.WriteWarning(WEB_PI_APP_PACK_DISPLAY_URL_MISSING, appObject.Title);
-				return GalleryWebAppStatus.Failed;
-			}
+        public GalleryApplicationsResult GetGalleryApplicationsFiltered(int UserId, string pattern)
+        {
+            GalleryApplicationsResult result = new GalleryApplicationsResult();
 
-			//
-			try
-			{
-				string appCacheRoot = Path.GetDirectoryName(localAppDistr);
-				//
-				if (!Directory.Exists(appCacheRoot))
-					Directory.CreateDirectory(appCacheRoot);
-				//
-				Log.WriteInfo("Local distributive path: {0}", localAppDistr);
-				AppPackagesDownloader.StartApplicationDownload(id, installerFile.InstallerUrl, localAppDistr);
-			}
-			catch (Exception ex)
-			{
-				Log.WriteError(ex);
-				//
-				return GalleryWebAppStatus.Failed;
-			}
-			//
-			return GalleryWebAppStatus.Downloading;
-		}
+            try
+            {
+                WPIApplicationGallery module = new WPIApplicationGallery(WPI_INSTANCE_VIEWER);
 
-		public bool IsMsDeployInstalled()
-		{
-			WebApplicationGallery module = new WebApplicationGallery(GalleryXmlFeedUrl);
-			//
-			return module.IsMsDeployInstalled();
-		}
+                result.Value = module.GetGalleryApplicationsFiltered(UserId, pattern);
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccess = false;
+                result.AddError(ex.Message, ex);
+            }
 
-		public DeploymentParametersResult GetGalleryApplicationParameters(string id)
-		{
-			DeploymentParametersResult result = new DeploymentParametersResult();
 
-			try
-			{
-				WebApplicationGallery module = new WebApplicationGallery(GalleryXmlFeedUrl);
-				//
-				result.Value = module.GetApplicationParameters(id);
-				result.IsSuccess = true;
-			}
-			catch (Exception ex)
-			{
-				result.IsSuccess = false;
-				result.AddError(GalleryErrors.ProcessingPackageError, ex);
-			}
-			//
-			return result;
-		}
+            return result;
+        }
 
-		public StringResultObject InstallGalleryApplication(string webAppId, List<DeploymentParameter> updatedValues)
-		{
-			StringResultObject result = new StringResultObject();
 
-			try
-			{
-				WebApplicationGallery module = new WebApplicationGallery(GalleryXmlFeedUrl);
-				//
-				string applicationPath = module.InstallApplication(webAppId, updatedValues);
-				//
-				if (!String.IsNullOrEmpty(applicationPath))
-				{
-					result.Value = applicationPath;
-					result.IsSuccess = true;
-				}
-			}
-			catch (Exception ex)
-			{
-				result.IsSuccess = false;
-				result.AddError(GalleryErrors.PackageInstallationError, ex);
-			}
-			//
-			return result;
-		}
+        public GalleryApplicationResult GetGalleryApplication(int UserId, string id)
+        {
+            GalleryApplicationResult result = new GalleryApplicationResult();
+            //
+            try
+            {
+                WPIApplicationGallery module = new WPIApplicationGallery(WPI_INSTANCE_VIEWER);
+                //
+                result.Value = module.GetApplicationByProductId(UserId, id);
+                result.IsSuccess = true;
+                result.ErrorCodes.AddRange(module.GetMissingDependenciesForApplicationById(UserId, id));
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccess = false;
+                result.AddError(GalleryErrors.ProcessingFeedXMLError, ex);
+            }
+            //
+            return result;
+        }
+
+        public GalleryWebAppStatus DownloadGalleryApplication(int UserId, string id)
+        {
+            return GetGalleryApplicationStatus(UserId, id);
+        }
+
+        public GalleryWebAppStatus GetGalleryApplicationStatus(int UserId, string id)
+        {
+            try
+            {
+                WPIApplicationGallery module = new WPIApplicationGallery(WPI_INSTANCE_INSTALLER);
+
+                return module.DownloadAppAndGetStatus(UserId, id);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(ex);
+                return GalleryWebAppStatus.Failed;
+            }
+        }
+
+        public DeploymentParametersResult GetGalleryApplicationParameters(int UserId, string id)
+        {
+            DeploymentParametersResult result = new DeploymentParametersResult();
+
+            try
+            {
+                WPIApplicationGallery module = new WPIApplicationGallery(WPI_INSTANCE_INSTALLER);
+                //
+                result.Value = module.GetApplicationParameters(UserId, id);
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccess = false;
+                result.AddError(GalleryErrors.ProcessingPackageError, ex);
+            }
+            //
+            return result;
+        }
+
+
+        public StringResultObject InstallGalleryApplication(int UserId, string webAppId, List<DeploymentParameter> updatedValues, string languageId)
+        {
+            StringResultObject result = new StringResultObject();
+
+            try
+            {
+                WPIApplicationGallery module = new WPIApplicationGallery(WPI_INSTANCE_INSTALLER);
+                //
+                module.InstallApplication(UserId, webAppId, updatedValues, languageId, ref result);
+
+                if (result.IsSuccess)
+                {
+                    module.DeleteWpiHelper(UserId);
+                }
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccess = false;
+                result.AddError(GalleryErrors.PackageInstallationError, ex);
+            }
+            //
+            return result;
+        }
 
 		#endregion
 

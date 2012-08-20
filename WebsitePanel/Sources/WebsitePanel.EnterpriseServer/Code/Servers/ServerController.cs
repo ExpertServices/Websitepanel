@@ -122,20 +122,20 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // TO-DO: Check connectivity
-				return 0;
+                return 0;
             }
             catch (WebException ex)
             {
                 HttpWebResponse response = (HttpWebResponse)ex.Response;
-				if (response != null && response.StatusCode == HttpStatusCode.NotFound)
+                if (response != null && response.StatusCode == HttpStatusCode.NotFound)
                     return BusinessErrorCodes.ERROR_ADD_SERVER_NOT_FOUND;
-				else if (response != null && response.StatusCode == HttpStatusCode.BadRequest)
+                else if (response != null && response.StatusCode == HttpStatusCode.BadRequest)
                     return BusinessErrorCodes.ERROR_ADD_SERVER_BAD_REQUEST;
-				else if (response != null && response.StatusCode == HttpStatusCode.InternalServerError)
+                else if (response != null && response.StatusCode == HttpStatusCode.InternalServerError)
                     return BusinessErrorCodes.ERROR_ADD_SERVER_INTERNAL_SERVER_ERROR;
-				else if (response != null && response.StatusCode == HttpStatusCode.ServiceUnavailable)
+                else if (response != null && response.StatusCode == HttpStatusCode.ServiceUnavailable)
                     return BusinessErrorCodes.ERROR_ADD_SERVER_SERVICE_UNAVAILABLE;
-				else if (response != null && response.StatusCode == HttpStatusCode.Unauthorized)
+                else if (response != null && response.StatusCode == HttpStatusCode.Unauthorized)
                     return BusinessErrorCodes.ERROR_ADD_SERVER_UNAUTHORIZED;
                 if (ex.Message.Contains("The remote name could not be resolved") || ex.Message.Contains("Unable to connect"))
                 {
@@ -155,7 +155,7 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     TaskManager.WriteError("General Server Error");
                     TaskManager.WriteError(ex);
-                    return BusinessErrorCodes.ERROR_ADD_SERVER_APPLICATION_ERROR;    
+                    return BusinessErrorCodes.ERROR_ADD_SERVER_APPLICATION_ERROR;
                 }
             }
             finally
@@ -220,7 +220,7 @@ namespace WebsitePanel.EnterpriseServer
                 throw new ApplicationException("Could not find services. General error was occued.", ex);
             }
         }
-        
+
         public static int AddServer(ServerInfo server, bool autoDiscovery)
         {
             // check account
@@ -243,8 +243,8 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             TaskManager.StartTask("SERVER", "ADD", server.ServerName);
-            
-            int serverId = DataProvider.AddServer(server.ServerName, server.ServerUrl,
+
+            int serverId = DataProvider.AddServer(server.ServerName, server.ServerUrl, 
                 CryptoUtils.Encrypt(server.Password), server.Comments, server.VirtualServer, server.InstantDomainAlias,
                 server.PrimaryGroupId, server.ADEnabled, server.ADRootDomain, server.ADUsername, CryptoUtils.Encrypt(server.ADPassword),
                 server.ADAuthenticationType);
@@ -261,7 +261,7 @@ namespace WebsitePanel.EnterpriseServer
                     TaskManager.WriteError(ex);
                 }
             }
-            
+
             TaskManager.ItemId = serverId;
             TaskManager.CompleteTask();
 
@@ -294,7 +294,7 @@ namespace WebsitePanel.EnterpriseServer
                     return availResult;
             }
 
-            DataProvider.UpdateServer(server.ServerId, server.ServerName, server.ServerUrl,
+            DataProvider.UpdateServer(server.ServerId, server.ServerName, server.ServerUrl, 
                 CryptoUtils.Encrypt(server.Password), server.Comments, server.InstantDomainAlias,
                 server.PrimaryGroupId, server.ADEnabled, server.ADRootDomain, server.ADUsername, CryptoUtils.Encrypt(server.ADPassword),
                 server.ADAuthenticationType);
@@ -322,7 +322,7 @@ namespace WebsitePanel.EnterpriseServer
             server.Password = password;
 
             // update server
-            DataProvider.UpdateServer(server.ServerId, server.ServerName, server.ServerUrl,
+            DataProvider.UpdateServer(server.ServerId, server.ServerName, server.ServerUrl, 
                 CryptoUtils.Encrypt(server.Password), server.Comments, server.InstantDomainAlias,
                 server.PrimaryGroupId, server.ADEnabled, server.ADRootDomain, server.ADUsername, CryptoUtils.Encrypt(server.ADPassword),
                 server.ADAuthenticationType);
@@ -350,7 +350,7 @@ namespace WebsitePanel.EnterpriseServer
             server.ADPassword = adPassword;
 
             // update server
-            DataProvider.UpdateServer(server.ServerId, server.ServerName, server.ServerUrl,
+            DataProvider.UpdateServer(server.ServerId, server.ServerName, server.ServerUrl, 
                 CryptoUtils.Encrypt(server.Password), server.Comments, server.InstantDomainAlias,
                 server.PrimaryGroupId, server.ADEnabled, server.ADRootDomain, server.ADUsername, CryptoUtils.Encrypt(server.ADPassword),
                 server.ADAuthenticationType);
@@ -636,12 +636,12 @@ namespace WebsitePanel.EnterpriseServer
                 | DemandAccount.IsActive);
             if (accountCheck < 0) return accountCheck;
 
-			// load original service
-			ServiceInfo origService = GetServiceInfo(service.ServiceId);
+            // load original service
+            ServiceInfo origService = GetServiceInfo(service.ServiceId);
 
             TaskManager.StartTask("SERVER", "UPDATE_SERVICE");
-			TaskManager.ItemId = origService.ServerId;
-			TaskManager.ItemName = GetServerByIdInternal(origService.ServerId).ServerName;
+            TaskManager.ItemId = origService.ServerId;
+            TaskManager.ItemName = GetServerByIdInternal(origService.ServerId).ServerName;
             TaskManager.WriteParameter("New service name", service.ServiceName);
 
             DataProvider.UpdateService(service.ServiceId, service.ServiceName,
@@ -839,7 +839,7 @@ namespace WebsitePanel.EnterpriseServer
         public static BoolResult IsInstalled(int serverId, int providerId)
         {
             BoolResult res = TaskManager.StartResultTask<BoolResult>("AUTO_DISCOVERY", "IS_INSTALLED");
-            
+
             try
             {
                 ProviderInfo provider = GetProvider(providerId);
@@ -848,22 +848,22 @@ namespace WebsitePanel.EnterpriseServer
                     TaskManager.CompleteResultTask(res, ErrorCodes.CANNOT_GET_PROVIDER_INFO);
                     return res;
                 }
-                
+
                 AutoDiscovery.AutoDiscovery ad = new AutoDiscovery.AutoDiscovery();
                 ServiceProviderProxy.ServerInit(ad, serverId);
-                
-                res = ad.IsInstalled(provider.ProviderType);                                        
+
+                res = ad.IsInstalled(provider.ProviderType);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 TaskManager.CompleteResultTask(res, ErrorCodes.CANNOT_CHECK_IF_PROVIDER_SOFTWARE_INSTALLED, ex);
-                
+
             }
 
             TaskManager.CompleteResultTask();
             return res;
         }
-        
+
         public static string GetServerVersion(int serverId)
         {
             AutoDiscovery.AutoDiscovery ad = new AutoDiscovery.AutoDiscovery();
@@ -871,7 +871,7 @@ namespace WebsitePanel.EnterpriseServer
 
             return ad.GetServerVersion();
         }
-        
+
         #endregion
 
         #region IP Addresses
@@ -1407,18 +1407,18 @@ namespace WebsitePanel.EnterpriseServer
 
         private static string GetIPAddressesQuotaByResourceGroup(string groupName)
         {
-			if (String.Compare(groupName, ResourceGroups.VPS, true) == 0)
-			{
-				return Quotas.VPS_EXTERNAL_IP_ADDRESSES_NUMBER;
-			}
-			else if (String.Compare(groupName, ResourceGroups.VPSForPC, true) == 0)
-			{
-				return Quotas.VPSForPC_EXTERNAL_IP_ADDRESSES_NUMBER;
-			}
-			else
-			{
-				return Quotas.WEB_IP_ADDRESSES;
-			}
+            if (String.Compare(groupName, ResourceGroups.VPS, true) == 0)
+            {
+                return Quotas.VPS_EXTERNAL_IP_ADDRESSES_NUMBER;
+            }
+            else if (String.Compare(groupName, ResourceGroups.VPSForPC, true) == 0)
+            {
+                return Quotas.VPSForPC_EXTERNAL_IP_ADDRESSES_NUMBER;
+            }
+            else
+            {
+                return Quotas.WEB_IP_ADDRESSES;
+            }
         }
         #endregion
 
@@ -1528,7 +1528,8 @@ namespace WebsitePanel.EnterpriseServer
             TaskManager.WriteParameter("Data", record.RecordData);
 
             DataProvider.AddDnsRecord(SecurityContext.User.UserId, record.ServiceId, record.ServerId, record.PackageId,
-                record.RecordType, record.RecordName, record.RecordData, record.MxPriority, record.IpAddressId);
+                record.RecordType, record.RecordName, record.RecordData, record.MxPriority,
+                record.SrvPriority, record.SrvWeight, record.SrvPort, record.IpAddressId);
 
             TaskManager.CompleteTask();
 
@@ -1547,7 +1548,8 @@ namespace WebsitePanel.EnterpriseServer
             TaskManager.WriteParameter("Data", record.RecordData);
 
             DataProvider.UpdateDnsRecord(SecurityContext.User.UserId, record.RecordId,
-                record.RecordType, record.RecordName, record.RecordData, record.MxPriority, record.IpAddressId);
+                record.RecordType, record.RecordName, record.RecordData, record.MxPriority,
+                record.SrvPriority, record.SrvWeight, record.SrvPort, record.IpAddressId);
 
             TaskManager.CompleteTask();
 
@@ -1578,7 +1580,7 @@ namespace WebsitePanel.EnterpriseServer
         #region Domains
         public static int CheckDomain(string domainName)
         {
-            int checkDomainResult = DataProvider.CheckDomain(-10, domainName);
+            int checkDomainResult = DataProvider.CheckDomain(-10, domainName, false);
 
             if (checkDomainResult == -1)
                 return BusinessErrorCodes.ERROR_DOMAIN_ALREADY_EXISTS;
@@ -1684,8 +1686,7 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         public static int AddDomainWithProvisioning(int packageId, string domainName, DomainType domainType,
-            bool createWebSite, int pointWebSiteId, int pointMailDomainId,
-            bool createDnsZone, bool createInstantAlias, bool allowSubDomains)
+            bool createWebSite, int pointWebSiteId, int pointMailDomainId, bool createDnsZone, bool createInstantAlias, bool allowSubDomains)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -1694,7 +1695,7 @@ namespace WebsitePanel.EnterpriseServer
             // check package
             int packageCheck = SecurityContext.CheckPackage(packageId, DemandPackage.IsActive);
             if (packageCheck < 0) return packageCheck;
-            
+
             // set flags
             bool isSubDomain = (domainType == DomainType.SubDomain || domainType == DomainType.ProviderSubDomain);
             bool isDomainPointer = (domainType == DomainType.DomainPointer);
@@ -1755,10 +1756,10 @@ namespace WebsitePanel.EnterpriseServer
 
         public static int AddDomain(DomainInfo domain)
         {
-            return AddDomain(domain, false);
+            return AddDomain(domain, false, false);
         }
 
-        public static int AddDomain(DomainInfo domain, bool createInstantAlias)
+        public static int AddDomain(DomainInfo domain, bool createInstantAlias, bool createZone)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -1769,7 +1770,7 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // add main domain
-            int domainId = AddDomainInternal(domain.PackageId, domain.DomainName, true,
+            int domainId = AddDomainInternal(domain.PackageId, domain.DomainName, createZone,
                 domain.IsSubDomain, false, domain.IsDomainPointer, false);
 
             if (domainId < 0)
@@ -1812,7 +1813,7 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             // check if the domain already exists
-            int checkResult = DataProvider.CheckDomain(packageId, domainName);
+            int checkResult = DataProvider.CheckDomain(packageId, domainName, isDomainPointer);
 
             if (checkResult < 0)
             {
@@ -1823,14 +1824,17 @@ namespace WebsitePanel.EnterpriseServer
                 else
                     return checkResult;
             }
-
-            if (domainName.ToLower().StartsWith("www."))
-                return BusinessErrorCodes.ERROR_DOMAIN_STARTS_WWW;
+            /*
+                        if (domainName.ToLower().StartsWith("www."))
+                            return BusinessErrorCodes.ERROR_DOMAIN_STARTS_WWW;
+             */
 
             // place log record
             TaskManager.StartTask("DOMAIN", "ADD", domainName);
             TaskManager.PackageId = packageId;
             TaskManager.TaskParameters["CreateZone"] = createDnsZone;
+
+
 
             // create DNS zone
             int zoneItemId = 0;
@@ -1902,60 +1906,60 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-		public static int DetachDomain(int domainId)
-		{
-			// check account
-			int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsAdmin);
-			if (accountCheck < 0) return accountCheck;
+        public static int DetachDomain(int domainId)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsAdmin);
+            if (accountCheck < 0) return accountCheck;
 
-			// load domain
-			DomainInfo domain = GetDomain(domainId);
+            // load domain
+            DomainInfo domain = GetDomain(domainId);
 
-			// place log record
-			TaskManager.StartTask("DOMAIN", "DETACH", domain.DomainName);
-			TaskManager.ItemId = domain.DomainId;
+            // place log record
+            TaskManager.StartTask("DOMAIN", "DETACH", domain.DomainName);
+            TaskManager.ItemId = domain.DomainId;
 
-			try
-			{
-				// check if domain can be deleted
-				if (domain.WebSiteId > 0)
-				{
-					TaskManager.WriteError("Domain points to the existing web site");
-					return BusinessErrorCodes.ERROR_DOMAIN_POINTS_TO_WEB_SITE;
-				}
+            try
+            {
+                // check if domain can be deleted
+                if (domain.WebSiteId > 0)
+                {
+                    TaskManager.WriteError("Domain points to the existing web site");
+                    return BusinessErrorCodes.ERROR_DOMAIN_POINTS_TO_WEB_SITE;
+                }
 
-				if (domain.MailDomainId > 0)
-				{
-					TaskManager.WriteError("Domain points to the existing mail domain");
-					return BusinessErrorCodes.ERROR_DOMAIN_POINTS_TO_MAIL_DOMAIN;
-				}
+                if (domain.MailDomainId > 0)
+                {
+                    TaskManager.WriteError("Domain points to the existing mail domain");
+                    return BusinessErrorCodes.ERROR_DOMAIN_POINTS_TO_MAIL_DOMAIN;
+                }
 
                 if (DataProvider.ExchangeOrganizationDomainExists(domain.DomainId))
                 {
                     TaskManager.WriteError("Domain points to the existing organization domain");
                     return BusinessErrorCodes.ERROR_ORGANIZATION_DOMAIN_IS_IN_USE;
                 }
-			    
+
                 // remove DNS zone meta-item if required
-				if (domain.ZoneItemId > 0)
-				{
-					PackageController.DeletePackageItem(domain.ZoneItemId);
-				}
+                if (domain.ZoneItemId > 0)
+                {
+                    PackageController.DeletePackageItem(domain.ZoneItemId);
+                }
 
-				// delete domain
-				DataProvider.DeleteDomain(SecurityContext.User.UserId, domainId);
+                // delete domain
+                DataProvider.DeleteDomain(SecurityContext.User.UserId, domainId);
 
-				return 0;
-			}
-			catch (Exception ex)
-			{
-				throw TaskManager.WriteError(ex);
-			}
-			finally
-			{
-				TaskManager.CompleteTask();
-			}
-		}
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
 
         public static int DeleteDomain(int domainId)
         {
@@ -1998,9 +2002,9 @@ namespace WebsitePanel.EnterpriseServer
                     if (res < 0)
                         return res;
                 }
-			    
-				// delete zone if required
-				DnsServerController.DeleteZone(domain.ZoneItemId);
+
+                // delete zone if required
+                DnsServerController.DeleteZone(domain.ZoneItemId);
 
                 // delete domain
                 DataProvider.DeleteDomain(SecurityContext.User.UserId, domainId);
@@ -2103,7 +2107,7 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 // add web site DNS records
-                int res = AddWebSiteZoneRecords(domainId);
+                int res = AddWebSiteZoneRecords("", domainId);
                 if (res < 0)
                     return res;
 
@@ -2119,7 +2123,7 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        private static int AddWebSiteZoneRecords(int domainId)
+        private static int AddWebSiteZoneRecords(string hostName, int domainId)
         {
             // load domain
             DomainInfo domain = GetDomainItem(domainId);
@@ -2133,7 +2137,7 @@ namespace WebsitePanel.EnterpriseServer
             return res;
         }
 
-        public static int CreateDomainInstantAlias(int domainId)
+        public static int CreateDomainInstantAlias(string hostName, int domainId)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo);
@@ -2173,14 +2177,15 @@ namespace WebsitePanel.EnterpriseServer
                     if (webRes < 0)
                         return webRes;
                 }
-
-                // add mail domain pointer
-                if (domain.MailDomainId > 0 && instantAlias.MailDomainId == 0)
-                {
-                    int mailRes = MailServerController.AddMailDomainPointer(domain.MailDomainId, instantAliasId);
-                    if (mailRes < 0)
-                        return mailRes;
-                }
+                /*
+                                // add mail domain pointer
+                                if (domain.MailDomainId > 0 && instantAlias.MailDomainId == 0)
+                                {
+                                    int mailRes = MailServerController.AddMailDomainPointer(domain.MailDomainId, instantAliasId);
+                                    if (mailRes < 0)
+                                        return mailRes;
+                                }
+                 */
 
                 return 0;
             }
@@ -2221,14 +2226,15 @@ namespace WebsitePanel.EnterpriseServer
                     if (webRes < 0)
                         return webRes;
                 }
-
-                // remove from mail domain pointers
-                if (instantAlias.MailDomainId > 0)
-                {
-                    int mailRes = MailServerController.DeleteMailDomainPointer(instantAlias.MailDomainId, instantAlias.DomainId);
-                    if (mailRes < 0)
-                        return mailRes;
-                }
+                /*
+                                // remove from mail domain pointers
+                                if (instantAlias.MailDomainId > 0)
+                                {
+                                    int mailRes = MailServerController.DeleteMailDomainPointer(instantAlias.MailDomainId, instantAlias.DomainId);
+                                    if (mailRes < 0)
+                                        return mailRes;
+                                }
+                 */
 
                 // delete instant alias
                 int res = DeleteDomain(instantAlias.DomainId);
@@ -2279,12 +2285,15 @@ namespace WebsitePanel.EnterpriseServer
             dt.Columns.Add("RecordName", typeof(string));
             dt.Columns.Add("RecordData", typeof(string));
             dt.Columns.Add("MxPriority", typeof(int));
+            dt.Columns.Add("SrvPriority", typeof(int));
+            dt.Columns.Add("SrvWeight", typeof(int));
+            dt.Columns.Add("SrvPort", typeof(int));
 
             // add rows
             DnsRecord[] records = GetDnsZoneRecords(domainId);
             foreach (DnsRecord record in records)
             {
-                dt.Rows.Add(record.RecordType, record.RecordName, record.RecordData, record.MxPriority);
+                dt.Rows.Add(record.RecordType, record.RecordName, record.RecordData, record.MxPriority, record.SrvPriority, record.SrvWeight, record.SrvPort);
             }
 
             return ds;
@@ -2306,7 +2315,7 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         public static int AddDnsZoneRecord(int domainId, string recordName, DnsRecordType recordType,
-            string recordData, int mxPriority)
+                   string recordData, int mxPriority, int srvPriority, int srvWeight, int srvPort)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -2322,7 +2331,7 @@ namespace WebsitePanel.EnterpriseServer
             // get DNS service
             DnsZone zoneItem = (DnsZone)PackageController.GetPackageItem(domain.ZoneItemId);
 
-            if(zoneItem == null)
+            if (zoneItem == null)
                 return 0;
 
             // place log record
@@ -2344,6 +2353,9 @@ namespace WebsitePanel.EnterpriseServer
                 record.RecordName = recordName;
                 record.RecordData = recordData;
                 record.MxPriority = mxPriority;
+                record.SrvPriority = srvPriority;
+                record.SrvWeight = srvWeight;
+                record.SrvPort = srvPort;
                 dns.AddZoneRecord(zoneItem.Name, record);
 
                 return 0;
@@ -2360,7 +2372,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static int UpdateDnsZoneRecord(int domainId,
             string originalRecordName, string originalRecordData,
-            string recordName, DnsRecordType recordType, string recordData, int mxPriority)
+            string recordName, DnsRecordType recordType, string recordData, int mxPriority, int srvPriority, int srvWeight, int srvPortNumber)
         {
             // place log record
             DomainInfo domain = GetDomain(domainId);
@@ -2374,7 +2386,7 @@ namespace WebsitePanel.EnterpriseServer
                 DeleteDnsZoneRecord(domainId, originalRecordName, recordType, originalRecordData);
 
                 // add new record
-                AddDnsZoneRecord(domainId, recordName, recordType, recordData, mxPriority);
+                AddDnsZoneRecord(domainId, recordName, recordType, recordData, mxPriority, srvPriority, srvWeight, srvPortNumber);
 
                 return 0;
             }
@@ -2417,7 +2429,7 @@ namespace WebsitePanel.EnterpriseServer
                 DNSServer dns = new DNSServer();
                 ServiceProviderProxy.Init(dns, zoneItem.ServiceId);
 
-                DnsRecord record = GetDnsZoneRecord(domainId, recordName, recordType, recordData); 
+                DnsRecord record = GetDnsZoneRecord(domainId, recordName, recordType, recordData);
                 dns.DeleteZoneRecord(zoneItem.Name, record);
 
                 return 0;

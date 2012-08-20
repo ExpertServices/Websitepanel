@@ -95,6 +95,7 @@ namespace WebsitePanel.Portal
             {
                 BindDomains();
             }
+
         }
 
         private void BindDomains()

@@ -38,49 +38,63 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class ExchangeContacts : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
-			if (!IsPostBack)
-			{
-				BindStats();
-			}
-		}
+    public partial class ExchangeContacts : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                BindStats();
+            }
 
-		private void BindStats()
-		{
-			// quota values
-			OrganizationStatistics stats =
-				ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
-			contactsQuota.QuotaUsedValue = stats.CreatedContacts;
-			contactsQuota.QuotaValue = stats.AllocatedContacts;
-		}
+            
+        }
 
-		protected void btnCreateContact_Click(object sender, EventArgs e)
-		{
-			Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "create_contact",
-				"SpaceID=" + PanelSecurity.PackageId.ToString()));
-		}
+        private void BindStats()
+        {
+            // quota values
+            OrganizationStatistics stats =
+                ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
+            contactsQuota.QuotaUsedValue = stats.CreatedContacts;
+            contactsQuota.QuotaValue = stats.AllocatedContacts;
+        }
 
-		public string GetContactEditUrl(string accountId)
-		{
-			return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "contact_settings",
-					"AccountID=" + accountId,
-					"ItemID=" + PanelRequest.ItemID.ToString());
-		}
+        protected void btnCreateContact_Click(object sender, EventArgs e)
+        {
+            Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "create_contact",
+                "SpaceID=" + PanelSecurity.PackageId.ToString()));
+        }
 
-		protected void odsAccountsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)
-		{
-			if (e.Exception != null)
-			{
-				messageBox.ShowErrorMessage("EXCHANGE_GET_CONTACTS", e.Exception);
-				e.ExceptionHandled = true;
-			}
-		}
+        public string GetContactEditUrl(string accountId)
+        {
+            return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "contact_settings",
+                    "AccountID=" + accountId,
+                    "ItemID=" + PanelRequest.ItemID.ToString());
+        }
+
+        protected void odsAccountsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)
+        {
+            if (e.Exception != null)
+            {
+                messageBox.ShowErrorMessage("EXCHANGE_GET_CONTACTS", e.Exception);
+                e.ExceptionHandled = true;
+            }
+        }
+
+        protected void ddlPageSize_SelectedIndexChanged(object sender, EventArgs e)   
+        {   
+            gvContacts.PageSize = Convert.ToInt16(ddlPageSize.SelectedValue);   
+
+            // rebind grid   
+            gvContacts.DataBind();   
+
+            // bind stats   
+            BindStats();   
+        }  
 
         protected void gvContacts_RowCommand(object sender, GridViewCommandEventArgs e)
         {
@@ -101,25 +115,13 @@ namespace WebsitePanel.Portal.ExchangeServer
                     // rebind grid
                     gvContacts.DataBind();
 
-					BindStats();
+                    BindStats();
                 }
                 catch (Exception ex)
                 {
-					messageBox.ShowErrorMessage("EXCHANGE_DELETE_CONTACT", ex);
+                    messageBox.ShowErrorMessage("EXCHANGE_DELETE_CONTACT", ex);
                 }
             }
         }
-
-        protected void ddlPageSize_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            gvContacts.PageSize = Convert.ToInt16(ddlPageSize.SelectedValue);
-
-            // rebind grid
-            gvContacts.DataBind();
-
-            // bind stats
-            BindStats();
-
-        }
-	}
+    }
 }

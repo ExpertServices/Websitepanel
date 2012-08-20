@@ -34,17 +34,19 @@
                         </div>
                         <div class="FormButtonsBarCleanRight">
                             <asp:Panel ID="SearchPanel" runat="server" DefaultButton="cmdSearch">
-                                <asp:DropDownList ID="ddlPageSize" runat="server" AutoPostBack="True" 
-                                    onselectedindexchanged="ddlPageSize_SelectedIndexChanged">
-                                    <asp:ListItem>10</asp:ListItem>
-                                    <asp:ListItem Selected="True">20</asp:ListItem>
-                                    <asp:ListItem>50</asp:ListItem>
-                                    <asp:ListItem>100</asp:ListItem>
-                                </asp:DropDownList>
+                                <asp:DropDownList ID="ddlPageSize" runat="server" AutoPostBack="True"    
+                                onselectedindexchanged="ddlPageSize_SelectedIndexChanged">   
+                                    <asp:ListItem>10</asp:ListItem>   
+                                    <asp:ListItem Selected="True">20</asp:ListItem>   
+                                    <asp:ListItem>50</asp:ListItem>   
+                                    <asp:ListItem>100</asp:ListItem>   
+                                </asp:DropDownList>  
+
                                 <asp:DropDownList ID="ddlSearchColumn" runat="server" CssClass="NormalTextBox">
                                     <asp:ListItem Value="DisplayName" meta:resourcekey="ddlSearchColumnDisplayName">DisplayName</asp:ListItem>
                                     <asp:ListItem Value="PrimaryEmailAddress" meta:resourcekey="ddlSearchColumnEmail">Email</asp:ListItem>
                                     <asp:ListItem Value="AccountName" meta:resourcekey="ddlSearchColumnAccountName">AccountName</asp:ListItem>
+                                    <asp:ListItem Value="SubscriberNumber" meta:resourcekey="ddlSearchColumnSubscriberNumber">Subscriber Number</asp:ListItem>
                                 </asp:DropDownList><asp:TextBox ID="txtSearchValue" runat="server" CssClass="NormalTextBox" Width="100"></asp:TextBox><asp:ImageButton ID="cmdSearch" Runat="server" meta:resourcekey="cmdSearch" SkinID="SearchButton"
 		                            CausesValidation="false"/>
                             </asp:Panel>
@@ -55,7 +57,13 @@
 					    Width="100%" EmptyDataText="gvUsers" CssSelectorClass="NormalGridView"
 					    OnRowCommand="gvUsers_RowCommand" AllowPaging="True" AllowSorting="True"
 					    DataSourceID="odsAccountsPaged" PageSize="20">
-					    <Columns>						     						   						    
+					    <Columns>
+						    <asp:TemplateField>
+							    <ItemTemplate>							        
+								    <asp:Image ID="img2" runat="server" Width="16px" Height="16px" ImageUrl='<%# GetStateImage((bool)Eval("Locked"),(bool)Eval("Disabled")) %>' ImageAlign="AbsMiddle" />
+							    </ItemTemplate>
+						    </asp:TemplateField>
+                        						     						   						    
 						    <asp:TemplateField HeaderText="gvUsersDisplayName" SortExpression="DisplayName">
 							    <ItemStyle Width="50%"></ItemStyle>
 							    <ItemTemplate>							        
@@ -67,13 +75,22 @@
 							    </ItemTemplate>
 						    </asp:TemplateField>
 						    <asp:BoundField HeaderText="gvUsersEmail" DataField="PrimaryEmailAddress" SortExpression="PrimaryEmailAddress" ItemStyle-Width="50%" />
+                            <asp:BoundField HeaderText="gvSubscriberNumber" DataField="SubscriberNumber" ItemStyle-Width="25%" />
+						    <asp:TemplateField ItemStyle-Wrap="False">
+                                <ItemTemplate>
+                                    <asp:Image ID="Image2" runat="server" Width="16px" Height="16px" ToolTip="Mail" ImageUrl='<%# GetMailImage((int)Eval("AccountType")) %>' />
+                                    <asp:Image ID="Image3" runat="server" Width="16px" Height="16px" ToolTip="OCS" ImageUrl='<%# GetOCSImage((bool)Eval("IsOCSUser"),(bool)Eval("IsLyncUser")) %>' />
+                                    <asp:Image ID="Image4" runat="server" Width="16px" Height="16px" ToolTip="BlackBerry" ImageUrl='<%# GetBlackBerryImage((bool)Eval("IsBlackBerryUser")) %>' />
+                                    <asp:Image ID="Image5" runat="server" Width="16px" Height="16px" ToolTip="CRM" ImageUrl='<%# GetCRMImage((Guid)Eval("CrmUserId")) %>' />
+                                </ItemTemplate>
+						    </asp:TemplateField>
 						    <asp:TemplateField>
 							    <ItemTemplate>
 								    <asp:ImageButton ID="cmdDelete" runat="server" Text="Delete" SkinID="ExchangeDelete"
 									    CommandName="DeleteItem" CommandArgument='<%# Eval("AccountId") %>'
 									    meta:resourcekey="cmdDelete" OnClientClick="return confirm('Remove this item?');"></asp:ImageButton>
 							    </ItemTemplate>
-						    </asp:TemplateField>
+                            </asp:TemplateField>
 					    </Columns>
 				    </asp:GridView>
 					<asp:ObjectDataSource ID="odsAccountsPaged" runat="server" EnablePaging="True"
@@ -93,9 +110,6 @@
 				    &nbsp;&nbsp;&nbsp;
 				    <wsp:QuotaViewer ID="usersQuota" runat="server" QuotaTypeId="2" />				    				    
 				</div>
-			</div>
-			<div class="Right">
-				<asp:Localize ID="FormComments" runat="server" meta:resourcekey="HSFormComments"></asp:Localize>
 			</div>
 		</div>
 	</div>

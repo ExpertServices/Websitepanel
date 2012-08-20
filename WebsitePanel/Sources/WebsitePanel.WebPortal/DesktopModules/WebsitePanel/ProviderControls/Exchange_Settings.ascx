@@ -13,11 +13,14 @@
         <td class="SubHead" width="200" nowrap>
             <asp:Localize ID="locMailboxDatabase" runat="server" meta:resourcekey="locMailboxDatabase"
                 Text="Mailbox Database Name:"></asp:Localize>
+            <asp:Localize ID="locMailboxDAG" runat="server" meta:resourcekey="locMailboxDAG"
+                Text="Database Availability Group:"></asp:Localize>
         </td>
         <td>
             <asp:TextBox ID="txtMailboxDatabase" runat="server" Width="200px"></asp:TextBox>
         </td>
     </tr>
+
     <tr>
         <td class="SubHead">
             <asp:Localize ID="locKeepDeletedItems" runat="server" meta:resourcekey="locKeepDeletedItems"

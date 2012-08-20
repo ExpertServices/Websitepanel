@@ -33,129 +33,154 @@ using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal
 {
-	public partial class Login : WebsitePanelModuleBase
-	{
-		string ipAddress;
+    public partial class Login : WebsitePanelModuleBase
+    {
+        string ipAddress;
 
-		private string RedirectUrl
-		{
-			get
-			{
-				string redirectUrl = "";
-				if (Request["returnurl"] != null)
-				{
-					// return to the url passed to signin
-					redirectUrl = HttpUtility.UrlDecode(Request["returnurl"]);
-				}
-				else
-				{
-					redirectUrl = PortalUtils.LoginRedirectUrl;
-				}
-				return redirectUrl;
-			}
-		}
+        private bool IsLocalUrl(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+            {
+                return false;
+            }
 
-		protected void Page_Load(object sender, EventArgs e)
-		{
-			if (!IsPostBack)
-			{
-				EnsureSCPA();
-				//
-				BindControls();
-			}
+            Uri absoluteUri;
+            if (Uri.TryCreate(url, UriKind.Absolute, out absoluteUri))
+            {
+                return String.Equals(this.Request.Url.Host, absoluteUri.Host, StringComparison.OrdinalIgnoreCase);
+            }
+            else
+            {
+                bool isLocal = !url.StartsWith("http:", StringComparison.OrdinalIgnoreCase)
+                    && !url.StartsWith("https:", StringComparison.OrdinalIgnoreCase)
+                    && Uri.IsWellFormedUriString(url, UriKind.Relative);
+                return isLocal;
+            }
+        }
 
-			// capture Enter key
-			//DotNetNuke.UI.Utilities.ClientAPI.RegisterKeyCapture(this.Parent, btnLogin, 13);
+        private string RedirectUrl
+        {
+            get
+            {
+                string redirectUrl = "";
+                if (Request["returnurl"] != null)
+                {
+                    // return to the url passed to signin
+                    redirectUrl = HttpUtility.UrlDecode(Request["returnurl"]);
+                    if (!IsLocalUrl(redirectUrl))
+                    {
+                        redirectUrl = PortalUtils.LoginRedirectUrl;
+                    }
+                }
+                else
+                {
+                    redirectUrl = PortalUtils.LoginRedirectUrl;
+                }
+                return redirectUrl;
+            }
+        }
 
-			// get user IP
-			if (Request.UserHostAddress != null)
-				ipAddress = Request.UserHostAddress;
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                EnsureSCPA();
+                //
+                BindControls();
+            }
 
-			// update password control
-			txtPassword.Attributes["value"] = txtPassword.Text;
+            // capture Enter key
+            //DotNetNuke.UI.Utilities.ClientAPI.RegisterKeyCapture(this.Parent, btnLogin, 13);
 
-			// autologin
-			string usr = Request["u"];
-			if (String.IsNullOrEmpty(usr))
-				usr = Request["user"];
+            // get user IP
+            if (Request.UserHostAddress != null)
+                ipAddress = Request.UserHostAddress;
 
-			string psw = Request["p"];
-			if (String.IsNullOrEmpty(psw))
-				psw = Request["pwd"];
-			if (String.IsNullOrEmpty(psw))
-				psw = Request["password"];
+            // update password control
+            txtPassword.Attributes["value"] = txtPassword.Text;
 
-			if (!String.IsNullOrEmpty(usr) && !String.IsNullOrEmpty(psw))
-			{
-				// perform login
-				LoginUser(usr, psw, chkRemember.Checked, String.Empty, String.Empty);
-			}
-		}
+            // autologin
+            string usr = Request["u"];
+            if (String.IsNullOrEmpty(usr))
+                usr = Request["user"];
 
-		private void EnsureSCPA()
-		{
-			var enabledScpa = ES.Services.Authentication.GetSystemSetupMode();
-			//
-			if (enabledScpa == false)
-			{
-				return;
-			}
-			//
-			Response.Redirect(EditUrl("scpa"), true);
-		}
+            string psw = Request["p"];
+            if (String.IsNullOrEmpty(psw))
+                psw = Request["pwd"];
+            if (String.IsNullOrEmpty(psw))
+                psw = Request["password"];
 
-		private void BindControls()
-		{
-			// load languages
-			PortalUtils.LoadCultureDropDownList(ddlLanguage);            
+            if (!String.IsNullOrEmpty(usr) && !String.IsNullOrEmpty(psw))
+            {
+                // perform login
+                LoginUser(usr, psw, chkRemember.Checked, String.Empty, String.Empty);
+            }
+        }
 
-			// load themes
-			PortalUtils.LoadThemesDropDownList(ddlTheme);
+        private void EnsureSCPA()
+        {
+            var enabledScpa = ES.Services.Authentication.GetSystemSetupMode();
+            //
+            if (enabledScpa == false)
+            {
+                return;
+            }
+            //
+            Response.Redirect(EditUrl("scpa"), true);
+        }
 
-			// try to get the last login name from cookie
-			HttpCookie cookie = Request.Cookies["WebsitePanelLogin"];
-			if (cookie != null)
-			{
-				txtUsername.Text = cookie.Value;
-			}
-		}
+        private void BindControls()
+        {
+            // load languages
+            PortalUtils.LoadCultureDropDownList(ddlLanguage);
 
-		protected void cmdForgotPassword_Click(object sender, EventArgs e)
-		{
-			Response.Redirect(EditUrl("forgot_password"), true);
-		}
+            // load themes
+            PortalUtils.LoadThemesDropDownList(ddlTheme);
 
-		protected void btnLogin_Click(object sender, EventArgs e)
-		{
-			// validate input
-			if (!Page.IsValid)
-				return;
+            // try to get the last login name from cookie
+            HttpCookie cookie = Request.Cookies["WebsitePanelLogin"];
+            if (cookie != null)
+            {
+                txtUsername.Text = cookie.Value;
+            }
+        }
 
-			// perform login
-			LoginUser(txtUsername.Text.Trim(), txtPassword.Text, chkRemember.Checked,
-				ddlLanguage.SelectedValue, ddlTheme.SelectedValue);
-		}
+        protected void cmdForgotPassword_Click(object sender, EventArgs e)
+        {
+            Response.Redirect(EditUrl("forgot_password"), true);
+        }
 
-		private void LoginUser(string username, string password, bool rememberLogin,
-			string preferredLocale, string theme)
-		{
-			// status
-			int loginStatus = PortalUtils.AuthenticateUser(username, password, ipAddress,
-				rememberLogin, preferredLocale, theme);
+        protected void btnLogin_Click(object sender, EventArgs e)
+        {
+            // validate input
+            if (!Page.IsValid)
+                return;
 
-			if (loginStatus < 0)
-			{
+            // perform login
+            LoginUser(txtUsername.Text.Trim(), txtPassword.Text, chkRemember.Checked,
+                ddlLanguage.SelectedValue, ddlTheme.SelectedValue);
+        }
+
+        private void LoginUser(string username, string password, bool rememberLogin,
+            string preferredLocale, string theme)
+        {
+            // status
+            int loginStatus = PortalUtils.AuthenticateUser(username, password, ipAddress,
+                rememberLogin, preferredLocale, theme);
+
+            if (loginStatus < 0)
+            {
                 ShowWarningMessage("WrongLogin");
-			}
-			else
-			{
+            }
+            else
+            {
                 // redirect by shortcut
                 ShortcutRedirect();
 
                 // standard redirect
-				Response.Redirect(RedirectUrl, true);
-			}
-		}
+                Response.Redirect(RedirectUrl, true);
+            }
+        }
 
         private void ShortcutRedirect()
         {
@@ -223,22 +248,22 @@ namespace WebsitePanel.Portal
             }
         }
 
-		private void SetCurrentLanguage()
-		{
+        private void SetCurrentLanguage()
+        {
             PortalUtils.SetCurrentLanguage(ddlLanguage.SelectedValue);
             Response.Redirect(Request.Url.ToString());
-		    
-		}
-        
-        protected void ddlLanguage_SelectedIndexChanged(object sender, EventArgs e)
-		{
-		    SetCurrentLanguage();
+
         }
 
-		protected void ddlTheme_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			PortalUtils.SetCurrentTheme(ddlTheme.SelectedValue);
-			Response.Redirect(Request.Url.ToString());
-		}
-	}
+        protected void ddlLanguage_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SetCurrentLanguage();
+        }
+
+        protected void ddlTheme_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            PortalUtils.SetCurrentTheme(ddlTheme.SelectedValue);
+            Response.Redirect(Request.Url.ToString());
+        }
+    }
 }

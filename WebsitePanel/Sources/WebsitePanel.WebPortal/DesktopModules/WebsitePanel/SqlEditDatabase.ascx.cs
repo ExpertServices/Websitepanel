@@ -125,6 +125,19 @@ namespace WebsitePanel.Portal
 
                         if (item != null)
                         {
+                            
+                            if (!string.IsNullOrEmpty(item.ExternalServerName))
+                            {
+                                lblDBExternalServer.Visible =litDBExternalServer.Visible = true;
+                                litDBExternalServer.Text = item.ExternalServerName;
+                            }
+
+                            if (!string.IsNullOrEmpty(item.InternalServerName))
+                            {
+                                lblDBInternalServer.Visible = litDBInternalServer.Visible = true;
+                                litDBInternalServer.Text = item.InternalServerName;
+                            }
+
                             // save package info
                             ViewState["PackageId"] = item.PackageId;
                             usernameControl.SetPackagePolicy(item.PackageId, policyName, "DatabaseNamePolicy");
@@ -135,6 +148,9 @@ namespace WebsitePanel.Portal
                     }
                     else
                     {
+                        lblDBExternalServer.Visible = lblDBInternalServer.Visible = false;
+                        litDBExternalServer.Visible = litDBInternalServer.Visible = false;
+
                         // new item
                         ViewState["PackageId"] = PanelSecurity.PackageId;
                         usernameControl.SetPackagePolicy(PanelSecurity.PackageId, policyName, "DatabaseNamePolicy");

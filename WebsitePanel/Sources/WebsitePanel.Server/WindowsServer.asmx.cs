@@ -29,6 +29,10 @@
 using System;
 using System.IO;
 using System.Data;
+using System.Security;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Web;
 using System.Diagnostics;
 using System.Collections;
@@ -36,13 +40,26 @@ using System.Collections.Generic;
 using System.Web.Services;
 using System.Web.Services.Protocols;
 using System.ComponentModel;
-using System.Text.RegularExpressions;
 using System.ServiceProcess;
+using System.ServiceModel;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Tcp;
 using System.Management;
+using System.Collections.Specialized;
+using Microsoft.Web.PlatformInstaller;
 using Microsoft.Web.Services3;
-
 using WebsitePanel.Providers.Utils;
+using WebsitePanel.Server.Code;
 using WebsitePanel.Server.Utils;
+using WebsitePanel.Providers;
+using WebsitePanel.Server.WPIService;
+
+
+
+
+
+
 
 namespace WebsitePanel.Server
 {
@@ -280,6 +297,560 @@ namespace WebsitePanel.Server
         }
         #endregion
 
+        #region Web Platform Installer
+
+      
+
+        private string makeHref(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return value;
+
+            //" qweqwe http://www.helicontech.com/zoo/feed/  asdasdasd"
+            Regex link =new Regex("(http[^\\s,]+)(?<![.,])");
+
+            return link.Replace(value,"<a href=\"$1\" target=\"_blank\">$1</a>");
+        }
+
+
+        private WPIProduct ProductToWPIProduct(Product product)
+        {
+            WPIProduct p = new WPIProduct();
+            p.ProductId = product.ProductId;
+            p.Summary = product.Summary;
+            p.LongDescription = makeHref(product.LongDescription);
+            p.Published = product.Published;
+            p.Author = product.Author;
+            p.AuthorUri = (product.AuthorUri != null) ? product.AuthorUri.ToString() : ""; 
+            p.Title = product.Title;
+            p.Link = (product.Link != null) ? product.Link.ToString() : "";
+            p.Version = product.Version;
+
+            if (product.Installers.Count > 0)
+            {
+                if (product.Installers[0].EulaUrl != null)
+                {
+                    p.EulaUrl = product.Installers[0].EulaUrl.ToString();
+                    
+                }
+
+                if (product.Installers[0].InstallerFile != null)
+                {
+                    if (product.Installers[0].InstallerFile.InstallerUrl != null)
+                    {
+                        p.DownloadedLocation = product.Installers[0].InstallerFile.InstallerUrl.ToString();
+                    }
+                    p.FileSize = product.Installers[0].InstallerFile.FileSize;
+                }
+
+            }
+
+            if (product.IconUrl != null)
+            {
+                p.Logo = product.IconUrl.ToString();
+            }
+
+            p.IsInstalled = product.IsInstalled(true);
+
+            return p;
+        }
+
+        [WebMethod]
+        public WPIProduct[] GetWPIProducts(string tabId, string keywordId)
+        {
+
+
+            try
+            {
+                Log.WriteStart("GetWPIProducts");
+                List<WPIProduct> wpiProducts = new List<WPIProduct>();
+
+
+                WpiHelper wpi = GetWpiFeed();
+
+                string feedLocation = null;
+                if (tabId != null)
+                {
+                    Tab tab = wpi.GetTab(tabId);
+                    ICollection<string> feeds = tab.FeedList;
+                    feedLocation = feeds.GetEnumerator().Current;
+                }
+
+                List<Product> products = wpi.GetProducts(feedLocation, keywordId);
+
+                if (products != null)
+                {
+
+
+                    foreach (Product product in products)
+                    {
+                        if (null != product && !product.IsApplication)
+                        {
+                            wpiProducts.Add(ProductToWPIProduct(product));
+
+                        }
+                    }
+
+                }
+
+               
+
+                Log.WriteEnd("GetWPIProducts");
+                return wpiProducts.ToArray();
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("GetWPIProducts", ex);
+                throw;
+            }
+        }
+
+
+        [WebMethod]
+        public WPIProduct[] GetWPIProductsFiltered(string filter)
+        {
+
+
+            try
+            {
+                Log.WriteStart("GetWPIProductsFiltered");
+                List<WPIProduct> wpiProducts = new List<WPIProduct>();
+
+
+                WpiHelper wpi = GetWpiFeed();
+
+                List<Product> products = wpi.GetProductsFiltered( filter);
+
+                if (products != null)
+                {
+
+
+                    foreach (Product product in products)
+                    {
+                        if (null != product && !product.IsApplication)
+                        {
+                            wpiProducts.Add(ProductToWPIProduct(product));
+
+                        }
+                    }
+
+                }
+
+
+
+                Log.WriteEnd("GetWPIProductsFiltered");
+                return wpiProducts.ToArray();
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("GetWPIProductsFiltered", ex);
+                throw;
+            }
+        }
+
+        [WebMethod]
+        public WPITab[] GetWPITabs()
+        {
+            try
+            {
+                Log.WriteStart("GetWPITabs");
+
+                WpiHelper wpi = GetWpiFeed();
+
+                List<WPITab> result = new List<WPITab>();
+
+                foreach (Tab tab in wpi.GetTabs())
+                {
+                    result.Add(new WPITab(tab.Id, tab.Name));
+                }
+
+
+                Log.WriteEnd("GetWPITabs");
+
+                return result.ToArray();
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("GetWPITabs", ex);
+                throw;
+            }
+        }
+
+       
+        static string[] FEEDS = new string[]
+                {
+              //      "https://www.microsoft.com/web/webpi/3.0/WebProductList.xml",
+              //      "http://www.helicontech.com/zoo/feed/"
+                };
+
+        [WebMethod]
+        public void InitWPIFeeds(string feedUrls)
+        {
+            if (string.IsNullOrEmpty(feedUrls))
+            {
+                throw new Exception("Empty feed list");
+            }
+
+            string[] newFEEDS = feedUrls.Split(';');
+
+            if (newFEEDS.Length == 0)
+            {
+                throw new Exception("Empty feed list");
+            }
+            if (!ArraysEqual<string>(newFEEDS, FEEDS))
+            {
+                Log.WriteInfo("InitWPIFeeds - new value: " + feedUrls);
+
+                //Feeds settings have been channged
+                FEEDS = newFEEDS;
+                wpi = null;
+
+            }
+        }
+
+
+        public static bool ArraysEqual<T>(T[] a1, T[] a2)
+        {
+            if (ReferenceEquals(a1, a2))
+                return true;
+
+            if (a1 == null || a2 == null)
+                return false;
+
+            if (a1.Length != a2.Length)
+                return false;
+
+            EqualityComparer<T> comparer = EqualityComparer<T>.Default;
+            for (int i = 0; i < a1.Length; i++)
+            {
+                if (!comparer.Equals(a1[i], a2[i])) return false;
+            }
+            return true;
+        }
+
+        [WebMethod]
+        public WPIKeyword[] GetWPIKeywords()
+        {
+            try
+            {
+                Log.WriteStart("GetWPIKeywords");
+
+                WpiHelper wpi = GetWpiFeed();
+
+                List<WPIKeyword> result = new List<WPIKeyword>();
+
+                result.Add(new WPIKeyword("", "All"));
+
+                foreach (Keyword keyword in wpi.GetKeywords())
+                {
+                    if (!wpi.IsKeywordApplication(keyword))
+                    {
+                        result.Add(new WPIKeyword(keyword.Id, keyword.Text));
+                    }
+
+                }
+
+
+                Log.WriteEnd("GetWPIKeywords");
+
+                return result.ToArray();
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("GetWPIKeywords", ex);
+                throw;
+            }
+        }
+
+
+        [WebMethod]
+        public WPIProduct[] GetWPIProductsWithDependencies(string[] products)
+        {
+            try
+            {
+                Log.WriteStart("GetWPIProductsWithDependencies");
+
+                WpiHelper wpi = GetWpiFeed();
+
+                List<WPIProduct> result = new List<WPIProduct>();
+                foreach (Product product in wpi.GetProductsWithDependencies(products))
+                {
+                    result.Add(ProductToWPIProduct(product));
+                }
+
+                Log.WriteEnd("GetWPIProductsWithDependencies");
+
+                return result.ToArray();
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("GetWPIProductsWithDependencies", ex);
+                throw;
+            }
+        }
+
+        static Process _WpiServiceExe = null;
+
+        [WebMethod]
+        public void InstallWPIProducts(string[] products)
+        {
+            try
+            {
+                Log.WriteStart("InstallWPIProducts");
+
+                StartWpiService();
+
+                RegisterWpiService();
+                
+                WPIServiceContract client = new WPIServiceContract();
+
+                client.Initialize(FEEDS);
+                client.BeginInstallation(products);
+
+                
+
+
+               
+                Log.WriteEnd("InstallWPIProducts");
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("InstallWPIProducts", ex);
+                throw;
+            }
+        }
+
+     
+        private void StartWpiService()
+        {
+            string binFolder = HttpContext.Current.Server.MapPath("/bin/");
+            string workingDirectory = Path.Combine(Environment.ExpandEnvironmentVariables("%SystemRoot%"), "Temp\\zoo.wpi");
+
+            //string newUserProfile = Path.Combine(Environment.ExpandEnvironmentVariables("%SystemRoot%"), "Temp\\zoo.wpi");
+            //string newAppData = Path.Combine(newUserProfile, "Roaming");
+            //string newLocalAppData = Path.Combine(newUserProfile, "Local");
+            //try
+            //{
+            //    Directory.CreateDirectory(newUserProfile);
+            //    Directory.CreateDirectory(newAppData);
+            //    Directory.CreateDirectory(newLocalAppData);
+            //}
+            //catch (Exception)
+            //{
+            //    //throw;
+            //}
+
+
+            Process wpiServiceExe = new Process();
+            wpiServiceExe.StartInfo = new ProcessStartInfo(Path.Combine(binFolder, "WebsitePanel.Server.WPIService.exe"));
+            wpiServiceExe.StartInfo.WorkingDirectory = workingDirectory;
+            wpiServiceExe.StartInfo.UseShellExecute = false;
+            wpiServiceExe.StartInfo.LoadUserProfile = true;
+            //wpiServiceExe.StartInfo.EnvironmentVariables["UserProfile"] = newUserProfile;
+            //wpiServiceExe.StartInfo.EnvironmentVariables["LocalAppData"] = newLocalAppData;
+            //wpiServiceExe.StartInfo.EnvironmentVariables["AppData"] = newAppData;
+            if (wpiServiceExe.Start())
+            {
+                _WpiServiceExe = wpiServiceExe;
+            }
+        }
+
+        [WebMethod]
+        public void CancelInstallWPIProducts()
+        {
+            try
+            {
+                Log.WriteStart("CancelInstallWPIProducts");
+
+                KillWpiService();
+
+
+                Log.WriteEnd("CancelInstallWPIProducts");
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("CancelInstallWPIProducts", ex);
+                throw;
+            }
+        }
+
+        private void KillWpiService()
+        {
+            //kill own service
+            if (_WpiServiceExe != null && !_WpiServiceExe.HasExited)
+            {
+                _WpiServiceExe.Kill();
+                _WpiServiceExe = null;
+            }
+            else
+            {
+                //find WebsitePanel.Server.WPIService.exe
+                Process[] wpiservices = Process.GetProcessesByName("WebsitePanel.Server.WPIService");
+                foreach (Process p in wpiservices)
+                {
+                    p.Kill();
+                }
+            }
+        }
+
+        [WebMethod]
+        public string GetWPIStatus()
+        {
+            try
+            {
+                Log.WriteStart("GetWPIStatus");
+
+                RegisterWpiService();
+                
+                WPIServiceContract client = new WPIServiceContract();
+
+                string status = client.GetStatus();
+
+                Log.WriteEnd("GetWPIStatus");
+
+                return status; //OK
+            }
+            catch (Exception ex)
+            {
+                // done or error
+
+                if (_WpiServiceExe == null || _WpiServiceExe.HasExited)
+                {
+                    // reset WpiHelper for refresh status
+                    wpi = null;
+                    return ""; //OK
+                }
+
+                Log.WriteError("GetWPIStatus", ex);
+
+                return ex.ToString();
+            }
+        }
+
+        [WebMethod]
+        public string WpiGetLogFileDirectory()
+        {
+            try
+            {
+                Log.WriteStart("WpiGetLogFileDirectory");
+
+                RegisterWpiService();
+                
+                WPIServiceContract client = new WPIServiceContract();
+
+                string result = client.GetLogFileDirectory();
+
+                Log.WriteEnd("WpiGetLogFileDirectory");
+
+                return result; //OK
+            }
+            catch (Exception ex)
+            {
+
+                Log.WriteError("WpiGetLogFileDirectory", ex);
+
+                //throw;
+                return string.Empty;
+            }
+        }
+
+        [WebMethod]
+        public SettingPair[] WpiGetLogsInDirectory(string Path)
+        {
+            try
+            {
+                Log.WriteStart("WpiGetLogsInDirectory");
+
+                ArrayList result = new ArrayList();
+
+                string[] filePaths = Directory.GetFiles(Path);
+                foreach (string filePath in filePaths)
+                {
+                    using (StreamReader streamReader = new StreamReader(filePath))
+                    {
+                        string fileContent = SecurityElement.Escape(StringUtils.CleanupASCIIControlCharacters(streamReader.ReadToEnd()));
+                        result.Add(new SettingPair(filePath, fileContent));
+                    }
+                    
+                }
+
+                Log.WriteEnd("WpiGetLogFileDirectory");
+
+                return (SettingPair[])result.ToArray(typeof(SettingPair)); //OK
+            }
+            catch (Exception ex)
+            {
+
+                Log.WriteError("WpiGetLogFileDirectory", ex);
+
+                //throw;
+                return null;
+            }
+        }
+
+        
+      
+     
+
+        static WpiHelper wpi = null;
+        WpiHelper GetWpiFeed()
+        {
+            if (FEEDS.Length == 0)
+            {
+                throw new Exception("Empty feed list");
+            }
+
+            if (null == wpi)
+            {
+                wpi = new WpiHelper(FEEDS);
+            }
+            return wpi;
+        }
+
+        private static object _lockRegisterWpiService = new object();
+        private void RegisterWpiService()
+        {
+            lock (_lockRegisterWpiService)
+            {
+                
+                
+                try
+                {
+                    ChannelServices.RegisterChannel(new TcpChannel(), true);
+                }
+                catch (System.Exception)
+                {
+                    //ignor
+                }
+
+                if (null == RemotingConfiguration.IsWellKnownClientType(typeof(WPIServiceContract)))
+                {
+                    RemotingConfiguration.RegisterWellKnownClientType(typeof(WPIServiceContract), string.Format("tcp://localhost:{0}/WPIServiceContract", WPIServiceContract.PORT));
+                }
+
+                try
+                {
+                    WPIServiceContract client = new WPIServiceContract();
+                    client.Ping();
+                }
+                catch (Exception)
+                {
+                    //unable to connect 
+                    //try to restart service
+                    KillWpiService();
+                    //StartWpiService();
+                }
+
+               
+             
+
+            }
+
+            
+        }
+        #endregion GetWPIProducts
+
+
         #region Event Viewer
         [WebMethod]
         public List<string> GetLogNames()
@@ -421,4 +992,6 @@ namespace WebsitePanel.Server
         }
         #endregion
     }
+
+ 
 }

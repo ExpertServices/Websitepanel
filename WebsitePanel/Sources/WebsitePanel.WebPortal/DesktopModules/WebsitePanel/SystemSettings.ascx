@@ -1,5 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SystemSettings.ascx.cs" Inherits="WebsitePanel.Portal.SystemSettings" %>
 <%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="UserControls/CollapsiblePanel.ascx" %>
+<%@ Register src="UserControls/EditFeedsList.ascx" tagname="EditFeedsList" tagprefix="uc1" %>
 <div class="FormBody">
 	<wsp:CollapsiblePanel id="lclSmtpSettings" runat="server"
 		TargetControlID="SmtpPanel" meta:resourcekey="lclSmtpSettings" Text="SMTP Server"/>
@@ -38,6 +39,30 @@
 				<td><asp:TextBox runat="server" ID="txtBackupsPath" Width="300px" /></td>
 			</tr>
 		</table>
+	</asp:Panel>
+
+    <wsp:CollapsiblePanel id="lclWpiSettings" runat="server"
+		TargetControlID="WpiPanel" meta:resourcekey="lclWpiSettings" Text="WebPlatformInstaller Settings"/>
+	<asp:Panel ID="WpiPanel" runat="server" Height="0" style="overflow:hidden;">
+     <table>
+			<tr>
+				<td class="SubHead" style="width:200px;">Enable Microsoft feed</td>
+				<td class="Normal">
+                    <asp:CheckBox ID="wpiMicrosoftFeed" runat="server" Text="Yes" />
+                </td>
+			</tr>
+			
+            <tr>
+		        <td class="SubHead" style="width:200px;">Enable HeliconTech feed</td>
+                <td class="Normal">
+                    <asp:CheckBox ID="wpiHeliconTechFeed" runat="server" Text="Yes" />
+                </td>
+            </tr>
+
+
+		</table>
+
+        <uc1:EditFeedsList ID="wpiEditFeedsList" runat="server" DisplayNames="false" />
 	</asp:Panel>
 </div>
 <div class="FormFooter">

@@ -33,67 +33,63 @@ using Microsoft.Security.Application;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class ExchangeMailboxGeneralSettings : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
+    public partial class ExchangeMailboxGeneralSettings : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
             if (!IsPostBack)
             {
                 BindSettings();
             }
-		}
+
+        }
 
         private void BindSettings()
         {
             try
             {
-                password.SetPackagePolicy(PanelSecurity.PackageId, UserSettings.EXCHANGE_POLICY, "MailboxPasswordPolicy");
-                password.EditMode = true;
-
                 // get settings
                 ExchangeMailbox mailbox = ES.Services.ExchangeServer.GetMailboxGeneralSettings(PanelRequest.ItemID,
                     PanelRequest.AccountID);
 
-				// title
-				litDisplayName.Text = mailbox.DisplayName;
+                //get statistics
+                ExchangeMailboxStatistics stats = ES.Services.ExchangeServer.GetMailboxStatistics(PanelRequest.ItemID,
+                    PanelRequest.AccountID);
+
+                // title
+                litDisplayName.Text = mailbox.DisplayName;
 
                 // bind form
-                txtDisplayName.Text = mailbox.DisplayName;
                 chkHideAddressBook.Checked = mailbox.HideFromAddressBook;
                 chkDisable.Checked = mailbox.Disabled;
-
-                txtFirstName.Text = mailbox.FirstName;
-                txtInitials.Text = mailbox.Initials;
-                txtLastName.Text = mailbox.LastName;
-
-                txtJobTitle.Text = mailbox.JobTitle;
-                txtCompany.Text = mailbox.Company;
-                txtDepartment.Text = mailbox.Department;
-                txtOffice.Text = mailbox.Office;
-                manager.SetAccount(mailbox.ManagerAccount);
-
-                txtBusinessPhone.Text = mailbox.BusinessPhone;
-                txtFax.Text = mailbox.Fax;
-                txtHomePhone.Text = mailbox.HomePhone;
-                txtMobilePhone.Text = mailbox.MobilePhone;
-                txtPager.Text = mailbox.Pager;
-                txtWebPage.Text = mailbox.WebPage;
-
-                txtAddress.Text = mailbox.Address;
-                txtCity.Text = mailbox.City;
-                txtState.Text = mailbox.State;
-                txtZip.Text = mailbox.Zip;
-                country.Country = mailbox.Country;
-
-                txtNotes.Text = mailbox.Notes;
 
                 // get account meta
                 ExchangeAccount account = ES.Services.ExchangeServer.GetAccount(PanelRequest.ItemID, PanelRequest.AccountID);
                 chkPmmAllowed.Checked = (account.MailboxManagerActions & MailboxManagerActions.GeneralSettings) > 0;
+
+                if (account.MailboxPlanId == 0)
+                {
+                    mailboxPlanSelector.AddNone = true;
+                    mailboxPlanSelector.MailboxPlanId = "-1";
+                }
+                else
+                {
+                    mailboxPlanSelector.MailboxPlanId = account.MailboxPlanId.ToString();
+                }
+
+                mailboxSize.QuotaUsedValue = Convert.ToInt32(stats.TotalSize / 1024 / 1024);
+                mailboxSize.QuotaValue = (stats.MaxSize == -1) ? -1: (int)Math.Round((double)(stats.MaxSize / 1024 / 1024));
+
+                if ((account.AccountType == ExchangeAccountType.Equipment) | (account.AccountType == ExchangeAccountType.Room))
+                    secCalendarSettings.Visible = true;
+                else
+                    secCalendarSettings.Visible = false;
+
+
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("EXCHANGE_GET_MAILBOX_SETTINGS", ex);
+                messageBox.ShowErrorMessage("EXCHANGE_GET_MAILBOX_SETTINGS", ex);
             }
         }
 
@@ -104,51 +100,37 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             try
             {
+                if (mailboxPlanSelector.MailboxPlanId == "-1")
+                {
+                    messageBox.ShowErrorMessage("EXCHANGE_SPECIFY_PLAN");
+                    return;
+                }
+
                 int result = ES.Services.ExchangeServer.SetMailboxGeneralSettings(
                     PanelRequest.ItemID, PanelRequest.AccountID,
-                    txtDisplayName.Text,
-                    password.Password,
                     chkHideAddressBook.Checked,
-                    chkDisable.Checked,
-                    
-                    txtFirstName.Text,
-                    txtInitials.Text,
-                    txtLastName.Text,
-                    
-                    txtAddress.Text,
-                    txtCity.Text,
-                    txtState.Text,
-                    txtZip.Text,
-                    country.Country,
-                    
-                    txtJobTitle.Text,
-                    txtCompany.Text,
-                    txtDepartment.Text,
-                    txtOffice.Text,
-                    manager.GetAccount(),
-                    
-                    txtBusinessPhone.Text,
-                    txtFax.Text,
-                    txtHomePhone.Text,
-                    txtMobilePhone.Text,
-                    txtPager.Text,
-                    txtWebPage.Text,
-                    txtNotes.Text);
+                    chkDisable.Checked);
 
                 if (result < 0)
                 {
                     messageBox.ShowResultMessage(result);
                     return;
                 }
+                else
+                {
+                    result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(PanelRequest.ItemID, PanelRequest.AccountID, Convert.ToInt32(mailboxPlanSelector.MailboxPlanId));
+                    if (result < 0)
+                    {
+                        messageBox.ShowResultMessage(result);
+                        return;
+                    }
+                }
 
-				// update title
-				litDisplayName.Text = AntiXss.HtmlEncode(txtDisplayName.Text);
-
-				messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_MAILBOX_SETTINGS");
+                messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_MAILBOX_SETTINGS");
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("EXCHANGE_UPDATE_MAILBOX_SETTINGS", ex);
+                messageBox.ShowErrorMessage("EXCHANGE_UPDATE_MAILBOX_SETTINGS", ex);
             }
         }
 
@@ -177,5 +159,33 @@ namespace WebsitePanel.Portal.ExchangeServer
                 messageBox.ShowErrorMessage("EXCHANGE_UPDATE_MAILMANAGER", ex);
             }
         }
-	}
+
+        private int ConvertMbxSizeToIntMB(string inputValue)
+        {
+            int result = 0;
+
+            if ((inputValue == null) || (inputValue == ""))
+                return 0;
+
+            if (inputValue.Contains("TB"))
+            {
+                result = Convert.ToInt32(inputValue.Replace(" TB", ""));
+                result = result * 1024 * 1024;
+            }
+            else
+                if (inputValue.Contains("GB"))
+                {
+                    result = Convert.ToInt32(inputValue.Replace(" GB", ""));
+                    result = result * 1024;
+                }
+                else
+                    if (inputValue.Contains("MB"))
+                    {
+                        result = Convert.ToInt32(inputValue.Replace(" MB", ""));
+                    }
+
+            return result;
+        }
+
+    }
 }

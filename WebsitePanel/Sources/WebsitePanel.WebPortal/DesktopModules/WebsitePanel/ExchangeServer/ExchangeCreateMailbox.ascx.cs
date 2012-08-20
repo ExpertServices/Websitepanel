@@ -33,18 +33,18 @@ using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class ExchangeCreateMailbox : WebsitePanelModuleBase
-	{
-	    private bool IsNewUser
-	    {
-	        get
-	        {
-	            return NewUserTable.Visible;
-	        }
-	    }
-        
+    public partial class ExchangeCreateMailbox : WebsitePanelModuleBase
+    {
+        private bool IsNewUser
+        {
+            get
+            {
+                return NewUserTable.Visible;
+            }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
-		{
+        {
             if (!IsPostBack)
             {
                 password.SetPackagePolicy(PanelSecurity.PackageId, UserSettings.EXCHANGE_POLICY, "MailboxPasswordPolicy");
@@ -64,16 +64,32 @@ namespace WebsitePanel.Portal.ExchangeServer
                     messageBox.ShowMessage(passwordPolicy, "EXCHANGE_CREATE_MAILBOX", "HostedOrganization");
                     return;
                 }
-                
+
                 PackageInfo package = ES.Services.Packages.GetPackage(PanelSecurity.PackageId);
                 if (package != null)
                 {
-                    UserInfo user = ES.Services.Users.GetUserById(package.UserId);
-                    if (user != null)
-                        sendInstructionEmail.Text = user.Email;
+                    //UserInfo user = ES.Services.Users.GetUserById(package.UserId);
+                    //if (user != null)
+                    //sendInstructionEmail.Text = user.Email;
                 }
-            }                                 			
-		}
+
+                WebsitePanel.Providers.HostedSolution.ExchangeMailboxPlan[] plans = ES.Services.ExchangeServer.GetExchangeMailboxPlans(PanelRequest.ItemID);
+
+                if (plans.Length == 0)
+                    btnCreate.Enabled = false;
+            }
+
+
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
+            {
+                if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
+                {
+                    locSubscriberNumber.Visible = txtSubscriberNumber.Visible = valRequireSubscriberNumber.Enabled = false;
+                }
+            }
+
+        }
 
         protected void btnCreate_Click(object sender, EventArgs e)
         {
@@ -92,12 +108,14 @@ namespace WebsitePanel.Portal.ExchangeServer
                 string accountName = IsNewUser ? string.Empty : userSelector.GetAccount();
 
                 ExchangeAccountType type = IsNewUser
-                                               ? (ExchangeAccountType) Utils.ParseInt(rbMailboxType.SelectedValue, 1)
+                                               ? (ExchangeAccountType)Utils.ParseInt(rbMailboxType.SelectedValue, 1)
                                                : ExchangeAccountType.Mailbox;
-                
+
                 string domain = IsNewUser ? email.DomainName : userSelector.GetPrimaryEmailAddress().Split('@')[1];
 
                 int accountId = IsNewUser ? 0 : userSelector.GetAccountId();
+
+                string subscriberNumber = IsNewUser ? txtSubscriberNumber.Text.Trim() : userSelector.GetSubscriberNumber();
 
                 accountId = ES.Services.ExchangeServer.CreateMailbox(PanelRequest.ItemID, accountId, type,
                                     accountName,
@@ -105,14 +123,23 @@ namespace WebsitePanel.Portal.ExchangeServer
                                     name,
                                     domain,
                                     password.Password,
-                                    chkSendInstructions.Checked,
-                                    sendInstructionEmail.Text); 
-                                                   
-                
+                                    false,
+                                    "",
+                                    Convert.ToInt32(mailboxPlanSelector.MailboxPlanId),
+                                    subscriberNumber);
+
+
                 if (accountId < 0)
                 {
                     messageBox.ShowResultMessage(accountId);
                     return;
+                }
+                else
+                {
+                    if ((!string.IsNullOrEmpty(txtFirstName.Text)) | (!string.IsNullOrEmpty(txtLastName.Text)) | (!string.IsNullOrEmpty(txtInitials.Text)))
+                    {
+                        SetUserAttributes(accountId);
+                    }
                 }
 
                 Response.Redirect(EditUrl("AccountID", accountId.ToString(), "mailbox_settings",
@@ -125,7 +152,45 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
         }
 
-       
+        private void SetUserAttributes(int accountId)
+        {
+            OrganizationUser user = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID, accountId);
+
+            ES.Services.Organizations.SetUserGeneralSettings(
+                    PanelRequest.ItemID, accountId,
+                    txtDisplayName.Text,
+                    null,
+                    false,
+                    user.Disabled,
+                    user.Locked,
+
+                    txtFirstName.Text,
+                    txtInitials.Text,
+                    txtLastName.Text,
+
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    user.ExternalEmail,
+                    txtSubscriberNumber.Text);
+        }
+
+
 
         protected void rbtnUserExistingUser_CheckedChanged(object sender, EventArgs e)
         {
@@ -138,7 +203,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             NewUserTable.Visible = true;
             ExistingUserTable.Visible = false;
 
-        }       
-        
-	}
+        }
+
+    }
 }

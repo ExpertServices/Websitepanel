@@ -30,19 +30,22 @@ using System;
 using System.Web.UI.WebControls;
 using WebsitePanel.Providers.HostedSolution;
 using Microsoft.Security.Application;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
-	public partial class ExchangeContactGeneralSettings : WebsitePanelModuleBase
-	{
-		protected void Page_Load(object sender, EventArgs e)
-		{
+    public partial class ExchangeContactGeneralSettings : WebsitePanelModuleBase
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
             if (!IsPostBack)
             {
                 BindMapiRichTextFormat();
                 BindSettings();
             }
-		}
+
+            
+        }
 
         private void BindMapiRichTextFormat()
         {
@@ -60,8 +63,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                 // get settings
                 ExchangeContact contact = ES.Services.ExchangeServer.GetContactGeneralSettings(PanelRequest.ItemID,
                     PanelRequest.AccountID);
-                
-				litDisplayName.Text = AntiXss.HtmlEncode(contact.DisplayName);
+
+                litDisplayName.Text = Microsoft.Security.Application.Encoder.HtmlEncode(contact.DisplayName);
 
                 // bind form
                 txtDisplayName.Text = contact.DisplayName;
@@ -95,7 +98,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("EXCHANGE_GET_CONTACT_SETTINGS", ex);
+                messageBox.ShowErrorMessage("EXCHANGE_GET_CONTACT_SETTINGS", ex);
             }
         }
 
@@ -143,13 +146,13 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-				litDisplayName.Text = AntiXss.HtmlEncode(txtDisplayName.Text);
+                litDisplayName.Text = Microsoft.Security.Application.Encoder.HtmlEncode(txtDisplayName.Text);
 
-				messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_CONTACT_SETTINGS");
+                messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_CONTACT_SETTINGS");
             }
             catch (Exception ex)
             {
-				messageBox.ShowErrorMessage("EXCHANGE_UPDATE_CONTACT_SETTINGS", ex);
+                messageBox.ShowErrorMessage("EXCHANGE_UPDATE_CONTACT_SETTINGS", ex);
             }
         }
 
@@ -157,5 +160,5 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             SaveSettings();
         }
-	}
+    }
 }

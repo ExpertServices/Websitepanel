@@ -43,45 +43,81 @@ namespace WebsitePanel.EnterpriseServer
     [System.ComponentModel.ToolboxItem(false)]
     public class esWebApplicationGallery : System.Web.Services.WebService
     {
+        [WebMethod]
+        public void InitFeeds(int packageId)
+        {
+            WebAppGalleryController.InitFeeds(SecurityContext.User.UserId, packageId);
+        }
+
+        [WebMethod]
+        public void SetResourceLanguage(int packageId, string resourceLanguage)
+        {
+            WebAppGalleryController.InitFeeds(SecurityContext.User.UserId, packageId);
+            WebAppGalleryController.SetResourceLanguage(packageId, resourceLanguage);
+        }
+        
+
+        [WebMethod]
+        public GalleryLanguagesResult GetGalleryLanguages(int packageId)
+        {
+            WebAppGalleryController.InitFeeds(SecurityContext.User.UserId, packageId);
+            return WebAppGalleryController.GetGalleryLanguages(packageId);
+        }
+
+
 		[WebMethod]
 		public GalleryApplicationsResult GetGalleryApplicationsByServiceId(int serviceId)
 		{
+            WebAppGalleryController.InitFeedsByServiceId(SecurityContext.User.UserId, serviceId);
 			return WebAppGalleryController.GetGalleryApplicationsByServiceId(serviceId);
 		}
 
         [WebMethod]
         public GalleryApplicationsResult GetGalleryApplications(int packageId, string categoryId)
         {
-			return WebAppGalleryController.GetGalleryApplications(packageId, categoryId);
+            WebAppGalleryController.InitFeeds(SecurityContext.User.UserId, packageId);
+            return WebAppGalleryController.GetGalleryApplications(packageId, categoryId);
+        }
+
+        [WebMethod]
+        public GalleryApplicationsResult GetGalleryApplicationsFiltered(int packageId, string pattern)
+        {
+            WebAppGalleryController.InitFeeds(SecurityContext.User.UserId, packageId);
+            return WebAppGalleryController.GetGalleryApplicationsFiltered(packageId, pattern);
         }
 
         [WebMethod]
         public GalleryCategoriesResult GetGalleryCategories(int packageId)
         {
+            WebAppGalleryController.InitFeeds(SecurityContext.User.UserId, packageId);
 			return WebAppGalleryController.GetGalleryCategories(packageId);
         }
 
         [WebMethod]
         public GalleryApplicationResult GetGalleryApplicationDetails(int packageId, string applicationId)
         {
+            WebAppGalleryController.InitFeeds(SecurityContext.User.UserId, packageId);
 			return WebAppGalleryController.GetGalleryApplicationDetails(packageId, applicationId);
         }
 
         [WebMethod]
 		public DeploymentParametersResult GetGalleryApplicationParams(int packageId, string applicationId)
         {
+            WebAppGalleryController.InitFeeds(SecurityContext.User.UserId, packageId);
 			return WebAppGalleryController.GetGalleryApplicationParams(packageId, applicationId);
         }
 
         [WebMethod]
-        public StringResultObject Install(int packageId, string webAppId, string siteName, string virtualDir, List<DeploymentParameter> parameters)
+        public StringResultObject Install(int packageId, string webAppId, string siteName, string virtualDir, List<DeploymentParameter> parameters, string languageId)
         {
-            return WebAppGalleryController.Install(packageId, webAppId, siteName, virtualDir, parameters);
+            WebAppGalleryController.InitFeeds(SecurityContext.User.UserId, packageId);
+            return WebAppGalleryController.Install(packageId, webAppId, siteName, virtualDir, parameters, languageId);
         }
 
 		[WebMethod(Description="Returns Web Application Gallery application status, such as Downloaded, Downloading, Failed or NotDownloaded. Throws an ApplicationException if WAG module is not available on the target server.")]
 		public GalleryWebAppStatus GetGalleryApplicationStatus(int packageId, string webAppId)
 		{
+            WebAppGalleryController.InitFeeds(SecurityContext.User.UserId, packageId);
 			return WebAppGalleryController.GetGalleryApplicationStatus(packageId, webAppId);
 		}
     }

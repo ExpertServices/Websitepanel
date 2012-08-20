@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -25,6 +25,7 @@
 // ANY  THEORY  OF  LIABILITY,  WHETHER  IN  CONTRACT,  STRICT  LIABILITY,  OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 
 using System;
 using System.IO;
@@ -527,7 +528,7 @@ namespace WebsitePanel.Import.CsvBulk
 				//create mailbox
 				//ES.Services.ExchangeServer.
 				string accountName = string.Empty;
-				int accountId = ES.Services.ExchangeServer.CreateMailbox(orgId, 0, ExchangeAccountType.Mailbox, accountName, displayName, name, domain, password, false, string.Empty);
+                int accountId = ES.Services.ExchangeServer.CreateMailbox(orgId, 0, ExchangeAccountType.Mailbox, accountName, displayName, name, domain, password, false, string.Empty, 0, string.Empty);
 				if (accountId < 0)
 				{
 					string errorMessage = GetErrorMessage(accountId);
@@ -558,12 +559,13 @@ namespace WebsitePanel.Import.CsvBulk
 
 
 				//update mailbox
+                /*
 				ES.Services.ExchangeServer.SetMailboxGeneralSettings(orgId, accountId, mailbox.DisplayName,
 					null, mailbox.HideFromAddressBook, mailbox.Disabled, mailbox.FirstName, mailbox.Initials,
 					mailbox.LastName, mailbox.Address, mailbox.City, mailbox.State, mailbox.Zip, mailbox.Country,
 					mailbox.JobTitle, mailbox.Company, mailbox.Department, mailbox.Office, null, mailbox.BusinessPhone,
 					mailbox.Fax, mailbox.HomePhone, mailbox.MobilePhone, mailbox.Pager, mailbox.WebPage, mailbox.Notes);
-
+                */
 				ret = true;
 			}
 			catch (Exception ex)
@@ -672,7 +674,7 @@ namespace WebsitePanel.Import.CsvBulk
 				string name = emailAddress.Substring(0, emailAddress.IndexOf("@"));
 				string domain = emailAddress.Substring(emailAddress.IndexOf("@") + 1);
 				string accountName = string.Empty;
-				int accountId = ES.Services.Organizations.CreateUser(orgId, displayName, name, domain, password, false, string.Empty);
+				int accountId = ES.Services.Organizations.CreateUser(orgId, displayName, name, domain, password, string.Empty,false, string.Empty);
 
 				if (accountId < 0)
 				{
@@ -703,12 +705,13 @@ namespace WebsitePanel.Import.CsvBulk
 				user.Notes = notes;
 
 				//update 
+                /*
 				ES.Services.Organizations.SetUserGeneralSettings(orgId, accountId, user.DisplayName,
 					null, false, user.Disabled, user.Locked, user.FirstName, user.Initials,
 					user.LastName, user.Address, user.City, user.State, user.Zip, user.Country,
 					user.JobTitle, user.Company, user.Department, user.Office, null, user.BusinessPhone,
 					user.Fax, user.HomePhone, user.MobilePhone, user.Pager, user.WebPage, user.Notes, user.ExternalEmail);
-
+                */
 				ret = true;
 			}
 			catch (Exception ex)

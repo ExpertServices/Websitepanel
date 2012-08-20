@@ -49,10 +49,13 @@
 							<ItemTemplate>
 								<asp:ImageButton ID="cmdEdit" runat="server" SkinID="EditSmall" CommandName="edit" AlternateText="Edit record">
 								</asp:ImageButton>
-								<asp:Literal ID="litMxPriority" runat="server" Text='<%# Eval("MxPriority") %>' Visible="false"></asp:Literal>
-								<asp:Literal ID="litRecordName" runat="server" Text='<%# Eval("RecordName") %>' Visible="false"></asp:Literal>
-								<asp:Literal ID="litRecordType" runat="server" Text='<%# Eval("RecordType") %>' Visible="false"></asp:Literal>
-								<asp:Literal ID="litRecordData" runat="server" Text='<%# Eval("RecordData") %>' Visible="false"></asp:Literal>
+                                <asp:Literal ID="litMxPriority" runat="server" Text='<%# Eval("MxPriority") %>' Visible="false"></asp:Literal>
+                                <asp:Literal ID="litRecordName" runat="server" Text='<%# Eval("RecordName") %>' Visible="false"></asp:Literal>
+                                <asp:Literal ID="litRecordType" runat="server" Text='<%# Eval("RecordType") %>' Visible="false"></asp:Literal>
+                                <asp:Literal ID="litRecordData" runat="server" Text='<%# Eval("RecordData") %>' Visible="false"></asp:Literal>
+                                <asp:Literal ID="litSrvPriority" runat="server" Text='<%# Eval("SrvPriority") %>' Visible="false"></asp:Literal>
+                                <asp:Literal ID="litSrvWeight" runat="server" Text='<%# Eval("SrvWeight") %>' Visible="false"></asp:Literal>
+                                <asp:Literal ID="litSrvPort" runat="server" Text='<%# Eval("SrvPort") %>' Visible="false"></asp:Literal>
 							</ItemTemplate>
 							<ItemStyle CssClass="NormalBold" Wrap="False" />
 						</asp:TemplateField>
@@ -61,7 +64,7 @@
 						<asp:TemplateField SortExpression="RecordData" HeaderText="gvRecordsData" >
 							<ItemStyle Width="100%" />
 							<ItemTemplate>
-								<%# GetRecordFullData((string)Eval("RecordType"), (string)Eval("RecordData"), (int)Eval("MxPriority"))  %>
+                                <%# GetRecordFullData((string)Eval("RecordType"), (string)Eval("RecordData"), (int)Eval("MxPriority"), (int)Eval("SrvPort"))%>
 							</ItemTemplate>
 						</asp:TemplateField>
 						<asp:TemplateField>
@@ -112,12 +115,13 @@
 							<td class="SubHead" width="150" nowrap><asp:Label ID="lblRecordType" runat="server" meta:resourcekey="lblRecordType" Text="Record Type:"></asp:Label></td>
 							<td class="NormalBold" width="100%">
 								<asp:DropDownList ID="ddlRecordType" runat="server" SelectedValue='<%# Bind("RecordType") %>' CssClass="NormalTextBox" AutoPostBack="True" OnSelectedIndexChanged="ddlRecordType_SelectedIndexChanged">
-									<asp:ListItem>A</asp:ListItem>
+                                    <asp:ListItem>A</asp:ListItem>
 									<asp:ListItem>AAAA</asp:ListItem>
-									<asp:ListItem>MX</asp:ListItem>
-									<asp:ListItem>NS</asp:ListItem>
-									<asp:ListItem>TXT</asp:ListItem>
-									<asp:ListItem>CNAME</asp:ListItem>
+                                    <asp:ListItem>MX</asp:ListItem>
+                                    <asp:ListItem>NS</asp:ListItem>
+                                    <asp:ListItem>TXT</asp:ListItem>
+                                    <asp:ListItem>CNAME</asp:ListItem>
+                                    <asp:ListItem>SRV</asp:ListItem>
 								</asp:DropDownList><asp:Literal ID="litRecordType" runat="server"></asp:Literal>
 							</td>
 						</tr>
@@ -127,27 +131,60 @@
 								<asp:TextBox ID="txtRecordName" runat="server" Width="100px" CssClass="NormalTextBox"></asp:TextBox>
 							</td>
 						</tr>
-						<tr id="rowData" runat="server">
-							<td class="SubHead"><asp:Label ID="lblRecordData" runat="server" meta:resourcekey="lblRecordData" Text="Record Data:"></asp:Label></td>
-							<td class="NormalBold" nowrap>
-								<asp:TextBox ID="txtRecordData" runat="server" Width="260px" CssClass="NormalTextBox"></asp:TextBox>
-								<asp:RequiredFieldValidator ID="valRequireData" runat="server" ControlToValidate="txtRecordData"
-									ErrorMessage="*" ValidationGroup="DnsZoneRecord" Display="Dynamic"></asp:RequiredFieldValidator>
-							</td>
-						</tr>
+                        <tr id="rowData" runat="server">
+                            <td class="SubHead"><asp:Label ID="lblRecordData" runat="server" meta:resourcekey="lblRecordData" Text="Record Data:"></asp:Label></td>
+                            <td class="NormalBold" nowrap>
+				<asp:TextBox ID="txtRecordData" runat="server" Width="260px" CssClass="NormalTextBox"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="valRequireData" runat="server" ControlToValidate="txtRecordData"
+                                    ErrorMessage="*" ValidationGroup="DnsZoneRecord" Display="Dynamic"></asp:RequiredFieldValidator>
+                               <asp:regularexpressionvalidator id="IPValidator" runat="server" ValidationExpression="^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$"
+							                Display="Dynamic" ErrorMessage="Please enter a valid IP" ValidationGroup="DnsZoneRecord" ControlToValidate="txtRecordData" CssClass="NormalBold"></asp:regularexpressionvalidator>
+                             </td>
+                        
+                        </tr>
 						<tr>
                             <asp:CustomValidator ID="IPValidator" runat="server" ControlToValidate="txtRecordData" ValidationGroup="DnsZoneRecord" Display="Dynamic"
                                 OnServerValidate="Validate" Text="Please enter a valid IP" meta:resourcekey="IPValidator" />
 						</tr>
-						<tr id="rowMXPriority" runat="server">
-							<td class="SubHead"><asp:Label ID="lblMXPriority" runat="server" meta:resourcekey="lblMXPriority" Text="MX Priority:"></asp:Label></td>
-							<td class="NormalBold">
-								<asp:TextBox ID="txtMXPriority" runat="server" Width="30" CssClass="NormalTextBox"></asp:TextBox>
-								<asp:RequiredFieldValidator ID="valRequireMxPriority" runat="server" ControlToValidate="txtMXPriority"
-									ErrorMessage="*" ValidationGroup="DnsZoneRecord" Display="Dynamic"></asp:RequiredFieldValidator>
-								<asp:RegularExpressionValidator ID="valRequireCorrectPriority" runat="server" ControlToValidate="txtMXPriority"
-									ErrorMessage="*" ValidationExpression="\d{1,3}"></asp:RegularExpressionValidator></td>
-						</tr>
+                        <tr id="rowMXPriority" runat="server">
+                            <td class="SubHead"><asp:Label ID="lblMXPriority" runat="server" meta:resourcekey="lblMXPriority" Text="MX Priority:"></asp:Label></td>
+                            <td class="NormalBold">
+                                <asp:TextBox ID="txtMXPriority" runat="server" Width="30" CssClass="NormalTextBox"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="valRequireMxPriority" runat="server" ControlToValidate="txtMXPriority"
+                                    ErrorMessage="*" ValidationGroup="DnsZoneRecord" Display="Dynamic"></asp:RequiredFieldValidator>
+                                <asp:RegularExpressionValidator ID="valRequireCorrectPriority" runat="server" ControlToValidate="txtMXPriority"
+                                    ErrorMessage="*" ValidationExpression="\d{1,3}"></asp:RegularExpressionValidator></td>
+                        </tr>
+
+                        <tr id="rowSRVPriority" runat="server">
+                            <td class="SubHead"><asp:Label ID="lblSRVPriority" runat="server" meta:resourcekey="lblSRVPriority" Text="Priority:"></asp:Label></td>
+                            <td class="NormalBold">
+                                <asp:TextBox ID="txtSRVPriority" runat="server" Width="30" CssClass="NormalTextBox"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="valRequireSrvPriority" runat="server" ControlToValidate="txtSRVPriority"
+                                    ErrorMessage="*" ValidationGroup="DnsZoneRecord" Display="Dynamic"></asp:RequiredFieldValidator>
+                                <asp:RegularExpressionValidator ID="valRequireCorrectSrvPriority" runat="server" ControlToValidate="txtSRVPriority"
+                                    ErrorMessage="*" ValidationExpression="\d{1,3}"></asp:RegularExpressionValidator></td>
+                        </tr>
+
+                        <tr id="rowSRVWeight" runat="server">
+                            <td class="SubHead"><asp:Label ID="lblSRVWeight" runat="server" meta:resourcekey="lblSRVWeight" Text="Weight:"></asp:Label></td>
+                            <td class="NormalBold">
+                                <asp:TextBox ID="txtSRVWeight" runat="server" Width="30" CssClass="NormalTextBox"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="valRequireSrvWeight" runat="server" ControlToValidate="txtSRVWeight"
+                                    ErrorMessage="*" ValidationGroup="DnsZoneRecord" Display="Dynamic"></asp:RequiredFieldValidator>
+                                <asp:RegularExpressionValidator ID="valRequireCorrectSrvWeight" runat="server" ControlToValidate="txtSRVWeight"
+                                    ErrorMessage="*" ValidationExpression="\d{1,3}"></asp:RegularExpressionValidator></td>
+                        </tr>
+
+                        <tr id="rowSRVPort" runat="server">
+                            <td class="SubHead"><asp:Label ID="lblSRVPort" runat="server" meta:resourcekey="lblSRVPort" Text="Port Number:"></asp:Label></td>
+                            <td class="NormalBold">
+                                <asp:TextBox ID="txtSRVPort" runat="server" Width="30" CssClass="NormalTextBox"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="valRequireSrvPort" runat="server" ControlToValidate="txtSRVPort"
+                                    ErrorMessage="*" ValidationGroup="DnsZoneRecord" Display="Dynamic"></asp:RequiredFieldValidator>
+                                <asp:RegularExpressionValidator ID="valRequireCorrectSrvPort" runat="server" ControlToValidate="txtSRVPort"
+                                    ErrorMessage="*" ValidationExpression="\d{1,3}"></asp:RegularExpressionValidator></td>
+                        </tr>
 					</table>
 					
 					</ContentTemplate>
@@ -170,9 +207,6 @@
 	</asp:UpdatePanel>
 				    
 				</div>
-			</div>
-			<div class="Right">
-				<asp:Localize ID="FormComments" runat="server" meta:resourcekey="FormComments"></asp:Localize>
 			</div>
 		</div>
 	</div>

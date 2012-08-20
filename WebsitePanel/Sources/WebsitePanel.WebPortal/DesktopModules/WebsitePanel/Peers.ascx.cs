@@ -37,15 +37,16 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
+using WebsitePanel.EnterpriseServer;
+
 namespace WebsitePanel.Portal
 {
     public partial class Peers : WebsitePanelModuleBase
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-              // set display preferences
-              usersList.PageSize = UsersHelper.GetDisplayItemsPerPage();
-            
+            // set display preferences
+            usersList.PageSize = UsersHelper.GetDisplayItemsPerPage();
         }
 
         protected void odsUserPeers_Selected(object sender, ObjectDataSourceStatusEventArgs e)
@@ -62,5 +63,57 @@ namespace WebsitePanel.Portal
         {
             Response.Redirect(EditUrl("UserID", PanelSecurity.SelectedUserId.ToString(), "edit_peer"));
         }
+
+        protected string GetRoleName(int roleID)
+        {
+            switch (roleID)
+            {
+                case 1:
+                    return "Administrator";
+                case 2:
+                    return "Reseller";
+                case 3:
+                    return "User";
+                case 4:
+                    return "CSR";
+                case 5:
+                    return "CSR";
+                case 6:
+                    return "Helpdesk";
+                case 7:
+                    return "Helpdesk";
+                default:
+                    return "Unknown";
+            }
+        }
+
+
+        protected string GetStateImage(object status)
+        {
+            string imgName = "enabled.png";
+
+            if (status != null)
+            {
+                try
+                {
+                    switch ((int)status)
+                    {
+                        case (int)UserLoginStatus.Disabled:
+                            imgName = "disabled.png";
+                            break;
+                        case (int)UserLoginStatus.LockedOut:
+                            imgName = "locked.png";
+                            break;
+                        default:
+                            imgName = "enabled.png";
+                            break;
+                    }
+                }
+                catch (Exception) { }
+            }
+
+            return GetThemedImage("Exchange/" + imgName);
+        }
+
     }
 }

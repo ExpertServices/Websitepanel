@@ -112,11 +112,14 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="chkLocalHostFile" xml:space="preserve">
+    <value>Provision local hosts file</value>
+  </data>
   <data name="lblBackupTempFolder.Text" xml:space="preserve">
     <value>SharePoint Backup Temporary Folder:</value>
   </data>
@@ -126,8 +129,14 @@
   <data name="lblRootWebApplicationIpAddress.Text" xml:space="preserve">
     <value>SharePoint Web Application IP:</value>
   </data>
+  <data name="lblSharedSSLRoot.Text" xml:space="preserve">
+    <value>Shared SSL Root:</value>
+  </data>
   <data name="lblSharePointBackup.Text" xml:space="preserve">
     <value>SharePoint Backup</value>
+  </data>
+  <data name="lblWildCardRoot.Text" xml:space="preserve">
+    <value>Wildcard Certificate Root</value>
   </data>
   <data name="lclTempBackupNote.Text" xml:space="preserve">
     <value>Please note that WebsitePanel Server account should have access to this folder. Leave this field blank to use default path.</value>

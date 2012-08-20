@@ -33,12 +33,13 @@
 						<tr>
 							<td class="FormLabel150"><asp:Localize ID="locOrganizationID" runat="server" meta:resourcekey="locOrganizationID" Text="Organization ID: *"></asp:Localize></td>
 							<td>
-								<asp:TextBox ID="txtOrganizationID" runat="server" CssClass="TextBox100" MaxLength="9"></asp:TextBox>
+								<asp:TextBox ID="txtOrganizationID" runat="server" CssClass="HugeTextBox200" 
+                                    MaxLength="128"></asp:TextBox>
 								<asp:RequiredFieldValidator ID="valRequiretxtOrganizationID" runat="server" meta:resourcekey="valRequiretxtOrganizationID" ControlToValidate="txtOrganizationID"
 									ErrorMessage="Enter Organization ID" ValidationGroup="CreateOrganization" Display="Dynamic" Text="*" SetFocusOnError="true"></asp:RequiredFieldValidator>
 								<asp:RegularExpressionValidator ID="valRequireCorrectOrgID" runat="server"
 									ErrorMessage="Please enter valid organization ID" ControlToValidate="txtOrganizationID"
-										Display="Dynamic" ValidationExpression="[a-zA-Z][a-zA-Z0-9]{1,8}" meta:resourcekey="valRequireCorrectOrgID"
+										Display="Dynamic" ValidationExpression="[a-zA-Z0-9.-]{1,128}" meta:resourcekey="valRequireCorrectOrgID"
 										ValidationGroup="CreateOrganization">*</asp:RegularExpressionValidator>
 							</td>
 						</tr>
@@ -49,9 +50,6 @@
 					    <asp:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="CreateOrganization" />
 				    </div>
 				</div>
-			</div>
-			<div class="Right">
-				<asp:Localize ID="FormComments" runat="server" meta:resourcekey="FormComments"></asp:Localize>
 			</div>
 		</div>
 	</div>

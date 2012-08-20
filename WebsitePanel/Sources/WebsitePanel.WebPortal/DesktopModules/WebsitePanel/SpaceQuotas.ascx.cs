@@ -54,13 +54,18 @@ namespace WebsitePanel.Portal
 		{
 			// QUOTA CONTROL ID <=> TABLE ROW CONTROL ID
 			{ "quotaDiskspace", "pnlDiskspace" },
-			{ "quotaBandwidth", "pnlBandwidth" },
-			{ "quotaFtpAccounts", "pnlFtpAccounts" },
+            { "quotaBandwidth", "pnlBandwidth" },
 			{ "quotaDomains", "pnlDomains" },
 			{ "quotaSubDomains", "pnlSubDomains" },
 			{ "quotaDomainPointers", "pnlDomainPointers" },
-			{ "quotaMailAccounts", "pnlMailAccounts" },
+            { "quotaUserAccounts", "pnlUserAccounts" },
+			{ "quotaMailAccounts", "pnlMailboxes" },
+            { "quotaOCSUsers", "pnlOCSUsers" },
+            { "quotaLyncUsers", "pnlLyncUsers" },
+            { "quotaBlackBerryUsers", "pnlBlackBerryUsers" },
+            { "quotaSharepointSites", "pnlSharepointSites" },
 			{ "quotaWebSites", "pnlWebSites" },
+            { "quotaDatabases", "pnlDatabases" },
 			{ "quotaNumberOfVm", "pnlHyperVForPC" }
 		};
 

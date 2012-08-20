@@ -72,11 +72,12 @@ namespace WebsitePanel.Providers.HostedSolution
                 return res;
             }
 
-            string arguments = string.Format("-username {0} -password {1} -add -u {2} -b {3}",
+            string arguments = string.Format("-username {0} -password {1} -add -u {2} -b {3} -n {4}",
                                              User,
                                              Password,
                                              primaryEmailAddress,
-                                             EnterpriseServer);
+                                             EnterpriseServer,
+                                             EnterpriseServerFQDN);
 
             try
             {
@@ -119,13 +120,14 @@ namespace WebsitePanel.Providers.HostedSolution
                 return res;
             }
 
-            string arguments = string.Format(" -username {0} -password {1} -change -u {2} -b {3} -w {4} -wt {5}",
+            string arguments = string.Format(" -username {0} -password {1} -change -u {2} -b {3} -w {4} -wt {5} -n {6}",
                                              User,
                                              Password,
                                              primaryEmailAddress,
                                              EnterpriseServer,                                             
                                              password,
-                                             time);
+                                             time,
+                                             EnterpriseServerFQDN);
 
             try
             {
@@ -163,11 +165,12 @@ namespace WebsitePanel.Providers.HostedSolution
                 return res;
             }
 
-            string arguments = string.Format("-username {0} -password {1}  -change -u {2}  -b {3} -cw",
+            string arguments = string.Format("-username {0} -password {1}  -change -u {2}  -b {3} -cw -n {4}",
                                                 User,
                                                 Password,
                                                 primaryEmailAddress,
-                                                EnterpriseServer);
+                                                EnterpriseServer,
+                                                EnterpriseServerFQDN);
 
             try
             {
@@ -214,11 +217,12 @@ namespace WebsitePanel.Providers.HostedSolution
                 return res;
             }
 
-            string arguments = string.Format("-username {0} -password {1}  -change -u {2}  -b {3} -wrandom",
+            string arguments = string.Format("-username {0} -password {1}  -change -u {2}  -b {3} -wrandom -n {4}",
                                                 User,
                                                 Password,         
                                                 primaryEmailAddress,                                             
-                                                EnterpriseServer);
+                                                EnterpriseServer,
+                                                EnterpriseServerFQDN);
 
             try
             {
@@ -256,11 +260,12 @@ namespace WebsitePanel.Providers.HostedSolution
                 return res;
             }
 
-            string arguments = string.Format("-username {0} -password {1} -kill_handheld -u {2} -b {3}",
+            string arguments = string.Format("-username {0} -password {1} -kill_handheld -u {2} -b {3} -n {4}",
                                              User,
                                              Password,
                                              primaryEmailAddress,
-                                             EnterpriseServer);
+                                             EnterpriseServer,
+                                             EnterpriseServerFQDN);
                 
 
             try
@@ -346,11 +351,12 @@ namespace WebsitePanel.Providers.HostedSolution
                 return res;
 
             }
-            string arguments = string.Format(" -username {0} -password {1} -stats -u {2} -b {3}",
+            string arguments = string.Format(" -username {0} -password {1} -stats -u {2} -b {3} -n {4}",
                                              User,
                                              Password,
                                              primaryEmailAddress,
-                                             EnterpriseServer);
+                                             EnterpriseServer,
+                                             EnterpriseServerFQDN);
 
             string output;
             string error;
@@ -421,11 +427,12 @@ namespace WebsitePanel.Providers.HostedSolution
                 return res;
             }
 
-            string arguments = string.Format("-username {0} -password {1} -delete -u {2} -b {3}",
+            string arguments = string.Format("-username {0} -password {1} -delete -u {2} -b {3} -n {4}",
                                              User, 
                                              Password,
                                              primaryEmailAddress,                                             
-                                             EnterpriseServer);
+                                             EnterpriseServer,
+                                             EnterpriseServerFQDN);
 
             try
             {

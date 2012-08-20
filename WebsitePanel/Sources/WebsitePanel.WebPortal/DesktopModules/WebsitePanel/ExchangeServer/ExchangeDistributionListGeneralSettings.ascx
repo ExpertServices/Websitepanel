@@ -50,8 +50,8 @@
 						    <td class="FormLabel150"><asp:Localize ID="locManager" runat="server" meta:resourcekey="locManager" Text="Manager:"></asp:Localize></td>
 						    <td>
                                 <wsp:MailboxSelector id="manager" runat="server"
+                                            ShowOnlyMailboxes="true" 
 											MailboxesEnabled="true"
-											ContactsEnabled="true"
 											DistributionListsEnabled="true" />
 											
 								<asp:CustomValidator runat="server" 
@@ -67,8 +67,8 @@
 						<tr>
 						    <td colspan="2">
                                 <wsp:AccountsList id="members" runat="server"
+                                            ShowOnlyMailboxes="true" 
 											MailboxesEnabled="true"
-											ContactsEnabled="true"
 											DistributionListsEnabled="true"  />
                             </td>
 						</tr>
@@ -88,9 +88,6 @@
 					    <asp:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="EditList" />
 				    </div>
 				</div>
-			</div>
-			<div class="Right">
-				<asp:Localize ID="FormComments" runat="server" meta:resourcekey="FormComments"></asp:Localize>
 			</div>
 		</div>
 	</div>

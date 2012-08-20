@@ -51,7 +51,8 @@ using System.Linq;
 
 namespace WebsitePanel.Providers.Web
 {
-	public sealed class WebApplicationGallery
+    [Obsolete]
+    public sealed class WebApplicationGallery
 	{
         // MS Deploy library
         private const string MS_DEPLOY_ASSEMBLY_NAME = "Microsoft.Web.Deployment";
@@ -70,7 +71,8 @@ namespace WebsitePanel.Providers.Web
 		public const string WAG_XML_FEED_CACHE_KEY = "WAG_XML_FEED_CACHE_KEY";
 		public const int WEB_APPLICATIONS_CACHE_STORE_MINUTES = 60;
 		public const int XML_FEED_RECOVERY_ATTEMPTS = 10;
-		public const string WAG_DEFAULT_FEED_URL = "https://www.microsoft.com/web/webpi/3.0/WebApplicationList.xml";
+		// public const string WAG_DEFAULT_FEED_URL = "https://www.microsoft.com/web/webpi/3.0/WebApplicationList.xml";
+        public const string WAG_DEFAULT_FEED_URL = "https://www.microsoft.com/web/webpi/4.0/webapplicationlist.xml";
 
         // well-known parameters matching
         public readonly Dictionary<string, DeploymentParameterWellKnownTag> wellKnownParameters

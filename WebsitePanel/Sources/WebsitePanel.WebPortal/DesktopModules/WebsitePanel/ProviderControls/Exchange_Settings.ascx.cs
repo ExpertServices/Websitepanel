@@ -41,7 +41,8 @@ namespace WebsitePanel.Portal.ProviderControls
 
         public const string ClientAccessData = "ClientAccessData";
 
-        public const int EXCHANGE2010_PROVIDER_ID = 32;    
+        public const int EXCHANGE2010_PROVIDER_ID = 32;
+        public const int EXCHANGE2010SP2_PROVIDER_ID = 90;    
 
         public string HubTransports
         {
@@ -78,21 +79,36 @@ namespace WebsitePanel.Portal.ProviderControls
                 ServiceInfo serviceInfo = ES.Services.Servers.GetServiceInfo(PanelRequest.ServiceId);
                 if (serviceInfo != null)
                 {
-                    if (serviceInfo.ProviderId == EXCHANGE2010_PROVIDER_ID)
+                    switch (serviceInfo.ProviderId)
                     {
-                        clusteredMailboxServer.Visible = false;
-                        txtMailboxClusterName.Text = "";
+                        case EXCHANGE2010_PROVIDER_ID:
+                            clusteredMailboxServer.Visible = false;
+                            txtMailboxClusterName.Text = "";
                         
-                        storageGroup.Visible = false;
-                        txtStorageGroup.Text = "";
-                    }
-                    else
-                    {
-                        storageGroup.Visible = true;
-                        txtStorageGroup.Text = settings["StorageGroup"];
-                        clusteredMailboxServer.Visible = true;
-                        txtMailboxClusterName.Text = settings["MailboxCluster"];
+                            storageGroup.Visible = false;
+                            txtStorageGroup.Text = "";
 
+                            locMailboxDAG.Visible = false;
+                            break;
+
+                        case EXCHANGE2010SP2_PROVIDER_ID:
+                            clusteredMailboxServer.Visible = false;
+                            txtMailboxClusterName.Text = "";
+
+                            storageGroup.Visible = false;
+                            txtStorageGroup.Text = "";
+
+                            locMailboxDatabase.Visible = false;
+                            break;
+
+
+                        default:
+                            storageGroup.Visible = true;
+                            txtStorageGroup.Text = settings["StorageGroup"];
+                            clusteredMailboxServer.Visible = true;
+                            txtMailboxClusterName.Text = settings["MailboxCluster"];
+                            locMailboxDAG.Visible = false;
+                            break;
                     }
                 }
             

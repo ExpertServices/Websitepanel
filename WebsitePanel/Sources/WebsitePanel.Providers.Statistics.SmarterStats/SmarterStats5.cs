@@ -102,11 +102,18 @@ namespace WebsitePanel.Providers.Statistics
             //
             if (String.IsNullOrEmpty(productVersion))
                 return false;
-            // Match SmarterStats either 5.x or 6.x version
-            if (productVersion.StartsWith("5.")
-                || productVersion.StartsWith("6."))
-                return true;
-            //
+				
+			// Match SmarterStats 5.x or newer versions
+			int version = 0;
+			string[] split = productVersion.Split(new[] { '.' });
+
+			if (int.TryParse(split[0], out version))
+			{
+				if(version >= 5)
+					return true;
+			}
+			//
+			
             return false;
         }
     }

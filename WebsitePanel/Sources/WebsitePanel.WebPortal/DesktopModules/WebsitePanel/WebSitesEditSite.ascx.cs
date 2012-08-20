@@ -66,7 +66,6 @@ namespace WebsitePanel.Portal
 			new Tab { Id = "mime", ResourceKey = "Tab.MIMETypes", Quota = Quotas.WEB_MIME, ViewId = "tabMimes" },
 			new Tab { Id = "coldfusion", ResourceKey = "Tab.ColdFusion", Quota = Quotas.WEB_COLDFUSION, ViewId = "tabCF" },
 			new Tab { Id = "webman", ResourceKey = "Tab.WebManagement", Quota = Quotas.WEB_REMOTEMANAGEMENT, ViewId = "tabWebManagement" },
-			new Tab { Id = "SSL", ResourceKey = "Tab.SSL", Quota = Quotas.WEB_SSL, ViewId = "SSL" },
 		};
 
 		private int PackageId
@@ -166,6 +165,7 @@ namespace WebsitePanel.Portal
 
 			if (!String.IsNullOrEmpty(site.SiteIPAddress))
 				litIPAddress.Text = String.Format("({0})", site.SiteIPAddress);
+                       
 
 			litFrontPageUnavailable.Visible = false;
 			tblSharePoint.Visible = site.SharePointInstalled;
@@ -234,7 +234,17 @@ namespace WebsitePanel.Portal
 			webSitesMimeTypesControl.BindWebItem(site);
 			webSitesCustomHeadersControl.BindWebItem(site);
 			webSitesCustomErrorsControl.BindWebItem(site);
-			WebsitesSSLControl.BindWebItem(site);
+            if (site.SiteIPAddress != null)
+            {
+                TabsList.Add(new Tab { Id = "SSL", ResourceKey = "Tab.SSL", Quota = Quotas.WEB_SSL, ViewId = "SSL" });
+                TabsList.ForEach((x) =>
+                {
+                    x.Name = GetLocalizedString(x.ResourceKey);
+                    x.ResourceGroup = x.ResourceGroup ?? ResourceGroups.Web;
+                });
+
+                WebsitesSSLControl.BindWebItem(site);
+            }
 
 			BindVirtualDirectories();
 

@@ -31,4 +31,13 @@
         </td>
     </tr>    
     
+    <tr>
+        <td class="SubHead" width="200" nowrap><asp:Label runat="server" ID="lblEnterpriseServerFQDN" meta:resourcekey="lblEnterpriseServerFQDN" /></td>
+        <td>                        
+            <asp:TextBox runat="server" ID="txtEnterpriseServerFQDN" MaxLength="256" Width="200px"  />            
+            <asp:RequiredFieldValidator ID="RequiredFieldValidator5" runat="server" ControlToValidate="txtEnterpriseServerFQDN" Display="Dynamic" ErrorMessage="*" />
+        </td>
+    </tr>    
+
+
 </table>
