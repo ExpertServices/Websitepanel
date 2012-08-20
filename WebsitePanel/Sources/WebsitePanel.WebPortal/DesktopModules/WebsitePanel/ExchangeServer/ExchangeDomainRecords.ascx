@@ -134,11 +134,9 @@
                         <tr id="rowData" runat="server">
                             <td class="SubHead"><asp:Label ID="lblRecordData" runat="server" meta:resourcekey="lblRecordData" Text="Record Data:"></asp:Label></td>
                             <td class="NormalBold" nowrap>
-				<asp:TextBox ID="txtRecordData" runat="server" Width="260px" CssClass="NormalTextBox"></asp:TextBox>
+				                <asp:TextBox ID="txtRecordData" runat="server" Width="260px" CssClass="NormalTextBox"></asp:TextBox>
                                 <asp:RequiredFieldValidator ID="valRequireData" runat="server" ControlToValidate="txtRecordData"
                                     ErrorMessage="*" ValidationGroup="DnsZoneRecord" Display="Dynamic"></asp:RequiredFieldValidator>
-                               <asp:regularexpressionvalidator id="IPValidator" runat="server" ValidationExpression="^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$"
-							                Display="Dynamic" ErrorMessage="Please enter a valid IP" ValidationGroup="DnsZoneRecord" ControlToValidate="txtRecordData" CssClass="NormalBold"></asp:regularexpressionvalidator>
                              </td>
                         
                         </tr>

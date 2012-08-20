@@ -74,7 +74,7 @@ namespace WebsitePanel.EnterpriseServer
 					}
 				}
 				var type = ip.Contains(":") ? DnsRecordType.AAAA : DnsRecordType.A;
-                                int res = ServerController.AddDnsZoneRecord(domainId, recordName, type, ip, 0);
+                int res = ServerController.AddDnsZoneRecord(domainId, recordName, type, ip, 0, 0, 0, 0);
 				if (res != 0)
 				{
 					CompleteTask(ret, CrmErrorCodes.CANNOT_CREATE_DNS_ZONE, null,
