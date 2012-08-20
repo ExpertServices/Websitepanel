@@ -5632,7 +5632,7 @@ CREATE TABLE #TempBlackBerryUsers
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[AccountID] [int],	
 	[ItemID] [int] NOT NULL,
-	[AccountName] [nvarchar](20) NOT NULL,
+	[AccountName] [nvarchar](300) NOT NULL,
 	[DisplayName] [nvarchar](300) NOT NULL,
 	[PrimaryEmailAddress] [nvarchar](300) NULL,
 	[SamAccountName] [nvarchar](100) NULL	
