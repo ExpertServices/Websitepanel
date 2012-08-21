@@ -4781,3 +4781,231 @@ BEGIN
 END
 GO
 
+
+
+
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetBlackBerryUsers')
+BEGIN
+EXEC sp_executesql N'
+CREATE PROCEDURE [dbo].[GetBlackBerryUsers]
+(
+	@ItemID int,
+	@SortColumn nvarchar(40),
+	@SortDirection nvarchar(20),
+	@Name nvarchar(400),
+	@Email nvarchar(400),
+	@StartRow int,
+	@Count int	
+)
+AS
+
+IF (@Name IS NULL)
+BEGIN
+	SET @Name = '%'
+END
+
+IF (@Email IS NULL)
+BEGIN
+	SET @Email = '%'
+END
+
+CREATE TABLE #TempBlackBerryUsers 
+(	
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int],	
+	[ItemID] [int] NOT NULL,
+	[AccountName] [nvarchar](300) NOT NULL,
+	[DisplayName] [nvarchar](300) NOT NULL,
+	[PrimaryEmailAddress] [nvarchar](300) NULL,
+	[SamAccountName] [nvarchar](100) NULL	
+)
+
+
+IF (@SortColumn = 'DisplayName')
+BEGIN
+	INSERT INTO 
+		#TempBlackBerryUsers 
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName 
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		BlackBerryUsers bu 
+	ON 
+		ea.AccountID = bu.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.DisplayName
+END
+ELSE
+BEGIN
+	INSERT INTO 
+		#TempBlackBerryUsers
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName 
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		BlackBerryUsers bu 
+	ON 
+		ea.AccountID = bu.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.PrimaryEmailAddress 
+END
+
+DECLARE @RetCount int
+SELECT @RetCount = COUNT(ID) FROM #TempBlackBerryUsers 
+
+IF (@SortDirection = 'ASC')
+BEGIN
+	SELECT * FROM #TempBlackBerryUsers 
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+END
+ELSE
+BEGIN
+	IF (@SortColumn = 'DisplayName')
+	BEGIN
+		SELECT * FROM #TempBlackBerryUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
+	END
+	ELSE
+	BEGIN
+		SELECT * FROM #TempBlackBerryUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
+	END
+	
+END
+
+
+DROP TABLE #TempBlackBerryUsers
+GO
+
+
+
+
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetBlackBerryUsers]
+(
+	@ItemID int,
+	@SortColumn nvarchar(40),
+	@SortDirection nvarchar(20),
+	@Name nvarchar(400),
+	@Email nvarchar(400),
+	@StartRow int,
+	@Count int	
+)
+AS
+
+IF (@Name IS NULL)
+BEGIN
+	SET @Name = '%'
+END
+
+IF (@Email IS NULL)
+BEGIN
+	SET @Email = '%'
+END
+
+CREATE TABLE #TempBlackBerryUsers 
+(	
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int],	
+	[ItemID] [int] NOT NULL,
+	[AccountName] [nvarchar](300) NOT NULL,
+	[DisplayName] [nvarchar](300) NOT NULL,
+	[PrimaryEmailAddress] [nvarchar](300) NULL,
+	[SamAccountName] [nvarchar](100) NULL	
+)
+
+
+IF (@SortColumn = 'DisplayName')
+BEGIN
+	INSERT INTO 
+		#TempBlackBerryUsers 
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName 
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		BlackBerryUsers bu 
+	ON 
+		ea.AccountID = bu.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.DisplayName
+END
+ELSE
+BEGIN
+	INSERT INTO 
+		#TempBlackBerryUsers
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName 
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		BlackBerryUsers bu 
+	ON 
+		ea.AccountID = bu.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.PrimaryEmailAddress 
+END
+
+DECLARE @RetCount int
+SELECT @RetCount = COUNT(ID) FROM #TempBlackBerryUsers 
+
+IF (@SortDirection = 'ASC')
+BEGIN
+	SELECT * FROM #TempBlackBerryUsers 
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+END
+ELSE
+BEGIN
+	IF (@SortColumn = 'DisplayName')
+	BEGIN
+		SELECT * FROM #TempBlackBerryUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
+	END
+	ELSE
+	BEGIN
+		SELECT * FROM #TempBlackBerryUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
+	END
+	
+END
+
+
+DROP TABLE #TempBlackBerryUsers
+GO
