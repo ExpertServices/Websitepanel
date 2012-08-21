@@ -101,6 +101,9 @@ namespace WebsitePanel.Providers.DNS
                 case "A":
                     dnsRecord.RecordType = DnsRecordType.A;
                     break;
+				case "AAAA":
+					dnsRecord.RecordType = DnsRecordType.AAAA;
+					break;
                 case "MX":
                     dnsRecord.RecordType = DnsRecordType.MX;
                     break;

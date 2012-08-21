@@ -49,6 +49,7 @@ namespace WebsitePanel.Portal
         {
             if (!IsPostBack)
             {
+
                 // bind dropdowns
                 try
                 {
@@ -96,7 +97,7 @@ namespace WebsitePanel.Portal
                 string comments = txtComments.Text.Trim();
 
                 // add ip address
-                if (endIP.Text != "")
+                if (endIP.Text != "" || startIP.Text.Contains("/"))
                 {
                     try
                     {
@@ -162,5 +163,12 @@ namespace WebsitePanel.Portal
             SubnetRow.Visible = vps;
             GatewayRow.Visible = vps;
         }
+
+		public void CheckIPAddresses(object sender, ServerValidateEventArgs args) {
+			startIP.Validate(sender, args);
+			endIP.Validate(sender, args);
+			subnetMask.Validate(sender, args);
+			args.IsValid = startIP.IsV6 == endIP.IsV6 && (startIP.IsV6 == subnetMask.IsV6 || subnetMask.IsMask);
+		}
     }
 }

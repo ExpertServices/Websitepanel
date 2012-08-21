@@ -35,6 +35,7 @@
             <td class="Normal" width="100%">
                 <asp:DropDownList ID="ddlRecordType" runat="server" SelectedValue='<%# Bind("RecordType") %>' CssClass="NormalTextBox" AutoPostBack="True" OnSelectedIndexChanged="ddlRecordType_SelectedIndexChanged">
                     <asp:ListItem>A</asp:ListItem>
+                    <asp:ListItem>AAAA</asp:ListItem>
                     <asp:ListItem>MX</asp:ListItem>
                     <asp:ListItem>NS</asp:ListItem>
                     <asp:ListItem>TXT</asp:ListItem>
@@ -52,13 +53,21 @@
         <tr id="rowData" runat="server">
             <td class="SubHead"><asp:Label ID="lblRecordData" runat="server" meta:resourcekey="lblRecordData" Text="Record Data:"></asp:Label></td>
             <td class="Normal" nowrap>
-                <asp:TextBox ID="txtRecordData" runat="server" Width="200px" CssClass="NormalTextBox"></asp:TextBox><uc1:SelectIPAddress ID="ipAddress" runat="server" />
+                <asp:TextBox ID="txtRecordData" runat="server" Width="260px" CssClass="NormalTextBox"></asp:TextBox><uc1:SelectIPAddress ID="ipAddress" runat="server" />
+                <asp:RequiredFieldValidator ID="valRequireData" runat="server" ControlToValidate="txtRecordData"
+                    ErrorMessage="*" ValidationGroup="DnsRecord" Display="Dynamic"></asp:RequiredFieldValidator>
+                <asp:CustomValidator ID="IPValidator" runat="server" ControlToValidate="txtRecordData" ValidationGroup="DnsRecord" Display="Dynamic" CssClass="NormalBold" 
+                    OnServerValidate="Validate" Text="Please enter a valid IP" meta:resourcekey="IPValidator"/>
             </td>
         </tr>
         <tr id="rowMXPriority" runat="server">
             <td class="SubHead"><asp:Label ID="lblMXPriority" runat="server" meta:resourcekey="lblMXPriority" Text="MX Priority:"></asp:Label></td>
             <td class="Normal">
                 <asp:TextBox ID="txtMXPriority" runat="server" Width="30" CssClass="NormalTextBox"></asp:TextBox>
+                <asp:RequiredFieldValidator ID="valRequireMxPriority" runat="server" ControlToValidate="txtMXPriority"
+                    ErrorMessage="*" ValidationGroup="DnsRecord" Display="Dynamic"></asp:RequiredFieldValidator>
+                <asp:RegularExpressionValidator ID="valRequireCorrectPriority" runat="server" ControlToValidate="txtMXPriority"
+                    ErrorMessage="*" ValidationExpression="\d{1,3}" ValidationGroup="DnsRecord" />
             </td>
         </tr>
 

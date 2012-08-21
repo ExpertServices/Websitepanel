@@ -603,11 +603,12 @@ namespace WebsitePanel.EnterpriseServer
 
         private static void FillWebServerBindings(List<ServerBinding> bindings, List<GlobalDnsRecord> dnsRecords,
             string ipAddr, string domainName)
+			// TODO test if IPv6 works
         {
             int bindingsCount = bindings.Count;
             foreach (GlobalDnsRecord dnsRecord in dnsRecords)
             {
-                if (dnsRecord.RecordType == "A" &&
+				if ((dnsRecord.RecordType == "A" || dnsRecord.RecordType == "AAAA") &&
                     dnsRecord.RecordName != "*")
                 {
                     string recordData = dnsRecord.RecordName +

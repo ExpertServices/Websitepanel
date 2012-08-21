@@ -35,6 +35,7 @@ namespace WebsitePanel.Providers.DNS
     public enum DnsRecordType
     {
         A,
+		AAAA,
         NS,
         MX,
         CNAME,

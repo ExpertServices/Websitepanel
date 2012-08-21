@@ -1060,7 +1060,11 @@ namespace WebsitePanel.Providers.DNS
                     result = DnsRecordType.A;
                     break;
 
-                case "CNAME":
+				case "AAAA":
+					result = DnsRecordType.AAAA;
+					break;
+
+				case "CNAME":
                     result = DnsRecordType.CNAME;
                     break;
 
@@ -1097,7 +1101,11 @@ namespace WebsitePanel.Providers.DNS
                 case DnsRecordType.A:
                     result = "A";
                     break;
-
+				
+				case DnsRecordType.AAAA:
+					result = "AAAA";
+					break;
+                
                 case DnsRecordType.CNAME:
                     result = "CNAME";
                     break;

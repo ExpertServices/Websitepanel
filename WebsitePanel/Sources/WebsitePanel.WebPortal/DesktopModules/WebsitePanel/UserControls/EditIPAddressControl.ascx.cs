@@ -34,8 +34,16 @@ using System.Web.UI.WebControls;
 
 namespace WebsitePanel.Portal.UserControls
 {
+	[Flags]
+	public enum IPValidationMode { V4 = 1, V6 = 2, V4AndV6 = 3 };
+
     public partial class EditIPAddressControl : WebsitePanelControlBase
     {
+
+		public IPValidationMode Validation { get; set; }
+
+		public EditIPAddressControl() { Validation = IPValidationMode.V4AndV6; AllowSubnet = false; }
+
         public bool Required
         {
             get { return requireAddressValidator.Enabled; }
@@ -86,5 +94,30 @@ namespace WebsitePanel.Portal.UserControls
         {
 
         }
+
+		public bool AllowSubnet { get; set; }
+		public bool IsV6 { get; private set; }
+		public bool IsMask { get; private set; }
+
+		public void Validate(object source, ServerValidateEventArgs args) {
+			IsMask = IsV6 = false;
+			var ip = args.Value;
+			int net = 0;
+			if (ip.Contains("/")) {
+				args.IsValid = AllowSubnet;
+				var tokens = ip.Split('/');
+				ip = tokens[0];
+				args.IsValid &= int.TryParse(tokens[1], out net) && net <= 128;
+				if (string.IsNullOrEmpty(ip)) {
+					IsMask = true;
+					return;
+				}
+			}
+			System.Net.IPAddress ipaddr;
+			args.IsValid &= System.Net.IPAddress.TryParse(ip, out ipaddr) && (ip.Contains(":") || ip.Contains(".")) &&
+                (((Validation & IPValidationMode.V6) != 0 && (IsV6 = ipaddr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)) ||
+				((Validation & IPValidationMode.V4) != 0 && ipaddr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork));
+			args.IsValid &= ipaddr.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork || net < 32;
+		}
     }
 }

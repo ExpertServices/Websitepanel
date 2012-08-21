@@ -65,7 +65,7 @@ namespace WebsitePanel.EnterpriseServer
 				DnsRecord[] records = ServerController.GetDnsZoneRecords(domainId);
 				foreach (DnsRecord record in records)
 				{
-					if ((record.RecordType == DnsRecordType.A) && (String.Compare(recordName, record.RecordName, true) == 0))
+					if ((record.RecordType == DnsRecordType.A || record.RecordType == DnsRecordType.AAAA) && (String.Compare(recordName, record.RecordName, true) == 0))
 					{
 						CompleteTask(ret, CrmErrorCodes.CANNOT_CREATE_DNS_ZONE, null,
 							string.Format("DNS record already exists. DomainId={0}, RecordName={1}", domainId, recordName));
@@ -73,8 +73,8 @@ namespace WebsitePanel.EnterpriseServer
 						return ret;
 					}
 				}
-
-                int res = ServerController.AddDnsZoneRecord(domainId, recordName, DnsRecordType.A, ip, 0, 0, 0, 0);
+				var type = ip.Contains(":") ? DnsRecordType.AAAA : DnsRecordType.A;
+                int res = ServerController.AddDnsZoneRecord(domainId, recordName, type, ip, 0, 0, 0, 0);
 				if (res != 0)
 				{
 					CompleteTask(ret, CrmErrorCodes.CANNOT_CREATE_DNS_ZONE, null,
@@ -373,7 +373,8 @@ namespace WebsitePanel.EnterpriseServer
             
             try
             {
-                int res = ServerController.DeleteDnsZoneRecord(domainId, recordName, DnsRecordType.A, ip);
+				var type = ip.Contains(":") ? DnsRecordType.AAAA : DnsRecordType.A;
+				int res = ServerController.DeleteDnsZoneRecord(domainId, recordName, type, ip);
 
                 if (res != 0)
                 {

@@ -89,6 +89,8 @@ namespace WebsitePanel.Providers.DNS
 		{
 			// A record
 			{ DnsRecordType.A, new BuildDnsRecordDataEventHandler(BuildRecordData_ARecord) },
+            // AAAA record
+            { DnsRecordType.AAAA, new BuildDnsRecordDataEventHandler(BuildRecordData_AAAARecord) },
 			// NS record
 			{ DnsRecordType.NS, new BuildDnsRecordDataEventHandler(BuildRecordData_NSRecord) },
 			// CNAME
@@ -145,6 +147,13 @@ namespace WebsitePanel.Providers.DNS
 					{
 						RecordName = recordName,
 						RecordType = DnsRecordType.A,
+						RecordData = record.DataFields[0]
+					};
+					break;
+				case "AAAA":
+					dnsRecord = new DnsRecord {
+						RecordName = recordName,
+						RecordType = DnsRecordType.AAAA,
 						RecordData = record.DataFields[0]
 					};
 					break;
@@ -531,6 +540,12 @@ namespace WebsitePanel.Providers.DNS
 						//
 						dnsZone.Records.Add(m_strRecordName, "A", rr.RecordData);
 						break;
+					case DnsRecordType.AAAA:
+						// cleanup DNS record if exists
+						dnsZone.Records.Remove(m_strRecordName, "AAAA");
+						//
+						dnsZone.Records.Add(m_strRecordName, "AAAA", rr.RecordData);
+						break;
 					case DnsRecordType.NS:
 						// cleanup DNS record if exists
 						dnsZone.Records.Remove(m_strRecordName, "NS");
@@ -583,6 +598,8 @@ namespace WebsitePanel.Providers.DNS
 		{
 			if (r_type == DnsRecordType.A)
 				return "A";
+			else if (r_type == DnsRecordType.AAAA)
+				return "AAAA";
 			else if (r_type == DnsRecordType.CNAME)
 				return "CNAME";
 			else if (r_type == DnsRecordType.MX)
@@ -607,6 +624,13 @@ namespace WebsitePanel.Providers.DNS
 			DnsRecord record, List<string> data)
 		{
 			type = "A";
+			data.Add(record.RecordData);
+		}
+
+		static void BuildRecordData_AAAARecord(string zoneName, ref string type,
+			DnsRecord record, List<string> data)
+		{
+			type = "AAAA";
 			data.Add(record.RecordData);
 		}
 

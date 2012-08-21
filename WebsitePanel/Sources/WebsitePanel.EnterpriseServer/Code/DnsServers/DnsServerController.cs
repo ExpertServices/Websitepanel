@@ -281,7 +281,7 @@ namespace WebsitePanel.EnterpriseServer
                 rr.RecordType = (DnsRecordType)Enum.Parse(typeof(DnsRecordType), record.RecordType, true);
                 rr.RecordName = record.RecordName;
                 
-                if (record.RecordType == "A")
+		if (record.RecordType == "A" || record.RecordType == "AAAA")
                 {
                     rr.RecordData = String.IsNullOrEmpty(record.RecordData) ? record.ExternalIP : record.RecordData;
                     rr.RecordData = Utils.ReplaceStringVariable(rr.RecordData, "ip", record.ExternalIP);

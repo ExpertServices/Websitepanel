@@ -2968,15 +2968,17 @@ namespace WebsitePanel.EnterpriseServer
             if (String.IsNullOrEmpty(networkFormat))
             {
                 // custom format
-                nic.NetworkFormat = settings["PrivateIPAddress"];
-                nic.SubnetMask = GetPrivateNetworkSubnetMask(settings["PrivateSubnetMask"]);
+				nic.NetworkFormat = settings["PrivateIPAddress"];
+				var v6 = IPAddress.Parse(nic.NetworkFormat).V6;
+                nic.SubnetMask = GetPrivateNetworkSubnetMask(settings["PrivateSubnetMask"], v6);
             }
             else
             {
                 // standard format
                 string[] formatPair = settings["PrivateNetworkFormat"].Split('/');
                 nic.NetworkFormat = formatPair[0];
-                nic.SubnetMask = GetPrivateNetworkSubnetMask(formatPair[1]);
+				var v6 = IPAddress.Parse(nic.NetworkFormat).V6;
+				nic.SubnetMask = GetPrivateNetworkSubnetMask(formatPair[1], v6);
             }
 
             nic.SubnetMaskCidr = GetSubnetMaskCidr(nic.SubnetMask);
@@ -3038,7 +3040,7 @@ namespace WebsitePanel.EnterpriseServer
                 List<PrivateIPAddress> ips = GetPackagePrivateIPAddresses(vm.PackageId);
 
                 // sort them
-                SortedList<long, string> sortedIps = GetSortedNormalizedIPAddresses(ips, nic.SubnetMask);
+                SortedList<IPAddress, string> sortedIps = GetSortedNormalizedIPAddresses(ips, nic.SubnetMask);
 
                 if (selectRandom)
                 {
@@ -3209,14 +3211,14 @@ namespace WebsitePanel.EnterpriseServer
             return res;
         }
 
-        private static string GenerateNextAvailablePrivateIP(SortedList<long, string> ips, string subnetMask, string startIPAddress)
+        private static string GenerateNextAvailablePrivateIP(SortedList<IPAddress, string> ips, string subnetMask, string startIPAddress)
         {
             // start IP address
-            long startIp = ServerController.ConvertIPToLong(startIPAddress);
-            long mask = ServerController.ConvertIPToLong(subnetMask);
+           var startIp = IPAddress.Parse(startIPAddress);
+            var mask = IPAddress.Parse(subnetMask);
 
-            long lastAddress = (startIp & ~mask) - 1;
-            foreach (long addr in ips.Keys)
+            var lastAddress = (startIp & ~mask) - 1;
+            foreach (var addr in ips.Keys)
             {
                 if ((addr - lastAddress) > 1)
                 {
@@ -3229,11 +3231,11 @@ namespace WebsitePanel.EnterpriseServer
                 }
             }
 
-            long genAddr = lastAddress + 1;
+            var genAddr = lastAddress + 1;
 
             // convert to IP address
-            long ip = startIp & mask | (uint)genAddr;
-            string genIP = ServerController.ConvertLongToIP(ip);
+            var ip = startIp & mask | genAddr;
+            string genIP = ip.ToString();
 
             // store in cache
             ips.Add(genAddr, genIP);
@@ -3241,46 +3243,44 @@ namespace WebsitePanel.EnterpriseServer
             return genIP;
         }
 
-        private static SortedList<long, string> GetSortedNormalizedIPAddresses(List<PrivateIPAddress> ips, string subnetMask)
+        private static SortedList<IPAddress, string> GetSortedNormalizedIPAddresses(List<PrivateIPAddress> ips, string subnetMask)
         {
-            long mask = ServerController.ConvertIPToLong(subnetMask);
-            SortedList<long, string> sortedIps = new SortedList<long, string>();
+            var mask = IPAddress.Parse(subnetMask);
+            SortedList<IPAddress, string> sortedIps = new SortedList<IPAddress, string>();
             foreach (PrivateIPAddress ip in ips)
             {
-                long addr = ~mask & ServerController.ConvertIPToLong(ip.IPAddress);
+                var addr = ~mask & IPAddress.Parse(ip.IPAddress);
                 sortedIps.Add(addr, ip.IPAddress);
             }
             return sortedIps;
         }
 
-        private static string GetPrivateNetworkSubnetMask(string cidr)
-        {
-            int digits = 32 - Utils.ParseInt(cidr, 0);
+		private static string GetPrivateNetworkSubnetMask(string cidr, bool v6) {
+			if (v6) return "/" + cidr;
+			else return IPAddress.Parse("/" + cidr).ToV4MaskString();
+		}
 
-            long mask = 0xFFFFFFFF;
-            mask = mask << digits;
-            return ServerController.ConvertLongToIP(mask);
-        }
-
-        private static string GetSubnetMaskCidr(string subnetMask)
-        {
-            if (String.IsNullOrEmpty(subnetMask))
-                return subnetMask;
-
-            int cidr = 32;
-            long mask = ServerController.ConvertIPToLong(subnetMask);
-            while ((mask & 1) == 0 && cidr > 0)
-            {
-                mask >>= 1;
-                cidr -= 1;
-            }
-            return cidr.ToString();
-        }
-
+		private static string GetSubnetMaskCidr(string subnetMask) {
+			if (String.IsNullOrEmpty(subnetMask))
+				return subnetMask;
+			var ip = IPAddress.Parse(subnetMask);
+			if (ip.V4) {
+				int cidr = 32;
+				long mask = (long)ip.Address;
+				while ((mask & 1) == 0 && cidr > 0) {
+					mask >>= 1;
+					cidr -= 1;
+				}
+				return cidr.ToString();
+			} else {
+				return ip.Cidr.ToString();
+			}
+		}
+		
         private static bool CheckPrivateIPAddress(string subnetMask, string ipAddress)
         {
-            long mask = ServerController.ConvertIPToLong(subnetMask);
-            long ip = ServerController.ConvertIPToLong(ipAddress);
+            var mask = IPAddress.Parse(subnetMask);
+            var ip = IPAddress.Parse(ipAddress);
 
             return ((mask & ip) == mask);
         }

@@ -74,6 +74,7 @@
                 <td class="NormalBold">
                     <asp:DropDownList ID="ddlRecordType" runat="server" SelectedValue='<%# Bind("RecordType") %>' CssClass="NormalTextBox" AutoPostBack="True" OnSelectedIndexChanged="ddlRecordType_SelectedIndexChanged">
                         <asp:ListItem>A</asp:ListItem>
+	                    <asp:ListItem>AAAA</asp:ListItem>
                         <asp:ListItem>MX</asp:ListItem>
                         <asp:ListItem>NS</asp:ListItem>
                         <asp:ListItem>TXT</asp:ListItem>
@@ -91,11 +92,11 @@
             <tr id="rowData" runat="server">
                 <td class="SubHead"><asp:Label ID="lblRecordData" runat="server" meta:resourcekey="lblRecordData" Text="Record Data:"></asp:Label></td>
                 <td class="NormalBold" nowrap>
-                    <asp:TextBox ID="txtRecordData" runat="server" Width="200px" CssClass="NormalTextBox"></asp:TextBox>
+                    <asp:TextBox ID="txtRecordData" runat="server" Width="260px" CssClass="NormalTextBox"></asp:TextBox>
                     <asp:RequiredFieldValidator ID="valRequireData" runat="server" ControlToValidate="txtRecordData"
                         ErrorMessage="*" ValidationGroup="DnsZoneRecord" Display="Dynamic"></asp:RequiredFieldValidator>
-                   <asp:regularexpressionvalidator id="IPValidator" runat="server" ValidationExpression="^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$"
-							    Display="Dynamic" ErrorMessage="Please enter a valid IP" ValidationGroup="DnsZoneRecord" ControlToValidate="txtRecordData" CssClass="NormalBold"></asp:regularexpressionvalidator>
+                    <asp:CustomValidator ID="IPValidator" runat="server" ControlToValidate="txtRecordData" ValidationGroup="DnsZoneRecord" Display="Dynamic" CssClass="NormalBold" 
+                        Text="Please enter a valid IP" OnServerValidate="Validate" meta:resourcekey="IPValidator" />
                  </td>
                         
             </tr>
@@ -104,9 +105,9 @@
                 <td class="NormalBold">
                     <asp:TextBox ID="txtMXPriority" runat="server" Width="30" CssClass="NormalTextBox"></asp:TextBox>
                     <asp:RequiredFieldValidator ID="valRequireMxPriority" runat="server" ControlToValidate="txtMXPriority"
-                        ErrorMessage="*" ValidationGroup="DnsZoneRecord" Display="Dynamic"></asp:RequiredFieldValidator>
+                        ErrorMessage="*" ValidationGroup="DnsZoneRecord" Display="Dynamic" />
                     <asp:RegularExpressionValidator ID="valRequireCorrectPriority" runat="server" ControlToValidate="txtMXPriority"
-                        ErrorMessage="*" ValidationExpression="\d{1,3}"></asp:RegularExpressionValidator></td>
+                        ErrorMessage="*" ValidationExpression="\d{1,3}" ValidationGroup="DnsZoneRecord" /></td>
             </tr>
 
             <tr id="rowSRVPriority" runat="server">

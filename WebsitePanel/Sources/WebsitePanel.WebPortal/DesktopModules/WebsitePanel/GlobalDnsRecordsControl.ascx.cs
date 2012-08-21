@@ -144,7 +144,6 @@ namespace WebsitePanel.Portal
 
         private void ToggleRecordControls()
         {
-
             rowMXPriority.Visible = false;
             rowSRVPriority.Visible = false;
             rowSRVWeight.Visible = false;
@@ -158,6 +157,10 @@ namespace WebsitePanel.Portal
                     lblRecordData.Text = "IP:";
                     ipAddress.Visible = true;
                     break;
+                case "AAAA":
+                    lblRecordData.Text = "IP (v6):";
+                    ipAddress.Visible = true;
+                    break;
                 case "MX":
                     rowMXPriority.Visible = true;
                     break;
@@ -165,15 +168,25 @@ namespace WebsitePanel.Portal
                     rowSRVPriority.Visible = true;
                     rowSRVWeight.Visible = true;
                     rowSRVPort.Visible = true;
+
                     lblRecordData.Text = "Host offering this service:";
                     break;
                 default:
                     break;
             }
         }
+		protected void Validate(object source, ServerValidateEventArgs args) {
+			var ip = args.Value;
+			System.Net.IPAddress ipaddr;
+			args.IsValid = System.Net.IPAddress.TryParse(ip, out ipaddr) && (ip.Contains(":") || ip.Contains(".")) && 
+                ((ddlRecordType.SelectedValue == "A" && ipaddr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) ||
+                (ddlRecordType.SelectedValue == "AAAA" && ipaddr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6));
+		}
 
         private void SaveRecord()
         {
+			if (!Page.IsValid) return;
+
             GlobalDnsRecord record = new GlobalDnsRecord();
             record.RecordId = (int)ViewState["RecordID"];
             record.RecordType = ddlRecordType.SelectedValue;

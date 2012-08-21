@@ -288,7 +288,7 @@
 		    <td>
 		        <wsp:EditIPAddressControl id="privateIPAddress" runat="server" Required="true" />
 		        /
-		        <asp:TextBox ID="privateSubnetMask" runat="server" MaxLength="2" Width="40px" CssClass="NormalTextBox"></asp:TextBox>
+		        <asp:TextBox ID="privateSubnetMask" runat="server" MaxLength="3" Width="40px" CssClass="NormalTextBox"></asp:TextBox>
 		        <asp:RequiredFieldValidator ID="privateSubnetMaskValidator" runat="server" ControlToValidate="privateSubnetMask"
                     Text="*" meta:resourcekey="privateSubnetMaskValidator" Display="Dynamic" SetFocusOnError="true" />
             </td>

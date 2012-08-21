@@ -190,6 +190,8 @@ namespace WebsitePanel.Providers.DNS
 			{
 				if (record.RecordType == DnsRecordType.A)
 					AddARecord(zoneName, record.RecordName, record.RecordData);
+				else if (record.RecordType == DnsRecordType.AAAA)
+					AddAAAARecord(zoneName, record.RecordName, record.RecordData);
 				else if (record.RecordType == DnsRecordType.CNAME)
 					AddCNameRecord(zoneName, record.RecordName, record.RecordData);
 				else if (record.RecordType == DnsRecordType.MX)
@@ -225,7 +227,7 @@ namespace WebsitePanel.Providers.DNS
 		{
 			try
 			{
-				if (record.RecordType == DnsRecordType.A || record.RecordType == DnsRecordType.CNAME)
+				if (record.RecordType == DnsRecordType.A || record.RecordType == DnsRecordType.AAAA || record.RecordType == DnsRecordType.CNAME)
 					record.RecordName = CorrectRecordName(zoneName, record.RecordName);
 
 				// delete record
@@ -254,7 +256,7 @@ namespace WebsitePanel.Providers.DNS
 		}
 		#endregion
 
-		#region A records
+		#region A & AAAA records
 		private void AddARecord(string zoneName, string host, string ip)
 		{
 			// get all zone records
@@ -282,6 +284,34 @@ namespace WebsitePanel.Providers.DNS
 			records.Add(record);
 
 		    // update zone
+			UpdateZone(zoneName, records);
+		}
+
+		private void AddAAAARecord(string zoneName, string host, string ip) {
+			// get all zone records
+			List<DnsRecord> records = GetZoneRecordsArrayList(zoneName);
+
+			// delete AAAA record
+			//DeleteARecordInternal(records, zoneName, host);
+
+			//check if user tries to add existent zone record
+			foreach (DnsRecord dnsRecord in records) {
+				if ((String.Compare(dnsRecord.RecordName, host, StringComparison.OrdinalIgnoreCase) == 0)
+                    && (String.Compare(dnsRecord.RecordData, ip, StringComparison.OrdinalIgnoreCase) == 0)
+					)
+
+
+					return;
+			}
+
+			// add new AAAA record
+			DnsRecord record = new DnsRecord();
+			record.RecordType = DnsRecordType.AAAA;
+			record.RecordName = host;
+			record.RecordData = ip;
+			records.Add(record);
+
+			// update zone
 			UpdateZone(zoneName, records);
 		}
 
@@ -576,6 +606,15 @@ namespace WebsitePanel.Providers.DNS
 					r.RecordText = zfLine;
 					records.Add(r);
 				}
+				else if (recordType == "AAAA") // A record
+				{
+					DnsRecord r = new DnsRecord();
+					r.RecordType = DnsRecordType.AAAA;
+					r.RecordName = CorrectRecordName(zoneName, recordName);
+					r.RecordData = recordData;
+					r.RecordText = zfLine;
+					records.Add(r);
+				}
 				else if (recordType == "CNAME") // CNAME record
 				{
 					DnsRecord r = new DnsRecord();
@@ -692,6 +731,12 @@ namespace WebsitePanel.Providers.DNS
 				if (rr.RecordType == DnsRecordType.A)
 				{
 					type = "A";
+					host = rr.RecordName;
+					data = rr.RecordData;
+					name = BuildRecordName(zoneName, host);
+				}
+				else if (rr.RecordType == DnsRecordType.AAAA) {
+					type = "AAAA";
 					host = rr.RecordName;
 					data = rr.RecordData;
 					name = BuildRecordName(zoneName, host);

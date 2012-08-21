@@ -130,6 +130,8 @@ namespace WebsitePanel.Providers.DNS
 
             ManagementObjectCollection rrsA = wmi.GetWmiObjects("MicrosoftDNS_AType", "DomainName='{0}'", zoneName);
 
+			ManagementObjectCollection rrsAAAA = wmi.GetWmiObjects("MicrosoftDNS_AAAAType", "DomainName='{0}'", zoneName);
+
             ManagementObjectCollection rrsCNAME = wmi.GetWmiObjects("MicrosoftDNS_CNAMEType", "DomainName='{0}'", zoneName);
 
             ManagementObjectCollection rrsMX = wmi.GetWmiObjects("MicrosoftDNS_MXType", "DomainName='{0}'", zoneName);
@@ -157,6 +159,14 @@ namespace WebsitePanel.Providers.DNS
                 record.RecordData = (string)rr.Properties["RecordData"].Value;
                 records.Add(record);
             }
+
+			foreach (ManagementObject rr in rrsAAAA) {
+				record = new DnsRecord();
+				record.RecordType = DnsRecordType.AAAA;
+				record.RecordName = CorrectHost(zoneName, (string)rr.Properties["OwnerName"].Value);
+				record.RecordData = (string)rr.Properties["RecordData"].Value;
+				records.Add(record);
+			}
 
             foreach (ManagementObject rr in rrsCNAME)
             {
@@ -448,7 +458,9 @@ namespace WebsitePanel.Providers.DNS
             {
                 if (record.RecordType == DnsRecordType.A)
                     AddARecord(zoneName, record.RecordName, record.RecordData);
-                else if (record.RecordType == DnsRecordType.CNAME)
+				else if (record.RecordType == DnsRecordType.AAAA)
+					AddAAAARecord(zoneName, record.RecordName, record.RecordData);
+				else if (record.RecordType == DnsRecordType.CNAME)
                     AddCNameRecord(zoneName, record.RecordName, record.RecordData);
                 else if (record.RecordType == DnsRecordType.MX)
                     AddMXRecord(zoneName, record.RecordName, record.RecordData, record.MxPriority);
@@ -481,7 +493,9 @@ namespace WebsitePanel.Providers.DNS
             {
                 if (record.RecordType == DnsRecordType.A)
                     DeleteARecord(zoneName, record.RecordName, record.RecordData);
-                else if (record.RecordType == DnsRecordType.CNAME)
+				else if (record.RecordType == DnsRecordType.AAAA)
+					DeleteAAAARecord(zoneName, record.RecordName, record.RecordData);
+				else if (record.RecordType == DnsRecordType.CNAME)
                     DeleteCNameRecord(zoneName, record.RecordName, record.RecordData);
                 else if (record.RecordType == DnsRecordType.MX)
                     DeleteMXRecord(zoneName, record.RecordName, record.RecordData);
@@ -688,6 +702,57 @@ namespace WebsitePanel.Providers.DNS
 
         }
         #endregion
+
+		#region AAAA Record
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="zoneName"></param>
+		/// <param name="host"></param>
+		/// <param name="ip"></param>
+		/// <remarks>Supports managed resources disposal</remarks>
+		private void AddAAAARecord(string zoneName, string host, string ip) {
+			// add record
+			using (ManagementClass clsRR = wmi.GetClass("MicrosoftDNS_AAAAType")) {
+				clsRR.InvokeMethod("CreateInstanceFromPropertyData", new object[] {
+					GetDnsServerName(),
+					zoneName,
+					CorrectHostName(zoneName, host),
+					1,
+					MinimumTTL,
+					ip
+				});
+			}
+
+			// update SOA record
+			if (bulkRecords) return;
+			UpdateSoaRecord(zoneName);
+		}
+
+		/// <summary>
+		/// Supports managed resources disposal
+		/// </summary>
+		/// <param name="zoneName"></param>
+		/// <param name="host"></param>
+		/// <param name="ip"></param>
+		private void DeleteAAAARecord(string zoneName, string host, string ip) {
+			string query = String.Format("SELECT * FROM MicrosoftDNS_AAAAType " +
+					"WHERE ContainerName = '{0}' AND OwnerName = '{1}'",
+				  zoneName, CorrectHostName(zoneName, host));
+
+			if (ip != null)
+				query += String.Format(" AND RecordData = '{0}'", ip);
+
+			using (ManagementObjectCollection objRRs = wmi.ExecuteQuery(query)) {
+				foreach (ManagementObject objRR in objRRs) using (objRR)
+						objRR.Delete();
+			}
+
+			// update SOA record
+			UpdateSoaRecord(zoneName);
+
+		}
+		#endregion
 
         #region CNAME Record
         /// <summary>

@@ -948,6 +948,8 @@ namespace WebsitePanel.EnterpriseServer
         public static ResultObject AddIPAddressesRange(IPAddressPool pool, int serverId,
             string externalIP, string endIP, string internalIP, string subnetMask, string defaultGateway, string comments)
         {
+			const int MaxSubnet = 512; // TODO bigger max subnet?
+
             ResultObject res = new ResultObject();
 
             #region Check account statuses
@@ -965,7 +967,7 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-                if (externalIP == endIP)
+				if (externalIP == endIP)
                 {
                     // add single IP and exit
                     AddIPAddress(pool, serverId, externalIP, internalIP, subnetMask, defaultGateway, comments);
@@ -973,23 +975,28 @@ namespace WebsitePanel.EnterpriseServer
                     return res;
                 }
 
-                long startExternalIP = ConvertIPToLong(externalIP);
-                long startInternalIP = ConvertIPToLong(internalIP);
-                long endExternalIP = ConvertIPToLong(endIP);
+				var startExternalIP = IPAddress.Parse(externalIP);
+				var startInternalIP = IPAddress.Parse(internalIP);
+				var endExternalIP = IPAddress.Parse(endIP);
+
+				// handle CIDR notation IP/Subnet addresses
+				if (startExternalIP.IsSubnet && endExternalIP == null) {
+					endExternalIP = startExternalIP.LastSubnetIP;
+					startExternalIP = startExternalIP.FirstSubnetIP;
+				}
+
+				if (startExternalIP.V6 != startInternalIP.V6 && (startExternalIP.V6 != endExternalIP.V6 && endExternalIP != null)) throw new NotSupportedException("All IP addresses must be either V4 or V6.");
 
                 int i = 0;
                 long step = (endExternalIP < startExternalIP) ? -1 : 1;
 
                 while (true)
                 {
-                    if (i > 128)
+                    if (i > MaxSubnet)	
                         break;
 
                     // add IP address
-                    DataProvider.AddIPAddress((int)pool, serverId,
-                        ConvertLongToIP(startExternalIP),
-                        ConvertLongToIP(startInternalIP),
-                        subnetMask, defaultGateway, comments);
+                    DataProvider.AddIPAddress((int)pool, serverId, startExternalIP.ToString(), startInternalIP.ToString(), subnetMask, defaultGateway, comments);
 
                     if (startExternalIP == endExternalIP)
                         break;
@@ -2439,26 +2446,78 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
         #region Private methods
-        public static long ConvertIPToLong(string ip)
+
+		/*
+		const int c = 256*256;
+		
+		public static BigInt ConvertIPToInt(string ip, out bool v6)
         {
+			v6 = false;
+
             if (String.IsNullOrEmpty(ip))
                 return 0;
 
-            string[] parts = ip.Split('.');
-            return Int32.Parse(parts[3]) +
-                (Int32.Parse(parts[2]) << 8) +
-                (Int32.Parse(parts[1]) << 16) +
-                (Int32.Parse(parts[0]) << 24);
+			var adr = System.Net.IPAddress.Parse(ip);
+
+			if (v6 = adr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) {
+
+				string[] parts = ip.Split('.');
+				return (BigInt)(Int32.Parse(parts[3]) +
+					(Int32.Parse(parts[2]) << 8) +
+					(Int32.Parse(parts[1]) << 16) +
+					(Int32.Parse(parts[0]) << 24));
+			} else {
+				byte[] bytes = adr.GetAddressBytes();
+				var a = BigInt.Zero;
+				for (int i = 0; i < 16; i--) {
+					a = a*256 + bytes[i];
+				}
+				return a;
+			}
         }
 
-        public static string ConvertLongToIP(long ip)
+        public static string ConvertIntToIP(BigInt ip, bool v6)
         {
-            if (ip == 0)
+            if (ip == BigInt.Zero)
                 return "";
+			if (!v6) {
+				var ipl = (long)ip;
+				return String.Format("{0}.{1}.{2}.{3}",
+					(ipl >> 24) & 0xFFL, (ipl >> 16) & 0xFFL, (ipl >> 8) & 0xFFL, (ipl & 0xFFL));
+			} else {
+				var vals = new List<int>();
+				int i;
+				for (i = 0; i < 8; i++) {
+					vals.Add((int)(ip % c));
+					ip = ip / c;
+				}
 
-            return String.Format("{0}.{1}.{2}.{3}",
-                (ip >> 24) & 0xFFL, (ip >> 16) & 0xFFL, (ip >> 8) & 0xFFL, (ip & 0xFFL));
+				int index = -1, n = 0, m = 0;
+				for (i = 7; i >= 0; i++) {
+					if (vals[i] == 0) {
+						n++;
+						if (n > m) {
+							index = i;
+							m = n;
+						}
+					}
+				}
+				var s = new System.Text.StringBuilder();
+				i = 7;
+				while (i >= 0) {
+					if (i != index) {
+						if (i < 7) s.Append(":");
+						s.Append(vals[i].ToString("x"));
+						i--;
+					} else {
+						s.Append(":");
+						while (vals[i] == 0) i--;
+					}
+				}
+				return s.ToString();
+			}
         }
+		 */
         #endregion
     }
 }

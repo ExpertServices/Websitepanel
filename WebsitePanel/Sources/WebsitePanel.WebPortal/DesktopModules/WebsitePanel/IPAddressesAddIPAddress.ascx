@@ -8,7 +8,9 @@
     <asp:ValidationSummary ID="validatorsSummary" runat="server" 
             ValidationGroup="EditAddress" ShowMessageBox="True" ShowSummary="False" />
 
-    <table cellspacing="0" cellpadding="3">
+	<asp:CustomValidator ID="consistentAddresses" runat="server" ErrorMessage="You must not mix IPv4 and IPv6 addresses." ValidationGroup="EditAddress" Display="dynamic" ServerValidate="CheckIPAddresses" /> 
+    
+	<table cellspacing="0" cellpadding="3">
 	    <tr>
 		    <td style="width:150px;">
 		        <asp:Localize ID="locPool" runat="server" meta:resourcekey="locPool" Text="Pool:"></asp:Localize>
@@ -33,7 +35,7 @@
 		    <td><asp:Localize ID="lblExternalIP" runat="server" meta:resourcekey="lblExternalIP" Text="IP Address:"></asp:Localize></td>
 		    <td>
 		    
-		        <wsp:EditIPAddressControl id="startIP" runat="server" ValidationGroup="EditAddress" Required="true" />
+		        <wsp:EditIPAddressControl id="startIP" runat="server" ValidationGroup="EditAddress" Required="true" AllowSubnet="true" />
 					            
 			    &nbsp;<asp:Localize ID="locTo" runat="server" meta:resourcekey="locTo" Text="to"></asp:Localize>&nbsp;
 
@@ -52,7 +54,7 @@
         <tr id="SubnetRow" runat="server">
 	        <td><asp:Localize ID="locSubnetMask" runat="server" meta:resourcekey="locSubnetMask" Text="Subnet Mask:"></asp:Localize></td>
 	        <td class="NormalBold">
-	            <wsp:EditIPAddressControl id="subnetMask" runat="server" ValidationGroup="EditAddress" Required="true"  />
+	            <wsp:EditIPAddressControl id="subnetMask" runat="server" ValidationGroup="EditAddress" Required="true" AllowSubnet="true"  />
             </td>
         </tr>
         <tr id="GatewayRow" runat="server">
