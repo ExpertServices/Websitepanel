@@ -4803,12 +4803,12 @@ AS
 
 IF (@Name IS NULL)
 BEGIN
-	SET @Name = '%'
+	SET @Name = ''%''
 END
 
 IF (@Email IS NULL)
 BEGIN
-	SET @Email = '%'
+	SET @Email = ''%''
 END
 
 CREATE TABLE #TempBlackBerryUsers 
@@ -4823,7 +4823,7 @@ CREATE TABLE #TempBlackBerryUsers
 )
 
 
-IF (@SortColumn = 'DisplayName')
+IF (@SortColumn = ''DisplayName'')
 BEGIN
 	INSERT INTO 
 		#TempBlackBerryUsers 
@@ -4871,14 +4871,14 @@ END
 DECLARE @RetCount int
 SELECT @RetCount = COUNT(ID) FROM #TempBlackBerryUsers 
 
-IF (@SortDirection = 'ASC')
+IF (@SortDirection = ''ASC'')
 BEGIN
 	SELECT * FROM #TempBlackBerryUsers 
 	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
 END
 ELSE
 BEGIN
-	IF (@SortColumn = 'DisplayName')
+	IF (@SortColumn = ''DisplayName'')
 	BEGIN
 		SELECT * FROM #TempBlackBerryUsers 
 			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
@@ -4892,7 +4892,8 @@ BEGIN
 END
 
 
-DROP TABLE #TempBlackBerryUsers
+DROP TABLE #TempBlackBerryUsers'
+END
 GO
 
 
