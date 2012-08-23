@@ -101,6 +101,8 @@ namespace WebsitePanel.Providers.WebAppGallery
         public DeploymentParameterValidationKind ValidationKind { get; set; }
         public string ValidationString { get; set; }
         public DeploymentParameterWellKnownTag WellKnownTags { get; set; }
+        public string ValuePrefix { get; set; }
+        public string ValueSuffix { get; set; }
         #endregion
 
 #if DEBUG

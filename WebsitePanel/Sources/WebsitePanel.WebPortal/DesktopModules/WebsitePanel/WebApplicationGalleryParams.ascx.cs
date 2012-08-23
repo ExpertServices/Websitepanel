@@ -28,7 +28,8 @@
 
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+﻿using System.Globalization;
+﻿using System.IO;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.Common;
@@ -52,8 +53,9 @@ namespace WebsitePanel.Portal
                     DeploymentParameterWellKnownTag.FlatFile;
 
         private GalleryApplicationResult appResult;
+        private UserInfo _policyUser;
 
-		protected void Page_Load(object sender, EventArgs e)
+        protected void Page_Load(object sender, EventArgs e)
         {
             if (IsPostBack)
                 return;
@@ -148,10 +150,12 @@ namespace WebsitePanel.Portal
                     AddDatabaseEngine(DeploymentParameterWellKnownTag.Sql, ResourceGroups.MsSql2005, GetSharedLocalizedString("ResourceGroup." + ResourceGroups.MsSql2005));
                 if (cntx.Groups.ContainsKey(ResourceGroups.MsSql2000))
                     AddDatabaseEngine(DeploymentParameterWellKnownTag.Sql, ResourceGroups.MsSql2000, GetSharedLocalizedString("ResourceGroup." + ResourceGroups.MsSql2000));
+
+                SetDBPolicies(UserSettings.MSSQL_POLICY, parameters);
             }
 
             // MySQL Server
-            if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.MySql) != null)
+            else if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.MySql) != null)
             {
                 // load package context
                 PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
@@ -161,19 +165,22 @@ namespace WebsitePanel.Portal
                     AddDatabaseEngine(DeploymentParameterWellKnownTag.MySql, ResourceGroups.MySql5, GetSharedLocalizedString("ResourceGroup." + ResourceGroups.MySql5));
                 if (cntx.Groups.ContainsKey(ResourceGroups.MySql4))
                     AddDatabaseEngine(DeploymentParameterWellKnownTag.MySql, ResourceGroups.MySql4, GetSharedLocalizedString("ResourceGroup." + ResourceGroups.MySql4));
+
+                SetDBPolicies(UserSettings.MYSQL_POLICY, parameters);
             }
 
             // SQLite
-            if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.SqLite) != null)
+            else if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.SqLite) != null)
                 AddDatabaseEngine(DeploymentParameterWellKnownTag.SqLite, "", GetLocalizedString("DatabaseEngine.SQLite"));
 
+            // Flat File
+            else if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.FlatFile) != null)
+                AddDatabaseEngine(DeploymentParameterWellKnownTag.FlatFile, "", GetLocalizedString("DatabaseEngine.FlatFile"));
+
             // VistaFB
-            if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.VistaDB) != null)
+            else if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.VistaDB) != null)
                 AddDatabaseEngine(DeploymentParameterWellKnownTag.VistaDB, "", GetLocalizedString("DatabaseEngine.VistaDB"));
 
-            // Flat File
-            if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.FlatFile) != null)
-                AddDatabaseEngine(DeploymentParameterWellKnownTag.FlatFile, "", GetLocalizedString("DatabaseEngine.FlatFile"));
 
             // hide module if no database required
             divDatabase.Visible = (databaseEngines.Items.Count > 0);
@@ -181,6 +188,112 @@ namespace WebsitePanel.Portal
             // bind parameters
             BindParameters(parameters);
         }
+
+        #region prefix & suffix for database name & username
+        private void SetDBPolicies(string policy, IEnumerable<DeploymentParameter> parameters)
+        {
+            foreach (DeploymentParameter parameter in parameters)
+            {
+                if ((parameter.WellKnownTags & DeploymentParameterWellKnownTag.DBName) != 0)
+                {
+                    // database name
+                    string policyValue = GetPackagePolicy(policy, "DatabaseNamePolicy");
+                    ApplyPrefixSuffixPolicy(parameter, policyValue);
+                }
+
+                if ((parameter.WellKnownTags & DeploymentParameterWellKnownTag.DBUserName) != 0)
+                {
+                    // user name
+                    string policyValue = GetPackagePolicy(policy, "UserNamePolicy");
+                    ApplyPrefixSuffixPolicy(parameter, policyValue);
+                }
+            }
+        }
+
+        private bool ApplyPrefixSuffixPolicy(DeploymentParameter parameter, string policyValue)
+        {
+            if (null != policyValue)
+            {
+                string prefix, suffix;
+                ParsePolicyPrefixSuffix(policyValue, out prefix, out suffix);
+                if (!string.IsNullOrEmpty(prefix))
+                    parameter.ValuePrefix = prefix;
+                if (!string.IsNullOrEmpty(suffix))
+                    parameter.ValueSuffix = suffix;
+                return true;
+            }
+            return false;
+        }
+
+        private void ParsePolicyPrefixSuffix(string policyValue, out string prefix, out string suffix)
+        {
+            prefix = string.Empty;
+            suffix = string.Empty;
+            
+            // parse and enforce policy
+            if (string.IsNullOrEmpty(policyValue)) return;
+            
+            try
+            {
+                // parse settings
+                string[] parts = policyValue.Split(';');
+                bool enabled = Utils.ParseBool(parts[0], false);
+                prefix = parts[4];
+                suffix = parts[5];
+
+                // apply policy
+                if (enabled)
+                {
+                    // prefix
+                    if (!String.IsNullOrEmpty(prefix))
+                    {
+                        // substitute vars
+                        prefix = Utils.ReplaceStringVariable(prefix, "user_id", _policyUser.UserId.ToString(CultureInfo.InvariantCulture));
+                        prefix = Utils.ReplaceStringVariable(prefix, "user_name", _policyUser.Username);
+                    }
+
+                    // suffix
+                    if (!String.IsNullOrEmpty(suffix))
+                    {
+                        // substitute vars
+                        suffix = Utils.ReplaceStringVariable(suffix, "user_id", _policyUser.UserId.ToString(CultureInfo.InvariantCulture));
+                        suffix = Utils.ReplaceStringVariable(suffix, "user_name", _policyUser.Username);
+                    }
+                }
+            }
+            catch
+            {
+                /* skip */
+            }
+        }
+
+        private string GetPackagePolicy(string settingsName, string key)
+        {
+            // load package
+            PackageInfo package = PackagesHelper.GetCachedPackage(PanelSecurity.PackageId);
+            if (package != null)
+            {
+                // load user profile
+                int userId = package.UserId;
+                _policyUser = UsersHelper.GetCachedUser(package.UserId);
+
+                if (_policyUser != null)
+                {
+                    // load settings
+                    UserSettings settings = UsersHelper.GetCachedUserSettings(userId, settingsName);
+                    if (settings != null)
+                    {
+                        string policyValue = settings[key];
+                        if (policyValue != null)
+                            return policyValue;
+                    }
+                }
+            }
+
+            return null;
+        }
+        #endregion
+
 
         private void AddDatabaseEngine(DeploymentParameterWellKnownTag engine, string group, string text)
         {

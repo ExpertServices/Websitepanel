@@ -282,7 +282,11 @@ namespace WebsitePanel.Server.Utils
 			WindowsXP,
 			WindowsServer2003,
 			Vista,
-			WindowsServer2008
+			WindowsServer2008,
+            Windows7,
+            WindowsServer2008R2,
+            Windows8,
+            WindowsServer2012
 		}
 
 		/// <summary>
@@ -362,11 +366,28 @@ namespace WebsitePanel.Server.Utils
 							}
 							break;
 						case 6:
-							if (info.wProductType == (byte)WinPlatform.VER_NT_WORKSTATION)
-								ret = WindowsVersion.Vista;
-							else
-								ret = WindowsVersion.WindowsServer2008;
-							break;
+                            switch (osInfo.Version.Minor)
+                            {
+                                case 0:
+                                    if (info.wProductType == (byte)WinPlatform.VER_NT_WORKSTATION)
+                                        ret = WindowsVersion.Vista;
+                                    else
+                                        ret = WindowsVersion.WindowsServer2008;
+                                    break;
+                                case 1:
+                                    if (info.wProductType == (byte)WinPlatform.VER_NT_WORKSTATION)
+                                        ret = WindowsVersion.Windows7;
+                                    else
+                                        ret = WindowsVersion.WindowsServer2008R2;
+                                    break;
+                                case 2:
+                                    if (info.wProductType == (byte)WinPlatform.VER_NT_WORKSTATION)
+                                        ret = WindowsVersion.Windows8;
+                                    else
+                                        ret = WindowsVersion.WindowsServer2012;
+                                    break;
+                            }
+                            break;
 					}
 					break;
 			}

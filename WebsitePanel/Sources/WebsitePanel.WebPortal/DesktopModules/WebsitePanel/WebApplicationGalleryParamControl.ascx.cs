@@ -58,6 +58,18 @@ namespace WebsitePanel.Portal
             private set { ViewState["DefaultValue"] = value; }
         }
 
+        public string ValuePrefix
+        {
+            get { return ViewState["ValuePrefix"] != null ? (string)ViewState["ValuePrefix"] : null; }
+            private set { ViewState["ValuePrefix"] = value; }
+        }
+
+        public string ValueSuffix
+        {
+            get { return ViewState["ValueSuffix"] != null ? (string)ViewState["ValueSuffix"] : null; }
+            private set { ViewState["ValueSuffix"] = value; }
+        }
+
         public DeploymentParameterWellKnownTag WellKnownTags
         {
             get { return this.wellKnownTags; }
@@ -96,9 +108,23 @@ namespace WebsitePanel.Portal
             this.wellKnownTags = param.WellKnownTags;
             this.validationKind = param.ValidationKind;
             this.validationString = param.ValidationString;
+            this.ValuePrefix = param.ValuePrefix;
+            this.ValueSuffix = param.ValueSuffix;
 
             // toggle controls
             BindControls();
+        }
+
+        public void SetTextValuePrefixSuffix(string prefix, string suffix)
+        {
+            if (!string.IsNullOrEmpty(prefix))
+            {
+                valPrefix.Text = prefix;
+            }
+            if (!string.IsNullOrEmpty(suffix))
+            {
+                valSuffix.Text = suffix;
+            }
         }
 
         public DeploymentParameter GetParameter()
@@ -120,7 +146,7 @@ namespace WebsitePanel.Portal
             if (PasswordControl.Visible)
                 return password.Text;
             else if (TextControl.Visible)
-                return textValue.Text.Trim();
+                return valPrefix.Text + textValue.Text.Trim() + valSuffix.Text;
             else if (BooleanControl.Visible)
                 return boolValue.Checked.ToString();
             else if (EnumControl.Visible)
@@ -185,6 +211,8 @@ namespace WebsitePanel.Portal
                 // Text value
                 TextControl.Visible = true;
                 textValue.Text = DefaultValue;
+                valPrefix.Text = ValuePrefix;
+                valSuffix.Text = ValueSuffix;
             }
 
             

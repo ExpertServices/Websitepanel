@@ -12,7 +12,181 @@ BEGIN
 END
 GO
 
+-- Windows Server 2012
 
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Windows Server 2012')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (104, 1, N'Windows2012', N'Windows Server 2012', N'WebsitePanel.Providers.OS.Windows2012, WebsitePanel.Providers.OS.Windows2012', N'Windows2008', NULL)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 104 AND [PropertyName] = N'UsersHome')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (104, N'UsersHome', N'%SYSTEMDRIVE%\HostingSpaces')
+END
+GO
+
+-- IIS 8.0
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Internet Information Services 8.0')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (105, 2, N'IIS80', N'Internet Information Services 8.0', N'WebsitePanel.Providers.Web.IIs70, WebsitePanel.Providers.Web.IIs70', N'IIS70', NULL)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'AspNet11Pool')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'AspNet11Pool', N'ASP.NET 1.1')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'AspNet40Path')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'AspNet40Path', N'%WINDIR%\Microsoft.NET\Framework\v4.0.30319\aspnet_isapi.dll')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'AspNet40x64Path')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'AspNet40x64Path', N'%WINDIR%\Microsoft.NET\Framework64\v4.0.30319\aspnet_isapi.dll')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'AspNetBitnessMode')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'AspNetBitnessMode', N'32')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'CFFlashRemotingDirectory')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'CFFlashRemotingDirectory', N'C:\ColdFusion9\runtime\lib\wsconfig\1')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'CFScriptsDirectory')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'CFScriptsDirectory', N'C:\Inetpub\wwwroot\CFIDE')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'ClassicAspNet20Pool')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'ClassicAspNet20Pool', N'ASP.NET 2.0 (Classic)')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'ClassicAspNet40Pool')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'ClassicAspNet40Pool', N'ASP.NET 4.0 (Classic)')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'ColdFusionPath')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'ColdFusionPath', N'C:\ColdFusion9\runtime\lib\wsconfig\jrun_iis6.dll')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'GalleryXmlFeedUrl')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'GalleryXmlFeedUrl', N'')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'IntegratedAspNet20Pool')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'IntegratedAspNet20Pool', N'ASP.NET 2.0 (Integrated)')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'IntegratedAspNet40Pool')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'IntegratedAspNet40Pool', N'ASP.NET 4.0 (Integrated)')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'PerlPath')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'PerlPath', N'%SYSTEMDRIVE%\Perl\bin\PerlEx30.dll')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'Php4Path')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'Php4Path', N'%PROGRAMFILES%\PHP\php.exe')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'PhpMode')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'PhpMode', N'FastCGI')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'PhpPath')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'PhpPath', N'%PROGRAMFILES%\PHP\php-cgi.exe')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'ProtectedGroupsFile')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'ProtectedGroupsFile', N'.htgroup')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'ProtectedUsersFile')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'ProtectedUsersFile', N'.htpasswd')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'SecureFoldersModuleAssembly')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'SecureFoldersModuleAssembly', N'WebsitePanel.IIsModules.SecureFolders, WebsitePanel.IIsModules, Version=1.0.0.0, Culture=Neutral, PublicKeyToken=37f9c58a0aa32ff0')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'WebGroupName')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'WebGroupName', N'WSP_IUSRS')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'WmSvc.CredentialsMode')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'WmSvc.CredentialsMode', N'WINDOWS')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 105 AND [PropertyName] = N'WmSvc.Port')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'WmSvc.Port', N'8172')
+END
+GO
+
+-- MS FTP 8.0
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Microsoft FTP Server 8.0')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (106, 3, N'MSFTP80', N'Microsoft FTP Server 8.0', N'WebsitePanel.Providers.FTP.MsFTP, WebsitePanel.Providers.FTP.IIs70', N'MSFTP70', NULL)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 106 AND [PropertyName] = N'FtpGroupName')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (106, N'FtpGroupName', N'WSPFtpUsers')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ServiceDefaultProperties] WHERE [ProviderID] = 106 AND [PropertyName] = N'SiteId')
+BEGIN
+	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (106, N'SiteId', N'Default FTP Site')
+END
+GO
+
+-- end of MS FTP 8.0, IIS 8.0 and Windows 2012
+
+-- new user settings
 IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE ([UserID] = 1) AND  ([SettingsName] = 'WebPolicy') AND ([PropertyName] = 'EnableParkingPageTokens'))
 BEGIN
 	INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'WebPolicy', N'EnableParkingPageTokens', N'False')
@@ -4781,3 +4955,232 @@ BEGIN
 END
 GO
 
+
+
+
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetBlackBerryUsers')
+BEGIN
+EXEC sp_executesql N'
+CREATE PROCEDURE [dbo].[GetBlackBerryUsers]
+(
+	@ItemID int,
+	@SortColumn nvarchar(40),
+	@SortDirection nvarchar(20),
+	@Name nvarchar(400),
+	@Email nvarchar(400),
+	@StartRow int,
+	@Count int	
+)
+AS
+
+IF (@Name IS NULL)
+BEGIN
+	SET @Name = ''%''
+END
+
+IF (@Email IS NULL)
+BEGIN
+	SET @Email = ''%''
+END
+
+CREATE TABLE #TempBlackBerryUsers 
+(	
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int],	
+	[ItemID] [int] NOT NULL,
+	[AccountName] [nvarchar](300) NOT NULL,
+	[DisplayName] [nvarchar](300) NOT NULL,
+	[PrimaryEmailAddress] [nvarchar](300) NULL,
+	[SamAccountName] [nvarchar](100) NULL	
+)
+
+
+IF (@SortColumn = ''DisplayName'')
+BEGIN
+	INSERT INTO 
+		#TempBlackBerryUsers 
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName 
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		BlackBerryUsers bu 
+	ON 
+		ea.AccountID = bu.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.DisplayName
+END
+ELSE
+BEGIN
+	INSERT INTO 
+		#TempBlackBerryUsers
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName 
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		BlackBerryUsers bu 
+	ON 
+		ea.AccountID = bu.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.PrimaryEmailAddress 
+END
+
+DECLARE @RetCount int
+SELECT @RetCount = COUNT(ID) FROM #TempBlackBerryUsers 
+
+IF (@SortDirection = ''ASC'')
+BEGIN
+	SELECT * FROM #TempBlackBerryUsers 
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+END
+ELSE
+BEGIN
+	IF (@SortColumn = ''DisplayName'')
+	BEGIN
+		SELECT * FROM #TempBlackBerryUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
+	END
+	ELSE
+	BEGIN
+		SELECT * FROM #TempBlackBerryUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
+	END
+	
+END
+
+
+DROP TABLE #TempBlackBerryUsers'
+END
+GO
+
+
+
+
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetBlackBerryUsers]
+(
+	@ItemID int,
+	@SortColumn nvarchar(40),
+	@SortDirection nvarchar(20),
+	@Name nvarchar(400),
+	@Email nvarchar(400),
+	@StartRow int,
+	@Count int	
+)
+AS
+
+IF (@Name IS NULL)
+BEGIN
+	SET @Name = '%'
+END
+
+IF (@Email IS NULL)
+BEGIN
+	SET @Email = '%'
+END
+
+CREATE TABLE #TempBlackBerryUsers 
+(	
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int],	
+	[ItemID] [int] NOT NULL,
+	[AccountName] [nvarchar](300) NOT NULL,
+	[DisplayName] [nvarchar](300) NOT NULL,
+	[PrimaryEmailAddress] [nvarchar](300) NULL,
+	[SamAccountName] [nvarchar](100) NULL	
+)
+
+
+IF (@SortColumn = 'DisplayName')
+BEGIN
+	INSERT INTO 
+		#TempBlackBerryUsers 
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName 
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		BlackBerryUsers bu 
+	ON 
+		ea.AccountID = bu.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.DisplayName
+END
+ELSE
+BEGIN
+	INSERT INTO 
+		#TempBlackBerryUsers
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName 
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		BlackBerryUsers bu 
+	ON 
+		ea.AccountID = bu.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.PrimaryEmailAddress 
+END
+
+DECLARE @RetCount int
+SELECT @RetCount = COUNT(ID) FROM #TempBlackBerryUsers 
+
+IF (@SortDirection = 'ASC')
+BEGIN
+	SELECT * FROM #TempBlackBerryUsers 
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+END
+ELSE
+BEGIN
+	IF (@SortColumn = 'DisplayName')
+	BEGIN
+		SELECT * FROM #TempBlackBerryUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
+	END
+	ELSE
+	BEGIN
+		SELECT * FROM #TempBlackBerryUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
+	END
+	
+END
+
+
+DROP TABLE #TempBlackBerryUsers
+GO

@@ -42,7 +42,9 @@
 
     <%-- Text value --%>
     <div id="TextControl" runat="server" class="FormField">
+        <asp:Literal ID="valPrefix" runat="server" Text=""></asp:Literal>
         <asp:TextBox ID="textValue" runat="server" Width="600px"></asp:TextBox>
+        <asp:Literal ID="valSuffix" runat="server" Text=""></asp:Literal>
         <div>
             <asp:RequiredFieldValidator ID="requireTextValue" runat="server" 
                 ControlToValidate="textValue" ValidationGroup="wag" 

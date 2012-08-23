@@ -105,6 +105,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Server.WPIServ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Providers.Mail.SmarterMail10", "WebsitePanel.Providers.Mail.SmarterMail10\WebsitePanel.Providers.Mail.SmarterMail10.csproj", "{ADEAADF8-62E6-4AA9-9E0D-A8E552A2A85A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Providers.OS.Windows2012", "WebsitePanel.Providers.OS.Windows2012\WebsitePanel.Providers.OS.Windows2012.csproj", "{27130BBB-76FA-411E-8B4D-51CD4DC821AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -575,6 +577,16 @@ Global
 		{ADEAADF8-62E6-4AA9-9E0D-A8E552A2A85A}.Release|Mixed Platforms.Build.0 = Release|x86
 		{ADEAADF8-62E6-4AA9-9E0D-A8E552A2A85A}.Release|x86.ActiveCfg = Release|x86
 		{ADEAADF8-62E6-4AA9-9E0D-A8E552A2A85A}.Release|x86.Build.0 = Release|x86
+		{27130BBB-76FA-411E-8B4D-51CD4DC821AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27130BBB-76FA-411E-8B4D-51CD4DC821AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27130BBB-76FA-411E-8B4D-51CD4DC821AF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{27130BBB-76FA-411E-8B4D-51CD4DC821AF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{27130BBB-76FA-411E-8B4D-51CD4DC821AF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{27130BBB-76FA-411E-8B4D-51CD4DC821AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27130BBB-76FA-411E-8B4D-51CD4DC821AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27130BBB-76FA-411E-8B4D-51CD4DC821AF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{27130BBB-76FA-411E-8B4D-51CD4DC821AF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{27130BBB-76FA-411E-8B4D-51CD4DC821AF}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
