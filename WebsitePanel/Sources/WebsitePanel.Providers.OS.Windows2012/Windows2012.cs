@@ -28,15 +28,13 @@
 
 namespace WebsitePanel.Providers.OS
 {
-    public class Windows2008 : Windows2003
+    public class Windows2012 : Windows2003
     {
         public override bool IsInstalled()
         {
             Server.Utils.OS.WindowsVersion version = WebsitePanel.Server.Utils.OS.GetVersion();
-            return version == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2008
-                || version == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2008R2
-                || version == WebsitePanel.Server.Utils.OS.WindowsVersion.Vista
-                || version == WebsitePanel.Server.Utils.OS.WindowsVersion.Windows7;
+            return version == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2012
+                || version == WebsitePanel.Server.Utils.OS.WindowsVersion.Windows8;
         }
     }
 }
