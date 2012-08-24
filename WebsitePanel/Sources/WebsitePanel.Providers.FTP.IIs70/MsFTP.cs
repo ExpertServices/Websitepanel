@@ -966,7 +966,7 @@ namespace WebsitePanel.Providers.FTP
             }
 
             RegistryKey ftp = root.OpenSubKey("SYSTEM\\CurrentControlSet\\Services\\ftpsvc");
-            bool res = value == 7 && ftp != null;
+            bool res = (value == 7 || value == 8) && ftp != null;
             if (ftp != null)
                 ftp.Close();
 

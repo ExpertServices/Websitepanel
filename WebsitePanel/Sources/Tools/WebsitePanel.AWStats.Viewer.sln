@@ -1,5 +1,5 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.AWStats.Viewer", "WebsitePanel.AWStats.Viewer\WebsitePanel.AWStats.Viewer.csproj", "{5F8C0079-C339-4590-BF10-DBA470329293}"
 EndProject
 Global
