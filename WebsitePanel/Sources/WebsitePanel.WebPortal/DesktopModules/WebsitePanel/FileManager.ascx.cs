@@ -33,7 +33,6 @@ using System.Text;
 using System.Web;
 using System.Web.UI.WebControls;
 using WebsitePanel.Providers.OS;
-using Microsoft.Security.Application;
 
 namespace WebsitePanel.Portal
 {
@@ -243,7 +242,7 @@ function SetCreateZipFocus()
         {
             if (e.CommandName == "browse")
             {                
-                litPath.Text =  HttpContext.Current.Server.HtmlEncode((string)e.CommandArgument);
+                litPath.Text =  PortalAntiXSS.Encode((string)e.CommandArgument);
                 BindPath();
             }
         }
@@ -697,7 +696,7 @@ function SetCreateZipFocus()
             if (e.CommandName == "browse")
             {
                 string fileName = (string)e.CommandArgument;
-                litPath.Text += HttpContext.Current.Server.HtmlEncode((litPath.Text != "\\") ? ("\\" + fileName) : fileName);
+                litPath.Text += PortalAntiXSS.Encode((litPath.Text != "\\") ? ("\\" + fileName) : fileName);
                 BindPath();
             }
             else if (e.CommandName == "download")

@@ -1,5 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AuditLogControl.ascx.cs" Inherits="WebsitePanel.Portal.UserControls.AuditLogControl" %>
 <%@ Register Src="PopupHeader.ascx" TagName="PopupHeader" TagPrefix="wsp" %>
+<%@ Import Namespace="WebsitePanel.Portal" %>
 
 <table cellpadding="5" width="100%">
     <tr>
@@ -136,10 +137,10 @@
 		        </asp:LinkButton>
             </ItemTemplate>
         </asp:TemplateField>
-        <asp:TemplateField SortExpression="ItemName" HeaderText="gvLogItemName">
+        <asp:TemplateField SortExpression="ItemName" HeaderText="gvLogItemName" >
             <ItemStyle Wrap="false" />
             <ItemTemplate>
-		         <%# Eval("ItemName")%>
+		         <%# PortalAntiXSS.Encode((string)Eval("ItemName"))%>
             </ItemTemplate>
         </asp:TemplateField>
         <asp:TemplateField SortExpression="Username" HeaderText="gvLogUser">

@@ -2,6 +2,7 @@
 <%@ Import Namespace="WebsitePanel.Portal" %>
 <%@ Register Src="UserControls/ServerDetails.ascx" TagName="ServerDetails" TagPrefix="uc3" %>
 <%@ Register Src="UserControls/Comments.ascx" TagName="Comments" TagPrefix="uc4" %>
+<%@ Import Namespace="WebsitePanel.Portal" %>
 
 
 <asp:Panel id="ButtonsPanel" runat="server" class="FormButtonsBar">
@@ -62,7 +63,7 @@
             <ItemStyle Width="40%"></ItemStyle>
             <ItemTemplate>
 	            <asp:hyperlink id=lnkEdit runat="server" CssClass="Medium" NavigateUrl='<%# GetSpaceHomePageUrl((int)Eval("PackageID")) %>'>
-		            <%# Eval("PackageName") %>
+		            <%# PortalAntiXSS.EncodeOld((string) Eval("PackageName")) %>
 	            </asp:hyperlink>
             </ItemTemplate>
         </asp:TemplateField>

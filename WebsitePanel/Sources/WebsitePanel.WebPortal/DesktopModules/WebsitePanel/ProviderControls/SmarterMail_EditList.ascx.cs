@@ -30,7 +30,6 @@ using System;
 using System.Web.UI.WebControls;
 using WebsitePanel.Providers.Mail;
 using WebsitePanel.WebPortal.Code.Controls;
-using Microsoft.Security.Application;
 
 namespace WebsitePanel.Portal.ProviderControls
 {

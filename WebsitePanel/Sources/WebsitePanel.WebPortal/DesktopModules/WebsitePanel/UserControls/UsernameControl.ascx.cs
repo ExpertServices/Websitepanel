@@ -30,7 +30,6 @@ using System;
 using System.Text;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
-using Microsoft.Security.Application;
 
 namespace WebsitePanel.Portal
 {
@@ -71,7 +70,7 @@ namespace WebsitePanel.Portal
         public string Text
         {
             get { return EditMode ? txtName.Text.Trim() : litPrefix.Text + txtName.Text.Trim() + litSuffix.Text; }
-            set { txtName.Text = value; lblName.Text = Microsoft.Security.Application.Encoder.HtmlEncode(value); }
+            set { txtName.Text = value; lblName.Text = PortalAntiXSS.Encode(value); }
         }
 
         private UserInfo PolicyUser

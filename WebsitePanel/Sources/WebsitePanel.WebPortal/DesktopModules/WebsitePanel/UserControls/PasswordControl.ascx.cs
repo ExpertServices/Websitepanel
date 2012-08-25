@@ -41,7 +41,6 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using WebsitePanel.EnterpriseServer;
-using Microsoft.Security.Application;
 
 namespace WebsitePanel.Portal
 {

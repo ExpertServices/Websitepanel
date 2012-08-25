@@ -29,7 +29,6 @@
 using System;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.EnterpriseServer;
-using Microsoft.Security.Application;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {

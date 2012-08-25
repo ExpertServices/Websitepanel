@@ -35,7 +35,6 @@ using System.Security.Cryptography;
 using System.Runtime.Serialization;
 using System.Globalization;
 using System.Text;
-using Microsoft.Security.Application;
 
 namespace WebsitePanel.WebPortal
 {

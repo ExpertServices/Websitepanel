@@ -38,7 +38,6 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
-using Microsoft.Security.Application;
 using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal
@@ -111,8 +110,8 @@ namespace WebsitePanel.Portal
                 userPassword.ValidationGroup = "NewPassword";
 
                 // account info
-                txtFirstName.Text = Server.HtmlDecode(user.FirstName);
-                txtLastName.Text = Server.HtmlDecode(user.LastName);
+                txtFirstName.Text = PortalAntiXSS.DecodeOld(user.FirstName);
+                txtLastName.Text = PortalAntiXSS.DecodeOld(user.LastName);
                 txtEmail.Text = user.Email;
                 txtSecondaryEmail.Text = user.SecondaryEmail;
                 ddlMailFormat.SelectedIndex = user.HtmlMail ? 1 : 0;
@@ -189,8 +188,8 @@ namespace WebsitePanel.Portal
                 user.IsPeer = true;
 
                 // account info
-                user.FirstName = Server.HtmlEncode(txtFirstName.Text);
-                user.LastName = Server.HtmlEncode(txtLastName.Text);
+                user.FirstName = txtFirstName.Text;
+                user.LastName = txtLastName.Text;
                 user.Email = txtEmail.Text;
                 user.SecondaryEmail = txtSecondaryEmail.Text;
                 user.HtmlMail = ddlMailFormat.SelectedIndex == 1;

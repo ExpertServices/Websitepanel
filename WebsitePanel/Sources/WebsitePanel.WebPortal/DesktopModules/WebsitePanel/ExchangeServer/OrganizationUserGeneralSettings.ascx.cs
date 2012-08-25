@@ -29,7 +29,6 @@
 using System;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
-using Microsoft.Security.Application;
 using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Portal.HostedSolution
@@ -70,7 +69,7 @@ namespace WebsitePanel.Portal.HostedSolution
                 OrganizationUser user = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID,
                     PanelRequest.AccountID);
 
-                litDisplayName.Text = Microsoft.Security.Application.Encoder.HtmlEncode(user.DisplayName);
+                litDisplayName.Text = PortalAntiXSS.Encode(user.DisplayName);
 
                 lblUserDomainName.Text = user.DomainUserName;
 

@@ -38,7 +38,6 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using WebsitePanel.Providers.HostedSolution;
-using Microsoft.Security.Application;
 using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
@@ -63,7 +62,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 ExchangeDistributionList dlist = ES.Services.ExchangeServer.GetDistributionListGeneralSettings(
                     PanelRequest.ItemID, PanelRequest.AccountID);
 
-                litDisplayName.Text = dlist.DisplayName;
+                litDisplayName.Text = PortalAntiXSS.Encode(dlist.DisplayName);
 
                 // bind form
                 txtDisplayName.Text = dlist.DisplayName;
@@ -105,7 +104,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-                litDisplayName.Text = Microsoft.Security.Application.Encoder.HtmlEncode(txtDisplayName.Text);
+                litDisplayName.Text = PortalAntiXSS.Encode(txtDisplayName.Text);
 
                 messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_DLIST_SETTINGS");
             }

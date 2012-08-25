@@ -29,7 +29,6 @@
 using System;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
-using Microsoft.Security.Application;
 
 namespace WebsitePanel.Portal
 {
@@ -53,8 +52,8 @@ namespace WebsitePanel.Portal
                 BindHostingPlans();
 
                 // bind space
-                txtName.Text = Server.HtmlDecode(package.PackageName);
-                txtComments.Text = Server.HtmlDecode(package.PackageComments);
+                txtName.Text = PortalAntiXSS.DecodeOld(package.PackageName);
+                txtComments.Text = PortalAntiXSS.DecodeOld(package.PackageComments);
                 PurchaseDate.SelectedDate = package.PurchaseDate;
                 serverDetails.ServerId = package.ServerId;
                 Utils.SelectListItem(ddlPlan, package.PlanId);
@@ -110,8 +109,8 @@ namespace WebsitePanel.Portal
                 package = ES.Services.Packages.GetPackage(PanelSecurity.PackageId);
 
             package.PackageId = PanelSecurity.PackageId;
-            package.PackageName = Server.HtmlEncode(txtName.Text);
-            package.PackageComments = Server.HtmlEncode(txtComments.Text);
+            package.PackageName = txtName.Text;
+            package.PackageComments = txtComments.Text;
             package.PlanId = Utils.ParseInt(ddlPlan.SelectedValue, 0);
             package.PurchaseDate = PurchaseDate.SelectedDate;
 
@@ -129,7 +128,7 @@ namespace WebsitePanel.Portal
                 if (result.Result < 0)
                 {
                     ShowResultMessage(result.Result);
-                    lblMessage.Text = Microsoft.Security.Application.Encoder.HtmlEncode(GetExceedingQuotasMessage(result.ExceedingQuotas));
+                    lblMessage.Text = PortalAntiXSS.Encode(GetExceedingQuotasMessage(result.ExceedingQuotas));
                     return;
                 }
             }

@@ -34,7 +34,6 @@ using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.EnterpriseServer.Base.Scheduling;
 using WebsitePanel.Portal.Code.Framework;
-using Microsoft.Security.Application;
 
 namespace WebsitePanel.Portal
 {
@@ -151,7 +150,7 @@ namespace WebsitePanel.Portal
 					// The view does not provide ability to set and get parameters.
 					return null;
 				}
-				view.ID = Microsoft.Security.Application.Encoder.HtmlEncode(taskId);
+				view.ID = taskId;
 				view.Visible = visible;
 				view.EnableTheming = true;
 				this.TaskParametersPlaceHolder.Controls.Add(view);
@@ -198,7 +197,7 @@ namespace WebsitePanel.Portal
                 ApplyPackageContextRestrictions(sc.PackageId);
                 PackageId = sc.PackageId;
 
-                txtTaskName.Text = Server.HtmlDecode(sc.ScheduleName);
+                txtTaskName.Text = sc.ScheduleName;
 
                 Utils.SelectListItem(ddlTaskType, sc.TaskId);
 
@@ -310,7 +309,7 @@ namespace WebsitePanel.Portal
             // gather form parameters
             ScheduleInfo sc = new ScheduleInfo();
             sc.ScheduleId = PanelRequest.ScheduleID;
-            sc.ScheduleName = Server.HtmlEncode(txtTaskName.Text.Trim());
+            sc.ScheduleName = txtTaskName.Text.Trim();
             sc.TaskId = ddlTaskType.SelectedValue;
 
             sc.PackageId = PanelSecurity.PackageId;

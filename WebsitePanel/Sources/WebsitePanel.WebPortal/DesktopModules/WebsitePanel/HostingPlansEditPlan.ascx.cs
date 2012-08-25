@@ -30,7 +30,6 @@ using System;
 using System.Web;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
-using Microsoft.Security.Application;
 
 namespace WebsitePanel.Portal
 {
@@ -104,8 +103,8 @@ namespace WebsitePanel.Portal
 			}
 
             // bind plan
-            txtPlanName.Text = Server.HtmlDecode(plan.PlanName);
-            txtPlanDescription.Text = Server.HtmlDecode(plan.PlanDescription);
+            txtPlanName.Text = PortalAntiXSS.DecodeOld(plan.PlanName);
+            txtPlanDescription.Text = PortalAntiXSS.DecodeOld(plan.PlanDescription);
             //chkAvailable.Checked = plan.Available;
 
             //txtSetupPrice.Text = plan.SetupPrice.ToString("0.00");
@@ -137,8 +136,8 @@ namespace WebsitePanel.Portal
             plan.UserId = PanelSecurity.SelectedUserId;
             plan.PlanId = PanelRequest.PlanID;
             plan.IsAddon = false;
-            plan.PlanName = Server.HtmlEncode(txtPlanName.Text);
-            plan.PlanDescription = Server.HtmlEncode(txtPlanDescription.Text);
+            plan.PlanName = txtPlanName.Text;
+            plan.PlanDescription = txtPlanDescription.Text;
             plan.Available = true; // always available
 
             plan.SetupPrice = 0;
@@ -196,7 +195,7 @@ namespace WebsitePanel.Portal
                     if (result.Result < 0)
                     {
                         ShowResultMessage(result.Result);
-                        lblMessage.Text = Microsoft.Security.Application.Encoder.HtmlEncode(GetExceedingQuotasMessage(result.ExceedingQuotas));
+                        lblMessage.Text = PortalAntiXSS.Encode(GetExceedingQuotasMessage(result.ExceedingQuotas));
                         return;
                     }
                 }

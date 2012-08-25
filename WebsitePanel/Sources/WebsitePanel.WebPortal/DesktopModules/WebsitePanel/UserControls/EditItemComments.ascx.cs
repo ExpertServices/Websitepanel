@@ -103,7 +103,7 @@ namespace WebsitePanel.Portal
 
             try
             {
-                int result = ES.Services.Comments.AddComment(ItemTypeId, ItemId, Server.HtmlEncode(txtComments.Text), 2);
+                int result = ES.Services.Comments.AddComment(ItemTypeId, ItemId, txtComments.Text, 2);
                 if (result < 0)
                 {
                     HostModule.ShowResultMessage(result);
@@ -125,7 +125,7 @@ namespace WebsitePanel.Portal
 
         public string WrapComment(string text)
         {
-            return (text != null) ? text.Replace("\n", "<br/>") : text;
+            return (text != null) ? PortalAntiXSS.EncodeOld(text.Replace("\n", "<br/>")) : text;
         }
 
         protected void gvComments_RowDeleting(object sender, GridViewDeleteEventArgs e)

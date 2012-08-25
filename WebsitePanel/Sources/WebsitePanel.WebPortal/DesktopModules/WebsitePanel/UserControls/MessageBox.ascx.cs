@@ -39,7 +39,6 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using System.Web.Services.Protocols;
-using Microsoft.Security.Application;
 
 namespace WebsitePanel.Portal
 {
@@ -81,7 +80,7 @@ namespace WebsitePanel.Portal
                 try
                 {
                     // technical details
-                    litPageUrl.Text = Microsoft.Security.Application.Encoder.HtmlEncode(Request.Url.ToString());
+                    litPageUrl.Text = PortalAntiXSS.Encode(Request.Url.ToString());
                     litLoggedUser.Text = PanelSecurity.LoggedUser.Username;
                     litSelectedUser.Text = PanelSecurity.SelectedUser.Username;
                     litPackageName.Text = PanelSecurity.PackageId.ToString();

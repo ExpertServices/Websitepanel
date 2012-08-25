@@ -63,7 +63,7 @@
 				</asp:hyperlink>
 			</ItemTemplate>
 		</asp:TemplateField>
-		<asp:BoundField DataField="FullName" HtmlEncode="false" SortExpression="FullName" HeaderText="gvUsersName">
+		<asp:BoundField DataField="FullName" HtmlEncode="true" SortExpression="FullName" HeaderText="gvUsersName">
 		    <HeaderStyle Wrap="false" />
             <ItemStyle Wrap="False" />
         </asp:BoundField>

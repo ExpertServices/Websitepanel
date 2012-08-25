@@ -29,7 +29,6 @@
 using System;
 using System.Web.UI.WebControls;
 using WebsitePanel.Providers.HostedSolution;
-using Microsoft.Security.Application;
 using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer
@@ -64,7 +63,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 ExchangeContact contact = ES.Services.ExchangeServer.GetContactGeneralSettings(PanelRequest.ItemID,
                     PanelRequest.AccountID);
 
-                litDisplayName.Text = Microsoft.Security.Application.Encoder.HtmlEncode(contact.DisplayName);
+                litDisplayName.Text = PortalAntiXSS.Encode(contact.DisplayName);
 
                 // bind form
                 txtDisplayName.Text = contact.DisplayName;
@@ -146,7 +145,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-                litDisplayName.Text = Microsoft.Security.Application.Encoder.HtmlEncode(txtDisplayName.Text);
+                litDisplayName.Text = PortalAntiXSS.Encode(txtDisplayName.Text);
 
                 messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_CONTACT_SETTINGS");
             }

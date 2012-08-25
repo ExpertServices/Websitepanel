@@ -3,6 +3,7 @@
 <%@ Register Src="UserControls/UserDetails.ascx" TagName="UserDetails" TagPrefix="uc2" %>
 <%@ Register Src="UserControls/SearchBox.ascx" TagName="SearchBox" TagPrefix="uc1" %>
 <%@ Register Src="UserControls/Quota.ascx" TagName="Quota" TagPrefix="uc4" %>
+<%@ Import Namespace="WebsitePanel.Portal" %>
 
 <div class="FormButtonsBar">
     <div class="Left">
@@ -24,7 +25,7 @@
 			<HeaderStyle Wrap="false" />
 			<ItemTemplate>
 				<asp:hyperlink id="lnkEdit" runat="server" NavigateUrl='<%# EditUrl("ScheduleID", Eval("ScheduleID").ToString(), "edit", "SpaceID=" + PanelSecurity.PackageId) %>'>
-					<%# Eval("ScheduleName") %>
+					<%# PortalAntiXSS.Encode((string)Eval("ScheduleName")) %>
 				</asp:hyperlink>
 			</ItemTemplate>
 		</asp:TemplateField>

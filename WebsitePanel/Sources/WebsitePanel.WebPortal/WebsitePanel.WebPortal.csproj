@@ -172,6 +172,7 @@
     <Compile Include="Code\Adapters\WebControlAdapterExtender.cs" />
     <Compile Include="Code\ContentPane.cs" />
     <Compile Include="Code\Controls\DesktopContextValidator.cs" />
+    <Compile Include="Code\PortalAntiXSS.cs" />
     <Compile Include="Code\PortalUtils.cs" />
     <Compile Include="Code\SecureSessionModule.cs" />
     <Compile Include="Code\WebPortalControlBase.cs">

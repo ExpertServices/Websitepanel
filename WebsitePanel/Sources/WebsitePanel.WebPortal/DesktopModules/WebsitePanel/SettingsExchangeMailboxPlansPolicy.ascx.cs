@@ -56,7 +56,7 @@ namespace WebsitePanel.Portal
         public void BindSettings(UserSettings settings)
         {
             BindMailboxPlans();
-
+            
             txtStatus.Visible = false;
         }
 
@@ -473,8 +473,5 @@ namespace WebsitePanel.Portal
 
             BindMailboxPlans();
         }
-
-
     }
-
 }

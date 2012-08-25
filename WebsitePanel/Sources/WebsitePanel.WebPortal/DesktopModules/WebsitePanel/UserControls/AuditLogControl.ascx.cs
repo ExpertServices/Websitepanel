@@ -32,7 +32,7 @@ using System.Text;
 using System.Web.UI.WebControls;
 using System.Xml;
 using WebsitePanel.EnterpriseServer;
-using Microsoft.Security.Application;
+using WebsitePanel.Portal;
 
 namespace WebsitePanel.Portal.UserControls
 {
@@ -185,9 +185,9 @@ namespace WebsitePanel.Portal.UserControls
 					GetAuditLogSourceName((string)dr["SourceName"]));
                 // Task
 				sb.AppendFormat("\"{0}\",", 
-					Microsoft.Security.Application.Encoder.HtmlEncode(GetAuditLogTaskName((string)dr["SourceName"], (string)dr["TaskName"])));
+					PortalAntiXSS.Encode(GetAuditLogTaskName((string)dr["SourceName"], (string)dr["TaskName"])));
 				// Item-Name
-                sb.AppendFormat("\"{0}\",", Microsoft.Security.Application.Encoder.HtmlEncode(dr["ItemName"].ToString()));
+                sb.AppendFormat("\"{0}\",", PortalAntiXSS.Encode(dr["ItemName"].ToString()));
 				// Execution-Log
 				string executionLog = FormatPlainTextExecutionLog(
 					dr["ExecutionLog"].ToString(), DateTime.Parse(dr["StartDate"].ToString()));

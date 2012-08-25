@@ -27,7 +27,6 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
-using Microsoft.Security.Application;
 using WSP = WebsitePanel.Portal;
 using WebsitePanel.Ecommerce.EnterpriseServer;
 using WebsitePanel.EnterpriseServer;

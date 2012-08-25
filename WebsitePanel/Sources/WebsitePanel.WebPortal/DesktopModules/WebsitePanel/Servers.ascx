@@ -1,4 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Servers.ascx.cs" Inherits="WebsitePanel.Portal.Servers" %>
+<%@ Import Namespace="WebsitePanel.Portal" %>
 <div class="FormButtonsBar">
 	<asp:Button ID="btnAddItem" runat="server" meta:resourcekey="btnAddItem" Text="Add Server" CssClass="Button3" OnClick="btnAddItem_Click" /></td>
 </div>
@@ -11,13 +12,13 @@
 				<td class="Big">
 					<asp:hyperlink id=lnkEdit runat="server" CssClass="Black" NavigateUrl='<%# EditUrl("ServerID", Eval("ServerID").ToString(), "edit_server") %>'
 						Width=100% Height=100%>
-						<%# Eval("ServerName") %>
+						<%# PortalAntiXSS.EncodeOld((string)Eval("ServerName")) %>
 					</asp:hyperlink>
 				</td>
 			</tr>
 			<tr>
 				<td class="Normal">
-					<%# Eval("Comments") %>
+					<%# PortalAntiXSS.EncodeOld((string)Eval("Comments")) %>
 				</td>
 			</tr>
 			<tr>

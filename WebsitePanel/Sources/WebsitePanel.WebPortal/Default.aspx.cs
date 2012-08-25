@@ -42,7 +42,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using System.Globalization;
-using Microsoft.Security.Application;
+using WebsitePanel.Portal;
 
 namespace WebsitePanel.WebPortal
 {
@@ -387,7 +387,7 @@ namespace WebsitePanel.WebPortal
         {
             Label lbl = new Label();
             lbl.Text =
-                Microsoft.Security.Application.Encoder.HtmlEncode("<div style=\"height:300px;overflow:auto;\">" + message.Replace("\n", "<br>") +
+                PortalAntiXSS.Encode("<div style=\"height:300px;overflow:auto;\">" + message.Replace("\n", "<br>") +
                                    "</div>");
             lbl.ForeColor = Color.Red;
             lbl.Font.Bold = true;

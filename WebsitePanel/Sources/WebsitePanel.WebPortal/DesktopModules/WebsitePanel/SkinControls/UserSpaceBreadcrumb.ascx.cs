@@ -78,11 +78,11 @@ namespace WebsitePanel.Portal.SkinControls
                     spanSpace.Visible = true;
                     pnlViewSpace.Visible = true;
 
-                    lnkSpace.Text = package.PackageName;
+                    lnkSpace.Text = PortalAntiXSS.EncodeOld(package.PackageName);
                     lnkSpace.NavigateUrl = PortalUtils.GetSpaceHomePageUrl(package.PackageId);
 
-					cmdSpaceName.Text = package.PackageName;
-					lblSpaceDescription.Text = package.PackageComments;
+                    cmdSpaceName.Text = PortalAntiXSS.EncodeOld(package.PackageName);
+                    lblSpaceDescription.Text = PortalAntiXSS.EncodeOld(package.PackageComments);
 
                     lnkCurrentPage.NavigateUrl = PortalUtils.NavigatePageURL(
                         PortalUtils.GetCurrentPageId(), "SpaceID", PanelSecurity.PackageId.ToString());
@@ -134,7 +134,7 @@ namespace WebsitePanel.Portal.SkinControls
         {
             // update space
             int result = ES.Services.Packages.UpdatePackageName(PanelSecurity.PackageId,
-                Server.HtmlEncode(txtName.Text), lblSpaceDescription.Text);
+                txtName.Text, lblSpaceDescription.Text);
 
             if (result < 0)
             {

@@ -54,8 +54,8 @@ namespace WebsitePanel.Portal
                 return;
 
             ServerInfo server = new ServerInfo();
-            server.ServerName = Server.HtmlEncode(txtName.Text.Trim());
-            server.Comments = Server.HtmlEncode(txtComments.Text);
+            server.ServerName = txtName.Text.Trim();
+            server.Comments = txtComments.Text;
             server.VirtualServer = true;
 
             int serverId = 0;

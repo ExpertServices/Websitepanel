@@ -54,7 +54,7 @@ namespace WebsitePanel.Portal
             PackageInfo package = ES.Services.Packages.GetPackage(PanelSecurity.PackageId);
             if (package != null)
             {
-                litSpaceName.Text = package.PackageName;
+                litSpaceName.Text = PortalAntiXSS.EncodeOld(package.PackageName);
 
                 // bind space status
                 PackageStatus status = (PackageStatus)package.StatusId;

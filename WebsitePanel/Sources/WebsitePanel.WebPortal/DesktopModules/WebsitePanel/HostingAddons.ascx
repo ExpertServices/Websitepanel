@@ -11,9 +11,9 @@
 			<ItemStyle Width="100%"></ItemStyle>
 			<ItemTemplate>
 				<b><asp:hyperlink id="lnkEdit" runat="server" NavigateUrl='<%# EditUrl("PlanID", Eval("PlanID").ToString(), "edit_addon", "UserID=" + Eval("UserID").ToString()) %>'>
-					<%# Eval("PlanName") %>
+					<%# PortalAntiXSS.EncodeOld((string) Eval("PlanName")) %>
 				</asp:hyperlink></b><br />
-				<%# Eval("PlanDescription") %>
+				<%# PortalAntiXSS.EncodeOld((string) Eval("PlanDescription")) %>
 			</ItemTemplate>
 		</asp:TemplateField>
 		<asp:TemplateField>

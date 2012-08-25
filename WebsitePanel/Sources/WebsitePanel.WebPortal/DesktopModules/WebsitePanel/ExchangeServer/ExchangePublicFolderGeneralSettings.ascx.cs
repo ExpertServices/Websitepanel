@@ -29,7 +29,6 @@
 using System;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.EnterpriseServer;
-using Microsoft.Security.Application;
 using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
@@ -120,7 +119,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 string origName = litDisplayName.Text;
                 origName = origName.Substring(0, origName.LastIndexOf("\\"));
 
-                litDisplayName.Text = Microsoft.Security.Application.Encoder.HtmlEncode(origName + txtName.Text);
+                litDisplayName.Text = PortalAntiXSS.Encode(origName + txtName.Text);
 
 				BindSettings();
             }

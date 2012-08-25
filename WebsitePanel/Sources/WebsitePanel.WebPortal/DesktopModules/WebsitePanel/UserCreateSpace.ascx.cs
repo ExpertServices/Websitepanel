@@ -29,7 +29,6 @@
 using System;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
-using Microsoft.Security.Application;
 
 namespace WebsitePanel.Portal
 {
@@ -136,7 +135,7 @@ namespace WebsitePanel.Portal
                 if (result.Result < 0)
                 {
                     ShowResultMessage(result.Result);
-                    lblMessage.Text = Microsoft.Security.Application.Encoder.HtmlEncode(GetExceedingQuotasMessage(result.ExceedingQuotas));
+                    lblMessage.Text = PortalAntiXSS.Encode(GetExceedingQuotasMessage(result.ExceedingQuotas));
                     return;
                 }
                 else

@@ -4,6 +4,7 @@
 <%@ Register Src="UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
+<%@ Import Namespace="WebsitePanel.Portal" %>
 
     <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
     <wsp:SimpleMessageBox id="messageBox" runat="server" />
@@ -23,7 +24,7 @@
 			<asp:TemplateField HeaderText="gvMailboxPlan">
 				<ItemStyle Width="70%"></ItemStyle>
 				<ItemTemplate>
-					<asp:Label id="lnkDisplayMailboxPlan" runat="server" EnableViewState="true" ><%# Eval("MailboxPlan")%></asp:Label>
+					<asp:Label id="lnkDisplayMailboxPlan" runat="server" EnableViewState="true" ><%# PortalAntiXSS.Encode((string)Eval("MailboxPlan"))%></asp:Label>
                  </ItemTemplate>
 			</asp:TemplateField>
 			<asp:TemplateField>

@@ -75,9 +75,9 @@ namespace WebsitePanel.Portal
                     rowDemo.Visible = !editAdminAccount;
 
                     // account info
-                    txtFirstName.Text = Server.HtmlDecode(user.FirstName);
-                    txtLastName.Text = Server.HtmlDecode(user.LastName);
-                    txtSubscriberNumber.Text = Server.HtmlDecode(user.SubscriberNumber);
+                    txtFirstName.Text = PortalAntiXSS.DecodeOld(user.FirstName);
+                    txtLastName.Text = PortalAntiXSS.DecodeOld(user.LastName);
+                    txtSubscriberNumber.Text = PortalAntiXSS.DecodeOld(user.SubscriberNumber);
                     txtEmail.Text = user.Email;
                     txtSecondaryEmail.Text = user.SecondaryEmail;
                     ddlMailFormat.SelectedIndex = user.HtmlMail ? 1 : 0;
@@ -127,9 +127,9 @@ namespace WebsitePanel.Portal
                 user.LoginStatusId = loginStatus.SelectedIndex;
                 
                 // account info
-                user.FirstName = Server.HtmlEncode(txtFirstName.Text);
-                user.LastName = Server.HtmlEncode(txtLastName.Text);
-                user.SubscriberNumber = Server.HtmlEncode(txtSubscriberNumber.Text);
+                user.FirstName = txtFirstName.Text;
+                user.LastName = txtLastName.Text;
+                user.SubscriberNumber = txtSubscriberNumber.Text;
                 user.Email = txtEmail.Text;
                 user.SecondaryEmail = txtSecondaryEmail.Text;
                 user.HtmlMail = ddlMailFormat.SelectedIndex == 1;

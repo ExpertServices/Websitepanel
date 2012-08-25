@@ -29,7 +29,6 @@
 using System;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
-using Microsoft.Security.Application;
 
 namespace WebsitePanel.Portal
 {
@@ -55,7 +54,16 @@ namespace WebsitePanel.Portal
 
         private void BindAddons(int userId)
         {
-            ddlPlan.DataSource = ES.Services.Packages.GetUserAvailableHostingAddons(userId);
+            HostingPlanInfo[] hpi = ES.Services.Packages.GetUserAvailableHostingAddons(userId);
+
+            // Next code is user for decoding incorectly stored plan names and descriptions with pre 1.2.2 installations
+            for (int i = 0; i < hpi.Length; i++)
+            {
+                hpi[i].PlanDescription = PortalAntiXSS.DecodeOld(hpi[i].PlanDescription);
+                hpi[i].PlanName = PortalAntiXSS.DecodeOld(hpi[i].PlanName);
+            }
+
+            ddlPlan.DataSource = hpi;
             ddlPlan.DataBind();
 
             ddlPlan.Items.Insert(0, new ListItem(GetLocalizedString("SelectHostingPlan.Text"), ""));
@@ -137,7 +145,7 @@ namespace WebsitePanel.Portal
                     if (result.Result < 0)
                     {
                         ShowResultMessage(result.Result);
-                        lblMessage.Text = Microsoft.Security.Application.Encoder.HtmlEncode(GetExceedingQuotasMessage(result.ExceedingQuotas));
+                        lblMessage.Text = PortalAntiXSS.Encode(GetExceedingQuotasMessage(result.ExceedingQuotas));
                         return;
                     }
                 }
@@ -156,7 +164,7 @@ namespace WebsitePanel.Portal
                     if (result.Result < 0)
                     {
                         ShowResultMessage(result.Result);
-                        lblMessage.Text = Microsoft.Security.Application.Encoder.HtmlEncode(GetExceedingQuotasMessage(result.ExceedingQuotas));
+                        lblMessage.Text = PortalAntiXSS.Encode(GetExceedingQuotasMessage(result.ExceedingQuotas));
                         return;
                     }
                 }

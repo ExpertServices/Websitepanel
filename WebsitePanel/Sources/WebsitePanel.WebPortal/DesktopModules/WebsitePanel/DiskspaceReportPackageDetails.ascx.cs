@@ -39,7 +39,6 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using WebsitePanel.EnterpriseServer;
-using Microsoft.Security.Application;
 
 namespace WebsitePanel.Portal
 {
@@ -94,7 +93,7 @@ namespace WebsitePanel.Portal
                 i++;
             }
 
-            litTotal.Text = Microsoft.Security.Application.Encoder.HtmlEncode(DiskspaceTotal.ToString());
+            litTotal.Text = PortalAntiXSS.Encode(DiskspaceTotal.ToString());
 
             // get summary
             gvSummary.DataSource = ds;

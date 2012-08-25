@@ -60,8 +60,8 @@ namespace WebsitePanel.Portal
 
                 // bind account details
                 litUsername.Text = user.Username;
-                litFullName.Text = Utils.EllipsisString(user.FirstName + " " + user.LastName, 25);
-                litSubscriberNumber.Text = Server.HtmlDecode(user.SubscriberNumber);
+                litFullName.Text = Utils.EllipsisString(PortalAntiXSS.Encode(user.FirstName) + " " + PortalAntiXSS.Encode(user.LastName), 25);
+                litSubscriberNumber.Text = PortalAntiXSS.Encode(user.SubscriberNumber);
                 litRole.Text = PanelFormatter.GetUserRoleName(user.RoleId);
                 litCreated.Text = user.Created.ToString();
                 litUpdated.Text = user.Changed.ToString();

@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -35,7 +35,6 @@ using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.Virtualization;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.ResultObjects;
-using Microsoft.Security.Application;
 
 namespace WebsitePanel.Portal.VPS
 {
@@ -239,17 +238,17 @@ namespace WebsitePanel.Portal.VPS
         private void BindSummary()
         {
             // general
-            litHostname.Text =  Microsoft.Security.Application.Encoder.HtmlEncode(String.Format("{0}.{1}", txtHostname.Text.Trim(), txtDomain.Text.Trim()));
+            litHostname.Text =  PortalAntiXSS.Encode(String.Format("{0}.{1}", txtHostname.Text.Trim(), txtDomain.Text.Trim()));
             litOperatingSystem.Text = listOperatingSystems.SelectedItem.Text;
 
-            litSummaryEmail.Text = Microsoft.Security.Application.Encoder.HtmlEncode(txtSummaryEmail.Text.Trim());
+            litSummaryEmail.Text = PortalAntiXSS.Encode(txtSummaryEmail.Text.Trim());
             SummSummaryEmailRow.Visible = chkSendSummary.Checked;
 
             // config
-            litCpu.Text = Microsoft.Security.Application.Encoder.HtmlEncode(ddlCpu.SelectedValue);
-            litRam.Text = Microsoft.Security.Application.Encoder.HtmlEncode(txtRam.Text.Trim());
-            litHdd.Text = Microsoft.Security.Application.Encoder.HtmlEncode(txtHdd.Text.Trim());
-            litSnapshots.Text = Microsoft.Security.Application.Encoder.HtmlEncode(txtSnapshots.Text.Trim());
+            litCpu.Text = PortalAntiXSS.Encode(ddlCpu.SelectedValue);
+            litRam.Text = PortalAntiXSS.Encode(txtRam.Text.Trim());
+            litHdd.Text = PortalAntiXSS.Encode(txtHdd.Text.Trim());
+            litSnapshots.Text = PortalAntiXSS.Encode(txtSnapshots.Text.Trim());
             optionDvdInstalled.Value = chkDvdInstalled.Checked;
             optionBootFromCd.Value = chkBootFromCd.Checked;
             optionNumLock.Value = chkNumLock.Checked;
@@ -262,23 +261,23 @@ namespace WebsitePanel.Portal.VPS
             // external network
             optionExternalNetwork.Value = chkExternalNetworkEnabled.Checked;
             SummExternalAddressesNumberRow.Visible = radioExternalRandom.Checked && chkExternalNetworkEnabled.Checked;
-            litExternalAddressesNumber.Text = Microsoft.Security.Application.Encoder.HtmlEncode(txtExternalAddressesNumber.Text.Trim());
+            litExternalAddressesNumber.Text = PortalAntiXSS.Encode(txtExternalAddressesNumber.Text.Trim());
             SummExternalAddressesListRow.Visible = radioExternalSelected.Checked && chkExternalNetworkEnabled.Checked;
 
             List<string> ipAddresses = new List<string>();
             foreach (ListItem li in listExternalAddresses.Items)
                 if (li.Selected)
                     ipAddresses.Add(li.Text);
-            litExternalAddresses.Text = Microsoft.Security.Application.Encoder.HtmlEncode(String.Join(", ", ipAddresses.ToArray()));
+            litExternalAddresses.Text = PortalAntiXSS.Encode(String.Join(", ", ipAddresses.ToArray()));
 
             // private network
             optionPrivateNetwork.Value = chkPrivateNetworkEnabled.Checked;
             SummPrivateAddressesNumberRow.Visible = radioPrivateRandom.Checked && chkPrivateNetworkEnabled.Checked && (ViewState["DHCP"] == null);
-            litPrivateAddressesNumber.Text = Microsoft.Security.Application.Encoder.HtmlEncode(txtPrivateAddressesNumber.Text.Trim());
+            litPrivateAddressesNumber.Text = PortalAntiXSS.Encode(txtPrivateAddressesNumber.Text.Trim());
             SummPrivateAddressesListRow.Visible = radioPrivateSelected.Checked && chkPrivateNetworkEnabled.Checked && (ViewState["DHCP"] == null);
 
             string[] privIps = Utils.ParseDelimitedString(txtPrivateAddressesList.Text, '\n', '\r', ' ', '\t');
-            litPrivateAddressesList.Text = Microsoft.Security.Application.Encoder.HtmlEncode(String.Join(", ", privIps));
+            litPrivateAddressesList.Text = PortalAntiXSS.Encode(String.Join(", ", privIps));
         }
 
         protected void wizard_FinishButtonClick(object sender, WizardNavigationEventArgs e)

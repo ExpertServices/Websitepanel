@@ -75,8 +75,8 @@ namespace WebsitePanel.Portal
                 RedirectToBrowsePage();
 
             // header
-            txtName.Text = Server.HtmlDecode(server.ServerName);
-            txtComments.Text = Server.HtmlDecode(server.Comments);
+            txtName.Text = PortalAntiXSS.DecodeOld(server.ServerName);
+            txtComments.Text = PortalAntiXSS.DecodeOld(server.Comments);
 
             Utils.SelectListItem(ddlPrimaryGroup, server.PrimaryGroupId);
 
@@ -175,8 +175,8 @@ namespace WebsitePanel.Portal
 
             // header
             server.ServerId = PanelRequest.ServerId;
-            server.ServerName = Server.HtmlEncode(txtName.Text);
-            server.Comments = Server.HtmlEncode(txtComments.Text);
+            server.ServerName = txtName.Text;
+            server.Comments = txtComments.Text;
             server.PrimaryGroupId = Utils.ParseInt(ddlPrimaryGroup.SelectedValue, 0);
 
             // instant alias

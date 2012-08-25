@@ -38,7 +38,6 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using WebsitePanel.EnterpriseServer;
-using Microsoft.Security.Application;
 
 namespace WebsitePanel.Portal
 {
@@ -60,7 +59,7 @@ namespace WebsitePanel.Portal
             DataSet dsSpaces = ES.Services.Packages.GetNestedPackagesSummary(PanelSecurity.PackageId);
 
             // all customers
-            lnkAllSpaces.Text = Microsoft.Security.Application.Encoder.HtmlEncode(String.Format("All Spaces ({0})", dsSpaces.Tables[0].Rows[0]["PackagesNumber"]));
+            lnkAllSpaces.Text = String.Format("All Spaces ({0})", dsSpaces.Tables[0].Rows[0]["PackagesNumber"]);
 
             // by status
             repSpaceStatuses.DataSource = dsSpaces.Tables[1];
