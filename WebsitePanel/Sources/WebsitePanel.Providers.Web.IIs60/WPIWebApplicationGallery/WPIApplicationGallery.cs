@@ -251,7 +251,13 @@ namespace WebsitePanel.Providers.Web.WPIWebApplicationGallery
         public GalleryWebAppStatus DownloadAppAndGetStatus(int UserId, string id)
         {
             WpiHelper wpi = GetWpiHelper(UserId);
-            wpi.InstallProducts(new[] { id }, null, null, null);
+            wpi.InstallProducts(
+                new[] { id }, 
+                false, // do not install dependencies
+                null, 
+                null, 
+                null
+                );
 
             return GalleryWebAppStatus.Downloaded;
         }
@@ -387,7 +393,7 @@ namespace WebsitePanel.Providers.Web.WPIWebApplicationGallery
                            Summary = product.Summary,
                            LastUpdated = product.Published,
                            Published = product.Published,
-                           Link = (null == product.Link) ? "" : product.Link.ToString(),
+                           Link = (null==product.Link) ? "" :product.Link.ToString(),
                            InstallerFileSize = size
                        };
         }
