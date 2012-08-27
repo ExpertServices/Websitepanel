@@ -172,6 +172,7 @@ namespace WebsitePanel.Server.WPIService
         {
             _wpiHelper.InstallProducts(
                 _productsToInstall,
+                true, //search and install dependencies
                 WpiHelper.DeafultLanguage,
                 InstallStatusUpdatedHandler, 
                 InstallCompleteHandler

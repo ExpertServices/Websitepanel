@@ -74,13 +74,13 @@ namespace WebsitePanel.Portal
                 // bind app details
                 appHeader.BindApplicationDetails(appResult.Value);
 
-                // check for warnings
-                if (appResult.ErrorCodes.Count > 0)
-                {
-                    // app does not meet requirements
-                    messageBox.ShowMessage(appResult, "WAG_CANNOT_INSTALL_APPLICATION", "WebAppGallery");
-                    btnInstall.Enabled = false;
-                }
+                //// check for warnings
+                //if (appResult.ErrorCodes.Count > 0)
+                //{
+                //    // app does not meet requirements
+                //    messageBox.ShowMessage(appResult, "WAG_CANNOT_INSTALL_APPLICATION", "WebAppGallery");
+                //    //btnInstall.Enabled = false;
+                //}
 
                 // bind app parameters
                 List<DeploymentParameter> parameters = GetApplicationParameters();

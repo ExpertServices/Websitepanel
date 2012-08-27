@@ -64,6 +64,7 @@ namespace WebsitePanel.Portal
                 {
                     // app does not meet requirements
                     messageBox.ShowMessage(appResult, "WAG_CANNOT_INSTALL_APPLICATION", "WebAppGallery");
+                    chIgnoreDependencies.Visible = true;
                     btnInstall.Enabled = false;
                 }
             }
@@ -116,6 +117,11 @@ namespace WebsitePanel.Portal
         protected void btnCancel_Click(object sender, EventArgs e)
         {
             RedirectSpaceHomePage();
+        }
+
+        protected void chIgnoreDependencies_CheckedChanged(object sender, EventArgs e)
+        {
+            btnInstall.Enabled = chIgnoreDependencies.Checked;
         }
 
     }

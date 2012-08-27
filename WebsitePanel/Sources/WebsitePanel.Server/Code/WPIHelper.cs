@@ -185,6 +185,35 @@ namespace WebsitePanel.Server.Code
             return installersToUse;
         }
 
+        public List<Product> GetProducts(IEnumerable<string> productIdsToInstall)
+        {
+            List<Product> productsToInstall = new List<Product>();
+
+            foreach (string productId in productIdsToInstall)
+            {
+                Log(string.Format("Product {0} to be installed", productId));
+
+                Product product = _productManager.GetProduct(productId);
+                if (null == product)
+                {
+                    Log(string.Format("Product {0} not found", productId));
+                    continue;
+                }
+                if (product.IsInstalled(true))
+                {
+                    Log(string.Format("Product {0} is installed", product.Title));
+                }
+                else
+                {
+                    Log(string.Format("Adding product {0}", product.Title));
+
+                    productsToInstall.Add(product);
+                }
+            }
+
+            return productsToInstall;
+        }
+
 
         public List<Product> GetProductsWithDependencies(IEnumerable<string> productIdsToInstall )
         {
@@ -309,6 +338,7 @@ namespace WebsitePanel.Server.Code
 
         public Product GetProduct(string productId)
         {
+
             return _productManager.GetProduct(productId);
         }
 
@@ -321,13 +351,24 @@ namespace WebsitePanel.Server.Code
 
         public void InstallProducts(
             IEnumerable<string> productIdsToInstall,
+            bool installDependencies,
             string languageId,
             EventHandler<InstallStatusEventArgs> installStatusUpdatedHandler,
             EventHandler<EventArgs> installCompleteHandler)
         {
-    
-            // Get products & dependencies list to install
-            List<Product> productsToInstall = GetProductsWithDependencies(productIdsToInstall);
+
+            List<Product> productsToInstall = null;
+            if (installDependencies)
+            {
+                // Get products & dependencies list to install
+                productsToInstall  = GetProductsWithDependencies(productIdsToInstall);
+            }
+            else
+            {
+                productsToInstall  = GetProducts(productIdsToInstall);
+            }
+            
+             
 
             // Get installers
             Language lang = GetLanguage(languageId);
@@ -405,6 +446,8 @@ namespace WebsitePanel.Server.Code
             Product app = GetProduct(appId);
             Installer appInstaller = app.GetInstaller(GetLanguage(languageId));
             WpiAppInstallLogger logger = new WpiAppInstallLogger();
+
+          
 
             if (null != installStatusUpdatedHandler)
             {
