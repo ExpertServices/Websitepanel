@@ -44,24 +44,24 @@
     <wsp:CollapsiblePanel id="lclWpiSettings" runat="server"
 		TargetControlID="WpiPanel" meta:resourcekey="lclWpiSettings" Text="WebPlatformInstaller Settings"/>
 	<asp:Panel ID="WpiPanel" runat="server" Height="0" style="overflow:hidden;">
-     <table>
+       <asp:CheckBox ID="wpiMicrosoftFeed" runat="server" Text="Yes" Visible="false"/>
+       <asp:CheckBox ID="wpiHeliconTechFeed" runat="server" Text="Yes" Visible="false" />
+<%--     <table> 
 			<tr>
 				<td class="SubHead" style="width:200px;">Enable Microsoft feed</td>
 				<td class="Normal">
-                    <asp:CheckBox ID="wpiMicrosoftFeed" runat="server" Text="Yes" />
+                    <asp:CheckBox ID="wpiMicrosoftFeed" runat="server" Text="Yes" Visible="false"/>
                 </td>
 			</tr>
 			
             <tr>
 		        <td class="SubHead" style="width:200px;">Enable HeliconTech feed</td>
                 <td class="Normal">
-                    <asp:CheckBox ID="wpiHeliconTechFeed" runat="server" Text="Yes" />
+                    <asp:CheckBox ID="wpiHeliconTechFeed" runat="server" Text="Yes" Visible="false" />
                 </td>
             </tr>
-
-
-		</table>
-
+	  </table>
+--%>
         <uc1:EditFeedsList ID="wpiEditFeedsList" runat="server" DisplayNames="false" />
 	</asp:Panel>
 </div>

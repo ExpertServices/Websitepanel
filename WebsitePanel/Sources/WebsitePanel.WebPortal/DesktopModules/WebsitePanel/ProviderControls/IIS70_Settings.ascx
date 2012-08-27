@@ -191,10 +191,10 @@
 			</td>
 		</tr>
 
-        <tr>
+<%--        <tr>
 				<td class="SubHead" style="width:200px;">Enable Microsoft feed</td>
 				<td class="Normal">
-                    <asp:CheckBox ID="wpiMicrosoftFeed" runat="server" Text="Yes" />
+                    <asp:CheckBox ID="wpiMicrosoftFeed" runat="server" Text="Yes"  Visible="false" />
                 </td>
 			</tr>
 			
@@ -204,7 +204,9 @@
                     <asp:CheckBox ID="wpiHeliconTechFeed" runat="server" Text="Yes" />
                 </td>
             </tr>
-    </table>
+--%>    
+
+</table>
     <uc6:EditFeedsList ID="wpiEditFeedsList" runat="server" DisplayNames="false" />
 </fieldset>
 <br />

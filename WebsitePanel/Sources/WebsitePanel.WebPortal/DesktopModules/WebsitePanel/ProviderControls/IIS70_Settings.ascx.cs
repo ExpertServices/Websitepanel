@@ -130,8 +130,8 @@ namespace WebsitePanel.Portal.ProviderControls
 			
 
             // WPI
-            wpiMicrosoftFeed.Checked = Utils.ParseBool(settings["FeedEnableMicrosoft"], true);
-            wpiHeliconTechFeed.Checked = Utils.ParseBool(settings["FeedEnableHelicon"], true);
+            //wpiMicrosoftFeed.Checked = Utils.ParseBool(settings["FeedEnableMicrosoft"], true);
+            //wpiHeliconTechFeed.Checked = Utils.ParseBool(settings["FeedEnableHelicon"], true);
             wpiEditFeedsList.Value = settings["FeedUrls"];
 
 
@@ -249,8 +249,8 @@ namespace WebsitePanel.Portal.ProviderControls
 
 			
 
-            settings["FeedEnableMicrosoft"] = wpiMicrosoftFeed.Checked.ToString();
-            settings["FeedEnableHelicon"] = wpiHeliconTechFeed.Checked.ToString();
+            //settings["FeedEnableMicrosoft"] = wpiMicrosoftFeed.Checked.ToString();
+            //settings["FeedEnableHelicon"] = wpiHeliconTechFeed.Checked.ToString();
             settings["FeedUrls"] = wpiEditFeedsList.Value;
             settings["GalleryAppsFilter"] = GetAppsCatalogFilter();
 

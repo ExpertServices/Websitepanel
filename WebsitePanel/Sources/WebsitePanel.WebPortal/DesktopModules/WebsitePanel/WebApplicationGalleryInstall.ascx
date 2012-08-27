@@ -10,12 +10,13 @@
 <div class="FormBody">
 
     <uc1:SimpleMessageBox ID="messageBox" runat="server" />
-    <asp:CheckBox ID="chIgnoreDependencies" runat="server"  
-        Text="Ignore these dependencies"  Visible="false" AutoPostBack="True" 
-        oncheckedchanged="chIgnoreDependencies_CheckedChanged" />
-	 		
+     		
     <uc1:WebApplicationGalleryHeader ID="appHeader" runat="server" />
     
+    <asp:CheckBox ID="chIgnoreDependencies" runat="server"  
+        Text="Ignore dependency fail and install selected product anyway."  Visible="false" AutoPostBack="True" 
+        oncheckedchanged="chIgnoreDependencies_CheckedChanged" />
+	
 </div>
 <div class="FormFooter">
     <asp:Button ID="btnInstall" runat="server" meta:resourcekey="btnInstall" Text="Install" CssClass="Button1" OnClick="btnInstall_Click" OnClientClick="ShowProgressDialog('Installing application...');"/>
