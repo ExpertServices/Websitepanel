@@ -53,7 +53,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
             if (cntx.Quotas.ContainsKey(Quotas.ORGANIZATIONS))
             {
-                btnCreate.Enabled = !(cntx.Quotas[Quotas.ORGANIZATIONS].QuotaAllocatedValue <= gvOrgs.Rows.Count);
+                btnCreate.Enabled = (!(cntx.Quotas[Quotas.ORGANIZATIONS].QuotaAllocatedValue <= gvOrgs.Rows.Count)||(cntx.Quotas[Quotas.ORGANIZATIONS].QuotaAllocatedValue==-1));
             }
             
             //else
