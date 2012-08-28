@@ -323,7 +323,7 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 END
 GO
 
-UPDATE [dbo].[Quotas] SET [QuotaTypeID] = 1 WHERE [QuotaID] = 364
+UPDATE [dbo].[Quotas] SET [QuotaTypeID] = 3 WHERE [QuotaID] = 364
 GO
 
 IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Exchange2007.MaxRecipients')

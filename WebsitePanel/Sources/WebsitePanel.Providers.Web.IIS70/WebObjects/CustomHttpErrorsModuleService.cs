@@ -97,6 +97,10 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 				var config = srvman.GetWebConfiguration(virtualDir.FullQualifiedPath);
 				//
 				var section = config.GetSection(Constants.HttpErrorsSection);
+
+                // enable custom errors
+                section.SetAttributeValue("errorMode", "Custom");
+
 				//
 				var errorsCollection = section.GetCollection();
 				//
