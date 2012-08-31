@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head runat="server">
+<meta http-equiv="X-UA-Compatible" content="IE=9">
     <title>Untitled Page</title>
     <link runat="server" rel="stylesheet" href="~/Styles/Import.css" type="text/css" id="AdaptersInvariantImportCSS" />
 <!--[if lt IE 7]>
