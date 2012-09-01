@@ -3189,7 +3189,7 @@ namespace WebsitePanel.EnterpriseServer
                     displayName,
                     accountName,
                     name,
-                    domain, manager.AccountName, addressLists.ToArray());
+                    domain, manager.SamAccountName, addressLists.ToArray());
 
                 ExchangeDistributionList dl = exchange.GetDistributionListGeneralSettings(accountName);
 
