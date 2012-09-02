@@ -20,3 +20,4 @@ WebsitePanel.Installer/Build
 WebsitePanel/Bin
 msbuild.log
 _ReSharper.*
+web.config
