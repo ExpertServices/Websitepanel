@@ -383,6 +383,11 @@
 		<!-- Update variables in the file -->
 		<FileUpdate Files="$(EnterpriseServerUpdate)\Setup\update_db.sql" Regex="\${release.version}" ReplacementText="$(FileVersion)" />
 		<FileUpdate Files="$(EnterpriseServerUpdate)\Setup\update_db.sql" Regex="\${release.date}" ReplacementText="$(ReleaseDate)" />
+
+		<Copy SourceFiles="$(TrunkFolder)\Database\update_db.sql" DestinationFolder="$(UpdateFolder)" />
+		<!-- Update variables in the file -->
+		<FileUpdate Files="$(UpdateFolder)\update_db.sql" Regex="\${release.version}" ReplacementText="$(FileVersion)" />
+		<FileUpdate Files="$(UpdateFolder)\update_db.sql" Regex="\${release.date}" ReplacementText="$(ReleaseDate)" />
 	</Target>
 
 	<Target Name="CreatePortalUpdate" DependsOnTargets="CreateEnterpriseServerUpdate" >
@@ -496,11 +501,13 @@
 			<PortalUpdateFiles Include="$(PortalUpdate)\**\*.*" />
 			<EnterpriseServerUpdateFiles Include="$(EnterpriseServerUpdate)\**\*.*" />
 			<ServerUpdateFiles Include="$(ServerUpdate)\**\*.*" />
+			<ManualUpdateFiles Include="$(UpdateFolder)\**\*.*" />
 		</ItemGroup>
 
 		<Zip Files="@(PortalUpdateFiles)" ZipFileName="$(DeployFolder)\WebsitePanel-Portal-$(Version)-Update.zip" WorkingDirectory="$(PortalUpdate)" />
 		<Zip Files="@(EnterpriseServerUpdateFiles)" ZipFileName="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version)-Update.zip" WorkingDirectory="$(EnterpriseServerUpdate)" />
 		<Zip Files="@(ServerUpdateFiles)" ZipFileName="$(DeployFolder)\WebsitePanel-Server-$(Version)-Update.zip" WorkingDirectory="$(ServerUpdate)" />
+		<Zip Files="@(ManualUpdateFiles)" ZipFileName="$(DeployFolder)\Manual-Update.zip" WorkingDirectory="$(UpdateFolder)" />
 
 		<!-- zip tools -->
 		<Zip Files="@(ImportCsvInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-Import-CsvBulk-$(Version).zip" WorkingDirectory="$(ImportCsvInstall)" />
