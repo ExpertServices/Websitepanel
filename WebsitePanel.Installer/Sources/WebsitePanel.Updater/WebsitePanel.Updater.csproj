@@ -154,6 +154,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>"$(SolutionDir)..\Resources\ILMerge.exe" "$(TargetPath)" "$(SolutionDir)..\Lib\Ionic.Zip.Reduced.dll" /out:$(SolutionDir)WebsitePanel.Installer\Updater.exe /ndebug</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
