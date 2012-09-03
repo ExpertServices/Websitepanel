@@ -191,7 +191,8 @@ namespace WebsitePanel.Portal
             {
                 if (user.Role == UserRole.Reseller || user.Role == UserRole.User)
                     role.Items.Remove("Administrator");
-                if (user.Role == UserRole.User)
+                if ((user.Role == UserRole.User) |(PanelSecurity.LoggedUser.Role == UserRole.ResellerCSR) |
+                    (PanelSecurity.LoggedUser.Role == UserRole.ResellerHelpdesk))
                     role.Items.Remove("Reseller");
             }
         }

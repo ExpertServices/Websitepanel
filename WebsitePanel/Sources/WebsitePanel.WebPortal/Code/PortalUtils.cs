@@ -404,6 +404,21 @@ namespace WebsitePanel.Portal
             return bResult;
         }
 
+        public static bool GetHideDemoCheckbox()
+        {
+            bool bResult = false;
+
+            try
+            {
+                bResult = Convert.ToBoolean(PortalConfiguration.SiteSettings["HideDemoCheckbox"]);
+            }
+            catch (Exception)
+            {
+
+            }
+
+            return bResult;
+        }
 
 
         private static int GetAuthenticationFormsTimeout()

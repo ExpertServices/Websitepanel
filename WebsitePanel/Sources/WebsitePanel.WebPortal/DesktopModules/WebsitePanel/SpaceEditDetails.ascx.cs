@@ -40,8 +40,26 @@ namespace WebsitePanel.Portal
             {
                 BindSpace();
                 BindSpaceAddons();
+                BindRoles(PanelSecurity.EffectiveUserId);
             }
         }
+
+        private void BindRoles(int userId)
+        {
+            // load selected user
+            UserInfo user = UsersHelper.GetUser(userId);
+
+            if (user != null)
+            {
+                if ((user.Role == UserRole.User) | 
+                    (PanelSecurity.LoggedUser.Role == UserRole.ResellerCSR) |
+                    (PanelSecurity.LoggedUser.Role == UserRole.ResellerHelpdesk) | 
+                    (PanelSecurity.LoggedUser.Role == UserRole.PlatformCSR) |
+                    (PanelSecurity.LoggedUser.Role == UserRole.PlatformHelpdesk))
+                    this.rbPackageQuotas.Enabled = this.rbPlanQuotas.Enabled = false;
+            }
+        }
+
 
         private void BindSpace()
         {

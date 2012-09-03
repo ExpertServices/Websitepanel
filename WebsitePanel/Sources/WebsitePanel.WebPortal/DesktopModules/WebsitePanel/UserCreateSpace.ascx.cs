@@ -74,6 +74,10 @@ namespace WebsitePanel.Portal
             if (!createResources)
                 return;
 
+            if ((PanelSecurity.LoggedUser.Role == UserRole.ResellerCSR) |
+                (PanelSecurity.LoggedUser.Role == UserRole.ResellerHelpdesk))
+                this.chkCreateResources.Enabled = this.chkIntegratedOUProvisioning.Enabled = false;
+
 
             bool systemEnabled = false;
             bool webEnabled = false;
