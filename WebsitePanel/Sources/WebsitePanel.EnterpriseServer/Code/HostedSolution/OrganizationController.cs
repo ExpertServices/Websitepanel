@@ -312,11 +312,14 @@ namespace WebsitePanel.EnterpriseServer
 
 				//create temporary domain name;
 				string domainName = CreateTemporyDomainName(serviceId, organizationId);
+                
 				if (string.IsNullOrEmpty(domainName))
 				{
-					RollbackOrganization(packageId, organizationId);
-					return BusinessErrorCodes.ERROR_ORGANIZATION_TEMP_DOMAIN_IS_NOT_SPECIFIED;
+                    domainName = organizationName;
+					//RollbackOrganization(packageId, organizationId);
+					//return BusinessErrorCodes.ERROR_ORGANIZATION_TEMP_DOMAIN_IS_NOT_SPECIFIED;
 				}
+                
 
 				bool domainCreated;
 				int domainId = CreateDomain(domainName, packageId, out domainCreated);
