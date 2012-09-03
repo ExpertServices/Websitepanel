@@ -20957,9 +20957,6 @@ CREATE PROCEDURE [dbo].[GetPackages]
 )
 AS
 
-IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
-RAISERROR('You are not allowed to access this account', 16, 1)
-
 SELECT
 	P.PackageID,
 	P.ParentPackageID,

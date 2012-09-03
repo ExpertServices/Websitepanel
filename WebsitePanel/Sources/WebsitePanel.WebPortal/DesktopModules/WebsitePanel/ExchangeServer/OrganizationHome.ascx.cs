@@ -67,21 +67,34 @@ namespace WebsitePanel.Portal.ExchangeServer
             mailboxesStats.QuotaValue = exchangeOrgStats.AllocatedMailboxes;
             if (exchangeOrgStats.AllocatedMailboxes != -1) mailboxesStats.QuotaAvailable = exchangeTenantStats.AllocatedMailboxes - exchangeTenantStats.CreatedMailboxes;
 
-            contactsStats.QuotaUsedValue = exchangeOrgStats.CreatedContacts;
-            contactsStats.QuotaValue = exchangeOrgStats.AllocatedContacts;
-            if (exchangeOrgStats.AllocatedContacts != -1) contactsStats.QuotaAvailable = exchangeTenantStats.AllocatedContacts - exchangeTenantStats.CreatedContacts;
 
-            listsStats.QuotaUsedValue = exchangeOrgStats.CreatedDistributionLists;
-            listsStats.QuotaValue = exchangeOrgStats.AllocatedDistributionLists;
-            if (exchangeOrgStats.AllocatedDistributionLists != -1) listsStats.QuotaAvailable = exchangeTenantStats.AllocatedDistributionLists - exchangeTenantStats.CreatedDistributionLists;
+            if (exchangeTenantStats.AllocatedContacts == 0) this.rowContacts.Style.Add("display", "none");
+            else
+            {
+                contactsStats.QuotaUsedValue = exchangeOrgStats.CreatedContacts;
+                contactsStats.QuotaValue = exchangeOrgStats.AllocatedContacts;
+                if (exchangeOrgStats.AllocatedContacts != -1) contactsStats.QuotaAvailable = exchangeTenantStats.AllocatedContacts - exchangeTenantStats.CreatedContacts;
+            }
+
+            if (exchangeTenantStats.AllocatedDistributionLists == 0) this.rowLists.Style.Add("display", "none");
+            else
+            {
+                listsStats.QuotaUsedValue = exchangeOrgStats.CreatedDistributionLists;
+                listsStats.QuotaValue = exchangeOrgStats.AllocatedDistributionLists;
+                if (exchangeOrgStats.AllocatedDistributionLists != -1) listsStats.QuotaAvailable = exchangeTenantStats.AllocatedDistributionLists - exchangeTenantStats.CreatedDistributionLists;
+            }
 
             exchangeStorageStats.QuotaUsedValue = exchangeOrgStats.UsedDiskSpace;
             exchangeStorageStats.QuotaValue = exchangeOrgStats.AllocatedDiskSpace;
             if (exchangeOrgStats.AllocatedDiskSpace != -1) exchangeStorageStats.QuotaAvailable = exchangeTenantStats.AllocatedDiskSpace - exchangeTenantStats.UsedDiskSpace;
 
-            foldersStats.QuotaUsedValue = exchangeOrgStats.CreatedPublicFolders;
-            foldersStats.QuotaValue = exchangeOrgStats.AllocatedPublicFolders;
-            if (exchangeOrgStats.AllocatedPublicFolders != -1) foldersStats.QuotaAvailable = exchangeTenantStats.AllocatedPublicFolders - exchangeTenantStats.CreatedPublicFolders;
+            if (exchangeTenantStats.AllocatedPublicFolders == 0) this.rowFolders.Style.Add("display", "none");
+            else
+            {
+                foldersStats.QuotaUsedValue = exchangeOrgStats.CreatedPublicFolders;
+                foldersStats.QuotaValue = exchangeOrgStats.AllocatedPublicFolders;
+                if (exchangeOrgStats.AllocatedPublicFolders != -1) foldersStats.QuotaAvailable = exchangeTenantStats.AllocatedPublicFolders - exchangeTenantStats.CreatedPublicFolders;
+            }
         }
 
         private void BindOrgStats()

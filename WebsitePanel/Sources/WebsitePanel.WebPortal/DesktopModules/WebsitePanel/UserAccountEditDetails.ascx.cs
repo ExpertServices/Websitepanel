@@ -40,6 +40,8 @@ namespace WebsitePanel.Portal
             if (!IsPostBack)
             {
                 BindUser();
+
+                if (PortalUtils.GetHideDemoCheckbox()) rowDemo.Visible = false;
             }
         }
 
