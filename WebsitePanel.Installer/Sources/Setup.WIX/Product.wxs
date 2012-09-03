@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+  <?include Config.wxi?>
+  <?define VERSION="!(bind.FileVersion.WebsitePanel.Installer.exe)"?>
+  
+  <Product Id="*" Name="WebsitePanel Installer" Language="1033" Version="1.2.2" Manufacturer="Outercurve Foundation" UpgradeCode="629ccd5c-1f6d-4168-bbe6-01c69e232f43">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    
+    <MediaTemplate EmbedCab="yes" />
+     
+		<Feature Id="ProductFeature" Title="WebsitePanel Installer" Level="1">
+      <ComponentRef Id="ProductFiles" />
+      <ComponentRef Id="ApplicationShortcut" />
+		</Feature>
+
+    <UIRef Id="WixUI_Minimal" />
+    <UI />
+
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+    
+    
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="WebsitePanel Installer" />
+			</Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="WebsitePanel" />
+      </Directory>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+    
+      <!-- Binaries -->
+      <DirectoryRef Id="INSTALLFOLDER">
+       <Component Id="ProductFiles" Guid="A89FA6CF-53E2-4390-9E9D-11CD4297D738">
+        <File Id="WebsitePanel.Installer.Core.dll" Source="$(var.BUILDPATH)\WebsitePanel.Installer.Core.dll" />
+        <File Id="WebsitePanel.Installer.exe" Source="$(var.BUILDPATH)\WebsitePanel.Installer.exe" />
+        <File Id="WebsitePanel.Installer.exe.config" Source="$(var.BUILDPATH)\WebsitePanel.Installer.exe.config" />
+        <File Id="WebsitePanel.SilentInstaller.exe" Source="$(var.BUILDPATH)\WebsitePanel.SilentInstaller.exe" />
+        <File Id="DotNetZip" Source="$(var.BUILDPATH)\Ionic.Zip.Reduced.dll" />
+      </Component>
+      </DirectoryRef>
+    
+      <!-- Shortcut -->
+      <DirectoryRef Id="ApplicationProgramsFolder"> 
+       <Component Id="ApplicationShortcut" Guid="2135C88C-E14C-4280-B553-2D8B41468F95">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+          Name="WebsitePanel Installer"
+          Description="WebsitePanel Installer"
+          Target="[INSTALLFOLDER]WebsitePanel.Installer.exe"
+          WorkingDirectory="INSTALLFOLDER"/>
+        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\WebsitePanel\WebsitePanel Installer" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+
+  </Fragment>
+</Wix>
