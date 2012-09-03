@@ -49,6 +49,8 @@ namespace WebsitePanel.Portal
             if (!IsPostBack)
             {
                 BindUser();
+
+                if (PortalUtils.GetHideDemoCheckbox()) chkDemo.Visible = lblDemoAccount.Visible= false;
             }
         }
 

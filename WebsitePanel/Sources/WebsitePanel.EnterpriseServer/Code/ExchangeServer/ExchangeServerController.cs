@@ -139,89 +139,116 @@ namespace WebsitePanel.EnterpriseServer
 
 		public static OrganizationStatistics GetOrganizationStatistics(int itemId)
 		{
-			#region Demo Mode
-			if (IsDemoMode)
-			{
-				OrganizationStatistics stats = new OrganizationStatistics();
-				stats.AllocatedMailboxes = 10;
-				stats.CreatedMailboxes = 4;
-				stats.AllocatedContacts = 4;
-				stats.CreatedContacts = 2;
-				stats.AllocatedDistributionLists = 5;
-				stats.CreatedDistributionLists = 1;
-				stats.AllocatedPublicFolders = 40;
-				stats.CreatedPublicFolders = 4;
-				stats.AllocatedDomains = 5;
-				stats.CreatedDomains = 2;
-				stats.AllocatedDiskSpace = 200;
-				stats.UsedDiskSpace = 70;
-				return stats;
-			}
-			#endregion
+            return GetOrganizationStatisticsInternal(itemId, false);
+		}
 
-			// place log record
-			TaskManager.StartTask("EXCHANGE", "GET_ORG_STATS");
-			TaskManager.ItemId = itemId;
+        public static OrganizationStatistics GetOrganizationStatisticsByOrganization(int itemId)
+        {
+            return GetOrganizationStatisticsInternal(itemId, true);
+        }
 
-			try
-			{
+
+        private static OrganizationStatistics GetOrganizationStatisticsInternal(int itemId, bool byOrganization)
+        {
+            #region Demo Mode
+            if (IsDemoMode)
+            {
+                OrganizationStatistics stats = new OrganizationStatistics();
+                stats.AllocatedMailboxes = 10;
+                stats.CreatedMailboxes = 4;
+                stats.AllocatedContacts = 4;
+                stats.CreatedContacts = 2;
+                stats.AllocatedDistributionLists = 5;
+                stats.CreatedDistributionLists = 1;
+                stats.AllocatedPublicFolders = 40;
+                stats.CreatedPublicFolders = 4;
+                stats.AllocatedDomains = 5;
+                stats.CreatedDomains = 2;
+                stats.AllocatedDiskSpace = 200;
+                stats.UsedDiskSpace = 70;
+                return stats;
+            }
+            #endregion
+
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "GET_ORG_STATS");
+            TaskManager.ItemId = itemId;
+
+            try
+            {
                 Organization org = (Organization)PackageController.GetPackageItem(itemId);
                 if (org == null)
                     return null;
 
                 OrganizationStatistics stats = new OrganizationStatistics();
-                UserInfo user = ObjectUtils.FillObjectFromDataReader<UserInfo>(DataProvider.GetUserByExchangeOrganizationIdInternally(itemId));
 
-                List<PackageInfo> Packages = PackageController.GetPackages(user.UserId);
-
-                if ((Packages != null) & (Packages.Count > 0))
+                if (byOrganization)
                 {
-                    foreach (PackageInfo Package in Packages)
+                    OrganizationStatistics tempStats = ObjectUtils.FillObjectFromDataReader<OrganizationStatistics>(DataProvider.GetExchangeOrganizationStatistics(org.Id));
+
+                    stats.CreatedMailboxes = tempStats.CreatedMailboxes;
+                    stats.CreatedContacts = tempStats.CreatedContacts;
+                    stats.CreatedDistributionLists = tempStats.CreatedDistributionLists;
+                    stats.CreatedDomains = tempStats.CreatedDomains;
+                    stats.CreatedPublicFolders = tempStats.CreatedPublicFolders;
+                    stats.UsedDiskSpace = tempStats.UsedDiskSpace;
+                }
+                else
+                {
+                    UserInfo user = ObjectUtils.FillObjectFromDataReader<UserInfo>(DataProvider.GetUserByExchangeOrganizationIdInternally(org.Id));
+                    List<PackageInfo> Packages = PackageController.GetPackages(user.UserId);
+
+                    if ((Packages != null) & (Packages.Count > 0))
                     {
-                        List<Organization> orgs = null;
-
-                        orgs = GetExchangeOrganizations(Package.PackageId, false);
-
-                        if ((orgs != null) & (orgs.Count > 0))
+                        foreach (PackageInfo Package in Packages)
                         {
-                            foreach (Organization o in orgs)
-                            {
-                                OrganizationStatistics tempStats = ObjectUtils.FillObjectFromDataReader<OrganizationStatistics>(DataProvider.GetExchangeOrganizationStatistics(o.Id));
+                            List<Organization> orgs = null;
 
-                                stats.CreatedMailboxes += tempStats.CreatedMailboxes;
-                                stats.CreatedContacts += tempStats.CreatedContacts;
-                                stats.CreatedDistributionLists += tempStats.CreatedDistributionLists;
-                                stats.CreatedDomains += tempStats.CreatedDomains;
-                                stats.CreatedPublicFolders += tempStats.CreatedPublicFolders;
-                                stats.UsedDiskSpace += tempStats.UsedDiskSpace;
+                            orgs = GetExchangeOrganizations(Package.PackageId, false);
+
+                            if ((orgs != null) & (orgs.Count > 0))
+                            {
+                                foreach (Organization o in orgs)
+                                {
+                                    OrganizationStatistics tempStats = ObjectUtils.FillObjectFromDataReader<OrganizationStatistics>(DataProvider.GetExchangeOrganizationStatistics(o.Id));
+
+                                    stats.CreatedMailboxes += tempStats.CreatedMailboxes;
+                                    stats.CreatedContacts += tempStats.CreatedContacts;
+                                    stats.CreatedDistributionLists += tempStats.CreatedDistributionLists;
+                                    stats.CreatedDomains += tempStats.CreatedDomains;
+                                    stats.CreatedPublicFolders += tempStats.CreatedPublicFolders;
+                                    stats.UsedDiskSpace += tempStats.UsedDiskSpace;
+                                }
                             }
                         }
                     }
                 }
-				
-				// disk space
-				//stats.UsedDiskSpace = org.DiskSpace;
+
+                // disk space
+                //stats.UsedDiskSpace = org.DiskSpace;
 
 
-				// allocated quotas
-				PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
-				stats.AllocatedMailboxes = cntx.Quotas[Quotas.EXCHANGE2007_MAILBOXES].QuotaAllocatedValue;
-				stats.AllocatedContacts = cntx.Quotas[Quotas.EXCHANGE2007_CONTACTS].QuotaAllocatedValue;
-				stats.AllocatedDistributionLists = cntx.Quotas[Quotas.EXCHANGE2007_DISTRIBUTIONLISTS].QuotaAllocatedValue;
-				stats.AllocatedPublicFolders = cntx.Quotas[Quotas.EXCHANGE2007_PUBLICFOLDERS].QuotaAllocatedValue;				
-				stats.AllocatedDiskSpace = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
+                // allocated quotas
+                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
+                stats.AllocatedMailboxes = cntx.Quotas[Quotas.EXCHANGE2007_MAILBOXES].QuotaAllocatedValue;
+                stats.AllocatedContacts = cntx.Quotas[Quotas.EXCHANGE2007_CONTACTS].QuotaAllocatedValue;
+                stats.AllocatedDistributionLists = cntx.Quotas[Quotas.EXCHANGE2007_DISTRIBUTIONLISTS].QuotaAllocatedValue;
+                stats.AllocatedPublicFolders = cntx.Quotas[Quotas.EXCHANGE2007_PUBLICFOLDERS].QuotaAllocatedValue;
+                stats.AllocatedDiskSpace = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
 
-				return stats;
-			}
-			catch (Exception ex)
-			{
-				throw TaskManager.WriteError(ex);
-			}
-			finally
-			{
-				TaskManager.CompleteTask();
-			}
-		}
+                return stats;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+
 
 		public static int CalculateOrganizationDiskspace(int itemId)
 		{

@@ -44,12 +44,14 @@ namespace WebsitePanel.Portal.CRM
             }
             else
             {
-                OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+                OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
+                OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
                 int allocatedCrmUsers = stats.AllocatedCRMUsers;
                 int usedUsers = stats.CreatedCRMUsers;
                 usersQuota.QuotaUsedValue = usedUsers;
                 usersQuota.QuotaValue = allocatedCrmUsers;
-                
+
+                if (stats.AllocatedCRMUsers != -1) usersQuota.QuotaAvailable = tenantStats.AllocatedCRMUsers - tenantStats.CreatedCRMUsers;
             }
         }
 

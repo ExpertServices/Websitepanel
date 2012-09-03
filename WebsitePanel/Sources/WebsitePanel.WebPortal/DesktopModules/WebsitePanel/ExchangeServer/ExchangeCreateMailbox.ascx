@@ -121,8 +121,6 @@
 							<td>
 							    <asp:RadioButtonList ID="rbMailboxType" runat="server">
 							        <asp:ListItem Value="1" Selected="true" meta:resourcekey="UserMailbox">User mailbox</asp:ListItem>
-							        <asp:ListItem Value="5" meta:resourcekey="RoomMailbox">Room mailbox</asp:ListItem>
-							        <asp:ListItem Value="6" meta:resourcekey="EquipmentMailbox">Equipment mailbox</asp:ListItem>
 							    </asp:RadioButtonList>
                             </td>
 						</tr>

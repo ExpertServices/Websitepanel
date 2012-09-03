@@ -41,11 +41,14 @@ namespace WebsitePanel.Portal.OCS
 
         private void BindStats()
         {            
-            OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+            OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
+            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
             int allocatedOCSUsers = stats.AllocatedOCSUsers;
             int usedUsers = stats.CreatedOCSUsers;
             usersQuota.QuotaUsedValue = usedUsers;
             usersQuota.QuotaValue = allocatedOCSUsers;
+
+            if (stats.AllocatedOCSUsers != -1) usersQuota.QuotaAvailable = tenantStats.AllocatedOCSUsers - tenantStats.CreatedOCSUsers;
         }
 
         protected void btnCreateUser_Click(object sender, EventArgs e)

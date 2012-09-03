@@ -975,6 +975,9 @@
   <data name="Error.108" xml:space="preserve">
     <value>You should have Reseller priviledges to perform this operation</value>
   </data>
+  <data name="Error.112" xml:space="preserve">
+    <value>You have not enough priviledges to perform this operation</value>
+  </data>
   <data name="Error.1201" xml:space="preserve">
     <value>Web Site does not exist</value>
   </data>

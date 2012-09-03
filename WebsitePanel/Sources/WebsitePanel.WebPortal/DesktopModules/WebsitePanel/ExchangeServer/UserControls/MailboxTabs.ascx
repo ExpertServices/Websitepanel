@@ -4,7 +4,7 @@
         <td>
            
             <asp:DataList ID="dlTabs" runat="server" RepeatDirection="Horizontal"
-                RepeatLayout="Flow" EnableViewState="false"  RepeatColumns="6" ItemStyle-Height="28px"  SeparatorStyle-CssClass="Separator" SeparatorStyle-Height="22px" >
+                RepeatLayout="Flow" EnableViewState="false"  RepeatColumns="7" ItemStyle-Height="28px"  SeparatorStyle-CssClass="Separator" SeparatorStyle-Height="22px" >
                 <ItemStyle Wrap="False" />
                 <ItemTemplate >
                     <asp:HyperLink ID="lnkTab" runat="server" CssClass="Tab" NavigateUrl='<%# Eval("Url") %>'>

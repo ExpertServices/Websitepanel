@@ -81,8 +81,12 @@ namespace WebsitePanel.EnterpriseServer
             return ExchangeServerController.GetOrganizationStatistics(itemId);
         }
 
-
-
+        [WebMethod]
+        public OrganizationStatistics GetOrganizationStatisticsByOrganization(int itemId)
+        {
+            return ExchangeServerController.GetOrganizationStatisticsByOrganization(itemId);
+        }
+        
         [WebMethod]
         public int DeleteOrganization(int itemId)
         {

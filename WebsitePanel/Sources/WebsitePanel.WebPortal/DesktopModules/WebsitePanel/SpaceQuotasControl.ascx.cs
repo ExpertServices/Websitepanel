@@ -54,6 +54,9 @@ namespace WebsitePanel.Portal
             try
             {
                 dsQuotas = ES.Services.Packages.GetPackageQuotas(packageId);
+                dsQuotas.Tables[1].Columns.Add("QuotaAvailable", typeof(int));
+                foreach (DataRow r in dsQuotas.Tables[1].Rows) r["QuotaAvailable"] = -1;
+
                 dlGroups.DataSource = dsQuotas.Tables[0];
                 dlGroups.DataBind();
             }

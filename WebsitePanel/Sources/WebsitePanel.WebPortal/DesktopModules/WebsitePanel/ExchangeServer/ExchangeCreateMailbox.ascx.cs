@@ -86,6 +86,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                 if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
                 {
                     locSubscriberNumber.Visible = txtSubscriberNumber.Visible = valRequireSubscriberNumber.Enabled = false;
+                    rbMailboxType.Items.Add(new System.Web.UI.WebControls.ListItem(GetLocalizedString("RoomMailbox"),"5"));
+                    rbMailboxType.Items.Add(new System.Web.UI.WebControls.ListItem(GetLocalizedString("EquipmentMailbox"),"6"));
                 }
             }
 

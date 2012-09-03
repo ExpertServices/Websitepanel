@@ -2,5 +2,6 @@
 <%@ Register Src="Gauge.ascx" TagName="Gauge" TagPrefix="uc1" %>
 <uc1:Gauge ID="gauge" runat="server"
     Progress='<%# Eval("QuotaUsedValue") %>'
-    Total='<%# Eval("QuotaValue") %>' />
+    Total='<%# Eval("QuotaValue") %>' 
+    Available='<%# Eval("QuotaAvailable") %>'/>
 <asp:Label ID="litValue" runat="server"></asp:Label>

@@ -86,7 +86,7 @@
                                 <wsp:QuotaViewer ID="mailboxesStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
-                        <tr class="OrgStatsRow">
+                        <tr class="OrgStatsRow" id="rowContacts" runat="server">
                             <td align="right" nowrap>
                                 <asp:HyperLink ID="lnkContacts" runat="server" meta:resourcekey="lnkContacts"></asp:HyperLink>
                             </td>
@@ -94,12 +94,20 @@
                                 <wsp:QuotaViewer ID="contactsStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
-                        <tr class="OrgStatsRow">
+                        <tr class="OrgStatsRow" id="rowLists" runat="server">
                             <td align="right" nowrap>
                                 <asp:HyperLink ID="lnkLists" runat="server" meta:resourcekey="lnkLists"></asp:HyperLink>
                             </td>
                             <td>
                                 <wsp:QuotaViewer ID="listsStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                        <tr class="OrgStatsRow"  id="rowFolders" runat="server">
+                            <td align="right" nowrap>
+                                <asp:HyperLink ID="lnkFolders" runat="server" meta:resourcekey="lnkFolders"></asp:HyperLink>
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="foldersStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
                         <tr class="OrgStatsRow">

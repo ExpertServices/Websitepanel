@@ -77,6 +77,7 @@ namespace WebsitePanel.Portal
                     quotaViewer.QuotaTypeId = quota.QuotaTypeId;
                     quotaViewer.QuotaUsedValue = quota.QuotaUsedValue;
                     quotaViewer.QuotaValue = quota.QuotaAllocatedValue;
+                    quotaViewer.QuotaAvailable = -1;
                 	//this.Visible = quota.QuotaAllocatedValue != 0;
                 }
                 else
@@ -85,6 +86,7 @@ namespace WebsitePanel.Portal
                     quotaViewer.QuotaTypeId = 1; // bool
                     quotaViewer.QuotaUsedValue = 0;
                     quotaViewer.QuotaValue = 0;
+                    quotaViewer.QuotaAvailable = -1;
                 }
             }
             catch

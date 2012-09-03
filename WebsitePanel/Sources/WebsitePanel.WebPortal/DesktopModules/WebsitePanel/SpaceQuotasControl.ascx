@@ -19,7 +19,8 @@
                             <uc1:QuotaViewer ID="quota" runat="server"
                                 QuotaTypeId='<%# Eval("QuotaTypeId") %>'
                                 QuotaUsedValue='<%# Eval("QuotaUsedValue") %>'
-                                QuotaValue='<%# Eval("QuotaValue") %>' />
+                                QuotaValue='<%# Eval("QuotaValue") %>'
+                                QuotaAvailable='<%# Eval("QuotaAvailable") %>'/>
                         </div>
                     </div>
                 </ItemTemplate>

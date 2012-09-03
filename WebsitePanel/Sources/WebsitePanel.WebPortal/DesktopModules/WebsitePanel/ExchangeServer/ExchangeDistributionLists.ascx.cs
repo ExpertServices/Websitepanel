@@ -57,10 +57,11 @@ namespace WebsitePanel.Portal.ExchangeServer
         private void BindStats()
         {
             // quota values
-            OrganizationStatistics stats =
-                ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
+            OrganizationStatistics stats = ES.Services.ExchangeServer.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
+            OrganizationStatistics tenantStats = ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
             listsQuota.QuotaUsedValue = stats.CreatedDistributionLists;
             listsQuota.QuotaValue = stats.AllocatedDistributionLists;
+            if (stats.AllocatedDistributionLists != -1) listsQuota.QuotaAvailable = tenantStats.AllocatedDistributionLists - tenantStats.CreatedDistributionLists;
         }
 
         protected void btnCreateList_Click(object sender, EventArgs e)

@@ -719,6 +719,15 @@ namespace WebsitePanel.EnterpriseServer
                 // check account
                 result.Result = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive
                     | DemandAccount.IsReseller);
+
+                if (result.Result < 0)
+                    result.Result = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive
+                    | DemandAccount.IsPlatformCSR);
+
+                if (result.Result < 0)
+                    result.Result = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive
+                    | DemandAccount.IsResellerCSR);
+
                 if (result.Result < 0) return result;
 
                 // load package
@@ -979,6 +988,15 @@ namespace WebsitePanel.EnterpriseServer
             // check account
             result.Result = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive
                 | DemandAccount.IsReseller);
+
+            if (result.Result < 0)
+                result.Result = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive
+                | DemandAccount.IsPlatformCSR);
+
+            if (result.Result < 0)
+                result.Result = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive
+                | DemandAccount.IsResellerCSR);
+            
             if (result.Result < 0) return result;
 
             int addonId = 0;
@@ -1004,6 +1022,15 @@ namespace WebsitePanel.EnterpriseServer
             // check account
             result.Result = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive
                 | DemandAccount.IsReseller);
+
+            if (result.Result < 0)
+                result.Result = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive
+                | DemandAccount.IsPlatformCSR);
+
+            if (result.Result < 0)
+                result.Result = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive
+                | DemandAccount.IsResellerCSR);
+
             if (result.Result < 0) return result;
 
             result.ExceedingQuotas = DataProvider.UpdatePackageAddon(SecurityContext.User.UserId, addon.PackageAddonId,

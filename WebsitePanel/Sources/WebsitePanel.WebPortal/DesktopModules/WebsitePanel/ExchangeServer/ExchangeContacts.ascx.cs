@@ -57,10 +57,11 @@ namespace WebsitePanel.Portal.ExchangeServer
         private void BindStats()
         {
             // quota values
-            OrganizationStatistics stats =
-                ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
+            OrganizationStatistics stats = ES.Services.ExchangeServer.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
+            OrganizationStatistics tenantStats = ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
             contactsQuota.QuotaUsedValue = stats.CreatedContacts;
             contactsQuota.QuotaValue = stats.AllocatedContacts;
+            if (stats.AllocatedContacts != -1) contactsQuota.QuotaAvailable = tenantStats.AllocatedContacts - tenantStats.CreatedContacts;
         }
 
         protected void btnCreateContact_Click(object sender, EventArgs e)

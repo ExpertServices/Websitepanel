@@ -92,6 +92,13 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public OrganizationStatistics GetOrganizationStatisticsByOrganization(int itemId)
+        {
+            return OrganizationController.GetOrganizationStatisticsByOrganization(itemId);
+        }
+
+
+        [WebMethod]
         public Organization GetOrganization(int itemId)
         {
             return OrganizationController.GetOrganization(itemId);

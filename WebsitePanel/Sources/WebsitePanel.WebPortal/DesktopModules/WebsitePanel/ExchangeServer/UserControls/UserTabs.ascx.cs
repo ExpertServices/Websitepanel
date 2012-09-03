@@ -50,7 +50,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
         {
             List<Tab> tabsList = new List<Tab>();
             tabsList.Add(CreateTab("edit_user", "Tab.General"));
-            tabsList.Add(CreateTab("organization_user_setup", "Tab.Setup"));
+            //tabsList.Add(CreateTab("organization_user_setup", "Tab.Setup"));
 
             // find selected menu item
             int idx = 0;

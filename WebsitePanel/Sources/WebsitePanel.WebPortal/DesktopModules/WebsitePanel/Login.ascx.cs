@@ -143,6 +143,14 @@ namespace WebsitePanel.Portal
             {
                 txtUsername.Text = cookie.Value;
             }
+
+            if (PortalUtils.GetHideThemeAndLocale())
+            {
+                ddlLanguage.Visible = false;
+                lblLanguage.Visible = false;
+                ddlTheme.Visible = false;
+                lblTheme.Visible = false;
+            }
         }
 
         protected void cmdForgotPassword_Click(object sender, EventArgs e)

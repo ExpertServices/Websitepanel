@@ -62,6 +62,7 @@ namespace WebsitePanel.Portal
         	bool accountSummaryEmailEnabled = !String.IsNullOrEmpty(settings["EnableLetter"]) && Utils.ParseBool(settings["EnableLetter"], false);
         	this.chkAccountLetter.Enabled = accountSummaryEmailEnabled;
         	this.pnlDisabledSummaryLetterHint.Visible = !accountSummaryEmailEnabled;
+            if (PortalUtils.GetHideDemoCheckbox()) this.lblDemoAccount.Visible = this.chkDemo.Checked = this.chkDemo.Visible = false;
 
             //reseller.UserId = PanelSecurity.SelectedUserId;
             userPassword.SetUserPolicy(PanelSecurity.SelectedUserId, UserSettings.WEBSITEPANEL_POLICY, "PasswordPolicy");
@@ -70,6 +71,10 @@ namespace WebsitePanel.Portal
         private void BindRoles(UserInfo user)
         {
             if (user.Role == UserRole.User)
+                role.Items.Remove("Reseller");
+
+            if ((PanelSecurity.LoggedUser.Role == UserRole.ResellerCSR) | 
+                (PanelSecurity.LoggedUser.Role == UserRole.ResellerHelpdesk))
                 role.Items.Remove("Reseller");
         }
 

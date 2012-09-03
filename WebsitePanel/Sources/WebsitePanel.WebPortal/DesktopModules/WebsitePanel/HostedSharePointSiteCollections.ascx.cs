@@ -52,11 +52,12 @@ namespace WebsitePanel.Portal
 		private void BindStats()
 		{
 			// quota values
-			OrganizationStatistics stats =
-				ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+			OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
+            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
 
 			siteCollectionsQuota.QuotaUsedValue = stats.CreatedSharePointSiteCollections;
 			siteCollectionsQuota.QuotaValue = stats.AllocatedSharePointSiteCollections;
+            if (stats.AllocatedSharePointSiteCollections != -1) siteCollectionsQuota.QuotaAvailable = tenantStats.AllocatedSharePointSiteCollections - tenantStats.CreatedSharePointSiteCollections;
 		}
 
 		protected void btnCreateSiteCollection_Click(object sender, EventArgs e)

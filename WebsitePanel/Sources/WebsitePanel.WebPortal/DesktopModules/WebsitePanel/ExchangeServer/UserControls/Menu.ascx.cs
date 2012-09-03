@@ -111,7 +111,16 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
         
         private void PrepareExchangeMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath)
         {
-                        
+            bool hideItems = false;
+
+            UserInfo user = UsersHelper.GetUser(PanelSecurity.EffectiveUserId);
+
+            if (user != null)
+            {
+                if ((user.Role == UserRole.User) & (CheckQouta(Quotas.EXCHANGE2007_ISCONSUMER, cntx)))
+                    hideItems = true;
+            }
+
             MenuGroup exchangeGroup = new MenuGroup(GetLocalizedString("Text.ExchangeGroup"), imagePath + "exchange24.png");
 
             if (CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
@@ -126,16 +135,20 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             if (CheckQouta(Quotas.EXCHANGE2007_PUBLICFOLDERS, cntx))
                 exchangeGroup.MenuItems.Add(CreateMenuItem("PublicFolders", "public_folders"));
 
-            if (CheckQouta(Quotas.EXCHANGE2007_ACTIVESYNCALLOWED, cntx))
-                exchangeGroup.MenuItems.Add(CreateMenuItem("ActiveSyncPolicy", "activesync_policy"));
+            if (!hideItems)
+                if (CheckQouta(Quotas.EXCHANGE2007_ACTIVESYNCALLOWED, cntx))
+                    exchangeGroup.MenuItems.Add(CreateMenuItem("ActiveSyncPolicy", "activesync_policy"));
 
-            if (CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
-                exchangeGroup.MenuItems.Add(CreateMenuItem("MailboxPlans", "mailboxplans"));
+            if (!hideItems)
+                if (CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
+                    exchangeGroup.MenuItems.Add(CreateMenuItem("MailboxPlans", "mailboxplans"));
 
-            if (CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))
-                exchangeGroup.MenuItems.Add(CreateMenuItem("DomainNames", "domains"));
+            if (!hideItems)
+                if (CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))
+                    exchangeGroup.MenuItems.Add(CreateMenuItem("DomainNames", "domains"));
 
-            exchangeGroup.MenuItems.Add(CreateMenuItem("StorageUsage", "storage_usage"));
+            if (!hideItems)
+                exchangeGroup.MenuItems.Add(CreateMenuItem("StorageUsage", "storage_usage"));
 
             if (exchangeGroup.MenuItems.Count > 0)
                 groups.Add(exchangeGroup);
@@ -144,14 +157,27 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
         
         private void PrepareOrganizationMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath)
         {
-            MenuGroup organizationGroup = new MenuGroup(GetLocalizedString("Text.OrganizationGroup"), imagePath + "company24.png");
-            //if (CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))
-            //    organizationGroup.MenuItems.Add(CreateMenuItem("DomainNames", "domains"));
-            if (CheckQouta(Quotas.ORGANIZATION_USERS, cntx))
-                organizationGroup.MenuItems.Add(CreateMenuItem("Users", "users"));
-            
-            if (organizationGroup.MenuItems.Count >0)
-                groups.Add(organizationGroup);
+            bool hideItems = false;
+
+            UserInfo user = UsersHelper.GetUser(PanelSecurity.EffectiveUserId);
+
+            if (user != null)
+            {
+                if ((user.Role == UserRole.User) & (CheckQouta(Quotas.EXCHANGE2007_ISCONSUMER, cntx)))
+                    hideItems = true;
+            }
+
+            if (!hideItems)
+            {
+                MenuGroup organizationGroup = new MenuGroup(GetLocalizedString("Text.OrganizationGroup"), imagePath + "company24.png");
+                //if (CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))
+                //    organizationGroup.MenuItems.Add(CreateMenuItem("DomainNames", "domains"));
+                if (CheckQouta(Quotas.ORGANIZATION_USERS, cntx))
+                    organizationGroup.MenuItems.Add(CreateMenuItem("Users", "users"));
+
+                if (organizationGroup.MenuItems.Count > 0)
+                    groups.Add(organizationGroup);
+            }
    
         }
 
