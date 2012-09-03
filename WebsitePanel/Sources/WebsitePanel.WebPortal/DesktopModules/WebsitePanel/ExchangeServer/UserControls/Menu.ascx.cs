@@ -139,8 +139,9 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 if (CheckQouta(Quotas.EXCHANGE2007_ACTIVESYNCALLOWED, cntx))
                     exchangeGroup.MenuItems.Add(CreateMenuItem("ActiveSyncPolicy", "activesync_policy"));
 
-            if (CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
-                exchangeGroup.MenuItems.Add(CreateMenuItem("MailboxPlans", "mailboxplans"));
+            if (!hideItems)
+                if (CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
+                    exchangeGroup.MenuItems.Add(CreateMenuItem("MailboxPlans", "mailboxplans"));
 
             if (!hideItems)
                 if (CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))

@@ -51,7 +51,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     {
                         if (cntx.Quotas[Quotas.EXCHANGE2007_ENABLEDPLANSEDITING].QuotaAllocatedValue != 1)
                         {
-                            gvMailboxPlans.Columns[2].Visible = false;
+                            gvMailboxPlans.Columns[3].Visible = false;
                             btnAddMailboxPlan.Enabled = btnAddMailboxPlan.Visible = false;
                         }
                     }
