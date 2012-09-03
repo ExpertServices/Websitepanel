@@ -55,7 +55,7 @@ namespace WebsitePanel.Installer.Core
     public static class LoaderFactory
     {
         /// <summary>
-        /// Instantiates either BitlyLoader or InstallerServiceLoader based on remote file format.
+        /// Instantiates either CodeplexLoader or InstallerServiceLoader based on remote file format.
         /// </summary>
         /// <param name="remoteFile"></param>
         /// <returns></returns>
@@ -63,9 +63,9 @@ namespace WebsitePanel.Installer.Core
         {
             Debug.Assert(!String.IsNullOrEmpty(remoteFile), "Remote file is empty");
 
-            if (remoteFile.StartsWith("http://bit.ly/"))
+            if (remoteFile.StartsWith("http://websitepanel.codeplex.com/"))
             {
-                return new BitlyLoader(remoteFile);
+                return new CodeplexLoader(remoteFile);
             }
             else
             {
@@ -74,13 +74,13 @@ namespace WebsitePanel.Installer.Core
         }
     }
 
-    public class BitlyLoader : Loader
+    public class CodeplexLoader : Loader
     {
         public const string WEB_PI_USER_AGENT_HEADER = "PI-Integrator/3.0.0.0({0})";
 
         private WebClient fileLoader;
 
-        internal BitlyLoader(string remoteFile) 
+        internal CodeplexLoader(string remoteFile) 
             : base(remoteFile)
         {
             InitFileLoader();
