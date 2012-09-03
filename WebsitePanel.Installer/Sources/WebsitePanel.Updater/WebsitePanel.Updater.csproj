@@ -150,9 +150,12 @@
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
   -->
+
+  <Target Name="AfterBuild">
+    <Exec Command="$(ProjectDir)..\..\Resources\ILMerge.exe &quot;$(TargetPath)&quot; &quot;$(ProjectDir)..\..\Lib\Ionic.Zip.Reduced.dll&quot; /out:$(ProjectDir)..\WebsitePanel.Installer\Updater.exe /ndebug" />
+  </Target>
+  
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>

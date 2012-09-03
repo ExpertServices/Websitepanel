@@ -256,7 +256,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="application.ico" />
-    <Content Include="Updater.exe" />
+    <EmbeddedResource Include="Updater.exe" />
     <Content Include="websitepanel.ico" />
   </ItemGroup>
   <ItemGroup>
