@@ -102,6 +102,14 @@
                                 <wsp:QuotaViewer ID="listsStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
+                        <tr class="OrgStatsRow" >
+                            <td align="right" nowrap>
+                                <asp:HyperLink ID="lnkFolders" runat="server" meta:resourcekey="lnkFolders"></asp:HyperLink>
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="foldersStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
                         <tr class="OrgStatsRow">
                             <td align="right" nowrap>
                                 <asp:HyperLink ID="lnkExchangeStorage" runat="server" meta:resourcekey="lnkExchangeStorage"></asp:HyperLink>

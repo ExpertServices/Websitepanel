@@ -68,6 +68,12 @@ namespace WebsitePanel.Portal
             set { ViewState["Total"] = value; }
         }
 
+        public int Available
+        {
+            get { return (ViewState["Available"] != null) ? (int)ViewState["Available"] : -1; }
+            set { ViewState["Available"] = value; }
+        }
+        
         public int Width
         {
             get { return this.width; }

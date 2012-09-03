@@ -35,11 +35,14 @@ namespace WebsitePanel.Portal.BlackBerry
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+            OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
+            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
             int allocatedCrmUsers = stats.AllocatedBlackBerryUsers;
             int usedUsers = stats.CreatedBlackBerryUsers;
             usersQuota.QuotaUsedValue = usedUsers;
             usersQuota.QuotaValue = allocatedCrmUsers;
+
+            if (stats.AllocatedBlackBerryUsers != -1) usersQuota.QuotaAvailable = tenantStats.AllocatedBlackBerryUsers - tenantStats.CreatedBlackBerryUsers;
         }
 
         protected void btnCreateNewBlackBerryUser_Click(object sender, EventArgs e)

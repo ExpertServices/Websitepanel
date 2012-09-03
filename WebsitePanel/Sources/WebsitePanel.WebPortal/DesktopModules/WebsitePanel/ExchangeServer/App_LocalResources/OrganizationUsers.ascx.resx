@@ -166,12 +166,18 @@
 &lt;p&gt;User account can also represent Exchange mailbox, which may be a person, room or inventory unit.&lt;/p&gt;</value>
   </data>
   <data name="locQuota.Text" xml:space="preserve">
-    <value>Total Users Created:</value>
+    <value>Total Users Created in this Organization:</value>
   </data>
   <data name="locTitle.Text" xml:space="preserve">
     <value>Users</value>
   </data>
   <data name="Text.PageName" xml:space="preserve">
     <value>Users</value>
+  </data>
+  <data name="locTenantAvailable.Text" xml:space="preserve">
+    <value>Available Users for this Tenant:</value>
+  </data>
+  <data name="locTenantQuota.Text" xml:space="preserve">
+    <value>Total Users Created for this Tenant:</value>
   </data>
 </root>

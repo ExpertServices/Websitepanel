@@ -55,10 +55,11 @@ namespace WebsitePanel.Portal.ExchangeServer
         private void BindStats()
         {
             // quota values
-            OrganizationStatistics stats =
-                ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
+            OrganizationStatistics stats = ES.Services.ExchangeServer.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
+            OrganizationStatistics tenantStats = ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
             mailboxesQuota.QuotaUsedValue = stats.CreatedMailboxes;
             mailboxesQuota.QuotaValue = stats.AllocatedMailboxes;
+            if (stats.AllocatedMailboxes != -1) mailboxesQuota.QuotaAvailable = tenantStats.AllocatedMailboxes - tenantStats.CreatedMailboxes;
         }
 
         protected void btnCreateMailbox_Click(object sender, EventArgs e)

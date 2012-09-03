@@ -59,10 +59,11 @@ namespace WebsitePanel.Portal.ExchangeServer
 
 		private void BindStats()
 		{
-			OrganizationStatistics stats =
-				ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
+			OrganizationStatistics stats = ES.Services.ExchangeServer.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
+            OrganizationStatistics tenantStats = ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
 			foldersQuota.QuotaUsedValue = stats.CreatedPublicFolders;
 			foldersQuota.QuotaValue = stats.AllocatedPublicFolders;
+            if (stats.AllocatedPublicFolders != -1) foldersQuota.QuotaAvailable = tenantStats.AllocatedPublicFolders - tenantStats.CreatedPublicFolders;
 		}
 
         private void BuildFoldersTree()

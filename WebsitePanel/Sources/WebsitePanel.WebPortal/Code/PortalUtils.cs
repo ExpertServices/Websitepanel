@@ -387,6 +387,25 @@ namespace WebsitePanel.Portal
         }
 
 
+        
+        public static bool GetHideThemeAndLocale()
+        {
+            bool bResult = false;
+
+            try
+            {
+                bResult = Convert.ToBoolean(PortalConfiguration.SiteSettings["HideThemeAndLocale"]);
+            }
+            catch (Exception)
+            {
+
+            }
+
+            return bResult;
+        }
+
+
+
         private static int GetAuthenticationFormsTimeout()
         {
             //default

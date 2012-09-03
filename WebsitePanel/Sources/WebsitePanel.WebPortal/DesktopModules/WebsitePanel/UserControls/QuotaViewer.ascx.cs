@@ -77,6 +77,19 @@ namespace WebsitePanel.Portal
             }
         }
 
+        public int QuotaAvailable
+        {
+            set
+            {
+                // store value
+                gauge.Available = value;
+
+                // update control
+                UpdateControl();
+            }
+        }
+
+
         private void UpdateControl()
         {
             int total = gauge.Total;
@@ -88,8 +101,12 @@ namespace WebsitePanel.Portal
             }
             else if (QuotaTypeId == 2)
             {
-                litValue.Text = String.Format("{0} {1} {2}",
-                    gauge.Progress, GetLocalizedString("Text.Of"), ((total == -1) ? GetLocalizedString("Text.Unlimited") : total.ToString()));
+                string availableText = string.Empty;
+                if (gauge.Available != -1) availableText = String.Format("({0} {1})", gauge.Available.ToString(), GetLocalizedString("Text.Available"));
+
+                litValue.Text = String.Format("{0} {1} {2} {3}",
+                    gauge.Progress, GetLocalizedString("Text.Of"), ((total == -1) ? GetLocalizedString("Text.Unlimited") : total.ToString()), availableText);
+
                 gauge.Visible = (total != -1);
                 //litValue.Visible = (value == -1);
             }
