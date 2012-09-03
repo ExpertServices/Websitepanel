@@ -236,9 +236,20 @@
                 ItemName="LocalizationToolkitMsi" />	
 		</MSBuild>
 		<Copy SourceFiles="@(LocalizationToolkitMsi)" DestinationFolder="$(LocalizationToolkitBuild)\%(RecursiveDir)" />
-	</Target>	
-
-	<Target Name="Build" DependsOnTargets="CreateLocalizationToolkitBuild">
+	</Target>
+	
+	<Target Name="CreateSetupBuild" DependsOnTargets="CreateLocalizationToolkitBuild">
+		
+		<!-- build MSI package -->
+		<MSBuild Projects="$(RootFolder)\WebsitePanel.Installer\Sources\Setup.WIX\Setup.Wix.wixproj" Properties="Configuration=$(BuildConfiguration)">
+			<Output
+                TaskParameter="TargetOutputs"
+                ItemName="WebsitePanelInstallerMsi" />	
+		</MSBuild>
+		<Copy SourceFiles="@(WebsitePanelInstallerMsi)" DestinationFolder="$(DeployFolder)\%(RecursiveDir)" />
+	</Target>
+	
+	<Target Name="Build" DependsOnTargets="CreateSetupBuild">
 		<!-- Do nothing -->
 	</Target>
 
