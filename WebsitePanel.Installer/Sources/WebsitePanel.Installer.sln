@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Updater", "Web
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Setup", "WebsitePanel.Setup\WebsitePanel.Setup.csproj", "{3951C0EC-BD98-450E-B228-CDBE5BD4AD49}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{2D271041-201E-4E9C-8AB1-B62DC5B0B0E1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.SilentInstaller", "WebsitePanel.SilentInstaller\WebsitePanel.SilentInstaller.csproj", "{CD3E79C3-AEEF-43E6-A9ED-1130840FB2CD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Installer.Core", "WebsitePanel.Installer.Core\WebsitePanel.Installer.Core.csproj", "{0E4A3F5B-0BB1-4F63-863D-7B0182B378CF}"
@@ -65,18 +63,6 @@ Global
 		{3951C0EC-BD98-450E-B228-CDBE5BD4AD49}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{3951C0EC-BD98-450E-B228-CDBE5BD4AD49}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{3951C0EC-BD98-450E-B228-CDBE5BD4AD49}.Release|x86.ActiveCfg = Release|Any CPU
-		{2D271041-201E-4E9C-8AB1-B62DC5B0B0E1}.Debug|Any CPU.ActiveCfg = Debug
-		{2D271041-201E-4E9C-8AB1-B62DC5B0B0E1}.Debug|Any CPU.Build.0 = Debug
-		{2D271041-201E-4E9C-8AB1-B62DC5B0B0E1}.Debug|Mixed Platforms.ActiveCfg = Debug
-		{2D271041-201E-4E9C-8AB1-B62DC5B0B0E1}.Debug|Mixed Platforms.Build.0 = Debug
-		{2D271041-201E-4E9C-8AB1-B62DC5B0B0E1}.Debug|x86.ActiveCfg = Debug
-		{2D271041-201E-4E9C-8AB1-B62DC5B0B0E1}.Debug|x86.Build.0 = Debug
-		{2D271041-201E-4E9C-8AB1-B62DC5B0B0E1}.Release|Any CPU.ActiveCfg = Release
-		{2D271041-201E-4E9C-8AB1-B62DC5B0B0E1}.Release|Any CPU.Build.0 = Release
-		{2D271041-201E-4E9C-8AB1-B62DC5B0B0E1}.Release|Mixed Platforms.ActiveCfg = Release
-		{2D271041-201E-4E9C-8AB1-B62DC5B0B0E1}.Release|Mixed Platforms.Build.0 = Release
-		{2D271041-201E-4E9C-8AB1-B62DC5B0B0E1}.Release|x86.ActiveCfg = Release
-		{2D271041-201E-4E9C-8AB1-B62DC5B0B0E1}.Release|x86.Build.0 = Release
 		{CD3E79C3-AEEF-43E6-A9ED-1130840FB2CD}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{CD3E79C3-AEEF-43E6-A9ED-1130840FB2CD}.Debug|Any CPU.Build.0 = Debug|x86
 		{CD3E79C3-AEEF-43E6-A9ED-1130840FB2CD}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
