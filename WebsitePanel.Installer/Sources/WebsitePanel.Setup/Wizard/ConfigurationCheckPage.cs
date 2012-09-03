@@ -40,6 +40,7 @@ using WebsitePanel.Setup.Web;
 using System.IO;
 using System.Management;
 using WebsitePanel.Setup.Actions;
+using Microsoft.Win32;
 
 namespace WebsitePanel.Setup
 {
@@ -233,9 +234,14 @@ namespace WebsitePanel.Setup
 				Log.WriteInfo(string.Format("OS check: {0}", details));
 
 				if (!(version == OS.WindowsVersion.WindowsServer2003 ||
-					version == OS.WindowsVersion.WindowsServer2008))
+                    version == OS.WindowsVersion.WindowsServer2008 ||
+                    version == OS.WindowsVersion.WindowsServer2008R2 ||
+                    version == OS.WindowsVersion.WindowsServer2012 ||
+                    version == OS.WindowsVersion.WindowsVista ||
+                    version == OS.WindowsVersion.Windows7 ||
+                    version == OS.WindowsVersion.Windows8 ))
 				{
-					details = "Windows Server 2003 or Windows Server 2008 required.";
+					details = "OS required: Windows Server 2008/2008 R2/2012 or Windows Vista/7/8.";
 					Log.WriteError(string.Format("OS check: {0}", details), null);
 #if DEBUG
 					return CheckStatuses.Warning;
@@ -318,12 +324,12 @@ namespace WebsitePanel.Setup
 						Log.WriteInfo(string.Format("ASP.NET check: {0}", details));
 						return CheckStatuses.Error;
 					}
-					if (!IsAspNetRoleServiceInstalled())
-					{
-						details = "ASP.NET role service is not installed on your server. Run Server Manager to add ASP.NET role service.";
-						Log.WriteInfo(string.Format("ASP.NET check: {0}", details));
-						return CheckStatuses.Error;
-					}
+                    if (!IsAspNetRoleServiceInstalled())
+                    {
+                        details = "ASP.NET role service is not installed on your server. Run Server Manager to add ASP.NET role service.";
+                        Log.WriteInfo(string.Format("ASP.NET check: {0}", details));
+                        return CheckStatuses.Error;
+                    }
 					// Register ASP.NET 4.0
 					if (Utils.CheckAspNet40Registered(SetupVariables) == false)
 					{
@@ -584,25 +590,22 @@ namespace WebsitePanel.Setup
 
 		private static bool IsWebServerRoleInstalled()
 		{
-			WmiHelper wmi = new WmiHelper("root\\cimv2");
-			using (ManagementObjectCollection roles = wmi.ExecuteQuery("SELECT NAME FROM Win32_ServerFeature WHERE ID=2"))
-			{
-				return (roles.Count > 0);
-			}
+            RegistryKey regkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\InetStp");
+            if (regkey == null)
+                return false;
+
+            int value = (int)regkey.GetValue("MajorVersion", 0);
+            return value == 7 || value == 8;
 		}
 
 		private static bool IsAspNetRoleServiceInstalled()
 		{
-			WmiHelper wmi = new WmiHelper("root\\cimv2");
-			using (ManagementObjectCollection roles = wmi.ExecuteQuery("SELECT NAME FROM Win32_ServerFeature WHERE ID=148"))
-			{
-				return (roles.Count > 0);
-			}
+            RegistryKey regkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\InetStp\\Components");
+            if (regkey == null)
+                return false;
+
+            int value = (int)regkey.GetValue("ASPNET", 0);
+            return value == 1;
 		}
-
-
-
-
-
 	}
 }
