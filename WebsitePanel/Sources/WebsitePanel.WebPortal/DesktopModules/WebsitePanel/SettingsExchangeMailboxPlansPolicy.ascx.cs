@@ -101,12 +101,12 @@ namespace WebsitePanel.Portal
             Providers.HostedSolution.ExchangeMailboxPlan plan = new Providers.HostedSolution.ExchangeMailboxPlan();
             plan.MailboxPlan = txtMailboxPlan.Text;
 
-            plan.MailboxSizeMB = mailboxSize.ValueKB;
+            plan.MailboxSizeMB = mailboxSize.QuotaValue;
 
             plan.IsDefault = false;
-            plan.MaxRecipients = maxRecipients.ValueKB;
-            plan.MaxSendMessageSizeKB = maxSendMessageSizeKB.ValueKB;
-            plan.MaxReceiveMessageSizeKB = maxReceiveMessageSizeKB.ValueKB;
+            plan.MaxRecipients = maxRecipients.QuotaValue;
+            plan.MaxSendMessageSizeKB = maxSendMessageSizeKB.QuotaValue;
+            plan.MaxReceiveMessageSizeKB = maxReceiveMessageSizeKB.QuotaValue;
             plan.EnablePOP = chkPOP3.Checked;
             plan.EnableIMAP = chkIMAP.Checked;
             plan.EnableOWA = chkOWA.Checked;
@@ -204,10 +204,10 @@ namespace WebsitePanel.Portal
                         ViewState["MailboxPlanID"] = null; 
 
                         txtMailboxPlan.Text = string.Empty;
-                        mailboxSize.ValueKB = -1;
-                        maxRecipients.ValueKB = -1;
-                        maxSendMessageSizeKB.ValueKB = -1;
-                        maxReceiveMessageSizeKB.ValueKB = 01;
+                        mailboxSize.QuotaValue = 0;
+                        maxRecipients.QuotaValue = 0;
+                        maxSendMessageSizeKB.QuotaValue = 0;
+                        maxReceiveMessageSizeKB.QuotaValue = 0;
                         chkPOP3.Checked = false;
                         chkIMAP.Checked = false;
                         chkOWA.Checked = false;
@@ -251,14 +251,10 @@ namespace WebsitePanel.Portal
                         plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(orgs[0].Id, mailboxPlanId);
                     
                         txtMailboxPlan.Text = plan.MailboxPlan;
-                        if (plan.MailboxSizeMB != -1)
-                            mailboxSize.ValueKB = plan.MailboxSizeMB;
-                        if (plan.MaxRecipients != -1)
-                            maxRecipients.ValueKB = plan.MaxRecipients;
-                        if (plan.MaxSendMessageSizeKB != -1)
-                            maxSendMessageSizeKB.ValueKB = plan.MaxSendMessageSizeKB;
-                        if (plan.MaxReceiveMessageSizeKB != -1)
-                            maxReceiveMessageSizeKB.ValueKB = plan.MaxReceiveMessageSizeKB;
+                        mailboxSize.QuotaValue = plan.MailboxSizeMB;
+                        maxRecipients.QuotaValue = plan.MaxRecipients;
+                        maxSendMessageSizeKB.QuotaValue = plan.MaxSendMessageSizeKB;
+                        maxReceiveMessageSizeKB.QuotaValue = plan.MaxReceiveMessageSizeKB;
                         chkPOP3.Checked = plan.EnablePOP;
                         chkIMAP.Checked = plan.EnableIMAP;
                         chkOWA.Checked = plan.EnableOWA;
@@ -354,12 +350,12 @@ namespace WebsitePanel.Portal
             plan.MailboxPlanId = (int)ViewState["MailboxPlanID"];
             plan.MailboxPlan = txtMailboxPlan.Text;
 
-            plan.MailboxSizeMB = mailboxSize.ValueKB;
+            plan.MailboxSizeMB = mailboxSize.QuotaValue;
 
             plan.IsDefault = false;
-            plan.MaxRecipients = maxRecipients.ValueKB;
-            plan.MaxSendMessageSizeKB = maxSendMessageSizeKB.ValueKB;
-            plan.MaxReceiveMessageSizeKB = maxReceiveMessageSizeKB.ValueKB;
+            plan.MaxRecipients = maxRecipients.QuotaValue;
+            plan.MaxSendMessageSizeKB = maxSendMessageSizeKB.QuotaValue;
+            plan.MaxReceiveMessageSizeKB = maxReceiveMessageSizeKB.QuotaValue;
             plan.EnablePOP = chkPOP3.Checked;
             plan.EnableIMAP = chkIMAP.Checked;
             plan.EnableOWA = chkOWA.Checked;

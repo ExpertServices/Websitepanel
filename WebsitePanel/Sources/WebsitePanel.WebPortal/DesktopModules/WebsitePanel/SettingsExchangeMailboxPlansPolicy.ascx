@@ -4,6 +4,7 @@
 <%@ Register Src="UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/QuotaEditor.ascx" TagName="QuotaEditor" TagPrefix="uc1" %>
 <%@ Import Namespace="WebsitePanel.Portal" %>
 
     <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
@@ -128,25 +129,49 @@
 				<tr>
 					<td class="FormLabel200" align="right"><asp:Localize ID="locMailboxSize" runat="server" meta:resourcekey="locMailboxSize" Text="Mailbox size:"></asp:Localize></td>
 					<td>
-						<wsp:SizeBox id="mailboxSize" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="false"  DisplayUnitsMB="true" DisplayUnitsPct="false" RequireValidatorEnabled="false"/>
+                        <div class="Right">
+                            <uc1:QuotaEditor id="mailboxSize" runat="server"
+                                QuotaTypeID="2"
+                                QuotaValue="0"
+                                ParentQuotaValue="-1">
+                            </uc1:QuotaEditor>
+                        </div>
 					</td>
 				</tr>
 				<tr>
 					<td class="FormLabel200" align="right"><asp:Localize ID="locMaxRecipients" runat="server" meta:resourcekey="locMaxRecipients" Text="Maximum Recipients:"></asp:Localize></td>
 					<td>
-						<wsp:SizeBox id="maxRecipients" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="false" DisplayUnitsMB="false" DisplayUnitsPct="false" RequireValidatorEnabled="false"/>
+                        <div class="Right">
+                            <uc1:QuotaEditor id="maxRecipients" runat="server"
+                                QuotaTypeID="2"
+                                QuotaValue="0"
+                                ParentQuotaValue="-1">
+                            </uc1:QuotaEditor>
+                        </div>
 					</td>
 				</tr>
 				<tr>
 					<td class="FormLabel200" align="right"><asp:Localize ID="locMaxSendMessageSizeKB" runat="server" meta:resourcekey="locMaxSendMessageSizeKB" Text="Maximum Send Message Size (Kb):"></asp:Localize></td>
 					<td>
-						<wsp:SizeBox id="maxSendMessageSizeKB" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="true" DisplayUnitsMB="false" DisplayUnitsPct="false" RequireValidatorEnabled="false"/>
+                        <div class="Right">
+                            <uc1:QuotaEditor id="maxSendMessageSizeKB" runat="server"
+                                QuotaTypeID="2"
+                                QuotaValue="0"
+                                ParentQuotaValue="-1">
+                            </uc1:QuotaEditor>
+                        </div>
 					</td>
 				</tr>
 				<tr>
 					<td class="FormLabel200" align="right"><asp:Localize ID="locMaxReceiveMessageSizeKB" runat="server" meta:resourcekey="locMaxReceiveMessageSizeKB" Text="Maximum Receive Message Size (Kb):"></asp:Localize></td>
 					<td>
-						<wsp:SizeBox id="maxReceiveMessageSizeKB" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="true"  DisplayUnitsMB="false" DisplayUnitsPct="false" RequireValidatorEnabled="false"/>
+                        <div class="Right">
+                            <uc1:QuotaEditor id="maxReceiveMessageSizeKB" runat="server"
+                                QuotaTypeID="2"
+                                QuotaValue="0"
+                                ParentQuotaValue="-1">
+                            </uc1:QuotaEditor>
+                        </div>
 					</td>
 				</tr>
 

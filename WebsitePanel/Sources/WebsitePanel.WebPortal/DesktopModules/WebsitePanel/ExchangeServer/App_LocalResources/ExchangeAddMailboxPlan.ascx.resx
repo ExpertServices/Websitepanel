@@ -151,16 +151,16 @@
     <value>Keep deleted items for:</value>
   </data>
   <data name="locMailboxSize.Text" xml:space="preserve">
-    <value>Mailbox size:</value>
+    <value>Mailbox size (Mb):</value>
   </data>
   <data name="locMaxReceiveMessageSizeKB.Text" xml:space="preserve">
-    <value>Maximum Receive Message Size:</value>
+    <value>Maximum Receive Message Size (Kb):</value>
   </data>
   <data name="locMaxRecipients.Text" xml:space="preserve">
     <value>Maximum Recipients:</value>
   </data>
   <data name="locMaxSendMessageSizeKB.Text" xml:space="preserve">
-    <value>Maximum Send Message Size:</value>
+    <value>Maximum Send Message Size (Kb):</value>
   </data>
   <data name="locProhibitSend.Text" xml:space="preserve">
     <value>Prohibit send at:</value>

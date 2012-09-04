@@ -46,14 +46,10 @@ namespace WebsitePanel.Portal.ExchangeServer
                 {
                     Providers.HostedSolution.ExchangeMailboxPlan plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(PanelRequest.ItemID, PanelRequest.GetInt("MailboxPlanId"));
                     txtMailboxPlan.Text = plan.MailboxPlan;
-                    if (plan.MailboxSizeMB != -1)
-                        mailboxSize.ValueKB = plan.MailboxSizeMB;
-                    if (plan.MaxRecipients != -1)
-                        maxRecipients.ValueKB = plan.MaxRecipients;
-                    if (plan.MaxSendMessageSizeKB != -1)
-                        maxSendMessageSizeKB.ValueKB = plan.MaxSendMessageSizeKB;
-                    if (plan.MaxReceiveMessageSizeKB != -1)
-                        maxReceiveMessageSizeKB.ValueKB = plan.MaxReceiveMessageSizeKB;
+                    mailboxSize.QuotaValue = plan.MailboxSizeMB;
+                    maxRecipients.QuotaValue = plan.MaxRecipients;
+                    maxSendMessageSizeKB.QuotaValue = plan.MaxSendMessageSizeKB;
+                    maxReceiveMessageSizeKB.QuotaValue = plan.MaxReceiveMessageSizeKB;
                     chkPOP3.Checked = plan.EnablePOP;
                     chkIMAP.Checked = plan.EnableIMAP;
                     chkOWA.Checked = plan.EnableOWA;
@@ -99,39 +95,24 @@ namespace WebsitePanel.Portal.ExchangeServer
                             switch (quota.QuotaId)
                             {
                                 case 77:
-                                    if (quota.QuotaAllocatedValue != -1)
-                                    {
-                                        mailboxSize.RequireValidatorEnabled = true;
-                                    }
-                                    else
-                                        mailboxSize.RequireValidatorEnabled = false;
                                     break;
                                 case 365:
                                     if (quota.QuotaAllocatedValue != -1)
                                     {
-                                        maxRecipients.ValueKB = quota.QuotaAllocatedValue;
-                                        maxRecipients.RequireValidatorEnabled = true;
+                                        maxRecipients.QuotaValue = quota.QuotaAllocatedValue;
                                     }
-                                    else
-                                        maxRecipients.RequireValidatorEnabled = false;
                                     break;
                                 case 366:
                                     if (quota.QuotaAllocatedValue != -1)
                                     {
-                                        maxSendMessageSizeKB.ValueKB = quota.QuotaAllocatedValue;
-                                        maxSendMessageSizeKB.RequireValidatorEnabled = true;
+                                        maxSendMessageSizeKB.QuotaValue = quota.QuotaAllocatedValue;
                                     }
-                                    else
-                                        maxSendMessageSizeKB.RequireValidatorEnabled = false;
                                     break;
                                 case 367:
                                     if (quota.QuotaAllocatedValue != -1)
                                     {
-                                        maxReceiveMessageSizeKB.ValueKB = quota.QuotaAllocatedValue;
-                                        maxReceiveMessageSizeKB.RequireValidatorEnabled = true;
+                                        maxReceiveMessageSizeKB.QuotaValue = quota.QuotaAllocatedValue;
                                     }
-                                    else
-                                        maxReceiveMessageSizeKB.RequireValidatorEnabled = false;
                                     break;
                                 case 83:
                                     chkPOP3.Checked = Convert.ToBoolean(quota.QuotaAllocatedValue);
@@ -183,12 +164,12 @@ namespace WebsitePanel.Portal.ExchangeServer
                 Providers.HostedSolution.ExchangeMailboxPlan plan = new Providers.HostedSolution.ExchangeMailboxPlan();
                 plan.MailboxPlan = txtMailboxPlan.Text;
 
-                plan.MailboxSizeMB = mailboxSize.ValueKB;
+                plan.MailboxSizeMB = mailboxSize.QuotaValue;
 
                 plan.IsDefault = false;
-                plan.MaxRecipients = maxRecipients.ValueKB;
-                plan.MaxSendMessageSizeKB = maxSendMessageSizeKB.ValueKB;
-                plan.MaxReceiveMessageSizeKB =  maxReceiveMessageSizeKB.ValueKB; 
+                plan.MaxRecipients = maxRecipients.QuotaValue;
+                plan.MaxSendMessageSizeKB = maxSendMessageSizeKB.QuotaValue;
+                plan.MaxReceiveMessageSizeKB = maxReceiveMessageSizeKB.QuotaValue; 
                 plan.EnablePOP = chkPOP3.Checked;
                 plan.EnableIMAP = chkIMAP.Checked;
                 plan.EnableOWA = chkOWA.Checked;

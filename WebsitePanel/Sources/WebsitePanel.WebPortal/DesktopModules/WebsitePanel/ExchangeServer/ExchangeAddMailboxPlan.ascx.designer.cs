@@ -226,7 +226,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.SizeBox mailboxSize;
+        protected global::WebsitePanel.Portal.QuotaEditor mailboxSize;
         
         /// <summary>
         /// locMaxRecipients control.
@@ -244,7 +244,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.SizeBox maxRecipients;
+        protected global::WebsitePanel.Portal.QuotaEditor maxRecipients;
         
         /// <summary>
         /// locMaxSendMessageSizeKB control.
@@ -262,7 +262,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.SizeBox maxSendMessageSizeKB;
+        protected global::WebsitePanel.Portal.QuotaEditor maxSendMessageSizeKB;
         
         /// <summary>
         /// locMaxReceiveMessageSizeKB control.
@@ -280,7 +280,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.SizeBox maxReceiveMessageSizeKB;
+        protected global::WebsitePanel.Portal.QuotaEditor maxReceiveMessageSizeKB;
         
         /// <summary>
         /// locWhenSizeExceeds control.
@@ -398,14 +398,5 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ValidationSummary ValidationSummary1;
-        
-        /// <summary>
-        /// FormComments control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize FormComments;
     }
 }
