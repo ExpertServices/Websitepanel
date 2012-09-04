@@ -590,16 +590,8 @@ namespace WebsitePanel.Setup
 
 		public static bool CheckAspNet40Registered(SetupVariables setupVariables)
 		{
-			//
-			var aspNet40Registered = false;
-			// Run ASP.NET Registration Tool command
-			var psOutput = ExecAspNetRegistrationToolCommand(setupVariables, "-lv");
-			// Split process output per lines
-			var strLines = psOutput.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-			// Lookup for an evidence of ASP.NET 4.0
-			aspNet40Registered = strLines.Any((string s) => { return s.Contains("4.0.30319.0"); });
-			//
-			return aspNet40Registered;
+            var regkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\ASP.NET\\4.0.30319.0");
+            return (regkey != null);
 		}
 
 		public static string ExecAspNetRegistrationToolCommand(SetupVariables setupVariables, string arguments)
