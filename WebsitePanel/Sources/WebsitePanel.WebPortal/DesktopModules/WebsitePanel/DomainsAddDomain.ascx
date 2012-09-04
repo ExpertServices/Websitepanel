@@ -9,7 +9,6 @@
 <div class="FormBody">
 
     <p id="DomainPanel" runat="server" style="padding: 15px 0 15px 5px;" visible="false">
-        <asp:Label ID="DomainPrefix" runat="server" meta:resourcekey="DomainPrefix" Text="www." CssClass="Huge"></asp:Label>
         <asp:TextBox ID="DomainName" runat="server" Width="300" CssClass="HugeTextBox"></asp:TextBox>
         <asp:RequiredFieldValidator id="DomainRequiredValidator" runat="server" meta:resourcekey="DomainRequiredValidator"
             ControlToValidate="DomainName" Display="Dynamic" ValidationGroup="Domain" SetFocusOnError="true"></asp:RequiredFieldValidator>
@@ -42,14 +41,6 @@
             </div>
         </asp:Panel>
         
-        <asp:Panel id="PointWebSitePanel" runat="server" style="padding-bottom: 15px;">
-            <asp:CheckBox ID="PointWebSite" runat="server" meta:resourcekey="PointWebSite" Text="Point to Web Site" CssClass="Checkbox Bold"
-                AutoPostBack="true" /><br />
-            <div style="padding-left: 20px;">
-                <asp:DropDownList ID="WebSitesList" Runat="server" CssClass="NormalTextBox" DataTextField="Name" DataValueField="ID"></asp:DropDownList>
-            </div>
-        </asp:Panel>
-        
         <asp:Panel id="PointMailDomainPanel" runat="server" style="padding-bottom: 15px;">
             <asp:CheckBox ID="PointMailDomain" runat="server" meta:resourcekey="PointMailDomain" Text="Point to Mail Domain" CssClass="Checkbox Bold"
                 AutoPostBack="true" /><br />
@@ -65,7 +56,7 @@
                 <asp:Localize ID="DescribeEnableDns" runat="server" meta:resourcekey="DescribeEnableDns">Description...</asp:Localize>
             </div>
         </asp:Panel>
-        
+<!--        
         <asp:Panel id="InstantAliasPanel" runat="server" style="padding-bottom: 15px;">
             <asp:CheckBox ID="CreateInstantAlias" runat="server" meta:resourcekey="CreateInstantAlias"
                 Text="Create Instant Alias" CssClass="Checkbox Bold" Checked="true" /><br />
@@ -73,7 +64,7 @@
                 <asp:Localize ID="DescribeCreateInstantAlias" runat="server" meta:resourcekey="DescribeCreateInstantAlias">Description...</asp:Localize>
             </div>
         </asp:Panel>
-        
+-->        
         <asp:Panel id="AllowSubDomainsPanel" runat="server" style="padding-bottom: 15px;">
             <asp:CheckBox ID="AllowSubDomains" runat="server" meta:resourcekey="AllowSubDomains" Text="Allow sub-domains" CssClass="Checkbox Bold" /><br />
             <div style="padding-left: 20px;">

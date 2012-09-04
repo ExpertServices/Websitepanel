@@ -389,7 +389,7 @@ namespace WebsitePanel.EnterpriseServer
         public static PackageResult AddPackageWithResources(int userId, int planId, string spaceName,
             int statusId, bool sendLetter,
             bool createResources, string domainName, bool createInstantAlias, bool createWebSite,
-            bool createFtpAccount, string ftpAccountName, bool createMailAccount)
+            bool createFtpAccount, string ftpAccountName, bool createMailAccount, string hostName)
         {
             try
             {
@@ -481,8 +481,7 @@ namespace WebsitePanel.EnterpriseServer
                         // create web site
                         try
                         {
-                            int webSiteId = WebServerController.AddWebSite(
-                                packageId, domainId, 0, true);
+                            int webSiteId = WebServerController.AddWebSite(packageId, hostName, domainId, 0, true);
                             if (webSiteId < 0)
                             {
                                 result.Result = webSiteId;

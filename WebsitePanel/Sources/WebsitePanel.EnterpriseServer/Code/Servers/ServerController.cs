@@ -1686,7 +1686,7 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         public static int AddDomainWithProvisioning(int packageId, string domainName, DomainType domainType,
-            bool createWebSite, int pointWebSiteId, int pointMailDomainId, bool createDnsZone, bool createInstantAlias, bool allowSubDomains)
+            bool createWebSite, int pointWebSiteId, int pointMailDomainId, bool createDnsZone, bool createInstantAlias, bool allowSubDomains, string hostName)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -1729,8 +1729,7 @@ namespace WebsitePanel.EnterpriseServer
             int webSiteId = 0;
             if (webEnabled && createWebSite)
             {
-                webSiteId = WebServerController.AddWebSite(
-                    packageId, domainId, 0, createInstantAlias);
+                webSiteId = WebServerController.AddWebSite(packageId, hostName, domainId, 0, createInstantAlias);
 
                 if (webSiteId < 0)
                 {
@@ -1742,7 +1741,7 @@ namespace WebsitePanel.EnterpriseServer
             // add web site pointer
             if (webEnabled && pointWebSiteId > 0)
             {
-                WebServerController.AddWebSitePointer(pointWebSiteId, domainId);
+                WebServerController.AddWebSitePointer(pointWebSiteId, hostName, domainId);
             }
 
             // add mail domain pointer
@@ -1801,8 +1800,10 @@ namespace WebsitePanel.EnterpriseServer
                 else if (isDomainPointer)
                 {
                     // domain pointer
+                    /*
                     if (PackageController.GetPackageQuota(packageId, Quotas.OS_DOMAINPOINTERS).QuotaExhausted)
                         return BusinessErrorCodes.ERROR_DOMAIN_QUOTA_LIMIT;
+                     */
                 }
                 else
                 {
@@ -2132,7 +2133,7 @@ namespace WebsitePanel.EnterpriseServer
 
             int res = 0;
             if (domain.WebSiteId > 0)
-                res = WebServerController.AddWebSitePointer(domain.WebSiteId, domainId, false);
+                res = WebServerController.AddWebSitePointer(domain.WebSiteId, hostName, domainId, false);
 
             return res;
         }
@@ -2173,7 +2174,7 @@ namespace WebsitePanel.EnterpriseServer
                 // add web site pointer if required
                 if (domain.WebSiteId > 0 && instantAlias.WebSiteId == 0)
                 {
-                    int webRes = WebServerController.AddWebSitePointer(domain.WebSiteId, instantAliasId);
+                    int webRes = WebServerController.AddWebSitePointer(domain.WebSiteId, hostName, domainId);
                     if (webRes < 0)
                         return webRes;
                 }

@@ -46,6 +46,12 @@ namespace WebsitePanel.Portal
 			{
 				ShowErrorMessage("DOMAIN_GET_DOMAIN", ex);
 			}
+
+            if (PanelSecurity.LoggedUser.Role == UserRole.User)
+            {
+                if (!PackagesHelper.CheckGroupQuotaEnabled(PanelSecurity.PackageId, ResourceGroups.Dns, Quotas.DNS_EDITOR))
+                    this.DisableControls = true;
+            }
 		}
 
 		private void BindControls()
@@ -78,10 +84,6 @@ namespace WebsitePanel.Portal
 
 			if ((type == DomainType.DomainPointer || (type == DomainType.Domain && cntx.Quotas[Quotas.OS_DOMAINPOINTERS].QuotaAllocatedValue == 0)) && !IsPostBack)
 			{
-				// bind web sites
-				WebSitesList.DataSource = ES.Services.WebServers.GetWebSites(PanelSecurity.PackageId, false);
-				WebSitesList.DataBind();
-
 				// bind mail domains
 				MailDomainsList.DataSource = ES.Services.MailServers.GetMailDomains(PanelSecurity.PackageId, false);
 				MailDomainsList.DataBind();
@@ -90,21 +92,9 @@ namespace WebsitePanel.Portal
 			// create web site option
 			CreateWebSitePanel.Visible = (type == DomainType.Domain || type == DomainType.SubDomain)
 				&& cntx.Groups.ContainsKey(ResourceGroups.Web);
-			if (PointWebSite.Checked)
-			{
-				CreateWebSite.Checked = false;
-				CreateWebSite.Enabled = false;
-			}
-			else
-			{
-				CreateWebSite.Enabled = true;
-				CreateWebSite.Checked &= CreateWebSitePanel.Visible;
-			}
 
-			// point Web site
-			PointWebSitePanel.Visible = (type == DomainType.DomainPointer || (type == DomainType.Domain && cntx.Quotas[Quotas.OS_DOMAINPOINTERS].QuotaAllocatedValue == 0))
-				&& cntx.Groups.ContainsKey(ResourceGroups.Web) && WebSitesList.Items.Count > 0;
-			WebSitesList.Enabled = PointWebSite.Checked;
+            CreateWebSite.Enabled = true;
+			CreateWebSite.Checked &= CreateWebSitePanel.Visible;
 
 			// point mail domain
 			PointMailDomainPanel.Visible = (type == DomainType.DomainPointer || (type == DomainType.Domain && cntx.Quotas[Quotas.OS_DOMAINPOINTERS].QuotaAllocatedValue == 0))
@@ -179,9 +169,6 @@ namespace WebsitePanel.Portal
 
 			if (type == DomainType.DomainPointer || (type == DomainType.Domain && cntx.Quotas[Quotas.OS_DOMAINPOINTERS].QuotaAllocatedValue == 0))
 			{
-				if (PointWebSite.Checked && WebSitesList.Items.Count > 0)
-					pointWebSiteId = Utils.ParseInt(WebSitesList.SelectedValue, 0);
-
 				if (PointMailDomain.Checked && MailDomainsList.Items.Count > 0)
 					pointMailDomainId = Utils.ParseInt(MailDomainsList.SelectedValue, 0);
 			}
@@ -192,7 +179,7 @@ namespace WebsitePanel.Portal
 			{
 				domainId = ES.Services.Servers.AddDomainWithProvisioning(PanelSecurity.PackageId,
 					domainName, type, CreateWebSite.Checked, pointWebSiteId, pointMailDomainId,
-					EnableDns.Checked, CreateInstantAlias.Checked, AllowSubDomains.Checked);
+					EnableDns.Checked, CreateInstantAlias.Checked, AllowSubDomains.Checked, "");
 
 				if (domainId < 0)
 				{

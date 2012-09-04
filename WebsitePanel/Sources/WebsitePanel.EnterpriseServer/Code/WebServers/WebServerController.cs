@@ -155,12 +155,12 @@ namespace WebsitePanel.EnterpriseServer
             return site;
         }
 
-        public static int AddWebSite(int packageId, int domainId, int ipAddressId)
+        public static int AddWebSite(int packageId, string hostName, int domainId, int ipAddressId)
         {
-            return AddWebSite(packageId, domainId, ipAddressId, false);
+            return AddWebSite(packageId, hostName, domainId, ipAddressId, false);
         }
 
-        public static int AddWebSite(int packageId, int domainId, int packageAddressId,
+        public static int AddWebSite(int packageId, string hostName, int domainId, int packageAddressId,
             bool addInstantAlias)
         {
             // check account
@@ -184,8 +184,11 @@ namespace WebsitePanel.EnterpriseServer
             if (PackageController.GetPackageItemByName(packageId, domainName, typeof(WebSite)) != null)
                 return BusinessErrorCodes.ERROR_WEB_SITE_ALREADY_EXISTS;
 
+
+            string siteName = string.IsNullOrEmpty(hostName) ? domainName : hostName + "." + domainName; ;
+
             // place log record
-            TaskManager.StartTask("WEB_SITE", "ADD", domainName);
+            TaskManager.StartTask("WEB_SITE", "ADD", siteName);
 
             try
             {
@@ -201,7 +204,7 @@ namespace WebsitePanel.EnterpriseServer
 				ServiceProviderProxy.Init(web, serviceId);
 
 				// Ensure the web site is being created doesn't exist on the server
-				if (web.SiteExists(domainName))
+                if (web.SiteExists(siteName))
 				{
 					//
 					PackageInfo packageInfo = PackageController.GetPackage(packageId);
@@ -209,7 +212,7 @@ namespace WebsitePanel.EnterpriseServer
 					ServerInfo serverInfo = ServerController.GetServerById(packageInfo.ServerId);
 					// Give as much clues for the issue to an administrator as possible
 					TaskManager.WriteError("Web site '{0}' could not be created because site with the name requested already " +
-						"exists on '{1}' server.", domainName, serverInfo.ServerName);
+                        "exists on '{1}' server.", siteName, serverInfo.ServerName);
 					// Return generic operation failed error
 					return BusinessErrorCodes.FAILED_EXECUTE_SERVICE_OPERATION;
 				} 
@@ -238,10 +241,12 @@ namespace WebsitePanel.EnterpriseServer
                     ipAddr = !String.IsNullOrEmpty(ip.InternalIP) ? ip.InternalIP : ip.ExternalIP;
 
                 // load domain instant alias
+                /*
                 string instantAlias = ServerController.GetDomainAlias(packageId, domainName);
                 DomainInfo instantDomain = ServerController.GetDomain(instantAlias);
                 if (instantDomain == null || instantDomain.WebSiteId > 0)
                     instantAlias = "";
+                */
 
                 // load web DNS records
                 List<GlobalDnsRecord> dnsRecords = ServerController.GetDnsRecordsByService(serviceId);
@@ -253,6 +258,7 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     // SHARED IP
                     // fill main domain bindings
+                    /*
                     FillWebServerBindings(bindings, dnsRecords, ipAddr, domain.DomainName);
 
                     // fill alias bindings if required
@@ -261,6 +267,8 @@ namespace WebsitePanel.EnterpriseServer
                         // fill bindings from DNS "A" records
                         FillWebServerBindings(bindings, dnsRecords, ipAddr, instantAlias);
                     }
+                     */
+                    bindings.Add(new ServerBinding(ipAddr, "80", siteName));
                 }
                 else
                 {
@@ -276,17 +284,17 @@ namespace WebsitePanel.EnterpriseServer
                 WebSite site = new WebSite();
 
                 // web site name and bindings
-                site.Name = domainName;
+                site.Name = siteName;
                 site.Bindings = bindings.ToArray();
 
-                site.AnonymousUsername = GetWebSiteUsername(webPolicy, domainName);
+                site.AnonymousUsername = GetWebSiteUsername(webPolicy, siteName);
                 site.AnonymousUserPassword = Guid.NewGuid().ToString("P");
 
                 // folders
                 string packageHome = FilesController.GetHomeFolder(packageId);
 
                 // add random string to the domain if specified
-                string randDomainName = domainName;
+                string randDomainName = siteName;
                 if (!String.IsNullOrEmpty(webPolicy["AddRandomDomainString"])
                     && Utils.ParseBool(webPolicy["AddRandomDomainString"], false))
                     randDomainName += "_" + Utils.GetRandomString(DOMAIN_RANDOM_LENGTH);
@@ -372,7 +380,7 @@ namespace WebsitePanel.EnterpriseServer
                 // register item
                 site.ServiceId = serviceId;
                 site.PackageId = packageId;
-                site.Name = domainName;
+                site.Name = siteName;
                 site.SiteIPAddressId = addressId;
                 site.SiteId = siteId;
 
@@ -384,11 +392,13 @@ namespace WebsitePanel.EnterpriseServer
 
                 // update domain
                 // add main pointer
-                AddWebSitePointer(siteItemId, domain.DomainId, false);
+                AddWebSitePointer(siteItemId, hostName, domain.DomainId, false);
 
                 // add instant pointer
+                /*
                 if (addInstantAlias && !String.IsNullOrEmpty(instantAlias))
                     AddWebSitePointer(siteItemId, instantDomain.DomainId, false);
+                */
 
                 // add parking page
                 // load package
@@ -602,27 +612,43 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         private static void FillWebServerBindings(List<ServerBinding> bindings, List<GlobalDnsRecord> dnsRecords,
-            string ipAddr, string domainName)
-			// TODO test if IPv6 works
+            string ipAddr, string hostName, string domainName)
+        // TODO test if IPv6 works
         {
             int bindingsCount = bindings.Count;
             foreach (GlobalDnsRecord dnsRecord in dnsRecords)
             {
-				if ((dnsRecord.RecordType == "A" || dnsRecord.RecordType == "AAAA") &&
+				if ((dnsRecord.RecordType == "A" || dnsRecord.RecordType == "AAAA" || dnsRecord.RecordType == "CNAME") &&
                     dnsRecord.RecordName != "*")
                 {
+                    /*
                     string recordData = dnsRecord.RecordName +
                         ((dnsRecord.RecordName != "") ? "." : "") + domainName;
+
+                    bindings.Add(new ServerBinding(ipAddr, "80", recordData));
+                     */
+
+                    string tmpName = string.Empty;
+                    if (!String.IsNullOrEmpty(hostName))
+                        tmpName = Utils.ReplaceStringVariable(dnsRecord.RecordName, "host_name", hostName);
+
+                    string recordData = string.Empty;
+                    if (tmpName.Contains("."))
+                        recordData = hostName;
+                    else
+                        recordData = tmpName + ((tmpName != "") ? "." : "") + domainName;
 
                     bindings.Add(new ServerBinding(ipAddr, "80", recordData));
                 }
             }
 
+            /*
             if(bindings.Count == bindingsCount)
             {
                 bindings.Add(new ServerBinding(ipAddr, "80", domainName));
                 bindings.Add(new ServerBinding(ipAddr, "80", "www." + domainName));
             }
+             */
         }
 
         private static string GetWebSiteUsername(UserSettings webPolicy, string domainName)
@@ -708,12 +734,12 @@ namespace WebsitePanel.EnterpriseServer
             return pointers;
         }
 
-        public static int AddWebSitePointer(int siteItemId, int domainId)
+        public static int AddWebSitePointer(int siteItemId, string hostName, int domainId)
         {
-            return AddWebSitePointer(siteItemId, domainId, true);
+            return AddWebSitePointer(siteItemId, hostName, domainId, true);
         }
 
-        internal static int AddWebSitePointer(int siteItemId, int domainId, bool updateWebSite)
+        internal static int AddWebSitePointer(int siteItemId, string hostName, int domainId, bool updateWebSite)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -751,7 +777,7 @@ namespace WebsitePanel.EnterpriseServer
                     string serviceIp = (ip != null) ? ip.ExternalIP : null;
 
                     List<DnsRecord> resourceRecords = DnsServerController.BuildDnsResourceRecords(
-                        dnsRecords, domain.DomainName, serviceIp);
+                        dnsRecords, hostName, domain.DomainName, serviceIp);
 
                     try
                     {
@@ -789,7 +815,7 @@ namespace WebsitePanel.EnterpriseServer
                             ipAddr = !String.IsNullOrEmpty(ip.InternalIP) ? ip.InternalIP : ip.ExternalIP;
 
                         // fill bindings
-                        FillWebServerBindings(bindings, dnsRecords, ipAddr, domain.DomainName);
+                        FillWebServerBindings(bindings, dnsRecords, ipAddr, hostName, domain.DomainName);
 
                         // update bindings
                         web.UpdateSiteBindings(siteItem.SiteId, bindings.ToArray());
@@ -798,7 +824,22 @@ namespace WebsitePanel.EnterpriseServer
 
                 // update domain
                 domain.WebSiteId = siteItemId;
-                ServerController.UpdateDomain(domain);
+                //ServerController.UpdateDomain(domain);
+                if (!String.IsNullOrEmpty(hostName))
+                    domain.DomainName = hostName + "." + domain.DomainName;
+                else
+                    domain.DomainName = domain.DomainName;
+                domain.IsDomainPointer = true;
+                int domainID = ServerController.AddDomain(domain);
+
+                DomainInfo domainTmp = ServerController.GetDomain(domainID);
+                if (domainTmp != null)
+                {
+                    domainTmp.WebSiteId = siteItemId;
+                    domainTmp.ZoneItemId = domain.ZoneItemId;
+                    ServerController.UpdateDomain(domainTmp);
+                }
+
 
                 return 0;
             }
@@ -855,7 +896,7 @@ namespace WebsitePanel.EnterpriseServer
                     string serviceIp = (ip != null) ? ip.ExternalIP : null;
 
                     List<DnsRecord> resourceRecords = DnsServerController.BuildDnsResourceRecords(
-                        dnsRecords, domain.DomainName, serviceIp);
+                        dnsRecords, domain.DomainName, "", serviceIp);
 
                     try
                     {
@@ -886,7 +927,7 @@ namespace WebsitePanel.EnterpriseServer
                     {
                         // remove host headers
                         List<ServerBinding> domainBindings = new List<ServerBinding>();
-                        FillWebServerBindings(domainBindings, dnsRecords, "", domain.DomainName);
+                        FillWebServerBindings(domainBindings, dnsRecords, "", domain.DomainName, "");
 
                         // fill to remove list
                         List<string> headersToRemove = new List<string>();

@@ -149,7 +149,7 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 // add all other records
-                zoneRecords.AddRange(BuildDnsResourceRecords(records, zoneName, ""));
+                zoneRecords.AddRange(BuildDnsResourceRecords(records, "", zoneName, ""));
 
                 // add zone records
                 dns.AddZoneRecords(zoneName, zoneRecords.ToArray());
@@ -271,7 +271,7 @@ namespace WebsitePanel.EnterpriseServer
             return 0;
         }
 
-        public static List<DnsRecord> BuildDnsResourceRecords(List<GlobalDnsRecord> records, string domainName, string serviceIP)
+        public static List<DnsRecord> BuildDnsResourceRecords(List<GlobalDnsRecord> records, string hostName, string domainName, string serviceIP)
         {
             List<DnsRecord> zoneRecords = new List<DnsRecord>();
 
@@ -279,9 +279,9 @@ namespace WebsitePanel.EnterpriseServer
             {
                 DnsRecord rr = new DnsRecord();
                 rr.RecordType = (DnsRecordType)Enum.Parse(typeof(DnsRecordType), record.RecordType, true);
-                rr.RecordName = record.RecordName;
+                rr.RecordName = Utils.ReplaceStringVariable(record.RecordName, "host_name", hostName);
                 
-		if (record.RecordType == "A" || record.RecordType == "AAAA")
+		        if (record.RecordType == "A" || record.RecordType == "AAAA")
                 {
                     rr.RecordData = String.IsNullOrEmpty(record.RecordData) ? record.ExternalIP : record.RecordData;
                     rr.RecordData = Utils.ReplaceStringVariable(rr.RecordData, "ip", record.ExternalIP);

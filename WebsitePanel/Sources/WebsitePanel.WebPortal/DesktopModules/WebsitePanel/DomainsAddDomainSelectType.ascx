@@ -20,12 +20,12 @@
         <b><asp:HyperLink ID="ProviderSubDomainLink" runat="server" meta:resourcekey="ProviderSubDomainLink">Provider Sub-domain</asp:HyperLink></b><br />
         <asp:Localize ID="ProviderSubDomainDescription" runat="server" meta:resourcekey="ProviderSubDomainDescription" /><br /><br />
     </p>
-    
+<!--    
     <p>
         <b><asp:HyperLink ID="DomainPointerLink" runat="server" meta:resourcekey="DomainPointerLink">Domain Alias</asp:HyperLink></b><br />
         <asp:Localize ID="DomainPointerDescription" runat="server" meta:resourcekey="DomainPointerDescription" />
     </p>
-
+-->
 </div>
 
 <div class="FormFooter">

@@ -423,11 +423,11 @@ namespace WebsitePanel.EnterpriseServer
         public PackageResult AddPackageWithResources(int userId, int planId, string spaceName,
             int statusId, bool sendLetter,
             bool createResources, string domainName, bool tempDomain, bool createWebSite,
-            bool createFtpAccount, string ftpAccountName, bool createMailAccount)
+            bool createFtpAccount, string ftpAccountName, bool createMailAccount, string hostName)
         {
             return PackageController.AddPackageWithResources(userId, planId, spaceName, statusId, sendLetter,
                 createResources, domainName, tempDomain, createWebSite,
-                createFtpAccount, ftpAccountName, createMailAccount);
+                createFtpAccount, ftpAccountName, createMailAccount, hostName);
         }
 
         [WebMethod]
@@ -436,13 +436,13 @@ namespace WebsitePanel.EnterpriseServer
                 bool sendAccountLetter,
                 bool createPackage, int planId, bool sendPackageLetter,
                 string domainName, bool tempDomain, bool createWebSite,
-                bool createFtpAccount, string ftpAccountName, bool createMailAccount)
+                bool createFtpAccount, string ftpAccountName, bool createMailAccount, string hostName)
         {
             return UserCreationWizard.CreateUserAccount(parentPackageId, username, password,
                 roleId, firstName, lastName, email, secondaryEmail, htmlMail, sendAccountLetter,
                 createPackage, planId,
                 sendPackageLetter, domainName, tempDomain, createWebSite, createFtpAccount, ftpAccountName,
-                createMailAccount);
+                createMailAccount, hostName);
         }
         #endregion
 

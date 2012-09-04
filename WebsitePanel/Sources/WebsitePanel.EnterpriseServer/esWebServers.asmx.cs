@@ -92,9 +92,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public int AddWebSitePointer(int siteItemId, int domainId)
+        public int AddWebSitePointer(int siteItemId, string hostName, int domainId)
         {
-            return WebServerController.AddWebSitePointer(siteItemId, domainId);
+            return WebServerController.AddWebSitePointer(siteItemId, hostName, domainId);
         }
 
         [WebMethod]
@@ -104,9 +104,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public int AddWebSite(int packageId, int domainId, int ipAddressId)
+        public int AddWebSite(int packageId, string hostName, int domainId, int ipAddressId)
         {
-            return WebServerController.AddWebSite(packageId, domainId, ipAddressId, true);
+            return WebServerController.AddWebSite(packageId, hostName, domainId, ipAddressId, true);
         }
 
         [WebMethod]
@@ -305,39 +305,39 @@ namespace WebsitePanel.EnterpriseServer
         }
         #endregion
 
-		#region Web Deploy Publishing Access
+        #region Web Deploy Publishing Access
 
-		[WebMethod]
-		public ResultObject GrantWebDeployPublishingAccess(int siteItemId, string accountName, string accountPassword)
-		{
-			return WebServerController.GrantWebDeployPublishingAccess(siteItemId, accountName, accountPassword);
-		}
+        [WebMethod]
+        public ResultObject GrantWebDeployPublishingAccess(int siteItemId, string accountName, string accountPassword)
+        {
+            return WebServerController.GrantWebDeployPublishingAccess(siteItemId, accountName, accountPassword);
+        }
 
-		[WebMethod]
-		public ResultObject SaveWebDeployPublishingProfile(int siteItemId, int[] serviceItemIds)
-		{
-			return WebServerController.SaveWebDeployPublishingProfile(siteItemId, serviceItemIds);
-		}
+        [WebMethod]
+        public ResultObject SaveWebDeployPublishingProfile(int siteItemId, int[] serviceItemIds)
+        {
+            return WebServerController.SaveWebDeployPublishingProfile(siteItemId, serviceItemIds);
+        }
 
-		[WebMethod]
-		public void RevokeWebDeployPublishingAccess(int siteItemId)
-		{
-			WebServerController.RevokeWebDeployPublishingAccess(siteItemId);
-		}
+        [WebMethod]
+        public void RevokeWebDeployPublishingAccess(int siteItemId)
+        {
+            WebServerController.RevokeWebDeployPublishingAccess(siteItemId);
+        }
 
-		[WebMethod]
-		public BytesResult GetWebDeployPublishingProfile(int siteItemId)
-		{
-			return WebServerController.GetWebDeployPublishingProfile(siteItemId);
-		}
+        [WebMethod]
+        public BytesResult GetWebDeployPublishingProfile(int siteItemId)
+        {
+            return WebServerController.GetWebDeployPublishingProfile(siteItemId);
+        }
 
-		[WebMethod]
-		public ResultObject ChangeWebDeployPublishingPassword(int siteItemId, string newAccountPassword)
-		{
-			return WebServerController.ChangeWebDeployPublishingPassword(siteItemId, newAccountPassword);
-		}
+        [WebMethod]
+        public ResultObject ChangeWebDeployPublishingPassword(int siteItemId, string newAccountPassword)
+        {
+            return WebServerController.ChangeWebDeployPublishingPassword(siteItemId, newAccountPassword);
+        }
 
-		#endregion
+        #endregion
 
 
         #region Helicon Ape
@@ -461,28 +461,28 @@ namespace WebsitePanel.EnterpriseServer
         #region WebManagement Access
 
         [WebMethod]
-		public ResultObject GrantWebManagementAccess(int siteItemId, string accountName, string accountPassword)
-		{
-			return WebServerController.GrantWebManagementAccess(siteItemId, accountName, accountPassword);
-		}
+        public ResultObject GrantWebManagementAccess(int siteItemId, string accountName, string accountPassword)
+        {
+            return WebServerController.GrantWebManagementAccess(siteItemId, accountName, accountPassword);
+        }
 
-		[WebMethod]
-		public void RevokeWebManagementAccess(int siteItemId)
-		{
-			WebServerController.RevokeWebManagementAccess(siteItemId);
-		}
+        [WebMethod]
+        public void RevokeWebManagementAccess(int siteItemId)
+        {
+            WebServerController.RevokeWebManagementAccess(siteItemId);
+        }
 
-		[WebMethod]
-		public ResultObject ChangeWebManagementAccessPassword(int siteItemId, string accountPassword)
-		{
-			return WebServerController.ChangeWebManagementAccessPassword(siteItemId, accountPassword);
-		}
-		
-		#endregion
+        [WebMethod]
+        public ResultObject ChangeWebManagementAccessPassword(int siteItemId, string accountPassword)
+        {
+            return WebServerController.ChangeWebManagementAccessPassword(siteItemId, accountPassword);
+        }
+
+        #endregion
 
         #region SSL
         [WebMethod]
-        public SSLCertificate CertificateRequest(SSLCertificate certificate,int siteItemId)
+        public SSLCertificate CertificateRequest(SSLCertificate certificate, int siteItemId)
         {
             return WebServerController.CertificateRequest(certificate, siteItemId);
         }
@@ -492,9 +492,9 @@ namespace WebsitePanel.EnterpriseServer
             return WebServerController.InstallCertificate(certificate, siteItemId);
         }
         [WebMethod]
-        public ResultObject InstallPfx(byte[] certificate, int siteItemId,string password)
+        public ResultObject InstallPfx(byte[] certificate, int siteItemId, string password)
         {
-            return WebServerController.InstallPfx(certificate, siteItemId,password);
+            return WebServerController.InstallPfx(certificate, siteItemId, password);
         }
         [WebMethod]
         public List<SSLCertificate> GetPendingCertificates(int siteItemId)
@@ -512,19 +512,19 @@ namespace WebsitePanel.EnterpriseServer
             return WebServerController.GetSiteCert(siteID);
         }
         [WebMethod]
-        public int CheckSSLForWebsite(int siteID,bool renewal)
+        public int CheckSSLForWebsite(int siteID, bool renewal)
         {
             return WebServerController.CheckSSL(siteID, renewal);
         }
         [WebMethod]
-        public ResultObject CheckSSLForDomain(string domain,int siteID)
+        public ResultObject CheckSSLForDomain(string domain, int siteID)
         {
             return WebServerController.CheckSSLForDomain(domain, siteID);
         }
         [WebMethod]
         public byte[] ExportCertificate(int siteId, string serialNumber, string password)
         {
-            return WebServerController.ExportCertificate(siteId,serialNumber, password);
+            return WebServerController.ExportCertificate(siteId, serialNumber, password);
         }
         [WebMethod]
         public List<SSLCertificate> GetCertificatesForSite(int siteId)
@@ -532,7 +532,7 @@ namespace WebsitePanel.EnterpriseServer
             return WebServerController.GetCertificatesForSite(siteId);
         }
         [WebMethod]
-        public ResultObject DeleteCertificate(int siteId,SSLCertificate certificate)
+        public ResultObject DeleteCertificate(int siteId, SSLCertificate certificate)
         {
             return WebServerController.DeleteCertificate(siteId, certificate);
         }
@@ -547,11 +547,11 @@ namespace WebsitePanel.EnterpriseServer
             return WebServerController.CheckCertificate(siteId);
         }
         [WebMethod]
-        public ResultObject DeleteCertificateRequest(int siteId,int csrID)
+        public ResultObject DeleteCertificateRequest(int siteId, int csrID)
         {
-            return WebServerController.DeleteCertificateRequest(siteId,csrID);
+            return WebServerController.DeleteCertificateRequest(siteId, csrID);
         }
-		
-		#endregion
+
+        #endregion
     }
 }

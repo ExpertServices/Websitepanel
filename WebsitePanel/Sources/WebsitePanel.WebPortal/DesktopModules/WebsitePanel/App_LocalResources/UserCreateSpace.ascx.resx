@@ -222,4 +222,7 @@
   <data name="chkIntegratedOUProvisioning.Text" xml:space="preserve">
     <value>Automated Hosted Organization Provisioning</value>
   </data>
+  <data name="lblHostName.Text" xml:space="preserve">
+    <value>Hostname:</value>
+  </data>
 </root>

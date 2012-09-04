@@ -7,8 +7,12 @@
 		    <asp:Label ID="lblDomainName" runat="server" meta:resourcekey="lblDomainName" Text="Domain name:"></asp:Label>
 		</td>
 		<td>
-			<uc1:DomainsSelectDomainControl ID="domainsSelectDomainControl" runat="server"
-			    HideWebSites="true" HideDomainsSubDomains="false" />
+			<asp:TextBox ID="txtHostName" runat="server" CssClass="TextBox100" MaxLength="64"></asp:TextBox>.<uc1:DomainsSelectDomainControl ID="domainsSelectDomainControl" runat="server" HideWebSites="true" HideDomainPointers="true" />
+            <asp:RequiredFieldValidator ID="valRequireHostName" runat="server" meta:resourcekey="valRequireHostName" ControlToValidate="txtHostName"
+	            ErrorMessage="Enter hostname" ValidationGroup="CreateSite" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
+            <asp:RegularExpressionValidator ID="valRequireCorrectHostName" runat="server"
+	                ErrorMessage="Enter valid hostname" ControlToValidate="txtHostName" Display="Dynamic"
+	                meta:resourcekey="valRequireCorrectHostName" ValidationExpression="^([0-9a-zA-Z])*[0-9a-zA-Z]+$" SetFocusOnError="True"></asp:RegularExpressionValidator>
 		</td>
 	</tr>
 </table>

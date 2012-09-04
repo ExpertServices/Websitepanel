@@ -553,11 +553,11 @@ namespace WebsitePanel.EnterpriseServer
         [WebMethod]
         public int AddDomainWithProvisioning(int packageId, string domainName, DomainType domainType,
             bool createWebSite, int pointWebSiteId, int pointMailDomainId,
-            bool createDnsZone, bool createInstantAlias, bool allowSubDomains)
+            bool createDnsZone, bool createInstantAlias, bool allowSubDomains, string hostName)
         {
             return ServerController.AddDomainWithProvisioning(packageId, domainName, domainType,
                         createWebSite, pointWebSiteId, pointMailDomainId,
-                        createDnsZone, createInstantAlias, allowSubDomains);
+                        createDnsZone, createInstantAlias, allowSubDomains, hostName);
         }
 
         [WebMethod]

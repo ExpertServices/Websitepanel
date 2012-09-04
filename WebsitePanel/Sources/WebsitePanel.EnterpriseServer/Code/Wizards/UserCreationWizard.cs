@@ -50,7 +50,7 @@ namespace WebsitePanel.EnterpriseServer
             bool sendAccountLetter,
             bool createPackage, int planId, bool sendPackageLetter,
             string domainName, bool tempDomain, bool createWebSite,
-            bool createFtpAccount, string ftpAccountName, bool createMailAccount)
+            bool createFtpAccount, string ftpAccountName, bool createMailAccount, string hostName)
         {
             UserCreationWizard wizard = new UserCreationWizard();
 
@@ -59,7 +59,7 @@ namespace WebsitePanel.EnterpriseServer
                 sendAccountLetter,
                 createPackage, planId, sendPackageLetter,
                 domainName, tempDomain, createWebSite,
-                createFtpAccount, ftpAccountName, createMailAccount);
+                createFtpAccount, ftpAccountName, createMailAccount, hostName);
         }
 
         // private fields
@@ -72,7 +72,7 @@ namespace WebsitePanel.EnterpriseServer
             bool sendAccountLetter,
             bool createPackage, int planId, bool sendPackageLetter,
             string domainName, bool tempDomain, bool createWebSite,
-            bool createFtpAccount, string ftpAccountName, bool createMailAccount)
+            bool createFtpAccount, string ftpAccountName, bool createMailAccount, string hostName)
         {
 
             // check account
@@ -193,13 +193,13 @@ namespace WebsitePanel.EnterpriseServer
                     }
                 }
 
-                if (createWebSite && !String.IsNullOrEmpty(domainName))
+                if (createWebSite && !String.IsNullOrEmpty(domainName) && !String.IsNullOrEmpty(hostName))
                 {
                     // create web site
                     try
                     {
                         int webSiteId = WebServerController.AddWebSite(
-                            createdPackageId, domainId, 0, true);
+                            createdPackageId, hostName, domainId, 0, true);
                         if (webSiteId < 0)
                         {
                             // rollback wizard

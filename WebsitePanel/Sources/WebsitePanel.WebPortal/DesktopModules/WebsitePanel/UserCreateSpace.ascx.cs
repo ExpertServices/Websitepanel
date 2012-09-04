@@ -124,6 +124,8 @@ namespace WebsitePanel.Portal
             string ftpAccount = (rbFtpAccountName.SelectedIndex == 0) ? null : ftpAccountName.Text;
 
             string domainName = txtDomainName.Text.Trim();
+
+            string hostName = txtHostName.Text.Trim();
             
             PackageResult result = null;
             try
@@ -134,7 +136,7 @@ namespace WebsitePanel.Portal
                     Utils.ParseInt(ddlStatus.SelectedValue, 0),
                     chkPackageLetter.Checked,
                     chkCreateResources.Checked, domainName, true, chkCreateWebSite.Checked,
-                    chkCreateFtpAccount.Checked, ftpAccount, chkCreateMailAccount.Checked);
+                    chkCreateFtpAccount.Checked, ftpAccount, chkCreateMailAccount.Checked, hostName);
 
                 if (result.Result < 0)
                 {

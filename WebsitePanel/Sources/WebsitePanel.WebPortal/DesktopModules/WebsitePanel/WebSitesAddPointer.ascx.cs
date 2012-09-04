@@ -50,7 +50,7 @@ namespace WebsitePanel.Portal
         {
             try
             {
-                int result = ES.Services.WebServers.AddWebSitePointer(PanelRequest.ItemID, domainsSelectDomainControl.DomainId);
+                int result = ES.Services.WebServers.AddWebSitePointer(PanelRequest.ItemID, txtHostName.Text, domainsSelectDomainControl.DomainId);
                 if (result < 0)
                 {
                     ShowResultMessage(result);

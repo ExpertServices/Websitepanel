@@ -31,10 +31,6 @@
 	                NavigateUrl='<%# GetItemEditUrl(Eval("PackageID"), Eval("DomainID")) %>'>
 		            <%# Eval("DomainName")%></asp:hyperlink>
 	            </b>
-	            <div runat="server" class="Small" style="margin-top:2px;" visible=' <%# Eval("WebSiteName") != DBNull.Value %>'>
-                    <asp:Label ID="lblWebSite" runat="server" meta:resourcekey="lblWebSite" Text="Web:"></asp:Label>
-                    <b><%# Eval("WebSiteName")%></b>
-	            </div>
 	            <div runat="server" class="Small" style="margin-top:2px;" visible=' <%# Eval("MailDomainName") != DBNull.Value %>'>
                     <asp:Label ID="lblMailDomain" runat="server" meta:resourcekey="lblMailDomain" Text="Mail:"></asp:Label>
                     <b><%# Eval("MailDomainName")%></b>
@@ -107,10 +103,12 @@
             <td><asp:Label ID="lblSubDomains" runat="server" meta:resourcekey="lblSubDomains" Text="Sub-Domains:" CssClass="NormalBold"></asp:Label></td>
             <td><wsp:Quota ID="quotaSubDomains" runat="server" QuotaName="OS.SubDomains" /></td>
         </tr>
+<!--
         <tr>
             <td><asp:Label ID="lblDomainPointers" runat="server" meta:resourcekey="lblDomainPointers" Text="Domain Aliases:" CssClass="NormalBold"></asp:Label></td>
             <td><wsp:Quota ID="quotaDomainPointers" runat="server" QuotaName="OS.DomainPointers" /></td>
         </tr>
+-->
     </table>
 </div>
 
