@@ -23602,7 +23602,7 @@ INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName]
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (31, 8, N'SmarterStats', N'SmarterStats 4.x', N'WebsitePanel.Providers.Statistics.SmarterStats4, WebsitePanel.Providers.Statistics.SmarterStats', N'SmarterStats', NULL)
 GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (32, 12, N'Exchange2010', N'Hosted Microsoft Exchange Server 2010', N'WebsitePanel.Providers.HostedSolution.Exchange2010, WebsitePanel.Providers.HostedSolution', N'Exchange', 1)
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (32, 12, N'Exchange2010', N'Hosted Microsoft Exchange Server 2010', N'WebsitePanel.Providers.HostedSolution.Exchange2010, WebsitePanel.Providers.HostedSolution', N'Exchange', NULL)
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (55, 7, N'NetticaDNS', N'Nettica DNS', N'WebsitePanel.Providers.DNS.Nettica, WebsitePanel.Providers.DNS.Nettica', N'NetticaDNS', 1)
 GO
@@ -23648,7 +23648,7 @@ INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName]
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (209, 23, N'MsSQL', N'Microsoft SQL Server 2012', N'WebsitePanel.Providers.Database.MsSqlServer2012, WebsitePanel.Providers.Database.SqlServer', N'MSSQL', NULL)
 GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (250, 41, N'Lync2010', N'Microsoft Lync Server 2010 Multitenant Hosting Pack', 'WebsitePanel.Providers.HostedSolution.Lync2010, WebsitePanel.Providers.HostedSolution', 'Lync', 1)
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (250, 41, N'Lync2010', N'Microsoft Lync Server 2010 Multitenant Hosting Pack', 'WebsitePanel.Providers.HostedSolution.Lync2010, WebsitePanel.Providers.HostedSolution', 'Lync', NULL)
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (300, 30, N'HyperV', N'Microsoft Hyper-V', N'WebsitePanel.Providers.Virtualization.HyperV, WebsitePanel.Providers.Virtualization.HyperV', N'HyperV', 1)
 GO
@@ -23656,7 +23656,7 @@ INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName]
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (400, 40, N'HyperVForPC', N'Microsoft Hyper-V For Private Cloud', N'WebsitePanel.Providers.VirtualizationForPC.HyperVForPC, WebsitePanel.Providers.VirtualizationForPC.HyperVForPC', N'HyperVForPrivateCloud', 1)
 GO
-INSERT [dbo].[Providers] ([ProviderId], [GroupId], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES(90, 12, N'Exchange2010SP2', N'Hosted Microsoft Exchange Server 2010 SP2', N'WebsitePanel.Providers.HostedSolution.Exchange2010SP2, WebsitePanel.Providers.HostedSolution', N'Exchange',	1)
+INSERT [dbo].[Providers] ([ProviderId], [GroupId], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES(90, 12, N'Exchange2010SP2', N'Hosted Microsoft Exchange Server 2010 SP2', N'WebsitePanel.Providers.HostedSolution.Exchange2010SP2, WebsitePanel.Providers.HostedSolution', N'Exchange',	NULL)
 GO
 SET ANSI_NULLS ON
 GO

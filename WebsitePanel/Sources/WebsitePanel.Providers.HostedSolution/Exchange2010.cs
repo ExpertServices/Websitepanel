@@ -229,14 +229,21 @@ namespace WebsitePanel.Providers.HostedSolution
         public override bool IsInstalled()
         {
 			int value = 0;
+            bool bResult = false;
 			RegistryKey root = Registry.LocalMachine;
 			RegistryKey rk = root.OpenSubKey(ExchangeRegistryPath);
 			if (rk != null)
 			{
 				value = (int)rk.GetValue("MsiProductMajor", null);
+                if (value == 14)
+                {
+                    value = (int)rk.GetValue("MsiProductMinor", null);
+                    if ((value == 0) |  (value == 1)) bResult = true;
+                }
+
 				rk.Close();
 			}
-			return value == 14;
+            return bResult;
         }
 	}
 }
