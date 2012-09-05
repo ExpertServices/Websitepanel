@@ -1233,7 +1233,7 @@ namespace WebsitePanel.Setup
 				Log.WriteStart("Adding hosting space");
 				// gather form info
 				PackageResult res = ES.Services.Packages.AddPackageWithResources(userId, planId,
-					name, 1, false, false, string.Empty, false, false, false, null, false);
+					name, 1, false, false, string.Empty, false, false, false, null, false,string.Empty);
 				if (res.Result > 0)
 					Log.WriteEnd("Added hosting space");
 				else
