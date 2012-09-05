@@ -17,12 +17,15 @@
 		</Feature>
 
     <UIRef Id="WixUI_Minimal" />
+    
     <UI />
 
     <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
-    
-    
-	</Product>
+    <WixVariable Id="WixUIBannerBmp" Value="bannrbmp.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="dlgbmp.bmp" />
+
+
+  </Product>
 
 	<Fragment>
 		<Directory Id="TARGETDIR" Name="SourceDir">
