@@ -1,0 +1,1 @@
+%windir%\Microsoft.NET\Framework64\v4.0.30319\msbuild.exe build.xml /target:Deploy /p:BuildConfiguration=Debug /p:Version="1.2.2" /p:FileVersion="1.2.2.1" /p:VersionLabel="1.2.2.1" /v:n /fileLogger /m
