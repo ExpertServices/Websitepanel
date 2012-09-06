@@ -154,8 +154,8 @@ namespace WebsitePanel.Providers.FTP
 
             Log.WriteInfo("Find users nodes");
             // find users node
-            XmlNode fzServerNode = doc.SelectSingleNode("/FileZillaServer");
-            XmlNode fzAccountsNode = fzServerNode.SelectSingleNode("/Users");
+            XmlNode fzServerNode = doc.SelectSingleNode("FileZillaServer");
+            XmlNode fzAccountsNode = fzServerNode.SelectSingleNode("Users");
             if (fzAccountsNode == null)
             {
                 fzAccountsNode = doc.CreateElement("Users");
