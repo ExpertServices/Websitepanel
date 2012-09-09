@@ -102,10 +102,13 @@ namespace WebsitePanel.Providers.HostedSolution
             DirectoryEntry entry = GetADObject(path);
 
             if (removeChild && entry.Children != null)
+            {
                 foreach (DirectoryEntry child in entry.Children)
                 {
                     entry.Children.Remove(child);
                 }
+                entry.CommitChanges();
+            }
 
             DirectoryEntry parent = entry.Parent;
             if (parent != null)
