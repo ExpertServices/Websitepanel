@@ -4,7 +4,7 @@
   <?include Config.wxi?>
   <?define VERSION="!(bind.FileVersion.WebsitePanel.Installer.exe)"?>
   
-  <Product Id="*" Name="WebsitePanel Installer" Language="1033" Version="1.2.2" Manufacturer="Outercurve Foundation" UpgradeCode="629ccd5c-1f6d-4168-bbe6-01c69e232f43">
+  <Product Id="*" Name="WebsitePanel Installer" Language="1033" Version="$(var.VERSION)" Manufacturer="Outercurve Foundation" UpgradeCode="629ccd5c-1f6d-4168-bbe6-01c69e232f43">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
@@ -23,6 +23,9 @@
     <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
     <WixVariable Id="WixUIBannerBmp" Value="bannrbmp.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="dlgbmp.bmp" />
+
+    <Icon Id="WebSitePanel.ico" SourceFile="WebSitePanel.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="WebSitePanel.ico" />
 
 
   </Product>

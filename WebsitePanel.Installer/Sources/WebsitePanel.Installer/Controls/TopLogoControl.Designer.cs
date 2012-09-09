@@ -42,21 +42,21 @@ namespace WebsitePanel.Installer
             // 
             // pnlLogo
             // 
-            this.pnlLogo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlLogo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlLogo.BackColor = System.Drawing.Color.White;
             this.pnlLogo.Controls.Add(this.progressIcon);
             this.pnlLogo.Controls.Add(this.lblVersion);
             this.pnlLogo.Controls.Add(this.imgLogo);
             this.pnlLogo.Location = new System.Drawing.Point(0, 0);
             this.pnlLogo.Name = "pnlLogo";
-            this.pnlLogo.Size = new System.Drawing.Size(496, 63);
+            this.pnlLogo.Size = new System.Drawing.Size(640, 63);
             this.pnlLogo.TabIndex = 2;
             // 
             // progressIcon
             // 
             this.progressIcon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressIcon.Location = new System.Drawing.Point(452, 15);
+            this.progressIcon.Location = new System.Drawing.Point(349, 18);
             this.progressIcon.Name = "progressIcon";
             this.progressIcon.Size = new System.Drawing.Size(30, 30);
             this.progressIcon.TabIndex = 4;
@@ -64,31 +64,31 @@ namespace WebsitePanel.Installer
             // 
             // lblVersion
             // 
-            this.lblVersion.Font = new System.Drawing.Font("Verdana", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lblVersion.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.lblVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.lblVersion.Location = new System.Drawing.Point(317, 31);
+            this.lblVersion.Location = new System.Drawing.Point(295, 35);
             this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(42, 13);
+            this.lblVersion.Size = new System.Drawing.Size(62, 13);
             this.lblVersion.TabIndex = 2;
-            this.lblVersion.Text = "v1.0";
+            this.lblVersion.Text = "v1.0.0.0";
             // 
             // imgLogo
             // 
             this.imgLogo.Image = ((System.Drawing.Image)(resources.GetObject("imgLogo.Image")));
-            this.imgLogo.Location = new System.Drawing.Point(13, 7);
+            this.imgLogo.Location = new System.Drawing.Point(3, 3);
             this.imgLogo.Name = "imgLogo";
-            this.imgLogo.Size = new System.Drawing.Size(303, 48);
+            this.imgLogo.Size = new System.Drawing.Size(632, 63);
             this.imgLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.imgLogo.TabIndex = 0;
             this.imgLogo.TabStop = false;
             // 
             // line
             // 
-            this.line.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.line.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.line.Location = new System.Drawing.Point(0, 61);
             this.line.Name = "line";
-            this.line.Size = new System.Drawing.Size(496, 2);
+            this.line.Size = new System.Drawing.Size(640, 2);
             this.line.TabIndex = 3;
             this.line.TabStop = false;
             // 
@@ -98,7 +98,7 @@ namespace WebsitePanel.Installer
             this.Controls.Add(this.line);
             this.Controls.Add(this.pnlLogo);
             this.Name = "TopLogoControl";
-            this.Size = new System.Drawing.Size(496, 64);
+            this.Size = new System.Drawing.Size(640, 64);
             this.pnlLogo.ResumeLayout(false);
             this.pnlLogo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imgLogo)).EndInit();
