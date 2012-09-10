@@ -765,6 +765,7 @@ namespace WebsitePanel.EnterpriseServer
             TaskManager.StartTask("WEB_SITE", "ADD_POINTER", siteItem.Name);
             TaskManager.ItemId = siteItemId;
             TaskManager.WriteParameter("Domain pointer", domain.DomainName);
+            TaskManager.WriteParameter("Host name", hostName);
 
             try
             {
@@ -1994,6 +1995,12 @@ namespace WebsitePanel.EnterpriseServer
 
 				//
 				WebServer server = GetWebServer(item.ServiceId);
+
+                StringDictionary webSettings = ServerController.GetServiceSettings(item.ServiceId);
+                if (webSettings["WmSvc.NETBIOS"] != null)
+                {
+                    accountName = webSettings["WmSvc.NETBIOS"].ToString() + "\\" + accountName;
+                }
 
 				// Most part of the functionality used to enable Web Deploy publishing correspond to those created for Web Management purposes,
 				// so we can re-use the existing functionality to deliver seamless development experience.

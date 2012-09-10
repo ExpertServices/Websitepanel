@@ -77,17 +77,16 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 if (plans.Length == 0)
                     btnCreate.Enabled = false;
-            }
 
-
-            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
-            if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
-            {
-                if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
+                PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
                 {
-                    locSubscriberNumber.Visible = txtSubscriberNumber.Visible = valRequireSubscriberNumber.Enabled = false;
-                    rbMailboxType.Items.Add(new System.Web.UI.WebControls.ListItem(GetLocalizedString("RoomMailbox"),"5"));
-                    rbMailboxType.Items.Add(new System.Web.UI.WebControls.ListItem(GetLocalizedString("EquipmentMailbox"),"6"));
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
+                    {
+                        locSubscriberNumber.Visible = txtSubscriberNumber.Visible = valRequireSubscriberNumber.Enabled = false;
+                        rbMailboxType.Items.Add(new System.Web.UI.WebControls.ListItem(GetLocalizedString("RoomMailbox.Text"), "5"));
+                        rbMailboxType.Items.Add(new System.Web.UI.WebControls.ListItem(GetLocalizedString("EquipmentMailbox.Text"), "6"));
+                    }
                 }
             }
 

@@ -91,10 +91,24 @@ namespace WebsitePanel.EnterpriseServer
             return (string[])list.ToArray(typeof(string));
         }
 
+
         public static string ReplaceStringVariable(string str, string variable, string value)
         {
-            if (String.IsNullOrEmpty(str) || String.IsNullOrEmpty(value))
-                return str;
+            return ReplaceStringVariable(str, variable, value, false);
+        }
+
+        public static string ReplaceStringVariable(string str, string variable, string value, bool allowEmptyValue)
+        {
+            if (allowEmptyValue)
+            {
+                if (String.IsNullOrEmpty(str)) return str;
+                if (String.IsNullOrEmpty(value)) return string.Empty;
+            }
+            else
+            {
+                if (String.IsNullOrEmpty(str) || String.IsNullOrEmpty(value))
+                    return str;
+            }
 
             Regex re = new Regex("\\[" + variable + "\\]+", RegexOptions.IgnoreCase);
             return re.Replace(str, value);

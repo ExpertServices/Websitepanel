@@ -918,7 +918,16 @@ namespace WebsitePanel.Providers.Utils
 
         private static string GetUserName(string userName, RemoteServerSettings serverSettings)
         {
-            return userName.Replace(serverSettings.ADRootDomain + "\\", "");
+            if (userName.Contains("\\"))
+            {
+                string[] tmp = userName.Split('\\');
+                if (tmp.Length > 1)
+                    return tmp[1];
+                else
+                    return tmp[0];
+            }
+            else
+                return userName;
         }
 
 		private static DirectoryEntry GetUserObject(DirectoryEntry objRoot, string userName, 

@@ -92,17 +92,15 @@
         <table width="100%" cellpadding="4" cellspacing="0">
             <tr>
                 <td class="Normal" width="40" nowrap rowspan="2"></td>
-                <td class="Normal" width="100%">
+                <td class="Normal">
                     <asp:CheckBox ID="chkCreateWebSite" runat="server" meta:resourcekey="chkCreateWebSite"
                         Text="Create Web Site" Checked="True" />
                 </td>
             </tr>
             <tr>
-		        <td class="SubHead">
+		        <td class="Normal" width="100%">
 		            <asp:Label ID="lblHostName" runat="server" meta:resourcekey="lblHostName" Text="Host name:"></asp:Label>
-		        </td>
-                <td>
-                    <asp:TextBox ID="txtHostName" runat="server" CssClass="TextBox100" MaxLength="64"></asp:TextBox>
+                    <asp:TextBox ID="txtHostName" runat="server" CssClass="NormalTextBox" Width="250px" MaxLength="64"></asp:TextBox>
                     <asp:RequiredFieldValidator ID="valRequireHostName" runat="server" meta:resourcekey="valRequireHostName" ControlToValidate="txtHostName"
 	                    ErrorMessage="Enter hostname" ValidationGroup="CreateSite" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
                     <asp:RegularExpressionValidator ID="valRequireCorrectHostName" runat="server"

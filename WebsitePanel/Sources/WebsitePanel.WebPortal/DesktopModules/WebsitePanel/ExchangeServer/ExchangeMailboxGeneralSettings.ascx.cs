@@ -146,6 +146,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 }
 
                 messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_MAILBOX_SETTINGS");
+                BindSettings();
             }
             catch (Exception ex)
             {

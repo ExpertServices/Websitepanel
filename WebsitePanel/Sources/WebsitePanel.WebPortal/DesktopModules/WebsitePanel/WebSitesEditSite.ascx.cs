@@ -259,7 +259,13 @@ namespace WebsitePanel.Portal
 
 			//
 			ToggleWmSvcControls(site);
-			AutoSuggestWmSvcAccontName(site);
+                        
+			//
+            if (!site.GetValue<bool>(WebVirtualDirectory.WmSvcSiteEnabled))
+            {
+                txtWmSvcAccountName.Text = AutoSuggestWmSvcAccontName(site, "_admin");
+            }
+
 			ToggleWmSvcConnectionHint(site);
 
 			// Web Deploy Publishing
@@ -489,6 +495,8 @@ namespace WebsitePanel.Portal
 					WDeployPublishingPasswordTextBox,
 					WDeployPublishingConfirmPasswordTextBox,
 					WDeployPublishingAccountRequiredFieldValidator);
+
+                WDeployPublishingAccountTextBox.Text = AutoSuggestWmSvcAccontName(item, "_dploy");
 				//
 				WDeployPublishingAccountRequiredFieldValidator.Enabled = true;
 				//
@@ -569,27 +577,22 @@ namespace WebsitePanel.Portal
 
 		#region WmSvc Management
 
-		private void AutoSuggestWmSvcAccontName(WebVirtualDirectory item)
+		private string  AutoSuggestWmSvcAccontName(WebVirtualDirectory item, string suffix)
 		{
-			bool wmSvcItemEnabled = item.GetValue<bool>(WebVirtualDirectory.WmSvcSiteEnabled);
+			string autoSuggestedPart = item.Name;
 			//
-			if (!wmSvcItemEnabled)
+			if (autoSuggestedPart.Length > 14)
 			{
-				string autoSuggestedPart = item.Name;
+				autoSuggestedPart = autoSuggestedPart.Substring(0, 14);
 				//
-				if (autoSuggestedPart.Length > 14)
+				while (!String.IsNullOrEmpty(autoSuggestedPart) &&
+					!Char.IsLetterOrDigit(autoSuggestedPart[autoSuggestedPart.Length - 1]))
 				{
-					autoSuggestedPart = autoSuggestedPart.Substring(0, 14);
-					//
-					while (!String.IsNullOrEmpty(autoSuggestedPart) &&
-						!Char.IsLetterOrDigit(autoSuggestedPart[autoSuggestedPart.Length - 1]))
-					{
-						autoSuggestedPart = autoSuggestedPart.Substring(0, autoSuggestedPart.Length - 1);
-					}
+					autoSuggestedPart = autoSuggestedPart.Substring(0, autoSuggestedPart.Length - 1);
 				}
-				//
-				txtWmSvcAccountName.Text = autoSuggestedPart + "_admin";
 			}
+			//
+            return autoSuggestedPart + suffix;
 		}
 
 		private void ToggleWmSvcControls(WebVirtualDirectory item)

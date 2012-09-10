@@ -186,7 +186,8 @@ namespace WebsitePanel.EnterpriseServer
 					IBackupController controller = null;
 					try
 					{
-						controller = Activator.CreateInstance(Type.GetType(group.GroupController)) as IBackupController;
+                        if (group.GroupController != null)
+						    controller = Activator.CreateInstance(Type.GetType(group.GroupController)) as IBackupController;
 						if (controller != null)
 						{
 							// backup items
@@ -342,6 +343,7 @@ namespace WebsitePanel.EnterpriseServer
 					}
 				}
 
+                TaskManager.IndicatorCurrent = TaskManager.IndicatorMaximum;
 			}
 			catch (Exception ex)
 			{

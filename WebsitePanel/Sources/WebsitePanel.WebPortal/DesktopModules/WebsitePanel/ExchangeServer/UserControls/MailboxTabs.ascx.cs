@@ -68,7 +68,11 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             if (!hideItems) tabsList.Add(CreateTab("mailbox_addresses", "Tab.Addresses"));
             if (!hideItems) tabsList.Add(CreateTab("mailbox_mailflow", "Tab.Mailflow"));
             if (!hideItems) tabsList.Add(CreateTab("mailbox_permissions", "Tab.Permissions"));
-            tabsList.Add(CreateTab("mailbox_setup", "Tab.Setup"));
+
+            string instructions = ES.Services.ExchangeServer.GetMailboxSetupInstructions(PanelRequest.ItemID, PanelRequest.AccountID, false, false, false);
+            if (!string.IsNullOrEmpty(instructions))
+                tabsList.Add(CreateTab("mailbox_setup", "Tab.Setup"));
+
             if (!hideItems) tabsList.Add(CreateTab("mailbox_mobile", "Tab.Mobile"));
             //tabsList.Add(CreateTab("mailbddox_spam", "Tab.Spam"));
 

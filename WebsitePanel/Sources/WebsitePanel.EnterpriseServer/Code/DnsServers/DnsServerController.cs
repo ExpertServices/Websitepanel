@@ -279,7 +279,7 @@ namespace WebsitePanel.EnterpriseServer
             {
                 DnsRecord rr = new DnsRecord();
                 rr.RecordType = (DnsRecordType)Enum.Parse(typeof(DnsRecordType), record.RecordType, true);
-                rr.RecordName = Utils.ReplaceStringVariable(record.RecordName, "host_name", hostName);
+                rr.RecordName = Utils.ReplaceStringVariable(record.RecordName, "host_name", hostName, true);
                 
 		        if (record.RecordType == "A" || record.RecordType == "AAAA")
                 {
