@@ -18,7 +18,7 @@ Imports System.Runtime.CompilerServices
 Imports System.Runtime.InteropServices
 <Assembly: AssemblyCompany("Outercurve Foundation"),  _
  Assembly: AssemblyCopyright("Copyright © 2012 Outercurve Foundation."),  _
- Assembly: AssemblyVersion("1.2.2.1"),  _
- Assembly: AssemblyFileVersion("1.2.2.1"),  _
- Assembly: AssemblyInformationalVersion("1.2.2.1")> 
+ Assembly: AssemblyVersion("2.0.0.1"),  _
+ Assembly: AssemblyFileVersion("2.0.0.1"),  _
+ Assembly: AssemblyInformationalVersion("2.0.0")> 
 
