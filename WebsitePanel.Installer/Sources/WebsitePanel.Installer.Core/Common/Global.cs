@@ -135,7 +135,7 @@ namespace WebsitePanel.Installer.Common
 			{
 				get
 				{
-					if (IISVersion.Major == 7)
+					if (IISVersion.Major >= 7)
 					{
 						return new string[] { "IIS_IUSRS" };
 					}
@@ -167,7 +167,7 @@ namespace WebsitePanel.Installer.Common
 			{
 				get
 				{
-					if (IISVersion.Major == 7)
+                    if (IISVersion.Major >= 7)
 					{
 						return new string[] { "IIS_IUSRS" };
 					}

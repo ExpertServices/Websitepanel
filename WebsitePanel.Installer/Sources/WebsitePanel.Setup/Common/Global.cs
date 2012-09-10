@@ -114,7 +114,7 @@ namespace WebsitePanel.Setup
 			{
 				get
 				{
-					if (IISVersion.Major == 7)
+                    if (IISVersion.Major >= 7)
 					{
 						return new string[] { "AD:Domain Admins", "SID:" + SystemSID.ADMINISTRATORS, "IIS_IUSRS" };
 					}
@@ -146,7 +146,7 @@ namespace WebsitePanel.Setup
 			{
 				get
 				{
-					if (IISVersion.Major == 7)
+                    if (IISVersion.Major >= 7)
 					{
 						return new string[] { "IIS_IUSRS" };
 					}
@@ -178,7 +178,7 @@ namespace WebsitePanel.Setup
 			{
 				get
 				{
-					if (IISVersion.Major == 7)
+                    if (IISVersion.Major >= 7)
 					{
 						return new string[] { "IIS_IUSRS" };
 					}

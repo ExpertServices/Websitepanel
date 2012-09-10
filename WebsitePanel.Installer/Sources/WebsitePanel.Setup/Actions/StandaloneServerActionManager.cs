@@ -316,7 +316,7 @@ namespace WebsitePanel.Setup.Actions
 				serviceInfo.Comments = string.Empty;
 
 				//check IIS version
-				if (ServerSetup.IISVersion.Major == 7)
+                if (ServerSetup.IISVersion.Major >= 7)
 				{
 					serviceInfo.ProviderId = 101;
 				}

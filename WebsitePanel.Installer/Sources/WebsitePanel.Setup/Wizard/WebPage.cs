@@ -326,7 +326,7 @@ namespace WebsitePanel.Setup
 						return true;
 					}
 				}
-				bool iis7 = (SetupVariables.IISVersion.Major == 7);
+                bool iis7 = (SetupVariables.IISVersion.Major >= 7);
 				string siteId = iis7 ? 
 					WebUtils.GetIIS7SiteIdByBinding(newIP, newPort, newDomain) :
 					WebUtils.GetSiteIdByBinding(newIP, newPort, newDomain);

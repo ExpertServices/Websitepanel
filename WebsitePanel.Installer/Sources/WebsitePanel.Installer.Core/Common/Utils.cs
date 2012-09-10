@@ -284,7 +284,7 @@ namespace WebsitePanel.Installer.Common
 					return;
 
 				//ignore win64 check on IIS7
-				if (Global.IISVersion.Major == 7)
+                if (Global.IISVersion.Major >= 7)
 					return;
 
 				if (!IIS32Enabled())

@@ -84,7 +84,7 @@ namespace WebsitePanel.Setup
 			string component = Wizard.SetupVariables.ComponentFullName;
 			string componentId = Wizard.SetupVariables.ComponentId;
 			Version iisVersion = Wizard.SetupVariables.IISVersion;
-			bool iis7 = (iisVersion.Major == 7);
+            bool iis7 = (iisVersion.Major >= 7);
 
 			try
 			{
