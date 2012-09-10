@@ -142,6 +142,20 @@ namespace WebsitePanel.Portal
                 {
                     ResellersPanel.Visible = true;
                 }
+
+                if (!(domain.IsDomainPointer || domain.IsSubDomain || domain.IsInstantAlias))
+                {
+                    UserInfo user = UsersHelper.GetUser(PanelSecurity.EffectiveUserId);
+
+                    if (user != null)
+                    {
+                        if (user.Role == UserRole.User)
+                        {
+                            btnDelete.Enabled = Utils.CheckQouta(Quotas.OS_ALLOWTENANTCREATEDOMAINS, cntx);
+                        }
+                    }
+                }
+
             }
             catch (Exception ex)
             {

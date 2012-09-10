@@ -467,6 +467,11 @@ END
 GO
 
 
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'OS.AllowTenantCreateDomains')
+BEGIN
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (410, 1, 12, N'OS.AllowTenantCreateDomains', N'Allow Tenants to Create Top Level Domains', 1, 0, NULL)
+END
+GO
 
 
 DELETE FROM [dbo].[PackageQuotas] WHERE [QuotaID] IN (SELECT [QuotaID] FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.POP3Enabled')
