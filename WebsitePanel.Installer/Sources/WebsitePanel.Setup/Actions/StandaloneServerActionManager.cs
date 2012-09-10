@@ -250,10 +250,17 @@ namespace WebsitePanel.Setup.Actions
 				{
 					serviceInfo.ProviderId = 1;
 				}
-				else if (version == OS.WindowsVersion.WindowsServer2008)
+				else if (version == OS.WindowsVersion.WindowsServer2008 ||
+                    version == OS.WindowsVersion.WindowsServer2008R2 ||
+                    version == OS.WindowsVersion.Windows7)
 				{
 					serviceInfo.ProviderId = 100;
 				}
+                else if (version == OS.WindowsVersion.WindowsServer2012 ||
+                    version == OS.WindowsVersion.Windows8)
+                {
+                    serviceInfo.ProviderId = 104;
+                }
 				int serviceId = ES.Services.Servers.AddService(serviceInfo);
 				if (serviceId > 0)
 				{
