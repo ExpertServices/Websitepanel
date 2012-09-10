@@ -55,6 +55,21 @@ namespace WebsitePanel.Portal
 
             DomainLink.Enabled = (cntx.Quotas.ContainsKey(Quotas.OS_DOMAINS) && !cntx.Quotas[Quotas.OS_DOMAINS].QuotaExhausted);
 
+            if (DomainLink.Enabled)
+            {
+                UserInfo user = UsersHelper.GetUser(PanelSecurity.EffectiveUserId);
+
+                if (user != null)
+                {
+                    if (user.Role == UserRole.User)
+                    {
+                        DomainLink.Enabled = Utils.CheckQouta(Quotas.OS_ALLOWTENANTCREATEDOMAINS, cntx);
+                    }
+                }
+            }
+
+            
+
             DomainInfo[] myDomains = ES.Services.Servers.GetMyDomains(PanelSecurity.PackageId);
             bool enableSubDomains = false;
             foreach(DomainInfo domain in myDomains)
