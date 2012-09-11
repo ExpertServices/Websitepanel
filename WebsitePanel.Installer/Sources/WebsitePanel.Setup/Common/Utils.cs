@@ -561,7 +561,7 @@ namespace WebsitePanel.Setup
 			// By default we fallback to the corresponding tool version based on the platform bitness
 			var util = Environment.Is64BitOperatingSystem ? AspNet40RegistrationToolx64 : AspNet40RegistrationToolx86;
 			// Choose appropriate tool version for IIS 7
-			if (setupVariables.IISVersion.Major == 7 && setupVariables.SetupAction == SetupActions.Update)
+            if (setupVariables.IISVersion.Major >= 7 && setupVariables.SetupAction == SetupActions.Update)
 			{
 				// Evaluate app pool settings on x64 platform only when update is running
 				if (Environment.Is64BitOperatingSystem == true)
@@ -747,7 +747,7 @@ namespace WebsitePanel.Setup
 
 		public static void OpenFirewallPort(string name, string port, Version iisVersion)
 		{
-			bool iis7 = (iisVersion.Major == 7);
+            bool iis7 = (iisVersion.Major >= 7);
 			if (iis7)
 			{
 				//TODO: Add IIS7 support

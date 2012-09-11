@@ -341,7 +341,7 @@ namespace WebsitePanel.Setup.Actions
 			var netbiosDomain = userDomain;
 			var userName = vars.UserAccount;
 			var iisVersion = vars.IISVersion;
-			var iis7 = (iisVersion.Major == 7);
+            var iis7 = (iisVersion.Major >= 7);
 			//
 			if (!String.IsNullOrEmpty(userDomain))
 			{
@@ -377,7 +377,7 @@ namespace WebsitePanel.Setup.Actions
 			var identity = GetWebIdentity(vars);
 			var componentId = vars.ComponentId;
 			var iisVersion = vars.IISVersion;
-			var iis7 = (iisVersion.Major == 7);
+            var iis7 = (iisVersion.Major >= 7);
 			var poolExists = false;
 
 			//
@@ -447,7 +447,7 @@ namespace WebsitePanel.Setup.Actions
 			{
 				var appPoolName = String.Format(AppPoolNameFormatString, vars.ComponentFullName);
 				var iisVersion = vars.IISVersion;
-				var iis7 = (iisVersion.Major == 7);
+                var iis7 = (iisVersion.Major >= 7);
 				var poolExists = false;
 				//
 				Log.WriteStart(LogStartUninstallMessage);
@@ -507,7 +507,7 @@ namespace WebsitePanel.Setup.Actions
 			var domain = vars.WebSiteDomain;
 			var contentPath = vars.InstallationFolder;
 			var iisVersion = vars.IISVersion;
-			var iis7 = (iisVersion.Major == 7);
+            var iis7 = (iisVersion.Major >= 7);
 			var userName = CreateWebApplicationPoolAction.GetWebIdentity(vars);
 			var userPassword = vars.UserPassword;
 			var appPool = vars.WebApplicationPoolName;
@@ -593,7 +593,7 @@ namespace WebsitePanel.Setup.Actions
 		void IUninstallAction.Run(SetupVariables vars)
 		{
 			var iisVersion = vars.IISVersion;
-			var iis7 = (iisVersion.Major == 7);
+            var iis7 = (iisVersion.Major >= 7);
 			var siteId = vars.WebSiteId;
 			//
 			try
@@ -963,7 +963,7 @@ namespace WebsitePanel.Setup.Actions
 
 		void IInstallAction.Run(SetupVariables vars)
 		{
-			if (vars.IISVersion.Major == 7)
+            if (vars.IISVersion.Major >= 7)
 			{
 				ChangeAspNetVersionOnIis7(vars);
 			}

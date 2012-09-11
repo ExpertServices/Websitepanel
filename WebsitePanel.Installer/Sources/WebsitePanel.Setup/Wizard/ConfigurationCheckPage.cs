@@ -397,7 +397,7 @@ namespace WebsitePanel.Setup
 
 		private bool SiteBindingsExist(SetupVariables setupVariables)
 		{
-			bool iis7 = (setupVariables.IISVersion.Major == 7);
+            bool iis7 = (setupVariables.IISVersion.Major >= 7);
 			string ip = setupVariables.WebSiteIP;
 			string port = setupVariables.WebSitePort;
 			string domain = setupVariables.WebSiteDomain;

@@ -362,7 +362,7 @@ namespace WebsitePanel.Setup
 				XmlDocument doc = new XmlDocument();
 				doc.Load(webConfigPath);
 				// do Windows 2008 platform-specific changes
-				bool iis7 = (Wizard.SetupVariables.IISVersion.Major == 7);
+                bool iis7 = (Wizard.SetupVariables.IISVersion.Major >= 7);
 				//
 				#region Do IIS 7 and IIS 6 specific web.config file changes
 				if (iis7)
@@ -776,7 +776,7 @@ namespace WebsitePanel.Setup
 				serviceInfo.Comments = string.Empty;
 
 				//check IIS version
-				if (Wizard.SetupVariables.IISVersion.Major == 7)
+                if (Wizard.SetupVariables.IISVersion.Major >= 7)
 				{
 					serviceInfo.ProviderId = 101;
 				}
@@ -1610,7 +1610,7 @@ namespace WebsitePanel.Setup
 					return;
 				
 				Version iisVersion = Wizard.SetupVariables.IISVersion;
-				bool iis7 = (iisVersion.Major == 7); 
+                bool iis7 = (iisVersion.Major >= 7); 
 
 				Log.WriteStart("Stopping IIS Application Pool");
 				Log.WriteInfo(string.Format("Stopping \"{0}\"", appPool));
@@ -1645,7 +1645,7 @@ namespace WebsitePanel.Setup
 					return;
 
 				Version iisVersion = Wizard.SetupVariables.IISVersion;
-				bool iis7 = (iisVersion.Major == 7);
+                bool iis7 = (iisVersion.Major >= 7);
 
 				Log.WriteStart("Starting IIS Application Pool");
 				Log.WriteInfo(string.Format("Starting \"{0}\"", appPool));
@@ -2256,7 +2256,7 @@ namespace WebsitePanel.Setup
 			string domain = Wizard.SetupVariables.WebSiteDomain;
 			bool update = Wizard.SetupVariables.UpdateWebSite;
 			Version iisVersion = Wizard.SetupVariables.IISVersion;
-			bool iis7 = (iisVersion.Major == 7); 
+            bool iis7 = (iisVersion.Major >= 7); 
 			
 			if (!update)
 				return;
@@ -2696,7 +2696,7 @@ namespace WebsitePanel.Setup
 			string identity = userName;
 			string netbiosDomain = userDomain;
 			Version iisVersion = Wizard.SetupVariables.IISVersion;
-			bool iis7 = (iisVersion.Major == 7);
+            bool iis7 = (iisVersion.Major >= 7);
 			
 			try
 			{
@@ -2860,7 +2860,7 @@ namespace WebsitePanel.Setup
 			Log.WriteStart("Creating web site");
 			Log.WriteInfo(string.Format("Creating web site \"{0}\" ( IP: {1}, Port: {2}, Domain: {3} )", siteName, ip, port, domain));
 			Version iisVersion = Wizard.SetupVariables.IISVersion;
-			bool iis7 = (iisVersion.Major == 7);
+            bool iis7 = (iisVersion.Major >= 7);
 
 			//check for existing site
 			string oldSiteId = iis7 ? WebUtils.GetIIS7SiteIdByBinding(ip, port, domain) : WebUtils.GetSiteIdByBinding(ip, port, domain);
@@ -3018,7 +3018,7 @@ namespace WebsitePanel.Setup
 			SetProgressText("Creating local account...");
 			string componentId = Wizard.SetupVariables.ComponentId;
 			Version iisVersion = Wizard.SetupVariables.IISVersion;
-			bool poolExists = ( iisVersion.Major == 7) ? 
+            bool poolExists = (iisVersion.Major >= 7) ? 
 				WebUtils.IIS7ApplicationPoolExists(name) :
 				WebUtils.ApplicationPoolExists(name);
 		
@@ -3027,7 +3027,7 @@ namespace WebsitePanel.Setup
 				//update app pool
 				Log.WriteStart("Updating application pool");
 				Log.WriteInfo(string.Format("Updating application pool \"{0}\"", name));
-				if ( iisVersion.Major == 7)
+                if (iisVersion.Major >= 7)
 					WebUtils.UpdateIIS7ApplicationPool(name, userName, userPassword);
 				else
 					WebUtils.UpdateApplicationPool(name, userName, userPassword);
@@ -3047,13 +3047,13 @@ namespace WebsitePanel.Setup
 				// create app pool
 				Log.WriteStart("Creating application pool");
 				Log.WriteInfo(string.Format("Creating application pool \"{0}\"", name));
-				if (iisVersion.Major == 7)
+                if (iisVersion.Major >= 7)
 					WebUtils.CreateIIS7ApplicationPool(name, userName, userPassword);
 				else
 					WebUtils.CreateApplicationPool(name, userName, userPassword);
 
 				//register rollback action
-				if (iisVersion.Major == 7)
+                if (iisVersion.Major >= 7)
 					RollBack.RegisterIIS7ApplicationPool(name);
 				else
 					RollBack.RegisterApplicationPool(name);
