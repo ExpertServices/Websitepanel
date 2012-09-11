@@ -186,4 +186,10 @@
   <data name="Text.PageName" xml:space="preserve">
     <value>Storage Usage</value>
   </data>
+  <data name="locAverageMailboxSize.Text" xml:space="preserve">
+    <value>Avg. Mailbox Size (MB):</value>
+  </data>
+  <data name="locTotalMailboxes.Text" xml:space="preserve">
+    <value>Total Mailboxes:</value>
+  </data>
 </root>
