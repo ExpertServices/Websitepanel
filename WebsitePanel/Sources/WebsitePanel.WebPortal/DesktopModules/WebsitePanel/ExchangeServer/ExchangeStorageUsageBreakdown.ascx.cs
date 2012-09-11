@@ -70,8 +70,13 @@ namespace WebsitePanel.Portal.ExchangeServer
                 totalMailboxesSizeMB += item.TotalSizeMB;
             }
 
+            OrganizationStatistics stats = ES.Services.ExchangeServer.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
+
             lblTotalMailboxItems.Text = totalMailboxItems.ToString();
             lblTotalMailboxSize.Text = totalMailboxesSizeMB.ToString();
+            lblTotalMailboxes.Text = stats.CreatedMailboxes.ToString();
+            int avgSize = totalMailboxesSizeMB / stats.CreatedMailboxes;
+            lblAverageMailboxSize.Text = avgSize.ToString("N2");
         }
     }
 }

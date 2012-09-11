@@ -43,6 +43,11 @@
 				        <br />
 			            <table cellpadding="2">
 					        <tr>
+					            <td class="FormLabel150"><asp:Localize ID="locTotalMailboxes" runat="server" meta:resourcekey="locTotalMailboxes" Text="Total Mailboxes:"></asp:Localize></td>
+					            <td><asp:Label ID="lblTotalMailboxes" runat="server" CssClass="NormalBold">177</asp:Label></td>
+					        </tr>
+
+					        <tr>
 					            <td class="FormLabel150"><asp:Localize ID="locTotalMailboxItems" runat="server" meta:resourcekey="locTotalMailboxItems" Text="Total Items:"></asp:Localize></td>
 					            <td><asp:Label ID="lblTotalMailboxItems" runat="server" CssClass="NormalBold">177</asp:Label></td>
 					        </tr>
@@ -50,6 +55,11 @@
 					            <td class="FormLabel150"><asp:Localize ID="locTotalMailboxesSize" runat="server" meta:resourcekey="locTotalMailboxesSize" Text="Total Size (MB):"></asp:Localize></td>
 					            <td><asp:Label ID="lblTotalMailboxSize" runat="server" CssClass="NormalBold">100</asp:Label></td>
 					        </tr>
+					        <tr>
+					            <td class="FormLabel150"><asp:Localize ID="Localize1" runat="server" meta:resourcekey="locAverageMailboxSize" Text="Avg. Size (MB):"></asp:Localize></td>
+					            <td><asp:Label ID="lblAverageMailboxSize" runat="server" CssClass="NormalBold">100</asp:Label></td>
+					        </tr>
+
 				        </table>
 				        <br />
 				    </asp:Panel>
