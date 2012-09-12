@@ -51,7 +51,7 @@
                              <asp:TemplateField HeaderText="gvDomainsTypeChange">
 							    <ItemTemplate>
 							        <div style="text-align:center">
-								        <asp:Button ID="btnChange" text="Change" meta:resourcekey="cmdChange" runat="server" CommandName="Change" CommandArgument='<%# Eval("DomainId") + "|" + Eval("DomainType") %>'/>
+								        <asp:Button ID="btnChangeDomain" text="Change" meta:resourcekey="btnChangeDomain" runat="server" CommandName="Change" CommandArgument='<%# Eval("DomainId") + "|" + Eval("DomainType") %>'/>
 								    </div>
 							    </ItemTemplate>
 						    </asp:TemplateField>
