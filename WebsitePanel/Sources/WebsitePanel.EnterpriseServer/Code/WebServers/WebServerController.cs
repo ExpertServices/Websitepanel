@@ -180,12 +180,11 @@ namespace WebsitePanel.EnterpriseServer
             DomainInfo domain = ServerController.GetDomain(domainId);
             string domainName = domain.DomainName;
 
+            string siteName = string.IsNullOrEmpty(hostName) ? domainName : hostName + "." + domainName; 
+
             // check if the web site already exists
-            if (PackageController.GetPackageItemByName(packageId, domainName, typeof(WebSite)) != null)
+            if (PackageController.GetPackageItemByName(packageId, siteName, typeof(WebSite)) != null)
                 return BusinessErrorCodes.ERROR_WEB_SITE_ALREADY_EXISTS;
-
-
-            string siteName = string.IsNullOrEmpty(hostName) ? domainName : hostName + "." + domainName; ;
 
             // place log record
             TaskManager.StartTask("WEB_SITE", "ADD", siteName);
@@ -743,13 +742,10 @@ namespace WebsitePanel.EnterpriseServer
                 }
             }
 
-            /*
             if(bindings.Count == bindingsCount)
             {
-                bindings.Add(new ServerBinding(ipAddr, "80", domainName));
-                bindings.Add(new ServerBinding(ipAddr, "80", "www." + domainName));
+                bindings.Add(new ServerBinding(ipAddr, "80", string.IsNullOrEmpty(hostName) ? domainName : hostName + "." + domainName));
             }
-             */
         }
 
         private static string GetWebSiteUsername(UserSettings webPolicy, string domainName)
@@ -856,6 +852,10 @@ namespace WebsitePanel.EnterpriseServer
             if (domain == null)
                 return BusinessErrorCodes.ERROR_DOMAIN_PACKAGE_ITEM_NOT_FOUND;
 
+            // check if the web site already exists
+            if (DataProvider.CheckDomain(domain.PackageId, string.IsNullOrEmpty(hostName) ? domain.DomainName : hostName + "." + domain.DomainName, true) != 0)
+                return BusinessErrorCodes.ERROR_WEB_SITE_ALREADY_EXISTS;
+
             // get zone records for the service
             List<GlobalDnsRecord> dnsRecords = ServerController.GetDnsRecordsByService(siteItem.ServiceId);
 
@@ -923,7 +923,7 @@ namespace WebsitePanel.EnterpriseServer
                         foreach (ServerBinding b in bindings)
                         {
                             string header = string.Format("{0} {1} {2}", b.Host, b.IP, b.Port);
-                            TaskManager.WriteParameter("Add Binding", b.Host);
+                            TaskManager.WriteParameter("Add Binding", header);
                         }
 
                         // update bindings
