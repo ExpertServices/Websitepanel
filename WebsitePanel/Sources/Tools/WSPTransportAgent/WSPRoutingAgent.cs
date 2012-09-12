@@ -115,8 +115,8 @@ namespace WSPTransportAgent
 
                 foreach (AcceptedDomain domain in server.AcceptedDomains)
                 {
-                    htAcceptedDomains.Add(domain.ToString(), "1");
-                    WriteLine("\tAccepted Domain: " + domain.ToString());
+                    htAcceptedDomains.Add(domain.ToString().ToLower(), "1");
+                    WriteLine("\tAccepted Domain: " + domain.ToString().ToLower());
                 }
             }
             catch (Exception ex)
@@ -154,11 +154,14 @@ namespace WSPTransportAgent
                         {
                             foreach (EnvelopeRecipient recp in e.MailItem.Recipients)
                             {
+                                WriteLine("\t\tFrom: " + e.MailItem.Message.From.SmtpAddress.ToString().ToLower());
                                 WriteLine("\t\tTo: " + recp.Address.ToString().ToLower());
-                                if (IsMessageBetweenTenants(e.MailItem.FromAddress.DomainPart.ToLower(), recp.Address.DomainPart.ToLower()))
+                                string[] tmpFrom = e.MailItem.Message.From.SmtpAddress.Split('@');
+                                string[] tmpTo = recp.Address.ToString().Split('@');
+                                if (IsMessageBetweenTenants(tmpFrom[1].ToLower(), tmpTo[1].ToLower()))
                                 {
-                                    WriteLine("\t\tMessage routed to domain: " + recp.Address.DomainPart.ToLower() + routingDomain);
-                                    RoutingDomain myRoutingDomain = new RoutingDomain(recp.Address.DomainPart.ToLower() + routingDomain);
+                                    WriteLine("\t\tMessage routed to domain: " + tmpTo[1].ToLower() + routingDomain);
+                                    RoutingDomain myRoutingDomain = new RoutingDomain(tmpTo[1].ToLower() + routingDomain);
                                     RoutingOverride myRoutingOverride = new RoutingOverride(myRoutingDomain, DeliveryQueueDomain.UseOverrideDomain);
                                     source.SetRoutingOverride(recp, myRoutingOverride);
                                     touched = true;
@@ -173,13 +176,14 @@ namespace WSPTransportAgent
                                 WriteLine("\t\tOOF From: " + e.MailItem.Message.From.SmtpAddress);
                                 if (e.MailItem.Message.From.SmtpAddress.Contains("@"))
                                 {
-                                    string[] tmp = e.MailItem.Message.From.SmtpAddress.Split('@');
+                                    string[] tmpFrom = e.MailItem.Message.From.SmtpAddress.Split('@');
                                     foreach (EnvelopeRecipient recp in e.MailItem.Recipients)
                                     {
                                         WriteLine("\t\tTo: " + recp.Address.ToString().ToLower());
-                                        if (IsMessageBetweenTenants(tmp[1].ToLower(), recp.Address.DomainPart.ToLower()))
+                                        string[] tmpTo = recp.Address.ToString().Split('@');
+                                        if (IsMessageBetweenTenants(tmpFrom[1].ToLower(), tmpTo[1].ToLower()))
                                         {
-                                            WriteLine("\t\tRemove: " + recp.Address.DomainPart.ToLower());
+                                            WriteLine("\t\tRemove: " + tmpTo[1].ToLower());
                                             e.MailItem.Recipients.Remove(recp);
                                         }
                                     }
