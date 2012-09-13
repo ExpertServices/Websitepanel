@@ -58,7 +58,10 @@ namespace WebsitePanel.Portal.ExchangeServer
                 }
             }
 
-            if (ddlDomains.Items.Count == 0) btnAdd.Enabled = false;
+            if (ddlDomains.Items.Count == 0)
+            {
+                ddlDomains.Visible= btnAdd.Enabled = false;
+            }
 
             
 
