@@ -7,33 +7,6 @@ using WebsitePanel.Setup.Actions;
 namespace WebsitePanel.Setup
 {
     /// <summary>
-    /// Release 1.2.2
-    /// </summary>
-    public class Portal122 : Portal
-    {
-        public static new object Install(object obj)
-        {
-            //
-            return Portal.InstallBase(obj, "1.2.2");
-        }
-
-        public static new DialogResult Uninstall(object obj)
-        {
-            return Portal.Uninstall(obj);
-        }
-
-        public static new DialogResult Setup(object obj)
-        {
-            return Portal.Setup(obj);
-        }
-
-        public static new DialogResult Update(object obj)
-        {
-            return UpdateBase(obj, "1.2.2", "1.2.1", false);
-        }
-    }
-
-    /// <summary>
     /// Release 1.2.1
     /// </summary>
     public class Portal121 : Portal

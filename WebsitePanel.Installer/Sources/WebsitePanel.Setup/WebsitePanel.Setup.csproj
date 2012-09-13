@@ -140,8 +140,11 @@
     <Compile Include="Common\XmlUtils.cs" />
     <Compile Include="Common\ZipIndicator.cs" />
     <Compile Include="EnterpriseServer10.cs" />
+    <Compile Include="EnterpriseServer20.cs" />
     <Compile Include="Portal10.cs" />
+    <Compile Include="Portal20.cs" />
     <Compile Include="Server10.cs" />
+    <Compile Include="Server20.cs" />
     <Compile Include="StandaloneServerSetup.cs" />
     <Compile Include="EnterpriseServer.cs" />
     <Compile Include="Portal.cs" />
@@ -160,6 +163,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="StandaloneServerSetup10.cs" />
+    <Compile Include="StandaloneServerSetup20.cs" />
     <Compile Include="Web\AspNetVersion.cs" />
     <Compile Include="Web\ServerBinding.cs" />
     <Compile Include="Web\ServerState.cs" />
