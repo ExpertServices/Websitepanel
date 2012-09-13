@@ -876,6 +876,9 @@
   <data name="Error.WPI_LOAD_FEED" xml:space="preserve">
     <value>Error loading feeds. Please check system settings</value>
   </data>
+  <data name="Error.WPI_CHECK_LOAD_USER_PROFILE" xml:space="preserve">
+    <value>Error checking 'Load user profile' application pool setting.</value>
+  </data>
   <data name="Error.SPACE_LETTER_GET" xml:space="preserve">
     <value>Error building hosting space summary letter</value>
   </data>

@@ -58,21 +58,24 @@ namespace WebsitePanel.Portal
                 {
                     if (!ES.Services.Servers.CheckLoadUserProfile(PanelRequest.ServerId))
                     {
-                        ShowWarningMessage("Server application pool \"Load User Profile\" setting is set to false. Please open IIS Manager, Application Pools, select pool running Web Site Panel Server component and set \"Load User Profile\" to TRUE. This setting is required for Web Paltform Installer to run.");
-
-                        //ES.Services.Servers.EnableLoadUserProfile(PanelRequest.ServerId);
+                        CheckLoadUserProfilePanel.Visible = true;
                     }
                 }
-                catch
+                catch (NotImplementedException ex)
                 {
+                    CheckLoadUserProfilePanel.Visible = false;
+                    ShowWarningMessage("Server application pool \"Load User Profile\" setting unavailable. Need IIS7 or higher. Fails is possible");
+                }
+                catch (Exception ex)
+                {
+                    CheckLoadUserProfilePanel.Visible = false;
                     ProductsPanel.Visible = false;
                     keywordsList.Visible = false;
                     SearchPanel.Visible = false;
                     InstallButtons1.Visible = false;
                     InstallButtons2.Visible = false;
 
-                    ShowWarningMessage("Server application pool \"Load User Profile\" setting is set to false. Please open IIS Manager, Application Pools, select pool running Web Site Panel Server component and set \"Load User Profile\" to TRUE. This setting is required for Web Paltform Installer to run.");
-
+                    ShowErrorMessage("WPI_CHECK_LOAD_USER_PROFILE", ex);
                 }
 
 
@@ -605,6 +608,12 @@ namespace WebsitePanel.Portal
                 string msg = string.Format("wpiLogsDir: {0}\nlogsEntrys is null: {1}\n{2}", wpiLogsDir, logsEntrys == null, ex);
                 WpiLogsPre.InnerText = msg;
             }
+        }
+
+        protected void EnableLoadUserProfileButton_OnClick(object sender, EventArgs e)
+        {
+            ES.Services.Servers.EnableLoadUserProfile(PanelRequest.ServerId);
+            CheckLoadUserProfilePanel.Visible = false;
         }
     }
 }

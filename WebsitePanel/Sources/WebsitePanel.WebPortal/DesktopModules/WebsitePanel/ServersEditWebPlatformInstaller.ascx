@@ -126,6 +126,16 @@ h2.ProductTitle {
 </script>
 
 
+<asp:Panel runat="server" ID="CheckLoadUserProfilePanel" Visible="False">
+    <div class="MessageBox Yellow">
+        To continue "Load User Profile" setting for the current application pool must be enabled. 
+        <br/>
+        Enable this setting now? (May require relogin)        
+        <br/>
+        <br/>
+        <asp:Button runat="server" ID="EnableLoadUserProfileButton" Text="Yes" OnClick="EnableLoadUserProfileButton_OnClick"/>
+    </div>
+</asp:Panel>
 
 
 <asp:Panel ID="SearchPanel" class="FormBody" runat="server">
