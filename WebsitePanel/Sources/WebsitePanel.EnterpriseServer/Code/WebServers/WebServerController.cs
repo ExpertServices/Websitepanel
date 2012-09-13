@@ -653,9 +653,10 @@ namespace WebsitePanel.EnterpriseServer
                 if (ipAddressId != 0)
                     ServerController.AddItemIPAddress(siteItemId, ipAddressId);
 
+                // TODO - what would be correct logic here?
                 // re-create pointers
                 foreach (var pointer in sitePointers)
-                    DeleteWebSitePointer(siteItemId, pointer.DomainId, false);
+                    DeleteWebSitePointer(siteItemId, pointer.DomainId, false, true);
 
                 foreach (var pointer in sitePointers)
                     AddWebSitePointer(siteItemId, null, pointer.DomainId, false);
@@ -697,7 +698,7 @@ namespace WebsitePanel.EnterpriseServer
                 ServiceProviderProxy.Init(web, siteItem.ServiceId);
                 var bindings = web.GetSiteBindings(siteItem.SiteId);
 
-                // TODO
+                // TODO - what would be correct logic here?
 
                 return 0;
             }
