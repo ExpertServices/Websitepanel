@@ -158,6 +158,18 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public int SwitchWebSiteToDedicatedIP(int siteItemId, int ipAddressId)
+        {
+            return WebServerController.SwitchWebSiteToDedicatedIP(siteItemId, ipAddressId);
+        }
+
+        [WebMethod]
+        public int SwitchWebSiteToSharedIP(int siteItemId)
+        {
+            return WebServerController.SwitchWebSiteToSharedIP(siteItemId);
+        }
+
+        [WebMethod]
         public int DeleteVirtualDirectory(int siteItemId, string vdirName)
         {
             return WebServerController.DeleteVirtualDirectory(siteItemId, vdirName);

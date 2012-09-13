@@ -610,6 +610,107 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
+        public static int SwitchWebSiteToDedicatedIP(int siteItemId, int ipAddressId)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // load web site item
+            WebSite siteItem = (WebSite)PackageController.GetPackageItem(siteItemId);
+            if (siteItem == null)
+                return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
+
+            // load assigned IP address
+            IPAddressInfo ip = ServerController.GetIPAddress(ipAddressId);
+            if (ip == null)
+                return BusinessErrorCodes.ERROR_WEB_SITE_IP_ADDRESS_NOT_SPECIFIED;
+
+            string ipAddr = !String.IsNullOrEmpty(ip.InternalIP) ? ip.InternalIP : ip.ExternalIP;
+
+            // place log record
+            TaskManager.StartTask("WEB_SITE", "SWITCH_TO_DEDICATED_IP", siteItem.Name);
+            TaskManager.ItemId = siteItemId;
+
+            try
+            {
+                // get web site pointers
+                var sitePointers = GetWebSitePointers(siteItemId);
+
+                // get existing web site bindings
+                WebServer web = new WebServer();
+                ServiceProviderProxy.Init(web, siteItem.ServiceId);
+                var bindings = web.GetSiteBindings(siteItem.SiteId);
+
+                // update site bindings
+                web.UpdateSiteBindings(siteItem.SiteId, new ServerBinding[] { new ServerBinding(ipAddr, "80", "") });
+
+                // update site item
+                siteItem.SiteIPAddressId = ipAddressId;
+                PackageController.UpdatePackageItem(siteItem);
+
+                // associate IP with web site
+                if (ipAddressId != 0)
+                    ServerController.AddItemIPAddress(siteItemId, ipAddressId);
+
+                // re-create pointers
+                foreach (var pointer in sitePointers)
+                    DeleteWebSitePointer(siteItemId, pointer.DomainId, false);
+
+                foreach (var pointer in sitePointers)
+                    AddWebSitePointer(siteItemId, null, pointer.DomainId, false);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static int SwitchWebSiteToSharedIP(int siteItemId)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // load web site item
+            WebSite siteItem = (WebSite)PackageController.GetPackageItem(siteItemId);
+            if (siteItem == null)
+                return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
+
+            // place log record
+            TaskManager.StartTask("WEB_SITE", "SWITCH_TO_SHARED_IP", siteItem.Name);
+            TaskManager.ItemId = siteItemId;
+
+            try
+            {
+                // get web site pointers
+                var sitePointers = GetWebSitePointers(siteItemId);
+
+                // get existing web site bindings
+                WebServer web = new WebServer();
+                ServiceProviderProxy.Init(web, siteItem.ServiceId);
+                var bindings = web.GetSiteBindings(siteItem.SiteId);
+
+                // TODO
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
         private static void FillWebServerBindings(List<ServerBinding> bindings, List<GlobalDnsRecord> dnsRecords,
             string ipAddr, string hostName, string domainName, bool ignoreGlobalDNSRecords)
         // TODO test if IPv6 works

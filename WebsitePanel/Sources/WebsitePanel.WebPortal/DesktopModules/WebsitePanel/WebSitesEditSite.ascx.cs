@@ -163,8 +163,29 @@ namespace WebsitePanel.Portal
 			lnkSiteName.Text = site.Name;
 			lnkSiteName.NavigateUrl = "http://" + site.Name;
 
-			if (!String.IsNullOrEmpty(site.SiteIPAddress))
-				litIPAddress.Text = String.Format("({0})", site.SiteIPAddress);
+            // bind unassigned IP addresses
+            PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(site.PackageId, IPAddressPool.WebSites);
+            foreach (PackageIPAddress ip in ips)
+            {
+                string fullIP = ip.ExternalIP;
+                if (ip.InternalIP != null &&
+                    ip.InternalIP != "" &&
+                    ip.InternalIP != ip.ExternalIP)
+                    fullIP += " (" + ip.InternalIP + ")";
+
+                ddlIpAddresses.Items.Add(new ListItem(fullIP, ip.PackageAddressID.ToString()));
+            }
+
+            bool isDedicatedIP = false;
+            if (!String.IsNullOrEmpty(site.SiteIPAddress))
+            {
+                litIPAddress.Text = site.SiteIPAddress;
+                isDedicatedIP = true;
+            }
+
+            dedicatedIP.Visible = isDedicatedIP;
+            sharedIP.Visible = !isDedicatedIP;
+            cmdSwitchToDedicatedIP.Visible = (ddlIpAddresses.Items.Count > 0);
                        
 
 			litFrontPageUnavailable.Visible = false;
@@ -981,5 +1002,74 @@ namespace WebsitePanel.Portal
 				PortalUtils.SPACE_ID_PARAM + "=" + PanelSecurity.PackageId.ToString()));
 		}
 		#endregion
+
+        protected void cmdSwitchToDedicatedIP_Click(object sender, EventArgs e)
+        {
+            sharedIP.Visible = false;
+            switchToDedicatedIP.Visible = true;
+        }
+
+        protected void cmdSwitchToSharedIP_Click(object sender, EventArgs e)
+        {
+            // call web service
+            try
+            {
+                int result = ES.Services.WebServers.SwitchWebSiteToSharedIP(PanelRequest.ItemID);
+
+                if (result < 0)
+                {
+                    ShowResultMessage(result);
+                    return;
+                }
+
+                ShowSuccessMessage("WEB_SWITCH_TO_SHARED_IP");
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage("WEB_SWITCH_TO_SHARED_IP", ex);
+                return;
+            }
+
+            // rebind
+            BindWebSite();
+        }
+
+        protected void cmdApplyDedicatedIP_Click(object sender, EventArgs e)
+        {
+            // call web service
+            try
+            {
+                int addressId = Int32.Parse(ddlIpAddresses.SelectedValue);
+                int result = ES.Services.WebServers.SwitchWebSiteToDedicatedIP(PanelRequest.ItemID, addressId);
+
+                if (result < 0)
+                {
+                    ShowResultMessage(result);
+                    return;
+                }
+
+                ShowSuccessMessage("WEB_SWITCH_TO_DEDICATED_IP");
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage("WEB_SWITCH_TO_DEDICATED_IP", ex);
+                return;
+            }
+
+            // rebind
+            HideDedicatedIPPanel();
+            BindWebSite();
+        }
+
+        protected void cmdCancelDedicatedIP_Click(object sender, EventArgs e)
+        {
+            HideDedicatedIPPanel();
+        }
+
+        private void HideDedicatedIPPanel()
+        {
+            switchToDedicatedIP.Visible = false;
+            sharedIP.Visible = true;
+        }
 	}
 }

@@ -193,6 +193,51 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.HyperLink lnkSiteName;
         
         /// <summary>
+        /// sharedIP control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel sharedIP;
+        
+        /// <summary>
+        /// locSharedIPAddress control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locSharedIPAddress;
+        
+        /// <summary>
+        /// cmdSwitchToDedicatedIP control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton cmdSwitchToDedicatedIP;
+        
+        /// <summary>
+        /// dedicatedIP control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel dedicatedIP;
+        
+        /// <summary>
+        /// locDedicatedIPAddress control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locDedicatedIPAddress;
+        
+        /// <summary>
         /// litIPAddress control.
         /// </summary>
         /// <remarks>
@@ -200,6 +245,60 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal litIPAddress;
+        
+        /// <summary>
+        /// cmdSwitchToSharedIP control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton cmdSwitchToSharedIP;
+        
+        /// <summary>
+        /// switchToDedicatedIP control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel switchToDedicatedIP;
+        
+        /// <summary>
+        /// locSelectIPAddress control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locSelectIPAddress;
+        
+        /// <summary>
+        /// ddlIpAddresses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlIpAddresses;
+        
+        /// <summary>
+        /// cmdApplyDedicatedIP control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton cmdApplyDedicatedIP;
+        
+        /// <summary>
+        /// cmdCancelDedicatedIP control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton cmdCancelDedicatedIP;
         
         /// <summary>
         /// btnAddPointer control.
