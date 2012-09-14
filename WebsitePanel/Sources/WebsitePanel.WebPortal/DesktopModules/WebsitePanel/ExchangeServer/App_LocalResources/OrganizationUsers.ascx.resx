@@ -142,7 +142,7 @@
     <value>E-mail Address</value>
   </data>
   <data name="ddlSearchColumnSubscriberNumber" xml:space="preserve">
-    <value>Subscriber Number</value>
+    <value>Account Number</value>
   </data>
   <data name="gvSubscriberNumber.Header" xml:space="preserve">
     <value>Subscriber</value>

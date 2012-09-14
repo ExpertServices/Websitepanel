@@ -151,6 +151,6 @@
     <value>Status</value>
   </data>
   <data name="locSubscriberNumber.Text" xml:space="preserve">
-    <value>Subscriber Number:</value>
+    <value>Account Number:</value>
   </data>
 </root>

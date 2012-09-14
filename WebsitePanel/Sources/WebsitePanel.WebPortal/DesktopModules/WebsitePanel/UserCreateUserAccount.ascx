@@ -55,7 +55,7 @@
 
             <tr>
                 <td class="SubHead">
-                    <asp:Label ID="lblSubscriberNumber" runat="server" meta:resourcekey="lblSubscriberNumber" Text="Subscriber Number:"></asp:Label>
+                    <asp:Label ID="lblSubscriberNumber" runat="server" meta:resourcekey="lblSubscriberNumber" Text="Account Number:"></asp:Label>
                 </td>
                 <td class="NormalBold">
                     <asp:TextBox ID="txtSubscriberNumber" runat="server" CssClass="NormalTextBox"></asp:TextBox>
