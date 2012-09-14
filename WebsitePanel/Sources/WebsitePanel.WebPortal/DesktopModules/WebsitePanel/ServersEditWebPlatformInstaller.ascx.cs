@@ -64,7 +64,7 @@ namespace WebsitePanel.Portal
                 catch (NotImplementedException ex)
                 {
                     CheckLoadUserProfilePanel.Visible = false;
-                    ShowWarningMessage("Server application pool \"Load User Profile\" setting unavailable. Need IIS7 or higher. Fails is possible");
+                    ShowWarningMessage("Server application pool \"Load User Profile\" setting unavailable. IIS7 or higher is expected.");
                 }
                 catch (Exception ex)
                 {
