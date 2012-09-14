@@ -119,6 +119,8 @@ namespace WebsitePanel.Providers.Web
 
 
 		// web app gallery
+        bool CheckLoadUserProfile();
+        void EnableLoadUserProfile();
         void InitFeeds(int UserId, string[] feeds);
         void SetResourceLanguage(int UserId, string resourceLanguage);
 		bool IsMsDeployInstalled();
@@ -153,5 +155,7 @@ namespace WebsitePanel.Providers.Web
 		ResultObject DeleteCertificate(SSLCertificate certificate, WebSite website);
 		SSLCertificate ImportCertificate(WebSite website);
 		bool CheckCertificate(WebSite webSite);
-	}
+
+        
+    }
 }

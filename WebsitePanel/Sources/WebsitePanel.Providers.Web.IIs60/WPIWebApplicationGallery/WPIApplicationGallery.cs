@@ -44,6 +44,7 @@ using System.Web;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Expirations;
 using DeploymentParameter = WebsitePanel.Providers.WebAppGallery.DeploymentParameter;
+using DeploymentParameterWPI = Microsoft.Web.PlatformInstaller.DeploymentParameter;
 
 namespace WebsitePanel.Providers.Web.WPIWebApplicationGallery
 {
@@ -268,10 +269,10 @@ namespace WebsitePanel.Providers.Web.WPIWebApplicationGallery
 
             Product product = wpi.GetProduct(id);
             List<DeploymentParameter> deploymentParameters = new List<DeploymentParameter>();
-            IList<DeclaredParameter> appDecalredParameters = wpi.GetAppDecalredParameters(id);
-            foreach (DeclaredParameter declaredParameter in appDecalredParameters)
+            IList<DeploymentParameterWPI> appDeploymentWPIParameters = wpi.GetAppDecalredParameters(id);
+            foreach (DeploymentParameterWPI deploymentParameter in appDeploymentWPIParameters)
             {
-                deploymentParameters.Add(MakeDeploymentParameterFromDecalredParameter(declaredParameter));
+                deploymentParameters.Add(MakeDeploymentParameterFromDecalredParameter(deploymentParameter));
             }
 
             return deploymentParameters;
@@ -398,28 +399,41 @@ namespace WebsitePanel.Providers.Web.WPIWebApplicationGallery
                        };
         }
 
-        protected static DeploymentParameter MakeDeploymentParameterFromDecalredParameter(DeclaredParameter d)
+        protected static DeploymentParameter MakeDeploymentParameterFromDecalredParameter(DeploymentParameterWPI d)
         {
-
-
             DeploymentParameter r = new DeploymentParameter();
             r.Name = d.Name;
             r.FriendlyName = d.FriendlyName;
             r.DefaultValue = d.DefaultValue;
             r.Description = d.Description;
 
-#pragma warning disable 612,618
-            r.WellKnownTags =   DeploymentParameterWellKnownTag.ALLKNOWN & (DeploymentParameterWellKnownTag) d.Tags;
-            if (null != d.Validation)
+            r.SetWellKnownTagsFromRawString(d.RawTags);
+            if (!string.IsNullOrEmpty(d.ValidationString))
             {
-                r.ValidationKind = (DeploymentParameterValidationKind) d.Validation.Kind;
-                r.ValidationString = d.Validation.ValidationString;
+                // synchronized with Microsoft.Web.Deployment.DeploymentSyncParameterValidationKind
+                if (d.HasValidation((int)DeploymentParameterValidationKind.AllowEmpty))
+                {
+                    r.ValidationKind |= DeploymentParameterValidationKind.AllowEmpty;
+                }
+                if (d.HasValidation((int)DeploymentParameterValidationKind.RegularExpression))
+                {
+                    r.ValidationKind |= DeploymentParameterValidationKind.RegularExpression;
+                }
+                if (d.HasValidation((int)DeploymentParameterValidationKind.Enumeration))
+                {
+                    r.ValidationKind |= DeploymentParameterValidationKind.Enumeration;
+                }
+                if (d.HasValidation((int)DeploymentParameterValidationKind.Boolean))
+                {
+                    r.ValidationKind |= DeploymentParameterValidationKind.Boolean;
+                }
+
+                r.ValidationString = d.ValidationString;
             }
             else
             {
                 r.ValidationKind = DeploymentParameterValidationKind.None;
             }
-#pragma warning restore 612,618
 
             return r;
         }

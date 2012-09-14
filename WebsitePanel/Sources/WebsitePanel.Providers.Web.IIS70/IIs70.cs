@@ -4042,6 +4042,26 @@ namespace WebsitePanel.Providers.Web
 
         // moved down to IIs60
 
+        override public bool CheckLoadUserProfile()
+        {
+            using (var srvman = new ServerManager())
+            {
+                return srvman.ApplicationPools["WebsitePanel Server"].ProcessModel.LoadUserProfile;
+            }
+
+        }
+
+        override public void EnableLoadUserProfile()
+        {
+            using (var srvman = new ServerManager())
+            {
+                srvman.ApplicationPools["WebsitePanel Server"].ProcessModel.LoadUserProfile = true;
+                // save changes
+                srvman.CommitChanges();
+            }
+        }
+
+
         #endregion
 	}
 }

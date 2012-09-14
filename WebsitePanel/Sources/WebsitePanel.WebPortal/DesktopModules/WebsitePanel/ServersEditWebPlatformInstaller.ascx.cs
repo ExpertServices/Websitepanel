@@ -52,6 +52,33 @@ namespace WebsitePanel.Portal
         {
             if (!IsPostBack)
             {
+
+
+                try
+                {
+                    if (!ES.Services.Servers.CheckLoadUserProfile(PanelRequest.ServerId))
+                    {
+                        CheckLoadUserProfilePanel.Visible = true;
+                    }
+                }
+                catch (NotImplementedException ex)
+                {
+                    CheckLoadUserProfilePanel.Visible = false;
+                    ShowWarningMessage("Server application pool \"Load User Profile\" setting unavailable. IIS7 or higher is expected.");
+                }
+                catch (Exception ex)
+                {
+                    CheckLoadUserProfilePanel.Visible = false;
+                    ProductsPanel.Visible = false;
+                    keywordsList.Visible = false;
+                    SearchPanel.Visible = false;
+                    InstallButtons1.Visible = false;
+                    InstallButtons2.Visible = false;
+
+                    ShowErrorMessage("WPI_CHECK_LOAD_USER_PROFILE", ex);
+                }
+
+
                 try
                 {
                     ES.Services.Servers.InitWPIFeeds(PanelRequest.ServerId);
@@ -581,6 +608,12 @@ namespace WebsitePanel.Portal
                 string msg = string.Format("wpiLogsDir: {0}\nlogsEntrys is null: {1}\n{2}", wpiLogsDir, logsEntrys == null, ex);
                 WpiLogsPre.InnerText = msg;
             }
+        }
+
+        protected void EnableLoadUserProfileButton_OnClick(object sender, EventArgs e)
+        {
+            ES.Services.Servers.EnableLoadUserProfile(PanelRequest.ServerId);
+            CheckLoadUserProfilePanel.Visible = false;
         }
     }
 }

@@ -3394,6 +3394,18 @@ namespace WebsitePanel.Providers.Web
         private const string WPI_INSTANCE_VIEWER = "viewer";
 	    private const string WPI_INSTANCE_INSTALLER = "installer";
 
+        virtual public bool CheckLoadUserProfile()
+        {
+            throw new NotImplementedException("LoadUserProfile option valid only on IIS7 or higer");
+        }
+
+        virtual public void EnableLoadUserProfile()
+        {
+            throw new NotImplementedException("LoadUserProfile option valid only on IIS7 or higer");
+        }
+
+        
+
 	    public void InitFeeds(int UserId, string[] feeds)
         {
             //need to call InitFeeds() before any operation with WPIApplicationGallery()
@@ -3667,5 +3679,10 @@ namespace WebsitePanel.Providers.Web
 			throw new NotSupportedException();
 		}
 		#endregion
-	}
+
+
+
+
+
+    }
 }
