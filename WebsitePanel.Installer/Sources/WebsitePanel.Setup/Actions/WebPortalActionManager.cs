@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Xml;
+using WebsitePanel.Setup.Common;
 
 namespace WebsitePanel.Setup.Actions
 {
@@ -113,6 +114,55 @@ namespace WebsitePanel.Setup.Actions
 			}
 		}
 	}
+
+    public class GenerateSessionValidationKeyAction : Action, IInstallAction
+    {
+        public const string LogStartInstallMessage = "Generating session validation key...";
+
+        void IInstallAction.Run(SetupVariables vars)
+        {
+            try
+            {
+                Begin(LogStartInstallMessage);
+
+                Log.WriteStart(LogStartInstallMessage);
+
+                string path = Path.Combine(vars.InstallationFolder, "web.config");
+
+                if (!File.Exists(path))
+                {
+                    Log.WriteInfo(string.Format("File {0} not found", path));
+                    return;
+                }
+
+                Log.WriteStart("Updating configuration file (session validation key)");
+                XmlDocument doc = new XmlDocument();
+                doc.Load(path);
+
+                XmlElement sessionKey = doc.SelectSingleNode("configuration/appSettings/add[@key='SessionValidationKey']") as XmlElement;
+                if (sessionKey == null)
+                {
+                    Log.WriteInfo("SessionValidationKey setting not found");
+                    return;
+                }
+
+                sessionKey.SetAttribute("value", StringUtils.GenerateRandomString(16));
+                doc.Save(path);
+
+                Log.WriteEnd("Generated session validation key");
+                InstallLog.AppendLine("- Generated session validation key");
+            }
+            catch (Exception ex)
+            {
+                if (Utils.IsThreadAbortException(ex))
+                    return;
+                //
+                Log.WriteError("Site settigs error", ex);
+                //
+                throw;
+            }
+        }
+    }
 
 	public class CreateDesktopShortcutsAction : Action, IInstallAction
 	{
@@ -253,6 +303,7 @@ namespace WebsitePanel.Setup.Actions
 			new CreateWebSiteAction(),
 			new SwitchAppPoolAspNetVersion(),
 			new UpdateEnterpriseServerUrlAction(),
+            new GenerateSessionValidationKeyAction(),
 			new SaveComponentConfigSettingsAction(),
 			new CreateDesktopShortcutsAction()
 		};

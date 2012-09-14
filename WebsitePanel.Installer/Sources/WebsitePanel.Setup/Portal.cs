@@ -217,10 +217,6 @@ namespace WebsitePanel.Setup
 			action.Description = "Updating site settings...";
 			page3.Actions.Add(action);
 
-            action = new InstallAction(ActionTypes.UpdatePortalSessionValidationKey);
-            action.Description = "Generate session validation key...";
-            page3.Actions.Add(action);
-
 			action = new InstallAction(ActionTypes.UpdateConfig);
 			action.Description = "Updating system configuration...";
 			page3.Actions.Add(action);
