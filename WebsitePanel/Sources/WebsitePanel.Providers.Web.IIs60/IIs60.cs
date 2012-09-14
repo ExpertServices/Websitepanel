@@ -3368,7 +3368,7 @@ namespace WebsitePanel.Providers.Web
 		}
 		#endregion
 
-		public bool IsIISInstalled()
+		public virtual bool IsIISInstalled()
 		{
 			int value = 0;
 			RegistryKey root = Registry.LocalMachine;

@@ -954,7 +954,7 @@ namespace WebsitePanel.Providers.FTP
 
 		#endregion
 
-        protected bool IsMsFTPInstalled()
+        protected virtual bool IsMsFTPInstalled()
         {
             int value = 0;
             RegistryKey root = Registry.LocalMachine;

@@ -12,7 +12,7 @@ namespace WebsitePanel.Providers.Web
         {
         }
 
-        public new bool IsIISInstalled()
+        public override bool IsIISInstalled()
         {
             int value = 0;
             RegistryKey root = Registry.LocalMachine;

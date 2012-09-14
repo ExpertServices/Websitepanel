@@ -12,7 +12,7 @@ namespace WebsitePanel.Providers.FTP
         {
         }
 
-        protected new bool IsMsFTPInstalled()
+        protected override bool IsMsFTPInstalled()
         {
             int value = 0;
             RegistryKey root = Registry.LocalMachine;
