@@ -294,7 +294,7 @@ h2.ProductTitle {
     <ContentTemplate>
         <asp:Timer ID="ProgressTimer" runat="server" Enabled="False" Interval="3000" OnTick="ProgressTimerTick"></asp:Timer>
         <asp:Panel ID="ProgressMessagePanel" class="FormBody" runat="server">
-            <h3 class="NormalBold">Selected products are installed now:</h3>
+            <h3 class="NormalBold">Selected products are being installed now:</h3>
             <br/>
             <asp:Image runat="server" ID="ProgressAnimation" ImageAlign="AbsMiddle" ImageUrl="" CssClass="ProgressAnimation"></asp:Image>
             <asp:Label ID="ProgressMessage" runat="server">initializing...</asp:Label>
