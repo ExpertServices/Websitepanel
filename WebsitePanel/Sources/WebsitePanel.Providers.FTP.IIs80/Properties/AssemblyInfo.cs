@@ -5,10 +5,10 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("WebsitePanel.Providers.Web.IIs70")]
+[assembly: AssemblyTitle("WebsitePanel.Providers.FTP.IIs80")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyProduct("WebsitePanel.Providers.Web.IIs70")]
+[assembly: AssemblyProduct("WebsitePanel.Providers.FTP.IIs80")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -18,4 +18,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("0eb18093-bb95-406a-ab78-a2e45f4cb972")]
+[assembly: Guid("587b5738-51db-4525-bcf5-60de49e89be4")]

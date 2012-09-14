@@ -258,6 +258,9 @@ namespace WebsitePanel.Setup
 						case ActionTypes.AddCustomErrorsPage:
 							AddCustomErrorsPage();
 							break;
+                        case ActionTypes.ConfigureSecureSessionModuleInWebConfig:
+                            ConfigureSecureSessionModuleInWebConfig();
+                            break;
 					}
 				}
 				this.progressBar.Value = 100;
@@ -280,6 +283,87 @@ namespace WebsitePanel.Setup
 			if (!string.IsNullOrEmpty(SetupVariables.SetupXml))
 				Wizard.GoNext();
 		}
+
+        private void ConfigureSecureSessionModuleInWebConfig()
+        {
+            try
+            {
+                string webConfigPath = Path.Combine(Wizard.SetupVariables.InstallationFolder, "web.config");
+                Log.WriteStart("Web.config file is being updated");
+                // Ensure the web.config exists
+                if (!File.Exists(webConfigPath))
+                {
+                    Log.WriteInfo(string.Format("File {0} not found", webConfigPath));
+                    return;
+                }
+                // Load web.config
+                XmlDocument doc = new XmlDocument();
+                doc.Load(webConfigPath);
+
+                // add node:
+                //<system.webServer>
+                //  <modules>
+                //    <add name="SecureSession" type="WebsitePanel.WebPortal.SecureSessionModule" />
+                //  </modules>
+                //</system.webServer>
+                //
+                //  ... or for IIS 6:
+                //
+                //<system.web>
+                //  <httpModules>
+                //    <add name="SecureSession" type="WebsitePanel.WebPortal.SecureSessionModule" />
+                //  </httpModules>
+                //</system.web>
+                bool iis6 = false;
+                XmlElement webServer = doc.SelectSingleNode("configuration/system.webServer") as XmlElement;
+                if (webServer == null)
+                {
+                    // this is IIS 6
+                    webServer = doc.SelectSingleNode("configuration/system.web") as XmlElement;
+                    iis6 = true;
+                }
+
+                if (webServer != null)
+                {
+                    var modules = doc.CreateElement(iis6 ? "httpModules" : "modules");
+                    webServer.AppendChild(modules);
+                    var sessionModule = doc.CreateElement("add");
+                    sessionModule.SetAttribute("name", "SecureSession");
+                    sessionModule.SetAttribute("type", "WebsitePanel.WebPortal.SecureSessionModule");
+                    modules.AppendChild(sessionModule);
+                }
+
+                // update /system.web/httpRuntime element
+                var httpRuntime = doc.SelectSingleNode("configuration/system.web/httpRuntime") as XmlElement;
+                if (httpRuntime != null)
+                    httpRuntime.SetAttribute("enableVersionHeader", "false");
+
+                // add:
+                //<appSettings>
+                //    <add key="SessionValidationKey" value="XXXXXX" />
+                //</appSettings>
+                var appSettings = doc.SelectSingleNode("configuration/appSettings");
+                if (appSettings != null)
+                {
+                    var sessionKey = doc.CreateElement("add");
+                    sessionKey.SetAttribute("name", "SessionValidationKey");
+                    sessionKey.SetAttribute("value", StringUtils.GenerateRandomString(16));
+                    appSettings.AppendChild(sessionKey);
+                }
+                
+                // save changes have been made
+                doc.Save(webConfigPath);
+                //
+                Log.WriteEnd("Web.config has been updated");
+            }
+            catch (Exception ex)
+            {
+                if (Utils.IsThreadAbortException(ex))
+                    return;
+                Log.WriteError("Could not update web.config file", ex);
+                throw;
+            }
+        }
 
 		private void SwitchWebPortal2AspNet40(InstallAction action, Setup.SetupVariables setupVariables)
 		{

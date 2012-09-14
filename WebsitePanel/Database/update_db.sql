@@ -29,7 +29,7 @@ GO
 -- IIS 8.0
 IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Internet Information Services 8.0')
 BEGIN
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (105, 2, N'IIS80', N'Internet Information Services 8.0', N'WebsitePanel.Providers.Web.IIs70, WebsitePanel.Providers.Web.IIs70', N'IIS70', NULL)
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (105, 2, N'IIS80', N'Internet Information Services 8.0', N'WebsitePanel.Providers.Web.IIs80, WebsitePanel.Providers.Web.IIs80', N'IIS70', NULL)
 END
 GO
 
@@ -168,7 +168,7 @@ GO
 -- MS FTP 8.0
 IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Microsoft FTP Server 8.0')
 BEGIN
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (106, 3, N'MSFTP80', N'Microsoft FTP Server 8.0', N'WebsitePanel.Providers.FTP.MsFTP, WebsitePanel.Providers.FTP.IIs70', N'MSFTP70', NULL)
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (106, 3, N'MSFTP80', N'Microsoft FTP Server 8.0', N'WebsitePanel.Providers.FTP.MsFTP80, WebsitePanel.Providers.FTP.IIs80', N'MSFTP70', NULL)
 END
 GO
 
