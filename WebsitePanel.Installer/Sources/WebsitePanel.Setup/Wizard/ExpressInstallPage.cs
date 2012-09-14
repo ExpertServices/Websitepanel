@@ -261,9 +261,6 @@ namespace WebsitePanel.Setup
                         case ActionTypes.ConfigureSecureSessionModuleInWebConfig:
                             ConfigureSecureSessionModuleInWebConfig();
                             break;
-                        case ActionTypes.UpdatePortalSessionValidationKey:
-                            UpdatePortalSessionValidationKey();
-                            break;
 					}
 				}
 				this.progressBar.Value = 100;
@@ -2656,44 +2653,6 @@ namespace WebsitePanel.Setup
 				throw;
 			}
 		}
-
-        private void UpdatePortalSessionValidationKey()
-        {
-            try
-            {
-                string installFolder = Wizard.SetupVariables.InstallationFolder;
-                string path = Path.Combine(installFolder, "web.config");
-
-                if (!File.Exists(path))
-                {
-                    Log.WriteInfo(string.Format("File {0} not found", path));
-                    return;
-                }
-
-                Log.WriteStart("Updating configuration file (session validation key)");
-                XmlDocument doc = new XmlDocument();
-                doc.Load(path);
-
-                XmlElement sessionKey = doc.SelectSingleNode("configuration/appSettings/add[@key='SessionValidationKey']") as XmlElement;
-                if (sessionKey == null)
-                {
-                    Log.WriteInfo("SessionValidationKey setting not found");
-                    return;
-                }
-
-                sessionKey.SetAttribute("value", StringUtils.GenerateRandomString(16));
-                doc.Save(path);
-                Log.WriteEnd("Updated configuration file");
-                InstallLog.AppendLine("- Updated session validation key in the configuration file");
-            }
-            catch (Exception ex)
-            {
-                if (Utils.IsThreadAbortException(ex))
-                    return;
-                Log.WriteError("Configuration file update error", ex);
-                throw;
-            }
-        }
 
 		private void SetServiceSettings()
 		{
