@@ -61,6 +61,8 @@ namespace WebsitePanel.Providers.OS {
         private System.Threading.SendOrPostCallback CreatePackageFolderOperationCompleted;
         
         private System.Threading.SendOrPostCallback FileExistsOperationCompleted;
+
+        private System.Threading.SendOrPostCallback SetQuotaLimitOnFolderOperationCompleted;
         
         private System.Threading.SendOrPostCallback DirectoryExistsOperationCompleted;
         
@@ -131,7 +133,8 @@ namespace WebsitePanel.Providers.OS {
         private System.Threading.SendOrPostCallback UpdateDSNOperationCompleted;
         
         private System.Threading.SendOrPostCallback DeleteDSNOperationCompleted;
-        
+
+       
         /// <remarks/>
         public OperatingSystem() {
             this.Url = "http://localhost/Server/OperatingSystem.asmx";
@@ -142,6 +145,8 @@ namespace WebsitePanel.Providers.OS {
         
         /// <remarks/>
         public event FileExistsCompletedEventHandler FileExistsCompleted;
+
+        public event SetQuotaLimitOnFolderCompletedEventHandler SetQuotaLimitOnFolderCompleted;
         
         /// <remarks/>
         public event DirectoryExistsCompletedEventHandler DirectoryExistsCompleted;
@@ -329,6 +334,56 @@ namespace WebsitePanel.Providers.OS {
             if ((this.FileExistsCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.FileExistsCompleted(this, new FileExistsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/SetQuotaLimitOnFolder", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool SetQuotaLimitOnFolder(string cmdFilePath, string virtualFileClusterName, string folderPath, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
+        {
+            object[] results = this.Invoke("SetQuotaLimitOnFolder", new object[] {
+                        cmdFilePath, virtualFileClusterName, folderPath, quotaLimit, mode, wmiUserName, wmiPassword});
+            return ((bool)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginSetQuotaLimitOnFolder(string cmdFilePath, string virtualFileClusterName, string folderPath, string quotaLimit, int mode, string wmiUserName, string wmiPassword, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("SetQuotaLimitOnFolder", new object[] {
+                        cmdFilePath, virtualFileClusterName, folderPath, quotaLimit, mode, wmiUserName, wmiPassword}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public bool EndSetQuotaLimitOnFolder(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+
+        /// <remarks/>
+        public void SetQuotaLimitOnFolderAsync(string cmdFilePath, string virtualFileClusterName, string folderPath, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
+        {
+            this.SetQuotaLimitOnFolderAsync(cmdFilePath, virtualFileClusterName, folderPath, quotaLimit, mode, wmiUserName, wmiPassword, null);
+        }
+
+        /// <remarks/>
+        public void SetQuotaLimitOnFolderAsync(string cmdFilePath, string virtualFileClusterName, string folderPath, string quotaLimit, int mode, string wmiUserName, string wmiPassword, object userState)
+        {
+            if ((this.FileExistsOperationCompleted == null))
+            {
+                this.FileExistsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnFileExistsOperationCompleted);
+            }
+            this.InvokeAsync("SetQuotaLimitOnFolder", new object[] {
+                        cmdFilePath, virtualFileClusterName, folderPath, quotaLimit, mode, wmiUserName, wmiPassword}, this.SetQuotaLimitOnFolderOperationCompleted, userState);
+        }
+
+        private void OnSetQuotaLimitOnFolderOperationCompleted(object arg)
+        {
+            if ((this.SetQuotaLimitOnFolderCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SetQuotaLimitOnFolderCompleted(this, new SetQuotaLimitOnFolderCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -1894,6 +1949,36 @@ namespace WebsitePanel.Providers.OS {
         /// <remarks/>
         public bool Result {
             get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void SetQuotaLimitOnFolderCompletedEventHandler(object sender, SetQuotaLimitOnFolderCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SetQuotaLimitOnFolderCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal SetQuotaLimitOnFolderCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public bool Result
+        {
+            get
+            {
                 this.RaiseExceptionIfNecessary();
                 return ((bool)(this.results[0]));
             }

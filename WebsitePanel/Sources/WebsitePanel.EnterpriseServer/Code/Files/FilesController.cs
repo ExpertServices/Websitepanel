@@ -912,5 +912,76 @@ namespace WebsitePanel.EnterpriseServer
 
             return users.ToArray();
         }
+
+        public static int SetFolderQuota(int packageId, string path)
+        {
+
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // check package
+            int packageCheck = SecurityContext.CheckPackage(packageId, DemandPackage.IsActive);
+            if (packageCheck < 0) return packageCheck;
+
+            // place log record
+            TaskManager.StartTask("FILES", "SET_QUOTA_ON_FOLDER", path);
+            TaskManager.ItemId = packageId;
+
+            try
+            {
+
+                // file server cluster name
+                string fileServerClusterName = String.Empty;
+
+                // Share Name where home folders are created
+                string shareName = String.Empty;
+
+                string[] splits = GetHomeFolder(packageId).Split('\\');
+
+                if (splits.Length > 4)
+                {
+                    fileServerClusterName = splits[2];
+                    shareName = splits[3];
+                }
+                
+                // disk space quota
+                QuotaValueInfo diskSpaceQuota = PackageController.GetPackageQuota(packageId, Quotas.OS_DISKSPACE);
+
+                // bat file pat
+                string cmdFilePath = @"\\" + fileServerClusterName + @"\" + shareName + @"\" + "Process.bat";
+
+                #region figure Quota Unit
+
+                // Quota Unit
+                string unit = String.Empty;
+                if (diskSpaceQuota.QuotaDescription.ToLower().Contains("gb"))
+                    unit = "GB";
+                else if (diskSpaceQuota.QuotaDescription.ToLower().Contains("mb"))
+                    unit = "MB";
+                else
+                    unit = "KB";
+
+                #endregion
+
+                OS.OperatingSystem os = GetOS(packageId);
+                os.SetQuotaLimitOnFolder(cmdFilePath, fileServerClusterName, path, diskSpaceQuota.QuotaAllocatedValue.ToString() + unit, 0, String.Empty, String.Empty);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                //Log and return a generic error rather than throwing an exception
+                TaskManager.WriteError(ex);
+                return BusinessErrorCodes.ERROR_FILE_GENERIC_LOGGED;
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        
+        
+        }
+
     }
 }

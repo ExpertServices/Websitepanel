@@ -377,6 +377,9 @@ namespace WebsitePanel.EnterpriseServer
                 // CREATE WEB SITE
                 siteId = web.CreateSite(site);
 
+                // Set hard quota on the website content folder
+                FilesController.SetFolderQuota(packageId, site.DataPath);
+          
                 // register item
                 site.ServiceId = serviceId;
                 site.PackageId = packageId;

@@ -209,6 +209,17 @@ namespace WebsitePanel.Providers.OS
             SecurityUtils.GrantGroupNtfsPermissions(path, users, resetChildPermissions,
                 ServerSettings, usersOU, null);
         }
+
+        public virtual void SetQuotaLimitOnFolder(string cmdFilePath, string virtualFileClusterName, string folderPath, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
+        {
+            FileUtils.SetQuotaLimitOnFolder(cmdFilePath, virtualFileClusterName, folderPath, quotaLimit, mode, wmiUserName, wmiPassword);
+        }
+
+        public static void DeleteDirRecursive(DirectoryInfo treeRoot)
+        {
+            FileUtils.DeleteDirectoryRecursive(treeRoot);
+        }
+
         #endregion
 
         #region ODBC DSNs

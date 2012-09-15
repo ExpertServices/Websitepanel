@@ -81,5 +81,6 @@ namespace WebsitePanel.Providers.OS
         // Synchronizing
         FolderGraph GetFolderGraph(string path);
         void ExecuteSyncActions(FileSyncAction[] actions);
+        void SetQuotaLimitOnFolder(string cmdFilePath, string virtualFileClusterName, string folderPath, string quotaLimit, int mode, string wmiUserName, string wmiPassword);
     }
 }
