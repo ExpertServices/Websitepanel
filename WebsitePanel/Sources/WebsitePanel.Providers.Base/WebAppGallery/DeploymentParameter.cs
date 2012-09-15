@@ -87,7 +87,7 @@ namespace WebsitePanel.Providers.WebAppGallery
         //SiteUserPassword = 549755813888,
 
 
-        ALLKNOWN = 
+        AllKnown = 
             AppHostConfig | 
             AppPoolConfig | 
             Boolean | 
@@ -155,5 +155,21 @@ namespace WebsitePanel.Providers.WebAppGallery
             return String.Format("{0}=\"{1}\", Tags={2}", Name, Value, WellKnownTags.ToString());
         }
 #endif
+
+	    public void SetWellKnownTagsFromRawString(string rawTags)
+	    {
+	        string[] tags = rawTags.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+	        DeploymentParameterWellKnownTag wellKnownTags = DeploymentParameterWellKnownTag.None;
+	        foreach (string tag in tags)
+	        {
+                try
+                {
+                    wellKnownTags |= (DeploymentParameterWellKnownTag)Enum.Parse(typeof(DeploymentParameterWellKnownTag), tag, true);
+                }
+                catch(Exception){}
+	        }
+
+	        WellKnownTags = wellKnownTags & DeploymentParameterWellKnownTag.AllKnown;
+	    }
     }
 }

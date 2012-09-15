@@ -33,6 +33,7 @@ using System.Data.SqlClient;
 using System.Text.RegularExpressions;
 using WebsitePanel.Providers.HostedSolution;
 using Microsoft.ApplicationBlocks.Data;
+using System.Collections.Generic;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -3398,6 +3399,46 @@ namespace WebsitePanel.EnterpriseServer
 
 
         #endregion
+
+        public static int GetPackageIdByName(string Name)
+        {
+            // get Helicon Zoo provider
+            int packageId = -1;
+            List<ProviderInfo> providers = ServerController.GetProviders();
+            foreach (ProviderInfo providerInfo in providers)
+            {
+                if (string.Equals(Name, providerInfo.ProviderName, StringComparison.OrdinalIgnoreCase))
+                {
+                    packageId = providerInfo.ProviderId;
+                    break;
+                }
+            }
+
+            if (-1 == packageId)
+            {
+                throw new Exception("Provider not found");
+            }
+
+            return packageId;
+        }
+
+        public static int GetServiceIdByProviderForServer(int providerId, int serverId)
+        {
+            IDataReader reader = SqlHelper.ExecuteReader(ConnectionString, CommandType.Text,
+                @"SELECT TOP 1 
+                    ServiceID
+                  FROM Services
+                  WHERE ProviderID = @ProviderID AND ServerID = @ServerID",
+                new SqlParameter("@ProviderID", providerId),
+                new SqlParameter("@ServerID", serverId));
+
+            if (reader.Read())
+            {
+                return (int)reader["ServiceID"];
+            }
+
+            return -1;
+        }
 
     }
 }

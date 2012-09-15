@@ -41,6 +41,7 @@ using WebsitePanel.Providers.OS;
 using OS = WebsitePanel.Providers.OS;
 using System.Collections;
 
+
 namespace WebsitePanel.EnterpriseServer
 {
     public class OperatingSystemController : IImportController, IBackupController
@@ -409,6 +410,23 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Web Platform Installer
 
+        public static bool CheckLoadUserProfile(int serverId)
+        {
+            int packageId = DataProvider.GetPackageIdByName("IIS70");
+            int serviceId = DataProvider.GetServiceIdByProviderForServer(packageId, serverId);
+            return WebServerController.GetWebServer(serviceId).CheckLoadUserProfile();
+             
+        }
+
+        public static void EnableLoadUserProfile(int serverId)
+        {
+            int packageId = DataProvider.GetPackageIdByName("IIS70");
+            int serviceId = DataProvider.GetServiceIdByProviderForServer(packageId, serverId);
+            WebServerController.GetWebServer(serviceId).EnableLoadUserProfile();
+        }
+
+        
+
         public static void InitWPIFeeds(int serverId, string feedUrls)
         {
             GetServerService(serverId).InitWPIFeeds(feedUrls);
@@ -746,6 +764,7 @@ namespace WebsitePanel.EnterpriseServer
             return 0;
         }
 
+      
        
         #endregion
     }

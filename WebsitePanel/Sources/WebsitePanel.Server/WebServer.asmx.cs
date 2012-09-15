@@ -1061,6 +1061,42 @@ namespace WebsitePanel.Server
         #endregion
 
         #region Web Application Gallery
+
+        [WebMethod, SoapHeader("settings")]
+        public bool CheckLoadUserProfile()
+        {
+            try
+            {
+                Log.WriteStart("CheckLoadUserProfile");
+
+                return WebProvider.CheckLoadUserProfile();
+
+                Log.WriteEnd("CheckLoadUserProfile");
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("CheckLoadUserProfile", ex);
+                throw;
+            }
+        }
+        
+        [WebMethod, SoapHeader("settings")]
+        public void EnableLoadUserProfile()
+        {
+            try
+            {
+                Log.WriteStart("EnableLoadUserProfile");
+
+                WebProvider.EnableLoadUserProfile();
+
+                Log.WriteEnd("EnableLoadUserProfile");
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("EnableLoadUserProfile", ex);
+                throw;
+            }
+        }
         [WebMethod, SoapHeader("settings")]
         public void InitFeeds(int UserId, string[] feeds)
         {

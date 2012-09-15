@@ -155,7 +155,7 @@ namespace WebsitePanel.Portal
             }
 
             // MySQL Server
-            else if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.MySql) != null)
+            if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.MySql) != null)
             {
                 // load package context
                 PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
@@ -170,15 +170,15 @@ namespace WebsitePanel.Portal
             }
 
             // SQLite
-            else if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.SqLite) != null)
+            if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.SqLite) != null)
                 AddDatabaseEngine(DeploymentParameterWellKnownTag.SqLite, "", GetLocalizedString("DatabaseEngine.SQLite"));
 
             // Flat File
-            else if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.FlatFile) != null)
+            if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.FlatFile) != null)
                 AddDatabaseEngine(DeploymentParameterWellKnownTag.FlatFile, "", GetLocalizedString("DatabaseEngine.FlatFile"));
 
             // VistaFB
-            else if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.VistaDB) != null)
+            if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.VistaDB) != null)
                 AddDatabaseEngine(DeploymentParameterWellKnownTag.VistaDB, "", GetLocalizedString("DatabaseEngine.VistaDB"));
 
 

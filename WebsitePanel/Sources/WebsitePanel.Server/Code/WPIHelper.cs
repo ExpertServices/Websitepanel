@@ -38,6 +38,7 @@ using System.Threading;
 using Microsoft.Web.Deployment;
 using Microsoft.Web.PlatformInstaller;
 using Installer = Microsoft.Web.PlatformInstaller.Installer;
+using DeploymentParameterWPI = Microsoft.Web.PlatformInstaller.DeploymentParameter;
 
 namespace WebsitePanel.Server.Code
 {
@@ -453,11 +454,11 @@ namespace WebsitePanel.Server.Code
             return products;
         }
 
-        public IList<DeclaredParameter> GetAppDecalredParameters(string productId)
+        public IList<DeploymentParameterWPI> GetAppDecalredParameters(string productId)
         {
             Product app = _productManager.GetProduct(productId);
             Installer appInstaller = app.GetInstaller(GetLanguage(null));
-            return appInstaller.MSDeployPackage.DeclaredParameters;
+            return appInstaller.MSDeployPackage.DeploymentParameters;
         }
 
         public bool InstallApplication(
@@ -501,7 +502,7 @@ namespace WebsitePanel.Server.Code
             DeploymentWellKnownTag dbTag = (DeploymentWellKnownTag)GetDbTag(updatedValues);
 
             // remove parameters with alien db tags
-            foreach (DeclaredParameter parameter in appInstaller.MSDeployPackage.DeclaredParameters)
+            foreach (DeploymentParameterWPI parameter in appInstaller.MSDeployPackage.DeploymentParameters)
             {
                 if (IsAlienDbTaggedParameter(dbTag, parameter))
                 {
@@ -726,13 +727,16 @@ namespace WebsitePanel.Server.Code
             return DeploymentWellKnownTag.None;
         }
 
-        private static bool IsAlienDbTaggedParameter(DeploymentWellKnownTag dbTag, DeclaredParameter parameter)
+        private static bool IsAlienDbTaggedParameter(DeploymentWellKnownTag dbTag, DeploymentParameterWPI parameter)
         {
+            return parameter.HasTags((long)databaseEngineTags) && !parameter.HasTags((long)dbTag);
+/*
 #pragma warning disable 612,618
             return (parameter.Tags & databaseEngineTags) != DeploymentWellKnownTag.None 
                    && 
                    (parameter.Tags & dbTag) == DeploymentWellKnownTag.None;
 #pragma warning restore 612,618
+*/
         }
 
         private static void RemoveUnusedProviders(MSDeployPackage msDeployPackage, DeploymentWellKnownTag dbTag)

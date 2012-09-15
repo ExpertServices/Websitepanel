@@ -671,6 +671,20 @@ namespace WebsitePanel.EnterpriseServer
         #region Web Platform Installer
 
         [WebMethod]
+        public bool CheckLoadUserProfile(int serverId)
+        {
+            return OperatingSystemController.CheckLoadUserProfile(serverId);
+        }
+
+        [WebMethod]
+        public void EnableLoadUserProfile(int serverId)
+        {
+            OperatingSystemController.EnableLoadUserProfile(serverId);
+        }
+
+        
+
+        [WebMethod]
         public void InitWPIFeeds(int serverId)
         {
             var wpiSettings = SystemController.GetSystemSettings(SystemSettings.WPI_SETTINGS);

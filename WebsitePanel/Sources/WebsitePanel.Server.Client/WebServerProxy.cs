@@ -1,8 +1,3 @@
-// Copyright (c) 2012, Outercurve Foundation.
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without modification,
-// are permitted provided that the following conditions are met:
 //
 // - Redistributions of source code must  retain  the  above copyright notice, this
 //   list of conditions and the following disclaimer.
@@ -50,6 +45,7 @@ namespace WebsitePanel.Providers.Web
     using WebsitePanel.Providers.ResultObjects;
     using WebsitePanel.Providers.WebAppGallery;
     using WebsitePanel.Providers.Common;
+
     
     
     /// <remarks/>
@@ -179,6 +175,10 @@ namespace WebsitePanel.Providers.Web
         private System.Threading.SendOrPostCallback RevokeWebDeployPublishingAccessOperationCompleted;
         
         private System.Threading.SendOrPostCallback DeleteHeliconApeGroupOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback CheckLoadUserProfileOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback EnableLoadUserProfileOperationCompleted;
         
         private System.Threading.SendOrPostCallback InitFeedsOperationCompleted;
         
@@ -415,6 +415,12 @@ namespace WebsitePanel.Providers.Web
         
         /// <remarks/>
         public event DeleteHeliconApeGroupCompletedEventHandler DeleteHeliconApeGroupCompleted;
+        
+        /// <remarks/>
+        public event CheckLoadUserProfileCompletedEventHandler CheckLoadUserProfileCompleted;
+        
+        /// <remarks/>
+        public event EnableLoadUserProfileCompletedEventHandler EnableLoadUserProfileCompleted;
         
         /// <remarks/>
         public event InitFeedsCompletedEventHandler InitFeedsCompleted;
@@ -3007,6 +3013,82 @@ namespace WebsitePanel.Providers.Web
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/CheckLoadUserProfile", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool CheckLoadUserProfile() {
+            object[] results = this.Invoke("CheckLoadUserProfile", new object[0]);
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginCheckLoadUserProfile(System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("CheckLoadUserProfile", new object[0], callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public bool EndCheckLoadUserProfile(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void CheckLoadUserProfileAsync() {
+            this.CheckLoadUserProfileAsync(null);
+        }
+        
+        /// <remarks/>
+        public void CheckLoadUserProfileAsync(object userState) {
+            if ((this.CheckLoadUserProfileOperationCompleted == null)) {
+                this.CheckLoadUserProfileOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckLoadUserProfileOperationCompleted);
+            }
+            this.InvokeAsync("CheckLoadUserProfile", new object[0], this.CheckLoadUserProfileOperationCompleted, userState);
+        }
+        
+        private void OnCheckLoadUserProfileOperationCompleted(object arg) {
+            if ((this.CheckLoadUserProfileCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CheckLoadUserProfileCompleted(this, new CheckLoadUserProfileCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/EnableLoadUserProfile", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void EnableLoadUserProfile() {
+            this.Invoke("EnableLoadUserProfile", new object[0]);
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginEnableLoadUserProfile(System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("EnableLoadUserProfile", new object[0], callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public void EndEnableLoadUserProfile(System.IAsyncResult asyncResult) {
+            this.EndInvoke(asyncResult);
+        }
+        
+        /// <remarks/>
+        public void EnableLoadUserProfileAsync() {
+            this.EnableLoadUserProfileAsync(null);
+        }
+        
+        /// <remarks/>
+        public void EnableLoadUserProfileAsync(object userState) {
+            if ((this.EnableLoadUserProfileOperationCompleted == null)) {
+                this.EnableLoadUserProfileOperationCompleted = new System.Threading.SendOrPostCallback(this.OnEnableLoadUserProfileOperationCompleted);
+            }
+            this.InvokeAsync("EnableLoadUserProfile", new object[0], this.EnableLoadUserProfileOperationCompleted, userState);
+        }
+        
+        private void OnEnableLoadUserProfileOperationCompleted(object arg) {
+            if ((this.EnableLoadUserProfileCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.EnableLoadUserProfileCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/InitFeeds", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public void InitFeeds(int UserId, string[] feeds) {
             this.Invoke("InitFeeds", new object[] {
@@ -5063,6 +5145,36 @@ namespace WebsitePanel.Providers.Web
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
     public delegate void DeleteHeliconApeGroupCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void CheckLoadUserProfileCompletedEventHandler(object sender, CheckLoadUserProfileCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CheckLoadUserProfileCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CheckLoadUserProfileCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void EnableLoadUserProfileCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
