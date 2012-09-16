@@ -1,7 +1,5 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
-	<UsingTask TaskName="UploadFiles" AssemblyFile="lib\CodePlex.WebServices.Client.dll" />
-	<PropertyGroup>
+  <PropertyGroup>
 		<Version>2.0.0</Version>
 		<FileVersion>$(BUILD_NUMBER)</FileVersion>
 		<VersionLabel>$(BUILD_NUMBER)</VersionLabel>
@@ -9,7 +7,6 @@
 		<BuildConfiguration></BuildConfiguration>
 		<RootFolder>..</RootFolder>
 		<TrunkFolder>$(RootFolder)\WebsitePanel</TrunkFolder>
-
 		<SetupTrunkFolder>$(RootFolder)\WebsitePanel.Installer</SetupTrunkFolder>
 		<SetupBuildFolder>$(SetupTrunkFolder)\Build\$(BuildConfiguration)</SetupBuildFolder>
 
@@ -17,12 +14,11 @@
 		<DeployFolder>$(TrunkFolder)\Deploy\$(BuildConfiguration)</DeployFolder>
 
     <PreviousBuildFolder>$(RootFolder)\..\prev\$(BuildConfiguration)</PreviousBuildFolder>
-
+    
 		<DiffCmd>$(TrunkFolder)\Tools\Diff.exe</DiffCmd>
-		<SqlCmd>"C:\Program Files\Microsoft SQL Server\110\Tools\Binn\sqlcmd.exe" -S (local)\SQLEXPRESS -E</SqlCmd>
-
-    <MSDeployPath Condition="Exists('$(ProgramFiles)\IIS\Microsoft Web Deploy\msdeploy.exe')">"$(ProgramFiles)\IIS\Microsoft Web Deploy\msdeploy.exe"</MSDeployPath>
-		<MSDeployPath Condition="Exists('$(ProgramFiles)\IIS\Microsoft Web Deploy V3\msdeploy.exe')">"$(ProgramFiles)\IIS\Microsoft Web Deploy V3\msdeploy.exe"</MSDeployPath>
+		<!-- Lets keep all tools we need for the build together in a well-known place to avoid BUIDL HELL -->
+		<SqlCmd Condition="Exists('$(RootFolder)\tools\sqlcmd\sqlcmd.exe')">"$(RootFolder)\tools\sqlcmd\sqlcmd.exe" -S (local)\SQLEXPRESS -E</SqlCmd>
+    <MSDeployPath Condition="Exists('$(RootFolder)\tools\webdeploy\msdeploy.exe')">"$(RootFolder)\tools\webdeploy\msdeploy.exe"</MSDeployPath>
 
 		<DataBaseName>WebsitePanel_build</DataBaseName>
 		<MSDeployConnectionString>server=(local)\SQLEXPRESS;database=$(DataBaseName);Integrated Security=true;</MSDeployConnectionString>
@@ -237,7 +233,8 @@
 		<Exec Command="@(LocalizationToolkitExe) -L $(PortalSrc)"/>
 		
 		<!-- build MSI package -->
-		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.LocalizationToolkit.Wix\WebsitePanel.LocalizationToolkit.Wix.wixproj" Properties="Configuration=$(BuildConfiguration)">
+		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.LocalizationToolkit.Wix\WebsitePanel.LocalizationToolkit.Wix.wixproj" 
+             Properties="Configuration=$(BuildConfiguration);DefineSolutionProperties=false">
 			<Output
                 TaskParameter="TargetOutputs"
                 ItemName="LocalizationToolkitMsi" />	
@@ -266,7 +263,8 @@
 		<MSBuild Projects="$(RootFolder)\WebsitePanel.Installer\Sources\WebsitePanel.Updater\WebsitePanel.Updater.csproj" Properties="Configuration=$(BuildConfiguration)" />
     
 		<!-- build MSI package -->
-		<MSBuild Projects="$(RootFolder)\WebsitePanel.Installer\Sources\Setup.WIX\Setup.Wix.wixproj" Properties="Configuration=$(BuildConfiguration)">
+		<MSBuild Projects="$(RootFolder)\WebsitePanel.Installer\Sources\Setup.WIX\Setup.Wix.wixproj" 
+             Properties="Configuration=$(BuildConfiguration);DefineSolutionProperties=false">
 			<Output
                 TaskParameter="TargetOutputs"
                 ItemName="WebsitePanelInstallerMsi" />	
@@ -552,8 +550,6 @@
 		<Zip Files="@(ImportEnterpriseInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-Import-Enterprise-$(Version).zip" WorkingDirectory="$(ImportEnterpriseInstall)" />
 		<Zip Files="@(AWStatsViewerInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(Version).zip" WorkingDirectory="$(AWStatsViewerInstall)" />
 		<Zip Files="@(WSPTransportAgentInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" WorkingDirectory="$(WSPTransportAgentInstall)" />
-
-
   </Target>
 
 	<Target Name="uploadtoftp">
@@ -665,5 +661,67 @@
 
 	</Target>
 
+  <Target Name="BuildWebPlatformInstallerFeed" DependsOnTargets="Deploy">
+    <ItemGroup>
+      <InstallerFilePath Include="$(DeployFolder)\WebsitePanelInstaller.msi" />
+    </ItemGroup>
+    <PropertyGroup>
+      <GetFileSizeScript>
+        <![CDATA[
+          public static string ScriptMain() {
+            System.Int32 KB = 1024;
+            System.IO.FileInfo fileInfo = new System.IO.FileInfo(@"%(InstallerFilePath.FullPath)");
+            return System.Convert.ToString(fileInfo.Length / KB);
+          }
+        ]]>
+      </GetFileSizeScript>
+      <ComputeChecksumScript>
+        <![CDATA[
+          public static string ScriptMain() {
+            System.String checksumStr = "";
+            using(System.IO.FileStream stream = System.IO.File.OpenRead(@"%(InstallerFilePath.FullPath)"))
+            {
+                System.Security.Cryptography.SHA1Managed sha = new System.Security.Cryptography.SHA1Managed();
+                System.Byte[] checksum = sha.ComputeHash(stream);
+                checksumStr = System.BitConverter.ToString(checksum).Replace("-", System.String.Empty);
+            }
+            return checksumStr;
+          }
+        ]]>
+      </ComputeChecksumScript>
+    </PropertyGroup>
+    <Script Language="C#" Code="$(ComputeChecksumScript)">
+      <Output TaskParameter="ReturnValue" PropertyName="InstallerFileChecksum" />
+    </Script>
+    <Script Language="C#" Code="$(GetFileSizeScript)">
+      <Output TaskParameter="ReturnValue" PropertyName="InstallerFileSize" />
+    </Script>
 
+    <ItemGroup>
+      <Tokens Include="ProductVersion">
+        <ReplacementValue>$(Version)</ReplacementValue>
+      </Tokens>
+      <Tokens Include="ProductTitle">
+        <ReplacementValue>WebsitePanel $(Version)</ReplacementValue>
+      </Tokens>
+      <Tokens Include="ReleaseDate">
+        <ReplacementValue>$(ReleaseDate)T00:00:00Z</ReplacementValue>
+      </Tokens>
+      <Tokens Include="InstallerFileSize">
+        <ReplacementValue>$(InstallerFileSize)</ReplacementValue>
+      </Tokens>
+      <Tokens Include="InstallerFileSHA1">
+        <ReplacementValue>$(InstallerFileChecksum)</ReplacementValue>
+      </Tokens>
+      <Tokens Include="InstallerFileUrl">
+        <ReplacementValue>TODO: Evaluate MSI file URL</ReplacementValue>
+      </Tokens>
+    </ItemGroup>
+    <TemplateFile Template="$(TrunkFolder)\WebsitePanelFeedTemplate.xml" OutputFilename="$(DeployFolder)\WebsitePanelFeed.xml" Tokens="@(Tokens)" />
+  </Target>
+
+  <!--<Import Project="$(TrunkFolder)\WebsitePanelFeed.webpi.xml"/>-->
+  <Import Project="$(RootFolder)\tools\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+	<UsingTask TaskName="UploadFiles" AssemblyFile="$(RootFolder)\tools\CodePlex\CodePlex.WebServices.Client.dll" />
+  
 </Project>
