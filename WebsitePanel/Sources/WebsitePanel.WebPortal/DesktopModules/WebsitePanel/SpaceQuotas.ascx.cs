@@ -58,6 +58,7 @@ namespace WebsitePanel.Portal
 			{ "quotaDomains", "pnlDomains" },
 			{ "quotaSubDomains", "pnlSubDomains" },
 			{ "quotaDomainPointers", "pnlDomainPointers" },
+            { "quotaOrganizations", "pnlOrganizations" },
             { "quotaUserAccounts", "pnlUserAccounts" },
 			{ "quotaMailAccounts", "pnlMailAccounts" },
             { "quotaExchangeAccounts", "pnlExchangeAccounts" },
