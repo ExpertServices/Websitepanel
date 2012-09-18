@@ -1,11 +1,11 @@
-﻿Windows Registry Editor Version 5.00
+Windows Registry Editor Version 5.00
 
-[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\eventlog\MEACPTransportAgent]
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\eventlog\WSPTransportAgent]
 "MaxSize"=dword:00080000
 "AutoBackupLogFiles"=dword:00000000
 "Retention"=dword:00000000
 
-[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\eventlog\MEACPTransportAgent\MEACPTransportAgent]
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\eventlog\WSPTransportAgent\WSPTransportAgent]
 "EventMessageFile"=hex(2):43,00,3a,00,5c,00,57,00,69,00,6e,00,64,00,6f,00,77,\
   00,73,00,5c,00,4d,00,69,00,63,00,72,00,6f,00,73,00,6f,00,66,00,74,00,2e,00,\
   4e,00,45,00,54,00,5c,00,46,00,72,00,61,00,6d,00,65,00,77,00,6f,00,72,00,6b,\
