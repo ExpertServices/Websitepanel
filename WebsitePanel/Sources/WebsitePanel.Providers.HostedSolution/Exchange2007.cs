@@ -1374,30 +1374,37 @@ namespace WebsitePanel.Providers.HostedSolution
 
 			long size = 0;
 
-			Command cmd = new Command("Get-PublicFolderStatistics");
-			cmd.Parameters.Add("Identity", folder);
-			if (!string.IsNullOrEmpty(PublicFolderServer))
-				cmd.Parameters.Add("Server", PublicFolderServer);
+            Command cmd = new Command("Get-PublicFolderDatabase");
 			Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
-			if (result != null && result.Count > 0)
-			{
-				PSObject obj = result[0];
-				Unlimited<ByteQuantifiedSize> totalItemSize =
-					(Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(obj, "TotalItemSize");
-				size += ConvertUnlimitedToBytes(totalItemSize);
-			}
+            if (result != null && result.Count > 0)
+            {
+                cmd = new Command("Get-PublicFolderStatistics");
+                cmd.Parameters.Add("Identity", folder);
+                if (!string.IsNullOrEmpty(PublicFolderServer))
+                    cmd.Parameters.Add("Server", PublicFolderServer);
+                result = ExecuteShellCommand(runSpace, cmd);
+                if (result != null && result.Count > 0)
+                {
+                    PSObject obj = result[0];
+                    Unlimited<ByteQuantifiedSize> totalItemSize =
+                        (Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(obj, "TotalItemSize");
+                    size += ConvertUnlimitedToBytes(totalItemSize);
+                }
 
-			cmd = new Command("Get-PublicFolder");
-			cmd.Parameters.Add("Identity", folder);
-			cmd.Parameters.Add("GetChildren", new SwitchParameter(true));
-			if (!string.IsNullOrEmpty(PublicFolderServer))
-				cmd.Parameters.Add("Server", PublicFolderServer);
-			result = ExecuteShellCommand(runSpace, cmd);
-			foreach (PSObject obj in result)
-			{
-				string id = ObjToString(GetPSObjectProperty(obj, "Identity"));
-				size += CalculatePublicFolderDiskSpace(runSpace, id);
-			}
+                cmd = new Command("Get-PublicFolder");
+                cmd.Parameters.Add("Identity", folder);
+                cmd.Parameters.Add("GetChildren", new SwitchParameter(true));
+                if (!string.IsNullOrEmpty(PublicFolderServer))
+                    cmd.Parameters.Add("Server", PublicFolderServer);
+                result = ExecuteShellCommand(runSpace, cmd);
+                foreach (PSObject obj in result)
+                {
+                    string id = ObjToString(GetPSObjectProperty(obj, "Identity"));
+                    size += CalculatePublicFolderDiskSpace(runSpace, id);
+                }
+            }
+            else
+                size = 0;
 			ExchangeLog.LogEnd("CalculatePublicFolderDiskSpace");
 			return size;
 		}
