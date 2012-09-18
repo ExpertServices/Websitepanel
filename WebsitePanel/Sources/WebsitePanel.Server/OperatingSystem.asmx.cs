@@ -550,6 +550,22 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public void DeleteDirectoryRecursive(string rootPath)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' DeleteDirectoryRecursive", ProviderSettings.ProviderName);
+                OsProvider.DeleteDirectoryRecursive(rootPath);
+                Log.WriteEnd("'{0}' DeleteDirectoryRecursive", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' DeleteDirectoryRecursive", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
         #endregion
 
         #region Synchronizing

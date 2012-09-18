@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections;
+using System.IO;
 
 namespace WebsitePanel.Providers.OS
 {
@@ -82,5 +83,7 @@ namespace WebsitePanel.Providers.OS
         FolderGraph GetFolderGraph(string path);
         void ExecuteSyncActions(FileSyncAction[] actions);
         void SetQuotaLimitOnFolder(string cmdFilePath, string virtualFileClusterName, string folderPath, string quotaLimit, int mode, string wmiUserName, string wmiPassword);
+        void DeleteDirectoryRecursive(string rootPath);
+
     }
 }

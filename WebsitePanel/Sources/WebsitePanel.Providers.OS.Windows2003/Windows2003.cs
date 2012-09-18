@@ -215,9 +215,9 @@ namespace WebsitePanel.Providers.OS
             FileUtils.SetQuotaLimitOnFolder(cmdFilePath, virtualFileClusterName, folderPath, quotaLimit, mode, wmiUserName, wmiPassword);
         }
 
-        public static void DeleteDirRecursive(DirectoryInfo treeRoot)
+        public virtual void DeleteDirectoryRecursive(string rootPath)
         {
-            FileUtils.DeleteDirectoryRecursive(treeRoot);
+            FileUtils.DeleteDirectoryRecursive(rootPath);
         }
 
         #endregion

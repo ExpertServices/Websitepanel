@@ -846,30 +846,35 @@ namespace WebsitePanel.Providers.Utils
             cat = null;
         }
 
-        public static void DeleteDirectoryRecursive(DirectoryInfo treeRoot)
+        public static void DeleteDirectoryRecursive(string rootPath)
         {
-            if (treeRoot.Exists)
-            {
-
-                DirectoryInfo[] dirs = treeRoot.GetDirectories();
-                while (dirs.Length > 0)
+            // This code is done this way to force folder deletion 
+            // even if the folder was opened
+           
+                DirectoryInfo treeRoot = new DirectoryInfo(rootPath);
+                if (treeRoot.Exists)
                 {
-                    foreach (DirectoryInfo dir in dirs)
-                        DeleteDirectoryRecursive(dir);
 
-                    dirs = treeRoot.GetDirectories();
+                    DirectoryInfo[] dirs = treeRoot.GetDirectories();
+                    while (dirs.Length > 0)
+                    {
+                        foreach (DirectoryInfo dir in dirs)
+                            DeleteDirectoryRecursive(dir.FullName);
+
+                        dirs = treeRoot.GetDirectories();
+                    }
+
+                    // DELETE THE FILES UNDER THE CURRENT ROOT
+                    string[] files = Directory.GetFiles(treeRoot.FullName);
+                    foreach (string file in files)
+                    {
+                        File.SetAttributes(file, FileAttributes.Normal);
+                        File.Delete(file);
+                    }
+
+                    Directory.Delete(treeRoot.FullName, true);
                 }
-
-                // DELETE THE FILES UNDER THE CURRENT ROOT
-                string[] files = Directory.GetFiles(treeRoot.FullName);
-                foreach (string file in files)
-                {
-                    File.SetAttributes(file, FileAttributes.Normal);
-                    File.Delete(file);
-                }
-
-                Directory.Delete(treeRoot.FullName, true);
-            }
+          
            
         }
 

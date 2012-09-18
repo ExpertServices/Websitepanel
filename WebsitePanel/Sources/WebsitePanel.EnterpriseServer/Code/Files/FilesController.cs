@@ -983,5 +983,42 @@ namespace WebsitePanel.EnterpriseServer
         
         }
 
+        public static int DeleteDirectoryRecursive(int packageId, string rootPath)
+        {
+
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // check package
+            int packageCheck = SecurityContext.CheckPackage(packageId, DemandPackage.IsActive);
+            if (packageCheck < 0) return packageCheck;
+
+            // place log record
+            TaskManager.StartTask("FILES", "DELETE_DIRECTORY_RECURSIVE", rootPath);
+            TaskManager.ItemId = packageId;
+
+            try
+            {
+
+                OS.OperatingSystem os = GetOS(packageId);
+                os.DeleteDirectoryRecursive(rootPath);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                //Log and return a generic error rather than throwing an exception
+                TaskManager.WriteError(ex);
+                return BusinessErrorCodes.ERROR_FILE_GENERIC_LOGGED;
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+
+        }
+
     }
 }

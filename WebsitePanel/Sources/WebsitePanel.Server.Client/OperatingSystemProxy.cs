@@ -63,6 +63,8 @@ namespace WebsitePanel.Providers.OS {
         private System.Threading.SendOrPostCallback FileExistsOperationCompleted;
 
         private System.Threading.SendOrPostCallback SetQuotaLimitOnFolderOperationCompleted;
+
+        private System.Threading.SendOrPostCallback DeleteDirectoryRecursiveOperationCompleted;
         
         private System.Threading.SendOrPostCallback DirectoryExistsOperationCompleted;
         
@@ -146,7 +148,11 @@ namespace WebsitePanel.Providers.OS {
         /// <remarks/>
         public event FileExistsCompletedEventHandler FileExistsCompleted;
 
+        /// <remarks/>
         public event SetQuotaLimitOnFolderCompletedEventHandler SetQuotaLimitOnFolderCompleted;
+
+        /// <remarks/>
+        public event DeleteDirectoryRecursiveCompletedEventHandler DeleteDirectoryRecursiveCompleted;
         
         /// <remarks/>
         public event DirectoryExistsCompletedEventHandler DirectoryExistsCompleted;
@@ -370,9 +376,9 @@ namespace WebsitePanel.Providers.OS {
         /// <remarks/>
         public void SetQuotaLimitOnFolderAsync(string cmdFilePath, string virtualFileClusterName, string folderPath, string quotaLimit, int mode, string wmiUserName, string wmiPassword, object userState)
         {
-            if ((this.FileExistsOperationCompleted == null))
+            if ((this.SetQuotaLimitOnFolderOperationCompleted == null))
             {
-                this.FileExistsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnFileExistsOperationCompleted);
+                this.SetQuotaLimitOnFolderOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetQuotaLimitOnFolderOperationCompleted);
             }
             this.InvokeAsync("SetQuotaLimitOnFolder", new object[] {
                         cmdFilePath, virtualFileClusterName, folderPath, quotaLimit, mode, wmiUserName, wmiPassword}, this.SetQuotaLimitOnFolderOperationCompleted, userState);
@@ -386,6 +392,57 @@ namespace WebsitePanel.Providers.OS {
                 this.SetQuotaLimitOnFolderCompleted(this, new SetQuotaLimitOnFolderCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/DeleteDirectoryRecursive", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool DeleteDirectoryRecursive(string rootPath)
+        {
+            object[] results = this.Invoke("DeleteDirectoryRecursive", new object[] { 
+                rootPath });
+            return ((bool)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginDeleteDirectoryRecursive(string rootPath, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("DeleteDirectoryRecursive", new object[] {
+                        rootPath}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public bool EndDeleteDirectoryRecursive(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+
+        /// <remarks/>
+        public void DeleteDirectoryRecursiveAsync(string rootPath)
+        {
+            this.DeleteDirectoryRecursiveAsync(rootPath, null);
+        }
+
+        /// <remarks/>
+        public void DeleteDirectoryRecursiveAsync(string rootPath, object userState)
+        {
+            if ((this.DeleteDirectoryRecursiveOperationCompleted == null))
+            {
+                this.DeleteDirectoryRecursiveOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDeleteDirectoryRecursiveOperationCompleted);
+            }
+            this.InvokeAsync("DeleteDirectoryRecursive", new object[] {
+                        rootPath}, this.DeleteDirectoryRecursiveOperationCompleted, userState);
+        }
+
+        private void OnDeleteDirectoryRecursiveOperationCompleted(object arg)
+        {
+            if ((this.DeleteDirectoryRecursiveCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DeleteDirectoryRecursiveCompleted(this, new DeleteDirectoryRecursiveCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -1984,6 +2041,37 @@ namespace WebsitePanel.Providers.OS {
             }
         }
     }
+
+      /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void DeleteDirectoryRecursiveCompletedEventHandler(object sender, DeleteDirectoryRecursiveCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DeleteDirectoryRecursiveCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal DeleteDirectoryRecursiveCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public bool Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+    }
+    
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
