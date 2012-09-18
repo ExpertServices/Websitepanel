@@ -735,6 +735,17 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
                         domainId});
             return ((int)(results[0]));
         }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/ChangeOrganizationDomainType", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int ChangeOrganizationDomainType(int itemId, int domainId, ExchangeAcceptedDomainType newDomainType)
+        {
+            object[] results = this.Invoke("ChangeOrganizationDomainType", new object[] {
+                        itemId,
+                        domainId,
+                        newDomainType});
+            return ((int)(results[0]));
+        }
         
         /// <remarks/>
         public System.IAsyncResult BeginDeleteOrganizationDomain(int itemId, int domainId, System.AsyncCallback callback, object asyncState) {

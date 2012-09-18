@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -26,68 +26,12 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-using System;
-namespace WebsitePanel.Providers.HostedSolution
-{
-    public class OrganizationDomainName
-    {
-        int organizationDomainId;
-        int itemId;
-        int domainId;
-        int domainTypeId;
-        string domainName;
-        bool isHost;
-        bool isDefault;
-
-        public bool IsHost
-        {
-            get { return isHost; }
-            set { isHost = value; }
-        }
-
-        public bool IsDefault
-        {
-            get { return isDefault; }
-            set { isDefault = value; }
-        }
-
-        public int DomainId
-        {
-            get { return domainId; }
-            set { domainId = value; }
-        }
-
-        public int DomainTypeId
-        {
-            get { return domainTypeId; }
-            set { domainTypeId = value; }
-        }
-
-        public ExchangeAcceptedDomainType DomainType
-        {
-            get
-            {
-                ExchangeAcceptedDomainType type = (ExchangeAcceptedDomainType)domainTypeId;
-                return type;
-            }
-        }
-
-        public int OrganizationDomainId
-        {
-            get { return organizationDomainId; }
-            set { organizationDomainId = value; }
-        }
-
-        public int ItemId
-        {
-            get { return itemId; }
-            set { itemId = value; }
-        }
-
-        public string DomainName
-        {
-            get { return domainName; }
-            set { domainName = value; }
-        }
-    }
-}
+﻿namespace WebsitePanel.Providers.HostedSolution
+ {
+     public enum ExchangeAcceptedDomainType
+     {
+         Authoritative = 0,         
+         InternalRelay = 1,
+         ExternalRelay = 2
+     }
+ }
