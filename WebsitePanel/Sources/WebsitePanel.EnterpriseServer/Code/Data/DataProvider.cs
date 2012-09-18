@@ -2153,6 +2153,18 @@ namespace WebsitePanel.EnterpriseServer
 			);
 		}
 
+        public static void ChangeExchangeAcceptedDomainType(int itemId, int domainId, int domainTypeId)
+        {            
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "ChangeExchangeAcceptedDomainType",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@DomainID", domainId),
+                new SqlParameter("@DomainTypeID", domainTypeId)
+            );
+        }
+
 		public static IDataReader GetExchangeOrganizationStatistics(int itemId)
 		{
 			return SqlHelper.ExecuteReader(
