@@ -533,39 +533,6 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
-
-
-        [WebMethod, SoapHeader("settings")]
-        public void SetQuotaLimitOnFolder(string cmdFilePath, string virtualFileClusterName, string folderPath, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
-        {
-            try
-            {
-                Log.WriteStart("'{0}' SetQuotaLimitOnFolder", ProviderSettings.ProviderName);
-                OsProvider.SetQuotaLimitOnFolder(cmdFilePath, virtualFileClusterName, folderPath, quotaLimit, mode, wmiUserName, wmiPassword);
-                Log.WriteEnd("'{0}' SetQuotaLimitOnFolder", ProviderSettings.ProviderName);
-            }
-            catch (Exception ex)
-            {
-                Log.WriteError(String.Format("'{0}' SetQuotaLimitOnFolder", ProviderSettings.ProviderName), ex);
-                throw;
-            }
-        }
-
-        [WebMethod, SoapHeader("settings")]
-        public void DeleteDirectoryRecursive(string rootPath)
-        {
-            try
-            {
-                Log.WriteStart("'{0}' DeleteDirectoryRecursive", ProviderSettings.ProviderName);
-                OsProvider.DeleteDirectoryRecursive(rootPath);
-                Log.WriteEnd("'{0}' DeleteDirectoryRecursive", ProviderSettings.ProviderName);
-            }
-            catch (Exception ex)
-            {
-                Log.WriteError(String.Format("'{0}' DeleteDirectoryRecursive", ProviderSettings.ProviderName), ex);
-                throw;
-            }
-        }
         #endregion
 
         #region Synchronizing

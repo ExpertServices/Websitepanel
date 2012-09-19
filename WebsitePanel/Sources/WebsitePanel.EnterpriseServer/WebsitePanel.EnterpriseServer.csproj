@@ -19,11 +19,6 @@
     </UpgradeBackupLocation>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile />
-    <UseIISExpress>false</UseIISExpress>
-    <IISExpressSSLPort />
-    <IISExpressAnonymousAuthentication />
-    <IISExpressWindowsAuthentication />
-    <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -415,7 +410,6 @@
     <Content Include="esWebApplicationGallery.asmx" />
     <EmbeddedResource Include="Images\logo.png" />
     <Content Include="SystemEventHandlers.config" />
-    <None Include="Properties\PublishProfiles\Profile1.pubxml" />
     <None Include="TaskEventHandlers.config" />
     <None Include="WsePolicyCache.Config" />
   </ItemGroup>
