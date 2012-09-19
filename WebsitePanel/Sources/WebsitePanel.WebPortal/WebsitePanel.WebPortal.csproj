@@ -241,6 +241,7 @@
     <Content Include="App_Themes\Default\Common.skin" />
     <Content Include="App_Themes\Default\DataBoundControls.skin" />
     <Content Include="App_Themes\Default\Icons.skin" />
+    <None Include="Properties\PublishProfiles\NewPortalFork.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Containers\Default\TopPane.ascx" />
