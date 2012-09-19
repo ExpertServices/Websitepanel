@@ -33,12 +33,26 @@
 					    Width="100%" EmptyDataText="gvDomains" CssSelectorClass="NormalGridView" OnRowCommand="gvDomains_RowCommand">
 					    <Columns>
 						    <asp:TemplateField HeaderText="gvDomainsName">
-							    <ItemStyle Width="70%"></ItemStyle>
+							    <ItemStyle Width="50%"></ItemStyle>
 							    <ItemTemplate>
 								    <asp:hyperlink id="lnkEditZone" runat="server" EnableViewState="false"
 									    NavigateUrl='<%# GetDomainRecordsEditUrl(Eval("DomainID").ToString()) %>' Enabled='<%# !(bool)Eval("IsHost") %>'>
 									    <%# Eval("DomainName") %>
 								    </asp:hyperlink>
+							    </ItemTemplate>
+						    </asp:TemplateField>
+                            <asp:TemplateField HeaderText="gvDomainsType">
+							    <ItemTemplate>
+							        <div style="text-align:center">
+								        <asp:Label ID="Label1" Text='<%# Eval("DomainType") %>' runat="server"/>
+								    </div>
+							    </ItemTemplate>
+						    </asp:TemplateField>
+                             <asp:TemplateField HeaderText="gvDomainsTypeChange">
+							    <ItemTemplate>
+							        <div style="text-align:center">
+								        <asp:Button ID="btnChangeDomain" text="Change" meta:resourcekey="btnChangeDomain" runat="server" CommandName="Change" CommandArgument='<%# Eval("DomainId") + "|" + Eval("DomainType") %>'/>
+								    </div>
 							    </ItemTemplate>
 						    </asp:TemplateField>
 						    <asp:TemplateField HeaderText="gvDomainsDefault">
@@ -47,7 +61,7 @@
 								        <input type="radio" name="DefaultDomain" value='<%# Eval("DomainId") %>' <%# IsChecked((bool)Eval("IsDefault")) %> />
 								    </div>
 							    </ItemTemplate>
-						    </asp:TemplateField>
+						    </asp:TemplateField>                            
 						    <asp:TemplateField>
 							    <ItemTemplate>
 									&nbsp;<asp:ImageButton ID="imgDelDomain" runat="server" Text="Delete" SkinID="ExchangeDelete"

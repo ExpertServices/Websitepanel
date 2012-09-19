@@ -123,6 +123,12 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public int ChangeOrganizationDomainType(int itemId, int domainId, ExchangeAcceptedDomainType newDomainType)
+        {
+            return OrganizationController.ChangeOrganizationDomainType(itemId, domainId, newDomainType);
+        }
+
+        [WebMethod]
         public List<OrganizationDomainName> GetOrganizationDomains(int itemId)
         {
             return OrganizationController.GetOrganizationDomains(itemId);

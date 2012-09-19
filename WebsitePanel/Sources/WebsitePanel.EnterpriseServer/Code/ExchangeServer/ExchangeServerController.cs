@@ -446,6 +446,10 @@ namespace WebsitePanel.EnterpriseServer
                             {
                                 hubTransportRole.AddAuthoritativeDomain(domain.DomainName);
                             }
+                            if (domain.DomainType != ExchangeAcceptedDomainType.Authoritative)
+                            {
+                                hubTransportRole.ChangeAcceptedDomainType(domain.DomainName, domain.DomainType);
+                            }
                         }
                         authDomainCreated = true;
                         break;
@@ -1423,8 +1427,64 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.CompleteTask();
             }
         }
-		
 
+        public static int ChangeAcceptedDomainType(int itemId, int domainId, ExchangeAcceptedDomainType domainType)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "CHANGE_DOMAIN_TYPE");
+            TaskManager.TaskParameters["Domain ID"] = domainId;
+            TaskManager.TaskParameters["Domain Type"] = domainType.ToString();
+            TaskManager.ItemId = itemId;
+
+            try
+            { 
+                // load organization
+                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                if (org == null)
+                    return -1;
+
+                // load domain
+                DomainInfo domain = ServerController.GetDomain(domainId);
+                if (domain == null)
+                    return -1;
+
+                int[] hubTransportServiceIds;
+                int[] clientAccessServiceIds;
+                int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+                GetExchangeServices(exchangeServiceId, out hubTransportServiceIds, out clientAccessServiceIds);
+
+                foreach (int id in hubTransportServiceIds)
+                {
+                    ExchangeServer hubTransportRole = null;
+                    try
+                    {
+                        hubTransportRole = GetExchangeServer(id, org.ServiceId);
+                    }
+                    catch (Exception ex)
+                    {
+                        TaskManager.WriteError(ex);
+                        continue;
+                    }
+
+                    hubTransportRole.ChangeAcceptedDomainType(domain.DomainName, domainType);
+                    break;
+
+                }
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
 		
 		public static int DeleteAuthoritativeDomain(int itemId, int domainId)
 		{

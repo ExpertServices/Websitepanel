@@ -1042,6 +1042,37 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
+        public static int ChangeOrganizationDomainType(int itemId, int domainId, ExchangeAcceptedDomainType newDomainType)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // place log record
+            TaskManager.StartTask("ORGANIZATION", "CHANGE_DOMAIN_TYPE", domainId);
+            TaskManager.ItemId = itemId;
+
+            try
+            {   
+                // change accepted domain type on Exchange
+                int checkResult = ExchangeServerController.ChangeAcceptedDomainType(itemId, domainId, newDomainType);
+
+
+                // change accepted domain type in DB
+                int domainTypeId= (int) newDomainType;
+                DataProvider.ChangeExchangeAcceptedDomainType(itemId, domainId, domainTypeId);
+
+                return checkResult;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
 
         public static int AddOrganizationDomain(int itemId, string domainName)
         {

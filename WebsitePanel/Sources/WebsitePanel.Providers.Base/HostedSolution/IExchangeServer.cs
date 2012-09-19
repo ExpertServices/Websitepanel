@@ -53,6 +53,7 @@ namespace WebsitePanel.Providers.HostedSolution
         // Domains
         void AddAuthoritativeDomain(string domain);
         void DeleteAuthoritativeDomain(string domain);
+        void ChangeAcceptedDomainType(string domain, ExchangeAcceptedDomainType domainType);
         string[] GetAuthoritativeDomains();
 
         // Mailboxes
