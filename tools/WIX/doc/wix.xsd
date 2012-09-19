@@ -74,7 +74,6 @@
         <xs:element ref="Catalog" minOccurs="0" maxOccurs="unbounded" />
         <xs:element ref="BootstrapperApplication" minOccurs="0" maxOccurs="1" />
         <xs:element ref="BootstrapperApplicationRef" minOccurs="0" maxOccurs="1" />
-        <xs:element ref="UX" minOccurs="0" maxOccurs="1" />
         <xs:element ref="OptionalUpdateRegistration" minOccurs="0" maxOccurs="1" />
         <xs:element ref="Chain" minOccurs="1" maxOccurs="1" />
         <xs:element ref="Container" />
@@ -82,6 +81,7 @@
         <xs:element ref="PayloadGroup" />
         <xs:element ref="PayloadGroupRef" />
         <xs:element ref="RelatedBundle" />
+        <xs:element ref="Update" />
         <xs:element ref="Variable" />
         <xs:element ref="WixVariable" />
         <xs:any namespace="##other" processContents="lax">
@@ -1368,12 +1368,33 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
+  <xs:element name="Update">
+    <xs:annotation>
+      <xs:documentation>Defines the update for a Bundle.</xs:documentation>
+      <xs:appinfo>
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Bundle" />
+        <xse:parent namespace="http://schemas.microsoft.com/wix/2006/wi" ref="Fragment" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="Location" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            The absolute path or URL to check for an update bundle. Currently the engine provides this value
+            in the IBootstrapperApplication::OnDetectUpdateBegin() and otherwise ignores the value. In the
+            future the engine will be able to acquire an update bundle from the location and determine if it
+            is newer than the current executing bundle.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="Product">
     <xs:annotation>
       <xs:documentation>
-                The Product element is analogous to the main function in a C program.  When linking, only one Product section
-                can be given to the linker to produce a successful result.  Using this element creates an msi file.
-            </xs:documentation>
+        The Product element is analogous to the main function in a C program.  When linking, only one Product section
+        can be given to the linker to produce a successful result.  Using this element creates an msi file.
+      </xs:documentation>
       <xs:appinfo>
         <xse:remarks>
           <html:p>You can specify any valid Windows code page by integer like 1252, or by web name like Windows-1252. See <html:a href="codepage.htm">Code Pages</html:a> for more information.</html:p>

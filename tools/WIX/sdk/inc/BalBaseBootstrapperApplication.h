@@ -91,10 +91,38 @@ public: // IBurnUserExperience
     }
 
     virtual STDMETHODIMP_(int) OnDetectBegin(
+        __in BOOL /*fInstalled*/,
         __in DWORD /*cPackages*/
         )
     {
         return CheckCanceled() ? IDCANCEL : IDNOACTION;
+    }
+
+    virtual STDMETHODIMP_(int) OnDetectForwardCompatibleBundle(
+        __in_z LPCWSTR /*wzBundleId*/,
+        __in BOOTSTRAPPER_RELATION_TYPE /*relationType*/,
+        __in_z LPCWSTR /*wzBundleTag*/,
+        __in BOOL /*fPerMachine*/,
+        __in DWORD64 /*dw64Version*/,
+        __in int nRecommendation
+        )
+    {
+        return CheckCanceled() ? IDCANCEL : nRecommendation;
+    }
+
+    virtual STDMETHODIMP_(int) OnDetectUpdateBegin(
+        __in_z LPCWSTR /*wzUpdateLocation*/,
+        __in int nRecommendation
+        )
+    {
+        return CheckCanceled() ? IDCANCEL : nRecommendation;
+    }
+
+    virtual STDMETHODIMP_(void) OnDetectUpdateComplete(
+        __in HRESULT /*hrStatus*/,
+        __in_z_opt LPCWSTR /*wzUpdateLocation*/
+        )
+    {
     }
 
     virtual STDMETHODIMP_(int) OnDetectPriorBundle(
@@ -113,6 +141,7 @@ public: // IBurnUserExperience
 
     virtual STDMETHODIMP_(int) OnDetectRelatedBundle(
         __in_z LPCWSTR /*wzBundleId*/,
+        __in BOOTSTRAPPER_RELATION_TYPE /*relationType*/,
         __in_z LPCWSTR /*wzBundleTag*/,
         __in BOOL /*fPerMachine*/,
         __in DWORD64 /*dw64Version*/,
