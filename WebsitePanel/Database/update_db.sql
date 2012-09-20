@@ -5211,6 +5211,66 @@ GO
 
 
 
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeOrganizationDomains' AND COLS.name='DomainTypeID')
+BEGIN
+ALTER TABLE [dbo].[ExchangeOrganizationDomains] ADD
+	[DomainTypeID] [int] NOT NULL CONSTRAINT DF_ExchangeOrganizationDomains_DomainTypeID DEFAULT 0
+END
+GO
+
+
+
+
+ALTER PROCEDURE [dbo].[GetExchangeOrganizationDomains] 
+(
+	@ItemID int
+)
+AS
+SELECT
+	ED.DomainID,
+	D.DomainName,
+	ED.IsHost,
+	ED.DomainTypeID
+FROM
+	ExchangeOrganizationDomains AS ED
+INNER JOIN Domains AS D ON ED.DomainID = D.DomainID
+WHERE ED.ItemID = @ItemID
+RETURN
+
+GO
+
+
+
+
+
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'ChangeExchangeAcceptedDomainType')
+BEGIN
+EXEC sp_executesql N'
+CREATE PROCEDURE [dbo].ChangeExchangeAcceptedDomainType 
+(
+	@ItemID int,
+	@DomainID int,
+	@DomainTypeID int
+)
+AS
+UPDATE ExchangeOrganizationDomains
+SET DomainTypeID=@DomainTypeID
+WHERE ItemID=ItemID AND DomainID=@DomainID
+RETURN'
+END
+GO
+
+
+
+
+
+
+
+
+
+
 ALTER PROCEDURE [dbo].[GetPackages]
 (
 	@ActorID int,

@@ -230,6 +230,11 @@ namespace WebsitePanel.Providers.HostedSolution
 		{
 			DeleteAuthoritativeDomainInternal(domain);
 		}
+
+        public void ChangeAcceptedDomainType(string domainName, ExchangeAcceptedDomainType domainType)
+        {
+            ChangeAcceptedDomainTypeInternal(domainName, domainType);
+        }
 		#endregion
 
 		#region Mailboxes
@@ -5961,6 +5966,31 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogEnd("CreateAuthoritativeDomainInternal");
 		}
 
+        private void ChangeAcceptedDomainTypeInternal(string domainName, ExchangeAcceptedDomainType domainType)
+        {
+            ExchangeLog.LogStart("ChangeAcceptedDomainType");
+
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+
+                SetAcceptedDomainType(runSpace, domainName,domainType);
+            }
+            catch (Exception ex)
+            {
+                ExchangeLog.LogError("ChangeAcceptedDomainType", ex);
+                throw;
+            }
+            finally
+            {
+
+                CloseRunspace(runSpace);
+            }
+
+            ExchangeLog.LogEnd("ChangeAcceptedDomainType");
+        }
+
 		private void DeleteAcceptedDomain(string domainName)
 		{
 			ExchangeLog.LogStart("DeleteAcceptedDomain");
@@ -6024,6 +6054,17 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExecuteShellCommand(runSpace, cmd);
 			ExchangeLog.LogEnd("RemoveAcceptedDomain");
 		}
+
+        private void SetAcceptedDomainType(Runspace runSpace, string id, ExchangeAcceptedDomainType domainType)
+        {
+            ExchangeLog.LogStart("SetAcceptedDomainType");
+            Command cmd = new Command("Set-AcceptedDomain");
+            cmd.Parameters.Add("Identity", id);
+            cmd.Parameters.Add("DomainType", domainType.ToString());
+            cmd.Parameters.Add("Confirm", false);
+            ExecuteShellCommand(runSpace, cmd);
+            ExchangeLog.LogEnd("SetAcceptedDomainType");
+        }
 
 		#endregion
 
