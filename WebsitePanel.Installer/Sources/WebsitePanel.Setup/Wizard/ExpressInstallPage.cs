@@ -346,7 +346,7 @@ namespace WebsitePanel.Setup
                 if (appSettings != null)
                 {
                     var sessionKey = doc.CreateElement("add");
-                    sessionKey.SetAttribute("name", "SessionValidationKey");
+                    sessionKey.SetAttribute("key", "SessionValidationKey");
                     sessionKey.SetAttribute("value", StringUtils.GenerateRandomString(16));
                     appSettings.AppendChild(sessionKey);
                 }
