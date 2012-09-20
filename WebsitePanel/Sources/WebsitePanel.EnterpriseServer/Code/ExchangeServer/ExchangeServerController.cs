@@ -2572,10 +2572,22 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 ExchangeMailboxPlan plan = GetExchangeMailboxPlan(itemId, mailboxPlanId);
+
                 if (maxDiskSpace != -1)
                 {
-                    if ((quotaUsed + plan.MailboxSizeMB) > (maxDiskSpace))
-                        return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+                    ExchangeAccount exchangeAccount = GetAccount(itemId, accountId);
+                    if (exchangeAccount.MailboxPlanId > 0)
+                    {
+                        ExchangeMailboxPlan oldPlan = GetExchangeMailboxPlan(itemId, exchangeAccount.MailboxPlanId);
+
+                        if (((quotaUsed - oldPlan.MailboxSizeMB) + plan.MailboxSizeMB) > (maxDiskSpace))
+                            return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+                    }
+                    else
+                    {
+                        if ((quotaUsed + plan.MailboxSizeMB) > (maxDiskSpace))
+                            return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+                    }
                 }
 
                 // get mailbox settings
