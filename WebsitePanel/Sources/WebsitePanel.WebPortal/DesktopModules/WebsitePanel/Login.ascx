@@ -45,6 +45,14 @@
 				<asp:DropDownList ID="ddlTheme" runat="server" CssClass="NormalTextBox" Width="150px" AutoPostBack="True" OnSelectedIndexChanged="ddlTheme_SelectedIndexChanged"></asp:DropDownList>
 			</td>
 		</tr>
+		<tr>
+			<td class="SubHead" align="right"></td>
+
+			<td class="Normal" align="left">
+            <a  href="https://mail.duhosting.ae" style="text-decoration:none">Click here to access your WebMail</a>
+			</td>
+		</tr>
+
 	</table>
 	<br />
 </div>
