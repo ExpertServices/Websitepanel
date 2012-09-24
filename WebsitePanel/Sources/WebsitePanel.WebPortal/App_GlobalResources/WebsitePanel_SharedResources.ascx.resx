@@ -639,6 +639,9 @@
   <data name="Warning.CREATE_OCS_USER" xml:space="preserve">
     <value>OCS User has been successfully created but the following errors have been occured:</value>
   </data>
+  <data name="Error.OCS_GET_USERS" xml:space="preserve">
+    <value>Error reading organization OCS Users</value>
+  </data>
   <data name="Success.USER_CHANGE_PASSWORD" xml:space="preserve">
     <value>User account password has been changed</value>
   </data>

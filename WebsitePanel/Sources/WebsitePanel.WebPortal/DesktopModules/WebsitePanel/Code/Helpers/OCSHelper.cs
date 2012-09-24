@@ -60,7 +60,8 @@ namespace WebsitePanel.Portal
             OCSUsersPagedResult res =
                 ES.Services.OCS.GetOCSUsersPaged(itemId, data[0], direction, name, email, startRowIndex, maximumRows);
 
-            return res.Value.PageUsers;
+            
+            return (res.Value == null) ? null : res.Value.PageUsers;
         }
 
 
