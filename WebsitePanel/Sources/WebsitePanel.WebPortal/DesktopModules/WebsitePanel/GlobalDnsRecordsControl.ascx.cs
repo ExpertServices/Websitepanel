@@ -176,16 +176,23 @@ namespace WebsitePanel.Portal
             }
         }
 		protected void Validate(object source, ServerValidateEventArgs args) {
+/*
 			var ip = args.Value;
 			System.Net.IPAddress ipaddr;
-			args.IsValid = System.Net.IPAddress.TryParse(ip, out ipaddr) && (ip.Contains(":") || ip.Contains(".")) && 
-                ((ddlRecordType.SelectedValue == "A" && ipaddr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) ||
-                (ddlRecordType.SelectedValue == "AAAA" && ipaddr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6));
+            if (string.IsNullOrEmpty(args.Value))
+                args.IsValid = true;
+            else
+			    args.IsValid = System.Net.IPAddress.TryParse(ip, out ipaddr) && (ip.Contains(":") || ip.Contains(".")) && 
+                    ((ddlRecordType.SelectedValue == "A" && ipaddr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) ||
+                    (ddlRecordType.SelectedValue == "AAAA" && ipaddr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6));
+*/
+            args.IsValid = true;
 		}
 
         private void SaveRecord()
         {
-			if (!Page.IsValid) return;
+            if (!string.IsNullOrEmpty(txtRecordData.Text))
+			    if (!Page.IsValid) return;
 
             GlobalDnsRecord record = new GlobalDnsRecord();
             record.RecordId = (int)ViewState["RecordID"];

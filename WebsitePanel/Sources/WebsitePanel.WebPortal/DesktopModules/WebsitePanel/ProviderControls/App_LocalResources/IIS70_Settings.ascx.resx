@@ -249,4 +249,7 @@
   <data name="lblWmSvcNETBIOS.Text" xml:space="preserve">
     <value>NETBIOS Domain name:</value>
   </data>
+  <data name="txtPublicSharedIP.Text" xml:space="preserve">
+    <value>Web Sites Public Shared Address:</value>
+  </data>
 </root>

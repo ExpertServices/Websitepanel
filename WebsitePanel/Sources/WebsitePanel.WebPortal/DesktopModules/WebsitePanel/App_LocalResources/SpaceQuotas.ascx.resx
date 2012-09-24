@@ -195,4 +195,7 @@
   <data name="lblExchangeStorage.Text" xml:space="preserve">
     <value>Exchange Storage, MB:</value>
   </data>
+  <data name="lblOrganizations.Text" xml:space="preserve">
+    <value>Organizations:</value>
+  </data>
 </root>

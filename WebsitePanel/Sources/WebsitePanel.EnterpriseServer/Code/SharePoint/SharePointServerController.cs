@@ -228,7 +228,7 @@ namespace WebsitePanel.EnterpriseServer
                     "sp_dropsrvrolemember '{0}', 'dbcreator'\nGO", dbUser.Name));
 
 				// restore original web site bindings
-				web.UpdateSiteBindings(site.SiteId, bindings);
+				web.UpdateSiteBindings(site.SiteId, bindings, false);
 
                 // save statistics item
                 item.ServiceId = serviceId;

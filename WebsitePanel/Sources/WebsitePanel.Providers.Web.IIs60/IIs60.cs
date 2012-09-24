@@ -847,7 +847,7 @@ namespace WebsitePanel.Providers.Web
 			}
 		}
 
-		public virtual void UpdateSiteBindings(string siteId, ServerBinding[] bindings)
+        public virtual void UpdateSiteBindings(string siteId, ServerBinding[] bindings, bool emptyBindingsAllowed)
 		{
 			ManagementObject objSite = wmi.GetObject(String.Format("IIsWebServerSetting='{0}'", siteId));
 
@@ -3368,7 +3368,7 @@ namespace WebsitePanel.Providers.Web
 		}
 		#endregion
 
-		public bool IsIISInstalled()
+		public virtual bool IsIISInstalled()
 		{
 			int value = 0;
 			RegistryKey root = Registry.LocalMachine;

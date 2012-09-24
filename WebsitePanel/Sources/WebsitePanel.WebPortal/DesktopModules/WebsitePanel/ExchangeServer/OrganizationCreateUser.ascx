@@ -68,11 +68,11 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="FormLabel150"><asp:Localize ID="locSubscriberNumber" runat="server" meta:resourcekey="locSubscriberNumber" Text="Subscriber Number: *"></asp:Localize></td>
+							<td class="FormLabel150"><asp:Localize ID="locSubscriberNumber" runat="server" meta:resourcekey="locSubscriberNumber" Text="Account Number: *"></asp:Localize></td>
 							<td>
 								<asp:TextBox ID="txtSubscriberNumber" runat="server" CssClass="HugeTextBox200"></asp:TextBox>
 								<asp:RequiredFieldValidator ID="valRequireSubscriberNumber" runat="server" meta:resourcekey="valRequireSubscriberNumber" ControlToValidate="txtSubscriberNumber"
-									ErrorMessage="Enter Subscriber Number" ValidationGroup="CreateMailbox" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
+									ErrorMessage="Enter Account Number" ValidationGroup="CreateMailbox" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
 							</td>
 						</tr>
 						<tr>

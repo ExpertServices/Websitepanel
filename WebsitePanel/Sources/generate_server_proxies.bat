@@ -17,8 +17,8 @@ REM %WSE_CLEAN% .\WebsitePanel.Server.Client\DatabaseServerProxy.cs
 REM %WSDL% %SERVER_URL%/DNSServer.asmx /out:.\WebsitePanel.Server.Client\DnsServerProxy.cs /namespace:WebsitePanel.Providers.DNS /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\DnsServerProxy.cs
 
-%WSDL% %SERVER_URL%/ExchangeServer.asmx /out:.\WebsitePanel.Server.Client\ExchangeServerProxy.cs /namespace:WebsitePanel.Providers.Exchange /type:webClient /fields
-%WSE_CLEAN% .\WebsitePanel.Server.Client\ExchangeServerProxy.cs
+REM %WSDL% %SERVER_URL%/ExchangeServer.asmx /out:.\WebsitePanel.Server.Client\ExchangeServerProxy.cs /namespace:WebsitePanel.Providers.Exchange /type:webClient /fields
+REM %WSE_CLEAN% .\WebsitePanel.Server.Client\ExchangeServerProxy.cs
 
 REM %WSDL% %SERVER_URL%/ExchangeServerHostedEdition.asmx /out:.\WebsitePanel.Server.Client\ExchangeServerHostedEditionProxy.cs /namespace:WebsitePanel.Providers.ExchangeHostedEdition /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\ExchangeServerHostedEditionProxy.cs
@@ -50,8 +50,8 @@ REM %WSE_CLEAN% .\WebsitePanel.Server.Client\VirtualizationServerProxy.cs
 REM %WSDL% %SERVER_URL%/VirtualizationServerForPrivateCloud.asmx /out:.\WebsitePanel.Server.Client\VirtualizationServerForPrivateCloudProxy.cs /namespace:WebsitePanel.Providers.VirtualizationForPC /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\VirtualizationServerForPrivateCloudProxy.cs
 
-REM %WSDL% %SERVER_URL%/WebServer.asmx /out:.\WebsitePanel.Server.Client\WebServerProxy.cs /namespace:WebsitePanel.Providers.Web /type:webClient /fields
-REM %WSE_CLEAN% .\WebsitePanel.Server.Client\WebServerProxy.cs
+%WSDL% %SERVER_URL%/WebServer.asmx /out:.\WebsitePanel.Server.Client\WebServerProxy.cs /namespace:WebsitePanel.Providers.Web /type:webClient /fields
+%WSE_CLEAN% .\WebsitePanel.Server.Client\WebServerProxy.cs
 
 REM %WSDL% %SERVER_URL%/WindowsServer.asmx /out:.\WebsitePanel.Server.Client\WindowsServerProxy.cs /namespace:WebsitePanel.Server /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\WindowsServerProxy.cs

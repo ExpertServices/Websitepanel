@@ -422,11 +422,14 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 			return bindings.ToArray();
         }
 
-		private void SyncWebSiteBindingsChanges(string siteId, ServerBinding[] bindings)
+		private void SyncWebSiteBindingsChanges(string siteId, ServerBinding[] bindings, bool emptyBindingsAllowed)
 		{
 			// ensure site bindings
-			if (bindings == null || bindings.Length == 0)
-				throw new Exception("SiteServerBindingsEmpty");
+            if (!emptyBindingsAllowed)
+            {
+                if (bindings == null || bindings.Length == 0)
+                    throw new Exception("SiteServerBindingsEmpty");
+            }
 			
 			using (var srvman = GetServerManager())
 			{
@@ -461,7 +464,7 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 			}
 		}
 
-		public void UpdateSiteBindings(string siteId, ServerBinding[] bindings)
+		public void UpdateSiteBindings(string siteId, ServerBinding[] bindings, bool emptyBindingsAllowed)
 		{
             using (ServerManager srvman = GetServerManager())
             {
@@ -470,7 +473,7 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
                     return;
             }
 			//
-			SyncWebSiteBindingsChanges(siteId, bindings);
+            SyncWebSiteBindingsChanges(siteId, bindings, emptyBindingsAllowed);
 		}
 
     	public string GetPhysicalPath(ServerManager srvman, WebVirtualDirectory virtualDir)

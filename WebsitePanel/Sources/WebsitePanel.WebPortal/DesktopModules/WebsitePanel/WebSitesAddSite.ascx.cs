@@ -53,6 +53,8 @@ namespace WebsitePanel.Portal
                 // bind IP Addresses
                 BindIPAddresses();
 
+                BindIgnoreZoneTemplate();
+
                 // toggle
                 ToggleControls();
             }
@@ -61,6 +63,19 @@ namespace WebsitePanel.Portal
         private void ToggleControls()
         {
             rowDedicatedIP.Visible = rbDedicatedIP.Checked;
+        }
+
+        private void BindIgnoreZoneTemplate()
+        {
+            /*
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            if (cntx.Quotas[Quotas.WEB_SITES].QuotaUsedValue > 0)
+                chkIgnoreGlobalDNSRecords.Visible = chkIgnoreGlobalDNSRecords.Checked = lblIgnoreGlobalDNSRecords.Visible = true;
+            else
+                chkIgnoreGlobalDNSRecords.Visible = chkIgnoreGlobalDNSRecords.Checked = lblIgnoreGlobalDNSRecords.Visible= false;
+            */
+
+            chkIgnoreGlobalDNSRecords.Checked = false;
         }
 
         private void BindIPAddresses()
@@ -92,7 +107,7 @@ namespace WebsitePanel.Portal
                 int packageAddressId = rbDedicatedIP.Checked ? Utils.ParseInt(ddlIpAddresses.SelectedValue, 0) : 0;
 
                 siteItemId = ES.Services.WebServers.AddWebSite(PanelSecurity.PackageId, txtHostName.Text.ToLower(), domainsSelectDomainControl.DomainId,
-                    packageAddressId);
+                    packageAddressId, chkIgnoreGlobalDNSRecords.Checked);
 
                 if (siteItemId < 0)
                 {

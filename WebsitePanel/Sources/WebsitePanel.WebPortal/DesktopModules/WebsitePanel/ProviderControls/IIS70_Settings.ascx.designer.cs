@@ -68,6 +68,24 @@ namespace WebsitePanel.Portal.ProviderControls {
         protected global::WebsitePanel.Portal.SelectIPAddress ipAddress;
         
         /// <summary>
+        /// lblPublicSharedIP control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblPublicSharedIP;
+        
+        /// <summary>
+        /// txtPublicSharedIP control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtPublicSharedIP;
+        
+        /// <summary>
         /// lblGroupName control.
         /// </summary>
         /// <remarks>

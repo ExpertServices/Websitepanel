@@ -284,7 +284,7 @@ namespace WebsitePanel.EnterpriseServer
 		        if (record.RecordType == "A" || record.RecordType == "AAAA")
                 {
                     rr.RecordData = String.IsNullOrEmpty(record.RecordData) ? record.ExternalIP : record.RecordData;
-                    rr.RecordData = Utils.ReplaceStringVariable(rr.RecordData, "ip", record.ExternalIP);
+                    rr.RecordData = Utils.ReplaceStringVariable(rr.RecordData, "ip", string.IsNullOrEmpty(serviceIP) ? record.ExternalIP : serviceIP);
 
                     if (String.IsNullOrEmpty(rr.RecordData) && !String.IsNullOrEmpty(serviceIP))
                         rr.RecordData = serviceIP;
@@ -310,7 +310,10 @@ namespace WebsitePanel.EnterpriseServer
                     rr.MxPriority = record.MxPriority;
 
                 if (!String.IsNullOrEmpty(rr.RecordData))
-                    zoneRecords.Add(rr);
+                {
+                    if (rr.RecordName != "[host_name]")
+                        zoneRecords.Add(rr);
+                }
             }
 
             return zoneRecords;

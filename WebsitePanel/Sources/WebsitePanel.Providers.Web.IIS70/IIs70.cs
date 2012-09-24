@@ -1237,7 +1237,7 @@ namespace WebsitePanel.Providers.Web
 				// Create site
 				webObjectsSvc.CreateSite(site);
 				// Update web site bindings
-				webObjectsSvc.UpdateSiteBindings(site.SiteId, site.Bindings);
+				webObjectsSvc.UpdateSiteBindings(site.SiteId, site.Bindings, false);
 				// Set web site logging settings
 				webObjectsSvc.SetWebSiteLoggingSettings(site);
 			}
@@ -1322,7 +1322,7 @@ namespace WebsitePanel.Providers.Web
 			// Update website
 			webObjectsSvc.UpdateSite(site);
 			// Update website bindings
-			webObjectsSvc.UpdateSiteBindings(site.SiteId, site.Bindings);
+			webObjectsSvc.UpdateSiteBindings(site.SiteId, site.Bindings, false);
 			// Set website logging settings
 			webObjectsSvc.SetWebSiteLoggingSettings(site);
 			//
@@ -1440,9 +1440,9 @@ namespace WebsitePanel.Providers.Web
 		/// </summary>
 		/// <param name="siteId">Site's id to update bindings for.</param>
 		/// <param name="bindings">Bindings information.</param>
-		public override void UpdateSiteBindings(string siteId, ServerBinding[] bindings)
+		public override void UpdateSiteBindings(string siteId, ServerBinding[] bindings, bool emptyBindingsAllowed)
 		{
-			this.webObjectsSvc.UpdateSiteBindings(siteId, bindings);
+			this.webObjectsSvc.UpdateSiteBindings(siteId, bindings, emptyBindingsAllowed);
 		}
 
 		/// <summary>
@@ -3477,7 +3477,7 @@ namespace WebsitePanel.Providers.Web
 
 		#endregion
 
-		public new bool IsIISInstalled()
+		public override bool IsIISInstalled()
 		{
 			int value = 0;
 			RegistryKey root = Registry.LocalMachine;
@@ -3488,7 +3488,7 @@ namespace WebsitePanel.Providers.Web
 				rk.Close();
 			}
 
-			return value == 7 || value == 8;
+			return value == 7;
 		}
 
 		public override bool IsInstalled()

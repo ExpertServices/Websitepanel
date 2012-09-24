@@ -104,9 +104,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public int AddWebSite(int packageId, string hostName, int domainId, int ipAddressId)
+        public int AddWebSite(int packageId, string hostName, int domainId, int ipAddressId, bool ignoreGlobalDNSZone)
         {
-            return WebServerController.AddWebSite(packageId, hostName, domainId, ipAddressId, true);
+            return WebServerController.AddWebSite(packageId, hostName, domainId, ipAddressId, true, ignoreGlobalDNSZone);
         }
 
         [WebMethod]
@@ -155,6 +155,18 @@ namespace WebsitePanel.EnterpriseServer
         public int DeleteWebSite(int siteItemId)
         {
             return WebServerController.DeleteWebSite(siteItemId);
+        }
+
+        [WebMethod]
+        public int SwitchWebSiteToDedicatedIP(int siteItemId, int ipAddressId)
+        {
+            return WebServerController.SwitchWebSiteToDedicatedIP(siteItemId, ipAddressId);
+        }
+
+        [WebMethod]
+        public int SwitchWebSiteToSharedIP(int siteItemId)
+        {
+            return WebServerController.SwitchWebSiteToSharedIP(siteItemId);
         }
 
         [WebMethod]

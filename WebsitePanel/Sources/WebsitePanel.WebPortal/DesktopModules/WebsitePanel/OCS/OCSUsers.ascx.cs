@@ -75,7 +75,11 @@ namespace WebsitePanel.Portal.OCS
 
         protected void odsAccountsPaged_Selected(object sender, System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs e)
         {
-
+            if (e.Exception != null)
+            {
+                messageBox.ShowErrorMessage("OCS_GET_USERS", e.Exception);
+                e.ExceptionHandled = true;
+            }
         }
 
         protected void gvUsers_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)

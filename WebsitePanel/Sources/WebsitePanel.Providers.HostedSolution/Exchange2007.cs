@@ -230,6 +230,11 @@ namespace WebsitePanel.Providers.HostedSolution
 		{
 			DeleteAuthoritativeDomainInternal(domain);
 		}
+
+        public void ChangeAcceptedDomainType(string domainName, ExchangeAcceptedDomainType domainType)
+        {
+            ChangeAcceptedDomainTypeInternal(domainName, domainType);
+        }
 		#endregion
 
 		#region Mailboxes
@@ -1374,30 +1379,37 @@ namespace WebsitePanel.Providers.HostedSolution
 
 			long size = 0;
 
-			Command cmd = new Command("Get-PublicFolderStatistics");
-			cmd.Parameters.Add("Identity", folder);
-			if (!string.IsNullOrEmpty(PublicFolderServer))
-				cmd.Parameters.Add("Server", PublicFolderServer);
+            Command cmd = new Command("Get-PublicFolderDatabase");
 			Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
-			if (result != null && result.Count > 0)
-			{
-				PSObject obj = result[0];
-				Unlimited<ByteQuantifiedSize> totalItemSize =
-					(Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(obj, "TotalItemSize");
-				size += ConvertUnlimitedToBytes(totalItemSize);
-			}
+            if (result != null && result.Count > 0)
+            {
+                cmd = new Command("Get-PublicFolderStatistics");
+                cmd.Parameters.Add("Identity", folder);
+                if (!string.IsNullOrEmpty(PublicFolderServer))
+                    cmd.Parameters.Add("Server", PublicFolderServer);
+                result = ExecuteShellCommand(runSpace, cmd);
+                if (result != null && result.Count > 0)
+                {
+                    PSObject obj = result[0];
+                    Unlimited<ByteQuantifiedSize> totalItemSize =
+                        (Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(obj, "TotalItemSize");
+                    size += ConvertUnlimitedToBytes(totalItemSize);
+                }
 
-			cmd = new Command("Get-PublicFolder");
-			cmd.Parameters.Add("Identity", folder);
-			cmd.Parameters.Add("GetChildren", new SwitchParameter(true));
-			if (!string.IsNullOrEmpty(PublicFolderServer))
-				cmd.Parameters.Add("Server", PublicFolderServer);
-			result = ExecuteShellCommand(runSpace, cmd);
-			foreach (PSObject obj in result)
-			{
-				string id = ObjToString(GetPSObjectProperty(obj, "Identity"));
-				size += CalculatePublicFolderDiskSpace(runSpace, id);
-			}
+                cmd = new Command("Get-PublicFolder");
+                cmd.Parameters.Add("Identity", folder);
+                cmd.Parameters.Add("GetChildren", new SwitchParameter(true));
+                if (!string.IsNullOrEmpty(PublicFolderServer))
+                    cmd.Parameters.Add("Server", PublicFolderServer);
+                result = ExecuteShellCommand(runSpace, cmd);
+                foreach (PSObject obj in result)
+                {
+                    string id = ObjToString(GetPSObjectProperty(obj, "Identity"));
+                    size += CalculatePublicFolderDiskSpace(runSpace, id);
+                }
+            }
+            else
+                size = 0;
 			ExchangeLog.LogEnd("CalculatePublicFolderDiskSpace");
 			return size;
 		}
@@ -3353,7 +3365,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 //fix showInAddressBook Attribute
                 if (addressLists.Length > 0)
-                    FixShowInAddressBook(runSpace, email, addressLists);
+                    FixShowInAddressBook(runSpace, email, addressLists, false);
 
 			}
 			catch (Exception ex)
@@ -3370,7 +3382,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogEnd("CreateDistributionListInternal");
 		}
 
-        private void FixShowInAddressBook(Runspace runSpace, string accountName, string[] addressLists)
+        private void FixShowInAddressBook(Runspace runSpace, string accountName, string[] addressLists, bool HideFromAddressList)
         {
             Command cmd = new Command("Get-DistributionGroup");
             cmd.Parameters.Add("Identity", accountName);
@@ -3380,9 +3392,12 @@ namespace WebsitePanel.Providers.HostedSolution
 
             DirectoryEntry dlDEEntry = GetADObject(AddADPrefix(id));
             dlDEEntry.Properties["showInAddressBook"].Clear();
-            foreach (string addressList in addressLists)
+            if (!HideFromAddressList)
             {
-                dlDEEntry.Properties["showInAddressBook"].Add(addressList);
+                foreach (string addressList in addressLists)
+                {
+                    dlDEEntry.Properties["showInAddressBook"].Add(addressList);
+                }
             }
             dlDEEntry.CommitChanges();
         }
@@ -3542,7 +3557,7 @@ namespace WebsitePanel.Providers.HostedSolution
 				}
 
                 if (addressLists.Length > 0)
-                    FixShowInAddressBook(runSpace, accountName, addressLists);
+                    FixShowInAddressBook(runSpace, accountName, addressLists, hideFromAddressBook);
 
 			}
 			finally
@@ -3612,7 +3627,14 @@ namespace WebsitePanel.Providers.HostedSolution
 					}
 
                     if (addressLists.Length > 0)
-                        FixShowInAddressBook(runSpace, accountName, addressLists);
+                    {
+                        cmd = new Command("Get-DistributionGroup");
+                        cmd.Parameters.Add("Identity", accountName);
+                        Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+                        PSObject distributionGroup = result[0];
+
+                        FixShowInAddressBook(runSpace, accountName, addressLists, (bool)GetPSObjectProperty(distributionGroup, "HiddenFromAddressListsEnabled"));
+                    }
 
 				}
 				finally
@@ -3648,7 +3670,14 @@ namespace WebsitePanel.Providers.HostedSolution
 					}
 
                     if (addressLists.Length > 0)
-                        FixShowInAddressBook(runSpace, accountName, addressLists);
+                    {
+                        cmd = new Command("Get-DistributionGroup");
+                        cmd.Parameters.Add("Identity", accountName);
+                        Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+                        PSObject distributionGroup = result[0];
+
+                        FixShowInAddressBook(runSpace, accountName, addressLists, (bool)GetPSObjectProperty(distributionGroup, "HiddenFromAddressListsEnabled"));
+                    }
 
 				}
 				finally
@@ -3720,7 +3749,14 @@ namespace WebsitePanel.Providers.HostedSolution
 				ExecuteShellCommand(runSpace, cmd);
 
                 if (addressLists.Length > 0)
-                    FixShowInAddressBook(runSpace, accountName, addressLists);
+                {
+                    cmd = new Command("Get-DistributionGroup");
+                    cmd.Parameters.Add("Identity", accountName);
+                    Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+                    PSObject distributionGroup = result[0];
+
+                    FixShowInAddressBook(runSpace, accountName, addressLists, (bool)GetPSObjectProperty(distributionGroup, "HiddenFromAddressListsEnabled"));
+                }
 
 			}
 			finally
@@ -3856,7 +3892,14 @@ namespace WebsitePanel.Providers.HostedSolution
 				ExecuteShellCommand(runSpace, cmd);
 
                 if (addressLists.Length > 0)
-                    FixShowInAddressBook(runSpace, accountName, addressLists);
+                {
+                    cmd = new Command("Get-DistributionGroup");
+                    cmd.Parameters.Add("Identity", accountName);
+                    Collection<PSObject> r = ExecuteShellCommand(runSpace, cmd);
+                    PSObject distributionGroup = r[0];
+
+                    FixShowInAddressBook(runSpace, accountName, addressLists, (bool)GetPSObjectProperty(distributionGroup, "HiddenFromAddressListsEnabled"));
+                }
 			}
 			finally
 			{
@@ -3955,17 +3998,24 @@ namespace WebsitePanel.Providers.HostedSolution
 			if (sendOnBehalfAccounts == null)
 				throw new ArgumentNullException("sendOnBehalfAccounts");
 
-			Runspace runspace = null;
+			Runspace runSpace = null;
 			try
 			{
-				runspace = OpenRunspace();
-				string cn = GetDistributionListCommonName(runspace, accountName);
-				ExchangeDistributionList distributionList = GetDistributionListPermissionsInternal(organizationId, accountName, runspace);
-				SetSendAsPermissions(runspace, distributionList.SendAsAccounts, cn, sendAsAccounts);
-				SetDistributionListSendOnBehalfAccounts(runspace, accountName, sendOnBehalfAccounts);
+				runSpace = OpenRunspace();
+				string cn = GetDistributionListCommonName(runSpace, accountName);
+				ExchangeDistributionList distributionList = GetDistributionListPermissionsInternal(organizationId, accountName, runSpace);
+				SetSendAsPermissions(runSpace, distributionList.SendAsAccounts, cn, sendAsAccounts);
+				SetDistributionListSendOnBehalfAccounts(runSpace, accountName, sendOnBehalfAccounts);
 
                 if (addressLists.Length > 0)
-                    FixShowInAddressBook(runspace, accountName, addressLists);
+                {
+                    Command cmd = new Command("Get-DistributionGroup");
+                    cmd.Parameters.Add("Identity", accountName);
+                    Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+                    PSObject distributionGroup = result[0];
+
+                    FixShowInAddressBook(runSpace, accountName, addressLists, (bool)GetPSObjectProperty(distributionGroup, "HiddenFromAddressListsEnabled"));
+                }
 
 			}
 			catch (Exception ex)
@@ -3975,7 +4025,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			}
 			finally
 			{
-				CloseRunspace(runspace);
+				CloseRunspace(runSpace);
 			}
 
 			ExchangeLog.LogEnd("SetDistributionListPermissionsInternal");
@@ -5916,6 +5966,31 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogEnd("CreateAuthoritativeDomainInternal");
 		}
 
+        private void ChangeAcceptedDomainTypeInternal(string domainName, ExchangeAcceptedDomainType domainType)
+        {
+            ExchangeLog.LogStart("ChangeAcceptedDomainType");
+
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+
+                SetAcceptedDomainType(runSpace, domainName,domainType);
+            }
+            catch (Exception ex)
+            {
+                ExchangeLog.LogError("ChangeAcceptedDomainType", ex);
+                throw;
+            }
+            finally
+            {
+
+                CloseRunspace(runSpace);
+            }
+
+            ExchangeLog.LogEnd("ChangeAcceptedDomainType");
+        }
+
 		private void DeleteAcceptedDomain(string domainName)
 		{
 			ExchangeLog.LogStart("DeleteAcceptedDomain");
@@ -5979,6 +6054,17 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExecuteShellCommand(runSpace, cmd);
 			ExchangeLog.LogEnd("RemoveAcceptedDomain");
 		}
+
+        private void SetAcceptedDomainType(Runspace runSpace, string id, ExchangeAcceptedDomainType domainType)
+        {
+            ExchangeLog.LogStart("SetAcceptedDomainType");
+            Command cmd = new Command("Set-AcceptedDomain");
+            cmd.Parameters.Add("Identity", id);
+            cmd.Parameters.Add("DomainType", domainType.ToString());
+            cmd.Parameters.Add("Confirm", false);
+            ExecuteShellCommand(runSpace, cmd);
+            ExchangeLog.LogEnd("SetAcceptedDomainType");
+        }
 
 		#endregion
 

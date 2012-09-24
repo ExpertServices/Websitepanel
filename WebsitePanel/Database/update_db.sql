@@ -29,7 +29,7 @@ GO
 -- IIS 8.0
 IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Internet Information Services 8.0')
 BEGIN
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (105, 2, N'IIS80', N'Internet Information Services 8.0', N'WebsitePanel.Providers.Web.IIs70, WebsitePanel.Providers.Web.IIs70', N'IIS70', NULL)
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (105, 2, N'IIS80', N'Internet Information Services 8.0', N'WebsitePanel.Providers.Web.IIs80, WebsitePanel.Providers.Web.IIs80', N'IIS70', NULL)
 END
 GO
 
@@ -168,7 +168,7 @@ GO
 -- MS FTP 8.0
 IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Microsoft FTP Server 8.0')
 BEGIN
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (106, 3, N'MSFTP80', N'Microsoft FTP Server 8.0', N'WebsitePanel.Providers.FTP.MsFTP, WebsitePanel.Providers.FTP.IIs70', N'MSFTP70', NULL)
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (106, 3, N'MSFTP80', N'Microsoft FTP Server 8.0', N'WebsitePanel.Providers.FTP.MsFTP80, WebsitePanel.Providers.FTP.IIs80', N'MSFTP70', NULL)
 END
 GO
 
@@ -5211,6 +5211,66 @@ GO
 
 
 
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeOrganizationDomains' AND COLS.name='DomainTypeID')
+BEGIN
+ALTER TABLE [dbo].[ExchangeOrganizationDomains] ADD
+	[DomainTypeID] [int] NOT NULL CONSTRAINT DF_ExchangeOrganizationDomains_DomainTypeID DEFAULT 0
+END
+GO
+
+
+
+
+ALTER PROCEDURE [dbo].[GetExchangeOrganizationDomains] 
+(
+	@ItemID int
+)
+AS
+SELECT
+	ED.DomainID,
+	D.DomainName,
+	ED.IsHost,
+	ED.DomainTypeID
+FROM
+	ExchangeOrganizationDomains AS ED
+INNER JOIN Domains AS D ON ED.DomainID = D.DomainID
+WHERE ED.ItemID = @ItemID
+RETURN
+
+GO
+
+
+
+
+
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'ChangeExchangeAcceptedDomainType')
+BEGIN
+EXEC sp_executesql N'
+CREATE PROCEDURE [dbo].ChangeExchangeAcceptedDomainType 
+(
+	@ItemID int,
+	@DomainID int,
+	@DomainTypeID int
+)
+AS
+UPDATE ExchangeOrganizationDomains
+SET DomainTypeID=@DomainTypeID
+WHERE ItemID=ItemID AND DomainID=@DomainID
+RETURN'
+END
+GO
+
+
+
+
+
+
+
+
+
+
 ALTER PROCEDURE [dbo].[GetPackages]
 (
 	@ActorID int,
@@ -5357,3 +5417,78 @@ exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @PackageID int, @Fil
 
 RETURN
 GO
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[DeleteServiceItem]
+(
+	@ActorID int,
+	@ItemID int
+)
+AS
+
+-- check rights
+DECLARE @PackageID int
+SELECT PackageID = @PackageID FROM ServiceItems
+WHERE ItemID = @ItemID
+
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+BEGIN TRAN
+
+UPDATE Domains
+SET ZoneItemID = NULL
+WHERE ZoneItemID = @ItemID
+
+DELETE FROM Domains
+WHERE WebSiteID = @ItemID AND IsDomainPointer = 1
+
+UPDATE Domains
+SET WebSiteID = NULL
+WHERE WebSiteID = @ItemID
+
+UPDATE Domains
+SET MailDomainID = NULL
+WHERE MailDomainID = @ItemID
+
+-- delete item comments
+DELETE FROM Comments
+WHERE ItemID = @ItemID AND ItemTypeID = 'SERVICE_ITEM'
+
+-- delete item properties
+DELETE FROM ServiceItemProperties
+WHERE ItemID = @ItemID
+
+-- delete external IP addresses
+EXEC dbo.DeleteItemIPAddresses @ActorID, @ItemID
+
+-- delete item
+DELETE FROM ServiceItems
+WHERE ItemID = @ItemID
+
+COMMIT TRAN
+
+RETURN 
+
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

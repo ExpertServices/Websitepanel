@@ -54,10 +54,13 @@
             <td class="SubHead"><asp:Label ID="lblRecordData" runat="server" meta:resourcekey="lblRecordData" Text="Record Data:"></asp:Label></td>
             <td class="Normal" nowrap>
                 <asp:TextBox ID="txtRecordData" runat="server" Width="260px" CssClass="NormalTextBox"></asp:TextBox><uc1:SelectIPAddress ID="ipAddress" runat="server" />
+<!--
                 <asp:RequiredFieldValidator ID="valRequireData" runat="server" ControlToValidate="txtRecordData"
                     ErrorMessage="*" ValidationGroup="DnsRecord" Display="Dynamic"></asp:RequiredFieldValidator>
+-->
                 <asp:CustomValidator ID="IPValidator" runat="server" ControlToValidate="txtRecordData" ValidationGroup="DnsRecord" Display="Dynamic" CssClass="NormalBold" 
-                    OnServerValidate="Validate" Text="Please enter a valid IP" meta:resourcekey="IPValidator"/>
+                    OnServerValidate="Validate" Text="Please enter a valid IP" meta:resourcekey="IPValidator" ValidateEmptyText="True" />
+
             </td>
         </tr>
         <tr id="rowMXPriority" runat="server">

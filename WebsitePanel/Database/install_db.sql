@@ -6508,6 +6508,7 @@ CREATE TABLE [dbo].[ExchangeOrganizationDomains](
 	[ItemID] [int] NOT NULL,
 	[DomainID] [int] NULL,
 	[IsHost] [bit] NULL,
+	[DomainTypeID] [int] NOT NULL,
  CONSTRAINT [PK_ExchangeOrganizationDomains] PRIMARY KEY CLUSTERED 
 (
 	[OrganizationDomainID] ASC
@@ -6634,7 +6635,8 @@ AS
 SELECT
 	ED.DomainID,
 	D.DomainName,
-	ED.IsHost
+	ED.IsHost,
+	ED.DomainTypeID
 FROM
 	ExchangeOrganizationDomains AS ED
 INNER JOIN Domains AS D ON ED.DomainID = D.DomainID
@@ -45799,6 +45801,29 @@ GO
 
 
 
+CREATE PROCEDURE [dbo].ChangeExchangeAcceptedDomainType 
+(
+	@ItemID int,
+	@DomainID int,
+	@DomainTypeID int
+)
+AS
+UPDATE ExchangeOrganizationDomains
+SET DomainTypeID=@DomainTypeID
+WHERE ItemID=ItemID AND DomainID=@DomainID
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -46063,6 +46088,8 @@ GO
 ALTER TABLE [dbo].[ExchangeOrganizationDomains] CHECK CONSTRAINT [FK_ExchangeOrganizationDomains_ServiceItems]
 GO
 ALTER TABLE [dbo].[ExchangeOrganizationDomains] ADD  CONSTRAINT [DF_ExchangeOrganizationDomains_IsHost]  DEFAULT ((0)) FOR [IsHost]
+GO
+ALTER TABLE [dbo].[ExchangeOrganizationDomains] ADD  CONSTRAINT [DF_ExchangeOrganizationDomains_DomainTypeID]  DEFAULT ((0)) FOR [DomainTypeID]
 GO
 ALTER TABLE [dbo].[PrivateIPAddresses]  WITH CHECK ADD  CONSTRAINT [FK_PrivateIPAddresses_ServiceItems] FOREIGN KEY([ItemID])
 REFERENCES [dbo].[ServiceItems] ([ItemID])

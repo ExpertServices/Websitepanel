@@ -107,6 +107,7 @@ namespace WebsitePanel.Portal.ProviderControls
 			//
 			ipAddress.AddressId = (settings["SharedIP"] != null) ? Utils.ParseInt(settings["SharedIP"], 0) : 0;
             ipAddress.SelectValueText = GetLocalizedString("ipAddress.SelectValueText");
+            txtPublicSharedIP.Text = settings["PublicSharedIP"];
 
 			txtWebGroupName.Text = settings["WebGroupName"];
 			chkAssignIPAutomatically.Checked = Utils.ParseBool(settings["AutoAssignDedicatedIP"], true);
@@ -205,6 +206,7 @@ namespace WebsitePanel.Portal.ProviderControls
 		{
 			//
 			settings["SharedIP"] = ipAddress.AddressId.ToString();
+            settings["PublicSharedIP"] = txtPublicSharedIP.Text.Trim();
 			settings["WebGroupName"] = txtWebGroupName.Text.Trim();
 			settings["AutoAssignDedicatedIP"] = chkAssignIPAutomatically.Checked.ToString();
 

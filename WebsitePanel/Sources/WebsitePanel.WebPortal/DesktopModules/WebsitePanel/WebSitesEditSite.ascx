@@ -115,18 +115,38 @@
 	BackgroundCssClass="modalBackground" DropShadow="false" CancelControlID="PubProfileWizardCancelButton" />
 <div class="FormBody">
 	<wsp:SimpleMessageBox id="messageBox" runat="server" EnableViewState="false" />
-	<table width="100%" cellpadding="0" cellspacing="0" border="0">
+	<table style="width:100%" cellpadding="0" cellspacing="0" border="0">
 		<tr>
 			<td valign="top">
 				<table cellpadding="7" border="0">
 					<tr>
 						<td class="Big">
 							<asp:HyperLink ID="lnkSiteName" runat="server" NavigateUrl="#" Target="_blank">domain.com</asp:HyperLink>
-							<asp:Literal ID="litIPAddress" runat="server"></asp:Literal>
 						</td>
+                        <td>
+                            <asp:Panel ID="sharedIP" runat="server">
+                                <asp:Localize ID="locSharedIPAddress" runat="server" meta:resourcekey="locSharedIPAddress" Text="IP address: Shared" />
+                                &nbsp;&nbsp;&nbsp;
+                                <asp:LinkButton ID="cmdSwitchToDedicatedIP" meta:resourcekey="cmdSwitchToDedicatedIP" runat="server" Text="Switch to dedicated IP" OnClick="cmdSwitchToDedicatedIP_Click"></asp:LinkButton>
+                            </asp:Panel>
+                            <asp:Panel ID="dedicatedIP" runat="server">
+                                <asp:Localize ID="locDedicatedIPAddress" runat="server" meta:resourcekey="locDedicatedIPAddress" Text="IP address:" />
+                                <asp:Literal ID="litIPAddress" runat="server"></asp:Literal>
+                                &nbsp;&nbsp;&nbsp;
+                                <asp:LinkButton ID="cmdSwitchToSharedIP" meta:resourcekey="cmdSwitchToSharedIP" runat="server" Text="Switch to shared IP" OnClick="cmdSwitchToSharedIP_Click"></asp:LinkButton>
+                            </asp:Panel>
+                            <asp:Panel ID="switchToDedicatedIP" runat="server" Visible="false">
+                                <asp:Localize ID="locSelectIPAddress" runat="server" meta:resourcekey="locSelectIPAddress" Text="Select IP address:" />
+                                <asp:dropdownlist id="ddlIpAddresses" Runat="server" CssClass="NormalTextBox"></asp:dropdownlist>
+                                &nbsp;
+                                <asp:LinkButton ID="cmdApplyDedicatedIP" meta:resourcekey="cmdApplyDedicatedIP" runat="server" Text="Apply" OnClick="cmdApplyDedicatedIP_Click"></asp:LinkButton>
+                                &nbsp;
+                                <asp:LinkButton ID="cmdCancelDedicatedIP" meta:resourcekey="cmdCancelDedicatedIP" runat="server" Text="Cancel" OnClick="cmdCancelDedicatedIP_Click"></asp:LinkButton>
+                            </asp:Panel>
+                        </td>
 					</tr>
 					<tr>
-						<td>
+						<td colspan="2">
 							<div class="FormButtonsBar">
 								<asp:Button ID="btnAddPointer" runat="server" Text="Add Pointer" CssClass="Button2"
 									meta:resourcekey="btnAddPointer" OnClick="btnAddPointer_Click" />

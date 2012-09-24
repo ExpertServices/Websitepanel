@@ -14,7 +14,7 @@
         <td class="Normal"><asp:Literal ID="litFullName" runat="server"></asp:Literal></td>
     </tr>
     <tr>
-        <td class="SubHead"><asp:Localize ID="locSubscriberNumber" runat="server" meta:resourcekey="locSubscriberNumber" Text="Subscriber Number:"/></td>
+        <td class="SubHead"><asp:Localize ID="locSubscriberNumber" runat="server" meta:resourcekey="locSubscriberNumber" Text="Account Number:"/></td>
         <td class="Normal"><asp:Literal ID="litSubscriberNumber" runat="server"></asp:Literal></td>
     </tr>
     <tr>

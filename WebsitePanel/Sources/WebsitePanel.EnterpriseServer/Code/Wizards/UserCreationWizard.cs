@@ -199,7 +199,7 @@ namespace WebsitePanel.EnterpriseServer
                     try
                     {
                         int webSiteId = WebServerController.AddWebSite(
-                            createdPackageId, hostName, domainId, 0, true);
+                            createdPackageId, hostName, domainId, 0, true, false);
                         if (webSiteId < 0)
                         {
                             // rollback wizard

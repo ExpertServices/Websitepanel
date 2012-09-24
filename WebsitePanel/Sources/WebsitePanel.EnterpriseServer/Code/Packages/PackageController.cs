@@ -481,7 +481,7 @@ namespace WebsitePanel.EnterpriseServer
                         // create web site
                         try
                         {
-                            int webSiteId = WebServerController.AddWebSite(packageId, hostName, domainId, 0, true);
+                            int webSiteId = WebServerController.AddWebSite(packageId, hostName, domainId, 0, true, false);
                             if (webSiteId < 0)
                             {
                                 result.Result = webSiteId;

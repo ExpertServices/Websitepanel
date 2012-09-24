@@ -176,6 +176,33 @@ namespace WebsitePanel.Portal {
         protected global::WebsitePanel.Portal.Quota quotaDomainPointers;
         
         /// <summary>
+        /// pnlOrganizations control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow pnlOrganizations;
+        
+        /// <summary>
+        /// lblOrganizations control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblOrganizations;
+        
+        /// <summary>
+        /// quotaOrganizations control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.Quota quotaOrganizations;
+        
+        /// <summary>
         /// pnlUserAccounts control.
         /// </summary>
         /// <remarks>

@@ -265,6 +265,21 @@ namespace WebsitePanel.Server
             }
         }
 
+        [WebMethod, SoapHeader("settings")]
+        public void ChangeAcceptedDomainType(string domain, ExchangeAcceptedDomainType domainType)
+        {
+            try
+            {
+                LogStart("ChangeAcceptedDomainType");
+                ES.ChangeAcceptedDomainType(domain, domainType);
+                LogEnd("ChangeAcceptedDomainType");
+            }
+            catch (Exception ex)
+            {
+                LogError("ChangeAcceptedDomainType", ex);
+                throw;
+            }
+        }
 
         [WebMethod, SoapHeader("settings")]
         public string[] GetAuthoritativeDomains()

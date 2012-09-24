@@ -639,6 +639,9 @@
   <data name="Warning.CREATE_OCS_USER" xml:space="preserve">
     <value>OCS User has been successfully created but the following errors have been occured:</value>
   </data>
+  <data name="Error.OCS_GET_USERS" xml:space="preserve">
+    <value>Error reading organization OCS Users</value>
+  </data>
   <data name="Success.USER_CHANGE_PASSWORD" xml:space="preserve">
     <value>User account password has been changed</value>
   </data>
@@ -5128,9 +5131,6 @@
   <data name="ResourceGroup.Lync" xml:space="preserve">
     <value>Lync Server</value>
   </data>
-  <data name="Success.UPDATE_LYNC_USER" xml:space="preserve">
-    <value>General Lync User settings have been successfully updated.</value>
-  </data>
   <data name="Warning.CREATE_LYNC_USER" xml:space="preserve">
     <value>Lync User has been successfully created but the following errors have been occured:</value>
   </data>
@@ -5194,14 +5194,12 @@
   <data name="Success.EXCHANGE_STAMPMAILBOXES" xml:space="preserve">
     <value>Succesfully stamp mailboxes</value>
   </data>
-
   <data name="Error.EXCHANGE_UPDATEPLANS" xml:space="preserve">
     <value>Mailbox plan update failed</value>
   </data>
   <data name="Success.EXCHANGE_UPDATEPLANS" xml:space="preserve">
     <value>Mailbox plan updated</value>
   </data>
-
   <data name="Error.LYNC_APPLYPLANTEMPLATE" xml:space="preserve">
     <value>Failed to apply plans template</value>
   </data>
@@ -5211,7 +5209,16 @@
   <data name="Success.REQUEST_COMPLETED_SUCCESFULLY" xml:space="preserve">
     <value>Request Completed Succesfully</value>
   </data>
-
-
-  
+  <data name="Error.WEB_SWITCH_TO_DEDICATED_IP" xml:space="preserve">
+    <value>Error updating web site to dedicated IP</value>
+  </data>
+  <data name="Error.WEB_SWITCH_TO_SHARED_IP" xml:space="preserve">
+    <value>Error updating web site to shared IP</value>
+  </data>
+  <data name="Success.WEB_SWITCH_TO_DEDICATED_IP" xml:space="preserve">
+    <value>Web site has been updated to dedicated IP</value>
+  </data>
+  <data name="Success.WEB_SWITCH_TO_SHARED_IP" xml:space="preserve">
+    <value>Web site has been updated to shared IP</value>
+  </data>
 </root>

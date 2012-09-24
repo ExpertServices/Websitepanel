@@ -160,7 +160,7 @@
     <value>Secondary E-Mail:</value>
   </data>
   <data name="lblSubscriberNumber.Text" xml:space="preserve">
-    <value>Subscriber Number:</value>
+    <value>Account Number:</value>
   </data>
   <data name="lblUsername.Text" xml:space="preserve">
     <value>User name:</value>

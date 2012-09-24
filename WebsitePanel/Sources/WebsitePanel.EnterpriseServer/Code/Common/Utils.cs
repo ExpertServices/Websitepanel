@@ -102,7 +102,6 @@ namespace WebsitePanel.EnterpriseServer
             if (allowEmptyValue)
             {
                 if (String.IsNullOrEmpty(str)) return str;
-                if (String.IsNullOrEmpty(value)) return string.Empty;
             }
             else
             {

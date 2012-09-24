@@ -323,10 +323,14 @@ namespace WebsitePanel.Setup.Actions
 				serviceInfo.Comments = string.Empty;
 
 				//check IIS version
-                if (ServerSetup.IISVersion.Major >= 7)
+                if (ServerSetup.IISVersion.Major == 7)
 				{
 					serviceInfo.ProviderId = 101;
 				}
+                else if (ServerSetup.IISVersion.Major == 8)
+                {
+                    serviceInfo.ProviderId = 105;
+                }
 				else if (ServerSetup.IISVersion.Major == 6)
 				{
 					serviceInfo.ProviderId = 2;

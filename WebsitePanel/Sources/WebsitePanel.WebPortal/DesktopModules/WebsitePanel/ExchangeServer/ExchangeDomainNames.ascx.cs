@@ -117,6 +117,37 @@ namespace WebsitePanel.Portal.ExchangeServer
                     ShowErrorMessage("EXCHANGE_DELETE_DOMAIN", ex);
                 }
             }
+            else if (e.CommandName == "Change")
+            {
+                string[] commandArgument = e.CommandArgument.ToString().Split('|');
+                int domainId = Utils.ParseInt(commandArgument[0].ToString(), 0);
+                ExchangeAcceptedDomainType acceptedDomainType = (ExchangeAcceptedDomainType)Enum.Parse(typeof(ExchangeAcceptedDomainType), commandArgument[1]);
+
+
+                try
+                {
+
+                    ExchangeAcceptedDomainType newDomainType = ExchangeAcceptedDomainType.Authoritative;
+                    if (acceptedDomainType == ExchangeAcceptedDomainType.Authoritative)
+                        newDomainType = ExchangeAcceptedDomainType.InternalRelay;
+
+                    int result = ES.Services.Organizations.ChangeOrganizationDomainType(PanelRequest.ItemID, domainId, newDomainType);
+                    if (result < 0)
+                    {
+                        messageBox.ShowResultMessage(result);
+                        return;
+                    }
+
+                    // rebind domains
+                    BindDomainNames();
+
+                    BindStats();
+                }
+                catch (Exception ex)
+                {
+                    ShowErrorMessage("EXCHANGE_CHANGE_DOMAIN", ex);
+                }
+            }
         }
 
         protected void btnSetDefaultDomain_Click(object sender, EventArgs e)
@@ -143,5 +174,6 @@ namespace WebsitePanel.Portal.ExchangeServer
                 ShowErrorMessage("EXCHANGE_SET_DEFAULT_DOMAIN", ex);
             }
         }
+
     }
 }

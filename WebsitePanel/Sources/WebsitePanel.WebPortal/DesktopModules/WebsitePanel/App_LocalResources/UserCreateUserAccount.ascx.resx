@@ -202,6 +202,6 @@
     <value>*</value>
   </data>
   <data name="lblSubscriberNumber" xml:space="preserve">
-    <value>Subscriber Number:</value>
+    <value>Account Number:</value>
   </data>
 </root>

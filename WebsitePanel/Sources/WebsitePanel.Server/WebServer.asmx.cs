@@ -229,12 +229,12 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public void UpdateSiteBindings(string siteId, ServerBinding[] bindings)
+        public void UpdateSiteBindings(string siteId, ServerBinding[] bindings, bool emptyBindingsAllowed)
         {
             try
             {
                 Log.WriteStart("'{0}' UpdateSiteBindings", ProviderSettings.ProviderName);
-                WebProvider.UpdateSiteBindings(siteId, bindings);
+                WebProvider.UpdateSiteBindings(siteId, bindings, emptyBindingsAllowed);
                 Log.WriteEnd("'{0}' UpdateSiteBindings", ProviderSettings.ProviderName);
             }
             catch (Exception ex)
