@@ -69,7 +69,7 @@ namespace WebsitePanel.EnterpriseServer {
                 return "";
 			var s = new System.Text.StringBuilder();
 			if (!V6) {
-				var ipl = (long)Address;
+				var ipl = Address;
 				s.Append(String.Format("{0}.{1}.{2}.{3}", (ipl >> 24) & 0xFFL, (ipl >> 16) & 0xFFL, (ipl >> 8) & 0xFFL, (ipl & 0xFFL)));
 			} else if (!IsMask) {
 				
