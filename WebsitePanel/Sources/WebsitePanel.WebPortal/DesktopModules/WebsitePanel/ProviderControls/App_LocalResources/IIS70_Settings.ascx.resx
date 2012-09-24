@@ -219,6 +219,9 @@
   <data name="FilterDialogButton.Text" xml:space="preserve">
     <value>Click to create a filter...</value>
   </data>
+  <data name="chkGalleryAppsAlwaysIgnoreDependencies.Text" xml:space="preserve">
+    <value>Always ignore dependencies</value>
+  </data>
   <data name="GalleryFeedFilter.Text" xml:space="preserve">
     <value>Gallery feed filter:</value>
   </data>

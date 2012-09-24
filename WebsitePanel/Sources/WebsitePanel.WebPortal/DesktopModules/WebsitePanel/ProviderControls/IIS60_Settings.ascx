@@ -135,6 +135,11 @@
                 <asp:LinkButton runat="server" ID="FilterDialogButton" meta:resourcekey="FilterDialogButton" Text="Click to apply a filter..." />
 			</td>
 		</tr>
+        <tr>
+	        <td colspan="2">
+	            <asp:CheckBox ID="chkGalleryAppsAlwaysIgnoreDependencies" runat="server" meta:resourcekey="chkGalleryAppsAlwaysIgnoreDependencies" Text="Always ignore dependencies" />
+	        </td>
+	    </tr>
     </table>
 </fieldset>
 <br />

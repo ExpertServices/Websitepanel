@@ -132,6 +132,7 @@ namespace WebsitePanel.Portal.ProviderControls
             ActiveDirectoryIntegration.BindSettings(settings);
 			//
 			FilteredAppIds = settings["GalleryAppsFilter"];
+            chkGalleryAppsAlwaysIgnoreDependencies.Checked = Utils.ParseBool(settings["GalleryAppsAlwaysIgnoreDependencies"], false);
         }
 
         public void SaveSettings(StringDictionary settings)
@@ -166,6 +167,7 @@ namespace WebsitePanel.Portal.ProviderControls
             ActiveDirectoryIntegration.SaveSettings(settings);
 			//
 			settings["GalleryAppsFilter"] = GetAppsCatalogFilter();
+            settings["GalleryAppsAlwaysIgnoreDependencies"] = chkGalleryAppsAlwaysIgnoreDependencies.Checked.ToString();
         }
     }
 }
