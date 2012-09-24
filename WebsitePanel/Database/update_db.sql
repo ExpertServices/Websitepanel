@@ -5600,7 +5600,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[GetCRMUsers]
+ALTER PROCEDURE [dbo].[GetCRMUsers]
 (
 	@ItemID int,
 	@SortColumn nvarchar(40),
