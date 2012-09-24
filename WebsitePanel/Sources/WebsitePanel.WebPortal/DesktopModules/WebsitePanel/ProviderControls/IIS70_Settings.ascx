@@ -214,9 +214,19 @@
             </tr>
 --%>    
 
+        
+
 </table>
     <uc6:EditFeedsList ID="wpiEditFeedsList" runat="server" DisplayNames="false" />
+
+       <br/>
+   <asp:CheckBox ID="chkGalleryAppsAlwaysIgnoreDependencies" runat="server" meta:resourcekey="chkGalleryAppsAlwaysIgnoreDependencies" Text="Always ignore dependencies" />
+
+
 </fieldset>
+
+
+
 <br />
 
 <asp:Panel ID="FilterDialogPanel" runat="server" CssClass="PopupContainer" style="display:none" 

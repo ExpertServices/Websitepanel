@@ -150,8 +150,6 @@ namespace WebsitePanel.Portal
                     AddDatabaseEngine(DeploymentParameterWellKnownTag.Sql, ResourceGroups.MsSql2005, GetSharedLocalizedString("ResourceGroup." + ResourceGroups.MsSql2005));
                 if (cntx.Groups.ContainsKey(ResourceGroups.MsSql2000))
                     AddDatabaseEngine(DeploymentParameterWellKnownTag.Sql, ResourceGroups.MsSql2000, GetSharedLocalizedString("ResourceGroup." + ResourceGroups.MsSql2000));
-
-                SetDBPolicies(UserSettings.MSSQL_POLICY, parameters);
             }
 
             // MySQL Server
@@ -165,8 +163,6 @@ namespace WebsitePanel.Portal
                     AddDatabaseEngine(DeploymentParameterWellKnownTag.MySql, ResourceGroups.MySql5, GetSharedLocalizedString("ResourceGroup." + ResourceGroups.MySql5));
                 if (cntx.Groups.ContainsKey(ResourceGroups.MySql4))
                     AddDatabaseEngine(DeploymentParameterWellKnownTag.MySql, ResourceGroups.MySql4, GetSharedLocalizedString("ResourceGroup." + ResourceGroups.MySql4));
-
-                SetDBPolicies(UserSettings.MYSQL_POLICY, parameters);
             }
 
             // SQLite
@@ -181,6 +177,7 @@ namespace WebsitePanel.Portal
             if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.VistaDB) != null)
                 AddDatabaseEngine(DeploymentParameterWellKnownTag.VistaDB, "", GetLocalizedString("DatabaseEngine.VistaDB"));
 
+            BindDBPolicies(parameters);
 
             // hide module if no database required
             divDatabase.Visible = (databaseEngines.Items.Count > 0);
@@ -190,18 +187,42 @@ namespace WebsitePanel.Portal
         }
 
         #region prefix & suffix for database name & username
-        private void SetDBPolicies(string policy, IEnumerable<DeploymentParameter> parameters)
+        private void BindDBPolicies(List<DeploymentParameter> parameters)
+        {
+            // MS SQL Server
+            if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.Sql) != null)
+            {
+                SetDBPolicies(UserSettings.MSSQL_POLICY, parameters, DeploymentParameterWellKnownTag.Sql);
+            }
+
+            // MySQL Server
+            if (FindParameterByTag(parameters, DeploymentParameterWellKnownTag.MySql) != null)
+            {
+                SetDBPolicies(UserSettings.MYSQL_POLICY, parameters, DeploymentParameterWellKnownTag.MySql);
+            }
+        }
+
+
+        private void SetDBPolicies(string policy, IEnumerable<DeploymentParameter> parameters, DeploymentParameterWellKnownTag dbTag)
         {
             foreach (DeploymentParameter parameter in parameters)
             {
-                if ((parameter.WellKnownTags & DeploymentParameterWellKnownTag.DBName) != 0)
+                if (
+                    (parameter.WellKnownTags & DeploymentParameterWellKnownTag.DBName) != 0
+                    &&
+                    (parameter.WellKnownTags & dbTag) != 0
+                )
                 {
                     // database name
                     string policyValue = GetPackagePolicy(policy, "DatabaseNamePolicy");
                     ApplyPrefixSuffixPolicy(parameter, policyValue);
                 }
 
-                if ((parameter.WellKnownTags & DeploymentParameterWellKnownTag.DBUserName) != 0)
+                if (
+                    (parameter.WellKnownTags & DeploymentParameterWellKnownTag.DBUserName) != 0
+                    &&
+                    (parameter.WellKnownTags & dbTag) != 0
+                )
                 {
                     // user name
                     string policyValue = GetPackagePolicy(policy, "UserNamePolicy");
@@ -302,7 +323,13 @@ namespace WebsitePanel.Portal
 
         protected void databaseEngines_SelectedIndexChanged(object sender, EventArgs e)
         {
-            BindParameters();
+            // load parameters
+            List<DeploymentParameter> parameters = GetApplicationParameters();
+            if (parameters == null)
+                return;
+
+            BindDBPolicies(parameters);
+            BindParameters(parameters);
         }
 
         protected void databaseMode_SelectedIndexChanged(object sender, EventArgs e)

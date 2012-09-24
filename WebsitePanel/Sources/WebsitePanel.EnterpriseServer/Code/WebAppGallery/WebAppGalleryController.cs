@@ -487,6 +487,19 @@ namespace WebsitePanel.EnterpriseServer
                     || context.Groups.ContainsKey(ResourceGroups.MySql5)))
                     result.ErrorCodes.Add(GalleryErrors.MySQLRequired);
 
+
+
+                //show Dependency warning optionaly 
+                int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Web);
+                StringDictionary serviceSettings = ServerController.GetServiceSettings(serviceId);
+
+                bool galleryAppsAlwaysIgnoreDependencies = Utils.ParseBool(serviceSettings["GalleryAppsAlwaysIgnoreDependencies"], false);
+
+                if (galleryAppsAlwaysIgnoreDependencies)
+                {
+                     result.ErrorCodes.Clear();
+                }
+
                 if (result.ErrorCodes.Count > 0)
                 {
                     GalleryApplicationResult warning = Warning<GalleryApplicationResult>(result, GalleryErrors.PackageDoesNotMeetRequirements);

@@ -200,6 +200,8 @@ namespace WebsitePanel.Portal.ProviderControls
 					WDeployDisabledCheckBox.Checked = true;
 				}
 			}
+
+            chkGalleryAppsAlwaysIgnoreDependencies.Checked = Utils.ParseBool(settings["GalleryAppsAlwaysIgnoreDependencies"], false);
 		}
 
 		public void SaveSettings(StringDictionary settings)
@@ -269,6 +271,8 @@ namespace WebsitePanel.Portal.ProviderControls
 			{
 				settings[WDeployEnabled] = Boolean.FalseString;
 			}
+
+            settings["GalleryAppsAlwaysIgnoreDependencies"] = chkGalleryAppsAlwaysIgnoreDependencies.Checked.ToString();
 		}
 
         protected void DownladAndIstallApeLinkButton_Click(object sender, EventArgs e)
