@@ -988,7 +988,7 @@ namespace WebsitePanel.EnterpriseServer
 				if (startExternalIP.V6 != startInternalIP.V6 && (startExternalIP.V6 != endExternalIP.V6 && endExternalIP != null)) throw new NotSupportedException("All IP addresses must be either V4 or V6.");
 
                 int i = 0;
-                long step = (endExternalIP < startExternalIP) ? -1 : 1;
+                long step = ((endExternalIP - startExternalIP) > 0) ? 1 : -1;
 
                 while (true)
                 {
