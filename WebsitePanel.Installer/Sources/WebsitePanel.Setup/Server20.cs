@@ -30,7 +30,7 @@ namespace WebsitePanel.Setup
         {
             return Server.UpdateBase(obj,
                 minimalInstallerVersion: "2.0.0",
-                versionToUpgrade: "1.2.1",
+                versionToUpgrade: "1.2.1,2.0.0",
                 updateSql: false);
         }
     }

@@ -31,7 +31,7 @@ namespace WebsitePanel.Setup
         {
             return UpdateBase(obj,
                 minimalInstallerVersion: "2.0.0",
-                versionsToUpgrade: "1.2.1",
+                versionsToUpgrade: "1.2.1,2.0.0",
                 updateSql: false,
                 versionSpecificAction: new InstallAction(ActionTypes.ConfigureSecureSessionModuleInWebConfig));
         }
