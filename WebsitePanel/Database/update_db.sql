@@ -5485,6 +5485,244 @@ GO
 
 
 
+ALTER PROCEDURE [dbo].[GetOCSUsers]
+(
+	@ItemID int,
+	@SortColumn nvarchar(40),
+	@SortDirection nvarchar(20),
+	@Name nvarchar(400),
+	@Email nvarchar(400),
+	@StartRow int,
+	@Count int	
+)
+AS
+
+IF (@Name IS NULL)
+BEGIN
+	SET @Name = '%'
+END
+
+IF (@Email IS NULL)
+BEGIN
+	SET @Email = '%'
+END
+
+CREATE TABLE #TempOCSUsers 
+(	
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int],	
+	[ItemID] [int] NOT NULL,
+	[AccountName] [nvarchar](300)  NOT NULL,
+	[DisplayName] [nvarchar](300)  NOT NULL,
+	[InstanceID] [nvarchar](50)  NOT NULL,
+	[PrimaryEmailAddress] [nvarchar](300) NULL,
+	[SamAccountName] [nvarchar](100) NULL	
+)
+
+
+IF (@SortColumn = 'DisplayName')
+BEGIN
+	INSERT INTO 
+		#TempOCSUsers 
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ou.InstanceID,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName		
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		OCSUsers ou 
+	ON 
+		ea.AccountID = ou.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.DisplayName
+END
+ELSE
+BEGIN
+	INSERT INTO 
+		#TempOCSUsers
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ou.InstanceID,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName		
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		OCSUsers ou 
+	ON 
+		ea.AccountID = ou.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.PrimaryEmailAddress 
+END
+
+DECLARE @RetCount int
+SELECT @RetCount = COUNT(ID) FROM #TempOCSUsers 
+
+IF (@SortDirection = 'ASC')
+BEGIN
+	SELECT * FROM #TempOCSUsers 
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+END
+ELSE
+BEGIN
+	IF (@SortColumn = 'DisplayName')
+	BEGIN
+		SELECT * FROM #TempOCSUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
+	END
+	ELSE
+	BEGIN
+		SELECT * FROM #TempOCSUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
+	END
+	
+END
+
+
+DROP TABLE #TempOCSUsers
+
+GO
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetCRMUsers]
+(
+	@ItemID int,
+	@SortColumn nvarchar(40),
+	@SortDirection nvarchar(20),
+	@Name nvarchar(400),
+	@Email nvarchar(400),
+	@StartRow int,
+	@Count int	
+)
+AS
+
+IF (@Name IS NULL)
+BEGIN
+	SET @Name = '%'
+END
+
+IF (@Email IS NULL)
+BEGIN
+	SET @Email = '%'
+END
+
+CREATE TABLE #TempCRMUsers 
+(	
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int],	
+	[ItemID] [int] NOT NULL,
+	[AccountName] [nvarchar](300) NOT NULL,
+	[DisplayName] [nvarchar](300) NOT NULL,
+	[PrimaryEmailAddress] [nvarchar](300) NULL,
+	[SamAccountName] [nvarchar](100) NULL	
+)
+
+
+IF (@SortColumn = 'DisplayName')
+BEGIN
+	INSERT INTO 
+		#TempCRMUsers
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName 
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		CRMUsers cu 
+	ON 
+		ea.AccountID = cu.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.DisplayName
+END
+ELSE
+BEGIN
+	INSERT INTO 
+		#TempCRMUsers
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName 
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		CRMUsers cu 
+	ON 
+		ea.AccountID = cu.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.PrimaryEmailAddress 
+END
+
+DECLARE @RetCount int
+SELECT @RetCount = COUNT(ID) FROM #TempCRMUsers
+
+IF (@SortDirection = 'ASC')
+BEGIN
+	SELECT * FROM #TempCRMUsers
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+END
+ELSE
+BEGIN
+	IF (@SortColumn = 'DisplayName')
+	BEGIN
+		SELECT * FROM #TempCRMUsers
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
+	END
+	ELSE
+	BEGIN
+		SELECT * FROM #TempCRMUsers
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
+	END
+	
+END
+
+
+
+DROP TABLE #TempCRMUsers
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
