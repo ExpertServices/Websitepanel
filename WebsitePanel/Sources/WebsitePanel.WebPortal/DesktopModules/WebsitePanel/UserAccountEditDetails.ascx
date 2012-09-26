@@ -41,7 +41,7 @@
 				<asp:Label ID="lblSubscriberNumber" runat="server" meta:resourcekey="lblSubscriberNumber" Text="Account Number:"></asp:Label>
 			</td>
 			<td class="NormalBold">
-				<asp:TextBox id="txtSubscriberNumber" runat="server" CssClass="NormalTextBox"></asp:TextBox>
+				<asp:TextBox id="txtSubscriberNumber" runat="server" CssClass="NormalTextBox" ></asp:TextBox>
 			</td>
 		</tr>
         
