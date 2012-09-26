@@ -130,10 +130,7 @@ namespace WebsitePanel.Portal.ProviderControls
 
 			
 
-            // WPI
-            //wpiMicrosoftFeed.Checked = Utils.ParseBool(settings["FeedEnableMicrosoft"], true);
-            //wpiHeliconTechFeed.Checked = Utils.ParseBool(settings["FeedEnableHelicon"], true);
-            wpiEditFeedsList.Value = settings["FeedUrls"];
+          
 
 
 			txtAspPath.Text = settings["AspPath"];
@@ -187,7 +184,7 @@ namespace WebsitePanel.Portal.ProviderControls
 			//
 			Utils.SelectListItem(ddlWmSvcCredentialsMode, settings["WmSvc.CredentialsMode"]);
 			//
-			FilteredAppIds = settings["GalleryAppsFilter"];
+			
 			//
 			if (String.IsNullOrEmpty(settings[WDeployEnabled]) == false)
 			{
@@ -201,6 +198,12 @@ namespace WebsitePanel.Portal.ProviderControls
 				}
 			}
 
+            // WPI
+            //wpiMicrosoftFeed.Checked = Utils.ParseBool(settings["FeedEnableMicrosoft"], true);
+            //wpiHeliconTechFeed.Checked = Utils.ParseBool(settings["FeedEnableHelicon"], true);
+            wpiEditFeedsList.Value = settings["FeedUrls"];
+            FilteredAppIds = settings["GalleryAppsFilter"];
+            radioFilterAppsList.SelectedIndex = Utils.ParseInt(settings["GalleryAppsFilterMode"], 0);
             chkGalleryAppsAlwaysIgnoreDependencies.Checked = Utils.ParseBool(settings["GalleryAppsAlwaysIgnoreDependencies"], false);
 		}
 
@@ -253,10 +256,6 @@ namespace WebsitePanel.Portal.ProviderControls
 
 			
 
-            //settings["FeedEnableMicrosoft"] = wpiMicrosoftFeed.Checked.ToString();
-            //settings["FeedEnableHelicon"] = wpiHeliconTechFeed.Checked.ToString();
-            settings["FeedUrls"] = wpiEditFeedsList.Value;
-            settings["GalleryAppsFilter"] = GetAppsCatalogFilter();
 
 			if (WDeployEnabledCheckBox.Checked)
 			{
@@ -272,6 +271,11 @@ namespace WebsitePanel.Portal.ProviderControls
 				settings[WDeployEnabled] = Boolean.FalseString;
 			}
 
+            //settings["FeedEnableMicrosoft"] = wpiMicrosoftFeed.Checked.ToString();
+            //settings["FeedEnableHelicon"] = wpiHeliconTechFeed.Checked.ToString();
+            settings["FeedUrls"] = wpiEditFeedsList.Value;
+            settings["GalleryAppsFilter"] = GetAppsCatalogFilter();
+            settings["GalleryAppsFilterMode"] = radioFilterAppsList.SelectedIndex.ToString();
             settings["GalleryAppsAlwaysIgnoreDependencies"] = chkGalleryAppsAlwaysIgnoreDependencies.Checked.ToString();
 		}
 

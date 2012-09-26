@@ -248,24 +248,6 @@ namespace WebsitePanel.Portal.ProviderControls {
         protected global::System.Web.UI.WebControls.Label lblWebAppGallery;
         
         /// <summary>
-        /// lblGalleryFeed control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblGalleryFeed;
-        
-        /// <summary>
-        /// txtGalleryFeedUrl control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtGalleryFeedUrl;
-        
-        /// <summary>
         /// Label1 control.
         /// </summary>
         /// <remarks>
@@ -275,13 +257,22 @@ namespace WebsitePanel.Portal.ProviderControls {
         protected global::System.Web.UI.WebControls.Label Label1;
         
         /// <summary>
+        /// radioFilterAppsList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButtonList radioFilterAppsList;
+        
+        /// <summary>
         /// FilterDialogButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton FilterDialogButton;
+        protected global::System.Web.UI.WebControls.Button FilterDialogButton;
         
         /// <summary>
         /// chkGalleryAppsAlwaysIgnoreDependencies control.
@@ -293,6 +284,15 @@ namespace WebsitePanel.Portal.ProviderControls {
         protected global::System.Web.UI.WebControls.CheckBox chkGalleryAppsAlwaysIgnoreDependencies;
         
         /// <summary>
+        /// wpiEditFeedsList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.UserControls.EditFeedsList wpiEditFeedsList;
+        
+        /// <summary>
         /// FilterDialogPanel control.
         /// </summary>
         /// <remarks>
@@ -300,15 +300,6 @@ namespace WebsitePanel.Portal.ProviderControls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel FilterDialogPanel;
-        
-        /// <summary>
-        /// Localize1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize Localize1;
         
         /// <summary>
         /// WebAppGalleryList control.

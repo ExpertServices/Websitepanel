@@ -4,6 +4,7 @@
 <%@ Register Src="../UserControls/EditDomainsList.ascx" TagName="EditDomainsList" TagPrefix="uc5" %>
 <%@ Register Src="../UserControls/CollapsiblePanel.ascx" TagPrefix="wsp" TagName="CollapsiblePanel" %>
 <%@ Register Src="../UserControls/PopupHeader.ascx" TagName="PopupHeader" TagPrefix="wsp" %>
+<%@ Register src="../UserControls/EditFeedsList.ascx" tagname="EditFeedsList" tagprefix="uc6" %>
 
 <fieldset>
     <legend>
@@ -116,30 +117,33 @@
         <asp:Label ID="lblWebAppGallery" runat="server" meta:resourcekey="lblWebAppGallery" Text="Pools" CssClass="NormalBold"></asp:Label>&nbsp;
     </legend>
 <br />
-    <table width="100%" cellpadding="4">
-
-		<tr>
-		    <td class="Normal" valign="top" width="192">
-		        <asp:Label ID="lblGalleryFeed" runat="server" meta:resourcekey="lblGalleryFeed" Text="Gallery feed URL:"></asp:Label>
-		    </td>
-		    <td class="Normal" valign="top">
-                <asp:TextBox ID="txtGalleryFeedUrl" runat="server" CssClass="NormalTextBox" Width="300px"></asp:TextBox>
-                <p style="text-align: justify;"><i><asp:Localize runat="server" meta:resourcekey="lclGalleryFeedNote" /></i></p>
-			</td>
-		</tr>
+      <table width="100%" cellpadding="4">
 		<tr>
 			<td class="Normal" valign="top" width="192">
 		        <asp:Label ID="Label1" runat="server" meta:resourcekey="GalleryFeedFilter" Text="Gallery feed filter:"></asp:Label>
+                
 		    </td>
 		    <td class="Normal" valign="top">
-                <asp:LinkButton runat="server" ID="FilterDialogButton" meta:resourcekey="FilterDialogButton" Text="Click to apply a filter..." />
+                <asp:RadioButtonList  ID="radioFilterAppsList" runat="server">
+                    <asp:ListItem Value="Exclude">Exclude selected applications</asp:ListItem>
+                    <asp:ListItem Value="Include">Include only selected applications</asp:ListItem>
+                </asp:RadioButtonList>
+                <br/>
+                <asp:Button runat="server" CssClass="Button1" ID="FilterDialogButton" Text="Change a filter" />
+                <br/><br/>
+                <asp:CheckBox ID="chkGalleryAppsAlwaysIgnoreDependencies" runat="server" meta:resourcekey="chkGalleryAppsAlwaysIgnoreDependencies" Text="Always ignore dependencies" />
 			</td>
 		</tr>
+
+
         <tr>
-	        <td colspan="2">
-	            <asp:CheckBox ID="chkGalleryAppsAlwaysIgnoreDependencies" runat="server" meta:resourcekey="chkGalleryAppsAlwaysIgnoreDependencies" Text="Always ignore dependencies" />
-	        </td>
-	    </tr>
+			<td class="SubHead" colspan="2">Custom feeds:</td>
+		</tr>
+
+        <tr>
+			<td colspan="2"><uc6:EditFeedsList ID="wpiEditFeedsList" runat="server" DisplayNames="false" /><br/></td>
+		</tr>
+
     </table>
 </fieldset>
 <br />
@@ -149,7 +153,6 @@
 	<wsp:PopupHeader runat="server" meta:resourcekey="popWebAppGalleryFilter" Text="Web Application Gallery Filter" />
 	<div class="Content">
 		<div class="Body">
-			<div style="padding: 5px 10px 5px 10px;"><asp:Localize ID="Localize1" runat="server" meta:resourcekey="lclGalleryFilterNote" /></div>
 			<div class="BorderFillBox" style="padding: 5px 5px 5px 5px; overflow-y: scroll; width: auto; height: 300px;">
 				<asp:CheckBoxList runat="server" ID="WebAppGalleryList" DataSourceID="WebAppGalleryListDS" 
 					DataValueField="Id" DataTextField="Title" OnDataBound="WebAppGalleryList_DataBound">

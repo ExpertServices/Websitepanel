@@ -571,6 +571,7 @@
 		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" RemoteFiles="WebsitePanel-WSPTransportAgent-$(Version).zip" />
 		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(ToolsFolder)\WebsitePanel.LocalizationToolkit.msi" RemoteFiles="WebsitePanel.LocalizationToolkit-$(Version).msi" />
 		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanelInstaller.msi" RemoteFiles="WebsitePanelInstaller-$(Version).msi" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\Manual-Update.zip" RemoteFiles="Manual-Update-$(Version).zip" />
 	</Target>
 
 	<Target Name="uploadtocodeplex">

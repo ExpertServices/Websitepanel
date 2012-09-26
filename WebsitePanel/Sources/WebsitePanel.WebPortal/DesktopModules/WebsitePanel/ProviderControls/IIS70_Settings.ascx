@@ -188,39 +188,35 @@
 
     <table width="100%" cellpadding="4">
 		<tr>
-
 			<td class="Normal" valign="top" width="192">
 		        <asp:Label runat="server" meta:resourcekey="GalleryFeedFilter" Text="Gallery feed filter:"></asp:Label>
+                
 		    </td>
-
-
 		    <td class="Normal" valign="top">
-                <asp:LinkButton runat="server" ID="FilterDialogButton" meta:resourcekey="FilterDialogButton" Text="Click to apply a filter..." />
+                <asp:RadioButtonList  ID="radioFilterAppsList" runat="server">
+                    <asp:ListItem Value="Exclude">Exclude selected applications</asp:ListItem>
+                    <asp:ListItem Value="Include">Include only selected applications</asp:ListItem>
+                </asp:RadioButtonList>
+                <br/>
+                <asp:Button runat="server" CssClass="Button1" ID="FilterDialogButton" Text="Change a filter" />
+                <br/><br/>
+                <asp:CheckBox ID="chkGalleryAppsAlwaysIgnoreDependencies" runat="server" meta:resourcekey="chkGalleryAppsAlwaysIgnoreDependencies" Text="Always ignore dependencies" />
 			</td>
 		</tr>
 
-<%--        <tr>
-				<td class="SubHead" style="width:200px;">Enable Microsoft feed</td>
-				<td class="Normal">
-                    <asp:CheckBox ID="wpiMicrosoftFeed" runat="server" Text="Yes"  Visible="false" />
-                </td>
-			</tr>
-			
-            <tr>
-		        <td class="SubHead" style="width:200px;">Enable HeliconTech feed</td>
-                <td class="Normal">
-                    <asp:CheckBox ID="wpiHeliconTechFeed" runat="server" Text="Yes" />
-                </td>
-            </tr>
---%>    
 
-        
+        <tr>
+			<td class="SubHead" colspan="2">Custom feeds:</td>
+		</tr>
 
-</table>
-    <uc6:EditFeedsList ID="wpiEditFeedsList" runat="server" DisplayNames="false" />
+        <tr>
+			<td colspan="2"><uc6:EditFeedsList ID="wpiEditFeedsList" runat="server" DisplayNames="false" /><br/></td>
+		</tr>
 
-       <br/>
-   <asp:CheckBox ID="chkGalleryAppsAlwaysIgnoreDependencies" runat="server" meta:resourcekey="chkGalleryAppsAlwaysIgnoreDependencies" Text="Always ignore dependencies" />
+    </table>
+    
+   
+   
 
 
 </fieldset>
@@ -233,7 +229,6 @@
 	DefaultButton="OkButton">
 	<wsp:PopupHeader runat="server" meta:resourcekey="popWebAppGalleryFilter" Text="Web Application Gallery Filter" />
 	<div class="Content">
-		<div style="padding: 5px 10px 5px 10px;"><asp:Localize runat="server" meta:resourcekey="lclGalleryFilterNote" /></div>
 		<div class="BorderFillBox" style="padding: 5px 5px 5px 5px; overflow-y: scroll; width: auto; height: 300px;">
 			<asp:CheckBoxList runat="server" ID="WebAppGalleryList" DataSourceID="WebAppGalleryListDS" 
 				DataValueField="Id" DataTextField="Title" OnDataBound="WebAppGalleryList_DataBound">

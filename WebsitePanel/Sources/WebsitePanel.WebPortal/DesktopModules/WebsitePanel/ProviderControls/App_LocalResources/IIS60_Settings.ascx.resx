@@ -200,7 +200,7 @@
     <value>Shared SSL Web Sites:</value>
   </data>
   <data name="lblWebAppGallery.Text" xml:space="preserve">
-    <value>Microsoft Web Appication Gallery</value>
+    <value>Web Appication Gallery</value>
   </data>
   <data name="lblWebFarms.Text" xml:space="preserve">
     <value>Web Farms Support:</value>
@@ -225,9 +225,6 @@
   </data>
   <data name="secWebExtensions.Text" xml:space="preserve">
     <value>Web Extensions</value>
-  </data>
-  <data name="lclGalleryFilterNote.Text" xml:space="preserve">
-    <value>Please select items from the feed you would like to remove from the list of apps available to end-users.</value>
   </data>
   <data name="lblAspNet40Path.Text" xml:space="preserve">
     <value>ASP.NET 4.0 Library Path:</value>

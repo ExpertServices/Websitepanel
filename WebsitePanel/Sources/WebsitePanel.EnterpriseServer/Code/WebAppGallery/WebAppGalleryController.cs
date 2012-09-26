@@ -270,6 +270,7 @@ namespace WebsitePanel.EnterpriseServer
                 //    x => MatchGalleryAppDependencies(x.Dependency, appsFilter.ToArray())
                 //        || MatchMenaltoGalleryApp(x, appsFilter.ToArray())));
 
+
 				{
                     FilterResultApplications(packageId, result);
 
@@ -293,14 +294,33 @@ namespace WebsitePanel.EnterpriseServer
             int userId = SecurityContext.User.UserId;
             //
             SecurityContext.SetThreadSupervisorPrincipal();
+
+            //get filter mode
+            int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Web);
+            StringDictionary serviceSettings = ServerController.GetServiceSettings(serviceId);
+            bool bExclude = (Utils.ParseInt(serviceSettings["GalleryAppsFilterMode"], 0) != 1);  //0 - Exclude apps, 1- Include apps
+
             //
             string[] filteredApps = GetServiceAppsCatalogFilter(packageId);
             //
+
+
+
             if (filteredApps != null)
             {
-                result.Value = new List<GalleryApplication>(Array.FindAll(result.Value.ToArray(),
-                    x => !Array.Exists(filteredApps,
-                        z => z.Equals(x.Id, StringComparison.InvariantCultureIgnoreCase))));
+                if (bExclude)
+                {
+                    result.Value = new List<GalleryApplication>(Array.FindAll(result.Value.ToArray(),
+                        x => !Array.Exists(filteredApps,
+                            z => z.Equals(x.Id, StringComparison.InvariantCultureIgnoreCase))));
+                }
+                else
+                {
+                    result.Value = new List<GalleryApplication>(Array.FindAll(result.Value.ToArray(),
+                        x => Array.Exists(filteredApps,
+                            z => z.Equals(x.Id, StringComparison.InvariantCultureIgnoreCase))));
+
+                }
             }
             //
             SecurityContext.SetThreadPrincipal(userId);

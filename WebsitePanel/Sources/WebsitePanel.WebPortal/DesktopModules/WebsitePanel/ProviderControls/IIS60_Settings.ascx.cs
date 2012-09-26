@@ -109,7 +109,6 @@ namespace WebsitePanel.Portal.ProviderControls
             txtAspNet11Pool.Text = settings["AspNet11Pool"];
             txtAspNet20Pool.Text = settings["AspNet20Pool"];
 			txtAspNet40Pool.Text = settings["AspNet40Pool"];
-			txtGalleryFeedUrl.Text = settings["GalleryXmlFeedUrl"];
             txtAspPath.Text = settings["AspPath"];
             txtAspNet11Path.Text = settings["AspNet11Path"];
             txtAspNet20Path.Text = settings["AspNet20Path"];
@@ -130,8 +129,11 @@ namespace WebsitePanel.Portal.ProviderControls
 
             sharedSslSites.Value = settings[PackageSettings.SHARED_SSL_SITES];
             ActiveDirectoryIntegration.BindSettings(settings);
-			//
+			
+            //
+            wpiEditFeedsList.Value = settings["FeedUrls"];
 			FilteredAppIds = settings["GalleryAppsFilter"];
+            radioFilterAppsList.SelectedIndex = Utils.ParseInt(settings["GalleryAppsFilterMode"], 0);
             chkGalleryAppsAlwaysIgnoreDependencies.Checked = Utils.ParseBool(settings["GalleryAppsAlwaysIgnoreDependencies"], false);
         }
 
@@ -148,7 +150,6 @@ namespace WebsitePanel.Portal.ProviderControls
             settings["AspNet11Path"] = txtAspNet11Path.Text.Trim();
             settings["AspNet20Path"] = txtAspNet20Path.Text.Trim();
 			settings["AspNet40Path"] = txtAspNet40Path.Text.Trim();
-			settings["GalleryXmlFeedUrl"] = txtGalleryFeedUrl.Text.Trim();
             settings["Php4Path"] = txtPhp4Path.Text.Trim();
             settings["Php5Path"] = txtPhp5Path.Text.Trim();
             settings["PerlPath"] = txtPerlPath.Text.Trim();
@@ -166,7 +167,9 @@ namespace WebsitePanel.Portal.ProviderControls
             
             ActiveDirectoryIntegration.SaveSettings(settings);
 			//
+            settings["FeedUrls"] = wpiEditFeedsList.Value;
 			settings["GalleryAppsFilter"] = GetAppsCatalogFilter();
+            settings["GalleryAppsFilterMode"] = radioFilterAppsList.SelectedIndex.ToString();
             settings["GalleryAppsAlwaysIgnoreDependencies"] = chkGalleryAppsAlwaysIgnoreDependencies.Checked.ToString();
         }
     }
