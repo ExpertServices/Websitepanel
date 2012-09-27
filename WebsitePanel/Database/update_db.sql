@@ -4863,6 +4863,10 @@ BEGIN
 	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (66, N'ServiceUrl', N'http://localhost:9998/services/')
 END
 GO
+UPDATE [dbo].[Providers] SET [DisplayName] = 'SmarterMail 7.x - 8.x' WHERE [DisplayName] = 'SmarterMail 7.x'
+GO
+UPDATE [dbo].[Providers] SET [DisplayName] = 'SmarterMail 10.x +' WHERE [DisplayName] = 'SmarterMail 10.x'
+GO
 
 
 ALTER PROCEDURE [dbo].[AddServiceItem]

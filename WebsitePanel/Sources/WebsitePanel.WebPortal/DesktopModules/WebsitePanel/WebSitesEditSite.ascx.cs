@@ -176,15 +176,13 @@ namespace WebsitePanel.Portal
                 ddlIpAddresses.Items.Add(new ListItem(fullIP, ip.PackageAddressID.ToString()));
             }
 
-            bool isDedicatedIP = false;
-            if (!String.IsNullOrEmpty(site.SiteIPAddress))
+            if (site.IsDedicatedIP)
             {
                 litIPAddress.Text = site.SiteIPAddress;
-                isDedicatedIP = true;
             }
 
-            dedicatedIP.Visible = isDedicatedIP;
-            sharedIP.Visible = !isDedicatedIP;
+            dedicatedIP.Visible = site.IsDedicatedIP;
+            sharedIP.Visible = !site.IsDedicatedIP;
             cmdSwitchToDedicatedIP.Visible = (ddlIpAddresses.Items.Count > 0);
                        
 

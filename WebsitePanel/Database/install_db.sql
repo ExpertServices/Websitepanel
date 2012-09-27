@@ -23621,11 +23621,11 @@ INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName]
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (63, 4, N'hMailServer5', N'hMailServer 5.x', N'WebsitePanel.Providers.Mail.hMailServer5, WebsitePanel.Providers.Mail.hMailServer5', N'hMailServer5', NULL)
 GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (64, 4, N'SmarterMail', N'SmarterMail 7.x', N'WebsitePanel.Providers.Mail.SmarterMail7, WebsitePanel.Providers.Mail.SmarterMail7', N'SmarterMail60', NULL)
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (64, 4, N'SmarterMail', N'SmarterMail 7.x - 8.x', N'WebsitePanel.Providers.Mail.SmarterMail7, WebsitePanel.Providers.Mail.SmarterMail7', N'SmarterMail60', NULL)
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (65, 4, N'SmarterMail', N'SmarterMail 9.x', N'WebsitePanel.Providers.Mail.SmarterMail9, WebsitePanel.Providers.Mail.SmarterMail9', N'SmarterMail60', NULL)
 GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (66, 4, N'SmarterMail', N'SmarterMail 10.x', N'WebsitePanel.Providers.Mail.SmarterMail10, WebsitePanel.Providers.Mail.SmarterMail10', N'SmarterMail60', NULL)
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (66, 4, N'SmarterMail', N'SmarterMail 10.x +', N'WebsitePanel.Providers.Mail.SmarterMail10, WebsitePanel.Providers.Mail.SmarterMail10', N'SmarterMail60', NULL)
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (100, 1, N'Windows2008', N'Windows Server 2008', N'WebsitePanel.Providers.OS.Windows2008, WebsitePanel.Providers.OS.Windows2008', N'Windows2008', NULL)
 GO

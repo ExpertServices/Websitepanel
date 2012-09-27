@@ -133,6 +133,18 @@ namespace WebsitePanel.EnterpriseServer
             if(ip != null)
                 site.SiteIPAddress = ip.ExternalIP;
 
+            // check if site has dedicated IP assigned
+            var siteIpAddresses = ServerController.GetItemIPAddresses(siteItemId, IPAddressPool.None);
+            foreach (var siteIp in siteIpAddresses)
+            {
+                var packageIpAddress = ServerController.GetPackageIPAddress(siteIp.AddressID);
+                if (packageIpAddress != null && packageIpAddress.ExternalIP == site.SiteIPAddress)
+                {
+                    site.IsDedicatedIP = true;
+                    break;
+                }
+            }
+
             // truncate home folder
             site.ContentPath = FilesController.GetVirtualPackagePath(siteItem.PackageId, site.ContentPath);
 
@@ -681,8 +693,6 @@ namespace WebsitePanel.EnterpriseServer
             {
                 TaskManager.CompleteTask();
             }
-
-            return 0;
         }
 
         public static int SwitchWebSiteToSharedIP(int siteItemId)
@@ -744,9 +754,6 @@ namespace WebsitePanel.EnterpriseServer
             {
                 TaskManager.CompleteTask();
             }
- 
-            return 0;
-  
         }
 
         private static void FillWebServerBindings(List<ServerBinding> bindings, List<GlobalDnsRecord> dnsRecords,

@@ -47,6 +47,7 @@ namespace WebsitePanel.Providers.Web
         private string siteId;
 		private string siteIPAddress;
         private int siteIPAddressId;
+        private bool isDedicatedIP;
         private string dataPath;
 		private ServerBinding[] bindings;
         private bool frontPageAvailable;
@@ -83,6 +84,12 @@ namespace WebsitePanel.Providers.Web
         {
             get { return siteIPAddressId; }
             set { siteIPAddressId = value; }
+        }
+
+        public bool IsDedicatedIP
+        {
+            get { return isDedicatedIP; }
+            set { isDedicatedIP = value; }
         }
 
 		/// <summary>
