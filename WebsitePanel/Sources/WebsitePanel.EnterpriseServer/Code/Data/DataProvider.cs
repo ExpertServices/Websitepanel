@@ -3414,7 +3414,6 @@ namespace WebsitePanel.EnterpriseServer
 
         public static int GetPackageIdByName(string Name)
         {
-            // get Helicon Zoo provider
             int packageId = -1;
             List<ProviderInfo> providers = ServerController.GetProviders();
             foreach (ProviderInfo providerInfo in providers)
@@ -3426,10 +3425,10 @@ namespace WebsitePanel.EnterpriseServer
                 }
             }
 
-            if (-1 == packageId)
-            {
-                throw new Exception("Provider not found");
-            }
+            //if (-1 == packageId)
+            //{
+            //    throw new Exception("Provider not found");
+            //}
 
             return packageId;
         }

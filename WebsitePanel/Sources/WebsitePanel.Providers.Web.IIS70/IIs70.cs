@@ -4046,7 +4046,12 @@ namespace WebsitePanel.Providers.Web
         {
             using (var srvman = new ServerManager())
             {
-                return srvman.ApplicationPools["WebsitePanel Server"].ProcessModel.LoadUserProfile;
+                string poolName = Environment.GetEnvironmentVariable("APP_POOL_ID", EnvironmentVariableTarget.Process);
+                ApplicationPool pool = srvman.ApplicationPools[poolName];
+                if (pool == null)
+                    throw new Exception("ApplicationPool pool is null" + poolName);
+
+                return pool.ProcessModel.LoadUserProfile;
             }
 
         }
@@ -4055,7 +4060,12 @@ namespace WebsitePanel.Providers.Web
         {
             using (var srvman = new ServerManager())
             {
-                srvman.ApplicationPools["WebsitePanel Server"].ProcessModel.LoadUserProfile = true;
+                string poolName = Environment.GetEnvironmentVariable("APP_POOL_ID", EnvironmentVariableTarget.Process);
+                ApplicationPool pool = srvman.ApplicationPools[poolName];
+                if (pool == null)
+                    throw new Exception("ApplicationPool pool is null" + poolName);
+
+                pool.ProcessModel.LoadUserProfile = true;
                 // save changes
                 srvman.CommitChanges();
             }
