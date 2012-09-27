@@ -412,17 +412,35 @@ namespace WebsitePanel.EnterpriseServer
 
         public static bool CheckLoadUserProfile(int serverId)
         {
-            int packageId = DataProvider.GetPackageIdByName("IIS70");
-            int serviceId = DataProvider.GetServiceIdByProviderForServer(packageId, serverId);
-            return WebServerController.GetWebServer(serviceId).CheckLoadUserProfile();
-             
+            int packageId = getIISPackageId();
+            if (packageId != -1)
+            {
+                int serviceId = DataProvider.GetServiceIdByProviderForServer(packageId, serverId);
+                return WebServerController.GetWebServer(serviceId).CheckLoadUserProfile();
+            }
+
+            return false;
         }
 
+        private static int getIISPackageId()
+        {
+            int packageId = DataProvider.GetPackageIdByName("IIS80");
+            if (packageId == -1)
+                packageId = DataProvider.GetPackageIdByName("IIS70");
+            if (packageId == -1)
+                packageId = DataProvider.GetPackageIdByName("IIS60");
+
+
+            return packageId;
+        }
         public static void EnableLoadUserProfile(int serverId)
         {
-            int packageId = DataProvider.GetPackageIdByName("IIS70");
-            int serviceId = DataProvider.GetServiceIdByProviderForServer(packageId, serverId);
-            WebServerController.GetWebServer(serviceId).EnableLoadUserProfile();
+            int packageId = getIISPackageId();
+            if (packageId != -1)
+            {
+                int serviceId = DataProvider.GetServiceIdByProviderForServer(packageId, serverId);
+                WebServerController.GetWebServer(serviceId).EnableLoadUserProfile();
+            }
         }
 
         
