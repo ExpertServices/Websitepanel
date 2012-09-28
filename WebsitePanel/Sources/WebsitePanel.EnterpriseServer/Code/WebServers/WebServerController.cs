@@ -644,8 +644,7 @@ namespace WebsitePanel.EnterpriseServer
                 PackageController.UpdatePackageItem(siteItem);
 
                 // associate IP with web site
-                if (addressId != 0)
-                    ServerController.AddItemIPAddress(siteItemId, addressId);
+                ServerController.AddItemIPAddress(siteItemId, ipAddressId);
 
                 DomainInfo ZoneInfo = ServerController.GetDomain(domain.ZoneName);
 
@@ -667,19 +666,26 @@ namespace WebsitePanel.EnterpriseServer
                 ServiceProviderProxy.Init(web, siteItem.ServiceId);
                 WebSite site = web.GetSite(siteItem.SiteId);
 
-                List<ServerBinding> newBindings = new List<ServerBinding>();
-                foreach (ServerBinding b in site.Bindings)
-                {
-                    newBindings.Add(b);
-                }
-
                 // load web site IP address
                 IPAddressInfo ip = ServerController.GetIPAddress(siteItem.SiteIPAddressId);
                 string ipAddr = "*";
                 if (ip != null)
                     ipAddr = !String.IsNullOrEmpty(ip.InternalIP) ? ip.InternalIP : ip.ExternalIP;
 
-                newBindings.Add(new ServerBinding(ipAddr, "80", ""));
+                List<ServerBinding> newBindings = new List<ServerBinding>();
+
+                ServerBinding srvBinding = new ServerBinding(ipAddr, "80", "");
+                newBindings.Add(srvBinding);
+
+                foreach (ServerBinding b in site.Bindings)
+                {
+                    if (!((b.Host == srvBinding.Host) &
+                        (b.IP == srvBinding.IP) &
+                        (b.Port == srvBinding.Port)))
+                        newBindings.Add(b);
+                }
+
+                
                
                 web.UpdateSiteBindings(siteItem.SiteId, newBindings.ToArray(), false);
                 
@@ -722,8 +728,29 @@ namespace WebsitePanel.EnterpriseServer
                 if (domain != null)
                     DeleteWebSitePointer(siteItemId, domain.DomainId, true, true, false);
 
+                // clear binding left overs
+                WebServer web = new WebServer();
+                ServiceProviderProxy.Init(web, siteItem.ServiceId);
+                WebSite site = web.GetSite(siteItem.SiteId);
+                List<ServerBinding> newBindings = new List<ServerBinding>();
+                web.UpdateSiteBindings(siteItem.SiteId, newBindings.ToArray(), true);
+
+
+                //figure out the PackageAddressId
+                PackageIPAddress packageIpAddress = null;
+                var siteIpAddresses = ServerController.GetItemIPAddresses(siteItemId, IPAddressPool.None);
+                foreach (var siteIp in siteIpAddresses)
+                {
+                    packageIpAddress = ServerController.GetPackageIPAddress(siteIp.AddressID);
+                    if (packageIpAddress != null && packageIpAddress.AddressID == siteItem.SiteIPAddressId)
+                    {
+                        break;
+                    }
+                }
+                
                 //Deallocate IP Address
-                ServerController.DeleteItemIPAddress(siteItemId, siteItem.SiteIPAddressId);
+                if (packageIpAddress != null)
+                    ServerController.DeleteItemIPAddress(siteItemId, packageIpAddress.PackageAddressID);
 
                 // update site item
                 siteItem.SiteIPAddressId = 0;
@@ -1043,14 +1070,17 @@ namespace WebsitePanel.EnterpriseServer
                     foreach (ServerBinding b in bindings)
                     {
                         //add new domain record
-                        domain.DomainName = b.Host;
-                        int domainID = ServerController.AddDomain(domain);
-                        DomainInfo domainTmp = ServerController.GetDomain(domainID);
-                        if (domainTmp != null)
+                        if (!string.IsNullOrEmpty(b.Host))
                         {
-                            domainTmp.WebSiteId = siteItemId;
-                            domainTmp.ZoneItemId = domain.ZoneItemId;
-                            ServerController.UpdateDomain(domainTmp);
+                            domain.DomainName = b.Host;
+                            int domainID = ServerController.AddDomain(domain);
+                            DomainInfo domainTmp = ServerController.GetDomain(domainID);
+                            if (domainTmp != null)
+                            {
+                                domainTmp.WebSiteId = siteItemId;
+                                domainTmp.ZoneItemId = domain.ZoneItemId;
+                                ServerController.UpdateDomain(domainTmp);
+                            }
                         }
                     }
                 }
