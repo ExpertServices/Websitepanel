@@ -1654,6 +1654,9 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeMailboxPlan plan = GetExchangeMailboxPlan(itemId, mailboxPlanId);
                 if (maxDiskSpace != -1)
                 {
+                    if (plan.MailboxSizeMB == -1)
+                        return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+
                     if ((quotaUsed + plan.MailboxSizeMB) > (maxDiskSpace))
                         return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
                 }
@@ -2575,6 +2578,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (maxDiskSpace != -1)
                 {
+                    if (plan.MailboxSizeMB == -1)
+                        return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+
                     ExchangeAccount exchangeAccount = GetAccount(itemId, accountId);
                     if (exchangeAccount.MailboxPlanId > 0)
                     {
