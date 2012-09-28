@@ -639,6 +639,13 @@ namespace WebsitePanel.EnterpriseServer
                 if (domain != null)
                     DeleteWebSitePointer(siteItemId, domain.DomainId, true, true, false);
 
+                // clear binding left overs
+                WebServer web = new WebServer();
+                ServiceProviderProxy.Init(web, siteItem.ServiceId);
+                WebSite site = web.GetSite(siteItem.SiteId);
+                List<ServerBinding> newBindings = new List<ServerBinding>();
+                web.UpdateSiteBindings(siteItem.SiteId, newBindings.ToArray(), true);
+
                 // update site item
                 siteItem.SiteIPAddressId = addressId;
                 PackageController.UpdatePackageItem(siteItem);
@@ -661,23 +668,18 @@ namespace WebsitePanel.EnterpriseServer
                         , ZoneInfo.DomainId, true, true, true);
                 }
 
-
-                WebServer web = new WebServer();
-                ServiceProviderProxy.Init(web, siteItem.ServiceId);
-                WebSite site = web.GetSite(siteItem.SiteId);
-
                 // load web site IP address
                 IPAddressInfo ip = ServerController.GetIPAddress(siteItem.SiteIPAddressId);
                 string ipAddr = "*";
                 if (ip != null)
                     ipAddr = !String.IsNullOrEmpty(ip.InternalIP) ? ip.InternalIP : ip.ExternalIP;
 
-                List<ServerBinding> newBindings = new List<ServerBinding>();
+                newBindings = new List<ServerBinding>();
 
                 ServerBinding srvBinding = new ServerBinding(ipAddr, "80", "");
                 newBindings.Add(srvBinding);
 
-                foreach (ServerBinding b in site.Bindings)
+                foreach (ServerBinding b in web.GetSiteBindings(siteItem.SiteId))
                 {
                     if (!((b.Host == srvBinding.Host) &
                         (b.IP == srvBinding.IP) &
