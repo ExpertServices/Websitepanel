@@ -1699,24 +1699,6 @@ GO
 
 
 
-USE [WebsitePanelMerge]
-GO
-/****** Object:  UserDefinedFunction [dbo].[CalculateQuotaUsage]    Script Date: 09/28/2012 22:39:53 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
 
 ALTER FUNCTION [dbo].[CalculateQuotaUsage]
 (
@@ -4871,7 +4853,7 @@ GO
 
 
 
-IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'SmarterMail 10.x')
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE DisplayName = 'SmarterMail 10.x +')
 BEGIN
 	INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (66, 4, N'SmarterMail', N'SmarterMail 10.x', N'WebsitePanel.Providers.Mail.SmarterMail10, WebsitePanel.Providers.Mail.SmarterMail10', N'SmarterMail60', NULL)
 	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (66, N'AdminPassword', N'')
