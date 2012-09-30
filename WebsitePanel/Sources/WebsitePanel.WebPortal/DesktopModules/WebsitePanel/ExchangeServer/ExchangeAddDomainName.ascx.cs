@@ -42,7 +42,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             foreach (DomainInfo d in domains)
             {
-                if (!d.IsDomainPointer & !d.IsInstantAlias)
+                if (!d.IsDomainPointer)
                 {
                     bool bAdd = true;
                     foreach (OrganizationDomainName acceptedDomain in list)

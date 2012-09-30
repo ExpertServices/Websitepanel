@@ -49,6 +49,12 @@ namespace WebsitePanel.Portal
             set { ViewState["HideWebSites"] = value; }
         }
 
+        public bool HideInstantAlias
+        {
+            get { return (ViewState["HideInstantAlias"] != null) ? (bool)ViewState["HideInstantAlias"] : false; }
+            set { ViewState["HideInstantAlias"] = value; }
+        }
+
         public bool HideMailDomains
         {
             get { return (ViewState["HideMailDomains"] != null) ? (bool)ViewState["HideMailDomains"] : false; }
@@ -111,13 +117,13 @@ namespace WebsitePanel.Portal
             {
                 if (HideWebSites && domain.WebSiteId > 0)
                     continue;
-                else if (domain.IsInstantAlias)
-                    continue; // remove instant aliases at all
+                else if (HideInstantAlias && domain.IsInstantAlias)
+                    continue; 
                 else if (HideMailDomains && domain.MailDomainId > 0)
                     continue;
-                else if (HideDomainPointers && (domain.IsDomainPointer || domain.IsInstantAlias))
+                else if (HideDomainPointers && (domain.IsDomainPointer))
                     continue;
-                else if (HideDomainsSubDomains && !(domain.IsDomainPointer || domain.IsInstantAlias))
+                else if (HideDomainsSubDomains && !(domain.IsDomainPointer))
                     continue;
 
                 ddlDomains.Items.Add(new ListItem(domain.DomainName, domain.DomainId.ToString()));

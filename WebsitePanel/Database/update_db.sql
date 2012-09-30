@@ -1699,6 +1699,7 @@ GO
 
 
 
+
 ALTER FUNCTION [dbo].[CalculateQuotaUsage]
 (
 	@PackageID int,
@@ -1728,7 +1729,7 @@ AS
 		ELSE IF @QuotaID = 54 -- sub-domains
 			SET @Result = (SELECT COUNT(D.DomainID) FROM PackagesTreeCache AS PT
 				INNER JOIN Domains AS D ON D.PackageID = PT.PackageID
-				WHERE IsSubDomain = 1 AND IsInstantAlias = 0 AND PT.ParentPackageID = @PackageID)
+				WHERE IsSubDomain = 1 AND IsInstantAlias = 0 AND IsDomainPointer = 0 AND PT.ParentPackageID = @PackageID)
 		ELSE IF @QuotaID = 220 -- domain pointers
 			SET @Result = (SELECT COUNT(D.DomainID) FROM PackagesTreeCache AS PT
 				INNER JOIN Domains AS D ON D.PackageID = PT.PackageID
@@ -1821,7 +1822,6 @@ AS
 
 		RETURN @Result
 	END
-
 GO
 
 
@@ -4852,11 +4852,6 @@ GO
 
 
 
----------------------------
--- SmarterTools Products
----------------------------
-
--- Renames
 UPDATE [dbo].[Providers] SET [DisplayName] = 'SmarterMail 7.x - 8.x' WHERE [DisplayName] = 'SmarterMail 7.x'
 GO
 UPDATE [dbo].[Providers] SET [DisplayName] = 'SmarterMail 10.x +' WHERE [DisplayName] = 'SmarterMail 10.x'
@@ -4864,7 +4859,6 @@ GO
 UPDATE [dbo].[Providers] SET [DisplayName] = 'SmarterStats 5.x +' WHERE [DisplayName] = 'SmarterStats 5.x-6.x'
 GO
 
--- Inserts
 IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'SmarterMail 10.x +')
 BEGIN
 	INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (66, 4, N'SmarterMail', N'SmarterMail 10.x +', N'WebsitePanel.Providers.Mail.SmarterMail10, WebsitePanel.Providers.Mail.SmarterMail10', N'SmarterMail60', NULL)

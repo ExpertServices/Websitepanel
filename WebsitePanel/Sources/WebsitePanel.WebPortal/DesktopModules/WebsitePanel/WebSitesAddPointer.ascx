@@ -7,7 +7,7 @@
 		    <asp:Label ID="lblDomainName" runat="server" meta:resourcekey="lblDomainName" Text="Domain name:"></asp:Label>
 		</td>
 		<td>
-			<asp:TextBox ID="txtHostName" runat="server" CssClass="TextBox100" MaxLength="64" Text="www"></asp:TextBox>.<uc1:DomainsSelectDomainControl ID="domainsSelectDomainControl" runat="server" HideWebSites="true" HideDomainPointers="true" />
+			<asp:TextBox ID="txtHostName" runat="server" CssClass="TextBox100" MaxLength="64" Text="www"></asp:TextBox>.<uc1:DomainsSelectDomainControl ID="domainsSelectDomainControl" runat="server" HideWebSites="true" HideDomainPointers="true" HideInstantAlias="false"/>
             <asp:RequiredFieldValidator ID="valRequireHostName" runat="server" meta:resourcekey="valRequireHostName" ControlToValidate="txtHostName"
 	            ErrorMessage="Enter hostname" ValidationGroup="CreateSite" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
             <asp:RegularExpressionValidator ID="valRequireCorrectHostName" runat="server"

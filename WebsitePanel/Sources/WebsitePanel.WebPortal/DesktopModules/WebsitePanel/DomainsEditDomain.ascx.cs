@@ -108,8 +108,10 @@ namespace WebsitePanel.Portal
                 }
 
                 // instant alias
+                PackageSettings settings = ES.Services.Packages.GetPackageSettings(PanelSecurity.PackageId, PackageSettings.INSTANT_ALIAS);
+
                 bool instantAliasAllowed = !String.IsNullOrEmpty(domain.InstantAliasName);
-                bool instantAliasExists = (domain.InstantAliasId > 0);
+                bool instantAliasExists = (domain.InstantAliasId > 0) && (settings != null && !String.IsNullOrEmpty(settings["InstantAlias"]));
                 if (instantAliasAllowed
                     && !domain.IsDomainPointer && !domain.IsInstantAlias)
                 {
