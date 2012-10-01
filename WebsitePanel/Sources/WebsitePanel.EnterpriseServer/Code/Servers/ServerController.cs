@@ -1800,11 +1800,9 @@ namespace WebsitePanel.EnterpriseServer
                 else if (isDomainPointer)
                 {
                     // domain pointer
-                    /*
                     if (PackageController.GetPackageQuota(packageId, Quotas.OS_DOMAINPOINTERS).QuotaExhausted)
                         return BusinessErrorCodes.ERROR_DOMAIN_QUOTA_LIMIT;
-                     */
-                }
+                 }
                 else
                 {
                     // top-level domain
@@ -2173,21 +2171,24 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 // add web site pointer if required
+                /*
                 if (domain.WebSiteId > 0 && instantAlias.WebSiteId == 0)
                 {
                     int webRes = WebServerController.AddWebSitePointer(domain.WebSiteId, hostName, domainId);
                     if (webRes < 0)
                         return webRes;
                 }
-                /*
-                                // add mail domain pointer
-                                if (domain.MailDomainId > 0 && instantAlias.MailDomainId == 0)
-                                {
-                                    int mailRes = MailServerController.AddMailDomainPointer(domain.MailDomainId, instantAliasId);
-                                    if (mailRes < 0)
-                                        return mailRes;
-                                }
                  */
+
+                                // add mail domain pointer
+                /*
+                if (domain.MailDomainId > 0 && instantAlias.MailDomainId == 0)
+                {
+                    int mailRes = MailServerController.AddMailDomainPointer(domain.MailDomainId, instantAliasId);
+                    if (mailRes < 0)
+                        return mailRes;
+                }
+                */
 
                 return 0;
             }
