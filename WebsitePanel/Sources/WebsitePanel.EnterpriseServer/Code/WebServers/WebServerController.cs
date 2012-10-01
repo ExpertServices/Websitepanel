@@ -631,12 +631,18 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // remove all web site pointers
+                DomainInfo domain = ServerController.GetDomain(siteItem.Name);
+                DomainInfo ZoneInfo = ServerController.GetDomain(domain.ZoneName);
+
+                if (ZoneInfo == null)
+                    throw new Exception("failed to retrieve parent zone");
+                
                 List<DomainInfo> pointers = GetWebSitePointers(siteItemId);
                 foreach (DomainInfo pointer in pointers)
                     DeleteWebSitePointer(siteItemId, pointer.DomainId, true, true, false);
 
                 // remove web site main pointer
-                DomainInfo domain = ServerController.GetDomain(siteItem.Name);
+                
                 if (domain != null)
                     DeleteWebSitePointer(siteItemId, domain.DomainId, true, true, false);
 
@@ -653,8 +659,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 // associate IP with web site
                 ServerController.AddItemIPAddress(siteItemId, ipAddressId);
-
-                DomainInfo ZoneInfo = ServerController.GetDomain(domain.ZoneName);
+               
 
                 AddWebSitePointer(siteItemId,
                     (domain.DomainName.Replace("." + domain.ZoneName, "") == domain.ZoneName) ? "": domain.DomainName.Replace("." + domain.ZoneName,"")
@@ -725,13 +730,19 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
+                DomainInfo domain = ServerController.GetDomain(siteItem.Name);
+                DomainInfo ZoneInfo = ServerController.GetDomain(domain.ZoneName);
+
+                if (ZoneInfo == null)
+                    throw new Exception("failed to retrieve parent zone");
+
+                
                 // remove all web site pointers
                 List<DomainInfo> pointers = GetWebSitePointers(siteItemId);
                 foreach (DomainInfo pointer in pointers)
                     DeleteWebSitePointer(siteItemId, pointer.DomainId, true, true, false);
 
                 // remove web site main pointer
-                DomainInfo domain = ServerController.GetDomain(siteItem.Name);
                 if (domain != null)
                     DeleteWebSitePointer(siteItemId, domain.DomainId, true, true, false);
 
@@ -762,8 +773,6 @@ namespace WebsitePanel.EnterpriseServer
                 // update site item
                 siteItem.SiteIPAddressId = 0;
                 PackageController.UpdatePackageItem(siteItem);
-
-                DomainInfo ZoneInfo = ServerController.GetDomain(domain.ZoneName);
 
                 AddWebSitePointer(siteItemId,
                     (domain.DomainName.Replace("." + domain.ZoneName, "") == domain.ZoneName) ? "" : domain.DomainName.Replace("." + domain.ZoneName, "")
