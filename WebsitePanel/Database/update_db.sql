@@ -694,6 +694,7 @@ FROM Domains AS D
 INNER JOIN Packages AS P ON D.PackageID = P.PackageID
 WHERE CHARINDEX('.' + DomainName, @DomainName) > 0
 AND (CHARINDEX('.' + DomainName, @DomainName) + LEN('.' + DomainName)) = LEN(@DomainName) + 1
+AND IsDomainPointer = 0
 
 -- this is a domain of other user
 IF @UserID <> @DomainUserID AND @HostingAllowed = 0
