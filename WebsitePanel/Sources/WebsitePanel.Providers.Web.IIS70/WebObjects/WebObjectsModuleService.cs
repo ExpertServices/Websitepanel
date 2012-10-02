@@ -437,11 +437,16 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 				//
 				lock (((ICollection)iisObject.ChildElements).SyncRoot)
 				{
-                    // remove all "http" bindings
+                    // remove all "http" and "https" bindings
                     int i = 0;
                     while (i < iisObject.Bindings.Count)
                     {
                         if (String.Equals(iisObject.Bindings[i].Protocol, Uri.UriSchemeHttp, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            iisObject.Bindings.RemoveAt(i);
+                            continue;
+                        }
+                        else if (String.Equals(iisObject.Bindings[i].Protocol, Uri.UriSchemeHttps, StringComparison.InvariantCultureIgnoreCase))
                         {
                             iisObject.Bindings.RemoveAt(i);
                             continue;
@@ -454,10 +459,17 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 
 					// Create HTTP bindings received
 					foreach (var serverBinding in bindings)
-					{
-						var bindingInformation = String.Format("{0}:{1}:{2}", serverBinding.IP, serverBinding.Port, serverBinding.Host);
-						iisObject.Bindings.Add(bindingInformation, Uri.UriSchemeHttp);
-					}
+                        if (serverBinding.Port != "443")
+                        {
+                            var bindingInformation = String.Format("{0}:{1}:{2}", serverBinding.IP, serverBinding.Port, serverBinding.Host);
+                            iisObject.Bindings.Add(bindingInformation, Uri.UriSchemeHttp);
+                        }
+                        else
+                        {
+                            var bindingInformation = String.Format("{0}:{1}:{2}", serverBinding.IP, serverBinding.Port, serverBinding.Host);
+                            iisObject.Bindings.Add(bindingInformation, Uri.UriSchemeHttps);
+                        }
+
 				}
 				//
 				srvman.CommitChanges();
