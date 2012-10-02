@@ -5703,7 +5703,7 @@ DROP TABLE #TempCRMUsers
 GO
 
 
-IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetDomainsByZoneID]')
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetDomainsByZoneID')
 BEGIN
 EXEC sp_executesql N'CREATE PROCEDURE [dbo].[GetDomainsByZoneID]
 (
