@@ -646,11 +646,17 @@ namespace WebsitePanel.EnterpriseServer
                     DeleteWebSitePointer(siteItemId, domain.DomainId, true, true, false);
 
                 // clear binding left overs
+                List<ServerBinding> newBindings = new List<ServerBinding>();
                 WebServer web = new WebServer();
                 ServiceProviderProxy.Init(web, siteItem.ServiceId);
-                WebSite site = web.GetSite(siteItem.SiteId);
-                List<ServerBinding> newBindings = new List<ServerBinding>();
-                web.UpdateSiteBindings(siteItem.SiteId, newBindings.ToArray(), true);
+                try
+                {
+                    web.UpdateSiteBindings(siteItem.SiteId, newBindings.ToArray(), true);
+                }
+                catch (Exception)
+                {
+
+                }
 
                 // update site item
                 siteItem.SiteIPAddressId = addressId;
@@ -744,9 +750,16 @@ namespace WebsitePanel.EnterpriseServer
                 // clear binding left overs
                 WebServer web = new WebServer();
                 ServiceProviderProxy.Init(web, siteItem.ServiceId);
-                WebSite site = web.GetSite(siteItem.SiteId);
                 List<ServerBinding> newBindings = new List<ServerBinding>();
-                web.UpdateSiteBindings(siteItem.SiteId, newBindings.ToArray(), true);
+
+                try
+                {
+                    web.UpdateSiteBindings(siteItem.SiteId, newBindings.ToArray(), true);
+                }
+                catch (Exception)
+                {
+
+                }
 
 
                 //figure out the PackageAddressId

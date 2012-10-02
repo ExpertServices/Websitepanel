@@ -441,7 +441,8 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
                     int i = 0;
                     while (i < iisObject.Bindings.Count)
                     {
-                        if (String.Equals(iisObject.Bindings[i].Protocol, Uri.UriSchemeHttp, StringComparison.InvariantCultureIgnoreCase))
+                        if ((String.Equals(iisObject.Bindings[i].Protocol, Uri.UriSchemeHttp, StringComparison.InvariantCultureIgnoreCase)) | 
+                            (bindings.Length == 0))
                         {
                             iisObject.Bindings.RemoveAt(i);
                             continue;

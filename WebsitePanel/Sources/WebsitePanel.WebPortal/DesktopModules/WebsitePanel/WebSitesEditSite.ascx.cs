@@ -66,6 +66,7 @@ namespace WebsitePanel.Portal
 			new Tab { Id = "mime", ResourceKey = "Tab.MIMETypes", Quota = Quotas.WEB_MIME, ViewId = "tabMimes" },
 			new Tab { Id = "coldfusion", ResourceKey = "Tab.ColdFusion", Quota = Quotas.WEB_COLDFUSION, ViewId = "tabCF" },
 			new Tab { Id = "webman", ResourceKey = "Tab.WebManagement", Quota = Quotas.WEB_REMOTEMANAGEMENT, ViewId = "tabWebManagement" },
+            new Tab { Id = "SSL", ResourceKey = "Tab.SSL", Quota = Quotas.WEB_SSL, ViewId = "SSL" },
 		};
 
 		private int PackageId
@@ -256,14 +257,12 @@ namespace WebsitePanel.Portal
 			webSitesCustomErrorsControl.BindWebItem(site);
             if (site.SiteIPAddress != null)
             {
-                TabsList.Add(new Tab { Id = "SSL", ResourceKey = "Tab.SSL", Quota = Quotas.WEB_SSL, ViewId = "SSL" });
-                TabsList.ForEach((x) =>
-                {
-                    x.Name = GetLocalizedString(x.ResourceKey);
-                    x.ResourceGroup = x.ResourceGroup ?? ResourceGroups.Web;
-                });
-
+                WebsitesSSLControl.Visible = true;
                 WebsitesSSLControl.BindWebItem(site);
+            }
+            else
+            {
+                WebsitesSSLControl.Visible = false;
             }
 
 			BindVirtualDirectories();
