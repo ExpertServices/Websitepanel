@@ -164,6 +164,7 @@ namespace WebsitePanel.Portal
 			lnkSiteName.NavigateUrl = "http://" + site.Name;
 
             // bind unassigned IP addresses
+            ddlIpAddresses.Items.Clear();
             PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(site.PackageId, IPAddressPool.WebSites);
             foreach (PackageIPAddress ip in ips)
             {
