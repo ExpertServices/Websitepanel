@@ -1602,6 +1602,13 @@ namespace WebsitePanel.EnterpriseServer
                 DataProvider.GetDomains(SecurityContext.User.UserId, packageId, true));
         }
 
+
+        public static List<DomainInfo> GetDomainsByZoneId(int zoneId)
+        {
+            return ObjectUtils.CreateListFromDataSet<DomainInfo>(
+                DataProvider.GetDomainsByZoneId(SecurityContext.User.UserId, zoneId));
+        }
+        
         public static List<DomainInfo> GetMyDomains(int packageId)
         {
             return ObjectUtils.CreateListFromDataSet<DomainInfo>(
@@ -1913,6 +1920,8 @@ namespace WebsitePanel.EnterpriseServer
 
             // load domain
             DomainInfo domain = GetDomain(domainId);
+            if (domain == null)
+                return 0;
 
             // place log record
             TaskManager.StartTask("DOMAIN", "DETACH", domain.DomainName);
@@ -1938,6 +1947,17 @@ namespace WebsitePanel.EnterpriseServer
                     TaskManager.WriteError("Domain points to the existing organization domain");
                     return BusinessErrorCodes.ERROR_ORGANIZATION_DOMAIN_IS_IN_USE;
                 }
+
+                List<DomainInfo> domains = GetDomainsByZoneId(domain.ZoneItemId);
+                foreach (DomainInfo d in domains)
+                {
+                    if (d.WebSiteId > 0)
+                    {
+                        TaskManager.WriteError("Domain points to the existing web site");
+                        return BusinessErrorCodes.ERROR_DOMAIN_POINTS_TO_WEB_SITE;
+                    }
+                }
+
 
                 // remove DNS zone meta-item if required
                 if (domain.ZoneItemId > 0)
@@ -1968,6 +1988,8 @@ namespace WebsitePanel.EnterpriseServer
 
             // load domain
             DomainInfo domain = GetDomain(domainId);
+            if (domain == null)
+                return 0;
 
             // place log record
             TaskManager.StartTask("DOMAIN", "DELETE", domain.DomainName);
@@ -1993,6 +2015,17 @@ namespace WebsitePanel.EnterpriseServer
                     TaskManager.WriteError("Domain points to the existing organization domain");
                     return BusinessErrorCodes.ERROR_ORGANIZATION_DOMAIN_IS_IN_USE;
                 }
+
+                List<DomainInfo> domains = GetDomainsByZoneId(domain.ZoneItemId);
+                foreach (DomainInfo d in domains)
+                {
+                    if (d.WebSiteId > 0)
+                    {
+                        TaskManager.WriteError("Domain points to the existing web site");
+                        return BusinessErrorCodes.ERROR_DOMAIN_POINTS_TO_WEB_SITE;
+                    }
+                }
+
 
                 // delete instant alias
                 if (domain.InstantAliasId > 0)
@@ -2210,6 +2243,8 @@ namespace WebsitePanel.EnterpriseServer
 
             // load domain
             DomainInfo domain = GetDomain(domainId);
+            if (domain == null)
+                return 0;
 
             // place log record
             TaskManager.StartTask("DOMAIN", "DELETE_INSTANT_ALIAS", domain.DomainName);
@@ -2229,15 +2264,27 @@ namespace WebsitePanel.EnterpriseServer
                     if (webRes < 0)
                         return webRes;
                 }
-                /*
-                                // remove from mail domain pointers
-                                if (instantAlias.MailDomainId > 0)
-                                {
-                                    int mailRes = MailServerController.DeleteMailDomainPointer(instantAlias.MailDomainId, instantAlias.DomainId);
-                                    if (mailRes < 0)
-                                        return mailRes;
-                                }
-                 */
+
+
+                List<DomainInfo> domains = GetDomainsByZoneId(domain.ZoneItemId);
+                foreach (DomainInfo d in domains)
+                {
+                    if (d.WebSiteId > 0)
+                    {
+                        int webRes = WebServerController.DeleteWebSitePointer(d.WebSiteId, d.DomainId);
+                        if (webRes < 0)
+                            return webRes;
+                    }
+                }
+
+
+                // remove from mail domain pointers
+                if (instantAlias.MailDomainId > 0)
+                {
+                    int mailRes = MailServerController.DeleteMailDomainPointer(instantAlias.MailDomainId, instantAlias.DomainId);
+                    if (mailRes < 0)
+                        return mailRes;
+                }
 
                 // delete instant alias
                 int res = DeleteDomain(instantAlias.DomainId);

@@ -735,7 +735,7 @@ namespace WebsitePanel.EnterpriseServer
                 DomainInfo ZoneInfo = ServerController.GetDomain(domain.ZoneName);
 
                 if (ZoneInfo == null)
-                    throw new Exception("failed to retrieve parent zone");
+                    throw new Exception("Parent zone not found");
 
                 
                 // remove all web site pointers

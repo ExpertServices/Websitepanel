@@ -5703,6 +5703,40 @@ DROP TABLE #TempCRMUsers
 GO
 
 
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetDomainsByZoneID]')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[GetDomainsByZoneID]
+(
+	@ActorID int,
+	@ZoneID int
+)
+AS
+
+SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(D.WebSiteID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(D.MailDomainID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	Z.ItemName AS ZoneName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.IsDomainPointer
+FROM Domains AS D
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+WHERE
+	D.ZoneItemID = @ZoneID
+	AND dbo.CheckActorPackageRights(@ActorID, P.PackageID) = 1
+RETURN'
+END
+GO
 
 
 

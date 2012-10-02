@@ -793,6 +793,15 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@domainName", domainName));
         }
 
+        public static DataSet GetDomainsByZoneId(int actorId, int zoneId)
+        {
+            return SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetDomainsByZoneID",
+                new SqlParameter("@ActorId", actorId),
+                new SqlParameter("@ZoneID", zoneId));
+        }
+
+
         public static int CheckDomain(int packageId, string domainName, bool isDomainPointer)
         {
             SqlParameter prmId = new SqlParameter("@Result", SqlDbType.Int);
