@@ -473,6 +473,13 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 END
 GO
 
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Web.AllowIPAddressModeSwitch')
+BEGIN
+	INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (333, 2, 22, N'Web.AllowIPAddressModeSwitch', N'Allow IP Address Mode Switch', 1, 0, NULL)
+END
+GO
+
+
 
 DELETE FROM [dbo].[PackageQuotas] WHERE [QuotaID] IN (SELECT [QuotaID] FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.POP3Enabled')
 DELETE FROM [dbo].[HostingPlanQuotas] WHERE [QuotaID] IN (SELECT [QuotaID] FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.POP3Enabled')

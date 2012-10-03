@@ -107,23 +107,11 @@ namespace WebsitePanel.Portal
 			}
 		}
 
-        private void BindListOfAvailableSslDomains(ServerBinding[] siteBindings, SSLCertificate[] siteCertificates, string websiteName = "")
+        private void BindListOfAvailableSslDomains(string websiteName, string domainName)
 		{
             lstDomains.Items.Clear();
-            //
-            foreach (ServerBinding binding in siteBindings)
-            {
-                //
-                if (binding.IP.ToString().Length > 0 && binding.Host.Length == 0)
-                {
-                    lstDomains.Items.Add(new ListItem(websiteName, websiteName));
-                    lstDomains.Items.Add(new ListItem(String.Format("www.{0}", websiteName), String.Format("www.{0}", websiteName)));
-                }
-                else
-                {
-                    lstDomains.Items.Add(new ListItem(binding.Host, binding.Host));
-                }
-            }
+            lstDomains.Items.Add(new ListItem(websiteName, websiteName));
+            lstDomains.Items.Add(new ListItem(domainName, domainName));
 		}
 
 		public void BindWebItem(WebVirtualDirectory item)
@@ -144,8 +132,20 @@ namespace WebsitePanel.Portal
 				SSLCertificate[] certificates = ES.Services.WebServers.GetCertificatesForSite(item.Id);
 
 				SSLNotInstalled.Visible = true;
+
+                DomainInfo[] domains = ES.Services.Servers.GetDomains(PanelSecurity.PackageId);
+                string zoneName = string.Empty;
+                foreach (DomainInfo d in domains)
+                {
+                    if (d.WebSiteId == SiteId)
+                    {
+                        zoneName = d.ZoneName;
+                        break;
+                    }
+                }
+
 				//
-                BindListOfAvailableSslDomains(webSite.Bindings, certificates, webSite.Name);
+                BindListOfAvailableSslDomains(webSite.Name, zoneName);
 
 				if (certificates.Length > 0)
 				{
@@ -568,7 +568,20 @@ namespace WebsitePanel.Portal
 
 				SSLNotInstalled.Visible = true;
 				//
-				BindListOfAvailableSslDomains(item.Bindings, certificates, item.Name);
+
+                DomainInfo[] domains = ES.Services.Servers.GetDomains(PanelSecurity.PackageId);
+                string zoneName = string.Empty;
+                foreach (DomainInfo d in domains)
+                {
+                    if (d.WebSiteId == item.Id)
+                    {
+                        zoneName = d.ZoneName;
+                        break;
+                    }
+                }
+
+                //
+                BindListOfAvailableSslDomains(item.Name, zoneName);
 
 				if (certificates.Length > 0)
 				{

@@ -127,7 +127,7 @@
     <value>Cancel</value>
   </data>
   <data name="chkIgnoreGlobalDNSRecords.Text" xml:space="preserve">
-    <value>Ignore Zone Template</value>
+    <value>Include Zone Template</value>
   </data>
   <data name="lblAspNetVersion.Text" xml:space="preserve">
     <value>ASP.NET Version:</value>

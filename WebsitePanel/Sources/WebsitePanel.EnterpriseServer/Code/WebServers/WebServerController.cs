@@ -565,7 +565,15 @@ namespace WebsitePanel.EnterpriseServer
             // delete web site
             try
             {
-				// remove all web site pointers
+				//cleanup certificates
+                //cleanup certificates
+                List<SSLCertificate> certificates = GetCertificatesForSite(siteItemId);
+                foreach (SSLCertificate c in certificates)
+                {
+                    DeleteCertificate(siteItemId, c);
+                }
+                
+                // remove all web site pointers
 				List<DomainInfo> pointers = GetWebSitePointers(siteItemId);
 				foreach (DomainInfo pointer in pointers)
 					DeleteWebSitePointer(siteItemId, pointer.DomainId, false, true, true);
@@ -641,7 +649,6 @@ namespace WebsitePanel.EnterpriseServer
                     DeleteWebSitePointer(siteItemId, pointer.DomainId, true, true, false);
 
                 // remove web site main pointer
-                
                 if (domain != null)
                     DeleteWebSitePointer(siteItemId, domain.DomainId, true, true, false);
 
@@ -737,7 +744,13 @@ namespace WebsitePanel.EnterpriseServer
                 if (ZoneInfo == null)
                     throw new Exception("Parent zone not found");
 
-                
+                //cleanup certificates
+                List<SSLCertificate> certificates = GetCertificatesForSite(siteItemId);
+                foreach (SSLCertificate c in certificates)
+                {
+                    DeleteCertificate(siteItemId, c);
+                }
+
                 // remove all web site pointers
                 List<DomainInfo> pointers = GetWebSitePointers(siteItemId);
                 foreach (DomainInfo pointer in pointers)
@@ -3656,6 +3669,10 @@ Please ensure the space has been allocated {0} IP address as a dedicated one and
 				long ticks = DateTime.UtcNow.Ticks - DateTime.Parse("01/01/1970 00:00:00").Ticks;
 				ticks /= 10000000; // Convert windows ticks to seconds
 
+                //clean up bindings
+
+
+
 				certificate.FriendlyName = String.Format("{0}_{1}", certificate.Hostname, ticks.ToString());
 				certificate = server.generateCSR(certificate);
 				certificate.id = DataProvider.AddSSLRequest(SecurityContext.User.UserId, item.PackageId,
@@ -3692,12 +3709,19 @@ Please ensure the space has been allocated {0} IP address as a dedicated one and
 				WebServer server = GetWebServer(item.ServiceId);
 				TaskManager.WriteParameter("item.ServiceId", item.ServiceId);
 
+                IPAddressInfo ip = ServerController.GetIPAddress(item.SiteIPAddressId);
+
+                if (ip != null)
+                    item.SiteIPAddress = !String.IsNullOrEmpty(ip.InternalIP) ? ip.InternalIP : ip.ExternalIP;
+
 				certificate = server.installCertificate(certificate, item);
 				if (certificate.SerialNumber == null)
 				{
 					result.AddError("Error_Installing_certificate", null);
 					result.IsSuccess = false;
 				}
+
+
 				DataProvider.CompleteSSLRequest(SecurityContext.User.UserId, item.PackageId,
 												certificate.id, certificate.Certificate,
 												certificate.DistinguishedName, certificate.SerialNumber,
@@ -3734,6 +3758,11 @@ Please ensure the space has been allocated {0} IP address as a dedicated one and
 				TaskManager.WriteParameter("WebSite.Name", item.Name);
 				WebServer server = GetWebServer(item.ServiceId);
 				TaskManager.WriteParameter("item.ServiceId", item.ServiceId);
+
+                // remove all web site pointers
+                List<DomainInfo> pointers = GetWebSitePointers(siteItemId);
+                foreach (DomainInfo pointer in pointers)
+                    DeleteWebSitePointer(siteItemId, pointer.DomainId, true, true, true);
 
 				SSLCertificate certificate = server.installPFX(pfx, password, item);
 				if (certificate.SerialNumber == null)

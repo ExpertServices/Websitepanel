@@ -107,7 +107,7 @@ namespace WebsitePanel.Portal
                 int packageAddressId = rbDedicatedIP.Checked ? Utils.ParseInt(ddlIpAddresses.SelectedValue, 0) : 0;
 
                 siteItemId = ES.Services.WebServers.AddWebSite(PanelSecurity.PackageId, txtHostName.Text.ToLower(), domainsSelectDomainControl.DomainId,
-                    packageAddressId, chkIgnoreGlobalDNSRecords.Checked);
+                    packageAddressId, !chkIgnoreGlobalDNSRecords.Checked);
 
                 if (siteItemId < 0)
                 {
