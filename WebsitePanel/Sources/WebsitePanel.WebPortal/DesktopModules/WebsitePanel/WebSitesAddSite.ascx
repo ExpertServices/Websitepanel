@@ -23,7 +23,7 @@
         <td class="Normal" nowrap rowspan="2"></td>
         <td class="Normal">
             <asp:CheckBox ID="chkIgnoreGlobalDNSRecords" runat="server" meta:resourcekey="chkIgnoreGlobalDNSRecords"
-                Text="This hostname only, Ignore Zone Template" Checked="True" />
+                Text="Include Zone Template" Checked="True" />
         </td>
 	</tr>
 	<tr>

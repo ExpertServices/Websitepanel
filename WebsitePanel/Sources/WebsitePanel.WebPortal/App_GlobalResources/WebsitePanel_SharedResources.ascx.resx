@@ -4855,6 +4855,9 @@
   <data name="Quota.Web.SSL" xml:space="preserve">
     <value>SSL</value>
   </data>
+  <data name="Quota.Web.AllowIPAddressModeSwitch" xml:space="preserve">
+    <value>Allow IP Address Mode Switch</value>
+  </data>
   <data name="ServiceItemType.ExchangeOrganization" xml:space="preserve">
     <value>Exchange Organization</value>
   </data>

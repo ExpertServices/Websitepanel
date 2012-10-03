@@ -197,8 +197,13 @@ namespace WebsitePanel.Portal
 
             dedicatedIP.Visible = site.IsDedicatedIP;
             sharedIP.Visible = !site.IsDedicatedIP;
-            cmdSwitchToDedicatedIP.Visible = (ddlIpAddresses.Items.Count > 0);
-                       
+
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            if (Utils.CheckQouta(Quotas.WEB_ALLOWIPADDRESSMODESWITCH, cntx))
+                cmdSwitchToDedicatedIP.Visible = (ddlIpAddresses.Items.Count > 0);
+            else
+                cmdSwitchToDedicatedIP.Visible = cmdSwitchToSharedIP.Visible = false;
+                      
 
 			litFrontPageUnavailable.Visible = false;
 			tblSharePoint.Visible = site.SharePointInstalled;
@@ -1016,6 +1021,7 @@ namespace WebsitePanel.Portal
 
         protected void cmdSwitchToDedicatedIP_Click(object sender, EventArgs e)
         {
+
             sharedIP.Visible = false;
             switchToDedicatedIP.Visible = true;
         }
