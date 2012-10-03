@@ -75,6 +75,12 @@ namespace WebsitePanel.Portal
 			set { ViewState["PackageId"] = value; }
 		}
 
+        private bool IsDedicatedIP
+        {
+            get { return (bool)ViewState["IsDedicatedIP"]; }
+            set { ViewState["IsDedicatedIP"] = value; }
+        }
+
 		private bool IIs7
 		{
 			get { return (bool)ViewState["IIs7"]; }
@@ -101,7 +107,13 @@ namespace WebsitePanel.Portal
 		private void BindTabs()
 		{
 			//
-			var filteredTabs = TabsList.FilterTabsByHostingPlanQuotas(PackageId);
+			var filteredTabs = TabsList.FilterTabsByHostingPlanQuotas(PackageId).ToList();
+
+            // remove "SSL" tab for a site with dynamic IP
+            var sslTab = filteredTabs.SingleOrDefault(t => t.Id == "SSL");
+            if (!IsDedicatedIP && sslTab != null)
+                filteredTabs.Remove(sslTab);
+
 			var selectedValue = dlTabs.SelectedValue;
 
 			if (dlTabs.SelectedIndex == -1)
@@ -255,14 +267,15 @@ namespace WebsitePanel.Portal
 			webSitesMimeTypesControl.BindWebItem(site);
 			webSitesCustomHeadersControl.BindWebItem(site);
 			webSitesCustomErrorsControl.BindWebItem(site);
-            if (site.SiteIPAddress != null)
+
+            if (site.IsDedicatedIP)
             {
-                WebsitesSSLControl.Visible = true;
+                IsDedicatedIP = true;
                 WebsitesSSLControl.BindWebItem(site);
             }
             else
             {
-                WebsitesSSLControl.Visible = false;
+                IsDedicatedIP = false;
             }
 
 			BindVirtualDirectories();
