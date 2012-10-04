@@ -39,6 +39,7 @@ using WebsitePanel.Providers;
 using System.Text;
 using System.Collections;
 using System.Net.Mail;
+using System.Diagnostics;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -2991,6 +2992,18 @@ namespace WebsitePanel.EnterpriseServer
 
         public static ResultObject AddVirtualMachinePrivateIPAddresses(int itemId, bool selectRandom, int addressesNumber, string[] addresses, bool provisionKvp)
         {
+            // trace info
+            Trace.TraceInformation("Entering AddVirtualMachinePrivateIPAddresses()");
+            Trace.TraceInformation("Item ID: {0}", itemId);
+            Trace.TraceInformation("SelectRandom: {0}", selectRandom);
+            Trace.TraceInformation("AddressesNumber: {0}", addressesNumber);
+
+            if (addresses != null)
+            {
+                foreach(var address in addresses)
+                    Trace.TraceInformation("addresses[n]: {0}", address);
+            }
+
             ResultObject res = new ResultObject();
 
             // load service item
@@ -3025,6 +3038,9 @@ namespace WebsitePanel.EnterpriseServer
                 NetworkAdapterDetails nic = GetPrivateNetworkAdapterDetails(itemId);
 
                 bool wasEmptyList = (nic.IPAddresses.Length == 0);
+
+                if(wasEmptyList)
+                    Trace.TraceInformation("NIC IP addresses list is empty");
 
                 // check IP addresses if they are specified
                 List<string> checkResults = CheckPrivateIPAddresses(vm.PackageId, addresses);
@@ -3213,44 +3229,64 @@ namespace WebsitePanel.EnterpriseServer
 
         private static string GenerateNextAvailablePrivateIP(SortedList<IPAddress, string> ips, string subnetMask, string startIPAddress)
         {
+            Trace.TraceInformation("Entering GenerateNextAvailablePrivateIP()");
+            Trace.TraceInformation("Param - number of sorted IPs in the list: {0}", ips.Count);
+            Trace.TraceInformation("Param - startIPAddress: {0}", startIPAddress);
+            Trace.TraceInformation("Param - subnetMask: {0}", subnetMask);
+
             // start IP address
-           var startIp = IPAddress.Parse(startIPAddress);
+            var startIp = IPAddress.Parse(startIPAddress);
             var mask = IPAddress.Parse(subnetMask);
 
+            Trace.TraceInformation("Calculate initial value for lastAddress");
             var lastAddress = (startIp & ~mask) - 1;
+            Trace.TraceInformation("Initial lastAddress: {0}", lastAddress.ToString());
+
+            Trace.TraceInformation("Start looking for next available IP");
             foreach (var addr in ips.Keys)
             {
                 if ((addr - lastAddress) > 1)
                 {
                     // it is a gap
+                    Trace.TraceInformation("Gap");
                     break;
                 }
                 else
                 {
                     lastAddress = addr;
+                    Trace.TraceInformation("New lastAddress: {0}", lastAddress.ToString());
                 }
             }
 
             var genAddr = lastAddress + 1;
+            Trace.TraceInformation("Generated address: {0}", genAddr.ToString());
 
             // convert to IP address
             var ip = startIp & mask | genAddr;
             string genIP = ip.ToString();
+            Trace.TraceInformation("Generated IP: {0}", genIP);
 
             // store in cache
+            Trace.TraceInformation("Adding to sorted list");
             ips.Add(genAddr, genIP);
 
+            Trace.TraceInformation("Leaving GenerateNextAvailablePrivateIP()");
             return genIP;
         }
 
         private static SortedList<IPAddress, string> GetSortedNormalizedIPAddresses(List<PrivateIPAddress> ips, string subnetMask)
         {
+            Trace.TraceInformation("Entering GetSortedNormalizedIPAddresses()");
+            Trace.TraceInformation("Param - subnetMask: {0}", subnetMask);
+
             var mask = IPAddress.Parse(subnetMask);
             SortedList<IPAddress, string> sortedIps = new SortedList<IPAddress, string>();
             foreach (PrivateIPAddress ip in ips)
             {
                 var addr = ~mask & IPAddress.Parse(ip.IPAddress);
                 sortedIps.Add(addr, ip.IPAddress);
+
+                Trace.TraceInformation("Added {0} to sorted IPs list with key: {1} ", ip.IPAddress, addr.ToString());
             }
             return sortedIps;
         }

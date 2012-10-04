@@ -127,6 +127,30 @@ namespace WebsitePanel.EnterpriseServer {
 		public static bool operator >(IPAddress a, IPAddress b) { return a.Address > b.Address; }
 		public static bool operator <=(IPAddress a, IPAddress b) { return a.Address <= b.Address; }
 		public static bool operator >=(IPAddress a, IPAddress b) { return a.Address >= b.Address; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is IPAddress)
+            {
+                var b = (IPAddress)obj;
+                return this.Address == b.Address && this.Null == b.Null && (this.Null || !(this.IsSubnet && b.IsSubnet || this.IsMask && b.IsMask) || this.Cidr == b.Cidr);
+            }
+            else if (obj is long)
+            {
+                var b = (long)obj;
+                return this.Address == b;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Address.GetHashCode();
+        }
+
 		/*
 		public static IPAddress operator +(IPAddress a, IPAddress b) {
 			if (a.IsSubnet || b.IsSubnet || a.V6 != b.V6) throw new ArgumentException("Arithmetic with subnets or mixed v4 & v6 addresses not supported.");
