@@ -47,10 +47,10 @@ namespace WebsitePanel.EnterpriseServer
 
         public static int AddZone(int packageId, int serviceId, string zoneName)
         {
-            return AddZone(packageId, serviceId, zoneName, true);
+            return AddZone(packageId, serviceId, zoneName, true, false);
         }
 
-        public static int AddZone(int packageId, int serviceId, string zoneName, bool addPackageItem)
+        public static int AddZone(int packageId, int serviceId, string zoneName, bool addPackageItem, bool ignoreGlobalDNSRecords)
         {
             // get DNS provider
             DNSServer dns = GetDNSServer(serviceId);
@@ -148,11 +148,15 @@ namespace WebsitePanel.EnterpriseServer
                     zoneRecords.Add(ns);
                 }
 
-                // add all other records
-                zoneRecords.AddRange(BuildDnsResourceRecords(records, "", zoneName, ""));
+                if (!ignoreGlobalDNSRecords)
+                {
+                    // add all other records
+                    zoneRecords.AddRange(BuildDnsResourceRecords(records, "", zoneName, ""));
+                }
 
                 // add zone records
                 dns.AddZoneRecords(zoneName, zoneRecords.ToArray());
+
 
 
                 // add secondary zones
@@ -443,7 +447,7 @@ namespace WebsitePanel.EnterpriseServer
             if (!dns.ZoneExists(itemName))
             {
                 // create primary and secondary zones
-                AddZone(packageId, serviceId, itemName, false);
+                AddZone(packageId, serviceId, itemName, false, false);
 
                 // restore records
                 XmlSerializer serializer = new XmlSerializer(typeof(DnsRecord));

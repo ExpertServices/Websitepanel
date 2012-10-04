@@ -642,7 +642,15 @@ namespace WebsitePanel.EnterpriseServer
                 DomainInfo ZoneInfo = ServerController.GetDomain(domain.ZoneName);
 
                 if (ZoneInfo == null)
-                    throw new Exception("failed to retrieve parent zone");
+                    throw new Exception("Parent zone not found");
+
+                //cleanup certificates
+                List<SSLCertificate> certificates = GetCertificatesForSite(siteItemId);
+                foreach (SSLCertificate c in certificates)
+                {
+                    DeleteCertificate(siteItemId, c);
+                }
+
                 
                 List<DomainInfo> pointers = GetWebSitePointers(siteItemId);
                 foreach (DomainInfo pointer in pointers)

@@ -1852,7 +1852,7 @@ namespace WebsitePanel.EnterpriseServer
                     int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Dns);
                     if (serviceId > 0)
                     {
-                        zoneItemId = DnsServerController.AddZone(packageId, serviceId, domainName);
+                        zoneItemId = DnsServerController.AddZone(packageId, serviceId, domainName, true, isInstantAlias);
                     }
 
                     if (zoneItemId < 0)
