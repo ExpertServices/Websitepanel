@@ -142,7 +142,7 @@
     <value>If you need your web site to be accessible via dedicated IP address or you are planning to enable SSL for your site you should choose "Dedicated IP" option; otherwise leave this settings by default. In order to create IP-based site you need to purchase IP address from your host.</value>
   </data>
   <data name="lblIPHelp2.Text" xml:space="preserve">
-    <value>Note: A Zone Template is often defined by your host and contains additional Web Site Pointers to create when creating a new Web Site. Static record definitions  such as 'www' conflicts when creating an additional Web Site in the same Domain. &lt;/p&gt;Check this option to ignore the Zone Template and create the new Web Site with this Web Site Pointer only. </value>
+    <value>Note: A Zone Template is often defined by your host and contains additional Web Site Pointers to create when creating a new Web Site. Static record definitions  such as 'www' conflicts when creating an additional Web Site in the same Domain. &lt;/p&gt;Do not check  the option to include the Zone Template and create the new Web Site with this Web Site Pointer only. </value>
   </data>
   <data name="rbDedicatedIP.Text" xml:space="preserve">
     <value>Dedicated</value>

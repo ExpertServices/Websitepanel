@@ -2016,13 +2016,17 @@ namespace WebsitePanel.EnterpriseServer
                     return BusinessErrorCodes.ERROR_ORGANIZATION_DOMAIN_IS_IN_USE;
                 }
 
-                List<DomainInfo> domains = GetDomainsByZoneId(domain.ZoneItemId);
-                foreach (DomainInfo d in domains)
+
+                if (!domain.IsDomainPointer)
                 {
-                    if (d.WebSiteId > 0)
+                    List<DomainInfo> domains = GetDomainsByZoneId(domain.ZoneItemId);
+                    foreach (DomainInfo d in domains)
                     {
-                        TaskManager.WriteError("Domain points to the existing web site");
-                        return BusinessErrorCodes.ERROR_DOMAIN_POINTS_TO_WEB_SITE;
+                        if (d.WebSiteId > 0)
+                        {
+                            TaskManager.WriteError("Domain points to the existing web site");
+                            return BusinessErrorCodes.ERROR_DOMAIN_POINTS_TO_WEB_SITE;
+                        }
                     }
                 }
 
