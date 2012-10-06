@@ -862,7 +862,7 @@ namespace WebsitePanel.EnterpriseServer
             
             if ((bindings.Count == bindingsCount) | (bindings.Count == 0))
             {
-                AddBinding(bindings, new ServerBinding(ipAddr, "80", string.IsNullOrEmpty(hostName) ? domainName : hostName + "." + domainName));
+                AddBinding(bindings, new ServerBinding(ipAddr, "80", string.IsNullOrEmpty(hostName) ? domainName : string.IsNullOrEmpty(domainName) ? hostName : hostName + "." + domainName));
             }
         }
 
@@ -1248,11 +1248,19 @@ namespace WebsitePanel.EnterpriseServer
                     web.UpdateSiteBindings(siteItem.SiteId, bindings.ToArray(), true);
 
                 // update domain
-                domain.WebSiteId = 0;
                 if (deleteDomainsRecord)
                 {
-                    ServerController.UpdateDomain(domain);
-                    ServerController.DeleteDomain(domain.DomainId);
+                    if ((domain.WebSiteId > 0) && (!domain.IsDomainPointer))
+                    {
+                        domain.WebSiteId = 0;
+                        ServerController.UpdateDomain(domain);
+                    }
+                    else
+                    {
+                        domain.WebSiteId = 0;
+                        ServerController.UpdateDomain(domain);
+                        ServerController.DeleteDomain(domain.DomainId);
+                    }
                 }
                 return 0;
             }
