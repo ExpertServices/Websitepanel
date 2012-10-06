@@ -1948,6 +1948,7 @@ namespace WebsitePanel.EnterpriseServer
                     return BusinessErrorCodes.ERROR_ORGANIZATION_DOMAIN_IS_IN_USE;
                 }
 
+
                 List<DomainInfo> domains = GetDomainsByZoneId(domain.ZoneItemId);
                 foreach (DomainInfo d in domains)
                 {
@@ -2269,18 +2270,14 @@ namespace WebsitePanel.EnterpriseServer
                         return webRes;
                 }
 
-
-                List<DomainInfo> domains = GetDomainsByZoneId(domain.ZoneItemId);
+                List<DomainInfo> domains = GetDomainsByZoneId(instantAlias.ZoneItemId);
                 foreach (DomainInfo d in domains)
                 {
                     if (d.WebSiteId > 0)
                     {
-                        int webRes = WebServerController.DeleteWebSitePointer(d.WebSiteId, d.DomainId);
-                        if (webRes < 0)
-                            return webRes;
+                        WebServerController.DeleteWebSitePointer(d.WebSiteId, d.DomainId);
                     }
                 }
-
 
                 // remove from mail domain pointers
                 if (instantAlias.MailDomainId > 0)
