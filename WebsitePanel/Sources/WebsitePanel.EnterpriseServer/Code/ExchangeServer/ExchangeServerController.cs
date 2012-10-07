@@ -2647,6 +2647,17 @@ namespace WebsitePanel.EnterpriseServer
                 else
                     ExchangeServerController.GetExchangeMailboxPlansByUser(0, user, ref mailboxPlans);
 
+
+                ExchangeOrganization ExchangeOrg = ObjectUtils.FillObjectFromDataReader<ExchangeOrganization>(DataProvider.GetExchangeOrganization(itemId));
+
+                if (ExchangeOrg != null)
+                {
+                    foreach (ExchangeMailboxPlan p in mailboxPlans)
+                    {
+                        p.IsDefault = (p.MailboxPlanId == ExchangeOrg.ExchangeMailboxPlanID);
+                    }
+                }
+
                 return mailboxPlans;
             }
             catch (Exception ex)

@@ -5775,9 +5775,81 @@ GO
 
 
 
+/****** Object:  Table [dbo].[ExchangeOrganizations]    Extend Exchange Accounts with ExchangeMailboxPlanID ******/
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeOrganizations' AND COLS.name='ExchangeMailboxPlanID')
+BEGIN
+ALTER TABLE [dbo].[ExchangeOrganizations] ADD [ExchangeMailboxPlanID] [int]
+END
+GO
+
+
+
+
+
+/****** Object:  Table [dbo].[ExchangeOrganizations]    Extend Exchange Accounts with LyncUserPlanID ******/
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeOrganizations' AND COLS.name='LyncUserPlanID')
+BEGIN
+ALTER TABLE [dbo].[ExchangeOrganizations] ADD [LyncUserPlanID] [int]
+END
+GO
 
 
 
 
 
 
+
+
+ALTER PROCEDURE [dbo].[SetOrganizationDefaultLyncUserPlan] 
+(
+	@ItemID int,
+	@LyncUserPlanId int
+)
+AS
+
+UPDATE ExchangeOrganizations SET
+	LyncUserPlanID = @LyncUserPlanId
+WHERE
+	ItemID = @ItemID
+
+RETURN
+GO
+
+
+
+ALTER PROCEDURE [dbo].[SetOrganizationDefaultExchangeMailboxPlan] 
+(
+	@ItemID int,
+	@MailboxPlanId int
+)
+AS
+
+UPDATE ExchangeOrganizations SET
+	ExchangeMailboxPlanID = @MailboxPlanId
+WHERE
+	ItemID = @ItemID
+
+RETURN
+GO
+
+
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetExchangeOrganization')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[GetExchangeOrganization]
+(
+	@ItemID int
+)
+AS
+SELECT
+	ItemID,
+	ExchangeMailboxPlanID,
+	LyncUserPlanID
+FROM
+	ExchangeOrganizations
+WHERE
+	ItemID = @ItemID 
+RETURN'
+END
+GO
