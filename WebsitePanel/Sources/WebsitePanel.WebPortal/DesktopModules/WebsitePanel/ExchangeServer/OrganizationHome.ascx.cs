@@ -88,7 +88,10 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 exchangeStorageStats.QuotaUsedValue = exchangeOrgStats.UsedDiskSpace;
                 exchangeStorageStats.QuotaValue = exchangeOrgStats.AllocatedDiskSpace;
-                if (exchangeOrgStats.AllocatedDiskSpace != -1) exchangeStorageStats.QuotaAvailable = exchangeTenantStats.AllocatedDiskSpace - exchangeTenantStats.UsedDiskSpace;
+                if (exchangeOrgStats.AllocatedDiskSpace != -1)
+                {
+                    exchangeStorageStats.QuotaAvailable = exchangeTenantStats.AllocatedDiskSpace - exchangeTenantStats.UsedDiskSpace;
+                }
             }
             else
                 this.rowExchangeStorage.Style.Add("display", "none");

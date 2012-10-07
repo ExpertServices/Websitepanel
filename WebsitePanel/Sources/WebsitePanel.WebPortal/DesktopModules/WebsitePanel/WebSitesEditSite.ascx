@@ -1,26 +1,17 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="WebSitesEditSite.ascx.cs"
 	Inherits="WebsitePanel.Portal.WebSitesEditSite" %>
 <%@ Import Namespace="WebsitePanel.Portal" %>
-<%@ Register Src="WebSitesExtensionsControl.ascx" TagName="WebSitesExtensionsControl"
-	TagPrefix="uc6" %>
-<%@ Register Src="WebSitesCustomErrorsControl.ascx" TagName="WebSitesCustomErrorsControl"
-	TagPrefix="uc4" %>
-<%@ Register Src="WebSitesMimeTypesControl.ascx" TagName="WebSitesMimeTypesControl"
-	TagPrefix="uc5" %>
-<%@ Register Src="WebSitesHomeFolderControl.ascx" TagName="WebSitesHomeFolderControl"
-	TagPrefix="uc1" %>
-<%@ Register Src="WebSitesCustomHeadersControl.ascx" TagName="WebSitesCustomHeadersControl"
-	TagPrefix="uc6" %>
-<%@ Register Src="WebSitesSecuredFoldersControl.ascx" TagName="WebSitesSecuredFoldersControl"
-	TagPrefix="wsp" %>
-<%@ Register Src="WebSitesHeliconApeControl.ascx" TagName="WebSitesHeliconApeControl"
-	TagPrefix="wsp" %>
+<%@ Register Src="WebSitesExtensionsControl.ascx" TagName="WebSitesExtensionsControl"	TagPrefix="uc6" %>
+<%@ Register Src="WebSitesCustomErrorsControl.ascx" TagName="WebSitesCustomErrorsControl"	TagPrefix="uc4" %>
+<%@ Register Src="WebSitesMimeTypesControl.ascx" TagName="WebSitesMimeTypesControl"	TagPrefix="uc5" %>
+<%@ Register Src="WebSitesHomeFolderControl.ascx" TagName="WebSitesHomeFolderControl"	TagPrefix="uc1" %>
+<%@ Register Src="WebSitesCustomHeadersControl.ascx" TagName="WebSitesCustomHeadersControl"	TagPrefix="uc6" %>
+<%@ Register Src="WebSitesSecuredFoldersControl.ascx" TagName="WebSitesSecuredFoldersControl"	TagPrefix="wsp" %>
+<%@ Register Src="WebSitesHeliconApeControl.ascx" TagName="WebSitesHeliconApeControl"	TagPrefix="wsp" %>
 <%@ Register Src="UserControls/PasswordControl.ascx" TagName="PasswordControl" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/UsernameControl.ascx" TagName="UsernameControl" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport"
-	TagPrefix="wsp" %>
-<%@ Register Src="UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox"
-	TagPrefix="wsp" %>
+<%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport"	TagPrefix="wsp" %>
+<%@ Register Src="UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox"	TagPrefix="wsp" %>
 <%@ Register Src="UserControls/PopupHeader.ascx" TagName="PopupHeader" TagPrefix="wsp" %>
 <%@ Register TagPrefix="wsp" Namespace="WebsitePanel.Portal" %>
 <%@ Register Src="WebsitesSSL.ascx" TagName="WebsitesSSL" TagPrefix="uc2" %>

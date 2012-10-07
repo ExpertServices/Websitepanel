@@ -1,4 +1,32 @@
-﻿using System;
+﻿// Copyright (c) 2012, Outercurve Foundation.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification,
+// are permitted provided that the following conditions are met:
+//
+// - Redistributions of source code must  retain  the  above copyright notice, this
+//   list of conditions and the following disclaimer.
+//
+// - Redistributions in binary form  must  reproduce the  above  copyright  notice,
+//   this list of conditions  and  the  following  disclaimer in  the documentation
+//   and/or other materials provided with the distribution.
+//
+// - Neither  the  name  of  the  Outercurve Foundation  nor   the   names  of  its
+//   contributors may be used to endorse or  promote  products  derived  from  this
+//   software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,  BUT  NOT  LIMITED TO, THE IMPLIED
+// WARRANTIES  OF  MERCHANTABILITY   AND  FITNESS  FOR  A  PARTICULAR  PURPOSE  ARE
+// DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+// ANY DIRECT, INDIRECT, INCIDENTAL,  SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO,  PROCUREMENT  OF  SUBSTITUTE  GOODS OR SERVICES;
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER  CAUSED AND ON
+// ANY  THEORY  OF  LIABILITY,  WHETHER  IN  CONTRACT,  STRICT  LIABILITY,  OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
+// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+using System;
 using System.Data;
 using System.Configuration;
 using System.Collections;
@@ -109,9 +137,8 @@ namespace WebsitePanel.Portal
 
         private void BindListOfAvailableSslDomains(string websiteName, string domainName)
 		{
-            lstDomains.Items.Clear();
-            lstDomains.Items.Add(new ListItem(websiteName, websiteName));
-            lstDomains.Items.Add(new ListItem(domainName, domainName));
+            rbSiteCertificate.Text = websiteName;
+            rbDomainCertificate.Text = "*." + domainName;
 		}
 
 		public void BindWebItem(WebVirtualDirectory item)
@@ -237,25 +264,22 @@ namespace WebsitePanel.Portal
 
 		protected void btnCSR_Click(object sender, EventArgs e)
 		{
-			string domain = lstDomains.SelectedValue;
-			// Ensure wildcard certificate request is correct
-			if (chkWild.Checked)
-				domain = "*." + domain;
 			//
 			string distinguishedName = string.Format(@"CN={0},
                                                      O={1},
                                                      OU={2},                                                                                                  
                                                      L={3},
                                                      S={4},                                                
-                                                     C={5}", domain,
-															 txtCompany.Text,
-															 txtOU.Text,
-															 txtCity.Text,
-															 State,
-															 lstCountries.SelectedValue);
+                                                     C={5}",
+                                                    rbSiteCertificate.Checked ? rbSiteCertificate.Text : rbDomainCertificate.Text,
+														txtCompany.Text,
+														txtOU.Text,
+														txtCity.Text,
+														State,
+														lstCountries.SelectedValue);
 
 			SSLCertificate certificate = new SSLCertificate();
-			certificate.Hostname = domain;
+            certificate.Hostname = rbSiteCertificate.Checked ? rbSiteCertificate.Text : rbDomainCertificate.Text;
 			certificate.DistinguishedName = distinguishedName;
 			certificate.CSRLength = Convert.ToInt32(lstBits.SelectedValue);
 			certificate.Organisation = txtCompany.Text;
@@ -307,18 +331,12 @@ namespace WebsitePanel.Portal
 
 		protected void btnRenCSR_Click(object sender, EventArgs e)
 		{
-			//
-			string domain = lstDomains.SelectedValue;
-			//
-			if (chkWild.Checked)
-				domain = "*." + domain;
-			//
 			string distinguishedName = string.Format(@"CN={0},
                                                      O={1},
                                                      OU={2},                                                                                                  
                                                      L={3},
                                                      S={4},                                                
-                                                     C={5}", domain,
+                                                     C={5}", rbSiteCertificate.Checked ? rbSiteCertificate.Text : rbDomainCertificate.Text,
 															 txtCompany.Text,
 															 txtOU.Text,
 															 txtCity.Text,
@@ -326,7 +344,7 @@ namespace WebsitePanel.Portal
 															 lstCountries.SelectedValue);
 
 			SSLCertificate certificate = new SSLCertificate();
-			certificate.Hostname = domain;
+            certificate.Hostname = rbSiteCertificate.Checked ? rbSiteCertificate.Text : rbDomainCertificate.Text;
 			certificate.DistinguishedName = distinguishedName;
 			certificate.CSRLength = Convert.ToInt32(lstBits.SelectedValue);
 			certificate.Organisation = txtCompany.Text;
@@ -382,6 +400,8 @@ namespace WebsitePanel.Portal
 			pnlInstallCertificate.Visible = false;
 			SSLNotInstalled.Visible = true;
 			//
+            TabContainer1.ActiveTab = tabInstalled;
+
 			RefreshControlLayout(webSiteId);
 		}
 
@@ -508,12 +528,7 @@ namespace WebsitePanel.Portal
 			tabCSR.HeaderText = GetLocalizedString("SSLGenereateRenewal.HeaderText");
 
 			string hostname = cert.Hostname;
-			// Check if it is a wildcard certificate
-			if (!String.IsNullOrEmpty(cert.Hostname) && cert.Hostname.StartsWith("*"))
-			{
-				chkWild.Checked = true;
-				hostname = hostname.Remove(0, 2);
-			}
+
 			// Assign hostname
 			SetCertHostnameSelection(hostname);
 			// Assign state
@@ -653,14 +668,7 @@ namespace WebsitePanel.Portal
 
 		protected void SetCertHostnameSelection(string hostname)
 		{
-			//Bind new CSR with current certificate details
-			var li = lstDomains.Items.FindByValue(hostname);
-			// Select domain name from the existing certificate
-			if (li != null)
-			{
-				lstDomains.ClearSelection();
-				li.Selected = true;
-			}
+            rbSiteCertificate.Checked = (rbSiteCertificate.Text == hostname);
 		}
 
 		protected void SetCertCountrySelection(string country)

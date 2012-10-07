@@ -67,14 +67,6 @@ namespace WebsitePanel.Portal
 
         private void BindIgnoreZoneTemplate()
         {
-            /*
-            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
-            if (cntx.Quotas[Quotas.WEB_SITES].QuotaUsedValue > 0)
-                chkIgnoreGlobalDNSRecords.Visible = chkIgnoreGlobalDNSRecords.Checked = lblIgnoreGlobalDNSRecords.Visible = true;
-            else
-                chkIgnoreGlobalDNSRecords.Visible = chkIgnoreGlobalDNSRecords.Checked = lblIgnoreGlobalDNSRecords.Visible= false;
-            */
-
             chkIgnoreGlobalDNSRecords.Checked = false;
         }
 

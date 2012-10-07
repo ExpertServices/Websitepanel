@@ -133,7 +133,7 @@ namespace WebsitePanel.Portal
 				else
 				{
 					// Select "Home Folder" tab by default
-					dlTabs.SelectedIndex = 0;
+                    dlTabs.SelectedIndex = 0;
 				}
 			}
 
@@ -1042,6 +1042,9 @@ namespace WebsitePanel.Portal
                 }
 
                 ShowSuccessMessage("WEB_SWITCH_TO_SHARED_IP");
+
+                dlTabs.SelectedIndex = 0;
+
             }
             catch (Exception ex)
             {

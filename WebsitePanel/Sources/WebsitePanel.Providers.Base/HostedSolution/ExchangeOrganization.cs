@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -27,47 +27,36 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
-using WebsitePanel.EnterpriseServer;
+using System.Collections.Generic;
+using System.Text;
 
-namespace WebsitePanel.Portal.ExchangeServer
+namespace WebsitePanel.Providers.HostedSolution
 {
-    public partial class OrganizationCreateOrganization : WebsitePanelModuleBase
+    public class ExchangeOrganization
     {
-        protected void Page_Load(object sender, EventArgs e)
+        int itemId;
+        int exchangeMailboxPlanID;
+        int lyncUserPlanID;
+
+
+        public int ItemId
         {
-            
+            get { return this.itemId; }
+            set { this.itemId = value; }
         }
 
-        protected void btnCreate_Click(object sender, EventArgs e)
+
+        public int ExchangeMailboxPlanID
         {
-            CreateOrganization();
+            get { return this.exchangeMailboxPlanID; }
+            set { this.exchangeMailboxPlanID = value; }
         }
 
-        private void CreateOrganization()
+        public int LyncUserPlanID
         {
-            if (!Page.IsValid)
-                return;
-
-            try
-            {
-
-                int itemId = ES.Services.Organizations.CreateOrganization(PanelSecurity.PackageId,
-                    txtOrganizationID.Text.Trim().ToLower(), txtOrganizationName.Text.Trim().ToLower());
-
-                if (itemId < 0)
-                {
-                    messageBox.ShowResultMessage(itemId);
-                    return;
-                }
-
-                Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "organization_home",
-                    "ItemID=" + itemId));
-
-            }
-            catch (Exception ex)
-            {
-                messageBox.ShowErrorMessage("ORGANIZATION_CREATE_ORG", ex);
-            }
+            get { return this.lyncUserPlanID; }
+            set { this.lyncUserPlanID = value; }
         }
+        
     }
 }

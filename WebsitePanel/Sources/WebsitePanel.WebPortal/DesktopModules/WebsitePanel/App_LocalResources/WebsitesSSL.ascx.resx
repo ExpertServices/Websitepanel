@@ -265,4 +265,7 @@
   <data name="valtxtPFXPassConfirm.ErrorMessage" xml:space="preserve">
     <value>Passwords do not match</value>
   </data>
+  <data name="SelectCertType.Text" xml:space="preserve">
+    <value>Select Certificate Type:</value>
+  </data>
 </root>

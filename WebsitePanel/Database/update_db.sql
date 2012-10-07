@@ -2660,6 +2660,19 @@ ALTER PROCEDURE [dbo].[GetExchangeOrganizationStatistics]
 	@ItemID int
 )
 AS
+
+IF -1 IN (SELECT B.MailboxSizeMB FROM ExchangeAccounts AS A INNER JOIN ExchangeMailboxPlans AS B ON A.MailboxPlanId = B.MailboxPlanId WHERE A.ItemID=@ItemID)
+BEGIN
+SELECT
+	(SELECT COUNT(*) FROM ExchangeAccounts WHERE (AccountType = 1 OR AccountType = 5 OR AccountType = 6) AND ItemID = @ItemID) AS CreatedMailboxes,
+	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 2 AND ItemID = @ItemID) AS CreatedContacts,
+	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 3 AND ItemID = @ItemID) AS CreatedDistributionLists,
+	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 4 AND ItemID = @ItemID) AS CreatedPublicFolders,
+	(SELECT COUNT(*) FROM ExchangeOrganizationDomains WHERE ItemID = @ItemID) AS CreatedDomains,
+	(SELECT MIN(B.MailboxSizeMB) FROM ExchangeAccounts AS A INNER JOIN ExchangeMailboxPlans AS B ON A.MailboxPlanId = B.MailboxPlanId WHERE A.ItemID=@ItemID) AS UsedDiskSpace
+END
+ELSE
+BEGIN
 SELECT
 	(SELECT COUNT(*) FROM ExchangeAccounts WHERE (AccountType = 1 OR AccountType = 5 OR AccountType = 6) AND ItemID = @ItemID) AS CreatedMailboxes,
 	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 2 AND ItemID = @ItemID) AS CreatedContacts,
@@ -2667,6 +2680,8 @@ SELECT
 	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 4 AND ItemID = @ItemID) AS CreatedPublicFolders,
 	(SELECT COUNT(*) FROM ExchangeOrganizationDomains WHERE ItemID = @ItemID) AS CreatedDomains,
 	(SELECT SUM(B.MailboxSizeMB) FROM ExchangeAccounts AS A INNER JOIN ExchangeMailboxPlans AS B ON A.MailboxPlanId = B.MailboxPlanId WHERE A.ItemID=@ItemID) AS UsedDiskSpace
+END
+
 
 RETURN
 GO
@@ -5760,9 +5775,81 @@ GO
 
 
 
+/****** Object:  Table [dbo].[ExchangeOrganizations]    Extend Exchange Accounts with ExchangeMailboxPlanID ******/
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeOrganizations' AND COLS.name='ExchangeMailboxPlanID')
+BEGIN
+ALTER TABLE [dbo].[ExchangeOrganizations] ADD [ExchangeMailboxPlanID] [int]
+END
+GO
+
+
+
+
+
+/****** Object:  Table [dbo].[ExchangeOrganizations]    Extend Exchange Accounts with LyncUserPlanID ******/
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeOrganizations' AND COLS.name='LyncUserPlanID')
+BEGIN
+ALTER TABLE [dbo].[ExchangeOrganizations] ADD [LyncUserPlanID] [int]
+END
+GO
 
 
 
 
 
 
+
+
+ALTER PROCEDURE [dbo].[SetOrganizationDefaultLyncUserPlan] 
+(
+	@ItemID int,
+	@LyncUserPlanId int
+)
+AS
+
+UPDATE ExchangeOrganizations SET
+	LyncUserPlanID = @LyncUserPlanId
+WHERE
+	ItemID = @ItemID
+
+RETURN
+GO
+
+
+
+ALTER PROCEDURE [dbo].[SetOrganizationDefaultExchangeMailboxPlan] 
+(
+	@ItemID int,
+	@MailboxPlanId int
+)
+AS
+
+UPDATE ExchangeOrganizations SET
+	ExchangeMailboxPlanID = @MailboxPlanId
+WHERE
+	ItemID = @ItemID
+
+RETURN
+GO
+
+
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetExchangeOrganization')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[GetExchangeOrganization]
+(
+	@ItemID int
+)
+AS
+SELECT
+	ItemID,
+	ExchangeMailboxPlanID,
+	LyncUserPlanID
+FROM
+	ExchangeOrganizations
+WHERE
+	ItemID = @ItemID 
+RETURN'
+END
+GO

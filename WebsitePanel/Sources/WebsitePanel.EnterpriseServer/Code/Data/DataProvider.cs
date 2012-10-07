@@ -2570,6 +2570,18 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
+
+        public static IDataReader GetExchangeOrganization(int itemId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetExchangeOrganization",
+                new SqlParameter("@ItemID", itemId)
+            );
+        }
+
+
         public static void SetOrganizationDefaultExchangeMailboxPlan(int itemId, int mailboxPlanId)
         {
             SqlHelper.ExecuteNonQuery(

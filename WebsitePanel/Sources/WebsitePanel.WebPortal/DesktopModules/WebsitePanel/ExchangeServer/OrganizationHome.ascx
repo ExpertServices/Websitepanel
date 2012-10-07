@@ -1,7 +1,5 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="OrganizationHome.ascx.cs"
-    Inherits="WebsitePanel.Portal.ExchangeServer.OrganizationHome" %>
-<%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox"
-    TagPrefix="wsp" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="OrganizationHome.ascx.cs" Inherits="WebsitePanel.Portal.ExchangeServer.OrganizationHome" %>
+<%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/QuotaViewer.ascx" TagName="QuotaViewer" TagPrefix="wsp" %>

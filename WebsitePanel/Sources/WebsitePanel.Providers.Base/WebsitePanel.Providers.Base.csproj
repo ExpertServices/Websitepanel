@@ -80,6 +80,7 @@
     <Compile Include="HostedSolution\BlackBerryErrorsCodes.cs" />
     <Compile Include="HostedSolution\BlackBerryStatsItem.cs" />
     <Compile Include="HostedSolution\BlackBerryUserDeleteState.cs" />
+    <Compile Include="HostedSolution\ExchangeOrganization.cs" />
     <Compile Include="HostedSolution\ExchangeAcceptedDomainType.cs" />
     <Compile Include="HostedSolution\ExchangeMailboxPlanType.cs" />
     <Compile Include="HostedSolution\ExchangeMailboxPlan.cs" />

@@ -548,6 +548,18 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                 else
                     LyncController.GetLyncUserPlansByUser(0, user, ref plans);
 
+
+                ExchangeOrganization ExchangeOrg = ObjectUtils.FillObjectFromDataReader<ExchangeOrganization>(DataProvider.GetExchangeOrganization(itemId));
+
+                if (ExchangeOrg != null)
+                {
+                    foreach (LyncUserPlan p in plans)
+                    {
+                        p.IsDefault = (p.LyncUserPlanId == ExchangeOrg.LyncUserPlanID);
+                    }
+                }
+
+
                 return plans;
             }
             catch (Exception ex)
