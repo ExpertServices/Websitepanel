@@ -1118,7 +1118,7 @@ namespace WebsitePanel.EnterpriseServer
                         if (!string.IsNullOrEmpty(b.Host))
                         {
                             domain.DomainName = b.Host;
-                            int domainID = ServerController.AddDomain(domain);
+                            int domainID = ServerController.AddDomain(domain, domain.IsInstantAlias, false);
                             DomainInfo domainTmp = ServerController.GetDomain(domainID);
                             if (domainTmp != null)
                             {

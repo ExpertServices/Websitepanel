@@ -178,7 +178,7 @@ namespace WebsitePanel.Portal
 			try
 			{
 				domainId = ES.Services.Servers.AddDomainWithProvisioning(PanelSecurity.PackageId,
-					domainName, type, CreateWebSite.Checked, pointWebSiteId, pointMailDomainId,
+					domainName.ToLower(), type, CreateWebSite.Checked, pointWebSiteId, pointMailDomainId,
 					EnableDns.Checked, CreateInstantAlias.Checked, AllowSubDomains.Checked, "");
 
 				if (domainId < 0)

@@ -37,6 +37,7 @@ using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.DNS;
 using WebsitePanel.Server;
 using WebsitePanel.Providers.ResultObjects;
+using WebsitePanel.Providers.Web;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -1777,8 +1778,9 @@ namespace WebsitePanel.EnterpriseServer
 
             // add main domain
             int domainId = AddDomainInternal(domain.PackageId, domain.DomainName, createZone,
-                domain.IsSubDomain, false, domain.IsDomainPointer, false);
+                domain.IsSubDomain, createInstantAlias, domain.IsDomainPointer, false);
 
+            /*
             if (domainId < 0)
                 return domainId;
 
@@ -1788,6 +1790,7 @@ namespace WebsitePanel.EnterpriseServer
             {
                 AddDomainInternal(domain.PackageId, domainAlias, true, false, true, false, false);
             }
+             */
 
             return domainId;
         }
@@ -2209,24 +2212,22 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 // add web site pointer if required
-                /*
-                if (domain.WebSiteId > 0 && instantAlias.WebSiteId == 0)
+                List<WebSite> sites =  WebServerController.GetWebSites(domain.PackageId, false);
+                foreach (WebSite w in sites)
                 {
-                    int webRes = WebServerController.AddWebSitePointer(domain.WebSiteId, hostName, domainId);
-                    if (webRes < 0)
-                        return webRes;
+                    WebServerController.AddWebSitePointer(  w.Id,
+                                                            (w.Name.Replace("." + domain.ZoneName, "") == domain.ZoneName) ? "" : w.Name.Replace("." + domain.ZoneName, ""),
+                                                            instantAlias.DomainId);
                 }
-                 */
+                
 
-                                // add mail domain pointer
-                /*
+                // add mail domain pointer
                 if (domain.MailDomainId > 0 && instantAlias.MailDomainId == 0)
                 {
                     int mailRes = MailServerController.AddMailDomainPointer(domain.MailDomainId, instantAliasId);
                     if (mailRes < 0)
                         return mailRes;
                 }
-                */
 
                 return 0;
             }

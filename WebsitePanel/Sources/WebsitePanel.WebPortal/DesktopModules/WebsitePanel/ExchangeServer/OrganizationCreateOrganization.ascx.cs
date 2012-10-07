@@ -52,7 +52,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
 
                 int itemId = ES.Services.Organizations.CreateOrganization(PanelSecurity.PackageId,
-                    txtOrganizationID.Text.Trim(), txtOrganizationName.Text.Trim());
+                    txtOrganizationID.Text.Trim().ToLower(), txtOrganizationName.Text.Trim().ToLower());
 
                 if (itemId < 0)
                 {
