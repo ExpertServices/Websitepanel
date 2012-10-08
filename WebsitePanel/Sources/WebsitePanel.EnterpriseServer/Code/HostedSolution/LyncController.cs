@@ -584,12 +584,12 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
 
                     if ((Packages != null) & (Packages.Count > 0))
                     {
-                        orgs = ExchangeServerController.GetExchangeOrganizations(Packages[0].PackageId, false);
+                        orgs = ExchangeServerController.GetExchangeOrganizationsInternal(Packages[0].PackageId, false);
                     }
                 }
                 else
                 {
-                    orgs = ExchangeServerController.GetExchangeOrganizations(1, false);
+                    orgs = ExchangeServerController.GetExchangeOrganizationsInternal(1, false);
                 }
 
                 int OrgId = -1;
