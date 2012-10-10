@@ -1600,7 +1600,7 @@
     <value>File Manager</value>
   </data>
   <data name="Quota.OS.AllowTenantCreateDomains" xml:space="preserve">
-    <value>Tenant Top-Level Domain creation Allowed</value>
+    <value>Disable Tenant To Create Top-Level Domain</value>
   </data>
   <data name="Quota.SharePoint.Groups" xml:space="preserve">
     <value>SharePoint Groups</value>

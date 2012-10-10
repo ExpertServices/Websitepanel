@@ -153,7 +153,7 @@ namespace WebsitePanel.Portal
                     {
                         if (user.Role == UserRole.User)
                         {
-                            btnDelete.Enabled = Utils.CheckQouta(Quotas.OS_ALLOWTENANTCREATEDOMAINS, cntx);
+                            btnDelete.Enabled = !Utils.CheckQouta(Quotas.OS_NOTALLOWTENANTCREATEDOMAINS, cntx);
                         }
                     }
                 }
