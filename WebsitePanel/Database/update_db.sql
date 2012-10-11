@@ -5853,3 +5853,55 @@ WHERE
 RETURN'
 END
 GO
+
+
+
+
+
+BEGIN TRAN	
+CREATE TABLE #TempDomains
+(
+	[PackageID] [int] NOT NULL,
+	[ZoneItemID] [int] NULL,
+	[DomainName] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
+	[HostingAllowed] [bit] NOT NULL,
+	[WebSiteID] [int] NULL,
+	[IsSubDomain] [bit] NOT NULL,
+	[IsInstantAlias] [bit] NOT NULL,
+	[IsDomainPointer] [bit] NOT NULL,
+)
+
+
+INSERT INTO #TempDomains SELECT PackageID,
+ZoneItemID,
+DomainName,
+HostingAllowed,
+WebSiteID,
+IsSubDomain,
+IsInstantAlias,
+IsDomainPointer FROM Domains WHERE IsDomainPointer = 1
+
+
+UPDATE Domains SET IsDomainPointer=0,WebSiteID=NULL WHERE IsDomainPointer = 1 AND DomainName IN (SELECT DomainName FROM Domains AS D WHERE 
+D.DomainName = (SELECT DISTINCT ItemName FROM ServiceItems WHERE ItemID = D.ZoneItemId )
+Group BY DOmainName
+HAVING (COUNT(DomainName) = 1)) 
+
+
+INSERT INTO Domains SELECT PackageID,
+ZoneItemID,
+DomainName,
+HostingAllowed,
+WebSiteID,
+NULL,
+IsSubDomain,
+IsInstantAlias,
+IsDomainPointer
+ FROM #TempDomains As T WHERE DomainName IN (SELECT DomainName FROM Domains AS D WHERE 
+D.DomainName = (SELECT DISTINCT ItemName FROM ServiceItems WHERE ItemID = D.ZoneItemId )
+Group BY DOmainName
+HAVING (COUNT(DomainName) = 1))
+
+DROP TABLE #TempDomains
+COMMIT TRAN
+GO
