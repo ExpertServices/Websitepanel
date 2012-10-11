@@ -1143,13 +1143,18 @@ namespace WebsitePanel.EnterpriseServer
                         if (!string.IsNullOrEmpty(b.Host))
                         {
                             domain.DomainName = b.Host;
-                            int domainID = ServerController.AddDomain(domain, domain.IsInstantAlias, false);
-                            DomainInfo domainTmp = ServerController.GetDomain(domainID);
-                            if (domainTmp != null)
+
+                            DomainInfo domainTmp = ServerController.GetDomain(domain.DomainName);
+                            if (!((domainTmp != null) && (domainTmp.WebSiteId == siteItemId)))
                             {
-                                domainTmp.WebSiteId = siteItemId;
-                                domainTmp.ZoneItemId = domain.ZoneItemId;
-                                ServerController.UpdateDomain(domainTmp);
+                                int domainID = ServerController.AddDomain(domain, domain.IsInstantAlias, false);
+                                domainTmp = ServerController.GetDomain(domainID);
+                                if (domainTmp != null)
+                                {
+                                    domainTmp.WebSiteId = siteItemId;
+                                    domainTmp.ZoneItemId = domain.ZoneItemId;
+                                    ServerController.UpdateDomain(domainTmp);
+                                }
                             }
                         }
                     }
