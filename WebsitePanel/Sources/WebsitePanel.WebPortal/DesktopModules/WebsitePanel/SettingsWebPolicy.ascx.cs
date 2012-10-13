@@ -52,6 +52,9 @@ namespace WebsitePanel.Portal
 			PublishingProfileTextBox.Text = settings["PublishingProfile"];
             chkEnableParkingPageTokens.Checked = Utils.ParseBool(settings["EnableParkingPageTokens"], false);
 
+            // HostName
+            txtHostName.Text = settings["HostName"];
+
             // default documents
             if (!String.IsNullOrEmpty(settings["DefaultDocuments"]))
                 txtDefaultDocs.Text = String.Join("\n", settings["DefaultDocuments"].Split(',', ';'));
@@ -104,6 +107,8 @@ namespace WebsitePanel.Portal
             settings["ParkingPageContent"] = txtPageContent.Text;
 			settings["PublishingProfile"] = PublishingProfileTextBox.Text;
             settings["EnableParkingPageTokens"] = chkEnableParkingPageTokens.Checked.ToString();
+
+            settings["HostName"] = txtHostName.Text.Trim();
 
             // default documents
             settings["DefaultDocuments"] = String.Join(",", Utils.ParseDelimitedString(txtDefaultDocs.Text, '\n', '\r', ';', ',')); ;

@@ -144,6 +144,9 @@
   <data name="lblIPHelp2.Text" xml:space="preserve">
     <value>Note: A Zone Template is often defined by your host and contains additional Web Site Pointers to create when creating a new Web Site. Static record definitions  such as 'www' conflicts when creating an additional Web Site in the same Domain.</value>
   </data>
+  <data name="lblTheDotInTheMiddle.Text" xml:space="preserve">
+    <value> . </value>
+  </data>
   <data name="rbDedicatedIP.Text" xml:space="preserve">
     <value>Dedicated</value>
   </data>

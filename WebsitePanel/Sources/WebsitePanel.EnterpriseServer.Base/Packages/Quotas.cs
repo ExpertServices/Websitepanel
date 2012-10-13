@@ -79,7 +79,8 @@ order by rg.groupOrder
         public const string WEB_CFVIRTUALDIRS = "Web.CFVirtualDirectories"; //ColdFusion Virtual Directories
 		public const string WEB_REMOTEMANAGEMENT = "Web.RemoteManagement"; //IIS 7 Remote Management
         public const string WEB_SSL = "Web.SSL"; //SSL
-        public const string WEB_ALLOWIPADDRESSMODESWITCH = "Web.AllowIPAddressModeSwitch"; //SSL
+        public const string WEB_ALLOWIPADDRESSMODESWITCH = "Web.AllowIPAddressModeSwitch"; //Allow to switch IP Address Mode
+        public const string WEB_ENABLEHOSTNAMESUPPORT = "Web.EnableHostNameSupport"; //Enable to specify hostnames upon site creation
 		public const string FTP_ACCOUNTS = "FTP.Accounts";  // FTP Accounts
 		public const string MAIL_ACCOUNTS = "Mail.Accounts";  // Mail Accounts
 		public const string MAIL_FORWARDINGS = "Mail.Forwardings";  // Mail Forwardings

@@ -41,6 +41,20 @@ namespace WebsitePanel.Portal
 			{
 				// bind controls
 				BindControls();
+
+                PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
+                if (Utils.CheckQouta(Quotas.WEB_ENABLEHOSTNAMESUPPORT, cntx))
+                {
+                    lblHostName.Visible = txtHostName.Visible = true;
+                    UserSettings settings = ES.Services.Users.GetUserSettings(PanelSecurity.LoggedUserId, UserSettings.WEB_POLICY);
+                    txtHostName.Text = String.IsNullOrEmpty(settings["HostName"]) ? "" : settings["HostName"];
+                }
+                else
+                    lblHostName.Visible= txtHostName.Visible = false;
+
+
+
 			}
 			catch (Exception ex)
 			{
@@ -179,7 +193,7 @@ namespace WebsitePanel.Portal
 			{
 				domainId = ES.Services.Servers.AddDomainWithProvisioning(PanelSecurity.PackageId,
 					domainName.ToLower(), type, CreateWebSite.Checked, pointWebSiteId, pointMailDomainId,
-					EnableDns.Checked, CreateInstantAlias.Checked, AllowSubDomains.Checked, "");
+                    EnableDns.Checked, CreateInstantAlias.Checked, AllowSubDomains.Checked, txtHostName.Text);
 
 				if (domainId < 0)
 				{

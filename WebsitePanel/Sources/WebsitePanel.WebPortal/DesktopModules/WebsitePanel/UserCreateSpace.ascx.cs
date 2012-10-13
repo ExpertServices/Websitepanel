@@ -44,6 +44,9 @@ namespace WebsitePanel.Portal
                     ftpAccountName.SetUserPolicy(PanelSecurity.SelectedUserId, UserSettings.FTP_POLICY, "UserNamePolicy");
                     BindHostingPlans(PanelSecurity.SelectedUserId);
                     BindHostingPlan();
+
+
+
                 }
             }
             catch (Exception ex)
@@ -92,6 +95,17 @@ namespace WebsitePanel.Portal
                 {
                     systemEnabled = cntx.Groups.ContainsKey(ResourceGroups.Os);
                     webEnabled = cntx.Groups.ContainsKey(ResourceGroups.Web);
+
+                    if (Utils.CheckQouta(Quotas.WEB_ENABLEHOSTNAMESUPPORT, cntx))
+                    {
+                        lblHostName.Visible = txtHostName.Visible = true;
+                        UserSettings settings = ES.Services.Users.GetUserSettings(PanelSecurity.LoggedUserId, UserSettings.WEB_POLICY);
+                        txtHostName.Text = String.IsNullOrEmpty(settings["HostName"]) ? "" : settings["HostName"];
+
+                    }
+                    else
+                        lblHostName.Visible = txtHostName.Visible = false;
+
                     ftpEnabled = cntx.Groups.ContainsKey(ResourceGroups.Ftp);
                     mailEnabled = cntx.Groups.ContainsKey(ResourceGroups.Mail);
                 }
@@ -102,6 +116,7 @@ namespace WebsitePanel.Portal
 
             fsWeb.Visible = webEnabled;
             chkCreateWebSite.Checked &= webEnabled;
+            
 
             fsFtp.Visible = ftpEnabled;
             chkCreateFtpAccount.Checked &= ftpEnabled;
@@ -134,7 +149,7 @@ namespace WebsitePanel.Portal
                     Utils.ParseInt(ddlStatus.SelectedValue, 0),
                     chkPackageLetter.Checked,
                     chkCreateResources.Checked, domainName, false, chkCreateWebSite.Checked,
-                    chkCreateFtpAccount.Checked, ftpAccount, chkCreateMailAccount.Checked, "");
+                    chkCreateFtpAccount.Checked, ftpAccount, chkCreateMailAccount.Checked, txtHostName.Text);
 
                 if (result.Result < 0)
                 {

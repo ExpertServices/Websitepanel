@@ -63,6 +63,18 @@ namespace WebsitePanel.Portal
         private void ToggleControls()
         {
             rowDedicatedIP.Visible = rbDedicatedIP.Checked;
+
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
+            if (Utils.CheckQouta(Quotas.WEB_ENABLEHOSTNAMESUPPORT, cntx))
+            {
+                txtHostName.Visible = chkIgnoreGlobalDNSRecords.Visible = lblIgnoreGlobalDNSRecords.Visible = lblTheDotInTheMiddle.Visible = true;
+                UserSettings settings = ES.Services.Users.GetUserSettings(PanelSecurity.LoggedUserId, UserSettings.WEB_POLICY);
+                txtHostName.Text = String.IsNullOrEmpty(settings["HostName"]) ? "" : settings["HostName"];
+            }
+            else
+                txtHostName.Visible = chkIgnoreGlobalDNSRecords.Visible = lblIgnoreGlobalDNSRecords.Visible = lblTheDotInTheMiddle.Visible = false;
+
         }
 
         private void BindIgnoreZoneTemplate()

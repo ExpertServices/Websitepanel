@@ -28,6 +28,19 @@
     </table>
 </asp:Panel>
 
+<wsp:CollapsiblePanel id="secHostNamePanel" runat="server"
+    TargetControlID="HostNamePanel" meta:resourcekey="secHostNamePanel" Text="Parking Page"/>
+<asp:Panel ID="HostNamePanel" runat="server" Height="0" style="overflow:hidden;">
+    <table width="100%">
+        <tr>
+            <td class="SubHead" style="width:150px;"><asp:Label ID="lblHostName" runat="server" meta:resourcekey="lblHostName" Text="Page Name:"></asp:Label></td>
+            <td class="Normal">
+                <asp:TextBox ID="txtHostName" runat="server" Width="200" CssClass="NormalTextBox"></asp:TextBox></td>
+        </tr>
+    </table>
+</asp:Panel>
+
+
 <wsp:CollapsiblePanel runat="server" ID="WebPublishingProfile" 
 	meta:resourcekey="WebPublishingProfile" Text="Web Publishing Profile" TargetControlID="WebPublishingProfilePanel" />
 <asp:Panel runat="server" ID="WebPublishingProfilePanel" Height="0" style="overflow:hidden;">

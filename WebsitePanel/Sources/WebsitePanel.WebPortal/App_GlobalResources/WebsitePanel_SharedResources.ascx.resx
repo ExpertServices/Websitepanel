@@ -4861,6 +4861,9 @@
   <data name="Quota.Web.AllowIPAddressModeSwitch" xml:space="preserve">
     <value>Allow IP Address Mode Switch</value>
   </data>
+  <data name="Quota.Web.EnableHostNameSupport" xml:space="preserve">
+    <value>Enable Hostname Support</value>
+  </data>
   <data name="ServiceItemType.ExchangeOrganization" xml:space="preserve">
     <value>Exchange Organization</value>
   </data>
