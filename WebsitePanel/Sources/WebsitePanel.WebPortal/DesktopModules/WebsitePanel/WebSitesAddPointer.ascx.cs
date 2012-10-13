@@ -49,14 +49,14 @@ namespace WebsitePanel.Portal
 
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
 
-            if (Utils.CheckQouta(Quotas.WEB_ENABLEHOSTNAMESUPPORT, cntx))
-            {
+            //if (Utils.CheckQouta(Quotas.WEB_ENABLEHOSTNAMESUPPORT, cntx))
+            //{
                 txtHostName.Visible = lblTheDotInTheMiddle.Visible = true;
                 UserSettings settings = ES.Services.Users.GetUserSettings(PanelSecurity.LoggedUserId, UserSettings.WEB_POLICY);
                 txtHostName.Text = String.IsNullOrEmpty(settings["HostName"]) ? "" : settings["HostName"];
-            }
-            else
-                txtHostName.Visible = lblTheDotInTheMiddle.Visible = false;
+            //}
+            //else
+                //txtHostName.Visible = lblTheDotInTheMiddle.Visible = false;
 
 
         }
