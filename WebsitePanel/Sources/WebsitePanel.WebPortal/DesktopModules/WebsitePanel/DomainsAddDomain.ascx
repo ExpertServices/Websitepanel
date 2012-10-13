@@ -1,5 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DomainsAddDomain.ascx.cs" Inherits="WebsitePanel.Portal.DomainsAddDomain" %>
 <%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
+<%@ Register Src="DomainsSelectDomainControl.ascx" TagName="DomainsSelectDomainControl" TagPrefix="uc1" %>
 <%@ Register Src="UserControls/CollapsiblePanel.ascx" TagPrefix="wsp" TagName="CollapsiblePanel" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server" />
@@ -35,10 +36,23 @@
         
         <br />
         <asp:Panel id="CreateWebSitePanel" runat="server" style="padding-bottom: 15px;">
-            <asp:CheckBox ID="CreateWebSite" runat="server" meta:resourcekey="CreateWebSite" Text="Create Web Site" CssClass="Checkbox Bold" Checked="true" /><br />
-            <div style="padding-left: 20px;">
-                <asp:Localize ID="DescribeCreateWebSite" runat="server" meta:resourcekey="DescribeCreateWebSite">Description...</asp:Localize>
-            </div>
+            <table>
+                <tr>
+                <td class="Normal" width="40" nowrap rowspan="2"></td>
+                <td>
+                    <asp:CheckBox ID="CreateWebSite" runat="server" meta:resourcekey="CreateWebSite" Text="Create Web Site" CssClass="Checkbox Bold" Checked="true" /><br />
+                    <div style="padding-left: 20px;">
+                        <asp:Localize ID="DescribeCreateWebSite" runat="server" meta:resourcekey="DescribeCreateWebSite">Description...</asp:Localize>
+                    </div>
+                </td>
+                </tr>
+                <tr>
+		            <td class="SubHead">
+		                <asp:Label ID="lblHostName" runat="server" meta:resourcekey="lblHostName" Text="Host name:"></asp:Label>
+			            <asp:TextBox ID="txtHostName" runat="server" CssClass="TextBox100" MaxLength="64" Text="www"></asp:TextBox>
+                    </td>
+                </tr>
+            </table>
         </asp:Panel>
         
         <asp:Panel id="PointMailDomainPanel" runat="server" style="padding-bottom: 15px;">

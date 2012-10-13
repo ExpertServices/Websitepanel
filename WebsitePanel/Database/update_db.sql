@@ -5905,3 +5905,12 @@ HAVING (COUNT(DomainName) = 1))
 DROP TABLE #TempDomains
 COMMIT TRAN
 GO
+
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Web.EnableHostNameSupport')
+BEGIN
+	INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (334, 2, 23, N'Web.EnableHostNameSupport', N'Enable Hostname Support', 1, 0, NULL)
+END
+GO
+

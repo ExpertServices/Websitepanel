@@ -37,6 +37,8 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
+using WebsitePanel.EnterpriseServer;
+
 namespace WebsitePanel.Portal
 {
     public partial class WebSitesAddPointer : WebsitePanelModuleBase
@@ -44,6 +46,19 @@ namespace WebsitePanel.Portal
         protected void Page_Load(object sender, EventArgs e)
         {
             domainsSelectDomainControl.PackageId = PanelSecurity.PackageId;
+
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
+            if (Utils.CheckQouta(Quotas.WEB_ENABLEHOSTNAMESUPPORT, cntx))
+            {
+                txtHostName.Visible = lblTheDotInTheMiddle.Visible = true;
+                UserSettings settings = ES.Services.Users.GetUserSettings(PanelSecurity.LoggedUserId, UserSettings.WEB_POLICY);
+                txtHostName.Text = String.IsNullOrEmpty(settings["HostName"]) ? "" : settings["HostName"];
+            }
+            else
+                txtHostName.Visible = lblTheDotInTheMiddle.Visible = false;
+
+
         }
 
         private void AddPointer()
