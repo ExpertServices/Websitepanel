@@ -271,7 +271,10 @@ namespace WebsitePanel.EnterpriseServer
                 {
                      foreach (GlobalDnsRecord d in dnsRecords)
                     {
-                        if (regIP.IsMatch(d.ExternalIP)) return BusinessErrorCodes.ERROR_GLOBALDNS_FOR_DEDICATEDIP;
+                         if (!string.IsNullOrEmpty(d.ExternalIP))
+                         {
+                            if (regIP.IsMatch(d.ExternalIP)) return BusinessErrorCodes.ERROR_GLOBALDNS_FOR_DEDICATEDIP;
+                         }
                     }
                 } 
 
@@ -653,7 +656,10 @@ namespace WebsitePanel.EnterpriseServer
 
             foreach (GlobalDnsRecord d in dnsRecords)
             {
-                if (regIP.IsMatch(d.ExternalIP)) return BusinessErrorCodes.ERROR_GLOBALDNS_FOR_DEDICATEDIP;
+                if (!string.IsNullOrEmpty(d.ExternalIP))
+                {
+                    if (regIP.IsMatch(d.ExternalIP)) return BusinessErrorCodes.ERROR_GLOBALDNS_FOR_DEDICATEDIP;
+                }
             }
 
             // place log record
