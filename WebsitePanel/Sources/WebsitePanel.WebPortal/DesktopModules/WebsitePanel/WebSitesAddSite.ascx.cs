@@ -71,10 +71,12 @@ namespace WebsitePanel.Portal
                 txtHostName.Visible = chkIgnoreGlobalDNSRecords.Visible = lblIgnoreGlobalDNSRecords.Visible = lblTheDotInTheMiddle.Visible = true;
                 UserSettings settings = ES.Services.Users.GetUserSettings(PanelSecurity.LoggedUserId, UserSettings.WEB_POLICY);
                 txtHostName.Text = String.IsNullOrEmpty(settings["HostName"]) ? "" : settings["HostName"];
+                chkIgnoreGlobalDNSRecords.Checked = false;
             }
             else
             {
                 txtHostName.Visible = chkIgnoreGlobalDNSRecords.Visible = lblIgnoreGlobalDNSRecords.Visible = lblTheDotInTheMiddle.Visible = false;
+                chkIgnoreGlobalDNSRecords.Checked = true;
                 txtHostName.Text = "";
             }
 
