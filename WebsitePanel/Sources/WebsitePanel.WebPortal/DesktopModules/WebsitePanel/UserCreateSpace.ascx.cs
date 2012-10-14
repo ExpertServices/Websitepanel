@@ -104,7 +104,10 @@ namespace WebsitePanel.Portal
 
                     }
                     else
+                    {
                         lblHostName.Visible = txtHostName.Visible = false;
+                        txtHostName.Text = "";
+                    }
 
                     ftpEnabled = cntx.Groups.ContainsKey(ResourceGroups.Ftp);
                     mailEnabled = cntx.Groups.ContainsKey(ResourceGroups.Mail);

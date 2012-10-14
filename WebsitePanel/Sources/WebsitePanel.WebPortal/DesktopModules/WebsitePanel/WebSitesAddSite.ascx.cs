@@ -73,7 +73,10 @@ namespace WebsitePanel.Portal
                 txtHostName.Text = String.IsNullOrEmpty(settings["HostName"]) ? "" : settings["HostName"];
             }
             else
+            {
                 txtHostName.Visible = chkIgnoreGlobalDNSRecords.Visible = lblIgnoreGlobalDNSRecords.Visible = lblTheDotInTheMiddle.Visible = false;
+                txtHostName.Text = "";
+            }
 
         }
 

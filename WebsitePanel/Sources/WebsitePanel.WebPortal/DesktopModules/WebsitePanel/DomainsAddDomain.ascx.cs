@@ -51,7 +51,10 @@ namespace WebsitePanel.Portal
                     txtHostName.Text = String.IsNullOrEmpty(settings["HostName"]) ? "" : settings["HostName"];
                 }
                 else
-                    lblHostName.Visible= txtHostName.Visible = false;
+                {
+                    lblHostName.Visible = txtHostName.Visible = false;
+                    txtHostName.Text = "";
+                }
 
 
 
