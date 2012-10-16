@@ -23551,7 +23551,7 @@ INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName]
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (3, 3, N'MSFTP60', N'Microsoft FTP Server 6.0', N'WebsitePanel.Providers.FTP.MsFTP, WebsitePanel.Providers.FTP.IIs60', N'MSFTP60', NULL)
 GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (4, 4, N'MailEnable', N'MailEnable Server 1.x - 4.x', N'WebsitePanel.Providers.Mail.MailEnable, WebsitePanel.Providers.Mail.MailEnable', N'MailEnable', NULL)
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (4, 4, N'MailEnable', N'MailEnable Server 1.x - 7.x', N'WebsitePanel.Providers.Mail.MailEnable, WebsitePanel.Providers.Mail.MailEnable', N'MailEnable', NULL)
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (5, 5, N'MSSQL', N'Microsoft SQL Server 2000', N'WebsitePanel.Providers.Database.MsSqlServer, WebsitePanel.Providers.Database.SqlServer', N'MSSQL', NULL)
 GO

@@ -4873,7 +4873,8 @@ RETURN'
 END
 GO
 
-
+UPDATE [dbo].[Providers] SET [DisplayName] = 'MailEnable Server 1.x - 7.x' WHERE [DisplayName] = 'MailEnable Server 1.x - 4.x'
+GO
 
 UPDATE [dbo].[Providers] SET [DisplayName] = 'SmarterMail 7.x - 8.x' WHERE [DisplayName] = 'SmarterMail 7.x'
 GO
