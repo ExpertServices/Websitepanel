@@ -19,7 +19,7 @@
     </p>
     
     <p id="SubDomainPanel" runat="server" style="padding: 15px 0 15px 5px;" visible="false">
-        <asp:TextBox ID="SubDomainName" runat="server" Width="150" CssClass="HugeTextBox"></asp:TextBox>
+        <asp:TextBox ID="SubDomainName" runat="server" Width="150" CssClass="TextBox100"></asp:TextBox>
         .
         <asp:DropDownList ID="DomainsList" Runat="server" CssClass="NormalTextBox" DataTextField="DomainName" DataValueField="DomainName"></asp:DropDownList>
         <asp:RequiredFieldValidator id="SubDomainRequiredValidator" runat="server" meta:resourcekey="SubDomainRequiredValidator"

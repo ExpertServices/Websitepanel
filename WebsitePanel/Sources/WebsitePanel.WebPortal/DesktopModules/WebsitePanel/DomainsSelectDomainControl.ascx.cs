@@ -110,8 +110,22 @@ namespace WebsitePanel.Portal
             DomainInfo[] domains = ES.Services.Servers.GetMyDomains(PackageId);
 
             WebSite[] sites = null;
+            Hashtable htSites = new Hashtable();
             if (HideWebSites)
+            {
                 sites = ES.Services.WebServers.GetWebSites(PackageId, false);
+
+                foreach (WebSite w in sites)
+                {
+                    if (htSites[w.Name.ToLower()] == null) htSites.Add(w.Name.ToLower(), 1);
+
+                    DomainInfo[] pointers = ES.Services.WebServers.GetWebSitePointers(w.Id);
+                    foreach (DomainInfo p in pointers)
+                    {
+                        if (htSites[p.DomainName.ToLower()] == null) htSites.Add(p.DomainName.ToLower(), 1);
+                    }
+                }
+            }
 
             ddlDomains.Items.Clear();
 
@@ -128,16 +142,10 @@ namespace WebsitePanel.Portal
                     }
                     else
                     {
-                        bool bFound = false;
-                        foreach (WebSite w in sites)
+                        if (htSites != null)
                         {
-                            if (w.Name.ToLower() == domain.DomainName.ToLower())
-                            {
-                                bFound = true;
-                                break;
-                            }
+                            if (htSites[domain.DomainName.ToLower()] != null) continue;
                         }
-                        if (bFound) continue;
                     }
                 }
                 else if (HideInstantAlias && domain.IsInstantAlias)

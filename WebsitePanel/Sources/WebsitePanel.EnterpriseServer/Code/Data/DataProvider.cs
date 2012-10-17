@@ -793,6 +793,16 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@domainName", domainName));
         }
 
+        public static IDataReader GetDomainByNameByPointer(int actorId, string domainName, bool isDomainPointer)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetDomainByNameByPointer",
+                new SqlParameter("@ActorId", actorId),
+                new SqlParameter("@domainName", domainName),
+                new SqlParameter("@isDomainPointer", isDomainPointer));
+        }
+
+
         public static DataSet GetDomainsByZoneId(int actorId, int zoneId)
         {
             return SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
