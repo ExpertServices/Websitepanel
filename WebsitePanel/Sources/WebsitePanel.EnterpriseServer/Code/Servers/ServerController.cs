@@ -1677,6 +1677,13 @@ namespace WebsitePanel.EnterpriseServer
                 DataProvider.GetDomainByName(SecurityContext.User.UserId, domainName));
         }
 
+        public static DomainInfo GetDomainItem(string domainName, bool IsDomainPointer)
+        {
+            return ObjectUtils.FillObjectFromDataReader<DomainInfo>(
+                DataProvider.GetDomainByNameByPointer(SecurityContext.User.UserId, domainName, IsDomainPointer));
+        }
+
+
         public static string GetDomainAlias(int packageId, string domainName)
         {
             // load package settings
@@ -2212,14 +2219,19 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 // add web site pointer if required
-                List<WebSite> sites =  WebServerController.GetWebSites(domain.PackageId, false);
-                foreach (WebSite w in sites)
+                List<DomainInfo> domains = GetDomainsByZoneId(domain.ZoneItemId);
+                foreach (DomainInfo d in domains)
                 {
-                    WebServerController.AddWebSitePointer(  w.Id,
-                                                            (w.Name.Replace("." + domain.ZoneName, "") == domain.ZoneName) ? "" : w.Name.Replace("." + domain.ZoneName, ""),
-                                                            instantAlias.DomainId);
+                    if (d.WebSiteId > 0)
+                    {
+                        WebSite w = WebServerController.GetWebSite(d.WebSiteId);
+
+                        WebServerController.AddWebSitePointer(d.WebSiteId,
+                                                                (w.Name.Replace("." + domain.ZoneName, "") == domain.ZoneName) ? "" : w.Name.Replace("." + domain.ZoneName, ""),
+                                                                instantAlias.DomainId);
+
+                    }
                 }
-                
 
                 // add mail domain pointer
                 if (domain.MailDomainId > 0 && instantAlias.MailDomainId == 0)
@@ -2259,7 +2271,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // load instant alias domain
-                DomainInfo instantAlias = GetDomainItem(domain.InstantAliasName);
+                DomainInfo instantAlias = GetDomainItem(domain.InstantAliasName, false);
                 if (instantAlias == null)
                     return 0;
 
