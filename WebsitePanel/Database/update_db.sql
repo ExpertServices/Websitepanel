@@ -5898,7 +5898,7 @@ CREATE TABLE #TempDomains
 	[DomainItemID] [int] NULL,
 )
 
-UPDATE Domains SET DomainItemID = DomainID
+UPDATE Domains SET DomainItemID = DomainID WHERE DomainItemID IS NULL
 
 INSERT INTO #TempDomains SELECT PackageID,
 ZoneItemID,
@@ -5913,6 +5913,7 @@ DomainItemID FROM Domains WHERE IsDomainPointer = 1
 
 UPDATE Domains SET IsDomainPointer=0,WebSiteID=NULL, DomainItemID=NULL WHERE IsDomainPointer = 1 AND DomainName IN (SELECT DomainName FROM Domains AS D WHERE 
 D.DomainName = (SELECT DISTINCT ItemName FROM ServiceItems WHERE ItemID = D.ZoneItemId )
+AND DomainItemID IS NULL
 Group BY DOmainName
 HAVING (COUNT(DomainName) = 1)) 
 
