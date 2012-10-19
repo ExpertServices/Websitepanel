@@ -19,6 +19,7 @@
     </UpgradeBackupLocation>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -410,6 +411,9 @@
     <Content Include="esWebApplicationGallery.asmx" />
     <EmbeddedResource Include="Images\logo.png" />
     <Content Include="SystemEventHandlers.config" />
+    <Content Include="Web6.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="TaskEventHandlers.config" />
     <None Include="WsePolicyCache.Config" />
   </ItemGroup>

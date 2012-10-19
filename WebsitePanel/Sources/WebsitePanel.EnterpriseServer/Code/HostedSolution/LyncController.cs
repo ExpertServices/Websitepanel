@@ -198,8 +198,8 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                                                                 Convert.ToBoolean(cntx.Quotas[Quotas.LYNC_CONFERENCING].QuotaAllocatedValue),
                                                                 Convert.ToBoolean(cntx.Quotas[Quotas.LYNC_ALLOWVIDEO].QuotaAllocatedValue),
                                                                 Convert.ToInt32(cntx.Quotas[Quotas.LYNC_MAXPARTICIPANTS].QuotaAllocatedValue),
-                                                                Convert.ToBoolean(cntx.Quotas[Quotas.LYNC_CONFERENCING].QuotaAllocatedValue),
-                                                                Convert.ToBoolean(cntx.Quotas[Quotas.LYNC_CONFERENCING].QuotaAllocatedValue));
+                                                                Convert.ToBoolean(cntx.Quotas[Quotas.LYNC_FEDERATION].QuotaAllocatedValue),
+                                                                Convert.ToBoolean(cntx.Quotas[Quotas.LYNC_ENTERPRISEVOICE].QuotaAllocatedValue));
 
                     if (string.IsNullOrEmpty(org.LyncTenantId))
                     {
@@ -837,8 +837,8 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                                                                 Convert.ToBoolean(cntx.Quotas[Quotas.LYNC_CONFERENCING].QuotaAllocatedValue),
                                                                 Convert.ToBoolean(cntx.Quotas[Quotas.LYNC_ALLOWVIDEO].QuotaAllocatedValue),
                                                                 Convert.ToInt32(cntx.Quotas[Quotas.LYNC_MAXPARTICIPANTS].QuotaAllocatedValue),
-                                                                Convert.ToBoolean(cntx.Quotas[Quotas.LYNC_CONFERENCING].QuotaAllocatedValue),
-                                                                Convert.ToBoolean(cntx.Quotas[Quotas.LYNC_CONFERENCING].QuotaAllocatedValue));
+                                                                Convert.ToBoolean(cntx.Quotas[Quotas.LYNC_FEDERATION].QuotaAllocatedValue),
+                                                                Convert.ToBoolean(cntx.Quotas[Quotas.LYNC_ENTERPRISEVOICE].QuotaAllocatedValue));
 
                     if (string.IsNullOrEmpty(org.LyncTenantId))
                     {
@@ -851,7 +851,20 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
 
                 lync = GetLyncServer(lyncServiceId, org.ServiceId);
 
-                lync.AddFederationDomain(org.OrganizationId, domainName, proxyFqdn);
+                bool bDomainExists = false;
+                LyncFederationDomain[] domains = GetFederationDomains(itemId);
+                foreach (LyncFederationDomain d in domains)
+                {
+                    if (d.DomainName.ToLower() == domainName.ToLower())
+                    {
+                        bDomainExists = true;
+                        break;
+                    }
+
+                }
+                
+                if (!bDomainExists)
+                    lync.AddFederationDomain(org.OrganizationId, domainName.ToLower(), proxyFqdn);
             }
             catch (Exception ex)
             {

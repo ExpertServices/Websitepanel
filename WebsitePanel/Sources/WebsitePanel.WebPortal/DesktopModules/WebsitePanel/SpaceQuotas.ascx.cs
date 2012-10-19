@@ -57,7 +57,7 @@ namespace WebsitePanel.Portal
             { "quotaBandwidth", "pnlBandwidth" },
 			{ "quotaDomains", "pnlDomains" },
 			{ "quotaSubDomains", "pnlSubDomains" },
-			{ "quotaDomainPointers", "pnlDomainPointers" },
+			//{ "quotaDomainPointers", "pnlDomainPointers" },
             { "quotaOrganizations", "pnlOrganizations" },
             { "quotaUserAccounts", "pnlUserAccounts" },
 			{ "quotaMailAccounts", "pnlMailAccounts" },

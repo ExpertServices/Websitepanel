@@ -36,16 +36,12 @@
         
         <br />
         <asp:Panel id="CreateWebSitePanel" runat="server" style="padding-bottom: 15px;">
+            <asp:CheckBox ID="CreateWebSite" runat="server" meta:resourcekey="CreateWebSite" Text="Create Web Site" CssClass="Checkbox Bold" Checked="true" /><br />
+            <div style="padding-left: 20px;">
+                <asp:Localize ID="DescribeCreateWebSite" runat="server" meta:resourcekey="DescribeCreateWebSite">Description...</asp:Localize>
+            </div>
+
             <table>
-                <tr>
-                <td class="Normal" width="40" nowrap rowspan="2"></td>
-                <td>
-                    <asp:CheckBox ID="CreateWebSite" runat="server" meta:resourcekey="CreateWebSite" Text="Create Web Site" CssClass="Checkbox Bold" Checked="true" /><br />
-                    <div style="padding-left: 20px;">
-                        <asp:Localize ID="DescribeCreateWebSite" runat="server" meta:resourcekey="DescribeCreateWebSite">Description...</asp:Localize>
-                    </div>
-                </td>
-                </tr>
                 <tr>
 		            <td class="SubHead">
 		                <asp:Label ID="lblHostName" runat="server" meta:resourcekey="lblHostName" Text="Host name:"></asp:Label>
