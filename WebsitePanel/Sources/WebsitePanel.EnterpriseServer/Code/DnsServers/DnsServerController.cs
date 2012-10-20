@@ -281,6 +281,9 @@ namespace WebsitePanel.EnterpriseServer
 
             foreach (GlobalDnsRecord record in records)
             {
+                if (String.IsNullOrEmpty(serviceIP) && String.IsNullOrEmpty(record.ExternalIP))
+                    continue;
+
                 DnsRecord rr = new DnsRecord();
                 rr.RecordType = (DnsRecordType)Enum.Parse(typeof(DnsRecordType), record.RecordType, true);
                 rr.RecordName = Utils.ReplaceStringVariable(record.RecordName, "host_name", hostName, true);
