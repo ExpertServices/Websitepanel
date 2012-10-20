@@ -281,15 +281,16 @@ namespace WebsitePanel.EnterpriseServer
 
             foreach (GlobalDnsRecord record in records)
             {
-                if (String.IsNullOrEmpty(serviceIP) && String.IsNullOrEmpty(record.ExternalIP))
-                    continue;
-
                 DnsRecord rr = new DnsRecord();
                 rr.RecordType = (DnsRecordType)Enum.Parse(typeof(DnsRecordType), record.RecordType, true);
                 rr.RecordName = Utils.ReplaceStringVariable(record.RecordName, "host_name", hostName, true);
                 
 		        if (record.RecordType == "A" || record.RecordType == "AAAA")
                 {
+                    // If the service IP address and the DNS records external address are empty / null SimpleDNS will fail to properly create the zone record
+                    if (String.IsNullOrEmpty(serviceIP) && String.IsNullOrEmpty(record.ExternalIP))
+                        continue;
+
                     rr.RecordData = String.IsNullOrEmpty(record.RecordData) ? record.ExternalIP : record.RecordData;
                     rr.RecordData = Utils.ReplaceStringVariable(rr.RecordData, "ip", string.IsNullOrEmpty(serviceIP) ? record.ExternalIP : serviceIP);
 
@@ -322,7 +323,6 @@ namespace WebsitePanel.EnterpriseServer
                         zoneRecords.Add(rr);
                 }
             }
-
             return zoneRecords;
         }
 
