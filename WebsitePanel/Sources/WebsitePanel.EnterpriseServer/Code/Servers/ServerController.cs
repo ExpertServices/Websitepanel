@@ -1763,7 +1763,7 @@ namespace WebsitePanel.EnterpriseServer
             // add web site pointer
             if (webEnabled && pointWebSiteId > 0)
             {
-                WebServerController.AddWebSitePointer(pointWebSiteId, hostName, domainId);
+                WebServerController.AddWebSitePointer(pointWebSiteId, hostName, domainId, true, false, false);
             }
 
             // add mail domain pointer
