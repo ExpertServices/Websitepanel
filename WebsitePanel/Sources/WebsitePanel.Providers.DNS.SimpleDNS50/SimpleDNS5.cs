@@ -99,8 +99,8 @@ namespace WebsitePanel.Providers.DNS
 			{ DnsRecordType.MX, new BuildDnsRecordDataEventHandler(BuildRecordData_MXRecord) },
 			// TXT
 			{ DnsRecordType.TXT, new BuildDnsRecordDataEventHandler(BuildRecordData_TXTRecord) },
-            		// SRV
-            		{ DnsRecordType.SRV, new BuildDnsRecordDataEventHandler(BuildRecordData_SRVRecord) },
+            // SRV
+            { DnsRecordType.SRV, new BuildDnsRecordDataEventHandler(BuildRecordData_SRVRecord) },
 			};
 		#endregion
 
@@ -137,77 +137,79 @@ namespace WebsitePanel.Providers.DNS
 			return zoneName;
 		}
 
-		protected DnsRecord ConvertToNative(DNSRecord record, string zoneName)
-		{
-			string recordName = ConvertRecordNameToInternalFormat(record.Name, zoneName);
-			//
-			DnsRecord dnsRecord = null;
-			switch (record.Type)
-			{
-				case "A":
-					dnsRecord = new DnsRecord
-					{
-						RecordName = recordName,
-						RecordType = DnsRecordType.A,
-						RecordData = record.DataFields[0]
-					};
-					break;
-				case "AAAA":
-					dnsRecord = new DnsRecord {
-						RecordName = recordName,
-						RecordType = DnsRecordType.AAAA,
-						RecordData = record.DataFields[0]
-					};
-					break;
-				case "NS":
-					dnsRecord = new DnsRecord
-					{
-						RecordName = recordName,
-						RecordType = DnsRecordType.NS,
-						RecordData = record.DataFields[0]
-					};
-					break;
-				case "CNAME":
-					dnsRecord = new DnsRecord
-					{
-						RecordName = recordName,
-						RecordType = DnsRecordType.CNAME,
-						RecordData = record.DataFields[0]
-					};
-					break;
-				case "MX":
-					dnsRecord = new DnsRecord
-					{
-						RecordName = recordName,
-						RecordType = DnsRecordType.MX,
-						MxPriority = Convert.ToInt32(record.DataFields[MX_RECORD_PRIORITY]),
-						RecordData = record.DataFields[MX_RECORD_NAMESERVER]
-					};
-					break;
-				case "TXT":
-					dnsRecord = new DnsRecord
-					{
-						RecordName = recordName,
-						RecordType = DnsRecordType.TXT,
-						RecordData = record.DataFields[0]
-					};
-					break;
-                		case "SRV":
-                    			dnsRecord = new DnsRecord
-                    			{
-                        			RecordName = recordName,
-                        			RecordType = DnsRecordType.SRV,
-                        			RecordData = record.DataFields[3],
-                        			SrvPriority = Convert.ToInt32(record.DataFields[0]),
-                        			SrvWeight = Convert.ToInt32(record.DataFields[1]),
-                        			SrvPort = Convert.ToInt32(record.DataFields[2])
-                    			};
-                    			break;
-                		//
-				return dnsRecord;
-			}
-
-		/// <summary>
+        protected DnsRecord ConvertToNative(DNSRecord record, string zoneName)
+        {
+            string recordName = ConvertRecordNameToInternalFormat(record.Name, zoneName);
+            //
+            DnsRecord dnsRecord = null;
+            switch (record.Type)
+            {
+                case "A":
+                    dnsRecord = new DnsRecord
+                    {
+                        RecordName = recordName,
+                        RecordType = DnsRecordType.A,
+                        RecordData = record.DataFields[0]
+                    };
+                    break;
+                case "AAAA":
+                    dnsRecord = new DnsRecord
+                    {
+                        RecordName = recordName,
+                        RecordType = DnsRecordType.AAAA,
+                        RecordData = record.DataFields[0]
+                    };
+                    break;
+                case "NS":
+                    dnsRecord = new DnsRecord
+                    {
+                        RecordName = recordName,
+                        RecordType = DnsRecordType.NS,
+                        RecordData = record.DataFields[0]
+                    };
+                    break;
+                case "CNAME":
+                    dnsRecord = new DnsRecord
+                    {
+                        RecordName = recordName,
+                        RecordType = DnsRecordType.CNAME,
+                        RecordData = record.DataFields[0]
+                    };
+                    break;
+                case "MX":
+                    dnsRecord = new DnsRecord
+                    {
+                        RecordName = recordName,
+                        RecordType = DnsRecordType.MX,
+                        MxPriority = Convert.ToInt32(record.DataFields[MX_RECORD_PRIORITY]),
+                        RecordData = record.DataFields[MX_RECORD_NAMESERVER]
+                    };
+                    break;
+                case "TXT":
+                    dnsRecord = new DnsRecord
+                    {
+                        RecordName = recordName,
+                        RecordType = DnsRecordType.TXT,
+                        RecordData = record.DataFields[0]
+                    };
+                    break;
+                case "SRV":
+                    dnsRecord = new DnsRecord
+                    {
+                        RecordName = recordName,
+                        RecordType = DnsRecordType.SRV,
+                        RecordData = record.DataFields[3],
+                        SrvPriority = Convert.ToInt32(record.DataFields[0]),
+                        SrvWeight = Convert.ToInt32(record.DataFields[1]),
+                        SrvPort = Convert.ToInt32(record.DataFields[2])
+                    };
+                    break;
+            }
+            //
+            return dnsRecord;
+        }
+        
+        		/// <summary>
 		/// Setups connection with the Simple DNS instance
 		/// </summary>
 		/// <returns></returns>
