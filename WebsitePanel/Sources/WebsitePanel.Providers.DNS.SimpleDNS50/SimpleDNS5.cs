@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -99,7 +99,9 @@ namespace WebsitePanel.Providers.DNS
 			{ DnsRecordType.MX, new BuildDnsRecordDataEventHandler(BuildRecordData_MXRecord) },
 			// TXT
 			{ DnsRecordType.TXT, new BuildDnsRecordDataEventHandler(BuildRecordData_TXTRecord) },
-		};
+            		// SRV
+            		{ DnsRecordType.SRV, new BuildDnsRecordDataEventHandler(BuildRecordData_SRVRecord) },
+			};
 		#endregion
 
 		public const int SOA_PRIMARY_NAME_SERVER = 0;
@@ -190,10 +192,20 @@ namespace WebsitePanel.Providers.DNS
 						RecordData = record.DataFields[0]
 					};
 					break;
+                		case "SRV":
+                    			dnsRecord = new DnsRecord
+                    			{
+                        			RecordName = recordName,
+                        			RecordType = DnsRecordType.SRV,
+                        			RecordData = record.DataFields[3],
+                        			SrvPriority = Convert.ToInt32(record.DataFields[0]),
+                        			SrvWeight = Convert.ToInt32(record.DataFields[1]),
+                        			SrvPort = Convert.ToInt32(record.DataFields[2])
+                    			};
+                    			break;
+                		//
+				return dnsRecord;
 			}
-			//
-			return dnsRecord;
-		}
 
 		/// <summary>
 		/// Setups connection with the Simple DNS instance
@@ -662,6 +674,15 @@ namespace WebsitePanel.Providers.DNS
 			type = "TXT";
 			data.Add(record.RecordData);
 		}
+
+        	static void BuildRecordData_SRVRecord(string zoneName, ref string type, DnsRecord record, List<string> data)
+        	{
+            		type = "SRV";
+            		data.Add(Convert.ToString(record.SrvPriority));
+            		data.Add(Convert.ToString(record.SrvWeight));
+            		data.Add(Convert.ToString(record.SrvPort));
+            		data.Add(record.RecordData);
+        	}
 
 		#endregion
 
