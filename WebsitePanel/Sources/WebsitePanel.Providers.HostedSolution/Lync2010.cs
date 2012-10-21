@@ -407,7 +407,7 @@ namespace WebsitePanel.Providers.HostedSolution
                     if (tmp.Length > 0)
                     {
                         string Url = SimpleUrlRoot + tmp[1];
-                        ActiveDirectoryUtils.SetADObjectPropertyValue(user, "msRTCSIP-BaseSimpleUrl", Url);
+                        ActiveDirectoryUtils.SetADObjectPropertyValue(user, "msRTCSIP-BaseSimpleUrl", Url.ToLower());
                     }
                     user.CommitChanges();
 
@@ -642,9 +642,6 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 SimpleUrls.Add(simpleUrl[0]);
             }
-
-            Hashtable properties = new Hashtable();
-            properties.Add("Add", SimpleUrls);
 
             //PSListModifier
             cmd = new Command("Set-CsSimpleUrlConfiguration");
