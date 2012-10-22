@@ -5858,86 +5858,57 @@ GO
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='Domains' AND COLS.name='DomainItemId')
 BEGIN
-ALTER TABLE [dbo].[Domains] ADD
-	[DomainItemId] [int] NULL
+ALTER TABLE [dbo].[Domains] ADD	[DomainItemId] [int] NULL
+
 END
 GO
 
+IF (SELECT Count(*) FROM Domains WHERE DomainItemId IS NOT NULL) = 0
+BEGIN
+	CREATE TABLE #TempDomains
+	(
+		[PackageID] [int] NOT NULL,
+		[ZoneItemID] [int] NULL,
+		[DomainName] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
+		[HostingAllowed] [bit] NOT NULL,
+		[WebSiteID] [int] NULL,
+		[IsSubDomain] [bit] NOT NULL,
+		[IsInstantAlias] [bit] NOT NULL,
+		[IsDomainPointer] [bit] NOT NULL,
+		[DomainItemID] [int] NULL,
+	)
+
+	UPDATE Domains SET DomainItemID = DomainID
+
+	INSERT INTO #TempDomains SELECT PackageID,
+	ZoneItemID,
+	DomainName,
+	HostingAllowed,
+	WebSiteID,
+	IsSubDomain,
+	IsInstantAlias,
+	IsDomainPointer,
+	DomainItemID FROM Domains WHERE WebSiteID IS NOT NULL
+
+	UPDATE Domains SET IsDomainPointer=0,WebSiteID=NULL, DomainItemID=NULL WHERE WebSiteID IS NOT NULL
+
+	INSERT INTO Domains SELECT PackageID,
+	ZoneItemID,
+	DomainName,
+	HostingAllowed,
+	WebSiteID,
+	NULL,
+	0,
+	IsInstantAlias,
+	1,
+	DomainItemID
+	 FROM #TempDomains
 
 
-
-
-BEGIN TRAN	
-CREATE TABLE #TempDomains
-(
-	[PackageID] [int] NOT NULL,
-	[ZoneItemID] [int] NULL,
-	[DomainName] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
-	[HostingAllowed] [bit] NOT NULL,
-	[WebSiteID] [int] NULL,
-	[IsSubDomain] [bit] NOT NULL,
-	[IsInstantAlias] [bit] NOT NULL,
-	[IsDomainPointer] [bit] NOT NULL,
-	[DomainItemID] [int] NULL,
-)
-
-UPDATE Domains SET DomainItemID = DomainID WHERE DomainItemID IS NULL
-
-INSERT INTO #TempDomains SELECT PackageID,
-ZoneItemID,
-DomainName,
-HostingAllowed,
-WebSiteID,
-IsSubDomain,
-IsInstantAlias,
-IsDomainPointer,
-DomainItemID FROM Domains WHERE IsDomainPointer = 1
-
-
-UPDATE Domains SET IsDomainPointer=0,WebSiteID=NULL, DomainItemID=NULL WHERE IsDomainPointer = 1 AND DomainName IN (SELECT DomainName FROM Domains AS D WHERE 
-D.DomainName = (SELECT DISTINCT ItemName FROM ServiceItems WHERE ItemID = D.ZoneItemId )
-AND DomainItemID IS NULL
-Group BY DOmainName
-HAVING (COUNT(DomainName) = 1)) 
-
-
-INSERT INTO Domains SELECT PackageID,
-ZoneItemID,
-DomainName,
-HostingAllowed,
-WebSiteID,
-NULL,
-IsSubDomain,
-IsInstantAlias,
-IsDomainPointer,
-DomainItemID
- FROM #TempDomains As T WHERE DomainName IN (SELECT DomainName FROM Domains AS D WHERE 
-D.DomainName = (SELECT DISTINCT ItemName FROM ServiceItems WHERE ItemID = D.ZoneItemId )
-Group BY DOmainName
-HAVING (COUNT(DomainName) = 1))
-
-
-UPDATE Domains SET DomainItemID = null WHERE IsDomainPointer=0
-
-DROP TABLE #TempDomains
-COMMIT TRAN
+	DROP TABLE #TempDomains
+END
 GO
 
 
