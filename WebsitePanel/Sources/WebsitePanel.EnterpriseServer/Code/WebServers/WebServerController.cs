@@ -604,6 +604,29 @@ namespace WebsitePanel.EnterpriseServer
 				if(domain != null)
 					DeleteWebSitePointer(siteItemId, domain.DomainId, false, true, true);
 
+                List<WebSite> sites = WebServerController.GetWebSites(domain.PackageId, false);
+                bool oneSiteOnly = (sites.Count == 1);
+
+                if (oneSiteOnly)
+                {
+                    // load site item
+                    IPAddressInfo ip = ServerController.GetIPAddress(sites[0].SiteIPAddressId);
+
+                    string serviceIp = (ip != null) ? ip.ExternalIP : null;
+
+                    if (string.IsNullOrEmpty(serviceIp))
+                    {
+                        StringDictionary settings = ServerController.GetServiceSettings(sites[0].ServiceId);
+                        if (settings["PublicSharedIP"] != null)
+                            serviceIp = settings["PublicSharedIP"].ToString();
+                    }
+
+                    ServerController.RemoveServiceDNSRecords(domain.PackageId, ResourceGroups.Web, domain, serviceIp, true);
+                }
+
+
+
+
 				// delete web site
                 WebServer web = new WebServer();
                 ServiceProviderProxy.Init(web, siteItem.ServiceId);
