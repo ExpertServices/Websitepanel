@@ -6039,3 +6039,133 @@ WHERE
 	DomainID = @DomainID
 	RETURN
 GO
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetDnsRecordsTotal]
+(
+	@ActorID int,
+	@PackageID int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- create temp table for DNS records
+DECLARE @Records TABLE
+(
+	RecordID int,
+	RecordType nvarchar(10) COLLATE Latin1_General_CI_AS,
+	RecordName nvarchar(50) COLLATE Latin1_General_CI_AS
+)
+
+-- select PACKAGES DNS records
+DECLARE @ParentPackageID int, @TmpPackageID int
+SET @TmpPackageID = @PackageID
+
+WHILE 10 = 10
+BEGIN
+
+	-- get DNS records for the current package
+	INSERT INTO @Records (RecordID, RecordType, RecordName)
+	SELECT
+		GR.RecordID,
+		GR.RecordType,
+		GR.RecordName
+	FROM GlobalDNSRecords AS GR
+	WHERE GR.PackageID = @TmpPackageID
+	AND GR.RecordType + GR.RecordName NOT IN (SELECT RecordType + RecordName FROM @Records)
+
+	SET @ParentPackageID = NULL
+
+	-- get parent package
+	SELECT
+		@ParentPackageID = ParentPackageID
+	FROM Packages
+	WHERE PackageID = @TmpPackageID
+	
+	IF @ParentPackageID IS NULL -- the last parent
+	BREAK
+	
+	SET @TmpPackageID = @ParentPackageID
+END
+
+-- select VIRTUAL SERVER DNS records
+DECLARE @ServerID int
+SELECT @ServerID = ServerID FROM Packages
+WHERE PackageID = @PackageID
+
+INSERT INTO @Records (RecordID, RecordType, RecordName)
+SELECT
+	GR.RecordID,
+	GR.RecordType,
+	GR.RecordName
+FROM GlobalDNSRecords AS GR
+WHERE GR.ServerID = @ServerID
+AND GR.RecordType + GR.RecordName NOT IN (SELECT RecordType + RecordName FROM @Records)
+
+-- select SERVER DNS records
+INSERT INTO @Records (RecordID, RecordType, RecordName)
+SELECT
+	GR.RecordID,
+	GR.RecordType,
+	GR.RecordName
+FROM GlobalDNSRecords AS GR
+WHERE GR.ServerID IN (SELECT
+	SRV.ServerID
+FROM VirtualServices AS VS
+INNER JOIN Services AS S ON VS.ServiceID = S.ServiceID
+INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+WHERE VS.ServerID = @ServerID)
+AND GR.RecordType + GR.RecordName NOT IN (SELECT RecordType + RecordName FROM @Records)
+
+
+
+
+
+-- select SERVICES DNS records
+-- re-distribute package services
+EXEC DistributePackageServices @ActorID, @PackageID
+
+--INSERT INTO @Records (RecordID, RecordType, RecordName)
+--SELECT
+--	GR.RecordID,
+--	GR.RecordType,
+	-- GR.RecordName
+-- FROM GlobalDNSRecords AS GR
+-- WHERE GR.ServiceID IN (SELECT ServiceID FROM PackageServices WHERE PackageID = @PackageID)
+-- AND GR.RecordType + GR.RecordName NOT IN (SELECT RecordType + RecordName FROM @Records)
+
+
+SELECT
+	NR.RecordID,
+	NR.ServiceID,
+	NR.ServerID,
+	NR.PackageID,
+	NR.RecordType,
+	NR.RecordName,
+	NR.RecordData,
+	NR.MXPriority,
+	NR.SrvPriority,
+	NR.SrvWeight,
+	NR.SrvPort,	
+	NR.IPAddressID,
+	ISNULL(IP.ExternalIP, '') AS ExternalIP,
+	ISNULL(IP.InternalIP, '') AS InternalIP,
+	CASE
+		WHEN NR.RecordType = 'A' AND NR.RecordData = '' THEN dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP)
+		WHEN NR.RecordType = 'MX' THEN CONVERT(varchar(3), NR.MXPriority) + ', ' + NR.RecordData
+		WHEN NR.RecordType = 'SRV' THEN CONVERT(varchar(3), NR.SrvPort) + ', ' + NR.RecordData
+		ELSE NR.RecordData
+	END AS FullRecordData,
+	dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP) AS IPAddress
+FROM @Records AS TR
+INNER JOIN GlobalDnsRecords AS NR ON TR.RecordID = NR.RecordID
+LEFT OUTER JOIN IPAddresses AS IP ON NR.IPAddressID = IP.AddressID
+
+RETURN
+GO

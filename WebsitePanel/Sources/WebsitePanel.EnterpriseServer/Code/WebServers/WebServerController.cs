@@ -723,7 +723,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 foreach (DomainInfo pointer in pointers)
                 {
-                    ZoneInfo = ServerController.GetDomain(domain.ZoneName);
+                    ZoneInfo = ServerController.GetDomain(pointer.ZoneName);
 
                     AddWebSitePointer(siteItemId,
                         (pointer.DomainName.Replace("." + pointer.ZoneName, "") == pointer.ZoneName) ? "" : pointer.DomainName.Replace("." + pointer.ZoneName, "")
@@ -851,7 +851,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 foreach (DomainInfo pointer in pointers)
                 {
-                    ZoneInfo = ServerController.GetDomain(domain.ZoneName);
+                    ZoneInfo = ServerController.GetDomain(pointer.ZoneName);
 
                     AddWebSitePointer(siteItemId,
                         (pointer.DomainName.Replace("." + pointer.ZoneName, "") == pointer.ZoneName) ? "" : pointer.DomainName.Replace("." + pointer.ZoneName, "")

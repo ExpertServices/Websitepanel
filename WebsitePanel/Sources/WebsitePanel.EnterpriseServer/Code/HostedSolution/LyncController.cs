@@ -208,6 +208,18 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                     }
                     else
                     {
+
+                        DomainInfo domain = ServerController.GetDomain(org.DefaultDomain);
+
+                        //Add the service records
+                        if (domain != null)
+                        {
+                            if (domain.ZoneItemId != 0)
+                            {
+                                ServerController.AddServiceDNSRecords(org.PackageId, ResourceGroups.Lync, domain, "");
+                            }
+                        }
+                        
                         PackageController.UpdatePackageItem(org);
 
                         bReloadConfiguration = true;

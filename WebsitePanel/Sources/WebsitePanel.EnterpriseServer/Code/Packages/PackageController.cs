@@ -468,6 +468,16 @@ namespace WebsitePanel.EnterpriseServer
                                 return result;
                             }
 
+                            domain = ServerController.GetDomain(domainId);
+                            if (domain != null)
+                            {
+                                if (domain.ZoneItemId != 0)
+                                {
+                                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.Os, domain, "");
+                                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.Dns, domain, "");
+                                }
+                            }
+                            
                             if (createInstantAlias)
                                 ServerController.CreateDomainInstantAlias("", domainId);
 

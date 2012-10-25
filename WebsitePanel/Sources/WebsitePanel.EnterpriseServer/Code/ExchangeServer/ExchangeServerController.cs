@@ -455,6 +455,22 @@ namespace WebsitePanel.EnterpriseServer
                         break;
                     }
 
+                    foreach (OrganizationDomainName d in domains)
+                    {
+                        DomainInfo domain = ServerController.GetDomain(d.DomainId);
+
+                        //Add the service records
+                        if (domain != null)
+                        {
+                            if (domain.ZoneItemId != 0)
+                            {
+                                ServerController.AddServiceDNSRecords(org.PackageId, ResourceGroups.Exchange, domain, "");
+                                ServerController.AddServiceDNSRecords(org.PackageId, ResourceGroups.BlackBerry, domain, "");
+                                ServerController.AddServiceDNSRecords(org.PackageId, ResourceGroups.OCS, domain, "");
+                            }
+                        }
+                    }
+
 
                     // 4) Add the address book policy (Exchange 2010 SP2
                     //    
@@ -1414,7 +1430,16 @@ namespace WebsitePanel.EnterpriseServer
                     if (domains == null || Array.BinarySearch(domains, domain.DomainName) < 0)
                         hubTransportRole.AddAuthoritativeDomain(domain.DomainName);
                     break;
-                }                               
+                }
+
+                //Add the service records
+                if (domain != null)
+                {
+                    if (domain.ZoneItemId != 0)
+                    {
+                        ServerController.AddServiceDNSRecords(org.PackageId, ResourceGroups.Exchange, domain, "");
+                    }
+                }
                 
                 return 0;
             }
@@ -1533,6 +1558,17 @@ namespace WebsitePanel.EnterpriseServer
                     break;
 
                 }
+
+                //Add the service records
+                if (domain != null)
+                {
+                    if (domain.ZoneItemId != 0)
+                    {
+                        ServerController.RemoveServiceDNSRecords(org.PackageId, ResourceGroups.Exchange, domain, "");
+                    }
+                }
+
+
 
 			    return 0;
 			}

@@ -38,6 +38,7 @@ using WebsitePanel.Providers.DNS;
 using WebsitePanel.Server;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.Web;
+using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -1732,6 +1733,16 @@ namespace WebsitePanel.EnterpriseServer
             if (domainId < 0)
                 return domainId;
 
+            DomainInfo domain = ServerController.GetDomain(domainId);
+            if (domain != null)
+            {
+                if (domain.ZoneItemId != 0)
+                {
+                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.Os, domain, "");
+                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.Dns, domain, "");
+                }
+            }
+            
             // add instant alias
             createInstantAlias &= (domainType != DomainType.DomainPointer);
             if (createInstantAlias)
@@ -1899,6 +1910,86 @@ namespace WebsitePanel.EnterpriseServer
                 domain.PackageId, domain.ZoneItemId, domain.DomainName, domain.HostingAllowed,
                 domain.WebSiteId, domain.MailDomainId, domain.IsSubDomain, domain.IsInstantAlias, domain.IsDomainPointer);
         }
+
+        public static void AddServiceDNSRecords(int packageId, string groupName, DomainInfo domain, string serviceIP)
+        {
+            int serviceId = PackageController.GetPackageServiceId(packageId, groupName);
+            if (serviceId > 0)
+            {
+                List<DnsRecord> tmpZoneRecords = new List<DnsRecord>();
+                List<GlobalDnsRecord> dnsRecords = ServerController.GetDnsRecordsByService(serviceId);
+
+                DnsZone zone = (DnsZone)PackageController.GetPackageItem(domain.ZoneItemId);
+                tmpZoneRecords.AddRange(DnsServerController.BuildDnsResourceRecords(dnsRecords, "", domain.ZoneName, serviceIP));
+
+                try
+                {
+                    DNSServer dns = new DNSServer();
+                    ServiceProviderProxy.Init(dns, zone.ServiceId);
+
+                    DnsRecord[] domainRecords = dns.GetZoneRecords(domain.DomainName);
+
+                    List<DnsRecord> zoneRecords = new List<DnsRecord>();
+                    foreach (DnsRecord t in tmpZoneRecords)
+                    {
+                        if (!RecordDoesExist(t, domainRecords))
+                            zoneRecords.Add(t);
+                    }
+
+
+                    // add new resource records
+                    dns.AddZoneRecords(zone.Name, zoneRecords.ToArray());
+                }
+                catch (Exception ex1)
+                {
+                    TaskManager.WriteError(ex1, "Error updating DNS records");
+                }
+            }
+        }
+
+
+
+        public static void RemoveServiceDNSRecords(int packageId, string groupName, DomainInfo domain, string serviceIP)
+        {
+            int serviceId = PackageController.GetPackageServiceId(packageId, groupName);
+            if (serviceId > 0)
+            {
+                List<DnsRecord> zoneRecords = new List<DnsRecord>();
+                List<GlobalDnsRecord> dnsRecords = ServerController.GetDnsRecordsByService(serviceId);
+
+                DnsZone zone = (DnsZone)PackageController.GetPackageItem(domain.ZoneItemId);
+                zoneRecords.AddRange(DnsServerController.BuildDnsResourceRecords(dnsRecords, "", domain.ZoneName, serviceIP));
+
+                try
+                {
+                    DNSServer dns = new DNSServer();
+                    ServiceProviderProxy.Init(dns, zone.ServiceId);
+
+                    // add new resource records
+                    dns.DeleteZoneRecords(zone.Name, zoneRecords.ToArray());
+                }
+                catch (Exception ex1)
+                {
+                    TaskManager.WriteError(ex1, "Error updating DNS records");
+                }
+            }
+        }
+
+
+        private static bool RecordDoesExist(DnsRecord record, DnsRecord[] domainRecords)
+        {
+            foreach (DnsRecord d in domainRecords)
+            {
+                if ((record.RecordName.ToLower() == d.RecordName.ToLower()) &
+                    (record.RecordType == d.RecordType))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
 
         public static int UpdateDomain(DomainInfo domain)
         {
@@ -2159,6 +2250,110 @@ namespace WebsitePanel.EnterpriseServer
                     // update domain
                     domain.ZoneItemId = zoneItemId;
                     UpdateDomain(domain);
+
+                    domain = GetDomain(domainId);
+
+
+                    PackageContext cntx = PackageController.GetPackageContext(domain.PackageId);
+                    if (cntx != null)
+                    {
+                        // fill dictionaries
+                        foreach (HostingPlanGroupInfo group in cntx.GroupsArray)
+                        {
+                            try
+                            {
+                                bool bFound = false;
+                                switch (group.GroupName)
+                                {
+                                    case ResourceGroups.Dns:
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.Dns, domain, "");
+                                        break;
+                                    case ResourceGroups.Os:
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.Os, domain, "");
+                                        break;
+                                    case ResourceGroups.HostedOrganizations:
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.HostedOrganizations, domain, "");
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.HostedCRM, domain, "");
+                                        break;
+                                    case ResourceGroups.Mail:
+                                        List<DomainInfo> myDomains = ServerController.GetMyDomains(domain.PackageId);
+                                        foreach (DomainInfo mailDomain in myDomains)
+                                        {
+                                            if ((mailDomain.MailDomainId != 0) && (domain.DomainName.ToLower() == mailDomain.DomainName.ToLower()))
+                                            {
+                                                bFound = true;
+                                                break;
+                                            }
+                                        }
+                                        if (bFound) ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.Mail, domain, "");
+                                        break;
+                                    case ResourceGroups.Exchange:
+                                        List<Organization> orgs = OrganizationController.GetOrganizations(domain.PackageId, false);
+                                        foreach (Organization o in orgs)
+                                        {
+                                            List<OrganizationDomainName> names = OrganizationController.GetOrganizationDomains(o.Id);
+                                            foreach (OrganizationDomainName name in names)
+                                            {
+                                                if (domain.DomainName.ToLower() == name.DomainName.ToLower())
+                                                {
+                                                    bFound = true;
+                                                    break;
+                                                }
+                                            }
+                                            if (bFound) break;
+                                        }
+                                        if (bFound)
+                                        {
+                                            ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.Exchange, domain, "");
+                                            ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.BlackBerry, domain, "");
+                                            ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.OCS, domain, "");
+                                        }
+                                        break;
+                                    case ResourceGroups.Lync:
+                                        List<Organization> orgsLync = OrganizationController.GetOrganizations(domain.PackageId, false);
+                                        foreach (Organization o in orgsLync)
+                                        {
+                                            if ((o.DefaultDomain.ToLower() == domain.DomainName.ToLower()) &
+                                                (o.LyncTenantId != null))
+                                            {
+                                                bFound = true;
+                                                break;
+                                            }
+                                        }
+                                        if (bFound)
+                                        {
+                                            ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.Lync, domain, "");
+                                        }
+                                        break;
+                                    case ResourceGroups.Web:
+                                        List<WebSite> sites = WebServerController.GetWebSites(domain.PackageId, false);
+                                        foreach (WebSite w in sites)
+                                        {
+                                            if (w.SiteId.ToLower().Replace("." + domain.DomainName.ToLower(), "").IndexOf('.') == -1)
+                                            {
+                                                WebServerController.AddWebSitePointer(w.Id, w.SiteId.ToLower().Replace("." + domain.DomainName.ToLower(), ""), domain.DomainId, false, true, true);
+                                            }
+
+                                            List<DomainInfo> pointers = WebServerController.GetWebSitePointers(w.Id);
+                                            foreach (DomainInfo pointer in pointers)
+                                            {
+                                                if (pointer.DomainName.ToLower().Replace("." + domain.DomainName.ToLower(), "").IndexOf('.') == -1)
+                                                {
+                                                    WebServerController.AddWebSitePointer(w.Id, pointer.DomainName.ToLower().Replace("." + domain.DomainName.ToLower(), ""), domain.DomainId, false, true, true);
+                                                }
+                                            }
+                                        }
+
+                                        break;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                TaskManager.WriteError(ex);
+                            }
+                        }
+                    }
+
                 }
 
                 // add web site DNS records

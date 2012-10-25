@@ -66,6 +66,7 @@ namespace WebsitePanel.Portal
                     BindService();
                     BindServiceProperties();
                     BindServiceQuota();
+                    ToggleGlobalDNS();
                 }
             }
             catch (Exception ex)
@@ -150,6 +151,23 @@ namespace WebsitePanel.Portal
             // bind
             ctrl.BindSettings(ConvertArrayToDictionary(settings));
         }
+
+
+        private void ToggleGlobalDNS()
+        {
+            DnsRecrodsPanel.Visible = DnsRecrodsHeader.Visible = ((resourceGroup.GroupName == ResourceGroups.BlackBerry) |
+                                                                (resourceGroup.GroupName == ResourceGroups.OCS)|
+                                                                (resourceGroup.GroupName == ResourceGroups.HostedCRM)|
+                                                                (resourceGroup.GroupName == ResourceGroups.Os)|
+                                                                (resourceGroup.GroupName == ResourceGroups.HostedOrganizations) |
+                                                                (resourceGroup.GroupName == ResourceGroups.HostedSharePoint) |
+                                                                (resourceGroup.GroupName == ResourceGroups.Mail)|
+                                                                (resourceGroup.GroupName == ResourceGroups.Lync)|
+                                                                (resourceGroup.GroupName == ResourceGroups.Exchange)|
+                                                                (resourceGroup.GroupName == ResourceGroups.Web)|
+                                                                (resourceGroup.GroupName == ResourceGroups.Dns));
+        }
+
 
         private void SaveServiceProperties()
         {

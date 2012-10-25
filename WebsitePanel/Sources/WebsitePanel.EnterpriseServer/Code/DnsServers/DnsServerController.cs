@@ -194,7 +194,7 @@ namespace WebsitePanel.EnterpriseServer
             return zoneItemId;
         }
 
-
+        
         private static int RegisterZoneItems(int spaceId, int serviceId, string zoneName, bool primaryZone)
         {
             // zone item
@@ -205,6 +205,7 @@ namespace WebsitePanel.EnterpriseServer
             int zoneItemId = PackageController.AddPackageItem(zone);
             return zoneItemId;
         }
+
 
         public static int DeleteZone(int zoneItemId)
         {
@@ -288,11 +289,12 @@ namespace WebsitePanel.EnterpriseServer
 		        if (record.RecordType == "A" || record.RecordType == "AAAA")
                 {
                     // If the service IP address and the DNS records external address are empty / null SimpleDNS will fail to properly create the zone record
-                    if (String.IsNullOrEmpty(serviceIP) && String.IsNullOrEmpty(record.ExternalIP))
+                    if (String.IsNullOrEmpty(serviceIP) && String.IsNullOrEmpty(record.ExternalIP) && String.IsNullOrEmpty(record.RecordData))
                         continue;
 
                     rr.RecordData = String.IsNullOrEmpty(record.RecordData) ? record.ExternalIP : record.RecordData;
                     rr.RecordData = Utils.ReplaceStringVariable(rr.RecordData, "ip", string.IsNullOrEmpty(serviceIP) ? record.ExternalIP : serviceIP);
+                    rr.RecordData = Utils.ReplaceStringVariable(rr.RecordData, "domain_name", string.IsNullOrEmpty(domainName) ? string.Empty : domainName);
 
                     if (String.IsNullOrEmpty(rr.RecordData) && !String.IsNullOrEmpty(serviceIP))
                         rr.RecordData = serviceIP;
