@@ -4627,6 +4627,9 @@
   <data name="Error.GALLERY_APP_DOWNLOAD_FAILED" xml:space="preserve">
     <value>We apologize for the inconvenience but the application download has been failed. Please contact your service provider to correct the issue.</value>
   </data>
+  <data name="Error.GALLERY_APP_UNAUTHORIZEDACCESSEXCEPTION" xml:space="preserve">
+    <value>We apologize for the inconvenience but the application download has been failed. Access is denied. Check WebSitePanel event log.</value>
+  </data>
   <data name="Error.WAG_NOT_AVAILABLE" xml:space="preserve">
     <value>Web Application Gallery module is unavailable:</value>
   </data>

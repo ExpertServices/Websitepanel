@@ -238,6 +238,7 @@ namespace WebsitePanel.Providers.WebAppGallery
 		NotDownloaded,
 		Downloaded,
 		Downloading,
+        UnauthorizedAccessException,
 		Failed
 	}
 

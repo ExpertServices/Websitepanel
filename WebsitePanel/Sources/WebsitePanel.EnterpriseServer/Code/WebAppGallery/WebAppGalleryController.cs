@@ -156,7 +156,10 @@ namespace WebsitePanel.EnterpriseServer
 				WebServer webServer = GetAssociatedWebServer(packageId);
 
                 if (!webServer.IsMsDeployInstalled())
+                {
+                    TaskManager.WriteError("MsDeploy is not installed");
                     return Error<GalleryCategoriesResult>(GalleryErrors.MsDeployIsNotInstalled);
+                }
 
                 // get categories
                 result = webServer.GetGalleryCategories(SecurityContext.User.UserId);

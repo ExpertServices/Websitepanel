@@ -3396,7 +3396,8 @@ namespace WebsitePanel.Providers.Web
 
         virtual public bool CheckLoadUserProfile()
         {
-            throw new NotImplementedException("LoadUserProfile option valid only on IIS7 or higer");
+            //throw new NotImplementedException("LoadUserProfile option valid only on IIS7 or higer");
+            return false;
         }
 
         virtual public void EnableLoadUserProfile()
@@ -3421,20 +3422,28 @@ namespace WebsitePanel.Providers.Web
 
 	    public bool IsMsDeployInstalled()
         {
-            // project has reference to Microsoft.Web.Deployment, so
-	        return true;
-	        /*
+            // TO-DO: Implement Web Deploy detection (x64/x86)
+            var isInstalled = false;
+            //
             try
             {
-                Assembly.Load(MS_DEPLOY_ASSEMBLY_NAME);
-                return true;
+                var msdeployRegKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\IIS Extensions\MSDeploy\3");
+                //
+                var keyValue = msdeployRegKey.GetValue("Install");
+                // We have found the required key in the registry hive
+                if (keyValue != null && keyValue.Equals(1))
+                {
+                    isInstalled = true;
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                // type could not be instantiated
-                return false;
+                Log.WriteError("Could not retrieve Web Deploy key from the registry", ex);
             }
-            */
+            //
+            return isInstalled;
+
+
         }
 
 	    public GalleryLanguagesResult GetGalleryLanguages(int UserId)
@@ -3550,6 +3559,11 @@ namespace WebsitePanel.Providers.Web
                 WPIApplicationGallery module = new WPIApplicationGallery(WPI_INSTANCE_INSTALLER);
 
                 return module.DownloadAppAndGetStatus(UserId, id);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Log.WriteError(ex);
+                return GalleryWebAppStatus.UnauthorizedAccessException;
             }
             catch (Exception ex)
             {
