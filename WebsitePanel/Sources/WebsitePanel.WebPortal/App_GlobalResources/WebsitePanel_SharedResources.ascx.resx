@@ -2118,6 +2118,10 @@
   <data name="ServiceItemType.WebSite" xml:space="preserve">
     <value>Web Site</value>
   </data>
+  <data name="ServiceItemType.HostHeader" xml:space="preserve">
+    <value>Web Site Host Header</value>
+  </data>
+
   <data name="AuditLogSource.APP_INSTALLER" xml:space="preserve">
     <value>Applications Installer</value>
   </data>
