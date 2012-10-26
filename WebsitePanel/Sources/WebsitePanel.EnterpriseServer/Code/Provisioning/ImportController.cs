@@ -136,7 +136,7 @@ namespace WebsitePanel.EnterpriseServer
                 catch { /* do nothing */ }
             }
             else
-                return GetImportableCustomerItems(packageId, itemTypeId);
+                return GetImportableCustomItems(packageId, itemTypeId);
 
             return items;
         }
@@ -278,7 +278,7 @@ namespace WebsitePanel.EnterpriseServer
             return 0;
         }
 
-        private static List<string> GetImportableCustomerItems(int packageId, int itemTypeId)
+        private static List<string> GetImportableCustomItems(int packageId, int itemTypeId)
         {
 
             List<string> items = new List<string>();

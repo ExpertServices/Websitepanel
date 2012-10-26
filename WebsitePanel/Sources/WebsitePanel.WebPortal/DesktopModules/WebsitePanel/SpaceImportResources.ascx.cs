@@ -139,7 +139,7 @@ namespace WebsitePanel.Portal
                             TreeNode userNode = null;
                             foreach (TreeNode n in headerNode.ChildNodes)
                             {
-                                if (n.Value == "+" + itemTypeId.ToString() + "|" + objectData[1]) ;
+                                if (n.Value == "+" + itemTypeId.ToString() + "|" + objectData[1]) 
                                 {
                                     userNode = n;
                                     break;
@@ -160,9 +160,9 @@ namespace WebsitePanel.Portal
                             siteNode.Value = "+" + itemTypeId.ToString() + "|" + item;
                             siteNode.ShowCheckBox = true;
                             userNode.ChildNodes.Add(siteNode);
-
-                            headerNode.Expand();
                         }
+
+                        headerNode.Expand();
                         break;
                 }
 
