@@ -20,6 +20,7 @@
 
 		<DiffCmd>$(TrunkFolder)\Tools\Diff.exe</DiffCmd>
 		<SqlCmd>"C:\Program Files\Microsoft SQL Server\110\Tools\Binn\sqlcmd.exe" -S (local)\SQLEXPRESS -E</SqlCmd>
+		<ZipCmd>"C:\Program Files\7-Zip\7z.exe"</ZipCmd>
 
     <MSDeployPath Condition="Exists('$(ProgramFiles)\IIS\Microsoft Web Deploy\msdeploy.exe')">"$(ProgramFiles)\IIS\Microsoft Web Deploy\msdeploy.exe"</MSDeployPath>
 		<MSDeployPath Condition="Exists('$(ProgramFiles)\IIS\Microsoft Web Deploy V3\msdeploy.exe')">"$(ProgramFiles)\IIS\Microsoft Web Deploy V3\msdeploy.exe"</MSDeployPath>
@@ -588,10 +589,10 @@
 		<Zip Files="@(StandaloneInstallFiles)" ZipFileName="$(DeployFolder)\WebsitePanel-StandaloneServerSetup-$(Version).zip" WorkingDirectory="$(StandaloneInstall)" />
 		-->
 		
-		<Exec Command="cscript $(TrunkFolder)\zip.vbs &quot;$(DeployFolder)\WebsitePanel-Portal-$(Version).zip&quot; &quot;$(PortalInstall)&quot;" />
-		<Exec Command="cscript $(TrunkFolder)\zip.vbs &quot;$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version).zip&quot; &quot;$(EnterpriseServerInstall)&quot;" />
-		<Exec Command="cscript $(TrunkFolder)\zip.vbs &quot;$(DeployFolder)\WebsitePanel-Server-$(Version).zip&quot; &quot;$(ServerInstall)&quot;" />
-		<Exec Command="cscript $(TrunkFolder)\zip.vbs &quot;$(DeployFolder)\WebsitePanel-StandaloneServerSetup-$(Version).zip&quot; &quot;$(StandaloneInstall)&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-Portal-$(Version).zip&quot; &quot;$(PortalInstall)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version).zip&quot; &quot;$(EnterpriseServerInstall)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-Server-$(Version).zip&quot; &quot;$(ServerInstall)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-StandaloneServerSetup-$(Version).zip&quot; &quot;$(StandaloneInstall)\*&quot;" />
 
 
 		<!-- zip updates
@@ -611,11 +612,11 @@
 		<Zip Files="@(InstallerUpdateFiles)" ZipFileName="$(DeployFolder)\WebsitePanel-Installer-$(Version)-Update.zip" WorkingDirectory="$(InstallerBuild)" />
 		-->
 		
-		<Exec Command="cscript $(TrunkFolder)\zip.vbs &quot;$(DeployFolder)\WebsitePanel-Portal-$(Version)-Update.zip&quot; &quot;$(PortalUpdate)&quot;" />
-		<Exec Command="cscript $(TrunkFolder)\zip.vbs &quot;$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version)-Update.zip&quot; &quot;$(EnterpriseServerUpdate)&quot;" />
-		<Exec Command="cscript $(TrunkFolder)\zip.vbs &quot;$(DeployFolder)\WebsitePanel-Server-$(Version)-Update.zip&quot; &quot;$(ServerUpdate)&quot;" />
-		<Exec Command="cscript $(TrunkFolder)\zip.vbs &quot;$(DeployFolder)\Manual-Update.zip&quot; &quot;$(UpdateFolder)&quot;" />
-		<Exec Command="cscript $(TrunkFolder)\zip.vbs &quot;$(DeployFolder)\WebsitePanel-Installer-$(Version)-Update.zip&quot; &quot;$(InstallerBuild)&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-Portal-$(Version)-Update.zip&quot; &quot;$(PortalUpdate)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version)-Update.zip&quot; &quot;$(EnterpriseServerUpdate)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-Server-$(Version)-Update.zip&quot; &quot;$(ServerUpdate)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\Manual-Update.zip&quot; &quot;$(UpdateFolder)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-Installer-$(Version)-Update.zip&quot; &quot;$(InstallerBuild)\*&quot;" />
 
 		<!-- zip tools 
 		<Zip Files="@(ImportCsvInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-Import-CsvBulk-$(Version).zip" WorkingDirectory="$(ImportCsvInstall)" />
@@ -626,12 +627,12 @@
 		<Zip Files="@(WSPTransportAgentInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" WorkingDirectory="$(WSPTransportAgentInstall)" />
 		-->
 		
-		<Exec Command="cscript $(TrunkFolder)\zip.vbs &quot;$(DeployFolder)\WebsitePanel-Import-CsvBulk-$(Version)-Update.zip&quot; &quot;$(ImportCsvInstall)&quot;" />
-		<Exec Command="cscript $(TrunkFolder)\zip.vbs &quot;$(DeployFolder)\WebsitePanel-HyperVUtils-$(Version)-Update.zip&quot; &quot;$(HyperVUtilsInstall)&quot;" />
-		<Exec Command="cscript $(TrunkFolder)\zip.vbs &quot;$(DeployFolder)\WebsitePanel-VMConfig-$(Version)-Update.zip&quot; &quot;$(VMConfigInstall)&quot;" />
-		<Exec Command="cscript $(TrunkFolder)\zip.vbs &quot;$(DeployFolder)\WebsitePanel-Import-Enterprise-$(Version)-Update.zip&quot; &quot;$(ImportEnterpriseInstall)&quot;" />
-		<Exec Command="cscript $(TrunkFolder)\zip.vbs &quot;$(DeployFolder)\WebsitePanel-AWStatsViewer-$(Version)-Update.zip&quot; &quot;$(AWStatsViewerInstall)&quot;" />
-		<Exec Command="cscript $(TrunkFolder)\zip.vbs &quot;$(DeployFolder)\WebsitePanel-WSPTransportAgent-$(Version)-Update.zip&quot; &quot;$(WSPTransportAgentInstall)&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-Import-CsvBulk-$(Version)-Update.zip&quot; &quot;$(ImportCsvInstall)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-HyperVUtils-$(Version)-Update.zip&quot; &quot;$(HyperVUtilsInstall)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-VMConfig-$(Version)-Update.zip&quot; &quot;$(VMConfigInstall)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-Import-Enterprise-$(Version)-Update.zip&quot; &quot;$(ImportEnterpriseInstall)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-AWStatsViewer-$(Version)-Update.zip&quot; &quot;$(AWStatsViewerInstall)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-WSPTransportAgent-$(Version)-Update.zip&quot; &quot;$(WSPTransportAgentInstall)\*&quot;" />
 
   </Target>
 
