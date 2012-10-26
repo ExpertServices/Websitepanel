@@ -29,8 +29,9 @@
 using System;
 using System.Data;
 using System.Collections.Generic;
-
+using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers;
+using WebsitePanel.Providers.Web;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -68,69 +69,74 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return items;
 
             // load item type
-            ServiceProviderItemType itemType = PackageController.GetServiceItemType(itemTypeId);
-
-            // load group
-            ResourceGroupInfo group = ServerController.GetResourceGroup(itemType.GroupId);
-
-            // get service id
-            int serviceId = PackageController.GetPackageServiceId(packageId, group.GroupName);
-            if (serviceId == 0)
-                return items;
-
-			DataTable dtServiceItems = PackageController.GetServiceItemsDataSet(serviceId).Tables[0];
-			DataTable dtPackageItems = PackageController.GetPackageItemsDataSet(packageId).Tables[0];
-
-            // instantiate controller
-            IImportController ctrl = null;
-            try
+            if (itemTypeId > 0)
             {
-                List<string> importableItems = null;
-                ctrl = Activator.CreateInstance(Type.GetType(group.GroupController)) as IImportController;
-                if (ctrl != null)
-                {
-                    importableItems = ctrl.GetImportableItems(packageId, itemTypeId, Type.GetType(itemType.TypeName), group);
-                }
+                ServiceProviderItemType itemType = PackageController.GetServiceItemType(itemTypeId);
 
-                foreach (string importableItem in importableItems)
-                {
+                // load group
+                ResourceGroupInfo group = ServerController.GetResourceGroup(itemType.GroupId);
 
-                    // filter items by service
-                    bool serviceContains = false;
-                    foreach (DataRow dr in dtServiceItems.Rows)
+                // get service id
+                int serviceId = PackageController.GetPackageServiceId(packageId, group.GroupName);
+                if (serviceId == 0)
+                    return items;
+
+                DataTable dtServiceItems = PackageController.GetServiceItemsDataSet(serviceId).Tables[0];
+                DataTable dtPackageItems = PackageController.GetPackageItemsDataSet(packageId).Tables[0];
+
+                // instantiate controller
+                IImportController ctrl = null;
+                try
+                {
+                    List<string> importableItems = null;
+                    ctrl = Activator.CreateInstance(Type.GetType(group.GroupController)) as IImportController;
+                    if (ctrl != null)
                     {
-                        string serviceItemName = (string)dr["ItemName"];
-                        int serviceItemTypeId = (int)dr["ItemTypeId"];
-
-                        if (String.Compare(importableItem, serviceItemName, true) == 0
-                            && serviceItemTypeId == itemTypeId)
-                        {
-                            serviceContains = true;
-                            break;
-                        }
+                        importableItems = ctrl.GetImportableItems(packageId, itemTypeId, Type.GetType(itemType.TypeName), group);
                     }
 
-                    // filter items by package
-                    bool packageContains = false;
-                    foreach (DataRow dr in dtPackageItems.Rows)
+                    foreach (string importableItem in importableItems)
                     {
-                        string packageItemName = (string)dr["ItemName"];
-                        int packageItemTypeId = (int)dr["ItemTypeId"];
 
-                        if (String.Compare(importableItem, packageItemName, true) == 0
-                            && packageItemTypeId == itemTypeId)
+                        // filter items by service
+                        bool serviceContains = false;
+                        foreach (DataRow dr in dtServiceItems.Rows)
                         {
-                            packageContains = true;
-                            break;
+                            string serviceItemName = (string)dr["ItemName"];
+                            int serviceItemTypeId = (int)dr["ItemTypeId"];
+
+                            if (String.Compare(importableItem, serviceItemName, true) == 0
+                                && serviceItemTypeId == itemTypeId)
+                            {
+                                serviceContains = true;
+                                break;
+                            }
                         }
+
+                        // filter items by package
+                        bool packageContains = false;
+                        foreach (DataRow dr in dtPackageItems.Rows)
+                        {
+                            string packageItemName = (string)dr["ItemName"];
+                            int packageItemTypeId = (int)dr["ItemTypeId"];
+
+                            if (String.Compare(importableItem, packageItemName, true) == 0
+                                && packageItemTypeId == itemTypeId)
+                            {
+                                packageContains = true;
+                                break;
+                            }
+                        }
+
+                        if (!serviceContains && !packageContains)
+                            items.Add(importableItem);
                     }
 
-                    if (!serviceContains && !packageContains)
-                        items.Add(importableItem);
                 }
-                
+                catch { /* do nothing */ }
             }
-            catch { /* do nothing */ }
+            else
+                return GetImportableCustomerItems(packageId, itemTypeId);
 
             return items;
         }
@@ -172,19 +178,35 @@ namespace WebsitePanel.EnterpriseServer
 			TaskManager.IndicatorCurrent = 0;
 
             Dictionary<int, List<string>> groupedItems = new Dictionary<int, List<string>>();
+            List<string> customItems = new List<string>();
 
             // sort by groups
             foreach (string item in items)
             {
+
                 string[] itemParts = item.Split('|');
-                int itemTypeId = Utils.ParseInt(itemParts[0], 0);
-                string itemName = itemParts[1];
+                if (!item.StartsWith("+"))
+                {
+                    int itemTypeId = Utils.ParseInt(itemParts[0], 0);
+                    string itemName = itemParts[1];
 
-                // add to group
-                if (!groupedItems.ContainsKey(itemTypeId))
-                    groupedItems[itemTypeId] = new List<string>();
+                    // add to group
+                    if (!groupedItems.ContainsKey(itemTypeId))
+                        groupedItems[itemTypeId] = new List<string>();
 
-                groupedItems[itemTypeId].Add(itemName);
+                    groupedItems[itemTypeId].Add(itemName);
+                }
+                else
+                {
+                    switch (itemParts[0])
+                    {
+                        case ("+100"):
+                            if (itemParts.Length > 2)
+                                customItems.Add(item);
+                            break;
+                    }
+
+                }
             }
 
             // import each group
@@ -226,9 +248,64 @@ namespace WebsitePanel.EnterpriseServer
                 catch { /* do nothing */ }
             }
 
+            foreach (string s in customItems)
+            {
+                try
+                {
+                    string[] sParts = s.Split('|');
+                    switch (sParts[0])
+                    {
+                        case "+100":
+                            TaskManager.Write(String.Format("Import {0}", sParts[4]));
+
+                            int result = WebServerController.ImporHostHeader(int.Parse(sParts[2],0), int.Parse(sParts[3],0), int.Parse(sParts[5],0));
+
+                            if (result < 0)
+                                TaskManager.WriteError(String.Format("Failed to Import {0} ,error: {1}: ", sParts[4], result.ToString()));
+                            
+                        break;
+                    }
+                }
+                catch { /* do nothing */ }
+
+                TaskManager.IndicatorCurrent++;
+            }
+
+            TaskManager.IndicatorCurrent = items.Length;
+
 			TaskManager.CompleteTask();
 
             return 0;
+        }
+
+        private static List<string> GetImportableCustomerItems(int packageId, int itemTypeId)
+        {
+
+            List<string> items = new List<string>();
+            PackageInfo packageInfo = PackageController.GetPackage(packageId);
+            if (packageInfo == null) return items;
+
+            switch (itemTypeId)
+            {
+                case -100:
+                    List<UserInfo> users = UserController.GetUsers(packageInfo.UserId, true);
+                    foreach (UserInfo user in users)
+                    {
+                        List<PackageInfo> packages = PackageController.GetPackages(user.UserId);
+                        foreach (PackageInfo package in packages)
+                        {
+                            List<WebSite> webSites = WebServerController.GetWebSites(package.PackageId, false);
+                            foreach (WebSite webSite in webSites)
+                            {
+                                items.Add(user.Username+"|"+user.UserId.ToString()+"|"+package.PackageId.ToString()+"|"+webSite.SiteId+"|"+webSite.Id);
+                            }
+                        }
+                    }
+
+                    break;
+            }
+            
+            return items;
         }
     }
 }

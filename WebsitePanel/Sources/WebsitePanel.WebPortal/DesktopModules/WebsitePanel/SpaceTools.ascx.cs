@@ -50,7 +50,7 @@ namespace WebsitePanel.Portal
             lnkImportResources.NavigateUrl = EditUrl(PortalUtils.SPACE_ID_PARAM, PanelSecurity.PackageId.ToString(), "import");
 
             lnkBackup.Visible = lnkRestore.Visible = PortalUtils.PageExists("Backup");
-            lnkImportResources.Visible = (PanelSecurity.PackageId > 1 &&
+            lnkImportResources.Visible = (PanelSecurity.PackageId >= 1 &&
 				PanelSecurity.LoggedUser.Role == UserRole.Administrator);
 
             if (PanelSecurity.SelectedUser.RoleId.Equals(1))

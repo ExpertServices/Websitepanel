@@ -3689,6 +3689,97 @@ Please ensure the space has been allocated {0} IP address as a dedicated one and
             }
         }
 
+
+        public static int ImporHostHeader(int userId, int packageId, int siteId)
+        {
+            WebSite siteItem = (WebSite)PackageController.GetPackageItem(siteId);
+            if (siteItem == null)
+                return -1;
+
+            // load live site from service
+            WebServer web = new WebServer();
+            ServiceProviderProxy.Init(web, siteItem.ServiceId);
+
+            // Verify if already exists
+            List<DomainInfo> domains = ServerController.GetDomains(packageId);
+
+            // Get hostheader
+            foreach (ServerBinding b in web.GetSiteBindings(siteItem.SiteId))
+            {
+                if ((!DoesHeaderExistInDomains(b.Host.ToLower(), domains)) && (!string.IsNullOrEmpty(b.Host)))
+                {
+                    // If not get domain info and add to domains
+                    int domainId = FindDomainForHeader(b.Host.ToLower(), domains);
+                    if (domainId > 0)
+                    {
+                        DomainInfo domain = ServerController.GetDomain(domainId);
+                        DomainInfo newDomain = new DomainInfo();
+                        newDomain.DomainName = b.Host.ToLower();
+                        newDomain.PackageId = domain.PackageId;
+
+                        int newDomainID = ServerController.AddDomain(newDomain, domain.IsInstantAlias, false);
+                        if (newDomainID > 0)
+                        {
+                            newDomain = ServerController.GetDomain(newDomainID);
+                            if (newDomain != null)
+                            {
+                                newDomain.WebSiteId = siteId;
+                                newDomain.ZoneItemId = domain.ZoneItemId;
+                                newDomain.DomainItemId = domain.DomainId;
+                                newDomain.IsDomainPointer = true;
+                                ServerController.UpdateDomain(newDomain);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return 0;
+        }
+
+        private static bool DoesHeaderExistInDomains(string header, List<DomainInfo> domains)
+        {
+            bool bExist = false;
+
+            if (!string.IsNullOrEmpty(header))
+            {
+                foreach (DomainInfo d in domains)
+                {
+                    if ((header == d.DomainName.ToLower()) &&
+                        (d.IsDomainPointer))
+                    {
+                        bExist = true;
+                        break;
+                    }
+                }
+            }
+            return bExist;
+        }
+
+
+        private static int FindDomainForHeader(string header, List<DomainInfo> domains)
+        {
+            int domainId = 0;
+
+            while (header.IndexOf(".") != -1)
+            {
+                header = header.Substring(header.IndexOf(".") + 1);
+
+                foreach (DomainInfo d in domains)
+                {
+                    if ((header == d.DomainName.ToLower()) && (!d.IsDomainPointer))
+                    {
+                        domainId = d.DomainId;
+                        break;
+                    }
+                }
+            }
+
+            return domainId;
+        }
+
+
+
         #endregion
 
         #region IBackupController Members
