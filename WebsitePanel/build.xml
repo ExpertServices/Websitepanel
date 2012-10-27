@@ -627,12 +627,12 @@
 		<Zip Files="@(WSPTransportAgentInstallFiles)" ZipFileName="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" WorkingDirectory="$(WSPTransportAgentInstall)" />
 		-->
 		
-		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-Import-CsvBulk-$(Version).zip&quot; &quot;$(ImportCsvInstall)\*&quot;" />
-		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-HyperVUtils-$(Version).zip&quot; &quot;$(HyperVUtilsInstall)\*&quot;" />
-		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-VMConfig-$(Version).zip&quot; &quot;$(VMConfigInstall)\*&quot;" />
-		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-Import-Enterprise-$(Version).zip&quot; &quot;$(ImportEnterpriseInstall)\*&quot;" />
-		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-AWStatsViewer-$(Version).zip&quot; &quot;$(AWStatsViewerInstall)\*&quot;" />
-		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip&quot; &quot;$(WSPTransportAgentInstall)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(ToolsFolder)\WebsitePanel-Import-CsvBulk-$(Version).zip&quot; &quot;$(ImportCsvInstall)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(ToolsFolder)\WebsitePanel-HyperVUtils-$(Version).zip&quot; &quot;$(HyperVUtilsInstall)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(ToolsFolder)\WebsitePanel-VMConfig-$(Version).zip&quot; &quot;$(VMConfigInstall)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(ToolsFolder)\WebsitePanel-Import-Enterprise-$(Version).zip&quot; &quot;$(ImportEnterpriseInstall)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(Version).zip&quot; &quot;$(AWStatsViewerInstall)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip&quot; &quot;$(WSPTransportAgentInstall)\*&quot;" />
 
   </Target>
 
