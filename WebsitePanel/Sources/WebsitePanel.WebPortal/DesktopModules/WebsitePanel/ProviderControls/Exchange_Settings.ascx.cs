@@ -42,7 +42,8 @@ namespace WebsitePanel.Portal.ProviderControls
         public const string ClientAccessData = "ClientAccessData";
 
         public const int EXCHANGE2010_PROVIDER_ID = 32;
-        public const int EXCHANGE2010SP2_PROVIDER_ID = 90;    
+        public const int EXCHANGE2010SP2_PROVIDER_ID = 90;
+        public const int EXCHANGE2013_PROVIDER_ID = 91;     
 
         public string HubTransports
         {
@@ -92,6 +93,16 @@ namespace WebsitePanel.Portal.ProviderControls
                             break;
 
                         case EXCHANGE2010SP2_PROVIDER_ID:
+                            clusteredMailboxServer.Visible = false;
+                            txtMailboxClusterName.Text = "";
+
+                            storageGroup.Visible = false;
+                            txtStorageGroup.Text = "";
+
+                            locMailboxDatabase.Visible = false;
+                            break;
+
+                        case EXCHANGE2013_PROVIDER_ID:
                             clusteredMailboxServer.Visible = false;
                             txtMailboxClusterName.Text = "";
 
