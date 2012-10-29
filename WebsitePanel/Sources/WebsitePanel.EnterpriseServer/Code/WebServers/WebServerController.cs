@@ -3772,19 +3772,21 @@ Please ensure the space has been allocated {0} IP address as a dedicated one and
         private static int FindDomainForHeader(string header, List<DomainInfo> domains)
         {
             int domainId = 0;
-
-            while (header.IndexOf(".") != -1)
+            int counter = 0;
+            while ((header.IndexOf(".") != -1) & (counter < 2))
             {
-                header = header.Substring(header.IndexOf(".") + 1);
 
                 foreach (DomainInfo d in domains)
                 {
                     if ((header == d.DomainName.ToLower()) && (!d.IsDomainPointer))
                     {
-                        domainId = d.DomainId;
-                        break;
+                        return d.DomainId;
                     }
                 }
+
+                header = header.Substring(header.IndexOf(".") + 1);
+                counter++;
+
             }
 
             return domainId;
