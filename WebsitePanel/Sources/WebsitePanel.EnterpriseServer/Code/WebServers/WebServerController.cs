@@ -3716,6 +3716,7 @@ Please ensure the space has been allocated {0} IP address as a dedicated one and
                         DomainInfo newDomain = new DomainInfo();
                         newDomain.DomainName = b.Host.ToLower();
                         newDomain.PackageId = domain.PackageId;
+                        newDomain.IsDomainPointer = true;
 
                         int newDomainID = ServerController.AddDomain(newDomain, domain.IsInstantAlias, false);
                         if (newDomainID > 0)
@@ -3726,7 +3727,6 @@ Please ensure the space has been allocated {0} IP address as a dedicated one and
                                 newDomain.WebSiteId = siteId;
                                 newDomain.ZoneItemId = domain.ZoneItemId;
                                 newDomain.DomainItemId = domain.DomainId;
-                                newDomain.IsDomainPointer = true;
                                 ServerController.UpdateDomain(newDomain);
                             }
                         }
