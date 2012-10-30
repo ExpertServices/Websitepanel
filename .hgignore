@@ -1,0 +1,23 @@
+syntax: glob
+*.suo
+obj
+bin/Debug
+bin/Release
+MySql.Data.dll
+SDNSAPI.dll
+bin
+*.vshost.*
+*.pdb
+*.vs10x
+*.user
+OrderBoxDomainsLib.dll
+OrderBoxCoreLib.dll
+WebsitePanel/Sources/WebsitePanel.WebPortal/DesktopModules/Ecommerce/Bin
+WebsitePanel/Sources/Tools/WebsitePanel.LocalizationToolkit.Setup/Release
+WebsitePanel/Deploy
+WebsitePanel/Build
+WebsitePanel.Installer/Build
+WebsitePanel/Bin
+msbuild.log
+_ReSharper.*
+web.config
