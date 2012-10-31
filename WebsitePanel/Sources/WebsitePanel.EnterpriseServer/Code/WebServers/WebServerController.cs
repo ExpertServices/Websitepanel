@@ -2490,7 +2490,7 @@ namespace WebsitePanel.EnterpriseServer
 				WebServer server = GetWebServer(item.ServiceId);
 
                 StringDictionary webSettings = ServerController.GetServiceSettings(item.ServiceId);
-                if (webSettings["WmSvc.NETBIOS"] != null)
+                if (!String.IsNullOrEmpty(webSettings["WmSvc.NETBIOS"]))
                 {
                     accountName = webSettings["WmSvc.NETBIOS"].ToString() + "\\" + accountName;
                 }
@@ -3258,7 +3258,7 @@ namespace WebsitePanel.EnterpriseServer
 				WebServer server = GetWebServer(item.ServiceId);
 
                 StringDictionary webSettings = ServerController.GetServiceSettings(item.ServiceId);
-                if (webSettings["WmSvc.NETBIOS"] != null)
+                if (!String.IsNullOrEmpty(webSettings["WmSvc.NETBIOS"]))
                 {
                     accountName = webSettings["WmSvc.NETBIOS"].ToString() + "\\" + accountName;
                 }
