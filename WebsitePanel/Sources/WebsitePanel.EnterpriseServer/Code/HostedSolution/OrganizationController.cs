@@ -517,7 +517,7 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-                LyncUsersPagedResult res = LyncController.GetLyncUsers(itemId, string.Empty, string.Empty, 0, int.MaxValue);
+                LyncUsersPagedResult res = LyncController.GetLyncUsers(itemId);
 
                 if (res.IsSuccess)
                 {

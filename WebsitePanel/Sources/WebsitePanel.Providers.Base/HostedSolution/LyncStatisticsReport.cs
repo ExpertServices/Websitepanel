@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -30,16 +30,16 @@
 
 namespace WebsitePanel.Providers.HostedSolution
 {
-    public class OrganizationStatisticsReport : BaseReport<OrganizationStatisticsRepotItem>
+    public class LyncStatisticsReport : BaseReport<LyncUserStatistics>
     {
         public override string ToCSV()
         {
             StringBuilder mainBuilder = new StringBuilder();
-            
+            StringBuilder sb = null;
             AddCSVHeader(mainBuilder);
-            foreach (OrganizationStatisticsRepotItem item in Items)
+            foreach (LyncUserStatistics item in Items)
             {
-                StringBuilder sb = new StringBuilder();
+                sb = new StringBuilder();
                 sb.Append("\n");
                 sb.AppendFormat("{0},", ToCsvString(item.TopResellerName));
                 sb.AppendFormat("{0},", ToCsvString(item.ResellerName));
@@ -51,23 +51,28 @@ namespace WebsitePanel.Providers.HostedSolution
                 sb.AppendFormat("{0},", ToCsvString(item.OrganizationCreated));
                 sb.AppendFormat("{0},", ToCsvString(item.OrganizationID));
 
-                sb.AppendFormat("{0},", ToCsvString(item.TotalMailboxes));
-                sb.AppendFormat("{0},", ToCsvString(item.TotalMailboxesSize / 1024.0 / 1024.0));
-                sb.AppendFormat("{0},", ToCsvString(item.TotalPublicFoldersSize / 1024.0 / 1024.0));
-                sb.AppendFormat("{0},", ToCsvString(item.TotalSharePointSiteCollections));
-                sb.AppendFormat("{0},", ToCsvString(item.TotalSharePointSiteCollectionsSize / 1024.0 / 1024.0));
-                sb.AppendFormat("{0}", ToCsvString(item.TotalCRMUsers));
-                sb.AppendFormat("{0}", ToCsvString(item.TotalLyncUsers));
-                sb.AppendFormat("{0}", ToCsvString(item.TotalLyncEVUsers));
-                
+                sb.AppendFormat("{0},", ToCsvString(item.DisplayName));
+                sb.AppendFormat("{0},", ToCsvString(item.AccountCreated));
+
+                sb.AppendFormat("{0},", ToCsvString(item.SipAddress));
+                sb.AppendFormat("{0},", ToCsvString(item.PhoneNumber));
+                sb.AppendFormat("{0},", ToCsvString(item.Conferencing));
+                sb.AppendFormat("{0},", ToCsvString(item.EnterpriseVoice));
+                sb.AppendFormat("{0},", ToCsvString(item.Federation));
+                sb.AppendFormat("{0},", ToCsvString(item.InstantMessaing));
+                sb.AppendFormat("{0},", ToCsvString(item.MobileAccess));
+                sb.AppendFormat("{0},", ToCsvString(item.LyncUserPlan));
+
                 mainBuilder.Append(sb.ToString());
             }
+
             return mainBuilder.ToString();
+
         }
 
         private static void AddCSVHeader(StringBuilder sb)
         {
-            sb.Append("Top Reseller,Reseller,Customer,Customer Created,Hosting Space,Hosting Space Created,Ogranization Name,Ogranization Created,Organization ID,Total mailboxes,Total mailboxes size(Mb),Total Public Folders size(Mb),Total SharePoint site collections,Total SharePoint site collections size(Mb),Total CRM users,Total Lync users,Total Lync EV users");
+            sb.Append("Top Reseller,Reseller,Customer,Customer Created,Hosting Space,Hosting Space Created,Ogranization Name,Organization Created,Organization ID,Display Name,Account Created,SipAddress,PhoneNumber,Conferencing,EnterpriseVoice,Federation,InstantMessaging,MobileAccess");
         }
     }
 }

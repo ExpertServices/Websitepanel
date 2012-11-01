@@ -59,7 +59,7 @@ namespace WebsitePanel.EnterpriseServer
         [WebMethod]
         public LyncUsersPagedResult GetLyncUsersPaged(int itemId, string sortColumn, string sortDirection, int startRow, int maximumRows)
         {
-            return LyncController.GetLyncUsers(itemId, sortColumn, sortDirection, startRow, maximumRows);
+            return LyncController.GetLyncUsersPaged(itemId, sortColumn, sortDirection, startRow, maximumRows);
         }
 
         [WebMethod]

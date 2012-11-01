@@ -88,6 +88,9 @@
     <Compile Include="HostedSolution\LyncConstants.cs" />
     <Compile Include="HostedSolution\LyncErrorCodes.cs" />
     <Compile Include="HostedSolution\LyncFederationDomain.cs" />
+    <Compile Include="HostedSolution\LyncOrganizationStatistics.cs" />
+    <Compile Include="HostedSolution\LyncUserStatistics.cs" />
+    <Compile Include="HostedSolution\LyncStatisticsReport.cs" />
     <Compile Include="HostedSolution\LyncUser.cs" />
     <Compile Include="HostedSolution\LyncUserPlan.cs" />
     <Compile Include="HostedSolution\LyncUserPlanType.cs" />

@@ -431,7 +431,12 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
 
         }
 
-        public static LyncUsersPagedResult GetLyncUsers(int itemId, string sortColumn, string sortDirection, int startRow, int count)
+        public static LyncUsersPagedResult GetLyncUsers(int itemId)
+        {
+            return GetLyncUsersPaged(itemId, string.Empty, string.Empty, 0, int.MaxValue);
+        }
+
+        public static LyncUsersPagedResult GetLyncUsersPaged(int itemId, string sortColumn, string sortDirection, int startRow, int count)
         {
             LyncUsersPagedResult res = TaskManager.StartResultTask<LyncUsersPagedResult>("LYNC", "GET_LYNC_USERS");
 

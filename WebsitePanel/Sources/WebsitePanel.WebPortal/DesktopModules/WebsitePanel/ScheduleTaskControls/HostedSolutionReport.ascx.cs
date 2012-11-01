@@ -37,6 +37,7 @@ namespace WebsitePanel.Portal.ScheduleTaskControls
         private static readonly string EXCHANGE_REPORT = "EXCHANGE_REPORT";
         private static readonly string ORGANIZATION_REPORT = "ORGANIZATION_REPORT";
         private static readonly string SHAREPOINT_REPORT = "SHAREPOINT_REPORT";
+        private static readonly string LYNC_REPORT = "LYNC_REPORT";
         private static readonly string CRM_REPORT = "CRM_REPORT";
         private static readonly string EMAIL = "EMAIL";
 
@@ -51,6 +52,7 @@ namespace WebsitePanel.Portal.ScheduleTaskControls
             base.SetParameters(parameters);
             SetParameter(cbExchange, EXCHANGE_REPORT);
             SetParameter(cbSharePoint, SHAREPOINT_REPORT);
+            SetParameter(cbLync, LYNC_REPORT);
             SetParameter(cbCRM, CRM_REPORT);
             SetParameter(cbOrganization, ORGANIZATION_REPORT);
             SetParameter(txtMail, EMAIL);         
@@ -61,12 +63,13 @@ namespace WebsitePanel.Portal.ScheduleTaskControls
         {
             ScheduleTaskParameterInfo exchange = GetParameter(cbExchange, EXCHANGE_REPORT);
             ScheduleTaskParameterInfo sharepoint = GetParameter(cbSharePoint, SHAREPOINT_REPORT);
+            ScheduleTaskParameterInfo lync = GetParameter(cbLync, LYNC_REPORT);
             ScheduleTaskParameterInfo crm = GetParameter(cbCRM, CRM_REPORT);
             ScheduleTaskParameterInfo organization = GetParameter(cbOrganization, ORGANIZATION_REPORT);
             ScheduleTaskParameterInfo email = GetParameter(txtMail, EMAIL);
 
 
-            return new ScheduleTaskParameterInfo[5] { exchange, sharepoint, crm , organization, email};
+            return new ScheduleTaskParameterInfo[6] { exchange, sharepoint, lync, crm , organization, email};
         }
     }
 }

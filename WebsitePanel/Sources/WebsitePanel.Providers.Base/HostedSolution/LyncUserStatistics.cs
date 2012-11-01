@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -32,24 +32,18 @@ using System.Text;
 
 namespace WebsitePanel.Providers.HostedSolution
 {
-	public class ExchangeMailboxStatistics : BaseStatistics
-	{
-		public string DisplayName{ get; set; }
-		public DateTime AccountCreated { get; set; }
-		public string PrimaryEmailAddress { get; set; }
-		public bool POPEnabled { get; set; }
-		public bool IMAPEnabled { get; set; }
-		public bool OWAEnabled { get; set; }
-		public bool MAPIEnabled { get; set; }
-		public bool ActiveSyncEnabled { get; set; }
-		public int TotalItems { get; set; }
-		public long TotalSize { get; set; }
-		public long MaxSize { get; set; }
-		public DateTime LastLogon { get; set; }
-		public DateTime LastLogoff { get; set; }
-		public bool Enabled { get; set; }
-		public ExchangeAccountType MailboxType { get; set; }
-        public bool BlackberryEnabled { get; set; }
-        public string MailboxPlan { get; set; }
-	}
+    public class LyncUserStatistics : BaseStatistics
+    {
+        public string DisplayName { get; set; }
+        public DateTime AccountCreated { get; set; }
+        public string SipAddress { get; set; }
+        public bool InstantMessaing{ get; set; }
+        public bool MobileAccess { get; set; }
+        public bool Federation { get; set; }
+        public bool Conferencing { get; set; }
+        public bool EnterpriseVoice { get; set; }
+        public string EVPolicy { get; set; }
+        public string PhoneNumber { get; set; }
+        public string LyncUserPlan { get; set; }
+    }
 }

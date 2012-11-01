@@ -66,5 +66,18 @@
             set;
         }
 
+        public int TotalLyncUsers
+        {
+            get;
+            set;
+        }
+
+        public int TotalLyncEVUsers
+        {
+            get;
+            set;
+        }
+
+
     }
 }
