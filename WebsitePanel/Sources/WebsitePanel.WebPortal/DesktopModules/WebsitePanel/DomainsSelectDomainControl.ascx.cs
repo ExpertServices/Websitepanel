@@ -148,7 +148,8 @@ namespace WebsitePanel.Portal
                         }
                     }
                 }
-                else if (HideInstantAlias && domain.IsInstantAlias)
+                
+                if (HideInstantAlias && domain.IsInstantAlias)
                     continue;
                 else if (HideMailDomains && domain.MailDomainId > 0)
                     continue;
