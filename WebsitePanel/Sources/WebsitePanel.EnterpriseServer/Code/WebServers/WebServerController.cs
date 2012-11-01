@@ -709,7 +709,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 // remove all web site pointers
                 DomainInfo domain = ServerController.GetDomain(siteItem.Name);
-                DomainInfo ZoneInfo = ServerController.GetDomain(domain.ZoneName);
+                DomainInfo ZoneInfo = ServerController.GetDomain(domain.DomainItemId);
 
                 if (ZoneInfo == null)
                     throw new Exception("Parent zone not found");
@@ -775,18 +775,38 @@ namespace WebsitePanel.EnterpriseServer
 
                 // associate IP with web site
                 ServerController.AddItemIPAddress(siteItemId, ipAddressId);
-               
+
+
+                string parentZone = domain.ZoneName;
+                if (string.IsNullOrEmpty(parentZone))
+                {
+                    DomainInfo parentDomain = ServerController.GetDomain(domain.DomainItemId);
+                    parentZone = parentDomain.DomainName;
+                }
+
 
                 AddWebSitePointer(siteItemId,
-                    (domain.DomainName.Replace("." + domain.ZoneName, "") == domain.ZoneName) ? "": domain.DomainName.Replace("." + domain.ZoneName,"")
+                    ((domain.DomainName.Replace("." + parentZone, "") == parentZone) |
+                    (domain.DomainName == parentZone))
+                    ? "" : domain.DomainName.Replace("." + parentZone, "")
                     , ZoneInfo.DomainId, true, true, true);
 
                 foreach (DomainInfo pointer in pointers)
                 {
-                    ZoneInfo = ServerController.GetDomain(pointer.ZoneName);
+                    string pointerParentZone = pointer.ZoneName;
+                    if (string.IsNullOrEmpty(pointerParentZone))
+                    {
+                        DomainInfo parentDomain = ServerController.GetDomain(pointer.DomainItemId);
+                        pointerParentZone = parentDomain.DomainName;
+                    }
+
+
+                    ZoneInfo = ServerController.GetDomain(pointerParentZone);
 
                     AddWebSitePointer(siteItemId,
-                        (pointer.DomainName.Replace("." + pointer.ZoneName, "") == pointer.ZoneName) ? "" : pointer.DomainName.Replace("." + pointer.ZoneName, "")
+                        ((pointer.DomainName.Replace("." + pointerParentZone, "") == pointerParentZone)  |
+                        (pointer.DomainName == pointerParentZone))
+                        ? "" : pointer.DomainName.Replace("." + pointerParentZone, "")
                         , ZoneInfo.DomainId, true, true, true);
                 }
 
@@ -864,7 +884,7 @@ namespace WebsitePanel.EnterpriseServer
                 IPAddressInfo ip;
 
                 DomainInfo domain = ServerController.GetDomain(siteItem.Name);
-                DomainInfo ZoneInfo = ServerController.GetDomain(domain.ZoneName);
+                DomainInfo ZoneInfo = ServerController.GetDomain(domain.DomainItemId);
 
                 if (ZoneInfo == null)
                     throw new Exception("Parent zone not found");
@@ -956,16 +976,35 @@ namespace WebsitePanel.EnterpriseServer
                 siteItem.SiteIPAddressId = 0;
                 PackageController.UpdatePackageItem(siteItem);
 
+                string parentZone = domain.ZoneName;
+                if (string.IsNullOrEmpty(parentZone))
+                {
+                    DomainInfo parentDomain = ServerController.GetDomain(domain.DomainItemId);
+                    parentZone = parentDomain.DomainName;
+                }
+
                 AddWebSitePointer(siteItemId,
-                    (domain.DomainName.Replace("." + domain.ZoneName, "") == domain.ZoneName) ? "" : domain.DomainName.Replace("." + domain.ZoneName, "")
+                    ((domain.DomainName.Replace("." + parentZone, "") == parentZone) |
+                    (domain.DomainName == parentZone))
+                    ? "" : domain.DomainName.Replace("." + parentZone, "")
                     , ZoneInfo.DomainId, true, true, true);
 
                 foreach (DomainInfo pointer in pointers)
                 {
-                    ZoneInfo = ServerController.GetDomain(pointer.ZoneName);
+                    string pointerParentZone = pointer.ZoneName;
+                    if (string.IsNullOrEmpty(pointerParentZone))
+                    {
+                        DomainInfo parentDomain = ServerController.GetDomain(pointer.DomainItemId);
+                        pointerParentZone = parentDomain.DomainName;
+                    }
+
+
+                    ZoneInfo = ServerController.GetDomain(pointerParentZone);
 
                     AddWebSitePointer(siteItemId,
-                        (pointer.DomainName.Replace("." + pointer.ZoneName, "") == pointer.ZoneName) ? "" : pointer.DomainName.Replace("." + pointer.ZoneName, "")
+                        ((pointer.DomainName.Replace("." + pointerParentZone, "") == pointerParentZone) |
+                        (pointer.DomainName == pointerParentZone))
+                        ? "" : pointer.DomainName.Replace("." + pointerParentZone, "")
                         , ZoneInfo.DomainId, true, true, true);
                 }
 
