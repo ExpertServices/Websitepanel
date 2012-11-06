@@ -607,15 +607,42 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogStart("GetDatabase");
             ExchangeLog.LogInfo("DAG: " + dagName);
 
-            //Get Dag Servers
+            // this part of code handles mailboxnames like in the old 2007 provider
+            // check if DAG is in reality DAG\mailboxdatabase
+            string dagNameDAG = string.Empty;
+            string dagNameMBX = string.Empty;
+            bool isFixedDatabase = false;
+            if (dagName.Contains("\\"))
+            {
+                // split the two parts and extract DAG-Name and mailboxdatabase-name
+                string[] parts = dagName.Split(new char[] { '\\' }, 2, StringSplitOptions.None);
+                dagNameDAG = parts[0];
+                dagNameMBX = parts[1];
+                // check that we realy have a database name
+                if (!String.IsNullOrEmpty(dagNameMBX))
+                {
+                    isFixedDatabase = true;
+                }
+            }
+            else
+            {
+                // there is no mailboxdatabase-name use the loadbalancing-code
+                dagNameDAG = dagName;
+                isFixedDatabase = false;
+            }
+
+            //Get Dag Servers - with the name of the database availability group
             Collection<PSObject> dags = null;
             Command cmd = new Command("Get-DatabaseAvailabilityGroup");
-            cmd.Parameters.Add("Identity", dagName);
+            cmd.Parameters.Add("Identity", dagNameDAG);
             dags = ExecuteShellCommand(runSpace, cmd);
 
             if (htBbalancer == null)
                 htBbalancer = new Hashtable();
 
+            // use fully qualified dagName for loadbalancer. Thus if there are two services and one of them
+            // contains only the DAG, the "fixed" database could also be used in loadbalancing. If you do not want this,
+            // set either IsExcludedFromProvisioning or IsSuspendedFromProvisioning - it is not evaluated for fixed databases
             if (htBbalancer[dagName] == null)
                 htBbalancer.Add(dagName, 0);
 
@@ -628,35 +655,56 @@ namespace WebsitePanel.Providers.HostedSolution
                 {
                     System.Collections.Generic.List<string> lstDatabase = new System.Collections.Generic.List<string>();
 
-                    foreach (object objServer in servers)
+                    if (!isFixedDatabase) // "old" loadbalancing code
+                    {
+                        foreach (object objServer in servers)
+                        {
+                            Collection<PSObject> databases = null;
+                            cmd = new Command("Get-MailboxDatabase");
+                            cmd.Parameters.Add("Server", ObjToString(objServer));
+                            databases = ExecuteShellCommand(runSpace, cmd);
+
+                            foreach (PSObject objDatabase in databases)
+                            {
+                                if (((bool)GetPSObjectProperty(objDatabase, "IsExcludedFromProvisioning") == false) &&
+                                    ((bool)GetPSObjectProperty(objDatabase, "IsSuspendedFromProvisioning") == false))
+                                {
+                                    string db = ObjToString(GetPSObjectProperty(objDatabase, "Identity"));
+
+                                    bool bAdd = true;
+                                    foreach (string s in lstDatabase)
+                                    {
+                                        if (s.ToLower() == db.ToLower())
+                                        {
+                                            bAdd = false;
+                                            break;
+                                        }
+                                    }
+
+                                    if (bAdd)
+                                    {
+                                        lstDatabase.Add(db);
+                                        ExchangeLog.LogInfo("AddDatabase: " + db);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else // new fixed database code
                     {
                         Collection<PSObject> databases = null;
                         cmd = new Command("Get-MailboxDatabase");
-                        cmd.Parameters.Add("Server", ObjToString(objServer));
+                        cmd.Parameters.Add("Identity", dagNameMBX);
                         databases = ExecuteShellCommand(runSpace, cmd);
 
+                        // do not check "IsExcludedFromProvisioning" or "IsSuspended", just check if it is a member of the DAG
                         foreach (PSObject objDatabase in databases)
                         {
-                            if (((bool)GetPSObjectProperty(objDatabase, "IsExcludedFromProvisioning") == false) &&
-                                ((bool)GetPSObjectProperty(objDatabase, "IsSuspendedFromProvisioning") == false))
+                            string dagSetting = ObjToString(GetPSObjectProperty(objDatabase, "MasterServerOrAvailabilityGroup"));
+                            if (dagNameDAG.Equals(dagSetting, StringComparison.OrdinalIgnoreCase))
                             {
-                                string db = ObjToString(GetPSObjectProperty(objDatabase, "Identity"));
-
-                                bool bAdd = true;
-                                foreach (string s in lstDatabase)
-                                {
-                                    if (s.ToLower() == db.ToLower())
-                                    {
-                                        bAdd = false;
-                                        break;
-                                    }
-                                }
-
-                                if (bAdd)
-                                {
-                                    lstDatabase.Add(db);
-                                    ExchangeLog.LogInfo("AddDatabase: " + db);
-                                }
+                                lstDatabase.Add(dagNameMBX);
+                                ExchangeLog.LogInfo("AddFixedDatabase: " + dagNameMBX);
                             }
                         }
                     }

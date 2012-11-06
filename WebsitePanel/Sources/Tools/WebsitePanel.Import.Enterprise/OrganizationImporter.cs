@@ -757,15 +757,19 @@ namespace WebsitePanel.Import.Enterprise
 			if (EmailAddressExists(email))
 				return BusinessErrorCodes.ERROR_EXCHANGE_EMAIL_EXISTS;
 
-
-			
 			if (AccountExists(accountName))
 				throw new Exception(string.Format("Account {0} already exists", accountName));
 
 			string displayName = (string)entry.Properties["displayName"].Value;
 
+            string samName = (string)entry.Properties["sAMAccountName"].Value;
+            // this should really NEVER happen - an AD account without sAMAccountName?!
+            if (string.IsNullOrEmpty(samName))
+                throw new Exception("SAMAccountName is not specified");
+            // add Netbios-Domainname before samAccountName - format in the database
+            samName = Global.NetBiosDomain + "\\" + samName;
 
-			int userId = AddOrganizationUser(itemId, accountName, displayName, email, string.Empty);
+			int userId = AddOrganizationUser(itemId, accountName, displayName, email, samName, string.Empty);
 			AddAccountEmailAddress(userId, email);
 			
 			//account type
@@ -796,7 +800,7 @@ namespace WebsitePanel.Import.Enterprise
 					return userId;
 			}
 
-			UpdateExchangeAccount(userId, accountName, accountType, displayName, email, false, string.Empty, string.Empty, string.Empty);
+			UpdateExchangeAccount(userId, accountName, accountType, displayName, email, false, string.Empty, samName, string.Empty);
 
 			string defaultEmail = (string)entry.Properties["extensionAttribute3"].Value;
 
@@ -847,7 +851,7 @@ namespace WebsitePanel.Import.Enterprise
 			if (email != null && email.ToLower().StartsWith("smtp:"))
 				email = email.Substring(5);
 
-
+            // no sAMAccountName for contacts - so String.Empty is OK
 			int accountId = AddAccount(itemId, ExchangeAccountType.Contact, accountName, displayName, email, false, 0, string.Empty, null);
 			
 			Log.WriteEnd("Contact imported");
@@ -886,7 +890,14 @@ namespace WebsitePanel.Import.Enterprise
 			if (EmailAddressExists(email))
 				return BusinessErrorCodes.ERROR_EXCHANGE_EMAIL_EXISTS;
 
-			int accountId = AddAccount(itemId, ExchangeAccountType.DistributionList, accountName, displayName, email, false, 0, string.Empty, null);
+            string samName = (string)entry.Properties["sAMAccountName"].Value;
+            // this should really NEVER happen - an AD group without sAMAccountName?!
+            if (string.IsNullOrEmpty(samName))
+                throw new Exception("SAMAccountName is not specified");
+            // add Netbios-Domainname before samAccountName - format in the database
+            samName = Global.NetBiosDomain + "\\" + samName;
+
+			int accountId = AddAccount(itemId, ExchangeAccountType.DistributionList, accountName, displayName, email, false, 0, samName, null);
 			AddAccountEmailAddress(accountId, email);
 
 			string defaultEmail = (string)entry.Properties["extensionAttribute3"].Value;
@@ -938,10 +949,10 @@ namespace WebsitePanel.Import.Enterprise
 				mailboxManagerActions.ToString(), samAccountName, CryptoUtils.Encrypt(accountPassword),0, string.Empty);
 		}
 
-		private static int AddOrganizationUser(int itemId, string accountName, string displayName, string email, string accountPassword)
+		private static int AddOrganizationUser(int itemId, string accountName, string displayName, string email, string samAccountName, string accountPassword)
 		{
 			return DataProvider.AddExchangeAccount(itemId, (int)ExchangeAccountType.User, accountName, displayName, email, false, string.Empty,
-                                            string.Empty, CryptoUtils.Encrypt(accountPassword),0 , string.Empty);
+                                            samAccountName, CryptoUtils.Encrypt(accountPassword), 0 , string.Empty);
 
 		}
 
