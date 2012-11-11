@@ -6439,3 +6439,19 @@ GO
 
 
 
+ALTER PROCEDURE [dbo].[GetItemIdByOrganizationId] 	
+	@OrganizationId nvarchar(128)
+AS
+BEGIN
+	SET NOCOUNT ON;
+    
+	SELECT 
+		ItemID
+	FROM 
+		dbo.ExchangeOrganizations
+	WHERE 
+		OrganizationId = @OrganizationId
+END
+GO
+
+
