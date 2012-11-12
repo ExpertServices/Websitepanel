@@ -435,7 +435,7 @@ namespace WebsitePanel.Providers.HostedSolution
                     cmd = new Command("Enable-CsUser");
                     cmd.Parameters.Add("Identity", userUpn);
                     cmd.Parameters.Add("RegistrarPool", PoolFQDN);
-                    cmd.Parameters.Add("SipAddressType", "EmailAddress");
+                    cmd.Parameters.Add("SipAddressType", "UserPrincipalName");
                     ExecuteShellCommand(runSpace, cmd);
 
                     transaction.RegisterNewCsUser(userUpn);
