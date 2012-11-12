@@ -125,6 +125,9 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                 item.TotalCRMUsers = crmOrganizationStatistics.Count;                
             }
 
+            item.TotalLyncUsers = 0;
+            item.TotalLyncEVUsers = 0;
+
             if (report.LyncReport != null)
             {
                 List<LyncUserStatistics> lyncOrganizationStatistics =
