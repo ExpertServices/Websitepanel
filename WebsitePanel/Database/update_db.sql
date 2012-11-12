@@ -6455,3 +6455,143 @@ END
 GO
 
 
+
+
+
+
+ALTER PROCEDURE [dbo].[SearchServiceItemsPaged]
+(
+	@ActorID int,
+	@UserID int,
+	@ItemTypeID int,
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+
+
+-- check rights
+IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
+RAISERROR('You are not allowed to access this account', 16, 1)
+
+-- build query and run it to the temporary table
+DECLARE @sql nvarchar(2000)
+
+IF @ItemTypeID <> 13
+BEGIN
+	SET @sql = '
+	DECLARE @EndRow int
+	SET @EndRow = @StartRow + @MaximumRows
+	DECLARE @Items TABLE
+	(
+		ItemPosition int IDENTITY(1,1),
+		ItemID int
+	)
+	INSERT INTO @Items (ItemID)
+	SELECT
+		SI.ItemID
+	FROM ServiceItems AS SI
+	INNER JOIN Packages AS P ON P.PackageID = SI.PackageID
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	WHERE
+		dbo.CheckUserParent(@UserID, P.UserID) = 1
+		AND SI.ItemTypeID = @ItemTypeID
+	'
+
+	IF @FilterValue <> ''
+	SET @sql = @sql + ' AND SI.ItemName LIKE @FilterValue '
+
+	IF @SortColumn = '' OR @SortColumn IS NULL
+	SET @SortColumn = 'ItemName'
+
+	SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
+
+	SET @sql = @sql + ' SELECT COUNT(ItemID) FROM @Items;
+	SELECT
+		
+		SI.ItemID,
+		SI.ItemName,
+
+		P.PackageID,
+		P.PackageName,
+		P.StatusID,
+		P.PurchaseDate,
+		
+		-- user
+		P.UserID,
+		U.Username,
+		U.FirstName,
+		U.LastName,
+		U.FullName,
+		U.RoleID,
+		U.Email
+	FROM @Items AS I
+	INNER JOIN ServiceItems AS SI ON I.ItemID = SI.ItemID
+	INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	WHERE I.ItemPosition BETWEEN @StartRow AND @EndRow'
+END
+ELSE
+BEGIN
+
+	SET @SortColumn = REPLACE(@SortColumn, 'ItemName', 'DomainName')
+	
+	SET @sql = '
+	DECLARE @EndRow int
+	SET @EndRow = @StartRow + @MaximumRows
+	DECLARE @Items TABLE
+	(
+		ItemPosition int IDENTITY(1,1),
+		ItemID int
+	)
+	INSERT INTO @Items (ItemID)
+	SELECT
+		D.DomainID
+	FROM Domains AS D
+	INNER JOIN Packages AS P ON P.PackageID = D.PackageID
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	WHERE
+		dbo.CheckUserParent(@UserID, P.UserID) = 1
+	'
+
+	IF @FilterValue <> ''
+	SET @sql = @sql + ' AND D.DomainName LIKE @FilterValue '
+
+	IF @SortColumn = '' OR @SortColumn IS NULL
+	SET @SortColumn = 'DomainName'
+
+	SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
+
+	SET @sql = @sql + ' SELECT COUNT(ItemID) FROM @Items;
+	SELECT
+		
+		D.DomainID AS ItemID,
+		D.DomainName AS ItemName,
+
+		P.PackageID,
+		P.PackageName,
+		P.StatusID,
+		P.PurchaseDate,
+		
+		-- user
+		P.UserID,
+		U.Username,
+		U.FirstName,
+		U.LastName,
+		U.FullName,
+		U.RoleID,
+		U.Email
+	FROM @Items AS I
+	INNER JOIN Domains AS D ON I.ItemID = D.DomainID
+	INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	WHERE I.ItemPosition BETWEEN @StartRow AND @EndRow AND D.IsDomainPointer=0'
+END
+
+exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @UserID int, @FilterValue nvarchar(50), @ItemTypeID int, @ActorID int',
+@StartRow, @MaximumRows, @UserID, @FilterValue, @ItemTypeID, @ActorID
+
+RETURN
+GO
