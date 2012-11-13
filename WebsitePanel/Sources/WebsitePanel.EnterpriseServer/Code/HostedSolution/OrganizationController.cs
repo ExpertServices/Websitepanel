@@ -1500,8 +1500,15 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (DataProvider.CheckOCSUserExists(accountId))
                 {
-                    return BusinessErrorCodes.CURRENT_USER_IS_OCS_USER; ;
+                    return BusinessErrorCodes.CURRENT_USER_IS_OCS_USER; 
                 }
+
+                if (DataProvider.CheckLyncUserExists(accountId))
+                {
+                    return BusinessErrorCodes.CURRENT_USER_IS_LYNC_USER; 
+                }
+
+
                 // load organization
                 Organization org = GetOrganization(itemId);
                 if (org == null)

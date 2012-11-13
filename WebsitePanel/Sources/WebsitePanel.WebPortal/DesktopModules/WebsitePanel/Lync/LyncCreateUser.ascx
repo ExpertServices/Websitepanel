@@ -28,7 +28,7 @@
 					    <tr>
 					        <td class="FormLabel150"><asp:Localize ID="Localize1" runat="server" meta:resourcekey="locDisplayName" Text="Display Name: *"></asp:Localize></td>
 					        <td>                                
-                                <wsp:UserSelector ID="userSelector" runat="server" IncludeMailboxesOnly="true" IncludeMailboxes="true" ExcludeOCSUsers="true" ExcludeLyncUsers="true"/>
+                                <wsp:UserSelector ID="userSelector" runat="server" IncludeMailboxesOnly="false" IncludeMailboxes="true" ExcludeOCSUsers="true" ExcludeLyncUsers="true"/>
                             </td>
 					    </tr>
 					    	    					    					    

@@ -3176,6 +3176,9 @@
   <data name="Warning.2709" xml:space="preserve">
     <value>Cannot delete user account as it is used in OCS.</value>
   </data>
+  <data name="Warning.2710" xml:space="preserve">
+    <value>Cannot delete user account as it is used in Lync.</value>
+  </data>
   <data name="Quota.DNS.PrimaryZones" xml:space="preserve">
     <value>B2B Primary Zones Allowed</value>
   </data>
