@@ -56,8 +56,8 @@ namespace WebsitePanel.Providers.HostedSolution
                 sb.AppendFormat("{0},", ToCsvString(item.TotalPublicFoldersSize / 1024.0 / 1024.0));
                 sb.AppendFormat("{0},", ToCsvString(item.TotalSharePointSiteCollections));
                 sb.AppendFormat("{0},", ToCsvString(item.TotalSharePointSiteCollectionsSize / 1024.0 / 1024.0));
-                sb.AppendFormat("{0}", ToCsvString(item.TotalCRMUsers));
-                sb.AppendFormat("{0}", ToCsvString(item.TotalLyncUsers));
+                sb.AppendFormat("{0},", ToCsvString(item.TotalCRMUsers));
+                sb.AppendFormat("{0},", ToCsvString(item.TotalLyncUsers));
                 sb.AppendFormat("{0}", ToCsvString(item.TotalLyncEVUsers));
                 
                 mainBuilder.Append(sb.ToString());
