@@ -202,6 +202,13 @@
     <Compile Include="Code\ReportingServices\IResourceStorage.cs" />
     <Compile Include="Code\ReportingServices\ReportingServicesUtils.cs" />
     <Compile Include="Code\UserControls\Tab.cs" />
+    <Compile Include="ExchangeServer\OrganizationDomainNames.ascx.cs">
+      <DependentUpon>OrganizationDomainNames.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationDomainNames.ascx.designer.cs">
+      <DependentUpon>OrganizationDomainNames.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ExchangeServer\ExchangeAddMailboxPlan.ascx.cs">
       <DependentUpon>ExchangeAddMailboxPlan.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -3790,6 +3797,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ExchangeServer\OrganizationDomainNames.ascx" />
     <Content Include="ExchangeServer\ExchangeAddMailboxPlan.ascx" />
     <Content Include="ServersEditWebPlatformInstaller.ascx" />
     <Content Include="ExchangeServer\ExchangeMailboxPlans.ascx" />
