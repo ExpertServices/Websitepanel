@@ -138,10 +138,11 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                     exchangeGroup.MenuItems.Add(CreateMenuItem("MailboxPlans", "mailboxplans"));
 
             if (!hideItems)
-                if (Utils.CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))
-                    exchangeGroup.MenuItems.Add(CreateMenuItem("DomainNames", "domains"));
+                if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
+                    exchangeGroup.MenuItems.Add(CreateMenuItem("ExchangeDomainNames", "domains"));
 
             if (!hideItems)
+                if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
                 exchangeGroup.MenuItems.Add(CreateMenuItem("StorageUsage", "storage_usage"));
 
             if (exchangeGroup.MenuItems.Count > 0)
@@ -164,8 +165,12 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             if (!hideItems)
             {
                 MenuGroup organizationGroup = new MenuGroup(GetLocalizedString("Text.OrganizationGroup"), imagePath + "company24.png");
-                //if (CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))
-                //    organizationGroup.MenuItems.Add(CreateMenuItem("DomainNames", "domains"));
+                
+                if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx) == false)
+                {
+                    if (CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))
+                        organizationGroup.MenuItems.Add(CreateMenuItem("DomainNames", "domains"));
+                }
                 if (Utils.CheckQouta(Quotas.ORGANIZATION_USERS, cntx))
                     organizationGroup.MenuItems.Add(CreateMenuItem("Users", "users"));
 
