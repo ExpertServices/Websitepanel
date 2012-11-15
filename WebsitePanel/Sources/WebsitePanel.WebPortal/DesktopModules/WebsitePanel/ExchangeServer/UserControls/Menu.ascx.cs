@@ -168,8 +168,8 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 
                 if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx) == false)
                 {
-                    if (Utils.CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))
-                        organizationGroup.MenuItems.Add(CreateMenuItem("DomainNames", "domains"));
+                    if (CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))
+                        organizationGroup.MenuItems.Add(CreateMenuItem("DomainNames", "org_domains"));
                 }
                 if (Utils.CheckQouta(Quotas.ORGANIZATION_USERS, cntx))
                     organizationGroup.MenuItems.Add(CreateMenuItem("Users", "users"));
