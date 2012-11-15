@@ -87,7 +87,7 @@ namespace WebsitePanel.Portal.ExchangeServer
         protected void btnAddDomain_Click(object sender, EventArgs e)
         {
             btnSetDefaultDomain.Enabled = true;
-            Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "add_domain",
+            Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "org_add_domain",
                 "SpaceID=" + PanelSecurity.PackageId));
         }
 
