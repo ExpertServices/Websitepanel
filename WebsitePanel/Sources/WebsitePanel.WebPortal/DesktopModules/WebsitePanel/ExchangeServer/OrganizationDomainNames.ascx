@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="OrganizationDomainNames.ascx.cs" Inherits="WebsitePanel.Portal.ExchangeServer.ExchangeDomainNames" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="OrganizationDomainNames.ascx.cs" Inherits="WebsitePanel.Portal.ExchangeServer.OrganizationDomainNames" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
