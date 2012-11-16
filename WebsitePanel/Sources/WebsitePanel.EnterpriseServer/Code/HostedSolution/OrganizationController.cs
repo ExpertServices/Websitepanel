@@ -1130,7 +1130,7 @@ namespace WebsitePanel.EnterpriseServer
                 if (orgStatsExchange.AllocatedMailboxes == 0)
                 {
                     ExchangeAcceptedDomainType newDomainType = ExchangeAcceptedDomainType.InternalRelay;
-                    ChangeOrganizationDomainType(itemId, domain.DomainId, newDomainType);
+                    ChangeOrganizationDomainType(org.ServiceId, domain.DomainId, newDomainType);
                 }
 
                 if (org.IsOCSOrganization)
