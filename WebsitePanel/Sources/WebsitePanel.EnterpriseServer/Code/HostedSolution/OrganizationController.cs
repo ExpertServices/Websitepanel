@@ -1127,7 +1127,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 OrganizationStatistics orgStatsExchange = ExchangeServerController.GetOrganizationStatistics(itemId);
 
-                if ((orgStatsExchange.AllocatedMailboxes != -1) == false)
+                if (orgStatsExchange.AllocatedMailboxes == 0)
                 {
                     ExchangeAcceptedDomainType newDomainType = ExchangeAcceptedDomainType.InternalRelay;
                     ChangeOrganizationDomainType(itemId, domain.DomainId, newDomainType);
