@@ -1123,8 +1123,10 @@ namespace WebsitePanel.EnterpriseServer
                 if (!string.IsNullOrEmpty(org.GlobalAddressList))
                 {
                     ExchangeServerController.AddAuthoritativeDomain(itemId, domain.DomainId);
-                    
-                    if (orgStats.AllocatedMailboxes == -1)
+
+                    OrganizationStatistics orgStatsExchange = ExchangeServerController.GetOrganizationStatistics(itemId);
+
+                    if (orgStatsExchange.AllocatedMailboxes == -1)
                     {
                         ExchangeAcceptedDomainType newDomainType = ExchangeAcceptedDomainType.InternalRelay;
                         ChangeOrganizationDomainType(itemId, domain.DomainId, newDomainType);
