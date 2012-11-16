@@ -1124,7 +1124,7 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     ExchangeServerController.AddAuthoritativeDomain(itemId, domain.DomainId);
                     
-                    if (orgStats.AllocatedMailboxes == 0)
+                    if (orgStats.AllocatedMailboxes > -1)
                     {
                         ExchangeAcceptedDomainType newDomainType = ExchangeAcceptedDomainType.InternalRelay;
                         ChangeOrganizationDomainType(itemId, domain.DomainId, newDomainType);
