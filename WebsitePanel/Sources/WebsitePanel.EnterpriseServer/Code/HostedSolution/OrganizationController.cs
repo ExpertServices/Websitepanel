@@ -1123,14 +1123,14 @@ namespace WebsitePanel.EnterpriseServer
                 if (!string.IsNullOrEmpty(org.GlobalAddressList))
                 {
                     ExchangeServerController.AddAuthoritativeDomain(itemId, domain.DomainId);
+                }
 
-                    OrganizationStatistics orgStatsExchange = ExchangeServerController.GetOrganizationStatistics(itemId);
+                OrganizationStatistics orgStatsExchange = ExchangeServerController.GetOrganizationStatistics(itemId);
 
-                    if ((orgStatsExchange.AllocatedMailboxes > -1) == false)
-                    {
-                        ExchangeAcceptedDomainType newDomainType = ExchangeAcceptedDomainType.InternalRelay;
-                        ChangeOrganizationDomainType(itemId, domain.DomainId, newDomainType);
-                    }
+                if (orgStatsExchange.AllocatedMailboxes == -1)
+                {
+                    ExchangeAcceptedDomainType newDomainType = ExchangeAcceptedDomainType.InternalRelay;
+                    ChangeOrganizationDomainType(itemId, domain.DomainId, newDomainType);
                 }
 
                 if (org.IsOCSOrganization)
