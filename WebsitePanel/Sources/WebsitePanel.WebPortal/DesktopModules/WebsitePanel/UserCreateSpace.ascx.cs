@@ -112,7 +112,11 @@ namespace WebsitePanel.Portal
 
                     ftpEnabled = cntx.Groups.ContainsKey(ResourceGroups.Ftp);
                     mailEnabled = cntx.Groups.ContainsKey(ResourceGroups.Mail);
-                    integratedOUEnabled = cntx.Groups.ContainsKey(ResourceGroups.HostedOrganizations);
+
+                    if (Utils.CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))
+                    {
+                        integratedOUEnabled = true;
+                    }
                 }
             }
 
