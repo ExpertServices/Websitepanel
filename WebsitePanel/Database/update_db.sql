@@ -559,7 +559,7 @@ GO
 UPDATE [dbo].[ResourceGroups] SET ShowGroup=1 
 GO
 
-IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='Quotas' AND COLS.name='ShowGroup')
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='Quotas' AND COLS.name='HideQuota')
 BEGIN
 ALTER TABLE [dbo].[Quotas] ADD [HideQuota] [bit] NULL
 END
