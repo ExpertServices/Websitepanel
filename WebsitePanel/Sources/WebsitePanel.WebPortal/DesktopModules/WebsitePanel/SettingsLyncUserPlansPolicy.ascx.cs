@@ -219,7 +219,7 @@ namespace WebsitePanel.Portal
                         }
 
 
-                        result = ES.Services.ExchangeServer.DeleteExchangeMailboxPlan(orgs[0].Id, planId);
+                        result = ES.Services.Lync.DeleteLyncUserPlan(orgs[0].Id, planId);
                         if (result < 0)
                         {
                             messageBox.ShowResultMessage(result);

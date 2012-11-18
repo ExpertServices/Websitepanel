@@ -113,7 +113,8 @@ namespace WebsitePanel.Providers.HostedSolution
             DirectoryEntry parent = entry.Parent;
             if (parent != null)
             {
-                parent.Children.Remove(entry);
+                //parent.Children.Remove(entry);
+                entry.DeleteTree();
                 parent.CommitChanges();
             }
         }
