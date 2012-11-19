@@ -236,4 +236,7 @@
   <data name="valRequireDisplayName.Text" xml:space="preserve">
     <value>*</value>
   </data>
+  <data name="lblUserPrincipalName" xml:space="preserve">
+    <value>Login Name:</value>
+  </data>
 </root>

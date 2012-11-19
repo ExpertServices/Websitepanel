@@ -529,6 +529,7 @@ namespace WebsitePanel.Providers.HostedSolution
             retUser.DomainUserName = GetDomainName(ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName));
             retUser.DistinguishedName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.DistinguishedName);
             retUser.Locked = (bool)entry.InvokeGet(ADAttributes.AccountLocked);
+            retUser.UserPrincipalName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.UserPrincipalName);
             
             HostedSolutionLog.LogEnd("GetUserGeneralSettingsInternal");
             return retUser;
