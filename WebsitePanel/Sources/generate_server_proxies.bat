@@ -50,13 +50,13 @@ REM %WSE_CLEAN% .\WebsitePanel.Server.Client\VirtualizationServerProxy.cs
 REM %WSDL% %SERVER_URL%/VirtualizationServerForPrivateCloud.asmx /out:.\WebsitePanel.Server.Client\VirtualizationServerForPrivateCloudProxy.cs /namespace:WebsitePanel.Providers.VirtualizationForPC /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\VirtualizationServerForPrivateCloudProxy.cs
 
-%WSDL% %SERVER_URL%/WebServer.asmx /out:.\WebsitePanel.Server.Client\WebServerProxy.cs /namespace:WebsitePanel.Providers.Web /type:webClient /fields
-%WSE_CLEAN% .\WebsitePanel.Server.Client\WebServerProxy.cs
+REM %WSDL% %SERVER_URL%/WebServer.asmx /out:.\WebsitePanel.Server.Client\WebServerProxy.cs /namespace:WebsitePanel.Providers.Web /type:webClient /fields
+REM %WSE_CLEAN% .\WebsitePanel.Server.Client\WebServerProxy.cs
 
 REM %WSDL% %SERVER_URL%/WindowsServer.asmx /out:.\WebsitePanel.Server.Client\WindowsServerProxy.cs /namespace:WebsitePanel.Server /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\WindowsServerProxy.cs
 
-REM %WSDL% %SERVER_URL%/LyncServer.asmx /out:.\WebsitePanel.Server.Client\LyncServerProxy.cs /namespace:WebsitePanel.Providers.Lync /type:webClient /fields
-REM %WSE_CLEAN% .\WebsitePanel.Server.Client\LyncServerProxy.cs
+%WSDL% %SERVER_URL%/LyncServer.asmx /out:.\WebsitePanel.Server.Client\LyncServerProxy.cs /namespace:WebsitePanel.Providers.Lync /type:webClient /fields
+%WSE_CLEAN% .\WebsitePanel.Server.Client\LyncServerProxy.cs
 
 

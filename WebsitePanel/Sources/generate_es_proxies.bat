@@ -65,8 +65,8 @@ REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\PackagesProxy.cs
 REM %WSDL% %SERVER_URL%/esScheduler.asmx /out:.\WebsitePanel.EnterpriseServer.Client\SchedulerProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\SchedulerProxy.cs
 
-%WSDL% %SERVER_URL%/esServers.asmx /out:.\WebsitePanel.EnterpriseServer.Client\ServersProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
-%WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\ServersProxy.cs
+REM %WSDL% %SERVER_URL%/esServers.asmx /out:.\WebsitePanel.EnterpriseServer.Client\ServersProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
+REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\ServersProxy.cs
 
 REM %WSDL% %SERVER_URL%/esSharePointServers.asmx /out:.\WebsitePanel.EnterpriseServer.Client\SharePointServersProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\SharePointServersProxy.cs
@@ -92,8 +92,8 @@ REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\WebServersProxy.cs
 REM %WSDL% %SERVER_URL%/esVirtualizationServerForPrivateCloud.asmx /out:.\WebsitePanel.EnterpriseServer.Client\VirtualizationServerProxyForPrivateCloud.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\VirtualizationServerProxyForPrivateCloud.cs
 
-REM %WSDL% %SERVER_URL%/esLync.asmx /out:.\WebsitePanel.EnterpriseServer.Client\LyncProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
-REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\LyncProxy.cs
+%WSDL% %SERVER_URL%/esLync.asmx /out:.\WebsitePanel.EnterpriseServer.Client\LyncProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
+%WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\LyncProxy.cs
 
 
 

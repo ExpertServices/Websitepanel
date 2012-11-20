@@ -228,7 +228,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
 
                 LyncUserPlan plan = GetLyncUserPlan(itemId, lyncUserPlanId);
 
-                if (!lync.CreateUser(org.OrganizationId, user.PrimaryEmailAddress, plan))
+                if (!lync.CreateUser(org.OrganizationId, user.UserPrincipalName, plan))
                 {
                     TaskManager.CompleteResultTask(res, LyncErrorCodes.CANNOT_ADD_LYNC_USER);
                     return res;
@@ -318,7 +318,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                 usr = OrganizationController.GetAccount(itemId, accountId);
 
                 if (usr != null)
-                    user = lync.GetLyncUserGeneralSettings(org.OrganizationId, usr.PrimaryEmailAddress);
+                    user = lync.GetLyncUserGeneralSettings(org.OrganizationId, usr.UserPrincipalName);
 
                 if (user != null)
                 {
@@ -340,6 +340,59 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             return user;
 
         }
+
+        public static bool SetLyncUserGeneralSettings(int itemId, int accountId, string sipAddress, string lineUri)
+        {
+            TaskManager.StartTask("LYNC", "SET_LYNC_USER_GENERAL_SETTINGS");
+
+            LyncUser user = null;
+            bool ret = true;
+
+            try
+            {
+                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                if (org == null)
+                {
+                    throw new ApplicationException(
+                        string.Format("Organization is null. ItemId={0}", itemId));
+                }
+
+                int lyncServiceId = GetLyncServiceID(org.PackageId);
+                LyncServer lync = GetLyncServer(lyncServiceId, org.ServiceId);
+
+                OrganizationUser usr;
+                usr = OrganizationController.GetAccount(itemId, accountId);
+
+                if (usr != null)
+                    user = lync.GetLyncUserGeneralSettings(org.OrganizationId, usr.UserPrincipalName);
+
+                if (user != null)
+                {
+                    LyncUserPlan plan = ObjectUtils.FillObjectFromDataReader<LyncUserPlan>(DataProvider.GetLyncUserPlanByAccountId(accountId));
+
+                    if (plan != null)
+                    {
+                        user.LyncUserPlanId = plan.LyncUserPlanId;
+                        user.LyncUserPlanName = plan.LyncUserPlanName;
+                    }
+
+                    user.PrimaryUri = sipAddress;
+                    user.LineUri = lineUri;
+
+                    lync.SetLyncUserGeneralSettings(org.OrganizationId, usr.UserPrincipalName, user);
+                }
+            }
+            catch (Exception ex)
+            {
+                ret = false;
+                throw TaskManager.WriteError(ex);
+            }
+            TaskManager.CompleteTask();
+            return ret;
+
+        }
+
+
 
         public static int DeleteOrganization(int itemId)
         {
@@ -403,7 +456,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                 OrganizationUser user;
                 user = OrganizationController.GetAccount(itemId, accountId);
 
-                if (!lync.SetLyncUserPlan(org.OrganizationId, user.PrimaryEmailAddress, plan))
+                if (!lync.SetLyncUserPlan(org.OrganizationId, user.UserPrincipalName, plan))
                 {
                     TaskManager.CompleteResultTask(res, LyncErrorCodes.CANNOT_ADD_LYNC_USER);
                     return res;
@@ -518,7 +571,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                 user = OrganizationController.GetAccount(itemId, accountId);
 
                 if (user != null)
-                    lync.DeleteUser(user.PrimaryEmailAddress);
+                    lync.DeleteUser(user.UserPrincipalName);
             }
             catch (Exception ex)
             {

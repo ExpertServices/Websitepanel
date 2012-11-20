@@ -127,6 +127,12 @@ namespace WebsitePanel.Providers.HostedSolution
             return GetLyncUserGeneralSettingsInternal(organizationId, userUpn);
         }
 
+        public bool SetLyncUserGeneralSettings(string organizationId, string userUpn, LyncUser lyncUser)
+        {
+            return SetLyncUserGeneralSettingsInternal(organizationId, userUpn, lyncUser);
+        }
+
+
         public bool SetLyncUserPlan(string organizationId, string userUpn, LyncUserPlan plan)
         {
             return SetLyncUserPlanInternal(organizationId, userUpn, plan, null);
@@ -523,6 +529,40 @@ namespace WebsitePanel.Providers.HostedSolution
             HostedSolutionLog.LogEnd("GetLyncUserGeneralSettingsInternal");
             return lyncUser;
         }
+
+        private bool SetLyncUserGeneralSettingsInternal(string organizationId, string userUpn, LyncUser lyncUser)
+        {
+            HostedSolutionLog.LogStart("SetLyncUserGeneralSettingsInternal");
+            HostedSolutionLog.DebugInfo("organizationId: {0}", organizationId);
+            HostedSolutionLog.DebugInfo("userUpn: {0}", userUpn);
+
+            bool ret = true;
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+
+                Command cmd = new Command("Set-CsUser");
+                cmd.Parameters.Add("Identity", userUpn);
+                if (!string.IsNullOrEmpty(lyncUser.PrimaryUri)) cmd.Parameters.Add("SipAddress", lyncUser.PrimaryUri);
+                if (!string.IsNullOrEmpty(lyncUser.PrimaryUri)) cmd.Parameters.Add("LineUri", lyncUser.LineUri);
+
+                ExecuteShellCommand(runSpace, cmd, false);
+            }
+            catch (Exception ex)
+            {
+                ret = false;
+                HostedSolutionLog.LogError("SetLyncUserGeneralSettingsInternal", ex);
+                throw;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+            HostedSolutionLog.LogEnd("SetLyncUserGeneralSettingsInternal");
+            return ret;
+        }
+
 
 
         private bool SetLyncUserPlanInternal(string organizationId, string userUpn, LyncUserPlan plan, Runspace runSpace)
