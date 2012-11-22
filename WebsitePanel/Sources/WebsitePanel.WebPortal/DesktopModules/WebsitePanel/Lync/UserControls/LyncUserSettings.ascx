@@ -1,0 +1,2 @@
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LyncUserSettings.ascx.cs" Inherits="WebsitePanel.Portal.Lync.UserControls.LyncUserSettings" %>
+<asp:DropDownList ID="ddlSipAddresses" runat="server" CssClass="NormalTextBox"></asp:DropDownList>
