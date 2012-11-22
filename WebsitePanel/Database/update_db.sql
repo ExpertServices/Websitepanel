@@ -577,9 +577,9 @@ ALTER TABLE [dbo].[ExchangeAccounts] ADD
 END
 GO
 
-IF NOT EXISTS(SELECT * FROM [dbo].[ExchangeAccounts] WHERE UserPrincipalName IS NOT NULL)
+IF NOT EXISTS(SELECT 1 FROM [dbo].[ExchangeAccounts] WHERE UserPrincipalName IS NOT NULL)
 BEGIN
-	UPDATE [dbo].[ExchangeAccounts] SET [UserPrincipalName] = PrimaryEmailAddress
+	UPDATE [dbo].[ExchangeAccounts] SET [UserPrincipalName] = PrimaryEmailAddress WHERE AccountType IN (1,7)
 END
 GO
 
@@ -6924,7 +6924,7 @@ AS
 UPDATE LyncUsers SET
 	SipAddress = @SipAddress
 WHERE
-	AccountID = @AccountID AND AccountType IN (1,7)
+	AccountID = @AccountID
 
 RETURN'
 END
