@@ -42,6 +42,7 @@ namespace WebsitePanel.EnterpriseServer
         private static readonly string EXCHANGE_REPORT = "EXCHANGE_REPORT";
         private static readonly string ORGANIZATION_REPORT = "ORGANIZATION_REPORT";
         private static readonly string SHAREPOINT_REPORT = "SHAREPOINT_REPORT";
+        private static readonly string LYNC_REPORT = "LYNC_REPORT";
         private static readonly string CRM_REPORT = "CRM_REPORT";
         private static readonly string EMAIL = "EMAIL";
         
@@ -52,6 +53,7 @@ namespace WebsitePanel.EnterpriseServer
             {
                 bool isExchange = Utils.ParseBool(TaskManager.TaskParameters[EXCHANGE_REPORT], false);
                 bool isSharePoint = Utils.ParseBool(TaskManager.TaskParameters[SHAREPOINT_REPORT], false);
+                bool isLync = Utils.ParseBool(TaskManager.TaskParameters[LYNC_REPORT], false);
                 bool isCRM = Utils.ParseBool(TaskManager.TaskParameters[CRM_REPORT], false);
                 bool isOrganization = Utils.ParseBool(TaskManager.TaskParameters[ORGANIZATION_REPORT], false);
 
@@ -61,13 +63,14 @@ namespace WebsitePanel.EnterpriseServer
                 UserInfo user = PackageController.GetPackageOwner(TaskManager.PackageId);
                 EnterpriseSolutionStatisticsReport report =
                     ReportController.GetEnterpriseSolutionStatisticsReport(user.UserId, isExchange, isSharePoint, isCRM,
-                                                             isOrganization);
+                                                             isOrganization, isLync);
 
 
                 SendMessage(user, email, isExchange && report.ExchangeReport != null ? report.ExchangeReport.ToCSV() : string.Empty,
                             isSharePoint && report.SharePointReport != null ? report.SharePointReport.ToCSV() : string.Empty,
                             isCRM && report.CRMReport != null ? report.CRMReport.ToCSV() : string.Empty,
-                            isOrganization && report.OrganizationReport != null ? report.OrganizationReport.ToCSV() : string.Empty);
+                            isOrganization && report.OrganizationReport != null ? report.OrganizationReport.ToCSV() : string.Empty,
+                            isLync && report.LyncReport != null ? report.LyncReport.ToCSV() : string.Empty);
             }
             catch(Exception ex)
             {
@@ -90,11 +93,12 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
         
-        private void SendMessage(UserInfo user,string email, string exchange_csv, string sharepoint_csv, string crm_csv, string organization_csv)
+        private void SendMessage(UserInfo user,string email, string exchange_csv, string sharepoint_csv, string crm_csv, string organization_csv, string lync_csv)
         {
             List<Attachment> attacments = new List<Attachment>();
             PrepareAttament("exchange.csv", exchange_csv, attacments);
             PrepareAttament("sharepoint.csv", sharepoint_csv, attacments);
+            PrepareAttament("lync.csv", lync_csv, attacments);
             PrepareAttament("crm.csv", crm_csv, attacments);
             PrepareAttament("organization.csv", organization_csv, attacments);
             

@@ -6220,7 +6220,7 @@ GO
 
 
 CREATE PROCEDURE [dbo].[GetItemIdByOrganizationId] 	
-	@OrganizationId nvarchar(10)
+	@OrganizationId nvarchar(128)
 AS
 BEGIN
 	SET NOCOUNT ON;

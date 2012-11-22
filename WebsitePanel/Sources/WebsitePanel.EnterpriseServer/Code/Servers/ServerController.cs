@@ -1847,8 +1847,8 @@ namespace WebsitePanel.EnterpriseServer
                 else if (isDomainPointer)
                 {
                     // domain pointer
-                    if (PackageController.GetPackageQuota(packageId, Quotas.OS_DOMAINPOINTERS).QuotaExhausted)
-                        return BusinessErrorCodes.ERROR_DOMAIN_QUOTA_LIMIT;
+                    //if (PackageController.GetPackageQuota(packageId, Quotas.OS_DOMAINPOINTERS).QuotaExhausted)
+                        //return BusinessErrorCodes.ERROR_DOMAIN_QUOTA_LIMIT;
                  }
                 else
                 {
@@ -2495,10 +2495,20 @@ namespace WebsitePanel.EnterpriseServer
                     instantAlias = GetDomainItem(instantAliasId);
                 }
 
+                string parentZone = domain.ZoneName;
+                if (string.IsNullOrEmpty(parentZone))
+                {
+                    DomainInfo parentDomain = GetDomain(domain.DomainId);
+                    parentZone = parentDomain.DomainName;
+                }
+
+
                 if (domain.WebSiteId > 0)
                 {
                     WebServerController.AddWebSitePointer(domain.WebSiteId,
-                                                            (domain.DomainName.Replace("." + domain.ZoneName, "") == domain.ZoneName) ? "" : domain.DomainName.Replace("." + domain.ZoneName, ""),
+                                                            ((domain.DomainName.Replace("." + parentZone, "") == parentZone) |
+                                                            (domain.DomainName == parentZone))
+                                                            ? "" : domain.DomainName.Replace("." + parentZone, ""),
                                                             instantAlias.DomainId);
                 }
 
@@ -2507,12 +2517,14 @@ namespace WebsitePanel.EnterpriseServer
                 List<DomainInfo> domains = GetDomainsByDomainItemId(domain.DomainId);
                 foreach (DomainInfo d in domains)
                 {
+                    
                     if (d.WebSiteId > 0)
                     {
                         WebServerController.AddWebSitePointer(d.WebSiteId,
-                                                                (d.DomainName.Replace("." + domain.ZoneName, "") == domain.ZoneName) ? "" : d.DomainName.Replace("." + domain.ZoneName, ""),
+                                                                ((d.DomainName.Replace("." + parentZone, "") == parentZone) |
+                                                                (d.DomainName == parentZone))
+                                                                ? "" : d.DomainName.Replace("." + parentZone, ""),
                                                                 instantAlias.DomainId);
-
                     }
                 }
 

@@ -39,6 +39,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
         bool CreateUser(string organizationId, string userUpn, LyncUserPlan plan);
         LyncUser GetLyncUserGeneralSettings(string organizationId, string userUpn);
+        bool SetLyncUserGeneralSettings(string organizationId, string userUpn, LyncUser lyncUser);
         bool SetLyncUserPlan(string organizationId, string userUpn, LyncUserPlan plan);
         bool DeleteUser(string userUpn);
 

@@ -115,6 +115,7 @@ namespace WebsitePanel.EnterpriseServer
         public const int ERROR_WEB_SITE_SHARED_IP_ADDRESS_NOT_SPECIFIED = -608;
         public const int ERROR_WEB_SHARED_SSL_QUOTA_LIMIT = -609;
         public const int ERROR_GLOBALDNS_FOR_DEDICATEDIP = -610;
+        public const int ERROR_PUBLICSHAREDIP_FOR_SHAREDIP = -611;
         #endregion
 
         #region Mail
@@ -323,6 +324,7 @@ namespace WebsitePanel.EnterpriseServer
         public const int ERROR_USERS_RESOURCE_QUOTA_LIMIT = -2707;
         public const int CURRENT_USER_IS_CRM_USER = -2708;
         public const int CURRENT_USER_IS_OCS_USER = -2709;
+        public const int CURRENT_USER_IS_LYNC_USER = -2710;
 
         #endregion
 

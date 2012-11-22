@@ -45,6 +45,7 @@ namespace WebsitePanel.Portal.ProviderControls
         public const int EXCHANGE2010SP2_PROVIDER_ID = 90;
         public const int EXCHANGE2013_PROVIDER_ID = 91;     
 
+
         public string HubTransports
         {
             get
@@ -111,7 +112,6 @@ namespace WebsitePanel.Portal.ProviderControls
 
                             locMailboxDatabase.Visible = false;
                             break;
-
 
                         default:
                             storageGroup.Visible = true;

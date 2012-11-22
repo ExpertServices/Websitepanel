@@ -3257,7 +3257,7 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Lync
 
-        public static void AddLyncUser(int accountId, int lyncUserPlanId)
+        public static void AddLyncUser(int accountId, int lyncUserPlanId, string sipAddress)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString,
                                       CommandType.StoredProcedure,
@@ -3265,9 +3265,23 @@ namespace WebsitePanel.EnterpriseServer
                                       new[]
                                           {                                              
                                               new SqlParameter("@AccountID", accountId),
-                                              new SqlParameter("@LyncUserPlanID", lyncUserPlanId)
+                                              new SqlParameter("@LyncUserPlanID", lyncUserPlanId),
+                                              new SqlParameter("@SipAddress", sipAddress)
                                           });
         }
+
+        public static void UpdateLyncUser(int accountId, string sipAddress)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString,
+                                      CommandType.StoredProcedure,
+                                      "UpdateLyncUser",
+                                      new[]
+                                          {                                              
+                                              new SqlParameter("@AccountID", accountId),
+                                              new SqlParameter("@SipAddress", sipAddress)
+                                          });
+        }
+
 
         public static bool CheckLyncUserExists(int accountId)
         {
@@ -3275,6 +3289,25 @@ namespace WebsitePanel.EnterpriseServer
                                     new SqlParameter("@AccountID", accountId));
             return res > 0;
         }
+
+        public static bool LyncUserExists(int accountId, string sipAddress)
+        {
+            SqlParameter outParam = new SqlParameter("@Exists", SqlDbType.Bit);
+            outParam.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "LyncUserExists",
+                new SqlParameter("@AccountID", accountId),
+                new SqlParameter("@SipAddress", sipAddress),
+                outParam
+            );
+
+            return Convert.ToBoolean(outParam.Value);
+        }
+
+
 
         public static IDataReader GetLyncUsers(int itemId, string sortColumn, string sortDirection, int startRow, int count)
         {

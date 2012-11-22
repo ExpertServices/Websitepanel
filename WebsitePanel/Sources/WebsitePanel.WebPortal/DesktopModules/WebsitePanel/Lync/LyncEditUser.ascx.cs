@@ -52,6 +52,8 @@ namespace WebsitePanel.Portal.Lync
             litDisplayName.Text = lyncUser.DisplayName;
 
             planSelector.planId = lyncUser.LyncUserPlanId.ToString();
+            lyncUserSettings.sipAddress = lyncUser.SipAddress;
+
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
@@ -63,9 +65,16 @@ namespace WebsitePanel.Portal.Lync
                 LyncUserResult res =  ES.Services.Lync.SetUserLyncPlan(PanelRequest.ItemID, PanelRequest.AccountID, Convert.ToInt32(planSelector.planId));
                 if (res.IsSuccess && res.ErrorCodes.Count == 0)
                 {
+                    res = ES.Services.Lync.SetLyncUserGeneralSettings(PanelRequest.ItemID, PanelRequest.AccountID, lyncUserSettings.sipAddress, string.Empty);
+                }
+
+                if (res.IsSuccess && res.ErrorCodes.Count == 0)
+                {
                     messageBox.ShowSuccessMessage("UPDATE_LYNC_USER");
                     return;
                 }
+                else
+                    messageBox.ShowMessage(res, "UPDATE_LYNC_USER", "LYNC");
             }
             catch(Exception ex)
             {

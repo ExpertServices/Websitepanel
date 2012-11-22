@@ -48,7 +48,7 @@ namespace WebsitePanel.Portal.HostedSolution
             {
                 if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
                 {
-                    gvUsers.Columns[3].Visible = false;
+                    gvUsers.Columns[4].Visible = false;
                 }
             }
 
@@ -114,6 +114,52 @@ namespace WebsitePanel.Portal.HostedSolution
                 {
                     messageBox.ShowErrorMessage("ORGANIZATIONS_DELETE_USERS", ex);
                 }
+            }
+
+            if (e.CommandName == "OpenMailProperties")
+            {
+                int accountId = Utils.ParseInt(e.CommandArgument.ToString(), 0);
+
+                Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "mailbox_settings",
+                    "AccountID=" + accountId,
+                    "ItemID=" + PanelRequest.ItemID));
+            }
+
+            if (e.CommandName == "OpenBlackBerryProperties")
+            {
+                int accountId = Utils.ParseInt(e.CommandArgument.ToString(), 0);
+
+                Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "edit_blackberry_user",
+                    "AccountID=" + accountId,
+                    "ItemID=" + PanelRequest.ItemID));
+            }
+
+            if (e.CommandName == "OpenCRMProperties")
+            {
+                int accountId = Utils.ParseInt(e.CommandArgument.ToString(), 0);
+
+                Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "mailbox_settings",
+                    "AccountID=" + accountId,
+                    "ItemID=" + PanelRequest.ItemID));
+            }
+
+            if (e.CommandName == "OpenUCProperties")
+            {
+                string[] Tmp = e.CommandArgument.ToString().Split('|');
+
+                int accountId = Utils.ParseInt(Tmp[0], 0);
+                if (Tmp[1] == "True")
+                    Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "edit_ocs_user",
+                        "AccountID=" + accountId,
+                        "ItemID=" + PanelRequest.ItemID));
+                else
+                    if (Tmp[2] == "True")
+                        Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "edit_lync_user",
+                            "AccountID=" + accountId,
+                            "ItemID=" + PanelRequest.ItemID));
+
+
+
             }
         }
 
@@ -208,7 +254,52 @@ namespace WebsitePanel.Portal.HostedSolution
        
             // bind stats   
             BindStats();   
-        }  
+        }
+
+
+        public bool EnableMailImageButton(int accountTypeId)
+        {
+            bool imgName = true;
+
+            ExchangeAccountType accountType = (ExchangeAccountType)accountTypeId;
+
+            if (accountType == ExchangeAccountType.User)
+                imgName = false;
+
+            return imgName;
+        }
+
+        public bool EnableOCSImageButton(bool IsOCSUser, bool IsLyncUser)
+        {
+            bool imgName = false;
+
+            if (IsLyncUser)
+                imgName = true;
+            else
+                if ((IsOCSUser))
+                    imgName = true;
+
+            return imgName;
+        }
+
+        public bool EnableBlackBerryImageButton(bool IsBlackBerryUser)
+        {
+            bool imgName = false;
+
+            if (IsBlackBerryUser)
+                imgName = true;
+
+            return imgName;
+        }
+
+
+        public string GetOCSArgument(int accountID, bool IsOCS, bool IsLync)
+        {
+            return accountID.ToString() + "|" + IsOCS.ToString() + "|" + IsLync.ToString();
+        }
+
+
+
 
     }
 }

@@ -50,5 +50,6 @@ namespace WebsitePanel.Providers.HostedSolution
 		public bool Enabled { get; set; }
 		public ExchangeAccountType MailboxType { get; set; }
         public bool BlackberryEnabled { get; set; }
+        public string MailboxPlan { get; set; }
 	}
 }

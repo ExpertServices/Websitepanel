@@ -2119,6 +2119,11 @@ namespace WebsitePanel.EnterpriseServer
                     ocs.SetUserPrimaryUri(instanceId, emailAddress);
                 }
 
+                if (DataProvider.CheckLyncUserExists(account.AccountId))
+                {
+                    LyncController.SetLyncUserGeneralSettings(itemId, accountId, emailAddress, null);
+                }
+
 				// save account
 				UpdateAccount(account);
 

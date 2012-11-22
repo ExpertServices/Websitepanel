@@ -7,6 +7,7 @@
 <%@ Register Src="../UserControls/QuotaViewer.ascx" TagName="QuotaViewer" TagPrefix="wsp" %>
 <%@ Register src="../ExchangeServer/UserControls/MailboxSelector.ascx" tagname="MailboxSelector" tagprefix="uc1" %>
 <%@ Register Src="UserControls/LyncUserPlanSelector.ascx" TagName="LyncUserPlanSelector" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/LyncUserSettings.ascx" TagName="LyncUserSettings" TagPrefix="wsp" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server" />
 <div id="ExchangeContainer">
@@ -38,6 +39,15 @@
                                 <wsp:LyncUserPlanSelector ID="planSelector" runat="server" />
                             </td>
                         </tr>
+                        <tr>
+                            <td class="FormLabel150">
+                                <asp:Localize ID="locSipAddress" runat="server" meta:resourcekey="locSipAddress" Text="SIP Address: *"></asp:Localize>
+                            </td>
+                            <td>                                
+                                <wsp:LyncUserSettings ID="lyncUserSettings" runat="server" />
+                            </td>
+                        </tr>
+
                     </table>
                         
 					<div class="FormFooterClean">

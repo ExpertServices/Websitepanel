@@ -125,6 +125,24 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
+        public bool SetLyncUserGeneralSettings(string organizationId, string userUpn, LyncUser lyncUser)
+        {
+            try
+            {
+                Log.WriteStart("{0}.SetLyncUserGeneralSettings", ProviderSettings.ProviderName);
+                bool ret = Lync.SetLyncUserGeneralSettings(organizationId, userUpn, lyncUser);
+                Log.WriteEnd("{0}.SetLyncUserGeneralSettings", ProviderSettings.ProviderName);
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("Error: {0}.SetLyncUserGeneralSettings", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+
+        [WebMethod, SoapHeader("settings")]
         public bool SetLyncUserPlan(string organizationId, string userUpn, LyncUserPlan plan)
         {
             try

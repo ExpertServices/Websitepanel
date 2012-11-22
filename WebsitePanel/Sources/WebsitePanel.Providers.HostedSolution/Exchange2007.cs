@@ -2591,8 +2591,8 @@ namespace WebsitePanel.Providers.HostedSolution
                 Command cmd = new Command("Set-Mailbox");
                 cmd.Parameters.Add("Identity", accountName);
                 cmd.Parameters.Add("PrimarySmtpAddress", primaryEmail);
-                cmd.Parameters.Add("UserPrincipalName", primaryEmail);
-                cmd.Parameters.Add("WindowsEmailAddress", primaryEmail);
+				//cmd.Parameters.Add("UserPrincipalName", primaryEmail);
+				//cmd.Parameters.Add("WindowsEmailAddress", primaryEmail);
 
                 ExecuteShellCommand(runSpace, cmd);
             }

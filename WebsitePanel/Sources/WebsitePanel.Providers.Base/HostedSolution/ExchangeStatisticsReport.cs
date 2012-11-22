@@ -67,6 +67,7 @@ namespace WebsitePanel.Providers.HostedSolution
 				sb.AppendFormat("{0},", ToCsvString(item.Enabled, "Enabled", "Disabled"));
 				sb.AppendFormat("{0},", ToCsvString(item.MailboxType));
                 sb.AppendFormat("{0}", ToCsvString(item.BlackberryEnabled));
+                sb.AppendFormat("{0}", ToCsvString(item.MailboxPlan));
                 mainBuilder.Append(sb.ToString());
             }
             return mainBuilder.ToString();
@@ -74,7 +75,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
 		private void AddCSVHeader(StringBuilder sb)
 		{
-            sb.Append("Top Reseller,Reseller,Customer,Customer Created,Hosting Space,Hosting Space Created,Ogranization Name,Ogranization Created,Organization ID,Mailbox Display Name,Account Created,Primary E-mail Address,MAPI,OWA,ActiveSync,POP 3,IMAP,Mailbox Size (Mb),Max Mailbox Size (Mb),Last Logon,Enabled,Mailbox Type, BlackBerry");
+            sb.Append("Top Reseller,Reseller,Customer,Customer Created,Hosting Space,Hosting Space Created,Ogranization Name,Organization Created,Organization ID,Mailbox Display Name,Account Created,Primary E-mail Address,MAPI,OWA,ActiveSync,POP 3,IMAP,Mailbox Size (Mb),Max Mailbox Size (Mb),Last Logon,Enabled,Mailbox Type, BlackBerry, Mailbox Plan");
 		}
     }
 }

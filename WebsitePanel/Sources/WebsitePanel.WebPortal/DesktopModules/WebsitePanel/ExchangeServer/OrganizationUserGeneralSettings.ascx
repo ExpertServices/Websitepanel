@@ -42,6 +42,11 @@
                     
 					<table>
 						<tr>
+						    <td class="FormLabel150"> <asp:Localize ID="locUserPrincipalName" runat="server" meta:resourcekey="locUserPrincipalName" Text="Login Name:"></asp:Localize></td>
+						    <td><asp:Label runat="server" ID="lblUserPrincipalName" /></td>
+						</tr>					   
+
+						<tr>
 							<td class="FormLabel150"><asp:Localize ID="locDisplayName" runat="server" meta:resourcekey="locDisplayName" Text="Display Name: *"></asp:Localize></td>
 							<td>
 								<asp:TextBox ID="txtDisplayName" runat="server" CssClass="HugeTextBox200"></asp:TextBox>
@@ -95,6 +100,7 @@
 						    <td class="FormLabel150" valign="top"><asp:Localize ID="locExternalEmailAddress" runat="server" meta:resourcekey="locExternalEmailAddress" ></asp:Localize></td>
 						    <td><asp:TextBox runat="server" ID="txtExternalEmailAddress"  CssClass="TextBox200"/></td>
 						</tr>
+
 					</table>
 					
 					<wsp:CollapsiblePanel id="secCompanyInfo" runat="server"

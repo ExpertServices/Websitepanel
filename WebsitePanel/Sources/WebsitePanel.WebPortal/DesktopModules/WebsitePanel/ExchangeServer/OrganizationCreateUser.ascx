@@ -91,6 +91,15 @@
 						</tr>
 						
 					</table>
+
+                    <table>  
+                        <tr>                      
+                            <td class="FormLabel150">                      
+                            <asp:CheckBox ID="chkSendInstructions"  runat="server" meta:resourcekey="chkSendInstructions" Text="Send Setup Instructions" Checked="true" />  
+                            </td>  
+                            <td><wsp:EmailControl id="sendInstructionEmail" runat="server" RequiredEnabled="true" ValidationGroup="CreateMailbox"></wsp:EmailControl></td>  
+                        </tr>                            
+                    </table>  
 					
 				    <div class="FormFooterClean">
 					    <asp:Button id="btnCreate" runat="server" Text="Create Mailbox"

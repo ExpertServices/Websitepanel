@@ -64,6 +64,7 @@ namespace WebsitePanel.Providers.HostedSolution
         private string country;
         private string notes;
         private string domainUserName;
+        private string userPrincipalName;
 
         private bool disabled;
         private bool locked;
@@ -305,6 +306,11 @@ namespace WebsitePanel.Providers.HostedSolution
             set { subscriberNumber = value; }
         }
 
+        public string UserPrincipalName
+        {
+            get { return userPrincipalName; }
+            set { userPrincipalName = value; }
+        }
 
 
     }

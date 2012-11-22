@@ -99,7 +99,7 @@
                 </td>
             </tr>
             <tr>
-		        <td class="SubHead">
+		        <td class="Normal" width="100%">
 		            <asp:Label ID="lblHostName" runat="server" meta:resourcekey="lblHostName" Text="Host name:"></asp:Label>
 			        <asp:TextBox ID="txtHostName" runat="server" CssClass="TextBox100" MaxLength="64" ></asp:TextBox>
                 </td>

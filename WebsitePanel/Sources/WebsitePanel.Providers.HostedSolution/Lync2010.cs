@@ -127,6 +127,12 @@ namespace WebsitePanel.Providers.HostedSolution
             return GetLyncUserGeneralSettingsInternal(organizationId, userUpn);
         }
 
+        public bool SetLyncUserGeneralSettings(string organizationId, string userUpn, LyncUser lyncUser)
+        {
+            return SetLyncUserGeneralSettingsInternal(organizationId, userUpn, lyncUser);
+        }
+
+
         public bool SetLyncUserPlan(string organizationId, string userUpn, LyncUserPlan plan)
         {
             return SetLyncUserPlanInternal(organizationId, userUpn, plan, null);
@@ -288,11 +294,14 @@ namespace WebsitePanel.Providers.HostedSolution
                     Guid tenantId = (Guid)GetPSObjectProperty(result[0], "TenantId");
 
                     // create sip domain
-                    DeleteSipDomain(runSpace, sipDomain);
-
-                    //clear the msRTCSIP-Domains, TenantID, ObjectID
                     string path = AddADPrefix(GetOrganizationPath(organizationId));
                     DirectoryEntry ou = ActiveDirectoryUtils.GetADObject(path);
+                    string[] sipDs = (string[])ActiveDirectoryUtils.GetADObjectPropertyMultiValue(ou, "msRTCSIP-Domains");
+                    
+                    foreach (string  sipD in sipDs)
+                        DeleteSipDomain(runSpace, sipD);
+
+                    //clear the msRTCSIP-Domains, TenantID, ObjectID
                     ActiveDirectoryUtils.ClearADObjectPropertyValue(ou, "msRTCSIP-Domains");
                     ActiveDirectoryUtils.ClearADObjectPropertyValue(ou, "msRTCSIP-TenantId");
                     ActiveDirectoryUtils.ClearADObjectPropertyValue(ou, "msRTCSIP-ObjectId");
@@ -383,6 +392,51 @@ namespace WebsitePanel.Providers.HostedSolution
                 {
                     tenantId = (Guid)GetPSObjectProperty(result[0], "TenantId");
 
+                    string[] tmp = userUpn.Split('@');
+                    if (tmp.Length < 2) return false;
+
+                    // Get SipDomains and verify existence
+                    bool bSipDomainExists = false;
+                    cmd = new Command("Get-CsSipDomain");
+                    Collection<PSObject> sipDomains = ExecuteShellCommand(runSpace, cmd, false);
+
+                    foreach (PSObject domain in sipDomains)
+                    {
+                        string d = (string)GetPSObjectProperty(domain, "Name");
+                        if (d.ToLower() == tmp[1].ToLower())
+                        {
+                            bSipDomainExists = true;
+                            break;
+                        }
+                    }
+
+                    string path = string.Empty;
+
+                    if (!bSipDomainExists)
+                    {
+                        // Create Sip Domain
+                        cmd = new Command("New-CsSipDomain");
+                        cmd.Parameters.Add("Identity", tmp[1].ToLower());
+                        ExecuteShellCommand(runSpace, cmd, false);
+
+                        transaction.RegisterNewSipDomain(tmp[1].ToLower());
+
+
+                        path = AddADPrefix(GetOrganizationPath(organizationId));
+                        DirectoryEntry ou = ActiveDirectoryUtils.GetADObject(path);
+                        string[] sipDs = (string[])ActiveDirectoryUtils.GetADObjectPropertyMultiValue(ou, "msRTCSIP-Domains");
+                        List<string> listSipDs = new List<string>();
+                        listSipDs.AddRange(sipDs);
+                        listSipDs.Add(tmp[1]);
+
+                        ActiveDirectoryUtils.SetADObjectPropertyValue(ou, "msRTCSIP-Domains", listSipDs.ToArray());
+                        ou.CommitChanges();
+
+                        //Create simpleurls
+                        CreateSimpleUrl(runSpace, tmp[1].ToLower(), tenantId);
+                        transaction.RegisterNewSimpleUrl(tmp[1].ToLower(), tenantId.ToString());
+                    }
+
                     //enable for lync
                     cmd = new Command("Enable-CsUser");
                     cmd.Parameters.Add("Identity", userUpn);
@@ -397,13 +451,11 @@ namespace WebsitePanel.Providers.HostedSolution
                     cmd.Parameters.Add("Identity", userUpn);
                     result = ExecuteShellCommand(runSpace, cmd);
 
-
-                    string path = AddADPrefix(GetResultObjectDN(result));
+                    path = AddADPrefix(GetResultObjectDN(result));
                     DirectoryEntry user = ActiveDirectoryUtils.GetADObject(path);
                     ActiveDirectoryUtils.SetADObjectPropertyValue(user, "msRTCSIP-GroupingID", tenantId);
                     ActiveDirectoryUtils.SetADObjectPropertyValue(user, "msRTCSIP-TenantId", tenantId);
 
-                    string[] tmp = userUpn.Split('@');
                     if (tmp.Length > 0)
                     {
                         string Url = SimpleUrlRoot + tmp[1];
@@ -462,8 +514,10 @@ namespace WebsitePanel.Providers.HostedSolution
                 PSObject user = result[0];
 
                 lyncUser.DisplayName = (string)GetPSObjectProperty(user, "DisplayName");
-                lyncUser.PrimaryUri = (string)GetPSObjectProperty(user, "SipAddress");
+                lyncUser.SipAddress = (string)GetPSObjectProperty(user, "SipAddress");
                 lyncUser.LineUri = (string)GetPSObjectProperty(user, "LineURI");
+
+                lyncUser.SipAddress = lyncUser.SipAddress.ToLower().Replace("sip:", "");
             }
             catch (Exception ex)
             {
@@ -477,6 +531,114 @@ namespace WebsitePanel.Providers.HostedSolution
             HostedSolutionLog.LogEnd("GetLyncUserGeneralSettingsInternal");
             return lyncUser;
         }
+
+        private bool SetLyncUserGeneralSettingsInternal(string organizationId, string userUpn, LyncUser lyncUser)
+        {
+            HostedSolutionLog.LogStart("SetLyncUserGeneralSettingsInternal");
+            HostedSolutionLog.DebugInfo("organizationId: {0}", organizationId);
+            HostedSolutionLog.DebugInfo("userUpn: {0}", userUpn);
+
+            bool ret = true;
+            Runspace runSpace = null;
+            Guid tenantId = Guid.Empty;
+            LyncTransaction transaction = StartTransaction();
+
+            try
+            {
+                runSpace = OpenRunspace();
+                Command cmd = new Command("Get-CsTenant");
+                cmd.Parameters.Add("Identity", GetOrganizationPath(organizationId));
+                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd, false);
+                if ((result != null) && (result.Count > 0))
+                {
+                    tenantId = (Guid)GetPSObjectProperty(result[0], "TenantId");
+
+                    string[] tmp = userUpn.Split('@');
+                    if (tmp.Length < 2) return false;
+
+                    // Get SipDomains and verify existence
+                    bool bSipDomainExists = false;
+                    cmd = new Command("Get-CsSipDomain");
+                    Collection<PSObject> sipDomains = ExecuteShellCommand(runSpace, cmd, false);
+
+                    foreach (PSObject domain in sipDomains)
+                    {
+                        string d = (string)GetPSObjectProperty(domain, "Name");
+                        if (d.ToLower() == tmp[1].ToLower())
+                        {
+                            bSipDomainExists = true;
+                            break;
+                        }
+                    }
+
+                    string path = string.Empty;
+
+                    if (!bSipDomainExists)
+                    {
+                        // Create Sip Domain
+                        cmd = new Command("New-CsSipDomain");
+                        cmd.Parameters.Add("Identity", tmp[1].ToLower());
+                        ExecuteShellCommand(runSpace, cmd, false);
+
+                        transaction.RegisterNewSipDomain(tmp[1].ToLower());
+
+
+                        path = AddADPrefix(GetOrganizationPath(organizationId));
+                        DirectoryEntry ou = ActiveDirectoryUtils.GetADObject(path);
+                        string[] sipDs = (string[])ActiveDirectoryUtils.GetADObjectPropertyMultiValue(ou, "msRTCSIP-Domains");
+                        List<string> listSipDs = new List<string>();
+                        listSipDs.AddRange(sipDs);
+                        listSipDs.Add(tmp[1]);
+
+                        ActiveDirectoryUtils.SetADObjectPropertyValue(ou, "msRTCSIP-Domains", listSipDs.ToArray());
+                        ou.CommitChanges();
+
+                        //Create simpleurls
+                        CreateSimpleUrl(runSpace, tmp[1].ToLower(), tenantId);
+                        transaction.RegisterNewSimpleUrl(tmp[1].ToLower(), tenantId.ToString());
+
+                        path = AddADPrefix(GetResultObjectDN(result));
+                        DirectoryEntry user = ActiveDirectoryUtils.GetADObject(path);
+
+                        if (tmp.Length > 0)
+                        {
+                            string Url = SimpleUrlRoot + tmp[1];
+                            ActiveDirectoryUtils.SetADObjectPropertyValue(user, "msRTCSIP-BaseSimpleUrl", Url.ToLower());
+                        }
+                        user.CommitChanges();
+                    }
+                }
+
+                cmd = new Command("Set-CsUser");
+                cmd.Parameters.Add("Identity", userUpn);
+                if (!string.IsNullOrEmpty(lyncUser.SipAddress)) cmd.Parameters.Add("SipAddress", "SIP:"+lyncUser.SipAddress);
+                if (!string.IsNullOrEmpty(lyncUser.SipAddress)) cmd.Parameters.Add("LineUri", lyncUser.LineUri);
+
+                ExecuteShellCommand(runSpace, cmd, false);
+
+                //initiate addressbook generation
+                cmd = new Command("Update-CsAddressBook");
+                ExecuteShellCommand(runSpace, cmd, false);
+
+                //initiate user database replication
+                cmd = new Command("Update-CsUserDatabase");
+                ExecuteShellCommand(runSpace, cmd, false);
+
+            }
+            catch (Exception ex)
+            {
+                ret = false;
+                HostedSolutionLog.LogError("SetLyncUserGeneralSettingsInternal", ex);
+                RollbackTransaction(transaction);
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+            HostedSolutionLog.LogEnd("SetLyncUserGeneralSettingsInternal");
+            return ret;
+        }
+
 
 
         private bool SetLyncUserPlanInternal(string organizationId, string userUpn, LyncUserPlan plan, Runspace runSpace)

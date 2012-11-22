@@ -100,6 +100,7 @@ namespace WebsitePanel.Import.Enterprise
 			Global.TempDomain = serviceSettings["TempDomain"];
 			ServerInfo serverInfo = ServerController.GetServerById(serviceInfo.ServerId);
 			Global.ADRootDomain = serverInfo.ADRootDomain;
+            Global.NetBiosDomain = ActiveDirectoryUtils.GetNETBIOSDomainName(Global.ADRootDomain);
 		}
 
 		private void OnBrowseOU(object sender, EventArgs e)

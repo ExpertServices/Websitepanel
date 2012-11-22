@@ -62,6 +62,13 @@ namespace WebsitePanel.Portal
             set { ViewState["HideMailDomains"] = value; }
         }
 
+        public bool HideMailDomainPointers
+        {
+            get { return (ViewState["HideMailDomainPointers"] != null) ? (bool)ViewState["HideMailDomainPointers"] : false; }
+            set { ViewState["HideMailDomainPointers"] = value; }
+        }
+
+
         public bool HideDomainPointers
         {
             get { return (ViewState["HideDomainPointers"] != null) ? (bool)ViewState["HideDomainPointers"] : false; }
@@ -111,6 +118,7 @@ namespace WebsitePanel.Portal
 
             WebSite[] sites = null;
             Hashtable htSites = new Hashtable();
+            Hashtable htMailDomainPointers = new Hashtable();
             if (HideWebSites)
             {
                 sites = ES.Services.WebServers.GetWebSites(PackageId, false);
@@ -126,6 +134,25 @@ namespace WebsitePanel.Portal
                     }
                 }
             }
+
+            if (HideMailDomainPointers)
+            {
+                Providers.Mail.MailDomain[] mailDomains = ES.Services.MailServers.GetMailDomains(PackageId, false);
+
+                foreach (Providers.Mail.MailDomain mailDomain in mailDomains)
+                {
+                    DomainInfo[] pointers = ES.Services.MailServers.GetMailDomainPointers(mailDomain.Id);
+                    if (pointers != null)
+                    {
+                        foreach (DomainInfo p in pointers)
+                        {
+                            if (htMailDomainPointers[p.DomainName.ToLower()] == null) htMailDomainPointers.Add(p.DomainName.ToLower(), 1);
+
+                        }
+                    }
+                }
+            }
+
 
             ddlDomains.Items.Clear();
 
@@ -148,7 +175,15 @@ namespace WebsitePanel.Portal
                         }
                     }
                 }
-                else if (HideInstantAlias && domain.IsInstantAlias)
+
+
+                if (HideMailDomainPointers)
+                {
+                    if (htMailDomainPointers[domain.DomainName.ToLower()] != null) continue;
+                }
+
+                
+                if (HideInstantAlias && domain.IsInstantAlias)
                     continue;
                 else if (HideMailDomains && domain.MailDomainId > 0)
                     continue;

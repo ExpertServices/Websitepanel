@@ -127,6 +127,9 @@
     <value>Distribution Lists</value>
   </data>
   <data name="Text.DomainNames" xml:space="preserve">
+    <value>Domains</value>
+  </data>
+  <data name="Text.ExchangeDomainNames" xml:space="preserve">
     <value>Accepted Domains</value>
   </data>
   <data name="Text.CRMOrganization" xml:space="preserve">

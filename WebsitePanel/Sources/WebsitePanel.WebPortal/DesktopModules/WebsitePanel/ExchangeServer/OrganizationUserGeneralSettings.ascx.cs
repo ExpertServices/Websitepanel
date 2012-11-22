@@ -108,6 +108,7 @@ namespace WebsitePanel.Portal.HostedSolution
                 lblUserDomainName.Text = user.DomainUserName;
 
                 txtSubscriberNumber.Text = user.SubscriberNumber;
+                lblUserPrincipalName.Text = user.UserPrincipalName;
 
                 PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
                 if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))

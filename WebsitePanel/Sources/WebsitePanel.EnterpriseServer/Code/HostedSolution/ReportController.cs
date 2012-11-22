@@ -123,8 +123,25 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                         delegate(CRMOrganizationStatistics stats) { return stats.OrganizationID == org.OrganizationId; });
 
                 item.TotalCRMUsers = crmOrganizationStatistics.Count;                
+            }
+
+            item.TotalLyncUsers = 0;
+            item.TotalLyncEVUsers = 0;
+
+            if (report.LyncReport != null)
+            {
+                List<LyncUserStatistics> lyncOrganizationStatistics =
+                    report.LyncReport.Items.FindAll(
+                        delegate(LyncUserStatistics stats) { return stats.OrganizationID == org.OrganizationId; });
+
+                foreach (LyncUserStatistics current in lyncOrganizationStatistics)
+                {
+                    if (current.EnterpriseVoice) item.TotalLyncEVUsers++;
+                }
+
+                item.TotalLyncUsers = lyncOrganizationStatistics.Count;
             }            
-            
+
             report.OrganizationReport.Items.Add(item);
         }
 
@@ -296,7 +313,19 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                 {
                     TaskManager.WriteError(ex);
                 }
-            }            
+            }
+
+            if (report.LyncReport != null)
+            {
+                try
+                {
+                    PopulateLyncReportItems(org, report, topReseller);
+                }
+                catch (Exception ex)
+                {
+                    TaskManager.WriteError(ex);
+                }
+            }                                    
             
             if (report.OrganizationReport != null)
             {
@@ -308,7 +337,9 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                 {
                     TaskManager.WriteError(ex);
                 }
-            }                                    
+            }
+
+
         }
 
         private static int GetExchangeServiceID(int packageId)
@@ -316,6 +347,10 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             return PackageController.GetPackageServiceId(packageId, ResourceGroups.Exchange);
         }
 
+        private static int GetLyncServiceID(int packageId)
+        {
+            return PackageController.GetPackageServiceId(packageId, ResourceGroups.Lync);
+        }
 
 
         private static void PopulateSharePointItem(Organization org, EnterpriseSolutionStatisticsReport report, string topReseller)
@@ -422,7 +457,13 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                     {
                         PopulateBaseItem(stats, org, topReseller);
                         stats.MailboxType = mailbox.AccountType;
+                        if (mailbox.AccountType == ExchangeAccountType.Mailbox)
+                        {
+                            ExchangeAccount a = ExchangeServerController.GetAccount(mailbox.ItemId, mailbox.AccountId);
+                            stats.MailboxPlan = a.MailboxPlan;
+                        }
 
+                        
                         stats.BlackberryEnabled = BlackBerryController.CheckBlackBerryUserExists(mailbox.AccountId);
                         report.ExchangeReport.Items.Add(stats);
                     }
@@ -433,6 +474,74 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                 }
             }
             
+        }
+
+
+
+
+        private static void PopulateLyncReportItems(Organization org, EnterpriseSolutionStatisticsReport report, string topReseller)
+        {
+
+            //Check if lync organization
+            if (string.IsNullOrEmpty(org.LyncTenantId))
+                return;
+
+            LyncUser[] lyncUsers = null;
+
+            try
+            {
+                LyncUsersPagedResult res = LyncController.GetLyncUsers(org.Id);
+                if (res.IsSuccess) lyncUsers = res.Value.PageUsers;
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException(
+                    string.Format("Could not get lync users for current organization {0}", org.Id), ex);
+            }
+
+
+            if (lyncUsers == null)
+                return;
+
+            foreach (LyncUser lyncUser in lyncUsers)
+            {
+                try
+                {
+                    LyncUserStatistics stats = new LyncUserStatistics();
+
+                    try
+                    {
+                        stats.SipAddress = lyncUser.SipAddress;
+                        if (string.IsNullOrEmpty(lyncUser.LineUri)) stats.PhoneNumber = string.Empty; else stats.PhoneNumber = lyncUser.LineUri;
+                        
+                        LyncUserPlan plan = LyncController.GetLyncUserPlan(org.Id, lyncUser.LyncUserPlanId);
+                        stats.Conferencing = plan.Conferencing;
+                        stats.EnterpriseVoice = plan.EnterpriseVoice;
+                        stats.Federation = plan.Federation;
+                        stats.InstantMessaing = plan.IM;
+                        stats.MobileAccess = plan.Mobility;
+                        stats.LyncUserPlan = plan.LyncUserPlanName;
+                        stats.DisplayName = lyncUser.DisplayName;
+                    }
+                    catch (Exception ex)
+                    {
+                        TaskManager.WriteError(ex, "Could not get lync statistics. AccountName: {0}",
+                                               lyncUser.DisplayName);
+                    }
+
+
+                    if (stats != null)
+                    {
+                        PopulateBaseItem(stats, org, topReseller);
+                        report.LyncReport.Items.Add(stats);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TaskManager.WriteError(ex);
+                }
+            }
+
         }
 
 
@@ -489,8 +598,8 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             }
             
         }
-        
-        private static void GetUsersData(EnterpriseSolutionStatisticsReport report, int  userId, bool generateExchangeReport, bool generateSharePointReport, bool generateCRMReport, bool generateOrganizationReport, string topReseller)
+
+        private static void GetUsersData(EnterpriseSolutionStatisticsReport report, int userId, bool generateExchangeReport, bool generateSharePointReport, bool generateCRMReport, bool generateOrganizationReport, bool generateLyncReport, string topReseller)
         {
             List<UserInfo> users;
             try
@@ -514,6 +623,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                         GetUsersData(report, user.UserId, generateExchangeReport, generateSharePointReport,
                                      generateCRMReport,
                                      generateOrganizationReport,
+                                     generateLyncReport,
                                      string.IsNullOrEmpty(topReseller) ? user.Username : topReseller);
                     }
                 }
@@ -523,8 +633,8 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                 }
             }            
         }
-        
-        public static EnterpriseSolutionStatisticsReport GetEnterpriseSolutionStatisticsReport(int userId, bool generateExchangeReport, bool generateSharePointReport, bool generateCRMReport, bool generateOrganizationReport)
+
+        public static EnterpriseSolutionStatisticsReport GetEnterpriseSolutionStatisticsReport(int userId, bool generateExchangeReport, bool generateSharePointReport, bool generateCRMReport, bool generateOrganizationReport, bool generateLyncReport)
         {
             EnterpriseSolutionStatisticsReport report = new EnterpriseSolutionStatisticsReport();
             
@@ -534,17 +644,20 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             if (generateSharePointReport || generateOrganizationReport)
                 report.SharePointReport = new SharePointStatisticsReport();
 
+            if (generateLyncReport || generateOrganizationReport)
+                report.LyncReport = new LyncStatisticsReport();
+
+
             if (generateCRMReport || generateOrganizationReport)
                 report.CRMReport = new CRMStatisticsReport();
 
             if (generateOrganizationReport)
                 report.OrganizationReport = new OrganizationStatisticsReport();
-
-
+            
             try
             {
                 GetUsersData(report, userId, generateExchangeReport, generateSharePointReport, generateCRMReport,
-                             generateOrganizationReport, null);
+                             generateOrganizationReport, generateLyncReport, null);
             }
             catch(Exception ex)
             {

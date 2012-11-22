@@ -86,6 +86,7 @@ namespace WebsitePanel.Portal
             bool webEnabled = false;
             bool ftpEnabled = false;
             bool mailEnabled = false;
+            bool integratedOUEnabled = false;
 
             // load hosting context
             if (planId > 0)
@@ -111,6 +112,11 @@ namespace WebsitePanel.Portal
 
                     ftpEnabled = cntx.Groups.ContainsKey(ResourceGroups.Ftp);
                     mailEnabled = cntx.Groups.ContainsKey(ResourceGroups.Mail);
+
+                    if (Utils.CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))
+                    {
+                        integratedOUEnabled = true;
+                    }
                 }
             }
 
@@ -129,7 +135,7 @@ namespace WebsitePanel.Portal
 
             ftpAccountName.Visible = (rbFtpAccountName.SelectedIndex == 1);
 
-            chkIntegratedOUProvisioning.Visible = chkCreateResources.Visible;
+            chkIntegratedOUProvisioning.Checked = chkIntegratedOUProvisioning.Visible = (chkCreateResources.Visible && integratedOUEnabled);
         }
 
         private void CreateHostingSpace()

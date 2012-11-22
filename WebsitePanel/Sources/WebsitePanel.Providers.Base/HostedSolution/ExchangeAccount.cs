@@ -49,6 +49,7 @@ namespace WebsitePanel.Providers.HostedSolution
         int mailboxPlanId;
         string mailboxPlan;
         string publicFolderPermission;
+        string userPrincipalName;
 
         public int AccountId
         {
@@ -141,6 +142,12 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.publicFolderPermission = value; }
         }
 
+
+        public string UserPrincipalName
+        {
+            get { return this.userPrincipalName; }
+            set { this.userPrincipalName = value; }
+        }
 
     }
 }

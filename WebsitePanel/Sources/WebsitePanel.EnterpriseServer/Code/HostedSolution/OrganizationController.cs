@@ -517,7 +517,7 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-                LyncUsersPagedResult res = LyncController.GetLyncUsers(itemId, string.Empty, string.Empty, 0, int.MaxValue);
+                LyncUsersPagedResult res = LyncController.GetLyncUsers(itemId);
 
                 if (res.IsSuccess)
                 {
@@ -1125,6 +1125,14 @@ namespace WebsitePanel.EnterpriseServer
                     ExchangeServerController.AddAuthoritativeDomain(itemId, domain.DomainId);
                 }
 
+                OrganizationStatistics orgStatsExchange = ExchangeServerController.GetOrganizationStatistics(itemId);
+
+                if (orgStatsExchange.AllocatedMailboxes == 0)
+                {
+                    ExchangeAcceptedDomainType newDomainType = ExchangeAcceptedDomainType.InternalRelay;
+                    ChangeOrganizationDomainType(org.ServiceId, domain.DomainId, newDomainType);
+                }
+
                 if (org.IsOCSOrganization)
                 {
                     OCSController.AddDomain(domain.DomainName, itemId);
@@ -1500,8 +1508,15 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (DataProvider.CheckOCSUserExists(accountId))
                 {
-                    return BusinessErrorCodes.CURRENT_USER_IS_OCS_USER; ;
+                    return BusinessErrorCodes.CURRENT_USER_IS_OCS_USER; 
                 }
+
+                if (DataProvider.CheckLyncUserExists(accountId))
+                {
+                    return BusinessErrorCodes.CURRENT_USER_IS_LYNC_USER; 
+                }
+
+
                 // load organization
                 Organization org = GetOrganization(itemId);
                 if (org == null)

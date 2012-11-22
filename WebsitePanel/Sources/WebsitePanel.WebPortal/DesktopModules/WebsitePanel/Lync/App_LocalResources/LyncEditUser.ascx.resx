@@ -135,4 +135,7 @@
   <data name="locPlanName.Text" xml:space="preserve">
     <value>Plan Name :</value>
   </data>
+  <data name="locSipAddress.Text" xml:space="preserve">
+    <value>SIP Address:</value>
+  </data>
 </root>
