@@ -829,6 +829,22 @@ namespace WebsitePanel.EnterpriseServer
             return Convert.ToInt32(prmId.Value);
         }
 
+
+
+        public static int CheckDomainUsedByHostedOrganization(string domainName)
+        {
+            SqlParameter prmId = new SqlParameter("@Result", SqlDbType.Int);
+            prmId.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "CheckDomainUsedByHostedOrganization",
+                prmId,
+                new SqlParameter("@domainName", domainName));
+
+            return Convert.ToInt32(prmId.Value);
+        }
+
+
         public static int AddDomain(int actorId, int packageId, int zoneItemId, string domainName,
             bool hostingAllowed, int webSiteId, int mailDomainId, bool isSubDomain, bool isInstantAlias, bool isDomainPointer)
         {

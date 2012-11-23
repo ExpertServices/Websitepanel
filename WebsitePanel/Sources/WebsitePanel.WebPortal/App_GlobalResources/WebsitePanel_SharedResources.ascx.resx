@@ -2896,6 +2896,9 @@
   <data name="ServiceItemType.Organization" xml:space="preserve">
     <value>Hosted Organization</value>
   </data>
+  <data name="Error.EXCHANGE_UNABLE_TO_DELETE_DOMAIN" xml:space="preserve">
+    <value>Unable to delete domain, verify if domain is in use by hosted organization objects.</value>
+  </data>
   <data name="Error.EXCHANGE_CREATE_MAILBOX" xml:space="preserve">
     <value>Error creating mailbox. See audit log for more details.</value>
   </data>
@@ -5071,6 +5074,9 @@
   </data>
   <data name="Error.DELETE_LYNC_USER" xml:space="preserve">
     <value>Cannot delete Lync User, the following errors have been occured:</value>
+  </data>
+  <data name="Error.LYNC_UNABLE_TO_ADD_PLAN" xml:space="preserve">
+    <value>Unabled to add plan</value>
   </data>
   <data name="Success.UPDATE_LYNC_USER" xml:space="preserve">
     <value>General Lync User settings have been successfully updated.</value>

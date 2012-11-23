@@ -6931,3 +6931,29 @@ END
 GO
 
 
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'CheckDomainUsedByHostedOrganization')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[CheckDomainUsedByHostedOrganization] 
+	@DomainName nvarchar(100),
+	@Result int OUTPUT
+AS
+	SET @Result = 0
+	IF EXISTS(SELECT 1 FROM ExchangeAccounts WHERE UserPrincipalName LIKE ''%@''+ @DomainName)
+	BEGIN
+		SET @Result = 1
+	END
+	ELSE
+	IF EXISTS(SELECT 1 FROM ExchangeAccountEmailAddresses WHERE EmailAddress LIKE ''%@''+ @DomainName)
+	BEGIN
+		SET @Result = 1
+	END
+	ELSE
+	IF EXISTS(SELECT 1 FROM LyncUsers WHERE SipAddress LIKE ''%@''+ @DomainName)
+	BEGIN
+		SET @Result = 1
+	END
+		
+	RETURN @Result'
+END
+GO

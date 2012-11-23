@@ -1534,6 +1534,10 @@ namespace WebsitePanel.EnterpriseServer
 				if(domain == null)
 					return -1;
 
+                if (DataProvider.CheckDomainUsedByHostedOrganization(domain.DomainName) == 1)
+                {
+                    return -1;
+                }
 			
 				// delete domain on Exchange
 				int[] hubTransportServiceIds;

@@ -425,7 +425,15 @@ namespace WebsitePanel.EnterpriseServer
                 DomainInfo domain = ServerController.GetDomain(domainId);
                 if (domain == null)
                     return -1;
-                
+
+                if (!string.IsNullOrEmpty(org.GlobalAddressList))
+                {
+                    if (DataProvider.CheckDomainUsedByHostedOrganization(domain.DomainName) == 1)
+                    {
+                        return -1;
+                    }
+                }
+                                
                 // unregister domain
                 DataProvider.DeleteExchangeOrganizationDomain(itemId, domainId);
 
