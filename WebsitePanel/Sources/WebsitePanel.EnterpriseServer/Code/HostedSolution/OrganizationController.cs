@@ -1735,7 +1735,7 @@ namespace WebsitePanel.EnterpriseServer
                 if (!String.IsNullOrEmpty(password))
                     account.AccountPassword = CryptoUtils.Encrypt(password);
                 else 
-                    account.AccountPassword = string.Empty;
+                    account.AccountPassword = null;
 
                 UpdateAccount(account);
 

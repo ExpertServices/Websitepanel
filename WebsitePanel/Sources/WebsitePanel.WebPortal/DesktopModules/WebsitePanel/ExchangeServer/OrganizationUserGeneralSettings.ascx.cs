@@ -120,6 +120,32 @@ namespace WebsitePanel.Portal.HostedSolution
                     }
                 }
 
+
+                if (cntx.Quotas.ContainsKey(Quotas.ORGANIZATION_ALLOWCHANGEUPN))
+                {
+                    if (cntx.Quotas[Quotas.ORGANIZATION_ALLOWCHANGEUPN].QuotaAllocatedValue != 1)
+                    {
+                        lblUserPrincipalName.Visible = true;
+                        upn.Visible = false;
+                    }
+                    else
+                    {
+                        lblUserPrincipalName.Visible = false;
+                        upn.Visible = true;
+                        if (!string.IsNullOrEmpty(user.UserPrincipalName))
+                        {
+                            string[] Tmp = user.UserPrincipalName.Split('@');
+                            upn.AccountName = Tmp[0];
+
+                            if (Tmp.Length > 1)
+                            {
+                                upn.DomainName = Tmp[1];
+                            }
+                        }
+
+                    }
+                }
+
                 if (user.Locked)
                     chkLocked.Enabled = true;
                 else
