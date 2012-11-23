@@ -3263,6 +3263,9 @@
   <data name="Quota.HostedSolution.Users" xml:space="preserve">
     <value>Users per Organization</value>
   </data>
+  <data name="Quota.HostedSolution.AllowChangeUPN" xml:space="preserve">
+    <value>Allow to Change UserPrincipalName</value>
+  </data>
   <data name="Quota.HostedSolution.Domains" xml:space="preserve">
     <value>Domains per Organization</value>
   </data>

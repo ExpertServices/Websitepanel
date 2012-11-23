@@ -6957,3 +6957,10 @@ AS
 	RETURN @Result'
 END
 GO
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedSolution.AllowChangeUPN')
+BEGIN
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (230,	13,	4,	N'HostedSolution.AllowChangeUPN', N'Allow to Change UserPrincipalName',	1,	0, NULL)
+END
+GO

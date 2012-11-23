@@ -1817,7 +1817,8 @@ namespace WebsitePanel.EnterpriseServer
                 exchange.DisableMailbox(account.AccountName);
 
                 account.AccountType = ExchangeAccountType.User;                
-                account.MailEnabledPublicFolder = false;                                
+                account.MailEnabledPublicFolder = false;
+                account.AccountPassword = null;
                 UpdateAccount(account);
                 DataProvider.DeleteUserEmailAddresses(account.AccountId, account.PrimaryEmailAddress);
                 
@@ -2129,6 +2130,7 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
 				// save account
+                account.AccountPassword = null;
 				UpdateAccount(account);
 
 				return 0;
@@ -2357,6 +2359,7 @@ namespace WebsitePanel.EnterpriseServer
                 else account.MailboxManagerActions &= ~action;
 
                 // update account
+                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -3193,6 +3196,7 @@ namespace WebsitePanel.EnterpriseServer
                 // update account
                 account.DisplayName = displayName;
                 account.PrimaryEmailAddress = emailAddress;
+                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -3521,6 +3525,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 // update account
                 account.DisplayName = displayName;
+                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -3741,6 +3746,7 @@ namespace WebsitePanel.EnterpriseServer
                     addressLists.ToArray());
 
                 // save account
+                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -4143,6 +4149,7 @@ namespace WebsitePanel.EnterpriseServer
 				account.AccountName = accountName;
 				account.MailEnabledPublicFolder = true;
 				account.PrimaryEmailAddress = email;
+                account.AccountPassword = null;
 				UpdateAccount(account);
 
 				// register e-mail
@@ -4195,6 +4202,7 @@ namespace WebsitePanel.EnterpriseServer
 				// update and save account
 				account.MailEnabledPublicFolder = false;
 				account.PrimaryEmailAddress = "";
+                account.AccountPassword = null;
 				UpdateAccount(account);
 
 
@@ -4314,6 +4322,7 @@ namespace WebsitePanel.EnterpriseServer
 				{
 					// rename original folder
 					account.DisplayName = newFullName;
+                    account.AccountPassword = null;
 					UpdateAccount(account);
 
 					// rename nested folders
@@ -4531,6 +4540,7 @@ namespace WebsitePanel.EnterpriseServer
 					emailAddress);
 
 				// save account
+                account.AccountPassword = null;
 				UpdateAccount(account);
 
 				return 0;

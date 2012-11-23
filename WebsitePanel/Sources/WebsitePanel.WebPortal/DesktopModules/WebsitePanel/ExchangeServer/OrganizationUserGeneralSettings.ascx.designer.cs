@@ -140,6 +140,15 @@ namespace WebsitePanel.Portal.HostedSolution {
         protected global::System.Web.UI.WebControls.Label lblUserPrincipalName;
         
         /// <summary>
+        /// upn control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.EmailAddress upn;
+        
+        /// <summary>
         /// locDisplayName control.
         /// </summary>
         /// <remarks>

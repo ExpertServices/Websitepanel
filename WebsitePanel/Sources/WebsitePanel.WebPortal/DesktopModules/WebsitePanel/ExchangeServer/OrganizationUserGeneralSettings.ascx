@@ -8,6 +8,7 @@
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/EmailAddress.ascx" TagName="EmailAddress" TagPrefix="wsp" %>
 
 
 
@@ -43,7 +44,10 @@
 					<table>
 						<tr>
 						    <td class="FormLabel150"> <asp:Localize ID="locUserPrincipalName" runat="server" meta:resourcekey="locUserPrincipalName" Text="Login Name:"></asp:Localize></td>
-						    <td><asp:Label runat="server" ID="lblUserPrincipalName" /></td>
+						    <td>
+                                <asp:Label runat="server" ID="lblUserPrincipalName" />
+                                <wsp:EmailAddress id="upn" runat="server" ValidationGroup="CreateMailbox"></wsp:EmailAddress>
+						    </td>
 						</tr>					   
 
 						<tr>
