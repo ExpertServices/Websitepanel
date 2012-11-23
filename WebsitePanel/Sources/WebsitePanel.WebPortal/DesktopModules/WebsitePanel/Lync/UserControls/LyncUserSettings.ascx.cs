@@ -28,7 +28,9 @@
 
 using System;
 using System.Web.UI.WebControls;
-using EntServer = WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer;
+using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Portal.Lync.UserControls
 {
@@ -40,17 +42,50 @@ namespace WebsitePanel.Portal.Lync.UserControls
         public string sipAddress
         {
                         
-            get { return ddlSipAddresses.SelectedItem.Value; }
+            get 
+            {
+                if (ddlSipAddresses.Visible)
+                {
+                    if ((ddlSipAddresses != null) && (ddlSipAddresses.SelectedItem != null))
+                        return ddlSipAddresses.SelectedItem.Value;
+                    else
+                        return string.Empty;
+                }
+                else
+                {
+                    return email.Email;
+                }
+            }
             set
             {
                 sipAddressToSelect = value;
-                foreach (ListItem li in ddlSipAddresses.Items)
+
+                if (ddlSipAddresses.Visible)
                 {
-                    if (li.Value == value)
+                    if ((ddlSipAddresses != null) && (ddlSipAddresses.Items != null))
                     {
-                        ddlSipAddresses.ClearSelection();
-                        li.Selected = true;
-                        break;
+                        foreach (ListItem li in ddlSipAddresses.Items)
+                        {
+                            if (li.Value == value)
+                            {
+                                ddlSipAddresses.ClearSelection();
+                                li.Selected = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        string[] Tmp = value.Split('@');
+                        email.AccountName = Tmp[0];
+
+                        if (Tmp.Length > 1)
+                        {
+                            email.DomainName = Tmp[1];
+                        }
                     }
                 }
             }
@@ -76,25 +111,54 @@ namespace WebsitePanel.Portal.Lync.UserControls
         private void BindAddresses()
 		{
 
-            EntServer.ExchangeEmailAddress[] emails = ES.Services.ExchangeServer.GetMailboxEmailAddresses(PanelRequest.ItemID, PanelRequest.AccountID);
+            OrganizationUser user = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID, PanelRequest.AccountID);
 
-            foreach (EntServer.ExchangeEmailAddress email in emails)
-			{
-				ListItem li = new ListItem();
-                li.Text = email.EmailAddress;
-                li.Value = email.EmailAddress;
-                li.Selected = email.IsPrimary;
-                ddlSipAddresses.Items.Add(li);
-			}
+            if (user == null)
+                return;
 
-            foreach (ListItem li in ddlSipAddresses.Items)
+            if (user.AccountType == ExchangeAccountType.Mailbox)
             {
-                if (li.Value == sipAddressToSelect)
+                email.Visible = false;
+                ddlSipAddresses.Visible = true;
+
+                WebsitePanel.EnterpriseServer.ExchangeEmailAddress[] emails = ES.Services.ExchangeServer.GetMailboxEmailAddresses(PanelRequest.ItemID, PanelRequest.AccountID);
+
+                foreach (WebsitePanel.EnterpriseServer.ExchangeEmailAddress mail in emails)
                 {
-                    ddlSipAddresses.ClearSelection();
-                    li.Selected = true;
-                    break;
+                    ListItem li = new ListItem();
+                    li.Text = mail.EmailAddress;
+                    li.Value = mail.EmailAddress;
+                    li.Selected = mail.IsPrimary;
+                    ddlSipAddresses.Items.Add(li);
                 }
+
+                foreach (ListItem li in ddlSipAddresses.Items)
+                {
+                    if (li.Value == sipAddressToSelect)
+                    {
+                        ddlSipAddresses.ClearSelection();
+                        li.Selected = true;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                email.Visible = true;
+                ddlSipAddresses.Visible = false;
+
+                if (!string.IsNullOrEmpty(sipAddressToSelect))
+                {
+                    string[] Tmp = sipAddressToSelect.Split('@');
+                    email.AccountName = Tmp[0];
+
+                    if (Tmp.Length > 1)
+                    {
+                        email.DomainName = Tmp[1];
+                    }
+                }
+
+
             }
 
 		}

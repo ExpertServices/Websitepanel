@@ -69,13 +69,17 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 			{
 				return domain.DomainName;
 			}
+            set
+            {
+                domain.DomainName = value;
+            }
 		}
 
 		public string Email
 		{
 			get
 			{
-				return AccountName + "@" + DomainName;
+				return string.Format("{0}@{1}",AccountName, DomainName).ToLower();
 			}
 		}
 
