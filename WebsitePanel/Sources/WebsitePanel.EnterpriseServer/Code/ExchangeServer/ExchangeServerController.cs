@@ -4766,7 +4766,7 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
-                return exchange.GetMobileDevices(account.AccountName);
+                return exchange.GetMobileDevices(account.UserPrincipalName);
             }
             catch (Exception ex)
             {
