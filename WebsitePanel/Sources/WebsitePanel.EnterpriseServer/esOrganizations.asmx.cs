@@ -196,6 +196,22 @@ namespace WebsitePanel.EnterpriseServer
 
 
         [WebMethod]
+        public int SetUserPrincipalName(int itemId, int accountId, string userPrincipalName, bool inherit)
+        {
+            return OrganizationController.SetUserPrincipalName(itemId, accountId, userPrincipalName,
+                inherit);
+        }
+
+
+        [WebMethod]
+        public int SetUserPassword(int itemId, int accountId, string password)
+        {
+            return OrganizationController.SetUserPassword(itemId, accountId, password);
+        }
+        
+
+
+        [WebMethod]
         public List<OrganizationUser> SearchAccounts(int itemId,
             string filterColumn, string filterValue, string sortColumn, bool includeMailboxes)
         {

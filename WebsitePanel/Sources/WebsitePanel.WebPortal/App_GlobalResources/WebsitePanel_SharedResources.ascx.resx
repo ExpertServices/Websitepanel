@@ -3083,6 +3083,19 @@
   <data name="Success.ORGANIZATION_UPDATE_USER_SETTINGS" xml:space="preserve">
     <value>User general settings have been successfully updated.</value>
   </data>
+  <data name="Success.ORGANIZATION_SET_USER_PASSWORD" xml:space="preserve">
+    <value>User password has been successfully updated.</value>
+  </data>
+  <data name="Error.ORGANIZATION_SET_USER_PASSWORD" xml:space="preserve">
+    <value>Failed to update user password.</value>
+  </data>
+  <data name="Success.ORGANIZATION_SET_USER_USERPRINCIPALNAME" xml:space="preserve">
+    <value>User login name has been successfully updated.</value>
+  </data>
+  <data name="Error.ORGANIZATION_SET_USER_USERPRINCIPALNAME" xml:space="preserve">
+    <value>Failed to update user login name.</value>
+  </data>
+
   <data name="Success.EXCHANGE_MAILBOX_SET_DEFAULT_EMAIL" xml:space="preserve">
     <value>Mailbox primary e-mail address has been changed.</value>
   </data>

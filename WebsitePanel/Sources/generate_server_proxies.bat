@@ -35,8 +35,8 @@ REM %WSE_CLEAN% .\WebsitePanel.Server.Client\OCSServerProxy.cs
 REM %WSDL% %SERVER_URL%/OperatingSystem.asmx /out:.\WebsitePanel.Server.Client\OperatingSystemProxy.cs /namespace:WebsitePanel.Providers.OS /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\OperatingSystemProxy.cs
 
-REM %WSDL% %SERVER_URL%/Organizations.asmx /out:.\WebsitePanel.Server.Client\OrganizationProxy.cs /namespace:WebsitePanel.Providers.HostedSolution /type:webClient /fields
-REM %WSE_CLEAN% .\WebsitePanel.Server.Client\OrganizationProxy.cs
+%WSDL% %SERVER_URL%/Organizations.asmx /out:.\WebsitePanel.Server.Client\OrganizationProxy.cs /namespace:WebsitePanel.Providers.HostedSolution /type:webClient /fields
+%WSE_CLEAN% .\WebsitePanel.Server.Client\OrganizationProxy.cs
 
 REM %WSDL% %SERVER_URL%/ServiceProvider.asmx /out:.\WebsitePanel.Server.Client\ServiceProviderProxy.cs /namespace:WebsitePanel.Providers /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\ServiceProviderProxy.cs
@@ -56,7 +56,7 @@ REM %WSE_CLEAN% .\WebsitePanel.Server.Client\WebServerProxy.cs
 REM %WSDL% %SERVER_URL%/WindowsServer.asmx /out:.\WebsitePanel.Server.Client\WindowsServerProxy.cs /namespace:WebsitePanel.Server /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\WindowsServerProxy.cs
 
-%WSDL% %SERVER_URL%/LyncServer.asmx /out:.\WebsitePanel.Server.Client\LyncServerProxy.cs /namespace:WebsitePanel.Providers.Lync /type:webClient /fields
-%WSE_CLEAN% .\WebsitePanel.Server.Client\LyncServerProxy.cs
+REM %WSDL% %SERVER_URL%/LyncServer.asmx /out:.\WebsitePanel.Server.Client\LyncServerProxy.cs /namespace:WebsitePanel.Providers.Lync /type:webClient /fields
+REM %WSE_CLEAN% .\WebsitePanel.Server.Client\LyncServerProxy.cs
 
 

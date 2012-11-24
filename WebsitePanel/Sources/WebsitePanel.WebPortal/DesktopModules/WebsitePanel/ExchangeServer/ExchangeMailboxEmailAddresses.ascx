@@ -73,7 +73,7 @@
 					                    <asp:CheckBox ID="chkSelectAll" runat="server" onclick="javascript:SelectAllCheckboxes(this);" />
 					                </HeaderTemplate>
 					                <ItemTemplate>
-					                    <asp:CheckBox ID="chkSelect" runat="server" Enabled='<%# !(bool)Eval("IsPrimary") %>' />
+					                    <asp:CheckBox ID="chkSelect" runat="server" Enabled='<%# !((bool)Eval("IsPrimary") |  (bool)Eval("IsUserPrincipalName"))%>' />
 					                </ItemTemplate>
                                     <ItemStyle Width="10px" />
 					            </asp:TemplateField>
@@ -87,7 +87,7 @@
 							        <ItemTemplate>
 							            <div style="text-align:center">
 							                &nbsp;
-								            <asp:Image ID="Image1" runat="server" SkinID="Checkbox16" Visible='<%# Eval("IsPrimary") %>' />
+								            <asp:Image ID="Image1" runat="server" SkinID="Checkbox16" Visible='<%# (bool)Eval("IsPrimary")%>' />
 								        </div>
 							        </ItemTemplate>
 						        </asp:TemplateField>

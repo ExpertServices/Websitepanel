@@ -1313,8 +1313,13 @@ namespace WebsitePanel.EnterpriseServer
 				if (String.Compare(account.PrimaryEmailAddress, email.EmailAddress, true) == 0)
 				{
 					email.IsPrimary = true;
-					break;
 				}
+
+                if (String.Compare(account.UserPrincipalName, email.EmailAddress, true) == 0)
+                {
+                    email.IsUserPrincipalName = true;
+                }
+
 			}
 
 			return emails.ToArray();

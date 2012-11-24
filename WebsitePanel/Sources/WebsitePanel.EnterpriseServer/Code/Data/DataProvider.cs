@@ -2354,6 +2354,16 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
+        public static void UpdateExchangeAccountUserPrincipalName(int accountId, string userPrincipalName)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateExchangeAccountUserPrincipalName",
+                new SqlParameter("@AccountID", accountId),
+                new SqlParameter("@UserPrincipalName", userPrincipalName));
+        }
+
 		public static IDataReader GetExchangeAccount(int itemId, int accountId)
 		{
 			return SqlHelper.ExecuteReader(
