@@ -6985,3 +6985,10 @@ WHERE
 RETURN'
 END
 GO
+
+
+IF  NOT EXISTS (SELECT 1 FROM LyncUsers WHERE SipAddress IS NOT NULL)
+BEGIN
+	UPDATE LyncUsers  SET SipAddress=EA.PrimaryEmailAddress FROM ExchangeAccounts AS EA WHERE LyncUsers.SipAddress IS NULL AND LyncUsers.AccountID = EA.AccountID
+END
+GO
