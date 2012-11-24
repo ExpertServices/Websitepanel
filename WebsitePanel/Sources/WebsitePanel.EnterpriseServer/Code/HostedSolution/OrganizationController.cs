@@ -1336,11 +1336,11 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (orgProxy.CreateUser(org.OrganizationId, sAMAccountName, displayName, upn, password, enabled) == 0)
                 {
-                    OrganizationUser retUser = orgProxy.GetUserGeneralSettings(upn, org.OrganizationId);
+                    accountName = sAMAccountName;
+                    OrganizationUser retUser = orgProxy.GetUserGeneralSettings(sAMAccountName, org.OrganizationId);
                     TaskManager.Write("sAMAccountName :" + retUser.DomainUserName);
 
-                    userId = AddOrganizationUser(itemId, upn, displayName, email, retUser.DomainUserName, password, subscriberNumber);
-                    accountName = upn;
+                    userId = AddOrganizationUser(itemId, sAMAccountName, displayName, email, retUser.DomainUserName, password, subscriberNumber);
 
                     // register email address
                     AddAccountEmailAddress(userId, email);
@@ -1432,7 +1432,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 TaskManager.Write("sAMAccountName :" + retUser.DomainUserName);
 
-                userId = AddOrganizationUser(itemId, accountName, displayName, email, retUser.DomainUserName, password, subscriberNumber);
+                userId = AddOrganizationUser(itemId, retUser.SamAccountName, displayName, email, retUser.DomainUserName, password, subscriberNumber);
 
                 AddAccountEmailAddress(userId, email);
 
@@ -1461,6 +1461,9 @@ namespace WebsitePanel.EnterpriseServer
             string CounterStr = "00000";
             int counter = 0;
             bool bFound = false;
+
+            if (!AccountExists(accountName)) return accountName;
+
             do
             {
                 accountName = genSamLogin(name, CounterStr);
