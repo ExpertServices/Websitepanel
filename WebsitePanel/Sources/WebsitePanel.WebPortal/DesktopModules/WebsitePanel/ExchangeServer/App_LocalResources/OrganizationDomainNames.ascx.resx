@@ -142,9 +142,7 @@
     <value>Domain Name</value>
   </data>
   <data name="HSFormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;Each organization can have several domain names. These domain names are used as part of the primary e-mail address (UPN) of the new accounts. Exchange-enabled organizations use domain name when creating e-mail addresses for mailboxes, and distribution lists. Domain name is also used when creating new site collection in SharePoint.&lt;/p&gt;
-&lt;p&gt;Default domain name is selected by default when creating a new e-mail address. You can always change default domain name and it will not affect existing accounts.&lt;/p&gt;
-&lt;p&gt;For each domain name a corresponding DNS Zone is created. You can edit DNS zone records by clicking domain name link. If you are unsure about the structure of DNS zone, please do not modify zone records.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="locQuota.Text" xml:space="preserve">
     <value>Total Domain Names Used:</value>

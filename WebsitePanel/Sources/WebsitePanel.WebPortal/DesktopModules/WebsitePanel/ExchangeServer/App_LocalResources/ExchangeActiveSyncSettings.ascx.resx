@@ -151,9 +151,7 @@
     <value>Windows SharePoint Services</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;Exchange Server enables users who have mobile devices to synchronize mailbox data by using Exchange ActiveSync. Users can synchronize e-mail, contacts, calendars, and task folders. &lt;/p&gt;&lt;p&gt;
-ActiveSync mailbox policy allows you to apply a common set of security settings to all users in organization.
-&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="lblRefreshInterval.Text" xml:space="preserve">
     <value>Refresh interval:</value>

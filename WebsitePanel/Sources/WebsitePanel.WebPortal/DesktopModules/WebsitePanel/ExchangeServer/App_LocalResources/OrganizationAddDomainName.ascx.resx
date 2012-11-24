@@ -121,7 +121,7 @@
     <value>Cancel</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>Select a domain name, e.g. "mydomain.com" or "sub.mydomain.com"</value>
+    <value />
   </data>
   <data name="locTitle.Text" xml:space="preserve">
     <value>Add Domain Name</value>

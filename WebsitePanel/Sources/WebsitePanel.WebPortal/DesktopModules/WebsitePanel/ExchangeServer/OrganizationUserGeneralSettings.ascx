@@ -116,6 +116,15 @@
 						</tr>
 
 					</table>
+                    <table>
+					    <tr>
+						    <td class="FormLabel150"><asp:Localize ID="locNotes" runat="server" meta:resourcekey="locNotes" Text="Notes:"></asp:Localize></td>
+						    <td>
+							    <asp:TextBox ID="txtNotes" runat="server" CssClass="TextBox200" Rows="4" TextMode="MultiLine"></asp:TextBox>
+						    </td>
+					    </tr>
+					</table>		
+
 					
 					<wsp:CollapsiblePanel id="secCompanyInfo" runat="server" IsCollapsed="true"
                         TargetControlID="CompanyInfo" meta:resourcekey="secCompanyInfo" Text="Company Information">
@@ -239,20 +248,9 @@
 					    </table>
 					</asp:Panel>
 					
-					<table>
-					    <tr>
-						    <td class="FormLabel150"><asp:Localize ID="locNotes" runat="server" meta:resourcekey="locNotes" Text="Notes:"></asp:Localize></td>
-						    <td>
-							    <asp:TextBox ID="txtNotes" runat="server" CssClass="TextBox200" Rows="4" TextMode="MultiLine"></asp:TextBox>
-						    </td>
-					    </tr>
-					</table>		
-					
-					
 					<wsp:CollapsiblePanel id="secAdvanced" runat="server" IsCollapsed="true"
                         TargetControlID="AdvancedInfo" meta:resourcekey="secAdvanced" Text="Advanced">
                     </wsp:CollapsiblePanel>	
-                    
                     
                     <asp:Panel ID="AdvancedInfo" runat="server" Height="0" style="overflow:hidden;">
 					    <table>
