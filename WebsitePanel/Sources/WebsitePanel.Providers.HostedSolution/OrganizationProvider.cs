@@ -371,7 +371,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 userPath = GetUserPath(organizationId, loginName);
                 if (!ActiveDirectoryUtils.AdObjectExists(userPath))
                 {
-                    userPath = ActiveDirectoryUtils.CreateUser(path, upn, loginName, displayName, password, enabled);
+                    userPath = ActiveDirectoryUtils.CreateUser(path, null, loginName, displayName, password, enabled);
                     DirectoryEntry entry = new DirectoryEntry(userPath);
                     ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.UserPrincipalName, upn);
                     entry.CommitChanges();

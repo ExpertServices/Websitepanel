@@ -767,7 +767,7 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
 
-                return exchange.GetMailboxStatistics(account.AccountName);
+                return exchange.GetMailboxStatistics(account.UserPrincipalName);
             }
             catch (Exception ex)
             {
@@ -1241,6 +1241,9 @@ namespace WebsitePanel.EnterpriseServer
             string CounterStr = "00000";
             int counter = 0;
             bool bFound = false;
+
+            if (!AccountExists(accountName)) return accountName;
+
             do
             {
                 accountName = genSamLogin(name, CounterStr);
@@ -1819,7 +1822,7 @@ namespace WebsitePanel.EnterpriseServer
                 // delete mailbox
                 int serviceExchangeId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(serviceExchangeId, org.ServiceId);
-                exchange.DisableMailbox(account.AccountName);
+                exchange.DisableMailbox(account.UserPrincipalName);
 
                 account.AccountType = ExchangeAccountType.User;                
                 account.MailEnabledPublicFolder = false;
@@ -1869,7 +1872,7 @@ namespace WebsitePanel.EnterpriseServer
 				// delete mailbox
 			    int serviceExchangeId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(serviceExchangeId, org.ServiceId);
-				exchange.DeleteMailbox(account.AccountName);
+				exchange.DeleteMailbox(account.UserPrincipalName);
 
 				
                 
@@ -1944,7 +1947,7 @@ namespace WebsitePanel.EnterpriseServer
 
 			    int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-				return exchange.GetMailboxGeneralSettings(account.AccountName);
+				return exchange.GetMailboxGeneralSettings(account.UserPrincipalName);
 			}
 			catch (Exception ex)
 			{
@@ -1991,7 +1994,7 @@ namespace WebsitePanel.EnterpriseServer
                     hideAddressBook = true;
 
                 exchange.SetMailboxGeneralSettings(
-                    account.AccountName,
+                    account.UserPrincipalName,
                     hideAddressBook,
                     disabled);
 
@@ -2063,7 +2066,7 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
                 exchange.SetMailboxEmailAddresses(
-					account.AccountName,
+					account.UserPrincipalName,
 					GetAccountSimpleEmailAddresses(itemId, accountId));
 
 				return 0;
@@ -2119,7 +2122,7 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
                 
 				exchange.SetMailboxPrimaryEmailAddress(
-					account.AccountName,
+					account.UserPrincipalName,
 					emailAddress);
 
                 if (DataProvider.CheckOCSUserExists(account.AccountId))
@@ -2187,7 +2190,7 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
                 
 				exchange.SetMailboxEmailAddresses(
-					account.AccountName,
+					account.UserPrincipalName,
 					GetAccountSimpleEmailAddresses(itemId, accountId));
 
 				return 0;
@@ -2228,7 +2231,7 @@ namespace WebsitePanel.EnterpriseServer
 				// get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
 				ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-				ExchangeMailbox mailbox = exchange.GetMailboxMailFlowSettings(account.AccountName);
+				ExchangeMailbox mailbox = exchange.GetMailboxMailFlowSettings(account.UserPrincipalName);
 				mailbox.DisplayName = account.DisplayName;
 				return mailbox;
 			}
@@ -2273,7 +2276,7 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
-                exchange.SetMailboxMailFlowSettings(account.AccountName,
+                exchange.SetMailboxMailFlowSettings(account.UserPrincipalName,
                     enableForwarding,
                     forwardingAccountName,
                     forwardToBoth,
@@ -2321,7 +2324,7 @@ namespace WebsitePanel.EnterpriseServer
 				// get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
 				ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-				ExchangeMailbox mailbox = exchange.GetMailboxAdvancedSettings(account.AccountName);
+				ExchangeMailbox mailbox = exchange.GetMailboxAdvancedSettings(account.UserPrincipalName);
 				mailbox.DisplayName = account.DisplayName;
 				return mailbox;
 			}
@@ -2529,7 +2532,7 @@ namespace WebsitePanel.EnterpriseServer
                 // get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-				ExchangeMailbox mailbox = exchange.GetMailboxPermissions(org.OrganizationId, account.AccountName);
+				ExchangeMailbox mailbox = exchange.GetMailboxPermissions(org.OrganizationId, account.UserPrincipalName);
                 mailbox.DisplayName = account.DisplayName;
                 return mailbox;
             }
@@ -2571,7 +2574,7 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
                 
-                exchange.SetMailboxPermissions(org.OrganizationId, account.AccountName, sendAsaccounts, fullAccessAcounts);
+                exchange.SetMailboxPermissions(org.OrganizationId, account.UserPrincipalName, sendAsaccounts, fullAccessAcounts);
                   
 
                 return 0;
@@ -2656,7 +2659,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 exchange.SetMailboxAdvancedSettings(
                     org.OrganizationId,
-                    account.AccountName,
+                    account.UserPrincipalName,
                     plan.EnablePOP,
                     plan.EnableIMAP,
                     plan.EnableOWA,
@@ -4763,7 +4766,7 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
-                return exchange.GetMobileDevices(account.AccountName);
+                return exchange.GetMobileDevices(account.UserPrincipalName);
             }
             catch (Exception ex)
             {

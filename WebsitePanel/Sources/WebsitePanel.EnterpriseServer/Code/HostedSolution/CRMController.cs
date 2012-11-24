@@ -249,7 +249,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 OrganizationResult serverRes =
                     crm.CreateOrganization(orgId, org.OrganizationId, org.Name, baseCurrencyCode, baseCurrencyName,
-                                           baseCurrencySymbol, user.AccountName, user.FirstName, user.LastName, user.PrimaryEmailAddress,
+                                           baseCurrencySymbol, user.SamAccountName, user.FirstName, user.LastName, user.PrimaryEmailAddress,
                                            collation);
 
                 if (!serverRes.IsSuccess)
