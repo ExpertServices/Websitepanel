@@ -43,13 +43,13 @@ namespace WebsitePanel.Providers.HostedSolution
         private string RootOU
         {
             get { return ProviderSettings["RootOU"]; }
-        }       
+        }
 
         private string RootDomain
         {
             get { return ServerSettings.ADRootDomain; }
         }
-        
+
         private string PrimaryDomainController
         {
             get { return ProviderSettings["PrimaryDomainController"]; }
@@ -68,7 +68,7 @@ namespace WebsitePanel.Providers.HostedSolution
             AppendProtocol(sb);
             AppendDomainController(sb);
             AppendOUPath(sb, organizationId);
-            AppendOUPath(sb, RootOU);            
+            AppendOUPath(sb, RootOU);
             AppendDomainPath(sb, RootDomain);
 
             return sb.ToString();
@@ -118,20 +118,20 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             sb.Append(PrimaryDomainController + "/");
         }
-        
+
         private static void AppendCNPath(StringBuilder sb, string organizationId)
         {
             if (string.IsNullOrEmpty(organizationId))
                 return;
-                        
+
             sb.Append("CN=").Append(organizationId).Append(",");
         }
-       
+
         private static void AppendProtocol(StringBuilder sb)
         {
             sb.Append("LDAP://");
         }
-        
+
         private static void AppendOUPath(StringBuilder sb, string ou)
         {
             if (string.IsNullOrEmpty(ou))
@@ -168,29 +168,29 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             return OrganizationExistsInternal(organizationId);
         }
-        
+
         internal bool OrganizationExistsInternal(string organizationId)
         {
             if (string.IsNullOrEmpty(organizationId))
                 throw new ArgumentNullException("organizationId");
-            
+
             string orgPath = GetOrganizationPath(organizationId);
             return ActiveDirectoryUtils.AdObjectExists(orgPath);
         }
-        
+
         public Organization CreateOrganization(string organizationId)
         {
-           return CreateOrganizationInternal(organizationId);
+            return CreateOrganizationInternal(organizationId);
         }
-                       
+
         internal Organization CreateOrganizationInternal(string organizationId)
         {
             HostedSolutionLog.LogStart("CreateOrganizationInternal");
             HostedSolutionLog.DebugInfo("OrganizationId : {0}", organizationId);
-            
+
             if (string.IsNullOrEmpty(organizationId))
                 throw new ArgumentNullException("organizationId");
-                        
+
             bool ouCreated = false;
             bool groupCreated = false;
 
@@ -203,18 +203,18 @@ namespace WebsitePanel.Providers.HostedSolution
                 //Create OU
                 ActiveDirectoryUtils.CreateOrganizationalUnit(organizationId, parentPath);
                 ouCreated = true;
-                
+
                 //Create security group
                 ActiveDirectoryUtils.CreateGroup(orgPath, organizationId);
                 groupCreated = true;
-                
-                
+
+
                 org = new Organization();
                 org.OrganizationId = organizationId;
                 org.DistinguishedName = ActiveDirectoryUtils.RemoveADPrefix(orgPath);
-                org.SecurityGroup = ActiveDirectoryUtils.RemoveADPrefix(GetGroupPath(organizationId));            
+                org.SecurityGroup = ActiveDirectoryUtils.RemoveADPrefix(GetGroupPath(organizationId));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 HostedSolutionLog.LogError(ex);
                 try
@@ -225,7 +225,7 @@ namespace WebsitePanel.Providers.HostedSolution
                         ActiveDirectoryUtils.DeleteADObject(groupPath);
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     HostedSolutionLog.LogError(e);
                 }
@@ -238,21 +238,21 @@ namespace WebsitePanel.Providers.HostedSolution
                         ActiveDirectoryUtils.DeleteADObject(orgPath);
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     HostedSolutionLog.LogError(e);
                 }
 
                 throw;
             }
-            
+
             HostedSolutionLog.LogEnd("CreateOrganizationInternal");
-            
-            return org;            
+
+            return org;
         }
 
         public override void ChangeServiceItemsState(ServiceProviderItem[] items, bool enabled)
-        {           
+        {
 
             foreach (ServiceProviderItem item in items)
             {
@@ -261,7 +261,7 @@ namespace WebsitePanel.Providers.HostedSolution
                     if (item is Organization)
                     {
                         Organization org = item as Organization;
-                        ChangeOrganizationState(org, enabled);                        
+                        ChangeOrganizationState(org, enabled);
                     }
                 }
                 catch (Exception ex)
@@ -281,7 +281,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 string.Format(CultureInfo.InvariantCulture, "(&(objectClass=user)(!{0}=disabled))",
                               ADAttributes.CustomAttribute2);
             using (DirectorySearcher searcher = new DirectorySearcher(entry, filter))
-            {                
+            {
                 SearchResultCollection resCollection = searcher.FindAll();
                 foreach (SearchResult res in resCollection)
                 {
@@ -303,21 +303,21 @@ namespace WebsitePanel.Providers.HostedSolution
                         Organization org = item as Organization;
                         DeleteOrganizationInternal(org.OrganizationId);
                     }
-                    
+
                 }
                 catch (Exception ex)
                 {
                     HostedSolutionLog.LogError(String.Format("Error deleting '{0}' {1}", item.Name, item.GetType().Name), ex);
                 }
             }
-            
+
         }
-        
+
         public void DeleteOrganization(string organizationId)
-        {            
+        {
             DeleteOrganizationInternal(organizationId);
         }
-        
+
         internal void DeleteOrganizationInternal(string organizationId)
         {
             HostedSolutionLog.LogStart("DeleteOrganizationInternal");
@@ -328,11 +328,11 @@ namespace WebsitePanel.Providers.HostedSolution
 
             string groupPath = GetGroupPath(organizationId);
             ActiveDirectoryUtils.DeleteADObject(groupPath);
-            
-            string path = GetOrganizationPath(organizationId);  
+
+            string path = GetOrganizationPath(organizationId);
             ActiveDirectoryUtils.DeleteADObject(path, true);
 
-            
+
 
             HostedSolutionLog.LogEnd("DeleteOrganizationInternal");
         }
@@ -416,12 +416,12 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             return GetPasswordPolicyInternal();
         }
-        
+
         internal PasswordPolicyResult GetPasswordPolicyInternal()
         {
             HostedSolutionLog.LogStart("GetPasswordPolicyInternal");
 
-            PasswordPolicyResult res = new PasswordPolicyResult {IsSuccess = true};
+            PasswordPolicyResult res = new PasswordPolicyResult { IsSuccess = true };
 
             string[] policyAttributes = new[] {"minPwdLength", 
                                                "pwdProperties", 
@@ -437,30 +437,30 @@ namespace WebsitePanel.Providers.HostedSolution
                     SearchScope.Base
                     );
 
-                
+
                 SearchResult result = ds.FindOne();
 
                 PasswordPolicy ret = new PasswordPolicy
-                                         {
-                                             MinLength = ((int) result.Properties["minPwdLength"][0]),
-                                             IsComplexityEnable = ((int) result.Properties["pwdProperties"][0] == 1)
-                                         };
-                res.Value = ret;                
+                {
+                    MinLength = ((int)result.Properties["minPwdLength"][0]),
+                    IsComplexityEnable = ((int)result.Properties["pwdProperties"][0] == 1)
+                };
+                res.Value = ret;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 HostedSolutionLog.LogError(ex);
                 res.IsSuccess = false;
-                res.ErrorCodes.Add(ErrorCodes.CANNOT_GET_PASSWORD_COMPLEXITY);                
+                res.ErrorCodes.Add(ErrorCodes.CANNOT_GET_PASSWORD_COMPLEXITY);
             }
 
-            HostedSolutionLog.LogEnd("GetPasswordPolicyInternal");            
+            HostedSolutionLog.LogEnd("GetPasswordPolicyInternal");
             return res;
         }
 
-        
+
         public void DeleteUser(string loginName, string organizationId)
-        {            
+        {
             DeleteUserInternal(loginName, organizationId);
         }
 
@@ -469,37 +469,37 @@ namespace WebsitePanel.Providers.HostedSolution
             HostedSolutionLog.LogStart("DeleteUserInternal");
             HostedSolutionLog.DebugInfo("loginName : {0}", loginName);
             HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
-            
+
             if (string.IsNullOrEmpty(loginName))
                 throw new ArgumentNullException("loginName");
 
             if (string.IsNullOrEmpty(organizationId))
                 throw new ArgumentNullException("organizationId");
 
-            string path = GetUserPath(organizationId, loginName);                        
+            string path = GetUserPath(organizationId, loginName);
             if (ActiveDirectoryUtils.AdObjectExists(path))
-                ActiveDirectoryUtils.DeleteADObject(path,true);
+                ActiveDirectoryUtils.DeleteADObject(path, true);
 
             HostedSolutionLog.LogEnd("DeleteUserInternal");
         }
-        
+
         public OrganizationUser GetUserGeneralSettings(string loginName, string organizationId)
         {
             return GetUserGeneralSettingsInternal(loginName, organizationId);
         }
-        
+
         internal OrganizationUser GetUserGeneralSettingsInternal(string loginName, string organizationId)
         {
             HostedSolutionLog.LogStart("GetUserGeneralSettingsInternal");
             HostedSolutionLog.DebugInfo("loginName : {0}", loginName);
             HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
-            
+
             if (string.IsNullOrEmpty(loginName))
                 throw new ArgumentNullException("loginName");
 
             string path = GetUserPath(organizationId, loginName);
             DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
-            
+
             OrganizationUser retUser = new OrganizationUser();
 
             retUser.FirstName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.FirstName);
@@ -529,25 +529,25 @@ namespace WebsitePanel.Providers.HostedSolution
             retUser.DomainUserName = GetDomainName(ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName));
             retUser.DistinguishedName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.DistinguishedName);
             retUser.Locked = (bool)entry.InvokeGet(ADAttributes.AccountLocked);
-            retUser.UserPrincipalName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.UserPrincipalName);
-            
+            retUser.UserPrincipalName= (string)entry.InvokeGet(ADAttributes.UserPrincipalName);
+
             HostedSolutionLog.LogEnd("GetUserGeneralSettingsInternal");
             return retUser;
         }
 
-		private string GetDomainName(string username)
-		{
-			string domain = ActiveDirectoryUtils.GetNETBIOSDomainName(RootDomain);
-			string ret = string.Format(@"{0}\{1}", domain, username);
-			return ret;
-		}
+        private string GetDomainName(string username)
+        {
+            string domain = ActiveDirectoryUtils.GetNETBIOSDomainName(RootDomain);
+            string ret = string.Format(@"{0}\{1}", domain, username);
+            return ret;
+        }
 
         private OrganizationUser GetManager(DirectoryEntry entry)
         {
             OrganizationUser retUser = null;
             string path = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.Manager);
             if (!string.IsNullOrEmpty(path))
-            {                
+            {
                 path = ActiveDirectoryUtils.AddADPrefix(path, PrimaryDomainController);
                 if (ActiveDirectoryUtils.AdObjectExists(path))
                 {
@@ -556,18 +556,18 @@ namespace WebsitePanel.Providers.HostedSolution
                     retUser.DisplayName = ActiveDirectoryUtils.GetADObjectStringProperty(user, ADAttributes.DisplayName);
 
                     retUser.AccountName = ActiveDirectoryUtils.GetADObjectStringProperty(user, ADAttributes.Name);
-                    }                 
+                }
             }
-                        
+
             return retUser;
         }
-               
-        public void  SetUserGeneralSettings(string organizationId, string accountName, string displayName, string password,
+
+        public void SetUserGeneralSettings(string organizationId, string accountName, string displayName, string password,
             bool hideFromAddressBook, bool disabled, bool locked, string firstName, string initials, string lastName,
             string address, string city, string state, string zip, string country, string jobTitle,
             string company, string department, string office, string managerAccountName,
             string businessPhone, string fax, string homePhone, string mobilePhone, string pager,
-			string webPage, string notes, string externalEmail)
+            string webPage, string notes, string externalEmail)
         {
             SetUserGeneralSettingsInternal(organizationId, accountName, displayName, password, hideFromAddressBook,
                 disabled, locked, firstName, initials, lastName, address, city, state, zip, country, jobTitle,
@@ -583,10 +583,10 @@ namespace WebsitePanel.Providers.HostedSolution
             string webPage, string notes, string externalEmail)
         {
             string path = GetUserPath(organizationId, accountName);
-            DirectoryEntry entry =  ActiveDirectoryUtils.GetADObject(path);
+            DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
 
 
-            ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.FirstName, firstName);                        
+            ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.FirstName, firstName);
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.LastName, lastName);
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.DisplayName, displayName);
 
@@ -609,7 +609,7 @@ namespace WebsitePanel.Providers.HostedSolution
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.Notes, notes);
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.ExternalEmail, externalEmail);
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.CustomAttribute2, (disabled ? "disabled" : null));
-            
+
 
             string manager = string.Empty;
             if (!string.IsNullOrEmpty(managerAccountName))
@@ -619,7 +619,7 @@ namespace WebsitePanel.Providers.HostedSolution
             }
 
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.Manager, ActiveDirectoryUtils.RemoveADPrefix(manager));
-            
+
             entry.InvokeSet(ADAttributes.AccountDisabled, disabled);
             if (!string.IsNullOrEmpty(password))
                 entry.Invoke(ADAttributes.SetPassword, password);
@@ -629,13 +629,44 @@ namespace WebsitePanel.Providers.HostedSolution
                 bool isLoked = (bool)entry.InvokeGet(ADAttributes.AccountLocked);
                 if (isLoked)
                     entry.InvokeSet(ADAttributes.AccountLocked, locked);
-            
+
             }
-            
-            
+
+
             entry.CommitChanges();
         }
 
+        public void SetUserPassword(string organizationId, string accountName, string password)
+        {
+            SetUserPasswordInternal(organizationId, accountName, password);
+        }
+
+        internal void SetUserPasswordInternal(string organizationId, string accountName, string password)
+        {
+            string path = GetUserPath(organizationId, accountName);
+            DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
+
+            if (!string.IsNullOrEmpty(password))
+                entry.Invoke(ADAttributes.SetPassword, password);
+
+            entry.CommitChanges();
+        }
+
+
+        public void SetUserPrincipalName(string organizationId, string accountName, string userPrincipalName)
+        {
+            SetUserPrincipalNameInternal(organizationId, accountName, userPrincipalName);
+        }
+
+        internal void SetUserPrincipalNameInternal(string organizationId, string accountName, string userPrincipalName)
+        {
+            string path = GetUserPath(organizationId, accountName);
+            DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
+
+            ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.UserPrincipalName, userPrincipalName);
+
+            entry.CommitChanges();
+        }
 
         public string GetSamAccountNameByUserPrincipalName(string organizationId, string userPrincipalName)
         {
@@ -679,15 +710,15 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
 
-        #endregion 
+        #endregion
 
         #region Domains
-        
+
         public void CreateOrganizationDomain(string organizationDistinguishedName, string domain)
         {
             CreateOrganizationDomainInternal(organizationDistinguishedName, domain);
         }
-        
+
         /// <summary>
         /// Creates organization domain
         /// </summary>
@@ -702,7 +733,7 @@ namespace WebsitePanel.Providers.HostedSolution
             HostedSolutionLog.LogEnd("CreateOrganizationDomainInternal");
         }
 
-        
+
         public void DeleteOrganizationDomain(string organizationDistinguishedName, string domain)
         {
             DeleteOrganizationDomainInternal(organizationDistinguishedName, domain);
@@ -730,6 +761,6 @@ namespace WebsitePanel.Providers.HostedSolution
             return Environment.UserDomainName != Environment.MachineName;
         }
 
-      
+
     }
 }

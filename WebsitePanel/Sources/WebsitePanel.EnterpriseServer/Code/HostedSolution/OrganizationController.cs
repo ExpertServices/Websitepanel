@@ -41,6 +41,7 @@ using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.SharePoint;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.DNS;
+using WebsitePanel.Providers.OCS;
 
 using System.IO;
 using System.Xml;
@@ -1670,7 +1671,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "UPDATE_MAILBOX_GENERAL");
+            TaskManager.StartTask("ORGANIZATION", "UPDATE_USER_GENERAL");
             TaskManager.ItemId = itemId;
 
             try
@@ -1751,6 +1752,162 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.CompleteTask();
             }
         }
+
+
+        public static int SetUserPrincipalName(int itemId, int accountId, string userPrincipalName, bool inherit)
+        {
+
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+
+            // place log record
+            TaskManager.StartTask("ORGANIZATION", "SET_USER_USERPRINCIPALNAME");
+            TaskManager.ItemId = itemId;
+
+            try
+            {
+               
+
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return -1;
+
+                // check package
+                int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
+                if (packageCheck < 0) return packageCheck;
+
+                // load account
+                OrganizationUser user = GetUserGeneralSettings(itemId, accountId);
+
+                if (user.UserPrincipalName != userPrincipalName)
+                {
+                    bool userPrincipalNameOwned = false;
+                    ExchangeEmailAddress[] emails = ExchangeServerController.GetMailboxEmailAddresses(itemId, accountId);
+
+                    foreach (ExchangeEmailAddress mail in emails)
+                    {
+                        if (mail.EmailAddress == userPrincipalName)
+                        {
+                            userPrincipalNameOwned = true;
+                            break;
+                        }
+                    }
+
+                    if (!userPrincipalNameOwned)
+                    {
+                        if (EmailAddressExists(userPrincipalName))
+                            return BusinessErrorCodes.ERROR_EXCHANGE_EMAIL_EXISTS;
+                    }
+                }
+                
+                Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+
+                orgProxy.SetUserPrincipalName(org.OrganizationId,
+                                            user.AccountName,
+                                            userPrincipalName.ToLower());
+
+                DataProvider.UpdateExchangeAccountUserPrincipalName(accountId, userPrincipalName.ToLower());
+
+                if (inherit)
+                {
+                    if (user.AccountType == ExchangeAccountType.Mailbox)
+                    {
+                        ExchangeServerController.AddMailboxEmailAddress(itemId, accountId, userPrincipalName.ToLower());
+                        ExchangeServerController.SetMailboxPrimaryEmailAddress(itemId, accountId, userPrincipalName.ToLower());
+                    }
+                    else
+                    {
+                        if (user.IsLyncUser)
+                        {
+                            if (!DataProvider.LyncUserExists(accountId, userPrincipalName.ToLower()))
+                            {
+                                LyncController.SetLyncUserGeneralSettings(itemId, accountId, userPrincipalName.ToLower(), null);
+                            }
+                        }
+                        else
+                        {
+                            if (user.IsOCSUser)
+                            {
+                                OCSServer ocs = GetOCSProxy(itemId);
+                                string instanceId = DataProvider.GetOCSUserInstanceID(user.AccountId);
+                                ocs.SetUserPrimaryUri(instanceId, userPrincipalName.ToLower());
+                            }
+                        }
+                    }
+                }
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+
+        }
+
+
+        public static int SetUserPassword(int itemId, int accountId, string password)
+        {
+
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // place log record
+            TaskManager.StartTask("ORGANIZATION", "SET_USER_PASSWORD");
+            TaskManager.ItemId = itemId;
+
+            try
+            {
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return -1;
+
+                // check package
+                int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
+                if (packageCheck < 0) return packageCheck;
+
+                // load account
+                ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
+
+                string accountName = GetAccountName(account.AccountName);
+
+                Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+
+                orgProxy.SetUserPassword(   org.OrganizationId,
+                                            accountName,
+                                            password);
+
+                //account.
+                if (!String.IsNullOrEmpty(password))
+                    account.AccountPassword = CryptoUtils.Encrypt(password);
+                else
+                    account.AccountPassword = null;
+
+                UpdateAccount(account);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+
 
         private static void UpdateAccount(ExchangeAccount account)
         {                        
@@ -1969,6 +2126,19 @@ namespace WebsitePanel.EnterpriseServer
             }
             return res;
         }
+
+        private static OCSServer GetOCSProxy(int itemId)
+        {
+            Organization org = OrganizationController.GetOrganization(itemId);
+            int serviceId = PackageController.GetPackageServiceId(org.PackageId, ResourceGroups.OCS);
+
+            OCSServer ocs = new OCSServer();
+            ServiceProviderProxy.Init(ocs, serviceId);
+
+
+            return ocs;
+        }
+
     }
     
 }

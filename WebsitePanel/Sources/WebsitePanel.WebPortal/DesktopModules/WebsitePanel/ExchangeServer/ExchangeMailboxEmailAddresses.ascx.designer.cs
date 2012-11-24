@@ -182,14 +182,5 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox chkPmmAllowed;
-        
-        /// <summary>
-        /// FormComments control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize FormComments;
     }
 }

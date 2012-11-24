@@ -6964,3 +6964,24 @@ BEGIN
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (230,	13,	4,	N'HostedSolution.AllowChangeUPN', N'Allow to Change UserPrincipalName',	1,	0, NULL)
 END
 GO
+
+
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'UpdateExchangeAccountUserPrincipalName')
+BEGIN
+EXEC sp_executesql N' CREATE PROCEDURE [dbo].[UpdateExchangeAccountUserPrincipalName] 
+(
+	@AccountID int,
+	@UserPrincipalName nvarchar(300)
+)
+AS
+
+UPDATE ExchangeAccounts SET
+	UserPrincipalName = @UserPrincipalName
+WHERE
+	AccountID = @AccountID
+
+RETURN'
+END
+GO

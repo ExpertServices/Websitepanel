@@ -149,6 +149,33 @@ namespace WebsitePanel.Portal.HostedSolution {
         protected global::WebsitePanel.Portal.ExchangeServer.UserControls.EmailAddress upn;
         
         /// <summary>
+        /// ddlEmailAddresses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlEmailAddresses;
+        
+        /// <summary>
+        /// btnSetUserPrincipalName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnSetUserPrincipalName;
+        
+        /// <summary>
+        /// chkInherit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkInherit;
+        
+        /// <summary>
         /// locDisplayName control.
         /// </summary>
         /// <remarks>
@@ -194,13 +221,22 @@ namespace WebsitePanel.Portal.HostedSolution {
         protected global::WebsitePanel.Portal.PasswordControl password;
         
         /// <summary>
-        /// chkSetPassword control.
+        /// btnSetUserPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkSetPassword;
+        protected global::System.Web.UI.WebControls.Button btnSetUserPassword;
+        
+        /// <summary>
+        /// ValidationSummary2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ValidationSummary ValidationSummary2;
         
         /// <summary>
         /// chkDisable control.
