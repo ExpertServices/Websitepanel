@@ -121,7 +121,7 @@
     <value>Send</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;You can send setup instructions to the newly created mailbox user.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="lblCC.Text" xml:space="preserve">
     <value>CC:</value>

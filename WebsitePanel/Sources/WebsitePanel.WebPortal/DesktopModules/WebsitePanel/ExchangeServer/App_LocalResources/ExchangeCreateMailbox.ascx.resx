@@ -130,13 +130,7 @@
     <value>Equipment Mailbox</value>
   </data>
   <data name="HSFormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;&lt;b&gt;Display Name&lt;/b&gt; is a “friendly” name used by other programs, such as Microsoft Exchange or SharePoint.&lt;/p&gt;
-
-&lt;p&gt;&lt;b&gt;E-Mail Address&lt;/b&gt; is a User Principal Name (UPN). It is used as a logon name in Outlook, Outlook Web Access (OWA) or SharePoint.&lt;/p&gt;
-
-&lt;p&gt;New organization domains can be added on "Domain Names" page.&lt;/p&gt;
-
-&lt;p&gt;Make sure your password is strong enough, i.e. contains lower and capital letters, numbers and symbols.</value>
+    <value />
   </data>
   <data name="lbtnCreateNewMailbox.Text" xml:space="preserve">
     <value>Create mailbox for new user</value>

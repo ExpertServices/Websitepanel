@@ -136,7 +136,7 @@
     <value>Require that all senders are authenticated</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;When "Deliver messages to both forwarding address and mailbox" checkbox is unchecked all incoming mail will be delivered to forwarding e-mail and deleted from local mailbox.&lt;/p&gt;&lt;p&gt;When editing Accepted and Rejected lists of accounts, please make sure that the same account (mailbox, contact or distribution list) is not included in both lists.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="locForwardTo.Text" xml:space="preserve">
     <value>Forward To:</value>

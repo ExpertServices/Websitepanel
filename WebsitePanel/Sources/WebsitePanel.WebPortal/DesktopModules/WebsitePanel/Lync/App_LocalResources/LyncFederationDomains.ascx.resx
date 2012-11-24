@@ -136,11 +136,7 @@
     <value>Domain Name</value>
   </data>
   <data name="HSFormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;By adding a federation domain you allow your users, that are enabled for federation, to interact through Lync with users from the specified domain. Your users as well as the users from the federated domain will see eachother status. &lt;/p&gt;
-
-&lt;p&gt;Federation is a mutual agreement between you and your federation partner (owner of the domain you want to federate with). Once you have added the federation domain to your list, your partner will need to do the same from his side&lt;/p&gt;
-
-</value>
+    <value />
   </data>
   <data name="locTitle.Text" xml:space="preserve">
     <value>Lync Federation Domains</value>

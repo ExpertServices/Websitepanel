@@ -121,7 +121,7 @@
     <value>   OK   </value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;</value>
+    <value />
   </data>
   <data name="gvFolders.Empty" xml:space="preserve">
     <value>There are no public folders in the organization.</value>

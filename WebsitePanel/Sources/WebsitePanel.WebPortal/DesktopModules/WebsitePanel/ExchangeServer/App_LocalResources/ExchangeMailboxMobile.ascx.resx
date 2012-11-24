@@ -133,7 +133,7 @@
     <value>There are no mobile devices.</value>
   </data>
   <data name="HSFormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;Manage mobile devices here.&lt;/p&gt;&lt;p&gt;To add a new device, begin a partnership with Microsoft Exchange from the device and it will appear in the device list.&lt;/p&gt;&lt;p&gt;You can remove devices that you are no longer using. If you forget your device password, you can access it here. If you lose your phone or mobile device, you can initiate a remote device wipe to protect your information.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="lastSyncTimeColumn.HeaderText" xml:space="preserve">
     <value>Last Sync Time</value>

@@ -133,7 +133,7 @@
     <value>Allow these settings to be managed from &lt;b&gt;Personal Mailbox Manager&lt;/b&gt;</value>
   </data>
   <data name="HSFormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;The General tab displays general information about the mailbox Use this tab to view or modify the mailbox characteristics such as size and show in your address book in the Exchange address lists. You can also specify whether to disable the mailbox user.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="locMailboxplanName.Text" xml:space="preserve">
     <value>Mailbox plan:</value>

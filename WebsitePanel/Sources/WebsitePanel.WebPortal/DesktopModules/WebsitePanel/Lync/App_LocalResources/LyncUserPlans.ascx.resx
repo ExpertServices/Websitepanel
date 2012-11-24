@@ -142,7 +142,7 @@
     <value>No plans have been added yet. To add a new plan click "Add New Plan" button.</value>
   </data>
   <data name="HSFormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt; A  plan is a template that defines the capabilities of a lync users &lt;/p&gt; &lt;p&gt;The plan name needs to be unique. A plan cannot be modified. In case a lync user needs a plan with another characteristics, a new plan needs to be created and assigned to the lync user. A plan can only be deleted when the plan is not assigned to any lync users. &lt;/p&gt;</value>
+    <value />
   </data>
   <data name="locSourcePlan.Text" xml:space="preserve">
     <value>Source plan: </value>

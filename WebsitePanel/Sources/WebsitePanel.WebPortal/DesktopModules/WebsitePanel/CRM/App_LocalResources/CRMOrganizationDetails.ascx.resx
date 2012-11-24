@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnCreate.OnClientClick" xml:space="preserve">
     <value>ShowProgressDialog('Creating CRM Organization...');</value>
@@ -133,8 +133,7 @@
     <value>Failed</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;CRM organization represents the top level of the Microsoft Dynamics CRM business hierarchy. The organization can be a specific business, holding company, or corporation. The organization is divided into business units.&lt;/p&gt;&lt;p&gt;The base currency is used for financial data, such as reporting, profit and loss statements, and balance sheets. After the base currency is set, it cannot be changed.&lt;/p&gt;&lt;br/&gt;
-&lt;p&gt;The collation defines comparison and sort-ordering for items. After the collation is set, it cannot be changed.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="lblAdministrator.Text" xml:space="preserve">
     <value>Administrator:</value>
