@@ -287,11 +287,11 @@ namespace WebsitePanel.Portal.HostedSolution
                     return;
                 }
 
-                messageBox.ShowSuccessMessage("ORGANIZATION_SET_USER_PRINCIPALNAME");
+                messageBox.ShowSuccessMessage("ORGANIZATION_SET_USER_USERPRINCIPALNAME");
             }
             catch (Exception ex)
             {
-                messageBox.ShowErrorMessage("ORGANIZATION_SET_USER_PRINCIPALNAME", ex);
+                messageBox.ShowErrorMessage("ORGANIZATION_SET_USER_USERPRINCIPALNAME", ex);
             }
         }
 
