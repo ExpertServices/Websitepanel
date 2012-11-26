@@ -2896,6 +2896,9 @@
   <data name="ServiceItemType.Organization" xml:space="preserve">
     <value>Hosted Organization</value>
   </data>
+  <data name="Error.EXCHANGE_UNABLE_TO_DELETE_DOMAIN" xml:space="preserve">
+    <value>Unable to delete domain, verify if domain is in use by hosted organization objects.</value>
+  </data>
   <data name="Error.EXCHANGE_CREATE_MAILBOX" xml:space="preserve">
     <value>Error creating mailbox. See audit log for more details.</value>
   </data>
@@ -3080,6 +3083,19 @@
   <data name="Success.ORGANIZATION_UPDATE_USER_SETTINGS" xml:space="preserve">
     <value>User general settings have been successfully updated.</value>
   </data>
+  <data name="Success.ORGANIZATION_SET_USER_PASSWORD" xml:space="preserve">
+    <value>User password has been successfully updated.</value>
+  </data>
+  <data name="Error.ORGANIZATION_SET_USER_PASSWORD" xml:space="preserve">
+    <value>Failed to update user password.</value>
+  </data>
+  <data name="Success.ORGANIZATION_SET_USER_USERPRINCIPALNAME" xml:space="preserve">
+    <value>User login name has been successfully updated.</value>
+  </data>
+  <data name="Error.ORGANIZATION_SET_USER_USERPRINCIPALNAME" xml:space="preserve">
+    <value>Failed to update user login name.</value>
+  </data>
+
   <data name="Success.EXCHANGE_MAILBOX_SET_DEFAULT_EMAIL" xml:space="preserve">
     <value>Mailbox primary e-mail address has been changed.</value>
   </data>
@@ -3259,6 +3275,9 @@
   </data>
   <data name="Quota.HostedSolution.Users" xml:space="preserve">
     <value>Users per Organization</value>
+  </data>
+  <data name="Quota.HostedSolution.AllowChangeUPN" xml:space="preserve">
+    <value>Allow to Change UserPrincipalName</value>
   </data>
   <data name="Quota.HostedSolution.Domains" xml:space="preserve">
     <value>Domains per Organization</value>
@@ -5071,6 +5090,9 @@
   </data>
   <data name="Error.DELETE_LYNC_USER" xml:space="preserve">
     <value>Cannot delete Lync User, the following errors have been occured:</value>
+  </data>
+  <data name="Error.LYNC_UNABLE_TO_ADD_PLAN" xml:space="preserve">
+    <value>Unabled to add plan</value>
   </data>
   <data name="Success.UPDATE_LYNC_USER" xml:space="preserve">
     <value>General Lync User settings have been successfully updated.</value>

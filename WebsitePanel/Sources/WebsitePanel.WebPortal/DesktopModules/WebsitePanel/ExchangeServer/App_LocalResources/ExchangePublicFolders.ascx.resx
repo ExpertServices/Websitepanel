@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnCreatePublicFolder.Text" xml:space="preserve">
     <value>Create New Public Folder</value>
@@ -127,7 +127,7 @@
     <value>Delete Selected Folders</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;&lt;b&gt;Public Folders&lt;/b&gt; can be used to share various information across Exchange organization.&lt;/p&gt;&lt;p&gt;All public folders of each Exchange organization are nested within a default root organization folder which is not visible to other organizations and which you cannot maintain.&lt;/p&gt;&lt;p&gt;If you need to delete a whole branch of folders you may check only top ones.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="locQuota.Text" xml:space="preserve">
     <value>Total Public Folders Created:</value>

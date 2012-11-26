@@ -78,8 +78,17 @@
 							</td>
 						</tr>
 					</table>
+
+					<table>
+					    <tr>
+						    <td class="FormLabel150"><asp:Localize ID="locNotes" runat="server" meta:resourcekey="locNotes" Text="Notes:"></asp:Localize></td>
+						    <td>
+							    <asp:TextBox ID="txtNotes" runat="server" CssClass="TextBox200" Rows="4" TextMode="MultiLine"></asp:TextBox>
+						    </td>
+					    </tr>					    
+					</table>
 					
-					<wsp:CollapsiblePanel id="secCompanyInfo" runat="server"
+					<wsp:CollapsiblePanel id="secCompanyInfo" runat="server" IsCollapsed="true"
                         TargetControlID="CompanyInfo" meta:resourcekey="secCompanyInfo" Text="Company Information">
                     </wsp:CollapsiblePanel>
                     <asp:Panel ID="CompanyInfo" runat="server" Height="0" style="overflow:hidden;">
@@ -121,7 +130,7 @@
 					</asp:Panel>
 					
 					
-					<wsp:CollapsiblePanel id="secContactInfo" runat="server"
+					<wsp:CollapsiblePanel id="secContactInfo" runat="server" IsCollapsed="true"
                         TargetControlID="ContactInfo" meta:resourcekey="secContactInfo" Text="Contact Information">
                     </wsp:CollapsiblePanel>
                     <asp:Panel ID="ContactInfo" runat="server" Height="0" style="overflow:hidden;">
@@ -165,7 +174,7 @@
 					    </table>
 					</asp:Panel>
 					
-					<wsp:CollapsiblePanel id="secAddressInfo" runat="server"
+					<wsp:CollapsiblePanel id="secAddressInfo" runat="server" IsCollapsed="true"
                         TargetControlID="AddressInfo" meta:resourcekey="secAddressInfo" Text="Address">
                     </wsp:CollapsiblePanel>
                     <asp:Panel ID="AddressInfo" runat="server" Height="0" style="overflow:hidden;">
@@ -204,14 +213,6 @@
 					    </table>
 					</asp:Panel>
 					
-					<table>
-					    <tr>
-						    <td class="FormLabel150"><asp:Localize ID="locNotes" runat="server" meta:resourcekey="locNotes" Text="Notes:"></asp:Localize></td>
-						    <td>
-							    <asp:TextBox ID="txtNotes" runat="server" CssClass="TextBox200" Rows="4" TextMode="MultiLine"></asp:TextBox>
-						    </td>
-					    </tr>					    
-					</table>
 					
 				    <div class="FormFooterClean">
 					    <asp:Button id="btnSave" runat="server" Text="Save Changes" CssClass="Button1" meta:resourcekey="btnSave" ValidationGroup="EditContact" OnClick="btnSave_Click"></asp:Button>

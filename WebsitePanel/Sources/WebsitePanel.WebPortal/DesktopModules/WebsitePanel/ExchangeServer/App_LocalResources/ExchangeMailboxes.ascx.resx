@@ -157,13 +157,7 @@
     <value>Subscriber</value>
   </data>
   <data name="HSFormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;&lt;b&gt;Mailboxes&lt;/b&gt; are used to receive and send electronic messages. Each mailbox is a separate Exchange account which may be a person, room or inventory unit.&lt;/p&gt;
-
-&lt;p&gt;&lt;b&gt;Primary E-Mail Address&lt;/b&gt; is a User Principal Name (UPN). It is used as a logon name in Outlook, Outlook Web Access (OWA) or SharePoint. Also, Primary E-Mail Address is shown in "From" field of messages sent from this mailbox.&lt;/p&gt;
-
-&lt;p&gt;You can always change your primary e-mail address on "E-Mail Addresses" tab of mailbox settings.&lt;/p&gt;
-
-&lt;p&gt;Note that deleting mailbox will not delete corresponding Active Directory account. You can delete Active Directory account on “Users” page.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="locQuota.Text" xml:space="preserve">
     <value>Total Mailboxes Created:</value>

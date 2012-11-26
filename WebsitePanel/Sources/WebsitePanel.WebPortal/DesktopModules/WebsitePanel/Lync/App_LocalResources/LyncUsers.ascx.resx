@@ -130,9 +130,7 @@
     <value>Login</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;Microsoft Lync Server delivers unified communications to the users, including software-powered VoIP, Web and audio/video conferencing, and enterprise instant messaging.&lt;/p&gt;
-&lt;p&gt;Click the “Create Lync User” button to enable a user account for Microsoft Lync Server. &lt;/p&gt;
-&lt;p&gt;If you delete an account in Microsoft Lync Server, the account is no longer available for use with Microsoft Lync Server unless you enable the account again. When you delete an account, all Lync Server settings for the account are lost, so you must configure the account again after enabling.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="gvUsersDisplayName.HeaderText" xml:space="preserve">
     <value>Display name</value>

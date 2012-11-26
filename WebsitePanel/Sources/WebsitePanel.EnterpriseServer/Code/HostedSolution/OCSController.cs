@@ -84,20 +84,23 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
         private static OCSEdgeServer[] GetEdgeServers(string edgeServices)
         {
             List<OCSEdgeServer> list = new List<OCSEdgeServer>();
-            string[] services = edgeServices.Split(';');
-            foreach (string current in services)
+            if (!string.IsNullOrEmpty(edgeServices))
             {
-                string[] data = current.Split(',');
-                try
+                string[] services = edgeServices.Split(';');
+                foreach (string current in services)
                 {
-                    int serviceId = int.Parse(data[1]);
-                    OCSEdgeServer ocs = new OCSEdgeServer();
-                    ServiceProviderProxy.Init(ocs, serviceId);
-                    list.Add(ocs);
-                }
-                catch(Exception ex)
-                {
-                    TaskManager.WriteError(ex);
+                    string[] data = current.Split(',');
+                    try
+                    {
+                        int serviceId = int.Parse(data[1]);
+                        OCSEdgeServer ocs = new OCSEdgeServer();
+                        ServiceProviderProxy.Init(ocs, serviceId);
+                        list.Add(ocs);
+                    }
+                    catch (Exception ex)
+                    {
+                        TaskManager.WriteError(ex);
+                    }
                 }
             }
 

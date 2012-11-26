@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
@@ -62,8 +63,6 @@ namespace WebsitePanel.Portal.HostedSolution
                         password.MinimumUppercase = 1;
                     }
                 }
-
-                password.EditMode = password.ValidationEnabled = false;
 
                 // get settings
                 OrganizationUser user = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID,
@@ -120,6 +119,67 @@ namespace WebsitePanel.Portal.HostedSolution
                     }
                 }
 
+
+                if (cntx.Quotas.ContainsKey(Quotas.ORGANIZATION_ALLOWCHANGEUPN))
+                {
+                    if (cntx.Quotas[Quotas.ORGANIZATION_ALLOWCHANGEUPN].QuotaAllocatedValue != 1)
+                    {
+                        lblUserPrincipalName.Visible = true;
+                        upn.Visible = false;
+                        ddlEmailAddresses.Visible = false;
+                        btnSetUserPrincipalName.Visible = false;
+                        chkInherit.Visible = false;
+                    }
+                    else
+                    {
+                        lblUserPrincipalName.Visible = false;
+                        upn.Visible = false;
+                        ddlEmailAddresses.Visible = false;
+                        btnSetUserPrincipalName.Visible = true;
+                        chkInherit.Visible = true;
+                        if (user.AccountType == ExchangeAccountType.Mailbox)
+                        {
+                            ddlEmailAddresses.Visible = true;
+                            WebsitePanel.EnterpriseServer.ExchangeEmailAddress[] emails = ES.Services.ExchangeServer.GetMailboxEmailAddresses(PanelRequest.ItemID, PanelRequest.AccountID);
+
+                            foreach (WebsitePanel.EnterpriseServer.ExchangeEmailAddress mail in emails)
+                            {
+                                ListItem li = new ListItem();
+                                li.Text = mail.EmailAddress;
+                                li.Value = mail.EmailAddress;
+                                li.Selected = mail.IsPrimary;
+                                ddlEmailAddresses.Items.Add(li);
+                            }
+
+                            foreach (ListItem li in ddlEmailAddresses.Items)
+                            {
+                                if (li.Value == user.UserPrincipalName)
+                                {
+                                    ddlEmailAddresses.ClearSelection();
+                                    li.Selected = true;
+                                    break;
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            upn.Visible = true;
+                            if (!string.IsNullOrEmpty(user.UserPrincipalName))
+                            {
+                                string[] Tmp = user.UserPrincipalName.Split('@');
+                                upn.AccountName = Tmp[0];
+
+                                if (Tmp.Length > 1)
+                                {
+                                    upn.DomainName = Tmp[1];
+                                }
+                            }
+                        }
+
+                    }
+                }
+
                 if (user.Locked)
                     chkLocked.Enabled = true;
                 else
@@ -127,6 +187,8 @@ namespace WebsitePanel.Portal.HostedSolution
 
                 chkLocked.Checked = user.Locked;
 
+                password.ValidationEnabled = true;
+                password.Password = string.Empty;
             }
             catch (Exception ex)
             {
@@ -139,17 +201,12 @@ namespace WebsitePanel.Portal.HostedSolution
             if (!Page.IsValid)
                 return;
 
-            string pwd = password.Password;
-
-            if (!chkSetPassword.Checked)
-                pwd = string.Empty;
-
             try
             {
                 int result = ES.Services.Organizations.SetUserGeneralSettings(
                     PanelRequest.ItemID, PanelRequest.AccountID,
                     txtDisplayName.Text,
-                    pwd,
+                    string.Empty,
                     false,
                     chkDisable.Checked,
                     chkLocked.Checked,
@@ -204,10 +261,66 @@ namespace WebsitePanel.Portal.HostedSolution
             SaveSettings();
         }
 
-        protected void chkSetPassword_CheckedChanged(object sender, EventArgs e)
+        protected void btnSetUserPrincipalName_Click(object sender, EventArgs e)
         {
 
-            password.EditMode = password.ValidationEnabled = chkSetPassword.Checked;
+            string userPrincipalName = string.Empty;
+
+            if (upn.Visible)
+                userPrincipalName = upn.Email;
+            else
+                if (ddlEmailAddresses.Visible)
+                    userPrincipalName = (string)ddlEmailAddresses.SelectedValue;
+
+            if (string.IsNullOrEmpty(userPrincipalName)) return;
+
+            try
+            {
+                int result = ES.Services.Organizations.SetUserPrincipalName(
+                    PanelRequest.ItemID, PanelRequest.AccountID,
+                    userPrincipalName.ToLower(),
+                    chkInherit.Checked);
+
+                if (result < 0)
+                {
+                    messageBox.ShowResultMessage(result);
+                    return;
+                }
+
+                messageBox.ShowSuccessMessage("ORGANIZATION_SET_USER_USERPRINCIPALNAME");
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage("ORGANIZATION_SET_USER_USERPRINCIPALNAME", ex);
+            }
+        }
+
+        protected void btnSetUserPassword_Click(object sender, EventArgs e)
+        {
+
+            if (!Page.IsValid)
+                return;
+
+            try
+            {
+                int result = ES.Services.Organizations.SetUserPassword(
+                    PanelRequest.ItemID, PanelRequest.AccountID,
+                    password.Password);
+
+                if (result < 0)
+                {
+                    messageBox.ShowResultMessage(result);
+                    return;
+                }
+
+                messageBox.ShowSuccessMessage("ORGANIZATION_SET_USER_PASSWORD");
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage("ORGANIZATION_SET_USER_PASSWORD", ex);
+            }
+
+
         }
 
     }

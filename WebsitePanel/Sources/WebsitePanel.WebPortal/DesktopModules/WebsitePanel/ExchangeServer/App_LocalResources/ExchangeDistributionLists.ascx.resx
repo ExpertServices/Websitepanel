@@ -139,7 +139,7 @@
     <value>E-mail Address</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;&lt;b&gt;Distribution List&lt;/b&gt; is a group of mailboxes, contacts and other distribution lists. Distribution lists are ideal for creating "Sales", "Support" and other "virtual" organization-wide mailboxes.&lt;/p&gt;&lt;p&gt;Each distribution list can have any number of e-mail Addresses. These e-mail addresses will be used for receiving incoming messages and distributing them to all DL members.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Primary E-Mail Address&lt;/b&gt; is shown in the GAL and in "From" field of all messages sent from this DL.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="gvLists.Empty" xml:space="preserve">
     <value>No distribution lists have been created. To create a new distribution list click "Create New Distribution List" button.</value>

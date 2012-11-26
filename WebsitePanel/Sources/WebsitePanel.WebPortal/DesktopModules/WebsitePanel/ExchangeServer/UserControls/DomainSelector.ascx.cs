@@ -37,6 +37,18 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
         public string DomainName
         {
             get { return ddlDomain.SelectedItem.Text; }
+            set
+            {
+                foreach (ListItem li in ddlDomain.Items)
+                {
+                    if (li.Value == value)
+                    {
+                        ddlDomain.ClearSelection();
+                        li.Selected = true;
+                        break;
+                    }
+                }
+            }
         }
 
         public int DomainId

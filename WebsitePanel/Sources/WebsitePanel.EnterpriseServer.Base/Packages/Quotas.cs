@@ -150,6 +150,7 @@ order by rg.groupOrder
         public const string ORGANIZATIONS = "HostedSolution.Organizations";
         public const string ORGANIZATION_USERS = "HostedSolution.Users";
         public const string ORGANIZATION_DOMAINS = "HostedSolution.Domains";
+        public const string ORGANIZATION_ALLOWCHANGEUPN = "HostedSolution.AllowChangeUPN";
         public const string CRM_USERS = "HostedCRM.Users";
         public const string CRM_ORGANIZATION = "HostedCRM.Organization";
 

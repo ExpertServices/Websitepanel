@@ -158,6 +158,7 @@ namespace WebsitePanel.Portal.Lync
                 if (result < 0)
                 {
                     messageBox.ShowResultMessage(result);
+                    messageBox.ShowErrorMessage("LYNC_UNABLE_TO_ADD_PLAN");
                     return;
                 }
 

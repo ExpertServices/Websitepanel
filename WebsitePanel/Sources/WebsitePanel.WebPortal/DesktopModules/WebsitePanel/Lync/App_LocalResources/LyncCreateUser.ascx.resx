@@ -124,7 +124,7 @@
     <value>Create</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>Select an existing Organization user and click the “Create” button to enable an individual user account for Microsoft Lync Server.</value>
+    <value />
   </data>
   <data name="locDisplayName.Text" xml:space="preserve">
     <value>Display name* :</value>
