@@ -3336,6 +3336,10 @@
   <data name="Warning.DIST_LIST_SELECT_EMAILS_TO_DELETE" xml:space="preserve">
     <value>Please select E-mail address you want to delete from Distribution List</value>
   </data>
+  <data name="Warning.NOT_ALL_EMAIL_ADDRESSES_DELETED" xml:space="preserve">
+    <value>Please note not all email address are deleted</value>
+  </data>
+
   <data name="Warning.EXCHANGE_NONE_PUBLIC_FOLDER_TO_DELETE" xml:space="preserve">
     <value>There are no public folders to delete</value>
   </data>
