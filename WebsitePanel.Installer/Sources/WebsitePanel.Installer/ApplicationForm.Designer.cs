@@ -209,7 +209,7 @@ namespace WebsitePanel.Installer
             this.MinimumSize = new System.Drawing.Size(640, 480);
             this.Name = "ApplicationForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "WebsitePanel Installer (Beta)";
+            this.Text = "WebsitePanel Installer";
             this.Shown += new System.EventHandler(this.OnApplicationFormShown);
             this.statusBar.ResumeLayout(false);
             this.statusBar.PerformLayout();
