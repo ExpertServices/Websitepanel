@@ -105,7 +105,8 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 foreach (DirectoryEntry child in entry.Children)
                 {
-                    entry.Children.Remove(child);
+                    //entry.Children.Remove(child);
+                    child.DeleteTree();
                 }
                 entry.CommitChanges();
             }
