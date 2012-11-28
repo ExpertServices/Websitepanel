@@ -140,6 +140,42 @@ namespace WebsitePanel.Portal.HostedSolution {
         protected global::System.Web.UI.WebControls.Label lblUserPrincipalName;
         
         /// <summary>
+        /// upn control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.EmailAddress upn;
+        
+        /// <summary>
+        /// ddlEmailAddresses control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlEmailAddresses;
+        
+        /// <summary>
+        /// btnSetUserPrincipalName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnSetUserPrincipalName;
+        
+        /// <summary>
+        /// chkInherit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkInherit;
+        
+        /// <summary>
         /// locDisplayName control.
         /// </summary>
         /// <remarks>
@@ -185,13 +221,22 @@ namespace WebsitePanel.Portal.HostedSolution {
         protected global::WebsitePanel.Portal.PasswordControl password;
         
         /// <summary>
-        /// chkSetPassword control.
+        /// btnSetUserPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkSetPassword;
+        protected global::System.Web.UI.WebControls.Button btnSetUserPassword;
+        
+        /// <summary>
+        /// ValidationSummary2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ValidationSummary ValidationSummary2;
         
         /// <summary>
         /// chkDisable control.
@@ -300,6 +345,24 @@ namespace WebsitePanel.Portal.HostedSolution {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox txtExternalEmailAddress;
+        
+        /// <summary>
+        /// locNotes control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locNotes;
+        
+        /// <summary>
+        /// txtNotes control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtNotes;
         
         /// <summary>
         /// secCompanyInfo control.
@@ -642,24 +705,6 @@ namespace WebsitePanel.Portal.HostedSolution {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.ExchangeServer.UserControls.CountrySelector country;
-        
-        /// <summary>
-        /// locNotes control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locNotes;
-        
-        /// <summary>
-        /// txtNotes control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtNotes;
         
         /// <summary>
         /// secAdvanced control.

@@ -55,153 +55,153 @@ using Microsoft.Exchange.Data.Storage;
 
 namespace WebsitePanel.Providers.HostedSolution
 {
-	public class Exchange2010 : Exchange2007
-	{
-		#region Static constructor
-		static Exchange2010()
-		{
-			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(ResolveExchangeAssembly);
-			ExchangeRegistryPath = "SOFTWARE\\Microsoft\\ExchangeServer\\v14\\Setup";
-		}
-		#endregion
+    public class Exchange2010 : Exchange2007
+    {
+        #region Static constructor
+        static Exchange2010()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(ResolveExchangeAssembly);
+            ExchangeRegistryPath = "SOFTWARE\\Microsoft\\ExchangeServer\\v14\\Setup";
+        }
+        #endregion
 
-		#region Mailboxes
+        #region Mailboxes
 
-		internal override void SetCalendarSettings(Runspace runspace, string id)
-		{
-			ExchangeLog.LogStart("SetCalendarSettings");
-			Command cmd = new Command("Set-CalendarProcessing");
-			cmd.Parameters.Add("Identity", id);
-			cmd.Parameters.Add("AutomateProcessing", CalendarProcessingFlags.AutoAccept);
-			ExecuteShellCommand(runspace, cmd);
-			ExchangeLog.LogEnd("SetCalendarSettings");
-		}
+        internal override void SetCalendarSettings(Runspace runspace, string id)
+        {
+            ExchangeLog.LogStart("SetCalendarSettings");
+            Command cmd = new Command("Set-CalendarProcessing");
+            cmd.Parameters.Add("Identity", id);
+            cmd.Parameters.Add("AutomateProcessing", CalendarProcessingFlags.AutoAccept);
+            ExecuteShellCommand(runspace, cmd);
+            ExchangeLog.LogEnd("SetCalendarSettings");
+        }
 
-		#endregion
+        #endregion
 
-		#region Distribution Lists
-		internal override string GetGroupManager(PSObject group)
-		{
-			string ret = null;
-			MultiValuedProperty<ADObjectId> ids =
-				(MultiValuedProperty<ADObjectId>)GetPSObjectProperty(group, "ManagedBy");
-			if ( ids.Count > 0 )
-				ret = ObjToString(ids[0]);
-			return ret;
-		}
+        #region Distribution Lists
+        internal override string GetGroupManager(PSObject group)
+        {
+            string ret = null;
+            MultiValuedProperty<ADObjectId> ids =
+                (MultiValuedProperty<ADObjectId>)GetPSObjectProperty(group, "ManagedBy");
+            if (ids.Count > 0)
+                ret = ObjToString(ids[0]);
+            return ret;
+        }
 
-		internal override void RemoveDistributionGroup(Runspace runSpace, string id)
-		{
-			ExchangeLog.LogStart("RemoveDistributionGroup");
-			Command cmd = new Command("Remove-DistributionGroup");
-			cmd.Parameters.Add("Identity", id);
-			cmd.Parameters.Add("Confirm", false);
-			cmd.Parameters.Add("BypassSecurityGroupManagerCheck");
-			ExecuteShellCommand(runSpace, cmd);
-			ExchangeLog.LogEnd("RemoveDistributionGroup");
-		}
+        internal override void RemoveDistributionGroup(Runspace runSpace, string id)
+        {
+            ExchangeLog.LogStart("RemoveDistributionGroup");
+            Command cmd = new Command("Remove-DistributionGroup");
+            cmd.Parameters.Add("Identity", id);
+            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("BypassSecurityGroupManagerCheck");
+            ExecuteShellCommand(runSpace, cmd);
+            ExchangeLog.LogEnd("RemoveDistributionGroup");
+        }
 
-		internal override void SetDistributionGroup(Runspace runSpace, string id, string displayName, bool hideFromAddressBook)
-		{
-			Command cmd = new Command("Set-DistributionGroup");
-			cmd.Parameters.Add("Identity", id);
-			cmd.Parameters.Add("DisplayName", displayName);
-			cmd.Parameters.Add("HiddenFromAddressListsEnabled", hideFromAddressBook);
-			cmd.Parameters.Add("BypassSecurityGroupManagerCheck"); 
-			ExecuteShellCommand(runSpace, cmd);
-		}
+        internal override void SetDistributionGroup(Runspace runSpace, string id, string displayName, bool hideFromAddressBook)
+        {
+            Command cmd = new Command("Set-DistributionGroup");
+            cmd.Parameters.Add("Identity", id);
+            cmd.Parameters.Add("DisplayName", displayName);
+            cmd.Parameters.Add("HiddenFromAddressListsEnabled", hideFromAddressBook);
+            cmd.Parameters.Add("BypassSecurityGroupManagerCheck");
+            ExecuteShellCommand(runSpace, cmd);
+        }
 
-		internal override void SetGroup(Runspace runSpace, string id, string managedBy, string notes)
-		{
-			Command cmd = new Command("Set-Group");
-			cmd.Parameters.Add("Identity", id);
-			cmd.Parameters.Add("ManagedBy", managedBy);
-			cmd.Parameters.Add("Notes", notes);
-			cmd.Parameters.Add("BypassSecurityGroupManagerCheck"); 
-			ExecuteShellCommand(runSpace, cmd);
-		}
+        internal override void SetGroup(Runspace runSpace, string id, string managedBy, string notes)
+        {
+            Command cmd = new Command("Set-Group");
+            cmd.Parameters.Add("Identity", id);
+            cmd.Parameters.Add("ManagedBy", managedBy);
+            cmd.Parameters.Add("Notes", notes);
+            cmd.Parameters.Add("BypassSecurityGroupManagerCheck");
+            ExecuteShellCommand(runSpace, cmd);
+        }
 
-		internal override void RemoveDistributionGroupMember(Runspace runSpace, string group, string member)
-		{
-			Command cmd = new Command("Remove-DistributionGroupMember");
-			cmd.Parameters.Add("Identity", group);
-			cmd.Parameters.Add("Member", member);
-			cmd.Parameters.Add("Confirm", false);
-			cmd.Parameters.Add("BypassSecurityGroupManagerCheck"); 
-			ExecuteShellCommand(runSpace, cmd);
-		}
+        internal override void RemoveDistributionGroupMember(Runspace runSpace, string group, string member)
+        {
+            Command cmd = new Command("Remove-DistributionGroupMember");
+            cmd.Parameters.Add("Identity", group);
+            cmd.Parameters.Add("Member", member);
+            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("BypassSecurityGroupManagerCheck");
+            ExecuteShellCommand(runSpace, cmd);
+        }
 
-		internal override void AddDistributionGroupMember(Runspace runSpace, string group, string member)
-		{
-			Command cmd = new Command("Add-DistributionGroupMember");
-			cmd.Parameters.Add("Identity", group);
-			cmd.Parameters.Add("Member", member);
-			cmd.Parameters.Add("BypassSecurityGroupManagerCheck"); 
-			ExecuteShellCommand(runSpace, cmd);
-		}
+        internal override void AddDistributionGroupMember(Runspace runSpace, string group, string member)
+        {
+            Command cmd = new Command("Add-DistributionGroupMember");
+            cmd.Parameters.Add("Identity", group);
+            cmd.Parameters.Add("Member", member);
+            cmd.Parameters.Add("BypassSecurityGroupManagerCheck");
+            ExecuteShellCommand(runSpace, cmd);
+        }
 
-		internal override void SetDistributionListSendOnBehalfAccounts(Runspace runspace, string accountName, string[] sendOnBehalfAccounts)
-		{
-			ExchangeLog.LogStart("SetDistributionListSendOnBehalfAccounts");
-			Command cmd = new Command("Set-DistributionGroup");
-			cmd.Parameters.Add("Identity", accountName);
-			cmd.Parameters.Add("GrantSendOnBehalfTo", SetSendOnBehalfAccounts(runspace, sendOnBehalfAccounts));
-			cmd.Parameters.Add("BypassSecurityGroupManagerCheck"); 
-			ExecuteShellCommand(runspace, cmd);
-			ExchangeLog.LogEnd("SetDistributionListSendOnBehalfAccounts");
-		}
-		#endregion
+        internal override void SetDistributionListSendOnBehalfAccounts(Runspace runspace, string accountName, string[] sendOnBehalfAccounts)
+        {
+            ExchangeLog.LogStart("SetDistributionListSendOnBehalfAccounts");
+            Command cmd = new Command("Set-DistributionGroup");
+            cmd.Parameters.Add("Identity", accountName);
+            cmd.Parameters.Add("GrantSendOnBehalfTo", SetSendOnBehalfAccounts(runspace, sendOnBehalfAccounts));
+            cmd.Parameters.Add("BypassSecurityGroupManagerCheck");
+            ExecuteShellCommand(runspace, cmd);
+            ExchangeLog.LogEnd("SetDistributionListSendOnBehalfAccounts");
+        }
+        #endregion
 
-		#region PowerShell integration
-		internal override string ExchangeSnapInName
-		{
-			get { return "Microsoft.Exchange.Management.PowerShell.E2010"; }
-		}
+        #region PowerShell integration
+        internal override string ExchangeSnapInName
+        {
+            get { return "Microsoft.Exchange.Management.PowerShell.E2010"; }
+        }
 
-		internal override Runspace OpenRunspace()
-		{
-			Runspace runspace = base.OpenRunspace();
-			Command cmd = new Command("Set-ADServerSettings");
-			cmd.Parameters.Add("PreferredServer", PrimaryDomainController);
-			ExecuteShellCommand(runspace, cmd, false);
-			return runspace;
-		}
+        internal override Runspace OpenRunspace()
+        {
+            Runspace runspace = base.OpenRunspace();
+            Command cmd = new Command("Set-ADServerSettings");
+            cmd.Parameters.Add("PreferredServer", PrimaryDomainController);
+            ExecuteShellCommand(runspace, cmd, false);
+            return runspace;
+        }
 
-		internal static Assembly ResolveExchangeAssembly(object p, ResolveEventArgs args)
-		{
-			//Add path for the Exchange 2007 DLLs
-			if (args.Name.Contains("Microsoft.Exchange"))
-			{
-				string exchangePath = GetExchangePath();
-				if (string.IsNullOrEmpty(exchangePath))
-					return null;
+        internal static Assembly ResolveExchangeAssembly(object p, ResolveEventArgs args)
+        {
+            //Add path for the Exchange 2007 DLLs
+            if (args.Name.Contains("Microsoft.Exchange"))
+            {
+                string exchangePath = GetExchangePath();
+                if (string.IsNullOrEmpty(exchangePath))
+                    return null;
 
-				string path = Path.Combine(exchangePath, args.Name.Split(',')[0] + ".dll");
-				if (!File.Exists(path))
-					return null;
-				
-				ExchangeLog.DebugInfo("Resolved assembly: {0}", path);
+                string path = Path.Combine(exchangePath, args.Name.Split(',')[0] + ".dll");
+                if (!File.Exists(path))
+                    return null;
 
-				return Assembly.LoadFrom(path);
-			}
-			else
-			{
-				return null;
-			}
-		}
+                ExchangeLog.DebugInfo("Resolved assembly: {0}", path);
 
-		#endregion
+                return Assembly.LoadFrom(path);
+            }
+            else
+            {
+                return null;
+            }
+        }
 
-		#region Storage
-		internal override string CreateStorageGroup(Runspace runSpace, string name, string server)
-		{
-			return string.Empty;
-		}
+        #endregion
 
-		internal override string CreateMailboxDatabase(Runspace runSpace, string name, string storageGroup)
-		{
-			ExchangeLog.LogStart("CreateMailboxDatabase");
-			string id;
+        #region Storage
+        internal override string CreateStorageGroup(Runspace runSpace, string name, string server)
+        {
+            return string.Empty;
+        }
+
+        internal override string CreateMailboxDatabase(Runspace runSpace, string name, string storageGroup)
+        {
+            ExchangeLog.LogStart("CreateMailboxDatabase");
+            string id;
             if (name != "*")
             {
                 Command cmd = new Command("Get-MailboxDatabase");
@@ -220,31 +220,31 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 id = "*";
             }
-			ExchangeLog.LogEnd("CreateMailboxDatabase");
-			return id;
-		}
-		#endregion
+            ExchangeLog.LogEnd("CreateMailboxDatabase");
+            return id;
+        }
+        #endregion
 
-		
+
         public override bool IsInstalled()
         {
-			int value = 0;
+            int value = 0;
             bool bResult = false;
-			RegistryKey root = Registry.LocalMachine;
-			RegistryKey rk = root.OpenSubKey(ExchangeRegistryPath);
-			if (rk != null)
-			{
-				value = (int)rk.GetValue("MsiProductMajor", null);
+            RegistryKey root = Registry.LocalMachine;
+            RegistryKey rk = root.OpenSubKey(ExchangeRegistryPath);
+            if (rk != null)
+            {
+                value = (int)rk.GetValue("MsiProductMajor", null);
                 if (value == 14)
                 {
                     value = (int)rk.GetValue("MsiProductMinor", null);
-                    if ((value == 0) |  (value == 1)) bResult = true;
+                    if ((value == 0) | (value == 1)) bResult = true;
                 }
 
-				rk.Close();
-			}
+                rk.Close();
+            }
             return bResult;
         }
-	}
+    }
 }
 

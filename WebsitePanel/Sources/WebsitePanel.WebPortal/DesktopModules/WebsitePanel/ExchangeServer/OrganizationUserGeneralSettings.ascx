@@ -4,10 +4,11 @@
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 
 <%@ Register Src="../UserControls/PasswordControl.ascx" TagName="PasswordControl" TagPrefix="wsp" %>
-<%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="../UserControls/CollapsiblePanel.ascx" %>
+<%@ Register Src="../UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/EmailAddress.ascx" TagName="EmailAddress" TagPrefix="wsp" %>
 
 
 
@@ -43,7 +44,18 @@
 					<table>
 						<tr>
 						    <td class="FormLabel150"> <asp:Localize ID="locUserPrincipalName" runat="server" meta:resourcekey="locUserPrincipalName" Text="Login Name:"></asp:Localize></td>
-						    <td><asp:Label runat="server" ID="lblUserPrincipalName" /></td>
+						    <td>
+                                <asp:Label runat="server" ID="lblUserPrincipalName" />
+                                <wsp:EmailAddress id="upn" runat="server" ValidationGroup="CreateMailbox"></wsp:EmailAddress>
+                                <asp:DropDownList ID="ddlEmailAddresses" runat="server" CssClass="NormalTextBox"></asp:DropDownList>
+						    </td>
+                            <td>
+                                <asp:Button id="btnSetUserPrincipalName" runat="server" Text="Set Login" CssClass="Button1"
+							meta:resourcekey="btnSetUserPrincipalName" OnClick="btnSetUserPrincipalName_Click"></asp:Button>
+                            </td>
+                            <td>
+                                <asp:CheckBox ID="chkInherit" runat="server" meta:resourcekey="chkInherit" Text="Services inherit Login Name" checked="true"/>
+                            </td>
 						</tr>					   
 
 						<tr>
@@ -58,8 +70,13 @@
 						<tr>
 							<td class="FormLabel150" valign="top"><asp:Localize ID="locPassword" runat="server" meta:resourcekey="locPassword" Text="Password:"></asp:Localize></td>
 							<td>
-                                <wsp:PasswordControl id="password" runat="server" ValidationGroup="EditMailbox">
+                                <wsp:PasswordControl id="password" runat="server" ValidationGroup="ValidatePassword">
                                 </wsp:PasswordControl>
+                            </td>
+                            <td>
+                                <asp:Button id="btnSetUserPassword" runat="server" Text="Set Password" CssClass="Button1"
+							meta:resourcekey="btnSetUserPassword" OnClick="btnSetUserPassword_Click" ValidationGroup="ValidatePassword"></asp:Button>
+					            <asp:ValidationSummary ID="ValidationSummary2" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="ValidatePassword" />
                             </td>
 						</tr>
 						
@@ -67,9 +84,6 @@
 						<tr>
 						    <td></td>
 						    <td>
-						        <asp:CheckBox ID="chkSetPassword" runat="server" 
-                                    meta:resourcekey="chkSetPassword" Text="Set Password" 
-                                    oncheckedchanged="chkSetPassword_CheckedChanged" AutoPostBack="True" />
 						        <br />
 						        <asp:CheckBox ID="chkDisable" runat="server" meta:resourcekey="chkDisable" Text="Disable User" />
 						        <br />
@@ -102,8 +116,17 @@
 						</tr>
 
 					</table>
+                    <table>
+					    <tr>
+						    <td class="FormLabel150"><asp:Localize ID="locNotes" runat="server" meta:resourcekey="locNotes" Text="Notes:"></asp:Localize></td>
+						    <td>
+							    <asp:TextBox ID="txtNotes" runat="server" CssClass="TextBox200" Rows="4" TextMode="MultiLine"></asp:TextBox>
+						    </td>
+					    </tr>
+					</table>		
+
 					
-					<wsp:CollapsiblePanel id="secCompanyInfo" runat="server"
+					<wsp:CollapsiblePanel id="secCompanyInfo" runat="server" IsCollapsed="true"
                         TargetControlID="CompanyInfo" meta:resourcekey="secCompanyInfo" Text="Company Information">
                     </wsp:CollapsiblePanel>
                     <asp:Panel ID="CompanyInfo" runat="server" Height="0" style="overflow:hidden;">
@@ -142,7 +165,7 @@
 					</asp:Panel>
 					
 					
-					<wsp:CollapsiblePanel id="secContactInfo" runat="server"
+					<wsp:CollapsiblePanel id="secContactInfo" runat="server" IsCollapsed="true"
                         TargetControlID="ContactInfo" meta:resourcekey="secContactInfo" Text="Contact Information">
                     </wsp:CollapsiblePanel>
                                       
@@ -187,7 +210,7 @@
 					    </table>
 					</asp:Panel>
 					
-					<wsp:CollapsiblePanel id="secAddressInfo" runat="server"
+					<wsp:CollapsiblePanel id="secAddressInfo" runat="server" IsCollapsed="true"
                         TargetControlID="AddressInfo" meta:resourcekey="secAddressInfo" Text="Address">
                     </wsp:CollapsiblePanel>
                     <asp:Panel ID="AddressInfo" runat="server" Height="0" style="overflow:hidden;">
@@ -225,20 +248,9 @@
 					    </table>
 					</asp:Panel>
 					
-					<table>
-					    <tr>
-						    <td class="FormLabel150"><asp:Localize ID="locNotes" runat="server" meta:resourcekey="locNotes" Text="Notes:"></asp:Localize></td>
-						    <td>
-							    <asp:TextBox ID="txtNotes" runat="server" CssClass="TextBox200" Rows="4" TextMode="MultiLine"></asp:TextBox>
-						    </td>
-					    </tr>
-					</table>		
-					
-					
-					<wsp:CollapsiblePanel id="secAdvanced" runat="server"
+					<wsp:CollapsiblePanel id="secAdvanced" runat="server" IsCollapsed="true"
                         TargetControlID="AdvancedInfo" meta:resourcekey="secAdvanced" Text="Advanced">
                     </wsp:CollapsiblePanel>	
-                    
                     
                     <asp:Panel ID="AdvancedInfo" runat="server" Height="0" style="overflow:hidden;">
 					    <table>

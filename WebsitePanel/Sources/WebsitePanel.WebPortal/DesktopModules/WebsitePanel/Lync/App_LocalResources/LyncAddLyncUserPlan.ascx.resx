@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt; A plan is a template that defines the characteristics of a lync users &lt;/p&gt; &lt;p&gt;The plan name needs to be unique. A plan cannot be modified. In case a user needs a plan with another characteristics, a new plan needs to be created and assigned to the user. A plan can only be deleted when the plan is not assigned to any users. &lt;/p&gt;</value>
+    <value />
   </data>
   <data name="locTitle.Text" xml:space="preserve">
     <value>Add Lync User Plan</value>

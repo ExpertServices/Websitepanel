@@ -444,12 +444,12 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                     try
                     {
 
-                        stats = exchange.GetMailboxStatistics(mailbox.AccountName);
+                        stats = exchange.GetMailboxStatistics(mailbox.UserPrincipalName);
                     }
                     catch (Exception ex)
                     {
                         TaskManager.WriteError(ex, "Could not get mailbox statistics. AccountName: {0}",
-                                               mailbox.AccountName);
+                                               mailbox.UserPrincipalName);
                     }
 
                     

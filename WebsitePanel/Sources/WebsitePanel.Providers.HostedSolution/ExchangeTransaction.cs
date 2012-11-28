@@ -30,7 +30,7 @@ using System.Collections.Generic;
 
 namespace WebsitePanel.Providers.HostedSolution
 {
-    internal class ExchangeTransaction
+    public class ExchangeTransaction
     {
         List<TransactionAction> actions = null;
 
@@ -39,12 +39,12 @@ namespace WebsitePanel.Providers.HostedSolution
             actions = new List<TransactionAction>();
         }
 
-        internal List<TransactionAction> Actions
+        public List<TransactionAction> Actions
         {
             get { return actions; }
         }
 
-        internal void RegisterNewOrganizationUnit(string id)
+        public void RegisterNewOrganizationUnit(string id)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.CreateOrganizationUnit;
@@ -69,7 +69,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Actions.Add(action);
         }
 
-        internal void RegisterNewGlobalAddressList(string id)
+        public void RegisterNewGlobalAddressList(string id)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.CreateGlobalAddressList;
@@ -77,7 +77,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Actions.Add(action);
         }
 
-        internal void RegisterNewAddressList(string id)
+        public void RegisterNewAddressList(string id)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.CreateAddressList;
@@ -85,7 +85,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Actions.Add(action);
         }
 
-        internal void RegisterNewAddressBookPolicy(string id)
+        public void RegisterNewAddressBookPolicy(string id)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.CreateAddressBookPolicy;
@@ -94,7 +94,7 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
 
-        internal void RegisterNewRoomsAddressList(string id)
+        public void RegisterNewRoomsAddressList(string id)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.CreateAddressList;
@@ -103,7 +103,7 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
 
-        internal void RegisterNewOfflineAddressBook(string id)
+        public void RegisterNewOfflineAddressBook(string id)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.CreateOfflineAddressBook;
@@ -111,7 +111,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Actions.Add(action);
         }
 
-        internal void RegisterNewActiveSyncPolicy(string id)
+        public void RegisterNewActiveSyncPolicy(string id)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.CreateActiveSyncPolicy;
@@ -120,7 +120,7 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
 
-        internal void RegisterNewAcceptedDomain(string id)
+        public void RegisterNewAcceptedDomain(string id)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.CreateAcceptedDomain;
@@ -128,7 +128,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Actions.Add(action);
         }
 
-        internal void RegisterNewUPNSuffix(string id, string suffix)
+        public void RegisterNewUPNSuffix(string id, string suffix)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.AddUPNSuffix;
@@ -137,7 +137,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Actions.Add(action);
         }
 
-        internal void RegisterNewMailbox(string id)
+        public void RegisterNewMailbox(string id)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.CreateMailbox;
@@ -145,7 +145,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Actions.Add(action);
         }
 
-        internal void RegisterEnableMailbox(string id)
+        public void RegisterEnableMailbox(string id)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.EnableMailbox;
@@ -154,7 +154,7 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
 
-        internal void RegisterNewContact(string id)
+        public void RegisterNewContact(string id)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.CreateContact;
@@ -162,7 +162,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Actions.Add(action);
         }
 
-        internal void RegisterNewPublicFolder(string id)
+        public void RegisterNewPublicFolder(string id)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.CreatePublicFolder;
@@ -170,7 +170,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Actions.Add(action);
         }
 
-        internal void AddMailBoxFullAccessPermission(string accountName, string id)
+        public void AddMailBoxFullAccessPermission(string accountName, string id)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.AddMailboxFullAccessPermission;
@@ -179,7 +179,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Actions.Add(action);
         }
 
-        internal void AddSendAsPermission(string accountName, string id)
+        public void AddSendAsPermission(string accountName, string id)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.AddSendAsPermission;
@@ -188,7 +188,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Actions.Add(action);
         }
 
-        internal void RemoveMailboxFullAccessPermission(string accountName, string id)
+        public void RemoveMailboxFullAccessPermission(string accountName, string id)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.RemoveMailboxFullAccessPermission;
@@ -197,7 +197,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Actions.Add(action);
         }
 
-        internal void RemoveSendAsPermission(string accountName, string id)
+        public void RemoveSendAsPermission(string accountName, string id)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.RemoveSendAsPermission;

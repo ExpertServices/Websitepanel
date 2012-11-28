@@ -127,7 +127,7 @@
     <value>ShowProgressDialog('Please wait...');</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;Organization disk space actual usage is calculated on timely basis (usually once a day). You can recalculate it right now by clicking "Recalculate Disk Space" button.&lt;/p&gt;&lt;p&gt;Click on the link with used disk space to see actual usage breakdown by all organization mailboxes.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="locAllocatedSize.Text" xml:space="preserve">
     <value>Allocated Disk Space (MB):</value>

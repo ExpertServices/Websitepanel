@@ -71,7 +71,7 @@
 						    <asp:TemplateField HeaderText="gvUsersLogin" SortExpression="UserPrincipalName">
 							    <ItemStyle></ItemStyle>
 							    <ItemTemplate>							        
-								    <asp:hyperlink id="lnk1" runat="server"
+								    <asp:hyperlink id="lnk2" runat="server"
 									    NavigateUrl='<%# GetOrganizationUserEditUrl(Eval("AccountId").ToString()) %>'>
 									    <%# Eval("UserPrincipalName") %>
 								    </asp:hyperlink>

@@ -577,9 +577,9 @@ ALTER TABLE [dbo].[ExchangeAccounts] ADD
 END
 GO
 
-IF NOT EXISTS(SELECT * FROM [dbo].[ExchangeAccounts] WHERE UserPrincipalName IS NOT NULL)
+IF NOT EXISTS(SELECT 1 FROM [dbo].[ExchangeAccounts] WHERE UserPrincipalName IS NOT NULL)
 BEGIN
-	UPDATE [dbo].[ExchangeAccounts] SET [UserPrincipalName] = PrimaryEmailAddress
+	UPDATE [dbo].[ExchangeAccounts] SET [UserPrincipalName] = PrimaryEmailAddress WHERE AccountType IN (1,7)
 END
 GO
 
@@ -6924,10 +6924,83 @@ AS
 UPDATE LyncUsers SET
 	SipAddress = @SipAddress
 WHERE
-	AccountID = @AccountID AND AccountType IN (1,7)
+	AccountID = @AccountID
 
 RETURN'
 END
 GO
 
 
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'CheckDomainUsedByHostedOrganization')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[CheckDomainUsedByHostedOrganization] 
+	@DomainName nvarchar(100),
+	@Result int OUTPUT
+AS
+	SET @Result = 0
+	IF EXISTS(SELECT 1 FROM ExchangeAccounts WHERE UserPrincipalName LIKE ''%@''+ @DomainName)
+	BEGIN
+		SET @Result = 1
+	END
+	ELSE
+	IF EXISTS(SELECT 1 FROM ExchangeAccountEmailAddresses WHERE EmailAddress LIKE ''%@''+ @DomainName)
+	BEGIN
+		SET @Result = 1
+	END
+	ELSE
+	IF EXISTS(SELECT 1 FROM LyncUsers WHERE SipAddress LIKE ''%@''+ @DomainName)
+	BEGIN
+		SET @Result = 1
+	END
+		
+	RETURN @Result'
+END
+GO
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedSolution.AllowChangeUPN')
+BEGIN
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (230,	13,	4,	N'HostedSolution.AllowChangeUPN', N'Allow to Change UserPrincipalName',	1,	0, NULL)
+END
+GO
+
+
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'UpdateExchangeAccountUserPrincipalName')
+BEGIN
+EXEC sp_executesql N' CREATE PROCEDURE [dbo].[UpdateExchangeAccountUserPrincipalName] 
+(
+	@AccountID int,
+	@UserPrincipalName nvarchar(300)
+)
+AS
+
+UPDATE ExchangeAccounts SET
+	UserPrincipalName = @UserPrincipalName
+WHERE
+	AccountID = @AccountID
+
+RETURN'
+END
+GO
+
+
+IF  NOT EXISTS (SELECT 1 FROM LyncUsers WHERE SipAddress IS NOT NULL)
+BEGIN
+	UPDATE LyncUsers  SET SipAddress=EA.PrimaryEmailAddress FROM ExchangeAccounts AS EA WHERE LyncUsers.SipAddress IS NULL AND LyncUsers.AccountID = EA.AccountID
+END
+GO
+
+
+-- Version 2.1 section
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Hosted Microsoft Exchange Server 2013')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderId], [GroupId], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES(91, 12, N'Exchange2013', N'Hosted Microsoft Exchange Server 2013', N'WebsitePanel.Providers.HostedSolution.Exchange2013, WebsitePanel.Providers.HostedSolution.Exchange2013', N'Exchange',	1)
+END
+ELSE
+BEGIN
+UPDATE [dbo].[Providers] SET [DisableAutoDiscovery] = NULL WHERE [DisplayName] = 'Hosted Microsoft Exchange Server 2013'
+END
+GO

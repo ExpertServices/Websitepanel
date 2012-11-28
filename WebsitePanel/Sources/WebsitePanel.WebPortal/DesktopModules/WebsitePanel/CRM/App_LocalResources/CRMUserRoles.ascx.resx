@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="locDisplayName.Text" xml:space="preserve">
     <value>Display Name:</value>
@@ -139,9 +139,7 @@
     <value>CRM User roles</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;How a user accesses data is determined by a combination of the user license, security role, business unit and one or more teams.&lt;/p&gt;
-
-&lt;p&gt;Security roles are predefined groups of common privileges based on the types of tasks users perform. The security roles listed are those that have been created for the business unit associated with the user. Note that this means users can be assigned only the security roles for the business unit with which they have been associated.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="btnActivate.Text" xml:space="preserve">
     <value>Enable</value>

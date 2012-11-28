@@ -157,9 +157,7 @@
     <value>Owner</value>
   </data>
   <data name="HSFormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;&lt;b&gt;Organization&lt;/b&gt; is a group of Active Directory users, contacts and groups.&lt;br&gt;&lt;br&gt;
-All accounts within one organization are located in the same Organizational Unit and are not visible to members of other organizations.&lt;br&gt;&lt;br&gt;
-Exchange-enabled organization has its own Global Address List (GAL) and Offline Address Book (OAB). Mailboxes, contacts, and distribution lists of Exchange-enabled organization share the same GAL and OAB&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="locQuota.Text" xml:space="preserve">
     <value>Total Organizations Created:</value>

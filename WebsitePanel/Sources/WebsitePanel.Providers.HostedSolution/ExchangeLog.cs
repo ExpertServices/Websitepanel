@@ -36,52 +36,52 @@ namespace WebsitePanel.Providers.HostedSolution
     /// <summary>
     /// Exchange Log Helper Methods
     /// </summary>
-    internal class ExchangeLog
+    public static class ExchangeLog
     {
-        internal static string LogPrefix = "Exchange";
+        public static string LogPrefix = "Exchange";
 
-        internal static void LogStart(string message, params object[] args)
+        public static void LogStart(string message, params object[] args)
         {
             string text = String.Format(message, args);
             Log.WriteStart("{0} {1}", LogPrefix, text);
         }
 
-        internal static void LogEnd(string message, params object[] args)
+        public static void LogEnd(string message, params object[] args)
         {
             string text = String.Format(message, args);
             Log.WriteEnd("{0} {1}", LogPrefix, text);
         }
 
-        internal static void LogInfo(string message, params object[] args)
+        public static void LogInfo(string message, params object[] args)
         {
             string text = String.Format(message, args);
             Log.WriteInfo("{0} {1}", LogPrefix, text);
         }
 
-        internal static void LogWarning(string message, params object[] args)
+        public static void LogWarning(string message, params object[] args)
         {
             string text = String.Format(message, args);
             Log.WriteWarning("{0} {1}", LogPrefix, text);
         }
 
-        internal static void LogError(Exception ex)
+        public static void LogError(Exception ex)
         {
             Log.WriteError(LogPrefix, ex);
         }
 
-        internal static void LogError(string message, Exception ex)
+        public static void LogError(string message, Exception ex)
         {
             string text = String.Format("{0} {1}", LogPrefix, message);
             Log.WriteError(text, ex);
         }
 
-        internal static void DebugInfo(string message, params object[] args)
+        public static void DebugInfo(string message, params object[] args)
         {
             string text = String.Format(message, args);
             Log.WriteInfo("{0} {1}", LogPrefix, text);
         }
 
-        internal static void DebugCommand(Command cmd)
+        public static void DebugCommand(Command cmd)
         {
             StringBuilder sb = new StringBuilder(cmd.CommandText);
             foreach (CommandParameter parameter in cmd.Parameters)

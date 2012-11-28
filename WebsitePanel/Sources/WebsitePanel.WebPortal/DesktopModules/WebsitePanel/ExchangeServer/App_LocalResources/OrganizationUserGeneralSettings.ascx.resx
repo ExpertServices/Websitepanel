@@ -133,9 +133,7 @@
     <value>Set Password</value>
   </data>
   <data name="HSFormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;&lt;b&gt;Display Name&lt;/b&gt; is a “friendly” name used by other programs, such as Microsoft Exchange or SharePoint.&lt;/p&gt;
-&lt;p&gt;Make sure your password is strong enough, i.e. contains lower and capital letters, numbers and symbols.&lt;/p&gt;
-&lt;p&gt;You can specify manager account to build organizational structure of your company.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="locAddress.Text" xml:space="preserve">
     <value>Address:</value>
@@ -238,5 +236,14 @@
   </data>
   <data name="lblUserPrincipalName" xml:space="preserve">
     <value>Login Name:</value>
+  </data>
+  <data name="btnSetUserPassword.Text" xml:space="preserve">
+    <value>Set Password</value>
+  </data>
+  <data name="btnSetUserPrincipalName.Text" xml:space="preserve">
+    <value>Set Login Name</value>
+  </data>
+  <data name="chkInherit.Text" xml:space="preserve">
+    <value>Update Services</value>
   </data>
 </root>

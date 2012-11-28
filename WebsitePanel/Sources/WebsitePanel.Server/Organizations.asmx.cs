@@ -126,6 +126,20 @@ namespace WebsitePanel.Server
 
 
         [WebMethod, SoapHeader("settings")]
+        public void SetUserPassword(string organizationId, string accountName, string password)
+        {
+            Organization.SetUserPassword(organizationId, accountName, password);
+        }
+
+
+        [WebMethod, SoapHeader("settings")]
+        public void SetUserPrincipalName(string organizationId, string accountName, string userPrincipalName)
+        {
+            Organization.SetUserPrincipalName(organizationId, accountName, userPrincipalName);
+        }
+
+
+        [WebMethod, SoapHeader("settings")]
         public void DeleteOrganizationDomain(string organizationDistinguishedName, string domain)
         {
             Organization.DeleteOrganizationDomain(organizationDistinguishedName, domain);

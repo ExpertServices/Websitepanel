@@ -130,7 +130,7 @@
     <value>Wipe All Data from Device</value>
   </data>
   <data name="HSFormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;Manage the mobile device here.&lt;/p&gt;&lt;p&gt;If you forget your device password, you can access it here. If you lose your phone or mobile device, you can initiate a remote device wipe to protect your information . You can also cancel a wipe request if it was initiated by accident or the device was found subsequently.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="locDeviceAcnowledgeTime.Text" xml:space="preserve">
     <value>Device wipe acnowledge time:</value>

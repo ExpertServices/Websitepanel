@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="breadcrumb.PageName" xml:space="preserve">
     <value>OCS Users</value>
@@ -130,9 +130,7 @@
     <value>Sign-in name</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;Office Communications Server delivers streamlined communications to the users, including software-powered VoIP, Web and audio/video conferencing, and enterprise instant messaging.&lt;/p&gt;
-&lt;p&gt;Click the “Create OCS User” button to enable an individual user account for Office Communications Server. &lt;/p&gt;
-&lt;p&gt;If you delete an account in Office Communications Server, the account is no longer available for use with Office Communications Server unless you enable the account again. When you delete an account, all Office Communications Server settings for the account are lost, so you must configure the account again after enabling.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="gvUsersDisplayName.HeaderText" xml:space="preserve">
     <value>Display name</value>

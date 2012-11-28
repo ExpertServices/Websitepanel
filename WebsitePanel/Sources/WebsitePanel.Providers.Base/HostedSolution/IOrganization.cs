@@ -51,6 +51,10 @@ namespace WebsitePanel.Providers.HostedSolution
                                     string businessPhone, string fax, string homePhone, string mobilePhone, string pager,
                                     string webPage, string notes, string externalEmail);
 
+        void SetUserPassword(string organizationId, string accountName, string password);
+
+        void SetUserPrincipalName(string organizationId, string accountName, string userPrincipalName);
+
         bool OrganizationExists(string organizationId);
 
         void DeleteOrganizationDomain(string organizationDistinguishedName, string domain);

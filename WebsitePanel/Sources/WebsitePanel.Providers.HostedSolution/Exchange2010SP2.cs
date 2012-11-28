@@ -493,7 +493,7 @@ namespace WebsitePanel.Providers.HostedSolution
                     cmd.Parameters.Add("Identity", id);
                     cmd.Parameters.Add("Confirm", false);
                     ExecuteShellCommand(runSpace, cmd);
-                                       
+
 
                     if (addressbookPolicy == (upn + " AP"))
                     {
