@@ -90,7 +90,7 @@
     <!-- SQLCM - Server Network Configuration - Server Instance Protocols -->
     <sheet location="property_description" name="Server Instance Network Configuration">
       <page name="Flags">
-        <item name="ForceEncryption" locDescr="Turns encryption on or off for the selected instance of SQL Server." />
+        <item name="ForceEncryption" locDescr="Turn on or off encryption for selected server instance" />
 		<item name="HideInstance" locDescr="Prevents the SQL Server Browser service from exposing this instance of the Database Engine to client computers" />
       </page>
       <page name="Certificate">
@@ -98,10 +98,6 @@
         <item name="Issued By" locDescr="Who issued the certificate" />
         <item name="Issued To" locDescr="To whom certificate was issued" />
         <item name="Expiration Date" locDescr="Date when certificate expires" />
-      </page>
-      <page name="Advanced">
-        <item name="ExtendedProtection" locDescr="Configures Extended Protection for Authentication for the SQL Server Database Engine. When set to Off, Extended Protection is disabled. When set to Allowed, Extended Protection is enabled except for connections from unprotected operating systems. When set to Required, only connections from protected applications on protected operating systems are accepted." />
-        <item name="AcceptedNTLMSPNs" locDescr="Specifies the NTLM service principal names (SPNs) that represent the local instance of SQL Server in a string delimited by semicolons." />
       </page>
     </sheet>
 
