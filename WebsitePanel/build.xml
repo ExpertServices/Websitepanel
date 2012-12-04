@@ -9,6 +9,7 @@
 		<TrunkFolder>$(RootFolder)\WebsitePanel</TrunkFolder>
 		<SetupTrunkFolder>$(RootFolder)\WebsitePanel.Installer</SetupTrunkFolder>
 		<SetupBuildFolder>$(SetupTrunkFolder)\Build\$(BuildConfiguration)</SetupBuildFolder>
+    <MSBuildCommunityTasksPath>$(RootFolder)\MSBuildCommunityTasks</MSBuildCommunityTasksPath>
 
 		<BuildFolder>$(TrunkFolder)\Build\$(BuildConfiguration)</BuildFolder>
 		<DeployFolder>$(TrunkFolder)\Deploy\$(BuildConfiguration)</DeployFolder>
