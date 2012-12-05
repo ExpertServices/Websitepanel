@@ -65,13 +65,24 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-                PackageInfo package = ES.Services.Packages.GetPackage(PanelSecurity.PackageId);
-                if (package != null)
+                string instructions = ES.Services.ExchangeServer.GetMailboxSetupInstructions(PanelRequest.ItemID, PanelRequest.AccountID, false, false, false);
+                if (!string.IsNullOrEmpty(instructions))
                 {
-                    //UserInfo user = ES.Services.Users.GetUserById(package.UserId);
-                    //if (user != null)
-                    //sendInstructionEmail.Text = user.Email;
+                    chkSendInstructions.Checked = chkSendInstructions.Visible = sendInstructionEmail.Visible = true;
+                    PackageInfo package = ES.Services.Packages.GetPackage(PanelSecurity.PackageId);
+                    if (package != null)
+                    {
+                        UserInfo user = ES.Services.Users.GetUserById(package.UserId);
+                        if (user != null)
+                            sendInstructionEmail.Text = user.Email;
+                    }
                 }
+                else
+                {
+                    chkSendInstructions.Checked = chkSendInstructions.Visible = sendInstructionEmail.Visible = false;
+                }
+
+
 
                 WebsitePanel.Providers.HostedSolution.ExchangeMailboxPlan[] plans = ES.Services.ExchangeServer.GetExchangeMailboxPlans(PanelRequest.ItemID);
 
@@ -124,8 +135,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                                     name,
                                     domain,
                                     password.Password,
-                                    false,
-                                    "",
+                                    chkSendInstructions.Checked,
+                                    sendInstructionEmail.Text,
                                     Convert.ToInt32(mailboxPlanSelector.MailboxPlanId),
                                     subscriberNumber);
 

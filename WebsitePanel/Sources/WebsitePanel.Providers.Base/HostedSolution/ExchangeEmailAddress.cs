@@ -58,5 +58,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			get { return primary; }
 			set { primary = value; }
 		}
+
+
 	}
 }

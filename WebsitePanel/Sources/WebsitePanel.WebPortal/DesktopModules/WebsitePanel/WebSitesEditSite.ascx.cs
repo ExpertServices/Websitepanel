@@ -66,6 +66,7 @@ namespace WebsitePanel.Portal
 			new Tab { Id = "mime", ResourceKey = "Tab.MIMETypes", Quota = Quotas.WEB_MIME, ViewId = "tabMimes" },
 			new Tab { Id = "coldfusion", ResourceKey = "Tab.ColdFusion", Quota = Quotas.WEB_COLDFUSION, ViewId = "tabCF" },
 			new Tab { Id = "webman", ResourceKey = "Tab.WebManagement", Quota = Quotas.WEB_REMOTEMANAGEMENT, ViewId = "tabWebManagement" },
+            new Tab { Id = "SSL", ResourceKey = "Tab.SSL", Quota = Quotas.WEB_SSL, ViewId = "SSL" },
 		};
 
 		private int PackageId
@@ -73,6 +74,12 @@ namespace WebsitePanel.Portal
 			get { return (int)ViewState["PackageId"]; }
 			set { ViewState["PackageId"] = value; }
 		}
+
+        private bool IsDedicatedIP
+        {
+            get { return (bool)ViewState["IsDedicatedIP"]; }
+            set { ViewState["IsDedicatedIP"] = value; }
+        }
 
 		private bool IIs7
 		{
@@ -100,7 +107,13 @@ namespace WebsitePanel.Portal
 		private void BindTabs()
 		{
 			//
-			var filteredTabs = TabsList.FilterTabsByHostingPlanQuotas(PackageId);
+			var filteredTabs = TabsList.FilterTabsByHostingPlanQuotas(PackageId).ToList();
+
+            // remove "SSL" tab for a site with dynamic IP
+            var sslTab = filteredTabs.SingleOrDefault(t => t.Id == "SSL");
+            if (!IsDedicatedIP && sslTab != null)
+                filteredTabs.Remove(sslTab);
+
 			var selectedValue = dlTabs.SelectedValue;
 
 			if (dlTabs.SelectedIndex == -1)
@@ -120,7 +133,7 @@ namespace WebsitePanel.Portal
 				else
 				{
 					// Select "Home Folder" tab by default
-					dlTabs.SelectedIndex = 0;
+                    dlTabs.SelectedIndex = 0;
 				}
 			}
 
@@ -164,6 +177,7 @@ namespace WebsitePanel.Portal
 			lnkSiteName.NavigateUrl = "http://" + site.Name;
 
             // bind unassigned IP addresses
+            ddlIpAddresses.Items.Clear();
             PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(site.PackageId, IPAddressPool.WebSites);
             foreach (PackageIPAddress ip in ips)
             {
@@ -176,17 +190,20 @@ namespace WebsitePanel.Portal
                 ddlIpAddresses.Items.Add(new ListItem(fullIP, ip.PackageAddressID.ToString()));
             }
 
-            bool isDedicatedIP = false;
-            if (!String.IsNullOrEmpty(site.SiteIPAddress))
+            if (site.IsDedicatedIP)
             {
                 litIPAddress.Text = site.SiteIPAddress;
-                isDedicatedIP = true;
             }
 
-            dedicatedIP.Visible = isDedicatedIP;
-            sharedIP.Visible = !isDedicatedIP;
-            cmdSwitchToDedicatedIP.Visible = (ddlIpAddresses.Items.Count > 0);
-                       
+            dedicatedIP.Visible = site.IsDedicatedIP;
+            sharedIP.Visible = !site.IsDedicatedIP;
+
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            if (Utils.CheckQouta(Quotas.WEB_ALLOWIPADDRESSMODESWITCH, cntx))
+                cmdSwitchToDedicatedIP.Visible = (ddlIpAddresses.Items.Count > 0);
+            else
+                cmdSwitchToDedicatedIP.Visible = cmdSwitchToSharedIP.Visible = false;
+                      
 
 			litFrontPageUnavailable.Visible = false;
 			tblSharePoint.Visible = site.SharePointInstalled;
@@ -255,16 +272,17 @@ namespace WebsitePanel.Portal
 			webSitesMimeTypesControl.BindWebItem(site);
 			webSitesCustomHeadersControl.BindWebItem(site);
 			webSitesCustomErrorsControl.BindWebItem(site);
-            if (site.SiteIPAddress != null)
-            {
-                TabsList.Add(new Tab { Id = "SSL", ResourceKey = "Tab.SSL", Quota = Quotas.WEB_SSL, ViewId = "SSL" });
-                TabsList.ForEach((x) =>
-                {
-                    x.Name = GetLocalizedString(x.ResourceKey);
-                    x.ResourceGroup = x.ResourceGroup ?? ResourceGroups.Web;
-                });
 
+            if (site.IsDedicatedIP)
+            {
+                IsDedicatedIP = true;
+                WebsitesSSLControl.Visible = true;
                 WebsitesSSLControl.BindWebItem(site);
+            }
+            else
+            {
+                IsDedicatedIP = false;
+                WebsitesSSLControl.Visible = false;
             }
 
 			BindVirtualDirectories();
@@ -1005,6 +1023,7 @@ namespace WebsitePanel.Portal
 
         protected void cmdSwitchToDedicatedIP_Click(object sender, EventArgs e)
         {
+
             sharedIP.Visible = false;
             switchToDedicatedIP.Visible = true;
         }
@@ -1023,6 +1042,9 @@ namespace WebsitePanel.Portal
                 }
 
                 ShowSuccessMessage("WEB_SWITCH_TO_SHARED_IP");
+
+                dlTabs.SelectedIndex = 0;
+
             }
             catch (Exception ex)
             {

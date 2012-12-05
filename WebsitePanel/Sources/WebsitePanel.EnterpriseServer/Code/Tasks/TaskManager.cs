@@ -398,12 +398,18 @@ namespace WebsitePanel.EnterpriseServer
         public static Dictionary<int, BackgroundTask> GetScheduledTasks()
         {
             Dictionary<int, BackgroundTask> scheduledTasks = new Dictionary<int, BackgroundTask>();
-            foreach (BackgroundTask task in tasks.Values)
+            try
             {
-                if (task.ScheduleId > 0
-					&& !task.Completed
-					&& !scheduledTasks.ContainsKey(task.ScheduleId))
-                    scheduledTasks.Add(task.ScheduleId, task);
+                foreach (BackgroundTask task in tasks.Values)
+                {
+                    if (task.ScheduleId > 0
+                        && !task.Completed
+                        && !scheduledTasks.ContainsKey(task.ScheduleId))
+                        scheduledTasks.Add(task.ScheduleId, task);
+                }
+            }
+            catch (Exception)
+            {
             }
             return scheduledTasks;
         }

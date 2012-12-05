@@ -36,6 +36,7 @@ namespace WebsitePanel.EnterpriseServer
         private int domainId;
         private int packageId;
         private int zoneItemId;
+        private int domainItemId;
         private string domainName;
         private bool hostingAllowed;
         private int webSiteId;
@@ -67,6 +68,13 @@ namespace WebsitePanel.EnterpriseServer
             get { return zoneItemId; }
             set { zoneItemId = value; }
         }
+
+        public int DomainItemId
+        {
+            get { return domainItemId; }
+            set { domainItemId = value; }
+        }
+
 
         public string DomainName
         {

@@ -21,6 +21,11 @@
     </tr>
     <tr>
         <td colspan="2">
+            <asp:CheckBox runat="server" ID="cbLync" meta:resourcekey="cbLync" />
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
             <asp:CheckBox runat="server" ID="cbCRM" meta:resourcekey="cbCRM" />
         </td>
     </tr>

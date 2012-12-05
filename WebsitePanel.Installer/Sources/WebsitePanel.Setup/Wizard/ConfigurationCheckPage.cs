@@ -605,6 +605,10 @@ namespace WebsitePanel.Setup
                 return false;
 
             int value = (int)regkey.GetValue("ASPNET", 0);
+
+            if (value != 1)
+                value = (int)regkey.GetValue("ASPNET45", 0);
+
             return value == 1;
 		}
 	}

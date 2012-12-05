@@ -50,7 +50,7 @@ order by rg.groupOrder
 		public const string OS_MINIMUMTASKINTERVAL = "OS.MinimumTaskInterval";  // Minimum Tasks Interval, minutes
 		public const string OS_APPINSTALLER = "OS.AppInstaller";  // Applications Installer
 		public const string OS_EXTRAAPPLICATIONS = "OS.ExtraApplications";  // Extra Application Packs
-        public const string OS_ALLOWTENANTCREATEDOMAINS = "OS.AllowTenantCreateDomains";  // Allow tenant to create top level domains
+        public const string OS_NOTALLOWTENANTCREATEDOMAINS = "OS.AllowTenantCreateDomains";  // Do not Allow tenant to create top level domains
 		public const string WEB_SITES = "Web.Sites";  // Web Sites
 		public const string WEB_ASPNET11 = "Web.AspNet11";  // ASP.NET 1.1
 		public const string WEB_ASPNET20 = "Web.AspNet20";  // ASP.NET 2.0
@@ -79,6 +79,8 @@ order by rg.groupOrder
         public const string WEB_CFVIRTUALDIRS = "Web.CFVirtualDirectories"; //ColdFusion Virtual Directories
 		public const string WEB_REMOTEMANAGEMENT = "Web.RemoteManagement"; //IIS 7 Remote Management
         public const string WEB_SSL = "Web.SSL"; //SSL
+        public const string WEB_ALLOWIPADDRESSMODESWITCH = "Web.AllowIPAddressModeSwitch"; //Allow to switch IP Address Mode
+        public const string WEB_ENABLEHOSTNAMESUPPORT = "Web.EnableHostNameSupport"; //Enable to specify hostnames upon site creation
 		public const string FTP_ACCOUNTS = "FTP.Accounts";  // FTP Accounts
 		public const string MAIL_ACCOUNTS = "Mail.Accounts";  // Mail Accounts
 		public const string MAIL_FORWARDINGS = "Mail.Forwardings";  // Mail Forwardings
@@ -148,6 +150,7 @@ order by rg.groupOrder
         public const string ORGANIZATIONS = "HostedSolution.Organizations";
         public const string ORGANIZATION_USERS = "HostedSolution.Users";
         public const string ORGANIZATION_DOMAINS = "HostedSolution.Domains";
+        public const string ORGANIZATION_ALLOWCHANGEUPN = "HostedSolution.AllowChangeUPN";
         public const string CRM_USERS = "HostedCRM.Users";
         public const string CRM_ORGANIZATION = "HostedCRM.Organization";
 

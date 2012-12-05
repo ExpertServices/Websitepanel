@@ -56,8 +56,8 @@ REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\OCSProxy.cs
 REM %WSDL% %SERVER_URL%/esOperatingSystems.asmx /out:.\WebsitePanel.EnterpriseServer.Client\OperatingSystemsProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\OperatingSystemsProxy.cs
 
-REM %WSDL% %SERVER_URL%/esOrganizations.asmx /out:.\WebsitePanel.EnterpriseServer.Client\OrganizationProxy.cs /namespace:WebsitePanel.EnterpriseServer.HostedSolution /type:webClient
-REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\OrganizationProxy.cs
+%WSDL% %SERVER_URL%/esOrganizations.asmx /out:.\WebsitePanel.EnterpriseServer.Client\OrganizationProxy.cs /namespace:WebsitePanel.EnterpriseServer.HostedSolution /type:webClient
+%WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\OrganizationProxy.cs
 
 REM %WSDL% %SERVER_URL%/esPackages.asmx /out:.\WebsitePanel.EnterpriseServer.Client\PackagesProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\PackagesProxy.cs
@@ -86,8 +86,8 @@ REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\VirtualizationServerProxy
 REM %WSDL% %SERVER_URL%/esWebApplicationGallery.asmx /out:.\WebsitePanel.EnterpriseServer.Client\WebApplicationGalleryProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\WebApplicationGalleryProxy.cs
 
-%WSDL% %SERVER_URL%/esWebServers.asmx /out:.\WebsitePanel.EnterpriseServer.Client\WebServersProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
-%WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\WebServersProxy.cs
+REM %WSDL% %SERVER_URL%/esWebServers.asmx /out:.\WebsitePanel.EnterpriseServer.Client\WebServersProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
+REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\WebServersProxy.cs
 
 REM %WSDL% %SERVER_URL%/esVirtualizationServerForPrivateCloud.asmx /out:.\WebsitePanel.EnterpriseServer.Client\VirtualizationServerProxyForPrivateCloud.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\VirtualizationServerProxyForPrivateCloud.cs

@@ -422,11 +422,14 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 			return bindings.ToArray();
         }
 
-		private void SyncWebSiteBindingsChanges(string siteId, ServerBinding[] bindings)
+		private void SyncWebSiteBindingsChanges(string siteId, ServerBinding[] bindings, bool emptyBindingsAllowed)
 		{
 			// ensure site bindings
-			if (bindings == null || bindings.Length == 0)
-				throw new Exception("SiteServerBindingsEmpty");
+            if (!emptyBindingsAllowed)
+            {
+                if (bindings == null || bindings.Length == 0)
+                    throw new Exception("SiteServerBindingsEmpty");
+            }
 			
 			using (var srvman = GetServerManager())
 			{
@@ -438,7 +441,8 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
                     int i = 0;
                     while (i < iisObject.Bindings.Count)
                     {
-                        if (String.Equals(iisObject.Bindings[i].Protocol, Uri.UriSchemeHttp, StringComparison.InvariantCultureIgnoreCase))
+                        if ((String.Equals(iisObject.Bindings[i].Protocol, Uri.UriSchemeHttp, StringComparison.InvariantCultureIgnoreCase)) | 
+                            (bindings.Length == 0))
                         {
                             iisObject.Bindings.RemoveAt(i);
                             continue;
@@ -451,17 +455,17 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 
 					// Create HTTP bindings received
 					foreach (var serverBinding in bindings)
-					{
-						var bindingInformation = String.Format("{0}:{1}:{2}", serverBinding.IP, serverBinding.Port, serverBinding.Host);
-						iisObject.Bindings.Add(bindingInformation, Uri.UriSchemeHttp);
-					}
+                        {
+                            var bindingInformation = String.Format("{0}:{1}:{2}", serverBinding.IP, serverBinding.Port, serverBinding.Host);
+                            iisObject.Bindings.Add(bindingInformation, Uri.UriSchemeHttp);
+                        }
 				}
 				//
 				srvman.CommitChanges();
 			}
 		}
 
-		public void UpdateSiteBindings(string siteId, ServerBinding[] bindings)
+		public void UpdateSiteBindings(string siteId, ServerBinding[] bindings, bool emptyBindingsAllowed)
 		{
             using (ServerManager srvman = GetServerManager())
             {
@@ -470,7 +474,7 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
                     return;
             }
 			//
-			SyncWebSiteBindingsChanges(siteId, bindings);
+            SyncWebSiteBindingsChanges(siteId, bindings, emptyBindingsAllowed);
 		}
 
     	public string GetPhysicalPath(ServerManager srvman, WebVirtualDirectory virtualDir)

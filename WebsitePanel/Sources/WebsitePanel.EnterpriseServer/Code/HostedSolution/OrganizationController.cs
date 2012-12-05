@@ -40,6 +40,8 @@ using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.SharePoint;
 using WebsitePanel.Providers.Common;
+using WebsitePanel.Providers.DNS;
+using WebsitePanel.Providers.OCS;
 
 using System.IO;
 using System.Xml;
@@ -281,7 +283,7 @@ namespace WebsitePanel.EnterpriseServer
 				TaskManager.WriteError(ex);
 			}
 		}
-        public static int CreateOrganization(int packageId,  string organizationId, string organizationName)
+        public static int CreateOrganization(int packageId,  string organizationId, string organizationName, string domainName)
         {
             int itemId;
             int errorCode;
@@ -291,6 +293,7 @@ namespace WebsitePanel.EnterpriseServer
             // place log record
             TaskManager.StartTask("ORGANIZATION", "CREATE_ORG", organizationName);
             TaskManager.TaskParameters["Organization ID"] = organizationId;
+            TaskManager.TaskParameters["DomainName"] = domainName;
 
 			try
 			{
@@ -311,7 +314,12 @@ namespace WebsitePanel.EnterpriseServer
 					return BusinessErrorCodes.ERROR_ORG_ID_EXISTS;
 
 				//create temporary domain name;
-				string domainName = CreateTemporyDomainName(serviceId, organizationId);
+                if (string.IsNullOrEmpty(domainName))
+                {
+                    string tmpDomainName = CreateTemporyDomainName(serviceId, organizationId);
+
+                    if (!string.IsNullOrEmpty(tmpDomainName)) domainName = tmpDomainName;
+                }
                 
 				if (string.IsNullOrEmpty(domainName))
 				{
@@ -329,6 +337,17 @@ namespace WebsitePanel.EnterpriseServer
 					RollbackOrganization(packageId, organizationId);
 					return domainId;
 				}
+                
+                DomainInfo domain = ServerController.GetDomain(domainId);
+                if (domain != null)
+                {
+                    if (domain.ZoneItemId != 0)
+                    {
+                        ServerController.AddServiceDNSRecords(org.PackageId, ResourceGroups.HostedOrganizations, domain, "");
+                        ServerController.AddServiceDNSRecords(org.PackageId, ResourceGroups.HostedCRM, domain, "");
+                    }
+                }
+
 
 				PackageContext cntx = PackageController.GetPackageContext(packageId);
 
@@ -360,60 +379,6 @@ namespace WebsitePanel.EnterpriseServer
 
 			    PackageController.AddPackageItem(orgDomain);
 
-
-                if (cntx.Quotas[Quotas.EXCHANGE2007_MAILBOXES] != null)
-                {
-                    // 5) Create default mailbox plans
-                    // load user info
-                    UserInfo user = PackageController.GetPackageOwner(org.PackageId);
-
-                    // get  settings
-                    UserSettings userSettings = UserController.GetUserSettings(user.UserId, "ExchangeMailboxPlansPolicy");
-
-                    if (!string.IsNullOrEmpty(userSettings[UserSettings.DEFAULT_MAILBOXPLANS]))
-                    {
-
-                        List<ExchangeMailboxPlan> list = new List<ExchangeMailboxPlan>();
-
-                        XmlSerializer serializer = new XmlSerializer(list.GetType());
-
-                        StringReader reader = new StringReader(userSettings[UserSettings.DEFAULT_MAILBOXPLANS]);
-
-                        list = (List<ExchangeMailboxPlan>)serializer.Deserialize(reader);
-
-                        foreach (ExchangeMailboxPlan p in list)
-                        {
-                            ExchangeServerController.AddExchangeMailboxPlan(itemId, p);
-                        }
-                    }
-                }
-
-                if (cntx.Quotas[Quotas.LYNC_USERS] != null)
-                {
-                    // 5) Create default mailbox plans
-                    // load user info
-                    UserInfo user = PackageController.GetPackageOwner(org.PackageId);
-
-                    // get  settings
-                    UserSettings userSettings = UserController.GetUserSettings(user.UserId, "LyncUserPlansPolicy");
-
-                    if (!string.IsNullOrEmpty(userSettings[UserSettings.DEFAULT_LYNCUSERPLANS]))
-                    {
-
-                        List<LyncUserPlan> list = new List<LyncUserPlan>();
-
-                        XmlSerializer serializer = new XmlSerializer(list.GetType());
-
-                        StringReader reader = new StringReader(userSettings[UserSettings.DEFAULT_LYNCUSERPLANS]);
-
-                        list = (List<LyncUserPlan>)serializer.Deserialize(reader);
-
-                        foreach (LyncUserPlan p in list)
-                        {
-                            LyncController.AddLyncUserPlan(itemId, p);
-                        }
-                    }
-                }
 
 
 			}
@@ -461,7 +426,15 @@ namespace WebsitePanel.EnterpriseServer
                 DomainInfo domain = ServerController.GetDomain(domainId);
                 if (domain == null)
                     return -1;
-                
+
+                if (!string.IsNullOrEmpty(org.GlobalAddressList))
+                {
+                    if (DataProvider.CheckDomainUsedByHostedOrganization(domain.DomainName) == 1)
+                    {
+                        return -1;
+                    }
+                }
+                                
                 // unregister domain
                 DataProvider.DeleteExchangeOrganizationDomain(itemId, domainId);
 
@@ -553,7 +526,7 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-                LyncUsersPagedResult res = LyncController.GetLyncUsers(itemId, string.Empty, string.Empty, 0, int.MaxValue);
+                LyncUsersPagedResult res = LyncController.GetLyncUsers(itemId);
 
                 if (res.IsSuccess)
                 {
@@ -1042,6 +1015,37 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
+        public static int ChangeOrganizationDomainType(int itemId, int domainId, ExchangeAcceptedDomainType newDomainType)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // place log record
+            TaskManager.StartTask("ORGANIZATION", "CHANGE_DOMAIN_TYPE", domainId);
+            TaskManager.ItemId = itemId;
+
+            try
+            {   
+                // change accepted domain type on Exchange
+                int checkResult = ExchangeServerController.ChangeAcceptedDomainType(itemId, domainId, newDomainType);
+
+
+                // change accepted domain type in DB
+                int domainTypeId= (int) newDomainType;
+                DataProvider.ChangeExchangeAcceptedDomainType(itemId, domainId, domainTypeId);
+
+                return checkResult;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
 
         public static int AddOrganizationDomain(int itemId, string domainName)
         {
@@ -1128,6 +1132,14 @@ namespace WebsitePanel.EnterpriseServer
                 if (!string.IsNullOrEmpty(org.GlobalAddressList))
                 {
                     ExchangeServerController.AddAuthoritativeDomain(itemId, domain.DomainId);
+                }
+
+                OrganizationStatistics orgStatsExchange = ExchangeServerController.GetOrganizationStatistics(itemId);
+
+                if (orgStatsExchange.AllocatedMailboxes == 0)
+                {
+                    ExchangeAcceptedDomainType newDomainType = ExchangeAcceptedDomainType.InternalRelay;
+                    ChangeOrganizationDomainType(org.ServiceId, domain.DomainId, newDomainType);
                 }
 
                 if (org.IsOCSOrganization)
@@ -1324,11 +1336,11 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (orgProxy.CreateUser(org.OrganizationId, sAMAccountName, displayName, upn, password, enabled) == 0)
                 {
-                    OrganizationUser retUser = orgProxy.GetUserGeneralSettings(upn, org.OrganizationId);
+                    accountName = sAMAccountName;
+                    OrganizationUser retUser = orgProxy.GetUserGeneralSettings(sAMAccountName, org.OrganizationId);
                     TaskManager.Write("sAMAccountName :" + retUser.DomainUserName);
 
-                    userId = AddOrganizationUser(itemId, upn, displayName, email, retUser.DomainUserName, password, subscriberNumber);
-                    accountName = upn;
+                    userId = AddOrganizationUser(itemId, sAMAccountName, displayName, email, retUser.DomainUserName, password, subscriberNumber);
 
                     // register email address
                     AddAccountEmailAddress(userId, email);
@@ -1420,7 +1432,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 TaskManager.Write("sAMAccountName :" + retUser.DomainUserName);
 
-                userId = AddOrganizationUser(itemId, accountName, displayName, email, retUser.DomainUserName, password, subscriberNumber);
+                userId = AddOrganizationUser(itemId, retUser.SamAccountName, displayName, email, retUser.DomainUserName, password, subscriberNumber);
 
                 AddAccountEmailAddress(userId, email);
 
@@ -1449,6 +1461,9 @@ namespace WebsitePanel.EnterpriseServer
             string CounterStr = "00000";
             int counter = 0;
             bool bFound = false;
+
+            if (!AccountExists(accountName)) return accountName;
+
             do
             {
                 accountName = genSamLogin(name, CounterStr);
@@ -1505,8 +1520,15 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (DataProvider.CheckOCSUserExists(accountId))
                 {
-                    return BusinessErrorCodes.CURRENT_USER_IS_OCS_USER; ;
+                    return BusinessErrorCodes.CURRENT_USER_IS_OCS_USER; 
                 }
+
+                if (DataProvider.CheckLyncUserExists(accountId))
+                {
+                    return BusinessErrorCodes.CURRENT_USER_IS_LYNC_USER; 
+                }
+
+
                 // load organization
                 Organization org = GetOrganization(itemId);
                 if (org == null)
@@ -1652,7 +1674,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "UPDATE_MAILBOX_GENERAL");
+            TaskManager.StartTask("ORGANIZATION", "UPDATE_USER_GENERAL");
             TaskManager.ItemId = itemId;
 
             try
@@ -1717,7 +1739,7 @@ namespace WebsitePanel.EnterpriseServer
                 if (!String.IsNullOrEmpty(password))
                     account.AccountPassword = CryptoUtils.Encrypt(password);
                 else 
-                    account.AccountPassword = string.Empty;
+                    account.AccountPassword = null;
 
                 UpdateAccount(account);
 
@@ -1733,6 +1755,162 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.CompleteTask();
             }
         }
+
+
+        public static int SetUserPrincipalName(int itemId, int accountId, string userPrincipalName, bool inherit)
+        {
+
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+
+            // place log record
+            TaskManager.StartTask("ORGANIZATION", "SET_USER_USERPRINCIPALNAME");
+            TaskManager.ItemId = itemId;
+
+            try
+            {
+               
+
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return -1;
+
+                // check package
+                int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
+                if (packageCheck < 0) return packageCheck;
+
+                // load account
+                OrganizationUser user = GetUserGeneralSettings(itemId, accountId);
+
+                if (user.UserPrincipalName != userPrincipalName)
+                {
+                    bool userPrincipalNameOwned = false;
+                    ExchangeEmailAddress[] emails = ExchangeServerController.GetMailboxEmailAddresses(itemId, accountId);
+
+                    foreach (ExchangeEmailAddress mail in emails)
+                    {
+                        if (mail.EmailAddress == userPrincipalName)
+                        {
+                            userPrincipalNameOwned = true;
+                            break;
+                        }
+                    }
+
+                    if (!userPrincipalNameOwned)
+                    {
+                        if (EmailAddressExists(userPrincipalName))
+                            return BusinessErrorCodes.ERROR_EXCHANGE_EMAIL_EXISTS;
+                    }
+                }
+                
+                Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+
+                orgProxy.SetUserPrincipalName(org.OrganizationId,
+                                            user.AccountName,
+                                            userPrincipalName.ToLower());
+
+                DataProvider.UpdateExchangeAccountUserPrincipalName(accountId, userPrincipalName.ToLower());
+
+                if (inherit)
+                {
+                    if (user.AccountType == ExchangeAccountType.Mailbox)
+                    {
+                        ExchangeServerController.AddMailboxEmailAddress(itemId, accountId, userPrincipalName.ToLower());
+                        ExchangeServerController.SetMailboxPrimaryEmailAddress(itemId, accountId, userPrincipalName.ToLower());
+                    }
+                    else
+                    {
+                        if (user.IsLyncUser)
+                        {
+                            if (!DataProvider.LyncUserExists(accountId, userPrincipalName.ToLower()))
+                            {
+                                LyncController.SetLyncUserGeneralSettings(itemId, accountId, userPrincipalName.ToLower(), null);
+                            }
+                        }
+                        else
+                        {
+                            if (user.IsOCSUser)
+                            {
+                                OCSServer ocs = GetOCSProxy(itemId);
+                                string instanceId = DataProvider.GetOCSUserInstanceID(user.AccountId);
+                                ocs.SetUserPrimaryUri(instanceId, userPrincipalName.ToLower());
+                            }
+                        }
+                    }
+                }
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+
+        }
+
+
+        public static int SetUserPassword(int itemId, int accountId, string password)
+        {
+
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // place log record
+            TaskManager.StartTask("ORGANIZATION", "SET_USER_PASSWORD");
+            TaskManager.ItemId = itemId;
+
+            try
+            {
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return -1;
+
+                // check package
+                int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
+                if (packageCheck < 0) return packageCheck;
+
+                // load account
+                ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
+
+                string accountName = GetAccountName(account.AccountName);
+
+                Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+
+                orgProxy.SetUserPassword(   org.OrganizationId,
+                                            accountName,
+                                            password);
+
+                //account.
+                if (!String.IsNullOrEmpty(password))
+                    account.AccountPassword = CryptoUtils.Encrypt(password);
+                else
+                    account.AccountPassword = null;
+
+                UpdateAccount(account);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+
 
         private static void UpdateAccount(ExchangeAccount account)
         {                        
@@ -1951,6 +2129,19 @@ namespace WebsitePanel.EnterpriseServer
             }
             return res;
         }
+
+        private static OCSServer GetOCSProxy(int itemId)
+        {
+            Organization org = OrganizationController.GetOrganization(itemId);
+            int serviceId = PackageController.GetPackageServiceId(org.PackageId, ResourceGroups.OCS);
+
+            OCSServer ocs = new OCSServer();
+            ServiceProviderProxy.Init(ocs, serviceId);
+
+
+            return ocs;
+        }
+
     }
     
 }

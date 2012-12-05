@@ -59,7 +59,7 @@ namespace WebsitePanel.EnterpriseServer
         [WebMethod]
         public LyncUsersPagedResult GetLyncUsersPaged(int itemId, string sortColumn, string sortDirection, int startRow, int maximumRows)
         {
-            return LyncController.GetLyncUsers(itemId, sortColumn, sortDirection, startRow, maximumRows);
+            return LyncController.GetLyncUsersPaged(itemId, sortColumn, sortDirection, startRow, maximumRows);
         }
 
         [WebMethod]
@@ -118,6 +118,13 @@ namespace WebsitePanel.EnterpriseServer
         {
             return LyncController.GetLyncUserGeneralSettings(itemId, accountId);
         }
+
+        [WebMethod]
+        public LyncUserResult SetLyncUserGeneralSettings(int itemId, int accountId, string sipAddress, string lineUri)
+        {
+            return LyncController.SetLyncUserGeneralSettings(itemId, accountId, sipAddress, lineUri);
+        }
+
 
         [WebMethod]
         public LyncUserResult SetUserLyncPlan(int itemId, int accountId, int lyncUserPlanId)

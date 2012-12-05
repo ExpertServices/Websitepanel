@@ -245,21 +245,21 @@ namespace WebsitePanel.Server.Code
 
             foreach (string productId in productIdsToInstall)
             {
-                Log(string.Format("Product {0} to be installed", productId));
+                WriteLog(string.Format("Product {0} to be installed", productId));
 
                 Product product = _productManager.GetProduct(productId);
                 if (null == product)
                 {
-                    Log(string.Format("Product {0} not found", productId));
+                    WriteLog(string.Format("Product {0} not found", productId));
                     continue;
                 }
                 if (product.IsInstalled(true))
                 {
-                    Log(string.Format("Product {0} is installed", product.Title));
+                    WriteLog(string.Format("Product {0} is installed", product.Title));
                 }
                 else
                 {
-                    Log(string.Format("Adding product {0}", product.Title));
+                    WriteLog(string.Format("Adding product {0}", product.Title));
 
                     productsToInstall.Add(product);
                 }
@@ -279,21 +279,21 @@ namespace WebsitePanel.Server.Code
 
             foreach (string productId in updatedProductIdsToInstall)
             {
-                Log(string.Format("Product {0} to be installed", productId));
+                WriteLog(string.Format("Product {0} to be installed", productId));
 
                 Product product = _productManager.GetProduct(productId);
                 if (null == product)
                 {
-                    Log(string.Format("Product {0} not found", productId));
+                    WriteLog(string.Format("Product {0} not found", productId));
                     continue;
                 }
                 if (product.IsInstalled(true))
                 {
-                    Log(string.Format("Product {0} is installed", product.Title));
+                    WriteLog(string.Format("Product {0} is installed", product.Title));
                 }
                 else
                 {
-                    Log(string.Format("Adding product {0} with dependencies", product.Title));
+                    WriteLog(string.Format("Adding product {0} with dependencies", product.Title));
                     // search and add dependencies but skip webmatrix/iisexpress branches
                     AddProductWithDependencies(product, productsToInstall, WebMatrixChoiceProduct);
                 }
@@ -358,8 +358,15 @@ namespace WebsitePanel.Server.Code
                     string failureReason;
                     if (!_installManager.DownloadInstallerFile(installerContext, out failureReason))
                     {
-                        Log(string.Format("DownloadInstallerFile '{0}' failed: {1}",
+                        WriteLog(string.Format("DownloadInstallerFile '{0}' failed: {1}",
                                           installerContext.Installer.InstallerFile.InstallerUrl, failureReason));
+
+                        throw new Exception(
+                                          string.Format("Can't install {0}  DownloadInstallerFile '{1}' failed: {2}",
+                                          installerContext.ProductName,
+                                          installerContext.Installer.InstallerFile.InstallerUrl, 
+                                          failureReason)
+                                          );
                     }
                 }
             }
@@ -368,10 +375,8 @@ namespace WebsitePanel.Server.Code
             {
                 // Start installation
                 _installCompleted = false;
-                Log("_installManager.StartInstallation()");
                 _installManager.StartInstallation();
 
-                Log("_installManager.StartInstallation() done");
                 while (!_installCompleted)
                 {
                     Thread.Sleep(100);
@@ -385,7 +390,7 @@ namespace WebsitePanel.Server.Code
             }
             else
             {
-                Log("Nothing to install");
+                //Log("Nothing to install");
             }
 
         }
@@ -514,13 +519,14 @@ namespace WebsitePanel.Server.Code
             RemoveUnusedProviders(appInstaller.MSDeployPackage, dbTag);
 
             _installCompleted = false;
-            Log("_installManager.StartApplicationInstallation()");
+
             _installManager.StartApplicationInstallation();
             while (!_installCompleted)
             {
                 Thread.Sleep(1000);
             }
-            Log("_installManager.StartApplicationInstallation() _installCompleted");
+
+            WriteLog("InstallApplication complete");
 
             //save logs
             SaveLogDirectory();
@@ -564,7 +570,7 @@ namespace WebsitePanel.Server.Code
 
             foreach (string feed in _feeds)
             {
-                Log(string.Format("Loading {0}", feed));
+                WriteLog(string.Format("Loading feed {0}", feed));
                 if (feed.StartsWith("https://www.microsoft.com", StringComparison.OrdinalIgnoreCase))
                 {
                     _productManager.Load(new Uri(feed), true, true, true, _webPIinstallersFolder);
@@ -575,9 +581,9 @@ namespace WebsitePanel.Server.Code
                 }
             }
 
-            Log(string.Format("{0} products loaded", _productManager.Products.Count));
+            WriteLog(string.Format("{0} products loaded", _productManager.Products.Count));
 
-            LogDebugInfo();
+            //LogDebugInfo();
         }
 
         private Language GetLanguage(string languageId)
@@ -606,52 +612,49 @@ namespace WebsitePanel.Server.Code
             return installersToUse;
         }
 
-        private void LogDebugInfo()
+
+        //private void LogDebugInfo()
+        //{
+        //    StringBuilder sb = new StringBuilder();
+
+        //    sb.Append("Products: ");
+
+        //    sb.Append("Tabs: ").AppendLine();
+        //    foreach (Tab tab in _productManager.Tabs)
+        //    {
+        //        sb.AppendFormat("\t{0}, FromCustomFeed = {1}", tab.Name, tab.FromCustomFeed).AppendLine();
+        //        foreach (string f in tab.FeedList)
+        //        {
+        //            sb.AppendFormat("\t\t{0}", f).AppendLine();
+        //        }
+        //        sb.AppendLine();
+        //    }
+        //    sb.AppendLine();
+
+        //    sb.Append("Keywords: ").AppendLine().Append("\t");
+        //    foreach (Keyword keyword in _productManager.Keywords)
+        //    {
+        //        sb.Append(keyword.Id).Append(",");
+        //    }
+        //    sb.AppendLine();
+
+        //    sb.Append("Languages: ").AppendLine().Append("\t");
+        //    foreach (Language language in _productManager.Languages)
+        //    {
+        //        sb.Append(language.Name).Append(",");
+        //    }
+        //    sb.AppendLine();
+
+        //    Log(sb.ToString());
+        //}
+
+        private static void WriteLog(string message)
         {
-            StringBuilder sb = new StringBuilder();
-
-            sb.Append("Products: ");
-
-            sb.Append("Tabs: ").AppendLine();
-            foreach (Tab tab in _productManager.Tabs)
-            {
-                sb.AppendFormat("\t{0}, FromCustomFeed = {1}", tab.Name, tab.FromCustomFeed).AppendLine();
-                foreach (string f in tab.FeedList)
-                {
-                    sb.AppendFormat("\t\t{0}", f).AppendLine();
-                }
-                sb.AppendLine();
-            }
-            sb.AppendLine();
-
-            sb.Append("Keywords: ").AppendLine().Append("\t");
-            foreach (Keyword keyword in _productManager.Keywords)
-            {
-                sb.Append(keyword.Id).Append(",");
-            }
-            sb.AppendLine();
-
-            sb.Append("Languages: ").AppendLine().Append("\t");
-            foreach (Language language in _productManager.Languages)
-            {
-                sb.Append(language.Name).Append(",");
-            }
-            sb.AppendLine();
-
-            Log(sb.ToString());
-        }
-
-        private static void Log(string message)
-        {
-//#if DEBUG
             Debug.WriteLine(string.Format("[{0}] WpiHelper: {1}", Process.GetCurrentProcess().Id, message));
-            Console.WriteLine(message);
-//#endif
         }
 
         private void InstallManager_InstallCompleted(object sender, EventArgs e)
         {
-            Log("Installation completed");
             if (null != _installManager)
             {
                 /*
@@ -670,11 +673,11 @@ namespace WebsitePanel.Server.Code
 
         private void InstallManager_InstallerStatusUpdated(object sender, InstallStatusEventArgs e)
         {
-            Log(string.Format("{0}: {1}. {2} Progress: {3}",
-                e.InstallerContext.ProductName,
-                e.InstallerContext.InstallationState,
-                e.InstallerContext.ReturnCode.DetailedInformation,
-                e.ProgressValue));
+            //Log(string.Format("{0}: {1}. {2} Progress: {3}",
+            //    e.InstallerContext.ProductName,
+            //    e.InstallerContext.InstallationState,
+            //    e.InstallerContext.ReturnCode.DetailedInformation,
+            //    e.ProgressValue));
         }
 
         private static void AddProductWithDependencies(Product product, List<Product> productsToInstall, string skipProduct)
@@ -691,7 +694,7 @@ namespace WebsitePanel.Server.Code
                 {
                     if (string.Equals(dependency.ProductId, skipProduct, StringComparison.OrdinalIgnoreCase))
                     {
-                        Log(string.Format("Product {0} is iis express dependency, skip it", dependency.Title));
+                        //Log(string.Format("Product {0} is iis express dependency, skip it", dependency.Title));
                         continue;
                     }
 
@@ -702,13 +705,10 @@ namespace WebsitePanel.Server.Code
 
         private void SaveLogDirectory()
         {
-            Log("SaveLogDirectory");
             foreach (InstallerContext ctx in _installManager.InstallerContexts)
             {
-                Log(ctx.LogFileDirectory);
                 _LogFileDirectory = ctx.LogFileDirectory;
                 break;
-
             }
         }
 

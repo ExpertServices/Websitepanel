@@ -473,6 +473,13 @@ INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDe
 END
 GO
 
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Web.AllowIPAddressModeSwitch')
+BEGIN
+	INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (333, 2, 22, N'Web.AllowIPAddressModeSwitch', N'Allow IP Address Mode Switch', 1, 0, NULL)
+END
+GO
+
+
 
 DELETE FROM [dbo].[PackageQuotas] WHERE [QuotaID] IN (SELECT [QuotaID] FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.POP3Enabled')
 DELETE FROM [dbo].[HostingPlanQuotas] WHERE [QuotaID] IN (SELECT [QuotaID] FROM [dbo].[Quotas] WHERE [QuotaName] = N'Exchange2007.POP3Enabled')
@@ -550,6 +557,30 @@ GO
 
 
 UPDATE [dbo].[ResourceGroups] SET ShowGroup=1 
+GO
+
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='Quotas' AND COLS.name='HideQuota')
+BEGIN
+ALTER TABLE [dbo].[Quotas] ADD [HideQuota] [bit] NULL
+END
+GO
+
+UPDATE [dbo].[Quotas] SET [HideQuota] = 1 WHERE [QuotaName] = N'OS.DomainPointers'
+GO
+
+
+/****** Object:  Table [dbo].[ExchangeAccounts]    Extend Exchange Accounts with UserPrincipalName ******/
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeAccounts' AND COLS.name='UserPrincipalName')
+BEGIN
+ALTER TABLE [dbo].[ExchangeAccounts] ADD
+	[UserPrincipalName] [nvarchar] (300) COLLATE Latin1_General_CI_AS NULL
+END
+GO
+
+IF NOT EXISTS(SELECT 1 FROM [dbo].[ExchangeAccounts] WHERE UserPrincipalName IS NOT NULL)
+BEGIN
+	UPDATE [dbo].[ExchangeAccounts] SET [UserPrincipalName] = PrimaryEmailAddress WHERE AccountType IN (1,7)
+END
 GO
 
 
@@ -694,6 +725,7 @@ FROM Domains AS D
 INNER JOIN Packages AS P ON D.PackageID = P.PackageID
 WHERE CHARINDEX('.' + DomainName, @DomainName) > 0
 AND (CHARINDEX('.' + DomainName, @DomainName) + LEN('.' + DomainName)) = LEN(@DomainName) + 1
+AND IsDomainPointer = 0
 
 -- this is a domain of other user
 IF @UserID <> @DomainUserID AND @HostingAllowed = 0
@@ -1449,7 +1481,8 @@ INSERT INTO ExchangeAccounts
 	SamAccountName,
 	AccountPassword,
 	MailboxPlanId,
-	SubscriberNumber
+	SubscriberNumber,
+	UserPrincipalName
 )
 VALUES
 (
@@ -1463,7 +1496,8 @@ VALUES
 	@SamAccountName,
 	@AccountPassword,
 	@MailboxPlanId,
-	@SubscriberNumber
+	@SubscriberNumber,
+	@PrimaryEmailAddress
 )
 
 SET @AccountID = SCOPE_IDENTITY()
@@ -1699,6 +1733,7 @@ GO
 
 
 
+
 ALTER FUNCTION [dbo].[CalculateQuotaUsage]
 (
 	@PackageID int,
@@ -1728,7 +1763,7 @@ AS
 		ELSE IF @QuotaID = 54 -- sub-domains
 			SET @Result = (SELECT COUNT(D.DomainID) FROM PackagesTreeCache AS PT
 				INNER JOIN Domains AS D ON D.PackageID = PT.PackageID
-				WHERE IsSubDomain = 1 AND IsInstantAlias = 0 AND PT.ParentPackageID = @PackageID)
+				WHERE IsSubDomain = 1 AND IsInstantAlias = 0 AND IsDomainPointer = 0 AND PT.ParentPackageID = @PackageID)
 		ELSE IF @QuotaID = 220 -- domain pointers
 			SET @Result = (SELECT COUNT(D.DomainID) FROM PackagesTreeCache AS PT
 				INNER JOIN Domains AS D ON D.PackageID = PT.PackageID
@@ -1793,7 +1828,9 @@ AS
 			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
 				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
 				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
-				WHERE pt.ParentPackageID = @PackageID AND ea.MailboxPlanId IS NOT NULL)
+				WHERE pt.ParentPackageID = @PackageID 
+				AND ea.AccountType IN (1)
+				AND ea.MailboxPlanId IS NOT NULL)
 		ELSE IF @QuotaID = 77 -- Exchange2007.DiskSpace
 			SET @Result = (SELECT SUM(B.MailboxSizeMB) FROM ExchangeAccounts AS ea 
 			INNER JOIN ExchangeMailboxPlans AS B ON ea.MailboxPlanId = B.MailboxPlanId 
@@ -1821,7 +1858,6 @@ AS
 
 		RETURN @Result
 	END
-
 GO
 
 
@@ -2136,7 +2172,8 @@ SELECT
 	E.MailEnabledPublicFolder,
 	E.MailboxPlanId,
 	P.MailboxPlan, 
-	E.SubscriberNumber
+	E.SubscriberNumber,
+	E.UserPrincipalName
 FROM
 	ExchangeAccounts  AS E
 LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId		
@@ -2221,7 +2258,8 @@ WITH Accounts AS (
 		EA.PrimaryEmailAddress,
 		EA.MailEnabledPublicFolder,
 		EA.MailboxPlanId,
-		EA.SubscriberNumber ' + @joincondition +
+		EA.SubscriberNumber,
+		EA.UserPrincipalName ' + @joincondition +
 	' WHERE ' + @condition + '
 )
 
@@ -2270,7 +2308,8 @@ SELECT
 	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
-	E.SubscriberNumber 
+	E.SubscriberNumber,
+	E.UserPrincipalName 
 FROM
 	ExchangeAccounts AS E
 LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
@@ -2281,6 +2320,37 @@ RETURN'
 END
 GO
 
+
+
+ALTER PROCEDURE [dbo].[GetExchangeAccountByAccountName] 
+(
+	@ItemID int,
+	@AccountName nvarchar(300)
+)
+AS
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber,
+	E.UserPrincipalName 
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+WHERE
+	E.ItemID = @ItemID AND
+	E.AccountName = @AccountName
+RETURN
+GO
 
 
 
@@ -2309,7 +2379,8 @@ SELECT
 	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
-	E.SubscriberNumber 
+	E.SubscriberNumber,
+	E.UserPrincipalName 
 FROM
 	ExchangeAccounts AS E
 LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
@@ -2336,7 +2407,8 @@ SELECT
 	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
-	E.SubscriberNumber 
+	E.SubscriberNumber, 
+	E.UserPrincipalName
 FROM
 	ExchangeAccounts AS E
 LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
@@ -2359,7 +2431,8 @@ SELECT
 	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
-	E.SubscriberNumber 
+	E.SubscriberNumber,
+	E.UserPrincipalName 
 FROM
 	ExchangeAccounts AS E
 LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
@@ -2399,7 +2472,8 @@ SELECT
 	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
-	E.SubscriberNumber 
+	E.SubscriberNumber,
+	E.UserPrincipalName 
 FROM
 	ExchangeAccounts AS E
 LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
@@ -2426,7 +2500,8 @@ SELECT
 	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
-	E.SubscriberNumber 
+	E.SubscriberNumber,
+	E.UserPrincipalName 
 FROM
 	ExchangeAccounts AS E
 LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
@@ -2449,7 +2524,8 @@ SELECT
 	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
-	E.SubscriberNumber 
+	E.SubscriberNumber,
+	E.UserPrincipalName 
 FROM
 	ExchangeAccounts AS E
 LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
@@ -2652,6 +2728,19 @@ ALTER PROCEDURE [dbo].[GetExchangeOrganizationStatistics]
 	@ItemID int
 )
 AS
+
+IF -1 IN (SELECT B.MailboxSizeMB FROM ExchangeAccounts AS A INNER JOIN ExchangeMailboxPlans AS B ON A.MailboxPlanId = B.MailboxPlanId WHERE A.ItemID=@ItemID)
+BEGIN
+SELECT
+	(SELECT COUNT(*) FROM ExchangeAccounts WHERE (AccountType = 1 OR AccountType = 5 OR AccountType = 6) AND ItemID = @ItemID) AS CreatedMailboxes,
+	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 2 AND ItemID = @ItemID) AS CreatedContacts,
+	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 3 AND ItemID = @ItemID) AS CreatedDistributionLists,
+	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 4 AND ItemID = @ItemID) AS CreatedPublicFolders,
+	(SELECT COUNT(*) FROM ExchangeOrganizationDomains WHERE ItemID = @ItemID) AS CreatedDomains,
+	(SELECT MIN(B.MailboxSizeMB) FROM ExchangeAccounts AS A INNER JOIN ExchangeMailboxPlans AS B ON A.MailboxPlanId = B.MailboxPlanId WHERE A.ItemID=@ItemID) AS UsedDiskSpace
+END
+ELSE
+BEGIN
 SELECT
 	(SELECT COUNT(*) FROM ExchangeAccounts WHERE (AccountType = 1 OR AccountType = 5 OR AccountType = 6) AND ItemID = @ItemID) AS CreatedMailboxes,
 	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 2 AND ItemID = @ItemID) AS CreatedContacts,
@@ -2659,6 +2748,8 @@ SELECT
 	(SELECT COUNT(*) FROM ExchangeAccounts WHERE AccountType = 4 AND ItemID = @ItemID) AS CreatedPublicFolders,
 	(SELECT COUNT(*) FROM ExchangeOrganizationDomains WHERE ItemID = @ItemID) AS CreatedDomains,
 	(SELECT SUM(B.MailboxSizeMB) FROM ExchangeAccounts AS A INNER JOIN ExchangeMailboxPlans AS B ON A.MailboxPlanId = B.MailboxPlanId WHERE A.ItemID=@ItemID) AS UsedDiskSpace
+END
+
 
 RETURN
 GO
@@ -2881,7 +2972,8 @@ SELECT
 	E.AccountPassword,
 	E.MailboxPlanId,
 	P.MailboxPlan,
-	E.SubscriberNumber 
+	E.SubscriberNumber,
+	E.UserPrincipalName 
 FROM
 	ExchangeAccounts AS E
 LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
@@ -2911,7 +3003,8 @@ SELECT
 	DisplayName,
 	PrimaryEmailAddress,
 	MailEnabledPublicFolder,
-	SubscriberNumber
+	SubscriberNumber,
+	UserPrincipalName
 FROM
 	ExchangeAccounts
 WHERE
@@ -2973,7 +3066,8 @@ SELECT
 	MailboxManagerActions,
 	SamAccountName,
 	AccountPassword, 
-	SubscriberNumber
+	SubscriberNumber,
+	UserPrincipalName
 FROM ExchangeAccounts
 WHERE AccountID = @AccountID
 
@@ -3042,7 +3136,8 @@ SELECT
 	EA.DisplayName,
 	EA.PrimaryEmailAddress,
 	EA.MailEnabledPublicFolder,
-	EA.SubscriberNumber
+	EA.SubscriberNumber,
+	EA.UserPrincipalName
 FROM ExchangeAccounts AS EA
 WHERE ' + @condition
 
@@ -3115,7 +3210,8 @@ SELECT
 	EA.AccountName,
 	EA.DisplayName,
 	EA.PrimaryEmailAddress,
-	EA.SubscriberNumber
+	EA.SubscriberNumber,
+	EA.UserPrincipalName
 FROM ExchangeAccounts AS EA
 WHERE ' + @condition
 
@@ -3175,7 +3271,7 @@ AS
 		ea.ItemID,
 		ea.AccountName,
 		ea.DisplayName,
-		ea.PrimaryEmailAddress,
+		ea.UserPrincipalName,
 		ea.SamAccountName,
 		ou.LyncUserPlanId,
 		lp.LyncUserPlanName
@@ -3213,7 +3309,7 @@ AS
 		ea.ItemID,
 		ea.AccountName,
 		ea.DisplayName,
-		ea.PrimaryEmailAddress,
+		ea.UserPrincipalName,
 		ea.SamAccountName,
 		ou.LyncUserPlanId,
 		lp.LyncUserPlanName
@@ -3642,6 +3738,13 @@ RETURN
 GO
 
 
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='LyncUsers' AND COLS.name='SipAddress')
+BEGIN
+ALTER TABLE [dbo].[LyncUsers] ADD
+	[SipAddress] [nvarchar] (300) COLLATE Latin1_General_CI_AS NULL
+END
+GO
+
 
 
 IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetLyncUsers')
@@ -3663,7 +3766,8 @@ CREATE TABLE #TempLyncUsers
 	[ItemID] [int] NOT NULL,
 	[AccountName] [nvarchar](300)  NOT NULL,
 	[DisplayName] [nvarchar](300)  NOT NULL,
-	[PrimaryEmailAddress] [nvarchar](300) NULL,
+	[UserPrincipalName] [nvarchar](300) NULL,
+	[SipAddress] [nvarchar](300) NULL,
 	[SamAccountName] [nvarchar](100) NULL,
 	[LyncUserPlanId] [int] NOT NULL,		
 	[LyncUserPlanName] [nvarchar] (300) NOT NULL,		
@@ -3678,10 +3782,16 @@ BEGIN
 	SET @condition = ''ORDER BY ea.DisplayName''
 END
 
-IF (@SortColumn = ''PrimaryEmailAddress'')
+IF (@SortColumn = ''UserPrincipalName'')
 BEGIN
-	SET @condition = ''ORDER BY ea.PrimaryEmailAddress''
+	SET @condition = ''ORDER BY ea.UserPrincipalName''
 END
+
+IF (@SortColumn = ''SipAddress'')
+BEGIN
+	SET @condition = ''ORDER BY ou.SipAddress''
+END
+
 
 IF (@SortColumn = ''LyncUserPlanName'')
 BEGIN
@@ -3698,7 +3808,8 @@ set @sql = ''
 		ea.ItemID,
 		ea.AccountName,
 		ea.DisplayName,
-		ea.PrimaryEmailAddress,
+		ea.UserPrincipalName,
+		ou.SipAddress,
 		ea.SamAccountName,
 		ou.LyncUserPlanId,
 		lp.LyncUserPlanName				
@@ -3734,11 +3845,17 @@ BEGIN
 			SELECT * FROM #TempLyncUsers 
 				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
 		END
-		IF (@SortColumn = ''PrimaryEmailAddress'')
+		IF (@SortColumn = ''UserPrincipalName'')
 		BEGIN
 			SELECT * FROM #TempLyncUsers 
-				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY UserPrincipalName DESC
 		END
+		IF (@SortColumn = ''SipAddress'')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY SipAddress DESC
+		END
+
 		IF (@SortColumn = ''LyncUserPlanName'')
 		BEGIN
 			SELECT * FROM #TempLyncUsers 
@@ -3748,7 +3865,7 @@ BEGIN
 	ELSE
 	BEGIN
 		SELECT * FROM #TempLyncUsers 
-			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY UserPrincipalName DESC
 	END
 
 	
@@ -3758,6 +3875,134 @@ DROP TABLE #TempLyncUsers'
 END
 GO
 
+
+
+
+ALTER PROCEDURE [dbo].[GetLyncUsers]
+(
+	@ItemID int,
+	@SortColumn nvarchar(40),
+	@SortDirection nvarchar(20),
+	@StartRow int,
+	@Count int	
+)
+AS
+
+CREATE TABLE #TempLyncUsers 
+(	
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int],	
+	[ItemID] [int] NOT NULL,
+	[AccountName] [nvarchar](300)  NOT NULL,
+	[DisplayName] [nvarchar](300)  NOT NULL,
+	[UserPrincipalName] [nvarchar](300) NULL,
+	[SipAddress] [nvarchar](300) NULL,
+	[SamAccountName] [nvarchar](100) NULL,
+	[LyncUserPlanId] [int] NOT NULL,		
+	[LyncUserPlanName] [nvarchar] (300) NOT NULL,		
+)
+
+
+DECLARE @condition nvarchar(700)
+SET @condition = ''
+
+IF (@SortColumn = 'DisplayName')
+BEGIN
+	SET @condition = 'ORDER BY ea.DisplayName'
+END
+
+IF (@SortColumn = 'UserPrincipalName')
+BEGIN
+	SET @condition = 'ORDER BY ea.UserPrincipalName'
+END
+
+IF (@SortColumn = 'SipAddress')
+BEGIN
+	SET @condition = 'ORDER BY ou.SipAddress'
+END
+
+
+IF (@SortColumn = 'LyncUserPlanName')
+BEGIN
+	SET @condition = 'ORDER BY lp.LyncUserPlanName'
+END
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = ''
+	INSERT INTO 
+		#TempLyncUsers 
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.UserPrincipalName,
+		ou.SipAddress,
+		ea.SamAccountName,
+		ou.LyncUserPlanId,
+		lp.LyncUserPlanName				
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		LyncUsers ou
+	INNER JOIN
+		LyncUserPlans lp 
+	ON
+		ou.LyncUserPlanId = lp.LyncUserPlanId				
+	ON 
+		ea.AccountID = ou.AccountID
+	WHERE 
+		ea.ItemID = @ItemID + @condition
+
+exec sp_executesql @sql, N'@ItemID int',@ItemID
+
+DECLARE @RetCount int
+SELECT @RetCount = COUNT(ID) FROM #TempLyncUsers 
+
+IF (@SortDirection = 'ASC')
+BEGIN
+	SELECT * FROM #TempLyncUsers 
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+END
+ELSE
+BEGIN
+	IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+	BEGIN
+		IF (@SortColumn = 'DisplayName')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
+		END
+		IF (@SortColumn = 'UserPrincipalName')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY UserPrincipalName DESC
+		END
+
+		IF (@SortColumn = 'SipAddress')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY SipAddress DESC
+		END
+
+		IF (@SortColumn = 'LyncUserPlanName')
+		BEGIN
+			SELECT * FROM #TempLyncUsers 
+				WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY LyncUserPlanName DESC
+		END
+	END
+	ELSE
+	BEGIN
+		SELECT * FROM #TempLyncUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY UserPrincipalName DESC
+	END
+
+	
+END
+
+DROP TABLE #TempLyncUsers
+GO
 
 
 
@@ -3902,6 +4147,7 @@ SELECT
 	dbo.GetPackageAllocatedQuota(@PackageID, Q.QuotaID) AS ParentQuotaValue
 FROM Quotas AS Q
 LEFT OUTER JOIN HostingPlanQuotas AS HPQ ON Q.QuotaID = HPQ.QuotaID AND HPQ.PlanID = @PlanID
+WHERE Q.HideQuota IS NULL OR Q.HideQuota = 0
 ORDER BY Q.QuotaOrder
 RETURN
 GO
@@ -4850,12 +5096,19 @@ RETURN'
 END
 GO
 
+UPDATE [dbo].[Providers] SET [DisplayName] = 'MailEnable Server 1.x - 7.x' WHERE [DisplayName] = 'MailEnable Server 1.x - 4.x'
+GO
 
+UPDATE [dbo].[Providers] SET [DisplayName] = 'SmarterMail 7.x - 8.x' WHERE [DisplayName] = 'SmarterMail 7.x'
+GO
+UPDATE [dbo].[Providers] SET [DisplayName] = 'SmarterMail 10.x +' WHERE [DisplayName] = 'SmarterMail 10.x'
+GO
+UPDATE [dbo].[Providers] SET [DisplayName] = 'SmarterStats 5.x +' WHERE [DisplayName] = 'SmarterStats 5.x-6.x'
+GO
 
-
-IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'SmarterMail 10.x')
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'SmarterMail 10.x +')
 BEGIN
-	INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (66, 4, N'SmarterMail', N'SmarterMail 10.x', N'WebsitePanel.Providers.Mail.SmarterMail10, WebsitePanel.Providers.Mail.SmarterMail10', N'SmarterMail60', NULL)
+	INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (66, 4, N'SmarterMail', N'SmarterMail 10.x +', N'WebsitePanel.Providers.Mail.SmarterMail10, WebsitePanel.Providers.Mail.SmarterMail10', N'SmarterMail60', NULL)
 	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (66, N'AdminPassword', N'')
 	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (66, N'AdminUsername', N'admin')
 	INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (66, N'DomainsPath', N'%SYSTEMDRIVE%\SmarterMail')
@@ -4964,18 +5217,6 @@ COMMIT TRAN
 RETURN 
 
 GO
-
-
-IF EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'SmarterStats 5.x-6.x')
-BEGIN
-	UPDATE [dbo].[Providers]
-	SET [DisplayName] = 'SmarterStats 5.x +'
-	WHERE [DisplayName] = 'SmarterStats 5.x-6.x'
-END
-GO
-
-
-
 
 
 
@@ -5211,6 +5452,66 @@ GO
 
 
 
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeOrganizationDomains' AND COLS.name='DomainTypeID')
+BEGIN
+ALTER TABLE [dbo].[ExchangeOrganizationDomains] ADD
+	[DomainTypeID] [int] NOT NULL CONSTRAINT DF_ExchangeOrganizationDomains_DomainTypeID DEFAULT 0
+END
+GO
+
+
+
+
+ALTER PROCEDURE [dbo].[GetExchangeOrganizationDomains] 
+(
+	@ItemID int
+)
+AS
+SELECT
+	ED.DomainID,
+	D.DomainName,
+	ED.IsHost,
+	ED.DomainTypeID
+FROM
+	ExchangeOrganizationDomains AS ED
+INNER JOIN Domains AS D ON ED.DomainID = D.DomainID
+WHERE ED.ItemID = @ItemID
+RETURN
+
+GO
+
+
+
+
+
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'ChangeExchangeAcceptedDomainType')
+BEGIN
+EXEC sp_executesql N'
+CREATE PROCEDURE [dbo].ChangeExchangeAcceptedDomainType 
+(
+	@ItemID int,
+	@DomainID int,
+	@DomainTypeID int
+)
+AS
+UPDATE ExchangeOrganizationDomains
+SET DomainTypeID=@DomainTypeID
+WHERE ItemID=ItemID AND DomainID=@DomainID
+RETURN'
+END
+GO
+
+
+
+
+
+
+
+
+
+
 ALTER PROCEDURE [dbo].[GetPackages]
 (
 	@ActorID int,
@@ -5356,4 +5657,1338 @@ exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @PackageID int, @Fil
 
 
 RETURN
+GO
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[DeleteServiceItem]
+(
+	@ActorID int,
+	@ItemID int
+)
+AS
+
+-- check rights
+DECLARE @PackageID int
+SELECT PackageID = @PackageID FROM ServiceItems
+WHERE ItemID = @ItemID
+
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+BEGIN TRAN
+
+UPDATE Domains
+SET ZoneItemID = NULL
+WHERE ZoneItemID = @ItemID
+
+DELETE FROM Domains
+WHERE WebSiteID = @ItemID AND IsDomainPointer = 1
+
+UPDATE Domains
+SET WebSiteID = NULL
+WHERE WebSiteID = @ItemID
+
+UPDATE Domains
+SET MailDomainID = NULL
+WHERE MailDomainID = @ItemID
+
+-- delete item comments
+DELETE FROM Comments
+WHERE ItemID = @ItemID AND ItemTypeID = 'SERVICE_ITEM'
+
+-- delete item properties
+DELETE FROM ServiceItemProperties
+WHERE ItemID = @ItemID
+
+-- delete external IP addresses
+EXEC dbo.DeleteItemIPAddresses @ActorID, @ItemID
+
+-- delete item
+DELETE FROM ServiceItems
+WHERE ItemID = @ItemID
+
+COMMIT TRAN
+
+RETURN 
+
+GO
+
+
+
+
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetOCSUsers]
+(
+	@ItemID int,
+	@SortColumn nvarchar(40),
+	@SortDirection nvarchar(20),
+	@Name nvarchar(400),
+	@Email nvarchar(400),
+	@StartRow int,
+	@Count int	
+)
+AS
+
+IF (@Name IS NULL)
+BEGIN
+	SET @Name = '%'
+END
+
+IF (@Email IS NULL)
+BEGIN
+	SET @Email = '%'
+END
+
+CREATE TABLE #TempOCSUsers 
+(	
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int],	
+	[ItemID] [int] NOT NULL,
+	[AccountName] [nvarchar](300)  NOT NULL,
+	[DisplayName] [nvarchar](300)  NOT NULL,
+	[InstanceID] [nvarchar](50)  NOT NULL,
+	[PrimaryEmailAddress] [nvarchar](300) NULL,
+	[SamAccountName] [nvarchar](100) NULL	
+)
+
+
+IF (@SortColumn = 'DisplayName')
+BEGIN
+	INSERT INTO 
+		#TempOCSUsers 
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ou.InstanceID,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName		
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		OCSUsers ou 
+	ON 
+		ea.AccountID = ou.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.DisplayName
+END
+ELSE
+BEGIN
+	INSERT INTO 
+		#TempOCSUsers
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ou.InstanceID,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName		
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		OCSUsers ou 
+	ON 
+		ea.AccountID = ou.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.PrimaryEmailAddress 
+END
+
+DECLARE @RetCount int
+SELECT @RetCount = COUNT(ID) FROM #TempOCSUsers 
+
+IF (@SortDirection = 'ASC')
+BEGIN
+	SELECT * FROM #TempOCSUsers 
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+END
+ELSE
+BEGIN
+	IF (@SortColumn = 'DisplayName')
+	BEGIN
+		SELECT * FROM #TempOCSUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
+	END
+	ELSE
+	BEGIN
+		SELECT * FROM #TempOCSUsers 
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
+	END
+	
+END
+
+
+DROP TABLE #TempOCSUsers
+
+GO
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetCRMUsers]
+(
+	@ItemID int,
+	@SortColumn nvarchar(40),
+	@SortDirection nvarchar(20),
+	@Name nvarchar(400),
+	@Email nvarchar(400),
+	@StartRow int,
+	@Count int	
+)
+AS
+
+IF (@Name IS NULL)
+BEGIN
+	SET @Name = '%'
+END
+
+IF (@Email IS NULL)
+BEGIN
+	SET @Email = '%'
+END
+
+CREATE TABLE #TempCRMUsers 
+(	
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[AccountID] [int],	
+	[ItemID] [int] NOT NULL,
+	[AccountName] [nvarchar](300) NOT NULL,
+	[DisplayName] [nvarchar](300) NOT NULL,
+	[PrimaryEmailAddress] [nvarchar](300) NULL,
+	[SamAccountName] [nvarchar](100) NULL	
+)
+
+
+IF (@SortColumn = 'DisplayName')
+BEGIN
+	INSERT INTO 
+		#TempCRMUsers
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName 
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		CRMUsers cu 
+	ON 
+		ea.AccountID = cu.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.DisplayName
+END
+ELSE
+BEGIN
+	INSERT INTO 
+		#TempCRMUsers
+	SELECT 
+		ea.AccountID,
+		ea.ItemID,
+		ea.AccountName,
+		ea.DisplayName,
+		ea.PrimaryEmailAddress,
+		ea.SamAccountName 
+	FROM 
+		ExchangeAccounts ea 
+	INNER JOIN 
+		CRMUsers cu 
+	ON 
+		ea.AccountID = cu.AccountID
+	WHERE 
+		ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email	
+	ORDER BY 
+		ea.PrimaryEmailAddress 
+END
+
+DECLARE @RetCount int
+SELECT @RetCount = COUNT(ID) FROM #TempCRMUsers
+
+IF (@SortDirection = 'ASC')
+BEGIN
+	SELECT * FROM #TempCRMUsers
+	WHERE ID > @StartRow AND ID <= (@StartRow + @Count) 
+END
+ELSE
+BEGIN
+	IF (@SortColumn = 'DisplayName')
+	BEGIN
+		SELECT * FROM #TempCRMUsers
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY DisplayName DESC
+	END
+	ELSE
+	BEGIN
+		SELECT * FROM #TempCRMUsers
+			WHERE ID >@RetCount - @Count - @StartRow AND ID <= @RetCount- @StartRow  ORDER BY PrimaryEmailAddress DESC
+	END
+	
+END
+
+
+
+DROP TABLE #TempCRMUsers
+GO
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetDomainsByZoneID')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[GetDomainsByZoneID]
+(
+	@ActorID int,
+	@ZoneID int
+)
+AS
+
+SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(D.WebSiteID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(D.MailDomainID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	Z.ItemName AS ZoneName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.IsDomainPointer
+FROM Domains AS D
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+WHERE
+	D.ZoneItemID = @ZoneID
+	AND dbo.CheckActorPackageRights(@ActorID, P.PackageID) = 1
+RETURN'
+END
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/****** Object:  Table [dbo].[ExchangeOrganizations]    Extend Exchange Accounts with ExchangeMailboxPlanID ******/
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeOrganizations' AND COLS.name='ExchangeMailboxPlanID')
+BEGIN
+ALTER TABLE [dbo].[ExchangeOrganizations] ADD [ExchangeMailboxPlanID] [int]
+END
+GO
+
+
+
+
+
+/****** Object:  Table [dbo].[ExchangeOrganizations]    Extend Exchange Accounts with LyncUserPlanID ******/
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeOrganizations' AND COLS.name='LyncUserPlanID')
+BEGIN
+ALTER TABLE [dbo].[ExchangeOrganizations] ADD [LyncUserPlanID] [int]
+END
+GO
+
+
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[SetOrganizationDefaultLyncUserPlan] 
+(
+	@ItemID int,
+	@LyncUserPlanId int
+)
+AS
+
+UPDATE ExchangeOrganizations SET
+	LyncUserPlanID = @LyncUserPlanId
+WHERE
+	ItemID = @ItemID
+
+RETURN
+GO
+
+
+
+ALTER PROCEDURE [dbo].[SetOrganizationDefaultExchangeMailboxPlan] 
+(
+	@ItemID int,
+	@MailboxPlanId int
+)
+AS
+
+UPDATE ExchangeOrganizations SET
+	ExchangeMailboxPlanID = @MailboxPlanId
+WHERE
+	ItemID = @ItemID
+
+RETURN
+GO
+
+
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetExchangeOrganization')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[GetExchangeOrganization]
+(
+	@ItemID int
+)
+AS
+SELECT
+	ItemID,
+	ExchangeMailboxPlanID,
+	LyncUserPlanID
+FROM
+	ExchangeOrganizations
+WHERE
+	ItemID = @ItemID 
+RETURN'
+END
+GO
+
+
+
+
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='Domains' AND COLS.name='DomainItemId')
+BEGIN
+ALTER TABLE [dbo].[Domains] ADD	[DomainItemId] [int] NULL
+
+END
+GO
+
+IF (SELECT Count(*) FROM Domains WHERE DomainItemId IS NOT NULL) = 0
+BEGIN
+	CREATE TABLE #TempDomains
+	(
+		[PackageID] [int] NOT NULL,
+		[ZoneItemID] [int] NULL,
+		[DomainName] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
+		[HostingAllowed] [bit] NOT NULL,
+		[WebSiteID] [int] NULL,
+		[IsSubDomain] [bit] NOT NULL,
+		[IsInstantAlias] [bit] NOT NULL,
+		[IsDomainPointer] [bit] NOT NULL,
+		[DomainItemID] [int] NULL,
+	)
+
+	UPDATE Domains SET DomainItemID = DomainID
+
+	INSERT INTO #TempDomains SELECT PackageID,
+	ZoneItemID,
+	DomainName,
+	HostingAllowed,
+	WebSiteID,
+	IsSubDomain,
+	IsInstantAlias,
+	IsDomainPointer,
+	DomainItemID FROM Domains WHERE WebSiteID IS NOT NULL
+
+	UPDATE Domains SET IsDomainPointer=0,WebSiteID=NULL, DomainItemID=NULL WHERE WebSiteID IS NOT NULL
+
+	INSERT INTO Domains SELECT PackageID,
+	ZoneItemID,
+	DomainName,
+	HostingAllowed,
+	WebSiteID,
+	NULL,
+	0,
+	IsInstantAlias,
+	1,
+	DomainItemID
+	 FROM #TempDomains
+
+
+	DROP TABLE #TempDomains
+END
+GO
+
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Web.EnableHostNameSupport')
+BEGIN
+	INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (334, 2, 23, N'Web.EnableHostNameSupport', N'Enable Hostname Support', 1, 0, NULL)
+END
+GO
+
+
+
+
+
+
+
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetDomainsByDomainItemID')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[GetDomainsByDomainItemID]
+(
+	@ActorID int,
+	@DomainID int
+)
+AS
+
+SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(D.WebSiteID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(D.MailDomainID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	Z.ItemName AS ZoneName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.IsDomainPointer
+FROM Domains AS D
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+WHERE
+	D.DomainItemID = @DomainID
+	AND dbo.CheckActorPackageRights(@ActorID, P.PackageID) = 1
+RETURN'
+END
+GO
+
+
+
+
+
+ALTER PROCEDURE [dbo].[UpdateDomain]
+(
+	@DomainID int,
+	@ActorID int,
+	@ZoneItemID int,
+	@HostingAllowed bit,
+	@WebSiteID int,
+	@MailDomainID int,
+	@DomainItemID int
+)
+AS
+
+-- check rights
+DECLARE @PackageID int
+SELECT @PackageID = PackageID FROM Domains
+WHERE DomainID = @DomainID
+
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+IF @ZoneItemID = 0 SET @ZoneItemID = NULL
+IF @WebSiteID = 0 SET @WebSiteID = NULL
+IF @MailDomainID = 0 SET @MailDomainID = NULL
+
+-- update record
+UPDATE Domains
+SET
+	ZoneItemID = @ZoneItemID,
+	HostingAllowed = @HostingAllowed,
+	WebSiteID = @WebSiteID,
+	MailDomainID = @MailDomainID,
+	DomainItemID = @DomainItemID
+WHERE
+	DomainID = @DomainID
+	RETURN
+GO
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetDnsRecordsTotal]
+(
+	@ActorID int,
+	@PackageID int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- create temp table for DNS records
+DECLARE @Records TABLE
+(
+	RecordID int,
+	RecordType nvarchar(10) COLLATE Latin1_General_CI_AS,
+	RecordName nvarchar(50) COLLATE Latin1_General_CI_AS
+)
+
+-- select PACKAGES DNS records
+DECLARE @ParentPackageID int, @TmpPackageID int
+SET @TmpPackageID = @PackageID
+
+WHILE 10 = 10
+BEGIN
+
+	-- get DNS records for the current package
+	INSERT INTO @Records (RecordID, RecordType, RecordName)
+	SELECT
+		GR.RecordID,
+		GR.RecordType,
+		GR.RecordName
+	FROM GlobalDNSRecords AS GR
+	WHERE GR.PackageID = @TmpPackageID
+	AND GR.RecordType + GR.RecordName NOT IN (SELECT RecordType + RecordName FROM @Records)
+
+	SET @ParentPackageID = NULL
+
+	-- get parent package
+	SELECT
+		@ParentPackageID = ParentPackageID
+	FROM Packages
+	WHERE PackageID = @TmpPackageID
+	
+	IF @ParentPackageID IS NULL -- the last parent
+	BREAK
+	
+	SET @TmpPackageID = @ParentPackageID
+END
+
+-- select VIRTUAL SERVER DNS records
+DECLARE @ServerID int
+SELECT @ServerID = ServerID FROM Packages
+WHERE PackageID = @PackageID
+
+INSERT INTO @Records (RecordID, RecordType, RecordName)
+SELECT
+	GR.RecordID,
+	GR.RecordType,
+	GR.RecordName
+FROM GlobalDNSRecords AS GR
+WHERE GR.ServerID = @ServerID
+AND GR.RecordType + GR.RecordName NOT IN (SELECT RecordType + RecordName FROM @Records)
+
+-- select SERVER DNS records
+INSERT INTO @Records (RecordID, RecordType, RecordName)
+SELECT
+	GR.RecordID,
+	GR.RecordType,
+	GR.RecordName
+FROM GlobalDNSRecords AS GR
+WHERE GR.ServerID IN (SELECT
+	SRV.ServerID
+FROM VirtualServices AS VS
+INNER JOIN Services AS S ON VS.ServiceID = S.ServiceID
+INNER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+WHERE VS.ServerID = @ServerID)
+AND GR.RecordType + GR.RecordName NOT IN (SELECT RecordType + RecordName FROM @Records)
+
+
+
+
+
+-- select SERVICES DNS records
+-- re-distribute package services
+EXEC DistributePackageServices @ActorID, @PackageID
+
+--INSERT INTO @Records (RecordID, RecordType, RecordName)
+--SELECT
+--	GR.RecordID,
+--	GR.RecordType,
+	-- GR.RecordName
+-- FROM GlobalDNSRecords AS GR
+-- WHERE GR.ServiceID IN (SELECT ServiceID FROM PackageServices WHERE PackageID = @PackageID)
+-- AND GR.RecordType + GR.RecordName NOT IN (SELECT RecordType + RecordName FROM @Records)
+
+
+SELECT
+	NR.RecordID,
+	NR.ServiceID,
+	NR.ServerID,
+	NR.PackageID,
+	NR.RecordType,
+	NR.RecordName,
+	NR.RecordData,
+	NR.MXPriority,
+	NR.SrvPriority,
+	NR.SrvWeight,
+	NR.SrvPort,	
+	NR.IPAddressID,
+	ISNULL(IP.ExternalIP, '') AS ExternalIP,
+	ISNULL(IP.InternalIP, '') AS InternalIP,
+	CASE
+		WHEN NR.RecordType = 'A' AND NR.RecordData = '' THEN dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP)
+		WHEN NR.RecordType = 'MX' THEN CONVERT(varchar(3), NR.MXPriority) + ', ' + NR.RecordData
+		WHEN NR.RecordType = 'SRV' THEN CONVERT(varchar(3), NR.SrvPort) + ', ' + NR.RecordData
+		ELSE NR.RecordData
+	END AS FullRecordData,
+	dbo.GetFullIPAddress(IP.ExternalIP, IP.InternalIP) AS IPAddress
+FROM @Records AS TR
+INNER JOIN GlobalDnsRecords AS NR ON TR.RecordID = NR.RecordID
+LEFT OUTER JOIN IPAddresses AS IP ON NR.IPAddressID = IP.AddressID
+
+RETURN
+GO
+
+
+
+
+ALTER PROCEDURE [dbo].[GetDomainByName]
+(
+	@ActorID int,
+	@DomainName nvarchar(100),
+	@SearchOnDomainPointer bit,
+	@IsDomainPointer bit
+)
+AS
+
+IF (@SearchOnDomainPointer = 1)
+BEGIN
+	SELECT
+		D.DomainID,
+		D.PackageID,
+		D.ZoneItemID,
+		D.DomainItemID,
+		D.DomainName,
+		D.HostingAllowed,
+		ISNULL(D.WebSiteID, 0) AS WebSiteID,
+		WS.ItemName AS WebSiteName,
+		ISNULL(D.MailDomainID, 0) AS MailDomainID,
+		MD.ItemName AS MailDomainName,
+		Z.ItemName AS ZoneName,
+		D.IsSubDomain,
+		D.IsInstantAlias,
+		D.IsDomainPointer
+	FROM Domains AS D
+	INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+	LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+	LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+	LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+	WHERE
+		D.DomainName = @DomainName
+		AND D.IsDomainPointer = @IsDomainPointer
+		AND dbo.CheckActorPackageRights(@ActorID, P.PackageID) = 1
+	RETURN
+END
+ELSE
+BEGIN
+	SELECT
+		D.DomainID,
+		D.PackageID,
+		D.ZoneItemID,
+		D.DomainItemID,
+		D.DomainName,
+		D.HostingAllowed,
+		ISNULL(D.WebSiteID, 0) AS WebSiteID,
+		WS.ItemName AS WebSiteName,
+		ISNULL(D.MailDomainID, 0) AS MailDomainID,
+		MD.ItemName AS MailDomainName,
+		Z.ItemName AS ZoneName,
+		D.IsSubDomain,
+		D.IsInstantAlias,
+		D.IsDomainPointer
+	FROM Domains AS D
+	INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+	LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+	LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+	LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+	WHERE
+		D.DomainName = @DomainName
+		AND dbo.CheckActorPackageRights(@ActorID, P.PackageID) = 1
+	RETURN
+END
+GO
+
+
+
+ALTER PROCEDURE [dbo].[GetDomain]
+(
+	@ActorID int,
+	@DomainID int
+)
+AS
+
+SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(WS.ItemID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(MD.ItemID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	Z.ItemName AS ZoneName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.IsDomainPointer
+FROM Domains AS D
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+WHERE
+	D.DomainID = @DomainID
+	AND dbo.CheckActorPackageRights(@ActorID, P.PackageID) = 1
+RETURN
+GO
+
+
+
+
+ALTER PROCEDURE [dbo].[GetDomains]
+(
+	@ActorID int,
+	@PackageID int,
+	@Recursive bit = 1
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(WS.ItemID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(MD.ItemID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	Z.ItemName AS ZoneName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.IsDomainPointer
+FROM Domains AS D
+INNER JOIN PackagesTree(@PackageID, @Recursive) AS PT ON D.PackageID = PT.PackageID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+RETURN
+GO
+
+
+
+
+ALTER PROCEDURE [dbo].[GetDomainsByZoneID]
+(
+	@ActorID int,
+	@ZoneID int
+)
+AS
+
+SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(D.WebSiteID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(D.MailDomainID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	Z.ItemName AS ZoneName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.IsDomainPointer
+FROM Domains AS D
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+WHERE
+	D.ZoneItemID = @ZoneID
+	AND dbo.CheckActorPackageRights(@ActorID, P.PackageID) = 1
+RETURN
+GO
+
+
+
+
+ALTER PROCEDURE [dbo].[GetDomainsPaged]
+(
+	@ActorID int,
+	@PackageID int,
+	@ServerID int,
+	@Recursive bit,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+SET NOCOUNT ON
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- build query and run it to the temporary table
+DECLARE @sql nvarchar(2000)
+
+IF @SortColumn = '' OR @SortColumn IS NULL
+SET @SortColumn = 'DomainName'
+
+SET @sql = '
+DECLARE @Domains TABLE
+(
+	ItemPosition int IDENTITY(1,1),
+	DomainID int
+)
+INSERT INTO @Domains (DomainID)
+SELECT
+	D.DomainID
+FROM Domains AS D
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
+LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+WHERE (D.IsInstantAlias = 0 AND D.IsDomainPointer = 0) AND
+		((@Recursive = 0 AND D.PackageID = @PackageID)
+		OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, D.PackageID) = 1))
+AND (@ServerID = 0 OR (@ServerID > 0 AND S.ServerID = @ServerID))
+'
+
+IF @FilterColumn <> '' AND @FilterValue <> ''
+SET @sql = @sql + ' AND ' + @FilterColumn + ' LIKE @FilterValue '
+
+IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
+
+SET @sql = @sql + ' SELECT COUNT(DomainID) FROM @Domains;SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(WS.ItemID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(MD.ItemID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.IsDomainPointer,
+	
+	-- packages
+	P.PackageName,
+	
+	-- server
+	ISNULL(SRV.ServerID, 0) AS ServerID,
+	ISNULL(SRV.ServerName, '''') AS ServerName,
+	ISNULL(SRV.Comments, '''') AS ServerComments,
+	ISNULL(SRV.VirtualServer, 0) AS VirtualServer,
+	
+	-- user
+	P.UserID,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.FullName,
+	U.RoleID,
+	U.Email
+FROM @Domains AS SD
+INNER JOIN Domains AS D ON SD.DomainID = D.DomainID
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
+LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+WHERE SD.ItemPosition BETWEEN @StartRow + 1 AND @StartRow + @MaximumRows'
+
+exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @PackageID int, @FilterValue nvarchar(50), @ServerID int, @Recursive bit',
+@StartRow, @MaximumRows, @PackageID, @FilterValue, @ServerID, @Recursive
+
+
+RETURN
+GO
+
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [ParameterID] = 'LYNC_REPORT')
+BEGIN
+INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_HOSTED_SOLUTION_REPORT', N'LYNC_REPORT', N'Boolean', N'true', 5)
+END
+GO
+
+
+
+ALTER PROCEDURE [dbo].[GetItemIdByOrganizationId] 	
+	@OrganizationId nvarchar(128)
+AS
+BEGIN
+	SET NOCOUNT ON;
+    
+	SELECT 
+		ItemID
+	FROM 
+		dbo.ExchangeOrganizations
+	WHERE 
+		OrganizationId = @OrganizationId
+END
+GO
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[SearchServiceItemsPaged]
+(
+	@ActorID int,
+	@UserID int,
+	@ItemTypeID int,
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+
+
+-- check rights
+IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
+RAISERROR('You are not allowed to access this account', 16, 1)
+
+-- build query and run it to the temporary table
+DECLARE @sql nvarchar(2000)
+
+IF @ItemTypeID <> 13
+BEGIN
+	SET @sql = '
+	DECLARE @EndRow int
+	SET @EndRow = @StartRow + @MaximumRows
+	DECLARE @Items TABLE
+	(
+		ItemPosition int IDENTITY(1,1),
+		ItemID int
+	)
+	INSERT INTO @Items (ItemID)
+	SELECT
+		SI.ItemID
+	FROM ServiceItems AS SI
+	INNER JOIN Packages AS P ON P.PackageID = SI.PackageID
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	WHERE
+		dbo.CheckUserParent(@UserID, P.UserID) = 1
+		AND SI.ItemTypeID = @ItemTypeID
+	'
+
+	IF @FilterValue <> ''
+	SET @sql = @sql + ' AND SI.ItemName LIKE @FilterValue '
+
+	IF @SortColumn = '' OR @SortColumn IS NULL
+	SET @SortColumn = 'ItemName'
+
+	SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
+
+	SET @sql = @sql + ' SELECT COUNT(ItemID) FROM @Items;
+	SELECT
+		
+		SI.ItemID,
+		SI.ItemName,
+
+		P.PackageID,
+		P.PackageName,
+		P.StatusID,
+		P.PurchaseDate,
+		
+		-- user
+		P.UserID,
+		U.Username,
+		U.FirstName,
+		U.LastName,
+		U.FullName,
+		U.RoleID,
+		U.Email
+	FROM @Items AS I
+	INNER JOIN ServiceItems AS SI ON I.ItemID = SI.ItemID
+	INNER JOIN Packages AS P ON SI.PackageID = P.PackageID
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	WHERE I.ItemPosition BETWEEN @StartRow AND @EndRow'
+END
+ELSE
+BEGIN
+
+	SET @SortColumn = REPLACE(@SortColumn, 'ItemName', 'DomainName')
+	
+	SET @sql = '
+	DECLARE @EndRow int
+	SET @EndRow = @StartRow + @MaximumRows
+	DECLARE @Items TABLE
+	(
+		ItemPosition int IDENTITY(1,1),
+		ItemID int
+	)
+	INSERT INTO @Items (ItemID)
+	SELECT
+		D.DomainID
+	FROM Domains AS D
+	INNER JOIN Packages AS P ON P.PackageID = D.PackageID
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	WHERE
+		dbo.CheckUserParent(@UserID, P.UserID) = 1
+	'
+
+	IF @FilterValue <> ''
+	SET @sql = @sql + ' AND D.DomainName LIKE @FilterValue '
+
+	IF @SortColumn = '' OR @SortColumn IS NULL
+	SET @SortColumn = 'DomainName'
+
+	SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
+
+	SET @sql = @sql + ' SELECT COUNT(ItemID) FROM @Items;
+	SELECT
+		
+		D.DomainID AS ItemID,
+		D.DomainName AS ItemName,
+
+		P.PackageID,
+		P.PackageName,
+		P.StatusID,
+		P.PurchaseDate,
+		
+		-- user
+		P.UserID,
+		U.Username,
+		U.FirstName,
+		U.LastName,
+		U.FullName,
+		U.RoleID,
+		U.Email
+	FROM @Items AS I
+	INNER JOIN Domains AS D ON I.ItemID = D.DomainID
+	INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	WHERE I.ItemPosition BETWEEN @StartRow AND @EndRow AND D.IsDomainPointer=0'
+END
+
+exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @UserID int, @FilterValue nvarchar(50), @ItemTypeID int, @ActorID int',
+@StartRow, @MaximumRows, @UserID, @FilterValue, @ItemTypeID, @ActorID
+
+RETURN
+GO
+
+
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'LyncUserExists')
+BEGIN
+EXEC sp_executesql N'
+CREATE PROCEDURE [dbo].[LyncUserExists]
+(
+	@AccountID int,
+	@SipAddress nvarchar(300),
+	@Exists bit OUTPUT
+)
+AS
+
+	SET @Exists = 0
+	IF EXISTS(SELECT * FROM [dbo].[ExchangeAccountEmailAddresses] WHERE [EmailAddress] = @SipAddress AND [AccountID] <> @AccountID)
+		BEGIN
+			SET @Exists = 1
+		END
+	ELSE IF EXISTS(SELECT * FROM [dbo].[ExchangeAccounts] WHERE [PrimaryEmailAddress] = @SipAddress AND [AccountID] <> @AccountID)
+		BEGIN
+			SET @Exists = 1
+		END
+	ELSE IF EXISTS(SELECT * FROM [dbo].[ExchangeAccounts] WHERE [UserPrincipalName] = @SipAddress AND [AccountID] <> @AccountID)
+		BEGIN
+			SET @Exists = 1
+		END
+	ELSE IF EXISTS(SELECT * FROM [dbo].[ExchangeAccounts] WHERE [AccountName] = @SipAddress AND [AccountID] <> @AccountID)
+		BEGIN
+			SET @Exists = 1
+		END
+	ELSE IF EXISTS(SELECT * FROM [dbo].[LyncUsers] WHERE [SipAddress] = @SipAddress)
+		BEGIN
+			SET @Exists = 1
+		END
+		
+
+	RETURN'
+END
+GO
+
+
+
+
+ALTER PROCEDURE [dbo].[LyncUserExists]
+(
+	@AccountID int,
+	@SipAddress nvarchar(300),
+	@Exists bit OUTPUT
+)
+AS
+
+	SET @Exists = 0
+	IF EXISTS(SELECT * FROM [dbo].[ExchangeAccountEmailAddresses] WHERE [EmailAddress] = @SipAddress AND [AccountID] <> @AccountID)
+		BEGIN
+			SET @Exists = 1
+		END
+	ELSE IF EXISTS(SELECT * FROM [dbo].[ExchangeAccounts] WHERE [PrimaryEmailAddress] = @SipAddress AND [AccountID] <> @AccountID)
+		BEGIN
+			SET @Exists = 1
+		END
+	ELSE IF EXISTS(SELECT * FROM [dbo].[ExchangeAccounts] WHERE [UserPrincipalName] = @SipAddress AND [AccountID] <> @AccountID)
+		BEGIN
+			SET @Exists = 1
+		END
+	ELSE IF EXISTS(SELECT * FROM [dbo].[ExchangeAccounts] WHERE [AccountName] = @SipAddress AND [AccountID] <> @AccountID)
+		BEGIN
+			SET @Exists = 1
+		END
+	ELSE IF EXISTS(SELECT * FROM [dbo].[LyncUsers] WHERE [SipAddress] = @SipAddress)
+		BEGIN
+			SET @Exists = 1
+		END
+		
+
+	RETURN
+GO
+
+
+
+
+
+ALTER PROCEDURE [dbo].[AddLyncUser]	
+	@AccountID int,
+	@LyncUserPlanID int,
+	@SipAddress nvarchar(300)
+AS
+INSERT INTO
+	dbo.LyncUsers
+	(AccountID,
+	 LyncUserPlanID,
+	 CreatedDate,
+	 ModifiedDate,
+	 SipAddress)
+VALUES
+(		
+	@AccountID,
+	@LyncUserPlanID,
+	getdate(),
+	getdate(),
+	@SipAddress
+)
+GO
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'UpdateLyncUser')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[UpdateLyncUser] 
+(
+	@AccountID int,
+	@SipAddress nvarchar(300)
+)
+AS
+
+UPDATE LyncUsers SET
+	SipAddress = @SipAddress
+WHERE
+	AccountID = @AccountID
+
+RETURN'
+END
+GO
+
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'CheckDomainUsedByHostedOrganization')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[CheckDomainUsedByHostedOrganization] 
+	@DomainName nvarchar(100),
+	@Result int OUTPUT
+AS
+	SET @Result = 0
+	IF EXISTS(SELECT 1 FROM ExchangeAccounts WHERE UserPrincipalName LIKE ''%@''+ @DomainName)
+	BEGIN
+		SET @Result = 1
+	END
+	ELSE
+	IF EXISTS(SELECT 1 FROM ExchangeAccountEmailAddresses WHERE EmailAddress LIKE ''%@''+ @DomainName)
+	BEGIN
+		SET @Result = 1
+	END
+	ELSE
+	IF EXISTS(SELECT 1 FROM LyncUsers WHERE SipAddress LIKE ''%@''+ @DomainName)
+	BEGIN
+		SET @Result = 1
+	END
+		
+	RETURN @Result'
+END
+GO
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedSolution.AllowChangeUPN')
+BEGIN
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (230,	13,	4,	N'HostedSolution.AllowChangeUPN', N'Allow to Change UserPrincipalName',	1,	0, NULL)
+END
+GO
+
+
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'UpdateExchangeAccountUserPrincipalName')
+BEGIN
+EXEC sp_executesql N' CREATE PROCEDURE [dbo].[UpdateExchangeAccountUserPrincipalName] 
+(
+	@AccountID int,
+	@UserPrincipalName nvarchar(300)
+)
+AS
+
+UPDATE ExchangeAccounts SET
+	UserPrincipalName = @UserPrincipalName
+WHERE
+	AccountID = @AccountID
+
+RETURN'
+END
+GO
+
+
+IF  NOT EXISTS (SELECT 1 FROM LyncUsers WHERE SipAddress IS NOT NULL)
+BEGIN
+	UPDATE LyncUsers  SET SipAddress=EA.PrimaryEmailAddress FROM ExchangeAccounts AS EA WHERE LyncUsers.SipAddress IS NULL AND LyncUsers.AccountID = EA.AccountID
+END
 GO

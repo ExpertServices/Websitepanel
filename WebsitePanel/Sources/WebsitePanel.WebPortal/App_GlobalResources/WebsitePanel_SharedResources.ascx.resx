@@ -639,6 +639,9 @@
   <data name="Warning.CREATE_OCS_USER" xml:space="preserve">
     <value>OCS User has been successfully created but the following errors have been occured:</value>
   </data>
+  <data name="Error.OCS_GET_USERS" xml:space="preserve">
+    <value>Error reading organization OCS Users</value>
+  </data>
   <data name="Success.USER_CHANGE_PASSWORD" xml:space="preserve">
     <value>User account password has been changed</value>
   </data>
@@ -1052,6 +1055,12 @@
   </data>
   <data name="Error.607" xml:space="preserve">
     <value>Web Site meta-item IP address is not specified</value>
+  </data>
+  <data name="Error.610" xml:space="preserve">
+    <value>Invalid Global DNS entries in platform server configuration for dedicated IP address usage. Contact you platform administrator</value>
+  </data>
+  <data name="Error.611" xml:space="preserve">
+    <value>Invalid public shared ip address in platform server configuration for shared IP address usage. Contact you platform administrator</value>
   </data>
   <data name="Error.700" xml:space="preserve">
     <value>Specified mail domain already exists on the service</value>
@@ -1594,7 +1603,7 @@
     <value>File Manager</value>
   </data>
   <data name="Quota.OS.AllowTenantCreateDomains" xml:space="preserve">
-    <value>Tenant Top-Level Domain creation Allowed</value>
+    <value>Disable Tenant To Create Top-Level Domain</value>
   </data>
   <data name="Quota.SharePoint.Groups" xml:space="preserve">
     <value>SharePoint Groups</value>
@@ -2112,6 +2121,10 @@
   <data name="ServiceItemType.WebSite" xml:space="preserve">
     <value>Web Site</value>
   </data>
+  <data name="ServiceItemType.HostHeader" xml:space="preserve">
+    <value>Web Site Host Header</value>
+  </data>
+
   <data name="AuditLogSource.APP_INSTALLER" xml:space="preserve">
     <value>Applications Installer</value>
   </data>
@@ -2883,6 +2896,9 @@
   <data name="ServiceItemType.Organization" xml:space="preserve">
     <value>Hosted Organization</value>
   </data>
+  <data name="Error.EXCHANGE_UNABLE_TO_DELETE_DOMAIN" xml:space="preserve">
+    <value>Unable to delete domain, verify if domain is in use by hosted organization objects.</value>
+  </data>
   <data name="Error.EXCHANGE_CREATE_MAILBOX" xml:space="preserve">
     <value>Error creating mailbox. See audit log for more details.</value>
   </data>
@@ -3067,6 +3083,19 @@
   <data name="Success.ORGANIZATION_UPDATE_USER_SETTINGS" xml:space="preserve">
     <value>User general settings have been successfully updated.</value>
   </data>
+  <data name="Success.ORGANIZATION_SET_USER_PASSWORD" xml:space="preserve">
+    <value>User password has been successfully updated.</value>
+  </data>
+  <data name="Error.ORGANIZATION_SET_USER_PASSWORD" xml:space="preserve">
+    <value>Failed to update user password.</value>
+  </data>
+  <data name="Success.ORGANIZATION_SET_USER_USERPRINCIPALNAME" xml:space="preserve">
+    <value>User login name has been successfully updated.</value>
+  </data>
+  <data name="Error.ORGANIZATION_SET_USER_USERPRINCIPALNAME" xml:space="preserve">
+    <value>Failed to update user login name.</value>
+  </data>
+
   <data name="Success.EXCHANGE_MAILBOX_SET_DEFAULT_EMAIL" xml:space="preserve">
     <value>Mailbox primary e-mail address has been changed.</value>
   </data>
@@ -3163,6 +3192,9 @@
   <data name="Warning.2709" xml:space="preserve">
     <value>Cannot delete user account as it is used in OCS.</value>
   </data>
+  <data name="Warning.2710" xml:space="preserve">
+    <value>Cannot delete user account as it is used in Lync.</value>
+  </data>
   <data name="Quota.DNS.PrimaryZones" xml:space="preserve">
     <value>B2B Primary Zones Allowed</value>
   </data>
@@ -3244,6 +3276,9 @@
   <data name="Quota.HostedSolution.Users" xml:space="preserve">
     <value>Users per Organization</value>
   </data>
+  <data name="Quota.HostedSolution.AllowChangeUPN" xml:space="preserve">
+    <value>Allow to Change UserPrincipalName</value>
+  </data>
   <data name="Quota.HostedSolution.Domains" xml:space="preserve">
     <value>Domains per Organization</value>
   </data>
@@ -3301,6 +3336,10 @@
   <data name="Warning.DIST_LIST_SELECT_EMAILS_TO_DELETE" xml:space="preserve">
     <value>Please select E-mail address you want to delete from Distribution List</value>
   </data>
+  <data name="Warning.NOT_ALL_EMAIL_ADDRESSES_DELETED" xml:space="preserve">
+    <value>Please note not all email address are deleted</value>
+  </data>
+
   <data name="Warning.EXCHANGE_NONE_PUBLIC_FOLDER_TO_DELETE" xml:space="preserve">
     <value>There are no public folders to delete</value>
   </data>
@@ -4621,6 +4660,9 @@
   <data name="Error.GALLERY_APP_DOWNLOAD_FAILED" xml:space="preserve">
     <value>We apologize for the inconvenience but the application download has been failed. Please contact your service provider to correct the issue.</value>
   </data>
+  <data name="Error.GALLERY_APP_UNAUTHORIZEDACCESSEXCEPTION" xml:space="preserve">
+    <value>We apologize for the inconvenience but the application download has been failed. Access is denied. Check WebSitePanel event log.</value>
+  </data>
   <data name="Error.WAG_NOT_AVAILABLE" xml:space="preserve">
     <value>Web Application Gallery module is unavailable:</value>
   </data>
@@ -4852,6 +4894,12 @@
   <data name="Quota.Web.SSL" xml:space="preserve">
     <value>SSL</value>
   </data>
+  <data name="Quota.Web.AllowIPAddressModeSwitch" xml:space="preserve">
+    <value>Allow IP Address Mode Switch</value>
+  </data>
+  <data name="Quota.Web.EnableHostNameSupport" xml:space="preserve">
+    <value>Enable Hostname Support</value>
+  </data>
   <data name="ServiceItemType.ExchangeOrganization" xml:space="preserve">
     <value>Exchange Organization</value>
   </data>
@@ -5046,6 +5094,9 @@
   </data>
   <data name="Error.DELETE_LYNC_USER" xml:space="preserve">
     <value>Cannot delete Lync User, the following errors have been occured:</value>
+  </data>
+  <data name="Error.LYNC_UNABLE_TO_ADD_PLAN" xml:space="preserve">
+    <value>Unabled to add plan</value>
   </data>
   <data name="Success.UPDATE_LYNC_USER" xml:space="preserve">
     <value>General Lync User settings have been successfully updated.</value>

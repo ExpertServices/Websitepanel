@@ -130,7 +130,7 @@
     <value>Allow these settings to be managed from &lt;b&gt;Personal Mailbox Manager&lt;/b&gt;</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;b&gt;Primary E-Mail Address&lt;/b&gt; is a User Principal Name (UPN). It will be used as a login in Outlook and Outlook Web Access (OWA). Also, Primary E-Mail Address will be shown in "From" field of messages sent from this mailbox.&lt;/p&gt;&lt;p&gt;You can add new Domain Names on "Domain Names" page. &lt;/p&gt;&lt;p&gt;E-mail addresses of all Exchange accounts should be unique across the organization. You cannot add the same e-mail address to several accounts.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="gvEmailAddress.Header" xml:space="preserve">
     <value>E-mail Address</value>
@@ -139,7 +139,7 @@
     <value>The list of e-mails is empty. Add at least one e-mail address.</value>
   </data>
   <data name="gvPrimaryEmail.Header" xml:space="preserve">
-    <value>Primary E-mail Address (UPN)</value>
+    <value>Primary E-mail Address</value>
   </data>
   <data name="lblAddEmail.Text" xml:space="preserve">
     <value>Add New E-mail Address</value>

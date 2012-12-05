@@ -47,6 +47,7 @@
                                     <asp:ListItem Value="PrimaryEmailAddress" meta:resourcekey="ddlSearchColumnEmail">Email</asp:ListItem>
                                     <asp:ListItem Value="AccountName" meta:resourcekey="ddlSearchColumnAccountName">AccountName</asp:ListItem>
                                     <asp:ListItem Value="SubscriberNumber" meta:resourcekey="ddlSearchColumnSubscriberNumber">Account Number</asp:ListItem>
+                                    <asp:ListItem Value="UserPrincipalName" meta:resourcekey="ddlSearchColumnUserPrincipalName">Login</asp:ListItem>
                                 </asp:DropDownList><asp:TextBox ID="txtSearchValue" runat="server" CssClass="NormalTextBox" Width="100"></asp:TextBox><asp:ImageButton ID="cmdSearch" Runat="server" meta:resourcekey="cmdSearch" SkinID="SearchButton"
 		                            CausesValidation="false"/>
                             </asp:Panel>
@@ -74,14 +75,15 @@
 								    </asp:hyperlink>
 							    </ItemTemplate>
 						    </asp:TemplateField>
-						    <asp:BoundField HeaderText="gvUsersEmail" DataField="PrimaryEmailAddress" SortExpression="PrimaryEmailAddress" ItemStyle-Width="50%" />
-                            <asp:BoundField HeaderText="gvSubscriberNumber" DataField="SubscriberNumber" ItemStyle-Width="25%" />
+                            <asp:BoundField HeaderText="gvUsersLogin" DataField="UserPrincipalName" SortExpression="UserPrincipalName" ItemStyle-Width="25%" />
+                            <asp:BoundField HeaderText="gvUsersEmail" DataField="PrimaryEmailAddress" SortExpression="PrimaryEmailAddress" ItemStyle-Width="25%" />                            
+                            <asp:BoundField HeaderText="gvSubscriberNumber" DataField="SubscriberNumber" ItemStyle-Width="25%" />						    
 						    <asp:TemplateField ItemStyle-Wrap="False">
                                 <ItemTemplate>
-                                    <asp:Image ID="Image2" runat="server" Width="16px" Height="16px" ToolTip="Mail" ImageUrl='<%# GetMailImage((int)Eval("AccountType")) %>' />
-                                    <asp:Image ID="Image3" runat="server" Width="16px" Height="16px" ToolTip="OCS" ImageUrl='<%# GetOCSImage((bool)Eval("IsOCSUser"),(bool)Eval("IsLyncUser")) %>' />
-                                    <asp:Image ID="Image4" runat="server" Width="16px" Height="16px" ToolTip="BlackBerry" ImageUrl='<%# GetBlackBerryImage((bool)Eval("IsBlackBerryUser")) %>' />
-                                    <asp:Image ID="Image5" runat="server" Width="16px" Height="16px" ToolTip="CRM" ImageUrl='<%# GetCRMImage((Guid)Eval("CrmUserId")) %>' />
+                                    <asp:ImageButton ID="Image2" runat="server" Width="16px" Height="16px" ToolTip="Mail" ImageUrl='<%# GetMailImage((int)Eval("AccountType")) %>' CommandName="OpenMailProperties" CommandArgument='<%# Eval("AccountId") %>' Enabled=<%# EnableMailImageButton((int)Eval("AccountType")) %>/>
+                                    <asp:ImageButton ID="Image3" runat="server" Width="16px" Height="16px" ToolTip="UC" ImageUrl='<%# GetOCSImage((bool)Eval("IsOCSUser"),(bool)Eval("IsLyncUser")) %>' CommandName="OpenUCProperties" CommandArgument='<%# GetOCSArgument((int)Eval("AccountId"),(bool)Eval("IsOCSUser"),(bool)Eval("IsLyncUser")) %>' Enabled=<%# EnableOCSImageButton((bool)Eval("IsOCSUser"),(bool)Eval("IsLyncUser")) %>/>
+                                    <asp:ImageButton ID="Image4" runat="server" Width="16px" Height="16px" ToolTip="BlackBerry" ImageUrl='<%# GetBlackBerryImage((bool)Eval("IsBlackBerryUser")) %>' CommandName="OpenBlackBerryProperties" CommandArgument='<%# Eval("AccountId") %>' Enabled=<%# EnableBlackBerryImageButton((bool)Eval("IsBlackBerryUser")) %>/>
+                                    <asp:Image ID="Image5" runat="server" Width="16px" Height="16px" ToolTip="CRM" ImageUrl='<%# GetCRMImage((Guid)Eval("CrmUserId")) %>'  />
                                 </ItemTemplate>
 						    </asp:TemplateField>
 						    <asp:TemplateField>

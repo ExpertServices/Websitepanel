@@ -46,6 +46,7 @@
                                     <asp:ListItem Value="PrimaryEmailAddress" meta:resourcekey="ddlSearchColumnEmail">Email</asp:ListItem>
                                     <asp:ListItem Value="AccountName" meta:resourcekey="ddlSearchColumnAccountName">AccountName</asp:ListItem>
                                     <asp:ListItem Value="SubscriberNumber" meta:resourcekey="ddlSearchColumnSubscriberNumber">Account Number</asp:ListItem>
+                                    <asp:ListItem Value="UserPrincipalName" meta:resourcekey="ddlSearchColumnUserPrincipalName">Login</asp:ListItem>
                                 </asp:DropDownList><asp:TextBox ID="txtSearchValue" runat="server" CssClass="NormalTextBox" Width="100"></asp:TextBox><asp:ImageButton ID="cmdSearch" Runat="server" meta:resourcekey="cmdSearch" SkinID="SearchButton"
 		                            CausesValidation="false"/>
                             </asp:Panel>
@@ -64,6 +65,15 @@
 								    <asp:hyperlink id="lnk1" runat="server"
 									    NavigateUrl='<%# GetMailboxEditUrl(Eval("AccountId").ToString()) %>'>
 									    <%# Eval("DisplayName") %>
+								    </asp:hyperlink>
+							    </ItemTemplate>
+						    </asp:TemplateField>
+						    <asp:TemplateField HeaderText="gvUsersLogin" SortExpression="UserPrincipalName">
+							    <ItemStyle></ItemStyle>
+							    <ItemTemplate>							        
+								    <asp:hyperlink id="lnk2" runat="server"
+									    NavigateUrl='<%# GetOrganizationUserEditUrl(Eval("AccountId").ToString()) %>'>
+									    <%# Eval("UserPrincipalName") %>
 								    </asp:hyperlink>
 							    </ItemTemplate>
 						    </asp:TemplateField>

@@ -446,9 +446,29 @@ namespace WebsitePanel.EnterpriseServer
                             {
                                 hubTransportRole.AddAuthoritativeDomain(domain.DomainName);
                             }
+                            if (domain.DomainType != ExchangeAcceptedDomainType.Authoritative)
+                            {
+                                hubTransportRole.ChangeAcceptedDomainType(domain.DomainName, domain.DomainType);
+                            }
                         }
                         authDomainCreated = true;
                         break;
+                    }
+
+                    foreach (OrganizationDomainName d in domains)
+                    {
+                        DomainInfo domain = ServerController.GetDomain(d.DomainId);
+
+                        //Add the service records
+                        if (domain != null)
+                        {
+                            if (domain.ZoneItemId != 0)
+                            {
+                                ServerController.AddServiceDNSRecords(org.PackageId, ResourceGroups.Exchange, domain, "");
+                                ServerController.AddServiceDNSRecords(org.PackageId, ResourceGroups.BlackBerry, domain, "");
+                                ServerController.AddServiceDNSRecords(org.PackageId, ResourceGroups.OCS, domain, "");
+                            }
+                        }
                     }
 
 
@@ -747,7 +767,7 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = GetAccount(itemId, accountId);
 
-                return exchange.GetMailboxStatistics(account.AccountName);
+                return exchange.GetMailboxStatistics(account.UserPrincipalName);
             }
             catch (Exception ex)
             {
@@ -1221,6 +1241,9 @@ namespace WebsitePanel.EnterpriseServer
             string CounterStr = "00000";
             int counter = 0;
             bool bFound = false;
+
+            if (!AccountExists(accountName)) return accountName;
+
             do
             {
                 accountName = genSamLogin(name, CounterStr);
@@ -1293,8 +1316,13 @@ namespace WebsitePanel.EnterpriseServer
 				if (String.Compare(account.PrimaryEmailAddress, email.EmailAddress, true) == 0)
 				{
 					email.IsPrimary = true;
-					break;
 				}
+
+                if (String.Compare(account.UserPrincipalName, email.EmailAddress, true) == 0)
+                {
+                    email.IsUserPrincipalName = true;
+                }
+
 			}
 
 			return emails.ToArray();
@@ -1410,7 +1438,16 @@ namespace WebsitePanel.EnterpriseServer
                     if (domains == null || Array.BinarySearch(domains, domain.DomainName) < 0)
                         hubTransportRole.AddAuthoritativeDomain(domain.DomainName);
                     break;
-                }                               
+                }
+
+                //Add the service records
+                if (domain != null)
+                {
+                    if (domain.ZoneItemId != 0)
+                    {
+                        ServerController.AddServiceDNSRecords(org.PackageId, ResourceGroups.Exchange, domain, "");
+                    }
+                }
                 
                 return 0;
             }
@@ -1423,8 +1460,64 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.CompleteTask();
             }
         }
-		
 
+        public static int ChangeAcceptedDomainType(int itemId, int domainId, ExchangeAcceptedDomainType domainType)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "CHANGE_DOMAIN_TYPE");
+            TaskManager.TaskParameters["Domain ID"] = domainId;
+            TaskManager.TaskParameters["Domain Type"] = domainType.ToString();
+            TaskManager.ItemId = itemId;
+
+            try
+            { 
+                // load organization
+                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                if (org == null)
+                    return -1;
+
+                // load domain
+                DomainInfo domain = ServerController.GetDomain(domainId);
+                if (domain == null)
+                    return -1;
+
+                int[] hubTransportServiceIds;
+                int[] clientAccessServiceIds;
+                int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+                GetExchangeServices(exchangeServiceId, out hubTransportServiceIds, out clientAccessServiceIds);
+
+                foreach (int id in hubTransportServiceIds)
+                {
+                    ExchangeServer hubTransportRole = null;
+                    try
+                    {
+                        hubTransportRole = GetExchangeServer(id, org.ServiceId);
+                    }
+                    catch (Exception ex)
+                    {
+                        TaskManager.WriteError(ex);
+                        continue;
+                    }
+
+                    hubTransportRole.ChangeAcceptedDomainType(domain.DomainName, domainType);
+                    break;
+
+                }
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
 		
 		public static int DeleteAuthoritativeDomain(int itemId, int domainId)
 		{
@@ -1449,6 +1542,10 @@ namespace WebsitePanel.EnterpriseServer
 				if(domain == null)
 					return -1;
 
+                if (DataProvider.CheckDomainUsedByHostedOrganization(domain.DomainName) == 1)
+                {
+                    return -1;
+                }
 			
 				// delete domain on Exchange
 				int[] hubTransportServiceIds;
@@ -1473,6 +1570,17 @@ namespace WebsitePanel.EnterpriseServer
                     break;
 
                 }
+
+                //Add the service records
+                if (domain != null)
+                {
+                    if (domain.ZoneItemId != 0)
+                    {
+                        ServerController.RemoveServiceDNSRecords(org.PackageId, ResourceGroups.Exchange, domain, "", false);
+                    }
+                }
+
+
 
 			    return 0;
 			}
@@ -1594,6 +1702,9 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeMailboxPlan plan = GetExchangeMailboxPlan(itemId, mailboxPlanId);
                 if (maxDiskSpace != -1)
                 {
+                    if (plan.MailboxSizeMB == -1)
+                        return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+
                     if ((quotaUsed + plan.MailboxSizeMB) > (maxDiskSpace))
                         return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
                 }
@@ -1711,10 +1822,11 @@ namespace WebsitePanel.EnterpriseServer
                 // delete mailbox
                 int serviceExchangeId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(serviceExchangeId, org.ServiceId);
-                exchange.DisableMailbox(account.AccountName);
+                exchange.DisableMailbox(account.UserPrincipalName);
 
                 account.AccountType = ExchangeAccountType.User;                
-                account.MailEnabledPublicFolder = false;                                
+                account.MailEnabledPublicFolder = false;
+                account.AccountPassword = null;
                 UpdateAccount(account);
                 DataProvider.DeleteUserEmailAddresses(account.AccountId, account.PrimaryEmailAddress);
                 
@@ -1760,7 +1872,7 @@ namespace WebsitePanel.EnterpriseServer
 				// delete mailbox
 			    int serviceExchangeId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(serviceExchangeId, org.ServiceId);
-				exchange.DeleteMailbox(account.AccountName);
+				exchange.DeleteMailbox(account.UserPrincipalName);
 
 				
                 
@@ -1835,7 +1947,7 @@ namespace WebsitePanel.EnterpriseServer
 
 			    int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-				return exchange.GetMailboxGeneralSettings(account.AccountName);
+				return exchange.GetMailboxGeneralSettings(account.UserPrincipalName);
 			}
 			catch (Exception ex)
 			{
@@ -1882,7 +1994,7 @@ namespace WebsitePanel.EnterpriseServer
                     hideAddressBook = true;
 
                 exchange.SetMailboxGeneralSettings(
-                    account.AccountName,
+                    account.UserPrincipalName,
                     hideAddressBook,
                     disabled);
 
@@ -1954,7 +2066,7 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
                 exchange.SetMailboxEmailAddresses(
-					account.AccountName,
+					account.UserPrincipalName,
 					GetAccountSimpleEmailAddresses(itemId, accountId));
 
 				return 0;
@@ -2010,7 +2122,7 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
                 
 				exchange.SetMailboxPrimaryEmailAddress(
-					account.AccountName,
+					account.UserPrincipalName,
 					emailAddress);
 
                 if (DataProvider.CheckOCSUserExists(account.AccountId))
@@ -2020,7 +2132,13 @@ namespace WebsitePanel.EnterpriseServer
                     ocs.SetUserPrimaryUri(instanceId, emailAddress);
                 }
 
+                if (DataProvider.CheckLyncUserExists(account.AccountId))
+                {
+                    LyncController.SetLyncUserGeneralSettings(itemId, accountId, emailAddress, null);
+                }
+
 				// save account
+                account.AccountPassword = null;
 				UpdateAccount(account);
 
 				return 0;
@@ -2054,7 +2172,8 @@ namespace WebsitePanel.EnterpriseServer
 				List<string> toDelete = new List<string>();
 				foreach (string emailAddress in emailAddresses)
 				{
-					if (String.Compare(account.PrimaryEmailAddress, emailAddress, true) != 0)
+					if ((String.Compare(account.PrimaryEmailAddress, emailAddress, true) != 0) &
+                        (String.Compare(account.UserPrincipalName, emailAddress, true) != 0))
 						toDelete.Add(emailAddress);
 				}
 
@@ -2071,7 +2190,7 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
                 
 				exchange.SetMailboxEmailAddresses(
-					account.AccountName,
+					account.UserPrincipalName,
 					GetAccountSimpleEmailAddresses(itemId, accountId));
 
 				return 0;
@@ -2112,7 +2231,7 @@ namespace WebsitePanel.EnterpriseServer
 				// get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
 				ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-				ExchangeMailbox mailbox = exchange.GetMailboxMailFlowSettings(account.AccountName);
+				ExchangeMailbox mailbox = exchange.GetMailboxMailFlowSettings(account.UserPrincipalName);
 				mailbox.DisplayName = account.DisplayName;
 				return mailbox;
 			}
@@ -2157,7 +2276,7 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
-                exchange.SetMailboxMailFlowSettings(account.AccountName,
+                exchange.SetMailboxMailFlowSettings(account.UserPrincipalName,
                     enableForwarding,
                     forwardingAccountName,
                     forwardToBoth,
@@ -2205,7 +2324,7 @@ namespace WebsitePanel.EnterpriseServer
 				// get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
 				ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-				ExchangeMailbox mailbox = exchange.GetMailboxAdvancedSettings(account.AccountName);
+				ExchangeMailbox mailbox = exchange.GetMailboxAdvancedSettings(account.UserPrincipalName);
 				mailbox.DisplayName = account.DisplayName;
 				return mailbox;
 			}
@@ -2248,6 +2367,7 @@ namespace WebsitePanel.EnterpriseServer
                 else account.MailboxManagerActions &= ~action;
 
                 // update account
+                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -2412,7 +2532,7 @@ namespace WebsitePanel.EnterpriseServer
                 // get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-				ExchangeMailbox mailbox = exchange.GetMailboxPermissions(org.OrganizationId, account.AccountName);
+				ExchangeMailbox mailbox = exchange.GetMailboxPermissions(org.OrganizationId, account.UserPrincipalName);
                 mailbox.DisplayName = account.DisplayName;
                 return mailbox;
             }
@@ -2454,7 +2574,7 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
                 
-                exchange.SetMailboxPermissions(org.OrganizationId, account.AccountName, sendAsaccounts, fullAccessAcounts);
+                exchange.SetMailboxPermissions(org.OrganizationId, account.UserPrincipalName, sendAsaccounts, fullAccessAcounts);
                   
 
                 return 0;
@@ -2512,10 +2632,25 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 ExchangeMailboxPlan plan = GetExchangeMailboxPlan(itemId, mailboxPlanId);
+
                 if (maxDiskSpace != -1)
                 {
-                    if ((quotaUsed + plan.MailboxSizeMB) > (maxDiskSpace))
+                    if (plan.MailboxSizeMB == -1)
                         return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+
+                    ExchangeAccount exchangeAccount = GetAccount(itemId, accountId);
+                    if (exchangeAccount.MailboxPlanId > 0)
+                    {
+                        ExchangeMailboxPlan oldPlan = GetExchangeMailboxPlan(itemId, exchangeAccount.MailboxPlanId);
+
+                        if (((quotaUsed - oldPlan.MailboxSizeMB) + plan.MailboxSizeMB) > (maxDiskSpace))
+                            return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+                    }
+                    else
+                    {
+                        if ((quotaUsed + plan.MailboxSizeMB) > (maxDiskSpace))
+                            return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+                    }
                 }
 
                 // get mailbox settings
@@ -2524,7 +2659,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 exchange.SetMailboxAdvancedSettings(
                     org.OrganizationId,
-                    account.AccountName,
+                    account.UserPrincipalName,
                     plan.EnablePOP,
                     plan.EnableIMAP,
                     plan.EnableOWA,
@@ -2568,6 +2703,17 @@ namespace WebsitePanel.EnterpriseServer
                     ExchangeServerController.GetExchangeMailboxPlansByUser(itemId, user, ref mailboxPlans);
                 else
                     ExchangeServerController.GetExchangeMailboxPlansByUser(0, user, ref mailboxPlans);
+
+
+                ExchangeOrganization ExchangeOrg = ObjectUtils.FillObjectFromDataReader<ExchangeOrganization>(DataProvider.GetExchangeOrganization(itemId));
+
+                if (ExchangeOrg != null)
+                {
+                    foreach (ExchangeMailboxPlan p in mailboxPlans)
+                    {
+                        p.IsDefault = (p.MailboxPlanId == ExchangeOrg.ExchangeMailboxPlanID);
+                    }
+                }
 
                 return mailboxPlans;
             }
@@ -3058,6 +3204,7 @@ namespace WebsitePanel.EnterpriseServer
                 // update account
                 account.DisplayName = displayName;
                 account.PrimaryEmailAddress = emailAddress;
+                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -3386,6 +3533,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 // update account
                 account.DisplayName = displayName;
+                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -3606,6 +3754,7 @@ namespace WebsitePanel.EnterpriseServer
                     addressLists.ToArray());
 
                 // save account
+                account.AccountPassword = null;
                 UpdateAccount(account);
 
                 return 0;
@@ -4008,6 +4157,7 @@ namespace WebsitePanel.EnterpriseServer
 				account.AccountName = accountName;
 				account.MailEnabledPublicFolder = true;
 				account.PrimaryEmailAddress = email;
+                account.AccountPassword = null;
 				UpdateAccount(account);
 
 				// register e-mail
@@ -4060,6 +4210,7 @@ namespace WebsitePanel.EnterpriseServer
 				// update and save account
 				account.MailEnabledPublicFolder = false;
 				account.PrimaryEmailAddress = "";
+                account.AccountPassword = null;
 				UpdateAccount(account);
 
 
@@ -4179,6 +4330,7 @@ namespace WebsitePanel.EnterpriseServer
 				{
 					// rename original folder
 					account.DisplayName = newFullName;
+                    account.AccountPassword = null;
 					UpdateAccount(account);
 
 					// rename nested folders
@@ -4396,6 +4548,7 @@ namespace WebsitePanel.EnterpriseServer
 					emailAddress);
 
 				// save account
+                account.AccountPassword = null;
 				UpdateAccount(account);
 
 				return 0;
@@ -4613,7 +4766,7 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
-                return exchange.GetMobileDevices(account.AccountName);
+                return exchange.GetMobileDevices(account.UserPrincipalName);
             }
             catch (Exception ex)
             {

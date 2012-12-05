@@ -34,6 +34,6 @@
         public SharePointStatisticsReport SharePointReport { get; set; }
         public CRMStatisticsReport CRMReport { get; set; }
         public OrganizationStatisticsReport OrganizationReport { get; set; }
-
+        public LyncStatisticsReport LyncReport { get; set; }
     }
 }

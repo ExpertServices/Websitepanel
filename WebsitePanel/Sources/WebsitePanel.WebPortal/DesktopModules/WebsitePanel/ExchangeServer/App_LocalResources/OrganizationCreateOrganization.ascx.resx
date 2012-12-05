@@ -124,7 +124,7 @@
     <value>Create Organization</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;&lt;b&gt;Organization name&lt;/b&gt; is used just as display name for references purposes. It will not be used somewhere on Exchange Server.&lt;/p&gt; &lt;p&gt;&lt;b&gt;Organization ID&lt;/b&gt; is an unique organization identifier. Organization ID will be used as GAL name.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="locOrganizationID.Text" xml:space="preserve">
     <value>Organization ID: *</value>
@@ -155,5 +155,8 @@
   </data>
   <data name="valRequireOrgName.Text" xml:space="preserve">
     <value>*</value>
+  </data>
+  <data name="locDomainName.Text" xml:space="preserve">
+    <value>Domain Name:</value>
   </data>
 </root>

@@ -112,16 +112,19 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="cbCRM.Text" xml:space="preserve">
     <value>CRM Report</value>
   </data>
   <data name="cbExchange.Text" xml:space="preserve">
     <value>Exchange Report</value>
+  </data>
+  <data name="cbLync.Text" xml:space="preserve">
+    <value>Lync Report</value>
   </data>
   <data name="cbOrganization.Text" xml:space="preserve">
     <value>Organization Report</value>

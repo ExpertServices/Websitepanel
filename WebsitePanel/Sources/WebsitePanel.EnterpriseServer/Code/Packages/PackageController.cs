@@ -460,13 +460,37 @@ namespace WebsitePanel.EnterpriseServer
                             domain.PackageId = packageId;
                             domain.DomainName = domainName;
                             domain.HostingAllowed = false;
-                            domainId = ServerController.AddDomain(domain, createInstantAlias, true);
+                            domainId = ServerController.AddDomain(domain, false, true);
                             if (domainId < 0)
                             {
                                 result.Result = domainId;
                                 DeletePackage(packageId);
                                 return result;
                             }
+
+                            domain = ServerController.GetDomain(domainId);
+                            if (domain != null)
+                            {
+                                if (domain.ZoneItemId != 0)
+                                {
+                                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.Os, domain, "");
+                                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.Dns, domain, "");
+                                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.Ftp, domain, "");
+                                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MsSql2000, domain, "");
+                                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MsSql2005, domain, "");
+                                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MsSql2008, domain, "");
+                                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MsSql2012, domain, "");
+                                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MySql4, domain, "");
+                                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MySql5, domain, "");
+                                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.Statistics, domain, "");
+                                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.VPS, domain, "");
+                                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.VPSForPC, domain, "");
+                                }
+                            }
+                            
+                            if (createInstantAlias)
+                                ServerController.CreateDomainInstantAlias("", domainId);
+
                         }
                         catch (Exception ex)
                         {
@@ -481,7 +505,7 @@ namespace WebsitePanel.EnterpriseServer
                         // create web site
                         try
                         {
-                            int webSiteId = WebServerController.AddWebSite(packageId, hostName, domainId, 0, true, false);
+                            int webSiteId = WebServerController.AddWebSite(packageId, hostName, domainId, 0, createInstantAlias, false);
                             if (webSiteId < 0)
                             {
                                 result.Result = webSiteId;

@@ -295,5 +295,13 @@ namespace WebsitePanel.Portal
                 (cntx.Quotas[key].QuotaTypeId != 1 && (cntx.Quotas[key].QuotaAllocatedValue > 0 || cntx.Quotas[key].QuotaAllocatedValue == -1)));
         }
 
+
+        public static bool CheckQouta(string key, HostingPlanContext cntx)
+        {
+            return cntx.Quotas.ContainsKey(key) &&
+                ((cntx.Quotas[key].QuotaAllocatedValue == 1 && cntx.Quotas[key].QuotaTypeId == 1) ||
+                (cntx.Quotas[key].QuotaTypeId != 1 && (cntx.Quotas[key].QuotaAllocatedValue > 0 || cntx.Quotas[key].QuotaAllocatedValue == -1)));
+        }
+
     }
 }

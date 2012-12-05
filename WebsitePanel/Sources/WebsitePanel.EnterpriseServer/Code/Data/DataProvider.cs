@@ -785,13 +785,34 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@domainId", domainId));
         }
 
-        public static IDataReader GetDomainByName(int actorId, string domainName)
+        public static IDataReader GetDomainByName(int actorId, string domainName, bool searchOnDomainPointer, bool isDomainPointer)
         {
             return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
                 ObjectQualifier + "GetDomainByName",
                 new SqlParameter("@ActorId", actorId),
-                new SqlParameter("@domainName", domainName));
+                new SqlParameter("@domainName", domainName),
+                new SqlParameter("@SearchOnDomainPointer", searchOnDomainPointer),
+                new SqlParameter("@IsDomainPointer", isDomainPointer));
         }
+
+
+        public static DataSet GetDomainsByZoneId(int actorId, int zoneId)
+        {
+            return SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetDomainsByZoneID",
+                new SqlParameter("@ActorId", actorId),
+                new SqlParameter("@ZoneID", zoneId));
+        }
+
+        public static DataSet GetDomainsByDomainItemId(int actorId, int domainId)
+        {
+            return SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetDomainsByDomainItemId",
+                new SqlParameter("@ActorId", actorId),
+                new SqlParameter("@DomainID", domainId));
+        }
+
+
 
         public static int CheckDomain(int packageId, string domainName, bool isDomainPointer)
         {
@@ -807,6 +828,22 @@ namespace WebsitePanel.EnterpriseServer
 
             return Convert.ToInt32(prmId.Value);
         }
+
+
+
+        public static int CheckDomainUsedByHostedOrganization(string domainName)
+        {
+            SqlParameter prmId = new SqlParameter("@Result", SqlDbType.Int);
+            prmId.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "CheckDomainUsedByHostedOrganization",
+                prmId,
+                new SqlParameter("@domainName", domainName));
+
+            return Convert.ToInt32(prmId.Value);
+        }
+
 
         public static int AddDomain(int actorId, int packageId, int zoneItemId, string domainName,
             bool hostingAllowed, int webSiteId, int mailDomainId, bool isSubDomain, bool isInstantAlias, bool isDomainPointer)
@@ -832,7 +869,7 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         public static void UpdateDomain(int actorId, int domainId, int zoneItemId,
-            bool hostingAllowed, int webSiteId, int mailDomainId)
+            bool hostingAllowed, int webSiteId, int mailDomainId, int domainItemId)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
                 ObjectQualifier + "UpdateDomain",
@@ -841,7 +878,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@ZoneItemId", zoneItemId),
                 new SqlParameter("@HostingAllowed", hostingAllowed),
                 new SqlParameter("@WebSiteId", webSiteId),
-                new SqlParameter("@MailDomainId", mailDomainId));
+                new SqlParameter("@MailDomainId", mailDomainId),
+                new SqlParameter("@DomainItemId", domainItemId));
         }
 
         public static void DeleteDomain(int actorId, int domainId)
@@ -2153,6 +2191,18 @@ namespace WebsitePanel.EnterpriseServer
 			);
 		}
 
+        public static void ChangeExchangeAcceptedDomainType(int itemId, int domainId, int domainTypeId)
+        {            
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "ChangeExchangeAcceptedDomainType",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@DomainID", domainId),
+                new SqlParameter("@DomainTypeID", domainTypeId)
+            );
+        }
+
 		public static IDataReader GetExchangeOrganizationStatistics(int itemId)
 		{
 			return SqlHelper.ExecuteReader(
@@ -2302,6 +2352,16 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@MailboxPlanId", (mailboxPlanId == 0) ? (object)DBNull.Value : (object)mailboxPlanId),
                 new SqlParameter("@SubscriberNumber", (string.IsNullOrEmpty(subscriberNumber) ? (object)DBNull.Value : (object)subscriberNumber))
             );
+        }
+
+        public static void UpdateExchangeAccountUserPrincipalName(int accountId, string userPrincipalName)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateExchangeAccountUserPrincipalName",
+                new SqlParameter("@AccountID", accountId),
+                new SqlParameter("@UserPrincipalName", userPrincipalName));
         }
 
 		public static IDataReader GetExchangeAccount(int itemId, int accountId)
@@ -2548,6 +2608,18 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@ItemID", itemId)
             );
         }
+
+
+        public static IDataReader GetExchangeOrganization(int itemId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetExchangeOrganization",
+                new SqlParameter("@ItemID", itemId)
+            );
+        }
+
 
         public static void SetOrganizationDefaultExchangeMailboxPlan(int itemId, int mailboxPlanId)
         {
@@ -3211,7 +3283,7 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Lync
 
-        public static void AddLyncUser(int accountId, int lyncUserPlanId)
+        public static void AddLyncUser(int accountId, int lyncUserPlanId, string sipAddress)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString,
                                       CommandType.StoredProcedure,
@@ -3219,9 +3291,23 @@ namespace WebsitePanel.EnterpriseServer
                                       new[]
                                           {                                              
                                               new SqlParameter("@AccountID", accountId),
-                                              new SqlParameter("@LyncUserPlanID", lyncUserPlanId)
+                                              new SqlParameter("@LyncUserPlanID", lyncUserPlanId),
+                                              new SqlParameter("@SipAddress", sipAddress)
                                           });
         }
+
+        public static void UpdateLyncUser(int accountId, string sipAddress)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString,
+                                      CommandType.StoredProcedure,
+                                      "UpdateLyncUser",
+                                      new[]
+                                          {                                              
+                                              new SqlParameter("@AccountID", accountId),
+                                              new SqlParameter("@SipAddress", sipAddress)
+                                          });
+        }
+
 
         public static bool CheckLyncUserExists(int accountId)
         {
@@ -3229,6 +3315,25 @@ namespace WebsitePanel.EnterpriseServer
                                     new SqlParameter("@AccountID", accountId));
             return res > 0;
         }
+
+        public static bool LyncUserExists(int accountId, string sipAddress)
+        {
+            SqlParameter outParam = new SqlParameter("@Exists", SqlDbType.Bit);
+            outParam.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "LyncUserExists",
+                new SqlParameter("@AccountID", accountId),
+                new SqlParameter("@SipAddress", sipAddress),
+                outParam
+            );
+
+            return Convert.ToBoolean(outParam.Value);
+        }
+
+
 
         public static IDataReader GetLyncUsers(int itemId, string sortColumn, string sortDirection, int startRow, int count)
         {
@@ -3402,7 +3507,6 @@ namespace WebsitePanel.EnterpriseServer
 
         public static int GetPackageIdByName(string Name)
         {
-            // get Helicon Zoo provider
             int packageId = -1;
             List<ProviderInfo> providers = ServerController.GetProviders();
             foreach (ProviderInfo providerInfo in providers)
@@ -3414,10 +3518,10 @@ namespace WebsitePanel.EnterpriseServer
                 }
             }
 
-            if (-1 == packageId)
-            {
-                throw new Exception("Provider not found");
-            }
+            //if (-1 == packageId)
+            //{
+            //    throw new Exception("Provider not found");
+            //}
 
             return packageId;
         }

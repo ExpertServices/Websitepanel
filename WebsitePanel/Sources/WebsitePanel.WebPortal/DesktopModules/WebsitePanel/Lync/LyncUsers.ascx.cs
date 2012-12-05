@@ -108,8 +108,17 @@ namespace WebsitePanel.Portal.Lync
        
             // bind stats   
             BindStats();   
-        }  
+        }
 
+
+
+        public string GetOrganizationUserEditUrl(string accountId)
+        {
+            return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "edit_user",
+                    "AccountID=" + accountId,
+                    "ItemID=" + PanelRequest.ItemID,
+                    "Context=User");
+        }
 
     }
 }

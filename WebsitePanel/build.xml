@@ -721,7 +721,6 @@
     <TemplateFile Template="$(TrunkFolder)\WebsitePanelFeedTemplate.xml" OutputFilename="$(DeployFolder)\WebsitePanelFeed.xml" Tokens="@(Tokens)" />
   </Target>
 
-  <!--<Import Project="$(TrunkFolder)\WebsitePanelFeed.webpi.xml"/>-->
   <Import Project="$(RootFolder)\tools\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
 	<UsingTask TaskName="UploadFiles" AssemblyFile="$(RootFolder)\tools\CodePlex\CodePlex.WebServices.Client.dll" />
   

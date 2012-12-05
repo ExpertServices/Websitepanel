@@ -51,7 +51,7 @@ namespace WebsitePanel.Providers.Web
         ServerBinding[] GetSiteBindings(string siteId);
 		string CreateSite(WebSite site);
 		void UpdateSite(WebSite site);
-        void UpdateSiteBindings(string siteId, ServerBinding[] bindings);
+        void UpdateSiteBindings(string siteId, ServerBinding[] bindings, bool emptyBindingsAllowed);
 		void DeleteSite(string siteId);
 
 		// virtual directories

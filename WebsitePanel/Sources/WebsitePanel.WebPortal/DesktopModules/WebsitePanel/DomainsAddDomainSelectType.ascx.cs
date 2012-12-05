@@ -63,7 +63,7 @@ namespace WebsitePanel.Portal
                 {
                     if (user.Role == UserRole.User)
                     {
-                        DomainLink.Enabled = Utils.CheckQouta(Quotas.OS_ALLOWTENANTCREATEDOMAINS, cntx);
+                        DomainLink.Enabled = !Utils.CheckQouta(Quotas.OS_NOTALLOWTENANTCREATEDOMAINS, cntx);
                     }
                 }
             }

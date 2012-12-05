@@ -91,7 +91,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             try
             {
                 int result = ES.Services.ExchangeServer.AddMailboxEmailAddress(
-                    PanelRequest.ItemID, PanelRequest.AccountID, email.Email);
+                    PanelRequest.ItemID, PanelRequest.AccountID, email.Email.ToLower());
 
                 if (result < 0)
                 {
@@ -163,13 +163,30 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             // get selected e-mail addresses
             List<string> emails = new List<string>();
+            bool containsUPN = false;
+            EntServer.ExchangeEmailAddress[] tmpEmails = ES.Services.ExchangeServer.GetMailboxEmailAddresses( PanelRequest.ItemID, PanelRequest.AccountID);
+
 
             for (int i = 0; i < gvEmails.Rows.Count; i++)
             {
                 GridViewRow row = gvEmails.Rows[i];
                 CheckBox chkSelect = (CheckBox)row.FindControl("chkSelect");
                 if (chkSelect.Checked)
+                {
                     emails.Add(gvEmails.DataKeys[i].Value.ToString());
+                    foreach (EntServer.ExchangeEmailAddress tmpEmail in tmpEmails)
+                    {
+                        if (gvEmails.DataKeys[i].Value.ToString() == tmpEmail.EmailAddress)
+                        {
+                            if (tmpEmail.IsUserPrincipalName)
+                            {
+                                containsUPN = true;
+                                break;
+                            }
+
+                        }
+                    }
+                }
             }
 
             if (emails.Count == 0)
@@ -186,6 +203,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                 {
                     messageBox.ShowResultMessage(result);
                     return;
+                }
+                else
+                {
+                    if (containsUPN)
+                        messageBox.ShowWarningMessage("NOT_ALL_EMAIL_ADDRESSES_DELETED");
                 }
 
                 // rebind

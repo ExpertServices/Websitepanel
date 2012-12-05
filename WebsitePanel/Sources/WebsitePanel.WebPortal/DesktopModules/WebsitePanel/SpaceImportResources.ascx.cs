@@ -45,6 +45,8 @@ namespace WebsitePanel.Portal
 {
     public partial class SpaceImportResources : WebsitePanelModuleBase
     {
+        private static TreeNode rootNode;
+        
         protected void Page_Load(object sender, EventArgs e)
         {
 			// enable async tasks
@@ -52,6 +54,8 @@ namespace WebsitePanel.Portal
 
             if (!IsPostBack)
             {
+                tree.Attributes.Add("onClick", "TreeViewCheckBoxClicked(event)");
+
                 PrepareTree();
             }
         }
@@ -64,7 +68,7 @@ namespace WebsitePanel.Portal
             tree.NoExpandImageUrl = PortalUtils.GetThemedImage("empty.gif");
             tree.Nodes.Clear();
 
-            TreeNode rootNode = new TreeNode();
+            rootNode = new TreeNode();
             rootNode.ImageUrl = PortalUtils.GetThemedImage("folder.png");
             rootNode.Text = GetLocalizedString("Text.Resources");
             rootNode.Value = "Root";
@@ -72,16 +76,28 @@ namespace WebsitePanel.Portal
             tree.Nodes.Add(rootNode);
 
             // populate root node
+            TreeNode node;
             ServiceProviderItemType[] types = ES.Services.Import.GetImportableItemTypes(PanelSecurity.PackageId);
             foreach (ServiceProviderItemType type in types)
             {
-                TreeNode node = new TreeNode();
+                node = new TreeNode();
                 node.Value = "-" + type.ItemTypeId.ToString();
                 node.Text = GetSharedLocalizedString("ServiceItemType." + type.DisplayName);
                 node.PopulateOnDemand = true;
                 node.ImageUrl = PortalUtils.GetThemedImage("folder.png");
                 rootNode.ChildNodes.Add(node);
             }
+
+            // Add Import HostHeaders
+            node = new TreeNode();
+            node.Value = "+100";
+            node.Text = GetSharedLocalizedString("ServiceItemType.HostHeader");
+            node.PopulateOnDemand = true;
+            node.ImageUrl = PortalUtils.GetThemedImage("folder.png");
+            rootNode.ChildNodes.Add(node);
+
+
+
         }
 
         protected void tree_TreeNodePopulate(object sender, TreeNodeEventArgs e)
@@ -100,6 +116,58 @@ namespace WebsitePanel.Portal
                     e.Node.ChildNodes.Add(node);
                 }
             }
+
+            if (e.Node.Value.StartsWith("+"))
+            {
+                int itemTypeId = Utils.ParseInt(e.Node.Value.Substring(1), 0);
+                string[] items = ES.Services.Import.GetImportableItems(PanelSecurity.PackageId, itemTypeId * -1);
+
+                switch (itemTypeId)
+                {
+                    case 100:
+
+                        TreeNode headerNode = new TreeNode();
+                        headerNode.Text = GetSharedLocalizedString("ServiceItemType.HostHeader");
+                        headerNode.Value = "+" + itemTypeId.ToString();
+                        headerNode.ShowCheckBox = true;
+                        e.Node.ChildNodes.Add(headerNode);
+
+                        foreach (string item in items)
+                        {
+                            string[] objectData = item.Split('|');
+
+                            TreeNode userNode = null;
+                            foreach (TreeNode n in headerNode.ChildNodes)
+                            {
+                                if (n.Value == "+" + itemTypeId.ToString() + "|" + objectData[1]) 
+                                {
+                                    userNode = n;
+                                    break;
+                                }
+                            }
+
+                            if (userNode == null)
+                            {
+                                userNode = new TreeNode();
+                                userNode.Text = objectData[0];
+                                userNode.Value = "+" + itemTypeId.ToString() + "|" + objectData[1];
+                                userNode.ShowCheckBox = true;
+                                headerNode.ChildNodes.Add(userNode);
+                            }
+
+                            TreeNode siteNode = new TreeNode();
+                            siteNode.Text = objectData[3];
+                            siteNode.Value = "+" + itemTypeId.ToString() + "|" + item;
+                            siteNode.ShowCheckBox = true;
+                            userNode.ChildNodes.Add(siteNode);
+                        }
+
+                        headerNode.Expand();
+                        break;
+                }
+
+            }
+
         }
 
         protected void btnImport_Click(object sender, EventArgs e)
@@ -141,6 +209,34 @@ namespace WebsitePanel.Portal
         protected void btnCancel_Click(object sender, EventArgs e)
         {
             RedirectSpaceHomePage();
+        }
+
+
+        void checkChildNodes(TreeNodeCollection ptnChildren, bool isChecked)
+        {
+            foreach (TreeNode childNode in ptnChildren)
+            {
+                childNode.Checked = isChecked;
+
+
+                if (childNode.ChildNodes.Count > 0)
+                {
+                    this.checkChildNodes(childNode.ChildNodes, isChecked);
+                }
+            }
+        }
+
+        protected void tree_TreeNodeCheckChanged(object sender, TreeNodeEventArgs e)
+        {
+            foreach (TreeNode childNode in e.Node.ChildNodes)
+            {
+                childNode.Checked = e.Node.Checked;
+
+                if (childNode.ChildNodes.Count > 0)
+                {
+                    this.checkChildNodes(childNode.ChildNodes, e.Node.Checked);
+                }
+            }
         }
     }
 }

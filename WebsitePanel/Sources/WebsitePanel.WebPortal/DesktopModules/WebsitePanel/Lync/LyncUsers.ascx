@@ -41,7 +41,7 @@
 
                                 <asp:DropDownList ID="ddlSearchColumn" runat="server" CssClass="NormalTextBox">
                                     <asp:ListItem Value="DisplayName" meta:resourcekey="ddlSearchColumnDisplayName">DisplayName</asp:ListItem>
-                                    <asp:ListItem Value="PrimaryEmailAddress" meta:resourcekey="ddlSearchColumnEmail">Email</asp:ListItem>
+                                    <asp:ListItem Value="UserPrincipalName" meta:resourcekey="ddlSearchColumnUserPrincipalName">Email</asp:ListItem>
                                 </asp:DropDownList>
                                 <asp:TextBox ID="txtSearchValue" runat="server" CssClass="NormalTextBox" Width="100"></asp:TextBox><asp:ImageButton
                                     ID="cmdSearch" runat="server" meta:resourcekey="cmdSearch" SkinID="SearchButton"
@@ -64,10 +64,17 @@
                                     </asp:HyperLink>
                                 </ItemTemplate>
                             </asp:TemplateField>
-                            <asp:BoundField HeaderText="gvUsersEmail" meta:resourcekey="gvUsersEmail" DataField="PrimaryEmailAddress"
-                                SortExpression="PrimaryEmailAddress" ItemStyle-Width="25%" />
-                            <asp:BoundField HeaderText="gvLyncUserPlan" meta:resourcekey="gvLyncUserPlan" DataField="LyncUserPlanName"
-                                SortExpression="LyncUserPlanName" ItemStyle-Width="50%" />
+						    <asp:TemplateField HeaderText="gvUsersLogin" SortExpression="UserPrincipalName">
+							    <ItemStyle ></ItemStyle>
+							    <ItemTemplate>							        
+								    <asp:hyperlink id="lnk2" runat="server"
+									    NavigateUrl='<%# GetOrganizationUserEditUrl(Eval("AccountId").ToString()) %>'>
+									    <%# Eval("UserPrincipalName") %>
+								    </asp:hyperlink>
+							    </ItemTemplate>
+						    </asp:TemplateField>
+                            <asp:BoundField HeaderText="gvUsersEmail" meta:resourcekey="gvUsersEmail" DataField="SipAddress" SortExpression="PrimaryUri" ItemStyle-Width="25%" />
+                            <asp:BoundField HeaderText="gvLyncUserPlan" meta:resourcekey="gvLyncUserPlan" DataField="LyncUserPlanName" SortExpression="LyncUserPlanName" ItemStyle-Width="25%" />
                             <asp:TemplateField>
                                 <ItemTemplate>
                                     <asp:ImageButton ID="cmdDelete" runat="server" SkinID="ExchangeDelete"

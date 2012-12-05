@@ -519,6 +519,12 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public List<DomainInfo> GetDomainsByDomainId(int domainId)
+        {
+            return ServerController.GetDomainsByDomainItemId(domainId);
+        }
+        
+        [WebMethod]
         public List<DomainInfo> GetMyDomains(int packageId)
         {
             return ServerController.GetMyDomains(packageId);

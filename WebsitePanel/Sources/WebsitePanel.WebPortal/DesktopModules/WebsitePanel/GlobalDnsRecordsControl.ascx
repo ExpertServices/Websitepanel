@@ -60,6 +60,7 @@
 -->
                 <asp:CustomValidator ID="IPValidator" runat="server" ControlToValidate="txtRecordData" ValidationGroup="DnsRecord" Display="Dynamic" CssClass="NormalBold" 
                     OnServerValidate="Validate" Text="Please enter a valid IP" meta:resourcekey="IPValidator" ValidateEmptyText="True" />
+
             </td>
         </tr>
         <tr id="rowMXPriority" runat="server">

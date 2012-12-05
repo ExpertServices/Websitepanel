@@ -267,7 +267,7 @@ namespace WebsitePanel.Portal
                             }
                             parts = settings["UserNamePolicy"].Split(';');
 
-                            if (Utils.ParseInt(parts[3]) > 16)
+                            if (Utils.ParseInt(parts[3]) > 40)
                             {
                                 ShowWarningMessage("MySQL_USERNAME_MAX_LENGTH");
                                 return;

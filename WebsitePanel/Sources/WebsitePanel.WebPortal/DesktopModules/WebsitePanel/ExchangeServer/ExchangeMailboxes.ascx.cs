@@ -47,7 +47,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
                 {
-                    gvMailboxes.Columns[2].Visible = false;
+                    gvMailboxes.Columns[3].Visible = false;
                 }
             }
         }
@@ -139,7 +139,15 @@ namespace WebsitePanel.Portal.ExchangeServer
             // bind stats   
             BindStats();   
        
-        } 
+        }
 
+
+        public string GetOrganizationUserEditUrl(string accountId)
+        {
+            return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "edit_user",
+                    "AccountID=" + accountId,
+                    "ItemID=" + PanelRequest.ItemID,
+                    "Context=User");
+        }
     }
 }

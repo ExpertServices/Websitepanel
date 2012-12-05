@@ -325,12 +325,16 @@ namespace WebsitePanel.Setup
 
                 if (webServer != null)
                 {
-                    var modules = doc.CreateElement(iis6 ? "httpModules" : "modules");
-                    webServer.AppendChild(modules);
-                    var sessionModule = doc.CreateElement("add");
-                    sessionModule.SetAttribute("name", "SecureSession");
-                    sessionModule.SetAttribute("type", "WebsitePanel.WebPortal.SecureSessionModule");
-                    modules.AppendChild(sessionModule);
+                    string modulesNodeName = iis6 ? "httpModules" : "modules";
+                    if (webServer.SelectSingleNode(modulesNodeName + "/add[@name='SecureSession']") == null)
+                    {
+                        var modules = doc.CreateElement(modulesNodeName);
+                        webServer.AppendChild(modules);
+                        var sessionModule = doc.CreateElement("add");
+                        sessionModule.SetAttribute("name", "SecureSession");
+                        sessionModule.SetAttribute("type", "WebsitePanel.WebPortal.SecureSessionModule");
+                        modules.AppendChild(sessionModule);
+                    }
                 }
 
                 // update /system.web/httpRuntime element
@@ -343,10 +347,10 @@ namespace WebsitePanel.Setup
                 //    <add key="SessionValidationKey" value="XXXXXX" />
                 //</appSettings>
                 var appSettings = doc.SelectSingleNode("configuration/appSettings");
-                if (appSettings != null)
+                if (appSettings != null && appSettings.SelectSingleNode("add[@key='SessionValidationKey']") == null)
                 {
                     var sessionKey = doc.CreateElement("add");
-                    sessionKey.SetAttribute("name", "SessionValidationKey");
+                    sessionKey.SetAttribute("key", "SessionValidationKey");
                     sessionKey.SetAttribute("value", StringUtils.GenerateRandomString(16));
                     appSettings.AppendChild(sessionKey);
                 }

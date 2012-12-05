@@ -1237,7 +1237,7 @@ namespace WebsitePanel.Providers.Web
 				// Create site
 				webObjectsSvc.CreateSite(site);
 				// Update web site bindings
-				webObjectsSvc.UpdateSiteBindings(site.SiteId, site.Bindings);
+				webObjectsSvc.UpdateSiteBindings(site.SiteId, site.Bindings, false);
 				// Set web site logging settings
 				webObjectsSvc.SetWebSiteLoggingSettings(site);
 			}
@@ -1322,7 +1322,7 @@ namespace WebsitePanel.Providers.Web
 			// Update website
 			webObjectsSvc.UpdateSite(site);
 			// Update website bindings
-			webObjectsSvc.UpdateSiteBindings(site.SiteId, site.Bindings);
+			webObjectsSvc.UpdateSiteBindings(site.SiteId, site.Bindings, false);
 			// Set website logging settings
 			webObjectsSvc.SetWebSiteLoggingSettings(site);
 			//
@@ -1440,9 +1440,9 @@ namespace WebsitePanel.Providers.Web
 		/// </summary>
 		/// <param name="siteId">Site's id to update bindings for.</param>
 		/// <param name="bindings">Bindings information.</param>
-		public override void UpdateSiteBindings(string siteId, ServerBinding[] bindings)
+		public override void UpdateSiteBindings(string siteId, ServerBinding[] bindings, bool emptyBindingsAllowed)
 		{
-			this.webObjectsSvc.UpdateSiteBindings(siteId, bindings);
+			this.webObjectsSvc.UpdateSiteBindings(siteId, bindings, emptyBindingsAllowed);
 		}
 
 		/// <summary>
@@ -4046,7 +4046,12 @@ namespace WebsitePanel.Providers.Web
         {
             using (var srvman = new ServerManager())
             {
-                return srvman.ApplicationPools["WebsitePanel Server"].ProcessModel.LoadUserProfile;
+                string poolName = Environment.GetEnvironmentVariable("APP_POOL_ID", EnvironmentVariableTarget.Process);
+                ApplicationPool pool = srvman.ApplicationPools[poolName];
+                if (pool == null)
+                    throw new Exception("ApplicationPool pool is null" + poolName);
+
+                return pool.ProcessModel.LoadUserProfile;
             }
 
         }
@@ -4055,7 +4060,12 @@ namespace WebsitePanel.Providers.Web
         {
             using (var srvman = new ServerManager())
             {
-                srvman.ApplicationPools["WebsitePanel Server"].ProcessModel.LoadUserProfile = true;
+                string poolName = Environment.GetEnvironmentVariable("APP_POOL_ID", EnvironmentVariableTarget.Process);
+                ApplicationPool pool = srvman.ApplicationPools[poolName];
+                if (pool == null)
+                    throw new Exception("ApplicationPool pool is null" + poolName);
+
+                pool.ProcessModel.LoadUserProfile = true;
                 // save changes
                 srvman.CommitChanges();
             }

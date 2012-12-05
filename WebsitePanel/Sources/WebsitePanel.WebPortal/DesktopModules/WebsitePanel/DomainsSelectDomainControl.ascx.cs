@@ -38,6 +38,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.Providers.Web;
 
 namespace WebsitePanel.Portal
 {
@@ -49,11 +50,24 @@ namespace WebsitePanel.Portal
             set { ViewState["HideWebSites"] = value; }
         }
 
+        public bool HideInstantAlias
+        {
+            get { return (ViewState["HideInstantAlias"] != null) ? (bool)ViewState["HideInstantAlias"] : false; }
+            set { ViewState["HideInstantAlias"] = value; }
+        }
+
         public bool HideMailDomains
         {
             get { return (ViewState["HideMailDomains"] != null) ? (bool)ViewState["HideMailDomains"] : false; }
             set { ViewState["HideMailDomains"] = value; }
         }
+
+        public bool HideMailDomainPointers
+        {
+            get { return (ViewState["HideMailDomainPointers"] != null) ? (bool)ViewState["HideMailDomainPointers"] : false; }
+            set { ViewState["HideMailDomainPointers"] = value; }
+        }
+
 
         public bool HideDomainPointers
         {
@@ -102,6 +116,44 @@ namespace WebsitePanel.Portal
         {
             DomainInfo[] domains = ES.Services.Servers.GetMyDomains(PackageId);
 
+            WebSite[] sites = null;
+            Hashtable htSites = new Hashtable();
+            Hashtable htMailDomainPointers = new Hashtable();
+            if (HideWebSites)
+            {
+                sites = ES.Services.WebServers.GetWebSites(PackageId, false);
+
+                foreach (WebSite w in sites)
+                {
+                    if (htSites[w.Name.ToLower()] == null) htSites.Add(w.Name.ToLower(), 1);
+
+                    DomainInfo[] pointers = ES.Services.WebServers.GetWebSitePointers(w.Id);
+                    foreach (DomainInfo p in pointers)
+                    {
+                        if (htSites[p.DomainName.ToLower()] == null) htSites.Add(p.DomainName.ToLower(), 1);
+                    }
+                }
+            }
+
+            if (HideMailDomainPointers)
+            {
+                Providers.Mail.MailDomain[] mailDomains = ES.Services.MailServers.GetMailDomains(PackageId, false);
+
+                foreach (Providers.Mail.MailDomain mailDomain in mailDomains)
+                {
+                    DomainInfo[] pointers = ES.Services.MailServers.GetMailDomainPointers(mailDomain.Id);
+                    if (pointers != null)
+                    {
+                        foreach (DomainInfo p in pointers)
+                        {
+                            if (htMailDomainPointers[p.DomainName.ToLower()] == null) htMailDomainPointers.Add(p.DomainName.ToLower(), 1);
+
+                        }
+                    }
+                }
+            }
+
+
             ddlDomains.Items.Clear();
 
             // add "select" item
@@ -109,15 +161,35 @@ namespace WebsitePanel.Portal
 
             foreach (DomainInfo domain in domains)
             {
-                if (HideWebSites && domain.WebSiteId > 0)
+                if (HideWebSites)
+                {
+                    if (domain.WebSiteId > 0)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        if (htSites != null)
+                        {
+                            if (htSites[domain.DomainName.ToLower()] != null) continue;
+                        }
+                    }
+                }
+
+
+                if (HideMailDomainPointers)
+                {
+                    if (htMailDomainPointers[domain.DomainName.ToLower()] != null) continue;
+                }
+
+                
+                if (HideInstantAlias && domain.IsInstantAlias)
                     continue;
-                else if (domain.IsInstantAlias)
-                    continue; // remove instant aliases at all
                 else if (HideMailDomains && domain.MailDomainId > 0)
                     continue;
-                else if (HideDomainPointers && (domain.IsDomainPointer || domain.IsInstantAlias))
+                else if (HideDomainPointers && (domain.IsDomainPointer))
                     continue;
-                else if (HideDomainsSubDomains && !(domain.IsDomainPointer || domain.IsInstantAlias))
+                else if (HideDomainsSubDomains && !(domain.IsDomainPointer))
                     continue;
 
                 ddlDomains.Items.Add(new ListItem(domain.DomainName, domain.DomainId.ToString()));

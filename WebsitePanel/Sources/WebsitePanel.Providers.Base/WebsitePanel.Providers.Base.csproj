@@ -80,12 +80,17 @@
     <Compile Include="HostedSolution\BlackBerryErrorsCodes.cs" />
     <Compile Include="HostedSolution\BlackBerryStatsItem.cs" />
     <Compile Include="HostedSolution\BlackBerryUserDeleteState.cs" />
+    <Compile Include="HostedSolution\ExchangeOrganization.cs" />
+    <Compile Include="HostedSolution\ExchangeAcceptedDomainType.cs" />
     <Compile Include="HostedSolution\ExchangeMailboxPlanType.cs" />
     <Compile Include="HostedSolution\ExchangeMailboxPlan.cs" />
     <Compile Include="HostedSolution\ILyncServer.cs" />
     <Compile Include="HostedSolution\LyncConstants.cs" />
     <Compile Include="HostedSolution\LyncErrorCodes.cs" />
     <Compile Include="HostedSolution\LyncFederationDomain.cs" />
+    <Compile Include="HostedSolution\LyncOrganizationStatistics.cs" />
+    <Compile Include="HostedSolution\LyncUserStatistics.cs" />
+    <Compile Include="HostedSolution\LyncStatisticsReport.cs" />
     <Compile Include="HostedSolution\LyncUser.cs" />
     <Compile Include="HostedSolution\LyncUserPlan.cs" />
     <Compile Include="HostedSolution\LyncUserPlanType.cs" />

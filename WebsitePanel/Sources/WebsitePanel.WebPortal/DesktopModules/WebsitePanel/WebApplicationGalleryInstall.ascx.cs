@@ -100,6 +100,12 @@ namespace WebsitePanel.Portal
 						ShowErrorMessage("GALLERY_APP_DOWNLOAD_FAILED");
 						isSuccess = false;
 						break;
+
+                    case GalleryWebAppStatus.UnauthorizedAccessException:
+                        ShowErrorMessage("GALLERY_APP_UNAUTHORIZEDACCESSEXCEPTION");
+                        isSuccess = false;
+                        break;
+
 				}
             }
             catch(Exception ex)

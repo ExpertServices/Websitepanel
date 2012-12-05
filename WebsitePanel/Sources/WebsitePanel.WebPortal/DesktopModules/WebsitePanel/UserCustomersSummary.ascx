@@ -12,6 +12,7 @@
 				<asp:ListItem Value="Username">Username</asp:ListItem>
 				<asp:ListItem Value="Email">E-mail</asp:ListItem>
 				<asp:ListItem Value="FullName">FullName</asp:ListItem>
+                <asp:ListItem Value="CompanyName">CompanyName</asp:ListItem>
 			</asp:DropDownList><asp:TextBox ID="txtFilterValue" runat="server" CssClass="NormalTextBox" Width="100" style="vertical-align: middle;"></asp:TextBox><asp:ImageButton ID="cmdSearch" Runat="server" meta:resourcekey="cmdSearch" SkinID="SearchButton"
 				CausesValidation="false" OnClick="cmdSearch_Click" style="vertical-align: middle;"/>
 		</asp:Panel>

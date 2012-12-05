@@ -58,12 +58,21 @@ namespace WebsitePanel.Portal.HostedSolution
                     messageBox.ShowMessage(passwordPolicy, "CREATE_ORGANIZATION_USER", "HostedOrganization");
                 }
 
-                PackageInfo package = ES.Services.Packages.GetPackage(PanelSecurity.PackageId);
-                if (package != null)
+                string instructions = ES.Services.Organizations.GetOrganizationUserSummuryLetter(PanelRequest.ItemID, PanelRequest.AccountID, false, false, false);
+                if (!string.IsNullOrEmpty(instructions))
                 {
-                    //UserInfo user = ES.Services.Users.GetUserById(package.UserId);
-                    //if (user != null)
-                    //sendInstructionEmail.Text = user.Email;
+                    chkSendInstructions.Checked = chkSendInstructions.Visible = sendInstructionEmail.Visible = true;
+                    PackageInfo package = ES.Services.Packages.GetPackage(PanelSecurity.PackageId);
+                    if (package != null)
+                    {
+                        UserInfo user = ES.Services.Users.GetUserById(package.UserId);
+                        if (user != null)
+                            sendInstructionEmail.Text = user.Email;
+                    }
+                }
+                else
+                {
+                    chkSendInstructions.Checked = chkSendInstructions.Visible = sendInstructionEmail.Visible = false;
                 }
             }
 
@@ -92,12 +101,12 @@ namespace WebsitePanel.Portal.HostedSolution
             try
             {
                 int accountId = ES.Services.Organizations.CreateUser(PanelRequest.ItemID, txtDisplayName.Text.Trim(),
-                    email.AccountName,
-                    email.DomainName,
+                    email.AccountName.ToLower(),
+                    email.DomainName.ToLower(),
                     password.Password,
                     txtSubscriberNumber.Text.Trim(),
-                    false,
-                    "");
+                    chkSendInstructions.Checked,
+                    sendInstructionEmail.Text);
 
                 if (accountId < 0)
                 {

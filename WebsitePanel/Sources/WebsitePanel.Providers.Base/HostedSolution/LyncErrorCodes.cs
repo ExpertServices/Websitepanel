@@ -70,5 +70,8 @@
 
          public const string CANNOT_REMOVE_LYNC_FEDERATIONDOMAIN = "CANNOT_REMOVE_LYNC_FEDERATIONDOMAIN";
 
+         public const string FAILED_SET_SETTINGS = "FAILED_SET_SETTINGS";
+
+         public const string ADDRESS_ALREADY_USED = "ADDRESS_ALREADY_USED";
      }
  }

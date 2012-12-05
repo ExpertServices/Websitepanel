@@ -6220,7 +6220,7 @@ GO
 
 
 CREATE PROCEDURE [dbo].[GetItemIdByOrganizationId] 	
-	@OrganizationId nvarchar(10)
+	@OrganizationId nvarchar(128)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -6508,6 +6508,7 @@ CREATE TABLE [dbo].[ExchangeOrganizationDomains](
 	[ItemID] [int] NOT NULL,
 	[DomainID] [int] NULL,
 	[IsHost] [bit] NULL,
+	[DomainTypeID] [int] NOT NULL,
  CONSTRAINT [PK_ExchangeOrganizationDomains] PRIMARY KEY CLUSTERED 
 (
 	[OrganizationDomainID] ASC
@@ -6634,7 +6635,8 @@ AS
 SELECT
 	ED.DomainID,
 	D.DomainName,
-	ED.IsHost
+	ED.IsHost,
+	ED.DomainTypeID
 FROM
 	ExchangeOrganizationDomains AS ED
 INNER JOIN Domains AS D ON ED.DomainID = D.DomainID
@@ -23549,7 +23551,7 @@ INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName]
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (3, 3, N'MSFTP60', N'Microsoft FTP Server 6.0', N'WebsitePanel.Providers.FTP.MsFTP, WebsitePanel.Providers.FTP.IIs60', N'MSFTP60', NULL)
 GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (4, 4, N'MailEnable', N'MailEnable Server 1.x - 4.x', N'WebsitePanel.Providers.Mail.MailEnable, WebsitePanel.Providers.Mail.MailEnable', N'MailEnable', NULL)
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (4, 4, N'MailEnable', N'MailEnable Server 1.x - 7.x', N'WebsitePanel.Providers.Mail.MailEnable, WebsitePanel.Providers.Mail.MailEnable', N'MailEnable', NULL)
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (5, 5, N'MSSQL', N'Microsoft SQL Server 2000', N'WebsitePanel.Providers.Database.MsSqlServer, WebsitePanel.Providers.Database.SqlServer', N'MSSQL', NULL)
 GO
@@ -23619,11 +23621,11 @@ INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName]
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (63, 4, N'hMailServer5', N'hMailServer 5.x', N'WebsitePanel.Providers.Mail.hMailServer5, WebsitePanel.Providers.Mail.hMailServer5', N'hMailServer5', NULL)
 GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (64, 4, N'SmarterMail', N'SmarterMail 7.x', N'WebsitePanel.Providers.Mail.SmarterMail7, WebsitePanel.Providers.Mail.SmarterMail7', N'SmarterMail60', NULL)
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (64, 4, N'SmarterMail', N'SmarterMail 7.x - 8.x', N'WebsitePanel.Providers.Mail.SmarterMail7, WebsitePanel.Providers.Mail.SmarterMail7', N'SmarterMail60', NULL)
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (65, 4, N'SmarterMail', N'SmarterMail 9.x', N'WebsitePanel.Providers.Mail.SmarterMail9, WebsitePanel.Providers.Mail.SmarterMail9', N'SmarterMail60', NULL)
 GO
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (66, 4, N'SmarterMail', N'SmarterMail 10.x', N'WebsitePanel.Providers.Mail.SmarterMail10, WebsitePanel.Providers.Mail.SmarterMail10', N'SmarterMail60', NULL)
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (66, 4, N'SmarterMail', N'SmarterMail 10.x +', N'WebsitePanel.Providers.Mail.SmarterMail10, WebsitePanel.Providers.Mail.SmarterMail10', N'SmarterMail60', NULL)
 GO
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (100, 1, N'Windows2008', N'Windows Server 2008', N'WebsitePanel.Providers.OS.Windows2008, WebsitePanel.Providers.OS.Windows2008', N'Windows2008', NULL)
 GO
@@ -45799,6 +45801,29 @@ GO
 
 
 
+CREATE PROCEDURE [dbo].ChangeExchangeAcceptedDomainType 
+(
+	@ItemID int,
+	@DomainID int,
+	@DomainTypeID int
+)
+AS
+UPDATE ExchangeOrganizationDomains
+SET DomainTypeID=@DomainTypeID
+WHERE ItemID=ItemID AND DomainID=@DomainID
+RETURN
+GO
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -46063,6 +46088,8 @@ GO
 ALTER TABLE [dbo].[ExchangeOrganizationDomains] CHECK CONSTRAINT [FK_ExchangeOrganizationDomains_ServiceItems]
 GO
 ALTER TABLE [dbo].[ExchangeOrganizationDomains] ADD  CONSTRAINT [DF_ExchangeOrganizationDomains_IsHost]  DEFAULT ((0)) FOR [IsHost]
+GO
+ALTER TABLE [dbo].[ExchangeOrganizationDomains] ADD  CONSTRAINT [DF_ExchangeOrganizationDomains_DomainTypeID]  DEFAULT ((0)) FOR [DomainTypeID]
 GO
 ALTER TABLE [dbo].[PrivateIPAddresses]  WITH CHECK ADD  CONSTRAINT [FK_PrivateIPAddresses_ServiceItems] FOREIGN KEY([ItemID])
 REFERENCES [dbo].[ServiceItems] ([ItemID])

@@ -108,8 +108,10 @@ namespace WebsitePanel.Portal
                 }
 
                 // instant alias
+                PackageSettings settings = ES.Services.Packages.GetPackageSettings(PanelSecurity.PackageId, PackageSettings.INSTANT_ALIAS);
+
                 bool instantAliasAllowed = !String.IsNullOrEmpty(domain.InstantAliasName);
-                bool instantAliasExists = (domain.InstantAliasId > 0);
+                bool instantAliasExists = (domain.InstantAliasId > 0) && (settings != null && !String.IsNullOrEmpty(settings["InstantAlias"]));
                 if (instantAliasAllowed
                     && !domain.IsDomainPointer && !domain.IsInstantAlias)
                 {
@@ -119,9 +121,18 @@ namespace WebsitePanel.Portal
 
                     // load instant alias
                     DomainInfo instantAlias = ES.Services.Servers.GetDomain(domain.InstantAliasId);
+                    WebSiteAliasPanel.Visible = false;
                     if (instantAlias != null)
                     {
-                        WebSiteAliasPanel.Visible = (instantAlias.WebSiteId > 0);
+                        DomainInfo[] Domains = ES.Services.Servers.GetDomainsByDomainId(domain.InstantAliasId);
+                        foreach (DomainInfo d in Domains)
+                        {
+                            if (d.WebSiteId > 0)
+                            {
+                                WebSiteAliasPanel.Visible = true;
+                            }
+                        }
+
                         MailDomainAliasPanel.Visible = (instantAlias.MailDomainId > 0);
                     }
 
@@ -151,7 +162,7 @@ namespace WebsitePanel.Portal
                     {
                         if (user.Role == UserRole.User)
                         {
-                            btnDelete.Enabled = Utils.CheckQouta(Quotas.OS_ALLOWTENANTCREATEDOMAINS, cntx);
+                            btnDelete.Enabled = !Utils.CheckQouta(Quotas.OS_NOTALLOWTENANTCREATEDOMAINS, cntx);
                         }
                     }
                 }

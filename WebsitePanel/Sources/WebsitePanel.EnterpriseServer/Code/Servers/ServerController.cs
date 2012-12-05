@@ -37,6 +37,8 @@ using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.DNS;
 using WebsitePanel.Server;
 using WebsitePanel.Providers.ResultObjects;
+using WebsitePanel.Providers.Web;
+using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -988,7 +990,7 @@ namespace WebsitePanel.EnterpriseServer
 				if (startExternalIP.V6 != startInternalIP.V6 && (startExternalIP.V6 != endExternalIP.V6 && endExternalIP != null)) throw new NotSupportedException("All IP addresses must be either V4 or V6.");
 
                 int i = 0;
-                long step = (endExternalIP < startExternalIP) ? -1 : 1;
+                long step = ((endExternalIP - startExternalIP) > 0) ? 1 : -1;
 
                 while (true)
                 {
@@ -1602,6 +1604,20 @@ namespace WebsitePanel.EnterpriseServer
                 DataProvider.GetDomains(SecurityContext.User.UserId, packageId, true));
         }
 
+
+        public static List<DomainInfo> GetDomainsByZoneId(int zoneId)
+        {
+            return ObjectUtils.CreateListFromDataSet<DomainInfo>(
+                DataProvider.GetDomainsByZoneId(SecurityContext.User.UserId, zoneId));
+        }
+
+        public static List<DomainInfo> GetDomainsByDomainItemId(int zoneId)
+        {
+            return ObjectUtils.CreateListFromDataSet<DomainInfo>(
+                DataProvider.GetDomainsByDomainItemId(SecurityContext.User.UserId, zoneId));
+        }
+
+
         public static List<DomainInfo> GetMyDomains(int packageId)
         {
             return ObjectUtils.CreateListFromDataSet<DomainInfo>(
@@ -1635,12 +1651,15 @@ namespace WebsitePanel.EnterpriseServer
 
         public static DomainInfo GetDomain(string domainName)
         {
-            // get domain by name
-            DomainInfo domain = GetDomainItem(domainName);
-
-            // return
-            return GetDomain(domain);
+            return ObjectUtils.FillObjectFromDataReader<DomainInfo>(
+                DataProvider.GetDomainByName(SecurityContext.User.UserId, domainName,false, false));
         }
+
+        public static DomainInfo GetDomain(string domainName, bool searchOnDomainPointer, bool isDomainPointer)
+        {
+            return GetDomainItem(domainName, searchOnDomainPointer, isDomainPointer);
+        }
+
 
         private static DomainInfo GetDomain(DomainInfo domain)
         {
@@ -1650,7 +1669,7 @@ namespace WebsitePanel.EnterpriseServer
 
             // get instant alias
             domain.InstantAliasName = GetDomainAlias(domain.PackageId, domain.DomainName);
-            DomainInfo instantAlias = GetDomainItem(domain.InstantAliasName);
+            DomainInfo instantAlias = GetDomainItem(domain.InstantAliasName, true, false);
             if (instantAlias != null)
                 domain.InstantAliasId = instantAlias.DomainId;
 
@@ -1665,8 +1684,14 @@ namespace WebsitePanel.EnterpriseServer
 
         public static DomainInfo GetDomainItem(string domainName)
         {
+            return GetDomainItem(domainName, false, false);
+        }
+
+
+        public static DomainInfo GetDomainItem(string domainName, bool searchOnDomainPointer, bool isDomainPointer)
+        {
             return ObjectUtils.FillObjectFromDataReader<DomainInfo>(
-                DataProvider.GetDomainByName(SecurityContext.User.UserId, domainName));
+                DataProvider.GetDomainByName(SecurityContext.User.UserId, domainName, searchOnDomainPointer, isDomainPointer));
         }
 
         public static string GetDomainAlias(int packageId, string domainName)
@@ -1710,6 +1735,26 @@ namespace WebsitePanel.EnterpriseServer
             if (domainId < 0)
                 return domainId;
 
+            DomainInfo domain = ServerController.GetDomain(domainId);
+            if (domain != null)
+            {
+                if (domain.ZoneItemId != 0)
+                {
+                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.Os, domain, "");
+                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.Dns, domain, "");
+                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.Ftp, domain, "");
+                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MsSql2000, domain, "");
+                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MsSql2005, domain, "");
+                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MsSql2008, domain, "");
+                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MsSql2012, domain, "");
+                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MySql4, domain, "");
+                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MySql5, domain, "");
+                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.Statistics, domain, "");
+                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.VPS, domain, "");
+                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.VPSForPC, domain, "");
+                }
+            }
+            
             // add instant alias
             createInstantAlias &= (domainType != DomainType.DomainPointer);
             if (createInstantAlias)
@@ -1741,7 +1786,7 @@ namespace WebsitePanel.EnterpriseServer
             // add web site pointer
             if (webEnabled && pointWebSiteId > 0)
             {
-                WebServerController.AddWebSitePointer(pointWebSiteId, hostName, domainId);
+                WebServerController.AddWebSitePointer(pointWebSiteId, hostName, domainId, true, false, false);
             }
 
             // add mail domain pointer
@@ -1770,8 +1815,9 @@ namespace WebsitePanel.EnterpriseServer
 
             // add main domain
             int domainId = AddDomainInternal(domain.PackageId, domain.DomainName, createZone,
-                domain.IsSubDomain, false, domain.IsDomainPointer, false);
+                domain.IsSubDomain, createInstantAlias, domain.IsDomainPointer, false);
 
+            /*
             if (domainId < 0)
                 return domainId;
 
@@ -1781,6 +1827,7 @@ namespace WebsitePanel.EnterpriseServer
             {
                 AddDomainInternal(domain.PackageId, domainAlias, true, false, true, false, false);
             }
+             */
 
             return domainId;
         }
@@ -1800,11 +1847,9 @@ namespace WebsitePanel.EnterpriseServer
                 else if (isDomainPointer)
                 {
                     // domain pointer
-                    /*
-                    if (PackageController.GetPackageQuota(packageId, Quotas.OS_DOMAINPOINTERS).QuotaExhausted)
-                        return BusinessErrorCodes.ERROR_DOMAIN_QUOTA_LIMIT;
-                     */
-                }
+                    //if (PackageController.GetPackageQuota(packageId, Quotas.OS_DOMAINPOINTERS).QuotaExhausted)
+                        //return BusinessErrorCodes.ERROR_DOMAIN_QUOTA_LIMIT;
+                 }
                 else
                 {
                     // top-level domain
@@ -1847,7 +1892,7 @@ namespace WebsitePanel.EnterpriseServer
                     int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Dns);
                     if (serviceId > 0)
                     {
-                        zoneItemId = DnsServerController.AddZone(packageId, serviceId, domainName);
+                        zoneItemId = DnsServerController.AddZone(packageId, serviceId, domainName, true, isInstantAlias);
                     }
 
                     if (zoneItemId < 0)
@@ -1878,6 +1923,116 @@ namespace WebsitePanel.EnterpriseServer
                 domain.WebSiteId, domain.MailDomainId, domain.IsSubDomain, domain.IsInstantAlias, domain.IsDomainPointer);
         }
 
+        public static void AddServiceDNSRecords(int packageId, string groupName, DomainInfo domain, string serviceIP)
+        {
+            AddServiceDNSRecords(packageId, groupName, domain, serviceIP, false);
+        }
+
+        public static void AddServiceDNSRecords(int packageId, string groupName, DomainInfo domain, string serviceIP, bool wildcardOnly)
+        {
+            int serviceId = PackageController.GetPackageServiceId(packageId, groupName);
+            if (serviceId > 0)
+            {
+                List<DnsRecord> tmpZoneRecords = new List<DnsRecord>();
+                List<GlobalDnsRecord> dnsRecords = ServerController.GetDnsRecordsByService(serviceId);
+
+                if (wildcardOnly)
+                {
+                    List<GlobalDnsRecord> temp = new List<GlobalDnsRecord>();
+                    foreach (GlobalDnsRecord d in dnsRecords)
+                    {
+                        if ((d.RecordName == "*") ||
+                            (d.RecordName == "@"))
+                            temp.Add(d);
+                    }
+
+                    dnsRecords = temp;
+                }
+
+                DnsZone zone = (DnsZone)PackageController.GetPackageItem(domain.ZoneItemId);
+                tmpZoneRecords.AddRange(DnsServerController.BuildDnsResourceRecords(dnsRecords, "", domain.ZoneName, serviceIP));
+
+                try
+                {
+                    DNSServer dns = new DNSServer();
+                    ServiceProviderProxy.Init(dns, zone.ServiceId);
+
+                    DnsRecord[] domainRecords = dns.GetZoneRecords(domain.DomainName);
+
+                    List<DnsRecord> zoneRecords = new List<DnsRecord>();
+                    foreach (DnsRecord t in tmpZoneRecords)
+                    {
+                        if (!RecordDoesExist(t, domainRecords))
+                            zoneRecords.Add(t);
+                    }
+
+
+                    // add new resource records
+                    dns.AddZoneRecords(zone.Name, zoneRecords.ToArray());
+                }
+                catch (Exception ex1)
+                {
+                    TaskManager.WriteError(ex1, "Error updating DNS records");
+                }
+            }
+        }
+
+
+
+        public static void RemoveServiceDNSRecords(int packageId, string groupName, DomainInfo domain, string serviceIP, bool wildcardOnly)
+        {
+            int serviceId = PackageController.GetPackageServiceId(packageId, groupName);
+            if (serviceId > 0)
+            {
+                List<DnsRecord> zoneRecords = new List<DnsRecord>();
+                List<GlobalDnsRecord> dnsRecords = ServerController.GetDnsRecordsByService(serviceId);
+                if (wildcardOnly)
+                {
+                    List<GlobalDnsRecord> temp = new List<GlobalDnsRecord>();
+                    foreach (GlobalDnsRecord d in dnsRecords)
+                    {
+                        if ((d.RecordName == "*") ||
+                            (d.RecordName == "@"))
+                            temp.Add(d);
+                    }
+
+                    dnsRecords = temp;
+                }
+
+                DnsZone zone = (DnsZone)PackageController.GetPackageItem(domain.ZoneItemId);
+                zoneRecords.AddRange(DnsServerController.BuildDnsResourceRecords(dnsRecords, "", domain.ZoneName, serviceIP));
+
+                try
+                {
+                    DNSServer dns = new DNSServer();
+                    ServiceProviderProxy.Init(dns, zone.ServiceId);
+
+                    // add new resource records
+                    dns.DeleteZoneRecords(zone.Name, zoneRecords.ToArray());
+                }
+                catch (Exception ex1)
+                {
+                    TaskManager.WriteError(ex1, "Error updating DNS records");
+                }
+            }
+        }
+
+
+        private static bool RecordDoesExist(DnsRecord record, DnsRecord[] domainRecords)
+        {
+            foreach (DnsRecord d in domainRecords)
+            {
+                if ((record.RecordName.ToLower() == d.RecordName.ToLower()) &
+                    (record.RecordType == d.RecordType))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
         public static int UpdateDomain(DomainInfo domain)
         {
             // check account
@@ -1893,7 +2048,7 @@ namespace WebsitePanel.EnterpriseServer
             {
                 DataProvider.UpdateDomain(SecurityContext.User.UserId,
                     domain.DomainId, domain.ZoneItemId, domain.HostingAllowed, domain.WebSiteId,
-                    domain.MailDomainId);
+                    domain.MailDomainId, domain.DomainItemId);
 
                 return 0;
             }
@@ -1915,6 +2070,8 @@ namespace WebsitePanel.EnterpriseServer
 
             // load domain
             DomainInfo domain = GetDomain(domainId);
+            if (domain == null)
+                return 0;
 
             // place log record
             TaskManager.StartTask("DOMAIN", "DETACH", domain.DomainName);
@@ -1940,6 +2097,18 @@ namespace WebsitePanel.EnterpriseServer
                     TaskManager.WriteError("Domain points to the existing organization domain");
                     return BusinessErrorCodes.ERROR_ORGANIZATION_DOMAIN_IS_IN_USE;
                 }
+
+
+                List<DomainInfo> domains = GetDomainsByDomainItemId(domain.DomainId);
+                foreach (DomainInfo d in domains)
+                {
+                    if (d.WebSiteId > 0)
+                    {
+                        TaskManager.WriteError("Domain points to the existing web site");
+                        return BusinessErrorCodes.ERROR_DOMAIN_POINTS_TO_WEB_SITE;
+                    }
+                }
+
 
                 // remove DNS zone meta-item if required
                 if (domain.ZoneItemId > 0)
@@ -1970,6 +2139,8 @@ namespace WebsitePanel.EnterpriseServer
 
             // load domain
             DomainInfo domain = GetDomain(domainId);
+            if (domain == null)
+                return 0;
 
             // place log record
             TaskManager.StartTask("DOMAIN", "DELETE", domain.DomainName);
@@ -1995,6 +2166,21 @@ namespace WebsitePanel.EnterpriseServer
                     TaskManager.WriteError("Domain points to the existing organization domain");
                     return BusinessErrorCodes.ERROR_ORGANIZATION_DOMAIN_IS_IN_USE;
                 }
+
+
+                if (!domain.IsDomainPointer)
+                {
+                    List<DomainInfo> domains = GetDomainsByDomainItemId(domain.DomainId);
+                    foreach (DomainInfo d in domains)
+                    {
+                        if (d.WebSiteId > 0)
+                        {
+                            TaskManager.WriteError("Domain points to the existing web site");
+                            return BusinessErrorCodes.ERROR_DOMAIN_POINTS_TO_WEB_SITE;
+                        }
+                    }
+                }
+
 
                 // delete instant alias
                 if (domain.InstantAliasId > 0)
@@ -2106,6 +2292,143 @@ namespace WebsitePanel.EnterpriseServer
                     // update domain
                     domain.ZoneItemId = zoneItemId;
                     UpdateDomain(domain);
+
+                    domain = GetDomain(domainId);
+
+
+                    PackageContext cntx = PackageController.GetPackageContext(domain.PackageId);
+                    if (cntx != null)
+                    {
+                        // fill dictionaries
+                        foreach (HostingPlanGroupInfo group in cntx.GroupsArray)
+                        {
+                            try
+                            {
+                                bool bFound = false;
+                                switch (group.GroupName)
+                                {
+                                    case ResourceGroups.Dns:
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.Ftp, domain, "");
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.MsSql2000, domain, "");
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.MsSql2005, domain, "");
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.MsSql2008, domain, "");
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.MsSql2012, domain, "");
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.MySql4, domain, "");
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.MySql5, domain, "");
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.Statistics, domain, "");
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.VPS, domain, "");
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.VPSForPC, domain, "");
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.Dns, domain, "");
+                                        break;
+                                    case ResourceGroups.Os:
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.Os, domain, "");
+                                        break;
+                                    case ResourceGroups.HostedOrganizations:
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.HostedOrganizations, domain, "");
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.HostedCRM, domain, "");
+                                        break;
+                                    case ResourceGroups.Mail:
+                                        List<DomainInfo> myDomains = ServerController.GetMyDomains(domain.PackageId);
+                                        foreach (DomainInfo mailDomain in myDomains)
+                                        {
+                                            if ((mailDomain.MailDomainId != 0) && (domain.DomainName.ToLower() == mailDomain.DomainName.ToLower()))
+                                            {
+                                                bFound = true;
+                                                break;
+                                            }
+                                        }
+                                        if (bFound) ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.Mail, domain, "");
+                                        break;
+                                    case ResourceGroups.Exchange:
+                                        List<Organization> orgs = OrganizationController.GetOrganizations(domain.PackageId, false);
+                                        foreach (Organization o in orgs)
+                                        {
+                                            List<OrganizationDomainName> names = OrganizationController.GetOrganizationDomains(o.Id);
+                                            foreach (OrganizationDomainName name in names)
+                                            {
+                                                if (domain.DomainName.ToLower() == name.DomainName.ToLower())
+                                                {
+                                                    bFound = true;
+                                                    break;
+                                                }
+                                            }
+                                            if (bFound) break;
+                                        }
+                                        if (bFound)
+                                        {
+                                            ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.Exchange, domain, "");
+                                            ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.BlackBerry, domain, "");
+                                            ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.OCS, domain, "");
+                                        }
+                                        break;
+                                    case ResourceGroups.Lync:
+                                        List<Organization> orgsLync = OrganizationController.GetOrganizations(domain.PackageId, false);
+                                        foreach (Organization o in orgsLync)
+                                        {
+                                            if ((o.DefaultDomain.ToLower() == domain.DomainName.ToLower()) &
+                                                (o.LyncTenantId != null))
+                                            {
+                                                bFound = true;
+                                                break;
+                                            }
+                                        }
+                                        if (bFound)
+                                        {
+                                            ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.Lync, domain, "");
+                                        }
+                                        break;
+                                    case ResourceGroups.Web:
+                                        List<WebSite> sites = WebServerController.GetWebSites(domain.PackageId, false);
+                                        foreach (WebSite w in sites)
+                                        {
+                                            if ((w.SiteId.ToLower().Replace("." + domain.DomainName.ToLower(), "").IndexOf('.') == -1) ||
+                                                (w.SiteId.ToLower() == domain.DomainName.ToLower()))
+                                            {
+                                                WebServerController.AddWebSitePointer(  w.Id, 
+                                                                                        (w.SiteId.ToLower() == domain.DomainName.ToLower()) ? "" : w.SiteId.ToLower().Replace("." + domain.DomainName.ToLower(), ""), 
+                                                                                        domain.DomainId, false, true, true);
+                                            }
+
+                                            List<DomainInfo> pointers = WebServerController.GetWebSitePointers(w.Id);
+                                            foreach (DomainInfo pointer in pointers)
+                                            {
+                                                if ((pointer.DomainName.ToLower().Replace("." + domain.DomainName.ToLower(), "").IndexOf('.') == -1)||
+                                                    (pointer.DomainName.ToLower() == domain.DomainName.ToLower()))
+                                                {
+                                                    WebServerController.AddWebSitePointer(  w.Id,
+                                                                                            (pointer.DomainName.ToLower() == domain.DomainName.ToLower()) ? "" : pointer.DomainName.ToLower().Replace("." + domain.DomainName.ToLower(), ""), 
+                                                                                            domain.DomainId, false, true, true);
+                                                }
+                                            }
+                                        }
+
+                                        if (sites.Count == 1)
+                                        {
+                                            // load site item
+                                            IPAddressInfo ip = ServerController.GetIPAddress(sites[0].SiteIPAddressId);
+
+                                            string serviceIp = (ip != null) ? ip.ExternalIP : null;
+
+                                            if (string.IsNullOrEmpty(serviceIp))
+                                            {
+                                                StringDictionary settings = ServerController.GetServiceSettings(sites[0].ServiceId);
+                                                if (settings["PublicSharedIP"] != null)
+                                                    serviceIp = settings["PublicSharedIP"].ToString();
+                                            }
+
+                                            ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.Web, domain, serviceIp, true);
+                                        }
+
+                                        break;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                TaskManager.WriteError(ex);
+                            }
+                        }
+                    }
+
                 }
 
                 // add web site DNS records
@@ -2172,22 +2495,46 @@ namespace WebsitePanel.EnterpriseServer
                     instantAlias = GetDomainItem(instantAliasId);
                 }
 
-                // add web site pointer if required
-                if (domain.WebSiteId > 0 && instantAlias.WebSiteId == 0)
+                string parentZone = domain.ZoneName;
+                if (string.IsNullOrEmpty(parentZone))
                 {
-                    int webRes = WebServerController.AddWebSitePointer(domain.WebSiteId, hostName, domainId);
-                    if (webRes < 0)
-                        return webRes;
+                    DomainInfo parentDomain = GetDomain(domain.DomainId);
+                    parentZone = parentDomain.DomainName;
                 }
-                /*
-                                // add mail domain pointer
-                                if (domain.MailDomainId > 0 && instantAlias.MailDomainId == 0)
-                                {
-                                    int mailRes = MailServerController.AddMailDomainPointer(domain.MailDomainId, instantAliasId);
-                                    if (mailRes < 0)
-                                        return mailRes;
-                                }
-                 */
+
+
+                if (domain.WebSiteId > 0)
+                {
+                    WebServerController.AddWebSitePointer(domain.WebSiteId,
+                                                            ((domain.DomainName.Replace("." + parentZone, "") == parentZone) |
+                                                            (domain.DomainName == parentZone))
+                                                            ? "" : domain.DomainName.Replace("." + parentZone, ""),
+                                                            instantAlias.DomainId);
+                }
+
+
+                // add web site pointer if required
+                List<DomainInfo> domains = GetDomainsByDomainItemId(domain.DomainId);
+                foreach (DomainInfo d in domains)
+                {
+                    
+                    if (d.WebSiteId > 0)
+                    {
+                        WebServerController.AddWebSitePointer(d.WebSiteId,
+                                                                ((d.DomainName.Replace("." + parentZone, "") == parentZone) |
+                                                                (d.DomainName == parentZone))
+                                                                ? "" : d.DomainName.Replace("." + parentZone, ""),
+                                                                instantAlias.DomainId);
+                    }
+                }
+
+                // add mail domain pointer
+                if (domain.MailDomainId > 0 && instantAlias.MailDomainId == 0)
+                {
+                    int mailRes = MailServerController.AddMailDomainPointer(domain.MailDomainId, instantAliasId);
+                    if (mailRes < 0)
+                        return mailRes;
+                }
 
                 return 0;
             }
@@ -2209,6 +2556,8 @@ namespace WebsitePanel.EnterpriseServer
 
             // load domain
             DomainInfo domain = GetDomain(domainId);
+            if (domain == null)
+                return 0;
 
             // place log record
             TaskManager.StartTask("DOMAIN", "DELETE_INSTANT_ALIAS", domain.DomainName);
@@ -2217,7 +2566,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // load instant alias domain
-                DomainInfo instantAlias = GetDomainItem(domain.InstantAliasName);
+                DomainInfo instantAlias = GetDomainItem(domain.InstantAliasName, true, false);
                 if (instantAlias == null)
                     return 0;
 
@@ -2228,15 +2577,24 @@ namespace WebsitePanel.EnterpriseServer
                     if (webRes < 0)
                         return webRes;
                 }
-                /*
-                                // remove from mail domain pointers
-                                if (instantAlias.MailDomainId > 0)
-                                {
-                                    int mailRes = MailServerController.DeleteMailDomainPointer(instantAlias.MailDomainId, instantAlias.DomainId);
-                                    if (mailRes < 0)
-                                        return mailRes;
-                                }
-                 */
+
+                List<DomainInfo> domains = GetDomainsByDomainItemId(instantAlias.DomainId);
+
+                foreach (DomainInfo d in domains)
+                {
+                    if (d.WebSiteId > 0)
+                    {
+                        WebServerController.DeleteWebSitePointer(d.WebSiteId, d.DomainId);
+                    }
+                }
+
+                // remove from mail domain pointers
+                if (instantAlias.MailDomainId > 0)
+                {
+                    int mailRes = MailServerController.DeleteMailDomainPointer(instantAlias.MailDomainId, instantAlias.DomainId);
+                    if (mailRes < 0)
+                        return mailRes;
+                }
 
                 // delete instant alias
                 int res = DeleteDomain(instantAlias.DomainId);

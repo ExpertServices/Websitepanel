@@ -2107,7 +2107,7 @@ namespace WebsitePanel.Providers.Mail
 				if (!String.IsNullOrEmpty(productVersion))
 				{
 					string[] split = productVersion.Split(new char[] { '.' });
-					return split[0].Equals("7");
+					return split[0].Equals("7")||split[0].Equals("8");
 				}
 			}
 
@@ -2140,7 +2140,7 @@ namespace WebsitePanel.Providers.Mail
 			if (!String.IsNullOrEmpty(productVersion))
 			{
 				string[] split = productVersion.Split(new[] { '.' });
-				return split[0].Equals("7");
+				return split[0].Equals("7")||split[0].Equals("8");
 			}
 
 			return false;

@@ -412,17 +412,54 @@ namespace WebsitePanel.EnterpriseServer
 
         public static bool CheckLoadUserProfile(int serverId)
         {
-            int packageId = DataProvider.GetPackageIdByName("IIS70");
-            int serviceId = DataProvider.GetServiceIdByProviderForServer(packageId, serverId);
-            return WebServerController.GetWebServer(serviceId).CheckLoadUserProfile();
-             
+            int serviceId = getWebServiceId(serverId);
+            if (serviceId != -1)
+            {
+                return WebServerController.GetWebServer(serviceId).CheckLoadUserProfile();
+            }
+
+            return false;
         }
+
+        private static int getWebServiceId(int serverId)
+        {
+            DataSet dsServices = ServerController.GetRawServicesByServerId(serverId);
+
+            int webGroup = -1;
+            
+            if (dsServices.Tables.Count < 1) return -1;
+
+            foreach (DataRow r in dsServices.Tables[0].Rows)
+            {
+                if (r["GroupName"].ToString() == "Web")
+                {
+                    webGroup = (int)r["GroupID"];
+                    break;
+                }
+            }
+
+            if (webGroup == -1) return -1;
+
+            foreach (DataRow r in dsServices.Tables[1].Rows)
+            {
+                if ((int)r["GroupID"] == webGroup)
+                {
+                    return (int)r["ServiceID"];
+                }
+            }
+
+            return -1;
+        }
+
+
 
         public static void EnableLoadUserProfile(int serverId)
         {
-            int packageId = DataProvider.GetPackageIdByName("IIS70");
-            int serviceId = DataProvider.GetServiceIdByProviderForServer(packageId, serverId);
-            WebServerController.GetWebServer(serviceId).EnableLoadUserProfile();
+            int serviceId = getWebServiceId(serverId);
+            if (serviceId != -1)
+            {
+                WebServerController.GetWebServer(serviceId).EnableLoadUserProfile();
+            }
         }
 
         

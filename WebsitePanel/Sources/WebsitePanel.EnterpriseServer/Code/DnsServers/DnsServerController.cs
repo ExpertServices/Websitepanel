@@ -47,10 +47,10 @@ namespace WebsitePanel.EnterpriseServer
 
         public static int AddZone(int packageId, int serviceId, string zoneName)
         {
-            return AddZone(packageId, serviceId, zoneName, true);
+            return AddZone(packageId, serviceId, zoneName, true, false);
         }
 
-        public static int AddZone(int packageId, int serviceId, string zoneName, bool addPackageItem)
+        public static int AddZone(int packageId, int serviceId, string zoneName, bool addPackageItem, bool ignoreGlobalDNSRecords)
         {
             // get DNS provider
             DNSServer dns = GetDNSServer(serviceId);
@@ -148,11 +148,15 @@ namespace WebsitePanel.EnterpriseServer
                     zoneRecords.Add(ns);
                 }
 
-                // add all other records
-                zoneRecords.AddRange(BuildDnsResourceRecords(records, "", zoneName, ""));
+                if (!ignoreGlobalDNSRecords)
+                {
+                    // add all other records
+                    zoneRecords.AddRange(BuildDnsResourceRecords(records, "", zoneName, ""));
+                }
 
                 // add zone records
                 dns.AddZoneRecords(zoneName, zoneRecords.ToArray());
+
 
 
                 // add secondary zones
@@ -190,7 +194,7 @@ namespace WebsitePanel.EnterpriseServer
             return zoneItemId;
         }
 
-
+        
         private static int RegisterZoneItems(int spaceId, int serviceId, string zoneName, bool primaryZone)
         {
             // zone item
@@ -201,6 +205,7 @@ namespace WebsitePanel.EnterpriseServer
             int zoneItemId = PackageController.AddPackageItem(zone);
             return zoneItemId;
         }
+
 
         public static int DeleteZone(int zoneItemId)
         {
@@ -283,8 +288,13 @@ namespace WebsitePanel.EnterpriseServer
                 
 		        if (record.RecordType == "A" || record.RecordType == "AAAA")
                 {
+                    // If the service IP address and the DNS records external address are empty / null SimpleDNS will fail to properly create the zone record
+                    if (String.IsNullOrEmpty(serviceIP) && String.IsNullOrEmpty(record.ExternalIP) && String.IsNullOrEmpty(record.RecordData))
+                        continue;
+
                     rr.RecordData = String.IsNullOrEmpty(record.RecordData) ? record.ExternalIP : record.RecordData;
-                    rr.RecordData = Utils.ReplaceStringVariable(rr.RecordData, "ip", record.ExternalIP);
+                    rr.RecordData = Utils.ReplaceStringVariable(rr.RecordData, "ip", string.IsNullOrEmpty(serviceIP) ? record.ExternalIP : serviceIP);
+                    rr.RecordData = Utils.ReplaceStringVariable(rr.RecordData, "domain_name", string.IsNullOrEmpty(domainName) ? string.Empty : domainName);
 
                     if (String.IsNullOrEmpty(rr.RecordData) && !String.IsNullOrEmpty(serviceIP))
                         rr.RecordData = serviceIP;
@@ -315,7 +325,6 @@ namespace WebsitePanel.EnterpriseServer
                         zoneRecords.Add(rr);
                 }
             }
-
             return zoneRecords;
         }
 
@@ -443,7 +452,7 @@ namespace WebsitePanel.EnterpriseServer
             if (!dns.ZoneExists(itemName))
             {
                 // create primary and secondary zones
-                AddZone(packageId, serviceId, itemName, false);
+                AddZone(packageId, serviceId, itemName, false, false);
 
                 // restore records
                 XmlSerializer serializer = new XmlSerializer(typeof(DnsRecord));

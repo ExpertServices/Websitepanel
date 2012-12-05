@@ -139,7 +139,7 @@
     <value>E-mail Address</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;&lt;b&gt;Company Contacts&lt;/b&gt; will be visible in GAL to all members of Exchange organization.&lt;/p&gt;&lt;p&gt;You can also create contacts to use them as forwarding accounts in mailbox properties.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="gvContacts.Empty" xml:space="preserve">
     <value>No contacts have been created. To create a new contact click "Create New Contact" button.</value>

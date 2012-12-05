@@ -86,9 +86,9 @@ namespace WebsitePanel.Server.Code
 
         public static string GetServerVersion()
         {
-            object[] attrs = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), true);
+            object[] attrs = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyFileVersionAttribute), true);
             if (attrs.Length > 0)
-                return ((AssemblyInformationalVersionAttribute)attrs[0]).InformationalVersion;
+                return ((AssemblyFileVersionAttribute)attrs[0]).Version;
             else
 			    return typeof(AutoDiscoveryHelper).Assembly.GetName().Version.ToString(3);
         }

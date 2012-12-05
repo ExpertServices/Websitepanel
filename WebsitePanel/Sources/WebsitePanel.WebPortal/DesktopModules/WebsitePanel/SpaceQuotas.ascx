@@ -22,10 +22,17 @@
         <td class="SubHead" nowrap><asp:Label ID="lblSubDomains" runat="server" meta:resourcekey="lblSubDomains" Text="Sub-Domains:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaSubDomains" runat="server" QuotaName="OS.SubDomains" DisplayGauge="True" /></td>
     </tr>
+<!--
     <tr ID="pnlDomainPointers" runat="server">
         <td class="SubHead" nowrap><asp:Label ID="lblDomainPointers" runat="server" meta:resourcekey="lblDomainPointers" Text="Domain Pointers:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaDomainPointers" runat="server" QuotaName="OS.DomainPointers" DisplayGauge="True" /></td>
     </tr>
+-->
+    <tr ID="pnlOrganizations" runat="server">
+        <td class="SubHead" nowrap><asp:Label ID="lblOrganizations" runat="server" meta:resourcekey="lblOrganizations" Text="Organizations:"></asp:Label></td>
+        <td class="Normal"><wsp:Quota ID="quotaOrganizations" runat="server" QuotaName="HostedSolution.Organizations" DisplayGauge="True" /></td>
+    </tr>
+
     <tr ID="pnlUserAccounts" runat="server">
         <td class="SubHead" nowrap><asp:Label ID="lblUserAccounts" runat="server" meta:resourcekey="lblUserAccounts" Text="User Accounts:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaUserAccounts" runat="server" QuotaName="HostedSolution.Users" DisplayGauge="True" /></td>

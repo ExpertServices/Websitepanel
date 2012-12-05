@@ -176,6 +176,7 @@ namespace WebsitePanel.Portal
             }
         }
 		protected void Validate(object source, ServerValidateEventArgs args) {
+/*
 			var ip = args.Value;
 			System.Net.IPAddress ipaddr;
             if (string.IsNullOrEmpty(args.Value))
@@ -184,6 +185,8 @@ namespace WebsitePanel.Portal
 			    args.IsValid = System.Net.IPAddress.TryParse(ip, out ipaddr) && (ip.Contains(":") || ip.Contains(".")) && 
                     ((ddlRecordType.SelectedValue == "A" && ipaddr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork) ||
                     (ddlRecordType.SelectedValue == "AAAA" && ipaddr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6));
+*/
+            args.IsValid = true;
 		}
 
         private void SaveRecord()

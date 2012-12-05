@@ -27,6 +27,10 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Data;
+using System.Text;
+using System.Collections.Generic;
+
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
 
@@ -38,11 +42,20 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             DomainInfo[] domains = ES.Services.Servers.GetMyDomains(PanelSecurity.PackageId);
 
-            OrganizationDomainName[] list = ES.Services.Organizations.GetOrganizationDomains(PanelRequest.ItemID);
+            Organization[] orgs = ES.Services.Organizations.GetOrganizations(PanelSecurity.PackageId, false);
+
+            List<OrganizationDomainName> list = new List<OrganizationDomainName>();
+
+            foreach (Organization o in orgs)
+            {
+                OrganizationDomainName[] tmpList = ES.Services.Organizations.GetOrganizationDomains(o.Id);
+
+                foreach (OrganizationDomainName name in tmpList) list.Add(name);
+            }
 
             foreach (DomainInfo d in domains)
             {
-                if (!d.IsDomainPointer & !d.IsInstantAlias)
+                if (!d.IsDomainPointer)
                 {
                     bool bAdd = true;
                     foreach (OrganizationDomainName acceptedDomain in list)

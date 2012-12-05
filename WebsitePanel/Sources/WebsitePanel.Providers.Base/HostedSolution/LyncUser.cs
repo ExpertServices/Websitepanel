@@ -34,8 +34,8 @@ namespace WebsitePanel.Providers.HostedSolution
 {
     public class LyncUser
     {
-        public string PrimaryUri { get; set; }
-        public string PrimaryEmailAddress { get; set; }
+        public string SipAddress { get; set; }
+        public string UserPrincipalName { get; set; }
         public string DisplayName { get; set; }
         public string LineUri { get; set; }
         public int AccountID { get; set; }

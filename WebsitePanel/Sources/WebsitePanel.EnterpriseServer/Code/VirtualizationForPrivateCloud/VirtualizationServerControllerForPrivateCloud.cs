@@ -3778,7 +3778,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 ret = vs.GetDeviceEvents(serviceInfo.ServerName, serviceProviderItem.Name);
             }
-            catch(Exception ex)
+            catch(Exception )
             {
                 ret = null;
             }
@@ -3804,7 +3804,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 ret  = vs.GetMonitoringAlerts(serviceInfo.ServerName, serviceProviderItem.Name);
             }
-            catch (Exception ex)
+            catch (Exception )
             { 
                 ret = null;
             }
@@ -3832,7 +3832,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 ret = vs.GetPerfomanceValue(serviceProviderItem.Name, perf, startPeriod, endPeriod);
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 ret = null;
             }

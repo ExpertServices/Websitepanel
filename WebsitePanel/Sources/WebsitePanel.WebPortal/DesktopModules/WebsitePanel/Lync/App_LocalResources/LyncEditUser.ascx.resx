@@ -124,7 +124,7 @@
     <value>Save changes</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt; A  plan is a template that defines the capabilities of a lync user. In order to change the plan assigned to this user, select a plan and click the Save Changes button &lt;/p&gt;</value>
+    <value />
   </data>
   <data name="locDisplayName.Text" xml:space="preserve">
     <value>Display name:</value>
@@ -134,5 +134,8 @@
   </data>
   <data name="locPlanName.Text" xml:space="preserve">
     <value>Plan Name :</value>
+  </data>
+  <data name="locSipAddress.Text" xml:space="preserve">
+    <value>SIP Address:</value>
   </data>
 </root>

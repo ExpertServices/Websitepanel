@@ -396,7 +396,7 @@
 .VpsBody
 {
 	float: left;
-	background: transparent url(../images/VPS/module_header.gif) left top no-repeat;
+	background: transparent url(../images/Exchange/module_header.gif) left top no-repeat;
 	clear: both;
 }
 .VpsBottom
@@ -456,7 +456,7 @@
 {
 	float: left;
 	background: transparent;
-	width: 600px;
+	width: 100%;
 }
 
 #VpsContainer .Right

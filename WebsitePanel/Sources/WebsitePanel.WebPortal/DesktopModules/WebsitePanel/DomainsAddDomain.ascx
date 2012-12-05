@@ -1,5 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DomainsAddDomain.ascx.cs" Inherits="WebsitePanel.Portal.DomainsAddDomain" %>
 <%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
+<%@ Register Src="DomainsSelectDomainControl.ascx" TagName="DomainsSelectDomainControl" TagPrefix="uc1" %>
 <%@ Register Src="UserControls/CollapsiblePanel.ascx" TagPrefix="wsp" TagName="CollapsiblePanel" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server" />
@@ -18,7 +19,7 @@
     </p>
     
     <p id="SubDomainPanel" runat="server" style="padding: 15px 0 15px 5px;" visible="false">
-        <asp:TextBox ID="SubDomainName" runat="server" Width="150" CssClass="HugeTextBox"></asp:TextBox>
+        <asp:TextBox ID="SubDomainName" runat="server" Width="150" CssClass="TextBox100"></asp:TextBox>
         .
         <asp:DropDownList ID="DomainsList" Runat="server" CssClass="NormalTextBox" DataTextField="DomainName" DataValueField="DomainName"></asp:DropDownList>
         <asp:RequiredFieldValidator id="SubDomainRequiredValidator" runat="server" meta:resourcekey="SubDomainRequiredValidator"
@@ -38,6 +39,18 @@
             <asp:CheckBox ID="CreateWebSite" runat="server" meta:resourcekey="CreateWebSite" Text="Create Web Site" CssClass="Checkbox Bold" Checked="true" /><br />
             <div style="padding-left: 20px;">
                 <asp:Localize ID="DescribeCreateWebSite" runat="server" meta:resourcekey="DescribeCreateWebSite">Description...</asp:Localize>
+            </div>
+            <div style="padding-left: 20px;">
+		        <asp:Label ID="lblHostName" runat="server" meta:resourcekey="lblHostName" Text="Host name:"></asp:Label>
+			    <asp:TextBox ID="txtHostName" runat="server" CssClass="TextBox100" MaxLength="64" Text="www"></asp:TextBox>
+            </div>
+        </asp:Panel>
+
+        <asp:Panel id="PointWebSitePanel" runat="server" style="padding-bottom: 15px;">
+            <asp:CheckBox ID="PointWebSite" runat="server" meta:resourcekey="PointWebSite" Text="Point to Web Site" CssClass="Checkbox Bold"
+                AutoPostBack="true" /><br />
+            <div style="padding-left: 20px;">
+                <asp:DropDownList ID="WebSitesList" Runat="server" CssClass="NormalTextBox" DataTextField="Name" DataValueField="ID"></asp:DropDownList>
             </div>
         </asp:Panel>
         

@@ -157,13 +157,7 @@
     <value>Primary E-mail Address</value>
   </data>
   <data name="HSFormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;Active Directory user accounts are used to:&lt;/p&gt;
-&lt;p&gt;•	Authenticate the identity of a user.&lt;br&gt;
-•	Authorize or deny access to domain resources.&lt;br&gt; 
-•	Administer other security principals.&lt;br&gt;
-•	Audit actions performed using the user account.&lt;/p&gt; 
-&lt;p&gt;Primary E-Mail Address is a User Principal Name (UPN). It is used as a logon name in Outlook, Outlook Web Access (OWA) or SharePoint.&lt;/p&gt;
-&lt;p&gt;User account can also represent Exchange mailbox, which may be a person, room or inventory unit.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="locQuota.Text" xml:space="preserve">
     <value>Total Users Created in this Organization:</value>
@@ -179,5 +173,11 @@
   </data>
   <data name="locTenantQuota.Text" xml:space="preserve">
     <value>Total Users Created for this Tenant:</value>
+  </data>
+  <data name="ddlSearchColumnUserPrincipalName.Text" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="gvUsersLogin.Header" xml:space="preserve">
+    <value>Login</value>
   </data>
 </root>

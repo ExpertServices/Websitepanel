@@ -43,6 +43,12 @@
 										ValidationGroup="CreateOrganization">*</asp:RegularExpressionValidator>
 							</td>
 						</tr>
+						<tr>
+							<td class="FormLabel150"><asp:Localize ID="locDomainName" runat="server" meta:resourcekey="locDomainName" Text="Domain Name:"></asp:Localize></td>
+							<td>
+                            <asp:DropDownList id="ddlDomains" runat="server" CssClass="NormalTextBox" DataTextField="DomainName" DataValueField="DomainID" style="vertical-align:middle;"></asp:DropDownList>
+							</td>
+						</tr>
 					</table>
 				    <div class="FormFooterClean">
 					    <asp:Button id="btnCreate" runat="server" Text="Create Organization" CssClass="Button1" OnClick="btnCreate_Click"

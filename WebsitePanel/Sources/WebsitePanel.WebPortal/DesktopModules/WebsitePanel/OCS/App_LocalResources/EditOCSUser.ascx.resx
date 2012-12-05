@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="breadcrumb.PageName" xml:space="preserve">
     <value>Edit OCS User</value>
@@ -139,12 +139,7 @@
     <value>Enable Public IM connectivity</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;&lt;b&gt;Sign-in name&lt;/b&gt; specifies the Session Initiation Protocol (SIP) address that is currently registered for this user and will be used to route messages to and from the user. The sign-in name is in the form "sip:user@domain" and must be unique.&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;Federation&lt;/b&gt; specifies whether the user can communicate with users from other organizations that have an Office Communications Server deployment and a federated link.&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;Public IM connectivity&lt;/b&gt; specifies whether the user can communicate with users who are hosted on AOL, Yahoo!, or the MSN network of Internet services.&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;Archiving&lt;/b&gt; enables or disables archiving of IM conversations of the user. Archiving  can be enabled independently for internal conversations and for conversations with users outside your organization.&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;Enhanced presence&lt;/b&gt; enables users to control their presence with more granularity. Enhanced presence enables users to create different presence categories and assign data items to the categories.&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;Note:&lt;/b&gt;  Some settings cannot be configured for individual users depending on the Global Properties.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="locDisplayName.Text" xml:space="preserve">
     <value>Display name:</value>

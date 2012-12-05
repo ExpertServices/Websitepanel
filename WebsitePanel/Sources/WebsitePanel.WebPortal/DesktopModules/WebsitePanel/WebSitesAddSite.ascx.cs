@@ -62,19 +62,29 @@ namespace WebsitePanel.Portal
 
         private void ToggleControls()
         {
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
             rowDedicatedIP.Visible = rbDedicatedIP.Checked;
+            
+            if (Utils.CheckQouta(Quotas.WEB_ENABLEHOSTNAMESUPPORT, cntx))
+            {
+                txtHostName.Visible = chkIgnoreGlobalDNSRecords.Visible = lblIgnoreGlobalDNSRecords.Visible = lblTheDotInTheMiddle.Visible = true;
+                UserSettings settings = ES.Services.Users.GetUserSettings(PanelSecurity.LoggedUserId, UserSettings.WEB_POLICY);
+                txtHostName.Text = String.IsNullOrEmpty(settings["HostName"]) ? "" : settings["HostName"];
+                chkIgnoreGlobalDNSRecords.Checked = false;
+            }
+            else
+            {
+                txtHostName.Visible = chkIgnoreGlobalDNSRecords.Visible = lblIgnoreGlobalDNSRecords.Visible = lblTheDotInTheMiddle.Visible = false;
+                chkIgnoreGlobalDNSRecords.Checked = true;
+                txtHostName.Text = "";
+                domainsSelectDomainControl.HideWebSites = true;
+            }
+
         }
 
         private void BindIgnoreZoneTemplate()
         {
-            /*
-            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
-            if (cntx.Quotas[Quotas.WEB_SITES].QuotaUsedValue > 0)
-                chkIgnoreGlobalDNSRecords.Visible = chkIgnoreGlobalDNSRecords.Checked = lblIgnoreGlobalDNSRecords.Visible = true;
-            else
-                chkIgnoreGlobalDNSRecords.Visible = chkIgnoreGlobalDNSRecords.Checked = lblIgnoreGlobalDNSRecords.Visible= false;
-            */
-
             chkIgnoreGlobalDNSRecords.Checked = false;
         }
 
@@ -107,7 +117,7 @@ namespace WebsitePanel.Portal
                 int packageAddressId = rbDedicatedIP.Checked ? Utils.ParseInt(ddlIpAddresses.SelectedValue, 0) : 0;
 
                 siteItemId = ES.Services.WebServers.AddWebSite(PanelSecurity.PackageId, txtHostName.Text.ToLower(), domainsSelectDomainControl.DomainId,
-                    packageAddressId, chkIgnoreGlobalDNSRecords.Checked);
+                    packageAddressId, !chkIgnoreGlobalDNSRecords.Checked);
 
                 if (siteItemId < 0)
                 {

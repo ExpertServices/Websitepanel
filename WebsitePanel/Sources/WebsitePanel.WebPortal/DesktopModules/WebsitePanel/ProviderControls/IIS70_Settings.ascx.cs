@@ -107,6 +107,7 @@ namespace WebsitePanel.Portal.ProviderControls
 			//
 			ipAddress.AddressId = (settings["SharedIP"] != null) ? Utils.ParseInt(settings["SharedIP"], 0) : 0;
             ipAddress.SelectValueText = GetLocalizedString("ipAddress.SelectValueText");
+            txtPublicSharedIP.Text = settings["PublicSharedIP"];
 
 			txtWebGroupName.Text = settings["WebGroupName"];
 			chkAssignIPAutomatically.Checked = Utils.ParseBool(settings["AutoAssignDedicatedIP"], true);
@@ -129,10 +130,7 @@ namespace WebsitePanel.Portal.ProviderControls
 
 			
 
-            // WPI
-            //wpiMicrosoftFeed.Checked = Utils.ParseBool(settings["FeedEnableMicrosoft"], true);
-            //wpiHeliconTechFeed.Checked = Utils.ParseBool(settings["FeedEnableHelicon"], true);
-            wpiEditFeedsList.Value = settings["FeedUrls"];
+          
 
 
 			txtAspPath.Text = settings["AspPath"];
@@ -186,7 +184,7 @@ namespace WebsitePanel.Portal.ProviderControls
 			//
 			Utils.SelectListItem(ddlWmSvcCredentialsMode, settings["WmSvc.CredentialsMode"]);
 			//
-			FilteredAppIds = settings["GalleryAppsFilter"];
+			
 			//
 			if (String.IsNullOrEmpty(settings[WDeployEnabled]) == false)
 			{
@@ -199,12 +197,21 @@ namespace WebsitePanel.Portal.ProviderControls
 					WDeployDisabledCheckBox.Checked = true;
 				}
 			}
+
+            // WPI
+            //wpiMicrosoftFeed.Checked = Utils.ParseBool(settings["FeedEnableMicrosoft"], true);
+            //wpiHeliconTechFeed.Checked = Utils.ParseBool(settings["FeedEnableHelicon"], true);
+            wpiEditFeedsList.Value = settings["FeedUrls"];
+            FilteredAppIds = settings["GalleryAppsFilter"];
+            radioFilterAppsList.SelectedIndex = Utils.ParseInt(settings["GalleryAppsFilterMode"], 0);
+            chkGalleryAppsAlwaysIgnoreDependencies.Checked = Utils.ParseBool(settings["GalleryAppsAlwaysIgnoreDependencies"], false);
 		}
 
 		public void SaveSettings(StringDictionary settings)
 		{
 			//
 			settings["SharedIP"] = ipAddress.AddressId.ToString();
+            settings["PublicSharedIP"] = txtPublicSharedIP.Text.Trim();
 			settings["WebGroupName"] = txtWebGroupName.Text.Trim();
 			settings["AutoAssignDedicatedIP"] = chkAssignIPAutomatically.Checked.ToString();
 
@@ -249,10 +256,6 @@ namespace WebsitePanel.Portal.ProviderControls
 
 			
 
-            //settings["FeedEnableMicrosoft"] = wpiMicrosoftFeed.Checked.ToString();
-            //settings["FeedEnableHelicon"] = wpiHeliconTechFeed.Checked.ToString();
-            settings["FeedUrls"] = wpiEditFeedsList.Value;
-            settings["GalleryAppsFilter"] = GetAppsCatalogFilter();
 
 			if (WDeployEnabledCheckBox.Checked)
 			{
@@ -267,6 +270,13 @@ namespace WebsitePanel.Portal.ProviderControls
 			{
 				settings[WDeployEnabled] = Boolean.FalseString;
 			}
+
+            //settings["FeedEnableMicrosoft"] = wpiMicrosoftFeed.Checked.ToString();
+            //settings["FeedEnableHelicon"] = wpiHeliconTechFeed.Checked.ToString();
+            settings["FeedUrls"] = wpiEditFeedsList.Value;
+            settings["GalleryAppsFilter"] = GetAppsCatalogFilter();
+            settings["GalleryAppsFilterMode"] = radioFilterAppsList.SelectedIndex.ToString();
+            settings["GalleryAppsAlwaysIgnoreDependencies"] = chkGalleryAppsAlwaysIgnoreDependencies.Checked.ToString();
 		}
 
         protected void DownladAndIstallApeLinkButton_Click(object sender, EventArgs e)

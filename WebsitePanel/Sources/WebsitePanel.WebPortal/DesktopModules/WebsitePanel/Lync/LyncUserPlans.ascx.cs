@@ -144,6 +144,7 @@ namespace WebsitePanel.Portal.Lync
 
             try
             {
+                /*
                 LyncUserPlan plan = ES.Services.Lync.GetLyncUserPlan(PanelRequest.ItemID, planId);
 
                 if (plan.LyncUserPlanType > 0)
@@ -152,7 +153,7 @@ namespace WebsitePanel.Portal.Lync
                     BindPlans();
                     return;
                 }
-
+                */
                 ES.Services.Lync.SetOrganizationDefaultLyncUserPlan(PanelRequest.ItemID, planId);
 
                 ShowSuccessMessage("REQUEST_COMPLETED_SUCCESFULLY");

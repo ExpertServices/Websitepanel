@@ -148,13 +148,16 @@
 				<h2>
 					<asp:Localize runat="server" meta:resourcekey="GenerateCSR" /></h2>
 				<table style="width: 100%;">
-					<tr>
+	                <tr>
 						<td class="SubHead">
-							<asp:Localize ID="sslDomain" runat="server" meta:resourcekey="sslDomain" /></td>
-						<td class="Normal">
-							<asp:DropDownList ID="lstDomains" runat="server" />
-							<asp:CheckBox ID="chkWild" runat="server" meta:resourcekey="sslWildcard" /></td>
-					</tr>
+							<asp:Localize ID="SelectCertType" runat="server" meta:resourcekey="SelectCertType" /></td>
+		                <td class="NormalBold" ><asp:radiobutton id="rbSiteCertificate" GroupName="Content" Runat="server" Checked="True"></asp:radiobutton></td>
+	                </tr>
+	                <tr>
+                        <td></td>
+                        <td class="NormalBold" ><asp:radiobutton id="rbDomainCertificate" GroupName="Content" Runat="server" ></asp:radiobutton></td>
+	                </tr>
+
 					<tr>
 						<td class="SubHead">
 							<asp:Localize ID="sslBitLength" runat="server" meta:resourcekey="sslBitLength" /></td>

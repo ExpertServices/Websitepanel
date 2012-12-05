@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnCreateUser.Text" xml:space="preserve">
     <value>Create new CRM user</value>
@@ -145,6 +145,6 @@
     <value>Primary Email Address</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;CRM user is any person who works for a business unit who uses the Microsoft Dynamics CRM application.&lt;/p&gt; &lt;p&gt;Each user has a user account. Included in the user's account is information such as the user's telephone numbers, e-mail address, and a link to the user's manager. &lt;/p&gt; &lt;p&gt;Each user corresponds to a user in the Active Directory for that organization.&lt;/p&gt;&lt;p&gt;You can disable a user's record to prevent the user from being able to access Microsoft Dynamics CRM. You can only disable a user record, not delete it.&lt;/p&gt;</value>
+    <value />
   </data>
 </root>

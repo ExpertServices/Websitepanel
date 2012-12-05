@@ -36,6 +36,7 @@ namespace WebsitePanel.EnterpriseServer
 	{
 		string emailAddress;
 		bool isPrimary;
+        bool iSuserPrincipalName;
 
 		public string EmailAddress
 		{
@@ -48,5 +49,12 @@ namespace WebsitePanel.EnterpriseServer
 			get { return this.isPrimary; }
 			set { this.isPrimary = value; }
 		}
+
+        public bool IsUserPrincipalName
+        {
+            get { return iSuserPrincipalName; }
+            set { iSuserPrincipalName = value; }
+        }
+
 	}
 }

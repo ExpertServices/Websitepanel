@@ -46,9 +46,9 @@ namespace WebsitePanel.EnterpriseServer
         #region Organizations
 
         [WebMethod]
-        public int CreateOrganization(int packageId, string organizationID, string organizationName)
+        public int CreateOrganization(int packageId, string organizationID, string organizationName, string domainName)
         {
-            return OrganizationController.CreateOrganization(packageId, organizationID, organizationName);
+            return OrganizationController.CreateOrganization(packageId, organizationID, organizationName, domainName);
 
         }
 
@@ -123,6 +123,12 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public int ChangeOrganizationDomainType(int itemId, int domainId, ExchangeAcceptedDomainType newDomainType)
+        {
+            return OrganizationController.ChangeOrganizationDomainType(itemId, domainId, newDomainType);
+        }
+
+        [WebMethod]
         public List<OrganizationDomainName> GetOrganizationDomains(int itemId)
         {
             return OrganizationController.GetOrganizationDomains(itemId);
@@ -187,6 +193,22 @@ namespace WebsitePanel.EnterpriseServer
                 businessPhone, fax, homePhone, mobilePhone, pager,
                 webPage, notes, externalEmail, subscriberNumber);
         }
+
+
+        [WebMethod]
+        public int SetUserPrincipalName(int itemId, int accountId, string userPrincipalName, bool inherit)
+        {
+            return OrganizationController.SetUserPrincipalName(itemId, accountId, userPrincipalName,
+                inherit);
+        }
+
+
+        [WebMethod]
+        public int SetUserPassword(int itemId, int accountId, string password)
+        {
+            return OrganizationController.SetUserPassword(itemId, accountId, password);
+        }
+        
 
 
         [WebMethod]

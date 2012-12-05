@@ -123,9 +123,13 @@
   <data name="FilterDialogButton.AlternateText" xml:space="preserve">
     <value>Click to modify the filter...</value>
   </data>
+  <data name="chkGalleryAppsAlwaysIgnoreDependencies.Text" xml:space="preserve">
+    <value>Always ignore dependencies</value>
+  </data>
   <data name="FilterDialogButton.Text" xml:space="preserve">
     <value>Click to create a filter...</value>
   </data>
+  
   <data name="GalleryFeedFilter.Text" xml:space="preserve">
     <value>Gallery feed filter:</value>
   </data>
@@ -196,7 +200,7 @@
     <value>Shared SSL Web Sites:</value>
   </data>
   <data name="lblWebAppGallery.Text" xml:space="preserve">
-    <value>Microsoft Web Appication Gallery</value>
+    <value>Web Appication Gallery</value>
   </data>
   <data name="lblWebFarms.Text" xml:space="preserve">
     <value>Web Farms Support:</value>
@@ -221,9 +225,6 @@
   </data>
   <data name="secWebExtensions.Text" xml:space="preserve">
     <value>Web Extensions</value>
-  </data>
-  <data name="lclGalleryFilterNote.Text" xml:space="preserve">
-    <value>Please select items from the feed you would like to remove from the list of apps available to end-users.</value>
   </data>
   <data name="lblAspNet40Path.Text" xml:space="preserve">
     <value>ASP.NET 4.0 Library Path:</value>

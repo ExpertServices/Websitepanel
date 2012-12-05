@@ -126,4 +126,7 @@
   <data name="lblDomainName.Text" xml:space="preserve">
     <value>Web Site Pointer:</value>
   </data>
+  <data name="lblTheDotInTheMiddle.Text" xml:space="preserve">
+    <value> . </value>
+  </data>
 </root>

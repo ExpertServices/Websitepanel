@@ -1032,7 +1032,17 @@ namespace WebsitePanel.Providers.Exchange
             this.Invoke("AddAuthoritativeDomain", new object[] {
                         domain});
         }
-        
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/ChangeAcceptedDomainType", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void ChangeAcceptedDomainType(string domain, ExchangeAcceptedDomainType domainType)
+        {
+            this.Invoke("ChangeAcceptedDomainType", new object[] {
+                        domain,
+                        domainType});
+        }
+
         /// <remarks/>
         public System.IAsyncResult BeginAddAuthoritativeDomain(string domain, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("AddAuthoritativeDomain", new object[] {

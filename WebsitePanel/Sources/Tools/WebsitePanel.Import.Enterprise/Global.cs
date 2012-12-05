@@ -58,6 +58,13 @@ namespace WebsitePanel.Import.Enterprise
 			set { aDRootDomain = value; }
 		}
 
+        private static string netBiosDomain;
+        public static string NetBiosDomain
+        {
+            get { return netBiosDomain; }
+            set { netBiosDomain = value; }
+        }
+
 		public static PackageInfo Space;
 		public static string TempDomain;
 

@@ -112,13 +112,13 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;When you grant &lt;b&gt;Full Access&lt;/b&gt; permission to a user, that user can open this mailbox and access all of its content.&lt;/p&gt; &lt;br&gt;&lt;p&gt;When you grant &lt;b&gt;Send As&lt;/b&gt; permission to a user, that user can send messages as this mailbox. &lt;/p&gt;&lt;br&gt;&lt;p&gt;We do not recommend to use this setting together “Send on behalf” (“Send as”) – it may work unpredictable.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="lblGrandPermissions.Text" xml:space="preserve">
     <value>Grant this permission to:</value>

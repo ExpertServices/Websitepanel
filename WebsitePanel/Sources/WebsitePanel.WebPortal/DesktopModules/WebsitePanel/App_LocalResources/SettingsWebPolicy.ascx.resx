@@ -219,6 +219,9 @@
   <data name="lblGroupName.Text" xml:space="preserve">
     <value>Group Name:</value>
   </data>
+  <data name="lblHostName.Text" xml:space="preserve">
+    <value>Default Hostname: (Only when hostnames are enabled)</value>
+  </data>
   <data name="lblParkingPageContent.Text" xml:space="preserve">
     <value>Page Content:</value>
   </data>
@@ -272,6 +275,9 @@
   </data>
   <data name="secGeneralSettings.Text" xml:space="preserve">
     <value>General Settings</value>
+  </data>
+  <data name="secHostNamePanel.Text" xml:space="preserve">
+    <value>Default Hostname</value>
   </data>
   <data name="secParkingPage.Text" xml:space="preserve">
     <value>Parking Page</value>

@@ -5,7 +5,7 @@ using System.Web;
 
 namespace WebsitePanel.EnterpriseServer {
 
-	public struct IPAddress {
+	public struct IPAddress : IComparable {
 		public Int128 Address;
 		public bool V6 { get; private set; }
 		public bool V4 { get { return !V6 || Null; } }
@@ -68,10 +68,19 @@ namespace WebsitePanel.EnterpriseServer {
             if (Null)
                 return "";
 			var s = new System.Text.StringBuilder();
-			if (!V6) {
-				var ipl = (long)Address;
-				s.Append(String.Format("{0}.{1}.{2}.{3}", (ipl >> 24) & 0xFFL, (ipl >> 16) & 0xFFL, (ipl >> 8) & 0xFFL, (ipl & 0xFFL)));
-			} else if (!IsMask) {
+            if (!V6)
+            {
+                var ipl = Address;
+                if (IsMask)
+                {
+                    int digits = 32 - Cidr;
+                    ipl = (Int128.MaxValue << 1) | 0x1; // remove left sign bit
+                    ipl = ipl << digits;
+                }
+                s.Append(String.Format("{0}.{1}.{2}.{3}", (ipl >> 24) & 0xFFL, (ipl >> 16) & 0xFFL, (ipl >> 8) & 0xFFL, (ipl & 0xFFL)));
+            }
+            else if (!IsMask)
+            {
 				
 				var vals = new List<int>();
 				int i;
@@ -127,6 +136,30 @@ namespace WebsitePanel.EnterpriseServer {
 		public static bool operator >(IPAddress a, IPAddress b) { return a.Address > b.Address; }
 		public static bool operator <=(IPAddress a, IPAddress b) { return a.Address <= b.Address; }
 		public static bool operator >=(IPAddress a, IPAddress b) { return a.Address >= b.Address; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is IPAddress)
+            {
+                var b = (IPAddress)obj;
+                return this.Address == b.Address && this.Null == b.Null && (this.Null || !(this.IsSubnet && b.IsSubnet || this.IsMask && b.IsMask) || this.Cidr == b.Cidr);
+            }
+            else if (obj is long)
+            {
+                var b = (long)obj;
+                return this.Address == b;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Address.GetHashCode();
+        }
+
 		/*
 		public static IPAddress operator +(IPAddress a, IPAddress b) {
 			if (a.IsSubnet || b.IsSubnet || a.V6 != b.V6) throw new ArgumentException("Arithmetic with subnets or mixed v4 & v6 addresses not supported.");
@@ -149,7 +182,7 @@ namespace WebsitePanel.EnterpriseServer {
 		}
 		public static IPAddress operator &(IPAddress a, IPAddress b) {
 			if (a.V6 != b.V6) throw new ArgumentException("Arithmetic with mixed v4 & v6 addresses not supported.");
-			return new IPAddress { Address = a.Address | b.Address, Cidr = a.V4 ? 32 : 128, Null = false, V6 = a.V6, IsSubnet = false };
+			return new IPAddress { Address = a.Address & b.Address, Cidr = a.V4 ? 32 : 128, Null = false, V6 = a.V6, IsSubnet = false };
 		}
 		public static IPAddress operator ~(IPAddress a) {
 			if (a.Null) return new IPAddress { Address = 0, Null = true, Cidr = a.V4 ? 32 : 128, V6 = true, IsSubnet = false };
@@ -157,7 +190,20 @@ namespace WebsitePanel.EnterpriseServer {
 		}
 
 		public static implicit operator IPAddress(NullIPAddress a) { return new IPAddress { Null = true, Address = 0, Cidr = -1 }; }
-	}
+
+        public int CompareTo(object obj)
+        {
+            var a = this.Address;
+            var b = ((IPAddress)obj).Address;
+
+            if (a < b)
+                return 1;
+            else if (a > b)
+                return -1;
+            else
+                return 0;
+        }
+    }
 
 	public class NullIPAddress { }
 

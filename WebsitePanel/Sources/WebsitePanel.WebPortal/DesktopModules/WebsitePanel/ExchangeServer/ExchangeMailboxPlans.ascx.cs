@@ -142,6 +142,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             try
             {
+                /*
                 ExchangeMailboxPlan plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(PanelRequest.ItemID, mailboxPlanId);
 
                 if (plan.MailboxPlanType > 0)
@@ -150,7 +151,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     BindMailboxPlans();
                     return;
                 }
-
+                */
 
                 ES.Services.ExchangeServer.SetOrganizationDefaultExchangeMailboxPlan(PanelRequest.ItemID, mailboxPlanId);
 

@@ -44,6 +44,9 @@ namespace WebsitePanel.Portal
                     ftpAccountName.SetUserPolicy(PanelSecurity.SelectedUserId, UserSettings.FTP_POLICY, "UserNamePolicy");
                     BindHostingPlans(PanelSecurity.SelectedUserId);
                     BindHostingPlan();
+
+
+
                 }
             }
             catch (Exception ex)
@@ -83,6 +86,7 @@ namespace WebsitePanel.Portal
             bool webEnabled = false;
             bool ftpEnabled = false;
             bool mailEnabled = false;
+            bool integratedOUEnabled = false;
 
             // load hosting context
             if (planId > 0)
@@ -92,8 +96,27 @@ namespace WebsitePanel.Portal
                 {
                     systemEnabled = cntx.Groups.ContainsKey(ResourceGroups.Os);
                     webEnabled = cntx.Groups.ContainsKey(ResourceGroups.Web);
+
+                    if (Utils.CheckQouta(Quotas.WEB_ENABLEHOSTNAMESUPPORT, cntx))
+                    {
+                        lblHostName.Visible = txtHostName.Visible = true;
+                        UserSettings settings = ES.Services.Users.GetUserSettings(PanelSecurity.LoggedUserId, UserSettings.WEB_POLICY);
+                        txtHostName.Text = String.IsNullOrEmpty(settings["HostName"]) ? "" : settings["HostName"];
+
+                    }
+                    else
+                    {
+                        lblHostName.Visible = txtHostName.Visible = false;
+                        txtHostName.Text = "";
+                    }
+
                     ftpEnabled = cntx.Groups.ContainsKey(ResourceGroups.Ftp);
                     mailEnabled = cntx.Groups.ContainsKey(ResourceGroups.Mail);
+
+                    if (Utils.CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))
+                    {
+                        integratedOUEnabled = true;
+                    }
                 }
             }
 
@@ -102,6 +125,7 @@ namespace WebsitePanel.Portal
 
             fsWeb.Visible = webEnabled;
             chkCreateWebSite.Checked &= webEnabled;
+            
 
             fsFtp.Visible = ftpEnabled;
             chkCreateFtpAccount.Checked &= ftpEnabled;
@@ -111,7 +135,7 @@ namespace WebsitePanel.Portal
 
             ftpAccountName.Visible = (rbFtpAccountName.SelectedIndex == 1);
 
-            chkIntegratedOUProvisioning.Visible = chkCreateResources.Visible;
+            chkIntegratedOUProvisioning.Checked = chkIntegratedOUProvisioning.Visible = (chkCreateResources.Visible && integratedOUEnabled);
         }
 
         private void CreateHostingSpace()
@@ -133,8 +157,8 @@ namespace WebsitePanel.Portal
                     spaceName,
                     Utils.ParseInt(ddlStatus.SelectedValue, 0),
                     chkPackageLetter.Checked,
-                    chkCreateResources.Checked, domainName, true, chkCreateWebSite.Checked,
-                    chkCreateFtpAccount.Checked, ftpAccount, chkCreateMailAccount.Checked, "");
+                    chkCreateResources.Checked, domainName, false, chkCreateWebSite.Checked,
+                    chkCreateFtpAccount.Checked, ftpAccount, chkCreateMailAccount.Checked, txtHostName.Text);
 
                 if (result.Result < 0)
                 {
@@ -153,7 +177,7 @@ namespace WebsitePanel.Portal
                             if (user.Role != UserRole.Reseller)
                             {
 
-                                ES.Services.Organizations.CreateOrganization(result.Result, domainName.ToLower(), domainName.ToLower());
+                                ES.Services.Organizations.CreateOrganization(result.Result, domainName.ToLower(), domainName.ToLower(), domainName.ToLower());
 
                                 if (result.Result < 0)
                                 {

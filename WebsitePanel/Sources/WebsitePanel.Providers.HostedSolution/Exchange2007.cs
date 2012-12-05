@@ -230,6 +230,11 @@ namespace WebsitePanel.Providers.HostedSolution
 		{
 			DeleteAuthoritativeDomainInternal(domain);
 		}
+
+        public void ChangeAcceptedDomainType(string domainName, ExchangeAcceptedDomainType domainType)
+        {
+            ChangeAcceptedDomainTypeInternal(domainName, domainType);
+        }
 		#endregion
 
 		#region Mailboxes
@@ -1374,30 +1379,37 @@ namespace WebsitePanel.Providers.HostedSolution
 
 			long size = 0;
 
-			Command cmd = new Command("Get-PublicFolderStatistics");
-			cmd.Parameters.Add("Identity", folder);
-			if (!string.IsNullOrEmpty(PublicFolderServer))
-				cmd.Parameters.Add("Server", PublicFolderServer);
+            Command cmd = new Command("Get-PublicFolderDatabase");
 			Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
-			if (result != null && result.Count > 0)
-			{
-				PSObject obj = result[0];
-				Unlimited<ByteQuantifiedSize> totalItemSize =
-					(Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(obj, "TotalItemSize");
-				size += ConvertUnlimitedToBytes(totalItemSize);
-			}
+            if (result != null && result.Count > 0)
+            {
+                cmd = new Command("Get-PublicFolderStatistics");
+                cmd.Parameters.Add("Identity", folder);
+                if (!string.IsNullOrEmpty(PublicFolderServer))
+                    cmd.Parameters.Add("Server", PublicFolderServer);
+                result = ExecuteShellCommand(runSpace, cmd);
+                if (result != null && result.Count > 0)
+                {
+                    PSObject obj = result[0];
+                    Unlimited<ByteQuantifiedSize> totalItemSize =
+                        (Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(obj, "TotalItemSize");
+                    size += ConvertUnlimitedToBytes(totalItemSize);
+                }
 
-			cmd = new Command("Get-PublicFolder");
-			cmd.Parameters.Add("Identity", folder);
-			cmd.Parameters.Add("GetChildren", new SwitchParameter(true));
-			if (!string.IsNullOrEmpty(PublicFolderServer))
-				cmd.Parameters.Add("Server", PublicFolderServer);
-			result = ExecuteShellCommand(runSpace, cmd);
-			foreach (PSObject obj in result)
-			{
-				string id = ObjToString(GetPSObjectProperty(obj, "Identity"));
-				size += CalculatePublicFolderDiskSpace(runSpace, id);
-			}
+                cmd = new Command("Get-PublicFolder");
+                cmd.Parameters.Add("Identity", folder);
+                cmd.Parameters.Add("GetChildren", new SwitchParameter(true));
+                if (!string.IsNullOrEmpty(PublicFolderServer))
+                    cmd.Parameters.Add("Server", PublicFolderServer);
+                result = ExecuteShellCommand(runSpace, cmd);
+                foreach (PSObject obj in result)
+                {
+                    string id = ObjToString(GetPSObjectProperty(obj, "Identity"));
+                    size += CalculatePublicFolderDiskSpace(runSpace, id);
+                }
+            }
+            else
+                size = 0;
 			ExchangeLog.LogEnd("CalculatePublicFolderDiskSpace");
 			return size;
 		}
@@ -2579,8 +2591,8 @@ namespace WebsitePanel.Providers.HostedSolution
 				Command cmd = new Command("Set-Mailbox");
 				cmd.Parameters.Add("Identity", accountName);
 				cmd.Parameters.Add("PrimarySmtpAddress", primaryEmail);
-				cmd.Parameters.Add("UserPrincipalName", primaryEmail);
-				cmd.Parameters.Add("WindowsEmailAddress", primaryEmail);
+				//cmd.Parameters.Add("UserPrincipalName", primaryEmail);
+				//cmd.Parameters.Add("WindowsEmailAddress", primaryEmail);
 
 				ExecuteShellCommand(runSpace, cmd);
 			}
@@ -5954,6 +5966,31 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExchangeLog.LogEnd("CreateAuthoritativeDomainInternal");
 		}
 
+        private void ChangeAcceptedDomainTypeInternal(string domainName, ExchangeAcceptedDomainType domainType)
+        {
+            ExchangeLog.LogStart("ChangeAcceptedDomainType");
+
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+
+                SetAcceptedDomainType(runSpace, domainName,domainType);
+            }
+            catch (Exception ex)
+            {
+                ExchangeLog.LogError("ChangeAcceptedDomainType", ex);
+                throw;
+            }
+            finally
+            {
+
+                CloseRunspace(runSpace);
+            }
+
+            ExchangeLog.LogEnd("ChangeAcceptedDomainType");
+        }
+
 		private void DeleteAcceptedDomain(string domainName)
 		{
 			ExchangeLog.LogStart("DeleteAcceptedDomain");
@@ -6017,6 +6054,17 @@ namespace WebsitePanel.Providers.HostedSolution
 			ExecuteShellCommand(runSpace, cmd);
 			ExchangeLog.LogEnd("RemoveAcceptedDomain");
 		}
+
+        private void SetAcceptedDomainType(Runspace runSpace, string id, ExchangeAcceptedDomainType domainType)
+        {
+            ExchangeLog.LogStart("SetAcceptedDomainType");
+            Command cmd = new Command("Set-AcceptedDomain");
+            cmd.Parameters.Add("Identity", id);
+            cmd.Parameters.Add("DomainType", domainType.ToString());
+            cmd.Parameters.Add("Confirm", false);
+            ExecuteShellCommand(runSpace, cmd);
+            ExchangeLog.LogEnd("SetAcceptedDomainType");
+        }
 
 		#endregion
 

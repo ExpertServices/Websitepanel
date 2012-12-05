@@ -51,7 +51,7 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             OrganizationStatistics stats = ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
 
-            btnUsedSize.Text = stats.UsedDiskSpace.ToString();
+            btnUsedSize.Text = (stats.UsedDiskSpace < 0) ? GetLocalizedString("Unlimited.Text") : stats.UsedDiskSpace.ToString();
         }
 
         protected void btnRecalculate_Click(object sender, EventArgs e)

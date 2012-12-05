@@ -43,6 +43,13 @@ namespace WebsitePanel.Portal
 
                 if (PortalUtils.GetHideDemoCheckbox()) rowDemo.Visible = false;
             }
+
+            if (PanelSecurity.LoggedUser.Role == UserRole.User)
+            {
+                txtSubscriberNumber.ReadOnly = true;
+            }
+
+
         }
 
         private void BindUser()

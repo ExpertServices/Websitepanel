@@ -26,6 +26,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using System;
 namespace WebsitePanel.Providers.HostedSolution
 {
     public class OrganizationDomainName
@@ -33,6 +34,7 @@ namespace WebsitePanel.Providers.HostedSolution
         int organizationDomainId;
         int itemId;
         int domainId;
+        int domainTypeId;
         string domainName;
         bool isHost;
         bool isDefault;
@@ -53,6 +55,21 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             get { return domainId; }
             set { domainId = value; }
+        }
+
+        public int DomainTypeId
+        {
+            get { return domainTypeId; }
+            set { domainTypeId = value; }
+        }
+
+        public ExchangeAcceptedDomainType DomainType
+        {
+            get
+            {
+                ExchangeAcceptedDomainType type = (ExchangeAcceptedDomainType)domainTypeId;
+                return type;
+            }
         }
 
         public int OrganizationDomainId

@@ -156,7 +156,10 @@ namespace WebsitePanel.EnterpriseServer
 				WebServer webServer = GetAssociatedWebServer(packageId);
 
                 if (!webServer.IsMsDeployInstalled())
+                {
+                    TaskManager.WriteError("MsDeploy is not installed");
                     return Error<GalleryCategoriesResult>(GalleryErrors.MsDeployIsNotInstalled);
+                }
 
                 // get categories
                 result = webServer.GetGalleryCategories(SecurityContext.User.UserId);
@@ -270,6 +273,7 @@ namespace WebsitePanel.EnterpriseServer
                 //    x => MatchGalleryAppDependencies(x.Dependency, appsFilter.ToArray())
                 //        || MatchMenaltoGalleryApp(x, appsFilter.ToArray())));
 
+
 				{
                     FilterResultApplications(packageId, result);
 
@@ -293,14 +297,33 @@ namespace WebsitePanel.EnterpriseServer
             int userId = SecurityContext.User.UserId;
             //
             SecurityContext.SetThreadSupervisorPrincipal();
+
+            //get filter mode
+            int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Web);
+            StringDictionary serviceSettings = ServerController.GetServiceSettings(serviceId);
+            bool bExclude = (Utils.ParseInt(serviceSettings["GalleryAppsFilterMode"], 0) != 1);  //0 - Exclude apps, 1- Include apps
+
             //
             string[] filteredApps = GetServiceAppsCatalogFilter(packageId);
             //
+
+
+
             if (filteredApps != null)
             {
-                result.Value = new List<GalleryApplication>(Array.FindAll(result.Value.ToArray(),
-                    x => !Array.Exists(filteredApps,
-                        z => z.Equals(x.Id, StringComparison.InvariantCultureIgnoreCase))));
+                if (bExclude)
+                {
+                    result.Value = new List<GalleryApplication>(Array.FindAll(result.Value.ToArray(),
+                        x => !Array.Exists(filteredApps,
+                            z => z.Equals(x.Id, StringComparison.InvariantCultureIgnoreCase))));
+                }
+                else
+                {
+                    result.Value = new List<GalleryApplication>(Array.FindAll(result.Value.ToArray(),
+                        x => Array.Exists(filteredApps,
+                            z => z.Equals(x.Id, StringComparison.InvariantCultureIgnoreCase))));
+
+                }
             }
             //
             SecurityContext.SetThreadPrincipal(userId);
@@ -486,6 +509,19 @@ namespace WebsitePanel.EnterpriseServer
                     && !(context.Groups.ContainsKey(ResourceGroups.MySql4)
                     || context.Groups.ContainsKey(ResourceGroups.MySql5)))
                     result.ErrorCodes.Add(GalleryErrors.MySQLRequired);
+
+
+
+                //show Dependency warning optionaly 
+                int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Web);
+                StringDictionary serviceSettings = ServerController.GetServiceSettings(serviceId);
+
+                bool galleryAppsAlwaysIgnoreDependencies = Utils.ParseBool(serviceSettings["GalleryAppsAlwaysIgnoreDependencies"], false);
+
+                if (galleryAppsAlwaysIgnoreDependencies)
+                {
+                     result.ErrorCodes.Clear();
+                }
 
                 if (result.ErrorCodes.Count > 0)
                 {

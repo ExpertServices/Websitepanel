@@ -202,6 +202,20 @@
     <Compile Include="Code\ReportingServices\IResourceStorage.cs" />
     <Compile Include="Code\ReportingServices\ReportingServicesUtils.cs" />
     <Compile Include="Code\UserControls\Tab.cs" />
+    <Compile Include="ExchangeServer\OrganizationAddDomainName.ascx.cs">
+      <DependentUpon>OrganizationAddDomainName.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationAddDomainName.ascx.designer.cs">
+      <DependentUpon>OrganizationAddDomainName.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationDomainNames.ascx.cs">
+      <DependentUpon>OrganizationDomainNames.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationDomainNames.ascx.designer.cs">
+      <DependentUpon>OrganizationDomainNames.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ExchangeServer\ExchangeAddMailboxPlan.ascx.cs">
       <DependentUpon>ExchangeAddMailboxPlan.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -282,6 +296,13 @@
     </Compile>
     <Compile Include="Lync\LyncUsers.ascx.designer.cs">
       <DependentUpon>LyncUsers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Lync\UserControls\LyncUserSettings.ascx.cs">
+      <DependentUpon>LyncUserSettings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Lync\UserControls\LyncUserSettings.ascx.designer.cs">
+      <DependentUpon>LyncUserSettings.ascx</DependentUpon>
     </Compile>
     <Compile Include="Lync\UserControls\LyncUserPlanSelector.ascx.cs">
       <DependentUpon>LyncUserPlanSelector.ascx</DependentUpon>
@@ -3790,7 +3811,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ExchangeServer\OrganizationAddDomainName.ascx" />
+    <Content Include="ExchangeServer\OrganizationDomainNames.ascx" />
     <Content Include="ExchangeServer\ExchangeAddMailboxPlan.ascx" />
+    <Content Include="Lync\UserControls\LyncUserSettings.ascx" />
     <Content Include="ServersEditWebPlatformInstaller.ascx" />
     <Content Include="ExchangeServer\ExchangeMailboxPlans.ascx" />
     <Content Include="ExchangeServer\UserControls\AccountsListWithPermissions.ascx" />
@@ -4945,6 +4969,12 @@
     <Content Include="ExchangeServer\UserControls\App_LocalResources\UserTabs.ascx.resx" />
     <Content Include="App_LocalResources\SettingsExchangeMailboxPlansPolicy.ascx.resx" />
     <Content Include="App_LocalResources\SettingsLyncUserPlansPolicy.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationDomainNames.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationAddDomainName.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

@@ -124,7 +124,7 @@
     <value>Create Contact</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
-    <value>&lt;p&gt;&lt;b&gt;Display Name&lt;/b&gt; will be shown in the GAL in Outlook and OWA.&lt;/p&gt;&lt;p&gt;You can specify both internal and external e-mail addresses in "E-Mail Address" field.&lt;/p&gt;</value>
+    <value />
   </data>
   <data name="locDisplayName.Text" xml:space="preserve">
     <value>Display Name: *</value>
