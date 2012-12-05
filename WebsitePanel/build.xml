@@ -17,7 +17,7 @@
     <PreviousBuildFolder>$(RootFolder)\..\prev\$(BuildConfiguration)</PreviousBuildFolder>
     
 		<DiffCmd>$(TrunkFolder)\Tools\Diff.exe</DiffCmd>
-		<!-- Lets keep all tools we need for the build together in a well-known place to avoid BUIDL HELL -->
+		<!-- Lets keep all tools we need for the build together in a well-known place to avoid BUILD HELL -->
 		<SqlCmd Condition="Exists('$(RootFolder)\tools\sqlcmd\sqlcmd.exe')">"$(RootFolder)\tools\sqlcmd\sqlcmd.exe" -S (local)\SQLEXPRESS -E</SqlCmd>
     <MSDeployPath Condition="Exists('$(RootFolder)\tools\webdeploy\msdeploy.exe')">"$(RootFolder)\tools\webdeploy\msdeploy.exe"</MSDeployPath>
 
