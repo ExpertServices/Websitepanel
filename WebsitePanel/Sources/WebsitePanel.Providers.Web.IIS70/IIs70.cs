@@ -3740,7 +3740,7 @@ namespace WebsitePanel.Providers.Web
 			//
 			try
 			{
-				var msdeployRegKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\IIS Extensions\MSDeploy\2");
+				var msdeployRegKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\IIS Extensions\MSDeploy\3");
 				//
 				var keyValue = msdeployRegKey.GetValue("Install");
 				// We have found the required key in the registry hive
