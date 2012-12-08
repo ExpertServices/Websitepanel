@@ -251,20 +251,6 @@ namespace WebsitePanel.Providers.HostedSolution
             SetMailboxPermissionsInternal(organizationId, accountName, sendAsAccounts, fullAccessAccounts);
         }
 
-        /*
-                public string CreateMailbox(string organizationId, string organizationDistinguishedName,
-                    string mailboxDatabase, string securityGroup, string offlineAddressBook, ExchangeAccountType accountType,
-                     string displayName,
-                    string accountName, string name, string domain, string password, bool enablePOP, bool enableIMAP,
-                    bool enableOWA, bool enableMAPI, bool enableActiveSync,
-                    int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays)
-                {
-                    return CreateMailboxInternal(organizationId, organizationDistinguishedName, mailboxDatabase, securityGroup,
-                        offlineAddressBook, accountType, displayName, accountName, name, domain, password, enablePOP, enableIMAP,
-                        enableOWA, enableMAPI, enableActiveSync,
-                        issueWarningKB, prohibitSendKB, prohibitSendReceiveKB, keepDeletedItemsDays);
-                }
-        */
         public void DeleteMailbox(string accountName)
         {
             DeleteMailboxInternal(accountName);
@@ -301,11 +287,12 @@ namespace WebsitePanel.Providers.HostedSolution
         public void SetMailboxAdvancedSettings(string organizationId, string accountName, bool enablePOP,
             bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync,
             long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB,
-            int maxReceiveMessageSizeKB)
+            int maxReceiveMessageSizeKB, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning)
         {
             SetMailboxAdvancedSettingsInternal(organizationId, accountName, enablePOP, enableIMAP, enableOWA,
                 enableMAPI, enableActiveSync, issueWarningKB,
-                prohibitSendKB, prohibitSendReceiveKB, keepDeletedItemsDays, maxRecipients, maxSendMessageSizeKB, maxReceiveMessageSizeKB);
+                prohibitSendKB, prohibitSendReceiveKB, keepDeletedItemsDays, maxRecipients, maxSendMessageSizeKB, maxReceiveMessageSizeKB,
+                enabledLitigationHold, recoverabelItemsSpace, recoverabelItemsWarning);
         }
 
         public ExchangeEmailAddress[] GetMailboxEmailAddresses(string accountName)
@@ -1845,14 +1832,14 @@ namespace WebsitePanel.Providers.HostedSolution
             string accountName, bool enablePOP, bool enableIMAP,
             bool enableOWA, bool enableMAPI, bool enableActiveSync,
             long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays,
-            int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool IsConsumer)
+            int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool IsConsumer, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning)
         {
             return CreateMailEnableUserInternal(upn, organizationId, organizationDistinguishedName, accountType,
                                                 mailboxDatabase, offlineAddressBook, addressBookPolicy,
                                                 accountName, enablePOP, enableIMAP,
                                                 enableOWA, enableMAPI, enableActiveSync,
                                                 issueWarningKB, prohibitSendKB, prohibitSendReceiveKB,
-                                                keepDeletedItemsDays, maxRecipients, maxSendMessageSizeKB, maxReceiveMessageSizeKB, hideFromAddressBook, IsConsumer);
+                                                keepDeletedItemsDays, maxRecipients, maxSendMessageSizeKB, maxReceiveMessageSizeKB, hideFromAddressBook, IsConsumer, enabledLitigationHold, recoverabelItemsSpace, recoverabelItemsWarning);
         }
 
         internal virtual string CreateMailEnableUserInternal(string upn, string organizationId, string organizationDistinguishedName, ExchangeAccountType accountType,
@@ -1860,7 +1847,7 @@ namespace WebsitePanel.Providers.HostedSolution
             string accountName, bool enablePOP, bool enableIMAP,
             bool enableOWA, bool enableMAPI, bool enableActiveSync,
             long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays,
-            int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool IsConsumer)
+            int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool IsConsumer, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning)
         {
 
             ExchangeLog.LogStart("CreateMailEnableUserInternal");
@@ -2485,7 +2472,7 @@ namespace WebsitePanel.Providers.HostedSolution
         private void SetMailboxAdvancedSettingsInternal(string organizationId, string accountName, bool enablePOP, bool enableIMAP,
             bool enableOWA, bool enableMAPI, bool enableActiveSync, long issueWarningKB, long prohibitSendKB,
             long prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB,
-            int maxReceiveMessageSizeKB)
+            int maxReceiveMessageSizeKB, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning)
         {
             ExchangeLog.LogStart("SetMailboxAdvancedSettingsInternal");
             ExchangeLog.DebugInfo("Account: {0}", accountName);

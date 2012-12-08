@@ -60,6 +60,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                     sizeProhibitSendReceive.ValueKB = plan.ProhibitSendReceivePct;
                     daysKeepDeletedItems.ValueDays = plan.KeepDeletedItemsDays;
                     chkHideFromAddressBook.Checked = plan.HideFromAddressBook;
+                    chkEnableLitigationHold.Checked = plan.AllowLitigationHold;
+                    recoverableItemsSpace.QuotaValue = plan.RecoverableItemsSpace;
+                    recoverableItemsWarning.ValueKB = plan.RecoverableItemsWarningPct;
+
+
 
                     /*
                     txtMailboxPlan.Enabled = false;
@@ -138,11 +143,17 @@ namespace WebsitePanel.Portal.ExchangeServer
                                     daysKeepDeletedItems.ValueDays = quota.QuotaAllocatedValue;
                                     daysKeepDeletedItems.RequireValidatorEnabled = true;
                                     break;
+                                case 420:
+                                    chkEnableLitigationHold.Checked = Convert.ToBoolean(quota.QuotaAllocatedValue);
+                                    chkEnableLitigationHold.Enabled = Convert.ToBoolean(quota.QuotaAllocatedValue);
+                                    break;
+
                             }
 
-                            sizeIssueWarning.ValueKB = 100;
+                            sizeIssueWarning.ValueKB = 95;
                             sizeProhibitSend.ValueKB = 100;
                             sizeProhibitSendReceive.ValueKB = 100;
+                            recoverableItemsWarning.ValueKB = 95;
                         }
                     }
                     else
@@ -183,6 +194,10 @@ namespace WebsitePanel.Portal.ExchangeServer
                 if ((plan.ProhibitSendReceivePct == 0)) plan.ProhibitSendReceivePct = 100;
                 plan.KeepDeletedItemsDays = daysKeepDeletedItems.ValueDays;
                 plan.HideFromAddressBook = chkHideFromAddressBook.Checked;
+                plan.AllowLitigationHold = chkEnableLitigationHold.Checked;
+                plan.RecoverableItemsSpace = recoverableItemsSpace.QuotaValue;
+                plan.RecoverableItemsWarningPct = recoverableItemsWarning.ValueKB;
+                if ((plan.RecoverableItemsWarningPct == 0)) plan.RecoverableItemsWarningPct = 100;
 
                 int result = ES.Services.ExchangeServer.AddExchangeMailboxPlan(PanelRequest.ItemID,
                                                                                 plan);

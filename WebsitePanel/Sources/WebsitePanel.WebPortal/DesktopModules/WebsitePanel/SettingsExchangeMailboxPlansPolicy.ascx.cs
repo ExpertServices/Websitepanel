@@ -120,6 +120,10 @@ namespace WebsitePanel.Portal
             if ((plan.ProhibitSendReceivePct == 0)) plan.ProhibitSendReceivePct = 100;
             plan.KeepDeletedItemsDays = daysKeepDeletedItems.ValueDays;
             plan.HideFromAddressBook = chkHideFromAddressBook.Checked;
+            plan.AllowLitigationHold = chkEnableLitigationHold.Checked;
+            plan.RecoverableItemsSpace = recoverableItemsSpace.QuotaValue;
+            plan.RecoverableItemsWarningPct = recoverableItemsWarning.ValueKB;
+            if ((plan.RecoverableItemsWarningPct == 0)) plan.RecoverableItemsWarningPct = 100;
 
             if (PanelSecurity.SelectedUser.Role == UserRole.Administrator)
                 plan.MailboxPlanType = (int)ExchangeMailboxPlanType.Administrator;
@@ -218,6 +222,10 @@ namespace WebsitePanel.Portal
                         sizeProhibitSendReceive.ValueKB = -1;
                         daysKeepDeletedItems.ValueDays = -1;
                         chkHideFromAddressBook.Checked = false;
+                        chkEnableLitigationHold.Checked = false;
+                        recoverableItemsSpace.QuotaValue = 0;
+                        recoverableItemsWarning.ValueKB = -1;
+
 
                         btnUpdateMailboxPlan.Enabled = (string.IsNullOrEmpty(txtMailboxPlan.Text)) ? false : true;
 
@@ -266,7 +274,9 @@ namespace WebsitePanel.Portal
                         if (plan.KeepDeletedItemsDays != -1)
                             daysKeepDeletedItems.ValueDays = plan.KeepDeletedItemsDays;
                         chkHideFromAddressBook.Checked = plan.HideFromAddressBook;
-
+                        chkEnableLitigationHold.Checked = plan.AllowLitigationHold;
+                        recoverableItemsSpace.QuotaValue = plan.RecoverableItemsSpace;
+                        recoverableItemsWarning.ValueKB = plan.RecoverableItemsWarningPct;
                         
                         btnUpdateMailboxPlan.Enabled  = (string.IsNullOrEmpty(txtMailboxPlan.Text)) ? false : true;
 
@@ -369,6 +379,11 @@ namespace WebsitePanel.Portal
             if ((plan.ProhibitSendReceivePct == 0)) plan.ProhibitSendReceivePct = 100;
             plan.KeepDeletedItemsDays = daysKeepDeletedItems.ValueDays;
             plan.HideFromAddressBook = chkHideFromAddressBook.Checked;
+            plan.AllowLitigationHold = chkEnableLitigationHold.Checked;
+            plan.RecoverableItemsSpace = recoverableItemsSpace.QuotaValue;
+            plan.RecoverableItemsWarningPct = recoverableItemsWarning.ValueKB;
+            if ((plan.RecoverableItemsWarningPct == 0)) plan.RecoverableItemsWarningPct = 100;
+
 
             if (PanelSecurity.SelectedUser.Role == UserRole.Administrator)
                 plan.MailboxPlanType = (int)ExchangeMailboxPlanType.Administrator;

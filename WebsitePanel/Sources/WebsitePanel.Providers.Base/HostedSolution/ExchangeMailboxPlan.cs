@@ -56,6 +56,10 @@ namespace WebsitePanel.Providers.HostedSolution
         bool hideFromAddressBook;
         int mailboxPlanType;
 
+        bool allowLitigationHold;
+	    int recoverableItemsWarningPct;
+        int recoverableItemsSpace;
+
 
         public int ItemId
         {
@@ -171,6 +175,25 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             get { return this.hideFromAddressBook; }
             set { this.hideFromAddressBook = value; }
+        }
+
+
+        public bool AllowLitigationHold
+        {
+            get { return this.allowLitigationHold; }
+            set { this.allowLitigationHold = value; }
+        }
+
+        public int RecoverableItemsWarningPct
+        {
+            get { return this.recoverableItemsWarningPct; }
+            set { this.recoverableItemsWarningPct = value; }
+        }
+
+        public int RecoverableItemsSpace
+        {
+            get { return this.recoverableItemsSpace; }
+            set { this.recoverableItemsSpace = value; }
         }
 
     }
