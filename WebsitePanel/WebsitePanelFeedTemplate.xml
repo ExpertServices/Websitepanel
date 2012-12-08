@@ -3,11 +3,6 @@
   <webpiFile version="4.0.0.0" />
 
   <title>WebsitePanel :: Web Platform Installer 4.0 Feed</title>
-  <link rel="enclosure" href="https://www.microsoft.com/web/webpi/4.0/webapplicationlist.xml" />
-  <link rel="enclosure" href="https://www.microsoft.com/web/webpi/4.0/mediaproductlist.xml" />
-  <link rel="enclosure" href="https://www.microsoft.com/web/webpi/4.0/toolsproductlist.xml" />
-  <link rel="enclosure" href="https://www.microsoft.com/web/webpi/4.0/enterpriseproductlist.xml" />
-  <link href="http://www.microsoft.com/web/webpi/4.0/WebProductList.xml" />
   <updated>${ReleaseDate}</updated>
   <author>
     <name>Outercurve Foundation</name>
@@ -60,27 +55,23 @@
           <productId>ManagementService</productId>
         </dependency>
         <dependency>
-          <or>
-            <dependency>
-              <productId>NETFramework4</productId>
-            </dependency>
-            <dependency>
-              <productId>NETFX4</productId>
-            </dependency>
-            <dependency>
-              <productId>NETFramework45</productId>
-            </dependency>
-            <!--the following two will install 4.5. We should remove the following when .Net 4.5 is a real installer-->
-            <dependency>
-              <productId>VWD11_Only_BaseLocale</productId>
-            </dependency>
-          </or>
+          <!-- This installs .NET v4 on Windows Server 2008 -->
+          <productId>NETFramework4</productId>
+        </dependency>
+        <dependency>
+          <!-- This enables IIS to host ASP.NET v4 content on Windows Server 2012 -->
+          <productId>ASPNET45</productId>
+        </dependency>
+        <dependency>
+          <!-- This enables IIS to host ASP.NET v4 content on Windows Server 2008/R2 -->
+          <productId>ASPNET_REGIIS_NET4</productId>
         </dependency>
         <dependency>
           <productId>SQLExpress</productId>
         </dependency>
         <dependency>
-          <productId>WDeploy_2_1</productId>
+          <!-- Installs Web Deploy 3.0 -->
+          <productId>WDeploy</productId>
         </dependency>
       </and>
     </dependency>
