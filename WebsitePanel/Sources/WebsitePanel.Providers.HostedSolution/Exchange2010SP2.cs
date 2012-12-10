@@ -414,6 +414,14 @@ namespace WebsitePanel.Providers.HostedSolution
                 else
                     cmd.Parameters.Add("HiddenFromAddressListsEnabled", hideFromAddressBook);
                 cmd.Parameters.Add("AddressBookPolicy", addressBookPolicy);
+
+                if (enabledLitigationHold)
+                {
+                    cmd.Parameters.Add("LitigationHoldEnabled", true);
+                    cmd.Parameters.Add("RecoverableItemsQuota", ConvertKBToUnlimited(recoverabelItemsSpace));
+                    cmd.Parameters.Add("RecoverableItemsWarningQuota", ConvertKBToUnlimited(recoverabelItemsWarning));
+                }
+
                 ExecuteShellCommand(runSpace, cmd);
 
                 //Client Access

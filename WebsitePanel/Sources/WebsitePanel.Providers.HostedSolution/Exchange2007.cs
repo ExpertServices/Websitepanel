@@ -2339,7 +2339,7 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("SetMailboxMailFlowSettingsInternal");
         }
 
-        private ExchangeMailbox GetMailboxAdvancedSettingsInternal(string accountName)
+        internal virtual ExchangeMailbox GetMailboxAdvancedSettingsInternal(string accountName)
         {
             ExchangeLog.LogStart("GetMailboxAdvancedSettingsInternal");
             ExchangeLog.DebugInfo("Account: {0}", accountName);
@@ -2412,7 +2412,7 @@ namespace WebsitePanel.Providers.HostedSolution
             return info;
         }
 
-        private void SetMailboxAdvancedSettingsInternal(string organizationId, string accountName, bool enablePOP, bool enableIMAP,
+        internal virtual void SetMailboxAdvancedSettingsInternal(string organizationId, string accountName, bool enablePOP, bool enableIMAP,
             bool enableOWA, bool enableMAPI, bool enableActiveSync, long issueWarningKB, long prohibitSendKB,
             long prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB,
             int maxReceiveMessageSizeKB, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning)
@@ -2435,6 +2435,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 cmd.Parameters.Add("RecipientLimits", ConvertInt32ToUnlimited(maxRecipients));
                 cmd.Parameters.Add("MaxSendSize", ConvertKBToUnlimited(maxSendMessageSizeKB));
                 cmd.Parameters.Add("MaxReceiveSize", ConvertKBToUnlimited(maxReceiveMessageSizeKB));
+
                 ExecuteShellCommand(runSpace, cmd);
 
                 //Client Access
@@ -2866,7 +2867,7 @@ namespace WebsitePanel.Providers.HostedSolution
             return info;
         }
 
-        private Collection<PSObject> GetMailboxObject(Runspace runSpace, string id)
+        virtual internal Collection<PSObject> GetMailboxObject(Runspace runSpace, string id)
         {
             Command cmd = new Command("Get-Mailbox");
             cmd.Parameters.Add("Identity", id);

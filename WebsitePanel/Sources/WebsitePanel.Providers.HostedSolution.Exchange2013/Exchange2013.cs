@@ -1934,6 +1934,14 @@ namespace WebsitePanel.Providers.HostedSolution
                 else
                     cmd.Parameters.Add("HiddenFromAddressListsEnabled", hideFromAddressBook);
                 cmd.Parameters.Add("AddressBookPolicy", addressBookPolicy);
+
+                if (enabledLitigationHold)
+                {
+                    cmd.Parameters.Add("LitigationHoldEnabled", true);
+                    cmd.Parameters.Add("RecoverableItemsQuota", ConvertKBToUnlimited(recoverabelItemsSpace));
+                    cmd.Parameters.Add("RecoverableItemsWarningQuota", ConvertKBToUnlimited(recoverabelItemsWarning));
+                }
+
                 ExecuteShellCommand(runSpace, cmd);
 
                 //Client Access
@@ -2276,6 +2284,8 @@ namespace WebsitePanel.Providers.HostedSolution
                 cmd.Parameters.Add("Identity", accountName);
                 cmd.Parameters.Add("HiddenFromAddressListsEnabled", hideFromAddressBook);
                 cmd.Parameters.Add("CustomAttribute2", (disabled ? "disabled" : null));
+
+
                 ExecuteShellCommand(runSpace, cmd);
 
             }
@@ -2420,6 +2430,13 @@ namespace WebsitePanel.Providers.HostedSolution
                 info.KeepDeletedItemsDays =
                     ConvertEnhancedTimeSpanToDays((EnhancedTimeSpan)GetPSObjectProperty(mailbox, "RetainDeletedItemsFor"));
 
+                info.EnableLitigationHold = (bool)GetPSObjectProperty(mailbox, "LitigationHoldEnabled");
+
+                info.RecoverabelItemsSpace =
+                    ConvertUnlimitedToKB((Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(mailbox, "RecoverableItemsQuota"));
+                info.RecoverabelItemsWarning =
+                    ConvertUnlimitedToKB((Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(mailbox, "RecoverableItemsWarningQuota"));
+
                 //Client Access
                 Command cmd = new Command("Get-CASMailbox");
                 cmd.Parameters.Add("Identity", accountName);
@@ -2492,6 +2509,14 @@ namespace WebsitePanel.Providers.HostedSolution
                 cmd.Parameters.Add("RecipientLimits", ConvertInt32ToUnlimited(maxRecipients));
                 cmd.Parameters.Add("MaxSendSize", ConvertKBToUnlimited(maxSendMessageSizeKB));
                 cmd.Parameters.Add("MaxReceiveSize", ConvertKBToUnlimited(maxReceiveMessageSizeKB));
+
+                if (enabledLitigationHold)
+                {
+                    cmd.Parameters.Add("LitigationHoldEnabled", true);
+                    cmd.Parameters.Add("RecoverableItemsQuota", ConvertKBToUnlimited(recoverabelItemsSpace));
+                    cmd.Parameters.Add("RecoverableItemsWarningQuota", ConvertKBToUnlimited(recoverabelItemsWarning));
+                }
+
                 ExecuteShellCommand(runSpace, cmd);
 
                 //Client Access

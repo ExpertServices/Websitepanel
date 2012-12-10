@@ -77,6 +77,144 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("SetCalendarSettings");
         }
 
+
+        internal override ExchangeMailbox GetMailboxAdvancedSettingsInternal(string accountName)
+        {
+            ExchangeLog.LogStart("GetMailboxAdvancedSettingsInternal");
+            ExchangeLog.DebugInfo("Account: {0}", accountName);
+
+            ExchangeMailbox info = new ExchangeMailbox();
+            info.AccountName = accountName;
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+
+                Collection<PSObject> result = GetMailboxObject(runSpace, accountName);
+                PSObject mailbox = result[0];
+
+                info.IssueWarningKB =
+                    ConvertUnlimitedToKB((Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(mailbox, "IssueWarningQuota"));
+                info.ProhibitSendKB =
+                    ConvertUnlimitedToKB((Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(mailbox, "ProhibitSendQuota"));
+                info.ProhibitSendReceiveKB =
+                    ConvertUnlimitedToKB((Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(mailbox, "ProhibitSendReceiveQuota"));
+                info.KeepDeletedItemsDays =
+                    ConvertEnhancedTimeSpanToDays((EnhancedTimeSpan)GetPSObjectProperty(mailbox, "RetainDeletedItemsFor"));
+
+                info.EnableLitigationHold = (bool)GetPSObjectProperty(mailbox, "LitigationHoldEnabled");
+
+                info.RecoverabelItemsSpace =
+                    ConvertUnlimitedToKB((Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(mailbox, "RecoverableItemsQuota"));
+                info.RecoverabelItemsWarning =
+                    ConvertUnlimitedToKB((Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(mailbox, "RecoverableItemsWarningQuota"));
+
+
+                //Client Access
+                Command cmd = new Command("Get-CASMailbox");
+                cmd.Parameters.Add("Identity", accountName);
+                result = ExecuteShellCommand(runSpace, cmd);
+                mailbox = result[0];
+
+                info.EnableActiveSync = (bool)GetPSObjectProperty(mailbox, "ActiveSyncEnabled");
+                info.EnableOWA = (bool)GetPSObjectProperty(mailbox, "OWAEnabled");
+                info.EnableMAPI = (bool)GetPSObjectProperty(mailbox, "MAPIEnabled");
+                info.EnablePOP = (bool)GetPSObjectProperty(mailbox, "PopEnabled");
+                info.EnableIMAP = (bool)GetPSObjectProperty(mailbox, "ImapEnabled");
+
+                //Statistics
+                cmd = new Command("Get-MailboxStatistics");
+                cmd.Parameters.Add("Identity", accountName);
+                result = ExecuteShellCommand(runSpace, cmd);
+                if (result.Count > 0)
+                {
+                    PSObject statistics = result[0];
+                    Unlimited<ByteQuantifiedSize> totalItemSize =
+                        (Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(statistics, "TotalItemSize");
+                    info.TotalSizeMB = ConvertUnlimitedToMB(totalItemSize);
+                    uint? itemCount = (uint?)GetPSObjectProperty(statistics, "ItemCount");
+                    info.TotalItems = ConvertNullableToInt32(itemCount);
+                    DateTime? lastLogoffTime = (DateTime?)GetPSObjectProperty(statistics, "LastLogoffTime"); ;
+                    DateTime? lastLogonTime = (DateTime?)GetPSObjectProperty(statistics, "LastLogonTime"); ;
+                    info.LastLogoff = ConvertNullableToDateTime(lastLogoffTime);
+                    info.LastLogon = ConvertNullableToDateTime(lastLogonTime);
+                }
+                else
+                {
+                    info.TotalSizeMB = 0;
+                    info.TotalItems = 0;
+                    info.LastLogoff = DateTime.MinValue;
+                    info.LastLogon = DateTime.MinValue;
+                }
+
+                //domain
+                info.Domain = GetNETBIOSDomainName();
+            }
+            finally
+            {
+
+                CloseRunspace(runSpace);
+            }
+            ExchangeLog.LogEnd("GetMailboxAdvancedSettingsInternal");
+            return info;
+        }
+
+
+
+        internal override void SetMailboxAdvancedSettingsInternal(string organizationId, string accountName, bool enablePOP, bool enableIMAP,
+            bool enableOWA, bool enableMAPI, bool enableActiveSync, long issueWarningKB, long prohibitSendKB,
+            long prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB,
+            int maxReceiveMessageSizeKB, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning)
+        {
+            ExchangeLog.LogStart("SetMailboxAdvancedSettingsInternal");
+            ExchangeLog.DebugInfo("Account: {0}", accountName);
+
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+
+
+                Command cmd = new Command("Set-Mailbox");
+                cmd.Parameters.Add("Identity", accountName);
+                cmd.Parameters.Add("IssueWarningQuota", ConvertKBToUnlimited(issueWarningKB));
+                cmd.Parameters.Add("ProhibitSendQuota", ConvertKBToUnlimited(prohibitSendKB));
+                cmd.Parameters.Add("ProhibitSendReceiveQuota", ConvertKBToUnlimited(prohibitSendReceiveKB));
+                cmd.Parameters.Add("RetainDeletedItemsFor", ConvertDaysToEnhancedTimeSpan(keepDeletedItemsDays));
+                cmd.Parameters.Add("RecipientLimits", ConvertInt32ToUnlimited(maxRecipients));
+                cmd.Parameters.Add("MaxSendSize", ConvertKBToUnlimited(maxSendMessageSizeKB));
+                cmd.Parameters.Add("MaxReceiveSize", ConvertKBToUnlimited(maxReceiveMessageSizeKB));
+
+                cmd.Parameters.Add("LitigationHoldEnabled", enabledLitigationHold);
+                cmd.Parameters.Add("RecoverableItemsQuota", ConvertKBToUnlimited(recoverabelItemsSpace));
+                cmd.Parameters.Add("RecoverableItemsWarningQuota", ConvertKBToUnlimited(recoverabelItemsWarning));
+
+                ExecuteShellCommand(runSpace, cmd);
+
+                //Client Access
+                cmd = new Command("Set-CASMailbox");
+                cmd.Parameters.Add("Identity", accountName);
+                cmd.Parameters.Add("ActiveSyncEnabled", enableActiveSync);
+                if (enableActiveSync)
+                {
+                    cmd.Parameters.Add("ActiveSyncMailboxPolicy", organizationId);
+                }
+                cmd.Parameters.Add("OWAEnabled", enableOWA);
+                cmd.Parameters.Add("MAPIEnabled", enableMAPI);
+                cmd.Parameters.Add("PopEnabled", enablePOP);
+                cmd.Parameters.Add("ImapEnabled", enableIMAP);
+                ExecuteShellCommand(runSpace, cmd);
+            }
+            finally
+            {
+
+                CloseRunspace(runSpace);
+            }
+            ExchangeLog.LogEnd("SetMailboxAdvancedSettingsInternal");
+        }
+
+
+
         #endregion
 
         #region Distribution Lists
