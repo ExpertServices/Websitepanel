@@ -50,7 +50,7 @@ namespace WebsitePanel.EnterpriseServer
             bool sendAccountLetter,
             bool createPackage, int planId, bool sendPackageLetter,
             string domainName, bool tempDomain, bool createWebSite,
-            bool createFtpAccount, string ftpAccountName, bool createMailAccount, string hostName)
+            bool createFtpAccount, string ftpAccountName, bool createMailAccount, string hostName, bool createZoneRecord)
         {
             UserCreationWizard wizard = new UserCreationWizard();
 
@@ -59,7 +59,7 @@ namespace WebsitePanel.EnterpriseServer
                 sendAccountLetter,
                 createPackage, planId, sendPackageLetter,
                 domainName, tempDomain, createWebSite,
-                createFtpAccount, ftpAccountName, createMailAccount, hostName);
+                createFtpAccount, ftpAccountName, createMailAccount, hostName, createZoneRecord);
         }
 
         // private fields
@@ -72,7 +72,7 @@ namespace WebsitePanel.EnterpriseServer
             bool sendAccountLetter,
             bool createPackage, int planId, bool sendPackageLetter,
             string domainName, bool tempDomain, bool createWebSite,
-            bool createFtpAccount, string ftpAccountName, bool createMailAccount, string hostName)
+            bool createFtpAccount, string ftpAccountName, bool createMailAccount, string hostName, bool createZoneRecord)
         {
 
             // check account
@@ -173,7 +173,7 @@ namespace WebsitePanel.EnterpriseServer
                         domain.PackageId = createdPackageId;
                         domain.DomainName = domainName;
                         domain.HostingAllowed = false;
-                        domainId = ServerController.AddDomain(domain, false, !tempDomain);
+                        domainId = ServerController.AddDomain(domain, false, createZoneRecord);
                         if (domainId < 0)
                         {
                             // rollback wizard
@@ -193,7 +193,7 @@ namespace WebsitePanel.EnterpriseServer
                     }
                 }
 
-                if (createWebSite && !String.IsNullOrEmpty(domainName) && !String.IsNullOrEmpty(hostName))
+                if (createWebSite && !String.IsNullOrEmpty(domainName))
                 {
                     // create web site
                     try
@@ -301,16 +301,6 @@ namespace WebsitePanel.EnterpriseServer
                         MailServerController.UpdateMailDomain(mailDomain);
 
                         int mailDomainId = mailDomain.Id;
-
-                        // set mail domain pointer
-                        // load domain instant alias
-                        string instantAlias = ServerController.GetDomainAlias(createdPackageId, domainName);
-                        DomainInfo instantDomain = ServerController.GetDomain(instantAlias);
-                        if (instantDomain == null || instantDomain.MailDomainId > 0)
-                            instantAlias = "";
-
-                        if (!String.IsNullOrEmpty(instantAlias))
-                            MailServerController.AddMailDomainPointer(mailDomainId, instantDomain.DomainId);
                     }
                     catch (Exception ex)
                     {
@@ -319,6 +309,19 @@ namespace WebsitePanel.EnterpriseServer
 
                         // error while creating mail account
                         throw new Exception("Could not create mail account", ex);
+                    }
+
+                    // Instant Alias / Temporary URL
+                    if (tempDomain && (domainId > 0))
+                    {
+                        int instantAliasId = ServerController.CreateDomainInstantAlias("", domainId);
+                        if (instantAliasId < 0)
+                        {
+                            // rollback wizard
+                            Rollback();
+
+                            return instantAliasId;
+                        }
                     }
                 }
             }

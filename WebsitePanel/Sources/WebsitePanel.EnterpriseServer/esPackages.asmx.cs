@@ -436,13 +436,13 @@ namespace WebsitePanel.EnterpriseServer
                 bool sendAccountLetter,
                 bool createPackage, int planId, bool sendPackageLetter,
                 string domainName, bool tempDomain, bool createWebSite,
-                bool createFtpAccount, string ftpAccountName, bool createMailAccount, string hostName)
+                bool createFtpAccount, string ftpAccountName, bool createMailAccount, string hostName, bool createZoneRecord)
         {
             return UserCreationWizard.CreateUserAccount(parentPackageId, username, password,
                 roleId, firstName, lastName, email, secondaryEmail, htmlMail, sendAccountLetter,
                 createPackage, planId,
                 sendPackageLetter, domainName, tempDomain, createWebSite, createFtpAccount, ftpAccountName,
-                createMailAccount, hostName);
+                createMailAccount, hostName, createZoneRecord);
         }
         #endregion
 
