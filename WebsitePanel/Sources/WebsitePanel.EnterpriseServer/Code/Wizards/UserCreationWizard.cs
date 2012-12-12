@@ -173,7 +173,7 @@ namespace WebsitePanel.EnterpriseServer
                         domain.PackageId = createdPackageId;
                         domain.DomainName = domainName;
                         domain.HostingAllowed = false;
-                        domainId = ServerController.AddDomain(domain, false, createZoneRecord);
+                        domainId = ServerController.AddDomain(domain, false, false);
                         if (domainId < 0)
                         {
                             // rollback wizard
@@ -322,6 +322,12 @@ namespace WebsitePanel.EnterpriseServer
 
                             return instantAliasId;
                         }
+                    }
+
+                    // Domain DNS Zone
+                    if (createZoneRecord && (domainId > 0))
+                    {
+                        ServerController.EnableDomainDns(domainId);
                     }
                 }
             }
