@@ -18,11 +18,12 @@ class WebsitePanel
      */
     const SERVICEFILE_PACKAGES = 'esPackages.asmx';
     const SERVICEFILE_USERS = 'esUsers.asmx';
+    const SERVICEFILE_SERVERS = 'esServers.asmx';
 
     /**
      * WebsitePanel account states
      *
-     * @access private
+     * @access public
      * @var string
      */
     const USERSTATUS_ACTIVE = 'Active';
@@ -33,11 +34,27 @@ class WebsitePanel
     /**
      * WebsitePanel usage calculation
      *
-     * @access private
+     * @access public
      * @var int
      */
     const USAGE_DISKSPACE = 0;
     const USAGE_BANDWIDTH = 1;
+    
+    /**
+     * WebsitePanel IP address pools
+     * 
+     * @access public
+     * @var string
+     */
+    const IPADDRESS_POOL_WEB = 'Web';
+    
+    /**
+     * WebsitePanel IP address groups
+     *
+     * @access public
+     * @var string
+     */
+    const IPADDRESS_GROUP_WEBSITES = 'WebSites';
     
     /**
      * Enterprise Server username
@@ -174,12 +191,12 @@ class WebsitePanel
     public function update_user_details($RoleId, $Role, $StatusId, $Status, $LoginStatusId, $LoginStatus, $FailedLogins, $UserId, $OwnerId, $Created, $Changed, $IsDemo, $IsPeer, $Comments, $Username, $Password, $FirstName, $LastName, $Email, $PrimaryPhone, $Zip, $InstantMessenger, $Fax, $SecondaryPhone, $SecondaryEmail, $Country, $Address, $City, $State, $HtmlMail, $CompanyName, $EcommerceEnabled)
     {
         $params = array();
-        foreach (get_defined_vars() as $name => $value)
+        foreach (get_defined_vars() as $key => $value)
         {
             if ($key == 'params')
                 continue;
             
-            $params[$name] = $value;
+            $params[$key] = $value;
         }
         return $this->execute_server_method(WebsitePanel::SERVICEFILE_USERS, 'UpdateUser', array('user' => $params))->UpdateUserResult;
     }
@@ -260,14 +277,28 @@ class WebsitePanel
     public function update_package_literal($packageId, $statusId, $planId, $purchaseDate, $packageName, $packageComments)
     {
         $params = array();
-        foreach (get_defined_vars() as $name => $value)
+        foreach (get_defined_vars() as $key => $value)
         {
             if ($key == 'params')
                 continue;
             
-            $params[$name] = $value;
+            $params[$key] = $value;
         }
         return (array)$this->execute_server_method(WebsitePanel::SERVICEFILE_PACKAGES, 'UpdatePackageLiteral', $params)->UpdatePackageLiteralResult;
+    }
+    
+    /**
+     * WebsitePanel::add_package_addon_by_id()
+     *
+     * @access public
+     * @param mixed $packageId Package id
+     * @param mixed $addonPlanId Addon plan od
+     * @param integer $quantity Quantity
+     * @return array
+     */
+    public function add_package_addon_by_id($packageId, $addonPlanId, $quantity = 1)
+    {
+        return (array)$this->execute_server_method(WebsitePanel::SERVICEFILE_PACKAGES, 'AddPackageAddonById', array('packageId' => $packageId, 'addonPlanId' => $addonPlanId, 'quantity' => $quantity))->AddPackageAddonByIdResult;
     }
     
     /**
@@ -294,6 +325,29 @@ class WebsitePanel
     public function get_space_diskspace_usage($packageId)
     {
         return $this->execute_server_method(WebsitePanel::SERVICEFILE_PACKAGES, 'GetPackageDiskspace', array('packageId' => $packageId))->GetPackageDiskspaceResult;
+    }
+    
+    /**
+     * WebsitePanel::package_allocate_ipaddress()
+     *
+     * @param mixed $packageId Package id
+     * @param mixed $groupName Group name
+     * @param mixed $pool Address pool
+     * @param integer $addressesNumber Number of IP addresses
+     * @param bool $allocateRandom Allocate IP addresses randomly
+     * @return object
+     */
+    public function package_allocate_ipaddress($packageId, $groupName = WebsitePanel::IPADDRESS_POOL_WEB, $pool = WebsitePanel::IPADDRESS_GROUP_WEBSITES, $addressesNumber = 1, $allocateRandom = TRUE)
+    {
+        $params = array();
+        foreach (get_defined_vars() as $key => $value)
+        {
+            if ($key == 'params')
+                continue;
+            
+            $params[$key] = $value;
+        }
+        return $this->execute_server_method(WebsitePanel::SERVICEFILE_SERVERS, 'AllocatePackageIPAddresses', $params)->AllocatePackageIPAddressesResult;
     }
     
     /**
