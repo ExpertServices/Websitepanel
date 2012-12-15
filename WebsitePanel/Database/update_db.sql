@@ -6117,6 +6117,8 @@ BEGIN
 
 	UPDATE Domains SET IsDomainPointer=0,WebSiteID=NULL, DomainItemID=NULL WHERE WebSiteID IS NOT NULL
 
+	UPDATE Domains SET IsDomainPointer=0, DomainItemID=NULL WHERE MailDomainID IS NOT NULL AND isDomainPointer=1
+	
 	INSERT INTO Domains SELECT PackageID,
 	ZoneItemID,
 	DomainName,
