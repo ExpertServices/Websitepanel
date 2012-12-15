@@ -554,20 +554,20 @@
   </Target>
 
 	<Target Name="uploadtoftp">
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanel-Portal-$(Version).zip" RemoteFiles="WebsitePanel-Portal-$(Version).zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version).zip" RemoteFiles="WebsitePanel-EnterpriseServer-$(Version).zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanel-Server-$(Version).zip" RemoteFiles="WebsitePanel-Server-$(Version).zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanel-StandaloneServerSetup-$(Version).zip" RemoteFiles="WebsitePanel-StandaloneServerSetup-$(Version).zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanel-Portal-$(Version)-Update.zip" RemoteFiles="WebsitePanel-Portal-$(Version)-Update.zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version)-Update.zip" RemoteFiles="WebsitePanel-EnterpriseServer-$(Version)-Update.zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanel-Server-$(Version)-Update.zip" RemoteFiles="WebsitePanel-Server-$(Version)-Update.zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanel-Installer-$(Version)-Update.zip" RemoteFiles="WebsitePanel-Installer-$(Version)-Update.zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(ToolsFolder)\WebsitePanel-Import-CsvBulk-$(Version).zip" RemoteFiles="WebsitePanel-Import-CsvBulk-$(Version).zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(ToolsFolder)\WebsitePanel-Import-Enterprise-$(Version).zip" RemoteFiles="WebsitePanel-Import-Enterprise-$(Version).zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(Version).zip" RemoteFiles="WebsitePanel-AWStatsViewer-$(Version).zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" RemoteFiles="WebsitePanel-WSPTransportAgent-$(Version).zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(ToolsFolder)\WebsitePanel.LocalizationToolkit.msi" RemoteFiles="WebsitePanel.LocalizationToolkit-$(Version).msi" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanelInstaller.msi" RemoteFiles="WebsitePanelInstaller-$(Version).msi" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(DeployFolder)\WebsitePanel-Portal-$(Version).zip" RemoteFiles="WebsitePanel-Portal-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version).zip" RemoteFile="WebsitePanel-EnterpriseServer-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(DeployFolder)\WebsitePanel-Server-$(Version).zip" RemoteFiles="WebsitePanel-Server-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(DeployFolder)\WebsitePanel-StandaloneServerSetup-$(Version).zip" RemoteFile="WebsitePanel-StandaloneServerSetup-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(DeployFolder)\WebsitePanel-Portal-$(Version)-Update.zip" RemoteFile="WebsitePanel-Portal-$(Version)-Update.zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version)-Update.zip" RemoteFile="WebsitePanel-EnterpriseServer-$(Version)-Update.zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(DeployFolder)\WebsitePanel-Server-$(Version)-Update.zip" RemoteFile="WebsitePanel-Server-$(Version)-Update.zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(DeployFolder)\WebsitePanel-Installer-$(Version)-Update.zip" RemoteFile="WebsitePanel-Installer-$(Version)-Update.zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(ToolsFolder)\WebsitePanel-Import-CsvBulk-$(Version).zip" RemoteFile="WebsitePanel-Import-CsvBulk-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(ToolsFolder)\WebsitePanel-Import-Enterprise-$(Version).zip" RemoteFile="WebsitePanel-Import-Enterprise-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(Version).zip" RemoteFile="WebsitePanel-AWStatsViewer-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" RemoteFile="WebsitePanel-WSPTransportAgent-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(ToolsFolder)\WebsitePanel.LocalizationToolkit.msi" RemoteFile="WebsitePanel.LocalizationToolkit-$(Version).msi" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(DeployFolder)\WebsitePanelInstaller.msi" RemoteFile="WebsitePanelInstaller-$(Version).msi" />
 	</Target>
 
 	<Target Name="uploadtocodeplex">
