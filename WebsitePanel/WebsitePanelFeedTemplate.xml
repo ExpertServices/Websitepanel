@@ -20,11 +20,11 @@
     <published>${ReleaseDate}</published>
     <link href="http://www.websitepanel.net" />
     <images>
-      <icon>http://www.websitepanel.net/content/images/wsp_screenshot.png</icon>
+      <icon>http://www.websitepanel.net/files/wsp_screenshot.png</icon>
     </images>
     <author>
       <name>Outercurve Foundation</name>
-      <uri>http://www.websitepanel.net/Contact-Us</uri>
+      <uri>http://www.websitepanel.net/contact</uri>
     </author>
 
     <keywords>
