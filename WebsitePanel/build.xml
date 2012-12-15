@@ -554,9 +554,9 @@
   </Target>
 
 	<Target Name="uploadtoftp">
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(DeployFolder)\WebsitePanel-Portal-$(Version).zip" RemoteFiles="WebsitePanel-Portal-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(DeployFolder)\WebsitePanel-Portal-$(Version).zip" RemoteFile="WebsitePanel-Portal-$(Version).zip" />
 		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version).zip" RemoteFile="WebsitePanel-EnterpriseServer-$(Version).zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(DeployFolder)\WebsitePanel-Server-$(Version).zip" RemoteFiles="WebsitePanel-Server-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(DeployFolder)\WebsitePanel-Server-$(Version).zip" RemoteFile="WebsitePanel-Server-$(Version).zip" />
 		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(DeployFolder)\WebsitePanel-StandaloneServerSetup-$(Version).zip" RemoteFile="WebsitePanel-StandaloneServerSetup-$(Version).zip" />
 		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(DeployFolder)\WebsitePanel-Portal-$(Version)-Update.zip" RemoteFile="WebsitePanel-Portal-$(Version)-Update.zip" />
 		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFile="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version)-Update.zip" RemoteFile="WebsitePanel-EnterpriseServer-$(Version)-Update.zip" />
