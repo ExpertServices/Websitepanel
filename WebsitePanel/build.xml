@@ -632,6 +632,9 @@
 		<Exec Command="$(ZipCmd) a &quot;$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(Version).zip&quot; &quot;$(AWStatsViewerInstall)\*&quot;" />
 		<Exec Command="$(ZipCmd) a &quot;$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip&quot; &quot;$(WSPTransportAgentInstall)\*&quot;" />
 
+  </Target>
+
+  <Target Name="BuildWebPlatformInstallerFeed" DependsOnTargets="Deploy">
     <ItemGroup>
       <InstallerFilePath Include="$(DeployFolder)\WebsitePanelInstaller.msi" />
     </ItemGroup>
@@ -688,7 +691,6 @@
       </Tokens>
     </ItemGroup>
     <TemplateFile Template="$(TrunkFolder)\WebsitePanelFeedTemplate.xml" OutputFilename="$(DeployFolder)\WebsitePanelFeed.xml" Tokens="@(Tokens)" />
-
   </Target>
 
 <Target Name="uploadtoftp">
