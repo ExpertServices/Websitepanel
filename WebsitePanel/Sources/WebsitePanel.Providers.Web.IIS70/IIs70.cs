@@ -101,7 +101,7 @@ namespace WebsitePanel.Providers.Web
         public const string DOTNETPANEL_IISMODULES = "DotNetPanel.IIsModules";
         
 
-        public const string HeliconApeModule = "Helicon Ape";
+        public const string HeliconApeModule = "Helicon.Ape";
         public const string HeliconApeHandlerPath = "*.apehandler";
         
 		public const string IsapiModule = "IsapiModule";
@@ -1986,7 +1986,13 @@ namespace WebsitePanel.Providers.Web
         private string GetHeliconApeInstallDir(string siteId)
         {
             //Check global registration
-            return Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Helicon\\Ape", "InstallDir", string.Empty) as string;
+            string installDir = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Helicon\\Ape", "InstallDir", string.Empty) as string;
+            if (string.Empty == installDir)
+            {
+                installDir = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Helicon\\Ape", "InstallDir", string.Empty) as string;
+            }
+
+            return installDir;
         }
 
         private bool IsHeliconApeInstalled(ServerManager srvman, string siteId, string installDir)
@@ -2013,7 +2019,13 @@ namespace WebsitePanel.Providers.Web
             if (string.IsNullOrEmpty(installDir))
                 return HELICON_APE_NOT_REGISTERED;
 
-            return System.Diagnostics.FileVersionInfo.GetVersionInfo(Path.Combine(installDir, "Helicon.Ape.Editor.dll")).FileVersion;
+            string apeModulePath = Path.Combine(installDir, "bin\\Helicon.Ape.dll");
+            if (File.Exists(apeModulePath))
+            {
+                return System.Diagnostics.FileVersionInfo.GetVersionInfo(apeModulePath).FileVersion;
+            }
+
+            return HELICON_APE_NOT_REGISTERED;
         }
 
         private string GetHeliconApeModuleType(string siteId)
