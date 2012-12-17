@@ -291,6 +291,27 @@ class WebsitePanel
     }
     
     /**
+     *
+     * @param int $userId User id
+     * @param string $filterColumn Column name to filter on
+     * @param string $filterValue Filter value
+     * @param int $statusId Status id
+     * @param int $roleId Role id
+     * @param string $sortColumn Column name to sort on
+     * @param int $startRow Row to start at
+     * @param int $maximumRows Maximum rows to return
+     */
+    public function get_users_paged_recursive($userId, $filterColumn, $filterValue, $statusId, $roleId, $sortColumn, $startRow = 0, $maximumRows = 999)
+    {
+        $params = array();
+        foreach (get_defined_vars() as $name => $value)
+        {
+            $params[$name] = $value;
+        }
+        return $this->execute_server_method(WebSitePanel::SERVICEFILE_USERS, 'GetUsersPagedRecursive', $params)->GetUsersPagedRecursiveResult;
+    }
+    
+    /**
      * WebsitePanel::UpdatePackageLiteral()
      *
      * @access public

@@ -1,17 +1,16 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
-	<UsingTask TaskName="UploadFiles" AssemblyFile="lib\CodePlex.WebServices.Client.dll" />
 	<PropertyGroup>
 		<Version>2.0.0</Version>
 		<FileVersion>$(BUILD_NUMBER)</FileVersion>
 		<VersionLabel>$(BUILD_NUMBER)</VersionLabel>
-		<ReleaseDate>2012-11-28</ReleaseDate>
+		<ReleaseDate>2012-12-07</ReleaseDate>
 		<BuildConfiguration></BuildConfiguration>
 		<RootFolder>..</RootFolder>
 		<TrunkFolder>$(RootFolder)\WebsitePanel</TrunkFolder>
 
 		<SetupTrunkFolder>$(RootFolder)\WebsitePanel.Installer</SetupTrunkFolder>
 		<SetupBuildFolder>$(SetupTrunkFolder)\Build\$(BuildConfiguration)</SetupBuildFolder>
+		<MSBuildCommunityTasksPath>$(RootFolder)\MSBuildCommunityTasks</MSBuildCommunityTasksPath>
 
 		<BuildFolder>$(TrunkFolder)\Build\$(BuildConfiguration)</BuildFolder>
 		<DeployFolder>$(TrunkFolder)\Deploy\$(BuildConfiguration)</DeployFolder>
@@ -19,13 +18,12 @@
     <PreviousBuildFolder>$(RootFolder)\..\prev\$(BuildConfiguration)</PreviousBuildFolder>
 
 		<DiffCmd>$(TrunkFolder)\Tools\Diff.exe</DiffCmd>
-		<SqlCmd>"C:\Program Files\Microsoft SQL Server\110\Tools\Binn\sqlcmd.exe" -S (local)\SQLEXPRESS -E</SqlCmd>
+		<!-- Lets keep all tools we need for the build together in a well-known place to avoid BUILD HELL -->
+		<SqlCmd Condition="Exists('$(RootFolder)\tools\sqlcmd\sqlcmd.exe')">"$(RootFolder)\tools\sqlcmd\sqlcmd.exe" -S (local)\SQLEXPRESS -E</SqlCmd>
+    		<MSDeployPath Condition="Exists('$(RootFolder)\tools\webdeploy\msdeploy.exe')">"$(RootFolder)\tools\webdeploy\msdeploy.exe"</MSDeployPath>
 		<ZipCmd>"C:\Program Files\7-Zip\7z.exe"</ZipCmd>
 
-    <MSDeployPath Condition="Exists('$(ProgramFiles)\IIS\Microsoft Web Deploy\msdeploy.exe')">"$(ProgramFiles)\IIS\Microsoft Web Deploy\msdeploy.exe"</MSDeployPath>
-		<MSDeployPath Condition="Exists('$(ProgramFiles)\IIS\Microsoft Web Deploy V3\msdeploy.exe')">"$(ProgramFiles)\IIS\Microsoft Web Deploy V3\msdeploy.exe"</MSDeployPath>
-
-		<DataBaseName>WebsitePanel_build</DataBaseName>
+    		<DataBaseName>WebsitePanel_build</DataBaseName>
 		<MSDeployConnectionString>server=(local)\SQLEXPRESS;database=$(DataBaseName);Integrated Security=true;</MSDeployConnectionString>
 
 		<PortalSrc>$(TrunkFolder)\Sources\WebsitePanel.WebPortal</PortalSrc>
@@ -266,7 +264,7 @@
 		<Exec Command="@(LocalizationToolkitExe) -L $(PortalSrc)"/>
 		
 		<!-- build MSI package -->
-		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.LocalizationToolkit.Wix\WebsitePanel.LocalizationToolkit.Wix.wixproj" Properties="Configuration=$(BuildConfiguration)">
+		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.LocalizationToolkit.Wix\WebsitePanel.LocalizationToolkit.Wix.wixproj" Properties="Configuration=$(BuildConfiguration);DefineSolutionProperties=false">
 			<Output
                 TaskParameter="TargetOutputs"
                 ItemName="LocalizationToolkitMsi" />	
@@ -295,7 +293,7 @@
 		<MSBuild Projects="$(RootFolder)\WebsitePanel.Installer\Sources\WebsitePanel.Updater\WebsitePanel.Updater.csproj" Properties="Configuration=$(BuildConfiguration)" />
     
 		<!-- build MSI package -->
-		<MSBuild Projects="$(RootFolder)\WebsitePanel.Installer\Sources\Setup.WIX\Setup.Wix.wixproj" Properties="Configuration=$(BuildConfiguration)">
+		<MSBuild Projects="$(RootFolder)\WebsitePanel.Installer\Sources\Setup.WIX\Setup.Wix.wixproj" Properties="Configuration=$(BuildConfiguration);DefineSolutionProperties=false">
 			<Output
                 TaskParameter="TargetOutputs"
                 ItemName="WebsitePanelInstallerMsi" />	
@@ -636,24 +634,87 @@
 
   </Target>
 
-	<Target Name="uploadtoftp">
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanel-Portal-$(Version).zip" RemoteFiles="WebsitePanel-Portal-$(Version).zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version).zip" RemoteFiles="WebsitePanel-EnterpriseServer-$(Version).zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanel-Server-$(Version).zip" RemoteFiles="WebsitePanel-Server-$(Version).zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanel-StandaloneServerSetup-$(Version).zip" RemoteFiles="WebsitePanel-StandaloneServerSetup-$(Version).zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanel-Portal-$(Version)-Update.zip" RemoteFiles="WebsitePanel-Portal-$(Version)-Update.zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version)-Update.zip" RemoteFiles="WebsitePanel-EnterpriseServer-$(Version)-Update.zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanel-Server-$(Version)-Update.zip" RemoteFiles="WebsitePanel-Server-$(Version)-Update.zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanel-Installer-$(Version)-Update.zip" RemoteFiles="WebsitePanel-Installer-$(Version)-Update.zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(ToolsFolder)\WebsitePanel-Import-CsvBulk-$(Version).zip" RemoteFiles="WebsitePanel-Import-CsvBulk-$(Version).zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(ToolsFolder)\WebsitePanel-HyperVUtils-$(Version).zip" RemoteFiles="WebsitePanel-HyperVUtils-$(Version).zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(ToolsFolder)\WebsitePanel-VMConfig-$(Version).zip" RemoteFiles="WebsitePanel-VMConfig-$(Version).zip" />
-    <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(ToolsFolder)\WebsitePanel-Import-Enterprise-$(Version).zip" RemoteFiles="WebsitePanel-Import-Enterprise-$(Version).zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(Version).zip" RemoteFiles="WebsitePanel-AWStatsViewer-$(Version).zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" RemoteFiles="WebsitePanel-WSPTransportAgent-$(Version).zip" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(ToolsFolder)\WebsitePanel.LocalizationToolkit.msi" RemoteFiles="WebsitePanel.LocalizationToolkit-$(Version).msi" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\WebsitePanelInstaller.msi" RemoteFiles="WebsitePanelInstaller-$(Version).msi" />
-		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/" LocalFiles="$(DeployFolder)\Manual-Update.zip" RemoteFiles="Manual-Update-$(Version).zip" />
-	</Target>
+  <Target Name="BuildWebPlatformInstallerFeed" DependsOnTargets="Deploy">
+    <ItemGroup>
+      <InstallerFilePath Include="$(DeployFolder)\WebsitePanelInstaller.msi" />
+    </ItemGroup>
+    <PropertyGroup>
+      <GetFileSizeScript>
+        <![CDATA[
+          public static string ScriptMain() {
+            System.Int32 KB = 1024;
+            System.IO.FileInfo fileInfo = new System.IO.FileInfo(@"%(InstallerFilePath.FullPath)");
+            return System.Convert.ToString(fileInfo.Length / KB);
+          }
+        ]]>
+      </GetFileSizeScript>
+      <ComputeChecksumScript>
+        <![CDATA[
+          public static string ScriptMain() {
+            System.String checksumStr = "";
+            using(System.IO.FileStream stream = System.IO.File.OpenRead(@"%(InstallerFilePath.FullPath)"))
+            {
+                System.Security.Cryptography.SHA1Managed sha = new System.Security.Cryptography.SHA1Managed();
+                System.Byte[] checksum = sha.ComputeHash(stream);
+                checksumStr = System.BitConverter.ToString(checksum).Replace("-", System.String.Empty);
+            }
+            return checksumStr;
+          }
+        ]]>
+      </ComputeChecksumScript>
+    </PropertyGroup>
+    <Script Language="C#" Code="$(ComputeChecksumScript)">
+      <Output TaskParameter="ReturnValue" PropertyName="InstallerFileChecksum" />
+    </Script>
+    <Script Language="C#" Code="$(GetFileSizeScript)">
+      <Output TaskParameter="ReturnValue" PropertyName="InstallerFileSize" />
+    </Script>
 
+    <ItemGroup>
+      <Tokens Include="ProductVersion">
+        <ReplacementValue>$(Version)</ReplacementValue>
+      </Tokens>
+      <Tokens Include="ProductTitle">
+        <ReplacementValue>WebsitePanel $(Version)</ReplacementValue>
+      </Tokens>
+      <Tokens Include="ReleaseDate">
+        <ReplacementValue>$(ReleaseDate)T00:00:00Z</ReplacementValue>
+      </Tokens>
+      <Tokens Include="InstallerFileSize">
+        <ReplacementValue>$(InstallerFileSize)</ReplacementValue>
+      </Tokens>
+      <Tokens Include="InstallerFileSHA1">
+        <ReplacementValue>$(InstallerFileChecksum)</ReplacementValue>
+      </Tokens>
+      <Tokens Include="InstallerFileUrl">
+        <ReplacementValue>TODO: Evaluate MSI file URL</ReplacementValue>
+      </Tokens>
+    </ItemGroup>
+    <TemplateFile Template="$(TrunkFolder)\WebsitePanelFeedTemplate.xml" OutputFilename="$(DeployFolder)\WebsitePanelFeed.xml" Tokens="@(Tokens)" />
+  </Target>
+
+<Target Name="uploadtoftp">
+
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-Portal-$(Version).zip" LocalFile="$(DeployFolder)\WebsitePanel-Portal-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-EnterpriseServer-$(Version).zip" LocalFile="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-Server-$(Version).zip" LocalFile="$(DeployFolder)\WebsitePanel-Server-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-StandaloneServerSetup-$(Version).zip" LocalFile="$(DeployFolder)\WebsitePanel-StandaloneServerSetup-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-Portal-$(Version)-Update.zip" LocalFile="$(DeployFolder)\WebsitePanel-Portal-$(Version)-Update.zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-EnterpriseServer-$(Version)-Update.zip" LocalFile="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version)-Update.zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-Server-$(Version)-Update.zip" LocalFile="$(DeployFolder)\WebsitePanel-Server-$(Version)-Update.zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-Installer-$(Version)-Update.zip" LocalFile="$(DeployFolder)\WebsitePanel-Installer-$(Version)-Update.zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-Import-CsvBulk-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-Import-CsvBulk-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-Import-Enterprise-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-Import-Enterprise-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-AWStatsViewer-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-WSPTransportAgent-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel.LocalizationToolkit-$(Version).msi" LocalFile="$(ToolsFolder)\WebsitePanel.LocalizationToolkit.msi" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanelInstaller-$(Version).msi" LocalFile="$(DeployFolder)\WebsitePanelInstaller.msi" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-HyperVUtils-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-HyperVUtils-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-VMConfig-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-VMConfig-$(Version).zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/Manual-Update-$(Version).zip" LocalFile="$(DeployFolder)\Manual-Update.zip" />
+		<FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanelFeed-$(Version).xml" LocalFile="$(DeployFolder)\WebsitePanelFeed.xml" />
+</Target>
+
+  <Import Project="$(RootFolder)\tools\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+  
 </Project>
