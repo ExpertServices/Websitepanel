@@ -39,7 +39,7 @@ using WebsitePanel.Server.Utils;
 using WebsitePanel.Providers.Utils;
 using WebsitePanel.Providers;
 using System.Reflection;
-
+using System.Data.Common;
 
 namespace WebsitePanel.Providers.Database
 {
@@ -129,49 +129,36 @@ namespace WebsitePanel.Providers.Database
 
 		static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
 		{
-			//
+            
+
+    		//
 			if (!args.Name.Contains("MySql.Data"))
 				return null;
+
+            if (args.Name.Contains("MySql.Data.resources"))
+                return null;
+			
 			//
 			string connectorKeyName = "SOFTWARE\\MySQL AB\\MySQL Connector/Net";
-			string connectorLocation = String.Empty;
 			string connectorVersion = String.Empty;
 			//
 			if (PInvoke.RegistryHive.HKLM.SubKeyExists_x86(connectorKeyName))
 			{
-				connectorLocation = PInvoke.RegistryHive.HKLM.GetSubKeyValue_x86(connectorKeyName, "Location");
 				connectorVersion = PInvoke.RegistryHive.HKLM.GetSubKeyValue_x86(connectorKeyName, "Version");
 			}
-			//
-			if (String.IsNullOrEmpty(connectorLocation))
-			{
-				Log.WriteInfo("Connector location is either null or empty");
-				return null;
-			}
-			
-			string assemblyFile = args.Name.Split(',')[0] + ".dll";
             
-            // 1st location
-            string assemblyPath = Path.Combine(connectorLocation, @"Binaries\.NET 2.0\" + assemblyFile);
-            if (!File.Exists(assemblyPath))
+		
+
+            string assemblyFullName = string.Format("MySql.Data, Version={0}.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d", connectorVersion);
+
+            if (assemblyFullName == args.Name)
             {
-                // 2nd location
-                assemblyPath = Path.Combine(connectorLocation, @"Assemblies\" + assemblyFile);
-
-                if (!File.Exists(assemblyPath))
-                {
-                    // 3rd location
-                    assemblyPath = Path.Combine(connectorLocation, @"Assemblies\v2.0" + assemblyFile);
-
-                    if (!File.Exists(assemblyPath))
-                    {
-                        Log.WriteInfo("Connector assembly could not be found or does not exist");
-                        return null; // sorry, cannot find
-                    }
-                }
+                return null; //avoid of stack overflow
             }
 
-			return Assembly.LoadFrom(assemblyPath);
+
+            return Assembly.Load(assemblyFullName);
+       
 		}
 
 		#endregion
@@ -185,8 +172,14 @@ namespace WebsitePanel.Providers.Database
 
         public virtual bool CheckConnectivity(string databaseName, string username, string password)
         {
-            MySqlConnection conn = new MySqlConnection(String.Format("server={0};port={1};database={2};uid={3};password={4}",
-                    ServerName, ServerPort, databaseName, username, password));
+            MySqlConnection conn = new MySqlConnection(
+                    String.Format("server={0};port={1};database={2};uid={3};password={4}",
+                                ServerName,
+                                ServerPort,
+                                databaseName,
+                                username,
+                                password)
+                    );
             try
             {
                 conn.Open();
