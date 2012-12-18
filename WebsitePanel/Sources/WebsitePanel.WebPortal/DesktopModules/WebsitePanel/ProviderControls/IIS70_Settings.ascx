@@ -427,6 +427,8 @@
 		    </td>
             <td class="Normal" valign="top">
                 <asp:Localize ID="Localize1" runat="server" meta:resourcekey="lclHeliconApeInstallNote" />
+                <br/><br/>
+                <asp:LinkButton runat="server" ID="InstallHeliconApeLink" Text="Install Helicon Ape" />
             </td>
 		</tr>
     </table>
