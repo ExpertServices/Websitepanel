@@ -161,6 +161,20 @@ namespace WebsitePanel.Portal.ProviderControls
             else
             {
                 configureApePanel.Visible = false;
+
+                // Build url manually, EditUrl throws exception:  module is Null
+                // pid=Servers&mid=137&ctl=edit_platforminstaller&ServerID=1&Product=HeliconApe
+
+                List<string> qsParts= new List<string>();
+
+                qsParts.Add("pid=Servers");
+                qsParts.Add("ctl=edit_platforminstaller");
+                qsParts.Add("mid=" + Request.QueryString["mid"]);
+                qsParts.Add("ServerID=" + Request.QueryString["ServerID"]);
+                qsParts.Add("WPIProduct=HeliconApe");
+
+                // TODO: make button here
+                InstallHeliconApeLink.Attributes["href"] = "Default.aspx?" + String.Join("&", qsParts.ToArray());
             }
 
             //
