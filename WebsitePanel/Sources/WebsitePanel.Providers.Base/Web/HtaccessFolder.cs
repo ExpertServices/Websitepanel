@@ -51,7 +51,7 @@ namespace WebsitePanel.Providers.Web
 		#endregion
 
 		#region parsing regexps
-		protected static readonly Regex RE_AUTH_NAME = new Regex(@"^\s*AuthName\s+(.+)\s*$", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
+		protected static readonly Regex RE_AUTH_NAME = new Regex("^\\s*AuthName\\s+\"?([^\"]+)\"?\\s*$", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
 		protected static readonly Regex RE_AUTH_TYPE = new Regex(@"^\s*AuthType\s+(basic|digest)\s*$", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
 		protected static readonly Regex RE_REQUIRE = new Regex(@"^\s*Require\s+(.+)\s*$", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
 		protected static readonly Regex RE_AUTH_PROVIDER = new Regex(@"^\s*Auth(Basic|Digest)Provider\s+(file)\s*$", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Compiled);
