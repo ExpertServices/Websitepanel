@@ -1251,6 +1251,8 @@ GO
 DELETE FROM Quotas WHERE QuotaID = 343
 GO
 
+DELETE FROM HostingPlanResources WHERE GroupID = 33
+GO
 
 -- Remove ExchangeHostedEdition ServiceItemType
 DELETE FROM ServiceItemTypes WHERE ItemTypeID = 40
