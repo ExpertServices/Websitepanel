@@ -469,8 +469,7 @@
             </td>
             <td>
                 <asp:CheckBox ID="chkHeliconApeGlobalRegistration" runat="server" style="margin-left: -4px;"/>
-                <br/>
-                <asp:Label runat="server" AssociatedControlID="chkHeliconApeGlobalRegistration">Uncheck this box to enable managing Helicon Ape using hosting plan policies.</asp:Label>
+                (<asp:Label runat="server" AssociatedControlID="chkHeliconApeGlobalRegistration">Uncheck this box to enable managing Helicon Ape using hosting plan policies.</asp:Label>)
             </td>
         </tr>
     </table>

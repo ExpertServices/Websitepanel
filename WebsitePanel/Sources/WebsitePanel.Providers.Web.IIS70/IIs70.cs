@@ -2180,14 +2180,9 @@ namespace WebsitePanel.Providers.Web
                 WebSite webSite = null;
                 using (ServerManager srvman = webObjectsSvc.GetServerManager())
                 {
-                    //
-                    if (String.IsNullOrEmpty(siteId))
-
-
-                        // Helicon.Ape.ApeModule works for apps working in Integrated Pipeline mode
-                        // Switch automatically to the app pool with Integrated Pipeline enabled
-                        webSite = webObjectsSvc.GetWebSiteFromIIS(srvman, siteId);
-                    //
+                    // Helicon.Ape.ApeModule works for apps working in Integrated Pipeline mode
+                    // Switch automatically to the app pool with Integrated Pipeline enabled
+                    webSite = webObjectsSvc.GetWebSiteFromIIS(srvman, siteId);
                     if (webSite == null)
                         throw new ApplicationException(
                             String.Format("Could not find a web site with the following identifier: {0}.", siteId));
