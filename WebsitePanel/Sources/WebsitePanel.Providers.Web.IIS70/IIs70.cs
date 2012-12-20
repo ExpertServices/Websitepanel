@@ -2254,33 +2254,61 @@ namespace WebsitePanel.Providers.Web
                 #endregion
             }
 
-            //
             using (var srvman = webObjectsSvc.GetServerManager())
             {
-                //
                 Configuration appConfig = srvman.GetApplicationHostConfiguration();
                 
                 // add Helicon.Ape module
                 ConfigurationSection modulesSection = appConfig.GetSection(Constants.ModulesSection, siteId);
                 ConfigurationElementCollection modulesCollection = modulesSection.GetCollection();
+
+                /*
+                if ("" != siteId)
+                {
+                    // <remove name="Helicon.Ape" />
+                    ConfigurationElement removeHeliconApeModuleEntry = modulesCollection.CreateElement("remove");
+                    removeHeliconApeModuleEntry["name"] = Constants.HeliconApeModule;
+                    modulesCollection.Add(removeHeliconApeModuleEntry);
+                }
+                */
+
+                // add name="Helicon.Ape" />
                 ConfigurationElement heliconApeModuleEntry = modulesCollection.CreateElement("add");
                 heliconApeModuleEntry["name"] = Constants.HeliconApeModule;
                 heliconApeModuleEntry["type"] = GetHeliconApeModuleType(siteId);
-                //
-                modulesCollection.AddAt(0, heliconApeModuleEntry);
+                
+                // this way make <clear/> and copy all modules list from ancestor
+                //modulesCollection.AddAt(0, heliconApeModuleEntry);
+                // this way just insert single ape module entry
+                modulesCollection.Add(heliconApeModuleEntry);
 
+                
+                
+                
                 // add Helicon.Ape handler
                 ConfigurationSection handlersSection = appConfig.GetSection(Constants.HandlersSection, siteId);
                 ConfigurationElementCollection handlersCollection = handlersSection.GetCollection();
+
+                /*
+                if ("" != siteId)
+                {
+                    // <remove name="Helicon.Ape" />
+                    ConfigurationElement removeHeliconApeHandlerEntry = handlersCollection.CreateElement("remove");
+                    removeHeliconApeHandlerEntry["name"] = Constants.HeliconApeModule;
+                    handlersCollection.Add(removeHeliconApeHandlerEntry);
+                }
+                */
+
+                // add name="Helicon.Ape" />
                 ConfigurationElement heliconApeHandlerEntry = handlersCollection.CreateElement("add");
                 heliconApeHandlerEntry["name"] = Constants.HeliconApeModule;
                 heliconApeHandlerEntry["type"] = GetHeliconApeHandlerType(siteId);
                 heliconApeHandlerEntry["path"] = Constants.HeliconApeHandlerPath;
                 heliconApeHandlerEntry["verb"] = "*";
                 heliconApeHandlerEntry["resourceType"] = "Unspecified";
-                //
+                
                 handlersCollection.AddAt(0, heliconApeHandlerEntry);
-                //
+
                 srvman.CommitChanges();
             }
         }
@@ -2304,40 +2332,38 @@ namespace WebsitePanel.Providers.Web
                 // remove Helicon.Ape module
                 ConfigurationSection modulesSection = appConfig.GetSection(Constants.ModulesSection, siteId);
                 ConfigurationElementCollection modulesCollection = modulesSection.GetCollection();
-                ConfigurationElement heliconApeModuleEntry = null;
+                List<ConfigurationElement> heliconApeModuleEntriesList = new List<ConfigurationElement>();
                 foreach (ConfigurationElement moduleEntry in modulesCollection)
                 {
                     if (String.Equals(moduleEntry["name"].ToString(), Constants.HeliconApeModule, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        heliconApeModuleEntry = moduleEntry;
-                        break;
+                        heliconApeModuleEntriesList.Add(moduleEntry);
                     }
                 }
-                if (heliconApeModuleEntry != null)
+                foreach (ConfigurationElement heliconApeElement in heliconApeModuleEntriesList)
                 {
-                    modulesCollection.Remove(heliconApeModuleEntry);
+                    modulesCollection.Remove(heliconApeElement);
                 }
 
                 // remove Helicon.Ape handler
                 ConfigurationSection handlersSection = appConfig.GetSection(Constants.HandlersSection, siteId);
                 ConfigurationElementCollection handlersCollection = handlersSection.GetCollection();
-                ConfigurationElement heliconApeHandlerEntry = null;
+                List<ConfigurationElement> heliconApeHandlerEntriesList = new List<ConfigurationElement>();
                 foreach (ConfigurationElement handlerEntry in handlersCollection)
                 {
-                    if (String.Equals(handlerEntry["path"].ToString(), Constants.HeliconApeHandlerPath, StringComparison.InvariantCultureIgnoreCase))
+                    if (String.Equals(handlerEntry["name"].ToString(), Constants.HeliconApeModule, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        heliconApeHandlerEntry = handlerEntry;
-                        break;
+                        heliconApeHandlerEntriesList.Add(handlerEntry);
                     }
                 }
 				//
-                if (heliconApeHandlerEntry != null)
+                foreach (ConfigurationElement heliconApeHandlerEntry in heliconApeHandlerEntriesList)
                 {
                     handlersCollection.Remove(heliconApeHandlerEntry);
                 }
 
                 // commit changes to metabase
-                if (heliconApeModuleEntry != null || heliconApeHandlerEntry != null)
+                if (heliconApeModuleEntriesList.Count > 0 || heliconApeHandlerEntriesList.Count > 0)
                 {
                     srvman.CommitChanges();
                 }
