@@ -160,6 +160,89 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
 
+        internal override ExchangeMailboxStatistics GetMailboxStatisticsInternal(string id)
+        {
+            ExchangeLog.LogStart("GetMailboxStatisticsInternal");
+            ExchangeLog.DebugInfo("Account: {0}", id);
+
+            ExchangeMailboxStatistics info = new ExchangeMailboxStatistics();
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+
+                Collection<PSObject> result = GetMailboxObject(runSpace, id);
+                PSObject mailbox = result[0];
+
+                string dn = GetResultObjectDN(result);
+                string path = AddADPrefix(dn);
+                DirectoryEntry entry = GetADObject(path);
+                info.Enabled = !(bool)entry.InvokeGet("AccountDisabled");
+                info.LitigationHoldEnabled = (bool)GetPSObjectProperty(mailbox, "LitigationHoldEnabled");
+
+                info.DisplayName = (string)GetPSObjectProperty(mailbox, "DisplayName");
+                SmtpAddress smtpAddress = (SmtpAddress)GetPSObjectProperty(mailbox, "PrimarySmtpAddress");
+                if (smtpAddress != null)
+                    info.PrimaryEmailAddress = smtpAddress.ToString();
+
+                info.MaxSize = ConvertUnlimitedToBytes((Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(mailbox, "ProhibitSendReceiveQuota"));
+                info.LitigationHoldMaxSize = ConvertUnlimitedToBytes((Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(mailbox, "RecoverableItemsQuota"));
+
+                DateTime? whenCreated = (DateTime?)GetPSObjectProperty(mailbox, "WhenCreated");
+                info.AccountCreated = ConvertNullableToDateTime(whenCreated);
+                //Client Access
+                Command cmd = new Command("Get-CASMailbox");
+                cmd.Parameters.Add("Identity", id);
+                result = ExecuteShellCommand(runSpace, cmd);
+                mailbox = result[0];
+
+                info.ActiveSyncEnabled = (bool)GetPSObjectProperty(mailbox, "ActiveSyncEnabled");
+                info.OWAEnabled = (bool)GetPSObjectProperty(mailbox, "OWAEnabled");
+                info.MAPIEnabled = (bool)GetPSObjectProperty(mailbox, "MAPIEnabled");
+                info.POPEnabled = (bool)GetPSObjectProperty(mailbox, "PopEnabled");
+                info.IMAPEnabled = (bool)GetPSObjectProperty(mailbox, "ImapEnabled");
+
+                //Statistics
+                cmd = new Command("Get-MailboxStatistics");
+                cmd.Parameters.Add("Identity", id);
+                result = ExecuteShellCommand(runSpace, cmd);
+                if (result.Count > 0)
+                {
+                    PSObject statistics = result[0];
+                    Unlimited<ByteQuantifiedSize> totalItemSize = (Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(statistics, "TotalItemSize");
+                    info.TotalSize = ConvertUnlimitedToBytes(totalItemSize);
+
+                    uint? itemCount = (uint?)GetPSObjectProperty(statistics, "ItemCount");
+                    info.TotalItems = ConvertNullableToInt32(itemCount);
+
+                    totalItemSize = (Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(statistics, "FolderAndSubfolderSize");
+                    info.LitigationHoldTotalSize = ConvertUnlimitedToBytes(totalItemSize);
+
+                    itemCount = (uint?)GetPSObjectProperty(statistics, "ItemsInFolder");
+                    info.LitigationHoldTotalItems = ConvertNullableToInt32(itemCount);
+                    
+                    DateTime? lastLogoffTime = (DateTime?)GetPSObjectProperty(statistics, "LastLogoffTime");
+                    DateTime? lastLogonTime = (DateTime?)GetPSObjectProperty(statistics, "LastLogonTime");
+                    info.LastLogoff = ConvertNullableToDateTime(lastLogoffTime);
+                    info.LastLogon = ConvertNullableToDateTime(lastLogonTime);
+                }
+                else
+                {
+                    info.TotalSize = 0;
+                    info.TotalItems = 0;
+                    info.LastLogoff = DateTime.MinValue;
+                    info.LastLogon = DateTime.MinValue;
+                }
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+            ExchangeLog.LogEnd("GetMailboxStatisticsInternal");
+            return info;
+        }
+
+
 
         internal override void SetMailboxAdvancedSettingsInternal(string organizationId, string accountName, bool enablePOP, bool enableIMAP,
             bool enableOWA, bool enableMAPI, bool enableActiveSync, long issueWarningKB, long prohibitSendKB,

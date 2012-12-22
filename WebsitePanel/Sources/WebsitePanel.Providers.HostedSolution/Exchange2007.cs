@@ -2795,7 +2795,7 @@ namespace WebsitePanel.Providers.HostedSolution
             return type;
         }
 
-        private ExchangeMailboxStatistics GetMailboxStatisticsInternal(string id)
+        virtual internal ExchangeMailboxStatistics GetMailboxStatisticsInternal(string id)
         {
             ExchangeLog.LogStart("GetMailboxStatisticsInternal");
             ExchangeLog.DebugInfo("Account: {0}", id);
