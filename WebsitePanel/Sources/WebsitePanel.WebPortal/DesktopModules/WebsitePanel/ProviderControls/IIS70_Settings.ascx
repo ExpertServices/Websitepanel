@@ -427,6 +427,8 @@
 		    </td>
             <td class="Normal" valign="top">
                 <asp:Localize ID="Localize1" runat="server" meta:resourcekey="lclHeliconApeInstallNote" />
+                <br/><br/>
+                <asp:LinkButton runat="server" ID="InstallHeliconApeLink" Text="Install Helicon Ape" />
             </td>
 		</tr>
     </table>
@@ -458,9 +460,18 @@
 		    </td>
 		    <td class="Normal" valign="top"> 
                     <asp:Button ID="EditHeliconApeConfButton" runat="server" class="Button2" 
-                        Text="Edit httpd.conf (server config)" onclick="EditHeliconApeConfButton_Click"  
-                    /></td>
+                        Text="Edit httpd.conf (server config)" onclick="EditHeliconApeConfButton_Click" />
+            </td>
 		</tr>
+        <tr>
+            <td valign="top">
+                <asp:Label runat="server" AssociatedControlID="chkHeliconApeGlobalRegistration" meta:resourcekey="chkHeliconApeGlobalRegistration">Register Helicon Ape module globally:</asp:Label>
+            </td>
+            <td>
+                <asp:CheckBox ID="chkHeliconApeGlobalRegistration" runat="server" style="margin-left: -4px;"/>
+                (<asp:Label runat="server" AssociatedControlID="chkHeliconApeGlobalRegistration">Uncheck this box to enable managing Helicon Ape using hosting plan policies.</asp:Label>)
+            </td>
+        </tr>
     </table>
     </asp:Panel>
 </fieldset>

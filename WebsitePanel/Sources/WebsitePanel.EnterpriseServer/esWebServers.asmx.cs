@@ -379,6 +379,18 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public int EnableHeliconApeGlobally(int serviceId)
+        {
+            return WebServerController.EnableHeliconApeGlobally(serviceId);
+        }
+
+        [WebMethod]
+        public int DisableHeliconApeGlobally(int serviceId)
+        {
+            return WebServerController.DisableHeliconApeGlobally(serviceId);
+        }
+
+        [WebMethod]
         public HtaccessFolder[] GetHeliconApeFolders(int siteItemId)
         {
             return WebServerController.GetHeliconApeFolders(siteItemId);

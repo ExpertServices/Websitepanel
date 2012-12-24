@@ -38,23 +38,12 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using WebsitePanel.Providers.Web;
+using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Portal
 {
     public partial class WebSitesHeliconApeControl : WebsitePanelControlBase
     {
-        private bool IsHeliconApeInstalled
-        {
-            get { return ViewState["IsHeliconApeInstalled"] != null ? (bool)ViewState["IsHeliconApeInstalled"] : false; }
-            set { ViewState["IsHeliconApeInstalled"] = value; }
-        }
-
-        private bool IsHeliconApeEnabled
-        {
-            get { return ViewState["IsHeliconApeEnabled"] != null ? (bool)ViewState["IsHeliconApeEnabled"] : false; }
-            set { ViewState["IsHeliconApeEnabled"] = value; }
-            
-        }
 
         private bool IsSecuredFoldersInstalled
         {
@@ -62,9 +51,16 @@ namespace WebsitePanel.Portal
             set { ViewState["IsSecuredFoldersInstalled"] = value; }
         }
 
+        private HeliconApeStatus HeliconApeStatus
+        {
+            get { return (HeliconApeStatus)ViewState["HeliconApeStatus"]; }
+            set { ViewState["HeliconApeStatus"] = value; }
+
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (IsHeliconApeInstalled)
+            if (HeliconApeStatus.IsInstalled)
             {
                 if (!IsPostBack)
                 {
@@ -90,12 +86,12 @@ namespace WebsitePanel.Portal
         public void BindHeliconApe(WebSite site)
         {
             // save initial state
-            IsHeliconApeInstalled = site.HeliconApeInstalled;
-            IsHeliconApeEnabled = site.HeliconApeEnabled;
-            IsSecuredFoldersInstalled = site.SecuredFoldersInstalled;
-            
+            this.IsSecuredFoldersInstalled = site.SecuredFoldersInstalled;
+            this.HeliconApeStatus = site.HeliconApeStatus;
+
+           
             // Render a warning message about the automatic site's settings change
-            if (!IsHeliconApeEnabled && site.IIs7)
+            if (!HeliconApeStatus.IsEnabled && site.IIs7)
             {
                 // Ensure the message is displayed only when neccessary
                 if (site.EnableWindowsAuthentication || !site.AspNetInstalled.EndsWith("I") || site.SecuredFoldersInstalled)
@@ -113,11 +109,21 @@ namespace WebsitePanel.Portal
 
         private void ToggleControls()
         {
-            if (IsHeliconApeInstalled)
+            if (HeliconApeStatus.IsInstalled)
             {
+                bool IsHeliconApeEnabled = HeliconApeStatus.IsEnabled;
+
                 // toggle button
-                btnToggleHeliconApe.Text = GetLocalizedString(
-                    IsHeliconApeEnabled ? "DisableHeliconApe.Text" : "EnableHeliconApe.Text");
+                if (IsHeliconApeEnabled)
+                {
+                    btnToggleHeliconApe.Text = GetLocalizedString("DisableHeliconApe.Text");
+                }
+                else
+                {
+                    btnToggleHeliconApe.Text = GetLocalizedString("EnableHeliconApe.Text");
+                }
+                
+             
 
                 // toggle panels
                 HeliconApeFoldersPanel.Visible = IsHeliconApeEnabled;
@@ -165,7 +171,7 @@ namespace WebsitePanel.Portal
             try
             {
                 int result = 0;
-                if (IsHeliconApeEnabled)
+                if (HeliconApeStatus.IsEnabled)
                 {
                     // uninstall folders
                     result = ES.Services.WebServers.DisableHeliconApe(PanelRequest.ItemID);
@@ -189,7 +195,10 @@ namespace WebsitePanel.Portal
             }
 
             // change state
-            IsHeliconApeEnabled = !IsHeliconApeEnabled;
+            HeliconApeStatus status = HeliconApeStatus;
+            status.IsEnabled = !status.IsEnabled;
+
+            HeliconApeStatus = status;
 
             // bind items
             ToggleControls();
