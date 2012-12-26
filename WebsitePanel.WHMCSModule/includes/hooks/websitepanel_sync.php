@@ -74,9 +74,9 @@ function websitepanel_sync_ClientEdit($params)
             // We cannot use the details provided by the get_users_paged_recursive method as it does not return all the required elements to fully update the user
             $currentRoot = $rootPath->Table1->$i;
             $userDetails = (array)$wsp->get_user_by_username($currentRoot->Username);
-        
+            
             // Update the current user
-            $wsp->update_user_details($userDetails['RoleId'], (($userDetails['RoleId'] == 2) ? 'Reseller' : 'User'), $userDetails['StatusId'], $userDetails['Status'], $userDetails['LoginStatusId'], $userDetails['LoginStatus'], $userDetails['FailedLogins'], $userDetails['UserId'], $userDetails['OwnerId'], $userDetails['Created'], $userDetails['Changed'], $userDetails['IsDemo'], $userDetails['IsPeer'], $currentRoot->Comments, $params['lastname'], $userDetails['Username'], $userDetails['Password'], $params['firstname'], $params['email'], $params['phonenumber'], $params['postcode'], '', '', '', '', $params['country'], $params['address1'] . (!empty($params['address2']) ? " {$params['address2']}" : ''), $params['city'], $params['state'], TRUE, $params['companyname'], (($userDetails['RoleId'] == 2) ? TRUE : FALSE));
+            $wsp->update_user_details($userDetails['RoleId'], (($userDetails['RoleId'] == 2) ? 'Reseller' : 'User'), $userDetails['StatusId'], $userDetails['Status'], $userDetails['LoginStatusId'], $userDetails['LoginStatus'], $userDetails['FailedLogins'], $userDetails['UserId'], $userDetails['OwnerId'], $userDetails['Created'], $userDetails['Changed'], $userDetails['IsDemo'], $userDetails['IsPeer'], $currentRoot->Comments, $userDetails['Username'], $userDetails['Password'], $params['firstname'], $params['lastname'], $params['email'], $params['phonenumber'], $params['postcode'], '', '', '', '', $params['country'], $params['address1'] . (!empty($params['address2']) ? " {$params['address2']}" : ''), $params['city'], $params['state'], TRUE, $params['companyname'], (($userDetails['RoleId'] == 2) ? TRUE : FALSE));
             
             // Add log entry to client log
             logactivity("WebsitePanel Sync - Account {$currentRoot->Username} contact details updated successfully", $params['userid']);
