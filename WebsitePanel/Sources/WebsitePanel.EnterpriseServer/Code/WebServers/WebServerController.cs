@@ -2879,7 +2879,6 @@ namespace WebsitePanel.EnterpriseServer
 
 		#endregion
 
-
         #region Helicon Ape
         public static int EnableHeliconApe(int siteItemId)
         {
@@ -2949,7 +2948,48 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-		/// <summary>
+        /// <summary>
+        /// Enables Helicon Ape on the server globally. Requires Administrator role to execute.
+        /// </summary>
+        /// <param name="ServiceId"></param>
+        /// <returns></returns>
+        public static int EnableHeliconApeGlobally(int ServiceId)
+        {
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.IsAdmin | DemandAccount.IsActive | DemandAccount.NotDemo);
+            if (accountCheck < 0)
+            {
+                return accountCheck;
+            }
+
+            WebServer web = GetWebServer(ServiceId);
+            web.EnableHeliconApe("");
+
+            return 0;
+        }
+
+
+        /// <summary>
+        /// Disables Helicon Ape on the server globally. Requires Administrator role to execute.
+        /// </summary>
+        /// <param name="ServiceId"></param>
+        /// <returns></returns>
+        public static int DisableHeliconApeGlobally(int ServiceId)
+        {
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.IsAdmin | DemandAccount.IsActive | DemandAccount.NotDemo);
+            //
+            if (accountCheck < 0)
+            {
+                return accountCheck;
+            }
+
+            WebServer web = GetWebServer(ServiceId);
+            web.DisableHeliconApe("");
+
+            return 0;
+        }
+
+
+        /// <summary>
 		/// Retrieves Helicon Ape extension status from the server. Requires Administrator role to execute.
 		/// </summary>
 		/// <param name="ServiceId"></param>

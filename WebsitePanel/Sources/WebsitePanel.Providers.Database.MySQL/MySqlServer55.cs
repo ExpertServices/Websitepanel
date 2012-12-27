@@ -32,7 +32,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Data;
 using Microsoft.Win32;
-using MySql.Data.MySqlClient;
+//using MySql.Data.MySqlClient;
 using System.IO;
 
 using WebsitePanel.Server.Utils;

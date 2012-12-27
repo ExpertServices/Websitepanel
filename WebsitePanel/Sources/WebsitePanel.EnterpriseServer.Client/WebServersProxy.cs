@@ -164,6 +164,10 @@ namespace WebsitePanel.EnterpriseServer {
         
         private System.Threading.SendOrPostCallback DisableHeliconApeOperationCompleted;
         
+        private System.Threading.SendOrPostCallback EnableHeliconApeGloballyOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback DisableHeliconApeGloballyOperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetHeliconApeFoldersOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetHeliconApeHttpdFolderOperationCompleted;
@@ -383,6 +387,12 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         public event DisableHeliconApeCompletedEventHandler DisableHeliconApeCompleted;
+        
+        /// <remarks/>
+        public event EnableHeliconApeGloballyCompletedEventHandler EnableHeliconApeGloballyCompleted;
+        
+        /// <remarks/>
+        public event DisableHeliconApeGloballyCompletedEventHandler DisableHeliconApeGloballyCompleted;
         
         /// <remarks/>
         public event GetHeliconApeFoldersCompletedEventHandler GetHeliconApeFoldersCompleted;
@@ -2704,6 +2714,88 @@ namespace WebsitePanel.EnterpriseServer {
             if ((this.DisableHeliconApeCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.DisableHeliconApeCompleted(this, new DisableHeliconApeCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/EnableHeliconApeGlobally", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int EnableHeliconApeGlobally(int serviceId) {
+            object[] results = this.Invoke("EnableHeliconApeGlobally", new object[] {
+                        serviceId});
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginEnableHeliconApeGlobally(int serviceId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("EnableHeliconApeGlobally", new object[] {
+                        serviceId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public int EndEnableHeliconApeGlobally(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void EnableHeliconApeGloballyAsync(int serviceId) {
+            this.EnableHeliconApeGloballyAsync(serviceId, null);
+        }
+        
+        /// <remarks/>
+        public void EnableHeliconApeGloballyAsync(int serviceId, object userState) {
+            if ((this.EnableHeliconApeGloballyOperationCompleted == null)) {
+                this.EnableHeliconApeGloballyOperationCompleted = new System.Threading.SendOrPostCallback(this.OnEnableHeliconApeGloballyOperationCompleted);
+            }
+            this.InvokeAsync("EnableHeliconApeGlobally", new object[] {
+                        serviceId}, this.EnableHeliconApeGloballyOperationCompleted, userState);
+        }
+        
+        private void OnEnableHeliconApeGloballyOperationCompleted(object arg) {
+            if ((this.EnableHeliconApeGloballyCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.EnableHeliconApeGloballyCompleted(this, new EnableHeliconApeGloballyCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/DisableHeliconApeGlobally", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int DisableHeliconApeGlobally(int serviceId) {
+            object[] results = this.Invoke("DisableHeliconApeGlobally", new object[] {
+                        serviceId});
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginDisableHeliconApeGlobally(int serviceId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("DisableHeliconApeGlobally", new object[] {
+                        serviceId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public int EndDisableHeliconApeGlobally(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void DisableHeliconApeGloballyAsync(int serviceId) {
+            this.DisableHeliconApeGloballyAsync(serviceId, null);
+        }
+        
+        /// <remarks/>
+        public void DisableHeliconApeGloballyAsync(int serviceId, object userState) {
+            if ((this.DisableHeliconApeGloballyOperationCompleted == null)) {
+                this.DisableHeliconApeGloballyOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDisableHeliconApeGloballyOperationCompleted);
+            }
+            this.InvokeAsync("DisableHeliconApeGlobally", new object[] {
+                        serviceId}, this.DisableHeliconApeGloballyOperationCompleted, userState);
+        }
+        
+        private void OnDisableHeliconApeGloballyOperationCompleted(object arg) {
+            if ((this.DisableHeliconApeGloballyCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DisableHeliconApeGloballyCompleted(this, new DisableHeliconApeGloballyCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -5321,6 +5413,58 @@ namespace WebsitePanel.EnterpriseServer {
         private object[] results;
         
         internal DisableHeliconApeCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public int Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((int)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void EnableHeliconApeGloballyCompletedEventHandler(object sender, EnableHeliconApeGloballyCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class EnableHeliconApeGloballyCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal EnableHeliconApeGloballyCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public int Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((int)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void DisableHeliconApeGloballyCompletedEventHandler(object sender, DisableHeliconApeGloballyCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DisableHeliconApeGloballyCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal DisableHeliconApeGloballyCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }

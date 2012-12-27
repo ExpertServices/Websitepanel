@@ -64,9 +64,14 @@ namespace WebsitePanel.Portal
                 if (appResult.ErrorCodes.Count > 0)
                 {
                     // app does not meet requirements
+                    if (appResult.ErrorCodes.Count > 1)
+                    {
+                        // remove "- Your hosting package does not meet..." message
+                        appResult.ErrorCodes.RemoveAt(0);
+                    }
                     messageBox.ShowMessage(appResult, "WAG_CANNOT_INSTALL_APPLICATION", "WebAppGallery");
-                    chIgnoreDependencies.Visible = true;
-                    btnInstall.Enabled = false;
+                    chIgnoreDependencies.Visible = false;
+                    btnInstall.Enabled = true;
                 }
             }
             catch (Exception ex)

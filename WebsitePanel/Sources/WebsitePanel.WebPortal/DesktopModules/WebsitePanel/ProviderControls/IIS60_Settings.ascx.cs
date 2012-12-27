@@ -134,7 +134,7 @@ namespace WebsitePanel.Portal.ProviderControls
             wpiEditFeedsList.Value = settings["FeedUrls"];
 			FilteredAppIds = settings["GalleryAppsFilter"];
             radioFilterAppsList.SelectedIndex = Utils.ParseInt(settings["GalleryAppsFilterMode"], 0);
-            chkGalleryAppsAlwaysIgnoreDependencies.Checked = Utils.ParseBool(settings["GalleryAppsAlwaysIgnoreDependencies"], false);
+            chkGalleryAppsAlwaysIgnoreDependencies.Checked = Utils.ParseBool(settings["GalleryAppsAlwaysIgnoreDependencies"], true);
         }
 
         public void SaveSettings(StringDictionary settings)

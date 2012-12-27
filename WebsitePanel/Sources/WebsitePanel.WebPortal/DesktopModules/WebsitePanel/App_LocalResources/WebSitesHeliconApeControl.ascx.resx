@@ -132,6 +132,9 @@
   <data name="EnableHeliconApe.Text" xml:space="preserve">
     <value>Enable Helicon Ape</value>
   </data>
+  <data name="EnableHeliconApeTrial.Text" xml:space="preserve">
+    <value>Enable Helicon Ape (45 days trial)</value>
+  </data>
   <data name="gvHeliconApeFolders.Empty" xml:space="preserve">
     <value>Click "Add Folder" button to add .htaccess folder</value>
   </data>

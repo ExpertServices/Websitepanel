@@ -25,6 +25,16 @@ GO
 
 
 IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Exchange2007.AllowLitigationHold')
+DELETE FROM HostingPlanQuotas WHERE QuotaID = 340
+GO
+DELETE FROM HostingPlanQuotas WHERE QuotaID = 341
+GO
+DELETE FROM HostingPlanQuotas WHERE QuotaID = 342
+GO
+DELETE FROM HostingPlanQuotas WHERE QuotaID = 343
+GO
+DELETE FROM HostingPlanResources WHERE GroupID = 33
+GO
 BEGIN
 INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (420, 12, 24,N'Exchange2007.AllowLitigationHold',N'Allow Litigation Hold',1, 0 , NULL)
 END
@@ -203,4 +213,6 @@ UPDATE ExchangeMailboxPlans SET
 WHERE MailboxPlanId = @MailboxPlanId
 
 RETURN
+	UPDATE Domains SET IsDomainPointer=0, DomainItemID=NULL WHERE MailDomainID IS NOT NULL AND isDomainPointer=1
+	
 GO

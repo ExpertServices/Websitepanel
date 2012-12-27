@@ -2743,7 +2743,8 @@ namespace WebsitePanel.EnterpriseServer {
                     bool createFtpAccount, 
                     string ftpAccountName, 
                     bool createMailAccount, 
-                    string hostName) {
+                    string hostName,
+                    bool createZoneRecord) {
             object[] results = this.Invoke("CreateUserWizard", new object[] {
                         parentPackageId,
                         username,
@@ -2764,7 +2765,8 @@ namespace WebsitePanel.EnterpriseServer {
                         createFtpAccount,
                         ftpAccountName,
                         createMailAccount,
-                        hostName});
+                        hostName,
+                        createZoneRecord});
             return ((int)(results[0]));
         }
         
@@ -2789,7 +2791,8 @@ namespace WebsitePanel.EnterpriseServer {
                     bool createFtpAccount, 
                     string ftpAccountName, 
                     bool createMailAccount, 
-                    string hostName, 
+                    string hostName,
+                    bool createZoneRecord,
                     System.AsyncCallback callback, 
                     object asyncState) {
             return this.BeginInvoke("CreateUserWizard", new object[] {
@@ -2812,7 +2815,8 @@ namespace WebsitePanel.EnterpriseServer {
                         createFtpAccount,
                         ftpAccountName,
                         createMailAccount,
-                        hostName}, callback, asyncState);
+                        hostName,
+                        createZoneRecord}, callback, asyncState);
         }
         
         /// <remarks/>
@@ -2842,8 +2846,9 @@ namespace WebsitePanel.EnterpriseServer {
                     bool createFtpAccount, 
                     string ftpAccountName, 
                     bool createMailAccount, 
-                    string hostName) {
-            this.CreateUserWizardAsync(parentPackageId, username, password, roleId, firstName, lastName, email, secondaryEmail, htmlMail, sendAccountLetter, createPackage, planId, sendPackageLetter, domainName, tempDomain, createWebSite, createFtpAccount, ftpAccountName, createMailAccount, hostName, null);
+                    string hostName,
+                    bool createZoneRecord) {
+            this.CreateUserWizardAsync(parentPackageId, username, password, roleId, firstName, lastName, email, secondaryEmail, htmlMail, sendAccountLetter, createPackage, planId, sendPackageLetter, domainName, tempDomain, createWebSite, createFtpAccount, ftpAccountName, createMailAccount, hostName, createZoneRecord, null);
         }
         
         /// <remarks/>
@@ -2867,7 +2872,8 @@ namespace WebsitePanel.EnterpriseServer {
                     bool createFtpAccount, 
                     string ftpAccountName, 
                     bool createMailAccount, 
-                    string hostName, 
+                    string hostName,
+                    bool createZoneRecord,
                     object userState) {
             if ((this.CreateUserWizardOperationCompleted == null)) {
                 this.CreateUserWizardOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCreateUserWizardOperationCompleted);
@@ -2892,7 +2898,8 @@ namespace WebsitePanel.EnterpriseServer {
                         createFtpAccount,
                         ftpAccountName,
                         createMailAccount,
-                        hostName}, this.CreateUserWizardOperationCompleted, userState);
+                        hostName,
+                        createZoneRecord}, this.CreateUserWizardOperationCompleted, userState);
         }
         
         private void OnCreateUserWizardOperationCompleted(object arg) {
