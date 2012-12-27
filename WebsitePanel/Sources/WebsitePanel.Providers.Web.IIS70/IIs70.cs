@@ -101,7 +101,11 @@ namespace WebsitePanel.Providers.Web
         public const string DOTNETPANEL_IISMODULES = "DotNetPanel.IIsModules";
         
 
-        public const string HeliconApeModule = "Helicon.Ape";
+        public const string HeliconApeModulePrevName = "Helicon Ape";
+        // true module name
+        public const string HeliconApeModule  = "Helicon.Ape";
+        // true handler name
+        public const string HeliconApeHandler = "Helicon.Ape Handler";
         public const string HeliconApeHandlerPath = "*.apehandler";
         
 		public const string IsapiModule = "IsapiModule";
@@ -1861,6 +1865,9 @@ namespace WebsitePanel.Providers.Web
 
 		#endregion
 
+
+
+
 		#region Helicon Ape
 
         public override HeliconApeStatus GetHeliconApeStatus(string siteId)
@@ -1895,7 +1902,11 @@ namespace WebsitePanel.Providers.Web
 
             foreach (var moduleEntry in modulesCollection)
             {
-                if (String.Equals(moduleEntry["name"].ToString(), Constants.HeliconApeModule, StringComparison.InvariantCultureIgnoreCase))
+                if (
+                    String.Equals(moduleEntry["name"].ToString(), Constants.HeliconApeModule, StringComparison.InvariantCultureIgnoreCase)
+                    ||
+                    String.Equals(moduleEntry["name"].ToString(), Constants.HeliconApeModulePrevName, StringComparison.InvariantCultureIgnoreCase)
+                )
                     return true;
             }
             //
@@ -2262,17 +2273,7 @@ namespace WebsitePanel.Providers.Web
                 ConfigurationSection modulesSection = appConfig.GetSection(Constants.ModulesSection, siteId);
                 ConfigurationElementCollection modulesCollection = modulesSection.GetCollection();
 
-                /*
-                if ("" != siteId)
-                {
-                    // <remove name="Helicon.Ape" />
-                    ConfigurationElement removeHeliconApeModuleEntry = modulesCollection.CreateElement("remove");
-                    removeHeliconApeModuleEntry["name"] = Constants.HeliconApeModule;
-                    modulesCollection.Add(removeHeliconApeModuleEntry);
-                }
-                */
-
-                // add name="Helicon.Ape" />
+                // <add name="Helicon.Ape" />
                 ConfigurationElement heliconApeModuleEntry = modulesCollection.CreateElement("add");
                 heliconApeModuleEntry["name"] = Constants.HeliconApeModule;
                 heliconApeModuleEntry["type"] = GetHeliconApeModuleType(siteId);
@@ -2289,19 +2290,9 @@ namespace WebsitePanel.Providers.Web
                 ConfigurationSection handlersSection = appConfig.GetSection(Constants.HandlersSection, siteId);
                 ConfigurationElementCollection handlersCollection = handlersSection.GetCollection();
 
-                /*
-                if ("" != siteId)
-                {
-                    // <remove name="Helicon.Ape" />
-                    ConfigurationElement removeHeliconApeHandlerEntry = handlersCollection.CreateElement("remove");
-                    removeHeliconApeHandlerEntry["name"] = Constants.HeliconApeModule;
-                    handlersCollection.Add(removeHeliconApeHandlerEntry);
-                }
-                */
-
-                // add name="Helicon.Ape" />
+                // <add name="Helicon.Ape" />
                 ConfigurationElement heliconApeHandlerEntry = handlersCollection.CreateElement("add");
-                heliconApeHandlerEntry["name"] = Constants.HeliconApeModule;
+                heliconApeHandlerEntry["name"] = Constants.HeliconApeHandler;
                 heliconApeHandlerEntry["type"] = GetHeliconApeHandlerType(siteId);
                 heliconApeHandlerEntry["path"] = Constants.HeliconApeHandlerPath;
                 heliconApeHandlerEntry["verb"] = "*";
@@ -2335,7 +2326,11 @@ namespace WebsitePanel.Providers.Web
                 List<ConfigurationElement> heliconApeModuleEntriesList = new List<ConfigurationElement>();
                 foreach (ConfigurationElement moduleEntry in modulesCollection)
                 {
-                    if (String.Equals(moduleEntry["name"].ToString(), Constants.HeliconApeModule, StringComparison.InvariantCultureIgnoreCase))
+                    if (
+                        String.Equals(moduleEntry["name"].ToString(), Constants.HeliconApeModule, StringComparison.InvariantCultureIgnoreCase)
+                        ||
+                        String.Equals(moduleEntry["name"].ToString(), Constants.HeliconApeModulePrevName, StringComparison.InvariantCultureIgnoreCase)
+                    )
                     {
                         heliconApeModuleEntriesList.Add(moduleEntry);
                     }
@@ -2351,7 +2346,13 @@ namespace WebsitePanel.Providers.Web
                 List<ConfigurationElement> heliconApeHandlerEntriesList = new List<ConfigurationElement>();
                 foreach (ConfigurationElement handlerEntry in handlersCollection)
                 {
-                    if (String.Equals(handlerEntry["name"].ToString(), Constants.HeliconApeModule, StringComparison.InvariantCultureIgnoreCase))
+                    if (
+                        String.Equals(handlerEntry["name"].ToString(), Constants.HeliconApeModule, StringComparison.InvariantCultureIgnoreCase)
+                        ||
+                        String.Equals(handlerEntry["name"].ToString(), Constants.HeliconApeModulePrevName, StringComparison.InvariantCultureIgnoreCase)
+                        ||
+                        String.Equals(handlerEntry["name"].ToString(), Constants.HeliconApeHandler, StringComparison.InvariantCultureIgnoreCase)
+                    )
                     {
                         heliconApeHandlerEntriesList.Add(handlerEntry);
                     }
