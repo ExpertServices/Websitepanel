@@ -2037,6 +2037,19 @@ namespace WebsitePanel.Providers.Web
                 return System.Diagnostics.FileVersionInfo.GetVersionInfo(apeModulePath).FileVersion;
             }
 
+            apeModulePath = Path.Combine(installDir, "ManualInstall\\bin\\Helicon.Ape.dll");
+            if (File.Exists(apeModulePath))
+            {
+                return System.Diagnostics.FileVersionInfo.GetVersionInfo(apeModulePath).FileVersion;
+            }
+
+            apeModulePath = Path.Combine(installDir, "Helicon.Ape.dll");
+            if (File.Exists(apeModulePath))
+            {
+                return System.Diagnostics.FileVersionInfo.GetVersionInfo(apeModulePath).FileVersion;
+            }
+
+
             return HELICON_APE_NOT_REGISTERED;
         }
 
