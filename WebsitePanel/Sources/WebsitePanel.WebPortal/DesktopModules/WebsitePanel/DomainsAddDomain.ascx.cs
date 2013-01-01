@@ -130,12 +130,12 @@ namespace WebsitePanel.Portal
             }
 
             // point Web site
-            PointWebSitePanel.Visible = (type == DomainType.DomainPointer || (type == DomainType.Domain && !cntx.Quotas[Quotas.OS_DOMAINPOINTERS].QuotaExhausted))
+            PointWebSitePanel.Visible = (type == DomainType.DomainPointer || (type == DomainType.Domain))
                 && cntx.Groups.ContainsKey(ResourceGroups.Web) && WebSitesList.Items.Count > 0;
             WebSitesList.Enabled = PointWebSite.Checked;
 
 			// point mail domain
-            PointMailDomainPanel.Visible = (type == DomainType.DomainPointer || (type == DomainType.Domain && !cntx.Quotas[Quotas.OS_DOMAINPOINTERS].QuotaExhausted))
+            PointMailDomainPanel.Visible = (type == DomainType.DomainPointer || (type == DomainType.Domain))
 				&& cntx.Groups.ContainsKey(ResourceGroups.Mail) && MailDomainsList.Items.Count > 0;
 			MailDomainsList.Enabled = PointMailDomain.Checked;
 

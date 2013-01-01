@@ -47,7 +47,7 @@
         </asp:Panel>
 
         <asp:Panel id="PointWebSitePanel" runat="server" style="padding-bottom: 15px;">
-            <asp:CheckBox ID="PointWebSite" runat="server" meta:resourcekey="PointWebSite" Text="Point to Web Site" CssClass="Checkbox Bold"
+            <asp:CheckBox ID="PointWebSite" runat="server" meta:resourcekey="PointWebSite" Text="Assign to Web Site" CssClass="Checkbox Bold"
                 AutoPostBack="true" /><br />
             <div style="padding-left: 20px;">
                 <asp:DropDownList ID="WebSitesList" Runat="server" CssClass="NormalTextBox" DataTextField="Name" DataValueField="ID"></asp:DropDownList>
@@ -55,7 +55,7 @@
         </asp:Panel>
         
         <asp:Panel id="PointMailDomainPanel" runat="server" style="padding-bottom: 15px;">
-            <asp:CheckBox ID="PointMailDomain" runat="server" meta:resourcekey="PointMailDomain" Text="Point to Mail Domain" CssClass="Checkbox Bold"
+            <asp:CheckBox ID="PointMailDomain" runat="server" meta:resourcekey="PointMailDomain" Text="Assign to Mail Domain" CssClass="Checkbox Bold"
                 AutoPostBack="true" /><br />
             <div style="padding-left: 20px;">
                 <asp:DropDownList ID="MailDomainsList" Runat="server" CssClass="NormalTextBox" DataTextField="Name" DataValueField="ID"></asp:DropDownList>
