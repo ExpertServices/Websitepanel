@@ -1,0 +1,3 @@
+%windir%\Microsoft.NET\Framework64\v4.0.30319\msbuild.exe build.xml /target:BuildWebPlatformInstallerFeed /p:BuildConfiguration=Debug /p:Version="2.0.0" /p:FileVersion="2.0.0.1" /p:VersionLabel="2.0.0.1" /v:n /fileLogger /m
+
+rem %windir%\Microsoft.NET\Framework64\v4.0.30319\msbuild.exe build.xml /target:Deploy /p:BuildConfiguration=Debug /p:Version="2.0.0" /p:FileVersion="2.0.0.1" /p:VersionLabel="2.0.0.1" /v:n /fileLogger /m
