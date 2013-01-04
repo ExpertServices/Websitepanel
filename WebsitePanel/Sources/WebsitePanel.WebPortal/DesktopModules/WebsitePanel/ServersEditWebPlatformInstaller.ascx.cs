@@ -108,6 +108,16 @@ namespace WebsitePanel.Portal
                     ShowProgressPanel();
                 }
 
+                string gotoProduct = Request.QueryString["WPIProduct"];
+                if (!string.IsNullOrEmpty(gotoProduct))
+                {
+                    ArrayList wpiProductsForInstall = GetProductsToInstallList();
+                    wpiProductsForInstall.Add(gotoProduct);
+                    SetProductsToInstallList(wpiProductsForInstall);
+
+                    btnInstall_Click(sender, e);
+                }
+
             }
         }
 

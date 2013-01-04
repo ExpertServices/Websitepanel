@@ -151,6 +151,9 @@ namespace WebsitePanel.Portal
                 ddlTheme.Visible = false;
                 lblTheme.Visible = false;
             }
+
+            // set focus on username field
+            txtUsername.Focus();
         }
 
         protected void cmdForgotPassword_Click(object sender, EventArgs e)

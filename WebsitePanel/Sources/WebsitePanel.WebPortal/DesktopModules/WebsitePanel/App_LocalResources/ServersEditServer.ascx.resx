@@ -252,4 +252,7 @@
     <data name="ServerNameValidator.Text" xml:space="preserve">
     <value>*</value>
   </data>
+  <data name="lnkPlatformInstaller.Text">
+    <value xml:space="preserve">Web Platform Installer</value>
+  </data>
 </root>

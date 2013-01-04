@@ -121,13 +121,13 @@
     <value>Cancel</value>
   </data>
   <data name="DomainDescription.Text" xml:space="preserve">
-    <value>Create a Top-Level Domain (TLD).</value>
+    <value>Create a Top-Level Domain (TLD).  You can create a new web site for domain or assign it to an existing web site.</value>
   </data>
   <data name="DomainLink.Text" xml:space="preserve">
     <value>Domain</value>
   </data>
   <data name="DomainPointerDescription.Text" xml:space="preserve">
-    <value>Create a Top-Level Domain (TLD) or sub-domain that could point to the existing web site only.</value>
+    <value>Create a Top-Level Domain (TLD) or sub-domain that can point to the existing web site only.</value>
   </data>
   <data name="DomainPointerLink.Text" xml:space="preserve">
     <value>Domain Alias</value>
@@ -136,13 +136,13 @@
     <value>Please choose what type of domain you would like to add:</value>
   </data>
   <data name="ProviderSubDomainDescription.Text" xml:space="preserve">
-    <value>Create a sub-domain under domains allowed by your hosting provider. You could create a new web site for sub-domain or point it to existing one.</value>
+    <value>Create a sub-domain under domains allowed by your hosting provider. You can create a new web site for sub-domain or assign it to an existing web site.</value>
   </data>
   <data name="ProviderSubDomainLink.Text" xml:space="preserve">
     <value>Provider Sub-domain</value>
   </data>
   <data name="SubDomainDescription.Text" xml:space="preserve">
-    <value>Create a sub-domain for already added top-level domain. You could create a new web site for sub-domain.</value>
+    <value>Create a sub-domain for already added top-level domain. You can create a new web site for sub-domain or assign it to an existing web site.</value>
   </data>
   <data name="SubDomainLink.Text" xml:space="preserve">
     <value>Sub-domain</value>

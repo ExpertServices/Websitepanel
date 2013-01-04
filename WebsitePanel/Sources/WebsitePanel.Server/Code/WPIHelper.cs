@@ -219,6 +219,12 @@ namespace WebsitePanel.Server.Code
                     continue;
                 }
 
+                if (product.GetAttributeValue("searchExclude") != null)
+                {
+                    // skip it, this is internal not visible product 
+                    continue;
+                }
+
                 if (string.IsNullOrEmpty(filter))
                 {
                     products.Add(product);
