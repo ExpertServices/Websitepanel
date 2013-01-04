@@ -275,7 +275,12 @@ namespace WebsitePanel.Portal.ProviderControls
 
             // Helicon Ape
 		    bool registerHeliconApeGlobbally = chkHeliconApeGlobalRegistration.Checked;
-            if (registerHeliconApeGlobbally != (bool)ViewState["HeliconApeInitiallyEnabled"])
+
+            bool bHeliconApeInitiallyEnabled = false;
+            if (ViewState["HeliconApeInitiallyEnabled"] != null)
+                bHeliconApeInitiallyEnabled = (bool)ViewState["HeliconApeInitiallyEnabled"];
+
+            if (registerHeliconApeGlobbally != bHeliconApeInitiallyEnabled)
             {
                 if (registerHeliconApeGlobbally)
                 {
