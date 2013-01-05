@@ -5072,9 +5072,9 @@ namespace WebsitePanel.Providers.HostedSolution
 
 			string path = AddADPrefix(id);
 
-			Command cmd = new Command("Update-OfflineAddressBook");
-			cmd.Parameters.Add("Identity", id);
-			ExecuteShellCommand(runSpace, cmd);
+			//Command cmd = new Command("Update-OfflineAddressBook");
+			//cmd.Parameters.Add("Identity", id);
+			//ExecuteShellCommand(runSpace, cmd);
 
 			AdjustADSecurity(path, securityGroup, true);
 
