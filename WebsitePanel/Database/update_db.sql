@@ -213,9 +213,11 @@ UPDATE ExchangeMailboxPlans SET
 WHERE MailboxPlanId = @MailboxPlanId
 
 RETURN
-	UPDATE Domains SET IsDomainPointer=0, DomainItemID=NULL WHERE MailDomainID IS NOT NULL AND isDomainPointer=1
 	
 GO
+
+
+-- 	UPDATE Domains SET IsDomainPointer=0, DomainItemID=NULL WHERE MailDomainID IS NOT NULL AND isDomainPointer=1
 
 
 ALTER PROCEDURE [dbo].[GetPackageQuotas]
@@ -314,4 +316,3 @@ exec sp_xml_removedocument @idoc
 COMMIT TRAN
 RETURN 
 GO
-
