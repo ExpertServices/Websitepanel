@@ -214,12 +214,6 @@ namespace WebsitePanel.Providers.HostedSolution
 
                     uint? itemCount = (uint?)GetPSObjectProperty(statistics, "ItemCount");
                     info.TotalItems = ConvertNullableToInt32(itemCount);
-
-                    totalItemSize = (Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(statistics, "FolderAndSubfolderSize");
-                    info.LitigationHoldTotalSize = ConvertUnlimitedToBytes(totalItemSize);
-
-                    itemCount = (uint?)GetPSObjectProperty(statistics, "ItemsInFolder");
-                    info.LitigationHoldTotalItems = ConvertNullableToInt32(itemCount);
                     
                     DateTime? lastLogoffTime = (DateTime?)GetPSObjectProperty(statistics, "LastLogoffTime");
                     DateTime? lastLogonTime = (DateTime?)GetPSObjectProperty(statistics, "LastLogonTime");
@@ -233,6 +227,29 @@ namespace WebsitePanel.Providers.HostedSolution
                     info.LastLogoff = DateTime.MinValue;
                     info.LastLogon = DateTime.MinValue;
                 }
+
+                if (info.LitigationHoldEnabled)
+                {
+                    cmd = new Command("Get-MailboxFolderStatistics");
+                    cmd.Parameters.Add("FolderScope", "RecoverableItems");
+                    cmd.Parameters.Add("Identity", id);
+                    result = ExecuteShellCommand(runSpace, cmd);
+                    if (result.Count > 0)
+                    {
+                        PSObject statistics = result[0];
+                        Unlimited<ByteQuantifiedSize> totalItemSize = (Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(statistics, "FolderAndSubfolderSize");
+                        info.LitigationHoldTotalSize = ConvertUnlimitedToBytes(totalItemSize);
+
+                        uint? itemCount = (uint?)GetPSObjectProperty(statistics, "ItemsInFolder");
+                        info.LitigationHoldTotalItems = ConvertNullableToInt32(itemCount);
+                    }
+                }
+                else
+                {
+                    info.LitigationHoldTotalSize = 0;
+                    info.LitigationHoldTotalItems = 0;
+                }
+
             }
             finally
             {
