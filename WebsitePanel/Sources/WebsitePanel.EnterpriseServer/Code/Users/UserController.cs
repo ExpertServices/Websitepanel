@@ -678,6 +678,12 @@ namespace WebsitePanel.EnterpriseServer
 			TaskManager.StartTask(taskId, "USER", "CHANGE_STATUS", user.Username);
 			TaskManager.ItemId = user.UserId;
 
+            // update user packages
+            List<PackageInfo> packages = new List<PackageInfo>();
+
+            // Add the users package(s)
+            packages.AddRange(PackageController.GetPackages(userId));
+
 			try
 			{
 
@@ -699,19 +705,23 @@ namespace WebsitePanel.EnterpriseServer
 				List<UserInfo> children = GetUsers(userId, true);
 				foreach (UserInfo child in children)
 				{
-					result = ChangeUserStatusInternal(child.UserId, status);
-					if (result < 0)
-						return result;
+                    // Add the child users packages
+                    packages.AddRange(PackageController.GetPackages(child.UserId));
+
+                    // change child user peers
+                    List<UserInfo> childPeers = GetUserPeers(child.UserId);
+                    foreach (UserInfo peer in childPeers)
+                    {
+                        result = ChangeUserStatusInternal(peer.UserId, status);
+                        if (result < 0)
+                            return result;
+                    }
+
+                    // change child account
+                    result = ChangeUserStatusInternal(child.UserId, status);
+                    if (result < 0)
+                        return result;
 				}
-
-				// update user packages
-				List<PackageInfo> packages = new List<PackageInfo>();
-
-				// his packages
-				packages.AddRange(PackageController.GetMyPackages(userId));
-
-				// children packages
-				packages.AddRange(PackageController.GetPackages(userId));
 
 				PackageStatus packageStatus = PackageStatus.Active;
 				switch (status)
