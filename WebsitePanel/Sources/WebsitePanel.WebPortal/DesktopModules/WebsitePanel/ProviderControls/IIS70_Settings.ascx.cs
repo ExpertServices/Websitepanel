@@ -157,7 +157,7 @@ namespace WebsitePanel.Portal.ProviderControls
                 downloadApePanel.Visible = false;
                 txtHeliconApeVersion.Text = sts.Version;
                 lblHeliconRegistrationText.Text = sts.RegistrationInfo;
-                
+
                 if (sts.IsEnabled)
                 {
                     chkHeliconApeGlobalRegistration.Checked = true;
@@ -171,7 +171,7 @@ namespace WebsitePanel.Portal.ProviderControls
                 // Build url manually, EditUrl throws exception:  module is Null
                 // pid=Servers&mid=137&ctl=edit_platforminstaller&ServerID=1&Product=HeliconApe
 
-                List<string> qsParts= new List<string>();
+                List<string> qsParts = new List<string>();
 
                 qsParts.Add("pid=Servers");
                 qsParts.Add("ctl=edit_platforminstaller");
@@ -180,6 +180,7 @@ namespace WebsitePanel.Portal.ProviderControls
                 qsParts.Add("WPIProduct=HeliconApe");
 
                 InstallHeliconApeLink.Attributes["href"] = "Default.aspx?" + String.Join("&", qsParts.ToArray());
+                ViewState["HeliconApeInitiallyEnabled"] = null;
             }
 
             //
@@ -273,25 +274,24 @@ namespace WebsitePanel.Portal.ProviderControls
 
 			ActiveDirectoryIntegration.SaveSettings(settings);
 
+            
             // Helicon Ape
-		    bool registerHeliconApeGlobbally = chkHeliconApeGlobalRegistration.Checked;
-
-            bool bHeliconApeInitiallyEnabled = false;
-            if (ViewState["HeliconApeInitiallyEnabled"] != null)
-                bHeliconApeInitiallyEnabled = (bool)ViewState["HeliconApeInitiallyEnabled"];
-
-            if (registerHeliconApeGlobbally != bHeliconApeInitiallyEnabled)
+            if (null != ViewState["HeliconApeInitiallyEnabled"])
             {
-                if (registerHeliconApeGlobbally)
+                bool registerHeliconApeGlobbally = chkHeliconApeGlobalRegistration.Checked;
+                if (registerHeliconApeGlobbally != (bool)ViewState["HeliconApeInitiallyEnabled"])
                 {
-                    ES.Services.WebServers.EnableHeliconApeGlobally(int.Parse(Request.QueryString["ServiceID"]));
+                    if (registerHeliconApeGlobbally)
+                    {
+                        ES.Services.WebServers.EnableHeliconApeGlobally(int.Parse(Request.QueryString["ServiceID"]));
+                    }
+                    else
+                    {
+                        ES.Services.WebServers.DisableHeliconApeGlobally(int.Parse(Request.QueryString["ServiceID"]));
+                    }
                 }
-                else
-                {
-                    ES.Services.WebServers.DisableHeliconApeGlobally(int.Parse(Request.QueryString["ServiceID"]));
-                }
-            }
 
+            }
 			
 
 			if (WDeployEnabledCheckBox.Checked)

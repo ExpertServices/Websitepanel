@@ -52,6 +52,10 @@
             <asp:RegularExpressionValidator ID="regexpTextValue" runat="server"
                 ControlToValidate="textValue" Text="!" ValidationGroup="wag" 
                 Display="Dynamic" SetFocusOnError="True"></asp:RegularExpressionValidator>
+            <asp:CustomValidator runat="server" ID="MysqlUsernameLengthValidator"
+                ControlToValidate="textValue" OnServerValidate="mysqlUsernameLen_OnServerValidate"
+                Display="Dynamic" SetFocusOnError="True" ValidationGroup="wag" Enabled="False"
+                Text="Mysql username can not be longer than 16 characters"></asp:CustomValidator>
         </div>
     </div>
 
