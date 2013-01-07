@@ -166,6 +166,15 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.RegularExpressionValidator regexpTextValue;
         
         /// <summary>
+        /// MysqlUsernameLengthValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CustomValidator MysqlUsernameLengthValidator;
+        
+        /// <summary>
         /// BooleanControl control.
         /// </summary>
         /// <remarks>

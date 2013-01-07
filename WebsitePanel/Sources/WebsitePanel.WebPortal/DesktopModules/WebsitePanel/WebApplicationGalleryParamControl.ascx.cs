@@ -213,6 +213,15 @@ namespace WebsitePanel.Portal
                 textValue.Text = DefaultValue;
                 valPrefix.Text = ValuePrefix;
                 valSuffix.Text = ValueSuffix;
+
+                if (
+                    (WellKnownTags & DeploymentParameterWellKnownTag.MySql) == DeploymentParameterWellKnownTag.MySql 
+                    && 
+                    (WellKnownTags & DeploymentParameterWellKnownTag.DBUserName) == DeploymentParameterWellKnownTag.DBUserName 
+                    )
+                {
+                    MysqlUsernameLengthValidator.Enabled = true;
+                }
             }
 
             
@@ -247,6 +256,21 @@ namespace WebsitePanel.Portal
                 String.Format(GetLocalizedString("RegexpValidator.Text"), FriendlyName, ValidationString);
 
 
+        }
+
+        protected void mysqlUsernameLen_OnServerValidate(object source, ServerValidateEventArgs args)
+        {
+            args.IsValid = true;
+            
+            // get entered database name with prefixes / suffixes
+            string value = GetParameterValue();
+
+            // check length
+            if (!string.IsNullOrEmpty(value) && value.Length <= 16)
+                return;
+
+            // validation failed
+            args.IsValid = false;
         }
     }
 }
