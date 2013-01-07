@@ -334,7 +334,13 @@ namespace WebsitePanel.Portal
 
         protected void databaseMode_SelectedIndexChanged(object sender, EventArgs e)
         {
-            BindParameters();
+            // load parameters
+            List<DeploymentParameter> parameters = GetApplicationParameters();
+            if (parameters == null)
+                return;
+
+            BindDBPolicies(parameters);
+            BindParameters(parameters);
         }
 
         private void BindParameters()
