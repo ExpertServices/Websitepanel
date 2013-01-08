@@ -13,7 +13,7 @@
 // 
 #pragma warning disable 1591
 
-namespace WebsitePanel.Installer.Core.InstallerService {
+namespace WebsitePanel.Installer.Services {
     using System;
     using System.Web.Services;
     using System.Diagnostics;
