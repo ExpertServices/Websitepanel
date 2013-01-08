@@ -95,12 +95,15 @@
     <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </None>
-    <None Include="Web References\InstallerService\InstallerService.wsdl" />
+    <None Include="Web References\InstallerService\InstallerService-2.wsdl" />
     <None Include="Web References\InstallerService\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
@@ -110,10 +113,10 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <WebReferenceUrl Include="http://www.websitepanel.net/Services/InstallerService.asmx">
+    <WebReferenceUrl Include="http://www.websitepanel.net/Services/InstallerService-2.0.asmx">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\InstallerService\</RelPath>
-      <UpdateFromURL>http://www.websitepanel.net/Services/InstallerService.asmx</UpdateFromURL>
+      <UpdateFromURL>http://www.websitepanel.net/Services/InstallerService-2.0.asmx</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
@@ -123,7 +126,7 @@
     </WebReferenceUrl>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Web References\InstallerService\InstallerService.disco" />
+    <None Include="Web References\InstallerService\InstallerService-2.disco" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
