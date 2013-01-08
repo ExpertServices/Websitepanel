@@ -77,8 +77,6 @@
     <Content Include="Data\ProductReleasesFeed.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Services\InstallerService-2.1.asmx" />
-    <Content Include="Services\InstallerService-2.0.asmx" />
     <Content Include="Services\InstallerService-Staging.asmx" />
     <Content Include="Services\InstallerService-Beta.asmx" />
     <Content Include="Services\InstallerService.asmx" />
@@ -88,12 +86,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\InstallerService-2.1.asmx.cs">
-      <DependentUpon>InstallerService-2.1.asmx</DependentUpon>
-    </Compile>
-    <Compile Include="Services\InstallerService-2.0.asmx.cs">
-      <DependentUpon>InstallerService-2.0.asmx</DependentUpon>
-    </Compile>
     <Compile Include="Services\InstallerService-Staging.asmx.cs">
       <DependentUpon>InstallerService-Staging.asmx</DependentUpon>
     </Compile>
