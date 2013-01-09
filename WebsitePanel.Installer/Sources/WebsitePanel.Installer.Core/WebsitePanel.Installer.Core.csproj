@@ -110,10 +110,10 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <WebReferenceUrl Include="http://www.websitepanel.net/Services/InstallerService-2.0.asmx">
+    <WebReferenceUrl Include="http://www.websitepanel.net/Services/InstallerService-2.1.asmx">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\InstallerService\</RelPath>
-      <UpdateFromURL>http://www.websitepanel.net/Services/InstallerService-2.0.asmx</UpdateFromURL>
+      <UpdateFromURL>http://www.websitepanel.net/Services/InstallerService-2.1.asmx</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>

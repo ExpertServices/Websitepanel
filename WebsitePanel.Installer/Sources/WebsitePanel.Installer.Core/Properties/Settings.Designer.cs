@@ -26,7 +26,7 @@ namespace WebsitePanel.Installer.Core.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://www.websitepanel.net/Services/InstallerService-2.0.asmx")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://www.websitepanel.net/Services/InstallerService-2.1.asmx")]
         public string WebsitePanel_Installer_Core_InstallerService_InstallerService {
             get {
                 return ((string)(this["WebsitePanel_Installer_Core_InstallerService_InstallerService"]));
