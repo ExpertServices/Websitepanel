@@ -1761,8 +1761,8 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     // update OAB
                     // check if this is the first mailbox within the organization
-                    // if (GetAccounts(itemId, ExchangeAccountType.Mailbox).Count == 1)
-                    //    exchange.UpdateOrganizationOfflineAddressBook(org.OfflineAddressBook);
+                    if (GetAccounts(itemId, ExchangeAccountType.Mailbox).Count == 1)
+                        exchange.UpdateOrganizationOfflineAddressBook(org.OfflineAddressBook);
                 }
                 catch (Exception ex)
                 {
