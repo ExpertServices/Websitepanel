@@ -65,19 +65,24 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WebsitePanel.Providers.Base">
-      <HintPath>..\..\Bin\WebsitePanel.Providers.Base.dll</HintPath>
-    </Reference>
-    <Reference Include="WebsitePanel.Providers.HostedSolution">
-      <HintPath>..\WebsitePanel.Server\bin\WebsitePanel.Providers.HostedSolution.dll</HintPath>
-    </Reference>
-    <Reference Include="WebsitePanel.Server.Utils">
-      <HintPath>..\WebsitePanel.Server.Utils\bin\Debug\WebsitePanel.Server.Utils.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exchange2013.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebsitePanel.Providers.Base\WebsitePanel.Providers.Base.csproj">
+      <Project>{684c932a-6c75-46ac-a327-f3689d89eb42}</Project>
+      <Name>WebsitePanel.Providers.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebsitePanel.Providers.HostedSolution\WebsitePanel.Providers.HostedSolution.csproj">
+      <Project>{a06de5e4-4331-47e1-8f46-7b846146b559}</Project>
+      <Name>WebsitePanel.Providers.HostedSolution</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebsitePanel.Server.Utils\WebsitePanel.Server.Utils.csproj">
+      <Project>{e91e52f3-9555-4d00-b577-2b1dbdd87ca7}</Project>
+      <Name>WebsitePanel.Server.Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
