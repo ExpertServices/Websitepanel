@@ -54,7 +54,7 @@ function websitepanel_addons_AddonActivation($params)
         
         // Retrieve the WebsitePanel Addons module settings
         $modSettings = websitepanel_addons_GetSettings();
-        if (empty($modSettings['username']) || empty($modSettings['password'])) || empty($modSettings['serverhost'])) || empty($modSettings['serverport'])))
+        if (empty($modSettings['username']) || empty($modSettings['password']) || empty($modSettings['serverhost']) || empty($modSettings['serverport']))
         {
             // The module is disabled or has not yet been configured - stop
             return;
