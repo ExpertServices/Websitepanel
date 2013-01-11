@@ -5128,7 +5128,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Command cmd = new Command("New-OfflineAddressBook");
             cmd.Parameters.Add("Name", oabName);
             cmd.Parameters.Add("AddressLists", addressListName);
-            cmd.Parameters.Add("PublicFolderDistributionEnabled", PublicFolderDistributionEnabled);
+            //cmd.Parameters.Add("PublicFolderDistributionEnabled", PublicFolderDistributionEnabled);
             cmd.Parameters.Add("IsDefault", false);
             cmd.Parameters.Add("GlobalWebDistributionEnabled", false);
 
