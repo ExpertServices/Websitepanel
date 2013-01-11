@@ -640,7 +640,7 @@
   </Target>
 
   <!-- This task depends on FTP upload task and will be run afterwards -->
-  <Target Name="BuildWebPlatformInstallerFeed"DependsOnTargets="Deploy">
+  <Target Name="BuildWebPlatformInstallerFeed" DependsOnTargets="Deploy">
     <ItemGroup>
       <!-- This will generate path to a temporary file that will be used by WebDownload task below to download the installer's distributive locally -->
       <InstallerFilePath Include="$([System.IO.Path]::GetTempFileName())" />
