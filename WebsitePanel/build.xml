@@ -639,6 +639,10 @@
 
   </Target>
 
+  <Target Name="uploadwebpi" DependsOnTargets="BuildWebPlatformInstallerFeed">
+		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanelFeed-$(Version).xml" LocalFile="$(DeployFolder)\WebsitePanelFeed.xml" />
+  </Target>
+
   <!-- This task depends on FTP upload task and will be run afterwards -->
   <Target Name="BuildWebPlatformInstallerFeed" DependsOnTargets="uploadtoftp">
     <ItemGroup>
@@ -717,11 +721,10 @@
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-WSPTransportAgent-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel.LocalizationToolkit-$(Version).msi" LocalFile="$(ToolsFolder)\WebsitePanel.LocalizationToolkit.msi" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanelInstaller-$(Version).msi" LocalFile="$(DeployFolder)\WebsitePanelInstaller.msi" />
-      <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanelInstaller-$(Version)-webpi.msi" LocalFile="$(DeployFolder)\WebsitePanelInstaller.msi" />
+      		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanelInstaller-$(Version)-webpi.msi" LocalFile="$(DeployFolder)\WebsitePanelInstaller.msi" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-HyperVUtils-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-HyperVUtils-$(Version).zip" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-VMConfig-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-VMConfig-$(Version).zip" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/Manual-Update-$(Version).zip" LocalFile="$(DeployFolder)\Manual-Update.zip" />
-		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanelFeed-$(Version).xml" LocalFile="$(DeployFolder)\WebsitePanelFeed.xml" />
   </Target>
 
   <Import Project="$(RootFolder)\tools\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
