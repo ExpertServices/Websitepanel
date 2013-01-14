@@ -31,6 +31,7 @@ using System.IO;
 using System.Net;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -166,6 +167,7 @@ namespace WebsitePanel.EnterpriseServer
             WebSiteResponse result = new WebSiteResponse();
             HttpWebResponse resp = null;
             StringBuilder sb = new StringBuilder();
+            Stream respStream = null;
             try
             {
                 WebRequest req = WebRequest.Create(url);
@@ -177,7 +179,7 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 resp = (HttpWebResponse)req.GetResponse();
-                Stream respStream = resp.GetResponseStream();
+                respStream = resp.GetResponseStream();
                 string charSet = !String.IsNullOrEmpty(resp.CharacterSet) ? resp.CharacterSet : "utf-8";
                 Encoding encode = System.Text.Encoding.GetEncoding(charSet);
 
@@ -196,6 +198,9 @@ namespace WebsitePanel.EnterpriseServer
                 result.Status = (int)resp.StatusCode;
                 result.Text = sb.ToString();
             }
+            catch (ThreadAbortException)
+            {
+            }
             catch (WebException ex)
             {
                 result.Status = (int)((HttpWebResponse)ex.Response).StatusCode;
@@ -210,10 +215,16 @@ namespace WebsitePanel.EnterpriseServer
             }
             finally
             {
+                if (respStream != null)
+                {
+                    respStream.Close();
+                }
+                
                 if (resp != null)
                 {
                     resp.Close();
                 }
+
             }
 
             return result;
