@@ -13,10 +13,7 @@ To enable addon automation...
 What does not work?
 - Quantities, only a single addon => addon can be allocated
 - Terminating / Suspending Addons, I've ran out of time on what I can do currently
-- When an IP address is allocated WebsitePanel does not return back what IP was allocated, so WHMCS is not updated which what IP has been allocated to
-his / her package at this time.
+- When an IP address is allocated WebsitePanel does not return back what IP was allocated, so WHMCS is not updated which what IP has been allocated to his / her package at this time.
 - A single user => single package is the only way the WebsitePanel server module works. I have no plans on making this work any other way.
-- Users who use empty pointers when creating websites (domain.com instead of www.domain.com), websites are not created automatically even if the "Create Website"
-  option is selected. I have provided a patch to the websitepanel developers, should be fixed in a later release.
-- The "Enable DNS Zone" option does not currently work - I have provided a patch to the websitepanel developers, should be fixed in a later release.
-- Instant aliases / Temp domain are not properly created for websites, I have provided a patch to the websitepanel developers, should be fixed in a later release.
+
+DO NOT CONTACT WHMCS FOR SUPPORT WITH THIS MODULE - THIS IS NOT DEVELOPED BY WHMCS AND HAS NO AFFILIATION WITH WHMCS OR WHMCS.COM.
