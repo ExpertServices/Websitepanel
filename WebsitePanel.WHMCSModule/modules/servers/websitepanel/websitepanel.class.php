@@ -415,7 +415,6 @@ class WebsitePanel
         $soapParams = array('login' => $this->_esUsername,
                             'password' => $this->_esPassword,
                             'cache_wsdl' => WSDL_CACHE_NONE, // WSDL caching is an annoying nightmare - we will disable it
-                            'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP
                             );
         try
         {
