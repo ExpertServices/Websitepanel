@@ -165,7 +165,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 // create domain
                 int domainId = 0;
-                if ((createWebSite || createMailAccount) && !String.IsNullOrEmpty(domainName))
+                if ((createWebSite || createMailAccount || createZoneRecord) && !String.IsNullOrEmpty(domainName))
                 {
                     try
                     {
@@ -193,7 +193,7 @@ namespace WebsitePanel.EnterpriseServer
                     }
                 }
 
-                if (createWebSite && !String.IsNullOrEmpty(domainName))
+                if (createWebSite && (domainId > 0))
                 {
                     // create web site
                     try
@@ -252,7 +252,7 @@ namespace WebsitePanel.EnterpriseServer
                     }
                 }
 
-                if (createMailAccount && !String.IsNullOrEmpty(domainName))
+                if (createMailAccount && (domainId > 0))
                 {
                     // create default mailbox
                     try
