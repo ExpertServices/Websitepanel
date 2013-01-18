@@ -310,25 +310,25 @@ namespace WebsitePanel.EnterpriseServer
                         // error while creating mail account
                         throw new Exception("Could not create mail account", ex);
                     }
+                }
 
-                    // Instant Alias / Temporary URL
-                    if (tempDomain && (domainId > 0))
+                // Instant Alias / Temporary URL
+                if (tempDomain && (domainId > 0))
+                {
+                    int instantAliasId = ServerController.CreateDomainInstantAlias("", domainId);
+                    if (instantAliasId < 0)
                     {
-                        int instantAliasId = ServerController.CreateDomainInstantAlias("", domainId);
-                        if (instantAliasId < 0)
-                        {
-                            // rollback wizard
-                            Rollback();
+                        // rollback wizard
+                        Rollback();
 
-                            return instantAliasId;
-                        }
+                        return instantAliasId;
                     }
+                }
 
-                    // Domain DNS Zone
-                    if (createZoneRecord && (domainId > 0))
-                    {
-                        ServerController.EnableDomainDns(domainId);
-                    }
+                // Domain DNS Zone
+                if (createZoneRecord && (domainId > 0))
+                {
+                    ServerController.EnableDomainDns(domainId);
                 }
             }
 

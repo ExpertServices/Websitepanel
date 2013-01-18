@@ -1570,29 +1570,23 @@ namespace WebsitePanel.Providers.Mail
                 {
                     try
                     {
+                        svcUserAdmin users = new svcUserAdmin();
+                        PrepareProxy(users);
 
-                        // get mailbox size
-                        string name = item.Name;
+                        StatInfoResult userStats = users.GetUserStats(AdminUsername, AdminPassword, item.Name, DateTime.Now, DateTime.Now);
+                        if (!userStats.Result)
+                        {
+                            throw new Exception(userStats.Message);
+                        }
 
-                        // try to get SmarterMail postoffices path
-                        string poPath = DomainsPath;
-                        if (poPath == null)
-                            continue;
-
-                        string mailboxName = name.Substring(0, name.IndexOf("@"));
-                        string domainName = name.Substring(name.IndexOf("@") + 1);
-
-                        string mailboxPath = Path.Combine(DomainsPath, String.Format("{0}\\Users\\{1}", domainName, mailboxName));
-
-                        Log.WriteStart(String.Format("Calculating '{0}' folder size", mailboxPath));
-
+                        Log.WriteStart(String.Format("Calculating mail account '{0}' size", item.Name));
                         // calculate disk space
                         ServiceProviderItemDiskSpace diskspace = new ServiceProviderItemDiskSpace();
                         diskspace.ItemId = item.Id;
                         //diskspace.DiskSpace = 0;
-                        diskspace.DiskSpace = FileUtils.CalculateFolderSize(mailboxPath);
+                        diskspace.DiskSpace = userStats.BytesSize;
                         itemsDiskspace.Add(diskspace);
-                        Log.WriteEnd(String.Format("Calculating '{0}' folder size", mailboxPath));
+                        Log.WriteEnd(String.Format("Calculating mail account '{0}' size", item.Name));
                     }
                     catch (Exception ex)
                     {
