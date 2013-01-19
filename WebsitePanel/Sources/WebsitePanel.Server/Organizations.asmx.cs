@@ -162,5 +162,12 @@ namespace WebsitePanel.Server
         {
             return Organization.GetSamAccountNameByUserPrincipalName(organizationId, userPrincipalName);
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool DoesSamAccountNameExist(string accountName)
+        {
+            return Organization.DoesSamAccountNameExist(accountName);
+        }
+
     }
 }
