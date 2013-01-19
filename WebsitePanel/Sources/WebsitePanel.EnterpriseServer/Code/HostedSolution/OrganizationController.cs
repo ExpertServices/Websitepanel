@@ -1329,7 +1329,7 @@ namespace WebsitePanel.EnterpriseServer
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
                 string upn = string.Format("{0}@{1}", name, domain);
-                string sAMAccountName = BuildAccountName(org.OrganizationId, name);
+                string sAMAccountName = BuildAccountName(org.OrganizationId, name, org.ServiceId);
 
                 TaskManager.Write("accountName :" + sAMAccountName);
                 TaskManager.Write("upn :" + upn);
@@ -1454,21 +1454,21 @@ namespace WebsitePanel.EnterpriseServer
         {
             DataProvider.AddExchangeAccountEmailAddress(accountId, emailAddress);
         }
-        
-        private static string BuildAccountName(string orgId, string name)
+
+        private static string BuildAccountName(string orgId, string name, int ServiceId)
         {
             string accountName = name = name.Replace(" ", "");
             string CounterStr = "00000";
             int counter = 0;
             bool bFound = false;
 
-            if (!AccountExists(accountName)) return accountName;
+            if (!AccountExists(accountName, ServiceId)) return accountName;
 
             do
             {
                 accountName = genSamLogin(name, CounterStr);
 
-                if (!AccountExists(accountName)) bFound = true;
+                if (!AccountExists(accountName, ServiceId)) bFound = true;
 
                 CounterStr = counter.ToString("d5");
                 counter++;
@@ -1494,9 +1494,18 @@ namespace WebsitePanel.EnterpriseServer
         }
 
 
-        private static bool AccountExists(string accountName)
+        private static bool AccountExists(string accountName, int ServiceId)
         {
-            return DataProvider.ExchangeAccountExists(accountName);
+            if (!DataProvider.ExchangeAccountExists(accountName))
+            {
+                Organizations orgProxy = GetOrganizationProxy(ServiceId);
+
+
+                return orgProxy.DoesSamAccountNameExist(accountName);
+            }
+            else
+                return true;
+
         }
 
         public static int DeleteUser(int itemId, int accountId)

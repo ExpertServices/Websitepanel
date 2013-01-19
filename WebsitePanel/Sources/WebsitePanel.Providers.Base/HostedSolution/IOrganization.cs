@@ -64,5 +64,7 @@ namespace WebsitePanel.Providers.HostedSolution
         PasswordPolicyResult GetPasswordPolicy();
 
         string GetSamAccountNameByUserPrincipalName(string organizationId, string userPrincipalName);
+
+        bool DoesSamAccountNameExist(string accountName);
     }
 }
