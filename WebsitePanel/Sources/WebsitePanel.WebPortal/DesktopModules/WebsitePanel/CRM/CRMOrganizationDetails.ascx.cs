@@ -172,8 +172,12 @@ namespace WebsitePanel.Portal.CRM
                     return;
                 }
 
-                
-                OrganizationResult res = ES.Services.CRM.CreateOrganization(org.Id, cuurrencyData[0], cuurrencyData[1], cuurrencyData[2], cuurrencyData[3],
+
+                EnterpriseServer.esCRM CRM = ES.Services.CRM;
+
+                CRM.Timeout = 7200000; //# Set longer timeout
+
+                OrganizationResult res = CRM.CreateOrganization(org.Id, cuurrencyData[0], cuurrencyData[1], cuurrencyData[2], cuurrencyData[3],
                                                    administrator.GetAccountId(), ddlCollation.SelectedValue);
 
                 messageBox.ShowMessage(res, "CreateCrmOrganization", "HostedCRM");

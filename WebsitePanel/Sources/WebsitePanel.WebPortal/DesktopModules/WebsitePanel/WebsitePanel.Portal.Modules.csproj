@@ -318,6 +318,12 @@
     <Compile Include="Lync\UserControls\LyncUserPlanSelector.ascx.designer.cs">
       <DependentUpon>LyncUserPlanSelector.ascx</DependentUpon>
     </Compile>
+    <Compile Include="ProviderControls\CRM2011_Settings.ascx.cs">
+      <DependentUpon>CRM2011_Settings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\CRM2011_Settings.ascx.designer.cs">
+      <DependentUpon>CRM2011_Settings.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ProviderControls\hMailServer5_EditAccount.ascx.cs">
       <DependentUpon>hMailServer5_EditAccount.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -3823,6 +3829,7 @@
     <Content Include="ExchangeServer\OrganizationDomainNames.ascx" />
     <Content Include="ExchangeServer\ExchangeAddMailboxPlan.ascx" />
     <Content Include="Lync\UserControls\LyncUserSettings.ascx" />
+    <Content Include="ProviderControls\CRM2011_Settings.ascx" />
     <Content Include="ServersEditWebPlatformInstaller.ascx" />
     <Content Include="ExchangeServer\ExchangeMailboxPlans.ascx" />
     <Content Include="ExchangeServer\UserControls\AccountsListWithPermissions.ascx" />
