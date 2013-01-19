@@ -12,6 +12,20 @@ BEGIN
 END
 GO
 
+
+--- Fix on version 2.0
+DELETE FROM HostingPlanQuotas WHERE QuotaID = 340
+GO
+DELETE FROM HostingPlanQuotas WHERE QuotaID = 341
+GO
+DELETE FROM HostingPlanQuotas WHERE QuotaID = 342
+GO
+DELETE FROM HostingPlanQuotas WHERE QuotaID = 343
+GO
+DELETE FROM HostingPlanResources WHERE GroupID = 33
+GO
+
+
 -- Version 2.1 section
 IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Hosted Microsoft Exchange Server 2013')
 BEGIN
@@ -25,16 +39,6 @@ GO
 
 
 IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Exchange2007.AllowLitigationHold')
-DELETE FROM HostingPlanQuotas WHERE QuotaID = 340
-GO
-DELETE FROM HostingPlanQuotas WHERE QuotaID = 341
-GO
-DELETE FROM HostingPlanQuotas WHERE QuotaID = 342
-GO
-DELETE FROM HostingPlanQuotas WHERE QuotaID = 343
-GO
-DELETE FROM HostingPlanResources WHERE GroupID = 33
-GO
 BEGIN
 INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (420, 12, 24,N'Exchange2007.AllowLitigationHold',N'Allow Litigation Hold',1, 0 , NULL)
 END
@@ -315,4 +319,10 @@ exec sp_xml_removedocument @idoc
 
 COMMIT TRAN
 RETURN 
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Hosted MS CRM 2011')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (1201, 21, N'CRM', N'Hosted MS CRM 2011', N'WebsitePanel.Providers.HostedSolution.CRMProvider2011, WebsitePanel.Providers.HostedSolution', N'CRM', NULL)
+END
 GO

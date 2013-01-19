@@ -710,6 +710,52 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
 
+        public bool DoesSamAccountNameExist(string accountName)
+        {
+            return DoesSamAccountNameExistInternal(accountName);
+        }
+
+
+        private bool DoesSamAccountNameExistInternal(string accountName)
+        {
+            HostedSolutionLog.LogStart("DoesSamAccountNameExistInternal");
+            HostedSolutionLog.DebugInfo("userPrincipalName : {0}", accountName);
+            bool bFound = false;
+
+            try
+            {
+
+                string path = GetRootOU();
+                DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
+
+                DirectorySearcher searcher = new DirectorySearcher(entry);
+                searcher.PropertiesToLoad.Add("sAMAccountName");
+                searcher.Filter = "(sAMAccountName=" + accountName + ")";
+                searcher.SearchScope = SearchScope.Subtree;
+
+                SearchResult resCollection = searcher.FindOne();
+                if (resCollection != null)
+                {
+                    if(resCollection.Properties["samaccountname"] != null)
+                        bFound = true; ;
+                }
+
+                HostedSolutionLog.LogEnd("GetSamAccountNameByUserPrincipalNameInternal");
+            }
+            catch (Exception e)
+            {
+                HostedSolutionLog.DebugInfo("Failed : {0}", e.Message);
+            }
+
+            return bFound;
+
+
+
+            return false;
+        }
+
+
+
         #endregion
 
         #region Domains
