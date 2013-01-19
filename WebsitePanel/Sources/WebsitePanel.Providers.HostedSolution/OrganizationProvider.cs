@@ -748,10 +748,6 @@ namespace WebsitePanel.Providers.HostedSolution
             }
 
             return bFound;
-
-
-
-            return false;
         }
 
 
