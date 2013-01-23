@@ -53,7 +53,20 @@ namespace WebsitePanel.Portal
 
         private HeliconApeStatus HeliconApeStatus
         {
-            get { return (HeliconApeStatus)ViewState["HeliconApeStatus"]; }
+            get
+            {
+                if (null == ViewState["HeliconApeStatus"])
+                {
+                    HeliconApeStatus nullstatus = new HeliconApeStatus();
+                    return nullstatus;
+                }
+                else
+                {
+                    return (HeliconApeStatus)ViewState["HeliconApeStatus"];    
+                }
+                
+                
+            }
             set { ViewState["HeliconApeStatus"] = value; }
 
         }
@@ -91,17 +104,23 @@ namespace WebsitePanel.Portal
 
            
             // Render a warning message about the automatic site's settings change
-            if (!HeliconApeStatus.IsEnabled && site.IIs7)
+            if (site.IIs7)
             {
-                // Ensure the message is displayed only when neccessary
-                if (site.EnableWindowsAuthentication || !site.AspNetInstalled.EndsWith("I") || site.SecuredFoldersInstalled)
+                if (!HeliconApeStatus.IsEnabled)
                 {
-                    // TODO: show warning, do not force to enable integrated pool
-                    string warningStr = GetLocalizedString("EnableFoldersIIs7Warning.Text");
-                    // Render a warning only if specified
-                    if (!String.IsNullOrEmpty(warningStr))
-                        btnToggleHeliconApe.OnClientClick = String.Format("return confirm('{0}')", warningStr);
+                    // Ensure the message is displayed only when neccessary
+                    if (site.EnableWindowsAuthentication || !site.AspNetInstalled.EndsWith("I") || site.SecuredFoldersInstalled)
+                    {
+                        // TODO: show warning, do not force to enable integrated pool
+                        string warningStr = GetLocalizedString("EnableFoldersIIs7Warning.Text");
+                        // Render a warning only if specified
+                        if (!String.IsNullOrEmpty(warningStr))
+                            btnToggleHeliconApe.OnClientClick = String.Format("return confirm('{0}')", warningStr);
+                    }
+                   
+
                 }
+
             }
             // toggle
             ToggleControls();
