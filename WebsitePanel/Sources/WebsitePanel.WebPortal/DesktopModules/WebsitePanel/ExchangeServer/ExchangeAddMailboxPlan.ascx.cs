@@ -63,6 +63,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                     chkEnableLitigationHold.Checked = plan.AllowLitigationHold;
                     recoverableItemsSpace.QuotaValue = plan.RecoverableItemsSpace;
                     recoverableItemsWarning.ValueKB = plan.RecoverableItemsWarningPct;
+                    txtLitigationHoldMsg.Text = plan.LitigationHoldMsg;
+                    txtLitigationHoldUrl.Text = plan.LitigationHoldUrl;
 
 
 
@@ -198,6 +200,9 @@ namespace WebsitePanel.Portal.ExchangeServer
                 plan.RecoverableItemsSpace = recoverableItemsSpace.QuotaValue;
                 plan.RecoverableItemsWarningPct = recoverableItemsWarning.ValueKB;
                 if ((plan.RecoverableItemsWarningPct == 0)) plan.RecoverableItemsWarningPct = 100;
+                plan.LitigationHoldMsg = txtLitigationHoldMsg.Text.Trim();
+                plan.LitigationHoldUrl = txtLitigationHoldUrl.Text.Trim(); 
+
 
                 int result = ES.Services.ExchangeServer.AddExchangeMailboxPlan(PanelRequest.ItemID,
                                                                                 plan);

@@ -59,6 +59,8 @@ namespace WebsitePanel.Providers.HostedSolution
         bool allowLitigationHold;
 	    int recoverableItemsWarningPct;
         int recoverableItemsSpace;
+        string litigationHoldUrl;
+        string litigationHoldMsg;
 
 
         public int ItemId
@@ -196,5 +198,16 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.recoverableItemsSpace = value; }
         }
 
+        public string LitigationHoldUrl
+        {
+            get { return this.litigationHoldUrl; }
+            set { this.litigationHoldUrl = value; }
+        }
+
+        public string LitigationHoldMsg
+        {
+            get { return this.litigationHoldMsg; }
+            set { this.litigationHoldMsg = value; }
+        }
     }
 }

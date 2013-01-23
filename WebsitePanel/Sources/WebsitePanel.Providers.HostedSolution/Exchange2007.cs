@@ -285,12 +285,12 @@ namespace WebsitePanel.Providers.HostedSolution
         public void SetMailboxAdvancedSettings(string organizationId, string accountName, bool enablePOP,
             bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync,
             long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB,
-            int maxReceiveMessageSizeKB, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning)
+            int maxReceiveMessageSizeKB, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg)
         {
             SetMailboxAdvancedSettingsInternal(organizationId, accountName, enablePOP, enableIMAP, enableOWA,
                 enableMAPI, enableActiveSync, issueWarningKB,
                 prohibitSendKB, prohibitSendReceiveKB, keepDeletedItemsDays, maxRecipients, maxSendMessageSizeKB, maxReceiveMessageSizeKB,
-                enabledLitigationHold, recoverabelItemsSpace, recoverabelItemsWarning);
+                enabledLitigationHold, recoverabelItemsSpace, recoverabelItemsWarning, litigationHoldUrl, litigationHoldMsg );
         }
 
         public ExchangeEmailAddress[] GetMailboxEmailAddresses(string accountName)
@@ -2415,7 +2415,8 @@ namespace WebsitePanel.Providers.HostedSolution
         internal virtual void SetMailboxAdvancedSettingsInternal(string organizationId, string accountName, bool enablePOP, bool enableIMAP,
             bool enableOWA, bool enableMAPI, bool enableActiveSync, long issueWarningKB, long prohibitSendKB,
             long prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB,
-            int maxReceiveMessageSizeKB, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning)
+            int maxReceiveMessageSizeKB, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning,
+            string litigationHoldUrl, string litigationHoldMsg)
         {
             ExchangeLog.LogStart("SetMailboxAdvancedSettingsInternal");
             ExchangeLog.DebugInfo("Account: {0}", accountName);

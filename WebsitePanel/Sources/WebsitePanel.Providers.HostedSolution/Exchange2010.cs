@@ -332,7 +332,8 @@ namespace WebsitePanel.Providers.HostedSolution
         internal override void SetMailboxAdvancedSettingsInternal(string organizationId, string accountName, bool enablePOP, bool enableIMAP,
             bool enableOWA, bool enableMAPI, bool enableActiveSync, long issueWarningKB, long prohibitSendKB,
             long prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB,
-            int maxReceiveMessageSizeKB, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning)
+            int maxReceiveMessageSizeKB, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning,
+            string litigationHoldUrl, string litigationHoldMsg)
         {
             ExchangeLog.LogStart("SetMailboxAdvancedSettingsInternal");
             ExchangeLog.DebugInfo("Account: {0}", accountName);
@@ -355,6 +356,9 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 cmd.Parameters.Add("LitigationHoldEnabled", enabledLitigationHold);
                 cmd.Parameters.Add("RecoverableItemsQuota", ConvertKBToUnlimited(recoverabelItemsSpace));
+
+                cmd.Parameters.Add("RetentionUrl", litigationHoldUrl);
+                cmd.Parameters.Add("RetentionComment", litigationHoldMsg);
 
                 if (recoverabelItemsSpace != -1) cmd.Parameters.Add("RecoverableItemsWarningQuota", ConvertKBToUnlimited(recoverabelItemsWarning));
 
