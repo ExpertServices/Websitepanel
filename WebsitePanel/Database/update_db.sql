@@ -62,6 +62,13 @@ ALTER TABLE [dbo].[ExchangeMailboxPlans] ADD
 END
 GO
 
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeMailboxPlans' AND COLS.name='LitigationHoldUrl')
+BEGIN
+ALTER TABLE [dbo].[ExchangeMailboxPlans] ADD
+	[LitigationHoldUrl] [nvarchar] (256) COLLATE Latin1_General_CI_AS NULL,
+	[LitigationHoldMsg] [nvarchar] (512) COLLATE Latin1_General_CI_AS NULL
+END
+GO
 
 
 
@@ -89,7 +96,9 @@ ALTER PROCEDURE [dbo].[AddExchangeMailboxPlan]
 	@MailboxPlanType int,
 	@AllowLitigationHold bit,
 	@RecoverableItemsWarningPct int,
-	@RecoverableItemsSpace int
+	@RecoverableItemsSpace int,
+	@LitigationHoldUrl nvarchar(256),
+	@LitigationHoldMsg nvarchar(512)
 )
 AS
 
@@ -127,7 +136,10 @@ INSERT INTO ExchangeMailboxPlans
 	MailboxPlanType,
 	AllowLitigationHold,
 	RecoverableItemsWarningPct,
-	RecoverableItemsSpace
+	RecoverableItemsSpace,
+	LitigationHoldUrl,
+	LitigationHoldMsg
+
 )
 VALUES
 (
@@ -151,7 +163,9 @@ VALUES
 	@MailboxPlanType,
 	@AllowLitigationHold,
 	@RecoverableItemsWarningPct,
-	@RecoverableItemsSpace
+	@RecoverableItemsSpace,
+	@LitigationHoldUrl,
+	@LitigationHoldMsg
 )
 
 SET @MailboxPlanId = SCOPE_IDENTITY()
@@ -189,7 +203,9 @@ ALTER PROCEDURE [dbo].[UpdateExchangeMailboxPlan]
 	@MailboxPlanType int,
 	@AllowLitigationHold bit,
 	@RecoverableItemsWarningPct int,
-	@RecoverableItemsSpace int
+	@RecoverableItemsSpace int,
+	@LitigationHoldUrl nvarchar(256),
+	@LitigationHoldMsg nvarchar(512)
 )
 AS
 
@@ -213,7 +229,10 @@ UPDATE ExchangeMailboxPlans SET
 	MailboxPlanType = @MailboxPlanType,
 	AllowLitigationHold = @AllowLitigationHold,
 	RecoverableItemsWarningPct = @RecoverableItemsWarningPct,
-	RecoverableItemsSpace = @RecoverableItemsSpace 
+	RecoverableItemsSpace = @RecoverableItemsSpace, 
+	LitigationHoldUrl = @LitigationHoldUrl,
+	LitigationHoldMsg = @LitigationHoldMsg
+
 WHERE MailboxPlanId = @MailboxPlanId
 
 RETURN
@@ -249,7 +268,9 @@ SELECT
 	MailboxPlanType,
 	AllowLitigationHold,
 	RecoverableItemsWarningPct,
-	RecoverableItemsSpace
+	RecoverableItemsSpace,
+	LitigationHoldUrl,
+	LitigationHoldMsg
 FROM
 	ExchangeMailboxPlans
 WHERE

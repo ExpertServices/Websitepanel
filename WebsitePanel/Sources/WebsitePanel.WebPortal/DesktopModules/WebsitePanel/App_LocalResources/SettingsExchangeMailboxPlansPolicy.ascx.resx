@@ -240,4 +240,10 @@
   <data name="secLitigationHold.Text" xml:space="preserve">
     <value>Litigation Hold</value>
   </data>
+  <data name="lblLitigationHoldMsg.Text" xml:space="preserve">
+    <value>Litigation Hold Message:</value>
+  </data>
+  <data name="lblLitigationHoldUrl.Text" xml:space="preserve">
+    <value>Litigation Hold Url:</value>
+  </data>
 </root>

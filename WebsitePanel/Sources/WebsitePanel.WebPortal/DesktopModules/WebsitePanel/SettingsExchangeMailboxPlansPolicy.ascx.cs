@@ -124,6 +124,9 @@ namespace WebsitePanel.Portal
             plan.RecoverableItemsSpace = recoverableItemsSpace.QuotaValue;
             plan.RecoverableItemsWarningPct = recoverableItemsWarning.ValueKB;
             if ((plan.RecoverableItemsWarningPct == 0)) plan.RecoverableItemsWarningPct = 100;
+            plan.LitigationHoldMsg = txtLitigationHoldMsg.Text.Trim();
+            plan.LitigationHoldUrl = txtLitigationHoldUrl.Text.Trim(); 
+
 
             if (PanelSecurity.SelectedUser.Role == UserRole.Administrator)
                 plan.MailboxPlanType = (int)ExchangeMailboxPlanType.Administrator;
@@ -225,6 +228,9 @@ namespace WebsitePanel.Portal
                         chkEnableLitigationHold.Checked = false;
                         recoverableItemsSpace.QuotaValue = 0;
                         recoverableItemsWarning.ValueKB = -1;
+                        txtLitigationHoldMsg.Text = string.Empty;
+                        txtLitigationHoldUrl.Text = string.Empty;
+
 
 
                         btnUpdateMailboxPlan.Enabled = (string.IsNullOrEmpty(txtMailboxPlan.Text)) ? false : true;
@@ -277,6 +283,8 @@ namespace WebsitePanel.Portal
                         chkEnableLitigationHold.Checked = plan.AllowLitigationHold;
                         recoverableItemsSpace.QuotaValue = plan.RecoverableItemsSpace;
                         recoverableItemsWarning.ValueKB = plan.RecoverableItemsWarningPct;
+                        txtLitigationHoldMsg.Text = plan.LitigationHoldMsg;
+                        txtLitigationHoldUrl.Text = plan.LitigationHoldUrl;
                         
                         btnUpdateMailboxPlan.Enabled  = (string.IsNullOrEmpty(txtMailboxPlan.Text)) ? false : true;
 
@@ -383,6 +391,8 @@ namespace WebsitePanel.Portal
             plan.RecoverableItemsSpace = recoverableItemsSpace.QuotaValue;
             plan.RecoverableItemsWarningPct = recoverableItemsWarning.ValueKB;
             if ((plan.RecoverableItemsWarningPct == 0)) plan.RecoverableItemsWarningPct = 100;
+            plan.LitigationHoldMsg = txtLitigationHoldMsg.Text.Trim();
+            plan.LitigationHoldUrl = txtLitigationHoldUrl.Text.Trim(); 
 
 
             if (PanelSecurity.SelectedUser.Role == UserRole.Administrator)

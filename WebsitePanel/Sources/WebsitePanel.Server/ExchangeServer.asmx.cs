@@ -435,14 +435,14 @@ namespace WebsitePanel.Server
         [WebMethod, SoapHeader("settings")]
         public void SetMailboxAdvancedSettings(string organizationId, string accountName, bool enablePOP, bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync,
             long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB
-            , bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning)
+            , bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg)
         {
             try
             {
                 LogStart("SetMailboxAdvancedSettings");
                 ES.SetMailboxAdvancedSettings(organizationId, accountName, enablePOP, enableIMAP, enableOWA, enableMAPI, enableActiveSync,
                     issueWarningKB, prohibitSendKB, prohibitSendReceiveKB, keepDeletedItemsDays, maxRecipients, maxSendMessageSizeKB, maxReceiveMessageSizeKB,
-                    enabledLitigationHold, recoverabelItemsSpace, recoverabelItemsWarning);
+                    enabledLitigationHold, recoverabelItemsSpace, recoverabelItemsWarning, litigationHoldUrl, litigationHoldMsg);
                 LogEnd("SetMailboxAdvancedSettings");
             }
             catch (Exception ex)

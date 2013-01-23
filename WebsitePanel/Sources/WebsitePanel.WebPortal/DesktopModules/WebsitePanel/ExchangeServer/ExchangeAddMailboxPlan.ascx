@@ -206,6 +206,16 @@
 									<wsp:SizeBox id="recoverableItemsWarning" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="false" DisplayUnitsMB="false" DisplayUnitsPct="true" RequireValidatorEnabled="true"/>
 								</td>
 							</tr>
+                            <tr>
+                                <td class="SubHead" style="width:150px;"><asp:Label ID="lblLitigationHoldUrl" runat="server" meta:resourcekey="lblLitigationHoldUrl" Text="Url:"></asp:Label></td>
+                                <td class="Normal">
+                                    <asp:TextBox ID="txtLitigationHoldUrl" runat="server" Width="200" CssClass="NormalTextBox" MaxLength="255"></asp:TextBox></td>
+                            </tr>
+                            <tr>
+                                <td class="SubHead" valign=top><asp:Label ID="lblLitigationHoldMsg" runat="server" meta:resourcekey="lblLitigationHoldMsg" Text="Page Content:"></asp:Label></td>
+                                <td class="Normal" valign=top>
+                                    <asp:TextBox ID="txtLitigationHoldMsg" runat="server" Rows="10" TextMode="MultiLine" Width="100%" CssClass="NormalTextBox" Wrap="False" MaxLength="511"></asp:TextBox></td>
+                            </tr>
 
 						</table>
 					</asp:Panel>

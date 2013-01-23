@@ -2534,7 +2534,7 @@ namespace WebsitePanel.EnterpriseServer
         public static int AddExchangeMailboxPlan(int itemID, string mailboxPlan, bool enableActiveSync, bool enableIMAP, bool enableMAPI, bool enableOWA, bool enablePOP,
                                                     bool isDefault, int issueWarningPct, int keepDeletedItemsDays, int mailboxSizeMB, int maxReceiveMessageSizeKB, int maxRecipients,
                                                     int maxSendMessageSizeKB, int prohibitSendPct, int prohibitSendReceivePct, bool hideFromAddressBook, int mailboxPlanType,
-                                                    bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning)
+                                                    bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg)
         {
             SqlParameter outParam = new SqlParameter("@MailboxPlanId", SqlDbType.Int);
             outParam.Direction = ParameterDirection.Output;
@@ -2564,7 +2564,9 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@MailboxPlanType", mailboxPlanType),
 	            new SqlParameter("@AllowLitigationHold",enabledLitigationHold),
                 new SqlParameter("@RecoverableItemsWarningPct", recoverabelItemsWarning),
-                new SqlParameter("@RecoverableItemsSpace",recoverabelItemsSpace)
+                new SqlParameter("@RecoverableItemsSpace",recoverabelItemsSpace),
+                new SqlParameter("@LitigationHoldUrl",litigationHoldUrl),
+                new SqlParameter("@LitigationHoldMsg",litigationHoldMsg)
             );
 
             return Convert.ToInt32(outParam.Value);
@@ -2575,7 +2577,7 @@ namespace WebsitePanel.EnterpriseServer
         public static void UpdateExchangeMailboxPlan(int mailboxPlanID, string mailboxPlan, bool enableActiveSync, bool enableIMAP, bool enableMAPI, bool enableOWA, bool enablePOP,
                                             bool isDefault, int issueWarningPct, int keepDeletedItemsDays, int mailboxSizeMB, int maxReceiveMessageSizeKB, int maxRecipients,
                                             int maxSendMessageSizeKB, int prohibitSendPct, int prohibitSendReceivePct, bool hideFromAddressBook, int mailboxPlanType,
-                                        bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning)
+                                        bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg)
         {
             SqlHelper.ExecuteNonQuery(
                 ConnectionString,
@@ -2601,7 +2603,10 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@MailboxPlanType", mailboxPlanType),
                 new SqlParameter("@AllowLitigationHold", enabledLitigationHold),
                 new SqlParameter("@RecoverableItemsWarningPct", recoverabelItemsWarning),
-                new SqlParameter("@RecoverableItemsSpace", recoverabelItemsSpace)
+                new SqlParameter("@RecoverableItemsSpace", recoverabelItemsSpace),
+                new SqlParameter("@LitigationHoldUrl",litigationHoldUrl),
+                new SqlParameter("@LitigationHoldMsg",litigationHoldMsg)
+
             );
         }
 
