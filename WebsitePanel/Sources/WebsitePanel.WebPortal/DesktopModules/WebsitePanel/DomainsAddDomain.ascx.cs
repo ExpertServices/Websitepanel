@@ -64,11 +64,14 @@ namespace WebsitePanel.Portal
 				ShowErrorMessage("DOMAIN_GET_DOMAIN", ex);
 			}
 
-            if (PanelSecurity.LoggedUser.Role == UserRole.User)
+            DomainType type = GetDomainType(Request["DomainType"]);
+
+            if ((PanelSecurity.LoggedUser.Role == UserRole.User) & (type != DomainType.SubDomain))
             {
                 if (!PackagesHelper.CheckGroupQuotaEnabled(PanelSecurity.PackageId, ResourceGroups.Dns, Quotas.DNS_EDITOR))
                     this.DisableControls = true;
             }
+
 		}
 
 		private void BindControls()
