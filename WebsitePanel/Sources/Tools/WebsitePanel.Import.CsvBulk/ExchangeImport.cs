@@ -581,7 +581,8 @@ namespace WebsitePanel.Import.CsvBulk
 					Log.WriteError(string.Format("Error at line {0}: {1}", index + 1, errorMessage));
 					return false;
 				}
-				ExchangeMailbox mailbox = ES.Services.ExchangeServer.GetMailboxGeneralSettings(orgId, accountId);
+                //ExchangeMailbox mailbox = ES.Services.ExchangeServer.GetMailboxGeneralSettings(orgId, accountId);
+                OrganizationUser mailbox = ES.Services.Organizations.GetUserGeneralSettings(orgId, accountId);
 
 				mailbox.FirstName = firstName;
 				mailbox.Initials = middleName;
@@ -611,7 +612,14 @@ namespace WebsitePanel.Import.CsvBulk
 					mailbox.JobTitle, mailbox.Company, mailbox.Department, mailbox.Office, null, mailbox.BusinessPhone,
 					mailbox.Fax, mailbox.HomePhone, mailbox.MobilePhone, mailbox.Pager, mailbox.WebPage, mailbox.Notes);
                 */
-				ret = true;
+                ES.Services.Organizations.SetUserGeneralSettings(orgId, accountId, mailbox.DisplayName,
+                    null, /*mailbox.HideFromAddressBook*/ false, mailbox.Disabled, mailbox.Locked, mailbox.FirstName, mailbox.Initials,
+                    mailbox.LastName, mailbox.Address, mailbox.City, mailbox.State, mailbox.Zip, mailbox.Country,
+                    mailbox.JobTitle, mailbox.Company, mailbox.Department, mailbox.Office, null, mailbox.BusinessPhone,
+                    mailbox.Fax, mailbox.HomePhone, mailbox.MobilePhone, mailbox.Pager, mailbox.WebPage, mailbox.Notes,
+                    // these are new and not in csv ...
+                    mailbox.ExternalEmail, mailbox.SubscriberNumber);
+                ret = true;
 			}
 			catch (Exception ex)
 			{
@@ -750,13 +758,11 @@ namespace WebsitePanel.Import.CsvBulk
 				user.Notes = notes;
 
 				//update 
-                /*
 				ES.Services.Organizations.SetUserGeneralSettings(orgId, accountId, user.DisplayName,
 					null, false, user.Disabled, user.Locked, user.FirstName, user.Initials,
 					user.LastName, user.Address, user.City, user.State, user.Zip, user.Country,
 					user.JobTitle, user.Company, user.Department, user.Office, null, user.BusinessPhone,
-					user.Fax, user.HomePhone, user.MobilePhone, user.Pager, user.WebPage, user.Notes, user.ExternalEmail);
-                */
+					user.Fax, user.HomePhone, user.MobilePhone, user.Pager, user.WebPage, user.Notes, user.ExternalEmail, user.SubscriberNumber);
 				ret = true;
 			}
 			catch (Exception ex)
