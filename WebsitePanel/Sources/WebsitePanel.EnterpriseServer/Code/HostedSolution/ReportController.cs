@@ -78,7 +78,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
 
                         try
                         {
-                            item.TotalPublicFoldersSize = exchange.GetPublicFolderSize("\\" + org.OrganizationId);
+                            item.TotalPublicFoldersSize = exchange.GetPublicFolderSize(org.OrganizationId, "\\" + org.OrganizationId);
                         }
                         catch (Exception ex)
                         {
