@@ -162,10 +162,20 @@ namespace WebsitePanel.Providers.HostedSolution
             Actions.Add(action);
         }
 
-        public void RegisterNewPublicFolder(string id)
+        public void RegisterNewPublicFolder(string mailbox, string id)
         {
             TransactionAction action = new TransactionAction();
             action.ActionType = TransactionAction.TransactionActionTypes.CreatePublicFolder;
+            action.Id = id;
+            action.Account = mailbox;
+            Actions.Add(action);
+        }
+
+
+        public void RegisterNewPublicFolderMailbox(string id)
+        {
+            TransactionAction action = new TransactionAction();
+            action.ActionType = TransactionAction.TransactionActionTypes.CreatePublicFolderMailbox;
             action.Id = id;
             Actions.Add(action);
         }

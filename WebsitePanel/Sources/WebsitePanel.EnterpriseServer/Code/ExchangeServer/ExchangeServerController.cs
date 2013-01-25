@@ -836,7 +836,7 @@ namespace WebsitePanel.EnterpriseServer
 				// get stats
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-				return exchange.GetPublicFoldersStatistics(folderNames.ToArray());
+                return exchange.GetPublicFoldersStatistics(org.OrganizationId, folderNames.ToArray());
 			}
 			catch (Exception ex)
 			{
@@ -4073,7 +4073,7 @@ namespace WebsitePanel.EnterpriseServer
                     PackageController.UpdatePackageItem(org);
                 }
 
-				exchange.CreatePublicFolder(
+				exchange.CreatePublicFolder(org.DistinguishedName,
 					org.OrganizationId,
 					org.SecurityGroup,
 					parentFolder,
@@ -4084,7 +4084,7 @@ namespace WebsitePanel.EnterpriseServer
 					domain);
 
 
-                ExchangePublicFolder folder = exchange.GetPublicFolderGeneralSettings(parentFolder + "\\" + folderName);
+                ExchangePublicFolder folder = exchange.GetPublicFolderGeneralSettings(org.OrganizationId, parentFolder + "\\" + folderName);
 
 				// add meta-item
 				int accountId = AddAccount(itemId, ExchangeAccountType.PublicFolder, accountName,
@@ -4146,8 +4146,8 @@ namespace WebsitePanel.EnterpriseServer
 				// delete folder
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-                
-				exchange.DeletePublicFolder(account.DisplayName);
+
+                exchange.DeletePublicFolder(org.OrganizationId, account.DisplayName);
 
 				// unregister account
 				DeleteAccount(itemId, accountId);
@@ -4268,8 +4268,8 @@ namespace WebsitePanel.EnterpriseServer
 
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-                
-				exchange.DisableMailPublicFolder(account.DisplayName);
+
+                exchange.DisableMailPublicFolder(org.OrganizationId, account.DisplayName);
 
 
 				// update and save account
@@ -4335,8 +4335,8 @@ namespace WebsitePanel.EnterpriseServer
 
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-                
-				ExchangePublicFolder folder = exchange.GetPublicFolderGeneralSettings(account.DisplayName);
+
+                ExchangePublicFolder folder = exchange.GetPublicFolderGeneralSettings(org.OrganizationId, account.DisplayName);
 				folder.MailEnabled = account.MailEnabledPublicFolder;
 				folder.DisplayName = account.DisplayName;
 				return folder;
@@ -4381,6 +4381,7 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
                 
 				exchange.SetPublicFolderGeneralSettings(
+                    org.OrganizationId,
 					account.DisplayName,
 					newName,
 					hideAddressBook,
@@ -4448,8 +4449,8 @@ namespace WebsitePanel.EnterpriseServer
 				// get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-                
-				ExchangePublicFolder folder = exchange.GetPublicFolderMailFlowSettings(account.DisplayName);
+
+                ExchangePublicFolder folder = exchange.GetPublicFolderMailFlowSettings(org.OrganizationId, account.DisplayName);
 				folder.DisplayName = account.DisplayName;
 				return folder;
 			}
@@ -4491,8 +4492,8 @@ namespace WebsitePanel.EnterpriseServer
 				// get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-                
-				exchange.SetPublicFolderMailFlowSettings(account.DisplayName,
+
+                exchange.SetPublicFolderMailFlowSettings(org.OrganizationId, account.DisplayName,
 					acceptAccounts,
 					rejectAccounts,
 					requireSenderAuthentication);
@@ -4565,6 +4566,7 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
                 
 				exchange.SetPublicFolderEmailAddresses(
+                    org.OrganizationId,
 					account.DisplayName,
 					GetAccountSimpleEmailAddresses(itemId, accountId));
 
@@ -4609,6 +4611,7 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
                 
 				exchange.SetPublicFolderPrimaryEmailAddress(
+                    org.OrganizationId,
 					account.DisplayName,
 					emailAddress);
 
@@ -4664,6 +4667,7 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
                 
 				exchange.SetPublicFolderEmailAddresses(
+                    org.OrganizationId,
 					account.DisplayName,
 					GetAccountSimpleEmailAddresses(itemId, accountId));
 

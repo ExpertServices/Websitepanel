@@ -431,16 +431,16 @@ namespace WebsitePanel.Providers.HostedSolution
         #endregion
 
         #region Public folders
-        public void CreatePublicFolder(string organizationId, string securityGroup, string parentFolder,
+        public void CreatePublicFolder(string organizationDistinguishedName, string organizationId, string securityGroup, string parentFolder,
             string folderName, bool mailEnabled, string accountName, string name, string domain)
         {
-            CreatePublicFolderInternal(organizationId, securityGroup, parentFolder, folderName,
+            CreatePublicFolderInternal(organizationDistinguishedName, organizationId, securityGroup, parentFolder, folderName,
                 mailEnabled, accountName, name, domain);
         }
 
-        public void DeletePublicFolder(string folder)
+        public void DeletePublicFolder(string organizationId, string folder)
         {
-            DeletePublicFolderInternal(folder);
+            DeletePublicFolderInternal(organizationId, folder);
         }
 
         public void EnableMailPublicFolder(string organizationId, string folder, string accountName,
@@ -521,60 +521,60 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
 
-        public void DisableMailPublicFolder(string folder)
+        public void DisableMailPublicFolder(string organizationId, string folder)
         {
-            DisableMailPublicFolderInternal(folder);
+            DisableMailPublicFolderInternal(organizationId, folder);
         }
 
-        public ExchangePublicFolder GetPublicFolderGeneralSettings(string folder)
+        public ExchangePublicFolder GetPublicFolderGeneralSettings(string organizationId, string folder)
         {
-            return GetPublicFolderGeneralSettingsInternal(folder);
+            return GetPublicFolderGeneralSettingsInternal(organizationId, folder);
         }
 
-        public void SetPublicFolderGeneralSettings(string folder, string newFolderName,
+        public void SetPublicFolderGeneralSettings(string organizationId, string folder, string newFolderName,
              bool hideFromAddressBook, ExchangeAccount[] accounts)
         {
-            SetPublicFolderGeneralSettingsInternal(folder, newFolderName, hideFromAddressBook, accounts);
+            SetPublicFolderGeneralSettingsInternal(organizationId, folder, newFolderName, hideFromAddressBook, accounts);
         }
-        public ExchangePublicFolder GetPublicFolderMailFlowSettings(string folder)
+        public ExchangePublicFolder GetPublicFolderMailFlowSettings(string organizationId, string folder)
         {
-            return GetPublicFolderMailFlowSettingsInternal(folder);
+            return GetPublicFolderMailFlowSettingsInternal(organizationId, folder);
         }
 
-        public void SetPublicFolderMailFlowSettings(string folder,
+        public void SetPublicFolderMailFlowSettings(string organizationId, string folder,
             string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication)
         {
-            SetPublicFolderMailFlowSettingsInternal(folder, acceptAccounts, rejectAccounts, requireSenderAuthentication);
+            SetPublicFolderMailFlowSettingsInternal(organizationId, folder, acceptAccounts, rejectAccounts, requireSenderAuthentication);
         }
 
-        public ExchangeEmailAddress[] GetPublicFolderEmailAddresses(string folder)
+        public ExchangeEmailAddress[] GetPublicFolderEmailAddresses(string organizationId, string folder)
         {
-            return GetPublicFolderEmailAddressesInternal(folder);
+            return GetPublicFolderEmailAddressesInternal(organizationId, folder);
         }
 
-        public void SetPublicFolderEmailAddresses(string folder, string[] emailAddresses)
+        public void SetPublicFolderEmailAddresses(string organizationId, string folder, string[] emailAddresses)
         {
-            SetPublicFolderEmailAddressesInternal(folder, emailAddresses);
+            SetPublicFolderEmailAddressesInternal(organizationId, folder, emailAddresses);
         }
 
-        public void SetPublicFolderPrimaryEmailAddress(string folder, string emailAddress)
+        public void SetPublicFolderPrimaryEmailAddress(string organizationId, string folder, string emailAddress)
         {
-            SetPublicFolderPrimaryEmailAddressInternal(folder, emailAddress);
+            SetPublicFolderPrimaryEmailAddressInternal(organizationId, folder, emailAddress);
         }
 
-        public ExchangeItemStatistics[] GetPublicFoldersStatistics(string[] folders)
+        public ExchangeItemStatistics[] GetPublicFoldersStatistics(string organizationId, string[] folders)
         {
-            return GetPublicFoldersStatisticsInternal(folders);
+            return GetPublicFoldersStatisticsInternal(organizationId, folders);
         }
 
-        public string[] GetPublicFoldersRecursive(string parent)
+        public string[] GetPublicFoldersRecursive(string organizationId, string parent)
         {
-            return GetPublicFoldersRecursiveInternal(parent);
+            return GetPublicFoldersRecursiveInternal(organizationId, parent);
         }
 
-        public long GetPublicFolderSize(string folder)
+        public long GetPublicFolderSize(string organizationId, string folder)
         {
-            return GetPublicFolderSizeInternal(folder);
+            return GetPublicFolderSizeInternal(organizationId, folder);
         }
         #endregion
 
@@ -1128,10 +1128,8 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 cmd = new Command("Get-PublicFolder");
                 cmd.Parameters.Add("Identity", "\\" + organizationId);
+                cmd.Parameters.Add("Mailbox", GetPublicFolderMailboxName(organizationId));
                 cmd.Parameters.Add("GetChildren", new SwitchParameter(true));
-                if (!string.IsNullOrEmpty(PublicFolderServer))
-                    cmd.Parameters.Add("Server", PublicFolderServer);
-
                 result = ExecuteShellCommand(runSpace, cmd);
                 if (result != null && result.Count > 0)
                     ret = false;
@@ -1159,7 +1157,7 @@ namespace WebsitePanel.Providers.HostedSolution
                         id = ObjToString(GetPSObjectProperty(obj, "Identity"));
                         RemoveDevicesInternal(runSpace, id);
 
-                        RemoveMailbox(runSpace, id);
+                        RemoveMailbox(runSpace, id, false);
                     }
                     catch (Exception ex)
                     {
@@ -1243,7 +1241,8 @@ namespace WebsitePanel.Providers.HostedSolution
             string publicFolder = "\\" + organizationId;
             try
             {
-                RemovePublicFolder(runSpace, publicFolder);
+                DisableMailPublicFolderRecursiveInternal(runSpace, organizationId, publicFolder);
+                RemovePublicFolder(runSpace, GetPublicFolderMailboxName(organizationId), publicFolder);
             }
             catch (Exception ex)
             {
@@ -1393,7 +1392,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
 
                 size += CalculateMailboxDiskSpace(runSpace, organizationDistinguishedName);
-                size += CalculatePublicFolderDiskSpace(runSpace, "\\" + organizationId);
+                size += CalculatePublicFolderDiskSpace(runSpace, GetPublicFolderMailboxName(organizationId), "\\" + organizationId);
             }
             finally
             {
@@ -1434,7 +1433,7 @@ namespace WebsitePanel.Providers.HostedSolution
             return size;
         }
 
-        internal virtual long CalculatePublicFolderDiskSpace(Runspace runSpace, string folder)
+        internal virtual long CalculatePublicFolderDiskSpace(Runspace runSpace, string mailbox, string folder)
         {
             ExchangeLog.LogStart("CalculatePublicFolderDiskSpace");
             ExchangeLog.DebugInfo("Folder: {0}", folder);
@@ -1447,8 +1446,7 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 cmd = new Command("Get-PublicFolderStatistics");
                 cmd.Parameters.Add("Identity", folder);
-                if (!string.IsNullOrEmpty(PublicFolderServer))
-                    cmd.Parameters.Add("Server", PublicFolderServer);
+                cmd.Parameters.Add("Mailbox", mailbox);
                 result = ExecuteShellCommand(runSpace, cmd);
                 if (result != null && result.Count > 0)
                 {
@@ -1460,14 +1458,13 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 cmd = new Command("Get-PublicFolder");
                 cmd.Parameters.Add("Identity", folder);
+                cmd.Parameters.Add("Mailbox", mailbox);
                 cmd.Parameters.Add("GetChildren", new SwitchParameter(true));
-                if (!string.IsNullOrEmpty(PublicFolderServer))
-                    cmd.Parameters.Add("Server", PublicFolderServer);
                 result = ExecuteShellCommand(runSpace, cmd);
                 foreach (PSObject obj in result)
                 {
                     string id = ObjToString(GetPSObjectProperty(obj, "Identity"));
-                    size += CalculatePublicFolderDiskSpace(runSpace, id);
+                    size += CalculatePublicFolderDiskSpace(runSpace, mailbox, id);
                 }
             }
             else
@@ -2027,7 +2024,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
                     RemoveDevicesInternal(runSpace, accountName);
 
-                    RemoveMailbox(runSpace, accountName);
+                    RemoveMailbox(runSpace, accountName, false);
 
                     if (addressbookPolicy == (upn + " AP"))
                     {
@@ -2077,15 +2074,42 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogStart("GetDatabase");
             ExchangeLog.LogInfo("DAG: " + dagName);
 
-            //Get Dag Servers
+            // this part of code handles mailboxnames like in the old 2007 provider
+            // check if DAG is in reality DAG\mailboxdatabase
+            string dagNameDAG = string.Empty;
+            string dagNameMBX = string.Empty;
+            bool isFixedDatabase = false;
+            if (dagName.Contains("\\"))
+            {
+                // split the two parts and extract DAG-Name and mailboxdatabase-name
+                string[] parts = dagName.Split(new char[] { '\\' }, 2, StringSplitOptions.None);
+                dagNameDAG = parts[0];
+                dagNameMBX = parts[1];
+                // check that we realy have a database name
+                if (!String.IsNullOrEmpty(dagNameMBX))
+                {
+                    isFixedDatabase = true;
+                }
+            }
+            else
+            {
+                // there is no mailboxdatabase-name use the loadbalancing-code
+                dagNameDAG = dagName;
+                isFixedDatabase = false;
+            }
+
+            //Get Dag Servers - with the name of the database availability group
             Collection<PSObject> dags = null;
             Command cmd = new Command("Get-DatabaseAvailabilityGroup");
-            cmd.Parameters.Add("Identity", dagName);
+            cmd.Parameters.Add("Identity", dagNameDAG);
             dags = ExecuteShellCommand(runSpace, cmd);
 
             if (htBbalancer == null)
                 htBbalancer = new Hashtable();
 
+            // use fully qualified dagName for loadbalancer. Thus if there are two services and one of them
+            // contains only the DAG, the "fixed" database could also be used in loadbalancing. If you do not want this,
+            // set either IsExcludedFromProvisioning or IsSuspendedFromProvisioning - it is not evaluated for fixed databases
             if (htBbalancer[dagName] == null)
                 htBbalancer.Add(dagName, 0);
 
@@ -2098,35 +2122,56 @@ namespace WebsitePanel.Providers.HostedSolution
                 {
                     System.Collections.Generic.List<string> lstDatabase = new System.Collections.Generic.List<string>();
 
-                    foreach (object objServer in servers)
+                    if (!isFixedDatabase) // "old" loadbalancing code
+                    {
+                        foreach (object objServer in servers)
+                        {
+                            Collection<PSObject> databases = null;
+                            cmd = new Command("Get-MailboxDatabase");
+                            cmd.Parameters.Add("Server", ObjToString(objServer));
+                            databases = ExecuteShellCommand(runSpace, cmd);
+
+                            foreach (PSObject objDatabase in databases)
+                            {
+                                if (((bool)GetPSObjectProperty(objDatabase, "IsExcludedFromProvisioning") == false) &&
+                                    ((bool)GetPSObjectProperty(objDatabase, "IsSuspendedFromProvisioning") == false))
+                                {
+                                    string db = ObjToString(GetPSObjectProperty(objDatabase, "Identity"));
+
+                                    bool bAdd = true;
+                                    foreach (string s in lstDatabase)
+                                    {
+                                        if (s.ToLower() == db.ToLower())
+                                        {
+                                            bAdd = false;
+                                            break;
+                                        }
+                                    }
+
+                                    if (bAdd)
+                                    {
+                                        lstDatabase.Add(db);
+                                        ExchangeLog.LogInfo("AddDatabase: " + db);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else // new fixed database code
                     {
                         Collection<PSObject> databases = null;
                         cmd = new Command("Get-MailboxDatabase");
-                        cmd.Parameters.Add("Server", ObjToString(objServer));
+                        cmd.Parameters.Add("Identity", dagNameMBX);
                         databases = ExecuteShellCommand(runSpace, cmd);
 
+                        // do not check "IsExcludedFromProvisioning" or "IsSuspended", just check if it is a member of the DAG
                         foreach (PSObject objDatabase in databases)
                         {
-                            if (((bool)GetPSObjectProperty(objDatabase, "IsExcludedFromProvisioning") == false) &&
-                                ((bool)GetPSObjectProperty(objDatabase, "IsSuspendedFromProvisioning") == false))
+                            string dagSetting = ObjToString(GetPSObjectProperty(objDatabase, "MasterServerOrAvailabilityGroup"));
+                            if (dagNameDAG.Equals(dagSetting, StringComparison.OrdinalIgnoreCase))
                             {
-                                string db = ObjToString(GetPSObjectProperty(objDatabase, "Identity"));
-
-                                bool bAdd = true;
-                                foreach (string s in lstDatabase)
-                                {
-                                    if (s.ToLower() == db.ToLower())
-                                    {
-                                        bAdd = false;
-                                        break;
-                                    }
-                                }
-
-                                if (bAdd)
-                                {
-                                    lstDatabase.Add(db);
-                                    ExchangeLog.LogInfo("AddDatabase: " + db);
-                                }
+                                lstDatabase.Add(dagNameMBX);
+                                ExchangeLog.LogInfo("AddFixedDatabase: " + dagNameMBX);
                             }
                         }
                     }
@@ -2144,13 +2189,15 @@ namespace WebsitePanel.Providers.HostedSolution
             return database;
         }
 
-        internal void RemoveMailbox(Runspace runSpace, string id)
+
+        internal void RemoveMailbox(Runspace runSpace, string id, bool isPublicFolder)
         {
             ExchangeLog.LogStart("RemoveMailbox");
             Command cmd = new Command("Remove-Mailbox");
             cmd.Parameters.Add("Identity", id);
             cmd.Parameters.Add("Permanent", false);
             cmd.Parameters.Add("Confirm", false);
+            if (isPublicFolder) cmd.Parameters.Add("PublicFolder");
             ExecuteShellCommand(runSpace, cmd);
             ExchangeLog.LogEnd("RemoveMailbox");
         }
@@ -2220,6 +2267,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 info.DisplayName = (string)GetPSObjectProperty(mailbox, "DisplayName");
                 info.HideFromAddressBook = (bool)GetPSObjectProperty(mailbox, "HiddenFromAddressListsEnabled");
+                info.EnableLitigationHold = (bool)GetPSObjectProperty(mailbox, "LitigationHoldEnabled");
 
                 Command cmd = new Command("Get-User");
                 cmd.Parameters.Add("Identity", accountName);
@@ -2895,6 +2943,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 string path = AddADPrefix(dn);
                 DirectoryEntry entry = GetADObject(path);
                 info.Enabled = !(bool)entry.InvokeGet("AccountDisabled");
+                info.LitigationHoldEnabled = (bool)GetPSObjectProperty(mailbox, "LitigationHoldEnabled");
 
                 info.DisplayName = (string)GetPSObjectProperty(mailbox, "DisplayName");
                 SmtpAddress smtpAddress = (SmtpAddress)GetPSObjectProperty(mailbox, "PrimarySmtpAddress");
@@ -2926,8 +2975,10 @@ namespace WebsitePanel.Providers.HostedSolution
                     Unlimited<ByteQuantifiedSize> totalItemSize =
                         (Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(statistics, "TotalItemSize");
                     info.TotalSize = ConvertUnlimitedToBytes(totalItemSize);
+
                     uint? itemCount = (uint?)GetPSObjectProperty(statistics, "ItemCount");
                     info.TotalItems = ConvertNullableToInt32(itemCount);
+
                     DateTime? lastLogoffTime = (DateTime?)GetPSObjectProperty(statistics, "LastLogoffTime");
                     DateTime? lastLogonTime = (DateTime?)GetPSObjectProperty(statistics, "LastLogonTime");
                     info.LastLogoff = ConvertNullableToDateTime(lastLogoffTime);
@@ -2940,6 +2991,29 @@ namespace WebsitePanel.Providers.HostedSolution
                     info.LastLogoff = DateTime.MinValue;
                     info.LastLogon = DateTime.MinValue;
                 }
+
+                if (info.LitigationHoldEnabled)
+                {
+                    cmd = new Command("Get-MailboxFolderStatistics");
+                    cmd.Parameters.Add("FolderScope", "RecoverableItems");
+                    cmd.Parameters.Add("Identity", id);
+                    result = ExecuteShellCommand(runSpace, cmd);
+                    if (result.Count > 0)
+                    {
+                        PSObject statistics = result[0];
+                        ByteQuantifiedSize totalItemSize = (ByteQuantifiedSize)GetPSObjectProperty(statistics, "FolderAndSubfolderSize");
+                        info.LitigationHoldTotalSize = (totalItemSize == null) ? 0 : ConvertUnlimitedToBytes(totalItemSize);
+
+                        Int32 itemCount = (Int32)GetPSObjectProperty(statistics, "ItemsInFolder");
+                        info.LitigationHoldTotalItems = (itemCount == null) ? 0 : itemCount;
+                    }
+                }
+                else
+                {
+                    info.LitigationHoldTotalSize = 0;
+                    info.LitigationHoldTotalItems = 0;
+                }
+
             }
             finally
             {
@@ -4139,7 +4213,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
         #region Public folders
 
-        private void CreatePublicFolderInternal(string organizationId, string securityGroup, string parentFolder,
+        private void CreatePublicFolderInternal(string organizationDistinguishedName, string organizationId, string securityGroup, string parentFolder,
             string folderName, bool mailEnabled, string accountName, string name, string domain)
         {
             ExchangeLog.LogStart("CreatePublicFolderInternal");
@@ -4154,12 +4228,16 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 runSpace = OpenRunspace();
 
+                string orgCanonicalName = ConvertADPathToCanonicalName(organizationDistinguishedName);
+
+                //create organization public folder mailbox if required
+                CheckOrganizationPublicFolderMailbox(runSpace, orgCanonicalName, organizationId);
 
                 //create organization root folder if required
-                CheckOrganizationRootFolder(runSpace, organizationId, securityGroup);
+                CheckOrganizationRootFolder(runSpace, organizationId, securityGroup, orgCanonicalName, organizationId);
 
-                string id = AddPublicFolder(runSpace, folderName, parentFolder);
-                transaction.RegisterNewPublicFolder(id);
+                string id = AddPublicFolder(runSpace, folderName, parentFolder, orgCanonicalName+"/"+GetPublicFolderMailboxName(organizationId));
+                transaction.RegisterNewPublicFolder(GetPublicFolderMailboxName(organizationId), id);
 
                 SetPublicFolderPermissions(runSpace, id, securityGroup);
 
@@ -4183,18 +4261,43 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("CreatePublicFolderInternal");
         }
 
-        private void CheckOrganizationRootFolder(Runspace runSpace, string folder, string user)
+        private void CheckOrganizationPublicFolderMailbox(Runspace runSpace, string orgCanonicalName, string organizationId)
         {
-            ExchangeLog.LogStart("CheckOrganizationRootFolder");
+            ExchangeLog.LogStart("CheckOrganizationPublicFolderMailbox");
 
-            Collection<PSObject> result = GetPublicFolderObject(runSpace, "\\" + folder);
+            Collection<PSObject> result = GetPublicFolderMailbox(runSpace, orgCanonicalName, GetPublicFolderMailboxName(organizationId));
             if (result == null || result.Count == 0)
             {
                 ExchangeTransaction transaction = StartTransaction();
                 try
                 {
-                    string rootId = AddPublicFolder(runSpace, folder, "\\");
-                    transaction.RegisterNewPublicFolder(rootId);
+                    string rootId = AddPublicFolderMailbox(runSpace, orgCanonicalName, GetPublicFolderMailboxName(organizationId));
+                    transaction.RegisterNewPublicFolderMailbox(orgCanonicalName + "/" + GetPublicFolderMailboxName(organizationId));
+                }
+                catch
+                {
+                    RollbackTransaction(transaction);
+                    throw;
+                }
+            }
+            ExchangeLog.LogEnd("CheckOrganizationPublicFolderMailbox");
+        }
+
+
+
+        private void CheckOrganizationRootFolder(Runspace runSpace, string folder, string user, string orgCanonicalName, string organizationId)
+        {
+            ExchangeLog.LogStart("CheckOrganizationRootFolder");
+
+            Collection<PSObject> result = GetPublicFolderObject(runSpace, orgCanonicalName+"/"+GetPublicFolderMailboxName(organizationId), "\\" + folder);
+            if (result == null || result.Count == 0)
+            {
+                ExchangeTransaction transaction = StartTransaction();
+                try
+                {
+                    string rootId = AddPublicFolder(runSpace, folder, "\\", orgCanonicalName + "/" + GetPublicFolderMailboxName(organizationId));
+                    transaction.RegisterNewPublicFolder(orgCanonicalName + "/" + GetPublicFolderMailboxName(organizationId), rootId);
+
                     SetPublicFolderPermissions(runSpace, rootId, user);
                 }
                 catch
@@ -4206,21 +4309,40 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("CheckOrganizationRootFolder");
         }
 
-        private string AddPublicFolder(Runspace runSpace, string name, string path)
+        private string AddPublicFolder(Runspace runSpace, string name, string path, string mailbox)
         {
             ExchangeLog.LogStart("CreatePublicFolder");
             Command cmd = new Command("New-PublicFolder");
             cmd.Parameters.Add("Name", name);
             cmd.Parameters.Add("Path", path);
-            if (!string.IsNullOrEmpty(PublicFolderServer))
-                cmd.Parameters.Add("Server", PublicFolderServer);
+            cmd.Parameters.Add("Mailbox", mailbox);
             Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
             string id = GetResultObjectIdentity(result);
             ExchangeLog.LogEnd("CreatePublicFolder");
             return id;
         }
 
-        private void DeletePublicFolderInternal(string folder)
+        private string AddPublicFolderMailbox(Runspace runSpace, string organizationDistinguishedName, string name)
+        {
+            ExchangeLog.LogStart("CreatePublicFolderMailbox");
+            Command cmd = new Command("New-Mailbox");
+            cmd.Parameters.Add("Name", name);
+            cmd.Parameters.Add("PublicFolder");
+            cmd.Parameters.Add("OrganizationalUnit", organizationDistinguishedName);
+            string database = GetDatabase(runSpace, PrimaryDomainController, MailboxDatabase);
+            ExchangeLog.DebugInfo("database: " + database);
+            if (database != string.Empty)
+            {
+                cmd.Parameters.Add("Database", database);
+            }
+            Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+            string id = GetResultObjectIdentity(result);
+            ExchangeLog.LogEnd("CreatePublicFolderMailbox");
+            return id;
+        }
+
+
+        private void DeletePublicFolderInternal(string organizationId, string folder)
         {
             ExchangeLog.LogStart("DeletePublicFolderInternal");
             ExchangeLog.DebugInfo("Folder: {0}", folder);
@@ -4229,8 +4351,8 @@ namespace WebsitePanel.Providers.HostedSolution
             try
             {
                 runSpace = OpenRunspace();
-
-                RemovePublicFolder(runSpace, folder);
+                DisableMailPublicFolderRecursiveInternal(runSpace, organizationId, folder);
+                RemovePublicFolder(runSpace, GetPublicFolderMailboxName(organizationId), folder);
             }
             finally
             {
@@ -4240,27 +4362,42 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("DeletePublicFolderInternal");
         }
 
-        private Collection<PSObject> GetPublicFolderObject(Runspace runSpace, string id)
+        private Collection<PSObject> GetPublicFolderObject(Runspace runSpace, string mailbox, string id)
         {
             Command cmd = new Command("Get-PublicFolder");
             cmd.Parameters.Add("Identity", id);
-            if (!string.IsNullOrEmpty(PublicFolderServer))
-                cmd.Parameters.Add("Server", PublicFolderServer);
+            //cmd.Parameters.Add("Mailbox", mailbox);
             Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
             return result;
         }
 
-        private bool PublicFolderExists(Runspace runSpace, string id)
+        private Collection<PSObject> GetPublicFolderMailbox(Runspace runSpace, string organizationDistinguishedName, string name)
+        {
+            Command cmd = new Command("Get-Mailbox");
+            cmd.Parameters.Add("Identity", name);
+            cmd.Parameters.Add("PublicFolder");
+            cmd.Parameters.Add("OrganizationalUnit", organizationDistinguishedName);
+            Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+            return result;
+        }
+
+
+        private string GetPublicFolderMailboxName(string organizationId)
+        {
+            return string.Format("{0} Public Folder Mailbox", organizationId);
+        }
+
+        private bool PublicFolderExists(Runspace runSpace, string id, string organizationId)
         {
             ExchangeLog.LogStart("PublicFolderExists");
 
-            Collection<PSObject> result = GetPublicFolderObject(runSpace, id);
+            Collection<PSObject> result = GetPublicFolderObject(runSpace, GetPublicFolderMailboxName(organizationId), id);
             bool ret = (result != null && result.Count == 1);
             ExchangeLog.LogEnd("PublicFolderExists");
             return ret;
         }
 
-        private void RemovePublicFolder(Runspace runSpace, string id)
+        private void RemovePublicFolder(Runspace runSpace, string mailbox, string id)
         {
             ExchangeLog.LogStart("RemovePublicFolder");
 
@@ -4268,8 +4405,6 @@ namespace WebsitePanel.Providers.HostedSolution
             cmd.Parameters.Add("Identity", id);
             cmd.Parameters.Add("Recurse", new SwitchParameter(true));
             cmd.Parameters.Add("Confirm", false);
-            if (!string.IsNullOrEmpty(PublicFolderServer))
-                cmd.Parameters.Add("Server", PublicFolderServer);
             ExecuteShellCommand(runSpace, cmd);
 
             ExchangeLog.LogEnd("RemovePublicFolder");
@@ -4286,14 +4421,12 @@ namespace WebsitePanel.Providers.HostedSolution
             string permission)
         {
             ExchangeLog.LogStart("RemovePublicFolderClientPermission");
+            ExchangeLog.DebugInfo("Id :{0}", id);
 
             Command cmd = new Command("Remove-PublicFolderClientPermission");
             cmd.Parameters.Add("Identity", id);
             cmd.Parameters.Add("User", user);
-            cmd.Parameters.Add("AccessRights", permission);
             cmd.Parameters.Add("Confirm", false);
-            if (!string.IsNullOrEmpty(PublicFolderServer))
-                cmd.Parameters.Add("Server", PublicFolderServer);
             ExecuteShellCommand(runSpace, cmd);
             ExchangeLog.LogEnd("RemovePublicFolderClientPermission");
         }
@@ -4306,18 +4439,15 @@ namespace WebsitePanel.Providers.HostedSolution
             cmd.Parameters.Add("Identity", id);
             cmd.Parameters.Add("User", user);
             cmd.Parameters.Add("AccessRights", permission);
-            if (!string.IsNullOrEmpty(PublicFolderServer))
-                cmd.Parameters.Add("Server", PublicFolderServer);
             ExecuteShellCommand(runSpace, cmd);
             ExchangeLog.LogEnd("AddPublicFolderClientPermission");
         }
 
-        private void GetPublicFolderClientPermission(Runspace runSpace, string id)
+        private void GetPublicFolderClientPermission(Runspace runSpace, string mailbox, string id)
         {
             Command cmd = new Command("Get-PublicFolderClientPermission");
             cmd.Parameters.Add("Identity", id);
-            if (!string.IsNullOrEmpty(PublicFolderServer))
-                cmd.Parameters.Add("Server", PublicFolderServer);
+            cmd.Parameters.Add("Mailbox", mailbox);
             Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
             PSObject obj = result[0];
         }
@@ -4337,8 +4467,6 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 Command cmd = new Command("Enable-MailPublicFolder");
                 cmd.Parameters.Add("Identity", folder);
-                if (!string.IsNullOrEmpty(PublicFolderServer))
-                    cmd.Parameters.Add("Server", PublicFolderServer);
                 ExecuteShellCommand(runSpace, cmd);
                 string id = null;
 
@@ -4350,8 +4478,6 @@ namespace WebsitePanel.Providers.HostedSolution
                 {
                     cmd = new Command("Get-MailPublicFolder");
                     cmd.Parameters.Add("Identity", folder);
-                    if (!string.IsNullOrEmpty(PublicFolderServer))
-                        cmd.Parameters.Add("Server", PublicFolderServer);
                     Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
                     if (result != null && result.Count > 0)
                     {
@@ -4418,9 +4544,10 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("EnableMailPublicFolderInternal");
         }
 
-        private void DisableMailPublicFolderInternal(string folder)
+        private void DisableMailPublicFolderInternal(string organizationId, string folder)
         {
             ExchangeLog.LogStart("DisableMailPublicFolderInternal");
+            ExchangeLog.DebugInfo("Organization: {0}", organizationId);
             ExchangeLog.DebugInfo("Folder: {0}", folder);
             Runspace runSpace = null;
             try
@@ -4431,8 +4558,6 @@ namespace WebsitePanel.Providers.HostedSolution
                 Command cmd = new Command("Disable-MailPublicFolder");
                 cmd.Parameters.Add("Identity", folder);
                 cmd.Parameters.Add("Confirm", false);
-                if (!string.IsNullOrEmpty(PublicFolderServer))
-                    cmd.Parameters.Add("Server", PublicFolderServer);
                 ExecuteShellCommand(runSpace, cmd);
             }
             finally
@@ -4443,9 +4568,42 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("DisableMailPublicFolderInternal");
         }
 
-        private ExchangePublicFolder GetPublicFolderGeneralSettingsInternal(string folder)
+
+        private void DisableMailPublicFolderRecursiveInternal(Runspace runSpace, string organizationId, string folder)
+        {
+            ExchangeLog.LogStart("DisableMailPublicFolderRecursiveInternal");
+            ExchangeLog.DebugInfo("Organization: {0}", organizationId);
+            ExchangeLog.DebugInfo("Folder: {0}", folder);
+
+            Command cmd = new Command("Disable-MailPublicFolder");
+            cmd.Parameters.Add("Identity", folder);
+            cmd.Parameters.Add("Confirm", false);
+            ExecuteShellCommand(runSpace, cmd);
+
+            cmd = new Command("Get-PublicFolder");
+            cmd.Parameters.Add("Identity", folder);
+            cmd.Parameters.Add("GetChildren");
+            Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+
+            if (result.Count > 0)
+            {
+                foreach (PSObject obj in result)
+                {
+                    string name = (string)GetPSObjectProperty(obj, "Name");
+                    string parentPath = (string)GetPSObjectProperty(obj, "parentPath");
+
+                    DisableMailPublicFolderRecursiveInternal(runSpace, organizationId, parentPath + "\\" + name);
+                }
+            }           
+
+            ExchangeLog.LogEnd("DisableMailPublicFolderRecursiveInternal");
+        }
+
+
+        private ExchangePublicFolder GetPublicFolderGeneralSettingsInternal(string organizationId, string folder)
         {
             ExchangeLog.LogStart("GetPublicFolderGeneralSettingsInternal");
+            ExchangeLog.DebugInfo("Organization: {0}", organizationId);
             ExchangeLog.DebugInfo("Folder: {0}", folder);
 
             ExchangePublicFolder info = new ExchangePublicFolder();
@@ -4454,26 +4612,25 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 runSpace = OpenRunspace();
 
-                Collection<PSObject> result = GetPublicFolderObject(runSpace, folder);
+                Collection<PSObject> result = GetPublicFolderObject(runSpace, GetPublicFolderMailboxName(organizationId), folder);
                 PSObject publicFolder = result[0];
 
                 info.Name = (string)GetPSObjectProperty(publicFolder, "Name");
                 info.MailEnabled = (bool)GetPSObjectProperty(publicFolder, "MailEnabled");
-                info.HideFromAddressBook = (bool)GetPSObjectProperty(publicFolder, "HiddenFromAddressListsEnabled");
+                
                 info.NETBIOS = GetNETBIOSDomainName();
-                info.Accounts = GetPublicFolderAccounts(runSpace, folder);
+                info.Accounts = GetPublicFolderAccounts(runSpace, GetPublicFolderMailboxName(organizationId), folder);
 
                 if (info.MailEnabled)
                 {
                     Command cmd = new Command("Get-MailPublicFolder");
                     cmd.Parameters.Add("Identity", folder);
-                    if (!string.IsNullOrEmpty(PublicFolderServer))
-                        cmd.Parameters.Add("Server", PublicFolderServer);
                     result = ExecuteShellCommand(runSpace, cmd);
                     if (result.Count > 0)
                     {
                         publicFolder = result[0];
                         info.SAMAccountName = string.Format("{0}\\{1}", GetNETBIOSDomainName(), (string)GetPSObjectProperty(publicFolder, "Alias"));
+                        info.HideFromAddressBook = (bool)GetPSObjectProperty(publicFolder, "HiddenFromAddressListsEnabled");
                     }
                 }
             }
@@ -4486,7 +4643,7 @@ namespace WebsitePanel.Providers.HostedSolution
             return info;
         }
 
-        private ExchangeAccount[] GetPublicFolderAccounts(Runspace runSpace, string folder)
+        private ExchangeAccount[] GetPublicFolderAccounts(Runspace runSpace, string mailbox, string folder)
         {
             ExchangeLog.LogStart("GetPublicFolderAccounts");
             ExchangeLog.DebugInfo("Folder: {0}", folder);
@@ -4496,8 +4653,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
             Command cmd = new Command("Get-PublicFolderClientPermission");
             cmd.Parameters.Add("Identity", folder);
-            if (!string.IsNullOrEmpty(PublicFolderServer))
-                cmd.Parameters.Add("Server", PublicFolderServer);
+            cmd.Parameters.Add("Mailbox", mailbox);
             Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
 
             foreach (PSObject obj in result)
@@ -4522,7 +4678,7 @@ namespace WebsitePanel.Providers.HostedSolution
             return list.ToArray();
         }
 
-        private void SetPublicFolderGeneralSettingsInternal(string folder, string newFolderName,
+        private void SetPublicFolderGeneralSettingsInternal(string organizationId, string folder, string newFolderName,
             bool hideFromAddressBook, ExchangeAccount[] accounts)
         {
             ExchangeLog.LogStart("SetPublicFolderGeneralSettingsInternal");
@@ -4534,10 +4690,10 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 runSpace = OpenRunspace();
 
-                Collection<PSObject> result = GetPublicFolderObject(runSpace, folder);
+                Collection<PSObject> result = GetPublicFolderObject(runSpace, GetPublicFolderMailboxName(organizationId), folder);
                 PSObject publicFolder = result[0];
                 string folderName = (string)GetPSObjectProperty(publicFolder, "Name");
-                ExchangeAccount[] allAccounts = GetPublicFolderAccounts(runSpace, folder);
+                ExchangeAccount[] allAccounts = GetPublicFolderAccounts(runSpace, GetPublicFolderMailboxName(organizationId), folder);
 
                 //Remove all accounts and re-apply               
                 List<ExchangeAccount> accountsToDelete = new List<ExchangeAccount>();
@@ -4576,10 +4732,8 @@ namespace WebsitePanel.Providers.HostedSolution
                 }
 
                 //general settings
-                Command cmd = new Command("Set-PublicFolder");
+                Command cmd = new Command("Set-MailPublicFolder");
                 cmd.Parameters.Add("Identity", folder);
-                if (!string.IsNullOrEmpty(PublicFolderServer))
-                    cmd.Parameters.Add("Server", PublicFolderServer);
                 if (!folderName.Equals(newFolderName, StringComparison.OrdinalIgnoreCase))
                 {
                     cmd.Parameters.Add("Name", newFolderName);
@@ -4595,9 +4749,10 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("SetPublicFolderGeneralSettingsInternal");
         }
 
-        private ExchangePublicFolder GetPublicFolderMailFlowSettingsInternal(string folder)
+        private ExchangePublicFolder GetPublicFolderMailFlowSettingsInternal(string organizationId, string folder)
         {
             ExchangeLog.LogStart("GetPublicFolderMailFlowSettingsInternal");
+            ExchangeLog.DebugInfo("Organization: {0}", organizationId);
             ExchangeLog.DebugInfo("Folder: {0}", folder);
 
             ExchangePublicFolder info = new ExchangePublicFolder();
@@ -4610,8 +4765,6 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 Command cmd = new Command("Get-MailPublicFolder");
                 cmd.Parameters.Add("Identity", folder);
-                if (!string.IsNullOrEmpty(PublicFolderServer))
-                    cmd.Parameters.Add("Server", PublicFolderServer);
                 Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
                 PSObject publicFolder = result[0];
 
@@ -4628,10 +4781,11 @@ namespace WebsitePanel.Providers.HostedSolution
             return info;
         }
 
-        private void SetPublicFolderMailFlowSettingsInternal(string folder,
+        private void SetPublicFolderMailFlowSettingsInternal(string organizationId, string folder,
             string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication)
         {
             ExchangeLog.LogStart("SetPublicFolderMailFlowSettingsInternal");
+            ExchangeLog.DebugInfo("Organization: {0}", organizationId);
             ExchangeLog.DebugInfo("Folder: {0}", folder);
 
             Runspace runSpace = null;
@@ -4667,9 +4821,10 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
 
-        private ExchangeEmailAddress[] GetPublicFolderEmailAddressesInternal(string folder)
+        private ExchangeEmailAddress[] GetPublicFolderEmailAddressesInternal(string organizationId, string folder)
         {
             ExchangeLog.LogStart("GetPublicFolderEmailAddressesInternal");
+            ExchangeLog.DebugInfo("Organization: {0}", organizationId);
             ExchangeLog.DebugInfo("Folder: {0}", folder);
 
             List<ExchangeEmailAddress> list = new List<ExchangeEmailAddress>();
@@ -4681,8 +4836,6 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 Command cmd = new Command("Get-MailPublicFolder");
                 cmd.Parameters.Add("Identity", folder);
-                if (!string.IsNullOrEmpty(PublicFolderServer))
-                    cmd.Parameters.Add("Server", PublicFolderServer);
                 Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
                 PSObject publicFolder = result[0];
 
@@ -4693,9 +4846,6 @@ namespace WebsitePanel.Providers.HostedSolution
                 if (smtpAddress != null)
                     primaryEmail = smtpAddress.ToString();
 
-                //SmtpAddress winAddress = (SmtpAddress)GetPSObjectProperty(publicFolder, "WindowsEmailAddress");
-                //if (winAddress != null)
-                //    windowsEmail = winAddress.ToString();
                 windowsEmail = ObjToString(GetPSObjectProperty(publicFolder, "CustomAttribute3"));
 
 
@@ -4721,9 +4871,10 @@ namespace WebsitePanel.Providers.HostedSolution
             return list.ToArray();
         }
 
-        private void SetPublicFolderEmailAddressesInternal(string folder, string[] emailAddresses)
+        private void SetPublicFolderEmailAddressesInternal(string organizationId, string folder, string[] emailAddresses)
         {
             ExchangeLog.LogStart("SetDistributionListEmailAddressesInternal");
+            ExchangeLog.DebugInfo("Organization: {0}", organizationId);
             ExchangeLog.DebugInfo("Folder: {0}", folder);
 
             Runspace runSpace = null;
@@ -4734,8 +4885,6 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 Command cmd = new Command("Get-MailPublicFolder");
                 cmd.Parameters.Add("Identity", folder);
-                if (!string.IsNullOrEmpty(PublicFolderServer))
-                    cmd.Parameters.Add("Server", PublicFolderServer);
                 Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
                 PSObject publicFolder = result[0];
 
@@ -4772,9 +4921,10 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("SetPublicFolderEmailAddressesInternal");
         }
 
-        private void SetPublicFolderPrimaryEmailAddressInternal(string folder, string emailAddress)
+        private void SetPublicFolderPrimaryEmailAddressInternal(string organizationId, string folder, string emailAddress)
         {
             ExchangeLog.LogStart("SetPublicFolderPrimaryEmailAddressInternal");
+            ExchangeLog.DebugInfo("Organization: {0}", organizationId);
             ExchangeLog.DebugInfo("Folder: {0}", folder);
             ExchangeLog.DebugInfo("Email: {0}", emailAddress);
 
@@ -4799,9 +4949,10 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("SetPublicFolderPrimaryEmailAddressInternal");
         }
 
-        private ExchangeItemStatistics[] GetPublicFoldersStatisticsInternal(string[] folders)
+        private ExchangeItemStatistics[] GetPublicFoldersStatisticsInternal(string organizationId, string[] folders)
         {
             ExchangeLog.LogStart("GetPublicFoldersStatisticsInternal");
+            ExchangeLog.DebugInfo("Organization: {0}", organizationId);
 
             Runspace runSpace = null;
             List<ExchangeItemStatistics> ret = new List<ExchangeItemStatistics>();
@@ -4814,8 +4965,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 {
                     Command cmd = new Command("Get-PublicFolderStatistics");
                     cmd.Parameters.Add("Identity", folder);
-                    if (!string.IsNullOrEmpty(PublicFolderServer))
-                        cmd.Parameters.Add("Server", PublicFolderServer);
+                    cmd.Parameters.Add("Mailbox", GetPublicFolderMailboxName(organizationId));
                     Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
                     if (result != null && result.Count > 0)
                     {
@@ -4845,9 +4995,10 @@ namespace WebsitePanel.Providers.HostedSolution
             return ret.ToArray();
         }
 
-        private string[] GetPublicFoldersRecursiveInternal(string parent)
+        private string[] GetPublicFoldersRecursiveInternal(string organizationId, string parent)
         {
             ExchangeLog.LogStart("GetPublicFoldersRecursiveInternal");
+            ExchangeLog.DebugInfo("Organization: {0}", organizationId);
 
             Runspace runSpace = null;
             List<string> ret = new List<string>();
@@ -4857,8 +5008,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 Command cmd = new Command("Get-PublicFolder");
                 cmd.Parameters.Add("Identity", parent);
                 cmd.Parameters.Add("Recurse", true);
-                if (!string.IsNullOrEmpty(PublicFolderServer))
-                    cmd.Parameters.Add("Server", PublicFolderServer);
+                cmd.Parameters.Add("Mailbox", GetPublicFolderMailboxName(organizationId));
 
                 Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
                 if (result != null)
@@ -4877,7 +5027,7 @@ namespace WebsitePanel.Providers.HostedSolution
             return ret.ToArray();
         }
 
-        private long GetPublicFolderSizeInternal(string folder)
+        private long GetPublicFolderSizeInternal(string organizationId, string folder)
         {
             ExchangeLog.LogStart("GetPublicFolderSizeInternal");
             long size = 0;
@@ -4885,7 +5035,7 @@ namespace WebsitePanel.Providers.HostedSolution
             try
             {
                 runSpace = OpenRunspace();
-                size += CalculatePublicFolderDiskSpace(runSpace, folder);
+                size += CalculatePublicFolderDiskSpace(runSpace, GetPublicFolderMailboxName(organizationId), folder);
             }
             finally
             {
@@ -6855,7 +7005,7 @@ namespace WebsitePanel.Providers.HostedSolution
                     RemoveUPNSuffix(action.Id, action.Suffix);
                     break;
                 case TransactionAction.TransactionActionTypes.CreateMailbox:
-                    RemoveMailbox(runspace, action.Id);
+                    RemoveMailbox(runspace, action.Id, false);
                     break;
                 case TransactionAction.TransactionActionTypes.EnableMailbox:
                     DisableMailbox(runspace, action.Id);
@@ -6863,8 +7013,11 @@ namespace WebsitePanel.Providers.HostedSolution
                 case TransactionAction.TransactionActionTypes.CreateContact:
                     RemoveContact(runspace, action.Id);
                     break;
+                case TransactionAction.TransactionActionTypes.CreatePublicFolderMailbox:
+                    RemoveMailbox(runspace, action.Id, true);
+                    break;
                 case TransactionAction.TransactionActionTypes.CreatePublicFolder:
-                    RemovePublicFolder(runspace, action.Id);
+                    RemovePublicFolder(runspace, action.Account, action.Id);
                     break;
                 case TransactionAction.TransactionActionTypes.AddMailboxFullAccessPermission:
                     RemoveMailboxAccessPermission(runspace, action.Account, action.Id, "FullAccess");

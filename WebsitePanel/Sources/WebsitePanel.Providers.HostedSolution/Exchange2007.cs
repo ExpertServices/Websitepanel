@@ -429,14 +429,14 @@ namespace WebsitePanel.Providers.HostedSolution
         #endregion
 
         #region Public folders
-        public void CreatePublicFolder(string organizationId, string securityGroup, string parentFolder,
+        public void CreatePublicFolder(string organizationDistinguishedName, string organizationId, string securityGroup, string parentFolder,
             string folderName, bool mailEnabled, string accountName, string name, string domain)
         {
             CreatePublicFolderInternal(organizationId, securityGroup, parentFolder, folderName,
                 mailEnabled, accountName, name, domain);
         }
 
-        public void DeletePublicFolder(string folder)
+        public void DeletePublicFolder(string organizationId, string folder)
         {
             DeletePublicFolderInternal(folder);
         }
@@ -475,58 +475,58 @@ namespace WebsitePanel.Providers.HostedSolution
             }
             ExchangeLog.LogEnd("DisableMailboxIntenal");
         }
-        public void DisableMailPublicFolder(string folder)
+        public void DisableMailPublicFolder(string organizationId, string folder)
         {
             DisableMailPublicFolderInternal(folder);
         }
 
-        public ExchangePublicFolder GetPublicFolderGeneralSettings(string folder)
+        public ExchangePublicFolder GetPublicFolderGeneralSettings(string organizationId, string folder)
         {
             return GetPublicFolderGeneralSettingsInternal(folder);
         }
 
-        public void SetPublicFolderGeneralSettings(string folder, string newFolderName,
+        public void SetPublicFolderGeneralSettings(string organizationId, string folder, string newFolderName,
              bool hideFromAddressBook, ExchangeAccount[] accounts)
         {
             SetPublicFolderGeneralSettingsInternal(folder, newFolderName, hideFromAddressBook, accounts);
         }
-        public ExchangePublicFolder GetPublicFolderMailFlowSettings(string folder)
+        public ExchangePublicFolder GetPublicFolderMailFlowSettings(string organizationId, string folder)
         {
             return GetPublicFolderMailFlowSettingsInternal(folder);
         }
 
-        public void SetPublicFolderMailFlowSettings(string folder,
+        public void SetPublicFolderMailFlowSettings(string organizationId, string folder,
             string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication)
         {
             SetPublicFolderMailFlowSettingsInternal(folder, acceptAccounts, rejectAccounts, requireSenderAuthentication);
         }
 
-        public ExchangeEmailAddress[] GetPublicFolderEmailAddresses(string folder)
+        public ExchangeEmailAddress[] GetPublicFolderEmailAddresses(string organizationId, string folder)
         {
             return GetPublicFolderEmailAddressesInternal(folder);
         }
 
-        public void SetPublicFolderEmailAddresses(string folder, string[] emailAddresses)
+        public void SetPublicFolderEmailAddresses(string organizationId, string folder, string[] emailAddresses)
         {
             SetPublicFolderEmailAddressesInternal(folder, emailAddresses);
         }
 
-        public void SetPublicFolderPrimaryEmailAddress(string folder, string emailAddress)
+        public void SetPublicFolderPrimaryEmailAddress(string organizationId, string folder, string emailAddress)
         {
             SetPublicFolderPrimaryEmailAddressInternal(folder, emailAddress);
         }
 
-        public ExchangeItemStatistics[] GetPublicFoldersStatistics(string[] folders)
+        public ExchangeItemStatistics[] GetPublicFoldersStatistics(string organizationId, string[] folders)
         {
             return GetPublicFoldersStatisticsInternal(folders);
         }
 
-        public string[] GetPublicFoldersRecursive(string parent)
+        public string[] GetPublicFoldersRecursive(string organizationId, string parent)
         {
             return GetPublicFoldersRecursiveInternal(parent);
         }
 
-        public long GetPublicFolderSize(string folder)
+        public long GetPublicFolderSize(string organizationId, string folder)
         {
             return GetPublicFolderSizeInternal(folder);
         }
@@ -4066,7 +4066,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 CheckOrganizationRootFolder(runSpace, organizationId, securityGroup);
 
                 string id = AddPublicFolder(runSpace, folderName, parentFolder);
-                transaction.RegisterNewPublicFolder(id);
+                transaction.RegisterNewPublicFolder(string.Empty, id);
 
                 SetPublicFolderPermissions(runSpace, id, securityGroup);
 
@@ -4101,7 +4101,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 try
                 {
                     string rootId = AddPublicFolder(runSpace, folder, "\\");
-                    transaction.RegisterNewPublicFolder(rootId);
+                    transaction.RegisterNewPublicFolder(string.Empty, rootId);
                     SetPublicFolderPermissions(runSpace, rootId, user);
                 }
                 catch

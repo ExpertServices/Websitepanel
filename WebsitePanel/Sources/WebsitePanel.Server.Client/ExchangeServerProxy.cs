@@ -48,8 +48,7 @@ namespace WebsitePanel.Providers.Exchange {
     using System.Diagnostics;
 
     using WebsitePanel.Providers.HostedSolution;
-    
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -2940,8 +2939,9 @@ namespace WebsitePanel.Providers.Exchange {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/CreatePublicFolder", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void CreatePublicFolder(string organizationId, string securityGroup, string parentFolder, string folderName, bool mailEnabled, string accountName, string name, string domain) {
+        public void CreatePublicFolder(string organizationDistinguishedName, string organizationId, string securityGroup, string parentFolder, string folderName, bool mailEnabled, string accountName, string name, string domain) {
             this.Invoke("CreatePublicFolder", new object[] {
+                        organizationDistinguishedName,
                         organizationId,
                         securityGroup,
                         parentFolder,
@@ -2953,8 +2953,9 @@ namespace WebsitePanel.Providers.Exchange {
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginCreatePublicFolder(string organizationId, string securityGroup, string parentFolder, string folderName, bool mailEnabled, string accountName, string name, string domain, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginCreatePublicFolder(string organizationDistinguishedName, string organizationId, string securityGroup, string parentFolder, string folderName, bool mailEnabled, string accountName, string name, string domain, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("CreatePublicFolder", new object[] {
+                        organizationDistinguishedName,
                         organizationId,
                         securityGroup,
                         parentFolder,
@@ -2971,16 +2972,17 @@ namespace WebsitePanel.Providers.Exchange {
         }
         
         /// <remarks/>
-        public void CreatePublicFolderAsync(string organizationId, string securityGroup, string parentFolder, string folderName, bool mailEnabled, string accountName, string name, string domain) {
-            this.CreatePublicFolderAsync(organizationId, securityGroup, parentFolder, folderName, mailEnabled, accountName, name, domain, null);
+        public void CreatePublicFolderAsync(string organizationDistinguishedName, string organizationId, string securityGroup, string parentFolder, string folderName, bool mailEnabled, string accountName, string name, string domain) {
+            this.CreatePublicFolderAsync(organizationDistinguishedName, organizationId, securityGroup, parentFolder, folderName, mailEnabled, accountName, name, domain, null);
         }
         
         /// <remarks/>
-        public void CreatePublicFolderAsync(string organizationId, string securityGroup, string parentFolder, string folderName, bool mailEnabled, string accountName, string name, string domain, object userState) {
+        public void CreatePublicFolderAsync(string organizationDistinguishedName, string organizationId, string securityGroup, string parentFolder, string folderName, bool mailEnabled, string accountName, string name, string domain, object userState) {
             if ((this.CreatePublicFolderOperationCompleted == null)) {
                 this.CreatePublicFolderOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCreatePublicFolderOperationCompleted);
             }
             this.InvokeAsync("CreatePublicFolder", new object[] {
+                        organizationDistinguishedName,
                         organizationId,
                         securityGroup,
                         parentFolder,
@@ -3001,14 +3003,16 @@ namespace WebsitePanel.Providers.Exchange {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/DeletePublicFolder", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void DeletePublicFolder(string folder) {
+        public void DeletePublicFolder(string organizationId, string folder) {
             this.Invoke("DeletePublicFolder", new object[] {
+                        organizationId,
                         folder});
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginDeletePublicFolder(string folder, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginDeletePublicFolder(string organizationId, string folder, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("DeletePublicFolder", new object[] {
+                        organizationId,
                         folder}, callback, asyncState);
         }
         
@@ -3018,16 +3022,17 @@ namespace WebsitePanel.Providers.Exchange {
         }
         
         /// <remarks/>
-        public void DeletePublicFolderAsync(string folder) {
-            this.DeletePublicFolderAsync(folder, null);
+        public void DeletePublicFolderAsync(string organizationId, string folder) {
+            this.DeletePublicFolderAsync(organizationId, folder, null);
         }
         
         /// <remarks/>
-        public void DeletePublicFolderAsync(string folder, object userState) {
+        public void DeletePublicFolderAsync(string organizationId, string folder, object userState) {
             if ((this.DeletePublicFolderOperationCompleted == null)) {
                 this.DeletePublicFolderOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDeletePublicFolderOperationCompleted);
             }
             this.InvokeAsync("DeletePublicFolder", new object[] {
+                        organizationId,
                         folder}, this.DeletePublicFolderOperationCompleted, userState);
         }
         
@@ -3093,14 +3098,16 @@ namespace WebsitePanel.Providers.Exchange {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/DisableMailPublicFolder", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void DisableMailPublicFolder(string folder) {
+        public void DisableMailPublicFolder(string organizationId, string folder) {
             this.Invoke("DisableMailPublicFolder", new object[] {
+                        organizationId,
                         folder});
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginDisableMailPublicFolder(string folder, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginDisableMailPublicFolder(string organizationId, string folder, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("DisableMailPublicFolder", new object[] {
+                        organizationId,
                         folder}, callback, asyncState);
         }
         
@@ -3110,16 +3117,17 @@ namespace WebsitePanel.Providers.Exchange {
         }
         
         /// <remarks/>
-        public void DisableMailPublicFolderAsync(string folder) {
-            this.DisableMailPublicFolderAsync(folder, null);
+        public void DisableMailPublicFolderAsync(string organizationId, string folder) {
+            this.DisableMailPublicFolderAsync(organizationId, folder, null);
         }
         
         /// <remarks/>
-        public void DisableMailPublicFolderAsync(string folder, object userState) {
+        public void DisableMailPublicFolderAsync(string organizationId, string folder, object userState) {
             if ((this.DisableMailPublicFolderOperationCompleted == null)) {
                 this.DisableMailPublicFolderOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDisableMailPublicFolderOperationCompleted);
             }
             this.InvokeAsync("DisableMailPublicFolder", new object[] {
+                        organizationId,
                         folder}, this.DisableMailPublicFolderOperationCompleted, userState);
         }
         
@@ -3133,15 +3141,17 @@ namespace WebsitePanel.Providers.Exchange {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetPublicFolderGeneralSettings", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public ExchangePublicFolder GetPublicFolderGeneralSettings(string folder) {
+        public ExchangePublicFolder GetPublicFolderGeneralSettings(string organizationId, string folder) {
             object[] results = this.Invoke("GetPublicFolderGeneralSettings", new object[] {
+                        organizationId,
                         folder});
             return ((ExchangePublicFolder)(results[0]));
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginGetPublicFolderGeneralSettings(string folder, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginGetPublicFolderGeneralSettings(string organizationId, string folder, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("GetPublicFolderGeneralSettings", new object[] {
+                        organizationId,
                         folder}, callback, asyncState);
         }
         
@@ -3152,16 +3162,17 @@ namespace WebsitePanel.Providers.Exchange {
         }
         
         /// <remarks/>
-        public void GetPublicFolderGeneralSettingsAsync(string folder) {
-            this.GetPublicFolderGeneralSettingsAsync(folder, null);
+        public void GetPublicFolderGeneralSettingsAsync(string organizationId, string folder) {
+            this.GetPublicFolderGeneralSettingsAsync(organizationId, folder, null);
         }
         
         /// <remarks/>
-        public void GetPublicFolderGeneralSettingsAsync(string folder, object userState) {
+        public void GetPublicFolderGeneralSettingsAsync(string organizationId, string folder, object userState) {
             if ((this.GetPublicFolderGeneralSettingsOperationCompleted == null)) {
                 this.GetPublicFolderGeneralSettingsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetPublicFolderGeneralSettingsOperationCompleted);
             }
             this.InvokeAsync("GetPublicFolderGeneralSettings", new object[] {
+                        organizationId,
                         folder}, this.GetPublicFolderGeneralSettingsOperationCompleted, userState);
         }
         
@@ -3175,8 +3186,9 @@ namespace WebsitePanel.Providers.Exchange {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/SetPublicFolderGeneralSettings", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void SetPublicFolderGeneralSettings(string folder, string newFolderName, bool hideFromAddressBook, ExchangeAccount[] accounts) {
+        public void SetPublicFolderGeneralSettings(string organizationId, string folder, string newFolderName, bool hideFromAddressBook, ExchangeAccount[] accounts) {
             this.Invoke("SetPublicFolderGeneralSettings", new object[] {
+                        organizationId,
                         folder,
                         newFolderName,
                         hideFromAddressBook,
@@ -3184,8 +3196,9 @@ namespace WebsitePanel.Providers.Exchange {
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginSetPublicFolderGeneralSettings(string folder, string newFolderName, bool hideFromAddressBook, ExchangeAccount[] accounts, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginSetPublicFolderGeneralSettings(string organizationId, string folder, string newFolderName, bool hideFromAddressBook, ExchangeAccount[] accounts, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("SetPublicFolderGeneralSettings", new object[] {
+                        organizationId,
                         folder,
                         newFolderName,
                         hideFromAddressBook,
@@ -3198,16 +3211,17 @@ namespace WebsitePanel.Providers.Exchange {
         }
         
         /// <remarks/>
-        public void SetPublicFolderGeneralSettingsAsync(string folder, string newFolderName, bool hideFromAddressBook, ExchangeAccount[] accounts) {
-            this.SetPublicFolderGeneralSettingsAsync(folder, newFolderName, hideFromAddressBook, accounts, null);
+        public void SetPublicFolderGeneralSettingsAsync(string organizationId, string folder, string newFolderName, bool hideFromAddressBook, ExchangeAccount[] accounts) {
+            this.SetPublicFolderGeneralSettingsAsync(organizationId, folder, newFolderName, hideFromAddressBook, accounts, null);
         }
         
         /// <remarks/>
-        public void SetPublicFolderGeneralSettingsAsync(string folder, string newFolderName, bool hideFromAddressBook, ExchangeAccount[] accounts, object userState) {
+        public void SetPublicFolderGeneralSettingsAsync(string organizationId, string folder, string newFolderName, bool hideFromAddressBook, ExchangeAccount[] accounts, object userState) {
             if ((this.SetPublicFolderGeneralSettingsOperationCompleted == null)) {
                 this.SetPublicFolderGeneralSettingsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetPublicFolderGeneralSettingsOperationCompleted);
             }
             this.InvokeAsync("SetPublicFolderGeneralSettings", new object[] {
+                        organizationId,
                         folder,
                         newFolderName,
                         hideFromAddressBook,
@@ -3224,15 +3238,17 @@ namespace WebsitePanel.Providers.Exchange {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetPublicFolderMailFlowSettings", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public ExchangePublicFolder GetPublicFolderMailFlowSettings(string folder) {
+        public ExchangePublicFolder GetPublicFolderMailFlowSettings(string organizationId, string folder) {
             object[] results = this.Invoke("GetPublicFolderMailFlowSettings", new object[] {
+                        organizationId,
                         folder});
             return ((ExchangePublicFolder)(results[0]));
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginGetPublicFolderMailFlowSettings(string folder, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginGetPublicFolderMailFlowSettings(string organizationId, string folder, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("GetPublicFolderMailFlowSettings", new object[] {
+                        organizationId,
                         folder}, callback, asyncState);
         }
         
@@ -3243,16 +3259,17 @@ namespace WebsitePanel.Providers.Exchange {
         }
         
         /// <remarks/>
-        public void GetPublicFolderMailFlowSettingsAsync(string folder) {
-            this.GetPublicFolderMailFlowSettingsAsync(folder, null);
+        public void GetPublicFolderMailFlowSettingsAsync(string organizationId, string folder) {
+            this.GetPublicFolderMailFlowSettingsAsync(organizationId, folder, null);
         }
         
         /// <remarks/>
-        public void GetPublicFolderMailFlowSettingsAsync(string folder, object userState) {
+        public void GetPublicFolderMailFlowSettingsAsync(string organizationId, string folder, object userState) {
             if ((this.GetPublicFolderMailFlowSettingsOperationCompleted == null)) {
                 this.GetPublicFolderMailFlowSettingsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetPublicFolderMailFlowSettingsOperationCompleted);
             }
             this.InvokeAsync("GetPublicFolderMailFlowSettings", new object[] {
+                        organizationId,
                         folder}, this.GetPublicFolderMailFlowSettingsOperationCompleted, userState);
         }
         
@@ -3266,8 +3283,9 @@ namespace WebsitePanel.Providers.Exchange {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/SetPublicFolderMailFlowSettings", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void SetPublicFolderMailFlowSettings(string folder, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication) {
+        public void SetPublicFolderMailFlowSettings(string organizationId, string folder, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication) {
             this.Invoke("SetPublicFolderMailFlowSettings", new object[] {
+                        organizationId,
                         folder,
                         acceptAccounts,
                         rejectAccounts,
@@ -3275,8 +3293,9 @@ namespace WebsitePanel.Providers.Exchange {
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginSetPublicFolderMailFlowSettings(string folder, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginSetPublicFolderMailFlowSettings(string organizationId, string folder, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("SetPublicFolderMailFlowSettings", new object[] {
+                        organizationId,
                         folder,
                         acceptAccounts,
                         rejectAccounts,
@@ -3289,16 +3308,17 @@ namespace WebsitePanel.Providers.Exchange {
         }
         
         /// <remarks/>
-        public void SetPublicFolderMailFlowSettingsAsync(string folder, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication) {
-            this.SetPublicFolderMailFlowSettingsAsync(folder, acceptAccounts, rejectAccounts, requireSenderAuthentication, null);
+        public void SetPublicFolderMailFlowSettingsAsync(string organizationId, string folder, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication) {
+            this.SetPublicFolderMailFlowSettingsAsync(organizationId, folder, acceptAccounts, rejectAccounts, requireSenderAuthentication, null);
         }
         
         /// <remarks/>
-        public void SetPublicFolderMailFlowSettingsAsync(string folder, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication, object userState) {
+        public void SetPublicFolderMailFlowSettingsAsync(string organizationId, string folder, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication, object userState) {
             if ((this.SetPublicFolderMailFlowSettingsOperationCompleted == null)) {
                 this.SetPublicFolderMailFlowSettingsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetPublicFolderMailFlowSettingsOperationCompleted);
             }
             this.InvokeAsync("SetPublicFolderMailFlowSettings", new object[] {
+                        organizationId,
                         folder,
                         acceptAccounts,
                         rejectAccounts,
@@ -3315,15 +3335,17 @@ namespace WebsitePanel.Providers.Exchange {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetPublicFolderEmailAddresses", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public ExchangeEmailAddress[] GetPublicFolderEmailAddresses(string folder) {
+        public ExchangeEmailAddress[] GetPublicFolderEmailAddresses(string organizationId, string folder) {
             object[] results = this.Invoke("GetPublicFolderEmailAddresses", new object[] {
+                        organizationId,
                         folder});
             return ((ExchangeEmailAddress[])(results[0]));
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginGetPublicFolderEmailAddresses(string folder, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginGetPublicFolderEmailAddresses(string organizationId, string folder, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("GetPublicFolderEmailAddresses", new object[] {
+                        organizationId,
                         folder}, callback, asyncState);
         }
         
@@ -3334,16 +3356,17 @@ namespace WebsitePanel.Providers.Exchange {
         }
         
         /// <remarks/>
-        public void GetPublicFolderEmailAddressesAsync(string folder) {
-            this.GetPublicFolderEmailAddressesAsync(folder, null);
+        public void GetPublicFolderEmailAddressesAsync(string organizationId, string folder) {
+            this.GetPublicFolderEmailAddressesAsync(organizationId, folder, null);
         }
         
         /// <remarks/>
-        public void GetPublicFolderEmailAddressesAsync(string folder, object userState) {
+        public void GetPublicFolderEmailAddressesAsync(string organizationId, string folder, object userState) {
             if ((this.GetPublicFolderEmailAddressesOperationCompleted == null)) {
                 this.GetPublicFolderEmailAddressesOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetPublicFolderEmailAddressesOperationCompleted);
             }
             this.InvokeAsync("GetPublicFolderEmailAddresses", new object[] {
+                        organizationId,
                         folder}, this.GetPublicFolderEmailAddressesOperationCompleted, userState);
         }
         
@@ -3357,15 +3380,17 @@ namespace WebsitePanel.Providers.Exchange {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/SetPublicFolderEmailAddresses", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void SetPublicFolderEmailAddresses(string folder, string[] emailAddresses) {
+        public void SetPublicFolderEmailAddresses(string organizationId, string folder, string[] emailAddresses) {
             this.Invoke("SetPublicFolderEmailAddresses", new object[] {
+                        organizationId,
                         folder,
                         emailAddresses});
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginSetPublicFolderEmailAddresses(string folder, string[] emailAddresses, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginSetPublicFolderEmailAddresses(string organizationId, string folder, string[] emailAddresses, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("SetPublicFolderEmailAddresses", new object[] {
+                        organizationId,
                         folder,
                         emailAddresses}, callback, asyncState);
         }
@@ -3376,16 +3401,17 @@ namespace WebsitePanel.Providers.Exchange {
         }
         
         /// <remarks/>
-        public void SetPublicFolderEmailAddressesAsync(string folder, string[] emailAddresses) {
-            this.SetPublicFolderEmailAddressesAsync(folder, emailAddresses, null);
+        public void SetPublicFolderEmailAddressesAsync(string organizationId, string folder, string[] emailAddresses) {
+            this.SetPublicFolderEmailAddressesAsync(organizationId, folder, emailAddresses, null);
         }
         
         /// <remarks/>
-        public void SetPublicFolderEmailAddressesAsync(string folder, string[] emailAddresses, object userState) {
+        public void SetPublicFolderEmailAddressesAsync(string organizationId, string folder, string[] emailAddresses, object userState) {
             if ((this.SetPublicFolderEmailAddressesOperationCompleted == null)) {
                 this.SetPublicFolderEmailAddressesOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetPublicFolderEmailAddressesOperationCompleted);
             }
             this.InvokeAsync("SetPublicFolderEmailAddresses", new object[] {
+                        organizationId,
                         folder,
                         emailAddresses}, this.SetPublicFolderEmailAddressesOperationCompleted, userState);
         }
@@ -3400,15 +3426,17 @@ namespace WebsitePanel.Providers.Exchange {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/SetPublicFolderPrimaryEmailAddress", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void SetPublicFolderPrimaryEmailAddress(string folder, string emailAddress) {
+        public void SetPublicFolderPrimaryEmailAddress(string organizationId, string folder, string emailAddress) {
             this.Invoke("SetPublicFolderPrimaryEmailAddress", new object[] {
+                        organizationId,
                         folder,
                         emailAddress});
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginSetPublicFolderPrimaryEmailAddress(string folder, string emailAddress, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginSetPublicFolderPrimaryEmailAddress(string organizationId, string folder, string emailAddress, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("SetPublicFolderPrimaryEmailAddress", new object[] {
+                        organizationId,
                         folder,
                         emailAddress}, callback, asyncState);
         }
@@ -3419,16 +3447,17 @@ namespace WebsitePanel.Providers.Exchange {
         }
         
         /// <remarks/>
-        public void SetPublicFolderPrimaryEmailAddressAsync(string folder, string emailAddress) {
-            this.SetPublicFolderPrimaryEmailAddressAsync(folder, emailAddress, null);
+        public void SetPublicFolderPrimaryEmailAddressAsync(string organizationId, string folder, string emailAddress) {
+            this.SetPublicFolderPrimaryEmailAddressAsync(organizationId, folder, emailAddress, null);
         }
         
         /// <remarks/>
-        public void SetPublicFolderPrimaryEmailAddressAsync(string folder, string emailAddress, object userState) {
+        public void SetPublicFolderPrimaryEmailAddressAsync(string organizationId, string folder, string emailAddress, object userState) {
             if ((this.SetPublicFolderPrimaryEmailAddressOperationCompleted == null)) {
                 this.SetPublicFolderPrimaryEmailAddressOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetPublicFolderPrimaryEmailAddressOperationCompleted);
             }
             this.InvokeAsync("SetPublicFolderPrimaryEmailAddress", new object[] {
+                        organizationId,
                         folder,
                         emailAddress}, this.SetPublicFolderPrimaryEmailAddressOperationCompleted, userState);
         }
@@ -3443,15 +3472,17 @@ namespace WebsitePanel.Providers.Exchange {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetPublicFoldersStatistics", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public ExchangeItemStatistics[] GetPublicFoldersStatistics(string[] folders) {
+        public ExchangeItemStatistics[] GetPublicFoldersStatistics(string organizationId, string[] folders) {
             object[] results = this.Invoke("GetPublicFoldersStatistics", new object[] {
+                        organizationId,
                         folders});
             return ((ExchangeItemStatistics[])(results[0]));
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginGetPublicFoldersStatistics(string[] folders, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginGetPublicFoldersStatistics(string organizationId, string[] folders, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("GetPublicFoldersStatistics", new object[] {
+                        organizationId,
                         folders}, callback, asyncState);
         }
         
@@ -3462,16 +3493,17 @@ namespace WebsitePanel.Providers.Exchange {
         }
         
         /// <remarks/>
-        public void GetPublicFoldersStatisticsAsync(string[] folders) {
-            this.GetPublicFoldersStatisticsAsync(folders, null);
+        public void GetPublicFoldersStatisticsAsync(string organizationId, string[] folders) {
+            this.GetPublicFoldersStatisticsAsync(organizationId, folders, null);
         }
         
         /// <remarks/>
-        public void GetPublicFoldersStatisticsAsync(string[] folders, object userState) {
+        public void GetPublicFoldersStatisticsAsync(string organizationId, string[] folders, object userState) {
             if ((this.GetPublicFoldersStatisticsOperationCompleted == null)) {
                 this.GetPublicFoldersStatisticsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetPublicFoldersStatisticsOperationCompleted);
             }
             this.InvokeAsync("GetPublicFoldersStatistics", new object[] {
+                        organizationId,
                         folders}, this.GetPublicFoldersStatisticsOperationCompleted, userState);
         }
         
@@ -3485,15 +3517,17 @@ namespace WebsitePanel.Providers.Exchange {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetPublicFoldersRecursive", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public string[] GetPublicFoldersRecursive(string parent) {
+        public string[] GetPublicFoldersRecursive(string organizationId, string parent) {
             object[] results = this.Invoke("GetPublicFoldersRecursive", new object[] {
+                        organizationId,
                         parent});
             return ((string[])(results[0]));
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginGetPublicFoldersRecursive(string parent, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginGetPublicFoldersRecursive(string organizationId, string parent, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("GetPublicFoldersRecursive", new object[] {
+                        organizationId,
                         parent}, callback, asyncState);
         }
         
@@ -3504,16 +3538,17 @@ namespace WebsitePanel.Providers.Exchange {
         }
         
         /// <remarks/>
-        public void GetPublicFoldersRecursiveAsync(string parent) {
-            this.GetPublicFoldersRecursiveAsync(parent, null);
+        public void GetPublicFoldersRecursiveAsync(string organizationId, string parent) {
+            this.GetPublicFoldersRecursiveAsync(organizationId, parent, null);
         }
         
         /// <remarks/>
-        public void GetPublicFoldersRecursiveAsync(string parent, object userState) {
+        public void GetPublicFoldersRecursiveAsync(string organizationId, string parent, object userState) {
             if ((this.GetPublicFoldersRecursiveOperationCompleted == null)) {
                 this.GetPublicFoldersRecursiveOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetPublicFoldersRecursiveOperationCompleted);
             }
             this.InvokeAsync("GetPublicFoldersRecursive", new object[] {
+                        organizationId,
                         parent}, this.GetPublicFoldersRecursiveOperationCompleted, userState);
         }
         
@@ -3527,15 +3562,17 @@ namespace WebsitePanel.Providers.Exchange {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetPublicFolderSize", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public long GetPublicFolderSize(string folder) {
+        public long GetPublicFolderSize(string organizationId, string folder) {
             object[] results = this.Invoke("GetPublicFolderSize", new object[] {
+                        organizationId,
                         folder});
             return ((long)(results[0]));
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginGetPublicFolderSize(string folder, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginGetPublicFolderSize(string organizationId, string folder, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("GetPublicFolderSize", new object[] {
+                        organizationId,
                         folder}, callback, asyncState);
         }
         
@@ -3546,16 +3583,17 @@ namespace WebsitePanel.Providers.Exchange {
         }
         
         /// <remarks/>
-        public void GetPublicFolderSizeAsync(string folder) {
-            this.GetPublicFolderSizeAsync(folder, null);
+        public void GetPublicFolderSizeAsync(string organizationId, string folder) {
+            this.GetPublicFolderSizeAsync(organizationId, folder, null);
         }
         
         /// <remarks/>
-        public void GetPublicFolderSizeAsync(string folder, object userState) {
+        public void GetPublicFolderSizeAsync(string organizationId, string folder, object userState) {
             if ((this.GetPublicFolderSizeOperationCompleted == null)) {
                 this.GetPublicFolderSizeOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetPublicFolderSizeOperationCompleted);
             }
             this.InvokeAsync("GetPublicFolderSize", new object[] {
+                        organizationId,
                         folder}, this.GetPublicFolderSizeOperationCompleted, userState);
         }
         

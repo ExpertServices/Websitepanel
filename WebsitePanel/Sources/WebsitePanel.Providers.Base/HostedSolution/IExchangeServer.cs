@@ -96,20 +96,20 @@ namespace WebsitePanel.Providers.HostedSolution
         void SetDistributionListPermissions(string organizationId, string accountName, string[] sendAsAccounts, string[] sendOnBehalfAccounts, string[] addressLists);
 
 		// Public Folders
-		void CreatePublicFolder(string organizationId, string securityGroup, string parentFolder, string folderName, bool mailEnabled, string accountName, string name, string domain);
-		void DeletePublicFolder(string folder);
+		void CreatePublicFolder(string organizationDistinguishedName, string organizationId, string securityGroup, string parentFolder, string folderName, bool mailEnabled, string accountName, string name, string domain);
+        void DeletePublicFolder(string organizationId, string folder);
 		void EnableMailPublicFolder(string organizationId, string folder, string accountName, string name, string domain);
-		void DisableMailPublicFolder(string folder);
-		ExchangePublicFolder GetPublicFolderGeneralSettings(string folder);
-		void SetPublicFolderGeneralSettings(string folder, string newFolderName, bool hideFromAddressBook, ExchangeAccount[] accounts );
-		ExchangePublicFolder GetPublicFolderMailFlowSettings(string folder);
-		void SetPublicFolderMailFlowSettings(string folder, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication);
-		ExchangeEmailAddress[] GetPublicFolderEmailAddresses(string folder);
-		void SetPublicFolderEmailAddresses(string folder, string[] emailAddresses);
-		void SetPublicFolderPrimaryEmailAddress(string folder, string emailAddress);
-		ExchangeItemStatistics[] GetPublicFoldersStatistics(string[] folders);
-		string[] GetPublicFoldersRecursive(string parent);
-		long GetPublicFolderSize(string folder);
+        void DisableMailPublicFolder(string organizationId, string folder);
+        ExchangePublicFolder GetPublicFolderGeneralSettings(string organizationId, string folder);
+        void SetPublicFolderGeneralSettings(string organizationId, string folder, string newFolderName, bool hideFromAddressBook, ExchangeAccount[] accounts);
+        ExchangePublicFolder GetPublicFolderMailFlowSettings(string organizationId, string folder);
+        void SetPublicFolderMailFlowSettings(string organizationId, string folder, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication);
+        ExchangeEmailAddress[] GetPublicFolderEmailAddresses(string organizationId, string folder);
+        void SetPublicFolderEmailAddresses(string organizationId, string folder, string[] emailAddresses);
+        void SetPublicFolderPrimaryEmailAddress(string organizationId, string folder, string emailAddress);
+        ExchangeItemStatistics[] GetPublicFoldersStatistics(string organizationId, string[] folders);
+        string[] GetPublicFoldersRecursive(string organizationId, string parent);
+        long GetPublicFolderSize(string organizationId, string folder);
 
         //ActiveSync
         void CreateOrganizationActiveSyncPolicy(string organizationId);

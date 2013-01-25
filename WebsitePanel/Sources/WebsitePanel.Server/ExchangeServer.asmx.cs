@@ -822,13 +822,13 @@ namespace WebsitePanel.Server
         
         #region Public Folders
 		[WebMethod, SoapHeader("settings")]
-		public void CreatePublicFolder(string organizationId, string securityGroup, string parentFolder,
+		public void CreatePublicFolder(string organizationDistinguishedName, string organizationId, string securityGroup, string parentFolder,
 			string folderName, bool mailEnabled, string accountName, string name, string domain)
 		{
 			try
 			{
 				LogStart("CreatePublicFolder");
-				ES.CreatePublicFolder(organizationId, securityGroup, parentFolder, folderName,
+				ES.CreatePublicFolder(organizationDistinguishedName, organizationId, securityGroup, parentFolder, folderName,
 					mailEnabled, accountName, name, domain);
 
 				LogEnd("CreatePublicFolder");
@@ -841,12 +841,12 @@ namespace WebsitePanel.Server
 		}
 		
 		[WebMethod, SoapHeader("settings")]
-		public void DeletePublicFolder(string folder)
+        public void DeletePublicFolder(string organizationId, string folder)
 		{
 			try
 			{
 				LogStart("DeletePublicFolder");
-				ES.DeletePublicFolder(folder);
+				ES.DeletePublicFolder(organizationId, folder);
 				LogEnd("DeletePublicFolder");
 			}
 			catch (Exception ex)
@@ -874,12 +874,12 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public void DisableMailPublicFolder(string folder)
+        public void DisableMailPublicFolder(string organizationId, string folder)
 		{
 			try
 			{
 				LogStart("DisableMailPublicFolder");
-				ES.DisableMailPublicFolder(folder);
+				ES.DisableMailPublicFolder(organizationId, folder);
 				LogEnd("DisableMailPublicFolder");
 			}
 			catch (Exception ex)
@@ -890,12 +890,12 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public ExchangePublicFolder GetPublicFolderGeneralSettings(string folder)
+        public ExchangePublicFolder GetPublicFolderGeneralSettings(string organizationId, string folder)
 		{
 			try
 			{
 				LogStart("GetPublicFolderGeneralSettings");
-				ExchangePublicFolder ret = ES.GetPublicFolderGeneralSettings(folder);
+				ExchangePublicFolder ret = ES.GetPublicFolderGeneralSettings(organizationId, folder);
 				LogEnd("GetPublicFolderGeneralSettings");
 				return ret;
 			}
@@ -907,13 +907,13 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public void SetPublicFolderGeneralSettings(string folder, string newFolderName,
+        public void SetPublicFolderGeneralSettings(string organizationId, string folder, string newFolderName,
 			 bool hideFromAddressBook, ExchangeAccount[] accounts)
 		{
 			try
 			{
 				LogStart("SetPublicFolderGeneralSettings");
-				ES.SetPublicFolderGeneralSettings(folder, newFolderName, hideFromAddressBook,  accounts);
+				ES.SetPublicFolderGeneralSettings(organizationId, folder, newFolderName, hideFromAddressBook,  accounts);
 				LogEnd("SetPublicFolderGeneralSettings");
 			}
 			catch (Exception ex)
@@ -924,12 +924,12 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public ExchangePublicFolder GetPublicFolderMailFlowSettings(string folder)
+        public ExchangePublicFolder GetPublicFolderMailFlowSettings(string organizationId, string folder)
 		{
 			try
 			{
 				LogStart("GetPublicFolderMailFlowSettings");
-				ExchangePublicFolder ret = ES.GetPublicFolderMailFlowSettings(folder);
+				ExchangePublicFolder ret = ES.GetPublicFolderMailFlowSettings(organizationId, folder);
 				LogEnd("GetPublicFolderMailFlowSettings");
 				return ret;
 			}
@@ -941,13 +941,13 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public void SetPublicFolderMailFlowSettings(string folder,
+        public void SetPublicFolderMailFlowSettings(string organizationId, string folder,
 			string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication)
 		{
 			try
 			{
 				LogStart("SetPublicFolderMailFlowSettings");
-				ES.SetPublicFolderMailFlowSettings(folder, acceptAccounts, rejectAccounts, requireSenderAuthentication);
+				ES.SetPublicFolderMailFlowSettings(organizationId, folder, acceptAccounts, rejectAccounts, requireSenderAuthentication);
 				LogEnd("SetPublicFolderMailFlowSettings");
 			}
 			catch (Exception ex)
@@ -958,12 +958,12 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public ExchangeEmailAddress[] GetPublicFolderEmailAddresses(string folder)
+        public ExchangeEmailAddress[] GetPublicFolderEmailAddresses(string organizationId, string folder)
 		{
 			try
 			{
 				LogStart("GetPublicFolderEmailAddresses");
-				ExchangeEmailAddress[] ret = ES.GetPublicFolderEmailAddresses(folder);
+				ExchangeEmailAddress[] ret = ES.GetPublicFolderEmailAddresses(organizationId, folder);
 				LogEnd("GetPublicFolderEmailAddresses");
 				return ret;
 			}
@@ -975,12 +975,12 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public void SetPublicFolderEmailAddresses(string folder, string[] emailAddresses)
+        public void SetPublicFolderEmailAddresses(string organizationId, string folder, string[] emailAddresses)
 		{
 			try
 			{
 				LogStart("SetPublicFolderEmailAddresses");
-				ES.SetPublicFolderEmailAddresses(folder, emailAddresses);
+				ES.SetPublicFolderEmailAddresses(organizationId, folder, emailAddresses);
 				LogEnd("SetPublicFolderEmailAddresses");
 			}
 			catch (Exception ex)
@@ -991,12 +991,12 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public void SetPublicFolderPrimaryEmailAddress(string folder, string emailAddress)
+        public void SetPublicFolderPrimaryEmailAddress(string organizationId, string folder, string emailAddress)
 		{
 			try
 			{
 				LogStart("SetPublicFolderPrimaryEmailAddress");
-				ES.SetPublicFolderPrimaryEmailAddress(folder, emailAddress);
+				ES.SetPublicFolderPrimaryEmailAddress(organizationId, folder, emailAddress);
 				LogEnd("SetPublicFolderPrimaryEmailAddress");
 			}
 			catch (Exception ex)
@@ -1007,12 +1007,12 @@ namespace WebsitePanel.Server
 		}
 		
 		[WebMethod, SoapHeader("settings")]
-		public ExchangeItemStatistics[] GetPublicFoldersStatistics(string[] folders)
+        public ExchangeItemStatistics[] GetPublicFoldersStatistics(string organizationId, string[] folders)
 		{
 			try
 			{
 				LogStart("GetPublicFoldersStatistics");
-				ExchangeItemStatistics[] ret = ES.GetPublicFoldersStatistics(folders);
+				ExchangeItemStatistics[] ret = ES.GetPublicFoldersStatistics(organizationId, folders);
 				LogEnd("GetPublicFoldersStatistics");
 				return ret;
 			}
@@ -1024,12 +1024,12 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public string[] GetPublicFoldersRecursive(string parent)
+        public string[] GetPublicFoldersRecursive(string organizationId, string parent)
 		{
 			try
 			{
 				LogStart("GetPublicFoldersRecursive");
-				string[] ret = ES.GetPublicFoldersRecursive(parent);
+				string[] ret = ES.GetPublicFoldersRecursive(organizationId, parent);
 				LogEnd("GetPublicFoldersRecursive");
 				return ret;
 			}
@@ -1041,12 +1041,12 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public long GetPublicFolderSize(string folder)
+        public long GetPublicFolderSize(string organizationId, string folder)
 		{
 			try
 			{
 				LogStart("GetPublicFolderSize");
-				long ret = ES.GetPublicFolderSize(folder);
+				long ret = ES.GetPublicFolderSize(organizationId, folder);
 				LogEnd("GetPublicFolderSize");
 				return ret;
 			}

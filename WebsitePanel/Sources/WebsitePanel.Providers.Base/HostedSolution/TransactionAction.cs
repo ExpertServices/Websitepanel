@@ -83,6 +83,7 @@ namespace WebsitePanel.Providers.HostedSolution
             CreateMailbox,
             CreateContact,
             CreatePublicFolder,
+            CreatePublicFolderMailbox,
             CreateActiveSyncPolicy,
             AddMailboxFullAccessPermission,
             AddSendAsPermission,
