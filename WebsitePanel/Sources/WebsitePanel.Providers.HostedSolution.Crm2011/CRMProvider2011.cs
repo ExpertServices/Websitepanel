@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -15,6 +15,9 @@ using Microsoft.Win32;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Server.Utils;
+using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.Providers;
+using WebsitePanel.Providers.Utils;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk.Discovery;
@@ -321,7 +324,7 @@ namespace WebsitePanel.Providers.HostedSolution
             return CreateOrganizationInternal(organizationId, organizationUniqueName, organizationFriendlyName, baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, initialUserDomainName, initialUserFirstName, initialUserLastName, initialUserPrimaryEmail, organizationCollation);
         }
 
-        const string CRMSysAdminRoleStr = "Ñèñòåìíûé àäìèíèñòðàòîð;System Administrator";
+        const string CRMSysAdminRoleStr = "Ã‘Ã¨Ã±Ã²Ã¥Ã¬Ã­Ã»Ã© Ã Ã¤Ã¬Ã¨Ã­Ã¨Ã±Ã²Ã°Ã Ã²Ã®Ã°;System Administrator";
 
         internal OrganizationResult CreateOrganizationInternal(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation)
         {
@@ -479,7 +482,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
             finally

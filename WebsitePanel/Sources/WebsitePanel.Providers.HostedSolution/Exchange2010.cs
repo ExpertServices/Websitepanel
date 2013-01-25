@@ -309,7 +309,7 @@ namespace WebsitePanel.Providers.HostedSolution
                         info.LitigationHoldTotalSize = (totalItemSize == null) ? 0 : ConvertUnlimitedToBytes(totalItemSize);
 
                         Int32 itemCount = (Int32)GetPSObjectProperty(statistics, "ItemsInFolder");
-                        info.LitigationHoldTotalItems = (itemCount == null) ? 0 : itemCount;
+                        info.LitigationHoldTotalItems = (itemCount == 0) ? 0 : itemCount;
                     }
                 }
                 else

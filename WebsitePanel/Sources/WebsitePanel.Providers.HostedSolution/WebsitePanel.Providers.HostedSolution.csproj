@@ -15,7 +15,7 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -62,10 +62,6 @@
     <Reference Include="Microsoft.Crm.Admin.AdminService">
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Crm.Admin.AdminService.dll</HintPath>
       <Private>False</Private>
-    </Reference>
-    <Reference Include="microsoft.crm.sdk.proxy, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Lib\References\Microsoft\microsoft.crm.sdk.proxy.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Crm.Setup.Common">
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Crm.Setup.Common.dll</HintPath>
@@ -123,34 +119,6 @@
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.SharePoint.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="microsoft.xrm.client, Version=5.0.9689.1985, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Lib\References\Microsoft\microsoft.xrm.client.dll</HintPath>
-    </Reference>
-    <Reference Include="microsoft.xrm.client.codegeneration, Version=5.0.9689.1985, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Lib\References\Microsoft\microsoft.xrm.client.codegeneration.dll</HintPath>
-    </Reference>
-    <Reference Include="microsoft.xrm.portal, Version=5.0.9689.1985, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Lib\References\Microsoft\microsoft.xrm.portal.dll</HintPath>
-    </Reference>
-    <Reference Include="microsoft.xrm.portal.files, Version=5.0.9689.1985, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Lib\References\Microsoft\microsoft.xrm.portal.files.dll</HintPath>
-    </Reference>
-    <Reference Include="microsoft.xrm.sdk, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Lib\References\Microsoft\microsoft.xrm.sdk.dll</HintPath>
-    </Reference>
-    <Reference Include="microsoft.xrm.sdk.deployment, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Lib\References\Microsoft\microsoft.xrm.sdk.deployment.dll</HintPath>
-    </Reference>
-    <Reference Include="microsoft.xrm.sdk.workflow, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Lib\References\Microsoft\microsoft.xrm.sdk.workflow.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -173,13 +141,11 @@
     </Compile>
     <Compile Include="BlackBerry5Provider.cs" />
     <Compile Include="BlackBerryProvider.cs" />
-    <Compile Include="CRMProvider2011.cs" />
     <Compile Include="Exchange2010.cs" />
     <Compile Include="Exchange2010SP2.cs" />
     <Compile Include="HostedSharePointServer2010.cs" />
     <Compile Include="Lync2010.cs" />
     <Compile Include="LyncTransaction.cs" />
-    <Compile Include="myorganizationcrmsdktypes.cs" />
     <Compile Include="OCSEdge2007R2.cs" />
     <Compile Include="OCS2007R2.cs" />
     <Compile Include="CRMProvider.cs" />

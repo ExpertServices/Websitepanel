@@ -417,6 +417,10 @@ GO
 
 IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Hosted MS CRM 2011')
 BEGIN
-INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (1201, 21, N'CRM', N'Hosted MS CRM 2011', N'WebsitePanel.Providers.HostedSolution.CRMProvider2011, WebsitePanel.Providers.HostedSolution', N'CRM', NULL)
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (1201, 21, N'CRM', N'Hosted MS CRM 2011', N'WebsitePanel.Providers.HostedSolution.CRMProvider2011, WebsitePanel.Providers.HostedSolution.CRMProvider2011', N'CRM', NULL)
 END
+GO
+
+
+UPDATE Providers SET ProviderType = N'WebsitePanel.Providers.HostedSolution.CRMProvider2011, WebsitePanel.Providers.HostedSolution.CRMProvider2011' WHERE ProviderID = 1201
 GO
