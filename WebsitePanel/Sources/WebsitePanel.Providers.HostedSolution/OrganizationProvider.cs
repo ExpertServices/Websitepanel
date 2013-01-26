@@ -719,13 +719,14 @@ namespace WebsitePanel.Providers.HostedSolution
         private bool DoesSamAccountNameExistInternal(string accountName)
         {
             HostedSolutionLog.LogStart("DoesSamAccountNameExistInternal");
-            HostedSolutionLog.DebugInfo("userPrincipalName : {0}", accountName);
+            HostedSolutionLog.DebugInfo("sAMAccountName : {0}", accountName);
             bool bFound = false;
 
             try
             {
 
                 string path = GetRootOU();
+                HostedSolutionLog.DebugInfo("Search path : {0}", path);
                 DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
 
                 DirectorySearcher searcher = new DirectorySearcher(entry);
@@ -737,15 +738,16 @@ namespace WebsitePanel.Providers.HostedSolution
                 if (resCollection != null)
                 {
                     if(resCollection.Properties["samaccountname"] != null)
-                        bFound = true; ;
+                        bFound = true; 
                 }
-
-                HostedSolutionLog.LogEnd("GetSamAccountNameByUserPrincipalNameInternal");
             }
             catch (Exception e)
             {
                 HostedSolutionLog.DebugInfo("Failed : {0}", e.Message);
             }
+
+            HostedSolutionLog.DebugInfo("DoesSamAccountNameExistInternal Result: {0}", bFound);
+            HostedSolutionLog.LogEnd("DoesSamAccountNameExistInternal");
 
             return bFound;
         }

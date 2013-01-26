@@ -75,10 +75,8 @@ namespace WebsitePanel.Providers.HostedSolution
 
         public static void DebugInfo(string message, params object[] args)
 		{
-#if DEBUG
 			string text = String.Format(message, args);
 			Log.WriteInfo("{0} {1}", LogPrefix, text);
-#endif
 		}
 
         public static void EndLog(string message, ResultObject res, string errorCode, Exception ex)
