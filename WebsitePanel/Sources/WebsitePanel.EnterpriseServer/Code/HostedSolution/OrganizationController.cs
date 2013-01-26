@@ -1458,19 +1458,15 @@ namespace WebsitePanel.EnterpriseServer
         private static string BuildAccountName(string orgId, string name, int ServiceId)
         {
             string accountName = name = name.Replace(" ", "");
-            string CounterStr = "00000";
             int counter = 0;
             bool bFound = false;
 
-            if (!AccountExists(accountName, ServiceId)) return accountName;
-
             do
             {
-                accountName = genSamLogin(name, CounterStr);
+                accountName = genSamLogin(name, counter.ToString("d5"));
 
                 if (!AccountExists(accountName, ServiceId)) bFound = true;
 
-                CounterStr = counter.ToString("d5");
                 counter++;
             }
             while (!bFound);

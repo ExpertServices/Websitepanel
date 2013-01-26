@@ -1238,7 +1238,6 @@ namespace WebsitePanel.EnterpriseServer
         private static string BuildAccountName(string orgId, string name)
         {
             string accountName = name = name.Replace(" ", "");
-            string CounterStr = "00000";
             int counter = 0;
             bool bFound = false;
 
@@ -1246,11 +1245,10 @@ namespace WebsitePanel.EnterpriseServer
 
             do
             {
-                accountName = genSamLogin(name, CounterStr);
+                accountName = genSamLogin(name, counter.ToString("d5"));
 
                 if (!AccountExists(accountName)) bFound = true;
 
-                CounterStr = counter.ToString("d5");
                 counter++;
             }
             while (!bFound);
