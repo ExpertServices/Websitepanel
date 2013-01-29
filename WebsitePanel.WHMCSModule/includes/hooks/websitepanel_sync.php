@@ -50,17 +50,19 @@ function websitepanel_sync_ClientEdit($params)
     {
         // Include the WebsitePanel ES Class
         require_once(ROOTDIR . '/modules/servers/websitepanel/websitepanel.class.php');
+        require_once(ROOTDIR . '/modules/servers/websitepanel/websitepanel.functions.php');
         
         // Retrieve the WebsitePanel Addons module settings
         $modSettings = websitepanel_sync_GetSettings();
-        if (empty($modSettings['username']) || empty($modSettings['password']) || empty($modSettings['serverhost']) || empty($modSettings['serverport']))
+        $srvSettings = websitepanel_GetServerSettings();
+        if (empty($modSettings['serverhost']) || empty($modSettings['serverport']) || empty($srvSettings['username']) || empty($srvSettings['password']))
         {
             // The module is disabled or has not yet been configured - stop
             return;
         }
         
         // Create the WebsitePanel object instance
-        $wsp = new WebsitePanel($modSettings['username'], $modSettings['password'], $modSettings['serverhost'], $modSettings['serverport'], (($modSettings['serversecured']) == 'on' ? TRUE : FALSE));
+        $wsp = new WebsitePanel($srvSettings['username'], $srvSettings['password'], $modSettings['serverhost'], $modSettings['serverport'], (($modSettings['serversecured']) == 'on' ? TRUE : FALSE));
         
         // Get all WSP users with the old email
         $items = (array)$wsp->get_users_paged_recursive(1, 'Email', $params['olddata']['email'], 0, 0, '');
