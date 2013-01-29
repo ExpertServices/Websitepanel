@@ -50,6 +50,7 @@ function websitepanel_GetErrorMessage($code)
     
     // Include the common / known error codes
     require_once(ROOTDIR . '/modules/servers/websitepanel/websitepanel.errorcodes.php');
+    $esErrorCodes = websitepanel_GetEnterpriseServerErrors();
     
     // Check if the error code exists, if not return the code
     if (array_key_exists($code, $esErrorCodes))
