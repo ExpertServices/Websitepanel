@@ -147,4 +147,10 @@
   <data name="locEnableSsl.Text" xml:space="preserve">
     <value>Enable SSL:</value>
   </data>
+  <data name="lclWpiMainFeedUrl.Text" xml:space="preserve">
+    <value>Main feed URL:</value>
+  </data>
+  <data name="lclWpiCustomFeeds.Text" xml:space="preserve">
+    <value>Custom feeds:</value>
+  </data>
 </root>

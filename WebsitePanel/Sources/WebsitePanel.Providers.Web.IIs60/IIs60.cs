@@ -279,7 +279,8 @@ namespace WebsitePanel.Providers.Web
 			get { return FileUtils.EvaluateSystemVariables(ProviderSettings["ProtectedFoldersFile"]); }
 		}
 
-		protected string GalleryXmlFeedUrl
+        /*
+        protected string GalleryXmlFeedUrl
 		{
 			get
 			{
@@ -289,6 +290,7 @@ namespace WebsitePanel.Providers.Web
 				return ret;
 			}
 		}
+        */
 		#endregion
 
 		private WmiHelper wmi = null;

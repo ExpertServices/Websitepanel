@@ -131,15 +131,6 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.Panel BackupPanel;
         
         /// <summary>
-        /// Localize1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize Localize1;
-        
-        /// <summary>
         /// txtBackupsPath control.
         /// </summary>
         /// <remarks>
@@ -167,22 +158,13 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.Panel WpiPanel;
         
         /// <summary>
-        /// wpiMicrosoftFeed control.
+        /// txtMainFeedUrl control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox wpiMicrosoftFeed;
-        
-        /// <summary>
-        /// wpiHeliconTechFeed control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox wpiHeliconTechFeed;
+        protected global::System.Web.UI.WebControls.TextBox txtMainFeedUrl;
         
         /// <summary>
         /// wpiEditFeedsList control.

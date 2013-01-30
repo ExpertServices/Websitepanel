@@ -477,11 +477,7 @@ namespace WebsitePanel.Server
         }
 
        
-        static string[] FEEDS = new string[]
-                {
-              //      "https://www.microsoft.com/web/webpi/3.0/WebProductList.xml",
-              //      "http://www.helicontech.com/zoo/feed/"
-                };
+        static private string[] _feeds = new string[]{};
 
         [WebMethod]
         public void InitWPIFeeds(string feedUrls)
@@ -491,18 +487,18 @@ namespace WebsitePanel.Server
                 throw new Exception("Empty feed list");
             }
 
-            string[] newFEEDS = feedUrls.Split(';');
+            string[] newFeeds = feedUrls.Split(';');
 
-            if (newFEEDS.Length == 0)
+            if (newFeeds.Length == 0)
             {
                 throw new Exception("Empty feed list");
             }
-            if (!ArraysEqual<string>(newFEEDS, FEEDS))
+            if (!ArraysEqual<string>(newFeeds, _feeds))
             {
                 Log.WriteInfo("InitWPIFeeds - new value: " + feedUrls);
 
                 //Feeds settings have been channged
-                FEEDS = newFEEDS;
+                _feeds = newFeeds;
                 wpi = null;
 
             }
@@ -604,7 +600,7 @@ namespace WebsitePanel.Server
                 
                 WPIServiceContract client = new WPIServiceContract();
 
-                client.Initialize(FEEDS);
+                client.Initialize(_feeds);
                 client.BeginInstallation(products);
 
                 
@@ -795,14 +791,14 @@ namespace WebsitePanel.Server
         static WpiHelper wpi = null;
         WpiHelper GetWpiFeed()
         {
-            if (FEEDS.Length == 0)
+            if (_feeds.Length == 0)
             {
                 throw new Exception("Empty feed list");
             }
 
             if (null == wpi)
             {
-                wpi = new WpiHelper(FEEDS);
+                wpi = new WpiHelper(_feeds);
             }
             return wpi;
         }

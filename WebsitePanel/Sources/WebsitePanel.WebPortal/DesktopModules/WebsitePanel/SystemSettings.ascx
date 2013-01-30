@@ -35,34 +35,28 @@
 	<asp:Panel ID="BackupPanel" runat="server" Height="0" style="overflow:hidden;">
 		<table>
 			<tr>
-				<td class="SubHead" style="width:200px;"><asp:Localize ID="Localize1" runat="server" meta:resourcekey="lclBackupFolderPath" /></td>
-				<td><asp:TextBox runat="server" ID="txtBackupsPath" Width="300px" /></td>
+				<td class="SubHead" style="width:200px;"><asp:Localize runat="server" meta:resourcekey="lclBackupFolderPath" /></td>
+				<td><asp:TextBox runat="server" ID="txtBackupsPath" Width="450px" /></td>
 			</tr>
 		</table>
 	</asp:Panel>
 
     <wsp:CollapsiblePanel id="lclWpiSettings" runat="server"
-		TargetControlID="WpiPanel" meta:resourcekey="lclWpiSettings" Text="WebPlatformInstaller Settings"/>
-	<asp:Panel ID="WpiPanel" runat="server" Height="0" style="overflow:hidden;">
-       <asp:CheckBox ID="wpiMicrosoftFeed" runat="server" Text="Yes" Visible="false"/>
-       <asp:CheckBox ID="wpiHeliconTechFeed" runat="server" Text="Yes" Visible="false" />
-<%--     <table> 
+		TargetControlID="WpiPanel" meta:resourcekey="lclWpiSettings" Text="Web Platform Installer Settings"/>
+	
+    <asp:Panel ID="WpiPanel" runat="server" Height="0" style="overflow:hidden;">
+		<table>
 			<tr>
-				<td class="SubHead" style="width:200px;">Enable Microsoft feed</td>
-				<td class="Normal">
-                    <asp:CheckBox ID="wpiMicrosoftFeed" runat="server" Text="Yes" Visible="false"/>
-                </td>
+				<td class="SubHead" style="width:200px;"><asp:Localize runat="server" meta:resourcekey="lclWpiMainFeedUrl" Text="Main feed URL:" /></td>
+				<td><asp:TextBox runat="server" ID="txtMainFeedUrl" Width="450px" /></td>
 			</tr>
-			
             <tr>
-		        <td class="SubHead" style="width:200px;">Enable HeliconTech feed</td>
-                <td class="Normal">
-                    <asp:CheckBox ID="wpiHeliconTechFeed" runat="server" Text="Yes" Visible="false" />
+                <td class="SubHead" style="width:200px; vertical-align: top;"><asp:Localize runat="server" meta:resourcekey="lclWpiCustomFeeds" Text="Custom feeds:" /></td>
+                <td>
+                    <uc1:EditFeedsList ID="wpiEditFeedsList" runat="server" DisplayNames="false" />
                 </td>
             </tr>
-	  </table>
---%>
-        <uc1:EditFeedsList ID="wpiEditFeedsList" runat="server" DisplayNames="false" />
+		</table>
 	</asp:Panel>
 </div>
 <div class="FormFooter">
