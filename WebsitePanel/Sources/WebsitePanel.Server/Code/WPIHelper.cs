@@ -57,8 +57,6 @@ namespace WebsitePanel.Server.Code
 
         private readonly List<string> _feeds;
         private string _webPIinstallersFolder;
-        //private const string MainWpiFeed = "https://www.microsoft.com/web/webpi/3.0/webproductlist.xml";
-        private const string MainWpiFeed = "https://www.microsoft.com/web/webpi/4.0/WebProductList.xml";
         private const string IisChoiceProduct = "StaticContent";
         private const string WebMatrixChoiceProduct = "WebMatrix";
         private ProductManager _productManager;
@@ -79,6 +77,14 @@ namespace WebsitePanel.Server.Code
 
         public WpiHelper(IEnumerable<string> feeds)
         {
+            // check feeds is not empty
+            if (null == feeds || !feeds.Any())
+            {
+                throw new Exception("WpiHelper error: empty feed list in constructor");
+            }
+
+            
+            // by default feeds must contains main MS WPI feed url and Zoo feed url
             _feeds = new List<string>();
             _feeds.AddRange(feeds);
 
@@ -135,7 +141,6 @@ namespace WebsitePanel.Server.Code
         }
        #endregion
 
-
         #region Keywords
         public ReadOnlyCollection<Keyword> GetKeywords()
         {
@@ -157,8 +162,6 @@ namespace WebsitePanel.Server.Code
 
         }
         #endregion
-
-
 
         #region Products
         public List<Product> GetProductsToInstall(string FeedLocation, string keywordId)
@@ -546,6 +549,7 @@ namespace WebsitePanel.Server.Code
         }
 
         #endregion
+
         #endregion Public interface
 
 
@@ -553,12 +557,6 @@ namespace WebsitePanel.Server.Code
 
         private void Initialize()
         {
-            // insert Main WebPI xml file
-            if (!_feeds.Contains(MainWpiFeed, StringComparer.OrdinalIgnoreCase))
-            {
-                _feeds.Insert(0, MainWpiFeed);
-            }
-
             // create cache folder if not exists
             //_webPIinstallersFolder = Environment.ExpandEnvironmentVariables(@"%LocalAppData%\Microsoft\Web Platform Installer\installers");
             _webPIinstallersFolder = Path.Combine(

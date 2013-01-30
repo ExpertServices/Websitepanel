@@ -36,7 +36,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
-
+using WebsitePanel.EnterpriseServer.Base.Common;
 using WSP = WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal
@@ -48,12 +48,12 @@ namespace WebsitePanel.Portal
 		public const string SMTP_USERNAME = "SmtpUsername";
 		public const string SMTP_PASSWORD = "SmtpPassword";
 		public const string SMTP_ENABLE_SSL = "SmtpEnableSsl";
-
 		public const string BACKUPS_PATH = "BackupsPath";
 
-        public const string FEED_ULS = "FeedUrls";
+        /*
         public const string FEED_ENABLE_MICROSOFT = "FeedEnableMicrosoft";
         public const string FEED_ENABLE_HELICON = "FeedEnableHelicon";
+        */
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
@@ -95,20 +95,31 @@ namespace WebsitePanel.Portal
 
 
             // WPI
-            settings = ES.Services.System.GetSystemSettings(
-                WSP.SystemSettings.WPI_SETTINGS);
+            settings = ES.Services.System.GetSystemSettings(WSP.SystemSettings.WPI_SETTINGS);
 
+            /*
             if (settings != null)
             {
                 wpiMicrosoftFeed.Checked = Utils.ParseBool(settings[FEED_ENABLE_MICROSOFT],true);
                 wpiHeliconTechFeed.Checked = Utils.ParseBool(settings[FEED_ENABLE_HELICON],true);
-                wpiEditFeedsList.Value = settings[FEED_ULS];
             }
             else
             {
                 wpiMicrosoftFeed.Checked = true;
                 wpiHeliconTechFeed.Checked = true;
+            }
+            */
 
+            if (null != settings)
+            {
+                wpiEditFeedsList.Value = settings[WSP.SystemSettings.FEED_ULS_KEY];
+
+                string mainFeedUrl = settings[WSP.SystemSettings.WPI_MAIN_FEED_KEY];
+                if (string.IsNullOrEmpty(mainFeedUrl))
+                {
+                    mainFeedUrl = WebPlatformInstaller.MAIN_FEED_URL;
+                }
+                txtMainFeedUrl.Text = mainFeedUrl;
             }
      
 
@@ -152,13 +163,21 @@ namespace WebsitePanel.Portal
 
 
                 // WPI
-                settings[FEED_ULS] = wpiEditFeedsList.Value;
+                /*
                 settings[FEED_ENABLE_MICROSOFT] = wpiMicrosoftFeed.Checked.ToString();
                 settings[FEED_ENABLE_HELICON] = wpiHeliconTechFeed.Checked.ToString();
+                */
+
+                settings[WSP.SystemSettings.FEED_ULS_KEY] = wpiEditFeedsList.Value;
+			    string mainFeedUrl = txtMainFeedUrl.Text;
+                if (string.IsNullOrEmpty(mainFeedUrl))
+                {
+                    mainFeedUrl = WebPlatformInstaller.MAIN_FEED_URL;
+                }
+			    settings[WSP.SystemSettings.WPI_MAIN_FEED_KEY] = mainFeedUrl;
 
 
-                result = ES.Services.System.SetSystemSettings(
-                    WSP.SystemSettings.WPI_SETTINGS, settings);
+                result = ES.Services.System.SetSystemSettings(WSP.SystemSettings.WPI_SETTINGS, settings);
 
                 if (result < 0)
                 {

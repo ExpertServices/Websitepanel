@@ -74,6 +74,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Common\MailTemplate.cs" />
+    <Compile Include="Common\WebPlatformInstaller.cs" />
     <Compile Include="DatabaseServers\DatabaseBrowserConfiguration.cs" />
     <Compile Include="Ecommerce\BillingCycle.cs" />
     <Compile Include="Ecommerce\Category.cs" />
