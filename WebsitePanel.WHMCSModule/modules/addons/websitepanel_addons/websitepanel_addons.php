@@ -46,13 +46,11 @@ function websitepanel_addons_config()
 {
     $configarray = array('name' => 'WebsitePanel Addons Automation',
                          'description' => 'Automates WHMCS product addons with WebsitePanel',
-                         'version' => '1.0',
+                         'version' => '1.2',
                          'author' => 'Christopher York',
                          'fields' => array('serverhost' => array('FriendlyName', 'Enterprise Server Host', 'Type' => 'text', 'Size' => 25, 'Description' => 'Enterprise Server hostname / IP address', 'Default' => '127.0.0.1'),
                                            'serverport' => array('FriendlyName', 'Enterprise Server Port', 'Type' => 'text', 'Size' => 4, 'Description' => 'Enterprise Server port', 'Default' => 9002),
                                            'serversecured' => array('FriendlyName', 'Use Secured Connection', 'Type' => 'yesno', 'Description' => 'Tick to use SSL secured connection'),
-                                           'username' => array('FriendlyName', 'Username', 'Type' => 'text', 'Size' => 25, 'Description' => 'Enterprise Server username', 'Default' => 'serveradmin'),
-                                           'password' => array('FriendlyName', 'Password', 'Type' => 'password', 'Size' => 25, 'Description' => 'Enterprise Server password')
                                            )
                         );
     return $configarray;
@@ -67,7 +65,7 @@ function websitepanel_addons_config()
 function websitepanel_addons_activate()
 {
     // Create the WebsitePanel Addons table
-    $query = "CREATE TABLE `tblwspaddons` (
+    $query = "CREATE TABLE `mod_wspaddons` (
               `whmcs_id` int(11) NOT NULL,
               `wsp_id` int(11) NOT NULL,
               `is_ipaddress` bit(1) NOT NULL DEFAULT b'0',
@@ -94,9 +92,8 @@ function websitepanel_addons_activate()
  */
 function websitepanel_addons_deactivate()
 {
-    // Create the WebsitePanel Addons table
-    $query = 'DROP TABLE `tblwspaddons`';
-    $result = full_query($query);
+    // Drop the WebsitePanel Addons table
+    $result = full_query('DROP TABLE `mod_wspaddons`');
 
     // Check the results to verify that the table has been created properly
     if (!$result)
@@ -106,6 +103,27 @@ function websitepanel_addons_deactivate()
     else
     {
         return array('status' => 'success', 'description' => 'The module has been deactivated successfully');
+    }
+}
+
+/**
+ * websitepanel_addons_upgrade
+ *
+ * @param $vars array
+ * @access public
+ * @return array
+ */
+function websitepanel_addons_upgrade($vars)
+{
+
+    $version = $vars['version'];
+
+    // Adjust the table name and remove the WebsitePanel credentials
+    if ($version < 1.2)
+    {
+        full_query('RENAME TABLE `tblwspaddons` TO `mod_wspaddons`');
+        full_query("DELETE FROM `tbladdonmodules` WHERE `module` = 'websitepanel_addons' AND `setting` = 'username'");
+        full_query("DELETE FROM `tbladdonmodules` WHERE `module` = 'websitepanel_addons' AND `setting` = 'password'");
     }
 }
 
@@ -120,24 +138,24 @@ function websitepanel_addons_output($params)
     // Delete the requested WebsitePanel addon
     if (isset($_GET['action']) && $_GET['action'] == 'delete')
     {
-        delete_query('tblwspaddons', array('whmcs_id' => $_GET['id']));
+        delete_query('mod_wspaddons', array('whmcs_id' => $_GET['id']));
     }
     
     // Add the requested WebsitePanel addon
     if ($_POST && isset($_POST['action']) && $_POST['action'] == 'add')
     {
         // Sanity check to make sure the WHMCS addon ID exists
-        $results = select_query('tbladdons', 'id', array('id' => $_POST['whmcs_id']));
+        $results = select_query('mod_wspaddons', 'id', array('id' => $_POST['whmcs_id']));
         if (mysql_num_rows($results) > 0)
         {
-            $results = select_query('tblwspaddons', 'whmcs_id', array('whmcs_id' => $_POST['whmcs_id']));
+            $results = select_query('mod_wspaddons', 'whmcs_id', array('whmcs_id' => $_POST['whmcs_id']));
             if (mysql_num_rows($results) > 0)
             {
                 echo '<p><div style="margin:0 0 -5px 0;padding: 10px;background-color: #FBEEEB;border: 1px dashed #cc0000;font-weight: bold;color: #cc0000;font-size:14px;text-align: center;-moz-border-radius: 10px;-webkit-border-radius: 10px;-o-border-radius: 10px;border-radius: 10px;">Duplicate WHMCS Addon ID. The WHMCS Addon ID Is Assigned To Another WebsitePanel Addon.</div></p>';
             }
             else
             {
-                insert_query('tblwspaddons', array('whmcs_id' => $_POST['whmcs_id'], 'wsp_id' => $_POST['wsp_id'], 'is_ipaddress' => $_POST['is_ipaddress']));
+                insert_query('mod_wspaddons', array('whmcs_id' => $_POST['whmcs_id'], 'wsp_id' => $_POST['wsp_id'], 'is_ipaddress' => $_POST['is_ipaddress']));
             }
         }
         else
@@ -147,7 +165,7 @@ function websitepanel_addons_output($params)
     }
     
     // Get all the assigned addons and display them to the user
-    $results = full_query('SELECT a.name AS `name`, a.id AS `whmcs_id`, w.wsp_id AS `wsp_id` FROM `tbladdons` AS a, `tblwspaddons` AS w WHERE w.whmcs_id = a.id');
+    $results = full_query('SELECT a.name AS `name`, a.id AS `whmcs_id`, w.wsp_id AS `wsp_id` FROM `tbladdons` AS a, `mod_wspaddons` AS w WHERE w.whmcs_id = a.id');
     
     // Build the table / data grid
     echo '<div class="tablebg">';
