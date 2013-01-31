@@ -55,7 +55,7 @@ namespace WebsitePanel.Server.Code
 
         #region private fields
 
-        private readonly List<string> _feeds;
+        private List<string> _feeds;
         private string _webPIinstallersFolder;
         private const string IisChoiceProduct = "StaticContent";
         private const string WebMatrixChoiceProduct = "WebMatrix";
@@ -568,26 +568,87 @@ namespace WebsitePanel.Server.Code
                 Directory.CreateDirectory(_webPIinstallersFolder);
             }
 
-            // load feeds
-            _productManager = new ProductManager();
-
-
-            foreach (string feed in _feeds)
-            {
-                WriteLog(string.Format("Loading feed {0}", feed));
-                if (feed.StartsWith("https://www.microsoft.com", StringComparison.OrdinalIgnoreCase))
-                {
-                    _productManager.Load(new Uri(feed), true, true, true, _webPIinstallersFolder);
-                }
-                else
-                {
-                    _productManager.LoadExternalFile(new Uri(feed));
-                }
-            }
+            LoadFeeds();
 
             WriteLog(string.Format("{0} products loaded", _productManager.Products.Count));
 
             //LogDebugInfo();
+        }
+
+        private void LoadFeeds()
+        {
+            if (null == _feeds || !_feeds.Any())
+            {
+                throw new Exception("WpiHelper: no feeds provided");
+            }
+
+            _productManager = new ProductManager();
+
+            if (TryLoadFeeds())
+            {
+                // ok, all feeds loaded
+            }
+            else
+            {
+                // feed loading failed
+
+                if (_feeds.Count > 1)
+                {
+                    // exclude feeds except first (default microsoft feed)
+                    _feeds = new List<string> {_feeds[0]};
+
+                    // re-create product manager
+                    _productManager = new ProductManager();
+                    if (TryLoadFeeds())
+                    {
+                        // loaded first (default) feed only
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("WpiHelper: download all feeds failed"));
+                    }
+                }
+                else
+                {
+                    throw new Exception(string.Format("WpiHelper: download all feeds failed"));
+                }
+            }
+        }
+
+        private bool TryLoadFeeds()
+        {
+            string loadingFeed = null;
+
+            try
+            {
+                foreach (string feed in _feeds)
+                {
+                    loadingFeed = feed;
+                    WriteLog(string.Format("Loading feed {0}", feed));
+                    if (feed.IndexOf("microsoft.com", StringComparison.OrdinalIgnoreCase) > 0)
+                    {
+                        // it is internal Microsoft feed
+                        _productManager.Load(new Uri(feed), true, true, true, _webPIinstallersFolder);
+                    }
+                    else
+                    {
+                        _productManager.LoadExternalFile(new Uri(feed));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (!string.IsNullOrEmpty(loadingFeed))
+                {
+                    // error occured on loading this feed
+                    // log this
+                    WriteLog(string.Format("Feed {0} loading error: {1}", loadingFeed, ex));
+
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private Language GetLanguage(string languageId)
