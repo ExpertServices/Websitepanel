@@ -1934,12 +1934,21 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 if (enabledLitigationHold)
                 {
-                    cmd.Parameters.Add("LitigationHoldEnabled", true);
                     cmd.Parameters.Add("RecoverableItemsQuota", ConvertKBToUnlimited(recoverabelItemsSpace));
                     cmd.Parameters.Add("RecoverableItemsWarningQuota", ConvertKBToUnlimited(recoverabelItemsWarning));
                 }
 
                 ExecuteShellCommand(runSpace, cmd);
+
+                //Litigation Hold
+                if (enabledLitigationHold)
+                {
+                    cmd = new Command("New-MailboxSearch");
+                    cmd.Parameters.Add("Name", upn);
+                    cmd.Parameters.Add("InPlaceHoldEnabled", enabledLitigationHold);
+                    cmd.Parameters.Add("SourceMailboxes", upn);
+                    ExecuteShellCommand(runSpace, cmd);
+                }
 
                 //Client Access
                 cmd = new Command("Set-CASMailbox");
@@ -2267,7 +2276,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 info.DisplayName = (string)GetPSObjectProperty(mailbox, "DisplayName");
                 info.HideFromAddressBook = (bool)GetPSObjectProperty(mailbox, "HiddenFromAddressListsEnabled");
-                info.EnableLitigationHold = (bool)GetPSObjectProperty(mailbox, "LitigationHoldEnabled");
+
 
                 Command cmd = new Command("Get-User");
                 cmd.Parameters.Add("Identity", accountName);
@@ -2297,6 +2306,18 @@ namespace WebsitePanel.Providers.HostedSolution
                 info.Pager = (string)GetPSObjectProperty(user, "Pager");
                 info.WebPage = (string)GetPSObjectProperty(user, "WebPage");
                 info.Notes = (string)GetPSObjectProperty(user, "Notes");
+
+                //Litigation Hold
+                info.EnableLitigationHold = false;
+                cmd = new Command("Get-MailboxSearch");
+                cmd.Parameters.Add("Identity", accountName);
+                result = ExecuteShellCommand(runSpace, cmd);
+                if ((result != null) & (result.Count > 0))
+                {
+                    mailbox = result[0];
+                    info.EnableLitigationHold = (bool)GetPSObjectProperty(mailbox, "InPlaceHoldEnabled");
+                }
+
 
             }
             finally
@@ -2478,8 +2499,6 @@ namespace WebsitePanel.Providers.HostedSolution
                 info.KeepDeletedItemsDays =
                     ConvertEnhancedTimeSpanToDays((EnhancedTimeSpan)GetPSObjectProperty(mailbox, "RetainDeletedItemsFor"));
 
-                info.EnableLitigationHold = (bool)GetPSObjectProperty(mailbox, "LitigationHoldEnabled");
-
                 info.RecoverabelItemsSpace =
                     ConvertUnlimitedToKB((Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(mailbox, "RecoverableItemsQuota"));
                 info.RecoverabelItemsWarning =
@@ -2496,6 +2515,18 @@ namespace WebsitePanel.Providers.HostedSolution
                 info.EnableMAPI = (bool)GetPSObjectProperty(mailbox, "MAPIEnabled");
                 info.EnablePOP = (bool)GetPSObjectProperty(mailbox, "PopEnabled");
                 info.EnableIMAP = (bool)GetPSObjectProperty(mailbox, "ImapEnabled");
+
+                //Litigation Hold
+                info.EnableLitigationHold = false;
+                cmd = new Command("Get-MailboxSearch");
+                cmd.Parameters.Add("Identity", accountName);
+                result = ExecuteShellCommand(runSpace, cmd);
+                if ((result != null) & (result.Count > 0))
+                {
+                    mailbox = result[0];
+                    info.EnableLitigationHold = (bool)GetPSObjectProperty(mailbox, "InPlaceHoldEnabled");
+                }
+
 
                 //Statistics
                 cmd = new Command("Get-MailboxStatistics");
@@ -2558,14 +2589,22 @@ namespace WebsitePanel.Providers.HostedSolution
                 cmd.Parameters.Add("MaxSendSize", ConvertKBToUnlimited(maxSendMessageSizeKB));
                 cmd.Parameters.Add("MaxReceiveSize", ConvertKBToUnlimited(maxReceiveMessageSizeKB));
 
-                cmd.Parameters.Add("LitigationHoldEnabled", enabledLitigationHold);
                 cmd.Parameters.Add("RecoverableItemsQuota", ConvertKBToUnlimited(recoverabelItemsSpace));
-
                 cmd.Parameters.Add("RetentionUrl", litigationHoldUrl);
                 cmd.Parameters.Add("RetentionComment", litigationHoldMsg);
 
                 if (recoverabelItemsSpace != -1) cmd.Parameters.Add("RecoverableItemsWarningQuota", ConvertKBToUnlimited(recoverabelItemsWarning));
 
+                ExecuteShellCommand(runSpace, cmd);
+
+                //LitigationHold
+                cmd = new Command("Get-MailboxSearch");
+                cmd.Parameters.Add("Identity", accountName);
+                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+                cmd = new Command((result == null) || (result.Count == 0) ? "New-MailboxSearch" : "Set-MailboxSearch");
+                cmd.Parameters.Add((result == null) || (result.Count == 0) ? "Name" : "Identity", accountName);
+                cmd.Parameters.Add("InPlaceHoldEnabled", enabledLitigationHold);
+                cmd.Parameters.Add("SourceMailboxes", accountName);
                 ExecuteShellCommand(runSpace, cmd);
 
                 //Client Access
@@ -2943,7 +2982,6 @@ namespace WebsitePanel.Providers.HostedSolution
                 string path = AddADPrefix(dn);
                 DirectoryEntry entry = GetADObject(path);
                 info.Enabled = !(bool)entry.InvokeGet("AccountDisabled");
-                info.LitigationHoldEnabled = (bool)GetPSObjectProperty(mailbox, "LitigationHoldEnabled");
 
                 info.DisplayName = (string)GetPSObjectProperty(mailbox, "DisplayName");
                 SmtpAddress smtpAddress = (SmtpAddress)GetPSObjectProperty(mailbox, "PrimarySmtpAddress");
@@ -2953,6 +2991,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 info.MaxSize = ConvertUnlimitedToBytes((Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(mailbox, "ProhibitSendReceiveQuota"));
                 DateTime? whenCreated = (DateTime?)GetPSObjectProperty(mailbox, "WhenCreated");
                 info.AccountCreated = ConvertNullableToDateTime(whenCreated);
+
                 //Client Access
                 Command cmd = new Command("Get-CASMailbox");
                 cmd.Parameters.Add("Identity", id);
@@ -2965,6 +3004,17 @@ namespace WebsitePanel.Providers.HostedSolution
                 info.POPEnabled = (bool)GetPSObjectProperty(mailbox, "PopEnabled");
                 info.IMAPEnabled = (bool)GetPSObjectProperty(mailbox, "ImapEnabled");
 
+                //Litigation Hold
+                info.LitigationHoldEnabled = false;
+                cmd = new Command("Get-MailboxSearch");
+                cmd.Parameters.Add("Identity", id);
+                result = ExecuteShellCommand(runSpace, cmd);
+                if ((result != null) & (result.Count > 0))
+                {
+                    mailbox = result[0];
+                    info.LitigationHoldEnabled = (bool)GetPSObjectProperty(mailbox, "InPlaceHoldEnabled");
+                }
+                
                 //Statistics
                 cmd = new Command("Get-MailboxStatistics");
                 cmd.Parameters.Add("Identity", id);
