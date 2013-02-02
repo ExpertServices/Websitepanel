@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Web.Services;
 using System.Web.Services.Protocols;
 using System.ComponentModel;
+using WebsitePanel.EnterpriseServer.Base.Common;
 using WebsitePanel.Providers.Common;
 using Microsoft.Web.Services3;
 
@@ -54,8 +55,10 @@ namespace WebsitePanel.EnterpriseServer
     [ToolboxItem(false)]
     public class esServers : System.Web.Services.WebService
     {
-        public const string MAIN_WPI_FEED = "https://www.microsoft.com/web/webpi/4.0/WebProductList.xml";
+        /*
+        public const string MAIN_WPI_FEED = "https://www.microsoft.com/web/webpi/4.2/WebProductList.xml";
         public const string HELICON_WPI_FEED = "http://www.helicontech.com/zoo/feed/wsp4";
+        */
 
         #region Servers
         [WebMethod]
@@ -696,25 +699,28 @@ namespace WebsitePanel.EnterpriseServer
             var wpiSettings = SystemController.GetSystemSettings(SystemSettings.WPI_SETTINGS);
             
 
-            List<string> arFeeds = new List<string>();
+            List<string> feeds = new List<string>();
             
-            if (Utils.ParseBool(wpiSettings["FeedEnableMicrosoft"] ,true))
+            // Microsoft feed
+            string mainFeedUrl = wpiSettings[SystemSettings.WPI_MAIN_FEED_KEY];
+            if (string.IsNullOrEmpty(mainFeedUrl))
             {
-                arFeeds.Add( MAIN_WPI_FEED );
+                mainFeedUrl = WebPlatformInstaller.MAIN_FEED_URL;
             }
+            feeds.Add(mainFeedUrl);
 
-            if (Utils.ParseBool(wpiSettings["FeedEnableHelicon"] ,true))
-            {
-                arFeeds.Add( HELICON_WPI_FEED );
-            }
-            
-            string additionalFeeds = wpiSettings["FeedUrls"];
+            // Zoo Feed
+            feeds.Add(WebPlatformInstaller.ZOO_FEED);
+
+
+            // additional feeds
+            string additionalFeeds = wpiSettings[SystemSettings.FEED_ULS_KEY];
             if (!string.IsNullOrEmpty(additionalFeeds))
             {
-                arFeeds.AddRange(additionalFeeds.Split(';'));
+                feeds.AddRange(additionalFeeds.Split(';'));
             }
 
-            OperatingSystemController.InitWPIFeeds(serverId, string.Join(";", arFeeds));
+            OperatingSystemController.InitWPIFeeds(serverId, string.Join(";", feeds));
 
         }
 

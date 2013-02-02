@@ -32,6 +32,7 @@ ul.WPIKeywordList {
 ul.WPIKeywordList>li {
     padding: .4em .4em;
     margin-right: .4em;
+    line-height: 2em;
     display: inline;
     list-style-type: none;
 }

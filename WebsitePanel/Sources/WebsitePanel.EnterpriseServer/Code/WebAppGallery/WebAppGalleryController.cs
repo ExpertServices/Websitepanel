@@ -29,15 +29,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using WebsitePanel.Providers.Web;
+﻿using WebsitePanel.EnterpriseServer.Base.Common;
+﻿using WebsitePanel.Providers.Web;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.Database;
 using WebsitePanel.Providers.WebAppGallery;
 using System.Collections.Specialized;
-using System.Reflection;
 using WebsitePanel.Providers.Common;
 using System.Diagnostics;
-using System.IO;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -72,28 +71,33 @@ namespace WebsitePanel.EnterpriseServer
 
         private static string[] getFeedsFromSettingsByServiceId(int serviceId)
         {
-            StringDictionary serviceSettings = ServerController.GetServiceSettings(serviceId);
+            var wpiSettings = SystemController.GetSystemSettings(SystemSettings.WPI_SETTINGS);
 
-            List<string> arFeeds = new List<string>();
+            List<string> feeds = new List<string>();
 
-            if (Utils.ParseBool(serviceSettings["FeedEnableMicrosoft"], true))
+            // Microsoft feed
+            string mainFeedUrl = wpiSettings[SystemSettings.WPI_MAIN_FEED_KEY];
+            if (string.IsNullOrEmpty(mainFeedUrl))
             {
-                arFeeds.Add(esServers.MAIN_WPI_FEED);
+                mainFeedUrl = WebPlatformInstaller.MAIN_FEED_URL;
             }
+            feeds.Add(mainFeedUrl);
 
-            if (Utils.ParseBool(serviceSettings["FeedEnableHelicon"], true))
-            {
-                arFeeds.Add(esServers.HELICON_WPI_FEED);
-            }
+            // Zoo Feed
+            feeds.Add(WebPlatformInstaller.ZOO_FEED);
 
-            string additionalFeeds = serviceSettings["FeedUrls"];
+
+            // additional feeds
+            string additionalFeeds = wpiSettings[SystemSettings.FEED_ULS_KEY];
             if (!string.IsNullOrEmpty(additionalFeeds))
             {
-                arFeeds.AddRange(additionalFeeds.Split(';'));
+                feeds.AddRange(additionalFeeds.Split(';'));
             }
 
-            return arFeeds.ToArray();
+            return feeds.ToArray();
         }
+
+
         public static void InitFeedsByServiceId(int UserId, int serviceId)
         {
             string[] feeds = getFeedsFromSettingsByServiceId(serviceId);

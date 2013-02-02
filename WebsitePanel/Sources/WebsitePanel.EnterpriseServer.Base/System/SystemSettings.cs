@@ -42,6 +42,10 @@ namespace WebsitePanel.EnterpriseServer
 		public const string BACKUP_SETTINGS = "BackupSettings";
 		public const string SETUP_SETTINGS = "SetupSettings";
         public const string WPI_SETTINGS = "WpiSettings";
+        
+        // key to access to wpi main & custom feed in wpi settings
+        public const string WPI_MAIN_FEED_KEY = "WpiMainFeedUrl";
+        public const string FEED_ULS_KEY = "FeedUrls";
 
 		public static readonly SystemSettings Empty = new SystemSettings { SettingsArray = new string[][] {} };
 
