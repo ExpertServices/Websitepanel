@@ -86,21 +86,21 @@ namespace WebsitePanel.EnterpriseServer
         {
             DataSet ds = DataProvider.GetSchedule(SecurityContext.User.UserId, scheduleId);
             ScheduleInfo si = ObjectUtils.FillObjectFromDataView<ScheduleInfo>(ds.Tables[0].DefaultView);
-        	return si;
+            return si;
         }
 
-		/// <summary>
-		/// Gets view configuration for a certain task.
-		/// </summary>
-		/// <param name="taskId">Task id for which view configuration is intended to be loeaded.</param>
-		/// <returns>View configuration for the task with supplied id.</returns>
-		public static List<ScheduleTaskViewConfiguration> GetScheduleTaskViewConfigurations(string taskId)
-		{
-			List<ScheduleTaskViewConfiguration> c = ObjectUtils.CreateListFromDataReader<ScheduleTaskViewConfiguration>(DataProvider.GetScheduleTaskViewConfigurations(taskId));
-			return c;
-		}
+        /// <summary>
+        /// Gets view configuration for a certain task.
+        /// </summary>
+        /// <param name="taskId">Task id for which view configuration is intended to be loeaded.</param>
+        /// <returns>View configuration for the task with supplied id.</returns>
+        public static List<ScheduleTaskViewConfiguration> GetScheduleTaskViewConfigurations(string taskId)
+        {
+            List<ScheduleTaskViewConfiguration> c = ObjectUtils.CreateListFromDataReader<ScheduleTaskViewConfiguration>(DataProvider.GetScheduleTaskViewConfigurations(taskId));
+            return c;
+        }
 
-    	internal static SchedulerJob GetScheduleComplete(int scheduleId)
+        internal static SchedulerJob GetScheduleComplete(int scheduleId)
         {
             DataSet ds = DataProvider.GetSchedule(SecurityContext.User.UserId, scheduleId);
             return CreateCompleteScheduleFromDataSet(ds);
@@ -199,7 +199,7 @@ namespace WebsitePanel.EnterpriseServer
                     nextStart = lastRun.AddSeconds(schedule.Interval);
                 }
 
-                if(nextStart < now)
+                if (nextStart < now)
                     nextStart = now; // run immediately
 
                 // check if start time is in allowed interval
@@ -261,7 +261,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // check quota
-            if(PackageController.GetPackageQuota(schedule.PackageId, Quotas.OS_SCHEDULEDTASKS).QuotaExhausted)
+            if (PackageController.GetPackageQuota(schedule.PackageId, Quotas.OS_SCHEDULEDTASKS).QuotaExhausted)
                 return BusinessErrorCodes.ERROR_OS_SCHEDULED_TASK_QUOTA_LIMIT;
 
             CalculateNextStartTime(schedule);

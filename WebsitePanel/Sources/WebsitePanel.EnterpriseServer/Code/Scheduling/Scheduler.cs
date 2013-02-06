@@ -40,9 +40,9 @@ namespace WebsitePanel.EnterpriseServer
 
     public sealed class Scheduler
     {
-        static SchedulerJob nextSchedule = null;
+        public static SchedulerJob nextSchedule = null;
 
-        // main timer
+        // main timer and put it to sleep
         static Timer scheduleTimer = new Timer(new TimerCallback(RunNextSchedule),
                                             null,
                                             Timeout.Infinite,
@@ -92,6 +92,8 @@ namespace WebsitePanel.EnterpriseServer
                     // this will put the timer to sleep
                     scheduleTimer.Change(Timeout.Infinite, Timeout.Infinite);
 
+                    System.Threading.Thread.Sleep(1000);
+
                     // run immediately
                     RunNextSchedule(null);
                 }
@@ -122,31 +124,47 @@ namespace WebsitePanel.EnterpriseServer
 
         static void RunSchedule(SchedulerJob schedule, bool changeNextRun)
         {
-            // update next run (if required)
-            if (changeNextRun)
+
+
+            try
             {
-                SchedulerController.CalculateNextStartTime(schedule.ScheduleInfo);
+                // update next run (if required)
+                if (changeNextRun)
+                {
+                    SchedulerController.CalculateNextStartTime(schedule.ScheduleInfo);
+                }
+
+                // disable run once task
+                if (schedule.ScheduleInfo.ScheduleType == ScheduleType.OneTime)
+                    schedule.ScheduleInfo.Enabled = false;
+
+                Dictionary<int, BackgroundTask> scheduledTasks = TaskManager.GetScheduledTasks();
+                if (!scheduledTasks.ContainsKey(schedule.ScheduleInfo.ScheduleId))
+                    // this task should be run, so
+                    // update its last run
+                    schedule.ScheduleInfo.LastRun = DateTime.Now;
+
+                // update schedule
+                SchedulerController.UpdateSchedule(schedule.ScheduleInfo);
+
+                // skip execution if the current task is still running
+                scheduledTasks = TaskManager.GetScheduledTasks();
+                if (!scheduledTasks.ContainsKey(schedule.ScheduleInfo.ScheduleId))
+                {
+                    // run the schedule in the separate thread
+                    schedule.Run();
+                }
             }
-
-            // disable run once task
-            if (schedule.ScheduleInfo.ScheduleType == ScheduleType.OneTime)
-                schedule.ScheduleInfo.Enabled = false;
-
-            Dictionary<int, BackgroundTask> scheduledTasks = TaskManager.GetScheduledTasks();
-            if (!scheduledTasks.ContainsKey(schedule.ScheduleInfo.ScheduleId))
-                // this task should be run, so
-                // update its last run
-                schedule.ScheduleInfo.LastRun = DateTime.Now;
-
-            // update schedule
-            SchedulerController.UpdateSchedule(schedule.ScheduleInfo);
-
-            // skip execution if the current task is still running
-            if (scheduledTasks.ContainsKey(schedule.ScheduleInfo.ScheduleId))
-                return;
-
-            // run the schedule in the separate thread
-            schedule.Run();
+            catch (Exception Ex)
+            {
+                try
+                {
+                    TaskManager.WriteError(string.Format("RunSchedule Error : {0}", Ex.Message));
+                }
+                catch (Exception)
+                {
+                }
+            }
         }
     }
 }
