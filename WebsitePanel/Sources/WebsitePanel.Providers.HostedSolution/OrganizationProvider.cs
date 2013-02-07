@@ -754,49 +754,6 @@ namespace WebsitePanel.Providers.HostedSolution
 
 
 
-        public bool DoesSamAccountNameExist(string accountName)
-        {
-            return DoesSamAccountNameExistInternal(accountName);
-        }
-
-
-        private bool DoesSamAccountNameExistInternal(string accountName)
-        {
-            HostedSolutionLog.LogStart("DoesSamAccountNameExistInternal");
-            HostedSolutionLog.DebugInfo("sAMAccountName : {0}", accountName);
-            bool bFound = false;
-
-            try
-            {
-
-                string path = GetRootOU();
-                HostedSolutionLog.DebugInfo("Search path : {0}", path);
-                DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
-
-                DirectorySearcher searcher = new DirectorySearcher(entry);
-                searcher.PropertiesToLoad.Add("sAMAccountName");
-                searcher.Filter = "(sAMAccountName=" + accountName + ")";
-                searcher.SearchScope = SearchScope.Subtree;
-
-                SearchResult resCollection = searcher.FindOne();
-                if (resCollection != null)
-                {
-                    if (resCollection.Properties["samaccountname"] != null)
-                        bFound = true;
-                }
-            }
-            catch (Exception e)
-            {
-                HostedSolutionLog.DebugInfo("Failed : {0}", e.Message);
-            }
-
-            HostedSolutionLog.DebugInfo("DoesSamAccountNameExistInternal Result: {0}", bFound);
-            HostedSolutionLog.LogEnd("DoesSamAccountNameExistInternal");
-
-            return bFound;
-        }
-
-
         #endregion
 
         #region Domains
