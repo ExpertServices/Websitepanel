@@ -71,7 +71,7 @@ namespace WebsitePanel.EnterpriseServer
 
         private static string[] getFeedsFromSettingsByServiceId(int serviceId)
         {
-            var wpiSettings = SystemController.GetSystemSettings(SystemSettings.WPI_SETTINGS);
+            var wpiSettings = SystemController.GetSystemSettingsInternal(SystemSettings.WPI_SETTINGS,false);
 
             List<string> feeds = new List<string>();
 
