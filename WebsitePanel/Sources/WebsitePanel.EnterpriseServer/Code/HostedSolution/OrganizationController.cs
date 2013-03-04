@@ -1492,7 +1492,6 @@ namespace WebsitePanel.EnterpriseServer
 
         private static bool AccountExists(string accountName, int ServiceId)
         {
-
             if (!DataProvider.ExchangeAccountExists(accountName))
             {
                 Organizations orgProxy = GetOrganizationProxy(ServiceId);
@@ -1502,6 +1501,7 @@ namespace WebsitePanel.EnterpriseServer
             }
             else
                 return true;
+
 
         }
 

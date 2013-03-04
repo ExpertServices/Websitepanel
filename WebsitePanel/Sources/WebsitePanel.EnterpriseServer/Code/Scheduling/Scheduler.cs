@@ -162,7 +162,7 @@ namespace WebsitePanel.EnterpriseServer
                     
                     counter++;
                 }
-
+                {
                 // skip execution if the current task is still running
                 scheduledTasks = TaskManager.GetScheduledTasks();
                 if (!scheduledTasks.ContainsKey(schedule.ScheduleInfo.ScheduleId))

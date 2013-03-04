@@ -3,7 +3,7 @@
 		<Version>2.1.0</Version>
 		<FileVersion>$(BUILD_NUMBER)</FileVersion>
 		<VersionLabel>$(BUILD_NUMBER)</VersionLabel>
-		<ReleaseDate>2012-01-22</ReleaseDate>
+		<ReleaseDate>2012-01-25</ReleaseDate>
 		<BuildConfiguration></BuildConfiguration>
 		<RootFolder>..</RootFolder>
 		<TrunkFolder>$(RootFolder)\WebsitePanel</TrunkFolder>
