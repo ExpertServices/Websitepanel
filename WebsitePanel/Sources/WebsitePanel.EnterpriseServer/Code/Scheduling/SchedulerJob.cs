@@ -119,7 +119,13 @@ namespace WebsitePanel.EnterpriseServer
             finally
             {
                 // complete task
-                TaskManager.CompleteTask();
+                try
+                {
+                    TaskManager.CompleteTask();
+                }
+                catch (Exception)
+                {
+                }
             }
         }
     }

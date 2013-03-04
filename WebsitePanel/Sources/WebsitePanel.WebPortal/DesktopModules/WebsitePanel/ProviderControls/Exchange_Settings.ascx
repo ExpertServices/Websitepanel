@@ -1,6 +1,25 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Exchange_Settings.ascx.cs"
     Inherits="WebsitePanel.Portal.ProviderControls.Exchange2010_Settings" %>
 <table cellpadding="3" cellspacing="0" width="100%">
+    
+    <tr runat="server" id="powershellUrl1" width="200" nowrap>
+        <td class="SubHead">
+        </td>
+        <td>
+            <asp:Label runat="server" ID="lblFileServiceInfo" meta:resourcekey="lblPowerShellUrl" Text="e.g. http://server.domain.com/PowerShell" Font-Italic="true"></asp:Label>
+        </td>
+    </tr>
+
+    <tr runat="server" id="powershellUrl2" width="200" nowrap>
+        <td class="SubHead">
+            <asp:Localize ID="loclocPowerShellUrl" runat="server" meta:resourcekey="locPowerShellUrl"
+                Text="Powershell URL:"></asp:Localize>
+        </td>
+        <td>
+            <asp:TextBox ID="txtPowerShellUrl" runat="server" Width="400px"></asp:TextBox>
+        </td>
+    </tr>
+    
     <tr runat="server" id="storageGroup">
 			<td class="SubHead" width="200" nowrap>
 			    <asp:Localize ID="locStorageGroup" runat="server" meta:resourcekey="locStorageGroup" Text="Storage Group Name:"></asp:Localize>

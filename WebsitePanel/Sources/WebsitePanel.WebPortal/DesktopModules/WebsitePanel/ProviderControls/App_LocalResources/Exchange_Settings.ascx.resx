@@ -192,4 +192,10 @@
   <data name="locMailboxDAG.Text" xml:space="preserve">
     <value>Database Availability Group:</value>
   </data>
+  <data name="lblPowerShellUrl.Text" xml:space="preserve">
+    <value>e.g. http://server.domain.com/PowerShell</value>
+  </data>
+  <data name="locPowerShellUrl.Text" xml:space="preserve">
+    <value>Powershell URL:</value>
+  </data>
 </root>

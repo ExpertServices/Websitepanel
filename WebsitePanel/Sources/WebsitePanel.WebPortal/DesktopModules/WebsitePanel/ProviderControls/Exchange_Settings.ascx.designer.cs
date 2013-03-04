@@ -13,6 +13,51 @@ namespace WebsitePanel.Portal.ProviderControls {
     public partial class Exchange2010_Settings {
         
         /// <summary>
+        /// powershellUrl1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow powershellUrl1;
+        
+        /// <summary>
+        /// lblFileServiceInfo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblFileServiceInfo;
+        
+        /// <summary>
+        /// powershellUrl2 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow powershellUrl2;
+        
+        /// <summary>
+        /// loclocPowerShellUrl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize loclocPowerShellUrl;
+        
+        /// <summary>
+        /// txtPowerShellUrl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtPowerShellUrl;
+        
+        /// <summary>
         /// storageGroup control.
         /// </summary>
         /// <remarks>

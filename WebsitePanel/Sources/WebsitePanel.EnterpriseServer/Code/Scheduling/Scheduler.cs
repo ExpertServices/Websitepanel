@@ -33,6 +33,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
+using System.Data.SqlClient;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -145,7 +146,22 @@ namespace WebsitePanel.EnterpriseServer
                     schedule.ScheduleInfo.LastRun = DateTime.Now;
 
                 // update schedule
-                SchedulerController.UpdateSchedule(schedule.ScheduleInfo);
+                int MAX_RETRY_COUNT = 10;
+                int counter = 0;
+                while (counter < MAX_RETRY_COUNT)
+                {
+                    try
+                    {
+                        SchedulerController.UpdateSchedule(schedule.ScheduleInfo);
+                        break;
+                    }
+                    catch (SqlException)
+                    {
+                        System.Threading.Thread.Sleep(1000);
+                    }
+                    
+                    counter++;
+                }
 
                 // skip execution if the current task is still running
                 scheduledTasks = TaskManager.GetScheduledTasks();
@@ -157,7 +173,13 @@ namespace WebsitePanel.EnterpriseServer
             }
             catch (Exception Ex)
             {
-                TaskManager.WriteError(string.Format("RunSchedule Error : {0}", Ex.Message));
+                try
+                {
+                    TaskManager.WriteError(string.Format("RunSchedule Error : {0}", Ex.Message));
+                }
+                catch(Exception)
+                {
+                }
             }
         }
     }
