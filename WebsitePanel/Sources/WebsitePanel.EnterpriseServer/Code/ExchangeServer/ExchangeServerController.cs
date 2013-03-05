@@ -192,6 +192,7 @@ namespace WebsitePanel.EnterpriseServer
                     stats.CreatedDomains = tempStats.CreatedDomains;
                     stats.CreatedPublicFolders = tempStats.CreatedPublicFolders;
                     stats.UsedDiskSpace = tempStats.UsedDiskSpace;
+                    stats.UsedLitigationHoldSpace = tempStats.UsedLitigationHoldSpace;
                 }
                 else
                 {
@@ -218,6 +219,7 @@ namespace WebsitePanel.EnterpriseServer
                                     stats.CreatedDomains += tempStats.CreatedDomains;
                                     stats.CreatedPublicFolders += tempStats.CreatedPublicFolders;
                                     stats.UsedDiskSpace += tempStats.UsedDiskSpace;
+                                    stats.UsedLitigationHoldSpace += tempStats.UsedLitigationHoldSpace;
                                 }
                             }
                         }
@@ -235,6 +237,7 @@ namespace WebsitePanel.EnterpriseServer
                 stats.AllocatedDistributionLists = cntx.Quotas[Quotas.EXCHANGE2007_DISTRIBUTIONLISTS].QuotaAllocatedValue;
                 stats.AllocatedPublicFolders = cntx.Quotas[Quotas.EXCHANGE2007_PUBLICFOLDERS].QuotaAllocatedValue;
                 stats.AllocatedDiskSpace = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
+                stats.AllocatedLitigationHoldSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue;
 
                 return stats;
             }
@@ -833,7 +836,7 @@ namespace WebsitePanel.EnterpriseServer
 				// get stats
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-				return exchange.GetPublicFoldersStatistics(folderNames.ToArray());
+                return exchange.GetPublicFoldersStatistics(org.OrganizationId, folderNames.ToArray());
 			}
 			catch (Exception ex)
 			{
@@ -1707,6 +1710,25 @@ namespace WebsitePanel.EnterpriseServer
                         return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
                 }
 
+                int maxRecoverableItemsSpace = -1;
+                int quotaRecoverableItemsUsed = 0;
+                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE)
+                    && cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue > 0)
+                {
+                    maxRecoverableItemsSpace  = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue;
+                    quotaRecoverableItemsUsed = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaUsedValue;
+                }
+
+                if (maxRecoverableItemsSpace != -1)
+                {
+                    if (plan.RecoverableItemsSpace == -1)
+                        return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+
+                    if ((quotaRecoverableItemsUsed + plan.RecoverableItemsSpace) > (maxRecoverableItemsSpace))
+                        return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+                }
+
+
                 //GetServiceSettings
                 StringDictionary primSettings = ServerController.GetServiceSettings(exchangeServiceId);
 
@@ -1727,7 +1749,10 @@ namespace WebsitePanel.EnterpriseServer
                                                 plan.MaxSendMessageSizeKB,
                                                 plan.MaxReceiveMessageSizeKB,
                                                 plan.HideFromAddressBook,
-                                                Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue));
+                                                Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue),
+                                                plan.AllowLitigationHold,
+                                                plan.RecoverableItemsSpace != -1 ? (plan.RecoverableItemsSpace * 1024) : -1,
+                                                plan.RecoverableItemsSpace != -1 ? (((long)plan.RecoverableItemsWarningPct * (long)plan.RecoverableItemsSpace * 1024) / 100) : -1);
 
                 MailboxManagerActions pmmActions = MailboxManagerActions.GeneralSettings
                     | MailboxManagerActions.MailFlowSettings
@@ -2651,6 +2676,24 @@ namespace WebsitePanel.EnterpriseServer
                     }
                 }
 
+                int maxRecoverableItemsSpace = -1;
+                int quotaRecoverableItemsUsed = 0;
+                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE)
+                    && cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue > 0)
+                {
+                    maxRecoverableItemsSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue;
+                    quotaRecoverableItemsUsed = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaUsedValue;
+                }
+
+                if (maxRecoverableItemsSpace != -1)
+                {
+                    if (plan.RecoverableItemsSpace == -1)
+                        return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+
+                    if ((quotaRecoverableItemsUsed + plan.RecoverableItemsSpace) > (maxRecoverableItemsSpace))
+                        return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+                }
+
                 // get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
@@ -2669,7 +2712,12 @@ namespace WebsitePanel.EnterpriseServer
                     plan.KeepDeletedItemsDays,
                     plan.MaxRecipients,
                     plan.MaxSendMessageSizeKB,
-                    plan.MaxReceiveMessageSizeKB);
+                    plan.MaxReceiveMessageSizeKB,
+                    plan.AllowLitigationHold,
+                    plan.RecoverableItemsSpace != -1 ? (plan.RecoverableItemsSpace * 1024) : -1,
+                    plan.RecoverableItemsSpace != -1 ? (((long)plan.RecoverableItemsWarningPct * (long)plan.RecoverableItemsSpace * 1024) / 100) : -1,
+                    plan.LitigationHoldUrl,
+                    plan.LitigationHoldMsg);
 
                 DataProvider.SetExchangeAccountMailboxPlan(accountId, mailboxPlanId);
 
@@ -2833,11 +2881,19 @@ namespace WebsitePanel.EnterpriseServer
                             mailboxPlan.MaxRecipients = cntx.Quotas[Quotas.EXCHANGE2007_MAXRECIPIENTS].QuotaAllocatedValue;
 
                     if (Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue)) mailboxPlan.HideFromAddressBook = true;
+
+                    mailboxPlan.AllowLitigationHold = mailboxPlan.AllowLitigationHold & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_ALLOWLITIGATIONHOLD].QuotaAllocatedValue);
+
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue != -1)
+                        if (mailboxPlan.RecoverableItemsSpace > cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue)
+                            mailboxPlan.RecoverableItemsSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue;
                 }
 
                 return DataProvider.AddExchangeMailboxPlan(itemID, mailboxPlan.MailboxPlan, mailboxPlan.EnableActiveSync, mailboxPlan.EnableIMAP, mailboxPlan.EnableMAPI, mailboxPlan.EnableOWA, mailboxPlan.EnablePOP,
                                                         mailboxPlan.IsDefault, mailboxPlan.IssueWarningPct, mailboxPlan.KeepDeletedItemsDays, mailboxPlan.MailboxSizeMB, mailboxPlan.MaxReceiveMessageSizeKB, mailboxPlan.MaxRecipients,
-                                                        mailboxPlan.MaxSendMessageSizeKB, mailboxPlan.ProhibitSendPct, mailboxPlan.ProhibitSendReceivePct, mailboxPlan.HideFromAddressBook, mailboxPlan.MailboxPlanType);
+                                                        mailboxPlan.MaxSendMessageSizeKB, mailboxPlan.ProhibitSendPct, mailboxPlan.ProhibitSendReceivePct, mailboxPlan.HideFromAddressBook, mailboxPlan.MailboxPlanType,
+                                                        mailboxPlan.AllowLitigationHold, mailboxPlan.RecoverableItemsSpace, mailboxPlan.RecoverableItemsWarningPct,
+                                                        mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg);
             }
             catch (Exception ex)
             {
@@ -2895,11 +2951,20 @@ namespace WebsitePanel.EnterpriseServer
                             mailboxPlan.MaxRecipients = cntx.Quotas[Quotas.EXCHANGE2007_MAXRECIPIENTS].QuotaAllocatedValue;
 
                     if (Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue)) mailboxPlan.HideFromAddressBook = true;
+
+                    mailboxPlan.AllowLitigationHold = mailboxPlan.AllowLitigationHold & Convert.ToBoolean(cntx.Quotas[Quotas.EXCHANGE2007_ALLOWLITIGATIONHOLD].QuotaAllocatedValue);
+
+                    if (cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue != -1)
+                        if (mailboxPlan.RecoverableItemsSpace > cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue)
+                            mailboxPlan.RecoverableItemsSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue;
+
                 }
 
                 DataProvider.UpdateExchangeMailboxPlan(mailboxPlan.MailboxPlanId, mailboxPlan.MailboxPlan, mailboxPlan.EnableActiveSync, mailboxPlan.EnableIMAP, mailboxPlan.EnableMAPI, mailboxPlan.EnableOWA, mailboxPlan.EnablePOP,
                                                         mailboxPlan.IsDefault, mailboxPlan.IssueWarningPct, mailboxPlan.KeepDeletedItemsDays, mailboxPlan.MailboxSizeMB, mailboxPlan.MaxReceiveMessageSizeKB, mailboxPlan.MaxRecipients,
-                                                        mailboxPlan.MaxSendMessageSizeKB, mailboxPlan.ProhibitSendPct, mailboxPlan.ProhibitSendReceivePct, mailboxPlan.HideFromAddressBook, mailboxPlan.MailboxPlanType);
+                                                        mailboxPlan.MaxSendMessageSizeKB, mailboxPlan.ProhibitSendPct, mailboxPlan.ProhibitSendReceivePct, mailboxPlan.HideFromAddressBook, mailboxPlan.MailboxPlanType,
+                                                        mailboxPlan.AllowLitigationHold, mailboxPlan.RecoverableItemsSpace, mailboxPlan.RecoverableItemsWarningPct,
+                                                        mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg);
             }
             catch (Exception ex)
             {
@@ -4006,7 +4071,7 @@ namespace WebsitePanel.EnterpriseServer
                     PackageController.UpdatePackageItem(org);
                 }
 
-				exchange.CreatePublicFolder(
+				exchange.CreatePublicFolder(org.DistinguishedName,
 					org.OrganizationId,
 					org.SecurityGroup,
 					parentFolder,
@@ -4017,7 +4082,7 @@ namespace WebsitePanel.EnterpriseServer
 					domain);
 
 
-                ExchangePublicFolder folder = exchange.GetPublicFolderGeneralSettings(parentFolder + "\\" + folderName);
+                ExchangePublicFolder folder = exchange.GetPublicFolderGeneralSettings(org.OrganizationId, parentFolder + "\\" + folderName);
 
 				// add meta-item
 				int accountId = AddAccount(itemId, ExchangeAccountType.PublicFolder, accountName,
@@ -4079,8 +4144,8 @@ namespace WebsitePanel.EnterpriseServer
 				// delete folder
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-                
-				exchange.DeletePublicFolder(account.DisplayName);
+
+                exchange.DeletePublicFolder(org.OrganizationId, account.DisplayName);
 
 				// unregister account
 				DeleteAccount(itemId, accountId);
@@ -4201,8 +4266,8 @@ namespace WebsitePanel.EnterpriseServer
 
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-                
-				exchange.DisableMailPublicFolder(account.DisplayName);
+
+                exchange.DisableMailPublicFolder(org.OrganizationId, account.DisplayName);
 
 
 				// update and save account
@@ -4268,8 +4333,8 @@ namespace WebsitePanel.EnterpriseServer
 
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-                
-				ExchangePublicFolder folder = exchange.GetPublicFolderGeneralSettings(account.DisplayName);
+
+                ExchangePublicFolder folder = exchange.GetPublicFolderGeneralSettings(org.OrganizationId, account.DisplayName);
 				folder.MailEnabled = account.MailEnabledPublicFolder;
 				folder.DisplayName = account.DisplayName;
 				return folder;
@@ -4314,6 +4379,7 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
                 
 				exchange.SetPublicFolderGeneralSettings(
+                    org.OrganizationId,
 					account.DisplayName,
 					newName,
 					hideAddressBook,
@@ -4381,8 +4447,8 @@ namespace WebsitePanel.EnterpriseServer
 				// get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-                
-				ExchangePublicFolder folder = exchange.GetPublicFolderMailFlowSettings(account.DisplayName);
+
+                ExchangePublicFolder folder = exchange.GetPublicFolderMailFlowSettings(org.OrganizationId, account.DisplayName);
 				folder.DisplayName = account.DisplayName;
 				return folder;
 			}
@@ -4424,8 +4490,8 @@ namespace WebsitePanel.EnterpriseServer
 				// get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-                
-				exchange.SetPublicFolderMailFlowSettings(account.DisplayName,
+
+                exchange.SetPublicFolderMailFlowSettings(org.OrganizationId, account.DisplayName,
 					acceptAccounts,
 					rejectAccounts,
 					requireSenderAuthentication);
@@ -4498,6 +4564,7 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
                 
 				exchange.SetPublicFolderEmailAddresses(
+                    org.OrganizationId,
 					account.DisplayName,
 					GetAccountSimpleEmailAddresses(itemId, accountId));
 
@@ -4542,6 +4609,7 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
                 
 				exchange.SetPublicFolderPrimaryEmailAddress(
+                    org.OrganizationId,
 					account.DisplayName,
 					emailAddress);
 
@@ -4597,6 +4665,7 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
                 
 				exchange.SetPublicFolderEmailAddresses(
+                    org.OrganizationId,
 					account.DisplayName,
 					GetAccountSimpleEmailAddresses(itemId, accountId));
 

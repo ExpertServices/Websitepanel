@@ -193,5 +193,13 @@ namespace WebsitePanel.EnterpriseServer
         {
             FilesController.ExecuteSyncActions(packageId, actions);
         }
+
+        //CO Changes
+        [WebMethod]
+        public int ApplyEnableHardQuotaFeature(int packageId)
+        {
+            return FilesController.ApplyEnableHardQuotaFeature(packageId);
+        }
+        //END
     }
 }

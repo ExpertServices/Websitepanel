@@ -98,6 +98,10 @@ namespace WebsitePanel.Providers.HostedSolution
 		DateTime lastLogon;
 		DateTime lastLogoff;
 
+        bool enableLitigationHold;
+        long recoverabelItemsSpace;
+        long recoverabelItemsWarning;
+
 
 
         public string DisplayName
@@ -399,5 +403,26 @@ namespace WebsitePanel.Providers.HostedSolution
 			get { return fullAccessAccounts; }
 			set { fullAccessAccounts = value; }
 		}
+
+
+        public bool EnableLitigationHold
+        {
+            get { return enableLitigationHold; }
+            set { enableLitigationHold = value; }
+        }
+
+
+        public long RecoverabelItemsSpace
+        {
+            get { return this.recoverabelItemsSpace; }
+            set { this.recoverabelItemsSpace = value; }
+        }
+
+        public long RecoverabelItemsWarning
+        {
+            get { return this.recoverabelItemsWarning; }
+            set { this.recoverabelItemsWarning = value; }
+        }
+
 	}
 }

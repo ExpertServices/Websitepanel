@@ -51,6 +51,10 @@ namespace WebsitePanel.Providers.HostedSolution
         private int allocatedDiskSpace;
         private int usedDiskSpace;
 
+        private int allocatedLitigationHoldSpace;
+        private int usedLitigationHoldSpace;
+
+
 		private int allocatedSharePointSiteCollections;
 		private int createdSharePointSiteCollections;
 
@@ -154,6 +158,18 @@ namespace WebsitePanel.Providers.HostedSolution
             set { usedDiskSpace = value; }
         }
 
+        public int AllocatedLitigationHoldSpace
+        {
+            get { return allocatedLitigationHoldSpace; }
+            set { allocatedLitigationHoldSpace = value; }
+        }
+
+        public int UsedLitigationHoldSpace
+        {
+            get { return usedLitigationHoldSpace; }
+            set { usedLitigationHoldSpace = value; }
+        }
+        
 		public int AllocatedSharePointSiteCollections
 		{
 			get { return allocatedSharePointSiteCollections; }

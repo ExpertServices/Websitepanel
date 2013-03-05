@@ -913,7 +913,7 @@ namespace WebsitePanel.Portal
 		{
 			try
 			{
-				int result = ES.Services.WebServers.DeleteWebSite(PanelRequest.ItemID);
+                int result = ES.Services.WebServers.DeleteWebSite(PanelRequest.ItemID, chkDeleteWebsiteDirectory.Checked);
 				if (result < 0)
 				{
 					ShowResultMessage(result);

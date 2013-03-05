@@ -50,8 +50,9 @@ namespace WebsitePanel.Portal.ExchangeServer
                         chkHideAddressBook.Visible = false;
                         chkDisable.Visible = false;
                     }
-                }
 
+                    secLitigationHoldSettings.Visible = (Utils.CheckQouta(Quotas.EXCHANGE2007_ALLOWLITIGATIONHOLD, cntx));
+                }
             }
 
         }
@@ -99,10 +100,13 @@ namespace WebsitePanel.Portal.ExchangeServer
                 mailboxSize.QuotaUsedValue = Convert.ToInt32(stats.TotalSize / 1024 / 1024);
                 mailboxSize.QuotaValue = (stats.MaxSize == -1) ? -1: (int)Math.Round((double)(stats.MaxSize / 1024 / 1024));
 
-                if ((account.AccountType == ExchangeAccountType.Equipment) | (account.AccountType == ExchangeAccountType.Room))
-                    secCalendarSettings.Visible = true;
-                else
-                    secCalendarSettings.Visible = false;
+                secCalendarSettings.Visible = ((account.AccountType == ExchangeAccountType.Equipment) | (account.AccountType == ExchangeAccountType.Room));
+
+                secLitigationHoldSettings.Visible = mailbox.EnableLitigationHold;
+
+                litigationHoldSpace.QuotaUsedValue = Convert.ToInt32(stats.LitigationHoldTotalSize / 1024 / 1024);
+                litigationHoldSpace.QuotaValue = (stats.LitigationHoldMaxSize == -1) ? -1 : (int)Math.Round((double)(stats.LitigationHoldMaxSize / 1024 / 1024));
+
 
 
             }

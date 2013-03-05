@@ -912,5 +912,163 @@ namespace WebsitePanel.EnterpriseServer
 
             return users.ToArray();
         }
+
+        public static int SetFolderQuota(int packageId, string path, string driveName)
+        {
+
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // check package
+            int packageCheck = SecurityContext.CheckPackage(packageId, DemandPackage.IsActive);
+            if (packageCheck < 0) return packageCheck;
+
+            // place log record
+            TaskManager.StartTask("FILES", "SET_QUOTA_ON_FOLDER", path);
+            TaskManager.ItemId = packageId;
+
+            try
+            {
+
+                // disk space quota
+                // This gets all the disk space allocated for a specific customer
+                // It includes the package Add Ons * Quatity + Hosting Plan System disk space value.
+                QuotaValueInfo diskSpaceQuota = PackageController.GetPackageQuota(packageId, Quotas.OS_DISKSPACE);
+
+
+                #region figure Quota Unit
+
+                // Quota Unit
+                string unit = String.Empty;
+                if (diskSpaceQuota.QuotaDescription.ToLower().Contains("gb"))
+                    unit = "GB";
+                else if (diskSpaceQuota.QuotaDescription.ToLower().Contains("mb"))
+                    unit = "MB";
+                else
+                    unit = "KB";
+
+                #endregion
+
+                OS.OperatingSystem os = GetOS(packageId);
+
+                os.SetQuotaLimitOnFolder(path, driveName, diskSpaceQuota.QuotaAllocatedValue.ToString() + unit, 0, String.Empty, String.Empty);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                //Log and return a generic error rather than throwing an exception
+                TaskManager.WriteError(ex);
+                return BusinessErrorCodes.ERROR_FILE_GENERIC_LOGGED;
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+
+        }
+
+        public static int ApplyEnableHardQuotaFeature(int packageId)
+        {
+            if (SecurityContext.CheckAccount(DemandAccount.IsActive | DemandAccount.IsAdmin | DemandAccount.NotDemo) != 0)
+                throw new Exception("This method could be called by serveradmin only.");
+
+            // place log record
+            TaskManager.StartTask("FILES", "APPLY_ENABLEHARDQUOTAFEATURE");
+
+            try
+            {
+
+                // request OS service
+                //int osId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Os);
+                //if (osId == 0)
+                //    return -1;
+
+                //OS.OperatingSystem os = new OS.OperatingSystem();
+                //ServiceProviderProxy.Init(os, osId);
+
+                ////Get operating system settings
+                // StringDictionary osSesstings = ServerController.GetServiceSettings(osId);
+                //  bool diskQuotaEnabled = (osSesstings["EnableHardQuota"] != null) ? bool.Parse(osSesstings["EnableHardQuota"]) : false;
+                //string driveName = osSesstings["LocationDrive"];
+
+                //if (!diskQuotaEnabled)
+                //    return -1;
+
+
+                List<PackageInfo> allPackages = PackageController.GetPackagePackages(packageId, true);
+
+                foreach (PackageInfo childPackage in allPackages)
+                {
+                    // request OS service
+                    int osId = PackageController.GetPackageServiceId(childPackage.PackageId, ResourceGroups.Os);
+                    if (osId == 0)
+                        continue;
+
+                    OS.OperatingSystem os = new OS.OperatingSystem();
+                    ServiceProviderProxy.Init(os, osId);
+
+                    //Get operating system settings
+                    StringDictionary osSesstings = ServerController.GetServiceSettings(osId);
+                    string driveName = osSesstings["LocationDrive"];
+
+                    if (String.IsNullOrEmpty(driveName))
+                        continue;
+
+                    string homeFolder = FilesController.GetHomeFolder(childPackage.PackageId);
+                    FilesController.SetFolderQuota(childPackage.PackageId, homeFolder, driveName);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+            return 0;
+
+        }
+
+        public static int DeleteDirectoryRecursive(int packageId, string rootPath)
+        {
+
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // check package
+            int packageCheck = SecurityContext.CheckPackage(packageId, DemandPackage.IsActive);
+            if (packageCheck < 0) return packageCheck;
+
+            // place log record
+            TaskManager.StartTask("FILES", "DELETE_DIRECTORY_RECURSIVE", rootPath);
+            TaskManager.ItemId = packageId;
+
+            try
+            {
+
+                OS.OperatingSystem os = GetOS(packageId);
+                os.DeleteDirectoryRecursive(rootPath);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                //Log and return a generic error rather than throwing an exception
+                TaskManager.WriteError(ex);
+                return BusinessErrorCodes.ERROR_FILE_GENERIC_LOGGED;
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+
+        }
     }
 }

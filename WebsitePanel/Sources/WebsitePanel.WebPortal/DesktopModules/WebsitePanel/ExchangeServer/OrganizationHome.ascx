@@ -118,6 +118,15 @@
                                 <wsp:QuotaViewer ID="exchangeStorageStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
+                        <tr class="OrgStatsRow" id="rowExchangeLitigationHold" runat="server">
+                            <td align="right" nowrap>
+                                <asp:HyperLink ID="lnkExchangeLitigationHold" runat="server" meta:resourcekey="lnkExchangeLitigationHold"></asp:HyperLink>
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="exchangeLitigationHoldStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+
                         </asp:Panel>
 
                         <asp:Panel runat="server" ID="besStatsPanel">

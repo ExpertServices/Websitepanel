@@ -290,8 +290,9 @@ namespace WebsitePanel.Portal.ProviderControls
                         ES.Services.WebServers.DisableHeliconApeGlobally(int.Parse(Request.QueryString["ServiceID"]));
                     }
                 }
-            }
 
+            }
+			
 
 			if (WDeployEnabledCheckBox.Checked)
 			{

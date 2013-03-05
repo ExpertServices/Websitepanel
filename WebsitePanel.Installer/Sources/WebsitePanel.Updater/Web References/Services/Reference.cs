@@ -40,7 +40,7 @@ namespace WebsitePanel.Updater.Services {
         
         /// <remarks/>
         public InstallerService() {
-            this.Url = "http://localhost/WebsitePanelSite/Services/InstallerService-2.0.asmx";
+            this.Url = "http://localhost/WebsitePanelSite/Services/InstallerService-2.1.asmx";
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;

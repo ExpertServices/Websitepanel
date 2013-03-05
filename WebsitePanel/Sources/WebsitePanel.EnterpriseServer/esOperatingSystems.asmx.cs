@@ -93,5 +93,13 @@ namespace WebsitePanel.EnterpriseServer
         {
             return OperatingSystemController.DeleteOdbcSource(itemId);
         }
+
+        //CO Changes
+        [WebMethod]
+        public bool CheckFileServicesInstallation(int serviceId)
+        {
+            return OperatingSystemController.CheckFileServicesInstallation(serviceId);
+        }
+        //END
     }
 }

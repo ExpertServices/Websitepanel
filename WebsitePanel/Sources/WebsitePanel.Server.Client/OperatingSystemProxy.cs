@@ -131,6 +131,12 @@ namespace WebsitePanel.Providers.OS {
         private System.Threading.SendOrPostCallback UpdateDSNOperationCompleted;
         
         private System.Threading.SendOrPostCallback DeleteDSNOperationCompleted;
+
+        private System.Threading.SendOrPostCallback SetQuotaLimitOnFolderOperationCompleted;
+
+        private System.Threading.SendOrPostCallback DeleteDirectoryRecursiveOperationCompleted;
+
+        private System.Threading.SendOrPostCallback CheckFileServicesInstallationOperationCompleted;
         
         /// <remarks/>
         public OperatingSystem() {
@@ -247,6 +253,16 @@ namespace WebsitePanel.Providers.OS {
         
         /// <remarks/>
         public event DeleteDSNCompletedEventHandler DeleteDSNCompleted;
+
+        /// <remarks/>
+        public event SetQuotaLimitOnFolderCompletedEventHandler SetQuotaLimitOnFolderCompleted;
+
+        /// <remarks/>
+        public event DeleteDirectoryRecursiveCompletedEventHandler DeleteDirectoryRecursiveCompleted;
+
+        /// <remarks/>
+        public event CheckFileServicesInstallationCompletedEventHandler CheckFileServicesInstallationCompleted;
+        
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -1592,7 +1608,154 @@ namespace WebsitePanel.Providers.OS {
                 this.ExecuteSyncActionsCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
-        
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/SetQuotaLimitOnFolder", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
+        {
+            object[] results = this.Invoke("SetQuotaLimitOnFolder", new object[] {
+                        folderPath, shareNameDrive, quotaLimit, mode, wmiUserName, wmiPassword});
+            return ((bool)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginSetQuotaLimitOnFolder(string folderPath, string shareNameDrive, string quotaLimit, int mode, string wmiUserName, string wmiPassword, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("SetQuotaLimitOnFolder", new object[] {
+                        folderPath, shareNameDrive, quotaLimit, mode, wmiUserName, wmiPassword}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public bool EndSetQuotaLimitOnFolder(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+
+        /// <remarks/>
+        public void SetQuotaLimitOnFolderAsync(string folderPath, string shareNameDrive, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
+        {
+            this.SetQuotaLimitOnFolderAsync(folderPath, shareNameDrive, quotaLimit, mode, wmiUserName, wmiPassword, null);
+        }
+
+        /// <remarks/>
+        public void SetQuotaLimitOnFolderAsync(string folderPath, string shareNameDrive, string quotaLimit, int mode, string wmiUserName, string wmiPassword, object userState)
+        {
+            if ((this.SetQuotaLimitOnFolderOperationCompleted == null))
+            {
+                this.SetQuotaLimitOnFolderOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetQuotaLimitOnFolderOperationCompleted);
+            }
+            this.InvokeAsync("SetQuotaLimitOnFolder", new object[] {
+                        folderPath, shareNameDrive, quotaLimit, mode, wmiUserName, wmiPassword}, this.SetQuotaLimitOnFolderOperationCompleted, userState);
+        }
+
+        private void OnSetQuotaLimitOnFolderOperationCompleted(object arg)
+        {
+            if ((this.SetQuotaLimitOnFolderCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SetQuotaLimitOnFolderCompleted(this, new SetQuotaLimitOnFolderCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/DeleteDirectoryRecursive", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool DeleteDirectoryRecursive(string rootPath)
+        {
+            object[] results = this.Invoke("DeleteDirectoryRecursive", new object[] { 
+                rootPath });
+            return ((bool)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginDeleteDirectoryRecursive(string rootPath, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("DeleteDirectoryRecursive", new object[] {
+                        rootPath}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public bool EndDeleteDirectoryRecursive(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+
+        /// <remarks/>
+        public void DeleteDirectoryRecursiveAsync(string rootPath)
+        {
+            this.DeleteDirectoryRecursiveAsync(rootPath, null);
+        }
+
+        /// <remarks/>
+        public void DeleteDirectoryRecursiveAsync(string rootPath, object userState)
+        {
+            if ((this.DeleteDirectoryRecursiveOperationCompleted == null))
+            {
+                this.DeleteDirectoryRecursiveOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDeleteDirectoryRecursiveOperationCompleted);
+            }
+            this.InvokeAsync("DeleteDirectoryRecursive", new object[] {
+                        rootPath}, this.DeleteDirectoryRecursiveOperationCompleted, userState);
+        }
+
+        private void OnDeleteDirectoryRecursiveOperationCompleted(object arg)
+        {
+            if ((this.DeleteDirectoryRecursiveCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DeleteDirectoryRecursiveCompleted(this, new DeleteDirectoryRecursiveCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/CheckFileServicesInstallation", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool CheckFileServicesInstallation()
+        {
+            object[] results = this.Invoke("CheckFileServicesInstallation", new object[0]);
+            return ((bool)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginCheckFileServicesInstallation(System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("CheckFileServicesInstallation", new object[0], callback, asyncState);
+        }
+
+        /// <remarks/>
+        public bool EndCheckFileServicesInstallation(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+
+        /// <remarks/>
+        public void CheckFileServicesInstallationAsync()
+        {
+            this.CheckFileServicesInstallationAsync(null);
+        }
+
+        /// <remarks/>
+        public void CheckFileServicesInstallationAsync(object userState)
+        {
+            if ((this.CheckFileServicesInstallationOperationCompleted == null))
+            {
+                this.CheckFileServicesInstallationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckFileServicesInstallationOperationCompleted);
+            }
+            this.InvokeAsync("CheckFileServicesInstallation", new object[0], this.CheckFileServicesInstallationOperationCompleted, userState);
+        }
+
+        private void OnCheckFileServicesInstallationOperationCompleted(object arg)
+        {
+            if ((this.CheckFileServicesInstallationCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CheckFileServicesInstallationCompleted(this, new CheckFileServicesInstallationCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetInstalledOdbcDrivers", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -2391,4 +2554,95 @@ namespace WebsitePanel.Providers.OS {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
     public delegate void DeleteDSNCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void SetQuotaLimitOnFolderCompletedEventHandler(object sender, SetQuotaLimitOnFolderCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SetQuotaLimitOnFolderCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal SetQuotaLimitOnFolderCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public bool Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void CheckFileServicesInstallationCompletedEventHandler(object sender, CheckFileServicesInstallationCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CheckFileServicesInstallationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal CheckFileServicesInstallationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public bool Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+    }
+
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void DeleteDirectoryRecursiveCompletedEventHandler(object sender, DeleteDirectoryRecursiveCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DeleteDirectoryRecursiveCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal DeleteDirectoryRecursiveCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public bool Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+    }
 }

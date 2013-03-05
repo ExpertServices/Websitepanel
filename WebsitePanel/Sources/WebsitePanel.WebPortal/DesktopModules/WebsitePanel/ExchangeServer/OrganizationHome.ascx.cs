@@ -43,7 +43,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         }
 
-        private void BindExchangeStats(bool hideItems)
+        private void BindExchangeStats(bool hideItems, PackageContext cntx)
         {
             OrganizationStatistics exchangeOrgStats = ES.Services.ExchangeServer.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
             OrganizationStatistics exchangeTenantStats = ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
@@ -62,6 +62,10 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             lnkFolders.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "public_folders",
             "SpaceID=" + PanelSecurity.PackageId.ToString());
+
+            lnkExchangeLitigationHold.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "storage_usage",
+            "SpaceID=" + PanelSecurity.PackageId.ToString());
+
 
             mailboxesStats.QuotaUsedValue = exchangeOrgStats.CreatedMailboxes;
             mailboxesStats.QuotaValue = exchangeOrgStats.AllocatedMailboxes;
@@ -103,6 +107,19 @@ namespace WebsitePanel.Portal.ExchangeServer
                 foldersStats.QuotaValue = exchangeOrgStats.AllocatedPublicFolders;
                 if (exchangeOrgStats.AllocatedPublicFolders != -1) foldersStats.QuotaAvailable = exchangeTenantStats.AllocatedPublicFolders - exchangeTenantStats.CreatedPublicFolders;
             }
+
+            if ((!hideItems) && (Utils.CheckQouta(Quotas.EXCHANGE2007_ALLOWLITIGATIONHOLD, cntx)))
+            {
+                exchangeLitigationHoldStats.QuotaUsedValue = exchangeOrgStats.UsedLitigationHoldSpace;
+                exchangeLitigationHoldStats.QuotaValue = exchangeOrgStats.AllocatedLitigationHoldSpace;
+                if (exchangeOrgStats.AllocatedLitigationHoldSpace != -1)
+                {
+                    exchangeLitigationHoldStats.QuotaAvailable = exchangeTenantStats.AllocatedLitigationHoldSpace - exchangeTenantStats.UsedLitigationHoldSpace;
+                }
+            }
+            else
+                this.rowExchangeLitigationHold.Style.Add("display", "none");
+
         }
 
         private void BindOrgStats()
@@ -160,7 +177,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             if (cntx.Groups.ContainsKey(ResourceGroups.Exchange))
             {
                 exchangeStatsPanel.Visible = true;
-                BindExchangeStats(hideItems);
+                BindExchangeStats(hideItems, cntx);
             }
             else
                 exchangeStatsPanel.Visible = false;

@@ -215,6 +215,47 @@
 			<br />
 		</asp:Panel>
 
+		<wsp:CollapsiblePanel id="secLitigationHold" runat="server"
+            TargetControlID="LitigationHold" meta:resourcekey="secLitigationHold" Text="LitigationHold">
+        </wsp:CollapsiblePanel>
+        <asp:Panel ID="LitigationHold" runat="server" Height="0" style="overflow:hidden;">
+			<table>
+				<tr>
+					<td>
+						<asp:CheckBox ID="chkEnableLitigationHold" runat="server" meta:resourcekey="chkEnableLitigationHold" Text="Enabled Litigation Hold"></asp:CheckBox>
+					</td>
+				</tr>
+				<tr>
+					<td class="FormLabel200" align="right"><asp:Localize ID="locRecoverableItemsSpace" runat="server" meta:resourcekey="locRecoverableItemsSpace" Text="Recoverable Items Space (MB):"></asp:Localize></td>
+					<td>
+                            <uc1:QuotaEditor id="recoverableItemsSpace" runat="server"
+                                QuotaTypeID="2"
+                                QuotaValue="0"
+                                ParentQuotaValue="-1">
+                            </uc1:QuotaEditor>
+					</td>
+				</tr>
+				<tr>
+					<td class="FormLabel200" align="right"><asp:Localize ID="locRecoverableItemsWarning" runat="server" meta:resourcekey="locRecoverableItemsWarning" Text="Issue warning at:"></asp:Localize></td>
+					<td>
+						<wsp:SizeBox id="recoverableItemsWarning" runat="server" ValidationGroup="CreateMailboxPlan" DisplayUnitsKB="false" DisplayUnitsMB="false" DisplayUnitsPct="true" RequireValidatorEnabled="true"/>
+					</td>
+				</tr>
+                <tr>
+                    <td class="FormLabel200" align="right"><asp:Label ID="lblLitigationHoldUrl" runat="server" meta:resourcekey="lblLitigationHoldUrl" Text="Url:"></asp:Label></td>
+                    <td class="Normal">
+                        <asp:TextBox ID="txtLitigationHoldUrl" runat="server" Width="200" CssClass="NormalTextBox" MaxLength="255"></asp:TextBox></td>
+                </tr>
+                <tr>
+                    <td class="FormLabel200" align="right"><asp:Label ID="lblLitigationHoldMsg" runat="server" meta:resourcekey="lblLitigationHoldMsg" Text="Page Content:"></asp:Label></td>
+                    <td class="Normal" valign=top>
+                        <asp:TextBox ID="txtLitigationHoldMsg" runat="server" Rows="10" TextMode="MultiLine" Width="100%" CssClass="NormalTextBox" Wrap="False" MaxLength="511"></asp:TextBox></td>
+                </tr>
+
+			</table>
+		</asp:Panel>
+
+
     <table>
         <tr>
             <td>

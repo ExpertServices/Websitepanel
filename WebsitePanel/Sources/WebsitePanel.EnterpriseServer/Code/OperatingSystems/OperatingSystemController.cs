@@ -406,6 +406,15 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.CompleteTask();
             }
         }
+
+        // Check If FSRM Role services were installed
+        public static bool CheckFileServicesInstallation(int serviceId)
+        {
+            OS.OperatingSystem os = GetOS(serviceId);
+            return os.CheckFileServicesInstallation();
+
+        }
+
         #endregion
 
         #region Web Platform Installer

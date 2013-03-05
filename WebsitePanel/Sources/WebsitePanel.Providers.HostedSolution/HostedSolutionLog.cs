@@ -36,50 +36,50 @@ namespace WebsitePanel.Providers.HostedSolution
 {
     public class HostedSolutionLog
     {
-        internal static string LogPrefix = "HostedSolution";
+        public static string LogPrefix = "HostedSolution";
 
-		internal static void LogStart(string message, params object[] args)
+        public static void LogStart(string message, params object[] args)
 		{
 			string text = String.Format(message, args);
 			Log.WriteStart("{0} {1}", LogPrefix, text);
 		}
 
-		internal static void LogEnd(string message, params object[] args)
+        public static void LogEnd(string message, params object[] args)
 		{
 			string text = String.Format(message, args);
 			Log.WriteEnd("{0} {1}", LogPrefix, text);
 		}
 
-		internal static void LogInfo(string message, params object[] args)
+        public static void LogInfo(string message, params object[] args)
 		{
 			string text = String.Format(message, args);
 			Log.WriteInfo("{0} {1}", LogPrefix, text);
 		}
 
-		internal static void LogWarning(string message, params object[] args)
+        public static void LogWarning(string message, params object[] args)
 		{
 			string text = String.Format(message, args);
 			Log.WriteWarning("{0} {1}", LogPrefix, text);
 		}
 
-		internal static void LogError(Exception ex)
+        public static void LogError(Exception ex)
 		{
 			Log.WriteError(LogPrefix, ex);
 		}
 
-		internal static void LogError(string message, Exception ex)
+        public static void LogError(string message, Exception ex)
 		{
 			string text = String.Format("{0} {1}", LogPrefix, message);
 			Log.WriteError(text, ex);
 		}
 
-		internal static void DebugInfo(string message, params object[] args)
+        public static void DebugInfo(string message, params object[] args)
 		{
 			string text = String.Format(message, args);
 			Log.WriteInfo("{0} {1}", LogPrefix, text);
 		}
 
-        internal static void EndLog(string message, ResultObject res, string errorCode, Exception ex)
+        public static void EndLog(string message, ResultObject res, string errorCode, Exception ex)
         {
             if (res != null)
             {
@@ -99,17 +99,17 @@ namespace WebsitePanel.Providers.HostedSolution
 
         }
 
-        internal static void EndLog(string message, ResultObject res, string errorCode)
+        public static void EndLog(string message, ResultObject res, string errorCode)
         {
             EndLog(message, res, errorCode, null);
         }
 
-        internal static void EndLog(string message, ResultObject res)
+        public static void EndLog(string message, ResultObject res)
         {
             EndLog(message, res, null);
         }
 
-        internal static void EndLog(string message)
+        public static void EndLog(string message)
         {
             EndLog(message, null);
         }

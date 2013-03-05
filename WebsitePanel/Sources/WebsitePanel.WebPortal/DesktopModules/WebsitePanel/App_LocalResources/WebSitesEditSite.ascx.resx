@@ -486,4 +486,7 @@ To connect to web site management service please use username and password provi
   <data name="locSharedIPAddress.Text" xml:space="preserve">
     <value>IP address: Shared</value>
   </data>
+  <data name="chkDeleteWebsiteDirectory.Text" xml:space="preserve">
+    <value>Force delete website directory?</value>
+  </data>
 </root>

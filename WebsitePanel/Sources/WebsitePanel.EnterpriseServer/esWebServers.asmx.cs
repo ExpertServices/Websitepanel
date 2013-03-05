@@ -152,9 +152,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public int DeleteWebSite(int siteItemId)
+        public int DeleteWebSite(int siteItemId, bool deleteWebsiteDirectory)
         {
-            return WebServerController.DeleteWebSite(siteItemId);
+            return WebServerController.DeleteWebSite(siteItemId, deleteWebsiteDirectory);
         }
 
         [WebMethod]

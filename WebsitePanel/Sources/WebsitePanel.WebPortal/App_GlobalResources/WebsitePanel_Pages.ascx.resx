@@ -459,4 +459,7 @@
   <data name="PageTitle.SpaceVPSForPC" xml:space="preserve">
     <value>{user} - {space} - Virtual Private Servers for Private Cloud</value>
   </data>
+  <data name="PageName.SpaceApplyEnableHardQuotaFeature" xml:space="preserve">
+    <value>System Hard Quota</value>
+  </data>
 </root>

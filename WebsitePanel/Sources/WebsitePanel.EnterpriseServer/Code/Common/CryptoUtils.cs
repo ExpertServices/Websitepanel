@@ -31,6 +31,7 @@ using System.IO;
 using System.Text;
 using System.Security.Cryptography;
 using System.Configuration;
+using Microsoft.Win32;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -39,9 +40,32 @@ namespace WebsitePanel.EnterpriseServer
 	/// </summary>
 	public class CryptoUtils
 	{
+        static string EnterpriseServerRegistryPath = "SOFTWARE\\WebsitePanel\\EnterpriseServer";
+
 		public static string CryptoKey
 		{
-			get { return ConfigurationManager.AppSettings["WebsitePanel.CryptoKey"]; }
+			get 
+            {
+                string Key = ConfigurationManager.AppSettings["WebsitePanel.AltCryptoKey"];
+                string value = string.Empty;
+
+                if (!string.IsNullOrEmpty(Key))
+                {
+                    RegistryKey root = Registry.LocalMachine;
+                    RegistryKey rk = root.OpenSubKey(EnterpriseServerRegistryPath);
+                    if (rk != null)
+                    {
+                        value = (string)rk.GetValue(Key, null);
+                        rk.Close();
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(value))
+                    return value;
+                else
+                    return ConfigurationManager.AppSettings["WebsitePanel.CryptoKey"]; 
+                
+            }
 		}
 
 		public static bool EncryptionEnabled

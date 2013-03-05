@@ -463,6 +463,17 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
+        //CO Changes
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/CheckFileServicesInstallation", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool CheckFileServicesInstallation(int serviceId)
+        {
+            object[] results = this.Invoke("CheckFileServicesInstallation", new object[] {
+                        serviceId});
+            return ((bool)(results[0]));
+        }
+        //END
+
         /// <remarks/>
         public new void CancelAsync(object userState)
         {

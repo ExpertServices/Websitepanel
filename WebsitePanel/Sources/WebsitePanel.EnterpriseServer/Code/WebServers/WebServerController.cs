@@ -583,7 +583,7 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        public static int DeleteWebSite(int siteItemId)
+        public static int DeleteWebSite(int siteItemId, bool deleteWebsiteDirectory)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -655,6 +655,16 @@ namespace WebsitePanel.EnterpriseServer
 				//
                 web.DeleteSite(siteItem.SiteId);
 
+                // Delete WebManagementAccess Account
+                WebServerController.RevokeWebManagementAccess(siteItemId);
+
+                if (deleteWebsiteDirectory)
+                {
+                    // Delete website directory from file server
+                    // This will remove the hard quota as well
+                    FilesController.DeleteDirectoryRecursive(siteItem.PackageId, new DirectoryInfo(siteItem.DataPath).Parent.FullName);
+
+                }
                 // delete service item
                 PackageController.DeletePackageItem(siteItemId);
 

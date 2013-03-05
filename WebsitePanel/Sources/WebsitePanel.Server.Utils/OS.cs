@@ -30,6 +30,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Management;
+
 
 namespace WebsitePanel.Server.Utils
 {
@@ -402,6 +404,22 @@ namespace WebsitePanel.Server.Utils
 		{
 			return Environment.GetEnvironmentVariable("windir");
 		}
+        /// <summary>
+        /// Checks Whether the FSRM role services are installed
+        /// </summary>
+        /// <returns></returns>
+        public static bool CheckFileServicesInstallation()
+        {
+
+            ManagementClass objMC = new ManagementClass("Win32_ServerFeature");
+            ManagementObjectCollection objMOC = objMC.GetInstances();
+            foreach (ManagementObject objMO in objMOC)
+                if (objMO.Properties["Name"].Value.ToString().ToLower().Contains("file server resource manager"))
+                    return true;
+
+            return false;
+
+        }
 	}
 }
 

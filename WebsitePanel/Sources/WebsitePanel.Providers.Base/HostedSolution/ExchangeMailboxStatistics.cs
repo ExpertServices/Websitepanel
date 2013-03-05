@@ -37,6 +37,7 @@ namespace WebsitePanel.Providers.HostedSolution
 		public string DisplayName{ get; set; }
 		public DateTime AccountCreated { get; set; }
 		public string PrimaryEmailAddress { get; set; }
+        public bool LitigationHoldEnabled { get; set; }
 		public bool POPEnabled { get; set; }
 		public bool IMAPEnabled { get; set; }
 		public bool OWAEnabled { get; set; }
@@ -45,6 +46,9 @@ namespace WebsitePanel.Providers.HostedSolution
 		public int TotalItems { get; set; }
 		public long TotalSize { get; set; }
 		public long MaxSize { get; set; }
+        public long LitigationHoldTotalSize { get; set; }
+        public long LitigationHoldTotalItems { get; set; }
+        public long LitigationHoldMaxSize { get; set; }
 		public DateTime LastLogon { get; set; }
 		public DateTime LastLogoff { get; set; }
 		public bool Enabled { get; set; }

@@ -45,8 +45,14 @@
  */
 function websitepanel_GetErrorMessage($code)
 {
-    global $esErrorCodes;
+    // Error codes
+    $esErrorCodes = array();
     
+    // Include the common / known error codes
+    require_once(ROOTDIR . '/modules/servers/websitepanel/websitepanel.errorcodes.php');
+    $esErrorCodes = websitepanel_GetEnterpriseServerErrors();
+    
+    // Check if the error code exists, if not return the code
     if (array_key_exists($code, $esErrorCodes))
     {
         return $esErrorCodes[$code];
@@ -167,4 +173,25 @@ function websitepanel_CalculateUsage($result, $usageType)
         }
     }
     return $total;
+}
+
+/**
+ * websitepanel_GetServerSettings
+ *
+ * @access public
+ * @return array
+ */
+function websitepanel_GetServerSettings()
+{
+    $settings = array('username' => '', 'password' => '');
+
+    // Retrieve the settings from the modules configuration table
+    $results = select_query('tblservers', 'username,password', array('type' => 'websitepanel'));
+    if (mysql_num_rows($results) != 0)
+    {
+        $row = mysql_fetch_array($results, MYSQL_ASSOC);
+        $settings['username'] = $row['username'];
+        $settings['password'] = decrypt($row['password']);
+    }
+    return $settings;
 }

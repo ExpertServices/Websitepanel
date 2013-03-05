@@ -770,6 +770,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (result.ExceedingQuotas.Tables[0].Rows.Count > 0)
                     result.Result = BusinessErrorCodes.ERROR_PACKAGE_QUOTA_EXCEED;
+
+                // Update the Hard quota on home folder in case it was enabled and in case there was a change in disk space
+                UpdatePackageHardQuota(package.PackageId);
             }
             finally
             {
@@ -963,6 +966,9 @@ namespace WebsitePanel.EnterpriseServer
             homeFolder.PackageId = packageId;
             homeFolder.Name = path;
 
+            // Added By Haya
+            UpdatePackageHardQuota(packageId);
+
             // save package item
             return AddPackageItem(homeFolder);
         }
@@ -975,6 +981,30 @@ namespace WebsitePanel.EnterpriseServer
         public static void UpdatePackageBandwidthUpdate(int packageId, DateTime updateDate)
         {
             DataProvider.UpdatePackageBandwidthUpdate(packageId, updateDate);
+        }
+      
+        // This gets the system quota and updates the home folder with the value
+        public static void UpdatePackageHardQuota(int packageId)
+        {
+            // request OS service
+            int osId = GetPackageServiceId(packageId, ResourceGroups.Os);
+            if (osId == 0)
+                return;
+
+            OS.OperatingSystem os = new OS.OperatingSystem();
+            ServiceProviderProxy.Init(os, osId);
+
+            //Get operating system settings
+            StringDictionary osSesstings = ServerController.GetServiceSettings(osId);
+            bool diskQuotaEnabled = (osSesstings["EnableHardQuota"] != null) ? bool.Parse(osSesstings["EnableHardQuota"]) : false;
+            string driveName = osSesstings["LocationDrive"];
+
+            if (!diskQuotaEnabled)
+                return;
+
+            string homeFolder = FilesController.GetHomeFolder(packageId);
+            FilesController.SetFolderQuota(packageId, homeFolder, driveName);
+
         }
 
         #endregion
@@ -1035,6 +1065,8 @@ namespace WebsitePanel.EnterpriseServer
 
             result.Result = addonId;
 
+            // Update the Hard quota on home folder in case it was enabled and in case there was a change in disk space
+            UpdatePackageHardQuota(addon.PackageId);
             return result;
         }
 
@@ -1062,6 +1094,9 @@ namespace WebsitePanel.EnterpriseServer
             if (result.ExceedingQuotas.Tables[0].Rows.Count > 0)
                 result.Result = BusinessErrorCodes.ERROR_PACKAGE_QUOTA_EXCEED;
 
+            // Update the Hard quota on home folder in case it was enabled and in case there was a change in disk space
+            UpdatePackageHardQuota(addon.PackageId);
+
             return result;
         }
 
@@ -1071,6 +1106,10 @@ namespace WebsitePanel.EnterpriseServer
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive
                 | DemandAccount.IsReseller);
             if (accountCheck < 0) return accountCheck;
+
+
+            // Update the Hard quota on home folder in case it was enabled and in case there was a change in disk space
+            UpdatePackageHardQuota(GetPackageAddon(packageAddonId).PackageId);
 
             DataProvider.DeletePackageAddon(SecurityContext.User.UserId, packageAddonId);
 

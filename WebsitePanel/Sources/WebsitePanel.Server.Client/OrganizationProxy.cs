@@ -51,7 +51,7 @@ namespace WebsitePanel.Providers.HostedSolution
     using WebsitePanel.Providers.Common;
     using WebsitePanel.Providers.ResultObjects;
 
-
+    
 
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]

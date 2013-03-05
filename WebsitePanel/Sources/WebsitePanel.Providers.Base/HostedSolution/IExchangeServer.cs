@@ -39,7 +39,7 @@ namespace WebsitePanel.Providers.HostedSolution
                                     string accountName, bool enablePOP, bool enableIMAP,
                                     bool enableOWA, bool enableMAPI, bool enableActiveSync,
                                     long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB,
-                                    int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool isConsumer);
+                                    int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool isConsumer, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning);
 
         Organization ExtendToExchangeOrganization(string organizationId, string securityGroup, bool IsConsumer);
         string GetOABVirtualDirectory();
@@ -57,8 +57,6 @@ namespace WebsitePanel.Providers.HostedSolution
         string[] GetAuthoritativeDomains();
 
         // Mailboxes
-        //string CreateMailbox(string organizationId, string organizationDistinguishedName, string mailboxDatabase, string securityGroup, string offlineAddressBook, string addressBookPolicy, ExchangeAccountType accountType, string displayName, string accountName, string name, string domain, string password, bool enablePOP, bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync,
-        //    int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB,bool hideFromAddressBook); 
         void DeleteMailbox(string accountName);
         void DisableMailbox(string id);
         ExchangeMailbox GetMailboxGeneralSettings(string accountName);
@@ -66,7 +64,7 @@ namespace WebsitePanel.Providers.HostedSolution
         ExchangeMailbox GetMailboxMailFlowSettings(string accountName);
         void SetMailboxMailFlowSettings(string accountName, bool enableForwarding, string forwardingAccountName, bool forwardToBoth, string[] sendOnBehalfAccounts, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication);
         ExchangeMailbox GetMailboxAdvancedSettings(string accountName);
-        void SetMailboxAdvancedSettings(string organizationId, string accountName, bool enablePOP, bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync, long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB);
+        void SetMailboxAdvancedSettings(string organizationId, string accountName, bool enablePOP, bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync, long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg);
         ExchangeEmailAddress[] GetMailboxEmailAddresses(string accountName);
         void SetMailboxEmailAddresses(string accountName, string[] emailAddresses);
         void SetMailboxPrimaryEmailAddress(string accountName, string emailAddress);
@@ -98,20 +96,20 @@ namespace WebsitePanel.Providers.HostedSolution
         void SetDistributionListPermissions(string organizationId, string accountName, string[] sendAsAccounts, string[] sendOnBehalfAccounts, string[] addressLists);
 
 		// Public Folders
-		void CreatePublicFolder(string organizationId, string securityGroup, string parentFolder, string folderName, bool mailEnabled, string accountName, string name, string domain);
-		void DeletePublicFolder(string folder);
+		void CreatePublicFolder(string organizationDistinguishedName, string organizationId, string securityGroup, string parentFolder, string folderName, bool mailEnabled, string accountName, string name, string domain);
+        void DeletePublicFolder(string organizationId, string folder);
 		void EnableMailPublicFolder(string organizationId, string folder, string accountName, string name, string domain);
-		void DisableMailPublicFolder(string folder);
-		ExchangePublicFolder GetPublicFolderGeneralSettings(string folder);
-		void SetPublicFolderGeneralSettings(string folder, string newFolderName, bool hideFromAddressBook, ExchangeAccount[] accounts );
-		ExchangePublicFolder GetPublicFolderMailFlowSettings(string folder);
-		void SetPublicFolderMailFlowSettings(string folder, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication);
-		ExchangeEmailAddress[] GetPublicFolderEmailAddresses(string folder);
-		void SetPublicFolderEmailAddresses(string folder, string[] emailAddresses);
-		void SetPublicFolderPrimaryEmailAddress(string folder, string emailAddress);
-		ExchangeItemStatistics[] GetPublicFoldersStatistics(string[] folders);
-		string[] GetPublicFoldersRecursive(string parent);
-		long GetPublicFolderSize(string folder);
+        void DisableMailPublicFolder(string organizationId, string folder);
+        ExchangePublicFolder GetPublicFolderGeneralSettings(string organizationId, string folder);
+        void SetPublicFolderGeneralSettings(string organizationId, string folder, string newFolderName, bool hideFromAddressBook, ExchangeAccount[] accounts);
+        ExchangePublicFolder GetPublicFolderMailFlowSettings(string organizationId, string folder);
+        void SetPublicFolderMailFlowSettings(string organizationId, string folder, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication);
+        ExchangeEmailAddress[] GetPublicFolderEmailAddresses(string organizationId, string folder);
+        void SetPublicFolderEmailAddresses(string organizationId, string folder, string[] emailAddresses);
+        void SetPublicFolderPrimaryEmailAddress(string organizationId, string folder, string emailAddress);
+        ExchangeItemStatistics[] GetPublicFoldersStatistics(string organizationId, string[] folders);
+        string[] GetPublicFoldersRecursive(string organizationId, string parent);
+        long GetPublicFolderSize(string organizationId, string folder);
 
         //ActiveSync
         void CreateOrganizationActiveSyncPolicy(string organizationId);

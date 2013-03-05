@@ -207,4 +207,7 @@
   <data name="Unlimited.Text" xml:space="preserve">
     <value>Unlimited</value>
   </data>
+  <data name="lnkExchangeLitigationHold.Text" xml:space="preserve">
+    <value>Litigation Hold Storage (Mb):</value>
+  </data>
 </root>

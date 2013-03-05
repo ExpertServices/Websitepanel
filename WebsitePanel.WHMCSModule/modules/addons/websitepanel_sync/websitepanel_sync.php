@@ -46,14 +46,32 @@ function websitepanel_sync_config()
 {
     $configarray = array('name' => 'WebsitePanel Sync Automation',
                          'description' => 'Syncs WHMCS client details / contact changes with WebsitePanel',
-                         'version' => '1.0',
+                         'version' => '1.2',
                          'author' => 'Christopher York',
                          'fields' => array('serverhost' => array('FriendlyName', 'Enterprise Server Host', 'Type' => 'text', 'Size' => 25, 'Description' => 'Enterprise Server hostname / IP address', 'Default' => '127.0.0.1'),
                                            'serverport' => array('FriendlyName', 'Enterprise Server Port', 'Type' => 'text', 'Size' => 4, 'Description' => 'Enterprise Server port', 'Default' => 9002),
                                            'serversecured' => array('FriendlyName', 'Use Secured Connection', 'Type' => 'yesno', 'Description' => 'Tick to use SSL secured connection'),
-                                           'username' => array('FriendlyName', 'Username', 'Type' => 'text', 'Size' => 25, 'Description' => 'Enterprise Server username', 'Default' => 'serveradmin'),
-                                           'password' => array('FriendlyName', 'Password', 'Type' => 'password', 'Size' => 25, 'Description' => 'Enterprise Server password')
                                            )
                         );
     return $configarray;
+}
+
+/**
+ * websitepanel_addons_upgrade
+ *
+ * @param $vars array
+ * @access public
+ * @return array
+ */
+function websitepanel_sync_upgrade($vars)
+{
+
+    $version = $vars['version'];
+
+    // Remove the WebsitePanel credentials
+    if ($version < 1.2)
+    {
+        full_query("DELETE FROM `tbladdonmodules` WHERE `module` = 'websitepanel_sync' AND `setting` = 'username'");
+        full_query("DELETE FROM `tbladdonmodules` WHERE `module` = 'websitepanel_sync' AND `setting` = 'password'");
+    }
 }

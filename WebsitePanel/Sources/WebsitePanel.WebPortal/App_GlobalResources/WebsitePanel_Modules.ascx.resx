@@ -762,10 +762,13 @@
   <data name="ModuleTitle.SystemCenterServerAddresses" xml:space="preserve">
     <value>System Center Server Addresses</value>
   </data>
-	<data name="ModuleTitle.UserAccountVLanCreate" xml:space="preserve">
+  <data name="ModuleTitle.UserAccountVLanCreate" xml:space="preserve">
     <value>Add VLan to user</value>
   </data>
   <data name="ModuleTitle.SetupControlPanelAccounts" xml:space="preserve">
     <value>Setup WebsitePanel Accounts</value>
+  </data>
+  <data name="ModuleTitle.ApplyEnableHardQuotaFeature" xml:space="preserve">
+    <value>System Hard Quota</value>
   </data>
 </root>

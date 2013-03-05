@@ -382,6 +382,105 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::WebsitePanel.Portal.ExchangeServer.UserControls.DaysBox daysKeepDeletedItems;
         
         /// <summary>
+        /// secLitigationHold control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.CollapsiblePanel secLitigationHold;
+        
+        /// <summary>
+        /// LitigationHold control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel LitigationHold;
+        
+        /// <summary>
+        /// chkEnableLitigationHold control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkEnableLitigationHold;
+        
+        /// <summary>
+        /// locRecoverableItemsSpace control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locRecoverableItemsSpace;
+        
+        /// <summary>
+        /// recoverableItemsSpace control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaEditor recoverableItemsSpace;
+        
+        /// <summary>
+        /// locRecoverableItemsWarning control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locRecoverableItemsWarning;
+        
+        /// <summary>
+        /// recoverableItemsWarning control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.SizeBox recoverableItemsWarning;
+        
+        /// <summary>
+        /// lblLitigationHoldUrl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblLitigationHoldUrl;
+        
+        /// <summary>
+        /// txtLitigationHoldUrl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtLitigationHoldUrl;
+        
+        /// <summary>
+        /// lblLitigationHoldMsg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblLitigationHoldMsg;
+        
+        /// <summary>
+        /// txtLitigationHoldMsg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtLitigationHoldMsg;
+        
+        /// <summary>
         /// btnAdd control.
         /// </summary>
         /// <remarks>

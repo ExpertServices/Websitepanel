@@ -329,6 +329,33 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::WebsitePanel.Portal.QuotaViewer exchangeStorageStats;
         
         /// <summary>
+        /// rowExchangeLitigationHold control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow rowExchangeLitigationHold;
+        
+        /// <summary>
+        /// lnkExchangeLitigationHold control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkExchangeLitigationHold;
+        
+        /// <summary>
+        /// exchangeLitigationHoldStats control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaViewer exchangeLitigationHoldStats;
+        
+        /// <summary>
         /// besStatsPanel control.
         /// </summary>
         /// <remarks>

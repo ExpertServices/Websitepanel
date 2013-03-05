@@ -645,7 +645,7 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             string path = GetUserPath(organizationId, accountName);
             DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
-
+            
             if (!string.IsNullOrEmpty(password))
                 entry.Invoke(ADAttributes.SetPassword, password);
 
@@ -737,8 +737,8 @@ namespace WebsitePanel.Providers.HostedSolution
                 SearchResult resCollection = searcher.FindOne();
                 if (resCollection != null)
                 {
-                    if (resCollection.Properties["samaccountname"] != null)
-                        bFound = true;
+                    if(resCollection.Properties["samaccountname"] != null)
+                        bFound = true; 
                 }
             }
             catch (Exception e)
@@ -751,6 +751,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
             return bFound;
         }
+
 
 
         #endregion

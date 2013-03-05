@@ -209,6 +209,16 @@ namespace WebsitePanel.Providers.OS
             SecurityUtils.GrantGroupNtfsPermissions(path, users, resetChildPermissions,
                 ServerSettings, usersOU, null);
         }
+      
+        public virtual void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
+        {
+            FileUtils.SetQuotaLimitOnFolder(folderPath, shareNameDrive, quotaLimit, mode, wmiUserName, wmiPassword);
+        }
+
+        public virtual void DeleteDirectoryRecursive(string rootPath)
+        {
+            FileUtils.DeleteDirectoryRecursive(rootPath);
+        }
         #endregion
 
         #region ODBC DSNs
@@ -728,6 +738,12 @@ namespace WebsitePanel.Providers.OS
         public override bool IsInstalled()
         {
             return WebsitePanel.Server.Utils.OS.GetVersion() == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2003;                        
+        }
+
+        public virtual bool CheckFileServicesInstallation()
+        {
+            return WebsitePanel.Server.Utils.OS.CheckFileServicesInstallation();
+
         }
     }
 }

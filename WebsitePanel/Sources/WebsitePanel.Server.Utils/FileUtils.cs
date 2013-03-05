@@ -37,6 +37,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Ionic.Zip;
 using WebsitePanel.Providers.OS;
+using System.Management;
 
 namespace WebsitePanel.Providers.Utils
 {
@@ -844,6 +845,126 @@ namespace WebsitePanel.Providers.Utils
                 conn, null);
             cat = null;
         }
+
+        public static void DeleteDirectoryRecursive(string rootPath)
+        {
+            // This code is done this way to force folder deletion 
+            // even if the folder was opened
+
+            DirectoryInfo treeRoot = new DirectoryInfo(rootPath);
+            if (treeRoot.Exists)
+            {
+
+                DirectoryInfo[] dirs = treeRoot.GetDirectories();
+                while (dirs.Length > 0)
+                {
+                    foreach (DirectoryInfo dir in dirs)
+                        DeleteDirectoryRecursive(dir.FullName);
+
+                    dirs = treeRoot.GetDirectories();
+                }
+
+                // DELETE THE FILES UNDER THE CURRENT ROOT
+                string[] files = Directory.GetFiles(treeRoot.FullName);
+                foreach (string file in files)
+                {
+                    File.SetAttributes(file, FileAttributes.Normal);
+                    File.Delete(file);
+                }
+
+                Directory.Delete(treeRoot.FullName, true);
+            }
+
+
+        }
+
+        public static void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
+        {
+
+            try
+            {
+                string[] splits = folderPath.Split('\\');
+                if (splits.Length > 0)
+                {
+                    // bat file pat
+                    string cmdFilePath = @"\\" + splits[2] + @"\" + splits[3] + @"\" + "Process.bat";
+
+                    // Creating the BAT file
+                    FileStream fs = File.Create(cmdFilePath);
+                    if (fs != null)
+                    {
+                        fs.Close();
+                        fs.Dispose();
+                    }
+
+                    StreamWriter swr = new StreamWriter(cmdFilePath);
+
+                    if (swr != null)
+                    {
+                        swr.WriteLine(@"cd c:\windows\system32");
+
+                        string sharePath = String.Empty;
+
+                        if (splits.Length > 4)
+                        {
+                            // Form the share physicalPath
+                            sharePath = shareNameDrive + @":\" + splits[3];
+
+                            if (splits.Length == 5 && !quotaLimit.Equals(String.Empty))
+                            {
+
+                                switch (mode)
+                                {
+                                    // Set
+                                    case 0:
+                                        // Delete the quota in case one exists
+                                        swr.WriteLine(@"dirquota quota delete /path:" + sharePath + @"\" + splits[4] + @" /remote:" + splits[2] + @" /quiet");
+                                        swr.WriteLine(@"dirquota quota add /path:" + sharePath + @"\" + splits[4] + @" /limit:" + quotaLimit + @" /remote:" + splits[2]);
+                                        break;
+
+                                    // Modify
+                                    case 1: swr.WriteLine(@"dirquota quota modify /path:" + sharePath + @"\" + splits[4] + @" /limit:" + quotaLimit + @" /remote:" + splits[2]);
+                                        break;
+                                }
+                            }
+
+
+                        }
+                        swr.Flush();
+                        swr.Close();
+                        swr.Dispose();
+                    }
+
+                    ConnectionOptions connOptions = new ConnectionOptions();
+
+                    if (wmiUserName.Length > 0)
+                    {
+                        connOptions.Username = wmiUserName;
+                        connOptions.Password = wmiPassword;
+                    }
+
+                    connOptions.Impersonation = ImpersonationLevel.Impersonate;
+
+                    connOptions.EnablePrivileges = true;
+
+                    ManagementScope manScope =
+                        new ManagementScope(String.Format(@"\\{0}\ROOT\CIMV2", splits[2]), connOptions);
+                    manScope.Connect();
+
+                    ObjectGetOptions objectGetOptions = new ObjectGetOptions();
+                    ManagementPath managementPath = new ManagementPath("Win32_Process");
+                    ManagementClass processClass = new ManagementClass(manScope, managementPath, objectGetOptions);
+
+                    ManagementBaseObject inParams = processClass.GetMethodParameters("Create");
+                    inParams["CommandLine"] = cmdFilePath;
+                    ManagementBaseObject outParams = processClass.InvokeMethod("Create", inParams, null);
+
+                }
+            }
+            catch
+            { }
+        }
+
 		#region Advanced Delete
 		/// <summary>
 		/// Deletes the specified file.

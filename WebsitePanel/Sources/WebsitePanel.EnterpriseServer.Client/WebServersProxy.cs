@@ -1208,9 +1208,11 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/DeleteWebSite", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public int DeleteWebSite(int siteItemId) {
+        public int DeleteWebSite(int siteItemId, bool deleteWebsiteDirectory)
+        {
             object[] results = this.Invoke("DeleteWebSite", new object[] {
-                        siteItemId});
+                        siteItemId,
+                        deleteWebsiteDirectory});
             return ((int)(results[0]));
         }
         

@@ -1238,6 +1238,17 @@ namespace WebsitePanel.EnterpriseServer {
                 this.ExecuteSyncActionsCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
+
+        //CO Changes       
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/ApplyEnableHardQuotaFeature", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int ApplyEnableHardQuotaFeature(int packageId)
+        {
+            object[] results = this.Invoke("ApplyEnableHardQuotaFeature", new object[] {
+                        packageId });
+            return ((int)(results[0]));
+        }
+        //END
         
         /// <remarks/>
         public new void CancelAsync(object userState) {

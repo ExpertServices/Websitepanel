@@ -46,15 +46,17 @@ function websitepanel_addons_AddonActivation($params)
 {
     // Sanity check to make sure the associated service is WebsitePanel based product
     // And that the addon purchased has an associated WebsitePanel addon
-    $results = full_query("SELECT h.id AS `id` FROM `tblhosting` AS h, `tblwspaddons` AS w, `tblservers` AS s WHERE h.id = {$params['serviceid']} AND h.server = s.id AND s.type = 'websitepanel' AND w.whmcs_id = {$params['addonid']}");
+    $results = full_query("SELECT h.id AS `id` FROM `tblhosting` AS h, `mod_wspaddons` AS w, `tblservers` AS s WHERE h.id = {$params['serviceid']} AND h.server = s.id AND s.type = 'websitepanel' AND w.whmcs_id = {$params['addonid']}");
     if (mysql_num_rows($results) > 0)
     {
         // Include the WebsitePanel ES Class
         require_once(ROOTDIR . '/modules/servers/websitepanel/websitepanel.class.php');
+        require_once(ROOTDIR . '/modules/servers/websitepanel/websitepanel.functions.php');
         
         // Retrieve the WebsitePanel Addons module settings
         $modSettings = websitepanel_addons_GetSettings();
-        if (empty($modSettings['username']) || empty($modSettings['password']) || empty($modSettings['serverhost']) || empty($modSettings['serverport']))
+        $srvSettings = websitepanel_GetServerSettings();
+        if (empty($modSettings['serverhost']) || empty($modSettings['serverport']) || empty($srvSettings['username']) || empty($srvSettings['password']))
         {
             // The module is disabled or has not yet been configured - stop
             return;
@@ -71,7 +73,7 @@ function websitepanel_addons_AddonActivation($params)
         }
         
         // Create the WebsitePanel object instance
-        $wsp = new WebsitePanel($modSettings['username'], $modSettings['password'], $modSettings['serverhost'], $modSettings['serverport'], (($modSettings['serversecured']) == 'on' ? TRUE : FALSE));
+        $wsp = new WebsitePanel($srvSettings['username'], $srvSettings['password'], $modSettings['serverhost'], $modSettings['serverport'], (($modSettings['serversecured']) == 'on' ? TRUE : FALSE));
         
         // Grab the user's details from WebsitePanel in order to get the user's id
         $user = $wsp->get_user_by_username($username);
@@ -89,7 +91,7 @@ function websitepanel_addons_AddonActivation($params)
         }
         
         // Get the associated WebsitePanel addon id
-        $results = select_query('tblwspaddons', 'wsp_id,is_ipaddress', array('whmcs_id' => $params['addonid']));
+        $results = select_query('mod_wspaddons', 'wsp_id,is_ipaddress', array('whmcs_id' => $params['addonid']));
         $addon = mysql_fetch_array($results);
         $addonPlanId = $addon['wsp_id'];
         $addonIsIpAddress = $addon['is_ipaddress'];
@@ -129,7 +131,7 @@ function websitepanel_addons_GetSettings()
     $results = select_query('tbladdonmodules', 'setting,value', array('module' => 'websitepanel_addons'));
     while (($row = mysql_fetch_array($results)) != false)
     {
-        $settings[$row['setting']] = $row['value'];
+        $settings[$row[0]] = $row[1];
     }
     return $settings;
 }

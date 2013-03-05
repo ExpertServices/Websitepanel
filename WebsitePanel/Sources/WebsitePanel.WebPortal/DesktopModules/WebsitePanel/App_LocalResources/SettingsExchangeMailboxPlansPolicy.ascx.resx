@@ -228,4 +228,22 @@
   <data name="btnUpdateMailboxPlan.Text" xml:space="preserve">
     <value>Update Mailbox Plan</value>
   </data>
+  <data name="chkEnableLitigationHold.Text" xml:space="preserve">
+    <value>Enable Litigation Hold</value>
+  </data>
+  <data name="locRecoverableItemsSpace.Text" xml:space="preserve">
+    <value>Recoverable Items Space (Mb):</value>
+  </data>
+  <data name="locRecoverableItemsWarning.Text" xml:space="preserve">
+    <value>Warning at:</value>
+  </data>
+  <data name="secLitigationHold.Text" xml:space="preserve">
+    <value>Litigation Hold</value>
+  </data>
+  <data name="lblLitigationHoldMsg.Text" xml:space="preserve">
+    <value>Litigation Hold Message:</value>
+  </data>
+  <data name="lblLitigationHoldUrl.Text" xml:space="preserve">
+    <value>Litigation Hold Url:</value>
+  </data>
 </root>

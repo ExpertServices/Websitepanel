@@ -327,7 +327,7 @@ namespace WebsitePanel.Providers.HostedSolution
             string accountName, bool enablePOP, bool enableIMAP,
             bool enableOWA, bool enableMAPI, bool enableActiveSync,
             long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays,
-            int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool IsConsumer)
+            int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool IsConsumer, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning)
         {
 
             ExchangeLog.LogStart("CreateMailEnableUserInternal");
@@ -414,6 +414,14 @@ namespace WebsitePanel.Providers.HostedSolution
                 else
                     cmd.Parameters.Add("HiddenFromAddressListsEnabled", hideFromAddressBook);
                 cmd.Parameters.Add("AddressBookPolicy", addressBookPolicy);
+
+                if (enabledLitigationHold)
+                {
+                    cmd.Parameters.Add("LitigationHoldEnabled", true);
+                    cmd.Parameters.Add("RecoverableItemsQuota", ConvertKBToUnlimited(recoverabelItemsSpace));
+                    cmd.Parameters.Add("RecoverableItemsWarningQuota", ConvertKBToUnlimited(recoverabelItemsWarning));
+                }
+
                 ExecuteShellCommand(runSpace, cmd);
 
                 //Client Access
@@ -493,7 +501,7 @@ namespace WebsitePanel.Providers.HostedSolution
                     cmd.Parameters.Add("Identity", id);
                     cmd.Parameters.Add("Confirm", false);
                     ExecuteShellCommand(runSpace, cmd);
-                                       
+
 
                     if (addressbookPolicy == (upn + " AP"))
                     {

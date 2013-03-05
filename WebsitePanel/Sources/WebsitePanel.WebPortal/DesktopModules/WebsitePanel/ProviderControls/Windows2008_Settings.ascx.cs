@@ -44,16 +44,40 @@ namespace WebsitePanel.Portal.ProviderControls
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            //CO Changes
+            if (!IsPostBack)
+            {
+                try
+                {
+                    chkEnableHardQuota.Enabled = ES.Services.OperatingSystems.CheckFileServicesInstallation(PanelRequest.ServiceId);
+                    txtLocationDrive.Enabled = chkEnableHardQuota.Enabled;
+                    valLocationDrive.Enabled = chkEnableHardQuota.Enabled;
+                    if (!chkEnableHardQuota.Enabled)
+                        lblFileServiceInfo.Visible = true;
+                }
+                catch
+                {
+                }
+            }
+            //END
         }
 
         public void BindSettings(StringDictionary settings)
         {
             txtFolder.Text = settings["UsersHome"];
+            //CO Changes
+            txtLocationDrive.Text = settings["LocationDrive"];
+            chkEnableHardQuota.Checked = settings["EnableHardQuota"] == "true" ? true : false;
+            //END 
         }
 
         public void SaveSettings(StringDictionary settings)
         {
             settings["UsersHome"] = txtFolder.Text;
+            //CO Changes
+            settings["LocationDrive"] = txtLocationDrive.Text;
+            settings["EnableHardQuota"] = chkEnableHardQuota.Checked.ToString().ToLower();
+            //END 
         }
     }
 }
