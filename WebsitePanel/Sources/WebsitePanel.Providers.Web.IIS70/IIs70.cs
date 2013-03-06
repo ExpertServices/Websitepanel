@@ -38,6 +38,7 @@ using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.OS;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.Utils;
+using WebsitePanel.Providers.Web.Compression;
 using WebsitePanel.Providers.Web.Handlers;
 using WebsitePanel.Providers.Web.HttpRedirect;
 using WebsitePanel.Providers.Web.Iis.Authentication;
@@ -78,6 +79,7 @@ namespace WebsitePanel.Providers.Web
 		public const string AnonymousAuthenticationSection = "system.webServer/security/authentication/anonymousAuthentication";
 		public const string BasicAuthenticationSection = "system.webServer/security/authentication/basicAuthentication";
 		public const string WindowsAuthenticationSection = "system.webServer/security/authentication/windowsAuthentication";
+        public const string CompressionSection = "system.webServer/urlCompression";
 		public const string StaticContentSection = "system.webServer/staticContent";
 		public const string ModulesSection = "system.webServer/modules";
 		public const string IsapiCgiRestrictionSection = "system.webServer/security/isapiCgiRestriction";
@@ -347,6 +349,7 @@ namespace WebsitePanel.Providers.Web
 		private AnonymAuthModuleService anonymAuthSvc;
 		private WindowsAuthModuleService winAuthSvc;
 		private BasicAuthModuleService basicAuthSvc;
+        private CompressionModuleService comprSvc;
 		private DefaultDocsModuleService defaultDocSvc;
 		private CustomHttpErrorsModuleService customErrorsSvc;
 		private CustomHttpHeadersModuleService customHeadersSvc;
@@ -519,6 +522,7 @@ namespace WebsitePanel.Providers.Web
 				winAuthSvc = new WindowsAuthModuleService();
 				anonymAuthSvc = new AnonymAuthModuleService();
 				basicAuthSvc = new BasicAuthModuleService();
+                comprSvc = new CompressionModuleService();
 				defaultDocSvc = new DefaultDocsModuleService();
 				classicAspSvc = new ClassicAspModuleService();
 				httpRedirectSvc = new HttpRedirectModuleService();
@@ -623,6 +627,8 @@ namespace WebsitePanel.Providers.Web
 			virtualDir.AnonymousUserPassword = (string)bag[AuthenticationGlobals.AnonymousAuthenticationPassword];
 			virtualDir.EnableAnonymousAccess = (bool)bag[AuthenticationGlobals.Enabled];
 
+            
+
 			// load windows auth 
 			bag = winAuthSvc.GetAuthenticationSettings(srvman, virtualDir.FullQualifiedPath);
 			virtualDir.EnableWindowsAuthentication = (bool)bag[AuthenticationGlobals.Enabled];
@@ -636,10 +642,17 @@ namespace WebsitePanel.Providers.Web
 			bag = classicAspSvc.GetClassicAspSettings(srvman, virtualDir.FullQualifiedPath);
 			virtualDir.EnableParentPaths = (bool)bag[ClassicAspGlobals.EnableParentPaths];
 			//
+
+            //gzip
+            bag = comprSvc.GetSettings(srvman, virtualDir.FullQualifiedPath);
+            virtualDir.EnableDynamicCompression = (bool)bag[CompressionGlobals.DynamicCompression];
+            virtualDir.EnableStaticCompression = (bool)bag[CompressionGlobals.StaticCompression];
+
 			virtualDir.IIs7 = true;
 		}
 
-		private void FillIISObjectFromVirtualDirectory(WebVirtualDirectory virtualDir)
+
+	    private void FillIISObjectFromVirtualDirectory(WebVirtualDirectory virtualDir)
 		{
 			dirBrowseSvc.SetDirectoryBrowseEnabled(virtualDir.FullQualifiedPath, virtualDir.EnableDirectoryBrowsing);
 			//
@@ -648,6 +661,8 @@ namespace WebsitePanel.Providers.Web
 			winAuthSvc.SetEnabled(virtualDir.FullQualifiedPath, virtualDir.EnableWindowsAuthentication);
 			//
 			basicAuthSvc.SetAuthenticationSettings(virtualDir);
+            //
+            comprSvc.SetSettings(virtualDir.FullQualifiedPath, virtualDir.EnableDynamicCompression, virtualDir.EnableStaticCompression);
 			//
 			defaultDocSvc.SetDefaultDocumentSettings(virtualDir.FullQualifiedPath, virtualDir.DefaultDocs);
 			//
