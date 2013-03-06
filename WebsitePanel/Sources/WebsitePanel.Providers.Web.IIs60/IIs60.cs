@@ -2488,6 +2488,8 @@ namespace WebsitePanel.Providers.Web
 			virtDir.EnableWindowsAuthentication = (bool)obj.Properties["AuthNTLM"].Value;
 			virtDir.EnableAnonymousAccess = (bool)obj.Properties["AuthAnonymous"].Value;
 			virtDir.EnableBasicAuthentication = (bool)obj.Properties["AuthBasic"].Value;
+            //virtDir.EnableDynamicCompression = (bool)obj.Properties["DoDynamicCompression"].Value;
+            //virtDir.EnableStaticCompression = (bool)obj.Properties["DoStaticCompression"].Value;
 			virtDir.DefaultDocs = (string)obj.Properties["DefaultDoc"].Value;
 			virtDir.EnableParentPaths = (bool)obj.Properties["AspEnableParentPaths"].Value;
 		}
@@ -2506,6 +2508,9 @@ namespace WebsitePanel.Providers.Web
 			obj.Properties["AuthNTLM"].Value = virtDir.EnableWindowsAuthentication;
 			obj.Properties["AuthAnonymous"].Value = virtDir.EnableAnonymousAccess;
 			obj.Properties["AuthBasic"].Value = virtDir.EnableBasicAuthentication;
+            //obj.Properties["DoDynamicCompression"].Value = virtDir.EnableDynamicCompression;
+            //obj.Properties["DoStaticCompression"].Value = virtDir.EnableStaticCompression;
+
 			obj.Properties["AspEnableParentPaths"].Value = virtDir.EnableParentPaths;
 			if (virtDir.DefaultDocs != null && virtDir.DefaultDocs != "")
 				obj.Properties["DefaultDoc"].Value = virtDir.DefaultDocs;
