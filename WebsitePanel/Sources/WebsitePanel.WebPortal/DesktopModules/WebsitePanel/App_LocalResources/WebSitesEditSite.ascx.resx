@@ -225,24 +225,6 @@
   <data name="gvGroupsName.Header" xml:space="preserve">
     <value>Groups</value>
   </data>
-  <data name="gvHeliconApeFolders.Empty" xml:space="preserve">
-    <value>Click "Add .htaccess Folder" button to add .htaccess folder</value>
-  </data>
-  <data name="gvHeliconApeFoldersName.Header" xml:space="preserve">
-    <value>.htaccess Folders</value>
-  </data>
-  <data name="gvHeliconApeUsers.Empty" xml:space="preserve">
-    <value>Click "Add .htaccess User" button to add .htaccess user</value>
-  </data>
-  <data name="gvHeliconApeUsersName.Header" xml:space="preserve">
-    <value>.htaccess Users</value>
-  </data>
-  <data name="gvHeliconApeGroups.Empty" xml:space="preserve">
-    <value>Click "Add .htaccess Group" button to add .htaccess group</value>
-  </data>
-  <data name="gvHeliconApeGroupsName.Header" xml:space="preserve">
-    <value>.htaccess Groups</value>
-  </data>
   <data name="gvMimeTypes.Empty" xml:space="preserve">
     <value>Custom MIME types are not defined</value>
   </data>

@@ -36,9 +36,10 @@
 	float: left;
 }
 
-.FormButtonsBar .Right
+.FormButtonsBar Button2.Right
 {
 	text-align: right;
+    margin-bottom: 3px;
 }
 
 .FormButtonsBarClean
@@ -1405,3 +1406,9 @@ table#toolbar
 }
 
 p.warningText {font-size:14px; color:Red; text-align:center;}
+
+
+.Hidden 
+{
+    display: none;    
+}
