@@ -1,31 +1,42 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="WebSitesEditHeliconApeFolder.ascx.cs"
 	Inherits="WebsitePanel.Portal.WebSitesEditHeliconApeFolder" %>
 <%@ Register Src="UserControls/FileLookup.ascx" TagName="FileLookup" TagPrefix="uc1" %>
+<link rel="stylesheet" href="/JavaScript/codemirror/codemirror.css" />
 <script type="text/javascript" src="/JavaScript/jquery.min.js?v=1.4.4"></script>
+<script type="text/javascript" src="/JavaScript/codemirror/codemirror.js"></script>
+<script type="text/javascript" src="/JavaScript/codemirror/htaccess.js"></script>
 <script type="text/javascript">
-	function pageLoad() {
-		$('input:hidden').each(function (index, el) {
-			if ($(this).attr('id').indexOf('ApeDebuggerUrl') >= 0) {
-				if (this.value) {
-					$('#toolbar-start-debug').show();
-				}
-			}
-		});
+    function pageLoad() {
+        $('input:hidden').each(function (index, el) {
+            if ($(this).attr('id').indexOf('ApeDebuggerUrl') >= 0) {
+                if (this.value) {
+                    $('#toolbar-start-debug').show();
+                }
+            }
+        });
 
-	};
+    };
 
-	function openDebugWindow() {
-		$('input:hidden').each(function (index, el) {
-			if ($(this).attr('id').indexOf('ApeDebuggerUrl') >= 0) {
-				if (this.value) {
-					window.open(this.value);
-				}
-			}
-		});
+    function openDebugWindow() {
+        $('input:hidden').each(function (index, el) {
+            if ($(this).attr('id').indexOf('ApeDebuggerUrl') >= 0) {
+                if (this.value) {
+                    window.open(this.value);
+                }
+            }
+        });
 
-		return false;
-	}
+        return false;
+    }
 </script>
+<style>
+.CodeMirror {
+    border: 1px solid #444;
+    padding: 2px;
+    font-family: Consolas, monospace;
+    font-size: 12px;
+}
+</style>
 <div class="FormBody">
 	<table cellspacing="0" cellpadding="0" width="100%">
 		<tr>
@@ -62,7 +73,7 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							<asp:TextBox ID="htaccessContent" runat="server" TextMode="MultiLine" class="htaccess CodeEditor"></asp:TextBox>
+							<asp:TextBox ID="htaccessContent" runat="server" TextMode="MultiLine" class="CodeEditor"></asp:TextBox>
 						</td>
 					</tr>
 				</table>
@@ -78,3 +89,13 @@
 	<asp:Button ID="btnCancel" runat="server" Text="Cancel" meta:resourcekey="btnCancel"
 		CssClass="Button1" CausesValidation="false" OnClick="btnCancel_Click" />
 </div>
+
+<script>
+    $(document).ready(function() {
+        CodeMirror.fromTextArea(($('.CodeEditor')[0]),
+            {
+                lineNumbers: true,
+                autofocus: true
+            });
+    });
+</script>

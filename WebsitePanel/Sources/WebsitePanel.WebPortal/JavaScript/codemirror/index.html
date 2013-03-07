@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<style type="text/css">
+.CodeMirror {
+    height: 800px !important;
+    font-family: Consolas !important;
+    font-size: 15px;
+}
+</style>
+<body>
+<textarea id='code'>
+# Helicon Ape
+
+# mod_rewrite rules
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . index.php [NC,L]
+
+&lt;Location index.php&gt;
+ExpiresByType "text/html; charset=UTF-8" A30
+CacheEnable mem 
+CacheVaryByHeaders Original-Url 
+&lt;/Location&gt;
+
+# expiration
+ExpiresActive On
+ExpiresByType image/jpeg "access plus 1 days"
+ExpiresByType image/gif "access plus 1 days"
+ExpiresByType text/css   "access plus 1 days"
+ExpiresByType application/x-javascript  "access plus 1 days"
+
+# gzipping
+mod_gzip_on yes
+mod_gzip_item_include Mime ^text/.*
+
+&lt;Files index.php&gt;
+ExpiresByType "text/html; charset=UTF-8" A30
+CacheEnable mem 
+CacheVaryByHeaders Original-Url 
+&lt;/Files&gt;
+
+Header set Server "Apache/2.2.9 (Unix)"
+</textarea>
+</body>
+<script src="codemirror.js"></script>
+<link rel="stylesheet" href="codemirror.css">
+<script src="htaccess.js"></script>
+<script type="text/javascript">
+var myCodeMirror = CodeMirror.fromTextArea(document.getElementById('code'));
+</script>
+</html>
