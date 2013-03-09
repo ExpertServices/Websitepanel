@@ -159,16 +159,17 @@ namespace WebsitePanel.EnterpriseServer
                     {
                         System.Threading.Thread.Sleep(1000);
                     }
-                    
+
                     counter++;
                 }
 
-                // skip execution if the current task is still running
-                scheduledTasks = TaskManager.GetScheduledTasks();
-                if (!scheduledTasks.ContainsKey(schedule.ScheduleInfo.ScheduleId))
-                {
-                    // run the schedule in the separate thread
-                    schedule.Run();
+                    // skip execution if the current task is still running
+                    scheduledTasks = TaskManager.GetScheduledTasks();
+                    if (!scheduledTasks.ContainsKey(schedule.ScheduleInfo.ScheduleId))
+                    {
+                        // run the schedule in the separate thread
+                        schedule.Run();
+                    }
                 }
             }
             catch (Exception Ex)
@@ -177,7 +178,7 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     TaskManager.WriteError(string.Format("RunSchedule Error : {0}", Ex.Message));
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                 }
             }
