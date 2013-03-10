@@ -1,0 +1,13 @@
+WSP Transport Agent Installation
+================================
+
+Perform the following steps:
+
+A) Copy the files WSPTransportAgent.dll and WSPTransportAgent.dll.config to "C:\Program Files\Microsoft\Exchange Server\V14\Public"
+B) Import the WSPTransportAgent.reg to create the event source
+C) Use the registry editor and provide the "NETWORK SERVICE" Full Control on the following Key
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\eventlog\WSPTransportAgent
+D) Run the following powershell command in the exchange management shell:
+Install-TransportAgent "WSPTransportAgent" -TransportAgentFactory WSPTransportAgent.WSPRoutingAgentFactory -AssemblyPath "C:\Program Files\Microsoft\Exchange Server\V14\Public\WSPTransportAgent.dll"
+E) Enable-TransportAgent "WSPTransportAgent"
+F) Restart-Service MSExchangeTransport
