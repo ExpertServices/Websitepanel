@@ -74,6 +74,11 @@ namespace WebsitePanel.Providers.HostedSolution
 
         #region Properties
 
+        internal string PowerShellUrl
+        {
+            get { return ProviderSettings["PowerShellUrl"]; }
+        }
+
         internal string RootOU
         {
             get { return ProviderSettings["RootOU"]; }
@@ -1853,6 +1858,7 @@ namespace WebsitePanel.Providers.HostedSolution
             string ret = null;
             ExchangeTransaction transaction = StartTransaction();
             Runspace runSpace = null;
+            Runspace runSpaceEx = null;
 
             int attempts = 0;
             string id = null;
@@ -1860,6 +1866,7 @@ namespace WebsitePanel.Providers.HostedSolution
             try
             {
                 runSpace = OpenRunspace();
+                runSpaceEx = OpenRunspaceEx();
                 Command cmd = null;
                 Collection<PSObject> result = null;
 
@@ -1947,7 +1954,7 @@ namespace WebsitePanel.Providers.HostedSolution
                     cmd.Parameters.Add("Name", upn);
                     cmd.Parameters.Add("InPlaceHoldEnabled", enabledLitigationHold);
                     cmd.Parameters.Add("SourceMailboxes", upn);
-                    ExecuteShellCommand(runSpace, cmd);
+                    ExecuteShellCommandEx(runSpaceEx, cmd);
                 }
 
                 //Client Access
@@ -2258,9 +2265,11 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeMailbox info = new ExchangeMailbox();
             info.AccountName = accountName;
             Runspace runSpace = null;
+            Runspace runSpaceEx = null;
             try
             {
                 runSpace = OpenRunspace();
+                runSpaceEx = OpenRunspaceEx();
 
                 Collection<PSObject> result = GetMailboxObject(runSpace, accountName);
                 PSObject mailbox = result[0];
@@ -2311,7 +2320,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 info.EnableLitigationHold = false;
                 cmd = new Command("Get-MailboxSearch");
                 cmd.Parameters.Add("Identity", accountName);
-                result = ExecuteShellCommand(runSpace, cmd);
+                result = ExecuteShellCommandEx(runSpaceEx, cmd);
                 if ((result != null) & (result.Count > 0))
                 {
                     mailbox = result[0];
@@ -2483,9 +2492,11 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeMailbox info = new ExchangeMailbox();
             info.AccountName = accountName;
             Runspace runSpace = null;
+            Runspace runSpaceEx = null;
             try
             {
                 runSpace = OpenRunspace();
+                runSpaceEx = OpenRunspaceEx();
 
                 Collection<PSObject> result = GetMailboxObject(runSpace, accountName);
                 PSObject mailbox = result[0];
@@ -2520,7 +2531,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 info.EnableLitigationHold = false;
                 cmd = new Command("Get-MailboxSearch");
                 cmd.Parameters.Add("Identity", accountName);
-                result = ExecuteShellCommand(runSpace, cmd);
+                result = ExecuteShellCommandEx(runSpaceEx, cmd);
                 if ((result != null) & (result.Count > 0))
                 {
                     mailbox = result[0];
@@ -2574,9 +2585,11 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.DebugInfo("Account: {0}", accountName);
 
             Runspace runSpace = null;
+            Runspace runSpaceEx = null;
             try
             {
                 runSpace = OpenRunspace();
+                runSpaceEx = OpenRunspaceEx();
 
 
                 Command cmd = new Command("Set-Mailbox");
@@ -2600,12 +2613,12 @@ namespace WebsitePanel.Providers.HostedSolution
                 //LitigationHold
                 cmd = new Command("Get-MailboxSearch");
                 cmd.Parameters.Add("Identity", accountName);
-                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+                Collection<PSObject> result = ExecuteShellCommandEx(runSpaceEx, cmd);
                 cmd = new Command((result == null) || (result.Count == 0) ? "New-MailboxSearch" : "Set-MailboxSearch");
                 cmd.Parameters.Add((result == null) || (result.Count == 0) ? "Name" : "Identity", accountName);
                 cmd.Parameters.Add("InPlaceHoldEnabled", enabledLitigationHold);
                 cmd.Parameters.Add("SourceMailboxes", accountName);
-                ExecuteShellCommand(runSpace, cmd);
+                ExecuteShellCommandEx(runSpaceEx, cmd);
 
                 //Client Access
                 cmd = new Command("Set-CASMailbox");
@@ -2971,9 +2984,11 @@ namespace WebsitePanel.Providers.HostedSolution
 
             ExchangeMailboxStatistics info = new ExchangeMailboxStatistics();
             Runspace runSpace = null;
+            Runspace runSpaceEx = null;
             try
             {
                 runSpace = OpenRunspace();
+                runSpaceEx = OpenRunspaceEx();
 
                 Collection<PSObject> result = GetMailboxObject(runSpace, id);
                 PSObject mailbox = result[0];
@@ -3008,7 +3023,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 info.LitigationHoldEnabled = false;
                 cmd = new Command("Get-MailboxSearch");
                 cmd.Parameters.Add("Identity", id);
-                result = ExecuteShellCommand(runSpace, cmd);
+                result = ExecuteShellCommandEx(runSpaceEx, cmd);
                 if ((result != null) & (result.Count > 0))
                 {
                     mailbox = result[0];
@@ -5828,26 +5843,8 @@ namespace WebsitePanel.Providers.HostedSolution
         #endregion
 
         #region PowerShell integration
-        /*private Collection<PSObject> ExecuteShellCommand2(Runspace runSpace, string cmd)
-		{
-			ExchangeLog.LogStart("ExecuteShellCommand");
-			RunspaceInvoke invoker = new RunspaceInvoke(runSpace);
-			System.Collections.IList errors = null;
-			Collection<PSObject> results = invoker.Invoke(cmd, null, out errors);
-			if (errors != null && errors.Count > 0)
-			{
-				foreach (PSObject err in errors)
-				{
-					string errorMessage = string.Format("Invoke error: {0}", err.ToString());
-					ExchangeLog.LogError(errorMessage, null);
-				}
-			}
-			invoker = null;
-			ExchangeLog.LogEnd("ExecuteShellCommand");
-			return results;
-		}*/
-
         private static RunspaceConfiguration runspaceConfiguration = null;
+        private static WSManConnectionInfo connectionInfo = null;
         private static string ExchangePath = null;
 
         internal static string GetExchangePath()
@@ -5919,6 +5916,35 @@ namespace WebsitePanel.Providers.HostedSolution
             return runSpace;
         }
 
+        internal virtual Runspace OpenRunspaceEx()
+        {
+            ExchangeLog.LogStart("OpenRunspace Ex");
+            ExchangeLog.DebugInfo("PowerShelll Url: {0}", PowerShellUrl);
+
+            if (connectionInfo == null)
+            {
+                PSCredential credential = (PSCredential)null;
+
+                connectionInfo = new WSManConnectionInfo(new Uri(PowerShellUrl),
+                                                            "http://schemas.microsoft.com/powershell/Microsoft.Exchange",
+                                                            credential);
+
+                connectionInfo.AuthenticationMechanism = AuthenticationMechanism.NegotiateWithImplicitCredential;
+            }
+
+            Runspace runSpace = RunspaceFactory.CreateRunspace(connectionInfo);
+
+            runSpace.Open();
+
+            ExchangeLog.LogEnd("OpenRunspace");
+
+            Command cmd = new Command("Set-ADServerSettings");
+            cmd.Parameters.Add("PreferredServer", PrimaryDomainController);
+            ExecuteShellCommand(runSpace, cmd, false);
+            return runSpace;
+        }
+
+
         internal void CloseRunspace(Runspace runspace)
         {
             try
@@ -5933,6 +5959,23 @@ namespace WebsitePanel.Providers.HostedSolution
                 ExchangeLog.LogError("Runspace error", ex);
             }
         }
+
+        internal void CloseRunspaceEx(Runspace runspace)
+        {
+            try
+            {
+                if (runspace != null && runspace.RunspaceStateInfo.State == RunspaceState.Opened)
+                {
+                    runspace.Dispose();
+                    runspace = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                ExchangeLog.LogError("Runspace error", ex);
+            }
+        }
+
 
         internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd)
         {
@@ -5994,6 +6037,73 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("ExecuteShellCommand");
             return results;
         }
+
+
+        internal Collection<PSObject> ExecuteShellCommandEx(Runspace runSpace, Command cmd)
+        {
+            return ExecuteShellCommandEx(runSpace, cmd, true);
+        }
+
+        internal Collection<PSObject> ExecuteShellCommandEx(Runspace runSpace, Command cmd, bool useDomainController)
+        {
+            object[] errors;
+            return ExecuteShellCommandEx(runSpace, cmd, useDomainController, out errors);
+        }
+
+        internal Collection<PSObject> ExecuteShellCommandEx(Runspace runSpace, Command cmd, out object[] errors)
+        {
+            return ExecuteShellCommandEx(runSpace, cmd, true, out errors);
+        }
+
+        internal Collection<PSObject> ExecuteShellCommandEx(Runspace runSpace, Command cmd, bool useDomainController, out object[] errors)
+        {
+            ExchangeLog.LogStart("ExecuteShellCommandEx");
+            List<object> errorList = new List<object>();
+
+            if (useDomainController)
+            {
+                CommandParameter dc = new CommandParameter("DomainController", PrimaryDomainController);
+                if (!cmd.Parameters.Contains(dc))
+                {
+                    cmd.Parameters.Add(dc);
+                }
+            }
+
+            ExchangeLog.DebugCommand(cmd);
+            Collection<PSObject> results = null;
+            // Create a pipeline
+            Pipeline pipeLine = runSpace.CreatePipeline();
+            using (pipeLine)
+            {
+                // Add the command
+                pipeLine.Commands.Add(cmd);
+                // Execute the pipeline and save the objects returned.
+                results = pipeLine.Invoke();
+
+                // Log out any errors in the pipeline execution
+                // NOTE: These errors are NOT thrown as exceptions! 
+                // Be sure to check this to ensure that no errors 
+                // happened while executing the command.
+                if (pipeLine.Error != null && pipeLine.Error.Count > 0)
+                {
+                    var error = pipeLine.Error.Read() as Collection<ErrorRecord>;
+                    if (error != null)
+                    {
+                        foreach (ErrorRecord er in error)
+                        {
+                            errorList.Add(er);
+                            string errorMessage = string.Format("Invoke error: {0}", er.Exception.Message);
+                            ExchangeLog.LogWarning(errorMessage);
+                        }
+                    }
+                }
+            }
+            pipeLine = null;
+            errors = errorList.ToArray();
+            ExchangeLog.LogEnd("ExecuteShellCommandEx");
+            return results;
+        }
+
 
         /// <summary>
         /// Returns the distinguished name of the object from the shell execution result
