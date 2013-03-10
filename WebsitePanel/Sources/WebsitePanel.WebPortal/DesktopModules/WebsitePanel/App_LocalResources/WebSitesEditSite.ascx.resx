@@ -321,6 +321,9 @@
   <data name="Tab.Htaccess" xml:space="preserve">
     <value>.htaccess</value>
   </data>
+  <data name="Tab.HeliconZoo" xml:space="preserve">
+    <value>Web Engines</value>
+  </data>
   <data name="Tab.VirtualDirs" xml:space="preserve">
     <value>Virtual Dirs</value>
   </data>

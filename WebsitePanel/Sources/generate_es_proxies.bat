@@ -95,7 +95,8 @@ REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\VirtualizationServerProxy
 REM %WSDL% %SERVER_URL%/esLync.asmx /out:.\WebsitePanel.EnterpriseServer.Client\LyncProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\LyncProxy.cs
 
-
+REM %WSDL% %SERVER_URL%/esHeliconZoo.asmx /out:.\WebsitePanel.EnterpriseServer.Client\HeliconZooProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
+REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\HeliconZooProxy.cs
 
 
 

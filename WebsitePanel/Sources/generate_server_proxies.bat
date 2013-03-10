@@ -59,4 +59,5 @@ REM %WSE_CLEAN% .\WebsitePanel.Server.Client\WindowsServerProxy.cs
 REM %WSDL% %SERVER_URL%/LyncServer.asmx /out:.\WebsitePanel.Server.Client\LyncServerProxy.cs /namespace:WebsitePanel.Providers.Lync /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\LyncServerProxy.cs
 
-
+REM %WSDL% %SERVER_URL%/HeliconZoo.asmx /out:.\WebsitePanel.Server.Client\HeliconZooProxy.cs /namespace:WebsitePanel.Providers.HeliconZoo /type:webClient /fields
+REM %WSE_CLEAN% .\WebsitePanel.Server.Client\HeliconZooProxy.cs

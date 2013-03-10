@@ -108,11 +108,11 @@ namespace WebsitePanel.Portal
                     ShowProgressPanel();
                 }
 
-                string gotoProduct = Request.QueryString["WPIProduct"];
-                if (!string.IsNullOrEmpty(gotoProduct))
+                string gotoProducts = Request.QueryString["WPIProduct"];
+                if (!string.IsNullOrEmpty(gotoProducts))
                 {
                     ArrayList wpiProductsForInstall = GetProductsToInstallList();
-                    wpiProductsForInstall.Add(gotoProduct);
+                    wpiProductsForInstall.AddRange(gotoProducts.Split(','));
                     SetProductsToInstallList(wpiProductsForInstall);
 
                     btnInstall_Click(sender, e);
@@ -440,6 +440,13 @@ namespace WebsitePanel.Portal
             }
 
             ShowLogButton();
+
+            // fix btnBackToServer button text
+            if (null != Request["returnurl"])
+            {
+                btnBackToServer.Text = "Ok";
+                BackToGalleryButton.Visible = false;
+            }
         }
 
         private void ShowLogButton()
@@ -523,9 +530,45 @@ namespace WebsitePanel.Portal
             }
         }
 
+        private bool IsLocalUrl(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+            {
+                return false;
+            }
+
+            Uri absoluteUri;
+            if (Uri.TryCreate(url, UriKind.Absolute, out absoluteUri))
+            {
+                return String.Equals(this.Request.Url.Host, absoluteUri.Host, StringComparison.OrdinalIgnoreCase);
+            }
+            else
+            {
+                bool isLocal = !url.StartsWith("http:", StringComparison.OrdinalIgnoreCase)
+                    && !url.StartsWith("https:", StringComparison.OrdinalIgnoreCase)
+                    && Uri.IsWellFormedUriString(url, UriKind.Relative);
+                return isLocal;
+            }
+        }
+
         protected void btnCancel_Click(object sender, EventArgs e)
         {
-            Response.Redirect(EditUrl("ServerID", PanelRequest.ServerId.ToString(), "edit_server"));
+            string redirectUrl = "";
+            if (Request["returnurl"] != null)
+            {
+                redirectUrl = HttpUtility.UrlDecode(Request["returnurl"]);
+                if (!IsLocalUrl(redirectUrl))
+                {
+                    redirectUrl = "";
+                }
+            }
+
+            if (string.IsNullOrEmpty(redirectUrl))
+            {
+                redirectUrl = EditUrl("ServerID", PanelRequest.ServerId.ToString(), "edit_server");
+            }
+
+            Response.Redirect(redirectUrl);
         }
 
         protected void SearchButton_Click(object sender, EventArgs e)

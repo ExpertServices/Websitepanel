@@ -325,6 +325,13 @@
     <Compile Include="ProviderControls\CRM2011_Settings.ascx.designer.cs">
       <DependentUpon>CRM2011_Settings.ascx</DependentUpon>
     </Compile>
+    <Compile Include="ProviderControls\HeliconZoo_Settings.ascx.cs">
+      <DependentUpon>HeliconZoo_Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\HeliconZoo_Settings.ascx.designer.cs">
+      <DependentUpon>HeliconZoo_Settings.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ProviderControls\hMailServer5_EditAccount.ascx.cs">
       <DependentUpon>hMailServer5_EditAccount.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -3725,6 +3732,13 @@
     <Compile Include="WebSitesEditHeliconApeUser.ascx.designer.cs">
       <DependentUpon>WebSitesEditHeliconApeUser.ascx</DependentUpon>
     </Compile>
+    <Compile Include="WebSitesHeliconZooControl.ascx.cs">
+      <DependentUpon>WebSitesHeliconZooControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebSitesHeliconZooControl.ascx.designer.cs">
+      <DependentUpon>WebSitesHeliconZooControl.ascx</DependentUpon>
+    </Compile>
     <Compile Include="WebSitesEditWebFolder.ascx.cs">
       <DependentUpon>WebSitesEditWebFolder.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -3831,6 +3845,7 @@
     <Content Include="ExchangeServer\ExchangeAddMailboxPlan.ascx" />
     <Content Include="Lync\UserControls\LyncUserSettings.ascx" />
     <Content Include="ProviderControls\CRM2011_Settings.ascx" />
+    <Content Include="ProviderControls\HeliconZoo_Settings.ascx" />
     <Content Include="ServersEditWebPlatformInstaller.ascx" />
     <Content Include="ExchangeServer\ExchangeMailboxPlans.ascx" />
     <Content Include="ExchangeServer\UserControls\AccountsListWithPermissions.ascx" />
@@ -3915,6 +3930,7 @@
     <Content Include="UserControls\UserDetails.ascx" />
     <Content Include="UserControls\UserLookup.ascx" />
     <Content Include="UserControls\UsernameControl.ascx" />
+    <Content Include="WebSitesHeliconZooControl.ascx" />
     <Content Include="WebsitesSSL.ascx" />
   </ItemGroup>
   <ItemGroup>
@@ -4985,6 +5001,7 @@
     <Content Include="ExchangeServer\UserControls\App_LocalResources\UserTabs.ascx.resx" />
     <Content Include="App_LocalResources\SettingsExchangeMailboxPlansPolicy.ascx.resx" />
     <Content Include="App_LocalResources\SettingsLyncUserPlansPolicy.ascx.resx" />
+    <Content Include="ProviderControls\App_LocalResources\HeliconZoo_Settings.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\OrganizationDomainNames.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
@@ -4992,6 +5009,7 @@
       <SubType>Designer</SubType>
     </Content>
     <None Include="Resources\Windows2008_Settings.ascx.resx" />
+    <Content Include="App_LocalResources\WebSitesHeliconZooControl.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

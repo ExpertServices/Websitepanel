@@ -3287,6 +3287,9 @@
   <data name="ResourceGroup.OCS" xml:space="preserve">
     <value>Office Communications Server</value>
   </data>
+  <data name="ResourceGroup.Web Engines" xml:space="preserve">
+    <value>Web Engines</value>
+  </data>
   <data name="Quota.HostedSharePoint.Sites" xml:space="preserve">
     <value>SharePoint Site Collections per Organization</value>
   </data>
@@ -3298,6 +3301,9 @@
   </data>
   <data name="Quota.HostedCRM.Organization" xml:space="preserve">
     <value>CRM Organization</value>
+  </data>
+  <data name="ResourceGroup.HeliconZoo" xml:space="preserve">
+    <value>Web Engines</value>
   </data>
   <data name="Error.HOSTEDSHAREPOINT_DELETE_SITECOLLECTION" xml:space="preserve">
     <value>Error occurred while delete SharePoint site collection.</value>
