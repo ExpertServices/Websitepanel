@@ -27,7 +27,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ﻿using System;
-using WebsitePanel.Providers.WebAppGallery;
+﻿using System.Web;
+﻿using WebsitePanel.Providers.WebAppGallery;
 using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Portal
@@ -121,14 +122,38 @@ namespace WebsitePanel.Portal
 
             if (isSuccess)
             {
-                Response.Redirect(EditUrl("ApplicationID", PanelRequest.ApplicationID, "editParams",
-                                          "SpaceID=" + PanelSecurity.PackageId));
+                // web app downloaded successfully
+                string url = EditUrl("ApplicationID", PanelRequest.ApplicationID, "editParams",
+                                     "SpaceID=" + PanelSecurity.PackageId);
+                
+                string targetSite = HttpContext.Current.Request["SiteId"];
+                if (!string.IsNullOrEmpty(targetSite))
+                {
+                    url += "&SiteId=" + targetSite;
+                }
+                string returnUrl = HttpContext.Current.Request["ReturnUrl"];
+                if (!string.IsNullOrEmpty(returnUrl))
+                {
+                    url += "&ReturnUrl=" + Server.UrlEncode(returnUrl);
+                }
+
+                Response.Redirect(url);
             }
         }
 
         protected void btnCancel_Click(object sender, EventArgs e)
         {
-            RedirectSpaceHomePage();
+            string returnUrl = HttpContext.Current.Request["ReturnUrl"];
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                string redirectUrl = HttpUtility.UrlDecode(returnUrl);
+                Response.Redirect(redirectUrl);
+
+            }
+            else
+            {
+                RedirectSpaceHomePage();
+            }
         }
 
         protected void chIgnoreDependencies_CheckedChanged(object sender, EventArgs e)

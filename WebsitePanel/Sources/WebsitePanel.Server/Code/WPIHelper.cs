@@ -161,18 +161,37 @@ namespace WebsitePanel.Server.Code
             return true;
 
         }
+
+        public bool IsHiddenKeyword(Keyword keyword)
+        {
+            if (keyword.Id.StartsWith("ZooEngine", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            return false;
+        }
         #endregion
 
         #region Products
         public List<Product> GetProductsToInstall(string FeedLocation, string keywordId)
         {
             Keyword keyword = null;
+            List<Product> products = new List<Product>();
+
             if (!string.IsNullOrEmpty(keywordId))
             {
                 keyword = _productManager.GetKeyword(keywordId);
             }
 
-            List<Product> products = new List<Product>();
+            // if we do not find keyword object by keyword string
+            // then return empty list
+            if (null == keyword && !string.IsNullOrEmpty(keywordId))
+            {
+                WriteLog(string.Format("Keyword '{0}' not found, return empty product list", keywordId));
+                return products;
+            }
+
 
             foreach (Product product in _productManager.Products)
             {
@@ -490,7 +509,12 @@ namespace WebsitePanel.Server.Code
             Installer appInstaller = app.GetInstaller(GetLanguage(languageId));
             WpiAppInstallLogger logger = new WpiAppInstallLogger();
 
-          
+            /*
+            if (null == _installManager)
+            {
+                Debugger.Break();
+            }
+            */
 
             if (null != installStatusUpdatedHandler)
             {
@@ -846,6 +870,7 @@ namespace WebsitePanel.Server.Code
                 msDeployPackage.SkipDirectives.Add(string.Format("objectName={0}", provider));
             }
         }
+
 
         #endregion private members
     }

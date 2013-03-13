@@ -25,7 +25,7 @@
                     <ItemTemplate>
                         <div class="Quota">
                             <div class="Left">
-                                <%# GetSharedLocalizedString("Quota." + (string)Eval("QuotaName"))%>:
+                                <%# GetSharedLocalizedStringNotEmpty((string)Eval("QuotaName"), Eval("QuotaDescription"))%>:
                             </div>
                             <div class="Right">
                                 <uc1:QuotaEditor id="quotaEditor" runat="server"

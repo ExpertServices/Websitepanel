@@ -771,4 +771,8 @@
   <data name="ModuleTitle.ApplyEnableHardQuotaFeature" xml:space="preserve">
     <value>System Hard Quota</value>
   </data>
+
+  <data name="ModuleTitle.HeliconZoo" xml:space="preserve">
+    <value>Helicon Zoo</value>
+  </data>
 </root>

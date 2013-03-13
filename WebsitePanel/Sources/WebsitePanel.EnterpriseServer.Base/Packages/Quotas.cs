@@ -226,7 +226,9 @@ order by rg.groupOrder
         public const string LYNC_EVNATIONAL = "Lync.EVNational";
         public const string LYNC_EVMOBILE = "Lync.EVMobile";
         public const string LYNC_EVINTERNATIONAL = "Lync.EVInternational";
-        public const string LYNC_ENABLEDPLANSEDITING = "Lync.EnablePlansEditing";  
-        
+        public const string LYNC_ENABLEDPLANSEDITING = "Lync.EnablePlansEditing";
+
+        public const string HELICON_ZOO = "HeliconZoo.*";
+
     }
 }

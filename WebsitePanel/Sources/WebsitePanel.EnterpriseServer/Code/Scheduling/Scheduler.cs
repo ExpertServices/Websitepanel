@@ -162,14 +162,13 @@ namespace WebsitePanel.EnterpriseServer
 
                     counter++;
                 }
+
+                // skip execution if the current task is still running
+                scheduledTasks = TaskManager.GetScheduledTasks();
+                if (!scheduledTasks.ContainsKey(schedule.ScheduleInfo.ScheduleId))
                 {
-                    // skip execution if the current task is still running
-                    scheduledTasks = TaskManager.GetScheduledTasks();
-                    if (!scheduledTasks.ContainsKey(schedule.ScheduleInfo.ScheduleId))
-                    {
-                        // run the schedule in the separate thread
-                        schedule.Run();
-                    }
+                    // run the schedule in the separate thread
+                    schedule.Run();
                 }
             }
             catch (Exception Ex)

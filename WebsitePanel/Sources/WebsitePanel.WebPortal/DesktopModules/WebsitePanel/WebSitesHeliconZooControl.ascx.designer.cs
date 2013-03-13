@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -38,15 +38,15 @@
 namespace WebsitePanel.Portal {
     
     
-    public partial class HostingPlansQuotas {
+    public partial class WebSitesHeliconZooControl {
         
         /// <summary>
-        /// dlGroups control.
+        /// gvApplications control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater dlGroups;
+        protected global::System.Web.UI.WebControls.GridView gvApplications;
     }
 }
