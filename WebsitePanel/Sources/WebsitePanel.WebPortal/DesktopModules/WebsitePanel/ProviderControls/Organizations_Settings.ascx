@@ -23,4 +23,13 @@
         <asp:RequiredFieldValidator  ControlToValidate="txtTemporyDomainName" ErrorMessage="*" />
         </td>
     </tr>
+    <tr>
+        <td class="SubHead" nowrap="nowrap"><asp:Label runat="server" ID="UserNameFormatLabel" meta:resourcekey="lblUserNameFormat"/></td>
+        <td>
+            <asp:DropDownList runat="server" ID="UserNameFormatDropDown">
+                <asp:ListItem Value="1" meta:resourcekey="listItemStandard"/>
+                <asp:ListItem Value="2" meta:resourcekey="listItemAppendOrgId"/>
+            </asp:DropDownList>
+        </td>
+    </tr>
 </table>

@@ -1314,8 +1314,18 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load organization
                 Organization org = GetOrganization(itemId);
+
                 if (org == null)
+                {
                     return -1;
+                }
+
+                StringDictionary serviceSettings = ServerController.GetServiceSettings(org.ServiceId);
+
+                if (serviceSettings == null)
+                {
+                    return -1;
+                }
 
                 // check package
                 int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
@@ -1329,7 +1339,7 @@ namespace WebsitePanel.EnterpriseServer
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
                 string upn = string.Format("{0}@{1}", name, domain);
-                string sAMAccountName = BuildAccountName(org.OrganizationId, name, org.ServiceId);
+                string sAMAccountName = AppendOrgId(serviceSettings) ? BuildAccountNameWithOrgId(org.OrganizationId, name, org.ServiceId) : BuildAccountName(org.OrganizationId, name, org.ServiceId);
 
                 TaskManager.Write("accountName :" + sAMAccountName);
                 TaskManager.Write("upn :" + upn);
@@ -1367,7 +1377,23 @@ namespace WebsitePanel.EnterpriseServer
             return userId;
         }
 
+        /// <summary> Checks should or not user name include organization id. </summary>
+        /// <param name="serviceSettings"> The service settings. </param>
+        /// <returns> True - if organization id should be appended. </returns>
+        private static bool AppendOrgId(StringDictionary serviceSettings)
+        {
+            if (!serviceSettings.ContainsKey("usernameformat"))
+            {
+                return false;
+            }
 
+            if (!serviceSettings["usernameformat"].Equals("Append OrgId", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return false;
+            }
+
+            return true;
+        }
 
         public static int ImportUser(int itemId, string accountName, string displayName, string name, string domain, string password, string subscriberNumber)
         {
@@ -1472,6 +1498,40 @@ namespace WebsitePanel.EnterpriseServer
             while (!bFound);
 
             return accountName;
+        }
+
+        /// <summary> Building account name with organization Id. </summary>
+        /// <param name="orgId"> The organization identifier. </param>
+        /// <param name="name"> The name. </param>
+        /// <param name="serviceId"> The service identifier. </param>
+        /// <returns> The account name with organization Id. </returns>
+        private static string BuildAccountNameWithOrgId(string orgId, string name, int serviceId)
+        {
+            int maxLen = 19 - orgId.Length;
+
+            // try to choose name
+            int i = 0;
+
+            while (true)
+            {
+                string num = i > 0 ? i.ToString() : "";
+                int len = maxLen - num.Length;
+
+                if (name.Length > len)
+                {
+                    name = name.Substring(0, len);
+                }
+
+                string accountName = name + num + "_" + orgId;
+
+                // check if already exists
+                if (!AccountExists(accountName, serviceId))
+                {
+                    return accountName;
+                }
+
+                i++;
+            }
         }
 
         private static string genSamLogin(string login, string strCounter)
