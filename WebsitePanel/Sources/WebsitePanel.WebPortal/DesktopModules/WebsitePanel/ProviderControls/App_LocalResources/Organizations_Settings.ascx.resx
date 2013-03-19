@@ -126,4 +126,13 @@
   <data name="lblTemporyDomainName.Text" xml:space="preserve">
     <value>Tempory Domain Name:</value>
   </data>
+  <data name="lblUserNameFormat.Text" xml:space="preserve">
+    <value>Username Format:</value>
+  </data>
+  <data name="listItemStandard.Text" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="listItemAppendOrgId.Text" xml:space="preserve">
+    <value>Append OrgID</value>
+  </data>
 </root>
