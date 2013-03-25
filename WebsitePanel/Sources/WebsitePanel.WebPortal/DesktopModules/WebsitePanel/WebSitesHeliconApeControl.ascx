@@ -34,7 +34,7 @@
 					<asp:HyperLink ID="lnkEditHeliconApeFolder" runat="server" 
                     NavigateUrl='<%# GetEditControlUrl("edit_htaccessfolder", Eval("Path").ToString()) %>'
                      CssClass="NormalBold">
-			            <%# Eval("Path")%>
+			            <%# GetHtaccessPathOnSite((string)Eval("Path")) %>
 					</asp:HyperLink>
 				</ItemTemplate>
 			</asp:TemplateField>
