@@ -34,7 +34,7 @@
     border: 1px solid #444;
     padding: 2px;
     font-family: Consolas, monospace;
-    font-size: 12px;
+    font-size: 13px;
 }
 </style>
 <div class="FormBody">

@@ -35,8 +35,12 @@ CodeMirror.defineMode('htaccess', function() {
       return 'comment';
     }
     if (ch === '$') {
-      state.tokens.unshift(tokenDollar);
-      return tokenize(stream, state);
+      stream.eatWhile(/[\w\$_]/);
+      return 'def';
+    }
+    if (ch === '%') {
+      stream.eatWhile(/[\w\_{}]/);
+      return 'tag';
     }
     if (ch === '+' || ch === '=') {
       return 'operator';
@@ -65,7 +69,6 @@ CodeMirror.defineMode('htaccess', function() {
     }
     stream.eatWhile(/\w/);
     var cur = stream.current();
-    if (stream.peek() === '=' && /\w+/.test(cur)) return 'def';
     return words.hasOwnProperty(cur) ? words[cur] : null;
   }
 
@@ -90,22 +93,6 @@ CodeMirror.defineMode('htaccess', function() {
       }
       return (quote === '`' || quote === ')' ? 'quote' : 'string');
     };
-  };
-
-  var tokenDollar = function(stream, state) {
-    if (state.tokens.length > 1) stream.eat('$');
-    var ch = stream.next(), hungry = /\w/;
-    if (ch === '{') hungry = /[^}]/;
-    if (ch === '(') {
-      state.tokens[0] = tokenString(')');
-      return tokenize(stream, state);
-    }
-    if (!/\d/.test(ch)) {
-      stream.eatWhile(hungry);
-      stream.eat('}');
-    }
-    state.tokens.shift();
-    return 'def';
   };
 
   function tokenize(stream, state) {

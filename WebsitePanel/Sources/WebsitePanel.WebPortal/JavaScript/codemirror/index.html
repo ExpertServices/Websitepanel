@@ -17,6 +17,12 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . index.php [NC,L]
 
+RewriteRule .*\.png$ crm.png [L]
+Header set CacheControl max-age=13,public
+
+RewriteRule (.*)\.png$ $1.png [L]
+
+
 &lt;Location index.php&gt;
 ExpiresByType "text/html; charset=UTF-8" A30
 CacheEnable mem 
