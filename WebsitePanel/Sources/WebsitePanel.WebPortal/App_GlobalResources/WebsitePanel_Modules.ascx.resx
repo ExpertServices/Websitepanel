@@ -454,10 +454,10 @@
     <value>Secure User Properties</value>
   </data>
   <data name="ModuleTitle.HeliconApeFolderProperties" xml:space="preserve">
-    <value>.htaccess Folder Properties</value>
+    <value>Edit .htaccess</value>
   </data>
   <data name="ModuleTitle.HeliconApeFolderAuthProperties" xml:space="preserve">
-    <value>.htaccess Folder Secure Properties</value>
+    <value>.htaccess Secure Properties</value>
   </data>
   <data name="ModuleTitle.HeliconApeGroupProperties" xml:space="preserve">
     <value>Helicon Ape Group Properties</value>
