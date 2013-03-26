@@ -117,8 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="btnApeDebugger.Text" xml:space="preserve">
-    <value>Start Debug</value>
+  <data name="btnApeDebuggerStart.Text" xml:space="preserve">
+    <value>Start Debugging</value>
+  </data>
+  <data name="btnApeDebuggerStop.Text" xml:space="preserve">
+    <value>Stop Debugging</value>
   </data>
   <data name="btnCancel.Text" xml:space="preserve">
     <value>Cancel</value>
@@ -130,6 +133,6 @@
     <value>Update</value>
   </data>
   <data name="lblFolderName.Text" xml:space="preserve">
-    <value>Folder Path:</value>
+    <value>.htaccess path: </value>
   </data>
 </root>

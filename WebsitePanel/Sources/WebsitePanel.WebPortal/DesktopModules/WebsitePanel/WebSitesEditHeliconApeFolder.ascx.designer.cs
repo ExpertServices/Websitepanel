@@ -22,6 +22,15 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.Label lblFolderName;
         
         /// <summary>
+        /// LabelWebSiteName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LabelWebSiteName;
+        
+        /// <summary>
         /// folderPath control.
         /// </summary>
         /// <remarks>
@@ -40,22 +49,67 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.HiddenField contentPath;
         
         /// <summary>
-        /// ApeDebuggerUrl control.
+        /// DebuggerUrlField control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField ApeDebuggerUrl;
+        protected global::System.Web.UI.WebControls.HiddenField DebuggerUrlField;
         
         /// <summary>
-        /// btnApeDebug control.
+        /// ButtonDebuggerStart control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnApeDebug;
+        protected global::System.Web.UI.WebControls.Button ButtonDebuggerStart;
+        
+        /// <summary>
+        /// ButtonDebuggerStop control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button ButtonDebuggerStop;
+        
+        /// <summary>
+        /// ContainerLinkDebuggingPage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label ContainerLinkDebuggingPage;
+        
+        /// <summary>
+        /// LinkDebuggingPage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink LinkDebuggingPage;
+        
+        /// <summary>
+        /// DebuggerFramePanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel DebuggerFramePanel;
+        
+        /// <summary>
+        /// DebuggerFrame control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl DebuggerFrame;
         
         /// <summary>
         /// htaccessContent control.
