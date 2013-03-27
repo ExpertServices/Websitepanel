@@ -491,6 +491,24 @@ namespace WebsitePanel.Portal {
         protected global::WebsitePanel.Portal.WebSitesHeliconApeControl webSitesHeliconApeControl;
         
         /// <summary>
+        /// tabHeliconZoo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.View tabHeliconZoo;
+        
+        /// <summary>
+        /// webSitesHeliconZooControl control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.WebSitesHeliconZooControl webSitesHeliconZooControl;
+        
+        /// <summary>
         /// tabFrontPage control.
         /// </summary>
         /// <remarks>

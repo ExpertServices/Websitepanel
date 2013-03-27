@@ -91,6 +91,8 @@ namespace WebsitePanel.Portal.ProviderControls
                             txtStorageGroup.Text = "";
 
                             locMailboxDAG.Visible = false;
+
+                            powershellUrl1.Visible = powershellUrl2.Visible = false;
                             break;
 
                         case EXCHANGE2010SP2_PROVIDER_ID:
@@ -101,6 +103,7 @@ namespace WebsitePanel.Portal.ProviderControls
                             txtStorageGroup.Text = "";
 
                             locMailboxDatabase.Visible = false;
+                            powershellUrl1.Visible = powershellUrl2.Visible = false;
                             break;
 
                         case EXCHANGE2013_PROVIDER_ID:
@@ -111,6 +114,7 @@ namespace WebsitePanel.Portal.ProviderControls
                             txtStorageGroup.Text = "";
 
                             locMailboxDatabase.Visible = false;
+                            powershellUrl1.Visible = powershellUrl2.Visible = true;
                             break;
 
                         default:
@@ -147,6 +151,7 @@ namespace WebsitePanel.Portal.ProviderControls
                 txtActiveSyncServer.Text = settings["ActiveSyncServer"];
                 txtOABServer.Text = settings["OABServer"];
                 txtPublicFolderServer.Text = settings["PublicFolderServer"];
+                txtPowerShellUrl.Text = settings["PowerShellUrl"];
 
                 UpdateHubTransportsGrid();
                 UpdateClientAccessGrid();
@@ -173,6 +178,7 @@ namespace WebsitePanel.Portal.ProviderControls
             settings["PublicFolderServer"] = txtPublicFolderServer.Text;
 
             settings["StorageGroup"] = txtStorageGroup.Text;
+            settings["PowerShellUrl"] = txtPowerShellUrl.Text;
         }
 
 		public void BindExchangeServices(DropDownList ddl, bool isHubservice)

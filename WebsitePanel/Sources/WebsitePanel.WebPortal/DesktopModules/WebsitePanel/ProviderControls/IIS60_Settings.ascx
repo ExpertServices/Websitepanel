@@ -21,6 +21,14 @@
 			</td>
 		</tr>
 		<tr>
+			<td class="Normal" width="200" nowrap>
+			    <asp:Label ID="lblPublicSharedIP" runat="server" meta:resourcekey="lblPublicSharedIP" Text="Web Sites Public Shared IP Address:"></asp:Label>
+			</td>
+			<td width="100%">
+                <asp:TextBox ID="txtPublicSharedIP" runat="server" Width="200" CssClass="NormalTextBox"></asp:TextBox>
+			</td>
+		</tr>
+		<tr>
 		    <td class="Normal" valign="top">
 		        <asp:Label ID="lblGroupName" runat="server" meta:resourcekey="lblGroupName" Text="Web Users Group Name:"></asp:Label>
 		    </td>

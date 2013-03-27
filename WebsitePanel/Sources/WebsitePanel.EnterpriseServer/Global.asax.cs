@@ -46,7 +46,12 @@ namespace WebsitePanel.EnterpriseServer
 
         protected void Application_Start(object sender, EventArgs e)
         {
-            Scheduler.Start();
+            if (ConfigurationManager.AppSettings["WebsitePanel.DistableScheduler"] != null)
+                if (Boolean.Parse(ConfigurationManager.AppSettings["WebsitePanel.DistableScheduler"]) == false)
+                {
+                    if (Scheduler.nextSchedule == null)
+                        Scheduler.Start();
+                }
         }
 
         protected void Application_End(object sender, EventArgs e)

@@ -49,6 +49,7 @@ using System.Management;
 using System.Collections.Specialized;
 using Microsoft.Web.PlatformInstaller;
 using Microsoft.Web.Services3;
+using Microsoft.Win32;
 using WebsitePanel.Providers.Utils;
 using WebsitePanel.Server.Code;
 using WebsitePanel.Server.Utils;
@@ -301,7 +302,7 @@ namespace WebsitePanel.Server
 
       
 
-        private string makeHref(string value)
+        private string Linkify(string value)
         {
             if (string.IsNullOrEmpty(value))
                 return value;
@@ -318,7 +319,7 @@ namespace WebsitePanel.Server
             WPIProduct p = new WPIProduct();
             p.ProductId = product.ProductId;
             p.Summary = product.Summary;
-            p.LongDescription = makeHref(product.LongDescription);
+            p.LongDescription = Linkify(product.LongDescription);
             p.Published = product.Published;
             p.Author = product.Author;
             p.AuthorUri = (product.AuthorUri != null) ? product.AuthorUri.ToString() : ""; 
@@ -355,6 +356,30 @@ namespace WebsitePanel.Server
             return p;
         }
 
+        private void CheckHostingPackagesUpgrades(IList<WPIProduct> products)
+        {
+            foreach (WPIProduct product in products)
+            {
+                string installedHostingPackageVersion = GetInstalledHostingPackageVersion(product.ProductId);
+                if (!string.IsNullOrEmpty(installedHostingPackageVersion) && string.Compare(product.Version, installedHostingPackageVersion, StringComparison.OrdinalIgnoreCase) > 0)
+                {
+                    product.IsUpgrade = true;
+                }
+            }
+        }
+
+        private string GetInstalledHostingPackageVersion(string productId)
+        {
+            string installedVersion = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Helicon\\Zoo", productId+"Version", string.Empty) as string;
+            if (string.IsNullOrEmpty(installedVersion))
+            {
+                installedVersion = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Helicon\\Zoo", productId + "Version", string.Empty) as string;
+            }
+
+            return installedVersion;
+        }
+
+
         [WebMethod]
         public WPIProduct[] GetWPIProducts(string tabId, string keywordId)
         {
@@ -390,6 +415,13 @@ namespace WebsitePanel.Server
 
                         }
                     }
+
+                    // check upgrades for Hosting Packages (ZooPackage keyword)
+                    if (WPIKeyword.HOSTING_PACKAGE_KEYWORD == keywordId)
+                    {
+                        CheckHostingPackagesUpgrades(wpiProducts);
+                    }
+
 
                 }
 
@@ -642,6 +674,7 @@ namespace WebsitePanel.Server
             wpiServiceExe.StartInfo.WorkingDirectory = workingDirectory;
             wpiServiceExe.StartInfo.UseShellExecute = false;
             wpiServiceExe.StartInfo.LoadUserProfile = true;
+            wpiServiceExe.StartInfo.EnvironmentVariables["MySqlPassword"] = "";
             //wpiServiceExe.StartInfo.EnvironmentVariables["UserProfile"] = newUserProfile;
             //wpiServiceExe.StartInfo.EnvironmentVariables["LocalAppData"] = newLocalAppData;
             //wpiServiceExe.StartInfo.EnvironmentVariables["AppData"] = newAppData;
