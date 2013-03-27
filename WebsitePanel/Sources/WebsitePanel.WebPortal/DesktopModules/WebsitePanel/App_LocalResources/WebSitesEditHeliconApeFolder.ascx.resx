@@ -135,4 +135,16 @@
   <data name="lblFolderName.Text" xml:space="preserve">
     <value>.htaccess path: </value>
   </data>
+  <data name="lblDebuggingPageLink.Text">
+    <value xml:space="preserve">Debugging Page Link</value>
+  </data>
+  <data name="lblCLickLink.Text">
+    <value xml:space="preserve">Click this link to open debugging page</value>
+  </data>
+  <data name="btnShowDebuggingPageLinkModal.Text">
+    <value xml:space="preserve">Show debugging page link</value>
+  </data>
+  <data name="btnClose.Text">
+    <value xml:space="preserve">Close</value>
+  </data>
 </root>

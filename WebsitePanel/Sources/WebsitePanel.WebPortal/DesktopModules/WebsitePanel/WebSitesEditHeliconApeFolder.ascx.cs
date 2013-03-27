@@ -184,20 +184,33 @@ namespace WebsitePanel.Portal
         protected void DebugStartClick(object sender, EventArgs e)
         {
             var code = htaccessContent.Text;
+            bool needUpdate = false;
+
             if ( RE_APE_DEBUGGER_DISABLED.IsMatch(code) )
             {
                 // already disabled, enable it!
                 DebuggerSecureKey = RE_APE_DEBUGGER_DISABLED.Match(code).Groups[2].Value;
                 code = RE_APE_DEBUGGER_DISABLED.Replace(code, "$1");
+                needUpdate = true;
+            }
+            else if (RE_APE_DEBUGGER_ENABLED.IsMatch(code))
+            {
+                // already enabled
+                DebuggerSecureKey = RE_APE_DEBUGGER_ENABLED.Match(code).Groups[2].Value;
+                needUpdate = false;
             }
             else
             {
                 DebuggerSecureKey = new Random().Next(100000000, 999999999).ToString(CultureInfo.InvariantCulture);
-                code = code + "\nSetEnv mod_developer secure-key-" + DebuggerSecureKey +"\n";
+                code = code + "\nSetEnv mod_developer secure-key-" + DebuggerSecureKey + "\n";
+                needUpdate = true;
             }
 
-            htaccessContent.Text = code;
-            SaveFolder();
+            if (needUpdate)
+            {
+                htaccessContent.Text = code;
+                SaveFolder();
+            }
 
             StartDebugger();
         }
@@ -209,13 +222,12 @@ namespace WebsitePanel.Portal
             {
                 // alerdy enable, disable it!
                 code = RE_APE_DEBUGGER_ENABLED.Replace(code, "# $1");
+                htaccessContent.Text = code;
+                SaveFolder();
             }
 
-            htaccessContent.Text = code;
-            SaveFolder();
 
             StopDebugger();
-
         }
 
         private void GetDebuggerUrl()
@@ -308,9 +320,9 @@ namespace WebsitePanel.Portal
             DebuggerFrame.Attributes["src"] = DebuggerUrl;
 
             // debugging page link
-            ContainerLinkDebuggingPage.Visible = true;
             LinkDebuggingPage.NavigateUrl = DebuggingPageUrl;
             LinkDebuggingPage.Text = DebuggingPageUrl;
+            DebuggingPageLinkModal.Show();
 
         }
 
@@ -325,12 +337,9 @@ namespace WebsitePanel.Portal
 
             // hide debugger iframe
             DebuggerFramePanel.Visible = false;
-
-            // hide debugging page link
-            ContainerLinkDebuggingPage.Visible = false;
         }
 
-        protected void btnCancel_Click(object sender, EventArgs e)
+        protected void BtnCancelClick(object sender, EventArgs e)
         {
             ReturnBack();
         }
