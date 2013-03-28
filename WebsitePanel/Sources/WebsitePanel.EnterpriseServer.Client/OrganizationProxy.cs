@@ -62,6 +62,8 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(ResultObject))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(ServiceProviderItem))]
     public partial class esOrganizations : Microsoft.Web.Services3.WebServicesClientProtocol {
+
+        private System.Threading.SendOrPostCallback CheckOrgIdExistsOperationCompleted;
         
         private System.Threading.SendOrPostCallback CreateOrganizationOperationCompleted;
         
@@ -117,6 +119,9 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         public esOrganizations() {
             this.Url = "http://localhost:9002/esOrganizations.asmx";
         }
+
+        /// <remarks/>
+        public event CheckOrgIdExistsCompletedEventHandler CheckOrgIdExistsCompleted;
         
         /// <remarks/>
         public event CreateOrganizationCompletedEventHandler CreateOrganizationCompleted;
@@ -192,6 +197,55 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         
         /// <remarks/>
         public event GetPasswordPolicyCompletedEventHandler GetPasswordPolicyCompleted;
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/CheckOrgIdExists", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool CheckOrgIdExists(string orgId)
+        {
+            object[] results = this.Invoke("CheckOrgIdExists", new object[] {
+                    orgId});
+            return ((bool)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginCheckOrgIdExists(string orgId, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("CheckOrgIdExists", new object[] {
+                    orgId}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public bool EndCheckOrgIdExists(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+
+        /// <remarks/>
+        public void CheckOrgIdExistsAsync(string orgId)
+        {
+            this.CheckOrgIdExistsAsync(orgId, null);
+        }
+
+        /// <remarks/>
+        public void CheckOrgIdExistsAsync(string orgId, object userState)
+        {
+            if ((this.CheckOrgIdExistsOperationCompleted == null))
+            {
+                this.CheckOrgIdExistsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckOrgIdExistsOperationCompleted);
+            }
+            this.InvokeAsync("CheckOrgIdExists", new object[] {
+                    orgId}, this.CheckOrgIdExistsOperationCompleted, userState);
+        }
+
+        private void OnCheckOrgIdExistsOperationCompleted(object arg)
+        {
+            if ((this.CheckOrgIdExistsCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CheckOrgIdExistsCompleted(this, new CheckOrgIdExistsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/CreateOrganization", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -204,6 +258,8 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
             return ((int)(results[0]));
         }
         
+
+
         /// <remarks/>
         public System.IAsyncResult BeginCreateOrganization(int packageId, string organizationID, string organizationName, string domainName, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("CreateOrganization", new object[] {
@@ -1583,6 +1639,36 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "4.0.30319.17929")]
+    public delegate void CheckOrgIdExistsCompletedEventHandler(object sender, CheckOrgIdExistsCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "4.0.30319.17929")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CheckOrgIdExistsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal CheckOrgIdExistsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public bool Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
         }
     }
     

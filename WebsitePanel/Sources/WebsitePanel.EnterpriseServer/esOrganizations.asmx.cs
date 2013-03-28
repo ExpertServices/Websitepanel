@@ -46,6 +46,12 @@ namespace WebsitePanel.EnterpriseServer
         #region Organizations
 
         [WebMethod]
+        public bool CheckOrgIdExists(string orgId)
+        {
+            return OrganizationController.OrganizationIdentifierExists(orgId);
+        }
+
+        [WebMethod]
         public int CreateOrganization(int packageId, string organizationID, string organizationName, string domainName)
         {
             return OrganizationController.CreateOrganization(packageId, organizationID, organizationName, domainName);

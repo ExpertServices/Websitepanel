@@ -265,7 +265,7 @@ namespace WebsitePanel.EnterpriseServer
             return itemId;
         }
 
-        private static bool OrganizationIdentifierExists(string organizationId)
+        public static bool OrganizationIdentifierExists(string organizationId)
         {
             return DataProvider.ExchangeOrganizationExists(organizationId);
         }
