@@ -1914,6 +1914,25 @@ namespace WebsitePanel.Providers.Web
 
         private bool IsHeliconApeEnabled(ServerManager srvman, string siteId)
         {
+            WebSite webSite = null;
+            webSite = webObjectsSvc.GetWebSiteFromIIS(srvman, siteId);
+            if (webSite == null)
+                throw new ApplicationException(
+                    String.Format("Could not find a web site with the following identifier: {0}.", siteId));
+
+            // Fill ASP.NET settings
+            FillAspNetSettingsFromIISObject(srvman, webSite);
+
+            var aphl = new WebAppPoolHelper(ProviderSettings);
+            var currentPool = aphl.match_webapp_pool(webSite);
+
+            if (aphl.pipeline(currentPool.Mode) != SiteAppPoolMode.Integrated)
+            {
+                // Ape is not working in not Integrated pipeline mode
+                return false;
+            }
+
+
             var appConfig = srvman.GetApplicationHostConfiguration();
             var modulesSection = appConfig.GetSection(Constants.ModulesSection, siteId);
             var modulesCollection = modulesSection.GetCollection();
@@ -2298,40 +2317,44 @@ namespace WebsitePanel.Providers.Web
 
             using (var srvman = webObjectsSvc.GetServerManager())
             {
-                Configuration appConfig = srvman.GetApplicationHostConfiguration();
-                
-                // add Helicon.Ape module
-                ConfigurationSection modulesSection = appConfig.GetSection(Constants.ModulesSection, siteId);
-                ConfigurationElementCollection modulesCollection = modulesSection.GetCollection();
+                if (!IsHeliconApeEnabled(srvman, siteId))
+                {
 
-                // <add name="Helicon.Ape" />
-                ConfigurationElement heliconApeModuleEntry = modulesCollection.CreateElement("add");
-                heliconApeModuleEntry["name"] = Constants.HeliconApeModule;
-                heliconApeModuleEntry["type"] = GetHeliconApeModuleType(siteId);
-                
-                // this way make <clear/> and copy all modules list from ancestor
-                //modulesCollection.AddAt(0, heliconApeModuleEntry);
-                // this way just insert single ape module entry
-                modulesCollection.Add(heliconApeModuleEntry);
+                    Configuration appConfig = srvman.GetApplicationHostConfiguration();
 
-                
-                
-                
-                // add Helicon.Ape handler
-                ConfigurationSection handlersSection = appConfig.GetSection(Constants.HandlersSection, siteId);
-                ConfigurationElementCollection handlersCollection = handlersSection.GetCollection();
+                    // add Helicon.Ape module
+                    ConfigurationSection modulesSection = appConfig.GetSection(Constants.ModulesSection, siteId);
+                    ConfigurationElementCollection modulesCollection = modulesSection.GetCollection();
 
-                // <add name="Helicon.Ape" />
-                ConfigurationElement heliconApeHandlerEntry = handlersCollection.CreateElement("add");
-                heliconApeHandlerEntry["name"] = Constants.HeliconApeHandler;
-                heliconApeHandlerEntry["type"] = GetHeliconApeHandlerType(siteId);
-                heliconApeHandlerEntry["path"] = Constants.HeliconApeHandlerPath;
-                heliconApeHandlerEntry["verb"] = "*";
-                heliconApeHandlerEntry["resourceType"] = "Unspecified";
-                
-                handlersCollection.AddAt(0, heliconApeHandlerEntry);
+                    // <add name="Helicon.Ape" />
+                    ConfigurationElement heliconApeModuleEntry = modulesCollection.CreateElement("add");
+                    heliconApeModuleEntry["name"] = Constants.HeliconApeModule;
+                    heliconApeModuleEntry["type"] = GetHeliconApeModuleType(siteId);
 
-                srvman.CommitChanges();
+                    // this way make <clear/> and copy all modules list from ancestor
+                    //modulesCollection.AddAt(0, heliconApeModuleEntry);
+                    // this way just insert single ape module entry
+                    modulesCollection.Add(heliconApeModuleEntry);
+
+
+
+
+                    // add Helicon.Ape handler
+                    ConfigurationSection handlersSection = appConfig.GetSection(Constants.HandlersSection, siteId);
+                    ConfigurationElementCollection handlersCollection = handlersSection.GetCollection();
+
+                    // <add name="Helicon.Ape" />
+                    ConfigurationElement heliconApeHandlerEntry = handlersCollection.CreateElement("add");
+                    heliconApeHandlerEntry["name"] = Constants.HeliconApeHandler;
+                    heliconApeHandlerEntry["type"] = GetHeliconApeHandlerType(siteId);
+                    heliconApeHandlerEntry["path"] = Constants.HeliconApeHandlerPath;
+                    heliconApeHandlerEntry["verb"] = "*";
+                    heliconApeHandlerEntry["resourceType"] = "Unspecified";
+
+                    handlersCollection.AddAt(0, heliconApeHandlerEntry);
+
+                    srvman.CommitChanges();
+                }
             }
         }
 
