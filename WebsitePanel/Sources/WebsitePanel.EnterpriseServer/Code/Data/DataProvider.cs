@@ -3578,5 +3578,123 @@ namespace WebsitePanel.EnterpriseServer
             return -1;
         }
 
+        #region Helicon Zoo
+
+        public static void GetHeliconZooProviderAndGroup(string providerName, out int providerId, out int groupId)
+        {
+            IDataReader reader = SqlHelper.ExecuteReader(ConnectionString, CommandType.Text,
+                @"SELECT TOP 1 
+                    ProviderID, GroupID
+                  FROM Providers
+                  WHERE ProviderName = @ProviderName",
+                new SqlParameter("@ProviderName", providerName));
+            
+            reader.Read();
+
+            providerId = (int) reader["ProviderID"];
+            groupId = (int) reader["GroupID"];
+
+        }
+
+        public static IDataReader GetHeliconZooQuotas(int providerId)
+        {
+            IDataReader reader = SqlHelper.ExecuteReader(ConnectionString, CommandType.Text,
+                @"SELECT
+	                Q.QuotaID,
+	                Q.GroupID,
+	                Q.QuotaName,
+	                Q.QuotaDescription,
+	                Q.QuotaTypeID,
+	                Q.ServiceQuota
+                FROM Providers AS P
+                INNER JOIN Quotas AS Q ON P.GroupID = Q.GroupID
+                WHERE P.ProviderID = @ProviderID",
+                new SqlParameter("@ProviderID", providerId));
+
+            return reader;
+        }
+
+        public static void RemoveHeliconZooQuota(int groupId, string engineName)
+        {
+            int quotaId;
+
+            // find quota id
+            IDataReader reader = SqlHelper.ExecuteReader(ConnectionString, CommandType.Text,
+                @"SELECT TOP 1 
+                    QuotaID
+                  FROM Quotas
+                  WHERE QuotaName = @QuotaName AND GroupID = @GroupID",
+                new SqlParameter("@QuotaName", engineName),
+                new SqlParameter("@GroupID", groupId));
+
+            reader.Read();
+            quotaId = (int)reader["QuotaID"];
+
+            // delete references from HostingPlanQuotas
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.Text,
+                "DELETE FROM HostingPlanQuotas WHERE QuotaID = @QuotaID",
+                new SqlParameter("@QuotaID", quotaId)
+            );
+
+            // delete from Quotas
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.Text,
+                "DELETE FROM Quotas WHERE QuotaID = @QuotaID",
+                new SqlParameter("@QuotaID", quotaId)
+            );
+
+        }
+
+        public static void AddHeliconZooQuota(int groupId, int quotaId, string engineName, string engineDescription, int quotaOrder)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.Text,
+                    @"INSERT INTO Quotas (QuotaID, GroupID, QuotaOrder, QuotaName, QuotaDescription, QuotaTypeID, ServiceQuota)
+                    VALUES (@QuotaID, @GroupID, @QuotaOrder, @QuotaName, @QuotaDescription, 1, 0)",
+                    new SqlParameter("@QuotaID", quotaId),
+                    new SqlParameter("@GroupID", groupId),
+                    new SqlParameter("@QuotaOrder", quotaOrder),
+                    new SqlParameter("@QuotaName", engineName),
+                    new SqlParameter("@QuotaDescription", engineDescription)
+                );
+        }
+
+        public static IDataReader GetEnabledHeliconZooQuotasForPackage(int packageId)
+        {
+            int providerId, groupId;
+
+            GetHeliconZooProviderAndGroup("HeliconZoo", out providerId, out groupId);
+
+            IDataReader reader = SqlHelper.ExecuteReader(ConnectionString, CommandType.Text, 
+                @"SELECT     HostingPlanQuotas.QuotaID, Quotas.QuotaName, Quotas.QuotaDescription
+                FROM         HostingPlanQuotas 
+                    INNER JOIN Packages ON HostingPlanQuotas.PlanID = Packages.PlanID 
+                        INNER JOIN Quotas ON HostingPlanQuotas.QuotaID = Quotas.QuotaID
+                WHERE     
+                    (Packages.PackageID = @PackageID) AND (Quotas.GroupID = @GroupID) AND (HostingPlanQuotas.QuotaValue = 1)",
+                new SqlParameter("@PackageID", packageId),
+                new SqlParameter("@GroupID", groupId)
+            );
+
+            return reader;
+        }
+
+        public static int GetServerIdForPackage(int packageId)
+        {
+            IDataReader reader = SqlHelper.ExecuteReader(ConnectionString, CommandType.Text,
+                @"SELECT TOP 1 
+                    ServerID
+                  FROM Packages
+                  WHERE PackageID = @PackageID",
+                new SqlParameter("@PackageID", packageId)
+            );
+
+            if (reader.Read())
+            {
+                return (int)reader["ServerID"];
+            }
+
+            return -1;
+        }
+
+        #endregion
     }
 }

@@ -60,6 +60,7 @@ namespace WebsitePanel.Portal
 			new Tab { Id = "htaccessfolders", ResourceKey = "Tab.Htaccess", Quota = Quotas.WEB_HTACCESS, ViewId = "tabHeliconApe" },
 			new Tab { Id = "frontpage", ResourceKey = "Tab.FrontPage", Quota = Quotas.WEB_FRONTPAGE, ViewId = "tabFrontPage" },
 			new Tab { Id = "extensions", ResourceKey = "Tab.Extensions", ViewId = "tabExtensions" },
+            new Tab { Id = "HeliconZoo", ResourceKey = "Tab.HeliconZoo", Quota = Quotas.HELICON_ZOO, ResourceGroup = "HeliconZoo", ViewId = "tabHeliconZoo" },
 			new Tab { Id = "errors", ResourceKey = "Tab.CustomErrors", Quota = Quotas.WEB_ERRORS, ViewId = "tabErrors" },
 			new Tab { Id = "headers", ResourceKey = "Tab.CustomHeaders", Quota = Quotas.WEB_HEADERS, ViewId = "tabHeaders" },
 			new Tab { Id = "webpub", ResourceKey = "Tab.WebDeployPublishing", Quota = Quotas.WEB_REMOTEMANAGEMENT, ViewId = "tabWebDeployPublishing" },
@@ -106,7 +107,6 @@ namespace WebsitePanel.Portal
 
 		private void BindTabs()
 		{
-			//
 			var filteredTabs = TabsList.FilterTabsByHostingPlanQuotas(PackageId).ToList();
 
             // remove "SSL" tab for a site with dynamic IP
@@ -114,6 +114,7 @@ namespace WebsitePanel.Portal
             if (!IsDedicatedIP && sslTab != null)
                 filteredTabs.Remove(sslTab);
 
+            
 			var selectedValue = dlTabs.SelectedValue;
 
 			if (dlTabs.SelectedIndex == -1)
@@ -272,6 +273,7 @@ namespace WebsitePanel.Portal
 			webSitesMimeTypesControl.BindWebItem(site);
 			webSitesCustomHeadersControl.BindWebItem(site);
 			webSitesCustomErrorsControl.BindWebItem(site);
+            webSitesHeliconZooControl.BindWebItem(site);
 
             if (site.IsDedicatedIP)
             {
@@ -889,6 +891,7 @@ namespace WebsitePanel.Portal
 			webSitesMimeTypesControl.SaveWebItem(site);
 			webSitesCustomHeadersControl.SaveWebItem(site);
 			webSitesCustomErrorsControl.SaveWebItem(site);
+		    webSitesHeliconZooControl.SaveWebItem(site);
 
 			// update web site
 			try

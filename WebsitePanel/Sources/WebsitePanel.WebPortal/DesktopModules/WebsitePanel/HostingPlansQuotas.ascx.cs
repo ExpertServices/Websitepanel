@@ -203,5 +203,29 @@ namespace WebsitePanel.Portal
         {
             return new DataView(dsQuotas.Tables[1], "GroupID=" + groupId.ToString(), "", DataViewRowState.CurrentRows);
         }
+
+        public string GetSharedLocalizedStringNotEmpty(string resourceKey, object resourceDescription)
+        {
+            string result = GetSharedLocalizedString("Quota." + resourceKey);
+            if (string.IsNullOrEmpty(result))
+            {
+                result = resourceKey;
+
+                string resourceDescriptionString = resourceDescription as string;
+                if (!string.IsNullOrEmpty(resourceDescriptionString))
+                {
+                    result = resourceDescriptionString;
+                }
+                else if (result.IndexOf('.') > 0 && result.Substring(result.IndexOf('.')).Length > 1)
+                {
+                    // drop Quota name prefix
+                    // HeliconZoo.python -> python
+
+                    result = result.Substring(result.IndexOf('.')+1);
+                }
+            }
+
+            return result;
+        }
     }
 }

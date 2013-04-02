@@ -83,6 +83,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="esHeliconZoo.asmx" />
     <Content Include="esLync.asmx" />
     <Content Include="esVirtualizationServerForPrivateCloud.asmx" />
     <Content Include="Default.aspx" />
@@ -138,6 +139,7 @@
     <Compile Include="Code\Common\ServiceUsernameTokenManager.cs" />
     <Compile Include="Code\Common\UsernameAssertion.cs" />
     <Compile Include="Code\Common\Utils.cs" />
+    <Compile Include="Code\HeliconZoo\HeliconZooController.cs" />
     <Compile Include="Code\HostedSolution\LyncController.cs" />
     <Compile Include="Code\HostedSolution\LyncControllerAsync.cs" />
     <Compile Include="Code\VirtualizationForPrivateCloud\CreateAsyncVMfromVM.cs" />
@@ -245,6 +247,10 @@
     <Compile Include="Code\WebServers\WebServerController.cs" />
     <Compile Include="Code\Wizards\UserCreationWizard.cs" />
     <Compile Include="Code\Wizards\WebApplicationsInstaller.cs" />
+    <Compile Include="esHeliconZoo.asmx.cs">
+      <DependentUpon>esHeliconZoo.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="esLync.asmx.cs">
       <DependentUpon>esLync.asmx</DependentUpon>
       <SubType>Component</SubType>

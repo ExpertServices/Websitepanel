@@ -359,5 +359,17 @@ namespace WebsitePanel.Portal
             e.Cancel = true;
         }
 
+        protected string GetHtaccessPathOnSite(string path)
+        {
+            path = path.Replace('\\', '/');
+            if (!path.EndsWith("/"))
+            {
+                path += "/";
+            }
+
+            path += ".htaccess";
+
+            return path;
+        }
     }
 }

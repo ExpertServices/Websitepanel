@@ -56,6 +56,8 @@ namespace WebsitePanel.Providers.Web
         private bool enableAnonymousAccess;
         private bool enableWindowsAuthentication;
         private bool enableBasicAuthentication;
+        private bool enableDynamicCompression;
+        private bool enableStaticCompression;
         private string defaultDocs;
         private string httpRedirect;
         private HttpError[] httpErrors;
@@ -165,6 +167,17 @@ namespace WebsitePanel.Providers.Web
         {
             get { return this.enableBasicAuthentication; }
             set { this.enableBasicAuthentication = value; }
+        }
+
+        public bool EnableDynamicCompression
+        {
+            get { return this.enableDynamicCompression; }
+            set { this.enableDynamicCompression = value; }
+        }
+        public bool EnableStaticCompression
+        {
+            get { return this.enableStaticCompression; }
+            set { this.enableStaticCompression = value; }
         }
 
         public bool AspInstalled

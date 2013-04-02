@@ -52,6 +52,7 @@
 					            <td><asp:checkbox id="chkDedicatedPool" meta:resourcekey="chkDedicatedPool" Text="Dedicated Application Pool" Runat="server"></asp:checkbox></td>
 				            </tr>
 			            </table>
+
 			            <asp:PlaceHolder runat="server" id="pnlCustomAuth">
 			            <br />
 			            <table class="Normal" cellSpacing="0" cellPadding="3">
@@ -69,8 +70,25 @@
                             <tr>
 	                            <td nowrap><asp:checkbox id="chkAuthBasic" meta:resourcekey="chkAuthBasic" Text="Basic authentication" Runat="server"></asp:checkbox></td>
                             </tr>
-			            </table>
+                            
+                        </table>
 			            </asp:PlaceHolder>
+
+                            
+                        <table class="Normal" cellSpacing="0" cellPadding="3">
+                            <tr>
+			                    <td class="NormalBold">
+			                        <asp:Label ID="lblCompression" runat="server" meta:resourcekey="lblCompression" Text="Compression:"></asp:Label>
+			                    </td>
+			                </tr>
+                            <tr>
+	                            <td nowrap><asp:checkbox id="chkDynamicCompression" meta:resourcekey="chkDynamicCompression" Text="Enable dynamic compression" Runat="server"></asp:checkbox></td>
+                            </tr>
+                            <tr>
+	                            <td nowrap><asp:checkbox id="chkStaticCompression" meta:resourcekey="chkStaticCompression" Text="Enable static compression" Runat="server"></asp:checkbox></td>
+                            </tr>
+                        </table>
+
 	                </td>
 	                <td width="30" nowrap></td>
 	                <td valign="top">

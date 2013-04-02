@@ -129,6 +129,12 @@
   <data name="chkAuthBasic.Text" xml:space="preserve">
     <value>Enable Basic Authentication</value>
   </data>
+  <data name="chkDynamicCompression.Text" xml:space="preserve">
+    <value>Enable Dynamic Compression</value>
+  </data>
+  <data name="chkStaticCompression.Text" xml:space="preserve">
+    <value>Enable Static Compression</value>
+  </data>
   <data name="chkAuthWindows.Text" xml:space="preserve">
     <value>Enable Integrated Windows Authentication</value>
   </data>
@@ -158,6 +164,9 @@
   </data>
   <data name="lblAuthentication.Text" xml:space="preserve">
     <value>Authentication:</value>
+  </data>
+  <data name="lblCompression.Text" xml:space="preserve">
+    <value>Compression:</value>
   </data>
   <data name="lblDefaultDocuments.Text" xml:space="preserve">
     <value>Default Documents:</value>
