@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\WebsitePanel.Server\bin\</OutputPath>
+    <OutputPath>..\WebsitePanel.Server\bin\Crm2011\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,32 +25,14 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\WebsitePanel.Server\bin\</OutputPath>
+    <OutputPath>..\WebsitePanel.Server\bin\Crm2011\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Crm">
-      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Crm.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Crm.Admin.AdminService">
-      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Crm.Admin.AdminService.dll</HintPath>
-    </Reference>
     <Reference Include="microsoft.crm.sdk.proxy">
       <HintPath>..\..\Lib\References\Microsoft\microsoft.crm.sdk.proxy.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Crm.Setup.Common">
-      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Crm.Setup.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Crm.Setup.DatabaseInstaller">
-      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Crm.Setup.DatabaseInstaller.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Crm.Setup.Server.Utility">
-      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Crm.Setup.Server.Utility.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Crm.Tools.Admin.DMSnapinLib">
-      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Crm.Tools.Admin.DMSnapinLib.dll</HintPath>
     </Reference>
     <Reference Include="microsoft.xrm.client">
       <HintPath>..\..\Lib\References\Microsoft\microsoft.xrm.client.dll</HintPath>
@@ -84,12 +66,15 @@
     <Reference Include="System.Xml" />
     <Reference Include="WebsitePanel.Providers.Base">
       <HintPath>..\..\Bin\WebsitePanel.Providers.Base.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="WebsitePanel.Providers.HostedSolution">
       <HintPath>..\WebsitePanel.Server\bin\WebsitePanel.Providers.HostedSolution.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="WebsitePanel.Server.Utils">
       <HintPath>..\WebsitePanel.Server.Utils\bin\Debug\WebsitePanel.Server.Utils.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

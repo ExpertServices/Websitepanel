@@ -57,26 +57,26 @@
   <ItemGroup>
     <Reference Include="Microsoft.Crm">
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Crm.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Crm.Admin.AdminService">
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Crm.Admin.AdminService.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Crm.Setup.Common">
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Crm.Setup.Common.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Crm.Setup.DatabaseInstaller">
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Crm.Setup.DatabaseInstaller.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Crm.Setup.Server.Utility">
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Crm.Setup.Server.Utility.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Crm.Tools.Admin.DMSnapinLib">
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Crm.Tools.Admin.DMSnapinLib.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Exchange.Common, Version=8.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\WebsitePanel.Server\bin\</OutputPath>
+    <OutputPath>..\WebsitePanel.Server\bin\Exchange2013\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\WebsitePanel.Server\bin\</OutputPath>
+    <OutputPath>..\WebsitePanel.Server\bin\Exchange2013\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -74,14 +74,17 @@
     <ProjectReference Include="..\WebsitePanel.Providers.Base\WebsitePanel.Providers.Base.csproj">
       <Project>{684c932a-6c75-46ac-a327-f3689d89eb42}</Project>
       <Name>WebsitePanel.Providers.Base</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\WebsitePanel.Providers.HostedSolution\WebsitePanel.Providers.HostedSolution.csproj">
       <Project>{a06de5e4-4331-47e1-8f46-7b846146b559}</Project>
       <Name>WebsitePanel.Providers.HostedSolution</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\WebsitePanel.Server.Utils\WebsitePanel.Server.Utils.csproj">
       <Project>{e91e52f3-9555-4d00-b577-2b1dbdd87ca7}</Project>
       <Name>WebsitePanel.Server.Utils</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
