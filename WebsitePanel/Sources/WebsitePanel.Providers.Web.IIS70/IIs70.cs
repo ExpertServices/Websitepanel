@@ -38,6 +38,7 @@ using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.OS;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.Utils;
+using WebsitePanel.Providers.Web.Compression;
 using WebsitePanel.Providers.Web.Handlers;
 using WebsitePanel.Providers.Web.HttpRedirect;
 using WebsitePanel.Providers.Web.Iis.Authentication;
@@ -78,6 +79,7 @@ namespace WebsitePanel.Providers.Web
 		public const string AnonymousAuthenticationSection = "system.webServer/security/authentication/anonymousAuthentication";
 		public const string BasicAuthenticationSection = "system.webServer/security/authentication/basicAuthentication";
 		public const string WindowsAuthenticationSection = "system.webServer/security/authentication/windowsAuthentication";
+        public const string CompressionSection = "system.webServer/urlCompression";
 		public const string StaticContentSection = "system.webServer/staticContent";
 		public const string ModulesSection = "system.webServer/modules";
 		public const string IsapiCgiRestrictionSection = "system.webServer/security/isapiCgiRestriction";
@@ -104,8 +106,11 @@ namespace WebsitePanel.Providers.Web
         public const string HeliconApeModulePrevName = "Helicon Ape";
         // true module name
         public const string HeliconApeModule  = "Helicon.Ape";
+        public const string HeliconApeModuleType = "Helicon.Ape.ApeModule";
         // true handler name
         public const string HeliconApeHandler = "Helicon.Ape Handler";
+        public const string HeliconApeHandlerType = "Helicon.Ape.Handler";
+        
         public const string HeliconApeHandlerPath = "*.apehandler";
         
 		public const string IsapiModule = "IsapiModule";
@@ -344,6 +349,7 @@ namespace WebsitePanel.Providers.Web
 		private AnonymAuthModuleService anonymAuthSvc;
 		private WindowsAuthModuleService winAuthSvc;
 		private BasicAuthModuleService basicAuthSvc;
+        private CompressionModuleService comprSvc;
 		private DefaultDocsModuleService defaultDocSvc;
 		private CustomHttpErrorsModuleService customErrorsSvc;
 		private CustomHttpHeadersModuleService customHeadersSvc;
@@ -516,6 +522,7 @@ namespace WebsitePanel.Providers.Web
 				winAuthSvc = new WindowsAuthModuleService();
 				anonymAuthSvc = new AnonymAuthModuleService();
 				basicAuthSvc = new BasicAuthModuleService();
+                comprSvc = new CompressionModuleService();
 				defaultDocSvc = new DefaultDocsModuleService();
 				classicAspSvc = new ClassicAspModuleService();
 				httpRedirectSvc = new HttpRedirectModuleService();
@@ -620,6 +627,8 @@ namespace WebsitePanel.Providers.Web
 			virtualDir.AnonymousUserPassword = (string)bag[AuthenticationGlobals.AnonymousAuthenticationPassword];
 			virtualDir.EnableAnonymousAccess = (bool)bag[AuthenticationGlobals.Enabled];
 
+            
+
 			// load windows auth 
 			bag = winAuthSvc.GetAuthenticationSettings(srvman, virtualDir.FullQualifiedPath);
 			virtualDir.EnableWindowsAuthentication = (bool)bag[AuthenticationGlobals.Enabled];
@@ -633,10 +642,17 @@ namespace WebsitePanel.Providers.Web
 			bag = classicAspSvc.GetClassicAspSettings(srvman, virtualDir.FullQualifiedPath);
 			virtualDir.EnableParentPaths = (bool)bag[ClassicAspGlobals.EnableParentPaths];
 			//
+
+            //gzip
+            bag = comprSvc.GetSettings(srvman, virtualDir.FullQualifiedPath);
+            virtualDir.EnableDynamicCompression = (bool)bag[CompressionGlobals.DynamicCompression];
+            virtualDir.EnableStaticCompression = (bool)bag[CompressionGlobals.StaticCompression];
+
 			virtualDir.IIs7 = true;
 		}
 
-		private void FillIISObjectFromVirtualDirectory(WebVirtualDirectory virtualDir)
+
+	    private void FillIISObjectFromVirtualDirectory(WebVirtualDirectory virtualDir)
 		{
 			dirBrowseSvc.SetDirectoryBrowseEnabled(virtualDir.FullQualifiedPath, virtualDir.EnableDirectoryBrowsing);
 			//
@@ -645,6 +661,8 @@ namespace WebsitePanel.Providers.Web
 			winAuthSvc.SetEnabled(virtualDir.FullQualifiedPath, virtualDir.EnableWindowsAuthentication);
 			//
 			basicAuthSvc.SetAuthenticationSettings(virtualDir);
+            //
+            comprSvc.SetSettings(virtualDir.FullQualifiedPath, virtualDir.EnableDynamicCompression, virtualDir.EnableStaticCompression);
 			//
 			defaultDocSvc.SetDefaultDocumentSettings(virtualDir.FullQualifiedPath, virtualDir.DefaultDocs);
 			//
@@ -1896,6 +1914,25 @@ namespace WebsitePanel.Providers.Web
 
         private bool IsHeliconApeEnabled(ServerManager srvman, string siteId)
         {
+            WebSite webSite = null;
+            webSite = webObjectsSvc.GetWebSiteFromIIS(srvman, siteId);
+            if (webSite == null)
+                throw new ApplicationException(
+                    String.Format("Could not find a web site with the following identifier: {0}.", siteId));
+
+            // Fill ASP.NET settings
+            FillAspNetSettingsFromIISObject(srvman, webSite);
+
+            var aphl = new WebAppPoolHelper(ProviderSettings);
+            var currentPool = aphl.match_webapp_pool(webSite);
+
+            if (aphl.pipeline(currentPool.Mode) != SiteAppPoolMode.Integrated)
+            {
+                // Ape is not working in not Integrated pipeline mode
+                return false;
+            }
+
+
             var appConfig = srvman.GetApplicationHostConfiguration();
             var modulesSection = appConfig.GetSection(Constants.ModulesSection, siteId);
             var modulesCollection = modulesSection.GetCollection();
@@ -2280,40 +2317,44 @@ namespace WebsitePanel.Providers.Web
 
             using (var srvman = webObjectsSvc.GetServerManager())
             {
-                Configuration appConfig = srvman.GetApplicationHostConfiguration();
-                
-                // add Helicon.Ape module
-                ConfigurationSection modulesSection = appConfig.GetSection(Constants.ModulesSection, siteId);
-                ConfigurationElementCollection modulesCollection = modulesSection.GetCollection();
+                if (!IsHeliconApeEnabled(srvman, siteId))
+                {
 
-                // <add name="Helicon.Ape" />
-                ConfigurationElement heliconApeModuleEntry = modulesCollection.CreateElement("add");
-                heliconApeModuleEntry["name"] = Constants.HeliconApeModule;
-                heliconApeModuleEntry["type"] = GetHeliconApeModuleType(siteId);
-                
-                // this way make <clear/> and copy all modules list from ancestor
-                //modulesCollection.AddAt(0, heliconApeModuleEntry);
-                // this way just insert single ape module entry
-                modulesCollection.Add(heliconApeModuleEntry);
+                    Configuration appConfig = srvman.GetApplicationHostConfiguration();
 
-                
-                
-                
-                // add Helicon.Ape handler
-                ConfigurationSection handlersSection = appConfig.GetSection(Constants.HandlersSection, siteId);
-                ConfigurationElementCollection handlersCollection = handlersSection.GetCollection();
+                    // add Helicon.Ape module
+                    ConfigurationSection modulesSection = appConfig.GetSection(Constants.ModulesSection, siteId);
+                    ConfigurationElementCollection modulesCollection = modulesSection.GetCollection();
 
-                // <add name="Helicon.Ape" />
-                ConfigurationElement heliconApeHandlerEntry = handlersCollection.CreateElement("add");
-                heliconApeHandlerEntry["name"] = Constants.HeliconApeHandler;
-                heliconApeHandlerEntry["type"] = GetHeliconApeHandlerType(siteId);
-                heliconApeHandlerEntry["path"] = Constants.HeliconApeHandlerPath;
-                heliconApeHandlerEntry["verb"] = "*";
-                heliconApeHandlerEntry["resourceType"] = "Unspecified";
-                
-                handlersCollection.AddAt(0, heliconApeHandlerEntry);
+                    // <add name="Helicon.Ape" />
+                    ConfigurationElement heliconApeModuleEntry = modulesCollection.CreateElement("add");
+                    heliconApeModuleEntry["name"] = Constants.HeliconApeModule;
+                    heliconApeModuleEntry["type"] = GetHeliconApeModuleType(siteId);
 
-                srvman.CommitChanges();
+                    // this way make <clear/> and copy all modules list from ancestor
+                    //modulesCollection.AddAt(0, heliconApeModuleEntry);
+                    // this way just insert single ape module entry
+                    modulesCollection.Add(heliconApeModuleEntry);
+
+
+
+
+                    // add Helicon.Ape handler
+                    ConfigurationSection handlersSection = appConfig.GetSection(Constants.HandlersSection, siteId);
+                    ConfigurationElementCollection handlersCollection = handlersSection.GetCollection();
+
+                    // <add name="Helicon.Ape" />
+                    ConfigurationElement heliconApeHandlerEntry = handlersCollection.CreateElement("add");
+                    heliconApeHandlerEntry["name"] = Constants.HeliconApeHandler;
+                    heliconApeHandlerEntry["type"] = GetHeliconApeHandlerType(siteId);
+                    heliconApeHandlerEntry["path"] = Constants.HeliconApeHandlerPath;
+                    heliconApeHandlerEntry["verb"] = "*";
+                    heliconApeHandlerEntry["resourceType"] = "Unspecified";
+
+                    handlersCollection.AddAt(0, heliconApeHandlerEntry);
+
+                    srvman.CommitChanges();
+                }
             }
         }
 
@@ -2330,57 +2371,102 @@ namespace WebsitePanel.Providers.Web
 
             using (var srvman = webObjectsSvc.GetServerManager())
             {
+                bool alterConfiguration = false;
                 //
                 Configuration appConfig = srvman.GetApplicationHostConfiguration();
+
+
+
                 
                 // remove Helicon.Ape module
                 ConfigurationSection modulesSection = appConfig.GetSection(Constants.ModulesSection, siteId);
                 ConfigurationElementCollection modulesCollection = modulesSection.GetCollection();
-                List<ConfigurationElement> heliconApeModuleEntriesList = new List<ConfigurationElement>();
-                foreach (ConfigurationElement moduleEntry in modulesCollection)
+                //List<ConfigurationElement> heliconApeModuleEntriesList = new List<ConfigurationElement>();
+                //foreach (ConfigurationElement moduleEntry in modulesCollection)
+                //{
+                //    if (
+                //        String.Equals(moduleEntry["name"].ToString(), Constants.HeliconApeModule, StringComparison.InvariantCultureIgnoreCase)
+                //        ||
+                //        String.Equals(moduleEntry["name"].ToString(), Constants.HeliconApeModulePrevName, StringComparison.InvariantCultureIgnoreCase)
+                //    )
+                //    {
+                //        heliconApeModuleEntriesList.Add(moduleEntry);
+                //    }
+                //}
+                //foreach (ConfigurationElement heliconApeElement in heliconApeModuleEntriesList)
+                //{
+                //    modulesCollection.Remove(heliconApeElement);
+                //}
+
+                for (int i = 0; i < modulesCollection.Count; )
                 {
-                    if (
-                        String.Equals(moduleEntry["name"].ToString(), Constants.HeliconApeModule, StringComparison.InvariantCultureIgnoreCase)
-                        ||
-                        String.Equals(moduleEntry["name"].ToString(), Constants.HeliconApeModulePrevName, StringComparison.InvariantCultureIgnoreCase)
-                    )
+                    ConfigurationElement moduleEntry = modulesCollection[i];
+
+                    string type = moduleEntry["type"].ToString();
+
+                    if (type.IndexOf(Constants.HeliconApeModuleType, StringComparison.Ordinal) >= 0)
                     {
-                        heliconApeModuleEntriesList.Add(moduleEntry);
+                        modulesCollection.RemoveAt(i);
+                        alterConfiguration = true;
                     }
-                }
-                foreach (ConfigurationElement heliconApeElement in heliconApeModuleEntriesList)
-                {
-                    modulesCollection.Remove(heliconApeElement);
+                    else
+                    {
+                        ++i;
+                    }
+
                 }
 
                 // remove Helicon.Ape handler
                 ConfigurationSection handlersSection = appConfig.GetSection(Constants.HandlersSection, siteId);
                 ConfigurationElementCollection handlersCollection = handlersSection.GetCollection();
-                List<ConfigurationElement> heliconApeHandlerEntriesList = new List<ConfigurationElement>();
-                foreach (ConfigurationElement handlerEntry in handlersCollection)
+                //List<ConfigurationElement> heliconApeHandlerEntriesList = new List<ConfigurationElement>();
+                //foreach (ConfigurationElement handlerEntry in handlersCollection)
+                //{
+                //    if (
+                //        String.Equals(handlerEntry["name"].ToString(), Constants.HeliconApeModule, StringComparison.InvariantCultureIgnoreCase)
+                //        ||
+                //        String.Equals(handlerEntry["name"].ToString(), Constants.HeliconApeModulePrevName, StringComparison.InvariantCultureIgnoreCase)
+                //        ||
+                //        String.Equals(handlerEntry["name"].ToString(), Constants.HeliconApeHandler, StringComparison.InvariantCultureIgnoreCase)
+                //    )
+                //    {
+                //        heliconApeHandlerEntriesList.Add(handlerEntry);
+                //    }
+                //}
+                ////
+                //foreach (ConfigurationElement heliconApeHandlerEntry in heliconApeHandlerEntriesList)
+                //{
+                //    handlersCollection.Remove(heliconApeHandlerEntry);
+                //}
+
+                //// commit changes to metabase
+                //if (heliconApeModuleEntriesList.Count > 0 || heliconApeHandlerEntriesList.Count > 0)
+                //{
+                //    srvman.CommitChanges();
+                //}
+
+                for (int i = 0; i < handlersCollection.Count; )
                 {
-                    if (
-                        String.Equals(handlerEntry["name"].ToString(), Constants.HeliconApeModule, StringComparison.InvariantCultureIgnoreCase)
-                        ||
-                        String.Equals(handlerEntry["name"].ToString(), Constants.HeliconApeModulePrevName, StringComparison.InvariantCultureIgnoreCase)
-                        ||
-                        String.Equals(handlerEntry["name"].ToString(), Constants.HeliconApeHandler, StringComparison.InvariantCultureIgnoreCase)
-                    )
+
+                    string type = handlersCollection[i]["type"].ToString();
+
+                    if (type.IndexOf(Constants.HeliconApeHandlerType, StringComparison.Ordinal) >= 0)
                     {
-                        heliconApeHandlerEntriesList.Add(handlerEntry);
+                        handlersCollection.RemoveAt(i);
+                        alterConfiguration = true;
                     }
-                }
-				//
-                foreach (ConfigurationElement heliconApeHandlerEntry in heliconApeHandlerEntriesList)
-                {
-                    handlersCollection.Remove(heliconApeHandlerEntry);
+                    else
+                    {
+                        ++i;
+                    }
+
                 }
 
-                // commit changes to metabase
-                if (heliconApeModuleEntriesList.Count > 0 || heliconApeHandlerEntriesList.Count > 0)
+                if (alterConfiguration)
                 {
-                    srvman.CommitChanges();
+                    srvman.CommitChanges();    
                 }
+                
 
             }
         }

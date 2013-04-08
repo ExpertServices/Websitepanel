@@ -2,66 +2,89 @@
 	Inherits="WebsitePanel.Portal.WebSitesHeliconApeControl" %>
 <%@ Import Namespace="WebsitePanel.Portal" %>
 
-<div class="FormRow">
-	<asp:Panel runat="server" ID="panelHeliconApeIsNotInstalledMessage" Visible="false">
-		<p>
-			<asp:Localize runat="server" meta:resourcekey="ApeModuleNotes" /></p>
-	</asp:Panel>
-	<asp:Panel runat="server" ID="panelHeliconApeIsNotEnabledMessage" Visible="false">
-		<p>
-			<asp:Localize runat="server" meta:resourcekey="ApeProductNotes" /></p>
-	</asp:Panel>
-	<asp:Button ID="btnToggleHeliconApe" runat="server" meta:resourcekey="btnToggleHeliconApe"
-		Text="Enable Helicon Ape" CssClass="Button2" CausesValidation="false" OnClick="btnToggleHeliconApe_Click" />
-	<div style="float: right;">
-		<asp:HyperLink runat="server" Target="_blank" NavigateUrl="http://www.helicontech.com/ape/doc/wsp.htm"
-			meta:resourcekey="ModuleHelpLink" />
-	</div>
-</div>
-<asp:Panel ID="HeliconApeFoldersPanel" runat="server">
-	<div class="FormButtonsBar">
-		<asp:Button ID="btnAddHeliconApeFolder" runat="server" meta:resourcekey="btnAddHeliconApeFolder"
-			Text="Add Folder" CssClass="Button2" CausesValidation="false" OnClick="btnAddHeliconApeFolder_Click" />
-	</div>
+<style type="text/css">
+    .HtaccessPanel {
+        margin: 1em 0 3em 0;
+    }
+    .DelButton {
+        margin-right: 5px;
+    }
+</style>
+
+<asp:Panel ID="HeliconApeFoldersPanel" runat="server" CssClass="HtaccessPanel">
+	
+    <table class="FormButtonsBar" width="100%">
+	    <tr>
+	        <td>
+	            <asp:Label runat="server" CssClass="NormalBold" meta:resourcekey="labelSelectHtacesEdit"></asp:Label>
+            </td>
+            <td align="right">
+		        <asp:Button ID="btnAddHeliconApeFolder" runat="server" meta:resourcekey="btnAddHeliconApeFolder"
+			        Text="Add .htaccess" CssClass="Button2" CausesValidation="false" OnClick="btnAddHeliconApeFolder_Click" />
+            </td>
+        </tr>
+	</table>
 	<asp:GridView ID="gvHeliconApeFolders" runat="server" EnableViewState="True" AutoGenerateColumns="false"
-		ShowHeader="true" CssSelectorClass="NormalGridView" EmptyDataText="gvHeliconApeFolders"
-		DataKeyNames="Path,ContentPath" OnRowDeleting="gvHeliconApeFolders_RowDeleting">
+		ShowHeader="False" CssSelectorClass="LightGridView" EmptyDataText="gvHeliconApeFolders"
+		DataKeyNames="Path,ContentPath" OnRowDeleting="gvHeliconApeFolders_RowDeleting" Width="100%">
 		<Columns>
-			<asp:TemplateField HeaderText="gvHeliconApeFoldersName" ItemStyle-Width="100%">
-				<ItemStyle CssClass="NormalBold"></ItemStyle>
+			<asp:TemplateField HeaderText="gvHeliconApeFoldersName" ItemStyle-Width="782px">
+				<ItemStyle CssClass="NormalText"></ItemStyle>
 				<ItemTemplate>
-					<asp:HyperLink ID="lnkEditHeliconApeFolder" runat="server" NavigateUrl='<%# GetEditControlUrl("edit_htaccessfolder", Eval("Path").ToString()) %>'>
-			            <%# Eval("Path")%>
+					<asp:HyperLink ID="lnkEditHeliconApeFolder" runat="server" 
+                    NavigateUrl='<%# GetEditControlUrl("edit_htaccessfolder", Eval("Path").ToString()) %>'
+                     CssClass="NormalBold">
+			            <%# GetHtaccessPathOnSite((string)Eval("Path")) %>
 					</asp:HyperLink>
 				</ItemTemplate>
 			</asp:TemplateField>
-			<asp:TemplateField>
+			<asp:TemplateField ItemStyle-Width="110px">
 				<ItemTemplate>
 					<asp:HyperLink ID="lnkEditHeliconApeFolderAuth" runat="server" NavigateUrl='<%# GetEditControlUrl("edit_htaccessfolderauth", Eval("Path").ToString()) %>'
-						title="Helicon Ape Folder Security Properties">
-			            <image src="/App_Themes/Default/Images/shield.png" style="border: 0;" />
+						title="Folder Security Properties (.htpasswd)">
+			            <image src="/App_Themes/Default/Images/shield.png" style="border: 0; vertical-align: top; margin-right: 3px;" />Security options
 					</asp:HyperLink>
 				</ItemTemplate>
 			</asp:TemplateField>
 			<asp:TemplateField>
 				<ItemTemplate>
-					<asp:ImageButton ID="cmdDeleteHeliconApeFolder" runat="server" SkinID="DeleteSmall"
-						CommandName="delete" CausesValidation="false" meta:resourcekey="cmdDeleteHeliconApeFolder"
-						OnClientClick="return confirm('Delete?');"></asp:ImageButton>
+					<asp:ImageButton ID="cmdDeleteHeliconApeFolder" runat="server" SkinID="DeleteSmall" CssClass="DelButton"
+						CommandName="delete" CausesValidation="false"
+						OnClientClick="return confirm('Delete .htaccess?');"></asp:ImageButton>
 				</ItemTemplate>
 			</asp:TemplateField>
 		</Columns>
 	</asp:GridView>
 	<br />
-	<div class="FormButtonsBar">
-		<asp:Button ID="btnAddHeliconApeUser" runat="server" meta:resourcekey="btnAddHeliconApeUser"
-			Text="Add User" CssClass="Button2" CausesValidation="false" OnClick="btnAddHeliconApeUser_Click" />
-	</div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    <input class="Button2" id="ShowSecurityPanelButton" value="Show Security Options (.htpasswd)" type="button" />
+    <div id="SecurityPanel" class="Hidden">
+	<table class="FormButtonsBar" width="100%" style="margin-top: 2em;">
+	    <tr>
+	        <td>
+	            <asp:Label runat="server" CssClass="NormalBold" meta:resourcekey="HeliconApeUsersHeader"></asp:Label>
+	        </td>
+            <td align="right">
+                <asp:Button ID="btnAddHeliconApeUser" runat="server" meta:resourcekey="btnAddHeliconApeUser"
+			        Text="Add User" CssClass="Button2" CausesValidation="false" OnClick="btnAddHeliconApeUser_Click" />
+            </td>
+	    </tr>
+	</table>
 	<asp:GridView ID="gvHeliconApeUsers" runat="server" EnableViewState="True" AutoGenerateColumns="false"
-		ShowHeader="true" CssSelectorClass="NormalGridView" EmptyDataText="gvHeliconApeUsers"
-		DataKeyNames="Name" OnRowDeleting="gvHeliconApeUsers_RowDeleting">
+		ShowHeader="False" CssSelectorClass="LightGridView" EmptyDataText="gvHeliconApeUsers"
+		DataKeyNames="Name" OnRowDeleting="gvHeliconApeUsers_RowDeleting" Width="100%">
 		<Columns>
-			<asp:TemplateField HeaderText="gvHeliconApeUsersName" ItemStyle-Width="100%">
+			<asp:TemplateField ItemStyle-Width="100%">
 				<ItemStyle CssClass="NormalBold"></ItemStyle>
 				<ItemTemplate>
 					<asp:HyperLink ID="lnkEditUser" runat="server" NavigateUrl='<%# GetEditControlUrl("edit_htaccessuser", Eval("Name").ToString()) %>'>
@@ -69,25 +92,38 @@
 					</asp:HyperLink>
 				</ItemTemplate>
 			</asp:TemplateField>
-			<asp:TemplateField>
+			<asp:TemplateField ItemStyle-Width="30px">
 				<ItemTemplate>
-					<asp:ImageButton ID="cmdDeleteUser" runat="server" SkinID="DeleteSmall" CommandName="delete"
-						CausesValidation="false" meta:resourcekey="cmdDeleteUser" OnClientClick="return confirm('Delete?');">
+					<asp:ImageButton ID="cmdDeleteUser" runat="server" SkinID="DeleteSmall" CommandName="delete" CssClass="DelButton"
+						CausesValidation="false" OnClientClick="return confirm('Delete user?');">
 					</asp:ImageButton>
 				</ItemTemplate>
 			</asp:TemplateField>
 		</Columns>
 	</asp:GridView>
-	<br />
-	<div class="FormButtonsBar">
-		<asp:Button ID="btnAddHeliconApeGroup" runat="server" meta:resourcekey="btnAddHeliconApeGroup"
-			Text="Add Group" CssClass="Button2" CausesValidation="false" OnClick="btnAddHeliconApeGroup_Click" />
-	</div>
+	
+    
+    
+    
+
+    
+    <table class="FormButtonsBar" width="100%" style="margin-top: 3em;">
+	    <tr>
+	        <td>
+	            <asp:Label ID="Label1" runat="server" CssClass="NormalBold" meta:resourcekey="HeliconApeGroupsHeader"></asp:Label>
+	        </td>
+            <td align="right">
+                <asp:Button ID="btnAddHeliconApeGroup" runat="server" meta:resourcekey="btnAddHeliconApeGroup"
+        			Text="Add Group" CssClass="Button2" CausesValidation="false" OnClick="btnAddHeliconApeGroup_Click" />
+            </td>
+	    </tr>
+	</table>
+
 	<asp:GridView ID="gvHeliconApeGroups" runat="server" EnableViewState="True" AutoGenerateColumns="false"
-		ShowHeader="true" EmptyDataText="gvHeliconApeGroups" CssSelectorClass="NormalGridView"
-		DataKeyNames="Name" OnRowDeleting="gvHeliconApeGroups_RowDeleting">
+		ShowHeader="False" EmptyDataText="gvHeliconApeGroups" CssSelectorClass="LightGridView"
+		DataKeyNames="Name" OnRowDeleting="gvHeliconApeGroups_RowDeleting" Width="100%">
 		<Columns>
-			<asp:TemplateField HeaderText="gvHeliconApeGroupsName" ItemStyle-Width="100%">
+			<asp:TemplateField ItemStyle-Width="100%">
 				<ItemStyle CssClass="NormalBold"></ItemStyle>
 				<ItemTemplate>
 					<asp:HyperLink ID="lnkEditGroup" runat="server" NavigateUrl='<%# GetEditControlUrl("edit_htaccessgroup", Eval("Name").ToString()) %>'>
@@ -95,13 +131,45 @@
 					</asp:HyperLink>
 				</ItemTemplate>
 			</asp:TemplateField>
-			<asp:TemplateField>
+			<asp:TemplateField ItemStyle-Width="30px">
 				<ItemTemplate>
-					<asp:ImageButton ID="cmdDeleteGroup" runat="server" SkinID="DeleteSmall" CommandName="delete"
-						CausesValidation="false" meta:resourcekey="cmdDeleteGroup" OnClientClick="return confirm('Delete?');">
+					<asp:ImageButton ID="cmdDeleteGroup" runat="server" SkinID="DeleteSmall" CommandName="delete" CssClass="DelButton"
+						CausesValidation="false" OnClientClick="return confirm('Delete group?');">
 					</asp:ImageButton>
 				</ItemTemplate>
 			</asp:TemplateField>
 		</Columns>
 	</asp:GridView>
+    </div>
 </asp:Panel>
+
+
+
+
+
+<div class="FormButtonsBar">
+	<asp:Panel runat="server" ID="panelHeliconApeIsNotInstalledMessage" Visible="false">
+		<p>
+			<asp:Localize ID="Localize1" runat="server" meta:resourcekey="ApeModuleNotes" /></p>
+	</asp:Panel>
+	<asp:Panel runat="server" ID="panelHeliconApeIsNotEnabledMessage" Visible="false">
+		<p>
+			<asp:Localize ID="Localize2" runat="server" meta:resourcekey="ApeProductNotes" /></p>
+	</asp:Panel>
+	<asp:Button ID="btnToggleHeliconApe" runat="server" meta:resourcekey="btnToggleHeliconApe"
+		Text="Enable Helicon Ape" CssClass="Button2" CausesValidation="false" OnClick="btnToggleHeliconApe_Click" />
+	<div style="float: right;">
+		<asp:HyperLink ID="HyperLink1" runat="server" Target="_blank" NavigateUrl="http://www.helicontech.com/ape/doc/wsp.htm"
+			meta:resourcekey="ModuleHelpLink" />
+	</div>
+</div>
+
+<script src="/JavaScript/jquery-1.4.4.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#ShowSecurityPanelButton').click(function () {
+            $('#ShowSecurityPanelButton').slideUp();
+            $('#SecurityPanel').slideDown();
+        });
+    });
+</script>

@@ -8,6 +8,7 @@
 <%@ Register Src="WebSitesCustomHeadersControl.ascx" TagName="WebSitesCustomHeadersControl" TagPrefix="uc6" %>
 <%@ Register Src="WebSitesSecuredFoldersControl.ascx" TagName="WebSitesSecuredFoldersControl" TagPrefix="wsp" %>
 <%@ Register Src="WebSitesHeliconApeControl.ascx" TagName="WebSitesHeliconApeControl" TagPrefix="wsp" %>
+<%@ Register Src="WebSitesHeliconZooControl.ascx" TagName="WebSitesHeliconZooControl" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/PasswordControl.ascx" TagName="PasswordControl" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/UsernameControl.ascx" TagName="UsernameControl" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
@@ -241,6 +242,9 @@
                         </asp:View>
                         <asp:View ID="tabHeliconApe" runat="server">
                             <wsp:WebSitesHeliconApeControl ID="webSitesHeliconApeControl" runat="server" />
+                        </asp:View>
+						<asp:View ID="tabHeliconZoo" runat="server">
+							<wsp:WebSitesHeliconZooControl ID="webSitesHeliconZooControl" runat="server" />
                         </asp:View>
                         <asp:View ID="tabFrontPage" runat="server">
                             <asp:Panel ID="pnlFrontPage" runat="server" Style="padding: 20;">

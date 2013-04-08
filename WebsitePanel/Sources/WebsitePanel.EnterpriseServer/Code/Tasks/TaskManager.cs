@@ -150,8 +150,8 @@ namespace WebsitePanel.EnterpriseServer
         {
             // ERROR
             WriteLogRecord(2, ex.Message, ex.StackTrace);
-            return new Exception(String.Format("Error executing '{0}' task on '{1}' {2}",
-                TopTask.TaskName, TopTask.ItemName, TopTask.Source), ex);
+            return new Exception((TopTask != null) ? String.Format("Error executing '{0}' task on '{1}' {2}",
+                TopTask.TaskName, TopTask.ItemName, TopTask.Source) : String.Format("Error executing task"), ex);
         }
 
         public static void WriteError(Exception ex, string text, params string[] textParameters)
@@ -182,12 +182,15 @@ namespace WebsitePanel.EnterpriseServer
             logRecord.TextParameters = textParameters;
             logRecord.TextIdent = TasksStack.Count - 1;
             logRecord.ExceptionStackTrace = stackTrace;
-            RootTask.LogRecords.Add(logRecord);
-            RootTask.LastLogRecord = logRecord;
+            if (RootTask != null)
+            {
+                RootTask.LogRecords.Add(logRecord);
+                RootTask.LastLogRecord = logRecord;
 
-            // change entire task severity
-            if (severity > RootTask.Severity)
-                RootTask.Severity = severity;
+                // change entire task severity
+                if (severity > RootTask.Severity)
+                    RootTask.Severity = severity;
+            }
         }
 
         public static void CompleteTask()

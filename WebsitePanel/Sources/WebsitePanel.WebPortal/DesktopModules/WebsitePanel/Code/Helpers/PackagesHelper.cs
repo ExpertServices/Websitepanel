@@ -146,6 +146,10 @@ namespace WebsitePanel.Portal
             if (!cntx.Groups.ContainsKey(groupName))
                 return false;
 
+            // check wildcard quota name
+            if (!string.IsNullOrEmpty(groupName) && quotaName.Substring(groupName.Length) == ".*")
+                return true;
+            
             // check quota
             if (cntx.Quotas.ContainsKey(quotaName))
                 return !cntx.Quotas[quotaName].QuotaExhausted;

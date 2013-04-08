@@ -33,6 +33,7 @@ using System.Text;
 
 namespace WebsitePanel.Server
 {
+    [Serializable]
     public class WPIProduct
     {
         private string productId;
@@ -45,10 +46,12 @@ namespace WebsitePanel.Server
         private string downloadedLocation;
         private string longDescription;
         private bool isInstalled;
+        private bool isUpgrade;
         private int fileSize;
         private DateTime published;
         private string author;
         private string authorUri;
+
 
         public WPIProduct()
         {
@@ -89,6 +92,12 @@ namespace WebsitePanel.Server
         {
             get { return this.isInstalled; }
             set { this.isInstalled = value; }
+        }
+
+        public bool IsUpgrade
+        {
+            get { return this.isUpgrade; }
+            set { this.isUpgrade = value; }
         }
 
         public string Version
@@ -138,6 +147,11 @@ namespace WebsitePanel.Server
             get { return authorUri; }
             set { authorUri = value; }
         }
+
+        public new string ToString()
+        {
+            return productId;
+        }
     }
 
     public class WPITab
@@ -185,6 +199,8 @@ namespace WebsitePanel.Server
 
     public class WPIKeyword
     {
+        public const string HOSTING_PACKAGE_KEYWORD = "ZooPackage";
+
         private string id;
         private string text;
 

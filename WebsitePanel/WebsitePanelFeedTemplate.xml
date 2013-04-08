@@ -70,8 +70,8 @@
           <productId>SQLExpress</productId>
         </dependency>
         <dependency>
-          <!-- Installs Web Deploy 3.0 -->
-          <productId>WDeploy</productId>
+          <!-- Installs the latest Web Deploy without bundled SQL support -->
+          <productId>WDeployNoSMO</productId>
         </dependency>
       </and>
     </dependency>

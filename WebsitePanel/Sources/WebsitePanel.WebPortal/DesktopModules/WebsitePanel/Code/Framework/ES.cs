@@ -213,6 +213,11 @@ namespace WebsitePanel.Portal
 			get { return GetCachedProxy<esExchangeServer>(); }
 		}
 
+
+        public esHeliconZoo HeliconZoo
+        {
+            get { return GetCachedProxy<esHeliconZoo>(); }
+        }
         protected ES()
         {
         }

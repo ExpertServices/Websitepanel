@@ -36,9 +36,10 @@
 	float: left;
 }
 
-.FormButtonsBar .Right
+.FormButtonsBar Button2.Right
 {
 	text-align: right;
+    margin-bottom: 3px;
 }
 
 .FormButtonsBarClean
@@ -1368,20 +1369,11 @@ UL.ActionButtons LI
     width:100px;
 }
 
-table#toolbar
-{
-	width: 100%;
-	display: none;
-}
 .pnlControl input.NormalTextBox
 {
     width: 300px;
 }
 
-.toolbar-space
-{
-	width: 80%;
-}
 .disabled
 {
     width:20px;
@@ -1390,12 +1382,6 @@ table#toolbar
 	border:medium none;
 }
 
-.toolbar-button
-{
-	padding: 0 1px;
-	cursor: pointer;
-	white-space: nowrap;
-}
 .enabled
 {
     width:20px;
@@ -1404,4 +1390,14 @@ table#toolbar
 	border:medium none;
 }
 
-p.warningText {font-size:14px; color:Red; text-align:center;}
+p.warningText {
+    font-size:14px; 
+    color:Red; 
+    text-align:center;
+}
+
+
+.Hidden 
+{
+    display: none;    
+}
