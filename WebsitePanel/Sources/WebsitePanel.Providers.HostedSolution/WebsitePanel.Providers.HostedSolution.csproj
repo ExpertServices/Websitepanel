@@ -144,8 +144,6 @@
     <Compile Include="Exchange2010.cs" />
     <Compile Include="Exchange2010SP2.cs" />
     <Compile Include="HostedSharePointServer2010.cs" />
-    <Compile Include="HostedSharePointServer2013.cs" />
-    <Compile Include="HostedSharePointServer2013Impl.cs" />
     <Compile Include="Lync2010.cs" />
     <Compile Include="LyncTransaction.cs" />
     <Compile Include="OCSEdge2007R2.cs" />
