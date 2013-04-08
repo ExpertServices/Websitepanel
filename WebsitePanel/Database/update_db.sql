@@ -428,6 +428,9 @@ GO
 IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Hosted SharePoint Foundation 2013')
 BEGIN
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery])
-VALUES (1301, 20, N'HostedSharePoint2013', N'Hosted SharePoint Foundation 2013', N'WebsitePanel.Providers.HostedSolution.HostedSharePointServer2013, WebsitePanel.Providers.HostedSolution', N'HostedSharePoint30', NULL)
+VALUES (1301, 20, N'HostedSharePoint2013', N'Hosted SharePoint Foundation 2013', N'WebsitePanel.Providers.HostedSolution.HostedSharePointServer2013, WebsitePanel.Providers.HostedSolution.SharePoint2013', N'HostedSharePoint30', NULL)
 END
+GO
+
+UPDATE Providers SET ProviderType = N'WebsitePanel.Providers.HostedSolution.HostedSharePointServer2013, WebsitePanel.Providers.HostedSolution.SharePoint2013' WHERE ProviderID = 1301
 GO

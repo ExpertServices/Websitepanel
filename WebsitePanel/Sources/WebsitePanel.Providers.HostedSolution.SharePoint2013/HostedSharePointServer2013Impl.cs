@@ -53,7 +53,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 try
                 {
-                    languages.AddRange(from SPLanguage lang in SPRegionalSettings.GlobalInstalledLanguages select lang.LCID);
+                    languages.AddRange(from SPLanguage lang in SPRegionalSettings.GlobalInstalledLanguages select lang.LCID);                    
                 }
                 finally
                 {
@@ -623,8 +623,6 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             HostedSolutionLog.LogStart("ExecuteShellCommand");
             var errorList = new List<object>();
-
-            HostedSolutionLog.DebugCommand(cmd);
             Collection<PSObject> results;
 
             using (Pipeline pipeLine = runspace.CreatePipeline())
