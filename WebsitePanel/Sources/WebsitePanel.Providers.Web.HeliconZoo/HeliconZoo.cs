@@ -70,8 +70,18 @@ namespace WebsitePanel.Providers.Web.HeliconZoo
             {
                 Configuration appConfig = srvman.GetApplicationHostConfiguration();
 
-                ConfigurationSection heliconZooServer = appConfig.GetSection("system.webServer/heliconZooServer");
-                
+                ConfigurationSection heliconZooServer;
+                try
+                {
+                    heliconZooServer = appConfig.GetSection("system.webServer/heliconZooServer");
+                }
+                catch(Exception)
+                {
+                    // heliconZooServer is not found
+                    // looks like zoo is installed
+                    return result.ToArray();
+                }
+
                 ConfigurationElement engines = heliconZooServer.GetChildElement("engines");
                 ConfigurationElementCollection enginesCollection = engines.GetCollection();
 
