@@ -5930,6 +5930,7 @@ namespace WebsitePanel.Providers.HostedSolution
                                                             credential);
 
                 connectionInfo.AuthenticationMechanism = AuthenticationMechanism.NegotiateWithImplicitCredential;
+                connectionInfo.SkipCNCheck = true;
             }
 
             Runspace runSpace = RunspaceFactory.CreateRunspace(connectionInfo);
