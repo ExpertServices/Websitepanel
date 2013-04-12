@@ -66,7 +66,7 @@ namespace WebsitePanel.Providers.HostedSolution
 				sb.AppendFormat("{0},", ToCsvString(item.LastLogon));
 				sb.AppendFormat("{0},", ToCsvString(item.Enabled, "Enabled", "Disabled"));
 				sb.AppendFormat("{0},", ToCsvString(item.MailboxType));
-                sb.AppendFormat("{0}", ToCsvString(item.BlackberryEnabled));
+                sb.AppendFormat("{0},", ToCsvString(item.BlackberryEnabled));
                 sb.AppendFormat("{0}", ToCsvString(item.MailboxPlan));
                 mainBuilder.Append(sb.ToString());
             }
