@@ -132,6 +132,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Providers.Host
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Providers.HostedSolution.SharePoint2013", "WebsitePanel.Providers.HostedSolution.SharePoint2013\WebsitePanel.Providers.HostedSolution.SharePoint2013.csproj", "{24762DC8-6078-4F10-A524-C94ED59BD5D1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Providers.HostedSolution.Lync2013", "WebsitePanel.Providers.HostedSolution.Lync2013\WebsitePanel.Providers.HostedSolution.Lync2013.csproj", "{EF36A05F-5573-4ED2-A47D-689F1CA1A209}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -672,6 +674,16 @@ Global
 		{24762DC8-6078-4F10-A524-C94ED59BD5D1}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{24762DC8-6078-4F10-A524-C94ED59BD5D1}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{24762DC8-6078-4F10-A524-C94ED59BD5D1}.Release|x86.ActiveCfg = Release|Any CPU
+		{EF36A05F-5573-4ED2-A47D-689F1CA1A209}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF36A05F-5573-4ED2-A47D-689F1CA1A209}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF36A05F-5573-4ED2-A47D-689F1CA1A209}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EF36A05F-5573-4ED2-A47D-689F1CA1A209}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EF36A05F-5573-4ED2-A47D-689F1CA1A209}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EF36A05F-5573-4ED2-A47D-689F1CA1A209}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF36A05F-5573-4ED2-A47D-689F1CA1A209}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF36A05F-5573-4ED2-A47D-689F1CA1A209}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EF36A05F-5573-4ED2-A47D-689F1CA1A209}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EF36A05F-5573-4ED2-A47D-689F1CA1A209}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

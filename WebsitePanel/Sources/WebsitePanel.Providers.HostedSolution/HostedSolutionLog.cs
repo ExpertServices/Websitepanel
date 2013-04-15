@@ -122,7 +122,7 @@ namespace WebsitePanel.Providers.HostedSolution
             return res;
         }
 
-        internal static void DebugCommand(Command cmd)
+        public static void DebugCommand(Command cmd)
         {
             StringBuilder sb = new StringBuilder(cmd.CommandText);
             foreach (CommandParameter parameter in cmd.Parameters)

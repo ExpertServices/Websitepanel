@@ -156,7 +156,6 @@
     <Compile Include="Exchange2010SP2.cs" />
     <Compile Include="HostedSharePointServer2010.cs" />
     <Compile Include="Lync2010.cs" />
-    <Compile Include="LyncTransaction.cs" />
     <Compile Include="OCSEdge2007R2.cs" />
     <Compile Include="OCS2007R2.cs" />
     <Compile Include="CRMProvider.cs" />
