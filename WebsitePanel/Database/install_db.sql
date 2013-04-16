@@ -868,154 +868,6 @@ RETURN
 GO
 SET ANSI_NULLS ON
 GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE AddHostingPlan
-(
-	@ActorID int,
-	@PlanID int OUTPUT,
-	@UserID int,
-	@PackageID int,
-	@PlanName nvarchar(200),
-	@PlanDescription ntext,
-	@Available bit,
-	@ServerID int,
-	@SetupPrice money,
-	@RecurringPrice money,
-	@RecurrenceLength int,
-	@RecurrenceUnit int,
-	@IsAddon bit,
-	@QuotasXml ntext
-)
-AS
-
--- check rights
-IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
-RAISERROR('You are not allowed to access this account', 16, 1)
-
-BEGIN TRAN
-
-IF @ServerID = 0
-SELECT @ServerID = ServerID FROM Packages
-WHERE PackageID = @PackageID
-
-IF @IsAddon = 1
-SET @ServerID = NULL
-
-IF @PackageID = 0 SET @PackageID = NULL
-
-INSERT INTO HostingPlans
-(
-	UserID,
-	PackageID,
-	PlanName,
-	PlanDescription,
-	Available,
-	ServerID,
-	SetupPrice,
-	RecurringPrice,
-	RecurrenceLength,
-	RecurrenceUnit,
-	IsAddon
-)
-VALUES
-(
-	@UserID,
-	@PackageID,
-	@PlanName,
-	@PlanDescription,
-	@Available,
-	@ServerID,
-	@SetupPrice,
-	@RecurringPrice,
-	@RecurrenceLength,
-	@RecurrenceUnit,
-	@IsAddon
-)
-
-SET @PlanID = SCOPE_IDENTITY()
-
--- save quotas
-EXEC UpdateHostingPlanQuotas @ActorID, @PlanID, @QuotasXml
-
-COMMIT TRAN
-RETURN 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
 SET QUOTED_IDENTIFIER OFF
 GO
 
@@ -33514,110 +33366,6 @@ WHERE MailboxPlanId = @MailboxPlanId
 
 RETURN
 
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE PROCEDURE UpdateHostingPlan
-(
-	@ActorID int,
-	@PlanID int,
-	@PackageID int,
-	@ServerID int,
-	@PlanName nvarchar(200),
-	@PlanDescription ntext,
-	@Available bit,
-	@SetupPrice money,
-	@RecurringPrice money,
-	@RecurrenceLength int,
-	@RecurrenceUnit int,
-	@QuotasXml ntext
-)
-AS
-
--- check rights
-DECLARE @UserID int
-SELECT @UserID = UserID FROM HostingPlans
-WHERE PlanID = @PlanID
-
--- check rights
-IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
-RAISERROR('You are not allowed to access this account', 16, 1)
-
-IF @ServerID = 0
-SELECT @ServerID = ServerID FROM Packages
-WHERE PackageID = @PackageID
-
-IF @PackageID = 0 SET @PackageID = NULL
-IF @ServerID = 0 SET @ServerID = NULL
-
--- update record
-UPDATE HostingPlans SET
-	PackageID = @PackageID,
-	ServerID = @ServerID,
-	PlanName = @PlanName,
-	PlanDescription = @PlanDescription,
-	Available = @Available,
-	SetupPrice = @SetupPrice,
-	RecurringPrice = @RecurringPrice,
-	RecurrenceLength = @RecurrenceLength,
-	RecurrenceUnit = @RecurrenceUnit
-WHERE PlanID = @PlanID
-
-BEGIN TRAN
-
--- update quotas
-EXEC UpdateHostingPlanQuotas @ActorID, @PlanID, @QuotasXml
-
-DECLARE @ExceedingQuotas AS TABLE (QuotaID int, QuotaName nvarchar(50), QuotaValue int)
-INSERT INTO @ExceedingQuotas
-SELECT * FROM dbo.GetPackageExceedingQuotas(@PackageID) WHERE QuotaValue > 0
-
-SELECT * FROM @ExceedingQuotas
-
-IF EXISTS(SELECT * FROM @ExceedingQuotas)
-BEGIN
-	ROLLBACK TRAN
-	RETURN
-END
-
-COMMIT TRAN
-
-RETURN 
 
 
 
@@ -33777,6 +33525,195 @@ FROM OPENXML(@idoc, '/plan/quotas/quota',1) WITH
 exec sp_xml_removedocument @idoc
 
 RETURN 
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+CREATE PROCEDURE UpdateHostingPlan
+(
+	@ActorID int,
+	@PlanID int,
+	@PackageID int,
+	@ServerID int,
+	@PlanName nvarchar(200),
+	@PlanDescription ntext,
+	@Available bit,
+	@SetupPrice money,
+	@RecurringPrice money,
+	@RecurrenceLength int,
+	@RecurrenceUnit int,
+	@QuotasXml ntext
+)
+AS
+
+-- check rights
+DECLARE @UserID int
+SELECT @UserID = UserID FROM HostingPlans
+WHERE PlanID = @PlanID
+
+-- check rights
+IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
+RAISERROR('You are not allowed to access this account', 16, 1)
+
+IF @ServerID = 0
+SELECT @ServerID = ServerID FROM Packages
+WHERE PackageID = @PackageID
+
+IF @PackageID = 0 SET @PackageID = NULL
+IF @ServerID = 0 SET @ServerID = NULL
+
+-- update record
+UPDATE HostingPlans SET
+	PackageID = @PackageID,
+	ServerID = @ServerID,
+	PlanName = @PlanName,
+	PlanDescription = @PlanDescription,
+	Available = @Available,
+	SetupPrice = @SetupPrice,
+	RecurringPrice = @RecurringPrice,
+	RecurrenceLength = @RecurrenceLength,
+	RecurrenceUnit = @RecurrenceUnit
+WHERE PlanID = @PlanID
+
+BEGIN TRAN
+
+-- update quotas
+EXEC UpdateHostingPlanQuotas @ActorID, @PlanID, @QuotasXml
+
+DECLARE @ExceedingQuotas AS TABLE (QuotaID int, QuotaName nvarchar(50), QuotaValue int)
+INSERT INTO @ExceedingQuotas
+SELECT * FROM dbo.GetPackageExceedingQuotas(@PackageID) WHERE QuotaValue > 0
+
+SELECT * FROM @ExceedingQuotas
+
+IF EXISTS(SELECT * FROM @ExceedingQuotas)
+BEGIN
+	ROLLBACK TRAN
+	RETURN
+END
+
+COMMIT TRAN
+
+RETURN 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE AddHostingPlan
+(
+	@ActorID int,
+	@PlanID int OUTPUT,
+	@UserID int,
+	@PackageID int,
+	@PlanName nvarchar(200),
+	@PlanDescription ntext,
+	@Available bit,
+	@ServerID int,
+	@SetupPrice money,
+	@RecurringPrice money,
+	@RecurrenceLength int,
+	@RecurrenceUnit int,
+	@IsAddon bit,
+	@QuotasXml ntext
+)
+AS
+
+-- check rights
+IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
+RAISERROR('You are not allowed to access this account', 16, 1)
+
+BEGIN TRAN
+
+IF @ServerID = 0
+SELECT @ServerID = ServerID FROM Packages
+WHERE PackageID = @PackageID
+
+IF @IsAddon = 1
+SET @ServerID = NULL
+
+IF @PackageID = 0 SET @PackageID = NULL
+
+INSERT INTO HostingPlans
+(
+	UserID,
+	PackageID,
+	PlanName,
+	PlanDescription,
+	Available,
+	ServerID,
+	SetupPrice,
+	RecurringPrice,
+	RecurrenceLength,
+	RecurrenceUnit,
+	IsAddon
+)
+VALUES
+(
+	@UserID,
+	@PackageID,
+	@PlanName,
+	@PlanDescription,
+	@Available,
+	@ServerID,
+	@SetupPrice,
+	@RecurringPrice,
+	@RecurrenceLength,
+	@RecurrenceUnit,
+	@IsAddon
+)
+
+SET @PlanID = SCOPE_IDENTITY()
+
+-- save quotas
+EXEC UpdateHostingPlanQuotas @ActorID, @PlanID, @QuotasXml
+
+COMMIT TRAN
+RETURN 
+
+
+
+
 
 
 
@@ -34018,75 +33955,6 @@ WHERE LyncUserPlanId = @LyncUserPlanId
 
 RETURN
 
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-
-
-CREATE PROCEDURE [dbo].[UpdatePackage]
-(
-	@ActorID int,
-	@PackageID int,
-	@PackageName nvarchar(300),
-	@PackageComments ntext,
-	@StatusID int,
-	@PlanID int,
-	@PurchaseDate datetime,
-	@OverrideQuotas bit,
-	@QuotasXml ntext
-)
-AS
-
--- check rights
-IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
-RAISERROR('You are not allowed to access this package', 16, 1)
-
-BEGIN TRAN
-
-DECLARE @ParentPackageID int
-DECLARE @OldPlanID int
-
-SELECT @ParentPackageID = ParentPackageID, @OldPlanID = PlanID FROM Packages
-WHERE PackageID = @PackageID
-
--- update package
-UPDATE Packages SET
-	PackageName = @PackageName,
-	PackageComments = @PackageComments,
-	StatusID = @StatusID,
-	PlanID = @PlanID,
-	PurchaseDate = @PurchaseDate,
-	OverrideQuotas = @OverrideQuotas
-WHERE
-	PackageID = @PackageID
-
--- update quotas (if required)
-EXEC UpdatePackageQuotas @ActorID, @PackageID, @QuotasXml
-
--- check resulting quotas
-DECLARE @ExceedingQuotas AS TABLE (QuotaID int, QuotaName nvarchar(50), QuotaValue int)
-
--- check exceeding quotas if plan has been changed
-IF (@OldPlanID <> @PlanID) OR (@OverrideQuotas = 1)
-BEGIN
-	INSERT INTO @ExceedingQuotas
-	SELECT * FROM dbo.GetPackageExceedingQuotas(@ParentPackageID) WHERE QuotaValue > 0
-END
-
-SELECT * FROM @ExceedingQuotas
-
-IF EXISTS(SELECT * FROM @ExceedingQuotas)
-BEGIN
-	ROLLBACK TRAN
-	RETURN
-END
-
-
-COMMIT TRAN
-RETURN
 
 
 
@@ -36648,6 +36516,100 @@ END
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+
+CREATE PROCEDURE [dbo].[UpdatePackage]
+(
+	@ActorID int,
+	@PackageID int,
+	@PackageName nvarchar(300),
+	@PackageComments ntext,
+	@StatusID int,
+	@PlanID int,
+	@PurchaseDate datetime,
+	@OverrideQuotas bit,
+	@QuotasXml ntext
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+BEGIN TRAN
+
+DECLARE @ParentPackageID int
+DECLARE @OldPlanID int
+
+SELECT @ParentPackageID = ParentPackageID, @OldPlanID = PlanID FROM Packages
+WHERE PackageID = @PackageID
+
+-- update package
+UPDATE Packages SET
+	PackageName = @PackageName,
+	PackageComments = @PackageComments,
+	StatusID = @StatusID,
+	PlanID = @PlanID,
+	PurchaseDate = @PurchaseDate,
+	OverrideQuotas = @OverrideQuotas
+WHERE
+	PackageID = @PackageID
+
+-- update quotas (if required)
+EXEC UpdatePackageQuotas @ActorID, @PackageID, @QuotasXml
+
+-- check resulting quotas
+DECLARE @ExceedingQuotas AS TABLE (QuotaID int, QuotaName nvarchar(50), QuotaValue int)
+
+-- check exceeding quotas if plan has been changed
+IF (@OldPlanID <> @PlanID) OR (@OverrideQuotas = 1)
+BEGIN
+	INSERT INTO @ExceedingQuotas
+	SELECT * FROM dbo.GetPackageExceedingQuotas(@ParentPackageID) WHERE QuotaValue > 0
+END
+
+SELECT * FROM @ExceedingQuotas
+
+IF EXISTS(SELECT * FROM @ExceedingQuotas)
+BEGIN
+	ROLLBACK TRAN
+	RETURN
+END
+
+
+COMMIT TRAN
+RETURN
 
 
 
