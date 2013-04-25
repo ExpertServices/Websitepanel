@@ -4,7 +4,9 @@
 <%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="UserControls/CollapsiblePanel.ascx" %>
 <%@ Register Src="UserControls/UserLookup.ascx" TagName="UserLookup" TagPrefix="uc1" %>
 <%@ Register Src="UserControls/ParameterEditor.ascx" TagName="ParameterEditor" TagPrefix="uc1" %>
+<%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 
+<wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server" />
 <div class="FormBody">
 	<table cellspacing="0" cellpadding="4" width="100%">
         <tr>

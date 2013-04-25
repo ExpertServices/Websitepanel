@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnCancel.Text" xml:space="preserve">
     <value>Cancel</value>
@@ -245,5 +245,8 @@
   </data>
   <data name="secHistory.Text" xml:space="preserve">
     <value>History Log</value>
+  </data>
+  <data name="btnUpdate.OnClientClick" xml:space="preserve">
+    <value>ShowProgressDialog('Saving Scheduled Task...');</value>
   </data>
 </root>
