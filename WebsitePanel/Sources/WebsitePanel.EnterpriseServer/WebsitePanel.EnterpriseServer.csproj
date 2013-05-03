@@ -70,6 +70,9 @@
     <Reference Include="WebsitePanel.EnterpriseServer.Base">
       <HintPath>..\..\Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
     </Reference>
+    <Reference Include="WebsitePanel.EnterpriseServer.Code">
+      <HintPath>..\..\Bin\WebsitePanel.EnterpriseServer.Code.dll</HintPath>
+    </Reference>
     <Reference Include="WebsitePanel.Providers.Base">
       <HintPath>..\..\Bin\WebsitePanel.Providers.Base.dll</HintPath>
     </Reference>
@@ -267,12 +270,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WebsitePanel.EnterpriseServer.Code\WebsitePanel.EnterpriseServer.Code.csproj">
-      <Project>{60E39314-659C-4FAD-AB91-D0D08E223578}</Project>
-      <Name>WebsitePanel.EnterpriseServer.Code</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="ecServiceHandler.asmx" />
     <Content Include="esBlackBerry.asmx" />
     <Content Include="esOCS.asmx" />
@@ -283,7 +280,6 @@
     <None Include="TaskEventHandlers.config" />
     <None Include="WsePolicyCache.Config" />
   </ItemGroup>
-  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
