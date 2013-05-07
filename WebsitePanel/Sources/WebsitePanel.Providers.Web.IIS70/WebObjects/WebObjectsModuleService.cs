@@ -351,9 +351,6 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
         // AppPool
         public void ChangeAppPoolState(string siteId, AppPoolState state)
         {
-            // del
-            File.AppendAllText(@"c:\websitepanel\test.log", "ChangeAppPoolState " + siteId + " state " + state.ToString() + "\r\n");
-
             using (var srvman = GetServerManager())
             {
                 var site = srvman.Sites[siteId];
@@ -361,34 +358,44 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
                 if (site == null)
                     return;
 
-                string AppPoolName = site.ApplicationDefaults.ApplicationPoolName;
                 foreach (Application app in site.Applications)
-                    AppPoolName = app.ApplicationPoolName;
-
-                if (string.IsNullOrEmpty(AppPoolName))
-                    return;
-
-                ApplicationPool pool = srvman.ApplicationPools[AppPoolName];
-                if (pool == null) return;
-
-                //
-                switch (state)
                 {
-                    case AppPoolState.Start:
-                        pool.Start();
-                        pool.AutoStart = true;
-                        break;
-                    case AppPoolState.Stop:
-                        pool.Stop();
-                        pool.AutoStart = false;
-                        break;
-                    case AppPoolState.Recycle:
-                        pool.Recycle();
-                        pool.AutoStart = true;
-                        break;
+                    string AppPoolName = app.ApplicationPoolName;
+
+                    if (string.IsNullOrEmpty(AppPoolName))
+                        continue;
+
+                    ApplicationPool pool = srvman.ApplicationPools[AppPoolName];
+                    if (pool == null) continue;
+
+                    //
+                    switch (state)
+                    {
+                        case AppPoolState.Started:
+                        case AppPoolState.Starting:
+                            if ((pool.State != ObjectState.Started) && (pool.State != ObjectState.Starting))
+                            {
+                                pool.Start();
+                                pool.AutoStart = true;
+                            }
+                            break;
+                        case AppPoolState.Stopped:
+                        case AppPoolState.Stopping:
+                            if ((pool.State != ObjectState.Stopped) && (pool.State != ObjectState.Stopping))
+                            {
+                                pool.Stop();
+                                pool.AutoStart = false;
+                            }
+                            break;
+                        case AppPoolState.Recycle:
+                            pool.Recycle();
+                            pool.AutoStart = true;
+                            break;
+                    }
+
+                    srvman.CommitChanges();
+
                 }
-                //
-                srvman.CommitChanges();
             }
         }
 
@@ -416,16 +423,16 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
             switch (pool.State)
             {
                 case ObjectState.Started:
-                    state = AppPoolState.Start;
+                    state = AppPoolState.Started;
                     break;
                 case ObjectState.Starting:
-                    state = AppPoolState.Start;
+                    state = AppPoolState.Starting;
                     break;
                 case ObjectState.Stopped:
-                    state = AppPoolState.Stop;
+                    state = AppPoolState.Stopped;
                     break;
                 case ObjectState.Stopping:
-                    state = AppPoolState.Stop;
+                    state = AppPoolState.Stopping;
                     break;
             }
 

@@ -995,17 +995,17 @@ namespace WebsitePanel.Portal
         // AppPool
         private void BindAppPoolState(AppPoolState state)
         {
-            litAppPoolStatus.Text = state.ToString();
+            litAppPoolStatus.Text = GetLocalizedString("SiteState." + state.ToString());
 
-            cmdAppPoolStart.Visible = (state == AppPoolState.Stop);
-            cmdAppPoolStop.Visible = (state == AppPoolState.Start);
-            cmdAppPoolRecycle.Visible = (state == AppPoolState.Start);
+            cmdAppPoolStart.Visible = (state == AppPoolState.Stopped || state == AppPoolState.Stopping);
+            cmdAppPoolStop.Visible = (state == AppPoolState.Started || state == AppPoolState.Starting);
+            cmdAppPoolRecycle.Visible = (state == AppPoolState.Started || state == AppPoolState.Starting);
         }
 
 
         protected void cmdAppPoolChangeState_Click(object sender, EventArgs e)
         {
-            string stateName = ((LinkButton)sender).CommandName;
+            string stateName = ((ImageButton)sender).CommandName;
             AppPoolState state = (AppPoolState)Enum.Parse(typeof(AppPoolState), stateName, true);
 
             try

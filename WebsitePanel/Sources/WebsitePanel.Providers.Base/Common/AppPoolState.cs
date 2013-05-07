@@ -6,8 +6,10 @@ namespace WebsitePanel.Providers
     public enum AppPoolState
     {
         Unknown = 0,
-        Start = 1,
-        Stop = 2,
-        Recycle = 3
+        Starting = 1,
+        Started = 2,
+        Stopping = 3,
+        Stopped = 4,
+        Recycle = 5
     }
 }

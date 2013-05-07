@@ -166,18 +166,12 @@
             <td nowrap valign="top" align="right">
                 <table cellpadding="7" width="150px">
                     <tr>
+                        <td>
+                            <asp:Label ID="lblWebsiteStatus" runat="server" meta:resourcekey="lblWebsiteStatus" Text="Website Status"></asp:Label>
+                        </td>
                         <td class="MediumBold" align="center">
                             <asp:Literal ID="litStatus" runat="server"></asp:Literal>
                         </td>
-
-                <%-- AppPool --%>
-						<td class="MediumBold" align="center">
-							App Pool : <asp:Literal ID="litAppPoolStatus" runat="server"></asp:Literal>
-						</td>
-                <%-- AppPool --%>
-
-                    </tr>
-                    <tr>
                         <td align="center">
                             <asp:ImageButton ID="cmdStart" runat="server" SkinID="StartMedium" meta:resourcekey="cmdStart"
                                 CommandName="Started" OnClick="cmdChangeState_Click" />
@@ -188,15 +182,22 @@
                             <asp:ImageButton ID="cmdStop" runat="server" SkinID="StopMedium" meta:resourcekey="cmdStop"
                                 CommandName="Stopped" OnClick="cmdChangeState_Click" />
                         </td>
-
-                <%-- AppPool --%>
-						<td align="center">
-                            <asp:LinkButton ID="cmdAppPoolStart" runat="server" CommandName="Start" OnClick="cmdAppPoolChangeState_Click">Start</asp:LinkButton><br />
-                            <asp:LinkButton ID="cmdAppPoolStop" runat="server" CommandName="Stop" OnClick="cmdAppPoolChangeState_Click">Stop</asp:LinkButton><br />
-                            <asp:LinkButton ID="cmdAppPoolRecycle" runat="server" CommandName="Recycle" OnClick="cmdAppPoolChangeState_Click">Recycle</asp:LinkButton>
+                    </tr>
+                    <tr>
+                        <td>
+                            <asp:Label ID="lblAppPoolStatus" runat="server" meta:resourcekey="lblAppPoolStatus" Text="App Pool Status"></asp:Label>
+                        </td>
+						<td class="MediumBold" align="center">
+							<asp:Literal ID="litAppPoolStatus" runat="server"></asp:Literal>
 						</td>
-                <%-- AppPool --%>
-
+						<td align="center">
+                            <asp:ImageButton ID="cmdAppPoolStart" runat="server" SkinID="StartMedium" meta:resourcekey="cmdStart"
+                                CommandName="Started" OnClick="cmdAppPoolChangeState_Click" />
+                            <asp:ImageButton ID="cmdAppPoolRecycle" runat="server" SkinID="RecycleMedium" meta:resourcekey="cmdRecycle"
+                                CommandName="Recycle" OnClick="cmdAppPoolChangeState_Click" />
+                            <asp:ImageButton ID="cmdAppPoolStop" runat="server" SkinID="StopMedium" meta:resourcekey="cmdStop"
+                                CommandName="Stopped" OnClick="cmdAppPoolChangeState_Click" />
+						</td>
                     </tr>
                 </table>
             </td>

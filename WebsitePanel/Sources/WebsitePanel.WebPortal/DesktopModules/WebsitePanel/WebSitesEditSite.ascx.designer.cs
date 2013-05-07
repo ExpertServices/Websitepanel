@@ -319,6 +319,15 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.GridView gvPointers;
         
         /// <summary>
+        /// lblWebsiteStatus элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblWebsiteStatus;
+        
+        /// <summary>
         /// litStatus элемент управления.
         /// </summary>
         /// <remarks>
@@ -326,15 +335,6 @@ namespace WebsitePanel.Portal {
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal litStatus;
-        
-        /// <summary>
-        /// litAppPoolStatus элемент управления.
-        /// </summary>
-        /// <remarks>
-        /// Автоматически создаваемое поле.
-        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litAppPoolStatus;
         
         /// <summary>
         /// cmdStart элемент управления.
@@ -373,22 +373,31 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.ImageButton cmdStop;
         
         /// <summary>
+        /// lblAppPoolStatus элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblAppPoolStatus;
+        
+        /// <summary>
+        /// litAppPoolStatus элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litAppPoolStatus;
+        
+        /// <summary>
         /// cmdAppPoolStart элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton cmdAppPoolStart;
-        
-        /// <summary>
-        /// cmdAppPoolStop элемент управления.
-        /// </summary>
-        /// <remarks>
-        /// Автоматически создаваемое поле.
-        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton cmdAppPoolStop;
+        protected global::System.Web.UI.WebControls.ImageButton cmdAppPoolStart;
         
         /// <summary>
         /// cmdAppPoolRecycle элемент управления.
@@ -397,7 +406,16 @@ namespace WebsitePanel.Portal {
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton cmdAppPoolRecycle;
+        protected global::System.Web.UI.WebControls.ImageButton cmdAppPoolRecycle;
+        
+        /// <summary>
+        /// cmdAppPoolStop элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton cmdAppPoolStop;
         
         /// <summary>
         /// dlTabs элемент управления.
