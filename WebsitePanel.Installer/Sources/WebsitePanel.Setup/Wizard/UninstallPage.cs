@@ -288,14 +288,7 @@ namespace WebsitePanel.Setup
 				action.Description = "Removing Windows service...";
 				action.Log = string.Format("- Remove {0} Windows service", serviceName);
 				list.Add(action);
-			}
-
-            if (ServiceController.GetServices().Any(s => s.DisplayName.Equals(Global.Parameters.SchedulerServiceName, StringComparison.CurrentCultureIgnoreCase)))
-            {
-                action = new InstallAction(ActionTypes.UnregisterWindowsService) {Path = Path.Combine(installFolder, "bin", Global.Parameters.SchedulerServiceFileName), Name = Global.Parameters.SchedulerServiceName, Description = "Removing Windows service..."};
-                action.Log = string.Format("- Remove {0} Windows service", action.Name);
-                list.Add(action);
-            }
+			}            
 
 			//database
 			bool deleteDatabase = AppConfig.GetComponentSettingBooleanValue(componentId, "NewDatabase");

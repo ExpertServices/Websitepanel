@@ -19,30 +19,32 @@
 
 		<DiffCmd>$(TrunkFolder)\Tools\Diff.exe</DiffCmd>
 		<!-- Lets keep all tools we need for the build together in a well-known place to avoid BUILD HELL -->
-		<SqlCmd Condition="Exists('$(RootFolder)\tools\sqlcmd\sqlcmd.exe')">"$(RootFolder)\tools\sqlcmd\sqlcmd.exe" -S (local)\SQLEXPRESS -E</SqlCmd>
+		<SqlCmd Condition="Exists('$(RootFolder)\tools\sqlcmd\sqlcmd.exe')">"$(RootFolder)\tools\sqlcmd\sqlcmd.exe" -S FEDOSEVICHV -E</SqlCmd>
     <MSDeployPath Condition="Exists('$(RootFolder)\tools\webdeploy\msdeploy.exe')">"$(RootFolder)\tools\webdeploy\msdeploy.exe"</MSDeployPath>
     <ZipCmd>"$(RootFolder)\tools\7-Zip\7z.exe"</ZipCmd>
 
     <DataBaseName>WebsitePanel_build</DataBaseName>
-		<MSDeployConnectionString>server=(local)\SQLEXPRESS;database=$(DataBaseName);Integrated Security=true;</MSDeployConnectionString>
+		<MSDeployConnectionString>server=FEDOSEVICHV;database=$(DataBaseName);Integrated Security=true;</MSDeployConnectionString>
 
 		<PortalSrc>$(TrunkFolder)\Sources\WebsitePanel.WebPortal</PortalSrc>
 		<ServerSrc>$(TrunkFolder)\Sources\WebsitePanel.Server</ServerSrc>
 		<EnterpriseServerSrc>$(TrunkFolder)\Sources\WebsitePanel.EnterpriseServer</EnterpriseServerSrc>
+		<SchedulerServiceSrc>$(TrunkFolder)\Sources\WebsitePanel.SchedulerService</SchedulerServiceSrc>
 		<ImportCsvSrc>$(TrunkFolder)\Sources\Tools\WebsitePanel.Import.CsvBulk\bin\$(BuildConfiguration)</ImportCsvSrc>
 		<HyperVUtilsSrc>$(RootFolder)\WebsitePanel.HyperV.Utils\Sources\WebsitePanel.HyperV.Utils\bin\$(BuildConfiguration)</HyperVUtilsSrc>
-		<VMConfigSrc>$(RootFolder)\WebsitePanel.VmConfig\Sources\WebsitePanel.VmConfig\bin\$(BuildConfiguration)</VMConfigSrc>    
-    <ImportEnterpriseSrc>$(TrunkFolder)\Sources\Tools\WebsitePanel.Import.Enterprise\bin\$(BuildConfiguration)</ImportEnterpriseSrc>
+		<VMConfigSrc>$(RootFolder)\WebsitePanel.VmConfig\Sources\WebsitePanel.VmConfig\bin\$(BuildConfiguration)</VMConfigSrc>
+		<ImportEnterpriseSrc>$(TrunkFolder)\Sources\Tools\WebsitePanel.Import.Enterprise\bin\$(BuildConfiguration)</ImportEnterpriseSrc>
 		<AWStatsViewerSrc>$(TrunkFolder)\Sources\Tools\WebsitePanel.AWStats.Viewer</AWStatsViewerSrc>
 		<WSPTransportAgentSrc>$(TrunkFolder)\Sources\Tools\WSPTransportAgent</WSPTransportAgentSrc>
 
 		<ServerBuild>$(BuildFolder)\Server</ServerBuild>
 		<EnterpriseServerBuild>$(BuildFolder)\EnterpriseServer</EnterpriseServerBuild>
+		<SchedulerServiceBuild>$(BuildFolder)\SchedulerService</SchedulerServiceBuild>
 		<PortalBuild>$(BuildFolder)\Portal</PortalBuild>
 		<ImportCsvBuild>$(BuildFolder)\Import.CsvBulk</ImportCsvBuild>
 		<HyperVUtilsBuild>$(BuildFolder)\HyperVUtils</HyperVUtilsBuild>
 		<VMConfigBuild>$(BuildFolder)\VMConfig</VMConfigBuild>
-    <ImportEnterpriseBuild>$(BuildFolder)\Import.Enterprise</ImportEnterpriseBuild>
+		<ImportEnterpriseBuild>$(BuildFolder)\Import.Enterprise</ImportEnterpriseBuild>
 		<AWStatsViewerBuild>$(BuildFolder)\AWStats.Viewer</AWStatsViewerBuild>
 		<WSPTransportAgentBuild>$(BuildFolder)\WSPTransportAgent</WSPTransportAgentBuild>
 		<LocalizationToolkitBuild>$(BuildFolder)\LocalizationToolkit</LocalizationToolkitBuild>
@@ -58,11 +60,11 @@
 		<codeplexPassword></codeplexPassword>
 
 	</PropertyGroup>
-
-  <PropertyGroup Label="WebPlatformFeed">
-    <!-- URI where to locate the installer's distributive online -->
-    <InstallerRemoteUri>http://www.websitepanel.net/files/$(Version)/WebsitePanelInstaller-$(Version)-webpi.msi</InstallerRemoteUri>
-  </PropertyGroup>
+	
+	<PropertyGroup Label="WebPlatformFeed">
+		<!-- URI where to locate the installer's distributive online -->
+		<InstallerRemoteUri>http://www.websitepanel.net/files/$(Version)/WebsitePanelInstaller-$(Version)-webpi.msi</InstallerRemoteUri>
+	</PropertyGroup>
 
 	<Target Name="GenerateBuildVersionFilesInstaller">
 		<AssemblyInfo CodeLanguage="CS" OutputFile="$(RootFolder)\WebsitePanel.Installer\Sources\VersionInfo.cs" AssemblyCompany="Outercurve Foundation" AssemblyCopyright="Copyright © 2012 Outercurve Foundation." AssemblyVersion="$(VersionLabel)" AssemblyFileVersion="$(FileVersion)" AssemblyInformationalVersion="$(Version)" />
@@ -84,17 +86,18 @@
 		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.Import.Enterprise.sln" Properties="Configuration=$(BuildConfiguration)" />
 		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.AWStats.Viewer.sln" Properties="Configuration=$(BuildConfiguration)" />
 		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WSPTransportAgent.sln" Properties="Configuration=$(BuildConfiguration)" />
-  </Target>
+	</Target>
 
 	<Target Name="PrepareBuilds" DependsOnTargets="CompileSources">
 		<!-- Remove build output folders in reversed order (e.q. root folder removed last) -->
 		<RemoveDir Directories="$(ServerBuild)"/>
 		<RemoveDir Directories="$(EnterpriseServerBuild)"/>
+		<RemoveDir Directories="$(SchedulerServiceBuild)"/>
 		<RemoveDir Directories="$(PortalBuild)"/>
 		<RemoveDir Directories="$(ImportCsvBuild)"/>
 		<RemoveDir Directories="$(ImportEnterpriseBuild)"/>
-    <RemoveDir Directories="$(VMConfigBuild)"/>
-    <RemoveDir Directories="$(HyperVUtilsBuild)"/>
+		<RemoveDir Directories="$(VMConfigBuild)"/>
+		<RemoveDir Directories="$(HyperVUtilsBuild)"/>
 		<RemoveDir Directories="$(AWStatsViewerBuild)"/>
 		<RemoveDir Directories="$(WSPTransportAgentBuild)"/>
 		<RemoveDir Directories="$(LocalizationToolkitBuild)"/>
@@ -104,9 +107,10 @@
 		<MakeDir Directories="$(BuildFolder)"/>
 		<MakeDir Directories="$(ServerBuild)"/>
 		<MakeDir Directories="$(EnterpriseServerBuild)"/>
+		<MakeDir Directories="$(SchedulerServiceBuild)"/>
 		<MakeDir Directories="$(PortalBuild)"/>
-    <MakeDir Directories="$(HyperVUtilsBuild)"/>
-    <MakeDir Directories="$(VmConfigBuild)"/>
+		<MakeDir Directories="$(HyperVUtilsBuild)"/>
+		<MakeDir Directories="$(VmConfigBuild)"/>
 		<MakeDir Directories="$(ImportCsvBuild)"/>
 		<MakeDir Directories="$(ImportEnterpriseBuild)"/>
 		<MakeDir Directories="$(AWStatsViewerBuild)"/>
@@ -158,6 +162,24 @@
 			<EnterpriseServerBuildFiles Include="$(EnterpriseServerSrc)\**\*.*" Exclude="@(EnterpriseServerBuildExclude)"/>
 		</ItemGroup>
 		<Copy SourceFiles="@(EnterpriseServerBuildFiles)" DestinationFolder="$(EnterpriseServerBuild)\%(RecursiveDir)" />
+	</Target>
+	
+	<Target Name="CreateSchedulerServiceBuild" DependsOnTargets="CreateEnterpriseServerBuild">
+		<ItemGroup>
+			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\.svn\**" />
+			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\obj\**" />
+			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\bin\*.xml" />
+			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\Release\**" />
+			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\Debug\**" />
+			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\Images\**" />
+			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\*.pdb" Condition="'$(BuildConfiguration)' == 'Release'" />
+			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\*.user" />
+			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\*.suo" />
+			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\*.cs" />
+			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\*.csproj" />
+			<SchedulerServiceBuildFiles Include="$(SchedulerServiceSrc)\**\*.*" Exclude="@(SchedulerServiceBuildExclude)"/>
+		</ItemGroup>
+		<Copy SourceFiles="@(SchedulerServiceBuildFiles)" DestinationFolder="$(SchedulerServiceBuild)\%(RecursiveDir)" />
 	</Target>
 
 	<Target Name="CreatePortalBuild" DependsOnTargets="CreateEnterpriseServerBuild">
@@ -303,6 +325,14 @@
                 TaskParameter="TargetOutputs"
                 ItemName="WebsitePanelInstallerMsi" />	
 		</MSBuild>
+		
+		<XmlUpdate XmlFileName="$(RootFolder)\WebsitePanel\Sources\WebsitePanel.SchedulerService\Bin\WebsitePanel.SchedulerService.exe.config" Xpath="//configuration/connectionStrings/add/@connectionString" Value="${installer.connectionstring}"  />		
+		
+		<MSBuild Projects="$(RootFolder)\WebsitePanel.Installer\Sources\Setup.SchedulerService\Setup.SchedulerService.wixproj" Properties="Configuration=$(BuildConfiguration);DefineSolutionProperties=false">
+			<Output
+                TaskParameter="TargetOutputs"
+                ItemName="WebsitePanelInstallerMsi" />	
+		</MSBuild>
 		<Copy SourceFiles="@(WebsitePanelInstallerMsi)" DestinationFolder="$(DeployFolder)\%(RecursiveDir)" />
 	</Target>
 	
@@ -315,14 +345,15 @@
 		<InstallFolder>$(DeployFolder)\Install</InstallFolder>
 		<ServerInstall>$(InstallFolder)\Server</ServerInstall>
 		<EnterpriseServerInstall>$(InstallFolder)\EnterpriseServer</EnterpriseServerInstall>
+		<SchedulerServiceInstall>$(InstallFolder)\SchedulerServive</SchedulerServiceInstall>
 		<PortalInstall>$(InstallFolder)\Portal</PortalInstall>
 		<StandaloneInstall>$(InstallFolder)\StandaloneServerSetup</StandaloneInstall>
 
 		<!-- Tools -->
 		<ToolsFolder>$(DeployFolder)\Tools</ToolsFolder>
 		<ImportCsvInstall>$(ToolsFolder)\Import.CsvBulk</ImportCsvInstall>
-    <HyperVUtilsInstall>$(ToolsFolder)\HyperVUtils</HyperVUtilsInstall>
-    <VMConfigInstall>$(ToolsFolder)\VMconfig</VMConfigInstall>
+		<HyperVUtilsInstall>$(ToolsFolder)\HyperVUtils</HyperVUtilsInstall>
+		<VMConfigInstall>$(ToolsFolder)\VMconfig</VMConfigInstall>
 		<ImportEnterpriseInstall>$(ToolsFolder)\Import.Enterprise</ImportEnterpriseInstall>
 		<AWStatsViewerInstall>$(ToolsFolder)\AWStats.Viewer</AWStatsViewerInstall>
 		<WSPTransportAgentInstall>$(ToolsFolder)\WSPTransportAgent</WSPTransportAgentInstall>
@@ -361,9 +392,8 @@
 		<MakeDir Directories="$(EnterpriseServerInstall)"/>
 		<Copy SourceFiles="@(EnterpriseServerDeployFiles)" DestinationFolder="$(EnterpriseServerInstall)\%(RecursiveDir)" />
 		<XmlUpdate XmlFileName="$(EnterpriseServerInstall)\web.config" Xpath="//configuration/connectionStrings/add/@connectionString" Value="${installer.connectionstring}"  />
-		<XmlUpdate XmlFileName="$(EnterpriseServerInstall)\bin\WebsitePanel.SchedulerService.exe.config" Xpath="//configuration/connectionStrings/add/@connectionString" Value="${installer.connectionstring}"  />
-		<XmlUpdate XmlFileName="$(EnterpriseServerInstall)\web.config" Xpath="//configuration/appSettings/add[@key=%22WebsitePanel.CryptoKey%22]/@value" Value="${installer.cryptokey}"  />
-	</Target>
+		<XmlUpdate XmlFileName="$(EnterpriseServerInstall)\web.config" Xpath="//configuration/appSettings/add[@key=%22WebsitePanel.CryptoKey%22]/@value" Value="${installer.cryptokey}"  />		
+	</Target>	
 
 	<Target Name="CreatePortalInstall" DependsOnTargets="CreateEnterpriseServerInstall">
 		<ItemGroup>
