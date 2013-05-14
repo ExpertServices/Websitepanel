@@ -1,0 +1,3 @@
+01/29/2013 (1.2)
+* WebsitePanel addons no longer require the storage of the Enterprise Server credentials
+* Error codes are not properly resolved to their text responses
