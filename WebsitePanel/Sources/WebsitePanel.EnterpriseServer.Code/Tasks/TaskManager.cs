@@ -223,6 +223,14 @@ namespace WebsitePanel.EnterpriseServer
                     TopTask.TaskName, executionLog);
             }
 
+            // update last finish time
+            ScheduleInfo scheduleInfo = SchedulerController.GetSchedule(TopTask.ItemId);
+            if (scheduleInfo != null)
+            {
+                scheduleInfo.LastFinish = DateTime.Now;
+                SchedulerController.UpdateSchedule(scheduleInfo);
+            }
+
             // remove task from the stack
             TasksStack.RemoveAt(TasksStack.Count - 1);
         }

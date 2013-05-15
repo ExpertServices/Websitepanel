@@ -45,6 +45,7 @@ namespace WebsitePanel.EnterpriseServer
         private DateTime toTime;
         private DateTime startTime;
         private DateTime lastRun;
+        private DateTime lastFinish;
         private DateTime nextRun;
         private bool enabled;
         private string statusId;
@@ -119,6 +120,12 @@ namespace WebsitePanel.EnterpriseServer
         {
             get { return this.lastRun; }
             set { this.lastRun = value; }
+        }
+
+        public System.DateTime LastFinish
+        {
+            get { return this.lastFinish; }
+            set { this.lastFinish = value; }
         }
 
         public System.DateTime NextRun

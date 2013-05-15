@@ -450,3 +450,363 @@ INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName]
 VALUES (1401, 41, N'Lync2013', N'Microsoft Lync Server 2013 Multitenant Hosting Pack', N'WebsitePanel.Providers.HostedSolution.Lync2013, WebsitePanel.Providers.HostedSolution.Lync2013', N'Lync', NULL)
 END
 GO
+
+-- Scheduler Service
+ALTER TABLE Schedule
+ADD LastFinish DATETIME NULL
+GO
+
+UPDATE Schedule SET LastFinish = LastRun
+GO
+
+ALTER PROCEDURE [dbo].[GetSchedule]
+(
+	@ActorID int,
+	@ScheduleID int
+)
+AS
+
+-- select schedule
+SELECT TOP 1
+	S.ScheduleID,
+	S.TaskID,
+	S.PackageID,
+	S.ScheduleName,
+	S.ScheduleTypeID,
+	S.Interval,
+	S.FromTime,
+	S.ToTime,
+	S.StartTime,
+	S.LastRun,
+	S.LastFinish,
+	S.NextRun,
+	S.Enabled,
+	S.HistoriesNumber,
+	S.PriorityID,
+	S.MaxExecutionTime,
+	S.WeekMonthDay,
+	1 AS StatusID
+FROM Schedule AS S
+WHERE
+	S.ScheduleID = @ScheduleID
+	AND dbo.CheckActorPackageRights(@ActorID, S.PackageID) = 1
+
+-- select task
+SELECT
+	ST.TaskID,
+	ST.TaskType,
+	ST.RoleID
+FROM Schedule AS S
+INNER JOIN ScheduleTasks AS ST ON S.TaskID = ST.TaskID
+WHERE
+	S.ScheduleID = @ScheduleID
+	AND dbo.CheckActorPackageRights(@ActorID, S.PackageID) = 1
+
+-- select schedule parameters
+SELECT
+	S.ScheduleID,
+	STP.ParameterID,
+	STP.DataTypeID,
+	ISNULL(SP.ParameterValue, STP.DefaultValue) AS ParameterValue
+FROM Schedule AS S
+INNER JOIN ScheduleTaskParameters AS STP ON S.TaskID = STP.TaskID
+LEFT OUTER JOIN ScheduleParameters AS SP ON STP.ParameterID = SP.ParameterID AND SP.ScheduleID = S.ScheduleID
+WHERE
+	S.ScheduleID = @ScheduleID
+	AND dbo.CheckActorPackageRights(@ActorID, S.PackageID) = 1
+
+RETURN
+GO
+
+ALTER PROCEDURE [dbo].[GetScheduleInternal]
+(
+	@ScheduleID int
+)
+AS
+
+-- select schedule
+SELECT
+	S.ScheduleID,
+	S.TaskID,
+	ST.TaskType,
+	ST.RoleID,
+	S.PackageID,
+	S.ScheduleName,
+	S.ScheduleTypeID,
+	S.Interval,
+	S.FromTime,
+	S.ToTime,
+	S.StartTime,
+	S.LastRun,
+	S.LastFinish,
+	S.NextRun,
+	S.Enabled,
+	1 AS StatusID,
+	S.PriorityID,
+	S.HistoriesNumber,
+	S.MaxExecutionTime,
+	S.WeekMonthDay
+FROM Schedule AS S
+INNER JOIN ScheduleTasks AS ST ON S.TaskID = ST.TaskID
+WHERE ScheduleID = @ScheduleID
+RETURN
+GO
+
+ALTER PROCEDURE [dbo].[GetSchedules]
+(
+	@ActorID int,
+	@PackageID int,
+	@Recursive bit
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+DECLARE @Schedules TABLE
+(
+	ScheduleID int
+)
+
+INSERT INTO @Schedules (ScheduleID)
+SELECT
+	S.ScheduleID
+FROM Schedule AS S
+INNER JOIN PackagesTree(@PackageID, @Recursive) AS PT ON S.PackageID = PT.PackageID
+ORDER BY S.Enabled DESC, S.NextRun
+	
+
+-- select schedules
+SELECT
+	S.ScheduleID,
+	S.TaskID,
+	ST.TaskType,
+	ST.RoleID,
+	S.PackageID,
+	S.ScheduleName,
+	S.ScheduleTypeID,
+	S.Interval,
+	S.FromTime,
+	S.ToTime,
+	S.StartTime,
+	S.LastRun,
+	S.LastFinish,
+	S.NextRun,
+	S.Enabled,
+	1 AS StatusID,
+	S.PriorityID,
+	S.MaxExecutionTime,
+	S.WeekMonthDay,
+	ISNULL(0, (SELECT TOP 1 SeverityID FROM AuditLog WHERE ItemID = S.ScheduleID AND SourceName = 'SCHEDULER' ORDER BY StartDate DESC)) AS LastResult,
+
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.FullName,
+	U.RoleID,
+	U.Email
+FROM @Schedules AS STEMP
+INNER JOIN Schedule AS S ON STEMP.ScheduleID = S.ScheduleID
+INNER JOIN Packages AS P ON S.PackageID = P.PackageID
+INNER JOIN ScheduleTasks AS ST ON S.TaskID = ST.TaskID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+
+-- select schedule parameters
+SELECT
+	S.ScheduleID,
+	STP.ParameterID,
+	STP.DataTypeID,
+	ISNULL(SP.ParameterValue, STP.DefaultValue) AS ParameterValue
+FROM @Schedules AS STEMP
+INNER JOIN Schedule AS S ON STEMP.ScheduleID = S.ScheduleID
+INNER JOIN ScheduleTaskParameters AS STP ON S.TaskID = STP.TaskID
+LEFT OUTER JOIN ScheduleParameters AS SP ON STP.ParameterID = SP.ParameterID AND SP.ScheduleID = S.ScheduleID
+RETURN
+GO
+
+ALTER PROCEDURE [dbo].[GetSchedulesPaged]
+(
+	@ActorID int,
+	@PackageID int,
+	@Recursive bit,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+BEGIN
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+DECLARE @condition nvarchar(400)
+SET @condition = ' 1 = 1 '
+
+IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+AND @FilterValue <> '' AND @FilterValue IS NOT NULL
+SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'S.ScheduleName ASC'
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+SELECT COUNT(S.ScheduleID) FROM Schedule AS S
+INNER JOIN PackagesTree(@PackageID, @Recursive) AS PT ON S.PackageID = PT.PackageID
+INNER JOIN Packages AS P ON S.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+WHERE ' + @condition + '
+
+DECLARE @Schedules AS TABLE
+(
+	ScheduleID int
+);
+
+WITH TempSchedules AS (
+	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
+		S.ScheduleID
+	FROM Schedule AS S
+	INNER JOIN Packages AS P ON S.PackageID = P.PackageID
+	INNER JOIN PackagesTree(@PackageID, @Recursive) AS PT ON S.PackageID = PT.PackageID
+	INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+	WHERE ' + @condition + '
+)
+
+INSERT INTO @Schedules
+SELECT ScheduleID FROM TempSchedules
+WHERE TempSchedules.Row BETWEEN @StartRow and @StartRow + @MaximumRows - 1
+
+SELECT
+	S.ScheduleID,
+	S.TaskID,
+	ST.TaskType,
+	ST.RoleID,
+	S.ScheduleName,
+	S.ScheduleTypeID,
+	S.Interval,
+	S.FromTime,
+	S.ToTime,
+	S.StartTime,
+	S.LastRun,
+	S.LastFinish,
+	S.NextRun,
+	S.Enabled,
+	1 AS StatusID,
+	S.PriorityID,
+	S.MaxExecutionTime,
+	S.WeekMonthDay,
+	ISNULL(0, (SELECT TOP 1 SeverityID FROM AuditLog WHERE ItemID = S.ScheduleID AND SourceName = ''SCHEDULER'' ORDER BY StartDate DESC)) AS LastResult,
+
+	-- packages
+	P.PackageID,
+	P.PackageName,
+	
+	-- user
+	P.UserID,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.FullName,
+	U.RoleID,
+	U.Email
+FROM @Schedules AS STEMP
+INNER JOIN Schedule AS S ON STEMP.ScheduleID = S.ScheduleID
+INNER JOIN ScheduleTasks AS ST ON S.TaskID = ST.TaskID
+INNER JOIN Packages AS P ON S.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID'
+
+exec sp_executesql @sql, N'@PackageID int, @StartRow int, @MaximumRows int, @Recursive bit',
+@PackageID, @StartRow, @MaximumRows, @Recursive
+
+END
+RETURN
+GO
+
+ALTER PROCEDURE [dbo].[UpdateSchedule]
+(
+	@ActorID int,
+	@ScheduleID int,
+	@TaskID nvarchar(100),
+	@ScheduleName nvarchar(100),
+	@ScheduleTypeID nvarchar(50),
+	@Interval int,
+	@FromTime datetime,
+	@ToTime datetime,
+	@StartTime datetime,
+	@LastRun datetime,
+	@LastFinish datetime,
+	@NextRun datetime,
+	@Enabled bit,
+	@PriorityID nvarchar(50),
+	@HistoriesNumber int,
+	@MaxExecutionTime int,
+	@WeekMonthDay int,
+	@XmlParameters ntext
+)
+AS
+
+-- check rights
+DECLARE @PackageID int
+SELECT @PackageID = PackageID FROM Schedule
+WHERE ScheduleID = @ScheduleID
+
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+BEGIN TRAN
+
+UPDATE Schedule
+SET
+	TaskID = @TaskID,
+	ScheduleName = @ScheduleName,
+	ScheduleTypeID = @ScheduleTypeID,
+	Interval = @Interval,
+	FromTime = @FromTime,
+	ToTime = @ToTime,
+	StartTime = @StartTime,
+	LastRun = @LastRun,
+	LastFinish = @LastFinish,
+	NextRun = @NextRun,
+	Enabled = @Enabled,
+	PriorityID = @PriorityID,
+	HistoriesNumber = @HistoriesNumber,
+	MaxExecutionTime = @MaxExecutionTime,
+	WeekMonthDay = @WeekMonthDay
+WHERE
+	ScheduleID = @ScheduleID
+	
+DECLARE @idoc int
+--Create an internal representation of the XML document.
+EXEC sp_xml_preparedocument @idoc OUTPUT, @XmlParameters
+
+-- Execute a SELECT statement that uses the OPENXML rowset provider.
+DELETE FROM ScheduleParameters
+WHERE ScheduleID = @ScheduleID
+
+INSERT INTO ScheduleParameters
+(
+	ScheduleID,
+	ParameterID,
+	ParameterValue
+)
+SELECT
+	@ScheduleID,
+	ParameterID,
+	ParameterValue
+FROM OPENXML(@idoc, '/parameters/parameter',1) WITH 
+(
+	ParameterID nvarchar(50) '@id',
+	ParameterValue nvarchar(3000) '@value'
+) as PV
+
+-- remove document
+exec sp_xml_removedocument @idoc
+
+COMMIT TRAN
+RETURN
+GO

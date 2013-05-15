@@ -58,13 +58,15 @@ namespace WebsitePanel.EnterpriseServer
         public static bool IsScheduleActive(int scheduleId)
         {
             Dictionary<int, BackgroundTask> scheduledTasks = TaskManager.GetScheduledTasks();
-            return scheduledTasks.ContainsKey(scheduleId);
+
+            ScheduleInfo scheduleInfo = SchedulerController.GetSchedule(scheduleId);
+
+            return scheduledTasks.ContainsKey(scheduleId) || scheduleInfo.LastRun > scheduleInfo.LastFinish;
         }
 
         public static void StartSchedule(SchedulerJob schedule)
         {
-            Dictionary<int, BackgroundTask> scheduledTasks = TaskManager.GetScheduledTasks();
-            if (scheduledTasks.ContainsKey(schedule.ScheduleInfo.ScheduleId))
+            if (IsScheduleActive(schedule.ScheduleInfo.ScheduleId))
                 return;
 
             // run schedule
@@ -125,8 +127,6 @@ namespace WebsitePanel.EnterpriseServer
 
         static void RunSchedule(SchedulerJob schedule, bool changeNextRun)
         {
-
-
             try
             {
                 // update next run (if required)

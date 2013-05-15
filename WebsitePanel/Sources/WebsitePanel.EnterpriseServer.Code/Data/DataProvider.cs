@@ -1945,11 +1945,12 @@ namespace WebsitePanel.EnterpriseServer
             // read identity
             return Convert.ToInt32(prmId.Value);
         }
+        
         public static void UpdateSchedule(int actorId, int scheduleId, string taskId,
             string scheduleName, string scheduleTypeId, int interval,
             DateTime fromTime, DateTime toTime, DateTime startTime,
-            DateTime lastRun, DateTime nextRun, bool enabled, string priorityId, int historiesNumber,
-            int maxExecutionTime, int weekMonthDay, string xmlParameters)
+            DateTime lastRun, DateTime lastFinish, DateTime nextRun, bool enabled, string priorityId,
+            int historiesNumber, int maxExecutionTime, int weekMonthDay, string xmlParameters)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
                 ObjectQualifier + "UpdateSchedule",
@@ -1963,6 +1964,7 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@toTime", toTime),
                 new SqlParameter("@startTime", startTime),
                 new SqlParameter("@lastRun", (lastRun == DateTime.MinValue) ? DBNull.Value : (object)lastRun),
+                new SqlParameter("@lastFinish", (lastFinish == DateTime.MinValue) ? DBNull.Value : (object)lastFinish),
                 new SqlParameter("@nextRun", nextRun),
                 new SqlParameter("@enabled", enabled),
                 new SqlParameter("@priorityId", priorityId),
@@ -1971,6 +1973,7 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@weekMonthDay", weekMonthDay),
                 new SqlParameter("@xmlParameters", xmlParameters));
         }
+
         public static void DeleteSchedule(int actorId, int scheduleId)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,

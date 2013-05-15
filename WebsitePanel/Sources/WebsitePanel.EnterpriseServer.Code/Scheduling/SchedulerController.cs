@@ -275,7 +275,7 @@ namespace WebsitePanel.EnterpriseServer
                 schedule.HistoriesNumber, schedule.MaxExecutionTime, schedule.WeekMonthDay, xmlParameters);
 
             // re-schedule tasks
-            Scheduler.ScheduleTasks();
+            //Scheduler.ScheduleTasks();
 
             return scheduleId;
         }
@@ -297,11 +297,11 @@ namespace WebsitePanel.EnterpriseServer
             DataProvider.UpdateSchedule(SecurityContext.User.UserId,
                 schedule.ScheduleId, schedule.TaskId, schedule.ScheduleName, schedule.ScheduleTypeId,
                 schedule.Interval, schedule.FromTime, schedule.ToTime, schedule.StartTime,
-                schedule.LastRun, schedule.NextRun, schedule.Enabled, schedule.PriorityId,
+                schedule.LastRun, schedule.LastFinish, schedule.NextRun, schedule.Enabled, schedule.PriorityId,
                 schedule.HistoriesNumber, schedule.MaxExecutionTime, schedule.WeekMonthDay, xmlParameters);
 
             // re-schedule tasks
-            Scheduler.ScheduleTasks();
+            //Scheduler.ScheduleTasks();
 
             return 0;
         }
@@ -336,7 +336,7 @@ namespace WebsitePanel.EnterpriseServer
             DataProvider.DeleteSchedule(SecurityContext.User.UserId, scheduleId);
 
             // re-schedule tasks
-            Scheduler.ScheduleTasks();
+            //Scheduler.ScheduleTasks();
 
             return 0;
         }
