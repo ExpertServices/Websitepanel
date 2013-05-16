@@ -810,3 +810,7 @@ exec sp_xml_removedocument @idoc
 COMMIT TRAN
 RETURN
 GO
+
+UPDATE ScheduleTasks SET TaskType = RTRIM(TaskType) + '.Code'
+WHERE SUBSTRING(RTRIM(TaskType), LEN(RTRIM(TaskType)) - 3, 4) <> 'Code'
+GO

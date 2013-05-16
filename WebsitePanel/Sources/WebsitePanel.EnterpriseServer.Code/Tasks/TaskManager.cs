@@ -224,11 +224,11 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             // update last finish time
-            ScheduleInfo scheduleInfo = SchedulerController.GetSchedule(TopTask.ItemId);
-            if (scheduleInfo != null)
+            SchedulerJob schedule = SchedulerController.GetScheduleComplete(TopTask.ItemId);
+            if (schedule != null)
             {
-                scheduleInfo.LastFinish = DateTime.Now;
-                SchedulerController.UpdateSchedule(scheduleInfo);
+                schedule.ScheduleInfo.LastFinish = DateTime.Now;
+                SchedulerController.UpdateSchedule(schedule.ScheduleInfo);
             }
 
             // remove task from the stack
