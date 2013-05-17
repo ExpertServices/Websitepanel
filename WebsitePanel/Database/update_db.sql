@@ -856,5 +856,6 @@ FROM Schedule AS S
 INNER JOIN Packages AS P ON S.PackageID = P.PackageID
 INNER JOIN ScheduleTasks AS ST ON S.TaskID = ST.TaskID
 INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
-WHERE (U.UserID = @ActorID OR U.OwnerID = @ActorID) AND S.LastRun > S.LastFinish
+WHERE (U.UserID = @ActorID OR U.OwnerID = @ActorID)
+    AND (ISNULL(S.LastRun, DATEADD(YEAR, -1, GETDATE())) > ISNULL(S.LastFinish, DATEADD(YEAR, -1, GETDATE())))
 GO
