@@ -814,3 +814,47 @@ GO
 UPDATE ScheduleTasks SET TaskType = RTRIM(TaskType) + '.Code'
 WHERE SUBSTRING(RTRIM(TaskType), LEN(RTRIM(TaskType)) - 3, 4) <> 'Code'
 GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'GetRunningSchedules')
+DROP PROCEDURE GetRunningSchedules
+GO
+
+CREATE PROCEDURE [dbo].[GetRunningSchedules]
+(
+	@ActorID int
+)
+AS
+
+SELECT
+	S.ScheduleID,
+	S.TaskID,
+	ST.TaskType,
+	ST.RoleID,
+	S.PackageID,
+	S.ScheduleName,
+	S.ScheduleTypeID,
+	S.Interval,
+	S.FromTime,
+	S.ToTime,
+	S.StartTime,
+	S.LastRun,
+	S.LastFinish,
+	S.NextRun,
+	S.Enabled,
+	1 AS StatusID,
+	S.PriorityID,
+	S.MaxExecutionTime,
+	S.WeekMonthDay,
+	ISNULL(0, (SELECT TOP 1 SeverityID FROM AuditLog WHERE ItemID = S.ScheduleID AND SourceName = 'SCHEDULER' ORDER BY StartDate DESC)) AS LastResult,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.FullName,
+	U.RoleID,
+	U.Email
+FROM Schedule AS S
+INNER JOIN Packages AS P ON S.PackageID = P.PackageID
+INNER JOIN ScheduleTasks AS ST ON S.TaskID = ST.TaskID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+WHERE (U.UserID = @ActorID OR U.OwnerID = @ActorID) AND S.LastRun > S.LastFinish
+GO

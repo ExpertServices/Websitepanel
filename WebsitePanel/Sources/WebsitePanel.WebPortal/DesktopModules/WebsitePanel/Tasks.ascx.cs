@@ -66,13 +66,34 @@ namespace WebsitePanel.Portal
 
             // find controls
             HyperLink lnkTaskName = (HyperLink)e.Row.FindControl("lnkTaskName");
+            Literal litTaskName = (Literal)e.Row.FindControl("litTaskName");
             Literal litTaskDuration = (Literal)e.Row.FindControl("litTaskDuration");
+            Panel pnlProgressBarContainer = (Panel)e.Row.FindControl("pnlProgressBarContainer");
             Panel pnlProgressIndicator = (Panel)e.Row.FindControl("pnlProgressIndicator");
+            Literal litProgressIndicator = (Literal)e.Row.FindControl("litProgressIndicator");
             LinkButton cmdStop = (LinkButton)e.Row.FindControl("cmdStop");
 
-            // bind controls
-            lnkTaskName.Text = GetAuditLogTaskName(task.Source, task.TaskName);
-            lnkTaskName.NavigateUrl = EditUrl("TaskID", task.TaskId, "view_details");
+            if (String.IsNullOrEmpty(task.TaskId))
+            {
+                litTaskName.Visible = true;
+                litProgressIndicator.Visible = true;
+
+                // bind controls
+                litTaskName.Text = GetAuditLogTaskName(task.Source, task.TaskName);
+            }
+            else
+            {
+                lnkTaskName.Visible = true;
+                pnlProgressBarContainer.Visible = true;
+                cmdStop.Visible = true;
+
+                // bind controls
+                lnkTaskName.NavigateUrl = EditUrl("TaskID", task.TaskId, "view_details");
+                lnkTaskName.Text = GetAuditLogTaskName(task.Source, task.TaskName);
+
+                // stop button
+                cmdStop.CommandArgument = task.TaskId;
+            }
 
             // duration
             TimeSpan duration = (TimeSpan)(DateTime.Now - task.StartDate);
@@ -86,9 +107,6 @@ namespace WebsitePanel.Portal
             if (task.IndicatorMaximum > 0)
                 percent = task.IndicatorCurrent * 100 / task.IndicatorMaximum;
             pnlProgressIndicator.Width = Unit.Percentage(percent);
-
-            // stop button
-            cmdStop.CommandArgument = task.TaskId;
         }
 
         protected void gvTasks_RowCommand(object sender, GridViewCommandEventArgs e)

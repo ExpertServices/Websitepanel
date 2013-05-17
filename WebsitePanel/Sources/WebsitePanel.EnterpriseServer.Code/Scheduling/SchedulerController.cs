@@ -54,6 +54,12 @@ namespace WebsitePanel.EnterpriseServer
                 DataProvider.GetScheduleTask(SecurityContext.User.UserId, taskId));
         }
 
+        public static List<ScheduleInfo> GetRunningSchedules()
+        {
+            return ObjectUtils.CreateListFromDataReader<ScheduleInfo>(
+                DataProvider.GetRunningSchedules(SecurityContext.User.UserId));
+        }
+
         public static DataSet GetSchedules(int packageId)
         {
             DataSet ds = DataProvider.GetSchedules(SecurityContext.User.UserId, packageId);

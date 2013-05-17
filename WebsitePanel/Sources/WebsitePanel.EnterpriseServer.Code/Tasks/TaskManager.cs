@@ -134,13 +134,13 @@ namespace WebsitePanel.EnterpriseServer
             WriteLogRecord(0, parameterName + ": " + val, null, null);
         }
 
-		public static void Write(string text, params string[] textParameters)
+        public static void Write(string text, params string[] textParameters)
         {
             // INFO
             WriteLogRecord(0, text, null, textParameters);
         }
 
-		public static void WriteWarning(string text, params string[] textParameters)
+        public static void WriteWarning(string text, params string[] textParameters)
         {
             // WARNING
             WriteLogRecord(1, text, null, textParameters);
@@ -168,7 +168,7 @@ namespace WebsitePanel.EnterpriseServer
             WriteLogRecord(2, text, ex.Message + "\n" + ex.StackTrace, prms);
         }
 
-		public static void WriteError(string text, params string[] textParameters)
+        public static void WriteError(string text, params string[] textParameters)
         {
             // ERROR
             WriteLogRecord(2, text, null, textParameters);
@@ -195,8 +195,8 @@ namespace WebsitePanel.EnterpriseServer
 
         public static void CompleteTask()
         {
-			if (TasksStack.Count == 0)
-				return;
+            if (TasksStack.Count == 0)
+                return;
 
             // call event handler
             CallTaskEventHandler(TopTask, true);
@@ -241,7 +241,7 @@ namespace WebsitePanel.EnterpriseServer
             XmlWriter writer = new XmlTextWriter(sw);
 
             writer.WriteStartElement("log");
-            
+
             // parameters
             writer.WriteStartElement("parameters");
             foreach (string name in task.Parameters.Keys)
@@ -320,7 +320,21 @@ namespace WebsitePanel.EnterpriseServer
 
             // remove tasks
             foreach (string taskId in completedTasks)
+            {
+                BackgroundTask task = GetTask(taskId);
+                if (task != null)
+                {
+                    // update last finish time
+                    SchedulerJob schedule = SchedulerController.GetScheduleComplete(task.ItemId);
+                    if (schedule != null)
+                    {
+                        schedule.ScheduleInfo.LastFinish = DateTime.Now;
+                        SchedulerController.UpdateSchedule(schedule.ScheduleInfo);
+                    }
+                }
+
                 tasks.Remove(taskId);
+            }
         }
 
         public static int PackageId
@@ -449,6 +463,14 @@ namespace WebsitePanel.EnterpriseServer
                 // nope
             }
 
+            // update last finish time
+            SchedulerJob schedule = SchedulerController.GetScheduleComplete(task.ItemId);
+            if (schedule != null)
+            {
+                schedule.ScheduleInfo.LastFinish = DateTime.Now;
+                SchedulerController.UpdateSchedule(schedule.ScheduleInfo);
+            }
+
             // remove it from stack
             tasks.Remove(taskId);
         }
@@ -467,17 +489,37 @@ namespace WebsitePanel.EnterpriseServer
         {
             List<BackgroundTask> list = new List<BackgroundTask>();
 
-            // try to get user first
-            UserInfo user = UserController.GetUser(userId);
-            if (user == null)
-                return list; // prohibited user
+            int effectiveUserId = SecurityContext.User.IsPeer ? SecurityContext.User.OwnerId : SecurityContext.User.UserId;
+            Dictionary<int, BackgroundTask> scheduledTasks = GetScheduledTasks();
 
-            // get user tasks
-            foreach (BackgroundTask task in tasks.Values)
+            List<ScheduleInfo> scheduleList = SchedulerController.GetRunningSchedules();
+
+            foreach (var scheduleInfo in scheduleList)
             {
-                if(task.EffectiveUserId == userId && !task.Completed)
-                    list.Add(task);
+                if (effectiveUserId == userId && scheduleInfo.LastRun > scheduleInfo.LastFinish)
+                {
+                    if (scheduledTasks.ContainsKey(scheduleInfo.ScheduleId) && !scheduledTasks[scheduleInfo.ScheduleId].Completed)
+                    {
+                        list.Add(scheduledTasks[scheduleInfo.ScheduleId]);
+                    }
+                    else
+                    {
+                        list.Add(new BackgroundTask
+                        {
+                            TaskId = "",
+                            ItemId = scheduleInfo.ScheduleId,
+                            StartDate = scheduleInfo.LastRun,
+                            TaskName = scheduleInfo.ScheduleName,
+                            UserId = SecurityContext.User.UserId,
+                            Source = "RUN_SCHEDULE",
+                            Severity = 0,
+                            ItemName = scheduleInfo.ScheduleName,
+                            Completed = false
+                        });
+                    }
+                }
             }
+
             return list;
         }
 
@@ -508,7 +550,7 @@ namespace WebsitePanel.EnterpriseServer
             string[] taskHandlers = GetTaskEventHandlers(task.Source, task.TaskName);
             if (taskHandlers != null)
             {
-                foreach(string taskHandler in taskHandlers)
+                foreach (string taskHandler in taskHandlers)
                 {
                     try
                     {
@@ -650,8 +692,8 @@ namespace WebsitePanel.EnterpriseServer
             res.IsSuccess = true;
             return res;
         }
-        
 
-        #endregion 
+
+        #endregion
     }
 }
