@@ -33,7 +33,8 @@ namespace WebsitePanel.SchedulerServiceInstaller
         [CustomAction]
         public static ActionResult FinalizeInstall(Session session)
         {
-            ChangeConnectionString(session["CONNECTIONSTRING"], session["INSTALLFOLDER"]);
+            ChangeConfigString("installer.connectionstring", session["CONNECTIONSTRING"], session["INSTALLFOLDER"]);
+            ChangeCryptoKey(session["INSTALLFOLDER"]);
             InstallService(session["INSTALLFOLDER"]);
 
             return ActionResult.Success;
@@ -55,7 +56,26 @@ namespace WebsitePanel.SchedulerServiceInstaller
             }
         }
 
-        private static void ChangeConnectionString(string connectionString, string installFolder)
+        private static void ChangeCryptoKey(string installFolder)
+        {
+            string path = Path.Combine(installFolder.Replace("SchedulerService", "Enterprise Server"), "web.config");            
+            string cryptoKey = "0123456789";
+
+            if (File.Exists(path))
+            {
+                using (var reader = new StreamReader(path))
+                {
+                    string content = reader.ReadToEnd();
+                    var pattern = new Regex(@"(?<=<add key=""WebsitePanel.CryptoKey"" .*?value\s*=\s*"")[^""]+(?="".*?>)");                    
+                    Match match = pattern.Match(content);                    
+                    cryptoKey = match.Value;
+                }
+            }            
+
+            ChangeConfigString("installer.cryptokey", cryptoKey, installFolder);
+        }
+
+        private static void ChangeConfigString(string searchString, string replaceValue, string installFolder)
         {
             string content;
             string path = Path.Combine(installFolder, "WebsitePanel.SchedulerService.exe.config");
@@ -65,8 +85,8 @@ namespace WebsitePanel.SchedulerServiceInstaller
                 content = reader.ReadToEnd();
             }
 
-            var re = new Regex("\\$\\{" + "installer.connectionstring" + "\\}+", RegexOptions.IgnoreCase);
-            content = re.Replace(content, connectionString);
+            var re = new Regex("\\$\\{" + searchString + "\\}+", RegexOptions.IgnoreCase);
+            content = re.Replace(content, replaceValue);
 
             using (var writer = new StreamWriter(path))
             {
