@@ -384,7 +384,7 @@ namespace WebsitePanel.EnterpriseServer
             Hashtable propValues = new Hashtable();
             foreach (DataRowView dr in dv)
             {
-                if (propValues[dr[nameColumn]] == null)
+                if (propValues[dr[nameColumn]] == null && !propValues.ContainsKey(dr[nameColumn]))
                     propValues.Add(dr[nameColumn], dr[valueColumn]);
             }
 
@@ -481,7 +481,7 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     // check for persistent attribute
                     object[] attrs = prop.GetCustomAttributes(typeof(PersistentAttribute), false);
-                    if (!persistentOnly || (persistentOnly && attrs.Length > 0))
+                    if (!persistentOnly || (persistentOnly && attrs.Length > 0) && !props.ContainsKey(prop.Name))
                     {
                         // add property to hash
                         props.Add(prop.Name, prop);
