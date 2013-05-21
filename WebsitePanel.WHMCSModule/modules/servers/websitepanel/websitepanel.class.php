@@ -168,7 +168,7 @@ class WebsitePanel
      * @param bool $createZoneRecord Create domain DNS zone record (if createMailAccount OR createWebSite are TRUE)
      * @return int
      */
-    public function create_user_wizard($username, $password, $roleId, $firstName, $lastName, $email, $planId, $parentPackageId, $domainName, $hostName, $htmlMail = TRUE, $sendAccountLetter = TRUE, $sendPackageLetter = TRUE, $createPackage = TRUE, $tempDomain = FALSE, $createWebSite = FALSE, $createFtpAccount = FALSE, $ftpAcountName = '', $createMailAccount = FALSE, $createZoneRecord = FALSE)
+    public function createUserWizard($username, $password, $roleId, $firstName, $lastName, $email, $planId, $parentPackageId, $domainName, $hostName, $htmlMail = TRUE, $sendAccountLetter = TRUE, $sendPackageLetter = TRUE, $createPackage = TRUE, $tempDomain = FALSE, $createWebSite = FALSE, $createFtpAccount = FALSE, $ftpAcountName = '', $createMailAccount = FALSE, $createZoneRecord = FALSE)
     {
         $params = array();
         foreach (get_defined_vars() as $key => $value)
@@ -178,7 +178,7 @@ class WebsitePanel
             
             $params[$key] = $value;
         }
-        return $this->execute_server_method(WebsitePanel::SERVICEFILE_PACKAGES, 'CreateUserWizard', $params)->CreateUserWizardResult;
+        return $this->executeServerMethod(WebsitePanel::SERVICEFILE_PACKAGES, 'CreateUserWizard', $params)->CreateUserWizardResult;
     }
     
     /**
@@ -216,7 +216,7 @@ class WebsitePanel
      * @param bool $EcommerceEnabled Ecommerce enabled
      * @return void
      */
-    public function update_user_details($RoleId, $Role, $StatusId, $Status, $LoginStatusId, $LoginStatus, $FailedLogins, $UserId, $OwnerId, $Created, $Changed, $IsDemo, $IsPeer, $Comments, $Username, $Password, $FirstName, $LastName, $Email, $PrimaryPhone, $Zip, $InstantMessenger, $Fax, $SecondaryPhone, $SecondaryEmail, $Country, $Address, $City, $State, $HtmlMail, $CompanyName, $EcommerceEnabled)
+    public function updateUserDetails($RoleId, $Role, $StatusId, $Status, $LoginStatusId, $LoginStatus, $FailedLogins, $UserId, $OwnerId, $Created, $Changed, $IsDemo, $IsPeer, $Comments, $Username, $Password, $FirstName, $LastName, $Email, $PrimaryPhone, $Zip, $InstantMessenger, $Fax, $SecondaryPhone, $SecondaryEmail, $Country, $Address, $City, $State, $HtmlMail, $CompanyName, $EcommerceEnabled)
     {
         $params = array();
         foreach (get_defined_vars() as $key => $value)
@@ -226,7 +226,7 @@ class WebsitePanel
             
             $params[$key] = $value;
         }
-        return $this->execute_server_method(WebsitePanel::SERVICEFILE_USERS, 'UpdateUser', array('user' => $params))->UpdateUserResult;
+        return $this->executeServerMethod(WebsitePanel::SERVICEFILE_USERS, 'UpdateUser', array('user' => $params))->UpdateUserResult;
     }
         
     /**
@@ -236,9 +236,9 @@ class WebsitePanel
      * @param int $userid User id
      * @return int
      */
-    public function delete_user($userId)
+    public function deleteUser($userId)
     {
-        return $this->execute_server_method(WebsitePanel::SERVICEFILE_USERS, 'DeleteUser', array('userId' => $userId))->DeleteUserResult;
+        return $this->executeServerMethod(WebsitePanel::SERVICEFILE_USERS, 'DeleteUser', array('userId' => $userId))->DeleteUserResult;
     }
     
     /**
@@ -248,9 +248,9 @@ class WebsitePanel
      * @param string $username Username
      * @return array
      */
-    public function get_user_by_username($username)
+    public function getUserByUsername($username)
     {
-        return (array)$this->execute_server_method(WebsitePanel::SERVICEFILE_USERS, 'GetUserByUsername', array('username' => $username))->GetUserByUsernameResult;
+        return (array)$this->executeServerMethod(WebsitePanel::SERVICEFILE_USERS, 'GetUserByUsername', array('username' => $username))->GetUserByUsernameResult;
     }
     
     /**
@@ -260,9 +260,9 @@ class WebsitePanel
      * @param string $status Account status (Active, Suspended, Cancelled, Pending)
      * @return int
      */
-    public function change_user_status($userId, $status)
+    public function changeUserStatus($userId, $status)
     {
-        return $this->execute_server_method(WebsitePanel::SERVICEFILE_USERS, 'ChangeUserStatus', array('userId' => $userId, 'status' => $status))->ChangeUserStatusResult;
+        return $this->executeServerMethod(WebsitePanel::SERVICEFILE_USERS, 'ChangeUserStatus', array('userId' => $userId, 'status' => $status))->ChangeUserStatusResult;
     }
     
     /**
@@ -273,9 +273,9 @@ class WebsitePanel
      * @param string $password New password
      * @return int
      */
-    public function change_user_password($userId, $password)
+    public function changeUserPassword($userId, $password)
     {
-        return $this->execute_server_method(WebsitePanel::SERVICEFILE_USERS, 'ChangeUserPassword', array('userId' => $userId, 'password' => $password))->ChangeUserPasswordResult;
+        return $this->executeServerMethod(WebsitePanel::SERVICEFILE_USERS, 'ChangeUserPassword', array('userId' => $userId, 'password' => $password))->ChangeUserPasswordResult;
     }
     
     /**
@@ -285,13 +285,14 @@ class WebsitePanel
      * @param int $userid User id
      * @return array
      */
-    public function get_user_packages($userid)
+    public function getUserPackages($userid)
     {
-        return (array)$this->execute_server_method(WebsitePanel::SERVICEFILE_PACKAGES, 'GetMyPackages', array('userId' => $userid))->GetMyPackagesResult->PackageInfo;
+        return (array)$this->executeServerMethod(WebsitePanel::SERVICEFILE_PACKAGES, 'GetMyPackages', array('userId' => $userid))->GetMyPackagesResult->PackageInfo;
     }
     
     /**
-     *
+     * WebsitePanel::getUsersPagedRecursive()
+     * 
      * @param int $userId User id
      * @param string $filterColumn Column name to filter on
      * @param string $filterValue Filter value
@@ -301,14 +302,17 @@ class WebsitePanel
      * @param int $startRow Row to start at
      * @param int $maximumRows Maximum rows to return
      */
-    public function get_users_paged_recursive($userId, $filterColumn, $filterValue, $statusId, $roleId, $sortColumn, $startRow = 0, $maximumRows = 999)
+    public function getUsersPagedRecursive($userId, $filterColumn, $filterValue, $statusId, $roleId, $sortColumn, $startRow = 0, $maximumRows = 999)
     {
         $params = array();
-        foreach (get_defined_vars() as $name => $value)
+        foreach (get_defined_vars() as $key => $value)
         {
-            $params[$name] = $value;
+            if ($key == 'params')
+                continue;
+            
+            $params[$key] = $value;
         }
-        return $this->execute_server_method(WebSitePanel::SERVICEFILE_USERS, 'GetUsersPagedRecursive', $params)->GetUsersPagedRecursiveResult;
+        return $this->executeServerMethod(WebSitePanel::SERVICEFILE_USERS, 'GetUsersPagedRecursive', $params)->GetUsersPagedRecursiveResult;
     }
     
     /**
@@ -323,7 +327,7 @@ class WebsitePanel
      * @param string $packageComments Package comments
      * @return array
      */
-    public function update_package_literal($packageId, $statusId, $planId, $purchaseDate, $packageName, $packageComments)
+    public function updatePackageLiteral($packageId, $statusId, $planId, $purchaseDate, $packageName, $packageComments)
     {
         $params = array();
         foreach (get_defined_vars() as $key => $value)
@@ -333,11 +337,11 @@ class WebsitePanel
             
             $params[$key] = $value;
         }
-        return (array)$this->execute_server_method(WebsitePanel::SERVICEFILE_PACKAGES, 'UpdatePackageLiteral', $params)->UpdatePackageLiteralResult;
+        return (array)$this->executeServerMethod(WebsitePanel::SERVICEFILE_PACKAGES, 'UpdatePackageLiteral', $params)->UpdatePackageLiteralResult;
     }
     
     /**
-     * WebsitePanel::add_package_addon_by_id()
+     * WebsitePanel::addPackageAddonById()
      *
      * @access public
      * @param mixed $packageId Package id
@@ -345,9 +349,9 @@ class WebsitePanel
      * @param integer $quantity Quantity
      * @return array
      */
-    public function add_package_addon_by_id($packageId, $addonPlanId, $quantity = 1)
+    public function addPackageAddonById($packageId, $addonPlanId, $quantity = 1)
     {
-        return (array)$this->execute_server_method(WebsitePanel::SERVICEFILE_PACKAGES, 'AddPackageAddonById', array('packageId' => $packageId, 'addonPlanId' => $addonPlanId, 'quantity' => $quantity))->AddPackageAddonByIdResult;
+        return (array)$this->executeServerMethod(WebsitePanel::SERVICEFILE_PACKAGES, 'AddPackageAddonById', array('packageId' => $packageId, 'addonPlanId' => $addonPlanId, 'quantity' => $quantity))->AddPackageAddonByIdResult;
     }
     
     /**
@@ -359,9 +363,9 @@ class WebsitePanel
      * @param string $endDate Ending date
      * @return object
      */
-    public function get_space_bandwidth_usage($packageId, $startDate, $endDate)
+    public function getSpaceBandwidthUsage($packageId, $startDate, $endDate)
     {
-        return $this->execute_server_method(WebsitePanel::SERVICEFILE_PACKAGES, 'GetPackageBandwidth', array('packageId' => $packageId, 'startDate' => $startDate, 'endDate' => $endDate))->GetPackageBandwidthResult;
+        return $this->executeServerMethod(WebsitePanel::SERVICEFILE_PACKAGES, 'GetPackageBandwidth', array('packageId' => $packageId, 'startDate' => $startDate, 'endDate' => $endDate))->GetPackageBandwidthResult;
     }
     
     /**
@@ -371,13 +375,13 @@ class WebsitePanel
      * @param int $packageId Package Id
      * @return object
      */
-    public function get_space_diskspace_usage($packageId)
+    public function getSpaceDiskspaceUsage($packageId)
     {
-        return $this->execute_server_method(WebsitePanel::SERVICEFILE_PACKAGES, 'GetPackageDiskspace', array('packageId' => $packageId))->GetPackageDiskspaceResult;
+        return $this->executeServerMethod(WebsitePanel::SERVICEFILE_PACKAGES, 'GetPackageDiskspace', array('packageId' => $packageId))->GetPackageDiskspaceResult;
     }
     
     /**
-     * WebsitePanel::package_allocate_ipaddress()
+     * WebsitePanel::packageAllocateIpAddress()
      *
      * @param mixed $packageId Package id
      * @param mixed $groupName Group name
@@ -386,7 +390,7 @@ class WebsitePanel
      * @param bool $allocateRandom Allocate IP addresses randomly
      * @return object
      */
-    public function package_allocate_ipaddress($packageId, $groupName = WebsitePanel::IPADDRESS_POOL_WEB, $pool = WebsitePanel::IPADDRESS_GROUP_WEBSITES, $addressesNumber = 1, $allocateRandom = TRUE)
+    public function packageAllocateIpAddress($packageId, $groupName = WebsitePanel::IPADDRESS_POOL_WEB, $pool = WebsitePanel::IPADDRESS_GROUP_WEBSITES, $addressesNumber = 1, $allocateRandom = TRUE)
     {
         $params = array();
         foreach (get_defined_vars() as $key => $value)
@@ -396,11 +400,11 @@ class WebsitePanel
             
             $params[$key] = $value;
         }
-        return $this->execute_server_method(WebsitePanel::SERVICEFILE_SERVERS, 'AllocatePackageIPAddresses', $params)->AllocatePackageIPAddressesResult;
+        return $this->executeServerMethod(WebsitePanel::SERVICEFILE_SERVERS, 'AllocatePackageIPAddresses', $params)->AllocatePackageIPAddressesResult;
     }
     
     /**
-     * Executes the request Enterprise Server method / parameters and returns the results
+     * Executes the requested Enterprise Server method / parameters and returns the results
      *
      * @access private
      * @param string $serviceFile Enterprise Server service filename
@@ -409,12 +413,12 @@ class WebsitePanel
      * @throws Exception
      * @return object
      */
-    private function execute_server_method($serviceFile, $serviceMethod, $methodParameters = array())
+    private function executeServerMethod($serviceFile, $serviceMethod, $methodParameters = array())
     {
         $esUrl = (($this->_esUseSsl ? "https" : "http") . "://{$this->_esServerUrl}:{$this->_esServerPort}/{$serviceFile}?WSDL");
         $soapParams = array('login' => $this->_esUsername,
                             'password' => $this->_esPassword,
-                            'cache_wsdl' => WSDL_CACHE_NONE // WSDL caching is an annoying nightmare - we will disable it
+                            'cache_wsdl' => WSDL_CACHE_NONE, // WSDL caching is an annoying nightmare - we will disable it
                             );
         try
         {
@@ -428,7 +432,7 @@ class WebsitePanel
         }
         catch (Exception $e)
         {
-            throw new Exception($e->getMessage());
+            throw;
         }
     }
 }
