@@ -29,6 +29,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
+using System.Xml;
 using Microsoft.Win32;
 using WebsitePanel.Providers.SharePoint;
 using WebsitePanel.Providers.Utils;
@@ -307,7 +309,7 @@ namespace WebsitePanel.Providers.HostedSolution
             try
             {
                 Type type = typeof(HostedSharePointServer2013Impl);
-                var info = new AppDomainSetup { ApplicationBase = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory), PrivateBinPath = string.Join(Path.PathSeparator.ToString(), new string[]{"bin", "bin/debug", "bin/SharePoint2013"}) };
+                var info = new AppDomainSetup { ApplicationBase = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory), PrivateBinPath = GetPrivateBinPath() };
                 domain = AppDomain.CreateDomain("WSS30", null, info);
                 var impl = (HostedSharePointServer2013Impl)domain.CreateInstanceAndUnwrap(type.Assembly.FullName, type.FullName);
 
@@ -322,6 +324,27 @@ namespace WebsitePanel.Providers.HostedSolution
             }
 
             throw new ArgumentNullException("action");
+        }
+
+        /// <summary> Getting PrivatePath from web.config. </summary>
+        /// <returns> The PrivateBinPath.</returns>
+        private static string GetPrivateBinPath()
+        {
+            var lines = new List<string>{ "bin", "bin/debug" };
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "web.config");
+
+            if (File.Exists(path))
+            {
+                using (var reader = new StreamReader(path))
+                {
+                    string content = reader.ReadToEnd();
+                    var pattern = new Regex(@"(?<=probing .*?privatePath\s*=\s*"")[^""]+(?="".*?>)");
+                    Match match = pattern.Match(content);
+                    lines.AddRange(match.Value.Split(';'));                    
+                }
+            }            
+
+            return string.Join(Path.PathSeparator.ToString(), lines.ToArray());
         }
 
         #endregion
