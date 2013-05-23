@@ -1921,7 +1921,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
                                       ObjectQualifier + "UpdateBackgroundTask",
-                                      new SqlParameter("@taskId", scheduleId),
+                                      new SqlParameter("@taskId", taskId),
                                       new SqlParameter("@scheduleId", scheduleId),
                                       new SqlParameter("@packageId", packageId),
                                       new SqlParameter("@taskName", taskName),

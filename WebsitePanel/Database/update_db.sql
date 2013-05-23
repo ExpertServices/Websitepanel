@@ -859,3 +859,404 @@ INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
 WHERE (U.UserID = @ActorID OR U.OwnerID = @ActorID)
     AND (ISNULL(S.LastRun, DATEADD(YEAR, -1, GETDATE())) > ISNULL(S.LastFinish, DATEADD(YEAR, -1, GETDATE())))
 GO
+
+CREATE TABLE BackgroundTasks
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	TaskID NVARCHAR(255),
+	ScheduleID INT NOT NULL,
+	PackageID INT NOT NULL,
+	UserID INT NOT NULL,
+	EffectiveUserID INT NOT NULL,
+	TaskName NVARCHAR(255),
+	ItemID INT,
+	ItemName NVARCHAR(255),
+	StartDate DATETIME NOT NULL,
+	FinishDate DATETIME,
+	IndicatorCurrent INT NOT NULL,
+	IndicatorMaximum INT NOT NULL,
+	MaximumExecutionTime INT NOT NULL,
+	Source NVARCHAR(MAX),
+	Severity INT NOT NULL,
+	Completed BIT,
+	NotifyOnComplete BIT,
+	Status INT NOT NULL,
+	FOREIGN KEY (ScheduleID) REFERENCES Schedule (ScheduleID),
+	FOREIGN KEY (PackageID) REFERENCES Packages (PackageID)
+)
+GO
+
+CREATE TABLE BackgroundTaskParameters
+(
+	ParameterID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	TaskID INT NOT NULL,
+	Name NVARCHAR(255),
+	SerializerValue NTEXT,
+	FOREIGN KEY (TaskID) REFERENCES BackgroundTasks (ID)
+)
+GO
+
+CREATE TABLE BackgroundTaskLogs
+(
+	LogID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	TaskID INT NOT NULL,
+	Date DATETIME,
+	ExceptionStackTrace NTEXT,
+	InnerTaskStart INT,
+	Severity INT,
+	Text NTEXT,
+	TextIdent INT,
+	XmlParameters NTEXT,
+	FOREIGN KEY (TaskID) REFERENCES BackgroundTasks (ID)
+)
+GO
+
+CREATE TABLE BackgroundTaskStack
+(
+	TaskStackID INT NOT NULL PRIMARY KEY,
+	TaskID INT NOT NULL,
+	Value NVARCHAR(MAX),
+	FOREIGN KEY (TaskID) REFERENCES BackgroundTasks (ID)
+)
+GO
+
+CREATE PROCEDURE [dbo].[AddBackgroundTask]
+(
+	@BackgroundTaskID INT OUTPUT,
+	@TaskID NVARCHAR(255),
+	@ScheduleID INT,
+	@PackageID INT,
+	@UserID INT,
+	@EffectiveUserID INT,
+	@TaskName NVARCHAR(255),
+	@ItemID INT,
+	@ItemName NVARCHAR(255),
+	@StartDate DATETIME,
+	@IndicatorCurrent INT,
+	@IndicatorMaximum INT,
+	@MaximumExecutionTime INT,
+	@Source NVARCHAR(MAX),
+	@Severity INT,
+	@Completed BIT,
+	@NotifyOnComplete BIT,
+	@Status INT
+)
+AS
+
+INSERT INTO BackgroundTasks
+(
+	TaskID,
+	ScheduleID,
+	PackageID,
+	UserID,
+	EffectiveUserID,
+	TaskName,
+	ItemID,
+	ItemName,
+	StartDate,
+	IndicatorCurrent,
+	IndicatorMaximum,
+	MaximumExecutionTime,
+	Source,
+	Severity,
+	Completed,
+	NotifyOnComplete,
+	Status
+)
+VALUES
+(
+	@TaskID,
+	@ScheduleID,
+	@PackageID,
+	@UserID,
+	@EffectiveUserID,
+	@TaskName,
+	@ItemID,
+	@ItemName,
+	@StartDate,
+	@IndicatorCurrent,
+	@IndicatorMaximum,
+	@MaximumExecutionTime,
+	@Source,
+	@Severity,
+	@Completed,
+	@NotifyOnComplete,
+	@Status
+)
+
+SET @BackgroundTaskID = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+CREATE PROCEDURE [dbo].[GetBackgroundTask]
+(
+	@ActorID INT,
+	@TaskID NVARCHAR(255)
+)
+AS
+
+SELECT TOP 1
+	T.ID,
+	T.TaskID,
+	T.ScheduleID,
+	T.PackageID,
+	T.UserID,
+	T.EffectiveUserID,
+	T.TaskName,
+	T.ItemID,
+	T.ItemName,
+	T.StartDate,
+	T.FinishDate,
+	T.IndicatorCurrent,
+	T.IndicatorMaximum,
+	T.MaximumExecutionTime,
+	T.Source,
+	T.Severity,
+	T.Completed,
+	T.NotifyOnComplete,
+	T.Status
+FROM BackgroundTasks AS T
+INNER JOIN BackgroundTaskStack AS TS
+	ON TS.TaskId = T.ID
+WHERE T.TaskID = @TaskID AND T.UserID = @ActorID
+GO
+
+CREATE PROCEDURE [dbo].[GetBackgroundTasks]
+(
+	@ActorID INT
+)
+AS
+
+SELECT
+	T.ID,
+	T.TaskID,
+	T.ScheduleId,
+	T.PackageId,
+	T.UserId,
+	T.EffectiveUserId,
+	T.TaskName,
+	T.ItemId,
+	T.ItemName,
+	T.StartDate,
+	T.FinishDate,
+	T.IndicatorCurrent,
+	T.IndicatorMaximum,
+	T.MaximumExecutionTime,
+	T.Source,
+	T.Severity,
+	T.Completed,
+	T.NotifyOnComplete,
+	T.Status
+FROM BackgroundTasks AS T
+INNER JOIN BackgroundTaskStack AS TS
+	ON TS.TaskId = T.ID
+WHERE T.UserID = @ActorID
+GO
+
+CREATE PROCEDURE [dbo].[GetBackgroundTopTask]
+(
+	@ActorID INT
+)
+AS
+
+SELECT TOP 1
+	T.ID,
+	T.TaskID,
+	T.ScheduleId,
+	T.PackageId,
+	T.UserId,
+	T.EffectiveUserId,
+	T.TaskName,
+	T.ItemId,
+	T.ItemName,
+	T.StartDate,
+	T.FinishDate,
+	T.IndicatorCurrent,
+	T.IndicatorMaximum,
+	T.MaximumExecutionTime,
+	T.Source,
+	T.Severity,
+	T.Completed,
+	T.NotifyOnComplete,
+	T.Status
+FROM BackgroundTasks AS T
+INNER JOIN BackgroundTaskStack AS TS
+	ON TS.TaskId = T.ID
+WHERE T.UserID = @ActorID
+ORDER BY T.StartDate DESC
+GO
+
+CREATE PROCEDURE [dbo].[AddBackgroundTaskLog]
+(
+	@TaskID INT,
+	@Date DATETIME,
+	@ExceptionStackTrace NTEXT,
+	@InnerTaskStart INT,
+	@Severity INT,
+	@Text NTEXT,
+	@TextIdent INT,
+	@XmlParameters NTEXT
+)
+AS
+
+INSERT INTO BackgroundTaskLogs
+(
+	TaskID,
+	Date,
+	ExceptionStackTrace,
+	InnerTaskStart,
+	Severity,
+	Text,
+	TextIdent,
+	XmlParameters
+)
+VALUES
+(
+	@TaskID,
+	@Date,
+	@ExceptionStackTrace,
+	@InnerTaskStart,
+	@Severity,
+	@Text,
+	@TextIdent,
+	@XmlParameters
+)
+GO
+
+CREATE PROCEDURE [dbo].[GetBackgroundTaskLogs]
+(
+	@TaskID INT,
+	@StartLogTime DATETIME
+)
+AS
+
+SELECT
+	L.LogID,
+	L.TaskID,
+	L.Date,
+	L.ExceptionStackTrace,
+	L.InnerTaskStart,
+	L.Severity,
+	L.Text,
+	L.XmlParameters
+FROM BackgroundTaskLogs AS L
+WHERE L.TaskID = @TaskID AND L.Date >= @StartLogTime
+ORDER BY L.Date
+GO
+
+CREATE PROCEDURE [dbo].[UpdateBackgroundTask]
+(
+	@TaskID INT,
+	@ScheduleID INT,
+	@PackageID INT,
+	@UserID INT,
+	@EffectiveUserID INT,
+	@TaskName NVARCHAR(255),
+	@ItemID INT,
+	@ItemName NVARCHAR(255),
+	@FinishDate DATETIME,
+	@IndicatorCurrent INT,
+	@IndicatorMaximum INT,
+	@MaximumExecutionTime INT,
+	@Source NVARCHAR(MAX),
+	@Severity INT,
+	@Completed BIT,
+	@NotifyOnComplete BIT,
+	@Status INT
+)
+AS
+
+UPDATE BackgroundTask
+SET
+	ScheduleID = @ScheduleID,
+	PackageID = @PackageID,
+	UserID = @UserID,
+	EffectiveUserID = @EffectiveUserID,
+	TaskName = @TaskName,
+	ItemID = @ItemID,
+	ItemName = @ItemName,
+	FinishDate = @FinishDate,
+	IndicatorCurrent = @IndicatorCurrent,
+	IndicatorMaximum = @IndicatorMaximum,
+	MaximumExecutionTime = @MaximumExecutionTime,
+	Source = @Source,
+	Severity = @Severity,
+	Completed = @Completed,
+	NotifyOnComplete = @NotifyOnComplete,
+	Status = @Status
+WHERE ID = @TaskID
+GO
+
+CREATE PROCEDURE [dbo].[GetBackgroundTaskParams]
+(
+	@TaskID INT
+)
+AS
+
+SELECT
+	P.ParameterID,
+	P.TaskID,
+	P.Name,
+	P.SerializerValue
+FROM BackgroundTaskParameters AS P
+WHERE P.TaskID = @TaskID
+GO
+
+CREATE PROCEDURE [dbo].[AddBackgroundTaskParam]
+(
+	@TaskID INT,
+	@Name NVARCHAR(255),
+	@Value NTEXT
+)
+AS
+
+INSERT INTO BackgroundTaskParameters
+(
+	TaskID,
+	Name,
+	SerializerValue
+)
+VALUES
+(
+	@TaskID,
+	@Name,
+	@Value
+)
+GO
+
+CREATE PROCEDURE [dbo].[DeleteBackgroundTaskParams]
+(
+	@TaskID INT
+)
+AS
+
+DELETE FROM BackgroundTaskParameters
+WHERE TaskID = @TaskID
+GO
+
+CREATE PROCEDURE [dbo].[AddBackgroundTaskStack]
+(
+	@TaskID INT
+)
+AS
+
+INSERT INTO BackgroundTaskStack
+(
+	TaskID
+)
+VALUES
+(
+	@TaskID
+)
+GO
+
+CREATE PROCEDURE [dbo].[DeleteBackgroundTaskStack]
+(
+	@TaskID INT
+)
+AS
+
+DELETE FROM BackgroundTaskStack
+WHERE TaskID = @TaskID
+GO
