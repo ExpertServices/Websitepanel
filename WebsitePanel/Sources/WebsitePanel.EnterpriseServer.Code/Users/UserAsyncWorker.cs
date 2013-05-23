@@ -103,8 +103,7 @@ namespace WebsitePanel.EnterpriseServer
             UserInfo user = UserController.GetUserInternally(userId);
 
             // place log record
-            TaskManager.StartTask(taskId, "USER", "DELETE", user.Username);
-            TaskManager.ItemId = userId;
+            TaskManager.StartTask(taskId, "USER", "DELETE", user.Username, userId);
 
             try
             {

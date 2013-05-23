@@ -617,8 +617,12 @@ namespace WebsitePanel.EnterpriseServer
                     }
                 }
 
-                TaskManager.ItemId = result.Result;
-                TaskManager.TaskParameters["SendLetter"] = sendLetter;
+                BackgroundTask topTask = TaskController.GetTopTask();
+
+                topTask.ItemId = userId;
+                topTask.UpdateParamValue("SendLetter", sendLetter);
+
+                TaskController.UpdateTask(topTask);
 
                 return result;
             }
@@ -718,10 +722,14 @@ namespace WebsitePanel.EnterpriseServer
                 if (homeId < 0)
                     result.Result = homeId;
 
-                TaskManager.ItemId = result.Result;
-                TaskManager.TaskParameters["Signup"] = signup;
-                TaskManager.TaskParameters["UserId"] = userId;
-                TaskManager.TaskParameters["SendLetter"] = sendLetter;
+                BackgroundTask topTask = TaskController.GetTopTask();
+
+                topTask.ItemId = userId;
+                topTask.UpdateParamValue("Signup", signup);
+                topTask.UpdateParamValue("UserId", userId);
+                topTask.UpdateParamValue("SendLetter", sendLetter);
+
+                TaskController.UpdateTask(topTask);
             }
             finally
             {

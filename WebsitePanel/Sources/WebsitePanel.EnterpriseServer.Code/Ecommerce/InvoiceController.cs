@@ -224,10 +224,15 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer
                 InvoiceController.UpdateInvoice(invoice.InvoiceId, invoice.InvoiceNumber, invoice.DueDate,
                     invoice.Total, invoice.SubTotal, invoice.TaxationId, invoice.TaxAmount, invoice.Currency);
                 //
-                ES.TaskManager.TaskParameters[SystemTaskParams.PARAM_CONTRACT] = contract;
-                ES.TaskManager.TaskParameters[SystemTaskParams.PARAM_INVOICE] = invoice;
-                ES.TaskManager.TaskParameters[SystemTaskParams.PARAM_INVOICE_LINES] = invoiceLines;
-                ES.TaskManager.TaskParameters[SystemTaskParams.PARAM_EXTRA_ARGS] = extraArgs;
+
+                Hashtable parameters = new Hashtable();
+
+                parameters.Add(SystemTaskParams.PARAM_CONTRACT, contract);
+                parameters.Add(SystemTaskParams.PARAM_INVOICE, invoice);
+                parameters.Add(SystemTaskParams.PARAM_INVOICE_LINES, invoiceLines);
+                parameters.Add(SystemTaskParams.PARAM_EXTRA_ARGS, extraArgs);
+
+                TaskManager.UpdateParams(parameters);
                 //
                 return result;
             }

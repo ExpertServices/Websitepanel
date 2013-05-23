@@ -1836,6 +1836,149 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
         #region Scheduler
+
+        public static IDataReader GetBackgroundTask(int actorId, string taskId)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
+                                           ObjectQualifier + "GetBackgroundTask",
+                                           new SqlParameter("@actorId", actorId),
+                                           new SqlParameter("@taskId", taskId));
+        }
+
+        public static IDataReader GetBackgroundTasks(int actorId)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
+                                           ObjectQualifier + "GetBackgroundTasks",
+                                           new SqlParameter("actorId", actorId));
+        }
+
+        public static IDataReader GetBackgroundTopTask(int actorId)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
+                                           ObjectQualifier + "GetBackGroundTopTask",
+                                           new SqlParameter("actorId", actorId));
+        }
+
+        public static int AddBackgroundTask(string taskId, int scheduleId, int packageId, int userId,
+            int effectiveUserId, string taskName, int itemId, string itemName, DateTime startDate,
+            int indicatorCurrent, int indicatorMaximum, int maximumExecutionTime, string source,
+            int severity, bool completed, bool notifyOnComplete, BackgroundTaskStatus status)
+        {
+            SqlParameter prmId = new SqlParameter("@BackgroundTaskID", SqlDbType.Int);
+            prmId.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                                      ObjectQualifier + "AddBackgroundTask",
+                                      prmId,
+                                      new SqlParameter("@taskId", taskId),
+                                      new SqlParameter("@scheduleId", scheduleId),
+                                      new SqlParameter("@packageId", packageId),
+                                      new SqlParameter("@userId", userId),
+                                      new SqlParameter("@effectiveUserId", effectiveUserId),
+                                      new SqlParameter("@taskName", taskName),
+                                      new SqlParameter("@itemId", itemId),
+                                      new SqlParameter("@itemName", itemName),
+                                      new SqlParameter("@startDate", startDate),
+                                      new SqlParameter("@indicatorCurrent", indicatorCurrent),
+                                      new SqlParameter("@indicatorMaximum", indicatorMaximum),
+                                      new SqlParameter("@maximumExecutionTime", maximumExecutionTime),
+                                      new SqlParameter("@source", source),
+                                      new SqlParameter("@severity", severity),
+                                      new SqlParameter("@completed", completed),
+                                      new SqlParameter("@notifyOnComplete", notifyOnComplete),
+                                      new SqlParameter("@status", status));
+
+            // read identity
+            return Convert.ToInt32(prmId.Value);
+        }
+
+        public static void AddBackgroundTaskLog(int taskId, DateTime date, string exceptionStackTrace,
+            bool innerTaskStart, int severity, string text, int textIdent, string xmlParameters)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                                      ObjectQualifier + "AddBackgroundTaskLog",
+                                      new SqlParameter("@taskId", taskId),
+                                      new SqlParameter("@date", date),
+                                      new SqlParameter("@exceptionStackTrace", exceptionStackTrace),
+                                      new SqlParameter("@innerTaskStart", innerTaskStart),
+                                      new SqlParameter("@severity", severity),
+                                      new SqlParameter("@text", text),
+                                      new SqlParameter("@textIdent", textIdent),
+                                      new SqlParameter("@xmlParameters", xmlParameters));
+        }
+
+        public static IDataReader GetBackgroundTaskLogs(int taskId, DateTime startLogTime)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
+                                           ObjectQualifier + "AddBackgroundTaskLogParam",
+                                           new SqlParameter("@taskId", taskId),
+                                           new SqlParameter("@startLogTime", startLogTime));
+        }
+
+        public static void UpdateBackgroundTask(int taskId, int scheduleId, int packageId, string taskName, int itemId,
+            string itemName, DateTime finishDate, int indicatorCurrent, int indicatorMaximum, int maximumExecutionTime,
+            string source, int severity, bool completed, bool notifyOnComplete, BackgroundTaskStatus status)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                                      ObjectQualifier + "UpdateBackgroundTask",
+                                      new SqlParameter("@taskId", scheduleId),
+                                      new SqlParameter("@scheduleId", scheduleId),
+                                      new SqlParameter("@packageId", packageId),
+                                      new SqlParameter("@taskName", taskName),
+                                      new SqlParameter("@itemId", itemId),
+                                      new SqlParameter("@itemName", itemName),
+                                      new SqlParameter("@finishDate",
+                                                       finishDate == DateTime.MinValue
+                                                           ? DBNull.Value
+                                                           : (object) finishDate),
+                                      new SqlParameter("@indicatorCurrent", indicatorCurrent),
+                                      new SqlParameter("@indicatorMaximum", indicatorMaximum),
+                                      new SqlParameter("@maximumExecutionTime", maximumExecutionTime),
+                                      new SqlParameter("@source", source),
+                                      new SqlParameter("@severity", severity),
+                                      new SqlParameter("@completed", completed),
+                                      new SqlParameter("@notifyOnComplete", notifyOnComplete),
+                                      new SqlParameter("@status", status));
+
+        }
+
+        public static IDataReader GetBackgroundTaskParams(int taskId)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
+                                           ObjectQualifier + "GetBackgroundTaskParams",
+                                           new SqlParameter("@taskId", taskId));
+        }
+
+        public static void AddBackgroundTaskParam(int taskId, string name, string value)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                                      ObjectQualifier + "AddBackgroundTaskParam",
+                                      new SqlParameter("@taskId", taskId),
+                                      new SqlParameter("@name", name),
+                                      new SqlParameter("@value", value));
+        }
+
+        public static void DeleteBackgroundTaskParams(int taskId)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                                      ObjectQualifier + "DeleteBackgroundTaskParams",
+                                      new SqlParameter("@taskId", taskId));
+        }
+
+        public static void AddBackgroundTaskStack(int taskId)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                                      ObjectQualifier + "AddBackgroundTaskStack",
+                                      new SqlParameter("@taskId", taskId));
+        }
+
+        public static void DeleteBackgroundTaskStack(int taskId)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                                      ObjectQualifier + "DeleteBackgroundTaskStack",
+                                      new SqlParameter("@taskId", taskId));
+        }
+
         public static IDataReader GetScheduleTasks(int actorId)
         {
             return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,

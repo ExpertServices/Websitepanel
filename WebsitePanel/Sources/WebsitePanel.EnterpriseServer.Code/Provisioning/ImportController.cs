@@ -171,8 +171,7 @@ namespace WebsitePanel.EnterpriseServer
         {
 			PackageInfo package = PackageController.GetPackage(packageId);
 
-			TaskManager.StartTask(taskId, "IMPORT", "IMPORT", package.PackageName);
-			TaskManager.ItemId = packageId;
+			TaskManager.StartTask(taskId, "IMPORT", "IMPORT", package.PackageName, packageId);
 
 			TaskManager.IndicatorMaximum = items.Length;
 			TaskManager.IndicatorCurrent = 0;

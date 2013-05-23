@@ -91,17 +91,20 @@ namespace WebsitePanel.EnterpriseServer
         public int InstallWebApplication(InstallationInfo inst)
         {
             // place log record
-            TaskManager.StartTask("APP_INSTALLER", "INSTALL_APPLICATION");
+            TaskManager.StartTask("APP_INSTALLER", "INSTALL_APPLICATION", inst.PackageId);
+
             TaskManager.WriteParameter("Virtual directory", inst.VirtualDir);
             TaskManager.WriteParameter("Database group", inst.DatabaseGroup);
-            TaskManager.ItemId = inst.PackageId;
-
+            
             try
             {
                 // get application info
                 app = GetApplication(inst.PackageId, inst.ApplicationId);
 
-                TaskManager.ItemName = app.Name;
+                BackgroundTask topTask = TaskController.GetTopTask();
+                topTask.ItemName = app.Name;
+
+                TaskController.UpdateTask(topTask);
 
                 // check web site for existance
                 WebSite webSite = WebServerController.GetWebSite(inst.WebSiteId);

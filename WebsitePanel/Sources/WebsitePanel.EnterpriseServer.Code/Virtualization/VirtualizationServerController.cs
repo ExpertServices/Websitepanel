@@ -583,9 +583,7 @@ namespace WebsitePanel.EnterpriseServer
                 string summaryLetterEmail)
         {
             // start task
-            TaskManager.StartTask(taskId, "VPS", "CREATE", vm.Name);
-            TaskManager.ItemId = vm.Id;
-            TaskManager.PackageId = vm.PackageId;
+            TaskManager.StartTask(taskId, "VPS", "CREATE", vm.Name, vm.Id, vm.PackageId);
 
             try
             {
@@ -1647,12 +1645,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("VPS", "UPDATE_HOSTNAME");
-
-            // log item info
-            TaskManager.ItemId = vm.Id;
-            TaskManager.ItemName = vm.Name;
-            TaskManager.PackageId = vm.PackageId;
+            res = TaskManager.StartResultTask<ResultObject>("VPS", "UPDATE_HOSTNAME", vm.Id, vm.Name, vm.PackageId);
 
             try
             {
@@ -1767,9 +1760,13 @@ namespace WebsitePanel.EnterpriseServer
                     return res;
                 }
 
-                TaskManager.ItemId = machine.Id;
-                TaskManager.ItemName = machine.Name;
-                TaskManager.PackageId = machine.PackageId;
+                BackgroundTask topTask = TaskController.GetTopTask();
+                topTask.ItemId = machine.Id;
+                topTask.ItemName = machine.Name;
+                topTask.PackageId = machine.PackageId;
+
+                TaskController.UpdateTask(topTask);
+
                 TaskManager.WriteParameter("New state", state);
 
                 // load proxy
@@ -1881,12 +1878,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("VPS", "CHANGE_ADMIN_PASSWORD");
-
-            // log item info
-            TaskManager.ItemId = vm.Id;
-            TaskManager.ItemName = vm.Name;
-            TaskManager.PackageId = vm.PackageId;
+            res = TaskManager.StartResultTask<ResultObject>("VPS", "CHANGE_ADMIN_PASSWORD", vm.Id, vm.Name, vm.PackageId);
 
             try
             {
@@ -1983,12 +1975,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("VPS", "UPDATE_CONFIGURATION");
-
-            // log item info
-            TaskManager.ItemId = vm.Id;
-            TaskManager.ItemName = vm.Name;
-            TaskManager.PackageId = vm.PackageId;
+            res = TaskManager.StartResultTask<ResultObject>("VPS", "UPDATE_CONFIGURATION", vm.Id, vm.Name, vm.PackageId);
 
             try
             {
@@ -2185,12 +2172,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("VPS", "INSERT_DVD_DISK");
-
-            // log item info
-            TaskManager.ItemId = vm.Id;
-            TaskManager.ItemName = vm.Name;
-            TaskManager.PackageId = vm.PackageId;
+            res = TaskManager.StartResultTask<ResultObject>("VPS", "INSERT_DVD_DISK", vm.Id, vm.Name, vm.PackageId);
 
             try
             {
@@ -2246,12 +2228,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("VPS", "EJECT_DVD_DISK");
-
-            // log item info
-            TaskManager.ItemId = vm.Id;
-            TaskManager.ItemName = vm.Name;
-            TaskManager.PackageId = vm.PackageId;
+            res = TaskManager.StartResultTask<ResultObject>("VPS", "EJECT_DVD_DISK", vm.Id, vm.Name, vm.PackageId);
 
             try
             {
@@ -2326,12 +2303,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("VPS", "TAKE_SNAPSHOT");
-
-            // log item info
-            TaskManager.ItemId = vm.Id;
-            TaskManager.ItemName = vm.Name;
-            TaskManager.PackageId = vm.PackageId;
+            res = TaskManager.StartResultTask<ResultObject>("VPS", "TAKE_SNAPSHOT", vm.Id, vm.Name, vm.PackageId);
 
             try
             {
@@ -2401,12 +2373,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("VPS", "APPLY_SNAPSHOT");
-
-            // log item info
-            TaskManager.ItemId = vm.Id;
-            TaskManager.ItemName = vm.Name;
-            TaskManager.PackageId = vm.PackageId;
+            res = TaskManager.StartResultTask<ResultObject>("VPS", "APPLY_SNAPSHOT", vm.Id, vm.Name, vm.PackageId);
 
             try
             {
@@ -2472,12 +2439,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("VPS", "RENAME_SNAPSHOT");
-
-            // log item info
-            TaskManager.ItemId = vm.Id;
-            TaskManager.ItemName = vm.Name;
-            TaskManager.PackageId = vm.PackageId;
+            res = TaskManager.StartResultTask<ResultObject>("VPS", "RENAME_SNAPSHOT", vm.Id, vm.Name, vm.PackageId);
 
             try
             {
@@ -2526,12 +2488,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("VPS", "DELETE_SNAPSHOT");
-
-            // log item info
-            TaskManager.ItemId = vm.Id;
-            TaskManager.ItemName = vm.Name;
-            TaskManager.PackageId = vm.PackageId;
+            res = TaskManager.StartResultTask<ResultObject>("VPS", "DELETE_SNAPSHOT", vm.Id, vm.Name, vm.PackageId);
 
             try
             {
@@ -2587,12 +2544,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("VPS", "DELETE_SNAPSHOT_SUBTREE");
-
-            // log item info
-            TaskManager.ItemId = vm.Id;
-            TaskManager.ItemName = vm.Name;
-            TaskManager.PackageId = vm.PackageId;
+            res = TaskManager.StartResultTask<ResultObject>("VPS", "DELETE_SNAPSHOT_SUBTREE", vm.Id, vm.Name, vm.PackageId);
 
             try
             {
@@ -2776,12 +2728,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("VPS", "ADD_EXTERNAL_IP");
-
-            // log item info
-            TaskManager.ItemId = vm.Id;
-            TaskManager.ItemName = vm.Name;
-            TaskManager.PackageId = vm.PackageId;
+            res = TaskManager.StartResultTask<ResultObject>("VPS", "ADD_EXTERNAL_IP", vm.Id, vm.Name, vm.PackageId);
 
             try
             {
@@ -2841,12 +2788,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("VPS", "SET_PRIMARY_EXTERNAL_IP");
-
-            // log item info
-            TaskManager.ItemId = vm.Id;
-            TaskManager.ItemName = vm.Name;
-            TaskManager.PackageId = vm.PackageId;
+            res = TaskManager.StartResultTask<ResultObject>("VPS", "SET_PRIMARY_EXTERNAL_IP", vm.Id, vm.Name, vm.PackageId);
 
             try
             {
@@ -2893,12 +2835,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("VPS", "DELETE_EXTERNAL_IP");
-
-            // log item info
-            TaskManager.ItemId = vm.Id;
-            TaskManager.ItemName = vm.Name;
-            TaskManager.PackageId = vm.PackageId;
+            res = TaskManager.StartResultTask<ResultObject>("VPS", "DELETE_EXTERNAL_IP", vm.Id, vm.Name, vm.PackageId);
 
             try
             {
@@ -3025,12 +2962,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("VPS", "ADD_PRIVATE_IP");
-
-            // log item info
-            TaskManager.ItemId = vm.Id;
-            TaskManager.ItemName = vm.Name;
-            TaskManager.PackageId = vm.PackageId;
+            res = TaskManager.StartResultTask<ResultObject>("VPS", "ADD_PRIVATE_IP", vm.Id, vm.Name, vm.PackageId);
 
             try
             {
@@ -3148,12 +3080,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("VPS", "SET_PRIMARY_PRIVATE_IP");
-
-            // log item info
-            TaskManager.ItemId = vm.Id;
-            TaskManager.ItemName = vm.Name;
-            TaskManager.PackageId = vm.PackageId;
+            res = TaskManager.StartResultTask<ResultObject>("VPS", "SET_PRIMARY_PRIVATE_IP", vm.Id, vm.Name, vm.PackageId);
 
             try
             {
@@ -3200,12 +3127,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("VPS", "DELETE_PRIVATE_IP");
-
-            // log item info
-            TaskManager.ItemId = vm.Id;
-            TaskManager.ItemName = vm.Name;
-            TaskManager.PackageId = vm.PackageId;
+            res = TaskManager.StartResultTask<ResultObject>("VPS", "DELETE_PRIVATE_IP", vm.Id, vm.Name, vm.PackageId);
 
             try
             {
@@ -3368,12 +3290,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("VPS", "DELETE");
-
-            // log item info
-            TaskManager.ItemId = vm.Id;
-            TaskManager.ItemName = vm.Name;
-            TaskManager.PackageId = vm.PackageId;
+            res = TaskManager.StartResultTask<ResultObject>("VPS", "DELETE", vm.Id, vm.Name, vm.PackageId);
 
             try
             {
@@ -3538,11 +3455,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("VPS", "SEND_SUMMARY_LETTER");
-
-            TaskManager.ItemId = vm.Id;
-            TaskManager.ItemName = vm.Name;
-            TaskManager.PackageId = vm.PackageId;
+            res = TaskManager.StartResultTask<ResultObject>("VPS", "SEND_SUMMARY_LETTER", vm.Id, vm.Name, vm.PackageId);
 
             try
             {

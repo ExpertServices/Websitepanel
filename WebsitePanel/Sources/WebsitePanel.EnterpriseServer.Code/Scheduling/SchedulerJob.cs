@@ -89,15 +89,15 @@ namespace WebsitePanel.EnterpriseServer
             UserInfo user = PackageController.GetPackageOwner(scheduleInfo.PackageId);
             SecurityContext.SetThreadPrincipal(user.UserId);
 
-            TaskManager.StartTask("SCHEDULER", "RUN_SCHEDULE", scheduleInfo.ScheduleName);
-            TaskManager.PackageId = scheduleInfo.PackageId;
-            TaskManager.ItemId = scheduleInfo.ScheduleId;
-            TaskManager.ScheduleId = scheduleInfo.ScheduleId;
-            TaskManager.MaximumExecutionTime = scheduleInfo.MaxExecutionTime;
-
-            // set task parameters
+            IList<BackgroundTaskParameter> parameters = new List<BackgroundTaskParameter>();
             foreach (ScheduleTaskParameterInfo prm in scheduleInfo.Parameters)
-                TaskManager.TaskParameters[prm.ParameterId] = prm.ParameterValue;
+            {
+                parameters.Add(new BackgroundTaskParameter(prm.ParameterId, prm.ParameterValue));
+            }
+
+            TaskManager.StartTask("SCHEDULER", "RUN_SCHEDULE", scheduleInfo.ScheduleName, scheduleInfo.ScheduleId,
+                                  scheduleInfo.ScheduleId, scheduleInfo.PackageId, scheduleInfo.MaxExecutionTime,
+                                  parameters);
 
             // run task
             try

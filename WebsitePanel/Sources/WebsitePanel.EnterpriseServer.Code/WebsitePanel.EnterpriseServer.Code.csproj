@@ -160,6 +160,7 @@
     <Compile Include="StatisticsServers\StatisticsServerController.cs" />
     <Compile Include="System\SystemController.cs" />
     <Compile Include="Tasks\SendEmailNotification.cs" />
+    <Compile Include="Tasks\TaskController.cs" />
     <Compile Include="Tasks\TaskEventHandler.cs" />
     <Compile Include="Tasks\TaskManager.cs" />
     <Compile Include="Users\UserAsyncWorker.cs" />

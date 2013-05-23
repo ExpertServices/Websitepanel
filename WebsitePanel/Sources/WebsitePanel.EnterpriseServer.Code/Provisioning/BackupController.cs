@@ -116,8 +116,7 @@ namespace WebsitePanel.EnterpriseServer
 		{
 			try
 			{
-				TaskManager.StartTask(taskId, "BACKUP", "BACKUP", backupFileName);
-				TaskManager.ItemId = SecurityContext.User.UserId;
+                TaskManager.StartTask(taskId, "BACKUP", "BACKUP", backupFileName, SecurityContext.User.UserId);
 
 				// get the list of items to backup
 				TaskManager.Write("Calculate items to backup");
@@ -343,7 +342,10 @@ namespace WebsitePanel.EnterpriseServer
 					}
 				}
 
-                TaskManager.IndicatorCurrent = TaskManager.IndicatorMaximum;
+			    BackgroundTask topTask = TaskController.GetTopTask();
+                topTask.IndicatorCurrent = topTask.IndicatorMaximum;
+
+                TaskController.UpdateTask(topTask);
 			}
 			catch (Exception ex)
 			{
@@ -490,8 +492,7 @@ namespace WebsitePanel.EnterpriseServer
 				string backupFileName = (storePackageId > 0)
 					? Path.GetFileName(storePackageBackupPath) : Path.GetFileName(storeServerBackupPath);
 
-				TaskManager.StartTask(taskId, "BACKUP", "RESTORE", backupFileName);
-				TaskManager.ItemId = SecurityContext.User.UserId;
+                TaskManager.StartTask(taskId, "BACKUP", "RESTORE", backupFileName, SecurityContext.User.UserId);
 
 				// create temp folder
 				string tempFolder = GetTempBackupFolder();

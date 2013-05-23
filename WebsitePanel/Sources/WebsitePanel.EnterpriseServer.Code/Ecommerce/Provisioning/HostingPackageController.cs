@@ -162,7 +162,8 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer
 				TaskManager.WriteParameter(USERNAME_PARAM, context.ConsumerInfo[ContractAccount.USERNAME]);
 				TaskManager.WriteParameter(SVC_PARAM, context.ServiceInfo.ServiceName);
 				TaskManager.WriteParameter(SVC_ID_PARAM, context.ServiceInfo.ServiceId);
-			    TaskManager.TaskParameters[SystemTaskParams.PARAM_SEND_EMAIL] = context.SendEmail;
+
+                TaskManager.UpdateParam(SystemTaskParams.PARAM_SEND_EMAIL, context.SendEmail);
 
 				// 0. Do security checks
 				if (!CheckOperationClientPermissions(result))

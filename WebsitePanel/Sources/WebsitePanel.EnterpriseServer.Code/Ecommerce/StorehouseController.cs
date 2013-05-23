@@ -1145,10 +1145,15 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer
                 //
                 int resultCode = EcommerceProvider.UpdateCustomerPayment(SecurityContext.User.UserId, paymentId, invoiceId,
                     transactionId, total, currency, methodName, pluginId, (int)status);
+
                 //
-                TaskManager.TaskParameters[SystemTaskParams.PARAM_CONTRACT] = ContractSystem.ContractController.GetContract(contractId);
-                TaskManager.TaskParameters[SystemTaskParams.PARAM_INVOICE] = InvoiceController.GetCustomerInvoiceInternally(invoiceId);
-                TaskManager.TaskParameters[SystemTaskParams.PARAM_PAYMENT] = GetCustomerPayment(paymentId);
+                Hashtable parameters = new Hashtable();
+                parameters[SystemTaskParams.PARAM_CONTRACT] = ContractSystem.ContractController.GetContract(contractId);
+                parameters[SystemTaskParams.PARAM_INVOICE] = InvoiceController.GetCustomerInvoiceInternally(invoiceId);
+                parameters[SystemTaskParams.PARAM_PAYMENT] = GetCustomerPayment(paymentId);
+
+                TaskManager.UpdateParams(parameters);
+
                 //
                 return resultCode;
             }
@@ -1209,9 +1214,12 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer
                 // TRACE
                 TaskManager.WriteParameter("PaymentID", resultCode);
                 //
-                TaskManager.TaskParameters[SystemTaskParams.PARAM_CONTRACT] = contract;
-                TaskManager.TaskParameters[SystemTaskParams.PARAM_INVOICE] = invoice;
-                TaskManager.TaskParameters[SystemTaskParams.PARAM_PAYMENT] = GetCustomerPayment(resultCode);
+                Hashtable parameters = new Hashtable();
+                parameters[SystemTaskParams.PARAM_CONTRACT] = contract;
+                parameters[SystemTaskParams.PARAM_INVOICE] = invoice;
+                parameters[SystemTaskParams.PARAM_PAYMENT] = GetCustomerPayment(resultCode);
+
+                TaskManager.UpdateParams(parameters);
                 //
                 return resultCode;
             }

@@ -169,8 +169,7 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("FILES", "UPDATE_BINARY_CONTENT", path);
-            TaskManager.ItemId = packageId;
+            TaskManager.StartTask("FILES", "UPDATE_BINARY_CONTENT", path, packageId);
 
             try
             {
@@ -204,8 +203,7 @@ namespace WebsitePanel.EnterpriseServer
 			if (packageCheck < 0) return packageCheck;
 
 			// place log record
-			TaskManager.StartTask("FILES", "UPDATE_BINARY_CONTENT", path);
-			TaskManager.ItemId = packageId;
+            TaskManager.StartTask("FILES", "UPDATE_BINARY_CONTENT", path, packageId);
 
 			try
 			{
@@ -260,8 +258,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("FILES", "DELETE_FILES");
-            TaskManager.ItemId = packageId;
+            TaskManager.StartTask("FILES", "DELETE_FILES", packageId);
+
             if (files != null)
             {
                 foreach (string file in files)
@@ -302,8 +300,7 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("FILES", "CREATE_FILE", path);
-            TaskManager.ItemId = packageId;
+            TaskManager.StartTask("FILES", "CREATE_FILE", path, packageId);
 
             try
             {
@@ -356,8 +353,7 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("FILES", "CREATE_FOLDER", path);
-            TaskManager.ItemId = packageId;
+            TaskManager.StartTask("FILES", "CREATE_FOLDER", path, packageId);
 
             try
             {
@@ -396,8 +392,7 @@ namespace WebsitePanel.EnterpriseServer
             if (!DirectoryExists(packageId, destFolder)) return BusinessErrorCodes.ERROR_FILE_DEST_FOLDER_NONEXISTENT;
 
             // place log record
-            TaskManager.StartTask("FILES", "COPY_FILES");
-            TaskManager.ItemId = packageId;
+            TaskManager.StartTask("FILES", "COPY_FILES", packageId);
             TaskManager.WriteParameter("Destination folder", destFolder);
             if (files != null)
             {
@@ -455,8 +450,8 @@ namespace WebsitePanel.EnterpriseServer
             if (!DirectoryExists(packageId, destFolder)) return BusinessErrorCodes.ERROR_FILE_DEST_FOLDER_NONEXISTENT;
 
             // place log record
-            TaskManager.StartTask("FILES", "MOVE_FILES");
-            TaskManager.ItemId = packageId;
+            TaskManager.StartTask("FILES", "MOVE_FILES", packageId);
+
             TaskManager.WriteParameter("Destination folder", destFolder);
             if (files != null)
             {
@@ -514,8 +509,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("FILES", "RENAME_FILE", oldPath);
-            TaskManager.ItemId = packageId;
+            TaskManager.StartTask("FILES", "RENAME_FILE", oldPath, packageId);
+
             TaskManager.WriteParameter("New name", newPath);
 
             try
@@ -551,8 +546,8 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return null;
 
             // place log record
-            TaskManager.StartTask("FILES", "UNZIP_FILES");
-            TaskManager.ItemId = packageId;
+            TaskManager.StartTask("FILES", "UNZIP_FILES", packageId);
+
             if (files != null)
             {
                 foreach (string file in files)
@@ -596,8 +591,8 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("FILES", "ZIP_FILES", archivePath);
-            TaskManager.ItemId = packageId;
+            TaskManager.StartTask("FILES", "ZIP_FILES", archivePath, packageId);
+
             if (files != null)
             {
                 foreach (string file in files)
@@ -647,8 +642,8 @@ namespace WebsitePanel.EnterpriseServer
 			if (packageCheck < 0) return packageCheck;
 
 			// place log record
-			TaskManager.StartTask("FILES", "ZIP_FILES", archivePath);
-			TaskManager.ItemId = packageId;
+            TaskManager.StartTask("FILES", "ZIP_FILES", archivePath, packageId);
+
 			if (files != null)
 			{
 				foreach (string file in files)
@@ -706,8 +701,7 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("FILES", "CREATE_ACCESS_DATABASE", dbPath);
-            TaskManager.ItemId = packageId;
+            TaskManager.StartTask("FILES", "CREATE_ACCESS_DATABASE", dbPath, packageId);
 
             try
             {
@@ -737,8 +731,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("SPACE", "CALCULATE_DISKSPACE");
-            TaskManager.ItemId = packageId;
+            TaskManager.StartTask("SPACE", "CALCULATE_DISKSPACE", packageId);
 
             try
             {
@@ -813,8 +806,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("FILES", "SET_PERMISSIONS", path);
-            TaskManager.ItemId = packageId;
+            TaskManager.StartTask("FILES", "SET_PERMISSIONS", path, packageId);
 
             try
             {
@@ -925,8 +917,7 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("FILES", "SET_QUOTA_ON_FOLDER", path);
-            TaskManager.ItemId = packageId;
+            TaskManager.StartTask("FILES", "SET_QUOTA_ON_FOLDER", path, packageId);
 
             try
             {
@@ -1046,8 +1037,7 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("FILES", "DELETE_DIRECTORY_RECURSIVE", rootPath);
-            TaskManager.ItemId = packageId;
+            TaskManager.StartTask("FILES", "DELETE_DIRECTORY_RECURSIVE", rootPath, packageId);
 
             try
             {

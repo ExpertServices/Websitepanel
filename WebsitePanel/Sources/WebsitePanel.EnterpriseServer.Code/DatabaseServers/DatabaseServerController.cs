@@ -200,8 +200,8 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("SQL_DATABASE", "UPDATE", origItem.Name);
-            TaskManager.ItemId = item.Id;
+            TaskManager.StartTask("SQL_DATABASE", "UPDATE", origItem.Name, item.Id);
+
             TaskManager.WriteParameter("Provider", origItem.GroupName);
 
             try
@@ -237,9 +237,7 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_MSSQL_DATABASES_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("SQL_DATABASE", "DELETE", origItem.Name);
-            TaskManager.ItemId = itemId;
-            TaskManager.WriteParameter("Provider", origItem.GroupName);
+            TaskManager.StartTask("SQL_DATABASE", "DELETE", origItem.Name, itemId, new BackgroundTaskParameter("Provider", origItem.GroupName));
 
             try
             {
@@ -305,8 +303,7 @@ namespace WebsitePanel.EnterpriseServer
                 return null;
 
             // place log record
-            TaskManager.StartTask("SQL_DATABASE", "BACKUP", item.Name);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("SQL_DATABASE", "BACKUP", item.Name, itemId);
 
             try
             {
@@ -398,8 +395,7 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("SQL_DATABASE", "RESTORE", item.Name);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("SQL_DATABASE", "RESTORE", item.Name, itemId);
 
             try
             {
@@ -468,8 +464,7 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_MSSQL_DATABASES_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("SQL_DATABASE", "TRUNCATE", origItem.Name);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("SQL_DATABASE", "TRUNCATE", origItem.Name, itemId);
 
             try
             {
@@ -701,8 +696,7 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("SQL_USER", "UPDATE", origItem.Name);
-            TaskManager.ItemId = item.Id;
+            TaskManager.StartTask("SQL_USER", "UPDATE", origItem.Name, item.Id);
 
             try
             {
@@ -746,8 +740,7 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_MSSQL_USERS_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("SQL_USER", "DELETE", origItem.Name);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("SQL_USER", "DELETE", origItem.Name, itemId);
 
             try
             {

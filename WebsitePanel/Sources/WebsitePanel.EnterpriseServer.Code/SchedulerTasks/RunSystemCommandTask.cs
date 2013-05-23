@@ -42,10 +42,12 @@ namespace WebsitePanel.EnterpriseServer
             //  - SERVER_NAME
             //  - EXECUTABLE_PATH
 
+            BackgroundTask topTask = TaskController.GetTopTask();
+
             // get input parameters
-            string serverName = (string)TaskManager.TaskParameters["SERVER_NAME"];
-            string execPath = (string)TaskManager.TaskParameters["EXECUTABLE_PATH"];
-            string execParams = (string)TaskManager.TaskParameters["EXECUTABLE_PARAMS"];
+            string serverName = (string)topTask.GetParamValue("SERVER_NAME");
+            string execPath = (string)topTask.GetParamValue("EXECUTABLE_PATH");
+            string execParams = (string)topTask.GetParamValue("EXECUTABLE_PARAMS");
 
             if (execParams == null)
                 execParams = "";

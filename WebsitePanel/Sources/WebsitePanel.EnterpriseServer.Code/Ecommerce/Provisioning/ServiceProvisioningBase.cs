@@ -235,10 +235,13 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer
         protected void SetOutboundParameters(ProvisioningContext context)
         {
             // set task outbound parameters
-            TaskManager.TaskParameters[SystemTaskParams.PARAM_SERVICE] = context.ServiceInfo;
-            TaskManager.TaskParameters[SystemTaskParams.PARAM_CONTRACT] = context.ContractInfo;
-            TaskManager.TaskParameters[SystemTaskParams.PARAM_CONTRACT_ACCOUNT] = context.ConsumerInfo;
-			TaskManager.TaskParameters[SystemTaskParams.PARAM_SEND_EMAIL] = context.SendEmail;
+            Hashtable parameters = new Hashtable();
+            parameters.Add(SystemTaskParams.PARAM_SERVICE, context.ServiceInfo);
+            parameters.Add(SystemTaskParams.PARAM_CONTRACT, context.ContractInfo);
+            parameters.Add(SystemTaskParams.PARAM_CONTRACT_ACCOUNT, context.ConsumerInfo);
+            parameters.Add(SystemTaskParams.PARAM_SEND_EMAIL, context.SendEmail);
+
+            TaskManager.UpdateParams(parameters);
         }
 	}
 	

@@ -45,9 +45,11 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.TaskEventHandlers
         /// </summary>
         public override void OnComplete()
         {
-            if (!TaskManager.HasErrors)
+            BackgroundTask topTask = TaskController.GetTopTask();
+
+            if (!TaskManager.HasErrors(topTask))
             {
-                switch (TaskManager.TaskName)
+                switch (topTask.TaskName)
                 {
 					case SystemTasks.SVC_SUSPEND:
 					case SystemTasks.SVC_CANCEL:
@@ -72,7 +74,10 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.TaskEventHandlers
             // send an e-mail notification
             try
             {
-				bool sendNotification = (bool)TaskManager.TaskParameters[SystemTaskParams.PARAM_SEND_EMAIL];
+                BackgroundTask topTask = TaskController.GetTopTask();
+
+                bool sendNotification = Utils.ParseBool(topTask.GetParamValue(SystemTaskParams.PARAM_SEND_EMAIL), false);
+
 				// Ensure notification is required
 				if (!sendNotification)
 				{
@@ -80,7 +85,7 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.TaskEventHandlers
 					return;
 				}
 
-                Service service = (Service)TaskManager.TaskParameters[SystemTaskParams.PARAM_SERVICE];
+                Service service = (Service)topTask.GetParamValue(SystemTaskParams.PARAM_SERVICE);
                 int smtpResult = 0;
                 switch (service.Status)
                 {
@@ -112,9 +117,11 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.TaskEventHandlers
             //
             try
             {
+                BackgroundTask topTask = TaskController.GetTopTask();
+
                 // Read task parameters
-                Invoice invoice = (Invoice)TaskManager.TaskParameters[SystemTaskParams.PARAM_INVOICE];
-                CustomerPayment payment = (CustomerPayment)TaskManager.TaskParameters[SystemTaskParams.PARAM_PAYMENT];
+                Invoice invoice = (Invoice)topTask.GetParamValue(SystemTaskParams.PARAM_INVOICE);
+                CustomerPayment payment = (CustomerPayment)topTask.GetParamValue(SystemTaskParams.PARAM_PAYMENT);
                 //
                 if (payment.Status == TransactionStatus.Approved)
                 {
@@ -139,11 +146,13 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.TaskEventHandlers
             //
             try
             {
+                BackgroundTask topTask = TaskController.GetTopTask();
+
                 // Read task parameters
-                Contract contract = (Contract)TaskManager.TaskParameters[SystemTaskParams.PARAM_CONTRACT];
-                Invoice invoice = (Invoice)TaskManager.TaskParameters[SystemTaskParams.PARAM_INVOICE];
-                List<InvoiceItem> invoiceLines = (List<InvoiceItem>)TaskManager.TaskParameters[SystemTaskParams.PARAM_INVOICE_LINES];
-                KeyValueBunch extraArgs = (KeyValueBunch)TaskManager.TaskParameters[SystemTaskParams.PARAM_EXTRA_ARGS];
+                Contract contract = (Contract)topTask.GetParamValue(SystemTaskParams.PARAM_CONTRACT);
+                Invoice invoice = (Invoice)topTask.GetParamValue(SystemTaskParams.PARAM_INVOICE);
+                List<InvoiceItem> invoiceLines = (List<InvoiceItem>)topTask.GetParamValue(SystemTaskParams.PARAM_INVOICE_LINES);
+                KeyValueBunch extraArgs = (KeyValueBunch)topTask.GetParamValue(SystemTaskParams.PARAM_EXTRA_ARGS);
                 // modify invoice direct url
                 if (extraArgs != null && !String.IsNullOrEmpty(extraArgs["InvoiceDirectURL"]))
                     extraArgs["InvoiceDirectURL"] += "&InvoiceId=" + invoice.InvoiceId;

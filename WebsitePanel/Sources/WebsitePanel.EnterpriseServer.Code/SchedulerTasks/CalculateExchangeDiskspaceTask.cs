@@ -45,8 +45,10 @@ namespace WebsitePanel.EnterpriseServer
 
         public void CalculateDiskspace()
         {
+            BackgroundTask topTask = TaskController.GetTopTask();
+
 			// get all space organizations recursively
-			List<Organization> items = ExchangeServerController.GetExchangeOrganizations(TaskManager.PackageId, true);
+			List<Organization> items = ExchangeServerController.GetExchangeOrganizations(topTask.PackageId, true);
 
 			foreach (Organization item in items)
 			{

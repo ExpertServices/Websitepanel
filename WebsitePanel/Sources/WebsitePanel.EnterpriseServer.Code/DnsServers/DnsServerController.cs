@@ -214,12 +214,10 @@ namespace WebsitePanel.EnterpriseServer
             //
             if (zoneItem != null)
             {
-                TaskManager.StartTask("DNS_ZONE", "DELETE", zoneItem.Name);
+                TaskManager.StartTask("DNS_ZONE", "DELETE", zoneItem.Name, zoneItemId);
                 //
                 try
                 {
-                    //
-                    TaskManager.ItemId = zoneItemId;
                     // delete DNS zone
                     DNSServer dns = new DNSServer();
                     ServiceProviderProxy.Init(dns, zoneItem.ServiceId);

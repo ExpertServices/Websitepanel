@@ -53,13 +53,16 @@ namespace WebsitePanel.EnterpriseServer
 			string storePackageFolder;
 			string storeServerFolder;
 			bool deleteTempBackup;
+
+            BackgroundTask topTask = TaskController.GetTopTask();
+
 			try
 			{
-				backupFileName = (string)TaskManager.TaskParameters["BACKUP_FILE_NAME"];
-				storePackageId = Convert.ToInt32(TaskManager.TaskParameters["STORE_PACKAGE_ID"]);
-				storePackageFolder = (string)TaskManager.TaskParameters["STORE_PACKAGE_FOLDER"];
-				storeServerFolder = (string)TaskManager.TaskParameters["STORE_SERVER_FOLDER"];
-				deleteTempBackup = Convert.ToBoolean(TaskManager.TaskParameters["DELETE_TEMP_BACKUP"]);
+				backupFileName = (string)topTask.GetParamValue("BACKUP_FILE_NAME");
+				storePackageId = Convert.ToInt32(topTask.GetParamValue("STORE_PACKAGE_ID"));
+				storePackageFolder = (string)topTask.GetParamValue("STORE_PACKAGE_FOLDER");
+				storeServerFolder = (string)topTask.GetParamValue("STORE_SERVER_FOLDER");
+				deleteTempBackup = Convert.ToBoolean(topTask.GetParamValue("DELETE_TEMP_BACKUP"));
 			}
 			catch(Exception ex)
 			{
@@ -69,7 +72,7 @@ namespace WebsitePanel.EnterpriseServer
 
 			try
 			{
-				PackageInfo package = PackageController.GetPackage(TaskManager.PackageId);
+				PackageInfo package = PackageController.GetPackage(topTask.PackageId);
 				// We do not take into account service id as long as scheduled tasks run against packages.
 				BackupController.Backup(false, "BackupTask", package.UserId, package.PackageId, 0, 0,
                     backupFileName, storePackageId, storePackageFolder, storeServerFolder, deleteTempBackup);

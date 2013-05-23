@@ -57,17 +57,19 @@ namespace WebsitePanel.EnterpriseServer
             //  - MAIL_SUBJECT
             //  - MAIL_BODY
 
-            // get input parameters
-            string url = (string)TaskManager.TaskParameters["URL"];
-            string username = (string)TaskManager.TaskParameters["USERNAME"];
-            string password = (string)TaskManager.TaskParameters["PASSWORD"];
-            string strResponseStatus = (string)TaskManager.TaskParameters["RESPONSE_STATUS"];
-            string responseContains = (string)TaskManager.TaskParameters["RESPONSE_CONTAIN"];
-            string responseNotContains = (string)TaskManager.TaskParameters["RESPONSE_DOESNT_CONTAIN"];
+            BackgroundTask topTask = TaskController.GetTopTask();
 
-			bool useResponseStatus = Convert.ToBoolean(TaskManager.TaskParameters["USE_RESPONSE_STATUS"]);
-			bool useResponseContains = Convert.ToBoolean(TaskManager.TaskParameters["USE_RESPONSE_CONTAIN"]);
-			bool useResponseDoesntContain = Convert.ToBoolean(TaskManager.TaskParameters["USE_RESPONSE_DOESNT_CONTAIN"]);
+            // get input parameters
+            string url = (string)topTask.GetParamValue("URL");
+            string username = (string)topTask.GetParamValue("USERNAME");
+            string password = (string)topTask.GetParamValue("PASSWORD");
+            string strResponseStatus = (string)topTask.GetParamValue("RESPONSE_STATUS");
+            string responseContains = (string)topTask.GetParamValue("RESPONSE_CONTAIN");
+            string responseNotContains = (string)topTask.GetParamValue("RESPONSE_DOESNT_CONTAIN");
+
+			bool useResponseStatus = Convert.ToBoolean(topTask.GetParamValue("USE_RESPONSE_STATUS"));
+			bool useResponseContains = Convert.ToBoolean(topTask.GetParamValue("USE_RESPONSE_CONTAIN"));
+			bool useResponseDoesntContain = Convert.ToBoolean(topTask.GetParamValue("USE_RESPONSE_DOESNT_CONTAIN"));
 
             // check input parameters
             if (String.IsNullOrEmpty(url))
@@ -126,11 +128,13 @@ namespace WebsitePanel.EnterpriseServer
 
         private void SendMailMessage(string url, string message, string content)
         {
+            BackgroundTask topTask = TaskController.GetTopTask();
+
             // input parameters
-            string mailFrom = (string)TaskManager.TaskParameters["MAIL_FROM"];
-            string mailTo = (string)TaskManager.TaskParameters["MAIL_TO"];
-            string mailSubject = (string)TaskManager.TaskParameters["MAIL_SUBJECT"];
-            string mailBody = (string)TaskManager.TaskParameters["MAIL_BODY"];
+            string mailFrom = (string)topTask.GetParamValue("MAIL_FROM");
+            string mailTo = (string)topTask.GetParamValue("MAIL_TO");
+            string mailSubject = (string)topTask.GetParamValue("MAIL_SUBJECT");
+            string mailBody = (string)topTask.GetParamValue("MAIL_BODY");
 
             if (String.IsNullOrEmpty(mailTo))
             {

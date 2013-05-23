@@ -42,11 +42,13 @@ namespace WebsitePanel.EnterpriseServer
             //  - MAIL_SUBJECT
             //  - MAIL_BODY
 
+            BackgroundTask topTask = TaskController.GetTopTask();
+
             // get input parameters
-            string mailFrom = (string)TaskManager.TaskParameters["MAIL_FROM"];
-            string mailTo = (string)TaskManager.TaskParameters["MAIL_TO"];
-            string mailSubject = (string)TaskManager.TaskParameters["MAIL_SUBJECT"];
-            string mailBody = (string)TaskManager.TaskParameters["MAIL_BODY"];
+            string mailFrom = (string)topTask.GetParamValue("MAIL_FROM");
+            string mailTo = (string)topTask.GetParamValue("MAIL_TO");
+            string mailSubject = (string)topTask.GetParamValue("MAIL_SUBJECT");
+            string mailBody = (string)topTask.GetParamValue("MAIL_BODY");
 
             // check input parameters
             if (String.IsNullOrEmpty(mailFrom))

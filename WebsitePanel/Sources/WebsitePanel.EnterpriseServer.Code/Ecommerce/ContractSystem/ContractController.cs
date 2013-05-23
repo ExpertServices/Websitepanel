@@ -84,8 +84,10 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.ContractSystem
                 //
                 result.Succeed = true;
                 result.SetProperty("ContractId", contractId);
+                
                 // Add contract object
-                ES.TaskManager.TaskParameters[SystemTaskParams.PARAM_CONTRACT] = GetContract(contractId);
+                ES.TaskManager.UpdateParam(SystemTaskParams.PARAM_CONTRACT, GetContract(contractId));
+
                 //
                 return result;
             }

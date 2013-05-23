@@ -265,6 +265,7 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             TaskManager.ItemId = serverId;
+
             TaskManager.CompleteTask();
 
             return serverId;
@@ -277,12 +278,10 @@ namespace WebsitePanel.EnterpriseServer
                 | DemandAccount.IsAdmin);
             if (accountCheck < 0) return accountCheck;
 
-            TaskManager.StartTask("SERVER", "UPDATE");
-            TaskManager.ItemId = server.ServerId;
-
             // get original server
             ServerInfo origServer = GetServerByIdInternal(server.ServerId);
-            TaskManager.ItemName = origServer.ServerName;
+
+            TaskManager.StartTask("SERVER", "UPDATE", origServer.ServerName, server.ServerId);
 
             // preserve passwords
             server.Password = origServer.Password;
@@ -313,12 +312,10 @@ namespace WebsitePanel.EnterpriseServer
                 | DemandAccount.IsAdmin);
             if (accountCheck < 0) return accountCheck;
 
-            TaskManager.StartTask("SERVER", "UPDATE_PASSWORD");
-            TaskManager.ItemId = serverId;
-
             // get original server
             ServerInfo server = GetServerByIdInternal(serverId);
-            TaskManager.ItemName = server.ServerName;
+
+            TaskManager.StartTask("SERVER", "UPDATE_PASSWORD", server.ServerName, serverId);
 
             // set password
             server.Password = password;
@@ -341,12 +338,10 @@ namespace WebsitePanel.EnterpriseServer
                 | DemandAccount.IsAdmin);
             if (accountCheck < 0) return accountCheck;
 
-            TaskManager.StartTask("SERVER", "UPDATE_AD_PASSWORD");
-            TaskManager.ItemId = serverId;
-
             // get original server
             ServerInfo server = GetServerByIdInternal(serverId);
-            TaskManager.ItemName = server.ServerName;
+
+            TaskManager.StartTask("SERVER", "UPDATE_AD_PASSWORD", server.ServerName, serverId);
 
             // set password
             server.ADPassword = adPassword;
@@ -369,12 +364,10 @@ namespace WebsitePanel.EnterpriseServer
                 | DemandAccount.IsAdmin);
             if (accountCheck < 0) return accountCheck;
 
-            TaskManager.StartTask("SERVER", "DELETE");
-            TaskManager.ItemId = serverId;
-
             // get original server
             ServerInfo server = GetServerByIdInternal(serverId);
-            TaskManager.ItemName = server.ServerName;
+
+            TaskManager.StartTask("SERVER", "DELETE", server.ServerName, serverId);
 
             try
             {
@@ -427,10 +420,9 @@ namespace WebsitePanel.EnterpriseServer
                 | DemandAccount.IsActive);
             if (accountCheck < 0) return accountCheck;
 
-            TaskManager.StartTask("VIRTUAL_SERVER", "ADD_SERVICES");
             ServerInfo server = GetServerByIdInternal(serverId);
-            TaskManager.ItemId = serverId;
-            TaskManager.ItemName = server.ServerName;
+
+            TaskManager.StartTask("VIRTUAL_SERVER", "ADD_SERVICES", server.ServerName, serverId);
 
             // build XML
             string xml = BuildXmlFromArray(ids, "services", "service");
@@ -450,10 +442,9 @@ namespace WebsitePanel.EnterpriseServer
                 | DemandAccount.IsActive);
             if (accountCheck < 0) return accountCheck;
 
-            TaskManager.StartTask("VIRTUAL_SERVER", "DELETE_SERVICES");
             ServerInfo server = GetServerByIdInternal(serverId);
-            TaskManager.ItemId = serverId;
-            TaskManager.ItemName = server.ServerName;
+
+            TaskManager.StartTask("VIRTUAL_SERVER", "DELETE_SERVICES", server.ServerName, serverId);
 
             // build XML
             string xml = BuildXmlFromArray(ids, "services", "service");
@@ -585,9 +576,8 @@ namespace WebsitePanel.EnterpriseServer
                 | DemandAccount.IsActive);
             if (accountCheck < 0) return accountCheck;
 
-            TaskManager.StartTask("SERVER", "ADD_SERVICE");
-            TaskManager.ItemId = service.ServerId;
-            TaskManager.ItemName = GetServerByIdInternal(service.ServerId).ServerName;
+            TaskManager.StartTask("SERVER", "ADD_SERVICE", GetServerByIdInternal(service.ServerId).ServerName, service.ServerId);
+
             TaskManager.WriteParameter("Service name", service.ServiceName);
             TaskManager.WriteParameter("Provider", service.ProviderId);
 
@@ -641,9 +631,8 @@ namespace WebsitePanel.EnterpriseServer
             // load original service
             ServiceInfo origService = GetServiceInfo(service.ServiceId);
 
-            TaskManager.StartTask("SERVER", "UPDATE_SERVICE");
-            TaskManager.ItemId = origService.ServerId;
-            TaskManager.ItemName = GetServerByIdInternal(origService.ServerId).ServerName;
+            TaskManager.StartTask("SERVER", "UPDATE_SERVICE", GetServerByIdInternal(origService.ServerId).ServerName, origService.ServerId);
+
             TaskManager.WriteParameter("New service name", service.ServiceName);
 
             DataProvider.UpdateService(service.ServiceId, service.ServiceName,
@@ -663,9 +652,8 @@ namespace WebsitePanel.EnterpriseServer
 
             ServiceInfo service = GetServiceInfoAdmin(serviceId);
 
-            TaskManager.StartTask("SERVER", "DELETE_SERVICE");
-            TaskManager.ItemId = service.ServerId;
-            TaskManager.ItemName = GetServerByIdInternal(service.ServerId).ServerName;
+            TaskManager.StartTask("SERVER", "DELETE_SERVICE", GetServerByIdInternal(service.ServerId).ServerName, service.ServerId);
+
             TaskManager.WriteParameter("Service name", service.ServiceName);
 
             try
@@ -926,8 +914,8 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<IntResult>("IP_ADDRESS", "ADD");
-            TaskManager.ItemName = externalIP;
+            res = TaskManager.StartResultTask<IntResult>("IP_ADDRESS", "ADD", externalIP);
+
             TaskManager.WriteParameter("IP Address", externalIP);
             TaskManager.WriteParameter("NAT Address", internalIP);
 
@@ -961,8 +949,8 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // start task
-            res = TaskManager.StartResultTask<ResultObject>("IP_ADDRESS", "ADD_RANGE");
-            TaskManager.ItemName = externalIP;
+            res = TaskManager.StartResultTask<ResultObject>("IP_ADDRESS", "ADD_RANGE", externalIP);
+
             TaskManager.WriteParameter("IP Address", externalIP);
             TaskManager.WriteParameter("End IP Address", endIP);
             TaskManager.WriteParameter("NAT Address", internalIP);
@@ -1251,8 +1239,7 @@ namespace WebsitePanel.EnterpriseServer
             if (addressesNumber > maxAvailableIPs)
                 addressesNumber = maxAvailableIPs;
 
-            res = TaskManager.StartResultTask<ResultObject>("IP_ADDRESS", "ALLOCATE_PACKAGE_IP");
-            TaskManager.PackageId = packageId;
+            res = TaskManager.StartResultTask<ResultObject>("IP_ADDRESS", "ALLOCATE_PACKAGE_IP", packageId);
 
             try
             {
@@ -1337,8 +1324,8 @@ namespace WebsitePanel.EnterpriseServer
                 return res;
             #endregion
 
-            res = TaskManager.StartResultTask<ResultObject>("IP_ADDRESS", "DEALLOCATE_PACKAGE_IP");
-            TaskManager.PackageId = packageId;
+            res = TaskManager.StartResultTask<ResultObject>("IP_ADDRESS", "DEALLOCATE_PACKAGE_IP", packageId);
+
             try
             {
                 foreach (int id in addressId)
@@ -1876,11 +1863,7 @@ namespace WebsitePanel.EnterpriseServer
              */
 
             // place log record
-            TaskManager.StartTask("DOMAIN", "ADD", domainName);
-            TaskManager.PackageId = packageId;
-            TaskManager.TaskParameters["CreateZone"] = createDnsZone;
-
-
+            TaskManager.StartTask("DOMAIN", "ADD", domainName, 0, packageId, new BackgroundTaskParameter("CreateZone", createDnsZone));
 
             // create DNS zone
             int zoneItemId = 0;
@@ -1911,6 +1894,7 @@ namespace WebsitePanel.EnterpriseServer
                 packageId, zoneItemId, domainName, allowSubDomains, 0, 0, isSubDomain, isInstantAlias, isDomainPointer);
 
             TaskManager.ItemId = itemId;
+
             TaskManager.CompleteTask();
 
             return itemId;
@@ -2041,8 +2025,7 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             DomainInfo origDomain = GetDomain(domain.DomainId);
-            TaskManager.StartTask("DOMAIN", "UPDATE", origDomain.DomainName);
-            TaskManager.ItemId = domain.DomainId;
+            TaskManager.StartTask("DOMAIN", "UPDATE", origDomain.DomainName, domain.DomainId);
 
             try
             {
@@ -2074,8 +2057,7 @@ namespace WebsitePanel.EnterpriseServer
                 return 0;
 
             // place log record
-            TaskManager.StartTask("DOMAIN", "DETACH", domain.DomainName);
-            TaskManager.ItemId = domain.DomainId;
+            TaskManager.StartTask("DOMAIN", "DETACH", domain.DomainName, domain.DomainId);
 
             try
             {
@@ -2143,8 +2125,7 @@ namespace WebsitePanel.EnterpriseServer
                 return 0;
 
             // place log record
-            TaskManager.StartTask("DOMAIN", "DELETE", domain.DomainName);
-            TaskManager.ItemId = domain.DomainId;
+            TaskManager.StartTask("DOMAIN", "DELETE", domain.DomainName, domain.DomainId);
 
             try
             {
@@ -2223,8 +2204,7 @@ namespace WebsitePanel.EnterpriseServer
                 return 0;
 
             // place log record
-            TaskManager.StartTask("DOMAIN", "DISABLE_DNS", domain.DomainName);
-            TaskManager.ItemId = domain.DomainId;
+            TaskManager.StartTask("DOMAIN", "DISABLE_DNS", domain.DomainName, domain.DomainId);
 
             try
             {
@@ -2270,8 +2250,7 @@ namespace WebsitePanel.EnterpriseServer
                 return 0;
 
             // place log record
-            TaskManager.StartTask("DOMAIN", "ENABLE_DNS", domain.DomainName);
-            TaskManager.ItemId = domain.DomainId;
+            TaskManager.StartTask("DOMAIN", "ENABLE_DNS", domain.DomainName, domain.DomainId);
 
             try
             {
@@ -2475,8 +2454,7 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_INSTANT_ALIAS_IS_NOT_CONFIGURED;
 
             // place log record
-            TaskManager.StartTask("DOMAIN", "CREATE_INSTANT_ALIAS", domain.DomainName);
-            TaskManager.ItemId = domain.DomainId;
+            TaskManager.StartTask("DOMAIN", "CREATE_INSTANT_ALIAS", domain.DomainName, domain.DomainId);
 
             try
             {
@@ -2560,8 +2538,7 @@ namespace WebsitePanel.EnterpriseServer
                 return 0;
 
             // place log record
-            TaskManager.StartTask("DOMAIN", "DELETE_INSTANT_ALIAS", domain.DomainName);
-            TaskManager.ItemId = domain.DomainId;
+            TaskManager.StartTask("DOMAIN", "DELETE_INSTANT_ALIAS", domain.DomainName, domain.DomainId);
 
             try
             {
@@ -2695,8 +2672,7 @@ namespace WebsitePanel.EnterpriseServer
                 return 0;
 
             // place log record
-            TaskManager.StartTask("DNS_ZONE", "ADD_RECORD", domain.DomainName);
-            TaskManager.ItemId = domain.ZoneItemId;
+            TaskManager.StartTask("DNS_ZONE", "ADD_RECORD", domain.DomainName, domain.ZoneItemId);
 
             try
             {
@@ -2736,8 +2712,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             // place log record
             DomainInfo domain = GetDomain(domainId);
-            TaskManager.StartTask("DNS_ZONE", "UPDATE_RECORD", domain.DomainName);
-            TaskManager.ItemId = domain.ZoneItemId;
+            TaskManager.StartTask("DNS_ZONE", "UPDATE_RECORD", domain.DomainName, domain.ZoneItemId);
 
             try
             {
@@ -2783,8 +2758,7 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
                 // place log record
-                TaskManager.StartTask("DNS_ZONE", "DELETE_RECORD", domain.DomainName);
-                TaskManager.ItemId = domain.ZoneItemId;
+                TaskManager.StartTask("DNS_ZONE", "DELETE_RECORD", domain.DomainName, domain.ZoneItemId);
 
                 DNSServer dns = new DNSServer();
                 ServiceProviderProxy.Init(dns, zoneItem.ServiceId);

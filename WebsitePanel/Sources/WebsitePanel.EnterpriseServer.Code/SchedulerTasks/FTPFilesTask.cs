@@ -46,12 +46,14 @@ namespace WebsitePanel.EnterpriseServer
             //  - FTP_PASSWORD
             //  - FTP_FOLDER
 
+            BackgroundTask topTask = TaskController.GetTopTask();
+
             // get input parameters
-            string filePath = (string)TaskManager.TaskParameters["FILE_PATH"];
-            string ftpServer = (string)TaskManager.TaskParameters["FTP_SERVER"];
-            string ftpUsername = (string)TaskManager.TaskParameters["FTP_USERNAME"];
-            string ftpPassword = (string)TaskManager.TaskParameters["FTP_PASSWORD"];
-            string ftpFolder = (string)TaskManager.TaskParameters["FTP_FOLDER"];
+            string filePath = (string)topTask.GetParamValue("FILE_PATH");
+            string ftpServer = (string)topTask.GetParamValue("FTP_SERVER");
+            string ftpUsername = (string)topTask.GetParamValue("FTP_USERNAME");
+            string ftpPassword = (string)topTask.GetParamValue("FTP_PASSWORD");
+            string ftpFolder = (string)topTask.GetParamValue("FTP_FOLDER");
 
             // check input parameters
             if (String.IsNullOrEmpty(filePath))
@@ -100,7 +102,7 @@ namespace WebsitePanel.EnterpriseServer
 
             // file to send
             writer.WriteLine("binary");
-            writer.WriteLine("put " + FilesController.GetFullPackagePath(TaskManager.PackageId, filePath));
+            writer.WriteLine("put " + FilesController.GetFullPackagePath(topTask.PackageId, filePath));
 
             // bye
             writer.WriteLine("bye");
@@ -109,14 +111,14 @@ namespace WebsitePanel.EnterpriseServer
 
             // create temp file in user space
             string cmdPath = Utils.GetRandomString(10) + ".txt";
-            string fullCmdPath = FilesController.GetFullPackagePath(TaskManager.PackageId, cmdPath);
+            string fullCmdPath = FilesController.GetFullPackagePath(topTask.PackageId, cmdPath);
 
             // upload batch
-            FilesController.UpdateFileBinaryContent(TaskManager.PackageId, cmdPath, Encoding.UTF8.GetBytes(cmdBatch));
+            FilesController.UpdateFileBinaryContent(topTask.PackageId, cmdPath, Encoding.UTF8.GetBytes(cmdBatch));
 
             // execute system command
             // load OS service
-            int serviceId = PackageController.GetPackageServiceId(TaskManager.PackageId, ResourceGroups.Os);
+            int serviceId = PackageController.GetPackageServiceId(topTask.PackageId, ResourceGroups.Os);
 
             // load service
             ServiceInfo service = ServerController.GetServiceInfo(serviceId);
@@ -128,7 +130,7 @@ namespace WebsitePanel.EnterpriseServer
             TaskManager.Write(winServer.ExecuteSystemCommand("ftp.exe", "-s:" + fullCmdPath));
 
             // delete batch file
-            FilesController.DeleteFiles(TaskManager.PackageId, new string[] { cmdPath });
+            FilesController.DeleteFiles(topTask.PackageId, new string[] { cmdPath });
         }
     }
 }

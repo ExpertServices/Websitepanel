@@ -226,8 +226,7 @@ namespace WebsitePanel.EnterpriseServer
             item.SiteId = origItem.SiteId;
 
             // place log record
-            TaskManager.StartTask("STATS_SITE", "UPDATE", origItem.Name);
-            TaskManager.ItemId = origItem.Id;
+            TaskManager.StartTask("STATS_SITE", "UPDATE", origItem.Name, origItem.Id);
 
             try
             {
@@ -263,8 +262,7 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_STATS_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("STATS_SITE", "DELETE", origItem.Name);
-            TaskManager.ItemId = origItem.Id;
+            TaskManager.StartTask("STATS_SITE", "DELETE", origItem.Name, itemId);
 
             try
             {

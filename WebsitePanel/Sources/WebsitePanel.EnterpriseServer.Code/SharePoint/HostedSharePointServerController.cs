@@ -341,6 +341,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
                 }
 
                 TaskManager.ItemId = itemId;
+
                 return itemId;
             }
             catch (Exception ex)
@@ -380,8 +381,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             string siteName = origItem.Name.Replace(String.Format("{0}://", rootWebApplicationUri.Scheme), String.Empty);
 
             // Log operation.
-            TaskManager.StartTask("HOSTEDSHAREPOINT", "DELETE_SITE", origItem.Name);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("HOSTEDSHAREPOINT", "DELETE_SITE", origItem.Name, itemId);
 
             try
             {
@@ -459,8 +459,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             }
 
             // Log operation.
-            TaskManager.StartTask("HOSTEDSHAREPOINT", "BACKUP_SITE_COLLECTION", origItem.Name);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("HOSTEDSHAREPOINT", "BACKUP_SITE_COLLECTION", origItem.Name, itemId);
 
             try
             {
@@ -550,8 +549,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             }
 
             // Log operation.
-            TaskManager.StartTask("HOSTEDSHAREPOINT", "BACKUP_SITE_COLLECTION", origItem.Name);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("HOSTEDSHAREPOINT", "BACKUP_SITE_COLLECTION", origItem.Name, itemId);
 
             try
             {
@@ -850,8 +848,7 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("HOSTED_SHAREPOINT", "SET_ORG_LIMITS");
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("HOSTED_SHAREPOINT", "SET_ORG_LIMITS", itemId);
 
             try
             {
@@ -923,8 +920,8 @@ namespace WebsitePanel.EnterpriseServer.Code.SharePoint
             }
 
             // place log record
-            TaskManager.StartTask("HOSTED_SHAREPOINT", "CALCULATE_DISK_SPACE");
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("HOSTED_SHAREPOINT", "CALCULATE_DISK_SPACE", itemId);
+
             try
             {
                 Organization org = (Organization)PackageController.GetPackageItem(itemId);

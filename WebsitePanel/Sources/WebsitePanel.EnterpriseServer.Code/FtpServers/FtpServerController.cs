@@ -215,8 +215,8 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("FTP_ACCOUNT", "UPDATE", origItem.Name);
-            TaskManager.ItemId = item.Id;
+            TaskManager.StartTask("FTP_ACCOUNT", "UPDATE", origItem.Name, item.Id);
+
             TaskManager.WriteParameter("Folder", item.Folder);
             TaskManager.WriteParameter("CanRead", item.CanRead);
             TaskManager.WriteParameter("CanWrite", item.CanWrite);
@@ -279,8 +279,7 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_FTP_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("FTP_ACCOUNT", "DELETE", origItem.Name);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("FTP_ACCOUNT", "DELETE", origItem.Name, itemId);
 
             try
             {

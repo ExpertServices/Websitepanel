@@ -44,9 +44,11 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.TaskEventHandlers
 
         public override void OnComplete()
         {
-            if (!TaskManager.HasErrors)
+            BackgroundTask topTask = TaskController.GetTopTask();
+
+            if (!TaskManager.HasErrors(topTask))
             {
-                switch (TaskManager.TaskName)
+                switch (topTask.TaskName)
                 {
                     case SystemTasks.TASK_ADD_INVOICE:
                         RegisterInvoiceActivationTrigger();
@@ -64,8 +66,10 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.TaskEventHandlers
 
         private void RegisterInvoiceActivationTrigger()
         {
+            BackgroundTask topTask = TaskController.GetTopTask();
+
             // Read contract invoice
-            Invoice invoice = (Invoice)TaskManager.TaskParameters[SystemTaskParams.PARAM_INVOICE];
+            Invoice invoice = (Invoice)topTask.GetParamValue(SystemTaskParams.PARAM_INVOICE);
             //
             TriggerSystem.TriggerController.AddSystemTrigger(invoice.InvoiceId.ToString(),
                 ActivateInvoiceTrigger.STATUS_AWAITING_PAYMENT, typeof(ActivateInvoiceTrigger));
@@ -73,10 +77,12 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.TaskEventHandlers
 
         private void RegisterContractActivationTrigger()
         {
+            BackgroundTask topTask = TaskController.GetTopTask();
+
             // Ensure the contract has been registered successfully
-            if (TaskManager.TaskParameters.ContainsKey(SystemTaskParams.PARAM_CONTRACT))
+            if (topTask.ContainsParam(SystemTaskParams.PARAM_CONTRACT))
             {
-                Contract contract = (Contract)TaskManager.TaskParameters[SystemTaskParams.PARAM_CONTRACT];
+                Contract contract = (Contract)topTask.GetParamValue(SystemTaskParams.PARAM_CONTRACT);
                 //
 				if (contract.Status == ContractStatus.Pending)
 				{
@@ -88,8 +94,10 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.TaskEventHandlers
 
         private void ActivatePaymentSystemTriggers()
         {
-            CustomerPayment payment = (CustomerPayment)TaskManager.TaskParameters[SystemTaskParams.PARAM_PAYMENT];
-            Contract contract = (Contract)TaskManager.TaskParameters[SystemTaskParams.PARAM_CONTRACT];
+            BackgroundTask topTask = TaskController.GetTopTask();
+
+            CustomerPayment payment = (CustomerPayment)topTask.GetParamValue(SystemTaskParams.PARAM_PAYMENT);
+            Contract contract = (Contract)topTask.GetParamValue(SystemTaskParams.PARAM_CONTRACT);
 
             // Run activate contract trigger if the transaction was approved
             if (payment.Status == TransactionStatus.Approved)

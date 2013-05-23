@@ -44,25 +44,27 @@ namespace WebsitePanel.EnterpriseServer
             //  - DISKSPACE_OVERUSED
             //  - BANDWIDTH_OVERUSED
 
+            BackgroundTask topTask = TaskController.GetTopTask();
+
             // get the list of all packages
-            List<PackageInfo> packages = PackageController.GetPackagePackages(TaskManager.PackageId, false);
+            List<PackageInfo> packages = PackageController.GetPackagePackages(topTask.PackageId, false);
             TaskManager.Write("Packages to verify: " + packages.Count.ToString());
 
-            bool checkMSSQL = (String.Compare((string)TaskManager.TaskParameters["MSSQL_OVERUSED"], "true", true) == 0);
-            bool checkMySQL = (String.Compare((string)TaskManager.TaskParameters["MYSQL_OVERUSED"], "true", true) == 0);
+            bool checkMSSQL = (String.Compare((string)topTask.GetParamValue("MSSQL_OVERUSED"), "true", true) == 0);
+            bool checkMySQL = (String.Compare((string)topTask.GetParamValue("MYSQL_OVERUSED"), "true", true) == 0);
 
-			bool sendWarningEmail = Convert.ToBoolean(TaskManager.TaskParameters["SEND_WARNING_EMAIL"]);
-            bool sendOverusedEmail = Convert.ToBoolean(TaskManager.TaskParameters["SEND_OVERUSED_EMAIL"]);
-			int warningUsageThreshold = Convert.ToInt32(TaskManager.TaskParameters["WARNING_USAGE_THRESHOLD"]);
-            int overusedUsageThreshold = Convert.ToInt32(TaskManager.TaskParameters["OVERUSED_USAGE_THRESHOLD"]);
-			string warningMailFrom = Convert.ToString(TaskManager.TaskParameters["WARNING_MAIL_FROM"]);
-			string warningMailBcc = Convert.ToString(TaskManager.TaskParameters["WARNING_MAIL_BCC"]);
-			string warningMailSubject = Convert.ToString(TaskManager.TaskParameters["WARNING_MAIL_SUBJECT"]);
-			string warningMailBody = Convert.ToString(TaskManager.TaskParameters["WARNING_MAIL_BODY"]);
-            string overusedMailFrom = Convert.ToString(TaskManager.TaskParameters["OVERUSED_MAIL_FROM"]);
-            string overusedMailBcc = Convert.ToString(TaskManager.TaskParameters["OVERUSED_MAIL_BCC"]);
-            string overusedMailSubject = Convert.ToString(TaskManager.TaskParameters["OVERUSED_MAIL_SUBJECT"]);
-            string overusedMailBody = Convert.ToString(TaskManager.TaskParameters["OVERUSED_MAIL_BODY"]);
+			bool sendWarningEmail = Convert.ToBoolean(topTask.GetParamValue("SEND_WARNING_EMAIL"));
+            bool sendOverusedEmail = Convert.ToBoolean(topTask.GetParamValue("SEND_OVERUSED_EMAIL"));
+			int warningUsageThreshold = Convert.ToInt32(topTask.GetParamValue("WARNING_USAGE_THRESHOLD"));
+            int overusedUsageThreshold = Convert.ToInt32(topTask.GetParamValue("OVERUSED_USAGE_THRESHOLD"));
+			string warningMailFrom = Convert.ToString(topTask.GetParamValue("WARNING_MAIL_FROM"));
+			string warningMailBcc = Convert.ToString(topTask.GetParamValue("WARNING_MAIL_BCC"));
+			string warningMailSubject = Convert.ToString(topTask.GetParamValue("WARNING_MAIL_SUBJECT"));
+			string warningMailBody = Convert.ToString(topTask.GetParamValue("WARNING_MAIL_BODY"));
+            string overusedMailFrom = Convert.ToString(topTask.GetParamValue("OVERUSED_MAIL_FROM"));
+            string overusedMailBcc = Convert.ToString(topTask.GetParamValue("OVERUSED_MAIL_BCC"));
+            string overusedMailSubject = Convert.ToString(topTask.GetParamValue("OVERUSED_MAIL_SUBJECT"));
+            string overusedMailBody = Convert.ToString(topTask.GetParamValue("OVERUSED_MAIL_BODY"));
 
             int overusedPackages = 0;
 

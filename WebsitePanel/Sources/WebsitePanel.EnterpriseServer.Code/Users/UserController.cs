@@ -448,8 +448,12 @@ namespace WebsitePanel.EnterpriseServer
 					return BusinessErrorCodes.ERROR_USER_ALREADY_EXISTS;
 				}
 
-				TaskManager.ItemId = userId;
-				TaskManager.TaskParameters["SendLetter"] = sendLetter;
+			    BackgroundTask topTask = TaskController.GetTopTask();
+
+			    topTask.ItemId = userId;
+                topTask.UpdateParamValue("SendLetter", sendLetter);
+
+                TaskController.UpdateTask(topTask);
 
 				return userId;
 			}
@@ -518,8 +522,7 @@ namespace WebsitePanel.EnterpriseServer
 			try
 			{
 				// start task
-				TaskManager.StartTask(taskId, "USER", "UPDATE", user.Username);
-				TaskManager.ItemId = user.UserId;
+				TaskManager.StartTask(taskId, "USER", "UPDATE", user.Username, user.UserId);
 
 				// check account
 				int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo);
@@ -637,10 +640,9 @@ namespace WebsitePanel.EnterpriseServer
 			UserInfo user = GetUserInternally(userId);
 
 			// place log record
-			TaskManager.StartTask("USER", "CHANGE_PASSWORD", user.Username);
-			TaskManager.ItemId = user.UserId;
+            TaskManager.StartTask("USER", "CHANGE_PASSWORD", user.Username, user.UserId);
 
-			try
+            try
 			{
 
 				DataProvider.ChangeUserPassword(SecurityContext.User.UserId, userId,
@@ -675,8 +677,7 @@ namespace WebsitePanel.EnterpriseServer
 			UserInfo user = GetUserInternally(userId);
 
 			// place log record
-			TaskManager.StartTask(taskId, "USER", "CHANGE_STATUS", user.Username);
-			TaskManager.ItemId = user.UserId;
+			TaskManager.StartTask(taskId, "USER", "CHANGE_STATUS", user.Username, user.UserId);
 
             // update user packages
             List<PackageInfo> packages = new List<PackageInfo>();
@@ -796,8 +797,7 @@ namespace WebsitePanel.EnterpriseServer
 			UserInfo user = GetUserInternally(settings.UserId);
 
 			// place log record
-			TaskManager.StartTask("USER", "UPDATE_SETTINGS", user.Username);
-			TaskManager.ItemId = user.UserId;
+            TaskManager.StartTask("USER", "UPDATE_SETTINGS", user.Username, user.UserId);
 
 			try
 			{

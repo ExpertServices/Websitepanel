@@ -51,16 +51,18 @@ namespace WebsitePanel.EnterpriseServer
         {
             try
             {
-                bool isExchange = Utils.ParseBool(TaskManager.TaskParameters[EXCHANGE_REPORT], false);
-                bool isSharePoint = Utils.ParseBool(TaskManager.TaskParameters[SHAREPOINT_REPORT], false);
-                bool isLync = Utils.ParseBool(TaskManager.TaskParameters[LYNC_REPORT], false);
-                bool isCRM = Utils.ParseBool(TaskManager.TaskParameters[CRM_REPORT], false);
-                bool isOrganization = Utils.ParseBool(TaskManager.TaskParameters[ORGANIZATION_REPORT], false);
+                BackgroundTask topTask = TaskController.GetTopTask();
 
-                string email = TaskManager.TaskParameters[EMAIL].ToString();
+                bool isExchange = Utils.ParseBool(topTask.GetParamValue(EXCHANGE_REPORT), false);
+                bool isSharePoint = Utils.ParseBool(topTask.GetParamValue(SHAREPOINT_REPORT), false);
+                bool isLync = Utils.ParseBool(topTask.GetParamValue(LYNC_REPORT), false);
+                bool isCRM = Utils.ParseBool(topTask.GetParamValue(CRM_REPORT), false);
+                bool isOrganization = Utils.ParseBool(topTask.GetParamValue(ORGANIZATION_REPORT), false);
+
+                string email = topTask.GetParamValue(EMAIL).ToString();
 
 
-                UserInfo user = PackageController.GetPackageOwner(TaskManager.PackageId);
+                UserInfo user = PackageController.GetPackageOwner(topTask.PackageId);
                 EnterpriseSolutionStatisticsReport report =
                     ReportController.GetEnterpriseSolutionStatisticsReport(user.UserId, isExchange, isSharePoint, isCRM,
                                                              isOrganization, isLync);

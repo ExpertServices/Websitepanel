@@ -291,9 +291,11 @@ namespace WebsitePanel.EnterpriseServer
                 return errorCode;
             
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "CREATE_ORG", organizationName);
-            TaskManager.TaskParameters["Organization ID"] = organizationId;
-            TaskManager.TaskParameters["DomainName"] = domainName;
+            IList<BackgroundTaskParameter> parameters = new List<BackgroundTaskParameter>();
+            parameters.Add(new BackgroundTaskParameter("Organization ID", organizationId));
+            parameters.Add(new BackgroundTaskParameter("DomainName", domainName));
+
+            TaskManager.StartTask("ORGANIZATION", "CREATE_ORG", organizationName, parameters);
 
 			try
 			{
@@ -411,9 +413,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "DELETE_DOMAIN");
-            TaskManager.TaskParameters["Domain ID"] = domainId;
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("ORGANIZATION", "DELETE_DOMAIN", itemId, new BackgroundTaskParameter("Domain ID", domainId));
 
             try
             {
@@ -586,8 +586,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "DELETE_ORG");
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("ORGANIZATION", "DELETE_ORG", itemId);
 
             try
             {
@@ -869,8 +868,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "GET_ORG_STATS");
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("ORGANIZATION", "GET_ORG_STATS", itemId);
 
             try
             {
@@ -1022,8 +1020,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "CHANGE_DOMAIN_TYPE", domainId);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("ORGANIZATION", "CHANGE_DOMAIN_TYPE", domainId, itemId);
 
             try
             {   
@@ -1060,8 +1057,7 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_EXCHANGE_DOMAINS_QUOTA_LIMIT;
             
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "ADD_DOMAIN", domainName);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("ORGANIZATION", "ADD_DOMAIN", domainName, itemId);
 
             try
             {
@@ -1291,8 +1287,8 @@ namespace WebsitePanel.EnterpriseServer
 
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "CREATE_USER");
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("ORGANIZATION", "CREATE_USER", itemId);
+
             TaskManager.Write("Organization ID :" + itemId);
             TaskManager.Write("name :" + name);
             TaskManager.Write("domain :" + domain);
@@ -1414,8 +1410,8 @@ namespace WebsitePanel.EnterpriseServer
 
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "IMPORT_USER");
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("ORGANIZATION", "IMPORT_USER", itemId);
+
             TaskManager.Write("Organization ID :" + itemId);
             TaskManager.Write("account :" + accountName);
             TaskManager.Write("name :" + name);
@@ -1572,8 +1568,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "DELETE_USER");
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("ORGANIZATION", "DELETE_USER", itemId);
 
             try
             {
@@ -1676,8 +1671,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "GET_USER_GENERAL");
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("ORGANIZATION", "GET_USER_GENERAL", itemId);
 
             OrganizationUser account = null;
             Organization org = null;
@@ -1740,8 +1734,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "UPDATE_USER_GENERAL");
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("ORGANIZATION", "UPDATE_USER_GENERAL", itemId);
 
             try
             {
@@ -1832,8 +1825,7 @@ namespace WebsitePanel.EnterpriseServer
 
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "SET_USER_USERPRINCIPALNAME");
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("ORGANIZATION", "SET_USER_USERPRINCIPALNAME", itemId);
 
             try
             {
@@ -1931,8 +1923,7 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "SET_USER_PASSWORD");
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("ORGANIZATION", "SET_USER_PASSWORD", itemId);
 
             try
             {
@@ -2048,8 +2039,7 @@ namespace WebsitePanel.EnterpriseServer
         public static int GetAccountIdByUserPrincipalName(int itemId, string userPrincipalName)
         {
             // place log record
-            TaskManager.StartTask("ORGANIZATION", "GET_ACCOUNT_BYUPN");
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("ORGANIZATION", "GET_ACCOUNT_BYUPN", itemId);
 
             int accounId = -1;
 

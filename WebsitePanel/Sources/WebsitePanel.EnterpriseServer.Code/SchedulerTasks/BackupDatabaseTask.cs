@@ -46,11 +46,13 @@ namespace WebsitePanel.EnterpriseServer
             //  - BACKUP_NAME
             //  - ZIP_BACKUP
 
-            string databaseGroup = (string)TaskManager.TaskParameters["DATABASE_GROUP"];
-            string databaseName = (string)TaskManager.TaskParameters["DATABASE_NAME"];
-            string backupFolder = (string)TaskManager.TaskParameters["BACKUP_FOLDER"];
-            string backupName = (string)TaskManager.TaskParameters["BACKUP_NAME"];
-            string strZipBackup = (string)TaskManager.TaskParameters["ZIP_BACKUP"];
+            BackgroundTask topTask = TaskController.GetTopTask();
+
+            string databaseGroup = (string)topTask.GetParamValue("DATABASE_GROUP");
+            string databaseName = (string)topTask.GetParamValue("DATABASE_NAME");
+            string backupFolder = (string)topTask.GetParamValue("BACKUP_FOLDER");
+            string backupName = (string)topTask.GetParamValue("BACKUP_NAME");
+            string strZipBackup = (string)topTask.GetParamValue("ZIP_BACKUP");
 
             // check input parameters
             if (String.IsNullOrEmpty(databaseName))
@@ -77,7 +79,7 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             // try to find database
-            SqlDatabase item = (SqlDatabase)PackageController.GetPackageItemByName(TaskManager.PackageId, databaseGroup,
+            SqlDatabase item = (SqlDatabase)PackageController.GetPackageItemByName(topTask.PackageId, databaseGroup,
                 databaseName, typeof(SqlDatabase));
 
             if (item == null)

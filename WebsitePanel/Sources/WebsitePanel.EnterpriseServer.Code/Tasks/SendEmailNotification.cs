@@ -40,23 +40,25 @@ namespace WebsitePanel.EnterpriseServer.Tasks
 
         public override void OnComplete()
         {
-            if (!TaskManager.HasErrors)
+            BackgroundTask topTask = TaskController.GetTopTask();
+
+            if (!TaskManager.HasErrors(topTask))
             {
                 // Send user add notification
-                if (TaskManager.TaskSource == "USER" &&
-                    TaskManager.TaskName == "ADD" && TaskManager.ItemId > 0)
+                if (topTask.Source == "USER" &&
+                    topTask.TaskName == "ADD" && topTask.ItemId > 0)
                 {
                     SendAddUserNotification();
                 }
                 // Send hosting package add notification
-                if (TaskManager.TaskSource == "HOSTING_SPACE"
-                    && TaskManager.TaskName == "ADD" && TaskManager.ItemId > 0)
+                if (topTask.Source == "HOSTING_SPACE"
+                    && topTask.TaskName == "ADD" && topTask.ItemId > 0)
                 {
                     SendAddPackageNotification();
                 }
                 // Send hosting package add notification
-                if (TaskManager.TaskSource == "HOSTING_SPACE_WR"
-                    && TaskManager.TaskName == "ADD" && TaskManager.ItemId > 0)
+                if (topTask.Source == "HOSTING_SPACE_WR"
+                    && topTask.TaskName == "ADD" && topTask.ItemId > 0)
                 {
                     SendAddPackageWithResourcesNotification();
                 }
@@ -76,10 +78,13 @@ namespace WebsitePanel.EnterpriseServer.Tasks
         {
             try
             {
-                bool sendLetter = (bool)TaskManager.TaskParameters["SendLetter"];
+                BackgroundTask topTask = TaskController.GetTopTask();
+                
+                bool sendLetter = Utils.ParseBool(topTask.GetParamValue("SendLetter"), false);
+
                 if (sendLetter)
                 {
-                    int sendResult = PackageController.SendPackageSummaryLetter(TaskManager.ItemId, null, null, true);
+                    int sendResult = PackageController.SendPackageSummaryLetter(topTask.ItemId, null, null, true);
                     CheckSmtpResult(sendResult);
                 }
             }
@@ -93,9 +98,12 @@ namespace WebsitePanel.EnterpriseServer.Tasks
         {
             try
             {
-                int userId = (int)TaskManager.TaskParameters["UserId"];
-                bool sendLetter = (bool)TaskManager.TaskParameters["SendLetter"];
-                bool signup = (bool)TaskManager.TaskParameters["Signup"];
+                BackgroundTask topTask = TaskController.GetTopTask();
+                
+                int userId = Utils.ParseInt(topTask.GetParamValue("UserId").ToString(), 0);
+                bool sendLetter = Utils.ParseBool(topTask.GetParamValue("SendLetter"), false);
+                bool signup = Utils.ParseBool(topTask.GetParamValue("Signup"), false);
+
                 // send space letter if enabled
                 UserSettings settings = UserController.GetUserSettings(userId, UserSettings.PACKAGE_SUMMARY_LETTER);
                 if (sendLetter
@@ -103,7 +111,7 @@ namespace WebsitePanel.EnterpriseServer.Tasks
                     && Utils.ParseBool(settings["EnableLetter"], false))
                 {
                     // send letter
-                    int smtpResult = PackageController.SendPackageSummaryLetter(TaskManager.ItemId, null, null, signup);
+                    int smtpResult = PackageController.SendPackageSummaryLetter(topTask.ItemId, null, null, signup);
                     CheckSmtpResult(smtpResult);
                 }
             }
@@ -117,8 +125,11 @@ namespace WebsitePanel.EnterpriseServer.Tasks
         {
             try
             {
-                bool sendLetter = (bool)TaskManager.TaskParameters["SendLetter"];
-                int userId = TaskManager.ItemId;
+                BackgroundTask topTask = TaskController.GetTopTask();
+
+                bool sendLetter = Utils.ParseBool(topTask.GetParamValue("SendLetter"), false);
+
+                int userId = topTask.ItemId;
                 // send account letter if enabled
                 UserSettings settings = UserController.GetUserSettings(userId, UserSettings.ACCOUNT_SUMMARY_LETTER);
                 if (sendLetter

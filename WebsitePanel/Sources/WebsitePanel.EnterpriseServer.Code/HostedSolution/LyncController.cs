@@ -419,8 +419,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("LYNC", "DELETE_ORG");
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("LYNC", "DELETE_ORG", itemId);
 
             try
             {
@@ -622,8 +621,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
         public static List<LyncUserPlan> GetLyncUserPlans(int itemId)
         {
             // place log record
-            TaskManager.StartTask("LYNC", "GET_LYNC_LYNCUSERPLANS");
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("LYNC", "GET_LYNC_LYNCUSERPLANS", itemId);
 
             try
             {
@@ -705,8 +703,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
         {
 
             // place log record
-            TaskManager.StartTask("LYNC", "GET_LYNC_LYNCUSERPLAN");
-            TaskManager.ItemId = lyncUserPlanId;
+            TaskManager.StartTask("LYNC", "GET_LYNC_LYNCUSERPLAN", lyncUserPlanId);
 
             try
             {
@@ -729,8 +726,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("LYNC", "ADD_LYNC_LYNCUSERPLAN");
-            TaskManager.ItemId = itemID;
+            TaskManager.StartTask("LYNC", "ADD_LYNC_LYNCUSERPLAN", itemID);
 
             try
             {
@@ -770,8 +766,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("LYNC", "ADD_LYNC_LYNCUSERPLAN");
-            TaskManager.ItemId = itemID;
+            TaskManager.StartTask("LYNC", "ADD_LYNC_LYNCUSERPLAN", itemID);
 
             try
             {
@@ -809,8 +804,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
             if (accountCheck < 0) return accountCheck;
 
-            TaskManager.StartTask("LYNC", "DELETE_LYNC_LYNCPLAN");
-            TaskManager.ItemId = itemID;
+            TaskManager.StartTask("LYNC", "DELETE_LYNC_LYNCPLAN", itemID);
 
             try
             {
@@ -834,8 +828,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
             if (accountCheck < 0) return accountCheck;
 
-            TaskManager.StartTask("LYNC", "SET_LYNC_LYNCUSERPLAN");
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("LYNC", "SET_LYNC_LYNCUSERPLAN", itemId);
 
             try
             {
@@ -861,8 +854,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
         public static LyncFederationDomain[] GetFederationDomains(int itemId)
         {
             // place log record
-            TaskManager.StartTask("LYNC", "GET_LYNC_FEDERATIONDOMAINS");
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("LYNC", "GET_LYNC_FEDERATIONDOMAINS", itemId);
 
             LyncFederationDomain[] lyncFederationDomains = null;
 
@@ -889,10 +881,11 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
 
         public static LyncUserResult AddFederationDomain(int itemId, string domainName, string proxyFqdn)
         {
-            LyncUserResult res = TaskManager.StartResultTask<LyncUserResult>("LYNC", "ADD_LYNC_FEDERATIONDOMAIN");
-            TaskManager.ItemId = itemId;
-            TaskManager.TaskParameters["domainName"] = domainName;
-            TaskManager.TaskParameters["proxyFqdn"] = proxyFqdn;
+            IList<BackgroundTaskParameter> parameters = new List<BackgroundTaskParameter>();
+            parameters.Add(new BackgroundTaskParameter("domainName", domainName));
+            parameters.Add(new BackgroundTaskParameter("proxyFqdn", proxyFqdn));
+
+            LyncUserResult res = TaskManager.StartResultTask<LyncUserResult>("LYNC", "ADD_LYNC_FEDERATIONDOMAIN", itemId, parameters);
 
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
 
@@ -966,9 +959,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
 
         public static LyncUserResult RemoveFederationDomain(int itemId, string domainName)
         {
-            LyncUserResult res = TaskManager.StartResultTask<LyncUserResult>("LYNC", "REMOVE_LYNC_FEDERATIONDOMAIN");
-            TaskManager.ItemId = itemId;
-            TaskManager.TaskParameters["domainName"] = domainName;
+            LyncUserResult res = TaskManager.StartResultTask<LyncUserResult>("LYNC", "REMOVE_LYNC_FEDERATIONDOMAIN", itemId, new BackgroundTaskParameter("domainName", domainName));
 
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
 

@@ -496,8 +496,7 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "UPDATE", siteItem.Name);
-            TaskManager.ItemId = site.Id;
+            TaskManager.StartTask("WEB_SITE", "UPDATE", siteItem.Name, site.Id);
 
             try
             {
@@ -559,8 +558,8 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "CHANGE_STATE", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "CHANGE_STATE", siteItem.Name, siteItemId);
+
             TaskManager.WriteParameter("New state", state);
 
             try
@@ -595,8 +594,7 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "DELETE", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "DELETE", siteItem.Name, siteItemId);
 
             // delete web site
             try
@@ -710,8 +708,7 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "SWITCH_TO_DEDICATED_IP", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "SWITCH_TO_DEDICATED_IP", siteItem.Name, siteItemId);
 
             try
             {
@@ -886,8 +883,7 @@ namespace WebsitePanel.EnterpriseServer
 
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "SWITCH_TO_SHARED_IP", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "SWITCH_TO_SHARED_IP", siteItem.Name, siteItemId);
 
             try
             {
@@ -1223,8 +1219,8 @@ namespace WebsitePanel.EnterpriseServer
             IPAddressInfo ip = ServerController.GetIPAddress(siteItem.SiteIPAddressId);
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "ADD_POINTER", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "ADD_POINTER", siteItem.Name, siteItemId);
+
             TaskManager.WriteParameter("Domain pointer", domain.DomainName);
             TaskManager.WriteParameter("Host name", hostName);
             TaskManager.WriteParameter("updateWebSite", updateWebSite.ToString());
@@ -1425,8 +1421,8 @@ namespace WebsitePanel.EnterpriseServer
             IPAddressInfo ip = ServerController.GetIPAddress(siteItem.SiteIPAddressId);
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "DELETE_POINTER", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "DELETE_POINTER", siteItem.Name, siteItemId);
+
             TaskManager.WriteParameter("Domain pointer", domain.DomainName);
             TaskManager.WriteParameter("updateWebSite", updateWebSite.ToString());
 
@@ -1587,8 +1583,8 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "ADD_VDIR", vdirName);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "ADD_VDIR", vdirName, siteItemId);
+
             TaskManager.WriteParameter("Web site", siteItem.Name);
 
             try
@@ -1641,8 +1637,8 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "UPDATE_VDIR", vdir.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "UPDATE_VDIR", vdir.Name, siteItemId);
+
             TaskManager.WriteParameter("Web site", siteItem.Name);
 
             try
@@ -1680,8 +1676,8 @@ namespace WebsitePanel.EnterpriseServer
 
             // place log record
             // place log record
-            TaskManager.StartTask("WEB_SITE", "DELETE_VDIR", vdirName);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "DELETE_VDIR", vdirName, siteItemId);
+
             TaskManager.WriteParameter("Web site", siteItem.Name);
 
             try
@@ -1721,8 +1717,8 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "INSTALL_FP", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "INSTALL_FP", siteItem.Name, siteItemId);
+
             TaskManager.WriteParameter("FrontPage username", username);
 
             try
@@ -1774,8 +1770,8 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "UNINSTALL_FP", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "UNINSTALL_FP", siteItem.Name, siteItemId);
+
             TaskManager.WriteParameter("FrontPage username", siteItem.FrontPageAccount);
 
             try
@@ -1815,8 +1811,8 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "CHANGE_FP_PASSWORD", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "CHANGE_FP_PASSWORD", siteItem.Name, siteItemId);
+
             TaskManager.WriteParameter("FrontPage username", siteItem.FrontPageAccount);
 
             try
@@ -1858,8 +1854,7 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "INSTALL_SECURED_FOLDERS", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "INSTALL_SECURED_FOLDERS", siteItem.Name, siteItemId);
 
             try
             {
@@ -1892,8 +1887,7 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "UNINSTALL_SECURED_FOLDERS", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "UNINSTALL_SECURED_FOLDERS", siteItem.Name, siteItemId);
 
             try
             {
@@ -1947,8 +1941,8 @@ namespace WebsitePanel.EnterpriseServer
             folder.Path = FilesController.CorrectRelativePath(folder.Path);
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "UPDATE_SECURED_FOLDER", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "UPDATE_SECURED_FOLDER", siteItem.Name, siteItemId);
+
             TaskManager.WriteParameter("Folder", folder.Path);
 
             try
@@ -1977,8 +1971,8 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "DELETE_SECURED_FOLDER", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "DELETE_SECURED_FOLDER", siteItem.Name, siteItemId);
+
             TaskManager.WriteParameter("Folder", folderPath);
 
             try
@@ -2033,8 +2027,8 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "UPDATE_SECURED_USER", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "UPDATE_SECURED_USER", siteItem.Name, siteItemId);
+
             TaskManager.WriteParameter("User", user.Name);
 
             try
@@ -2063,8 +2057,8 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "DELETE_SECURED_USER", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "DELETE_SECURED_USER", siteItem.Name, siteItemId);
+
             TaskManager.WriteParameter("User", userName);
 
             try
@@ -2119,8 +2113,8 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "UPDATE_SECURED_GROUP", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "UPDATE_SECURED_GROUP", siteItem.Name, siteItemId);
+
             TaskManager.WriteParameter("Group", group.Name);
 
             try
@@ -2149,8 +2143,8 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "DELETE_SECURED_GROUP", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "DELETE_SECURED_GROUP", siteItem.Name, siteItemId);
+
             TaskManager.WriteParameter("Group", groupName);
 
             try
@@ -2314,9 +2308,12 @@ namespace WebsitePanel.EnterpriseServer
                 dir.Name = sslDomain + "/" + vdirName;
                 dir.PackageId = packageId;
                 dir.ServiceId = serviceId;
-                TaskManager.ItemId = PackageController.AddPackageItem(dir);
 
-                return TaskManager.ItemId;
+                int itemId = PackageController.AddPackageItem(dir);
+                
+                TaskManager.ItemId = itemId;
+
+                return itemId;
             }
             catch (Exception ex)
             {
@@ -2340,8 +2337,7 @@ namespace WebsitePanel.EnterpriseServer
                 return 0;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "UPDATE_SSL_FOLDER", origVdir.Name);
-            TaskManager.ItemId = vdir.Id;
+            TaskManager.StartTask("WEB_SITE", "UPDATE_SSL_FOLDER", origVdir.Name, vdir.Id);
 
             try
             {
@@ -2388,8 +2384,7 @@ namespace WebsitePanel.EnterpriseServer
                 return 0;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "DELETE_SSL_FOLDER", origVdir.Name);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("WEB_SITE", "DELETE_SSL_FOLDER", origVdir.Name, itemId);
 
             try
             {
@@ -2892,8 +2887,7 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "ENABLE_HELICON_APE", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "ENABLE_HELICON_APE", siteItem.Name, siteItemId);
 
             try
             {
@@ -2927,8 +2921,7 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "DISABLE_HELICON_APE", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "DISABLE_HELICON_APE", siteItem.Name, siteItemId);
 
             try
             {
@@ -3070,8 +3063,8 @@ namespace WebsitePanel.EnterpriseServer
             folder.Path = FilesController.CorrectRelativePath(folder.Path);
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "UPDATE_HELICON_APE_FOLDER", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "UPDATE_HELICON_APE_FOLDER", siteItem.Name, siteItemId);
+
             TaskManager.WriteParameter("Folder", folder.Path);
 
             try
@@ -3126,8 +3119,8 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "DELETE_HELICON_APE_FOLDER", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "DELETE_HELICON_APE_FOLDER", siteItem.Name, siteItemId);
+
             TaskManager.WriteParameter("Folder", folderPath);
 
             try
@@ -3183,8 +3176,8 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "UPDATE_HELICON_APE_USER", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "UPDATE_HELICON_APE_USER", siteItem.Name, siteItemId);
+
             TaskManager.WriteParameter("User", user.Name);
 
             try
@@ -3213,8 +3206,8 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "DELETE_HELICON_APE_USER", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "DELETE_HELICON_APE_USER", siteItem.Name, siteItemId);
+
             TaskManager.WriteParameter("User", userName);
 
             try
@@ -3269,8 +3262,8 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "UPDATE_HELICON_APE_GROUP", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "UPDATE_HELICON_APE_GROUP", siteItem.Name, siteItemId);
+
             TaskManager.WriteParameter("Group", group.Name);
 
             try
@@ -3299,8 +3292,8 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("WEB_SITE", "DELETE_HELICON_APE_GROUP", siteItem.Name);
-            TaskManager.ItemId = siteItemId;
+            TaskManager.StartTask("WEB_SITE", "DELETE_HELICON_APE_GROUP", siteItem.Name, siteItemId);
+
             TaskManager.WriteParameter("Group", groupName);
 
             try

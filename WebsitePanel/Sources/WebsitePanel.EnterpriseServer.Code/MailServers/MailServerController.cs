@@ -191,8 +191,7 @@ namespace WebsitePanel.EnterpriseServer
 				return BusinessErrorCodes.ERROR_MAIL_ACCOUNT_MAX_MAILBOX_SIZE_LIMIT;
 
 			// place log record
-			TaskManager.StartTask("MAIL_ACCOUNT", "UPDATE", origItem.Name);
-			TaskManager.ItemId = item.Id;
+            TaskManager.StartTask("MAIL_ACCOUNT", "UPDATE", origItem.Name, item.Id);
 
 			try
 			{
@@ -245,8 +244,7 @@ namespace WebsitePanel.EnterpriseServer
 				return BusinessErrorCodes.ERROR_MAIL_ACCOUNTS_PACKAGE_ITEM_NOT_FOUND;
 
 			// place log record
-			TaskManager.StartTask("MAIL_ACCOUNT", "DELETE", origItem.Name);
-			TaskManager.ItemId = itemId;
+			TaskManager.StartTask("MAIL_ACCOUNT", "DELETE", origItem.Name, itemId);
 
 			try
 			{
@@ -402,7 +400,7 @@ namespace WebsitePanel.EnterpriseServer
 				item.ServiceId = serviceId;
 				int itemId = PackageController.AddPackageItem(item);
 
-				TaskManager.ItemId = itemId;
+                TaskManager.ItemId = itemId;
 
 				return itemId;
 			}
@@ -432,8 +430,7 @@ namespace WebsitePanel.EnterpriseServer
 			if (packageCheck < 0) return packageCheck;
 
 			// place log record
-			TaskManager.StartTask("MAIL_FORWARDING", "UPDATE", origItem.Name);
-			TaskManager.ItemId = item.Id;
+			TaskManager.StartTask("MAIL_FORWARDING", "UPDATE", origItem.Name, item.Id);
 
 			try
 			{
@@ -477,8 +474,7 @@ namespace WebsitePanel.EnterpriseServer
 				return BusinessErrorCodes.ERROR_MAIL_FORWARDINGS_PACKAGE_ITEM_NOT_FOUND;
 
 			// place log record
-			TaskManager.StartTask("MAIL_FORWARDING", "DELETE", origItem.Name);
-			TaskManager.ItemId = itemId;
+			TaskManager.StartTask("MAIL_FORWARDING", "DELETE", origItem.Name, itemId);
 
 			try
 			{
@@ -638,8 +634,7 @@ namespace WebsitePanel.EnterpriseServer
 				return BusinessErrorCodes.ERROR_MAIL_GROUPS_RECIPIENTS_LIMIT;
 
 			// place log record
-			TaskManager.StartTask("MAIL_GROUP", "UPDATE", origItem.Name);
-			TaskManager.ItemId = item.Id;
+            TaskManager.StartTask("MAIL_GROUP", "UPDATE", origItem.Name, item.Id);
 
 			try
 			{
@@ -679,8 +674,7 @@ namespace WebsitePanel.EnterpriseServer
 				return BusinessErrorCodes.ERROR_MAIL_GROUPS_PACKAGE_ITEM_NOT_FOUND;
 
 			// place log record
-			TaskManager.StartTask("MAIL_GROUP", "DELETE", origItem.Name);
-			TaskManager.ItemId = itemId;
+			TaskManager.StartTask("MAIL_GROUP", "DELETE", origItem.Name, itemId);
 
 			try
 			{
@@ -889,8 +883,7 @@ namespace WebsitePanel.EnterpriseServer
 				return BusinessErrorCodes.ERROR_MAIL_LISTS_RECIPIENTS_LIMIT;
 
 			// place log record
-			TaskManager.StartTask("MAIL_LIST", "UPDATE", origItem.Name);
-			TaskManager.ItemId = item.Id;
+            TaskManager.StartTask("MAIL_LIST", "UPDATE", origItem.Name, item.Id);
 
 			try
 			{
@@ -938,8 +931,7 @@ namespace WebsitePanel.EnterpriseServer
 				return BusinessErrorCodes.ERROR_MAIL_LISTS_PACKAGE_ITEM_NOT_FOUND;
 
 			// place log record
-			TaskManager.StartTask("MAIL_LIST", "DELETE", origItem.Name);
-			TaskManager.ItemId = itemId;
+            TaskManager.StartTask("MAIL_LIST", "DELETE", origItem.Name, itemId);
 
 			try
 			{
@@ -1073,7 +1065,8 @@ namespace WebsitePanel.EnterpriseServer
 				}
 
 				TaskManager.ItemId = itemId;
-				return itemId;
+				
+                return itemId;
 			}
 			catch (Exception ex)
 			{
@@ -1101,8 +1094,7 @@ namespace WebsitePanel.EnterpriseServer
 			if (packageCheck < 0) return packageCheck;
 
 			// place log record
-			TaskManager.StartTask("MAIL_DOMAIN", "UPDATE", origItem.Name);
-			TaskManager.ItemId = item.Id;
+            TaskManager.StartTask("MAIL_DOMAIN", "UPDATE", origItem.Name, item.Id);
 
 			// get service
 			MailServer mail = new MailServer();
@@ -1148,8 +1140,7 @@ namespace WebsitePanel.EnterpriseServer
 				return BusinessErrorCodes.ERROR_MAIL_DOMAIN_IS_NOT_EMPTY; // mail domain is not empty
 
 			// place log record
-			TaskManager.StartTask("MAIL_DOMAIN", "DELETE", origItem.Name);
-			TaskManager.ItemId = itemId;
+            TaskManager.StartTask("MAIL_DOMAIN", "DELETE", origItem.Name, itemId);
 
 			try
 			{
@@ -1222,10 +1213,9 @@ namespace WebsitePanel.EnterpriseServer
 				return BusinessErrorCodes.ERROR_DOMAIN_PACKAGE_ITEM_NOT_FOUND;
 
 			// place log record
-			TaskManager.StartTask("MAIL_DOMAIN", "ADD_POINTER", mailDomain.Name);
-			TaskManager.ItemId = itemId;
-			TaskManager.TaskParameters["Domain ID"] = domain.DomainId;
-			TaskManager.WriteParameter("Domain pointer", domain.DomainName);
+            TaskManager.StartTask("MAIL_DOMAIN", "ADD_POINTER", mailDomain.Name, itemId, new BackgroundTaskParameter("Domain ID", domain.DomainId));
+			
+            TaskManager.WriteParameter("Domain pointer", domain.DomainName);
 
 			try
 			{
@@ -1277,10 +1267,12 @@ namespace WebsitePanel.EnterpriseServer
 				return BusinessErrorCodes.ERROR_DOMAIN_PACKAGE_ITEM_NOT_FOUND;
 
 			// place log record
-			TaskManager.StartTask("MAIL_DOMAIN", "DELETE_POINTER", mailDomain.Name);
-			TaskManager.ItemId = itemId;
-			TaskManager.TaskParameters["Domain ID"] = domain.DomainId;
-			TaskManager.WriteParameter("Domain pointer", domain.DomainName);
+
+            IList<BackgroundTaskParameter> parameters = new List<BackgroundTaskParameter>();
+            parameters.Add(new BackgroundTaskParameter("Domain ID", domain.DomainId));
+            parameters.Add(new BackgroundTaskParameter("Domain pointer", domain.DomainName));
+
+			TaskManager.StartTask("MAIL_DOMAIN", "DELETE_POINTER", mailDomain.Name, itemId, parameters);
 
 			try
 			{

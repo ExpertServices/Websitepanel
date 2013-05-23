@@ -268,8 +268,7 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_SHAREPOINT_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("SHAREPOINT", "DELETE_SITE", origItem.Name);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("SHAREPOINT", "DELETE_SITE", origItem.Name, itemId);
 
             try
             {
@@ -340,8 +339,7 @@ namespace WebsitePanel.EnterpriseServer
                 return null;
 
             // place log record
-            TaskManager.StartTask("SHAREPOINT", "BACKUP_SITE", item.Name);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("SHAREPOINT", "BACKUP_SITE", item.Name, itemId);
 
             try
             {
@@ -432,8 +430,7 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("SHAREPOINT", "RESTORE_SITE", item.Name);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("SHAREPOINT", "RESTORE_SITE", item.Name, itemId);
 
             try
             {
@@ -520,8 +517,8 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("SHAREPOINT", "INSTALL_WEBPARTS", item.Name);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("SHAREPOINT", "INSTALL_WEBPARTS", item.Name, itemId);
+
             TaskManager.WriteParameter("Package file", packageFile);
 
             try
@@ -592,8 +589,8 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("SHAREPOINT", "UNINSTALL_WEBPARTS", item.Name);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("SHAREPOINT", "UNINSTALL_WEBPARTS", item.Name, itemId);
+
             TaskManager.WriteParameter("Package name", packageName);
 
             try
@@ -736,8 +733,7 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("SHAREPOINT", "UPDATE_USER", origItem.Name);
-            TaskManager.ItemId = item.Id;
+            TaskManager.StartTask("SHAREPOINT", "UPDATE_USER", origItem.Name, item.Id);
 
             try
             {
@@ -785,8 +781,7 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_SHAREPOINT_USERS_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("SHAREPOINT", "DELETE_USER", origItem.Name);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("SHAREPOINT", "DELETE_USER", origItem.Name, itemId);
 
             try
             {
@@ -925,8 +920,7 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("SHAREPOINT", "UPDATE_GROUP", origItem.Name);
-            TaskManager.ItemId = item.Id;
+            TaskManager.StartTask("SHAREPOINT", "UPDATE_GROUP", origItem.Name, item.Id);
 
             try
             {
@@ -962,8 +956,7 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_SHAREPOINT_GROUPS_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("SHAREPOINT", "DELETE_GROUP", origItem.Name);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("SHAREPOINT", "DELETE_GROUP", origItem.Name, itemId);
 
             try
             {

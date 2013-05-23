@@ -43,27 +43,29 @@ namespace WebsitePanel.EnterpriseServer
             //  - DISKSPACE_OVERUSED
             //  - BANDWIDTH_OVERUSED
 
+            BackgroundTask topTask = TaskController.GetTopTask();
+
             // get the list of all packages
-            List<PackageInfo> packages = PackageController.GetPackagePackages(TaskManager.PackageId, false);
+            List<PackageInfo> packages = PackageController.GetPackagePackages(topTask.PackageId, false);
             TaskManager.Write("Packages to verify: " + packages.Count.ToString());
 
-            bool checkDiskspace = (String.Compare((string)TaskManager.TaskParameters["DISKSPACE_OVERUSED"], "true", true) == 0);
-            bool checkBandwidth = (String.Compare((string)TaskManager.TaskParameters["BANDWIDTH_OVERUSED"], "true", true) == 0);
+            bool checkDiskspace = (String.Compare((string)topTask.GetParamValue("DISKSPACE_OVERUSED"), "true", true) == 0);
+            bool checkBandwidth = (String.Compare((string)topTask.GetParamValue("BANDWIDTH_OVERUSED"), "true", true) == 0);
 
-			bool suspendOverused = Convert.ToBoolean(TaskManager.TaskParameters["SUSPEND_OVERUSED"]);
+			bool suspendOverused = Convert.ToBoolean(topTask.GetParamValue("SUSPEND_OVERUSED"));
 
-			bool sendWarningEmail = Convert.ToBoolean(TaskManager.TaskParameters["SEND_WARNING_EMAIL"]);
-			bool sendSuspensionEmail = Convert.ToBoolean(TaskManager.TaskParameters["SEND_SUSPENSION_EMAIL"]);
-			int warningUsageThreshold = Convert.ToInt32(TaskManager.TaskParameters["WARNING_USAGE_THRESHOLD"]);
-			int suspensionUsageThreshold = Convert.ToInt32(TaskManager.TaskParameters["SUSPENSION_USAGE_THRESHOLD"]);
-			string warningMailFrom = Convert.ToString(TaskManager.TaskParameters["WARNING_MAIL_FROM"]);
-			string warningMailBcc = Convert.ToString(TaskManager.TaskParameters["WARNING_MAIL_BCC"]);
-			string warningMailSubject = Convert.ToString(TaskManager.TaskParameters["WARNING_MAIL_SUBJECT"]);
-			string warningMailBody = Convert.ToString(TaskManager.TaskParameters["WARNING_MAIL_BODY"]);
-			string suspensionMailFrom = Convert.ToString(TaskManager.TaskParameters["SUSPENSION_MAIL_FROM"]);
-			string suspensionMailBcc = Convert.ToString(TaskManager.TaskParameters["SUSPENSION_MAIL_BCC"]);
-			string suspensionMailSubject = Convert.ToString(TaskManager.TaskParameters["SUSPENSION_MAIL_SUBJECT"]);
-			string suspensionMailBody = Convert.ToString(TaskManager.TaskParameters["SUSPENSION_MAIL_BODY"]);
+			bool sendWarningEmail = Convert.ToBoolean(topTask.GetParamValue("SEND_WARNING_EMAIL"));
+			bool sendSuspensionEmail = Convert.ToBoolean(topTask.GetParamValue("SEND_SUSPENSION_EMAIL"));
+			int warningUsageThreshold = Convert.ToInt32(topTask.GetParamValue("WARNING_USAGE_THRESHOLD"));
+			int suspensionUsageThreshold = Convert.ToInt32(topTask.GetParamValue("SUSPENSION_USAGE_THRESHOLD"));
+			string warningMailFrom = Convert.ToString(topTask.GetParamValue("WARNING_MAIL_FROM"));
+			string warningMailBcc = Convert.ToString(topTask.GetParamValue("WARNING_MAIL_BCC"));
+			string warningMailSubject = Convert.ToString(topTask.GetParamValue("WARNING_MAIL_SUBJECT"));
+			string warningMailBody = Convert.ToString(topTask.GetParamValue("WARNING_MAIL_BODY"));
+			string suspensionMailFrom = Convert.ToString(topTask.GetParamValue("SUSPENSION_MAIL_FROM"));
+			string suspensionMailBcc = Convert.ToString(topTask.GetParamValue("SUSPENSION_MAIL_BCC"));
+			string suspensionMailSubject = Convert.ToString(topTask.GetParamValue("SUSPENSION_MAIL_SUBJECT"));
+			string suspensionMailBody = Convert.ToString(topTask.GetParamValue("SUSPENSION_MAIL_BODY"));
 
             int suspendedPackages = 0;
 

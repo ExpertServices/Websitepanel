@@ -191,8 +191,7 @@ namespace WebsitePanel.EnterpriseServer
             if (packageCheck < 0) return packageCheck;
 
             // place log record
-            TaskManager.StartTask("ODBC_DSN", "UPDATE", origItem.Name);
-            TaskManager.ItemId = item.Id;
+            TaskManager.StartTask("ODBC_DSN", "UPDATE", origItem.Name, item.Id);
 
             try
             {
@@ -265,8 +264,7 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_OS_DSN_PACKAGE_ITEM_NOT_FOUND;
 
             // place log record
-            TaskManager.StartTask("ODBC_DSN", "DELETE", origItem.Name);
-            TaskManager.ItemId = itemId;
+            TaskManager.StartTask("ODBC_DSN", "DELETE", origItem.Name, itemId);
 
             try
             {
@@ -316,8 +314,7 @@ namespace WebsitePanel.EnterpriseServer
             ServerInfo server = ServerController.GetServerById(serverId);
 
             // place log record
-            TaskManager.StartTask("SERVER", "RESET_TERMINAL_SESSION", sessionId);
-            TaskManager.ItemId = serverId;
+            TaskManager.StartTask("SERVER", "RESET_TERMINAL_SESSION", sessionId, serverId);
 
             try
             {
@@ -352,8 +349,7 @@ namespace WebsitePanel.EnterpriseServer
             ServerInfo server = ServerController.GetServerById(serverId);
 
             // place log record
-            TaskManager.StartTask("SERVER", "TERMINATE_SYSTEM_PROCESS", pid);
-            TaskManager.ItemId = serverId;
+            TaskManager.StartTask("SERVER", "TERMINATE_SYSTEM_PROCESS", pid, serverId);
 
             try
             {
@@ -388,8 +384,7 @@ namespace WebsitePanel.EnterpriseServer
             ServerInfo server = ServerController.GetServerById(serverId);
 
             // place log record
-            TaskManager.StartTask("SERVER", "CHANGE_WINDOWS_SERVICE_STATUS", id);
-            TaskManager.ItemId = serverId;
+            TaskManager.StartTask("SERVER", "CHANGE_WINDOWS_SERVICE_STATUS", id, serverId);
             TaskManager.WriteParameter("New Status", status);
 
             try
@@ -555,8 +550,7 @@ namespace WebsitePanel.EnterpriseServer
                 | DemandAccount.IsActive);
             if (accountCheck < 0) return accountCheck;
 
-            TaskManager.StartTask("SERVER", "CLEAR_EVENT_LOG", logName);
-            TaskManager.ItemId = serverId;
+            TaskManager.StartTask("SERVER", "CLEAR_EVENT_LOG", logName, serverId);
 
             try
             {
@@ -587,8 +581,7 @@ namespace WebsitePanel.EnterpriseServer
             ServerInfo server = ServerController.GetServerById(serverId);
 
             // place log record
-            TaskManager.StartTask("SERVER", "REBOOT");
-            TaskManager.ItemId = serverId;
+            TaskManager.StartTask("SERVER", "REBOOT", serverId);
 
             try
             {

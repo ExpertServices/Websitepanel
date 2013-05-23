@@ -40,9 +40,11 @@ namespace WebsitePanel.EnterpriseServer
             //  - FOLDER
             //  - ZIP_FILE
 
+            BackgroundTask topTask = TaskController.GetTopTask();
+
             // get input parameters
-            string filesList = (string)TaskManager.TaskParameters["FOLDER"];
-            string zipFile = (string)TaskManager.TaskParameters["ZIP_FILE"];
+            string filesList = (string)topTask.GetParamValue("FOLDER");
+            string zipFile = (string)topTask.GetParamValue("ZIP_FILE");
 
             // check input parameters
             if (String.IsNullOrEmpty(filesList))
@@ -68,7 +70,7 @@ namespace WebsitePanel.EnterpriseServer
             zipFile = Utils.ReplaceStringVariable(zipFile, "time", time);
 
             // zip files and folders
-            FilesController.ZipFiles(TaskManager.PackageId, new string[] { filesList }, zipFile);
+            FilesController.ZipFiles(topTask.PackageId, new string[] { filesList }, zipFile);
         }
     }
 }

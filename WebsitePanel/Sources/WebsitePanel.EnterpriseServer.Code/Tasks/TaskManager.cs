@@ -42,7 +42,6 @@ namespace WebsitePanel.EnterpriseServer
 {
     public class TaskManager
     {
-        private static Hashtable tasks = Hashtable.Synchronized(new Hashtable());
         private static Hashtable eventHandlers = null;
 
         // purge timer, used for killing old tasks from the hash
@@ -51,81 +50,120 @@ namespace WebsitePanel.EnterpriseServer
                                             60000, // start from 1 minute
                                             60000); // invoke each minute
 
-        private static BackgroundTask RootTask
-        {
-            get { return TasksStack.Count > 0 ? TasksStack[0] : null; }
-        }
-
-        private static BackgroundTask TopTask
-        {
-            get { return TasksStack.Count > 0 ? TasksStack[TasksStack.Count - 1] : null; }
-        }
-
-        private static List<BackgroundTask> TasksStack
-        {
-            get
-            {
-                List<BackgroundTask> stack = (List<BackgroundTask>)Thread.GetData(Thread.GetNamedDataSlot("BackgroundTasksStack"));
-                if (stack == null)
-                {
-                    stack = new List<BackgroundTask>();
-                    Thread.SetData(Thread.GetNamedDataSlot("BackgroundTasksStack"), stack);
-                }
-                return stack;
-            }
-        }
 
         public static void StartTask(string source, string taskName)
         {
-            StartTask(null, source, taskName, null);
+            StartTask(source, taskName, 0);
+        }
+
+        public static void StartTask(string source, string taskName, int itemId)
+        {
+            StartTask(source, taskName, 0, new List<BackgroundTaskParameter>());
+        }
+
+        public static void StartTask(string source, string taskName, int itemId, BackgroundTaskParameter parameter)
+        {
+            StartTask(source, taskName, null, itemId, parameter);
+        }
+
+        public static void StartTask(string source, string taskName, int itemId, IList<BackgroundTaskParameter> parameters)
+        {
+            StartTask(source, taskName, null, itemId, parameters);
         }
 
         public static void StartTask(string source, string taskName, object itemName)
         {
-            StartTask(null, source, taskName, itemName);
+            StartTask(source, taskName, itemName, 0);
         }
 
-        public static void StartTask(string taskId, string source, string taskName, object itemName)
+        public static void StartTask(string source, string taskName, object itemName, int itemId)
         {
-            // create new task object
-            BackgroundTask task = new BackgroundTask();
-            task.TaskId = String.IsNullOrEmpty(taskId) ? Guid.NewGuid().ToString("N") : taskId;
-            task.UserId = SecurityContext.User.UserId;
-            task.EffectiveUserId = SecurityContext.User.IsPeer ? SecurityContext.User.OwnerId : task.UserId;
-            task.StartDate = DateTime.Now;
-            task.Source = source;
-            task.TaskName = taskName;
-            task.ItemName = itemName != null ? itemName.ToString() : "";
-            task.Severity = 0; //info
-            task.TaskThread = Thread.CurrentThread;
+            StartTask(source, taskName, itemName, itemId, new List<BackgroundTaskParameter>());
+        }
 
-            // new "parent" task?
-            if (TasksStack.Count == 0)
+        public static void StartTask(string source, string taskName, object itemName, BackgroundTaskParameter parameter)
+        {
+            StartTask(source, taskName, itemName, 0, parameter);
+        }
+
+        public static void StartTask(string source, string taskName, object itemName, IList<BackgroundTaskParameter> parameters)
+        {
+            StartTask(source, taskName, itemName, 0, parameters);
+        }
+
+        public static void StartTask(string source, string taskName, object itemName, int itemId, BackgroundTaskParameter parameter)
+        {
+            StartTask(source, taskName, itemName, itemId, 0, parameter);
+        }
+
+        public static void StartTask(string source, string taskName, object itemName, int itemId, IList<BackgroundTaskParameter> parameters)
+        {
+            StartTask(source, taskName, itemName, itemId, 0, 0, -1, parameters);
+        }
+
+        public static void StartTask(string source, string taskName, object itemName, int itemId, int packageId, BackgroundTaskParameter parameter)
+        {
+            IList<BackgroundTaskParameter> parameters = new List<BackgroundTaskParameter>();
+            if (parameter != null)
             {
-                // register task globally
-                tasks[task.TaskId] = task;
+                parameters.Add(parameter);
             }
-            else
-            {
-                // child task
-                // add log record to the root task
-                BackgroundTaskLogRecord logRecord = new BackgroundTaskLogRecord();
-                logRecord.InnerTaskStart = true;
-                logRecord.Text = source + "_" + taskName;
-                logRecord.TextParameters = new string[] { itemName != null ? itemName.ToString() : "" };
-                logRecord.TextIdent = TasksStack.Count - 1;
-                RootTask.LogRecords.Add(logRecord);
 
-                // change log records destination
-                // for nested task
-                task.LogRecords = RootTask.LogRecords;
+            StartTask(source, taskName, itemName, itemId, 0, packageId, -1, parameters);
+        }
+
+        public static void StartTask(string taskId, string source, string taskName, object itemName, int itemId)
+        {
+            StartTask(taskId, source, taskName, itemName, itemId, 0, 0, -1, new List<BackgroundTaskParameter>());
+        }
+
+        public static void StartTask(string taskId, string source, string taskName, object itemName, int itemId, int packageId)
+        {
+            StartTask(taskId, source, taskName, itemName, itemId, 0, packageId, -1, new List<BackgroundTaskParameter>());
+        }
+
+        public static void StartTask(string source, string taskName, object itemName, int itemId,
+            int scheduleId, int packageId, int maximumExecutionTime, IList<BackgroundTaskParameter> parameters)
+        {
+            StartTask(null, source, taskName, itemName, itemId, scheduleId, packageId, maximumExecutionTime, new List<BackgroundTaskParameter>());
+        }
+
+        public static void StartTask(string taskId, string source, string taskName, object itemName, int itemId,
+            int scheduleId, int packageId, int maximumExecutionTime, IList<BackgroundTaskParameter> parameters)
+        {
+            if (String.IsNullOrEmpty(taskId))
+            {
+                taskId = Guid.NewGuid().ToString("N");
+            }
+
+            int userId = SecurityContext.User.UserId;
+            int effectiveUserId = SecurityContext.User.IsPeer ? SecurityContext.User.OwnerId : userId;
+            String itemNameStr = itemName != null ? itemName.ToString() : String.Empty;
+
+            BackgroundTask task = new BackgroundTask(taskId, userId, effectiveUserId, source, taskName, itemNameStr,
+                                                     itemId, scheduleId, packageId, maximumExecutionTime, parameters);
+
+            List<BackgroundTask> tasks = TaskController.GetTasks();
+
+            if (tasks.Count > 0)
+            {
+                BackgroundTask rootTask = tasks[0];
+
+                BackgroundTaskLogRecord log = new BackgroundTaskLogRecord(
+                    rootTask.Id,
+                    tasks.Count - 1,
+                    true,
+                    String.Format("{0}_{1}", source, taskName),
+                    new string[] {itemNameStr});
+
+
+                TaskController.AddLog(log);
             }
 
             // call event handler
             CallTaskEventHandler(task, false);
 
-            // push task on the stack
-            TasksStack.Add(task);
+            TaskController.AddTask(task);
         }
 
         public static void WriteParameter(string parameterName, object parameterValue)
@@ -150,8 +188,11 @@ namespace WebsitePanel.EnterpriseServer
         {
             // ERROR
             WriteLogRecord(2, ex.Message, ex.StackTrace);
-            return new Exception((TopTask != null) ? String.Format("Error executing '{0}' task on '{1}' {2}",
-                TopTask.TaskName, TopTask.ItemName, TopTask.Source) : String.Format("Error executing task"), ex);
+
+            BackgroundTask topTask = TaskController.GetTopTask();
+
+            return new Exception((topTask != null) ? String.Format("Error executing '{0}' task on '{1}' {2}",
+                topTask.TaskName, topTask.ItemName, topTask.Source) : String.Format("Error executing task"), ex);
         }
 
         public static void WriteError(Exception ex, string text, params string[] textParameters)
@@ -176,63 +217,124 @@ namespace WebsitePanel.EnterpriseServer
 
         private static void WriteLogRecord(int severity, string text, string stackTrace, params string[] textParameters)
         {
-            BackgroundTaskLogRecord logRecord = new BackgroundTaskLogRecord();
-            logRecord.Severity = severity;
-            logRecord.Text = text;
-            logRecord.TextParameters = textParameters;
-            logRecord.TextIdent = TasksStack.Count - 1;
-            logRecord.ExceptionStackTrace = stackTrace;
-            if (RootTask != null)
+            List<BackgroundTask> tasks = TaskController.GetTasks();
+            
+            if (tasks.Count > 0)
             {
-                RootTask.LogRecords.Add(logRecord);
-                RootTask.LastLogRecord = logRecord;
+                BackgroundTask rootTask = tasks[0];
 
-                // change entire task severity
-                if (severity > RootTask.Severity)
-                    RootTask.Severity = severity;
+                BackgroundTaskLogRecord log = new BackgroundTaskLogRecord(
+                    rootTask.Id,
+                    tasks.Count - 1,
+                    false,
+                    text,
+                    stackTrace,
+                    textParameters);
+
+                TaskController.AddLog(log);
+
+                if (severity > rootTask.Severity)
+                {
+                    rootTask.Severity = severity;
+
+                    TaskController.UpdateTask(rootTask);
+                }
             }
         }
 
         public static void CompleteTask()
         {
-            if (TasksStack.Count == 0)
+            List<BackgroundTask> tasks = TaskController.GetTasks();
+
+            if (tasks.Count == 0)
                 return;
 
+            BackgroundTask topTask = TaskController.GetTopTask();
+
             // call event handler
-            CallTaskEventHandler(TopTask, true);
+            CallTaskEventHandler(topTask, true);
 
             // finish task
-            TopTask.FinishDate = DateTime.Now;
-            TopTask.Completed = true;
+            topTask.FinishDate = DateTime.Now;
+            topTask.Completed = true;
 
             // write task execution result to database
-            if (TasksStack.Count == 1) // single task
+            if (tasks.Count == 1) // single task
             {
                 // unregister task globally
                 // tasks.Remove(TopTask.TaskId);
 
                 // write to database
-                string itemName = TopTask.ItemName != null ? TopTask.ItemName.ToString() : null;
-                string executionLog = FormatExecutionLog(TopTask);
-                UserInfo user = UserController.GetUserInternally(TopTask.UserId);
+                topTask.Logs = TaskController.GetLogs(topTask.Id, topTask.StartDate);
+
+                string executionLog = FormatExecutionLog(topTask);
+                UserInfo user = UserController.GetUserInternally(topTask.UserId);
                 string username = user != null ? user.Username : null;
 
-                AuditLog.AddAuditLogRecord(TopTask.TaskId, TopTask.Severity, TopTask.UserId,
-                    username, TopTask.PackageId, TopTask.ItemId,
-                    itemName, TopTask.StartDate, TopTask.FinishDate, TopTask.Source,
-                    TopTask.TaskName, executionLog);
+                AuditLog.AddAuditLogRecord(topTask.TaskId, topTask.Severity, topTask.UserId,
+                    username, topTask.PackageId, topTask.ItemId,
+                    topTask.ItemName, topTask.StartDate, topTask.FinishDate, topTask.Source,
+                    topTask.TaskName, executionLog);
             }
 
-            // update last finish time
-            SchedulerJob schedule = SchedulerController.GetScheduleComplete(TopTask.ItemId);
-            if (schedule != null)
+            TaskController.UpdateTask(topTask);
+        }
+
+        public static void UpdateParam(String name, Object value)
+        {
+            BackgroundTask topTask = TaskController.GetTopTask();
+
+            if (topTask == null)
+                return;
+
+            topTask.UpdateParamValue(name, value);
+
+            TaskController.UpdateTask(topTask);
+        }
+
+        public static int ItemId
+        {
+            set
             {
-                schedule.ScheduleInfo.LastFinish = DateTime.Now;
-                SchedulerController.UpdateSchedule(schedule.ScheduleInfo);
+                BackgroundTask topTask = TaskController.GetTopTask();
+
+                if (topTask == null)
+                    return;
+
+                topTask.ItemId = value;
+
+                TaskController.UpdateTask(topTask);
+            }
+        }
+
+        public static String ItemName
+        {
+            set
+            {
+                BackgroundTask topTask = TaskController.GetTopTask();
+
+                if (topTask == null)
+                    return;
+
+                topTask.ItemName = value;
+
+                TaskController.UpdateTask(topTask);
+            }
+        }
+
+        public static void UpdateParams(Hashtable parameters)
+        {
+            BackgroundTask topTask = TaskController.GetTopTask();
+
+            if (topTask == null)
+                return;
+
+            foreach (string key in parameters.Keys)
+            {
+                topTask.UpdateParamValue(key, parameters[key]);
             }
 
-            // remove task from the stack
-            TasksStack.RemoveAt(TasksStack.Count - 1);
+            TaskController.UpdateTask(topTask);
         }
 
         static string FormatExecutionLog(BackgroundTask task)
@@ -244,19 +346,19 @@ namespace WebsitePanel.EnterpriseServer
 
             // parameters
             writer.WriteStartElement("parameters");
-            foreach (string name in task.Parameters.Keys)
+            foreach (BackgroundTaskParameter param in task.Params)
             {
-                string val = task.Parameters[name] != null ? task.Parameters[name].ToString() : "";
                 writer.WriteStartElement("parameter");
-                writer.WriteAttributeString("name", name);
-                writer.WriteString(val);
+                writer.WriteAttributeString("name", param.Name);
+                writer.WriteString(param.Value.ToString());
+
                 writer.WriteEndElement();
             }
             writer.WriteEndElement(); // parameters
 
             // records
             writer.WriteStartElement("records");
-            foreach (BackgroundTaskLogRecord record in task.LogRecords)
+            foreach (BackgroundTaskLogRecord record in task.Logs)
             {
                 writer.WriteStartElement("record");
                 writer.WriteAttributeString("severity", record.Severity.ToString());
@@ -289,133 +391,84 @@ namespace WebsitePanel.EnterpriseServer
 
         static void PurgeCompletedTasks(object obj)
         {
-            // remove completed tasks
-            List<string> completedTasks = new List<string>();
-            foreach (BackgroundTask task in tasks.Values)
+            List<BackgroundTask> tasks = TaskController.GetTasks();
+
+            foreach (BackgroundTask task in tasks)
             {
                 if (task.MaximumExecutionTime != -1
-                    && ((TimeSpan)(DateTime.Now - task.StartDate)).TotalSeconds > task.MaximumExecutionTime)
+                    && ((TimeSpan) (DateTime.Now - task.StartDate)).TotalSeconds > task.MaximumExecutionTime)
                 {
-                    // terminate task
-                    try
-                    {
-                        task.TaskThread.Abort();
-                    }
-                    catch
-                    {
-                        // nope
-                    }
+                    task.Status = BackgroundTaskStatus.Abort;
 
-                    // add to the list
-                    completedTasks.Add(task.TaskId);
-                }
-
-                if ((task.FinishDate != DateTime.MinValue
-                    && ((TimeSpan)(DateTime.Now - task.FinishDate)).TotalMinutes > 2))
-                {
-                    // add to the list
-                    completedTasks.Add(task.TaskId);
+                    TaskController.UpdateTask(task);
                 }
             }
-
-            // remove tasks
-            foreach (string taskId in completedTasks)
-            {
-                BackgroundTask task = GetTask(taskId);
-                if (task != null)
-                {
-                    // update last finish time
-                    SchedulerJob schedule = SchedulerController.GetScheduleComplete(task.ItemId);
-                    if (schedule != null)
-                    {
-                        schedule.ScheduleInfo.LastFinish = DateTime.Now;
-                        SchedulerController.UpdateSchedule(schedule.ScheduleInfo);
-                    }
-                }
-
-                tasks.Remove(taskId);
-            }
-        }
-
-        public static int PackageId
-        {
-            get { return TopTask.PackageId; }
-            set { TopTask.PackageId = value; }
-        }
-
-        public static int ItemId
-        {
-            get { return TopTask.ItemId; }
-            set { TopTask.ItemId = value; }
-        }
-
-        public static string ItemName
-        {
-            get { return TopTask.ItemName; }
-            set { TopTask.ItemName = value; }
-        }
-
-        public static string TaskName
-        {
-            get { return TopTask.TaskName; }
-        }
-
-        public static string TaskSource
-        {
-            get { return TopTask.Source; }
         }
 
         public static int IndicatorMaximum
         {
-            get { return TopTask.IndicatorMaximum; }
-            set { TopTask.IndicatorMaximum = value; }
+            set
+            {
+                BackgroundTask topTask = TaskController.GetTopTask();
+                topTask.IndicatorMaximum = value;
+
+                TaskController.UpdateTask(topTask);
+            }
         }
 
         public static int IndicatorCurrent
         {
-            get { return TopTask.IndicatorCurrent; }
-            set { TopTask.IndicatorCurrent = value; }
+            get
+            {
+                return TaskController.GetTopTask().IndicatorCurrent;
+            }
+            set
+            {
+                BackgroundTask topTask = TaskController.GetTopTask();
+                topTask.IndicatorCurrent = value;
+
+                TaskController.UpdateTask(topTask);
+            }
         }
 
         public static int MaximumExecutionTime
         {
-            get { return TopTask.MaximumExecutionTime; }
-            set { TopTask.MaximumExecutionTime = value; }
+            get
+            {
+                return TaskController.GetTopTask().MaximumExecutionTime;
+            }
+            set
+            {
+                BackgroundTask topTask = TaskController.GetTopTask();
+                topTask.MaximumExecutionTime = value;
+
+                TaskController.UpdateTask(topTask);
+            }
         }
 
-        public static int ScheduleId
+        public static bool HasErrors(BackgroundTask task)
         {
-            get { return TopTask.ScheduleId; }
-            set { TopTask.ScheduleId = value; }
-        }
-
-        public static bool HasErrors
-        {
-            get { return (TopTask.Severity == 2); }
+            return task.Severity == 2;
         }
 
         public static BackgroundTask GetTask(string taskId)
         {
-            BackgroundTask task = (BackgroundTask)tasks[taskId];
+            BackgroundTask task = TaskController.GetTask(taskId);
+
             if (task == null)
                 return null;
 
-            task.LastLogRecords.Clear();
             return task;
         }
 
         public static BackgroundTask GetTaskWithLogRecords(string taskId, DateTime startLogTime)
         {
             BackgroundTask task = GetTask(taskId);
+            
             if (task == null)
                 return null;
 
-            // fill log records
-            foreach (BackgroundTaskLogRecord record in task.LogRecords)
-            {
-                if (record.Date >= startLogTime)
-                    task.LastLogRecords.Add(record);
-            }
+            task.Logs = TaskController.GetLogs(task.Id, startLogTime);
 
             return task;
         }
@@ -425,7 +478,7 @@ namespace WebsitePanel.EnterpriseServer
             Dictionary<int, BackgroundTask> scheduledTasks = new Dictionary<int, BackgroundTask>();
             try
             {
-                foreach (BackgroundTask task in tasks.Values)
+                foreach (BackgroundTask task in TaskController.GetTasks())
                 {
                     if (task.ScheduleId > 0
                         && !task.Completed
@@ -441,7 +494,8 @@ namespace WebsitePanel.EnterpriseServer
 
         public static void SetTaskNotifyOnComplete(string taskId)
         {
-            BackgroundTask task = (BackgroundTask)tasks[taskId];
+            BackgroundTask task = GetTask(taskId);
+
             if (task == null)
                 return;
 
@@ -450,101 +504,46 @@ namespace WebsitePanel.EnterpriseServer
 
         public static void StopTask(string taskId)
         {
-            BackgroundTask task = (BackgroundTask)tasks[taskId];
+            BackgroundTask task = GetTask(taskId);
+
             if (task == null)
                 return;
 
-            try
-            {
-                task.TaskThread.Abort();
-            }
-            catch
-            {
-                // nope
-            }
-
-            // update last finish time
-            SchedulerJob schedule = SchedulerController.GetScheduleComplete(task.ItemId);
-            if (schedule != null)
-            {
-                schedule.ScheduleInfo.LastFinish = DateTime.Now;
-                SchedulerController.UpdateSchedule(schedule.ScheduleInfo);
-            }
-
-            // remove it from stack
-            tasks.Remove(taskId);
-        }
-
-        public static Hashtable TaskParameters
-        {
-            get { return TopTask.Parameters; }
-        }
-
-        public static int GetTasksNumber()
-        {
-            return tasks.Count;
+            task.Status = BackgroundTaskStatus.Abort;
+            
+            TaskController.UpdateTask(task);
         }
 
         public static List<BackgroundTask> GetUserTasks(int userId)
         {
             List<BackgroundTask> list = new List<BackgroundTask>();
 
-            int effectiveUserId = SecurityContext.User.IsPeer ? SecurityContext.User.OwnerId : SecurityContext.User.UserId;
-            Dictionary<int, BackgroundTask> scheduledTasks = GetScheduledTasks();
+            // try to get user first
+            UserInfo user = UserController.GetUser(userId);
+            if (user == null)
+                return list; // prohibited user
 
-            List<ScheduleInfo> scheduleList = SchedulerController.GetRunningSchedules();
-
-            foreach (var scheduleInfo in scheduleList)
+            // get user tasks
+            foreach (BackgroundTask task in TaskController.GetTasks())
             {
-                if (effectiveUserId == userId && scheduleInfo.LastRun > scheduleInfo.LastFinish)
-                {
-                    if (scheduledTasks.ContainsKey(scheduleInfo.ScheduleId) && !scheduledTasks[scheduleInfo.ScheduleId].Completed)
-                    {
-                        list.Add(scheduledTasks[scheduleInfo.ScheduleId]);
-                    }
-                    else
-                    {
-                        list.Add(new BackgroundTask
-                        {
-                            TaskId = "",
-                            ItemId = scheduleInfo.ScheduleId,
-                            StartDate = scheduleInfo.LastRun,
-                            TaskName = scheduleInfo.ScheduleName,
-                            UserId = SecurityContext.User.UserId,
-                            Source = "RUN_SCHEDULE",
-                            Severity = 0,
-                            ItemName = scheduleInfo.ScheduleName,
-                            Completed = false
-                        });
-                    }
-                }
+                if (task.EffectiveUserId == userId && !task.Completed)
+                    list.Add(task);
             }
-
             return list;
         }
 
         public static List<BackgroundTask> GetUserCompletedTasks(int userId)
         {
-            // get user tasks
-            List<BackgroundTask> list = GetUserTasks(userId);
+            return new List<BackgroundTask>();
+        }
 
-            // extract completed only
-            List<BackgroundTask> completedTasks = new List<BackgroundTask>();
-            foreach (BackgroundTask task in list)
-            {
-                if (task.Completed && task.NotifyOnComplete)
-                {
-                    // add to the list
-                    completedTasks.Add(task);
-
-                    // remove from hash
-                    tasks.Remove(task.TaskId);
-                }
-            }
-            return completedTasks;
+        public static int GetTasksNumber()
+        {
+            return TaskController.GetTasks().Count;
         }
 
         #region Private Helpers
+
         private static void CallTaskEventHandler(BackgroundTask task, bool onComplete)
         {
             string[] taskHandlers = GetTaskEventHandlers(task.Source, task.TaskName);
@@ -630,6 +629,7 @@ namespace WebsitePanel.EnterpriseServer
             List<string> handlersList = (List<string>)eventHandlers[fullTaskName];
             return handlersList == null ? null : handlersList.ToArray();
         }
+        
         #endregion
 
 
@@ -677,14 +677,6 @@ namespace WebsitePanel.EnterpriseServer
             CompleteResultTask(null);
         }
 
-        public static T StartResultTask<T>(string source, string taskName, Guid taskId) where T : ResultObject, new()
-        {
-            StartTask(taskId.ToString(), source, taskName, null);
-            T res = new T();
-            res.IsSuccess = true;
-            return res;
-        }
-
         public static T StartResultTask<T>(string source, string taskName) where T : ResultObject, new()
         {
             StartTask(source, taskName);
@@ -693,6 +685,69 @@ namespace WebsitePanel.EnterpriseServer
             return res;
         }
 
+        public static T StartResultTask<T>(string source, string taskName, object itemName) where T : ResultObject, new()
+        {
+            StartTask(source, taskName, itemName);
+            T res = new T();
+            res.IsSuccess = true;
+            return res;
+        }
+
+        public static T StartResultTask<T>(string source, string taskName, object itemName, int packageId) where T : ResultObject, new()
+        {
+            StartTask(source, taskName, itemName, 0, packageId, null);
+            T res = new T();
+            res.IsSuccess = true;
+            return res;
+        }
+
+        public static T StartResultTask<T>(string source, string taskName, int packageId) where T : ResultObject, new()
+        {
+            StartTask(source, taskName, null, 0, packageId, null);
+            T res = new T();
+            res.IsSuccess = true;
+            return res;
+        }
+
+        public static T StartResultTask<T>(string source, string taskName, int itemId, BackgroundTaskParameter parameter) where T : ResultObject, new()
+        {
+            StartTask(source, taskName, itemId, parameter);
+            T res = new T();
+            res.IsSuccess = true;
+            return res;
+        }
+
+        public static T StartResultTask<T>(string source, string taskName, int itemId, IList<BackgroundTaskParameter> parameters) where T : ResultObject, new()
+        {
+            StartTask(source, taskName, itemId, parameters);
+            T res = new T();
+            res.IsSuccess = true;
+            return res;
+        }
+
+        public static T StartResultTask<T>(string source, string taskName, int itemId, object itemName, int packageId) where T : ResultObject, new()
+        {
+            StartTask(source, taskName, itemName, itemId, packageId, null);
+            T res = new T();
+            res.IsSuccess = true;
+            return res;
+        }
+
+        public static T StartResultTask<T>(string source, string taskName, Guid taskId, object itemName, int packageId) where T : ResultObject, new()
+        {
+            StartTask(taskId.ToString(), source, taskName, itemName, 0, packageId);
+            T res = new T();
+            res.IsSuccess = true;
+            return res;
+        }
+
+        public static T StartResultTask<T>(string source, string taskName, Guid taskId, int itemId, object itemName, int packageId) where T : ResultObject, new()
+        {
+            StartTask(taskId.ToString(), source, taskName, itemName, itemId, packageId);
+            T res = new T();
+            res.IsSuccess = true;
+            return res;
+        }
 
         #endregion
     }
