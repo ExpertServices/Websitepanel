@@ -1268,7 +1268,7 @@ namespace WebsitePanel.EnterpriseServer
 
 			// place log record
 
-            IList<BackgroundTaskParameter> parameters = new List<BackgroundTaskParameter>();
+            List<BackgroundTaskParameter> parameters = new List<BackgroundTaskParameter>();
             parameters.Add(new BackgroundTaskParameter("Domain ID", domain.DomainId));
             parameters.Add(new BackgroundTaskParameter("Domain pointer", domain.DomainName));
 

@@ -58,10 +58,8 @@ namespace WebsitePanel.EnterpriseServer
         public static bool IsScheduleActive(int scheduleId)
         {
             Dictionary<int, BackgroundTask> scheduledTasks = TaskManager.GetScheduledTasks();
-
-            ScheduleInfo scheduleInfo = SchedulerController.GetSchedule(scheduleId);
-
-            return scheduledTasks.ContainsKey(scheduleId) || scheduleInfo.LastRun > scheduleInfo.LastFinish;
+            
+            return scheduledTasks.ContainsKey(scheduleId);
         }
 
         public static void StartSchedule(SchedulerJob schedule)
@@ -85,8 +83,10 @@ namespace WebsitePanel.EnterpriseServer
 
         public static void ScheduleTasks()
         {
-            nextSchedule = SchedulerController.GetNextSchedule();
+            RunManualTasks();
 
+            nextSchedule = SchedulerController.GetNextSchedule();
+            
             // set timer
             if (nextSchedule != null)
             {
@@ -94,9 +94,7 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     // this will put the timer to sleep
                     scheduleTimer.Change(Timeout.Infinite, Timeout.Infinite);
-
-                    System.Threading.Thread.Sleep(1000);
-
+                    Thread.Sleep(1000);
                     // run immediately
                     RunNextSchedule(null);
                 }
@@ -106,9 +104,61 @@ namespace WebsitePanel.EnterpriseServer
                     TimeSpan ts = nextSchedule.ScheduleInfo.NextRun.Subtract(DateTime.Now);
                     if (ts < TimeSpan.Zero)
                         ts = TimeSpan.Zero; // cannot be negative !
-
                     // invoke after the timespan
                     scheduleTimer.Change((long)ts.TotalMilliseconds, Timeout.Infinite);
+                }
+            }
+        }
+
+        private static void RunManualTasks()
+        {
+            var tasks = TaskController.GetProcessTasks(BackgroundTaskStatus.Starting);
+            foreach (var task in tasks)
+            {
+                StartManualTask(task);
+            }
+            tasks = TaskController.GetProcessTasks(BackgroundTaskStatus.Stopping);
+            foreach (var task in tasks)
+            {
+                TaskManager.StopTask(task.TaskId);
+            }
+        }
+        private static void StartManualTask(BackgroundTask backgroundTask)
+        {
+            new Thread(() => RunBackgroundTask(backgroundTask)) { Priority = ThreadPriority.Highest }.Start();
+            
+            backgroundTask.Status = BackgroundTaskStatus.Run;
+            
+            TaskController.UpdateTask(backgroundTask);
+        }
+        private static void RunBackgroundTask(BackgroundTask backgroundTask)
+        {
+            UserInfo user = PackageController.GetPackageOwner(backgroundTask.PackageId);
+            
+            SecurityContext.SetThreadPrincipal(user.UserId);
+            
+            var schedule = SchedulerController.GetScheduleComplete(backgroundTask.ScheduleId);
+            
+            TaskManager.StartTask(backgroundTask.Source, backgroundTask.TaskName, backgroundTask.ItemName, backgroundTask.ItemId, backgroundTask.ScheduleId, backgroundTask.PackageId, backgroundTask.MaximumExecutionTime, backgroundTask.Params);
+            
+            try
+            {
+                var objTask = (SchedulerTask)Activator.CreateInstance(Type.GetType(schedule.Task.TaskType));
+                objTask.DoWork();
+                Thread.Sleep(100000);
+            }
+            catch (Exception ex)
+            {
+                TaskManager.WriteError(ex, "Error executing scheduled task");
+            }
+            finally
+            {
+                try
+                {
+                    TaskManager.CompleteTask();
+                }
+                catch (Exception)
+                {
                 }
             }
         }

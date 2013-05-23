@@ -37,6 +37,8 @@ using System.Web.Caching;
 using System.Xml;
 using System.Reflection;
 using WebsitePanel.Providers.Common;
+using System.Diagnostics;
+using System.Linq;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -66,7 +68,7 @@ namespace WebsitePanel.EnterpriseServer
             StartTask(source, taskName, null, itemId, parameter);
         }
 
-        public static void StartTask(string source, string taskName, int itemId, IList<BackgroundTaskParameter> parameters)
+        public static void StartTask(string source, string taskName, int itemId, List<BackgroundTaskParameter> parameters)
         {
             StartTask(source, taskName, null, itemId, parameters);
         }
@@ -86,7 +88,7 @@ namespace WebsitePanel.EnterpriseServer
             StartTask(source, taskName, itemName, 0, parameter);
         }
 
-        public static void StartTask(string source, string taskName, object itemName, IList<BackgroundTaskParameter> parameters)
+        public static void StartTask(string source, string taskName, object itemName, List<BackgroundTaskParameter> parameters)
         {
             StartTask(source, taskName, itemName, 0, parameters);
         }
@@ -96,14 +98,14 @@ namespace WebsitePanel.EnterpriseServer
             StartTask(source, taskName, itemName, itemId, 0, parameter);
         }
 
-        public static void StartTask(string source, string taskName, object itemName, int itemId, IList<BackgroundTaskParameter> parameters)
+        public static void StartTask(string source, string taskName, object itemName, int itemId, List<BackgroundTaskParameter> parameters)
         {
             StartTask(source, taskName, itemName, itemId, 0, 0, -1, parameters);
         }
 
         public static void StartTask(string source, string taskName, object itemName, int itemId, int packageId, BackgroundTaskParameter parameter)
         {
-            IList<BackgroundTaskParameter> parameters = new List<BackgroundTaskParameter>();
+            List<BackgroundTaskParameter> parameters = new List<BackgroundTaskParameter>();
             if (parameter != null)
             {
                 parameters.Add(parameter);
@@ -123,13 +125,13 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         public static void StartTask(string source, string taskName, object itemName, int itemId,
-            int scheduleId, int packageId, int maximumExecutionTime, IList<BackgroundTaskParameter> parameters)
+            int scheduleId, int packageId, int maximumExecutionTime, List<BackgroundTaskParameter> parameters)
         {
             StartTask(null, source, taskName, itemName, itemId, scheduleId, packageId, maximumExecutionTime, new List<BackgroundTaskParameter>());
         }
 
         public static void StartTask(string taskId, string source, string taskName, object itemName, int itemId,
-            int scheduleId, int packageId, int maximumExecutionTime, IList<BackgroundTaskParameter> parameters)
+            int scheduleId, int packageId, int maximumExecutionTime, List<BackgroundTaskParameter> parameters)
         {
             if (String.IsNullOrEmpty(taskId))
             {
@@ -507,11 +509,41 @@ namespace WebsitePanel.EnterpriseServer
             BackgroundTask task = GetTask(taskId);
 
             if (task == null)
+            {
                 return;
-
+            }
+            
             task.Status = BackgroundTaskStatus.Abort;
             
+            StopProcess(task.TaskId);
+            
             TaskController.UpdateTask(task);
+        }
+
+        public static void StopTask(BackgroundTask task)
+        {
+            if (task == null)
+            {
+                return;
+            }
+            
+            task.Status = BackgroundTaskStatus.Abort;
+            
+            StopProcess(task.TaskId);
+            
+            TaskController.UpdateTask(task);
+        }
+        
+        private static void StopProcess(string taskId)
+        {
+            var process = Process.GetProcesses().FirstOrDefault(
+                p => p.ProcessName.Equals(taskId, StringComparison.CurrentCultureIgnoreCase));
+
+            if (process != null)
+            {
+                process.Kill();
+                process.WaitForExit(10000);
+            }
         }
 
         public static List<BackgroundTask> GetUserTasks(int userId)
@@ -717,7 +749,7 @@ namespace WebsitePanel.EnterpriseServer
             return res;
         }
 
-        public static T StartResultTask<T>(string source, string taskName, int itemId, IList<BackgroundTaskParameter> parameters) where T : ResultObject, new()
+        public static T StartResultTask<T>(string source, string taskName, int itemId, List<BackgroundTaskParameter> parameters) where T : ResultObject, new()
         {
             StartTask(source, taskName, itemId, parameters);
             T res = new T();

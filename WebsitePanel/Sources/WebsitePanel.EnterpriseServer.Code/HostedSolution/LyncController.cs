@@ -881,7 +881,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
 
         public static LyncUserResult AddFederationDomain(int itemId, string domainName, string proxyFqdn)
         {
-            IList<BackgroundTaskParameter> parameters = new List<BackgroundTaskParameter>();
+            List<BackgroundTaskParameter> parameters = new List<BackgroundTaskParameter>();
             parameters.Add(new BackgroundTaskParameter("domainName", domainName));
             parameters.Add(new BackgroundTaskParameter("proxyFqdn", proxyFqdn));
 

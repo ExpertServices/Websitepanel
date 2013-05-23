@@ -31,6 +31,7 @@ using System.Data;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using System.Linq;
 using WebsitePanel.EnterpriseServer.Base.Scheduling;
 
 namespace WebsitePanel.EnterpriseServer
@@ -157,30 +158,64 @@ namespace WebsitePanel.EnterpriseServer
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo);
-            if (accountCheck < 0) return accountCheck;
-
+         
+            if (accountCheck < 0)
+                return accountCheck;
+            
             SchedulerJob schedule = GetScheduleComplete(scheduleId);
             if (schedule == null)
                 return 0;
 
-            Scheduler.StartSchedule(schedule);
+            var parameters = schedule.ScheduleInfo.Parameters.Select(
+                prm => new BackgroundTaskParameter(prm.ParameterId, prm.ParameterValue)).ToList();
 
+            var backgroundTask = new BackgroundTask(
+                schedule.ScheduleInfo.TaskId,
+                SecurityContext.User.UserId,
+                SecurityContext.User.IsPeer
+                    ? SecurityContext.User.OwnerId
+                    : SecurityContext.User.UserId, "SCHEDULER", "RUN_SCHEDULE",
+                schedule.ScheduleInfo.ScheduleName,
+                schedule.ScheduleInfo.ScheduleId,
+                schedule.ScheduleInfo.ScheduleId,
+                schedule.ScheduleInfo.PackageId,
+                schedule.ScheduleInfo.MaxExecutionTime, parameters) { Status = BackgroundTaskStatus.Starting };
+
+            TaskController.AddTask(backgroundTask);
+            
             return 0;
         }
 
         public static int StopSchedule(int scheduleId)
         {
-            // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo);
-            if (accountCheck < 0) return accountCheck;
 
+            if (accountCheck < 0)
+                return accountCheck;
+            
             SchedulerJob schedule = GetScheduleComplete(scheduleId);
             if (schedule == null)
                 return 0;
 
-            Scheduler.StopSchedule(schedule);
+            var parameters = schedule.ScheduleInfo.Parameters.Select(
+                prm => new BackgroundTaskParameter(prm.ParameterId, prm.ParameterValue)).ToList();
 
+            var backgroundTask = new BackgroundTask(
+                schedule.ScheduleInfo.TaskId,
+                SecurityContext.User.UserId,
+                SecurityContext.User.IsPeer
+                    ? SecurityContext.User.OwnerId
+                    : SecurityContext.User.UserId, "SCHEDULER", "STOP_SCHEDULE",
+                schedule.ScheduleInfo.ScheduleName,
+                schedule.ScheduleInfo.ScheduleId,
+                schedule.ScheduleInfo.ScheduleId,
+                schedule.ScheduleInfo.PackageId,
+                schedule.ScheduleInfo.MaxExecutionTime, parameters) { Status = BackgroundTaskStatus.Stopping };
+            
+            TaskController.AddTask(backgroundTask);
+            
             return 0;
+
         }
 
         public static void CalculateNextStartTime(ScheduleInfo schedule)

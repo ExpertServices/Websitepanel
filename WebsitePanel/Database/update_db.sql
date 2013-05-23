@@ -880,9 +880,7 @@ CREATE TABLE BackgroundTasks
 	Severity INT NOT NULL,
 	Completed BIT,
 	NotifyOnComplete BIT,
-	Status INT NOT NULL,
-	FOREIGN KEY (ScheduleID) REFERENCES Schedule (ScheduleID),
-	FOREIGN KEY (PackageID) REFERENCES Packages (PackageID)
+	Status INT NOT NULL
 )
 GO
 
@@ -913,9 +911,8 @@ GO
 
 CREATE TABLE BackgroundTaskStack
 (
-	TaskStackID INT NOT NULL PRIMARY KEY,
+	TaskStackID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	TaskID INT NOT NULL,
-	Value NVARCHAR(MAX),
 	FOREIGN KEY (TaskID) REFERENCES BackgroundTasks (ID)
 )
 GO
@@ -1150,8 +1147,6 @@ CREATE PROCEDURE [dbo].[UpdateBackgroundTask]
 	@TaskID INT,
 	@ScheduleID INT,
 	@PackageID INT,
-	@UserID INT,
-	@EffectiveUserID INT,
 	@TaskName NVARCHAR(255),
 	@ItemID INT,
 	@ItemName NVARCHAR(255),
@@ -1167,12 +1162,10 @@ CREATE PROCEDURE [dbo].[UpdateBackgroundTask]
 )
 AS
 
-UPDATE BackgroundTask
+UPDATE BackgroundTasks
 SET
 	ScheduleID = @ScheduleID,
 	PackageID = @PackageID,
-	UserID = @UserID,
-	EffectiveUserID = @EffectiveUserID,
 	TaskName = @TaskName,
 	ItemID = @ItemID,
 	ItemName = @ItemName,
@@ -1259,4 +1252,35 @@ AS
 
 DELETE FROM BackgroundTaskStack
 WHERE TaskID = @TaskID
+GO
+
+CREATE PROCEDURE [dbo].[GetProcessBackgroundTasks]
+(
+	@ActorID INT,
+	@Status INT
+)
+AS
+
+SELECT
+	T.ID,
+	T.TaskID,
+	T.ScheduleId,
+	T.PackageId,
+	T.UserId,
+	T.EffectiveUserId,
+	T.TaskName,
+	T.ItemId,
+	T.ItemName,
+	T.StartDate,
+	T.FinishDate,
+	T.IndicatorCurrent,
+	T.IndicatorMaximum,
+	T.MaximumExecutionTime,
+	T.Source,
+	T.Severity,
+	T.Completed,
+	T.NotifyOnComplete,
+	T.Status
+FROM BackgroundTasks AS T
+WHERE T.UserID = @ActorID AND T.Completed = 0 AND T.Status = @Status
 GO

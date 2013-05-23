@@ -13,9 +13,8 @@
         <asp:TemplateField HeaderText="gvTasksName">
             <ItemStyle Width="40%"></ItemStyle>
             <ItemTemplate>
-	            <asp:hyperlink id="lnkTaskName" runat="server" Visible="false">
+	            <asp:hyperlink id="lnkTaskName" runat="server">
 	            </asp:hyperlink>
-                <asp:Literal ID="litTaskName" runat="server" Visible="false"></asp:Literal>
             </ItemTemplate>
         </asp:TemplateField>
         <asp:BoundField DataField="ItemName" HeaderText="gvTasksItemName"></asp:BoundField>
@@ -27,16 +26,15 @@
 		</asp:TemplateField>
 		<asp:TemplateField HeaderText="gvTasksProgress">
 			<ItemTemplate>
-                <asp:Panel ID="pnlProgressBarContainer" runat="server" class="ProgressBarContainer" Visible="false">
+                <div class="ProgressBarContainer">
                     <asp:Panel id="pnlProgressIndicator" runat="server" CssClass="ProgressBarIndicator"></asp:Panel>
-                </asp:Panel>
-                <asp:Literal ID="litProgressIndicator" runat="server" Visible="false">In Progress</asp:Literal>
+                </div>
 			</ItemTemplate>
 		</asp:TemplateField>
 		<asp:TemplateField HeaderText="gvTasksActions">
 			<ItemTemplate>
 			    <asp:LinkButton ID="cmdStop" runat="server" CommandName="stop"
-			        CausesValidation="false" Text="Stop" OnClientClick="return confirm('Do you really want to terminate this task?');" Visible="false"></asp:LinkButton>
+			        CausesValidation="false" Text="Stop" OnClientClick="return confirm('Do you really want to terminate this task?');"></asp:LinkButton>
 			</ItemTemplate>
 		</asp:TemplateField>
     </Columns>

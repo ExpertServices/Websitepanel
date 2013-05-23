@@ -89,7 +89,7 @@ namespace WebsitePanel.EnterpriseServer
             UserInfo user = PackageController.GetPackageOwner(scheduleInfo.PackageId);
             SecurityContext.SetThreadPrincipal(user.UserId);
 
-            IList<BackgroundTaskParameter> parameters = new List<BackgroundTaskParameter>();
+            List<BackgroundTaskParameter> parameters = new List<BackgroundTaskParameter>();
             foreach (ScheduleTaskParameterInfo prm in scheduleInfo.Parameters)
             {
                 parameters.Add(new BackgroundTaskParameter(prm.ParameterId, prm.ParameterValue));

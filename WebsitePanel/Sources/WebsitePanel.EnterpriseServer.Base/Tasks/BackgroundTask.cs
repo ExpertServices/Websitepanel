@@ -41,25 +41,25 @@ namespace WebsitePanel.EnterpriseServer
     {
         #region Properties
 
-        public int Id { get; protected set; }
+        public int Id { get; set; }
 
-        public String TaskId { get; protected set; }
+        public String TaskId { get; set; }
 
         public int ScheduleId { get; set; }
 
         public int PackageId { get; set; }
 
-        public int UserId { get; protected set; }
+        public int UserId { get; set; }
 
-        public int EffectiveUserId { get; protected set; }
+        public int EffectiveUserId { get; set; }
 
-        public String TaskName { get; protected set; }
+        public String TaskName { get; set; }
 
         public int ItemId { get; set; }
 
         public String ItemName { get; set; }
 
-        public DateTime StartDate { get; protected set; }
+        public DateTime StartDate { get; set; }
 
         public DateTime FinishDate { get; set; }
 
@@ -69,7 +69,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public int MaximumExecutionTime { get; set; }
 
-        public String Source { get; protected set; }
+        public String Source { get; set; }
 
         public int Severity { get; set; }
 
@@ -79,9 +79,9 @@ namespace WebsitePanel.EnterpriseServer
 
         public BackgroundTaskStatus Status { get; set; }
 
-        public IList<BackgroundTaskLogRecord> Logs { get; set; }
+        public List<BackgroundTaskLogRecord> Logs { get; set; }
 
-        public IList<BackgroundTaskParameter> Params { get; set; }
+        public List<BackgroundTaskParameter> Params { get; set; }
 
         #endregion
 
@@ -99,10 +99,10 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         public BackgroundTask(String taskId, int userId, int effectiveUserId, String source, String taskName, String itemName,
-            int itemId, int scheduleId, int packageId, int maximumExecutionTime, IList<BackgroundTaskParameter> parameters)
+            int itemId, int scheduleId, int packageId, int maximumExecutionTime, List<BackgroundTaskParameter> parameters)
             : this()
         {
-            TaskId = TaskId;
+            TaskId = taskId;
             UserId = userId;
             EffectiveUserId = effectiveUserId;
             Source = source;
@@ -164,11 +164,11 @@ namespace WebsitePanel.EnterpriseServer
     {
         #region Properties
 
-        public int ParameterId { get; protected set; }
+        public int ParameterId { get; set; }
 
-        public int TaskId { get; protected set; }
+        public int TaskId { get; set; }
 
-        public String Name { get; protected set; }
+        public String Name { get; set; }
 
         public Object Value { get; set; }
 

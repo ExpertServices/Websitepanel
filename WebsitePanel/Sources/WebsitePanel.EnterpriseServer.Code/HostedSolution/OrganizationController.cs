@@ -291,7 +291,7 @@ namespace WebsitePanel.EnterpriseServer
                 return errorCode;
             
             // place log record
-            IList<BackgroundTaskParameter> parameters = new List<BackgroundTaskParameter>();
+            List<BackgroundTaskParameter> parameters = new List<BackgroundTaskParameter>();
             parameters.Add(new BackgroundTaskParameter("Organization ID", organizationId));
             parameters.Add(new BackgroundTaskParameter("DomainName", domainName));
 

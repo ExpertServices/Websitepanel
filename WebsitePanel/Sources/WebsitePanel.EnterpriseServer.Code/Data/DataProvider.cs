@@ -1852,6 +1852,14 @@ namespace WebsitePanel.EnterpriseServer
                                            new SqlParameter("actorId", actorId));
         }
 
+        public static IDataReader GetProcessBackgroundTasks(int actorId, BackgroundTaskStatus status)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
+                                           ObjectQualifier + "GetProcessBackgroundTasks",
+                                           new SqlParameter("actorId", actorId),
+                                           new SqlParameter("status", (int)status));
+        }
+
         public static IDataReader GetBackgroundTopTask(int actorId)
         {
             return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
@@ -1910,7 +1918,7 @@ namespace WebsitePanel.EnterpriseServer
         public static IDataReader GetBackgroundTaskLogs(int taskId, DateTime startLogTime)
         {
             return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
-                                           ObjectQualifier + "AddBackgroundTaskLogParam",
+                                           ObjectQualifier + "GetBackgroundTaskLogs",
                                            new SqlParameter("@taskId", taskId),
                                            new SqlParameter("@startLogTime", startLogTime));
         }
@@ -1938,7 +1946,7 @@ namespace WebsitePanel.EnterpriseServer
                                       new SqlParameter("@severity", severity),
                                       new SqlParameter("@completed", completed),
                                       new SqlParameter("@notifyOnComplete", notifyOnComplete),
-                                      new SqlParameter("@status", status));
+                                      new SqlParameter("@status", (int)status));
 
         }
 

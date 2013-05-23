@@ -51,7 +51,7 @@ namespace WebsitePanel.Portal
 
         private void BindTask()
         {
-            DateTime lastLogDate = DateTime.MinValue;
+            DateTime lastLogDate = DateTime.Now.AddYears(-1);
             if (ViewState["lastLogDate"] != null)
                 lastLogDate = (DateTime)ViewState["lastLogDate"];
 
