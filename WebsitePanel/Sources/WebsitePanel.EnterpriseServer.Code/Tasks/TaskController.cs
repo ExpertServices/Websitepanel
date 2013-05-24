@@ -88,15 +88,10 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         public static void AddTaskParams(int taskId, List<BackgroundTaskParameter> parameters)
-        {
-            if (parameters == null)
-            {
-                return;
-            }
-
+        {            
             foreach (BackgroundTaskParameter param in SerializeParams(parameters))
             {
-                DataProvider.AddBackgroundTaskParam(taskId, param.Name, param.SerializerValue);
+                DataProvider.AddBackgroundTaskParam(taskId, param.Name, param.SerializerValue, param.TypeName);
             }
         }
 
@@ -131,9 +126,10 @@ namespace WebsitePanel.EnterpriseServer
         {
             foreach (BackgroundTaskParameter param in parameters)
             {
-                param.TypeName = param.Value.GetType().Name;
+                var type = param.Value.GetType();
+                param.TypeName = type.FullName;
 
-                XmlSerializer serializer = new XmlSerializer(Type.GetType(param.TypeName));
+                XmlSerializer serializer = new XmlSerializer(type);
                 MemoryStream ms = new MemoryStream();
                 serializer.Serialize(ms, param.Value);
 
@@ -178,22 +174,17 @@ namespace WebsitePanel.EnterpriseServer
 
         private static string[] ReBuildParametersXml(string parameters)
         {
-            string[] textParameters = new string[] {};
+            var textParameters = new List<string>();
 
-            XmlDocument xmlDoc = new XmlDocument();
+            var xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(parameters);
 
             if (xmlDoc != null)
             {
-                int index = 0;
-                foreach (XmlNode xmlParameter in xmlDoc.SelectNodes("parameters/parameter"))
-                {
-                    textParameters[index] = xmlParameter.Attributes.GetNamedItem("value").Value;
-                    index++;
-                }
+                textParameters.AddRange(from XmlNode xmlParameter in xmlDoc.SelectNodes("parameters/parameter") select xmlParameter.Attributes.GetNamedItem("value").Value);
             }
 
-            return textParameters;
+            return textParameters.ToArray();
         }
     }
 }

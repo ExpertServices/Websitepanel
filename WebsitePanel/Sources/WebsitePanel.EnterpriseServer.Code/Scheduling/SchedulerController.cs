@@ -152,10 +152,10 @@ namespace WebsitePanel.EnterpriseServer
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo);
-         
+
             if (accountCheck < 0)
                 return accountCheck;
-            
+
             SchedulerJob schedule = GetScheduleComplete(scheduleId);
             if (schedule == null)
                 return 0;
@@ -177,9 +177,9 @@ namespace WebsitePanel.EnterpriseServer
                 schedule.ScheduleInfo.MaxExecutionTime, parameters) { Status = BackgroundTaskStatus.Starting };
 
             TaskController.AddTask(backgroundTask);
-            
+
             return 0;
-        }
+        }        
 
         public static int StopSchedule(int scheduleId)
         {

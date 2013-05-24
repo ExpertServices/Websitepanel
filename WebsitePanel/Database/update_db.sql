@@ -1,18 +1,4 @@
-﻿USE [${install.database}]
-GO
-
--- update database version
-DECLARE @build_version nvarchar(10), @build_date datetime
-SET @build_version = N'${release.version}'
-SET @build_date = '${release.date}T00:00:00' -- ISO 8601 Format (YYYY-MM-DDTHH:MM:SS)
-
-IF NOT EXISTS (SELECT * FROM [dbo].[Versions] WHERE [DatabaseVersion] = @build_version)
-BEGIN
-	INSERT [dbo].[Versions] ([DatabaseVersion], [BuildDate]) VALUES (@build_version, @build_date)
-END
-GO
-
-
+﻿
 --- Fix on version 2.0
 DELETE FROM HostingPlanQuotas WHERE QuotaID = 340
 GO
@@ -861,6 +847,7 @@ CREATE TABLE BackgroundTaskParameters
 	TaskID INT NOT NULL,
 	Name NVARCHAR(255),
 	SerializerValue NTEXT,
+	TypeName NVARCHAR(255),
 	FOREIGN KEY (TaskID) REFERENCES BackgroundTasks (ID)
 )
 GO
@@ -1074,7 +1061,7 @@ SELECT
 FROM BackgroundTasks AS T
 INNER JOIN BackgroundTaskStack AS TS
 	ON TS.TaskId = T.ID
-WHERE T.UserID = @ActorID AND T.Guid = @Guid
+WHERE T.EffectiveUserID = @ActorID AND T.Guid = @Guid
 GO
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetBackgroundTopTask')
@@ -1112,7 +1099,7 @@ SELECT TOP 1
 FROM BackgroundTasks AS T
 INNER JOIN BackgroundTaskStack AS TS
 	ON TS.TaskId = T.ID
-WHERE T.UserID = @ActorID AND T.Guid = @Guid
+WHERE T.EffectiveUserID = @ActorID AND T.Guid = @Guid
 ORDER BY T.StartDate DESC
 GO
 
@@ -1241,7 +1228,8 @@ SELECT
 	P.ParameterID,
 	P.TaskID,
 	P.Name,
-	P.SerializerValue
+	P.SerializerValue,
+	P.TypeName
 FROM BackgroundTaskParameters AS P
 WHERE P.TaskID = @TaskID
 GO
@@ -1254,7 +1242,8 @@ CREATE PROCEDURE [dbo].[AddBackgroundTaskParam]
 (
 	@TaskID INT,
 	@Name NVARCHAR(255),
-	@Value NTEXT
+	@Value NTEXT,
+	@TypeName NVARCHAR(255)
 )
 AS
 
@@ -1262,13 +1251,15 @@ INSERT INTO BackgroundTaskParameters
 (
 	TaskID,
 	Name,
-	SerializerValue
+	SerializerValue,
+	TypeName
 )
 VALUES
 (
 	@TaskID,
 	@Name,
-	@Value
+	@Value,
+	@TypeName
 )
 GO
 

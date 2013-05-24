@@ -1976,13 +1976,14 @@ namespace WebsitePanel.EnterpriseServer
                                            new SqlParameter("@taskId", taskId));
         }
 
-        public static void AddBackgroundTaskParam(int taskId, string name, string value)
+        public static void AddBackgroundTaskParam(int taskId, string name, string value, string typeName)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
                                       ObjectQualifier + "AddBackgroundTaskParam",
                                       new SqlParameter("@taskId", taskId),
                                       new SqlParameter("@name", name),
-                                      new SqlParameter("@value", value));
+                                      new SqlParameter("@value", value),
+                                      new SqlParameter("@typeName", typeName));
         }
 
         public static void DeleteBackgroundTaskParams(int taskId)

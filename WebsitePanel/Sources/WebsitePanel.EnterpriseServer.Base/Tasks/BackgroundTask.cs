@@ -39,6 +39,12 @@ namespace WebsitePanel.EnterpriseServer
 
     public class BackgroundTask
     {
+        #region Fields
+
+        private List<BackgroundTaskParameter> parameters;
+
+        #endregion
+
         #region Properties
 
         public int Id { get; set; }
@@ -83,7 +89,11 @@ namespace WebsitePanel.EnterpriseServer
 
         public List<BackgroundTaskLogRecord> Logs { get; set; }
 
-        public List<BackgroundTaskParameter> Params { get; set; }
+        public List<BackgroundTaskParameter> Params
+        {
+            get { return parameters ?? (parameters = new List<BackgroundTaskParameter>()); }
+            set { parameters = value; }
+        }
 
         #endregion
 

@@ -141,7 +141,7 @@ namespace WebsitePanel.EnterpriseServer
         public static void StartTask(string source, string taskName, object itemName, int itemId,
             int scheduleId, int packageId, int maximumExecutionTime, List<BackgroundTaskParameter> parameters)
         {
-            StartTask(null, source, taskName, itemName, itemId, scheduleId, packageId, maximumExecutionTime, new List<BackgroundTaskParameter>());
+            StartTask(null, source, taskName, itemName, itemId, scheduleId, packageId, maximumExecutionTime, parameters);
         }
 
         public static void StartTask(string taskId, string source, string taskName, object itemName, int itemId,
@@ -152,8 +152,8 @@ namespace WebsitePanel.EnterpriseServer
                 taskId = Guid.NewGuid().ToString("N");
             }
 
-            int userId = SecurityContext.User.UserId;
-            int effectiveUserId = SecurityContext.User.IsPeer ? SecurityContext.User.OwnerId : userId;
+            int userId = SecurityContext.User.OwnerId;
+            int effectiveUserId = SecurityContext.User.IsPeer ? SecurityContext.User.OwnerId : SecurityContext.User.UserId;
             String itemNameStr = itemName != null ? itemName.ToString() : String.Empty;
 
             BackgroundTask task = new BackgroundTask(Guid, taskId, userId, effectiveUserId, source, taskName, itemNameStr,
@@ -595,7 +595,7 @@ namespace WebsitePanel.EnterpriseServer
             // get user tasks
             foreach (BackgroundTask task in TaskController.GetTasks())
             {
-                if (task.EffectiveUserId == userId && !task.Completed)
+                if (task.UserId == userId && !task.Completed)
                     list.Add(task);
             }
             return list;
