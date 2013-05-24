@@ -55,12 +55,6 @@ namespace WebsitePanel.EnterpriseServer
                 DataProvider.GetScheduleTask(SecurityContext.User.UserId, taskId));
         }
 
-        public static List<ScheduleInfo> GetRunningSchedules()
-        {
-            return ObjectUtils.CreateListFromDataReader<ScheduleInfo>(
-                DataProvider.GetRunningSchedules(SecurityContext.User.UserId));
-        }
-
         public static DataSet GetSchedules(int packageId)
         {
             DataSet ds = DataProvider.GetSchedules(SecurityContext.User.UserId, packageId);
@@ -170,6 +164,7 @@ namespace WebsitePanel.EnterpriseServer
                 prm => new BackgroundTaskParameter(prm.ParameterId, prm.ParameterValue)).ToList();
 
             var backgroundTask = new BackgroundTask(
+                Guid.NewGuid(),
                 schedule.ScheduleInfo.TaskId,
                 SecurityContext.User.UserId,
                 SecurityContext.User.IsPeer
@@ -197,22 +192,12 @@ namespace WebsitePanel.EnterpriseServer
             if (schedule == null)
                 return 0;
 
-            var parameters = schedule.ScheduleInfo.Parameters.Select(
-                prm => new BackgroundTaskParameter(prm.ParameterId, prm.ParameterValue)).ToList();
-
-            var backgroundTask = new BackgroundTask(
-                schedule.ScheduleInfo.TaskId,
-                SecurityContext.User.UserId,
-                SecurityContext.User.IsPeer
-                    ? SecurityContext.User.OwnerId
-                    : SecurityContext.User.UserId, "SCHEDULER", "STOP_SCHEDULE",
-                schedule.ScheduleInfo.ScheduleName,
-                schedule.ScheduleInfo.ScheduleId,
-                schedule.ScheduleInfo.ScheduleId,
-                schedule.ScheduleInfo.PackageId,
-                schedule.ScheduleInfo.MaxExecutionTime, parameters) { Status = BackgroundTaskStatus.Stopping };
-            
-            TaskController.AddTask(backgroundTask);
+            foreach (BackgroundTask task in TaskController.GetScheduleTasks(scheduleId))
+            {
+                task.Status = BackgroundTaskStatus.Stopping;
+                
+                TaskController.UpdateTask(task);
+            }
             
             return 0;
 
@@ -338,7 +323,7 @@ namespace WebsitePanel.EnterpriseServer
             DataProvider.UpdateSchedule(SecurityContext.User.UserId,
                 schedule.ScheduleId, schedule.TaskId, schedule.ScheduleName, schedule.ScheduleTypeId,
                 schedule.Interval, schedule.FromTime, schedule.ToTime, schedule.StartTime,
-                schedule.LastRun, schedule.LastFinish, schedule.NextRun, schedule.Enabled, schedule.PriorityId,
+                schedule.LastRun, schedule.NextRun, schedule.Enabled, schedule.PriorityId,
                 schedule.HistoriesNumber, schedule.MaxExecutionTime, schedule.WeekMonthDay, xmlParameters);
 
             // re-schedule tasks

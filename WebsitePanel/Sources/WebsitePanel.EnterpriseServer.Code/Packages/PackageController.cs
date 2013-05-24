@@ -617,7 +617,7 @@ namespace WebsitePanel.EnterpriseServer
                     }
                 }
 
-                BackgroundTask topTask = TaskController.GetTopTask();
+                BackgroundTask topTask = TaskManager.TopTask;
 
                 topTask.ItemId = userId;
                 topTask.UpdateParamValue("SendLetter", sendLetter);
@@ -722,7 +722,7 @@ namespace WebsitePanel.EnterpriseServer
                 if (homeId < 0)
                     result.Result = homeId;
 
-                BackgroundTask topTask = TaskController.GetTopTask();
+                BackgroundTask topTask = TaskManager.TopTask;
 
                 topTask.ItemId = userId;
                 topTask.UpdateParamValue("Signup", signup);

@@ -44,7 +44,7 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.TaskEventHandlers
 
         public override void OnComplete()
         {
-            BackgroundTask topTask = TaskController.GetTopTask();
+            BackgroundTask topTask = TaskManager.TopTask;
 
             if (!TaskManager.HasErrors(topTask))
             {
@@ -66,10 +66,8 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.TaskEventHandlers
 
         private void RegisterInvoiceActivationTrigger()
         {
-            BackgroundTask topTask = TaskController.GetTopTask();
-
             // Read contract invoice
-            Invoice invoice = (Invoice)topTask.GetParamValue(SystemTaskParams.PARAM_INVOICE);
+            Invoice invoice = (Invoice)TaskManager.TopTask.GetParamValue(SystemTaskParams.PARAM_INVOICE);
             //
             TriggerSystem.TriggerController.AddSystemTrigger(invoice.InvoiceId.ToString(),
                 ActivateInvoiceTrigger.STATUS_AWAITING_PAYMENT, typeof(ActivateInvoiceTrigger));
@@ -77,7 +75,7 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.TaskEventHandlers
 
         private void RegisterContractActivationTrigger()
         {
-            BackgroundTask topTask = TaskController.GetTopTask();
+            BackgroundTask topTask = TaskManager.TopTask;
 
             // Ensure the contract has been registered successfully
             if (topTask.ContainsParam(SystemTaskParams.PARAM_CONTRACT))
@@ -94,7 +92,7 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.TaskEventHandlers
 
         private void ActivatePaymentSystemTriggers()
         {
-            BackgroundTask topTask = TaskController.GetTopTask();
+            BackgroundTask topTask = TaskManager.TopTask;
 
             CustomerPayment payment = (CustomerPayment)topTask.GetParamValue(SystemTaskParams.PARAM_PAYMENT);
             Contract contract = (Contract)topTask.GetParamValue(SystemTaskParams.PARAM_CONTRACT);

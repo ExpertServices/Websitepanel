@@ -115,22 +115,15 @@ namespace WebsitePanel.EnterpriseServer
             var tasks = TaskController.GetProcessTasks(BackgroundTaskStatus.Starting);
             foreach (var task in tasks)
             {
-                StartManualTask(task);
+                new Thread(() => RunBackgroundTask(task)) {Priority = ThreadPriority.Highest}.Start();
             }
             tasks = TaskController.GetProcessTasks(BackgroundTaskStatus.Stopping);
             foreach (var task in tasks)
             {
-                TaskManager.StopTask(task.TaskId);
+                TaskManager.StopTask(task);
             }
         }
-        private static void StartManualTask(BackgroundTask backgroundTask)
-        {
-            new Thread(() => RunBackgroundTask(backgroundTask)) { Priority = ThreadPriority.Highest }.Start();
-            
-            backgroundTask.Status = BackgroundTaskStatus.Run;
-            
-            TaskController.UpdateTask(backgroundTask);
-        }
+
         private static void RunBackgroundTask(BackgroundTask backgroundTask)
         {
             UserInfo user = PackageController.GetPackageOwner(backgroundTask.PackageId);
@@ -138,13 +131,18 @@ namespace WebsitePanel.EnterpriseServer
             SecurityContext.SetThreadPrincipal(user.UserId);
             
             var schedule = SchedulerController.GetScheduleComplete(backgroundTask.ScheduleId);
-            
-            TaskManager.StartTask(backgroundTask.Source, backgroundTask.TaskName, backgroundTask.ItemName, backgroundTask.ItemId, backgroundTask.ScheduleId, backgroundTask.PackageId, backgroundTask.MaximumExecutionTime, backgroundTask.Params);
+
+            backgroundTask.Guid = TaskManager.Guid;
+            backgroundTask.Status = BackgroundTaskStatus.Run;
+
+            TaskController.UpdateTask(backgroundTask);
             
             try
             {
                 var objTask = (SchedulerTask)Activator.CreateInstance(Type.GetType(schedule.Task.TaskType));
+
                 objTask.DoWork();
+                
                 Thread.Sleep(100000);
             }
             catch (Exception ex)

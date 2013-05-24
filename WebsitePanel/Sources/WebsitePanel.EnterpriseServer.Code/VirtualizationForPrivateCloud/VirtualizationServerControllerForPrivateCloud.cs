@@ -1803,7 +1803,7 @@ namespace WebsitePanel.EnterpriseServer
                     return res;
                 }
 
-                BackgroundTask topTask = TaskController.GetTopTask();
+                BackgroundTask topTask = TaskManager.TopTask;
                 topTask.ItemId = machine.Id;
                 topTask.ItemName = machine.Name;
                 topTask.PackageId = machine.PackageId;

@@ -15,14 +15,15 @@ namespace WebsitePanel.EnterpriseServer
             BackgroundTask task = ObjectUtils.FillObjectFromDataReader<BackgroundTask>(
                 DataProvider.GetBackgroundTask(SecurityContext.User.UserId, taskId));
 
-            if (task == null)
-            {
-                return null;
-            }
-
             task.Params = GetTaskParams(task.Id);
 
             return task;
+        }
+
+        public static List<BackgroundTask> GetScheduleTasks(int scheduleId)
+        {
+            return ObjectUtils.CreateListFromDataReader<BackgroundTask>(
+                DataProvider.GetScheduleBackgroundTasks(SecurityContext.User.UserId, scheduleId));
         }
 
         public static List<BackgroundTask> GetTasks()
@@ -31,16 +32,22 @@ namespace WebsitePanel.EnterpriseServer
                 DataProvider.GetBackgroundTasks(SecurityContext.User.UserId));
         }
 
+        public static List<BackgroundTask> GetTasks(Guid guid)
+        {
+            return ObjectUtils.CreateListFromDataReader<BackgroundTask>(
+                DataProvider.GetBackgroundTasks(SecurityContext.User.UserId, guid));
+        }
+
         public static List<BackgroundTask> GetProcessTasks(BackgroundTaskStatus status)
         {
             return ObjectUtils.CreateListFromDataReader<BackgroundTask>(
                 DataProvider.GetProcessBackgroundTasks(SecurityContext.User.UserId, status));
         }
 
-        public static BackgroundTask GetTopTask()
+        public static BackgroundTask GetTopTask(Guid guid)
         {
             BackgroundTask task = ObjectUtils.FillObjectFromDataReader<BackgroundTask>(
-                DataProvider.GetBackgroundTopTask(SecurityContext.User.UserId));
+                DataProvider.GetBackgroundTopTask(SecurityContext.User.UserId, guid));
 
             task.Params = GetTaskParams(task.Id);
 
@@ -49,7 +56,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static void AddTask(BackgroundTask task)
         {
-            int taskId = DataProvider.AddBackgroundTask(task.TaskId, task.ScheduleId, task.PackageId, task.UserId,
+            int taskId = DataProvider.AddBackgroundTask(task.Guid, task.TaskId, task.ScheduleId, task.PackageId, task.UserId,
                                                         task.EffectiveUserId, task.TaskName, task.ItemId, task.ItemName,
                                                         task.StartDate, task.IndicatorCurrent, task.IndicatorMaximum,
                                                         task.MaximumExecutionTime, task.Source, task.Severity, task.Completed,
@@ -62,14 +69,14 @@ namespace WebsitePanel.EnterpriseServer
 
         public static void UpdateTask(BackgroundTask task)
         {
-            DataProvider.UpdateBackgroundTask(task.Id, task.ScheduleId, task.PackageId, task.TaskName, task.ItemId,
+            DataProvider.UpdateBackgroundTask(task.Guid, task.Id, task.ScheduleId, task.PackageId, task.TaskName, task.ItemId,
                                               task.ItemName, task.FinishDate, task.IndicatorCurrent,
                                               task.IndicatorMaximum, task.MaximumExecutionTime, task.Source,
                                               task.Severity, task.Completed, task.NotifyOnComplete, task.Status);
 
             AddTaskParams(task.Id, task.Params);
 
-            if (task.Completed || task.Status == BackgroundTaskStatus.Abort)
+            if (task.Completed || task.Status == BackgroundTaskStatus.Abort || task.Status == BackgroundTaskStatus.Stopping)
             {
                 DeleteTaskStack(task.Id);
             }
@@ -82,6 +89,11 @@ namespace WebsitePanel.EnterpriseServer
 
         public static void AddTaskParams(int taskId, List<BackgroundTaskParameter> parameters)
         {
+            if (parameters == null)
+            {
+                return;
+            }
+
             foreach (BackgroundTaskParameter param in SerializeParams(parameters))
             {
                 DataProvider.AddBackgroundTaskParam(taskId, param.Name, param.SerializerValue);
@@ -117,14 +129,11 @@ namespace WebsitePanel.EnterpriseServer
 
         private static List<BackgroundTaskParameter> SerializeParams(List<BackgroundTaskParameter> parameters)
         {
-            if (parameters == null)
-            {
-                return new List<BackgroundTaskParameter>();
-            }
-
             foreach (BackgroundTaskParameter param in parameters)
             {
-                XmlSerializer serializer = new XmlSerializer(param.Value.GetType());
+                param.TypeName = param.Value.GetType().Name;
+
+                XmlSerializer serializer = new XmlSerializer(Type.GetType(param.TypeName));
                 MemoryStream ms = new MemoryStream();
                 serializer.Serialize(ms, param.Value);
 
@@ -141,7 +150,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             foreach (BackgroundTaskParameter param in parameters)
             {
-                XmlSerializer deserializer = new XmlSerializer(param.SerializerValue.GetType());
+                XmlSerializer deserializer = new XmlSerializer(Type.GetType(param.TypeName));
                 StringReader sr = new StringReader(param.SerializerValue);
 
                 param.Value = deserializer.Deserialize(sr);

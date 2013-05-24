@@ -451,12 +451,13 @@ VALUES (1401, 41, N'Lync2013', N'Microsoft Lync Server 2013 Multitenant Hosting 
 END
 GO
 
--- Scheduler Service
-ALTER TABLE Schedule
-ADD LastFinish DATETIME NULL
-GO
+-------------------------------- Scheduler Service------------------------------------------------------
 
-UPDATE Schedule SET LastFinish = LastRun
+IF EXISTS( SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+            WHERE TABLE_NAME = 'Schedule' 
+           AND  COLUMN_NAME = 'LastFinish')
+ALTER TABLE Schedule
+DROP COLUMN LastFinish
 GO
 
 ALTER PROCEDURE [dbo].[GetSchedule]
@@ -478,7 +479,6 @@ SELECT TOP 1
 	S.ToTime,
 	S.StartTime,
 	S.LastRun,
-	S.LastFinish,
 	S.NextRun,
 	S.Enabled,
 	S.HistoriesNumber,
@@ -538,7 +538,6 @@ SELECT
 	S.ToTime,
 	S.StartTime,
 	S.LastRun,
-	S.LastFinish,
 	S.NextRun,
 	S.Enabled,
 	1 AS StatusID,
@@ -591,7 +590,6 @@ SELECT
 	S.ToTime,
 	S.StartTime,
 	S.LastRun,
-	S.LastFinish,
 	S.NextRun,
 	S.Enabled,
 	1 AS StatusID,
@@ -693,7 +691,6 @@ SELECT
 	S.ToTime,
 	S.StartTime,
 	S.LastRun,
-	S.LastFinish,
 	S.NextRun,
 	S.Enabled,
 	1 AS StatusID,
@@ -739,7 +736,6 @@ ALTER PROCEDURE [dbo].[UpdateSchedule]
 	@ToTime datetime,
 	@StartTime datetime,
 	@LastRun datetime,
-	@LastFinish datetime,
 	@NextRun datetime,
 	@Enabled bit,
 	@PriorityID nvarchar(50),
@@ -770,7 +766,6 @@ SET
 	ToTime = @ToTime,
 	StartTime = @StartTime,
 	LastRun = @LastRun,
-	LastFinish = @LastFinish,
 	NextRun = @NextRun,
 	Enabled = @Enabled,
 	PriorityID = @PriorityID,
@@ -815,54 +810,30 @@ UPDATE ScheduleTasks SET TaskType = RTRIM(TaskType) + '.Code'
 WHERE SUBSTRING(RTRIM(TaskType), LEN(RTRIM(TaskType)) - 3, 4) <> 'Code'
 GO
 
-IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'GetRunningSchedules')
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRunningSchedules')
 DROP PROCEDURE GetRunningSchedules
 GO
 
-CREATE PROCEDURE [dbo].[GetRunningSchedules]
-(
-	@ActorID int
-)
-AS
+IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'BackgroundTaskStack')
+DROP TABLE BackgroundTaskStack
+GO
 
-SELECT
-	S.ScheduleID,
-	S.TaskID,
-	ST.TaskType,
-	ST.RoleID,
-	S.PackageID,
-	S.ScheduleName,
-	S.ScheduleTypeID,
-	S.Interval,
-	S.FromTime,
-	S.ToTime,
-	S.StartTime,
-	S.LastRun,
-	S.LastFinish,
-	S.NextRun,
-	S.Enabled,
-	1 AS StatusID,
-	S.PriorityID,
-	S.MaxExecutionTime,
-	S.WeekMonthDay,
-	ISNULL(0, (SELECT TOP 1 SeverityID FROM AuditLog WHERE ItemID = S.ScheduleID AND SourceName = 'SCHEDULER' ORDER BY StartDate DESC)) AS LastResult,
-	U.Username,
-	U.FirstName,
-	U.LastName,
-	U.FullName,
-	U.RoleID,
-	U.Email
-FROM Schedule AS S
-INNER JOIN Packages AS P ON S.PackageID = P.PackageID
-INNER JOIN ScheduleTasks AS ST ON S.TaskID = ST.TaskID
-INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
-WHERE (U.UserID = @ActorID OR U.OwnerID = @ActorID)
-    AND (ISNULL(S.LastRun, DATEADD(YEAR, -1, GETDATE())) > ISNULL(S.LastFinish, DATEADD(YEAR, -1, GETDATE())))
+IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'BackgroundTaskLogs')
+DROP TABLE BackgroundTaskLogs
+GO
+
+IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'BackgroundTaskParameters')
+DROP TABLE BackgroundTaskParameters
+GO
+
+IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'BackgroundTasks')
+DROP TABLE BackgroundTasks
 GO
 
 CREATE TABLE BackgroundTasks
 (
 	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	Guid UNIQUEIDENTIFIER NOT NULL,
 	TaskID NVARCHAR(255),
 	ScheduleID INT NOT NULL,
 	PackageID INT NOT NULL,
@@ -917,9 +888,14 @@ CREATE TABLE BackgroundTaskStack
 )
 GO
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddBackgroundTask')
+DROP PROCEDURE AddBackgroundTask
+GO
+
 CREATE PROCEDURE [dbo].[AddBackgroundTask]
 (
 	@BackgroundTaskID INT OUTPUT,
+	@Guid UNIQUEIDENTIFIER,
 	@TaskID NVARCHAR(255),
 	@ScheduleID INT,
 	@PackageID INT,
@@ -942,6 +918,7 @@ AS
 
 INSERT INTO BackgroundTasks
 (
+	Guid,
 	TaskID,
 	ScheduleID,
 	PackageID,
@@ -962,6 +939,7 @@ INSERT INTO BackgroundTasks
 )
 VALUES
 (
+	@Guid,
 	@TaskID,
 	@ScheduleID,
 	@PackageID,
@@ -986,6 +964,10 @@ SET @BackgroundTaskID = SCOPE_IDENTITY()
 RETURN
 GO
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetBackgroundTask')
+DROP PROCEDURE GetBackgroundTask
+GO
+
 CREATE PROCEDURE [dbo].[GetBackgroundTask]
 (
 	@ActorID INT,
@@ -995,6 +977,7 @@ AS
 
 SELECT TOP 1
 	T.ID,
+	T.Guid,
 	T.TaskID,
 	T.ScheduleID,
 	T.PackageID,
@@ -1019,6 +1002,10 @@ INNER JOIN BackgroundTaskStack AS TS
 WHERE T.TaskID = @TaskID AND T.UserID = @ActorID
 GO
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetBackgroundTasks')
+DROP PROCEDURE GetBackgroundTasks
+GO
+
 CREATE PROCEDURE [dbo].[GetBackgroundTasks]
 (
 	@ActorID INT
@@ -1027,6 +1014,7 @@ AS
 
 SELECT
 	T.ID,
+	T.Guid,
 	T.TaskID,
 	T.ScheduleId,
 	T.PackageId,
@@ -1051,14 +1039,20 @@ INNER JOIN BackgroundTaskStack AS TS
 WHERE T.UserID = @ActorID
 GO
 
-CREATE PROCEDURE [dbo].[GetBackgroundTopTask]
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetThreadBackgroundTasks')
+DROP PROCEDURE GetThreadBackgroundTasks
+GO
+
+CREATE PROCEDURE [dbo].GetThreadBackgroundTasks
 (
-	@ActorID INT
+	@ActorID INT,
+	@Guid UNIQUEIDENTIFIER
 )
 AS
 
-SELECT TOP 1
+SELECT
 	T.ID,
+	T.Guid,
 	T.TaskID,
 	T.ScheduleId,
 	T.PackageId,
@@ -1080,8 +1074,50 @@ SELECT TOP 1
 FROM BackgroundTasks AS T
 INNER JOIN BackgroundTaskStack AS TS
 	ON TS.TaskId = T.ID
-WHERE T.UserID = @ActorID
+WHERE T.UserID = @ActorID AND T.Guid = @Guid
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetBackgroundTopTask')
+DROP PROCEDURE GetBackgroundTopTask
+GO
+
+CREATE PROCEDURE [dbo].[GetBackgroundTopTask]
+(
+	@ActorID INT,
+	@Guid UNIQUEIDENTIFIER
+)
+AS
+
+SELECT TOP 1
+	T.ID,
+	T.Guid,
+	T.TaskID,
+	T.ScheduleId,
+	T.PackageId,
+	T.UserId,
+	T.EffectiveUserId,
+	T.TaskName,
+	T.ItemId,
+	T.ItemName,
+	T.StartDate,
+	T.FinishDate,
+	T.IndicatorCurrent,
+	T.IndicatorMaximum,
+	T.MaximumExecutionTime,
+	T.Source,
+	T.Severity,
+	T.Completed,
+	T.NotifyOnComplete,
+	T.Status
+FROM BackgroundTasks AS T
+INNER JOIN BackgroundTaskStack AS TS
+	ON TS.TaskId = T.ID
+WHERE T.UserID = @ActorID AND T.Guid = @Guid
 ORDER BY T.StartDate DESC
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddBackgroundTaskLog')
+DROP PROCEDURE AddBackgroundTaskLog
 GO
 
 CREATE PROCEDURE [dbo].[AddBackgroundTaskLog]
@@ -1121,6 +1157,10 @@ VALUES
 )
 GO
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetBackgroundTaskLogs')
+DROP PROCEDURE GetBackgroundTaskLogs
+GO
+
 CREATE PROCEDURE [dbo].[GetBackgroundTaskLogs]
 (
 	@TaskID INT,
@@ -1142,8 +1182,13 @@ WHERE L.TaskID = @TaskID AND L.Date >= @StartLogTime
 ORDER BY L.Date
 GO
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateBackgroundTask')
+DROP PROCEDURE UpdateBackgroundTask
+GO
+
 CREATE PROCEDURE [dbo].[UpdateBackgroundTask]
 (
+	@Guid UNIQUEIDENTIFIER,
 	@TaskID INT,
 	@ScheduleID INT,
 	@PackageID INT,
@@ -1164,6 +1209,7 @@ AS
 
 UPDATE BackgroundTasks
 SET
+	Guid = @Guid,
 	ScheduleID = @ScheduleID,
 	PackageID = @PackageID,
 	TaskName = @TaskName,
@@ -1181,6 +1227,10 @@ SET
 WHERE ID = @TaskID
 GO
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetBackgroundTaskParams')
+DROP PROCEDURE GetBackgroundTaskParams
+GO
+
 CREATE PROCEDURE [dbo].[GetBackgroundTaskParams]
 (
 	@TaskID INT
@@ -1194,6 +1244,10 @@ SELECT
 	P.SerializerValue
 FROM BackgroundTaskParameters AS P
 WHERE P.TaskID = @TaskID
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddBackgroundTaskParam')
+DROP PROCEDURE AddBackgroundTaskParam
 GO
 
 CREATE PROCEDURE [dbo].[AddBackgroundTaskParam]
@@ -1218,6 +1272,10 @@ VALUES
 )
 GO
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteBackgroundTaskParams')
+DROP PROCEDURE DeleteBackgroundTaskParams
+GO
+
 CREATE PROCEDURE [dbo].[DeleteBackgroundTaskParams]
 (
 	@TaskID INT
@@ -1226,6 +1284,10 @@ AS
 
 DELETE FROM BackgroundTaskParameters
 WHERE TaskID = @TaskID
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddBackgroundTaskStack')
+DROP PROCEDURE AddBackgroundTaskStack
 GO
 
 CREATE PROCEDURE [dbo].[AddBackgroundTaskStack]
@@ -1244,6 +1306,10 @@ VALUES
 )
 GO
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteBackgroundTaskStack')
+DROP PROCEDURE DeleteBackgroundTaskStack
+GO
+
 CREATE PROCEDURE [dbo].[DeleteBackgroundTaskStack]
 (
 	@TaskID INT
@@ -1252,6 +1318,10 @@ AS
 
 DELETE FROM BackgroundTaskStack
 WHERE TaskID = @TaskID
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetProcessBackgroundTasks')
+DROP PROCEDURE GetProcessBackgroundTasks
 GO
 
 CREATE PROCEDURE [dbo].[GetProcessBackgroundTasks]
@@ -1283,4 +1353,44 @@ SELECT
 	T.Status
 FROM BackgroundTasks AS T
 WHERE T.UserID = @ActorID AND T.Completed = 0 AND T.Status = @Status
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetScheduleBackgroundTasks')
+DROP PROCEDURE GetScheduleBackgroundTasks
+GO
+
+CREATE PROCEDURE [dbo].[GetScheduleBackgroundTasks]
+(
+	@ActorID INT,
+	@ScheduleID INT
+)
+AS
+
+SELECT
+	T.ID,
+	T.TaskID,
+	T.ScheduleId,
+	T.PackageId,
+	T.UserId,
+	T.EffectiveUserId,
+	T.TaskName,
+	T.ItemId,
+	T.ItemName,
+	T.StartDate,
+	T.FinishDate,
+	T.IndicatorCurrent,
+	T.IndicatorMaximum,
+	T.MaximumExecutionTime,
+	T.Source,
+	T.Severity,
+	T.Completed,
+	T.NotifyOnComplete,
+	T.Status
+FROM BackgroundTasks AS T
+WHERE T.Guid = (
+	SELECT Guid FROM BackgroundTasks
+	WHERE ScheduleID = @ScheduleID
+		AND UserID = @ActorID
+		AND Completed = 0 AND Status IN (1, 3))
+	AND T.UserID = @ActorID AND T.Completed = 0 AND T.Status IN (1, 3)
 GO

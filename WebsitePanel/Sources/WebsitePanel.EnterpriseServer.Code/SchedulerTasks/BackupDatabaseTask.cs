@@ -46,7 +46,7 @@ namespace WebsitePanel.EnterpriseServer
             //  - BACKUP_NAME
             //  - ZIP_BACKUP
 
-            BackgroundTask topTask = TaskController.GetTopTask();
+            BackgroundTask topTask = TaskManager.TopTask;
 
             string databaseGroup = (string)topTask.GetParamValue("DATABASE_GROUP");
             string databaseName = (string)topTask.GetParamValue("DATABASE_NAME");

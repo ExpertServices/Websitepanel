@@ -44,7 +44,7 @@ namespace WebsitePanel.EnterpriseServer
             //  - DISKSPACE_OVERUSED
             //  - BANDWIDTH_OVERUSED
 
-            BackgroundTask topTask = TaskController.GetTopTask();
+            BackgroundTask topTask = TaskManager.TopTask;
 
             // get the list of all packages
             List<PackageInfo> packages = PackageController.GetPackagePackages(topTask.PackageId, false);

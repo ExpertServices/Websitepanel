@@ -51,7 +51,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             try
             {
-                BackgroundTask topTask = TaskController.GetTopTask();
+                BackgroundTask topTask = TaskManager.TopTask;
 
                 bool isExchange = Utils.ParseBool(topTask.GetParamValue(EXCHANGE_REPORT), false);
                 bool isSharePoint = Utils.ParseBool(topTask.GetParamValue(SHAREPOINT_REPORT), false);

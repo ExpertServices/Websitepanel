@@ -50,10 +50,8 @@ namespace WebsitePanel.EnterpriseServer
 
         public void CalculateBandwidth()
         {
-            BackgroundTask topTask = TaskController.GetTopTask();
-
             // get all owned packages
-            List<PackageInfo> packages = PackageController.GetPackagePackages(topTask.PackageId, true);
+            List<PackageInfo> packages = PackageController.GetPackagePackages(TaskManager.TopTask.PackageId, true);
             TaskManager.Write("Packages to calculate: " + packages.Count.ToString());
 
             foreach (PackageInfo package in packages)

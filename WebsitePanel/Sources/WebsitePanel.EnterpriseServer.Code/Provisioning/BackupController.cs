@@ -342,7 +342,8 @@ namespace WebsitePanel.EnterpriseServer
 					}
 				}
 
-			    BackgroundTask topTask = TaskController.GetTopTask();
+                BackgroundTask topTask = TaskManager.TopTask;
+
                 topTask.IndicatorCurrent = topTask.IndicatorMaximum;
 
                 TaskController.UpdateTask(topTask);

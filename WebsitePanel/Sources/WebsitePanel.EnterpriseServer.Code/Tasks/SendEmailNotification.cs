@@ -40,7 +40,7 @@ namespace WebsitePanel.EnterpriseServer.Tasks
 
         public override void OnComplete()
         {
-            BackgroundTask topTask = TaskController.GetTopTask();
+            BackgroundTask topTask = TaskManager.TopTask;
 
             if (!TaskManager.HasErrors(topTask))
             {
@@ -78,7 +78,7 @@ namespace WebsitePanel.EnterpriseServer.Tasks
         {
             try
             {
-                BackgroundTask topTask = TaskController.GetTopTask();
+                BackgroundTask topTask = TaskManager.TopTask;
                 
                 bool sendLetter = Utils.ParseBool(topTask.GetParamValue("SendLetter"), false);
 
@@ -98,7 +98,7 @@ namespace WebsitePanel.EnterpriseServer.Tasks
         {
             try
             {
-                BackgroundTask topTask = TaskController.GetTopTask();
+                BackgroundTask topTask = TaskManager.TopTask;
                 
                 int userId = Utils.ParseInt(topTask.GetParamValue("UserId").ToString(), 0);
                 bool sendLetter = Utils.ParseBool(topTask.GetParamValue("SendLetter"), false);
@@ -125,7 +125,7 @@ namespace WebsitePanel.EnterpriseServer.Tasks
         {
             try
             {
-                BackgroundTask topTask = TaskController.GetTopTask();
+                BackgroundTask topTask = TaskManager.TopTask;
 
                 bool sendLetter = Utils.ParseBool(topTask.GetParamValue("SendLetter"), false);
 

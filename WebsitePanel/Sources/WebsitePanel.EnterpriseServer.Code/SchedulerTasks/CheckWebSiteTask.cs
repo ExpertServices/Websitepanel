@@ -57,7 +57,7 @@ namespace WebsitePanel.EnterpriseServer
             //  - MAIL_SUBJECT
             //  - MAIL_BODY
 
-            BackgroundTask topTask = TaskController.GetTopTask();
+            BackgroundTask topTask = TaskManager.TopTask;
 
             // get input parameters
             string url = (string)topTask.GetParamValue("URL");
@@ -128,7 +128,7 @@ namespace WebsitePanel.EnterpriseServer
 
         private void SendMailMessage(string url, string message, string content)
         {
-            BackgroundTask topTask = TaskController.GetTopTask();
+            BackgroundTask topTask = TaskManager.TopTask;
 
             // input parameters
             string mailFrom = (string)topTask.GetParamValue("MAIL_FROM");

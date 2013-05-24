@@ -448,7 +448,7 @@ namespace WebsitePanel.EnterpriseServer
 					return BusinessErrorCodes.ERROR_USER_ALREADY_EXISTS;
 				}
 
-			    BackgroundTask topTask = TaskController.GetTopTask();
+                BackgroundTask topTask = TaskManager.TopTask;
 
 			    topTask.ItemId = userId;
                 topTask.UpdateParamValue("SendLetter", sendLetter);

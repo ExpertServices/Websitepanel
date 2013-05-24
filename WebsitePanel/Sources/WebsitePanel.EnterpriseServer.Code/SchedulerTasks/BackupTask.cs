@@ -54,7 +54,7 @@ namespace WebsitePanel.EnterpriseServer
 			string storeServerFolder;
 			bool deleteTempBackup;
 
-            BackgroundTask topTask = TaskController.GetTopTask();
+            BackgroundTask topTask = TaskManager.TopTask;
 
 			try
 			{

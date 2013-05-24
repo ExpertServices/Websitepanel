@@ -1845,29 +1845,46 @@ namespace WebsitePanel.EnterpriseServer
                                            new SqlParameter("@taskId", taskId));
         }
 
+        public static IDataReader GetScheduleBackgroundTasks(int actorId, int scheduleId)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
+                                           ObjectQualifier + "GetScheduleBackgroundTasks",
+                                           new SqlParameter("@actorId", actorId),
+                                           new SqlParameter("@scheduleId", scheduleId));
+        }
+
         public static IDataReader GetBackgroundTasks(int actorId)
         {
             return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
                                            ObjectQualifier + "GetBackgroundTasks",
-                                           new SqlParameter("actorId", actorId));
+                                           new SqlParameter("@actorId", actorId));
+        }
+
+        public static IDataReader GetBackgroundTasks(int actorId, Guid guid)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
+                                           ObjectQualifier + "GetThreadBackgroundTasks",
+                                           new SqlParameter("@actorId", actorId),
+                                           new SqlParameter("@guid", guid));
         }
 
         public static IDataReader GetProcessBackgroundTasks(int actorId, BackgroundTaskStatus status)
         {
             return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
                                            ObjectQualifier + "GetProcessBackgroundTasks",
-                                           new SqlParameter("actorId", actorId),
-                                           new SqlParameter("status", (int)status));
+                                           new SqlParameter("@actorId", actorId),
+                                           new SqlParameter("@status", (int)status));
         }
 
-        public static IDataReader GetBackgroundTopTask(int actorId)
+        public static IDataReader GetBackgroundTopTask(int actorId, Guid guid)
         {
             return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
                                            ObjectQualifier + "GetBackGroundTopTask",
-                                           new SqlParameter("actorId", actorId));
+                                           new SqlParameter("@actorId", actorId),
+                                           new SqlParameter("@guid", guid));
         }
 
-        public static int AddBackgroundTask(string taskId, int scheduleId, int packageId, int userId,
+        public static int AddBackgroundTask(Guid guid, string taskId, int scheduleId, int packageId, int userId,
             int effectiveUserId, string taskName, int itemId, string itemName, DateTime startDate,
             int indicatorCurrent, int indicatorMaximum, int maximumExecutionTime, string source,
             int severity, bool completed, bool notifyOnComplete, BackgroundTaskStatus status)
@@ -1878,6 +1895,7 @@ namespace WebsitePanel.EnterpriseServer
             SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
                                       ObjectQualifier + "AddBackgroundTask",
                                       prmId,
+                                      new SqlParameter("@guid", guid),
                                       new SqlParameter("@taskId", taskId),
                                       new SqlParameter("@scheduleId", scheduleId),
                                       new SqlParameter("@packageId", packageId),
@@ -1923,12 +1941,13 @@ namespace WebsitePanel.EnterpriseServer
                                            new SqlParameter("@startLogTime", startLogTime));
         }
 
-        public static void UpdateBackgroundTask(int taskId, int scheduleId, int packageId, string taskName, int itemId,
+        public static void UpdateBackgroundTask(Guid guid, int taskId, int scheduleId, int packageId, string taskName, int itemId,
             string itemName, DateTime finishDate, int indicatorCurrent, int indicatorMaximum, int maximumExecutionTime,
             string source, int severity, bool completed, bool notifyOnComplete, BackgroundTaskStatus status)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
                                       ObjectQualifier + "UpdateBackgroundTask",
+                                      new SqlParameter("@Guid", guid),
                                       new SqlParameter("@taskId", taskId),
                                       new SqlParameter("@scheduleId", scheduleId),
                                       new SqlParameter("@packageId", packageId),
@@ -2000,13 +2019,6 @@ namespace WebsitePanel.EnterpriseServer
                 ObjectQualifier + "GetScheduleTask",
                 new SqlParameter("@actorId", actorId),
                 new SqlParameter("@taskId", taskId));
-        }
-
-        public static IDataReader GetRunningSchedules(int actorId)
-        {
-            return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
-                ObjectQualifier + "GetRunningSchedules",
-                new SqlParameter("@actorId", actorId));
         }
 
         public static DataSet GetSchedules(int actorId, int packageId)
@@ -2107,7 +2119,7 @@ namespace WebsitePanel.EnterpriseServer
         public static void UpdateSchedule(int actorId, int scheduleId, string taskId,
             string scheduleName, string scheduleTypeId, int interval,
             DateTime fromTime, DateTime toTime, DateTime startTime,
-            DateTime lastRun, DateTime lastFinish, DateTime nextRun, bool enabled, string priorityId,
+            DateTime lastRun, DateTime nextRun, bool enabled, string priorityId,
             int historiesNumber, int maxExecutionTime, int weekMonthDay, string xmlParameters)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
@@ -2122,7 +2134,6 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@toTime", toTime),
                 new SqlParameter("@startTime", startTime),
                 new SqlParameter("@lastRun", (lastRun == DateTime.MinValue) ? DBNull.Value : (object)lastRun),
-                new SqlParameter("@lastFinish", (lastFinish == DateTime.MinValue) ? DBNull.Value : (object)lastFinish),
                 new SqlParameter("@nextRun", nextRun),
                 new SqlParameter("@enabled", enabled),
                 new SqlParameter("@priorityId", priorityId),

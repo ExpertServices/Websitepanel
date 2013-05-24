@@ -40,7 +40,7 @@ namespace WebsitePanel.EnterpriseServer
             //  - FOLDER
             //  - ZIP_FILE
 
-            BackgroundTask topTask = TaskController.GetTopTask();
+            BackgroundTask topTask = TaskManager.TopTask;
 
             // get input parameters
             string filesList = (string)topTask.GetParamValue("FOLDER");

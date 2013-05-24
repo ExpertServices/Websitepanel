@@ -43,6 +43,8 @@ namespace WebsitePanel.EnterpriseServer
 
         public int Id { get; set; }
 
+        public Guid Guid { get; set; }
+
         public String TaskId { get; set; }
 
         public int ScheduleId { get; set; }
@@ -98,10 +100,11 @@ namespace WebsitePanel.EnterpriseServer
             Logs = new List<BackgroundTaskLogRecord>();
         }
 
-        public BackgroundTask(String taskId, int userId, int effectiveUserId, String source, String taskName, String itemName,
+        public BackgroundTask(Guid guid, String taskId, int userId, int effectiveUserId, String source, String taskName, String itemName,
             int itemId, int scheduleId, int packageId, int maximumExecutionTime, List<BackgroundTaskParameter> parameters)
             : this()
         {
+            Guid = guid;
             TaskId = taskId;
             UserId = userId;
             EffectiveUserId = effectiveUserId;
@@ -171,6 +174,8 @@ namespace WebsitePanel.EnterpriseServer
         public String Name { get; set; }
 
         public Object Value { get; set; }
+
+        public String TypeName { get; set; }
 
         public String SerializerValue { get; set; }
 

@@ -101,7 +101,8 @@ namespace WebsitePanel.EnterpriseServer
                 // get application info
                 app = GetApplication(inst.PackageId, inst.ApplicationId);
 
-                BackgroundTask topTask = TaskController.GetTopTask();
+                BackgroundTask topTask = TaskManager.TopTask;
+
                 topTask.ItemName = app.Name;
 
                 TaskController.UpdateTask(topTask);

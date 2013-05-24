@@ -52,6 +52,20 @@ namespace WebsitePanel.EnterpriseServer
                                             60000, // start from 1 minute
                                             60000); // invoke each minute
 
+        protected static Guid? _Guid;
+
+        public static Guid Guid
+        {
+            get
+            {
+                if (_Guid == null)
+                {
+                    _Guid = Guid.NewGuid();
+                }
+
+                return _Guid.Value;
+            }
+        }
 
         public static void StartTask(string source, string taskName)
         {
@@ -142,10 +156,10 @@ namespace WebsitePanel.EnterpriseServer
             int effectiveUserId = SecurityContext.User.IsPeer ? SecurityContext.User.OwnerId : userId;
             String itemNameStr = itemName != null ? itemName.ToString() : String.Empty;
 
-            BackgroundTask task = new BackgroundTask(taskId, userId, effectiveUserId, source, taskName, itemNameStr,
+            BackgroundTask task = new BackgroundTask(Guid, taskId, userId, effectiveUserId, source, taskName, itemNameStr,
                                                      itemId, scheduleId, packageId, maximumExecutionTime, parameters);
 
-            List<BackgroundTask> tasks = TaskController.GetTasks();
+            List<BackgroundTask> tasks = TaskController.GetTasks(Guid);
 
             if (tasks.Count > 0)
             {
@@ -191,10 +205,10 @@ namespace WebsitePanel.EnterpriseServer
             // ERROR
             WriteLogRecord(2, ex.Message, ex.StackTrace);
 
-            BackgroundTask topTask = TaskController.GetTopTask();
-
-            return new Exception((topTask != null) ? String.Format("Error executing '{0}' task on '{1}' {2}",
-                topTask.TaskName, topTask.ItemName, topTask.Source) : String.Format("Error executing task"), ex);
+            return new Exception((TopTask != null)
+                                     ? String.Format("Error executing '{0}' task on '{1}' {2}",
+                                                     TopTask.TaskName, TopTask.ItemName, TopTask.Source)
+                                     : String.Format("Error executing task"), ex);
         }
 
         public static void WriteError(Exception ex, string text, params string[] textParameters)
@@ -219,7 +233,7 @@ namespace WebsitePanel.EnterpriseServer
 
         private static void WriteLogRecord(int severity, string text, string stackTrace, params string[] textParameters)
         {
-            List<BackgroundTask> tasks = TaskController.GetTasks();
+            List<BackgroundTask> tasks = TaskController.GetTasks(Guid);
             
             if (tasks.Count > 0)
             {
@@ -246,12 +260,12 @@ namespace WebsitePanel.EnterpriseServer
 
         public static void CompleteTask()
         {
-            List<BackgroundTask> tasks = TaskController.GetTasks();
+            List<BackgroundTask> tasks = TaskController.GetTasks(Guid);
 
             if (tasks.Count == 0)
                 return;
 
-            BackgroundTask topTask = TaskController.GetTopTask();
+            BackgroundTask topTask = tasks[tasks.Count - 1];
 
             // call event handler
             CallTaskEventHandler(topTask, true);
@@ -284,7 +298,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static void UpdateParam(String name, Object value)
         {
-            BackgroundTask topTask = TaskController.GetTopTask();
+            BackgroundTask topTask = TopTask;
 
             if (topTask == null)
                 return;
@@ -298,7 +312,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             set
             {
-                BackgroundTask topTask = TaskController.GetTopTask();
+                BackgroundTask topTask = TopTask;
 
                 if (topTask == null)
                     return;
@@ -313,7 +327,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             set
             {
-                BackgroundTask topTask = TaskController.GetTopTask();
+                BackgroundTask topTask = TopTask;
 
                 if (topTask == null)
                     return;
@@ -326,7 +340,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static void UpdateParams(Hashtable parameters)
         {
-            BackgroundTask topTask = TaskController.GetTopTask();
+            BackgroundTask topTask = TopTask;
 
             if (topTask == null)
                 return;
@@ -393,7 +407,7 @@ namespace WebsitePanel.EnterpriseServer
 
         static void PurgeCompletedTasks(object obj)
         {
-            List<BackgroundTask> tasks = TaskController.GetTasks();
+            List<BackgroundTask> tasks = TaskController.GetTasks(Guid);
 
             foreach (BackgroundTask task in tasks)
             {
@@ -411,7 +425,13 @@ namespace WebsitePanel.EnterpriseServer
         {
             set
             {
-                BackgroundTask topTask = TaskController.GetTopTask();
+                BackgroundTask topTask = TopTask;
+
+                if (topTask == null)
+                {
+                    return;
+                }
+
                 topTask.IndicatorMaximum = value;
 
                 TaskController.UpdateTask(topTask);
@@ -422,11 +442,17 @@ namespace WebsitePanel.EnterpriseServer
         {
             get
             {
-                return TaskController.GetTopTask().IndicatorCurrent;
+                return TopTask.IndicatorCurrent;
             }
             set
             {
-                BackgroundTask topTask = TaskController.GetTopTask();
+                BackgroundTask topTask = TopTask;
+
+                if (topTask == null)
+                {
+                    return;
+                }
+
                 topTask.IndicatorCurrent = value;
 
                 TaskController.UpdateTask(topTask);
@@ -437,11 +463,17 @@ namespace WebsitePanel.EnterpriseServer
         {
             get
             {
-                return TaskController.GetTopTask().MaximumExecutionTime;
+                return TopTask.MaximumExecutionTime;
             }
             set
             {
-                BackgroundTask topTask = TaskController.GetTopTask();
+                BackgroundTask topTask = TopTask;
+
+                if (topTask == null)
+                {
+                    return;
+                }
+
                 topTask.MaximumExecutionTime = value;
 
                 TaskController.UpdateTask(topTask);
@@ -451,6 +483,11 @@ namespace WebsitePanel.EnterpriseServer
         public static bool HasErrors(BackgroundTask task)
         {
             return task.Severity == 2;
+        }
+
+        public static BackgroundTask TopTask
+        {
+            get { return TaskController.GetTopTask(Guid); }
         }
 
         public static BackgroundTask GetTask(string taskId)

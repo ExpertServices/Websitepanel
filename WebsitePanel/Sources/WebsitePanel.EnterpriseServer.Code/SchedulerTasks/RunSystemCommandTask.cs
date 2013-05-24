@@ -42,7 +42,7 @@ namespace WebsitePanel.EnterpriseServer
             //  - SERVER_NAME
             //  - EXECUTABLE_PATH
 
-            BackgroundTask topTask = TaskController.GetTopTask();
+            BackgroundTask topTask = TaskManager.TopTask;
 
             // get input parameters
             string serverName = (string)topTask.GetParamValue("SERVER_NAME");

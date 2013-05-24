@@ -42,7 +42,7 @@ namespace WebsitePanel.EnterpriseServer
             //  - MAIL_SUBJECT
             //  - MAIL_BODY
 
-            BackgroundTask topTask = TaskController.GetTopTask();
+            BackgroundTask topTask = TaskManager.TopTask;
 
             // get input parameters
             string mailFrom = (string)topTask.GetParamValue("MAIL_FROM");

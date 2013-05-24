@@ -45,7 +45,7 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.TaskEventHandlers
         /// </summary>
         public override void OnComplete()
         {
-            BackgroundTask topTask = TaskController.GetTopTask();
+            BackgroundTask topTask = TaskManager.TopTask;
 
             if (!TaskManager.HasErrors(topTask))
             {
@@ -74,7 +74,7 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.TaskEventHandlers
             // send an e-mail notification
             try
             {
-                BackgroundTask topTask = TaskController.GetTopTask();
+                BackgroundTask topTask = TaskManager.TopTask;
 
                 bool sendNotification = Utils.ParseBool(topTask.GetParamValue(SystemTaskParams.PARAM_SEND_EMAIL), false);
 
@@ -117,7 +117,7 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.TaskEventHandlers
             //
             try
             {
-                BackgroundTask topTask = TaskController.GetTopTask();
+                BackgroundTask topTask = TaskManager.TopTask;
 
                 // Read task parameters
                 Invoice invoice = (Invoice)topTask.GetParamValue(SystemTaskParams.PARAM_INVOICE);
@@ -146,7 +146,7 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer.TaskEventHandlers
             //
             try
             {
-                BackgroundTask topTask = TaskController.GetTopTask();
+                BackgroundTask topTask = TaskManager.TopTask;
 
                 // Read task parameters
                 Contract contract = (Contract)topTask.GetParamValue(SystemTaskParams.PARAM_CONTRACT);

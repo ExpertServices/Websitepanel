@@ -46,7 +46,7 @@ namespace WebsitePanel.EnterpriseServer
             //  - FTP_PASSWORD
             //  - FTP_FOLDER
 
-            BackgroundTask topTask = TaskController.GetTopTask();
+            BackgroundTask topTask = TaskManager.TopTask;
 
             // get input parameters
             string filePath = (string)topTask.GetParamValue("FILE_PATH");
