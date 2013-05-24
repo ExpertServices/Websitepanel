@@ -52,18 +52,18 @@ namespace WebsitePanel.EnterpriseServer
                                             60000, // start from 1 minute
                                             60000); // invoke each minute
 
-        protected static Guid? _Guid;
-
         public static Guid Guid
         {
             get
             {
-                if (_Guid == null)
+                Guid? guid = (Guid?)Thread.GetData(Thread.GetNamedDataSlot("BackgroundTaskGuid"));
+                if (!guid.HasValue)
                 {
-                    _Guid = Guid.NewGuid();
+                    guid = Guid.NewGuid();
+                    Thread.SetData(Thread.GetNamedDataSlot("BackgroundTaskGuid"), guid.Value);
                 }
 
-                return _Guid.Value;
+                return guid.Value;
             }
         }
 
