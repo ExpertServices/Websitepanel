@@ -153,8 +153,13 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             int userId = SecurityContext.User.OwnerId;
-            int effectiveUserId = SecurityContext.User.IsPeer ? SecurityContext.User.OwnerId : SecurityContext.User.UserId;
-            String itemNameStr = itemName != null ? itemName.ToString() : String.Empty;
+            int effectiveUserId = SecurityContext.User.IsPeer
+                ? userId
+                : SecurityContext.User.UserId;
+
+            String itemNameStr = itemName != null
+                ? itemName.ToString()
+                : String.Empty;
 
             BackgroundTask task = new BackgroundTask(Guid, taskId, userId, effectiveUserId, source, taskName, itemNameStr,
                                                      itemId, scheduleId, packageId, maximumExecutionTime, parameters);
@@ -170,7 +175,7 @@ namespace WebsitePanel.EnterpriseServer
                     tasks.Count - 1,
                     true,
                     String.Format("{0}_{1}", source, taskName),
-                    new string[] {itemNameStr});
+                    new string[] { itemNameStr });
 
 
                 TaskController.AddLog(log);
@@ -234,7 +239,7 @@ namespace WebsitePanel.EnterpriseServer
         private static void WriteLogRecord(int severity, string text, string stackTrace, params string[] textParameters)
         {
             List<BackgroundTask> tasks = TaskController.GetTasks(Guid);
-            
+
             if (tasks.Count > 0)
             {
                 BackgroundTask rootTask = tasks[0];
@@ -287,7 +292,7 @@ namespace WebsitePanel.EnterpriseServer
                 UserInfo user = UserController.GetUserInternally(topTask.UserId);
                 string username = user != null ? user.Username : null;
 
-                AuditLog.AddAuditLogRecord(topTask.TaskId, topTask.Severity, topTask.UserId,
+                AuditLog.AddAuditLogRecord(topTask.TaskId, topTask.Severity, topTask.EffectiveUserId,
                     username, topTask.PackageId, topTask.ItemId,
                     topTask.ItemName, topTask.StartDate, topTask.FinishDate, topTask.Source,
                     topTask.TaskName, executionLog);
@@ -412,7 +417,7 @@ namespace WebsitePanel.EnterpriseServer
             foreach (BackgroundTask task in tasks)
             {
                 if (task.MaximumExecutionTime != -1
-                    && ((TimeSpan) (DateTime.Now - task.StartDate)).TotalSeconds > task.MaximumExecutionTime)
+                    && ((TimeSpan)(DateTime.Now - task.StartDate)).TotalSeconds > task.MaximumExecutionTime)
                 {
                     task.Status = BackgroundTaskStatus.Abort;
 
@@ -503,7 +508,7 @@ namespace WebsitePanel.EnterpriseServer
         public static BackgroundTask GetTaskWithLogRecords(string taskId, DateTime startLogTime)
         {
             BackgroundTask task = GetTask(taskId);
-            
+
             if (task == null)
                 return null;
 
@@ -549,11 +554,11 @@ namespace WebsitePanel.EnterpriseServer
             {
                 return;
             }
-            
+
             task.Status = BackgroundTaskStatus.Abort;
-            
+
             StopProcess(task.TaskId);
-            
+
             TaskController.UpdateTask(task);
         }
 
@@ -563,14 +568,14 @@ namespace WebsitePanel.EnterpriseServer
             {
                 return;
             }
-            
+
             task.Status = BackgroundTaskStatus.Abort;
-            
+
             StopProcess(task.TaskId);
-            
+
             TaskController.UpdateTask(task);
         }
-        
+
         private static void StopProcess(string taskId)
         {
             var process = Process.GetProcesses().FirstOrDefault(
@@ -595,8 +600,11 @@ namespace WebsitePanel.EnterpriseServer
             // get user tasks
             foreach (BackgroundTask task in TaskController.GetTasks())
             {
-                if (task.UserId == userId && !task.Completed)
+                if (task.UserId == userId && !task.Completed
+                    && task.Status == BackgroundTaskStatus.Run)
+                {
                     list.Add(task);
+                }
             }
             return list;
         }
@@ -698,7 +706,7 @@ namespace WebsitePanel.EnterpriseServer
             List<string> handlersList = (List<string>)eventHandlers[fullTaskName];
             return handlersList == null ? null : handlersList.ToArray();
         }
-        
+
         #endregion
 
 
@@ -821,3 +829,4 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
     }
 }
+

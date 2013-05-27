@@ -42,18 +42,12 @@ namespace WebsitePanel.EnterpriseServer
 
     public sealed class Scheduler
     {
-        public static SchedulerJob nextSchedule = null;               
+        public static SchedulerJob nextSchedule = null;
+        private static Timer timer = new Timer(ScheduleTasks, null, 30000, 30000);               
 
         public static void Start()
-        {            
-            var serviceController = new ServiceController("WebsitePanel Scheduler");            
-
-            if (serviceController != null && serviceController.Status != ServiceControllerStatus.Running)
-            {                
-                serviceController.WaitForStatus(ServiceControllerStatus.Running);                
-            }            
-
-            ScheduleTasks(null);
+        {                         
+            ScheduleTasks();        
         }
 
         public static bool IsScheduleActive(int scheduleId)
@@ -82,21 +76,23 @@ namespace WebsitePanel.EnterpriseServer
             TaskManager.StopTask(activeTask.TaskId);
         }
 
+        public static void ScheduleTasks()
+        {            
+            ScheduleTasks(null);                    
+        }
+
         public static void ScheduleTasks(object obj)
         {            
-            RunManualTasks();            
-            nextSchedule = SchedulerController.GetNextSchedule();            
-                        
+            RunManualTasks();
+            nextSchedule = SchedulerController.GetNextSchedule();
+
             if (nextSchedule != null)
-            {            
+            {
                 if (nextSchedule.ScheduleInfo.NextRun <= DateTime.Now)
-                {                    
+                {
                     RunNextSchedule(null);
-                }                
+                }
             }
-            
-            Thread.Sleep(30000);
-            ScheduleTasks(null);
         }
 
         private static void RunManualTasks()
@@ -155,14 +151,14 @@ namespace WebsitePanel.EnterpriseServer
 
         // call back for the timer function
         static void RunNextSchedule(object obj) // obj ignored
-        {
+        {            
             if (nextSchedule == null)
                 return;
 
             RunSchedule(nextSchedule, true);
 
             // schedule next task
-            ScheduleTasks(null);
+            ScheduleTasks();
         }
 
         static void RunSchedule(SchedulerJob schedule, bool changeNextRun)

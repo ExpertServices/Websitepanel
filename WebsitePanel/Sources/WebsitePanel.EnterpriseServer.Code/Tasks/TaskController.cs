@@ -15,6 +15,11 @@ namespace WebsitePanel.EnterpriseServer
             BackgroundTask task = ObjectUtils.FillObjectFromDataReader<BackgroundTask>(
                 DataProvider.GetBackgroundTask(SecurityContext.User.UserId, taskId));
 
+            if (task == null)
+            {
+                return null;
+            }
+
             task.Params = GetTaskParams(task.Id);
 
             return task;
@@ -28,8 +33,13 @@ namespace WebsitePanel.EnterpriseServer
 
         public static List<BackgroundTask> GetTasks()
         {
+            return GetTasks(SecurityContext.User.UserId);
+        }
+
+        public static List<BackgroundTask> GetTasks(int actorId)
+        {
             return ObjectUtils.CreateListFromDataReader<BackgroundTask>(
-                DataProvider.GetBackgroundTasks(SecurityContext.User.UserId));
+                DataProvider.GetBackgroundTasks(actorId));
         }
 
         public static List<BackgroundTask> GetTasks(Guid guid)
@@ -48,6 +58,11 @@ namespace WebsitePanel.EnterpriseServer
         {
             BackgroundTask task = ObjectUtils.FillObjectFromDataReader<BackgroundTask>(
                 DataProvider.GetBackgroundTopTask(SecurityContext.User.UserId, guid));
+
+            if (task == null)
+            {
+                return null;
+            }
 
             task.Params = GetTaskParams(task.Id);
 
@@ -88,7 +103,7 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         public static void AddTaskParams(int taskId, List<BackgroundTaskParameter> parameters)
-        {            
+        {
             foreach (BackgroundTaskParameter param in SerializeParams(parameters))
             {
                 DataProvider.AddBackgroundTaskParam(taskId, param.Name, param.SerializerValue, param.TypeName);
@@ -118,7 +133,7 @@ namespace WebsitePanel.EnterpriseServer
             {
                 log.TextParameters = ReBuildParametersXml(log.XmlParameters);
             }
-            
+
             return logs;
         }
 
@@ -142,7 +157,7 @@ namespace WebsitePanel.EnterpriseServer
             return parameters;
         }
 
-        private static List<BackgroundTaskParameter>  DeserializeParams(List<BackgroundTaskParameter> parameters)
+        private static List<BackgroundTaskParameter> DeserializeParams(List<BackgroundTaskParameter> parameters)
         {
             foreach (BackgroundTaskParameter param in parameters)
             {
@@ -188,3 +203,4 @@ namespace WebsitePanel.EnterpriseServer
         }
     }
 }
+
