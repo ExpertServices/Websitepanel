@@ -28,6 +28,7 @@
 
 using System;
 using System.IO;
+using System.ServiceProcess;
 using System.Threading;
 using System.Collections;
 using System.Diagnostics;
@@ -41,18 +42,18 @@ namespace WebsitePanel.EnterpriseServer
 
     public sealed class Scheduler
     {
-        public static SchedulerJob nextSchedule = null;
-
-        // main timer and put it to sleep
-        static Timer scheduleTimer = new Timer(new TimerCallback(RunNextSchedule),
-                                            null,
-                                            Timeout.Infinite,
-                                            Timeout.Infinite);
+        public static SchedulerJob nextSchedule = null;               
 
         public static void Start()
-        {
-            // schedule tasks
-            ScheduleTasks();
+        {            
+            var serviceController = new ServiceController("WebsitePanel Scheduler");            
+
+            if (serviceController != null && serviceController.Status != ServiceControllerStatus.Running)
+            {                
+                serviceController.WaitForStatus(ServiceControllerStatus.Running);                
+            }            
+
+            ScheduleTasks(null);
         }
 
         public static bool IsScheduleActive(int scheduleId)
@@ -81,43 +82,34 @@ namespace WebsitePanel.EnterpriseServer
             TaskManager.StopTask(activeTask.TaskId);
         }
 
-        public static void ScheduleTasks()
-        {
-            RunManualTasks();
-
-            nextSchedule = SchedulerController.GetNextSchedule();
-            
-            // set timer
+        public static void ScheduleTasks(object obj)
+        {            
+            RunManualTasks();            
+            nextSchedule = SchedulerController.GetNextSchedule();            
+                        
             if (nextSchedule != null)
-            {
+            {            
                 if (nextSchedule.ScheduleInfo.NextRun <= DateTime.Now)
-                {
-                    // this will put the timer to sleep
-                    scheduleTimer.Change(Timeout.Infinite, Timeout.Infinite);
-                    Thread.Sleep(1000);
-                    // run immediately
+                {                    
                     RunNextSchedule(null);
-                }
-                else
-                {
-                    // set timer
-                    TimeSpan ts = nextSchedule.ScheduleInfo.NextRun.Subtract(DateTime.Now);
-                    if (ts < TimeSpan.Zero)
-                        ts = TimeSpan.Zero; // cannot be negative !
-                    // invoke after the timespan
-                    scheduleTimer.Change((long)ts.TotalMilliseconds, Timeout.Infinite);
-                }
+                }                
             }
+            
+            Thread.Sleep(30000);
+            ScheduleTasks(null);
         }
 
         private static void RunManualTasks()
         {
-            var tasks = TaskController.GetProcessTasks(BackgroundTaskStatus.Starting);
+            var tasks = TaskController.GetProcessTasks(BackgroundTaskStatus.Starting);            
+
             foreach (var task in tasks)
             {
                 new Thread(() => RunBackgroundTask(task)) {Priority = ThreadPriority.Highest}.Start();
             }
-            tasks = TaskController.GetProcessTasks(BackgroundTaskStatus.Stopping);
+
+            tasks = TaskController.GetProcessTasks(BackgroundTaskStatus.Stopping);            
+
             foreach (var task in tasks)
             {
                 TaskManager.StopTask(task);
@@ -170,7 +162,7 @@ namespace WebsitePanel.EnterpriseServer
             RunSchedule(nextSchedule, true);
 
             // schedule next task
-            ScheduleTasks();
+            ScheduleTasks(null);
         }
 
         static void RunSchedule(SchedulerJob schedule, bool changeNextRun)

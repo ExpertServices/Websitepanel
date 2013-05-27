@@ -17,7 +17,7 @@ namespace WebsitePanel.SchedulerService
             processInstaller.Account = ServiceAccount.LocalSystem;
             serviceInstaller.DisplayName = "WebsitePanel Scheduler";
             serviceInstaller.StartType = ServiceStartMode.Automatic;
-            serviceInstaller.ServiceName = "WebsitePanlel Scheduler";
+            serviceInstaller.ServiceName = "WebsitePanel Scheduler";
 
             Installers.Add(processInstaller);
             Installers.Add(serviceInstaller);

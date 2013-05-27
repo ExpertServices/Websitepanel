@@ -41,7 +41,7 @@ namespace WebsitePanel.EnterpriseServer
         public static List<BackgroundTask> GetProcessTasks(BackgroundTaskStatus status)
         {
             return ObjectUtils.CreateListFromDataReader<BackgroundTask>(
-                DataProvider.GetProcessBackgroundTasks(SecurityContext.User.UserId, status));
+                DataProvider.GetProcessBackgroundTasks(status));
         }
 
         public static BackgroundTask GetTopTask(Guid guid)

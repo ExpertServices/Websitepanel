@@ -12,6 +12,7 @@ BEGIN
 END
 GO
 
+
 --- Fix on version 2.0
 DELETE FROM HostingPlanQuotas WHERE QuotaID = 340
 GO
@@ -1329,8 +1330,7 @@ DROP PROCEDURE GetProcessBackgroundTasks
 GO
 
 CREATE PROCEDURE [dbo].[GetProcessBackgroundTasks]
-(
-	@ActorID INT,
+(	
 	@Status INT
 )
 AS
@@ -1356,7 +1356,7 @@ SELECT
 	T.NotifyOnComplete,
 	T.Status
 FROM BackgroundTasks AS T
-WHERE T.UserID = @ActorID AND T.Completed = 0 AND T.Status = @Status
+WHERE T.Completed = 0 AND T.Status = @Status
 GO
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetScheduleBackgroundTasks')

@@ -1868,11 +1868,10 @@ namespace WebsitePanel.EnterpriseServer
                                            new SqlParameter("@guid", guid));
         }
 
-        public static IDataReader GetProcessBackgroundTasks(int actorId, BackgroundTaskStatus status)
+        public static IDataReader GetProcessBackgroundTasks(BackgroundTaskStatus status)
         {
             return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
-                                           ObjectQualifier + "GetProcessBackgroundTasks",
-                                           new SqlParameter("@actorId", actorId),
+                                           ObjectQualifier + "GetProcessBackgroundTasks",                                           
                                            new SqlParameter("@status", (int)status));
         }
 
