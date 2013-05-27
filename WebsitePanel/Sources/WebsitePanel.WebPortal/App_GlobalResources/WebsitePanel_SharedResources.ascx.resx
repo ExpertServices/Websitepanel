@@ -1893,6 +1893,9 @@
   <data name="ResourceGroup.RemoteDesktopServices" xml:space="preserve">
     <value>Remote Desktop Services</value>
   </data>
+  <data name="ResourceGroup.EnterpriseStorage" xml:space="preserve">
+    <value>Enterprise Storage Services</value>
+  </data>
   <data name="ResourceGroup.MySQL5" xml:space="preserve">
     <value>MySQL 5</value>
   </data>

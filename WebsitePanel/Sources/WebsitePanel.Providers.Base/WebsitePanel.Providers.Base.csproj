@@ -77,6 +77,7 @@
     <Compile Include="Common\ErrorCodes.cs" />
     <Compile Include="Common\PasswdHelper.cs" />
     <Compile Include="Common\WPIEntries.cs" />
+    <Compile Include="EnterpriseStorage\IEnterpriseStorage.cs" />
     <Compile Include="HeliconZoo\IHeliconZooServer.cs" />
     <Compile Include="HostedSolution\BaseReport.cs" />
     <Compile Include="HostedSolution\BaseStatistics.cs" />

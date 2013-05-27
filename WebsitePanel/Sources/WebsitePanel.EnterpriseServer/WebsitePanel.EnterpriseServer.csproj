@@ -83,6 +83,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="esEnterpriseStorage.asmx" />
     <Content Include="esRemoteDesktopServices.asmx" />
     <Content Include="esHeliconZoo.asmx" />
     <Content Include="esLync.asmx" />
@@ -249,6 +250,10 @@
     <Compile Include="Code\WebServers\WebServerController.cs" />
     <Compile Include="Code\Wizards\UserCreationWizard.cs" />
     <Compile Include="Code\Wizards\WebApplicationsInstaller.cs" />
+    <Compile Include="esEnterpriseStorage.asmx.cs">
+      <DependentUpon>esEnterpriseStorage.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="esRemoteDesktopServices.asmx.cs">
       <DependentUpon>esRemoteDesktopServices.asmx</DependentUpon>
       <SubType>Component</SubType>

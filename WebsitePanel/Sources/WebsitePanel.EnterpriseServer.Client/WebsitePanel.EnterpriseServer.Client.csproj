@@ -84,6 +84,7 @@
     <Compile Include="CommentsProxy.cs" />
     <Compile Include="Common\EnterpriseServerProxyConfigurator.cs" />
     <Compile Include="Common\UsernameAssertion.cs" />
+    <Compile Include="EnterpriseStorageProxy.cs" />
     <Compile Include="ExchangeServerProxy.cs">
       <SubType>code</SubType>
     </Compile>

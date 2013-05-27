@@ -62,5 +62,8 @@ REM %WSE_CLEAN% .\WebsitePanel.Server.Client\LyncServerProxy.cs
 REM %WSDL% %SERVER_URL%/HeliconZoo.asmx /out:.\WebsitePanel.Server.Client\HeliconZooProxy.cs /namespace:WebsitePanel.Providers.HeliconZoo /type:webClient /fields
 REM %WSE_CLEAN% .\WebsitePanel.Server.Client\HeliconZooProxy.cs
 
-%WSDL% %SERVER_URL%/RemoteDesktopServices.asmx /out:.\WebsitePanel.Server.Client\RemoteDesktopServicesProxy.cs /namespace:WebsitePanel.Providers.RemoteDesktopServices /type:webClient /fields
-%WSE_CLEAN% .\WebsitePanel.Server.Client\RemoteDesktopServicesProxy.cs
+REM %WSDL% %SERVER_URL%/RemoteDesktopServices.asmx /out:.\WebsitePanel.Server.Client\RemoteDesktopServicesProxy.cs /namespace:WebsitePanel.Providers.RemoteDesktopServices /type:webClient /fields
+REM %WSE_CLEAN% .\WebsitePanel.Server.Client\RemoteDesktopServicesProxy.cs
+
+%WSDL% %SERVER_URL%/EnterpriseStorage.asmx /out:.\WebsitePanel.Server.Client\EnterpriseStorageProxy.cs /namespace:WebsitePanel.Providers.EnterpriseStorage /type:webClient /fields
+%WSE_CLEAN% .\WebsitePanel.Server.Client\EnterpriseStorageProxy.cs
