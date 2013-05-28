@@ -45,6 +45,8 @@ namespace WebsitePanel.EnterpriseServer
     public class TaskManager
     {
         private static Hashtable eventHandlers = null;
+        //using id instead of guid
+        private static Dictionary<int, Thread> _taskThreadsDictionary = new Dictionary<int, Thread>();
 
         // purge timer, used for killing old tasks from the hash
         static Timer purgeTimer = new Timer(new TimerCallback(PurgeCompletedTasks),
@@ -163,6 +165,8 @@ namespace WebsitePanel.EnterpriseServer
 
             BackgroundTask task = new BackgroundTask(Guid, taskId, userId, effectiveUserId, source, taskName, itemNameStr,
                                                      itemId, scheduleId, packageId, maximumExecutionTime, parameters);
+
+            AddTaskThread(task, Thread.CurrentThread);
 
             List<BackgroundTask> tasks = TaskController.GetTasks(Guid);
 
@@ -289,7 +293,7 @@ namespace WebsitePanel.EnterpriseServer
                 topTask.Logs = TaskController.GetLogs(topTask.Id, topTask.StartDate);
 
                 string executionLog = FormatExecutionLog(topTask);
-                UserInfo user = UserController.GetUserInternally(topTask.UserId);
+                UserInfo user = UserController.GetUserInternally(topTask.EffectiveUserId);
                 string username = user != null ? user.Username : null;
 
                 AuditLog.AddAuditLogRecord(topTask.TaskId, topTask.Severity, topTask.EffectiveUserId,
@@ -419,7 +423,7 @@ namespace WebsitePanel.EnterpriseServer
                 if (task.MaximumExecutionTime != -1
                     && ((TimeSpan)(DateTime.Now - task.StartDate)).TotalSeconds > task.MaximumExecutionTime)
                 {
-                    task.Status = BackgroundTaskStatus.Abort;
+                    task.Status = BackgroundTaskStatus.Stopping;
 
                     TaskController.UpdateTask(task);
                 }
@@ -526,6 +530,7 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     if (task.ScheduleId > 0
                         && !task.Completed
+                        && (task.Status == BackgroundTaskStatus.Run || task.Status == BackgroundTaskStatus.Starting)
                         && !scheduledTasks.ContainsKey(task.ScheduleId))
                         scheduledTasks.Add(task.ScheduleId, task);
                 }
@@ -546,6 +551,14 @@ namespace WebsitePanel.EnterpriseServer
             task.NotifyOnComplete = true;
         }
 
+        internal static void AddTaskThread(BackgroundTask task, Thread taskThread)
+        {
+            if (_taskThreadsDictionary.ContainsKey(task.Id))
+                _taskThreadsDictionary[task.Id] = taskThread;
+            else
+                _taskThreadsDictionary.Add(task.Id, taskThread);
+        }
+
         public static void StopTask(string taskId)
         {
             BackgroundTask task = GetTask(taskId);
@@ -557,35 +570,18 @@ namespace WebsitePanel.EnterpriseServer
 
             task.Status = BackgroundTaskStatus.Abort;
 
-            StopProcess(task.TaskId);
+            StopProcess(task.Id);
 
             TaskController.UpdateTask(task);
         }
 
-        public static void StopTask(BackgroundTask task)
+        private static void StopProcess(int key)
         {
-            if (task == null)
-            {
-                return;
-            }
-
-            task.Status = BackgroundTaskStatus.Abort;
-
-            StopProcess(task.TaskId);
-
-            TaskController.UpdateTask(task);
-        }
-
-        private static void StopProcess(string taskId)
-        {
-            var process = Process.GetProcesses().FirstOrDefault(
-                p => p.ProcessName.Equals(taskId, StringComparison.CurrentCultureIgnoreCase));
-
-            if (process != null)
-            {
-                process.Kill();
-                process.WaitForExit(10000);
-            }
+                if (_taskThreadsDictionary.ContainsKey(key))
+                {
+                    _taskThreadsDictionary[key].Abort();
+                    _taskThreadsDictionary.Remove(key);
+                }
         }
 
         public static List<BackgroundTask> GetUserTasks(int userId)
@@ -827,6 +823,7 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         #endregion
+
     }
 }
 

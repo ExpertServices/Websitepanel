@@ -1075,7 +1075,7 @@ SELECT
 FROM BackgroundTasks AS T
 INNER JOIN BackgroundTaskStack AS TS
 	ON TS.TaskId = T.ID
-WHERE T.EffectiveUserID = @ActorID AND T.Guid = @Guid
+WHERE T.Guid = @Guid
 GO
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetBackgroundTopTask')
@@ -1113,7 +1113,7 @@ SELECT TOP 1
 FROM BackgroundTasks AS T
 INNER JOIN BackgroundTaskStack AS TS
 	ON TS.TaskId = T.ID
-WHERE T.EffectiveUserID = @ActorID AND T.Guid = @Guid
+WHERE T.Guid = @Guid
 ORDER BY T.StartDate DESC
 GO
 
@@ -1372,6 +1372,7 @@ AS
 
 SELECT
 	T.ID,
+	T.Guid,
 	T.TaskID,
 	T.ScheduleId,
 	T.PackageId,

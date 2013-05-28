@@ -97,18 +97,20 @@ namespace WebsitePanel.EnterpriseServer
 
         private static void RunManualTasks()
         {
-            var tasks = TaskController.GetProcessTasks(BackgroundTaskStatus.Starting);            
+            var tasks = TaskController.GetProcessTasks(BackgroundTaskStatus.Stopping);            
 
             foreach (var task in tasks)
             {
-                new Thread(() => RunBackgroundTask(task)) {Priority = ThreadPriority.Highest}.Start();
+                TaskManager.StopTask(task.TaskId);
             }
 
-            tasks = TaskController.GetProcessTasks(BackgroundTaskStatus.Stopping);            
+            tasks = TaskController.GetProcessTasks(BackgroundTaskStatus.Starting);
 
             foreach (var task in tasks)
             {
-                TaskManager.StopTask(task);
+                var taskThread = new Thread(() => RunBackgroundTask(task)) { Priority = ThreadPriority.Highest };
+                taskThread.Start();
+                TaskManager.AddTaskThread(task, taskThread);
             }
         }
 
@@ -130,8 +132,6 @@ namespace WebsitePanel.EnterpriseServer
                 var objTask = (SchedulerTask)Activator.CreateInstance(Type.GetType(schedule.Task.TaskType));
 
                 objTask.DoWork();
-                
-                Thread.Sleep(100000);
             }
             catch (Exception ex)
             {

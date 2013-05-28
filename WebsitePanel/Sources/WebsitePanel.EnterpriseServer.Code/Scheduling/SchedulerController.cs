@@ -165,7 +165,7 @@ namespace WebsitePanel.EnterpriseServer
 
             var backgroundTask = new BackgroundTask(
                 Guid.NewGuid(),
-                schedule.ScheduleInfo.TaskId,
+                Guid.NewGuid().ToString("N"),
                 SecurityContext.User.UserId,
                 SecurityContext.User.IsPeer
                     ? SecurityContext.User.OwnerId

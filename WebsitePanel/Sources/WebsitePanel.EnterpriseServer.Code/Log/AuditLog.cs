@@ -92,7 +92,7 @@ namespace WebsitePanel.EnterpriseServer
                 DataProvider.AddAuditLogRecord(recordId, severityId, userId, username, packageId, itemId, itemName,
                     startDate, finishDate, sourceName, taskName, executionLog);
             }
-            catch
+            catch(Exception ex)
             {
                 // skip error
             }

@@ -66,7 +66,6 @@ namespace WebsitePanel.EnterpriseServer
         {
             // create worker
             Thread worker = new Thread(new ThreadStart(RunSchedule));
-
             // set worker priority
             switch (scheduleInfo.Priority)
             {
@@ -109,7 +108,7 @@ namespace WebsitePanel.EnterpriseServer
                     objTask.DoWork();
                 else
                     throw new Exception(String.Format("Could not create scheduled task of '{0}' type",
-                        task.TaskType));                
+                        task.TaskType));      
             }
             catch (Exception ex)
             {

@@ -91,7 +91,7 @@ namespace WebsitePanel.EnterpriseServer
 
             AddTaskParams(task.Id, task.Params);
 
-            if (task.Completed || task.Status == BackgroundTaskStatus.Abort || task.Status == BackgroundTaskStatus.Stopping)
+            if (task.Completed || task.Status == BackgroundTaskStatus.Abort)
             {
                 DeleteTaskStack(task.Id);
             }
