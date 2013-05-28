@@ -1971,6 +1971,12 @@ namespace WebsitePanel.Providers.HostedSolution
                 cmd.Parameters.Add("ImapEnabled", enableIMAP);
                 ExecuteShellCommand(runSpace, cmd);
 
+                //calendar settings
+                if (accountType == ExchangeAccountType.Equipment || accountType == ExchangeAccountType.Room)
+                {
+                    SetCalendarSettings(runSpace, id);
+                }
+
                 //add to the security group
                 cmd = new Command("Add-DistributionGroupMember");
                 cmd.Parameters.Add("Identity", organizationId);
@@ -2008,6 +2014,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 CloseRunspace(runSpace);
             }
         }
+               
 
         internal virtual void SetCalendarSettings(Runspace runspace, string id)
         {
