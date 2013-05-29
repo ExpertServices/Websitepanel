@@ -110,7 +110,7 @@ namespace WebsitePanel.EnterpriseServer
             {
                 var taskThread = new Thread(() => RunBackgroundTask(task)) { Priority = ThreadPriority.Highest };
                 taskThread.Start();
-                TaskManager.AddTaskThread(task, taskThread);
+                TaskManager.AddTaskThread(task.Id, taskThread);
             }
         }
 
@@ -132,6 +132,7 @@ namespace WebsitePanel.EnterpriseServer
                 var objTask = (SchedulerTask)Activator.CreateInstance(Type.GetType(schedule.Task.TaskType));
 
                 objTask.DoWork();
+              //  Thread.Sleep(40000);
             }
             catch (Exception ex)
             {

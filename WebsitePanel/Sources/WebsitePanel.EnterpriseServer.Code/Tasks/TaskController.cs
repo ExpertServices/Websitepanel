@@ -69,7 +69,7 @@ namespace WebsitePanel.EnterpriseServer
             return task;
         }
 
-        public static void AddTask(BackgroundTask task)
+        public static int AddTask(BackgroundTask task)
         {
             int taskId = DataProvider.AddBackgroundTask(task.Guid, task.TaskId, task.ScheduleId, task.PackageId, task.UserId,
                                                         task.EffectiveUserId, task.TaskName, task.ItemId, task.ItemName,
@@ -80,6 +80,7 @@ namespace WebsitePanel.EnterpriseServer
             AddTaskParams(taskId, task.Params);
 
             DataProvider.AddBackgroundTaskStack(taskId);
+            return taskId;
         }
 
         public static void UpdateTask(BackgroundTask task)

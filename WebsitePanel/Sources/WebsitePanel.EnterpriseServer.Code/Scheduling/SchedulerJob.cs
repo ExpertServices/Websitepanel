@@ -109,6 +109,7 @@ namespace WebsitePanel.EnterpriseServer
                 else
                     throw new Exception(String.Format("Could not create scheduled task of '{0}' type",
                         task.TaskType));      
+            //    Thread.Sleep(40000);
             }
             catch (Exception ex)
             {

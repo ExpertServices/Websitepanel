@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 using System.Collections;
@@ -46,7 +47,7 @@ namespace WebsitePanel.EnterpriseServer
     {
         private static Hashtable eventHandlers = null;
         //using id instead of guid
-        private static Dictionary<int, Thread> _taskThreadsDictionary = new Dictionary<int, Thread>();
+        private static ConcurrentDictionary<int, Thread> _taskThreadsDictionary = new ConcurrentDictionary<int, Thread>();
 
         // purge timer, used for killing old tasks from the hash
         static Timer purgeTimer = new Timer(new TimerCallback(PurgeCompletedTasks),
@@ -162,11 +163,9 @@ namespace WebsitePanel.EnterpriseServer
             String itemNameStr = itemName != null
                 ? itemName.ToString()
                 : String.Empty;
-
             BackgroundTask task = new BackgroundTask(Guid, taskId, userId, effectiveUserId, source, taskName, itemNameStr,
                                                      itemId, scheduleId, packageId, maximumExecutionTime, parameters);
 
-            AddTaskThread(task, Thread.CurrentThread);
 
             List<BackgroundTask> tasks = TaskController.GetTasks(Guid);
 
@@ -188,7 +187,8 @@ namespace WebsitePanel.EnterpriseServer
             // call event handler
             CallTaskEventHandler(task, false);
 
-            TaskController.AddTask(task);
+            int newTaskId = TaskController.AddTask(task);
+            AddTaskThread(newTaskId, Thread.CurrentThread);
         }
 
         public static void WriteParameter(string parameterName, object parameterValue)
@@ -551,12 +551,12 @@ namespace WebsitePanel.EnterpriseServer
             task.NotifyOnComplete = true;
         }
 
-        internal static void AddTaskThread(BackgroundTask task, Thread taskThread)
+        internal static void AddTaskThread(int taskId, Thread taskThread)
         {
-            if (_taskThreadsDictionary.ContainsKey(task.Id))
-                _taskThreadsDictionary[task.Id] = taskThread;
+            if (_taskThreadsDictionary.ContainsKey(taskId))
+                _taskThreadsDictionary[taskId] = taskThread;
             else
-                _taskThreadsDictionary.Add(task.Id, taskThread);
+                _taskThreadsDictionary.AddOrUpdate(taskId, taskThread, (key, oldValue) => taskThread);
         }
 
         public static void StopTask(string taskId)
@@ -579,8 +579,11 @@ namespace WebsitePanel.EnterpriseServer
         {
                 if (_taskThreadsDictionary.ContainsKey(key))
                 {
-                    _taskThreadsDictionary[key].Abort();
-                    _taskThreadsDictionary.Remove(key);
+                    if (_taskThreadsDictionary[key] != null)
+                        if (_taskThreadsDictionary[key].IsAlive)
+                            _taskThreadsDictionary[key].Abort();
+                    Thread deleted;
+                    _taskThreadsDictionary.TryRemove(key,out deleted);
                 }
         }
 

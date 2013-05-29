@@ -160,23 +160,38 @@ namespace WebsitePanel.EnterpriseServer
             if (schedule == null)
                 return 0;
 
+            if (TaskController.GetScheduleTasks(scheduleId).Any(x => x.Status == BackgroundTaskStatus.Run
+                                                                     || x.Status == BackgroundTaskStatus.Starting))
+                return 0;
+
             var parameters = schedule.ScheduleInfo.Parameters.Select(
                 prm => new BackgroundTaskParameter(prm.ParameterId, prm.ParameterValue)).ToList();
 
+            var packageInfo = PackageController.GetPackage(schedule.ScheduleInfo.PackageId);
             var backgroundTask = new BackgroundTask(
                 Guid.NewGuid(),
                 Guid.NewGuid().ToString("N"),
                 SecurityContext.User.UserId,
                 SecurityContext.User.IsPeer
                     ? SecurityContext.User.OwnerId
-                    : SecurityContext.User.UserId, "SCHEDULER", "RUN_SCHEDULE",
+                    : packageInfo.UserId, "SCHEDULER", "RUN_SCHEDULE",
                 schedule.ScheduleInfo.ScheduleName,
                 schedule.ScheduleInfo.ScheduleId,
                 schedule.ScheduleInfo.ScheduleId,
                 schedule.ScheduleInfo.PackageId,
                 schedule.ScheduleInfo.MaxExecutionTime, parameters) { Status = BackgroundTaskStatus.Starting };
-
+            
             TaskController.AddTask(backgroundTask);
+
+            // update next run (if required)
+            CalculateNextStartTime(schedule.ScheduleInfo);
+            
+            // disable run once task
+            if (schedule.ScheduleInfo.ScheduleType == ScheduleType.OneTime)
+                schedule.ScheduleInfo.Enabled = false;
+
+            schedule.ScheduleInfo.LastRun = DateTime.Now;
+            UpdateSchedule(schedule.ScheduleInfo);
 
             return 0;
         }        
