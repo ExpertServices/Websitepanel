@@ -126,11 +126,9 @@
   <data name="gvInstalledApplicationsEnableConsole.Header" xml:space="preserve">
     <value>Web console</value>
   </data>
-  <data name="gvInstalledApplicationsConsoleUrl.Header" xml:space="preserve">
-    <value>Web console url</value>
-  </data>
+
   <data name="btnEnable.Text" xml:space="preserve">
-    <value>Enable console for 1 day</value>
+    <value>Enable</value>
   </data>
   <data name="btnDisable.Text" xml:space="preserve">
     <value>Disable</value>

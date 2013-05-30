@@ -54,6 +54,7 @@
 			        Text='<%# GetLocalizedString("btnEnable.Text") %>' CssClass="Button1"
 			        CommandArgument='<%# Eval("Name") %>'
 			        CommandName="EnableConsole"
+                    Visible= '<%# IsNullOrEmpty( (string)Eval("ConsoleUrl")) %>'
                     />
                     
                      <asp:Button ID="btnDisable" runat="server"
@@ -62,22 +63,25 @@
 			        CommandName="DisableConsole"
                     Visible= '<%# !IsNullOrEmpty( (string)Eval("ConsoleUrl")) %>'
                     />
+                    
+                    &nbsp;&nbsp;
+                        
+			    <asp:hyperlink 
+                    CssClass="MediumBold" 
+                    NavigateUrl='<%# GetConsoleFullUrl((string)Eval("ConsoleUrl")) %>' 
+                    runat="server" 
+                    ID="lnkAppDetails" 
+                    ToolTip='<%# Eval("ConsoleUrl") %>' 
+                    Target="_blank" 
+                    Visible= '<%# !IsNullOrEmpty( (string)Eval("ConsoleUrl")) %>'>
+			            Open console
+                </asp:hyperlink>
               
            
 			</ItemTemplate>
 		</asp:TemplateField>
         
-        <asp:TemplateField HeaderText="gvInstalledApplicationsConsoleUrl">
-		    <ItemStyle HorizontalAlign="Center" />
-			<ItemTemplate>
-			    
-                
-			    <asp:hyperlink CssClass="MediumBold" NavigateUrl='<%# GetConsoleFullUrl((string)Eval("ConsoleUrl")) %>' runat="server" ID="lnkAppDetails" ToolTip='<%# Eval("ConsoleUrl") %>' Target="_blank">
-			        <%# Eval("ConsoleUrl") %>
-                </asp:hyperlink>
-
-			</ItemTemplate>
-		</asp:TemplateField>
+    
         </Columns>
     </asp:GridView>
 
