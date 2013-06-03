@@ -95,7 +95,9 @@ namespace WebsitePanel.Providers.Web.HeliconZoo
                 {
                     if ((string)switchboardElement.GetAttributeValue("name") == "*")
                     {
-                        switchboardDisabledDefault = !(bool)switchboardElement.GetAttributeValue("enabled");
+                        bool isEnabled = GetSwitchBoardValue(switchboardElement);
+
+                        switchboardDisabledDefault =  !isEnabled ;
                         break;
                     }
                 }
@@ -149,7 +151,8 @@ namespace WebsitePanel.Providers.Web.HeliconZoo
                     HeliconZooEngine item = Collection_GetHeliconZooEngineByName(result, (string)switchboardElement.GetAttributeValue("name"));
                     if (item != null)
                     {
-                        item.disabled = !(bool)switchboardElement.GetAttributeValue("enabled");
+                        bool isEnabled = GetSwitchBoardValue(switchboardElement);
+                        item.disabled = !isEnabled;
                     }
                     else
                     {
@@ -163,6 +166,17 @@ namespace WebsitePanel.Providers.Web.HeliconZoo
             }
 
             return result.ToArray();
+        }
+
+        private bool GetSwitchBoardValue(ConfigurationElement switchboardElement)
+        {
+            return (0 == String.Compare((string)switchboardElement.GetAttributeValue("value"),
+                                                                 "Enabled", StringComparison.OrdinalIgnoreCase));
+        }
+        
+        private void SetSwitchBoardValue(ConfigurationElement switchboardElement, bool enabled)
+        {
+            switchboardElement.SetAttributeValue("value", enabled ? "Enabled" : "Disabled");
         }
 
         HeliconZooEngine Collection_GetHeliconZooEngineByName(List<HeliconZooEngine> collection, string name)
@@ -200,15 +214,7 @@ namespace WebsitePanel.Providers.Web.HeliconZoo
                 switchboardCollection.Clear();
                 
                 
-                //Disable all engines, by default for WSP
-                /*
-                ConfigurationElement disableAll = switchboardCollection.CreateElement();
-                disableAll.SetAttributeValue("name", "*");
-                disableAll.SetAttributeValue("enabled", "false");
-                switchboardCollection.Add(disableAll);
-                */
-                
-
+              
                 foreach(HeliconZooEngine item in userEngines)
                 {
                     if (item.isUserEngine)
@@ -218,12 +224,7 @@ namespace WebsitePanel.Providers.Web.HeliconZoo
                         enginesCollection.Add(engine);
                     }
 
-                    /*
-                    ConfigurationElement disable = switchboardCollection.CreateElement();
-                    disable.SetAttributeValue("name", item.name );
-                    disable.SetAttributeValue("enabled", item.disabled? "false": "true" );
-                    switchboardCollection.Add(disable);
-                    */
+                
                 }
 
                 srvman.CommitChanges();
@@ -249,7 +250,7 @@ namespace WebsitePanel.Providers.Web.HeliconZoo
                 {
                     if ((string) switchboardElement.GetAttributeValue("name") == "*")
                     {
-                        isEnginesEnabled = (bool) switchboardElement.GetAttributeValue("enabled");
+                        isEnginesEnabled = GetSwitchBoardValue(switchboardElement);
                         break;
                     }
                 }
@@ -274,7 +275,7 @@ namespace WebsitePanel.Providers.Web.HeliconZoo
                 {
                     if ((string)switchboardElement.GetAttributeValue("name") == "*")
                     {
-                        switchboardElement.SetAttributeValue("enabled", enabled ? "true" : "false");
+                        switchboardElement.SetAttributeValue("value", enabled ? "Enabed" : "Disabled");
                         wildCardFound = true;
                         break;
                     }
@@ -284,7 +285,7 @@ namespace WebsitePanel.Providers.Web.HeliconZoo
                 {
                     ConfigurationElement element = switchboardCollection.CreateElement();
                     element.SetAttributeValue("name", "*");
-                    element.SetAttributeValue("enabled", enabled ? "true" : "false");
+                    SetSwitchBoardValue(element, enabled);
                     switchboardCollection.Add(element);
                 }
 
@@ -321,8 +322,9 @@ namespace WebsitePanel.Providers.Web.HeliconZoo
 
                 foreach (ConfigurationElement element in switchboardCollection)
                 {
-                    string enabled = element.GetAttributeValue("enabled").ToString();
-                    if (string.Equals(enabled, "true", StringComparison.OrdinalIgnoreCase))
+                    
+                    bool isEnabled = GetSwitchBoardValue(element);
+                    if (isEnabled)
                     {
                         engines.Add(element.GetAttributeValue("name").ToString());
                     }
@@ -350,14 +352,14 @@ namespace WebsitePanel.Providers.Web.HeliconZoo
 
                 ConfigurationElement elementDisableAll = switchboardCollection.CreateElement();
                 elementDisableAll.SetAttributeValue("name", "*");
-                elementDisableAll.SetAttributeValue("enabled", "false");
+                SetSwitchBoardValue(elementDisableAll, false);
                 switchboardCollection.Add(elementDisableAll);
 
                 foreach (string engineName in engineNames)
                 {
                     ConfigurationElement element = switchboardCollection.CreateElement();
                     element.SetAttributeValue("name", engineName);
-                    element.SetAttributeValue("enabled", "true");
+                    SetSwitchBoardValue(element, true);
                     switchboardCollection.Add(element);
                 }
 
@@ -388,7 +390,7 @@ namespace WebsitePanel.Providers.Web.HeliconZoo
                 {
                     if ((string)switchboardElement.GetAttributeValue("name") == "console")
                     {
-                        isEnginesEnabled = (bool)switchboardElement.GetAttributeValue("enabled");
+                        isEnginesEnabled = GetSwitchBoardValue(switchboardElement);
                         break;
                     }
                 }
@@ -413,7 +415,8 @@ namespace WebsitePanel.Providers.Web.HeliconZoo
                 {
                     if ((string)switchboardElement.GetAttributeValue("name") == "console")
                     {
-                        switchboardElement.SetAttributeValue("enabled", enabled ? "true" : "false");
+                        SetSwitchBoardValue(switchboardElement, enabled);
+                        
                         found = true;
                         break;
                     }
@@ -423,13 +426,15 @@ namespace WebsitePanel.Providers.Web.HeliconZoo
                 {
                     ConfigurationElement element = switchboardCollection.CreateElement();
                     element.SetAttributeValue("name", "console");
-                    element.SetAttributeValue("enabled", enabled ? "true" : "false");
+                    SetSwitchBoardValue(element, enabled);
                     switchboardCollection.Add(element);
                 }
 
                 srvman.CommitChanges();
             }
         }
+
+      
 
         #region private methods
 
