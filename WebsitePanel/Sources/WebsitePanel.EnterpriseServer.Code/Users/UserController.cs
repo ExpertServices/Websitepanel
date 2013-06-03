@@ -453,7 +453,7 @@ namespace WebsitePanel.EnterpriseServer
 			    topTask.ItemId = userId;
                 topTask.UpdateParamValue("SendLetter", sendLetter);
 
-                TaskController.UpdateTask(topTask);
+                TaskController.UpdateTaskWithParams(topTask);
 
 				return userId;
 			}

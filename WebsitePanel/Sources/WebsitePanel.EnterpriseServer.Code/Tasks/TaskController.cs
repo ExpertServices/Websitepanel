@@ -80,27 +80,57 @@ namespace WebsitePanel.EnterpriseServer
             AddTaskParams(taskId, task.Params);
 
             DataProvider.AddBackgroundTaskStack(taskId);
+
             return taskId;
         }
 
-        public static void UpdateTask(BackgroundTask task)
+        public static void UpdateTaskWithParams(BackgroundTask task)
         {
+            if (UpdateTask(task))
+            {
+                UpdateBackgroundTaskParams(task);
+            }
+        }
+
+        public static bool UpdateTask(BackgroundTask task)
+        {
+            if (task.Status == BackgroundTaskStatus.Abort)
+            {
+                DeleteBackgroundTasks(task.Guid);
+
+                return false;
+            }
+
+            if (task.Completed)
+            {
+                DeleteBackgroundTask(task.Id);
+
+                return false;
+            }
+
             DataProvider.UpdateBackgroundTask(task.Guid, task.Id, task.ScheduleId, task.PackageId, task.TaskName, task.ItemId,
                                               task.ItemName, task.FinishDate, task.IndicatorCurrent,
                                               task.IndicatorMaximum, task.MaximumExecutionTime, task.Source,
                                               task.Severity, task.Completed, task.NotifyOnComplete, task.Status);
 
-            AddTaskParams(task.Id, task.Params);
-
-            if (task.Completed || task.Status == BackgroundTaskStatus.Abort)
-            {
-                DeleteTaskStack(task.Id);
-            }
+            return true;
         }
 
-        public static void DeleteTaskStack(int taskId)
+        public static void UpdateBackgroundTaskParams(BackgroundTask task)
         {
-            DataProvider.DeleteBackgroundTaskStack(taskId);
+            DataProvider.DeleteBackgroundTaskParams(task.Id);
+
+            AddTaskParams(task.Id, task.Params);
+        }
+
+        public static void DeleteBackgroundTasks(Guid guid)
+        {
+            DataProvider.DeleteBackgroundTasks(guid);
+        }
+
+        public static void DeleteBackgroundTask(int id)
+        {
+            DataProvider.DeleteBackgroundTask(id);
         }
 
         public static void AddTaskParams(int taskId, List<BackgroundTaskParameter> parameters)

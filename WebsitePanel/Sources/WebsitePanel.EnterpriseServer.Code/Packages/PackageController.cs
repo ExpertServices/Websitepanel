@@ -622,7 +622,7 @@ namespace WebsitePanel.EnterpriseServer
                 topTask.ItemId = userId;
                 topTask.UpdateParamValue("SendLetter", sendLetter);
 
-                TaskController.UpdateTask(topTask);
+                TaskController.UpdateTaskWithParams(topTask);
 
                 return result;
             }
@@ -729,7 +729,7 @@ namespace WebsitePanel.EnterpriseServer
                 topTask.UpdateParamValue("UserId", userId);
                 topTask.UpdateParamValue("SendLetter", sendLetter);
 
-                TaskController.UpdateTask(topTask);
+                TaskController.UpdateTaskWithParams(topTask);
             }
             finally
             {

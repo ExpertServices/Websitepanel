@@ -212,7 +212,7 @@ namespace WebsitePanel.EnterpriseServer
 									// try implicit type conversion
 									props[i].SetValue(obj, propVal, null);
 								}
-								catch
+                                catch (Exception ex)
 								{
 									// convert to string and then set property value
 									try
@@ -220,14 +220,14 @@ namespace WebsitePanel.EnterpriseServer
 										string strVal = propVal.ToString();
 										props[i].SetValue(obj, Cast(strVal, props[i].PropertyType), null);
 									}
-									catch
+									catch(Exception e)
 									{
 										// skip property init
 									}
 								}
 							}
 						}
-						catch{} // just skip
+                        catch (Exception e) { } // just skip
 					} // for properties
 				}
 			}

@@ -31,6 +31,7 @@ using System.IO;
 using System.Data;
 using System.Text;
 using System.Collections.Generic;
+using System.Threading;
 using System.Xml;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
@@ -118,7 +119,7 @@ namespace WebsitePanel.EnterpriseServer
 			{
                 TaskManager.StartTask(taskId, "BACKUP", "BACKUP", backupFileName, SecurityContext.User.UserId);
 
-				// get the list of items to backup
+                // get the list of items to backup
 				TaskManager.Write("Calculate items to backup");
 				List<ServiceProviderItem> items = GetBackupItems(userId, packageId, serviceId, serverId);
 
@@ -209,7 +210,7 @@ namespace WebsitePanel.EnterpriseServer
 
 								// increment progress
 								TaskManager.IndicatorCurrent += 1;
-							}
+    						}
 						}
 					}
 					catch (Exception ex)
@@ -805,7 +806,7 @@ namespace WebsitePanel.EnterpriseServer
 				//
 				return true;
 			}
-			catch
+			catch(Exception e)
 			{
 				//
 				return false;

@@ -63,7 +63,7 @@ namespace WebsitePanel.Portal
             litTitle.Text = String.Format("{0} &quot;{1}&quot;",
                 GetAuditLogTaskName(task.Source, task.TaskName),
                 task.ItemName);
-            litStep.Text = LocalizeActivityText(task.Logs.Count > 0 ? task.Logs[0].Text : String.Empty);
+            litStep.Text = LocalizeActivityText(task.GetLogs().Count > 0 ? task.GetLogs()[0].Text : String.Empty);
             litStartTime.Text = task.StartDate.ToString();
 
             // progress
@@ -77,10 +77,10 @@ namespace WebsitePanel.Portal
 
             // execution log
             StringBuilder log = new StringBuilder();
-            if (task.Logs.Count > 0)
-                ViewState["lastLogDate"] = task.Logs[0].Date.AddTicks(1);
+            if (task.GetLogs().Count > 0)
+                ViewState["lastLogDate"] = task.GetLogs()[0].Date.AddTicks(1);
 
-            foreach (BackgroundTaskLogRecord logRecord in task.Logs)
+            foreach (BackgroundTaskLogRecord logRecord in task.GetLogs())
             {
                 log.Append("[").Append(GetDurationText(task.StartDate, logRecord.Date)).Append("] ");
                 log.Append(GetLogLineIdent(logRecord.TextIdent));

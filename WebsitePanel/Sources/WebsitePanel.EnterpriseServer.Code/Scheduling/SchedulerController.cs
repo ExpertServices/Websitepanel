@@ -167,19 +167,23 @@ namespace WebsitePanel.EnterpriseServer
             var parameters = schedule.ScheduleInfo.Parameters.Select(
                 prm => new BackgroundTaskParameter(prm.ParameterId, prm.ParameterValue)).ToList();
 
-            var packageInfo = PackageController.GetPackage(schedule.ScheduleInfo.PackageId);
+            var userInfo = PackageController.GetPackageOwner(schedule.ScheduleInfo.PackageId);
+
             var backgroundTask = new BackgroundTask(
                 Guid.NewGuid(),
                 Guid.NewGuid().ToString("N"),
-                SecurityContext.User.UserId,
-                SecurityContext.User.IsPeer
-                    ? SecurityContext.User.OwnerId
-                    : packageInfo.UserId, "SCHEDULER", "RUN_SCHEDULE",
+                userInfo.OwnerId == 0 ? userInfo.UserId : userInfo.OwnerId,
+                userInfo.UserId,
+                "SCHEDULER",
+                "RUN_SCHEDULE",
                 schedule.ScheduleInfo.ScheduleName,
                 schedule.ScheduleInfo.ScheduleId,
                 schedule.ScheduleInfo.ScheduleId,
                 schedule.ScheduleInfo.PackageId,
-                schedule.ScheduleInfo.MaxExecutionTime, parameters) { Status = BackgroundTaskStatus.Starting };
+                schedule.ScheduleInfo.MaxExecutionTime, parameters)
+                                     {
+                                         Status = BackgroundTaskStatus.Starting
+                                     };
             
             TaskController.AddTask(backgroundTask);
 

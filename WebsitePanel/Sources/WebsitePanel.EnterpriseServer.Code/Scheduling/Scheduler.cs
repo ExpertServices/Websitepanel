@@ -43,7 +43,7 @@ namespace WebsitePanel.EnterpriseServer
     public sealed class Scheduler
     {
         public static SchedulerJob nextSchedule = null;
-        private static Timer timer = new Timer(ScheduleTasks, null, 30000, 30000);               
+        //private static Timer timer = new Timer(ScheduleTasks, null, 30000, 30000);               
 
         public static void Start()
         {                         
@@ -132,7 +132,7 @@ namespace WebsitePanel.EnterpriseServer
                 var objTask = (SchedulerTask)Activator.CreateInstance(Type.GetType(schedule.Task.TaskType));
 
                 objTask.DoWork();
-              //  Thread.Sleep(40000);
+             //   Thread.Sleep(40000);
             }
             catch (Exception ex)
             {

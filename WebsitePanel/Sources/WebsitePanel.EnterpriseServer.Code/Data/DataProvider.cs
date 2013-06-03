@@ -1999,11 +1999,18 @@ namespace WebsitePanel.EnterpriseServer
                                       new SqlParameter("@taskId", taskId));
         }
 
-        public static void DeleteBackgroundTaskStack(int taskId)
+        public static void DeleteBackgroundTasks(Guid guid)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
-                                      ObjectQualifier + "DeleteBackgroundTaskStack",
-                                      new SqlParameter("@taskId", taskId));
+                                      ObjectQualifier + "DeleteBackgroundTasks",
+                                      new SqlParameter("@guid", guid));
+        }
+
+        public static void DeleteBackgroundTask(int taskId)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                                      ObjectQualifier + "DeleteBackgroundTask",
+                                      new SqlParameter("@id", taskId));
         }
 
         public static IDataReader GetScheduleTasks(int actorId)

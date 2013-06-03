@@ -41,7 +41,9 @@ namespace WebsitePanel.EnterpriseServer
     {
         #region Fields
 
-        private List<BackgroundTaskParameter> parameters;
+        public List<BackgroundTaskParameter> Params = new List<BackgroundTaskParameter>();
+        
+        public List<BackgroundTaskLogRecord> Logs = new List<BackgroundTaskLogRecord>();
 
         #endregion
 
@@ -51,7 +53,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public Guid Guid { get; set; }
 
-        public String TaskId { get; set; }
+        public string TaskId { get; set; }
 
         public int ScheduleId { get; set; }
 
@@ -61,11 +63,11 @@ namespace WebsitePanel.EnterpriseServer
 
         public int EffectiveUserId { get; set; }
 
-        public String TaskName { get; set; }
+        public string TaskName { get; set; }
 
         public int ItemId { get; set; }
 
-        public String ItemName { get; set; }
+        public string ItemName { get; set; }
 
         public DateTime StartDate { get; set; }
 
@@ -77,7 +79,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public int MaximumExecutionTime { get; set; }
 
-        public String Source { get; set; }
+        public string Source { get; set; }
 
         public int Severity { get; set; }
 
@@ -86,14 +88,6 @@ namespace WebsitePanel.EnterpriseServer
         public bool NotifyOnComplete { get; set; }
 
         public BackgroundTaskStatus Status { get; set; }
-
-        public List<BackgroundTaskLogRecord> Logs { get; set; }
-
-        public List<BackgroundTaskParameter> Params
-        {
-            get { return parameters ?? (parameters = new List<BackgroundTaskParameter>()); }
-            set { parameters = value; }
-        }
 
         #endregion
 
@@ -106,8 +100,9 @@ namespace WebsitePanel.EnterpriseServer
             IndicatorCurrent = 0;
             IndicatorMaximum = 0;
             Status = BackgroundTaskStatus.Run;
-            
-            Logs = new List<BackgroundTaskLogRecord>();
+
+            Completed = false;
+            NotifyOnComplete = false;
         }
 
         public BackgroundTask(Guid guid, String taskId, int userId, int effectiveUserId, String source, String taskName, String itemName,
@@ -131,6 +126,11 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
         #region Methods
+
+        public List<BackgroundTaskLogRecord> GetLogs()
+        {
+            return Logs;
+        }
 
         public Object GetParamValue(String name)
         {

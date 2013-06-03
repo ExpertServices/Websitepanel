@@ -155,10 +155,13 @@ namespace WebsitePanel.EnterpriseServer
                 taskId = Guid.NewGuid().ToString("N");
             }
 
-            int userId = SecurityContext.User.OwnerId;
-            int effectiveUserId = SecurityContext.User.IsPeer
-                ? userId
-                : SecurityContext.User.UserId;
+            var user = SecurityContext.User;
+
+            int userId = user.OwnerId == 0
+                             ? user.UserId
+                             : user.OwnerId;
+
+            int effectiveUserId = user.UserId;
 
             String itemNameStr = itemName != null
                 ? itemName.ToString()
@@ -286,23 +289,12 @@ namespace WebsitePanel.EnterpriseServer
             // write task execution result to database
             if (tasks.Count == 1) // single task
             {
-                // unregister task globally
-                // tasks.Remove(TopTask.TaskId);
-
                 // write to database
-                topTask.Logs = TaskController.GetLogs(topTask.Id, topTask.StartDate);
-
-                string executionLog = FormatExecutionLog(topTask);
-                UserInfo user = UserController.GetUserInternally(topTask.EffectiveUserId);
-                string username = user != null ? user.Username : null;
-
-                AuditLog.AddAuditLogRecord(topTask.TaskId, topTask.Severity, topTask.EffectiveUserId,
-                    username, topTask.PackageId, topTask.ItemId,
-                    topTask.ItemName, topTask.StartDate, topTask.FinishDate, topTask.Source,
-                    topTask.TaskName, executionLog);
+                AddAuditLog(topTask);
             }
 
             TaskController.UpdateTask(topTask);
+            StopProcess(topTask);
         }
 
         public static void UpdateParam(String name, Object value)
@@ -314,7 +306,7 @@ namespace WebsitePanel.EnterpriseServer
 
             topTask.UpdateParamValue(name, value);
 
-            TaskController.UpdateTask(topTask);
+            TaskController.UpdateTaskWithParams(topTask);
         }
 
         public static int ItemId
@@ -359,7 +351,7 @@ namespace WebsitePanel.EnterpriseServer
                 topTask.UpdateParamValue(key, parameters[key]);
             }
 
-            TaskController.UpdateTask(topTask);
+            TaskController.UpdateTaskWithParams(topTask);
         }
 
         static string FormatExecutionLog(BackgroundTask task)
@@ -535,7 +527,7 @@ namespace WebsitePanel.EnterpriseServer
                         scheduledTasks.Add(task.ScheduleId, task);
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
             }
             return scheduledTasks;
@@ -570,21 +562,49 @@ namespace WebsitePanel.EnterpriseServer
 
             task.Status = BackgroundTaskStatus.Abort;
 
-            StopProcess(task.Id);
+            StopProcess(task);
+
+            if (!HasErrors(task))
+            {
+                task.Severity = 1;
+            }
+
+            task.FinishDate = DateTime.Now;
+
+            AddAuditLog(task);
 
             TaskController.UpdateTask(task);
         }
 
-        private static void StopProcess(int key)
+        private static void StopProcess(BackgroundTask task)
         {
-                if (_taskThreadsDictionary.ContainsKey(key))
+                if (_taskThreadsDictionary.ContainsKey(task.Id))
                 {
-                    if (_taskThreadsDictionary[key] != null)
-                        if (_taskThreadsDictionary[key].IsAlive)
-                            _taskThreadsDictionary[key].Abort();
+                    if (_taskThreadsDictionary[task.Id] != null)
+                        if (_taskThreadsDictionary[task.Id].IsAlive)
+                        {
+                            if (!task.Completed)
+                                _taskThreadsDictionary[task.Id].Abort();
+                            _taskThreadsDictionary[task.Id] = null;
+                        }
                     Thread deleted;
-                    _taskThreadsDictionary.TryRemove(key,out deleted);
+                    _taskThreadsDictionary.TryRemove(task.Id, out deleted);
                 }
+        }
+
+        private static void AddAuditLog(BackgroundTask task)
+        {
+            task.Logs = TaskController.GetLogs(task.Id, task.StartDate);
+
+            string executionLog = FormatExecutionLog(task);
+
+            UserInfo user = UserController.GetUserInternally(task.EffectiveUserId);
+            string username = user != null ? user.Username : null;
+
+            AuditLog.AddAuditLogRecord(task.TaskId, task.Severity, task.EffectiveUserId,
+                                       username, task.PackageId, task.ItemId,
+                                       task.ItemName, task.StartDate, task.FinishDate, task.Source,
+                                       task.TaskName, executionLog);
         }
 
         public static List<BackgroundTask> GetUserTasks(int userId)
@@ -597,7 +617,7 @@ namespace WebsitePanel.EnterpriseServer
                 return list; // prohibited user
 
             // get user tasks
-            foreach (BackgroundTask task in TaskController.GetTasks())
+            foreach (BackgroundTask task in TaskController.GetTasks(user.IsPeer ? user.OwnerId : user.UserId))
             {
                 if (task.UserId == userId && !task.Completed
                     && task.Status == BackgroundTaskStatus.Run)
