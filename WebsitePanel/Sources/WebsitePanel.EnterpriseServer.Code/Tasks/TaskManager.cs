@@ -512,7 +512,7 @@ namespace WebsitePanel.EnterpriseServer
             if (task == null)
                 return null;
 
-            task.Logs = TaskController.GetLogs(task.Id, startLogTime);
+            task.Logs = TaskController.GetLogs(task, startLogTime);
 
             return task;
         }
@@ -600,7 +600,7 @@ namespace WebsitePanel.EnterpriseServer
 
         private static void AddAuditLog(BackgroundTask task)
         {
-            task.Logs = TaskController.GetLogs(task.Id, task.StartDate);
+            task.Logs = TaskController.GetLogs(task, task.StartDate);
 
             string executionLog = FormatExecutionLog(task);
 

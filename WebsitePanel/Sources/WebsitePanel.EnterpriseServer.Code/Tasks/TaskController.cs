@@ -156,10 +156,15 @@ namespace WebsitePanel.EnterpriseServer
                                               log.Severity, log.Text, log.TextIdent, BuildParametersXml(log.TextParameters));
         }
 
-        public static List<BackgroundTaskLogRecord> GetLogs(int taskId, DateTime startLogTime)
+        public static List<BackgroundTaskLogRecord> GetLogs(BackgroundTask task, DateTime startLogTime)
         {
+            if (startLogTime <= task.StartDate)
+            {
+                startLogTime = task.StartDate;
+            }
+
             List<BackgroundTaskLogRecord> logs = ObjectUtils.CreateListFromDataReader<BackgroundTaskLogRecord>(
-                DataProvider.GetBackgroundTaskLogs(taskId, startLogTime));
+                DataProvider.GetBackgroundTaskLogs(task.Id, startLogTime));
 
             foreach (BackgroundTaskLogRecord log in logs)
             {
