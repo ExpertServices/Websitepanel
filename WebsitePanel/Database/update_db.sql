@@ -971,7 +971,6 @@ GO
 
 CREATE PROCEDURE [dbo].[GetBackgroundTask]
 (
-	@ActorID INT,
 	@TaskID NVARCHAR(255)
 )
 AS
@@ -1013,7 +1012,17 @@ CREATE PROCEDURE [dbo].[GetBackgroundTasks]
 )
 AS
 
-SELECT
+ with GetChildUsersId(id) as (
+    select UserID
+    from Users
+    where UserID = @ActorID
+    union all
+    select C.UserId
+    from GetChildUsersId P
+    inner join Users C on P.id = C.OwnerID
+)
+
+SELECT 
 	T.ID,
 	T.Guid,
 	T.TaskID,
@@ -1035,9 +1044,12 @@ SELECT
 	T.NotifyOnComplete,
 	T.Status
 FROM BackgroundTasks AS T
-INNER JOIN BackgroundTaskStack AS TS
-	ON TS.TaskId = T.ID
-WHERE T.UserID = @ActorID
+INNER JOIN (SELECT T.Guid, MIN(T.StartDate) AS Date
+			FROM BackgroundTasks AS T
+			INNER JOIN BackgroundTaskStack AS TS
+				ON TS.TaskId = T.ID
+			WHERE T.UserID in (select id from GetChildUsersId)
+			GROUP BY T.Guid) AS TT ON TT.Guid = T.Guid AND TT.Date = T.StartDate
 GO
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetThreadBackgroundTasks')
@@ -1046,7 +1058,6 @@ GO
 
 CREATE PROCEDURE [dbo].GetThreadBackgroundTasks
 (
-	@ActorID INT,
 	@Guid UNIQUEIDENTIFIER
 )
 AS
@@ -1084,7 +1095,6 @@ GO
 
 CREATE PROCEDURE [dbo].[GetBackgroundTopTask]
 (
-	@ActorID INT,
 	@Guid UNIQUEIDENTIFIER
 )
 AS
@@ -1114,7 +1124,7 @@ FROM BackgroundTasks AS T
 INNER JOIN BackgroundTaskStack AS TS
 	ON TS.TaskId = T.ID
 WHERE T.Guid = @Guid
-ORDER BY T.StartDate DESC
+ORDER BY T.StartDate ASC
 GO
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddBackgroundTaskLog')
@@ -1311,10 +1321,6 @@ VALUES
 )
 GO
 
-IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteBackgroundTaskStack')
-DROP PROCEDURE DeleteBackgroundTaskStack
-GO
-
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteBackgroundTasks')
 DROP PROCEDURE DeleteBackgroundTasks
 GO
@@ -1401,7 +1407,6 @@ GO
 
 CREATE PROCEDURE [dbo].[GetScheduleBackgroundTasks]
 (
-	@ActorID INT,
 	@ScheduleID INT
 )
 AS
@@ -1431,91 +1436,5 @@ FROM BackgroundTasks AS T
 WHERE T.Guid = (
 	SELECT Guid FROM BackgroundTasks
 	WHERE ScheduleID = @ScheduleID
-		AND UserID = @ActorID
 		AND Completed = 0 AND Status IN (1, 3))
-	AND T.UserID = @ActorID AND T.Completed = 0 AND T.Status IN (1, 3)
-GO
-
-
-
-ALTER PROCEDURE [dbo].[GetBackgroundTopTask]
-(
-	@ActorID INT,
-	@Guid UNIQUEIDENTIFIER
-)
-AS
-
-SELECT TOP 1
-	T.ID,
-	T.Guid,
-	T.TaskID,
-	T.ScheduleId,
-	T.PackageId,
-	T.UserId,
-	T.EffectiveUserId,
-	T.TaskName,
-	T.ItemId,
-	T.ItemName,
-	T.StartDate,
-	T.FinishDate,
-	T.IndicatorCurrent,
-	T.IndicatorMaximum,
-	T.MaximumExecutionTime,
-	T.Source,
-	T.Severity,
-	T.Completed,
-	T.NotifyOnComplete,
-	T.Status
-FROM BackgroundTasks AS T
-INNER JOIN BackgroundTaskStack AS TS
-	ON TS.TaskId = T.ID
-WHERE T.Guid = @Guid
-ORDER BY T.StartDate ASC
-GO
-
-
-ALTER PROCEDURE [dbo].[GetBackgroundTasks]
-(
-	@ActorID INT
-)
-AS
-
- with GetChildUsersId(id) as (
-    select UserID
-    from Users
-    where UserID = @ActorID
-    union all
-    select C.UserId
-    from GetChildUsersId P
-    inner join Users C on P.id = C.OwnerID
-)
-
-SELECT 
-	T.ID,
-	T.Guid,
-	T.TaskID,
-	T.ScheduleId,
-	T.PackageId,
-	T.UserId,
-	T.EffectiveUserId,
-	T.TaskName,
-	T.ItemId,
-	T.ItemName,
-	T.StartDate,
-	T.FinishDate,
-	T.IndicatorCurrent,
-	T.IndicatorMaximum,
-	T.MaximumExecutionTime,
-	T.Source,
-	T.Severity,
-	T.Completed,
-	T.NotifyOnComplete,
-	T.Status
-FROM BackgroundTasks AS T
-INNER JOIN (SELECT T.Guid, MIN(T.StartDate) AS Date
-			FROM BackgroundTasks AS T
-			INNER JOIN BackgroundTaskStack AS TS
-				ON TS.TaskId = T.ID
-			WHERE T.UserID in (select id from GetChildUsersId)
-			GROUP BY T.Guid) AS TT ON TT.Guid = T.Guid AND TT.Date = T.StartDate
 GO

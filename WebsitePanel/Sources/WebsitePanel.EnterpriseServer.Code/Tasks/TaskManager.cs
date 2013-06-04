@@ -190,32 +190,36 @@ namespace WebsitePanel.EnterpriseServer
             // call event handler
             CallTaskEventHandler(task, false);
 
-            int newTaskId = TaskController.AddTask(task);
-            AddTaskThread(newTaskId, Thread.CurrentThread);
+            AddTaskThread(TaskController.AddTask(task), Thread.CurrentThread);
         }
 
         public static void WriteParameter(string parameterName, object parameterValue)
         {
             string val = parameterValue != null ? parameterValue.ToString() : "";
-            WriteLogRecord(0, parameterName + ": " + val, null, null);
+            WriteLogRecord(Guid, 0, parameterName + ": " + val, null, null);
         }
 
         public static void Write(string text, params string[] textParameters)
         {
             // INFO
-            WriteLogRecord(0, text, null, textParameters);
+            WriteLogRecord(Guid, 0, text, null, textParameters);
         }
 
         public static void WriteWarning(string text, params string[] textParameters)
         {
+            WriteWarning(Guid, text, textParameters);
+        }
+
+        public static void WriteWarning(Guid guid, string text, params string[] textParameters)
+        {
             // WARNING
-            WriteLogRecord(1, text, null, textParameters);
+            WriteLogRecord(guid, 1, text, null, textParameters);
         }
 
         public static Exception WriteError(Exception ex)
         {
             // ERROR
-            WriteLogRecord(2, ex.Message, ex.StackTrace);
+            WriteLogRecord(Guid, 2, ex.Message, ex.StackTrace);
 
             return new Exception((TopTask != null)
                                      ? String.Format("Error executing '{0}' task on '{1}' {2}",
@@ -234,18 +238,18 @@ namespace WebsitePanel.EnterpriseServer
                 prms[0] = ex.Message;
             }
 
-            WriteLogRecord(2, text, ex.Message + "\n" + ex.StackTrace, prms);
+            WriteLogRecord(Guid, 2, text, ex.Message + "\n" + ex.StackTrace, prms);
         }
 
         public static void WriteError(string text, params string[] textParameters)
         {
             // ERROR
-            WriteLogRecord(2, text, null, textParameters);
+            WriteLogRecord(Guid, 2, text, null, textParameters);
         }
 
-        private static void WriteLogRecord(int severity, string text, string stackTrace, params string[] textParameters)
+        private static void WriteLogRecord(Guid guid, int severity, string text, string stackTrace, params string[] textParameters)
         {
-            List<BackgroundTask> tasks = TaskController.GetTasks(Guid);
+            List<BackgroundTask> tasks = TaskController.GetTasks(guid);
 
             if (tasks.Count > 0)
             {
@@ -570,6 +574,8 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             task.FinishDate = DateTime.Now;
+
+            WriteWarning(task.Guid, "Task aborted by user");
 
             AddAuditLog(task);
 

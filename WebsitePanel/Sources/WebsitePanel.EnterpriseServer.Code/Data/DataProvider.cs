@@ -1837,19 +1837,17 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Scheduler
 
-        public static IDataReader GetBackgroundTask(int actorId, string taskId)
+        public static IDataReader GetBackgroundTask(string taskId)
         {
             return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
                                            ObjectQualifier + "GetBackgroundTask",
-                                           new SqlParameter("@actorId", actorId),
                                            new SqlParameter("@taskId", taskId));
         }
 
-        public static IDataReader GetScheduleBackgroundTasks(int actorId, int scheduleId)
+        public static IDataReader GetScheduleBackgroundTasks(int scheduleId)
         {
             return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
                                            ObjectQualifier + "GetScheduleBackgroundTasks",
-                                           new SqlParameter("@actorId", actorId),
                                            new SqlParameter("@scheduleId", scheduleId));
         }
 
@@ -1860,11 +1858,10 @@ namespace WebsitePanel.EnterpriseServer
                                            new SqlParameter("@actorId", actorId));
         }
 
-        public static IDataReader GetBackgroundTasks(int actorId, Guid guid)
+        public static IDataReader GetBackgroundTasks(Guid guid)
         {
             return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
                                            ObjectQualifier + "GetThreadBackgroundTasks",
-                                           new SqlParameter("@actorId", actorId),
                                            new SqlParameter("@guid", guid));
         }
 
@@ -1875,11 +1872,10 @@ namespace WebsitePanel.EnterpriseServer
                                            new SqlParameter("@status", (int)status));
         }
 
-        public static IDataReader GetBackgroundTopTask(int actorId, Guid guid)
+        public static IDataReader GetBackgroundTopTask(Guid guid)
         {
             return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
-                                           ObjectQualifier + "GetBackGroundTopTask",
-                                           new SqlParameter("@actorId", actorId),
+                                           ObjectQualifier + "GetBackgroundTopTask",
                                            new SqlParameter("@guid", guid));
         }
 

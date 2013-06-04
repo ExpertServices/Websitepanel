@@ -43,11 +43,10 @@ namespace WebsitePanel.EnterpriseServer
     public sealed class Scheduler
     {
         public static SchedulerJob nextSchedule = null;
-        //private static Timer timer = new Timer(ScheduleTasks, null, 30000, 30000);               
 
         public static void Start()
-        {                         
-            ScheduleTasks();        
+        {   
+            ScheduleTasks();
         }
 
         public static bool IsScheduleActive(int scheduleId)
@@ -57,33 +56,10 @@ namespace WebsitePanel.EnterpriseServer
             return scheduledTasks.ContainsKey(scheduleId);
         }
 
-        public static void StartSchedule(SchedulerJob schedule)
-        {
-            if (IsScheduleActive(schedule.ScheduleInfo.ScheduleId))
-                return;
-
-            // run schedule
-            RunSchedule(schedule, false);
-        }
-
-        public static void StopSchedule(SchedulerJob schedule)
-        {
-            Dictionary<int, BackgroundTask> scheduledTasks = TaskManager.GetScheduledTasks();
-            if (!scheduledTasks.ContainsKey(schedule.ScheduleInfo.ScheduleId))
-                return;
-
-            BackgroundTask activeTask = scheduledTasks[schedule.ScheduleInfo.ScheduleId];
-            TaskManager.StopTask(activeTask.TaskId);
-        }
-
         public static void ScheduleTasks()
-        {            
-            ScheduleTasks(null);                    
-        }
-
-        public static void ScheduleTasks(object obj)
-        {            
+        {
             RunManualTasks();
+
             nextSchedule = SchedulerController.GetNextSchedule();
 
             if (nextSchedule != null)
@@ -125,6 +101,7 @@ namespace WebsitePanel.EnterpriseServer
             backgroundTask.Guid = TaskManager.Guid;
             backgroundTask.Status = BackgroundTaskStatus.Run;
 
+
             TaskController.UpdateTask(backgroundTask);
             
             try
@@ -132,7 +109,6 @@ namespace WebsitePanel.EnterpriseServer
                 var objTask = (SchedulerTask)Activator.CreateInstance(Type.GetType(schedule.Task.TaskType));
 
                 objTask.DoWork();
-             //   Thread.Sleep(40000);
             }
             catch (Exception ex)
             {
@@ -199,6 +175,8 @@ namespace WebsitePanel.EnterpriseServer
 
                     counter++;
                 }
+                if (counter == MAX_RETRY_COUNT)
+                    return;
 
                 // skip execution if the current task is still running
                 scheduledTasks = TaskManager.GetScheduledTasks();

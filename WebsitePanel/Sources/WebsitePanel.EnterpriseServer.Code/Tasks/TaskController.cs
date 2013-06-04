@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-
 namespace WebsitePanel.EnterpriseServer
 {
     public class TaskController
@@ -13,7 +12,7 @@ namespace WebsitePanel.EnterpriseServer
         public static BackgroundTask GetTask(string taskId)
         {
             BackgroundTask task = ObjectUtils.FillObjectFromDataReader<BackgroundTask>(
-                DataProvider.GetBackgroundTask(SecurityContext.User.UserId, taskId));
+                DataProvider.GetBackgroundTask(taskId));
 
             if (task == null)
             {
@@ -28,12 +27,14 @@ namespace WebsitePanel.EnterpriseServer
         public static List<BackgroundTask> GetScheduleTasks(int scheduleId)
         {
             return ObjectUtils.CreateListFromDataReader<BackgroundTask>(
-                DataProvider.GetScheduleBackgroundTasks(SecurityContext.User.UserId, scheduleId));
+                DataProvider.GetScheduleBackgroundTasks(scheduleId));
         }
 
         public static List<BackgroundTask> GetTasks()
         {
-            return GetTasks(SecurityContext.User.UserId);
+            var user = SecurityContext.User;
+
+            return GetTasks(user.IsPeer ? user.OwnerId : user.UserId);
         }
 
         public static List<BackgroundTask> GetTasks(int actorId)
@@ -45,7 +46,7 @@ namespace WebsitePanel.EnterpriseServer
         public static List<BackgroundTask> GetTasks(Guid guid)
         {
             return ObjectUtils.CreateListFromDataReader<BackgroundTask>(
-                DataProvider.GetBackgroundTasks(SecurityContext.User.UserId, guid));
+                DataProvider.GetBackgroundTasks(guid));
         }
 
         public static List<BackgroundTask> GetProcessTasks(BackgroundTaskStatus status)
@@ -57,7 +58,7 @@ namespace WebsitePanel.EnterpriseServer
         public static BackgroundTask GetTopTask(Guid guid)
         {
             BackgroundTask task = ObjectUtils.FillObjectFromDataReader<BackgroundTask>(
-                DataProvider.GetBackgroundTopTask(SecurityContext.User.UserId, guid));
+                DataProvider.GetBackgroundTopTask(guid));
 
             if (task == null)
             {
