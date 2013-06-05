@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Web;
@@ -32,7 +33,19 @@ namespace WebsitePanel.Portal
             ViewState["WebSitePackageId"] = site.PackageId;
 
             BindEngines(site);
-            BindInstalledApplications();
+            try
+            {
+                BindInstalledApplications();
+            }
+            catch (Exception ex)
+            {
+                lblConsole.Text = "Zoo Module is not installed. Please ask your system administrator to install Zoo on the server to Configuration\\Server\\Web Application Engines.";
+                lblConsole.ForeColor = Color.Red;
+                lblConsole.Font.Size = 16;
+
+                return; // Exit
+            }
+            
             BindApplications();
         }
 
@@ -77,17 +90,27 @@ namespace WebsitePanel.Portal
 
         private void BindInstalledApplications()
         {
+            ViewState["IsZooEnabled"] = false;
+            var installedApplications = ES.Services.WebServers.GetZooApplications(PanelRequest.ItemID);
+            ViewState["IsZooEnabled"] = true;
+
             if ((bool) ViewState["IsZooWebConsoleEnabled"])
             {
-                gvInstalledApplications.DataSource = ES.Services.WebServers.GetZooApplications(PanelRequest.ItemID);
+                gvInstalledApplications.DataSource = installedApplications;
                 gvInstalledApplications.DataBind();
+
+                
             }
             else
             {
-                gvInstalledApplications.Visible = false;
-                lblConsole.Visible = false;
+                HideInstalledApplications();
             }
+        }
 
+        private void HideInstalledApplications()
+        {
+            gvInstalledApplications.Visible = false;
+            lblConsole.Visible = false;
         }
 
         private void BindApplications()
@@ -164,6 +187,11 @@ namespace WebsitePanel.Portal
 
         private void UpdatedAllowedEngines()
         {
+            if (!(bool) ViewState["IsZooEnabled"])
+            {
+                return; // exit;
+            }
+
             List<ShortHeliconZooEngine> allowedEngines = (List<ShortHeliconZooEngine>)ViewState["AllowedEngines"];
             string[] enabledEngineNames = (string[])ViewState["EnabledEnginesNames"];
 

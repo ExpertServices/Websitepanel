@@ -68,7 +68,7 @@ public partial class HeliconZoo_Settings : WebsitePanelControlBase, IHostingServ
 
     private void BindHostingPackages()
     {
-        // TODO: try...catch?
+
         WPIProduct[] products = null;
         try
         {
@@ -92,6 +92,12 @@ public partial class HeliconZoo_Settings : WebsitePanelControlBase, IHostingServ
 
     private void BindEngines()
     {
+        WPIProduct zooModule =  ES.Services.Servers.GetWPIProductById(PanelRequest.ServerId, "HeliconZooModule");
+        if (!zooModule.IsInstalled || zooModule.IsUpgrade)
+        {
+            HostModule.ShowWarningMessage("Zoo Module is not installed or out-of-date. To proceed press 'Add' or 'Update' next to Helicon Zoo Module below, then press 'Install'.");
+        }
+
         // get all engines from IIS
         HeliconZooEngine[] engineList = ES.Services.HeliconZoo.GetEngines(PanelRequest.ServiceId);
 

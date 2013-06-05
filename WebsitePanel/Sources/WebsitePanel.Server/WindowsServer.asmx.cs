@@ -360,20 +360,50 @@ namespace WebsitePanel.Server
         {
             foreach (WPIProduct product in products)
             {
-                string installedHostingPackageVersion = GetInstalledHostingPackageVersion(product.ProductId);
-                if (!string.IsNullOrEmpty(installedHostingPackageVersion) && string.Compare(product.Version, installedHostingPackageVersion, StringComparison.OrdinalIgnoreCase) > 0)
-                {
-                    product.IsUpgrade = true;
-                }
+                string hostingPackageName = product.ProductId;
+                CheckProductForUpdate(hostingPackageName, product);
             }
         }
 
-        private string GetInstalledHostingPackageVersion(string productId)
+        private void CheckProductForUpdate(string hostingPackageName, WPIProduct product)
         {
-            string installedVersion = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Helicon\\Zoo", productId+"Version", string.Empty) as string;
+            string installedHostingPackageVersion = GetInstalledHostingPackageVersion(hostingPackageName);
+            if (!string.IsNullOrEmpty(installedHostingPackageVersion))
+            {
+                //6
+                //3.0.90.383
+                if (CompareVersions(product.Version, installedHostingPackageVersion) > 0)
+                {
+                    product.IsUpgrade = true;
+                    product.IsInstalled = false;
+                }
+                
+            }
+        }
+
+        private decimal CompareVersions(string newVersion, string oldVersion)
+        {
+            try
+            {
+                var version1 = new Version(newVersion);
+                var version2 = new Version(oldVersion);
+
+                return version1.CompareTo(version2);
+
+            }
+            catch (ArgumentException)
+            {
+                return String.Compare(newVersion,oldVersion, StringComparison.Ordinal);
+
+            }
+        }
+
+        private string GetInstalledHostingPackageVersion(string hostingPackageName)
+        {
+            string installedVersion = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Helicon\\Zoo", hostingPackageName + "Version", string.Empty) as string;
             if (string.IsNullOrEmpty(installedVersion))
             {
-                installedVersion = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Helicon\\Zoo", productId + "Version", string.Empty) as string;
+                installedVersion = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Helicon\\Zoo", hostingPackageName + "Version", string.Empty) as string;
             }
 
             return installedVersion;
@@ -490,6 +520,12 @@ namespace WebsitePanel.Server
 
                 Product product = wpi.GetWPIProductById(productdId);
                 WPIProduct wpiProduct = ProductToWPIProduct(product);
+
+                if (wpiProduct.ProductId == "HeliconZooModule")
+                {
+                    /*null string = HeliconZooModule in registry*/
+                    CheckProductForUpdate("", wpiProduct);
+                }
 
                 Log.WriteEnd("GetWPIProductById");
                 return wpiProduct;
