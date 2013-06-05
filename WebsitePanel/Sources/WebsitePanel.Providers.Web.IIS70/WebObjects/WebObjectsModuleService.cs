@@ -717,6 +717,7 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
                 catch (Exception)
                 {
                     //there is no zoo
+                    throw;
                 }
             }
             //
@@ -730,16 +731,6 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
             UInt64 hwidhi = ((UInt64) hwidlow) << 32;
             
             
-            //try
-            //{
-            //    hwid = GetVolumeSerial();
-            //}
-            //catch (Exception)
-            //{
-            //    hwid = 0x27356246; //magic
-            //}
-            
-
             UInt64 secret = (ulong) DateTime.Now.ToFileTime();
             UInt64 hw = hwidhi | hwidlow;
 
