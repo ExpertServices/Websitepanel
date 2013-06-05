@@ -498,6 +498,11 @@ namespace WebsitePanel.EnterpriseServer
             return GetServerService(serverId).GetWPIProductsFiltered(keywordId);
         }
 
+        public static WPIProduct GetWPIProductById(int serverId, string productdId)
+        {
+            return GetServerService(serverId).GetWPIProductById(productdId);
+        }
+
         
 
         public static WPIProduct[] GetWPIProductsWithDependencies(int serverId, string[] products)

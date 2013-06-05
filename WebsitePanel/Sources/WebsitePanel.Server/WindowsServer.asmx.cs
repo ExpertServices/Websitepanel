@@ -481,6 +481,27 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod]
+        public WPIProduct GetWPIProductById(string productdId)
+        {
+            try
+            {
+                Log.WriteStart("GetWPIProductById");
+                WpiHelper wpi = GetWpiFeed();
+
+                Product product = wpi.GetWPIProductById(productdId);
+                WPIProduct wpiProduct = ProductToWPIProduct(product);
+
+                Log.WriteEnd("GetWPIProductById");
+                return wpiProduct;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("GetWPIProductById", ex);
+                throw;
+            }
+        }
+
+        [WebMethod]
         public WPITab[] GetWPITabs()
         {
             try

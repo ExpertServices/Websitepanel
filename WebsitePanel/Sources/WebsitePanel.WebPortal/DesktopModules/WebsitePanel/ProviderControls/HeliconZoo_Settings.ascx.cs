@@ -394,7 +394,15 @@ public partial class HeliconZoo_Settings : WebsitePanelControlBase, IHostingServ
 
     private static WPIProduct[] RequestHostingPackages()
     {
-        return ES.Services.Servers.GetWPIProducts(PanelRequest.ServerId, null, "ZooPackage");
+        List<WPIProduct> result = new List<WPIProduct>();
+        result.Add(ES.Services.Servers.GetWPIProductById(PanelRequest.ServerId, "HeliconZooModule"));
+        result.AddRange(ES.Services.Servers.GetWPIProducts(PanelRequest.ServerId, null, "ZooPackage"));
+        
+
+
+
+        return result.ToArray();
+
     }
 
     protected string AddUpgradeRemoveText(WPIProduct wpiProduct)
