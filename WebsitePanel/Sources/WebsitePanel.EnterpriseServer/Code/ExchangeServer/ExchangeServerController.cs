@@ -1244,7 +1244,7 @@ namespace WebsitePanel.EnterpriseServer
             int counter = 0;
             bool bFound = false;
 
-            if (!AccountExists(accountName)) return accountName;
+            //if (!AccountExists(accountName)) return accountName;
 
             do
             {
