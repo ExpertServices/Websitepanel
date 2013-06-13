@@ -30,6 +30,11 @@ using System;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
+using WebsitePanel.Providers;
+using WebsitePanel.Providers.Web;
+using WebsitePanel.Providers.Common;
+using WebsitePanel.Portal.Code.Helpers;
+
 
 namespace WebsitePanel.Portal.Lync
 {
@@ -37,10 +42,11 @@ namespace WebsitePanel.Portal.Lync
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            PackageContext cntx = null;
 
             if (!IsPostBack)
             {
-                PackageContext cntx = ES.Services.Packages.GetPackageContext(PanelSecurity.PackageId);
+                cntx = ES.Services.Packages.GetPackageContext(PanelSecurity.PackageId);
 
                 string[] archivePolicy = ES.Services.Lync.GetPolicyList(PanelRequest.ItemID, LyncPolicyType.Archiving, null);
                 if (archivePolicy != null)
@@ -168,6 +174,10 @@ namespace WebsitePanel.Portal.Lync
                 break;
                 
             }
+
+            cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            PlanFeaturesTelephony.Visible = Utils.CheckQouta(Quotas.LYNC_ENTERPRISEVOICE, cntx);
+            secPlanFeaturesTelephony.Visible = PlanFeaturesTelephony.Visible;
 
         }
 
