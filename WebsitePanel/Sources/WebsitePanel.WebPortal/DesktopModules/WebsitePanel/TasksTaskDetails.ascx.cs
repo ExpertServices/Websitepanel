@@ -80,6 +80,8 @@ namespace WebsitePanel.Portal
             if (task.GetLogs().Count > 0)
                 ViewState["lastLogDate"] = task.GetLogs()[0].Date.AddTicks(1);
 
+
+
             foreach (BackgroundTaskLogRecord logRecord in task.GetLogs())
             {
                 log.Append("[").Append(GetDurationText(task.StartDate, logRecord.Date)).Append("] ");
@@ -87,7 +89,7 @@ namespace WebsitePanel.Portal
                 log.Append(LocalizeActivityText(logRecord.Text));
                 log.Append("<br>");
             }
-            litLog.Text = log.ToString() + litLog.Text;
+            litLog.Text = log.ToString();//+ litLog.Text;
 
             if(task.Completed)
                 btnStop.Visible = false;
