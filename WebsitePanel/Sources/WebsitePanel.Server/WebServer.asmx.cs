@@ -259,6 +259,41 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
+
+        // AppPool
+        [WebMethod, SoapHeader("settings")]
+        public void ChangeAppPoolState(string siteId, AppPoolState state)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' ChangeAppPoolState", ProviderSettings.ProviderName);
+                WebProvider.ChangeAppPoolState(siteId, state);
+                Log.WriteEnd("'{0}' ChangeAppPoolState", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' ChangeAppPoolState", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public AppPoolState GetAppPoolState(string siteId)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetAppPoolState", ProviderSettings.ProviderName);
+                AppPoolState result = WebProvider.GetAppPoolState(siteId);
+                Log.WriteEnd("'{0}' GetAppPoolState", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetAppPoolState", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
         #endregion
 
         #region Virtual Directories

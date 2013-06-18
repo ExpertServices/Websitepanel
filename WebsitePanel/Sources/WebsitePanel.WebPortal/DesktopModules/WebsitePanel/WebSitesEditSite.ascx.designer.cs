@@ -347,6 +347,15 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.GridView gvPointers;
         
         /// <summary>
+        /// lblWebsiteStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblWebsiteStatus;
+        
+        /// <summary>
         /// litStatus control.
         /// </summary>
         /// <remarks>
@@ -390,6 +399,60 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ImageButton cmdStop;
+        
+        /// <summary>
+        /// lblAppPoolStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblAppPoolStatus;
+        
+        /// <summary>
+        /// litAppPoolStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litAppPoolStatus;
+        
+        /// <summary>
+        /// AppPoolRestartPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel AppPoolRestartPanel;
+        
+        /// <summary>
+        /// cmdAppPoolStart control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton cmdAppPoolStart;
+        
+        /// <summary>
+        /// cmdAppPoolRecycle control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton cmdAppPoolRecycle;
+        
+        /// <summary>
+        /// cmdAppPoolStop control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton cmdAppPoolStop;
         
         /// <summary>
         /// dlTabs control.

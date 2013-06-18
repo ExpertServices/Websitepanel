@@ -76,14 +76,14 @@ function websitepanel_addons_AddonActivation($params)
         $wsp = new WebsitePanel($srvSettings['username'], $srvSettings['password'], $modSettings['serverhost'], $modSettings['serverport'], (($modSettings['serversecured']) == 'on' ? TRUE : FALSE));
         
         // Grab the user's details from WebsitePanel in order to get the user's id
-        $user = $wsp->get_user_by_username($username);
+        $user = $wsp->getUserByUsername($username);
         if (empty($user))
         {
             return;
         }
         
         // Get the user's current WebsitePanel hosting space Id (Hosting Plan)
-        $package = $wsp->get_user_packages($user['UserId']);
+        $package = $wsp->getUserPackages($user['UserId']);
         $packageId = $package['PackageId'];
         if (empty($packageId))
         {
@@ -97,7 +97,7 @@ function websitepanel_addons_AddonActivation($params)
         $addonIsIpAddress = $addon['is_ipaddress'];
         
         // Add the Addon Plan to the customer's WebsitePanel package / hosting space
-        $results = $wsp->add_package_addon_by_id($packageId, $addonPlanId);
+        $results = $wsp->addPackageAddonById($packageId, $addonPlanId);
         
         // Check the results to verify that the addon has been successfully allocated
         if ($results['Result'] > 0)
@@ -105,7 +105,7 @@ function websitepanel_addons_AddonActivation($params)
             // If this addon is an IP address addon - attempt to randomly allocate an IP address to the customer's hosting space
             if ($addonIsIpAddress)
             {
-                $wsp->package_allocate_ipaddress($packageId);
+                $wsp->packageAllocateIpAddress($packageId);
             }
         }
     }

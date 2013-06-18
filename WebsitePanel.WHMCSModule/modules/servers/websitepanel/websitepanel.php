@@ -52,7 +52,6 @@
 // WebsitePanel WHMCS Server Module Configuration / Commands
 /****************************************************************************/
 require_once(ROOTDIR . '/modules/servers/websitepanel/websitepanel.class.php');
-require_once(ROOTDIR . '/modules/servers/websitepanel/websitepanel.errorcodes.php');
 require_once(ROOTDIR . '/modules/servers/websitepanel/websitepanel.functions.php');
 
 /**
@@ -100,16 +99,16 @@ function websitepanel_CreateAccount($params)
     // WHMCS server parameters & package parameters
     $username = $params['username'];
     $password = $params['password'];
-    $accountid = $params['accountid'];
-    $packageid = $params['packageid'];
+    $accountId = $params['accountid'];
+    $packageId = $params['packageid'];
     $domain = $params['domain'];
-    $packagetype = $params['type'];
-    $clientsdetails = $params['clientsdetails'];
+    $packageType = $params['type'];
+    $clientsDetails = $params['clientsdetails'];
     
     // WebsitePanel API parameters
     $planId = $params['configoption4'];
     $parentPackageId = $params['configoption5'];
-    $roleId = ($packagetype == 'reselleraccount') ? 2 : 3;
+    $roleId = ($packageType == 'reselleraccount') ? 2 : 3;
     $htmlMail = ($params['configoption14'] == 'on') ? TRUE : FALSE;
     $sendAccountLetter = ($params['configoption9'] == 'on') ? TRUE : FALSE;
     $sendPackageLetter = ($params['configoption10'] == 'on') ? TRUE : FALSE;
@@ -123,14 +122,14 @@ function websitepanel_CreateAccount($params)
     try
     {
         // Attempt to create the WSP user account and his / her package / hosting space
-        $result = $wsp->create_user_wizard($username, $password, $roleId, $clientsdetails['firstname'], $clientsdetails['lastname'], $clientsdetails['email'], $planId, $parentPackageId, $domain, $websitePointerName, $htmlMail, $sendAccountLetter, $sendPackageLetter, TRUE, $createTempDomain, $createWebsite, $createFtpAccount, $username, $createMailAccount, $createZoneRecord);
+        $result = $wsp->createUserWizard($username, $password, $roleId, $clientsDetails['firstname'], $clientsDetails['lastname'], $clientsDetails['email'], $planId, $parentPackageId, $domain, $websitePointerName, $htmlMail, $sendAccountLetter, $sendPackageLetter, TRUE, $createTempDomain, $createWebsite, $createFtpAccount, $username, $createMailAccount, $createZoneRecord);
         if ($result >= 0)
         {
             // Grab the user's details from WebsitePanel
-            $user = $wsp->get_user_by_username($username);
+            $user = $wsp->getUserByUsername($username);
             
             // Update the user's account with his / her WHMCS contact details
-            $wsp->update_user_details($user['RoleId'], $user['Role'], $user['StatusId'], $user['Status'], $user['LoginStatusId'], $user['LoginStatus'], $user['FailedLogins'], $user['UserId'], $user['OwnerId'], $user['Created'], $user['Changed'], $user['IsDemo'], $user['IsPeer'], $user['Comments'], $username, $password, $clientsdetails['firstname'], $clientsdetails['lastname'], $clientsdetails['email'], $clientsdetails['phonenumber'], $clientsdetails['postcode'], '', '', '', '', $clientsdetails['country'], $clientsdetails['address1'], $clientsdetails['city'], $clientsdetails['state'], $htmlMail, $clientsdetails['companyname'], (($roleId == 2) ? TRUE : FALSE));
+            $wsp->updateUserDetails($user['RoleId'], $user['Role'], $user['StatusId'], $user['Status'], $user['LoginStatusId'], $user['LoginStatus'], $user['FailedLogins'], $user['UserId'], $user['OwnerId'], $user['Created'], $user['Changed'], $user['IsDemo'], $user['IsPeer'], $user['Comments'], $username, $password, $clientsDetails['firstname'], $clientsDetails['lastname'], $clientsDetails['email'], $clientsDetails['phonenumber'], $clientsDetails['postcode'], '', '', '', '', $clientsDetails['country'], $clientsDetails['address1'], $clientsDetails['city'], $clientsDetails['state'], $htmlMail, $clientsDetails['companyname'], (($roleId == 2) ? TRUE : FALSE));
             
             // Success - Alert WHMCS
             return 'success';
@@ -165,7 +164,7 @@ function websitepanel_TerminateAccount($params)
     try
     {
         // Grab the user's details from WebsitePanel in order to get the user's id
-        $user = $wsp->get_user_by_username($username);
+        $user = $wsp->getUserByUsername($username);
         if (empty($user))
         {
             return "The specified user {$username} does not exist";
@@ -173,7 +172,7 @@ function websitepanel_TerminateAccount($params)
         else
         {
             // Attempt to delete the users account and package / hosting space
-            $result = $wsp->delete_user($user['UserId']);
+            $result = $wsp->deleteUser($user['UserId']);
             if ($result >= 0)
             {            
                 // Success - Alert WHMCS
@@ -210,7 +209,7 @@ function websitepanel_SuspendAccount($params)
     try
     {
         // Grab the user's details from WebsitePanel in order to get the user's id
-        $user = $wsp->get_user_by_username($username);
+        $user = $wsp->getUserByUsername($username);
         if (empty($user))
         {
             return "The specified user {$username} does not exist";
@@ -218,7 +217,7 @@ function websitepanel_SuspendAccount($params)
         else
         {
             // Attempt to suspend the users account and package / hosting space
-            $result = $wsp->change_user_status($user['UserId'], WebsitePanel::USERSTATUS_SUSPENDED);
+            $result = $wsp->changeUserStatus($user['UserId'], WebsitePanel::USERSTATUS_SUSPENDED);
             if ($result >= 0)
             {            
                 // Success - Alert WHMCS
@@ -255,7 +254,7 @@ function websitepanel_UnsuspendAccount($params)
     try
     {
         // Grab the user's details from WebsitePanel in order to get the user's id
-        $user = $wsp->get_user_by_username($username);
+        $user = $wsp->getUserByUsername($username);
         if (empty($user))
         {
             return "The specified user {$username} does not exist";
@@ -263,7 +262,7 @@ function websitepanel_UnsuspendAccount($params)
         else
         {
             // Attempt to activate the users account and package / hosting space
-            $result = $wsp->change_user_status($user['UserId'], WebsitePanel::USERSTATUS_ACTIVE);
+            $result = $wsp->changeUserStatus($user['UserId'], WebsitePanel::USERSTATUS_ACTIVE);
             if ($result >= 0)
             {
                 // Success - Alert WHMCS
@@ -295,13 +294,15 @@ function websitepanel_ChangePassword($params)
     $wsp = new WebsitePanel($params['serverusername'], $params['serverpassword'], $params['serverip'], $params['configoption6'], $params['serversecure']);
     
     // WHMCS server parameters & package parameters
+    $serviceId = $params['serviceid'];
     $username = $params['username'];
     $password = $params['password'];
+    $userId = $params['clientsdetails']['userid'];
     
     try
     {
         // Grab the user's details from WebsitePanel in order to get the user's id
-        $user = $wsp->get_user_by_username($username);
+        $user = $wsp->getUserByUsername($username);
         if (empty($user))
         {
             return "The specified user {$username} does not exist";
@@ -312,6 +313,9 @@ function websitepanel_ChangePassword($params)
             $result = $wsp->change_user_password($user['UserId'], $password);
             if ($result >= 0)
             {
+                // Log this action for logging / tracking purposes incase the client complains we have record of what went on and why
+                logActivity("Control Panel Password Updated - Service ID: {$serviceId}", $userId);
+                
                 // Success - Alert WHMCS
                 return 'success';
             }
@@ -350,7 +354,7 @@ function websitepanel_ChangePackage($params)
     try
     {
         // Grab the user's details from WebsitePanel in order to get the user's id
-        $user = $wsp->get_user_by_username($username);
+        $user = $wsp->getUserByUsername($username);
         if (empty($user))
         {
             return "The specified user {$username} does not exist";
@@ -358,11 +362,11 @@ function websitepanel_ChangePackage($params)
         else
         {
             // Get the user's current WebsitePanel hosting space Id (Hosting Plan)
-            $package = $wsp->get_user_packages($user['UserId']);
+            $package = $wsp->getUserPackages($user['UserId']);
             $packageId = $package['PackageId'];
             
             // Update the user's package
-            $result = $wsp->update_package_literal($packageId, $package['StatusId'], $planId, $package['PurchaseDate'], $packageName, '');
+            $result = $wsp->updatePackageLiteral($packageId, $package['StatusId'], $planId, $package['PurchaseDate'], $packageName, '');
             $result = $result['Result'];
             if ($result >= 0)
             {
@@ -443,8 +447,8 @@ function websitepanel_UsageUpdate($params)
 
             // Get the specified user details
             // Get the Package id of the user's package
-            $user = $wsp->get_user_by_username($username);
-            $package = $wsp->get_user_packages($user['UserId']);
+            $user = $wsp->getUserByUsername($username);
+            $package = $wsp->getUserPackages($user['UserId']);
             
             // Gather the bandwidth / diskspace usage stats
             $bandwidthUsage = websitepanel_CalculateBandwidthUsage($params, $package['PackageId'], websitepanel_CreateBandwidthDate($row['regdate']));

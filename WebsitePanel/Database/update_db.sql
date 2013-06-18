@@ -450,7 +450,9 @@ INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName]
 VALUES (1401, 41, N'Lync2013', N'Microsoft Lync Server 2013 Multitenant Hosting Pack', N'WebsitePanel.Providers.HostedSolution.Lync2013, WebsitePanel.Providers.HostedSolution.Lync2013', N'Lync', NULL)
 END
 GO
-
+-- add Application Pools Restart Quota
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (411, 2, 13, N'Web.AppPoolsRestart', N'Application Pools Restart', 1, 0, NULL, NULL)
+GO
 -------------------------------- Scheduler Service------------------------------------------------------
 
 IF EXISTS( SELECT * FROM INFORMATION_SCHEMA.COLUMNS 

@@ -181,6 +181,20 @@ namespace WebsitePanel.EnterpriseServer
             return WebServerController.ChangeSiteState(siteItemId, state);
         }
 
+        // AppPool
+        [WebMethod]
+        public int ChangeAppPoolState(int siteItemId, AppPoolState state)
+        {
+            return WebServerController.ChangeAppPoolState(siteItemId, state);
+        }
+
+        [WebMethod]
+        public AppPoolState GetAppPoolState(int siteItemId)
+        {
+            return WebServerController.GetAppPoolState(siteItemId);
+        }
+
+
         #region Shared SSL Folders
         [WebMethod]
         public List<string> GetSharedSSLDomains(int packageId)

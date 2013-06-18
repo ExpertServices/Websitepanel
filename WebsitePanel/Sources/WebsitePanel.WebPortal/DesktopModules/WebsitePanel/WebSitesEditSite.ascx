@@ -166,11 +166,12 @@
             <td nowrap valign="top" align="right">
                 <table cellpadding="7" width="150px">
                     <tr>
+                        <td>
+                            <asp:Label ID="lblWebsiteStatus" runat="server" meta:resourcekey="lblWebsiteStatus" Text="Website Status"></asp:Label>
+                        </td>
                         <td class="MediumBold" align="center">
                             <asp:Literal ID="litStatus" runat="server"></asp:Literal>
                         </td>
-                    </tr>
-                    <tr>
                         <td align="center">
                             <asp:ImageButton ID="cmdStart" runat="server" SkinID="StartMedium" meta:resourcekey="cmdStart"
                                 CommandName="Started" OnClick="cmdChangeState_Click" />
@@ -181,6 +182,24 @@
                             <asp:ImageButton ID="cmdStop" runat="server" SkinID="StopMedium" meta:resourcekey="cmdStop"
                                 CommandName="Stopped" OnClick="cmdChangeState_Click" />
                         </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <asp:Label ID="lblAppPoolStatus" runat="server" meta:resourcekey="lblAppPoolStatus" Text="App Pool Status"></asp:Label>
+                        </td>
+						<td class="MediumBold" align="center">
+							<asp:Literal ID="litAppPoolStatus" runat="server"></asp:Literal>
+						</td>
+						<td align="center">
+                            <asp:Panel runat="server" ID="AppPoolRestartPanel">
+                                <asp:ImageButton ID="cmdAppPoolStart" runat="server" SkinID="StartMedium" meta:resourcekey="cmdStart"
+                                    CommandName="Started" OnClick="cmdAppPoolChangeState_Click" />
+                                <asp:ImageButton ID="cmdAppPoolRecycle" runat="server" SkinID="RecycleMedium" meta:resourcekey="cmdRecycle"
+                                    CommandName="Recycle" OnClick="cmdAppPoolChangeState_Click" />
+                                <asp:ImageButton ID="cmdAppPoolStop" runat="server" SkinID="StopMedium" meta:resourcekey="cmdStop"
+                                    CommandName="Stopped" OnClick="cmdAppPoolChangeState_Click" />
+                            </asp:Panel>
+						</td>
                     </tr>
                 </table>
             </td>

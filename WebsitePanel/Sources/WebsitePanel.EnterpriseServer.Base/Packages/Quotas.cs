@@ -65,7 +65,8 @@ order by rg.groupOrder
 		public const string WEB_SECURITY = "Web.Security";  // Custom Security Settings
 		public const string WEB_DEFAULTDOCS = "Web.DefaultDocs";  // Custom Default Documents
 		public const string WEB_APPPOOLS = "Web.AppPools";  // Dedicated Application Pools
-		public const string WEB_HEADERS = "Web.Headers";  // Custom Headers
+        public const string WEB_APPPOOLSRESTART = "Web.AppPoolsRestart";  // Application Pools Restart
+        public const string WEB_HEADERS = "Web.Headers";  // Custom Headers
 		public const string WEB_ERRORS = "Web.Errors";  // Custom Errors
 		public const string WEB_MIME = "Web.Mime";  // Custom MIME Types
 		public const string WEB_CGIBIN = "Web.CgiBin";  // CGI-BIN Folder

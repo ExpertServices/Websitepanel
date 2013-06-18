@@ -1892,7 +1892,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 //calendar settings
                 if (accountType == ExchangeAccountType.Equipment || accountType == ExchangeAccountType.Room)
                 {
-                    //SetCalendarSettings(runSpace, id);
+                    SetCalendarSettings(runSpace, id);
                 }
 
                 ret = string.Format("{0}\\{1}", GetNETBIOSDomainName(), accountName);
