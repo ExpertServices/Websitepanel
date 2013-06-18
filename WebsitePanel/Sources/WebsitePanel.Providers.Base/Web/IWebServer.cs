@@ -54,6 +54,10 @@ namespace WebsitePanel.Providers.Web
         void UpdateSiteBindings(string siteId, ServerBinding[] bindings, bool emptyBindingsAllowed);
 		void DeleteSite(string siteId);
 
+        // AppPool
+        void ChangeAppPoolState(string siteId, AppPoolState state);
+        AppPoolState GetAppPoolState(string siteId);
+
 		// virtual directories
 		bool VirtualDirectoryExists(string siteId, string directoryName);
 		WebVirtualDirectory[] GetVirtualDirectories(string siteId);

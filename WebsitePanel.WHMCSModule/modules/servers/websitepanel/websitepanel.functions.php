@@ -106,7 +106,7 @@ function websitepanel_CalculateBandwidthUsage($params, $packageId, $startDate)
 
     try
     {
-        $result = $wsp->get_space_bandwidth_usage($packageId, $startDate, date('Y-m-d', time()));
+        $result = $wsp->getSpaceBandwidthUsage($packageId, $startDate, date('Y-m-d', time()));
         return websitepanel_CalculateUsage($result, WebsitePanel::USAGE_BANDWIDTH);
     }
     catch (Exception $e)
@@ -130,7 +130,7 @@ function websitepanel_CalculateDiskspaceUsage($params, $packageId)
 
     try
     {
-        $result = $wsp->get_space_diskspace_usage($packageId);
+        $result = $wsp->getSpaceDiskspaceUsage($packageId);
         return websitepanel_CalculateUsage($result, WebsitePanel::USAGE_DISKSPACE);
     }
     catch (Exception $e)

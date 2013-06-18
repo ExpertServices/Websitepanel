@@ -72,6 +72,7 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Common\AppPoolState.cs" />
     <Compile Include="Common\ByteOperations.cs" />
     <Compile Include="Common\ErrorCodes.cs" />
     <Compile Include="Common\PasswdHelper.cs" />

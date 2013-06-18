@@ -265,6 +265,8 @@ namespace WebsitePanel.Portal
 				ToggleFrontPageControls(site.FrontPageInstalled);
 			}
 
+            AppPoolRestartPanel.Visible = Utils.CheckQouta(Quotas.WEB_APPPOOLSRESTART, cntx);
+
 			// bind controls
 			webSitesHomeFolderControl.BindWebItem(PackageId, site);
 			webSitesSecuredFoldersControl.BindSecuredFolders(site);
@@ -291,6 +293,9 @@ namespace WebsitePanel.Portal
 
 			// bind state
 			BindSiteState(site.SiteState);
+            // AppPool
+            AppPoolState appPoolState = ES.Services.WebServers.GetAppPoolState(PanelRequest.ItemID);
+            BindAppPoolState(appPoolState);
 
 			// bind pointers
 			BindPointers();
@@ -988,6 +993,42 @@ namespace WebsitePanel.Portal
 				return;
 			}
 		}
+
+        // AppPool
+        private void BindAppPoolState(AppPoolState state)
+        {
+            litAppPoolStatus.Text = GetLocalizedString("SiteState." + state.ToString());
+
+            cmdAppPoolStart.Visible = (state == AppPoolState.Stopped || state == AppPoolState.Stopping);
+            cmdAppPoolStop.Visible = (state == AppPoolState.Started || state == AppPoolState.Starting);
+            cmdAppPoolRecycle.Visible = (state == AppPoolState.Started || state == AppPoolState.Starting);
+        }
+
+
+        protected void cmdAppPoolChangeState_Click(object sender, EventArgs e)
+        {
+            string stateName = ((ImageButton)sender).CommandName;
+            AppPoolState state = (AppPoolState)Enum.Parse(typeof(AppPoolState), stateName, true);
+
+            try
+            {
+                int result = ES.Services.WebServers.ChangeAppPoolState(PanelRequest.ItemID, state);
+                if (result < 0)
+                {
+                    ShowResultMessage(result);
+                    return;
+                }
+
+                state = ES.Services.WebServers.GetAppPoolState(PanelRequest.ItemID);
+                BindAppPoolState(state);
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage("WEB_CHANGE_SITE_STATE", ex);
+                return;
+            }
+        }
+
 		#endregion
 
 		#region Pointers
