@@ -581,6 +581,86 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.CompleteTask();
             }
         }
+        // AppPool
+        public static int ChangeAppPoolState(int siteItemId, AppPoolState state)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // load site item
+            WebSite siteItem = (WebSite)PackageController.GetPackageItem(siteItemId);
+            if (siteItem == null)
+                return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
+
+            // check package
+            int packageCheck = SecurityContext.CheckPackage(siteItem.PackageId, DemandPackage.IsActive);
+            if (packageCheck < 0) return packageCheck;
+
+            // place log record
+            TaskManager.StartTask("WEB_SITE", "CHANGE_STATE", siteItem.Name);
+            TaskManager.ItemId = siteItemId;
+            TaskManager.WriteParameter("New state", state);
+
+            try
+            {
+
+                // change state
+                WebServer web = new WebServer();
+                ServiceProviderProxy.Init(web, siteItem.ServiceId);
+                web.ChangeAppPoolState(siteItem.SiteId, state);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static AppPoolState GetAppPoolState(int siteItemId)
+        {
+            AppPoolState state = AppPoolState.Unknown;
+
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return state;
+
+            // load site item
+            WebSite siteItem = (WebSite)PackageController.GetPackageItem(siteItemId);
+            if (siteItem == null)
+                return state;
+
+            // check package
+            int packageCheck = SecurityContext.CheckPackage(siteItem.PackageId, DemandPackage.IsActive);
+            if (packageCheck < 0) return state;
+
+            // place log record
+            TaskManager.StartTask("WEB_SITE", "GET_STATE", siteItem.Name);
+            TaskManager.ItemId = siteItemId;
+
+            try
+            {
+                // get state
+                WebServer web = new WebServer();
+                ServiceProviderProxy.Init(web, siteItem.ServiceId);
+                state = web.GetAppPoolState(siteItem.SiteId);
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+            return state;
+        }
 
         public static int DeleteWebSite(int siteItemId, bool deleteWebsiteDirectory)
         {
