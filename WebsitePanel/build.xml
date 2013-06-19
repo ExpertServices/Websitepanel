@@ -163,7 +163,7 @@
 		</ItemGroup>
 		<Copy SourceFiles="@(EnterpriseServerBuildFiles)" DestinationFolder="$(EnterpriseServerBuild)\%(RecursiveDir)" />
 	</Target>
-	
+
 	<Target Name="CreateSchedulerServiceBuild" DependsOnTargets="CreateEnterpriseServerBuild">
 		<ItemGroup>
 			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\.svn\**" />
@@ -182,7 +182,7 @@
 		<Copy SourceFiles="@(SchedulerServiceBuildFiles)" DestinationFolder="$(SchedulerServiceBuild)\%(RecursiveDir)" />
 	</Target>
 
-	<Target Name="CreatePortalBuild" DependsOnTargets="CreateEnterpriseServerBuild">
+	<Target Name="CreatePortalBuild" DependsOnTargets="CreateSchedulerServiceBuild">
 		<ItemGroup>
 			<PortalBuildExclude Include="$(PortalSrc)\**\.svn\**" />
 			<PortalBuildExclude Include="$(PortalSrc)\**\obj\**" />
@@ -201,7 +201,7 @@
 			<PortalBuildFiles Include="$(PortalSrc)\**\*.*" Exclude="@(PortalBuildExclude)" />
 		</ItemGroup>
 		<Copy SourceFiles="@(PortalBuildFiles)" DestinationFolder="$(PortalBuild)\%(RecursiveDir)" />
-	</Target>
+	</Target>	
 
 	<Target Name="CreateImportCsvBuild" DependsOnTargets="CreatePortalBuild">
 		<ItemGroup>
