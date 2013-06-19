@@ -92,10 +92,7 @@ namespace WebsitePanel.EnterpriseServer
                 DataProvider.AddAuditLogRecord(recordId, severityId, userId, username, packageId, itemId, itemName,
                     startDate, finishDate, sourceName, taskName, executionLog);
             }
-            catch(Exception ex)
-            {
-                // skip error
-            }
+            catch { }
         }
 
         private static DateTime GetStartDate(DateTime d)

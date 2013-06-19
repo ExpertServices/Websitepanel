@@ -531,9 +531,8 @@ namespace WebsitePanel.EnterpriseServer
                         scheduledTasks.Add(task.ScheduleId, task);
                 }
             }
-            catch (Exception e)
-            {
-            }
+            catch { }
+
             return scheduledTasks;
         }
 
