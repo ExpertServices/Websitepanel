@@ -19,7 +19,7 @@
 
 		<DiffCmd>$(TrunkFolder)\Tools\Diff.exe</DiffCmd>
 		<!-- Lets keep all tools we need for the build together in a well-known place to avoid BUILD HELL -->
-		<SqlCmd Condition="Exists('$(RootFolder)\tools\sqlcmd\sqlcmd.exe')">"$(RootFolder)\tools\sqlcmd\sqlcmd.exe" -S FEDOSEVICHV -E</SqlCmd>
+		<SqlCmd Condition="Exists('$(RootFolder)\tools\sqlcmd\sqlcmd.exe')">"$(RootFolder)\tools\sqlcmd\sqlcmd.exe" -S (local)\SQLEXPRESS -E</SqlCmd>
     <MSDeployPath Condition="Exists('$(RootFolder)\tools\webdeploy\msdeploy.exe')">"$(RootFolder)\tools\webdeploy\msdeploy.exe"</MSDeployPath>
     <ZipCmd>"$(RootFolder)\tools\7-Zip\7z.exe"</ZipCmd>
 
