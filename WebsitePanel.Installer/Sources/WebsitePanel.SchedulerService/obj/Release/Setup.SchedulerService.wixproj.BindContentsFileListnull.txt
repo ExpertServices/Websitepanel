@@ -1,0 +1,11 @@
+..\..\..\WebsitePanel\Sources\WebsitePanel.SchedulerService\Bin\Ionic.Zip.Reduced.dll
+..\..\..\WebsitePanel\Sources\WebsitePanel.SchedulerService\Bin\Microsoft.Web.Services3.dll
+..\..\..\WebsitePanel\Sources\WebsitePanel.SchedulerService\Bin\WebsitePanel.Common.Utils.dll
+..\..\..\WebsitePanel\Sources\WebsitePanel.SchedulerService\Bin\WebsitePanel.EnterpriseServer.Base.dll
+..\..\..\WebsitePanel\Sources\WebsitePanel.SchedulerService\Bin\WebsitePanel.EnterpriseServer.Code.dll
+..\..\..\WebsitePanel\Sources\WebsitePanel.SchedulerService\Bin\WebsitePanel.Providers.Base.dll
+..\..\..\WebsitePanel\Sources\WebsitePanel.SchedulerService\Bin\WebsitePanel.SchedulerService.exe
+..\..\..\WebsitePanel\Sources\WebsitePanel.SchedulerService\Bin\WebsitePanel.SchedulerService.exe.config
+..\..\..\WebsitePanel\Sources\WebsitePanel.SchedulerService\Bin\WebsitePanel.Server.Client.dll
+..\..\..\WebsitePanel\Sources\WebsitePanel.SchedulerService\Bin\WebsitePanel.Templates.dll
+..\..\..\WebsitePanel\Sources\WebsitePanel.SchedulerService\Bin\WebsitePanel.Whois.dll
