@@ -24,7 +24,7 @@
     <ZipCmd>"$(RootFolder)\tools\7-Zip\7z.exe"</ZipCmd>
 
     <DataBaseName>WebsitePanel_build</DataBaseName>
-		<MSDeployConnectionString>server=FEDOSEVICHV;database=$(DataBaseName);Integrated Security=true;</MSDeployConnectionString>
+		<MSDeployConnectionString>server=(local)\SQLEXPRESS;database=$(DataBaseName);Integrated Security=true;</MSDeployConnectionString>
 
 		<PortalSrc>$(TrunkFolder)\Sources\WebsitePanel.WebPortal</PortalSrc>
 		<ServerSrc>$(TrunkFolder)\Sources\WebsitePanel.Server</ServerSrc>
