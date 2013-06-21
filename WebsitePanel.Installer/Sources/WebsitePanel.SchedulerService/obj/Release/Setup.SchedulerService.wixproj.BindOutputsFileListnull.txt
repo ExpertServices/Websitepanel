@@ -1,2 +1,0 @@
-C:\Projects\wsp210\WebsitePanel.Installer\Sources\Setup.SchedulerService\bin\Release\Setup.SchedulerService.msi
-C:\Projects\wsp210\WebsitePanel.Installer\Sources\Setup.SchedulerService\bin\Release\Setup.SchedulerService.wixpdb

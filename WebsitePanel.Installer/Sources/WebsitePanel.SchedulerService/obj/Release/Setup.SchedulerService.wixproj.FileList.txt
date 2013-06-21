@@ -1,6 +1,0 @@
-C:\Projects\wsp210\WebsitePanel.Installer\Sources\Setup.SchedulerService\bin\Release\Setup.SchedulerService.msi
-C:\Projects\wsp210\WebsitePanel.Installer\Sources\Setup.SchedulerService\bin\Release\Setup.SchedulerService.wixpdb
-obj\Release\Product.wixobj
-obj\Release\Setup.SchedulerService.wixproj.BindContentsFileListnull.txt
-obj\Release\Setup.SchedulerService.wixproj.BindOutputsFileListnull.txt
-obj\Release\Setup.SchedulerService.wixproj.BindBuiltOutputsFileListnull.txt
