@@ -74,6 +74,9 @@
     <Reference Include="WebsitePanel.EnterpriseServer.Client">
       <HintPath>..\..\..\Bin\WebsitePanel.EnterpriseServer.Client.dll</HintPath>
     </Reference>
+    <Reference Include="WebsitePanel.EnterpriseServer.Code">
+      <HintPath>..\..\..\Bin\WebsitePanel.EnterpriseServer.Code.dll</HintPath>
+    </Reference>
     <Reference Include="WebsitePanel.Providers.Base">
       <HintPath>..\..\..\Bin\WebsitePanel.Providers.Base.dll</HintPath>
     </Reference>

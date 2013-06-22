@@ -28,6 +28,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Configuration.Install;
+using System.Linq;
+using System.ServiceProcess;
 using System.Text;
 using System.IO;
 using System.Xml;
@@ -97,7 +100,7 @@ namespace WebsitePanel.Setup.Actions
 				throw;
 			}
 		}
-	}
+	}    
 
 	public class CreateDatabaseAction : Action, IInstallAction, IUninstallAction
 	{
@@ -347,7 +350,7 @@ namespace WebsitePanel.Setup.Actions
 			Log.WriteEnd(String.Format("Updated {0} file", vars.ConfigurationFile));
 		}
 	}
-
+    
 	public class SaveEntServerConfigSettingsAction : Action, IInstallAction
 	{
 		void IInstallAction.Run(SetupVariables vars)
@@ -390,7 +393,7 @@ namespace WebsitePanel.Setup.Actions
 			new UpdateServeradminPasswAction(),
 			new SaveAspNetDbConnectionStringAction(),
 			new SaveComponentConfigSettingsAction(),
-			new SaveEntServerConfigSettingsAction()
+			new SaveEntServerConfigSettingsAction()            
 		};
 
 		public EntServerActionManager(SetupVariables sessionVars) : base(sessionVars)

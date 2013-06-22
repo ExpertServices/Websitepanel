@@ -76,7 +76,7 @@ namespace WebsitePanel.Setup
 			public const string DatabaseName = "DatabaseName";
 			public const string ConnectionString = "ConnectionString";
 			public const string InstallConnectionString = "InstallConnectionString";
-			public const string Release = "Release";
+			public const string Release = "Release";		    
 		}
 
 		public abstract class Messages

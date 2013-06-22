@@ -36,162 +36,171 @@ using System.Xml.Serialization;
 
 namespace WebsitePanel.EnterpriseServer
 {
+
     public class BackgroundTask
     {
-        private string taskId;
-        private int userId;
-        private int packageId;
-        private int effectiveUserId;
-        private DateTime startDate = DateTime.MinValue;
-        private DateTime finishDate = DateTime.MinValue;
-        private int maximumExecutionTime = -1; // seconds
-        private string source;
-        private string taskName;
-        private int scheduleId;
-        private string itemName;
-        private int itemId = 0;
-        private int severity = 0; /* 0 - Info, 1 - Warning, 2 - Error */
-        private List<BackgroundTaskLogRecord> logRecords = new List<BackgroundTaskLogRecord>();
-        private List<BackgroundTaskLogRecord> lastLogRecords = new List<BackgroundTaskLogRecord>();
-        private BackgroundTaskLogRecord lastLogRecord;
-        private Hashtable parameters = new Hashtable();
-        private int indicatorMaximum;
-        private int indicatorCurrent;
-        private bool completed;
-        private bool notifyOnComplete;
-        private Thread taskThread;
+        #region Fields
 
-        public System.DateTime StartDate
+        public List<BackgroundTaskParameter> Params = new List<BackgroundTaskParameter>();
+        
+        public List<BackgroundTaskLogRecord> Logs = new List<BackgroundTaskLogRecord>();
+
+        #endregion
+
+        #region Properties
+
+        public int Id { get; set; }
+
+        public Guid Guid { get; set; }
+
+        public string TaskId { get; set; }
+
+        public int ScheduleId { get; set; }
+
+        public int PackageId { get; set; }
+
+        public int UserId { get; set; }
+
+        public int EffectiveUserId { get; set; }
+
+        public string TaskName { get; set; }
+
+        public int ItemId { get; set; }
+
+        public string ItemName { get; set; }
+
+        public DateTime StartDate { get; set; }
+
+        public DateTime FinishDate { get; set; }
+
+        public int IndicatorCurrent { get; set; }
+
+        public int IndicatorMaximum { get; set; }
+
+        public int MaximumExecutionTime { get; set; }
+
+        public string Source { get; set; }
+
+        public int Severity { get; set; }
+
+        public bool Completed { get; set; }
+
+        public bool NotifyOnComplete { get; set; }
+
+        public BackgroundTaskStatus Status { get; set; }
+
+        #endregion
+
+        #region Constructors
+
+        public BackgroundTask()
         {
-            get { return this.startDate; }
-            set { this.startDate = value; }
+            StartDate = DateTime.Now;
+            Severity = 0;
+            IndicatorCurrent = 0;
+            IndicatorMaximum = 0;
+            Status = BackgroundTaskStatus.Run;
+
+            Completed = false;
+            NotifyOnComplete = false;
         }
 
-        public System.DateTime FinishDate
+        public BackgroundTask(Guid guid, String taskId, int userId, int effectiveUserId, String source, String taskName, String itemName,
+            int itemId, int scheduleId, int packageId, int maximumExecutionTime, List<BackgroundTaskParameter> parameters)
+            : this()
         {
-            get { return this.finishDate; }
-            set { this.finishDate = value; }
+            Guid = guid;
+            TaskId = taskId;
+            UserId = userId;
+            EffectiveUserId = effectiveUserId;
+            Source = source;
+            TaskName = taskName;
+            ItemName = itemName;
+            ItemId = itemId;
+            ScheduleId = scheduleId;
+            PackageId = packageId;
+            MaximumExecutionTime = maximumExecutionTime;
+            Params = parameters;
         }
 
-        public string Source
+        #endregion
+
+        #region Methods
+
+        public List<BackgroundTaskLogRecord> GetLogs()
         {
-            get { return this.source; }
-            set { this.source = value; }
+            return Logs;
         }
 
-        public string TaskName
+        public Object GetParamValue(String name)
         {
-            get { return this.taskName; }
-            set { this.taskName = value; }
+            foreach(BackgroundTaskParameter param in Params)
+            {
+                if (param.Name == name)
+                    return param.Value;
+            }
+
+            return null;
         }
 
-        public int ItemId
+        public void UpdateParamValue(String name, object value)
         {
-            get { return this.itemId; }
-            set { this.itemId = value; }
+            foreach (BackgroundTaskParameter param in Params)
+            {
+                if (param.Name == name)
+                {
+                    param.Value = value;
+
+                    return;
+
+                }
+            }
+
+            Params.Add(new BackgroundTaskParameter(name, value));
         }
 
-        public int PackageId
+        public bool ContainsParam(String name)
         {
-            get { return this.packageId; }
-            set { this.packageId = value; }
+            foreach (BackgroundTaskParameter param in Params)
+            {
+                if (param.Name == name)
+                    return true;
+            }
+
+            return false;
         }
 
-        public int Severity
+        #endregion
+    }
+
+    public class BackgroundTaskParameter
+    {
+        #region Properties
+
+        public int ParameterId { get; set; }
+
+        public int TaskId { get; set; }
+
+        public String Name { get; set; }
+
+        public Object Value { get; set; }
+
+        public String TypeName { get; set; }
+
+        public String SerializerValue { get; set; }
+
+        #endregion
+
+        #region Constructors
+
+        public BackgroundTaskParameter() { }
+
+        public BackgroundTaskParameter(String name, Object value)
         {
-            get { return this.severity; }
-            set { this.severity = value; }
+            Name = name;
+            Value = value;
         }
 
-        [XmlIgnore]
-        public List<BackgroundTaskLogRecord> LogRecords
-        {
-            get { return this.logRecords; }
-            set { this.logRecords = value; }
-        }
-
-        public List<BackgroundTaskLogRecord> LastLogRecords
-        {
-            get { return this.lastLogRecords; }
-        }
-
-        public string ItemName
-        {
-            get { return this.itemName; }
-            set { this.itemName = value; }
-        }
-
-        public BackgroundTaskLogRecord LastLogRecord
-        {
-            get { return this.lastLogRecord; }
-            set { this.lastLogRecord = value; }
-        }
-
-        public string TaskId
-        {
-            get { return this.taskId; }
-            set { this.taskId = value; }
-        }
-
-        public int UserId
-        {
-            get { return this.userId; }
-            set { this.userId = value; }
-        }
-
-        [XmlIgnore]
-        public Hashtable Parameters
-        {
-            get { return this.parameters; }
-        }
-
-        public int IndicatorMaximum
-        {
-            get { return this.indicatorMaximum; }
-            set { this.indicatorMaximum = value; }
-        }
-
-        public int IndicatorCurrent
-        {
-            get { return this.indicatorCurrent; }
-            set { this.indicatorCurrent = value; }
-        }
-
-        public bool Completed
-        {
-            get { return this.completed; }
-            set { this.completed = value; }
-        }
-
-        public bool NotifyOnComplete
-        {
-            get { return this.notifyOnComplete; }
-            set { this.notifyOnComplete = value; }
-        }
-
-        public int EffectiveUserId
-        {
-            get { return this.effectiveUserId; }
-            set { this.effectiveUserId = value; }
-        }
-
-        [XmlIgnore]
-        public System.Threading.Thread TaskThread
-        {
-            get { return this.taskThread; }
-            set { this.taskThread = value; }
-        }
-
-        public int ScheduleId
-        {
-            get { return this.scheduleId; }
-            set { this.scheduleId = value; }
-        }
-
-        public int MaximumExecutionTime
-        {
-            get { return this.maximumExecutionTime; }
-            set { this.maximumExecutionTime = value; }
-        }
+        #endregion
     }
 }
