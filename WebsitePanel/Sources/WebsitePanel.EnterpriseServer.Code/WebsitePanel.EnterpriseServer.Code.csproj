@@ -129,6 +129,7 @@
     <Compile Include="Provisioning\IImportController.cs" />
     <Compile Include="Provisioning\ImportAsyncWorker.cs" />
     <Compile Include="Provisioning\ImportController.cs" />
+    <Compile Include="RemoteDesktopServices\RemoteDesktopServicesController.cs" />
     <Compile Include="SchedulerTasks\ActivatePaidInvoicesTask.cs" />
     <Compile Include="SchedulerTasks\BackupDatabaseTask.cs" />
     <Compile Include="SchedulerTasks\BackupTask.cs" />

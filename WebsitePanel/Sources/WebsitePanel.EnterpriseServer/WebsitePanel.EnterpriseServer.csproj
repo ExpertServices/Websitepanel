@@ -123,7 +123,6 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
-    <Compile Include="Code\RemoteDesktopServices\RemoteDesktopServicesController.cs" />
     <Compile Include="esEnterpriseStorage.asmx.cs">
       <DependentUpon>esEnterpriseStorage.asmx</DependentUpon>
       <SubType>Component</SubType>
@@ -290,6 +289,9 @@
     <Content Include="SystemEventHandlers.config" />
     <None Include="TaskEventHandlers.config" />
     <None Include="WsePolicyCache.Config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Code\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
