@@ -636,7 +636,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
         #region IHostingServiceProvider Members
 
-        public virtual void ChangeServiceItemsState(ServiceProviderItem[] items, bool enabled)
+        public override void ChangeServiceItemsState(ServiceProviderItem[] items, bool enabled)
         {
             foreach (ServiceProviderItem item in items)
             {
@@ -656,7 +656,7 @@ namespace WebsitePanel.Providers.HostedSolution
             }
         }
 
-        public virtual void DeleteServiceItems(ServiceProviderItem[] items)
+        public override void DeleteServiceItems(ServiceProviderItem[] items)
         {
             foreach (ServiceProviderItem item in items)
             {
@@ -680,7 +680,7 @@ namespace WebsitePanel.Providers.HostedSolution
             }
         }
 
-        public virtual ServiceProviderItemDiskSpace[] GetServiceItemsDiskSpace(ServiceProviderItem[] items)
+        public override ServiceProviderItemDiskSpace[] GetServiceItemsDiskSpace(ServiceProviderItem[] items)
         {
             List<ServiceProviderItemDiskSpace> itemsDiskspace = new List<ServiceProviderItemDiskSpace>();
 
