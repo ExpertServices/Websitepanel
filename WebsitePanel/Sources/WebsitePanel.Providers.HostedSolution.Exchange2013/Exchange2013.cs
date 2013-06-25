@@ -7275,7 +7275,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 runSpace = OpenRunspace();
                 Command cmd = new Command("Remove-TransportRule");
                 cmd.Parameters.Add("Identity", Name);
-                cmd.Parameters.Add("Confirm", true);
+                cmd.Parameters.Add("Confirm", false);
                 ExecuteShellCommand(runSpace, cmd);
             }
             catch (Exception exc)
