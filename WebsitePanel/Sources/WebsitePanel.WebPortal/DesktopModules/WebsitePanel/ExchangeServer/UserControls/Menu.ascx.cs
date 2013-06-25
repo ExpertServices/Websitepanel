@@ -146,7 +146,8 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                     exchangeGroup.MenuItems.Add(CreateMenuItem("StorageUsage", "storage_usage"));
 
             if (!hideItems)
-                exchangeGroup.MenuItems.Add(CreateMenuItem("Disclaimers", "disclaimers"));
+                if (Utils.CheckQouta(Quotas.EXCHANGE2007_DISCLAIMERSALLOWED, cntx))
+                    exchangeGroup.MenuItems.Add(CreateMenuItem("Disclaimers", "disclaimers"));
 
             if (exchangeGroup.MenuItems.Count > 0)
                 groups.Add(exchangeGroup);

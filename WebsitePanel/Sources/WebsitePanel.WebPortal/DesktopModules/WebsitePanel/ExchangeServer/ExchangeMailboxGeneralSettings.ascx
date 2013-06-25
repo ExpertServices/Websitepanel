@@ -58,7 +58,7 @@
                                         </td>
 					                </tr>
 					                <tr>
-					                    <td class="FormLabel150"><asp:Localize ID="Localize1" runat="server" meta:resourcekey="locDisclaimer" Text="Disclaimer: "></asp:Localize></td>
+					                    <td class="FormLabel150"><asp:Localize ID="locDisclaimer" runat="server" meta:resourcekey="locDisclaimer" Text="Disclaimer: "></asp:Localize></td>
 					                    <td>                                
                                             <asp:DropDownList ID="ddDisclaimer" runat="server" />
                                         </td>

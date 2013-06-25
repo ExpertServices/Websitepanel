@@ -2892,6 +2892,9 @@
   <data name="Quota.Exchange2007.MaxReceiveMessageSizeKB" xml:space="preserve">
     <value>Maximum Receive Message Size (Kb)</value>
   </data>
+  <data name="Quota.Exchange2007.DisclaimersAllowed" xml:space="preserve">
+    <value>Disclaimers Allowed</value>
+  </data>
   <data name="ResourceGroup.Exchange" xml:space="preserve">
     <value>Hosted Exchange</value>
   </data>
