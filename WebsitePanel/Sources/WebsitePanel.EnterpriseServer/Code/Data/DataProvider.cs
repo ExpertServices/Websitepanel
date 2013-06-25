@@ -2679,6 +2679,98 @@ namespace WebsitePanel.EnterpriseServer
 
         #endregion
 
+        #region Exchange Disclaimer
+        public static int AddExchangeDisclaimer(int itemID, ExchangeDisclaimer disclaimer)
+        {
+            SqlParameter outParam = new SqlParameter("@ExchangeDisclaimerId", SqlDbType.Int);
+            outParam.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddExchangeDisclaimer",
+                outParam,
+
+                new SqlParameter("@ItemID", itemID),
+                new SqlParameter("@DisclaimerName", disclaimer.DisclaimerName),
+                new SqlParameter("@DisclaimerText", disclaimer.DisclaimerText)
+            );
+
+            return Convert.ToInt32(outParam.Value);
+        }
+
+        public static void UpdateExchangeDisclaimer(int itemID, ExchangeDisclaimer disclaimer)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateExchangeDisclaimer",
+                new SqlParameter("@ExchangeDisclaimerId", disclaimer.ExchangeDisclaimerId),
+                new SqlParameter("@DisclaimerName", disclaimer.DisclaimerName),
+                new SqlParameter("@DisclaimerText", disclaimer.DisclaimerText)
+            );
+        }
+
+        public static void DeleteExchangeDisclaimer(int exchangeDisclaimerId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteExchangeDisclaimer",
+                new SqlParameter("@ExchangeDisclaimerId", exchangeDisclaimerId)
+            );
+        }
+
+        public static IDataReader GetExchangeDisclaimer(int exchangeDisclaimerId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetExchangeDisclaimer",
+                new SqlParameter("@ExchangeDisclaimerId", exchangeDisclaimerId)
+            );
+        }
+
+        public static IDataReader GetExchangeDisclaimers(int itemId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetExchangeDisclaimers",
+                new SqlParameter("@ItemID", itemId)
+            );
+        }
+
+        public static void SetExchangeAccountDisclaimerId(int AccountID, int ExchangeDisclaimerId)
+        {
+            object id = null;
+            if (ExchangeDisclaimerId != -1) id = ExchangeDisclaimerId;
+
+            SqlHelper.ExecuteNonQuery(
+                            ConnectionString,
+                            CommandType.StoredProcedure,
+                            "SetExchangeAccountDisclaimerId",
+                            new SqlParameter("@AccountID", AccountID),
+                            new SqlParameter("@ExchangeDisclaimerId", id)
+                        );
+        }
+
+        public static int GetExchangeAccountDisclaimerId(int AccountID)
+        {
+            object objReturn = SqlHelper.ExecuteScalar(
+                            ConnectionString,
+                            CommandType.StoredProcedure,
+                            "GetExchangeAccountDisclaimerId",
+                            new SqlParameter("@AccountID", AccountID)
+                        );
+
+            int ret;
+            if (!int.TryParse(objReturn.ToString(), out ret)) return -1;
+            return ret;
+        }
+
+        #endregion
+
         #region Organizations
 
         public static void DeleteOrganizationUser(int itemId)

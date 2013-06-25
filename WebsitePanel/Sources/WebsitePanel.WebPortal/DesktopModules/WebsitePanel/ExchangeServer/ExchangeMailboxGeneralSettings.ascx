@@ -57,6 +57,12 @@
                                             <wsp:MailboxPlanSelector ID="mailboxPlanSelector" runat="server" />
                                         </td>
 					                </tr>
+					                <tr>
+					                    <td class="FormLabel150"><asp:Localize ID="Localize1" runat="server" meta:resourcekey="locDisclaimer" Text="Disclaimer: "></asp:Localize></td>
+					                    <td>                                
+                                            <asp:DropDownList ID="ddDisclaimer" runat="server" />
+                                        </td>
+					                </tr>
                                     <tr>
                                         <td class="FormLabel150"><asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Mailbox Size:"></asp:Localize></td>
 					                    <td>                                

@@ -38,6 +38,11 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             if (!IsPostBack)
             {
+                ddDisclaimer.Items.Add(new System.Web.UI.WebControls.ListItem("None", "-1"));
+                ExchangeDisclaimer[] disclaimers = ES.Services.ExchangeServer.GetExchangeDisclaimers(PanelRequest.ItemID);
+                foreach (ExchangeDisclaimer disclaimer in disclaimers)
+                    ddDisclaimer.Items.Add(new System.Web.UI.WebControls.ListItem(disclaimer.DisclaimerName, disclaimer.ExchangeDisclaimerId.ToString()));
+
                 BindSettings();
 
                 UserInfo user = UsersHelper.GetUser(PanelSecurity.EffectiveUserId);
@@ -98,7 +103,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 }
 
                 mailboxSize.QuotaUsedValue = Convert.ToInt32(stats.TotalSize / 1024 / 1024);
-                mailboxSize.QuotaValue = (stats.MaxSize == -1) ? -1: (int)Math.Round((double)(stats.MaxSize / 1024 / 1024));
+                mailboxSize.QuotaValue = (stats.MaxSize == -1) ? -1 : (int)Math.Round((double)(stats.MaxSize / 1024 / 1024));
 
                 secCalendarSettings.Visible = ((account.AccountType == ExchangeAccountType.Equipment) | (account.AccountType == ExchangeAccountType.Room));
 
@@ -107,7 +112,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                 litigationHoldSpace.QuotaUsedValue = Convert.ToInt32(stats.LitigationHoldTotalSize / 1024 / 1024);
                 litigationHoldSpace.QuotaValue = (stats.LitigationHoldMaxSize == -1) ? -1 : (int)Math.Round((double)(stats.LitigationHoldMaxSize / 1024 / 1024));
 
-
+                int disclaimerId = ES.Services.ExchangeServer.GetExchangeAccountDisclaimerId(PanelRequest.ItemID, PanelRequest.AccountID);
+                ddDisclaimer.SelectedValue = disclaimerId.ToString();
 
             }
             catch (Exception ex)
@@ -148,6 +154,10 @@ namespace WebsitePanel.Portal.ExchangeServer
                         return;
                     }
                 }
+
+                int disclaimerId;
+                if (int.TryParse(ddDisclaimer.SelectedValue, out disclaimerId))
+                    ES.Services.ExchangeServer.SetExchangeAccountDisclaimerId(PanelRequest.ItemID, PanelRequest.AccountID, disclaimerId);
 
                 messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_MAILBOX_SETTINGS");
                 BindSettings();
