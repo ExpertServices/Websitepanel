@@ -171,7 +171,8 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "GET_ORG_STATS", itemId);
+            TaskManager.StartTask("EXCHANGE", "GET_ORG_STATS");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -259,7 +260,8 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-			TaskManager.StartTask("EXCHANGE", "CALCULATE_DISKSPACE", itemId);
+			TaskManager.StartTask("EXCHANGE", "CALCULATE_DISKSPACE");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -346,7 +348,8 @@ namespace WebsitePanel.EnterpriseServer
         private static int ExtendToExchangeOrganization(ref Organization org)
         {                        
             // place log record
-            TaskManager.StartTask("EXCHANGE", "CREATE_ORG", org.Name, new BackgroundTaskParameter("Organization ID", org.OrganizationId));
+            TaskManager.StartTask("EXCHANGE", "CREATE_ORG", org.Name);
+            TaskManager.TaskParameters["Organization ID"] = org.OrganizationId;
 
             try
             {            
@@ -572,7 +575,8 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-			TaskManager.StartTask("EXCHANGE", "DELETE_ORG", itemId);
+			TaskManager.StartTask("EXCHANGE", "DELETE_ORG");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -609,7 +613,8 @@ namespace WebsitePanel.EnterpriseServer
 		public static Organization GetOrganizationStorageLimits(int itemId)
 		{
 			// place log record
-			TaskManager.StartTask("EXCHANGE", "GET_ORG_LIMITS", itemId);
+			TaskManager.StartTask("EXCHANGE", "GET_ORG_LIMITS");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -633,7 +638,8 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "SET_ORG_LIMITS", itemId);
+			TaskManager.StartTask("EXCHANGE", "SET_ORG_LIMITS");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -718,7 +724,8 @@ namespace WebsitePanel.EnterpriseServer
 			#endregion
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "GET_MAILBOXES_STATS", itemId);
+			TaskManager.StartTask("EXCHANGE", "GET_MAILBOXES_STATS");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -746,7 +753,8 @@ namespace WebsitePanel.EnterpriseServer
         public static ExchangeMailboxStatistics GetMailboxStatistics(int itemId, int accountId)
         {
             // place log record
-            TaskManager.StartTask("EXCHANGE", "GET_MAILBOX_STATS", itemId);
+            TaskManager.StartTask("EXCHANGE", "GET_MAILBOX_STATS");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -810,7 +818,8 @@ namespace WebsitePanel.EnterpriseServer
 			#endregion
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "GET_FOLDERS_STATS", itemId);
+			TaskManager.StartTask("EXCHANGE", "GET_FOLDERS_STATS");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -856,7 +865,8 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "GET_ACTIVESYNC_POLICY", itemId);
+            TaskManager.StartTask("EXCHANGE", "GET_ACTIVESYNC_POLICY");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -907,7 +917,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "SET_ACTIVESYNC_POLICY", itemId);
+            TaskManager.StartTask("EXCHANGE", "SET_ACTIVESYNC_POLICY");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -1160,7 +1171,8 @@ namespace WebsitePanel.EnterpriseServer
         public static bool CheckAccountCredentials(int itemId, string email, string password)
         {
             // place log record
-            TaskManager.StartTask("EXCHANGE", "AUTHENTICATE", email, itemId);
+            TaskManager.StartTask("EXCHANGE", "AUTHENTICATE", email);
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -1384,7 +1396,9 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "ADD_DOMAIN", itemId, new BackgroundTaskParameter("Domain ID", domainId));
+            TaskManager.StartTask("EXCHANGE", "ADD_DOMAIN");
+            TaskManager.TaskParameters["Domain ID"] = domainId;
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -1455,12 +1469,10 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-
-            List<BackgroundTaskParameter> parameters = new List<BackgroundTaskParameter>();
-            parameters.Add(new BackgroundTaskParameter("Domain ID", domainId));
-            parameters.Add(new BackgroundTaskParameter("Domain Type", domainType.ToString()));
-
-            TaskManager.StartTask("EXCHANGE", "CHANGE_DOMAIN_TYPE", itemId, parameters);
+            TaskManager.StartTask("EXCHANGE", "CHANGE_DOMAIN_TYPE");
+            TaskManager.TaskParameters["Domain ID"] = domainId;
+            TaskManager.TaskParameters["Domain Type"] = domainType.ToString();
+            TaskManager.ItemId = itemId;
 
             try
             { 
@@ -1515,7 +1527,9 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-			TaskManager.StartTask("EXCHANGE", "DELETE_DOMAIN", itemId, new BackgroundTaskParameter("Domain ID", domainId));
+			TaskManager.StartTask("EXCHANGE", "DELETE_DOMAIN");
+			TaskManager.TaskParameters["Domain ID"] = domainId;
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -1618,8 +1632,8 @@ namespace WebsitePanel.EnterpriseServer
 
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "CREATE_MAILBOX", itemId);
-
+            TaskManager.StartTask("EXCHANGE", "CREATE_MAILBOX");
+            TaskManager.ItemId = itemId;
             bool userCreated = false;
             Organization org = null;
             try
@@ -1810,7 +1824,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "DISABLE_MAILBOX", itemId);
+            TaskManager.StartTask("EXCHANGE", "DISABLE_MAILBOX");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -1858,7 +1873,8 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "DELETE_MAILBOX", itemId);
+			TaskManager.StartTask("EXCHANGE", "DELETE_MAILBOX");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -1937,7 +1953,8 @@ namespace WebsitePanel.EnterpriseServer
 			#endregion
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "GET_MAILBOX_GENERAL", itemId);
+			TaskManager.StartTask("EXCHANGE", "GET_MAILBOX_GENERAL");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -1972,7 +1989,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "UPDATE_MAILBOX_GENERAL", itemId);
+            TaskManager.StartTask("EXCHANGE", "UPDATE_MAILBOX_GENERAL");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -2018,7 +2036,8 @@ namespace WebsitePanel.EnterpriseServer
 		public static ExchangeEmailAddress[] GetMailboxEmailAddresses(int itemId, int accountId)
 		{
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "GET_MAILBOX_ADDRESSES", itemId);
+			TaskManager.StartTask("EXCHANGE", "GET_MAILBOX_ADDRESSES");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -2041,7 +2060,8 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "ADD_MAILBOX_ADDRESS", itemId);
+			TaskManager.StartTask("EXCHANGE", "ADD_MAILBOX_ADDRESS");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -2103,7 +2123,8 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "SET_PRIMARY_MAILBOX_ADDRESS", itemId);
+			TaskManager.StartTask("EXCHANGE", "SET_PRIMARY_MAILBOX_ADDRESS");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -2162,7 +2183,8 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "DELETE_MAILBOX_ADDRESSES", itemId);
+			TaskManager.StartTask("EXCHANGE", "DELETE_MAILBOX_ADDRESSES");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -2216,7 +2238,8 @@ namespace WebsitePanel.EnterpriseServer
 			#endregion
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "GET_MAILBOX_MAILFLOW", itemId);
+			TaskManager.StartTask("EXCHANGE", "GET_MAILBOX_MAILFLOW");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -2255,7 +2278,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "UPDATE_MAILBOX_MAILFLOW", itemId);
+            TaskManager.StartTask("EXCHANGE", "UPDATE_MAILBOX_MAILFLOW");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -2307,7 +2331,8 @@ namespace WebsitePanel.EnterpriseServer
 			#endregion
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "GET_MAILBOX_ADVANCED", itemId);
+			TaskManager.StartTask("EXCHANGE", "GET_MAILBOX_ADVANCED");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -2343,7 +2368,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "UPDATE_MAILBOX_GENERAL", itemId);
+            TaskManager.StartTask("EXCHANGE", "UPDATE_MAILBOX_GENERAL");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -2513,7 +2539,8 @@ namespace WebsitePanel.EnterpriseServer
         public static ExchangeMailbox GetMailboxPermissions(int itemId, int accountId)
         {
             // place log record
-            TaskManager.StartTask("EXCHANGE", "GET_MAILBOX_PERMISSIONS", itemId);
+            TaskManager.StartTask("EXCHANGE", "GET_MAILBOX_PERMISSIONS");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -2549,7 +2576,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "SET_MAILBOX_PERMISSIONS", itemId);
+            TaskManager.StartTask("EXCHANGE", "SET_MAILBOX_PERMISSIONS");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -2597,7 +2625,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "SET_MAILBOXPLAN", itemId);
+            TaskManager.StartTask("EXCHANGE", "SET_MAILBOXPLAN");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -2707,7 +2736,8 @@ namespace WebsitePanel.EnterpriseServer
         public static List<ExchangeMailboxPlan> GetExchangeMailboxPlans(int itemId)
         {
             // place log record
-            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_MAILBOXPLANS", itemId);
+            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_MAILBOXPLANS");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -2789,7 +2819,8 @@ namespace WebsitePanel.EnterpriseServer
         {
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_MAILBOXPLAN", mailboxPlanId);
+            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_MAILBOXPLAN");
+            TaskManager.ItemId = mailboxPlanId;
 
             try
             {
@@ -2809,7 +2840,8 @@ namespace WebsitePanel.EnterpriseServer
         public static int AddExchangeMailboxPlan(int itemID, ExchangeMailboxPlan mailboxPlan)
         {
             // place log record
-            TaskManager.StartTask("EXCHANGE", "ADD_EXCHANGE_MAILBOXPLAN", itemID);
+            TaskManager.StartTask("EXCHANGE", "ADD_EXCHANGE_MAILBOXPLAN");
+            TaskManager.ItemId = itemID;
 
             try
             {
@@ -2878,7 +2910,8 @@ namespace WebsitePanel.EnterpriseServer
         public static int UpdateExchangeMailboxPlan(int itemID, ExchangeMailboxPlan mailboxPlan)
         {
             // place log record
-            TaskManager.StartTask("EXCHANGE", "UPDATE_EXCHANGE_MAILBOXPLAN", itemID);
+            TaskManager.StartTask("EXCHANGE", "UPDATE_EXCHANGE_MAILBOXPLAN");
+            TaskManager.ItemId = itemID;
 
             try
             {
@@ -2950,7 +2983,8 @@ namespace WebsitePanel.EnterpriseServer
 
         public static int DeleteExchangeMailboxPlan(int itemID, int mailboxPlanId)
         {
-            TaskManager.StartTask("EXCHANGE", "DELETE_EXCHANGE_MAILBOXPLAN", itemID);
+            TaskManager.StartTask("EXCHANGE", "DELETE_EXCHANGE_MAILBOXPLAN");
+            TaskManager.ItemId = itemID;
 
             try
             {
@@ -2971,7 +3005,8 @@ namespace WebsitePanel.EnterpriseServer
 
         public static void SetOrganizationDefaultExchangeMailboxPlan(int itemId, int mailboxPlanId)
         {
-            TaskManager.StartTask("EXCHANGE", "SET_EXCHANGE_MAILBOXPLAN", itemId);
+            TaskManager.StartTask("EXCHANGE", "SET_EXCHANGE_MAILBOXPLAN");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -3011,7 +3046,8 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_EXCHANGE_CONTACTS_QUOTA_LIMIT;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "CREATE_CONTACT", itemId);
+            TaskManager.StartTask("EXCHANGE", "CREATE_CONTACT");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -3078,9 +3114,10 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "DELETE_CONTACT", itemId);
+			TaskManager.StartTask("EXCHANGE", "DELETE_CONTACT");
+			TaskManager.ItemId = itemId;
 
-            try
+			try
 			{
 				// load organization
 				Organization org = GetOrganization(itemId);
@@ -3133,7 +3170,8 @@ namespace WebsitePanel.EnterpriseServer
 			#endregion
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "GET_CONTACT_GENERAL", itemId);
+			TaskManager.StartTask("EXCHANGE", "GET_CONTACT_GENERAL");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -3173,7 +3211,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "UPDATE_CONTACT_GENERAL", itemId);
+            TaskManager.StartTask("EXCHANGE", "UPDATE_CONTACT_GENERAL");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -3253,7 +3292,8 @@ namespace WebsitePanel.EnterpriseServer
 			#endregion
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "GET_CONTACT_MAILFLOW", itemId);
+			TaskManager.StartTask("EXCHANGE", "GET_CONTACT_MAILFLOW");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -3291,7 +3331,8 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "UPDATE_CONTACT_MAILFLOW", itemId);
+			TaskManager.StartTask("EXCHANGE", "UPDATE_CONTACT_MAILFLOW");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -3343,7 +3384,8 @@ namespace WebsitePanel.EnterpriseServer
                 return BusinessErrorCodes.ERROR_EXCHANGE_DLISTS_QUOTA_LIMIT;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "CREATE_DISTR_LIST", itemId);
+            TaskManager.StartTask("EXCHANGE", "CREATE_DISTR_LIST");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -3423,7 +3465,8 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "DELETE_DISTR_LIST", itemId);
+			TaskManager.StartTask("EXCHANGE", "DELETE_DISTR_LIST");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -3477,7 +3520,8 @@ namespace WebsitePanel.EnterpriseServer
 			#endregion
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "GET_DISTR_LIST_GENERAL", itemId);
+			TaskManager.StartTask("EXCHANGE", "GET_DISTR_LIST_GENERAL");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -3514,7 +3558,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "UPDATE_DISTR_LIST_GENERAL", itemId);
+            TaskManager.StartTask("EXCHANGE", "UPDATE_DISTR_LIST_GENERAL");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -3576,7 +3621,8 @@ namespace WebsitePanel.EnterpriseServer
 			#endregion
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "GET_DISTR_LIST_MAILFLOW", itemId);
+			TaskManager.StartTask("EXCHANGE", "GET_DISTR_LIST_MAILFLOW");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -3614,7 +3660,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "UPDATE_DISTR_LIST_MAILFLOW", itemId);
+            TaskManager.StartTask("EXCHANGE", "UPDATE_DISTR_LIST_MAILFLOW");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -3660,7 +3707,8 @@ namespace WebsitePanel.EnterpriseServer
 		public static ExchangeEmailAddress[] GetDistributionListEmailAddresses(int itemId, int accountId)
 		{
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "GET_DISTR_LIST_ADDRESSES", itemId);
+			TaskManager.StartTask("EXCHANGE", "GET_DISTR_LIST_ADDRESSES");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -3683,7 +3731,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "ADD_DISTR_LIST_ADDRESS", itemId);
+            TaskManager.StartTask("EXCHANGE", "ADD_DISTR_LIST_ADDRESS");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -3737,7 +3786,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "SET_PRIMARY_DISTR_LIST_ADDRESS", itemId);
+            TaskManager.StartTask("EXCHANGE", "SET_PRIMARY_DISTR_LIST_ADDRESS");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -3789,7 +3839,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "DELETE_DISTR_LIST_ADDRESSES", itemId);
+            TaskManager.StartTask("EXCHANGE", "DELETE_DISTR_LIST_ADDRESSES");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -3969,7 +4020,8 @@ namespace WebsitePanel.EnterpriseServer
 				return BusinessErrorCodes.ERROR_EXCHANGE_PFOLDERS_QUOTA_LIMIT;
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "CREATE_PUBLIC_FOLDER", itemId);
+			TaskManager.StartTask("EXCHANGE", "CREATE_PUBLIC_FOLDER");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -4076,7 +4128,8 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "DELETE_PUBLIC_FOLDER", itemId);
+			TaskManager.StartTask("EXCHANGE", "DELETE_PUBLIC_FOLDER");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -4125,7 +4178,8 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "ENABLE_MAIL_PUBLIC_FOLDER", itemId);
+			TaskManager.StartTask("EXCHANGE", "ENABLE_MAIL_PUBLIC_FOLDER");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -4191,7 +4245,8 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "DISABLE_MAIL_PUBLIC_FOLDER", itemId);
+			TaskManager.StartTask("EXCHANGE", "DISABLE_MAIL_PUBLIC_FOLDER");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -4263,7 +4318,8 @@ namespace WebsitePanel.EnterpriseServer
 			#endregion
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "GET_PUBLIC_FOLDER_GENERAL", itemId);
+			TaskManager.StartTask("EXCHANGE", "GET_PUBLIC_FOLDER_GENERAL");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -4301,7 +4357,8 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "UPDATE_PUBLIC_FOLDER_GENERAL", itemId);
+			TaskManager.StartTask("EXCHANGE", "UPDATE_PUBLIC_FOLDER_GENERAL");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -4374,7 +4431,8 @@ namespace WebsitePanel.EnterpriseServer
 			#endregion
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "GET_PUBLIC_FOLDER_MAILFLOW", itemId);
+			TaskManager.StartTask("EXCHANGE", "GET_PUBLIC_FOLDER_MAILFLOW");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -4412,7 +4470,8 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "UPDATE_PUBLIC_FOLDER_MAILFLOW", itemId);
+			TaskManager.StartTask("EXCHANGE", "UPDATE_PUBLIC_FOLDER_MAILFLOW");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -4452,7 +4511,8 @@ namespace WebsitePanel.EnterpriseServer
 		public static ExchangeEmailAddress[] GetPublicFolderEmailAddresses(int itemId, int accountId)
 		{
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "GET_PUBLIC_FOLDER_ADDRESSES", itemId);
+			TaskManager.StartTask("EXCHANGE", "GET_PUBLIC_FOLDER_ADDRESSES");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -4475,7 +4535,8 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "ADD_PUBLIC_FOLDER_ADDRESS", itemId);
+			TaskManager.StartTask("EXCHANGE", "ADD_PUBLIC_FOLDER_ADDRESS");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -4526,7 +4587,8 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "SET_PRIMARY_PUBLIC_FOLDER_ADDRESS", itemId);
+			TaskManager.StartTask("EXCHANGE", "SET_PRIMARY_PUBLIC_FOLDER_ADDRESS");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -4574,7 +4636,8 @@ namespace WebsitePanel.EnterpriseServer
 			if (accountCheck < 0) return accountCheck;
 
 			// place log record
-            TaskManager.StartTask("EXCHANGE", "DELETE_PUBLIC_FOLDER_ADDRESSES", itemId);
+			TaskManager.StartTask("EXCHANGE", "DELETE_PUBLIC_FOLDER_ADDRESSES");
+			TaskManager.ItemId = itemId;
 
 			try
 			{
@@ -4754,7 +4817,8 @@ namespace WebsitePanel.EnterpriseServer
         public static ExchangeMobileDevice[] GetMobileDevices(int itemId, int accountId)
         {
             // place log record
-            TaskManager.StartTask("EXCHANGE", "GET_MOBILE_DEVICES", itemId);
+            TaskManager.StartTask("EXCHANGE", "GET_MOBILE_DEVICES");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -4784,7 +4848,8 @@ namespace WebsitePanel.EnterpriseServer
         public static ExchangeMobileDevice GetMobileDevice(int itemId, string deviceId)
         {
             // place log record
-            TaskManager.StartTask("EXCHANGE", "GET_MOBILE_DEVICE", itemId);
+            TaskManager.StartTask("EXCHANGE", "GET_MOBILE_DEVICE");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -4811,7 +4876,8 @@ namespace WebsitePanel.EnterpriseServer
         public static void WipeDataFromDevice(int itemId, string deviceId)
         {
             // place log record
-            TaskManager.StartTask("EXCHANGE", "WIPE_DATA_FROM_DEVICE", itemId);
+            TaskManager.StartTask("EXCHANGE", "WIPE_DATA_FROM_DEVICE");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -4838,7 +4904,8 @@ namespace WebsitePanel.EnterpriseServer
         public static void CancelRemoteWipeRequest(int itemId, string deviceId)
         {
             // place log record
-            TaskManager.StartTask("EXCHANGE", "CANCEL_REMOTE_WIPE_REQUEST", itemId);
+            TaskManager.StartTask("EXCHANGE", "CANCEL_REMOTE_WIPE_REQUEST");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -4865,7 +4932,8 @@ namespace WebsitePanel.EnterpriseServer
         public static void RemoveDevice(int itemId, string deviceId)
         {
             // place log record
-            TaskManager.StartTask("EXCHANGE", "REMOVE_DEVICE", itemId);
+            TaskManager.StartTask("EXCHANGE", "REMOVE_DEVICE");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -4889,15 +4957,14 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        #region Disclaimers
-
         public static int AddExchangeDisclaimer(int itemID, ExchangeDisclaimer disclaimer)
         {
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "ADD_EXCHANGE_EXCHANGEDISCLAIMER", itemID);
+            TaskManager.StartTask("EXCHANGE", "ADD_EXCHANGE_EXCHANGEDISCLAIMER");
+            TaskManager.ItemId = itemID;
 
             try
             {
@@ -4921,7 +4988,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "UPDATE_EXCHANGE_EXCHANGEDISCLAIMER", itemID);
+            TaskManager.StartTask("EXCHANGE", "UPDATE_EXCHANGE_EXCHANGEDISCLAIMER");
+            TaskManager.ItemId = itemID;
 
             try
             {
@@ -4944,7 +5012,8 @@ namespace WebsitePanel.EnterpriseServer
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
             if (accountCheck < 0) return accountCheck;
 
-            TaskManager.StartTask("EXCHANGE", "DELETE_EXCHANGE_EXCHANGEDISCLAIMER", itemId);
+            TaskManager.StartTask("EXCHANGE", "DELETE_EXCHANGE_EXCHANGEDISCLAIMER");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -4965,7 +5034,8 @@ namespace WebsitePanel.EnterpriseServer
         public static ExchangeDisclaimer GetExchangeDisclaimer(int itemId, int exchangeDisclaimerId)
         {
 
-            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_EXCHANGEDISCLAIMER", itemId);
+            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_EXCHANGEDISCLAIMER");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -4985,7 +5055,8 @@ namespace WebsitePanel.EnterpriseServer
 
         public static List<ExchangeDisclaimer> GetExchangeDisclaimers(int itemId)
         {
-            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_EXCHANGEDISCLAIMER", itemId);
+            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_EXCHANGEDISCLAIMER");
+            TaskManager.ItemId = itemId;
 
             try
             {
@@ -5009,7 +5080,8 @@ namespace WebsitePanel.EnterpriseServer
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "SET_EXCHANGE_ACCOUNTDISCLAIMERID", AccountID);
+            TaskManager.StartTask("EXCHANGE", "SET_EXCHANGE_ACCOUNTDISCLAIMERID");
+            TaskManager.ItemId = AccountID;
 
             try
             {
@@ -5035,7 +5107,7 @@ namespace WebsitePanel.EnterpriseServer
                 if (disclaimer != null)
                 {
                     if (!string.IsNullOrEmpty(disclaimer.DisclaimerText))
-                        exchange.NewDisclaimerTransportRule(transportRuleName, account.PrimaryEmailAddress, disclaimer.DisclaimerText);
+                    exchange.NewDisclaimerTransportRule(transportRuleName, account.PrimaryEmailAddress, disclaimer.DisclaimerText);
                 }
 
                 DataProvider.SetExchangeAccountDisclaimerId(AccountID, ExchangeDisclaimerId);
@@ -5055,7 +5127,8 @@ namespace WebsitePanel.EnterpriseServer
 
         public static int GetExchangeAccountDisclaimerId(int itemId, int AccountID)
         {
-            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_ACCOUNTDISCLAIMERID", AccountID);
+            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_ACCOUNTDISCLAIMERID");
+            TaskManager.ItemId = AccountID;
 
             try
             {
@@ -5071,7 +5144,6 @@ namespace WebsitePanel.EnterpriseServer
             }
 
         }
-        #endregion
 
-    }
+	}
 }
