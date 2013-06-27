@@ -1524,6 +1524,27 @@ namespace WebsitePanel.Providers.Web
 			}
 		}
 
+        // AppPool
+        public void ChangeAppPoolState(string siteId, AppPoolState state)
+        {
+            webObjectsSvc.ChangeAppPoolState(siteId, state);
+        }
+
+        public AppPoolState GetAppPoolState(string siteId)
+        {
+            using (ServerManager srvman = webObjectsSvc.GetServerManager())
+            {
+                return GetAppPoolState(srvman, siteId);
+            }
+        }
+
+        public AppPoolState GetAppPoolState(ServerManager srvman, string siteId)
+        {
+            return webObjectsSvc.GetAppPoolState(srvman, siteId);
+        }
+
+
+
 		/// <summary>
 		/// Checks whether virtual iisDirObject with supplied name under specified site exists.
 		/// </summary>
@@ -1965,7 +1986,7 @@ namespace WebsitePanel.Providers.Web
 		public new void GrantWebDeployPublishingAccess(string siteName, string accountName, string accountPassword)
 		{
 			// Web Publishing Access feature requires FullControl permissions on the web site's wwwroot folder
-			GrantWebManagementAccessInternally(siteName, accountName, accountPassword, NTFSPermission.FullControl);
+			//GrantWebManagementAccessInternally(siteName, accountName, accountPassword, NTFSPermission.FullControl);
 			//
 			EnforceDelegationRulesRestrictions(siteName, accountName);
 		}
@@ -1979,7 +2000,7 @@ namespace WebsitePanel.Providers.Web
 		public new void RevokeWebDeployPublishingAccess(string siteName, string accountName)
 		{
 			// Web Publishing Access feature requires FullControl permissions on the web site's wwwroot folder
-			RevokeWebManagementAccess(siteName, accountName);
+			//RevokeWebManagementAccess(siteName, accountName);
 			//
 			RemoveDelegationRulesRestrictions(siteName, accountName);
 		}
@@ -3834,7 +3855,7 @@ namespace WebsitePanel.Providers.Web
 			else
 			{
 				//
-				SystemUser user = SecurityUtils.GetUser(accountName, ServerSettings, String.Empty);
+				SystemUser user = SecurityUtils.GetUser(GetNonQualifiedAccountName(accountName), ServerSettings, String.Empty);
 				//
 				user.Password = accountPassword;
 				//
@@ -3877,14 +3898,14 @@ namespace WebsitePanel.Providers.Web
                     if (adEnabled)
                     {
                         ManagementAuthorization.Revoke(GetFullQualifiedAccountName(accountName), fqWebPath);
-                        SecurityUtils.RemoveNtfsPermissions(contentPath, accountName, ServerSettings, UsersOU, GroupsOU);
-                        SecurityUtils.DeleteUser(accountName, ServerSettings, UsersOU);
+                        SecurityUtils.RemoveNtfsPermissions(contentPath, GetNonQualifiedAccountName(accountName), ServerSettings, UsersOU, GroupsOU);
+                        SecurityUtils.DeleteUser(GetNonQualifiedAccountName(accountName), ServerSettings, UsersOU);
                     }
                     else
                     {
                         ManagementAuthorization.Revoke(GetFullQualifiedAccountName(accountName), fqWebPath);
-                        SecurityUtils.RemoveNtfsPermissions(contentPath, accountName, ServerSettings, String.Empty, String.Empty);
-                        SecurityUtils.DeleteUser(accountName, ServerSettings, String.Empty);
+                        SecurityUtils.RemoveNtfsPermissions(contentPath, GetNonQualifiedAccountName(accountName), ServerSettings, String.Empty, String.Empty);
+                        SecurityUtils.DeleteUser(GetNonQualifiedAccountName(accountName), ServerSettings, String.Empty);
                     }
                 }
                 // Restore setting back

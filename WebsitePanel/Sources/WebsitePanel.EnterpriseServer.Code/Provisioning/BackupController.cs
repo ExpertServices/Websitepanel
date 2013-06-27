@@ -806,9 +806,8 @@ namespace WebsitePanel.EnterpriseServer
 				//
 				return true;
 			}
-			catch(Exception e)
-			{
-				//
+			catch
+            {				//
 				return false;
 			}
 		}

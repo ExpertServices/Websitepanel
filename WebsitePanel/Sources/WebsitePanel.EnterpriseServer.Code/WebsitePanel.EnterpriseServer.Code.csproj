@@ -55,9 +55,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
     </Reference>
-    <Reference Include="WebsitePanel.EnterpriseServer.Client">
-      <HintPath>..\..\Bin\WebsitePanel.EnterpriseServer.Client.dll</HintPath>
-    </Reference>
     <Reference Include="WebsitePanel.Providers.Base">
       <HintPath>..\..\Bin\WebsitePanel.Providers.Base.dll</HintPath>
     </Reference>

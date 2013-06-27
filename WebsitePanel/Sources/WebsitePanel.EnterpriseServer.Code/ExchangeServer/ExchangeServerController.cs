@@ -4888,5 +4888,190 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.CompleteTask();
             }
         }
-	}
+
+        #region Disclaimers
+
+        public static int AddExchangeDisclaimer(int itemID, ExchangeDisclaimer disclaimer)
+        {
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "ADD_EXCHANGE_EXCHANGEDISCLAIMER", itemID);
+
+            try
+            {
+                return DataProvider.AddExchangeDisclaimer(itemID, disclaimer);
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+
+        }
+
+        public static int UpdateExchangeDisclaimer(int itemID, ExchangeDisclaimer disclaimer)
+        {
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "UPDATE_EXCHANGE_EXCHANGEDISCLAIMER", itemID);
+
+            try
+            {
+                DataProvider.UpdateExchangeDisclaimer(itemID, disclaimer);
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+            return 0;
+        }
+
+        public static int DeleteExchangeDisclaimer(int itemId, int exchangeDisclaimerId)
+        {
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            TaskManager.StartTask("EXCHANGE", "DELETE_EXCHANGE_EXCHANGEDISCLAIMER", itemId);
+
+            try
+            {
+                DataProvider.DeleteExchangeDisclaimer(exchangeDisclaimerId);
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+            return 0;
+        }
+
+        public static ExchangeDisclaimer GetExchangeDisclaimer(int itemId, int exchangeDisclaimerId)
+        {
+
+            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_EXCHANGEDISCLAIMER", itemId);
+
+            try
+            {
+                return ObjectUtils.FillObjectFromDataReader<ExchangeDisclaimer>(
+                    DataProvider.GetExchangeDisclaimer(exchangeDisclaimerId));
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+        }
+
+        public static List<ExchangeDisclaimer> GetExchangeDisclaimers(int itemId)
+        {
+            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_EXCHANGEDISCLAIMER", itemId);
+
+            try
+            {
+                List<ExchangeDisclaimer> disclaimers = ObjectUtils.CreateListFromDataReader<ExchangeDisclaimer>(DataProvider.GetExchangeDisclaimers(itemId));
+                return disclaimers;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+        }
+
+        public static int SetExchangeAccountDisclaimerId(int itemId, int AccountID, int ExchangeDisclaimerId)
+        {
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "SET_EXCHANGE_ACCOUNTDISCLAIMERID", AccountID);
+
+            try
+            {
+                ExchangeDisclaimer disclaimer = null;
+
+                if (ExchangeDisclaimerId != -1)
+                    disclaimer = GetExchangeDisclaimer(itemId, ExchangeDisclaimerId);
+
+                // load account
+                ExchangeAccount account = GetAccount(itemId, AccountID);
+
+                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                if (org == null)
+                    return -1;
+
+                int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+                ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+
+                string transportRuleName = org.Name + "_" + account.PrimaryEmailAddress;
+
+                exchange.RemoveTransportRule(transportRuleName);
+
+                if (disclaimer != null)
+                {
+                    if (!string.IsNullOrEmpty(disclaimer.DisclaimerText))
+                        exchange.NewDisclaimerTransportRule(transportRuleName, account.PrimaryEmailAddress, disclaimer.DisclaimerText);
+                }
+
+                DataProvider.SetExchangeAccountDisclaimerId(AccountID, ExchangeDisclaimerId);
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+            return 0;
+
+        }
+
+        public static int GetExchangeAccountDisclaimerId(int itemId, int AccountID)
+        {
+            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_ACCOUNTDISCLAIMERID", AccountID);
+
+            try
+            {
+                return DataProvider.GetExchangeAccountDisclaimerId(AccountID);
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+        }
+        #endregion
+
+    }
 }

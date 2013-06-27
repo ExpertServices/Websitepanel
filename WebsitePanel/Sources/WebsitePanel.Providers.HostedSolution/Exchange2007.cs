@@ -1892,7 +1892,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 //calendar settings
                 if (accountType == ExchangeAccountType.Equipment || accountType == ExchangeAccountType.Room)
                 {
-                    //SetCalendarSettings(runSpace, id);
+                    SetCalendarSettings(runSpace, id);
                 }
 
                 ret = string.Format("{0}\\{1}", GetNETBIOSDomainName(), accountName);
@@ -6873,6 +6873,77 @@ namespace WebsitePanel.Providers.HostedSolution
                     break;
             }
         }
+        #endregion
+
+        #region Disclaimers
+
+        public int NewDisclaimerTransportRule(string Name, string From, string Text)
+        {
+            return NewDisclaimerTransportRuleInternal(Name, From, Text);
+        }
+
+        public int RemoveTransportRule(string Name)
+        {
+            return RemoveTransportRuleInternal(Name);
+        }
+
+        internal virtual int NewDisclaimerTransportRuleInternal(string Name, string From, string Text)
+        {
+            ExchangeLog.LogStart("NewDisclaimerTransportRuleInternal");
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+                Command cmd = new Command("New-TransportRule");
+                cmd.Parameters.Add("Name", Name);
+                cmd.Parameters.Add("From", From);
+                cmd.Parameters.Add("Enabled", true);
+                cmd.Parameters.Add("ApplyHtmlDisclaimerLocation", "Append");
+                cmd.Parameters.Add("ApplyHtmlDisclaimerText", Text);
+                cmd.Parameters.Add("ApplyHtmlDisclaimerFallbackAction", "Wrap");
+                ExecuteShellCommand(runSpace, cmd);
+            }
+            catch (Exception exc)
+            {
+                ExchangeLog.LogError(exc);
+                return -1;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+            ExchangeLog.LogEnd("NewDisclaimerTransportRuleInternal");
+
+            return 0;
+
+        }
+
+        internal virtual int RemoveTransportRuleInternal(string Name)
+        {
+            ExchangeLog.LogStart("RemoveTransportRuleInternal");
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+                Command cmd = new Command("Remove-TransportRule");
+                cmd.Parameters.Add("Identity", Name);
+                cmd.Parameters.Add("Confirm", false);
+                ExecuteShellCommand(runSpace, cmd);
+            }
+            catch(Exception exc)
+            {
+                ExchangeLog.LogError(exc);
+                return -1;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+            ExchangeLog.LogEnd("RemoveTransportRuleInternal");
+
+            return 0;
+        }
+
         #endregion
     }
 }

@@ -19,12 +19,12 @@
 
 		<DiffCmd>$(TrunkFolder)\Tools\Diff.exe</DiffCmd>
 		<!-- Lets keep all tools we need for the build together in a well-known place to avoid BUILD HELL -->
-		<SqlCmd Condition="Exists('$(RootFolder)\tools\sqlcmd\sqlcmd.exe')">"$(RootFolder)\tools\sqlcmd\sqlcmd.exe" -S FEDOSEVICHV -E</SqlCmd>
+		<SqlCmd Condition="Exists('$(RootFolder)\tools\sqlcmd\sqlcmd.exe')">"$(RootFolder)\tools\sqlcmd\sqlcmd.exe" -S (local)\SQLEXPRESS -E</SqlCmd>
     <MSDeployPath Condition="Exists('$(RootFolder)\tools\webdeploy\msdeploy.exe')">"$(RootFolder)\tools\webdeploy\msdeploy.exe"</MSDeployPath>
     <ZipCmd>"$(RootFolder)\tools\7-Zip\7z.exe"</ZipCmd>
 
     <DataBaseName>WebsitePanel_build</DataBaseName>
-		<MSDeployConnectionString>server=FEDOSEVICHV;database=$(DataBaseName);Integrated Security=true;</MSDeployConnectionString>
+		<MSDeployConnectionString>server=(local)\SQLEXPRESS;database=$(DataBaseName);Integrated Security=true;</MSDeployConnectionString>
 
 		<PortalSrc>$(TrunkFolder)\Sources\WebsitePanel.WebPortal</PortalSrc>
 		<ServerSrc>$(TrunkFolder)\Sources\WebsitePanel.Server</ServerSrc>
@@ -163,7 +163,7 @@
 		</ItemGroup>
 		<Copy SourceFiles="@(EnterpriseServerBuildFiles)" DestinationFolder="$(EnterpriseServerBuild)\%(RecursiveDir)" />
 	</Target>
-	
+
 	<Target Name="CreateSchedulerServiceBuild" DependsOnTargets="CreateEnterpriseServerBuild">
 		<ItemGroup>
 			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\.svn\**" />
@@ -182,7 +182,7 @@
 		<Copy SourceFiles="@(SchedulerServiceBuildFiles)" DestinationFolder="$(SchedulerServiceBuild)\%(RecursiveDir)" />
 	</Target>
 
-	<Target Name="CreatePortalBuild" DependsOnTargets="CreateEnterpriseServerBuild">
+	<Target Name="CreatePortalBuild" DependsOnTargets="CreateSchedulerServiceBuild">
 		<ItemGroup>
 			<PortalBuildExclude Include="$(PortalSrc)\**\.svn\**" />
 			<PortalBuildExclude Include="$(PortalSrc)\**\obj\**" />
@@ -201,7 +201,7 @@
 			<PortalBuildFiles Include="$(PortalSrc)\**\*.*" Exclude="@(PortalBuildExclude)" />
 		</ItemGroup>
 		<Copy SourceFiles="@(PortalBuildFiles)" DestinationFolder="$(PortalBuild)\%(RecursiveDir)" />
-	</Target>
+	</Target>	
 
 	<Target Name="CreateImportCsvBuild" DependsOnTargets="CreatePortalBuild">
 		<ItemGroup>

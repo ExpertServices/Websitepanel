@@ -348,6 +348,98 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 			return siteState;
         }
 
+        // AppPool
+        public void ChangeAppPoolState(string siteId, AppPoolState state)
+        {
+            using (var srvman = GetServerManager())
+            {
+                var site = srvman.Sites[siteId];
+                //
+                if (site == null)
+                    return;
+
+                foreach (Application app in site.Applications)
+                {
+                    string AppPoolName = app.ApplicationPoolName;
+
+                    if (string.IsNullOrEmpty(AppPoolName))
+                        continue;
+
+                    ApplicationPool pool = srvman.ApplicationPools[AppPoolName];
+                    if (pool == null) continue;
+
+                    //
+                    switch (state)
+                    {
+                        case AppPoolState.Started:
+                        case AppPoolState.Starting:
+                            if ((pool.State != ObjectState.Started) && (pool.State != ObjectState.Starting))
+                            {
+                                pool.Start();
+                                pool.AutoStart = true;
+                            }
+                            break;
+                        case AppPoolState.Stopped:
+                        case AppPoolState.Stopping:
+                            if ((pool.State != ObjectState.Stopped) && (pool.State != ObjectState.Stopping))
+                            {
+                                pool.Stop();
+                                pool.AutoStart = false;
+                            }
+                            break;
+                        case AppPoolState.Recycle:
+                            pool.Recycle();
+                            pool.AutoStart = true;
+                            break;
+                    }
+
+                    srvman.CommitChanges();
+
+                }
+            }
+        }
+
+        public AppPoolState GetAppPoolState(ServerManager srvman, string siteId)
+        {
+            Site site = srvman.Sites[siteId];
+
+            // ensure website exists
+            if (site == null)
+                return AppPoolState.Unknown;
+
+            string AppPoolName = site.ApplicationDefaults.ApplicationPoolName;
+            foreach (Application app in site.Applications)
+                AppPoolName = app.ApplicationPoolName;
+
+            if (string.IsNullOrEmpty(AppPoolName))
+                return AppPoolState.Unknown;
+
+            ApplicationPool pool = srvman.ApplicationPools[AppPoolName];
+
+            if (pool == null) return AppPoolState.Unknown;
+
+            AppPoolState state = AppPoolState.Unknown;
+
+            switch (pool.State)
+            {
+                case ObjectState.Started:
+                    state = AppPoolState.Started;
+                    break;
+                case ObjectState.Starting:
+                    state = AppPoolState.Starting;
+                    break;
+                case ObjectState.Stopped:
+                    state = AppPoolState.Stopped;
+                    break;
+                case ObjectState.Stopping:
+                    state = AppPoolState.Stopping;
+                    break;
+            }
+
+            return state;
+        }
+
+
         public bool SiteExists(ServerManager srvman, string siteId)
         {
             return (srvman.Sites[siteId] != null);

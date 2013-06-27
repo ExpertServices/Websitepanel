@@ -849,6 +849,16 @@ namespace WebsitePanel.Providers.Web
 			}
 		}
 
+        // AppPool
+        public void ChangeAppPoolState(string siteId, AppPoolState state)
+        {
+        }
+
+        public AppPoolState GetAppPoolState(string siteId)
+        {
+            return AppPoolState.Unknown;
+        }
+
         public virtual void UpdateSiteBindings(string siteId, ServerBinding[] bindings, bool emptyBindingsAllowed)
 		{
 			ManagementObject objSite = wmi.GetObject(String.Format("IIsWebServerSetting='{0}'", siteId));

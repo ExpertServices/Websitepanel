@@ -117,8 +117,8 @@
             <Component Id="ProductFiles" Guid="A89FA6CF-53E2-4390-9E9D-11CD4297D739">
                 <File Id="WebsitePanel.SchedulerService.exe" Source="$(var.BUILDPATH)\WebsitePanel.SchedulerService.exe" />
                 <File Id="WebsitePanel.SchedulerService.exe.config" Source="$(var.BUILDPATH)\WebsitePanel.SchedulerService.exe.config" />
-              <File Id="Ionic.Zip.Reduced.dll" Source="$(var.BUILDPATH)\Ionic.Zip.Reduced.dll"/>
-              <File Id="Microsoft.Web.Services3.dll" Source="$(var.BUILDPATH)\Microsoft.Web.Services3.dll"/>
+              <File Id="Ionic.Zip.Reduced.dll" Source="$(var.SERVERBUILDPATH)\Ionic.Zip.Reduced.dll"/>
+              <File Id="Microsoft.Web.Services3.dll" Source="$(var.SERVERBUILDPATH)\Microsoft.Web.Services3.dll"/>
               <File Id="WebsitePanel.Common.Utils.dll" Source="$(var.BUILDPATH)\WebsitePanel.Common.Utils.dll"/>
               <File Id="WebsitePanel.EnterpriseServer.Base.dll" Source="$(var.BUILDPATH)\WebsitePanel.EnterpriseServer.Base.dll"/>
               <File Id="WebsitePanel.EnterpriseServer.Code.dll" Source="$(var.BUILDPATH)\WebsitePanel.EnterpriseServer.Code.dll"/>

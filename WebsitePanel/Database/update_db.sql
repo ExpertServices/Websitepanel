@@ -450,7 +450,9 @@ INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName]
 VALUES (1401, 41, N'Lync2013', N'Microsoft Lync Server 2013 Multitenant Hosting Pack', N'WebsitePanel.Providers.HostedSolution.Lync2013, WebsitePanel.Providers.HostedSolution.Lync2013', N'Lync', NULL)
 END
 GO
-
+-- add Application Pools Restart Quota
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (411, 2, 13, N'Web.AppPoolsRestart', N'Application Pools Restart', 1, 0, NULL, NULL)
+GO
 -------------------------------- Scheduler Service------------------------------------------------------
 
 IF EXISTS( SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
@@ -1438,3 +1440,187 @@ WHERE T.Guid = (
 	WHERE ScheduleID = @ScheduleID
 		AND Completed = 0 AND Status IN (1, 3))
 GO
+
+-- Disclaimers
+
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ExchangeDisclaimers](
+        [ExchangeDisclaimerId] [int] IDENTITY(1,1) NOT NULL,
+        [ItemID] [int] NOT NULL,
+        [DisclaimerName] [nvarchar](300) NOT NULL,
+        [DisclaimerText] [nvarchar](1024),
+ CONSTRAINT [PK_ExchangeDisclaimers] PRIMARY KEY CLUSTERED
+(
+        [ExchangeDisclaimerId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetExchangeDisclaimers')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[GetExchangeDisclaimers]
+(
+	@ItemID int
+)
+AS
+SELECT
+	ExchangeDisclaimerId,
+	ItemID,
+	DisclaimerName,
+	DisclaimerText
+FROM
+	ExchangeDisclaimers
+WHERE
+	ItemID = @ItemID 
+ORDER BY DisclaimerName
+RETURN'
+END
+GO
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'DeleteExchangeDisclaimer')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[DeleteExchangeDisclaimer]
+(
+	@ExchangeDisclaimerId int
+)
+AS
+
+DELETE FROM ExchangeDisclaimers
+WHERE ExchangeDisclaimerId = @ExchangeDisclaimerId
+
+RETURN'
+END
+GO
+
+--
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'UpdateExchangeDisclaimer')
+BEGIN
+EXEC sp_executesql N' CREATE PROCEDURE [dbo].[UpdateExchangeDisclaimer] 
+(
+	@ExchangeDisclaimerId int,
+	@DisclaimerName nvarchar(300),
+	@DisclaimerText nvarchar(1024)
+)
+AS
+
+UPDATE ExchangeDisclaimers SET
+	DisclaimerName = @DisclaimerName,
+	DisclaimerText = @DisclaimerText
+
+WHERE ExchangeDisclaimerId = @ExchangeDisclaimerId
+
+RETURN'
+END
+GO
+
+--
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'AddExchangeDisclaimer')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[AddExchangeDisclaimer] 
+(
+	@ExchangeDisclaimerId int OUTPUT,
+	@ItemID int,
+	@DisclaimerName	nvarchar(300),
+	@DisclaimerText	nvarchar(1024)
+)
+AS
+
+INSERT INTO ExchangeDisclaimers
+(
+	ItemID,
+	DisclaimerName,
+	DisclaimerText
+)
+VALUES
+(
+	@ItemID,
+	@DisclaimerName,
+	@DisclaimerText
+)
+
+SET @ExchangeDisclaimerId = SCOPE_IDENTITY()
+
+RETURN'
+END
+GO
+
+--
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetExchangeDisclaimer')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[GetExchangeDisclaimer] 
+(
+	@ExchangeDisclaimerId int
+)
+AS
+SELECT
+	ExchangeDisclaimerId,
+	ItemID,
+	DisclaimerName,
+	DisclaimerText
+FROM
+	ExchangeDisclaimers
+WHERE
+	ExchangeDisclaimerId = @ExchangeDisclaimerId
+RETURN'
+END
+GO
+
+
+
+
+BEGIN
+ALTER TABLE [dbo].[ExchangeAccounts] ADD
+
+[ExchangeDisclaimerId] [int] NULL
+
+END
+Go
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'SetExchangeAccountDisclaimerId')
+BEGIN
+EXEC sp_executesql N' CREATE PROCEDURE [dbo].[SetExchangeAccountDisclaimerId] 
+(
+	@AccountID int,
+	@ExchangeDisclaimerId int
+)
+AS
+UPDATE ExchangeAccounts SET
+	ExchangeDisclaimerId = @ExchangeDisclaimerId
+WHERE AccountID = @AccountID
+
+RETURN'
+END
+GO
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetExchangeAccountDisclaimerId')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[GetExchangeAccountDisclaimerId] 
+(
+	@AccountID int
+)
+AS
+SELECT
+	ExchangeDisclaimerId
+FROM
+	ExchangeAccounts
+WHERE
+	AccountID= @AccountID
+RETURN'
+END
+GO
+
+
+-- add Disclaimers Quota   
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (422, 12, 26, N'Exchange2007.DisclaimersAllowed', N'Disclaimers Allowed', 1, 0, NULL, NULL)   
+GO  

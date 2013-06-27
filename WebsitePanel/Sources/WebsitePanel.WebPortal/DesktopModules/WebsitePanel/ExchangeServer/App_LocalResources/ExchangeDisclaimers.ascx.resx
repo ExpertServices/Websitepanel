@@ -117,88 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Text.ActiveSyncPolicy" xml:space="preserve">
-    <value>ActiveSync Policy</value>
+  <data name="btnCreateList.Text" xml:space="preserve">
+    <value>Create New Disclaimer</value>
   </data>
-  <data name="Text.Contacts" xml:space="preserve">
-    <value>Contacts</value>
+  <data name="cmdDelete.OnClientClick" xml:space="preserve">
+    <value>if(!confirm('Are you sure you want to delete this disclaimer?')) return false; else ShowProgressDialog('Deleting disclaimer list...');</value>
   </data>
-  <data name="Text.DistributionLists" xml:space="preserve">
-    <value>Distribution Lists</value>
+  <data name="cmdDelete.Text" xml:space="preserve">
+    <value>Delete</value>
   </data>
-  <data name="Text.Disclaimers" xml:space="preserve">
+  <data name="cmdDelete.ToolTip" xml:space="preserve">
+    <value>Delete Disclaimer</value>
+  </data>
+  <data name="cmdSearch.AlternateText" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="ddlSearchColumnDisplayName.Text" xml:space="preserve">
+    <value>Display Name</value>
+  </data>
+  <data name="FormComments.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="gvLists.Empty" xml:space="preserve">
+    <value>No disclaimer have been created. To create a new disclaimer click "Create New Disclaimer" button.</value>
+  </data>
+  <data name="gvListsDisplayName.Header" xml:space="preserve">
+    <value>Display Name</value>
+  </data>
+  <data name="locQuota.Text" xml:space="preserve">
+    <value>Disclaimer Created:</value>
+  </data>
+  <data name="locTitle.Text" xml:space="preserve">
     <value>Disclaimers</value>
   </data>
-  <data name="Text.DomainNames" xml:space="preserve">
-    <value>Domains</value>
-  </data>
-  <data name="Text.ExchangeDomainNames" xml:space="preserve">
-    <value>Accepted Domains</value>
-  </data>
-  <data name="Text.CRMOrganization" xml:space="preserve">
-    <value>CRM Organization</value>
-  </data>
-  <data name="Text.CRMUsers" xml:space="preserve">
-    <value>CRM Users</value>
-  </data>
-  <data name="Text.ExchangeGroup" xml:space="preserve">
-    <value>Exchange</value>
-  </data>
-  <data name="Text.Mailboxes" xml:space="preserve">
-    <value>Mailboxes</value>
-  </data>
-  <data name="Text.OrganizationGroup" xml:space="preserve">
-    <value>Organization's</value>
-  </data>
-  <data name="Text.CRMGroup" xml:space="preserve">
-    <value>CRM</value>
-  </data>
-  <data name="Text.BlackBerryGroup" xml:space="preserve">
-    <value>BlackBerry</value>
-  </data>
-  <data name="Text.BlackBerryUsers" xml:space="preserve">
-    <value>BlackBerry Users</value>
-  </data>
-  <data name="Text.PublicFolders" xml:space="preserve">
-    <value>Public Folders</value>
-  </data>
-  <data name="Text.Setup" xml:space="preserve">
-    <value>Setup</value>
-  </data>
-  <data name="Text.SharePointGroup" xml:space="preserve">
-    <value>SharePoint</value>
-  </data>
-  <data name="Text.OCSGroup" xml:space="preserve">
-    <value>OCS</value>
-  </data>
-  <data name="Text.OCSUsers" xml:space="preserve">
-    <value>OCS Users</value>
-  </data>
-  <data name="Text.SiteCollections" xml:space="preserve">
-    <value>Site Collections</value>
-  </data>
-  <data name="Text.StorageLimits" xml:space="preserve">
-    <value>Storage Settings</value>
-  </data>
-  <data name="Text.StorageUsage" xml:space="preserve">
-    <value>Storage Usage</value>
-  </data>
-  <data name="Text.Users" xml:space="preserve">
-    <value>Users</value>
-  </data>
-  <data name="Text.MailboxPlans" xml:space="preserve">
-    <value>Mailbox Plans</value>
-  </data>
-  <data name="Text.LyncGroup" xml:space="preserve">
-    <value>Lync</value>
-  </data>
-  <data name="Text.LyncUserPlans" xml:space="preserve">
-    <value>Lync User Plans</value>
-  </data>
-  <data name="Text.LyncUsers" xml:space="preserve">
-    <value>Lync Users</value>
-  </data>
-  <data name="Text.LyncFederationDomains" xml:space="preserve">
-    <value>Lync Federation Domains</value>
+  <data name="Text.PageName" xml:space="preserve">
+    <value>Disclaimers</value>
   </data>
 </root>

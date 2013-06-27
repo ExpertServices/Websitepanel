@@ -1694,8 +1694,8 @@ namespace WebsitePanel.EnterpriseServer
                 // get mailbox settings
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
                 string accountName = GetAccountName(account.AccountName);
-                
-                
+
+
                 OrganizationUser retUser = orgProxy.GetUserGeneralSettings(accountName, org.OrganizationId);
                 retUser.AccountId = accountId;
                 retUser.AccountName = account.AccountName;
@@ -1706,13 +1706,10 @@ namespace WebsitePanel.EnterpriseServer
                 retUser.IsLyncUser = DataProvider.CheckLyncUserExists(accountId);
                 retUser.IsBlackBerryUser = BlackBerryController.CheckBlackBerryUserExists(accountId);
                 retUser.SubscriberNumber = account.SubscriberNumber;
-                
+
                 return retUser;
             }
-            catch (Exception ex)
-            {
-                //throw TaskManager.WriteError(ex);
-            }
+            catch { }
             finally
             {
                 TaskManager.CompleteTask();

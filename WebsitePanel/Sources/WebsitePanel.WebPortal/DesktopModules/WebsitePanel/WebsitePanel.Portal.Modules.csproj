@@ -255,6 +255,20 @@
     <Compile Include="ExchangeServer\UserControls\UserTabs.ascx.designer.cs">
       <DependentUpon>UserTabs.ascx</DependentUpon>
     </Compile>
+    <Compile Include="ExchangeServer\ExchangeDisclaimers.ascx.cs">
+      <DependentUpon>ExchangeDisclaimers.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\ExchangeDisclaimers.ascx.designer.cs">
+      <DependentUpon>ExchangeDisclaimers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\ExchangeDisclaimerGeneralSettings.ascx.cs">
+      <DependentUpon>ExchangeDisclaimerGeneralSettings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\ExchangeDisclaimerGeneralSettings.ascx.designer.cs">
+      <DependentUpon>ExchangeDisclaimerGeneralSettings.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Lync\LyncAddFederationDomain.ascx.cs">
       <DependentUpon>LyncAddFederationDomain.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -3850,6 +3864,8 @@
     <Content Include="ExchangeServer\OrganizationAddDomainName.ascx" />
     <Content Include="ExchangeServer\OrganizationDomainNames.ascx" />
     <Content Include="ExchangeServer\ExchangeAddMailboxPlan.ascx" />
+    <Content Include="ExchangeServer\ExchangeDisclaimers.ascx" />
+    <Content Include="ExchangeServer\ExchangeDisclaimerGeneralSettings.ascx" />
     <Content Include="Lync\UserControls\LyncUserSettings.ascx" />
     <Content Include="ProviderControls\CRM2011_Settings.ascx" />
     <Content Include="ProviderControls\HeliconZoo_Settings.ascx" />
@@ -5021,6 +5037,12 @@
     <Content Include="UserControls\App_LocalResources\OrgIdPolicyEditor.ascx.resx" />
     <None Include="Resources\Windows2008_Settings.ascx.resx" />
     <Content Include="App_LocalResources\WebSitesHeliconZooControl.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\ExchangeDisclaimers.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ExchangeServer\App_LocalResources\ExchangeDisclaimerGeneralSettings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
