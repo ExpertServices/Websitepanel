@@ -33,6 +33,7 @@ using System.Linq;
 using System.ServiceProcess;
 using System.Text;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace WebsitePanel.Setup.Actions
@@ -443,6 +444,66 @@ namespace WebsitePanel.Setup.Actions
             Log.WriteEnd(string.Format("Updated {0}.config file (connection string)", Global.Parameters.SchedulerServiceFileName));
         }
     }
+
+    public class SaveSchedulerServiceCryptoKeyAction : Action, IInstallAction
+    {
+        void IInstallAction.Run(SetupVariables vars)
+        {
+            Log.WriteStart(string.Format("Updating {0}.config file (crypto key)", Global.Parameters.SchedulerServiceFileName));
+
+            try
+            {
+                UpdateCryptoKey(vars.InstallationFolder);
+            }
+            catch (Exception)
+            {
+            }
+
+            Log.WriteEnd(string.Format("Updated {0}.config file (connection string)", Global.Parameters.SchedulerServiceFileName));
+        }
+
+        private static void UpdateCryptoKey(string installFolder)
+        {
+            string path = Path.Combine(installFolder, "web.config");
+            string cryptoKey = "0123456789";
+
+            if (File.Exists(path))
+            {
+                using (var reader = new StreamReader(path))
+                {
+                    string content = reader.ReadToEnd();
+                    var pattern = new Regex(@"(?<=<add key=""WebsitePanel.CryptoKey"" .*?value\s*=\s*"")[^""]+(?="".*?>)");
+                    Match match = pattern.Match(content);
+                    cryptoKey = match.Value;
+                }
+            }
+
+            ChangeConfigString("installer.cryptokey", cryptoKey, installFolder);
+        }
+
+        private static void ChangeConfigString(string searchString, string replaceValue, string installFolder)
+        {
+            string path = Path.Combine(installFolder, "bin", string.Format("{0}.config", Global.Parameters.SchedulerServiceFileName));
+
+            if (File.Exists(path))
+            {
+                string content;
+
+                using (var reader = new StreamReader(path))
+                {
+                    content = reader.ReadToEnd();
+                }
+
+                var re = new Regex("\\$\\{" + searchString + "\\}+", RegexOptions.IgnoreCase);
+                content = re.Replace(content, replaceValue);
+
+                using (var writer = new StreamWriter(path))
+                {
+                    writer.Write(content);
+                }
+            }
+        }
+    }
     
 	public class SaveEntServerConfigSettingsAction : Action, IInstallAction
 	{
@@ -488,6 +549,7 @@ namespace WebsitePanel.Setup.Actions
 			new SaveComponentConfigSettingsAction(),
 			new SaveEntServerConfigSettingsAction(),
             new SaveSchedulerServiceConnectionStringAction(),
+            new SaveSchedulerServiceCryptoKeyAction(),
             new InstallSchedulerServiceAction()
 		};
 
