@@ -451,7 +451,11 @@ VALUES (1401, 41, N'Lync2013', N'Microsoft Lync Server 2013 Multitenant Hosting 
 END
 GO
 -- add Application Pools Restart Quota
-INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (411, 2, 13, N'Web.AppPoolsRestart', N'Application Pools Restart', 1, 0, NULL, NULL)
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE ([QuotaName] = N'Web.AppPoolsRestart'))
+BEGIN
+	INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (411, 2, 13, N'Web.AppPoolsRestart', N'Application Pools Restart', 1, 0, NULL, NULL)
+END
 GO
 -------------------------------- Scheduler Service------------------------------------------------------
 
@@ -1449,6 +1453,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
+IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'ExchangeDisclaimers')
+
 CREATE TABLE [dbo].[ExchangeDisclaimers](
         [ExchangeDisclaimerId] [int] IDENTITY(1,1) NOT NULL,
         [ItemID] [int] NOT NULL,
@@ -1459,6 +1466,9 @@ CREATE TABLE [dbo].[ExchangeDisclaimers](
         [ExchangeDisclaimerId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
 )
+
+GO
+
 
 
 IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetExchangeDisclaimers')
@@ -1577,8 +1587,9 @@ GO
 
 
 
-
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeAccounts' AND COLS.name='ExchangeDisclaimerId')
 BEGIN
+
 ALTER TABLE [dbo].[ExchangeAccounts] ADD
 
 [ExchangeDisclaimerId] [int] NULL
@@ -1622,5 +1633,8 @@ GO
 
 
 -- add Disclaimers Quota   
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE ([QuotaName] = N'Exchange2007.DisclaimersAllowed'))
+BEGIN
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (422, 12, 26, N'Exchange2007.DisclaimersAllowed', N'Disclaimers Allowed', 1, 0, NULL, NULL)   
+END
 GO  
