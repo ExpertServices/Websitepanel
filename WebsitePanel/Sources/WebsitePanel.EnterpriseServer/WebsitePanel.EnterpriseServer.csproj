@@ -48,7 +48,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Web.Services3">
-      <HintPath>..\..\Bin\Microsoft.Web.Services3.dll</HintPath>
+      <HintPath>..\..\Lib\Microsoft.Web.Services3.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
