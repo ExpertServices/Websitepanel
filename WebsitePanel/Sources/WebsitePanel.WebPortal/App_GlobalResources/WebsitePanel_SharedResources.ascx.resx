@@ -2898,6 +2898,9 @@
   <data name="Quota.Exchange2007.MaxReceiveMessageSizeKB" xml:space="preserve">
     <value>Maximum Receive Message Size (Kb)</value>
   </data>
+  <data name="Quota.Exchange2007.DisclaimersAllowed" xml:space="preserve">
+    <value>Disclaimers Allowed</value>
+  </data>
   <data name="ResourceGroup.Exchange" xml:space="preserve">
     <value>Hosted Exchange</value>
   </data>
@@ -2924,6 +2927,9 @@
   </data>
   <data name="Error.EXCHANGE_DELETE_DISTRIBUTION_LIST" xml:space="preserve">
     <value>Error deleting distribution list. See audit log for more details.</value>
+  </data>
+  <data name="Error.EXCHANGE_DELETE_DISCLAIMER" xml:space="preserve">
+    <value>Error deleting disclaimer. See audit log for more details.</value>
   </data>
   <data name="Error.EXCHANGE_DELETE_MAILBOX" xml:space="preserve">
     <value>Error deleting mailbox. See audit log for more details.</value>
@@ -2986,6 +2992,9 @@
   <data name="Error.EXCHANGE_GET_DLIST_SETTINGS" xml:space="preserve">
     <value>Error reading distribution list general settings. See audit log for more details.</value>
   </data>
+  <data name="Error.EXCHANGE_GET_DISCLAIMER_SETTINGS" xml:space="preserve">
+    <value>Error reading disclaimer. See audit log for more details.</value>
+  </data>
   <data name="Error.EXCHANGE_GET_MAILBOX_ADVANCED" xml:space="preserve">
     <value>Error reading mailbox advanced settings. See audit log for more details.</value>
   </data>
@@ -3037,6 +3046,9 @@
   <data name="Error.EXCHANGE_UPDATE_DLIST_SETTINGS" xml:space="preserve">
     <value>Error updating distribution list general settings. See audit log for more details.</value>
   </data>
+  <data name="Error.EXCHANGE_UPDATE_DISCLAIMER_SETTINGS" xml:space="preserve">
+    <value>Error updating disclaimer. See audit log for more details.</value>
+  </data>
   <data name="Error.EXCHANGE_UPDATE_MAILBOX_ADVANCED" xml:space="preserve">
     <value>Error updating mailbox advanced settings. See audit log for more details.</value>
   </data>
@@ -3069,6 +3081,9 @@
   </data>
   <data name="Error.EXCHANGE_GET_LISTS" xml:space="preserve">
     <value>Error reading organization distribution lists</value>
+  </data>
+  <data name="Error.EXCHANGE_DISCLAIMERS_LISTS" xml:space="preserve">
+    <value>Error reading organization disclaimer lists</value>
   </data>
   <data name="Error.HOSTED_SHAREPOINT_UPDATE_QUOTAS" xml:space="preserve">
     <value>Error updating storage settings. See audit log for more details.</value>
@@ -3127,6 +3142,9 @@
   </data>
   <data name="Success.EXCHANGE_UPDATE_DLIST_SETTINGS" xml:space="preserve">
     <value>Distribution list general settings have been successfully updated.</value>
+  </data>
+  <data name="Success.EXCHANGE_UPDATE_DISCLAIMER_SETTINGS" xml:space="preserve">
+    <value>Disclaimer successfully updated.</value>
   </data>
   <data name="Success.EXCHANGE_UPDATE_PFOLDER_MAILFLOW" xml:space="preserve">
     <value>Public folder mail flow settings have been successfully updated.</value>

@@ -26,45 +26,42 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-using System.ServiceProcess;
-using System.Threading;
-using WebsitePanel.EnterpriseServer;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace WebsitePanel.SchedulerService
+namespace WebsitePanel.Providers.HostedSolution
 {
-    public partial class SchedulerService : ServiceBase
+    public class ExchangeDisclaimer
     {
-        private Timer _Timer;
-        private static bool _isRuninng;
-        #region Construcor
+        int exchangeDisclaimerId;
+        int itemId;
+        string disclaimerName;
+        string disclaimerText;
 
-        public SchedulerService()
+        public int ItemId
         {
-            InitializeComponent();
-
-            _Timer = new Timer(Process, null, 5000, 5000);
-            _isRuninng = false;
+            get { return this.itemId; }
+            set { this.itemId = value; }
         }
 
-        #endregion
-
-        #region Methods
-
-        protected override void OnStart(string[] args)
+        public int ExchangeDisclaimerId
         {
+            get { return this.exchangeDisclaimerId; }
+            set { this.exchangeDisclaimerId = value; }
         }
 
-        protected static void Process(object callback)
+        public string DisclaimerName
         {
-            //check running service
-            if (_isRuninng)
-                return;
-
-            _isRuninng = true;
-             Scheduler.Start();
-            _isRuninng = false;
+            get { return this.disclaimerName; }
+            set { this.disclaimerName = value; }
         }
 
-        #endregion
+        public string DisclaimerText
+        {
+            get { return this.disclaimerText; }
+            set { this.disclaimerText = value; }
+        }
+
     }
 }

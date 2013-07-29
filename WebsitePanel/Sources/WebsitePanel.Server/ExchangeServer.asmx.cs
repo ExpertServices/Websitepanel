@@ -818,10 +818,24 @@ namespace WebsitePanel.Server
 
         #endregion
 
-		
-        
+        #region Disclaimers
+
+        [WebMethod, SoapHeader("settings")]
+        public int NewDisclaimerTransportRule(string Name, string From, string Text)
+        {
+            return ES.NewDisclaimerTransportRule(Name, From, Text);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public int RemoveTransportRule(string Name)
+        {
+            return ES.RemoveTransportRule(Name);
+        }
+
+        #endregion
+
         #region Public Folders
-		[WebMethod, SoapHeader("settings")]
+        [WebMethod, SoapHeader("settings")]
 		public void CreatePublicFolder(string organizationDistinguishedName, string organizationId, string securityGroup, string parentFolder,
 			string folderName, bool mailEnabled, string accountName, string name, string domain)
 		{

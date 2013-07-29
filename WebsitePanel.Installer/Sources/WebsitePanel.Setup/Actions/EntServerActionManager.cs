@@ -33,6 +33,7 @@ using System.Linq;
 using System.ServiceProcess;
 using System.Text;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace WebsitePanel.Setup.Actions
@@ -100,7 +101,75 @@ namespace WebsitePanel.Setup.Actions
 				throw;
 			}
 		}
-	}    
+	}
+
+    public class InstallSchedulerServiceAction : Action, IInstallAction, IUninstallAction
+    {
+        public const string LogStartInstallMessage = "Installing Scheduler Windows Service...";
+        public const string LogStartUninstallMessage = "Uninstalling Scheduler Windows Service...";
+
+        void IInstallAction.Run(SetupVariables vars)
+        {
+            try
+            {
+
+                Begin(LogStartInstallMessage);
+
+                Log.WriteStart(LogStartInstallMessage);
+                Log.WriteInfo(String.Format("Scheduler Service Name: \"{0}\"", Global.Parameters.SchedulerServiceName));
+
+                if (ServiceController.GetServices().Any(s => s.DisplayName.Equals(Global.Parameters.SchedulerServiceName, StringComparison.CurrentCultureIgnoreCase)))
+                {
+                    Log.WriteEnd("Scheduler Service Already Installed.");
+                    InstallLog.AppendLine(String.Format("- Scheduler Service \"{0}\" Already Installed.", Global.Parameters.SchedulerServiceName));
+                    return;
+                }
+
+                ManagedInstallerClass.InstallHelper(new[] { "/i", Path.Combine(vars.InstallationFolder, "bin", Global.Parameters.SchedulerServiceFileName) });
+                Utils.StartService(Global.Parameters.SchedulerServiceName);
+            }
+            catch (Exception ex)
+            {
+                UninstallService(vars);
+
+                if (Utils.IsThreadAbortException(ex))
+                {
+                    return;
+                }
+
+                Log.WriteError("Installing scheduler service error.", ex);
+                throw;
+            }
+        }
+
+        void IUninstallAction.Run(SetupVariables vars)
+        {
+            try
+            {
+                Log.WriteStart(LogStartUninstallMessage);
+                UninstallService(vars);
+                Log.WriteEnd("Scheduler Service Uninstalled.");
+            }
+            catch (Exception ex)
+            {
+                if (Utils.IsThreadAbortException(ex))
+                {
+                    return;
+                }
+
+                Log.WriteError("Uninstalling scheduler service error.", ex);
+                throw;
+            }
+        }
+
+        private void UninstallService(SetupVariables vars)
+        {
+            if (ServiceController.GetServices().Any(s => s.ServiceName.Equals(Global.Parameters.SchedulerServiceName, StringComparison.CurrentCultureIgnoreCase)))
+            {
+                ManagedInstallerClass.InstallHelper(new[] { "/u", Path.Combine(vars.InstallationFolder, "bin", Global.Parameters.SchedulerServiceFileName) });
+            }
+        }
+    }
 
 	public class CreateDatabaseAction : Action, IInstallAction, IUninstallAction
 	{
@@ -350,6 +419,91 @@ namespace WebsitePanel.Setup.Actions
 			Log.WriteEnd(String.Format("Updated {0} file", vars.ConfigurationFile));
 		}
 	}
+
+    public class SaveSchedulerServiceConnectionStringAction : Action, IInstallAction
+    {
+        void IInstallAction.Run(SetupVariables vars)
+        {
+            Log.WriteStart(string.Format("Updating {0}.config file (connection string)", Global.Parameters.SchedulerServiceFileName));
+            var file = Path.Combine(vars.InstallationFolder, "bin", string.Format("{0}.config", Global.Parameters.SchedulerServiceFileName));
+            string content;
+            
+            using (var reader = new StreamReader(file))
+            {
+                content = reader.ReadToEnd();
+            }
+            
+            vars.ConnectionString = String.Format(vars.ConnectionString, vars.DatabaseServer, vars.Database, vars.Database, vars.DatabaseUserPassword);
+            content = Utils.ReplaceScriptVariable(content, "installer.connectionstring", vars.ConnectionString);
+            
+            using (var writer = new StreamWriter(file))
+            {
+                writer.Write(content);
+            }
+            
+            Log.WriteEnd(string.Format("Updated {0}.config file (connection string)", Global.Parameters.SchedulerServiceFileName));
+        }
+    }
+
+    public class SaveSchedulerServiceCryptoKeyAction : Action, IInstallAction
+    {
+        void IInstallAction.Run(SetupVariables vars)
+        {
+            Log.WriteStart(string.Format("Updating {0}.config file (crypto key)", Global.Parameters.SchedulerServiceFileName));
+
+            try
+            {
+                UpdateCryptoKey(vars.InstallationFolder);
+            }
+            catch (Exception)
+            {
+            }
+
+            Log.WriteEnd(string.Format("Updated {0}.config file (connection string)", Global.Parameters.SchedulerServiceFileName));
+        }
+
+        private static void UpdateCryptoKey(string installFolder)
+        {
+            string path = Path.Combine(installFolder, "web.config");
+            string cryptoKey = "0123456789";
+
+            if (File.Exists(path))
+            {
+                using (var reader = new StreamReader(path))
+                {
+                    string content = reader.ReadToEnd();
+                    var pattern = new Regex(@"(?<=<add key=""WebsitePanel.CryptoKey"" .*?value\s*=\s*"")[^""]+(?="".*?>)");
+                    Match match = pattern.Match(content);
+                    cryptoKey = match.Value;
+                }
+            }
+
+            ChangeConfigString("installer.cryptokey", cryptoKey, installFolder);
+        }
+
+        private static void ChangeConfigString(string searchString, string replaceValue, string installFolder)
+        {
+            string path = Path.Combine(installFolder, "bin", string.Format("{0}.config", Global.Parameters.SchedulerServiceFileName));
+
+            if (File.Exists(path))
+            {
+                string content;
+
+                using (var reader = new StreamReader(path))
+                {
+                    content = reader.ReadToEnd();
+                }
+
+                var re = new Regex("\\$\\{" + searchString + "\\}+", RegexOptions.IgnoreCase);
+                content = re.Replace(content, replaceValue);
+
+                using (var writer = new StreamWriter(path))
+                {
+                    writer.Write(content);
+                }
+            }
+        }
+    }
     
 	public class SaveEntServerConfigSettingsAction : Action, IInstallAction
 	{
@@ -393,7 +547,10 @@ namespace WebsitePanel.Setup.Actions
 			new UpdateServeradminPasswAction(),
 			new SaveAspNetDbConnectionStringAction(),
 			new SaveComponentConfigSettingsAction(),
-			new SaveEntServerConfigSettingsAction()            
+			new SaveEntServerConfigSettingsAction(),
+            new SaveSchedulerServiceConnectionStringAction(),
+            new SaveSchedulerServiceCryptoKeyAction(),
+            new InstallSchedulerServiceAction()
 		};
 
 		public EntServerActionManager(SetupVariables sessionVars) : base(sessionVars)

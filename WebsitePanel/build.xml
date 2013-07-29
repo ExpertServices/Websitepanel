@@ -164,25 +164,7 @@
 		<Copy SourceFiles="@(EnterpriseServerBuildFiles)" DestinationFolder="$(EnterpriseServerBuild)\%(RecursiveDir)" />
 	</Target>
 
-	<Target Name="CreateSchedulerServiceBuild" DependsOnTargets="CreateEnterpriseServerBuild">
-		<ItemGroup>
-			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\.svn\**" />
-			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\obj\**" />
-			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\bin\*.xml" />
-			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\Release\**" />
-			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\Debug\**" />
-			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\Images\**" />
-			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\*.pdb" Condition="'$(BuildConfiguration)' == 'Release'" />
-			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\*.user" />
-			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\*.suo" />
-			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\*.cs" />
-			<SchedulerServiceBuildExclude Include="$(SchedulerServiceSrc)\**\*.csproj" />
-			<SchedulerServiceBuildFiles Include="$(SchedulerServiceSrc)\**\*.*" Exclude="@(SchedulerServiceBuildExclude)"/>
-		</ItemGroup>
-		<Copy SourceFiles="@(SchedulerServiceBuildFiles)" DestinationFolder="$(SchedulerServiceBuild)\%(RecursiveDir)" />
-	</Target>
-
-	<Target Name="CreatePortalBuild" DependsOnTargets="CreateSchedulerServiceBuild">
+	<Target Name="CreatePortalBuild" DependsOnTargets="CreateEnterpriseServerBuild">
 		<ItemGroup>
 			<PortalBuildExclude Include="$(PortalSrc)\**\.svn\**" />
 			<PortalBuildExclude Include="$(PortalSrc)\**\obj\**" />
@@ -324,10 +306,7 @@
 			<Output
                 TaskParameter="TargetOutputs"
                 ItemName="WebsitePanelInstallerMsi" />	
-		</MSBuild>
-		
-		<XmlUpdate XmlFileName="$(RootFolder)\WebsitePanel\Sources\WebsitePanel.SchedulerService\Bin\WebsitePanel.SchedulerService.exe.config" Xpath="//configuration/connectionStrings/add/@connectionString" Value="${installer.connectionstring}"  />		
-		<XmlUpdate XmlFileName="$(RootFolder)\WebsitePanel\Sources\WebsitePanel.SchedulerService\Bin\WebsitePanel.SchedulerService.exe.config" Xpath="//configuration/appSettings/add[@key=%22WebsitePanel.CryptoKey%22]/@value" Value="${installer.cryptokey}"  />		
+		</MSBuild>		
 		
 		<MSBuild Projects="$(RootFolder)\WebsitePanel.Installer\Sources\WebsitePanel.SchedulerServiceInstaller\WebsitePanel.SchedulerServiceInstaller.csproj" Properties="Configuration=$(BuildConfiguration);DefineSolutionProperties=false"/>
 		
@@ -395,6 +374,8 @@
 		<MakeDir Directories="$(EnterpriseServerInstall)"/>
 		<Copy SourceFiles="@(EnterpriseServerDeployFiles)" DestinationFolder="$(EnterpriseServerInstall)\%(RecursiveDir)" />
 		<XmlUpdate XmlFileName="$(EnterpriseServerInstall)\web.config" Xpath="//configuration/connectionStrings/add/@connectionString" Value="${installer.connectionstring}"  />
+		<XmlUpdate XmlFileName="$(EnterpriseServerInstall)\bin\WebsitePanel.SchedulerService.exe.config" Xpath="//configuration/connectionStrings/add/@connectionString" Value="${installer.connectionstring}"  />
+		<XmlUpdate XmlFileName="$(EnterpriseServerInstall)\bin\WebsitePanel.SchedulerService.exe.config" Xpath="//configuration/appSettings/add[@key=%22WebsitePanel.CryptoKey%22]/@value" Value="${installer.cryptokey}"  />
 		<XmlUpdate XmlFileName="$(EnterpriseServerInstall)\web.config" Xpath="//configuration/appSettings/add[@key=%22WebsitePanel.CryptoKey%22]/@value" Value="${installer.cryptokey}"  />		
 	</Target>	
 
@@ -758,9 +739,10 @@
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-WSPTransportAgent-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel.LocalizationToolkit-$(Version).msi" LocalFile="$(ToolsFolder)\WebsitePanel.LocalizationToolkit.msi" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanelInstaller-$(Version).msi" LocalFile="$(DeployFolder)\WebsitePanelInstaller.msi" />
-      <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanelInstaller-$(Version)-webpi.msi" LocalFile="$(DeployFolder)\WebsitePanelInstaller.msi" />
+      		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanelInstaller-$(Version)-webpi.msi" LocalFile="$(DeployFolder)\WebsitePanelInstaller.msi" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-HyperVUtils-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-HyperVUtils-$(Version).zip" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-VMConfig-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-VMConfig-$(Version).zip" />
+		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/Websitepanel-SchedulerService-$(Version).msi" LocalFile="$(DeployFolder)\Websitepanel-SchedulerService.msi" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/Manual-Update-$(Version).zip" LocalFile="$(DeployFolder)\Manual-Update.zip" />
 		  </Target>
 
