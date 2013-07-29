@@ -5496,6 +5496,37 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetDistributionListsByMember", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ExchangeAccount[] GetDistributionListsByMember(int itemId, int accountId)
+        {
+            object[] results = this.Invoke("GetDistributionListsByMember", new object[] {
+                        itemId,
+                        accountId});
+            return ((ExchangeAccount[])(results[0]));
+        }
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/AddDistributionListMember", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int AddDistributionListMember(int itemId, string distributionListName, int memberId)
+        {
+            object[] results = this.Invoke("AddDistributionListMember", new object[] {
+                        itemId,
+                        distributionListName,
+                        memberId});
+            return ((int)(results[0]));
+        }
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/DeleteDistributionListMember", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int DeleteDistributionListMember(int itemId, string distributionListName, int memberId)
+        {
+            object[] results = this.Invoke("DeleteDistributionListMember", new object[] {
+                        itemId,
+                        distributionListName,
+                        memberId});
+            return ((int)(results[0]));
+        }
+
+
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetMobileDevices", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public ExchangeMobileDevice[] GetMobileDevices(int itemId, int accountId)
         {

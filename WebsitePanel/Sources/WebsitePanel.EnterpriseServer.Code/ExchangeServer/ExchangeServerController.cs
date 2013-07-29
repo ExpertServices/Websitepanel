@@ -4008,6 +4008,170 @@ namespace WebsitePanel.EnterpriseServer
             return res;
         }
 
+        public static ExchangeAccount[] GetDistributionListsByMember(int itemId, int accountId)
+        {
+            #region Demo Mode
+            if (IsDemoMode)
+            {
+                return null;
+            }
+            #endregion
+
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "GET_DISTR_LIST_BYMEMBER");
+            TaskManager.ItemId = itemId;
+
+            List<ExchangeAccount> ret = new List<ExchangeAccount>();
+
+            try
+            {
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return null;
+
+                int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+                ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+
+                // load account
+                ExchangeAccount account = GetAccount(itemId, accountId);
+
+                List<ExchangeAccount> DistributionLists = GetAccounts(itemId, ExchangeAccountType.DistributionList);
+                foreach (ExchangeAccount DistributionAccount in DistributionLists)
+                {
+                    ExchangeDistributionList DistributionList = exchange.GetDistributionListGeneralSettings(DistributionAccount.AccountName);
+
+                    foreach (ExchangeAccount member in DistributionList.MembersAccounts)
+                    {
+                        if (member.AccountName == account.AccountName)
+                        {
+                            ret.Add(DistributionAccount);
+                            break;
+                        }
+
+                    }
+                }
+
+                return ret.ToArray();
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static int AddDistributionListMember(int itemId, string distributionListName, int memberId)
+        {
+            #region Demo Mode
+            if (IsDemoMode)
+            {
+                return 0;
+            }
+            #endregion
+
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "ADD_DISTR_LIST_MEMBER");
+            TaskManager.ItemId = itemId;
+
+            try
+            {
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return 0;
+
+                // load account
+                ExchangeAccount memberAccount = GetAccount(itemId, memberId);
+
+                int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+                ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+
+                ExchangeDistributionList distributionList = exchange.GetDistributionListGeneralSettings(distributionListName);
+
+                List<string> members = new List<string>();
+                foreach (ExchangeAccount member in distributionList.MembersAccounts)
+                    members.Add(member.AccountName);
+                members.Add(memberAccount.AccountName);
+
+                List<string> addressLists = new List<string>();
+                addressLists.Add(org.GlobalAddressList);
+                addressLists.Add(org.AddressList);
+
+                exchange.SetDistributionListGeneralSettings(distributionListName, distributionList.DisplayName, distributionList.HideFromAddressBook, distributionList.ManagerAccount.AccountName,
+                    members.ToArray(),
+                    distributionList.Notes, addressLists.ToArray());
+
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+            return 0;
+        }
+
+        public static int DeleteDistributionListMember(int itemId, string distributionListName, int memberId)
+        {
+            #region Demo Mode
+            if (IsDemoMode)
+            {
+                return 0;
+            }
+            #endregion
+
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "DELETE_DISTR_LIST_MEMBER");
+            TaskManager.ItemId = itemId;
+
+            try
+            {
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return 0;
+
+                // load account
+                ExchangeAccount memberAccount = GetAccount(itemId, memberId);
+
+                int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+                ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+
+                ExchangeDistributionList distributionList = exchange.GetDistributionListGeneralSettings(distributionListName);
+
+                List<string> members = new List<string>();
+                foreach (ExchangeAccount member in distributionList.MembersAccounts)
+                    if (member.AccountName != memberAccount.AccountName) members.Add(member.AccountName);
+
+                List<string> addressLists = new List<string>();
+                addressLists.Add(org.GlobalAddressList);
+                addressLists.Add(org.AddressList);
+
+                exchange.SetDistributionListGeneralSettings(distributionListName, distributionList.DisplayName, distributionList.HideFromAddressBook, distributionList.ManagerAccount.AccountName,
+                    members.ToArray(),
+                    distributionList.Notes, addressLists.ToArray());
+
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+            return 0;
+        }        
+
+
         #endregion
 
         #region Public Folders

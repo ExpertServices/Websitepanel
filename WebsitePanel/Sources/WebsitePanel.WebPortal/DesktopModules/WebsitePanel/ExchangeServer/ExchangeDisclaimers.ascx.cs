@@ -96,7 +96,7 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             if (e.CommandName == "DeleteItem")
             {
-                // delete distribution list
+
                 int accountId = Utils.ParseInt(e.CommandArgument.ToString(), 0);
 
                 try

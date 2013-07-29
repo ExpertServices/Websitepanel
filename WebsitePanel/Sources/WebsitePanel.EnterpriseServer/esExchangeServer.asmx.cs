@@ -470,6 +470,25 @@ namespace WebsitePanel.EnterpriseServer
             return ExchangeServerController.GetDistributionListPermissions(itemId, accountId);
         }
 
+        [WebMethod]
+        public ExchangeAccount[] GetDistributionListsByMember(int itemId, int accountId)
+        {
+            return ExchangeServerController.GetDistributionListsByMember(itemId, accountId);
+        }
+
+        [WebMethod]
+        public int AddDistributionListMember(int itemId, string distributionListName, int memberId)
+        {
+            return ExchangeServerController.AddDistributionListMember(itemId, distributionListName, memberId);
+        }
+
+        [WebMethod]
+        public int DeleteDistributionListMember(int itemId, string distributionListName, int memberId)
+        {
+            return ExchangeServerController.DeleteDistributionListMember(itemId, distributionListName, memberId);
+        }
+
+
         #endregion
 
         #region MobileDevice

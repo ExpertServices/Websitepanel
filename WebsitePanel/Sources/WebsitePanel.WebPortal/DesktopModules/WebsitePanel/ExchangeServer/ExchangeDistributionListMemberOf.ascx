@@ -1,7 +1,8 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ExchangeDisclaimerGeneralSettings.ascx.cs" Inherits="WebsitePanel.Portal.ExchangeServer.ExchangeDisclaimerGeneralSettings" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ExchangeDistributionListMemberOf.ascx.cs" Inherits="WebsitePanel.Portal.ExchangeServer.ExchangeDistributionListMemberOf" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/AccountsList.ascx" TagName="AccountsList" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/MailboxSelector.ascx" TagName="MailboxSelector" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/DistributionListTabs.ascx" TagName="DistributionListTabs" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="../UserControls/CollapsiblePanel.ascx" %>
@@ -23,27 +24,28 @@
 					<asp:Image ID="Image1" SkinID="ExchangeList48" runat="server" />
 					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Edit Distribution List"></asp:Localize>
 					-
-					<asp:Literal ID="litDisplayName" runat="server" Text="" />
+					<asp:Literal ID="litDisplayName" runat="server" Text="John Smith" />
                 </div>
 				<div class="FormBody">
+                    <wsp:DistributionListTabs id="tabs" runat="server" SelectedTab="dlist_memberof" />
                     <wsp:SimpleMessageBox id="messageBox" runat="server" />
-					<table>
-						<tr>
-							<td class="FormLabel150"><asp:Localize ID="locDisplayName" runat="server" meta:resourcekey="locDisplayName" Text="Display Name: *"></asp:Localize></td>
-							<td>
-								<asp:TextBox ID="txtDisplayName" runat="server" CssClass="HugeTextBox200" ValidationGroup="CreateMailbox"></asp:TextBox>
-								<asp:RequiredFieldValidator ID="valRequireDisplayName" runat="server" meta:resourcekey="valRequireDisplayName" ControlToValidate="txtDisplayName"
-									ErrorMessage="Enter Display Name" ValidationGroup="EditList" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
-							</td>
-						</tr>
-						<tr>
-							<td class="FormLabel200"><asp:Localize ID="locNotes" runat="server" meta:resourcekey="locNotes" Text="Text:"></asp:Localize></td>
-						    <td>
-							    <asp:TextBox ID="txtNotes" runat="server" CssClass="TextBox200" Rows="4" TextMode="MultiLine"></asp:TextBox>
-						    </td>
-					    </tr>
-					</table>
 					
+					<wsp:CollapsiblePanel id="secDistributionLists" runat="server" TargetControlID="DistributionLists" meta:resourcekey="secDistributionLists" Text="Distribution Lists"></wsp:CollapsiblePanel>
+                    <asp:Panel ID="DistributionLists" runat="server" Height="0" style="overflow:hidden;">
+						<asp:UpdatePanel ID="GeneralUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
+							<ContentTemplate>
+
+                                <wsp:AccountsList id="distrlists" runat="server"
+                                            MailboxesEnabled="false" 
+                                            EnableMailboxOnly="true" 
+										    ContactsEnabled="false"
+										    DistributionListsEnabled="true"  />
+
+							</ContentTemplate>
+						</asp:UpdatePanel>
+					</asp:Panel>
+
+
 				    <div class="FormFooterClean">
 					    <asp:Button id="btnSave" runat="server" Text="Save Changes" CssClass="Button1" meta:resourcekey="btnSave" ValidationGroup="EditList" OnClick="btnSave_Click"></asp:Button>
 					    <asp:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="EditList" />

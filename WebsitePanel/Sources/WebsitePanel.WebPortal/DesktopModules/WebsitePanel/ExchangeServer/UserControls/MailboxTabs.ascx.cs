@@ -55,9 +55,10 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
             UserInfo user = UsersHelper.GetUser(PanelSecurity.EffectiveUserId);
 
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
             if (user != null)
             {
-                PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
                 if ((user.Role == UserRole.User) & (Utils.CheckQouta(Quotas.EXCHANGE2007_ISCONSUMER, cntx)))
                     hideItems = true;
             }
@@ -76,7 +77,8 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             if (!hideItems) tabsList.Add(CreateTab("mailbox_mobile", "Tab.Mobile"));
             //tabsList.Add(CreateTab("mailbddox_spam", "Tab.Spam"));
 
-
+            if (Utils.CheckQouta(Quotas.EXCHANGE2007_DISTRIBUTIONLISTS, cntx))
+                tabsList.Add(CreateTab("mailbox_memberof", "Tab.MemberOf"));
 
             // find selected menu item
             int idx = 0;
