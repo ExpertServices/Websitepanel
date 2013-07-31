@@ -55,6 +55,8 @@ using Microsoft.Exchange.Data;
 using Microsoft.Exchange.Data.Directory;
 using Microsoft.Exchange.Data.Storage;
 
+using Microsoft.Web.Administration;
+
 namespace WebsitePanel.Providers.HostedSolution
 {
     public class Exchange2013 : HostingServiceProviderBase, IExchangeServer
@@ -5930,14 +5932,27 @@ namespace WebsitePanel.Providers.HostedSolution
 
             if (connectionInfo == null)
             {
-                PSCredential credential = (PSCredential)null;
+                ServerManager mgr = new ServerManager();
+                ApplicationPool myAppPool = mgr.ApplicationPools["WebsitePanel Server Pool"];
+
+                SecureString password = new SecureString();
+                string str_password = myAppPool.ProcessModel.Password;
+                string username = myAppPool.ProcessModel.UserName;
+
+                foreach (char x in str_password)
+                {
+                    password.AppendChar(x);
+                }
+
+                PSCredential credential = new PSCredential(username, password);
 
                 connectionInfo = new WSManConnectionInfo(new Uri(PowerShellUrl),
                                                             "http://schemas.microsoft.com/powershell/Microsoft.Exchange",
                                                             credential);
 
-                connectionInfo.AuthenticationMechanism = AuthenticationMechanism.NegotiateWithImplicitCredential;
+                connectionInfo.AuthenticationMechanism = AuthenticationMechanism.Negotiate;
                 connectionInfo.SkipCNCheck = true;
+                connectionInfo.SkipCACheck = true;
             }
 
             Runspace runSpace = RunspaceFactory.CreateRunspace(connectionInfo);
@@ -5945,7 +5960,7 @@ namespace WebsitePanel.Providers.HostedSolution
             runSpace.Open();
 
             ExchangeLog.LogEnd("OpenRunspace");
-
+                
             Command cmd = new Command("Set-ADServerSettings");
             cmd.Parameters.Add("PreferredServer", PrimaryDomainController);
             ExecuteShellCommand(runSpace, cmd, false);
