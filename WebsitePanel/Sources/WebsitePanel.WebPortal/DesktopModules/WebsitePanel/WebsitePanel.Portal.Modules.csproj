@@ -211,12 +211,14 @@
     <Compile Include="Code\UserControls\Tab.cs" />
     <Compile Include="ExchangeServer\ExchangeDistributionListMemberOf.ascx.cs">
       <DependentUpon>ExchangeDistributionListMemberOf.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="ExchangeServer\ExchangeDistributionListMemberOf.ascx.designer.cs">
       <DependentUpon>ExchangeDistributionListMemberOf.ascx</DependentUpon>
     </Compile>
     <Compile Include="ExchangeServer\ExchangeMailboxMemberOf.ascx.cs">
       <DependentUpon>ExchangeMailboxMemberOf.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="ExchangeServer\ExchangeMailboxMemberOf.ascx.designer.cs">
       <DependentUpon>ExchangeMailboxMemberOf.ascx</DependentUpon>
@@ -251,6 +253,7 @@
     </Compile>
     <Compile Include="ExchangeServer\OrganizationUserMemberOf.ascx.cs">
       <DependentUpon>OrganizationUserMemberOf.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="ExchangeServer\OrganizationUserMemberOf.ascx.designer.cs">
       <DependentUpon>OrganizationUserMemberOf.ascx</DependentUpon>
