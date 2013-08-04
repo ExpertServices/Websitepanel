@@ -2014,6 +2014,7 @@ namespace WebsitePanel.Providers.HostedSolution
             finally
             {
                 CloseRunspace(runSpace);
+                CloseRunspaceEx(runSpaceEx);
             }
         }
                
@@ -2342,6 +2343,7 @@ namespace WebsitePanel.Providers.HostedSolution
             {
 
                 CloseRunspace(runSpace);
+                CloseRunspaceEx(runSpaceEx);
             }
             ExchangeLog.LogEnd("GetMailboxGeneralSettingsInternal");
             return info;
@@ -2580,6 +2582,7 @@ namespace WebsitePanel.Providers.HostedSolution
             {
 
                 CloseRunspace(runSpace);
+                CloseRunspaceEx(runSpaceEx);
             }
             ExchangeLog.LogEnd("GetMailboxAdvancedSettingsInternal");
             return info;
@@ -2647,6 +2650,7 @@ namespace WebsitePanel.Providers.HostedSolution
             {
 
                 CloseRunspace(runSpace);
+                CloseRunspaceEx(runSpaceEx);
             }
             ExchangeLog.LogEnd("SetMailboxAdvancedSettingsInternal");
         }
@@ -3092,6 +3096,7 @@ namespace WebsitePanel.Providers.HostedSolution
             finally
             {
                 CloseRunspace(runSpace);
+                CloseRunspaceEx(runSpaceEx);
             }
             ExchangeLog.LogEnd("GetMailboxStatisticsInternal");
             return info;
@@ -5987,7 +5992,7 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             try
             {
-                if (runspace != null && runspace.RunspaceStateInfo.State == RunspaceState.Opened)
+                if (runspace != null)
                 {
                     runspace.Dispose();
                     runspace = null;
