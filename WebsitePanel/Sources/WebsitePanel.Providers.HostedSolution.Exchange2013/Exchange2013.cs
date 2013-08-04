@@ -6430,6 +6430,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Command cmd = new Command("Set-AcceptedDomain");
             cmd.Parameters.Add("Identity", id);
             cmd.Parameters.Add("DomainType", domainType.ToString());
+            cmd.Parameters.Add("AddressBookEnabled", !(domainType == ExchangeAcceptedDomainType.InternalRelay));
             cmd.Parameters.Add("Confirm", false);
             ExecuteShellCommand(runSpace, cmd);
             ExchangeLog.LogEnd("SetAcceptedDomainType");
