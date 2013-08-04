@@ -4186,7 +4186,8 @@ Please ensure the space has been allocated {0} IP address as a dedicated one and
                 IPAddressInfo ip = ServerController.GetIPAddress(item.SiteIPAddressId);
 
                 if (ip != null)
-                    item.SiteIPAddress = !String.IsNullOrEmpty(ip.InternalIP) ? ip.InternalIP : ip.ExternalIP;
+                    //item.SiteIPAddress = !String.IsNullOrEmpty(ip.InternalIP) ? ip.InternalIP : ip.ExternalIP;
+                    item.SiteIPAddress = ip.ExternalIP;
 
 				certificate = server.installCertificate(certificate, item);
 				if (certificate.SerialNumber == null)
