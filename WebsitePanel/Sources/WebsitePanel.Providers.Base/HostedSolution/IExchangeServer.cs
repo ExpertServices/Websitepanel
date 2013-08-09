@@ -126,5 +126,9 @@ namespace WebsitePanel.Providers.HostedSolution
         void WipeDataFromDevice(string id);
         void CancelRemoteWipeRequest(string id);
         void RemoveDevice(string id);
+
+        // Disclaimers
+        int NewDisclaimerTransportRule(string Name, string From, string Text);
+        int RemoveTransportRule(string Name);
     }
 }

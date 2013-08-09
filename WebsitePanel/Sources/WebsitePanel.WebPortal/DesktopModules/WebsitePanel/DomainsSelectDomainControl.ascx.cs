@@ -99,7 +99,7 @@ namespace WebsitePanel.Portal
         {
             get
             {
-                return ddlDomains.SelectedItem.Text;
+                return ddlDomains.SelectedItem.Text.ToLower();
             }
         }
 
@@ -192,7 +192,7 @@ namespace WebsitePanel.Portal
                 else if (HideDomainsSubDomains && !(domain.IsDomainPointer))
                     continue;
 
-                ddlDomains.Items.Add(new ListItem(domain.DomainName, domain.DomainId.ToString()));
+                ddlDomains.Items.Add(new ListItem(domain.DomainName.ToLower(), domain.DomainId.ToString()));
             }
 
             if (Request.Cookies["CreatedDomainId"] != null)

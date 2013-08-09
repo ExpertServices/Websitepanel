@@ -55,6 +55,8 @@ using Microsoft.Exchange.Data;
 using Microsoft.Exchange.Data.Directory;
 using Microsoft.Exchange.Data.Storage;
 
+using Microsoft.Web.Administration;
+
 namespace WebsitePanel.Providers.HostedSolution
 {
     public class Exchange2013 : HostingServiceProviderBase, IExchangeServer
@@ -2012,6 +2014,7 @@ namespace WebsitePanel.Providers.HostedSolution
             finally
             {
                 CloseRunspace(runSpace);
+                CloseRunspaceEx(runSpaceEx);
             }
         }
                
@@ -2340,6 +2343,7 @@ namespace WebsitePanel.Providers.HostedSolution
             {
 
                 CloseRunspace(runSpace);
+                CloseRunspaceEx(runSpaceEx);
             }
             ExchangeLog.LogEnd("GetMailboxGeneralSettingsInternal");
             return info;
@@ -2578,6 +2582,7 @@ namespace WebsitePanel.Providers.HostedSolution
             {
 
                 CloseRunspace(runSpace);
+                CloseRunspaceEx(runSpaceEx);
             }
             ExchangeLog.LogEnd("GetMailboxAdvancedSettingsInternal");
             return info;
@@ -2645,6 +2650,7 @@ namespace WebsitePanel.Providers.HostedSolution
             {
 
                 CloseRunspace(runSpace);
+                CloseRunspaceEx(runSpaceEx);
             }
             ExchangeLog.LogEnd("SetMailboxAdvancedSettingsInternal");
         }
@@ -3090,6 +3096,7 @@ namespace WebsitePanel.Providers.HostedSolution
             finally
             {
                 CloseRunspace(runSpace);
+                CloseRunspaceEx(runSpaceEx);
             }
             ExchangeLog.LogEnd("GetMailboxStatisticsInternal");
             return info;
@@ -5930,14 +5937,27 @@ namespace WebsitePanel.Providers.HostedSolution
 
             if (connectionInfo == null)
             {
-                PSCredential credential = (PSCredential)null;
+                ServerManager mgr = new ServerManager();
+                ApplicationPool myAppPool = mgr.ApplicationPools["WebsitePanel Server Pool"];
+
+                SecureString password = new SecureString();
+                string str_password = myAppPool.ProcessModel.Password;
+                string username = myAppPool.ProcessModel.UserName;
+
+                foreach (char x in str_password)
+                {
+                    password.AppendChar(x);
+                }
+
+                PSCredential credential = new PSCredential(username, password);
 
                 connectionInfo = new WSManConnectionInfo(new Uri(PowerShellUrl),
                                                             "http://schemas.microsoft.com/powershell/Microsoft.Exchange",
                                                             credential);
 
-                connectionInfo.AuthenticationMechanism = AuthenticationMechanism.NegotiateWithImplicitCredential;
+                connectionInfo.AuthenticationMechanism = AuthenticationMechanism.Negotiate;
                 connectionInfo.SkipCNCheck = true;
+                connectionInfo.SkipCACheck = true;
             }
 
             Runspace runSpace = RunspaceFactory.CreateRunspace(connectionInfo);
@@ -5945,7 +5965,7 @@ namespace WebsitePanel.Providers.HostedSolution
             runSpace.Open();
 
             ExchangeLog.LogEnd("OpenRunspace");
-
+                
             Command cmd = new Command("Set-ADServerSettings");
             cmd.Parameters.Add("PreferredServer", PrimaryDomainController);
             ExecuteShellCommand(runSpace, cmd, false);
@@ -5972,7 +5992,7 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             try
             {
-                if (runspace != null && runspace.RunspaceStateInfo.State == RunspaceState.Opened)
+                if (runspace != null)
                 {
                     runspace.Dispose();
                     runspace = null;
@@ -6410,6 +6430,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Command cmd = new Command("Set-AcceptedDomain");
             cmd.Parameters.Add("Identity", id);
             cmd.Parameters.Add("DomainType", domainType.ToString());
+            cmd.Parameters.Add("AddressBookEnabled", !(domainType == ExchangeAcceptedDomainType.InternalRelay));
             cmd.Parameters.Add("Confirm", false);
             ExecuteShellCommand(runSpace, cmd);
             ExchangeLog.LogEnd("SetAcceptedDomainType");
@@ -7222,6 +7243,78 @@ namespace WebsitePanel.Providers.HostedSolution
             }
             return bResult;
         }
+
+        #region Disclaimers
+
+        public int NewDisclaimerTransportRule(string Name, string From, string Text)
+        {
+            return NewDisclaimerTransportRuleInternal(Name, From, Text);
+        }
+
+        public int RemoveTransportRule(string Name)
+        {
+            return RemoveTransportRuleInternal(Name);
+        }
+
+        internal virtual int NewDisclaimerTransportRuleInternal(string Name, string From, string Text)
+        {
+            ExchangeLog.LogStart("NewDisclaimerTransportRuleInternal");
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+                Command cmd = new Command("New-TransportRule");
+                cmd.Parameters.Add("Name", Name);
+                cmd.Parameters.Add("From", From);
+                cmd.Parameters.Add("Enabled", true);
+                cmd.Parameters.Add("ApplyHtmlDisclaimerLocation", "Append");
+                cmd.Parameters.Add("ApplyHtmlDisclaimerText", Text);
+                cmd.Parameters.Add("ApplyHtmlDisclaimerFallbackAction", "Wrap");
+                ExecuteShellCommand(runSpace, cmd);
+            }
+            catch (Exception exc)
+            {
+                ExchangeLog.LogError(exc);
+                return -1;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+            ExchangeLog.LogEnd("NewDisclaimerTransportRuleInternal");
+
+            return 0;
+
+        }
+
+        internal virtual int RemoveTransportRuleInternal(string Name)
+        {
+            ExchangeLog.LogStart("RemoveTransportRuleInternal");
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+                Command cmd = new Command("Remove-TransportRule");
+                cmd.Parameters.Add("Identity", Name);
+                cmd.Parameters.Add("Confirm", false);
+                ExecuteShellCommand(runSpace, cmd);
+            }
+            catch (Exception exc)
+            {
+                ExchangeLog.LogError(exc);
+                return -1;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+            ExchangeLog.LogEnd("RemoveTransportRuleInternal");
+
+            return 0;
+        }
+
+        #endregion
+
     }
 }
 

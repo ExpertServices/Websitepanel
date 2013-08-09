@@ -38,13 +38,28 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             if (!IsPostBack)
             {
+                PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
+                if (Utils.CheckQouta(Quotas.EXCHANGE2007_DISCLAIMERSALLOWED, cntx))
+                {
+                    ddDisclaimer.Items.Add(new System.Web.UI.WebControls.ListItem("None", "-1"));
+                    ExchangeDisclaimer[] disclaimers = ES.Services.ExchangeServer.GetExchangeDisclaimers(PanelRequest.ItemID);
+                    foreach (ExchangeDisclaimer disclaimer in disclaimers)
+                        ddDisclaimer.Items.Add(new System.Web.UI.WebControls.ListItem(disclaimer.DisclaimerName, disclaimer.ExchangeDisclaimerId.ToString()));
+                }
+                else
+                {
+                    locDisclaimer.Visible = false;
+                    ddDisclaimer.Visible = false;
+                }
+
                 BindSettings();
 
                 UserInfo user = UsersHelper.GetUser(PanelSecurity.EffectiveUserId);
 
                 if (user != null)
                 {
-                    PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+                    
                     if ((user.Role == UserRole.User) & (Utils.CheckQouta(Quotas.EXCHANGE2007_ISCONSUMER, cntx)))
                     {
                         chkHideAddressBook.Visible = false;
@@ -98,7 +113,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 }
 
                 mailboxSize.QuotaUsedValue = Convert.ToInt32(stats.TotalSize / 1024 / 1024);
-                mailboxSize.QuotaValue = (stats.MaxSize == -1) ? -1: (int)Math.Round((double)(stats.MaxSize / 1024 / 1024));
+                mailboxSize.QuotaValue = (stats.MaxSize == -1) ? -1 : (int)Math.Round((double)(stats.MaxSize / 1024 / 1024));
 
                 secCalendarSettings.Visible = ((account.AccountType == ExchangeAccountType.Equipment) | (account.AccountType == ExchangeAccountType.Room));
 
@@ -107,7 +122,12 @@ namespace WebsitePanel.Portal.ExchangeServer
                 litigationHoldSpace.QuotaUsedValue = Convert.ToInt32(stats.LitigationHoldTotalSize / 1024 / 1024);
                 litigationHoldSpace.QuotaValue = (stats.LitigationHoldMaxSize == -1) ? -1 : (int)Math.Round((double)(stats.LitigationHoldMaxSize / 1024 / 1024));
 
-
+                PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+                if (Utils.CheckQouta(Quotas.EXCHANGE2007_DISCLAIMERSALLOWED, cntx))
+                {
+                    int disclaimerId = ES.Services.ExchangeServer.GetExchangeAccountDisclaimerId(PanelRequest.ItemID, PanelRequest.AccountID);
+                    ddDisclaimer.SelectedValue = disclaimerId.ToString();
+                }
 
             }
             catch (Exception ex)
@@ -147,6 +167,14 @@ namespace WebsitePanel.Portal.ExchangeServer
                         messageBox.ShowResultMessage(result);
                         return;
                     }
+                }
+
+                PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+                if (Utils.CheckQouta(Quotas.EXCHANGE2007_DISCLAIMERSALLOWED, cntx))
+                {
+                    int disclaimerId;
+                    if (int.TryParse(ddDisclaimer.SelectedValue, out disclaimerId))
+                        ES.Services.ExchangeServer.SetExchangeAccountDisclaimerId(PanelRequest.ItemID, PanelRequest.AccountID, disclaimerId);
                 }
 
                 messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_MAILBOX_SETTINGS");

@@ -134,45 +134,47 @@ function ReloadProgressImage()
 
 function GetTaskProgress()
 {
-    requestSimpleService = WebsitePanel.Portal.TaskManager.GetTask(
+        requestSimpleService = WebsitePanel.Portal.TaskManager.GetTaskWithLogRecords(
         _taskId,       //params
+        new Date(1, 2, 3, 4),
         OnGetTaskProgressComplete,     //Complete event
         OnGetTaskProgressTimeout       //Timeout event
         );
 }
 
-function OnGetTaskProgressComplete(task) 
+function OnGetTaskProgressComplete(task)
 {
-    if(task.LastLogRecord != null)
-    {
-        $get('objProgressDialogStep').innerHTML = task.LastLogRecord.Text;
-    }
-    
-    // set progress indicator
-    if(task.IndicatorMaximum > 0)
-        $get("objProgressDialogProgressBar").style.width = task.IndicatorCurrent / task.IndicatorMaximum * 100 + "%";
-        
-    if(task.Completed)
-    {
-		// switch buttons
+    if (task == null || task.Completed) {
+        // switch buttons
         $get("objProgressDialogCommandButtons").style.display = "none";
         $get("objProgressDialogCloseButton").style.display = "block";
-        
+
         // stop timer
         StopTimer();
-        
+
         // hide image indicator
         $get("imgAjaxIndicator").style.display = "none";
-        
+
         // show success message
         $get('objProgressDialogStep').innerHTML = _completeMessage;
-    }    
-    else
-    {
-        $find('ModalPopupProperties')._layout();
-        //alert(result);
-        window.setTimeout(GetTaskProgress, 1000);
+        
+        $get("objProgressDialogProgressBar").style.width =  100 + "%";
+
+        return;
     }
+
+    if (task.Logs != null) {
+        $get('objProgressDialogStep').innerHTML = task.Logs.length > 0 ? task.Logs[task.Logs.length - 1].Text : "";
+    }
+
+    // set progress indicator
+    if (task.IndicatorMaximum > 0)
+        $get("objProgressDialogProgressBar").style.width = task.IndicatorCurrent / task.IndicatorMaximum * 100 + "%";
+
+
+    $find('ModalPopupProperties')._layout();
+    //alert(result);
+    window.setTimeout(GetTaskProgress, 1000);
 }
 
 function OnGetTaskProgressTimeout(result) 

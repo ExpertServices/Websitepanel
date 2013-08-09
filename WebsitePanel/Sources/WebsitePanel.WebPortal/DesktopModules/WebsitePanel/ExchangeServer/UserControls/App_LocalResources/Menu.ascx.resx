@@ -126,6 +126,9 @@
   <data name="Text.DistributionLists" xml:space="preserve">
     <value>Distribution Lists</value>
   </data>
+  <data name="Text.Disclaimers" xml:space="preserve">
+    <value>Disclaimers</value>
+  </data>
   <data name="Text.DomainNames" xml:space="preserve">
     <value>Domains</value>
   </data>

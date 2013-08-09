@@ -129,4 +129,7 @@
 	<data name="Tab.Permissions" xml:space="preserve">
     <value>Permissions</value>
   </data>
+  <data name="Tab.MemberOf" xml:space="preserve">
+    <value>Member Of</value>
+  </data>
 </root>

@@ -478,12 +478,11 @@ namespace WebsitePanel.Providers.Database
             string cmd = Path.Combine(MySqlBinFolder, "mysqldump.exe");
             string bakFile = Path.Combine(BackupTempFolder, backupName);
 
-            string args = string.Format(" --host={0} --port={1} --user={2} --password={3} --opt --skip-extended-insert --skip-quick --skip-comments {4}",
-                ServerName, ServerPort,
-				RootLogin, RootPassword, databaseName);
+            string args = string.Format(" --host={0} --port={1} --user={2} --password={3} --opt --skip-extended-insert --skip-quick --skip-comments --result-file=\"{4}\" {5}",
+                ServerName, ServerPort, RootLogin, RootPassword, bakFile, databaseName);
 
             // backup database
-            FileUtils.ExecuteSystemCommand(cmd, args, bakFile);
+            FileUtils.ExecuteSystemCommand(cmd, args);
 
             return bakFile;
         }

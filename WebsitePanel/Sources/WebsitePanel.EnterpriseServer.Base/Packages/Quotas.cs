@@ -117,7 +117,8 @@ order by rg.groupOrder
         public const string EXCHANGE2007_ENABLEDPLANSEDITING = "Exchange2007.EnablePlansEditing";  // Enabled plans editing
         public const string EXCHANGE2007_ALLOWLITIGATIONHOLD = "Exchange2007.AllowLitigationHold";
         public const string EXCHANGE2007_RECOVERABLEITEMSSPACE = "Exchange2007.RecoverableItemsSpace";
-		public const string MSSQL2000_DATABASES = "MsSQL2000.Databases";  // Databases
+        public const string EXCHANGE2007_DISCLAIMERSALLOWED = "Exchange2007.DisclaimersAllowed";
+        public const string MSSQL2000_DATABASES = "MsSQL2000.Databases";  // Databases
 		public const string MSSQL2000_USERS = "MsSQL2000.Users";  // Users
 		public const string MSSQL2000_MAXDATABASESIZE = "MsSQL2000.MaxDatabaseSize";  // Max Database Size
 		public const string MSSQL2000_BACKUP = "MsSQL2000.Backup";  // Database Backups
