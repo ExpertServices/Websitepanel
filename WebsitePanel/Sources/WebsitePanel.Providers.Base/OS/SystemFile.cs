@@ -41,6 +41,7 @@ namespace WebsitePanel.Providers.OS
         private DateTime changed;
         private bool isDirectory;
         private long size;
+        private long quota;
         private bool isEmpty;
 
         public SystemFile()

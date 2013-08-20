@@ -37,6 +37,7 @@ using Microsoft.Web.Services3;
 
 using WebsitePanel.Providers;
 using WebsitePanel.Providers.EnterpriseStorage;
+using WebsitePanel.Providers.OS;
 using WebsitePanel.Server.Utils;
 
 namespace WebsitePanel.Server
@@ -50,12 +51,94 @@ namespace WebsitePanel.Server
     [ToolboxItem(false)]
     public class EnterpriseStorage : HostingServiceProviderWebService, IEnterpriseStorage
     {
-        private IEnterpriseStorage RDSProvider
+        private IEnterpriseStorage EnterpriseStorageProvider
         {
             get { return (IEnterpriseStorage)Provider; }
         }
 
 
+        [WebMethod, SoapHeader("settings")]
+        public SystemFile[] GetFolders(string organizationId)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetFolders", ProviderSettings.ProviderName);
+                SystemFile[] result = EnterpriseStorageProvider.GetFolders(organizationId);
+                Log.WriteEnd("'{0}' GetFolders", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetFolders", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public SystemFile GetFolder(string organizationId, string folder)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetFolder", ProviderSettings.ProviderName);
+                SystemFile result = EnterpriseStorageProvider.GetFolder(organizationId, folder);
+                Log.WriteEnd("'{0}' GetFolder", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetFolder", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void CreateFolder(string organizationId, string folder)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' CreateFolder", ProviderSettings.ProviderName);
+                EnterpriseStorageProvider.CreateFolder(organizationId, folder);
+                Log.WriteEnd("'{0}' CreateFolder", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' CreateFolder", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void DeleteFolder(string organizationId, string folder)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' DeleteFolder", ProviderSettings.ProviderName);
+                EnterpriseStorageProvider.DeleteFolder(organizationId, folder);
+                Log.WriteEnd("'{0}' DeleteFolder", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' DeleteFolder", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+
+        [WebMethod, SoapHeader("settings")]
+        public void SetFolderQuota(string organizationId, string folder, long quota)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' SetFolderQuota", ProviderSettings.ProviderName);
+                EnterpriseStorageProvider.SetFolderQuota(organizationId, folder,quota);
+                Log.WriteEnd("'{0}' SetFolderQuota", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' SetFolderQuota", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
     }
 
 }

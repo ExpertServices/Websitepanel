@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections;
+using WebsitePanel.Providers.OS;
 
 namespace WebsitePanel.Providers.EnterpriseStorage
 {
@@ -36,6 +37,10 @@ namespace WebsitePanel.Providers.EnterpriseStorage
     /// </summary>
     public interface IEnterpriseStorage
     {
-   
+        SystemFile[] GetFolders(string organizationId);
+        SystemFile GetFolder(string organizationId, string folder);
+        void CreateFolder(string organizationId, string folder);
+        void DeleteFolder(string organizationId, string folder);
+        void SetFolderQuota(string organizationId, string folder, long quota);
     }
 }
