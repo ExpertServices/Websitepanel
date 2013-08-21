@@ -44,7 +44,6 @@ namespace WebsitePanel.Portal.ExchangeServer
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            
         }
 
         protected void btnCreate_Click(object sender, EventArgs e)
@@ -54,43 +53,31 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         private void CreateSecurityGroup()
         {
-            /*if (!Page.IsValid)
-                return;*/
-
-
-
+            if (!Page.IsValid)
+                return;
             try
             {
+                int accountId = ES.Services.Organizations.CreateSecurityGroup(PanelRequest.ItemID, txtDisplayName.Text, manager.GetAccount());
 
-                //int accountId = ES.Services.ExchangeServer.CreateDistributionList(PanelRequest.ItemID,
-                //    txtDisplayName.Text.Trim(),
-                //    email.AccountName,
-                //    email.DomainName,
-                //    manager.GetAccountId());
+                if (accountId < 0)
+                {
+                    messageBox.ShowResultMessage(accountId);
+                    return;
+                }
 
-
-                //if (accountId < 0)
-                //{
-                //    messageBox.ShowResultMessage(accountId);
-                //    return;
-                //}
-
-                //Response.Redirect(EditUrl("AccountID", accountId.ToString(), "dlist_settings",
-                //    "SpaceID=" + PanelSecurity.PackageId.ToString(),
-                //    "ItemID=" + PanelRequest.ItemID.ToString()));
+                Response.Redirect(EditUrl("AccountID", accountId.ToString(), "secur_group_settings",
+                    "SpaceID=" + PanelSecurity.PackageId.ToString(),
+                    "ItemID=" + PanelRequest.ItemID.ToString()));
             }
             catch (Exception ex)
             {
-                messageBox.ShowErrorMessage("EXCHANGE_CREATE_DISTRIBUTION_LIST", ex);
+                messageBox.ShowErrorMessage("ORGANIZATION_CREATE_SECURITY_GROUP", ex);
             }
         }
 
         protected void valManager_ServerValidate(object source, ServerValidateEventArgs args)
         {
             args.IsValid = manager.GetAccountId() != 0;
-
         }
-
-
     }
 }

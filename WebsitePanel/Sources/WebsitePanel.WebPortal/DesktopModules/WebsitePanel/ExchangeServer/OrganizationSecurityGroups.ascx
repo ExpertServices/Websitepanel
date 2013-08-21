@@ -26,8 +26,8 @@
 				    <wsp:SimpleMessageBox id="messageBox" runat="server" />
                     <div class="FormButtonsBarClean">
                         <div class="FormButtonsBarCleanLeft">
-                            <asp:Button ID="btnCreateList" runat="server" meta:resourcekey="btnCreateList"
-                            Text="Create New Distribution List" CssClass="Button1" OnClick="btnCreateList_Click" />
+                            <asp:Button ID="btnCreateGroup" runat="server" meta:resourcekey="btnCreateGroup"
+                            Text="Create New Group" CssClass="Button1" OnClick="btnCreateGroup_Click" />
                         </div>
                         <div class="FormButtonsBarCleanRight">
                             <asp:Panel ID="SearchPanel" runat="server" DefaultButton="cmdSearch">
@@ -49,12 +49,12 @@
                         </div>
                     </div>
 
-				    <asp:GridView ID="gvLists" runat="server" AutoGenerateColumns="False" EnableViewState="true"
-					    Width="100%" EmptyDataText="gvLists" CssSelectorClass="NormalGridView"
+				    <asp:GridView ID="gvGroups" runat="server" AutoGenerateColumns="False" EnableViewState="true"
+					    Width="100%" EmptyDataText="gvGroups" CssSelectorClass="NormalGridView"
 					    OnRowCommand="gvLists_RowCommand" AllowPaging="True" AllowSorting="True"
-					    DataSourceID="odsAccountsPaged" PageSize="20">
+					    DataSourceID="odsSecurityGroupsPaged" PageSize="20">
 					    <Columns>
-						    <asp:TemplateField HeaderText="gvListsDisplayName" SortExpression="DisplayName">
+						    <asp:TemplateField HeaderText="gvGroupsDisplayName" SortExpression="DisplayName">
 							    <ItemStyle Width="50%"></ItemStyle>
 							    <ItemTemplate>
 								    <asp:hyperlink id="lnk1" runat="server"
@@ -63,7 +63,6 @@
 								    </asp:hyperlink>
 							    </ItemTemplate>
 						    </asp:TemplateField>
-						    <asp:BoundField HeaderText="gvListsEmail" DataField="PrimaryEmailAddress" SortExpression="PrimaryEmailAddress" ItemStyle-Width="50%" />
 						    <asp:TemplateField>
 							    <ItemTemplate>
 								    <asp:ImageButton ID="cmdDelete" runat="server" Text="Delete" SkinID="ExchangeDelete"
@@ -73,12 +72,12 @@
 						    </asp:TemplateField>
 					    </Columns>
 				    </asp:GridView>
-					<asp:ObjectDataSource ID="odsAccountsPaged" runat="server" EnablePaging="True"
-							SelectCountMethod="GetExchangeAccountsPagedCount"
-							SelectMethod="GetExchangeAccountsPaged"
+					<asp:ObjectDataSource ID="odsSecurityGroupsPaged" runat="server" EnablePaging="True"
+							SelectCountMethod="GetOrganizationSecurityGroupsPagedCount"
+							SelectMethod="GetOrganizationSecurityGroupsPaged"
 							SortParameterName="sortColumn"
-							TypeName="WebsitePanel.Portal.ExchangeHelper"
-							OnSelected="odsAccountsPaged_Selected">
+							TypeName="WebsitePanel.Portal.OrganizationsHelper"
+							OnSelected="odsSecurityGroupsPaged_Selected">
 						<SelectParameters>
 							<asp:QueryStringParameter Name="itemId" QueryStringField="ItemID" DefaultValue="0" />
 							<asp:Parameter Name="accountTypes" DefaultValue="3" />
@@ -86,12 +85,6 @@
 							<asp:ControlParameter Name="filterValue" ControlID="txtSearchValue" PropertyName="Text" />
 						</SelectParameters>
 					</asp:ObjectDataSource>
-				    <br />
-				    <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Total Distribution Lists Created:"></asp:Localize>
-				    &nbsp;&nbsp;&nbsp;
-				    <wsp:QuotaViewer ID="listsQuota" runat="server" QuotaTypeId="2" />
-				    
-				    
 				</div>
 			</div>
 		</div>

@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnSave.OnClientClick" xml:space="preserve">
-    <value>ShowProgressDialog('Updating security group settings...');</value>
+    <value>ShowProgressDialog('Updating group settings...');</value>
   </data>
   <data name="btnSave.Text" xml:space="preserve">
     <value>Save Changes</value>
@@ -139,10 +139,10 @@
     <value>Notes:</value>
   </data>
   <data name="locTitle.Text" xml:space="preserve">
-    <value>Edit Security Group</value>
+    <value>Edit Group</value>
   </data>
   <data name="Text.PageName" xml:space="preserve">
-    <value>Security Group</value>
+    <value>Security Groups</value>
   </data>
   <data name="valManager.ErrorMessage" xml:space="preserve">
     <value>Please specify a manager</value>

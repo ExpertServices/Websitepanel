@@ -824,12 +824,12 @@ namespace WebsitePanel.Providers.HostedSolution
 
         #region Security Groups
 
-        public int CreateSecurityGroup(string organizationId, string groupName, string displayName, string managedBy, string notes)
+        public int CreateSecurityGroup(string organizationId, string groupName, string displayName, string managedBy)
         {
-            return CreateSecurityGroupInternal(organizationId, groupName, displayName, managedBy, notes);
+            return CreateSecurityGroupInternal(organizationId, groupName, displayName, managedBy);
         }
 
-        internal int CreateSecurityGroupInternal(string organizationId, string groupName, string displayName, string managedBy, string notes)
+        internal int CreateSecurityGroupInternal(string organizationId, string groupName, string displayName, string managedBy)
         {
             HostedSolutionLog.LogStart("CreateSecurityGroupInternal");
             HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
@@ -850,12 +850,6 @@ namespace WebsitePanel.Providers.HostedSolution
                 
                 if (!ActiveDirectoryUtils.AdObjectExists(groupPath))
                 {
-                    ActiveDirectoryUtils.CreateGroup(path, groupName);
-
-                    DirectoryEntry entry = new DirectoryEntry(groupPath);
-                    
-                    ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.DisplayName, displayName);
-
                     string manager = string.Empty;
                     if (!string.IsNullOrEmpty(managedBy))
                     {
@@ -863,11 +857,8 @@ namespace WebsitePanel.Providers.HostedSolution
                         manager = ActiveDirectoryUtils.AdObjectExists(managerPath) ? managerPath : string.Empty;
                     }
 
-                    ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.Manager, ActiveDirectoryUtils.RemoveADPrefix(manager));
+                    ActiveDirectoryUtils.CreateGroup(path, groupName, ActiveDirectoryUtils.RemoveADPrefix(manager));
 
-                    ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.Notes, notes);
-                    entry.CommitChanges();
-                                       
                     groupCreated = true;
                     
                     HostedSolutionLog.DebugInfo("Security Group created: {0}", groupName);

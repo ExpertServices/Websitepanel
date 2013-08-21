@@ -67,13 +67,13 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox messageBox;
         
         /// <summary>
-        /// btnCreateList control.
+        /// btnCreateGroup control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCreateList;
+        protected global::System.Web.UI.WebControls.Button btnCreateGroup;
         
         /// <summary>
         /// SearchPanel control.
@@ -130,39 +130,21 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::System.Web.UI.WebControls.ImageButton cmdSearch;
         
         /// <summary>
-        /// gvLists control.
+        /// gvGroups control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvLists;
+        protected global::System.Web.UI.WebControls.GridView gvGroups;
         
         /// <summary>
-        /// odsAccountsPaged control.
+        /// odsSecurityGroupsPaged control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource odsAccountsPaged;
-        
-        /// <summary>
-        /// locQuota control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locQuota;
-        
-        /// <summary>
-        /// listsQuota control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.QuotaViewer listsQuota;
+        protected global::System.Web.UI.WebControls.ObjectDataSource odsSecurityGroupsPaged;
     }
 }

@@ -83,5 +83,30 @@ namespace WebsitePanel.Portal
         }
 
         #endregion
+
+        #region Security Groups
+
+        ExchangeAccountsPaged accounts;
+
+        public int GetOrganizationSecurityGroupsPagedCount(int itemId, string accountTypes,
+            string filterColumn, string filterValue)
+        {
+            return accounts.RecordsCount;
+        }
+
+        public ExchangeAccount[] GetOrganizationSecurityGroupsPaged(int itemId, string accountTypes,
+            string filterColumn, string filterValue,
+            int maximumRows, int startRowIndex, string sortColumn)
+        {
+            if (!String.IsNullOrEmpty(filterValue))
+                filterValue = filterValue + "%";
+
+            accounts = ES.Services.Organizations.GetOrganizationSecurityGroupsPaged(itemId,
+                filterColumn, filterValue, sortColumn, startRowIndex, maximumRows);
+
+            return accounts.PageItems;
+        }
+
+        #endregion
     }
 }

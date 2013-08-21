@@ -42,6 +42,8 @@ namespace WebsitePanel.Providers.HostedSolution
 
         OrganizationUser GetUserGeneralSettings(string loginName, string organizationId);
 
+        int CreateSecurityGroup(string organizationId, string groupName, string displayName, string managedBy);
+
         OrganizationSecurityGroup GetSecurityGroupGeneralSettings(string groupName, string organizationId);
 
         void DeleteSecurityGroup(string groupName, string organizationId);

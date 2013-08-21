@@ -50,21 +50,13 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 BindStats();
             }
-
-
         }
 
         private void BindStats()
         {
-            // quota values
-            OrganizationStatistics stats = ES.Services.ExchangeServer.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            OrganizationStatistics tenantStats = ES.Services.ExchangeServer.GetOrganizationStatistics(PanelRequest.ItemID);
-            listsQuota.QuotaUsedValue = stats.CreatedDistributionLists;
-            listsQuota.QuotaValue = stats.AllocatedDistributionLists;
-            if (stats.AllocatedDistributionLists != -1) listsQuota.QuotaAvailable = tenantStats.AllocatedDistributionLists - tenantStats.CreatedDistributionLists;
         }
 
-        protected void btnCreateList_Click(object sender, EventArgs e)
+        protected void btnCreateGroup_Click(object sender, EventArgs e)
         {
             Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "create_secur_group",
                 "SpaceID=" + PanelSecurity.PackageId.ToString()));
@@ -77,11 +69,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                     "ItemID=" + PanelRequest.ItemID.ToString());
         }
 
-        protected void odsAccountsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)
+        protected void odsSecurityGroupsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)
         {
             if (e.Exception != null)
             {
-                messageBox.ShowErrorMessage("EXCHANGE_GET_LISTS", e.Exception);
+                messageBox.ShowErrorMessage("ORGANIZATION_GET_SECURITY_GROUP", e.Exception);
                 e.ExceptionHandled = true;
             }
         }
@@ -90,12 +82,12 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             if (e.CommandName == "DeleteItem")
             {
-                // delete distribution list
+                // delete security group
                 int accountId = Utils.ParseInt(e.CommandArgument.ToString(), 0);
 
                 try
                 {
-                    int result = ES.Services.ExchangeServer.DeleteDistributionList(PanelRequest.ItemID, accountId);
+                    int result = ES.Services.Organizations.DeleteSecurityGroup(PanelRequest.ItemID, accountId);
                     if (result < 0)
                     {
                         messageBox.ShowResultMessage(result);
@@ -103,28 +95,27 @@ namespace WebsitePanel.Portal.ExchangeServer
                     }
 
                     // rebind grid
-                    gvLists.DataBind();
+                    gvGroups.DataBind();
 
                     BindStats();
                 }
                 catch (Exception ex)
                 {
-                    messageBox.ShowErrorMessage("EXCHANGE_DELETE_DISTRIBUTION_LIST", ex);
+                    messageBox.ShowErrorMessage("ORGANIZATION_DELETE_SECURITY_GROUP", ex);
                 }
             }
         }
 
         protected void ddlPageSize_SelectedIndexChanged(object sender, EventArgs e)   
-        {   
-            gvLists.PageSize = Convert.ToInt16(ddlPageSize.SelectedValue);   
+        {
+            gvGroups.PageSize = Convert.ToInt16(ddlPageSize.SelectedValue);   
        
             // rebind grid   
-            gvLists.DataBind();   
+            gvGroups.DataBind();   
        
             // bind stats   
             BindStats();   
        
         }  
-
     }
 }

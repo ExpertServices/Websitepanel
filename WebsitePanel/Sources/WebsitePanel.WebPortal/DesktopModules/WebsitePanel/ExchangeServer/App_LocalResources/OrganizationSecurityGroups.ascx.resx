@@ -117,17 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="btnCreateList.Text" xml:space="preserve">
-    <value>Create New Security Group</value>
+  <data name="btnCreateGroup.Text" xml:space="preserve">
+    <value>Create New Group</value>
   </data>
   <data name="cmdDelete.OnClientClick" xml:space="preserve">
-    <value>if(!confirm('Are you sure you want to delete this security group?')) return false; else ShowProgressDialog('Deleting security group...');</value>
+    <value>if(!confirm('Are you sure you want to delete this group?')) return false; else ShowProgressDialog('Deleting group...');</value>
   </data>
   <data name="cmdDelete.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
   <data name="cmdDelete.ToolTip" xml:space="preserve">
-    <value>Delete Security Group</value>
+    <value>Delete Group</value>
   </data>
   <data name="cmdSearch.AlternateText" xml:space="preserve">
     <value>Search</value>
@@ -141,20 +141,14 @@
   <data name="FormComments.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="gvLists.Empty" xml:space="preserve">
-    <value>No security groups have been created. To create a new security group click "Create New Security Group" button.</value>
+  <data name="gvGroups.Empty" xml:space="preserve">
+    <value>No groups have been created. To create a new group click "Create New Group" button.</value>
   </data>
-  <data name="gvListsDisplayName.Header" xml:space="preserve">
+  <data name="gvGroupsDisplayName.Header" xml:space="preserve">
     <value>Display Name</value>
   </data>
-  <data name="gvListsEmail.Header" xml:space="preserve">
-    <value>E-mail Address</value>
-  </data>
-  <data name="locQuota.Text" xml:space="preserve">
-    <value>Total Security Groups Created:</value>
-  </data>
   <data name="locTitle.Text" xml:space="preserve">
-    <value>Security Groups</value>
+    <value>Groups</value>
   </data>
   <data name="Text.PageName" xml:space="preserve">
     <value>Security Groups</value>

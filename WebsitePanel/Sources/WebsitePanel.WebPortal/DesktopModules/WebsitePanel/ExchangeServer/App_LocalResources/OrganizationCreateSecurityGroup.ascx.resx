@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnCreate.OnClientClick" xml:space="preserve">
-    <value>ShowProgressDialog('Creating security group ...');</value>
+    <value>ShowProgressDialog('Creating group ...');</value>
   </data>
   <data name="btnCreate.Text" xml:space="preserve">
-    <value>Create Security Group</value>
+    <value>Create Group</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
     <value />
@@ -136,7 +136,7 @@
     <value>Managed by: *</value>
   </data>
   <data name="locTitle.Text" xml:space="preserve">
-    <value>Create New Security Group</value>
+    <value>Create New Group</value>
   </data>
   <data name="Text.PageName" xml:space="preserve">
     <value>Security Groups</value>

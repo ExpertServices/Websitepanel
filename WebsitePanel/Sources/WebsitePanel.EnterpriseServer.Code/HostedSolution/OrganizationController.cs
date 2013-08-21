@@ -1640,20 +1640,6 @@ namespace WebsitePanel.EnterpriseServer
             return account;
         }
 
-        /*public static OrganizationUser GetAccount(int itemId, string samAccountName)
-        {
-            OrganizationUser account = ObjectUtils.FillObjectFromDataReader<OrganizationUser>(
-                DataProvider.GetExchangeAccount(itemId, userId));
-
-            if (account == null)
-                return null;
-
-            // decrypt password
-            account.AccountPassword = CryptoUtils.Decrypt(account.AccountPassword);
-
-            return account;
-        }*/
-
         public static OrganizationUser GetAccountByAccountName(int itemId, string AccountName)
         {
             OrganizationUser account = ObjectUtils.FillObjectFromDataReader<OrganizationUser>(
@@ -2265,6 +2251,15 @@ namespace WebsitePanel.EnterpriseServer
             return ocs;
         }
 
+        private static int AddAccount(int itemId, ExchangeAccountType accountType,
+            string accountName, string displayName, string primaryEmailAddress, bool mailEnabledPublicFolder,
+            MailboxManagerActions mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, string subscriberNumber)
+        {
+            return DataProvider.AddExchangeAccount(itemId, (int)accountType,
+                accountName, displayName, primaryEmailAddress, mailEnabledPublicFolder,
+                mailboxManagerActions.ToString(), samAccountName, CryptoUtils.Encrypt(accountPassword), mailboxPlanId, (string.IsNullOrEmpty(subscriberNumber) ? null : subscriberNumber.Trim()));
+        }
+
         public static int CreateSecurityGroup(int itemId, string displayName, string managedBy)
         {
             if (string.IsNullOrEmpty(displayName))
@@ -2281,19 +2276,11 @@ namespace WebsitePanel.EnterpriseServer
             TaskManager.Write("Organization ID :" + itemId);
             TaskManager.Write("display name :" + displayName);
 
-            int userId = -1;
+            int securityGroupId = -1;
 
             try
             {
-                /*displayName = displayName.Trim();
-                name = name.Trim();
-                domain = domain.Trim();
-
-                // e-mail
-                string email = name + "@" + domain;
-
-                if (EmailAddressExists(email))
-                    return BusinessErrorCodes.ERROR_EXCHANGE_EMAIL_EXISTS;
+                displayName = displayName.Trim();
 
                 // load organization
                 Organization org = GetOrganization(itemId);
@@ -2318,35 +2305,25 @@ namespace WebsitePanel.EnterpriseServer
                 if (!CheckUserQuota(org.Id, out errorCode))
                     return errorCode;
 
-
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
-                string upn = string.Format("{0}@{1}", name, domain);
-                string sAMAccountName = AppendOrgId(serviceSettings) ? BuildAccountNameWithOrgId(org.OrganizationId, name, org.ServiceId) : BuildAccountName(org.OrganizationId, name, org.ServiceId);
+                string accountName = BuildAccountName(org.OrganizationId, displayName, org.ServiceId);
 
-                TaskManager.Write("accountName :" + sAMAccountName);
-                TaskManager.Write("upn :" + upn);
+                TaskManager.Write("accountName :" + accountName);
 
-                if (orgProxy.CreateUser(org.OrganizationId, sAMAccountName, displayName, upn, password, enabled) == 0)
+                if (orgProxy.CreateSecurityGroup(org.OrganizationId, accountName, displayName, managedBy) == 0)
                 {
-                    accountName = sAMAccountName;
-                    OrganizationUser retUser = orgProxy.GetUserGeneralSettings(sAMAccountName, org.OrganizationId);
-                    TaskManager.Write("sAMAccountName :" + retUser.DomainUserName);
+                    OrganizationSecurityGroup retSecurityGroup = orgProxy.GetSecurityGroupGeneralSettings(accountName, org.OrganizationId);
+                    TaskManager.Write("sAMAccountName :" + retSecurityGroup.AccountName);
 
-                    userId = AddOrganizationUser(itemId, sAMAccountName, displayName, email, retUser.DomainUserName, password, subscriberNumber);
-
-                    // register email address
-                    AddAccountEmailAddress(userId, email);
-
-                    if (sendNotification)
-                    {
-                        SendSummaryLetter(org.Id, userId, true, to, "");
-                    }
+                    securityGroupId = AddAccount(itemId, ExchangeAccountType.DistributionList, accountName,
+                                                    displayName, null, false,
+                                                    0, retSecurityGroup.AccountName, null, 0, null);
                 }
                 else
                 {
-                    TaskManager.WriteError("Failed to create user");
-                }*/
+                    TaskManager.WriteError("Failed to create securitygroup");
+                }
             }
             catch (Exception ex)
             {
@@ -2357,7 +2334,7 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.CompleteTask();
             }
 
-            return userId;
+            return securityGroupId;
         }
 
         public static int DeleteSecurityGroup(int itemId, int accountId)
@@ -2377,11 +2354,11 @@ namespace WebsitePanel.EnterpriseServer
                     return -1;
 
                 // load account
-                ExchangeAccount account = GetAccount(itemId, accountId);
+                ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
 
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
-                orgProxy.DeleteSecurityGroup(itemId, account.AccountName);
+                orgProxy.DeleteSecurityGroup(account.AccountName, org.OrganizationId);
                 
                 DeleteUserFromMetabase(itemId, accountId);
 
@@ -2397,7 +2374,7 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        public static int SetUserGeneralSettings(int itemId, int accountId, string displayName, string managedBy, string[] memberAccounts, string notes)
+        public static int SetSecurityGroupGeneralSettings(int itemId, int accountId, string displayName, string managedBy, string[] memberAccounts, string notes)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -2477,8 +2454,8 @@ namespace WebsitePanel.EnterpriseServer
                 demoSecurityGroups.Add(r2);
 
 
-                res.PageUsers = demoSecurityGroups.ToArray();
-                res.RecordsCount = res.PageUsers.Length;
+                res.PageItems = demoSecurityGroups.ToArray();
+                res.RecordsCount = res.PageItems.Length;
                 
                 return res;
             }
@@ -2496,7 +2473,7 @@ namespace WebsitePanel.EnterpriseServer
 
             List<ExchangeAccount> Tmpaccounts = new List<ExchangeAccount>();
             ObjectUtils.FillCollectionFromDataView(Tmpaccounts, ds.Tables[1].DefaultView);
-            result.PageUsers = Tmpaccounts.ToArray();
+            result.PageItems = Tmpaccounts.ToArray();
 
             List<ExchangeAccount> accounts = new List<ExchangeAccount>();
 
@@ -2504,11 +2481,11 @@ namespace WebsitePanel.EnterpriseServer
             {
                 OrganizationSecurityGroup tmpSecurityGroup = GetSecurityGroupGeneralSettings(itemId, account.AccountId);
 
-                if (tmpUser != null)
+                if (tmpSecurityGroup != null)
                     accounts.Add(account);
             }
 
-            result.PageUsers = accounts.ToArray();
+            result.PageItems = accounts.ToArray();
 
             return result;
         }
