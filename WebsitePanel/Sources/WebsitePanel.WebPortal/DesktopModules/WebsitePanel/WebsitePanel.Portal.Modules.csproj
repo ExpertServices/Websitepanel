@@ -461,6 +461,20 @@
     <Compile Include="UserControls\OrgIdPolicyEditor.ascx.designer.cs">
       <DependentUpon>OrgIdPolicyEditor.ascx</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\PackagePhoneNumbers.ascx.cs">
+      <DependentUpon>PackagePhoneNumbers.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\PackagePhoneNumbers.ascx.designer.cs">
+      <DependentUpon>PackagePhoneNumbers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\AllocatePackagePhoneNumbers.ascx.cs">
+      <DependentUpon>AllocatePackagePhoneNumbers.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\AllocatePackagePhoneNumbers.ascx.designer.cs">
+      <DependentUpon>AllocatePackagePhoneNumbers.ascx</DependentUpon>
+    </Compile>
     <Compile Include="VPSForPC\MonitoringPage.aspx.cs">
       <DependentUpon>MonitoringPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -3879,6 +3893,41 @@
     <Compile Include="WebsitesSSL.ascx.designer.cs">
       <DependentUpon>WebsitesSSL.ascx</DependentUpon>
     </Compile>
+    <Compile Include="LyncPhoneNumbers.ascx.cs">
+      <DependentUpon>LyncPhoneNumbers.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LyncPhoneNumbers.ascx.designer.cs">
+      <DependentUpon>LyncPhoneNumbers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="LyncAllocatePhoneNumbers.ascx.cs">
+      <DependentUpon>LyncAllocatePhoneNumbers.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LyncAllocatePhoneNumbers.ascx.designer.cs">
+      <DependentUpon>LyncAllocatePhoneNumbers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="PhoneNumbers.ascx.cs">
+      <DependentUpon>PhoneNumbers.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PhoneNumbers.ascx.designer.cs">
+      <DependentUpon>PhoneNumbers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="PhoneNumbersAddPhoneNumber.ascx.cs">
+      <DependentUpon>PhoneNumbersAddPhoneNumber.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PhoneNumbersAddPhoneNumber.ascx.designer.cs">
+      <DependentUpon>PhoneNumbersAddPhoneNumber.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="PhoneNumbersEditPhoneNumber.ascx.cs">
+      <DependentUpon>PhoneNumbersEditPhoneNumber.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PhoneNumbersEditPhoneNumber.ascx.designer.cs">
+      <DependentUpon>PhoneNumbersEditPhoneNumber.ascx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplyEnableHardQuotaFeature.ascx" />
@@ -3918,6 +3967,8 @@
     <Content Include="SettingsLyncUserPlansPolicy.ascx" />
     <Content Include="UserControls\EditFeedsList.ascx" />
     <Content Include="UserControls\OrgIdPolicyEditor.ascx" />
+    <Content Include="UserControls\PackagePhoneNumbers.ascx" />
+    <Content Include="UserControls\AllocatePackagePhoneNumbers.ascx" />
     <Content Include="VPSForPC\MonitoringPage.aspx" />
     <Content Include="VPSForPC\VdcAccountVLanAdd.ascx" />
     <Content Include="VPSForPC\VdcAccountVLanNetwork.ascx" />
@@ -3980,6 +4031,11 @@
     <Content Include="UserControls\UsernameControl.ascx" />
     <Content Include="WebSitesHeliconZooControl.ascx" />
     <Content Include="WebsitesSSL.ascx" />
+    <Content Include="LyncPhoneNumbers.ascx" />
+    <Content Include="LyncAllocatePhoneNumbers.ascx" />
+    <Content Include="PhoneNumbers.ascx" />
+    <Content Include="PhoneNumbersAddPhoneNumber.ascx" />
+    <Content Include="PhoneNumbersEditPhoneNumber.ascx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_LocalResources\BandwidthReport.ascx.resx">
@@ -5061,6 +5117,12 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="UserControls\App_LocalResources\OrgIdPolicyEditor.ascx.resx" />
+    <Content Include="UserControls\App_LocalResources\PackagePhoneNumbers.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="UserControls\App_LocalResources\AllocatePackagePhoneNumbers.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Resources\Windows2008_Settings.ascx.resx" />
     <Content Include="App_LocalResources\WebSitesHeliconZooControl.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\ExchangeDisclaimers.ascx.resx">
@@ -5072,6 +5134,15 @@
     <Content Include="ExchangeServer\App_LocalResources\ExchangeDistributionListMemberOf.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\ExchangeMailboxMemberOf.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\OrganizationUserMemberOf.ascx.resx" />
+    <Content Include="App_LocalResources\LyncPhoneNumbers.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_LocalResources\LyncAllocatePhoneNumbers.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_LocalResources\PhoneNumbers.ascx.resx" />
+    <Content Include="App_LocalResources\PhoneNumbersAddPhoneNumber.ascx.resx" />
+    <Content Include="App_LocalResources\PhoneNumbersEditPhoneNumber.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

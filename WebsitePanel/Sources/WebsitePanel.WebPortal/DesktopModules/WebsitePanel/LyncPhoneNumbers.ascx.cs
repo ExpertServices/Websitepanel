@@ -28,17 +28,16 @@
 
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 
-namespace WebsitePanel.EnterpriseServer
+namespace WebsitePanel.Portal
 {
-    public enum IPAddressPool
+    public partial class LyncPhoneNumbers : WebsitePanelModuleBase
     {
-        None = 0,
-        General = 1,
-        WebSites = 2,
-        VpsExternalNetwork = 3,
-        VpsManagementNetwork = 4,
-        PhoneNumbers = 5
+        protected void Page_Load(object sender, EventArgs e)
+        {
+        }
     }
 }

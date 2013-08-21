@@ -7,70 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal.Lync {
+namespace WebsitePanel.Portal.UserControls {
     
     
-    public partial class EditLyncUser {
-        
-        /// <summary>
-        /// asyncTasks control.
-        /// </summary>
-        /// <remarks>
-                /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-
-        /// </remarks>
-        protected global::WebsitePanel.Portal.EnableAsyncTasksSupport asyncTasks;
-        
-        /// <summary>
-        /// breadcrumb control.
-        /// </summary>
-        /// <remarks>
-                /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-
-        /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.Breadcrumb breadcrumb;
-        
-        /// <summary>
-        /// menu control.
-        /// </summary>
-        /// <remarks>
-                /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-
-        /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.Menu menu;
-        
-        /// <summary>
-        /// Image1 control.
-        /// </summary>
-        /// <remarks>
-                /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Image Image1;
-        
-        /// <summary>
-        /// locTitle control.
-        /// </summary>
-        /// <remarks>
-                /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locTitle;
-        
-        /// <summary>
-        /// litDisplayName control.
-        /// </summary>
-        /// <remarks>
-                /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litDisplayName;
+    public partial class AllocatePackagePhoneNumbers {
         
         /// <summary>
         /// messageBox control.
@@ -83,133 +23,193 @@ namespace WebsitePanel.Portal.Lync {
         protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox messageBox;
         
         /// <summary>
-        /// locPlanName control.
+        /// validatorsSummary control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locPlanName;
+        protected global::System.Web.UI.WebControls.ValidationSummary validatorsSummary;
         
         /// <summary>
-        /// planSelector control.
+        /// ErrorMessagesList control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::WebsitePanel.Portal.Lync.UserControls.LyncUserPlanSelector planSelector;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl ErrorMessagesList;
         
         /// <summary>
-        /// locSipAddress control.
+        /// EmptyAddressesMessage control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locSipAddress;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl EmptyAddressesMessage;
         
         /// <summary>
-        /// lyncUserSettings control.
+        /// locNotEnoughAddresses control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::WebsitePanel.Portal.Lync.UserControls.LyncUserSettings lyncUserSettings;
+        protected global::System.Web.UI.WebControls.Localize locNotEnoughAddresses;
         
         /// <summary>
-        /// pnEnterpriseVoice control.
+        /// QuotaReachedMessage control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnEnterpriseVoice;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl QuotaReachedMessage;
         
         /// <summary>
-        /// locPhoneNumber control.
+        /// locQuotaReached control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locPhoneNumber;
+        protected global::System.Web.UI.WebControls.Localize locQuotaReached;
         
         /// <summary>
-        /// tb_PhoneNumber control.
+        /// AddressesTable control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox tb_PhoneNumber;
+        protected global::System.Web.UI.UpdatePanel AddressesTable;
         
         /// <summary>
-        /// ddlPhoneNumber control.
+        /// radioExternalRandom control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlPhoneNumber;
+        protected global::System.Web.UI.WebControls.RadioButton radioExternalRandom;
         
         /// <summary>
-        /// PhoneFormatValidator control.
+        /// AddressesNumberRow control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RegularExpressionValidator PhoneFormatValidator;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow AddressesNumberRow;
         
         /// <summary>
-        /// locLyncPin control.
+        /// locExternalAddresses control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locLyncPin;
+        protected global::System.Web.UI.WebControls.Localize locExternalAddresses;
         
         /// <summary>
-        /// tbPin control.
+        /// txtExternalAddressesNumber control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox tbPin;
+        protected global::System.Web.UI.WebControls.TextBox txtExternalAddressesNumber;
         
         /// <summary>
-        /// PinRegularExpressionValidator control.
+        /// ExternalAddressesValidator control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RegularExpressionValidator PinRegularExpressionValidator;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator ExternalAddressesValidator;
         
         /// <summary>
-        /// btnSave control.
+        /// litMaxAddresses control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSave;
+        protected global::System.Web.UI.WebControls.Literal litMaxAddresses;
+        
+        /// <summary>
+        /// radioExternalSelected control.
+        /// </summary>
+        /// <remarks>
+                /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButton radioExternalSelected;
+        
+        /// <summary>
+        /// AddressesListRow control.
+        /// </summary>
+        /// <remarks>
+                /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow AddressesListRow;
+        
+        /// <summary>
+        /// listExternalAddresses control.
+        /// </summary>
+        /// <remarks>
+                /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ListBox listExternalAddresses;
+        
+        /// <summary>
+        /// locHoldCtrl control.
+        /// </summary>
+        /// <remarks>
+                /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locHoldCtrl;
+        
+        /// <summary>
+        /// btnAdd control.
+        /// </summary>
+        /// <remarks>
+                /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnAdd;
+        
+        /// <summary>
+        /// btnCancel control.
+        /// </summary>
+        /// <remarks>
+                /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCancel;
     }
 }

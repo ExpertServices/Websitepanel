@@ -32,6 +32,10 @@ using WebsitePanel.EnterpriseServer;
 
 using WebsitePanel.Providers.HostedSolution;
 
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
+
 
 namespace WebsitePanel.Portal.Lync
 {
@@ -43,9 +47,25 @@ namespace WebsitePanel.Portal.Lync
             {
                 WebsitePanel.Providers.HostedSolution.LyncUserPlan[] plans = ES.Services.Lync.GetLyncUserPlans(PanelRequest.ItemID);
 
+                BindPhoneNumbers();
+
                 if (plans.Length == 0)
                     btnCreate.Enabled = false;
             }
+        }
+
+        private void BindPhoneNumbers()
+        {
+            
+            ddlPhoneNumber.Items.Add(new ListItem("<Select Phone>", ""));
+
+            PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(PanelSecurity.PackageId, IPAddressPool.PhoneNumbers);
+            foreach (PackageIPAddress ip in ips)
+            {
+                string phone = ip.ExternalIP;
+                                ddlPhoneNumber.Items.Add(new ListItem(phone, ip.PackageAddressID.ToString()));
+            }
+
         }
 
 
@@ -61,7 +81,7 @@ namespace WebsitePanel.Portal.Lync
 
             if (!EnterpriseVoice)
             {
-                tbPhoneNumber.Text = ""; 
+                ddlPhoneNumber.Text = ""; 
                 tbPin.Text = "";
             }
 
@@ -93,7 +113,7 @@ namespace WebsitePanel.Portal.Lync
 
                 //#1
                 LyncUser lyncUser = ES.Services.Lync.GetLyncUserGeneralSettings(PanelRequest.ItemID, accountId);
-                ES.Services.Lync.SetLyncUserGeneralSettings(PanelRequest.ItemID, accountId, lyncUser.SipAddress, tbPhoneNumber.Text + ":" + tbPin.Text);
+                ES.Services.Lync.SetLyncUserGeneralSettings(PanelRequest.ItemID, accountId, lyncUser.SipAddress, ddlPhoneNumber.SelectedItem.Text + ":" + tbPin.Text);
 
                 Response.Redirect(EditUrl("AccountID", accountId.ToString(), "edit_lync_user",
                     "SpaceID=" + PanelSecurity.PackageId,

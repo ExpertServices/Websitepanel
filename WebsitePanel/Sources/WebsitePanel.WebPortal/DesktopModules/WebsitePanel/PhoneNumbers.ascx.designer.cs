@@ -8,99 +8,99 @@
 
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal.ProviderControls {
+namespace WebsitePanel.Portal {
     
     
-    public partial class CRM2011_Settings {
+    public partial class PhoneNumbers {
         
         /// <summary>
-        /// txtSqlServer control.
+        /// messageBox control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtSqlServer;
+        protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox messageBox;
         
         /// <summary>
-        /// RequiredFieldValidator1 control.
+        /// btnAddItem control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidator1;
+        protected global::System.Web.UI.WebControls.Button btnAddItem;
         
         /// <summary>
-        /// txtReportingService control.
+        /// searchBox control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtReportingService;
+        protected global::WebsitePanel.Portal.SearchBox searchBox;
         
         /// <summary>
-        /// txtDomainName control.
+        /// gvIPAddresses control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtDomainName;
+        protected global::System.Web.UI.WebControls.GridView gvIPAddresses;
         
         /// <summary>
-        /// RequiredFieldValidator2 control.
+        /// odsIPAddresses control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidator2;
+        protected global::System.Web.UI.WebControls.ObjectDataSource odsIPAddresses;
         
         /// <summary>
-        /// ddlSchema control.
+        /// btnEditSelected control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlSchema;
+        protected global::System.Web.UI.WebControls.Button btnEditSelected;
         
         /// <summary>
-        /// ddlCrmIpAddress control.
+        /// btnDeleteSelected control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::WebsitePanel.Portal.SelectIPAddress ddlCrmIpAddress;
+        protected global::System.Web.UI.WebControls.Button btnDeleteSelected;
         
         /// <summary>
-        /// txtPort control.
+        /// lblItemsPerPage control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtPort;
+        protected global::System.Web.UI.WebControls.Label lblItemsPerPage;
         
         /// <summary>
-        /// txtAppRootDomain control.
+        /// ddlItemsPerPage control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtAppRootDomain;
+        protected global::System.Web.UI.WebControls.DropDownList ddlItemsPerPage;
     }
 }

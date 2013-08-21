@@ -8,99 +8,129 @@
 
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal.ProviderControls {
+namespace WebsitePanel.Portal {
     
     
-    public partial class CRM2011_Settings {
+    public partial class PhoneNumbersEditPhoneNumber {
         
         /// <summary>
-        /// txtSqlServer control.
+        /// messageBox control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtSqlServer;
+        protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox messageBox;
         
         /// <summary>
-        /// RequiredFieldValidator1 control.
+        /// validatorsSummary control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidator1;
+        protected global::System.Web.UI.WebControls.ValidationSummary validatorsSummary;
         
         /// <summary>
-        /// txtReportingService control.
+        /// locServer control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtReportingService;
+        protected global::System.Web.UI.WebControls.Localize locServer;
         
         /// <summary>
-        /// txtDomainName control.
+        /// ddlServer control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtDomainName;
+        protected global::System.Web.UI.WebControls.DropDownList ddlServer;
         
         /// <summary>
-        /// RequiredFieldValidator2 control.
+        /// PhoneNumbersRow control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidator2;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow PhoneNumbersRow;
         
         /// <summary>
-        /// ddlSchema control.
+        /// Localize1 control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlSchema;
+        protected global::System.Web.UI.WebControls.Localize Localize1;
         
         /// <summary>
-        /// ddlCrmIpAddress control.
+        /// Phone control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::WebsitePanel.Portal.SelectIPAddress ddlCrmIpAddress;
+        protected global::System.Web.UI.WebControls.TextBox Phone;
         
         /// <summary>
-        /// txtPort control.
+        /// requireStartPhoneValidator control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtPort;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator requireStartPhoneValidator;
         
         /// <summary>
-        /// txtAppRootDomain control.
+        /// lblComments control.
         /// </summary>
         /// <remarks>
                 /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtAppRootDomain;
+        protected global::System.Web.UI.WebControls.Localize lblComments;
+        
+        /// <summary>
+        /// txtComments control.
+        /// </summary>
+        /// <remarks>
+                /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtComments;
+        
+        /// <summary>
+        /// btnUpdate control.
+        /// </summary>
+        /// <remarks>
+                /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnUpdate;
+        
+        /// <summary>
+        /// btnCancel control.
+        /// </summary>
+        /// <remarks>
+                /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCancel;
     }
 }

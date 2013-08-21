@@ -52,9 +52,10 @@
                                     <asp:Localize runat="server" ID="locPhoneNumber" meta:resourcekey="locPhoneNumber" Text="Phone Number:" />
                                 </td>
                                 <td>
-                                    <asp:TextBox runat="server" ID="tbPhoneNumber" />
+                                    <!-- <asp:TextBox runat="server" ID="tb_PhoneNumber" /> -->
+                                    <asp:dropdownlist id="ddlPhoneNumber" Runat="server" CssClass="NormalTextBox"></asp:dropdownlist>
                                     <asp:RegularExpressionValidator ID="PhoneFormatValidator" runat="server"
-		                            ControlToValidate="tbPhoneNumber" Display="Dynamic" ValidationGroup="Validation1" SetFocusOnError="true"
+		                            ControlToValidate="ddlPhoneNumber" Display="Dynamic" ValidationGroup="Validation1" SetFocusOnError="true"
 		                            ValidationExpression="^([0-9])*$"
                                     ErrorMessage="Must contain only numbers.">
                                     </asp:RegularExpressionValidator>
