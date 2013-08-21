@@ -250,6 +250,24 @@ namespace WebsitePanel.EnterpriseServer
             return OrganizationController.GetSecurityGroupGeneralSettings(itemId, accountId);
         }
 
+        [WebMethod]
+        public int DeleteSecurityGroup(int itemId, int accountId)
+        {
+            return OrganizationController.DeleteSecurityGroup(itemId, accountId);
+        }
+
+        [WebMethod]
+        public int SetUserGeneralSettings(int itemId, int accountId, string displayName, string managedBy, string[] memberAccounts, string notes)
+        {
+            return OrganizationController.SetUserGeneralSettings(itemId, accountId, displayName, managedBy, memberAccounts, notes)
+        }
+
+        public ExchangeAccountsPaged GetOrganizationSecurityGroupsPaged(int itemId, string filterColumn, string filterValue, string sortColumn,
+            int startRow, int maximumRows)
+        {
+            return OrganizationController.GetOrganizationSecurityGroupsPaged(itemId, filterColumn, filterValue, sortColumn, startRow, maximumRows);
+        }
+
         #endregion
 
     }

@@ -2359,6 +2359,159 @@ namespace WebsitePanel.EnterpriseServer
 
             return userId;
         }
+
+        public static int DeleteSecurityGroup(int itemId, int accountId)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // place log record
+            TaskManager.StartTask("ORGANIZATION", "DELETE_SECURITY_GROUP", itemId);
+
+            try
+            {
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return -1;
+
+                // load account
+                ExchangeAccount account = GetAccount(itemId, accountId);
+
+                Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+
+                orgProxy.DeleteSecurityGroup(itemId, account.AccountName);
+                
+                DeleteUserFromMetabase(itemId, accountId);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static int SetUserGeneralSettings(int itemId, int accountId, string displayName, string managedBy, string[] memberAccounts, string notes)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // place log record
+            TaskManager.StartTask("ORGANIZATION", "UPDATE_SECURITY_GROUP_GENERAL", itemId);
+
+            try
+            {
+                displayName = displayName.Trim();
+
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return -1;
+
+                // check package
+                int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
+                if (packageCheck < 0) return packageCheck;
+
+                // load account
+                ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
+
+                string accountName = GetAccountName(account.AccountName);
+                // get mailbox settings
+                Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+                // external email
+
+                orgProxy.SetSecurityGroupGeneralSettings(
+                    org.OrganizationId,
+                    accountName,
+                    displayName,
+                    managedBy,
+                    memberAccounts,
+                    notes);
+
+                // update account
+                account.DisplayName = displayName;
+
+                UpdateAccount(account);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static ExchangeAccountsPaged GetOrganizationSecurityGroupsPaged(int itemId, string filterColumn, string filterValue, string sortColumn,
+            int startRow, int maximumRows)
+        {
+
+            #region Demo Mode
+            if (IsDemoMode)
+            {
+                ExchangeAccountsPaged res = new ExchangeAccountsPaged();
+                List<ExchangeAccount> demoSecurityGroups = new List<ExchangeAccount>();
+
+                ExchangeAccount r1 = new ExchangeAccount();
+                r1.AccountId = 20;
+                r1.AccountName = "group1_fabrikam";
+                r1.AccountType = ExchangeAccountType.SecurityGroup;
+                r1.DisplayName = "Group 1";
+                demoSecurityGroups.Add(r1);
+
+                ExchangeAccount r2 = new ExchangeAccount();
+                r1.AccountId = 21;
+                r1.AccountName = "group2_fabrikam";
+                r1.AccountType = ExchangeAccountType.SecurityGroup;
+                r1.DisplayName = "Group 2";
+                demoSecurityGroups.Add(r2);
+
+
+                res.PageUsers = demoSecurityGroups.ToArray();
+                res.RecordsCount = res.PageUsers.Length;
+                
+                return res;
+            }
+            #endregion
+
+            string accountTypes = string.Format("{0}", ((int)ExchangeAccountType.SecurityGroup));
+
+
+            DataSet ds =
+                DataProvider.GetExchangeAccountsPaged(SecurityContext.User.UserId, itemId, accountTypes, filterColumn,
+                                                      filterValue, sortColumn, startRow, maximumRows);
+
+            ExchangeAccountsPaged result = new ExchangeAccountsPaged();
+            result.RecordsCount = (int)ds.Tables[0].Rows[0][0];
+
+            List<ExchangeAccount> Tmpaccounts = new List<ExchangeAccount>();
+            ObjectUtils.FillCollectionFromDataView(Tmpaccounts, ds.Tables[1].DefaultView);
+            result.PageUsers = Tmpaccounts.ToArray();
+
+            List<ExchangeAccount> accounts = new List<ExchangeAccount>();
+
+            foreach (ExchangeAccount account in Tmpaccounts.ToArray())
+            {
+                OrganizationSecurityGroup tmpSecurityGroup = GetSecurityGroupGeneralSettings(itemId, account.AccountId);
+
+                if (tmpUser != null)
+                    accounts.Add(account);
+            }
+
+            result.PageUsers = accounts.ToArray();
+
+            return result;
+        }
     }
     
 }

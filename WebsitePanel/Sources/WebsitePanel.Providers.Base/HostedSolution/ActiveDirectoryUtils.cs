@@ -368,6 +368,14 @@ namespace WebsitePanel.Providers.HostedSolution
             group.Invoke("Add", user.Path);
         }
 
+        public static void RemoveUserFromGroup(string userPath, string groupPath)
+        {
+            DirectoryEntry user = new DirectoryEntry(userPath);
+            DirectoryEntry group = new DirectoryEntry(groupPath);
+
+            group.Invoke("Remove", user.Path);
+        }
+
         public static bool AdObjectExists(string path)
         {
             return DirectoryEntry.Exists(path);
