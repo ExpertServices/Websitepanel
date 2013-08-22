@@ -3710,7 +3710,20 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@Conferencing", lyncUserPlan.Conferencing),
                 new SqlParameter("@EnterpriseVoice", lyncUserPlan.EnterpriseVoice),
                 new SqlParameter("@VoicePolicy", lyncUserPlan.VoicePolicy),
-                new SqlParameter("@IsDefault", lyncUserPlan.IsDefault)
+                new SqlParameter("@IsDefault", lyncUserPlan.IsDefault),
+
+                new SqlParameter("@RemoteUserAccess", lyncUserPlan.RemoteUserAccess),
+                new SqlParameter("@PublicIMConnectivity", lyncUserPlan.PublicIMConnectivity),
+
+                new SqlParameter("@AllowOrganizeMeetingsWithExternalAnonymous", lyncUserPlan.AllowOrganizeMeetingsWithExternalAnonymous),
+
+                new SqlParameter("@Telephony", lyncUserPlan.Telephony),
+
+                new SqlParameter("@ServerURI", lyncUserPlan.ServerURI),
+
+                new SqlParameter("@ArchivePolicy", lyncUserPlan.ArchivePolicy),
+                new SqlParameter("@TelephonyDialPlanPolicy", lyncUserPlan.TelephonyDialPlanPolicy),
+                new SqlParameter("@TelephonyVoicePolicy", lyncUserPlan.TelephonyVoicePolicy)
             );
 
             return Convert.ToInt32(outParam.Value);
@@ -3733,7 +3746,20 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@Conferencing", lyncUserPlan.Conferencing),
                 new SqlParameter("@EnterpriseVoice", lyncUserPlan.EnterpriseVoice),
                 new SqlParameter("@VoicePolicy", lyncUserPlan.VoicePolicy),
-                new SqlParameter("@IsDefault", lyncUserPlan.IsDefault)
+                new SqlParameter("@IsDefault", lyncUserPlan.IsDefault),
+
+                new SqlParameter("@RemoteUserAccess", lyncUserPlan.RemoteUserAccess),
+                new SqlParameter("@PublicIMConnectivity", lyncUserPlan.PublicIMConnectivity),
+
+                new SqlParameter("@AllowOrganizeMeetingsWithExternalAnonymous", lyncUserPlan.AllowOrganizeMeetingsWithExternalAnonymous),
+
+                new SqlParameter("@Telephony", lyncUserPlan.Telephony),
+
+                new SqlParameter("@ServerURI", lyncUserPlan.ServerURI),
+
+                new SqlParameter("@ArchivePolicy", lyncUserPlan.ArchivePolicy),
+                new SqlParameter("@TelephonyDialPlanPolicy", lyncUserPlan.TelephonyDialPlanPolicy),
+                new SqlParameter("@TelephonyVoicePolicy", lyncUserPlan.TelephonyVoicePolicy)
             );
         }
 

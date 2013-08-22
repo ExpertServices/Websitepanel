@@ -53,8 +53,11 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
 
             List<string> resSettings = new List<string>(lyncSettings);
 
-            ExtendLyncSettings(resSettings, "primarydomaincontroller", GetProviderProperty(organizationServiceId, "primarydomaincontroller"));
-            ExtendLyncSettings(resSettings, "rootou", GetProviderProperty(organizationServiceId, "rootou"));
+            if (organizationServiceId != -1)
+            {
+                ExtendLyncSettings(resSettings, "primarydomaincontroller", GetProviderProperty(organizationServiceId, "primarydomaincontroller"));
+                ExtendLyncSettings(resSettings, "rootou", GetProviderProperty(organizationServiceId, "rootou"));
+            }
             ws.ServiceProviderSettingsSoapHeaderValue.Settings = resSettings.ToArray();
             return ws;
         }
@@ -345,6 +348,13 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
         {
             LyncUserResult res = TaskManager.StartResultTask<LyncUserResult>("LYNC", "SET_LYNC_USER_GENERAL_SETTINGS");
 
+            string PIN = "";
+
+            string[] uriAndPin = ("" + lineUri).Split(':');
+
+            if (uriAndPin.Length > 0) lineUri = uriAndPin[0];
+            if (uriAndPin.Length > 1) PIN = uriAndPin[1];
+
             LyncUser user = null;
 
             try
@@ -378,20 +388,22 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
 
                     if (!string.IsNullOrEmpty(sipAddress))
                     {
-                        if (sipAddress != usr.UserPrincipalName)
+                        if (user.SipAddress != sipAddress)
                         {
-                            if (DataProvider.LyncUserExists(accountId, sipAddress))
+                            if (sipAddress != usr.UserPrincipalName)
                             {
-                                TaskManager.CompleteResultTask(res, LyncErrorCodes.ADDRESS_ALREADY_USED);
-                                return res;
+                                if (DataProvider.LyncUserExists(accountId, sipAddress))
+                                {
+                                    TaskManager.CompleteResultTask(res, LyncErrorCodes.ADDRESS_ALREADY_USED);
+                                    return res;
+                                }
                             }
+                            user.SipAddress = sipAddress;
                         }
-                        
-                        user.SipAddress = sipAddress;
-
                     }
 
-                    if (!string.IsNullOrEmpty(lineUri)) user.LineUri = lineUri;
+                    user.LineUri = lineUri;
+                    user.PIN = PIN;
 
                     lync.SetLyncUserGeneralSettings(org.OrganizationId, usr.UserPrincipalName, user);
 
@@ -1002,6 +1014,51 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
 
         #endregion
 
+        public static string[] GetPolicyList(int itemId, LyncPolicyType type, string name)
+        {
+            string[] ret = null;
+            try
+            {
+                if (itemId == -1)
+                {
+                    // policy list in all lync servers
+                    List<string> allpolicylist = new List<string>();
+                    List<ServerInfo> servers = ServerController.GetAllServers();
+                    foreach (ServerInfo server in servers)
+                    {
+                        List<ServiceInfo> services = ServerController.GetServicesByServerIdGroupName(server.ServerId, ResourceGroups.Lync);
+                        foreach (ServiceInfo service in services)
+                        {
+                            LyncServer lync = GetLyncServer(service.ServiceId, -1);
+                            string[] values = lync.GetPolicyList(type, name);
+                            foreach (string val in values)
+                                if (allpolicylist.IndexOf(val) == -1)
+                                    allpolicylist.Add(val);
+                        }
+
+                    }
+                    ret = allpolicylist.ToArray();
+                }
+                else
+                {
+
+                    Organization org = (Organization)PackageController.GetPackageItem(itemId);
+
+                    int lyncServiceId = GetLyncServiceID(org.PackageId);
+                    LyncServer lync = GetLyncServer(lyncServiceId, org.ServiceId);
+
+                    ret = lync.GetPolicyList(type, name);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+            }
+
+            return ret;
+        }
 
         #region Private methods
         public static UInt64 ConvertPhoneNumberToLong(string ip)

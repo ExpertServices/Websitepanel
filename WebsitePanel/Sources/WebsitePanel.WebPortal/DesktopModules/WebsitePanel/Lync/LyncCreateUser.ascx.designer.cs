@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2011, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -44,8 +44,9 @@ namespace WebsitePanel.Portal.Lync {
         /// asyncTasks control.
         /// </summary>
         /// <remarks>
-        /// Auto-generated field.
+                /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
+
         /// </remarks>
         protected global::WebsitePanel.Portal.EnableAsyncTasksSupport asyncTasks;
         
@@ -53,8 +54,9 @@ namespace WebsitePanel.Portal.Lync {
         /// breadcrumb control.
         /// </summary>
         /// <remarks>
-        /// Auto-generated field.
+                /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
+
         /// </remarks>
         protected global::WebsitePanel.Portal.ExchangeServer.UserControls.Breadcrumb breadcrumb;
         
@@ -62,8 +64,9 @@ namespace WebsitePanel.Portal.Lync {
         /// menu control.
         /// </summary>
         /// <remarks>
-        /// Auto-generated field.
+                /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
+
         /// </remarks>
         protected global::WebsitePanel.Portal.ExchangeServer.UserControls.Menu menu;
         
@@ -71,8 +74,9 @@ namespace WebsitePanel.Portal.Lync {
         /// Image1 control.
         /// </summary>
         /// <remarks>
-        /// Auto-generated field.
+                /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
+
         /// </remarks>
         protected global::System.Web.UI.WebControls.Image Image1;
         
@@ -80,8 +84,9 @@ namespace WebsitePanel.Portal.Lync {
         /// locTitle control.
         /// </summary>
         /// <remarks>
-        /// Auto-generated field.
+                /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
+
         /// </remarks>
         protected global::System.Web.UI.WebControls.Localize locTitle;
         
@@ -89,8 +94,9 @@ namespace WebsitePanel.Portal.Lync {
         /// messageBox control.
         /// </summary>
         /// <remarks>
-        /// Auto-generated field.
+                /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
+
         /// </remarks>
         protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox messageBox;
         
@@ -98,8 +104,9 @@ namespace WebsitePanel.Portal.Lync {
         /// ExistingUserTable control.
         /// </summary>
         /// <remarks>
-        /// Auto-generated field.
+                /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
+
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlTable ExistingUserTable;
         
@@ -107,8 +114,9 @@ namespace WebsitePanel.Portal.Lync {
         /// Localize1 control.
         /// </summary>
         /// <remarks>
-        /// Auto-generated field.
+                /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
+
         /// </remarks>
         protected global::System.Web.UI.WebControls.Localize Localize1;
         
@@ -116,8 +124,9 @@ namespace WebsitePanel.Portal.Lync {
         /// userSelector control.
         /// </summary>
         /// <remarks>
-        /// Auto-generated field.
+                /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
+
         /// </remarks>
         protected global::WebsitePanel.Portal.ExchangeServer.UserControls.UserSelector userSelector;
         
@@ -125,8 +134,9 @@ namespace WebsitePanel.Portal.Lync {
         /// locPlanName control.
         /// </summary>
         /// <remarks>
-        /// Auto-generated field.
+                /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
+
         /// </remarks>
         protected global::System.Web.UI.WebControls.Localize locPlanName;
         
@@ -134,17 +144,89 @@ namespace WebsitePanel.Portal.Lync {
         /// planSelector control.
         /// </summary>
         /// <remarks>
-        /// Auto-generated field.
+                /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
+
         /// </remarks>
         protected global::WebsitePanel.Portal.Lync.UserControls.LyncUserPlanSelector planSelector;
+        
+        /// <summary>
+        /// pnEnterpriseVoice control.
+        /// </summary>
+        /// <remarks>
+                /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnEnterpriseVoice;
+        
+        /// <summary>
+        /// locPhoneNumber control.
+        /// </summary>
+        /// <remarks>
+                /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locPhoneNumber;
+        
+        /// <summary>
+        /// ddlPhoneNumber control.
+        /// </summary>
+        /// <remarks>
+                /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlPhoneNumber;
+        
+        /// <summary>
+        /// PhoneFormatValidator control.
+        /// </summary>
+        /// <remarks>
+                /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator PhoneFormatValidator;
+        
+        /// <summary>
+        /// locLyncPin control.
+        /// </summary>
+        /// <remarks>
+                /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locLyncPin;
+        
+        /// <summary>
+        /// tbPin control.
+        /// </summary>
+        /// <remarks>
+                /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox tbPin;
+        
+        /// <summary>
+        /// PinRegularExpressionValidator control.
+        /// </summary>
+        /// <remarks>
+                /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator PinRegularExpressionValidator;
         
         /// <summary>
         /// btnCreate control.
         /// </summary>
         /// <remarks>
-        /// Auto-generated field.
+                /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
+
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnCreate;
     }

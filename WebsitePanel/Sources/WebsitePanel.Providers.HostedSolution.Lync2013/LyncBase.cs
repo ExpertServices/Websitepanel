@@ -134,6 +134,11 @@ namespace WebsitePanel.Providers.HostedSolution
             ReloadConfigurationInternal();
         }
 
+        public virtual string[] GetPolicyList(LyncPolicyType type, string name)
+        {
+            return GetPolicyListInternal(type, name);
+        }
+
         public override bool IsInstalled()
         {
             bool bResult = false;
@@ -205,6 +210,11 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         internal virtual void ReloadConfigurationInternal()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal virtual string[] GetPolicyListInternal(LyncPolicyType type, string name)
         {
             throw new NotImplementedException();
         }

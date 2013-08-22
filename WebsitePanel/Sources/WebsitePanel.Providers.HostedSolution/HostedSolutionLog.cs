@@ -50,11 +50,21 @@ namespace WebsitePanel.Providers.HostedSolution
 			Log.WriteEnd("{0} {1}", LogPrefix, text);
 		}
 
+        public static void LogInfo(string message)
+        {
+            Log.WriteInfo("{0} {1}", LogPrefix, message);
+        }
+
         public static void LogInfo(string message, params object[] args)
 		{
 			string text = String.Format(message, args);
 			Log.WriteInfo("{0} {1}", LogPrefix, text);
 		}
+
+        public static void LogWarning(string message)
+        {
+            Log.WriteWarning("{0} {1}", LogPrefix, message);
+        }
 
         public static void LogWarning(string message, params object[] args)
 		{

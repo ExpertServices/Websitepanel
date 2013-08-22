@@ -48,5 +48,7 @@ namespace WebsitePanel.Providers.HostedSolution
         bool RemoveFederationDomain(string organizationId, string domainName);
 
         void ReloadConfiguration();
+
+        string[] GetPolicyList(LyncPolicyType type, string name);
     }
 }

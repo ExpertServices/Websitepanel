@@ -627,6 +627,16 @@ namespace WebsitePanel.Providers.Lync {
                 this.ReloadConfigurationCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetPolicyList", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string[] GetPolicyList(LyncPolicyType type, string name)
+        {
+            object[] results = this.Invoke("GetPolicyList", new object[] {
+                        type, name});
+            return ((string[])(results[0]));
+        }
         
         /// <remarks/>
         public new void CancelAsync(object userState) {

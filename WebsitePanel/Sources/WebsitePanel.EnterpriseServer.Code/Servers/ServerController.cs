@@ -965,38 +965,59 @@ namespace WebsitePanel.EnterpriseServer
                     return res;
                 }
 
-				var startExternalIP = IPAddress.Parse(externalIP);
-				var startInternalIP = IPAddress.Parse(internalIP);
-				var endExternalIP = IPAddress.Parse(endIP);
-
-				// handle CIDR notation IP/Subnet addresses
-				if (startExternalIP.IsSubnet && endExternalIP == null) {
-					endExternalIP = startExternalIP.LastSubnetIP;
-					startExternalIP = startExternalIP.FirstSubnetIP;
-				}
-
-				if (startExternalIP.V6 != startInternalIP.V6 && (startExternalIP.V6 != endExternalIP.V6 && endExternalIP != null)) throw new NotSupportedException("All IP addresses must be either V4 or V6.");
-
-                int i = 0;
-                long step = ((endExternalIP - startExternalIP) > 0) ? 1 : -1;
-
-                while (true)
+                if (pool == IPAddressPool.PhoneNumbers)
                 {
-                    if (i > MaxSubnet)	
-                        break;
+                    string phoneFormat = "D" + Math.Max(externalIP.Length, endIP.Length);
 
-                    // add IP address
-                    DataProvider.AddIPAddress((int)pool, serverId, startExternalIP.ToString(), startInternalIP.ToString(), subnetMask, defaultGateway, comments);
+                    UInt64 start = UInt64.Parse(externalIP);
+                    UInt64 end = UInt64.Parse(endIP);
 
-                    if (startExternalIP == endExternalIP)
-                        break;
+                    if (end < start) { UInt64 temp = start; start = end; end = temp; }
 
-                    i++;
+                    const UInt64 maxPhones = 1000; // TODO max?
 
-                    startExternalIP += step;
+                    end = Math.Min(end, start + maxPhones);
 
-                    if (startInternalIP != 0)
-                        startInternalIP += step;
+                    for (UInt64 number = start; number <= end; number++)
+                        DataProvider.AddIPAddress((int)pool, serverId, number.ToString(phoneFormat), "", subnetMask, defaultGateway, comments);
+                }
+
+                else
+                {
+                    var startExternalIP = IPAddress.Parse(externalIP);
+                    var startInternalIP = IPAddress.Parse(internalIP);
+                    var endExternalIP = IPAddress.Parse(endIP);
+
+                    // handle CIDR notation IP/Subnet addresses
+                    if (startExternalIP.IsSubnet && endExternalIP == null)
+                    {
+                        endExternalIP = startExternalIP.LastSubnetIP;
+                        startExternalIP = startExternalIP.FirstSubnetIP;
+                    }
+
+                    if (startExternalIP.V6 != startInternalIP.V6 && (startExternalIP.V6 != endExternalIP.V6 && endExternalIP != null)) throw new NotSupportedException("All IP addresses must be either V4 or V6.");
+
+                    int i = 0;
+                    long step = ((endExternalIP - startExternalIP) > 0) ? 1 : -1;
+
+                    while (true)
+                    {
+                        if (i > MaxSubnet)
+                            break;
+
+                        // add IP address
+                        DataProvider.AddIPAddress((int)pool, serverId, startExternalIP.ToString(), startInternalIP.ToString(), subnetMask, defaultGateway, comments);
+
+                        if (startExternalIP == endExternalIP)
+                            break;
+
+                        i++;
+
+                        startExternalIP += step;
+
+                        if (startInternalIP != 0)
+                            startInternalIP += step;
+                    }
                 }
             }
             catch (Exception ex)

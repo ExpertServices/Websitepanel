@@ -30,6 +30,11 @@ using System;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
+using WebsitePanel.Providers;
+using WebsitePanel.Providers.Web;
+using WebsitePanel.Providers.Common;
+using WebsitePanel.Portal.Code.Helpers;
+
 
 namespace WebsitePanel.Portal.Lync
 {
@@ -37,11 +42,22 @@ namespace WebsitePanel.Portal.Lync
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            PackageContext cntx = null;
 
             if (!IsPostBack)
             {
+                cntx = ES.Services.Packages.GetPackageContext(PanelSecurity.PackageId);
 
-                PackageContext cntx = ES.Services.Packages.GetPackageContext(PanelSecurity.PackageId);
+                string[] archivePolicy = ES.Services.Lync.GetPolicyList(PanelRequest.ItemID, LyncPolicyType.Archiving, null);
+                if (archivePolicy != null)
+                {
+                    foreach (string policy in archivePolicy)
+                    {
+                        if (policy.ToLower()=="global") continue;
+                        string txt = policy.Replace("Tag:","");
+                        ddArchivingPolicy.Items.Add( new System.Web.UI.WebControls.ListItem( txt, policy) );
+                    }
+                }
 
                 if (PanelRequest.GetInt("LyncUserPlanId") != 0)
                 {
@@ -54,6 +70,8 @@ namespace WebsitePanel.Portal.Lync
                     chkConferencing.Checked = plan.Conferencing;
                     chkMobility.Checked = plan.Mobility;
                     chkEnterpriseVoice.Checked = plan.EnterpriseVoice;
+
+                    /* because not used
                     switch (plan.VoicePolicy)
                     {
                         case LyncVoicePolicyType.None:
@@ -74,16 +92,40 @@ namespace WebsitePanel.Portal.Lync
                             chkNone.Checked = true;
                             break;
                     }
+                     */
+
+	                chkRemoteUserAccess.Checked = plan.RemoteUserAccess;
+	                chkPublicIMConnectivity.Checked = plan.PublicIMConnectivity;
+
+	                chkAllowOrganizeMeetingsWithExternalAnonymous.Checked = plan.AllowOrganizeMeetingsWithExternalAnonymous;
+
+                    ddTelephony.SelectedIndex = plan.Telephony;
+
+	                tbServerURI.Text = plan.ServerURI;
 
                     locTitle.Text = plan.LyncUserPlanName;
                     this.DisableControls = true;
+
+                    string planArchivePolicy = ""; 
+                    if (plan.ArchivePolicy != null) planArchivePolicy = plan.ArchivePolicy;
+                    string planTelephonyDialPlanPolicy = "";
+                    if (plan.TelephonyDialPlanPolicy != null) planTelephonyDialPlanPolicy = plan.TelephonyDialPlanPolicy;
+                    string planTelephonyVoicePolicy = "";
+                    if (plan.TelephonyVoicePolicy != null) planTelephonyVoicePolicy = plan.TelephonyVoicePolicy;
+
+                    ddArchivingPolicy.Items.Clear();
+                    ddArchivingPolicy.Items.Add(new System.Web.UI.WebControls.ListItem(planArchivePolicy.Replace("Tag:", ""), planArchivePolicy));
+                    ddTelephonyDialPlanPolicy.Items.Clear();
+                    ddTelephonyDialPlanPolicy.Items.Add(new System.Web.UI.WebControls.ListItem(planTelephonyDialPlanPolicy.Replace("Tag:", ""), planTelephonyDialPlanPolicy));
+                    ddTelephonyVoicePolicy.Items.Clear();
+                    ddTelephonyVoicePolicy.Items.Add(new System.Web.UI.WebControls.ListItem(planTelephonyVoicePolicy.Replace("Tag:", ""), planTelephonyVoicePolicy));
 
                 }
                 else
                 {
                     chkIM.Checked = true;
                     chkIM.Enabled = false;
-                    chkNone.Checked = true;
+                    // chkNone.Checked = true; because not used
                     if (cntx != null)
                     {
                         foreach (QuotaValueInfo quota in cntx.QuotasArray)
@@ -110,11 +152,69 @@ namespace WebsitePanel.Portal.Lync
                 }
             }
 
+            chkEnterpriseVoice.Enabled = false;
+            chkEnterpriseVoice.Checked = false;
+
+            pnEnterpriseVoice.Visible = false;
+            pnServerURI.Visible = false;
+
+            switch (ddTelephony.SelectedIndex)
+            {
+                case 1:
+                break;
+                case 2:
+                    pnEnterpriseVoice.Visible = true;
+                    chkEnterpriseVoice.Checked = true;
+                break;
+                case 3:
+                    pnServerURI.Visible = true;
+                break;
+                case 4:
+                    pnServerURI.Visible = true;
+                break;
+                
+            }
+
+            cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            PlanFeaturesTelephony.Visible = Utils.CheckQouta(Quotas.LYNC_ENTERPRISEVOICE, cntx);
+            secPlanFeaturesTelephony.Visible = PlanFeaturesTelephony.Visible;
+
         }
 
         protected void btnAdd_Click(object sender, EventArgs e)
         {
             AddPlan();
+        }
+
+        protected void btnAccept_Click(object sender, EventArgs e)
+        {
+            string name = tbTelephoneProvider.Text;
+
+            if (string.IsNullOrEmpty(name)) return;
+
+            ddTelephonyDialPlanPolicy.Items.Clear();
+            string[] dialPlan = ES.Services.Lync.GetPolicyList(PanelRequest.ItemID, LyncPolicyType.DialPlan, name);
+            if (dialPlan != null)
+            {
+                foreach (string policy in dialPlan)
+                {
+                    if (policy.ToLower() == "global") continue;
+                    string txt = policy.Replace("Tag:", "");
+                    ddTelephonyDialPlanPolicy.Items.Add(new System.Web.UI.WebControls.ListItem(txt, policy));
+                }
+            }
+
+            ddTelephonyVoicePolicy.Items.Clear();
+            string[] voicePolicy = ES.Services.Lync.GetPolicyList(PanelRequest.ItemID, LyncPolicyType.Voice, name);
+            if (voicePolicy != null)
+            {
+                foreach (string policy in voicePolicy)
+                {
+                    if (policy.ToLower() == "global") continue;
+                    string txt = policy.Replace("Tag:", "");
+                    ddTelephonyVoicePolicy.Items.Add(new System.Web.UI.WebControls.ListItem(txt, policy));
+                }
+            }
         }
 
         private void AddPlan()
@@ -132,6 +232,10 @@ namespace WebsitePanel.Portal.Lync
 
 
                 plan.EnterpriseVoice = chkEnterpriseVoice.Checked;
+
+                plan.VoicePolicy = LyncVoicePolicyType.None;
+
+                /* because not used
                 if (!plan.EnterpriseVoice)
                 {
                     plan.VoicePolicy = LyncVoicePolicyType.None;
@@ -149,7 +253,21 @@ namespace WebsitePanel.Portal.Lync
                     else
                         plan.VoicePolicy = LyncVoicePolicyType.None;
 
-                }
+                } 
+                */
+
+	            plan.RemoteUserAccess = chkRemoteUserAccess.Checked;
+	            plan.PublicIMConnectivity = chkPublicIMConnectivity.Checked;
+
+	            plan.AllowOrganizeMeetingsWithExternalAnonymous = chkAllowOrganizeMeetingsWithExternalAnonymous.Checked;
+
+	            plan.Telephony = ddTelephony.SelectedIndex;
+
+	            plan.ServerURI = tbServerURI.Text;
+
+                plan.ArchivePolicy = ddArchivingPolicy.SelectedValue;
+                plan.TelephonyDialPlanPolicy = ddTelephonyDialPlanPolicy.SelectedValue;
+                plan.TelephonyVoicePolicy = ddTelephonyVoicePolicy.SelectedValue;
 
                 int result = ES.Services.Lync.AddLyncUserPlan(PanelRequest.ItemID,
                                                                                 plan);

@@ -94,6 +94,7 @@
     <Compile Include="HostedSolution\LyncErrorCodes.cs" />
     <Compile Include="HostedSolution\LyncFederationDomain.cs" />
     <Compile Include="HostedSolution\LyncOrganizationStatistics.cs" />
+    <Compile Include="HostedSolution\LyncPolicyType.cs" />
     <Compile Include="HostedSolution\LyncTransaction.cs" />
     <Compile Include="HostedSolution\LyncUserStatistics.cs" />
     <Compile Include="HostedSolution\LyncStatisticsReport.cs" />

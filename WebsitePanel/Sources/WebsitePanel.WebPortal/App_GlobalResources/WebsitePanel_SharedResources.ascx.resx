@@ -3118,7 +3118,6 @@
   <data name="Error.ORGANIZATION_SET_USER_USERPRINCIPALNAME" xml:space="preserve">
     <value>Failed to update user login name.</value>
   </data>
-
   <data name="Success.EXCHANGE_MAILBOX_SET_DEFAULT_EMAIL" xml:space="preserve">
     <value>Mailbox primary e-mail address has been changed.</value>
   </data>
@@ -3371,7 +3370,6 @@
   <data name="Warning.NOT_ALL_EMAIL_ADDRESSES_DELETED" xml:space="preserve">
     <value>Please note not all email address are deleted</value>
   </data>
-
   <data name="Warning.EXCHANGE_NONE_PUBLIC_FOLDER_TO_DELETE" xml:space="preserve">
     <value>There are no public folders to delete</value>
   </data>
@@ -3959,9 +3957,6 @@
   </data>
   <data name="Warning.1602" xml:space="preserve">
     <value>IP Address could not be deleted</value>
-  </data>
-  <data name="WarningDescription.1602" xml:space="preserve">
-    <value>IP Address could not be deleted because it is being used by Virtual Private Server.</value>
   </data>
   <data name="Error.VPS_ERROR_ADDING_IP_ADDRESS" xml:space="preserve">
     <value>Cannot add network adapter IP addresses</value>
@@ -5286,6 +5281,12 @@
   <data name="Success.EXCHANGE_UPDATEPLANS" xml:space="preserve">
     <value>Mailbox plan updated</value>
   </data>
+  <data name="Error.LYNC_UPDATEPLANS" xml:space="preserve">
+    <value>Lync plan update failed</value>
+  </data>
+  <data name="Success.LYNC_UPDATEPLANS" xml:space="preserve">
+    <value>Lync plan updated</value>
+  </data>
   <data name="Error.LYNC_APPLYPLANTEMPLATE" xml:space="preserve">
     <value>Failed to apply plans template</value>
   </data>
@@ -5312,5 +5313,20 @@
   </data>
   <data name="WarningDescription.ApplyEnableHardQuotaFeature" xml:space="preserve">
     <value>By clicking on the button 'Apply', you will apply the respective hard quota on each provisioned home folder. Note that this may take some time.</value>
+  </data>
+  <data name="Error.IP_ADD_PHONE" xml:space="preserve">
+    <value>Error adding Phone number</value>
+  </data>
+  <data name="Error.IP_ADD_PHONE_RANGE" xml:space="preserve">
+    <value>Cannot add Phone numbers range.</value>
+  </data>
+  <data name="Error.DEALLOCATE_SPACE_PHONE_NUMBER" xml:space="preserve">
+    <value>The following errors have been occurred:</value>
+  </data>
+  <data name="Success.DEALLOCATE_SPACE_PHONE_NUMBER" xml:space="preserve">
+    <value>Phone number have been successfully deallocated.</value>
+  </data>
+  <data name="WarningDescription.PHONE_EDIT_LIST_EMPTY_ERROR" xml:space="preserve">
+    <value>At least one Phone number must be selected.</value>
   </data>
 </root>

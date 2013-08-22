@@ -247,7 +247,25 @@ namespace WebsitePanel.Server
             }
         }
 
+        [WebMethod, SoapHeader("settings")]
+        public string[] GetPolicyList(LyncPolicyType type, string name)
+        {
+            string[] ret = null;
 
+            try
+            {
+                Log.WriteStart("{0}.GetPolicyList", ProviderSettings.ProviderName);
+                ret = Lync.GetPolicyList(type, name);
+                Log.WriteEnd("{0}.GetPolicyList", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("Error: {0}.GetPolicyList", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+
+            return ret;
+        }
 
 
     }

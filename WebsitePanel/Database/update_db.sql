@@ -1638,3 +1638,325 @@ BEGIN
 INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (422, 12, 26, N'Exchange2007.DisclaimersAllowed', N'Disclaimers Allowed', 1, 0, NULL, NULL)   
 END
 GO  
+
+-- Lync Enterprise Voice
+
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='LyncUserPlans' AND COLS.name='TelephonyVoicePolicy')
+BEGIN
+ALTER TABLE [dbo].[LyncUserPlans] ADD 
+
+[RemoteUserAccess] [bit] NOT NULL DEFAULT 0,
+[PublicIMConnectivity] [bit] NOT NULL  DEFAULT 0,
+
+[AllowOrganizeMeetingsWithExternalAnonymous] [bit] NOT NULL DEFAULT 0,
+
+[Telephony] [int] NULL,
+
+[ServerURI] [nvarchar](300) NULL,
+
+[ArchivePolicy] [nvarchar](300) NULL,
+[TelephonyDialPlanPolicy] [nvarchar](300) NULL,
+[TelephonyVoicePolicy] [nvarchar](300) NULL
+
+
+END
+Go
+
+-- 
+
+DROP PROCEDURE GetLyncUserPlan;
+
+DROP PROCEDURE AddLyncUserPlan;
+
+DROP PROCEDURE UpdateLyncUserPlan;
+
+DROP PROCEDURE DeleteLyncUserPlan;
+
+--
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'DeleteLyncUserPlan')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[DeleteLyncUserPlan]
+(
+	@LyncUserPlanId int
+)
+AS
+
+-- delete lyncuserplan
+DELETE FROM LyncUserPlans
+WHERE LyncUserPlanId = @LyncUserPlanId
+
+RETURN'
+END
+GO
+
+--
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'UpdateLyncUserPlan')
+BEGIN
+EXEC sp_executesql N' CREATE PROCEDURE [dbo].[UpdateLyncUserPlan] 
+(
+	@LyncUserPlanId int,
+	@LyncUserPlanName	nvarchar(300),
+	@LyncUserPlanType int,
+	@IM bit,
+	@Mobility bit,
+	@MobilityEnableOutsideVoice bit,
+	@Federation bit,
+	@Conferencing bit,
+	@EnterpriseVoice bit,
+	@VoicePolicy int,
+	@IsDefault bit,
+
+	@RemoteUserAccess bit,
+	@PublicIMConnectivity bit,
+
+	@AllowOrganizeMeetingsWithExternalAnonymous bit,
+
+	@Telephony int,
+
+	@ServerURI nvarchar(300),
+	
+	@ArchivePolicy nvarchar(300),
+	
+	@TelephonyDialPlanPolicy nvarchar(300),
+	@TelephonyVoicePolicy nvarchar(300)
+)
+AS
+
+UPDATE LyncUserPlans SET
+	LyncUserPlanName = @LyncUserPlanName,
+	LyncUserPlanType = @LyncUserPlanType,
+	IM = @IM,
+	Mobility = @Mobility,
+	MobilityEnableOutsideVoice = @MobilityEnableOutsideVoice,
+	Federation = @Federation,
+	Conferencing =@Conferencing,
+	EnterpriseVoice = @EnterpriseVoice,
+	VoicePolicy = @VoicePolicy,
+	IsDefault = @IsDefault,
+
+	RemoteUserAccess = @RemoteUserAccess,
+	PublicIMConnectivity = @PublicIMConnectivity,
+
+	AllowOrganizeMeetingsWithExternalAnonymous = @AllowOrganizeMeetingsWithExternalAnonymous,
+
+	Telephony = @Telephony,
+
+	ServerURI = @ServerURI,
+	
+	ArchivePolicy = @ArchivePolicy,
+	TelephonyDialPlanPolicy = @TelephonyDialPlanPolicy,
+	TelephonyVoicePolicy = @TelephonyVoicePolicy
+
+WHERE LyncUserPlanId = @LyncUserPlanId
+
+
+RETURN'
+END
+GO
+
+--
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'AddLyncUserPlan')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[AddLyncUserPlan] 
+(
+	@LyncUserPlanId int OUTPUT,
+	@ItemID int,
+	@LyncUserPlanName	nvarchar(300),
+	@LyncUserPlanType int,
+	@IM bit,
+	@Mobility bit,
+	@MobilityEnableOutsideVoice bit,
+	@Federation bit,
+	@Conferencing bit,
+	@EnterpriseVoice bit,
+	@VoicePolicy int,
+	@IsDefault bit,
+
+	@RemoteUserAccess bit,
+	@PublicIMConnectivity bit,
+
+	@AllowOrganizeMeetingsWithExternalAnonymous bit,
+
+	@Telephony int,
+
+	@ServerURI nvarchar(300),
+	
+	@ArchivePolicy  nvarchar(300),
+	@TelephonyDialPlanPolicy nvarchar(300),
+	@TelephonyVoicePolicy nvarchar(300)
+
+)
+AS
+
+
+
+IF (((SELECT Count(*) FROM LyncUserPlans WHERE ItemId = @ItemID) = 0) AND (@LyncUserPlanType=0))
+BEGIN
+	SET @IsDefault = 1
+END
+ELSE
+BEGIN
+	IF ((@IsDefault = 1) AND (@LyncUserPlanType=0))
+	BEGIN
+		UPDATE LyncUserPlans SET IsDefault = 0 WHERE ItemID = @ItemID
+	END
+END
+
+
+INSERT INTO LyncUserPlans
+(
+	ItemID,
+	LyncUserPlanName,
+	LyncUserPlanType,
+	IM,
+	Mobility,
+	MobilityEnableOutsideVoice,
+	Federation,
+	Conferencing,
+	EnterpriseVoice,
+	VoicePolicy,
+	IsDefault,
+
+	RemoteUserAccess,
+	PublicIMConnectivity,
+
+	AllowOrganizeMeetingsWithExternalAnonymous,
+
+	Telephony,
+
+	ServerURI,
+	
+	ArchivePolicy,
+	TelephonyDialPlanPolicy,
+	TelephonyVoicePolicy
+
+)
+VALUES
+(
+	@ItemID,
+	@LyncUserPlanName,
+	@LyncUserPlanType,
+	@IM,
+	@Mobility,
+	@MobilityEnableOutsideVoice,
+	@Federation,
+	@Conferencing,
+	@EnterpriseVoice,
+	@VoicePolicy,
+	@IsDefault,
+
+	@RemoteUserAccess,
+	@PublicIMConnectivity,
+
+	@AllowOrganizeMeetingsWithExternalAnonymous,
+
+	@Telephony,
+
+	@ServerURI,
+	
+	@ArchivePolicy,
+	@TelephonyDialPlanPolicy,
+	@TelephonyVoicePolicy
+
+)
+
+SET @LyncUserPlanId = SCOPE_IDENTITY()
+
+RETURN'		
+END
+GO
+
+--
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetLyncUserPlan')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[GetLyncUserPlan] 
+(
+	@LyncUserPlanId int
+)
+AS
+SELECT
+	LyncUserPlanId,
+	ItemID,
+	LyncUserPlanName,
+	LyncUserPlanType,
+	IM,
+	Mobility,
+	MobilityEnableOutsideVoice,
+	Federation,
+	Conferencing,
+	EnterpriseVoice,
+	VoicePolicy,
+	IsDefault,
+
+	RemoteUserAccess,
+	PublicIMConnectivity,
+
+	AllowOrganizeMeetingsWithExternalAnonymous,
+
+	Telephony,
+
+	ServerURI,
+	
+	ArchivePolicy,
+	TelephonyDialPlanPolicy,
+	TelephonyVoicePolicy
+
+FROM
+	LyncUserPlans
+WHERE
+	LyncUserPlanId = @LyncUserPlanId
+RETURN'
+END
+GO
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetLyncUserPlan] 
+(
+	@LyncUserPlanId int
+)
+AS
+SELECT
+	LyncUserPlanId,
+	ItemID,
+	LyncUserPlanName,
+	LyncUserPlanType,
+	IM,
+	Mobility,
+	MobilityEnableOutsideVoice,
+	Federation,
+	Conferencing,
+	EnterpriseVoice,
+	VoicePolicy,
+	IsDefault,
+
+	RemoteUserAccess,
+	PublicIMConnectivity,
+
+	AllowOrganizeMeetingsWithExternalAnonymous,
+
+	Telephony,
+
+	ServerURI,
+	
+	ArchivePolicy,
+	TelephonyDialPlanPolicy,
+	TelephonyVoicePolicy
+
+FROM
+	LyncUserPlans
+WHERE
+	LyncUserPlanId = @LyncUserPlanId
+RETURN
+GO
+
+
+
+

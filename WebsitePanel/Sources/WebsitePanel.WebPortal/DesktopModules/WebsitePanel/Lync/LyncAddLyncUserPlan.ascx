@@ -62,11 +62,6 @@
 						    </tr>
 						    <tr>
 							    <td>
-								    <asp:CheckBox ID="chkFederation" runat="server" meta:resourcekey="chkFederation" Text="Federation"></asp:CheckBox>
-							    </td>
-						    </tr>
-						    <tr>
-							    <td>
 								    <asp:CheckBox ID="chkConferencing" runat="server" meta:resourcekey="chkConferencing" Text="Conferencing"></asp:CheckBox>
 							    </td>
 						    </tr>
@@ -78,7 +73,136 @@
 						</table>
 						<br />
 					</asp:Panel>
-			
+
+
+					<wsp:CollapsiblePanel id="secPlanFeaturesFederation" runat="server"
+                        TargetControlID="PlanFeaturesFederation" meta:resourcekey="secPlanFeaturesFederation" Text="Federation">
+                    </wsp:CollapsiblePanel>
+                    <asp:Panel ID="PlanFeaturesFederation" runat="server" Height="0" style="overflow:hidden;">
+					    <table>
+						    <tr>
+							    <td>
+								    <asp:CheckBox ID="chkFederation" runat="server" meta:resourcekey="chkFederation" Text="Federation"></asp:CheckBox>
+							    </td>
+						    </tr>
+						    <tr>
+							    <td>
+								    <asp:CheckBox ID="chkRemoteUserAccess" runat="server" meta:resourcekey="chkRemoteUserAccess" Text="Remote User access"></asp:CheckBox>
+							    </td>
+						    </tr>
+						    <tr>
+							    <td>
+								    <asp:CheckBox ID="chkPublicIMConnectivity" runat="server" meta:resourcekey="chkPublicIMConnectivity" Text="Public IM Connectivity"></asp:CheckBox>
+							    </td>
+						    </tr>
+						</table>
+						<br />
+					</asp:Panel>
+
+					<wsp:CollapsiblePanel id="secPlanFeaturesArchiving" runat="server"
+                        TargetControlID="PlanFeaturesArchiving" meta:resourcekey="secPlanFeaturesArchiving" Text="Archiving">
+                    </wsp:CollapsiblePanel>
+                    <asp:Panel ID="PlanFeaturesArchiving" runat="server" Height="0" style="overflow:hidden;">
+					    <table>
+                            <tr>
+                                <td class="FormLabel150">
+                                    <asp:Localize runat="server" ID="locArchivingPolicy" meta:resourcekey="locArchivingPolicy" Text="Archiving Policy:" />
+                                </td>
+                                <td>
+                                    <asp:DropDownList ID="ddArchivingPolicy" runat="server"></asp:DropDownList>
+                                </td>
+                            </tr>
+						</table>
+						<br />
+					</asp:Panel>
+
+					<wsp:CollapsiblePanel id="secPlanFeaturesMeeting" runat="server"
+                        TargetControlID="PlanFeaturesMeeting" meta:resourcekey="secPlanFeaturesMeeting" Text="Meeting">
+                    </wsp:CollapsiblePanel>
+                    <asp:Panel ID="PlanFeaturesMeeting" runat="server" Height="0" style="overflow:hidden;">
+					    <table>
+						    <tr>
+							    <td>
+								    <asp:CheckBox ID="chkAllowOrganizeMeetingsWithExternalAnonymous" runat="server" meta:resourcekey="chkAllowOrganizeMeetingsWithExternalAnonymous" Text="Allow organize meetings with external anonymous participants"></asp:CheckBox>
+							    </td>
+						    </tr>
+						</table>
+						<br />
+					</asp:Panel>
+
+					<wsp:CollapsiblePanel id="secPlanFeaturesTelephony" runat="server"
+                        TargetControlID="PlanFeaturesTelephony" meta:resourcekey="secPlanFeaturesTelephony" Text="Telephony">
+                    </wsp:CollapsiblePanel>
+                    <asp:Panel ID="PlanFeaturesTelephony" runat="server" Height="0" style="overflow:hidden;">
+					    <table>
+                            <tr>
+                                <td class="FormLabel150">
+                                    <asp:Localize runat="server" ID="locTelephony" meta:resourcekey="locTelephony" Text="Telephony :" />
+                                </td>
+                                <td>
+                                    <asp:DropDownList ID="ddTelephony" runat="server" AutoPostBack="True">
+                                        <asp:ListItem Value="0" Text="Audio/Video disabled" meta:resourcekey="ddlTelephonyDisabled" />
+                                        <asp:ListItem Value="1" Text="PC-to-PC only" meta:resourcekey="ddlTelephonyPCtoPCOnly" />
+                                        <asp:ListItem Value="2" Text="Enterprise voice" meta:resourcekey="ddlTelephonyEnterpriseVoice" />
+                                        <asp:ListItem Value="3" Text="Remote call control" meta:resourcekey="ddlTelephonyRemoteCallControl" />
+                                        <asp:ListItem Value="4" Text="Remote call control only" meta:resourcekey="ddlTelephonyRemoteCallControlOnly" />
+                                    </asp:DropDownList>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <asp:Panel runat="server" ID="pnEnterpriseVoice">
+                        <table>
+                            <tr>
+                                <td class="FormLabel150">
+                                    <asp:Localize runat="server" ID="locTelephonyProvider" meta:resourcekey="locTelephonyProvider" Text="Telephony Provider :" />
+                                </td>
+                                <td>
+                                    <asp:TextBox ID="tbTelephoneProvider" runat="server"></asp:TextBox>
+                                    <asp:Button runat="server" ID="btnAccept" Text="Accept" OnClick="btnAccept_Click" OnClientClick="ShowProgressDialog('Loading...');" ValidationGroup="Accept"/>
+
+                                    <asp:RequiredFieldValidator id="AcceptRequiredValidator" runat="server" ErrorMessage="Please enter provider name"
+                                    ControlToValidate="tbTelephoneProvider" Display="Dynamic" ValidationGroup="Accept" SetFocusOnError="true"></asp:RequiredFieldValidator>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="FormLabel150">
+                                    <asp:Localize runat="server" ID="locDialPlan" meta:resourcekey="locDialPlan" Text="Dial Plan :" />
+                                </td>
+                                <td>        
+                                    <asp:DropDownList ID="ddTelephonyDialPlanPolicy" runat="server"></asp:DropDownList>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="FormLabel150">
+                                    <asp:Localize runat="server" ID="locVoicePolicy" meta:resourcekey="locVoicePolicy" Text="Voice Policy :" />
+                                </td>
+                                <td>
+                                    <asp:DropDownList ID="ddTelephonyVoicePolicy" runat="server"></asp:DropDownList>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </asp:Panel>
+
+                    <asp:Panel runat="server" ID="pnServerURI">
+                        <table>
+                            <tr>
+                                <td class="FormLabel150">
+                                    <asp:Localize runat="server" ID="locServerURI" meta:resourcekey="locServerURI" Text="Server URI :" />
+                                </td>
+                                <td>
+                                    <asp:TextBox ID="tbServerURI" runat="server"></asp:TextBox>
+                                </td>
+                            </tr>
+                        </table>
+                    </asp:Panel>
+
+					<br />
+					</asp:Panel>
+
+
+			        <%-- Disable because not used
 					<wsp:CollapsiblePanel id="secEnterpriseVoice" runat="server"
                         TargetControlID="EnterpriseVoice" meta:resourcekey="secEnterpriseVoice" Text="Enterprise Voice Policy">
                     </wsp:CollapsiblePanel>
@@ -115,7 +239,7 @@
 						</table>
 						<br />
 					</asp:Panel>
-					
+					--%>
 					
 					<br />
 				    <div class="FormFooterClean">

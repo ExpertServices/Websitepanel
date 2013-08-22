@@ -41,5 +41,7 @@ namespace WebsitePanel.Providers.HostedSolution
         public int AccountID { get; set; }
         public int LyncUserPlanId { get; set; }
         public string LyncUserPlanName { get; set; }
+
+        public string PIN { get; set; }
     }
 }
