@@ -37,7 +37,9 @@ namespace WebsitePanel.Providers.HostedSolution
 		PublicFolder = 4,
 		Room = 5,
 		Equipment = 6,
-        User = 7
+        User = 7,
+        SecurityGroup = 8,
+        DefaultSecurityGroup = 9
 
 	}
 }

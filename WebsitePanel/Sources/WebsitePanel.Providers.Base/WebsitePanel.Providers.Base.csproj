@@ -102,6 +102,7 @@
     <Compile Include="HostedSolution\LyncUserPlanType.cs" />
     <Compile Include="HostedSolution\LyncUsersPaged.cs" />
     <Compile Include="HostedSolution\LyncVoicePolicyType.cs" />
+    <Compile Include="HostedSolution\OrganizationSecurityGroup.cs" />
     <Compile Include="HostedSolution\TransactionAction.cs" />
     <Compile Include="ResultObjects\HeliconApe.cs" />
     <Compile Include="HostedSolution\ExchangeMobileDevice.cs" />

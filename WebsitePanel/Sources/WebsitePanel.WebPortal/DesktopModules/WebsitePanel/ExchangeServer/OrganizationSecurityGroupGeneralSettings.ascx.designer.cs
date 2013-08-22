@@ -7,10 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal.HostedSolution {
+namespace WebsitePanel.Portal.ExchangeServer {
     
     
-    public partial class UserMemberOf {
+    public partial class OrganizationSecurityGroupGeneralSettings {
         
         /// <summary>
         /// asyncTasks control.
@@ -67,22 +67,13 @@ namespace WebsitePanel.Portal.HostedSolution {
         protected global::System.Web.UI.WebControls.Literal litDisplayName;
         
         /// <summary>
-        /// UserTabsId control.
+        /// tabs control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.UserTabs UserTabsId;
-        
-        /// <summary>
-        /// MailboxTabsId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.MailboxTabs MailboxTabsId;
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.SecurityGroupTabs tabs;
         
         /// <summary>
         /// messageBox control.
@@ -94,76 +85,94 @@ namespace WebsitePanel.Portal.HostedSolution {
         protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox messageBox;
         
         /// <summary>
-        /// secDistributionLists control.
+        /// locDisplayName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.CollapsiblePanel secDistributionLists;
+        protected global::System.Web.UI.WebControls.Localize locDisplayName;
         
         /// <summary>
-        /// DistributionListsPanel control.
+        /// txtDisplayName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel DistributionListsPanel;
+        protected global::System.Web.UI.WebControls.TextBox txtDisplayName;
         
         /// <summary>
-        /// DLGeneralUpdatePanel control.
+        /// valRequireDisplayName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel DLGeneralUpdatePanel;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator valRequireDisplayName;
         
         /// <summary>
-        /// distrlists control.
+        /// locManager control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.AccountsList distrlists;
+        protected global::System.Web.UI.WebControls.Localize locManager;
         
         /// <summary>
-        /// secSecurityGroups control.
+        /// manager control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.CollapsiblePanel secSecurityGroups;
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.UserSelector manager;
         
         /// <summary>
-        /// SecurityGroupsPanel control.
+        /// valManager control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel SecurityGroupsPanel;
+        protected global::System.Web.UI.WebControls.CustomValidator valManager;
         
         /// <summary>
-        /// SCGeneralUpdatePanel control.
+        /// locMembers control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel SCGeneralUpdatePanel;
+        protected global::System.Web.UI.WebControls.Localize locMembers;
         
         /// <summary>
-        /// securegroups control.
+        /// members control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.AccountsList securegroups;
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.UsersList members;
+        
+        /// <summary>
+        /// locNotes control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locNotes;
+        
+        /// <summary>
+        /// txtNotes control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtNotes;
         
         /// <summary>
         /// btnSave control.
