@@ -37,27 +37,52 @@ using System.ComponentModel;
 
 using Microsoft.Web.Services3;
 
+using WebsitePanel.Providers.Common;
+using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.EnterpriseStorage;
+using WebsitePanel.Providers.ResultObjects;
+using WebsitePanel.Providers.OS;
 
 namespace WebsitePanel.EnterpriseServer
 {
     /// <summary>
-    /// Summary description for esApplicationsInstaller
+    /// Summary description for esEnterpriseStorage
     /// </summary>
     [WebService(Namespace = "http://smbsaas/websitepanel/enterpriseserver")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
     [Policy("ServerPolicy")]
     [ToolboxItem(false)]
-    public class esEnterpriseStorage : System.Web.Services.WebService
+    public class esEnterpriseStorage : WebService
     {
-        /*
         [WebMethod]
-        public DataSet GetRawOdbcSourcesPaged(int packageId,
-            string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
+        public SystemFile[] GetEnterpriseFolders(int itemId)
         {
-            return OperatingSystemController.GetRawOdbcSourcesPaged(packageId, filterColumn,
-                filterValue, sortColumn, startRow, maximumRows);
+            return EnterpriseStorageController.GetFolders(itemId);
         }
-        */
+
+        [WebMethod]
+        public SystemFile GetEnterpriseFolder(int itemId, string folderName)
+        {
+            return EnterpriseStorageController.GetFolder(itemId, folderName);
+        }
+
+        [WebMethod]
+        public ResultObject CreateEnterpriseFolder(int itemId, string folderName, long quota)
+        {
+            return EnterpriseStorageController.CreateFolder(itemId, folderName, quota);
+        }
+       
+
+        [WebMethod]
+        public ResultObject DeleteEnterpriseFolder(int itemId, string folderName)
+        {
+            return EnterpriseStorageController.DeleteFolder(itemId, folderName);
+        }
+
+        [WebMethod]
+        public ResultObject SetEnterpriseFolderQuota(int itemId, string folderName, long quota)
+        {
+            return EnterpriseStorageController.SetFolderQuota(itemId, folderName, quota);
+        }
     }
 }
