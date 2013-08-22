@@ -9,7 +9,7 @@ using WebsitePanel.Server.Utils;
 using WebsitePanel.Providers.Utils;
 using WebsitePanel.Providers.OS;
 
-namespace WebsitePanel.Providers.EnterpriseStorage.Windows2012
+namespace WebsitePanel.Providers.EnterpriseStorage
 {
     public class Windows2012 : HostingServiceProviderBase
     {
@@ -66,6 +66,12 @@ namespace WebsitePanel.Providers.EnterpriseStorage.Windows2012
 
 
         }
+
+        public bool CheckFileServicesInstallation()
+        {
+            return WebsitePanel.Server.Utils.OS.CheckFileServicesInstallation();
+        }
+
         #endregion
 
         #region HostingServiceProvider methods
@@ -135,6 +141,7 @@ namespace WebsitePanel.Providers.EnterpriseStorage.Windows2012
             }
             return itemsDiskspace.ToArray();
         }
+
         #endregion
 
         public override bool IsInstalled()

@@ -1959,4 +1959,20 @@ GO
 
 
 
+-- Enterprise Storage
+IF NOT EXISTS (SELECT * FROM [dbo].[ResourceGroups] WHERE [GroupName] = 'EnterpriseStorage')
+BEGIN
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (44, N'EnterpriseStorage', 25, N'WebsitePanel.EnterpriseServer.EnterpriseStorageController', 1)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Enterprise Storage Windows 2012')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderId], [GroupId], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES(600, 44, N'EnterpriseStorage2012', N'Enterprise Storage Windows 2012', N'WebsitePanel.Providers.EnterpriseStorage.Windows2012, WebsitePanel.Providers.EnterpriseStorage.Windows2012', N'EnterpriseStorage',	1)
+END
+ELSE
+BEGIN
+UPDATE [dbo].[Providers] SET [DisableAutoDiscovery] = NULL WHERE [DisplayName] = 'Enterprise Storage Windows 2012'
+END
+GO
 

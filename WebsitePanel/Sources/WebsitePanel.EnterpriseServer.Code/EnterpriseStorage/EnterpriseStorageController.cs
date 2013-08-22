@@ -38,6 +38,7 @@ using System.Xml.Serialization;
 using WebsitePanel.Server;
 using WebsitePanel.Providers;
 using WebsitePanel.Providers.OS;
+using WebsitePanel.Providers.EnterpriseStorage;
 using System.Collections;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.ResultObjects;
@@ -75,6 +76,14 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
 
+        private static EnterpriseStorage GetEnterpriseStorage(int serviceId)
+        {
+            EnterpriseStorage es = new EnterpriseStorage();
+            ServiceProviderProxy.Init(es, serviceId);
+            return es;
+        }
+
+
         private static SystemFile[] GetFoldersInternal(int itemId)
         {
             return new SystemFile[1];
@@ -101,5 +110,10 @@ namespace WebsitePanel.EnterpriseServer
         }
 
 
+        public static bool CheckFileServicesInstallation(int serviceId)
+        {
+            EnterpriseStorage es = GetEnterpriseStorage(serviceId);
+            return es.CheckFileServicesInstallation();
+        }
     }
 }

@@ -139,6 +139,23 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool CheckFileServicesInstallation()
+        {
+            try
+            {
+                Log.WriteStart("'{0}' CheckFileServicesInstallation", ProviderSettings.ProviderName);
+                return EnterpriseStorageProvider.CheckFileServicesInstallation();
+                Log.WriteEnd("'{0}' CheckFileServicesInstallation", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' CheckFileServicesInstallation", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
     }
 
 }

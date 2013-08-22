@@ -54,6 +54,13 @@ namespace WebsitePanel.EnterpriseServer
     [ToolboxItem(false)]
     public class esEnterpriseStorage : WebService
     {
+
+        [WebMethod]
+        public bool CheckFileServicesInstallation(int serviceId)
+        {
+            return EnterpriseStorageController.CheckFileServicesInstallation(serviceId);
+        }
+
         [WebMethod]
         public SystemFile[] GetEnterpriseFolders(int itemId)
         {

@@ -360,6 +360,13 @@
     <Compile Include="ProviderControls\CRM2011_Settings.ascx.designer.cs">
       <DependentUpon>CRM2011_Settings.ascx</DependentUpon>
     </Compile>
+    <Compile Include="ProviderControls\EnterpriseStorage_Settings.ascx.cs">
+      <DependentUpon>EnterpriseStorage_Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\EnterpriseStorage_Settings.ascx.designer.cs">
+      <DependentUpon>EnterpriseStorage_Settings.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ProviderControls\HeliconZoo_Settings.ascx.cs">
       <DependentUpon>HeliconZoo_Settings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -3941,6 +3948,7 @@
     <Content Include="ExchangeServer\OrganizationUserMemberOf.ascx" />
     <Content Include="Lync\UserControls\LyncUserSettings.ascx" />
     <Content Include="ProviderControls\CRM2011_Settings.ascx" />
+    <Content Include="ProviderControls\EnterpriseStorage_Settings.ascx" />
     <Content Include="ProviderControls\HeliconZoo_Settings.ascx" />
     <Content Include="ServersEditWebPlatformInstaller.ascx" />
     <Content Include="ExchangeServer\ExchangeMailboxPlans.ascx" />
@@ -5143,6 +5151,7 @@
     <Content Include="App_LocalResources\PhoneNumbers.ascx.resx" />
     <Content Include="App_LocalResources\PhoneNumbersAddPhoneNumber.ascx.resx" />
     <Content Include="App_LocalResources\PhoneNumbersEditPhoneNumber.ascx.resx" />
+    <Content Include="ProviderControls\App_LocalResources\EnterpriseStorage_Settings.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

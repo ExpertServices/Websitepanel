@@ -16,6 +16,7 @@ using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.OS;
 
+
 namespace WebsitePanel.EnterpriseServer {
     using System.Xml.Serialization;
     using System.Web.Services;
@@ -33,6 +34,8 @@ namespace WebsitePanel.EnterpriseServer {
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(ServiceProviderItem))]
     public partial class esEnterpriseStorage : Microsoft.Web.Services3.WebServicesClientProtocol {
         
+        private System.Threading.SendOrPostCallback CheckFileServicesInstallationOperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetEnterpriseFoldersOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetEnterpriseFolderOperationCompleted;
@@ -49,6 +52,9 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
+        public event CheckFileServicesInstallationCompletedEventHandler CheckFileServicesInstallationCompleted;
+        
+        /// <remarks/>
         public event GetEnterpriseFoldersCompletedEventHandler GetEnterpriseFoldersCompleted;
         
         /// <remarks/>
@@ -62,6 +68,47 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         public event SetEnterpriseFolderQuotaCompletedEventHandler SetEnterpriseFolderQuotaCompleted;
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/CheckFileServicesInstallation", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool CheckFileServicesInstallation(int serviceId) {
+            object[] results = this.Invoke("CheckFileServicesInstallation", new object[] {
+                        serviceId});
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginCheckFileServicesInstallation(int serviceId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("CheckFileServicesInstallation", new object[] {
+                        serviceId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public bool EndCheckFileServicesInstallation(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void CheckFileServicesInstallationAsync(int serviceId) {
+            this.CheckFileServicesInstallationAsync(serviceId, null);
+        }
+        
+        /// <remarks/>
+        public void CheckFileServicesInstallationAsync(int serviceId, object userState) {
+            if ((this.CheckFileServicesInstallationOperationCompleted == null)) {
+                this.CheckFileServicesInstallationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckFileServicesInstallationOperationCompleted);
+            }
+            this.InvokeAsync("CheckFileServicesInstallation", new object[] {
+                        serviceId}, this.CheckFileServicesInstallationOperationCompleted, userState);
+        }
+        
+        private void OnCheckFileServicesInstallationOperationCompleted(object arg) {
+            if ((this.CheckFileServicesInstallationCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CheckFileServicesInstallationCompleted(this, new CheckFileServicesInstallationCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetEnterpriseFolders", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -289,6 +336,32 @@ namespace WebsitePanel.EnterpriseServer {
         /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void CheckFileServicesInstallationCompletedEventHandler(object sender, CheckFileServicesInstallationCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CheckFileServicesInstallationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CheckFileServicesInstallationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
         }
     }
     

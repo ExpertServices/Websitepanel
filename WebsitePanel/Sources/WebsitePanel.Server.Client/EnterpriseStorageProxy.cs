@@ -16,7 +16,6 @@ using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.OS;
 
-
 namespace WebsitePanel.Providers.EnterpriseStorage {
     using System.Xml.Serialization;
     using System.Web.Services;
@@ -46,6 +45,8 @@ namespace WebsitePanel.Providers.EnterpriseStorage {
         
         private System.Threading.SendOrPostCallback SetFolderQuotaOperationCompleted;
         
+        private System.Threading.SendOrPostCallback CheckFileServicesInstallationOperationCompleted;
+        
         /// <remarks/>
         public EnterpriseStorage() {
             this.Url = "http://localhost:9003/EnterpriseStorage.asmx";
@@ -65,6 +66,9 @@ namespace WebsitePanel.Providers.EnterpriseStorage {
         
         /// <remarks/>
         public event SetFolderQuotaCompletedEventHandler SetFolderQuotaCompleted;
+        
+        /// <remarks/>
+        public event CheckFileServicesInstallationCompletedEventHandler CheckFileServicesInstallationCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -286,6 +290,45 @@ namespace WebsitePanel.Providers.EnterpriseStorage {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/CheckFileServicesInstallation", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool CheckFileServicesInstallation() {
+            object[] results = this.Invoke("CheckFileServicesInstallation", new object[0]);
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginCheckFileServicesInstallation(System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("CheckFileServicesInstallation", new object[0], callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public bool EndCheckFileServicesInstallation(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void CheckFileServicesInstallationAsync() {
+            this.CheckFileServicesInstallationAsync(null);
+        }
+        
+        /// <remarks/>
+        public void CheckFileServicesInstallationAsync(object userState) {
+            if ((this.CheckFileServicesInstallationOperationCompleted == null)) {
+                this.CheckFileServicesInstallationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckFileServicesInstallationOperationCompleted);
+            }
+            this.InvokeAsync("CheckFileServicesInstallation", new object[0], this.CheckFileServicesInstallationOperationCompleted, userState);
+        }
+        
+        private void OnCheckFileServicesInstallationOperationCompleted(object arg) {
+            if ((this.CheckFileServicesInstallationCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CheckFileServicesInstallationCompleted(this, new CheckFileServicesInstallationCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -354,4 +397,30 @@ namespace WebsitePanel.Providers.EnterpriseStorage {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void SetFolderQuotaCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void CheckFileServicesInstallationCompletedEventHandler(object sender, CheckFileServicesInstallationCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CheckFileServicesInstallationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CheckFileServicesInstallationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+    }
 }

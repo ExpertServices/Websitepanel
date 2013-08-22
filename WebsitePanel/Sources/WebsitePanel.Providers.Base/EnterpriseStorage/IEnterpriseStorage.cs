@@ -42,5 +42,6 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         void CreateFolder(string organizationId, string folder);
         void DeleteFolder(string organizationId, string folder);
         void SetFolderQuota(string organizationId, string folder, long quota);
+        bool CheckFileServicesInstallation();
     }
 }
