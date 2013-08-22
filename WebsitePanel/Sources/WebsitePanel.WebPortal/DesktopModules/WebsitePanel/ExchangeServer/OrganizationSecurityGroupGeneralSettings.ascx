@@ -1,6 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="OrganizationSecurityGroupGeneralSettings.ascx.cs" Inherits="WebsitePanel.Portal.ExchangeServer.OrganizationSecurityGroupGeneralSettings" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
-<%--<%@ Register Src="UserControls/AccountsList.ascx" TagName="AccountsList" TagPrefix="wsp" %>--%>
 <%@ Register Src="UserControls/UsersList.ascx" TagName="UsersList" TagPrefix="wsp"%>
 <%@ Register Src="UserControls/UserSelector.ascx" TagName="UserSelector" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/SecurityGroupTabs.ascx" TagName="SecurityGroupTabs" TagPrefix="wsp"%>
@@ -17,13 +16,13 @@
 			<wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName" />
 		</div>
 		<div class="Left">
-			<wsp:Menu id="menu" runat="server" SelectedItem="dlists" />
+			<wsp:Menu id="menu" runat="server" SelectedItem="secur_groups" />
 		</div>
 		<div class="Content">
 			<div class="Center">
 				<div class="Title">
 					<asp:Image ID="Image1" SkinID="ExchangeList48" runat="server" />
-					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Edit Distribution List"></asp:Localize>
+					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Edit Security Group"></asp:Localize>
 
 					<asp:Literal ID="litDisplayName" runat="server" Text="John Smith" />
                 </div>

@@ -46,14 +46,7 @@ namespace WebsitePanel.Portal.ExchangeServer
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
-            {
-                BindStats();
-            }
-        }
 
-        private void BindStats()
-        {
         }
 
         protected void btnCreateGroup_Click(object sender, EventArgs e)
@@ -69,6 +62,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                     "ItemID=" + PanelRequest.ItemID.ToString());
         }
 
+        public bool IsNotDefault(string accountType)
+        {
+            return (ExchangeAccountType)Enum.Parse(typeof(ExchangeAccountType), accountType) != ExchangeAccountType.DefaultSecurityGroup;
+        }
+
         protected void odsSecurityGroupsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)
         {
             if (e.Exception != null)
@@ -78,7 +76,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
         }
 
-        protected void gvLists_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void gvSecurityGroups_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             if (e.CommandName == "DeleteItem")
             {
@@ -96,8 +94,6 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                     // rebind grid
                     gvGroups.DataBind();
-
-                    BindStats();
                 }
                 catch (Exception ex)
                 {
@@ -112,10 +108,7 @@ namespace WebsitePanel.Portal.ExchangeServer
        
             // rebind grid   
             gvGroups.DataBind();   
-       
-            // bind stats   
-            BindStats();   
-       
+                
         }  
     }
 }

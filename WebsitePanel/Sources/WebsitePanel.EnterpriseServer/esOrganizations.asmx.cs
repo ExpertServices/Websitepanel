@@ -275,6 +275,12 @@ namespace WebsitePanel.EnterpriseServer
             return OrganizationController.GetOrganizationSecurityGroupsPaged(itemId, filterColumn, filterValue, sortColumn, startRow, maximumRows);
         }
 
+        [WebMethod]
+        public int AddUserToSecurityGroup(int itemId, int userAccountId, int groupAccountId)
+        {
+            return OrganizationController.AddUserToSecurityGroup(itemId, userAccountId, groupAccountId);
+        }
+
         #endregion
 
     }

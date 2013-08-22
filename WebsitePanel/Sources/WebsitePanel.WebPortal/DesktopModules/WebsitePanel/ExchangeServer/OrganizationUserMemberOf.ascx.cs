@@ -62,7 +62,6 @@ namespace WebsitePanel.Portal.HostedSolution
                 ExchangeAccount[] dLists = ES.Services.ExchangeServer.GetDistributionListsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
 
                 distrlists.SetAccounts(dLists);
-
             }
             catch (Exception ex)
             {

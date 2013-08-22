@@ -70,10 +70,18 @@ namespace WebsitePanel.Portal.ExchangeServer
                 members.SetAccounts(securityGroup.MembersAccounts);
 
                 txtNotes.Text = securityGroup.Notes;
+
+                if (securityGroup.IsDefault)
+                {
+                    txtDisplayName.ReadOnly = true;
+                    txtNotes.ReadOnly = true;
+                    manager.Enabled = false;
+                    members.Enabled = false;
+                }
             }
             catch (Exception ex)
             {
-                messageBox.ShowErrorMessage("EXCHANGE_GET_DLIST_SETTINGS", ex);
+                messageBox.ShowErrorMessage("ORGANIZATION_GET_SECURITY_GROUP_SETTINGS", ex);
             }
         }
 
@@ -84,15 +92,12 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             try
             {
-                int result = ES.Services.ExchangeServer.SetDistributionListGeneralSettings(
-                    PanelRequest.ItemID, PanelRequest.AccountID,
+                int result = ES.Services.Organizations.SetSecurityGroupGeneralSettings(
+                    PanelRequest.ItemID,
+                    PanelRequest.AccountID,
                     txtDisplayName.Text,
-                    false,
-
                     manager.GetAccount(),
-
                     members.GetAccounts(),
-
                     txtNotes.Text);
 
                 if (result < 0)
@@ -103,11 +108,11 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 litDisplayName.Text = PortalAntiXSS.Encode(txtDisplayName.Text);
 
-                messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_DLIST_SETTINGS");
+                messageBox.ShowSuccessMessage("ORGANIZATION_UPDATE_SECURITY_GROUP_SETTINGS");
             }
             catch (Exception ex)
             {
-                messageBox.ShowErrorMessage("EXCHANGE_UPDATE_DLIST_SETTINGS", ex);
+                messageBox.ShowErrorMessage("ORGANIZATION_UPDATE_SECURITY_GROUP_SETTINGS", ex);
             }
         }
 

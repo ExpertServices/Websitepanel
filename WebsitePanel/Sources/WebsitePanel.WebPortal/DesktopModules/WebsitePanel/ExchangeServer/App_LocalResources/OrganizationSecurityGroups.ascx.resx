@@ -135,9 +135,6 @@
   <data name="ddlSearchColumnDisplayName.Text" xml:space="preserve">
     <value>Display Name</value>
   </data>
-  <data name="ddlSearchColumnEmail.Text" xml:space="preserve">
-    <value>E-mail Address</value>
-  </data>
   <data name="FormComments.Text" xml:space="preserve">
     <value />
   </data>

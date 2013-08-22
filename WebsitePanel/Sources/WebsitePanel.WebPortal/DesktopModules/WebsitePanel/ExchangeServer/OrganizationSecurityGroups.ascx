@@ -2,7 +2,6 @@
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
-<%@ Register Src="../UserControls/QuotaViewer.ascx" TagName="QuotaViewer" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
@@ -13,13 +12,13 @@
 			<wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName" />
 		</div>
 		<div class="Left">
-			<wsp:Menu id="menu" runat="server" SelectedItem="dlists" />
+			<wsp:Menu id="menu" runat="server" SelectedItem="secur_groups" />
 		</div>
 		<div class="Content">
 			<div class="Center">
 				<div class="Title">
 					<asp:Image ID="Image1" SkinID="ExchangeList48" runat="server" />
-					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Lists"></asp:Localize>
+					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Groups"></asp:Localize>
 				</div>
 				
 				<div class="FormBody">
@@ -42,7 +41,6 @@
 
                                 <asp:DropDownList ID="ddlSearchColumn" runat="server" CssClass="NormalTextBox">
                                     <asp:ListItem Value="DisplayName" meta:resourcekey="ddlSearchColumnDisplayName">DisplayName</asp:ListItem>
-                                    <asp:ListItem Value="PrimaryEmailAddress" meta:resourcekey="ddlSearchColumnEmail">Email</asp:ListItem>
                                 </asp:DropDownList><asp:TextBox ID="txtSearchValue" runat="server" CssClass="NormalTextBox" Width="100"></asp:TextBox><asp:ImageButton ID="cmdSearch" Runat="server" meta:resourcekey="cmdSearch" SkinID="SearchButton"
 		                            CausesValidation="false"/>
                             </asp:Panel>
@@ -51,7 +49,7 @@
 
 				    <asp:GridView ID="gvGroups" runat="server" AutoGenerateColumns="False" EnableViewState="true"
 					    Width="100%" EmptyDataText="gvGroups" CssSelectorClass="NormalGridView"
-					    OnRowCommand="gvLists_RowCommand" AllowPaging="True" AllowSorting="True"
+					    OnRowCommand="gvSecurityGroups_RowCommand" AllowPaging="True" AllowSorting="True"
 					    DataSourceID="odsSecurityGroupsPaged" PageSize="20">
 					    <Columns>
 						    <asp:TemplateField HeaderText="gvGroupsDisplayName" SortExpression="DisplayName">
@@ -66,7 +64,7 @@
 						    <asp:TemplateField>
 							    <ItemTemplate>
 								    <asp:ImageButton ID="cmdDelete" runat="server" Text="Delete" SkinID="ExchangeDelete"
-									    CommandName="DeleteItem" CommandArgument='<%# Eval("AccountId") %>'
+									    CommandName="DeleteItem" CommandArgument='<%# Eval("AccountId") %>' Visible='<%# IsNotDefault(Eval("AccountType").ToString()) %>'
 									    meta:resourcekey="cmdDelete" OnClientClick="return confirm('Remove this item?');"></asp:ImageButton>
 							    </ItemTemplate>
 						    </asp:TemplateField>
@@ -80,7 +78,7 @@
 							OnSelected="odsSecurityGroupsPaged_Selected">
 						<SelectParameters>
 							<asp:QueryStringParameter Name="itemId" QueryStringField="ItemID" DefaultValue="0" />
-							<asp:Parameter Name="accountTypes" DefaultValue="3" />
+							<asp:Parameter Name="accountTypes" DefaultValue="8" />
 							<asp:ControlParameter Name="filterColumn" ControlID="ddlSearchColumn" PropertyName="SelectedValue" />
 							<asp:ControlParameter Name="filterValue" ControlID="txtSearchValue" PropertyName="Text" />
 						</SelectParameters>

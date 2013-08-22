@@ -10,6 +10,7 @@
 <%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/EmailAddress.ascx" TagName="EmailAddress" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/AccountsList.ascx" TagName="AccountsList" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/UsersList.ascx" TagName="UsersList" TagPrefix="wsp" %>
 
 
 
@@ -42,9 +43,9 @@
                     <uc1:MailboxTabs ID="MailboxTabsId" runat="server" SelectedTab="user_memberof" />
                     <wsp:SimpleMessageBox id="messageBox" runat="server" />
                     
-					<wsp:CollapsiblePanel id="secDistributionLists" runat="server" TargetControlID="DistributionLists" meta:resourcekey="secDistributionLists" Text="Distribution Lists"></wsp:CollapsiblePanel>
-                    <asp:Panel ID="DistributionLists" runat="server" Height="0" style="overflow:hidden;">
-						<asp:UpdatePanel ID="GeneralUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
+					<wsp:CollapsiblePanel id="secDistributionLists" runat="server" TargetControlID="DistributionListsPanel" meta:resourcekey="secDistributionLists" Text="Distribution Lists"></wsp:CollapsiblePanel>
+                    <asp:Panel ID="DistributionListsPanel" runat="server" Height="0" style="overflow:hidden;">
+						<asp:UpdatePanel ID="DLGeneralUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
 							<ContentTemplate>
 
                                 <wsp:AccountsList id="distrlists" runat="server"
@@ -57,6 +58,20 @@
 						</asp:UpdatePanel>
 					</asp:Panel>
 					
+                    <wsp:CollapsiblePanel id="secSecurityGroups" runat="server" TargetControlID="SecurityGroupsPanel" meta:resourcekey="secSecurityGroups" Text="Security Groups"></wsp:CollapsiblePanel>
+                    <asp:Panel ID="SecurityGroupsPanel" runat="server" Height="0" style="overflow:hidden;">
+						<asp:UpdatePanel ID="SCGeneralUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
+							<ContentTemplate>
+
+                                <wsp:AccountsList id="securegroups" runat="server"
+                                            MailboxesEnabled="false" 
+                                            EnableMailboxOnly="false" 
+										    ContactsEnabled="false"
+										    DistributionListsEnabled="false"  />
+
+							</ContentTemplate>
+						</asp:UpdatePanel>
+					</asp:Panel>
 					
 				    <div class="FormFooterClean">
 					    <asp:Button id="btnSave" runat="server" Text="Save Changes" CssClass="Button1"

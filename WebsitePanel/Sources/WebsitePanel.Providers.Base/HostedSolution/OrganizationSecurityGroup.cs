@@ -42,5 +42,11 @@ namespace WebsitePanel.Providers.HostedSolution
             get;
             set;
         }
+
+        public bool IsDefault
+        {
+            get;
+            set;
+        }
     }
 }

@@ -38,6 +38,14 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
     {
         public const string DirectionString = "DirectionString";
 
+        private bool _enabled = true;
+
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set { _enabled = value; }
+        }
+
         public bool IncludeMailboxes
         {
             get

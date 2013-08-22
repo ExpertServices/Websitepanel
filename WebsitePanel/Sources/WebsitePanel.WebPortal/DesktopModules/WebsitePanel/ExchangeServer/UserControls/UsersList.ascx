@@ -3,9 +3,8 @@
 
 <asp:UpdatePanel ID="AccountsUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
     <ContentTemplate>
-    
 	<div class="FormButtonsBarClean">
-		<asp:Button ID="btnAdd" runat="server" Text="Add..." CssClass="Button1" OnClick="btnAdd_Click" meta:resourcekey="btnAdd"  />
+		<asp:Button ID="btnAdd" runat="server" Text="Add..." CssClass="Button1"  OnClick="btnAdd_Click" meta:resourcekey="btnAdd"  />
 		<asp:Button ID="btnDelete" runat="server" Text="Delete" CssClass="Button1" OnClick="btnDelete_Click" meta:resourcekey="btnDelete"/>
 	</div>
 	<asp:GridView ID="gvAccounts" runat="server" meta:resourcekey="gvAccounts" AutoGenerateColumns="False"

@@ -38,6 +38,14 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 	{
         public const string DirectionString = "DirectionString";
 
+        private bool _enabled = true;
+
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set { _enabled = value; }
+        }
+
 		private enum SelectedState
 		{
 			All,
@@ -150,6 +158,11 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 				Page.ClientScript.RegisterClientScriptBlock(typeof(AccountsList), "SelectAllCheckboxes",
 					script, true);
 			}
+
+            btnAdd.Visible = Enabled;
+            btnDelete.Visible = Enabled;
+
+            gvAccounts.Columns[0].Visible = Enabled;
 		}
 
 		protected void btnAdd_Click(object sender, EventArgs e)
@@ -279,7 +292,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 					bool exists = false;
 					foreach (OrganizationUser account in accounts)
 					{
-						if (String.Compare(newAccount.SamAccountName, account.SamAccountName, true) == 0)
+						if (String.Compare(newAccount.AccountName, account.AccountName, true) == 0)
 						{
 							exists = true;
 							break;

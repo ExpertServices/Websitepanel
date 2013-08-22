@@ -38,7 +38,8 @@ namespace WebsitePanel.Providers.HostedSolution
 		Room = 5,
 		Equipment = 6,
         User = 7,
-        SecurityGroup = 8
+        SecurityGroup = 8,
+        DefaultSecurityGroup = 9
 
 	}
 }

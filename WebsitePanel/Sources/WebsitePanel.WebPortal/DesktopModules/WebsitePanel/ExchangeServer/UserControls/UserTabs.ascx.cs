@@ -59,7 +59,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
 
-            if (Utils.CheckQouta(Quotas.EXCHANGE2007_DISTRIBUTIONLISTS, cntx))
+            if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPMANAGEMENT, cntx) || Utils.CheckQouta(Quotas.EXCHANGE2007_DISTRIBUTIONLISTS, cntx))
                 tabsList.Add(CreateTab("user_memberof", "Tab.MemberOf"));
 
             // find selected menu item

@@ -85,6 +85,8 @@ namespace WebsitePanel.Providers.HostedSolution
 
         private System.Threading.SendOrPostCallback SetSecurityGroupGeneralSettingsOperationCompleted;
 
+        private System.Threading.SendOrPostCallback AddUserToSecurityGroupOperationCompleted;
+
         private System.Threading.SendOrPostCallback SetUserGeneralSettingsOperationCompleted;
 
         private System.Threading.SendOrPostCallback SetUserPasswordOperationCompleted;
@@ -136,6 +138,9 @@ namespace WebsitePanel.Providers.HostedSolution
 
         /// <remarks/>
         public event SetSecurityGroupGeneralSettingsCompletedEventHandler SetSecurityGroupGeneralSettingsCompleted;
+
+        /// <remarks/>
+        public event AddUserToSecurityGroupCompletedEventHandler AddUserToSecurityGroupCompleted;
 
         /// <remarks/>
         public event SetUserGeneralSettingsCompletedEventHandler SetUserGeneralSettingsCompleted;
@@ -481,23 +486,21 @@ namespace WebsitePanel.Providers.HostedSolution
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/CreateSecurityGroup", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public int CreateSecurityGroup(string organizationId, string groupName, string displayName, string managedBy)
+        public int CreateSecurityGroup(string organizationId, string groupName, string managedBy)
         {
             object[] results = this.Invoke("CreateSecurityGroup", new object[] {
                     organizationId,
                     groupName,
-                    displayName,
                     managedBy});
             return ((int)(results[0]));
         }
 
         /// <remarks/>
-        public System.IAsyncResult BeginCreateSecurityGroup(string organizationId, string groupName, string displayName, string managedBy, System.AsyncCallback callback, object asyncState)
+        public System.IAsyncResult BeginCreateSecurityGroup(string organizationId, string groupName, string managedBy, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("CreateSecurityGroup", new object[] {
                     organizationId,
                     groupName,
-                    displayName,
                     managedBy}, callback, asyncState);
         }
 
@@ -509,13 +512,13 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         /// <remarks/>
-        public void CreateSecurityGroupAsync(string organizationId, string groupName, string displayName, string managedBy)
+        public void CreateSecurityGroupAsync(string organizationId, string groupName, string managedBy)
         {
-            this.CreateSecurityGroupAsync(organizationId, groupName, displayName, managedBy, null);
+            this.CreateSecurityGroupAsync(organizationId, groupName, managedBy, null);
         }
 
         /// <remarks/>
-        public void CreateSecurityGroupAsync(string organizationId, string groupName, string displayName, string managedBy, object userState)
+        public void CreateSecurityGroupAsync(string organizationId, string groupName, string managedBy, object userState)
         {
             if ((this.CreateSecurityGroupOperationCompleted == null))
             {
@@ -524,7 +527,6 @@ namespace WebsitePanel.Providers.HostedSolution
             this.InvokeAsync("CreateSecurityGroup", new object[] {
                     organizationId,
                     groupName,
-                    displayName,
                     managedBy}, this.CreateSecurityGroupOperationCompleted, userState);
         }
 
@@ -644,24 +646,22 @@ namespace WebsitePanel.Providers.HostedSolution
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SetSecurityGroupGeneralSettings", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void SetSecurityGroupGeneralSettings(string organizationId, string groupName, string displayName, string managedBy, string[] memberAccounts, string notes)
+        public void SetSecurityGroupGeneralSettings(string organizationId, string groupName, string managedBy, string[] memberAccounts, string notes)
         {
             this.Invoke("SetSecurityGroupGeneralSettings", new object[] {
                     organizationId,
                     groupName,
-                    displayName,
                     managedBy,
                     memberAccounts,
                     notes});
         }
 
         /// <remarks/>
-        public System.IAsyncResult BeginSetSecurityGroupGeneralSettings(string organizationId, string groupName, string displayName, string managedBy, string[] memberAccounts, string notes, System.AsyncCallback callback, object asyncState)
+        public System.IAsyncResult BeginSetSecurityGroupGeneralSettings(string organizationId, string groupName, string managedBy, string[] memberAccounts, string notes, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("SetSecurityGroupGeneralSettings", new object[] {
                     organizationId,
                     groupName,
-                    displayName,
                     managedBy,
                     memberAccounts,
                     notes}, callback, asyncState);
@@ -674,13 +674,13 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         /// <remarks/>
-        public void SetSecurityGroupGeneralSettingsAsync(string organizationId, string groupName, string displayName, string managedBy, string[] memberAccounts, string notes)
+        public void SetSecurityGroupGeneralSettingsAsync(string organizationId, string groupName, string managedBy, string[] memberAccounts, string notes)
         {
-            this.SetSecurityGroupGeneralSettingsAsync(organizationId, groupName, displayName, managedBy, memberAccounts, notes, null);
+            this.SetSecurityGroupGeneralSettingsAsync(organizationId, groupName, managedBy, memberAccounts, notes, null);
         }
 
         /// <remarks/>
-        public void SetSecurityGroupGeneralSettingsAsync(string organizationId, string groupName, string displayName, string managedBy, string[] memberAccounts, string notes, object userState)
+        public void SetSecurityGroupGeneralSettingsAsync(string organizationId, string groupName, string managedBy, string[] memberAccounts, string notes, object userState)
         {
             if ((this.SetSecurityGroupGeneralSettingsOperationCompleted == null))
             {
@@ -689,7 +689,6 @@ namespace WebsitePanel.Providers.HostedSolution
             this.InvokeAsync("SetSecurityGroupGeneralSettings", new object[] {
                     organizationId,
                     groupName,
-                    displayName,
                     managedBy,
                     memberAccounts,
                     notes}, this.SetSecurityGroupGeneralSettingsOperationCompleted, userState);
@@ -701,6 +700,60 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.SetSecurityGroupGeneralSettingsCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/AddUserToSecurityGroup", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void AddUserToSecurityGroup(string organizationId, string loginName, string groupName)
+        {
+            this.Invoke("AddUserToSecurityGroup", new object[] {
+                    organizationId,
+                    loginName,
+                    groupName});
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginAddUserToSecurityGroup(string organizationId, string loginName, string groupName, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("AddUserToSecurityGroup", new object[] {
+                    organizationId,
+                    loginName,
+                    groupName}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public void EndAddUserToSecurityGroup(System.IAsyncResult asyncResult)
+        {
+            this.EndInvoke(asyncResult);
+        }
+
+        /// <remarks/>
+        public void AddUserToSecurityGroupAsync(string organizationId, string loginName, string groupName)
+        {
+            this.AddUserToSecurityGroupAsync(organizationId, loginName, groupName, null);
+        }
+
+        /// <remarks/>
+        public void AddUserToSecurityGroupAsync(string organizationId, string loginName, string groupName, object userState)
+        {
+            if ((this.AddUserToSecurityGroupOperationCompleted == null))
+            {
+                this.AddUserToSecurityGroupOperationCompleted = new System.Threading.SendOrPostCallback(this.OnAddUserToSecurityGroupOperationCompleted);
+            }
+            this.InvokeAsync("AddUserToSecurityGroup", new object[] {
+                    organizationId,
+                    loginName,
+                    groupName}, this.AddUserToSecurityGroupOperationCompleted, userState);
+        }
+
+        private void OnAddUserToSecurityGroupOperationCompleted(object arg)
+        {
+            if ((this.AddUserToSecurityGroupCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.AddUserToSecurityGroupCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
 
@@ -1510,6 +1563,10 @@ namespace WebsitePanel.Providers.HostedSolution
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void SetSecurityGroupGeneralSettingsCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void AddUserToSecurityGroupCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]

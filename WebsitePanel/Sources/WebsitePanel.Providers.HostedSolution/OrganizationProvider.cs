@@ -227,6 +227,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 org.OrganizationId = organizationId;
                 org.DistinguishedName = ActiveDirectoryUtils.RemoveADPrefix(orgPath);
                 org.SecurityGroup = ActiveDirectoryUtils.RemoveADPrefix(GetGroupPath(organizationId));
+                org.GroupName = organizationId;
             }
             catch (Exception ex)
             {
@@ -547,7 +548,7 @@ namespace WebsitePanel.Providers.HostedSolution
             retUser.Notes = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.Notes);
             retUser.ExternalEmail = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.ExternalEmail);
             retUser.Disabled = (bool)entry.InvokeGet(ADAttributes.AccountDisabled);
-            retUser.Manager = GetManager(entry);
+            retUser.Manager = GetManager(entry, ADAttributes.Manager);
             retUser.SamAccountName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName);
             retUser.DomainUserName = GetDomainName(ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName));
             retUser.DistinguishedName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.DistinguishedName);
@@ -564,10 +565,10 @@ namespace WebsitePanel.Providers.HostedSolution
             return ret;
         }
 
-        private OrganizationUser GetManager(DirectoryEntry entry)
+        private OrganizationUser GetManager(DirectoryEntry entry, string adAttribute)
         {
             OrganizationUser retUser = null;
-            string path = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.Manager);
+            string path = ActiveDirectoryUtils.GetADObjectStringProperty(entry, adAttribute);
             if (!string.IsNullOrEmpty(path))
             {
                 path = ActiveDirectoryUtils.AddADPrefix(path, PrimaryDomainController);
@@ -824,12 +825,12 @@ namespace WebsitePanel.Providers.HostedSolution
 
         #region Security Groups
 
-        public int CreateSecurityGroup(string organizationId, string groupName, string displayName, string managedBy)
+        public int CreateSecurityGroup(string organizationId, string groupName, string managedBy)
         {
-            return CreateSecurityGroupInternal(organizationId, groupName, displayName, managedBy);
+            return CreateSecurityGroupInternal(organizationId, groupName, managedBy);
         }
 
-        internal int CreateSecurityGroupInternal(string organizationId, string groupName, string displayName, string managedBy)
+        internal int CreateSecurityGroupInternal(string organizationId, string groupName, string managedBy)
         {
             HostedSolutionLog.LogStart("CreateSecurityGroupInternal");
             HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
@@ -850,6 +851,10 @@ namespace WebsitePanel.Providers.HostedSolution
                 
                 if (!ActiveDirectoryUtils.AdObjectExists(groupPath))
                 {
+                    ActiveDirectoryUtils.CreateGroup(path, groupName);
+
+                    DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(groupPath);
+
                     string manager = string.Empty;
                     if (!string.IsNullOrEmpty(managedBy))
                     {
@@ -857,7 +862,9 @@ namespace WebsitePanel.Providers.HostedSolution
                         manager = ActiveDirectoryUtils.AdObjectExists(managerPath) ? managerPath : string.Empty;
                     }
 
-                    ActiveDirectoryUtils.CreateGroup(path, groupName, ActiveDirectoryUtils.RemoveADPrefix(manager));
+                    ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.ManagedBy, ActiveDirectoryUtils.RemoveADPrefix(manager));
+
+                    entry.CommitChanges();
 
                     groupCreated = true;
                     
@@ -915,9 +922,11 @@ namespace WebsitePanel.Providers.HostedSolution
 
             OrganizationSecurityGroup securityGroup = new OrganizationSecurityGroup();
 
-            securityGroup.DisplayName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.DisplayName);
-            securityGroup.ManagerAccount = GetManager(entry);
+            securityGroup.ManagerAccount = GetManager(entry, ADAttributes.ManagedBy);
+
             securityGroup.Notes = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.Notes);
+            
+            securityGroup.AccountName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName);
             securityGroup.SAMAccountName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName);
 
             List<OrganizationUser> members = new List<OrganizationUser>();
@@ -959,13 +968,13 @@ namespace WebsitePanel.Providers.HostedSolution
             HostedSolutionLog.LogEnd("DeleteSecurityGroupInternal");
         }
 
-        public void SetSecurityGroupGeneralSettings(string organizationId, string groupName, string displayName, string managedBy, string[] memberAccounts, string notes)
+        public void SetSecurityGroupGeneralSettings(string organizationId, string groupName, string managedBy, string[] memberAccounts, string notes)
         {
             
-            SetSecurityGroupGeneralSettingsInternal(organizationId, groupName, displayName, managedBy, memberAccounts, notes);
+            SetSecurityGroupGeneralSettingsInternal(organizationId, groupName, managedBy, memberAccounts, notes);
         }
 
-        internal void SetSecurityGroupGeneralSettingsInternal(string organizationId, string groupName, string displayName, string managedBy, string[] memberAccounts, string notes)
+        internal void SetSecurityGroupGeneralSettingsInternal(string organizationId, string groupName, string managedBy, string[] memberAccounts, string notes)
         {
             HostedSolutionLog.LogStart("SetSecurityGroupGeneralSettingsInternal");
             HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
@@ -981,8 +990,6 @@ namespace WebsitePanel.Providers.HostedSolution
 
             DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
 
-            ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.DisplayName, displayName);
-
             string manager = string.Empty;
             if (!string.IsNullOrEmpty(managedBy))
             {
@@ -990,7 +997,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 manager = ActiveDirectoryUtils.AdObjectExists(managerPath) ? managerPath : string.Empty;
             }
 
-            ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.Manager, ActiveDirectoryUtils.RemoveADPrefix(manager));
+            ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.ManagedBy, ActiveDirectoryUtils.RemoveADPrefix(manager));
 
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.Notes, notes);
 
@@ -1004,6 +1011,34 @@ namespace WebsitePanel.Providers.HostedSolution
             }
             
             entry.CommitChanges();
+        }
+
+        public void AddUserToSecurityGroup(string organizationId, string loginName, string groupName)
+        {
+            AddUserToSecurityGroupInternal(organizationId, loginName, groupName);
+        }
+
+        internal void AddUserToSecurityGroupInternal(string organizationId, string loginName, string groupName)
+        {
+            HostedSolutionLog.LogStart("AddUserToSecurityGroupInternal");
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+            HostedSolutionLog.DebugInfo("loginName : {0}", loginName);
+            HostedSolutionLog.DebugInfo("groupName : {0}", groupName);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            if (string.IsNullOrEmpty(loginName))
+                throw new ArgumentNullException("loginName");
+
+            if (string.IsNullOrEmpty(groupName))
+                throw new ArgumentNullException("groupName");
+
+            string userPath = GetUserPath(organizationId, loginName);
+
+            string groupPath = GetGroupPath(organizationId, groupName);
+
+            ActiveDirectoryUtils.AddUserToGroup(userPath, groupPath);
         }
 
         #endregion

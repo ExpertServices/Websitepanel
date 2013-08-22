@@ -350,11 +350,6 @@ namespace WebsitePanel.Providers.HostedSolution
 
         public static void CreateGroup(string path, string group)
         {
-            CreateGroup(path, group, "");
-        }
-
-        public static void CreateGroup(string path, string group, string manager)
-        {
             DirectoryEntry currentADObject = new DirectoryEntry(path);
 
             DirectoryEntry newGroupObject = currentADObject.Children.Add("CN=" + group, "Group");
@@ -362,11 +357,6 @@ namespace WebsitePanel.Providers.HostedSolution
             newGroupObject.Properties[ADAttributes.SAMAccountName].Add(group);
 
             newGroupObject.Properties[ADAttributes.GroupType].Add(-2147483640);
-
-            if (!string.IsNullOrEmpty(manager))
-            {
-                newGroupObject.Properties[ADAttributes.Manager].Add(manager);
-            }
 
             newGroupObject.CommitChanges();
         }
