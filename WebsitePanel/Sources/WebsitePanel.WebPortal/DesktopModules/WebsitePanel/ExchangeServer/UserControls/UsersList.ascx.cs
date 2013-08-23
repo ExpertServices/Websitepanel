@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using WebsitePanel.Providers.HostedSolution;
+using System.Linq;
 
 namespace WebsitePanel.Portal.ExchangeServer.UserControls
 {
@@ -217,6 +218,10 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 		{
 			OrganizationUser[] accounts = ES.Services.Organizations.SearchAccounts(PanelRequest.ItemID,
 				ddlSearchColumn.SelectedValue, txtSearchValue.Text + "%", "", IncludeMailboxes);
+
+            List<OrganizationUser> newAccounts = new List<OrganizationUser>();
+
+            accounts = accounts.Where(x => !GetAccounts().Contains(x.AccountName)).ToArray();
 
 			if (ExcludeAccountId > 0)
 			{

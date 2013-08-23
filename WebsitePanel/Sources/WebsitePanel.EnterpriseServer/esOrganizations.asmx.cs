@@ -276,11 +276,29 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public int AddUserToSecurityGroup(int itemId, int userAccountId, int groupAccountId)
+        public int AddUserToSecurityGroup(int itemId, int userAccountId, string groupName)
         {
-            return OrganizationController.AddUserToSecurityGroup(itemId, userAccountId, groupAccountId);
+            return OrganizationController.AddUserToSecurityGroup(itemId, userAccountId, groupName);
         }
 
+        [WebMethod]
+        public int DeleteUserFromSecurityGroup(int itemId, int userAccountId, string groupName)
+        {
+            return OrganizationController.DeleteUserFromSecurityGroup(itemId, userAccountId, groupName);
+        }
+
+        [WebMethod]
+        public ExchangeAccount[] GetSecurityGroupsByMember(int itemId, int accountId)
+        {
+            return OrganizationController.GetSecurityGroupsByMember(itemId, accountId); 
+        }
+
+        [WebMethod]
+        public List<ExchangeAccount> SearchSecurityGroups(int itemId, string filterColumn, string filterValue, string sortColumn)
+        {
+            return OrganizationController.SearchSecurityGroups(itemId, filterColumn, filterValue, sortColumn);
+        }
+       
         #endregion
 
     }

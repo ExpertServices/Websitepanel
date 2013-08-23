@@ -53,7 +53,7 @@
 					    DataSourceID="odsSecurityGroupsPaged" PageSize="20">
 					    <Columns>
 						    <asp:TemplateField HeaderText="gvGroupsDisplayName" SortExpression="DisplayName">
-							    <ItemStyle Width="50%"></ItemStyle>
+							    <ItemStyle Width="100%"></ItemStyle>
 							    <ItemTemplate>
 								    <asp:hyperlink id="lnk1" runat="server"
 									    NavigateUrl='<%# GetListEditUrl(Eval("AccountId").ToString()) %>'>

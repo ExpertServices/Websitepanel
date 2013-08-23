@@ -51,7 +51,7 @@ namespace WebsitePanel.Providers.HostedSolution
             DirectorySearcher deSearch = new DirectorySearcher
             {
                 Filter =
-                    ("(&(objectClass=user))")
+                    "(&(objectClass=user))"
             };
 
             SearchResultCollection srcUsers = deSearch.FindAll();
@@ -63,9 +63,19 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 foreach (string str in props)
                 {
-                    if (str.IndexOf(group) != -1)
+                    string groupName = "";
+
+                    string[] parts = str.Split(',');
+                    for (int i = 0; i < parts.Length; i++)
                     {
-                        rets.Add(de.Path);
+                        if (parts[i].StartsWith("CN="))
+                        {
+                            if (parts[i].Substring(3) == group)
+                            {
+                                rets.Add(de.Path);
+                            }
+                            break;
+                        }
                     }
                 }
             }

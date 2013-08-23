@@ -129,6 +129,12 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
 
         private System.Threading.SendOrPostCallback AddUserToSecurityGroupOperationCompleted;
 
+        private System.Threading.SendOrPostCallback DeleteUserFromSecurityGroupOperationCompleted;
+
+        private System.Threading.SendOrPostCallback GetSecurityGroupsByMemberOperationCompleted;
+
+        private System.Threading.SendOrPostCallback SearchSecurityGroupsOperationCompleted;
+
         /// <remarks/>
         public esOrganizations()
         {
@@ -230,6 +236,15 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
 
         /// <remarks/>
         public event AddUserToSecurityGroupCompletedEventHandler AddUserToSecurityGroupCompleted;
+
+        /// <remarks/>
+        public event DeleteUserFromSecurityGroupCompletedEventHandler DeleteUserFromSecurityGroupCompleted;
+
+        /// <remarks/>
+        public event GetSecurityGroupsByMemberCompletedEventHandler GetSecurityGroupsByMemberCompleted;
+
+        /// <remarks/>
+        public event SearchSecurityGroupsCompletedEventHandler SearchSecurityGroupsCompleted;
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/CheckOrgIdExists", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -2158,22 +2173,22 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/AddUserToSecurityGroup", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public int AddUserToSecurityGroup(int itemId, int userAccountId, int groupAccountId)
+        public int AddUserToSecurityGroup(int itemId, int userAccountId, string groupName)
         {
             object[] results = this.Invoke("AddUserToSecurityGroup", new object[] {
                     itemId,
                     userAccountId,
-                    groupAccountId});
+                    groupName});
             return ((int)(results[0]));
         }
 
         /// <remarks/>
-        public System.IAsyncResult BeginAddUserToSecurityGroup(int itemId, int userAccountId, int groupAccountId, System.AsyncCallback callback, object asyncState)
+        public System.IAsyncResult BeginAddUserToSecurityGroup(int itemId, int userAccountId, string groupName, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("AddUserToSecurityGroup", new object[] {
                     itemId,
                     userAccountId,
-                    groupAccountId}, callback, asyncState);
+                    groupName}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -2184,13 +2199,13 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
         }
 
         /// <remarks/>
-        public void AddUserToSecurityGroupAsync(int itemId, int userAccountId, int groupAccountId)
+        public void AddUserToSecurityGroupAsync(int itemId, int userAccountId, string groupName)
         {
-            this.AddUserToSecurityGroupAsync(itemId, userAccountId, groupAccountId, null);
+            this.AddUserToSecurityGroupAsync(itemId, userAccountId, groupName, null);
         }
 
         /// <remarks/>
-        public void AddUserToSecurityGroupAsync(int itemId, int userAccountId, int groupAccountId, object userState)
+        public void AddUserToSecurityGroupAsync(int itemId, int userAccountId, string groupName, object userState)
         {
             if ((this.AddUserToSecurityGroupOperationCompleted == null))
             {
@@ -2199,7 +2214,7 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
             this.InvokeAsync("AddUserToSecurityGroup", new object[] {
                     itemId,
                     userAccountId,
-                    groupAccountId}, this.AddUserToSecurityGroupOperationCompleted, userState);
+                    groupName}, this.AddUserToSecurityGroupOperationCompleted, userState);
         }
 
         private void OnAddUserToSecurityGroupOperationCompleted(object arg)
@@ -2208,6 +2223,171 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
             {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.AddUserToSecurityGroupCompleted(this, new AddUserToSecurityGroupCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/DeleteUserFromSecurityGroup", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int DeleteUserFromSecurityGroup(int itemId, int userAccountId, string groupName)
+        {
+            object[] results = this.Invoke("DeleteUserFromSecurityGroup", new object[] {
+                    itemId,
+                    userAccountId,
+                    groupName});
+            return ((int)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginDeleteUserFromSecurityGroup(int itemId, int userAccountId, string groupName, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("DeleteUserFromSecurityGroup", new object[] {
+                    itemId,
+                    userAccountId,
+                    groupName}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public int EndDeleteUserFromSecurityGroup(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((int)(results[0]));
+        }
+
+        /// <remarks/>
+        public void DeleteUserFromSecurityGroupAsync(int itemId, int userAccountId, string groupName)
+        {
+            this.DeleteUserFromSecurityGroupAsync(itemId, userAccountId, groupName, null);
+        }
+
+        /// <remarks/>
+        public void DeleteUserFromSecurityGroupAsync(int itemId, int userAccountId, string groupName, object userState)
+        {
+            if ((this.DeleteUserFromSecurityGroupOperationCompleted == null))
+            {
+                this.DeleteUserFromSecurityGroupOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDeleteUserFromSecurityGroupOperationCompleted);
+            }
+            this.InvokeAsync("DeleteUserFromSecurityGroup", new object[] {
+                    itemId,
+                    userAccountId,
+                    groupName}, this.DeleteUserFromSecurityGroupOperationCompleted, userState);
+        }
+
+        private void OnDeleteUserFromSecurityGroupOperationCompleted(object arg)
+        {
+            if ((this.DeleteUserFromSecurityGroupCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DeleteUserFromSecurityGroupCompleted(this, new DeleteUserFromSecurityGroupCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetSecurityGroupsByMember", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ExchangeAccount[] GetSecurityGroupsByMember(int itemId, int accountId)
+        {
+            object[] results = this.Invoke("GetSecurityGroupsByMember", new object[] {
+                    itemId,
+                    accountId});
+            return ((ExchangeAccount[])(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginGetSecurityGroupsByMember(int itemId, int accountId, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("GetSecurityGroupsByMember", new object[] {
+                    itemId,
+                    accountId}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public ExchangeAccount[] EndGetSecurityGroupsByMember(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ExchangeAccount[])(results[0]));
+        }
+
+        /// <remarks/>
+        public void GetSecurityGroupsByMemberAsync(int itemId, int accountId)
+        {
+            this.GetSecurityGroupsByMemberAsync(itemId, accountId, null);
+        }
+
+        /// <remarks/>
+        public void GetSecurityGroupsByMemberAsync(int itemId, int accountId, object userState)
+        {
+            if ((this.GetSecurityGroupsByMemberOperationCompleted == null))
+            {
+                this.GetSecurityGroupsByMemberOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetSecurityGroupsByMemberOperationCompleted);
+            }
+            this.InvokeAsync("GetSecurityGroupsByMember", new object[] {
+                    itemId,
+                    accountId}, this.GetSecurityGroupsByMemberOperationCompleted, userState);
+        }
+
+        private void OnGetSecurityGroupsByMemberOperationCompleted(object arg)
+        {
+            if ((this.GetSecurityGroupsByMemberCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetSecurityGroupsByMemberCompleted(this, new GetSecurityGroupsByMemberCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SearchSecurityGroups", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ExchangeAccount[] SearchSecurityGroups(int itemId, string filterColumn, string filterValue, string sortColumn)
+        {
+            object[] results = this.Invoke("SearchSecurityGroups", new object[] {
+                    itemId,
+                    filterColumn,
+                    filterValue,
+                    sortColumn});
+            return ((ExchangeAccount[])(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginSearchSecurityGroups(int itemId, string filterColumn, string filterValue, string sortColumn, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("SearchSecurityGroups", new object[] {
+                    itemId,
+                    filterColumn,
+                    filterValue,
+                    sortColumn}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public ExchangeAccount[] EndSearchSecurityGroups(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ExchangeAccount[])(results[0]));
+        }
+
+        /// <remarks/>
+        public void SearchSecurityGroupsAsync(int itemId, string filterColumn, string filterValue, string sortColumn)
+        {
+            this.SearchSecurityGroupsAsync(itemId, filterColumn, filterValue, sortColumn, null);
+        }
+
+        /// <remarks/>
+        public void SearchSecurityGroupsAsync(int itemId, string filterColumn, string filterValue, string sortColumn, object userState)
+        {
+            if ((this.SearchSecurityGroupsOperationCompleted == null))
+            {
+                this.SearchSecurityGroupsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSearchSecurityGroupsOperationCompleted);
+            }
+            this.InvokeAsync("SearchSecurityGroups", new object[] {
+                    itemId,
+                    filterColumn,
+                    filterValue,
+                    sortColumn}, this.SearchSecurityGroupsOperationCompleted, userState);
+        }
+
+        private void OnSearchSecurityGroupsOperationCompleted(object arg)
+        {
+            if ((this.SearchSecurityGroupsCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SearchSecurityGroupsCompleted(this, new SearchSecurityGroupsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
 
@@ -3174,6 +3354,96 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
             {
                 this.RaiseExceptionIfNecessary();
                 return ((int)(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void DeleteUserFromSecurityGroupCompletedEventHandler(object sender, DeleteUserFromSecurityGroupCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DeleteUserFromSecurityGroupCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal DeleteUserFromSecurityGroupCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public int Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((int)(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetSecurityGroupsByMemberCompletedEventHandler(object sender, GetSecurityGroupsByMemberCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetSecurityGroupsByMemberCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal GetSecurityGroupsByMemberCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public ExchangeAccount[] Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((ExchangeAccount[])(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void SearchSecurityGroupsCompletedEventHandler(object sender, SearchSecurityGroupsCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SearchSecurityGroupsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal SearchSecurityGroupsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public ExchangeAccount[] Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((ExchangeAccount[])(this.results[0]));
             }
         }
     }

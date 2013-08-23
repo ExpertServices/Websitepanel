@@ -77,6 +77,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                     txtNotes.ReadOnly = true;
                     manager.Enabled = false;
                     members.Enabled = false;
+
+                    btnSave.Visible = false;
                 }
             }
             catch (Exception ex)

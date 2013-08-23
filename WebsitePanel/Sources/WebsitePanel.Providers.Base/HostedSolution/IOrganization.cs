@@ -52,6 +52,8 @@ namespace WebsitePanel.Providers.HostedSolution
 
         void AddUserToSecurityGroup(string organizationId, string loginName, string groupName);
 
+        void DeleteUserFromSecurityGroup(string organizationId, string loginName, string groupName);
+
         void SetUserGeneralSettings(string organizationId, string accountName, string displayName, string password,
                                     bool hideFromAddressBook, bool disabled, bool locked, string firstName, string initials,
                                     string lastName,

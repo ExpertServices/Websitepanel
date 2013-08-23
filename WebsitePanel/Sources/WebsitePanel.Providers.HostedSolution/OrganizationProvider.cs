@@ -1041,6 +1041,34 @@ namespace WebsitePanel.Providers.HostedSolution
             ActiveDirectoryUtils.AddUserToGroup(userPath, groupPath);
         }
 
+        public void DeleteUserFromSecurityGroup(string organizationId, string loginName, string groupName)
+        {
+            DeleteUserFromSecurityGroupInternal(organizationId, loginName, groupName);
+        }
+
+        internal void DeleteUserFromSecurityGroupInternal(string organizationId, string loginName, string groupName)
+        {
+            HostedSolutionLog.LogStart("AddUserToSecurityGroupInternal");
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+            HostedSolutionLog.DebugInfo("loginName : {0}", loginName);
+            HostedSolutionLog.DebugInfo("groupName : {0}", groupName);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            if (string.IsNullOrEmpty(loginName))
+                throw new ArgumentNullException("loginName");
+
+            if (string.IsNullOrEmpty(groupName))
+                throw new ArgumentNullException("groupName");
+
+            string userPath = GetUserPath(organizationId, loginName);
+
+            string groupPath = GetGroupPath(organizationId, groupName);
+
+            ActiveDirectoryUtils.RemoveUserFromGroup(userPath, groupPath);
+        }
+
         #endregion
 
         public override bool IsInstalled()

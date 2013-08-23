@@ -10,7 +10,7 @@
 <%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/EmailAddress.ascx" TagName="EmailAddress" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/AccountsList.ascx" TagName="AccountsList" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/UsersList.ascx" TagName="UsersList" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/GroupsList.ascx" TagName="GroupsList" TagPrefix="wsp" %>
 
 
 
@@ -63,11 +63,7 @@
 						<asp:UpdatePanel ID="SCGeneralUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
 							<ContentTemplate>
 
-                                <wsp:AccountsList id="securegroups" runat="server"
-                                            MailboxesEnabled="false" 
-                                            EnableMailboxOnly="false" 
-										    ContactsEnabled="false"
-										    DistributionListsEnabled="false"  />
+                                <wsp:GroupsList id="securegroups" runat="server" />
 
 							</ContentTemplate>
 						</asp:UpdatePanel>

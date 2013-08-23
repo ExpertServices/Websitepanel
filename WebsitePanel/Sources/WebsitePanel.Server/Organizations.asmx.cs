@@ -141,6 +141,12 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
+        public void DeleteUserFromSecurityGroup(string organizationId, string loginName, string groupName)
+        {
+            Organization.DeleteUserFromSecurityGroup(organizationId, loginName, groupName);
+        }
+
+        [WebMethod, SoapHeader("settings")]
         public void SetUserGeneralSettings(string organizationId, string accountName, string displayName, string password,
             bool hideFromAddressBook, bool disabled, bool locked, string firstName, string initials, string lastName,
             string address, string city, string state, string zip, string country, string jobTitle,
