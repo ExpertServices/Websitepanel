@@ -5110,6 +5110,15 @@
   <data name="Quota.Exchange2007.RecoverableItemsSpace" xml:space="preserve">
     <value>Recoverable Items Storage, MB</value>
   </data>
+  <data name="ResourceGroup.Exchange" xml:space="preserve">
+    <value>Enterprise Storage</value>
+  </data>
+  <data name="EnterpriseStorage.DiskStorageSpace" xml:space="preserve">
+    <value>Disk Storage Space, MB</value>
+  </data>
+  <data name="EnterpriseStorage.Folders" xml:space="preserve">
+    <value>Number of Root Folders</value>
+  </data>
   <data name="Error.LYNC_DELETE_DOMAIN" xml:space="preserve">
     <value>Error deleting organization domain name. See audit log for more details.</value>
   </data>

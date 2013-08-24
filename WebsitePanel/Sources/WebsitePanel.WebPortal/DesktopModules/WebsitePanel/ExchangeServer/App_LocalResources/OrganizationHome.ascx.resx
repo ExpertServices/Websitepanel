@@ -210,4 +210,13 @@
   <data name="lnkExchangeLitigationHold.Text" xml:space="preserve">
     <value>Litigation Hold Storage (Mb):</value>
   </data>
+  <data name="lnkEnterpriseStorageFolders.Text" xml:space="preserve">
+    <value>Folders:</value>
+  </data>
+  <data name="lnkEnterpriseStorageSpace.Text" xml:space="preserve">
+    <value>Used Diskspace (MB):</value>
+  </data>
+  <data name="locEnterpriseStorage.Text" xml:space="preserve">
+    <value>Enterprise Storage</value>
+  </data>
 </root>
