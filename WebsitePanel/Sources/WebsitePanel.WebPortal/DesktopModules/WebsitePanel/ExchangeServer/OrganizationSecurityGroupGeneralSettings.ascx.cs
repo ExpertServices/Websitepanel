@@ -27,24 +27,28 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Data;
+using System.Configuration;
+using System.Collections;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Collections.Generic;
-using WebsitePanel.EnterpriseServer;
-using WebsitePanel.Providers.HostedSolution;
-using WebsitePanel.Providers.ResultObjects;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
 
-namespace WebsitePanel.Portal.HostedSolution
+using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.EnterpriseServer;
+
+namespace WebsitePanel.Portal.ExchangeServer
 {
-    public partial class UserMemberOf : WebsitePanelModuleBase
+    public partial class OrganizationSecurityGroupGeneralSettings : WebsitePanelModuleBase
     {
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
                 BindSettings();
-
-                MailboxTabsId.Visible = (PanelRequest.Context == "Mailbox");
-                UserTabsId.Visible = (PanelRequest.Context == "User");
             }
         }
 
@@ -53,19 +57,31 @@ namespace WebsitePanel.Portal.HostedSolution
             try
             {
                 // get settings
-                ExchangeMailbox mailbox = ES.Services.ExchangeServer.GetMailboxGeneralSettings(PanelRequest.ItemID,
-                    PanelRequest.AccountID);
+                OrganizationSecurityGroup securityGroup = ES.Services.Organizations.GetSecurityGroupGeneralSettings(
+                    PanelRequest.ItemID, PanelRequest.AccountID);
 
-                // title
-                litDisplayName.Text = mailbox.DisplayName;
+                litDisplayName.Text = PortalAntiXSS.Encode(securityGroup.DisplayName);
 
-                ExchangeAccount[] dLists = ES.Services.ExchangeServer.GetDistributionListsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
+                // bind form
+                txtDisplayName.Text = securityGroup.DisplayName;
 
-                distrlists.SetAccounts(dLists);
+                manager.SetAccount(securityGroup.ManagerAccount);
+
+                members.SetAccounts(securityGroup.MembersAccounts);
+
+                txtNotes.Text = securityGroup.Notes;
+
+                if (securityGroup.IsDefault)
+                {
+                    txtDisplayName.ReadOnly = true;
+                    txtNotes.ReadOnly = true;
+                    manager.Enabled = false;
+                    members.Enabled = false;
+                }
             }
             catch (Exception ex)
             {
-                messageBox.ShowErrorMessage("EXCHANGE_GET_MAILBOX_SETTINGS", ex);
+                messageBox.ShowErrorMessage("ORGANIZATION_GET_SECURITY_GROUP_SETTINGS", ex);
             }
         }
 
@@ -76,25 +92,27 @@ namespace WebsitePanel.Portal.HostedSolution
 
             try
             {
-                ExchangeAccount[] oldDistributionLists = ES.Services.ExchangeServer.GetDistributionListsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
-                List<string> newDistributionLists = new List<string>(distrlists.GetAccounts());
-                foreach (ExchangeAccount oldlist in oldDistributionLists)
+                int result = ES.Services.Organizations.SetSecurityGroupGeneralSettings(
+                    PanelRequest.ItemID,
+                    PanelRequest.AccountID,
+                    txtDisplayName.Text,
+                    manager.GetAccount(),
+                    members.GetAccounts(),
+                    txtNotes.Text);
+
+                if (result < 0)
                 {
-                    if (newDistributionLists.Contains(oldlist.AccountName))
-                        newDistributionLists.Remove(oldlist.AccountName);
-                    else
-                        ES.Services.ExchangeServer.DeleteDistributionListMember(PanelRequest.ItemID, oldlist.AccountName, PanelRequest.AccountID);
+                    messageBox.ShowResultMessage(result);
+                    return;
                 }
 
-                foreach (string newlist in newDistributionLists)
-                    ES.Services.ExchangeServer.AddDistributionListMember(PanelRequest.ItemID, newlist, PanelRequest.AccountID);
+                litDisplayName.Text = PortalAntiXSS.Encode(txtDisplayName.Text);
 
-                messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_MAILBOX_SETTINGS");
-                BindSettings();
+                messageBox.ShowSuccessMessage("ORGANIZATION_UPDATE_SECURITY_GROUP_SETTINGS");
             }
             catch (Exception ex)
             {
-                messageBox.ShowErrorMessage("EXCHANGE_UPDATE_MAILBOX_SETTINGS", ex);
+                messageBox.ShowErrorMessage("ORGANIZATION_UPDATE_SECURITY_GROUP_SETTINGS", ex);
             }
         }
 
@@ -103,6 +121,10 @@ namespace WebsitePanel.Portal.HostedSolution
             SaveSettings();
         }
 
+        protected void valManager_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            args.IsValid = manager.GetAccount() != null;
 
+        }
     }
 }

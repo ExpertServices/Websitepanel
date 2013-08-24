@@ -117,91 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Text.ActiveSyncPolicy" xml:space="preserve">
-    <value>ActiveSync Policy</value>
+  <data name="btnSave.OnClientClick" xml:space="preserve">
+    <value>ShowProgressDialog('Updating group settings...');</value>
   </data>
-  <data name="Text.Contacts" xml:space="preserve">
-    <value>Contacts</value>
+  <data name="btnSave.Text" xml:space="preserve">
+    <value>Save Changes</value>
   </data>
-  <data name="Text.DistributionLists" xml:space="preserve">
-    <value>Distribution Lists</value>
+  <data name="chkHideAddressBook.Text" xml:space="preserve">
+    <value>Hide from Address Book</value>
   </data>
-  <data name="Text.Disclaimers" xml:space="preserve">
-    <value>Disclaimers</value>
+  <data name="FormComments.Text" xml:space="preserve">
+    <value />
   </data>
-  <data name="Text.DomainNames" xml:space="preserve">
-    <value>Domains</value>
+  <data name="locManager.Text" xml:space="preserve">
+    <value>Managed By: *</value>
   </data>
-  <data name="Text.ExchangeDomainNames" xml:space="preserve">
-    <value>Accepted Domains</value>
+  <data name="locMembers.Text" xml:space="preserve">
+    <value>Members:</value>
   </data>
-  <data name="Text.CRMOrganization" xml:space="preserve">
-    <value>CRM Organization</value>
+  <data name="locNotes.Text" xml:space="preserve">
+    <value>Notes:</value>
   </data>
-  <data name="Text.CRMUsers" xml:space="preserve">
-    <value>CRM Users</value>
+  <data name="locTitle.Text" xml:space="preserve">
+    <value>Edit Group</value>
   </data>
-  <data name="Text.ExchangeGroup" xml:space="preserve">
-    <value>Exchange</value>
-  </data>
-  <data name="Text.Mailboxes" xml:space="preserve">
-    <value>Mailboxes</value>
-  </data>
-  <data name="Text.OrganizationGroup" xml:space="preserve">
-    <value>Organization's</value>
-  </data>
-  <data name="Text.CRMGroup" xml:space="preserve">
-    <value>CRM</value>
-  </data>
-  <data name="Text.BlackBerryGroup" xml:space="preserve">
-    <value>BlackBerry</value>
-  </data>
-  <data name="Text.BlackBerryUsers" xml:space="preserve">
-    <value>BlackBerry Users</value>
-  </data>
-  <data name="Text.PublicFolders" xml:space="preserve">
-    <value>Public Folders</value>
-  </data>
-  <data name="Text.Setup" xml:space="preserve">
-    <value>Setup</value>
-  </data>
-  <data name="Text.SharePointGroup" xml:space="preserve">
-    <value>SharePoint</value>
-  </data>
-  <data name="Text.OCSGroup" xml:space="preserve">
-    <value>OCS</value>
-  </data>
-  <data name="Text.OCSUsers" xml:space="preserve">
-    <value>OCS Users</value>
-  </data>
-  <data name="Text.SiteCollections" xml:space="preserve">
-    <value>Site Collections</value>
-  </data>
-  <data name="Text.StorageLimits" xml:space="preserve">
-    <value>Storage Settings</value>
-  </data>
-  <data name="Text.StorageUsage" xml:space="preserve">
-    <value>Storage Usage</value>
-  </data>
-  <data name="Text.Users" xml:space="preserve">
-    <value>Users</value>
-  </data>
-  <data name="Text.MailboxPlans" xml:space="preserve">
-    <value>Mailbox Plans</value>
-  </data>
-  <data name="Text.LyncGroup" xml:space="preserve">
-    <value>Lync</value>
-  </data>
-  <data name="Text.LyncUserPlans" xml:space="preserve">
-    <value>Lync User Plans</value>
-  </data>
-  <data name="Text.LyncUsers" xml:space="preserve">
-    <value>Lync Users</value>
-  </data>
-  <data name="Text.LyncFederationDomains" xml:space="preserve">
-    <value>Lync Federation Domains</value>
-  </data>
-  <data name="Text.SecurityGroups" xml:space="preserve">
+  <data name="Text.PageName" xml:space="preserve">
     <value>Groups</value>
+  </data>
+  <data name="valManager.ErrorMessage" xml:space="preserve">
+    <value>Please specify a manager</value>
+  </data>
+  <data name="valRequireDisplayName.ErrorMessage" xml:space="preserve">
+    <value>Enter Display Name</value>
+  </data>
+  <data name="valRequireDisplayName.Text" xml:space="preserve">
+    <value>*</value>
   </data>
 </root>

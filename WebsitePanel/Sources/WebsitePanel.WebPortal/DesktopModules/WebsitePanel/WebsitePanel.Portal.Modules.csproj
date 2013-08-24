@@ -230,6 +230,13 @@
     <Compile Include="ExchangeServer\OrganizationAddDomainName.ascx.designer.cs">
       <DependentUpon>OrganizationAddDomainName.ascx</DependentUpon>
     </Compile>
+    <Compile Include="ExchangeServer\OrganizationCreateSecurityGroup.ascx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>OrganizationCreateSecurityGroup.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationCreateSecurityGroup.ascx.designer.cs">
+      <DependentUpon>OrganizationCreateSecurityGroup.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ExchangeServer\OrganizationDomainNames.ascx.cs">
       <DependentUpon>OrganizationDomainNames.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -251,6 +258,20 @@
     <Compile Include="ExchangeServer\ExchangeMailboxPlans.ascx.designer.cs">
       <DependentUpon>ExchangeMailboxPlans.ascx</DependentUpon>
     </Compile>
+    <Compile Include="ExchangeServer\OrganizationSecurityGroupGeneralSettings.ascx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>OrganizationSecurityGroupGeneralSettings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationSecurityGroupGeneralSettings.ascx.designer.cs">
+      <DependentUpon>OrganizationSecurityGroupGeneralSettings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationSecurityGroups.ascx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>OrganizationSecurityGroups.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationSecurityGroups.ascx.designer.cs">
+      <DependentUpon>OrganizationSecurityGroups.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ExchangeServer\OrganizationUserMemberOf.ascx.cs">
       <DependentUpon>OrganizationUserMemberOf.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -268,6 +289,20 @@
     </Compile>
     <Compile Include="ExchangeServer\UserControls\MailboxPlanSelector.ascx.designer.cs">
       <DependentUpon>MailboxPlanSelector.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\SecurityGroupTabs.ascx.cs">
+      <DependentUpon>SecurityGroupTabs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\SecurityGroupTabs.ascx.designer.cs">
+      <DependentUpon>SecurityGroupTabs.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\UsersList.ascx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>UsersList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\UsersList.ascx.designer.cs">
+      <DependentUpon>UsersList.ascx</DependentUpon>
     </Compile>
     <Compile Include="ExchangeServer\UserControls\UserTabs.ascx.cs">
       <DependentUpon>UserTabs.ascx</DependentUpon>
@@ -359,13 +394,6 @@
     </Compile>
     <Compile Include="ProviderControls\CRM2011_Settings.ascx.designer.cs">
       <DependentUpon>CRM2011_Settings.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="ProviderControls\EnterpriseStorage_Settings.ascx.cs">
-      <DependentUpon>EnterpriseStorage_Settings.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="ProviderControls\EnterpriseStorage_Settings.ascx.designer.cs">
-      <DependentUpon>EnterpriseStorage_Settings.ascx</DependentUpon>
     </Compile>
     <Compile Include="ProviderControls\HeliconZoo_Settings.ascx.cs">
       <DependentUpon>HeliconZoo_Settings.ascx</DependentUpon>
@@ -3941,14 +3969,18 @@
     <Content Include="ExchangeServer\ExchangeDistributionListMemberOf.ascx" />
     <Content Include="ExchangeServer\ExchangeMailboxMemberOf.ascx" />
     <Content Include="ExchangeServer\OrganizationAddDomainName.ascx" />
+    <Content Include="ExchangeServer\OrganizationCreateSecurityGroup.ascx" />
     <Content Include="ExchangeServer\OrganizationDomainNames.ascx" />
     <Content Include="ExchangeServer\ExchangeAddMailboxPlan.ascx" />
     <Content Include="ExchangeServer\ExchangeDisclaimers.ascx" />
     <Content Include="ExchangeServer\ExchangeDisclaimerGeneralSettings.ascx" />
+    <Content Include="ExchangeServer\OrganizationSecurityGroupGeneralSettings.ascx" />
+    <Content Include="ExchangeServer\OrganizationSecurityGroups.ascx" />
     <Content Include="ExchangeServer\OrganizationUserMemberOf.ascx" />
+    <Content Include="ExchangeServer\UserControls\SecurityGroupTabs.ascx" />
+    <Content Include="ExchangeServer\UserControls\UsersList.ascx" />
     <Content Include="Lync\UserControls\LyncUserSettings.ascx" />
     <Content Include="ProviderControls\CRM2011_Settings.ascx" />
-    <Content Include="ProviderControls\EnterpriseStorage_Settings.ascx" />
     <Content Include="ProviderControls\HeliconZoo_Settings.ascx" />
     <Content Include="ServersEditWebPlatformInstaller.ascx" />
     <Content Include="ExchangeServer\ExchangeMailboxPlans.ascx" />
@@ -5151,7 +5183,12 @@
     <Content Include="App_LocalResources\PhoneNumbers.ascx.resx" />
     <Content Include="App_LocalResources\PhoneNumbersAddPhoneNumber.ascx.resx" />
     <Content Include="App_LocalResources\PhoneNumbersEditPhoneNumber.ascx.resx" />
-    <Content Include="ProviderControls\App_LocalResources\EnterpriseStorage_Settings.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationCreateSecurityGroup.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationSecurityGroupGeneralSettings.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationSecurityGroups.ascx.resx" />
+    <Content Include="ExchangeServer\UserControls\App_LocalResources\AccountsListWithPermissions.ascx.resx" />
+    <Content Include="ExchangeServer\UserControls\App_LocalResources\SecurityGroupTabs.ascx.resx" />
+    <Content Include="ExchangeServer\UserControls\App_LocalResources\UsersList.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

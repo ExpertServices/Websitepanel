@@ -44,6 +44,35 @@ namespace WebsitePanel.Providers.HostedSolution
             return de;
         }
 
+        public static string[] GetUsersGroup(string group)
+        {
+            List<string> rets = new List<string>();
+
+            DirectorySearcher deSearch = new DirectorySearcher
+            {
+                Filter =
+                    ("(&(objectClass=user))")
+            };
+
+            SearchResultCollection srcUsers = deSearch.FindAll();
+
+            foreach (SearchResult srcUser in srcUsers)
+            {
+                DirectoryEntry de = srcUser.GetDirectoryEntry();
+                PropertyValueCollection props = de.Properties["memberOf"];
+
+                foreach (string str in props)
+                {
+                    if (str.IndexOf(group) != -1)
+                    {
+                        rets.Add(de.Path);
+                    }
+                }
+            }
+
+            return rets.ToArray();
+        }
+
         public static bool IsUserInGroup(string samAccountName, string group)
         {
             bool res = false;
@@ -328,6 +357,7 @@ namespace WebsitePanel.Providers.HostedSolution
             newGroupObject.Properties[ADAttributes.SAMAccountName].Add(group);
 
             newGroupObject.Properties[ADAttributes.GroupType].Add(-2147483640);
+
             newGroupObject.CommitChanges();
         }
 
@@ -337,6 +367,14 @@ namespace WebsitePanel.Providers.HostedSolution
             DirectoryEntry group = new DirectoryEntry(groupPath);
 
             group.Invoke("Add", user.Path);
+        }
+
+        public static void RemoveUserFromGroup(string userPath, string groupPath)
+        {
+            DirectoryEntry user = new DirectoryEntry(userPath);
+            DirectoryEntry group = new DirectoryEntry(groupPath);
+
+            group.Invoke("Remove", user.Path);
         }
 
         public static bool AdObjectExists(string path)

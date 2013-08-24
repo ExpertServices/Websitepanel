@@ -11,7 +11,7 @@
 //   this list of conditions  and  the  following  disclaimer in  the documentation
 //   and/or other materials provided with the distribution.
 //
-// - Neither  the  name  of  the  SMB SAAS Systems Inc.  nor   the   names  of  its
+// - Neither  the  name  of  the  Outercurve Foundation  nor   the   names  of  its
 //   contributors may be used to endorse or  promote  products  derived  from  this
 //   software without specific prior written permission.
 //
@@ -34,8 +34,8 @@ using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Portal.ExchangeServer.UserControls
 {
-    public partial class UserSelector : WebsitePanelControlBase
-    {
+    public partial class UsersList : WebsitePanelControlBase
+	{
         public const string DirectionString = "DirectionString";
 
         private bool _enabled = true;
@@ -45,6 +45,13 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             get { return _enabled; }
             set { _enabled = value; }
         }
+
+		private enum SelectedState
+		{
+			All,
+			Selected,
+			Unselected
+		}
 
         public bool IncludeMailboxes
         {
@@ -113,98 +120,113 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             }
         }
 
+	    public int ExcludeAccountId
+		{
+			get { return PanelRequest.AccountID; }
+		}
 
-        public int ExcludeAccountId
+		public void SetAccounts(OrganizationUser[] accounts)
+		{
+			BindAccounts(accounts, false);
+		}
+
+		public string[] GetAccounts()
+		{
+			// get selected accounts
+			List<OrganizationUser> selectedAccounts = GetGridViewAccounts(gvAccounts, SelectedState.All);
+
+			List<string> accountNames = new List<string>();
+			foreach (OrganizationUser account in selectedAccounts)
+				accountNames.Add(account.AccountName);
+
+			return accountNames.ToArray();
+		}
+
+		protected void Page_Load(object sender, EventArgs e)
+		{
+			// register javascript
+			if (!Page.ClientScript.IsClientScriptBlockRegistered("SelectAllCheckboxes"))
+			{
+				string script = @"    function SelectAllCheckboxes(box)
+    {
+		var state = box.checked;
+        var elm = box.parentElement.parentElement.parentElement.parentElement.getElementsByTagName(""INPUT"");
+        for(i = 0; i < elm.length; i++)
+            if(elm[i].type == ""checkbox"" && elm[i].id != box.id && elm[i].checked != state && !elm[i].disabled)
+		        elm[i].checked = state;
+    }";
+				Page.ClientScript.RegisterClientScriptBlock(typeof(AccountsList), "SelectAllCheckboxes",
+					script, true);
+			}
+
+            btnAdd.Visible = Enabled;
+            btnDelete.Visible = Enabled;
+
+            gvAccounts.Columns[0].Visible = Enabled;
+		}
+
+		protected void btnAdd_Click(object sender, EventArgs e)
+		{
+			// bind all accounts
+			BindPopupAccounts();
+
+			// show modal
+			AddAccountsModal.Show();
+		}
+
+		protected void btnDelete_Click(object sender, EventArgs e)
+		{
+			// get selected accounts
+			List<OrganizationUser> selectedAccounts = GetGridViewAccounts(gvAccounts, SelectedState.Unselected);
+
+			// add to the main list
+			BindAccounts(selectedAccounts.ToArray(), false);
+		}
+
+		protected void btnAddSelected_Click(object sender, EventArgs e)
+		{
+			// get selected accounts
+			List<OrganizationUser> selectedAccounts = GetGridViewAccounts(gvPopupAccounts, SelectedState.Selected);
+			
+			// add to the main list
+			BindAccounts(selectedAccounts.ToArray(), true);
+		}
+
+        public string GetAccountImage(int accountTypeId)
         {
-            get { return PanelRequest.AccountID; }
-        }
+            string imgName = string.Empty;
 
-        public void SetAccount(OrganizationUser account)
-        {
-            BindSelectedAccount(account);
-        }
-
-        public string GetAccount()
-        {
-            return (string)ViewState["AccountName"];
-        }
-
-        public string GetSAMAccountName()
-        {
-            return (string)ViewState["SAMAccountName"];
-        }
-
-
-        public string GetDisplayName()
-        {
-            return (string)ViewState["DisplayName"];
-        }
-
-        public string GetPrimaryEmailAddress()
-        {
-            return (string)ViewState["PrimaryEmailAddress"];
-        }
-
-        public string GetSubscriberNumber()
-        {
-            return (string)ViewState["SubscriberNumber"];
-        }
-
-
-        public int GetAccountId()
-        {
-            return Utils.ParseInt(ViewState["AccountId"], 0);
-        }
-
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void BindSelectedAccount(OrganizationUser account)
-        {
-            if (account != null)
+            ExchangeAccountType accountType = (ExchangeAccountType)accountTypeId;
+            switch (accountType)
             {
-                txtDisplayName.Text = account.DisplayName;
-                ViewState["AccountName"] = account.AccountName;
-                ViewState["DisplayName"] = account.DisplayName;
-                ViewState["PrimaryEmailAddress"] = account.PrimaryEmailAddress;
-                ViewState["AccountId"] = account.AccountId;
-                ViewState["SAMAccountName"] = account.SamAccountName;
-                ViewState["SubscriberNumber"] = account.SubscriberNumber;
+                case ExchangeAccountType.Room:
+                    imgName = "room_16.gif";
+                    break;
+                case ExchangeAccountType.Equipment:
+                    imgName = "equipment_16.gif";
+                    break;
+                default:
+                    imgName = "admin_16.png";
+                    break;
             }
-            else
-            {
-                txtDisplayName.Text = "";
-                ViewState["AccountName"] = null;
-                ViewState["DisplayName"] = null;
-                ViewState["PrimaryEmailAddress"] = null;
-                ViewState["AccountId"] = null;
-                ViewState["SAMAccountName"] = null;
-                ViewState["SubscriberNumber"] = null;
-            }
+
+            return GetThemedImage("Exchange/" + imgName);
         }
 
-        public string GetAccountImage()
-        {
-            return GetThemedImage("Exchange/admin_16.png");
-        }
+		private void BindPopupAccounts()
+		{
+			OrganizationUser[] accounts = ES.Services.Organizations.SearchAccounts(PanelRequest.ItemID,
+				ddlSearchColumn.SelectedValue, txtSearchValue.Text + "%", "", IncludeMailboxes);
 
-        private void BindPopupAccounts()
-        {
-            OrganizationUser[] accounts = ES.Services.Organizations.SearchAccounts(PanelRequest.ItemID,
-                ddlSearchColumn.SelectedValue, txtSearchValue.Text + "%", "", IncludeMailboxes);
+			if (ExcludeAccountId > 0)
+			{
+				List<OrganizationUser> updatedAccounts = new List<OrganizationUser>();
+				foreach (OrganizationUser account in accounts)
+					if (account.AccountId != ExcludeAccountId)
+						updatedAccounts.Add(account);
 
-            if (ExcludeAccountId > 0)
-            {
-                List<OrganizationUser> updatedAccounts = new List<OrganizationUser>();
-                foreach (OrganizationUser account in accounts)
-                    if (account.AccountId != ExcludeAccountId)
-                        updatedAccounts.Add(account);
-
-                accounts = updatedAccounts.ToArray();
-            }
+				accounts = updatedAccounts.ToArray();
+			}
 
             if (IncludeMailboxesOnly)
             {
@@ -252,7 +274,72 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
             gvPopupAccounts.DataSource = accounts;
             gvPopupAccounts.DataBind();
-        }
+		}
+
+		private void BindAccounts(OrganizationUser[] newAccounts, bool preserveExisting)
+		{
+			// get binded addresses
+			List<OrganizationUser> accounts = new List<OrganizationUser>();
+			if(preserveExisting)
+				accounts.AddRange(GetGridViewAccounts(gvAccounts, SelectedState.All));
+
+			// add new accounts
+			if (newAccounts != null)
+			{
+				foreach (OrganizationUser newAccount in newAccounts)
+				{
+					// check if exists
+					bool exists = false;
+					foreach (OrganizationUser account in accounts)
+					{
+						if (String.Compare(newAccount.AccountName, account.AccountName, true) == 0)
+						{
+							exists = true;
+							break;
+						}
+					}
+
+					if (exists)
+						continue;
+
+					accounts.Add(newAccount);
+				}
+			}
+
+			gvAccounts.DataSource = accounts;
+			gvAccounts.DataBind();
+
+            btnDelete.Visible = gvAccounts.Rows.Count > 0;
+		}
+
+		private List<OrganizationUser> GetGridViewAccounts(GridView gv, SelectedState state)
+		{
+			List<OrganizationUser> accounts = new List<OrganizationUser>();
+			for (int i = 0; i < gv.Rows.Count; i++)
+			{
+				GridViewRow row = gv.Rows[i];
+				CheckBox chkSelect = (CheckBox)row.FindControl("chkSelect");
+				if (chkSelect == null)
+					continue;
+
+				OrganizationUser account = new OrganizationUser();
+				account.AccountType = (ExchangeAccountType)Enum.Parse(typeof(ExchangeAccountType), ((Literal)row.FindControl("litAccountType")).Text);
+				account.AccountName = (string)gv.DataKeys[i][0];
+				account.DisplayName = ((Literal)row.FindControl("litDisplayName")).Text;
+				account.PrimaryEmailAddress = ((Literal)row.FindControl("litPrimaryEmailAddress")).Text;
+
+				if(state == SelectedState.All || 
+					(state == SelectedState.Selected && chkSelect.Checked) ||
+					(state == SelectedState.Unselected && !chkSelect.Checked))
+					accounts.Add(account);
+			}
+			return accounts;
+		}
+
+		protected void cmdSearch_Click(object sender, ImageClickEventArgs e)
+		{
+			BindPopupAccounts();
+		}
 
         private SortDirection Direction
         {
@@ -264,63 +351,5 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
         {
             return string.Compare(user1.DisplayName, user2.DisplayName);
         }
-
-
-
-        protected void chkIncludeMailboxes_CheckedChanged(object sender, EventArgs e)
-        {
-            BindPopupAccounts();
-        }
-
-        protected void cmdSearch_Click(object sender, ImageClickEventArgs e)
-        {
-            BindPopupAccounts();
-        }
-
-        protected void cmdClear_Click(object sender, EventArgs e)
-        {
-            BindSelectedAccount(null);
-        }
-
-        protected void ImageButton1_Click(object sender, ImageClickEventArgs e)
-        {
-            // bind all accounts
-            BindPopupAccounts();
-
-            // show modal
-            SelectAccountsModal.Show();
-        }
-
-        protected void gvPopupAccounts_RowCommand(object sender, GridViewCommandEventArgs e)
-        {
-            if (e.CommandName == "SelectAccount")
-            {
-                string[] parts = e.CommandArgument.ToString().Split('|');
-                OrganizationUser account = new OrganizationUser();
-                account.AccountName = parts[0];
-                account.DisplayName = parts[1];
-                account.PrimaryEmailAddress = parts[2];
-                account.AccountId = Utils.ParseInt(parts[3]);
-                account.SamAccountName = parts[4];
-                account.SubscriberNumber = parts[5];
-
-                // set account
-                BindSelectedAccount(account);
-
-                // hide popup
-                SelectAccountsModal.Hide();
-
-                // update parent panel
-                MainUpdatePanel.Update();
-            }
-        }
-
-        protected void OnSorting(object sender, GridViewSortEventArgs e)
-        {
-
-            BindPopupAccounts();
-
-        }
-
-    }
+	}
 }

@@ -61,6 +61,7 @@ namespace WebsitePanel.Providers.HostedSolution
 		public const string ExternalEmail = "mail";
         public const string CustomAttribute2 = "extensionAttribute2";
         public const string DistinguishedName = "distinguishedName";
+        public const string ManagedBy = "ManagedBy";
 
     }
 }

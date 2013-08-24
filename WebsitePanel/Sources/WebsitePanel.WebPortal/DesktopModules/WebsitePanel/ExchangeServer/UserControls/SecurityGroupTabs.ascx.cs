@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -32,9 +32,10 @@ using WebsitePanel.Portal.Code.UserControls;
 using WebsitePanel.WebPortal;
 using WebsitePanel.EnterpriseServer;
 
+
 namespace WebsitePanel.Portal.ExchangeServer.UserControls
 {
-    public partial class UserTabs : WebsitePanelControlBase
+    public partial class SecurityGroupTabs : WebsitePanelControlBase
     {
         private string selectedTab;
         public string SelectedTab
@@ -51,16 +52,9 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
         private void BindTabs()
         {
             List<Tab> tabsList = new List<Tab>();
-            tabsList.Add(CreateTab("edit_user", "Tab.General"));
-
-            string instructions = ES.Services.Organizations.GetOrganizationUserSummuryLetter(PanelRequest.ItemID, PanelRequest.AccountID, false, false, false);
-            if (!string.IsNullOrEmpty(instructions))
-                tabsList.Add(CreateTab("organization_user_setup", "Tab.Setup"));
+            tabsList.Add(CreateTab("secur_group_settings", "Tab.Settings"));
 
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
-
-            if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPMANAGEMENT, cntx) || Utils.CheckQouta(Quotas.EXCHANGE2007_DISTRIBUTIONLISTS, cntx))
-                tabsList.Add(CreateTab("user_memberof", "Tab.MemberOf"));
 
             // find selected menu item
             int idx = 0;
@@ -81,8 +75,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             return new Tab(id, GetLocalizedString(text),
                 HostModule.EditUrl("AccountID", PanelRequest.AccountID.ToString(), id,
                 "SpaceID=" + PanelSecurity.PackageId.ToString(),
-                "ItemID=" + PanelRequest.ItemID.ToString(),
-                "Context=User"));
+                "ItemID=" + PanelRequest.ItemID.ToString()));
         }
     }
 }

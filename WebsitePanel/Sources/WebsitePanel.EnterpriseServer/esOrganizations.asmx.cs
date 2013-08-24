@@ -242,5 +242,46 @@ namespace WebsitePanel.EnterpriseServer
 
         #endregion
 
+        #region Security Groups
+
+        [WebMethod]
+        public int CreateSecurityGroup(int itemId, string displayName, string managedBy)
+        {
+            return OrganizationController.CreateSecurityGroup(itemId, displayName, managedBy);
+        }
+
+        [WebMethod]
+        public OrganizationSecurityGroup GetSecurityGroupGeneralSettings(int itemId, int accountId)
+        {
+            return OrganizationController.GetSecurityGroupGeneralSettings(itemId, accountId);
+        }
+
+        [WebMethod]
+        public int DeleteSecurityGroup(int itemId, int accountId)
+        {
+            return OrganizationController.DeleteSecurityGroup(itemId, accountId);
+        }
+
+        [WebMethod]
+        public int SetSecurityGroupGeneralSettings(int itemId, int accountId, string displayName, string managedBy, string[] memberAccounts, string notes)
+        {
+            return OrganizationController.SetSecurityGroupGeneralSettings(itemId, accountId, displayName, managedBy, memberAccounts, notes);
+        }
+
+        [WebMethod]
+        public ExchangeAccountsPaged GetOrganizationSecurityGroupsPaged(int itemId, string filterColumn, string filterValue, string sortColumn,
+            int startRow, int maximumRows)
+        {
+            return OrganizationController.GetOrganizationSecurityGroupsPaged(itemId, filterColumn, filterValue, sortColumn, startRow, maximumRows);
+        }
+
+        [WebMethod]
+        public int AddUserToSecurityGroup(int itemId, int userAccountId, int groupAccountId)
+        {
+            return OrganizationController.AddUserToSecurityGroup(itemId, userAccountId, groupAccountId);
+        }
+
+        #endregion
+
     }
 }
