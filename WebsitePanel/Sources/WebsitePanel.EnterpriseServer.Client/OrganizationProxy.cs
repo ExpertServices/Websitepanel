@@ -1886,22 +1886,20 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/CreateSecurityGroup", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public int CreateSecurityGroup(int itemId, string displayName, string managedBy)
+        public int CreateSecurityGroup(int itemId, string displayName)
         {
             object[] results = this.Invoke("CreateSecurityGroup", new object[] {
                     itemId,
-                    displayName,
-                    managedBy});
+                    displayName});
             return ((int)(results[0]));
         }
 
         /// <remarks/>
-        public System.IAsyncResult BeginCreateSecurityGroup(int itemId, string displayName, string managedBy, System.AsyncCallback callback, object asyncState)
+        public System.IAsyncResult BeginCreateSecurityGroup(int itemId, string displayName, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("CreateSecurityGroup", new object[] {
                     itemId,
-                    displayName,
-                    managedBy}, callback, asyncState);
+                    displayName}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -1912,13 +1910,13 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
         }
 
         /// <remarks/>
-        public void CreateSecurityGroupAsync(int itemId, string displayName, string managedBy)
+        public void CreateSecurityGroupAsync(int itemId, string displayName)
         {
-            this.CreateSecurityGroupAsync(itemId, displayName, managedBy, null);
+            this.CreateSecurityGroupAsync(itemId, displayName, null);
         }
 
         /// <remarks/>
-        public void CreateSecurityGroupAsync(int itemId, string displayName, string managedBy, object userState)
+        public void CreateSecurityGroupAsync(int itemId, string displayName, object userState)
         {
             if ((this.CreateSecurityGroupOperationCompleted == null))
             {
@@ -1926,8 +1924,7 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
             }
             this.InvokeAsync("CreateSecurityGroup", new object[] {
                     itemId,
-                    displayName,
-                    managedBy}, this.CreateSecurityGroupOperationCompleted, userState);
+                    displayName}, this.CreateSecurityGroupOperationCompleted, userState);
         }
 
         private void OnCreateSecurityGroupOperationCompleted(object arg)
@@ -2045,26 +2042,24 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SetSecurityGroupGeneralSettings", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public int SetSecurityGroupGeneralSettings(int itemId, int accountId, string displayName, string managedBy, string[] memberAccounts, string notes)
+        public int SetSecurityGroupGeneralSettings(int itemId, int accountId, string displayName, string[] memberAccounts, string notes)
         {
             object[] results = this.Invoke("SetSecurityGroupGeneralSettings", new object[] {
                     itemId,
                     accountId,
                     displayName,
-                    managedBy,
                     memberAccounts,
                     notes});
             return ((int)(results[0]));
         }
 
         /// <remarks/>
-        public System.IAsyncResult BeginSetSecurityGroupGeneralSettings(int itemId, int accountId, string displayName, string managedBy, string[] memberAccounts, string notes, System.AsyncCallback callback, object asyncState)
+        public System.IAsyncResult BeginSetSecurityGroupGeneralSettings(int itemId, int accountId, string displayName, string[] memberAccounts, string notes, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("SetSecurityGroupGeneralSettings", new object[] {
                     itemId,
                     accountId,
                     displayName,
-                    managedBy,
                     memberAccounts,
                     notes}, callback, asyncState);
         }
@@ -2077,13 +2072,13 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
         }
 
         /// <remarks/>
-        public void SetSecurityGroupGeneralSettingsAsync(int itemId, int accountId, string displayName, string managedBy, string[] memberAccounts, string notes)
+        public void SetSecurityGroupGeneralSettingsAsync(int itemId, int accountId, string displayName, string[] memberAccounts, string notes)
         {
-            this.SetSecurityGroupGeneralSettingsAsync(itemId, accountId, displayName, managedBy, memberAccounts, notes, null);
+            this.SetSecurityGroupGeneralSettingsAsync(itemId, accountId, displayName, memberAccounts, notes, null);
         }
 
         /// <remarks/>
-        public void SetSecurityGroupGeneralSettingsAsync(int itemId, int accountId, string displayName, string managedBy, string[] memberAccounts, string notes, object userState)
+        public void SetSecurityGroupGeneralSettingsAsync(int itemId, int accountId, string displayName, string[] memberAccounts, string notes, object userState)
         {
             if ((this.SetSecurityGroupGeneralSettingsOperationCompleted == null))
             {
@@ -2093,7 +2088,6 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
                     itemId,
                     accountId,
                     displayName,
-                    managedBy,
                     memberAccounts,
                     notes}, this.SetSecurityGroupGeneralSettingsOperationCompleted, userState);
         }

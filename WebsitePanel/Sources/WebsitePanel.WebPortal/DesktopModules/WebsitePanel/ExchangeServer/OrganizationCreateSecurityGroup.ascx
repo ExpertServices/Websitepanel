@@ -5,8 +5,6 @@
 <%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 
-<%@ Register src="UserControls/UserSelector.ascx" tagname="UserSelector" tagprefix="wsp" %>
-
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
 <div id="ExchangeContainer">
@@ -33,15 +31,6 @@
 								<asp:RequiredFieldValidator ID="valRequireDisplayName" runat="server" meta:resourcekey="valRequireDisplayName" ControlToValidate="txtDisplayName"
 									ErrorMessage="Enter Display Name" ValidationGroup="CreateGroup" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
 							</td>
-						</tr>
-						<tr>
-							<td class="FormLabel150"><asp:Localize ID="Localize1" runat="server" meta:resourcekey="locManagedBy" ></asp:Localize></td>
-							<td>                                
-                                 <wsp:userselector id="manager" IncludeMailboxes="true" runat="server" />											
-								 <asp:CustomValidator runat="server" 
-                                     ValidationGroup="CreateGroup"  meta:resourcekey="valManager" ID="valManager" 
-                                     onservervalidate="valManager_ServerValidate" />
-                            </td>
 						</tr>
 					</table>
 				    <div class="FormFooterClean">

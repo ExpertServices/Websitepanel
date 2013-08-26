@@ -1509,6 +1509,10 @@ namespace WebsitePanel.EnterpriseServer
         /// <returns> The account name with organization Id. </returns>
         private static string BuildAccountNameWithOrgId(string orgId, string name, int serviceId)
         {
+            name = name.Length > 5 ? name.Substring(0, 5) : name;
+
+            orgId = (orgId.Length + name.Length) > 19 ? orgId.Substring(0, 19 - name.Length) : orgId;
+
             int maxLen = 19 - orgId.Length;
 
             // try to choose name
@@ -1535,6 +1539,7 @@ namespace WebsitePanel.EnterpriseServer
                 i++;
             }
         }
+
 
         private static string genSamLogin(string login, string strCounter)
         {
@@ -2211,7 +2216,7 @@ namespace WebsitePanel.EnterpriseServer
                 mailboxManagerActions.ToString(), samAccountName, CryptoUtils.Encrypt(accountPassword), mailboxPlanId, (string.IsNullOrEmpty(subscriberNumber) ? null : subscriberNumber.Trim()));
         }
 
-        public static int CreateSecurityGroup(int itemId, string displayName, string managedBy)
+        public static int CreateSecurityGroup(int itemId, string displayName)
         {
             if (string.IsNullOrEmpty(displayName))
                 throw new ArgumentNullException("displayName");
@@ -2262,7 +2267,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 TaskManager.Write("accountName :" + groupName);
 
-                if (orgProxy.CreateSecurityGroup(org.OrganizationId, groupName, managedBy) == 0)
+                if (orgProxy.CreateSecurityGroup(org.OrganizationId, groupName) == 0)
                 {
                     OrganizationSecurityGroup retSecurityGroup = orgProxy.GetSecurityGroupGeneralSettings(groupName, org.OrganizationId);
                     TaskManager.Write("sAMAccountName :" + retSecurityGroup.SAMAccountName);
@@ -2395,7 +2400,7 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        public static int SetSecurityGroupGeneralSettings(int itemId, int accountId, string displayName, string managedBy, string[] memberAccounts, string notes)
+        public static int SetSecurityGroupGeneralSettings(int itemId, int accountId, string displayName, string[] memberAccounts, string notes)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -2428,7 +2433,6 @@ namespace WebsitePanel.EnterpriseServer
                 orgProxy.SetSecurityGroupGeneralSettings(
                     org.OrganizationId,
                     accountName,
-                    managedBy,
                     memberAccounts,
                     notes);
 

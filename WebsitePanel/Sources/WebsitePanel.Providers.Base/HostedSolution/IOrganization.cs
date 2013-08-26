@@ -42,13 +42,13 @@ namespace WebsitePanel.Providers.HostedSolution
 
         OrganizationUser GetUserGeneralSettings(string loginName, string organizationId);
 
-        int CreateSecurityGroup(string organizationId, string groupName, string managedBy);
+        int CreateSecurityGroup(string organizationId, string groupName);
 
         OrganizationSecurityGroup GetSecurityGroupGeneralSettings(string groupName, string organizationId);
 
         void DeleteSecurityGroup(string groupName, string organizationId);
 
-        void SetSecurityGroupGeneralSettings(string organizationId, string groupName, string managedBy, string[] memberAccounts, string notes);
+        void SetSecurityGroupGeneralSettings(string organizationId, string groupName, string[] memberAccounts, string notes);
 
         void AddUserToSecurityGroup(string organizationId, string loginName, string groupName);
 

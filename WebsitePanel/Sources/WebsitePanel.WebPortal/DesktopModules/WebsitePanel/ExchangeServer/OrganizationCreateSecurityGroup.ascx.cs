@@ -57,7 +57,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 return;
             try
             {
-                int accountId = ES.Services.Organizations.CreateSecurityGroup(PanelRequest.ItemID, txtDisplayName.Text, manager.GetAccount());
+                int accountId = ES.Services.Organizations.CreateSecurityGroup(PanelRequest.ItemID, txtDisplayName.Text);
 
                 if (accountId < 0)
                 {
@@ -73,11 +73,6 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 messageBox.ShowErrorMessage("ORGANIZATION_CREATE_SECURITY_GROUP", ex);
             }
-        }
-
-        protected void valManager_ServerValidate(object source, ServerValidateEventArgs args)
-        {
-            args.IsValid = manager.GetAccountId() != 0;
         }
     }
 }

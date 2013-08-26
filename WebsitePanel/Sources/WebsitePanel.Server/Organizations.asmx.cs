@@ -111,9 +111,9 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public int CreateSecurityGroup(string organizationId, string groupName, string managedBy)
+        public int CreateSecurityGroup(string organizationId, string groupName)
         {
-            return Organization.CreateSecurityGroup(organizationId, groupName, managedBy);
+            return Organization.CreateSecurityGroup(organizationId, groupName);
         }
 
         [WebMethod, SoapHeader("settings")]
@@ -129,9 +129,9 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public void SetSecurityGroupGeneralSettings(string organizationId, string groupName, string managedBy, string[] memberAccounts, string notes)
+        public void SetSecurityGroupGeneralSettings(string organizationId, string groupName, string[] memberAccounts, string notes)
         {
-            Organization.SetSecurityGroupGeneralSettings(organizationId, groupName, managedBy, memberAccounts, notes);
+            Organization.SetSecurityGroupGeneralSettings(organizationId, groupName, memberAccounts, notes);
         }
 
         [WebMethod, SoapHeader("settings")]

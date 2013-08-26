@@ -65,8 +65,6 @@ namespace WebsitePanel.Portal.ExchangeServer
                 // bind form
                 txtDisplayName.Text = securityGroup.DisplayName;
 
-                manager.SetAccount(securityGroup.ManagerAccount);
-
                 members.SetAccounts(securityGroup.MembersAccounts);
 
                 txtNotes.Text = securityGroup.Notes;
@@ -75,7 +73,6 @@ namespace WebsitePanel.Portal.ExchangeServer
                 {
                     txtDisplayName.ReadOnly = true;
                     txtNotes.ReadOnly = true;
-                    manager.Enabled = false;
                     members.Enabled = false;
 
                     btnSave.Visible = false;
@@ -98,7 +95,6 @@ namespace WebsitePanel.Portal.ExchangeServer
                     PanelRequest.ItemID,
                     PanelRequest.AccountID,
                     txtDisplayName.Text,
-                    manager.GetAccount(),
                     members.GetAccounts(),
                     txtNotes.Text);
 
@@ -121,12 +117,6 @@ namespace WebsitePanel.Portal.ExchangeServer
         protected void btnSave_Click(object sender, EventArgs e)
         {
             SaveSettings();
-        }
-
-        protected void valManager_ServerValidate(object source, ServerValidateEventArgs args)
-        {
-            args.IsValid = manager.GetAccount() != null;
-
         }
     }
 }

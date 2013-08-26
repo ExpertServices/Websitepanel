@@ -825,12 +825,12 @@ namespace WebsitePanel.Providers.HostedSolution
 
         #region Security Groups
 
-        public int CreateSecurityGroup(string organizationId, string groupName, string managedBy)
+        public int CreateSecurityGroup(string organizationId, string groupName)
         {
-            return CreateSecurityGroupInternal(organizationId, groupName, managedBy);
+            return CreateSecurityGroupInternal(organizationId, groupName);
         }
 
-        internal int CreateSecurityGroupInternal(string organizationId, string groupName, string managedBy)
+        internal int CreateSecurityGroupInternal(string organizationId, string groupName)
         {
             HostedSolutionLog.LogStart("CreateSecurityGroupInternal");
             HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
@@ -852,19 +852,6 @@ namespace WebsitePanel.Providers.HostedSolution
                 if (!ActiveDirectoryUtils.AdObjectExists(groupPath))
                 {
                     ActiveDirectoryUtils.CreateGroup(path, groupName);
-
-                    DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(groupPath);
-
-                    string manager = string.Empty;
-                    if (!string.IsNullOrEmpty(managedBy))
-                    {
-                        string managerPath = GetUserPath(organizationId, managedBy);
-                        manager = ActiveDirectoryUtils.AdObjectExists(managerPath) ? managerPath : string.Empty;
-                    }
-
-                    ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.ManagedBy, ActiveDirectoryUtils.RemoveADPrefix(manager));
-
-                    entry.CommitChanges();
 
                     groupCreated = true;
                     
@@ -922,8 +909,6 @@ namespace WebsitePanel.Providers.HostedSolution
 
             OrganizationSecurityGroup securityGroup = new OrganizationSecurityGroup();
 
-            securityGroup.ManagerAccount = GetManager(entry, ADAttributes.ManagedBy);
-
             securityGroup.Notes = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.Notes);
             
             securityGroup.AccountName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName);
@@ -968,13 +953,13 @@ namespace WebsitePanel.Providers.HostedSolution
             HostedSolutionLog.LogEnd("DeleteSecurityGroupInternal");
         }
 
-        public void SetSecurityGroupGeneralSettings(string organizationId, string groupName, string managedBy, string[] memberAccounts, string notes)
+        public void SetSecurityGroupGeneralSettings(string organizationId, string groupName, string[] memberAccounts, string notes)
         {
             
-            SetSecurityGroupGeneralSettingsInternal(organizationId, groupName, managedBy, memberAccounts, notes);
+            SetSecurityGroupGeneralSettingsInternal(organizationId, groupName, memberAccounts, notes);
         }
 
-        internal void SetSecurityGroupGeneralSettingsInternal(string organizationId, string groupName, string managedBy, string[] memberAccounts, string notes)
+        internal void SetSecurityGroupGeneralSettingsInternal(string organizationId, string groupName, string[] memberAccounts, string notes)
         {
             HostedSolutionLog.LogStart("SetSecurityGroupGeneralSettingsInternal");
             HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
@@ -989,15 +974,6 @@ namespace WebsitePanel.Providers.HostedSolution
             string path = GetGroupPath(organizationId, groupName);
 
             DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
-
-            string manager = string.Empty;
-            if (!string.IsNullOrEmpty(managedBy))
-            {
-                string managerPath = GetUserPath(organizationId, managedBy);
-                manager = ActiveDirectoryUtils.AdObjectExists(managerPath) ? managerPath : string.Empty;
-            }
-
-            ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.ManagedBy, ActiveDirectoryUtils.RemoveADPrefix(manager));
 
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.Notes, notes);
 

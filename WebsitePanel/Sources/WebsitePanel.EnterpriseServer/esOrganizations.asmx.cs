@@ -245,9 +245,9 @@ namespace WebsitePanel.EnterpriseServer
         #region Security Groups
 
         [WebMethod]
-        public int CreateSecurityGroup(int itemId, string displayName, string managedBy)
+        public int CreateSecurityGroup(int itemId, string displayName)
         {
-            return OrganizationController.CreateSecurityGroup(itemId, displayName, managedBy);
+            return OrganizationController.CreateSecurityGroup(itemId, displayName);
         }
 
         [WebMethod]
@@ -263,9 +263,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public int SetSecurityGroupGeneralSettings(int itemId, int accountId, string displayName, string managedBy, string[] memberAccounts, string notes)
+        public int SetSecurityGroupGeneralSettings(int itemId, int accountId, string displayName, string[] memberAccounts, string notes)
         {
-            return OrganizationController.SetSecurityGroupGeneralSettings(itemId, accountId, displayName, managedBy, memberAccounts, notes);
+            return OrganizationController.SetSecurityGroupGeneralSettings(itemId, accountId, displayName, memberAccounts, notes);
         }
 
         [WebMethod]

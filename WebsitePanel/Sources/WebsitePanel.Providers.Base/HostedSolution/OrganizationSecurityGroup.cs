@@ -25,12 +25,6 @@ namespace WebsitePanel.Providers.HostedSolution
             set;
         }
 
-        public OrganizationUser ManagerAccount
-        {
-            get;
-            set;
-        }
-
         public string Notes
         {
             get;
