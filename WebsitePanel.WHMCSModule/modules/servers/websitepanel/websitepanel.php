@@ -310,7 +310,7 @@ function websitepanel_ChangePassword($params)
         else
         {
             // Attempt to change the user's account password
-            $result = $wsp->change_user_password($user['UserId'], $password);
+            $result = $wsp->changeUserPassword($user['UserId'], $password);
             if ($result >= 0)
             {
                 // Log this action for logging / tracking purposes incase the client complains we have record of what went on and why
