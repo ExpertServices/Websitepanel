@@ -283,6 +283,13 @@
       <DependentUpon>AccountsListWithPermissions.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="ExchangeServer\UserControls\GroupsList.ascx.cs">
+      <DependentUpon>GroupsList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\GroupsList.ascx.designer.cs">
+      <DependentUpon>GroupsList.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ExchangeServer\UserControls\MailboxPlanSelector.ascx.cs">
       <DependentUpon>MailboxPlanSelector.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -397,7 +404,6 @@
     </Compile>
     <Compile Include="ProviderControls\EnterpriseStorage_Settings.ascx.cs">
       <DependentUpon>EnterpriseStorage_Settings.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="ProviderControls\EnterpriseStorage_Settings.ascx.designer.cs">
       <DependentUpon>EnterpriseStorage_Settings.ascx</DependentUpon>
@@ -3984,6 +3990,7 @@
     <Content Include="ExchangeServer\OrganizationSecurityGroupGeneralSettings.ascx" />
     <Content Include="ExchangeServer\OrganizationSecurityGroups.ascx" />
     <Content Include="ExchangeServer\OrganizationUserMemberOf.ascx" />
+    <Content Include="ExchangeServer\UserControls\GroupsList.ascx" />
     <Content Include="ExchangeServer\UserControls\SecurityGroupTabs.ascx" />
     <Content Include="ExchangeServer\UserControls\UsersList.ascx" />
     <Content Include="Lync\UserControls\LyncUserSettings.ascx" />
@@ -5197,6 +5204,9 @@
     <Content Include="ExchangeServer\UserControls\App_LocalResources\AccountsListWithPermissions.ascx.resx" />
     <Content Include="ExchangeServer\UserControls\App_LocalResources\SecurityGroupTabs.ascx.resx" />
     <Content Include="ExchangeServer\UserControls\App_LocalResources\UsersList.ascx.resx" />
+    <Content Include="ExchangeServer\UserControls\App_LocalResources\GroupsList.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="ProviderControls\App_LocalResources\EnterpriseStorage_Settings.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>

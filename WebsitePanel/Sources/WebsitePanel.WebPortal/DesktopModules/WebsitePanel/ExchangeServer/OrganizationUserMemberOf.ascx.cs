@@ -58,10 +58,17 @@ namespace WebsitePanel.Portal.HostedSolution
 
                 // title
                 litDisplayName.Text = mailbox.DisplayName;
-
+                
+                //Distribution Lists
                 ExchangeAccount[] dLists = ES.Services.ExchangeServer.GetDistributionListsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
 
                 distrlists.SetAccounts(dLists);
+
+                //Security Groups
+                ExchangeAccount[] securGroups = ES.Services.Organizations.GetSecurityGroupsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
+
+                securegroups.SetAccounts(securGroups);
+
             }
             catch (Exception ex)
             {
@@ -76,6 +83,7 @@ namespace WebsitePanel.Portal.HostedSolution
 
             try
             {
+                //Distribution Lists
                 ExchangeAccount[] oldDistributionLists = ES.Services.ExchangeServer.GetDistributionListsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
                 List<string> newDistributionLists = new List<string>(distrlists.GetAccounts());
                 foreach (ExchangeAccount oldlist in oldDistributionLists)
@@ -89,7 +97,29 @@ namespace WebsitePanel.Portal.HostedSolution
                 foreach (string newlist in newDistributionLists)
                     ES.Services.ExchangeServer.AddDistributionListMember(PanelRequest.ItemID, newlist, PanelRequest.AccountID);
 
+                //Security Groups
+                ExchangeAccount[] oldDSecurityGroups = ES.Services.Organizations.GetSecurityGroupsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
+                List<string> newSecurityGroups = new List<string>(securegroups.GetAccounts());
+                foreach (ExchangeAccount oldgroup in oldDSecurityGroups)
+                {
+                    if (newSecurityGroups.Contains(oldgroup.AccountName))
+                    {
+                        newSecurityGroups.Remove(oldgroup.AccountName);
+                    }
+                    else
+                    {
+                        ES.Services.Organizations.DeleteUserFromSecurityGroup(PanelRequest.ItemID, PanelRequest.AccountID, oldgroup.AccountName);
+                    }
+                }
+
+                foreach (string newgroup in newSecurityGroups)
+                {
+                    ES.Services.Organizations.AddUserToSecurityGroup(PanelRequest.ItemID, PanelRequest.AccountID, newgroup);
+                }
+
                 messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_MAILBOX_SETTINGS");
+
+
                 BindSettings();
             }
             catch (Exception ex)

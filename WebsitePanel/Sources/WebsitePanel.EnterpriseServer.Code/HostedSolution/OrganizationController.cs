@@ -42,6 +42,7 @@ using WebsitePanel.Providers.SharePoint;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.DNS;
 using WebsitePanel.Providers.OCS;
+using System.Linq;
 
 using System.IO;
 using System.Xml;
@@ -1508,6 +1509,10 @@ namespace WebsitePanel.EnterpriseServer
         /// <returns> The account name with organization Id. </returns>
         private static string BuildAccountNameWithOrgId(string orgId, string name, int serviceId)
         {
+            name = name.Length > 5 ? name.Substring(0, 5) : name;
+
+            orgId = (orgId.Length + name.Length) > 19 ? orgId.Substring(0, 19 - name.Length) : orgId;
+
             int maxLen = 19 - orgId.Length;
 
             // try to choose name
@@ -1534,6 +1539,7 @@ namespace WebsitePanel.EnterpriseServer
                 i++;
             }
         }
+
 
         private static string genSamLogin(string login, string strCounter)
         {
@@ -2210,7 +2216,7 @@ namespace WebsitePanel.EnterpriseServer
                 mailboxManagerActions.ToString(), samAccountName, CryptoUtils.Encrypt(accountPassword), mailboxPlanId, (string.IsNullOrEmpty(subscriberNumber) ? null : subscriberNumber.Trim()));
         }
 
-        public static int CreateSecurityGroup(int itemId, string displayName, string managedBy)
+        public static int CreateSecurityGroup(int itemId, string displayName)
         {
             if (string.IsNullOrEmpty(displayName))
                 throw new ArgumentNullException("displayName");
@@ -2257,14 +2263,16 @@ namespace WebsitePanel.EnterpriseServer
 
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
-                TaskManager.Write("accountName :" + displayName);
+                string groupName = BuildAccountNameWithOrgId(org.OrganizationId, displayName, org.ServiceId);
 
-                if (orgProxy.CreateSecurityGroup(org.OrganizationId, displayName, managedBy) == 0)
+                TaskManager.Write("accountName :" + groupName);
+
+                if (orgProxy.CreateSecurityGroup(org.OrganizationId, groupName) == 0)
                 {
-                    OrganizationSecurityGroup retSecurityGroup = orgProxy.GetSecurityGroupGeneralSettings(displayName, org.OrganizationId);
+                    OrganizationSecurityGroup retSecurityGroup = orgProxy.GetSecurityGroupGeneralSettings(groupName, org.OrganizationId);
                     TaskManager.Write("sAMAccountName :" + retSecurityGroup.SAMAccountName);
 
-                    securityGroupId = AddAccount(itemId, ExchangeAccountType.SecurityGroup, displayName,
+                    securityGroupId = AddAccount(itemId, ExchangeAccountType.SecurityGroup, groupName,
                                                     displayName, null, false,
                                                     0, retSecurityGroup.SAMAccountName, null, 0, null);
                 }
@@ -2324,15 +2332,24 @@ namespace WebsitePanel.EnterpriseServer
 
                 securityGroup.IsDefault = account.AccountType == ExchangeAccountType.DefaultSecurityGroup;
 
+                List<OrganizationUser> members = new List<OrganizationUser>();
+
                 foreach (OrganizationUser user in securityGroup.MembersAccounts)
                 {
                     OrganizationUser userAccount = GetAccountByAccountName(itemId, user.SamAccountName);
 
-                    user.AccountId = userAccount.AccountId;
-                    user.AccountName = userAccount.AccountName;
-                    user.PrimaryEmailAddress = userAccount.PrimaryEmailAddress;
-                    user.AccountType = userAccount.AccountType;
+                    if (userAccount != null)
+                    {
+                        user.AccountId = userAccount.AccountId;
+                        user.AccountName = userAccount.AccountName;
+                        user.PrimaryEmailAddress = userAccount.PrimaryEmailAddress;
+                        user.AccountType = userAccount.AccountType;
+
+                        members.Add(user);
+                    }
                 }
+
+                securityGroup.MembersAccounts = members.ToArray();
 
                 return securityGroup;
             }
@@ -2383,7 +2400,7 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        public static int SetSecurityGroupGeneralSettings(int itemId, int accountId, string displayName, string managedBy, string[] memberAccounts, string notes)
+        public static int SetSecurityGroupGeneralSettings(int itemId, int accountId, string displayName, string[] memberAccounts, string notes)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -2416,7 +2433,6 @@ namespace WebsitePanel.EnterpriseServer
                 orgProxy.SetSecurityGroupGeneralSettings(
                     org.OrganizationId,
                     accountName,
-                    managedBy,
                     memberAccounts,
                     notes);
 
@@ -2497,7 +2513,7 @@ namespace WebsitePanel.EnterpriseServer
             return result;
         }
 
-        public static int AddUserToSecurityGroup(int itemId, int userAccountId, int groupAccountId)
+        public static int AddUserToSecurityGroup(int itemId, int userAccountId, string groupName)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -2516,12 +2532,9 @@ namespace WebsitePanel.EnterpriseServer
                 // load user account
                 OrganizationUser userAccount = GetAccount(itemId, userAccountId);
 
-                //load group account
-                ExchangeAccount groupAccount = ExchangeServerController.GetAccount(itemId, groupAccountId);
-
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
-                orgProxy.AddUserToSecurityGroup(org.OrganizationId, userAccount.AccountName, groupAccount.AccountName);
+                orgProxy.AddUserToSecurityGroup(org.OrganizationId, userAccount.AccountName, groupName);
 
                 return 0;
             }
@@ -2533,6 +2546,130 @@ namespace WebsitePanel.EnterpriseServer
             {
                 TaskManager.CompleteTask();
             }
+        }
+
+        public static int DeleteUserFromSecurityGroup(int itemId, int userAccountId, string groupName)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // place log record
+            TaskManager.StartTask("ORGANIZATION", "DELETE_USER_FROM_SECURITY_GROUP", itemId);
+
+            try
+            {
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return -1;
+
+                // load user account
+                OrganizationUser userAccount = GetAccount(itemId, userAccountId);
+
+                Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+
+                orgProxy.DeleteUserFromSecurityGroup(org.OrganizationId, userAccount.AccountName, groupName);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static ExchangeAccount[] GetSecurityGroupsByMember(int itemId, int accountId)
+        {
+            #region Demo Mode
+            if (IsDemoMode)
+            {
+                return null;
+            }
+            #endregion
+
+            // place log record
+            TaskManager.StartTask("ORGANIZATION", "GET_SECURITY_GROUPS_BYMEMBER");
+            TaskManager.ItemId = itemId;
+
+            List<ExchangeAccount> ret = new List<ExchangeAccount>();
+
+            try
+            {
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return null;
+
+                Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+
+                // load account
+                ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
+
+                List<ExchangeAccount> SecurytyGroups = ExchangeServerController.GetAccounts(itemId, ExchangeAccountType.SecurityGroup);
+                foreach (ExchangeAccount SecurytyGroupAccount in SecurytyGroups)
+                {
+                    OrganizationSecurityGroup SecurytyGroup = GetSecurityGroupGeneralSettings(itemId, SecurytyGroupAccount.AccountId);
+
+                    foreach (OrganizationUser member in SecurytyGroup.MembersAccounts)
+                    {
+                        if (member.AccountName == account.AccountName)
+                        {
+                            ret.Add(SecurytyGroupAccount);
+                            break;
+                        }
+
+                    }
+                }
+
+                return ret.ToArray();
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static List<ExchangeAccount> SearchSecurityGroups(int itemId, string filterColumn, string filterValue, string sortColumn)
+        {
+            #region Demo Mode
+
+            if (IsDemoMode)
+            {
+                List<ExchangeAccount> demoSecurityGroups = new List<ExchangeAccount>();
+
+                ExchangeAccount r1 = new ExchangeAccount();
+                r1.AccountId = 20;
+                r1.AccountName = "group1_fabrikam";
+                r1.AccountType = ExchangeAccountType.SecurityGroup;
+                r1.DisplayName = "Group 1";
+                demoSecurityGroups.Add(r1);
+
+                ExchangeAccount r2 = new ExchangeAccount();
+                r1.AccountId = 21;
+                r1.AccountName = "group2_fabrikam";
+                r1.AccountType = ExchangeAccountType.SecurityGroup;
+                r1.DisplayName = "Group 2";
+                demoSecurityGroups.Add(r2);
+
+                return demoSecurityGroups;
+            }
+
+            #endregion
+
+            List<ExchangeAccount> accounts = ObjectUtils.CreateListFromDataReader<ExchangeAccount>(
+                DataProvider.SearchExchangeAccounts(
+                    SecurityContext.User.UserId, itemId, false, false, false, false, false, filterColumn, filterValue, sortColumn));
+
+            return accounts.Where(x => x.AccountType == ExchangeAccountType.SecurityGroup).ToList();
         }
     }
     

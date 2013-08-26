@@ -4,10 +4,9 @@
     <ContentTemplate>
 
 <asp:TextBox ID="txtDisplayName" runat="server" CssClass="TextBox200" ReadOnly="true"></asp:TextBox>
-<% if (Enabled) { %>
+
 <asp:ImageButton ID="ImageButton1" SkinID="ExchangeAddressBook16" runat="server" CausesValidation="false" OnClick="ImageButton1_Click" />
 <asp:LinkButton ID="cmdClear" runat="server" meta:resourcekey="cmdClear" OnClick="cmdClear_Click" CausesValidation="False"></asp:LinkButton>
-<% } %>
 
 <asp:Panel ID="AddAccountsPanel" runat="server" CssClass="Popup" style="display:none">
 	<table class="Popup-Header" cellpadding="0" cellspacing="0">

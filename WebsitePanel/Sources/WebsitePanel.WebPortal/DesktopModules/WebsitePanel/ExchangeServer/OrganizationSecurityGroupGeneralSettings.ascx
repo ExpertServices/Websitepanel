@@ -1,7 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="OrganizationSecurityGroupGeneralSettings.ascx.cs" Inherits="WebsitePanel.Portal.ExchangeServer.OrganizationSecurityGroupGeneralSettings" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/UsersList.ascx" TagName="UsersList" TagPrefix="wsp"%>
-<%@ Register Src="UserControls/UserSelector.ascx" TagName="UserSelector" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/SecurityGroupTabs.ascx" TagName="SecurityGroupTabs" TagPrefix="wsp"%>
 <%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
@@ -40,16 +39,6 @@
 						        <br />
 							</td>
 						</tr>
-					    <tr>
-						    <td class="FormLabel150"><asp:Localize ID="locManager" runat="server" meta:resourcekey="locManager" Text="Manager:"></asp:Localize></td>
-						    <td>
-                                <wsp:UserSelector id="manager" runat="server" />
-											
-								<asp:CustomValidator runat="server" 
-                                     ValidationGroup="EditList"  meta:resourcekey="valManager" ID="valManager" 
-                                     onservervalidate="valManager_ServerValidate" />
-                            </td>
-					    </tr>
 					    
 					    <tr><td>&nbsp;</td></tr>
 						<tr>

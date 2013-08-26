@@ -129,9 +129,6 @@
   <data name="FormComments.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="locManager.Text" xml:space="preserve">
-    <value>Managed By: *</value>
-  </data>
   <data name="locMembers.Text" xml:space="preserve">
     <value>Members:</value>
   </data>
@@ -143,9 +140,6 @@
   </data>
   <data name="Text.PageName" xml:space="preserve">
     <value>Groups</value>
-  </data>
-  <data name="valManager.ErrorMessage" xml:space="preserve">
-    <value>Please specify a manager</value>
   </data>
   <data name="valRequireDisplayName.ErrorMessage" xml:space="preserve">
     <value>Enter Display Name</value>
