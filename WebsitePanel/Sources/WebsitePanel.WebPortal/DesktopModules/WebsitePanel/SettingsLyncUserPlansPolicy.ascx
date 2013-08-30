@@ -105,11 +105,6 @@
 								    <asp:CheckBox ID="chkRemoteUserAccess" runat="server" meta:resourcekey="chkRemoteUserAccess" Text="Remote User access"></asp:CheckBox>
 							    </td>
 						    </tr>
-						    <tr>
-							    <td>
-								    <asp:CheckBox ID="chkPublicIMConnectivity" runat="server" meta:resourcekey="chkPublicIMConnectivity" Text="Public IM Connectivity"></asp:CheckBox>
-							    </td>
-						    </tr>
 						</table>
 						<br />
 					</asp:Panel>
