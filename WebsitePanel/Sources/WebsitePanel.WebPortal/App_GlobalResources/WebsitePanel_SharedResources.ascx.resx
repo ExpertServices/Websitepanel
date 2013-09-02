@@ -5333,12 +5333,12 @@
     <value>Error creating security group. See audit log for more details.</value>
   </data>
   <data name="Error.ORGANIZATION_GET_SECURITY_GROUP_SETTINGS" xml:space="preserve">
-    <value>Error reading organization security group settings</value>
+    <value>Error reading group settings</value>
   </data>
   <data name="Error.ORGANIZATION_UPDATE_SECURITY_GROUP_SETTINGS" xml:space="preserve">
-    <value>Error updating organization security group settings</value>
+    <value>Error updating group settings</value>
   </data>
   <data name="Success.ORGANIZATION_UPDATE_SECURITY_GROUP_SETTINGS" xml:space="preserve">
-    <value>Security group general settings have been successfully updated.</value>
+    <value>Group general settings have been successfully updated.</value>
   </data>
 </root>

@@ -1048,11 +1048,11 @@ namespace WebsitePanel.Providers.HostedSolution
             if (string.IsNullOrEmpty(groupName))
                 throw new ArgumentNullException("groupName");
 
-            string userPath = GetObjectPath(organizationId, accountName);
+            string objectPath = GetObjectPath(organizationId, accountName);
 
             string groupPath = GetGroupPath(organizationId, groupName);
 
-            ActiveDirectoryUtils.AddObjectToGroup(userPath, groupPath);
+            ActiveDirectoryUtils.AddObjectToGroup(objectPath, groupPath);
         }
 
         public void DeleteObjectFromSecurityGroup(string organizationId, string accountName, string groupName)
@@ -1076,11 +1076,11 @@ namespace WebsitePanel.Providers.HostedSolution
             if (string.IsNullOrEmpty(groupName))
                 throw new ArgumentNullException("groupName");
 
-            string userPath = GetObjectPath(organizationId, accountName);
+            string objectPath = GetObjectPath(organizationId, accountName);
 
             string groupPath = GetGroupPath(organizationId, groupName);
 
-            ActiveDirectoryUtils.RemoveObjectFromGroup(userPath, groupPath);
+            ActiveDirectoryUtils.RemoveObjectFromGroup(objectPath, groupPath);
         }
 
         #endregion
@@ -1089,7 +1089,5 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             return Environment.UserDomainName != Environment.MachineName;
         }
-
-
     }
 }
