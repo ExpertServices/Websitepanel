@@ -57,6 +57,10 @@
         <td class="SubHead" nowrap><asp:Label ID="lblLyncUsers" runat="server" meta:resourcekey="lblLyncUsers" Text="Lync Users:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaLyncUsers" runat="server" QuotaName="Lync.Users" DisplayGauge="True" /></td>
     </tr>
+    <tr ID="pnlLyncPhone" runat="server">
+        <td class="SubHead" nowrap><asp:Label ID="Label1" runat="server" meta:resourcekey="lblLyncPhone" Text="Lync Phone Numbers:"></asp:Label></td>
+        <td class="Normal"><wsp:Quota ID="quotaLyncPhone" runat="server" QuotaName="Lync.PhoneNumbers" DisplayGauge="True" /></td>
+    </tr>
 
     <tr ID="pnlBlackBerryUsers" runat="server">
         <td class="SubHead" nowrap><asp:Label ID="lblBlackBerryUsers" runat="server" meta:resourcekey="lblBlackBerryUsers" Text="BlackBerry Users:"></asp:Label></td>

@@ -1231,7 +1231,7 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             // check quotas
-            string quotaName = GetIPAddressesQuotaByResourceGroup(groupName);
+            string quotaName = GetIPAddressesQuotaByResourceGroup(groupName, pool);
 
             // get maximum server IPs
             List<IPAddressInfo> ips = ServerController.GetUnallottedIPAddresses(packageId, groupName, pool);
@@ -1249,15 +1249,15 @@ namespace WebsitePanel.EnterpriseServer
             int quotaUsed = cntx.Quotas[quotaName].QuotaUsedValue;
 
             // check the maximum allowed number
-            if (quotaAllocated != -1 &&
-                (addressesNumber > (quotaAllocated - quotaUsed)))
+            if (addressesNumber > (quotaAllocated - quotaUsed))
             {
                 res.ErrorCodes.Add("IP_ADDRESSES_QUOTA_LIMIT_REACHED");
                 return res;
             }
 
             // check if requested more than available
-            if (addressesNumber > maxAvailableIPs)
+            if  (maxAvailableIPs != -1 &&
+                (addressesNumber > maxAvailableIPs))
                 addressesNumber = maxAvailableIPs;
 
             res = TaskManager.StartResultTask<ResultObject>("IP_ADDRESS", "ALLOCATE_PACKAGE_IP", packageId);
@@ -1303,7 +1303,7 @@ namespace WebsitePanel.EnterpriseServer
             int maxAvailableIPs = GetUnallottedIPAddresses(packageId, groupName, pool).Count;
 
             // get quota name
-            string quotaName = GetIPAddressesQuotaByResourceGroup(groupName);
+            string quotaName = GetIPAddressesQuotaByResourceGroup(groupName, pool);
 
             // get hosting plan IPs
             int number = 0;
@@ -1415,8 +1415,11 @@ namespace WebsitePanel.EnterpriseServer
             return doc.InnerXml;
         }
 
-        private static string GetIPAddressesQuotaByResourceGroup(string groupName)
+        private static string GetIPAddressesQuotaByResourceGroup(string groupName, IPAddressPool pool)
         {
+            if (pool == IPAddressPool.PhoneNumbers)
+                return Quotas.LYNC_PHONE;
+
             if (String.Compare(groupName, ResourceGroups.VPS, true) == 0)
             {
                 return Quotas.VPS_EXTERNAL_IP_ADDRESSES_NUMBER;

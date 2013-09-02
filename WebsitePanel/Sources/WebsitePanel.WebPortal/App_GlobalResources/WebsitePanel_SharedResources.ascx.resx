@@ -5326,6 +5326,8 @@
   <data name="WarningDescription.PHONE_EDIT_LIST_EMPTY_ERROR" xml:space="preserve">
     <value>At least one Phone number must be selected.</value>
   </data>
+  <data name="Quota.Lync.PhoneNumbers" xml:space="preserve">
+    <value>Phone Numbers per Organization</value>
   <data name="Error.ORGANIZATION_CREATE_USER" xml:space="preserve">
     <value>Error creating user. See audit log for more details.</value>
   </data>

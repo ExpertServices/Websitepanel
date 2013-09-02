@@ -20,7 +20,7 @@
     <table cellspacing="6">
         <tr>
             <td><asp:Localize ID="locIPQuota" runat="server" meta:resourcekey="locIPQuota" Text="Number of Phone Numbes:"></asp:Localize></td>
-            <td><wsp:Quota ID="addressesQuota" runat="server" QuotaName="Web.IPAddresses" /></td>
+            <td><wsp:Quota ID="addressesQuota" runat="server" QuotaName="Lync.PhoneNumbers" /></td>
         </tr>
     </table>
     

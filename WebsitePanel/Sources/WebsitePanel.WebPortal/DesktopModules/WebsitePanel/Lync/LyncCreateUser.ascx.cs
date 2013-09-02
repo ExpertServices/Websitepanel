@@ -56,14 +56,18 @@ namespace WebsitePanel.Portal.Lync
 
         private void BindPhoneNumbers()
         {
-            
-            ddlPhoneNumber.Items.Add(new ListItem("<Select Phone>", ""));
 
             PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(PanelSecurity.PackageId, IPAddressPool.PhoneNumbers);
-            foreach (PackageIPAddress ip in ips)
+
+            if (ips.Length > 0)
             {
-                string phone = ip.ExternalIP;
-                                ddlPhoneNumber.Items.Add(new ListItem(phone, ip.PackageAddressID.ToString()));
+                ddlPhoneNumber.Items.Add(new ListItem("<Select Phone>", ""));
+
+                foreach (PackageIPAddress ip in ips)
+                {
+                    string phone = ip.ExternalIP;
+                    ddlPhoneNumber.Items.Add(new ListItem(phone, ip.PackageAddressID.ToString()));
+                }
             }
 
         }
@@ -77,7 +81,7 @@ namespace WebsitePanel.Portal.Lync
             if (plan != null)
                 EnterpriseVoice = plan.EnterpriseVoice;
 
-            pnEnterpriseVoice.Visible = EnterpriseVoice;
+            pnEnterpriseVoice.Visible = EnterpriseVoice && (ddlPhoneNumber.Items.Count>0);
 
             if (!EnterpriseVoice)
             {

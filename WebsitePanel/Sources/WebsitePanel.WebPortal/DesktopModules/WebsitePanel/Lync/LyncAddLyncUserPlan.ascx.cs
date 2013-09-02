@@ -95,9 +95,8 @@ namespace WebsitePanel.Portal.Lync
                      */
 
 	                chkRemoteUserAccess.Checked = plan.RemoteUserAccess;
-	                chkPublicIMConnectivity.Checked = plan.PublicIMConnectivity;
 
-	                chkAllowOrganizeMeetingsWithExternalAnonymous.Checked = plan.AllowOrganizeMeetingsWithExternalAnonymous;
+                    chkAllowOrganizeMeetingsWithExternalAnonymous.Checked = plan.AllowOrganizeMeetingsWithExternalAnonymous;
 
                     ddTelephony.SelectedIndex = plan.Telephony;
 
@@ -257,7 +256,6 @@ namespace WebsitePanel.Portal.Lync
                 */
 
 	            plan.RemoteUserAccess = chkRemoteUserAccess.Checked;
-	            plan.PublicIMConnectivity = chkPublicIMConnectivity.Checked;
 
 	            plan.AllowOrganizeMeetingsWithExternalAnonymous = chkAllowOrganizeMeetingsWithExternalAnonymous.Checked;
 
