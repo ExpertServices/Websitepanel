@@ -5328,6 +5328,7 @@
   </data>
   <data name="Quota.Lync.PhoneNumbers" xml:space="preserve">
     <value>Phone Numbers per Organization</value>
+  </data>
   <data name="Error.ORGANIZATION_CREATE_USER" xml:space="preserve">
     <value>Error creating user. See audit log for more details.</value>
   </data>

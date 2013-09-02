@@ -260,19 +260,19 @@
 		</ItemGroup>
 		<Copy SourceFiles="@(WSPTransportAgentBuildFiles)" DestinationFolder="$(WSPTransportAgentBuild)\%(RecursiveDir)" />
 	</Target>
-	<!--
+	
 	<Target Name="CreateLocalizationToolkitBuild" DependsOnTargets="CreateWSPTransportAgentBuild">
-		compile toolkit
+		<!-- compile toolkit -->
 		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.LocalizationToolkit\WebsitePanel.LocalizationToolkit.csproj" Properties="Configuration=$(BuildConfiguration)">
 			<Output
                 TaskParameter="TargetOutputs"
                 ItemName="LocalizationToolkitExe" />		
 		</MSBuild>
 		
-		generate default resources
+		<!-- generate default resources -->
 		<Exec Command="@(LocalizationToolkitExe) -L $(PortalSrc)"/>
 		
-		build MSI package
+		<!-- build MSI package -->
 		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.LocalizationToolkit.Wix\WebsitePanel.LocalizationToolkit.Wix.wixproj" Properties="Configuration=$(BuildConfiguration);DefineSolutionProperties=false">
 			<Output
                 TaskParameter="TargetOutputs"
@@ -280,8 +280,8 @@
 		</MSBuild>
 		<Copy SourceFiles="@(LocalizationToolkitMsi)" DestinationFolder="$(LocalizationToolkitBuild)\%(RecursiveDir)" />
 	</Target>
-	-->
-	<Target Name="CreateSetupBuild" DependsOnTargets="CreateWSPTransportAgentBuild">
+	
+	<Target Name="CreateSetupBuild" DependsOnTargets="CreateLocalizationToolkitBuild">
 	
 		<PropertyGroup>
 			<InstallerProjectRoot>$(RootFolder)\WebsitePanel.Installer\Sources\WebsitePanel.Installer</InstallerProjectRoot>
@@ -740,9 +740,7 @@
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-Import-Enterprise-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-Import-Enterprise-$(Version).zip" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-AWStatsViewer-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-AWStatsViewer-$(Version).zip" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-WSPTransportAgent-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-WSPTransportAgent-$(Version).zip" />
-<!--
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel.LocalizationToolkit-$(Version).msi" LocalFile="$(ToolsFolder)\WebsitePanel.LocalizationToolkit.msi" />
--->
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanelInstaller-$(Version).msi" LocalFile="$(DeployFolder)\WebsitePanelInstaller.msi" />
       		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanelInstaller-$(Version)-webpi.msi" LocalFile="$(DeployFolder)\WebsitePanelInstaller.msi" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-HyperVUtils-$(Version).zip" LocalFile="$(ToolsFolder)\WebsitePanel-HyperVUtils-$(Version).zip" />
