@@ -260,19 +260,19 @@
 		</ItemGroup>
 		<Copy SourceFiles="@(WSPTransportAgentBuildFiles)" DestinationFolder="$(WSPTransportAgentBuild)\%(RecursiveDir)" />
 	</Target>
-	
+	<!--
 	<Target Name="CreateLocalizationToolkitBuild" DependsOnTargets="CreateWSPTransportAgentBuild">
-		<!-- compile toolkit -->
+		compile toolkit
 		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.LocalizationToolkit\WebsitePanel.LocalizationToolkit.csproj" Properties="Configuration=$(BuildConfiguration)">
 			<Output
                 TaskParameter="TargetOutputs"
                 ItemName="LocalizationToolkitExe" />		
 		</MSBuild>
 		
-		<!-- generate default resources -->
+		generate default resources
 		<Exec Command="@(LocalizationToolkitExe) -L $(PortalSrc)"/>
 		
-		<!-- build MSI package -->
+		build MSI package
 		<MSBuild Projects="$(TrunkFolder)\Sources\Tools\WebsitePanel.LocalizationToolkit.Wix\WebsitePanel.LocalizationToolkit.Wix.wixproj" Properties="Configuration=$(BuildConfiguration);DefineSolutionProperties=false">
 			<Output
                 TaskParameter="TargetOutputs"
@@ -280,8 +280,8 @@
 		</MSBuild>
 		<Copy SourceFiles="@(LocalizationToolkitMsi)" DestinationFolder="$(LocalizationToolkitBuild)\%(RecursiveDir)" />
 	</Target>
-	
-	<Target Name="CreateSetupBuild" DependsOnTargets="CreateLocalizationToolkitBuild">
+	-->
+	<Target Name="CreateSetupBuild" DependsOnTargets="CreateWSPTransportAgentBuild">
 	
 		<PropertyGroup>
 			<InstallerProjectRoot>$(RootFolder)\WebsitePanel.Installer\Sources\WebsitePanel.Installer</InstallerProjectRoot>
