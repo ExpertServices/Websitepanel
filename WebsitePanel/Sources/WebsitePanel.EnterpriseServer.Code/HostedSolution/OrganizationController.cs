@@ -58,14 +58,14 @@ namespace WebsitePanel.EnterpriseServer
         {
             errorCode = 0;
             OrganizationStatistics stats = GetOrganizationStatistics(orgId);
-            
-            
-            if (stats.AllocatedUsers != -1 && (stats.CreatedUsers >= stats.AllocatedUsers) )
+
+
+            if (stats.AllocatedUsers != -1 && (stats.CreatedUsers >= stats.AllocatedUsers))
             {
                 errorCode = BusinessErrorCodes.ERROR_USERS_RESOURCE_QUOTA_LIMIT;
                 return false;
             }
-            
+
             return true;
         }
 
@@ -81,14 +81,14 @@ namespace WebsitePanel.EnterpriseServer
             // add organization
             items["Organization"] = org;
             OrganizationUser user = GetAccount(itemId, accountId);
-            
+
             items["account"] = user;
 
-            
+
             // evaluate template
             return PackageController.EvaluateTemplate(template, items);
         }
-        
+
         public static string GetOrganizationUserSummuryLetter(int itemId, int accountId, bool pmm, bool emailMode, bool signup)
         {
             // load organization
@@ -110,7 +110,7 @@ namespace WebsitePanel.EnterpriseServer
             string result = EvaluateMailboxTemplate(itemId, accountId, pmm, false, false, body);
             return user.HtmlMail ? result : result.Replace("\n", "<br/>");
         }
-        
+
         public static int SendSummaryLetter(int itemId, int accountId, bool signup, string to, string cc)
         {
             // check account
@@ -152,10 +152,10 @@ namespace WebsitePanel.EnterpriseServer
             // send message
             return MailHelper.SendMessage(from, to, cc, subject, body, priority, isHtml);
         }
-        
+
         private static bool CheckQuotas(int packageId, out int errorCode)
         {
-            
+
             // check account
             errorCode = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
             if (errorCode < 0) return false;
@@ -165,7 +165,7 @@ namespace WebsitePanel.EnterpriseServer
             if (errorCode < 0) return false;
 
             // check organizations quota
-            QuotaValueInfo quota = PackageController.GetPackageQuota(packageId, Quotas.ORGANIZATIONS );
+            QuotaValueInfo quota = PackageController.GetPackageQuota(packageId, Quotas.ORGANIZATIONS);
             if (quota.QuotaExhausted)
             {
                 errorCode = BusinessErrorCodes.ERROR_ORGS_RESOURCE_QUOTA_LIMIT;
@@ -180,32 +180,32 @@ namespace WebsitePanel.EnterpriseServer
                 errorCode = BusinessErrorCodes.ERROR_SUBDOMAIN_QUOTA_LIMIT;
                 return false;
             }
-                                        
-            
-            return true;            
+
+
+            return true;
         }
 
         private static string CreateTemporyDomainName(int serviceId, string organizationId)
         {
             // load service settings
             StringDictionary serviceSettings = ServerController.GetServiceSettings(serviceId);
-            
+
             string tempDomain = serviceSettings[TemporyDomainName];
-            return String.IsNullOrEmpty(tempDomain) ? null : organizationId + "."+ tempDomain;                                                                               
+            return String.IsNullOrEmpty(tempDomain) ? null : organizationId + "." + tempDomain;
         }
-                       
+
         private static DomainInfo CreateNewDomain(int packageId, string domainName)
-        {          
+        {
             // new domain
             DomainInfo domain = new DomainInfo();
             domain.PackageId = packageId;
             domain.DomainName = domainName;
             domain.IsInstantAlias = true;
             domain.IsSubDomain = true;
-            
+
             return domain;
         }
-              
+
         private static int CreateDomain(string domainName, int packageId, out bool domainCreated)
         {
             // trying to locate (register) temp domain
@@ -251,18 +251,18 @@ namespace WebsitePanel.EnterpriseServer
 
             return domainId;
         }
-        
+
         private static int AddOrganizationToPackageItems(Organization org, int serviceId, int packageId, string organizationName, string organizationId, string domainName)
-        {            
+        {
             org.ServiceId = serviceId;
             org.PackageId = packageId;
             org.Name = organizationName;
             org.OrganizationId = organizationId;
             org.DefaultDomain = domainName;
-            
+
             int itemId = PackageController.AddPackageItem(org);
-            
-            
+
+
             return itemId;
         }
 
@@ -271,26 +271,26 @@ namespace WebsitePanel.EnterpriseServer
             return DataProvider.ExchangeOrganizationExists(organizationId);
         }
 
-		private static void RollbackOrganization(int packageId, string organizationId)
-		{
-			try
-			{
-				int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedOrganizations);
-				Organizations orgProxy = GetOrganizationProxy(serviceId);
-				orgProxy.DeleteOrganization(organizationId);
-			}
-			catch (Exception ex)
-			{
-				TaskManager.WriteError(ex);
-			}
-		}
-        public static int CreateOrganization(int packageId,  string organizationId, string organizationName, string domainName)
+        private static void RollbackOrganization(int packageId, string organizationId)
+        {
+            try
+            {
+                int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedOrganizations);
+                Organizations orgProxy = GetOrganizationProxy(serviceId);
+                orgProxy.DeleteOrganization(organizationId);
+            }
+            catch (Exception ex)
+            {
+                TaskManager.WriteError(ex);
+            }
+        }
+        public static int CreateOrganization(int packageId, string organizationId, string organizationName, string domainName)
         {
             int itemId;
             int errorCode;
             if (!CheckQuotas(packageId, out errorCode))
                 return errorCode;
-            
+
             // place log record
             List<BackgroundTaskParameter> parameters = new List<BackgroundTaskParameter>();
             parameters.Add(new BackgroundTaskParameter("Organization ID", organizationId));
@@ -298,49 +298,49 @@ namespace WebsitePanel.EnterpriseServer
 
             TaskManager.StartTask("ORGANIZATION", "CREATE_ORG", organizationName, parameters);
 
-			try
-			{
-				// Check if organization exitsts.                
-				if (OrganizationIdentifierExists(organizationId))
-					return BusinessErrorCodes.ERROR_ORG_ID_EXISTS;
+            try
+            {
+                // Check if organization exitsts.                
+                if (OrganizationIdentifierExists(organizationId))
+                    return BusinessErrorCodes.ERROR_ORG_ID_EXISTS;
 
-				// Create Organization Unit
-				int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedOrganizations);
+                // Create Organization Unit
+                int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedOrganizations);
 
-				Organizations orgProxy = GetOrganizationProxy(serviceId);
-				Organization org = null;
-				if (!orgProxy.OrganizationExists(organizationId))
-				{
-					org = orgProxy.CreateOrganization(organizationId);
-				}
-				else
-					return BusinessErrorCodes.ERROR_ORG_ID_EXISTS;
+                Organizations orgProxy = GetOrganizationProxy(serviceId);
+                Organization org = null;
+                if (!orgProxy.OrganizationExists(organizationId))
+                {
+                    org = orgProxy.CreateOrganization(organizationId);
+                }
+                else
+                    return BusinessErrorCodes.ERROR_ORG_ID_EXISTS;
 
-				//create temporary domain name;
+                //create temporary domain name;
                 if (string.IsNullOrEmpty(domainName))
                 {
                     string tmpDomainName = CreateTemporyDomainName(serviceId, organizationId);
 
                     if (!string.IsNullOrEmpty(tmpDomainName)) domainName = tmpDomainName;
                 }
-                
-				if (string.IsNullOrEmpty(domainName))
-				{
-                    domainName = organizationName;
-					//RollbackOrganization(packageId, organizationId);
-					//return BusinessErrorCodes.ERROR_ORGANIZATION_TEMP_DOMAIN_IS_NOT_SPECIFIED;
-				}
-                
 
-				bool domainCreated;
-				int domainId = CreateDomain(domainName, packageId, out domainCreated);
-				//create domain 
-				if (domainId < 0)
-				{
-					RollbackOrganization(packageId, organizationId);
-					return domainId;
-				}
-                
+                if (string.IsNullOrEmpty(domainName))
+                {
+                    domainName = organizationName;
+                    //RollbackOrganization(packageId, organizationId);
+                    //return BusinessErrorCodes.ERROR_ORGANIZATION_TEMP_DOMAIN_IS_NOT_SPECIFIED;
+                }
+
+
+                bool domainCreated;
+                int domainId = CreateDomain(domainName, packageId, out domainCreated);
+                //create domain 
+                if (domainId < 0)
+                {
+                    RollbackOrganization(packageId, organizationId);
+                    return domainId;
+                }
+
                 DomainInfo domain = ServerController.GetDomain(domainId);
                 if (domain != null)
                 {
@@ -352,63 +352,63 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
 
-				PackageContext cntx = PackageController.GetPackageContext(packageId);
+                PackageContext cntx = PackageController.GetPackageContext(packageId);
 
-				if (cntx.Quotas[Quotas.HOSTED_SHAREPOINT_STORAGE_SIZE] != null)
-					org.MaxSharePointStorage = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_STORAGE_SIZE].QuotaAllocatedValue;
-				
+                if (cntx.Quotas[Quotas.HOSTED_SHAREPOINT_STORAGE_SIZE] != null)
+                    org.MaxSharePointStorage = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_STORAGE_SIZE].QuotaAllocatedValue;
 
-				if (cntx.Quotas[Quotas.HOSTED_SHAREPOINT_STORAGE_SIZE] != null)
-					org.WarningSharePointStorage = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_STORAGE_SIZE].QuotaAllocatedValue;
-				
 
-				//add organization to package items                
-				itemId = AddOrganizationToPackageItems(org, serviceId, packageId, organizationName, organizationId, domainName);
+                if (cntx.Quotas[Quotas.HOSTED_SHAREPOINT_STORAGE_SIZE] != null)
+                    org.WarningSharePointStorage = cntx.Quotas[Quotas.HOSTED_SHAREPOINT_STORAGE_SIZE].QuotaAllocatedValue;
 
-				// register org ID
 
-				DataProvider.AddExchangeOrganization(itemId, organizationId);
+                //add organization to package items                
+                itemId = AddOrganizationToPackageItems(org, serviceId, packageId, organizationName, organizationId, domainName);
 
-				// register domain                
-				DataProvider.AddExchangeOrganizationDomain(itemId, domainId, true);
+                // register org ID
+
+                DataProvider.AddExchangeOrganization(itemId, organizationId);
+
+                // register domain                
+                DataProvider.AddExchangeOrganizationDomain(itemId, domainId, true);
 
                 //add to exchangeAcounts
                 AddAccount(itemId, ExchangeAccountType.DefaultSecurityGroup, org.GroupName,
                                 org.GroupName, null, false,
                                 0, org.GroupName, null, 0, null);
 
-				// register organization domain service item
-				OrganizationDomain orgDomain = new OrganizationDomain
-				                                   {
-				                                       Name = domainName,
-				                                       PackageId = packageId,
-				                                       ServiceId = serviceId
-				                                   };
+                // register organization domain service item
+                OrganizationDomain orgDomain = new OrganizationDomain
+                {
+                    Name = domainName,
+                    PackageId = packageId,
+                    ServiceId = serviceId
+                };
 
-			    PackageController.AddPackageItem(orgDomain);
+                PackageController.AddPackageItem(orgDomain);
 
 
 
-			}
-			catch (Exception ex)
-			{
-				//rollback organization
-				try
-				{
-					RollbackOrganization(packageId, organizationId);
-				}
-				catch (Exception rollbackException)
-				{
-					TaskManager.WriteError(rollbackException);
-				}
+            }
+            catch (Exception ex)
+            {
+                //rollback organization
+                try
+                {
+                    RollbackOrganization(packageId, organizationId);
+                }
+                catch (Exception rollbackException)
+                {
+                    TaskManager.WriteError(rollbackException);
+                }
 
-				throw TaskManager.WriteError(ex);
-			}
+                throw TaskManager.WriteError(ex);
+            }
             finally
             {
                 TaskManager.CompleteTask();
             }
-            
+
             return itemId;
         }
 
@@ -440,7 +440,7 @@ namespace WebsitePanel.EnterpriseServer
                         return -1;
                     }
                 }
-                                
+
                 // unregister domain
                 DataProvider.DeleteExchangeOrganizationDomain(itemId, domainId);
 
@@ -477,52 +477,52 @@ namespace WebsitePanel.EnterpriseServer
         private static void DeleteOCSUsers(int itemId, ref bool successful)
         {
             try
-            {                  
-                    OCSUsersPagedResult res = OCSController.GetOCSUsers(itemId, string.Empty, string.Empty, string.Empty,
-                                                            string.Empty, 0, int.MaxValue);
-                    if (res.IsSuccess)
-                    {
-                        foreach (OCSUser user in res.Value.PageUsers)
-                        {
-                            try
-                            {
-                                ResultObject delUserResult = OCSController.DeleteOCSUser(itemId, user.InstanceId);          
-                                if (!delUserResult.IsSuccess)
-                                {
-                                    StringBuilder sb = new StringBuilder();                                   
-                                    foreach(string str in delUserResult.ErrorCodes)
-                                    {
-                                        sb.Append(str);
-                                        sb.Append('\n');
-                                    }
-
-                                    throw new ApplicationException(sb.ToString());
-                                }
-                            }
-                            catch(Exception ex)
-                            {
-                                successful = false;
-                                TaskManager.WriteError(ex);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        StringBuilder sb = new StringBuilder();                                   
-                        foreach(string str in res.ErrorCodes)
-                        {
-                            sb.Append(str);
-                            sb.Append('\n');
-                        }
-
-                        throw new ApplicationException(sb.ToString());
-                    }
-                }
-                catch(Exception ex)
+            {
+                OCSUsersPagedResult res = OCSController.GetOCSUsers(itemId, string.Empty, string.Empty, string.Empty,
+                                                        string.Empty, 0, int.MaxValue);
+                if (res.IsSuccess)
                 {
-                    successful = false;
-                    TaskManager.WriteError(ex);
+                    foreach (OCSUser user in res.Value.PageUsers)
+                    {
+                        try
+                        {
+                            ResultObject delUserResult = OCSController.DeleteOCSUser(itemId, user.InstanceId);
+                            if (!delUserResult.IsSuccess)
+                            {
+                                StringBuilder sb = new StringBuilder();
+                                foreach (string str in delUserResult.ErrorCodes)
+                                {
+                                    sb.Append(str);
+                                    sb.Append('\n');
+                                }
+
+                                throw new ApplicationException(sb.ToString());
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            successful = false;
+                            TaskManager.WriteError(ex);
+                        }
+                    }
                 }
+                else
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (string str in res.ErrorCodes)
+                    {
+                        sb.Append(str);
+                        sb.Append('\n');
+                    }
+
+                    throw new ApplicationException(sb.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                successful = false;
+                TaskManager.WriteError(ex);
+            }
         }
 
 
@@ -611,7 +611,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (org.IsOCSOrganization)
                 {
-                    DeleteOCSUsers(itemId, ref successful);                                        
+                    DeleteOCSUsers(itemId, ref successful);
                 }
 
                 try
@@ -623,10 +623,10 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     successful = false;
                     TaskManager.WriteError(ex);
-                }                
+                }
 
                 try
-                {                  
+                {
                     OrganizationUsersPagedResult res = BlackBerryController.GetBlackBerryUsers(itemId, string.Empty, string.Empty, string.Empty,
                                                             string.Empty, 0, int.MaxValue);
                     if (res.IsSuccess)
@@ -635,11 +635,11 @@ namespace WebsitePanel.EnterpriseServer
                         {
                             try
                             {
-                                ResultObject delUserResult = BlackBerryController.DeleteBlackBerryUser(itemId, user.AccountId);          
+                                ResultObject delUserResult = BlackBerryController.DeleteBlackBerryUser(itemId, user.AccountId);
                                 if (!delUserResult.IsSuccess)
                                 {
-                                    StringBuilder sb = new StringBuilder();                                   
-                                    foreach(string str in delUserResult.ErrorCodes)
+                                    StringBuilder sb = new StringBuilder();
+                                    foreach (string str in delUserResult.ErrorCodes)
                                     {
                                         sb.Append(str);
                                         sb.Append('\n');
@@ -648,7 +648,7 @@ namespace WebsitePanel.EnterpriseServer
                                     throw new ApplicationException(sb.ToString());
                                 }
                             }
-                            catch(Exception ex)
+                            catch (Exception ex)
                             {
                                 successful = false;
                                 TaskManager.WriteError(ex);
@@ -657,8 +657,8 @@ namespace WebsitePanel.EnterpriseServer
                     }
                     else
                     {
-                        StringBuilder sb = new StringBuilder();                                   
-                        foreach(string str in res.ErrorCodes)
+                        StringBuilder sb = new StringBuilder();
+                        foreach (string str in res.ErrorCodes)
                         {
                             sb.Append(str);
                             sb.Append('\n');
@@ -667,7 +667,7 @@ namespace WebsitePanel.EnterpriseServer
                         throw new ApplicationException(sb.ToString());
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     successful = false;
                     TaskManager.WriteError(ex);
@@ -699,10 +699,10 @@ namespace WebsitePanel.EnterpriseServer
                     TaskManager.WriteError(ex);
                 }
 
-                
-                                                
-                Organizations orgProxy =  GetOrganizationProxy(org.ServiceId);
-              
+
+
+                Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+
                 try
                 {
                     orgProxy.DeleteOrganization(org.OrganizationId);
@@ -712,8 +712,8 @@ namespace WebsitePanel.EnterpriseServer
                     successful = false;
                     TaskManager.WriteError(ex);
                 }
-                
-                    
+
+
 
                 // delete organization domains
                 List<OrganizationDomainName> domains = GetOrganizationDomains(itemId);
@@ -728,15 +728,15 @@ namespace WebsitePanel.EnterpriseServer
                         successful = false;
                         TaskManager.WriteError(ex);
                     }
-                
+
                 }
 
                 DataProvider.DeleteOrganizationUser(itemId);
-                
+
                 // delete meta-item
                 PackageController.DeletePackageItem(itemId);
-                
-                
+
+
                 return successful ? 0 : BusinessErrorCodes.ERROR_ORGANIZATION_DELETE_SOME_PROBLEMS;
             }
             catch (Exception ex)
@@ -749,11 +749,11 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-       
+
         public static Organizations GetOrganizationProxy(int serviceId)
-        {            
+        {
             Organizations ws = new Organizations();
-            ServiceProviderProxy.Init(ws, serviceId);            
+            ServiceProviderProxy.Init(ws, serviceId);
             return ws;
         }
 
@@ -768,7 +768,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static DataSet GetRawOrganizationsPaged(int packageId, bool recursive,
             string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
-        {               
+        {
             #region Demo Mode
             if (IsDemoMode)
             {
@@ -790,15 +790,15 @@ namespace WebsitePanel.EnterpriseServer
                 dtItems.Columns.Add("UserID", typeof(int));
                 dtItems.Rows.Add(1, "fabrikam", "Fabrikam Inc", "Hosted Exchange", 1, "Customer", 1);
 
-                
+
                 dtItems.Rows.Add(2, "Contoso", "Contoso Ltd", "Hosted Exchange", 2, "Customer", 2);
-                
+
 
                 return ds;
             }
             #endregion
-            
-            
+
+
             return PackageController.GetRawPackageItemsPaged(
                    packageId, ResourceGroups.HostedOrganizations, typeof(Organization),
                    recursive, filterColumn, filterValue, sortColumn, startRow, maximumRows);
@@ -813,9 +813,9 @@ namespace WebsitePanel.EnterpriseServer
 
             Organization org = GetOrganization(itemId);
 
-            return org; 
+            return org;
         }
-        
+
         public static Organization GetOrganization(int itemId)
         {
             #region Demo Mode
@@ -1029,13 +1029,13 @@ namespace WebsitePanel.EnterpriseServer
             TaskManager.StartTask("ORGANIZATION", "CHANGE_DOMAIN_TYPE", domainId, itemId);
 
             try
-            {   
+            {
                 // change accepted domain type on Exchange
                 int checkResult = ExchangeServerController.ChangeAcceptedDomainType(itemId, domainId, newDomainType);
 
 
                 // change accepted domain type in DB
-                int domainTypeId= (int) newDomainType;
+                int domainTypeId = (int)newDomainType;
                 DataProvider.ChangeExchangeAcceptedDomainType(itemId, domainId, domainTypeId);
 
                 return checkResult;
@@ -1061,7 +1061,7 @@ namespace WebsitePanel.EnterpriseServer
             if (orgStats.AllocatedDomains > -1
                 && orgStats.CreatedDomains >= orgStats.AllocatedDomains)
                 return BusinessErrorCodes.ERROR_EXCHANGE_DOMAINS_QUOTA_LIMIT;
-            
+
             // place log record
             TaskManager.StartTask("ORGANIZATION", "ADD_DOMAIN", domainName, itemId);
 
@@ -1111,13 +1111,13 @@ namespace WebsitePanel.EnterpriseServer
                     int domainId = ServerController.AddDomain(domain);
                     if (domainId < 0)
                         return domainId;
-                    
+
                     // add domain
                     domain.DomainId = domainId;
                 }
 
-               
-                
+
+
                 // register domain
                 DataProvider.AddExchangeOrganizationDomain(itemId, domain.DomainId, false);
 
@@ -1128,7 +1128,7 @@ namespace WebsitePanel.EnterpriseServer
                 exchDomain.ServiceId = org.ServiceId;
                 PackageController.AddPackageItem(exchDomain);
 
-                
+
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
                 orgProxy.CreateOrganizationDomain(org.DistinguishedName, domainName);
                 if (!string.IsNullOrEmpty(org.GlobalAddressList))
@@ -1187,18 +1187,18 @@ namespace WebsitePanel.EnterpriseServer
         #region Users
 
 
-        
-        
+
+
         public static OrganizationUsersPaged GetOrganizationUsersPaged(int itemId, string filterColumn, string filterValue, string sortColumn,
-			int startRow, int maximumRows)
+            int startRow, int maximumRows)
         {
 
             #region Demo Mode
             if (IsDemoMode)
-            {                                
+            {
                 OrganizationUsersPaged res = new OrganizationUsersPaged();
                 List<OrganizationUser> demoAccounts = SearchAccounts(1, "", "", "", true);
-                
+
                 OrganizationUser r1 = new OrganizationUser();
                 r1.AccountId = 20;
                 r1.AccountName = "room1_fabrikam";
@@ -1206,7 +1206,7 @@ namespace WebsitePanel.EnterpriseServer
                 r1.DisplayName = "Meeting Room 1";
                 r1.PrimaryEmailAddress = "room1@fabrikam.net";
                 demoAccounts.Add(r1);
-                
+
                 OrganizationUser e1 = new OrganizationUser();
                 e1.AccountId = 21;
                 e1.AccountName = "projector_fabrikam";
@@ -1219,14 +1219,14 @@ namespace WebsitePanel.EnterpriseServer
                 return res;
             }
             #endregion
-            
+
             string accountTypes = string.Format("{0}, {1}, {2}, {3}", ((int)ExchangeAccountType.User), ((int)ExchangeAccountType.Mailbox), ((int)ExchangeAccountType.Room), ((int)ExchangeAccountType.Equipment));
-            
-            
+
+
             DataSet ds =
                 DataProvider.GetExchangeAccountsPaged(SecurityContext.User.UserId, itemId, accountTypes, filterColumn,
                                                       filterValue, sortColumn, startRow, maximumRows);
-           
+
             OrganizationUsersPaged result = new OrganizationUsersPaged();
             result.RecordsCount = (int)ds.Tables[0].Rows[0][0];
 
@@ -1249,10 +1249,10 @@ namespace WebsitePanel.EnterpriseServer
         }
 
 
-        
+
         private static bool EmailAddressExists(string emailAddress)
         {
-            return DataProvider.ExchangeAccountEmailAddressExists(emailAddress);		
+            return DataProvider.ExchangeAccountEmailAddressExists(emailAddress);
         }
 
 
@@ -1268,7 +1268,7 @@ namespace WebsitePanel.EnterpriseServer
             //string []parts = loginName.Split('@');
             //return parts != null && parts.Length > 1 ? parts[0] : loginName;
             return loginName;
-                
+
         }
 
         public static int CreateUser(int itemId, string displayName, string name, string domain, string password, string subscriberNumber, bool enabled, bool sendNotification, string to, out string accountName)
@@ -1509,7 +1509,7 @@ namespace WebsitePanel.EnterpriseServer
         /// <returns> The account name with organization Id. </returns>
         private static string BuildAccountNameWithOrgId(string orgId, string name, int serviceId)
         {
-            name = name.Length > 5 ? name.Substring(0, 5) : name;
+            name = ((orgId.Length + name.Length) > 19 && name.Length > 9) ? name.Substring(0, (19 - orgId.Length) < 10 ? 10 : 19 - orgId.Length) : name;
 
             orgId = (orgId.Length + name.Length) > 19 ? orgId.Substring(0, 19 - name.Length) : orgId;
 
@@ -1583,7 +1583,7 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-                Guid crmUserId = CRMController.GetCrmUserId( accountId);
+                Guid crmUserId = CRMController.GetCrmUserId(accountId);
                 if (crmUserId != Guid.Empty)
                 {
                     return BusinessErrorCodes.CURRENT_USER_IS_CRM_USER;
@@ -1592,12 +1592,12 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (DataProvider.CheckOCSUserExists(accountId))
                 {
-                    return BusinessErrorCodes.CURRENT_USER_IS_OCS_USER; 
+                    return BusinessErrorCodes.CURRENT_USER_IS_OCS_USER;
                 }
 
                 if (DataProvider.CheckLyncUserExists(accountId))
                 {
-                    return BusinessErrorCodes.CURRENT_USER_IS_LYNC_USER; 
+                    return BusinessErrorCodes.CURRENT_USER_IS_LYNC_USER;
                 }
 
 
@@ -1608,11 +1608,11 @@ namespace WebsitePanel.EnterpriseServer
 
                 // load account
                 OrganizationUser user = GetAccount(itemId, accountId);
-                
+
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
                 string account = GetAccountName(user.AccountName);
-                
+
                 if (user.AccountType == ExchangeAccountType.User)
                 {
                     //Delete user from AD
@@ -1620,8 +1620,8 @@ namespace WebsitePanel.EnterpriseServer
                     // unregister account
                     DeleteUserFromMetabase(itemId, accountId);
                 }
-                else 
-                {                    
+                else
+                {
                     //Delete mailbox with AD user
                     ExchangeServerController.DeleteMailbox(itemId, accountId);
                 }
@@ -1638,7 +1638,7 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         public static OrganizationUser GetAccount(int itemId, int userId)
-        {            
+        {
             OrganizationUser account = ObjectUtils.FillObjectFromDataReader<OrganizationUser>(
                 DataProvider.GetExchangeAccount(itemId, userId));
 
@@ -1669,7 +1669,7 @@ namespace WebsitePanel.EnterpriseServer
             if (GetOrganization(itemId) == null)
                 return;
 
-            DataProvider.DeleteExchangeAccount(itemId, accountId);            
+            DataProvider.DeleteExchangeAccount(itemId, accountId);
         }
 
         public static OrganizationUser GetUserGeneralSettings(int itemId, int accountId)
@@ -1697,7 +1697,7 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 account = GetAccount(itemId, accountId);
             }
-            catch (Exception){}
+            catch (Exception) { }
 
             try
             {
@@ -1764,10 +1764,10 @@ namespace WebsitePanel.EnterpriseServer
 
                 string accountName = GetAccountName(account.AccountName);
                 // get mailbox settings
-                Organizations orgProxy = GetOrganizationProxy(org.ServiceId); 
-				// external email
-				string externalEmailAddress = (account.AccountType == ExchangeAccountType.User ) ? externalEmail : account.PrimaryEmailAddress;
-				 
+                Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
+                // external email
+                string externalEmailAddress = (account.AccountType == ExchangeAccountType.User) ? externalEmail : account.PrimaryEmailAddress;
+
                 orgProxy.SetUserGeneralSettings(
                     org.OrganizationId,
                     accountName,
@@ -1796,21 +1796,21 @@ namespace WebsitePanel.EnterpriseServer
                     pager,
                     webPage,
                     notes,
-					externalEmailAddress);
+                    externalEmailAddress);
 
                 // update account
                 account.DisplayName = displayName;
                 account.SubscriberNumber = subscriberNumber;
-                
+
                 //account.
                 if (!String.IsNullOrEmpty(password))
                     account.AccountPassword = CryptoUtils.Encrypt(password);
-                else 
+                else
                     account.AccountPassword = null;
 
                 UpdateAccount(account);
 
-                
+
                 return 0;
             }
             catch (Exception ex)
@@ -1837,7 +1837,7 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-               
+
 
                 // load organization
                 Organization org = GetOrganization(itemId);
@@ -1871,7 +1871,7 @@ namespace WebsitePanel.EnterpriseServer
                             return BusinessErrorCodes.ERROR_EXCHANGE_EMAIL_EXISTS;
                     }
                 }
-                
+
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
                 orgProxy.SetUserPrincipalName(org.OrganizationId,
@@ -1951,7 +1951,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
-                orgProxy.SetUserPassword(   org.OrganizationId,
+                orgProxy.SetUserPassword(org.OrganizationId,
                                             accountName,
                                             password);
 
@@ -1978,18 +1978,18 @@ namespace WebsitePanel.EnterpriseServer
 
 
         private static void UpdateAccount(ExchangeAccount account)
-        {                        
+        {
             DataProvider.UpdateExchangeAccount(account.AccountId, account.AccountName, account.AccountType, account.DisplayName,
                 account.PrimaryEmailAddress, account.MailEnabledPublicFolder,
-                account.MailboxManagerActions.ToString(), account.SamAccountName, account.AccountPassword, account.MailboxPlanId, 
+                account.MailboxManagerActions.ToString(), account.SamAccountName, account.AccountPassword, account.MailboxPlanId,
                 (string.IsNullOrEmpty(account.SubscriberNumber) ? null : account.SubscriberNumber.Trim()));
         }
 
 
 
         public static List<OrganizationUser> SearchAccounts(int itemId,
-            
-            string filterColumn, string filterValue, string sortColumn, bool includeMailboxes )
+
+            string filterColumn, string filterValue, string sortColumn, bool includeMailboxes)
         {
             #region Demo Mode
             if (IsDemoMode)
@@ -1998,38 +1998,38 @@ namespace WebsitePanel.EnterpriseServer
 
 
                 OrganizationUser m1 = new OrganizationUser();
-                    m1.AccountId = 1;
-                    m1.AccountName = "john_fabrikam";
-                    m1.AccountType = ExchangeAccountType.Mailbox;
-                    m1.DisplayName = "John Smith";
-                    m1.PrimaryEmailAddress = "john@fabrikam.net";
-                    
-                    if (includeMailboxes)                
-                        demoAccounts.Add(m1);
+                m1.AccountId = 1;
+                m1.AccountName = "john_fabrikam";
+                m1.AccountType = ExchangeAccountType.Mailbox;
+                m1.DisplayName = "John Smith";
+                m1.PrimaryEmailAddress = "john@fabrikam.net";
 
-                    OrganizationUser m2 = new OrganizationUser();
-                    m2.AccountId = 2;
-                    m2.AccountName = "jack_fabrikam";
-                    m2.AccountType = ExchangeAccountType.User;
-                    m2.DisplayName = "Jack Brown";
-                    m2.PrimaryEmailAddress = "jack@fabrikam.net";
-                    demoAccounts.Add(m2);
+                if (includeMailboxes)
+                    demoAccounts.Add(m1);
 
-                    OrganizationUser m3 = new OrganizationUser();
-                    m3.AccountId = 3;
-                    m3.AccountName = "marry_fabrikam";
-                    m3.AccountType = ExchangeAccountType.Mailbox;
-                    m3.DisplayName = "Marry Smith";
-                    m3.PrimaryEmailAddress = "marry@fabrikam.net";
-                    
-                    if (includeMailboxes)
-                        demoAccounts.Add(m3);                  
-                  
+                OrganizationUser m2 = new OrganizationUser();
+                m2.AccountId = 2;
+                m2.AccountName = "jack_fabrikam";
+                m2.AccountType = ExchangeAccountType.User;
+                m2.DisplayName = "Jack Brown";
+                m2.PrimaryEmailAddress = "jack@fabrikam.net";
+                demoAccounts.Add(m2);
+
+                OrganizationUser m3 = new OrganizationUser();
+                m3.AccountId = 3;
+                m3.AccountName = "marry_fabrikam";
+                m3.AccountType = ExchangeAccountType.Mailbox;
+                m3.DisplayName = "Marry Smith";
+                m3.PrimaryEmailAddress = "marry@fabrikam.net";
+
+                if (includeMailboxes)
+                    demoAccounts.Add(m3);
+
 
                 return demoAccounts;
             }
             #endregion
-            
+
             List<OrganizationUser> Tmpaccounts = ObjectUtils.CreateListFromDataReader<OrganizationUser>(
                                                   DataProvider.SearchOrganizationAccounts(SecurityContext.User.UserId, itemId,
                                                   filterColumn, filterValue, sortColumn, includeMailboxes));
@@ -2043,7 +2043,7 @@ namespace WebsitePanel.EnterpriseServer
 
             return Accounts;
         }
-        
+
         public static int GetAccountIdByUserPrincipalName(int itemId, string userPrincipalName)
         {
             // place log record
@@ -2107,8 +2107,8 @@ namespace WebsitePanel.EnterpriseServer
                 return demoDomains;
             }
             #endregion
-            
-            
+
+
             // load organization
             Organization org = (Organization)PackageController.GetPackageItem(itemId);
             if (org == null)
@@ -2134,14 +2134,14 @@ namespace WebsitePanel.EnterpriseServer
         private static OrganizationUser GetDemoUserGeneralSettings()
         {
             OrganizationUser user = new OrganizationUser();
-            user.DisplayName = "John Smith";            
+            user.DisplayName = "John Smith";
             user.AccountName = "john_fabrikam";
             user.FirstName = "John";
             user.LastName = "Smith";
-            user.AccountType = ExchangeAccountType.Mailbox;            
+            user.AccountType = ExchangeAccountType.Mailbox;
             return user;
         }
-        
+
         private static bool IsDemoMode
         {
             get
@@ -2153,7 +2153,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static PasswordPolicyResult GetPasswordPolicy(int itemId)
         {
-            PasswordPolicyResult res = new PasswordPolicyResult {IsSuccess = true};
+            PasswordPolicyResult res = new PasswordPolicyResult { IsSuccess = true };
             try
             {
                 Organization org = GetOrganization(itemId);
@@ -2169,7 +2169,7 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     orgProxy = GetOrganizationProxy(org.ServiceId);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     res.IsSuccess = false;
                     res.ErrorCodes.Add(ErrorCodes.CANNOT_GET_ORGANIZATION_PROXY);
@@ -2177,17 +2177,17 @@ namespace WebsitePanel.EnterpriseServer
                     return res;
                 }
 
-                 PasswordPolicyResult policyRes = orgProxy.GetPasswordPolicy();                
-                 res.ErrorCodes.AddRange(policyRes.ErrorCodes);
-                 if (!policyRes.IsSuccess)
-                 {
-                     res.IsSuccess = false;
-                     return res;
-                 }
-                
+                PasswordPolicyResult policyRes = orgProxy.GetPasswordPolicy();
+                res.ErrorCodes.AddRange(policyRes.ErrorCodes);
+                if (!policyRes.IsSuccess)
+                {
+                    res.IsSuccess = false;
+                    return res;
+                }
+
                 res.Value = policyRes.Value;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 TaskManager.WriteError(ex);
                 res.IsSuccess = false;
@@ -2263,7 +2263,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
-                string groupName = BuildAccountNameWithOrgId(org.OrganizationId, displayName, org.ServiceId);
+                string groupName = BuildAccountNameWithOrgId(org.OrganizationId, displayName.Replace(" ", ""), org.ServiceId);
 
                 TaskManager.Write("accountName :" + groupName);
 
@@ -2332,9 +2332,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 securityGroup.IsDefault = account.AccountType == ExchangeAccountType.DefaultSecurityGroup;
 
-                List<OrganizationUser> members = new List<OrganizationUser>();
+                List<ExchangeAccount> members = new List<ExchangeAccount>();
 
-                foreach (OrganizationUser user in securityGroup.MembersAccounts)
+                foreach (ExchangeAccount user in securityGroup.MembersAccounts)
                 {
                     OrganizationUser userAccount = GetAccountByAccountName(itemId, user.SamAccountName);
 
@@ -2342,6 +2342,7 @@ namespace WebsitePanel.EnterpriseServer
                     {
                         user.AccountId = userAccount.AccountId;
                         user.AccountName = userAccount.AccountName;
+                        user.DisplayName = userAccount.DisplayName;
                         user.PrimaryEmailAddress = userAccount.PrimaryEmailAddress;
                         user.AccountType = userAccount.AccountType;
 
@@ -2385,7 +2386,7 @@ namespace WebsitePanel.EnterpriseServer
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
                 orgProxy.DeleteSecurityGroup(account.AccountName, org.OrganizationId);
-                
+
                 DeleteUserFromMetabase(itemId, accountId);
 
                 return 0;
@@ -2480,7 +2481,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 res.PageItems = demoSecurityGroups.ToArray();
                 res.RecordsCount = res.PageItems.Length;
-                
+
                 return res;
             }
             #endregion
@@ -2513,7 +2514,7 @@ namespace WebsitePanel.EnterpriseServer
             return result;
         }
 
-        public static int AddUserToSecurityGroup(int itemId, int userAccountId, string groupName)
+        public static int AddObjectToSecurityGroup(int itemId, int accountId, string groupName)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -2530,11 +2531,11 @@ namespace WebsitePanel.EnterpriseServer
                     return -1;
 
                 // load user account
-                OrganizationUser userAccount = GetAccount(itemId, userAccountId);
+                ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
 
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
-                orgProxy.AddUserToSecurityGroup(org.OrganizationId, userAccount.AccountName, groupName);
+                orgProxy.AddObjectToSecurityGroup(org.OrganizationId, account.AccountName, groupName);
 
                 return 0;
             }
@@ -2548,7 +2549,7 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        public static int DeleteUserFromSecurityGroup(int itemId, int userAccountId, string groupName)
+        public static int DeleteObjectFromSecurityGroup(int itemId, int accountId, string groupName)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -2565,11 +2566,11 @@ namespace WebsitePanel.EnterpriseServer
                     return -1;
 
                 // load user account
-                OrganizationUser userAccount = GetAccount(itemId, userAccountId);
+                ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
 
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
-                orgProxy.DeleteUserFromSecurityGroup(org.OrganizationId, userAccount.AccountName, groupName);
+                orgProxy.DeleteObjectFromSecurityGroup(org.OrganizationId, account.AccountName, groupName);
 
                 return 0;
             }
@@ -2610,16 +2611,20 @@ namespace WebsitePanel.EnterpriseServer
                 // load account
                 ExchangeAccount account = ExchangeServerController.GetAccount(itemId, accountId);
 
-                List<ExchangeAccount> SecurytyGroups = ExchangeServerController.GetAccounts(itemId, ExchangeAccountType.SecurityGroup);
-                foreach (ExchangeAccount SecurytyGroupAccount in SecurytyGroups)
-                {
-                    OrganizationSecurityGroup SecurytyGroup = GetSecurityGroupGeneralSettings(itemId, SecurytyGroupAccount.AccountId);
+                List<ExchangeAccount> securytyGroups = ExchangeServerController.GetAccounts(itemId, ExchangeAccountType.SecurityGroup);
 
-                    foreach (OrganizationUser member in SecurytyGroup.MembersAccounts)
+                //load default group
+                securytyGroups.AddRange(ExchangeServerController.GetAccounts(itemId, ExchangeAccountType.DefaultSecurityGroup));
+
+                foreach (ExchangeAccount securityGroupAccount in securytyGroups)
+                {
+                    OrganizationSecurityGroup securityGroup = GetSecurityGroupGeneralSettings(itemId, securityGroupAccount.AccountId);
+
+                    foreach (ExchangeAccount member in securityGroup.MembersAccounts)
                     {
                         if (member.AccountName == account.AccountName)
                         {
-                            ret.Add(SecurytyGroupAccount);
+                            ret.Add(securityGroupAccount);
                             break;
                         }
 
@@ -2638,39 +2643,96 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        public static List<ExchangeAccount> SearchSecurityGroups(int itemId, string filterColumn, string filterValue, string sortColumn)
+        public static List<ExchangeAccount> SearchOrganizationAccounts(int itemId, string filterColumn, string filterValue,
+            string sortColumn, bool includeOnlySecurityGroups)
         {
             #region Demo Mode
 
             if (IsDemoMode)
             {
-                List<ExchangeAccount> demoSecurityGroups = new List<ExchangeAccount>();
+                List<ExchangeAccount> demoAccounts = new List<ExchangeAccount>();
+
+                ExchangeAccount m1 = new ExchangeAccount();
+                m1.AccountId = 1;
+                m1.AccountName = "john_fabrikam";
+                m1.AccountType = ExchangeAccountType.Mailbox;
+                m1.DisplayName = "John Smith";
+                m1.PrimaryEmailAddress = "john@fabrikam.net";
+                demoAccounts.Add(m1);
+
+                ExchangeAccount m2 = new ExchangeAccount();
+                m2.AccountId = 2;
+                m2.AccountName = "jack_fabrikam";
+                m2.AccountType = ExchangeAccountType.User;
+                m2.DisplayName = "Jack Brown";
+                m2.PrimaryEmailAddress = "jack@fabrikam.net";
+                demoAccounts.Add(m2);
+
+                ExchangeAccount m3 = new ExchangeAccount();
+                m3.AccountId = 3;
+                m3.AccountName = "marry_fabrikam";
+                m3.AccountType = ExchangeAccountType.Mailbox;
+                m3.DisplayName = "Marry Smith";
+                m3.PrimaryEmailAddress = "marry@fabrikam.net";
+                demoAccounts.Add(m3);
 
                 ExchangeAccount r1 = new ExchangeAccount();
                 r1.AccountId = 20;
                 r1.AccountName = "group1_fabrikam";
                 r1.AccountType = ExchangeAccountType.SecurityGroup;
                 r1.DisplayName = "Group 1";
-                demoSecurityGroups.Add(r1);
+                demoAccounts.Add(r1);
 
                 ExchangeAccount r2 = new ExchangeAccount();
                 r1.AccountId = 21;
                 r1.AccountName = "group2_fabrikam";
                 r1.AccountType = ExchangeAccountType.SecurityGroup;
                 r1.DisplayName = "Group 2";
-                demoSecurityGroups.Add(r2);
+                demoAccounts.Add(r2);
 
-                return demoSecurityGroups;
+                return demoAccounts;
             }
 
             #endregion
 
-            List<ExchangeAccount> accounts = ObjectUtils.CreateListFromDataReader<ExchangeAccount>(
-                DataProvider.SearchExchangeAccounts(
-                    SecurityContext.User.UserId, itemId, false, false, false, false, false, filterColumn, filterValue, sortColumn));
+            string accountTypes = string.Format("{0}", ((int)ExchangeAccountType.SecurityGroup));
 
-            return accounts.Where(x => x.AccountType == ExchangeAccountType.SecurityGroup).ToList();
+            if (!includeOnlySecurityGroups)
+            {
+                accountTypes = string.Format("{0}, {1}, {2}, {3}, {4}, {5}", accountTypes, ((int)ExchangeAccountType.User), ((int)ExchangeAccountType.Mailbox),
+                    ((int)ExchangeAccountType.Room), ((int)ExchangeAccountType.Equipment), ((int)ExchangeAccountType.DistributionList));
+            }
+
+            List<ExchangeAccount> tmpAccounts = ObjectUtils.CreateListFromDataReader<ExchangeAccount>(
+                                                  DataProvider.SearchExchangeAccountsByTypes(SecurityContext.User.UserId, itemId,
+                                                  accountTypes, filterColumn, filterValue, sortColumn));
+
+            List<ExchangeAccount> accounts = new List<ExchangeAccount>();
+
+            foreach (ExchangeAccount tmpAccount in tmpAccounts.ToArray())
+            {
+                bool bSuccess = false;
+
+                switch (tmpAccount.AccountType)
+                {
+                    case ExchangeAccountType.SecurityGroup:
+                        bSuccess = GetSecurityGroupGeneralSettings(itemId, tmpAccount.AccountId) != null;
+                        break;
+                    case ExchangeAccountType.DistributionList:
+                        bSuccess = ExchangeServerController.GetDistributionListGeneralSettings(itemId, tmpAccount.AccountId) != null;
+                        break;
+                    default:
+                        bSuccess = GetUserGeneralSettings(itemId, tmpAccount.AccountId) != null;
+                        break;
+                }
+
+                if (bSuccess)
+                {
+                    accounts.Add(tmpAccount);
+                }
+            }
+
+            return accounts;
         }
     }
-    
 }

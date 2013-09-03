@@ -153,6 +153,9 @@
   <data name="gvAccounts.EmptyDataText" xml:space="preserve">
     <value>The list of accounts is empty. Click "Add..." button to add accounts.</value>
   </data>
+  <data name="gvAccountsAccountType.HeaderText" xml:space="preserve">
+    <value>Type</value>
+  </data>
   <data name="gvAccountsDisplayName.HeaderText" xml:space="preserve">
     <value>Display Name</value>
   </data>
@@ -163,7 +166,7 @@
     <value>No accounts found.</value>
   </data>
   <data name="headerAddAccounts.Text" xml:space="preserve">
-    <value>Organization Users</value>
+    <value>Organization Accounts</value>
   </data>
   <data name="locIncludeSearch.Text" xml:space="preserve">
     <value>Include in search:</value>

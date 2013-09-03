@@ -53,6 +53,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
         {
             List<Tab> tabsList = new List<Tab>();
             tabsList.Add(CreateTab("secur_group_settings", "Tab.Settings"));
+            tabsList.Add(CreateTab("secur_group_memberof", "Tab.MemberOf"));
 
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
 

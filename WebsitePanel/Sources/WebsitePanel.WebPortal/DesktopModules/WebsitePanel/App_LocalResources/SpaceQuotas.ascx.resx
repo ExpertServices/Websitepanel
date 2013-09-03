@@ -198,4 +198,7 @@
   <data name="lblOrganizations.Text" xml:space="preserve">
     <value>Organizations:</value>
   </data>
+  <data name="lblLyncPhone.Text" xml:space="preserve">
+    <value>Lync Phone Numbers:</value>
+  </data>
 </root>

@@ -116,8 +116,8 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
 		private void BindPopupAccounts()
 		{
-			ExchangeAccount[] accounts = ES.Services.Organizations.SearchSecurityGroups(PanelRequest.ItemID,			
-				ddlSearchColumn.SelectedValue, txtSearchValue.Text + "%", "");
+			ExchangeAccount[] accounts = ES.Services.Organizations.SearchOrganizationAccounts(PanelRequest.ItemID,			
+				ddlSearchColumn.SelectedValue, txtSearchValue.Text + "%", "", true);
 
             accounts = accounts.Where(x => !GetAccounts().Contains(x.AccountName)).ToArray();
 
@@ -158,6 +158,8 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 			gvGroups.DataSource = accounts;
 			gvGroups.DataBind();
 
+            UpdateGridViewAccounts(gvGroups);
+
             btnDelete.Visible = gvGroups.Rows.Count > 0;
 		}
 
@@ -183,6 +185,38 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 			}
 			return accounts;
 		}
+
+        private void UpdateGridViewAccounts(GridView gv)
+        {
+            CheckBox chkSelectAll = (CheckBox)gv.HeaderRow.FindControl("chkSelectAll");
+
+            for (int i = 0; i < gv.Rows.Count; i++)
+            {
+                GridViewRow row = gv.Rows[i];
+                CheckBox chkSelect = (CheckBox)row.FindControl("chkSelect");
+                if (chkSelect == null)
+                {
+                    continue;
+                }
+
+                ExchangeAccountType exAccountType = (ExchangeAccountType)Enum.Parse(typeof(ExchangeAccountType), ((Literal)row.FindControl("litAccountType")).Text);
+
+                if (exAccountType != ExchangeAccountType.DefaultSecurityGroup)
+                {
+                    chkSelectAll = null;
+                    chkSelect.Enabled = true;
+                }
+                else
+                {
+                    chkSelect.Enabled = false;
+                }
+            }
+
+            if (chkSelectAll != null)
+            {
+                chkSelectAll.Enabled = false;
+            }
+        }
 
 		protected void chkIncludeMailboxes_CheckedChanged(object sender, EventArgs e)
 		{

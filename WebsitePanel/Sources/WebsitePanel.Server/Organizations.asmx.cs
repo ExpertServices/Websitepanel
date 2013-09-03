@@ -135,15 +135,15 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public void AddUserToSecurityGroup(string organizationId, string loginName, string groupName)
+        public void AddObjectToSecurityGroup(string organizationId, string accountName, string groupName)
         {
-            Organization.AddUserToSecurityGroup(organizationId, loginName, groupName);
+            Organization.AddObjectToSecurityGroup(organizationId, accountName, groupName);
         }
 
         [WebMethod, SoapHeader("settings")]
-        public void DeleteUserFromSecurityGroup(string organizationId, string loginName, string groupName)
+        public void DeleteObjectFromSecurityGroup(string organizationId, string accountName, string groupName)
         {
-            Organization.DeleteUserFromSecurityGroup(organizationId, loginName, groupName);
+            Organization.DeleteObjectFromSecurityGroup(organizationId, accountName, groupName);
         }
 
         [WebMethod, SoapHeader("settings")]

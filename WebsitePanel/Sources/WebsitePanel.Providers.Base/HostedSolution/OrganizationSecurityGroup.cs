@@ -19,7 +19,7 @@ namespace WebsitePanel.Providers.HostedSolution
             set;
         }
 
-        public OrganizationUser[] MembersAccounts
+        public ExchangeAccount[] MembersAccounts
         {
             get;
             set;

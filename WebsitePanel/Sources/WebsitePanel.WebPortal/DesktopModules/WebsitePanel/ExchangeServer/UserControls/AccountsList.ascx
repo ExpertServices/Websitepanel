@@ -37,6 +37,13 @@
 					<asp:Literal ID="litPrimaryEmailAddress" runat="server" Text='<%# Eval("PrimaryEmailAddress") %>'></asp:Literal>
 				</ItemTemplate>
 			</asp:TemplateField>
+            <asp:TemplateField meta:resourcekey="gvAccountsAccountType" HeaderText="gvAccountsAccountType">
+				<HeaderStyle Wrap="false" />
+				<ItemStyle Width="50%" Wrap="false"></ItemStyle>
+				<ItemTemplate>
+					<asp:Literal ID="litType" runat="server" Text='<%# GetType((int)Eval("AccountType")) %>'></asp:Literal>
+				</ItemTemplate>
+			</asp:TemplateField>
 		</Columns>
 	</asp:GridView>
 
@@ -69,6 +76,8 @@
 							meta:resourcekey="chkIncludeContacts" AutoPostBack="true" CssClass="Normal" OnCheckedChanged="chkIncludeMailboxes_CheckedChanged" />
 					<asp:CheckBox ID="chkIncludeLists" runat="server" Text="Distribution Lists" Checked="true"
 							meta:resourcekey="chkIncludeLists" AutoPostBack="true" CssClass="Normal" OnCheckedChanged="chkIncludeMailboxes_CheckedChanged" />
+                    <asp:CheckBox ID="chkIncludeGroups" runat="server" Text="Groups" Checked="true"
+							meta:resourcekey="chkIncludeGroups" AutoPostBack="true" CssClass="Normal" OnCheckedChanged="chkIncludeMailboxes_CheckedChanged" />
                 </div>
                 <div class="FormButtonsBarClean">
                     <div class="FormButtonsBarCleanRight">
@@ -109,6 +118,12 @@
 									<asp:Literal ID="litPrimaryEmailAddress" runat="server" Text='<%# Eval("PrimaryEmailAddress") %>'></asp:Literal>
 								</ItemTemplate>
 							</asp:TemplateField>
+                            <asp:TemplateField meta:resourcekey="gvAccountsAccountType" HeaderText="gvAccountsAccountType">
+				                <ItemStyle Width="50%"></ItemStyle>
+				                <ItemTemplate>
+					                <asp:Literal ID="litType" runat="server" Text='<%# GetType((int)Eval("AccountType")) %>'></asp:Literal>
+				                </ItemTemplate>
+			                </asp:TemplateField>
 						</Columns>
 					</asp:GridView>
 				</div>

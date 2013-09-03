@@ -44,21 +44,21 @@ namespace WebsitePanel.Providers.HostedSolution
             return de;
         }
 
-        public static string[] GetUsersGroup(string group)
+        public static string[] GetGroupObjects(string group, string objectType)
         {
             List<string> rets = new List<string>();
 
             DirectorySearcher deSearch = new DirectorySearcher
             {
                 Filter =
-                    "(&(objectClass=user))"
+                    "(&(objectClass=" + objectType + "))"
             };
 
-            SearchResultCollection srcUsers = deSearch.FindAll();
+            SearchResultCollection srcObjects = deSearch.FindAll();
 
-            foreach (SearchResult srcUser in srcUsers)
+            foreach (SearchResult srcObject in srcObjects)
             {
-                DirectoryEntry de = srcUser.GetDirectoryEntry();
+                DirectoryEntry de = srcObject.GetDirectoryEntry();
                 PropertyValueCollection props = de.Properties["memberOf"];
 
                 foreach (string str in props)
@@ -371,20 +371,20 @@ namespace WebsitePanel.Providers.HostedSolution
             newGroupObject.CommitChanges();
         }
 
-        public static void AddUserToGroup(string userPath, string groupPath)
+        public static void AddObjectToGroup(string objectPath, string groupPath)
         {
-            DirectoryEntry user = new DirectoryEntry(userPath);
+            DirectoryEntry obj = new DirectoryEntry(objectPath);
             DirectoryEntry group = new DirectoryEntry(groupPath);
 
-            group.Invoke("Add", user.Path);
+            group.Invoke("Add", obj.Path);
         }
 
-        public static void RemoveUserFromGroup(string userPath, string groupPath)
+        public static void RemoveObjectFromGroup(string obejctPath, string groupPath)
         {
-            DirectoryEntry user = new DirectoryEntry(userPath);
+            DirectoryEntry obj = new DirectoryEntry(obejctPath);
             DirectoryEntry group = new DirectoryEntry(groupPath);
 
-            group.Invoke("Remove", user.Path);
+            group.Invoke("Remove", obj.Path);
         }
 
         public static bool AdObjectExists(string path)

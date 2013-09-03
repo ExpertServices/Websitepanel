@@ -3053,7 +3053,7 @@ namespace WebsitePanel.EnterpriseServer
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/SearchAccounts", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public ExchangeAccount[] SearchAccounts(int itemId, bool includeMailboxes, bool includeContacts, bool includeDistributionLists, bool includeRooms, bool includeEquipment, string filterColumn, string filterValue, string sortColumn)
+        public ExchangeAccount[] SearchAccounts(int itemId, bool includeMailboxes, bool includeContacts, bool includeDistributionLists, bool includeRooms, bool includeEquipment, bool includeSecurityGroups, string filterColumn, string filterValue, string sortColumn)
         {
             object[] results = this.Invoke("SearchAccounts", new object[] {
                         itemId,
@@ -3062,6 +3062,7 @@ namespace WebsitePanel.EnterpriseServer
                         includeDistributionLists,
                         includeRooms,
                         includeEquipment,
+                        includeSecurityGroups,
                         filterColumn,
                         filterValue,
                         sortColumn});
@@ -3069,7 +3070,7 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         /// <remarks/>
-        public System.IAsyncResult BeginSearchAccounts(int itemId, bool includeMailboxes, bool includeContacts, bool includeDistributionLists, bool includeRooms, bool includeEquipment, string filterColumn, string filterValue, string sortColumn, System.AsyncCallback callback, object asyncState)
+        public System.IAsyncResult BeginSearchAccounts(int itemId, bool includeMailboxes, bool includeContacts, bool includeDistributionLists, bool includeRooms, bool includeEquipment, bool includeSecurityGroups, string filterColumn, string filterValue, string sortColumn, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("SearchAccounts", new object[] {
                         itemId,
@@ -3078,6 +3079,7 @@ namespace WebsitePanel.EnterpriseServer
                         includeDistributionLists,
                         includeRooms,
                         includeEquipment,
+                        includeSecurityGroups,
                         filterColumn,
                         filterValue,
                         sortColumn}, callback, asyncState);
@@ -3091,13 +3093,13 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         /// <remarks/>
-        public void SearchAccountsAsync(int itemId, bool includeMailboxes, bool includeContacts, bool includeDistributionLists, bool includeRooms, bool includeEquipment, string filterColumn, string filterValue, string sortColumn)
+        public void SearchAccountsAsync(int itemId, bool includeMailboxes, bool includeContacts, bool includeDistributionLists, bool includeRooms, bool includeEquipment, bool includeSecurityGroups, string filterColumn, string filterValue, string sortColumn)
         {
-            this.SearchAccountsAsync(itemId, includeMailboxes, includeContacts, includeDistributionLists, includeRooms, includeEquipment, filterColumn, filterValue, sortColumn, null);
+            this.SearchAccountsAsync(itemId, includeMailboxes, includeContacts, includeDistributionLists, includeRooms, includeEquipment, includeSecurityGroups, filterColumn, filterValue, sortColumn, null);
         }
 
         /// <remarks/>
-        public void SearchAccountsAsync(int itemId, bool includeMailboxes, bool includeContacts, bool includeDistributionLists, bool includeRooms, bool includeEquipment, string filterColumn, string filterValue, string sortColumn, object userState)
+        public void SearchAccountsAsync(int itemId, bool includeMailboxes, bool includeContacts, bool includeDistributionLists, bool includeRooms, bool includeEquipment, bool includeSecurityGroups, string filterColumn, string filterValue, string sortColumn, object userState)
         {
             if ((this.SearchAccountsOperationCompleted == null))
             {
@@ -3110,6 +3112,7 @@ namespace WebsitePanel.EnterpriseServer
                         includeDistributionLists,
                         includeRooms,
                         includeEquipment,
+                        includeSecurityGroups,
                         filterColumn,
                         filterValue,
                         sortColumn}, this.SearchAccountsOperationCompleted, userState);

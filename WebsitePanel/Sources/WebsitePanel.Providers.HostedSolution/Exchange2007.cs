@@ -5656,7 +5656,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
         internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd)
         {
-            return ExecuteShellCommand(runSpace, cmd, true);
+            return ExecuteShellCommand(runSpace, cmd, false);
         }
 
         internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd, bool useDomainController)

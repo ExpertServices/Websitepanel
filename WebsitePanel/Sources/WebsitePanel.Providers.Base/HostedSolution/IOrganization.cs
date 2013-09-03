@@ -50,9 +50,9 @@ namespace WebsitePanel.Providers.HostedSolution
 
         void SetSecurityGroupGeneralSettings(string organizationId, string groupName, string[] memberAccounts, string notes);
 
-        void AddUserToSecurityGroup(string organizationId, string loginName, string groupName);
+        void AddObjectToSecurityGroup(string organizationId, string accountName, string groupName);
 
-        void DeleteUserFromSecurityGroup(string organizationId, string loginName, string groupName);
+        void DeleteObjectFromSecurityGroup(string organizationId, string accountName, string groupName);
 
         void SetUserGeneralSettings(string organizationId, string accountName, string displayName, string password,
                                     bool hideFromAddressBook, bool disabled, bool locked, string firstName, string initials,
@@ -66,7 +66,7 @@ namespace WebsitePanel.Providers.HostedSolution
         void SetUserPassword(string organizationId, string accountName, string password);
 
         void SetUserPrincipalName(string organizationId, string accountName, string userPrincipalName);
-        
+
         bool OrganizationExists(string organizationId);
 
         void DeleteOrganizationDomain(string organizationDistinguishedName, string domain);

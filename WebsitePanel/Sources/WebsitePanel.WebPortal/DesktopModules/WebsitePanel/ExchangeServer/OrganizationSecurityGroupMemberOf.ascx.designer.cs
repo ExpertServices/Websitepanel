@@ -35,10 +35,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal.ExchangeServer {
+namespace WebsitePanel.Portal.HostedSolution {
     
     
-    public partial class ExchangeDistributionListMemberOf {
+    public partial class OrganizationSecurityGroupMemberOf {
         
         /// <summary>
         /// asyncTasks control.

@@ -190,12 +190,12 @@ namespace WebsitePanel.EnterpriseServer
         [WebMethod]
         public List<ExchangeAccount> SearchAccounts(int itemId,
             bool includeMailboxes, bool includeContacts, bool includeDistributionLists,
-            bool includeRooms, bool includeEquipment,
+            bool includeRooms, bool includeEquipment, bool includeSecurityGroups,
             string filterColumn, string filterValue, string sortColumn)
         {
             return ExchangeServerController.SearchAccounts(itemId,
                 includeMailboxes, includeContacts, includeDistributionLists,
-                includeRooms, includeEquipment,
+                includeRooms, includeEquipment, includeSecurityGroups,
                 filterColumn, filterValue, sortColumn);
         }
 

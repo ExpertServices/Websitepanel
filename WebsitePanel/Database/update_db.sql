@@ -1964,6 +1964,144 @@ WHERE
 RETURN
 GO
 
+-- Lync Phone Numbers Quota
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE ([QuotaName] = N'Lync.PhoneNumbers'))
+BEGIN
+	INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (381, 41, 12, N'Lync.PhoneNumbers', N'Phone Numbers', 2, 0, NULL, NULL)
+END
+GO
+
+
+ALTER FUNCTION [dbo].[CalculateQuotaUsage]
+(
+	@PackageID int,
+	@QuotaID int
+)
+RETURNS int
+AS
+	BEGIN
+
+		DECLARE @QuotaTypeID int
+		SELECT @QuotaTypeID = QuotaTypeID FROM Quotas
+		WHERE QuotaID = @QuotaID
+
+		IF @QuotaTypeID <> 2
+			RETURN 0
+
+		DECLARE @Result int
+
+		IF @QuotaID = 52 -- diskspace
+			SET @Result = dbo.CalculatePackageDiskspace(@PackageID)
+		ELSE IF @QuotaID = 51 -- bandwidth
+			SET @Result = dbo.CalculatePackageBandwidth(@PackageID)
+		ELSE IF @QuotaID = 53 -- domains
+			SET @Result = (SELECT COUNT(D.DomainID) FROM PackagesTreeCache AS PT
+				INNER JOIN Domains AS D ON D.PackageID = PT.PackageID
+				WHERE IsSubDomain = 0 AND IsInstantAlias = 0 AND IsDomainPointer = 0 AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 54 -- sub-domains
+			SET @Result = (SELECT COUNT(D.DomainID) FROM PackagesTreeCache AS PT
+				INNER JOIN Domains AS D ON D.PackageID = PT.PackageID
+				WHERE IsSubDomain = 1 AND IsInstantAlias = 0 AND IsDomainPointer = 0 AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 220 -- domain pointers
+			SET @Result = (SELECT COUNT(D.DomainID) FROM PackagesTreeCache AS PT
+				INNER JOIN Domains AS D ON D.PackageID = PT.PackageID
+				WHERE IsDomainPointer = 1 AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 71 -- scheduled tasks
+			SET @Result = (SELECT COUNT(S.ScheduleID) FROM PackagesTreeCache AS PT
+				INNER JOIN Schedule AS S ON S.PackageID = PT.PackageID
+				WHERE PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 305 -- RAM of VPS
+			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'RamSize' AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 306 -- HDD of VPS
+			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'HddSize' AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 309 -- External IP addresses of VPS
+			SET @Result = (SELECT COUNT(PIP.PackageAddressID) FROM PackageIPAddresses AS PIP
+							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
+							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 3)
+		ELSE IF @QuotaID = 100 -- Dedicated Web IP addresses
+			SET @Result = (SELECT COUNT(PIP.PackageAddressID) FROM PackageIPAddresses AS PIP
+							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
+							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 2)
+		ELSE IF @QuotaID = 350 -- RAM of VPSforPc
+			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'Memory' AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 351 -- HDD of VPSforPc
+			SET @Result = (SELECT SUM(CAST(SIP.PropertyValue AS int)) FROM ServiceItemProperties AS SIP
+							INNER JOIN ServiceItems AS SI ON SIP.ItemID = SI.ItemID
+							INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID
+							WHERE SIP.PropertyName = 'HddSize' AND PT.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 354 -- External IP addresses of VPSforPc
+			SET @Result = (SELECT COUNT(PIP.PackageAddressID) FROM PackageIPAddresses AS PIP
+							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
+							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 3)
+		ELSE IF @QuotaID = 319 -- BB Users
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts ea 
+							INNER JOIN BlackBerryUsers bu ON ea.AccountID = bu.AccountID
+							INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+							INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+							WHERE pt.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 320 -- OCS Users
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts ea 
+							INNER JOIN OCSUsers ocs ON ea.AccountID = ocs.AccountID
+							INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+							INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+							WHERE pt.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 206 -- HostedSolution.Users
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE pt.ParentPackageID = @PackageID AND ea.AccountType IN (1,5,6,7))
+		ELSE IF @QuotaID = 78 -- Exchange2007.Mailboxes
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE pt.ParentPackageID = @PackageID 
+				AND ea.AccountType IN (1)
+				AND ea.MailboxPlanId IS NOT NULL)
+		ELSE IF @QuotaID = 77 -- Exchange2007.DiskSpace
+			SET @Result = (SELECT SUM(B.MailboxSizeMB) FROM ExchangeAccounts AS ea 
+			INNER JOIN ExchangeMailboxPlans AS B ON ea.MailboxPlanId = B.MailboxPlanId 
+			INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+			INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+			WHERE pt.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 370 -- Lync.Users
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
+				INNER JOIN LyncUsers lu ON ea.AccountID = lu.AccountID
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE pt.ParentPackageID = @PackageID)
+		ELSE IF @QuotaID = 376 -- Lync.EVUsers
+			SET @Result = (SELECT COUNT(ea.AccountID) FROM ExchangeAccounts AS ea
+				INNER JOIN LyncUsers lu ON ea.AccountID = lu.AccountID
+				INNER JOIN LyncUserPlans lp ON lu.LyncUserPlanId = lp.LyncUserPlanId
+				INNER JOIN ServiceItems  si ON ea.ItemID = si.ItemID
+				INNER JOIN PackagesTreeCache pt ON si.PackageID = pt.PackageID
+				WHERE pt.ParentPackageID = @PackageID AND lp.EnterpriseVoice = 1)
+		ELSE IF @QuotaID = 381 -- Dedicated Lync Phone Numbers
+			SET @Result = (SELECT COUNT(PIP.PackageAddressID) FROM PackageIPAddresses AS PIP
+							INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+							INNER JOIN PackagesTreeCache AS PT ON PIP.PackageID = PT.PackageID
+							WHERE PT.ParentPackageID = @PackageID AND IP.PoolID = 5)
+		ELSE
+			SET @Result = (SELECT COUNT(SI.ItemID) FROM Quotas AS Q
+			INNER JOIN ServiceItems AS SI ON SI.ItemTypeID = Q.ItemTypeID
+			INNER JOIN PackagesTreeCache AS PT ON SI.PackageID = PT.PackageID AND PT.ParentPackageID = @PackageID
+			WHERE Q.QuotaID = @QuotaID)
+
+		RETURN @Result
+	END
 
 
 
@@ -1977,6 +2115,7 @@ ALTER PROCEDURE [dbo].[SearchExchangeAccounts]
 	@IncludeDistributionLists bit,
 	@IncludeRooms bit,
 	@IncludeEquipment bit,
+	@IncludeSecurityGroups bit,
 	@FilterColumn nvarchar(50) = '',
 	@FilterValue nvarchar(50) = '',
 	@SortColumn nvarchar(50)
@@ -1998,7 +2137,7 @@ OR (@IncludeContacts = 1 AND EA.AccountType = 2)
 OR (@IncludeDistributionLists = 1 AND EA.AccountType = 3)
 OR (@IncludeRooms = 1 AND EA.AccountType = 5)
 OR (@IncludeEquipment = 1 AND EA.AccountType = 6)
-OR (@IncludeEquipment = 0 AND @IncludeContacts = 0 AND @IncludeDistributionLists = 0 AND @IncludeRooms = 0 AND @IncludeEquipment = 0 AND EA.AccountType = 8))
+OR (@IncludeSecurityGroups = 1 AND EA.AccountType = 8))
 AND EA.ItemID = @ItemID
 '
 
@@ -2028,8 +2167,71 @@ WHERE ' + @condition
 print @sql
 
 exec sp_executesql @sql, N'@ItemID int, @IncludeMailboxes int, @IncludeContacts int,
-    @IncludeDistributionLists int, @IncludeRooms bit, @IncludeEquipment bit',
-@ItemID, @IncludeMailboxes, @IncludeContacts, @IncludeDistributionLists, @IncludeRooms, @IncludeEquipment
+    @IncludeDistributionLists int, @IncludeRooms bit, @IncludeEquipment bit, @IncludeSecurityGroups bit',
+@ItemID, @IncludeMailboxes, @IncludeContacts, @IncludeDistributionLists, @IncludeRooms, @IncludeEquipment, @IncludeSecurityGroups
+
+RETURN
+GO
+
+CREATE PROCEDURE [dbo].[SearchExchangeAccountsByTypes]
+(
+	@ActorID int,
+	@ItemID int,
+	@AccountTypes nvarchar(30),
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50)
+)
+AS
+
+DECLARE @PackageID int
+SELECT @PackageID = PackageID FROM ServiceItems
+WHERE ItemID = @ItemID
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+DECLARE @condition nvarchar(700)
+SET @condition = 'EA.ItemID = @ItemID AND EA.AccountType IN (' + @AccountTypes + ')'
+
+IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+AND @FilterValue <> '' AND @FilterValue IS NOT NULL
+BEGIN
+	IF @FilterColumn = 'PrimaryEmailAddress' AND @AccountTypes <> '2'
+	BEGIN		
+		SET @condition = @condition + ' AND EA.AccountID IN (SELECT EAEA.AccountID FROM ExchangeAccountEmailAddresses EAEA WHERE EAEA.EmailAddress LIKE ''' + @FilterValue + ''')'
+	END
+	ELSE
+	BEGIN		
+		SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+	END
+END
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'EA.DisplayName ASC'
+
+DECLARE @sql nvarchar(3500)
+SET @sql = '
+SELECT
+	EA.AccountID,
+	EA.ItemID,
+	EA.AccountType,
+	EA.AccountName,
+	EA.DisplayName,
+	EA.PrimaryEmailAddress,
+	EA.MailEnabledPublicFolder,
+	EA.MailboxPlanId,
+	P.MailboxPlan, 
+	EA.SubscriberNumber,
+	EA.UserPrincipalName
+FROM
+	ExchangeAccounts  AS EA
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON EA.MailboxPlanId = P.MailboxPlanId
+	WHERE ' + @condition
+	+ ' ORDER BY ' + @SortColumn
+
+EXEC sp_executesql @sql, N'@ItemID int', @ItemID
 
 RETURN
 GO
