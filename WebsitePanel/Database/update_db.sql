@@ -2102,7 +2102,7 @@ AS
 
 		RETURN @Result
 	END
-
+GO
 
 
 
@@ -2172,6 +2172,12 @@ exec sp_executesql @sql, N'@ItemID int, @IncludeMailboxes int, @IncludeContacts 
 
 RETURN
 GO
+
+
+IF EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'SearchExchangeAccountsByTypes')
+DROP PROCEDURE [dbo].[SearchExchangeAccountsByTypes]
+GO
+
 
 CREATE PROCEDURE [dbo].[SearchExchangeAccountsByTypes]
 (
