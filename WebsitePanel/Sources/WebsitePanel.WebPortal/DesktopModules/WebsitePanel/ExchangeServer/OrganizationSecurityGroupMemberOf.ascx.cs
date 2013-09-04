@@ -51,7 +51,6 @@ namespace WebsitePanel.Portal.HostedSolution
             {
                 // get settings
                 OrganizationSecurityGroup group = ES.Services.Organizations.GetSecurityGroupGeneralSettings(PanelRequest.ItemID, PanelRequest.AccountID); 
-                //OrganizationUser user = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID, PanelRequest.AccountID);
 
                 litDisplayName.Text = group.DisplayName;
                

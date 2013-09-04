@@ -76,6 +76,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     members.Enabled = false;
 
                     btnSave.Visible = false;
+                    tabs.IsDefault = true;
                 }
             }
             catch (Exception ex)

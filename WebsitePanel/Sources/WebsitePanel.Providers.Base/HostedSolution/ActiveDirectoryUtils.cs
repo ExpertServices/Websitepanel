@@ -46,13 +46,23 @@ namespace WebsitePanel.Providers.HostedSolution
 
         public static string[] GetGroupObjects(string group, string objectType)
         {
-            List<string> rets = new List<string>();
+            return GetGroupObjects(group, objectType, null);
+        }
+
+        public static string[] GetGroupObjects(string group, string objectType, DirectoryEntry entry)
+        {
+            List<string> rets = new List<string>();  
 
             DirectorySearcher deSearch = new DirectorySearcher
             {
                 Filter =
                     "(&(objectClass=" + objectType + "))"
             };
+
+            if (entry != null)
+            {
+                deSearch.SearchRoot = entry;
+            }
 
             SearchResultCollection srcObjects = deSearch.FindAll();
 

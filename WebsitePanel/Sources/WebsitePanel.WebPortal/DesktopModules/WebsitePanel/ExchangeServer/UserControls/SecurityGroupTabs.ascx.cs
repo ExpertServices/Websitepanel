@@ -44,6 +44,13 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             set { selectedTab = value; }
         }
 
+        private bool isDefault = false;
+        public bool IsDefault
+        {
+            get { return isDefault; }
+            set { isDefault = value; }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             BindTabs();
@@ -53,7 +60,10 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
         {
             List<Tab> tabsList = new List<Tab>();
             tabsList.Add(CreateTab("secur_group_settings", "Tab.Settings"));
-            tabsList.Add(CreateTab("secur_group_memberof", "Tab.MemberOf"));
+            if (!isDefault)
+            {
+                tabsList.Add(CreateTab("secur_group_memberof", "Tab.MemberOf"));
+            }
 
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
 
