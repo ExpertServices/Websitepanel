@@ -5341,4 +5341,22 @@
   <data name="WarningDescription.PHONE_EDIT_LIST_EMPTY_ERROR" xml:space="preserve">
     <value>At least one Phone number must be selected.</value>
   </data>
+  <data name="Quota.Lync.PhoneNumbers" xml:space="preserve">
+    <value>Phone Numbers per Organization</value>
+  </data>
+  <data name="Error.ORGANIZATION_CREATE_USER" xml:space="preserve">
+    <value>Error creating user. See audit log for more details.</value>
+  </data>
+  <data name="Error.ORGANIZATION_CREATE_SECURITY_GROUP" xml:space="preserve">
+    <value>Error creating security group. See audit log for more details.</value>
+  </data>
+  <data name="Error.ORGANIZATION_GET_SECURITY_GROUP_SETTINGS" xml:space="preserve">
+    <value>Error reading group settings</value>
+  </data>
+  <data name="Error.ORGANIZATION_UPDATE_SECURITY_GROUP_SETTINGS" xml:space="preserve">
+    <value>Error updating group settings</value>
+  </data>
+  <data name="Success.ORGANIZATION_UPDATE_SECURITY_GROUP_SETTINGS" xml:space="preserve">
+    <value>Group general settings have been successfully updated.</value>
+  </data>
 </root>

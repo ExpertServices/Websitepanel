@@ -67,7 +67,20 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 ExchangeAccount[] dLists = ES.Services.ExchangeServer.GetDistributionListsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
 
-                distrlists.SetAccounts(dLists);
+                ExchangeAccount[] secGroups = ES.Services.Organizations.GetSecurityGroupsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
+
+                List<ExchangeAccount> groupsList = new List<ExchangeAccount>();
+                foreach (ExchangeAccount distList in dLists)
+                {
+                    groupsList.Add(distList);
+                }
+
+                foreach (ExchangeAccount secGroup in secGroups)
+                {
+                    groupsList.Add(secGroup);
+                }
+
+                groups.SetAccounts(groupsList.ToArray());
 
             }
             catch (Exception ex)
@@ -83,18 +96,53 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             try
             {
-                ExchangeAccount[] oldDistributionLists = ES.Services.ExchangeServer.GetDistributionListsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
-                List<string> newDistributionLists = new List<string>(distrlists.GetAccounts());
-                foreach (ExchangeAccount oldlist in oldDistributionLists)
+                ExchangeAccount[] oldSecGroups = ES.Services.Organizations.GetSecurityGroupsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
+                ExchangeAccount[] oldDistLists = ES.Services.ExchangeServer.GetDistributionListsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
+
+                IList<ExchangeAccount> oldGroups = new List<ExchangeAccount>();
+                foreach (ExchangeAccount distList in oldSecGroups)
                 {
-                    if (newDistributionLists.Contains(oldlist.AccountName))
-                        newDistributionLists.Remove(oldlist.AccountName);
-                    else
-                        ES.Services.ExchangeServer.DeleteDistributionListMember(PanelRequest.ItemID, oldlist.AccountName, PanelRequest.AccountID);
+                    oldGroups.Add(distList);
                 }
 
-                foreach (string newlist in newDistributionLists)
-                    ES.Services.ExchangeServer.AddDistributionListMember(PanelRequest.ItemID, newlist, PanelRequest.AccountID);
+                foreach (ExchangeAccount secGroup in oldDistLists)
+                {
+                    oldGroups.Add(secGroup);
+                }
+
+                IDictionary<string, ExchangeAccountType> newGroups = groups.GetFullAccounts();
+                foreach (ExchangeAccount oldGroup in oldGroups)
+                {
+                    if (newGroups.ContainsKey(oldGroup.AccountName))
+                    {
+                        newGroups.Remove(oldGroup.AccountName);
+                    }
+                    else
+                    {
+                        switch (oldGroup.AccountType)
+                        {
+                            case ExchangeAccountType.DistributionList:
+                                ES.Services.ExchangeServer.DeleteDistributionListMember(PanelRequest.ItemID, oldGroup.AccountName, PanelRequest.AccountID);
+                                break;
+                            case ExchangeAccountType.SecurityGroup:
+                                ES.Services.Organizations.DeleteObjectFromSecurityGroup(PanelRequest.ItemID, PanelRequest.AccountID, oldGroup.AccountName);
+                                break;
+                        }
+                    }
+                }
+
+                foreach (KeyValuePair<string, ExchangeAccountType> newGroup in newGroups)
+                {
+                    switch (newGroup.Value)
+                    {
+                        case ExchangeAccountType.DistributionList:
+                            ES.Services.ExchangeServer.AddDistributionListMember(PanelRequest.ItemID, newGroup.Key, PanelRequest.AccountID);
+                            break;
+                        case ExchangeAccountType.SecurityGroup:
+                            ES.Services.Organizations.AddObjectToSecurityGroup(PanelRequest.ItemID, PanelRequest.AccountID, newGroup.Key);
+                            break;
+                    }
+                }
 
                 messageBox.ShowSuccessMessage("EXCHANGE_UPDATE_DLIST_SETTINGS");
                 BindSettings();

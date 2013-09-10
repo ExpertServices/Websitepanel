@@ -58,7 +58,7 @@ namespace WebsitePanel.Providers.HostedSolution
         public const string UserPrincipalName = "UserPrincipalName";
         public const string GroupType = "GroupType";
         public const string Name = "Name";
-		public const string ExternalEmail = "mail";
+        public const string ExternalEmail = "mail";
         public const string CustomAttribute2 = "extensionAttribute2";
         public const string DistinguishedName = "distinguishedName";
 

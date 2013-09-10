@@ -209,6 +209,13 @@
     <Compile Include="Code\ReportingServices\IResourceStorage.cs" />
     <Compile Include="Code\ReportingServices\ReportingServicesUtils.cs" />
     <Compile Include="Code\UserControls\Tab.cs" />
+    <Compile Include="ExchangeServer\OrganizationSecurityGroupMemberOf.ascx.cs">
+      <DependentUpon>OrganizationSecurityGroupMemberOf.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationSecurityGroupMemberOf.ascx.designer.cs">
+      <DependentUpon>OrganizationSecurityGroupMemberOf.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ExchangeServer\ExchangeDistributionListMemberOf.ascx.cs">
       <DependentUpon>ExchangeDistributionListMemberOf.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -3979,6 +3986,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplyEnableHardQuotaFeature.ascx" />
+    <Content Include="ExchangeServer\OrganizationSecurityGroupMemberOf.ascx" />
     <Content Include="ExchangeServer\ExchangeDistributionListMemberOf.ascx" />
     <Content Include="ExchangeServer\ExchangeMailboxMemberOf.ascx" />
     <Content Include="ExchangeServer\OrganizationAddDomainName.ascx" />

@@ -56,14 +56,18 @@ namespace WebsitePanel.Portal.Lync
 
         private void BindPhoneNumbers()
         {
-            
-            ddlPhoneNumber.Items.Add(new ListItem("<Select Phone>", ""));
 
             PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(PanelSecurity.PackageId, IPAddressPool.PhoneNumbers);
-            foreach (PackageIPAddress ip in ips)
+
+            if (ips.Length > 0)
             {
-                string phone = ip.ExternalIP;
-                                ddlPhoneNumber.Items.Add(new ListItem(phone, ip.PackageAddressID.ToString()));
+                ddlPhoneNumber.Items.Add(new ListItem("<Select Phone>", ""));
+
+                foreach (PackageIPAddress ip in ips)
+                {
+                    string phone = ip.ExternalIP;
+                    ddlPhoneNumber.Items.Add(new ListItem(phone, ip.PackageAddressID.ToString()));
+                }
             }
 
         }
@@ -71,21 +75,24 @@ namespace WebsitePanel.Portal.Lync
 
         protected void Page_PreRender(object sender, EventArgs e)
         {
-            bool EnterpriseVoice = false;
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            bool enterpriseVoiceQuota = Utils.CheckQouta(Quotas.LYNC_ENTERPRISEVOICE, cntx);
+
+            bool enterpriseVoice = false;
 
             WebsitePanel.Providers.HostedSolution.LyncUserPlan plan = planSelector.plan;
             if (plan != null)
-                EnterpriseVoice = plan.EnterpriseVoice;
+                enterpriseVoice = plan.EnterpriseVoice && enterpriseVoiceQuota && (ddlPhoneNumber.Items.Count > 0);
 
-            pnEnterpriseVoice.Visible = EnterpriseVoice;
+            pnEnterpriseVoice.Visible = enterpriseVoice;
 
-            if (!EnterpriseVoice)
+            if (!enterpriseVoice)
             {
                 ddlPhoneNumber.Text = ""; 
                 tbPin.Text = "";
             }
 
-            if (EnterpriseVoice)
+            if (enterpriseVoice)
             {
                 string[] pinPolicy = ES.Services.Lync.GetPolicyList(PanelRequest.ItemID, LyncPolicyType.Pin, "MinPasswordLength");
                 if (pinPolicy != null)
@@ -111,9 +118,15 @@ namespace WebsitePanel.Portal.Lync
             if (res.IsSuccess && res.ErrorCodes.Count == 0)
             {
 
+                PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+                bool enterpriseVoiceQuota = Utils.CheckQouta(Quotas.LYNC_ENTERPRISEVOICE, cntx);
+
+                string lineUri = "";
+                if (enterpriseVoiceQuota) lineUri = ddlPhoneNumber.SelectedItem.Text + ":" + tbPin.Text;
+
                 //#1
                 LyncUser lyncUser = ES.Services.Lync.GetLyncUserGeneralSettings(PanelRequest.ItemID, accountId);
-                ES.Services.Lync.SetLyncUserGeneralSettings(PanelRequest.ItemID, accountId, lyncUser.SipAddress, ddlPhoneNumber.SelectedItem.Text + ":" + tbPin.Text);
+                ES.Services.Lync.SetLyncUserGeneralSettings(PanelRequest.ItemID, accountId, lyncUser.SipAddress, lineUri);
 
                 Response.Redirect(EditUrl("AccountID", accountId.ToString(), "edit_lync_user",
                     "SpaceID=" + PanelSecurity.PackageId,

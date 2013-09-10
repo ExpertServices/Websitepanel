@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -67,6 +68,12 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 			set { ViewState["DistributionListsEnabled"] = value; }
 		}
 
+        public bool SecurityGroupsEnabled
+        {
+            get { return ViewState["SecurityGroupsEnabled"] != null ? (bool)ViewState["SecurityGroupsEnabled"] : false; }
+            set { ViewState["SecurityGroupsEnabled"] = value; }
+        }
+
 		public int ExcludeAccountId
 		{
 			get { return PanelRequest.AccountID; }
@@ -77,16 +84,31 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 			BindAccounts(accounts, false);
 		}
 
-		public string[] GetAccounts()
+        public string[] GetAccounts()
+        {
+            // get selected accounts
+            List<ExchangeAccount> selectedAccounts = GetGridViewAccounts(gvAccounts, SelectedState.All);
+
+            List<string> accountNames = new List<string>();
+            foreach (ExchangeAccount account in selectedAccounts)
+                accountNames.Add(account.AccountName);
+
+            return accountNames.ToArray();
+        }
+
+        public IDictionary<string, ExchangeAccountType> GetFullAccounts()
 		{
 			// get selected accounts
 			List<ExchangeAccount> selectedAccounts = GetGridViewAccounts(gvAccounts, SelectedState.All);
 
-			List<string> accountNames = new List<string>();
-			foreach (ExchangeAccount account in selectedAccounts)
-				accountNames.Add(account.AccountName);
+            IDictionary<string, ExchangeAccountType> accounts = new Dictionary<string, ExchangeAccountType>();
 
-			return accountNames.ToArray();
+            foreach (ExchangeAccount account in selectedAccounts)
+            {
+                accounts.Add(account.AccountName, account.AccountType);
+            }
+
+            return accounts;
 		}
 
 		protected void Page_Load(object sender, EventArgs e)
@@ -109,6 +131,11 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 				chkIncludeContacts.Checked = ContactsEnabled;
 				chkIncludeLists.Visible = DistributionListsEnabled;
 				chkIncludeLists.Checked = DistributionListsEnabled;
+
+                chkIncludeGroups.Visible = SecurityGroupsEnabled;
+                chkIncludeGroups.Checked = SecurityGroupsEnabled;
+
+                gvAccounts.Columns[3].Visible = gvPopupAccounts.Columns[3].Visible = SecurityGroupsEnabled;
 			}
 
 			// register javascript
@@ -131,10 +158,12 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 		{
 			ExchangeAccountType accountType = (ExchangeAccountType)accountTypeId;
 			string imgName = "mailbox_16.gif";
-			if (accountType == ExchangeAccountType.Contact)
-				imgName = "contact_16.gif";
-			else if (accountType == ExchangeAccountType.DistributionList)
-				imgName = "dlist_16.gif";
+            if (accountType == ExchangeAccountType.Contact)
+                imgName = "contact_16.gif";
+            else if (accountType == ExchangeAccountType.DistributionList
+                    || accountType == ExchangeAccountType.SecurityGroup
+                    || accountType == ExchangeAccountType.DefaultSecurityGroup)
+                imgName = "dlist_16.gif";
             else if (accountType == ExchangeAccountType.Room)
                 imgName = "room_16.gif";
             else if (accountType == ExchangeAccountType.Equipment)
@@ -142,6 +171,23 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
 			return GetThemedImage("Exchange/" + imgName);
 		}
+
+        public string GetType(int accountTypeId)
+        {
+            ExchangeAccountType accountType = (ExchangeAccountType)accountTypeId;
+
+            switch(accountType)
+            {
+                case ExchangeAccountType.DistributionList:
+                    return "Distribution";
+                case ExchangeAccountType.SecurityGroup:
+                    return "Security";
+                case ExchangeAccountType.DefaultSecurityGroup:
+                    return "Default";
+                default:
+                    return string.Empty;
+            }
+        }
 
 		protected void btnAdd_Click(object sender, EventArgs e)
 		{
@@ -174,8 +220,13 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 		{
 			ExchangeAccount[] accounts = ES.Services.ExchangeServer.SearchAccounts(PanelRequest.ItemID,
 				chkIncludeMailboxes.Checked, chkIncludeContacts.Checked, chkIncludeLists.Checked,
-                chkIncludeRooms.Checked, chkIncludeEquipment.Checked,
+                chkIncludeRooms.Checked, chkIncludeEquipment.Checked, chkIncludeGroups.Checked,
 				ddlSearchColumn.SelectedValue, txtSearchValue.Text + "%", "");
+
+            if (SecurityGroupsEnabled)
+            {
+                accounts = accounts.Where(x => !GetAccounts().Contains(x.AccountName)).ToArray();
+            }
 
 			if (ExcludeAccountId > 0)
 			{
@@ -189,6 +240,11 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
 			gvPopupAccounts.DataSource = accounts;
 			gvPopupAccounts.DataBind();
+
+            if (gvPopupAccounts.Rows.Count > 0)
+            {
+                UpdateGridViewAccounts(gvPopupAccounts);
+            }
 		}
 
 		private void BindAccounts(ExchangeAccount[] newAccounts, bool preserveExisting)
@@ -224,6 +280,11 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 			gvAccounts.DataSource = accounts;
 			gvAccounts.DataBind();
 
+            if (gvAccounts.Rows.Count > 0)
+            {
+                UpdateGridViewAccounts(gvAccounts);
+            }
+
             btnDelete.Visible = gvAccounts.Rows.Count > 0;
 		}
 
@@ -250,6 +311,38 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 			}
 			return accounts;
 		}
+
+        private void UpdateGridViewAccounts(GridView gv)
+        {
+            CheckBox chkSelectAll = (CheckBox)gv.HeaderRow.FindControl("chkSelectAll");
+
+            for (int i = 0; i < gv.Rows.Count; i++)
+            {
+                GridViewRow row = gv.Rows[i];
+                CheckBox chkSelect = (CheckBox)row.FindControl("chkSelect");
+                if (chkSelect == null)
+                {
+                    continue;
+                }
+
+                ExchangeAccountType exAccountType = (ExchangeAccountType)Enum.Parse(typeof(ExchangeAccountType), ((Literal)row.FindControl("litAccountType")).Text);
+
+                if (exAccountType != ExchangeAccountType.DefaultSecurityGroup)
+                {
+                    chkSelectAll = null;
+                    chkSelect.Enabled = true;
+                }
+                else
+                {
+                    chkSelect.Enabled = false;
+                }
+            }
+
+            if (chkSelectAll != null)
+            {
+                chkSelectAll.Enabled = false;
+            }
+        }
 
 		protected void chkIncludeMailboxes_CheckedChanged(object sender, EventArgs e)
 		{

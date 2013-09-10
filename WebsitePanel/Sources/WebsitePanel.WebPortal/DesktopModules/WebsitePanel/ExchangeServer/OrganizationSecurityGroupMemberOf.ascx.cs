@@ -35,17 +35,13 @@ using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Portal.HostedSolution
 {
-    public partial class UserMemberOf : WebsitePanelModuleBase
+    public partial class OrganizationSecurityGroupMemberOf : WebsitePanelModuleBase
     {
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
                 BindSettings();
-
-                MailboxTabsId.Visible = (PanelRequest.Context == "Mailbox");
-
-                UserTabsId.Visible = (PanelRequest.Context == "User");
             }
         }
 
@@ -54,13 +50,9 @@ namespace WebsitePanel.Portal.HostedSolution
             try
             {
                 // get settings
-                OrganizationUser user = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID, PanelRequest.AccountID);
+                OrganizationSecurityGroup group = ES.Services.Organizations.GetSecurityGroupGeneralSettings(PanelRequest.ItemID, PanelRequest.AccountID); 
 
-                groups.DistributionListsEnabled = (user.AccountType == ExchangeAccountType.Mailbox
-                    || user.AccountType == ExchangeAccountType.Room
-                        || user.AccountType == ExchangeAccountType.Equipment);
-
-                litDisplayName.Text = user.DisplayName;
+                litDisplayName.Text = group.DisplayName;
                
                 //Distribution Lists
                 ExchangeAccount[] dLists = ES.Services.ExchangeServer.GetDistributionListsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
@@ -84,7 +76,7 @@ namespace WebsitePanel.Portal.HostedSolution
             }
             catch (Exception ex)
             {
-                messageBox.ShowErrorMessage("ORGANIZATION_GET_USER_SETTINGS", ex);
+                messageBox.ShowErrorMessage("ORGANIZATION_GET_GROUP_SETTINGS", ex);
             }
         }
 
@@ -118,39 +110,23 @@ namespace WebsitePanel.Portal.HostedSolution
                     }
                     else
                     {
-                        switch (oldGroup.AccountType)
-                        {
-                            case ExchangeAccountType.DistributionList:
-                                ES.Services.ExchangeServer.DeleteDistributionListMember(PanelRequest.ItemID, oldGroup.AccountName, PanelRequest.AccountID);
-                                break;
-                            case ExchangeAccountType.SecurityGroup:
-                                ES.Services.Organizations.DeleteObjectFromSecurityGroup(PanelRequest.ItemID, PanelRequest.AccountID, oldGroup.AccountName);
-                                break;
-                        }
+                        ES.Services.Organizations.DeleteObjectFromSecurityGroup(PanelRequest.ItemID, PanelRequest.AccountID, oldGroup.AccountName);
                     }
                 }
 
                 foreach (KeyValuePair<string, ExchangeAccountType> newGroup in newGroups)
                 {
-                    switch (newGroup.Value)
-                    {
-                        case ExchangeAccountType.DistributionList:
-                            ES.Services.ExchangeServer.AddDistributionListMember(PanelRequest.ItemID, newGroup.Key, PanelRequest.AccountID);
-                            break;
-                        case ExchangeAccountType.SecurityGroup:
-                            ES.Services.Organizations.AddObjectToSecurityGroup(PanelRequest.ItemID, PanelRequest.AccountID, newGroup.Key);
-                            break;
-                    }
+                    ES.Services.Organizations.AddObjectToSecurityGroup(PanelRequest.ItemID, PanelRequest.AccountID, newGroup.Key);
                 }
 
-                messageBox.ShowSuccessMessage("ORGANIZATION_UPDATE_USER_SETTINGS");
+                messageBox.ShowSuccessMessage("ORGANIZATION_UPDATE_SECURITY_GROUP_SETTINGS");
 
 
                 BindSettings();
             }
             catch (Exception ex)
             {
-                messageBox.ShowErrorMessage("ORGANIZATION_UPDATE_USER_SETTINGS", ex);
+                messageBox.ShowErrorMessage("ORGANIZATION_UPDATE_SECURITY_GROUP_SETTINGS", ex);
             }
         }
 

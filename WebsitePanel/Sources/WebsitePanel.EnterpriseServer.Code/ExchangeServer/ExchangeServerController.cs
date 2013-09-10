@@ -999,7 +999,7 @@ namespace WebsitePanel.EnterpriseServer
                 else if (accountType == ExchangeAccountType.Contact)
                     return SearchAccounts(0, false, true, false, false, false, "", "", "");
                 else if (accountType == ExchangeAccountType.DistributionList)
-                    return SearchAccounts(0, false, false, true, false, false, "", "", "");
+                    return SearchAccounts(0, false, false, true, false, false, false, "", "", "");
                 else
                 {
                     List<ExchangeAccount> demoAccounts = new List<ExchangeAccount>();
@@ -1050,7 +1050,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static List<ExchangeAccount> SearchAccounts(int itemId,
             bool includeMailboxes, bool includeContacts, bool includeDistributionLists,
-            bool includeRooms, bool includeEquipment,
+            bool includeRooms, bool includeEquipment, bool includeSecurityGroups,
             string filterColumn, string filterValue, string sortColumn)
         {
             #region Demo Mode
@@ -1129,6 +1129,16 @@ namespace WebsitePanel.EnterpriseServer
                     d1.DisplayName = "Fabrikam Sales Dept";
                     d1.PrimaryEmailAddress = "sales@fabrikam.net";
                     demoAccounts.Add(d1);
+                }
+
+                if (includeSecurityGroups)
+                {
+                    ExchangeAccount g1 = new ExchangeAccount();
+                    g1.AccountId = 7;
+                    g1.AccountName = "group_fabrikam";
+                    g1.AccountType = ExchangeAccountType.SecurityGroup;
+                    g1.DisplayName = "Fabrikam Sales Dept";
+                    demoAccounts.Add(g1);
                 }
 
                 return demoAccounts;
@@ -3444,7 +3454,7 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeDistributionList dl = exchange.GetDistributionListGeneralSettings(accountName);
 
                 // add meta-item
-                int accountId = AddAccount(itemId, ExchangeAccountType.DistributionList, email,
+                int accountId = AddAccount(itemId, ExchangeAccountType.DistributionList, accountName,
                     displayName, email, false,
                     0, dl.SAMAccountName, null, 0, null);
 
@@ -4039,7 +4049,8 @@ namespace WebsitePanel.EnterpriseServer
                 List<ExchangeAccount> DistributionLists = GetAccounts(itemId, ExchangeAccountType.DistributionList);
                 foreach (ExchangeAccount DistributionAccount in DistributionLists)
                 {
-                    ExchangeDistributionList DistributionList = exchange.GetDistributionListGeneralSettings(DistributionAccount.AccountName);
+                    //ExchangeDistributionList DistributionList = exchange.GetDistributionListGeneralSettings(DistributionAccount.AccountName);
+                    OrganizationSecurityGroup DistributionList = OrganizationController.GetSecurityGroupGeneralSettings(itemId, DistributionAccount.AccountId);
 
                     foreach (ExchangeAccount member in DistributionList.MembersAccounts)
                     {
@@ -4169,7 +4180,7 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             return 0;
-        }        
+        }
 
 
         #endregion

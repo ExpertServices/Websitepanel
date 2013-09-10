@@ -1,23 +1,12 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="OrganizationUserMemberOf.ascx.cs" Inherits="WebsitePanel.Portal.HostedSolution.UserMemberOf" %>
-<%@ Register Src="UserControls/UserSelector.ascx" TagName="UserSelector" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/CountrySelector.ascx" TagName="CountrySelector" TagPrefix="wsp" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="OrganizationSecurityGroupMemberOf.ascx.cs" Inherits="WebsitePanel.Portal.HostedSolution.OrganizationSecurityGroupMemberOf" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 
-<%@ Register Src="../UserControls/PasswordControl.ascx" TagName="PasswordControl" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/EmailAddress.ascx" TagName="EmailAddress" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/AccountsList.ascx" TagName="AccountsList" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/GroupsList.ascx" TagName="GroupsList" TagPrefix="wsp" %>
-
-
-
-<%@ Register src="UserControls/UserTabs.ascx" tagname="UserTabs" tagprefix="uc1" %>
-<%@ Register src="UserControls/MailboxTabs.ascx" tagname="MailboxTabs" tagprefix="uc1" %>
-
-
+<%@ Register Src="UserControls/SecurityGroupTabs.ascx" TagName="SecurityGroupTabs" TagPrefix="wsp"%>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
@@ -39,8 +28,7 @@
                 </div>
 
 				<div class="FormBody">
-                    <uc1:UserTabs ID="UserTabsId" runat="server" SelectedTab="user_memberof" />
-                    <uc1:MailboxTabs ID="MailboxTabsId" runat="server" SelectedTab="user_memberof" />
+                    <wsp:SecurityGroupTabs id="tabs" runat="server" SelectedTab="secur_group_memberof" />
                     <wsp:SimpleMessageBox id="messageBox" runat="server" />
                     
 					<wsp:CollapsiblePanel id="secGroups" runat="server" TargetControlID="GroupsPanel" meta:resourcekey="secGroups" Text="Groups"></wsp:CollapsiblePanel>

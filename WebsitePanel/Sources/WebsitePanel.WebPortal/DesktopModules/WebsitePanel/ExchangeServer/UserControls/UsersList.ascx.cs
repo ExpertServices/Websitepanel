@@ -54,79 +54,12 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 			Unselected
 		}
 
-        public bool IncludeMailboxes
-        {
-            get
-            {
-                object ret = ViewState["IncludeMailboxes"];
-                return (ret != null) ? (bool)ret : false;
-            }
-            set
-            {
-                ViewState["IncludeMailboxes"] = value;
-            }
-        }
-
-        public bool IncludeMailboxesOnly
-        {
-            get
-            {
-                object ret = ViewState["IncludeMailboxesOnly"];
-                return (ret != null) ? (bool)ret : false;
-            }
-            set
-            {
-                ViewState["IncludeMailboxesOnly"] = value;
-            }
-        }
-
-
-        public bool ExcludeOCSUsers
-        {
-            get
-            {
-                object ret = ViewState["ExcludeOCSUsers"];
-                return (ret != null) ? (bool)ret : false;
-            }
-            set
-            {
-                ViewState["ExcludeOCSUsers"] = value;
-            }
-        }
-
-        public bool ExcludeLyncUsers
-        {
-            get
-            {
-                object ret = ViewState["ExcludeLyncUsers"];
-                return (ret != null) ? (bool)ret : false;
-            }
-            set
-            {
-                ViewState["ExcludeLyncUsers"] = value;
-            }
-        }
-
-
-        public bool ExcludeBESUsers
-        {
-            get
-            {
-                object ret = ViewState["ExcludeBESUsers"];
-                return (ret != null) ? (bool)ret : false;
-            }
-            set
-            {
-                ViewState["ExcludeBESUsers"] = value;
-            }
-        }
-
 	    public int ExcludeAccountId
 		{
 			get { return PanelRequest.AccountID; }
 		}
 
-		public void SetAccounts(OrganizationUser[] accounts)
+        public void SetAccounts(ExchangeAccount[] accounts)
 		{
 			BindAccounts(accounts, false);
 		}
@@ -134,10 +67,10 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 		public string[] GetAccounts()
 		{
 			// get selected accounts
-			List<OrganizationUser> selectedAccounts = GetGridViewAccounts(gvAccounts, SelectedState.All);
+			List<ExchangeAccount> selectedAccounts = GetGridViewAccounts(gvAccounts, SelectedState.All);
 
 			List<string> accountNames = new List<string>();
-			foreach (OrganizationUser account in selectedAccounts)
+            foreach (ExchangeAccount account in selectedAccounts)
 				accountNames.Add(account.AccountName);
 
 			return accountNames.ToArray();
@@ -178,7 +111,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 		protected void btnDelete_Click(object sender, EventArgs e)
 		{
 			// get selected accounts
-			List<OrganizationUser> selectedAccounts = GetGridViewAccounts(gvAccounts, SelectedState.Unselected);
+            List<ExchangeAccount> selectedAccounts = GetGridViewAccounts(gvAccounts, SelectedState.Unselected);
 
 			// add to the main list
 			BindAccounts(selectedAccounts.ToArray(), false);
@@ -187,7 +120,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 		protected void btnAddSelected_Click(object sender, EventArgs e)
 		{
 			// get selected accounts
-			List<OrganizationUser> selectedAccounts = GetGridViewAccounts(gvPopupAccounts, SelectedState.Selected);
+            List<ExchangeAccount> selectedAccounts = GetGridViewAccounts(gvPopupAccounts, SelectedState.Selected);
 			
 			// add to the main list
 			BindAccounts(selectedAccounts.ToArray(), true);
@@ -206,6 +139,15 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 case ExchangeAccountType.Equipment:
                     imgName = "equipment_16.gif";
                     break;
+                case ExchangeAccountType.DistributionList:
+                    imgName = "dlist_16.gif";
+                    break;
+                case ExchangeAccountType.SecurityGroup:
+                    imgName = "dlist_16.gif";
+                    break;
+                case ExchangeAccountType.DefaultSecurityGroup:
+                    imgName = "dlist_16.gif";
+                    break;
                 default:
                     imgName = "admin_16.png";
                     break;
@@ -214,59 +156,41 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             return GetThemedImage("Exchange/" + imgName);
         }
 
+        public string GetType(int accountTypeId)
+        {
+            ExchangeAccountType accountType = (ExchangeAccountType)accountTypeId;
+
+            switch (accountType)
+            {
+                case ExchangeAccountType.DistributionList:
+                    return "Distribution";
+                case ExchangeAccountType.SecurityGroup:
+                    return "Security";
+                case ExchangeAccountType.DefaultSecurityGroup:
+                    return "Default Group";
+                default:
+                    return accountType.ToString();
+            }
+        }
+
 		private void BindPopupAccounts()
 		{
-			OrganizationUser[] accounts = ES.Services.Organizations.SearchAccounts(PanelRequest.ItemID,
-				ddlSearchColumn.SelectedValue, txtSearchValue.Text + "%", "", IncludeMailboxes);
+			ExchangeAccount[] accounts = ES.Services.Organizations.SearchOrganizationAccounts(PanelRequest.ItemID,
+				ddlSearchColumn.SelectedValue, txtSearchValue.Text + "%", "", false);
 
-            List<OrganizationUser> newAccounts = new List<OrganizationUser>();
+            List<ExchangeAccount> newAccounts = new List<ExchangeAccount>();
 
             accounts = accounts.Where(x => !GetAccounts().Contains(x.AccountName)).ToArray();
 
 			if (ExcludeAccountId > 0)
 			{
-				List<OrganizationUser> updatedAccounts = new List<OrganizationUser>();
-				foreach (OrganizationUser account in accounts)
+                List<ExchangeAccount> updatedAccounts = new List<ExchangeAccount>();
+                foreach (ExchangeAccount account in accounts)
 					if (account.AccountId != ExcludeAccountId)
 						updatedAccounts.Add(account);
 
 				accounts = updatedAccounts.ToArray();
 			}
-
-            if (IncludeMailboxesOnly)
-            {
-
-                List<OrganizationUser> updatedAccounts = new List<OrganizationUser>();
-                foreach (OrganizationUser account in accounts)
-                {
-                    bool addUser = false;
-                    if (account.ExternalEmail != string.Empty) addUser = true;
-                    if ((account.IsBlackBerryUser) & (ExcludeBESUsers)) addUser = false;
-                    if ((account.IsLyncUser) & (ExcludeLyncUsers)) addUser = false;
-
-                    if (addUser) updatedAccounts.Add(account);
-                }
-
-                accounts = updatedAccounts.ToArray();
-            }
-            else
-                if ((ExcludeOCSUsers) | (ExcludeBESUsers) | (ExcludeLyncUsers))
-                {
-
-                    List<OrganizationUser> updatedAccounts = new List<OrganizationUser>();
-                    foreach (OrganizationUser account in accounts)
-                    {
-                        bool addUser = true;
-                        if ((account.IsOCSUser) & (ExcludeOCSUsers)) addUser = false;
-                        if ((account.IsLyncUser) & (ExcludeLyncUsers)) addUser = false;
-                        if ((account.IsBlackBerryUser) & (ExcludeBESUsers)) addUser = false;
-
-                        if (addUser) updatedAccounts.Add(account);
-                    }
-
-                    accounts = updatedAccounts.ToArray();
-                }
-
 
             Array.Sort(accounts, CompareAccount);
             if (Direction == SortDirection.Ascending)
@@ -281,21 +205,21 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             gvPopupAccounts.DataBind();
 		}
 
-		private void BindAccounts(OrganizationUser[] newAccounts, bool preserveExisting)
+        private void BindAccounts(ExchangeAccount[] newAccounts, bool preserveExisting)
 		{
 			// get binded addresses
-			List<OrganizationUser> accounts = new List<OrganizationUser>();
+            List<ExchangeAccount> accounts = new List<ExchangeAccount>();
 			if(preserveExisting)
 				accounts.AddRange(GetGridViewAccounts(gvAccounts, SelectedState.All));
 
 			// add new accounts
 			if (newAccounts != null)
 			{
-				foreach (OrganizationUser newAccount in newAccounts)
+                foreach (ExchangeAccount newAccount in newAccounts)
 				{
 					// check if exists
 					bool exists = false;
-					foreach (OrganizationUser account in accounts)
+                    foreach (ExchangeAccount account in accounts)
 					{
 						if (String.Compare(newAccount.AccountName, account.AccountName, true) == 0)
 						{
@@ -317,9 +241,9 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             btnDelete.Visible = gvAccounts.Rows.Count > 0;
 		}
 
-		private List<OrganizationUser> GetGridViewAccounts(GridView gv, SelectedState state)
+        private List<ExchangeAccount> GetGridViewAccounts(GridView gv, SelectedState state)
 		{
-			List<OrganizationUser> accounts = new List<OrganizationUser>();
+            List<ExchangeAccount> accounts = new List<ExchangeAccount>();
 			for (int i = 0; i < gv.Rows.Count; i++)
 			{
 				GridViewRow row = gv.Rows[i];
@@ -327,7 +251,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 				if (chkSelect == null)
 					continue;
 
-				OrganizationUser account = new OrganizationUser();
+                ExchangeAccount account = new ExchangeAccount();
 				account.AccountType = (ExchangeAccountType)Enum.Parse(typeof(ExchangeAccountType), ((Literal)row.FindControl("litAccountType")).Text);
 				account.AccountName = (string)gv.DataKeys[i][0];
 				account.DisplayName = ((Literal)row.FindControl("litDisplayName")).Text;
@@ -352,7 +276,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             set { ViewState[DirectionString] = value; }
         }
 
-        private static int CompareAccount(OrganizationUser user1, OrganizationUser user2)
+        private static int CompareAccount(ExchangeAccount user1, ExchangeAccount user2)
         {
             return string.Compare(user1.DisplayName, user2.DisplayName);
         }

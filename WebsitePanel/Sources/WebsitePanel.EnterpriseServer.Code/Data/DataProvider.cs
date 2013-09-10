@@ -1868,7 +1868,7 @@ namespace WebsitePanel.EnterpriseServer
         public static IDataReader GetProcessBackgroundTasks(BackgroundTaskStatus status)
         {
             return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
-                                           ObjectQualifier + "GetProcessBackgroundTasks",                                           
+                                           ObjectQualifier + "GetProcessBackgroundTasks",
                                            new SqlParameter("@status", (int)status));
         }
 
@@ -1952,7 +1952,7 @@ namespace WebsitePanel.EnterpriseServer
                                       new SqlParameter("@finishDate",
                                                        finishDate == DateTime.MinValue
                                                            ? DBNull.Value
-                                                           : (object) finishDate),
+                                                           : (object)finishDate),
                                       new SqlParameter("@indicatorCurrent", indicatorCurrent),
                                       new SqlParameter("@indicatorMaximum", indicatorMaximum),
                                       new SqlParameter("@maximumExecutionTime", maximumExecutionTime),
@@ -2636,6 +2636,38 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
+        public static IDataReader SearchExchangeAccountsByTypes(int actorId, int itemId, string accountTypes,
+            string filterColumn, string filterValue, string sortColumn)
+        {
+            // check input parameters
+            string[] types = accountTypes.Split(',');
+            for (int i = 0; i < types.Length; i++)
+            {
+                try
+                {
+                    int type = Int32.Parse(types[i]);
+                }
+                catch
+                {
+                    throw new ArgumentException("Wrong patameter", "accountTypes");
+                }
+            }
+
+            string searchTypes = String.Join(",", types);
+
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "SearchExchangeAccountsByTypes",
+                new SqlParameter("@ActorID", actorId),
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@AccountTypes", searchTypes),
+                new SqlParameter("@FilterColumn", VerifyColumnName(filterColumn)),
+                new SqlParameter("@FilterValue", VerifyColumnValue(filterValue)),
+                new SqlParameter("@SortColumn", VerifyColumnName(sortColumn))
+            );
+        }
+
         public static DataSet GetExchangeAccountsPaged(int actorId, int itemId, string accountTypes,
                 string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
         {
@@ -2672,7 +2704,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static IDataReader SearchExchangeAccounts(int actorId, int itemId, bool includeMailboxes,
                 bool includeContacts, bool includeDistributionLists, bool includeRooms, bool includeEquipment,
-                string filterColumn, string filterValue, string sortColumn)
+                bool includeSecurityGroups, string filterColumn, string filterValue, string sortColumn)
         {
             return SqlHelper.ExecuteReader(
                 ConnectionString,
@@ -2685,6 +2717,7 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@IncludeDistributionLists", includeDistributionLists),
                 new SqlParameter("@IncludeRooms", includeRooms),
                 new SqlParameter("@IncludeEquipment", includeEquipment),
+                new SqlParameter("@IncludeSecurityGroups", includeSecurityGroups),
                 new SqlParameter("@FilterColumn", VerifyColumnName(filterColumn)),
                 new SqlParameter("@FilterValue", VerifyColumnValue(filterValue)),
                 new SqlParameter("@SortColumn", VerifyColumnName(sortColumn))

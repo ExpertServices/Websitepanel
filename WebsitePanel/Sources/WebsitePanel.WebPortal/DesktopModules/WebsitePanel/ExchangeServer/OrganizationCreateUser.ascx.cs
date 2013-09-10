@@ -128,7 +128,7 @@ namespace WebsitePanel.Portal.HostedSolution
             }
             catch (Exception ex)
             {
-                messageBox.ShowErrorMessage("EXCHANGE_CREATE_MAILBOX", ex);
+                messageBox.ShowErrorMessage("ORGANIZATION_CREATE_USER", ex);
             }
         }
 

@@ -188,6 +188,22 @@ namespace WebsitePanel.EnterpriseServer
                 // get type properties
                 PropertyInfo[] props = GetTypeProperties(type);
 
+                // leave only a property from the DataReader
+                DataTable readerSchema = reader.GetSchemaTable();
+                if (readerSchema != null)
+                {
+                    List<PropertyInfo> propslist = new List<PropertyInfo>();
+                    foreach (DataRow field in readerSchema.Rows)
+                    {
+                        string columnName = System.Convert.ToString(field["ColumnName"]);
+
+                        foreach (PropertyInfo prop in props)
+                            if (columnName.ToLower() == prop.Name.ToLower())
+                                propslist.Add(prop);
+                    }
+                    props = propslist.ToArray();
+                }
+
                 // iterate through reader
                 while (reader.Read())
                 {

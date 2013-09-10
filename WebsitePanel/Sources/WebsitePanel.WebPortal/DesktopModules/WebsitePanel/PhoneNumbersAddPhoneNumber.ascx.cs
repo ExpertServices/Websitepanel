@@ -30,6 +30,7 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Collections;
+using System.Collections.Generic;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
@@ -73,7 +74,15 @@ namespace WebsitePanel.Portal
         {
             try
             {
-                ddlServer.DataSource = ES.Services.Servers.GetServers();
+                ServerInfo[] allServers = ES.Services.Servers.GetServers();
+                List<ServerInfo> servers = new List<ServerInfo>();
+                foreach(ServerInfo server in allServers)
+                {
+                    ServiceInfo[] service = ES.Services.Servers.GetServicesByServerIdGroupName(server.ServerId, ResourceGroups.Lync);
+                    if (service.Length>0) servers.Add(server);
+                }
+                    
+                ddlServer.DataSource = servers;
                 ddlServer.DataBind();
             }
             catch (Exception ex)

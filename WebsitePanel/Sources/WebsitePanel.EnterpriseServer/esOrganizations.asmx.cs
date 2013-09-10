@@ -214,7 +214,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             return OrganizationController.SetUserPassword(itemId, accountId, password);
         }
-        
+
 
 
         [WebMethod]
@@ -276,29 +276,31 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public int AddUserToSecurityGroup(int itemId, int userAccountId, string groupName)
+        public int AddObjectToSecurityGroup(int itemId, int accountId, string groupName)
         {
-            return OrganizationController.AddUserToSecurityGroup(itemId, userAccountId, groupName);
+            return OrganizationController.AddObjectToSecurityGroup(itemId, accountId, groupName);
         }
 
         [WebMethod]
-        public int DeleteUserFromSecurityGroup(int itemId, int userAccountId, string groupName)
+        public int DeleteObjectFromSecurityGroup(int itemId, int accountId, string groupName)
         {
-            return OrganizationController.DeleteUserFromSecurityGroup(itemId, userAccountId, groupName);
+            return OrganizationController.DeleteObjectFromSecurityGroup(itemId, accountId, groupName);
         }
 
         [WebMethod]
         public ExchangeAccount[] GetSecurityGroupsByMember(int itemId, int accountId)
         {
-            return OrganizationController.GetSecurityGroupsByMember(itemId, accountId); 
+            return OrganizationController.GetSecurityGroupsByMember(itemId, accountId);
         }
 
         [WebMethod]
-        public List<ExchangeAccount> SearchSecurityGroups(int itemId, string filterColumn, string filterValue, string sortColumn)
+        public List<ExchangeAccount> SearchOrganizationAccounts(int itemId, string filterColumn, string filterValue,
+            string sortColumn, bool includeOnlySecurityGroups)
         {
-            return OrganizationController.SearchSecurityGroups(itemId, filterColumn, filterValue, sortColumn);
+            return OrganizationController.SearchOrganizationAccounts(itemId, filterColumn, filterValue, sortColumn,
+                includeOnlySecurityGroups);
         }
-       
+
         #endregion
 
     }

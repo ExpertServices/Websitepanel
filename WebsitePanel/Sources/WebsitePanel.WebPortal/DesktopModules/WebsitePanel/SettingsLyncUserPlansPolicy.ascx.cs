@@ -173,7 +173,6 @@ namespace WebsitePanel.Portal
             plan.VoicePolicy = LyncVoicePolicyType.None;
 
             plan.RemoteUserAccess = chkRemoteUserAccess.Checked;
-            plan.PublicIMConnectivity = chkPublicIMConnectivity.Checked;
 
             plan.AllowOrganizeMeetingsWithExternalAnonymous = chkAllowOrganizeMeetingsWithExternalAnonymous.Checked;
 
@@ -314,7 +313,6 @@ namespace WebsitePanel.Portal
                         chkEnterpriseVoice.Checked = plan.EnterpriseVoice;
 
                         chkRemoteUserAccess.Checked = plan.RemoteUserAccess;
-                        chkPublicIMConnectivity.Checked = plan.PublicIMConnectivity;
 
                         chkAllowOrganizeMeetingsWithExternalAnonymous.Checked = plan.AllowOrganizeMeetingsWithExternalAnonymous;
                         ddTelephony.SelectedIndex = plan.Telephony;
@@ -437,7 +435,6 @@ namespace WebsitePanel.Portal
             plan.VoicePolicy = LyncVoicePolicyType.None;
 
             plan.RemoteUserAccess = chkRemoteUserAccess.Checked;
-            plan.PublicIMConnectivity = chkPublicIMConnectivity.Checked;
 
             plan.AllowOrganizeMeetingsWithExternalAnonymous = chkAllowOrganizeMeetingsWithExternalAnonymous.Checked;
 
