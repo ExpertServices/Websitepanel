@@ -104,6 +104,10 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 chkIncludeLists.Visible = DistributionListsEnabled;
                 chkIncludeLists.Checked = DistributionListsEnabled;
             }
+
+            // increase timeout
+            ScriptManager scriptMngr = ScriptManager.GetCurrent(this.Page);
+            scriptMngr.AsyncPostBackTimeout = 300;
         }
 
         private void BindSelectedAccount(ExchangeAccount account)

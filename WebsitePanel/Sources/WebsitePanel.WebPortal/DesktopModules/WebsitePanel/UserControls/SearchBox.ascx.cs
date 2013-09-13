@@ -79,5 +79,11 @@ namespace WebsitePanel.Portal
         {
             ddlFilterColumn.Items.Add(new ListItem(columnTitle, columnName));
         }
+
+        public override void Focus()
+        {
+            base.Focus();
+            txtFilterValue.Focus();
+        }
     }
 }

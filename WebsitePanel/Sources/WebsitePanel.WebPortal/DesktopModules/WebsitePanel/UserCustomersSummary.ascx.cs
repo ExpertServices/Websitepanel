@@ -44,6 +44,9 @@ namespace WebsitePanel.Portal
             this.ContainerControl.Visible = (PanelSecurity.SelectedUser.Role != UserRole.User);
             lnkAllCustomers.NavigateUrl = NavigatePageURL(PortalUtils.GetUserCustomersPageId(),
                 PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString());
+
+            if (!IsPostBack)
+                txtFilterValue.Focus();
         }
 
         private void BindGroupings()
