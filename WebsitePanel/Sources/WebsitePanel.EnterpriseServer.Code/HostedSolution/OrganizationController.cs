@@ -2034,6 +2034,10 @@ namespace WebsitePanel.EnterpriseServer
                                                   DataProvider.SearchOrganizationAccounts(SecurityContext.User.UserId, itemId,
                                                   filterColumn, filterValue, sortColumn, includeMailboxes));
 
+            return Tmpaccounts;
+
+            // on large lists is very slow
+            /*
             List<OrganizationUser> Accounts = new List<OrganizationUser>();
 
             foreach (OrganizationUser user in Tmpaccounts.ToArray())
@@ -2042,6 +2046,7 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             return Accounts;
+             */
         }
 
         public static int GetAccountIdByUserPrincipalName(int itemId, string userPrincipalName)

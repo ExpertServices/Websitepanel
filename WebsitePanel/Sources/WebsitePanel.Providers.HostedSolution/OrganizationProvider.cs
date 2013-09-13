@@ -918,8 +918,11 @@ namespace WebsitePanel.Providers.HostedSolution
                 throw new ArgumentNullException("groupName");
 
             string path = GetGroupPath(organizationId, groupName);
+            string organizationPath = GetOrganizationPath(organizationId);
 
             DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
+            DirectoryEntry organizationEntry = ActiveDirectoryUtils.GetADObject(organizationPath);
+
 
             OrganizationSecurityGroup securityGroup = new OrganizationSecurityGroup();
 
@@ -930,7 +933,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
             List<ExchangeAccount> members = new List<ExchangeAccount>();
 
-            foreach (string userPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "user"))
+            foreach (string userPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "user", organizationEntry))
             {
                 OrganizationUser tmpUser = GetUser(userPath);
 
@@ -941,7 +944,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 });
             }
 
-            foreach (string groupPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "group"))
+            foreach (string groupPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "group", organizationEntry))
             {
                 DirectoryEntry groupEntry = ActiveDirectoryUtils.GetADObject(groupPath);
 
