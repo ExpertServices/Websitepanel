@@ -51,6 +51,12 @@ namespace WebsitePanel.EnterpriseServer
     public class esFiles : System.Web.Services.WebService
     {
         [WebMethod]
+        public SystemSettings GetFileManagerSettings()
+        {
+            return FilesController.GetFileManagerSettings();
+        }
+
+        [WebMethod]
         public static string GetHomeFolder(int packageId)
         {
             return FilesController.GetHomeFolder(packageId);
