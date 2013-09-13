@@ -38,6 +38,7 @@ using System.Xml;
 using System.Xml.Serialization;
 
 using WebsitePanel.Providers;
+using WebsitePanel.Providers.HeliconZoo;
 using WebsitePanel.Providers.Web;
 using WebsitePanel.Providers.DNS;
 using OS = WebsitePanel.Providers.OS;
@@ -469,6 +470,8 @@ namespace WebsitePanel.EnterpriseServer
                         }
                     }
                 }
+
+                TryEnableHeliconZooEngines(site.SiteId, site.PackageId);
 
                 TaskManager.ItemId = siteItemId;
 
@@ -3467,6 +3470,26 @@ namespace WebsitePanel.EnterpriseServer
             WebServer web = new WebServer();
             ServiceProviderProxy.Init(web, siteItem.ServiceId);
             return web.SetZooConsoleDisabled(siteItem.SiteId, appName);
+        }
+
+        public static void TryEnableHeliconZooEngines(string siteId, int packageId)
+        {
+            try
+            {
+                ShortHeliconZooEngine[] allowedEngines = HeliconZooController.GetAllowedHeliconZooQuotasForPackage(packageId);
+                string[] engineNames = new string[allowedEngines.Length];
+                int i = 0;
+                foreach (ShortHeliconZooEngine engine in allowedEngines)
+                {
+                    engineNames[i] = engine.Name.Replace(HeliconZooController.HeliconZooQuotaPrefix, "");
+                    i++;
+                }
+                HeliconZooController.SetEnabledEnginesForSite(siteId, packageId, engineNames);
+            }
+            catch(Exception e)
+            {
+                TaskManager.WriteWarning("Error on enabling zoo engines for site '{0}': {1}", siteId, e.ToString());
+            }
         }
 
         #endregion
