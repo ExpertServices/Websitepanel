@@ -3394,7 +3394,83 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
         #endregion
-        
+
+        #region Helicon Zoo
+
+        public static List<WebVirtualDirectory> GetZooApplications(int siteItemId)
+        {
+            List<WebVirtualDirectory> dirs = new List<WebVirtualDirectory>();
+
+            // load site item
+            WebSite siteItem = (WebSite)PackageController.GetPackageItem(siteItemId);
+            if (siteItem == null)
+                return dirs;
+
+            // truncate home folders
+            WebServer web = new WebServer();
+            ServiceProviderProxy.Init(web, siteItem.ServiceId);
+            WebVirtualDirectory[] vdirs = web.GetZooApplications(siteItem.SiteId);
+
+            foreach (WebVirtualDirectory vdir in vdirs)
+            {
+                vdir.ContentPath = FilesController.GetVirtualPackagePath(siteItem.PackageId, vdir.ContentPath);
+                dirs.Add(vdir);
+            }
+
+            return dirs;
+        }
+
+        public static StringResultObject SetZooEnvironmentVariable(int siteItemId, string appName, string envName, string envValue)
+        {
+            StringResultObject result = new StringResultObject {IsSuccess = false};
+
+
+            // load site item
+            WebSite siteItem = (WebSite)PackageController.GetPackageItem(siteItemId);
+            if (siteItem == null)
+                return result;
+
+
+            WebServer web = new WebServer();
+            ServiceProviderProxy.Init(web, siteItem.ServiceId);
+            return web.SetZooEnvironmentVariable(siteItem.SiteId, appName, envName, envValue);
+        }
+
+        public static StringResultObject SetZooConsoleEnabled(int siteItemId, string appName)
+        {
+            StringResultObject result = new StringResultObject { IsSuccess = false };
+
+
+            // load site item
+            WebSite siteItem = (WebSite)PackageController.GetPackageItem(siteItemId);
+            if (siteItem == null)
+                return result;
+
+
+            WebServer web = new WebServer();
+            ServiceProviderProxy.Init(web, siteItem.ServiceId);
+            return web.SetZooConsoleEnabled(siteItem.SiteId, appName);
+        }
+
+
+        public static StringResultObject SetZooConsoleDisabled(int siteItemId, string appName)
+        {
+            StringResultObject result = new StringResultObject { IsSuccess = false };
+
+
+            // load site item
+            WebSite siteItem = (WebSite)PackageController.GetPackageItem(siteItemId);
+            if (siteItem == null)
+                return result;
+
+
+            WebServer web = new WebServer();
+            ServiceProviderProxy.Init(web, siteItem.ServiceId);
+            return web.SetZooConsoleDisabled(siteItem.SiteId, appName);
+        }
+
+        #endregion
+
         #region WebManagement Access
 
 		public static ResultObject GrantWebManagementAccess(int siteItemId, string accountName, string accountPassword)
