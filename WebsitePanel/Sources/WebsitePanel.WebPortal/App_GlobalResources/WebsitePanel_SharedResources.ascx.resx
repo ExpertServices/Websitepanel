@@ -2892,6 +2892,9 @@
   <data name="Quota.Exchange2007.MaxReceiveMessageSizeKB" xml:space="preserve">
     <value>Maximum Receive Message Size (Kb)</value>
   </data>
+  <data name="Quota.Exchange2007.DisclaimersAllowed" xml:space="preserve">
+    <value>Disclaimers Allowed</value>
+  </data>
   <data name="ResourceGroup.Exchange" xml:space="preserve">
     <value>Hosted Exchange</value>
   </data>
@@ -2918,6 +2921,9 @@
   </data>
   <data name="Error.EXCHANGE_DELETE_DISTRIBUTION_LIST" xml:space="preserve">
     <value>Error deleting distribution list. See audit log for more details.</value>
+  </data>
+  <data name="Error.EXCHANGE_DELETE_DISCLAIMER" xml:space="preserve">
+    <value>Error deleting disclaimer. See audit log for more details.</value>
   </data>
   <data name="Error.EXCHANGE_DELETE_MAILBOX" xml:space="preserve">
     <value>Error deleting mailbox. See audit log for more details.</value>
@@ -2980,6 +2986,9 @@
   <data name="Error.EXCHANGE_GET_DLIST_SETTINGS" xml:space="preserve">
     <value>Error reading distribution list general settings. See audit log for more details.</value>
   </data>
+  <data name="Error.EXCHANGE_GET_DISCLAIMER_SETTINGS" xml:space="preserve">
+    <value>Error reading disclaimer. See audit log for more details.</value>
+  </data>
   <data name="Error.EXCHANGE_GET_MAILBOX_ADVANCED" xml:space="preserve">
     <value>Error reading mailbox advanced settings. See audit log for more details.</value>
   </data>
@@ -3031,6 +3040,9 @@
   <data name="Error.EXCHANGE_UPDATE_DLIST_SETTINGS" xml:space="preserve">
     <value>Error updating distribution list general settings. See audit log for more details.</value>
   </data>
+  <data name="Error.EXCHANGE_UPDATE_DISCLAIMER_SETTINGS" xml:space="preserve">
+    <value>Error updating disclaimer. See audit log for more details.</value>
+  </data>
   <data name="Error.EXCHANGE_UPDATE_MAILBOX_ADVANCED" xml:space="preserve">
     <value>Error updating mailbox advanced settings. See audit log for more details.</value>
   </data>
@@ -3063,6 +3075,9 @@
   </data>
   <data name="Error.EXCHANGE_GET_LISTS" xml:space="preserve">
     <value>Error reading organization distribution lists</value>
+  </data>
+  <data name="Error.EXCHANGE_DISCLAIMERS_LISTS" xml:space="preserve">
+    <value>Error reading organization disclaimer lists</value>
   </data>
   <data name="Error.HOSTED_SHAREPOINT_UPDATE_QUOTAS" xml:space="preserve">
     <value>Error updating storage settings. See audit log for more details.</value>
@@ -3097,7 +3112,6 @@
   <data name="Error.ORGANIZATION_SET_USER_USERPRINCIPALNAME" xml:space="preserve">
     <value>Failed to update user login name.</value>
   </data>
-
   <data name="Success.EXCHANGE_MAILBOX_SET_DEFAULT_EMAIL" xml:space="preserve">
     <value>Mailbox primary e-mail address has been changed.</value>
   </data>
@@ -3121,6 +3135,9 @@
   </data>
   <data name="Success.EXCHANGE_UPDATE_DLIST_SETTINGS" xml:space="preserve">
     <value>Distribution list general settings have been successfully updated.</value>
+  </data>
+  <data name="Success.EXCHANGE_UPDATE_DISCLAIMER_SETTINGS" xml:space="preserve">
+    <value>Disclaimer successfully updated.</value>
   </data>
   <data name="Success.EXCHANGE_UPDATE_PFOLDER_MAILFLOW" xml:space="preserve">
     <value>Public folder mail flow settings have been successfully updated.</value>
@@ -3284,6 +3301,9 @@
   <data name="Quota.HostedSolution.Domains" xml:space="preserve">
     <value>Domains per Organization</value>
   </data>
+  <data name="Quota.HostedSolution.SecurityGroupManagement" xml:space="preserve">
+    <value>Allow Security Group Management</value>
+  </data>
   <data name="ResourceGroup.Hosted SharePoint" xml:space="preserve">
     <value>Hosted SharePoint</value>
   </data>
@@ -3347,7 +3367,6 @@
   <data name="Warning.NOT_ALL_EMAIL_ADDRESSES_DELETED" xml:space="preserve">
     <value>Please note not all email address are deleted</value>
   </data>
-
   <data name="Warning.EXCHANGE_NONE_PUBLIC_FOLDER_TO_DELETE" xml:space="preserve">
     <value>There are no public folders to delete</value>
   </data>
@@ -3935,9 +3954,6 @@
   </data>
   <data name="Warning.1602" xml:space="preserve">
     <value>IP Address could not be deleted</value>
-  </data>
-  <data name="WarningDescription.1602" xml:space="preserve">
-    <value>IP Address could not be deleted because it is being used by Virtual Private Server.</value>
   </data>
   <data name="Error.VPS_ERROR_ADDING_IP_ADDRESS" xml:space="preserve">
     <value>Cannot add network adapter IP addresses</value>
@@ -5262,6 +5278,12 @@
   <data name="Success.EXCHANGE_UPDATEPLANS" xml:space="preserve">
     <value>Mailbox plan updated</value>
   </data>
+  <data name="Error.LYNC_UPDATEPLANS" xml:space="preserve">
+    <value>Lync plan update failed</value>
+  </data>
+  <data name="Success.LYNC_UPDATEPLANS" xml:space="preserve">
+    <value>Lync plan updated</value>
+  </data>
   <data name="Error.LYNC_APPLYPLANTEMPLATE" xml:space="preserve">
     <value>Failed to apply plans template</value>
   </data>
@@ -5288,5 +5310,38 @@
   </data>
   <data name="WarningDescription.ApplyEnableHardQuotaFeature" xml:space="preserve">
     <value>By clicking on the button 'Apply', you will apply the respective hard quota on each provisioned home folder. Note that this may take some time.</value>
+  </data>
+  <data name="Error.IP_ADD_PHONE" xml:space="preserve">
+    <value>Error adding Phone number</value>
+  </data>
+  <data name="Error.IP_ADD_PHONE_RANGE" xml:space="preserve">
+    <value>Cannot add Phone numbers range.</value>
+  </data>
+  <data name="Error.DEALLOCATE_SPACE_PHONE_NUMBER" xml:space="preserve">
+    <value>The following errors have been occurred:</value>
+  </data>
+  <data name="Success.DEALLOCATE_SPACE_PHONE_NUMBER" xml:space="preserve">
+    <value>Phone number have been successfully deallocated.</value>
+  </data>
+  <data name="WarningDescription.PHONE_EDIT_LIST_EMPTY_ERROR" xml:space="preserve">
+    <value>At least one Phone number must be selected.</value>
+  </data>
+  <data name="Quota.Lync.PhoneNumbers" xml:space="preserve">
+    <value>Phone Numbers per Organization</value>
+  </data>
+  <data name="Error.ORGANIZATION_CREATE_USER" xml:space="preserve">
+    <value>Error creating user. See audit log for more details.</value>
+  </data>
+  <data name="Error.ORGANIZATION_CREATE_SECURITY_GROUP" xml:space="preserve">
+    <value>Error creating security group. See audit log for more details.</value>
+  </data>
+  <data name="Error.ORGANIZATION_GET_SECURITY_GROUP_SETTINGS" xml:space="preserve">
+    <value>Error reading group settings</value>
+  </data>
+  <data name="Error.ORGANIZATION_UPDATE_SECURITY_GROUP_SETTINGS" xml:space="preserve">
+    <value>Error updating group settings</value>
+  </data>
+  <data name="Success.ORGANIZATION_UPDATE_SECURITY_GROUP_SETTINGS" xml:space="preserve">
+    <value>Group general settings have been successfully updated.</value>
   </data>
 </root>

@@ -176,6 +176,24 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::WebsitePanel.Portal.ExchangeServer.UserControls.MailboxPlanSelector mailboxPlanSelector;
         
         /// <summary>
+        /// locDisclaimer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locDisclaimer;
+        
+        /// <summary>
+        /// ddDisclaimer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddDisclaimer;
+        
+        /// <summary>
         /// locQuota control.
         /// </summary>
         /// <remarks>

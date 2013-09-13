@@ -43,11 +43,42 @@
                                     <wsp:LyncUserPlanSelector ID="planSelector" runat="server" />
                                 </td>
 					        </tr>
-					    </table>
+                        </table>
 
+                        <asp:Panel runat="server" ID="pnEnterpriseVoice">
+                        <table>
+                            <tr>
+                                <td class="FormLabel150">
+                                    <asp:Localize runat="server" ID="locPhoneNumber" meta:resourcekey="locPhoneNumber" Text="Phone Number:" />
+                                </td>
+                                <td>
+                                    <!-- <asp:TextBox runat="server" ID="tb_PhoneNumber" /> -->
+                                    <asp:dropdownlist id="ddlPhoneNumber" Runat="server" CssClass="NormalTextBox"></asp:dropdownlist>
+                                    <asp:RegularExpressionValidator ID="PhoneFormatValidator" runat="server"
+		                            ControlToValidate="ddlPhoneNumber" Display="Dynamic" ValidationGroup="Validation1" SetFocusOnError="true"
+		                            ValidationExpression="^([0-9])*$"
+                                    ErrorMessage="Must contain only numbers.">
+                                    </asp:RegularExpressionValidator>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="FormLabel150">
+                                    <asp:Localize runat="server" ID="locLyncPin" meta:resourcekey="locLyncPin" Text="Lync Pin:" />
+                                </td>
+                                <td>
+                                    <asp:TextBox runat="server" ID="tbPin" />
+                                    <asp:RegularExpressionValidator ID="PinRegularExpressionValidator" runat="server"
+		                            ControlToValidate="tbPin" Display="Dynamic" ValidationGroup="Validation1" SetFocusOnError="true"
+		                            ValidationExpression="^([0-9])*$"
+                                    ErrorMessage="Must contain only numbers.">
+                                    </asp:RegularExpressionValidator>
+                                </td>
+                            </tr>
+					    </table>
+                        </asp:Panel>
 					
 					<div class="FormFooterClean">
-					    <asp:Button id="btnCreate" runat="server" 
+					    <asp:Button id="btnCreate" runat="server" ValidationGroup="Validation1"
 					    CssClass="Button1" meta:resourcekey="btnCreate" 
 					     onclick="btnCreate_Click" ></asp:Button>					    
 				    </div>			

@@ -29,6 +29,9 @@
 using System;
 using System.Collections.Generic;
 using WebsitePanel.Portal.Code.UserControls;
+using WebsitePanel.WebPortal;
+using WebsitePanel.EnterpriseServer;
+
 
 namespace WebsitePanel.Portal.ExchangeServer.UserControls
 {
@@ -53,6 +56,11 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             tabsList.Add(CreateTab("dlist_addresses", "Tab.Addresses"));
             tabsList.Add(CreateTab("dlist_mailflow", "Tab.Mailflow"));
             tabsList.Add(CreateTab("dlist_permissions", "Tab.Permissions"));
+
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
+            if (Utils.CheckQouta(Quotas.EXCHANGE2007_DISTRIBUTIONLISTS, cntx))
+                tabsList.Add(CreateTab("dlist_memberof", "Tab.MemberOf"));
 
             // find selected menu item
             int idx = 0;

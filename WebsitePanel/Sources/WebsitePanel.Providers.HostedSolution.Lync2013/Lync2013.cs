@@ -269,7 +269,22 @@ namespace WebsitePanel.Providers.HostedSolution
                 command.Parameters.Add("Identity", userUpn);
                 ExecuteShellCommand(runspace, command, false);
 
-                SetLyncUserPlanInternal(organizationId, userUpn, plan, runspace);
+                command = new Command("Update-CsAddressBook");
+                ExecuteShellCommand(runspace, command, false);
+                command = new Command("Update-CsUserDatabase");
+                ExecuteShellCommand(runspace, command, false);
+
+                int trySleep = 5000; int tryMaxCount = 10; bool PlanSet = false;
+                for (int tryCount = 0; (tryCount < tryMaxCount) && (!PlanSet); tryCount++ )
+                {
+                    try
+                    {
+                        PlanSet = SetLyncUserPlanInternal(organizationId, userUpn, plan, runspace);
+                    }
+                    catch { }
+                    if (!PlanSet) System.Threading.Thread.Sleep(trySleep);
+                }
+
                 command = new Command("Update-CsAddressBook");
                 ExecuteShellCommand(runspace, command, false);
                 command = new Command("Update-CsUserDatabase");
@@ -317,6 +332,8 @@ namespace WebsitePanel.Providers.HostedSolution
                 lyncUser.LineUri = (string) GetPSObjectProperty(user, "LineURI");
 
                 lyncUser.SipAddress = lyncUser.SipAddress.ToLower().Replace("sip:", "");
+                lyncUser.LineUri = lyncUser.LineUri.ToLower().Replace("tel:+", "");
+                lyncUser.LineUri = lyncUser.LineUri.ToLower().Replace("tel:", "");
             }
             catch (Exception ex)
             {
@@ -404,12 +421,24 @@ namespace WebsitePanel.Providers.HostedSolution
                     command.Parameters.Add("SipAddress", "SIP:" + lyncUser.SipAddress);
                 }
 
-                if (!string.IsNullOrEmpty(lyncUser.SipAddress))
+                if (!string.IsNullOrEmpty(lyncUser.LineUri))
                 {
-                    command.Parameters.Add("LineUri", lyncUser.LineUri);
+                    command.Parameters.Add("LineUri", "TEL:+" + lyncUser.LineUri);
+                }
+                else
+                {
+                    command.Parameters.Add("LineUri", null);
                 }
 
                 ExecuteShellCommand(runspace, command, false);
+
+                if (!String.IsNullOrEmpty(lyncUser.PIN))
+                {
+                    command = new Command("Set-CsClientPin");
+                    command.Parameters.Add("Identity", userUpn);
+                    command.Parameters.Add("Pin", lyncUser.PIN);
+                    ExecuteShellCommand(runspace, command, false);
+                }
 
                 command = new Command("Update-CsAddressBook");
                 ExecuteShellCommand(runspace, command, false);
@@ -454,7 +483,13 @@ namespace WebsitePanel.Providers.HostedSolution
                     bCloseRunSpace = true;
                 }
 
-                var command = new Command("Grant-CsExternalAccessPolicy");
+                // EnterpriseVoice
+                var command = new Command("Set-CsUser");
+                command.Parameters.Add("Identity", userUpn);
+                command.Parameters.Add("EnterpriseVoiceEnabled", plan.EnterpriseVoice);
+                ExecuteShellCommand(runspace, command, false);
+
+                command = new Command("Grant-CsExternalAccessPolicy");
                 command.Parameters.Add("Identity", userUpn);
                 command.Parameters.Add("PolicyName", plan.Federation ? organizationId : null);
                 ExecuteShellCommand(runspace, command, false);
@@ -466,7 +501,6 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 command = new Command("Grant-CsMobilityPolicy");
                 command.Parameters.Add("Identity", userUpn);
-
                 if (plan.Mobility)
                 {
                     command.Parameters.Add("PolicyName", plan.MobilityEnableOutsideVoice ? organizationId + " EnableOutSideVoice" : organizationId + " DisableOutSideVoice");
@@ -475,8 +509,26 @@ namespace WebsitePanel.Providers.HostedSolution
                 {
                     command.Parameters.Add("PolicyName", null);
                 }
-
                 ExecuteShellCommand(runspace, command, false);
+
+                // ArchivePolicy
+                command = new Command("Grant-CsArchivingPolicy");
+                command.Parameters.Add("Identity", userUpn);
+                command.Parameters.Add("PolicyName", string.IsNullOrEmpty(plan.ArchivePolicy) ? null : plan.ArchivePolicy);
+                ExecuteShellCommand(runspace, command, false);
+
+                // DialPlan
+                command = new Command("Grant-CsDialPlan");
+                command.Parameters.Add("Identity", userUpn);
+                command.Parameters.Add("PolicyName", string.IsNullOrEmpty(plan.TelephonyDialPlanPolicy) ? null : plan.TelephonyDialPlanPolicy);
+                ExecuteShellCommand(runspace, command, false);
+
+                // VoicePolicy
+                command = new Command("Grant-CsVoicePolicy");
+                command.Parameters.Add("Identity", userUpn);
+                command.Parameters.Add("PolicyName", string.IsNullOrEmpty(plan.TelephonyVoicePolicy) ? null : plan.TelephonyVoicePolicy);
+                ExecuteShellCommand(runspace, command, false);
+
                 command = new Command("Update-CsUserDatabase");
                 ExecuteShellCommand(runspace, command, false);
             }
@@ -740,6 +792,92 @@ namespace WebsitePanel.Providers.HostedSolution
             DirectoryEntry ou = ActiveDirectoryUtils.GetADObject(path);
             ActiveDirectoryUtils.SetADObjectPropertyValue(ou, "Url", new[] {domainName});
             ou.CommitChanges();
+        }
+
+        #endregion
+
+        #region Policy
+
+        internal override string[] GetPolicyListInternal(LyncPolicyType type, string name)
+        {
+            List<string> ret = new List<string>();
+
+            switch (type)
+            {
+                case LyncPolicyType.Archiving:
+                    {
+                        Runspace runSpace = OpenRunspace();
+                        Command cmd = new Command("Get-CsArchivingPolicy");
+                        Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd, false);
+                        if ((result != null) && (result.Count > 0))
+                        {
+                            foreach (PSObject res in result)
+                            {
+                                string Identity = GetPSObjectProperty(res, "Identity").ToString();
+                                ret.Add(Identity);
+                            }
+                        }
+                    }
+                    break;
+                case LyncPolicyType.DialPlan:
+                    {
+                        Runspace runSpace = OpenRunspace();
+                        Command cmd = new Command("Get-CsDialPlan");
+                        Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd, false);
+                        if ((result != null) && (result.Count > 0))
+                        {
+                            foreach (PSObject res in result)
+                            {
+                                string Identity = GetPSObjectProperty(res, "Identity").ToString();
+                                string Description = "" + (string)GetPSObjectProperty(res, "Description");
+                                if (Description.ToLower().IndexOf(name.ToLower()) == -1) continue;
+                                ret.Add(Identity);
+                            }
+
+
+                        }
+                    }
+                    break;
+                case LyncPolicyType.Voice:
+                    {
+                        Runspace runSpace = OpenRunspace();
+                        Command cmd = new Command("Get-CsVoicePolicy");
+                        Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd, false);
+                        if ((result != null) && (result.Count > 0))
+                        {
+                            foreach (PSObject res in result)
+                            {
+                                string Identity = GetPSObjectProperty(res, "Identity").ToString();
+                                string Description = "" + (string)GetPSObjectProperty(res, "Description");
+                                if (Description.ToLower().IndexOf(name.ToLower()) == -1) continue;
+
+                                ret.Add(Identity);
+                            }
+
+
+                        }
+                    }
+                    break;
+                case LyncPolicyType.Pin:
+                    {
+                        Runspace runSpace = OpenRunspace();
+                        Command cmd = new Command("Get-CsPinPolicy");
+                        Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd, false);
+                        if ((result != null) && (result.Count > 0))
+                        {
+                            foreach (PSObject res in result)
+                            {
+                                string Identity = GetPSObjectProperty(res, "Identity").ToString();
+                                string str = "" + GetPSObjectProperty(res, name);
+                                ret.Add(str);
+                            }
+                        }
+                    }
+                    break;
+
+            }
+
+            return ret.ToArray();
         }
 
         #endregion

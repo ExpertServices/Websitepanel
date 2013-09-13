@@ -912,6 +912,15 @@ namespace WebsitePanel.EnterpriseServer {
                 this.RemoveFederationDomainCompleted(this, new RemoveFederationDomainCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetPolicyList", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string[] GetPolicyList(int itemId, LyncPolicyType type, string name)
+        {
+            object[] results = this.Invoke("GetPolicyList", new object[] {
+                        itemId, type, name});
+            return ((string[])(results[0]));
+        }
         
         /// <remarks/>
         public new void CancelAsync(object userState) {

@@ -76,7 +76,9 @@ namespace WebsitePanel.Setup
 			public const string DatabaseName = "DatabaseName";
 			public const string ConnectionString = "ConnectionString";
 			public const string InstallConnectionString = "InstallConnectionString";
-			public const string Release = "Release";
+		    public const string Release = "Release";
+            public const string SchedulerServiceFileName = "WebsitePanel.SchedulerService.exe";
+            public const string SchedulerServiceName = "WebsitePanel Scheduler";
 		}
 
 		public abstract class Messages

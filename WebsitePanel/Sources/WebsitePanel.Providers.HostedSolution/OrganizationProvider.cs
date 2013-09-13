@@ -27,10 +27,10 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Globalization;
 using System.Text;
-
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.ResultObjects;
 
@@ -95,6 +95,34 @@ namespace WebsitePanel.Providers.HostedSolution
             AppendProtocol(sb);
             AppendDomainController(sb);
             AppendCNPath(sb, organizationId);
+            AppendOUPath(sb, organizationId);
+            AppendOUPath(sb, RootOU);
+            AppendDomainPath(sb, RootDomain);
+
+            return sb.ToString();
+        }
+
+        private string GetObjectPath(string organizationId, string objName)
+        {
+            StringBuilder sb = new StringBuilder();
+            // append provider
+            AppendProtocol(sb);
+            AppendDomainController(sb);
+            AppendCNPath(sb, objName);
+            AppendOUPath(sb, organizationId);
+            AppendOUPath(sb, RootOU);
+            AppendDomainPath(sb, RootDomain);
+
+            return sb.ToString();
+        }
+
+        private string GetGroupPath(string organizationId, string groupName)
+        {
+            StringBuilder sb = new StringBuilder();
+            // append provider
+            AppendProtocol(sb);
+            AppendDomainController(sb);
+            AppendCNPath(sb, groupName);
             AppendOUPath(sb, organizationId);
             AppendOUPath(sb, RootOU);
             AppendDomainPath(sb, RootDomain);
@@ -213,6 +241,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 org.OrganizationId = organizationId;
                 org.DistinguishedName = ActiveDirectoryUtils.RemoveADPrefix(orgPath);
                 org.SecurityGroup = ActiveDirectoryUtils.RemoveADPrefix(GetGroupPath(organizationId));
+                org.GroupName = organizationId;
             }
             catch (Exception ex)
             {
@@ -389,7 +418,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 HostedSolutionLog.DebugInfo("Group retrieved: {0}", groupPath);
 
 
-                ActiveDirectoryUtils.AddUserToGroup(userPath, groupPath);
+                ActiveDirectoryUtils.AddObjectToGroup(userPath, groupPath);
                 HostedSolutionLog.DebugInfo("Added to group: {0}", groupPath);
             }
             catch (Exception e)
@@ -498,9 +527,18 @@ namespace WebsitePanel.Providers.HostedSolution
                 throw new ArgumentNullException("loginName");
 
             string path = GetUserPath(organizationId, loginName);
-            DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
 
+            OrganizationUser retUser = GetUser(path);
+
+            HostedSolutionLog.LogEnd("GetUserGeneralSettingsInternal");
+            return retUser;
+        }
+
+        private OrganizationUser GetUser(string path)
+        {
             OrganizationUser retUser = new OrganizationUser();
+
+            DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
 
             retUser.FirstName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.FirstName);
             retUser.LastName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.LastName);
@@ -524,14 +562,13 @@ namespace WebsitePanel.Providers.HostedSolution
             retUser.Notes = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.Notes);
             retUser.ExternalEmail = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.ExternalEmail);
             retUser.Disabled = (bool)entry.InvokeGet(ADAttributes.AccountDisabled);
-            retUser.Manager = GetManager(entry);
+            retUser.Manager = GetManager(entry, ADAttributes.Manager);
             retUser.SamAccountName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName);
             retUser.DomainUserName = GetDomainName(ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName));
             retUser.DistinguishedName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.DistinguishedName);
             retUser.Locked = (bool)entry.InvokeGet(ADAttributes.AccountLocked);
-            retUser.UserPrincipalName= (string)entry.InvokeGet(ADAttributes.UserPrincipalName);
+            retUser.UserPrincipalName = (string)entry.InvokeGet(ADAttributes.UserPrincipalName);
 
-            HostedSolutionLog.LogEnd("GetUserGeneralSettingsInternal");
             return retUser;
         }
 
@@ -542,10 +579,10 @@ namespace WebsitePanel.Providers.HostedSolution
             return ret;
         }
 
-        private OrganizationUser GetManager(DirectoryEntry entry)
+        private OrganizationUser GetManager(DirectoryEntry entry, string adAttribute)
         {
             OrganizationUser retUser = null;
-            string path = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.Manager);
+            string path = ActiveDirectoryUtils.GetADObjectStringProperty(entry, adAttribute);
             if (!string.IsNullOrEmpty(path))
             {
                 path = ActiveDirectoryUtils.AddADPrefix(path, PrimaryDomainController);
@@ -645,7 +682,7 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             string path = GetUserPath(organizationId, accountName);
             DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
-            
+
             if (!string.IsNullOrEmpty(password))
                 entry.Invoke(ADAttributes.SetPassword, password);
 
@@ -737,8 +774,8 @@ namespace WebsitePanel.Providers.HostedSolution
                 SearchResult resCollection = searcher.FindOne();
                 if (resCollection != null)
                 {
-                    if(resCollection.Properties["samaccountname"] != null)
-                        bFound = true; 
+                    if (resCollection.Properties["samaccountname"] != null)
+                        bFound = true;
                 }
             }
             catch (Exception e)
@@ -800,11 +837,260 @@ namespace WebsitePanel.Providers.HostedSolution
         }
         #endregion
 
+        #region Security Groups
+
+        public int CreateSecurityGroup(string organizationId, string groupName)
+        {
+            return CreateSecurityGroupInternal(organizationId, groupName);
+        }
+
+        internal int CreateSecurityGroupInternal(string organizationId, string groupName)
+        {
+            HostedSolutionLog.LogStart("CreateSecurityGroupInternal");
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+            HostedSolutionLog.DebugInfo("groupName : {0}", groupName);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            if (string.IsNullOrEmpty(groupName))
+                throw new ArgumentNullException("groupName");
+
+            bool groupCreated = false;
+            string groupPath = null;
+            try
+            {
+                string path = GetOrganizationPath(organizationId);
+                groupPath = GetGroupPath(organizationId, groupName);
+
+                if (!ActiveDirectoryUtils.AdObjectExists(groupPath))
+                {
+                    ActiveDirectoryUtils.CreateGroup(path, groupName);
+
+                    groupCreated = true;
+
+                    HostedSolutionLog.DebugInfo("Security Group created: {0}", groupName);
+                }
+                else
+                {
+                    HostedSolutionLog.DebugInfo("AD_OBJECT_ALREADY_EXISTS: {0}", groupPath);
+                    HostedSolutionLog.LogEnd("CreateSecurityGroupInternal");
+
+                    return Errors.AD_OBJECT_ALREADY_EXISTS;
+                }
+            }
+            catch (Exception e)
+            {
+                HostedSolutionLog.LogError(e);
+                try
+                {
+                    if (groupCreated)
+                        ActiveDirectoryUtils.DeleteADObject(groupPath);
+                }
+                catch (Exception ex)
+                {
+                    HostedSolutionLog.LogError(ex);
+                }
+
+                return Errors.AD_OBJECT_ALREADY_EXISTS;
+            }
+
+            HostedSolutionLog.LogEnd("CreateSecurityGroupInternal");
+
+            return Errors.OK;
+        }
+
+        public OrganizationSecurityGroup GetSecurityGroupGeneralSettings(string groupName, string organizationId)
+        {
+            return GetSecurityGroupGeneralSettingsInternal(groupName, organizationId);
+        }
+
+        internal OrganizationSecurityGroup GetSecurityGroupGeneralSettingsInternal(string groupName, string organizationId)
+        {
+            HostedSolutionLog.LogStart("GetSecurityGroupGeneralSettingsInternal");
+            HostedSolutionLog.DebugInfo("groupName : {0}", groupName);
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            if (string.IsNullOrEmpty(groupName))
+                throw new ArgumentNullException("groupName");
+
+            string path = GetGroupPath(organizationId, groupName);
+            string organizationPath = GetOrganizationPath(organizationId);
+
+            DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
+            DirectoryEntry organizationEntry = ActiveDirectoryUtils.GetADObject(organizationPath);
+
+
+            OrganizationSecurityGroup securityGroup = new OrganizationSecurityGroup();
+
+            securityGroup.Notes = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.Notes);
+
+            securityGroup.AccountName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName);
+            securityGroup.SAMAccountName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName);
+
+            List<ExchangeAccount> members = new List<ExchangeAccount>();
+
+            foreach (string userPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "user", organizationEntry))
+            {
+                OrganizationUser tmpUser = GetUser(userPath);
+
+                members.Add(new ExchangeAccount
+                {
+                    AccountName = tmpUser.AccountName,
+                    SamAccountName = tmpUser.SamAccountName
+                });
+            }
+
+            foreach (string groupPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "group", organizationEntry))
+            {
+                DirectoryEntry groupEntry = ActiveDirectoryUtils.GetADObject(groupPath);
+
+                members.Add(new ExchangeAccount
+                {
+                    AccountName = ActiveDirectoryUtils.GetADObjectStringProperty(groupEntry, ADAttributes.SAMAccountName),
+                    SamAccountName = ActiveDirectoryUtils.GetADObjectStringProperty(groupEntry, ADAttributes.SAMAccountName)
+                });
+            }
+
+            securityGroup.MembersAccounts = members.ToArray();
+
+            HostedSolutionLog.LogEnd("GetSecurityGroupGeneralSettingsInternal");
+
+            return securityGroup;
+        }
+
+        public void DeleteSecurityGroup(string groupName, string organizationId)
+        {
+            DeleteSecurityGroupInternal(groupName, organizationId);
+        }
+
+        internal void DeleteSecurityGroupInternal(string groupName, string organizationId)
+        {
+            HostedSolutionLog.LogStart("DeleteSecurityGroupInternal");
+            HostedSolutionLog.DebugInfo("groupName : {0}", groupName);
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            if (string.IsNullOrEmpty(groupName))
+                throw new ArgumentNullException("groupName");
+
+            string path = GetGroupPath(organizationId, groupName);
+
+            if (ActiveDirectoryUtils.AdObjectExists(path))
+                ActiveDirectoryUtils.DeleteADObject(path, true);
+
+            HostedSolutionLog.LogEnd("DeleteSecurityGroupInternal");
+        }
+
+        public void SetSecurityGroupGeneralSettings(string organizationId, string groupName, string[] memberAccounts, string notes)
+        {
+
+            SetSecurityGroupGeneralSettingsInternal(organizationId, groupName, memberAccounts, notes);
+        }
+
+        internal void SetSecurityGroupGeneralSettingsInternal(string organizationId, string groupName, string[] memberAccounts, string notes)
+        {
+            HostedSolutionLog.LogStart("SetSecurityGroupGeneralSettingsInternal");
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+            HostedSolutionLog.DebugInfo("groupName : {0}", groupName);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            if (string.IsNullOrEmpty(groupName))
+                throw new ArgumentNullException("groupName");
+
+            string path = GetGroupPath(organizationId, groupName);
+
+            DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
+
+            ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.Notes, notes);
+
+            foreach (string userPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "user"))
+            {
+                ActiveDirectoryUtils.RemoveObjectFromGroup(userPath, path);
+            }
+
+            foreach (string groupPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "group"))
+            {
+                ActiveDirectoryUtils.RemoveObjectFromGroup(groupPath, path);
+            }
+
+            foreach (string obj in memberAccounts)
+            {
+                string objPath = GetObjectPath(organizationId, obj);
+                ActiveDirectoryUtils.AddObjectToGroup(objPath, path);
+            }
+
+            entry.CommitChanges();
+        }
+
+        public void AddObjectToSecurityGroup(string organizationId, string accountName, string groupName)
+        {
+            AddObjectToSecurityGroupInternal(organizationId, accountName, groupName);
+        }
+
+        internal void AddObjectToSecurityGroupInternal(string organizationId, string accountName, string groupName)
+        {
+            HostedSolutionLog.LogStart("AddUserToSecurityGroupInternal");
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+            HostedSolutionLog.DebugInfo("accountName : {0}", accountName);
+            HostedSolutionLog.DebugInfo("groupName : {0}", groupName);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            if (string.IsNullOrEmpty(accountName))
+                throw new ArgumentNullException("loginName");
+
+            if (string.IsNullOrEmpty(groupName))
+                throw new ArgumentNullException("groupName");
+
+            string objectPath = GetObjectPath(organizationId, accountName);
+
+            string groupPath = GetGroupPath(organizationId, groupName);
+
+            ActiveDirectoryUtils.AddObjectToGroup(objectPath, groupPath);
+        }
+
+        public void DeleteObjectFromSecurityGroup(string organizationId, string accountName, string groupName)
+        {
+            DeleteObjectFromSecurityGroupInternal(organizationId, accountName, groupName);
+        }
+
+        internal void DeleteObjectFromSecurityGroupInternal(string organizationId, string accountName, string groupName)
+        {
+            HostedSolutionLog.LogStart("AddUserToSecurityGroupInternal");
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+            HostedSolutionLog.DebugInfo("accountName : {0}", accountName);
+            HostedSolutionLog.DebugInfo("groupName : {0}", groupName);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            if (string.IsNullOrEmpty(accountName))
+                throw new ArgumentNullException("loginName");
+
+            if (string.IsNullOrEmpty(groupName))
+                throw new ArgumentNullException("groupName");
+
+            string objectPath = GetObjectPath(organizationId, accountName);
+
+            string groupPath = GetGroupPath(organizationId, groupName);
+
+            ActiveDirectoryUtils.RemoveObjectFromGroup(objectPath, groupPath);
+        }
+
+        #endregion
+
         public override bool IsInstalled()
         {
             return Environment.UserDomainName != Environment.MachineName;
         }
-
-
     }
 }

@@ -122,6 +122,63 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.voicePolicy = value; }
         }
 
+        bool remoteUserAccess;
+        bool publicIMConnectivity;
 
+        bool allowOrganizeMeetingsWithExternalAnonymous;
+
+        int telephony;
+
+        string serverURI;
+
+        string archivePolicy;
+        string telephonyDialPlanPolicy;
+        string telephonyVoicePolicy;
+
+        public bool RemoteUserAccess
+        {
+            get { return this.remoteUserAccess; }
+            set { this.remoteUserAccess = value; }
+        }
+        public bool PublicIMConnectivity
+        {
+            get { return this.publicIMConnectivity; }
+            set { this.publicIMConnectivity = value; }
+        }
+
+        public bool AllowOrganizeMeetingsWithExternalAnonymous
+        {
+            get { return this.allowOrganizeMeetingsWithExternalAnonymous; }
+            set { this.allowOrganizeMeetingsWithExternalAnonymous = value; }
+        }
+
+        public int Telephony
+        {
+            get { return this.telephony; }
+            set { this.telephony = value; }
+        }
+
+        public string ServerURI
+        {
+            get { return this.serverURI; }
+            set { this.serverURI = value; }
+        }
+
+        public string ArchivePolicy
+        {
+            get { return this.archivePolicy; }
+            set { this.archivePolicy = value; }
+        }
+
+        public string TelephonyDialPlanPolicy
+        {
+            get { return this.telephonyDialPlanPolicy; }
+            set { this.telephonyDialPlanPolicy = value; }
+        }
+        public string TelephonyVoicePolicy
+        {
+            get { return this.telephonyVoicePolicy; }
+            set { this.telephonyVoicePolicy = value; }
+        }
     }
 }

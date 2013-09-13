@@ -438,6 +438,12 @@ namespace WebsitePanel.Providers.HostedSolution
                 cmd.Parameters.Add("ImapEnabled", enableIMAP);
                 ExecuteShellCommand(runSpace, cmd);
 
+                //calendar settings
+                if (accountType == ExchangeAccountType.Equipment || accountType == ExchangeAccountType.Room)
+                {
+                    SetCalendarSettings(runSpace, id);
+                }
+
                 //add to the security group
                 cmd = new Command("Add-DistributionGroupMember");
                 cmd.Parameters.Add("Identity", organizationId);
@@ -476,6 +482,16 @@ namespace WebsitePanel.Providers.HostedSolution
             }
         }
 
+
+        internal override void SetCalendarSettings(Runspace runspace, string id)
+        {
+            ExchangeLog.LogStart("SetCalendarSettings");
+            Command cmd = new Command("Set-CalendarProcessing");
+            cmd.Parameters.Add("Identity", id);
+            cmd.Parameters.Add("AutomateProcessing", CalendarProcessingFlags.AutoAccept);
+            ExecuteShellCommand(runspace, cmd);
+            ExchangeLog.LogEnd("SetCalendarSettings");
+        }
 
         internal override void DisableMailboxInternal(string id)
         {
@@ -803,7 +819,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 if (value == 14)
                 {
                     value = (int)rk.GetValue("MsiProductMinor", null);
-                    if (value == 2) bResult = true;
+                    if ((value == 2) | (value == 3)) bResult = true;
                 }
                 rk.Close();
             }

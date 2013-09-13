@@ -44,6 +44,55 @@ namespace WebsitePanel.Providers.HostedSolution
             return de;
         }
 
+        public static string[] GetGroupObjects(string group, string objectType)
+        {
+            return GetGroupObjects(group, objectType, null);
+        }
+
+        public static string[] GetGroupObjects(string group, string objectType, DirectoryEntry entry)
+        {
+            List<string> rets = new List<string>();  
+
+            DirectorySearcher deSearch = new DirectorySearcher
+            {
+                Filter =
+                    "(&(objectClass=" + objectType + "))"
+            };
+
+            if (entry != null)
+            {
+                deSearch.SearchRoot = entry;
+            }
+
+            SearchResultCollection srcObjects = deSearch.FindAll();
+
+            foreach (SearchResult srcObject in srcObjects)
+            {
+                DirectoryEntry de = srcObject.GetDirectoryEntry();
+                PropertyValueCollection props = de.Properties["memberOf"];
+
+                foreach (string str in props)
+                {
+                    string groupName = "";
+
+                    string[] parts = str.Split(',');
+                    for (int i = 0; i < parts.Length; i++)
+                    {
+                        if (parts[i].StartsWith("CN="))
+                        {
+                            if (parts[i].Substring(3) == group)
+                            {
+                                rets.Add(de.Path);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return rets.ToArray();
+        }
+
         public static bool IsUserInGroup(string samAccountName, string group)
         {
             bool res = false;
@@ -328,15 +377,24 @@ namespace WebsitePanel.Providers.HostedSolution
             newGroupObject.Properties[ADAttributes.SAMAccountName].Add(group);
 
             newGroupObject.Properties[ADAttributes.GroupType].Add(-2147483640);
+
             newGroupObject.CommitChanges();
         }
 
-        public static void AddUserToGroup(string userPath, string groupPath)
+        public static void AddObjectToGroup(string objectPath, string groupPath)
         {
-            DirectoryEntry user = new DirectoryEntry(userPath);
+            DirectoryEntry obj = new DirectoryEntry(objectPath);
             DirectoryEntry group = new DirectoryEntry(groupPath);
 
-            group.Invoke("Add", user.Path);
+            group.Invoke("Add", obj.Path);
+        }
+
+        public static void RemoveObjectFromGroup(string obejctPath, string groupPath)
+        {
+            DirectoryEntry obj = new DirectoryEntry(obejctPath);
+            DirectoryEntry group = new DirectoryEntry(groupPath);
+
+            group.Invoke("Remove", obj.Path);
         }
 
         public static bool AdObjectExists(string path)

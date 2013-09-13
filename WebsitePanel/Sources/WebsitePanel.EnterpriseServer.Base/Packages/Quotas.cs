@@ -117,7 +117,8 @@ order by rg.groupOrder
         public const string EXCHANGE2007_ENABLEDPLANSEDITING = "Exchange2007.EnablePlansEditing";  // Enabled plans editing
         public const string EXCHANGE2007_ALLOWLITIGATIONHOLD = "Exchange2007.AllowLitigationHold";
         public const string EXCHANGE2007_RECOVERABLEITEMSSPACE = "Exchange2007.RecoverableItemsSpace";
-		public const string MSSQL2000_DATABASES = "MsSQL2000.Databases";  // Databases
+        public const string EXCHANGE2007_DISCLAIMERSALLOWED = "Exchange2007.DisclaimersAllowed";
+        public const string MSSQL2000_DATABASES = "MsSQL2000.Databases";  // Databases
 		public const string MSSQL2000_USERS = "MsSQL2000.Users";  // Users
 		public const string MSSQL2000_MAXDATABASESIZE = "MsSQL2000.MaxDatabaseSize";  // Max Database Size
 		public const string MSSQL2000_BACKUP = "MsSQL2000.Backup";  // Database Backups
@@ -154,6 +155,7 @@ order by rg.groupOrder
         public const string ORGANIZATION_USERS = "HostedSolution.Users";
         public const string ORGANIZATION_DOMAINS = "HostedSolution.Domains";
         public const string ORGANIZATION_ALLOWCHANGEUPN = "HostedSolution.AllowChangeUPN";
+		public const string ORGANIZATION_SECURITYGROUPMANAGEMENT = "HostedSolution.SecurityGroupManagement";
         public const string CRM_USERS = "HostedCRM.Users";
         public const string CRM_ORGANIZATION = "HostedCRM.Organization";
 
@@ -228,6 +230,7 @@ order by rg.groupOrder
         public const string LYNC_EVMOBILE = "Lync.EVMobile";
         public const string LYNC_EVINTERNATIONAL = "Lync.EVInternational";
         public const string LYNC_ENABLEDPLANSEDITING = "Lync.EnablePlansEditing";
+        public const string LYNC_PHONE = "Lync.PhoneNumbers";
 
         public const string HELICON_ZOO = "HeliconZoo.*";
 

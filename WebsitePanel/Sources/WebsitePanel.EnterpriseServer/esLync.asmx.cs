@@ -151,5 +151,12 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         #endregion
+
+        [WebMethod]
+        public string[] GetPolicyList(int itemId, LyncPolicyType type, string name)
+        {
+            return LyncController.GetPolicyList(itemId, type, name);
+        }
+
     }
 }

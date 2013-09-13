@@ -126,6 +126,9 @@
   <data name="Text.DistributionLists" xml:space="preserve">
     <value>Distribution Lists</value>
   </data>
+  <data name="Text.Disclaimers" xml:space="preserve">
+    <value>Disclaimers</value>
+  </data>
   <data name="Text.DomainNames" xml:space="preserve">
     <value>Domains</value>
   </data>
@@ -197,5 +200,8 @@
   </data>
   <data name="Text.LyncFederationDomains" xml:space="preserve">
     <value>Lync Federation Domains</value>
+  </data>
+  <data name="Text.SecurityGroups" xml:space="preserve">
+    <value>Groups</value>
   </data>
 </root>

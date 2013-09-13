@@ -214,7 +214,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             return OrganizationController.SetUserPassword(itemId, accountId, password);
         }
-        
+
 
 
         [WebMethod]
@@ -239,6 +239,67 @@ namespace WebsitePanel.EnterpriseServer
             return OrganizationController.GetPasswordPolicy(itemId);
         }
 
+
+        #endregion
+
+        #region Security Groups
+
+        [WebMethod]
+        public int CreateSecurityGroup(int itemId, string displayName)
+        {
+            return OrganizationController.CreateSecurityGroup(itemId, displayName);
+        }
+
+        [WebMethod]
+        public OrganizationSecurityGroup GetSecurityGroupGeneralSettings(int itemId, int accountId)
+        {
+            return OrganizationController.GetSecurityGroupGeneralSettings(itemId, accountId);
+        }
+
+        [WebMethod]
+        public int DeleteSecurityGroup(int itemId, int accountId)
+        {
+            return OrganizationController.DeleteSecurityGroup(itemId, accountId);
+        }
+
+        [WebMethod]
+        public int SetSecurityGroupGeneralSettings(int itemId, int accountId, string displayName, string[] memberAccounts, string notes)
+        {
+            return OrganizationController.SetSecurityGroupGeneralSettings(itemId, accountId, displayName, memberAccounts, notes);
+        }
+
+        [WebMethod]
+        public ExchangeAccountsPaged GetOrganizationSecurityGroupsPaged(int itemId, string filterColumn, string filterValue, string sortColumn,
+            int startRow, int maximumRows)
+        {
+            return OrganizationController.GetOrganizationSecurityGroupsPaged(itemId, filterColumn, filterValue, sortColumn, startRow, maximumRows);
+        }
+
+        [WebMethod]
+        public int AddObjectToSecurityGroup(int itemId, int accountId, string groupName)
+        {
+            return OrganizationController.AddObjectToSecurityGroup(itemId, accountId, groupName);
+        }
+
+        [WebMethod]
+        public int DeleteObjectFromSecurityGroup(int itemId, int accountId, string groupName)
+        {
+            return OrganizationController.DeleteObjectFromSecurityGroup(itemId, accountId, groupName);
+        }
+
+        [WebMethod]
+        public ExchangeAccount[] GetSecurityGroupsByMember(int itemId, int accountId)
+        {
+            return OrganizationController.GetSecurityGroupsByMember(itemId, accountId);
+        }
+
+        [WebMethod]
+        public List<ExchangeAccount> SearchOrganizationAccounts(int itemId, string filterColumn, string filterValue,
+            string sortColumn, bool includeOnlySecurityGroups)
+        {
+            return OrganizationController.SearchOrganizationAccounts(itemId, filterColumn, filterValue, sortColumn,
+                includeOnlySecurityGroups);
+        }
 
         #endregion
 

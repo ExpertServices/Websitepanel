@@ -38,6 +38,7 @@ namespace WebsitePanel.EnterpriseServer
         General = 1,
         WebSites = 2,
         VpsExternalNetwork = 3,
-        VpsManagementNetwork = 4
+        VpsManagementNetwork = 4,
+        PhoneNumbers = 5
     }
 }

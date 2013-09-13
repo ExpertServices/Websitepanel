@@ -29,6 +29,8 @@
 using System;
 using System.Collections.Generic;
 using WebsitePanel.Portal.Code.UserControls;
+using WebsitePanel.WebPortal;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.ExchangeServer.UserControls
 {
@@ -54,6 +56,11 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             string instructions = ES.Services.Organizations.GetOrganizationUserSummuryLetter(PanelRequest.ItemID, PanelRequest.AccountID, false, false, false);
             if (!string.IsNullOrEmpty(instructions))
                 tabsList.Add(CreateTab("organization_user_setup", "Tab.Setup"));
+
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
+            if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPMANAGEMENT, cntx) || Utils.CheckQouta(Quotas.EXCHANGE2007_DISTRIBUTIONLISTS, cntx))
+                tabsList.Add(CreateTab("user_memberof", "Tab.MemberOf"));
 
             // find selected menu item
             int idx = 0;

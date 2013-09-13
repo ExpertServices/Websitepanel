@@ -111,6 +111,42 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
+        public int CreateSecurityGroup(string organizationId, string groupName)
+        {
+            return Organization.CreateSecurityGroup(organizationId, groupName);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public OrganizationSecurityGroup GetSecurityGroupGeneralSettings(string groupName, string organizationId)
+        {
+            return Organization.GetSecurityGroupGeneralSettings(groupName, organizationId);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void DeleteSecurityGroup(string groupName, string organizationId)
+        {
+            Organization.DeleteSecurityGroup(groupName, organizationId);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void SetSecurityGroupGeneralSettings(string organizationId, string groupName, string[] memberAccounts, string notes)
+        {
+            Organization.SetSecurityGroupGeneralSettings(organizationId, groupName, memberAccounts, notes);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void AddObjectToSecurityGroup(string organizationId, string accountName, string groupName)
+        {
+            Organization.AddObjectToSecurityGroup(organizationId, accountName, groupName);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void DeleteObjectFromSecurityGroup(string organizationId, string accountName, string groupName)
+        {
+            Organization.DeleteObjectFromSecurityGroup(organizationId, accountName, groupName);
+        }
+
+        [WebMethod, SoapHeader("settings")]
         public void SetUserGeneralSettings(string organizationId, string accountName, string displayName, string password,
             bool hideFromAddressBook, bool disabled, bool locked, string firstName, string initials, string lastName,
             string address, string city, string state, string zip, string country, string jobTitle,
