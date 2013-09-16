@@ -2331,7 +2331,15 @@ namespace WebsitePanel.EnterpriseServer
                 // get mailbox settings
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
-                OrganizationSecurityGroup securityGroup = orgProxy.GetSecurityGroupGeneralSettings(account.AccountName, org.OrganizationId);
+                //OrganizationSecurityGroup securityGroup = orgProxy.GetSecurityGroupGeneralSettings(account.AccountName, org.OrganizationId);
+                string groupName;
+                string[] parts = account.SamAccountName.Split('\\');
+                if (parts.Length == 2) 
+                    groupName = parts[1];
+                else 
+                    groupName = account.SamAccountName;
+
+                OrganizationSecurityGroup securityGroup = orgProxy.GetSecurityGroupGeneralSettings(groupName, org.OrganizationId);
 
                 securityGroup.DisplayName = account.DisplayName;
 
