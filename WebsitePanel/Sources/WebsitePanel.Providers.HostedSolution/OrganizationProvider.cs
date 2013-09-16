@@ -928,8 +928,10 @@ namespace WebsitePanel.Providers.HostedSolution
 
             securityGroup.Notes = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.Notes);
 
-            securityGroup.AccountName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName);
-            securityGroup.SAMAccountName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName);
+            string samAccountName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName);
+
+            securityGroup.AccountName = samAccountName;
+            securityGroup.SAMAccountName = samAccountName;
 
             List<ExchangeAccount> members = new List<ExchangeAccount>();
 
@@ -939,7 +941,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 members.Add(new ExchangeAccount
                 {
-                    AccountName = tmpUser.AccountName,
+                    AccountName = ActiveDirectoryUtils.GetCNFromADPath(userPath),
                     SamAccountName = tmpUser.SamAccountName
                 });
             }
@@ -948,10 +950,12 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 DirectoryEntry groupEntry = ActiveDirectoryUtils.GetADObject(groupPath);
 
+                string tmpSamAccountName = ActiveDirectoryUtils.GetADObjectStringProperty(groupEntry, ADAttributes.SAMAccountName);
+
                 members.Add(new ExchangeAccount
                 {
-                    AccountName = ActiveDirectoryUtils.GetADObjectStringProperty(groupEntry, ADAttributes.SAMAccountName),
-                    SamAccountName = ActiveDirectoryUtils.GetADObjectStringProperty(groupEntry, ADAttributes.SAMAccountName)
+                    AccountName =  tmpSamAccountName,
+                    SamAccountName =  tmpSamAccountName
                 });
             }
 

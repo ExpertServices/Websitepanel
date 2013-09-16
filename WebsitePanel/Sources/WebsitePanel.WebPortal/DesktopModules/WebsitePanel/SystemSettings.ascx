@@ -58,6 +58,18 @@
             </tr>
 		</table>
 	</asp:Panel>
+
+    <wsp:CollapsiblePanel id="HeaderFileManagerSettings" runat="server"
+		TargetControlID="PanelFileManagereSettings" meta:resourcekey="HeaderFileManagerSettings" Text="File Manager"/>
+
+	<asp:Panel ID="PanelFileManagereSettings" runat="server" Height="0" style="overflow:hidden;">
+		<table>
+			<tr>
+				<td class="SubHead" style="width:200px;"><asp:Localize ID="lblFileManagerEditableExtensions" runat="server" meta:resourcekey="lblFileManagerEditableExtensions" /></td>
+				<td><asp:TextBox  TextMode="MultiLine" Rows="10" runat="server" ID="txtFileManagerEditableExtensions" Width="300px" /><asp:Literal ID="litFileManagerEditableExtensions" runat="Server" Text=" (One (1) extension per line)"></asp:Literal></td>
+			</tr>
+		</table>
+	</asp:Panel>
 </div>
 <div class="FormFooter">
 	<asp:Button runat="server" ID="btnSaveSettings" meta:resourcekey="btnSaveSettings" 

@@ -45,6 +45,11 @@ namespace WebsitePanel.EnterpriseServer
 {
     public class FilesController
     {
+        public static SystemSettings GetFileManagerSettings()
+        {
+            return SystemController.GetSystemSettingsInternal(SystemSettings.FILEMANAGER_SETTINGS, false);
+        }
+
         public static OS.OperatingSystem GetOS(int packageId)
         {
             int sid = PackageController.GetPackageServiceId(packageId, ResourceGroups.Os);

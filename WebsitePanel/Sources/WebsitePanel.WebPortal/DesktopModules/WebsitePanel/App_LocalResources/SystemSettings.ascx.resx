@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnSaveSettings.Text" xml:space="preserve">
     <value>Save Settings</value>
@@ -152,5 +152,14 @@
   </data>
   <data name="lclWpiCustomFeeds.Text" xml:space="preserve">
     <value>Custom feeds:</value>
+  </data>
+  <data name="HeaderFileManagerSettings.Text" xml:space="preserve">
+    <value>File Manager</value>
+  </data>
+  <data name="lblFileManagerEditableExtensions.Text" xml:space="preserve">
+    <value>Editable Extensions:</value>
+  </data>
+  <data name="litFileManagerEditableExtensions.Text" xml:space="preserve">
+    <value>(One (1) extension per line)</value>
   </data>
 </root>

@@ -35,8 +35,33 @@ namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class ExchangeMailboxMemberOf : WebsitePanelModuleBase
     {
+        protected PackageContext cntx;
+
+        protected PackageContext Cntx
+        {
+            get
+            {
+                if (cntx == null)
+                {
+                    cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+                }
+
+                return cntx;
+            }
+        }
+
+        protected bool EnableSecurityGroups
+        {
+            get
+            {
+                return Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPMANAGEMENT, Cntx);
+            }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            groups.SecurityGroupsEnabled = EnableSecurityGroups;
+
             if (!IsPostBack)
             {
                 PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
@@ -44,9 +69,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 BindSettings();
 
                 UserInfo user = UsersHelper.GetUser(PanelSecurity.EffectiveUserId);
-
             }
-
         }
 
         private void BindSettings()
@@ -59,21 +82,25 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 // title
                 litDisplayName.Text = mailbox.DisplayName;
-                //Distribution Lists
-                ExchangeAccount[] dLists = ES.Services.ExchangeServer.GetDistributionListsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
-
-                //Security Groups
-                ExchangeAccount[] securGroups = ES.Services.Organizations.GetSecurityGroupsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
 
                 List<ExchangeAccount> groupsList = new List<ExchangeAccount>();
+
+                //Distribution Lists
+                ExchangeAccount[] dLists = ES.Services.ExchangeServer.GetDistributionListsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
                 foreach (ExchangeAccount distList in dLists)
                 {
                     groupsList.Add(distList);
                 }
 
-                foreach (ExchangeAccount secGroup in securGroups)
+                if (EnableSecurityGroups)
                 {
-                    groupsList.Add(secGroup);
+                    //Security Groups
+                    ExchangeAccount[] securGroups = ES.Services.Organizations.GetSecurityGroupsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
+
+                    foreach (ExchangeAccount secGroup in securGroups)
+                    {
+                        groupsList.Add(secGroup);
+                    }
                 }
 
                 groups.SetAccounts(groupsList.ToArray());
@@ -92,18 +119,23 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             try
             {
-                ExchangeAccount[] oldSecGroups = ES.Services.Organizations.GetSecurityGroupsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
-                ExchangeAccount[] oldDistLists = ES.Services.ExchangeServer.GetDistributionListsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
-
                 IList<ExchangeAccount> oldGroups = new List<ExchangeAccount>();
-                foreach (ExchangeAccount distList in oldSecGroups)
+
+                if (EnableSecurityGroups)
                 {
-                    oldGroups.Add(distList);
+                    ExchangeAccount[] oldSecGroups = ES.Services.Organizations.GetSecurityGroupsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
+
+                    foreach (ExchangeAccount secGroup in oldSecGroups)
+                    {
+                        oldGroups.Add(secGroup);
+                    }
                 }
 
-                foreach (ExchangeAccount secGroup in oldDistLists)
+                ExchangeAccount[] oldDistLists = ES.Services.ExchangeServer.GetDistributionListsByMember(PanelRequest.ItemID, PanelRequest.AccountID);
+
+                foreach (ExchangeAccount distList in oldDistLists)
                 {
-                    oldGroups.Add(secGroup);
+                    oldGroups.Add(distList);
                 }
 
                 IDictionary<string, ExchangeAccountType> newGroups = groups.GetFullAccounts();

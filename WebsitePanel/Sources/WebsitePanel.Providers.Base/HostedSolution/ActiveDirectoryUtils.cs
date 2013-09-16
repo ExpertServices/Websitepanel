@@ -255,6 +255,18 @@ namespace WebsitePanel.Providers.HostedSolution
             return ret != null ? ret.ToString() : string.Empty;
         }
 
+        public static string GetCNFromADPath(string path)
+        {
+            string[] parts = path.Substring(path.ToUpper().IndexOf("CN=")).Split(',');
+
+            if (parts.Length > 0)
+            {
+                return parts[0].Substring(3);
+            }
+
+            return null;
+        }
+
         public static string ConvertADPathToCanonicalName(string name)
         {
 

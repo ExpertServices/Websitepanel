@@ -2341,7 +2341,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 foreach (ExchangeAccount user in securityGroup.MembersAccounts)
                 {
-                    OrganizationUser userAccount = GetAccountByAccountName(itemId, user.SamAccountName);
+                    OrganizationUser userAccount = GetAccountByAccountName(itemId, user.AccountName);
 
                     if (userAccount != null)
                     {
