@@ -10,6 +10,7 @@ using WebsitePanel.Providers.HeliconZoo;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.Web;
 using WebsitePanel.Providers.WebAppGallery;
+using WebsitePanel.WebPortal;
 
 namespace WebsitePanel.Portal
 {
@@ -252,9 +253,11 @@ namespace WebsitePanel.Portal
         {
             //http://localhost:9001/Default.aspx?pid=SpaceWebApplicationsGallery&mid=122&ctl=edit&ApplicationID=DotNetNuke&SpaceID=7
 
+            var mid = GetWebAppGaleryModuleId();
+
             List<string> url = new List<string>();
             url.Add("pid=SpaceWebApplicationsGallery");
-            url.Add("mid=122");
+            url.Add(string.Format("{0}={1}", DefaultPage.MODULE_ID_PARAM, mid));
             url.Add("ctl=edit");
             url.Add("SpaceID="+PanelSecurity.PackageId.ToString(CultureInfo.InvariantCulture));
             url.Add("ApplicationID=" + appId);
@@ -266,6 +269,22 @@ namespace WebsitePanel.Portal
             url.Add("ReturnUrl=" + Server.UrlEncode(Request.RawUrl));
 
             return "~/Default.aspx?" + String.Join("&", url.ToArray());
+        }
+
+        private static int GetWebAppGaleryModuleId()
+        {
+            // default value, valid in 2.1.0.166
+            int mid = 124;
+
+            foreach (KeyValuePair<int, PageModule> pair in PortalConfiguration.Site.Modules)
+            {
+                if (string.Equals(pair.Value.ModuleDefinitionID, "webapplicationsgallery", StringComparison.OrdinalIgnoreCase))
+                {
+                    mid = pair.Value.ModuleId;
+                    break;
+                }
+            }
+            return mid;
         }
 
         protected void gvInstalledApplications_RowCommand(object sender, GridViewCommandEventArgs e)
