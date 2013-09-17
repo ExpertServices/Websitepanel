@@ -151,7 +151,7 @@ namespace WebsitePanel.Providers.DNS
 			soa.PrimaryNsServer = System.Net.Dns.GetHostEntry("LocalHost").HostName;
 			soa.PrimaryPerson = "hostmaster";//"hostmaster." + zoneName;
 			records.Add(soa);
-
+            ReloadBIND("reconfig", "");
 			// add DNS zone
 			UpdateZone(zoneName, records);
 		}
@@ -184,7 +184,7 @@ namespace WebsitePanel.Providers.DNS
 			File.Create(GetZoneFilePath(zoneName)).Close();
 
 			// reload config
-            //ReloadBIND(); No need, we don't have a valid NS record, will generate a servfail on bind
+            ReloadBIND("reconfig", "");
 		}
 
 		public virtual DnsRecord[] GetZoneRecords(string zoneName)
@@ -254,9 +254,9 @@ namespace WebsitePanel.Providers.DNS
 			if (File.Exists(zonePath))
 				File.Delete(zonePath);
 
-			// reload config
+			// reload named.conf
             ReloadBIND("reconfig", "");
-		}
+        }
 		#endregion
 
 		#region Resource records
@@ -818,6 +818,7 @@ namespace WebsitePanel.Providers.DNS
 
 			// update zone file
 			UpdateZoneFile(zoneName, sb.ToString());
+            ReloadBIND("reload", zoneName);
 		}
 
 		private string CorrectRecordName(string zoneName, string host)
@@ -911,11 +912,7 @@ namespace WebsitePanel.Providers.DNS
 		{
 			string path = GetZoneFilePath(zoneName);
 			File.WriteAllText(path, zoneContent);
-            
-            // This is need so bind reloads after update else you will get serverfail if new zone
-            // If update the change will not be accesseble from bind
-            ReloadBIND("reload", zoneName);
-		}
+        }
 
 		private string GetZoneFilePath(string zoneName)
 		{
@@ -932,7 +929,7 @@ namespace WebsitePanel.Providers.DNS
             // We don't use a bat file for reloading all zone files.. that's crazy talk
             // Both bind 8 & 9 supports reloadind it's config and or reloading a single zone file
             // rndc reconfig Will reload named.conf (perfect when adding a primary zone)
-            // rnd reload mydomain.com will reload the domain and only that domain
+            // rndc reload mydomain.com will reload the domain and only that domain
             // Used Bind Reload Batch for inputing correct path to rndc
             // Best Reguards, kenneth@cancode.se
             Process rndc = new Process();
