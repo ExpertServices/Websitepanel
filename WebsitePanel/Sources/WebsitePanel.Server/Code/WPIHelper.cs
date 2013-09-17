@@ -266,6 +266,20 @@ namespace WebsitePanel.Server.Code
 
             return products;
         }
+
+        public Product GetWPIProductById(string productId)
+        {
+            foreach (Product product in _productManager.Products)
+            {
+                if (0 == String.Compare(product.ProductId, productId, StringComparison.OrdinalIgnoreCase))
+                {
+                    return product;
+                }
+
+            }
+
+            return null; //not found
+        }
         
         public List<Product> GetProductsToInstall(IEnumerable<string> productIdsToInstall)
         {
@@ -582,7 +596,6 @@ namespace WebsitePanel.Server.Code
         private void Initialize()
         {
             // create cache folder if not exists
-            //_webPIinstallersFolder = Environment.ExpandEnvironmentVariables(@"%LocalAppData%\Microsoft\Web Platform Installer\installers");
             _webPIinstallersFolder = Path.Combine(
                 Environment.ExpandEnvironmentVariables("%SystemRoot%"),
                 "Temp\\zoo.wpi\\AppData\\Local\\Microsoft\\Web Platform Installer\\installers");

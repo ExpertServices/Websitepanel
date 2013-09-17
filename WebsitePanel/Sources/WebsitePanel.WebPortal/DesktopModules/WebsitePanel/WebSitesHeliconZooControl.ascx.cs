@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Web;
@@ -9,6 +10,7 @@ using WebsitePanel.Providers.HeliconZoo;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.Web;
 using WebsitePanel.Providers.WebAppGallery;
+using WebsitePanel.WebPortal;
 
 namespace WebsitePanel.Portal
 {
@@ -32,6 +34,19 @@ namespace WebsitePanel.Portal
             ViewState["WebSitePackageId"] = site.PackageId;
 
             BindEngines(site);
+            try
+            {
+                BindInstalledApplications();
+            }
+            catch (Exception ex)
+            {
+                lblConsole.Text = "Zoo Module is not installed. Please ask your system administrator to install Zoo on the server to Configuration\\Server\\Web Application Engines.";
+                lblConsole.ForeColor = Color.Red;
+                lblConsole.Font.Size = 16;
+
+                return; // Exit
+            }
+            
             BindApplications();
         }
 
@@ -42,12 +57,17 @@ namespace WebsitePanel.Portal
                 ES.Services.HeliconZoo.GetAllowedHeliconZooQuotasForPackage(site.PackageId);
             Array.Sort(allowedEngineArray, new ShortHeliconZooEngineComparer());
 
-            // get enabled engines for this site
+
+            
+
+            // get enabled engines for this site from applicationHost.config
             string[] enabledEngineNames = ES.Services.HeliconZoo.GetEnabledEnginesForSite(site.SiteId, site.PackageId);
             ViewState["EnabledEnginesNames"] = enabledEngineNames;
+
+            //console allowed in applicationHost.config
+            ViewState["IsZooWebConsoleEnabled"] = enabledEngineNames.Contains("console", StringComparer.OrdinalIgnoreCase);
+    
             
-            //EnabledEnginesList.DataSource = enabledEngineNames;
-            //EnabledEnginesList.DataBind();
 
 
             List<ShortHeliconZooEngine> allowedEngines = new List<ShortHeliconZooEngine>(allowedEngineArray);
@@ -55,18 +75,51 @@ namespace WebsitePanel.Portal
             foreach (ShortHeliconZooEngine engine in allowedEngines)
             {
                 engine.Name = engine.Name.Replace("HeliconZoo.", "");
-                engine.Enabled = enabledEngineNames.Contains(engine.Name, StringComparer.OrdinalIgnoreCase);
+                //engine.Enabled = enabledEngineNames.Contains(engine.Name, StringComparer.OrdinalIgnoreCase);
+
+                if (engine.Name == "console")
+                {
+                    //console allowed in hosting plan
+                    ViewState["IsZooWebConsoleEnabled"] = engine.Enabled;
+                }
+   
             }
 
             ViewState["AllowedEngines"] = allowedEngines;
 
-            //AllowedEnginesList.DataSource = allowedEngines;
-            //AllowedEnginesList.DataBind();
+        }
+
+        private void BindInstalledApplications()
+        {
+            ViewState["IsZooEnabled"] = false;
+            var installedApplications = ES.Services.WebServers.GetZooApplications(PanelRequest.ItemID);
+            ViewState["IsZooEnabled"] = true;
+
+            if ((bool) ViewState["IsZooWebConsoleEnabled"])
+            {
+                gvInstalledApplications.DataSource = installedApplications;
+                gvInstalledApplications.DataBind();
+
+                
+            }
+            else
+            {
+                HideInstalledApplications();
+            }
+        }
+
+        private void HideInstalledApplications()
+        {
+            gvInstalledApplications.Visible = false;
+            lblConsole.Visible = false;
         }
 
         private void BindApplications()
         {
+
+
             WebAppGalleryHelpers helper = new WebAppGalleryHelpers();
+
             GalleryApplicationsResult result = helper.GetGalleryApplications("ZooTemplate", PanelSecurity.PackageId);
 
             List<GalleryApplication> applications = result.Value as List<GalleryApplication>;
@@ -77,18 +130,33 @@ namespace WebsitePanel.Portal
             {
                 foreach (GalleryApplication application in applications)
                 {
+                    
+
                     foreach (string keyword in application.Keywords)
                     {
+                        bool appAlreadyAdded = false;
                         if (keyword.StartsWith("ZooEngine", StringComparison.OrdinalIgnoreCase))
                         {
                             string appEngine = keyword.Substring("ZooEngine".Length);
+                            
                             foreach (ShortHeliconZooEngine engine in allowedEngines)
                             {
+                                if (!engine.Enabled)
+                                {
+                                    continue; //skip
+                                }
+
                                 if (string.Equals(appEngine, engine.KeywordedName, StringComparison.OrdinalIgnoreCase))
                                 {
+                                    
                                     filteredApplications.Add(application);
+                                    appAlreadyAdded = true;
                                     break;
                                 }
+                            }
+                            if (appAlreadyAdded)
+                            {
+                                break;
                             }
                         }
                     }
@@ -120,6 +188,11 @@ namespace WebsitePanel.Portal
 
         private void UpdatedAllowedEngines()
         {
+            if (!(bool) ViewState["IsZooEnabled"])
+            {
+                return; // exit;
+            }
+
             List<ShortHeliconZooEngine> allowedEngines = (List<ShortHeliconZooEngine>)ViewState["AllowedEngines"];
             string[] enabledEngineNames = (string[])ViewState["EnabledEnginesNames"];
 
@@ -180,9 +253,11 @@ namespace WebsitePanel.Portal
         {
             //http://localhost:9001/Default.aspx?pid=SpaceWebApplicationsGallery&mid=122&ctl=edit&ApplicationID=DotNetNuke&SpaceID=7
 
+            var mid = GetWebAppGaleryModuleId();
+
             List<string> url = new List<string>();
             url.Add("pid=SpaceWebApplicationsGallery");
-            url.Add("mid=122");
+            url.Add(string.Format("{0}={1}", DefaultPage.MODULE_ID_PARAM, mid));
             url.Add("ctl=edit");
             url.Add("SpaceID="+PanelSecurity.PackageId.ToString(CultureInfo.InvariantCulture));
             url.Add("ApplicationID=" + appId);
@@ -194,6 +269,61 @@ namespace WebsitePanel.Portal
             url.Add("ReturnUrl=" + Server.UrlEncode(Request.RawUrl));
 
             return "~/Default.aspx?" + String.Join("&", url.ToArray());
+        }
+
+        private static int GetWebAppGaleryModuleId()
+        {
+            // default value, valid in 2.1.0.166
+            int mid = 124;
+
+            foreach (KeyValuePair<int, PageModule> pair in PortalConfiguration.Site.Modules)
+            {
+                if (string.Equals(pair.Value.ModuleDefinitionID, "webapplicationsgallery", StringComparison.OrdinalIgnoreCase))
+                {
+                    mid = pair.Value.ModuleId;
+                    break;
+                }
+            }
+            return mid;
+        }
+
+        protected void gvInstalledApplications_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "EnableConsole")
+            {
+                UpdatedAllowedEngines();
+
+                string appName = e.CommandArgument.ToString();
+
+                ES.Services.WebServers.SetZooConsoleEnabled(PanelRequest.ItemID, appName);
+
+                BindInstalledApplications();
+            }
+
+            if (e.CommandName == "DisableConsole")
+            {
+                UpdatedAllowedEngines();
+
+                string appName = e.CommandArgument.ToString();
+
+                ES.Services.WebServers.SetZooConsoleDisabled(PanelRequest.ItemID, appName);
+
+                BindInstalledApplications();
+            }
+
+          
+        }
+
+
+        protected bool IsNullOrEmpty(string value)
+        {
+            return string.IsNullOrEmpty(value);
+        }
+
+        protected string GetConsoleFullUrl(string consoleUrl)
+        {
+            WebSite site = ES.Services.WebServers.GetWebSite(PanelRequest.ItemID);
+            return "http://" + site.Name + consoleUrl;
         }
     }
 }

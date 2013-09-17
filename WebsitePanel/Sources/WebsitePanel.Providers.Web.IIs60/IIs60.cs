@@ -2455,10 +2455,37 @@ namespace WebsitePanel.Providers.Web
 			throw new NotImplementedException();
 		}
 
-		#endregion
+	   
 
-		#region Private Helper Methods
-		protected string GetVirtualDirectoryPath(string siteId, string directoryName)
+	    #endregion
+
+        #region Helicon Zoo
+        public virtual WebVirtualDirectory[] GetZooApplications(string siteId)
+        {
+            return new WebVirtualDirectory[] { };
+        }
+
+        public virtual StringResultObject SetZooEnvironmentVariable(string siteId, string appName, string envName, string envValue)
+	    {
+	        //pass
+            return new StringResultObject();
+            
+	    }
+
+        public virtual StringResultObject SetZooConsoleEnabled(string siteId, string appName)
+	    {
+            return new StringResultObject();
+	    }
+
+	    public virtual StringResultObject SetZooConsoleDisabled(string siteId, string appName)
+	    {
+            return new StringResultObject();
+	    }
+
+	    #endregion
+
+        #region Private Helper Methods
+        protected string GetVirtualDirectoryPath(string siteId, string directoryName)
 		{
 			string path = siteId + "/ROOT";
 			if (!String.IsNullOrEmpty(directoryName))

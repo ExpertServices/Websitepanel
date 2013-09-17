@@ -123,4 +123,18 @@
   <data name="SelectWebEngine.Text" xml:space="preserve">
     <value>Select web application engine to set up</value>
   </data>
+  <data name="gvInstalledApplicationsEnableConsole.Header" xml:space="preserve">
+    <value>Web console</value>
+  </data>
+
+  <data name="btnEnable.Text" xml:space="preserve">
+    <value>Enable</value>
+  </data>
+  <data name="btnDisable.Text" xml:space="preserve">
+    <value>Disable</value>
+  </data>
+  <data name="EnableWebConsole.Text" xml:space="preserve">
+    <value>Enable web console</value>
+  </data>
+
 </root>

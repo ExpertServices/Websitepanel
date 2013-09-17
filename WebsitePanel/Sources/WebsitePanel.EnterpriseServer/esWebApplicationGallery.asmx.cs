@@ -80,6 +80,14 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public GalleryApplicationsResult GetInstaledApplications(int packageId, string categoryId)
+        {
+            WebAppGalleryController.InitFeeds(SecurityContext.User.UserId, packageId);
+            return WebAppGalleryController.GetGalleryApplications(packageId, categoryId);
+        }
+
+
+        [WebMethod]
         public GalleryApplicationsResult GetGalleryApplicationsFiltered(int packageId, string pattern)
         {
             WebAppGalleryController.InitFeeds(SecurityContext.User.UserId, packageId);

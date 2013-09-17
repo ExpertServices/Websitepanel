@@ -121,6 +121,12 @@ namespace WebsitePanel.Providers.Web
         void UpdateHeliconApeGroup(string siteId, WebGroup group);
         void DeleteHeliconApeGroup(string siteId, string groupName);
 
+        // Helicon Zoo
+	    WebVirtualDirectory[] GetZooApplications(string siteId);
+        StringResultObject SetZooEnvironmentVariable(string siteId, string appName, string envName, string envValue);
+        StringResultObject SetZooConsoleEnabled(string siteId, string appName);
+        StringResultObject SetZooConsoleDisabled(string siteId, string appName);
+
 
 		// web app gallery
         bool CheckLoadUserProfile();
