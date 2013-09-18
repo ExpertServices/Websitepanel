@@ -621,11 +621,12 @@ namespace WebsitePanel.Server.Code
 
             _productManager = new ProductManager();
 
-            if (TryLoadFeeds())
+            try
             {
+                TryLoadFeeds();
                 // ok, all feeds loaded
             }
-            else
+            catch(Exception ex1)
             {
                 // feed loading failed
 
@@ -636,23 +637,25 @@ namespace WebsitePanel.Server.Code
 
                     // re-create product manager
                     _productManager = new ProductManager();
-                    if (TryLoadFeeds())
+
+                    try
                     {
                         // loaded first (default) feed only
+                        TryLoadFeeds();
                     }
-                    else
+                    catch(Exception ex2)
                     {
-                        throw new Exception(string.Format("WpiHelper: download all feeds failed"));
+                        throw new Exception(string.Format("WpiHelper: download first feed failed: {0}", ex2), ex2);
                     }
                 }
                 else
                 {
-                    throw new Exception(string.Format("WpiHelper: download all feeds failed"));
+                    throw new Exception(string.Format("WpiHelper: download all ({0}) feeds failed: {1}", _feeds.Count, ex1), ex1);
                 }
             }
         }
 
-        private bool TryLoadFeeds()
+        private void TryLoadFeeds()
         {
             string loadingFeed = null;
 
@@ -680,12 +683,9 @@ namespace WebsitePanel.Server.Code
                     // error occured on loading this feed
                     // log this
                     WriteLog(string.Format("Feed {0} loading error: {1}", loadingFeed, ex));
-
-                    return false;
                 }
+                throw;
             }
-
-            return true;
         }
 
         private Language GetLanguage(string languageId)
