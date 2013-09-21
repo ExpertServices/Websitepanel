@@ -89,10 +89,12 @@ span.ValidationMessageBlock {
 
 <fieldset>
   <legend>
-      <span>Helicon Zoo engine quotas settings</span>
+      <span>Helicon Zoo settings</span>
   </legend>
   <div class="FormBody">
-      <asp:CheckBox runat="server" ID="QuotasEnabled" Text="Enable Quotas"/>
+      <asp:CheckBox runat="server" ID="QuotasEnabled" Text="Enable hosting plan controls for web engines."/>
+      <br />
+      <asp:CheckBox runat="server" ID="WebCosoleEnabled" Text="Enable web console."/>
   </div>
 </fieldset>
 

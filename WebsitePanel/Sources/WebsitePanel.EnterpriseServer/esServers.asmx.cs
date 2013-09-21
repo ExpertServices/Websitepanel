@@ -751,7 +751,13 @@ namespace WebsitePanel.EnterpriseServer
             InitWPIFeeds(serverId);
             return OperatingSystemController.GetWPIProductsFiltered(serverId, keywordId);
         }
-
+        
+        [WebMethod]
+        public WPIProduct GetWPIProductById(int serverId, string productdId)
+        {
+            InitWPIFeeds(serverId);
+            return OperatingSystemController.GetWPIProductById(serverId, productdId);
+        }
 
         [WebMethod]
         public WPIProduct[] GetWPIProductsWithDependencies(int serverId, string[] products)

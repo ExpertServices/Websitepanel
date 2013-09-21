@@ -1563,11 +1563,17 @@ namespace WebsitePanel.Providers.Web
 		/// <returns>virtual directories that belong to site with supplied id.</returns>
 		public override WebVirtualDirectory[] GetVirtualDirectories(string siteId)
 		{
+            
+
             using (ServerManager srvman = webObjectsSvc.GetServerManager())
             {
                 return GetVirtualDirectories(srvman, siteId);
             }
 		}
+
+      
+
+                        
 
         private WebVirtualDirectory[] GetVirtualDirectories(ServerManager srvman, string siteId)
         {
@@ -1938,7 +1944,6 @@ namespace WebsitePanel.Providers.Web
             if (!string.IsNullOrEmpty(siteId))
             {
                 // Check the web site app pool in integrated pipeline mode
-
                 WebSite webSite = null;
                 webSite = webObjectsSvc.GetWebSiteFromIIS(srvman, siteId);
                 if (webSite == null)
@@ -2587,9 +2592,88 @@ namespace WebsitePanel.Providers.Web
 
         #endregion
 
+        #region Helicon Zoo
+
+        public override WebVirtualDirectory[] GetZooApplications(string siteId)
+        {
+            using (ServerManager srvman = webObjectsSvc.GetServerManager())
+            {
+                return webObjectsSvc.GetZooApplications(srvman, siteId);
+            }
+        }
+
+        public override StringResultObject SetZooEnvironmentVariable(string siteId, string appName, string envName, string envValue)
+        {
+            StringResultObject result = new StringResultObject();
+
+            try
+            {
+                using (ServerManager srvman = webObjectsSvc.GetServerManager())
+                {
+                    webObjectsSvc.SetZooEnvironmentVariable(srvman, siteId, appName, envName, envValue);
+                }
+                
+                result.IsSuccess = true;
+            }
+            catch (Exception e)
+            {
+                result.AddError("Exception", e);
+            }
+
+            return result;
+        }
+
+
+        public override StringResultObject SetZooConsoleEnabled(string siteId, string appName)
+        {
+            StringResultObject result = new StringResultObject();
+
+            try
+            {
+                using (ServerManager srvman = webObjectsSvc.GetServerManager())
+                {
+                    webObjectsSvc.SetZooConsoleEnabled(srvman, siteId, appName);
+                }
+
+                result.IsSuccess = true;
+            }
+            catch (Exception e)
+            {
+                result.AddError("Exception", e);
+            }
+
+            return result;
+        }
+
+        public override StringResultObject SetZooConsoleDisabled(string siteId, string appName)
+        {
+            StringResultObject result = new StringResultObject();
+
+            try
+            {
+                using (ServerManager srvman = webObjectsSvc.GetServerManager())
+                {
+                    webObjectsSvc.SetZooConsoleDisabled(srvman, siteId, appName);
+                }
+
+                result.IsSuccess = true;
+            }
+            catch (Exception e)
+            {
+                result.AddError("Exception", e);
+            }
+
+            return result;
+        }
+
+
+        
+
+        #endregion
+
         #region Secured Helicon Ape Users
 
-	    public static string GeneratePasswordHash(HtaccessUser user)
+        public static string GeneratePasswordHash(HtaccessUser user)
 	    {
 	        if (HtaccessFolder.AUTH_TYPE_BASIC == user.AuthType)
 	        {

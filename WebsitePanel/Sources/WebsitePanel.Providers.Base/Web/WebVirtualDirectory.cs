@@ -78,6 +78,7 @@ namespace WebsitePanel.Providers.Web
         private bool redirectPermanent;
         private bool sharePointInstalled;
         private bool iis7;
+        private string consoleUrl;
 
         public string AnonymousUsername
         {
@@ -262,6 +263,12 @@ namespace WebsitePanel.Providers.Web
         {
             get { return this.iis7; }
             set { this.iis7 = value; }
+        }
+        
+        public string ConsoleUrl
+        {
+            get { return consoleUrl; }
+            set { consoleUrl = value; }
         }
 
 		#region Web Deploy Publishing Properties

@@ -85,6 +85,8 @@ namespace WebsitePanel.EnterpriseServer
                 allowedEngines.Add( new ShortHeliconZooEngine(){
                     Name = (string)reader["QuotaName"],
                     DisplayName= (string)reader["QuotaDescription"],
+                    Enabled = true
+
                 });
             }
 
@@ -117,6 +119,21 @@ namespace WebsitePanel.EnterpriseServer
             HeliconZoo zooServer = new HeliconZoo();
             ServiceProviderProxy.Init(zooServer, serviceId);
             zooServer.SetEnabledEnginesForSite(siteId, engines);
+        }
+
+
+        public static bool IsWebCosoleEnabled(int serviceId)
+        {
+            HeliconZoo zooServer = new HeliconZoo();
+            ServiceProviderProxy.Init(zooServer, serviceId);
+            return zooServer.IsWebCosoleEnabled();
+        }
+
+        public static void SetWebCosoleEnabled(int serviceId, bool enabled)
+        {
+            HeliconZoo zooServer = new HeliconZoo();
+            ServiceProviderProxy.Init(zooServer, serviceId);
+            zooServer.SetWebCosoleEnabled(enabled);
         }
 
 
@@ -183,7 +200,7 @@ namespace WebsitePanel.EnterpriseServer
                 DataProvider.AddHeliconZooQuota(groupId, quotaId, 
                     HeliconZooQuotaPrefix+engine.name, 
                     engine.displayName,
-                    order++);
+                    existingQuotas.Count + order++);
             }
         }
 
