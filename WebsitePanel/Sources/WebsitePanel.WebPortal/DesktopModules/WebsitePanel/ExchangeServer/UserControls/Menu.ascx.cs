@@ -249,6 +249,17 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             groups.Add(lyncGroup);
         }
 
+        private void PrepareEnterpriseStorageMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath)
+        {
+            MenuGroup enterpriseStorageGroup =
+                   new MenuGroup(GetLocalizedString("Text.EnterpriseStorageGroup"), imagePath + "spaces16.png");
+
+            enterpriseStorageGroup.MenuItems.Add(CreateMenuItem("EnterpriseStorageSpaces", "enterprisestorage_spaces"));
+
+            groups.Add(enterpriseStorageGroup);
+        }
+
+
         private List<MenuGroup> PrepareMenu()
         {
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
@@ -288,6 +299,11 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             //Lync Menu
             if (cntx.Groups.ContainsKey(ResourceGroups.Lync))
                 PrepareLyncMenu(cntx, groups, imagePath);
+
+            //EnterpriseStorage Menu
+            if (cntx.Groups.ContainsKey(ResourceGroups.EnterpriseStorage))
+                PrepareEnterpriseStorageMenu(cntx, groups, imagePath);
+
 
             return groups;
         }

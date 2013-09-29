@@ -73,8 +73,6 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 foreach (string str in props)
                 {
-                    string groupName = "";
-
                     string[] parts = str.Split(',');
                     for (int i = 0; i < parts.Length; i++)
                     {

@@ -43,6 +43,7 @@ namespace WebsitePanel.Providers.OS
         private long size;
         private long quota;
         private bool isEmpty;
+        private bool isPublished;
 
         public SystemFile()
         {
@@ -89,10 +90,23 @@ namespace WebsitePanel.Providers.OS
             set { size = value; }
         }
 
+        public long Quota
+        {
+            get { return quota; }
+            set { quota = value; }
+        }
+
         public bool IsEmpty
         {
             get { return this.isEmpty; }
             set { this.isEmpty = value; }
         }
+
+        public bool IsPublished
+        {
+            get { return this.isPublished; }
+            set { this.isPublished = value; }
+        }
+
     }
 }

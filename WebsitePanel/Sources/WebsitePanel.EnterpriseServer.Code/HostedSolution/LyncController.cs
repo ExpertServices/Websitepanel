@@ -1050,7 +1050,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                     ret = lync.GetPolicyList(type, name);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
             finally
