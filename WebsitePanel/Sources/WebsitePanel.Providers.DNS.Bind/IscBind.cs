@@ -926,22 +926,37 @@ namespace WebsitePanel.Providers.DNS
 
 		private void ReloadBIND(string Args, string zoneName)
 		{
-            // We don't use a bat file for reloading all zone files.. that's crazy talk
-            // Both bind 8 & 9 supports reloadind it's config and or reloading a single zone file
-            // rndc reconfig Will reload named.conf (perfect when adding a primary zone)
-            // rndc reload mydomain.com will reload the domain and only that domain
-            // Used Bind Reload Batch for inputing correct path to rndc
-            // Best Reguards, kenneth@cancode.se
-            Process rndc = new Process();
 
-            rndc.StartInfo.FileName = BindReloadBatch;
-            string rndcArguments = Args;
-            if (zoneName.Length > 0) {
-                rndcArguments += " " + zoneName; 
+            // Do we have a rndc.exe? if so use it - improves handling
+            if (BindReloadBatch.IndexOf("rndc.exe") > 0)
+            {
+                Process rndc = new Process();
+                rndc.StartInfo.FileName = BindReloadBatch;
+                string rndcArguments = Args;
+                if (zoneName.Length > 0)
+                {
+                    rndcArguments += " " + zoneName;
+                }
+                rndc.StartInfo.Arguments = rndcArguments;
+                rndc.StartInfo.CreateNoWindow = true;
+                rndc.Start();
+
+                /*
+                 * Can't figure out how to log the output of the process to auditlog. If someone could be of assistans and fix this.
+                 * it's rndcOutput var that should be written to audit log.s
+                 * 
+                string rndcOutput = "";
+                while (!rndc.StandardOutput.EndOfStream)
+                {
+                    rndcOutput += rndc.StandardOutput.ReadLine();
+                } 
+                */
+
             }
-            rndc.StartInfo.Arguments = rndcArguments;
-            rndc.StartInfo.CreateNoWindow = true;
-            rndc.Start();
+            else
+            {
+                FileUtils.ExecuteSystemCommand(BindReloadBatch, "");
+            }
 		}
 
 		#endregion
