@@ -32,11 +32,11 @@ namespace WebsitePanel.Providers.HostedSolution
 {
     public interface IOrganization
     {
-        Organization CreateOrganization(string organizationId);
+        Organization CreateOrganization(string organizationId, bool enableDefaultGroup);
 
         void DeleteOrganization(string organizationId);
 
-        int CreateUser(string organizationId, string loginName, string displayName, string upn, string password, bool enabled);
+        int CreateUser(string organizationId, string loginName, string displayName, string upn, string password, bool enabled, bool enableDefaultGroup);
 
         void DeleteUser(string loginName, string organizationId);
 
