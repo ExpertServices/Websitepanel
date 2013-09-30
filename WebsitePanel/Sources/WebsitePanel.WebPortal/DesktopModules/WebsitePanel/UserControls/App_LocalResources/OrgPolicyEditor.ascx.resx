@@ -112,18 +112,12 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="secMailboxPassword.Text" xml:space="preserve">
-    <value>User Password Policy</value>
-  </data>
-  <data name="secOrg.Text" xml:space="preserve">
-    <value>Organization Id Policy</value>
-  </data>
-  <data name="threeOrg.Text" xml:space="preserve">
-    <value>Organization Policy</value>
+  <data name="enablePolicyCheckBox.Text" xml:space="preserve">
+    <value>Enable Policy</value>
   </data>
 </root>

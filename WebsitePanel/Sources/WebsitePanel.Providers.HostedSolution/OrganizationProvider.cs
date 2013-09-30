@@ -206,12 +206,12 @@ namespace WebsitePanel.Providers.HostedSolution
             return ActiveDirectoryUtils.AdObjectExists(orgPath);
         }
 
-        public Organization CreateOrganization(string organizationId)
+        public Organization CreateOrganization(string organizationId, bool enableDefaultGroup)
         {
-            return CreateOrganizationInternal(organizationId);
+            return CreateOrganizationInternal(organizationId, enableDefaultGroup);
         }
 
-        internal Organization CreateOrganizationInternal(string organizationId)
+        internal Organization CreateOrganizationInternal(string organizationId, bool enableDefaultGroup)
         {
             HostedSolutionLog.LogStart("CreateOrganizationInternal");
             HostedSolutionLog.DebugInfo("OrganizationId : {0}", organizationId);
@@ -232,15 +232,20 @@ namespace WebsitePanel.Providers.HostedSolution
                 ActiveDirectoryUtils.CreateOrganizationalUnit(organizationId, parentPath);
                 ouCreated = true;
 
-                //Create security group
-                ActiveDirectoryUtils.CreateGroup(orgPath, organizationId);
-                groupCreated = true;
-
+                if (enableDefaultGroup)
+                {
+                    //Create security group
+                    ActiveDirectoryUtils.CreateGroup(orgPath, organizationId);
+                    groupCreated = true;
+                }
 
                 org = new Organization();
                 org.OrganizationId = organizationId;
                 org.DistinguishedName = ActiveDirectoryUtils.RemoveADPrefix(orgPath);
-                org.SecurityGroup = ActiveDirectoryUtils.RemoveADPrefix(GetGroupPath(organizationId));
+                org.SecurityGroup = enableDefaultGroup
+                    ? ActiveDirectoryUtils.RemoveADPrefix(GetGroupPath(organizationId))
+                    : "";
+
                 org.GroupName = organizationId;
             }
             catch (Exception ex)
@@ -356,12 +361,14 @@ namespace WebsitePanel.Providers.HostedSolution
                 throw new ArgumentNullException("organizationId");
 
             string groupPath = GetGroupPath(organizationId);
-            ActiveDirectoryUtils.DeleteADObject(groupPath);
+            try
+            {
+                ActiveDirectoryUtils.DeleteADObject(groupPath);
+            }
+            catch { /* skip */ }
 
             string path = GetOrganizationPath(organizationId);
             ActiveDirectoryUtils.DeleteADObject(path, true);
-
-
 
             HostedSolutionLog.LogEnd("DeleteOrganizationInternal");
         }
@@ -371,12 +378,12 @@ namespace WebsitePanel.Providers.HostedSolution
 
         #region Users
 
-        public int CreateUser(string organizationId, string loginName, string displayName, string upn, string password, bool enabled)
+        public int CreateUser(string organizationId, string loginName, string displayName, string upn, string password, bool enabled, bool enableDefaultGroup)
         {
-            return CreateUserInternal(organizationId, loginName, displayName, upn, password, enabled);
+            return CreateUserInternal(organizationId, loginName, displayName, upn, password, enabled, enableDefaultGroup);
         }
 
-        internal int CreateUserInternal(string organizationId, string loginName, string displayName, string upn, string password, bool enabled)
+        internal int CreateUserInternal(string organizationId, string loginName, string displayName, string upn, string password, bool enabled, bool enableDefaultGroup)
         {
             HostedSolutionLog.LogStart("CreateUserInternal");
             HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
@@ -414,12 +421,14 @@ namespace WebsitePanel.Providers.HostedSolution
                     return Errors.AD_OBJECT_ALREADY_EXISTS;
                 }
 
-                string groupPath = GetGroupPath(organizationId);
-                HostedSolutionLog.DebugInfo("Group retrieved: {0}", groupPath);
+                if (enableDefaultGroup)
+                {
+                    string groupPath = GetGroupPath(organizationId);
+                    HostedSolutionLog.DebugInfo("Group retrieved: {0}", groupPath);
 
-
-                ActiveDirectoryUtils.AddObjectToGroup(userPath, groupPath);
-                HostedSolutionLog.DebugInfo("Added to group: {0}", groupPath);
+                    ActiveDirectoryUtils.AddObjectToGroup(userPath, groupPath);
+                    HostedSolutionLog.DebugInfo("Added to group: {0}", groupPath);
+                }
             }
             catch (Exception e)
             {

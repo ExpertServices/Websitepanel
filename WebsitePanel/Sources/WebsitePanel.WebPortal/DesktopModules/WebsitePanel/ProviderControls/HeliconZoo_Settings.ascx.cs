@@ -68,7 +68,7 @@ public partial class HeliconZoo_Settings : WebsitePanelControlBase, IHostingServ
 
     private void BindHostingPackages()
     {
-        // TODO: try...catch?
+
         WPIProduct[] products = null;
         try
         {
@@ -92,6 +92,12 @@ public partial class HeliconZoo_Settings : WebsitePanelControlBase, IHostingServ
 
     private void BindEngines()
     {
+        WPIProduct zooModule =  ES.Services.Servers.GetWPIProductById(PanelRequest.ServerId, "HeliconZooModule");
+        if (!zooModule.IsInstalled || zooModule.IsUpgrade)
+        {
+            HostModule.ShowWarningMessage("Zoo Module is not installed or out-of-date. To proceed press 'Add' or 'Update' next to Helicon Zoo Module below, then press 'Install'.");
+        }
+
         // get all engines from IIS
         HeliconZooEngine[] engineList = ES.Services.HeliconZoo.GetEngines(PanelRequest.ServiceId);
 
@@ -114,6 +120,8 @@ public partial class HeliconZoo_Settings : WebsitePanelControlBase, IHostingServ
             // bind 'Enable quotas' checkbox
             bool enabled = ES.Services.HeliconZoo.IsEnginesEnabled(PanelRequest.ServiceId);
             QuotasEnabled.Checked = !enabled;
+
+            WebCosoleEnabled.Checked = ES.Services.HeliconZoo.IsWebCosoleEnabled(PanelRequest.ServiceId);
         }
         else
         {
@@ -139,6 +147,8 @@ public partial class HeliconZoo_Settings : WebsitePanelControlBase, IHostingServ
 
         // save switcher
         ES.Services.HeliconZoo.SwithEnginesEnabled(PanelRequest.ServiceId, !QuotasEnabled.Checked);
+
+        ES.Services.HeliconZoo.SetWebCosoleEnabled(PanelRequest.ServiceId, WebCosoleEnabled.Checked);
     }
 
     protected void ClearEngineForm()
@@ -390,7 +400,15 @@ public partial class HeliconZoo_Settings : WebsitePanelControlBase, IHostingServ
 
     private static WPIProduct[] RequestHostingPackages()
     {
-        return ES.Services.Servers.GetWPIProducts(PanelRequest.ServerId, null, "ZooPackage");
+        List<WPIProduct> result = new List<WPIProduct>();
+        result.Add(ES.Services.Servers.GetWPIProductById(PanelRequest.ServerId, "HeliconZooModule"));
+        result.AddRange(ES.Services.Servers.GetWPIProducts(PanelRequest.ServerId, null, "ZooPackage"));
+        
+
+
+
+        return result.ToArray();
+
     }
 
     protected string AddUpgradeRemoveText(WPIProduct wpiProduct)

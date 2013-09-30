@@ -266,6 +266,20 @@ namespace WebsitePanel.Server.Code
 
             return products;
         }
+
+        public Product GetWPIProductById(string productId)
+        {
+            foreach (Product product in _productManager.Products)
+            {
+                if (0 == String.Compare(product.ProductId, productId, StringComparison.OrdinalIgnoreCase))
+                {
+                    return product;
+                }
+
+            }
+
+            return null; //not found
+        }
         
         public List<Product> GetProductsToInstall(IEnumerable<string> productIdsToInstall)
         {
@@ -582,7 +596,6 @@ namespace WebsitePanel.Server.Code
         private void Initialize()
         {
             // create cache folder if not exists
-            //_webPIinstallersFolder = Environment.ExpandEnvironmentVariables(@"%LocalAppData%\Microsoft\Web Platform Installer\installers");
             _webPIinstallersFolder = Path.Combine(
                 Environment.ExpandEnvironmentVariables("%SystemRoot%"),
                 "Temp\\zoo.wpi\\AppData\\Local\\Microsoft\\Web Platform Installer\\installers");
@@ -608,11 +621,12 @@ namespace WebsitePanel.Server.Code
 
             _productManager = new ProductManager();
 
-            if (TryLoadFeeds())
+            try
             {
+                TryLoadFeeds();
                 // ok, all feeds loaded
             }
-            else
+            catch(Exception ex1)
             {
                 // feed loading failed
 
@@ -623,23 +637,25 @@ namespace WebsitePanel.Server.Code
 
                     // re-create product manager
                     _productManager = new ProductManager();
-                    if (TryLoadFeeds())
+
+                    try
                     {
                         // loaded first (default) feed only
+                        TryLoadFeeds();
                     }
-                    else
+                    catch(Exception ex2)
                     {
-                        throw new Exception(string.Format("WpiHelper: download all feeds failed"));
+                        throw new Exception(string.Format("WpiHelper: download first feed failed: {0}", ex2), ex2);
                     }
                 }
                 else
                 {
-                    throw new Exception(string.Format("WpiHelper: download all feeds failed"));
+                    throw new Exception(string.Format("WpiHelper: download all ({0}) feeds failed: {1}", _feeds.Count, ex1), ex1);
                 }
             }
         }
 
-        private bool TryLoadFeeds()
+        private void TryLoadFeeds()
         {
             string loadingFeed = null;
 
@@ -667,12 +683,9 @@ namespace WebsitePanel.Server.Code
                     // error occured on loading this feed
                     // log this
                     WriteLog(string.Format("Feed {0} loading error: {1}", loadingFeed, ex));
-
-                    return false;
                 }
+                throw;
             }
-
-            return true;
         }
 
         private Language GetLanguage(string languageId)

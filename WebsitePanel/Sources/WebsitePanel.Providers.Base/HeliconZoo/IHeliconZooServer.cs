@@ -92,5 +92,7 @@ namespace WebsitePanel.Providers.HeliconZoo
         void SwithEnginesEnabled(bool enabled);
         string[] GetEnabledEnginesForSite(string siteId);
         void SetEnabledEnginesForSite(string siteId, string[] engineNames);
+        bool IsWebCosoleEnabled();
+        void SetWebCosoleEnabled(bool enabled);
     }
 }

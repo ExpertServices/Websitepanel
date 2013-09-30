@@ -101,5 +101,17 @@ namespace WebsitePanel.Server
         {
             ZooProvider.SetEnabledEnginesForSite(siteId, engineNames);
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool IsWebCosoleEnabled()
+        {
+            return ZooProvider.IsWebCosoleEnabled();
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void SetWebCosoleEnabled(bool enabled)
+        {
+            ZooProvider.SetWebCosoleEnabled(enabled);
+        }
     }
 }
