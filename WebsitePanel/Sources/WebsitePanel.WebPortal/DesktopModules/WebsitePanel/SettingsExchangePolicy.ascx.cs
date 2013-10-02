@@ -39,12 +39,14 @@ namespace WebsitePanel.Portal
             // mailbox
             mailboxPasswordPolicy.Value = settings["MailboxPasswordPolicy"];
             orgIdPolicy.Value = settings["OrgIdPolicy"];
+            orgPolicy.Value = settings["OrgPolicy"];
         }
 
         public void SaveSettings(UserSettings settings)
         {
             settings["MailboxPasswordPolicy"] = mailboxPasswordPolicy.Value;
             settings["OrgIdPolicy"] = orgIdPolicy.Value;
+            settings["OrgPolicy"] = orgPolicy.Value;
         }
 
         #endregion
