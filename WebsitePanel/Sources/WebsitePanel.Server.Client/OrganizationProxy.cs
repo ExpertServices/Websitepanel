@@ -224,18 +224,20 @@ namespace WebsitePanel.Providers.HostedSolution
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/CreateOrganization", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public Organization CreateOrganization(string organizationId)
+        public Organization CreateOrganization(string organizationId, bool enableDefaultGroup)
         {
             object[] results = this.Invoke("CreateOrganization", new object[] {
-                        organizationId});
+                        organizationId,
+                        enableDefaultGroup});
             return ((Organization)(results[0]));
         }
 
         /// <remarks/>
-        public System.IAsyncResult BeginCreateOrganization(string organizationId, System.AsyncCallback callback, object asyncState)
+        public System.IAsyncResult BeginCreateOrganization(string organizationId, bool enableDefaultGroup, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("CreateOrganization", new object[] {
-                        organizationId}, callback, asyncState);
+                        organizationId,
+                        enableDefaultGroup}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -246,20 +248,21 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         /// <remarks/>
-        public void CreateOrganizationAsync(string organizationId)
+        public void CreateOrganizationAsync(string organizationId, bool enableDefaultGroup)
         {
-            this.CreateOrganizationAsync(organizationId, null);
+            this.CreateOrganizationAsync(organizationId, enableDefaultGroup, null);
         }
 
         /// <remarks/>
-        public void CreateOrganizationAsync(string organizationId, object userState)
+        public void CreateOrganizationAsync(string organizationId, bool enableDefaultGroup, object userState)
         {
             if ((this.CreateOrganizationOperationCompleted == null))
             {
                 this.CreateOrganizationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCreateOrganizationOperationCompleted);
             }
             this.InvokeAsync("CreateOrganization", new object[] {
-                        organizationId}, this.CreateOrganizationOperationCompleted, userState);
+                        organizationId,
+                        enableDefaultGroup}, this.CreateOrganizationOperationCompleted, userState);
         }
 
         private void OnCreateOrganizationOperationCompleted(object arg)
@@ -322,7 +325,7 @@ namespace WebsitePanel.Providers.HostedSolution
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/CreateUser", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public int CreateUser(string organizationId, string loginName, string displayName, string upn, string password, bool enabled)
+        public int CreateUser(string organizationId, string loginName, string displayName, string upn, string password, bool enabled, bool enableDefaultGroup)
         {
             object[] results = this.Invoke("CreateUser", new object[] {
                         organizationId,
@@ -330,12 +333,13 @@ namespace WebsitePanel.Providers.HostedSolution
                         displayName,
                         upn,
                         password,
-                        enabled});
+                        enabled,
+                        enableDefaultGroup});
             return ((int)(results[0]));
         }
 
         /// <remarks/>
-        public System.IAsyncResult BeginCreateUser(string organizationId, string loginName, string displayName, string upn, string password, bool enabled, System.AsyncCallback callback, object asyncState)
+        public System.IAsyncResult BeginCreateUser(string organizationId, string loginName, string displayName, string upn, string password, bool enabled, bool enableDefaultGroup, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("CreateUser", new object[] {
                         organizationId,
@@ -343,7 +347,8 @@ namespace WebsitePanel.Providers.HostedSolution
                         displayName,
                         upn,
                         password,
-                        enabled}, callback, asyncState);
+                        enabled,
+                        enableDefaultGroup}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -354,13 +359,13 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         /// <remarks/>
-        public void CreateUserAsync(string organizationId, string loginName, string displayName, string upn, string password, bool enabled)
+        public void CreateUserAsync(string organizationId, string loginName, string displayName, string upn, string password, bool enabled, bool enableDefaultGroup)
         {
-            this.CreateUserAsync(organizationId, loginName, displayName, upn, password, enabled, null);
+            this.CreateUserAsync(organizationId, loginName, displayName, upn, password, enabled, enableDefaultGroup, null);
         }
 
         /// <remarks/>
-        public void CreateUserAsync(string organizationId, string loginName, string displayName, string upn, string password, bool enabled, object userState)
+        public void CreateUserAsync(string organizationId, string loginName, string displayName, string upn, string password, bool enabled, bool enableDefaultGroup, object userState)
         {
             if ((this.CreateUserOperationCompleted == null))
             {
@@ -372,7 +377,8 @@ namespace WebsitePanel.Providers.HostedSolution
                         displayName,
                         upn,
                         password,
-                        enabled}, this.CreateUserOperationCompleted, userState);
+                        enabled,
+                        enableDefaultGroup}, this.CreateUserOperationCompleted, userState);
         }
 
         private void OnCreateUserOperationCompleted(object arg)

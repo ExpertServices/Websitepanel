@@ -397,6 +397,8 @@ namespace WebsitePanel.Providers.HostedSolution
             DirectoryEntry group = new DirectoryEntry(groupPath);
 
             group.Invoke("Add", obj.Path);
+
+            group.CommitChanges();
         }
 
         public static void RemoveObjectFromGroup(string obejctPath, string groupPath)
@@ -405,6 +407,8 @@ namespace WebsitePanel.Providers.HostedSolution
             DirectoryEntry group = new DirectoryEntry(groupPath);
 
             group.Invoke("Remove", obj.Path);
+
+            group.CommitChanges();
         }
 
         public static bool AdObjectExists(string path)

@@ -304,6 +304,21 @@ namespace WebsitePanel.EnterpriseServer
                 if (OrganizationIdentifierExists(organizationId))
                     return BusinessErrorCodes.ERROR_ORG_ID_EXISTS;
 
+                // load user info
+                UserInfo user = PackageController.GetPackageOwner(packageId);
+
+                // get letter settings
+                UserSettings settings = UserController.GetUserSettings(user.UserId, UserSettings.EXCHANGE_POLICY);
+
+                bool enableDefaultGroup = true;
+                try
+                {
+                    // parse settings
+                    string[] parts = settings["OrgPolicy"].Split(';');
+                    enableDefaultGroup = Convert.ToBoolean(parts[0]) && Convert.ToBoolean(parts[1]);
+                }
+                catch { /* skip */ }
+
                 // Create Organization Unit
                 int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedOrganizations);
 
@@ -311,7 +326,7 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = null;
                 if (!orgProxy.OrganizationExists(organizationId))
                 {
-                    org = orgProxy.CreateOrganization(organizationId);
+                    org = orgProxy.CreateOrganization(organizationId, enableDefaultGroup);
                 }
                 else
                     return BusinessErrorCodes.ERROR_ORG_ID_EXISTS;
@@ -366,16 +381,18 @@ namespace WebsitePanel.EnterpriseServer
                 itemId = AddOrganizationToPackageItems(org, serviceId, packageId, organizationName, organizationId, domainName);
 
                 // register org ID
-
                 DataProvider.AddExchangeOrganization(itemId, organizationId);
 
                 // register domain                
                 DataProvider.AddExchangeOrganizationDomain(itemId, domainId, true);
 
-                //add to exchangeAcounts
-                AddAccount(itemId, ExchangeAccountType.DefaultSecurityGroup, org.GroupName,
-                                org.GroupName, null, false,
-                                0, org.GroupName, null, 0, null);
+                if (enableDefaultGroup)
+                {
+                    //add to exchangeAcounts
+                    AddAccount(itemId, ExchangeAccountType.DefaultSecurityGroup, org.GroupName,
+                                    org.GroupName, null, false,
+                                    0, org.GroupName, null, 0, null);
+                }
 
                 // register organization domain service item
                 OrganizationDomain orgDomain = new OrganizationDomain
@@ -386,9 +403,6 @@ namespace WebsitePanel.EnterpriseServer
                 };
 
                 PackageController.AddPackageItem(orgDomain);
-
-
-
             }
             catch (Exception ex)
             {
@@ -1337,7 +1351,6 @@ namespace WebsitePanel.EnterpriseServer
                 if (!CheckUserQuota(org.Id, out errorCode))
                     return errorCode;
 
-
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
                 string upn = string.Format("{0}@{1}", name, domain);
@@ -1346,7 +1359,9 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.Write("accountName :" + sAMAccountName);
                 TaskManager.Write("upn :" + upn);
 
-                if (orgProxy.CreateUser(org.OrganizationId, sAMAccountName, displayName, upn, password, enabled) == 0)
+                bool enableDefaultGroup = !string.IsNullOrEmpty(org.SecurityGroup);
+
+                if (orgProxy.CreateUser(org.OrganizationId, sAMAccountName, displayName, upn, password, enabled, enableDefaultGroup) == 0)
                 {
                     accountName = sAMAccountName;
                     OrganizationUser retUser = orgProxy.GetUserGeneralSettings(sAMAccountName, org.OrganizationId);
@@ -2262,10 +2277,6 @@ namespace WebsitePanel.EnterpriseServer
                 int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
                 if (packageCheck < 0) return packageCheck;
 
-                int errorCode;
-                if (!CheckUserQuota(org.Id, out errorCode))
-                    return errorCode;
-
                 Organizations orgProxy = GetOrganizationProxy(org.ServiceId);
 
                 string groupName = BuildAccountNameWithOrgId(org.OrganizationId, displayName.Replace(" ", ""), org.ServiceId);
@@ -2708,17 +2719,30 @@ namespace WebsitePanel.EnterpriseServer
 
             #endregion
 
+            // load organization
+            Organization org = (Organization)PackageController.GetPackageItem(itemId);
+            if (org == null)
+                return null;
+
             string accountTypes = string.Format("{0}", ((int)ExchangeAccountType.SecurityGroup));
 
             if (!includeOnlySecurityGroups)
             {
-                accountTypes = string.Format("{0}, {1}, {2}, {3}, {4}, {5}", accountTypes, ((int)ExchangeAccountType.User), ((int)ExchangeAccountType.Mailbox),
+                accountTypes = string.Format("{0}, {1}", accountTypes, ((int)ExchangeAccountType.User));
+
+                int exchangeServiceId = PackageController.GetPackageServiceId(org.PackageId, ResourceGroups.Exchange);
+
+                if (exchangeServiceId != 0)
+                {
+                    accountTypes = string.Format("{0}, {1}, {2}, {3}, {4}", accountTypes, ((int)ExchangeAccountType.Mailbox),
                     ((int)ExchangeAccountType.Room), ((int)ExchangeAccountType.Equipment), ((int)ExchangeAccountType.DistributionList));
+                }
             }
 
             List<ExchangeAccount> tmpAccounts = ObjectUtils.CreateListFromDataReader<ExchangeAccount>(
                                                   DataProvider.SearchExchangeAccountsByTypes(SecurityContext.User.UserId, itemId,
                                                   accountTypes, filterColumn, filterValue, sortColumn));
+
 
             List<ExchangeAccount> accounts = new List<ExchangeAccount>();
 

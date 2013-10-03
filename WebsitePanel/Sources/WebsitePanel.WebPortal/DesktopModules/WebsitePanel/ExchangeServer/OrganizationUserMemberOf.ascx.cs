@@ -90,7 +90,7 @@ namespace WebsitePanel.Portal.HostedSolution
                 // get settings
                 OrganizationUser user = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID, PanelRequest.AccountID);
 
-                groups.DistributionListsEnabled = (user.AccountType == ExchangeAccountType.Mailbox
+                groups.DistributionListsEnabled = EnableDistributionLists && (user.AccountType == ExchangeAccountType.Mailbox
                     || user.AccountType == ExchangeAccountType.Room
                         || user.AccountType == ExchangeAccountType.Equipment);
 

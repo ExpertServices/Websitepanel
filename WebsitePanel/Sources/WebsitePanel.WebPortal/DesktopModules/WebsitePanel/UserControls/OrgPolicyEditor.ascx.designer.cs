@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -35,90 +35,54 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal {
+namespace WebsitePanel.Portal.UserControls {
     
     
-    public partial class SettingsExchangePolicy {
+    public partial class OrgPolicyEditor {
         
         /// <summary>
-        /// secMailboxPassword control.
+        /// OrgPolicyPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.CollapsiblePanel secMailboxPassword;
+        protected global::System.Web.UI.UpdatePanel OrgPolicyPanel;
         
         /// <summary>
-        /// MailboxPasswordPanel control.
+        /// enablePolicyCheckBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel MailboxPasswordPanel;
+        protected global::System.Web.UI.WebControls.CheckBox enablePolicyCheckBox;
         
         /// <summary>
-        /// mailboxPasswordPolicy control.
+        /// PolicyTable control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.PasswordPolicyEditor mailboxPasswordPolicy;
+        protected global::System.Web.UI.HtmlControls.HtmlTable PolicyTable;
         
         /// <summary>
-        /// secOrg control.
+        /// lblEnableDefaultGroups control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.CollapsiblePanel secOrg;
+        protected global::System.Web.UI.WebControls.Label lblEnableDefaultGroups;
         
         /// <summary>
-        /// OrgIdPanel control.
+        /// chkEnableDefaultGroups control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel OrgIdPanel;
-        
-        /// <summary>
-        /// orgIdPolicy control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.UserControls.OrgIdPolicyEditor orgIdPolicy;
-        
-        /// <summary>
-        /// threeOrg control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.CollapsiblePanel threeOrg;
-        
-        /// <summary>
-        /// OrgPanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel OrgPanel;
-        
-        /// <summary>
-        /// orgPolicy control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.UserControls.OrgPolicyEditor orgPolicy;
+        protected global::System.Web.UI.WebControls.CheckBox chkEnableDefaultGroups;
     }
 }
