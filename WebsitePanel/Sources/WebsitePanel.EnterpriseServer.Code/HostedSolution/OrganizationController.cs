@@ -2719,17 +2719,30 @@ namespace WebsitePanel.EnterpriseServer
 
             #endregion
 
+            // load organization
+            Organization org = (Organization)PackageController.GetPackageItem(itemId);
+            if (org == null)
+                return null;
+
             string accountTypes = string.Format("{0}", ((int)ExchangeAccountType.SecurityGroup));
 
             if (!includeOnlySecurityGroups)
             {
-                accountTypes = string.Format("{0}, {1}, {2}, {3}, {4}, {5}", accountTypes, ((int)ExchangeAccountType.User), ((int)ExchangeAccountType.Mailbox),
+                accountTypes = string.Format("{0}, {1}", accountTypes, ((int)ExchangeAccountType.User));
+
+                int exchangeServiceId = PackageController.GetPackageServiceId(org.PackageId, ResourceGroups.Exchange);
+
+                if (exchangeServiceId != 0)
+                {
+                    accountTypes = string.Format("{0}, {1}, {2}, {3}, {4}", accountTypes, ((int)ExchangeAccountType.Mailbox),
                     ((int)ExchangeAccountType.Room), ((int)ExchangeAccountType.Equipment), ((int)ExchangeAccountType.DistributionList));
+                }
             }
 
             List<ExchangeAccount> tmpAccounts = ObjectUtils.CreateListFromDataReader<ExchangeAccount>(
                                                   DataProvider.SearchExchangeAccountsByTypes(SecurityContext.User.UserId, itemId,
                                                   accountTypes, filterColumn, filterValue, sortColumn));
+
 
             List<ExchangeAccount> accounts = new List<ExchangeAccount>();
 

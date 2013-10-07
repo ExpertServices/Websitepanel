@@ -1024,12 +1024,18 @@ namespace WebsitePanel.Providers.HostedSolution
 
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.Notes, notes);
 
-            foreach (string userPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "user"))
+            entry.CommitChanges();
+
+            string orgPath = GetOrganizationPath(organizationId);
+
+            DirectoryEntry orgEntry = ActiveDirectoryUtils.GetADObject(orgPath);
+
+            foreach (string userPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "user", orgEntry))
             {
                 ActiveDirectoryUtils.RemoveObjectFromGroup(userPath, path);
             }
 
-            foreach (string groupPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "group"))
+            foreach (string groupPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "group", orgEntry))
             {
                 ActiveDirectoryUtils.RemoveObjectFromGroup(groupPath, path);
             }
@@ -1038,9 +1044,7 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 string objPath = GetObjectPath(organizationId, obj);
                 ActiveDirectoryUtils.AddObjectToGroup(objPath, path);
-            }
-
-            entry.CommitChanges();
+            }   
         }
 
         public void AddObjectToSecurityGroup(string organizationId, string accountName, string groupName)

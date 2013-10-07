@@ -3993,8 +3993,7 @@ namespace WebsitePanel.EnterpriseServer
                 List<ExchangeAccount> DistributionLists = GetAccounts(itemId, ExchangeAccountType.DistributionList);
                 foreach (ExchangeAccount DistributionAccount in DistributionLists)
                 {
-                    //ExchangeDistributionList DistributionList = exchange.GetDistributionListGeneralSettings(DistributionAccount.AccountName);
-                    OrganizationSecurityGroup DistributionList = OrganizationController.GetSecurityGroupGeneralSettings(itemId, DistributionAccount.AccountId);
+                    ExchangeDistributionList DistributionList = exchange.GetDistributionListGeneralSettings(DistributionAccount.AccountName);
 
                     foreach (ExchangeAccount member in DistributionList.MembersAccounts)
                     {
