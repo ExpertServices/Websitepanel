@@ -493,6 +493,13 @@
     <Compile Include="SettingsLyncUserPlansPolicy.ascx.designer.cs">
       <DependentUpon>SettingsLyncUserPlansPolicy.ascx</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\OrgPolicyEditor.ascx.cs">
+      <DependentUpon>OrgPolicyEditor.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\OrgPolicyEditor.ascx.designer.cs">
+      <DependentUpon>OrgPolicyEditor.ascx</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\DomainListControlBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -4021,6 +4028,7 @@
     <Content Include="ScheduleTaskControls\NotifyOverusedDatabases.ascx" />
     <Content Include="SettingsExchangeMailboxPlansPolicy.ascx" />
     <Content Include="SettingsLyncUserPlansPolicy.ascx" />
+    <Content Include="UserControls\OrgPolicyEditor.ascx" />
     <Content Include="UserControls\EditFeedsList.ascx" />
     <Content Include="UserControls\OrgIdPolicyEditor.ascx" />
     <Content Include="UserControls\PackagePhoneNumbers.ascx" />
@@ -5209,6 +5217,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="ExchangeServer\App_LocalResources\OrganizationSecurityGroupMemberOf.ascx.resx" />
+    <Content Include="UserControls\App_LocalResources\OrgPolicyEditor.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

@@ -26,6 +26,10 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Security.Permissions;
+
 namespace WebsitePanel.Providers.Web.Iis.WebObjects
 {
     using System;
@@ -661,6 +665,137 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 			return vdirs.ToArray();
 		}
 
+        public WebVirtualDirectory[] GetZooApplications(ServerManager srvman, string siteId)
+        {
+            if (!SiteExists(srvman, siteId))
+                return new WebVirtualDirectory[] { };
+
+            var vdirs = new List<WebVirtualDirectory>();
+            var iisObject = srvman.Sites[siteId];
+            //
+            foreach (var item in iisObject.Applications)
+            {
+               
+
+                try
+                {
+
+                    Configuration cfg = item.GetWebConfiguration();
+                    string location = siteId + ConfigurationUtility.GetQualifiedVirtualPath(item.Path);
+                    ConfigurationSection section = cfg.GetSection("system.webServer/heliconZoo", location);
+
+                    if (section.GetCollection().Count > 0)
+                    {
+                        WebVirtualDirectory vdir = new WebVirtualDirectory
+                            {
+                                Name = ConfigurationUtility.GetNonQualifiedVirtualPath(item.Path),
+                                ContentPath = item.VirtualDirectories[0].PhysicalPath
+                            };
+
+                        ConfigurationElement zooAppElement = section.GetCollection()[0];
+                        ConfigurationElementCollection envColl = zooAppElement.GetChildElement("environmentVariables").GetCollection();
+                        
+                        foreach (ConfigurationElement env in  envColl)
+                        {
+                            if ((string) env.GetAttributeValue("name") == "CONSOLE_URL")
+                            {
+                                vdir.ConsoleUrl = ConfigurationUtility.GetQualifiedVirtualPath(item.Path);
+                                if (!vdir.ConsoleUrl.EndsWith("/"))
+                                {
+                                    vdir.ConsoleUrl += "/";
+                                }
+                                vdir.ConsoleUrl += (string)env.GetAttributeValue("value");
+                            }
+                        }
+                        
+                        vdirs.Add(vdir);
+                        
+                    }
+
+
+                }
+                catch (Exception)
+                {
+                    //there is no zoo
+                    throw;
+                }
+            }
+            //
+            return vdirs.ToArray();
+        }
+
+        public void SetZooConsoleEnabled(ServerManager srvman, string siteId, string appName)
+        {
+
+            Random random = new Random((int) DateTime.Now.Ticks);
+            byte[] bytes = new byte[8];
+            random.NextBytes(bytes);
+            string consoleUrl = "console_" + Convert.ToBase64String(bytes);
+            SetZooEnvironmentVariable(srvman, siteId, appName, "CONSOLE_URL", consoleUrl);
+
+        }
+        
+        public void SetZooConsoleDisabled(ServerManager srvman, string siteId, string appName)
+        {
+            SetZooEnvironmentVariable(srvman, siteId, appName, "CONSOLE_URL", null);
+        }
+
+
+        public void SetZooEnvironmentVariable(ServerManager srvman, string siteId, string appName, string envName, string envValue)
+        {
+            if (!SiteExists(srvman, siteId))
+                return;
+
+            
+            var iisObject = srvman.Sites[siteId];
+            //
+            foreach (var item in iisObject.Applications)
+            {
+                
+
+                if (appName == ConfigurationUtility.GetNonQualifiedVirtualPath(item.Path))
+                {
+                    Configuration cfg = item.GetWebConfiguration();
+                    ConfigurationSection section = cfg.GetSection("system.webServer/heliconZoo");
+                    ConfigurationElement zooAppElement = section.GetCollection()[0];
+                    ConfigurationElementCollection envColl = zooAppElement.GetChildElement("environmentVariables").GetCollection();
+
+                    //remove all CONSOLE_URLs
+                    for (int i = 0; i < envColl.Count; )
+                    {
+                        if (String.Compare(envColl[i].GetAttributeValue("name").ToString(), envName, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            envColl.RemoveAt(i);        
+                        }
+                        else
+                        {
+                            ++i;
+                        }
+                        
+                    }
+
+                    // do not set empty value
+                    if (!string.IsNullOrEmpty(envValue))
+                    {
+                        ConfigurationElement el = envColl.CreateElement();
+                        el.SetAttributeValue("name", envName);
+                        el.SetAttributeValue("value", envValue);
+                        envColl.Add(el);
+                    }
+
+                    
+                    srvman.CommitChanges();
+                }
+
+              
+
+            }
+         
+        }
+
+
+      
+
 		public WebVirtualDirectory GetVirtualDirectory(string siteId, string directoryName)
 		{
 			//
@@ -737,4 +872,6 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 			}
         }
     }
+
+    
 }

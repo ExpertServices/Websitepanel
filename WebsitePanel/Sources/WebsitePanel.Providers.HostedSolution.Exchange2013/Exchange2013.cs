@@ -771,28 +771,42 @@ namespace WebsitePanel.Providers.HostedSolution
                 string server = GetServerName();
                 string securityGroupPath = AddADPrefix(securityGroup);
 
-                //Create mail enabled organization security group
-                EnableMailSecurityDistributionGroup(runSpace, securityGroup, organizationId);
-                transaction.RegisterMailEnabledDistributionGroup(securityGroup);
-                UpdateSecurityDistributionGroup(runSpace, securityGroup, organizationId, IsConsumer);
+                bool enableDefaultGroup = !string.IsNullOrEmpty(securityGroup);
+
+                if (enableDefaultGroup)
+                {
+                    //Create mail enabled organization security group
+                    EnableMailSecurityDistributionGroup(runSpace, securityGroup, organizationId);
+                    transaction.RegisterMailEnabledDistributionGroup(securityGroup);
+                    UpdateSecurityDistributionGroup(runSpace, securityGroup, organizationId, IsConsumer);
+                }
 
                 //create GAL
                 string galId = CreateGlobalAddressList(runSpace, organizationId);
                 transaction.RegisterNewGlobalAddressList(galId);
                 ExchangeLog.LogInfo("  Global Address List: {0}", galId);
-                UpdateGlobalAddressList(runSpace, galId, securityGroupPath);
+                if (enableDefaultGroup)
+                {
+                    UpdateGlobalAddressList(runSpace, galId, securityGroupPath);
+                }
 
                 //create AL
                 string alId = CreateAddressList(runSpace, organizationId);
                 transaction.RegisterNewAddressList(alId);
                 ExchangeLog.LogInfo("  Address List: {0}", alId);
-                UpdateAddressList(runSpace, alId, securityGroupPath);
+                if (enableDefaultGroup)
+                {
+                    UpdateAddressList(runSpace, alId, securityGroupPath);
+                }
 
                 //create RAL
                 string ralId = CreateRoomsAddressList(runSpace, organizationId);
                 transaction.RegisterNewRoomsAddressList(ralId);
                 ExchangeLog.LogInfo("  Rooms Address List: {0}", ralId);
-                UpdateAddressList(runSpace, ralId, securityGroupPath);
+                if (enableDefaultGroup)
+                {
+                    UpdateAddressList(runSpace, ralId, securityGroupPath);
+                }
 
                 //create ActiveSync policy
                 string asId = CreateActiveSyncPolicy(runSpace, organizationId);
@@ -880,12 +894,18 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 string server = GetOABGenerationServerName();
 
-                string securityGroupId = AddADPrefix(securityGroup);
-
                 //create OAB
                 string oabId = CreateOfflineAddressBook(runSpace, organizationId, server, oabVirtualDir);
                 transaction.RegisterNewOfflineAddressBook(oabId);
-                UpdateOfflineAddressBook(runSpace, oabId, securityGroupId);
+
+                bool enableDefaultGroup = !string.IsNullOrEmpty(securityGroup);
+
+                if (enableDefaultGroup)
+                {
+                    string securityGroupId = AddADPrefix(securityGroup);
+                    UpdateOfflineAddressBook(runSpace, oabId, securityGroupId);
+                }
+                
                 info.OfflineAddressBook = oabId;
             }
             catch (Exception ex)
@@ -1078,7 +1098,12 @@ namespace WebsitePanel.Providers.HostedSolution
                 //disable mail security distribution group
                 try
                 {
-                    DisableMailSecurityDistributionGroup(runSpace, securityGroup);
+                    bool enableDefaultGroup = !string.IsNullOrEmpty(securityGroup);
+
+                    if (enableDefaultGroup)
+                    {
+                        DisableMailSecurityDistributionGroup(runSpace, securityGroup);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -4016,7 +4041,25 @@ namespace WebsitePanel.Providers.HostedSolution
                 id = GetPSObjectIdentity(obj);
                 account = GetExchangeAccount(runSpace, id);
                 if (account != null)
+                {
                     list.Add(account);
+                }
+                else
+                {
+                    string distinguishedName = (string)GetPSObjectProperty(obj, "DistinguishedName");
+                    string path = ActiveDirectoryUtils.AddADPrefix(distinguishedName, PrimaryDomainController);
+
+                    if (ActiveDirectoryUtils.AdObjectExists(path))
+                    {
+                        DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
+
+                        list.Add(new ExchangeAccount
+                        {
+                            AccountName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName),
+                            AccountType = ExchangeAccountType.SecurityGroup
+                        });
+                    }
+                }
             }
             ExchangeLog.LogEnd("GetGroupMembers");
             return list.ToArray();
@@ -4318,7 +4361,12 @@ namespace WebsitePanel.Providers.HostedSolution
                 string id = AddPublicFolder(runSpace, folderName, parentFolder, orgCanonicalName+"/"+GetPublicFolderMailboxName(organizationId));
                 transaction.RegisterNewPublicFolder(GetPublicFolderMailboxName(organizationId), id);
 
-                SetPublicFolderPermissions(runSpace, id, securityGroup);
+                bool enableDefaultGroup = !string.IsNullOrEmpty(securityGroup);
+
+                if (enableDefaultGroup)
+                {
+                    SetPublicFolderPermissions(runSpace, id, securityGroup);
+                }
 
                 if (mailEnabled)
                 {

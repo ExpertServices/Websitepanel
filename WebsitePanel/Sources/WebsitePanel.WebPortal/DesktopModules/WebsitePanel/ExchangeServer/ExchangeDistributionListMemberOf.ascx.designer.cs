@@ -101,7 +101,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.SecurityGroupTabs tabs;
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.DistributionListTabs tabs;
         
         /// <summary>
         /// messageBox control.

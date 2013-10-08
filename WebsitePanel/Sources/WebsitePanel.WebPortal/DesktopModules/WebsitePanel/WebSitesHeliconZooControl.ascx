@@ -28,12 +28,72 @@
 --%>
 
 <p>
-<asp:Label  runat="server" meta:resourcekey="SelectWebEngine" CssClass="NormalBold"></asp:Label>
+<asp:Label  ID="lblConsole" runat="server" meta:resourcekey="EnableWebConsole" CssClass="NormalBold"></asp:Label>
 </p>
 <br />
 
+<%--<asp:GridView id="gvInstalledApplications" runat="server" AutoGenerateColumns="True" AllowPaging="true" 
+	ShowHeader="false" CssSelectorClass="LightGridView" EmptyDataText="gvInstalledApplications.Empty"
+	>
+</asp:GridView>--%>
+
+  <asp:GridView ID="gvInstalledApplications" runat="server" 
+    EnableViewState="True" AutoGenerateColumns="false"
+        ShowHeader="true" CssSelectorClass="NormalGridView" 
+    EmptyDataText="gvVirtualDirectories" 
+    onrowcommand="gvInstalledApplications_RowCommand">
+        <Columns>
+              <asp:BoundField DataField="Name" HeaderText="Name">
+                <ItemStyle Width="60%" />
+            </asp:BoundField>
+           
+           <asp:TemplateField HeaderText="gvInstalledApplicationsEnableConsole">
+		    <ItemStyle HorizontalAlign="Center" />
+			<ItemTemplate>
+			    <asp:Button ID="btnEnable" runat="server"
+			        Text='<%# GetLocalizedString("btnEnable.Text") %>' CssClass="Button1"
+			        CommandArgument='<%# Eval("Name") %>'
+			        CommandName="EnableConsole"
+                    Visible= '<%# IsNullOrEmpty( (string)Eval("ConsoleUrl")) %>'
+                    />
+                    
+                     <asp:Button ID="btnDisable" runat="server"
+			        Text='<%# GetLocalizedString("btnDisable.Text") %>' CssClass="Button1"
+			        CommandArgument='<%# Eval("Name") %>'
+			        CommandName="DisableConsole"
+                    Visible= '<%# !IsNullOrEmpty( (string)Eval("ConsoleUrl")) %>'
+                    />
+                    
+                    &nbsp;&nbsp;
+                        
+			    <asp:hyperlink 
+                    CssClass="MediumBold" 
+                    NavigateUrl='<%# GetConsoleFullUrl((string)Eval("ConsoleUrl")) %>' 
+                    runat="server" 
+                    ID="lnkAppDetails" 
+                    ToolTip='<%# Eval("ConsoleUrl") %>' 
+                    Target="_blank" 
+                    Visible= '<%# !IsNullOrEmpty( (string)Eval("ConsoleUrl")) %>'>
+			            Open console
+                </asp:hyperlink>
+              
+           
+			</ItemTemplate>
+		</asp:TemplateField>
+        
+    
+        </Columns>
+    </asp:GridView>
+
+
+<p>
+<asp:Label runat="server" meta:resourcekey="SelectWebEngine" CssClass="NormalBold"></asp:Label>
+</p>
+<br />
+
+
 <asp:GridView id="gvApplications" runat="server" AutoGenerateColumns="False" AllowPaging="true" 
-	ShowHeader="false" CssSelectorClass="LightGridView" EmptyDataText="gvApplications" OnRowCommand="gvApplications_RowCommand" 
+	ShowHeader="false" CssSelectorClass="LightGridView" EmptyDataText="There are no applications" OnRowCommand="gvApplications_RowCommand" 
 	OnPageIndexChanging="gvApplications_PageIndexChanging">
 	<Columns>
 		<asp:TemplateField HeaderText="gvApplicationsApplication">
