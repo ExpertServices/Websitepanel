@@ -125,10 +125,9 @@ namespace WebsitePanel.Portal
             }
      
             // FILE MANAGER
-            settings = ES.Services.System.GetSystemSettings(
-                WSP.SystemSettings.FILEMANAGER_SETTINGS);
+            settings = ES.Services.System.GetSystemSettings(WSP.SystemSettings.FILEMANAGER_SETTINGS);
 
-            if (settings != null)
+            if (settings != null && !String.IsNullOrEmpty(settings[FILE_MANAGER_EDITABLE_EXTENSIONS]))
             {
                 txtFileManagerEditableExtensions.Text = settings[FILE_MANAGER_EDITABLE_EXTENSIONS].Replace(",", System.Environment.NewLine);
             }
