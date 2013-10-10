@@ -3488,7 +3488,8 @@ namespace WebsitePanel.EnterpriseServer
             }
             catch(Exception e)
             {
-                TaskManager.WriteWarning("Error on enabling zoo engines for site '{0}': {1}", siteId, e.ToString());
+                // TODO: write to right place debug warning message
+                // TaskManager.WriteWarning("Error on enabling zoo engines for site '{0}': {1}", siteId, e.ToString());
             }
         }
 
