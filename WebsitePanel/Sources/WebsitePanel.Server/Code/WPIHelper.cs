@@ -520,7 +520,7 @@ namespace WebsitePanel.Server.Code
         {
 
             Product app = GetProduct(appId);
-            Installer appInstaller = app.GetInstaller(GetLanguage(languageId));
+            Installer appInstaller = GetInstaller(languageId, app);
             WpiAppInstallLogger logger = new WpiAppInstallLogger();
 
             /*
@@ -584,6 +584,25 @@ namespace WebsitePanel.Server.Code
             failedMessage = logger.FailedMessage;
             
             return !logger.IsFailed;
+        }
+
+        private Installer GetInstaller(string languageId, Product product)
+        {
+            Installer installer = product.GetInstaller(GetLanguage(languageId));
+            if (null == installer)
+            {
+                installer = product.GetInstaller(GetLanguage(DeafultLanguage));
+                if (null == installer)
+                {
+                    throw new Exception(
+                        string.Format(
+                        "Could not get installer for product '{0}', language: {1}, default language: {2}",
+                        product.Title, languageId, DeafultLanguage)
+                    );
+                }
+            }
+
+            return installer;
         }
 
         #endregion
@@ -701,10 +720,11 @@ namespace WebsitePanel.Server.Code
 
         private List<Installer> GetInstallers(List<Product> productsToInstall, Language lang)
         {
+            Language defaultLang = GetLanguage(DeafultLanguage);
             List<Installer> installersToUse = new List<Installer>();
             foreach (Product product in productsToInstall)
             {
-                Installer installer = product.GetInstaller(lang);
+                Installer installer = product.GetInstaller(lang) ?? product.GetInstaller(defaultLang);
                 if (null != installer)
                 {
                     installersToUse.Add(installer);
