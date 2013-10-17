@@ -70,12 +70,12 @@ namespace WebsitePanel.Server
 
 
         [WebMethod, SoapHeader("settings")]
-        public Organization CreateOrganization(string organizationId, bool enableDefaultGroup)
+        public Organization CreateOrganization(string organizationId)
         {
             try
             {
                 Log.WriteStart("'{0}' CreateOrganization", ProviderSettings.ProviderName);
-                Organization ret = Organization.CreateOrganization(organizationId, enableDefaultGroup);
+                Organization ret = Organization.CreateOrganization(organizationId);
                 Log.WriteEnd("'{0}' CreateOrganization", ProviderSettings.ProviderName);
                 return ret;
             }
@@ -93,9 +93,9 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public int CreateUser(string organizationId, string loginName, string displayName, string upn, string password, bool enabled, bool enableDefaultGroup)
+        public int CreateUser(string organizationId, string loginName, string displayName, string upn, string password, bool enabled)
         {
-            return Organization.CreateUser(organizationId, loginName, displayName, upn, password, enabled, enableDefaultGroup);
+            return Organization.CreateUser(organizationId, loginName, displayName, upn, password, enabled);
         }
 
         [WebMethod, SoapHeader("settings")]

@@ -32,7 +32,7 @@
     </table>
 </asp:Panel>
 
-<wsp:CollapsiblePanel id="threeOrg" runat="server" TargetControlID="OrgPanel" meta:resourcekey="threeOrg" Text="Organization Policy"/>
+<wsp:CollapsiblePanel id="threeOrg" runat="server" TargetControlID="OrgPanel" meta:resourcekey="threeOrg" Text="Additional Default Security Groups"/>
 <asp:Panel ID="OrgPanel" runat="server" Height="0" style="overflow:hidden;">
     <table>
         <tr>

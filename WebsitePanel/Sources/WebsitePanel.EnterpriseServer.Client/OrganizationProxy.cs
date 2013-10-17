@@ -53,6 +53,7 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
     using WebsitePanel.Providers.Common;
     using WebsitePanel.Providers.HostedSolution;
     using WebsitePanel.Providers.ResultObjects;
+    using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 
 
     /// <remarks/>
@@ -134,6 +135,14 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
         private System.Threading.SendOrPostCallback GetSecurityGroupsByMemberOperationCompleted;
 
         private System.Threading.SendOrPostCallback SearchOrganizationAccountsOperationCompleted;
+
+        private System.Threading.SendOrPostCallback GetAdditionalGroupsOperationCompleted;
+
+        private System.Threading.SendOrPostCallback UpdateAdditionalGroupOperationCompleted;
+
+        private System.Threading.SendOrPostCallback DeleteAdditionalGroupOperationCompleted;
+
+        private System.Threading.SendOrPostCallback AddAdditionalGroupOperationCompleted;
 
         /// <remarks/>
         public esOrganizations()
@@ -245,6 +254,19 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
 
         /// <remarks/>
         public event SearchOrganizationAccountsCompletedEventHandler SearchOrganizationAccountsCompleted;
+
+        /// <remarks/>
+        public event GetAdditionalGroupsCompletedEventHandler GetAdditionalGroupsCompleted;
+
+        /// <remarks/>
+        public event UpdateAdditionalGroupCompletedEventHandler UpdateAdditionalGroupCompleted;
+
+        /// <remarks/>
+        public event DeleteAdditionalGroupCompletedEventHandler DeleteAdditionalGroupCompleted;
+
+        /// <remarks/>
+        public event AddAdditionalGroupCompletedEventHandler AddAdditionalGroupCompleted;
+
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/CheckOrgIdExists", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -2389,6 +2411,204 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
         }
 
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetAdditionalGroups", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public AdditionalGroup[] GetAdditionalGroups(int userId)
+        {
+            object[] results = this.Invoke("GetAdditionalGroups", new object[] {
+                    userId});
+            return ((AdditionalGroup[])(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginGetAdditionalGroups(int userId, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("GetAdditionalGroups", new object[] {
+                    userId}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public AdditionalGroup[] EndGetAdditionalGroups(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((AdditionalGroup[])(results[0]));
+        }
+
+        /// <remarks/>
+        public void GetAdditionalGroupsAsync(int userId)
+        {
+            this.GetAdditionalGroupsAsync(userId, null);
+        }
+
+        /// <remarks/>
+        public void GetAdditionalGroupsAsync(int userId, object userState)
+        {
+            if ((this.GetAdditionalGroupsOperationCompleted == null))
+            {
+                this.GetAdditionalGroupsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetAdditionalGroupsOperationCompleted);
+            }
+            this.InvokeAsync("GetAdditionalGroups", new object[] {
+                    userId}, this.GetAdditionalGroupsOperationCompleted, userState);
+        }
+
+        private void OnGetAdditionalGroupsOperationCompleted(object arg)
+        {
+            if ((this.GetAdditionalGroupsCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetAdditionalGroupsCompleted(this, new GetAdditionalGroupsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/UpdateAdditionalGroup", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void UpdateAdditionalGroup(int groupId, string groupName)
+        {
+            this.Invoke("UpdateAdditionalGroup", new object[] {
+                    groupId,
+                    groupName});
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginUpdateAdditionalGroup(int groupId, string groupName, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("UpdateAdditionalGroup", new object[] {
+                    groupId,
+                    groupName}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public void EndUpdateAdditionalGroup(System.IAsyncResult asyncResult)
+        {
+            this.EndInvoke(asyncResult);
+        }
+
+        /// <remarks/>
+        public void UpdateAdditionalGroupAsync(int groupId, string groupName)
+        {
+            this.UpdateAdditionalGroupAsync(groupId, groupName, null);
+        }
+
+        /// <remarks/>
+        public void UpdateAdditionalGroupAsync(int groupId, string groupName, object userState)
+        {
+            if ((this.UpdateAdditionalGroupOperationCompleted == null))
+            {
+                this.UpdateAdditionalGroupOperationCompleted = new System.Threading.SendOrPostCallback(this.OnUpdateAdditionalGroupOperationCompleted);
+            }
+            this.InvokeAsync("UpdateAdditionalGroup", new object[] {
+                    groupId,
+                    groupName}, this.UpdateAdditionalGroupOperationCompleted, userState);
+        }
+
+        private void OnUpdateAdditionalGroupOperationCompleted(object arg)
+        {
+            if ((this.UpdateAdditionalGroupCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.UpdateAdditionalGroupCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/DeleteAdditionalGroup", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void DeleteAdditionalGroup(int groupId)
+        {
+            this.Invoke("DeleteAdditionalGroup", new object[] {
+                    groupId});
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginDeleteAdditionalGroup(int groupId, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("DeleteAdditionalGroup", new object[] {
+                    groupId}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public void EndDeleteAdditionalGroup(System.IAsyncResult asyncResult)
+        {
+            this.EndInvoke(asyncResult);
+        }
+
+        /// <remarks/>
+        public void DeleteAdditionalGroupAsync(int groupId)
+        {
+            this.DeleteAdditionalGroupAsync(groupId, null);
+        }
+
+        /// <remarks/>
+        public void DeleteAdditionalGroupAsync(int groupId, object userState)
+        {
+            if ((this.DeleteAdditionalGroupOperationCompleted == null))
+            {
+                this.DeleteAdditionalGroupOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDeleteAdditionalGroupOperationCompleted);
+            }
+            this.InvokeAsync("DeleteAdditionalGroup", new object[] {
+                    groupId}, this.DeleteAdditionalGroupOperationCompleted, userState);
+        }
+
+        private void OnDeleteAdditionalGroupOperationCompleted(object arg)
+        {
+            if ((this.DeleteAdditionalGroupCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DeleteAdditionalGroupCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/AddAdditionalGroup", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int AddAdditionalGroup(int userId, string groupName)
+        {
+            object[] results = this.Invoke("AddAdditionalGroup", new object[] {
+                    userId,
+                    groupName});
+            return ((int)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginAddAdditionalGroup(int userId, string groupName, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("AddAdditionalGroup", new object[] {
+                    userId,
+                    groupName}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public int EndAddAdditionalGroup(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((int)(results[0]));
+        }
+
+        /// <remarks/>
+        public void AddAdditionalGroupAsync(int userId, string groupName)
+        {
+            this.AddAdditionalGroupAsync(userId, groupName, null);
+        }
+
+        /// <remarks/>
+        public void AddAdditionalGroupAsync(int userId, string groupName, object userState)
+        {
+            if ((this.AddAdditionalGroupOperationCompleted == null))
+            {
+                this.AddAdditionalGroupOperationCompleted = new System.Threading.SendOrPostCallback(this.OnAddAdditionalGroupOperationCompleted);
+            }
+            this.InvokeAsync("AddAdditionalGroup", new object[] {
+                    userId,
+                    groupName}, this.AddAdditionalGroupOperationCompleted, userState);
+        }
+
+        private void OnAddAdditionalGroupOperationCompleted(object arg)
+        {
+            if ((this.AddAdditionalGroupCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.AddAdditionalGroupCompleted(this, new AddAdditionalGroupCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
         public new void CancelAsync(object userState)
         {
             base.CancelAsync(userState);
@@ -3441,6 +3661,74 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
             {
                 this.RaiseExceptionIfNecessary();
                 return ((ExchangeAccount[])(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetAdditionalGroupsCompletedEventHandler(object sender, GetAdditionalGroupsCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetAdditionalGroupsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal GetAdditionalGroupsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public AdditionalGroup[] Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((AdditionalGroup[])(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void UpdateAdditionalGroupCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void DeleteAdditionalGroupCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void AddAdditionalGroupCompletedEventHandler(object sender, AddAdditionalGroupCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class AddAdditionalGroupCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal AddAdditionalGroupCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public int Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((int)(this.results[0]));
             }
         }
     }

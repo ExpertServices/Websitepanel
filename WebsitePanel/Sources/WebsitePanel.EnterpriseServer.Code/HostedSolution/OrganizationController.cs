@@ -47,6 +47,7 @@ using System.Linq;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -304,21 +305,6 @@ namespace WebsitePanel.EnterpriseServer
                 if (OrganizationIdentifierExists(organizationId))
                     return BusinessErrorCodes.ERROR_ORG_ID_EXISTS;
 
-                // load user info
-                UserInfo user = PackageController.GetPackageOwner(packageId);
-
-                // get letter settings
-                UserSettings settings = UserController.GetUserSettings(user.UserId, UserSettings.EXCHANGE_POLICY);
-
-                bool enableDefaultGroup = true;
-                try
-                {
-                    // parse settings
-                    string[] parts = settings["OrgPolicy"].Split(';');
-                    enableDefaultGroup = Convert.ToBoolean(parts[0]) && Convert.ToBoolean(parts[1]);
-                }
-                catch { /* skip */ }
-
                 // Create Organization Unit
                 int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedOrganizations);
 
@@ -326,7 +312,7 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = null;
                 if (!orgProxy.OrganizationExists(organizationId))
                 {
-                    org = orgProxy.CreateOrganization(organizationId, enableDefaultGroup);
+                    org = orgProxy.CreateOrganization(organizationId);
                 }
                 else
                     return BusinessErrorCodes.ERROR_ORG_ID_EXISTS;
@@ -386,12 +372,40 @@ namespace WebsitePanel.EnterpriseServer
                 // register domain                
                 DataProvider.AddExchangeOrganizationDomain(itemId, domainId, true);
 
-                if (enableDefaultGroup)
+                //add to exchangeAcounts
+                AddAccount(itemId, ExchangeAccountType.DefaultSecurityGroup, org.GroupName,
+                                org.GroupName, null, false,
+                                0, org.GroupName, null, 0, null);
+
+
+                // load user info
+                UserInfo user = PackageController.GetPackageOwner(packageId);
+
+                // get letter settings
+                UserSettings settings = UserController.GetUserSettings(user.UserId, UserSettings.EXCHANGE_POLICY);
+
+                bool enableAdditionalGroup = false;
+                try
                 {
-                    //add to exchangeAcounts
-                    AddAccount(itemId, ExchangeAccountType.DefaultSecurityGroup, org.GroupName,
-                                    org.GroupName, null, false,
-                                    0, org.GroupName, null, 0, null);
+                    // parse settings
+                    enableAdditionalGroup = Utils.ParseBool(settings["OrgPolicy"], false);
+                }
+                catch { /* skip */ }
+
+                if (enableAdditionalGroup)
+                {
+                    foreach (AdditionalGroup additionalGroup in GetAdditionalGroups(settings.UserId))
+                    {
+                        string additionalGroupName = BuildAccountNameWithOrgId(org.OrganizationId, additionalGroup.GroupName.Replace(" ", ""), org.ServiceId);
+
+                        if (orgProxy.CreateSecurityGroup(org.OrganizationId, additionalGroupName) == 0)
+                        {
+                            OrganizationSecurityGroup retSecurityGroup = orgProxy.GetSecurityGroupGeneralSettings(additionalGroupName, org.OrganizationId);
+
+                            AddAccount(itemId, ExchangeAccountType.SecurityGroup, additionalGroupName,
+                                additionalGroup.GroupName, null, false, 0, retSecurityGroup.SAMAccountName, null, 0, null);
+                        }
+                    }
                 }
 
                 // register organization domain service item
@@ -1359,9 +1373,7 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.Write("accountName :" + sAMAccountName);
                 TaskManager.Write("upn :" + upn);
 
-                bool enableDefaultGroup = !string.IsNullOrEmpty(org.SecurityGroup);
-
-                if (orgProxy.CreateUser(org.OrganizationId, sAMAccountName, displayName, upn, password, enabled, enableDefaultGroup) == 0)
+                if (orgProxy.CreateUser(org.OrganizationId, sAMAccountName, displayName, upn, password, enabled) == 0)
                 {
                     accountName = sAMAccountName;
                     OrganizationUser retUser = orgProxy.GetUserGeneralSettings(sAMAccountName, org.OrganizationId);
@@ -2235,6 +2247,45 @@ namespace WebsitePanel.EnterpriseServer
                 accountName, displayName, primaryEmailAddress, mailEnabledPublicFolder,
                 mailboxManagerActions.ToString(), samAccountName, CryptoUtils.Encrypt(accountPassword), mailboxPlanId, (string.IsNullOrEmpty(subscriberNumber) ? null : subscriberNumber.Trim()));
         }
+
+        #region Additional Default Groups
+
+        public static List<AdditionalGroup> GetAdditionalGroups(int userId)
+        {
+            List<AdditionalGroup> additionalGroups = new List<AdditionalGroup>();
+
+            IDataReader reader = DataProvider.GetAdditionalGroups(userId);
+
+            while (reader.Read())
+            {
+                additionalGroups.Add(new AdditionalGroup
+                {
+                    GroupId = (int)reader["ID"],
+                    GroupName = (string)reader["GroupName"]
+                });
+            }
+
+            reader.Close();
+
+            return additionalGroups;
+        }
+
+        public static void UpdateAdditionalGroup(int groupId, string groupName)
+        {
+            DataProvider.UpdateAdditionalGroup(groupId, groupName);
+        }
+
+        public static void DeleteAdditionalGroup(int groupId)
+        {
+            DataProvider.DeleteAdditionalGroup(groupId);
+        }
+
+        public static int AddAdditionalGroup(int userId, string groupName)
+        {
+            return DataProvider.AddAdditionalGroup(userId, groupName);
+        }
+
+        #endregion
 
         public static int CreateSecurityGroup(int itemId, string displayName)
         {

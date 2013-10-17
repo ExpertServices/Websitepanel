@@ -718,42 +718,28 @@ namespace WebsitePanel.Providers.HostedSolution
                 string server = GetServerName();
                 string securityGroupPath = AddADPrefix(securityGroup);
 
-                bool enableDefaultGroup = !string.IsNullOrEmpty(securityGroup);
-
-                if (enableDefaultGroup)
-                {
-                    //Create mail enabled organization security group
-                    EnableMailSecurityDistributionGroup(runSpace, securityGroup, organizationId);
-                    transaction.RegisterMailEnabledDistributionGroup(securityGroup);
-                    UpdateSecurityDistributionGroup(runSpace, securityGroup, organizationId, IsConsumer);
-                }
+                //Create mail enabled organization security group
+                EnableMailSecurityDistributionGroup(runSpace, securityGroup, organizationId);
+                transaction.RegisterMailEnabledDistributionGroup(securityGroup);
+                UpdateSecurityDistributionGroup(runSpace, securityGroup, organizationId, IsConsumer);
 
                 //create GAL
                 string galId = CreateGlobalAddressList(runSpace, organizationId);
                 transaction.RegisterNewGlobalAddressList(galId);
                 ExchangeLog.LogInfo("  Global Address List: {0}", galId);
-                if (enableDefaultGroup)
-                {
-                    UpdateGlobalAddressList(runSpace, galId, securityGroupPath);
-                }
+                UpdateGlobalAddressList(runSpace, galId, securityGroupPath);
 
                 //create AL
                 string alId = CreateAddressList(runSpace, organizationId);
                 transaction.RegisterNewAddressList(alId);
                 ExchangeLog.LogInfo("  Address List: {0}", alId);
-                if (enableDefaultGroup)
-                {
-                    UpdateAddressList(runSpace, alId, securityGroupPath);
-                }
+                UpdateAddressList(runSpace, alId, securityGroupPath);
 
                 //create RAL
                 string ralId = CreateRoomsAddressList(runSpace, organizationId);
                 transaction.RegisterNewRoomsAddressList(ralId);
                 ExchangeLog.LogInfo("  Rooms Address List: {0}", ralId);
-                if (enableDefaultGroup)
-                {
-                    UpdateAddressList(runSpace, ralId, securityGroupPath);
-                }
+                UpdateAddressList(runSpace, ralId, securityGroupPath);
 
                 //create ActiveSync policy
                 string asId = CreateActiveSyncPolicy(runSpace, organizationId);
@@ -855,13 +841,8 @@ namespace WebsitePanel.Providers.HostedSolution
                 string oabId = CreateOfflineAddressBook(runSpace, organizationId, server, oabVirtualDir);
                 transaction.RegisterNewOfflineAddressBook(oabId);
 
-                bool enableDefaultGroup = !string.IsNullOrEmpty(securityGroup);
-
-                if (enableDefaultGroup)
-                {
-                    string securityGroupId = AddADPrefix(securityGroup);
-                    UpdateOfflineAddressBook(runSpace, oabId, securityGroupId);
-                }
+                string securityGroupId = AddADPrefix(securityGroup);
+                UpdateOfflineAddressBook(runSpace, oabId, securityGroupId);
                 
                 info.OfflineAddressBook = oabId;
             }
@@ -1016,12 +997,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 //disable mail security distribution group
                 try
                 {
-                    bool enableDefaultGroup = !string.IsNullOrEmpty(securityGroup);
-
-                    if (enableDefaultGroup)
-                    {
-                        DisableMailSecurityDistributionGroup(runSpace, securityGroup);
-                    }
+                    DisableMailSecurityDistributionGroup(runSpace, securityGroup);
                 }
                 catch (Exception ex)
                 {
@@ -4111,12 +4087,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 string id = AddPublicFolder(runSpace, folderName, parentFolder);
                 transaction.RegisterNewPublicFolder(string.Empty, id);
 
-                bool enableDefaultGroup = !string.IsNullOrEmpty(securityGroup);
-
-                if (enableDefaultGroup)
-                {
-                    SetPublicFolderPermissions(runSpace, id, securityGroup);
-                }
+                SetPublicFolderPermissions(runSpace, id, securityGroup);
 
                 if (mailEnabled)
                 {
