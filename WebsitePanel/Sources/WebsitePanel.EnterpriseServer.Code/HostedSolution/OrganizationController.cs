@@ -1534,7 +1534,7 @@ namespace WebsitePanel.EnterpriseServer
         /// <param name="name"> The name. </param>
         /// <param name="serviceId"> The service identifier. </param>
         /// <returns> The account name with organization Id. </returns>
-        private static string BuildAccountNameWithOrgId(string orgId, string name, int serviceId)
+        public static string BuildAccountNameWithOrgId(string orgId, string name, int serviceId)
         {
             name = ((orgId.Length + name.Length) > 19 && name.Length > 9) ? name.Substring(0, (19 - orgId.Length) < 10 ? 10 : 19 - orgId.Length) : name;
 
