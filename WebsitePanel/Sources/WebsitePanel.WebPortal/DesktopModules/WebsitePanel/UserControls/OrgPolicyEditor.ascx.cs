@@ -146,6 +146,8 @@ namespace WebsitePanel.Portal.UserControls
             additionalGroups.Add(additionalGroup);
 
             BindAdditionalGroups(additionalGroups.ToArray());
+
+            txtAdditionalGroup.Text = string.Empty;
         }
 
         protected void btnUpdateAdditionalGroup_Click(object sender, EventArgs e)
@@ -160,6 +162,8 @@ namespace WebsitePanel.Portal.UserControls
                 .First().GroupName = txtAdditionalGroup.Text;
 
             BindAdditionalGroups(additionalGroups.ToArray());
+
+            txtAdditionalGroup.Text = string.Empty;
         }
 
         protected void gvAdditionalGroup_RowCommand(object sender, GridViewCommandEventArgs e)

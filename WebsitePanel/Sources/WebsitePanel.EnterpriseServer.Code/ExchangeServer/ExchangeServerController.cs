@@ -3375,7 +3375,7 @@ namespace WebsitePanel.EnterpriseServer
                 int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
                 if (packageCheck < 0) return packageCheck;
 
-                string accountName = BuildAccountName(org.OrganizationId, name);
+                string accountName = OrganizationController.BuildAccountNameWithOrgId(org.OrganizationId, name, org.ServiceId);
 
                 // add account
                 // add contact
