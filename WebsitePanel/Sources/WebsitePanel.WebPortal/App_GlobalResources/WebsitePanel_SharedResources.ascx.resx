@@ -5111,7 +5111,7 @@
     <value>Recoverable Items Storage, MB</value>
   </data>
   <data name="ResourceGroup.Exchange" xml:space="preserve">
-    <value>Enterprise Storage</value>
+    <value>Hosted Exchange</value>
   </data>
   <data name="EnterpriseStorage.DiskStorageSpace" xml:space="preserve">
     <value>Disk Storage Space, MB</value>
