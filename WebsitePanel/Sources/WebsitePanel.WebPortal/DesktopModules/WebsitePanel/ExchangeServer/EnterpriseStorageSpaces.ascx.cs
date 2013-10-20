@@ -101,7 +101,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     }
 
                     // rebind domains
-                    BindDomainNames();
+                    //BindDomainNames();
 
                     BindStats();
                 }
@@ -132,7 +132,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     }
 
                     // rebind domains
-                    BindDomainNames();
+                    //BindDomainNames();
 
                     BindStats();
                 }
@@ -155,12 +155,12 @@ namespace WebsitePanel.Portal.ExchangeServer
                 {
                     messageBox.ShowResultMessage(result);
                     if (BusinessErrorCodes.ERROR_USER_ACCOUNT_DEMO == result)
-                        BindDomainNames();
+                        //BindDomainNames();
                     return;
                 }
 
                 // rebind domains
-                BindDomainNames();
+                //BindDomainNames();
             }
             catch (Exception ex)
             {

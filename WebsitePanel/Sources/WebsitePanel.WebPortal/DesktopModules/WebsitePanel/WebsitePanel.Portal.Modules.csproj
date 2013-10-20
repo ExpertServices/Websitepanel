@@ -524,6 +524,13 @@
     <Compile Include="UserControls\OrgIdPolicyEditor.ascx.designer.cs">
       <DependentUpon>OrgIdPolicyEditor.ascx</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\OrgPolicyEditor.ascx.cs">
+      <DependentUpon>OrgPolicyEditor.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\OrgPolicyEditor.ascx.designer.cs">
+      <DependentUpon>OrgPolicyEditor.ascx</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\PackagePhoneNumbers.ascx.cs">
       <DependentUpon>PackagePhoneNumbers.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4039,6 +4046,7 @@
     <Content Include="SettingsLyncUserPlansPolicy.ascx" />
     <Content Include="UserControls\EditFeedsList.ascx" />
     <Content Include="UserControls\OrgIdPolicyEditor.ascx" />
+    <Content Include="UserControls\OrgPolicyEditor.ascx" />
     <Content Include="UserControls\PackagePhoneNumbers.ascx" />
     <Content Include="UserControls\AllocatePackagePhoneNumbers.ascx" />
     <Content Include="VPSForPC\MonitoringPage.aspx" />
@@ -5225,8 +5233,8 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="ProviderControls\App_LocalResources\EnterpriseStorage_Settings.ascx.resx" />
-    <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageSpaces.ascx.resx">
-    <Content Include="UserControls\App_LocalResources\OrgPolicyEditor.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageSpaces.ascx.resx" />
+    <Content Include="UserControls\App_LocalResources\OrgPolicyEditor.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">

@@ -47,18 +47,18 @@ using System.Management;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 
-using Microsoft.Rtc.Management.Hosted;
+//using Microsoft.Rtc.Management.Hosted;
 using Microsoft.Rtc.Management.WritableConfig.Settings.Edge;
 using Microsoft.Rtc.Management.WritableConfig.Settings.SimpleUrl;
 
 
 namespace WebsitePanel.Providers.HostedSolution
 {
-    public class Lync2010 : HostingServiceProviderBase, ILyncServer
+    public class Lync2013HP : HostingServiceProviderBase, ILyncServer
     {
 
         #region Static constructor
-        static Lync2010()
+        static Lync2013HP()
         {
             LyncRegistryPath = "SOFTWARE\\Microsoft\\Real-Time Communications";
         }

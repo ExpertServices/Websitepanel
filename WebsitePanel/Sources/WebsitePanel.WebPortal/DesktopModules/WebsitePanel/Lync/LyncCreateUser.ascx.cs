@@ -122,7 +122,7 @@ namespace WebsitePanel.Portal.Lync
                 bool enterpriseVoiceQuota = Utils.CheckQouta(Quotas.LYNC_ENTERPRISEVOICE, cntx);
 
                 string lineUri = "";
-                if (enterpriseVoiceQuota) lineUri = ddlPhoneNumber.SelectedItem.Text + ":" + tbPin.Text;
+                if ((enterpriseVoiceQuota) & (ddlPhoneNumber.Items.Count != 0)) lineUri = ddlPhoneNumber.SelectedItem.Text + ":" + tbPin.Text;
 
                 //#1
                 LyncUser lyncUser = ES.Services.Lync.GetLyncUserGeneralSettings(PanelRequest.ItemID, accountId);
