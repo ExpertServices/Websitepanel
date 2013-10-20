@@ -68,7 +68,9 @@ namespace WebsitePanel.Providers.OS
         {
             Server.Utils.OS.WindowsVersion version = WebsitePanel.Server.Utils.OS.GetVersion();
             return version == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2012
-                || version == WebsitePanel.Server.Utils.OS.WindowsVersion.Windows8;
+                || version == WebsitePanel.Server.Utils.OS.WindowsVersion.Windows8
+                || version == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2012R2
+                || version == WebsitePanel.Server.Utils.OS.WindowsVersion.Windows81;
         }
         
         public override void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
