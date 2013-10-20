@@ -1535,7 +1535,7 @@ namespace WebsitePanel.Providers.HostedSolution
             if (rk != null)
             {
                 value = (string)rk.GetValue("ProductVersion", null);
-                if (value == "4.0.7577.0")
+                if (value == "5.0.8308.0")
                     bResult = true;
 
                 rk.Close();
