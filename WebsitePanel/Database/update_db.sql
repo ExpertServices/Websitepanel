@@ -2270,3 +2270,93 @@ EXEC sp_executesql @sql, N'@ItemID int', @ItemID
 
 RETURN
 GO
+
+---- Additional Default Groups-------------
+
+IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'AdditionalGroups')
+DROP TABLE AdditionalGroups
+GO
+
+CREATE TABLE AdditionalGroups
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	UserID INT NOT NULL,
+	GroupName NVARCHAR(255)
+)
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetAdditionalGroups')
+DROP PROCEDURE GetAdditionalGroups
+GO
+
+CREATE PROCEDURE [dbo].[GetAdditionalGroups]
+(
+	@UserID INT
+)
+AS
+
+SELECT
+	AG.ID,
+	AG.UserID,
+	AG.GroupName
+FROM AdditionalGroups AS AG
+WHERE AG.UserID = @UserID
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddAdditionalGroup')
+DROP PROCEDURE AddAdditionalGroup
+GO
+
+CREATE PROCEDURE [dbo].[AddAdditionalGroup]
+(
+	@GroupID INT OUTPUT,
+	@UserID INT,
+	@GroupName NVARCHAR(255)
+)
+AS
+
+INSERT INTO AdditionalGroups
+(
+	UserID,
+	GroupName
+)
+VALUES
+(
+	@UserID,
+	@GroupName
+)
+
+SET @GroupID = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteAdditionalGroup')
+DROP PROCEDURE DeleteAdditionalGroup
+GO
+
+CREATE PROCEDURE [dbo].[DeleteAdditionalGroup]
+(
+	@GroupID INT
+)
+AS
+
+DELETE FROM AdditionalGroups
+WHERE ID = @GroupID
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateAdditionalGroup')
+DROP PROCEDURE UpdateAdditionalGroup
+GO
+
+CREATE PROCEDURE [dbo].[UpdateAdditionalGroup]
+(
+	@GroupID INT,
+	@GroupName NVARCHAR(255)
+)
+AS
+
+UPDATE AdditionalGroups SET
+	GroupName = @GroupName
+WHERE ID = @GroupID
+GO

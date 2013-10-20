@@ -5226,6 +5226,7 @@
     </Content>
     <Content Include="ProviderControls\App_LocalResources\EnterpriseStorage_Settings.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageSpaces.ascx.resx">
+    <Content Include="UserControls\App_LocalResources\OrgPolicyEditor.ascx.resx" />
       <SubType>Designer</SubType>
     </Content>
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">

@@ -117,7 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="enablePolicyCheckBox.Text" xml:space="preserve">
+  <data name="btnAddAdditionalGroup.Text" xml:space="preserve">
+    <value>Add New Group</value>
+  </data>
+  <data name="btnUpdateAdditionalGroup.Text" xml:space="preserve">
+    <value>Update Group</value>
+  </data>
+  <data name="chkEnablePolicy.Text" xml:space="preserve">
     <value>Enable Policy</value>
+  </data>
+  <data name="gvAdditionalGroup.HeaderText" xml:space="preserve">
+    <value>Display Name</value>
+  </data>
+  <data name="gvAdditionalGroupEdit.HeaderText" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="gvAdditionalGroups.EmptyDataText" xml:space="preserve">
+    <value>No groups have been added yet. To add a new group click "Add New Group" button.</value>
+  </data>
+  <data name="lblAdditionalGroupName.Text" xml:space="preserve">
+    <value>Display Name:</value>
+  </data>
+  <data name="valDuplicateAdditionalGroup" xml:space="preserve">
+    <value>*</value>
+  </data>
+  <data name="valRequireAdditionalGroup.Text" xml:space="preserve">
+    <value>*</value>
   </data>
 </root>

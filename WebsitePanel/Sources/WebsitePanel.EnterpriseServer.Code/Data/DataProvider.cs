@@ -2981,6 +2981,53 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Organizations
 
+        public static IDataReader GetAdditionalGroups(int userId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetAdditionalGroups",
+                new SqlParameter("@UserID", userId)
+            );
+        }
+
+
+        public static int AddAdditionalGroup(int userId, string groupName)
+        {
+            SqlParameter prmId = new SqlParameter("@GroupID", SqlDbType.Int);
+            prmId.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddAdditionalGroup",
+                prmId,
+                new SqlParameter("@UserID", userId),
+                new SqlParameter("@GroupName", groupName));
+
+            // read identity
+            return Convert.ToInt32(prmId.Value);
+        }
+
+        public static void DeleteAdditionalGroup(int groupId)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteAdditionalGroup",
+                new SqlParameter("@GroupID", groupId));
+        }
+
+        public static void UpdateAdditionalGroup(int groupId, string groupName)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateAdditionalGroup",
+                new SqlParameter("@GroupID", groupId),
+                new SqlParameter("@GroupName", groupName)
+            );
+        }
+
         public static void DeleteOrganizationUser(int itemId)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure, "DeleteOrganizationUsers", new SqlParameter("@ItemID", itemId));

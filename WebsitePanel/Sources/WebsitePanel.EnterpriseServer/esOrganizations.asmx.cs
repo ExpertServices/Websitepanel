@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Web.Services;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
 
@@ -119,7 +120,6 @@ namespace WebsitePanel.EnterpriseServer
 
         #endregion
 
-
         #region Domains
 
         [WebMethod]
@@ -153,7 +153,6 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         #endregion
-
 
         #region Users
 
@@ -299,6 +298,34 @@ namespace WebsitePanel.EnterpriseServer
         {
             return OrganizationController.SearchOrganizationAccounts(itemId, filterColumn, filterValue, sortColumn,
                 includeOnlySecurityGroups);
+        }
+
+        #endregion
+
+        #region Additional Default Groups
+
+        [WebMethod]
+        public List<AdditionalGroup> GetAdditionalGroups(int userId)
+        {
+            return OrganizationController.GetAdditionalGroups(userId);
+        }
+
+        [WebMethod]
+        public void UpdateAdditionalGroup(int groupId, string groupName)
+        {
+            OrganizationController.UpdateAdditionalGroup(groupId, groupName);
+        }
+
+        [WebMethod]
+        public void DeleteAdditionalGroup(int groupId)
+        {
+            OrganizationController.DeleteAdditionalGroup(groupId);
+        }
+
+        [WebMethod]
+        public int AddAdditionalGroup(int userId, string groupName)
+        {
+            return OrganizationController.AddAdditionalGroup(userId, groupName);
         }
 
         #endregion
