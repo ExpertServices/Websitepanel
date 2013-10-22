@@ -147,4 +147,10 @@
   <data name="valRequireDisplayName.Text" xml:space="preserve">
     <value>*</value>
   </data>
+  <data name="locDisplayName" xml:space="preserve">
+    <value>Display Name: *</value>
+  </data>
+  <data name="locGroupName" xml:space="preserve">
+    <value>Windows Group Name:</value>
+  </data>
 </root>

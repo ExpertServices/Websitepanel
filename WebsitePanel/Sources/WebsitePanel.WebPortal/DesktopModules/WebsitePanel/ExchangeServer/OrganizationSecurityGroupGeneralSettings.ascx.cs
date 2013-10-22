@@ -64,6 +64,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 // bind form
                 txtDisplayName.Text = securityGroup.DisplayName;
+                lblGroupName.Text = securityGroup.AccountName;
 
                 members.SetAccounts(securityGroup.MembersAccounts);
 
