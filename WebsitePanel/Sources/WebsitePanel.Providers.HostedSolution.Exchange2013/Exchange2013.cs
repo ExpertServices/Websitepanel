@@ -2296,6 +2296,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 info.DisplayName = (string)GetPSObjectProperty(mailbox, "DisplayName");
                 info.HideFromAddressBook = (bool)GetPSObjectProperty(mailbox, "HiddenFromAddressListsEnabled");
+                info.ExchangeGuid = GetPSObjectProperty(mailbox, "ExchangeGuid").ToString();
 
 
                 Command cmd = new Command("Get-User");
