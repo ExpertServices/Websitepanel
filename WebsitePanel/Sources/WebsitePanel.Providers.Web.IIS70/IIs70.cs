@@ -110,10 +110,13 @@ namespace WebsitePanel.Providers.Web
         // true handler name
         public const string HeliconApeHandler = "Helicon.Ape Handler";
         public const string HeliconApeHandlerType = "Helicon.Ape.Handler";
-        
         public const string HeliconApeHandlerPath = "*.apehandler";
-        
-		public const string IsapiModule = "IsapiModule";
+
+	    public const string HeliconApeRegistryPath = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Helicon\\Ape";
+	    public const string heliconApeRegistryPathWow6432 = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Helicon\\Ape";
+
+
+	    public const string IsapiModule = "IsapiModule";
 		public const string FastCgiModule = "FastCgiModule";
 		public const string CgiModule = "CgiModule";
 
@@ -2066,10 +2069,10 @@ namespace WebsitePanel.Providers.Web
         private string GetHeliconApeInstallDir(string siteId)
         {
             //Check global registration
-            string installDir = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Helicon\\Ape", "InstallDir", string.Empty) as string;
+            string installDir = Registry.GetValue(Constants.heliconApeRegistryPathWow6432, "InstallDir", string.Empty) as string;
             if (string.Empty == installDir)
             {
-                installDir = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Helicon\\Ape", "InstallDir", string.Empty) as string;
+                installDir = Registry.GetValue(Constants.HeliconApeRegistryPath, "InstallDir", string.Empty) as string;
             }
 
             return installDir;
@@ -2218,12 +2221,12 @@ namespace WebsitePanel.Providers.Web
             if (!string.IsNullOrEmpty(registrationInfo))
                 return registrationInfo;
 
-            string ApeRegistryPath = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Helicon\\Ape";
+            string apeRegistryPath = Constants.HeliconApeRegistryPath;
             long dtFirstRunBinary = 0L;
 
             try
             {
-                dtFirstRunBinary = (long) Registry.GetValue(ApeRegistryPath, "FirstRun", 0L);
+                dtFirstRunBinary = (long) Registry.GetValue(apeRegistryPath, "FirstRun", 0L);
             }
             catch(NullReferenceException)
             {
@@ -2232,10 +2235,10 @@ namespace WebsitePanel.Providers.Web
 
             if (0 == dtFirstRunBinary)
             {
-                ApeRegistryPath = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Helicon\\Ape";
+                apeRegistryPath = Constants.heliconApeRegistryPathWow6432;
                 try
                 {
-                    dtFirstRunBinary = (long) Registry.GetValue(ApeRegistryPath, "FirstRun", 0L);
+                    dtFirstRunBinary = (long) Registry.GetValue(apeRegistryPath, "FirstRun", 0L);
                 }
                 catch(NullReferenceException)
                 {
@@ -2247,7 +2250,7 @@ namespace WebsitePanel.Providers.Web
             if (0 == dtFirstRunBinary)
             {
                 dtFirstRun = DateTime.Now;
-                Registry.SetValue(ApeRegistryPath, "FirstRun", dtFirstRun.ToBinary(),RegistryValueKind.QWord );
+                Registry.SetValue(apeRegistryPath, "FirstRun", dtFirstRun.ToBinary(),RegistryValueKind.QWord );
             }
             else
             {
@@ -3477,7 +3480,6 @@ namespace WebsitePanel.Providers.Web
 		public const string WDeployRepair = "WDeployRepair";
 		public const string WDeployAppHostConfigWriter = "WDeployAppHostConfigWriter";
 		public const string WDeployAppPoolConfigEditor = "WDeployAppPoolConfigEditor";
-
 
 	    private void SetupWebDeployPublishingOnServer(List<string> messages)
 		{
