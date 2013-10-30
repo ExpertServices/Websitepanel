@@ -98,6 +98,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                 chkHideAddressBook.Checked = mailbox.HideFromAddressBook;
                 chkDisable.Checked = mailbox.Disabled;
 
+                lblExchangeGuid.Text = string.IsNullOrEmpty(mailbox.ExchangeGuid) ? "<>" : mailbox.ExchangeGuid ;
+
                 // get account meta
                 ExchangeAccount account = ES.Services.ExchangeServer.GetAccount(PanelRequest.ItemID, PanelRequest.AccountID);
                 chkPmmAllowed.Checked = (account.MailboxManagerActions & MailboxManagerActions.GeneralSettings) > 0;

@@ -150,4 +150,7 @@
   <data name="Text.PageName" xml:space="preserve">
     <value>Groups</value>
   </data>
+  <data name="gvGroupsNotes.Header" xml:space="preserve">
+    <value>Notes</value>
+  </data>
 </root>
