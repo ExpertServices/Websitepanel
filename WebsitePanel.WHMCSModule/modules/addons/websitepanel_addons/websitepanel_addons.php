@@ -68,7 +68,7 @@ function websitepanel_addons_activate()
     $query = "CREATE TABLE `mod_wspaddons` (
               `whmcs_id` int(11) NOT NULL,
               `wsp_id` int(11) NOT NULL,
-              `is_ipaddress` bit(1) NOT NULL DEFAULT b'0',
+              `is_ipaddress` bit(1) NOT NULL DEFAULT 0,
               PRIMARY KEY (`whmcs_id`)
               ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
     $result = full_query($query);
