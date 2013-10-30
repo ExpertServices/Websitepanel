@@ -1249,10 +1249,13 @@ namespace WebsitePanel.EnterpriseServer
             int quotaUsed = cntx.Quotas[quotaName].QuotaUsedValue;
 
             // check the maximum allowed number
-            if (addressesNumber > (quotaAllocated - quotaUsed))
+            if (quotaAllocated != -1) // check only if not unlimited 
             {
-                res.ErrorCodes.Add("IP_ADDRESSES_QUOTA_LIMIT_REACHED");
-                return res;
+                if (addressesNumber > (quotaAllocated - quotaUsed))
+                {
+                    res.ErrorCodes.Add("IP_ADDRESSES_QUOTA_LIMIT_REACHED");
+                    return res;
+                }
             }
 
             // check if requested more than available
