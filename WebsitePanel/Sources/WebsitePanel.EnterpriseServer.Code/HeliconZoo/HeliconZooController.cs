@@ -76,6 +76,31 @@ namespace WebsitePanel.EnterpriseServer
 
         public static ShortHeliconZooEngine[] GetAllowedHeliconZooQuotasForPackage(int packageId)
         {
+            // first, check IsEnginesAllowed for this server
+            
+            // get helicon zoo provider serviceId
+            int heliconZooProviderId, heliconZooGroupId;
+            DataProvider.GetHeliconZooProviderAndGroup("HeliconZoo", out heliconZooProviderId, out heliconZooGroupId);
+
+            // get helicon zoo service id for heliconZooProviderId and packageId
+            int serviceId = DataProvider.GetServiceIdForProviderIdAndPackageId(heliconZooProviderId, packageId);
+
+            if (serviceId > 0)
+            {
+                if (IsEnginesEnabled(serviceId))
+                {
+                    // all engines allowed by default
+                    return new ShortHeliconZooEngine[]
+                    {
+                        new ShortHeliconZooEngine{Name = "*", DisplayName = "*", Enabled = true} 
+                    };
+                }
+            }
+
+
+            // all engines is not allowed
+            // get allowed engines from hosting plan quotas
+
             List<ShortHeliconZooEngine> allowedEngines = new List<ShortHeliconZooEngine>();
 
             IDataReader reader = DataProvider.GetEnabledHeliconZooQuotasForPackage(packageId);

@@ -4050,6 +4050,26 @@ namespace WebsitePanel.EnterpriseServer
             return reader;
         }
 
+        public static int GetServiceIdForProviderIdAndPackageId(int providerId, int packageId)
+        {
+            IDataReader reader = SqlHelper.ExecuteReader(ConnectionString, CommandType.Text,
+                @"SELECT PackageServices.ServiceID 
+                FROM PackageServices
+                INNER JOIN Services ON PackageServices.ServiceID = Services.ServiceID
+                WHERE Services.ProviderID = @ProviderID and PackageID = @PackageID",
+                new SqlParameter("@ProviderID", providerId),
+                new SqlParameter("@PackageID", packageId)
+            );
+
+            if (reader.Read())
+            {
+                return (int)reader["ServiceID"];
+            }
+
+            return -1;
+
+        }
+
         public static int GetServerIdForPackage(int packageId)
         {
             IDataReader reader = SqlHelper.ExecuteReader(ConnectionString, CommandType.Text,
