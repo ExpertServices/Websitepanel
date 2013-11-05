@@ -50,6 +50,7 @@ namespace WebsitePanel.Providers.HostedSolution
         string mailboxPlan;
         string publicFolderPermission;
         string userPrincipalName;
+        string notes;
 
         public int AccountId
         {
@@ -149,5 +150,10 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.userPrincipalName = value; }
         }
 
+        public string Notes
+        {
+            get { return this.notes; }
+            set { this.notes = value; }
+        }
     }
 }

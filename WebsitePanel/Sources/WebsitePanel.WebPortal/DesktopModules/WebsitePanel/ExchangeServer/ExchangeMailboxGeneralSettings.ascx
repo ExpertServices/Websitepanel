@@ -119,6 +119,16 @@
 					        </td>
 					    </tr>
 					</table>
+
+                    <wsp:CollapsiblePanel id="secAdvancedInfo" runat="server" TargetControlID="AdvancedInfo" meta:resourcekey="secAdvancedInfo" Text="Advanced Information" IsCollapsed="true"></wsp:CollapsiblePanel>
+                    <asp:Panel ID="AdvancedInfo" runat="server" Height="0" style="overflow:hidden;">
+					    <table>
+						    <tr>
+						    <td class="FormLabel150"> <asp:Localize ID="locExchangeGuid" runat="server" meta:resourcekey="locExchangeGuid" Text="Exchange Guid:"></asp:Localize></td>
+						    <td><asp:Label runat="server" ID="lblExchangeGuid" /></td>
+						</tr>					   
+					    </table>
+					</asp:Panel>
 					
 				    <div class="FormFooterClean">
 					    <asp:Button id="btnSave" runat="server" Text="Save Changes" CssClass="Button1"

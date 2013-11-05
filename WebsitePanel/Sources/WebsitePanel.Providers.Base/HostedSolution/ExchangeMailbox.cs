@@ -102,6 +102,8 @@ namespace WebsitePanel.Providers.HostedSolution
         long recoverabelItemsSpace;
         long recoverabelItemsWarning;
 
+        string exchangeGuid;
+
 
 
         public string DisplayName
@@ -423,6 +425,13 @@ namespace WebsitePanel.Providers.HostedSolution
             get { return this.recoverabelItemsWarning; }
             set { this.recoverabelItemsWarning = value; }
         }
+
+        public string ExchangeGuid
+        {
+            get { return this.exchangeGuid; }
+            set { this.exchangeGuid = value; }
+        }
+
 
 	}
 }

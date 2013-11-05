@@ -5110,9 +5110,6 @@
   <data name="Quota.Exchange2007.RecoverableItemsSpace" xml:space="preserve">
     <value>Recoverable Items Storage, MB</value>
   </data>
-  <data name="ResourceGroup.Exchange" xml:space="preserve">
-    <value>Hosted Exchange</value>
-  </data>
   <data name="EnterpriseStorage.DiskStorageSpace" xml:space="preserve">
     <value>Disk Storage Space, MB</value>
   </data>
@@ -5358,5 +5355,8 @@
   </data>
   <data name="Success.ORGANIZATION_UPDATE_SECURITY_GROUP_SETTINGS" xml:space="preserve">
     <value>Group general settings have been successfully updated.</value>
+  </data>
+  <data name="ResourceGroup.RDS" xml:space="preserve">
+    <value>Remote Desktop Services</value>
   </data>
 </root>
