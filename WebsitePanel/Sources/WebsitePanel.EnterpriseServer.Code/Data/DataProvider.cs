@@ -979,6 +979,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@ClusterId", clusterId),
                 new SqlParameter("@comments", comments));
 
+            UpdateServerPackageServices(serverId);
+
             return Convert.ToInt32(prmServiceId.Value);
         }
 
@@ -1559,6 +1561,8 @@ namespace WebsitePanel.EnterpriseServer
             // read identity
             packageId = Convert.ToInt32(prmPackageId.Value);
 
+            DistributePackageServices(actorId, packageId);
+
             return ds;
         }
 
@@ -1658,6 +1662,33 @@ namespace WebsitePanel.EnterpriseServer
                 ObjectQualifier + "DeletePackageAddon",
                 new SqlParameter("@actorId", actorId),
                 new SqlParameter("@PackageAddonID", packageAddonId));
+        }
+
+        public static void UpdateServerPackageServices(int serverId)
+        {
+            // FIXME
+            int defaultActorID = 1;
+
+            // get server packages
+            IDataReader packagesReader = SqlHelper.ExecuteReader(ConnectionString, CommandType.Text,
+                @"SELECT PackageID FROM Packages WHERE ServerID = @ServerID",
+                new SqlParameter("@ServerID", serverId)
+            );
+
+            // call DistributePackageServices for all packages on this server
+            while (packagesReader.Read())
+            {
+                int packageId = (int) packagesReader["PackageID"];
+                DistributePackageServices(defaultActorID, packageId);
+            }
+        }
+
+        public static void DistributePackageServices(int actorId, int packageId)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "DistributePackageServices",
+                new SqlParameter("@ActorId", actorId),
+                new SqlParameter("@PackageID", packageId));
         }
 
         #endregion
