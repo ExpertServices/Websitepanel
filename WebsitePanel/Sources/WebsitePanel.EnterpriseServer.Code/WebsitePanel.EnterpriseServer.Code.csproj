@@ -1,0 +1,200 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{60E39314-659C-4FAD-AB91-D0D08E223578}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WebsitePanel.EnterpriseServer.Code</RootNamespace>
+    <AssemblyName>WebsitePanel.EnterpriseServer.Code</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\Bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\Bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Ionic.Zip.Reduced">
+      <HintPath>..\..\Lib\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Services3">
+      <HintPath>..\..\Lib\Microsoft.Web.Services3.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WebsitePanel.EnterpriseServer.Base, Version=2.1.0.1, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="WebsitePanel.Providers.Base">
+      <HintPath>..\..\Bin\WebsitePanel.Providers.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="WebsitePanel.Server.Client">
+      <HintPath>..\..\Bin\WebsitePanel.Server.Client.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Comments\CommentsController.cs" />
+    <Compile Include="Common\ConfigSettings.cs" />
+    <Compile Include="Common\CryptoUtils.cs" />
+    <Compile Include="Common\EnterpriseServerIdentity.cs" />
+    <Compile Include="Common\EnterpriseServerPrincipal.cs" />
+    <Compile Include="Common\FileUtils.cs" />
+    <Compile Include="Common\Int128.cs" />
+    <Compile Include="Common\IPAddress.cs" />
+    <Compile Include="Common\MailHelper.cs" />
+    <Compile Include="Common\ObjectUtils.cs" />
+    <Compile Include="Common\SecurityContext.cs" />
+    <Compile Include="Common\ServiceProviderProxy.cs" />
+    <Compile Include="Common\ServiceUsernameTokenManager.cs" />
+    <Compile Include="Common\UsernameAssertion.cs" />
+    <Compile Include="Common\Utils.cs" />
+    <Compile Include="DatabaseServers\DatabaseServerController.cs" />
+    <Compile Include="Data\DataProvider.cs" />
+    <Compile Include="Data\EcommerceProvider.cs" />
+    <Compile Include="Data\SQLHelper.cs" />
+    <Compile Include="DnsServers\DnsServerController.cs" />
+    <Compile Include="Ecommerce\CategoryController.cs" />
+    <Compile Include="Ecommerce\ContractSystem\ContractController.cs" />
+    <Compile Include="Ecommerce\Helpers.cs" />
+    <Compile Include="Ecommerce\InvoiceController.cs" />
+    <Compile Include="Ecommerce\MiscController.cs" />
+    <Compile Include="Ecommerce\PaymentGatewayController.cs" />
+    <Compile Include="Ecommerce\Provisioning\DomainNameController.cs" />
+    <Compile Include="Ecommerce\Provisioning\HostingAddonController.cs" />
+    <Compile Include="Ecommerce\Provisioning\HostingPackageController.cs" />
+    <Compile Include="Ecommerce\Provisioning\IServiceProvisioning.cs" />
+    <Compile Include="Ecommerce\Provisioning\ProvisioningContext.cs" />
+    <Compile Include="Ecommerce\Provisioning\ServiceProvisioningBase.cs" />
+    <Compile Include="Ecommerce\ServiceController.cs" />
+    <Compile Include="Ecommerce\ServiceHandlers\ServiceHandlerController.cs" />
+    <Compile Include="Ecommerce\StorefrontController.cs" />
+    <Compile Include="Ecommerce\StorehouseController.cs" />
+    <Compile Include="Ecommerce\SystemPluginController.cs" />
+    <Compile Include="Ecommerce\TaskEventHandlers\SendEmailNotification.cs" />
+    <Compile Include="Ecommerce\TaskEventHandlers\SystemTriggersAgent.cs" />
+    <Compile Include="Ecommerce\TriggerSystem\CommonTrigger.cs" />
+    <Compile Include="Ecommerce\TriggerSystem\TriggerController.cs" />
+    <Compile Include="EnterpriseStorage\EnterpriseStorageController.cs" />
+    <Compile Include="ExchangeServer\ExchangeServerController.cs" />
+    <Compile Include="Files\FilesController.cs" />
+    <Compile Include="FtpServers\FtpServerController.cs" />
+    <Compile Include="HeliconZoo\HeliconZooController.cs" />
+    <Compile Include="HostedSolution\BlackBerryController.cs" />
+    <Compile Include="HostedSolution\CRMController.cs" />
+    <Compile Include="HostedSolution\LyncController.cs" />
+    <Compile Include="HostedSolution\LyncControllerAsync.cs" />
+    <Compile Include="HostedSolution\OCSController.cs" />
+    <Compile Include="HostedSolution\OrganizationController.cs" />
+    <Compile Include="HostedSolution\ReportController.cs" />
+    <Compile Include="Log\AuditLog.cs" />
+    <Compile Include="MailServers\MailServerController.cs" />
+    <Compile Include="MailServers\QuotaLimit.cs" />
+    <Compile Include="OperatingSystems\OperatingSystemController.cs" />
+    <Compile Include="Packages\PackageAsyncWorker.cs" />
+    <Compile Include="Packages\PackageController.cs" />
+    <Compile Include="Packages\ServiceItemsPaged.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Provisioning\BackupAsyncWorker.cs" />
+    <Compile Include="Provisioning\BackupController.cs" />
+    <Compile Include="Provisioning\IBackupController.cs" />
+    <Compile Include="Provisioning\IImportController.cs" />
+    <Compile Include="Provisioning\ImportAsyncWorker.cs" />
+    <Compile Include="Provisioning\ImportController.cs" />
+    <Compile Include="RemoteDesktopServices\RemoteDesktopServicesController.cs" />
+    <Compile Include="SchedulerTasks\ActivatePaidInvoicesTask.cs" />
+    <Compile Include="SchedulerTasks\BackupDatabaseTask.cs" />
+    <Compile Include="SchedulerTasks\BackupTask.cs" />
+    <Compile Include="SchedulerTasks\CalculateExchangeDiskspaceTask.cs" />
+    <Compile Include="SchedulerTasks\CalculatePackagesBandwidthTask.cs" />
+    <Compile Include="SchedulerTasks\CalculatePackagesDiskspaceTask.cs" />
+    <Compile Include="SchedulerTasks\CancelOverdueInvoicesTask.cs" />
+    <Compile Include="SchedulerTasks\CheckWebSiteTask.cs" />
+    <Compile Include="SchedulerTasks\FTPFilesTask.cs" />
+    <Compile Include="SchedulerTasks\GenerateInvoicesTask.cs" />
+    <Compile Include="SchedulerTasks\HostedSolutionReport.cs" />
+    <Compile Include="SchedulerTasks\NotifyOverusedDatabasesTask.cs" />
+    <Compile Include="SchedulerTasks\RunPaymentQueueTask.cs" />
+    <Compile Include="SchedulerTasks\RunSystemCommandTask.cs" />
+    <Compile Include="SchedulerTasks\SendMailNotificationTask.cs" />
+    <Compile Include="SchedulerTasks\SuspendOverdueInvoicesTask.cs" />
+    <Compile Include="SchedulerTasks\SuspendOverusedPackagesTask.cs" />
+    <Compile Include="SchedulerTasks\ZipFilesTask.cs" />
+    <Compile Include="Scheduling\Scheduler.cs" />
+    <Compile Include="Scheduling\SchedulerController.cs" />
+    <Compile Include="Scheduling\SchedulerJob.cs" />
+    <Compile Include="Servers\ServerController.cs" />
+    <Compile Include="SharePoint\HostedSharePointServerController.cs" />
+    <Compile Include="SharePoint\SharePointServerController.cs" />
+    <Compile Include="StatisticsServers\StatisticsServerController.cs" />
+    <Compile Include="System\SystemController.cs" />
+    <Compile Include="Tasks\SendEmailNotification.cs" />
+    <Compile Include="Tasks\TaskController.cs" />
+    <Compile Include="Tasks\TaskEventHandler.cs" />
+    <Compile Include="Tasks\TaskManager.cs" />
+    <Compile Include="Users\UserAsyncWorker.cs" />
+    <Compile Include="Users\UserController.cs" />
+    <Compile Include="VirtualizationForPrivateCloud\CreateAsyncVMfromVM.cs" />
+    <Compile Include="VirtualizationForPrivateCloud\CreateServerAsyncWorkerForPrivateCloud.cs" />
+    <Compile Include="VirtualizationForPrivateCloud\VirtualizationServerControllerForPrivateCloud.cs" />
+    <Compile Include="Virtualization\CreateServerAsyncWorker.cs" />
+    <Compile Include="Virtualization\VirtualizationServerController.cs" />
+    <Compile Include="WebAppGallery\WebAppGalleryController.cs" />
+    <Compile Include="WebServers\WebServerController.cs" />
+    <Compile Include="Wizards\UserCreationWizard.cs" />
+    <Compile Include="Wizards\WebApplicationsInstaller.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebsitePanel.Common.Utils\WebsitePanel.Common.Utils.csproj">
+      <Project>{53D22D35-4013-415F-BA09-F67A0DBBB0C1}</Project>
+      <Name>WebsitePanel.Common.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebsitePanel.Templates\WebsitePanel.Templates.csproj">
+      <Project>{387FA0EF-3927-45FF-8F8F-BCCD735540C6}</Project>
+      <Name>WebsitePanel.Templates</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebsitePanel.Whois\WebsitePanel.Whois.csproj">
+      <Project>{7112B144-C5EE-43C2-9441-569D75D13CB9}</Project>
+      <Name>WebsitePanel.Whois</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
