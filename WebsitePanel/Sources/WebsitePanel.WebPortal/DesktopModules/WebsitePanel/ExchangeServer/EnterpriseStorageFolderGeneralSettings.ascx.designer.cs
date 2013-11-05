@@ -121,6 +121,24 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::System.Web.UI.WebControls.Label lblFolderUrl;
         
         /// <summary>
+        /// locDirectoryBrowsing control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locDirectoryBrowsing;
+        
+        /// <summary>
+        /// chkDirectoryBrowsing control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkDirectoryBrowsing;
+        
+        /// <summary>
         /// PermissionsPanel control.
         /// </summary>
         /// <remarks>
@@ -146,24 +164,6 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.ExchangeServer.UserControls.EnterpriseStoragePermissions permissions;
-        
-        /// <summary>
-        /// locNotes control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locNotes;
-        
-        /// <summary>
-        /// txtNotes control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtNotes;
         
         /// <summary>
         /// btnSave control.

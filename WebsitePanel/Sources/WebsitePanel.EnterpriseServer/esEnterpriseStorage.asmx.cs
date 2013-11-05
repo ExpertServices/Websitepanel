@@ -110,5 +110,11 @@ namespace WebsitePanel.EnterpriseServer
         {
             return EnterpriseStorageController.GetEnterpriseFoldersPaged(itemId, filterValue, sortColumn, startRow, maximumRows);
         }
+
+        [WebMethod]
+        public SystemFile RenameEnterpriseFolder(int itemId, string oldName, string newName)
+        {
+            return EnterpriseStorageController.RenameFolder(itemId, oldName, newName);
+        }
     }
 }

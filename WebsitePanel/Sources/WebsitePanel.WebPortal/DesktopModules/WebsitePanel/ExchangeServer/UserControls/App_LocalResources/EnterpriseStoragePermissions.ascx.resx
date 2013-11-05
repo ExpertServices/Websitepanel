@@ -162,6 +162,9 @@
   <data name="headerAddAccounts.Text" xml:space="preserve">
     <value>Organization Accounts</value>
   </data>
+  <data name="locDirectoryBrowsing" xml:space="preserve">
+    <value>Enable Directory Browsing:</value>
+  </data>
   <data name="locIncludeSearch.Text" xml:space="preserve">
     <value>Include in search:</value>
   </data>

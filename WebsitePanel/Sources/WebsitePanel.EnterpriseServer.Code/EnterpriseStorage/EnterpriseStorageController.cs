@@ -100,13 +100,18 @@ namespace WebsitePanel.EnterpriseServer
 
         public static ESPermission[] GetFolderPermission(int itemId, string folder)
         {
-            return ConvertToESPermission(GetFolderWebDavRulesInternal(itemId, folder));
+            return ConvertToESPermission(itemId,GetFolderWebDavRulesInternal(itemId, folder));
         }
 
         public static bool CheckFileServicesInstallation(int serviceId)
         {
             EnterpriseStorage es = GetEnterpriseStorage(serviceId);
             return es.CheckFileServicesInstallation();
+        }
+
+        public static SystemFile RenameFolder(int itemId, string oldFolder, string newFolder)
+        {
+            return RenameFolderInternal(itemId, oldFolder, newFolder);
         }
 
         #endregion
@@ -154,6 +159,28 @@ namespace WebsitePanel.EnterpriseServer
                 EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
 
                 return es.GetFolder(org.OrganizationId, folderName);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        protected static SystemFile RenameFolderInternal(int itemId, string oldFolder, string newFolder)
+        {
+            try
+            {
+                // load organization
+                Organization org = OrganizationController.GetOrganization(itemId);
+                if (org == null)
+                {
+                    return null;
+                }
+
+                EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
+
+                return es.RenameFolder(org.OrganizationId, oldFolder, newFolder);
             }
             catch (Exception ex)
             {
@@ -240,7 +267,8 @@ namespace WebsitePanel.EnterpriseServer
             if (org == null)
                 return null;
 
-            string accountTypes = string.Format("{0}, {1}", ((int)ExchangeAccountType.SecurityGroup), ((int)ExchangeAccountType.User));
+            string accountTypes = string.Format("{0}, {1}, {2}", ((int)ExchangeAccountType.SecurityGroup),
+                (int)ExchangeAccountType.DefaultSecurityGroup, ((int)ExchangeAccountType.User));
 
             if (PackageController.GetPackageServiceId(org.PackageId, ResourceGroups.Exchange) != 0)
             {
@@ -257,25 +285,16 @@ namespace WebsitePanel.EnterpriseServer
 
             foreach (ExchangeAccount tmpAccount in tmpAccounts.ToArray())
             {
-                bool bSuccess = false;
+                if (tmpAccount.AccountType == ExchangeAccountType.SecurityGroup || tmpAccount.AccountType == ExchangeAccountType.SecurityGroup
+                        ? OrganizationController.GetSecurityGroupGeneralSettings(itemId, tmpAccount.AccountId) == null
+                        : OrganizationController.GetSecurityGroupGeneralSettings(itemId, tmpAccount.AccountId) == null)
+                    continue;
 
-                switch (tmpAccount.AccountType)
-                {
-                    case ExchangeAccountType.SecurityGroup:
-                        bSuccess = OrganizationController.GetSecurityGroupGeneralSettings(itemId, tmpAccount.AccountId) != null;
-                        break;
-                    default:
-                        bSuccess = OrganizationController.GetUserGeneralSettings(itemId, tmpAccount.AccountId) != null;
-                        break;
-                }
-
-                if (bSuccess)
-                {
-                    exAccounts.Add(tmpAccount);
-                }
+                exAccounts.Add(tmpAccount);
             }
 
             return exAccounts;
+
         }
 
         protected static SystemFilesPaged GetEnterpriseFoldersPagedInternal(int itemId, string filterValue, string sortColumn,
@@ -423,7 +442,7 @@ namespace WebsitePanel.EnterpriseServer
             return rules.ToArray();
         }
 
-        private static ESPermission[] ConvertToESPermission(WebDavFolderRule[] rules)
+        private static ESPermission[] ConvertToESPermission(int itemId, WebDavFolderRule[] rules)
         {
             var permissions = new List<ESPermission>();
 
@@ -435,6 +454,31 @@ namespace WebsitePanel.EnterpriseServer
 
                 permission.IsGroup = rule.Roles.Any();
 
+                var orgObj = OrganizationController.GetAccountByAccountName(itemId, permission.Account);
+
+                if (orgObj == null)
+                    continue;
+
+                if (permission.IsGroup)
+                {
+                    var secGroupObj = OrganizationController.GetSecurityGroupGeneralSettings(itemId, orgObj.AccountId);
+
+                    if (secGroupObj == null)
+                        continue;
+
+                    permission.DisplayName = secGroupObj.DisplayName;
+
+                }
+                else
+                {
+                    var userObj = OrganizationController.GetUserGeneralSettings(itemId, orgObj.AccountId);
+
+                    if (userObj == null)
+                        continue;
+
+                    permission.DisplayName = userObj.DisplayName;
+                }
+
                 if (rule.Read && !rule.Write)
                 {
                     permission.Access = "Read-Only";
@@ -444,10 +488,12 @@ namespace WebsitePanel.EnterpriseServer
                     permission.Access = "Read-Write";
                 }
 
+
                 permissions.Add(permission);
             }
 
             return permissions.ToArray();
+
         }
     }
 }

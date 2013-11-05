@@ -112,6 +112,21 @@ namespace WebsitePanel.Providers.EnterpriseStorage
             FileUtils.CreateDirectory(string.Format("{0}:\\{1}\\{2}\\{3}", LocationDrive, UsersHome, organizationId, folder));
         }
 
+        public SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder)
+        {
+            var oldPath = string.Format("{0}:\\{1}\\{2}\\{3}", LocationDrive, UsersHome, organizationId, originalFolder);
+            var newPath = string.Format("{0}:\\{1}\\{2}\\{3}", LocationDrive, UsersHome, organizationId, newFolder);
+
+            FileUtils.MoveFile(oldPath,newPath);
+
+            IWebDav webdav = new WebDav(UsersDomain);
+
+            //deleting old folder rules
+            webdav.DeleteAllWebDavRules(organizationId, originalFolder);
+
+            return GetFolder(organizationId, newFolder);
+        }
+
         public void DeleteFolder(string organizationId, string folder)
         {
             string rootPath = string.Format("{0}:\\{1}\\{2}\\{3}", LocationDrive, UsersHome, organizationId, folder);

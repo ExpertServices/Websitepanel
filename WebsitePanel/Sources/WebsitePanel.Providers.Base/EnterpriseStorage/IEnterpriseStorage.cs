@@ -41,9 +41,11 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         SystemFile[] GetFolders(string organizationId);
         SystemFile GetFolder(string organizationId, string folderName);
         void CreateFolder(string organizationId, string folder);
+        SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder);
         void DeleteFolder(string organizationId, string folder);
         bool SetFolderWebDavRules(string organizationId, string folder, WebDavFolderRule[] rules);
         WebDavFolderRule[] GetFolderWebDavRules(string organizationId, string folder);
         bool CheckFileServicesInstallation();
+        
     }
 }

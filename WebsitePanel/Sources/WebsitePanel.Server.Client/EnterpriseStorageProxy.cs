@@ -71,16 +71,18 @@ namespace WebsitePanel.Providers.EnterpriseStorage
 
         private System.Threading.SendOrPostCallback DeleteFolderOperationCompleted;
 
-        private System.Threading.SendOrPostCallback CheckFileServicesInstallationOperationCompleted;
-
         private System.Threading.SendOrPostCallback SetFolderWebDavRulesOperationCompleted;
 
         private System.Threading.SendOrPostCallback GetFolderWebDavRulesOperationCompleted;
 
+        private System.Threading.SendOrPostCallback CheckFileServicesInstallationOperationCompleted;
+
+        private System.Threading.SendOrPostCallback RenameFolderOperationCompleted;
+
         /// <remarks/>
         public EnterpriseStorage()
         {
-            this.Url = "http://localhost:9003/EnterpriseStorage.asmx";
+            this.Url = "http://localhost:9004/EnterpriseStorage.asmx";
         }
 
         /// <remarks/>
@@ -96,13 +98,16 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         public event DeleteFolderCompletedEventHandler DeleteFolderCompleted;
 
         /// <remarks/>
-        public event CheckFileServicesInstallationCompletedEventHandler CheckFileServicesInstallationCompleted;
-
-        /// <remarks/>
         public event SetFolderWebDavRulesCompletedEventHandler SetFolderWebDavRulesCompleted;
 
         /// <remarks/>
         public event GetFolderWebDavRulesCompletedEventHandler GetFolderWebDavRulesCompleted;
+
+        /// <remarks/>
+        public event CheckFileServicesInstallationCompletedEventHandler CheckFileServicesInstallationCompleted;
+
+        /// <remarks/>
+        public event RenameFolderCompletedEventHandler RenameFolderCompleted;
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -311,53 +316,6 @@ namespace WebsitePanel.Providers.EnterpriseStorage
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/CheckFileServicesInstallation", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public bool CheckFileServicesInstallation()
-        {
-            object[] results = this.Invoke("CheckFileServicesInstallation", new object[0]);
-            return ((bool)(results[0]));
-        }
-
-        /// <remarks/>
-        public System.IAsyncResult BeginCheckFileServicesInstallation(System.AsyncCallback callback, object asyncState)
-        {
-            return this.BeginInvoke("CheckFileServicesInstallation", new object[0], callback, asyncState);
-        }
-
-        /// <remarks/>
-        public bool EndCheckFileServicesInstallation(System.IAsyncResult asyncResult)
-        {
-            object[] results = this.EndInvoke(asyncResult);
-            return ((bool)(results[0]));
-        }
-
-        /// <remarks/>
-        public void CheckFileServicesInstallationAsync()
-        {
-            this.CheckFileServicesInstallationAsync(null);
-        }
-
-        /// <remarks/>
-        public void CheckFileServicesInstallationAsync(object userState)
-        {
-            if ((this.CheckFileServicesInstallationOperationCompleted == null))
-            {
-                this.CheckFileServicesInstallationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckFileServicesInstallationOperationCompleted);
-            }
-            this.InvokeAsync("CheckFileServicesInstallation", new object[0], this.CheckFileServicesInstallationOperationCompleted, userState);
-        }
-
-        private void OnCheckFileServicesInstallationOperationCompleted(object arg)
-        {
-            if ((this.CheckFileServicesInstallationCompleted != null))
-            {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.CheckFileServicesInstallationCompleted(this, new CheckFileServicesInstallationCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-
-        /// <remarks/>
-        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/SetFolderWebDavRules", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public bool SetFolderWebDavRules(string organizationId, string folder, WebDavFolderRule[] rules)
         {
@@ -466,6 +424,109 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         }
 
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/CheckFileServicesInstallation", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool CheckFileServicesInstallation()
+        {
+            object[] results = this.Invoke("CheckFileServicesInstallation", new object[0]);
+            return ((bool)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginCheckFileServicesInstallation(System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("CheckFileServicesInstallation", new object[0], callback, asyncState);
+        }
+
+        /// <remarks/>
+        public bool EndCheckFileServicesInstallation(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+
+        /// <remarks/>
+        public void CheckFileServicesInstallationAsync()
+        {
+            this.CheckFileServicesInstallationAsync(null);
+        }
+
+        /// <remarks/>
+        public void CheckFileServicesInstallationAsync(object userState)
+        {
+            if ((this.CheckFileServicesInstallationOperationCompleted == null))
+            {
+                this.CheckFileServicesInstallationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckFileServicesInstallationOperationCompleted);
+            }
+            this.InvokeAsync("CheckFileServicesInstallation", new object[0], this.CheckFileServicesInstallationOperationCompleted, userState);
+        }
+
+        private void OnCheckFileServicesInstallationOperationCompleted(object arg)
+        {
+            if ((this.CheckFileServicesInstallationCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CheckFileServicesInstallationCompleted(this, new CheckFileServicesInstallationCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/RenameFolder", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder)
+        {
+            object[] results = this.Invoke("RenameFolder", new object[] {
+                        organizationId,
+                        originalFolder,
+                        newFolder});
+            return ((SystemFile)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginRenameFolder(string organizationId, string originalFolder, string newFolder, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("RenameFolder", new object[] {
+                        organizationId,
+                        originalFolder,
+                        newFolder}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public SystemFile EndRenameFolder(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((SystemFile)(results[0]));
+        }
+
+        /// <remarks/>
+        public void RenameFolderAsync(string organizationId, string originalFolder, string newFolder)
+        {
+            this.RenameFolderAsync(organizationId, originalFolder, newFolder, null);
+        }
+
+        /// <remarks/>
+        public void RenameFolderAsync(string organizationId, string originalFolder, string newFolder, object userState)
+        {
+            if ((this.RenameFolderOperationCompleted == null))
+            {
+                this.RenameFolderOperationCompleted = new System.Threading.SendOrPostCallback(this.OnRenameFolderOperationCompleted);
+            }
+            this.InvokeAsync("RenameFolder", new object[] {
+                        organizationId,
+                        originalFolder,
+                        newFolder}, this.RenameFolderOperationCompleted, userState);
+        }
+
+        private void OnRenameFolderOperationCompleted(object arg)
+        {
+            if ((this.RenameFolderCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.RenameFolderCompleted(this, new RenameFolderCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
         public new void CancelAsync(object userState)
         {
             base.CancelAsync(userState);
@@ -542,36 +603,6 @@ namespace WebsitePanel.Providers.EnterpriseStorage
 
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void CheckFileServicesInstallationCompletedEventHandler(object sender, CheckFileServicesInstallationCompletedEventArgs e);
-
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CheckFileServicesInstallationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
-    {
-
-        private object[] results;
-
-        internal CheckFileServicesInstallationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
-            base(exception, cancelled, userState)
-        {
-            this.results = results;
-        }
-
-        /// <remarks/>
-        public bool Result
-        {
-            get
-            {
-                this.RaiseExceptionIfNecessary();
-                return ((bool)(this.results[0]));
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
     public delegate void SetFolderWebDavRulesCompletedEventHandler(object sender, SetFolderWebDavRulesCompletedEventArgs e);
 
     /// <remarks/>
@@ -626,6 +657,66 @@ namespace WebsitePanel.Providers.EnterpriseStorage
             {
                 this.RaiseExceptionIfNecessary();
                 return ((WebDavFolderRule[])(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void CheckFileServicesInstallationCompletedEventHandler(object sender, CheckFileServicesInstallationCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CheckFileServicesInstallationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal CheckFileServicesInstallationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public bool Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void RenameFolderCompletedEventHandler(object sender, RenameFolderCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class RenameFolderCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal RenameFolderCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public SystemFile Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((SystemFile)(this.results[0]));
             }
         }
     }

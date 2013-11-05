@@ -56,6 +56,8 @@ using System.Xml.Serialization;
 using System.Text.RegularExpressions;
 using WebsitePanel.Providers.Common;
 using System.Collections.Specialized;
+using Microsoft.Web.Administration;
+using Microsoft.Web.Management.Server;
 
 namespace WebsitePanel.Providers.Web
 {
@@ -3412,7 +3414,28 @@ namespace WebsitePanel.Providers.Web
 		}
 		#endregion
 
-		public virtual bool IsIISInstalled()
+        #region Directory Browsing
+
+        public virtual bool GetDirectoryBrowseEnabled(string siteId)
+        {
+            ManagementObject objVirtDir = wmi.GetObject(String.Format("IIsWebVirtualDirSetting='{0}'", GetVirtualDirectoryPath(siteId, "")));
+            return objVirtDir.Properties["EnableDirBrowsing"].Value != null ? (bool)objVirtDir.Properties["EnableDirBrowsing"].Value : false;
+        }
+
+        public virtual void SetDirectoryBrowseEnabled(string siteId, bool enabled)
+        {
+            ManagementObject objSite = wmi.GetObject(String.Format("IIsWebServerSetting='{0}'", siteId));
+
+            WebSite site = GetSite(siteId);
+            site.EnableDirectoryBrowsing = enabled;
+
+            FillWmiObjectFromVirtualDirectory(objSite, site, false);
+            objSite.Put();
+        }
+
+        #endregion
+
+        public virtual bool IsIISInstalled()
 		{
 			int value = 0;
 			RegistryKey root = Registry.LocalMachine;
@@ -3737,10 +3760,5 @@ namespace WebsitePanel.Providers.Web
 			throw new NotSupportedException();
 		}
 		#endregion
-
-
-
-
-
     }
 }

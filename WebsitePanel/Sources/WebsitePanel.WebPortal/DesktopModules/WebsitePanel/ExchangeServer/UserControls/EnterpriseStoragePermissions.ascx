@@ -24,7 +24,7 @@
 				<ItemStyle Width="60%" Wrap="false">
 				</ItemStyle>
 				<ItemTemplate>
-					<asp:Literal ID="litAccount" runat="server" Text='<%# Eval("Account") %>'></asp:Literal>
+                    <asp:Literal ID="litAccount" runat="server" Text='<%# Eval("DisplayName") %>'></asp:Literal>
 				</ItemTemplate>
 			</asp:TemplateField>
 			<asp:TemplateField meta:resourcekey="gvPermissionsAccess" HeaderText="gvPermissionsAccess">

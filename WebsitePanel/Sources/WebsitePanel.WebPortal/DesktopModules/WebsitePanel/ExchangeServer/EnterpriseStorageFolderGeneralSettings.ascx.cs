@@ -72,9 +72,10 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 var esPermissions = ES.Services.EnterpriseStorage.GetEnterpriseFolderPermissions(PanelRequest.ItemID,folder.Name);
 
+                chkDirectoryBrowsing.Checked = ES.Services.WebServers.GetDirectoryBrowseEnabled(PanelRequest.ItemID, folder.Url);
+
                 permissions.SetPermissions(esPermissions);
 
-                txtNotes.Text = folder.GetValue<string>("Notes");
             }
             catch (Exception ex)
             {
@@ -89,11 +90,33 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             try
             {
+                bool redirectNeeded = false;
+
                 litFolderName.Text = txtFolderName.Text;
 
-                SystemFile folder = ES.Services.EnterpriseStorage.GetEnterpriseFolder(PanelRequest.ItemID, PanelRequest.FolderID);
+              //  SystemFile folder = ES.Services.EnterpriseStorage.GetEnterpriseFolder(PanelRequest.ItemID, PanelRequest.FolderID);
+                SystemFile folder = new SystemFile();
 
-                ES.Services.EnterpriseStorage.SetEnterpriseFolderPermissions(PanelRequest.ItemID, folder.Name, permissions.GetPemissions());
+                if (PanelRequest.FolderID != txtFolderName.Text)
+                {
+                    if (txtFolderName.Text.Contains("\\"))
+                    {
+                        throw new Exception("Wrong file name");
+                    }
+
+                    folder = ES.Services.EnterpriseStorage.RenameEnterpriseFolder(PanelRequest.ItemID, PanelRequest.FolderID, txtFolderName.Text);
+                    redirectNeeded = true;
+                }
+
+                ES.Services.EnterpriseStorage.SetEnterpriseFolderPermissions(PanelRequest.ItemID, redirectNeeded ? folder.Name : PanelRequest.FolderID, permissions.GetPemissions());
+
+                ES.Services.WebServers.SetDirectoryBrowseEnabled(PanelRequest.ItemID, redirectNeeded ? folder.Url : lblFolderUrl.Text, chkDirectoryBrowsing.Checked);
+
+                if (redirectNeeded)
+                {
+                    Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folders",
+                        "ItemID=" + PanelRequest.ItemID));
+                }
 
                 messageBox.ShowSuccessMessage("ENTERPRISE_STORAGE_UPDATE_FOLDER_SETTINGS");
             }

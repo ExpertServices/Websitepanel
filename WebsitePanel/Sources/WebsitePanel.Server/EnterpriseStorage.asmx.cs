@@ -170,5 +170,21 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' RenameFolder", ProviderSettings.ProviderName);
+                return EnterpriseStorageProvider.RenameFolder(organizationId, originalFolder, newFolder);
+                Log.WriteEnd("'{0}' RenameFolder", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' RenameFolder", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
     }
 }

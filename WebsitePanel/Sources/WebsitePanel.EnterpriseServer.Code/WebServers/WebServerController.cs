@@ -4619,5 +4619,57 @@ Please ensure the space has been allocated {0} IP address as a dedicated one and
 			return result;
 		}
 		#endregion
+
+
+        #region Directory Browsing
+
+        public static bool GetDirectoryBrowseEnabled(int itemId, string siteId)
+        {
+            // load organization
+            var org = OrganizationController.GetOrganization(itemId);
+            if (org == null)
+            {
+                return false;
+            }
+
+            siteId = RemoveProtocolFromUrl(siteId);
+
+            var webServer = GetWebServer(GetWebServerServiceID(org.PackageId));
+
+            return webServer.GetDirectoryBrowseEnabled(siteId);
+        }
+
+        public static void SetDirectoryBrowseEnabled(int itemId, string siteId, bool enabled)
+        {
+            // load organization
+            var org = OrganizationController.GetOrganization(itemId);
+            if (org == null)
+            {
+                return;
+            }
+
+            siteId = RemoveProtocolFromUrl(siteId);
+
+            var webServer = GetWebServer(GetWebServerServiceID(org.PackageId));
+
+            webServer.SetDirectoryBrowseEnabled(siteId, enabled);
+        }
+
+        private static string RemoveProtocolFromUrl(string input)
+        {
+            if (input.Contains("//"))
+            {
+                return System.Text.RegularExpressions.Regex.Split(input, "//")[1];
+            }
+
+            return input;
+        }
+
+        #endregion
+
+        private static int GetWebServerServiceID(int packageId)
+        {
+            return PackageController.GetPackageServiceId(packageId, ResourceGroups.Web);
+        }
     }
 }

@@ -42,6 +42,8 @@ using WebsitePanel.Server.Utils;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.WebAppGallery;
 using WebsitePanel.Providers.Common;
+using Microsoft.Web.Administration;
+using Microsoft.Web.Management.Server;
 
 namespace WebsitePanel.Server
 {
@@ -1621,5 +1623,21 @@ namespace WebsitePanel.Server
 			return WebProvider.CheckCertificate(webSite);
 		} 
 		#endregion
+
+        #region Directory Browsing
+
+        [WebMethod, SoapHeader("settings")]
+        public bool GetDirectoryBrowseEnabled(string siteId)
+        {
+            return WebProvider.GetDirectoryBrowseEnabled(siteId);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public  void SetDirectoryBrowseEnabled(string siteId, bool enabled)
+        {
+            WebProvider.SetDirectoryBrowseEnabled(siteId, enabled);
+        }
+
+        #endregion
     }
 }

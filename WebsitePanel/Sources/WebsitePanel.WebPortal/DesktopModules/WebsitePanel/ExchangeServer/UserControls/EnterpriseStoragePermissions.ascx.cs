@@ -100,13 +100,15 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             foreach (ExchangeAccount account in selectedAccounts)
             {
                 permissions.Add(new ESPermission
-                    {
-                        Account = account.AccountName,
-                        Access = "Read-Only",
-                    });
+                {
+                    Account = account.AccountName,
+                    DisplayName = account.DisplayName,
+                    Access = "Read-Only",
+                });
             }
-			
-			BindAccounts(permissions.ToArray(), true);
+
+            BindAccounts(permissions.ToArray(), true);
+
 		}
 
         public string GetAccountImage(int accountTypeId)
@@ -207,6 +209,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 ESPermission permission = new ESPermission();
                 permission.Account = (string)gvPermissions.DataKeys[i][0];
                 permission.Access = ((Literal)row.FindControl("litAccess")).Text;
+                permission.DisplayName = ((Literal)row.FindControl("litAccount")).Text;
 
                 if (state == SelectedState.All ||
                     (state == SelectedState.Selected && chkSelect.Checked) ||
@@ -230,13 +233,15 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 if (chkSelect.Checked)
                 {
                     accounts.Add(new ExchangeAccount
-                        {
-                            AccountName = (string)gvPopupAccounts.DataKeys[i][0]
-                        });
+                    {
+                        AccountName = (string)gvPopupAccounts.DataKeys[i][0],
+                        DisplayName = ((Literal)row.FindControl("litDisplayName")).Text
+                    });
                 }
             }
 
             return accounts;
+
         }
 
 		protected void cmdSearch_Click(object sender, ImageClickEventArgs e)

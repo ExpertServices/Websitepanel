@@ -55,6 +55,8 @@ namespace WebsitePanel.EnterpriseServer
 
         private System.Threading.SendOrPostCallback GetEnterpriseFoldersPagedOperationCompleted;
 
+        private System.Threading.SendOrPostCallback RenameEnterpriseFolderOperationCompleted;
+
         /// <remarks/>
         public esEnterpriseStorage()
         {
@@ -87,6 +89,9 @@ namespace WebsitePanel.EnterpriseServer
 
         /// <remarks/>
         public event GetEnterpriseFoldersPagedCompletedEventHandler GetEnterpriseFoldersPagedCompleted;
+
+        /// <remarks/>
+        public event RenameEnterpriseFolderCompletedEventHandler RenameEnterpriseFolderCompleted;
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/CheckFileServicesInstallation", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -569,6 +574,61 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/RenameEnterpriseFolder", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public SystemFile RenameEnterpriseFolder(int itemId, string oldName, string newName)
+        {
+            object[] results = this.Invoke("RenameEnterpriseFolder", new object[] {
+                        itemId,
+                        oldName,
+                        newName});
+            return ((SystemFile)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginRenameEnterpriseFolder(int itemId, string oldName, string newName, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("RenameEnterpriseFolder", new object[] {
+                        itemId,
+                        oldName,
+                        newName}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public SystemFile EndRenameEnterpriseFolder(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((SystemFile)(results[0]));
+        }
+
+        /// <remarks/>
+        public void RenameEnterpriseFolderAsync(int itemId, string oldName, string newName)
+        {
+            this.RenameEnterpriseFolderAsync(itemId, oldName, newName, null);
+        }
+
+        /// <remarks/>
+        public void RenameEnterpriseFolderAsync(int itemId, string oldName, string newName, object userState)
+        {
+            if ((this.RenameEnterpriseFolderOperationCompleted == null))
+            {
+                this.RenameEnterpriseFolderOperationCompleted = new System.Threading.SendOrPostCallback(this.OnRenameEnterpriseFolderOperationCompleted);
+            }
+            this.InvokeAsync("RenameEnterpriseFolder", new object[] {
+                        itemId,
+                        oldName,
+                        newName}, this.RenameEnterpriseFolderOperationCompleted, userState);
+        }
+
+        private void OnRenameEnterpriseFolderOperationCompleted(object arg)
+        {
+            if ((this.RenameEnterpriseFolderCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.RenameEnterpriseFolderCompleted(this, new RenameEnterpriseFolderCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
         public new void CancelAsync(object userState)
         {
             base.CancelAsync(userState);
@@ -841,6 +901,36 @@ namespace WebsitePanel.EnterpriseServer
             {
                 this.RaiseExceptionIfNecessary();
                 return ((SystemFilesPaged)(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void RenameEnterpriseFolderCompletedEventHandler(object sender, RenameEnterpriseFolderCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class RenameEnterpriseFolderCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal RenameEnterpriseFolderCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public SystemFile Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((SystemFile)(this.results[0]));
             }
         }
     }

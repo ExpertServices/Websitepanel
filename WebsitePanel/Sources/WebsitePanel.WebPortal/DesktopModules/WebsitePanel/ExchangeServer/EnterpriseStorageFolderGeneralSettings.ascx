@@ -30,7 +30,7 @@
 						<tr>
 							<td class="FormLabel150"><asp:Localize ID="locFolderName" runat="server" meta:resourcekey="locFolderName" Text="Folder Name:"></asp:Localize></td>
 							<td>
-								<asp:TextBox ID="txtFolderName" runat="server" CssClass="HugeTextBox200" ReadOnly="true"></asp:TextBox>
+								<asp:TextBox ID="txtFolderName" runat="server" CssClass="HugeTextBox200"></asp:TextBox>
 								<asp:RequiredFieldValidator ID="valRequireFolderName" runat="server" meta:resourcekey="valRequireFolderName" ControlToValidate="txtFolderName"
 									ErrorMessage="Enter Folder Name" ValidationGroup="EditFolder" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
                                 <br />
@@ -42,6 +42,13 @@
                             <td><asp:Label runat="server" ID="lblFolderUrl" /></td>
                         </tr>
                         <tr><td>&nbsp;</td></tr>
+                        <tr>
+                            <td class="FormLabel150"><asp:Localize ID="locDirectoryBrowsing" runat="server" meta:resourcekey="locDirectoryBrowsing" Text="Enable Directory Browsing:"></asp:Localize></td>
+						    <td>
+							    <asp:CheckBox id="chkDirectoryBrowsing" runat="server"></asp:CheckBox>
+						    </td>
+					    </tr>
+                        <tr><td>&nbsp;</td></tr>
 						<tr>
 							<td colspan="2">
                                 <fieldset id="PermissionsPanel" runat="server">
@@ -50,14 +57,7 @@
                                 </fieldset>
 						</tr>
 					    <tr><td>&nbsp;</td></tr>
-						<tr>
-							<td class="FormLabel150" colspan="2"><asp:Localize ID="locNotes" runat="server" meta:resourcekey="locNotes" Text="Notes:"></asp:Localize></td>
-						</tr>
-					    <tr>
-						    <td colspan="2">
-							    <asp:TextBox ID="txtNotes" runat="server" CssClass="TextBox200" Rows="4" TextMode="MultiLine"></asp:TextBox>
-						    </td>
-					    </tr>
+
 					</table>
 					
 				    <div class="FormFooterClean">
