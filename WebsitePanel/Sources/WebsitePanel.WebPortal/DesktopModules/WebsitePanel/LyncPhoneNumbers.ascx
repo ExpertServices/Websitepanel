@@ -8,7 +8,6 @@
             Pool="PhoneNumbers"
             EditItemControl=""
             SpaceHomeControl=""
-            AllocateAddressesControl="allocate_phonenumbers"
             ManageAllowed="true" />
     
     <br />

@@ -7,55 +7,10 @@
 // </автоматически создаваемое>
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal.Lync {
+namespace WebsitePanel.Portal.UserControls {
     
     
-    public partial class CreateLyncUser {
-        
-        /// <summary>
-        /// asyncTasks элемент управления.
-        /// </summary>
-        /// <remarks>
-        /// Автоматически создаваемое поле.
-        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.EnableAsyncTasksSupport asyncTasks;
-        
-        /// <summary>
-        /// breadcrumb элемент управления.
-        /// </summary>
-        /// <remarks>
-        /// Автоматически создаваемое поле.
-        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.Breadcrumb breadcrumb;
-        
-        /// <summary>
-        /// menu элемент управления.
-        /// </summary>
-        /// <remarks>
-        /// Автоматически создаваемое поле.
-        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.Menu menu;
-        
-        /// <summary>
-        /// Image1 элемент управления.
-        /// </summary>
-        /// <remarks>
-        /// Автоматически создаваемое поле.
-        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Image Image1;
-        
-        /// <summary>
-        /// locTitle элемент управления.
-        /// </summary>
-        /// <remarks>
-        /// Автоматически создаваемое поле.
-        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locTitle;
+    public partial class AllocatePackagePhoneNumbers {
         
         /// <summary>
         /// messageBox элемент управления.
@@ -67,129 +22,174 @@ namespace WebsitePanel.Portal.Lync {
         protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox messageBox;
         
         /// <summary>
-        /// ExistingUserTable элемент управления.
+        /// validatorsSummary элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTable ExistingUserTable;
+        protected global::System.Web.UI.WebControls.ValidationSummary validatorsSummary;
         
         /// <summary>
-        /// Localize1 элемент управления.
+        /// ErrorMessagesList элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize Localize1;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl ErrorMessagesList;
         
         /// <summary>
-        /// userSelector элемент управления.
+        /// EmptyAddressesMessage элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.UserSelector userSelector;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl EmptyAddressesMessage;
         
         /// <summary>
-        /// locPlanName элемент управления.
+        /// locNotEnoughAddresses элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locPlanName;
+        protected global::System.Web.UI.WebControls.Localize locNotEnoughAddresses;
         
         /// <summary>
-        /// planSelector элемент управления.
+        /// QuotaReachedMessage элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::WebsitePanel.Portal.Lync.UserControls.LyncUserPlanSelector planSelector;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl QuotaReachedMessage;
         
         /// <summary>
-        /// pnEnterpriseVoice элемент управления.
+        /// locQuotaReached элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnEnterpriseVoice;
+        protected global::System.Web.UI.WebControls.Localize locQuotaReached;
         
         /// <summary>
-        /// locPhoneNumber элемент управления.
+        /// AddressesTable элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locPhoneNumber;
+        protected global::System.Web.UI.UpdatePanel AddressesTable;
         
         /// <summary>
-        /// tb_PhoneNumber элемент управления.
+        /// radioExternalRandom элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox tb_PhoneNumber;
+        protected global::System.Web.UI.WebControls.RadioButton radioExternalRandom;
         
         /// <summary>
-        /// ddlPhoneNumber элемент управления.
+        /// AddressesNumberRow элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlPhoneNumber;
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow AddressesNumberRow;
         
         /// <summary>
-        /// PhoneFormatValidator элемент управления.
+        /// locExternalAddresses элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RegularExpressionValidator PhoneFormatValidator;
+        protected global::System.Web.UI.WebControls.Localize locExternalAddresses;
         
         /// <summary>
-        /// locLyncPin элемент управления.
+        /// txtExternalAddressesNumber элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locLyncPin;
+        protected global::System.Web.UI.WebControls.TextBox txtExternalAddressesNumber;
         
         /// <summary>
-        /// tbPin элемент управления.
+        /// ExternalAddressesValidator элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox tbPin;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator ExternalAddressesValidator;
         
         /// <summary>
-        /// PinRegularExpressionValidator элемент управления.
+        /// litMaxAddresses элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RegularExpressionValidator PinRegularExpressionValidator;
+        protected global::System.Web.UI.WebControls.Literal litMaxAddresses;
         
         /// <summary>
-        /// btnCreate элемент управления.
+        /// radioExternalSelected элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCreate;
+        protected global::System.Web.UI.WebControls.RadioButton radioExternalSelected;
+        
+        /// <summary>
+        /// AddressesListRow элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlTableRow AddressesListRow;
+        
+        /// <summary>
+        /// listExternalAddresses элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ListBox listExternalAddresses;
+        
+        /// <summary>
+        /// locHoldCtrl элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locHoldCtrl;
+        
+        /// <summary>
+        /// btnAdd элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnAdd;
+        
+        /// <summary>
+        /// btnCancel элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnCancel;
     }
 }

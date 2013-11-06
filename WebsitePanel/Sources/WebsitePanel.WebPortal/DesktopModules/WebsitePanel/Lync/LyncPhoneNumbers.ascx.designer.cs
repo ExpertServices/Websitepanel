@@ -7,54 +7,54 @@
 // </автоматически создаваемое>
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal {
+namespace WebsitePanel.Portal.Lync {
     
     
     public partial class LyncPhoneNumbers {
         
         /// <summary>
-        /// webAddresses элемент управления.
+        /// asyncTasks элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::WebsitePanel.Portal.UserControls.PackagePhoneNumbers webAddresses;
+        protected global::WebsitePanel.Portal.EnableAsyncTasksSupport asyncTasks;
         
         /// <summary>
-        /// secQuotas элемент управления.
+        /// breadcrumb элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::WebsitePanel.Portal.CollapsiblePanel secQuotas;
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.Breadcrumb breadcrumb;
         
         /// <summary>
-        /// QuotasPanel элемент управления.
+        /// menu элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel QuotasPanel;
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.Menu menu;
         
         /// <summary>
-        /// locIPQuota элемент управления.
+        /// Image1 элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locIPQuota;
+        protected global::System.Web.UI.WebControls.Image Image1;
         
         /// <summary>
-        /// addressesQuota элемент управления.
+        /// locTitle элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::WebsitePanel.Portal.Quota addressesQuota;
+        protected global::System.Web.UI.WebControls.Localize locTitle;
     }
 }

@@ -117,100 +117,37 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Text.ActiveSyncPolicy" xml:space="preserve">
-    <value>ActiveSync Policy</value>
+  <data name="btnAdd.Text" xml:space="preserve">
+    <value>Add</value>
   </data>
-  <data name="Text.Contacts" xml:space="preserve">
-    <value>Contacts</value>
+  <data name="btnCancel.Text" xml:space="preserve">
+    <value>Cancel</value>
   </data>
-  <data name="Text.DistributionLists" xml:space="preserve">
-    <value>Distribution Lists</value>
+  <data name="ExternalAddressesValidator.ErrorMessage" xml:space="preserve">
+    <value>Enter the number of Phone Numbers</value>
   </data>
-  <data name="Text.Disclaimers" xml:space="preserve">
-    <value>Disclaimers</value>
+  <data name="litMaxAddresses.Text" xml:space="preserve">
+    <value>({0} max)</value>
   </data>
-  <data name="Text.DomainNames" xml:space="preserve">
-    <value>Domains</value>
+  <data name="locExternalAddresses.Text" xml:space="preserve">
+    <value>Number of Phone Numbers:</value>
   </data>
-  <data name="Text.ExchangeDomainNames" xml:space="preserve">
-    <value>Accepted Domains</value>
+  <data name="locHoldCtrl.Text" xml:space="preserve">
+    <value>* Hold CTRL key to select multiple phone numbers</value>
   </data>
-  <data name="Text.CRMOrganization" xml:space="preserve">
-    <value>CRM Organization</value>
+  <data name="locNotEnoughAddresses.Text" xml:space="preserve">
+    <value>The pool of Phone Numbers is empty.&lt;br/&gt;Allocate more Phone Numbers on reseller level. If the current hosting space is nested within "System" space then add more server Phone Numbers to the appropriate pool on "Configuration -&gt; Phone Numbers" page.</value>
   </data>
-  <data name="Text.CRMUsers" xml:space="preserve">
-    <value>CRM Users</value>
+  <data name="locTitle.Text" xml:space="preserve">
+    <value>Allocate Phone Numbers</value>
   </data>
-  <data name="Text.ExchangeGroup" xml:space="preserve">
-    <value>Exchange</value>
+  <data name="radioExternalRandom.Text" xml:space="preserve">
+    <value>Randomly select Phone Numbers from the pool</value>
   </data>
-  <data name="Text.Mailboxes" xml:space="preserve">
-    <value>Mailboxes</value>
+  <data name="radioExternalSelected.Text" xml:space="preserve">
+    <value>Select Phone Numbers from the list</value>
   </data>
-  <data name="Text.OrganizationGroup" xml:space="preserve">
-    <value>Organization</value>
-  </data>
-  <data name="Text.CRMGroup" xml:space="preserve">
-    <value>CRM</value>
-  </data>
-  <data name="Text.BlackBerryGroup" xml:space="preserve">
-    <value>BlackBerry</value>
-  </data>
-  <data name="Text.BlackBerryUsers" xml:space="preserve">
-    <value>BlackBerry Users</value>
-  </data>
-  <data name="Text.PublicFolders" xml:space="preserve">
-    <value>Public Folders</value>
-  </data>
-  <data name="Text.Setup" xml:space="preserve">
-    <value>Setup</value>
-  </data>
-  <data name="Text.SharePointGroup" xml:space="preserve">
-    <value>SharePoint</value>
-  </data>
-  <data name="Text.OCSGroup" xml:space="preserve">
-    <value>OCS</value>
-  </data>
-  <data name="Text.OCSUsers" xml:space="preserve">
-    <value>OCS Users</value>
-  </data>
-  <data name="Text.SiteCollections" xml:space="preserve">
-    <value>Site Collections</value>
-  </data>
-  <data name="Text.StorageLimits" xml:space="preserve">
-    <value>Storage Settings</value>
-  </data>
-  <data name="Text.StorageUsage" xml:space="preserve">
-    <value>Storage Usage</value>
-  </data>
-  <data name="Text.Users" xml:space="preserve">
-    <value>Users</value>
-  </data>
-  <data name="Text.MailboxPlans" xml:space="preserve">
-    <value>Mailbox Plans</value>
-  </data>
-  <data name="Text.LyncGroup" xml:space="preserve">
-    <value>Lync</value>
-  </data>
-  <data name="Text.LyncUserPlans" xml:space="preserve">
-    <value>Lync User Plans</value>
-  </data>
-  <data name="Text.LyncUsers" xml:space="preserve">
-    <value>Lync Users</value>
-  </data>
-  <data name="Text.LyncFederationDomains" xml:space="preserve">
-    <value>Lync Federation Domains</value>
-  </data>
-  <data name="Text.SecurityGroups" xml:space="preserve">
-    <value>Groups</value>
-  </data>
-  <data name="Text.EnterpriseStorageGroup" xml:space="preserve">
-    <value>Enterprise Storage</value>
-  </data>
-  <data name="Text.EnterpriseStorageFolders" xml:space="preserve">
-    <value>Folders</value>
-  </data>
-  <data name="Text.LyncPhoneNumbers" xml:space="preserve">
-    <value>Phone Numbers</value>
+  <data name="locQuotaReached.Text" xml:space="preserve">
+    <value>Phone Numbers quota has been reached.</value>
   </data>
 </root>
