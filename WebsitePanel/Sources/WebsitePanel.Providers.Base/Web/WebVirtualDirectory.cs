@@ -61,6 +61,8 @@ namespace WebsitePanel.Providers.Web
         private string defaultDocs;
         private string httpRedirect;
         private HttpError[] httpErrors;
+        private HttpErrorsMode errorMode;
+        private HttpErrorsExistingResponse existingResponse;
         private MimeMap[] mimeMaps; 
         private HttpHeader[] httpHeaders;
         private bool aspInstalled;
@@ -120,6 +122,18 @@ namespace WebsitePanel.Providers.Web
         {
             get { return httpErrors; }
             set { httpErrors = value; }
+        }
+
+        public HttpErrorsMode ErrorMode
+        {
+            get { return errorMode; }
+            set { errorMode = value; }
+        }
+
+        public HttpErrorsExistingResponse ExistingResponse
+        {
+            get { return existingResponse; }
+            set { existingResponse = value; }
         }
 
         public string ApplicationPool
