@@ -64,7 +64,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 SystemFile folder = ES.Services.EnterpriseStorage.GetEnterpriseFolder(
                     PanelRequest.ItemID, PanelRequest.FolderID);
 
-                litFolderName.Text = string.Format("{0}\\{1}", org.OrganizationId, folder.Name);
+                litFolderName.Text = string.Format("{0}", folder.Name);
 
                 // bind form
                 txtFolderName.Text = folder.Name;

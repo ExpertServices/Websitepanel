@@ -64,29 +64,34 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         #region Folders
         public SystemFile[] GetFolders(string organizationId)
         {
-            string rootPath = string.Format("{0}:\\{1}\\{2}", LocationDrive, UsersHome, organizationId);
-            
-            DirectoryInfo root = new DirectoryInfo(rootPath);
-            IWebDav webdav = new Web.WebDav(UsersDomain);
-
             ArrayList items = new ArrayList();
+            string rootPath = string.Format("{0}:\\{1}\\{2}", LocationDrive, UsersHome, organizationId);
 
-            // get directories
-            DirectoryInfo[] dirs = root.GetDirectories();
-            foreach (DirectoryInfo dir in dirs)
+            if (Directory.Exists(rootPath))
             {
-                string fullName = System.IO.Path.Combine(rootPath, dir.Name);
 
-                SystemFile folder = new SystemFile(dir.Name, fullName, true, 
-                    FileUtils.BytesToMb(FileUtils.CalculateFolderSize(dir.FullName)), dir.CreationTime, dir.LastWriteTime);
+                DirectoryInfo root = new DirectoryInfo(rootPath);
+                IWebDav webdav = new Web.WebDav(UsersDomain);
 
-                folder.Url = string.Format("https://{0}/{1}/{2}", UsersDomain, organizationId, dir.Name);
-                folder.Rules = webdav.GetFolderWebDavRules(organizationId, dir.Name);
 
-                items.Add(folder);
 
-                // check if the directory is empty
-                folder.IsEmpty = (Directory.GetFileSystemEntries(fullName).Length == 0);
+                // get directories
+                DirectoryInfo[] dirs = root.GetDirectories();
+                foreach (DirectoryInfo dir in dirs)
+                {
+                    string fullName = System.IO.Path.Combine(rootPath, dir.Name);
+
+                    SystemFile folder = new SystemFile(dir.Name, fullName, true,
+                        FileUtils.BytesToMb(FileUtils.CalculateFolderSize(dir.FullName)), dir.CreationTime, dir.LastWriteTime);
+
+                    folder.Url = string.Format("https://{0}/{1}/{2}", UsersDomain, organizationId, dir.Name);
+                    folder.Rules = webdav.GetFolderWebDavRules(organizationId, dir.Name);
+
+                    items.Add(folder);
+
+                    // check if the directory is empty
+                    folder.IsEmpty = (Directory.GetFileSystemEntries(fullName).Length == 0);
+                }
             }
 
             return (SystemFile[])items.ToArray(typeof(SystemFile));
@@ -95,15 +100,18 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         public SystemFile GetFolder(string organizationId, string folderName)
         {
             string fullName = string.Format("{0}:\\{1}\\{2}\\{3}", LocationDrive, UsersHome, organizationId, folderName);
+            SystemFile folder = new SystemFile();
 
-            DirectoryInfo root = new DirectoryInfo(fullName);
-            
-            SystemFile folder = new SystemFile(root.Name, fullName, true,
-                FileUtils.BytesToMb( FileUtils.CalculateFolderSize(root.FullName)), root.CreationTime, root.LastWriteTime);
+            if (Directory.Exists(fullName))
+            {
+                DirectoryInfo root = new DirectoryInfo(fullName);
 
-            folder.Url = string.Format("https://{0}/{1}/{2}", UsersDomain, organizationId, folderName);
-            folder.Rules = GetFolderWebDavRules(organizationId, folderName);
+                folder = new SystemFile(root.Name, fullName, true,
+                    FileUtils.BytesToMb(FileUtils.CalculateFolderSize(root.FullName)), root.CreationTime, root.LastWriteTime);
 
+                folder.Url = string.Format("https://{0}/{1}/{2}", UsersDomain, organizationId, folderName);
+                folder.Rules = GetFolderWebDavRules(organizationId, folderName);
+            }
             return folder;
         }
 

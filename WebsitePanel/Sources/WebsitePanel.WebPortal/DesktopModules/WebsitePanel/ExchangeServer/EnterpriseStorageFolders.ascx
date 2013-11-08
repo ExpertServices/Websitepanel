@@ -20,8 +20,6 @@
 				<div class="Title">
 					<asp:Image ID="imgESS" SkinID="EnterpriseStorageSpace48" runat="server" />
 					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Folders"></asp:Localize>
-
-                    <asp:Literal ID="litRootFolder" runat="server" Text="Root" />
 				</div>
 				<div class="FormBody">
 				    <wsp:SimpleMessageBox id="messageBox" runat="server" />

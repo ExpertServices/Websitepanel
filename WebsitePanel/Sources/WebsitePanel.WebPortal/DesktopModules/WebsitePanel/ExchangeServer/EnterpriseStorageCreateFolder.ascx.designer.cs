@@ -86,15 +86,6 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::System.Web.UI.WebControls.Localize locTitle;
         
         /// <summary>
-        /// litRootFolder control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal litRootFolder;
-        
-        /// <summary>
         /// messageBox control.
         /// </summary>
         /// <remarks>

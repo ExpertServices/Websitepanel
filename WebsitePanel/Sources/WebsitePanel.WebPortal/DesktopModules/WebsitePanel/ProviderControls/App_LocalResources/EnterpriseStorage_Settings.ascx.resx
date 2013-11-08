@@ -120,11 +120,8 @@
   <data name="chkEnableHardQuota.Text" xml:space="preserve">
     <value>Enable Hard Quota:</value>
   </data>
-  <data name="lblLocationDrive.Text" xml:space="preserve">
-    <value>Location Drive:</value>
-  </data>
   <data name="lblSpacesFolder.Text" xml:space="preserve">
-    <value>Enterprise Storage Folder:</value>
+    <value>Enterprise Storage Path:</value>
   </data>
   <data name="lblDomain.Text" xml:space="preserve">
     <value>Enterprise Storage Domain:</value>

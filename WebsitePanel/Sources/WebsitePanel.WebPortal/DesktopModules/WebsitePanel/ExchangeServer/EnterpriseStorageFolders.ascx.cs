@@ -41,10 +41,6 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             if (!IsPostBack)
             {
-                Organization org = ES.Services.Organizations.GetOrganization(PanelRequest.ItemID);
-
-                litRootFolder.Text = org.OrganizationId;
-
                 BindEnterpriseStorageStats();
             }
         }

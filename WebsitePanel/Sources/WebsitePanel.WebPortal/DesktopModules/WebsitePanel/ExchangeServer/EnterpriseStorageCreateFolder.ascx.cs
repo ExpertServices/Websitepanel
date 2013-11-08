@@ -35,15 +35,6 @@ namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class EnterpriseStorageCreateFolder : WebsitePanelModuleBase
     {
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            if (!IsPostBack)
-            {
-                Organization org = ES.Services.Organizations.GetOrganization(PanelRequest.ItemID);
-
-                litRootFolder.Text = org.OrganizationId;
-            }
-        }
 
         protected void btnCreate_Click(object sender, EventArgs e)
         {

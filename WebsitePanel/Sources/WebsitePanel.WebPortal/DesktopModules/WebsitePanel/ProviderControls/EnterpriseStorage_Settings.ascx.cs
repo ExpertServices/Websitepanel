@@ -49,8 +49,7 @@ namespace WebsitePanel.Portal.ProviderControls
                 try
                 {
                     chkEnableHardQuota.Enabled = ES.Services.EnterpriseStorage.CheckFileServicesInstallation(PanelRequest.ServiceId);
-                    txtLocationDrive.Enabled = chkEnableHardQuota.Enabled;
-                    valLocationDrive.Enabled = chkEnableHardQuota.Enabled;
+                    txtFolder.Enabled = chkEnableHardQuota.Enabled;
                     if (!chkEnableHardQuota.Enabled)
                         lblFileServiceInfo.Visible = true;
                 }
@@ -62,18 +61,25 @@ namespace WebsitePanel.Portal.ProviderControls
 
         public void BindSettings(StringDictionary settings)
         {
-            txtFolder.Text = settings["UsersHome"];
-            txtLocationDrive.Text = settings["LocationDrive"];
+            string path = string.Format("{0}:\\{1}", settings["LocationDrive"], settings["UsersHome"]);
+
+            txtFolder.Text = path;
             txtDomain.Text = settings["UsersDomain"];
             chkEnableHardQuota.Checked = settings["EnableHardQuota"] == "true" ? true : false;
         }
 
         public void SaveSettings(StringDictionary settings)
         {
-            settings["UsersHome"] = txtFolder.Text;
-            settings["LocationDrive"] = txtLocationDrive.Text;
-            settings["UsersDomain"] = txtDomain.Text;
-            settings["EnableHardQuota"] = chkEnableHardQuota.Checked.ToString().ToLower();
+            var drive = System.IO.Path.GetPathRoot(txtFolder.Text);
+            var folder = txtFolder.Text.Replace(drive, string.Empty);
+
+            if (!string.IsNullOrEmpty(drive) && !string.IsNullOrEmpty(folder))
+            {
+                settings["LocationDrive"] = drive.Split(':')[0];
+                settings["UsersHome"] = folder;
+                settings["UsersDomain"] = txtDomain.Text;
+                settings["EnableHardQuota"] = chkEnableHardQuota.Checked.ToString().ToLower();
+            }
         }
     }
 }

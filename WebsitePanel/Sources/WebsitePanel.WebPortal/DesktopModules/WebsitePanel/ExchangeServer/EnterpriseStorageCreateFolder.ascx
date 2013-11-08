@@ -19,9 +19,7 @@
 			<div class="Center">
 				<div class="Title">
 					<asp:Image ID="imgESS" SkinID="EnterpriseStorageSpace48" runat="server" />
-					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Create New Folder In"></asp:Localize>
-
-                    <asp:Literal ID="litRootFolder" runat="server" Text="Root" />
+					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Create New Folder"></asp:Localize>
 				</div>
 				<div class="FormBody">
 				    <wsp:SimpleMessageBox id="messageBox" runat="server" />

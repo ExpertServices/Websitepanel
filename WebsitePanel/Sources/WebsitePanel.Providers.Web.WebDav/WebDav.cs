@@ -109,11 +109,14 @@ namespace WebsitePanel.Providers.Web
                 ConfigurationElementCollection authoringRulesCollection = authoringRulesSection.GetCollection();
 
                 var rules = new List<WebDavFolderRule>();
-
-                foreach (var rule in authoringRulesCollection)
+                try
                 {
-                    rules.Add(rule.ToWebDavFolderRule());
+                    foreach (var rule in authoringRulesCollection)
+                    {
+                        rules.Add(rule.ToWebDavFolderRule());
+                    }
                 }
+                catch { }
 
                 return rules.ToArray();
             }
@@ -128,10 +131,6 @@ namespace WebsitePanel.Providers.Web
                 {
 
                     Configuration config = serverManager.GetApplicationHostConfiguration();
-                    //ConfigurationSection authoringRulesSection = config.GetSection("system.webServer/webdav/authoringRules", string.Format("{0}/{1}/{2}", _usersDomain, organizationId, folder));
-
-                    //ConfigurationElementCollection authoringRulesCollection = authoringRulesSection.GetCollection();
-                    //authoringRulesCollection.Clear();
 
                     config.RemoveLocationPath(string.Format("{0}/{1}/{2}", _usersDomain, organizationId, folder));
                     serverManager.CommitChanges();
