@@ -501,6 +501,13 @@
       <DependentUpon>Lync_Settings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="ProviderControls\RDS_Settings.ascx.cs">
+      <DependentUpon>RDS_Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\RDS_Settings.ascx.designer.cs">
+      <DependentUpon>RDS_Settings.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ServersEditWebPlatformInstaller.ascx.cs">
       <DependentUpon>ServersEditWebPlatformInstaller.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4046,6 +4053,7 @@
     <Content Include="ProviderControls\CRM2011_Settings.ascx" />
     <Content Include="ProviderControls\EnterpriseStorage_Settings.ascx" />
     <Content Include="ProviderControls\HeliconZoo_Settings.ascx" />
+    <Content Include="ProviderControls\RDS_Settings.ascx" />
     <Content Include="ServersEditWebPlatformInstaller.ascx" />
     <Content Include="ExchangeServer\ExchangeMailboxPlans.ascx" />
     <Content Include="ExchangeServer\UserControls\AccountsListWithPermissions.ascx" />

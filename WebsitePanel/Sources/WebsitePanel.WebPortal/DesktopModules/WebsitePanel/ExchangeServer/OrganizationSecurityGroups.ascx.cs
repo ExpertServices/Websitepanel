@@ -44,6 +44,8 @@ namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class OrganizationSecurityGroups : WebsitePanelModuleBase
     {
+        protected const int _NotesMaxLength = 100;
+
         protected void Page_Load(object sender, EventArgs e)
         {
 
@@ -99,6 +101,14 @@ namespace WebsitePanel.Portal.ExchangeServer
                 {
                     messageBox.ShowErrorMessage("ORGANIZATION_DELETE_SECURITY_GROUP", ex);
                 }
+            }
+        }
+
+        protected void gvSecurityGroups_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow && e.Row.Cells[1].Text.Length > _NotesMaxLength)
+            {
+                e.Row.Cells[1].Text = e.Row.Cells[1].Text.Substring(0, _NotesMaxLength - 3) + "...";
             }
         }
 

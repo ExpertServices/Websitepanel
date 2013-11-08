@@ -26,48 +26,27 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-namespace WebsitePanel.Providers.Common
+using System;
+using WebsitePanel.EnterpriseServer;
+using WebsitePanel.Providers.Common;
+
+namespace WebsitePanel.Portal.ProviderControls
 {
-    public class Constants
+    public partial class RDS_Settings : WebsitePanelControlBase, IHostingServiceProviderSettings
     {
-        public const string ImportDomainAdmin = "ImportDomainAdmin";
+        protected void Page_Load(object sender, EventArgs e)
+        {
+        }
 
-        public const string InheritDomainDefaultLimits = "InheritDomainDefaultLimits";
+        public void BindSettings(System.Collections.Specialized.StringDictionary settings)
+        {
+            txtUsersHome.Text = settings[Constants.UsersHome];
+        }
 
-        public const string EnableDomainAdministrators = "EnableDomainAdministrators";
-
-        public const string RelayAliasedMail = "RelayAliasedMail";
-
-        public const string UserName = "UserName";
-
-        public const string Password = "Password";
-
-        public const string NameServers = "NameServers";
-
-        public const string SqlServer = "SqlServer";
-
-        public const string ReportingServer = "ReportingServer";
-
-        public const string IFDWebApplicationRootDomain = "IFDWebApplicationRootDomain";
-
-        public const string CRMWebsiteIP = "CRMWebsiteIP";
-
-        public const string UrlSchema = "UrlSchema";
-
-        public const string Port = "Port";
-
-        public const string AppRootDomain = "AppRootDomain";
-
-        public const string UtilityPath = "UtilityPath";
-
-        public const string EnterpriseServer = "EnterpriseServer";
-
-        public const string EnterpriseServerFQDN = "EnterpriseServerFQDN";
-
-        public const string AdministrationToolService = "AdministrationToolService";
-
-        public const string UsersHome = "UsersHome";
-
-        
+        public void SaveSettings(System.Collections.Specialized.StringDictionary settings)
+        {
+            settings[Constants.UsersHome] = txtUsersHome.Text;
+        }
+     
     }
 }

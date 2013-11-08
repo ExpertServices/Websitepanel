@@ -2372,3 +2372,32 @@ UPDATE AdditionalGroups SET
 	GroupName = @GroupName
 WHERE ID = @GroupID
 GO
+
+
+
+-- Remote Desktop Services
+
+-- RDS ResourceGroup
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ResourceGroups] WHERE [GroupName] = 'RDS')
+BEGIN
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (45, N'RDS', 26, NULL, 1)
+END
+GO
+
+-- RDS Quota
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'RDS.Users')
+BEGIN
+INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (450, 45, 1, N'RDS.Users',N'Remote Desktop Users',2, 0 , NULL)
+END
+GO
+
+-- RDS Provider
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Remote Desktop Services Windows 2012')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderId], [GroupId], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) 
+VALUES(1501, 45, N'RemoteDesktopServices2012', N'Remote Desktop Services Windows 2012', N'WebsitePanel.Providers.RemoteDesktopServices.Windows2012,WebsitePanel.Providers.RemoteDesktopServices.Windows2012', N'RDS',	1)
+END
+GO
