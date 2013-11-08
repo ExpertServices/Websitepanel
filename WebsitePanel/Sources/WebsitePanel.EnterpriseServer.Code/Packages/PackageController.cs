@@ -1015,7 +1015,7 @@ namespace WebsitePanel.EnterpriseServer
                 return;
 
             string homeFolder = FilesController.GetHomeFolder(packageId);
-            FilesController.SetFolderQuota(packageId, homeFolder, driveName);
+            FilesController.SetFolderQuota(packageId, homeFolder, driveName, Quotas.OS_DISKSPACE);
 
         }
 

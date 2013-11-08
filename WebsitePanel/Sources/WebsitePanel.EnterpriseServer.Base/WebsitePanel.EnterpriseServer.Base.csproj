@@ -117,6 +117,7 @@
     <Compile Include="Ecommerce\TriggerSystem\ITriggerHandler.cs" />
     <Compile Include="ExchangeServer\ExchangeEmailAddress.cs" />
     <Compile Include="HostedSolution\AdditionalGroup.cs" />
+    <Compile Include="HostedSolution\ESPermission.cs" />
     <Compile Include="Log\LogRecord.cs" />
     <Compile Include="Packages\HostingPlanContext.cs" />
     <Compile Include="Packages\HostingPlanGroupInfo.cs" />

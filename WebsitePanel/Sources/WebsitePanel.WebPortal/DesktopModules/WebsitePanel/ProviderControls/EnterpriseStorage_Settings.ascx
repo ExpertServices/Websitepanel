@@ -9,6 +9,16 @@
     </tr>
     <tr>
         <td class="SubHead" width="200" nowrap>
+            <asp:Label ID="lblDomain" runat="server" meta:resourcekey="lblDomain" Text="User domain:"></asp:Label>
+        </td>
+        <td width="100%">
+            <asp:TextBox runat="server" ID="txtDomain" Width="300px" CssClass="NormalTextBox"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="valDomain" runat="server" ControlToValidate="txtDomain"
+                ErrorMessage="*"></asp:RequiredFieldValidator>
+        </td>
+    </tr>
+    <tr>
+        <td class="SubHead" width="200" nowrap>
             <asp:Label ID="lblLocationDrive" runat="server" meta:resourcekey="lblLocationDrive" Text="Location Drive:"></asp:Label>
         </td>
         <td width="100%">

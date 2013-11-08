@@ -123,19 +123,34 @@ namespace WebsitePanel.Server
             }
         }
 
-
         [WebMethod, SoapHeader("settings")]
-        public void SetFolderQuota(string organizationId, string folder, long quota)
+        public bool SetFolderWebDavRules(string organizationId, string folder, Providers.Web.WebDavFolderRule[] rules)
         {
             try
             {
-                Log.WriteStart("'{0}' SetFolderQuota", ProviderSettings.ProviderName);
-                EnterpriseStorageProvider.SetFolderQuota(organizationId, folder,quota);
-                Log.WriteEnd("'{0}' SetFolderQuota", ProviderSettings.ProviderName);
+                Log.WriteStart("'{0}' SetFolderWebDavRules", ProviderSettings.ProviderName);
+                return EnterpriseStorageProvider.SetFolderWebDavRules(organizationId, folder, rules);
+                Log.WriteEnd("'{0}' SetFolderWebDavRules", ProviderSettings.ProviderName);
             }
             catch (Exception ex)
             {
-                Log.WriteError(String.Format("'{0}' SetFolderQuota", ProviderSettings.ProviderName), ex);
+                Log.WriteError(String.Format("'{0}' SetFolderWebDavRules", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public Providers.Web.WebDavFolderRule[] GetFolderWebDavRules(string organizationId, string folder)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetFolderWebDavRules", ProviderSettings.ProviderName);
+                return EnterpriseStorageProvider.GetFolderWebDavRules(organizationId, folder);
+                Log.WriteEnd("'{0}' GetFolderWebDavRules", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetFolderWebDavRules", ProviderSettings.ProviderName), ex);
                 throw;
             }
         }
@@ -156,6 +171,20 @@ namespace WebsitePanel.Server
             }
         }
 
+        [WebMethod, SoapHeader("settings")]
+        public SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' RenameFolder", ProviderSettings.ProviderName);
+                return EnterpriseStorageProvider.RenameFolder(organizationId, originalFolder, newFolder);
+                Log.WriteEnd("'{0}' RenameFolder", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' RenameFolder", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
     }
-
 }

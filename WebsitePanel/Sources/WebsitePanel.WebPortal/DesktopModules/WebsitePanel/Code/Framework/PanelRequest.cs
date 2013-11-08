@@ -191,5 +191,9 @@ namespace WebsitePanel.Portal
             get { return HttpContext.Current.Request["Context"]; }
         }
 
+        public static string FolderID
+        {
+            get { return HttpContext.Current.Request["FolderID"] ?? ""; }
+        }
     }
 }

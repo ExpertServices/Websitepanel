@@ -3771,6 +3771,27 @@ namespace WebsitePanel.Providers.Web
 
 		#endregion
 
+        #region Directory Browsing
+
+        public override bool GetDirectoryBrowseEnabled(string siteId)
+        {
+            using (ServerManager srvman = webObjectsSvc.GetServerManager())
+            {
+                var enabled = dirBrowseSvc.GetDirectoryBrowseSettings(srvman, siteId)[DirectoryBrowseGlobals.Enabled];
+
+                return enabled != null ? (bool)enabled : false;
+            }
+        }
+
+        public override void SetDirectoryBrowseEnabled(string siteId, bool enabled)
+        {
+            dirBrowseSvc.SetDirectoryBrowseEnabled(siteId, enabled);
+        }
+        
+
+
+        #endregion
+
 		public override bool IsIISInstalled()
 		{
 			int value = 0;

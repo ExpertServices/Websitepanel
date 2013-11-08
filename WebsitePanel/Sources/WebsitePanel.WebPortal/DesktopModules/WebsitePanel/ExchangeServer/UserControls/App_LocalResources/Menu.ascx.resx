@@ -207,7 +207,7 @@
   <data name="Text.EnterpriseStorageGroup" xml:space="preserve">
     <value>Enterprise Storage</value>
   </data>
-  <data name="Text.EnterpriseStorageSpaces" xml:space="preserve">
-    <value>Spaces</value>
+  <data name="Text.EnterpriseStorageFolders" xml:space="preserve">
+    <value>Folders</value>
   </data>
 </root>

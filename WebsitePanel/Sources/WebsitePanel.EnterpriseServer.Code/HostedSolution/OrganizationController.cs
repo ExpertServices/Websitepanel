@@ -48,6 +48,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using WebsitePanel.EnterpriseServer.Base.HostedSolution;
+using WebsitePanel.Providers.OS;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -417,6 +418,36 @@ namespace WebsitePanel.EnterpriseServer
                 };
 
                 PackageController.AddPackageItem(orgDomain);
+
+                //Create Enterprise storage
+
+                int esServiceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.EnterpriseStorage);
+
+                if (esServiceId != 0)
+                {
+                    StringDictionary esSesstings = ServerController.GetServiceSettings(esServiceId);
+                    
+                    string usersHome = esSesstings["UsersHome"];
+                    string usersDomain = esSesstings["UsersDomain"];
+                    string locationDrive = esSesstings["LocationDrive"];
+                    
+                    string homePath = string.Format("{0}:\\{1}",locationDrive, usersHome);
+
+                    EnterpriseStorageController.CreateFolder(itemId);
+
+                    WebServerController.AddWebDavDirectory(packageId, usersDomain, organizationId, homePath);
+
+                    int osId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Os);
+                    bool enableHardQuota = (esSesstings["enablehardquota"] != null)
+                        ? bool.Parse(esSesstings["enablehardquota"])
+                        : false;
+
+                    if (enableHardQuota && osId != 0 && OperatingSystemController.CheckFileServicesInstallation(osId))
+                    {
+                        FilesController.SetFolderQuota(packageId, Path.Combine(usersHome, organizationId),
+                            locationDrive, Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -714,6 +745,26 @@ namespace WebsitePanel.EnterpriseServer
                     TaskManager.WriteError(ex);
                 }
 
+                //Cleanup Enterprise storage
+                int esId = PackageController.GetPackageServiceId(org.PackageId, ResourceGroups.EnterpriseStorage);
+
+                if (esId != 0)
+                {
+                    StringDictionary esSesstings = ServerController.GetServiceSettings(esId);
+
+                    string usersDomain = esSesstings["UsersDomain"];
+
+                    try
+                    {
+                        WebServerController.DeleteWebDavDirectory(org.PackageId, usersDomain, org.OrganizationId);
+                        EnterpriseStorageController.DeleteFolder(itemId);
+                    }
+                    catch (Exception ex)
+                    {
+                        successful = false;
+                        TaskManager.WriteError(ex);
+                    }
+                }
 
                 //Cleanup Exchange
                 try
@@ -741,8 +792,6 @@ namespace WebsitePanel.EnterpriseServer
                     TaskManager.WriteError(ex);
                 }
 
-
-
                 // delete organization domains
                 List<OrganizationDomainName> domains = GetOrganizationDomains(itemId);
                 foreach (OrganizationDomainName domain in domains)
@@ -763,7 +812,6 @@ namespace WebsitePanel.EnterpriseServer
 
                 // delete meta-item
                 PackageController.DeletePackageItem(itemId);
-
 
                 return successful ? 0 : BusinessErrorCodes.ERROR_ORGANIZATION_DELETE_SOME_PROBLEMS;
             }
@@ -946,7 +994,13 @@ namespace WebsitePanel.EnterpriseServer
                         stats.CreatedLyncUsers = LyncController.GetLyncUsersCount(org.Id).Value;
                     }
 
+                    if (cntxTmp.Groups.ContainsKey(ResourceGroups.EnterpriseStorage))
+                    {
+                        SystemFile[] folders = EnterpriseStorageController.GetFolders(itemId);
 
+                        stats.CreatedEnterpriseStorageFolders = folders.Count();
+                        stats.UsedEnterpriseStorageSpace = (int)folders.Sum(x => x.Size);
+                    }
                 }
                 else
                 {
@@ -998,6 +1052,14 @@ namespace WebsitePanel.EnterpriseServer
                                     {
                                         stats.CreatedLyncUsers += LyncController.GetLyncUsersCount(o.Id).Value;
                                     }
+
+                                    if (cntxTmp.Groups.ContainsKey(ResourceGroups.EnterpriseStorage))
+                                    {
+                                        SystemFile[] folders = EnterpriseStorageController.GetFolders(itemId);
+
+                                        stats.CreatedEnterpriseStorageFolders = folders.Count();
+                                        stats.UsedEnterpriseStorageSpace = (int)folders.Sum(x => x.Size);
+                                    }
                                 }
                             }
                         }
@@ -1033,6 +1095,17 @@ namespace WebsitePanel.EnterpriseServer
                 if (cntx.Groups.ContainsKey(ResourceGroups.Lync))
                 {
                     stats.AllocatedLyncUsers = cntx.Quotas[Quotas.LYNC_USERS].QuotaAllocatedValue;
+                }
+
+                if (cntx.Groups.ContainsKey(ResourceGroups.EnterpriseStorage))
+                {
+                    stats.AllocatedEnterpriseStorageFolders = cntx.Quotas[Quotas.ENTERPRISESTORAGE_FOLDERS].QuotaAllocatedValue;
+                }
+
+
+                if (cntx.Groups.ContainsKey(ResourceGroups.EnterpriseStorage))
+                {
+                    stats.AllocatedEnterpriseStorageSpace = cntx.Quotas[Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE].QuotaAllocatedValue;
                 }
 
                 return stats;

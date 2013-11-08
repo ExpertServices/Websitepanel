@@ -42,6 +42,8 @@ using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.EnterpriseStorage;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.OS;
+using WebsitePanel.Providers.Web;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -74,11 +76,10 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public ResultObject CreateEnterpriseFolder(int itemId, string folderName, long quota)
+        public ResultObject CreateEnterpriseFolder(int itemId, string folderName)
         {
-            return EnterpriseStorageController.CreateFolder(itemId, folderName, quota);
+            return EnterpriseStorageController.CreateFolder(itemId, folderName);
         }
-       
 
         [WebMethod]
         public ResultObject DeleteEnterpriseFolder(int itemId, string folderName)
@@ -87,9 +88,33 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public ResultObject SetEnterpriseFolderQuota(int itemId, string folderName, long quota)
+        public ESPermission[] GetEnterpriseFolderPermissions(int itemId, string folderName)
         {
-            return EnterpriseStorageController.SetFolderQuota(itemId, folderName, quota);
+            return EnterpriseStorageController.GetFolderPermission(itemId, folderName);
+        }
+
+        [WebMethod]
+        public ResultObject SetEnterpriseFolderPermissions(int itemId, string folderName, ESPermission[] permission)
+        {
+            return EnterpriseStorageController.SetFolderPermission(itemId, folderName, permission);
+        }
+
+        [WebMethod]
+        public List<ExchangeAccount> SearchESAccounts(int itemId, string filterColumn, string filterValue, string sortColumn)
+        {
+            return EnterpriseStorageController.SearchESAccounts(itemId, filterColumn, filterValue, sortColumn);
+        }
+
+        [WebMethod]
+        public SystemFilesPaged GetEnterpriseFoldersPaged(int itemId, string filterValue, string sortColumn, int startRow, int maximumRows)
+        {
+            return EnterpriseStorageController.GetEnterpriseFoldersPaged(itemId, filterValue, sortColumn, startRow, maximumRows);
+        }
+
+        [WebMethod]
+        public SystemFile RenameEnterpriseFolder(int itemId, string oldName, string newName)
+        {
+            return EnterpriseStorageController.RenameFolder(itemId, oldName, newName);
         }
     }
 }

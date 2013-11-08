@@ -29,6 +29,7 @@
 using System;
 using System.Collections;
 using WebsitePanel.Providers.OS;
+using WebsitePanel.Providers.Web;
 
 namespace WebsitePanel.Providers.EnterpriseStorage
 {
@@ -38,10 +39,13 @@ namespace WebsitePanel.Providers.EnterpriseStorage
     public interface IEnterpriseStorage
     {
         SystemFile[] GetFolders(string organizationId);
-        SystemFile GetFolder(string organizationId, string folder);
+        SystemFile GetFolder(string organizationId, string folderName);
         void CreateFolder(string organizationId, string folder);
+        SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder);
         void DeleteFolder(string organizationId, string folder);
-        void SetFolderQuota(string organizationId, string folder, long quota);
+        bool SetFolderWebDavRules(string organizationId, string folder, WebDavFolderRule[] rules);
+        WebDavFolderRule[] GetFolderWebDavRules(string organizationId, string folder);
         bool CheckFileServicesInstallation();
+        
     }
 }

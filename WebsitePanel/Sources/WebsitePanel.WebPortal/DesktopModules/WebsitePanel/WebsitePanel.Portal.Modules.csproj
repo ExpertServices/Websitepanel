@@ -169,6 +169,7 @@
     <Compile Include="Code\Framework\Utils.cs" />
     <Compile Include="Code\Helpers\AuditLogHelper.cs" />
     <Compile Include="Code\Helpers\BlackBerryHelper.cs" />
+    <Compile Include="Code\Helpers\EnterpriseStorageHelper.cs" />
     <Compile Include="Code\Helpers\LyncHelper.cs" />
     <Compile Include="Code\Helpers\VirtualMachinesForPCHelper.cs" />
     <Compile Include="Code\Helpers\CRMHelper.cs" />
@@ -209,12 +210,26 @@
     <Compile Include="Code\ReportingServices\IResourceStorage.cs" />
     <Compile Include="Code\ReportingServices\ReportingServicesUtils.cs" />
     <Compile Include="Code\UserControls\Tab.cs" />
-    <Compile Include="ExchangeServer\EnterpriseStorageSpaces.ascx.cs">
-      <DependentUpon>EnterpriseStorageSpaces.ascx</DependentUpon>
+    <Compile Include="ExchangeServer\EnterpriseStorageFolderGeneralSettings.ascx.cs">
+      <DependentUpon>EnterpriseStorageFolderGeneralSettings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="ExchangeServer\EnterpriseStorageSpaces.ascx.designer.cs">
-      <DependentUpon>EnterpriseStorageSpaces.ascx</DependentUpon>
+    <Compile Include="ExchangeServer\EnterpriseStorageFolderGeneralSettings.ascx.designer.cs">
+      <DependentUpon>EnterpriseStorageFolderGeneralSettings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageCreateFolder.ascx.cs">
+      <DependentUpon>EnterpriseStorageCreateFolder.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageCreateFolder.ascx.designer.cs">
+      <DependentUpon>EnterpriseStorageCreateFolder.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageFolders.ascx.cs">
+      <DependentUpon>EnterpriseStorageFolders.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageFolders.ascx.designer.cs">
+      <DependentUpon>EnterpriseStorageFolders.ascx</DependentUpon>
     </Compile>
     <Compile Include="ExchangeServer\OrganizationSecurityGroupMemberOf.ascx.cs">
       <DependentUpon>OrganizationSecurityGroupMemberOf.ascx</DependentUpon>
@@ -296,6 +311,13 @@
     <Compile Include="ExchangeServer\UserControls\AccountsListWithPermissions.ascx.cs">
       <DependentUpon>AccountsListWithPermissions.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\EnterpriseStoragePermissions.ascx.cs">
+      <DependentUpon>EnterpriseStoragePermissions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\EnterpriseStoragePermissions.ascx.designer.cs">
+      <DependentUpon>EnterpriseStoragePermissions.ascx</DependentUpon>
     </Compile>
     <Compile Include="ExchangeServer\UserControls\GroupsList.ascx.cs">
       <DependentUpon>GroupsList.ascx</DependentUpon>
@@ -478,6 +500,13 @@
     <Compile Include="ProviderControls\Lync_Settings.ascx.cs">
       <DependentUpon>Lync_Settings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\RDS_Settings.ascx.cs">
+      <DependentUpon>RDS_Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\RDS_Settings.ascx.designer.cs">
+      <DependentUpon>RDS_Settings.ascx</DependentUpon>
     </Compile>
     <Compile Include="ServersEditWebPlatformInstaller.ascx.cs">
       <DependentUpon>ServersEditWebPlatformInstaller.ascx</DependentUpon>
@@ -4001,7 +4030,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplyEnableHardQuotaFeature.ascx" />
-    <Content Include="ExchangeServer\EnterpriseStorageSpaces.ascx" />
+    <Content Include="ExchangeServer\EnterpriseStorageFolderGeneralSettings.ascx" />
+    <Content Include="ExchangeServer\EnterpriseStorageCreateFolder.ascx" />
+    <Content Include="ExchangeServer\EnterpriseStorageFolders.ascx" />
     <Content Include="ExchangeServer\OrganizationSecurityGroupMemberOf.ascx" />
     <Content Include="ExchangeServer\ExchangeDistributionListMemberOf.ascx" />
     <Content Include="ExchangeServer\ExchangeMailboxMemberOf.ascx" />
@@ -4014,6 +4045,7 @@
     <Content Include="ExchangeServer\OrganizationSecurityGroupGeneralSettings.ascx" />
     <Content Include="ExchangeServer\OrganizationSecurityGroups.ascx" />
     <Content Include="ExchangeServer\OrganizationUserMemberOf.ascx" />
+    <Content Include="ExchangeServer\UserControls\EnterpriseStoragePermissions.ascx" />
     <Content Include="ExchangeServer\UserControls\GroupsList.ascx" />
     <Content Include="ExchangeServer\UserControls\SecurityGroupTabs.ascx" />
     <Content Include="ExchangeServer\UserControls\UsersList.ascx" />
@@ -4021,6 +4053,7 @@
     <Content Include="ProviderControls\CRM2011_Settings.ascx" />
     <Content Include="ProviderControls\EnterpriseStorage_Settings.ascx" />
     <Content Include="ProviderControls\HeliconZoo_Settings.ascx" />
+    <Content Include="ProviderControls\RDS_Settings.ascx" />
     <Content Include="ServersEditWebPlatformInstaller.ascx" />
     <Content Include="ExchangeServer\ExchangeMailboxPlans.ascx" />
     <Content Include="ExchangeServer\UserControls\AccountsListWithPermissions.ascx" />
@@ -5232,11 +5265,18 @@
     <Content Include="ExchangeServer\UserControls\App_LocalResources\GroupsList.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="ProviderControls\App_LocalResources\EnterpriseStorage_Settings.ascx.resx" />
-    <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageSpaces.ascx.resx" />
+    <Content Include="ProviderControls\App_LocalResources\EnterpriseStorage_Settings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolders.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="UserControls\App_LocalResources\OrgPolicyEditor.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageCreateFolder.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolderGeneralSettings.ascx.resx" />
+    <Content Include="ExchangeServer\UserControls\App_LocalResources\EnterpriseStoragePermissions.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

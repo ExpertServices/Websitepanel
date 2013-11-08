@@ -34,6 +34,7 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Linq;
 
 using WebsitePanel.Server;
 using WebsitePanel.Providers;
@@ -42,13 +43,16 @@ using WebsitePanel.Providers.EnterpriseStorage;
 using System.Collections;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.ResultObjects;
-
+using WebsitePanel.Providers.Web;
+using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 
 namespace WebsitePanel.EnterpriseServer
 {
     public class EnterpriseStorageController
     {
         #region Public Methods
+
         public static SystemFile[] GetFolders(int itemId)
         {
             return GetFoldersInternal(itemId);
@@ -59,20 +63,57 @@ namespace WebsitePanel.EnterpriseServer
             return GetFolderInternal(itemId, folderName);
         }
 
-        public static ResultObject CreateFolder(int itemId, string folderName, long quota)
+        public static ResultObject CreateFolder(int itemId)
         {
-            return CreateFolderInternal(itemId, folderName, quota);
+            return CreateFolder(itemId, string.Empty);
+        }
+
+        public static ResultObject CreateFolder(int itemId, string folderName)
+        {
+            return CreateFolderInternal(itemId, folderName);
+        }
+
+        public static ResultObject DeleteFolder(int itemId)
+        {
+            return DeleteFolder(itemId, string.Empty);
         }
 
         public static ResultObject DeleteFolder(int itemId, string folderName)
         {
             return DeleteFolderInternal(itemId, folderName);
+        } 
+
+        public static List<ExchangeAccount> SearchESAccounts(int itemId, string filterColumn, string filterValue, string sortColumn)
+        {
+            return SearchESAccountsInternal(itemId, filterColumn, filterValue, sortColumn);
         }
 
-        public static ResultObject SetFolderQuota(int itemId, string folderName, long quota)
+        public static SystemFilesPaged GetEnterpriseFoldersPaged(int itemId, string filterValue, string sortColumn, int startRow, int maximumRows)
         {
-            return SetFolderQuotaInternal(itemId, folderName, quota);
+            return GetEnterpriseFoldersPagedInternal(itemId, filterValue, sortColumn, startRow, maximumRows);
         }
+
+        public static ResultObject SetFolderPermission(int itemId, string folder, ESPermission[] permission)
+        {
+            return SetFolderWebDavRulesInternal(itemId, folder, permission);
+        }
+
+        public static ESPermission[] GetFolderPermission(int itemId, string folder)
+        {
+            return ConvertToESPermission(itemId,GetFolderWebDavRulesInternal(itemId, folder));
+        }
+
+        public static bool CheckFileServicesInstallation(int serviceId)
+        {
+            EnterpriseStorage es = GetEnterpriseStorage(serviceId);
+            return es.CheckFileServicesInstallation();
+        }
+
+        public static SystemFile RenameFolder(int itemId, string oldFolder, string newFolder)
+        {
+            return RenameFolderInternal(itemId, oldFolder, newFolder);
+        }
+
         #endregion
 
 
@@ -83,37 +124,376 @@ namespace WebsitePanel.EnterpriseServer
             return es;
         }
 
-
-        private static SystemFile[] GetFoldersInternal(int itemId)
+        protected static SystemFile[] GetFoldersInternal(int itemId)
         {
-            return new SystemFile[1];
+            try
+            {
+                // load organization
+                Organization org = OrganizationController.GetOrganization(itemId);
+                if (org == null)
+                {
+                    return null;
+                }
+
+                EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
+
+                return es.GetFolders(org.OrganizationId);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        private static SystemFile GetFolderInternal(int itemId, string folderName)
+        protected static SystemFile GetFolderInternal(int itemId, string folderName)
         {
-            return new SystemFile();
+            try
+            {
+                // load organization
+                Organization org = OrganizationController.GetOrganization(itemId);
+                if (org == null)
+                {
+                    return null;
+                }
+
+                EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
+
+                return es.GetFolder(org.OrganizationId, folderName);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        private static ResultObject CreateFolderInternal(int itemId, string folderName, long quota)
+
+        protected static SystemFile RenameFolderInternal(int itemId, string oldFolder, string newFolder)
         {
-            return new ResultObject();
+            try
+            {
+                // load organization
+                Organization org = OrganizationController.GetOrganization(itemId);
+                if (org == null)
+                {
+                    return null;
+                }
+
+                EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
+
+                return es.RenameFolder(org.OrganizationId, oldFolder, newFolder);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        private static ResultObject DeleteFolderInternal(int itemId, string folderName)
+        protected static ResultObject CreateFolderInternal(int itemId, string folderName)
         {
-            return new ResultObject();
+            ResultObject result = TaskManager.StartResultTask<ResultObject>("ENTERPRISE_STORAGE", "CREATE_FOLDER");
+
+            try
+            {
+                // load organization
+                Organization org = OrganizationController.GetOrganization(itemId);
+                if (org == null)
+                {
+                    return null;
+                }
+
+                EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
+
+                es.CreateFolder(org.OrganizationId, folderName);
+            }
+            catch (Exception ex)
+            {
+                result.AddError("ENTERPRISE_STORAGE_CREATE_FOLDER", ex);
+            }
+            finally
+            {
+                if (!result.IsSuccess)
+                {
+                    TaskManager.CompleteResultTask(result);
+                }
+                else
+                {
+                    TaskManager.CompleteResultTask();
+                }
+            }
+
+            return result;
         }
 
-        private static ResultObject SetFolderQuotaInternal(int itemId, string folderName, long quota)
+        protected static ResultObject DeleteFolderInternal(int itemId, string folderName)
         {
-            return new ResultObject();
+            ResultObject result = TaskManager.StartResultTask<ResultObject>("ENTERPRISE_STORAGE", "DELETE_FOLDER");
+
+            try
+            {
+                // load organization
+                Organization org = OrganizationController.GetOrganization(itemId);
+                if (org == null)
+                {
+                    return null;
+                }
+
+                EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
+
+                es.DeleteFolder(org.OrganizationId, folderName);
+            }
+            catch (Exception ex)
+            {
+                result.AddError("ENTERPRISE_STORAGE_DELETE_FOLDER", ex);
+            }
+            finally
+            {
+                if (!result.IsSuccess)
+                {
+                    TaskManager.CompleteResultTask(result);
+                }
+                else
+                {
+                    TaskManager.CompleteResultTask();
+                }
+            }
+
+            return result;
+        }
+    
+        protected static List<ExchangeAccount> SearchESAccountsInternal(int itemId, string filterColumn, string filterValue, string sortColumn)
+        {
+            // load organization
+            Organization org = (Organization)PackageController.GetPackageItem(itemId);
+            if (org == null)
+                return null;
+
+            string accountTypes = string.Format("{0}, {1}, {2}", ((int)ExchangeAccountType.SecurityGroup),
+                (int)ExchangeAccountType.DefaultSecurityGroup, ((int)ExchangeAccountType.User));
+
+            if (PackageController.GetPackageServiceId(org.PackageId, ResourceGroups.Exchange) != 0)
+            {
+                accountTypes = string.Format("{0}, {1}, {2}, {3}", accountTypes, ((int)ExchangeAccountType.Mailbox),
+                ((int)ExchangeAccountType.Room), ((int)ExchangeAccountType.Equipment));
+            }
+
+            List<ExchangeAccount> tmpAccounts = ObjectUtils.CreateListFromDataReader<ExchangeAccount>(
+                                                  DataProvider.SearchExchangeAccountsByTypes(SecurityContext.User.UserId, itemId,
+                                                  accountTypes, filterColumn, filterValue, sortColumn));
+
+
+            List<ExchangeAccount> exAccounts = new List<ExchangeAccount>();
+
+            foreach (ExchangeAccount tmpAccount in tmpAccounts.ToArray())
+            {
+                if (tmpAccount.AccountType == ExchangeAccountType.SecurityGroup || tmpAccount.AccountType == ExchangeAccountType.SecurityGroup
+                        ? OrganizationController.GetSecurityGroupGeneralSettings(itemId, tmpAccount.AccountId) == null
+                        : OrganizationController.GetSecurityGroupGeneralSettings(itemId, tmpAccount.AccountId) == null)
+                    continue;
+
+                exAccounts.Add(tmpAccount);
+            }
+
+            return exAccounts;
+
         }
 
-
-        public static bool CheckFileServicesInstallation(int serviceId)
+        protected static SystemFilesPaged GetEnterpriseFoldersPagedInternal(int itemId, string filterValue, string sortColumn,
+            int startRow, int maximumRows)
         {
-            EnterpriseStorage es = GetEnterpriseStorage(serviceId);
-            return es.CheckFileServicesInstallation();
+            SystemFilesPaged result = new SystemFilesPaged();
+
+            try
+            {
+                // load organization
+                Organization org = OrganizationController.GetOrganization(itemId);
+                if (org == null)
+                {
+                    return null;
+                }
+
+                EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
+                List<SystemFile> folders = es.GetFolders(org.OrganizationId).Where(x => x.Name.Contains(filterValue)).ToList();
+
+                switch (sortColumn)
+                {
+                    case "Size":
+                        folders = folders.OrderBy(x => x.Size).ToList();
+                        break;
+                    default:
+                        folders = folders.OrderBy(x => x.Name).ToList();
+                        break;
+                }
+
+                result.RecordsCount = folders.Count;
+                result.PageItems = folders.Skip(startRow).Take(maximumRows).ToArray();
+            }
+            catch { /*skip exception*/}
+
+            return result;
+        }
+
+        protected static ResultObject SetFolderWebDavRulesInternal(int itemId, string folder, ESPermission[] permission)
+        {
+            ResultObject result = TaskManager.StartResultTask<ResultObject>("ENTERPRISE_STORAGE", "SET_WEBDAV_FOLDER_RULES");
+
+            try
+            {
+                // load organization
+                Organization org = OrganizationController.GetOrganization(itemId);
+                if (org == null)
+                {
+                    return null;
+                }
+
+                var rules = ConvertToWebDavRule(itemId,permission);
+
+                EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
+
+                es.SetFolderWebDavRules(org.OrganizationId, folder, rules);
+            }
+            catch (Exception ex)
+            {
+                result.AddError("ENTERPRISE_STORAGE_SET_WEBDAV_FOLDER_RULES", ex);
+            }
+            finally
+            {
+                if (!result.IsSuccess)
+                {
+                    TaskManager.CompleteResultTask(result);
+                }
+                else
+                {
+                    TaskManager.CompleteResultTask();
+                }
+            }
+
+            return result;
+        }
+
+        protected static WebDavFolderRule[] GetFolderWebDavRulesInternal(int itemId, string folder)
+        {
+            try
+            {
+                // load organization
+                Organization org = OrganizationController.GetOrganization(itemId);
+                if (org == null)
+                {
+                    return null;
+                }
+
+                EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
+
+                return es.GetFolderWebDavRules(org.OrganizationId, folder);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        private static int GetEnterpriseStorageServiceID(int packageId)
+        {
+            return PackageController.GetPackageServiceId(packageId, ResourceGroups.EnterpriseStorage);
+        }
+
+        private static EnterpriseStorage GetEnterpriseStorageByPackageId(int packageId)
+        {
+            var serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.EnterpriseStorage);
+
+            return GetEnterpriseStorage(serviceId);
+        }
+
+        private static WebDavFolderRule[] ConvertToWebDavRule(int itemId, ESPermission[] permissions)
+        {
+            var rules = new List<WebDavFolderRule>();
+
+            foreach (var permission in permissions)
+            {
+                var rule = new WebDavFolderRule();
+
+                var account = ObjectUtils.FillObjectFromDataReader<ExchangeAccount>(DataProvider.GetExchangeAccountByAccountName(itemId, permission.Account));
+
+                if (account.AccountType == ExchangeAccountType.SecurityGroup)
+                {
+                    rule.Roles.Add(permission.Account);
+                }
+                else
+                {
+                    rule.Users.Add(permission.Account);
+                }
+
+                if (permission.Access.ToLower().Contains("read-only"))
+                {
+                    rule.Read = true;
+                }
+
+                if (permission.Access.ToLower().Contains("read-write"))
+                {
+                    rule.Write = true;
+                    rule.Read = true;
+                }
+
+                rule.Pathes.Add("*");
+
+                rules.Add(rule);
+            }
+            
+            return rules.ToArray();
+        }
+
+        private static ESPermission[] ConvertToESPermission(int itemId, WebDavFolderRule[] rules)
+        {
+            var permissions = new List<ESPermission>();
+
+            foreach (var rule in rules)
+            {
+                var permission = new ESPermission();
+
+                permission.Account = rule.Users.Any() ? rule.Users[0] : rule.Roles[0];
+
+                permission.IsGroup = rule.Roles.Any();
+
+                var orgObj = OrganizationController.GetAccountByAccountName(itemId, permission.Account);
+
+                if (orgObj == null)
+                    continue;
+
+                if (permission.IsGroup)
+                {
+                    var secGroupObj = OrganizationController.GetSecurityGroupGeneralSettings(itemId, orgObj.AccountId);
+
+                    if (secGroupObj == null)
+                        continue;
+
+                    permission.DisplayName = secGroupObj.DisplayName;
+
+                }
+                else
+                {
+                    var userObj = OrganizationController.GetUserGeneralSettings(itemId, orgObj.AccountId);
+
+                    if (userObj == null)
+                        continue;
+
+                    permission.DisplayName = userObj.DisplayName;
+                }
+
+                if (rule.Read && !rule.Write)
+                {
+                    permission.Access = "Read-Only";
+                }
+                if (rule.Write)
+                {
+                    permission.Access = "Read-Write";
+                }
+
+
+                permissions.Add(permission);
+            }
+
+            return permissions.ToArray();
+
         }
     }
 }

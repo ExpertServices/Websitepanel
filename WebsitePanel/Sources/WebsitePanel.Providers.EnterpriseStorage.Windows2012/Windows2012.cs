@@ -36,63 +36,142 @@ using Microsoft.Win32;
 using WebsitePanel.Server.Utils;
 using WebsitePanel.Providers.Utils;
 using WebsitePanel.Providers.OS;
+using WebsitePanel.Providers.Web;
 
 namespace WebsitePanel.Providers.EnterpriseStorage
 {
-    public class Windows2012 : HostingServiceProviderBase
+    public class Windows2012 : HostingServiceProviderBase, IEnterpriseStorage
     {
-
         #region Properties
+
         protected string UsersHome
         {
             get { return FileUtils.EvaluateSystemVariables(ProviderSettings["UsersHome"]); }
         }
-        #endregion
 
+        protected string LocationDrive
+        {
+            get { return FileUtils.EvaluateSystemVariables(ProviderSettings["LocationDrive"]); }
+        }
+
+        protected string UsersDomain
+        {
+            get { return FileUtils.EvaluateSystemVariables(ProviderSettings["UsersDomain"]); }
+        }
+
+        #endregion
 
         #region Folders
         public SystemFile[] GetFolders(string organizationId)
         {
+            string rootPath = string.Format("{0}:\\{1}\\{2}", LocationDrive, UsersHome, organizationId);
+            
+            DirectoryInfo root = new DirectoryInfo(rootPath);
+            IWebDav webdav = new Web.WebDav(UsersDomain);
 
             ArrayList items = new ArrayList();
-            DirectoryInfo root = new DirectoryInfo(string.Format("{0}\\{1}", UsersHome, organizationId));
 
             // get directories
             DirectoryInfo[] dirs = root.GetDirectories();
             foreach (DirectoryInfo dir in dirs)
             {
-                string fullName = System.IO.Path.Combine(string.Format("{0}\\{1}", UsersHome, organizationId), dir.Name);
-                SystemFile fi = new SystemFile(dir.Name, fullName, true, 0, dir.CreationTime, dir.LastWriteTime);
-                items.Add(fi);
+                string fullName = System.IO.Path.Combine(rootPath, dir.Name);
+
+                SystemFile folder = new SystemFile(dir.Name, fullName, true, 
+                    FileUtils.BytesToMb(FileUtils.CalculateFolderSize(dir.FullName)), dir.CreationTime, dir.LastWriteTime);
+
+                folder.Url = string.Format("https://{0}/{1}/{2}", UsersDomain, organizationId, dir.Name);
+                folder.Rules = webdav.GetFolderWebDavRules(organizationId, dir.Name);
+
+                items.Add(folder);
 
                 // check if the directory is empty
-                fi.IsEmpty = (Directory.GetFileSystemEntries(fullName).Length == 0);
+                folder.IsEmpty = (Directory.GetFileSystemEntries(fullName).Length == 0);
             }
 
             return (SystemFile[])items.ToArray(typeof(SystemFile));
         }
 
-        public SystemFile GetFolder(string organizationId, string folder)
+        public SystemFile GetFolder(string organizationId, string folderName)
         {
-            DirectoryInfo root = new DirectoryInfo(string.Format("{0}\\{1}\\{2}", UsersHome, organizationId, folder));
-            string fullName = string.Format("{0}\\{1}\\{2}", UsersHome, organizationId, folder);
-            return new SystemFile(root.Name, fullName, true, 0, root.CreationTime, root.LastWriteTime);
+            string fullName = string.Format("{0}:\\{1}\\{2}\\{3}", LocationDrive, UsersHome, organizationId, folderName);
+
+            DirectoryInfo root = new DirectoryInfo(fullName);
+            
+            SystemFile folder = new SystemFile(root.Name, fullName, true,
+                FileUtils.BytesToMb( FileUtils.CalculateFolderSize(root.FullName)), root.CreationTime, root.LastWriteTime);
+
+            folder.Url = string.Format("https://{0}/{1}/{2}", UsersDomain, organizationId, folderName);
+            folder.Rules = GetFolderWebDavRules(organizationId, folderName);
+
+            return folder;
         }
 
         public void CreateFolder(string organizationId, string folder)
         {
-            FileUtils.CreateDirectory(string.Format("{0}\\{1}\\{2}", UsersHome, organizationId, folder));
+            FileUtils.CreateDirectory(string.Format("{0}:\\{1}\\{2}\\{3}", LocationDrive, UsersHome, organizationId, folder));
+        }
+
+        public SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder)
+        {
+            var oldPath = string.Format("{0}:\\{1}\\{2}\\{3}", LocationDrive, UsersHome, organizationId, originalFolder);
+            var newPath = string.Format("{0}:\\{1}\\{2}\\{3}", LocationDrive, UsersHome, organizationId, newFolder);
+
+            FileUtils.MoveFile(oldPath,newPath);
+
+            IWebDav webdav = new WebDav(UsersDomain);
+
+            //deleting old folder rules
+            webdav.DeleteAllWebDavRules(organizationId, originalFolder);
+
+            return GetFolder(organizationId, newFolder);
         }
 
         public void DeleteFolder(string organizationId, string folder)
         {
-            FileUtils.DeleteDirectoryRecursive(string.Format("{0}\\{1}\\{2}", UsersHome, organizationId, folder));
+            string rootPath = string.Format("{0}:\\{1}\\{2}\\{3}", LocationDrive, UsersHome, organizationId, folder);
+
+            DirectoryInfo treeRoot = new DirectoryInfo(rootPath);
+            
+            if (treeRoot.Exists)
+            {
+                DirectoryInfo[] dirs = treeRoot.GetDirectories();
+                while (dirs.Length > 0)
+                {
+                    foreach (DirectoryInfo dir in dirs)
+                        DeleteFolder(organizationId, folder != string.Empty ? string.Format("{0}\\{1}", folder, dir.Name) : dir.Name);
+
+                    dirs = treeRoot.GetDirectories();
+                }
+
+                // DELETE THE FILES UNDER THE CURRENT ROOT
+                string[] files = Directory.GetFiles(treeRoot.FullName);
+                foreach (string file in files)
+                {
+                    File.SetAttributes(file, FileAttributes.Normal);
+                    File.Delete(file);
+                }
+
+                IWebDav webdav = new WebDav(UsersDomain);
+                
+                webdav.DeleteAllWebDavRules(organizationId, folder);
+                
+                Directory.Delete(treeRoot.FullName, true);
+            }
         }
 
-        public void SetFolderQuota(string organizationId, string folder, long quota)
+        public bool SetFolderWebDavRules(string organizationId, string folder, WebDavFolderRule[] rules)
         {
+            IWebDav webdav = new WebDav(UsersDomain);
 
+            return webdav.SetFolderWebDavRules(organizationId, folder, rules);
+        }
 
+        public WebDavFolderRule[] GetFolderWebDavRules(string organizationId, string folder)
+        {
+            IWebDav webdav = new WebDav(UsersDomain);
+
+            return webdav.GetFolderWebDavRules(organizationId, folder);
         }
 
         public bool CheckFileServicesInstallation()
@@ -103,6 +182,7 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         #endregion
 
         #region HostingServiceProvider methods
+        
         public override string[] Install()
         {
             List<string> messages = new List<string>();
@@ -177,5 +257,6 @@ namespace WebsitePanel.Providers.EnterpriseStorage
             Server.Utils.OS.WindowsVersion version = WebsitePanel.Server.Utils.OS.GetVersion();
             return version == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2012;
         }
+
     }
 }

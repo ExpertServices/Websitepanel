@@ -35,6 +35,7 @@ using Microsoft.Win32;
 using WebsitePanel.Server.Utils;
 using WebsitePanel.Providers.Utils;
 using WebsitePanel.Providers.OS;
+using WebsitePanel.Providers.Common;
 
 
 namespace WebsitePanel.Providers.RemoteDesktopServices
@@ -45,7 +46,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         #region Properties
         protected string UsersHome
         {
-            get { return FileUtils.EvaluateSystemVariables(ProviderSettings["UsersHome"]); }
+            get { return FileUtils.EvaluateSystemVariables(ProviderSettings[Constants.UsersHome]); }
         }
         #endregion
 
@@ -121,6 +122,9 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
         public override bool IsInstalled()
         {
+            // TODO: Remove it.
+            return true;
+
             Server.Utils.OS.WindowsVersion version = WebsitePanel.Server.Utils.OS.GetVersion();
             return version == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2012;
         }

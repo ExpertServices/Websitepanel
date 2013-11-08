@@ -741,7 +741,6 @@ namespace WebsitePanel.EnterpriseServer
             if (res != null)
             {
                 res.IsSuccess = false;
-
                 if (!string.IsNullOrEmpty(errorCode))
                     res.ErrorCodes.Add(errorCode);
             }

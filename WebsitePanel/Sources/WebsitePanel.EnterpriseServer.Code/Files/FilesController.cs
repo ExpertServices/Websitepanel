@@ -910,7 +910,7 @@ namespace WebsitePanel.EnterpriseServer
             return users.ToArray();
         }
 
-        public static int SetFolderQuota(int packageId, string path, string driveName)
+        public static int SetFolderQuota(int packageId, string path, string driveName,string quotas)
         {
 
             // check account
@@ -929,8 +929,8 @@ namespace WebsitePanel.EnterpriseServer
 
                 // disk space quota
                 // This gets all the disk space allocated for a specific customer
-                // It includes the package Add Ons * Quatity + Hosting Plan System disk space value.
-                QuotaValueInfo diskSpaceQuota = PackageController.GetPackageQuota(packageId, Quotas.OS_DISKSPACE);
+                // It includes the package Add Ons * Quatity + Hosting Plan System disk space value. //Quotas.OS_DISKSPACE
+                QuotaValueInfo diskSpaceQuota = PackageController.GetPackageQuota(packageId, quotas);
 
 
                 #region figure Quota Unit
@@ -965,7 +965,7 @@ namespace WebsitePanel.EnterpriseServer
 
 
         }
-
+        
         public static int ApplyEnableHardQuotaFeature(int packageId)
         {
             if (SecurityContext.CheckAccount(DemandAccount.IsActive | DemandAccount.IsAdmin | DemandAccount.NotDemo) != 0)
@@ -1014,7 +1014,7 @@ namespace WebsitePanel.EnterpriseServer
                         continue;
 
                     string homeFolder = FilesController.GetHomeFolder(childPackage.PackageId);
-                    FilesController.SetFolderQuota(childPackage.PackageId, homeFolder, driveName);
+                    FilesController.SetFolderQuota(childPackage.PackageId, homeFolder, driveName, Quotas.OS_DISKSPACE);
                 }
             }
             catch (Exception ex)
@@ -1027,7 +1027,6 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             return 0;
-
         }
 
         public static int DeleteDirectoryRecursive(int packageId, string rootPath)

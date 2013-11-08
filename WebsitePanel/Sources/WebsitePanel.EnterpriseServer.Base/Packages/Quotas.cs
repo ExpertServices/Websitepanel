@@ -234,5 +234,8 @@ order by rg.groupOrder
 
         public const string HELICON_ZOO = "HeliconZoo.*";
 
+        public const string ENTERPRISESTORAGE_DISKSTORAGESPACE = "EnterpriseStorage.DiskStorageSpace"; 
+        public const string ENTERPRISESTORAGE_FOLDERS = "EnterpriseStorage.Folders"; 
+
     }
 }

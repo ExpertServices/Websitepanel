@@ -126,4 +126,7 @@
   <data name="lblSpacesFolder.Text" xml:space="preserve">
     <value>Enterprise Storage Folder:</value>
   </data>
+  <data name="lblDomain.Text" xml:space="preserve">
+    <value>Enterprise Storage Domain:</value>
+  </data>
 </root>

@@ -27,7 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
-
+using WebsitePanel.Providers.Web;
 namespace WebsitePanel.Providers.OS
 {
     /// <summary>
@@ -44,6 +44,8 @@ namespace WebsitePanel.Providers.OS
         private long quota;
         private bool isEmpty;
         private bool isPublished;
+        private WebDavFolderRule[] rules;
+        private string url;
 
         public SystemFile()
         {
@@ -108,5 +110,16 @@ namespace WebsitePanel.Providers.OS
             set { this.isPublished = value; }
         }
 
+        public WebDavFolderRule[] Rules
+        {
+            get { return this.rules; }
+            set { this.rules = value; }
+        }
+
+        public string Url
+        {
+            get { return this.url; }
+            set { this.url = value; }
+        }
     }
 }

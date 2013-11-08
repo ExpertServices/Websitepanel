@@ -64,6 +64,7 @@ namespace WebsitePanel.Portal.ProviderControls
         {
             txtFolder.Text = settings["UsersHome"];
             txtLocationDrive.Text = settings["LocationDrive"];
+            txtDomain.Text = settings["UsersDomain"];
             chkEnableHardQuota.Checked = settings["EnableHardQuota"] == "true" ? true : false;
         }
 
@@ -71,6 +72,7 @@ namespace WebsitePanel.Portal.ProviderControls
         {
             settings["UsersHome"] = txtFolder.Text;
             settings["LocationDrive"] = txtLocationDrive.Text;
+            settings["UsersDomain"] = txtDomain.Text;
             settings["EnableHardQuota"] = chkEnableHardQuota.Checked.ToString().ToLower();
         }
     }

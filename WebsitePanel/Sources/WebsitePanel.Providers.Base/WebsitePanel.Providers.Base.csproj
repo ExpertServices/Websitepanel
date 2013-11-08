@@ -57,6 +57,14 @@
     <WarningsAsErrors>618</WarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Web.Administration, Version=7.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Web.Administration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Management, Version=7.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Web.Management.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.DirectoryServices" />
@@ -105,6 +113,7 @@
     <Compile Include="HostedSolution\LyncVoicePolicyType.cs" />
     <Compile Include="HostedSolution\OrganizationSecurityGroup.cs" />
     <Compile Include="HostedSolution\TransactionAction.cs" />
+    <Compile Include="OS\SystemFilesPaged.cs" />
     <Compile Include="RemoteDesktopServices\IRemoteDesktopServices.cs" />
     <Compile Include="ResultObjects\HeliconApe.cs" />
     <Compile Include="HostedSolution\ExchangeMobileDevice.cs" />
@@ -315,10 +324,12 @@
     <Compile Include="Web\HtaccessFolder.cs" />
     <Compile Include="Web\HttpError.cs" />
     <Compile Include="Web\HttpHeader.cs" />
+    <Compile Include="Web\IWebDav.cs" />
     <Compile Include="Web\IWebServer.cs" />
     <Compile Include="Web\MimeMap.cs" />
     <Compile Include="Web\SharedSSLFolder.cs" />
     <Compile Include="Web\SSLCertificate.cs" />
+    <Compile Include="Web\WebDavFolderRule.cs" />
     <Compile Include="Web\WebFolder.cs" />
     <Compile Include="Web\WebGroup.cs" />
     <Compile Include="Web\WebSite.cs" />

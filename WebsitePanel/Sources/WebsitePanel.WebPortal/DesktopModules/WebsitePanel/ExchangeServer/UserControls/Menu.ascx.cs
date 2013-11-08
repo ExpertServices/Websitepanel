@@ -254,7 +254,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             MenuGroup enterpriseStorageGroup =
                    new MenuGroup(GetLocalizedString("Text.EnterpriseStorageGroup"), imagePath + "spaces16.png");
 
-            enterpriseStorageGroup.MenuItems.Add(CreateMenuItem("EnterpriseStorageSpaces", "enterprisestorage_spaces"));
+            enterpriseStorageGroup.MenuItems.Add(CreateMenuItem("EnterpriseStorageFolders", "enterprisestorage_folders"));
 
             groups.Add(enterpriseStorageGroup);
         }
