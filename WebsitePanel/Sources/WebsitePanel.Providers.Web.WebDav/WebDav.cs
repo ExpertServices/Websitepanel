@@ -100,26 +100,27 @@ namespace WebsitePanel.Providers.Web
 
         public WebDavFolderRule[] GetFolderWebDavRules(string organizationId, string folder)
         {
-            using (ServerManager serverManager = new ServerManager())
+            var rules = new List<WebDavFolderRule>();
+            try
             {
-                Configuration config = serverManager.GetApplicationHostConfiguration();
-
-                ConfigurationSection authoringRulesSection = config.GetSection("system.webServer/webdav/authoringRules", string.Format("{0}/{1}/{2}", _usersDomain, organizationId, folder));
-
-                ConfigurationElementCollection authoringRulesCollection = authoringRulesSection.GetCollection();
-
-                var rules = new List<WebDavFolderRule>();
-                try
+                using (ServerManager serverManager = new ServerManager())
                 {
+                    Configuration config = serverManager.GetApplicationHostConfiguration();
+
+                    ConfigurationSection authoringRulesSection = config.GetSection("system.webServer/webdav/authoringRules", string.Format("{0}/{1}/{2}", _usersDomain, organizationId, folder));
+
+                    ConfigurationElementCollection authoringRulesCollection = authoringRulesSection.GetCollection();
+
+
                     foreach (var rule in authoringRulesCollection)
                     {
                         rules.Add(rule.ToWebDavFolderRule());
                     }
                 }
-                catch { }
-
-                return rules.ToArray();
             }
+            catch { }
+
+            return rules.ToArray();
         }
 
 

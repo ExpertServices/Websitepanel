@@ -85,6 +85,12 @@ namespace WebsitePanel.EnterpriseServer
 
         private System.Threading.SendOrPostCallback RenameEnterpriseFolderOperationCompleted;
 
+        private System.Threading.SendOrPostCallback CreateEnterpriseStorageOperationCompleted;
+
+        private System.Threading.SendOrPostCallback CheckEnterpriseStorageInitializationOperationCompleted;
+
+        private System.Threading.SendOrPostCallback CheckUsersDomainExistsOperationCompleted;
+
         /// <remarks/>
         public esEnterpriseStorage()
         {
@@ -120,6 +126,15 @@ namespace WebsitePanel.EnterpriseServer
 
         /// <remarks/>
         public event RenameEnterpriseFolderCompletedEventHandler RenameEnterpriseFolderCompleted;
+
+        /// <remarks/>
+        public event CreateEnterpriseStorageCompletedEventHandler CreateEnterpriseStorageCompleted;
+
+        /// <remarks/>
+        public event CheckEnterpriseStorageInitializationCompletedEventHandler CheckEnterpriseStorageInitializationCompleted;
+
+        /// <remarks/>
+        public event CheckUsersDomainExistsCompletedEventHandler CheckUsersDomainExistsCompleted;
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/CheckFileServicesInstallation", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -657,6 +672,160 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/CreateEnterpriseStorage", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResultObject CreateEnterpriseStorage(int packageId, int itemId)
+        {
+            object[] results = this.Invoke("CreateEnterpriseStorage", new object[] {
+                        packageId,
+                        itemId});
+            return ((ResultObject)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginCreateEnterpriseStorage(int packageId, int itemId, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("CreateEnterpriseStorage", new object[] {
+                        packageId,
+                        itemId}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public ResultObject EndCreateEnterpriseStorage(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ResultObject)(results[0]));
+        }
+
+        /// <remarks/>
+        public void CreateEnterpriseStorageAsync(int packageId, int itemId)
+        {
+            this.CreateEnterpriseStorageAsync(packageId, itemId, null);
+        }
+
+        /// <remarks/>
+        public void CreateEnterpriseStorageAsync(int packageId, int itemId, object userState)
+        {
+            if ((this.CreateEnterpriseStorageOperationCompleted == null))
+            {
+                this.CreateEnterpriseStorageOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCreateEnterpriseStorageOperationCompleted);
+            }
+            this.InvokeAsync("CreateEnterpriseStorage", new object[] {
+                        packageId,
+                        itemId}, this.CreateEnterpriseStorageOperationCompleted, userState);
+        }
+
+        private void OnCreateEnterpriseStorageOperationCompleted(object arg)
+        {
+            if ((this.CreateEnterpriseStorageCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CreateEnterpriseStorageCompleted(this, new CreateEnterpriseStorageCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/CheckEnterpriseStorageInitialization" +
+            "", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool CheckEnterpriseStorageInitialization(int packageId, int itemId)
+        {
+            object[] results = this.Invoke("CheckEnterpriseStorageInitialization", new object[] {
+                        packageId,
+                        itemId});
+            return ((bool)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginCheckEnterpriseStorageInitialization(int packageId, int itemId, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("CheckEnterpriseStorageInitialization", new object[] {
+                        packageId,
+                        itemId}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public bool EndCheckEnterpriseStorageInitialization(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+
+        /// <remarks/>
+        public void CheckEnterpriseStorageInitializationAsync(int packageId, int itemId)
+        {
+            this.CheckEnterpriseStorageInitializationAsync(packageId, itemId, null);
+        }
+
+        /// <remarks/>
+        public void CheckEnterpriseStorageInitializationAsync(int packageId, int itemId, object userState)
+        {
+            if ((this.CheckEnterpriseStorageInitializationOperationCompleted == null))
+            {
+                this.CheckEnterpriseStorageInitializationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckEnterpriseStorageInitializationOperationCompleted);
+            }
+            this.InvokeAsync("CheckEnterpriseStorageInitialization", new object[] {
+                        packageId,
+                        itemId}, this.CheckEnterpriseStorageInitializationOperationCompleted, userState);
+        }
+
+        private void OnCheckEnterpriseStorageInitializationOperationCompleted(object arg)
+        {
+            if ((this.CheckEnterpriseStorageInitializationCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CheckEnterpriseStorageInitializationCompleted(this, new CheckEnterpriseStorageInitializationCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/CheckUsersDomainExists", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool CheckUsersDomainExists(int itemId)
+        {
+            object[] results = this.Invoke("CheckUsersDomainExists", new object[] {
+                        itemId});
+            return ((bool)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginCheckUsersDomainExists(int itemId, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("CheckUsersDomainExists", new object[] {
+                        itemId}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public bool EndCheckUsersDomainExists(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+
+        /// <remarks/>
+        public void CheckUsersDomainExistsAsync(int itemId)
+        {
+            this.CheckUsersDomainExistsAsync(itemId, null);
+        }
+
+        /// <remarks/>
+        public void CheckUsersDomainExistsAsync(int itemId, object userState)
+        {
+            if ((this.CheckUsersDomainExistsOperationCompleted == null))
+            {
+                this.CheckUsersDomainExistsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckUsersDomainExistsOperationCompleted);
+            }
+            this.InvokeAsync("CheckUsersDomainExists", new object[] {
+                        itemId}, this.CheckUsersDomainExistsOperationCompleted, userState);
+        }
+
+        private void OnCheckUsersDomainExistsOperationCompleted(object arg)
+        {
+            if ((this.CheckUsersDomainExistsCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CheckUsersDomainExistsCompleted(this, new CheckUsersDomainExistsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
         public new void CancelAsync(object userState)
         {
             base.CancelAsync(userState);
@@ -959,6 +1128,96 @@ namespace WebsitePanel.EnterpriseServer
             {
                 this.RaiseExceptionIfNecessary();
                 return ((SystemFile)(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void CreateEnterpriseStorageCompletedEventHandler(object sender, CreateEnterpriseStorageCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CreateEnterpriseStorageCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal CreateEnterpriseStorageCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public ResultObject Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((ResultObject)(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void CheckEnterpriseStorageInitializationCompletedEventHandler(object sender, CheckEnterpriseStorageInitializationCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CheckEnterpriseStorageInitializationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal CheckEnterpriseStorageInitializationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public bool Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void CheckUsersDomainExistsCompletedEventHandler(object sender, CheckUsersDomainExistsCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CheckUsersDomainExistsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal CheckUsersDomainExistsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public bool Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
             }
         }
     }

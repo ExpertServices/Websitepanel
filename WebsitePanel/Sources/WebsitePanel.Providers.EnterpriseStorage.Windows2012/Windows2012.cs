@@ -100,7 +100,7 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         public SystemFile GetFolder(string organizationId, string folderName)
         {
             string fullName = string.Format("{0}:\\{1}\\{2}\\{3}", LocationDrive, UsersHome, organizationId, folderName);
-            SystemFile folder = new SystemFile();
+            SystemFile folder = null;
 
             if (Directory.Exists(fullName))
             {

@@ -41,7 +41,16 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             if (!IsPostBack)
             {
-                BindEnterpriseStorageStats();
+                if (ES.Services.EnterpriseStorage.CheckUsersDomainExists(PanelRequest.ItemID))
+                {
+                    BindEnterpriseStorageStats();
+                }
+                else
+                {
+                    btnAddFolder.Enabled = false;
+
+                    messageBox.ShowWarningMessage("WEB_SITE_IS_NOT_CREATED");
+                }
             }
         }
 

@@ -4632,8 +4632,6 @@ Please ensure the space has been allocated {0} IP address as a dedicated one and
                 return false;
             }
 
-            siteId = RemoveProtocolFromUrl(siteId);
-
             var webServer = GetWebServer(GetWebServerServiceID(org.PackageId));
 
             return webServer.GetDirectoryBrowseEnabled(siteId);
@@ -4648,21 +4646,9 @@ Please ensure the space has been allocated {0} IP address as a dedicated one and
                 return;
             }
 
-            siteId = RemoveProtocolFromUrl(siteId);
-
             var webServer = GetWebServer(GetWebServerServiceID(org.PackageId));
 
             webServer.SetDirectoryBrowseEnabled(siteId, enabled);
-        }
-
-        private static string RemoveProtocolFromUrl(string input)
-        {
-            if (input.Contains("//"))
-            {
-                return System.Text.RegularExpressions.Regex.Split(input, "//")[1];
-            }
-
-            return input;
         }
 
         #endregion

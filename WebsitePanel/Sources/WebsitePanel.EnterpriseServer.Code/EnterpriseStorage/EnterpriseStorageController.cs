@@ -53,14 +53,34 @@ namespace WebsitePanel.EnterpriseServer
     {
         #region Public Methods
 
+        public static bool CheckEnterpriseStorageInitialization(int packageId, int itemId)
+        {
+            return CheckEnterpriseStorageInitializationInternal(packageId, itemId);
+        }
+
+        public static ResultObject CreateEnterpriseStorage(int packageId, int itemId)
+        {
+            return CreateEnterpriseStorageInternal(packageId, itemId);
+        }
+
+        public static ResultObject DeleteEnterpriseStorage(int packageId, int itemId)
+        {
+            return DeleteEnterpriseStorageInternal(packageId,itemId);
+        }
+
         public static SystemFile[] GetFolders(int itemId)
         {
-            return GetFoldersInternal(itemId);
+           return GetFoldersInternal(itemId);
         }
 
         public static SystemFile GetFolder(int itemId, string folderName)
         {
             return GetFolderInternal(itemId, folderName);
+        }
+
+        public static SystemFile GetFolder(int itemId)
+        {
+            return GetFolder(itemId, string.Empty);
         }
 
         public static ResultObject CreateFolder(int itemId)
@@ -114,8 +134,169 @@ namespace WebsitePanel.EnterpriseServer
             return RenameFolderInternal(itemId, oldFolder, newFolder);
         }
 
+        public static bool CheckUsersDomainExists(int itemId)
+        {
+            return CheckUsersDomainExistsInternal(itemId);
+        }
+
         #endregion
 
+        protected static bool CheckUsersDomainExistsInternal(int itemId)
+        {
+            Organization org = OrganizationController.GetOrganization(itemId);
+
+            return CheckUsersDomainExistsInternal(itemId, org.PackageId);
+        }
+
+        protected static bool CheckUsersDomainExistsInternal(int itemId, int packageId)
+        {
+            int webServiceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Web);
+            var esServiceId = GetEnterpriseStorageServiceID(packageId);
+
+            StringDictionary esSesstings = ServerController.GetServiceSettings(esServiceId);
+
+            string usersDomain = esSesstings["UsersDomain"];
+
+            WebServer web = new WebServer();
+            ServiceProviderProxy.Init(web, webServiceId);
+
+            if (web.SiteExists(usersDomain))
+                return true;
+
+            return false;
+        }
+
+        protected static bool CheckEnterpriseStorageInitializationInternal(int packageId, int itemId)
+        {
+            bool checkResult = true;
+
+            var esServiceId = GetEnterpriseStorageServiceID(packageId);
+            int webServiceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Web);
+
+            Organization org = OrganizationController.GetOrganization(itemId);
+
+            if (org == null)
+            {
+                return false;
+            }
+
+            //root folder not created
+            if (GetFolder(itemId) == null)
+            {
+                checkResult = false;
+            }
+
+            //checking if virtual directory is created
+            StringDictionary esSesstings = ServerController.GetServiceSettings(esServiceId);
+
+            string usersDomain = esSesstings["UsersDomain"];
+
+            WebServer web = new WebServer();
+            ServiceProviderProxy.Init(web, webServiceId);
+            
+            if (!web.VirtualDirectoryExists(usersDomain, org.OrganizationId))
+            {
+                checkResult = false;
+            }
+
+
+            return checkResult;
+        }
+
+        protected static ResultObject CreateEnterpriseStorageInternal(int packageId, int itemId)
+        {
+            ResultObject result = TaskManager.StartResultTask<ResultObject>("ORGANIZATION", "CREATE_ORGANIZATION_ENTERPRISE_STORAGE", itemId, packageId);
+
+            try
+            {
+                int esServiceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.EnterpriseStorage);
+
+                if (esServiceId != 0)
+                {
+                    StringDictionary esSesstings = ServerController.GetServiceSettings(esServiceId);
+
+                    Organization org = OrganizationController.GetOrganization(itemId);
+
+                    string usersHome = esSesstings["UsersHome"];
+                    string usersDomain = esSesstings["UsersDomain"];
+                    string locationDrive = esSesstings["LocationDrive"];
+
+                    string homePath = string.Format("{0}:\\{1}", locationDrive, usersHome);
+
+                    EnterpriseStorageController.CreateFolder(itemId);
+
+                    WebServerController.AddWebDavDirectory(packageId, usersDomain, org.OrganizationId, homePath);
+
+                    int osId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Os);
+                    bool enableHardQuota = (esSesstings["enablehardquota"] != null)
+                        ? bool.Parse(esSesstings["enablehardquota"])
+                        : false;
+
+                    if (enableHardQuota && osId != 0 && OperatingSystemController.CheckFileServicesInstallation(osId))
+                    {
+                        FilesController.SetFolderQuota(packageId, Path.Combine(usersHome, org.OrganizationId),
+                            locationDrive, Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.AddError("ENTERPRISE_STORAGE_CREATE_FOLDER", ex);
+            }
+            finally
+            {
+                if (!result.IsSuccess)
+                {
+                    TaskManager.CompleteResultTask(result);
+                }
+                else
+                {
+                    TaskManager.CompleteResultTask();
+                }
+            }
+
+            return result;
+        }
+
+        protected static ResultObject DeleteEnterpriseStorageInternal(int packageId, int itemId)
+        {
+            ResultObject result = TaskManager.StartResultTask<ResultObject>("ORGANIZATION", "CLEANUP_ORGANIZATION_ENTERPRISE_STORAGE", itemId, packageId);
+
+            try
+            {
+                int esId = PackageController.GetPackageServiceId(packageId, ResourceGroups.EnterpriseStorage);
+
+                Organization org = OrganizationController.GetOrganization(itemId);
+
+                if (esId != 0)
+                {
+                    StringDictionary esSesstings = ServerController.GetServiceSettings(esId);
+
+                    string usersDomain = esSesstings["UsersDomain"];
+
+                    WebServerController.DeleteWebDavDirectory(packageId, usersDomain, org.OrganizationId);
+                    EnterpriseStorageController.DeleteFolder(itemId);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                result.AddError("ENTERPRISE_STORAGE_CLEANUP", ex);
+            }
+            finally
+            {
+                if (!result.IsSuccess)
+                {
+                    TaskManager.CompleteResultTask(result);
+                }
+                else
+                {
+                    TaskManager.CompleteResultTask();
+                }
+            }
+
+            return result;
+        }
 
         private static EnterpriseStorage GetEnterpriseStorage(int serviceId)
         {
@@ -165,7 +346,6 @@ namespace WebsitePanel.EnterpriseServer
                 throw ex;
             }
         }
-
 
         protected static SystemFile RenameFolderInternal(int itemId, string oldFolder, string newFolder)
         {
@@ -311,21 +491,24 @@ namespace WebsitePanel.EnterpriseServer
                     return null;
                 }
 
-                EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
-                List<SystemFile> folders = es.GetFolders(org.OrganizationId).Where(x => x.Name.Contains(filterValue)).ToList();
-
-                switch (sortColumn)
+                if (CheckUsersDomainExistsInternal(itemId, org.PackageId))
                 {
-                    case "Size":
-                        folders = folders.OrderBy(x => x.Size).ToList();
-                        break;
-                    default:
-                        folders = folders.OrderBy(x => x.Name).ToList();
-                        break;
-                }
+                    EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
+                    List<SystemFile> folders = es.GetFolders(org.OrganizationId).Where(x => x.Name.Contains(filterValue)).ToList();
 
-                result.RecordsCount = folders.Count;
-                result.PageItems = folders.Skip(startRow).Take(maximumRows).ToArray();
+                    switch (sortColumn)
+                    {
+                        case "Size":
+                            folders = folders.OrderBy(x => x.Size).ToList();
+                            break;
+                        default:
+                            folders = folders.OrderBy(x => x.Name).ToList();
+                            break;
+                    }
+
+                    result.RecordsCount = folders.Count;
+                    result.PageItems = folders.Skip(startRow).Take(maximumRows).ToArray();
+                }
             }
             catch { /*skip exception*/}
 

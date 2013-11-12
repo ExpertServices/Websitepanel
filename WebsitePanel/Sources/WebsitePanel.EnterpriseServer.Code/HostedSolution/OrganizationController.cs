@@ -418,36 +418,6 @@ namespace WebsitePanel.EnterpriseServer
                 };
 
                 PackageController.AddPackageItem(orgDomain);
-
-                //Create Enterprise storage
-
-                int esServiceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.EnterpriseStorage);
-
-                if (esServiceId != 0)
-                {
-                    StringDictionary esSesstings = ServerController.GetServiceSettings(esServiceId);
-                    
-                    string usersHome = esSesstings["UsersHome"];
-                    string usersDomain = esSesstings["UsersDomain"];
-                    string locationDrive = esSesstings["LocationDrive"];
-                    
-                    string homePath = string.Format("{0}:\\{1}",locationDrive, usersHome);
-
-                    EnterpriseStorageController.CreateFolder(itemId);
-
-                    WebServerController.AddWebDavDirectory(packageId, usersDomain, organizationId, homePath);
-
-                    int osId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Os);
-                    bool enableHardQuota = (esSesstings["enablehardquota"] != null)
-                        ? bool.Parse(esSesstings["enablehardquota"])
-                        : false;
-
-                    if (enableHardQuota && osId != 0 && OperatingSystemController.CheckFileServicesInstallation(osId))
-                    {
-                        FilesController.SetFolderQuota(packageId, Path.Combine(usersHome, organizationId),
-                            locationDrive, Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE);
-                    }
-                }
             }
             catch (Exception ex)
             {
@@ -746,24 +716,10 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 //Cleanup Enterprise storage
-                int esId = PackageController.GetPackageServiceId(org.PackageId, ResourceGroups.EnterpriseStorage);
 
-                if (esId != 0)
+                if (EnterpriseStorageController.DeleteEnterpriseStorage(org.PackageId, itemId).IsSuccess == false)
                 {
-                    StringDictionary esSesstings = ServerController.GetServiceSettings(esId);
-
-                    string usersDomain = esSesstings["UsersDomain"];
-
-                    try
-                    {
-                        WebServerController.DeleteWebDavDirectory(org.PackageId, usersDomain, org.OrganizationId);
-                        EnterpriseStorageController.DeleteFolder(itemId);
-                    }
-                    catch (Exception ex)
-                    {
-                        successful = false;
-                        TaskManager.WriteError(ex);
-                    }
+                    successful = false;
                 }
 
                 //Cleanup Exchange

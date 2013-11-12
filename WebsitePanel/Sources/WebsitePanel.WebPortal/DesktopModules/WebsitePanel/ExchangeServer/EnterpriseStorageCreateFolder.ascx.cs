@@ -35,6 +35,18 @@ namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class EnterpriseStorageCreateFolder : WebsitePanelModuleBase
     {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                if (!ES.Services.EnterpriseStorage.CheckUsersDomainExists(PanelRequest.ItemID))
+                {
+                    Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folders",
+                        "ItemID=" + PanelRequest.ItemID));
+                }
+            }
+        }
+
 
         protected void btnCreate_Click(object sender, EventArgs e)
         {
@@ -42,6 +54,21 @@ namespace WebsitePanel.Portal.ExchangeServer
                 return;
             try
             {
+                foreach (var invalidChar in System.IO.Path.GetInvalidFileNameChars())
+                {
+                    if (txtFolderName.Text.Contains(invalidChar.ToString()))
+                    {
+                        messageBox.ShowErrorMessage("FILES_CREATE_FILE");
+
+                        return;
+                    }
+                }
+
+                if (!ES.Services.EnterpriseStorage.CheckEnterpriseStorageInitialization(PanelSecurity.PackageId, PanelRequest.ItemID))
+                {
+                    ES.Services.EnterpriseStorage.CreateEnterpriseStorage(PanelSecurity.PackageId, PanelRequest.ItemID);
+                }
+
                 ResultObject result = ES.Services.EnterpriseStorage.CreateEnterpriseFolder(PanelRequest.ItemID, txtFolderName.Text);
 
                 if (!result.IsSuccess && result.ErrorCodes.Count > 0)

@@ -3775,17 +3775,33 @@ namespace WebsitePanel.Providers.Web
 
         public override bool GetDirectoryBrowseEnabled(string siteId)
         {
-            using (ServerManager srvman = webObjectsSvc.GetServerManager())
-            {
-                var enabled = dirBrowseSvc.GetDirectoryBrowseSettings(srvman, siteId)[DirectoryBrowseGlobals.Enabled];
+            var uri = new Uri(siteId);
+            var host = uri.Host;
+            var site = uri.Host + uri.PathAndQuery;
 
-                return enabled != null ? (bool)enabled : false;
+            if (SiteExists(host))
+            {
+                using (ServerManager srvman = webObjectsSvc.GetServerManager())
+                {
+                    var enabled = dirBrowseSvc.GetDirectoryBrowseSettings(srvman, site)[DirectoryBrowseGlobals.Enabled];
+
+                    return enabled != null ? (bool)enabled : false;
+                }
             }
+
+            return false;
         }
 
         public override void SetDirectoryBrowseEnabled(string siteId, bool enabled)
         {
-            dirBrowseSvc.SetDirectoryBrowseEnabled(siteId, enabled);
+            var uri = new Uri(siteId);
+            var host = uri.Host;
+            var site = uri.Host + uri.PathAndQuery;
+
+            if (SiteExists(host))
+            {
+                dirBrowseSvc.SetDirectoryBrowseEnabled(site, enabled);
+            }
         }
         
 

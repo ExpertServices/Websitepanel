@@ -116,5 +116,23 @@ namespace WebsitePanel.EnterpriseServer
         {
             return EnterpriseStorageController.RenameFolder(itemId, oldName, newName);
         }
+
+        [WebMethod]
+        public ResultObject CreateEnterpriseStorage(int packageId, int itemId)
+        {
+            return EnterpriseStorageController.CreateEnterpriseStorage(packageId, itemId);
+        }
+
+        [WebMethod]
+        public bool CheckEnterpriseStorageInitialization(int packageId, int itemId)
+        {
+            return EnterpriseStorageController.CheckEnterpriseStorageInitialization(packageId, itemId);
+        }
+
+        [WebMethod]
+        public bool CheckUsersDomainExists(int itemId)
+        {
+            return EnterpriseStorageController.CheckUsersDomainExists(itemId);
+        }
     }
 }
