@@ -54,6 +54,16 @@ namespace WebsitePanel.Portal.ExchangeServer
                 return;
             try
             {
+                foreach (var invalidChar in System.IO.Path.GetInvalidFileNameChars())
+                {
+                    if (txtFolderName.Text.Contains(invalidChar.ToString()))
+                    {
+                        messageBox.ShowErrorMessage("FILES_CREATE_FILE");
+
+                        return;
+                    }
+                }
+
                 if (!ES.Services.EnterpriseStorage.CheckEnterpriseStorageInitialization(PanelSecurity.PackageId, PanelRequest.ItemID))
                 {
                     ES.Services.EnterpriseStorage.CreateEnterpriseStorage(PanelSecurity.PackageId, PanelRequest.ItemID);

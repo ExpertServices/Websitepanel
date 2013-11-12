@@ -98,6 +98,9 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 bool redirectNeeded = false;
 
+                string fileName = PanelRequest.FolderID;
+                string fileUrl = lblFolderUrl.Text;
+
                 litFolderName.Text = txtFolderName.Text;
 
                 SystemFile folder = null;
@@ -107,20 +110,32 @@ namespace WebsitePanel.Portal.ExchangeServer
                     ES.Services.EnterpriseStorage.CreateEnterpriseStorage(PanelSecurity.PackageId, PanelRequest.ItemID);
                 }
 
+                //File is renaming
                 if (PanelRequest.FolderID != txtFolderName.Text)
                 {
-                    if (txtFolderName.Text.Contains("\\"))
+                    //check if filename is correct
+                    foreach (var invalidChar in System.IO.Path.GetInvalidFileNameChars())
                     {
-                        throw new Exception("Wrong file name");
+                        if (txtFolderName.Text.Contains(invalidChar.ToString()))
+                        {
+                            messageBox.ShowErrorMessage("FILES_RENAME_FILE");
+
+                            return;
+                        }
                     }
 
                     folder = ES.Services.EnterpriseStorage.RenameEnterpriseFolder(PanelRequest.ItemID, PanelRequest.FolderID, txtFolderName.Text);
+
+                    // file is renamed - new name and url
+                    fileName = folder.Name;
+                    fileUrl = folder.Url;
+
                     redirectNeeded = true;
                 }
 
-                ES.Services.EnterpriseStorage.SetEnterpriseFolderPermissions(PanelRequest.ItemID, redirectNeeded ? folder.Name : PanelRequest.FolderID, permissions.GetPemissions());
+                ES.Services.EnterpriseStorage.SetEnterpriseFolderPermissions(PanelRequest.ItemID, fileName, permissions.GetPemissions());
 
-                ES.Services.WebServers.SetDirectoryBrowseEnabled(PanelRequest.ItemID, redirectNeeded ? folder.Url : lblFolderUrl.Text, chkDirectoryBrowsing.Checked);
+                ES.Services.WebServers.SetDirectoryBrowseEnabled(PanelRequest.ItemID, fileUrl, chkDirectoryBrowsing.Checked);
 
                 if (redirectNeeded)
                 {
