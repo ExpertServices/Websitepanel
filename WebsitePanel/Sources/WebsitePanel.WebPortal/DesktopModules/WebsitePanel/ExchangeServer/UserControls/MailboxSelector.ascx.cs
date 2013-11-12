@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using WebsitePanel.Providers.HostedSolution;
+using System.Text.RegularExpressions;
 
 namespace WebsitePanel.Portal.ExchangeServer.UserControls
 {
@@ -218,7 +219,8 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
         {
             if (e.CommandName == "SelectAccount")
             {
-                string[] parts = e.CommandArgument.ToString().Split('|');
+
+                string[] parts = e.CommandArgument.ToString().Split('^');
                 ExchangeAccount account = new ExchangeAccount();
                 account.AccountName = parts[0];
                 account.DisplayName = parts[1];

@@ -49,11 +49,11 @@
 
 				    <asp:GridView ID="gvGroups" runat="server" AutoGenerateColumns="False" EnableViewState="true"
 					    Width="100%" EmptyDataText="gvGroups" CssSelectorClass="NormalGridView"
-					    OnRowCommand="gvSecurityGroups_RowCommand" AllowPaging="True" AllowSorting="True"
+					    OnRowCommand="gvSecurityGroups_RowCommand" OnRowDataBound="gvSecurityGroups_RowDataBound" AllowPaging="True" AllowSorting="True"
 					    DataSourceID="odsSecurityGroupsPaged" PageSize="20">
 					    <Columns>
 						    <asp:TemplateField HeaderText="gvGroupsDisplayName" SortExpression="DisplayName">
-							    <ItemStyle Width="100%"></ItemStyle>
+							    <ItemStyle Width="35%"></ItemStyle>
 							    <ItemTemplate>
 								    <asp:hyperlink id="lnk1" runat="server"
 									    NavigateUrl='<%# GetListEditUrl(Eval("AccountId").ToString()) %>'>
@@ -61,6 +61,7 @@
 								    </asp:hyperlink>
 							    </ItemTemplate>
 						    </asp:TemplateField>
+                            <asp:BoundField HeaderText="gvGroupsNotes" DataField="Notes" ItemStyle-Width="65%" />
 						    <asp:TemplateField>
 							    <ItemTemplate>
 								    <asp:ImageButton ID="cmdDelete" runat="server" Text="Delete" SkinID="ExchangeDelete"

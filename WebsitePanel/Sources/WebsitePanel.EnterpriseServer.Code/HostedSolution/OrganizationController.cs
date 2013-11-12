@@ -2610,7 +2610,10 @@ namespace WebsitePanel.EnterpriseServer
                 OrganizationSecurityGroup tmpSecurityGroup = GetSecurityGroupGeneralSettings(itemId, account.AccountId);
 
                 if (tmpSecurityGroup != null)
+                {
+                    account.Notes = tmpSecurityGroup.Notes;
                     accounts.Add(account);
+                }
             }
 
             result.PageItems = accounts.ToArray();

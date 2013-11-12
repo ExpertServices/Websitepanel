@@ -979,6 +979,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@ClusterId", clusterId),
                 new SqlParameter("@comments", comments));
 
+            UpdateServerPackageServices(serverId);
+
             return Convert.ToInt32(prmServiceId.Value);
         }
 
@@ -1559,6 +1561,8 @@ namespace WebsitePanel.EnterpriseServer
             // read identity
             packageId = Convert.ToInt32(prmPackageId.Value);
 
+            DistributePackageServices(actorId, packageId);
+
             return ds;
         }
 
@@ -1658,6 +1662,33 @@ namespace WebsitePanel.EnterpriseServer
                 ObjectQualifier + "DeletePackageAddon",
                 new SqlParameter("@actorId", actorId),
                 new SqlParameter("@PackageAddonID", packageAddonId));
+        }
+
+        public static void UpdateServerPackageServices(int serverId)
+        {
+            // FIXME
+            int defaultActorID = 1;
+
+            // get server packages
+            IDataReader packagesReader = SqlHelper.ExecuteReader(ConnectionString, CommandType.Text,
+                @"SELECT PackageID FROM Packages WHERE ServerID = @ServerID",
+                new SqlParameter("@ServerID", serverId)
+            );
+
+            // call DistributePackageServices for all packages on this server
+            while (packagesReader.Read())
+            {
+                int packageId = (int) packagesReader["PackageID"];
+                DistributePackageServices(defaultActorID, packageId);
+            }
+        }
+
+        public static void DistributePackageServices(int actorId, int packageId)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "DistributePackageServices",
+                new SqlParameter("@ActorId", actorId),
+                new SqlParameter("@PackageID", packageId));
         }
 
         #endregion
@@ -3932,15 +3963,16 @@ namespace WebsitePanel.EnterpriseServer
             return packageId;
         }
 
-        public static int GetServiceIdByProviderForServer(int providerId, int serverId)
+        public static int GetServiceIdByProviderForServer(int providerId, int packageId)
         {
             IDataReader reader = SqlHelper.ExecuteReader(ConnectionString, CommandType.Text,
                 @"SELECT TOP 1 
-                    ServiceID
-                  FROM Services
-                  WHERE ProviderID = @ProviderID AND ServerID = @ServerID",
+                    PackageServices.ServiceID
+                  FROM PackageServices
+                  LEFT JOIN Services ON Services.ServiceID = PackageServices.ServiceID
+                  WHERE PackageServices.PackageID = @PackageID AND Services.ProviderID = @ProviderID",
                 new SqlParameter("@ProviderID", providerId),
-                new SqlParameter("@ServerID", serverId));
+                new SqlParameter("@PackageID", packageId));
 
             if (reader.Read())
             {
@@ -4047,6 +4079,26 @@ namespace WebsitePanel.EnterpriseServer
             );
 
             return reader;
+        }
+
+        public static int GetServiceIdForProviderIdAndPackageId(int providerId, int packageId)
+        {
+            IDataReader reader = SqlHelper.ExecuteReader(ConnectionString, CommandType.Text,
+                @"SELECT PackageServices.ServiceID 
+                FROM PackageServices
+                INNER JOIN Services ON PackageServices.ServiceID = Services.ServiceID
+                WHERE Services.ProviderID = @ProviderID and PackageID = @PackageID",
+                new SqlParameter("@ProviderID", providerId),
+                new SqlParameter("@PackageID", packageId)
+            );
+
+            if (reader.Read())
+            {
+                return (int)reader["ServiceID"];
+            }
+
+            return -1;
+
         }
 
         public static int GetServerIdForPackage(int packageId)

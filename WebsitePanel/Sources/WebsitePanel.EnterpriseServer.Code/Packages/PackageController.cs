@@ -229,6 +229,8 @@ namespace WebsitePanel.EnterpriseServer
             if (result.ExceedingQuotas.Tables[0].Rows.Count > 0)
                 result.Result = BusinessErrorCodes.ERROR_PACKAGE_QUOTA_EXCEED;
 
+            DataProvider.DistributePackageServices(SecurityContext.User.UserId, plan.PackageId);
+
             return result;
         }
 
@@ -781,6 +783,8 @@ namespace WebsitePanel.EnterpriseServer
 
                 // Update the Hard quota on home folder in case it was enabled and in case there was a change in disk space
                 UpdatePackageHardQuota(package.PackageId);
+
+                DataProvider.DistributePackageServices(SecurityContext.User.UserId, package.PackageId);
             }
             finally
             {

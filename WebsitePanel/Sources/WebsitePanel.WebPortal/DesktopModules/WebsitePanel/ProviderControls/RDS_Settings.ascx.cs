@@ -27,64 +27,26 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
-using System.Net;
+using WebsitePanel.EnterpriseServer;
+using WebsitePanel.Providers.Common;
 
-using System.Collections;
-using System.ComponentModel;
-
-namespace WebsitePanel.Providers.Web
+namespace WebsitePanel.Portal.ProviderControls
 {
-	public enum HttpErrorsMode
-	{
-        DetailedLocalOnly = 0,
-        Custom = 1,
-        Detailed = 2
-	}
-
-    public enum HttpErrorsExistingResponse
+    public partial class RDS_Settings : WebsitePanelControlBase, IHostingServiceProviderSettings
     {
-        Auto = 0,
-        Replace = 1,
-        PassThrough = 2
+        protected void Page_Load(object sender, EventArgs e)
+        {
+        }
+
+        public void BindSettings(System.Collections.Specialized.StringDictionary settings)
+        {
+            txtUsersHome.Text = settings[Constants.UsersHome];
+        }
+
+        public void SaveSettings(System.Collections.Specialized.StringDictionary settings)
+        {
+            settings[Constants.UsersHome] = txtUsersHome.Text;
+        }
+     
     }
-
-    public class HttpError
-	{
-        public const HttpErrorsMode DefaultHttpErrorsMode = HttpErrorsMode.DetailedLocalOnly;
-        public const HttpErrorsExistingResponse DefaultHttpErrorsExistingResponse = HttpErrorsExistingResponse.Auto;
-
-		private string errorCode;
-		private string errorSubcode;
-		private string handlerType;
-		private string errorContent;
-
-		public HttpError()
-		{
-		}
-
-		public string ErrorCode
-		{
-			get { return errorCode; }
-			set {errorCode = value; }
-		}
-
-        public string ErrorSubcode
-		{
-			get { return errorSubcode; }
-			set {errorSubcode = value; }
-		}
-
-		public string HandlerType
-		{
-			get { return handlerType; }
-			set{ handlerType = value; }
-		}
-
-		public string ErrorContent
-		{
-			get { return errorContent; }
-			set { errorContent = value; }
-
-		}
-	}
 }

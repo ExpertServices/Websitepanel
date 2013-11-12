@@ -202,6 +202,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 ActiveDirectoryUtils.SetADObjectPropertyValue(ou, "msRTCSIP-Domains", sipDomain);
                 ActiveDirectoryUtils.SetADObjectPropertyValue(ou, "msRTCSIP-TenantId", id);
                 ActiveDirectoryUtils.SetADObjectPropertyValue(ou, "msRTCSIP-ObjectId", id);
+                ActiveDirectoryUtils.SetADObjectPropertyValue(ou, "msRTCSIP-DomainUrlMap", sipDomain + "#" + SimpleUrlRoot+sipDomain);
                 ou.CommitChanges();
 
                 //Create simpleurls

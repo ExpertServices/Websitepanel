@@ -66,7 +66,7 @@ namespace WebsitePanel.Providers.Common
 
         public const string AdministrationToolService = "AdministrationToolService";
 
-        
+        public const string UsersHome = "UsersHome";
 
         
     }

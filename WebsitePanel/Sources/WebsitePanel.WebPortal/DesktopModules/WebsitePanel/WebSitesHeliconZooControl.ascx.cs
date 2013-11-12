@@ -58,20 +58,17 @@ namespace WebsitePanel.Portal
             Array.Sort(allowedEngineArray, new ShortHeliconZooEngineComparer());
 
 
-            
-
             // get enabled engines for this site from applicationHost.config
             string[] enabledEngineNames = ES.Services.HeliconZoo.GetEnabledEnginesForSite(site.SiteId, site.PackageId);
             ViewState["EnabledEnginesNames"] = enabledEngineNames;
 
             //console allowed in applicationHost.config
             ViewState["IsZooWebConsoleEnabled"] = enabledEngineNames.Contains("console", StringComparer.OrdinalIgnoreCase);
-    
-            
 
 
             List<ShortHeliconZooEngine> allowedEngines = new List<ShortHeliconZooEngine>(allowedEngineArray);
 
+            // fix engine name and check is web console enabled
             foreach (ShortHeliconZooEngine engine in allowedEngines)
             {
                 engine.Name = engine.Name.Replace("HeliconZoo.", "");
@@ -82,7 +79,6 @@ namespace WebsitePanel.Portal
                     //console allowed in hosting plan
                     ViewState["IsZooWebConsoleEnabled"] = engine.Enabled;
                 }
-   
             }
 
             ViewState["AllowedEngines"] = allowedEngines;
@@ -146,7 +142,11 @@ namespace WebsitePanel.Portal
                                     continue; //skip
                                 }
 
-                                if (string.Equals(appEngine, engine.KeywordedName, StringComparison.OrdinalIgnoreCase))
+                                if (
+                                    string.Equals(appEngine, engine.KeywordedName, StringComparison.OrdinalIgnoreCase)
+                                    ||
+                                    engine.Name == "*"
+                                    )
                                 {
                                     
                                     filteredApplications.Add(application);

@@ -5356,6 +5356,8 @@
   <data name="Success.ORGANIZATION_UPDATE_SECURITY_GROUP_SETTINGS" xml:space="preserve">
     <value>Group general settings have been successfully updated.</value>
   </data>
+  <data name="ResourceGroup.RDS" xml:space="preserve">
+    <value>Remote Desktop Services</value>
   <data name="Warning.WEB_SITE_IS_NOT_CREATED" xml:space="preserve">
     <value>Website is not created</value>
   </data>
