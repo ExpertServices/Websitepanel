@@ -5358,6 +5358,7 @@
   </data>
   <data name="ResourceGroup.RDS" xml:space="preserve">
     <value>Remote Desktop Services</value>
+    </data>
   <data name="Warning.WEB_SITE_IS_NOT_CREATED" xml:space="preserve">
     <value>Website is not created</value>
   </data>
