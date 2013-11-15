@@ -73,13 +73,13 @@ namespace WebsitePanel.Portal.ProviderControls
             var drive = System.IO.Path.GetPathRoot(txtFolder.Text);
             var folder = txtFolder.Text.Replace(drive, string.Empty);
 
-            if (!string.IsNullOrEmpty(drive) && !string.IsNullOrEmpty(folder))
-            {
-                settings["LocationDrive"] = drive.Split(':')[0];
-                settings["UsersHome"] = folder;
-                settings["UsersDomain"] = txtDomain.Text;
-                settings["EnableHardQuota"] = chkEnableHardQuota.Checked.ToString().ToLower();
-            }
+            var uri = new UriBuilder(txtDomain.Text).Uri;
+            var domain = uri.Host;
+
+            settings["LocationDrive"] = drive.Split(':')[0];
+            settings["UsersHome"] = folder;
+            settings["UsersDomain"] = domain;
+            settings["EnableHardQuota"] = chkEnableHardQuota.Checked.ToString().ToLower();
         }
     }
 }
