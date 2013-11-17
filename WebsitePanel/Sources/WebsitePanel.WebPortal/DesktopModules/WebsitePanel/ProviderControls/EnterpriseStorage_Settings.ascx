@@ -5,7 +5,12 @@
             <asp:Label ID="lblSpacesFolder" runat="server" meta:resourcekey="lblSpacesFolder" Text="User Packages Path:"></asp:Label>
         </td>
         <td width="100%">
-            <asp:TextBox runat="server" ID="txtFolder" Width="300px" CssClass="NormalTextBox"></asp:TextBox></td>
+            <asp:TextBox runat="server" ID="txtFolder" Width="300px" CssClass="NormalTextBox"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="valRequiredFolder" runat="server" ControlToValidate="txtFolder"
+                ErrorMessage="*"></asp:RequiredFieldValidator>
+            <asp:RegularExpressionValidator ID="valExpressionFolder"  runat="server"   ValidationExpression="[a-zA-Z]:\\((\w(\s)?)+(\\)?)+"  
+                ControlToValidate="txtFolder"  ErrorMessage="*"></asp:RegularExpressionValidator>  
+        </td>
     </tr>
     <tr>
         <td class="SubHead" width="200" nowrap>
@@ -13,8 +18,10 @@
         </td>
         <td width="100%">
             <asp:TextBox runat="server" ID="txtDomain" Width="300px" CssClass="NormalTextBox"></asp:TextBox>
-            <asp:RequiredFieldValidator ID="valDomain" runat="server" ControlToValidate="txtDomain"
+            <asp:RequiredFieldValidator ID="valRequiredDomain" runat="server" ControlToValidate="txtDomain"
                 ErrorMessage="*"></asp:RequiredFieldValidator>
+            <asp:RegularExpressionValidator ID="valExpressionDomain"  runat="server"   ValidationExpression="(http(s)?://)?([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?"  
+                ControlToValidate="txtDomain"  ErrorMessage="*"></asp:RegularExpressionValidator>  
         </td>
     </tr>
     <tr>

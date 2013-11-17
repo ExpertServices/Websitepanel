@@ -145,6 +145,11 @@ namespace WebsitePanel.EnterpriseServer
         {
             Organization org = OrganizationController.GetOrganization(itemId);
 
+            if (org == null)
+            {
+                return false;
+            }
+
             return CheckUsersDomainExistsInternal(itemId, org.PackageId);
         }
 
