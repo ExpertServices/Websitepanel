@@ -1481,7 +1481,25 @@ CREATE TABLE [dbo].[ExchangeDisclaimers](
 
 GO
 
+IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetResourceGroupByName')
+BEGIN
+EXEC sp_executesql N'CREATE PROCEDURE [dbo].[GetResourceGroupByName]
+(
+	@GroupName nvarchar(100)
+)
+AS
+SELECT
+	RG.GroupID,
+	RG.GroupOrder,
+	RG.GroupName,
+	RG.GroupController
+FROM ResourceGroups AS RG
+WHERE RG.GroupName = @GroupName
 
+RETURN'
+END
+
+GO
 
 IF  NOT EXISTS (SELECT * FROM sys.objects WHERE type_desc = N'SQL_STORED_PROCEDURE' AND name = N'GetExchangeDisclaimers')
 BEGIN

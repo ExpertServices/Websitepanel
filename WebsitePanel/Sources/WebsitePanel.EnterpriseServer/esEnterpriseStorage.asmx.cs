@@ -134,5 +134,28 @@ namespace WebsitePanel.EnterpriseServer
         {
             return EnterpriseStorageController.CheckUsersDomainExists(itemId);
         }
+
+        #region Directory Browsing
+
+        [WebMethod]
+        public bool GetDirectoryBrowseEnabled(int itemId, string site)
+        {
+            return EnterpriseStorageController.GetDirectoryBrowseEnabled(itemId, site);
+        }
+
+        [WebMethod]
+        public void SetDirectoryBrowseEnabled(int itemId, string site, bool enabled)
+        {
+            EnterpriseStorageController.SetDirectoryBrowseEnabled(itemId, site, enabled);
+        }
+
+        [WebMethod]
+        public void SetEnterpriseFolderSettings(int itemId, SystemFile folder, ESPermission[] permissions, bool directoyBrowsingEnabled)
+        {
+            EnterpriseStorageController.SetDirectoryBrowseEnabled(itemId, folder.Url, directoyBrowsingEnabled);
+            EnterpriseStorageController.SetFolderPermission(itemId, folder.Name, permissions);
+        }
+
+        #endregion
     }
 }

@@ -625,22 +625,5 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         #endregion
-
-
-        #region Directory Browsing
-
-        [WebMethod]
-        public bool GetDirectoryBrowseEnabled(int itemId, string site)
-        {
-            return WebServerController.GetDirectoryBrowseEnabled(itemId, site);
-        }
-
-         [WebMethod]
-        public void SetDirectoryBrowseEnabled(int itemId, string site, bool enabled)
-        {
-            WebServerController.SetDirectoryBrowseEnabled(itemId, site, enabled);
-        }
-
-        #endregion
     }
 }

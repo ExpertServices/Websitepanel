@@ -75,10 +75,10 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 int folderAvailable = foldersQuota.QuotaAvailable = tenantStats.AllocatedEnterpriseStorageFolders - tenantStats.CreatedEnterpriseStorageFolders;
 
-                //if (folderAvailable <= 0)
-                //{
-                //    btnAddFolder.Enabled = false;
-                //}
+                if (folderAvailable <= 0)
+                {
+                    btnAddFolder.Enabled = false;
+                }
             }
         }
 

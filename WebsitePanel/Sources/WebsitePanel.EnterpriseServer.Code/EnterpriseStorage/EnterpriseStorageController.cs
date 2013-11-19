@@ -46,6 +46,7 @@ using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.Web;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.EnterpriseServer.Base.HostedSolution;
+using WebsitePanel.Server.Client;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -139,6 +140,34 @@ namespace WebsitePanel.EnterpriseServer
             return CheckUsersDomainExistsInternal(itemId);
         }
 
+        #region Directory Browsing
+
+        public static bool GetDirectoryBrowseEnabled(int itemId, string siteId)
+        {
+          return  GetDirectoryBrowseEnabledInternal(itemId, siteId);
+        }
+
+        public static void SetDirectoryBrowseEnabled(int itemId, string siteId, bool enabled)
+        {
+            SetDirectoryBrowseEnabledInternal(itemId, siteId, enabled);
+        }
+
+        #endregion
+
+        #region WebDav
+
+        public static int AddWebDavDirectory(int packageId, string site, string vdirName, string contentpath)
+        {
+            return AddWebDavDirectoryInternal(packageId, site, vdirName, contentpath);
+        }
+
+        public static int DeleteWebDavDirectory(int packageId, string site, string vdirName)
+        {
+            return DeleteWebDavDirectoryInternal(packageId, site, vdirName);
+        } 
+
+        #endregion
+        
         #endregion
 
         protected static bool CheckUsersDomainExistsInternal(int itemId)
@@ -155,18 +184,19 @@ namespace WebsitePanel.EnterpriseServer
 
         protected static bool CheckUsersDomainExistsInternal(int itemId, int packageId)
         {
-            int webServiceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Web);
-            var esServiceId = GetEnterpriseStorageServiceID(packageId);
+            var web = GetWebServer(packageId);
 
-            StringDictionary esSesstings = ServerController.GetServiceSettings(esServiceId);
+            if (web != null)
+            {
+                var esServiceId = GetEnterpriseStorageServiceID(packageId);
 
-            string usersDomain = esSesstings["UsersDomain"];
+                StringDictionary esSesstings = ServerController.GetServiceSettings(esServiceId);
 
-            WebServer web = new WebServer();
-            ServiceProviderProxy.Init(web, webServiceId);
+                string usersDomain = esSesstings["UsersDomain"];
 
-            if (web.SiteExists(usersDomain))
-                return true;
+                if (web.SiteExists(usersDomain))
+                    return true;
+            }
 
             return false;
         }
@@ -196,8 +226,7 @@ namespace WebsitePanel.EnterpriseServer
 
             string usersDomain = esSesstings["UsersDomain"];
 
-            WebServer web = new WebServer();
-            ServiceProviderProxy.Init(web, webServiceId);
+            WebServer web = GetWebServer(packageId);
             
             if (!web.VirtualDirectoryExists(usersDomain, org.OrganizationId))
             {
@@ -230,7 +259,7 @@ namespace WebsitePanel.EnterpriseServer
 
                     EnterpriseStorageController.CreateFolder(itemId);
 
-                    WebServerController.AddWebDavDirectory(packageId, usersDomain, org.OrganizationId, homePath);
+                    EnterpriseStorageController.AddWebDavDirectory(packageId, usersDomain, org.OrganizationId, homePath);
 
                     int osId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Os);
                     bool enableHardQuota = (esSesstings["enablehardquota"] != null)
@@ -279,7 +308,7 @@ namespace WebsitePanel.EnterpriseServer
 
                     string usersDomain = esSesstings["UsersDomain"];
 
-                    WebServerController.DeleteWebDavDirectory(packageId, usersDomain, org.OrganizationId);
+                    EnterpriseStorageController.DeleteWebDavDirectory(packageId, usersDomain, org.OrganizationId);
                     EnterpriseStorageController.DeleteFolder(itemId);
 
                 }
@@ -482,8 +511,7 @@ namespace WebsitePanel.EnterpriseServer
 
         }
 
-        protected static SystemFilesPaged GetEnterpriseFoldersPagedInternal(int itemId, string filterValue, string sortColumn,
-            int startRow, int maximumRows)
+        protected static SystemFilesPaged GetEnterpriseFoldersPagedInternal(int itemId, string filterValue, string sortColumn, int startRow, int maximumRows)
         {
             SystemFilesPaged result = new SystemFilesPaged();
 
@@ -519,6 +547,98 @@ namespace WebsitePanel.EnterpriseServer
 
             return result;
         }
+        
+        #region WebDav
+
+        protected static int AddWebDavDirectoryInternal(int packageId, string site, string vdirName, string contentpath)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // place log record
+            TaskManager.StartTask("ENTERPRISE_STORAGE", "ADD_VDIR", vdirName);
+
+            TaskManager.WriteParameter("enterprise storage", site);
+
+            try
+            {
+                // create virtual directory
+                WebVirtualDirectory dir = new WebVirtualDirectory();
+                dir.Name = vdirName;
+                dir.ContentPath = Path.Combine(contentpath, vdirName);
+
+                dir.EnableAnonymousAccess = false;
+                dir.EnableWindowsAuthentication = false;
+                dir.EnableBasicAuthentication = false;
+
+                //dir.InstalledDotNetFramework = aspNet;
+
+                dir.DefaultDocs = null; // inherit from service
+                dir.HttpRedirect = "";
+                dir.HttpErrors = null;
+                dir.MimeMaps = null;
+
+                int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Web);
+
+                if (serviceId == -1)
+                    return serviceId;
+
+                // create directory
+
+                WebServer web = GetWebServer(packageId);
+                if (web.VirtualDirectoryExists(site, vdirName))
+                    return BusinessErrorCodes.ERROR_VDIR_ALREADY_EXISTS;
+
+                web.CreateVirtualDirectory(site, dir);
+
+                return 0;
+
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        protected static int DeleteWebDavDirectoryInternal(int packageId, string site, string vdirName)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // place log record
+            TaskManager.StartTask("ENTERPRISE_STORAGE", "DELETE_VDIR", vdirName);
+
+            TaskManager.WriteParameter("enterprise storage", site);
+
+            try
+            {
+                int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Web);
+
+                if (serviceId == -1)
+                    return serviceId;
+
+                // create directory
+                WebServer web = GetWebServer(packageId);
+                if (web.VirtualDirectoryExists(site, vdirName))
+                    web.DeleteVirtualDirectory(site, vdirName);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
 
         protected static ResultObject SetFolderWebDavRulesInternal(int itemId, string folder, ESPermission[] permission)
         {
@@ -533,7 +653,7 @@ namespace WebsitePanel.EnterpriseServer
                     return null;
                 }
 
-                var rules = ConvertToWebDavRule(itemId,permission);
+                var rules = ConvertToWebDavRule(itemId, permission);
 
                 EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
 
@@ -580,6 +700,39 @@ namespace WebsitePanel.EnterpriseServer
 
         }
 
+        #endregion
+
+        #region Directory Browsing
+
+        private static bool GetDirectoryBrowseEnabledInternal(int itemId, string siteId)
+        {
+            // load organization
+            var org = OrganizationController.GetOrganization(itemId);
+
+            if (org == null)
+                return false;
+
+            var webServer = GetWebServer(org.PackageId);
+
+            return webServer.GetDirectoryBrowseEnabled(siteId);
+        }
+
+        private static void SetDirectoryBrowseEnabledInternal(int itemId, string siteId, bool enabled)
+        {
+            // load organization
+            var org = OrganizationController.GetOrganization(itemId);
+
+            if (org == null)
+                return;
+
+
+            var webServer = GetWebServer(org.PackageId);
+
+            webServer.SetDirectoryBrowseEnabled(siteId, enabled);
+        }
+
+        #endregion
+
         private static int GetEnterpriseStorageServiceID(int packageId)
         {
             return PackageController.GetPackageServiceId(packageId, ResourceGroups.EnterpriseStorage);
@@ -602,7 +755,8 @@ namespace WebsitePanel.EnterpriseServer
 
                 var account = ObjectUtils.FillObjectFromDataReader<ExchangeAccount>(DataProvider.GetExchangeAccountByAccountName(itemId, permission.Account));
 
-                if (account.AccountType == ExchangeAccountType.SecurityGroup)
+                if (account.AccountType == ExchangeAccountType.SecurityGroup 
+                    || account.AccountType == ExchangeAccountType.DefaultSecurityGroup)
                 {
                     rule.Roles.Add(permission.Account);
                 }
@@ -626,7 +780,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 rules.Add(rule);
             }
-            
+
             return rules.ToArray();
         }
 
@@ -682,6 +836,46 @@ namespace WebsitePanel.EnterpriseServer
 
             return permissions.ToArray();
 
+        }
+
+        /// <summary>
+        /// Get webserver (IIS) installed on server connected with packageId
+        /// </summary>
+        /// <param name="packageId">packageId parametr</param>
+        /// <returns>Configurated webserver or null</returns>
+        private static WebServer GetWebServer(int packageId)
+        {
+            try
+            {
+                var group = ServerController.GetResourceGroupByName(ResourceGroups.Web);
+
+                var webProviders = ServerController.GetProvidersByGroupID(group.GroupId);
+
+                var package = PackageController.GetPackage(packageId);
+
+                foreach (var webProvider in webProviders)
+                {
+                    BoolResult result = ServerController.IsInstalled(package.ServerId, webProvider.ProviderId);
+
+                    if (result.IsSuccess && result.Value)
+                    {
+                        WebServer web = new WebServer();
+                        ServerProxyConfigurator cnfg = new ServerProxyConfigurator();
+
+                        cnfg.ProviderSettings.ProviderGroupID = webProvider.GroupId;
+                        cnfg.ProviderSettings.ProviderCode = webProvider.ProviderName;
+                        cnfg.ProviderSettings.ProviderName = webProvider.DisplayName;
+                        cnfg.ProviderSettings.ProviderType = webProvider.ProviderType;
+
+                        ServiceProviderProxy.ServerInit(web, cnfg, package.ServerId);
+
+                        return web;
+                    }
+                }
+            }
+            catch { /*something wrong*/ }
+
+            return null;
         }
     }
 }

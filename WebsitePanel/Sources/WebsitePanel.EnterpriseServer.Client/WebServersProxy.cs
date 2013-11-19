@@ -116,10 +116,6 @@ namespace WebsitePanel.EnterpriseServer
 
         private System.Threading.SendOrPostCallback DeleteCertificateRequestOperationCompleted;
 
-        private System.Threading.SendOrPostCallback GetDirectoryBrowseEnabledOperationCompleted;
-
-        private System.Threading.SendOrPostCallback SetDirectoryBrowseEnabledOperationCompleted;
-
         private System.Threading.SendOrPostCallback GetRawWebSitesPagedOperationCompleted;
 
         private System.Threading.SendOrPostCallback GetWebSitesOperationCompleted;
@@ -331,12 +327,6 @@ namespace WebsitePanel.EnterpriseServer
 
         /// <remarks/>
         public event DeleteCertificateRequestCompletedEventHandler DeleteCertificateRequestCompleted;
-
-        /// <remarks/>
-        public event GetDirectoryBrowseEnabledCompletedEventHandler GetDirectoryBrowseEnabledCompleted;
-
-        /// <remarks/>
-        public event SetDirectoryBrowseEnabledCompletedEventHandler SetDirectoryBrowseEnabledCompleted;
 
         /// <remarks/>
         public event GetRawWebSitesPagedCompletedEventHandler GetRawWebSitesPagedCompleted;
@@ -1866,111 +1856,6 @@ namespace WebsitePanel.EnterpriseServer
             {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.DeleteCertificateRequestCompleted(this, new DeleteCertificateRequestCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-
-        /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetDirectoryBrowseEnabled", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public bool GetDirectoryBrowseEnabled(int itemId, string site)
-        {
-            object[] results = this.Invoke("GetDirectoryBrowseEnabled", new object[] {
-                        itemId,
-                        site});
-            return ((bool)(results[0]));
-        }
-
-        /// <remarks/>
-        public System.IAsyncResult BeginGetDirectoryBrowseEnabled(int itemId, string site, System.AsyncCallback callback, object asyncState)
-        {
-            return this.BeginInvoke("GetDirectoryBrowseEnabled", new object[] {
-                        itemId,
-                        site}, callback, asyncState);
-        }
-
-        /// <remarks/>
-        public bool EndGetDirectoryBrowseEnabled(System.IAsyncResult asyncResult)
-        {
-            object[] results = this.EndInvoke(asyncResult);
-            return ((bool)(results[0]));
-        }
-
-        /// <remarks/>
-        public void GetDirectoryBrowseEnabledAsync(int itemId, string site)
-        {
-            this.GetDirectoryBrowseEnabledAsync(itemId, site, null);
-        }
-
-        /// <remarks/>
-        public void GetDirectoryBrowseEnabledAsync(int itemId, string site, object userState)
-        {
-            if ((this.GetDirectoryBrowseEnabledOperationCompleted == null))
-            {
-                this.GetDirectoryBrowseEnabledOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetDirectoryBrowseEnabledOperationCompleted);
-            }
-            this.InvokeAsync("GetDirectoryBrowseEnabled", new object[] {
-                        itemId,
-                        site}, this.GetDirectoryBrowseEnabledOperationCompleted, userState);
-        }
-
-        private void OnGetDirectoryBrowseEnabledOperationCompleted(object arg)
-        {
-            if ((this.GetDirectoryBrowseEnabledCompleted != null))
-            {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.GetDirectoryBrowseEnabledCompleted(this, new GetDirectoryBrowseEnabledCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-
-        /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/SetDirectoryBrowseEnabled", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void SetDirectoryBrowseEnabled(int itemId, string site, bool enabled)
-        {
-            this.Invoke("SetDirectoryBrowseEnabled", new object[] {
-                        itemId,
-                        site,
-                        enabled});
-        }
-
-        /// <remarks/>
-        public System.IAsyncResult BeginSetDirectoryBrowseEnabled(int itemId, string site, bool enabled, System.AsyncCallback callback, object asyncState)
-        {
-            return this.BeginInvoke("SetDirectoryBrowseEnabled", new object[] {
-                        itemId,
-                        site,
-                        enabled}, callback, asyncState);
-        }
-
-        /// <remarks/>
-        public void EndSetDirectoryBrowseEnabled(System.IAsyncResult asyncResult)
-        {
-            this.EndInvoke(asyncResult);
-        }
-
-        /// <remarks/>
-        public void SetDirectoryBrowseEnabledAsync(int itemId, string site, bool enabled)
-        {
-            this.SetDirectoryBrowseEnabledAsync(itemId, site, enabled, null);
-        }
-
-        /// <remarks/>
-        public void SetDirectoryBrowseEnabledAsync(int itemId, string site, bool enabled, object userState)
-        {
-            if ((this.SetDirectoryBrowseEnabledOperationCompleted == null))
-            {
-                this.SetDirectoryBrowseEnabledOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetDirectoryBrowseEnabledOperationCompleted);
-            }
-            this.InvokeAsync("SetDirectoryBrowseEnabled", new object[] {
-                        itemId,
-                        site,
-                        enabled}, this.SetDirectoryBrowseEnabledOperationCompleted, userState);
-        }
-
-        private void OnSetDirectoryBrowseEnabledOperationCompleted(object arg)
-        {
-            if ((this.SetDirectoryBrowseEnabledCompleted != null))
-            {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.SetDirectoryBrowseEnabledCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
 
@@ -6031,40 +5916,6 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
     }
-
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetDirectoryBrowseEnabledCompletedEventHandler(object sender, GetDirectoryBrowseEnabledCompletedEventArgs e);
-
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetDirectoryBrowseEnabledCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
-    {
-
-        private object[] results;
-
-        internal GetDirectoryBrowseEnabledCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
-            base(exception, cancelled, userState)
-        {
-            this.results = results;
-        }
-
-        /// <remarks/>
-        public bool Result
-        {
-            get
-            {
-                this.RaiseExceptionIfNecessary();
-                return ((bool)(this.results[0]));
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void SetDirectoryBrowseEnabledCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]

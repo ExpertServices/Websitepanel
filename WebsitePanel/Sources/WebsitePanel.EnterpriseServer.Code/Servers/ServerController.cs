@@ -792,6 +792,12 @@ namespace WebsitePanel.EnterpriseServer
                 DataProvider.GetResourceGroup(groupId));
         }
 
+        public static ResourceGroupInfo GetResourceGroupByName(string name)
+        {
+            return ObjectUtils.FillObjectFromDataReader<ResourceGroupInfo>(
+                DataProvider.GetResourceGroupByName(name));
+        }
+
         public static ProviderInfo GetProvider(int providerId)
         {
             return ObjectUtils.FillObjectFromDataReader<ProviderInfo>(

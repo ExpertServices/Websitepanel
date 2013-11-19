@@ -78,7 +78,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 var esPermissions = ES.Services.EnterpriseStorage.GetEnterpriseFolderPermissions(PanelRequest.ItemID,folder.Name);
 
-                chkDirectoryBrowsing.Checked = ES.Services.WebServers.GetDirectoryBrowseEnabled(PanelRequest.ItemID, folder.Url);
+                chkDirectoryBrowsing.Checked = ES.Services.EnterpriseStorage.GetDirectoryBrowseEnabled(PanelRequest.ItemID, folder.Url);
 
                 permissions.SetPermissions(esPermissions);
 
@@ -98,12 +98,9 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 bool redirectNeeded = false;
 
-                string fileName = PanelRequest.FolderID;
-                string fileUrl = lblFolderUrl.Text;
-
                 litFolderName.Text = txtFolderName.Text;
 
-                SystemFile folder = null;
+                SystemFile folder = new SystemFile { Name = PanelRequest.FolderID, Url = lblFolderUrl.Text };
 
                 if (!ES.Services.EnterpriseStorage.CheckEnterpriseStorageInitialization(PanelSecurity.PackageId, PanelRequest.ItemID))
                 {
@@ -126,16 +123,10 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                     folder = ES.Services.EnterpriseStorage.RenameEnterpriseFolder(PanelRequest.ItemID, PanelRequest.FolderID, txtFolderName.Text);
 
-                    // file is renamed - new name and url
-                    fileName = folder.Name;
-                    fileUrl = folder.Url;
-
                     redirectNeeded = true;
                 }
 
-                ES.Services.EnterpriseStorage.SetEnterpriseFolderPermissions(PanelRequest.ItemID, fileName, permissions.GetPemissions());
-
-                ES.Services.WebServers.SetDirectoryBrowseEnabled(PanelRequest.ItemID, fileUrl, chkDirectoryBrowsing.Checked);
+                ES.Services.EnterpriseStorage.SetEnterpriseFolderSettings(PanelRequest.ItemID, folder, permissions.GetPemissions(), chkDirectoryBrowsing.Checked);
 
                 if (redirectNeeded)
                 {

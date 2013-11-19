@@ -1040,6 +1040,15 @@ namespace WebsitePanel.EnterpriseServer
                 CommandType.StoredProcedure,
                 ObjectQualifier + "GetResourceGroups");
         }
+
+        public static IDataReader GetResourceGroupByName(string groupName)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString,
+                CommandType.StoredProcedure,
+                ObjectQualifier + "GetResourceGroupByName",
+                new SqlParameter("@groupName", groupName));
+        }
+
         #endregion
 
         #region Service Items

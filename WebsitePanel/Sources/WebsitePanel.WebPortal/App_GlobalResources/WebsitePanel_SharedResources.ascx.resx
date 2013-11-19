@@ -5362,4 +5362,7 @@
   <data name="Warning.WEB_SITE_IS_NOT_CREATED" xml:space="preserve">
     <value>Website is not created</value>
   </data>
+  <data name="Success.ENTERPRISE_STORAGE_UPDATE_FOLDER_SETTINGS" xml:space="preserve">
+    <value>Enterprise storage folder settings have been successfully updated.</value>
+  </data>
 </root>
