@@ -200,6 +200,32 @@ namespace WebsitePanel.EnterpriseServer
             return res;
         }
 
+        private static string GetProviderProperty(int organizationServiceId, string property)
+        {
+
+            Organizations orgProxy = new Organizations();
+
+            ServiceProviderProxy.Init(orgProxy, organizationServiceId);
+
+            string[] organizationSettings = orgProxy.ServiceProviderSettingsSoapHeaderValue.Settings;
+
+            string value = string.Empty;
+            foreach (string str in organizationSettings)
+            {
+                string[] props = str.Split('=');
+                if (props.Length == 2)
+                {
+                    if (props[0].ToLower() == property)
+                    {
+                        value = props[1];
+                        break;
+                    }
+                }
+            }
+
+            return value;
+        }
+
         public static OrganizationResult CreateOrganization(int organizationId, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string regionName,  int userId, string collation)
         {
             OrganizationResult res = StartTask<OrganizationResult>("CRM", "CREATE_ORGANIZATION");
@@ -239,6 +265,10 @@ namespace WebsitePanel.EnterpriseServer
                     return res;
                 }
 
+               
+
+                int serviceid = PackageController.GetPackageServiceId(org.PackageId, ResourceGroups.HostedOrganizations);
+                string rootOU = GetProviderProperty(serviceid, "rootou");
 
                 org.CrmAdministratorId = user.AccountId;
                 org.CrmCurrency =
@@ -248,7 +278,10 @@ namespace WebsitePanel.EnterpriseServer
                 org.CrmOrganizationId = orgId;
 
                 OrganizationResult serverRes =
-                    crm.CreateOrganization(orgId, org.OrganizationId, org.Name, baseCurrencyCode, baseCurrencyName,
+                    crm.CreateOrganization(orgId, org.OrganizationId, org.Name,
+                                           org.DefaultDomain,
+                                           org.OrganizationId + "." + rootOU,
+                                           baseCurrencyCode, baseCurrencyName,
                                            baseCurrencySymbol, user.SamAccountName, user.FirstName, user.LastName, user.PrimaryEmailAddress,
                                            collation);
 

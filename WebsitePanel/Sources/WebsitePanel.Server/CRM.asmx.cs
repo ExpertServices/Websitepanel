@@ -55,9 +55,9 @@ namespace WebsitePanel.Server
 
 
         [WebMethod, SoapHeader("settings")]
-        public OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation)
+        public OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string organizationDomainName, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation)
         {                                  
-           return CrmProvider.CreateOrganization(organizationId, organizationUniqueName, organizationFriendlyName, baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, initialUserDomainName, initialUserFirstName, initialUserLastName, initialUserPrimaryEmail, organizationCollation);
+           return CrmProvider.CreateOrganization(organizationId, organizationUniqueName, organizationFriendlyName, organizationDomainName, ou, baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, initialUserDomainName, initialUserFirstName, initialUserLastName, initialUserPrimaryEmail, organizationCollation);
         }
 
         [WebMethod, SoapHeader("settings")] 
@@ -126,5 +126,13 @@ namespace WebsitePanel.Server
         {
             return CrmProvider.ChangeUserState(disable, orgName, crmUserId);
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public long GetUsedSpace(Guid organizationId)
+        {
+            return CrmProvider.GetUsedSpace( organizationId);
+        }
+
+    
     }
 }

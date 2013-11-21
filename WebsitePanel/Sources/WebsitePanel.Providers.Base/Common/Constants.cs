@@ -58,6 +58,12 @@ namespace WebsitePanel.Providers.Common
 
         public const string AppRootDomain = "AppRootDomain";
 
+        public const string OrganizationWebService = "OrganizationWebService";
+
+        public const string DiscoveryWebService = "DiscoveryWebService";
+
+        public const string DeploymentWebService = "DeploymentWebService";
+
         public const string UtilityPath = "UtilityPath";
 
         public const string EnterpriseServer = "EnterpriseServer";

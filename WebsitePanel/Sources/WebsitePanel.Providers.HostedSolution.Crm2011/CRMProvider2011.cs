@@ -11,6 +11,7 @@ using System.Security.Principal;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.ServiceModel.Description;
+using System.Text.RegularExpressions;
 using Microsoft.Win32;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.ResultObjects;
@@ -58,7 +59,9 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             get
             {
-                string cRMServiceUrl = "https://" + ProviderSettings[Constants.AppRootDomain] + ":" + ProviderSettings[Constants.Port] + "/XRMDeployment/2011/Deployment.svc";
+                string uri = ProviderSettings[Constants.DeploymentWebService];
+                if (String.IsNullOrEmpty(uri)) uri = ProviderSettings[Constants.AppRootDomain];
+                string cRMServiceUrl = "https://" + uri + ":" + ProviderSettings[Constants.Port] + "/XRMDeployment/2011/Deployment.svc";
                 return cRMServiceUrl;
             }
         }
@@ -67,7 +70,9 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             get
             {
-                string cRMDiscoveryUri = "https://" + ProviderSettings[Constants.AppRootDomain] + ":" + ProviderSettings[Constants.Port] + "/XRMServices/2011/Discovery.svc";
+                string uri = ProviderSettings[Constants.DiscoveryWebService];
+                if (String.IsNullOrEmpty(uri)) uri = ProviderSettings[Constants.AppRootDomain];
+                string cRMDiscoveryUri = "https://" + uri + ":" + ProviderSettings[Constants.Port] + "/XRMServices/2011/Discovery.svc";
                 return cRMDiscoveryUri;
             }
         }
@@ -172,6 +177,75 @@ namespace WebsitePanel.Providers.HostedSolution
 
             Log.WriteEnd("CheckPermissions");
             return res;
+        }
+
+        public long GetUsedSpace(Guid organizationId)
+        {
+            Log.WriteStart("GetUsedSpace");
+            long res = 0;
+
+            string crmDatabaseName = "MSCRM_CONFIG";
+            string databasename = "";
+
+            SqlConnection connection = null;
+            try
+            {
+                connection = new SqlConnection();
+                connection.ConnectionString =
+                   string.Format("Server={1};Initial Catalog={0};Integrated Security=SSPI",
+                                  crmDatabaseName, SqlServer);
+
+                connection.Open();
+
+                string commandText = string.Format("SELECT DatabaseName FROM dbo.Organization where id = '{0}'", organizationId);
+                SqlCommand command = new SqlCommand(commandText, connection);
+                databasename = command.ExecuteScalar().ToString();
+
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(ex);
+            }
+            finally
+            {
+                if (connection != null)
+                    connection.Dispose();
+            }
+
+            try
+            {
+                connection = new SqlConnection();
+                connection.ConnectionString =
+                   string.Format("Server={1};Initial Catalog={0};Integrated Security=SSPI",
+                                  databasename, SqlServer);
+
+                connection.Open();
+
+                string commandText = "SELECT ((dbsize + logsize) * 8192 ) size FROM " +
+                    "( " +
+                    "SELECT SUM(CONVERT(BIGINT,CASE WHEN status & 64 = 0 THEN size ELSE 0 END)) dbsize " +
+                    ",      SUM(CONVERT(BIGINT,CASE WHEN status & 64 <> 0 THEN size ELSE 0 END)) logsize " +
+                    "FROM dbo.sysfiles " +
+                    ") big";
+
+                SqlCommand command = new SqlCommand(commandText, connection);
+                res = (long)command.ExecuteScalar();
+
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(ex);
+            }
+            finally
+            {
+                if (connection != null)
+                    connection.Dispose();
+
+            }
+
+            Log.WriteEnd("GetUsedSpace");
+            return res;
+            
         }
 
         private bool CheckOrganizationUnique(string databaseName, string orgName)
@@ -319,16 +393,38 @@ namespace WebsitePanel.Providers.HostedSolution
             return retOrganization;
         }
 
-        public OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation)
+        public OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string organizationDomainName, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation)
         {
-            return CreateOrganizationInternal(organizationId, organizationUniqueName, organizationFriendlyName, baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, initialUserDomainName, initialUserFirstName, initialUserLastName, initialUserPrimaryEmail, organizationCollation);
+            return CreateOrganizationInternal(organizationId, organizationUniqueName, organizationFriendlyName, organizationDomainName, ou , baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, initialUserDomainName, initialUserFirstName, initialUserLastName, initialUserPrimaryEmail, organizationCollation);
         }
 
-        const string CRMSysAdminRoleStr = "Ñèñòåìíûé àäìèíèñòðàòîð;System Administrator";
+        const string CRMSysAdminRoleStr = "Системный администратор;System Administrator";
 
-        internal OrganizationResult CreateOrganizationInternal(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation)
+        internal OrganizationResult CreateOrganizationInternal(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string organizationDomainName, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation)
         {
+ 
             OrganizationResult ret = StartLog<OrganizationResult>("CreateOrganizationInternal");
+
+            organizationUniqueName = Regex.Replace(organizationUniqueName, @"[^\dA-Za-z]", "-", RegexOptions.Compiled);
+
+            // calculate UserRootPath
+            string ldapstr = "";
+
+            string[] ouItems = ou.Split('.');
+            foreach (string ouItem in ouItems)
+            {
+                if (ldapstr.Length != 0) ldapstr += ",";
+                ldapstr += "OU=" + ouItem;
+            }
+
+            string rootDomain = ServerSettings.ADRootDomain;
+            string[] domainItems = rootDomain.Split('.');
+            foreach (string domainItem in domainItems)
+                ldapstr += ",DC=" + domainItem;
+
+            ldapstr = @"LDAP://" + rootDomain + "/" + ldapstr;
+
+            
 
             if (organizationId == Guid.Empty)
                 throw new ArgumentException("OrganizationId is Guid.Empty");
@@ -362,6 +458,8 @@ namespace WebsitePanel.Providers.HostedSolution
                 Uri serviceUrl = new Uri(CRMServiceUrl);
 
                 DeploymentServiceClient deploymentService = Microsoft.Xrm.Sdk.Deployment.Proxy.ProxyClientHelper.CreateClient(serviceUrl);
+                if (!String.IsNullOrEmpty(UserName))
+                    deploymentService.ClientCredentials.Windows.ClientCredential = new NetworkCredential(UserName, Password);
 
                 Microsoft.Xrm.Sdk.Deployment.Organization org = new Microsoft.Xrm.Sdk.Deployment.Organization
                 {
@@ -397,9 +495,11 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 Microsoft.Xrm.Sdk.Deployment.OrganizationState OperationState = Microsoft.Xrm.Sdk.Deployment.OrganizationState.Pending;
 
+                int timeout = 30000;
+
                 do
                 {
-                    Thread.Sleep(30000);
+                    Thread.Sleep(timeout);
                     try
                     {
                         Microsoft.Xrm.Sdk.Deployment.Organization getorg
@@ -413,16 +513,50 @@ namespace WebsitePanel.Providers.HostedSolution
                 if (OperationState == Microsoft.Xrm.Sdk.Deployment.OrganizationState.Failed)
                     throw new ArgumentException("Create organization failed.");
 
-
-                try
+                // update UserRootPath setting
+                Microsoft.Xrm.Sdk.Deployment.ConfigurationEntity orgSettings = new Microsoft.Xrm.Sdk.Deployment.ConfigurationEntity
                 {
-                    OrganizationServiceProxy _serviceProxy = GetOrganizationProxy(organizationUniqueName);
+                    Id = org.Id,
+                    LogicalName = "Organization"
+                };
+                orgSettings.Attributes = new Microsoft.Xrm.Sdk.Deployment.AttributeCollection();
+                orgSettings.Attributes.Add(new KeyValuePair<string, object>("UserRootPath", ldapstr));
+                Microsoft.Xrm.Sdk.Deployment.UpdateAdvancedSettingsRequest reqUpdateSettings = new Microsoft.Xrm.Sdk.Deployment.UpdateAdvancedSettingsRequest
+                {
+                    Entity = orgSettings
+                };
+                Microsoft.Xrm.Sdk.Deployment.UpdateAdvancedSettingsResponse respUpdateSettings = (Microsoft.Xrm.Sdk.Deployment.UpdateAdvancedSettingsResponse) deploymentService.Execute(reqUpdateSettings);
 
-                    string ldap = "";
+                int tryTimeout = 30000;
+                int tryCount = 10;
 
-                    Guid SysAdminGuid = RetrieveSystemUser(GetDomainName(initialUserDomainName), initialUserFirstName, initialUserLastName, CRMSysAdminRoleStr, _serviceProxy, ref ldap);
+                bool success = false;
+                int tryItem = 0;
+
+                while (!success)
+                {
+
+                    try
+                    {
+                        Thread.Sleep(tryTimeout);
+
+                        OrganizationServiceProxy _serviceProxy = GetOrganizationProxy(organizationUniqueName, 0, 0);
+
+                        string ldap = "";
+
+                        Guid SysAdminGuid = RetrieveSystemUser(GetDomainName(initialUserDomainName), initialUserFirstName, initialUserLastName, CRMSysAdminRoleStr, _serviceProxy, ref ldap);
+
+                        success = true;
+
+                    }
+                    catch (Exception exc)
+                    {
+                        tryItem++;
+                        if (tryItem >= tryCount)
+                            success = true;
+                    }
                 }
-                catch { }
+
 
             }
             catch (Exception ex)
@@ -944,10 +1078,15 @@ namespace WebsitePanel.Providers.HostedSolution
             return false;
         }
 
-        int GetOrganizationProxyTryCount = 5;
+        int GetOrganizationProxyTryCount = 10;
         int GetOrganizationProxyTryTimeout = 30000;
 
         private OrganizationServiceProxy GetOrganizationProxy(string orgName)
+        {
+            return GetOrganizationProxy(orgName, GetOrganizationProxyTryCount, GetOrganizationProxyTryTimeout);
+        }
+
+        private OrganizationServiceProxy GetOrganizationProxy(string orgName, int TryCount, int TryTimeout)
         {
 
             Uri OrganizationUri = GetOrganizationAddress(orgName);
@@ -977,9 +1116,9 @@ namespace WebsitePanel.Providers.HostedSolution
                 }
                 catch (Exception exc)
                 {
-                    Thread.Sleep(GetOrganizationProxyTryTimeout);
+                    Thread.Sleep(TryTimeout);
                     tryItem++;
-                    if (tryItem >= GetOrganizationProxyTryCount)
+                    if (tryItem >= TryCount)
                     {
                         exception = exc;
                         success = true;
@@ -1013,7 +1152,6 @@ namespace WebsitePanel.Providers.HostedSolution
             return credentials;
         }
 
-
         private DiscoveryServiceProxy GetDiscoveryProxy()
         {
 
@@ -1041,7 +1179,20 @@ namespace WebsitePanel.Providers.HostedSolution
 
         protected virtual Uri GetOrganizationAddress(string orgName)
         {
-            string url = "https://" + ProviderSettings[Constants.AppRootDomain] + ":" + ProviderSettings[Constants.Port] + "/" + orgName + "/XRMServices/2011/Organization.svc";
+            //string url = "https://" + ProviderSettings[Constants.AppRootDomain] + ":" + ProviderSettings[Constants.Port] + "/" + orgName + "/XRMServices/2011/Organization.svc";
+
+            string url;
+
+            string organizationWebServiceUri = ProviderSettings[Constants.OrganizationWebService];
+
+            if (!String.IsNullOrEmpty(organizationWebServiceUri))
+            {
+                url = "https://" + organizationWebServiceUri + ":" + ProviderSettings[Constants.Port] + "/" + orgName + "/XRMServices/2011/Organization.svc";
+            }
+            else
+            {
+                url = "https://" + orgName + "." + ProviderSettings[Constants.IFDWebApplicationRootDomain] + ":" + ProviderSettings[Constants.Port] + "/XRMServices/2011/Organization.svc";
+            }
 
             try
             {

@@ -2586,3 +2586,6 @@ BEGIN
 END
 GO
 
+-- CRM
+
+UPDATE Providers SET EditorControl = 'CRM2011' Where ProviderID = 1201;
