@@ -792,6 +792,12 @@ namespace WebsitePanel.EnterpriseServer
                 DataProvider.GetResourceGroup(groupId));
         }
 
+        public static ResourceGroupInfo GetResourceGroupByName(string name)
+        {
+            return ObjectUtils.FillObjectFromDataReader<ResourceGroupInfo>(
+                DataProvider.GetResourceGroupByName(name));
+        }
+
         public static ProviderInfo GetProvider(int providerId)
         {
             return ObjectUtils.FillObjectFromDataReader<ProviderInfo>(
@@ -1161,13 +1167,13 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
         #region Package IP Addresses
-        public static PackageIPAddressesPaged GetPackageIPAddresses(int packageId, IPAddressPool pool,
+        public static PackageIPAddressesPaged GetPackageIPAddresses(int packageId, int orgId, IPAddressPool pool,
             string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows, bool recursive)
         {
             PackageIPAddressesPaged result = new PackageIPAddressesPaged();
 
             // get reader
-            IDataReader reader = DataProvider.GetPackageIPAddresses(packageId, (int)pool, filterColumn, filterValue, sortColumn, startRow, maximumRows, recursive);
+            IDataReader reader = DataProvider.GetPackageIPAddresses(packageId, orgId, (int)pool, filterColumn, filterValue, sortColumn, startRow, maximumRows, recursive);
 
             // number of items = first data reader
             reader.Read();
@@ -1190,10 +1196,15 @@ namespace WebsitePanel.EnterpriseServer
                 DataProvider.GetUnallottedIPAddresses(packageId, serviceId, (int)pool));
         }
 
-        public static List<PackageIPAddress> GetPackageUnassignedIPAddresses(int packageId, IPAddressPool pool)
+        public static List<PackageIPAddress> GetPackageUnassignedIPAddresses(int packageId, int orgId, IPAddressPool pool)
         {
             return ObjectUtils.CreateListFromDataReader<PackageIPAddress>(
-                DataProvider.GetPackageUnassignedIPAddresses(SecurityContext.User.UserId, packageId, (int)pool));
+                DataProvider.GetPackageUnassignedIPAddresses(SecurityContext.User.UserId, packageId, orgId, (int)pool));
+        }
+
+        public static List<PackageIPAddress> GetPackageUnassignedIPAddresses(int packageId, IPAddressPool pool)
+        {
+            return GetPackageUnassignedIPAddresses(packageId, 0, pool);
         }
 
         public static void AllocatePackageIPAddresses(int packageId, int[] addressId)
@@ -1202,10 +1213,10 @@ namespace WebsitePanel.EnterpriseServer
             string xml = PrepareIPsXML(addressId);
 
             // save to database
-            DataProvider.AllocatePackageIPAddresses(packageId, xml);
+            DataProvider.AllocatePackageIPAddresses(packageId, 0, xml);
         }
 
-        public static ResultObject AllocatePackageIPAddresses(int packageId, string groupName, IPAddressPool pool, bool allocateRandom, int addressesNumber, int[] addressId)
+        public static ResultObject AllocatePackageIPAddresses(int packageId, int orgId, string groupName, IPAddressPool pool, bool allocateRandom, int addressesNumber, int[] addressId)
         {
             #region Check account and space statuses
             // create result object
@@ -1249,10 +1260,13 @@ namespace WebsitePanel.EnterpriseServer
             int quotaUsed = cntx.Quotas[quotaName].QuotaUsedValue;
 
             // check the maximum allowed number
-            if (addressesNumber > (quotaAllocated - quotaUsed))
+            if (quotaAllocated != -1) // check only if not unlimited 
             {
-                res.ErrorCodes.Add("IP_ADDRESSES_QUOTA_LIMIT_REACHED");
-                return res;
+                if (addressesNumber > (quotaAllocated - quotaUsed))
+                {
+                    res.ErrorCodes.Add("IP_ADDRESSES_QUOTA_LIMIT_REACHED");
+                    return res;
+                }
             }
 
             // check if requested more than available
@@ -1279,7 +1293,7 @@ namespace WebsitePanel.EnterpriseServer
                 // save to database
                 try
                 {
-                    DataProvider.AllocatePackageIPAddresses(packageId, xml);
+                    DataProvider.AllocatePackageIPAddresses(packageId, orgId, xml);
                 }
                 catch (Exception ex)
                 {
@@ -1326,7 +1340,7 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             // allocate
-            return AllocatePackageIPAddresses(packageId, groupName, pool,
+            return AllocatePackageIPAddresses(packageId, 0, groupName, pool,
                 true, number, new int[0]);
         }
 

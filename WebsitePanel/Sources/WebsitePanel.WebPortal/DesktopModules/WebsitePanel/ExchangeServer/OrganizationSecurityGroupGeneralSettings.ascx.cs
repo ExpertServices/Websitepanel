@@ -64,6 +64,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 // bind form
                 txtDisplayName.Text = securityGroup.DisplayName;
+                lblGroupName.Text = securityGroup.AccountName;
 
                 members.SetAccounts(securityGroup.MembersAccounts);
 
@@ -76,6 +77,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     members.Enabled = false;
 
                     btnSave.Visible = false;
+                    tabs.IsDefault = true;
                 }
             }
             catch (Exception ex)

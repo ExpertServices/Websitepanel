@@ -120,6 +120,8 @@
     <Content Include="App_Themes\Default\Images\lyncuser.png" />
     <Content Include="App_Themes\Default\Images\lyncuserplan48.png" />
     <Content Include="App_Themes\Default\Images\lyncuserplanadd48.png" />
+    <Content Include="App_Themes\Default\Images\spaces16.png" />
+    <Content Include="App_Themes\Default\Images\spaces48.png" />
     <Content Include="App_Themes\Default\Images\VPSForPC\vlan_icon.png" />
     <Content Include="App_Themes\Default\Images\VPSForPC\private_cloud_module_header_vps.gif" />
     <Content Include="App_Themes\Default\Images\FileManager\cshtml.png" />

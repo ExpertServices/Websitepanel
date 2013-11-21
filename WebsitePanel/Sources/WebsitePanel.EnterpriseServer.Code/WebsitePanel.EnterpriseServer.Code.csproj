@@ -105,6 +105,7 @@
     <Compile Include="Ecommerce\TaskEventHandlers\SystemTriggersAgent.cs" />
     <Compile Include="Ecommerce\TriggerSystem\CommonTrigger.cs" />
     <Compile Include="Ecommerce\TriggerSystem\TriggerController.cs" />
+    <Compile Include="EnterpriseStorage\EnterpriseStorageController.cs" />
     <Compile Include="ExchangeServer\ExchangeServerController.cs" />
     <Compile Include="Files\FilesController.cs" />
     <Compile Include="FtpServers\FtpServerController.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="Provisioning\IImportController.cs" />
     <Compile Include="Provisioning\ImportAsyncWorker.cs" />
     <Compile Include="Provisioning\ImportController.cs" />
+    <Compile Include="RemoteDesktopServices\RemoteDesktopServicesController.cs" />
     <Compile Include="SchedulerTasks\ActivatePaidInvoicesTask.cs" />
     <Compile Include="SchedulerTasks\BackupDatabaseTask.cs" />
     <Compile Include="SchedulerTasks\BackupTask.cs" />
@@ -186,6 +188,7 @@
       <Name>WebsitePanel.Whois</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

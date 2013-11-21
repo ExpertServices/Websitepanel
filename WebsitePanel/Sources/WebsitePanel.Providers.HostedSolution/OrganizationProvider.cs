@@ -235,12 +235,12 @@ namespace WebsitePanel.Providers.HostedSolution
                 //Create security group
                 ActiveDirectoryUtils.CreateGroup(orgPath, organizationId);
                 groupCreated = true;
-
-
+            
                 org = new Organization();
                 org.OrganizationId = organizationId;
                 org.DistinguishedName = ActiveDirectoryUtils.RemoveADPrefix(orgPath);
                 org.SecurityGroup = ActiveDirectoryUtils.RemoveADPrefix(GetGroupPath(organizationId));
+
                 org.GroupName = organizationId;
             }
             catch (Exception ex)
@@ -356,12 +356,14 @@ namespace WebsitePanel.Providers.HostedSolution
                 throw new ArgumentNullException("organizationId");
 
             string groupPath = GetGroupPath(organizationId);
-            ActiveDirectoryUtils.DeleteADObject(groupPath);
+            try
+            {
+                ActiveDirectoryUtils.DeleteADObject(groupPath);
+            }
+            catch { /* skip */ }
 
             string path = GetOrganizationPath(organizationId);
             ActiveDirectoryUtils.DeleteADObject(path, true);
-
-
 
             HostedSolutionLog.LogEnd("DeleteOrganizationInternal");
         }
@@ -416,7 +418,6 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 string groupPath = GetGroupPath(organizationId);
                 HostedSolutionLog.DebugInfo("Group retrieved: {0}", groupPath);
-
 
                 ActiveDirectoryUtils.AddObjectToGroup(userPath, groupPath);
                 HostedSolutionLog.DebugInfo("Added to group: {0}", groupPath);
@@ -918,37 +919,44 @@ namespace WebsitePanel.Providers.HostedSolution
                 throw new ArgumentNullException("groupName");
 
             string path = GetGroupPath(organizationId, groupName);
+            string organizationPath = GetOrganizationPath(organizationId);
 
             DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
+            DirectoryEntry organizationEntry = ActiveDirectoryUtils.GetADObject(organizationPath);
+
 
             OrganizationSecurityGroup securityGroup = new OrganizationSecurityGroup();
 
             securityGroup.Notes = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.Notes);
 
-            securityGroup.AccountName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName);
-            securityGroup.SAMAccountName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName);
+            string samAccountName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName);
+
+            securityGroup.AccountName = samAccountName;
+            securityGroup.SAMAccountName = samAccountName;
 
             List<ExchangeAccount> members = new List<ExchangeAccount>();
 
-            foreach (string userPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "user"))
+            foreach (string userPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "user", organizationEntry))
             {
                 OrganizationUser tmpUser = GetUser(userPath);
 
                 members.Add(new ExchangeAccount
                 {
-                    AccountName = tmpUser.AccountName,
+                    AccountName = ActiveDirectoryUtils.GetCNFromADPath(userPath),
                     SamAccountName = tmpUser.SamAccountName
                 });
             }
 
-            foreach (string groupPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "group"))
+            foreach (string groupPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "group", organizationEntry))
             {
                 DirectoryEntry groupEntry = ActiveDirectoryUtils.GetADObject(groupPath);
 
+                string tmpSamAccountName = ActiveDirectoryUtils.GetADObjectStringProperty(groupEntry, ADAttributes.SAMAccountName);
+
                 members.Add(new ExchangeAccount
                 {
-                    AccountName = ActiveDirectoryUtils.GetADObjectStringProperty(groupEntry, ADAttributes.SAMAccountName),
-                    SamAccountName = ActiveDirectoryUtils.GetADObjectStringProperty(groupEntry, ADAttributes.SAMAccountName)
+                    AccountName =  tmpSamAccountName,
+                    SamAccountName =  tmpSamAccountName
                 });
             }
 
@@ -1008,12 +1016,18 @@ namespace WebsitePanel.Providers.HostedSolution
 
             ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.Notes, notes);
 
-            foreach (string userPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "user"))
+            entry.CommitChanges();
+
+            string orgPath = GetOrganizationPath(organizationId);
+
+            DirectoryEntry orgEntry = ActiveDirectoryUtils.GetADObject(orgPath);
+
+            foreach (string userPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "user", orgEntry))
             {
                 ActiveDirectoryUtils.RemoveObjectFromGroup(userPath, path);
             }
 
-            foreach (string groupPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "group"))
+            foreach (string groupPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "group", orgEntry))
             {
                 ActiveDirectoryUtils.RemoveObjectFromGroup(groupPath, path);
             }
@@ -1022,9 +1036,7 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 string objPath = GetObjectPath(organizationId, obj);
                 ActiveDirectoryUtils.AddObjectToGroup(objPath, path);
-            }
-
-            entry.CommitChanges();
+            }   
         }
 
         public void AddObjectToSecurityGroup(string organizationId, string accountName, string groupName)

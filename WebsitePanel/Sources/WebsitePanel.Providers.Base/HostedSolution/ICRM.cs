@@ -35,6 +35,7 @@ namespace WebsitePanel.Providers.HostedSolution
     public interface ICRM
     {
         OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName,
+                    string organizationDomainName, string ou,
                     string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol,
                     string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail,                  
                     string organizationCollation);
@@ -60,5 +61,8 @@ namespace WebsitePanel.Providers.HostedSolution
         CrmUserResult GetCrmUserById(Guid crmUserId, string orgName);
 
         ResultObject ChangeUserState(bool disable, string orgName, Guid crmUserId);
+
+        long GetUsedSpace(Guid organizationId);
+
     }
 }

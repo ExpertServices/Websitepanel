@@ -46,13 +46,23 @@ namespace WebsitePanel.Providers.HostedSolution
 
         public static string[] GetGroupObjects(string group, string objectType)
         {
-            List<string> rets = new List<string>();
+            return GetGroupObjects(group, objectType, null);
+        }
+
+        public static string[] GetGroupObjects(string group, string objectType, DirectoryEntry entry)
+        {
+            List<string> rets = new List<string>();  
 
             DirectorySearcher deSearch = new DirectorySearcher
             {
                 Filter =
                     "(&(objectClass=" + objectType + "))"
             };
+
+            if (entry != null)
+            {
+                deSearch.SearchRoot = entry;
+            }
 
             SearchResultCollection srcObjects = deSearch.FindAll();
 
@@ -63,8 +73,6 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 foreach (string str in props)
                 {
-                    string groupName = "";
-
                     string[] parts = str.Split(',');
                     for (int i = 0; i < parts.Length; i++)
                     {
@@ -245,6 +253,18 @@ namespace WebsitePanel.Providers.HostedSolution
             return ret != null ? ret.ToString() : string.Empty;
         }
 
+        public static string GetCNFromADPath(string path)
+        {
+            string[] parts = path.Substring(path.ToUpper().IndexOf("CN=")).Split(',');
+
+            if (parts.Length > 0)
+            {
+                return parts[0].Substring(3);
+            }
+
+            return null;
+        }
+
         public static string ConvertADPathToCanonicalName(string name)
         {
 
@@ -377,6 +397,8 @@ namespace WebsitePanel.Providers.HostedSolution
             DirectoryEntry group = new DirectoryEntry(groupPath);
 
             group.Invoke("Add", obj.Path);
+
+            group.CommitChanges();
         }
 
         public static void RemoveObjectFromGroup(string obejctPath, string groupPath)
@@ -385,6 +407,8 @@ namespace WebsitePanel.Providers.HostedSolution
             DirectoryEntry group = new DirectoryEntry(groupPath);
 
             group.Invoke("Remove", obj.Path);
+
+            group.CommitChanges();
         }
 
         public static bool AdObjectExists(string path)

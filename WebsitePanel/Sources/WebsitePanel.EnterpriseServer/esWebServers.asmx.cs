@@ -443,6 +443,8 @@ namespace WebsitePanel.EnterpriseServer
 
         #endregion
 
+
+
         #region Helicon Ape Users
         [WebMethod]
         public HtaccessUser[] GetHeliconApeUsers(int siteItemId)
@@ -494,6 +496,38 @@ namespace WebsitePanel.EnterpriseServer
             return WebServerController.DeleteHeliconApeGroup(siteItemId, groupName);
         }
         #endregion
+
+        #region Helicon Zoo
+
+        [WebMethod]
+        public List<WebVirtualDirectory> GetZooApplications(int siteItemId)
+        {
+            return WebServerController.GetZooApplications(siteItemId);
+        }
+
+        [WebMethod]
+        public StringResultObject SetZooEnvironmentVariable(int siteItemId, string appName, string envName, string envValue)
+        {
+            return WebServerController.SetZooEnvironmentVariable(siteItemId, appName, envName, envValue);
+        }
+
+
+        [WebMethod]
+        public StringResultObject SetZooConsoleEnabled(int siteItemId, string appName)
+        {
+            return WebServerController.SetZooConsoleEnabled(siteItemId, appName);
+        }
+
+        [WebMethod]
+        public StringResultObject SetZooConsoleDisabled(int siteItemId, string appName)
+        {
+            return WebServerController.SetZooConsoleDisabled(siteItemId, appName);
+        }
+
+
+
+        #endregion
+
 
 
         #region WebManagement Access

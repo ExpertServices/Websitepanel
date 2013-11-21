@@ -76,6 +76,31 @@ namespace WebsitePanel.EnterpriseServer
 
         public static ShortHeliconZooEngine[] GetAllowedHeliconZooQuotasForPackage(int packageId)
         {
+            // first, check IsEnginesAllowed for this server
+            
+            // get helicon zoo provider serviceId
+            int heliconZooProviderId, heliconZooGroupId;
+            DataProvider.GetHeliconZooProviderAndGroup("HeliconZoo", out heliconZooProviderId, out heliconZooGroupId);
+
+            // get helicon zoo service id for heliconZooProviderId and packageId
+            int serviceId = DataProvider.GetServiceIdForProviderIdAndPackageId(heliconZooProviderId, packageId);
+
+            if (serviceId > 0)
+            {
+                if (IsEnginesEnabled(serviceId))
+                {
+                    // all engines allowed by default
+                    return new ShortHeliconZooEngine[]
+                    {
+                        new ShortHeliconZooEngine{Name = "*", DisplayName = "*", Enabled = true} 
+                    };
+                }
+            }
+
+
+            // all engines is not allowed
+            // get allowed engines from hosting plan quotas
+
             List<ShortHeliconZooEngine> allowedEngines = new List<ShortHeliconZooEngine>();
 
             IDataReader reader = DataProvider.GetEnabledHeliconZooQuotasForPackage(packageId);
@@ -85,6 +110,8 @@ namespace WebsitePanel.EnterpriseServer
                 allowedEngines.Add( new ShortHeliconZooEngine(){
                     Name = (string)reader["QuotaName"],
                     DisplayName= (string)reader["QuotaDescription"],
+                    Enabled = true
+
                 });
             }
 
@@ -117,6 +144,21 @@ namespace WebsitePanel.EnterpriseServer
             HeliconZoo zooServer = new HeliconZoo();
             ServiceProviderProxy.Init(zooServer, serviceId);
             zooServer.SetEnabledEnginesForSite(siteId, engines);
+        }
+
+
+        public static bool IsWebCosoleEnabled(int serviceId)
+        {
+            HeliconZoo zooServer = new HeliconZoo();
+            ServiceProviderProxy.Init(zooServer, serviceId);
+            return zooServer.IsWebCosoleEnabled();
+        }
+
+        public static void SetWebCosoleEnabled(int serviceId, bool enabled)
+        {
+            HeliconZoo zooServer = new HeliconZoo();
+            ServiceProviderProxy.Init(zooServer, serviceId);
+            zooServer.SetWebCosoleEnabled(enabled);
         }
 
 
@@ -183,7 +225,7 @@ namespace WebsitePanel.EnterpriseServer
                 DataProvider.AddHeliconZooQuota(groupId, quotaId, 
                     HeliconZooQuotaPrefix+engine.name, 
                     engine.displayName,
-                    order++);
+                    existingQuotas.Count + order++);
             }
         }
 
@@ -219,7 +261,7 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             // get Helicon Zoo service for site
-            int serviceId = DataProvider.GetServiceIdByProviderForServer(heliconZooProviderId, serverId);
+            int serviceId = DataProvider.GetServiceIdByProviderForServer(heliconZooProviderId, packageId);
             return serviceId;
         }
 

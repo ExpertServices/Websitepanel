@@ -32,6 +32,8 @@ using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.WebAppGallery;
 using WebsitePanel.Providers.Common;
+using Microsoft.Web.Administration;
+using Microsoft.Web.Management.Server;
 
 namespace WebsitePanel.Providers.Web
 {
@@ -121,6 +123,12 @@ namespace WebsitePanel.Providers.Web
         void UpdateHeliconApeGroup(string siteId, WebGroup group);
         void DeleteHeliconApeGroup(string siteId, string groupName);
 
+        // Helicon Zoo
+	    WebVirtualDirectory[] GetZooApplications(string siteId);
+        StringResultObject SetZooEnvironmentVariable(string siteId, string appName, string envName, string envValue);
+        StringResultObject SetZooConsoleEnabled(string siteId, string appName);
+        StringResultObject SetZooConsoleDisabled(string siteId, string appName);
+
 
 		// web app gallery
         bool CheckLoadUserProfile();
@@ -160,6 +168,8 @@ namespace WebsitePanel.Providers.Web
 		SSLCertificate ImportCertificate(WebSite website);
 		bool CheckCertificate(WebSite webSite);
 
-        
+        //Directory Browseing
+        bool GetDirectoryBrowseEnabled(string siteId);
+        void SetDirectoryBrowseEnabled(string siteId, bool enabled);
     }
 }

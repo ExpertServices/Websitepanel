@@ -1890,11 +1890,17 @@
   <data name="ResourceGroup.MsSQL2008" xml:space="preserve">
     <value>SQL Server 2008</value>
   </data>
-  <data name="ResourceGroup.MsSQL2012" xml:space="preserve">
-    <value>SQL Server 2012</value>
+  <data name="ResourceGroup.RemoteDesktopServices" xml:space="preserve">
+    <value>Remote Desktop Services</value>
+  </data>
+  <data name="ResourceGroup.EnterpriseStorage" xml:space="preserve">
+    <value>Enterprise Storage Services</value>
   </data>
   <data name="ResourceGroup.MySQL5" xml:space="preserve">
     <value>MySQL 5</value>
+  </data>
+  <data name="ResourceGroup.MsSQL2012" xml:space="preserve">
+    <value>SQL Server 2012</value>
   </data>
   <data name="Quota.OS.MinimumTaskInterval" xml:space="preserve">
     <value>Minimum Tasks Interval, minutes</value>
@@ -5104,6 +5110,12 @@
   <data name="Quota.Exchange2007.RecoverableItemsSpace" xml:space="preserve">
     <value>Recoverable Items Storage, MB</value>
   </data>
+  <data name="EnterpriseStorage.DiskStorageSpace" xml:space="preserve">
+    <value>Disk Storage Space, MB</value>
+  </data>
+  <data name="EnterpriseStorage.Folders" xml:space="preserve">
+    <value>Number of Root Folders</value>
+  </data>
   <data name="Error.LYNC_DELETE_DOMAIN" xml:space="preserve">
     <value>Error deleting organization domain name. See audit log for more details.</value>
   </data>
@@ -5343,5 +5355,14 @@
   </data>
   <data name="Success.ORGANIZATION_UPDATE_SECURITY_GROUP_SETTINGS" xml:space="preserve">
     <value>Group general settings have been successfully updated.</value>
+  </data>
+  <data name="ResourceGroup.RDS" xml:space="preserve">
+    <value>Remote Desktop Services</value>
+  </data>
+  <data name="Warning.WEB_SITE_IS_NOT_CREATED" xml:space="preserve">
+    <value>Website is not created</value>
+  </data>
+  <data name="Success.ENTERPRISE_STORAGE_UPDATE_FOLDER_SETTINGS" xml:space="preserve">
+    <value>Enterprise storage folder settings have been successfully updated.</value>
   </data>
 </root>

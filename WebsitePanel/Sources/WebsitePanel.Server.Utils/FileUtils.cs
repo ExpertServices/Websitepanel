@@ -785,6 +785,11 @@ namespace WebsitePanel.Providers.Utils
 			return CalculateFolderSize(path, out files, out folders);
         }
 
+        public static int BytesToMb(long bytes)
+        {
+            return (int)bytes / (1024 * 1024);
+        }
+
         private static long CalculateFolderSize(string path, out int files, out int folders)
         {
             files = 0;
@@ -882,8 +887,6 @@ namespace WebsitePanel.Providers.Utils
 
                 Directory.Delete(treeRoot.FullName, true);
             }
-
-
         }
 
         public static void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, string quotaLimit, int mode, string wmiUserName, string wmiPassword)

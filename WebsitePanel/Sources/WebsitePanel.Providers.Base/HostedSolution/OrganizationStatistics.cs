@@ -60,7 +60,13 @@ namespace WebsitePanel.Providers.HostedSolution
 
         private int createdCRMUsers;
         private int allocatedCRMUsers;
-		
+
+        private int createdEnterpriseStorageFolders;
+        private int allocatedEnterpriseStorageFolders;
+
+        private int allocatedEnterpriseStorageSpace;
+        private int usedEnterpriseStorageSpace;
+        		
 		
         public int CreatedCRMUsers
         {
@@ -185,12 +191,36 @@ namespace WebsitePanel.Providers.HostedSolution
         public int CreatedBlackBerryUsers { get; set; }
         public int AllocatedBlackBerryUsers { get; set; }
 
-
         public int CreatedOCSUsers { get; set; }
         public int AllocatedOCSUsers { get; set; }
 
         public int CreatedLyncUsers { get; set; }
         public int AllocatedLyncUsers { get; set; }
+
+
+        public int CreatedEnterpriseStorageFolders
+        {
+            get { return createdEnterpriseStorageFolders; }
+            set { createdEnterpriseStorageFolders = value; }
+        }
+
+        public int AllocatedEnterpriseStorageFolders
+        {
+            get { return allocatedEnterpriseStorageFolders; }
+            set { allocatedEnterpriseStorageFolders = value; }
+        }
+
+        public int AllocatedEnterpriseStorageSpace
+        {
+            get { return allocatedEnterpriseStorageSpace; }
+            set { allocatedEnterpriseStorageSpace = value; }
+        }
+
+        public int UsedEnterpriseStorageSpace
+        {
+            get { return usedEnterpriseStorageSpace; }
+            set { usedEnterpriseStorageSpace = value; }
+        }
 	}
 }
 

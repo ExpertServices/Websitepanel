@@ -117,7 +117,7 @@ namespace WebsitePanel.Portal.VPS
             if (PackagesHelper.IsQuotaEnabled(PanelSecurity.PackageId, Quotas.VPS_EXTERNAL_NETWORK_ENABLED))
             {
                 // bind list
-                PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(PanelSecurity.PackageId, IPAddressPool.VpsExternalNetwork);
+                PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(PanelSecurity.PackageId, 0, IPAddressPool.VpsExternalNetwork);
                 foreach (PackageIPAddress ip in ips)
                 {
                     string txt = ip.ExternalIP;

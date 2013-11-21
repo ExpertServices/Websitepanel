@@ -47,10 +47,18 @@
     <WarningsAsErrors>618</WarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Web.Administration, Version=7.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Web.Administration.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Web.Deployment, Version=9.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Web.Deployment.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Web.Management, Version=7.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Web.Management.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.PlatformInstaller, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -85,6 +93,8 @@
     <Content Include="AutoDiscovery.asmx" />
     <Content Include="BlackBerry.asmx" />
     <EmbeddedResource Include="Images\logo.png" />
+    <Content Include="EnterpriseStorage.asmx" />
+    <Content Include="RemoteDesktopServices.asmx" />
     <Content Include="HeliconZoo.asmx" />
     <Content Include="LyncServer.asmx" />
     <Content Include="OCSEdgeServer.asmx" />
@@ -127,6 +137,14 @@
     <Compile Include="Code\ServerConfiguration.cs" />
     <Compile Include="Code\ServerUsernameTokenManager.cs" />
     <Compile Include="Code\UsernameAssertion.cs" />
+    <Compile Include="EnterpriseStorage.asmx.cs">
+      <DependentUpon>EnterpriseStorage.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="RemoteDesktopServices.asmx.cs">
+      <DependentUpon>RemoteDesktopServices.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="HeliconZoo.asmx.cs">
       <DependentUpon>HeliconZoo.asmx</DependentUpon>
       <SubType>Component</SubType>

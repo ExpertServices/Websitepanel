@@ -534,5 +534,59 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.QuotaViewer crmUsersStats;
+        
+        /// <summary>
+        /// enterpriseStorageStatsPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel enterpriseStorageStatsPanel;
+        
+        /// <summary>
+        /// locEnterpriseStorage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locEnterpriseStorage;
+        
+        /// <summary>
+        /// lnkEnterpriseStorageSpace control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkEnterpriseStorageSpace;
+        
+        /// <summary>
+        /// enterpriseStorageSpaceStats control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaViewer enterpriseStorageSpaceStats;
+        
+        /// <summary>
+        /// lnkEnterpriseStorageFolders control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkEnterpriseStorageFolders;
+        
+        /// <summary>
+        /// enterpriseStorageFoldersStats control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaViewer enterpriseStorageFoldersStats;
     }
 }

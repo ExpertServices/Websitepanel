@@ -246,8 +246,22 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             if (Utils.CheckQouta(Quotas.LYNC_FEDERATION, cntx))
                 lyncGroup.MenuItems.Add(CreateMenuItem("LyncFederationDomains", "lync_federationdomains"));
 
+            if (Utils.CheckQouta(Quotas.LYNC_PHONE, cntx))
+                lyncGroup.MenuItems.Add(CreateMenuItem("LyncPhoneNumbers", "lync_phonenumbers"));
+
             groups.Add(lyncGroup);
         }
+
+        private void PrepareEnterpriseStorageMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath)
+        {
+            MenuGroup enterpriseStorageGroup =
+                   new MenuGroup(GetLocalizedString("Text.EnterpriseStorageGroup"), imagePath + "spaces16.png");
+
+            enterpriseStorageGroup.MenuItems.Add(CreateMenuItem("EnterpriseStorageFolders", "enterprisestorage_folders"));
+
+            groups.Add(enterpriseStorageGroup);
+        }
+
 
         private List<MenuGroup> PrepareMenu()
         {
@@ -288,6 +302,11 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             //Lync Menu
             if (cntx.Groups.ContainsKey(ResourceGroups.Lync))
                 PrepareLyncMenu(cntx, groups, imagePath);
+
+            //EnterpriseStorage Menu
+            if (cntx.Groups.ContainsKey(ResourceGroups.EnterpriseStorage))
+                PrepareEnterpriseStorageMenu(cntx, groups, imagePath);
+
 
             return groups;
         }

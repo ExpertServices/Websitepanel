@@ -288,7 +288,9 @@ namespace WebsitePanel.Server.Utils
             Windows7,
             WindowsServer2008R2,
             Windows8,
-            WindowsServer2012
+            WindowsServer2012,
+            Windows81,
+            WindowsServer2012R2
 		}
 
 		/// <summary>
@@ -387,6 +389,12 @@ namespace WebsitePanel.Server.Utils
                                         ret = WindowsVersion.Windows8;
                                     else
                                         ret = WindowsVersion.WindowsServer2012;
+                                    break;
+                                case 3:
+                                    if (info.wProductType == (byte)WinPlatform.VER_NT_WORKSTATION)
+                                        ret = WindowsVersion.Windows81;
+                                    else
+                                        ret = WindowsVersion.WindowsServer2012R2;
                                     break;
                             }
                             break;

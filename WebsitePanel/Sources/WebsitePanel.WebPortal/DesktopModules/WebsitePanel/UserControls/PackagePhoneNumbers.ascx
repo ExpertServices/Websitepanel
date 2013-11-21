@@ -73,7 +73,8 @@
 	    OnSelected="odsExternalAddressesPaged_Selected" 
     onselecting="odsExternalAddressesPaged_Selecting">
     <SelectParameters>
-	    <asp:QueryStringParameter Name="packageId" QueryStringField="SpaceID" DefaultValue="0" />						    
+	    <asp:QueryStringParameter Name="packageId" QueryStringField="SpaceID" DefaultValue="0" />
+        <asp:QueryStringParameter Name="orgId" QueryStringField="ItemID" DefaultValue="0" />						    
 	    <asp:Parameter Name="pool" DefaultValue="0" />
         <asp:ControlParameter Name="filterColumn" ControlID="searchBox"  PropertyName="FilterColumn" />
         <asp:ControlParameter Name="filterValue" ControlID="searchBox" PropertyName="FilterValue" />

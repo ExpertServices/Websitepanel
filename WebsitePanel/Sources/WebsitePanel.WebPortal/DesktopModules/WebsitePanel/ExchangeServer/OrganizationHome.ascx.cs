@@ -232,6 +232,13 @@ namespace WebsitePanel.Portal.ExchangeServer
                 crmStatsPanel.Visible = false;
 
 
+            if (cntx.Groups.ContainsKey(ResourceGroups.EnterpriseStorage))
+            {
+                enterpriseStorageStatsPanel.Visible = true;
+                BindEnterpriseStorageStats(orgStats, tenantStats);
+            }
+            else
+                enterpriseStorageStatsPanel.Visible = false;
         }
 
         private void BindCRMStats(OrganizationStatistics stats, OrganizationStatistics tenantStats)
@@ -272,6 +279,23 @@ namespace WebsitePanel.Portal.ExchangeServer
             if (stats.AllocatedBlackBerryUsers != -1) besUsersStats.QuotaAvailable = tenantStats.AllocatedBlackBerryUsers - tenantStats.CreatedBlackBerryUsers;
 
             lnkBESUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "blackberry_users",
+            "SpaceID=" + PanelSecurity.PackageId.ToString());
+        }
+
+        private void BindEnterpriseStorageStats(OrganizationStatistics stats, OrganizationStatistics tenantStats)
+        {
+            enterpriseStorageSpaceStats.QuotaValue = stats.AllocatedEnterpriseStorageSpace;
+            enterpriseStorageSpaceStats.QuotaUsedValue = stats.UsedEnterpriseStorageSpace;
+            if (stats.AllocatedEnterpriseStorageSpace != -1) enterpriseStorageSpaceStats.QuotaAvailable = tenantStats.AllocatedEnterpriseStorageSpace - tenantStats.UsedEnterpriseStorageSpace;
+
+            lnkBESUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "enterprisestorage_folders",
+            "SpaceID=" + PanelSecurity.PackageId.ToString());
+
+            enterpriseStorageFoldersStats.QuotaValue = stats.AllocatedEnterpriseStorageFolders;
+            enterpriseStorageFoldersStats.QuotaUsedValue = stats.CreatedEnterpriseStorageFolders;
+            if (stats.AllocatedEnterpriseStorageFolders != -1) enterpriseStorageFoldersStats.QuotaAvailable = tenantStats.AllocatedEnterpriseStorageFolders - tenantStats.CreatedEnterpriseStorageFolders;
+
+            lnkBESUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "enterprisestorage_folders",
             "SpaceID=" + PanelSecurity.PackageId.ToString());
         }
 

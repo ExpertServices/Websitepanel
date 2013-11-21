@@ -176,6 +176,51 @@ namespace WebsitePanel.Portal {
         protected global::WebsitePanel.Portal.UserControls.EditFeedsList wpiEditFeedsList;
         
         /// <summary>
+        /// HeaderFileManagerSettings control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.CollapsiblePanel HeaderFileManagerSettings;
+        
+        /// <summary>
+        /// PanelFileManagereSettings control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PanelFileManagereSettings;
+        
+        /// <summary>
+        /// lblFileManagerEditableExtensions control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize lblFileManagerEditableExtensions;
+        
+        /// <summary>
+        /// txtFileManagerEditableExtensions control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtFileManagerEditableExtensions;
+        
+        /// <summary>
+        /// litFileManagerEditableExtensions control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litFileManagerEditableExtensions;
+        
+        /// <summary>
         /// btnSaveSettings control.
         /// </summary>
         /// <remarks>

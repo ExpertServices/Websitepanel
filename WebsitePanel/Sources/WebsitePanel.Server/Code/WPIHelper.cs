@@ -266,6 +266,20 @@ namespace WebsitePanel.Server.Code
 
             return products;
         }
+
+        public Product GetWPIProductById(string productId)
+        {
+            foreach (Product product in _productManager.Products)
+            {
+                if (0 == String.Compare(product.ProductId, productId, StringComparison.OrdinalIgnoreCase))
+                {
+                    return product;
+                }
+
+            }
+
+            return null; //not found
+        }
         
         public List<Product> GetProductsToInstall(IEnumerable<string> productIdsToInstall)
         {
@@ -506,7 +520,7 @@ namespace WebsitePanel.Server.Code
         {
 
             Product app = GetProduct(appId);
-            Installer appInstaller = app.GetInstaller(GetLanguage(languageId));
+            Installer appInstaller = GetInstaller(languageId, app);
             WpiAppInstallLogger logger = new WpiAppInstallLogger();
 
             /*
@@ -572,6 +586,25 @@ namespace WebsitePanel.Server.Code
             return !logger.IsFailed;
         }
 
+        private Installer GetInstaller(string languageId, Product product)
+        {
+            Installer installer = product.GetInstaller(GetLanguage(languageId));
+            if (null == installer)
+            {
+                installer = product.GetInstaller(GetLanguage(DeafultLanguage));
+                if (null == installer)
+                {
+                    throw new Exception(
+                        string.Format(
+                        "Could not get installer for product '{0}', language: {1}, default language: {2}",
+                        product.Title, languageId, DeafultLanguage)
+                    );
+                }
+            }
+
+            return installer;
+        }
+
         #endregion
 
         #endregion Public interface
@@ -582,7 +615,6 @@ namespace WebsitePanel.Server.Code
         private void Initialize()
         {
             // create cache folder if not exists
-            //_webPIinstallersFolder = Environment.ExpandEnvironmentVariables(@"%LocalAppData%\Microsoft\Web Platform Installer\installers");
             _webPIinstallersFolder = Path.Combine(
                 Environment.ExpandEnvironmentVariables("%SystemRoot%"),
                 "Temp\\zoo.wpi\\AppData\\Local\\Microsoft\\Web Platform Installer\\installers");
@@ -608,11 +640,12 @@ namespace WebsitePanel.Server.Code
 
             _productManager = new ProductManager();
 
-            if (TryLoadFeeds())
+            try
             {
+                TryLoadFeeds();
                 // ok, all feeds loaded
             }
-            else
+            catch(Exception ex1)
             {
                 // feed loading failed
 
@@ -623,23 +656,25 @@ namespace WebsitePanel.Server.Code
 
                     // re-create product manager
                     _productManager = new ProductManager();
-                    if (TryLoadFeeds())
+
+                    try
                     {
                         // loaded first (default) feed only
+                        TryLoadFeeds();
                     }
-                    else
+                    catch(Exception ex2)
                     {
-                        throw new Exception(string.Format("WpiHelper: download all feeds failed"));
+                        throw new Exception(string.Format("WpiHelper: download first feed failed: {0}", ex2), ex2);
                     }
                 }
                 else
                 {
-                    throw new Exception(string.Format("WpiHelper: download all feeds failed"));
+                    throw new Exception(string.Format("WpiHelper: download all ({0}) feeds failed: {1}", _feeds.Count, ex1), ex1);
                 }
             }
         }
 
-        private bool TryLoadFeeds()
+        private void TryLoadFeeds()
         {
             string loadingFeed = null;
 
@@ -667,12 +702,9 @@ namespace WebsitePanel.Server.Code
                     // error occured on loading this feed
                     // log this
                     WriteLog(string.Format("Feed {0} loading error: {1}", loadingFeed, ex));
-
-                    return false;
                 }
+                throw;
             }
-
-            return true;
         }
 
         private Language GetLanguage(string languageId)
@@ -688,10 +720,11 @@ namespace WebsitePanel.Server.Code
 
         private List<Installer> GetInstallers(List<Product> productsToInstall, Language lang)
         {
+            Language defaultLang = GetLanguage(DeafultLanguage);
             List<Installer> installersToUse = new List<Installer>();
             foreach (Product product in productsToInstall)
             {
-                Installer installer = product.GetInstaller(lang);
+                Installer installer = product.GetInstaller(lang) ?? product.GetInstaller(defaultLang);
                 if (null != installer)
                 {
                     installersToUse.Add(installer);

@@ -2,7 +2,7 @@
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/AccountsList.ascx" TagName="AccountsList" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/MailboxSelector.ascx" TagName="MailboxSelector" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/SecurityGroupTabs.ascx" TagName="SecurityGroupTabs" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/DistributionListTabs.ascx" TagName="DistributionListTabs" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="../UserControls/CollapsiblePanel.ascx" %>
@@ -27,7 +27,7 @@
 					<asp:Literal ID="litDisplayName" runat="server" Text="John Smith" />
                 </div>
 				<div class="FormBody">
-                    <wsp:SecurityGroupTabs id="tabs" runat="server" SelectedTab="secur_group_memberof" />
+                    <wsp:DistributionListTabs id="tabs" runat="server" SelectedTab="dlist_memberof" />
                     <wsp:SimpleMessageBox id="messageBox" runat="server" />
 					
 					<wsp:CollapsiblePanel id="secGroups" runat="server" TargetControlID="GroupsPanel" meta:resourcekey="secGroups" Text="Groups"></wsp:CollapsiblePanel>

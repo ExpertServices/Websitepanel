@@ -38,6 +38,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using WebsitePanel.EnterpriseServer.Base.Common;
 using WSP = WebsitePanel.EnterpriseServer;
+using System.Text.RegularExpressions;
 
 namespace WebsitePanel.Portal
 {
@@ -49,6 +50,7 @@ namespace WebsitePanel.Portal
 		public const string SMTP_PASSWORD = "SmtpPassword";
 		public const string SMTP_ENABLE_SSL = "SmtpEnableSsl";
 		public const string BACKUPS_PATH = "BackupsPath";
+        public const string FILE_MANAGER_EDITABLE_EXTENSIONS = "EditableExtensions";
 
         /*
         public const string FEED_ENABLE_MICROSOFT = "FeedEnableMicrosoft";
@@ -122,7 +124,18 @@ namespace WebsitePanel.Portal
                 txtMainFeedUrl.Text = mainFeedUrl;
             }
      
+            // FILE MANAGER
+            settings = ES.Services.System.GetSystemSettings(WSP.SystemSettings.FILEMANAGER_SETTINGS);
 
+            if (settings != null && !String.IsNullOrEmpty(settings[FILE_MANAGER_EDITABLE_EXTENSIONS]))
+            {
+                txtFileManagerEditableExtensions.Text = settings[FILE_MANAGER_EDITABLE_EXTENSIONS].Replace(",", System.Environment.NewLine);
+            }
+            else
+            {
+                // Original WebsitePanel Extensions
+                txtFileManagerEditableExtensions.Text = FileManager.ALLOWED_EDIT_EXTENSIONS.Replace(",", System.Environment.NewLine);
+            }
 		}
 
 		private void SaveSettings()
@@ -178,6 +191,20 @@ namespace WebsitePanel.Portal
 
 
                 result = ES.Services.System.SetSystemSettings(WSP.SystemSettings.WPI_SETTINGS, settings);
+
+                if (result < 0)
+                {
+                    ShowResultMessage(result);
+                    return;
+                }
+
+                // FILE MANAGER
+                settings = new WSP.SystemSettings();
+                settings[FILE_MANAGER_EDITABLE_EXTENSIONS] = Regex.Replace(txtFileManagerEditableExtensions.Text, @"[\r\n]+", ",");
+
+
+                result = ES.Services.System.SetSystemSettings(
+                    WSP.SystemSettings.FILEMANAGER_SETTINGS, settings);
 
                 if (result < 0)
                 {

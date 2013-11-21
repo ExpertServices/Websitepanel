@@ -61,6 +61,8 @@ namespace WebsitePanel.Providers.Web
         private string defaultDocs;
         private string httpRedirect;
         private HttpError[] httpErrors;
+        private HttpErrorsMode errorMode;
+        private HttpErrorsExistingResponse existingResponse;
         private MimeMap[] mimeMaps; 
         private HttpHeader[] httpHeaders;
         private bool aspInstalled;
@@ -78,6 +80,7 @@ namespace WebsitePanel.Providers.Web
         private bool redirectPermanent;
         private bool sharePointInstalled;
         private bool iis7;
+        private string consoleUrl;
 
         public string AnonymousUsername
         {
@@ -119,6 +122,18 @@ namespace WebsitePanel.Providers.Web
         {
             get { return httpErrors; }
             set { httpErrors = value; }
+        }
+
+        public HttpErrorsMode ErrorMode
+        {
+            get { return errorMode; }
+            set { errorMode = value; }
+        }
+
+        public HttpErrorsExistingResponse ExistingResponse
+        {
+            get { return existingResponse; }
+            set { existingResponse = value; }
         }
 
         public string ApplicationPool
@@ -262,6 +277,12 @@ namespace WebsitePanel.Providers.Web
         {
             get { return this.iis7; }
             set { this.iis7 = value; }
+        }
+        
+        public string ConsoleUrl
+        {
+            get { return consoleUrl; }
+            set { consoleUrl = value; }
         }
 
 		#region Web Deploy Publishing Properties

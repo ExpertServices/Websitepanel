@@ -979,6 +979,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@ClusterId", clusterId),
                 new SqlParameter("@comments", comments));
 
+            UpdateServerPackageServices(serverId);
+
             return Convert.ToInt32(prmServiceId.Value);
         }
 
@@ -1038,6 +1040,15 @@ namespace WebsitePanel.EnterpriseServer
                 CommandType.StoredProcedure,
                 ObjectQualifier + "GetResourceGroups");
         }
+
+        public static IDataReader GetResourceGroupByName(string groupName)
+        {
+            return SqlHelper.ExecuteReader(ConnectionString,
+                CommandType.StoredProcedure,
+                ObjectQualifier + "GetResourceGroupByName",
+                new SqlParameter("@groupName", groupName));
+        }
+
         #endregion
 
         #region Service Items
@@ -1559,6 +1570,8 @@ namespace WebsitePanel.EnterpriseServer
             // read identity
             packageId = Convert.ToInt32(prmPackageId.Value);
 
+            DistributePackageServices(actorId, packageId);
+
             return ds;
         }
 
@@ -1658,6 +1671,33 @@ namespace WebsitePanel.EnterpriseServer
                 ObjectQualifier + "DeletePackageAddon",
                 new SqlParameter("@actorId", actorId),
                 new SqlParameter("@PackageAddonID", packageAddonId));
+        }
+
+        public static void UpdateServerPackageServices(int serverId)
+        {
+            // FIXME
+            int defaultActorID = 1;
+
+            // get server packages
+            IDataReader packagesReader = SqlHelper.ExecuteReader(ConnectionString, CommandType.Text,
+                @"SELECT PackageID FROM Packages WHERE ServerID = @ServerID",
+                new SqlParameter("@ServerID", serverId)
+            );
+
+            // call DistributePackageServices for all packages on this server
+            while (packagesReader.Read())
+            {
+                int packageId = (int) packagesReader["PackageID"];
+                DistributePackageServices(defaultActorID, packageId);
+            }
+        }
+
+        public static void DistributePackageServices(int actorId, int packageId)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "DistributePackageServices",
+                new SqlParameter("@ActorId", actorId),
+                new SqlParameter("@PackageID", packageId));
         }
 
         #endregion
@@ -2981,6 +3021,53 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Organizations
 
+        public static IDataReader GetAdditionalGroups(int userId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetAdditionalGroups",
+                new SqlParameter("@UserID", userId)
+            );
+        }
+
+
+        public static int AddAdditionalGroup(int userId, string groupName)
+        {
+            SqlParameter prmId = new SqlParameter("@GroupID", SqlDbType.Int);
+            prmId.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddAdditionalGroup",
+                prmId,
+                new SqlParameter("@UserID", userId),
+                new SqlParameter("@GroupName", groupName));
+
+            // read identity
+            return Convert.ToInt32(prmId.Value);
+        }
+
+        public static void DeleteAdditionalGroup(int groupId)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteAdditionalGroup",
+                new SqlParameter("@GroupID", groupId));
+        }
+
+        public static void UpdateAdditionalGroup(int groupId, string groupName)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateAdditionalGroup",
+                new SqlParameter("@GroupID", groupId),
+                new SqlParameter("@GroupName", groupName)
+            );
+        }
+
         public static void DeleteOrganizationUser(int itemId)
         {
             SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure, "DeleteOrganizationUsers", new SqlParameter("@ItemID", itemId));
@@ -3158,23 +3245,25 @@ namespace WebsitePanel.EnterpriseServer
         }
 
 
-        public static void AllocatePackageIPAddresses(int packageId, string xml)
+        public static void AllocatePackageIPAddresses(int packageId, int orgId, string xml)
         {
             SqlParameter[] param = new[]
                                        {
                                            new SqlParameter("@PackageID", packageId),
+                                           new SqlParameter("@OrgID", orgId),
                                            new SqlParameter("@xml", xml)
                                        };
 
             ExecuteLongNonQuery("AllocatePackageIPAddresses", param);
         }
 
-        public static IDataReader GetPackageIPAddresses(int packageId, int poolId, string filterColumn, string filterValue,
+        public static IDataReader GetPackageIPAddresses(int packageId, int orgId, int poolId, string filterColumn, string filterValue,
             string sortColumn, int startRow, int maximumRows, bool recursive)
         {
             IDataReader reader = SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
                                      "GetPackageIPAddresses",
                                         new SqlParameter("@PackageID", packageId),
+                                        new SqlParameter("@OrgID", orgId),
                                         new SqlParameter("@PoolId", poolId),
                                         new SqlParameter("@FilterColumn", VerifyColumnName(filterColumn)),
                                         new SqlParameter("@FilterValue", VerifyColumnValue(filterValue)),
@@ -3219,12 +3308,13 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
         #region VPS - External Network Adapter
-        public static IDataReader GetPackageUnassignedIPAddresses(int actorId, int packageId, int poolId)
+        public static IDataReader GetPackageUnassignedIPAddresses(int actorId, int packageId, int orgId, int poolId)
         {
             return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
                                 "GetPackageUnassignedIPAddresses",
                                 new SqlParameter("@ActorID", actorId),
                                 new SqlParameter("@PackageID", packageId),
+                                new SqlParameter("@OrgID", orgId),
                                 new SqlParameter("@PoolId", poolId));
         }
 
@@ -3885,15 +3975,16 @@ namespace WebsitePanel.EnterpriseServer
             return packageId;
         }
 
-        public static int GetServiceIdByProviderForServer(int providerId, int serverId)
+        public static int GetServiceIdByProviderForServer(int providerId, int packageId)
         {
             IDataReader reader = SqlHelper.ExecuteReader(ConnectionString, CommandType.Text,
                 @"SELECT TOP 1 
-                    ServiceID
-                  FROM Services
-                  WHERE ProviderID = @ProviderID AND ServerID = @ServerID",
+                    PackageServices.ServiceID
+                  FROM PackageServices
+                  LEFT JOIN Services ON Services.ServiceID = PackageServices.ServiceID
+                  WHERE PackageServices.PackageID = @PackageID AND Services.ProviderID = @ProviderID",
                 new SqlParameter("@ProviderID", providerId),
-                new SqlParameter("@ServerID", serverId));
+                new SqlParameter("@PackageID", packageId));
 
             if (reader.Read())
             {
@@ -4000,6 +4091,26 @@ namespace WebsitePanel.EnterpriseServer
             );
 
             return reader;
+        }
+
+        public static int GetServiceIdForProviderIdAndPackageId(int providerId, int packageId)
+        {
+            IDataReader reader = SqlHelper.ExecuteReader(ConnectionString, CommandType.Text,
+                @"SELECT PackageServices.ServiceID 
+                FROM PackageServices
+                INNER JOIN Services ON PackageServices.ServiceID = Services.ServiceID
+                WHERE Services.ProviderID = @ProviderID and PackageID = @PackageID",
+                new SqlParameter("@ProviderID", providerId),
+                new SqlParameter("@PackageID", packageId)
+            );
+
+            if (reader.Read())
+            {
+                return (int)reader["ServiceID"];
+            }
+
+            return -1;
+
         }
 
         public static int GetServerIdForPackage(int packageId)

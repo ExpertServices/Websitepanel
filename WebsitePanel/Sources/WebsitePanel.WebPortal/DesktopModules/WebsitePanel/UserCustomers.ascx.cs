@@ -67,8 +67,11 @@ namespace WebsitePanel.Portal
 
 
                 gvUsers.Sort("Username", System.Web.UI.WebControls.SortDirection.Ascending);
+
 			}
-		}
+
+            searchBox.Focus();
+        }
 
 		public string GetUserHomePageUrl(int userId)
 		{

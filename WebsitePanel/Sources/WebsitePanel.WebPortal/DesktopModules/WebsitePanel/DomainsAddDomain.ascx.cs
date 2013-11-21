@@ -56,22 +56,21 @@ namespace WebsitePanel.Portal
                     txtHostName.Text = "";
                 }
 
+                DomainType type = GetDomainType(Request["DomainType"]);
 
-
+                if ((PanelSecurity.LoggedUser.Role == UserRole.User) & (type != DomainType.SubDomain))
+                {
+                    if (cntx.Groups.ContainsKey(ResourceGroups.Dns))
+                    {
+                        if (!PackagesHelper.CheckGroupQuotaEnabled(PanelSecurity.PackageId, ResourceGroups.Dns, Quotas.DNS_EDITOR))
+                            this.DisableControls = true;
+                    }
+                }
 			}
 			catch (Exception ex)
 			{
 				ShowErrorMessage("DOMAIN_GET_DOMAIN", ex);
 			}
-
-            DomainType type = GetDomainType(Request["DomainType"]);
-
-            if ((PanelSecurity.LoggedUser.Role == UserRole.User) & (type != DomainType.SubDomain))
-            {
-                if (!PackagesHelper.CheckGroupQuotaEnabled(PanelSecurity.PackageId, ResourceGroups.Dns, Quotas.DNS_EDITOR))
-                    this.DisableControls = true;
-            }
-
 		}
 
 		private void BindControls()

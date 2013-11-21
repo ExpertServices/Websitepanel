@@ -47,7 +47,16 @@ namespace WebsitePanel.Portal.ProviderControls
             txtSqlServer.Text = settings[Constants.SqlServer];
             txtDomainName.Text = settings[Constants.IFDWebApplicationRootDomain];
             txtPort.Text = settings[Constants.Port];
+
             txtAppRootDomain.Text = settings[Constants.AppRootDomain];
+            txtOrganizationWebService.Text = settings[Constants.OrganizationWebService];
+            txtDiscoveryWebService.Text = settings[Constants.DiscoveryWebService];
+            txtDeploymentWebService.Text = settings[Constants.DeploymentWebService];
+
+            txtPassword.Text = settings[Constants.Password];
+            ViewState["PWD"] = settings[Constants.Password];
+            txtUserName.Text = settings[Constants.UserName];
+
             int selectedAddressid = FindAddressByText(settings[Constants.CRMWebsiteIP]);
             ddlCrmIpAddress.AddressId = (selectedAddressid > 0) ? selectedAddressid : 0; 
             
@@ -61,7 +70,15 @@ namespace WebsitePanel.Portal.ProviderControls
             settings[Constants.SqlServer] = txtSqlServer.Text;
             settings[Constants.IFDWebApplicationRootDomain] = txtDomainName.Text;
             settings[Constants.Port] = txtPort.Text;
+
             settings[Constants.AppRootDomain] = txtAppRootDomain.Text;
+            settings[Constants.OrganizationWebService] = txtOrganizationWebService.Text;
+            settings[Constants.DiscoveryWebService] = txtDiscoveryWebService.Text;
+            settings[Constants.DeploymentWebService] = txtDeploymentWebService.Text;
+
+            settings[Constants.Password] = (txtPassword.Text.Length > 0) ? txtPassword.Text : (string)ViewState["PWD"];
+            settings[Constants.UserName] = txtUserName.Text;
+
             if (ddlCrmIpAddress.AddressId > 0)
 			{
 				IPAddressInfo address = ES.Services.Servers.GetIPAddress(ddlCrmIpAddress.AddressId);

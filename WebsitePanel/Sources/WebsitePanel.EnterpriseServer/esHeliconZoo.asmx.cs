@@ -97,5 +97,17 @@ namespace WebsitePanel.EnterpriseServer
         {
             HeliconZooController.SetEnabledEnginesForSite(siteId, packageId, engines);
         }
+
+        [WebMethod]
+        public bool IsWebCosoleEnabled(int serviceId)
+        {
+            return HeliconZooController.IsWebCosoleEnabled(serviceId);
+        }
+
+        [WebMethod]
+        public void SetWebCosoleEnabled(int serviceId, bool enabled)
+        {
+            HeliconZooController.SetWebCosoleEnabled(serviceId, enabled);
+        }
     }
 }

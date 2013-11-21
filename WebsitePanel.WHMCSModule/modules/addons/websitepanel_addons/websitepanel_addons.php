@@ -68,7 +68,7 @@ function websitepanel_addons_activate()
     $query = "CREATE TABLE `mod_wspaddons` (
               `whmcs_id` int(11) NOT NULL,
               `wsp_id` int(11) NOT NULL,
-              `is_ipaddress` bit(1) NOT NULL DEFAULT b'0',
+              `is_ipaddress` bit(1) NOT NULL DEFAULT 0,
               PRIMARY KEY (`whmcs_id`)
               ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
     $result = full_query($query);
@@ -145,7 +145,7 @@ function websitepanel_addons_output($params)
     if ($_POST && isset($_POST['action']) && $_POST['action'] == 'add')
     {
         // Sanity check to make sure the WHMCS addon ID exists
-        $results = select_query('mod_wspaddons', 'id', array('id' => $_POST['whmcs_id']));
+        $results = select_query('tbladdons', 'id', array('id' => $_POST['whmcs_id']));
         if (mysql_num_rows($results) > 0)
         {
             $results = select_query('mod_wspaddons', 'whmcs_id', array('whmcs_id' => $_POST['whmcs_id']));

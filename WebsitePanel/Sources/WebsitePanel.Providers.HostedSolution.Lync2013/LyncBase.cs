@@ -637,7 +637,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
             command = new Command("Set-CsSimpleUrlConfiguration");
             command.Parameters.Add("Identity", "Global");
-            command.Parameters.Add("Tenant", id);
+            //command.Parameters.Add("Tenant", id);
             command.Parameters.Add("SimpleUrl", SimpleUrls);
             ExecuteShellCommand(runspace, command, false);
         }

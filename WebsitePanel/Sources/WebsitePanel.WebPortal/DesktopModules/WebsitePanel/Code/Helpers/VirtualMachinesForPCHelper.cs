@@ -108,7 +108,7 @@ namespace WebsitePanel.Portal
         public PackageIPAddress[] GetPackageIPAddresses(int packageId, IPAddressPool pool, string filterColumn, string filterValue,
             string sortColumn, int maximumRows, int startRowIndex)
         {
-            packageAddresses = ES.Services.Servers.GetPackageIPAddresses(packageId, pool,
+            packageAddresses = ES.Services.Servers.GetPackageIPAddresses(packageId, 0, pool,
                 filterColumn, filterValue, sortColumn, startRowIndex, maximumRows, true);
             return packageAddresses.Items;
         }

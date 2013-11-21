@@ -331,7 +331,8 @@ namespace WebsitePanel.Portal.ProviderControls
             return HostModule.EditUrl("ItemID", PanelRequest.ItemID.ToString(), ctrlKey,
                 "Name=" + name,
                 PortalUtils.SPACE_ID_PARAM + "=" + int.Parse(Request.QueryString["ServiceID"]),
-                "ReturnUrlBase64="+ EncodeTo64(Server.UrlEncode(Request.Url.PathAndQuery))
+                "ReturnUrlBase64="+ EncodeTo64(Server.UrlEncode(Request.Url.PathAndQuery)),
+                "UserID="+PanelSecurity.LoggedUserId.ToString()
                 );
         }
 

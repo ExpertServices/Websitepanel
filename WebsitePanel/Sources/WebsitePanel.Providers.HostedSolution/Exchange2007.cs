@@ -837,12 +837,13 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 string server = GetOABGenerationServerName();
 
-                string securityGroupId = AddADPrefix(securityGroup);
-
                 //create OAB
                 string oabId = CreateOfflineAddressBook(runSpace, organizationId, server, oabVirtualDir);
                 transaction.RegisterNewOfflineAddressBook(oabId);
+
+                string securityGroupId = AddADPrefix(securityGroup);
                 UpdateOfflineAddressBook(runSpace, oabId, securityGroupId);
+                
                 info.OfflineAddressBook = oabId;
             }
             catch (Exception ex)
@@ -3771,7 +3772,25 @@ namespace WebsitePanel.Providers.HostedSolution
                 id = GetPSObjectIdentity(obj);
                 account = GetExchangeAccount(runSpace, id);
                 if (account != null)
+                {
                     list.Add(account);
+                }
+                else
+                {
+                    string distinguishedName = (string)GetPSObjectProperty(obj, "DistinguishedName");
+                    string path = ActiveDirectoryUtils.AddADPrefix(distinguishedName, PrimaryDomainController);
+
+                    if (ActiveDirectoryUtils.AdObjectExists(path))
+                    {
+                        DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
+
+                        list.Add(new ExchangeAccount
+                            {
+                                AccountName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName),
+                                AccountType = ExchangeAccountType.SecurityGroup
+                            });
+                    }
+                }
             }
             ExchangeLog.LogEnd("GetGroupMembers");
             return list.ToArray();

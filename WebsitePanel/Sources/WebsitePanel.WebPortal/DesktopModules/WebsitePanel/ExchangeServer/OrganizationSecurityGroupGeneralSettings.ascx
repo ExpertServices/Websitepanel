@@ -39,6 +39,10 @@
 						        <br />
 							</td>
 						</tr>
+                        <tr>
+                            <td class="FormLabel150"><asp:Localize ID="locGroupName" runat="server" meta:resourcekey="locGroupName" Text="Windows Group Name:"></asp:Localize></td>
+                            <td><asp:Label runat="server" ID="lblGroupName" /></td>
+                        </tr>
 					    
 					    <tr><td>&nbsp;</td></tr>
 						<tr>

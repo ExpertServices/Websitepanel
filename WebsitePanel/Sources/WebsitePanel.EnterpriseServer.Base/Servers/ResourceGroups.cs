@@ -52,5 +52,6 @@ namespace WebsitePanel.EnterpriseServer
         public const string OCS = "OCS";
         public const string VPSForPC = "VPSForPC";
         public const string Lync = "Lync";
+        public const string EnterpriseStorage = "EnterpriseStorage";
     }
 }

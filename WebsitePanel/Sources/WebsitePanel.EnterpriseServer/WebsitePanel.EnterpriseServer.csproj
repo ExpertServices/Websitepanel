@@ -83,6 +83,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="esEnterpriseStorage.asmx" />
+    <Content Include="esRemoteDesktopServices.asmx" />
     <Content Include="esHeliconZoo.asmx" />
     <Content Include="esLync.asmx" />
     <Content Include="esVirtualizationServerForPrivateCloud.asmx" />
@@ -121,6 +123,14 @@
   <ItemGroup>
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
+    </Compile>
+    <Compile Include="esEnterpriseStorage.asmx.cs">
+      <DependentUpon>esEnterpriseStorage.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="esRemoteDesktopServices.asmx.cs">
+      <DependentUpon>esRemoteDesktopServices.asmx</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="esHeliconZoo.asmx.cs">
       <DependentUpon>esHeliconZoo.asmx</DependentUpon>
@@ -280,6 +290,9 @@
     <Content Include="SystemEventHandlers.config" />
     <None Include="TaskEventHandlers.config" />
     <None Include="WsePolicyCache.Config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Code\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

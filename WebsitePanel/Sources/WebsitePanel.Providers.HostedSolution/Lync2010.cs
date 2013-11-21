@@ -63,7 +63,7 @@ namespace WebsitePanel.Providers.HostedSolution
             LyncRegistryPath = "SOFTWARE\\Microsoft\\Real-Time Communications";
         }
 
-        internal static string LyncRegistryPath
+        public static string LyncRegistryPath
         {
             get;
             set;

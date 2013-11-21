@@ -72,6 +72,7 @@
                             </td>
                         </tr>
                         </asp:Panel>
+
                         <asp:Panel runat="server" ID="exchangeStatsPanel">
                         <tr>
                             <td class="OrgStatsGroup" width="100%" colspan="2">
@@ -211,6 +212,30 @@
                             </td>
                             <td>
                                 <wsp:QuotaViewer ID="crmUsersStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                        </asp:Panel>
+
+                        <asp:Panel runat="server" ID="enterpriseStorageStatsPanel">
+                        <tr>
+                            <td class="OrgStatsGroup" width="100%" colspan="2">
+                                <asp:Localize ID="locEnterpriseStorage" runat="server" meta:resourcekey="locEnterpriseStorage" ></asp:Localize>
+                            </td>
+                        </tr>
+                        <tr class="OrgStatsRow"> 
+                            <td align="right" nowrap>
+                                <asp:HyperLink ID="lnkEnterpriseStorageSpace" runat="server" meta:resourcekey="lnkEnterpriseStorageSpace" />
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="enterpriseStorageSpaceStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                        <tr class="OrgStatsRow">
+                            <td align="right" nowrap>
+                                <asp:HyperLink ID="lnkEnterpriseStorageFolders" runat="server" meta:resourcekey="lnkEnterpriseStorageFolders"></asp:HyperLink>
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="enterpriseStorageFoldersStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
                         </asp:Panel>

@@ -56,6 +56,8 @@ using System.Xml.Serialization;
 using System.Text.RegularExpressions;
 using WebsitePanel.Providers.Common;
 using System.Collections.Specialized;
+using Microsoft.Web.Administration;
+using Microsoft.Web.Management.Server;
 
 namespace WebsitePanel.Providers.Web
 {
@@ -2455,10 +2457,37 @@ namespace WebsitePanel.Providers.Web
 			throw new NotImplementedException();
 		}
 
-		#endregion
+	   
 
-		#region Private Helper Methods
-		protected string GetVirtualDirectoryPath(string siteId, string directoryName)
+	    #endregion
+
+        #region Helicon Zoo
+        public virtual WebVirtualDirectory[] GetZooApplications(string siteId)
+        {
+            return new WebVirtualDirectory[] { };
+        }
+
+        public virtual StringResultObject SetZooEnvironmentVariable(string siteId, string appName, string envName, string envValue)
+	    {
+	        //pass
+            return new StringResultObject();
+            
+	    }
+
+        public virtual StringResultObject SetZooConsoleEnabled(string siteId, string appName)
+	    {
+            return new StringResultObject();
+	    }
+
+	    public virtual StringResultObject SetZooConsoleDisabled(string siteId, string appName)
+	    {
+            return new StringResultObject();
+	    }
+
+	    #endregion
+
+        #region Private Helper Methods
+        protected string GetVirtualDirectoryPath(string siteId, string directoryName)
 		{
 			string path = siteId + "/ROOT";
 			if (!String.IsNullOrEmpty(directoryName))
@@ -3385,7 +3414,28 @@ namespace WebsitePanel.Providers.Web
 		}
 		#endregion
 
-		public virtual bool IsIISInstalled()
+        #region Directory Browsing
+
+        public virtual bool GetDirectoryBrowseEnabled(string siteId)
+        {
+            ManagementObject objVirtDir = wmi.GetObject(String.Format("IIsWebVirtualDirSetting='{0}'", GetVirtualDirectoryPath(siteId, "")));
+            return objVirtDir.Properties["EnableDirBrowsing"].Value != null ? (bool)objVirtDir.Properties["EnableDirBrowsing"].Value : false;
+        }
+
+        public virtual void SetDirectoryBrowseEnabled(string siteId, bool enabled)
+        {
+            ManagementObject objSite = wmi.GetObject(String.Format("IIsWebServerSetting='{0}'", siteId));
+
+            WebSite site = GetSite(siteId);
+            site.EnableDirectoryBrowsing = enabled;
+
+            FillWmiObjectFromVirtualDirectory(objSite, site, false);
+            objSite.Put();
+        }
+
+        #endregion
+
+        public virtual bool IsIISInstalled()
 		{
 			int value = 0;
 			RegistryKey root = Registry.LocalMachine;
@@ -3710,10 +3760,5 @@ namespace WebsitePanel.Providers.Web
 			throw new NotSupportedException();
 		}
 		#endregion
-
-
-
-
-
     }
 }

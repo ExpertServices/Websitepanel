@@ -52,7 +52,7 @@ namespace WebsitePanel.Portal.Lync
 
         private void BindPhoneNumbers()
         {
-            PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(PanelSecurity.PackageId, IPAddressPool.PhoneNumbers);
+            PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(PanelSecurity.PackageId, PanelRequest.ItemID, IPAddressPool.PhoneNumbers);
 
             if (ips.Length > 0)
             {
@@ -70,21 +70,24 @@ namespace WebsitePanel.Portal.Lync
 
         protected void Page_PreRender(object sender, EventArgs e)
         {
-            bool EnterpriseVoice = false;
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            bool enterpriseVoiceQuota = Utils.CheckQouta(Quotas.LYNC_ENTERPRISEVOICE, cntx);
+
+            bool enterpriseVoice = false;
 
             WebsitePanel.Providers.HostedSolution.LyncUserPlan plan = planSelector.plan;
             if (plan != null)
-                EnterpriseVoice = plan.EnterpriseVoice;
+                enterpriseVoice = plan.EnterpriseVoice && enterpriseVoiceQuota && (ddlPhoneNumber.Items.Count > 0);
 
-            pnEnterpriseVoice.Visible = EnterpriseVoice && (ddlPhoneNumber.Items.Count>0);
+            pnEnterpriseVoice.Visible = enterpriseVoice;
 
-            if (!EnterpriseVoice)
+            if (!enterpriseVoice)
             {
                 ddlPhoneNumber.Text = "";
                 tbPin.Text = "";
             }
 
-            if (EnterpriseVoice)
+            if (enterpriseVoice)
             {
                 string[] pinPolicy = ES.Services.Lync.GetPolicyList(PanelRequest.ItemID, LyncPolicyType.Pin, "MinPasswordLength");
                 if (pinPolicy != null)
@@ -123,10 +126,16 @@ namespace WebsitePanel.Portal.Lync
                 return;
             try
             {
+                PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+                bool enterpriseVoiceQuota = Utils.CheckQouta(Quotas.LYNC_ENTERPRISEVOICE, cntx);
+
+                string lineUri = "";
+                if ((enterpriseVoiceQuota) & (ddlPhoneNumber.Items.Count != 0)) lineUri = ddlPhoneNumber.SelectedItem.Text + ":" + tbPin.Text;
+
                 LyncUserResult res =  ES.Services.Lync.SetUserLyncPlan(PanelRequest.ItemID, PanelRequest.AccountID, Convert.ToInt32(planSelector.planId));
                 if (res.IsSuccess && res.ErrorCodes.Count == 0)
                 {
-                    res = ES.Services.Lync.SetLyncUserGeneralSettings(PanelRequest.ItemID, PanelRequest.AccountID, lyncUserSettings.sipAddress, ddlPhoneNumber.SelectedItem.Text + ":" + tbPin.Text);
+                    res = ES.Services.Lync.SetLyncUserGeneralSettings(PanelRequest.ItemID, PanelRequest.AccountID, lyncUserSettings.sipAddress, lineUri);
                 }
 
                 if (res.IsSuccess && res.ErrorCodes.Count == 0)

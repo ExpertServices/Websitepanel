@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using WebsitePanel.Portal.Code.UserControls;
 using WebsitePanel.WebPortal;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Portal.ExchangeServer.UserControls
 {
@@ -59,8 +60,23 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
 
-            if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPMANAGEMENT, cntx) || Utils.CheckQouta(Quotas.EXCHANGE2007_DISTRIBUTIONLISTS, cntx))
+            bool bSuccess = Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPMANAGEMENT, cntx);
+
+            if (!bSuccess)
+            {
+                // get user settings
+                OrganizationUser user = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID, PanelRequest.AccountID);
+
+                bSuccess = (Utils.CheckQouta(Quotas.EXCHANGE2007_DISTRIBUTIONLISTS, cntx)
+                    && (user.AccountType == ExchangeAccountType.Mailbox
+                        || user.AccountType == ExchangeAccountType.Room
+                            || user.AccountType == ExchangeAccountType.Equipment));
+            }
+
+            if (bSuccess)
+            {
                 tabsList.Add(CreateTab("user_memberof", "Tab.MemberOf"));
+            }
 
             // find selected menu item
             int idx = 0;

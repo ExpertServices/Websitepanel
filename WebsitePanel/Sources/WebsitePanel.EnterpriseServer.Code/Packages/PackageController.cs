@@ -229,6 +229,8 @@ namespace WebsitePanel.EnterpriseServer
             if (result.ExceedingQuotas.Tables[0].Rows.Count > 0)
                 result.Result = BusinessErrorCodes.ERROR_PACKAGE_QUOTA_EXCEED;
 
+            DataProvider.DistributePackageServices(SecurityContext.User.UserId, plan.PackageId);
+
             return result;
         }
 
@@ -619,7 +621,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 BackgroundTask topTask = TaskManager.TopTask;
 
-                topTask.ItemId = userId;
+                topTask.ItemId = result.Result;
                 topTask.UpdateParamValue("SendLetter", sendLetter);
 
                 TaskController.UpdateTaskWithParams(topTask);
@@ -724,7 +726,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 BackgroundTask topTask = TaskManager.TopTask;
 
-                topTask.ItemId = userId;
+                topTask.ItemId = result.Result;
                 topTask.UpdateParamValue("Signup", signup);
                 topTask.UpdateParamValue("UserId", userId);
                 topTask.UpdateParamValue("SendLetter", sendLetter);
@@ -781,6 +783,8 @@ namespace WebsitePanel.EnterpriseServer
 
                 // Update the Hard quota on home folder in case it was enabled and in case there was a change in disk space
                 UpdatePackageHardQuota(package.PackageId);
+
+                DataProvider.DistributePackageServices(SecurityContext.User.UserId, package.PackageId);
             }
             finally
             {
@@ -1011,7 +1015,7 @@ namespace WebsitePanel.EnterpriseServer
                 return;
 
             string homeFolder = FilesController.GetHomeFolder(packageId);
-            FilesController.SetFolderQuota(packageId, homeFolder, driveName);
+            FilesController.SetFolderQuota(packageId, homeFolder, driveName, Quotas.OS_DISKSPACE);
 
         }
 

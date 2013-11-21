@@ -42,6 +42,8 @@ using WebsitePanel.Server.Utils;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.WebAppGallery;
 using WebsitePanel.Providers.Common;
+using Microsoft.Web.Administration;
+using Microsoft.Web.Management.Server;
 
 namespace WebsitePanel.Server
 {
@@ -1093,6 +1095,82 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
+
+    
+
+        #endregion
+
+        #region Helicon Zoo
+
+        [WebMethod, SoapHeader("settings")]
+        public WebVirtualDirectory[] GetZooApplications(string siteId)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetZooApplications", ProviderSettings.ProviderName);
+                WebVirtualDirectory[] result = WebProvider.GetZooApplications(siteId);
+                Log.WriteEnd("'{0}' GetZooApplications", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetZooApplications", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public StringResultObject SetZooEnvironmentVariable(string siteId, string appName, string envName, string envValue)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' SetZooEnvironmentVariable", ProviderSettings.ProviderName);
+                StringResultObject result = WebProvider.SetZooEnvironmentVariable(siteId, appName, envName, envValue);
+                Log.WriteEnd("'{0}' SetZooEnvironmentVariable", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' SetZooEnvironmentVariable", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public StringResultObject SetZooConsoleEnabled(string siteId, string appName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' SetZooConsoleEnabled", ProviderSettings.ProviderName);
+                StringResultObject result = WebProvider.SetZooConsoleEnabled(siteId, appName);
+                Log.WriteEnd("'{0}' SetZooConsoleEnabled", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' SetZooConsoleEnabled", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+            
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public StringResultObject SetZooConsoleDisabled(string siteId, string appName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' SetZooConsoleDisabled", ProviderSettings.ProviderName);
+                StringResultObject result = WebProvider.SetZooConsoleDisabled(siteId, appName);
+                Log.WriteEnd("'{0}' SetZooConsoleDisabled", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' SetZooConsoleDisabled", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
         #endregion
 
         #region Web Application Gallery
@@ -1545,5 +1623,21 @@ namespace WebsitePanel.Server
 			return WebProvider.CheckCertificate(webSite);
 		} 
 		#endregion
+
+        #region Directory Browsing
+
+        [WebMethod, SoapHeader("settings")]
+        public bool GetDirectoryBrowseEnabled(string siteId)
+        {
+            return WebProvider.GetDirectoryBrowseEnabled(siteId);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public  void SetDirectoryBrowseEnabled(string siteId, bool enabled)
+        {
+            WebProvider.SetDirectoryBrowseEnabled(siteId, enabled);
+        }
+
+        #endregion
     }
 }

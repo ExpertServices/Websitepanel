@@ -3375,7 +3375,7 @@ namespace WebsitePanel.EnterpriseServer
                 int packageCheck = SecurityContext.CheckPackage(org.PackageId, DemandPackage.IsActive);
                 if (packageCheck < 0) return packageCheck;
 
-                string accountName = BuildAccountName(org.OrganizationId, name);
+                string accountName = OrganizationController.BuildAccountNameWithOrgId(org.OrganizationId, name, org.ServiceId);
 
                 // add account
                 // add contact
@@ -3993,8 +3993,7 @@ namespace WebsitePanel.EnterpriseServer
                 List<ExchangeAccount> DistributionLists = GetAccounts(itemId, ExchangeAccountType.DistributionList);
                 foreach (ExchangeAccount DistributionAccount in DistributionLists)
                 {
-                    //ExchangeDistributionList DistributionList = exchange.GetDistributionListGeneralSettings(DistributionAccount.AccountName);
-                    OrganizationSecurityGroup DistributionList = OrganizationController.GetSecurityGroupGeneralSettings(itemId, DistributionAccount.AccountId);
+                    ExchangeDistributionList DistributionList = exchange.GetDistributionListGeneralSettings(DistributionAccount.AccountName);
 
                     foreach (ExchangeAccount member in DistributionList.MembersAccounts)
                     {

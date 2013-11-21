@@ -169,6 +169,7 @@
     <Compile Include="Code\Framework\Utils.cs" />
     <Compile Include="Code\Helpers\AuditLogHelper.cs" />
     <Compile Include="Code\Helpers\BlackBerryHelper.cs" />
+    <Compile Include="Code\Helpers\EnterpriseStorageHelper.cs" />
     <Compile Include="Code\Helpers\LyncHelper.cs" />
     <Compile Include="Code\Helpers\VirtualMachinesForPCHelper.cs" />
     <Compile Include="Code\Helpers\CRMHelper.cs" />
@@ -209,6 +210,27 @@
     <Compile Include="Code\ReportingServices\IResourceStorage.cs" />
     <Compile Include="Code\ReportingServices\ReportingServicesUtils.cs" />
     <Compile Include="Code\UserControls\Tab.cs" />
+    <Compile Include="ExchangeServer\EnterpriseStorageFolderGeneralSettings.ascx.cs">
+      <DependentUpon>EnterpriseStorageFolderGeneralSettings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageFolderGeneralSettings.ascx.designer.cs">
+      <DependentUpon>EnterpriseStorageFolderGeneralSettings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageCreateFolder.ascx.cs">
+      <DependentUpon>EnterpriseStorageCreateFolder.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageCreateFolder.ascx.designer.cs">
+      <DependentUpon>EnterpriseStorageCreateFolder.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageFolders.ascx.cs">
+      <DependentUpon>EnterpriseStorageFolders.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageFolders.ascx.designer.cs">
+      <DependentUpon>EnterpriseStorageFolders.ascx</DependentUpon>    
+    </Compile>
     <Compile Include="ExchangeServer\OrganizationSecurityGroupMemberOf.ascx.cs">
       <DependentUpon>OrganizationSecurityGroupMemberOf.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -289,6 +311,13 @@
     <Compile Include="ExchangeServer\UserControls\AccountsListWithPermissions.ascx.cs">
       <DependentUpon>AccountsListWithPermissions.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\EnterpriseStoragePermissions.ascx.cs">
+      <DependentUpon>EnterpriseStoragePermissions.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\EnterpriseStoragePermissions.ascx.designer.cs">
+      <DependentUpon>EnterpriseStoragePermissions.ascx</DependentUpon>
     </Compile>
     <Compile Include="ExchangeServer\UserControls\GroupsList.ascx.cs">
       <DependentUpon>GroupsList.ascx</DependentUpon>
@@ -374,6 +403,13 @@
     <Compile Include="Lync\LyncFederationDomains.ascx.designer.cs">
       <DependentUpon>LyncFederationDomains.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Lync\LyncPhoneNumbers.ascx.cs">
+      <DependentUpon>LyncPhoneNumbers.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Lync\LyncPhoneNumbers.ascx.designer.cs">
+      <DependentUpon>LyncPhoneNumbers.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Lync\LyncUserPlans.ascx.cs">
       <DependentUpon>LyncUserPlans.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -408,6 +444,13 @@
     </Compile>
     <Compile Include="ProviderControls\CRM2011_Settings.ascx.designer.cs">
       <DependentUpon>CRM2011_Settings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\EnterpriseStorage_Settings.ascx.cs">
+      <DependentUpon>EnterpriseStorage_Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\EnterpriseStorage_Settings.ascx.designer.cs">
+      <DependentUpon>EnterpriseStorage_Settings.ascx</DependentUpon>
     </Compile>
     <Compile Include="ProviderControls\HeliconZoo_Settings.ascx.cs">
       <DependentUpon>HeliconZoo_Settings.ascx</DependentUpon>
@@ -465,6 +508,13 @@
       <DependentUpon>Lync_Settings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="ProviderControls\RDS_Settings.ascx.cs">
+      <DependentUpon>RDS_Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\RDS_Settings.ascx.designer.cs">
+      <DependentUpon>RDS_Settings.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ServersEditWebPlatformInstaller.ascx.cs">
       <DependentUpon>ServersEditWebPlatformInstaller.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -510,6 +560,13 @@
     <Compile Include="UserControls\OrgIdPolicyEditor.ascx.designer.cs">
       <DependentUpon>OrgIdPolicyEditor.ascx</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\OrgPolicyEditor.ascx.cs">
+      <DependentUpon>OrgPolicyEditor.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\OrgPolicyEditor.ascx.designer.cs">
+      <DependentUpon>OrgPolicyEditor.ascx</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\PackagePhoneNumbers.ascx.cs">
       <DependentUpon>PackagePhoneNumbers.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -517,11 +574,11 @@
     <Compile Include="UserControls\PackagePhoneNumbers.ascx.designer.cs">
       <DependentUpon>PackagePhoneNumbers.ascx</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\AllocatePackagePhoneNumbers.ascx.cs">
+    <Compile Include="Lync\UserControls\AllocatePackagePhoneNumbers.ascx.cs">
       <DependentUpon>AllocatePackagePhoneNumbers.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="UserControls\AllocatePackagePhoneNumbers.ascx.designer.cs">
+    <Compile Include="Lync\UserControls\AllocatePackagePhoneNumbers.ascx.designer.cs">
       <DependentUpon>AllocatePackagePhoneNumbers.ascx</DependentUpon>
     </Compile>
     <Compile Include="VPSForPC\MonitoringPage.aspx.cs">
@@ -3949,11 +4006,11 @@
     <Compile Include="LyncPhoneNumbers.ascx.designer.cs">
       <DependentUpon>LyncPhoneNumbers.ascx</DependentUpon>
     </Compile>
-    <Compile Include="LyncAllocatePhoneNumbers.ascx.cs">
+    <Compile Include="Lync\LyncAllocatePhoneNumbers.ascx.cs">
       <DependentUpon>LyncAllocatePhoneNumbers.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="LyncAllocatePhoneNumbers.ascx.designer.cs">
+    <Compile Include="Lync\LyncAllocatePhoneNumbers.ascx.designer.cs">
       <DependentUpon>LyncAllocatePhoneNumbers.ascx</DependentUpon>
     </Compile>
     <Compile Include="PhoneNumbers.ascx.cs">
@@ -3980,6 +4037,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplyEnableHardQuotaFeature.ascx" />
+    <Content Include="ExchangeServer\EnterpriseStorageFolderGeneralSettings.ascx" />
+    <Content Include="ExchangeServer\EnterpriseStorageCreateFolder.ascx" />
+    <Content Include="ExchangeServer\EnterpriseStorageFolders.ascx" />
     <Content Include="ExchangeServer\OrganizationSecurityGroupMemberOf.ascx" />
     <Content Include="ExchangeServer\ExchangeDistributionListMemberOf.ascx" />
     <Content Include="ExchangeServer\ExchangeMailboxMemberOf.ascx" />
@@ -3992,12 +4052,16 @@
     <Content Include="ExchangeServer\OrganizationSecurityGroupGeneralSettings.ascx" />
     <Content Include="ExchangeServer\OrganizationSecurityGroups.ascx" />
     <Content Include="ExchangeServer\OrganizationUserMemberOf.ascx" />
+    <Content Include="ExchangeServer\UserControls\EnterpriseStoragePermissions.ascx" />
     <Content Include="ExchangeServer\UserControls\GroupsList.ascx" />
     <Content Include="ExchangeServer\UserControls\SecurityGroupTabs.ascx" />
     <Content Include="ExchangeServer\UserControls\UsersList.ascx" />
+    <Content Include="Lync\LyncPhoneNumbers.ascx" />
     <Content Include="Lync\UserControls\LyncUserSettings.ascx" />
     <Content Include="ProviderControls\CRM2011_Settings.ascx" />
+    <Content Include="ProviderControls\EnterpriseStorage_Settings.ascx" />
     <Content Include="ProviderControls\HeliconZoo_Settings.ascx" />
+    <Content Include="ProviderControls\RDS_Settings.ascx" />
     <Content Include="ServersEditWebPlatformInstaller.ascx" />
     <Content Include="ExchangeServer\ExchangeMailboxPlans.ascx" />
     <Content Include="ExchangeServer\UserControls\AccountsListWithPermissions.ascx" />
@@ -4023,8 +4087,9 @@
     <Content Include="SettingsLyncUserPlansPolicy.ascx" />
     <Content Include="UserControls\EditFeedsList.ascx" />
     <Content Include="UserControls\OrgIdPolicyEditor.ascx" />
+    <Content Include="UserControls\OrgPolicyEditor.ascx" />
     <Content Include="UserControls\PackagePhoneNumbers.ascx" />
-    <Content Include="UserControls\AllocatePackagePhoneNumbers.ascx" />
+    <Content Include="Lync\UserControls\AllocatePackagePhoneNumbers.ascx" />
     <Content Include="VPSForPC\MonitoringPage.aspx" />
     <Content Include="VPSForPC\VdcAccountVLanAdd.ascx" />
     <Content Include="VPSForPC\VdcAccountVLanNetwork.ascx" />
@@ -4088,7 +4153,7 @@
     <Content Include="WebSitesHeliconZooControl.ascx" />
     <Content Include="WebsitesSSL.ascx" />
     <Content Include="LyncPhoneNumbers.ascx" />
-    <Content Include="LyncAllocatePhoneNumbers.ascx" />
+    <Content Include="Lync\LyncAllocatePhoneNumbers.ascx" />
     <Content Include="PhoneNumbers.ascx" />
     <Content Include="PhoneNumbersAddPhoneNumber.ascx" />
     <Content Include="PhoneNumbersEditPhoneNumber.ascx" />
@@ -5176,7 +5241,7 @@
     <Content Include="UserControls\App_LocalResources\PackagePhoneNumbers.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="UserControls\App_LocalResources\AllocatePackagePhoneNumbers.ascx.resx">
+    <Content Include="Lync\UserControls\App_LocalResources\AllocatePackagePhoneNumbers.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
     <None Include="Resources\Windows2008_Settings.ascx.resx" />
@@ -5193,7 +5258,7 @@
     <Content Include="App_LocalResources\LyncPhoneNumbers.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_LocalResources\LyncAllocatePhoneNumbers.ascx.resx">
+    <Content Include="Lync\App_LocalResources\LyncAllocatePhoneNumbers.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="App_LocalResources\PhoneNumbers.ascx.resx" />
@@ -5208,7 +5273,21 @@
     <Content Include="ExchangeServer\UserControls\App_LocalResources\GroupsList.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="ExchangeServer\App_LocalResources\OrganizationSecurityGroupMemberOf.ascx.resx" />
+    <Content Include="ProviderControls\App_LocalResources\EnterpriseStorage_Settings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolders.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>    
+    <Content Include="UserControls\App_LocalResources\OrgPolicyEditor.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageCreateFolder.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolderGeneralSettings.ascx.resx" />
+    <Content Include="ExchangeServer\UserControls\App_LocalResources\EnterpriseStoragePermissions.ascx.resx" />
+    <Content Include="Lync\App_LocalResources\LyncPhoneNumbers.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -6162,9 +6241,7 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Lync\UserControls\App_LocalResources\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

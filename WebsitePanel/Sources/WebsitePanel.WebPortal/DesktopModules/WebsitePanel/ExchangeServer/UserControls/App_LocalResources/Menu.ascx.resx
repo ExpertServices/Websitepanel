@@ -148,7 +148,7 @@
     <value>Mailboxes</value>
   </data>
   <data name="Text.OrganizationGroup" xml:space="preserve">
-    <value>Organization's</value>
+    <value>Organization</value>
   </data>
   <data name="Text.CRMGroup" xml:space="preserve">
     <value>CRM</value>
@@ -203,5 +203,14 @@
   </data>
   <data name="Text.SecurityGroups" xml:space="preserve">
     <value>Groups</value>
+  </data>
+  <data name="Text.EnterpriseStorageGroup" xml:space="preserve">
+    <value>Enterprise Storage</value>
+  </data>
+  <data name="Text.EnterpriseStorageFolders" xml:space="preserve">
+    <value>Folders</value>
+  </data>
+  <data name="Text.LyncPhoneNumbers" xml:space="preserve">
+    <value>Phone Numbers</value>
   </data>
 </root>
