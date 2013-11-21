@@ -2419,3 +2419,191 @@ INSERT [dbo].[Providers] ([ProviderId], [GroupId], [ProviderName], [DisplayName]
 VALUES(1501, 45, N'RemoteDesktopServices2012', N'Remote Desktop Services Windows 2012', N'WebsitePanel.Providers.RemoteDesktopServices.Windows2012,WebsitePanel.Providers.RemoteDesktopServices.Windows2012', N'RDS',	1)
 END
 GO
+
+-- Added phone numbers in the hosted organization.
+
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='PackageIPAddresses' AND COLS.name='OrgID')
+BEGIN
+ALTER TABLE [dbo].[PackageIPAddresses] ADD
+	[OrgID] [int] NULL
+END
+GO
+
+ALTER PROCEDURE [dbo].[AllocatePackageIPAddresses]
+(
+	@PackageID int,
+	@OrgID int,
+	@xml ntext
+)
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+	DECLARE @idoc int
+	--Create an internal representation of the XML document.
+	EXEC sp_xml_preparedocument @idoc OUTPUT, @xml
+
+	-- delete
+	DELETE FROM PackageIPAddresses
+	FROM PackageIPAddresses AS PIP
+	INNER JOIN OPENXML(@idoc, '/items/item', 1) WITH 
+	(
+		AddressID int '@id'
+	) as PV ON PIP.AddressID = PV.AddressID
+
+
+	-- insert
+	INSERT INTO dbo.PackageIPAddresses
+	(		
+		PackageID,
+		OrgID,
+		AddressID	
+	)
+	SELECT		
+		@PackageID,
+		@OrgID,
+		AddressID
+
+	FROM OPENXML(@idoc, '/items/item', 1) WITH 
+	(
+		AddressID int '@id'
+	) as PV
+
+	-- remove document
+	exec sp_xml_removedocument @idoc
+
+END
+GO
+
+ALTER PROCEDURE [dbo].[GetPackageIPAddresses]
+(
+	@PackageID int,
+	@OrgID int,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int,
+	@PoolID int = 0,
+	@Recursive bit = 0
+)
+AS
+BEGIN
+
+
+-- start
+DECLARE @condition nvarchar(700)
+SET @condition = '
+((@Recursive = 0 AND PA.PackageID = @PackageID)
+OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, PA.PackageID) = 1))
+AND (@PoolID = 0 OR @PoolID <> 0 AND IP.PoolID = @PoolID)
+AND (@OrgID = 0 OR @OrgID <> 0 AND PA.OrgID = @OrgID)
+'
+
+IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+AND @FilterValue <> '' AND @FilterValue IS NOT NULL
+SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'IP.ExternalIP ASC'
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+SELECT COUNT(PA.PackageAddressID)
+FROM dbo.PackageIPAddresses PA
+INNER JOIN dbo.IPAddresses AS IP ON PA.AddressID = IP.AddressID
+INNER JOIN dbo.Packages P ON PA.PackageID = P.PackageID
+INNER JOIN dbo.Users U ON U.UserID = P.UserID
+LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
+WHERE ' + @condition + '
+
+DECLARE @Addresses AS TABLE
+(
+	PackageAddressID int
+);
+
+WITH TempItems AS (
+	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
+		PA.PackageAddressID
+	FROM dbo.PackageIPAddresses PA
+	INNER JOIN dbo.IPAddresses AS IP ON PA.AddressID = IP.AddressID
+	INNER JOIN dbo.Packages P ON PA.PackageID = P.PackageID
+	INNER JOIN dbo.Users U ON U.UserID = P.UserID
+	LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
+	WHERE ' + @condition + '
+)
+
+INSERT INTO @Addresses
+SELECT PackageAddressID FROM TempItems
+WHERE TempItems.Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
+
+SELECT
+	PA.PackageAddressID,
+	PA.AddressID,
+	IP.ExternalIP,
+	IP.InternalIP,
+	IP.SubnetMask,
+	IP.DefaultGateway,
+	PA.ItemID,
+	SI.ItemName,
+	PA.PackageID,
+	P.PackageName,
+	P.UserID,
+	U.UserName,
+	PA.IsPrimary
+FROM @Addresses AS TA
+INNER JOIN dbo.PackageIPAddresses AS PA ON TA.PackageAddressID = PA.PackageAddressID
+INNER JOIN dbo.IPAddresses AS IP ON PA.AddressID = IP.AddressID
+INNER JOIN dbo.Packages P ON PA.PackageID = P.PackageID
+INNER JOIN dbo.Users U ON U.UserID = P.UserID
+LEFT JOIN ServiceItems SI ON PA.ItemId = SI.ItemID
+'
+
+print @sql
+
+exec sp_executesql @sql, N'@PackageID int, @OrgID int, @StartRow int, @MaximumRows int, @Recursive bit, @PoolID int',
+@PackageID, @OrgID, @StartRow, @MaximumRows, @Recursive, @PoolID
+
+END
+GO
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetPackageUnassignedIPAddresses]
+(
+	@ActorID int,
+	@PackageID int,
+	@OrgID int,
+	@PoolID int = 0
+)
+AS
+BEGIN
+	SELECT
+		PIP.PackageAddressID,
+		IP.AddressID,
+		IP.ExternalIP,
+		IP.InternalIP,
+		IP.ServerID,
+		IP.PoolID,
+		PIP.IsPrimary,
+		IP.SubnetMask,
+		IP.DefaultGateway
+	FROM PackageIPAddresses AS PIP
+	INNER JOIN IPAddresses AS IP ON PIP.AddressID = IP.AddressID
+	WHERE
+		PIP.ItemID IS NULL
+		AND PIP.PackageID = @PackageID
+		AND (@PoolID = 0 OR @PoolID <> 0 AND IP.PoolID = @PoolID)
+		AND (@OrgID = 0 OR @OrgID <> 0 AND PIP.OrgID = @OrgID)
+		AND dbo.CheckActorPackageRights(@ActorID, PIP.PackageID) = 1
+	ORDER BY IP.DefaultGateway, IP.ExternalIP
+END
+GO
+
+-- CRM
+
+UPDATE Providers SET EditorControl = 'CRM2011' Where ProviderID = 1201;

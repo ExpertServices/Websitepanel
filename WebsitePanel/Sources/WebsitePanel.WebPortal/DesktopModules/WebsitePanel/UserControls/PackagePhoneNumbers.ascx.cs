@@ -118,7 +118,8 @@ namespace WebsitePanel.Portal.UserControls
 
         protected void btnAllocateAddress_Click(object sender, EventArgs e)
         {
-            Response.Redirect(HostModule.EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), AllocateAddressesControl));
+            Response.Redirect(HostModule.EditUrl("ItemID", PanelRequest.ItemID.ToString(), AllocateAddressesControl,
+                PortalUtils.SPACE_ID_PARAM + "=" + PanelSecurity.PackageId));
         }
 
         protected void gvAddresses_RowDataBound(object sender, GridViewRowEventArgs e)

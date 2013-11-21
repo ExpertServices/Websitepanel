@@ -92,7 +92,7 @@ namespace WebsitePanel.Portal
         {
             ddlIpAddresses.Items.Add(new ListItem("<Select IP>", ""));
 
-            PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(PanelSecurity.PackageId, IPAddressPool.WebSites);
+            PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(PanelSecurity.PackageId, 0, IPAddressPool.WebSites);
             foreach (PackageIPAddress ip in ips)
             {
                 string fullIP = ip.ExternalIP;

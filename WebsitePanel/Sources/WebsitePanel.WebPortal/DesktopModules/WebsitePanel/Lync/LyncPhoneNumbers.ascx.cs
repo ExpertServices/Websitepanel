@@ -32,13 +32,12 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace WebsitePanel.Portal
+namespace WebsitePanel.Portal.Lync
 {
-    public partial class LyncAllocatePhoneNumbers : WebsitePanelModuleBase
+    public partial class LyncPhoneNumbers : WebsitePanelModuleBase
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
         }
     }
 }

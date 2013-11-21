@@ -246,6 +246,9 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             if (Utils.CheckQouta(Quotas.LYNC_FEDERATION, cntx))
                 lyncGroup.MenuItems.Add(CreateMenuItem("LyncFederationDomains", "lync_federationdomains"));
 
+            if (Utils.CheckQouta(Quotas.LYNC_PHONE, cntx))
+                lyncGroup.MenuItems.Add(CreateMenuItem("LyncPhoneNumbers", "lync_phonenumbers"));
+
             groups.Add(lyncGroup);
         }
 

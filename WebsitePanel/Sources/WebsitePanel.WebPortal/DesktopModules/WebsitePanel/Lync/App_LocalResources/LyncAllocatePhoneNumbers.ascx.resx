@@ -123,4 +123,7 @@
   <data name="secQuotas.Text" xml:space="preserve">
     <value>Quotas</value>
   </data>
+  <data name="Text.PageName" xml:space="preserve">
+    <value>Phone Numbers</value>
+  </data>
 </root>

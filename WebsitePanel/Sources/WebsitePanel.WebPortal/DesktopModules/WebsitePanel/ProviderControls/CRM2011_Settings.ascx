@@ -51,14 +51,47 @@
     </tr>
     
     <tr>
-        <td class="SubHead" width="200" nowrap>Deployment web service</td>
+        <td class="SubHead" width="200" nowrap>Web Application Server</td>
         <td class="Normal" width="100%">
             <asp:TextBox runat="server" ID="txtAppRootDomain" Width="200px" />
             <asp:RequiredFieldValidator runat="server" ControlToValidate="txtAppRootDomain" ErrorMessage="*" />
         </td>
     </tr>
     
+    <tr>
+        <td class="SubHead" width="200" nowrap>Organization Web Service</td>
+        <td class="Normal" width="100%">
+            <asp:TextBox runat="server" ID="txtOrganizationWebService" Width="200px" />
+        </td>
+    </tr>
     
+    <tr>
+        <td class="SubHead" width="200" nowrap>Discovery Web Service</td>
+        <td class="Normal" width="100%">
+            <asp:TextBox runat="server" ID="txtDiscoveryWebService" Width="200px" />
+            <asp:RequiredFieldValidator runat="server" ControlToValidate="txtDiscoveryWebService" ErrorMessage="*" />
+        </td>
+    </tr>
+
+    <tr>
+        <td class="SubHead" width="200" nowrap>Deployment Web Service</td>
+        <td class="Normal" width="100%">
+            <asp:TextBox runat="server" ID="txtDeploymentWebService" Width="200px" />
+            <asp:RequiredFieldValidator runat="server" ControlToValidate="txtDeploymentWebService" ErrorMessage="*" />
+        </td>
+    </tr>
     
-    
+    <tr>
+        <td class="SubHead" width="200" nowrap>Service account</td>
+        <td class="Normal" width="100%">
+            <asp:TextBox runat="server" ID="txtUserName" Width="200px" />
+        </td>
+    </tr>
+    <tr>
+        <td class="SubHead" width="200" nowrap>Password</td>
+        <td class="Normal" width="100%">
+            <asp:TextBox runat="server" ID="txtPassword" Width="200px" TextMode="Password" />
+        </td>
+    </tr>
+
 </table>

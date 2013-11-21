@@ -1,5 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AllocatePackagePhoneNumbers.ascx.cs" Inherits="WebsitePanel.Portal.UserControls.AllocatePackagePhoneNumbers" %>
-<%@ Register Src="SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
+<%@ Register Src="../../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 
 
 <wsp:SimpleMessageBox id="messageBox" runat="server" />

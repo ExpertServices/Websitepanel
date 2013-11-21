@@ -36,7 +36,7 @@ using WebsitePanel.Providers.Common;
 
 namespace WebsitePanel.Portal.UserControls
 {
-    public partial class AllocatePackagePhoneNumbers : WebsitePanelControlBase
+    public partial class AllocatePackagePhoneNumbers : WebsitePanelModuleBase
     {
         private IPAddressPool pool;
         public IPAddressPool Pool
@@ -129,6 +129,7 @@ namespace WebsitePanel.Portal.UserControls
                 }
 
                 ResultObject res = ES.Services.Servers.AllocatePackageIPAddresses(PanelSecurity.PackageId,
+                                                     PanelRequest.ItemID,
                                                      ResourceGroup, Pool,
                                                      radioExternalRandom.Checked,
                                                      Utils.ParseInt(txtExternalAddressesNumber.Text),
@@ -136,7 +137,8 @@ namespace WebsitePanel.Portal.UserControls
                 if (res.IsSuccess)
                 {
                     // return back
-                    Response.Redirect(HostModule.EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), ListAddressesControl));
+                    Response.Redirect(HostModule.EditUrl("ItemID", PanelRequest.ItemID.ToString(), ListAddressesControl,
+                                    PortalUtils.SPACE_ID_PARAM + "=" + PanelSecurity.PackageId));
                 }
                 else
                 {

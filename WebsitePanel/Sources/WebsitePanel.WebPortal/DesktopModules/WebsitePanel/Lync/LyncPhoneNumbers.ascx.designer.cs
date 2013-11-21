@@ -7,19 +7,64 @@
 // </автоматически создаваемое>
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal {
+namespace WebsitePanel.Portal.Lync {
     
     
     public partial class LyncPhoneNumbers {
         
         /// <summary>
-        /// webAddresses элемент управления.
+        /// asyncTasks элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::WebsitePanel.Portal.UserControls.PackagePhoneNumbers webAddresses;
+        protected global::WebsitePanel.Portal.EnableAsyncTasksSupport asyncTasks;
+        
+        /// <summary>
+        /// breadcrumb элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.Breadcrumb breadcrumb;
+        
+        /// <summary>
+        /// menu элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.Menu menu;
+        
+        /// <summary>
+        /// Image1 элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image Image1;
+        
+        /// <summary>
+        /// locTitle элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locTitle;
+        
+        /// <summary>
+        /// phoneNumbers элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.UserControls.PackagePhoneNumbers phoneNumbers;
         
         /// <summary>
         /// secQuotas элемент управления.
@@ -49,12 +94,12 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.Localize locIPQuota;
         
         /// <summary>
-        /// addressesQuota элемент управления.
+        /// phoneQuota элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::WebsitePanel.Portal.Quota addressesQuota;
+        protected global::WebsitePanel.Portal.Quota phoneQuota;
     }
 }

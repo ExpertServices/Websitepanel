@@ -328,7 +328,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return retOrganization;
 		}
 
-		public OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation)
+        public OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string organizationDomainName, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation)
 		{
 			return CreateOrganizationInternal(organizationId, organizationUniqueName, organizationFriendlyName, baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, initialUserDomainName, initialUserFirstName, initialUserLastName, initialUserPrimaryEmail, organizationCollation);
 		}
@@ -1544,6 +1544,11 @@ namespace WebsitePanel.Providers.HostedSolution
 
 			return value.StartsWith("4.");
 		}
+
+        public long GetUsedSpace(Guid organizationId)
+        {
+            return 0;
+        }
 
 	}
 

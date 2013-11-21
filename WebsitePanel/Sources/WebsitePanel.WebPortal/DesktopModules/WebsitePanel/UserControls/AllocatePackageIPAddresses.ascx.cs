@@ -129,6 +129,7 @@ namespace WebsitePanel.Portal.UserControls
                 }
 
                 ResultObject res = ES.Services.Servers.AllocatePackageIPAddresses(PanelSecurity.PackageId,
+                                                     0,
                                                      ResourceGroup, Pool,
                                                      radioExternalRandom.Checked,
                                                      Utils.ParseInt(txtExternalAddressesNumber.Text),
