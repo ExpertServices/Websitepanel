@@ -32,7 +32,7 @@
                     <wsp:AllocatePackagePhoneNumbers id="allocatePhoneNumbers" runat="server"
                             Pool="PhoneNumbers"
                             ResourceGroup="Web"
-                            ListAddressesControl="" />                   
+                            ListAddressesControl="lync_phonenumbers" />                   
                 </div>
             </div>
         </div>

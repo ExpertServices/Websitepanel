@@ -57,7 +57,7 @@ namespace WebsitePanel.Portal.Lync
         private void BindPhoneNumbers()
         {
 
-            PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(PanelSecurity.PackageId, IPAddressPool.PhoneNumbers);
+            PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(PanelSecurity.PackageId, PanelRequest.ItemID, IPAddressPool.PhoneNumbers);
 
             if (ips.Length > 0)
             {

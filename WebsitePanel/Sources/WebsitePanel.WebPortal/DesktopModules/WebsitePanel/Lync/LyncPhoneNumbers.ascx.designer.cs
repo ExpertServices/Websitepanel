@@ -56,5 +56,50 @@ namespace WebsitePanel.Portal.Lync {
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Localize locTitle;
+        
+        /// <summary>
+        /// phoneNumbers элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.UserControls.PackagePhoneNumbers phoneNumbers;
+        
+        /// <summary>
+        /// secQuotas элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.CollapsiblePanel secQuotas;
+        
+        /// <summary>
+        /// QuotasPanel элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel QuotasPanel;
+        
+        /// <summary>
+        /// locIPQuota элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locIPQuota;
+        
+        /// <summary>
+        /// phoneQuota элемент управления.
+        /// </summary>
+        /// <remarks>
+        /// Автоматически создаваемое поле.
+        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.Quota phoneQuota;
     }
 }

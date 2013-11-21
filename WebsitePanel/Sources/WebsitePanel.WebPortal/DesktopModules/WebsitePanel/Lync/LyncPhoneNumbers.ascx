@@ -27,7 +27,7 @@
                     <asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle"></asp:Localize>
                 </div>
                 <div class="FormBody">
-                    <wsp:PackagePhoneNumbers id="webAddresses" runat="server"
+                    <wsp:PackagePhoneNumbers id="phoneNumbers" runat="server"
                             Pool="PhoneNumbers"
                             EditItemControl=""
                             SpaceHomeControl=""
@@ -43,7 +43,7 @@
                     <table cellspacing="6">
                         <tr>
                             <td><asp:Localize ID="locIPQuota" runat="server" meta:resourcekey="locIPQuota" Text="Number of Phone Numbes:"></asp:Localize></td>
-                            <td><wsp:Quota ID="addressesQuota" runat="server" QuotaName="Lync.PhoneNumbers" /></td>
+                            <td><wsp:Quota ID="phoneQuota" runat="server" QuotaName="Lync.PhoneNumbers" /></td>
                         </tr>
                     </table>
     

@@ -51,7 +51,7 @@ namespace WebsitePanel.Portal.VPSForPC
 
         private void BindExternalIPAddresses()
         {
-            PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(PanelSecurity.PackageId, IPAddressPool.VpsExternalNetwork);
+            PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(PanelSecurity.PackageId, 0, IPAddressPool.VpsExternalNetwork);
             foreach (PackageIPAddress ip in ips)
             {
                 string txt = ip.ExternalIP;

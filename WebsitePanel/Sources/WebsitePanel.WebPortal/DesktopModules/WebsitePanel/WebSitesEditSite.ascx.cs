@@ -179,7 +179,7 @@ namespace WebsitePanel.Portal
 
             // bind unassigned IP addresses
             ddlIpAddresses.Items.Clear();
-            PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(site.PackageId, IPAddressPool.WebSites);
+            PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(site.PackageId, 0, IPAddressPool.WebSites);
             foreach (PackageIPAddress ip in ips)
             {
                 string fullIP = ip.ExternalIP;

@@ -386,24 +386,24 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public PackageIPAddressesPaged GetPackageIPAddresses(int packageId, IPAddressPool pool,
+        public PackageIPAddressesPaged GetPackageIPAddresses(int packageId, int orgId, IPAddressPool pool,
             string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows, bool recursive)
         {
-            return ServerController.GetPackageIPAddresses(packageId, pool,
+            return ServerController.GetPackageIPAddresses(packageId, orgId, pool,
                 filterColumn, filterValue, sortColumn, startRow, maximumRows, recursive);
         }
 
         [WebMethod]
-        public List<PackageIPAddress> GetPackageUnassignedIPAddresses(int packageId, IPAddressPool pool)
+        public List<PackageIPAddress> GetPackageUnassignedIPAddresses(int packageId, int orgId, IPAddressPool pool)
         {
-            return ServerController.GetPackageUnassignedIPAddresses(packageId, pool);
+            return ServerController.GetPackageUnassignedIPAddresses(packageId, orgId, pool);
         }
 
         [WebMethod]
-        public ResultObject AllocatePackageIPAddresses(int packageId, string groupName, IPAddressPool pool, bool allocateRandom, int addressesNumber,
+        public ResultObject AllocatePackageIPAddresses(int packageId,int orgId, string groupName, IPAddressPool pool, bool allocateRandom, int addressesNumber,
             int[] addressId)
         {
-            return ServerController.AllocatePackageIPAddresses(packageId, groupName, pool, allocateRandom,
+            return ServerController.AllocatePackageIPAddresses(packageId, orgId, groupName, pool, allocateRandom,
                 addressesNumber, addressId);
         }
 

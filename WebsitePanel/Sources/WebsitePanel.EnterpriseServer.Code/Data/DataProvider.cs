@@ -3205,23 +3205,25 @@ namespace WebsitePanel.EnterpriseServer
         }
 
 
-        public static void AllocatePackageIPAddresses(int packageId, string xml)
+        public static void AllocatePackageIPAddresses(int packageId, int orgId, string xml)
         {
             SqlParameter[] param = new[]
                                        {
                                            new SqlParameter("@PackageID", packageId),
+                                           new SqlParameter("@OrgID", orgId),
                                            new SqlParameter("@xml", xml)
                                        };
 
             ExecuteLongNonQuery("AllocatePackageIPAddresses", param);
         }
 
-        public static IDataReader GetPackageIPAddresses(int packageId, int poolId, string filterColumn, string filterValue,
+        public static IDataReader GetPackageIPAddresses(int packageId, int orgId, int poolId, string filterColumn, string filterValue,
             string sortColumn, int startRow, int maximumRows, bool recursive)
         {
             IDataReader reader = SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
                                      "GetPackageIPAddresses",
                                         new SqlParameter("@PackageID", packageId),
+                                        new SqlParameter("@OrgID", orgId),
                                         new SqlParameter("@PoolId", poolId),
                                         new SqlParameter("@FilterColumn", VerifyColumnName(filterColumn)),
                                         new SqlParameter("@FilterValue", VerifyColumnValue(filterValue)),
@@ -3266,12 +3268,13 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
         #region VPS - External Network Adapter
-        public static IDataReader GetPackageUnassignedIPAddresses(int actorId, int packageId, int poolId)
+        public static IDataReader GetPackageUnassignedIPAddresses(int actorId, int packageId, int orgId, int poolId)
         {
             return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
                                 "GetPackageUnassignedIPAddresses",
                                 new SqlParameter("@ActorID", actorId),
                                 new SqlParameter("@PackageID", packageId),
+                                new SqlParameter("@OrgID", orgId),
                                 new SqlParameter("@PoolId", poolId));
         }
 
