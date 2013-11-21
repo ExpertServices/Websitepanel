@@ -45,7 +45,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// asyncTasks control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -55,7 +55,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// breadcrumb control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -65,7 +65,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// menu control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -75,7 +75,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// Image1 control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -85,7 +85,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// locTitle control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -95,7 +95,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// litDisplayName control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -105,7 +105,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// messageBox control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -115,7 +115,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// locDisplayName control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -125,7 +125,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// txtDisplayName control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -135,7 +135,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// valRequireDisplayName control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -145,7 +145,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// locNotes control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -155,7 +155,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// txtNotes control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -165,7 +165,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// btnSave control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -175,7 +175,7 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// ValidationSummary1 control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>

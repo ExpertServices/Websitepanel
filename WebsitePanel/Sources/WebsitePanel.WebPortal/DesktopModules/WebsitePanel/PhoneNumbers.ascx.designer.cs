@@ -45,7 +45,7 @@ namespace WebsitePanel.Portal {
         /// messageBox control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -55,7 +55,7 @@ namespace WebsitePanel.Portal {
         /// btnAddItem control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -65,7 +65,7 @@ namespace WebsitePanel.Portal {
         /// searchBox control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -75,7 +75,7 @@ namespace WebsitePanel.Portal {
         /// gvIPAddresses control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -85,7 +85,7 @@ namespace WebsitePanel.Portal {
         /// odsIPAddresses control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -95,7 +95,7 @@ namespace WebsitePanel.Portal {
         /// btnEditSelected control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -105,7 +105,7 @@ namespace WebsitePanel.Portal {
         /// btnDeleteSelected control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -115,7 +115,7 @@ namespace WebsitePanel.Portal {
         /// lblItemsPerPage control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -125,7 +125,7 @@ namespace WebsitePanel.Portal {
         /// ddlItemsPerPage control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>

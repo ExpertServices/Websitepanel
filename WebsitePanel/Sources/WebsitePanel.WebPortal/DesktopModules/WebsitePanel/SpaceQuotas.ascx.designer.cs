@@ -45,7 +45,7 @@ namespace WebsitePanel.Portal {
         /// pnlDiskspace control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -55,7 +55,7 @@ namespace WebsitePanel.Portal {
         /// quotaDiskspace control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -65,7 +65,7 @@ namespace WebsitePanel.Portal {
         /// lnkViewDiskspaceDetails control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -75,7 +75,7 @@ namespace WebsitePanel.Portal {
         /// pnlBandwidth control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -85,7 +85,7 @@ namespace WebsitePanel.Portal {
         /// quotaBandwidth control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -95,7 +95,7 @@ namespace WebsitePanel.Portal {
         /// lnkViewBandwidthDetails control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -105,7 +105,7 @@ namespace WebsitePanel.Portal {
         /// pnlDomains control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -115,7 +115,7 @@ namespace WebsitePanel.Portal {
         /// lblDomains control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -125,7 +125,7 @@ namespace WebsitePanel.Portal {
         /// quotaDomains control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -135,7 +135,7 @@ namespace WebsitePanel.Portal {
         /// pnlSubDomains control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -145,7 +145,7 @@ namespace WebsitePanel.Portal {
         /// lblSubDomains control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -155,7 +155,7 @@ namespace WebsitePanel.Portal {
         /// quotaSubDomains control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -165,7 +165,7 @@ namespace WebsitePanel.Portal {
         /// pnlDomainPointers control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -175,7 +175,7 @@ namespace WebsitePanel.Portal {
         /// lblDomainPointers control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -185,7 +185,7 @@ namespace WebsitePanel.Portal {
         /// quotaDomainPointers control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -195,7 +195,7 @@ namespace WebsitePanel.Portal {
         /// pnlOrganizations control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -205,7 +205,7 @@ namespace WebsitePanel.Portal {
         /// lblOrganizations control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -215,7 +215,7 @@ namespace WebsitePanel.Portal {
         /// quotaOrganizations control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -225,7 +225,7 @@ namespace WebsitePanel.Portal {
         /// pnlUserAccounts control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -235,7 +235,7 @@ namespace WebsitePanel.Portal {
         /// lblUserAccounts control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -245,7 +245,7 @@ namespace WebsitePanel.Portal {
         /// quotaUserAccounts control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -255,7 +255,7 @@ namespace WebsitePanel.Portal {
         /// pnlExchangeAccounts control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -265,7 +265,7 @@ namespace WebsitePanel.Portal {
         /// lblExchangeAccounts control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -275,7 +275,7 @@ namespace WebsitePanel.Portal {
         /// quotaExchangeAccounts control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -285,7 +285,7 @@ namespace WebsitePanel.Portal {
         /// pnlExchangeStorage control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -295,7 +295,7 @@ namespace WebsitePanel.Portal {
         /// lblExchangeStorage control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -305,7 +305,7 @@ namespace WebsitePanel.Portal {
         /// quotaExchangeStorage control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -315,7 +315,7 @@ namespace WebsitePanel.Portal {
         /// pnlMailAccounts control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -325,7 +325,7 @@ namespace WebsitePanel.Portal {
         /// lblMailAccounts control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -335,7 +335,7 @@ namespace WebsitePanel.Portal {
         /// quotaMailAccounts control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -345,7 +345,7 @@ namespace WebsitePanel.Portal {
         /// pnlOCSUsers control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -355,7 +355,7 @@ namespace WebsitePanel.Portal {
         /// lblOCSUsers control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -365,7 +365,7 @@ namespace WebsitePanel.Portal {
         /// quotaOCSUsers control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -375,7 +375,7 @@ namespace WebsitePanel.Portal {
         /// pnlLyncUsers control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -385,7 +385,7 @@ namespace WebsitePanel.Portal {
         /// lblLyncUsers control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -395,7 +395,7 @@ namespace WebsitePanel.Portal {
         /// quotaLyncUsers control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -405,7 +405,7 @@ namespace WebsitePanel.Portal {
         /// pnlLyncPhone control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -415,7 +415,7 @@ namespace WebsitePanel.Portal {
         /// Label1 control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -425,7 +425,7 @@ namespace WebsitePanel.Portal {
         /// quotaLyncPhone control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -435,7 +435,7 @@ namespace WebsitePanel.Portal {
         /// pnlBlackBerryUsers control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -445,7 +445,7 @@ namespace WebsitePanel.Portal {
         /// lblBlackBerryUsers control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -455,7 +455,7 @@ namespace WebsitePanel.Portal {
         /// quotaBlackBerryUsers control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -465,7 +465,7 @@ namespace WebsitePanel.Portal {
         /// pnlSharepointSites control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -475,7 +475,7 @@ namespace WebsitePanel.Portal {
         /// lblSharepointSites control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -485,7 +485,7 @@ namespace WebsitePanel.Portal {
         /// quotaSharepointSites control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -495,7 +495,7 @@ namespace WebsitePanel.Portal {
         /// pnlWebSites control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -505,7 +505,7 @@ namespace WebsitePanel.Portal {
         /// lblWebSites control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -515,7 +515,7 @@ namespace WebsitePanel.Portal {
         /// quotaWebSites control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -525,7 +525,7 @@ namespace WebsitePanel.Portal {
         /// pnlFtpAccounts control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -535,7 +535,7 @@ namespace WebsitePanel.Portal {
         /// lblFtpAccounts control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -545,7 +545,7 @@ namespace WebsitePanel.Portal {
         /// quotaFtpAccounts control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -555,7 +555,7 @@ namespace WebsitePanel.Portal {
         /// pnlDatabases control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -565,7 +565,7 @@ namespace WebsitePanel.Portal {
         /// lblDatabases control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -575,7 +575,7 @@ namespace WebsitePanel.Portal {
         /// quotaDatabases control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -585,7 +585,7 @@ namespace WebsitePanel.Portal {
         /// pnlHyperVForPC control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -595,7 +595,7 @@ namespace WebsitePanel.Portal {
         /// lblHyperVForPC control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -605,7 +605,7 @@ namespace WebsitePanel.Portal {
         /// quotaNumberOfVm control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -615,7 +615,7 @@ namespace WebsitePanel.Portal {
         /// btnViewQuotas control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>

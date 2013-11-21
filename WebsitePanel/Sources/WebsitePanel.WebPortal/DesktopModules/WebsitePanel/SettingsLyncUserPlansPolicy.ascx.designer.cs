@@ -45,7 +45,7 @@ namespace WebsitePanel.Portal {
         /// asyncTasks control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -55,7 +55,7 @@ namespace WebsitePanel.Portal {
         /// messageBox control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -65,7 +65,7 @@ namespace WebsitePanel.Portal {
         /// gvPlans control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -75,7 +75,7 @@ namespace WebsitePanel.Portal {
         /// secPlan control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -85,7 +85,7 @@ namespace WebsitePanel.Portal {
         /// Plan control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -95,7 +95,7 @@ namespace WebsitePanel.Portal {
         /// txtPlan control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -105,7 +105,7 @@ namespace WebsitePanel.Portal {
         /// valRequirePlan control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -115,7 +115,7 @@ namespace WebsitePanel.Portal {
         /// secPlanFeatures control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -125,7 +125,7 @@ namespace WebsitePanel.Portal {
         /// PlanFeatures control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -135,7 +135,7 @@ namespace WebsitePanel.Portal {
         /// chkIM control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -145,7 +145,7 @@ namespace WebsitePanel.Portal {
         /// chkMobility control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -155,7 +155,7 @@ namespace WebsitePanel.Portal {
         /// chkConferencing control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -165,7 +165,7 @@ namespace WebsitePanel.Portal {
         /// chkEnterpriseVoice control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -175,7 +175,7 @@ namespace WebsitePanel.Portal {
         /// secPlanFeaturesFederation control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -185,7 +185,7 @@ namespace WebsitePanel.Portal {
         /// PlanFeaturesFederation control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -195,7 +195,7 @@ namespace WebsitePanel.Portal {
         /// chkFederation control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -205,7 +205,7 @@ namespace WebsitePanel.Portal {
         /// chkRemoteUserAccess control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -215,7 +215,7 @@ namespace WebsitePanel.Portal {
         /// secPlanFeaturesArchiving control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -225,7 +225,7 @@ namespace WebsitePanel.Portal {
         /// PlanFeaturesArchiving control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -235,7 +235,7 @@ namespace WebsitePanel.Portal {
         /// locArchivingPolicy control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -245,7 +245,7 @@ namespace WebsitePanel.Portal {
         /// ddArchivingPolicy control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -255,7 +255,7 @@ namespace WebsitePanel.Portal {
         /// secPlanFeaturesMeeting control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -265,7 +265,7 @@ namespace WebsitePanel.Portal {
         /// PlanFeaturesMeeting control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -275,7 +275,7 @@ namespace WebsitePanel.Portal {
         /// chkAllowOrganizeMeetingsWithExternalAnonymous control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -285,7 +285,7 @@ namespace WebsitePanel.Portal {
         /// secPlanFeaturesTelephony control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -295,7 +295,7 @@ namespace WebsitePanel.Portal {
         /// PlanFeaturesTelephony control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -305,7 +305,7 @@ namespace WebsitePanel.Portal {
         /// locTelephony control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -315,7 +315,7 @@ namespace WebsitePanel.Portal {
         /// ddTelephony control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -325,7 +325,7 @@ namespace WebsitePanel.Portal {
         /// pnEnterpriseVoice control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -335,7 +335,7 @@ namespace WebsitePanel.Portal {
         /// locTelephonyProvider control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -345,7 +345,7 @@ namespace WebsitePanel.Portal {
         /// tbTelephoneProvider control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -355,7 +355,7 @@ namespace WebsitePanel.Portal {
         /// btnAccept control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -365,7 +365,7 @@ namespace WebsitePanel.Portal {
         /// AcceptRequiredValidator control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -375,7 +375,7 @@ namespace WebsitePanel.Portal {
         /// locDialPlan control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -385,7 +385,7 @@ namespace WebsitePanel.Portal {
         /// ddTelephonyDialPlanPolicy control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -395,7 +395,7 @@ namespace WebsitePanel.Portal {
         /// locVoicePolicy control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -405,7 +405,7 @@ namespace WebsitePanel.Portal {
         /// ddTelephonyVoicePolicy control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -415,7 +415,7 @@ namespace WebsitePanel.Portal {
         /// pnServerURI control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -425,7 +425,7 @@ namespace WebsitePanel.Portal {
         /// locServerURI control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -435,7 +435,7 @@ namespace WebsitePanel.Portal {
         /// tbServerURI control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -445,7 +445,7 @@ namespace WebsitePanel.Portal {
         /// btnAddPlan control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -455,7 +455,7 @@ namespace WebsitePanel.Portal {
         /// btnUpdatePlan control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -465,7 +465,7 @@ namespace WebsitePanel.Portal {
         /// txtStatus control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>

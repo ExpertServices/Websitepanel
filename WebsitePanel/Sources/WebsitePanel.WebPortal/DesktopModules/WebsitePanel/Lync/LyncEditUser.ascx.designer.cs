@@ -45,7 +45,7 @@ namespace WebsitePanel.Portal.Lync {
         /// asyncTasks control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -55,7 +55,7 @@ namespace WebsitePanel.Portal.Lync {
         /// breadcrumb control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -65,7 +65,7 @@ namespace WebsitePanel.Portal.Lync {
         /// menu control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -75,7 +75,7 @@ namespace WebsitePanel.Portal.Lync {
         /// Image1 control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -85,7 +85,7 @@ namespace WebsitePanel.Portal.Lync {
         /// locTitle control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -95,7 +95,7 @@ namespace WebsitePanel.Portal.Lync {
         /// litDisplayName control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -105,7 +105,7 @@ namespace WebsitePanel.Portal.Lync {
         /// messageBox control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -115,7 +115,7 @@ namespace WebsitePanel.Portal.Lync {
         /// locPlanName control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -125,7 +125,7 @@ namespace WebsitePanel.Portal.Lync {
         /// planSelector control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -135,7 +135,7 @@ namespace WebsitePanel.Portal.Lync {
         /// locSipAddress control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -145,7 +145,7 @@ namespace WebsitePanel.Portal.Lync {
         /// lyncUserSettings control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -155,7 +155,7 @@ namespace WebsitePanel.Portal.Lync {
         /// pnEnterpriseVoice control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -165,7 +165,7 @@ namespace WebsitePanel.Portal.Lync {
         /// locPhoneNumber control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -175,7 +175,7 @@ namespace WebsitePanel.Portal.Lync {
         /// tb_PhoneNumber control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -185,7 +185,7 @@ namespace WebsitePanel.Portal.Lync {
         /// ddlPhoneNumber control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -195,7 +195,7 @@ namespace WebsitePanel.Portal.Lync {
         /// PhoneFormatValidator control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -205,7 +205,7 @@ namespace WebsitePanel.Portal.Lync {
         /// locLyncPin control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -215,7 +215,7 @@ namespace WebsitePanel.Portal.Lync {
         /// tbPin control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -225,7 +225,7 @@ namespace WebsitePanel.Portal.Lync {
         /// PinRegularExpressionValidator control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
@@ -235,7 +235,7 @@ namespace WebsitePanel.Portal.Lync {
         /// btnSave control.
         /// </summary>
         /// <remarks>
-                /// Auto-generated field.
+        /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
 
         /// </remarks>
