@@ -49,6 +49,7 @@ using System.Management.Automation.Runspaces;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers;
 using WebsitePanel.Providers.HostedSolution;
+using System.Runtime.InteropServices;
 
 
 namespace WebsitePanel.Providers.OS
@@ -80,28 +81,34 @@ namespace WebsitePanel.Providers.OS
             Log.WriteInfo("ShareNameDrive : {0}", shareNameDrive);
             Log.WriteInfo("QuotaLimit : {0}", quotaLimit);
 
+            string path = Path.Combine(shareNameDrive + @":\", folderPath);
+            var quota = CalculateQuota(quotaLimit);
+
             Runspace runSpace = null;
             try
             {
                 runSpace = OpenRunspace();
-                string[] splits = folderPath.Split('\\');
-                if (splits.Length > 0)
+
+                if (path.IndexOfAny(Path.GetInvalidPathChars()) == -1)
                 {
-                    string sharePath = String.Empty;
+                    if (!FileUtils.DirectoryExists(path))
+                        FileUtils.CreateDirectory(path);
 
-                    if (splits.Length > 4)
+                    switch (mode)
                     {
-                        // Form the share physicalPath
-                        sharePath = shareNameDrive + @":\" + splits[3];
-
-                        if (splits.Length == 5 && !quotaLimit.Equals(String.Empty))
-                        {
-                            Command cmd = new Command("Set-FsrmQuota");
-                            cmd.Parameters.Add("Path", sharePath + @"\" + splits[4]);
-                            cmd.Parameters.Add("Size", quotaLimit);
-                            cmd.Parameters.Add("Confirm", true);
-                            ExecuteShellCommand(runSpace, cmd, false);
-                        }
+                            //deleting old quota and creating new one
+                        case 0:
+                            {
+                                RemoveOldQuotaOnFolder(runSpace, path);
+                                ChangeQuotaOnFolder(runSpace, "New-FsrmQuota", path, quota);
+                                break;
+                            }
+                            //modifying folder quota
+                        case 1:
+                            {
+                                ChangeQuotaOnFolder(runSpace, "Set-FsrmQuota", path, quota);
+                                break;
+                            }
                     }
                 }
             }
@@ -112,11 +119,58 @@ namespace WebsitePanel.Providers.OS
             }
             finally
             {
-
                 CloseRunspace(runSpace);
             }
 
             Log.WriteEnd("SetQuotaLimitOnFolder");
+        }
+
+        public UInt64 CalculateQuota(string quota)
+        {
+            UInt64 OneKb = 1024;
+            UInt64 OneMb = OneKb * 1024;
+            UInt64 OneGb = OneMb * 1024;
+
+            UInt64 result = 0;
+
+            // Quota Unit
+            if (quota.ToLower().Contains("gb"))
+            {
+                result = UInt64.Parse(quota.ToLower().Replace("gb", "")) * OneGb;
+            }
+            else if (quota.ToLower().Contains("mb"))
+            {
+                result = UInt64.Parse(quota.ToLower().Replace("mb", "")) * OneMb;
+            }
+            else
+            {
+                result = UInt64.Parse(quota.ToLower().Replace("kb", "")) * OneKb;
+            }
+
+            return result;
+        }
+
+        public void RemoveOldQuotaOnFolder(Runspace runSpace, string path)
+        {
+            try
+            {
+                runSpace = OpenRunspace();
+                if (!string.IsNullOrEmpty(path))
+                {
+                    Command cmd = new Command("Remove-FsrmQuota");
+                    cmd.Parameters.Add("Path", path);
+                    ExecuteShellCommand(runSpace, cmd, false);
+                }
+            }
+            catch { /* do nothing */ }
+        }
+
+        public void ChangeQuotaOnFolder(Runspace runSpace, string command, string path, UInt64 quota)
+        {
+            Command cmd = new Command(command);
+            cmd.Parameters.Add("Path", path);
+            cmd.Parameters.Add("Size", quota);
+            ExecuteShellCommand(runSpace, cmd, false);
         }
 
         #region PowerShell integration

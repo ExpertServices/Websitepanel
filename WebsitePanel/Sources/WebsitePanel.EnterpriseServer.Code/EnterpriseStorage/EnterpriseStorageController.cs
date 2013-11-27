@@ -261,16 +261,16 @@ namespace WebsitePanel.EnterpriseServer
 
                     EnterpriseStorageController.AddWebDavDirectory(packageId, usersDomain, org.OrganizationId, homePath);
 
-                    int osId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Os);
-                    bool enableHardQuota = (esSesstings["enablehardquota"] != null)
-                        ? bool.Parse(esSesstings["enablehardquota"])
-                        : false;
+                    //int osId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Os);
+                    //bool enableHardQuota = (esSesstings["enablehardquota"] != null)
+                    //    ? bool.Parse(esSesstings["enablehardquota"])
+                    //    : false;
 
-                    if (enableHardQuota && osId != 0 && OperatingSystemController.CheckFileServicesInstallation(osId))
-                    {
-                        FilesController.SetFolderQuota(packageId, Path.Combine(usersHome, org.OrganizationId),
-                            locationDrive, Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE);
-                    }
+                    //if (enableHardQuota && osId != 0 && OperatingSystemController.CheckFileServicesInstallation(osId))
+                    //{
+                    //    FilesController.SetFolderQuota(packageId, Path.Combine(usersHome, org.OrganizationId),
+                    //        locationDrive, Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE);
+                    //}
                 }
             }
             catch (Exception ex)
@@ -579,11 +579,6 @@ namespace WebsitePanel.EnterpriseServer
                 dir.HttpErrors = null;
                 dir.MimeMaps = null;
 
-                int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Web);
-
-                if (serviceId == -1)
-                    return serviceId;
-
                 // create directory
 
                 WebServer web = GetWebServer(packageId);
@@ -866,6 +861,11 @@ namespace WebsitePanel.EnterpriseServer
                         cnfg.ProviderSettings.ProviderCode = webProvider.ProviderName;
                         cnfg.ProviderSettings.ProviderName = webProvider.DisplayName;
                         cnfg.ProviderSettings.ProviderType = webProvider.ProviderType;
+
+                        //// set service settings
+                        //StringDictionary serviceSettings = ServerController.GetServiceSettings(serviceId);
+                        //foreach (string key in serviceSettings.Keys)
+                        //    cnfg.ProviderSettings.Settings[key] = serviceSettings[key];
 
                         ServiceProviderProxy.ServerInit(web, cnfg, package.ServerId);
 

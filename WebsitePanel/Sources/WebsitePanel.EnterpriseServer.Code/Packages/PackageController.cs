@@ -783,6 +783,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 // Update the Hard quota on home folder in case it was enabled and in case there was a change in disk space
                 UpdatePackageHardQuota(package.PackageId);
+                UpdateESHardQuota(package.PackageId);
 
                 DataProvider.DistributePackageServices(SecurityContext.User.UserId, package.PackageId);
             }
@@ -980,6 +981,7 @@ namespace WebsitePanel.EnterpriseServer
 
             // Added By Haya
             UpdatePackageHardQuota(packageId);
+            UpdateESHardQuota(packageId);
 
             // save package item
             return AddPackageItem(homeFolder);
@@ -1017,6 +1019,33 @@ namespace WebsitePanel.EnterpriseServer
             string homeFolder = FilesController.GetHomeFolder(packageId);
             FilesController.SetFolderQuota(packageId, homeFolder, driveName, Quotas.OS_DISKSPACE);
 
+        }
+
+        public static void UpdateESHardQuota(int packageId)
+        {
+            int esServiceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.EnterpriseStorage);
+
+            if (esServiceId != 0)
+            {
+
+                StringDictionary esSesstings = ServerController.GetServiceSettings(esServiceId);
+
+                string usersHome = esSesstings["UsersHome"];
+                string usersDomain = esSesstings["UsersDomain"];
+                string locationDrive = esSesstings["LocationDrive"];
+
+                string homePath = string.Format("{0}:\\{1}", locationDrive, usersHome);
+
+                int osId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Os);
+                bool enableHardQuota = (esSesstings["enablehardquota"] != null)
+                    ? bool.Parse(esSesstings["enablehardquota"])
+                    : false;
+
+                if (enableHardQuota && osId != 0 && OperatingSystemController.CheckFileServicesInstallation(osId))
+                {
+                    FilesController.SetFolderQuota(packageId, usersHome, locationDrive, Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE);
+                }
+            }
         }
 
         #endregion
@@ -1079,6 +1108,7 @@ namespace WebsitePanel.EnterpriseServer
 
             // Update the Hard quota on home folder in case it was enabled and in case there was a change in disk space
             UpdatePackageHardQuota(addon.PackageId);
+            UpdateESHardQuota(addon.PackageId);
             return result;
         }
 
@@ -1108,7 +1138,7 @@ namespace WebsitePanel.EnterpriseServer
 
             // Update the Hard quota on home folder in case it was enabled and in case there was a change in disk space
             UpdatePackageHardQuota(addon.PackageId);
-
+            UpdateESHardQuota(addon.PackageId);
             return result;
         }
 
@@ -1119,11 +1149,13 @@ namespace WebsitePanel.EnterpriseServer
                 | DemandAccount.IsReseller);
             if (accountCheck < 0) return accountCheck;
 
-
-            // Update the Hard quota on home folder in case it was enabled and in case there was a change in disk space
-            UpdatePackageHardQuota(GetPackageAddon(packageAddonId).PackageId);
+            var packageId = GetPackageAddon(packageAddonId).PackageId;
 
             DataProvider.DeletePackageAddon(SecurityContext.User.UserId, packageAddonId);
+
+            // Update the Hard quota on home folder in case it was enabled and in case there was a change in disk space
+            UpdatePackageHardQuota(packageId);
+            UpdateESHardQuota(packageId);
 
             return 0;
         }
