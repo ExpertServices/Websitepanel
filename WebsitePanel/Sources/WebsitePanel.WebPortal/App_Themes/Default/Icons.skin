@@ -94,4 +94,4 @@ Default skin template. The following skins are provided as examples only.
 <asp:Image SkinID="VLanNetwork" runat="server" ImageUrl="images/VPSForPC/vlan_icon.png" ImageAlign="AbsMiddle" Width="48" Height="48"></asp:Image>
 
 <%--  Enterprise Storage Icons --%>
-<asp:Image SkinID="EnterpriseStorageSpace48" runat="server" ImageUrl="images/spaces48.png" ImageAlign="AbsMiddle" Width="48" Height="48"></asp:Image>
+<asp:Image SkinID="EnterpriseStorageSpace48" runat="server" ImageUrl="images/Exchange/spaces48.png" ImageAlign="AbsMiddle" Width="48" Height="48"></asp:Image>
