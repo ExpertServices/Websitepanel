@@ -4330,7 +4330,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 string orgCanonicalName = ConvertADPathToCanonicalName(organizationDistinguishedName);
 
                 //create organization public folder mailbox if required
-                CheckOrganizationPublicFolderMailbox(runSpace, orgCanonicalName, organizationId);
+                CheckOrganizationPublicFolderMailbox(runSpace, orgCanonicalName, organizationId, domain);
 
                 //create organization root folder if required
                 CheckOrganizationRootFolder(runSpace, organizationId, securityGroup, orgCanonicalName, organizationId);
@@ -4360,7 +4360,7 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("CreatePublicFolderInternal");
         }
 
-        private void CheckOrganizationPublicFolderMailbox(Runspace runSpace, string orgCanonicalName, string organizationId)
+        private void CheckOrganizationPublicFolderMailbox(Runspace runSpace, string orgCanonicalName, string organizationId, string domain)
         {
             ExchangeLog.LogStart("CheckOrganizationPublicFolderMailbox");
 
@@ -4370,7 +4370,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 ExchangeTransaction transaction = StartTransaction();
                 try
                 {
-                    string rootId = AddPublicFolderMailbox(runSpace, orgCanonicalName, GetPublicFolderMailboxName(organizationId));
+                    string rootId = AddPublicFolderMailbox(runSpace, orgCanonicalName, GetPublicFolderMailboxName(organizationId), domain);
                     transaction.RegisterNewPublicFolderMailbox(orgCanonicalName + "/" + GetPublicFolderMailboxName(organizationId));
                 }
                 catch
@@ -4421,12 +4421,13 @@ namespace WebsitePanel.Providers.HostedSolution
             return id;
         }
 
-        private string AddPublicFolderMailbox(Runspace runSpace, string organizationDistinguishedName, string name)
+        private string AddPublicFolderMailbox(Runspace runSpace, string organizationDistinguishedName, string name, string domain)
         {
             ExchangeLog.LogStart("CreatePublicFolderMailbox");
             Command cmd = new Command("New-Mailbox");
             cmd.Parameters.Add("Name", name);
             cmd.Parameters.Add("PublicFolder");
+            cmd.Parameters.Add("PrimarySmtpAddress", name.Replace(" ", "")+"@"+domain);
             cmd.Parameters.Add("OrganizationalUnit", organizationDistinguishedName);
             string database = GetDatabase(runSpace, PrimaryDomainController, MailboxDatabase);
             ExchangeLog.DebugInfo("database: " + database);
