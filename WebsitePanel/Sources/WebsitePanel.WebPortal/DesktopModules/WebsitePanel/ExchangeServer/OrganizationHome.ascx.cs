@@ -246,9 +246,18 @@ namespace WebsitePanel.Portal.ExchangeServer
             lnkCRMUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "crmusers",
                 "SpaceID=" + PanelSecurity.PackageId);
 
+            lnkLimitedCRMUsers.NavigateUrl = lnkCRMUsers.NavigateUrl;
+
             crmUsersStats.QuotaUsedValue = stats.CreatedCRMUsers;
             crmUsersStats.QuotaValue = stats.AllocatedCRMUsers;
-            if (stats.AllocatedCRMUsers != -1) crmUsersStats.QuotaAvailable = tenantStats.AllocatedCRMUsers - tenantStats.CreatedCRMUsers;
+
+            //if (stats.AllocatedCRMUsers != -1) crmUsersStats.QuotaAvailable = tenantStats.AllocatedCRMUsers - tenantStats.CreatedCRMUsers;
+
+            crmLimitedUsersStats.QuotaUsedValue = stats.CreatedLimitedCRMUsers;
+            crmLimitedUsersStats.QuotaValue = stats.AllocatedLimitedCRMUsers;
+
+            crmDBSize.QuotaUsedValue = Convert.ToInt32( stats.UsedCRMDiskSpace>0 ? stats.UsedCRMDiskSpace/(1024*1024) : -1);
+            crmDBSize.QuotaValue = Convert.ToInt32(stats.AllocatedCRMDiskSpace>0 ? stats.AllocatedCRMDiskSpace/(1024*1024) : -1);
         }
 
         private void BindOCSStats(OrganizationStatistics stats, OrganizationStatistics tenantStats)

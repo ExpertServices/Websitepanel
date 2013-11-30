@@ -67,7 +67,6 @@
 					    </Columns>
 				    </asp:GridView>
 					<asp:ObjectDataSource ID="odsAccountsPaged" runat="server" EnablePaging="True"
-							
 							SelectCountMethod="GetCRMUsersPagedCount"
 							SelectMethod="GetCRMUsersPaged"
 							SortParameterName="sortColumn"
@@ -80,9 +79,26 @@
 						</SelectParameters>
 					</asp:ObjectDataSource>
 				    <br />
-				    <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Total Users Created:"></asp:Localize>
-				    &nbsp;&nbsp;&nbsp;
-				    <wsp:QuotaViewer ID="usersQuota" runat="server" QuotaTypeId="2"   />				    				    
+
+                    <table>
+                    <tr>
+                            <td align="right" nowrap>
+				                <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Full licenses :"></asp:Localize>
+                            </td>
+                            <td>
+            				    <wsp:QuotaViewer ID="usersQuota" runat="server" QuotaTypeId="2"   />
+                            </td>
+                    </tr>
+                    <tr>
+                            <td align="right" nowrap>
+            				    <asp:Localize ID="locLimitedQuota" runat="server" meta:resourcekey="locLimitedQuota" Text="Limited licenses :"></asp:Localize>
+                            </td>
+                            <td>
+				                <wsp:QuotaViewer ID="limitedusersQuota" runat="server" QuotaTypeId="2"   />
+                            </td>
+                    </tr>
+                    
+                    </table>
 				</div>                                                
             </div>
         </div>

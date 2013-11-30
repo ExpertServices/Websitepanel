@@ -179,11 +179,8 @@ namespace WebsitePanel.Providers.HostedSolution
             return res;
         }
 
-        public long GetUsedSpace(Guid organizationId)
+        private string GetDataBaseName(Guid organizationId)
         {
-            Log.WriteStart("GetUsedSpace");
-            long res = 0;
-
             string crmDatabaseName = "MSCRM_CONFIG";
             string databasename = "";
 
@@ -212,6 +209,17 @@ namespace WebsitePanel.Providers.HostedSolution
                     connection.Dispose();
             }
 
+            return databasename;
+        }
+
+        public long GetDBSize(Guid organizationId)
+        {
+            Log.WriteStart("GetDBSize");
+            long res = 0;
+
+            string databasename = GetDataBaseName(organizationId);
+
+            SqlConnection connection = null; 
             try
             {
                 connection = new SqlConnection();
@@ -221,7 +229,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 connection.Open();
 
-                string commandText = "SELECT ((dbsize + logsize) * 8192 ) size FROM " +
+                string commandText = "SELECT ((dbsize ) * 8192 ) size FROM " + // + logsize
                     "( " +
                     "SELECT SUM(CONVERT(BIGINT,CASE WHEN status & 64 = 0 THEN size ELSE 0 END)) dbsize " +
                     ",      SUM(CONVERT(BIGINT,CASE WHEN status & 64 <> 0 THEN size ELSE 0 END)) logsize " +
@@ -243,9 +251,91 @@ namespace WebsitePanel.Providers.HostedSolution
 
             }
 
-            Log.WriteEnd("GetUsedSpace");
+            Log.WriteEnd("GetDBSize");
             return res;
             
+        }
+
+        public long GetMaxDBSize(Guid organizationId)
+        {
+            Log.WriteStart("GetMaxDBSize");
+            long res = 0;
+
+            string databasename = GetDataBaseName(organizationId);
+
+            SqlConnection connection = null;
+            try
+            {
+                connection = new SqlConnection();
+                connection.ConnectionString =
+                   string.Format("Server={1};Initial Catalog={0};Integrated Security=SSPI",
+                                  databasename, SqlServer);
+
+                connection.Open();
+
+                string commandText = "SELECT SUM(CONVERT(BIGINT,CASE WHEN status & 64 = 0 THEN maxsize ELSE 0 END)) dbsize FROM dbo.sysfiles";
+
+                SqlCommand command = new SqlCommand(commandText, connection);
+                res = (long)command.ExecuteScalar();
+                if (res > 0) res = res * 8192;
+
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(ex);
+            }
+            finally
+            {
+                if (connection != null)
+                    connection.Dispose();
+
+            }
+
+            Log.WriteEnd("GetMaxDBSize");
+            return res;
+
+        }
+
+        public ResultObject SetMaxDBSize(Guid organizationId, long maxSize)
+        {
+            ResultObject res = StartLog<ResultObject>("SetMaxDBSize");
+
+            string databasename = GetDataBaseName(organizationId);
+
+            SqlConnection connection = null;
+            try
+            {
+                connection = new SqlConnection();
+                connection.ConnectionString =
+                   string.Format("Server={1};Initial Catalog={0};Integrated Security=SSPI",
+                                  databasename, SqlServer);
+
+                connection.Open();
+
+                string maxSizeStr = maxSize == -1 ? "UNLIMITED" : (maxSize/(1024*1024)).ToString() +" MB";
+
+                string commandText = "ALTER DATABASE [" + databasename + "] MODIFY FILE ( NAME = N'mscrm', MAXSIZE = " + maxSizeStr + " )";
+
+                SqlCommand command = new SqlCommand(commandText, connection);
+                command.ExecuteNonQuery();
+
+                res.IsSuccess = true;
+
+            }
+            catch (Exception ex)
+            {
+                EndLog("SetMaxDBSize", res, CrmErrorCodes.CANNOT_CHANGE_CRM_ORGANIZATION_STATE, ex);
+            }
+            finally
+            {
+                if (connection != null)
+                    connection.Dispose();
+
+            }
+
+
+            EndLog("SetMaxDBSize");
+            return res;
         }
 
         private bool CheckOrganizationUnique(string databaseName, string orgName)
@@ -393,14 +483,14 @@ namespace WebsitePanel.Providers.HostedSolution
             return retOrganization;
         }
 
-        public OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string organizationDomainName, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation)
+        public OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation, long maxSize)
         {
-            return CreateOrganizationInternal(organizationId, organizationUniqueName, organizationFriendlyName, organizationDomainName, ou , baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, initialUserDomainName, initialUserFirstName, initialUserLastName, initialUserPrimaryEmail, organizationCollation);
+            return CreateOrganizationInternal(organizationId, organizationUniqueName, organizationFriendlyName, ou , baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, initialUserDomainName, initialUserFirstName, initialUserLastName, initialUserPrimaryEmail, organizationCollation, maxSize);
         }
 
         const string CRMSysAdminRoleStr = "Системный администратор;System Administrator";
 
-        internal OrganizationResult CreateOrganizationInternal(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string organizationDomainName, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation)
+        internal OrganizationResult CreateOrganizationInternal(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation, long maxSize)
         {
  
             OrganizationResult ret = StartLog<OrganizationResult>("CreateOrganizationInternal");
@@ -527,6 +617,10 @@ namespace WebsitePanel.Providers.HostedSolution
                 };
                 Microsoft.Xrm.Sdk.Deployment.UpdateAdvancedSettingsResponse respUpdateSettings = (Microsoft.Xrm.Sdk.Deployment.UpdateAdvancedSettingsResponse) deploymentService.Execute(reqUpdateSettings);
 
+                // DB size limit
+                if (maxSize!=-1)
+                    SetMaxDBSize(organizationId, maxSize);
+
                 int tryTimeout = 30000;
                 int tryCount = 10;
 
@@ -544,7 +638,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
                         string ldap = "";
 
-                        Guid SysAdminGuid = RetrieveSystemUser(GetDomainName(initialUserDomainName), initialUserFirstName, initialUserLastName, CRMSysAdminRoleStr, _serviceProxy, ref ldap);
+                        Guid SysAdminGuid = RetrieveSystemUser(GetDomainName(initialUserDomainName), initialUserFirstName, initialUserLastName, CRMSysAdminRoleStr, _serviceProxy, ref ldap, 0);
 
                         success = true;
 
@@ -774,12 +868,12 @@ namespace WebsitePanel.Providers.HostedSolution
             return res;
         }
 
-        public UserResult CreateCRMUser(OrganizationUser user, string orgName, Guid organizationId, Guid baseUnitId)
+        public UserResult CreateCRMUser(OrganizationUser user, string orgName, Guid organizationId, Guid baseUnitId, int CALType)
         {
-            return CreateCRMUserInternal(user, orgName, organizationId, baseUnitId);
+            return CreateCRMUserInternal(user, orgName, organizationId, baseUnitId, CALType);
         }
 
-        internal UserResult CreateCRMUserInternal(OrganizationUser user, string orgName, Guid organizationId, Guid businessUnitId)
+        internal UserResult CreateCRMUserInternal(OrganizationUser user, string orgName, Guid organizationId, Guid businessUnitId, int CALType)
         {
             UserResult res = StartLog<UserResult>("CreateCRMUserInternal");
 
@@ -803,7 +897,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
 
                     string ldap = "";
-                    Guid guid = RetrieveSystemUser(user.DomainUserName, user.FirstName, user.LastName, CRMSysAdminRoleStr, _serviceProxy, ref ldap);
+                    Guid guid = RetrieveSystemUser(user.DomainUserName, user.FirstName, user.LastName, CRMSysAdminRoleStr, _serviceProxy, ref ldap, CALType);
 
                     user.CrmUserId = guid;
                     res.Value = user;
@@ -828,7 +922,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
         private static Guid CreateSystemUser(String userName, String firstName,
             String lastName, String domain, String roleStr,
-            OrganizationServiceProxy serviceProxy, ref String ldapPath)
+            OrganizationServiceProxy serviceProxy, ref String ldapPath, int CALType)
         {
 
             if (serviceProxy.ServiceConfiguration.AuthenticationType == AuthenticationProviderType.LiveId ||
@@ -868,7 +962,8 @@ namespace WebsitePanel.Providers.HostedSolution
                     LogicalName = BusinessUnit.EntityLogicalName,
                     Name = BusinessUnit.EntityLogicalName,
                     Id = defaultBusinessUnit.Id
-                }
+                },
+                CALType = new OptionSetValue(CALType)
             };
             userId = serviceProxy.Create(user);
 
@@ -890,7 +985,8 @@ namespace WebsitePanel.Providers.HostedSolution
 
         public static Guid RetrieveSystemUser(String userName, String firstName,
             String lastName, String roleStr, OrganizationServiceProxy serviceProxy,
-            ref String ldapPath)
+            ref String ldapPath,
+            int CALType)
         {
             String domain;
             Guid userId = Guid.Empty;
@@ -985,11 +1081,12 @@ namespace WebsitePanel.Providers.HostedSolution
                     };
                     serviceProxy.Execute(associate);
                 }
+
             }
             else
             {
                 userId = CreateSystemUser(userName, firstName, lastName, domain,
-                    roleStr, serviceProxy, ref ldapPath);
+                    roleStr, serviceProxy, ref ldapPath, CALType);
             }
 
             return userId;
@@ -1633,7 +1730,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 OrganizationServiceProxy serviceProxy = GetOrganizationProxy(orgName);
 
                 SystemUser retruveUser =
-                    serviceProxy.Retrieve(SystemUser.EntityLogicalName, crmUserId, new Microsoft.Xrm.Sdk.Query.ColumnSet("domainname", "businessunitid", "accessmode", "isdisabled")).ToEntity<SystemUser>();
+                    serviceProxy.Retrieve(SystemUser.EntityLogicalName, crmUserId, new Microsoft.Xrm.Sdk.Query.ColumnSet("domainname", "businessunitid", "accessmode", "isdisabled", "caltype")).ToEntity<SystemUser>();
 
                 CrmUser user = null;
 
@@ -1644,6 +1741,7 @@ namespace WebsitePanel.Providers.HostedSolution
                     user.CRMUserId = retruveUser.SystemUserId.Value;
                     user.ClientAccessMode = (CRMUserAccessMode)retruveUser.AccessMode.Value;
                     user.IsDisabled = (bool)retruveUser.IsDisabled;
+                    user.CALType = retruveUser.CALType.Value;
 
                     ret.Value = user;
                 }
@@ -1677,7 +1775,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 Microsoft.Xrm.Sdk.Query.QueryExpression usereQuery = new Microsoft.Xrm.Sdk.Query.QueryExpression
                 {
                     EntityName = SystemUser.EntityLogicalName,
-                    ColumnSet = new Microsoft.Xrm.Sdk.Query.ColumnSet("domainname", "businessunitid", "accessmode", "isdisabled", "systemuserid"),
+                    ColumnSet = new Microsoft.Xrm.Sdk.Query.ColumnSet("domainname", "businessunitid", "accessmode", "isdisabled", "systemuserid", "caltype"),
                 };
 
                 EntityCollection users = serviceProxy.RetrieveMultiple(usereQuery);
@@ -1694,6 +1792,7 @@ namespace WebsitePanel.Providers.HostedSolution
                     user.CRMUserId = sysuser.SystemUserId.Value;
                     user.ClientAccessMode = (CRMUserAccessMode)sysuser.AccessMode.Value;
                     user.IsDisabled = sysuser.IsDisabled.Value;
+                    user.CALType = sysuser.CALType.Value;
                     ret.Value = user;
                 }
             }
@@ -1800,6 +1899,44 @@ namespace WebsitePanel.Providers.HostedSolution
 
             return value.StartsWith("5.");
         }
+
+        public ResultObject SetUserCALType(string orgName, Guid userId, int CALType)
+        {
+            return SetUserCALTypeInternal(orgName, userId, CALType);
+        }
+
+        internal ResultObject SetUserCALTypeInternal(string orgName, Guid userId, int CALType)
+        {
+            ResultObject ret = StartLog<CrmUserResult>("SetUserCALTypeInternal");
+
+            try
+            {
+                if (userId == Guid.Empty)
+                    throw new ArgumentNullException("crmUserId");
+
+                if (string.IsNullOrEmpty(orgName))
+                    throw new ArgumentNullException("orgName");
+
+                OrganizationServiceProxy serviceProxy = GetOrganizationProxy(orgName);
+
+                SystemUser user =
+                    serviceProxy.Retrieve(SystemUser.EntityLogicalName, userId, new Microsoft.Xrm.Sdk.Query.ColumnSet("domainname", "businessunitid", "accessmode", "isdisabled", "caltype")).ToEntity<SystemUser>();
+
+                user.CALType = new OptionSetValue(CALType);
+
+                serviceProxy.Update(user);
+
+            }
+            catch (Exception ex)
+            {
+                EndLog("SetUserCALTypeInternal", ret, CrmErrorCodes.CANONT_GET_CRM_USER_BY_ID, ex);
+                return ret;
+            }
+
+            EndLog("SetUserCALTypeInternal");
+            return ret;
+        }
+
 
     }
 

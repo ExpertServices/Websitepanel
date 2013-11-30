@@ -68,9 +68,12 @@ namespace WebsitePanel.Portal.CRM
             try
             {
                 OrganizationUser user = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID, accountId);
-                user.AccountId = accountId;                
+                user.AccountId = accountId;
 
-                res = ES.Services.CRM.CreateCRMUser(user,  PanelSecurity.PackageId, PanelRequest.ItemID, new Guid(ddlBusinessUnits.SelectedValue));
+                int cALType = 0;
+                int.TryParse(ddlLicenseType.SelectedValue, out cALType);
+
+                res = ES.Services.CRM.CreateCRMUser(user, PanelSecurity.PackageId, PanelRequest.ItemID, new Guid(ddlBusinessUnits.SelectedValue), cALType);
                 if (res.IsSuccess)
                 {
 

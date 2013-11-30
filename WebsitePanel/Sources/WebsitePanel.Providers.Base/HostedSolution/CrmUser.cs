@@ -36,6 +36,6 @@ namespace WebsitePanel.Providers.HostedSolution
         public Guid BusinessUnitId  { get; set; }
         public CRMUserAccessMode ClientAccessMode  { get; set; }
         public bool IsDisabled { get; set; }
-
+        public int CALType { get; set; }
     }
 }

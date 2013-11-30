@@ -58,6 +58,19 @@ namespace WebsitePanel.Portal.CRM
                         lblDisplayName.Text = user.DisplayName;
                         lblEmailAddress.Text = user.PrimaryEmailAddress;
                         lblDomainName.Text = user.DomainUserName;
+
+                        int cALType = userResult.Value.CALType;
+
+                        switch (cALType)
+                        {
+                            case 0 :
+                            case 2 :
+                                ddlLicenseType.SelectedValue = cALType.ToString();
+                                break;
+                            default:
+                                ddlLicenseType.SelectedIndex = 0;
+                                break;
+                        }
                     }
                     else
                     {
@@ -103,7 +116,20 @@ namespace WebsitePanel.Portal.CRM
                     ES.Services.CRM.SetUserRoles(PanelRequest.ItemID, PanelRequest.AccountID, PanelSecurity.PackageId,
                                                  roles.ToArray());
 
-                messageBox.ShowMessage(res, "UPDATE_CRM_USER_ROLES", "HostedCRM");
+
+                int CALType = 0;
+                int.TryParse(ddlLicenseType.SelectedValue, out CALType);
+
+                ResultObject res2 =
+                    ES.Services.CRM.SetUserCALType(PanelRequest.ItemID, PanelRequest.AccountID, PanelSecurity.PackageId,
+                                                CALType);
+
+                if (!res2.IsSuccess)
+                    messageBox.ShowErrorMessage("UPDATE_CRM_USER_ROLES");
+                else if (!res.IsSuccess)
+                    messageBox.ShowErrorMessage("UPDATE_CRM_USER_ROLES");
+                else
+                    messageBox.ShowMessage(res, "UPDATE_CRM_USER_ROLES", "HostedCRM");
             }
             catch(Exception ex)
             {

@@ -48,10 +48,15 @@ namespace WebsitePanel.Portal.CRM
                 OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
                 int allocatedCrmUsers = stats.AllocatedCRMUsers;
                 int usedUsers = stats.CreatedCRMUsers;
+
                 usersQuota.QuotaUsedValue = usedUsers;
                 usersQuota.QuotaValue = allocatedCrmUsers;
 
-                if (stats.AllocatedCRMUsers != -1) usersQuota.QuotaAvailable = tenantStats.AllocatedCRMUsers - tenantStats.CreatedCRMUsers;
+                limitedusersQuota.QuotaUsedValue = stats.CreatedLimitedCRMUsers;
+                limitedusersQuota.QuotaValue = stats.AllocatedLimitedCRMUsers;
+
+                //if (stats.AllocatedCRMUsers != -1) usersQuota.QuotaAvailable = tenantStats.AllocatedCRMUsers - tenantStats.CreatedCRMUsers;
+                //if (stats.AllocatedLimitedCRMUsers != -1) limitedusersQuota.QuotaAvailable = tenantStats.AllocatedLimitedCRMUsers - tenantStats.CreatedLimitedCRMUsers;
             }
         }
 

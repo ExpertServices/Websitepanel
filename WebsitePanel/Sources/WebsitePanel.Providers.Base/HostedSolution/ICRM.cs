@@ -35,10 +35,11 @@ namespace WebsitePanel.Providers.HostedSolution
     public interface ICRM
     {
         OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName,
-                    string organizationDomainName, string ou,
+                    string ou,
                     string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol,
                     string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail,                  
-                    string organizationCollation);
+                    string organizationCollation,
+                    long maxSize);
 
         string[] GetSupportedCollationNames();
 
@@ -46,7 +47,7 @@ namespace WebsitePanel.Providers.HostedSolution
        
         ResultObject DeleteOrganization(Guid orgId);
 
-        UserResult CreateCRMUser(OrganizationUser user, string orgName, Guid organizationId, Guid baseUnitId);
+        UserResult CreateCRMUser(OrganizationUser user, string orgName, Guid organizationId, Guid baseUnitId, int CALType);
 
         CRMBusinessUnitsResult GetOrganizationBusinessUnits(Guid organizationId, string orgName);
 
@@ -56,13 +57,19 @@ namespace WebsitePanel.Providers.HostedSolution
 
         ResultObject SetUserRoles(string orgName, Guid userId, Guid[] roles);
 
+        ResultObject SetUserCALType(string orgName, Guid userId, int CALType);
+
         CrmUserResult GetCrmUserByDomainName(string domainName, string orgName);
 
         CrmUserResult GetCrmUserById(Guid crmUserId, string orgName);
 
         ResultObject ChangeUserState(bool disable, string orgName, Guid crmUserId);
 
-        long GetUsedSpace(Guid organizationId);
+        long GetDBSize(Guid organizationId);
+
+        long GetMaxDBSize(Guid organizationId);
+
+        ResultObject SetMaxDBSize(Guid organizationId, long maxSize);
 
     }
 }

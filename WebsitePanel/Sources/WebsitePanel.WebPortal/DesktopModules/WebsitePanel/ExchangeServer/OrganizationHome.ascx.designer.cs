@@ -536,6 +536,42 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::WebsitePanel.Portal.QuotaViewer crmUsersStats;
         
         /// <summary>
+        /// lnkLimitedCRMUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkLimitedCRMUsers;
+        
+        /// <summary>
+        /// crmLimitedUsersStats control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaViewer crmLimitedUsersStats;
+        
+        /// <summary>
+        /// locCRMDBSize control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locCRMDBSize;
+        
+        /// <summary>
+        /// crmDBSize control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaViewer crmDBSize;
+        
+        /// <summary>
         /// enterpriseStorageStatsPanel control.
         /// </summary>
         /// <remarks>

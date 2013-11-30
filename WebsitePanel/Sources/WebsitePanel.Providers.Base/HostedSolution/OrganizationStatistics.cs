@@ -61,6 +61,12 @@ namespace WebsitePanel.Providers.HostedSolution
         private int createdCRMUsers;
         private int allocatedCRMUsers;
 
+        private int createdLimitedCRMUsers;
+        private int allocatedLimitedCRMUsers;
+
+        private long usedCRMDiskSpace;
+        private long allocatedCRMDiskSpace;
+
         private int createdEnterpriseStorageFolders;
         private int allocatedEnterpriseStorageFolders;
 
@@ -79,12 +85,36 @@ namespace WebsitePanel.Providers.HostedSolution
             get { return allocatedCRMUsers; }
             set { allocatedCRMUsers = value; }
         }
+
+        public int CreatedLimitedCRMUsers
+        {
+            get { return createdLimitedCRMUsers; }
+            set { createdLimitedCRMUsers = value; }
+        }
+
+        public int AllocatedLimitedCRMUsers
+        {
+            get { return allocatedLimitedCRMUsers; }
+            set { allocatedLimitedCRMUsers = value; }
+        }
         
         public int AllocatedUsers
 		{
 			get { return allocatedUsers; }
 			set { allocatedUsers = value; }
 		}
+
+        public long UsedCRMDiskSpace
+        {
+            get { return usedCRMDiskSpace; }
+            set { usedCRMDiskSpace = value;}
+        }
+
+        public long AllocatedCRMDiskSpace
+        {
+            get { return allocatedCRMDiskSpace; }
+            set { allocatedCRMDiskSpace = value; }
+        }
 
 		public int CreatedUsers
 		{

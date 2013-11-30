@@ -3112,13 +3112,14 @@ namespace WebsitePanel.EnterpriseServer
 
         #region CRM
 
-        public static int GetCRMUsersCount(int itemId, string name, string email)
+        public static int GetCRMUsersCount(int itemId, string name, string email, int CALType)
         {
             SqlParameter[] sqlParams = new SqlParameter[]
                 {
                     new SqlParameter("@ItemID", itemId),
                     GetFilterSqlParam("@Name", name),
                     GetFilterSqlParam("@Email", email),
+                    new SqlParameter("@CALType", CALType)
                 };
 
             return (int)SqlHelper.ExecuteScalar(ConnectionString, CommandType.StoredProcedure, "GetCRMUsersCount", sqlParams);
@@ -3159,18 +3160,29 @@ namespace WebsitePanel.EnterpriseServer
                                            new SqlParameter[] { new SqlParameter("@ItemID", itemId) });
         }
 
-        public static void CreateCRMUser(int itemId, Guid crmId, Guid businessUnitId)
+        public static void CreateCRMUser(int itemId, Guid crmId, Guid businessUnitId, int CALType)
         {
             SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure, "InsertCRMUser",
                                     new SqlParameter[]
                                         {
                                             new SqlParameter("@ItemID", itemId),
                                             new SqlParameter("@CrmUserID", crmId),
-                                            new SqlParameter("@BusinessUnitId", businessUnitId)
+                                            new SqlParameter("@BusinessUnitId", businessUnitId),
+                                            new SqlParameter("@CALType", CALType)
                                         });
 
         }
 
+        public static void UpdateCRMUser(int itemId, int CALType)
+        {
+            SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure, "UpdateCRMUser",
+                                    new SqlParameter[]
+                                        {
+                                            new SqlParameter("@ItemID", itemId),
+                                            new SqlParameter("@CALType", CALType)
+                                        });
+
+        }
 
         public static IDataReader GetCrmUser(int itemId)
         {
