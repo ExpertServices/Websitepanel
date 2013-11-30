@@ -38,6 +38,16 @@
 					        <td class="FormLabel150"><asp:Localize ID="Localize1" runat="server" meta:resourcekey="locDisplayName" Text="Display Name: *"></asp:Localize></td>
 					        <td><wsp:UserSelector id="userSelector" runat="server" IncludeMailboxes="true"></wsp:UserSelector></td>
 					    </tr>
+
+                        <tr>
+                            <td class="FormLabel150"><asp:Localize runat="server" meta:resourcekey="locLicenseType" Text="License Type: *" /></td>
+                            <td>
+                                <asp:DropDownList ID="ddlLicenseType" runat="server" CssClass="NormalTextBox" AutoPostBack="false">
+                                    <asp:ListItem Value="0" meta:resourcekey="ddlLicenseTypeFull">Full</asp:ListItem>
+                                    <asp:ListItem Value="2" meta:resourcekey="ddlLicenseTypeLimited">Limited</asp:ListItem>
+                                </asp:DropDownList>
+                            </td>
+                        </tr>
 					    
 					    <tr>
 					        <td class="FormLabel150">

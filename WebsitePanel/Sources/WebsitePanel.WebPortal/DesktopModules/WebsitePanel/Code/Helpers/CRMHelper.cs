@@ -76,7 +76,7 @@ namespace WebsitePanel.Portal
             else            
                 email = filterValue;
 
-            IntResult res = ES.Services.CRM.GetCRMUserCount(itemId, name, email);
+            IntResult res = ES.Services.CRM.GetCRMUserCount(itemId, name, email, -1);
             return res.Value;
         }
     

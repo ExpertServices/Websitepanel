@@ -55,9 +55,9 @@ namespace WebsitePanel.Server
 
 
         [WebMethod, SoapHeader("settings")]
-        public OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string organizationDomainName, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation)
+        public OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation, long maxSize)
         {                                  
-           return CrmProvider.CreateOrganization(organizationId, organizationUniqueName, organizationFriendlyName, organizationDomainName, ou, baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, initialUserDomainName, initialUserFirstName, initialUserLastName, initialUserPrimaryEmail, organizationCollation);
+           return CrmProvider.CreateOrganization(organizationId, organizationUniqueName, organizationFriendlyName, ou, baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, initialUserDomainName, initialUserFirstName, initialUserLastName, initialUserPrimaryEmail, organizationCollation, maxSize);
         }
 
         [WebMethod, SoapHeader("settings")] 
@@ -79,9 +79,9 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public UserResult CreateCRMUser(OrganizationUser user, string orgName, Guid organizationId, Guid baseUnitId)
+        public UserResult CreateCRMUser(OrganizationUser user, string orgName, Guid organizationId, Guid baseUnitId, int CALType)
         {
-            return CrmProvider.CreateCRMUser(user, orgName, organizationId, baseUnitId);
+            return CrmProvider.CreateCRMUser(user, orgName, organizationId, baseUnitId, CALType);
         }
 
         [WebMethod, SoapHeader("settings")]
@@ -107,6 +107,12 @@ namespace WebsitePanel.Server
         {
             return CrmProvider.SetUserRoles(orgName, userId, roles);
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public ResultObject SetUserCALType(string orgName, Guid userId, int CALType)
+        {
+            return CrmProvider.SetUserCALType(orgName, userId, CALType);
+        }
         
         [WebMethod, SoapHeader("settings")]
         public CrmUserResult GetCrmUserByDomainName(string domainName, string orgName)
@@ -128,11 +134,22 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public long GetUsedSpace(Guid organizationId)
+        public long GetDBSize(Guid organizationId)
         {
-            return CrmProvider.GetUsedSpace( organizationId);
+            return CrmProvider.GetDBSize(organizationId);
         }
 
+        [WebMethod, SoapHeader("settings")]
+        public long GetMaxDBSize(Guid organizationId)
+        {
+            return CrmProvider.GetMaxDBSize(organizationId);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public ResultObject SetMaxDBSize(Guid organizationId, long maxSize)
+        {
+            return CrmProvider.SetMaxDBSize(organizationId, maxSize);
+        }
     
     }
 }

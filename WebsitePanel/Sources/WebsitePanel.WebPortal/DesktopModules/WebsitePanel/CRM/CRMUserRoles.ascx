@@ -49,6 +49,17 @@
                                             onclick="btnActive_Click" meta:resourcekey="btnActivate" /><asp:Button  CssClass="Button1" runat="server" 
                                             Text="Deactivate" ID="btnDeactivate" onclick="btnDeactivate_Click"  meta:resourcekey="btnDeactivate"/></td>
                                 </tr>
+
+                                <tr>
+                                    <td class="FormLabel150"><asp:Localize runat="server" meta:resourcekey="locLicenseType" Text="License Type:" /></td>
+                                    <td>
+                                        <asp:DropDownList ID="ddlLicenseType" runat="server" CssClass="NormalTextBox" AutoPostBack="false">
+                                            <asp:ListItem Value="0" meta:resourcekey="ddlLicenseTypeFull">Full</asp:ListItem>
+                                            <asp:ListItem Value="2" meta:resourcekey="ddlLicenseTypeLimited">Limited</asp:ListItem>
+                                        </asp:DropDownList>
+                                    </td>
+                                </tr>
+
                             </table>
                             <br />
                         </div>

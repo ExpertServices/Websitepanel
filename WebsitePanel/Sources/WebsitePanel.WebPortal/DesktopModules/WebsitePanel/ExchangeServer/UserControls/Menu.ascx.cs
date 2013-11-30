@@ -193,6 +193,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
             crmGroup.MenuItems.Add(CreateMenuItem("CRMOrganization", "CRMOrganizationDetails"));
             crmGroup.MenuItems.Add(CreateMenuItem("CRMUsers", "CRMUsers"));
+            crmGroup.MenuItems.Add(CreateMenuItem("StorageLimits", "crm_storage_settings"));
 
             if (crmGroup.MenuItems.Count > 0)
                 groups.Add(crmGroup);

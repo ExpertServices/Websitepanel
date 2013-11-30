@@ -208,10 +208,26 @@
                         </tr>
                         <tr class="OrgStatsRow">
                             <td align="right" nowrap>
-                                <asp:HyperLink ID="lnkCRMUsers" runat="server" meta:resourcekey="lnkCRMUsers"></asp:HyperLink>
+                                <asp:HyperLink ID="lnkCRMUsers" runat="server" meta:resourcekey="lnkCRMUsers" Text="Full licenses :"></asp:HyperLink>
                             </td>
                             <td>
                                 <wsp:QuotaViewer ID="crmUsersStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                        <tr class="OrgStatsRow">
+                            <td align="right" nowrap>
+                                <asp:HyperLink ID="lnkLimitedCRMUsers" runat="server" meta:resourcekey="lnkLimitedCRMUsers" Text="Limited licenses :"></asp:HyperLink>
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="crmLimitedUsersStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                        <tr class="OrgStatsRow">
+                            <td align="right" nowrap>
+				                <asp:Localize ID="locCRMDBSize" runat="server" meta:resourcekey="locCRMDBSize" Text="Storage size (ÌÂ):"></asp:Localize>
+                            </td>
+                            <td>
+				                <wsp:QuotaViewer ID="crmDBSize" runat="server" QuotaTypeId="2" DisplayGauge="true" />
                             </td>
                         </tr>
                         </asp:Panel>

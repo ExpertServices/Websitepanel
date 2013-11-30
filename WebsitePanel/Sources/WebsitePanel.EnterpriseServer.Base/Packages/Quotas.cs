@@ -156,8 +156,11 @@ order by rg.groupOrder
         public const string ORGANIZATION_DOMAINS = "HostedSolution.Domains";
         public const string ORGANIZATION_ALLOWCHANGEUPN = "HostedSolution.AllowChangeUPN";
 		public const string ORGANIZATION_SECURITYGROUPMANAGEMENT = "HostedSolution.SecurityGroupManagement";
+
         public const string CRM_USERS = "HostedCRM.Users";
         public const string CRM_ORGANIZATION = "HostedCRM.Organization";
+        public const string CRM_LIMITEDUSERS = "HostedCRM.LimitedUsers";
+        public const string CRM_MAXDATABASESIZE = "HostedCRM.MaxDatabaseSize";
 
         public const string VPS_SERVERS_NUMBER = "VPS.ServersNumber";		// Number of VPS
         public const string VPS_MANAGING_ALLOWED = "VPS.ManagingAllowed";		// Allow user to create VPS

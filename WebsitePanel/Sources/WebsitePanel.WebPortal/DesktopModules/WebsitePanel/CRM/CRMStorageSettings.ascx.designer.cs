@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -35,19 +35,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal.CRM {
+namespace WebsitePanel.Portal {
     
     
-    public partial class CRMUsers {
-        
-        /// <summary>
-        /// asyncTasks control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.EnableAsyncTasksSupport asyncTasks;
+    public partial class CRMStorageSettings {
         
         /// <summary>
         /// breadcrumb control.
@@ -95,111 +86,84 @@ namespace WebsitePanel.Portal.CRM {
         protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox messageBox;
         
         /// <summary>
-        /// btnCreateUser control.
+        /// secStorageLimits control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCreateUser;
+        protected global::WebsitePanel.Portal.CollapsiblePanel secStorageLimits;
         
         /// <summary>
-        /// SearchPanel control.
+        /// StorageLimits control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel SearchPanel;
+        protected global::System.Web.UI.WebControls.Panel StorageLimits;
         
         /// <summary>
-        /// ddlPageSize control.
+        /// lblDBSize control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlPageSize;
+        protected global::System.Web.UI.WebControls.Label lblDBSize;
         
         /// <summary>
-        /// ddlSearchColumn control.
+        /// lblMAXDBSize control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlSearchColumn;
+        protected global::System.Web.UI.WebControls.Label lblMAXDBSize;
         
         /// <summary>
-        /// txtSearchValue control.
+        /// locMaxStorage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtSearchValue;
+        protected global::System.Web.UI.WebControls.Localize locMaxStorage;
         
         /// <summary>
-        /// cmdSearch control.
+        /// maxStorageSettingsValue control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton cmdSearch;
+        protected global::WebsitePanel.Portal.QuotaEditor maxStorageSettingsValue;
         
         /// <summary>
-        /// gvUsers control.
+        /// locWarningStorage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvUsers;
+        protected global::System.Web.UI.WebControls.Localize locWarningStorage;
         
         /// <summary>
-        /// odsAccountsPaged control.
+        /// warningValue control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource odsAccountsPaged;
+        protected global::WebsitePanel.Portal.QuotaEditor warningValue;
         
         /// <summary>
-        /// locQuota control.
+        /// btnSave control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locQuota;
-        
-        /// <summary>
-        /// usersQuota control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.QuotaViewer usersQuota;
-        
-        /// <summary>
-        /// locLimitedQuota control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locLimitedQuota;
-        
-        /// <summary>
-        /// limitedusersQuota control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.QuotaViewer limitedusersQuota;
+        protected global::System.Web.UI.WebControls.Button btnSave;
     }
 }

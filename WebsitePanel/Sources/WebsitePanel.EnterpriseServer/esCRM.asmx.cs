@@ -81,15 +81,15 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public IntResult GetCRMUserCount(int itemId, string name, string email)
+        public IntResult GetCRMUserCount(int itemId, string name, string email, int CALType)
         {
-            return CRMController.GetCRMUsersCount(itemId, name, email);
+            return CRMController.GetCRMUsersCount(itemId, name, email, CALType);
         }
 
         [WebMethod]
-        public UserResult CreateCRMUser(OrganizationUser user, int packageId, int itemId, Guid businessUnitOrgId)
+        public UserResult CreateCRMUser(OrganizationUser user, int packageId, int itemId, Guid businessUnitOrgId, int CALType)
         {
-            return CRMController.CreateCRMUser(user, packageId, itemId, businessUnitOrgId);
+            return CRMController.CreateCRMUser(user, packageId, itemId, businessUnitOrgId, CALType);
         }
 
 
@@ -113,6 +113,12 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public ResultObject SetUserCALType(int itemId, int accountId, int packageId, int CALType)
+        {
+            return CRMController.SetUserCALType(itemId, accountId, packageId, CALType);
+        }
+
+        [WebMethod]
         public ResultObject ChangeUserState(int itemId, int accountId, bool disable)
         {
             return CRMController.ChangeUserState(itemId, accountId, disable);
@@ -123,6 +129,24 @@ namespace WebsitePanel.EnterpriseServer
         public CrmUserResult GetCrmUser(int itemId, int accountId)
         {
             return CRMController.GetCrmUser(itemId, accountId);
+        }
+
+        [WebMethod]
+        public ResultObject SetMaxDBSize(int itemId, int packageId, long maxSize)
+        {
+            return CRMController.SetMaxDBSize(itemId, packageId, maxSize);
+        }
+
+        [WebMethod]
+        public long GetDBSize(int itemId, int packageId)
+        {
+            return CRMController.GetDBSize(itemId, packageId);
+        }
+
+        [WebMethod]
+        public long GetMaxDBSize(int itemId, int packageId)
+        {
+            return CRMController.GetMaxDBSize(itemId, packageId);
         }
 
     }

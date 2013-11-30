@@ -2604,6 +2604,127 @@ BEGIN
 END
 GO
 
--- CRM
+-- CRM Provider fix
 
 UPDATE Providers SET EditorControl = 'CRM2011' Where ProviderID = 1201;
+
+-- CRM Quota
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedCRM.MaxDatabaseSize')
+BEGIN
+INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (460, 21, 4, N'HostedCRM.MaxDatabaseSize', N'Max Database Size, MB',3, 0 , NULL)
+END
+GO
+
+BEGIN
+UPDATE [dbo].[Quotas] SET QuotaDescription = 'Full licenses per organization'  WHERE [QuotaName] = 'HostedCRM.Users'
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedCRM.LimitedUsers')
+BEGIN
+INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (461, 21, 3, N'HostedCRM.LimitedUsers', N'Limited licenses per organization',3, 0 , NULL)
+END
+GO
+
+-- CRM Users
+
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='CRMUsers' AND COLS.name='CALType')
+BEGIN
+ALTER TABLE [dbo].[CRMUsers] ADD
+	[CALType] [int] NULL;
+
+UPDATE [dbo].[CRMUsers]
+   SET 
+      CALType = 0;
+END
+GO
+
+ALTER PROCEDURE [dbo].[InsertCRMUser] 
+(
+	@ItemID int,
+	@CrmUserID uniqueidentifier,
+	@BusinessUnitID uniqueidentifier,
+	@CALType int
+)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+INSERT INTO
+	CRMUsers
+(
+	AccountID,
+	CRMUserGuid,
+	BusinessUnitID,
+	CALType
+)
+VALUES 
+(
+	@ItemID, 
+	@CrmUserID,
+	@BusinessUnitID,
+	@CALType
+)
+    
+END
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateCRMUser')
+DROP PROCEDURE UpdateCRMUser
+GO
+
+CREATE PROCEDURE [dbo].[UpdateCRMUser]
+(
+	@ItemID int,
+	@CALType int
+)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+
+UPDATE [dbo].[CRMUsers]
+   SET 
+      CALType = @CALType
+ WHERE AccountID = @ItemID
+
+    
+END
+GO
+
+ALTER PROCEDURE [dbo].[GetCRMUsersCount] 
+(
+	@ItemID int,
+	@Name nvarchar(400),
+	@Email nvarchar(400),
+	@CALType int
+)
+AS
+BEGIN
+
+IF (@Name IS NULL)
+BEGIN
+	SET @Name = '%'
+END
+
+IF (@Email IS NULL)
+BEGIN
+	SET @Email = '%'
+END
+
+SELECT 
+	COUNT(ea.AccountID)		
+FROM 
+	ExchangeAccounts ea 
+INNER JOIN 
+	CRMUsers cu 
+ON 
+	ea.AccountID = cu.AccountID
+WHERE 
+	ea.ItemID = @ItemID AND ea.DisplayName LIKE @Name AND ea.PrimaryEmailAddress LIKE @Email
+	AND ((cu.CALType = @CALType) OR (@CALType = -1))
+END
+GO
+
+

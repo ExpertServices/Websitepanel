@@ -328,7 +328,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return retOrganization;
 		}
 
-        public OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string organizationDomainName, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation)
+        public OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation, long maxSize)
 		{
 			return CreateOrganizationInternal(organizationId, organizationUniqueName, organizationFriendlyName, baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, initialUserDomainName, initialUserFirstName, initialUserLastName, initialUserPrimaryEmail, organizationCollation);
 		}
@@ -872,7 +872,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return res;
 		}
 
-		public UserResult CreateCRMUser(OrganizationUser user, string orgName, Guid organizationId, Guid baseUnitId)
+		public UserResult CreateCRMUser(OrganizationUser user, string orgName, Guid organizationId, Guid baseUnitId, int CALType)
 		{
 			return CreateCRMUserInternal(user, orgName, organizationId, baseUnitId);
 		}
@@ -1550,6 +1550,29 @@ namespace WebsitePanel.Providers.HostedSolution
             return 0;
         }
 
+        public ResultObject SetUserCALType(string orgName, Guid userId, int CALType)
+        {
+            ResultObject ret = new ResultObject();
+            ret.IsSuccess = false;
+            return ret;
+        }
+
+        public long GetDBSize(Guid organizationId)
+        {
+            return -1;
+        }
+
+        public long GetMaxDBSize(Guid organizationId)
+        {
+            return -1;
+        }
+
+        public ResultObject SetMaxDBSize(Guid organizationId, long maxSize)
+        {
+            ResultObject ret = new ResultObject();
+            ret.IsSuccess = false;
+            return ret;
+        }
 	}
 
 }

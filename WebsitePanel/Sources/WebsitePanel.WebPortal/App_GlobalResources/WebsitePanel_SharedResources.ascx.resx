@@ -3326,7 +3326,7 @@
     <value>Max site storage, MB</value>
   </data>
   <data name="Quota.HostedCRM.Users" xml:space="preserve">
-    <value>CRM users per organization</value>
+    <value>Full licenses per organization</value>
   </data>
   <data name="Quota.HostedCRM.Organization" xml:space="preserve">
     <value>CRM Organization</value>
@@ -5364,5 +5364,11 @@
   </data>
   <data name="Success.ENTERPRISE_STORAGE_UPDATE_FOLDER_SETTINGS" xml:space="preserve">
     <value>Enterprise storage folder settings have been successfully updated.</value>
+  </data>
+  <data name="Quota.HostedCRM.LimitedUsers" xml:space="preserve">
+    <value>Limited licenses per organization</value>
+  </data>
+  <data name="Quota.HostedCRM.MaxDatabaseSize" xml:space="preserve">
+    <value>Max Database Size, MB</value>
   </data>
 </root>
