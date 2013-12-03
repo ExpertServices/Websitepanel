@@ -39,6 +39,9 @@ namespace WebsitePanel.Portal.ExchangeServer
             if (!IsPostBack)
             {
                 BindInstructions();
+
+                MailboxTabs.Visible = (PanelRequest.Context == "Mailbox");
+                UserTabs.Visible = (PanelRequest.Context == "User");
             }
 
         }

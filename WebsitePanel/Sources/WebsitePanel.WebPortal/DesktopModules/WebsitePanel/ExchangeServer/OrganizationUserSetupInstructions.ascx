@@ -1,6 +1,7 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="OrganizationUserSetupInstructions.ascx.cs" Inherits="WebsitePanel.Portal.ExchangeServer.OrganizationUserSetupInstructions" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/MailboxTabs.ascx" TagName="MailboxTabs" TagPrefix="wsp" %>
+<%@ Register src="UserControls/UserTabs.ascx" tagname="UserTabs" tagprefix="wsp" %>
 <%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/SizeBox.ascx" TagName="SizeBox" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/DaysBox.ascx" TagName="DaysBox" TagPrefix="wsp" %>
@@ -25,7 +26,8 @@
 					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Edit Mailbox"></asp:Localize>					
                 </div>
 				<div class="FormBody">
-                    <wsp:MailboxTabs id="tabs" runat="server" SelectedTab="organization_user_setup" IsADUserTabs="true" />	
+                    <wsp:UserTabs ID="UserTabs" runat="server" SelectedTab="organization_user_setup" />
+                    <wsp:MailboxTabs id="MailboxTabs" runat="server" SelectedTab="organization_user_setup" IsADUserTabs="true" />	
                     <wsp:SimpleMessageBox id="messageBox" runat="server" />
 
                     <wsp:CollapsiblePanel id="secEmail" runat="server" IsCollapsed="true"
