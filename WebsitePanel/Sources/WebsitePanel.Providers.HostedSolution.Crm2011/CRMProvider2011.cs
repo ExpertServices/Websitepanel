@@ -1520,6 +1520,8 @@ namespace WebsitePanel.Providers.HostedSolution
             return res;
         }
 
+        static string excludedRolesStr = ";пользователь поддержки;support user;";
+
         private static List<CrmRole> FillCrmRoles(EntityCollection entities, bool isUserRole, Guid businessUnitId)
         {
             List<CrmRole> res = new List<CrmRole>();
@@ -1536,10 +1538,16 @@ namespace WebsitePanel.Providers.HostedSolution
                         continue;
                 }
 
+                string roleName = role.Name;
+
+                if (roleName!=null)
+                    if (excludedRolesStr.IndexOf(";" + roleName.ToLower() + ";") != -1)
+                        continue;
+
                 CrmRole crmRole = new CrmRole();
                 crmRole.IsCurrentUserRole = isUserRole;
                 crmRole.RoleId = (Guid)role.RoleId;
-                crmRole.RoleName = role.Name;
+                crmRole.RoleName = roleName;
 
                 res.Add(crmRole);
             }

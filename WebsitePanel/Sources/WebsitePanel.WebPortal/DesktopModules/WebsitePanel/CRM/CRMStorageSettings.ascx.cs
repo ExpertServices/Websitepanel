@@ -54,7 +54,9 @@ namespace WebsitePanel.Portal
             Organization org = ES.Services.Organizations.GetOrganization(PanelRequest.ItemID);
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
 
-            maxStorageSettingsValue.ParentQuotaValue = cntx.Quotas[Quotas.CRM_MAXDATABASESIZE].QuotaAllocatedValue;
+            int limitDBSize = cntx.Quotas[Quotas.CRM_MAXDATABASESIZE].QuotaAllocatedValue;
+            //maxStorageSettingsValue.ParentQuotaValue = limitDBSize;
+            maxStorageSettingsValue.ParentQuotaValue = -1;
 
             long maxDBSize = ES.Services.CRM.GetMaxDBSize(PanelRequest.ItemID, PanelSecurity.PackageId);
             long DBSize = ES.Services.CRM.GetDBSize(PanelRequest.ItemID, PanelSecurity.PackageId);
@@ -66,6 +68,8 @@ namespace WebsitePanel.Portal
 
             lblDBSize.Text = SizeValueToString(DBSize);
             lblMAXDBSize.Text = SizeValueToString(maxDBSize);
+
+            lblLimitDBSize.Text = SizeValueToString(limitDBSize);
         }
 
         private void Save()
