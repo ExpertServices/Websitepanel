@@ -3643,8 +3643,8 @@
   <data name="HostedCRM.CANONT_GET_CRM_USER_GENERAL_ERROR" xml:space="preserve">
     <value>General error has been occurred while getting crm user.</value>
   </data>
-  <data name="HostedCRM.USER_QUOTA_HAS_BEEN_REACHED" xml:space="preserve">
-    <value>CRM users quota has been reached.</value>
+  <data name="HostedCRM.USER_QUOTA_HAS_BEEN_REACHED0" xml:space="preserve">
+    <value>CRM users quota (full license) has been reached.</value>
   </data>
   <data name="HostedCRM.CANNOT_ADD_ORGANIZATION_OWNER_TO_ORGANIZATIO_USER" xml:space="preserve">
     <value>Unable to add organization owner to organization users.</value>
@@ -5370,5 +5370,8 @@
   </data>
   <data name="Quota.HostedCRM.MaxDatabaseSize" xml:space="preserve">
     <value>Max Database Size, MB</value>
+  </data>
+  <data name="HostedCRM.USER_QUOTA_HAS_BEEN_REACHED2" xml:space="preserve">
+    <value>CRM users quota (limited license) has been reached.</value>
   </data>
 </root>

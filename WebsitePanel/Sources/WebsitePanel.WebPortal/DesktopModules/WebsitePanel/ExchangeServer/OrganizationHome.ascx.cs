@@ -248,6 +248,9 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             lnkLimitedCRMUsers.NavigateUrl = lnkCRMUsers.NavigateUrl;
 
+            lnkCRMDBSize.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "crm_storage_settings",
+                "SpaceID=" + PanelSecurity.PackageId);
+
             crmUsersStats.QuotaUsedValue = stats.CreatedCRMUsers;
             crmUsersStats.QuotaValue = stats.AllocatedCRMUsers;
 

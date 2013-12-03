@@ -125,9 +125,9 @@ namespace WebsitePanel.Portal.CRM
                                                 CALType);
 
                 if (!res2.IsSuccess)
-                    messageBox.ShowErrorMessage("UPDATE_CRM_USER_ROLES");
+                    messageBox.ShowMessage(res2, "UPDATE_CRM_USER_ROLES", "HostedCRM");
                 else if (!res.IsSuccess)
-                    messageBox.ShowErrorMessage("UPDATE_CRM_USER_ROLES");
+                    messageBox.ShowMessage(res, "UPDATE_CRM_USER_ROLES", "HostedCRM");
                 else
                     messageBox.ShowMessage(res, "UPDATE_CRM_USER_ROLES", "HostedCRM");
             }
