@@ -2639,7 +2639,7 @@ GO
 BEGIN
 UPDATE [dbo].[CRMUsers]
    SET 
-      CALType = 0 WHERE CALType = NULL 
+      CALType = 0 WHERE CALType IS NULL 
 END
 GO
 
