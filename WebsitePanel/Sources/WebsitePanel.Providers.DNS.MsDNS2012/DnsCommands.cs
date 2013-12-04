@@ -55,7 +55,8 @@ namespace WebsitePanel.Providers.DNS
 		/// <returns>Same command</returns>
 		private static Command addParam( this Command cmd, string name )
 		{
-			cmd.Parameters.Add( name );
+			// http://stackoverflow.com/a/10304080/126995
+			cmd.Parameters.Add( name, true );
 			return cmd;
 		}
 
