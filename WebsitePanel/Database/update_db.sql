@@ -2632,13 +2632,17 @@ GO
 IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='CRMUsers' AND COLS.name='CALType')
 BEGIN
 ALTER TABLE [dbo].[CRMUsers] ADD
-	[CALType] [int] NULL;
-
-UPDATE [dbo].[CRMUsers]
-   SET 
-      CALType = 0;
+	[CALType] [int] NULL
 END
 GO
+
+BEGIN
+UPDATE [dbo].[CRMUsers]
+   SET 
+      CALType = 0 WHERE CALType = NULL 
+END
+GO
+
 
 ALTER PROCEDURE [dbo].[InsertCRMUser] 
 (
