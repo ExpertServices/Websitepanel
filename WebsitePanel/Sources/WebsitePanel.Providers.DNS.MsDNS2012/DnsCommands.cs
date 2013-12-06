@@ -55,7 +55,8 @@ namespace WebsitePanel.Providers.DNS
 		/// <returns>Same command</returns>
 		private static Command addParam( this Command cmd, string name )
 		{
-			cmd.Parameters.Add( name );
+			// http://stackoverflow.com/a/10304080/126995
+			cmd.Parameters.Add( name, true );
 			return cmd;
 		}
 
@@ -187,17 +188,16 @@ namespace WebsitePanel.Providers.DNS
 			Log.WriteEnd( "Add_DnsServerPrimaryZone" );
 		}
 
+		/// <summary>Call Add-DnsServerSecondaryZone cmdlet</summary>
+		/// <param name="ps"></param>
+		/// <param name="zoneName">a name of a zone</param>
+		/// <param name="masterServers">an array of IP addresses of the master servers of the zone. You can use both IPv4 and IPv6.</param>
 		public static void Add_DnsServerSecondaryZone( this PowerShellHelper ps, string zoneName, string[] masterServers )
 		{
-			// Add-DnsServerSecondaryZone -Name zzz.com -ZoneFile zzz.com.dns
+			// Add-DnsServerSecondaryZone -Name zzz.com -ZoneFile zzz.com.dns -MasterServers ...
 			var cmd = new Command( "Add-DnsServerSecondaryZone" );
 			cmd.addParam( "Name", zoneName );
 			cmd.addParam( "ZoneFile", zoneName + ".dns" );
-			ps.RunPipeline( cmd );
-
-			// Set-DnsServerSecondaryZone -Name zzz.com -MasterServers ...
-			cmd = new Command( "Set-DnsServerSecondaryZone" );
-			cmd.addParam( "Name", zoneName );
 			cmd.addParam( "MasterServers", masterServers );
 			ps.RunPipeline( cmd );
 		}

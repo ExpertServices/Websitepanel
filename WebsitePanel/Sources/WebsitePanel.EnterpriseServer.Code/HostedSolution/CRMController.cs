@@ -270,6 +270,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
                 int maxDBSize = cntx.Quotas[Quotas.CRM_MAXDATABASESIZE].QuotaAllocatedValue;
+                if (maxDBSize != -1) maxDBSize = maxDBSize * 1024 * 1024;
 
                 org.CrmAdministratorId = user.AccountId;
                 org.CrmCurrency =
@@ -1011,7 +1012,8 @@ namespace WebsitePanel.EnterpriseServer
                 }
                 if (!quotaRes.Value)
                 {
-                    CompleteTask(res, CrmErrorCodes.USER_QUOTA_HAS_BEEN_REACHED, null, "CRM user quota has been reached.");
+                    CompleteTask(res, CrmErrorCodes.USER_QUOTA_HAS_BEEN_REACHED + CALType.ToString(), null, "CRM user quota " +
+                        (CALType==0 ? "(full license)" : "(limited license)") +" has been reached.");
                     return res;
                 }
 
@@ -1159,6 +1161,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (limitSize != -1)
                 {
+                    limitSize = limitSize * 1024 * 1024;
                     if (maxSize == -1) maxSize = limitSize;
                     if (maxSize > limitSize) maxSize = limitSize;
                 }

@@ -42,10 +42,15 @@
                                 <td>
                                     <asp:Label ID="lblDBSize" runat="server" Text="0" /> of <asp:Label ID="lblMAXDBSize" runat="server" Text="0" />
                             </tr>
+                            <tr>
+                                <td class="FormLabel200" align="right"><asp:Localize runat="server" meta:resourcekey="locLimitStorage" >Maximum allowed (MB):</asp:Localize></td>
+                                <td>
+                                    <asp:Label ID="lblLimitDBSize" runat="server" Text="0" />
+                            </tr>
 						    <tr>
 							    <td class="FormLabel200" align="right"><asp:Localize ID="locMaxStorage" runat="server" meta:resourcekey="locMaxStorage" >Reassign storage space (MB):</asp:Localize></td>
 							    <td>                                    
-									<uc1:QuotaEditor QuotaTypeId="2" ID="maxStorageSettingsValue" runat="server" />                                    																	    
+									<uc1:QuotaEditor QuotaTypeId="2" ID="maxStorageSettingsValue" runat="server"/>
 								</td>
 						    </tr>
                             <!-- 

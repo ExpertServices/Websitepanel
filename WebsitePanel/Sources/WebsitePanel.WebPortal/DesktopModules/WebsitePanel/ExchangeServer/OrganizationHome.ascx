@@ -224,7 +224,7 @@
                         </tr>
                         <tr class="OrgStatsRow">
                             <td align="right" nowrap>
-				                <asp:Localize ID="locCRMDBSize" runat="server" meta:resourcekey="locCRMDBSize" Text="Storage size (ÌÂ):"></asp:Localize>
+				                <asp:HyperLink ID="lnkCRMDBSize" runat="server" meta:resourcekey="lnkCRMDBSize" Text="Storage size (ÌÂ):"></asp:HyperLink>
                             </td>
                             <td>
 				                <wsp:QuotaViewer ID="crmDBSize" runat="server" QuotaTypeId="2" DisplayGauge="true" />
