@@ -198,7 +198,7 @@ namespace WebsitePanel.EnterpriseServer
                     return true;
             }
 
-            return false;
+            return true;
         }
 
         protected static bool CheckEnterpriseStorageInitializationInternal(int packageId, int itemId)
