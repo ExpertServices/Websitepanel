@@ -188,13 +188,6 @@ namespace WebsitePanel.EnterpriseServer
 
             if (web != null)
             {
-                var esServiceId = GetEnterpriseStorageServiceID(packageId);
-
-                StringDictionary esSesstings = ServerController.GetServiceSettings(esServiceId);
-
-                string usersDomain = esSesstings["UsersDomain"];
-
-                if (web.SiteExists(usersDomain))
                     return true;
             }
 
