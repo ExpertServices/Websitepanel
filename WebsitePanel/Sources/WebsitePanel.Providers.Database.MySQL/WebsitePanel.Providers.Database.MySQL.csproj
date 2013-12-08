@@ -71,6 +71,7 @@
     <Compile Include="MySqlServer50.cs" />
     <Compile Include="MySqlServer51.cs" />
     <Compile Include="MySqlServer55.cs" />
+    <Compile Include="MySqlServer56.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

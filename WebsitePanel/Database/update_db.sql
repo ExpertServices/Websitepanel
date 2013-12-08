@@ -2740,3 +2740,12 @@ WHERE
 END
 GO
 
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'MySQL Server 5.6')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderId], [GroupId], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES(302, 11, N'MySQL', N'MySQL Server 5.6', N'WebsitePanel.Providers.Database.MySqlServer56, WebsitePanel.Providers.Database.MySQL', N'MySQL', NULL)
+END
+ELSE
+BEGIN
+UPDATE [dbo].[Providers] SET [DisableAutoDiscovery] = NULL WHERE [DisplayName] = 'MySQL Server 5.6'
+END
+GO
