@@ -59,12 +59,13 @@ namespace WebsitePanel.Portal.CRM
                         lblEmailAddress.Text = user.PrimaryEmailAddress;
                         lblDomainName.Text = user.DomainUserName;
 
-                        int cALType = userResult.Value.CALType;
+                        int cALType = userResult.Value.CALType + ((int)userResult.Value.ClientAccessMode) * 10;
 
                         switch (cALType)
                         {
                             case 0 :
                             case 2 :
+                            case 22:
                                 ddlLicenseType.SelectedValue = cALType.ToString();
                                 break;
                             default:

@@ -5374,4 +5374,10 @@
   <data name="HostedCRM.USER_QUOTA_HAS_BEEN_REACHED2" xml:space="preserve">
     <value>CRM users quota (limited license) has been reached.</value>
   </data>
+  <data name="HostedCRM.USER_QUOTA_HAS_BEEN_REACHED22" xml:space="preserve">
+    <value>CRM users quota (ESS license) has been reached.</value>
+  </data>
+  <data name="Quota.HostedCRM.ESSUsers" xml:space="preserve">
+    <value>ESS licenses per organization</value>
+  </data>
 </root>

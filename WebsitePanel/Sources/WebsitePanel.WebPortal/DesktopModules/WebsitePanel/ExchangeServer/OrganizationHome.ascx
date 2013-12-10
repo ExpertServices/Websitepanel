@@ -224,7 +224,15 @@
                         </tr>
                         <tr class="OrgStatsRow">
                             <td align="right" nowrap>
-				                <asp:HyperLink ID="lnkCRMDBSize" runat="server" meta:resourcekey="lnkCRMDBSize" Text="Storage size (ÌÂ):"></asp:HyperLink>
+                                <asp:HyperLink ID="lnkESSCRMUsers" runat="server" meta:resourcekey="lnkESSCRMUsers" Text="ESS licenses :"></asp:HyperLink>
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="crmESSUsersStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                        <tr class="OrgStatsRow">
+                            <td align="right" nowrap>
+				                <asp:HyperLink ID="lnkCRMDBSize" runat="server" meta:resourcekey="lnkCRMDBSize" Text="Storage size (MB):"></asp:HyperLink>
                             </td>
                             <td>
 				                <wsp:QuotaViewer ID="crmDBSize" runat="server" QuotaTypeId="2" DisplayGauge="true" />

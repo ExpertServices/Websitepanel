@@ -160,6 +160,7 @@ order by rg.groupOrder
         public const string CRM_USERS = "HostedCRM.Users";
         public const string CRM_ORGANIZATION = "HostedCRM.Organization";
         public const string CRM_LIMITEDUSERS = "HostedCRM.LimitedUsers";
+        public const string CRM_ESSUSERS = "HostedCRM.ESSUsers";
         public const string CRM_MAXDATABASESIZE = "HostedCRM.MaxDatabaseSize";
 
         public const string VPS_SERVERS_NUMBER = "VPS.ServersNumber";		// Number of VPS

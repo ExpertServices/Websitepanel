@@ -42,10 +42,19 @@ namespace WebsitePanel.Portal
         protected void Page_Load(object sender, EventArgs e)
         {
             warningValue.UnlimitedText = GetLocalizedString("WarningUnlimitedValue");
-            
             if (!IsPostBack)
             {
-                BindValues();
+                Organization org = ES.Services.Organizations.GetOrganization(PanelRequest.ItemID);
+                if (org.CrmOrganizationId == Guid.Empty)
+                {
+                    messageBox.ShowErrorMessage("NOT_CRM_ORGANIZATION");
+                    StorageLimits.Enabled = false;
+                    btnSave.Enabled = false;
+                }
+                else
+                {
+                    BindValues();
+                }
             }
         }
 
@@ -77,9 +86,9 @@ namespace WebsitePanel.Portal
             try
             {
                 PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
-                int limitSize = cntx.Quotas[Quotas.CRM_MAXDATABASESIZE].QuotaAllocatedValue;
+                long limitSize = cntx.Quotas[Quotas.CRM_MAXDATABASESIZE].QuotaAllocatedValue;
 
-                int maxSize = maxStorageSettingsValue.QuotaValue;
+                long maxSize = maxStorageSettingsValue.QuotaValue;
 
                 if (limitSize != -1)
                 {

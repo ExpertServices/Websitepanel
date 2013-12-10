@@ -934,6 +934,7 @@ namespace WebsitePanel.EnterpriseServer
                     {
                         stats.CreatedCRMUsers = CRMController.GetCRMUsersCount(org.Id, string.Empty, string.Empty, 0).Value;
                         stats.CreatedLimitedCRMUsers = CRMController.GetCRMUsersCount(org.Id, string.Empty, string.Empty, 2).Value;
+                        stats.CreatedESSCRMUsers = CRMController.GetCRMUsersCount(org.Id, string.Empty, string.Empty, 22).Value;
                         stats.UsedCRMDiskSpace = CRMController.GetDBSize(org.Id, org.PackageId);
                         stats.AllocatedCRMDiskSpace = CRMController.GetMaxDBSize(org.Id, org.PackageId);
                         
@@ -997,6 +998,7 @@ namespace WebsitePanel.EnterpriseServer
                                     {
                                         stats.CreatedCRMUsers += CRMController.GetCRMUsersCount(o.Id, string.Empty, string.Empty, 0 ).Value;
                                         stats.CreatedLimitedCRMUsers += CRMController.GetCRMUsersCount(o.Id, string.Empty, string.Empty, 2).Value;
+                                        stats.CreatedESSCRMUsers += CRMController.GetCRMUsersCount(o.Id, string.Empty, string.Empty, 22).Value;
                                         stats.UsedCRMDiskSpace += CRMController.GetDBSize(o.Id, o.PackageId);
                                         stats.AllocatedCRMDiskSpace += CRMController.GetMaxDBSize(o.Id, o.PackageId);
                                     }
@@ -1044,6 +1046,7 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     stats.AllocatedCRMUsers = cntx.Quotas[Quotas.CRM_USERS].QuotaAllocatedValue;
                     stats.AllocatedLimitedCRMUsers = cntx.Quotas[Quotas.CRM_LIMITEDUSERS].QuotaAllocatedValue;
+                    stats.AllocatedESSCRMUsers = cntx.Quotas[Quotas.CRM_ESSUSERS].QuotaAllocatedValue;
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.BlackBerry))

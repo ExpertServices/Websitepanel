@@ -2732,3 +2732,16 @@ END
 GO
 
 
+
+-- CRM Quota
+
+BEGIN
+UPDATE [dbo].[Quotas] SET QuotaOrder = 5  WHERE [QuotaName] = 'HostedCRM.MaxDatabaseSize'
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedCRM.ESSUsers')
+BEGIN
+INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (462, 21, 4, N'HostedCRM.ESSUsers', N'ESS licenses per organization',3, 0 , NULL)
+END
+GO

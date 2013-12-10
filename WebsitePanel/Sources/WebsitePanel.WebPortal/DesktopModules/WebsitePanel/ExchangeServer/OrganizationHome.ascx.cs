@@ -247,6 +247,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 "SpaceID=" + PanelSecurity.PackageId);
 
             lnkLimitedCRMUsers.NavigateUrl = lnkCRMUsers.NavigateUrl;
+            lnkESSCRMUsers.NavigateUrl = lnkCRMUsers.NavigateUrl;
 
             lnkCRMDBSize.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "crm_storage_settings",
                 "SpaceID=" + PanelSecurity.PackageId);
@@ -259,7 +260,10 @@ namespace WebsitePanel.Portal.ExchangeServer
             crmLimitedUsersStats.QuotaUsedValue = stats.CreatedLimitedCRMUsers;
             crmLimitedUsersStats.QuotaValue = stats.AllocatedLimitedCRMUsers;
 
-            crmDBSize.QuotaUsedValue = Convert.ToInt32( stats.UsedCRMDiskSpace>0 ? stats.UsedCRMDiskSpace/(1024*1024) : -1);
+            crmESSUsersStats.QuotaUsedValue = stats.CreatedESSCRMUsers;
+            crmESSUsersStats.QuotaValue = stats.AllocatedESSCRMUsers;
+
+            crmDBSize.QuotaUsedValue = Convert.ToInt32(stats.UsedCRMDiskSpace > 0 ? stats.UsedCRMDiskSpace / (1024 * 1024) : -1);
             crmDBSize.QuotaValue = Convert.ToInt32(stats.AllocatedCRMDiskSpace>0 ? stats.AllocatedCRMDiskSpace/(1024*1024) : -1);
         }
 
