@@ -3286,6 +3286,17 @@ namespace WebsitePanel.EnterpriseServer
             return reader;
         }
 
+        public static int GetPackageIPAddressesCount(int packageId, int orgId, int poolId)
+        {
+            object obj = SqlHelper.ExecuteScalar(ConnectionString, CommandType.StoredProcedure,
+                                     "GetPackageIPAddressesCount",
+                                        new SqlParameter("@PackageID", packageId),
+                                        new SqlParameter("@OrgID", orgId),
+                                        new SqlParameter("@PoolId", poolId));
+            int res = 0;
+            int.TryParse(obj.ToString(), out res);
+            return res;
+        }
 
         public static void DeallocatePackageIPAddress(int id)
         {

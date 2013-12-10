@@ -1186,6 +1186,11 @@ namespace WebsitePanel.EnterpriseServer
             return result;
         }
 
+        public static int GetPackageIPAddressesCount(int packageId, int orgId, IPAddressPool pool)
+        {
+            return  DataProvider.GetPackageIPAddressesCount(packageId, orgId, (int)pool);
+        }
+
         public static List<IPAddressInfo> GetUnallottedIPAddresses(int packageId, string groupName, IPAddressPool pool)
         {
             // get service ID
@@ -1258,6 +1263,9 @@ namespace WebsitePanel.EnterpriseServer
             PackageContext cntx = PackageController.GetPackageContext(packageId);
             int quotaAllocated = cntx.Quotas[quotaName].QuotaAllocatedValue;
             int quotaUsed = cntx.Quotas[quotaName].QuotaUsedValue;
+
+            if (pool == IPAddressPool.PhoneNumbers)
+                quotaUsed = ServerController.GetPackageIPAddressesCount(packageId, orgId, pool);
 
             // check the maximum allowed number
             if (quotaAllocated != -1) // check only if not unlimited 

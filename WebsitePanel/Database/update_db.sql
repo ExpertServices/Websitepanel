@@ -2745,3 +2745,38 @@ BEGIN
 INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (462, 21, 4, N'HostedCRM.ESSUsers', N'ESS licenses per organization',3, 0 , NULL)
 END
 GO
+
+
+-- Lync
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetPackageIPAddressesCount')
+DROP PROCEDURE GetPackageIPAddressesCount
+GO
+
+ PROCEDURE [dbo].[GetPackageIPAddressesCount]
+(
+	@PackageID int,
+	@OrgID int,
+	@PoolID int = 0
+)
+AS
+BEGIN
+
+SELECT 
+	COUNT(PA.PackageAddressID)
+FROM 
+	dbo.PackageIPAddresses PA
+INNER JOIN 
+	dbo.IPAddresses AS IP ON PA.AddressID = IP.AddressID
+INNER JOIN 
+	dbo.Packages P ON PA.PackageID = P.PackageID
+INNER JOIN 
+	dbo.Users U ON U.UserID = P.UserID
+LEFT JOIN 
+	ServiceItems SI ON PA.ItemId = SI.ItemID
+WHERE
+	(@PoolID = 0 OR @PoolID <> 0 AND IP.PoolID = @PoolID)
+AND (@OrgID = 0 OR @OrgID <> 0 AND PA.OrgID = @OrgID)
+
+END
+

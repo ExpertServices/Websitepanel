@@ -95,7 +95,9 @@ namespace WebsitePanel.Portal.UserControls
             if (cntx.Quotas.ContainsKey(quotaName))
             {
                 int quotaAllocated = cntx.Quotas[quotaName].QuotaAllocatedValue;
-                int quotaUsed = cntx.Quotas[quotaName].QuotaUsedValue;
+                //int quotaUsed = cntx.Quotas[quotaName].QuotaUsedValue;
+
+                int quotaUsed = ES.Services.Servers.GetPackageIPAddressesCount(PanelSecurity.PackageId, PanelRequest.ItemID, IPAddressPool.PhoneNumbers);
 
                 if (quotaAllocated != -1)
                     quotaAllowed = quotaAllocated - quotaUsed;
