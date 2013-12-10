@@ -394,6 +394,12 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public int GetPackageIPAddressesCount(int packageId, int orgId, IPAddressPool pool)
+        {
+            return ServerController.GetPackageIPAddressesCount(packageId, orgId, pool);
+        }
+
+        [WebMethod]
         public List<PackageIPAddress> GetPackageUnassignedIPAddresses(int packageId, int orgId, IPAddressPool pool)
         {
             return ServerController.GetPackageUnassignedIPAddresses(packageId, orgId, pool);

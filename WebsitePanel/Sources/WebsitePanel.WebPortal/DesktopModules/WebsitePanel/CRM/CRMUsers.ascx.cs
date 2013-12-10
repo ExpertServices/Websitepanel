@@ -57,6 +57,10 @@ namespace WebsitePanel.Portal.CRM
 
                 //if (stats.AllocatedCRMUsers != -1) usersQuota.QuotaAvailable = tenantStats.AllocatedCRMUsers - tenantStats.CreatedCRMUsers;
                 //if (stats.AllocatedLimitedCRMUsers != -1) limitedusersQuota.QuotaAvailable = tenantStats.AllocatedLimitedCRMUsers - tenantStats.CreatedLimitedCRMUsers;
+
+                essusersQuota.QuotaUsedValue = stats.CreatedESSCRMUsers;
+                essusersQuota.QuotaValue = stats.AllocatedESSCRMUsers;
+
             }
         }
 

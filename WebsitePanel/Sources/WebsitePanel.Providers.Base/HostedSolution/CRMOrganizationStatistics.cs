@@ -42,6 +42,7 @@ namespace WebsitePanel.Providers.HostedSolution
         public string СRMOrganizationName { get; set; }
         public int CRMUsersFullLicenceCount { get; set; }
         public int CRMUsersReadOnlyLicenceCount { get; set; }
+        public int CRMUsersESSLicenceCount { get; set; }
         public int UsedSpace { get; set; }
         public string UsageMonth { get; set; }
 

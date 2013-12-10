@@ -951,6 +951,10 @@ namespace WebsitePanel.Providers.HostedSolution
             // Retrieve the specified security role.
             Role role = RetrieveRoleByName(serviceProxy, roleStr);
 
+            // CALType and AccessMode
+            int accessmode = CALType / 10;
+            int caltype = CALType % 10;
+
             //Create a new system user.
             SystemUser user = new SystemUser
             {
@@ -963,7 +967,8 @@ namespace WebsitePanel.Providers.HostedSolution
                     Name = BusinessUnit.EntityLogicalName,
                     Id = defaultBusinessUnit.Id
                 },
-                CALType = new OptionSetValue(CALType)
+                CALType = new OptionSetValue(caltype),
+                AccessMode = new OptionSetValue(accessmode)
             };
             userId = serviceProxy.Create(user);
 
@@ -1930,7 +1935,12 @@ namespace WebsitePanel.Providers.HostedSolution
                 SystemUser user =
                     serviceProxy.Retrieve(SystemUser.EntityLogicalName, userId, new Microsoft.Xrm.Sdk.Query.ColumnSet("domainname", "businessunitid", "accessmode", "isdisabled", "caltype")).ToEntity<SystemUser>();
 
-                user.CALType = new OptionSetValue(CALType);
+                // CALType and AccessMode
+                int accessmode = CALType / 10;
+                int caltype = CALType % 10;
+
+                user.CALType = new OptionSetValue(caltype);
+                user.AccessMode = new OptionSetValue(accessmode);
 
                 serviceProxy.Update(user);
 

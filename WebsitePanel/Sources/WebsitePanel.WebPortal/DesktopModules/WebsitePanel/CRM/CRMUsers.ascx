@@ -97,6 +97,14 @@
 				                <wsp:QuotaViewer ID="limitedusersQuota" runat="server" QuotaTypeId="2"   />
                             </td>
                     </tr>
+                    <tr>
+                            <td align="right" nowrap>
+            				    <asp:Localize ID="locESSQuota" runat="server" meta:resourcekey="locESSQuota" Text="ESS licenses :"></asp:Localize>
+                            </td>
+                            <td>
+				                <wsp:QuotaViewer ID="essusersQuota" runat="server" QuotaTypeId="2"   />
+                            </td>
+                    </tr>
                     
                     </table>
 				</div>                                                

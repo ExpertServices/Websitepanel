@@ -31,6 +31,8 @@ using System.Collections.Generic;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using WebsitePanel.EnterpriseServer;
+using WebsitePanel.Providers.Common;
 
 namespace WebsitePanel.Portal.Lync
 {
@@ -38,6 +40,15 @@ namespace WebsitePanel.Portal.Lync
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+          
+        }
+
+        protected void Page_PreRender(object sender, EventArgs e)
+        {
+             if (!IsPostBack)
+            {
+                phoneQuota.Viewer.QuotaUsedValue = ES.Services.Servers.GetPackageIPAddressesCount(PanelSecurity.PackageId, PanelRequest.ItemID, IPAddressPool.PhoneNumbers);
+            }
         }
     }
 }

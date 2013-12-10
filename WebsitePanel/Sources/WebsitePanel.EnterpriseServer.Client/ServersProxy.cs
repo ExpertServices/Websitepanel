@@ -52,14 +52,16 @@ using WebsitePanel.Server;
 using WebsitePanel.Providers.DNS;
 using WebsitePanel.Providers.ResultObjects;
 
-namespace WebsitePanel.EnterpriseServer {
-    
+namespace WebsitePanel.EnterpriseServer
+{
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Web.Services.WebServiceBindingAttribute(Name="esServersSoap", Namespace="http://smbsaas/websitepanel/enterpriseserver")]
     public partial class esServers : Microsoft.Web.Services3.WebServicesClientProtocol {
+        
+        private System.Threading.SendOrPostCallback GetDnsRecordsByServiceOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetDnsRecordsByServerOperationCompleted;
         
@@ -269,6 +271,8 @@ namespace WebsitePanel.EnterpriseServer {
         
         private System.Threading.SendOrPostCallback GetPackageIPAddressesOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetPackageIPAddressesCountOperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetPackageUnassignedIPAddressesOperationCompleted;
         
         private System.Threading.SendOrPostCallback AllocatePackageIPAddressesOperationCompleted;
@@ -291,12 +295,13 @@ namespace WebsitePanel.EnterpriseServer {
         
         private System.Threading.SendOrPostCallback GetRawDnsRecordsByGroupOperationCompleted;
         
-        private System.Threading.SendOrPostCallback GetDnsRecordsByServiceOperationCompleted;
-        
         /// <remarks/>
         public esServers() {
             this.Url = "http://localhost:9002/esServers.asmx";
         }
+        
+        /// <remarks/>
+        public event GetDnsRecordsByServiceCompletedEventHandler GetDnsRecordsByServiceCompleted;
         
         /// <remarks/>
         public event GetDnsRecordsByServerCompletedEventHandler GetDnsRecordsByServerCompleted;
@@ -611,6 +616,9 @@ namespace WebsitePanel.EnterpriseServer {
         public event GetPackageIPAddressesCompletedEventHandler GetPackageIPAddressesCompleted;
         
         /// <remarks/>
+        public event GetPackageIPAddressesCountCompletedEventHandler GetPackageIPAddressesCountCompleted;
+        
+        /// <remarks/>
         public event GetPackageUnassignedIPAddressesCompletedEventHandler GetPackageUnassignedIPAddressesCompleted;
         
         /// <remarks/>
@@ -644,7 +652,45 @@ namespace WebsitePanel.EnterpriseServer {
         public event GetRawDnsRecordsByGroupCompletedEventHandler GetRawDnsRecordsByGroupCompleted;
         
         /// <remarks/>
-        public event GetDnsRecordsByServiceCompletedEventHandler GetDnsRecordsByServiceCompleted;
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetDnsRecordsByService", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public GlobalDnsRecord[] GetDnsRecordsByService(int serviceId) {
+            object[] results = this.Invoke("GetDnsRecordsByService", new object[] {
+                        serviceId});
+            return ((GlobalDnsRecord[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetDnsRecordsByService(int serviceId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetDnsRecordsByService", new object[] {
+                        serviceId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public GlobalDnsRecord[] EndGetDnsRecordsByService(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((GlobalDnsRecord[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetDnsRecordsByServiceAsync(int serviceId) {
+            this.GetDnsRecordsByServiceAsync(serviceId, null);
+        }
+        
+        /// <remarks/>
+        public void GetDnsRecordsByServiceAsync(int serviceId, object userState) {
+            if ((this.GetDnsRecordsByServiceOperationCompleted == null)) {
+                this.GetDnsRecordsByServiceOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetDnsRecordsByServiceOperationCompleted);
+            }
+            this.InvokeAsync("GetDnsRecordsByService", new object[] {
+                        serviceId}, this.GetDnsRecordsByServiceOperationCompleted, userState);
+        }
+        
+        private void OnGetDnsRecordsByServiceOperationCompleted(object arg) {
+            if ((this.GetDnsRecordsByServiceCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetDnsRecordsByServiceCompleted(this, new GetDnsRecordsByServiceCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetDnsRecordsByServer", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -5197,6 +5243,53 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetPackageIPAddressesCount", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int GetPackageIPAddressesCount(int packageId, int orgId, IPAddressPool pool) {
+            object[] results = this.Invoke("GetPackageIPAddressesCount", new object[] {
+                        packageId,
+                        orgId,
+                        pool});
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetPackageIPAddressesCount(int packageId, int orgId, IPAddressPool pool, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetPackageIPAddressesCount", new object[] {
+                        packageId,
+                        orgId,
+                        pool}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public int EndGetPackageIPAddressesCount(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetPackageIPAddressesCountAsync(int packageId, int orgId, IPAddressPool pool) {
+            this.GetPackageIPAddressesCountAsync(packageId, orgId, pool, null);
+        }
+        
+        /// <remarks/>
+        public void GetPackageIPAddressesCountAsync(int packageId, int orgId, IPAddressPool pool, object userState) {
+            if ((this.GetPackageIPAddressesCountOperationCompleted == null)) {
+                this.GetPackageIPAddressesCountOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetPackageIPAddressesCountOperationCompleted);
+            }
+            this.InvokeAsync("GetPackageIPAddressesCount", new object[] {
+                        packageId,
+                        orgId,
+                        pool}, this.GetPackageIPAddressesCountOperationCompleted, userState);
+        }
+        
+        private void OnGetPackageIPAddressesCountOperationCompleted(object arg) {
+            if ((this.GetPackageIPAddressesCountCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetPackageIPAddressesCountCompleted(this, new GetPackageIPAddressesCountCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetPackageUnassignedIPAddresses", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public PackageIPAddress[] GetPackageUnassignedIPAddresses(int packageId, int orgId, IPAddressPool pool) {
             object[] results = this.Invoke("GetPackageUnassignedIPAddresses", new object[] {
@@ -5678,49 +5771,34 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetDnsRecordsByService", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public GlobalDnsRecord[] GetDnsRecordsByService(int serviceId) {
-            object[] results = this.Invoke("GetDnsRecordsByService", new object[] {
-                        serviceId});
-            return ((GlobalDnsRecord[])(results[0]));
-        }
-        
-        /// <remarks/>
-        public System.IAsyncResult BeginGetDnsRecordsByService(int serviceId, System.AsyncCallback callback, object asyncState) {
-            return this.BeginInvoke("GetDnsRecordsByService", new object[] {
-                        serviceId}, callback, asyncState);
-        }
-        
-        /// <remarks/>
-        public GlobalDnsRecord[] EndGetDnsRecordsByService(System.IAsyncResult asyncResult) {
-            object[] results = this.EndInvoke(asyncResult);
-            return ((GlobalDnsRecord[])(results[0]));
-        }
-        
-        /// <remarks/>
-        public void GetDnsRecordsByServiceAsync(int serviceId) {
-            this.GetDnsRecordsByServiceAsync(serviceId, null);
-        }
-        
-        /// <remarks/>
-        public void GetDnsRecordsByServiceAsync(int serviceId, object userState) {
-            if ((this.GetDnsRecordsByServiceOperationCompleted == null)) {
-                this.GetDnsRecordsByServiceOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetDnsRecordsByServiceOperationCompleted);
-            }
-            this.InvokeAsync("GetDnsRecordsByService", new object[] {
-                        serviceId}, this.GetDnsRecordsByServiceOperationCompleted, userState);
-        }
-        
-        private void OnGetDnsRecordsByServiceOperationCompleted(object arg) {
-            if ((this.GetDnsRecordsByServiceCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.GetDnsRecordsByServiceCompleted(this, new GetDnsRecordsByServiceCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void GetDnsRecordsByServiceCompletedEventHandler(object sender, GetDnsRecordsByServiceCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetDnsRecordsByServiceCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetDnsRecordsByServiceCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public GlobalDnsRecord[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((GlobalDnsRecord[])(this.results[0]));
+            }
         }
     }
     
@@ -8342,6 +8420,32 @@ namespace WebsitePanel.EnterpriseServer {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void GetPackageIPAddressesCountCompletedEventHandler(object sender, GetPackageIPAddressesCountCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetPackageIPAddressesCountCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetPackageIPAddressesCountCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public int Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((int)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
     public delegate void GetPackageUnassignedIPAddressesCompletedEventHandler(object sender, GetPackageUnassignedIPAddressesCompletedEventArgs e);
     
     /// <remarks/>
@@ -8622,32 +8726,6 @@ namespace WebsitePanel.EnterpriseServer {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((System.Data.DataSet)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetDnsRecordsByServiceCompletedEventHandler(object sender, GetDnsRecordsByServiceCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetDnsRecordsByServiceCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetDnsRecordsByServiceCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public GlobalDnsRecord[] Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((GlobalDnsRecord[])(this.results[0]));
             }
         }
     }

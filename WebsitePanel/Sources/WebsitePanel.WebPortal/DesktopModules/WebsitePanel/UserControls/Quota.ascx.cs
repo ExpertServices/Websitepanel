@@ -55,6 +55,11 @@ namespace WebsitePanel.Portal
             set { quotaViewer.DisplayGauge = value; }
         }
 
+        public QuotaViewer Viewer
+        {
+            get { return quotaViewer; }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
