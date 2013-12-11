@@ -2771,7 +2771,7 @@ IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetPackageIPAd
 DROP PROCEDURE GetPackageIPAddressesCount
 GO
 
- PROCEDURE [dbo].[GetPackageIPAddressesCount]
+CREATE PROCEDURE [dbo].[GetPackageIPAddressesCount]
 (
 	@PackageID int,
 	@OrgID int,
