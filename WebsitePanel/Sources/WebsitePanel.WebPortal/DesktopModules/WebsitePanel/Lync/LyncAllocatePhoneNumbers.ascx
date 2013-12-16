@@ -31,7 +31,7 @@
                 <div class="FormBody">
                     <wsp:AllocatePackagePhoneNumbers id="allocatePhoneNumbers" runat="server"
                             Pool="PhoneNumbers"
-                            ResourceGroup="Web"
+                            ResourceGroup="Lync"
                             ListAddressesControl="lync_phonenumbers" />                   
                 </div>
             </div>

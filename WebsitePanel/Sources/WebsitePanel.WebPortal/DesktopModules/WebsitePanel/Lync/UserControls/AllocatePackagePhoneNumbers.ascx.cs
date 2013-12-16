@@ -70,21 +70,14 @@ namespace WebsitePanel.Portal.UserControls
 
         private void BindIPAddresses()
         {
-            bool vps = (Pool == IPAddressPool.VpsExternalNetwork || Pool == IPAddressPool.VpsManagementNetwork);
-
             // bind list
             IPAddressInfo[] ips = ES.Services.Servers.GetUnallottedIPAddresses(PanelSecurity.PackageId, ResourceGroup, Pool);
             foreach (IPAddressInfo ip in ips)
             {
                 string txt = ip.ExternalIP;
 
-                // web sites - NAT Address
-                if (!vps && !String.IsNullOrEmpty(ip.InternalIP))
+                if (!String.IsNullOrEmpty(ip.InternalIP))
                     txt += "/" + ip.InternalIP;
-
-                // VPS - Gateway Address
-                else if (vps && !String.IsNullOrEmpty(ip.DefaultGateway))
-                    txt += "/" + ip.DefaultGateway;
 
                 listExternalAddresses.Items.Add(new ListItem(txt, ip.AddressId.ToString()));
             }
