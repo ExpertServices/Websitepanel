@@ -37,9 +37,8 @@ using WebsitePanel.Providers.Utils;
 
 namespace WebsitePanel.Providers.DNS
 {
-	public class MsDNS: HostingServiceProviderBase, IDnsServer
+	public class MsDNS2012: HostingServiceProviderBase, IDnsServer
 	{
-
 		protected int ExpireLimit
 		{
 			get { return ProviderSettings.GetInt( "ExpireLimit" ); }
@@ -69,7 +68,7 @@ namespace WebsitePanel.Providers.DNS
 		private WmiHelper wmi = null;	//< We still need WMI because PowerShell doesn't support SOA updates.
 		private bool bulkRecords;
 
-		public MsDNS()
+		public MsDNS2012()
 		{
 			// Create PowerShell helper
 			ps = new PowerShellHelper();
