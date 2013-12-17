@@ -39,17 +39,18 @@ namespace WebsitePanel.Providers.DNS
 	/// <remarks>It's also possible to access native CIM object, and use Mgmtclassgen.exe for that.</remarks>
 	internal static class RecordConverter
 	{
-		private static string RemoveTrailingDot( string str )
+		internal static string RemoveTrailingDot( string str )
 		{
 			if( !str.EndsWith( "." ) )
 				return str;
 			return str.Substring( 0, str.Length - 1 );
 		}
 
-		private static string CorrectHost( string zoneName, string host )
+		internal static string CorrectHost( string zoneName, string host )
 		{
-			if( host.ToLower() == zoneName.ToLower() )
-				return "";
+			if( "@" == host || host.ToLower() == zoneName.ToLower() )
+				return String.Empty;
+
 			if( host.ToLower().EndsWith( "." + zoneName.ToLower() ) )
 				return host.Substring( 0, ( host.Length - zoneName.Length - 1 ) );
 			return host;
