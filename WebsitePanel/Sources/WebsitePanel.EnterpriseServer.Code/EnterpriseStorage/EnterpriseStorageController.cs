@@ -501,9 +501,9 @@ namespace WebsitePanel.EnterpriseServer
 
             foreach (ExchangeAccount tmpAccount in tmpAccounts.ToArray())
             {
-                if (tmpAccount.AccountType == ExchangeAccountType.SecurityGroup || tmpAccount.AccountType == ExchangeAccountType.SecurityGroup
+                if (tmpAccount.AccountType == ExchangeAccountType.SecurityGroup || tmpAccount.AccountType == ExchangeAccountType.DefaultSecurityGroup
                         ? OrganizationController.GetSecurityGroupGeneralSettings(itemId, tmpAccount.AccountId) == null
-                        : OrganizationController.GetSecurityGroupGeneralSettings(itemId, tmpAccount.AccountId) == null)
+                        : OrganizationController.GetUserGeneralSettings(itemId, tmpAccount.AccountId) == null)
                     continue;
 
                 exAccounts.Add(tmpAccount);
