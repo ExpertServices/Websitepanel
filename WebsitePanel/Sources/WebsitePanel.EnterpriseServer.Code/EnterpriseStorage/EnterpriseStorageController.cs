@@ -47,6 +47,7 @@ using WebsitePanel.Providers.Web;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Server.Client;
+using System.Text.RegularExpressions;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -138,6 +139,11 @@ namespace WebsitePanel.EnterpriseServer
         public static bool CheckUsersDomainExists(int itemId)
         {
             return CheckUsersDomainExistsInternal(itemId);
+        }
+
+        public static void SetFRSMQuotaOnFolder(int itemId, string folderName, int quota)
+        {
+            SetFRSMQuotaOnFolderInternal(itemId, folderName, quota);
         }
 
         #region Directory Browsing
@@ -260,17 +266,6 @@ namespace WebsitePanel.EnterpriseServer
                     EnterpriseStorageController.CreateFolder(itemId);
 
                     EnterpriseStorageController.AddWebDavDirectory(packageId, usersDomain, org.OrganizationId, homePath);
-
-                    //int osId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Os);
-                    //bool enableHardQuota = (esSesstings["enablehardquota"] != null)
-                    //    ? bool.Parse(esSesstings["enablehardquota"])
-                    //    : false;
-
-                    //if (enableHardQuota && osId != 0 && OperatingSystemController.CheckFileServicesInstallation(osId))
-                    //{
-                    //    FilesController.SetFolderQuota(packageId, Path.Combine(usersHome, org.OrganizationId),
-                    //        locationDrive, Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE);
-                    //}
                 }
             }
             catch (Exception ex)
@@ -412,14 +407,14 @@ namespace WebsitePanel.EnterpriseServer
                 Organization org = OrganizationController.GetOrganization(itemId);
                 if (org == null)
                 {
-                    return null;
+                    result.IsSuccess = false;
+                    result.AddError("",new NullReferenceException("Organization not found"));
+                    return result;
                 }
 
                 EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
 
                 es.CreateFolder(org.OrganizationId, folderName);
-
-                UpdateESHardQuota(org.PackageId);
             }
             catch (Exception ex)
             {
@@ -438,6 +433,46 @@ namespace WebsitePanel.EnterpriseServer
             }
 
             return result;
+        }
+
+        protected static void SetFRSMQuotaOnFolderInternal(int itemId, string folderName, int quota)
+        {
+            ResultObject result = TaskManager.StartResultTask<ResultObject>("ENTERPRISE_STORAGE", "CREATE_FOLDER");
+
+            try
+            {
+                // load organization
+                Organization org = OrganizationController.GetOrganization(itemId);
+                if (org == null)
+                {
+                    return;
+                }
+
+                EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
+
+                es.CreateFolder(org.OrganizationId, folderName);
+
+                // check if it's not root folder
+                if (!string.IsNullOrEmpty(folderName))
+                {
+                    UpdateESHardQuota(org.PackageId, org.OrganizationId, folderName, quota);
+                }
+            }
+            catch (Exception ex)
+            {
+                result.AddError("ENTERPRISE_STORAGE_CREATE_FOLDER", ex);
+            }
+            finally
+            {
+                if (!result.IsSuccess)
+                {
+                    TaskManager.CompleteResultTask(result);
+                }
+                else
+                {
+                    TaskManager.CompleteResultTask();
+                }
+            }
         }
 
         protected static ResultObject DeleteFolderInternal(int itemId, string folderName)
@@ -835,7 +870,7 @@ namespace WebsitePanel.EnterpriseServer
 
         }
 
-        private static void UpdateESHardQuota(int packageId)
+        private static void UpdateESHardQuota(int packageId, string orgId, string folderName, int quotaSize)
         {
             int esServiceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.EnterpriseStorage);
 
@@ -848,16 +883,21 @@ namespace WebsitePanel.EnterpriseServer
                 string usersDomain = esSesstings["UsersDomain"];
                 string locationDrive = esSesstings["LocationDrive"];
 
-                string homePath = string.Format("{0}:\\{1}", locationDrive, usersHome);
-
-                int osId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Os);
+                var orgRootFolder = Path.Combine(usersHome, orgId);
+                var orgFolder = Path.Combine(usersHome, orgId, folderName);
+                
                 bool enableHardQuota = (esSesstings["enablehardquota"] != null)
                     ? bool.Parse(esSesstings["enablehardquota"])
                     : false;
-
-                if (enableHardQuota && osId != 0 && OperatingSystemController.CheckFileServicesInstallation(osId))
+                if (enableHardQuota)
                 {
-                    FilesController.SetFolderQuota(packageId, usersHome, locationDrive, Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE);
+                    var os = GetOS(packageId);
+
+                    if (os != null && os.CheckFileServicesInstallation())
+                    {
+                        SetFolderQuotaByQuotaName(packageId, os, orgRootFolder, locationDrive, Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE);
+                        SetFolderQuotaByQuotaSize(packageId, os, orgFolder, locationDrive, quotaSize, "MB");
+                    }
                 }
             }
         }
@@ -903,6 +943,129 @@ namespace WebsitePanel.EnterpriseServer
                 }
             }
             catch { /*something wrong*/ }
+
+            return null;
+        }
+
+        private static int SetFolderQuotaByQuotaName(int packageId, WebsitePanel.Providers.OS.OperatingSystem os, string path, string driveName, string quotaName)
+        {
+
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // check package
+            int packageCheck = SecurityContext.CheckPackage(packageId, DemandPackage.IsActive);
+            if (packageCheck < 0) return packageCheck;
+
+            // place log record
+            TaskManager.StartTask("FILES", "SET_QUOTA_ON_FOLDER", path, packageId);
+
+            try
+            {
+                // disk space quota
+                // This gets all the disk space allocated for a specific customer
+                // It includes the package Add Ons * Quatity + Hosting Plan System disk space value. //Quotas.OS_DISKSPACE
+                QuotaValueInfo diskSpaceQuota = PackageController.GetPackageQuota(packageId, quotaName);
+
+                #region figure Quota Unit
+
+                // Quota Unit
+                string unit = string.Empty;
+                if (diskSpaceQuota.QuotaDescription.ToLower().Contains("gb"))
+                    unit = "GB";
+                else if (diskSpaceQuota.QuotaDescription.ToLower().Contains("mb"))
+                    unit = "MB";
+                else
+                    unit = "KB";
+
+                #endregion
+
+                os.SetQuotaLimitOnFolder(path, driveName, diskSpaceQuota.QuotaAllocatedValue.ToString() + unit, 0, String.Empty, String.Empty);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                //Log and return a generic error rather than throwing an exception
+                TaskManager.WriteError(ex);
+                return BusinessErrorCodes.ERROR_FILE_GENERIC_LOGGED;
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        private static int SetFolderQuotaByQuotaSize(int packageId,WebsitePanel.Providers.OS.OperatingSystem os, string path, string driveName, int quotaSize ,string unit)
+        {
+
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // check package
+            int packageCheck = SecurityContext.CheckPackage(packageId, DemandPackage.IsActive);
+            if (packageCheck < 0) return packageCheck;
+
+            // place log record
+            TaskManager.StartTask("FILES", "SET_QUOTA_ON_FOLDER", path, packageId);
+
+            try
+            {
+                os.SetQuotaLimitOnFolder(path, driveName, quotaSize.ToString() + unit, 0, String.Empty, String.Empty);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                //Log and return a generic error rather than throwing an exception
+                TaskManager.WriteError(ex);
+                return BusinessErrorCodes.ERROR_FILE_GENERIC_LOGGED;
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        private static WebsitePanel.Providers.OS.OperatingSystem GetOS(int packageId)
+        {
+            var esServiceInfo = ServerController.GetServiceInfo(GetEnterpriseStorageServiceID(packageId));
+            var esProviderInfo = ServerController.GetProvider(esServiceInfo.ProviderId);
+
+            var osGroups = ServerController.GetResourceGroupByName(ResourceGroups.Os);
+            var osProviders = ServerController.GetProvidersByGroupID(osGroups.GroupId);
+
+            var regexResult = Regex.Match(esProviderInfo.ProviderType,"Windows([0-9]+)");
+
+            if(regexResult.Success)
+            {
+                foreach(var osProvider in osProviders)
+                {
+                    BoolResult result = ServerController.IsInstalled(esServiceInfo.ServerId, osProvider.ProviderId);
+
+                    if (result.IsSuccess && result.Value)
+                    {
+                        var os = new WebsitePanel.Providers.OS.OperatingSystem();
+                        ServerProxyConfigurator cnfg = new ServerProxyConfigurator();
+
+                        cnfg.ProviderSettings.ProviderGroupID = osProvider.GroupId;
+                        cnfg.ProviderSettings.ProviderCode = osProvider.ProviderName;
+                        cnfg.ProviderSettings.ProviderName = osProvider.DisplayName;
+                        cnfg.ProviderSettings.ProviderType = osProvider.ProviderType;
+
+                        //// set service settings
+                        //StringDictionary serviceSettings = ServerController.GetServiceSettings(serviceId);
+                        //foreach (string key in serviceSettings.Keys)
+                        //    cnfg.ProviderSettings.Settings[key] = serviceSettings[key];
+
+                        ServiceProviderProxy.ServerInit(os, cnfg, esServiceInfo.ServerId);
+
+                        return os;
+                    }
+                }
+            }
 
             return null;
         }

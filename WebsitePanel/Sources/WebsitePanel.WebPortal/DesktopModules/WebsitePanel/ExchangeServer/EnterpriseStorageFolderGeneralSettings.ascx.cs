@@ -96,8 +96,6 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             try
             {
-                bool redirectNeeded = false;
-
                 litFolderName.Text = txtFolderName.Text;
 
                 SystemFile folder = new SystemFile { Name = PanelRequest.FolderID, Url = lblFolderUrl.Text };
@@ -122,19 +120,13 @@ namespace WebsitePanel.Portal.ExchangeServer
                     }
 
                     folder = ES.Services.EnterpriseStorage.RenameEnterpriseFolder(PanelRequest.ItemID, PanelRequest.FolderID, txtFolderName.Text);
-
-                    redirectNeeded = true;
                 }
 
-                ES.Services.EnterpriseStorage.SetEnterpriseFolderSettings(PanelRequest.ItemID, folder, permissions.GetPemissions(), chkDirectoryBrowsing.Checked);
+                ES.Services.EnterpriseStorage.SetEnterpriseFolderSettings(PanelRequest.ItemID, folder, permissions.GetPemissions(), chkDirectoryBrowsing.Checked, 100);
 
-                if (redirectNeeded)
-                {
-                    Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folders",
+
+                Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folders",
                         "ItemID=" + PanelRequest.ItemID));
-                }
-
-                messageBox.ShowSuccessMessage("ENTERPRISE_STORAGE_UPDATE_FOLDER_SETTINGS");
             }
             catch (Exception ex)
             {

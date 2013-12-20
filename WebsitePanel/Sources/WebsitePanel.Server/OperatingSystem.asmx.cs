@@ -552,6 +552,23 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
+        public int GetQuotaLimitOnFolder(string folderPath, string wmiUserName, string wmiPassword)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetQuotaLimitOnFolder", ProviderSettings.ProviderName);
+                var result = OsProvider.GetQuotaLimitOnFolder(folderPath, wmiUserName, wmiPassword);
+                Log.WriteEnd("'{0}' GetQuotaLimitOnFolder", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetQuotaLimitOnFolder", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
         public void DeleteDirectoryRecursive(string rootPath)
         {
             try

@@ -203,9 +203,6 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 if (chkSelect == null)
                     continue;
 
-                ExchangeAccount[] accounts = ES.Services.EnterpriseStorage.SearchESAccounts(PanelRequest.ItemID,
-				    ddlSearchColumn.SelectedValue, txtSearchValue.Text + "%", "");
-
                 ESPermission permission = new ESPermission();
                 permission.Account = (string)gvPermissions.DataKeys[i][0];
                 permission.Access = ((Literal)row.FindControl("litAccess")).Text;

@@ -150,10 +150,11 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public void SetEnterpriseFolderSettings(int itemId, SystemFile folder, ESPermission[] permissions, bool directoyBrowsingEnabled)
+        public void SetEnterpriseFolderSettings(int itemId, SystemFile folder, ESPermission[] permissions, bool directoyBrowsingEnabled,int quota)
         {
             EnterpriseStorageController.SetDirectoryBrowseEnabled(itemId, folder.Url, directoyBrowsingEnabled);
             EnterpriseStorageController.SetFolderPermission(itemId, folder.Name, permissions);
+            EnterpriseStorageController.SetFRSMQuotaOnFolder(itemId, folder.Name, quota);
         }
 
         #endregion

@@ -215,6 +215,11 @@ namespace WebsitePanel.Providers.OS
             FileUtils.SetQuotaLimitOnFolder(folderPath, shareNameDrive, quotaLimit, mode, wmiUserName, wmiPassword);
         }
 
+        public virtual int GetQuotaLimitOnFolder(string folderPath, string wmiUserName, string wmiPassword)
+        {
+            throw new NotImplementedException();
+        }
+
         public virtual void DeleteDirectoryRecursive(string rootPath)
         {
             FileUtils.DeleteDirectoryRecursive(rootPath);

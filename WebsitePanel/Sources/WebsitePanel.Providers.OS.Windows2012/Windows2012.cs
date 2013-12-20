@@ -125,6 +125,47 @@ namespace WebsitePanel.Providers.OS
             Log.WriteEnd("SetQuotaLimitOnFolder");
         }
 
+        public override int GetQuotaLimitOnFolder(string folderPath, string wmiUserName, string wmiPassword)
+        {
+            Log.WriteStart("GetQuotaLimitOnFolder");
+            Log.WriteInfo("FolderPath : {0}", folderPath);
+            
+            
+            Runspace runSpace = null;
+            int quota = 0;
+
+            try
+            {
+                runSpace = OpenRunspace();
+
+                if (folderPath.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+                {
+                    Command cmd = new Command("Get-FsrmQuota");
+                    cmd.Parameters.Add("Path", folderPath);
+                    var result = ExecuteShellCommand(runSpace, cmd, false);
+
+                    if (result.Count > 0)
+                    {
+                        quota = ConvertBytesToMB(Convert.ToInt64(GetPSObjectProperty(result[0], "size")));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("GetQuotaLimitOnFolder", ex);
+                throw;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+
+            Log.WriteEnd("GetQuotaLimitOnFolder");
+
+            return quota;
+        }
+
+
         public UInt64 CalculateQuota(string quota)
         {
             UInt64 OneKb = 1024;
@@ -148,6 +189,17 @@ namespace WebsitePanel.Providers.OS
             }
 
             return result;
+        }
+
+        public int ConvertBytesToMB(long bytes)
+        {
+            int OneKb = 1024;
+            int OneMb = OneKb * 1024;
+
+            if (bytes == 0)
+                return 0;
+
+            return (int)bytes / OneMb;
         }
 
         public void RemoveOldQuotaOnFolder(Runspace runSpace, string path)

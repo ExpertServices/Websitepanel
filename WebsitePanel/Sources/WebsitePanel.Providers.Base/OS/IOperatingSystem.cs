@@ -83,6 +83,7 @@ namespace WebsitePanel.Providers.OS
         void ExecuteSyncActions(FileSyncAction[] actions);
 
         void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, string quotaLimit, int mode, string wmiUserName, string wmiPassword);
+        int GetQuotaLimitOnFolder(string folderPath, string wmiUserName, string wmiPassword);
         void DeleteDirectoryRecursive(string rootPath);
 
         // File Services

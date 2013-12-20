@@ -46,6 +46,7 @@ namespace WebsitePanel.Providers.OS
         private bool isPublished;
         private WebDavFolderRule[] rules;
         private string url;
+        private int fsrmQuotaMB;
 
         public SystemFile()
         {
@@ -60,6 +61,12 @@ namespace WebsitePanel.Providers.OS
             this.size = size;
             this.created = created;
             this.changed = changed;
+        }
+
+        public int FRSMQuotaMB
+        {
+            get { return fsrmQuotaMB; }
+            set { fsrmQuotaMB = value; }
         }
 
         public string FullName

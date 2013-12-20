@@ -67,13 +67,12 @@ namespace WebsitePanel.Providers.EnterpriseStorage
             ArrayList items = new ArrayList();
             string rootPath = string.Format("{0}:\\{1}\\{2}", LocationDrive, UsersHome, organizationId);
 
+            var windows = new WebsitePanel.Providers.OS.Windows2012();
+
             if (Directory.Exists(rootPath))
             {
-
                 DirectoryInfo root = new DirectoryInfo(rootPath);
                 IWebDav webdav = new Web.WebDav(UsersDomain);
-
-
 
                 // get directories
                 DirectoryInfo[] dirs = root.GetDirectories();
@@ -86,7 +85,8 @@ namespace WebsitePanel.Providers.EnterpriseStorage
 
                     folder.Url = string.Format("https://{0}/{1}/{2}", UsersDomain, organizationId, dir.Name);
                     folder.Rules = webdav.GetFolderWebDavRules(organizationId, dir.Name);
-
+                    folder.FRSMQuotaMB = windows.GetQuotaLimitOnFolder(fullName, string.Empty, string.Empty);
+                    
                     items.Add(folder);
 
                     // check if the directory is empty
@@ -101,6 +101,8 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         {
             string fullName = string.Format("{0}:\\{1}\\{2}\\{3}", LocationDrive, UsersHome, organizationId, folderName);
             SystemFile folder = null;
+           
+            var windows = new WebsitePanel.Providers.OS.Windows2012();
 
             if (Directory.Exists(fullName))
             {
@@ -111,6 +113,8 @@ namespace WebsitePanel.Providers.EnterpriseStorage
 
                 folder.Url = string.Format("https://{0}/{1}/{2}", UsersDomain, organizationId, folderName);
                 folder.Rules = GetFolderWebDavRules(organizationId, folderName);
+
+                folder.FRSMQuotaMB = windows.GetQuotaLimitOnFolder(fullName, string.Empty, string.Empty);
             }
             return folder;
         }
@@ -170,8 +174,39 @@ namespace WebsitePanel.Providers.EnterpriseStorage
 
         public bool SetFolderWebDavRules(string organizationId, string folder, WebDavFolderRule[] rules)
         {
-            IWebDav webdav = new WebDav(UsersDomain);
+            var users = new List<UserPermission>();
 
+            foreach (var rule in rules)
+            {
+                foreach (var user in rule.Users)
+                {
+                    users.Add(new UserPermission
+                    {
+                        AccountName = user,
+                        Read = rule.Read,
+                        Write = rule.Write
+                    });
+                }
+
+                foreach (var user in rule.Roles)
+                {
+                    users.Add(new UserPermission
+                    {
+                        AccountName = user,
+                        Read = rule.Read,
+                        Write = rule.Write
+                    });
+                }
+            }
+
+            string path = string.Format("{0}:\\{1}\\{2}\\{3}", LocationDrive, UsersHome, organizationId, folder);
+
+            SecurityUtils.ResetNtfsPermissions(path);
+
+            SecurityUtils.GrantGroupNtfsPermissions(path, users.ToArray(), true, new RemoteServerSettings(), null, null);
+
+            IWebDav webdav = new WebDav(UsersDomain);
+            
             return webdav.SetFolderWebDavRules(organizationId, folder, rules);
         }
 
