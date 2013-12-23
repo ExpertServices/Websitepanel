@@ -112,6 +112,11 @@ namespace WebsitePanel.Providers.HostedSolution
             return CreateOrganizationInternal(organizationId, sipDomain, enableConferencing, enableConferencingVideo, maxConferenceSize, enabledFederation, enabledEnterpriseVoice);
         }
 
+        public string GetOrganizationTenantId(string organizationId)
+        {
+            return GetOrganizationTenantIdInternal(organizationId);
+        }
+
         public bool DeleteOrganization(string organizationId, string sipDomain)
         {
             return DeleteOrganizationInternal(organizationId, sipDomain);
@@ -276,7 +281,42 @@ namespace WebsitePanel.Providers.HostedSolution
             return TenantId;
         }
 
+        private string GetOrganizationTenantIdInternal(string organizationId)
+        {
+            HostedSolutionLog.LogStart("GetOrganizationTenantIdInternal");
+            HostedSolutionLog.DebugInfo("organizationId: {0}", organizationId);
 
+            string tenantIdStr = string.Empty; 
+
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+
+                Command cmd = new Command("Get-CsTenant");
+                cmd.Parameters.Add("Identity", GetOrganizationPath(organizationId));
+                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd, false);
+                if ((result != null) && (result.Count > 0))
+                {
+                    Guid tenantId = (Guid)GetPSObjectProperty(result[0], "TenantId");
+
+                    tenantIdStr = tenantId.ToString();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("GetOrganizationTenantIdInternal", ex);
+                throw;
+            }
+            finally
+            {
+
+                CloseRunspace(runSpace);
+            }
+            HostedSolutionLog.LogEnd("GetOrganizationTenantIdnInternal");
+            return tenantIdStr;
+        }
 
         private bool DeleteOrganizationInternal(string organizationId, string sipDomain)
         {
@@ -507,7 +547,7 @@ namespace WebsitePanel.Providers.HostedSolution
             HostedSolutionLog.DebugInfo("organizationId: {0}", organizationId);
             HostedSolutionLog.DebugInfo("userUpn: {0}", userUpn);
 
-            LyncUser lyncUser = new LyncUser();
+            LyncUser lyncUser = null;
             Runspace runSpace = null;
             try
             {
@@ -516,15 +556,24 @@ namespace WebsitePanel.Providers.HostedSolution
                 Command cmd = new Command("Get-CsUser");
                 cmd.Parameters.Add("Identity", userUpn);
                 Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
-                PSObject user = result[0];
 
-                lyncUser.DisplayName = (string)GetPSObjectProperty(user, "DisplayName");
-                lyncUser.SipAddress = (string)GetPSObjectProperty(user, "SipAddress");
-                lyncUser.LineUri = (string)GetPSObjectProperty(user, "LineURI");
+                if ((result != null) && (result.Count > 0))
+                {
+                    PSObject user = result[0];
 
-                lyncUser.SipAddress = lyncUser.SipAddress.ToLower().Replace("sip:", "");
-                lyncUser.LineUri = lyncUser.LineUri.ToLower().Replace("tel:+", "");
-                lyncUser.LineUri = lyncUser.LineUri.ToLower().Replace("tel:", "");
+                    lyncUser = new LyncUser();
+
+                    lyncUser.DisplayName = (string)GetPSObjectProperty(user, "DisplayName");
+                    lyncUser.SipAddress = (string)GetPSObjectProperty(user, "SipAddress");
+                    lyncUser.LineUri = (string)GetPSObjectProperty(user, "LineURI");
+
+                    lyncUser.SipAddress = lyncUser.SipAddress.ToLower().Replace("sip:", "");
+                    lyncUser.LineUri = lyncUser.LineUri.ToLower().Replace("tel:+", "");
+                    lyncUser.LineUri = lyncUser.LineUri.ToLower().Replace("tel:", "");
+                }
+                else
+                    HostedSolutionLog.LogInfo("GetLyncUserGeneralSettingsInternal: No info found");
+
             }
             catch (Exception ex)
             {
