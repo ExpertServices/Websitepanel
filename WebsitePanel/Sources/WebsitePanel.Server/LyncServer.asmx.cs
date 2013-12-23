@@ -71,7 +71,7 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public string GetOrganizationTenantId(string organizationId, string sipDomain, bool enableConferencing, bool enableConferencingVideo, int maxConferenceSize, bool enabledFederation, bool enabledEnterpriseVoice)
+        public string GetOrganizationTenantId(string organizationId)
         {
             try
             {
