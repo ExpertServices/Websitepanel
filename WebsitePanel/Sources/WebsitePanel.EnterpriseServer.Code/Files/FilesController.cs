@@ -948,7 +948,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 OS.OperatingSystem os = GetOS(packageId);
 
-                os.SetQuotaLimitOnFolder(path, driveName, diskSpaceQuota.QuotaAllocatedValue.ToString() + unit, 0, String.Empty, String.Empty);
+                os.SetQuotaLimitOnFolder(path, driveName, FSRMQuotaType.Hard, diskSpaceQuota.QuotaAllocatedValue.ToString() + unit, 0, String.Empty, String.Empty);
 
                 return 0;
             }

@@ -209,8 +209,8 @@ namespace WebsitePanel.Providers.OS
             SecurityUtils.GrantGroupNtfsPermissions(path, users, resetChildPermissions,
                 ServerSettings, usersOU, null);
         }
-      
-        public virtual void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
+
+        public virtual void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, FSRMQuotaType quotaType, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
         {
             FileUtils.SetQuotaLimitOnFolder(folderPath, shareNameDrive, quotaLimit, mode, wmiUserName, wmiPassword);
         }

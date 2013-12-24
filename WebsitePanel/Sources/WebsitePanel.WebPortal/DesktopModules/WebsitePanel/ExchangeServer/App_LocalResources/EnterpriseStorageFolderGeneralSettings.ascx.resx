@@ -147,4 +147,13 @@
   <data name="locFolderUrl.Text" xml:space="preserve">
     <value>Folder Url:</value>
   </data>
+  <data name="locFolderSize" xml:space="preserve">
+    <value>Folder Limit Size (Mb):</value>
+  </data>
+  <data name="valNumericFolderSize" xml:space="preserve">
+    <value>*</value>
+  </data>
+  <data name="valNumericFolderSize.ErrorMessage" xml:space="preserve">
+    <value>Enter Folder Size</value>
+  </data>
 </root>

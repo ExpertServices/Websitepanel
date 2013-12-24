@@ -300,9 +300,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         private void BindEnterpriseStorageStats(OrganizationStatistics stats, OrganizationStatistics tenantStats)
         {
-            enterpriseStorageSpaceStats.QuotaValue = stats.AllocatedEnterpriseStorageSpace;
-            enterpriseStorageSpaceStats.QuotaUsedValue = stats.UsedEnterpriseStorageSpace;
-            if (stats.AllocatedEnterpriseStorageSpace != -1) enterpriseStorageSpaceStats.QuotaAvailable = tenantStats.AllocatedEnterpriseStorageSpace - tenantStats.UsedEnterpriseStorageSpace;
+            enterpriseStorageSpaceStats.QuotaValue = stats.UsedEnterpriseStorageSpace;
 
             lnkBESUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "enterprisestorage_folders",
             "SpaceID=" + PanelSecurity.PackageId.ToString());

@@ -251,7 +251,7 @@
                                 <asp:HyperLink ID="lnkEnterpriseStorageSpace" runat="server" meta:resourcekey="lnkEnterpriseStorageSpace" />
                             </td>
                             <td>
-                                <wsp:QuotaViewer ID="enterpriseStorageSpaceStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                                <wsp:QuotaViewer ID="enterpriseStorageSpaceStats" QuotaTypeId="3" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
                         <tr class="OrgStatsRow">

@@ -74,7 +74,7 @@ namespace WebsitePanel.Providers.OS
                 || version == WebsitePanel.Server.Utils.OS.WindowsVersion.Windows81;
         }
         
-        public override void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
+        public override void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, FSRMQuotaType quotaType, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
         {
             Log.WriteStart("SetQuotaLimitOnFolder");
             Log.WriteInfo("FolderPath : {0}", folderPath);
@@ -82,7 +82,6 @@ namespace WebsitePanel.Providers.OS
             Log.WriteInfo("QuotaLimit : {0}", quotaLimit);
 
             string path = Path.Combine(shareNameDrive + @":\", folderPath);
-            var quota = CalculateQuota(quotaLimit);
 
             Runspace runSpace = null;
             try
@@ -94,21 +93,30 @@ namespace WebsitePanel.Providers.OS
                     if (!FileUtils.DirectoryExists(path))
                         FileUtils.CreateDirectory(path);
 
-                    switch (mode)
+                    if (quotaLimit.Contains("-"))
                     {
+                        RemoveOldQuotaOnFolder(runSpace, path);
+                    }
+                    else
+                    {
+                        var quota = CalculateQuota(quotaLimit);
+
+                        switch (mode)
+                        {
                             //deleting old quota and creating new one
-                        case 0:
-                            {
-                                RemoveOldQuotaOnFolder(runSpace, path);
-                                ChangeQuotaOnFolder(runSpace, "New-FsrmQuota", path, quota);
-                                break;
-                            }
+                            case 0:
+                                {
+                                    RemoveOldQuotaOnFolder(runSpace, path);
+                                    ChangeQuotaOnFolder(runSpace, "New-FsrmQuota", path, quotaType, quota);
+                                    break;
+                                }
                             //modifying folder quota
-                        case 1:
-                            {
-                                ChangeQuotaOnFolder(runSpace, "Set-FsrmQuota", path, quota);
-                                break;
-                            }
+                            case 1:
+                                {
+                                    ChangeQuotaOnFolder(runSpace, "Set-FsrmQuota", path, quotaType, quota);
+                                    break;
+                                }
+                        }
                     }
                 }
             }
@@ -132,7 +140,7 @@ namespace WebsitePanel.Providers.OS
             
             
             Runspace runSpace = null;
-            int quota = 0;
+            int quota = -1;
 
             try
             {
@@ -165,6 +173,45 @@ namespace WebsitePanel.Providers.OS
             return quota;
         }
 
+        public int GetUsageOnFolder(string folderPath)
+        {
+            Log.WriteStart("GetUsageOnFolder");
+            Log.WriteInfo("FolderPath : {0}", folderPath);
+
+
+            Runspace runSpace = null;
+            int size = -1;
+
+            try
+            {
+                runSpace = OpenRunspace();
+
+                if (folderPath.IndexOfAny(Path.GetInvalidPathChars()) == -1)
+                {
+                    Command cmd = new Command("Get-FsrmQuota");
+                    cmd.Parameters.Add("Path", folderPath);
+                    var result = ExecuteShellCommand(runSpace, cmd, false);
+
+                    if (result.Count > 0)
+                    {
+                        size = ConvertBytesToMB(Convert.ToInt64(GetPSObjectProperty(result[0], "usage")));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("GetUsageOnFolder", ex);
+                throw;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+
+            Log.WriteEnd("GetUsageOnFolder");
+
+            return size;
+        }
 
         public UInt64 CalculateQuota(string quota)
         {
@@ -217,11 +264,17 @@ namespace WebsitePanel.Providers.OS
             catch { /* do nothing */ }
         }
 
-        public void ChangeQuotaOnFolder(Runspace runSpace, string command, string path, UInt64 quota)
+        public void ChangeQuotaOnFolder(Runspace runSpace, string command, string path, FSRMQuotaType quotaType, UInt64 quota)
         {
             Command cmd = new Command(command);
             cmd.Parameters.Add("Path", path);
             cmd.Parameters.Add("Size", quota);
+
+            if (quotaType == FSRMQuotaType.Soft)
+            {
+                cmd.Parameters.Add("SoftLimit", true);
+            }
+
             ExecuteShellCommand(runSpace, cmd, false);
         }
 

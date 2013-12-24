@@ -30,13 +30,23 @@
 						<tr>
 							<td class="FormLabel150"><asp:Localize ID="locFolderName" runat="server" meta:resourcekey="locFolderName" Text="Folder Name:"></asp:Localize></td>
 							<td>
-								<asp:TextBox ID="txtFolderName" runat="server" CssClass="HugeTextBox200"></asp:TextBox>
+								<asp:TextBox ID="txtFolderName" runat="server" CssClass="HugeTextBox200" ></asp:TextBox>
 								<asp:RequiredFieldValidator ID="valRequireFolderName" runat="server" meta:resourcekey="valRequireFolderName" ControlToValidate="txtFolderName"
 									ErrorMessage="Enter Folder Name" ValidationGroup="EditFolder" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
+							</td>
+						</tr>
+                        <tr>
+							<td class="FormLabel150"><asp:Localize ID="locFolderSize" runat="server" meta:resourcekey="locFolderSize" Text="Folder Limit Size (Mb):"></asp:Localize></td>
+							<td>
+								<asp:TextBox ID="txtFolderSize" runat="server" CssClass="HugeTextBox200"></asp:TextBox>
+                                <asp:CompareValidator ID="valNumericFolderSize" runat="server" meta:resourcekey="valNumericFolderSize" ControlToValidate="txtFolderSize"
+                                    Type="Integer" Operator="DataTypeCheck" ValidationGroup="EditFolder" Display="Dynamic" Text="*" SetFocusOnError="True"
+                                    ErrorMessage="Enter Folder Size" />
                                 <br />
 						        <br />
 							</td>
 						</tr>
+
                         <tr>
                             <td class="FormLabel150"><asp:Localize ID="locFolderUrl" runat="server" meta:resourcekey="locFolderUrl" Text="Folder Url:"></asp:Localize></td>
                             <td><asp:Label runat="server" ID="lblFolderUrl" /></td>

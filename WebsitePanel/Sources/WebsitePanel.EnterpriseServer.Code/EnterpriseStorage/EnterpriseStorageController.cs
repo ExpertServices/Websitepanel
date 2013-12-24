@@ -455,7 +455,7 @@ namespace WebsitePanel.EnterpriseServer
                 // check if it's not root folder
                 if (!string.IsNullOrEmpty(folderName))
                 {
-                    UpdateESHardQuota(org.PackageId, org.OrganizationId, folderName, quota);
+                    SetFolderQuota(org.PackageId, org.OrganizationId, folderName, quota);
                 }
             }
             catch (Exception ex)
@@ -870,33 +870,64 @@ namespace WebsitePanel.EnterpriseServer
 
         }
 
-        private static void UpdateESHardQuota(int packageId, string orgId, string folderName, int quotaSize)
+        private static void SetFolderQuota(int packageId, string orgId, string folderName, int quotaSize)
         {
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0)
+                return;
+
+            int packageCheck = SecurityContext.CheckPackage(packageId, DemandPackage.IsActive);
+            if (packageCheck < 0)
+                return;
+
             int esServiceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.EnterpriseStorage);
 
             if (esServiceId != 0)
             {
-
                 StringDictionary esSesstings = ServerController.GetServiceSettings(esServiceId);
 
                 string usersHome = esSesstings["UsersHome"];
                 string usersDomain = esSesstings["UsersDomain"];
                 string locationDrive = esSesstings["LocationDrive"];
 
-                var orgRootFolder = Path.Combine(usersHome, orgId);
                 var orgFolder = Path.Combine(usersHome, orgId, folderName);
                 
-                bool enableHardQuota = (esSesstings["enablehardquota"] != null)
-                    ? bool.Parse(esSesstings["enablehardquota"])
-                    : false;
-                if (enableHardQuota)
-                {
-                    var os = GetOS(packageId);
+                FSRMQuotaType quotaType = (esSesstings["enablehardquota"] != null)
+                    ? bool.Parse(esSesstings["enablehardquota"]) == true ? FSRMQuotaType.Hard : FSRMQuotaType.Soft
+                    : FSRMQuotaType.Soft;
 
-                    if (os != null && os.CheckFileServicesInstallation())
+                var os = GetOS(packageId);
+
+                if (os != null && os.CheckFileServicesInstallation())
+                {
+                    TaskManager.StartTask("FILES", "SET_QUOTA_ON_FOLDER", orgFolder, packageId);
+
+                    try
                     {
-                        SetFolderQuotaByQuotaName(packageId, os, orgRootFolder, locationDrive, Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE);
-                        SetFolderQuotaByQuotaSize(packageId, os, orgFolder, locationDrive, quotaSize, "MB");
+                        QuotaValueInfo diskSpaceQuota = PackageController.GetPackageQuota(packageId, Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE);
+
+                        #region figure Quota Unit
+
+                        // Quota Unit
+                        string unit = string.Empty;
+                        if (diskSpaceQuota.QuotaDescription.ToLower().Contains("gb"))
+                            unit = "GB";
+                        else if (diskSpaceQuota.QuotaDescription.ToLower().Contains("mb"))
+                            unit = "MB";
+                        else
+                            unit = "KB";
+
+                        #endregion
+
+                        os.SetQuotaLimitOnFolder(orgFolder, locationDrive, quotaType, quotaSize.ToString() + unit, 0, String.Empty, String.Empty);
+                    }
+                    catch (Exception ex)
+                    {
+                        TaskManager.WriteError(ex);
+                    }
+                    finally
+                    {
+                        TaskManager.CompleteTask();
                     }
                 }
             }
@@ -947,88 +978,6 @@ namespace WebsitePanel.EnterpriseServer
             return null;
         }
 
-        private static int SetFolderQuotaByQuotaName(int packageId, WebsitePanel.Providers.OS.OperatingSystem os, string path, string driveName, string quotaName)
-        {
-
-            // check account
-            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
-            if (accountCheck < 0) return accountCheck;
-
-            // check package
-            int packageCheck = SecurityContext.CheckPackage(packageId, DemandPackage.IsActive);
-            if (packageCheck < 0) return packageCheck;
-
-            // place log record
-            TaskManager.StartTask("FILES", "SET_QUOTA_ON_FOLDER", path, packageId);
-
-            try
-            {
-                // disk space quota
-                // This gets all the disk space allocated for a specific customer
-                // It includes the package Add Ons * Quatity + Hosting Plan System disk space value. //Quotas.OS_DISKSPACE
-                QuotaValueInfo diskSpaceQuota = PackageController.GetPackageQuota(packageId, quotaName);
-
-                #region figure Quota Unit
-
-                // Quota Unit
-                string unit = string.Empty;
-                if (diskSpaceQuota.QuotaDescription.ToLower().Contains("gb"))
-                    unit = "GB";
-                else if (diskSpaceQuota.QuotaDescription.ToLower().Contains("mb"))
-                    unit = "MB";
-                else
-                    unit = "KB";
-
-                #endregion
-
-                os.SetQuotaLimitOnFolder(path, driveName, diskSpaceQuota.QuotaAllocatedValue.ToString() + unit, 0, String.Empty, String.Empty);
-
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                //Log and return a generic error rather than throwing an exception
-                TaskManager.WriteError(ex);
-                return BusinessErrorCodes.ERROR_FILE_GENERIC_LOGGED;
-            }
-            finally
-            {
-                TaskManager.CompleteTask();
-            }
-        }
-
-        private static int SetFolderQuotaByQuotaSize(int packageId,WebsitePanel.Providers.OS.OperatingSystem os, string path, string driveName, int quotaSize ,string unit)
-        {
-
-            // check account
-            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
-            if (accountCheck < 0) return accountCheck;
-
-            // check package
-            int packageCheck = SecurityContext.CheckPackage(packageId, DemandPackage.IsActive);
-            if (packageCheck < 0) return packageCheck;
-
-            // place log record
-            TaskManager.StartTask("FILES", "SET_QUOTA_ON_FOLDER", path, packageId);
-
-            try
-            {
-                os.SetQuotaLimitOnFolder(path, driveName, quotaSize.ToString() + unit, 0, String.Empty, String.Empty);
-
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                //Log and return a generic error rather than throwing an exception
-                TaskManager.WriteError(ex);
-                return BusinessErrorCodes.ERROR_FILE_GENERIC_LOGGED;
-            }
-            finally
-            {
-                TaskManager.CompleteTask();
-            }
-        }
-
         private static WebsitePanel.Providers.OS.OperatingSystem GetOS(int packageId)
         {
             var esServiceInfo = ServerController.GetServiceInfo(GetEnterpriseStorageServiceID(packageId));
@@ -1037,7 +986,7 @@ namespace WebsitePanel.EnterpriseServer
             var osGroups = ServerController.GetResourceGroupByName(ResourceGroups.Os);
             var osProviders = ServerController.GetProvidersByGroupID(osGroups.GroupId);
 
-            var regexResult = Regex.Match(esProviderInfo.ProviderType,"Windows([0-9]+)");
+            var regexResult = Regex.Match(esProviderInfo.ProviderType, "Windows([0-9]+)");
 
             if(regexResult.Success)
             {
@@ -1054,12 +1003,7 @@ namespace WebsitePanel.EnterpriseServer
                         cnfg.ProviderSettings.ProviderCode = osProvider.ProviderName;
                         cnfg.ProviderSettings.ProviderName = osProvider.DisplayName;
                         cnfg.ProviderSettings.ProviderType = osProvider.ProviderType;
-
-                        //// set service settings
-                        //StringDictionary serviceSettings = ServerController.GetServiceSettings(serviceId);
-                        //foreach (string key in serviceSettings.Keys)
-                        //    cnfg.ProviderSettings.Settings[key] = serviceSettings[key];
-
+                        
                         ServiceProviderProxy.ServerInit(os, cnfg, esServiceInfo.ServerId);
 
                         return os;

@@ -113,6 +113,7 @@
     <Compile Include="HostedSolution\LyncVoicePolicyType.cs" />
     <Compile Include="HostedSolution\OrganizationSecurityGroup.cs" />
     <Compile Include="HostedSolution\TransactionAction.cs" />
+    <Compile Include="OS\FSRMQuotaType.cs" />
     <Compile Include="OS\SystemFilesPaged.cs" />
     <Compile Include="RemoteDesktopServices\IRemoteDesktopServices.cs" />
     <Compile Include="ResultObjects\HeliconApe.cs" />
