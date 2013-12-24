@@ -1741,11 +1741,12 @@ namespace WebsitePanel.Providers.OS
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/SetQuotaLimitOnFolder", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
+        public void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, FSRMQuotaType quotaType, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
         {
             this.Invoke("SetQuotaLimitOnFolder", new object[] {
                         folderPath,
                         shareNameDrive,
+                        quotaType,
                         quotaLimit,
                         mode,
                         wmiUserName,
@@ -1753,11 +1754,12 @@ namespace WebsitePanel.Providers.OS
         }
 
         /// <remarks/>
-        public System.IAsyncResult BeginSetQuotaLimitOnFolder(string folderPath, string shareNameDrive, string quotaLimit, int mode, string wmiUserName, string wmiPassword, System.AsyncCallback callback, object asyncState)
+        public System.IAsyncResult BeginSetQuotaLimitOnFolder(string folderPath, string shareNameDrive, FSRMQuotaType quotaType, string quotaLimit, int mode, string wmiUserName, string wmiPassword, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("SetQuotaLimitOnFolder", new object[] {
                         folderPath,
                         shareNameDrive,
+                        quotaType,
                         quotaLimit,
                         mode,
                         wmiUserName,
@@ -1771,13 +1773,13 @@ namespace WebsitePanel.Providers.OS
         }
 
         /// <remarks/>
-        public void SetQuotaLimitOnFolderAsync(string folderPath, string shareNameDrive, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
+        public void SetQuotaLimitOnFolderAsync(string folderPath, string shareNameDrive, FSRMQuotaType quotaType, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
         {
-            this.SetQuotaLimitOnFolderAsync(folderPath, shareNameDrive, quotaLimit, mode, wmiUserName, wmiPassword, null);
+            this.SetQuotaLimitOnFolderAsync(folderPath, shareNameDrive, quotaType, quotaLimit, mode, wmiUserName, wmiPassword, null);
         }
 
         /// <remarks/>
-        public void SetQuotaLimitOnFolderAsync(string folderPath, string shareNameDrive, string quotaLimit, int mode, string wmiUserName, string wmiPassword, object userState)
+        public void SetQuotaLimitOnFolderAsync(string folderPath, string shareNameDrive, FSRMQuotaType quotaType, string quotaLimit, int mode, string wmiUserName, string wmiPassword, object userState)
         {
             if ((this.SetQuotaLimitOnFolderOperationCompleted == null))
             {
@@ -1786,6 +1788,7 @@ namespace WebsitePanel.Providers.OS
             this.InvokeAsync("SetQuotaLimitOnFolder", new object[] {
                         folderPath,
                         shareNameDrive,
+                        quotaType,
                         quotaLimit,
                         mode,
                         wmiUserName,

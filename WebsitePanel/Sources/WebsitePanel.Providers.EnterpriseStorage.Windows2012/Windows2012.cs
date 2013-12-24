@@ -80,17 +80,23 @@ namespace WebsitePanel.Providers.EnterpriseStorage
                 {
                     string fullName = System.IO.Path.Combine(rootPath, dir.Name);
 
-                    SystemFile folder = new SystemFile(dir.Name, fullName, true,
-                        FileUtils.BytesToMb(FileUtils.CalculateFolderSize(dir.FullName)), dir.CreationTime, dir.LastWriteTime);
+                    SystemFile folder = new SystemFile();
+                    
+                    folder.Name = dir.Name;
+                    folder.FullName = dir.FullName;
+                    folder.IsDirectory = true;
 
+                    folder.Size = windows.GetUsageOnFolder(fullName);
+                    if (folder.Size == -1)
+                    {
+                        folder.Size = FileUtils.BytesToMb(FileUtils.CalculateFolderSize(dir.FullName));
+                    }
+                    
                     folder.Url = string.Format("https://{0}/{1}/{2}", UsersDomain, organizationId, dir.Name);
                     folder.Rules = webdav.GetFolderWebDavRules(organizationId, dir.Name);
                     folder.FRSMQuotaMB = windows.GetQuotaLimitOnFolder(fullName, string.Empty, string.Empty);
                     
                     items.Add(folder);
-
-                    // check if the directory is empty
-                    folder.IsEmpty = (Directory.GetFileSystemEntries(fullName).Length == 0);
                 }
             }
 
@@ -108,14 +114,23 @@ namespace WebsitePanel.Providers.EnterpriseStorage
             {
                 DirectoryInfo root = new DirectoryInfo(fullName);
 
-                folder = new SystemFile(root.Name, fullName, true,
-                    FileUtils.BytesToMb(FileUtils.CalculateFolderSize(root.FullName)), root.CreationTime, root.LastWriteTime);
+                folder = new SystemFile();
+
+                folder.Name = root.Name;
+                folder.FullName = root.FullName;
+                folder.IsDirectory = true;
+
+                folder.Size = windows.GetUsageOnFolder(fullName);
+                if (folder.Size == -1)
+                {
+                    folder.Size = FileUtils.BytesToMb(FileUtils.CalculateFolderSize(root.FullName));
+                }
 
                 folder.Url = string.Format("https://{0}/{1}/{2}", UsersDomain, organizationId, folderName);
                 folder.Rules = GetFolderWebDavRules(organizationId, folderName);
-
                 folder.FRSMQuotaMB = windows.GetQuotaLimitOnFolder(fullName, string.Empty, string.Empty);
             }
+            
             return folder;
         }
 

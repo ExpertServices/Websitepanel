@@ -75,6 +75,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                 // bind form
                 txtFolderName.Text = folder.Name;
                 lblFolderUrl.Text = folder.Url;
+                
+                if (folder.FRSMQuotaMB != -1)
+                {
+                    txtFolderSize.Text = folder.FRSMQuotaMB.ToString();
+                }
 
                 var esPermissions = ES.Services.EnterpriseStorage.GetEnterpriseFolderPermissions(PanelRequest.ItemID,folder.Name);
 
@@ -122,7 +127,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                     folder = ES.Services.EnterpriseStorage.RenameEnterpriseFolder(PanelRequest.ItemID, PanelRequest.FolderID, txtFolderName.Text);
                 }
 
-                ES.Services.EnterpriseStorage.SetEnterpriseFolderSettings(PanelRequest.ItemID, folder, permissions.GetPemissions(), chkDirectoryBrowsing.Checked, 100);
+                ES.Services.EnterpriseStorage.SetEnterpriseFolderSettings(PanelRequest.ItemID, folder, permissions.GetPemissions(), 
+                    chkDirectoryBrowsing.Checked, txtFolderSize.Text.Length == 0 ? -1 : int.Parse(txtFolderSize.Text));
 
 
                 Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folders",
