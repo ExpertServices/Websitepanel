@@ -345,7 +345,14 @@ namespace WebsitePanel.EnterpriseServer
                     return new SystemFile[0];
                 }
 
-                EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
+                int serviceId = GetEnterpriseStorageServiceID(org.PackageId);
+
+                if (serviceId == 0)
+                {
+                    return new SystemFile[0];
+                }
+
+                EnterpriseStorage es = GetEnterpriseStorage(serviceId);
 
                 return es.GetFolders(org.OrganizationId);
             }

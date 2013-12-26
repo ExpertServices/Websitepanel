@@ -960,7 +960,10 @@ namespace WebsitePanel.EnterpriseServer
                         SystemFile[] folders = EnterpriseStorageController.GetFolders(itemId);
 
                         stats.CreatedEnterpriseStorageFolders = folders.Count();
+                        
                         stats.UsedEnterpriseStorageSpace = (int)folders.Sum(x => x.Size);
+                        
+                        stats.AllocatedEnterpriseStorageSpace = folders.Where(x => x.FRSMQuotaMB != -1).Sum(x => x.FRSMQuotaMB);
                     }
                 }
                 else
@@ -1020,10 +1023,13 @@ namespace WebsitePanel.EnterpriseServer
 
                                     if (cntxTmp.Groups.ContainsKey(ResourceGroups.EnterpriseStorage))
                                     {
-                                        SystemFile[] folders = EnterpriseStorageController.GetFolders(itemId);
+                                        SystemFile[] folders = EnterpriseStorageController.GetFolders(o.Id);
 
-                                        stats.CreatedEnterpriseStorageFolders = folders.Count();
-                                        stats.UsedEnterpriseStorageSpace = (int)folders.Sum(x => x.Size);
+                                        stats.CreatedEnterpriseStorageFolders += folders.Count();
+                                        
+                                        stats.UsedEnterpriseStorageSpace += (int)folders.Sum(x => x.Size);
+
+                                        stats.AllocatedEnterpriseStorageSpace += folders.Where(x => x.FRSMQuotaMB != -1).Sum(x => x.FRSMQuotaMB);
                                     }
                                 }
                             }
@@ -1067,12 +1073,6 @@ namespace WebsitePanel.EnterpriseServer
                 if (cntx.Groups.ContainsKey(ResourceGroups.EnterpriseStorage))
                 {
                     stats.AllocatedEnterpriseStorageFolders = cntx.Quotas[Quotas.ENTERPRISESTORAGE_FOLDERS].QuotaAllocatedValue;
-                }
-
-
-                if (cntx.Groups.ContainsKey(ResourceGroups.EnterpriseStorage))
-                {
-                    stats.AllocatedEnterpriseStorageSpace = cntx.Quotas[Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE].QuotaAllocatedValue;
                 }
 
                 return stats;

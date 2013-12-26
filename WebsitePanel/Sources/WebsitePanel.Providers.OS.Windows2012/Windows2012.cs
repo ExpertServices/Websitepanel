@@ -238,6 +238,18 @@ namespace WebsitePanel.Providers.OS
             return result;
         }
 
+        public int ConvertBytesToGB(long bytes)
+        {
+            int OneKb = 1024;
+            int OneMb = OneKb * 1024;
+            int OneGb = OneMb * 1024;
+
+            if (bytes == 0)
+                return 0;
+
+            return (int)(bytes / OneGb);
+        }
+
         public int ConvertBytesToMB(long bytes)
         {
             int OneKb = 1024;
@@ -246,7 +258,7 @@ namespace WebsitePanel.Providers.OS
             if (bytes == 0)
                 return 0;
 
-            return (int)bytes / OneMb;
+            return (int)(bytes / OneMb);
         }
 
         public void RemoveOldQuotaOnFolder(Runspace runSpace, string path)

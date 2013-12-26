@@ -135,7 +135,7 @@
   <data name="HSFormComments.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="locQuota.Text" xml:space="preserve">
+  <data name="locQuotaFolders.Text" xml:space="preserve">
     <value>Total Folders Allocated:</value>
   </data>
   <data name="Text.PageName" xml:space="preserve">
@@ -152,5 +152,8 @@
   </data>
   <data name="gvFolderUrl.Header" xml:space="preserve">
     <value>Url</value>
+  </data>
+  <data name="locQuotaSpace.Text" xml:space="preserve">
+    <value>Total Space Allocated (Mb):</value>
   </data>
 </root>

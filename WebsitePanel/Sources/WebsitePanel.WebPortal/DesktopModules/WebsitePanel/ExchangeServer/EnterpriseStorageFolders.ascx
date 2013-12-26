@@ -93,9 +93,15 @@
 					</asp:ObjectDataSource>
 				    <br />
 				
-                    <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Total Folders Used:"></asp:Localize>
+                    <asp:Localize ID="locQuotaFolders" runat="server" meta:resourcekey="locQuotaFolders" Text="Total Folders Allocated:"></asp:Localize>
 				    &nbsp;&nbsp;&nbsp;
 				    <wsp:QuotaViewer ID="foldersQuota" runat="server" QuotaTypeId="2" />
+                    <br />
+                    <br />
+
+                    <asp:Localize ID="locQuotaSpace" runat="server" meta:resourcekey="locQuotaSpace" Text="Total Space Allocated (Mb):"></asp:Localize>
+				    &nbsp;&nbsp;&nbsp;
+				    <wsp:QuotaViewer ID="spaceQuota" runat="server" QuotaTypeId="2" />
 				</div>
 			</div>
 		</div>

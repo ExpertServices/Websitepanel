@@ -36,7 +36,7 @@
 							</td>
 						</tr>
                         <tr>
-							<td class="FormLabel150"><asp:Localize ID="locFolderSize" runat="server" meta:resourcekey="locFolderSize" Text="Folder Limit Size (Mb):"></asp:Localize></td>
+							<td class="FormLabel150"><asp:Localize ID="locFolderSize" runat="server" meta:resourcekey="locFolderSize" Text="Folder Limit Size (Gb):"></asp:Localize></td>
 							<td>
 								<asp:TextBox ID="txtFolderSize" runat="server" CssClass="HugeTextBox200"></asp:TextBox>
                                 <asp:CompareValidator ID="valNumericFolderSize" runat="server" meta:resourcekey="valNumericFolderSize" ControlToValidate="txtFolderSize"
