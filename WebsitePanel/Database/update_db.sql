@@ -2797,4 +2797,18 @@ WHERE
 AND (@OrgID = 0 OR @OrgID <> 0 AND PA.OrgID = @OrgID)
 
 END
+GO
 
+-- Enterprise Storage
+
+IF EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'EnterpriseStorage.DiskStorageSpace')
+BEGIN
+
+DELETE FROM [dbo].[HostingPlanQuotas] WHERE QuotaID = 430
+
+DELETE FROM [dbo].[PackageQuotas] WHERE QuotaID = 430
+
+DELETE FROM [dbo].[Quotas] WHERE QuotaID = 430
+
+END
+GO
