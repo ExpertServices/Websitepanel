@@ -167,13 +167,13 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::System.Web.UI.WebControls.ObjectDataSource odsEnterpriseFoldersPaged;
         
         /// <summary>
-        /// locQuota control.
+        /// locQuotaFolders control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locQuota;
+        protected global::System.Web.UI.WebControls.Localize locQuotaFolders;
         
         /// <summary>
         /// foldersQuota control.
@@ -183,5 +183,23 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.QuotaViewer foldersQuota;
+        
+        /// <summary>
+        /// locQuotaSpace control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locQuotaSpace;
+        
+        /// <summary>
+        /// spaceQuota control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaViewer spaceQuota;
     }
 }

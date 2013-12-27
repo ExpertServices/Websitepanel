@@ -150,7 +150,6 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             if (!hideItems)
             {
-
                 domainStats.QuotaUsedValue = orgStats.CreatedDomains;
                 domainStats.QuotaValue = orgStats.AllocatedDomains;
                 if (orgStats.AllocatedDomains != -1) domainStats.QuotaAvailable = tenantStats.AllocatedDomains - tenantStats.CreatedDomains;
@@ -169,9 +168,6 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
             else
                 organizationStatsPanel.Visible = false;
-
-
-
 
             
             if (cntx.Groups.ContainsKey(ResourceGroups.Exchange))
@@ -300,14 +296,18 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         private void BindEnterpriseStorageStats(OrganizationStatistics stats, OrganizationStatistics tenantStats)
         {
-            enterpriseStorageSpaceStats.QuotaValue = stats.UsedEnterpriseStorageSpace;
+            enterpriseStorageSpaceStats.QuotaValue = stats.AllocatedEnterpriseStorageSpace;
+            enterpriseStorageSpaceStats.QuotaUsedValue = stats.UsedEnterpriseStorageSpace;
 
             lnkBESUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "enterprisestorage_folders",
             "SpaceID=" + PanelSecurity.PackageId.ToString());
 
             enterpriseStorageFoldersStats.QuotaValue = stats.AllocatedEnterpriseStorageFolders;
             enterpriseStorageFoldersStats.QuotaUsedValue = stats.CreatedEnterpriseStorageFolders;
-            if (stats.AllocatedEnterpriseStorageFolders != -1) enterpriseStorageFoldersStats.QuotaAvailable = tenantStats.AllocatedEnterpriseStorageFolders - tenantStats.CreatedEnterpriseStorageFolders;
+            if (stats.AllocatedEnterpriseStorageFolders != -1)
+            {
+                enterpriseStorageFoldersStats.QuotaAvailable = tenantStats.AllocatedEnterpriseStorageFolders - tenantStats.CreatedEnterpriseStorageFolders;
+            }
 
             lnkBESUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "enterprisestorage_folders",
             "SpaceID=" + PanelSecurity.PackageId.ToString());

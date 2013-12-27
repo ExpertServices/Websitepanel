@@ -148,7 +148,7 @@
     <value>Folder Url:</value>
   </data>
   <data name="locFolderSize" xml:space="preserve">
-    <value>Folder Limit Size (Mb):</value>
+    <value>Folder Limit Size (Gb):</value>
   </data>
   <data name="valNumericFolderSize" xml:space="preserve">
     <value>*</value>

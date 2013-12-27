@@ -45,6 +45,12 @@ namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class EnterpriseStorageFolderGeneralSettings : WebsitePanelModuleBase
     {
+        #region Constansts
+
+        const int OneMb = 1024;
+
+        #endregion
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -78,7 +84,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 
                 if (folder.FRSMQuotaMB != -1)
                 {
-                    txtFolderSize.Text = folder.FRSMQuotaMB.ToString();
+                    txtFolderSize.Text = ((int)(folder.FRSMQuotaMB / OneMb)).ToString();
                 }
 
                 var esPermissions = ES.Services.EnterpriseStorage.GetEnterpriseFolderPermissions(PanelRequest.ItemID,folder.Name);
@@ -127,8 +133,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                     folder = ES.Services.EnterpriseStorage.RenameEnterpriseFolder(PanelRequest.ItemID, PanelRequest.FolderID, txtFolderName.Text);
                 }
 
-                ES.Services.EnterpriseStorage.SetEnterpriseFolderSettings(PanelRequest.ItemID, folder, permissions.GetPemissions(), 
-                    chkDirectoryBrowsing.Checked, txtFolderSize.Text.Length == 0 ? -1 : int.Parse(txtFolderSize.Text));
+                ES.Services.EnterpriseStorage.SetEnterpriseFolderSettings(PanelRequest.ItemID, folder, permissions.GetPemissions(),
+                    chkDirectoryBrowsing.Checked, txtFolderSize.Text.Length == 0 ? -1 : int.Parse(txtFolderSize.Text) * OneMb);
 
 
                 Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folders",

@@ -80,6 +80,10 @@ namespace WebsitePanel.Portal.ExchangeServer
                     btnAddFolder.Enabled = false;
                 }
             }
+
+            spaceQuota.QuotaUsedValue = organizationStats.UsedEnterpriseStorageSpace;
+
+            spaceQuota.QuotaValue = organizationStats.AllocatedEnterpriseStorageSpace;
         }
 
         protected void btnAddFolder_Click(object sender, EventArgs e)
