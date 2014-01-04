@@ -48,14 +48,9 @@ namespace WebsitePanel.Portal.ProviderControls
             {
                 try
                 {
-                    chkEnableHardQuota.Enabled = ES.Services.EnterpriseStorage.CheckFileServicesInstallation(PanelRequest.ServiceId);
-                    txtFolder.Enabled = chkEnableHardQuota.Enabled;
-                    if (!chkEnableHardQuota.Enabled)
-                        lblFileServiceInfo.Visible = true;
+                    txtFolder.Enabled = ES.Services.EnterpriseStorage.CheckFileServicesInstallation(PanelRequest.ServiceId);
                 }
-                catch
-                {
-                }
+                catch { }
             }
         }
 
@@ -65,7 +60,6 @@ namespace WebsitePanel.Portal.ProviderControls
 
             txtFolder.Text = path;
             txtDomain.Text = settings["UsersDomain"];
-            chkEnableHardQuota.Checked = settings["EnableHardQuota"] == "true" ? true : false;
         }
 
         public void SaveSettings(StringDictionary settings)
@@ -79,7 +73,6 @@ namespace WebsitePanel.Portal.ProviderControls
             settings["LocationDrive"] = drive.Split(':')[0];
             settings["UsersHome"] = folder;
             settings["UsersDomain"] = domain;
-            settings["EnableHardQuota"] = chkEnableHardQuota.Checked.ToString().ToLower();
         }
     }
 }

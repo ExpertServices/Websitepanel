@@ -63,27 +63,26 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         protected void BindEnterpriseStorageStats()
         {
+            btnAddFolder.Enabled = true;
+
             OrganizationStatistics organizationStats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            
             OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
 
             foldersQuota.QuotaUsedValue = organizationStats.CreatedEnterpriseStorageFolders;
-            
             foldersQuota.QuotaValue = organizationStats.AllocatedEnterpriseStorageFolders;
 
             if (organizationStats.AllocatedEnterpriseStorageFolders != -1)
             {
                 int folderAvailable = foldersQuota.QuotaAvailable = tenantStats.AllocatedEnterpriseStorageFolders - tenantStats.CreatedEnterpriseStorageFolders;
+                int spaceAvailable = tenantStats.AllocatedEnterpriseStorageSpace - tenantStats.UsedEnterpriseStorageSpace;
 
-                if (folderAvailable <= 0)
+                if (folderAvailable <= 0 || spaceAvailable <= 0)
                 {
                     btnAddFolder.Enabled = false;
                 }
             }
 
-            spaceQuota.QuotaUsedValue = organizationStats.UsedEnterpriseStorageSpace;
-
-            spaceQuota.QuotaValue = organizationStats.AllocatedEnterpriseStorageSpace;
+            spaceQuota.QuotaValue = organizationStats.UsedEnterpriseStorageSpace;
         }
 
         protected void btnAddFolder_Click(object sender, EventArgs e)
@@ -109,6 +108,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                     }
 
                     gvFolders.DataBind();
+                    
+                    BindEnterpriseStorageStats();
                 }
                 catch (Exception ex)
                 {

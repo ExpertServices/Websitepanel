@@ -73,7 +73,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 if (!result.IsSuccess && result.ErrorCodes.Count > 0)
                 {
-                    messageBox.ShowMessage(result, "ENTERPRISE_STORAGE_FOLDER", "EnterpriseStorage");
+                    messageBox.ShowMessage(result, "ENTERPRISE_STORAGE_CREATE_FOLDER", "Enterprise Storage");
                     return;
                 }
 

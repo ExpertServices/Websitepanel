@@ -24,19 +24,4 @@
                 ControlToValidate="txtDomain"  ErrorMessage="*"></asp:RegularExpressionValidator>  
         </td>
     </tr>
-    <tr>
-        <td class="SubHead" width="200" nowrap></td>
-        <td width="100%">
-            <table>
-                <tr>
-                    <td>
-                        <asp:CheckBox runat="server" AutoPostBack="false" ID="chkEnableHardQuota" meta:resourcekey="chkEnableHardQuota" Text="Enable Hard Quota:" /></td>
-                </tr>
-                <tr>
-                    <td>
-                        <asp:Label runat="server" ID="lblFileServiceInfo" Text="Install File Services role on the file server to enable the check box" Font-Italic="true" Visible="false"></asp:Label></td>
-                </tr>
-            </table>
-        </td>
-    </tr>
 </table>

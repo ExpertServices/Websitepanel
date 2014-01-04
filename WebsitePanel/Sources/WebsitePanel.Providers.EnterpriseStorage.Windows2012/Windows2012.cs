@@ -86,7 +86,10 @@ namespace WebsitePanel.Providers.EnterpriseStorage
                     folder.FullName = dir.FullName;
                     folder.IsDirectory = true;
 
-                    folder.Size = windows.GetUsageOnFolder(fullName);
+                    Quota quota = windows.GetQuotaOnFolder(fullName, string.Empty, string.Empty);
+
+                    folder.Size = quota.Usage;
+
                     if (folder.Size == -1)
                     {
                         folder.Size = FileUtils.BytesToMb(FileUtils.CalculateFolderSize(dir.FullName));
@@ -94,7 +97,9 @@ namespace WebsitePanel.Providers.EnterpriseStorage
                     
                     folder.Url = string.Format("https://{0}/{1}/{2}", UsersDomain, organizationId, dir.Name);
                     folder.Rules = webdav.GetFolderWebDavRules(organizationId, dir.Name);
-                    folder.FRSMQuotaMB = windows.GetQuotaLimitOnFolder(fullName, string.Empty, string.Empty);
+                    folder.FRSMQuotaMB = quota.Size;
+                    folder.FRSMQuotaGB = windows.ConvertMegaBytesToGB(folder.FRSMQuotaMB);
+                    folder.FsrmQuotaType = quota.QuotaType;
                     
                     items.Add(folder);
                 }
@@ -120,7 +125,10 @@ namespace WebsitePanel.Providers.EnterpriseStorage
                 folder.FullName = root.FullName;
                 folder.IsDirectory = true;
 
-                folder.Size = windows.GetUsageOnFolder(fullName);
+                Quota quota = windows.GetQuotaOnFolder(fullName, string.Empty, string.Empty);
+
+                folder.Size = quota.Usage;
+
                 if (folder.Size == -1)
                 {
                     folder.Size = FileUtils.BytesToMb(FileUtils.CalculateFolderSize(root.FullName));
@@ -128,7 +136,9 @@ namespace WebsitePanel.Providers.EnterpriseStorage
 
                 folder.Url = string.Format("https://{0}/{1}/{2}", UsersDomain, organizationId, folderName);
                 folder.Rules = GetFolderWebDavRules(organizationId, folderName);
-                folder.FRSMQuotaMB = windows.GetQuotaLimitOnFolder(fullName, string.Empty, string.Empty);
+                folder.FRSMQuotaMB = quota.Size;
+                folder.FRSMQuotaGB = windows.ConvertMegaBytesToGB(folder.FRSMQuotaMB);
+                folder.FsrmQuotaType = quota.QuotaType;
             }
             
             return folder;

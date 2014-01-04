@@ -536,7 +536,7 @@ namespace WebsitePanel.Server
 
 
         [WebMethod, SoapHeader("settings")]
-        public void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, FSRMQuotaType quotaType, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
+        public void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, QuotaType quotaType, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
         {
             try
             {
@@ -552,18 +552,18 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public int GetQuotaLimitOnFolder(string folderPath, string wmiUserName, string wmiPassword)
+        public Quota GetQuotaOnFolder(string folderPath, string wmiUserName, string wmiPassword)
         {
             try
             {
-                Log.WriteStart("'{0}' GetQuotaLimitOnFolder", ProviderSettings.ProviderName);
-                var result = OsProvider.GetQuotaLimitOnFolder(folderPath, wmiUserName, wmiPassword);
-                Log.WriteEnd("'{0}' GetQuotaLimitOnFolder", ProviderSettings.ProviderName);
+                Log.WriteStart("'{0}' GetQuotaOnFolder", ProviderSettings.ProviderName);
+                var result = OsProvider.GetQuotaOnFolder(folderPath, wmiUserName, wmiPassword);
+                Log.WriteEnd("'{0}' GetQuotaOnFolder", ProviderSettings.ProviderName);
                 return result;
             }
             catch (Exception ex)
             {
-                Log.WriteError(String.Format("'{0}' GetQuotaLimitOnFolder", ProviderSettings.ProviderName), ex);
+                Log.WriteError(String.Format("'{0}' GetQuotaOnFolder", ProviderSettings.ProviderName), ex);
                 throw;
             }
         }

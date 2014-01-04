@@ -38,8 +38,11 @@
 	</asp:GridView>
     <br />
     <div class="FormButtonsBarClean">
-		<asp:Button ID="btnSetReadOnly" runat="server" Text="Set Read-Only" CssClass="Button1"  OnClick="btn_UpdateAccess" CommandArgument="Read-Only" meta:resourcekey="btnSetReadOnly"  />
-		<asp:Button ID="btnSetReadWrite" runat="server" Text="Set Read-Write" CssClass="Button1" OnClick="btn_UpdateAccess" CommandArgument="Read-Write" meta:resourcekey="btnSetReadWrite"/>
+        <asp:CheckBox ID="chkRead" runat="server" Text="Read" meta:resourcekey="chkRead" />
+        <asp:CheckBox ID="chkWrite" runat="server" Text="Write" meta:resourcekey="chkWrite" />
+        <asp:CheckBox ID="chkSource" runat="server" Text="Source" meta:resourcekey="chkSource" />
+        <br />
+		<asp:Button ID="btnSet" runat="server" Text="Set Permissions" CssClass="Button1"  OnClick="btn_UpdateAccess" meta:resourcekey="btnSet"  />
 	</div>
 
 

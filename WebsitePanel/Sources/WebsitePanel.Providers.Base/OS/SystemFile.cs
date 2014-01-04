@@ -47,6 +47,8 @@ namespace WebsitePanel.Providers.OS
         private WebDavFolderRule[] rules;
         private string url;
         private int fsrmQuotaMB;
+        private int frsmQuotaGB;
+        private QuotaType fsrmQuotaType = QuotaType.Soft;
 
         public SystemFile()
         {
@@ -67,6 +69,18 @@ namespace WebsitePanel.Providers.OS
         {
             get { return fsrmQuotaMB; }
             set { fsrmQuotaMB = value; }
+        }
+
+        public int FRSMQuotaGB
+        {
+            get { return frsmQuotaGB; }
+            set { frsmQuotaGB = value; }
+        }
+
+        public QuotaType FsrmQuotaType
+        {
+            get { return fsrmQuotaType; }
+            set { fsrmQuotaType = value; }
         }
 
         public string FullName

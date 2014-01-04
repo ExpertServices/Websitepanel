@@ -60,6 +60,12 @@
 								    </asp:hyperlink>
 							    </ItemTemplate>
 						    </asp:TemplateField>
+                            <asp:TemplateField HeaderText="gvFolderQuota" SortExpression="FRSMQuotaGB">
+							    <ItemStyle Width="20%"></ItemStyle>
+							    <ItemTemplate>
+                                    <asp:Literal id="litFolderQuota" runat="server" Text='<%# Eval("FRSMQuotaGB").ToString() + " Gb" %>'></asp:Literal>
+							    </ItemTemplate>
+						    </asp:TemplateField>
                             <asp:TemplateField HeaderText="gvFolderSize" SortExpression="Size">
 							    <ItemStyle Width="20%"></ItemStyle>
 							    <ItemTemplate>
@@ -99,9 +105,9 @@
                     <br />
                     <br />
 
-                    <asp:Localize ID="locQuotaSpace" runat="server" meta:resourcekey="locQuotaSpace" Text="Total Space Allocated (Mb):"></asp:Localize>
+                    <asp:Localize ID="locQuotaSpace" runat="server" meta:resourcekey="locQuotaSpace" Text="Total Space Allocated (Gb):"></asp:Localize>
 				    &nbsp;&nbsp;&nbsp;
-				    <wsp:QuotaViewer ID="spaceQuota" runat="server" QuotaTypeId="2" />
+				    <wsp:QuotaViewer ID="spaceQuota" runat="server" QuotaTypeId="3" />
 				</div>
 			</div>
 		</div>

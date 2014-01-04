@@ -141,9 +141,9 @@ namespace WebsitePanel.EnterpriseServer
             return CheckUsersDomainExistsInternal(itemId);
         }
 
-        public static void SetFRSMQuotaOnFolder(int itemId, string folderName, int quota)
+        public static void SetFRSMQuotaOnFolder(int itemId, string folderName, int quota, QuotaType quotaType)
         {
-            SetFRSMQuotaOnFolderInternal(itemId, folderName, quota);
+            SetFRSMQuotaOnFolderInternal(itemId, folderName, quota, quotaType);
         }
 
         #region Directory Browsing
@@ -396,7 +396,16 @@ namespace WebsitePanel.EnterpriseServer
 
                 EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
 
-                return es.RenameFolder(org.OrganizationId, oldFolder, newFolder);
+                if (es.GetFolder(org.OrganizationId, newFolder) == null)
+                {
+                    SystemFile folder = es.RenameFolder(org.OrganizationId, oldFolder, newFolder);
+
+                    DataProvider.UpdateEnterpriseFolder(itemId, oldFolder, newFolder, folder.FRSMQuotaGB);
+
+                    return folder;
+                }
+
+                return null;
             }
             catch (Exception ex)
             {
@@ -421,7 +430,18 @@ namespace WebsitePanel.EnterpriseServer
 
                 EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
 
-                es.CreateFolder(org.OrganizationId, folderName);
+                if (es.GetFolder(org.OrganizationId, folderName) == null)
+                {
+                    es.CreateFolder(org.OrganizationId, folderName);
+
+                    DataProvider.AddEntepriseFolder(itemId, folderName);
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.AddError("Enterprise Storage", new Exception("Folder already exist"));
+                    return result;
+                }
             }
             catch (Exception ex)
             {
@@ -442,7 +462,7 @@ namespace WebsitePanel.EnterpriseServer
             return result;
         }
 
-        protected static void SetFRSMQuotaOnFolderInternal(int itemId, string folderName, int quota)
+        protected static void SetFRSMQuotaOnFolderInternal(int itemId, string folderName, int quota, QuotaType quotaType)
         {
             ResultObject result = TaskManager.StartResultTask<ResultObject>("ENTERPRISE_STORAGE", "CREATE_FOLDER");
 
@@ -462,7 +482,9 @@ namespace WebsitePanel.EnterpriseServer
                 // check if it's not root folder
                 if (!string.IsNullOrEmpty(folderName))
                 {
-                    SetFolderQuota(org.PackageId, org.OrganizationId, folderName, quota);
+                    SetFolderQuota(org.PackageId, org.OrganizationId, folderName, quota, quotaType);
+
+                    DataProvider.UpdateEnterpriseFolder(itemId, folderName, folderName, quota);
                 }
             }
             catch (Exception ex)
@@ -498,6 +520,8 @@ namespace WebsitePanel.EnterpriseServer
                 EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
 
                 es.DeleteFolder(org.OrganizationId, folderName);
+
+                DataProvider.DeleteEnterpriseFolder(itemId, folderName);
             }
             catch (Exception ex)
             {
@@ -804,15 +828,19 @@ namespace WebsitePanel.EnterpriseServer
                     rule.Users.Add(permission.Account);
                 }
 
-                if (permission.Access.ToLower().Contains("read-only"))
+                if (permission.Access.ToLower().Contains("read"))
                 {
                     rule.Read = true;
                 }
 
-                if (permission.Access.ToLower().Contains("read-write"))
+                if (permission.Access.ToLower().Contains("write"))
                 {
                     rule.Write = true;
-                    rule.Read = true;
+                }
+
+                if (permission.Access.ToLower().Contains("source"))
+                {
+                    rule.Source = true;
                 }
 
                 rule.Pathes.Add("*");
@@ -860,15 +888,25 @@ namespace WebsitePanel.EnterpriseServer
                     permission.DisplayName = userObj.DisplayName;
                 }
 
-                if (rule.Read && !rule.Write)
+                if (rule.Read)
                 {
-                    permission.Access = "Read-Only";
-                }
-                if (rule.Write)
-                {
-                    permission.Access = "Read-Write";
+                    permission.Access += "Read,";
                 }
 
+                if (rule.Write)
+                {
+                    permission.Access += "Write,";
+                }
+
+                if (rule.Source)
+                {
+                    permission.Access += "Source";
+                }
+
+                if (permission.Access[permission.Access.Length - 1] == ',')
+                {
+                    permission.Access = permission.Access.Remove(permission.Access.Length - 1);
+                }
 
                 permissions.Add(permission);
             }
@@ -877,7 +915,7 @@ namespace WebsitePanel.EnterpriseServer
 
         }
 
-        private static void SetFolderQuota(int packageId, string orgId, string folderName, int quotaSize)
+        private static void SetFolderQuota(int packageId, string orgId, string folderName, int quotaSize, QuotaType quotaType)
         {
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
             if (accountCheck < 0)
@@ -899,10 +937,6 @@ namespace WebsitePanel.EnterpriseServer
 
                 var orgFolder = Path.Combine(usersHome, orgId, folderName);
                 
-                FSRMQuotaType quotaType = (esSesstings["enablehardquota"] != null)
-                    ? bool.Parse(esSesstings["enablehardquota"]) == true ? FSRMQuotaType.Hard : FSRMQuotaType.Soft
-                    : FSRMQuotaType.Soft;
-
                 var os = GetOS(packageId);
 
                 if (os != null && os.CheckFileServicesInstallation())
