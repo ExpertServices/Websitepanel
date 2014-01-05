@@ -74,7 +74,7 @@ namespace WebsitePanel.Providers.OS
                 || version == WebsitePanel.Server.Utils.OS.WindowsVersion.Windows81;
         }
         
-        public override void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, FSRMQuotaType quotaType, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
+        public override void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, QuotaType quotaType, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
         {
             Log.WriteStart("SetQuotaLimitOnFolder");
             Log.WriteInfo("FolderPath : {0}", folderPath);
@@ -133,14 +133,14 @@ namespace WebsitePanel.Providers.OS
             Log.WriteEnd("SetQuotaLimitOnFolder");
         }
 
-        public override int GetQuotaLimitOnFolder(string folderPath, string wmiUserName, string wmiPassword)
+        public override Quota GetQuotaOnFolder(string folderPath, string wmiUserName, string wmiPassword)
         {
             Log.WriteStart("GetQuotaLimitOnFolder");
             Log.WriteInfo("FolderPath : {0}", folderPath);
             
             
             Runspace runSpace = null;
-            int quota = -1;
+            Quota quota = new Quota();
 
             try
             {
@@ -154,7 +154,9 @@ namespace WebsitePanel.Providers.OS
 
                     if (result.Count > 0)
                     {
-                        quota = ConvertBytesToMB(Convert.ToInt64(GetPSObjectProperty(result[0], "size")));
+                        quota.Size = ConvertBytesToMB(Convert.ToInt64(GetPSObjectProperty(result[0], "Size")));
+                        quota.QuotaType = Convert.ToBoolean(GetPSObjectProperty(result[0], "SoftLimit")) ? QuotaType.Soft : QuotaType.Hard;
+                        quota.Usage = ConvertBytesToMB(Convert.ToInt64(GetPSObjectProperty(result[0], "usage")));
                     }
                 }
             }
@@ -171,46 +173,6 @@ namespace WebsitePanel.Providers.OS
             Log.WriteEnd("GetQuotaLimitOnFolder");
 
             return quota;
-        }
-
-        public int GetUsageOnFolder(string folderPath)
-        {
-            Log.WriteStart("GetUsageOnFolder");
-            Log.WriteInfo("FolderPath : {0}", folderPath);
-
-
-            Runspace runSpace = null;
-            int size = -1;
-
-            try
-            {
-                runSpace = OpenRunspace();
-
-                if (folderPath.IndexOfAny(Path.GetInvalidPathChars()) == -1)
-                {
-                    Command cmd = new Command("Get-FsrmQuota");
-                    cmd.Parameters.Add("Path", folderPath);
-                    var result = ExecuteShellCommand(runSpace, cmd, false);
-
-                    if (result.Count > 0)
-                    {
-                        size = ConvertBytesToMB(Convert.ToInt64(GetPSObjectProperty(result[0], "usage")));
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.WriteError("GetUsageOnFolder", ex);
-                throw;
-            }
-            finally
-            {
-                CloseRunspace(runSpace);
-            }
-
-            Log.WriteEnd("GetUsageOnFolder");
-
-            return size;
         }
 
         public UInt64 CalculateQuota(string quota)
@@ -238,16 +200,14 @@ namespace WebsitePanel.Providers.OS
             return result;
         }
 
-        public int ConvertBytesToGB(long bytes)
+        public int ConvertMegaBytesToGB(int megabytes)
         {
-            int OneKb = 1024;
-            int OneMb = OneKb * 1024;
-            int OneGb = OneMb * 1024;
+            int OneGb = 1024;
 
-            if (bytes == 0)
-                return 0;
+            if (megabytes == -1)
+                return megabytes;
 
-            return (int)(bytes / OneGb);
+            return (int)(megabytes/ OneGb);
         }
 
         public int ConvertBytesToMB(long bytes)
@@ -276,13 +236,13 @@ namespace WebsitePanel.Providers.OS
             catch { /* do nothing */ }
         }
 
-        public void ChangeQuotaOnFolder(Runspace runSpace, string command, string path, FSRMQuotaType quotaType, UInt64 quota)
+        public void ChangeQuotaOnFolder(Runspace runSpace, string command, string path, QuotaType quotaType, UInt64 quota)
         {
             Command cmd = new Command(command);
             cmd.Parameters.Add("Path", path);
             cmd.Parameters.Add("Size", quota);
 
-            if (quotaType == FSRMQuotaType.Soft)
+            if (quotaType == QuotaType.Soft)
             {
                 cmd.Parameters.Add("SoftLimit", true);
             }

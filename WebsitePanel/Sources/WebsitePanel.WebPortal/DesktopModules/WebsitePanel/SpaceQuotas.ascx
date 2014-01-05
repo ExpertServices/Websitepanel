@@ -86,6 +86,14 @@
 		<td class="SubHead" nowrap><asp:Label ID="lblHyperVForPC" runat="server" meta:resourcekey="lblHyperVForPC" Text="Number of VM:" /></td>
 		<td class="Normal"><wsp:Quota ID="quotaNumberOfVm" runat="server" QuotaName="VPSForPC.ServersNumber" DisplayGauge="True" /></td>
 	</tr>
+    <tr id="pnlFolders" runat="server">
+		<td class="SubHead" nowrap><asp:Label ID="lblFolders" runat="server" meta:resourcekey="lblFolders" Text="Folders:" /></td>
+		<td class="Normal"><wsp:Quota ID="quotaNumberOfFolders" runat="server" QuotaName="EnterpriseStorage.Folders" DisplayGauge="True" /></td>
+	</tr>
+    <tr id="pnlEnterpriseStorage" runat="server">
+		<td class="SubHead" nowrap><asp:Label ID="lblEnterpriseStorage" runat="server" meta:resourcekey="lblEnterpriseStorage" Text="Enterprise Storage:" /></td>
+		<td class="Normal"><wsp:Quota ID="quotaEnterpriseStorage" runat="server" QuotaName="EnterpriseStorage.DiskStorageSpace" DisplayGauge="True" /></td>
+	</tr>
 </table>
 </div>
 <div class="FormFooter">

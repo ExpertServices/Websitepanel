@@ -960,10 +960,8 @@ namespace WebsitePanel.EnterpriseServer
                         SystemFile[] folders = EnterpriseStorageController.GetFolders(itemId);
 
                         stats.CreatedEnterpriseStorageFolders = folders.Count();
-                        
-                        stats.UsedEnterpriseStorageSpace = (int)folders.Sum(x => x.Size);
-                        
-                        stats.AllocatedEnterpriseStorageSpace = folders.Where(x => x.FRSMQuotaMB != -1).Sum(x => x.FRSMQuotaMB);
+
+                        stats.UsedEnterpriseStorageSpace = folders.Where(x => x.FRSMQuotaGB != -1).Sum(x => x.FRSMQuotaGB);
                     }
                 }
                 else
@@ -1026,10 +1024,8 @@ namespace WebsitePanel.EnterpriseServer
                                         SystemFile[] folders = EnterpriseStorageController.GetFolders(o.Id);
 
                                         stats.CreatedEnterpriseStorageFolders += folders.Count();
-                                        
-                                        stats.UsedEnterpriseStorageSpace += (int)folders.Sum(x => x.Size);
 
-                                        stats.AllocatedEnterpriseStorageSpace += folders.Where(x => x.FRSMQuotaMB != -1).Sum(x => x.FRSMQuotaMB);
+                                        stats.UsedEnterpriseStorageSpace += folders.Where(x => x.FRSMQuotaGB != -1).Sum(x => x.FRSMQuotaGB);
                                     }
                                 }
                             }
@@ -1073,6 +1069,7 @@ namespace WebsitePanel.EnterpriseServer
                 if (cntx.Groups.ContainsKey(ResourceGroups.EnterpriseStorage))
                 {
                     stats.AllocatedEnterpriseStorageFolders = cntx.Quotas[Quotas.ENTERPRISESTORAGE_FOLDERS].QuotaAllocatedValue;
+                    stats.AllocatedEnterpriseStorageSpace = cntx.Quotas[Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE].QuotaAllocatedValue;
                 }
 
                 return stats;

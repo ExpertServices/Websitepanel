@@ -4155,5 +4155,48 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         #endregion
+
+        #region Enterprise Storage
+
+        public static int AddEntepriseFolder(int itemId, string folderName)
+        {
+            SqlParameter prmId = new SqlParameter("@FolderID", SqlDbType.Int);
+            prmId.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddEnterpriseFolder",
+                prmId,
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@FolderName", folderName));
+
+            // read identity
+            return Convert.ToInt32(prmId.Value);
+        }
+
+        public static void DeleteEnterpriseFolder(int itemId, string folderName)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteEnterpriseFolder",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@FolderName", folderName));
+        }
+
+        public static void UpdateEnterpriseFolder(int itemId, string folderID, string folderName, int folderQuota)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateEnterpriseFolder",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@FolderID", folderID),
+                new SqlParameter("@FolderName", folderName),
+                new SqlParameter("@FolderQuota", folderQuota));
+        }
+
+        #endregion
     }
 }

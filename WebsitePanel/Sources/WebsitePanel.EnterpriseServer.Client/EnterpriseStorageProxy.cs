@@ -48,16 +48,8 @@ using WebsitePanel.Providers.OS;
 
 namespace WebsitePanel.EnterpriseServer
 {
-    using System.Xml.Serialization;
-    using System.Web.Services;
-    using System.ComponentModel;
-    using System.Web.Services.Protocols;
-    using System;
-    using System.Diagnostics;
-
-
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Web.Services.WebServiceBindingAttribute(Name = "esEnterpriseStorageSoap", Namespace = "http://smbsaas/websitepanel/enterpriseserver")]
@@ -156,7 +148,7 @@ namespace WebsitePanel.EnterpriseServer
         public bool CheckFileServicesInstallation(int serviceId)
         {
             object[] results = this.Invoke("CheckFileServicesInstallation", new object[] {
-                        serviceId});
+                    serviceId});
             return ((bool)(results[0]));
         }
 
@@ -164,7 +156,7 @@ namespace WebsitePanel.EnterpriseServer
         public System.IAsyncResult BeginCheckFileServicesInstallation(int serviceId, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("CheckFileServicesInstallation", new object[] {
-                        serviceId}, callback, asyncState);
+                    serviceId}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -188,7 +180,7 @@ namespace WebsitePanel.EnterpriseServer
                 this.CheckFileServicesInstallationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckFileServicesInstallationOperationCompleted);
             }
             this.InvokeAsync("CheckFileServicesInstallation", new object[] {
-                        serviceId}, this.CheckFileServicesInstallationOperationCompleted, userState);
+                    serviceId}, this.CheckFileServicesInstallationOperationCompleted, userState);
         }
 
         private void OnCheckFileServicesInstallationOperationCompleted(object arg)
@@ -205,7 +197,7 @@ namespace WebsitePanel.EnterpriseServer
         public SystemFile[] GetEnterpriseFolders(int itemId)
         {
             object[] results = this.Invoke("GetEnterpriseFolders", new object[] {
-                        itemId});
+                    itemId});
             return ((SystemFile[])(results[0]));
         }
 
@@ -213,7 +205,7 @@ namespace WebsitePanel.EnterpriseServer
         public System.IAsyncResult BeginGetEnterpriseFolders(int itemId, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("GetEnterpriseFolders", new object[] {
-                        itemId}, callback, asyncState);
+                    itemId}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -237,7 +229,7 @@ namespace WebsitePanel.EnterpriseServer
                 this.GetEnterpriseFoldersOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetEnterpriseFoldersOperationCompleted);
             }
             this.InvokeAsync("GetEnterpriseFolders", new object[] {
-                        itemId}, this.GetEnterpriseFoldersOperationCompleted, userState);
+                    itemId}, this.GetEnterpriseFoldersOperationCompleted, userState);
         }
 
         private void OnGetEnterpriseFoldersOperationCompleted(object arg)
@@ -254,8 +246,8 @@ namespace WebsitePanel.EnterpriseServer
         public SystemFile GetEnterpriseFolder(int itemId, string folderName)
         {
             object[] results = this.Invoke("GetEnterpriseFolder", new object[] {
-                        itemId,
-                        folderName});
+                    itemId,
+                    folderName});
             return ((SystemFile)(results[0]));
         }
 
@@ -263,8 +255,8 @@ namespace WebsitePanel.EnterpriseServer
         public System.IAsyncResult BeginGetEnterpriseFolder(int itemId, string folderName, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("GetEnterpriseFolder", new object[] {
-                        itemId,
-                        folderName}, callback, asyncState);
+                    itemId,
+                    folderName}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -288,8 +280,8 @@ namespace WebsitePanel.EnterpriseServer
                 this.GetEnterpriseFolderOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetEnterpriseFolderOperationCompleted);
             }
             this.InvokeAsync("GetEnterpriseFolder", new object[] {
-                        itemId,
-                        folderName}, this.GetEnterpriseFolderOperationCompleted, userState);
+                    itemId,
+                    folderName}, this.GetEnterpriseFolderOperationCompleted, userState);
         }
 
         private void OnGetEnterpriseFolderOperationCompleted(object arg)
@@ -306,8 +298,8 @@ namespace WebsitePanel.EnterpriseServer
         public ResultObject CreateEnterpriseFolder(int itemId, string folderName)
         {
             object[] results = this.Invoke("CreateEnterpriseFolder", new object[] {
-                        itemId,
-                        folderName});
+                    itemId,
+                    folderName});
             return ((ResultObject)(results[0]));
         }
 
@@ -315,8 +307,8 @@ namespace WebsitePanel.EnterpriseServer
         public System.IAsyncResult BeginCreateEnterpriseFolder(int itemId, string folderName, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("CreateEnterpriseFolder", new object[] {
-                        itemId,
-                        folderName}, callback, asyncState);
+                    itemId,
+                    folderName}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -340,8 +332,8 @@ namespace WebsitePanel.EnterpriseServer
                 this.CreateEnterpriseFolderOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCreateEnterpriseFolderOperationCompleted);
             }
             this.InvokeAsync("CreateEnterpriseFolder", new object[] {
-                        itemId,
-                        folderName}, this.CreateEnterpriseFolderOperationCompleted, userState);
+                    itemId,
+                    folderName}, this.CreateEnterpriseFolderOperationCompleted, userState);
         }
 
         private void OnCreateEnterpriseFolderOperationCompleted(object arg)
@@ -358,8 +350,8 @@ namespace WebsitePanel.EnterpriseServer
         public ResultObject DeleteEnterpriseFolder(int itemId, string folderName)
         {
             object[] results = this.Invoke("DeleteEnterpriseFolder", new object[] {
-                        itemId,
-                        folderName});
+                    itemId,
+                    folderName});
             return ((ResultObject)(results[0]));
         }
 
@@ -367,8 +359,8 @@ namespace WebsitePanel.EnterpriseServer
         public System.IAsyncResult BeginDeleteEnterpriseFolder(int itemId, string folderName, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("DeleteEnterpriseFolder", new object[] {
-                        itemId,
-                        folderName}, callback, asyncState);
+                    itemId,
+                    folderName}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -392,8 +384,8 @@ namespace WebsitePanel.EnterpriseServer
                 this.DeleteEnterpriseFolderOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDeleteEnterpriseFolderOperationCompleted);
             }
             this.InvokeAsync("DeleteEnterpriseFolder", new object[] {
-                        itemId,
-                        folderName}, this.DeleteEnterpriseFolderOperationCompleted, userState);
+                    itemId,
+                    folderName}, this.DeleteEnterpriseFolderOperationCompleted, userState);
         }
 
         private void OnDeleteEnterpriseFolderOperationCompleted(object arg)
@@ -410,8 +402,8 @@ namespace WebsitePanel.EnterpriseServer
         public ESPermission[] GetEnterpriseFolderPermissions(int itemId, string folderName)
         {
             object[] results = this.Invoke("GetEnterpriseFolderPermissions", new object[] {
-                        itemId,
-                        folderName});
+                    itemId,
+                    folderName});
             return ((ESPermission[])(results[0]));
         }
 
@@ -419,8 +411,8 @@ namespace WebsitePanel.EnterpriseServer
         public System.IAsyncResult BeginGetEnterpriseFolderPermissions(int itemId, string folderName, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("GetEnterpriseFolderPermissions", new object[] {
-                        itemId,
-                        folderName}, callback, asyncState);
+                    itemId,
+                    folderName}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -444,8 +436,8 @@ namespace WebsitePanel.EnterpriseServer
                 this.GetEnterpriseFolderPermissionsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetEnterpriseFolderPermissionsOperationCompleted);
             }
             this.InvokeAsync("GetEnterpriseFolderPermissions", new object[] {
-                        itemId,
-                        folderName}, this.GetEnterpriseFolderPermissionsOperationCompleted, userState);
+                    itemId,
+                    folderName}, this.GetEnterpriseFolderPermissionsOperationCompleted, userState);
         }
 
         private void OnGetEnterpriseFolderPermissionsOperationCompleted(object arg)
@@ -462,9 +454,9 @@ namespace WebsitePanel.EnterpriseServer
         public ResultObject SetEnterpriseFolderPermissions(int itemId, string folderName, ESPermission[] permission)
         {
             object[] results = this.Invoke("SetEnterpriseFolderPermissions", new object[] {
-                        itemId,
-                        folderName,
-                        permission});
+                    itemId,
+                    folderName,
+                    permission});
             return ((ResultObject)(results[0]));
         }
 
@@ -472,9 +464,9 @@ namespace WebsitePanel.EnterpriseServer
         public System.IAsyncResult BeginSetEnterpriseFolderPermissions(int itemId, string folderName, ESPermission[] permission, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("SetEnterpriseFolderPermissions", new object[] {
-                        itemId,
-                        folderName,
-                        permission}, callback, asyncState);
+                    itemId,
+                    folderName,
+                    permission}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -498,9 +490,9 @@ namespace WebsitePanel.EnterpriseServer
                 this.SetEnterpriseFolderPermissionsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetEnterpriseFolderPermissionsOperationCompleted);
             }
             this.InvokeAsync("SetEnterpriseFolderPermissions", new object[] {
-                        itemId,
-                        folderName,
-                        permission}, this.SetEnterpriseFolderPermissionsOperationCompleted, userState);
+                    itemId,
+                    folderName,
+                    permission}, this.SetEnterpriseFolderPermissionsOperationCompleted, userState);
         }
 
         private void OnSetEnterpriseFolderPermissionsOperationCompleted(object arg)
@@ -517,10 +509,10 @@ namespace WebsitePanel.EnterpriseServer
         public ExchangeAccount[] SearchESAccounts(int itemId, string filterColumn, string filterValue, string sortColumn)
         {
             object[] results = this.Invoke("SearchESAccounts", new object[] {
-                        itemId,
-                        filterColumn,
-                        filterValue,
-                        sortColumn});
+                    itemId,
+                    filterColumn,
+                    filterValue,
+                    sortColumn});
             return ((ExchangeAccount[])(results[0]));
         }
 
@@ -528,10 +520,10 @@ namespace WebsitePanel.EnterpriseServer
         public System.IAsyncResult BeginSearchESAccounts(int itemId, string filterColumn, string filterValue, string sortColumn, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("SearchESAccounts", new object[] {
-                        itemId,
-                        filterColumn,
-                        filterValue,
-                        sortColumn}, callback, asyncState);
+                    itemId,
+                    filterColumn,
+                    filterValue,
+                    sortColumn}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -555,10 +547,10 @@ namespace WebsitePanel.EnterpriseServer
                 this.SearchESAccountsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSearchESAccountsOperationCompleted);
             }
             this.InvokeAsync("SearchESAccounts", new object[] {
-                        itemId,
-                        filterColumn,
-                        filterValue,
-                        sortColumn}, this.SearchESAccountsOperationCompleted, userState);
+                    itemId,
+                    filterColumn,
+                    filterValue,
+                    sortColumn}, this.SearchESAccountsOperationCompleted, userState);
         }
 
         private void OnSearchESAccountsOperationCompleted(object arg)
@@ -575,11 +567,11 @@ namespace WebsitePanel.EnterpriseServer
         public SystemFilesPaged GetEnterpriseFoldersPaged(int itemId, string filterValue, string sortColumn, int startRow, int maximumRows)
         {
             object[] results = this.Invoke("GetEnterpriseFoldersPaged", new object[] {
-                        itemId,
-                        filterValue,
-                        sortColumn,
-                        startRow,
-                        maximumRows});
+                    itemId,
+                    filterValue,
+                    sortColumn,
+                    startRow,
+                    maximumRows});
             return ((SystemFilesPaged)(results[0]));
         }
 
@@ -587,11 +579,11 @@ namespace WebsitePanel.EnterpriseServer
         public System.IAsyncResult BeginGetEnterpriseFoldersPaged(int itemId, string filterValue, string sortColumn, int startRow, int maximumRows, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("GetEnterpriseFoldersPaged", new object[] {
-                        itemId,
-                        filterValue,
-                        sortColumn,
-                        startRow,
-                        maximumRows}, callback, asyncState);
+                    itemId,
+                    filterValue,
+                    sortColumn,
+                    startRow,
+                    maximumRows}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -615,11 +607,11 @@ namespace WebsitePanel.EnterpriseServer
                 this.GetEnterpriseFoldersPagedOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetEnterpriseFoldersPagedOperationCompleted);
             }
             this.InvokeAsync("GetEnterpriseFoldersPaged", new object[] {
-                        itemId,
-                        filterValue,
-                        sortColumn,
-                        startRow,
-                        maximumRows}, this.GetEnterpriseFoldersPagedOperationCompleted, userState);
+                    itemId,
+                    filterValue,
+                    sortColumn,
+                    startRow,
+                    maximumRows}, this.GetEnterpriseFoldersPagedOperationCompleted, userState);
         }
 
         private void OnGetEnterpriseFoldersPagedOperationCompleted(object arg)
@@ -636,9 +628,9 @@ namespace WebsitePanel.EnterpriseServer
         public SystemFile RenameEnterpriseFolder(int itemId, string oldName, string newName)
         {
             object[] results = this.Invoke("RenameEnterpriseFolder", new object[] {
-                        itemId,
-                        oldName,
-                        newName});
+                    itemId,
+                    oldName,
+                    newName});
             return ((SystemFile)(results[0]));
         }
 
@@ -646,9 +638,9 @@ namespace WebsitePanel.EnterpriseServer
         public System.IAsyncResult BeginRenameEnterpriseFolder(int itemId, string oldName, string newName, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("RenameEnterpriseFolder", new object[] {
-                        itemId,
-                        oldName,
-                        newName}, callback, asyncState);
+                    itemId,
+                    oldName,
+                    newName}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -672,9 +664,9 @@ namespace WebsitePanel.EnterpriseServer
                 this.RenameEnterpriseFolderOperationCompleted = new System.Threading.SendOrPostCallback(this.OnRenameEnterpriseFolderOperationCompleted);
             }
             this.InvokeAsync("RenameEnterpriseFolder", new object[] {
-                        itemId,
-                        oldName,
-                        newName}, this.RenameEnterpriseFolderOperationCompleted, userState);
+                    itemId,
+                    oldName,
+                    newName}, this.RenameEnterpriseFolderOperationCompleted, userState);
         }
 
         private void OnRenameEnterpriseFolderOperationCompleted(object arg)
@@ -691,8 +683,8 @@ namespace WebsitePanel.EnterpriseServer
         public ResultObject CreateEnterpriseStorage(int packageId, int itemId)
         {
             object[] results = this.Invoke("CreateEnterpriseStorage", new object[] {
-                        packageId,
-                        itemId});
+                    packageId,
+                    itemId});
             return ((ResultObject)(results[0]));
         }
 
@@ -700,8 +692,8 @@ namespace WebsitePanel.EnterpriseServer
         public System.IAsyncResult BeginCreateEnterpriseStorage(int packageId, int itemId, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("CreateEnterpriseStorage", new object[] {
-                        packageId,
-                        itemId}, callback, asyncState);
+                    packageId,
+                    itemId}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -725,8 +717,8 @@ namespace WebsitePanel.EnterpriseServer
                 this.CreateEnterpriseStorageOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCreateEnterpriseStorageOperationCompleted);
             }
             this.InvokeAsync("CreateEnterpriseStorage", new object[] {
-                        packageId,
-                        itemId}, this.CreateEnterpriseStorageOperationCompleted, userState);
+                    packageId,
+                    itemId}, this.CreateEnterpriseStorageOperationCompleted, userState);
         }
 
         private void OnCreateEnterpriseStorageOperationCompleted(object arg)
@@ -744,8 +736,8 @@ namespace WebsitePanel.EnterpriseServer
         public bool CheckEnterpriseStorageInitialization(int packageId, int itemId)
         {
             object[] results = this.Invoke("CheckEnterpriseStorageInitialization", new object[] {
-                        packageId,
-                        itemId});
+                    packageId,
+                    itemId});
             return ((bool)(results[0]));
         }
 
@@ -753,8 +745,8 @@ namespace WebsitePanel.EnterpriseServer
         public System.IAsyncResult BeginCheckEnterpriseStorageInitialization(int packageId, int itemId, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("CheckEnterpriseStorageInitialization", new object[] {
-                        packageId,
-                        itemId}, callback, asyncState);
+                    packageId,
+                    itemId}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -778,8 +770,8 @@ namespace WebsitePanel.EnterpriseServer
                 this.CheckEnterpriseStorageInitializationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckEnterpriseStorageInitializationOperationCompleted);
             }
             this.InvokeAsync("CheckEnterpriseStorageInitialization", new object[] {
-                        packageId,
-                        itemId}, this.CheckEnterpriseStorageInitializationOperationCompleted, userState);
+                    packageId,
+                    itemId}, this.CheckEnterpriseStorageInitializationOperationCompleted, userState);
         }
 
         private void OnCheckEnterpriseStorageInitializationOperationCompleted(object arg)
@@ -796,7 +788,7 @@ namespace WebsitePanel.EnterpriseServer
         public bool CheckUsersDomainExists(int itemId)
         {
             object[] results = this.Invoke("CheckUsersDomainExists", new object[] {
-                        itemId});
+                    itemId});
             return ((bool)(results[0]));
         }
 
@@ -804,7 +796,7 @@ namespace WebsitePanel.EnterpriseServer
         public System.IAsyncResult BeginCheckUsersDomainExists(int itemId, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("CheckUsersDomainExists", new object[] {
-                        itemId}, callback, asyncState);
+                    itemId}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -828,7 +820,7 @@ namespace WebsitePanel.EnterpriseServer
                 this.CheckUsersDomainExistsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckUsersDomainExistsOperationCompleted);
             }
             this.InvokeAsync("CheckUsersDomainExists", new object[] {
-                        itemId}, this.CheckUsersDomainExistsOperationCompleted, userState);
+                    itemId}, this.CheckUsersDomainExistsOperationCompleted, userState);
         }
 
         private void OnCheckUsersDomainExistsOperationCompleted(object arg)
@@ -845,8 +837,8 @@ namespace WebsitePanel.EnterpriseServer
         public bool GetDirectoryBrowseEnabled(int itemId, string site)
         {
             object[] results = this.Invoke("GetDirectoryBrowseEnabled", new object[] {
-                        itemId,
-                        site});
+                    itemId,
+                    site});
             return ((bool)(results[0]));
         }
 
@@ -854,8 +846,8 @@ namespace WebsitePanel.EnterpriseServer
         public System.IAsyncResult BeginGetDirectoryBrowseEnabled(int itemId, string site, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("GetDirectoryBrowseEnabled", new object[] {
-                        itemId,
-                        site}, callback, asyncState);
+                    itemId,
+                    site}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -879,8 +871,8 @@ namespace WebsitePanel.EnterpriseServer
                 this.GetDirectoryBrowseEnabledOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetDirectoryBrowseEnabledOperationCompleted);
             }
             this.InvokeAsync("GetDirectoryBrowseEnabled", new object[] {
-                        itemId,
-                        site}, this.GetDirectoryBrowseEnabledOperationCompleted, userState);
+                    itemId,
+                    site}, this.GetDirectoryBrowseEnabledOperationCompleted, userState);
         }
 
         private void OnGetDirectoryBrowseEnabledOperationCompleted(object arg)
@@ -897,18 +889,18 @@ namespace WebsitePanel.EnterpriseServer
         public void SetDirectoryBrowseEnabled(int itemId, string site, bool enabled)
         {
             this.Invoke("SetDirectoryBrowseEnabled", new object[] {
-                        itemId,
-                        site,
-                        enabled});
+                    itemId,
+                    site,
+                    enabled});
         }
 
         /// <remarks/>
         public System.IAsyncResult BeginSetDirectoryBrowseEnabled(int itemId, string site, bool enabled, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("SetDirectoryBrowseEnabled", new object[] {
-                        itemId,
-                        site,
-                        enabled}, callback, asyncState);
+                    itemId,
+                    site,
+                    enabled}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -931,9 +923,9 @@ namespace WebsitePanel.EnterpriseServer
                 this.SetDirectoryBrowseEnabledOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetDirectoryBrowseEnabledOperationCompleted);
             }
             this.InvokeAsync("SetDirectoryBrowseEnabled", new object[] {
-                        itemId,
-                        site,
-                        enabled}, this.SetDirectoryBrowseEnabledOperationCompleted, userState);
+                    itemId,
+                    site,
+                    enabled}, this.SetDirectoryBrowseEnabledOperationCompleted, userState);
         }
 
         private void OnSetDirectoryBrowseEnabledOperationCompleted(object arg)
@@ -947,25 +939,27 @@ namespace WebsitePanel.EnterpriseServer
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/SetEnterpriseFolderSettings", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void SetEnterpriseFolderSettings(int itemId, SystemFile folder, ESPermission[] permissions, bool directoyBrowsingEnabled, int quota)
+        public void SetEnterpriseFolderSettings(int itemId, SystemFile folder, ESPermission[] permissions, bool directoyBrowsingEnabled, int quota, QuotaType quotaType)
         {
             this.Invoke("SetEnterpriseFolderSettings", new object[] {
-                        itemId,
-                        folder,
-                        permissions,
-                        directoyBrowsingEnabled,
-                        quota});
+                    itemId,
+                    folder,
+                    permissions,
+                    directoyBrowsingEnabled,
+                    quota,
+                    quotaType});
         }
 
         /// <remarks/>
-        public System.IAsyncResult BeginSetEnterpriseFolderSettings(int itemId, SystemFile folder, ESPermission[] permissions, bool directoyBrowsingEnabled, int quota, System.AsyncCallback callback, object asyncState)
+        public System.IAsyncResult BeginSetEnterpriseFolderSettings(int itemId, SystemFile folder, ESPermission[] permissions, bool directoyBrowsingEnabled, int quota, QuotaType quotaType, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("SetEnterpriseFolderSettings", new object[] {
-                        itemId,
-                        folder,
-                        permissions,
-                        directoyBrowsingEnabled,
-                        quota}, callback, asyncState);
+                    itemId,
+                    folder,
+                    permissions,
+                    directoyBrowsingEnabled,
+                    quota,
+                    quotaType}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -975,24 +969,25 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         /// <remarks/>
-        public void SetEnterpriseFolderSettingsAsync(int itemId, SystemFile folder, ESPermission[] permissions, bool directoyBrowsingEnabled, int quota)
+        public void SetEnterpriseFolderSettingsAsync(int itemId, SystemFile folder, ESPermission[] permissions, bool directoyBrowsingEnabled, int quota, QuotaType quotaType)
         {
-            this.SetEnterpriseFolderSettingsAsync(itemId, folder, permissions, directoyBrowsingEnabled, quota, null);
+            this.SetEnterpriseFolderSettingsAsync(itemId, folder, permissions, directoyBrowsingEnabled, quota, quotaType, null);
         }
 
         /// <remarks/>
-        public void SetEnterpriseFolderSettingsAsync(int itemId, SystemFile folder, ESPermission[] permissions, bool directoyBrowsingEnabled, int quota, object userState)
+        public void SetEnterpriseFolderSettingsAsync(int itemId, SystemFile folder, ESPermission[] permissions, bool directoyBrowsingEnabled, int quota, QuotaType quotaType, object userState)
         {
             if ((this.SetEnterpriseFolderSettingsOperationCompleted == null))
             {
                 this.SetEnterpriseFolderSettingsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetEnterpriseFolderSettingsOperationCompleted);
             }
             this.InvokeAsync("SetEnterpriseFolderSettings", new object[] {
-                        itemId,
-                        folder,
-                        permissions,
-                        directoyBrowsingEnabled,
-                        quota}, this.SetEnterpriseFolderSettingsOperationCompleted, userState);
+                    itemId,
+                    folder,
+                    permissions,
+                    directoyBrowsingEnabled,
+                    quota,
+                    quotaType}, this.SetEnterpriseFolderSettingsOperationCompleted, userState);
         }
 
         private void OnSetEnterpriseFolderSettingsOperationCompleted(object arg)
@@ -1012,11 +1007,11 @@ namespace WebsitePanel.EnterpriseServer
     }
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void CheckFileServicesInstallationCompletedEventHandler(object sender, CheckFileServicesInstallationCompletedEventArgs e);
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class CheckFileServicesInstallationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
@@ -1042,11 +1037,11 @@ namespace WebsitePanel.EnterpriseServer
     }
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void GetEnterpriseFoldersCompletedEventHandler(object sender, GetEnterpriseFoldersCompletedEventArgs e);
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class GetEnterpriseFoldersCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
@@ -1072,11 +1067,11 @@ namespace WebsitePanel.EnterpriseServer
     }
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void GetEnterpriseFolderCompletedEventHandler(object sender, GetEnterpriseFolderCompletedEventArgs e);
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class GetEnterpriseFolderCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
@@ -1102,11 +1097,11 @@ namespace WebsitePanel.EnterpriseServer
     }
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void CreateEnterpriseFolderCompletedEventHandler(object sender, CreateEnterpriseFolderCompletedEventArgs e);
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class CreateEnterpriseFolderCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
@@ -1132,11 +1127,11 @@ namespace WebsitePanel.EnterpriseServer
     }
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void DeleteEnterpriseFolderCompletedEventHandler(object sender, DeleteEnterpriseFolderCompletedEventArgs e);
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class DeleteEnterpriseFolderCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
@@ -1162,11 +1157,11 @@ namespace WebsitePanel.EnterpriseServer
     }
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void GetEnterpriseFolderPermissionsCompletedEventHandler(object sender, GetEnterpriseFolderPermissionsCompletedEventArgs e);
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class GetEnterpriseFolderPermissionsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
@@ -1192,11 +1187,11 @@ namespace WebsitePanel.EnterpriseServer
     }
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void SetEnterpriseFolderPermissionsCompletedEventHandler(object sender, SetEnterpriseFolderPermissionsCompletedEventArgs e);
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class SetEnterpriseFolderPermissionsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
@@ -1222,11 +1217,11 @@ namespace WebsitePanel.EnterpriseServer
     }
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void SearchESAccountsCompletedEventHandler(object sender, SearchESAccountsCompletedEventArgs e);
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class SearchESAccountsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
@@ -1252,11 +1247,11 @@ namespace WebsitePanel.EnterpriseServer
     }
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void GetEnterpriseFoldersPagedCompletedEventHandler(object sender, GetEnterpriseFoldersPagedCompletedEventArgs e);
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class GetEnterpriseFoldersPagedCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
@@ -1282,11 +1277,11 @@ namespace WebsitePanel.EnterpriseServer
     }
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void RenameEnterpriseFolderCompletedEventHandler(object sender, RenameEnterpriseFolderCompletedEventArgs e);
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class RenameEnterpriseFolderCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
@@ -1312,11 +1307,11 @@ namespace WebsitePanel.EnterpriseServer
     }
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void CreateEnterpriseStorageCompletedEventHandler(object sender, CreateEnterpriseStorageCompletedEventArgs e);
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class CreateEnterpriseStorageCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
@@ -1342,11 +1337,11 @@ namespace WebsitePanel.EnterpriseServer
     }
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void CheckEnterpriseStorageInitializationCompletedEventHandler(object sender, CheckEnterpriseStorageInitializationCompletedEventArgs e);
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class CheckEnterpriseStorageInitializationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
@@ -1372,11 +1367,11 @@ namespace WebsitePanel.EnterpriseServer
     }
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void CheckUsersDomainExistsCompletedEventHandler(object sender, CheckUsersDomainExistsCompletedEventArgs e);
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class CheckUsersDomainExistsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
@@ -1402,11 +1397,11 @@ namespace WebsitePanel.EnterpriseServer
     }
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void GetDirectoryBrowseEnabledCompletedEventHandler(object sender, GetDirectoryBrowseEnabledCompletedEventArgs e);
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class GetDirectoryBrowseEnabledCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
@@ -1432,10 +1427,10 @@ namespace WebsitePanel.EnterpriseServer
     }
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void SetDirectoryBrowseEnabledCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void SetEnterpriseFolderSettingsCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 }

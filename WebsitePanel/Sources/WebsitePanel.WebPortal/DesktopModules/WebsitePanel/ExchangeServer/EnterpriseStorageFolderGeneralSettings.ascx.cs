@@ -45,12 +45,6 @@ namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class EnterpriseStorageFolderGeneralSettings : WebsitePanelModuleBase
     {
-        #region Constansts
-
-        const int OneMb = 1024;
-
-        #endregion
-
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -63,6 +57,16 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 BindSettings();
             }
+            
+            OrganizationStatistics organizationStats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
+
+            if (organizationStats.AllocatedEnterpriseStorageSpace != -1)
+            {
+                OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+
+                rangeFolderSize.MaximumValue = (tenantStats.AllocatedEnterpriseStorageSpace - tenantStats.UsedEnterpriseStorageSpace + Utils.ParseInt(txtFolderSize.Text, 0)).ToString();
+                rangeFolderSize.ErrorMessage = string.Format("The quota you’ve entered exceeds the available quota for tenant ({0}Gb)", rangeFolderSize.MaximumValue);
+            }
         }
 
         private void BindSettings()
@@ -70,7 +74,6 @@ namespace WebsitePanel.Portal.ExchangeServer
             try
             {
                 // get settings
-
                 Organization org = ES.Services.Organizations.GetOrganization(PanelRequest.ItemID);
 
                 SystemFile folder = ES.Services.EnterpriseStorage.GetEnterpriseFolder(
@@ -82,9 +85,19 @@ namespace WebsitePanel.Portal.ExchangeServer
                 txtFolderName.Text = folder.Name;
                 lblFolderUrl.Text = folder.Url;
                 
-                if (folder.FRSMQuotaMB != -1)
+                if (folder.FRSMQuotaGB != -1)
                 {
-                    txtFolderSize.Text = ((int)(folder.FRSMQuotaMB / OneMb)).ToString();
+                    txtFolderSize.Text = folder.FRSMQuotaGB.ToString();
+                }
+
+                switch (folder.FsrmQuotaType)
+                {
+                    case QuotaType.Hard:
+                        rbtnQuotaHard.Checked = true;
+                        break;
+                    case QuotaType.Soft:
+                        rbtnQuotaSoft.Checked = true;
+                        break;
                 }
 
                 var esPermissions = ES.Services.EnterpriseStorage.GetEnterpriseFolderPermissions(PanelRequest.ItemID,folder.Name);
@@ -92,7 +105,6 @@ namespace WebsitePanel.Portal.ExchangeServer
                 chkDirectoryBrowsing.Checked = ES.Services.EnterpriseStorage.GetDirectoryBrowseEnabled(PanelRequest.ItemID, folder.Url);
 
                 permissions.SetPermissions(esPermissions);
-
             }
             catch (Exception ex)
             {
@@ -131,10 +143,22 @@ namespace WebsitePanel.Portal.ExchangeServer
                     }
 
                     folder = ES.Services.EnterpriseStorage.RenameEnterpriseFolder(PanelRequest.ItemID, PanelRequest.FolderID, txtFolderName.Text);
+
+                    if (folder == null)
+                    {
+                        messageBox.ShowErrorMessage("FOLDER_ALREADY_EXIST");
+
+                        return;
+                    }
                 }
 
-                ES.Services.EnterpriseStorage.SetEnterpriseFolderSettings(PanelRequest.ItemID, folder, permissions.GetPemissions(),
-                    chkDirectoryBrowsing.Checked, txtFolderSize.Text.Length == 0 ? -1 : int.Parse(txtFolderSize.Text) * OneMb);
+                ES.Services.EnterpriseStorage.SetEnterpriseFolderSettings(
+                    PanelRequest.ItemID,
+                    folder,
+                    permissions.GetPemissions(),
+                    chkDirectoryBrowsing.Checked,
+                    int.Parse(txtFolderSize.Text),
+                    rbtnQuotaSoft.Checked ? QuotaType.Soft : QuotaType.Hard);
 
 
                 Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folders",

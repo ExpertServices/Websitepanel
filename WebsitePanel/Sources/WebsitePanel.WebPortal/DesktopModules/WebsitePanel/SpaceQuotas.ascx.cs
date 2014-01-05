@@ -70,7 +70,9 @@ namespace WebsitePanel.Portal
             { "quotaDatabases", "pnlDatabases" },
 			{ "quotaNumberOfVm", "pnlHyperVForPC" },
             { "quotaFtpAccounts", "pnlFtpAccounts" },
-            { "quotaExchangeStorage", "pnlExchangeStorage" }
+            { "quotaExchangeStorage", "pnlExchangeStorage" },
+            { "quotaNumberOfFolders", "pnlFolders" },
+            { "quotaEnterpriseStorage", "pnlEnterpriseStorage" }
 		};
 
         protected void Page_Load(object sender, EventArgs e)

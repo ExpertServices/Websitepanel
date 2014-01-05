@@ -103,7 +103,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 {
                     Account = account.AccountName,
                     DisplayName = account.DisplayName,
-                    Access = "Read-Only",
+                    Access = "Read",
                 });
             }
 
@@ -281,9 +281,34 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 if (chkSelect.Checked)
                 {
                     chkSelect.Checked = false;
-                    litAccess.Text = ((Button)sender).CommandArgument;
+
+                    litAccess.Text = "";
+
+                    if (chkRead.Checked)
+                    {
+                        litAccess.Text = "Read,";
+                    }
+
+                    if (chkWrite.Checked)
+                    {
+                        litAccess.Text += "Write,";
+                    }
+
+                    if (chkSource.Checked)
+                    {
+                        litAccess.Text += "Source";
+                    }
+
+                    if (litAccess.Text[litAccess.Text.Length - 1] == ',')
+                    {
+                        litAccess.Text = litAccess.Text.Remove(litAccess.Text.Length - 1);
+                    }
                 }
             }
+
+            chkRead.Checked = false;
+            chkWrite.Checked = false;
+            chkSource.Checked = false;
         }
 	}
 }
