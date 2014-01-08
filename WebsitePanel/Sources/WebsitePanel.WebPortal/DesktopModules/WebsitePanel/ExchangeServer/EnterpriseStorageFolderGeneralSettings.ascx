@@ -41,7 +41,7 @@
 								<asp:TextBox ID="txtFolderSize" runat="server" CssClass="HugeTextBox200"></asp:TextBox>
                                 <asp:RequiredFieldValidator ID="valRequireFolderSize" runat="server" meta:resourcekey="valRequireFolderSize" ControlToValidate="txtFolderSize"
 									ErrorMessage="Enter Folder Size" ValidationGroup="EditFolder" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
-                                <asp:RangeValidator ID="rangeFolderSize" runat="server" ControlToValidate="txtFolderSize" MaximumValue="99999" MinimumValue="1"
+                                <asp:RangeValidator ID="rangeFolderSize" runat="server" ControlToValidate="txtFolderSize" MaximumValue="99999999" MinimumValue="1" Type="Integer"
                                     ValidationGroup="EditFolder" Display="Dynamic" Text="*" SetFocusOnError="True"
                                     ErrorMessage="The quota you’ve entered exceeds the available quota for tenant" />
 							</td>

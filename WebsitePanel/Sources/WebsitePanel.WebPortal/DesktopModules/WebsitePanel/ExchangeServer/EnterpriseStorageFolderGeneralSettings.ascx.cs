@@ -45,6 +45,12 @@ namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class EnterpriseStorageFolderGeneralSettings : WebsitePanelModuleBase
     {
+        #region Constants
+
+        private const int OneGb = 1024;
+
+        #endregion
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -56,16 +62,16 @@ namespace WebsitePanel.Portal.ExchangeServer
                 }
 
                 BindSettings();
-            }
-            
-            OrganizationStatistics organizationStats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
 
-            if (organizationStats.AllocatedEnterpriseStorageSpace != -1)
-            {
-                OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+                OrganizationStatistics organizationStats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
 
-                rangeFolderSize.MaximumValue = (tenantStats.AllocatedEnterpriseStorageSpace - tenantStats.UsedEnterpriseStorageSpace + Utils.ParseInt(txtFolderSize.Text, 0)).ToString();
-                rangeFolderSize.ErrorMessage = string.Format("The quota you’ve entered exceeds the available quota for tenant ({0}Gb)", rangeFolderSize.MaximumValue);
+                if (organizationStats.AllocatedEnterpriseStorageSpace != -1)
+                {
+                    OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+
+                    rangeFolderSize.MaximumValue = ((tenantStats.AllocatedEnterpriseStorageSpace - tenantStats.UsedEnterpriseStorageSpace)/OneGb + Utils.ParseInt(txtFolderSize.Text, 0)).ToString();
+                    rangeFolderSize.ErrorMessage = string.Format("The quota you’ve entered exceeds the available quota for tenant ({0}Gb)", rangeFolderSize.MaximumValue);
+                }
             }
         }
 
@@ -157,7 +163,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     folder,
                     permissions.GetPemissions(),
                     chkDirectoryBrowsing.Checked,
-                    int.Parse(txtFolderSize.Text),
+                    int.Parse(txtFolderSize.Text) * OneGb,
                     rbtnQuotaSoft.Checked ? QuotaType.Soft : QuotaType.Hard);
 
 

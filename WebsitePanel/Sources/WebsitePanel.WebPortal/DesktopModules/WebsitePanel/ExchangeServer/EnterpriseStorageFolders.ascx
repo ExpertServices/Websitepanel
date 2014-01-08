@@ -69,7 +69,7 @@
                             <asp:TemplateField HeaderText="gvFolderSize" SortExpression="Size">
 							    <ItemStyle Width="20%"></ItemStyle>
 							    <ItemTemplate>
-                                    <asp:Literal id="litFolderSize" runat="server" Text='<%# Eval("Size").ToString() + " Mb" %>'></asp:Literal>
+                                    <asp:Literal id="litFolderSize" runat="server" Text='<%# (ConvertMBytesToGB(Eval("Size"))).ToString("f1") + " Gb" %>'></asp:Literal>
 							    </ItemTemplate>
 						    </asp:TemplateField>
                             <asp:TemplateField HeaderText="gvFolderUrl">
