@@ -828,19 +828,16 @@ namespace WebsitePanel.EnterpriseServer
                     rule.Users.Add(permission.Account);
                 }
 
-                if (permission.Access.ToLower().Contains("read"))
+                if (permission.Access.ToLower().Contains("read-only"))
                 {
                     rule.Read = true;
+                    rule.Source = true;
                 }
 
-                if (permission.Access.ToLower().Contains("write"))
+                if (permission.Access.ToLower().Contains("read-write"))
                 {
                     rule.Write = true;
-                }
-
-                if (permission.Access.ToLower().Contains("source"))
-                {
-                    rule.Source = true;
+                    rule.Read = true;
                 }
 
                 rule.Pathes.Add("*");
@@ -888,24 +885,13 @@ namespace WebsitePanel.EnterpriseServer
                     permission.DisplayName = userObj.DisplayName;
                 }
 
-                if (rule.Read)
+                if (rule.Read && !rule.Write)
                 {
-                    permission.Access += "Read,";
+                    permission.Access = "Read-Only";
                 }
-
                 if (rule.Write)
                 {
-                    permission.Access += "Write,";
-                }
-
-                if (rule.Source)
-                {
-                    permission.Access += "Source";
-                }
-
-                if (permission.Access[permission.Access.Length - 1] == ',')
-                {
-                    permission.Access = permission.Access.Remove(permission.Access.Length - 1);
+                    permission.Access = "Read-Write";
                 }
 
                 permissions.Add(permission);

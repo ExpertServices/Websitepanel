@@ -129,17 +129,11 @@
   <data name="btnDelete.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
-  <data name="btnSet.Text" xml:space="preserve">
-    <value>Set Permissions</value>
+  <data name="btnSetReadOnly.Text" xml:space="preserve">
+    <value>Set Read-Only</value>
   </data>
-  <data name="chkRead" xml:space="preserve">
-    <value>Read</value>
-  </data>
-  <data name="chkSource" xml:space="preserve">
-    <value>Source</value>
-  </data>
-  <data name="chkWrite" xml:space="preserve">
-    <value>Write</value>
+  <data name="btnSetReadWrite.Text" xml:space="preserve">
+    <value>Set Read-Write</value>
   </data>
   <data name="ddlSearchColumnDisplayName.Text" xml:space="preserve">
     <value>Display Name</value>

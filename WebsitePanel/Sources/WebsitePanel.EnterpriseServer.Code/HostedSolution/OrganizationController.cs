@@ -961,7 +961,7 @@ namespace WebsitePanel.EnterpriseServer
 
                         stats.CreatedEnterpriseStorageFolders = folders.Count();
 
-                        stats.UsedEnterpriseStorageSpace = folders.Where(x => x.FRSMQuotaGB != -1).Sum(x => x.FRSMQuotaGB);
+                        stats.UsedEnterpriseStorageSpace = folders.Where(x => x.FRSMQuotaMB != -1).Sum(x => x.FRSMQuotaMB);
                     }
                 }
                 else
@@ -1025,7 +1025,7 @@ namespace WebsitePanel.EnterpriseServer
 
                                         stats.CreatedEnterpriseStorageFolders += folders.Count();
 
-                                        stats.UsedEnterpriseStorageSpace += folders.Where(x => x.FRSMQuotaGB != -1).Sum(x => x.FRSMQuotaGB);
+                                        stats.UsedEnterpriseStorageSpace += folders.Where(x => x.FRSMQuotaMB != -1).Sum(x => x.FRSMQuotaMB);
                                     }
                                 }
                             }

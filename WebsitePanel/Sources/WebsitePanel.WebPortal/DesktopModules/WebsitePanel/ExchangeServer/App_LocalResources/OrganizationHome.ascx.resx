@@ -214,7 +214,7 @@
     <value>Folders:</value>
   </data>
   <data name="lnkEnterpriseStorageSpace.Text" xml:space="preserve">
-    <value>Used Diskspace (Gb):</value>
+    <value>Used Diskspace (Mb):</value>
   </data>
   <data name="locEnterpriseStorage.Text" xml:space="preserve">
     <value>Enterprise Storage</value>

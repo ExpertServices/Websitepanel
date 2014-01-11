@@ -94,7 +94,7 @@ namespace WebsitePanel.Providers.EnterpriseStorage
                     {
                         folder.Size = FileUtils.BytesToMb(FileUtils.CalculateFolderSize(dir.FullName));
                     }
-                    
+
                     folder.Url = string.Format("https://{0}/{1}/{2}", UsersDomain, organizationId, dir.Name);
                     folder.Rules = webdav.GetFolderWebDavRules(organizationId, dir.Name);
                     folder.FRSMQuotaMB = quota.Size;

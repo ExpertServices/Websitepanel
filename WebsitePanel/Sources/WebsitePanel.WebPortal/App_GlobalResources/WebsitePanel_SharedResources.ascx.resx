@@ -5114,7 +5114,7 @@
     <value>Recoverable Items Storage, MB</value>
   </data>
   <data name="Quota.EnterpriseStorage.DiskStorageSpace" xml:space="preserve">
-    <value>Disk Storage Space, Gb</value>
+    <value>Disk Storage Space, Mb</value>
   </data>
   <data name="Quota.EnterpriseStorage.Folders" xml:space="preserve">
     <value>Number of Root Folders</value>

@@ -229,7 +229,7 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="ExchangeServer\EnterpriseStorageFolders.ascx.designer.cs">
-      <DependentUpon>EnterpriseStorageFolders.ascx</DependentUpon>    
+      <DependentUpon>EnterpriseStorageFolders.ascx</DependentUpon>
     </Compile>
     <Compile Include="ExchangeServer\OrganizationSecurityGroupMemberOf.ascx.cs">
       <DependentUpon>OrganizationSecurityGroupMemberOf.ascx</DependentUpon>
@@ -5278,12 +5278,14 @@
     </Content>
     <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolders.ascx.resx">
       <SubType>Designer</SubType>
-    </Content>    
+    </Content>
     <Content Include="UserControls\App_LocalResources\OrgPolicyEditor.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageCreateFolder.ascx.resx" />
-    <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolderGeneralSettings.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageFolderGeneralSettings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="ExchangeServer\UserControls\App_LocalResources\EnterpriseStoragePermissions.ascx.resx" />
     <Content Include="Lync\App_LocalResources\LyncPhoneNumbers.ascx.resx">
       <SubType>Designer</SubType>

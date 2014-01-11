@@ -77,40 +77,22 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls {
         protected global::System.Web.UI.WebControls.GridView gvPermissions;
         
         /// <summary>
-        /// chkRead control.
+        /// btnSetReadOnly control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkRead;
+        protected global::System.Web.UI.WebControls.Button btnSetReadOnly;
         
         /// <summary>
-        /// chkWrite control.
+        /// btnSetReadWrite control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkWrite;
-        
-        /// <summary>
-        /// chkSource control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkSource;
-        
-        /// <summary>
-        /// btnSet control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSet;
+        protected global::System.Web.UI.WebControls.Button btnSetReadWrite;
         
         /// <summary>
         /// AddAccountsPanel control.

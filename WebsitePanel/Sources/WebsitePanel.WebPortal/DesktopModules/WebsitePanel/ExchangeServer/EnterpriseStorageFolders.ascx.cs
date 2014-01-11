@@ -37,6 +37,12 @@ namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class EnterpriseStorageFolders : WebsitePanelModuleBase
     {
+        #region Constants
+
+        private const int OneGb = 1024;
+
+        #endregion
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -61,6 +67,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                     "ItemID=" + PanelRequest.ItemID);
         }
 
+        public decimal ConvertMBytesToGB(object size)
+        {
+            return Convert.ToDecimal(size) / OneGb;
+        }
+
         protected void BindEnterpriseStorageStats()
         {
             btnAddFolder.Enabled = true;
@@ -74,15 +85,24 @@ namespace WebsitePanel.Portal.ExchangeServer
             if (organizationStats.AllocatedEnterpriseStorageFolders != -1)
             {
                 int folderAvailable = foldersQuota.QuotaAvailable = tenantStats.AllocatedEnterpriseStorageFolders - tenantStats.CreatedEnterpriseStorageFolders;
-                int spaceAvailable = tenantStats.AllocatedEnterpriseStorageSpace - tenantStats.UsedEnterpriseStorageSpace;
 
-                if (folderAvailable <= 0 || spaceAvailable <= 0)
+                if (folderAvailable <= 0)
                 {
                     btnAddFolder.Enabled = false;
                 }
             }
 
-            spaceQuota.QuotaValue = organizationStats.UsedEnterpriseStorageSpace;
+            if (organizationStats.AllocatedEnterpriseStorageSpace != -1)
+            {
+                int spaceAvailable = (int)ConvertMBytesToGB(tenantStats.AllocatedEnterpriseStorageSpace - tenantStats.UsedEnterpriseStorageSpace);
+
+                if (spaceAvailable <= 0)
+                {
+                    btnAddFolder.Enabled = false;
+                }
+            }
+
+            spaceQuota.QuotaValue = (int)ConvertMBytesToGB(organizationStats.UsedEnterpriseStorageSpace);
         }
 
         protected void btnAddFolder_Click(object sender, EventArgs e)

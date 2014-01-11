@@ -103,7 +103,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 {
                     Account = account.AccountName,
                     DisplayName = account.DisplayName,
-                    Access = "Read",
+                    Access = "Read-Only",
                 });
             }
 
@@ -274,41 +274,16 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
                 CheckBox chkSelect = (CheckBox)row.FindControl("chkSelect");
                 Literal litAccess = (Literal)row.FindControl("litAccess");
-                
+
                 if (chkSelect == null || litAccess == null)
                     continue;
 
                 if (chkSelect.Checked)
                 {
                     chkSelect.Checked = false;
-
-                    litAccess.Text = "";
-
-                    if (chkRead.Checked)
-                    {
-                        litAccess.Text = "Read,";
-                    }
-
-                    if (chkWrite.Checked)
-                    {
-                        litAccess.Text += "Write,";
-                    }
-
-                    if (chkSource.Checked)
-                    {
-                        litAccess.Text += "Source";
-                    }
-
-                    if (litAccess.Text[litAccess.Text.Length - 1] == ',')
-                    {
-                        litAccess.Text = litAccess.Text.Remove(litAccess.Text.Length - 1);
-                    }
+                    litAccess.Text = ((Button)sender).CommandArgument;
                 }
             }
-
-            chkRead.Checked = false;
-            chkWrite.Checked = false;
-            chkSource.Checked = false;
         }
 	}
 }

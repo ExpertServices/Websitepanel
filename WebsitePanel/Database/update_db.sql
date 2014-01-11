@@ -3026,3 +3026,13 @@ UPDATE EnterpriseFolders SET
 	FolderQuota = @FolderQuota
 WHERE ItemID = @ItemID AND FolderName = @FolderID
 GO
+
+-- Enterprise Storage Quotas
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'EnterpriseStorage.DiskStorageSpace')
+BEGIN
+INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (430, 44, 1,N'EnterpriseStorage.DiskStorageSpace',N'Disk Storage Space (Mb)',2, 0 , NULL)
+END
+GO
+
+UPDATE [dbo].[Quotas] SET [QuotaDescription] = N'Disk Storage Space (Mb)' WHERE [QuotaName] = 'EnterpriseStorage.DiskStorageSpace'
+GO

@@ -205,6 +205,6 @@
     <value>Folders:</value>
   </data>
   <data name="lblEnterpriseStorage.Text" xml:space="preserve">
-    <value>Enterprise Storage:</value>
+    <value>Enterprise Storage, MB:</value>
   </data>
 </root>
