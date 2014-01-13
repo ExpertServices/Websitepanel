@@ -35,6 +35,7 @@ namespace WebsitePanel.Providers.HostedSolution
     public interface ILyncServer
     {
         string CreateOrganization(string organizationId, string sipDomain, bool enableConferencing, bool enableConferencingVideo, int maxConferenceSize, bool enabledFederation, bool enabledEnterpriseVoice);
+        string GetOrganizationTenantId(string organizationId);
         bool DeleteOrganization(string organizationId, string sipDomain);
 
         bool CreateUser(string organizationId, string userUpn, LyncUserPlan plan);

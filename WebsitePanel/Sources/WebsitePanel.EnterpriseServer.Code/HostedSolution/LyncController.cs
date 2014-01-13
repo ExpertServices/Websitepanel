@@ -229,6 +229,34 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                     }
                 }
 
+                if (lync.GetOrganizationTenantId(org.OrganizationId) == string.Empty)
+                {
+                    PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
+
+                    org.LyncTenantId = lync.CreateOrganization(org.OrganizationId,
+                                                                org.DefaultDomain,
+                                                                Convert.ToBoolean(cntx.Quotas[Quotas.LYNC_CONFERENCING].QuotaAllocatedValue),
+                                                                Convert.ToBoolean(cntx.Quotas[Quotas.LYNC_ALLOWVIDEO].QuotaAllocatedValue),
+                                                                Convert.ToInt32(cntx.Quotas[Quotas.LYNC_MAXPARTICIPANTS].QuotaAllocatedValue),
+                                                                Convert.ToBoolean(cntx.Quotas[Quotas.LYNC_FEDERATION].QuotaAllocatedValue),
+                                                                Convert.ToBoolean(cntx.Quotas[Quotas.LYNC_ENTERPRISEVOICE].QuotaAllocatedValue));
+
+                    if (string.IsNullOrEmpty(org.LyncTenantId))
+                    {
+                        TaskManager.CompleteResultTask(res, LyncErrorCodes.CANNOT_ENABLE_ORG);
+                        return res;
+                    }
+                    else
+                    {
+                        PackageController.UpdatePackageItem(org);
+
+                        bReloadConfiguration = true;
+                    }
+
+
+                }
+
+
                 LyncUserPlan plan = GetLyncUserPlan(itemId, lyncUserPlanId);
 
                 if (!lync.CreateUser(org.OrganizationId, user.UserPrincipalName, plan))
