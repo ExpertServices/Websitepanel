@@ -84,6 +84,11 @@ namespace WebsitePanel.Providers.HostedSolution
             return CreateOrganizationInternal(organizationId, sipDomain, enableConferencingVideo, maxConferenceSize, enabledFederation, enabledEnterpriseVoice);
         }
 
+        public virtual string GetOrganizationTenantId(string organizationId)
+        {
+            return "NoHostingPack";
+        }
+
         public virtual bool DeleteOrganization(string organizationId, string sipDomain)
         {
             return DeleteOrganizationInternal(organizationId, sipDomain);

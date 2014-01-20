@@ -71,6 +71,23 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
+        public string GetOrganizationTenantId(string organizationId)
+        {
+            try
+            {
+                Log.WriteStart("{0}.GetOrganizationTenantId", ProviderSettings.ProviderName);
+                string ret = Lync.GetOrganizationTenantId(organizationId);
+                Log.WriteEnd("{0}.GetOrganizationTenantId", ProviderSettings.ProviderName);
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("Error: {0}.GetOrganizationTenantId", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
         public bool DeleteOrganization(string organizationId, string sipDomain)
         {
             try
