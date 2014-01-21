@@ -54,12 +54,12 @@ namespace WebsitePanel.Providers.Mail
 			"whocanpost",
 			"prependsubject",
 			"maxmessagesize",
-			//"maxrecipients",
+			"maxrecipients",
 			"replytolist",
 			"subject",
-            //"listtoaddress",
-            //"listfromaddress",
-            //"listreplytoaddress",
+            "listtoaddress",
+            "listfromaddress",
+            "listreplytoaddress",
             "digestmode",
             "sendsubscribe",
             "sendunsubscribe",
@@ -1875,7 +1875,7 @@ namespace WebsitePanel.Providers.Mail
 
 				settings.Add(string.Concat("prependsubject=", list.EnableSubjectPrefix));
 				settings.Add(string.Concat("maxmessagesize=", list.MaxMessageSize));
-				//settings.Add(string.Concat("maxrecipients=", list.MaxRecipientsPerMessage));
+				settings.Add(string.Concat("maxrecipients=", list.MaxRecipientsPerMessage));
 				settings.Add(string.Concat("subject=", list.SubjectPrefix));
 
 				switch (list.ReplyToMode)
@@ -1885,9 +1885,9 @@ namespace WebsitePanel.Providers.Mail
 						break;
 				}
 
-				//settings.Add(string.Concat("listtoaddress=", list.ListToAddress));
-				//settings.Add(string.Concat("listfromaddress=", list.ListFromAddress));
-				//settings.Add(string.Concat("listreplytoaddress=", list.ListReplyToAddress));
+				settings.Add(string.Concat("listtoaddress=", list.ListToAddress));
+				settings.Add(string.Concat("listfromaddress=", list.ListFromAddress));
+				settings.Add(string.Concat("listreplytoaddress=", list.ListReplyToAddress));
 				settings.Add(string.Concat("digestmode=", list.DigestMode));
 				settings.Add(string.Concat("sendsubscribe=", list.SendSubscribe));
 				settings.Add(string.Concat("sendunsubscribe=", list.SendUnsubscribe));
@@ -1959,7 +1959,7 @@ namespace WebsitePanel.Providers.Mail
 
 				settings.Add(string.Concat("prependsubject=", list.EnableSubjectPrefix));
 				settings.Add(string.Concat("maxmessagesize=", list.MaxMessageSize));
-				//settings.Add(string.Concat("maxrecipients=", list.MaxRecipientsPerMessage));
+				settings.Add(string.Concat("maxrecipients=", list.MaxRecipientsPerMessage));
 				settings.Add(string.Concat("subject=", list.SubjectPrefix));
 
 				switch (list.ReplyToMode)
@@ -1972,9 +1972,9 @@ namespace WebsitePanel.Providers.Mail
 						break;
 				}
 
-				//settings.Add(string.Concat("listtoaddress=", list.ListToAddress));
-				//settings.Add(string.Concat("listfromaddress=", list.ListFromAddress));
-				//settings.Add(string.Concat("listreplytoaddress=", list.ListReplyToAddress));
+				settings.Add(string.Concat("listtoaddress=", list.ListToAddress));
+				settings.Add(string.Concat("listfromaddress=", list.ListFromAddress));
+				settings.Add(string.Concat("listreplytoaddress=", list.ListReplyToAddress));
 				settings.Add(string.Concat("digestmode=", list.DigestMode));
 				settings.Add(string.Concat("sendsubscribe=", list.SendSubscribe));
 				settings.Add(string.Concat("sendunsubscribe=", list.SendUnsubscribe));
