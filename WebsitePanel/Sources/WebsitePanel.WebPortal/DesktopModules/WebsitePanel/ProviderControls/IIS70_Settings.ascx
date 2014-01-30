@@ -39,7 +39,7 @@
 		</tr>
 	    <tr>
 	        <td colspan="2">
-	            <asp:CheckBox ID="chkAssignIPAutomatically" runat="server" meta:resourcekey="chkAssignIPAutomatically" Text="Assign IP addresses to the space on creation" />
+	            <asp:CheckBox ID="chkAssignIPAutomatically" runat="server" meta:resourcekey="chkAssignIPAutomatically" Text="Assign IP addresses on space creation" />
 	        </td>
 	    </tr>
     </table>
