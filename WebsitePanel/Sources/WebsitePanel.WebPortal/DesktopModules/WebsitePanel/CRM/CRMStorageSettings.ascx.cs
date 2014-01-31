@@ -63,7 +63,11 @@ namespace WebsitePanel.Portal
             Organization org = ES.Services.Organizations.GetOrganization(PanelRequest.ItemID);
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
 
-            int limitDBSize = cntx.Quotas[Quotas.CRM_MAXDATABASESIZE].QuotaAllocatedValue;
+            string quotaName = "";
+            if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013)) quotaName = Quotas.CRM2013_MAXDATABASESIZE;
+            else if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM)) quotaName = Quotas.CRM_MAXDATABASESIZE;
+
+            int limitDBSize = cntx.Quotas[quotaName].QuotaAllocatedValue;
             //maxStorageSettingsValue.ParentQuotaValue = limitDBSize;
             maxStorageSettingsValue.ParentQuotaValue = -1;
 
@@ -86,7 +90,12 @@ namespace WebsitePanel.Portal
             try
             {
                 PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
-                long limitSize = cntx.Quotas[Quotas.CRM_MAXDATABASESIZE].QuotaAllocatedValue;
+
+                string quotaName = "";
+                if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013)) quotaName = Quotas.CRM2013_MAXDATABASESIZE;
+                else if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM)) quotaName = Quotas.CRM_MAXDATABASESIZE;
+
+                long limitSize = cntx.Quotas[quotaName].QuotaAllocatedValue;
 
                 long maxSize = maxStorageSettingsValue.QuotaValue;
 

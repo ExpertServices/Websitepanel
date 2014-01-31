@@ -31,40 +31,44 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="microsoft.crm.sdk.proxy">
-      <HintPath>..\..\Lib\References\Microsoft\microsoft.crm.sdk.proxy.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="microsoft.crm.sdk.proxy, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lib\References\Microsoft\CRM2011\microsoft.crm.sdk.proxy.dll</HintPath>
     </Reference>
-    <Reference Include="microsoft.xrm.client">
-      <HintPath>..\..\Lib\References\Microsoft\microsoft.xrm.client.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="microsoft.xrm.client, Version=5.0.9689.1985, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lib\References\Microsoft\CRM2011\microsoft.xrm.client.dll</HintPath>
     </Reference>
-    <Reference Include="microsoft.xrm.client.codegeneration">
-      <HintPath>..\..\Lib\References\Microsoft\microsoft.xrm.client.codegeneration.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="microsoft.xrm.client.codegeneration, Version=5.0.9689.1985, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lib\References\Microsoft\CRM2011\microsoft.xrm.client.codegeneration.dll</HintPath>
     </Reference>
-    <Reference Include="microsoft.xrm.portal">
-      <HintPath>..\..\Lib\References\Microsoft\microsoft.xrm.portal.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="microsoft.xrm.portal, Version=5.0.9689.1985, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lib\References\Microsoft\CRM2011\microsoft.xrm.portal.dll</HintPath>
     </Reference>
-    <Reference Include="microsoft.xrm.portal.files">
-      <HintPath>..\..\Lib\References\Microsoft\microsoft.xrm.portal.files.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="microsoft.xrm.portal.files, Version=5.0.9689.1985, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lib\References\Microsoft\CRM2011\microsoft.xrm.portal.files.dll</HintPath>
     </Reference>
-    <Reference Include="microsoft.xrm.sdk">
-      <HintPath>..\..\Lib\References\Microsoft\microsoft.xrm.sdk.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="microsoft.xrm.sdk, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lib\References\Microsoft\CRM2011\microsoft.xrm.sdk.dll</HintPath>
     </Reference>
-    <Reference Include="microsoft.xrm.sdk.deployment">
-      <HintPath>..\..\Lib\References\Microsoft\microsoft.xrm.sdk.deployment.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="microsoft.xrm.sdk.deployment, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lib\References\Microsoft\CRM2011\microsoft.xrm.sdk.deployment.dll</HintPath>
     </Reference>
-    <Reference Include="microsoft.xrm.sdk.workflow">
-      <HintPath>..\..\Lib\References\Microsoft\microsoft.xrm.sdk.workflow.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="microsoft.xrm.sdk.workflow, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lib\References\Microsoft\CRM2011\microsoft.xrm.sdk.workflow.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lib\System.Management.Automation.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
@@ -74,7 +78,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CRMBase.cs" />
     <Compile Include="CRMProvider2011.cs" />
+    <Compile Include="HostedSolutionLog.cs" />
     <Compile Include="myorganizationcrmsdktypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -82,11 +88,6 @@
     <ProjectReference Include="..\WebsitePanel.Providers.Base\WebsitePanel.Providers.Base.csproj">
       <Project>{684C932A-6C75-46AC-A327-F3689D89EB42}</Project>
       <Name>WebsitePanel.Providers.Base</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\WebsitePanel.Providers.HostedSolution\WebsitePanel.Providers.HostedSolution.csproj">
-      <Project>{A06DE5E4-4331-47E1-8F46-7B846146B559}</Project>
-      <Name>WebsitePanel.Providers.HostedSolution</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\WebsitePanel.Server.Utils\WebsitePanel.Server.Utils.csproj">

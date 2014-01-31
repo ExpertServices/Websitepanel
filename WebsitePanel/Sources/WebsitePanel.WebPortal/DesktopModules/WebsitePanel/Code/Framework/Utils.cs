@@ -207,13 +207,16 @@ namespace WebsitePanel.Portal
 
         public static void SelectListItem(ListControl ctrl, object value)
         {
-            // unselect currently selected item
-            if (ctrl.SelectedIndex != -1)
-                ctrl.SelectedItem.Selected = false;
-
             string val = (value != null) ? value.ToString() : "";
             ListItem item = ctrl.Items.FindByValue(val);
-            if (item != null) item.Selected = true;
+            if (item != null)
+            {
+                // unselect currently selected item
+                if (ctrl.SelectedIndex != -1)
+                    ctrl.SelectedItem.Selected = false;
+
+                item.Selected = true;
+            }
         }
 
         public static void SaveListControlState(ListControl ctrl)

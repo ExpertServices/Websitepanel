@@ -328,7 +328,7 @@ namespace WebsitePanel.Providers.HostedSolution
 			return retOrganization;
 		}
 
-        public OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation, long maxSize)
+        public OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, int baseLanguageCode, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation, long maxSize)
 		{
 			return CreateOrganizationInternal(organizationId, organizationUniqueName, organizationFriendlyName, baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, initialUserDomainName, initialUserFirstName, initialUserLastName, initialUserPrimaryEmail, organizationCollation);
 		}
@@ -1572,6 +1572,11 @@ namespace WebsitePanel.Providers.HostedSolution
             ResultObject ret = new ResultObject();
             ret.IsSuccess = false;
             return ret;
+        }
+
+        public int[] GetInstalledLanguagePacks()
+        {
+            return null;
         }
 	}
 

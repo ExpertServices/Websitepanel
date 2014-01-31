@@ -94,4 +94,20 @@
         </td>
     </tr>
 
+	<tr>
+	    <td class="SubHead" width="200" nowrap>Default Currency</td>
+	    <td><asp:DropDownList runat="server" ID="ddlCurrency"/></td>
+	</tr>
+				          				          				        
+    <tr>
+	    <td class="SubHead" width="200" nowrap/>Default Collation</td>
+	    <td><asp:DropDownList runat="server" ID="ddlCollation" /></td>
+	</tr>                         
+
+	<tr>
+	    <td class="SubHead" width="200" nowrap>Default Base Language</td>
+	    <td><asp:DropDownList runat="server" ID="ddlBaseLanguage" /></td>
+	</tr>
+
+
 </table>

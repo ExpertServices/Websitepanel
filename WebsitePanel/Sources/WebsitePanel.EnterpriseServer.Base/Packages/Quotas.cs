@@ -163,6 +163,14 @@ order by rg.groupOrder
         public const string CRM_ESSUSERS = "HostedCRM.ESSUsers";
         public const string CRM_MAXDATABASESIZE = "HostedCRM.MaxDatabaseSize";
 
+        public const string CRM2013_ORGANIZATION = "HostedCRM2013.Organization";
+        public const string CRM2013_MAXDATABASESIZE = "HostedCRM2013.MaxDatabaseSize";
+
+        public const string CRM2013_ESSENTIALUSERS = "HostedCRM2013.EssentialUsers";
+        public const string CRM2013_BASICUSERS = "HostedCRM2013.BasicUsers";
+        public const string CRM2013_PROFESSIONALUSERS = "HostedCRM2013.ProfessionalUsers";
+
+
         public const string VPS_SERVERS_NUMBER = "VPS.ServersNumber";		// Number of VPS
         public const string VPS_MANAGING_ALLOWED = "VPS.ManagingAllowed";		// Allow user to create VPS
         public const string VPS_CPU_NUMBER = "VPS.CpuNumber";		// Number of CPU cores

@@ -213,4 +213,7 @@
   <data name="Text.LyncPhoneNumbers" xml:space="preserve">
     <value>Phone Numbers</value>
   </data>
+  <data name="Text.CRMGroup2013" xml:space="preserve">
+    <value>CRM 2013</value>
+  </data>
 </root>

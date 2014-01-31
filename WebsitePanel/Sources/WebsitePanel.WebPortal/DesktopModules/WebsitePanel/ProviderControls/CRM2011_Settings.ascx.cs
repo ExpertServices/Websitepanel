@@ -27,8 +27,12 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Web.UI.WebControls;
+using System.Globalization;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.Common;
+using WebsitePanel.Providers.ResultObjects;
+using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Portal.ProviderControls
 {
@@ -60,8 +64,54 @@ namespace WebsitePanel.Portal.ProviderControls
             int selectedAddressid = FindAddressByText(settings[Constants.CRMWebsiteIP]);
             ddlCrmIpAddress.AddressId = (selectedAddressid > 0) ? selectedAddressid : 0; 
             
-            ddlSchema.SelectedValue = settings[Constants.UrlSchema];
-            
+            Utils.SelectListItem(ddlSchema, settings[Constants.UrlSchema]);
+
+            // Collation
+            StringArrayResultObject res = ES.Services.CRM.GetCollationByServiceId(PanelRequest.ServiceId);
+            if (res.IsSuccess)
+            {
+                ddlCollation.DataSource = res.Value;
+                ddlCollation.DataBind();
+                Utils.SelectListItem(ddlCollation, "Latin1_General_CI_AI"); // default
+            }
+            Utils.SelectListItem(ddlCollation, settings[Constants.Collation]);
+
+            // Currency
+            ddlCurrency.Items.Clear();
+            CurrencyArrayResultObject cres = ES.Services.CRM.GetCurrencyByServiceId(PanelRequest.ServiceId);
+            if (cres.IsSuccess)
+            {
+                foreach (Currency currency in cres.Value)
+                {
+                    ListItem item = new ListItem(string.Format("{0} ({1})",
+                                                               currency.RegionName, currency.CurrencyName),
+                                                 string.Join("|",
+                                                             new string[]
+                                                                 {
+                                                                     currency.CurrencyCode, currency.CurrencyName,
+                                                                     currency.CurrencySymbol, currency.RegionName
+                                                                 }));
+
+                    ddlCurrency.Items.Add(item);
+                }
+                Utils.SelectListItem(ddlCurrency, "USD|US Dollar|$|United States"); // default
+            }
+            Utils.SelectListItem(ddlCurrency, settings[Constants.Currency]);
+
+            // Base Language
+            ddlBaseLanguage.Items.Clear();
+            int[] langPacksId = ES.Services.CRM.GetInstalledLanguagePacksByServiceId(PanelRequest.ServiceId);
+            if (langPacksId != null)
+            {
+                foreach (int langId in langPacksId)
+                {
+                    CultureInfo ci = CultureInfo.GetCultureInfo(langId);
+                    ListItem item = new ListItem(ci.EnglishName, langId.ToString());
+                    ddlBaseLanguage.Items.Add(item);
+                }
+                Utils.SelectListItem(ddlBaseLanguage, "1033"); // default
+            }
+            Utils.SelectListItem(ddlBaseLanguage, settings[Constants.BaseLanguage]);
         }
 
         public void SaveSettings(System.Collections.Specialized.StringDictionary settings)
@@ -97,6 +147,11 @@ namespace WebsitePanel.Portal.ProviderControls
 			}
              
             settings[Constants.UrlSchema] = ddlSchema.SelectedValue;
+
+            settings[Constants.Collation] = ddlCollation.SelectedValue;
+            settings[Constants.Currency] = ddlCurrency.SelectedValue;
+            settings[Constants.BaseLanguage] = ddlBaseLanguage.SelectedValue;
+
         }
 
         private static int FindAddressByText(string address)
