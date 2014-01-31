@@ -536,17 +536,34 @@ namespace WebsitePanel.Server
 
 
         [WebMethod, SoapHeader("settings")]
-        public void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
+        public void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, QuotaType quotaType, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
         {
             try
             {
                 Log.WriteStart("'{0}' SetQuotaLimitOnFolder", ProviderSettings.ProviderName);
-                OsProvider.SetQuotaLimitOnFolder(folderPath, shareNameDrive, quotaLimit, mode, wmiUserName, wmiPassword);
+                OsProvider.SetQuotaLimitOnFolder(folderPath, shareNameDrive, quotaType, quotaLimit, mode, wmiUserName, wmiPassword);
                 Log.WriteEnd("'{0}' SetQuotaLimitOnFolder", ProviderSettings.ProviderName);
             }
             catch (Exception ex)
             {
                 Log.WriteError(String.Format("'{0}' SetQuotaLimitOnFolder", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public Quota GetQuotaOnFolder(string folderPath, string wmiUserName, string wmiPassword)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetQuotaOnFolder", ProviderSettings.ProviderName);
+                var result = OsProvider.GetQuotaOnFolder(folderPath, wmiUserName, wmiPassword);
+                Log.WriteEnd("'{0}' GetQuotaOnFolder", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetQuotaOnFolder", ProviderSettings.ProviderName), ex);
                 throw;
             }
         }

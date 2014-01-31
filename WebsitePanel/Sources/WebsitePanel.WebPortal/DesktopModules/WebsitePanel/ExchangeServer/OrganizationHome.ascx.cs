@@ -150,7 +150,6 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             if (!hideItems)
             {
-
                 domainStats.QuotaUsedValue = orgStats.CreatedDomains;
                 domainStats.QuotaValue = orgStats.AllocatedDomains;
                 if (orgStats.AllocatedDomains != -1) domainStats.QuotaAvailable = tenantStats.AllocatedDomains - tenantStats.CreatedDomains;
@@ -169,9 +168,6 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
             else
                 organizationStatsPanel.Visible = false;
-
-
-
 
             
             if (cntx.Groups.ContainsKey(ResourceGroups.Exchange))

@@ -483,7 +483,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
                     cmd = new Command("Disable-Mailbox");
                     cmd.Parameters.Add("Identity", id);
-                    cmd.Parameters.Add("Confirm", false);
+                    cmd.Parameters.Add("Confirm", new SwitchParameter(false));
                     ExecuteShellCommand(runSpace, cmd);
 
 
@@ -1711,7 +1711,7 @@ namespace WebsitePanel.Providers.HostedSolution
             cmd.Parameters.Add("Identity", accountName);
             cmd.Parameters.Add("User", account);
             cmd.Parameters.Add("AccessRights", accessRights);
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             ExecuteShellCommand(runSpace, cmd);
 
             ExchangeLog.LogEnd("RemoveMailboxFullAccessPermission");
@@ -1786,7 +1786,7 @@ namespace WebsitePanel.Providers.HostedSolution
             cmd.Parameters.Add("ChildObjectTypes", null);
             cmd.Parameters.Add("InheritedObjectType", null);
             cmd.Parameters.Add("Properties", properties);
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             ExecuteShellCommand(runSpace, cmd);
 
             ExchangeLog.LogEnd("RemoveADPermission");
@@ -1802,7 +1802,7 @@ namespace WebsitePanel.Providers.HostedSolution
             cmd.Parameters.Add("AccessRights", accessRights);
             cmd.Parameters.Add("ExtendedRights", extendedRights);
             cmd.Parameters.Add("Properties", properties);
-            //cmd.Parameters.Add("Confirm", false);
+            //cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             ExecuteShellCommand(runSpace, cmd);
 
             ExchangeLog.LogEnd("AddADPermission");
@@ -2223,7 +2223,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Command cmd = new Command("Remove-Mailbox");
             cmd.Parameters.Add("Identity", id);
             cmd.Parameters.Add("Permanent", false);
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             if (isPublicFolder) cmd.Parameters.Add("PublicFolder");
             ExecuteShellCommand(runSpace, cmd);
             ExchangeLog.LogEnd("RemoveMailbox");
@@ -2234,7 +2234,7 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogStart("DisableMailbox");
             Command cmd = new Command("Disable-Mailbox");
             cmd.Parameters.Add("Identity", id);
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             ExecuteShellCommand(runSpace, cmd);
             ExchangeLog.LogEnd("DisableMailbox");
         }
@@ -3202,7 +3202,7 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogStart("RemoveContact");
             Command cmd = new Command("Remove-MailContact");
             cmd.Parameters.Add("Identity", id);
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             ExecuteShellCommand(runSpace, cmd);
             ExchangeLog.LogEnd("RemoveContact");
         }
@@ -3509,7 +3509,7 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.DebugInfo("Group Id: {0}", id);
             Command cmd = new Command("Disable-DistributionGroup");
             cmd.Parameters.Add("Identity", id);
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             ExecuteShellCommand(runSpace, cmd);
             ExchangeLog.LogEnd("DisableMailSecurityDistributionGroup");
         }
@@ -3652,7 +3652,7 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogStart("RemoveDistributionGroup");
             Command cmd = new Command("Remove-DistributionGroup");
             cmd.Parameters.Add("Identity", id);
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             cmd.Parameters.Add("BypassSecurityGroupManagerCheck");
             ExecuteShellCommand(runSpace, cmd);
             ExchangeLog.LogEnd("RemoveDistributionGroup");
@@ -3772,7 +3772,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 foreach (string member in membersToDelete)
                 {
                     RemoveDistributionGroupMember(runSpace, accountName, member);
-                }
+                } 
 
                 //remove old manager rights
                 if (!string.IsNullOrEmpty(manager))
@@ -3803,7 +3803,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Command cmd = new Command("Remove-DistributionGroupMember");
             cmd.Parameters.Add("Identity", group);
             cmd.Parameters.Add("Member", member);
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             cmd.Parameters.Add("BypassSecurityGroupManagerCheck");
             ExecuteShellCommand(runSpace, cmd);
         }
@@ -3901,7 +3901,7 @@ namespace WebsitePanel.Providers.HostedSolution
                         cmd = new Command("Remove-DistributionGroupMember");
                         cmd.Parameters.Add("Identity", accountName);
                         cmd.Parameters.Add("Member", member);
-                        cmd.Parameters.Add("Confirm", false);
+                        cmd.Parameters.Add("Confirm", new SwitchParameter(false));
                         ExecuteShellCommand(runSpace, cmd);
                     }
 
@@ -4504,7 +4504,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Command cmd = new Command("Remove-PublicFolder");
             cmd.Parameters.Add("Identity", id);
             cmd.Parameters.Add("Recurse", new SwitchParameter(true));
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             ExecuteShellCommand(runSpace, cmd);
 
             ExchangeLog.LogEnd("RemovePublicFolder");
@@ -4526,7 +4526,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Command cmd = new Command("Remove-PublicFolderClientPermission");
             cmd.Parameters.Add("Identity", id);
             cmd.Parameters.Add("User", user);
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             ExecuteShellCommand(runSpace, cmd);
             ExchangeLog.LogEnd("RemovePublicFolderClientPermission");
         }
@@ -4657,7 +4657,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 Command cmd = new Command("Disable-MailPublicFolder");
                 cmd.Parameters.Add("Identity", folder);
-                cmd.Parameters.Add("Confirm", false);
+                cmd.Parameters.Add("Confirm", new SwitchParameter(false));
                 ExecuteShellCommand(runSpace, cmd);
             }
             finally
@@ -4677,7 +4677,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
             Command cmd = new Command("Disable-MailPublicFolder");
             cmd.Parameters.Add("Identity", folder);
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             ExecuteShellCommand(runSpace, cmd);
 
             cmd = new Command("Get-PublicFolder");
@@ -4759,7 +4759,7 @@ namespace WebsitePanel.Providers.HostedSolution
             foreach (PSObject obj in result)
             {
                 string userId = ObjToString(GetPSObjectProperty(obj, "User"));
-                if (userId == "Default" || userId == "Anonymous" || userId.StartsWith("NT User:") == true)
+                if (userId == "Default" || userId == "Anonymous" || userId.StartsWith("NT:") == true)
                     continue;
 
                 object rights = GetPSObjectProperty(obj, "AccessRights");
@@ -5289,7 +5289,7 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogStart("DeleteAddressList");
             Command cmd = new Command("Remove-AddressList");
             cmd.Parameters.Add("Identity", id);
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             ExecuteShellCommand(runSpace, cmd);
             ExchangeLog.LogEnd("DeleteAddressList");
         }
@@ -5302,7 +5302,7 @@ namespace WebsitePanel.Providers.HostedSolution
             //{
             Command cmd = new Command("Remove-AddressBookPolicy");
             cmd.Parameters.Add("Identity", id);
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             ExecuteShellCommand(runSpace, cmd);
             //}
             ExchangeLog.LogEnd("DeleteAddressBookPolicy");
@@ -5364,7 +5364,7 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogStart("DeleteGlobalAddressList");
             Command cmd = new Command("Remove-GlobalAddressList");
             cmd.Parameters.Add("Identity", id);
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             ExecuteShellCommand(runSpace, cmd);
             ExchangeLog.LogEnd("DeleteGlobalAddressList");
         }
@@ -5426,7 +5426,7 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogStart("DeleteOfflineAddressBook");
             Command cmd = new Command("Remove-OfflineAddressBook");
             cmd.Parameters.Add("Identity", id);
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             ExecuteShellCommand(runSpace, cmd);
             ExchangeLog.LogEnd("DeleteOfflineAddressBook");
         }
@@ -5436,7 +5436,7 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogStart("DeleteAddressPolicy");
             Command cmd = new Command("Remove-AddressBookPolicy");
             cmd.Parameters.Add("Identity", id);
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             ExecuteShellCommand(runSpace, cmd);
             ExchangeLog.LogEnd("DeleteAddressPolicy");
         }
@@ -6440,7 +6440,7 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogStart("RemoveAcceptedDomain");
             Command cmd = new Command("Remove-AcceptedDomain");
             cmd.Parameters.Add("Identity", id);
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             ExecuteShellCommand(runSpace, cmd);
             ExchangeLog.LogEnd("RemoveAcceptedDomain");
         }
@@ -6452,7 +6452,7 @@ namespace WebsitePanel.Providers.HostedSolution
             cmd.Parameters.Add("Identity", id);
             cmd.Parameters.Add("DomainType", domainType.ToString());
             cmd.Parameters.Add("AddressBookEnabled", !(domainType == ExchangeAcceptedDomainType.InternalRelay));
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             ExecuteShellCommand(runSpace, cmd);
             ExchangeLog.LogEnd("SetAcceptedDomainType");
         }
@@ -6485,7 +6485,7 @@ namespace WebsitePanel.Providers.HostedSolution
             Command cmd = new Command("New-ActiveSyncMailboxPolicy");
             cmd.Parameters.Add("Name", organizationId);
             cmd.Parameters.Add("AllowNonProvisionableDevices", true);
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
             string id = GetResultObjectIdentity(result);
             ExchangeLog.LogEnd("CreateActiveSyncPolicy");
@@ -6497,7 +6497,7 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogStart("DeleteActiveSyncPolicy");
             Command cmd = new Command("Remove-ActiveSyncMailboxPolicy");
             cmd.Parameters.Add("Identity", id);
-            cmd.Parameters.Add("Confirm", false);
+            cmd.Parameters.Add("Confirm", new SwitchParameter(false));
             ExecuteShellCommand(runSpace, cmd);
             ExchangeLog.LogEnd("DeleteActiveSyncPolicy");
         }
@@ -6749,7 +6749,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 runSpace = OpenRunspace();
                 Command cmd = new Command("Clear-ActiveSyncDevice");
                 cmd.Parameters.Add("Identity", id);
-                cmd.Parameters.Add("Confirm", false);
+                cmd.Parameters.Add("Confirm", new SwitchParameter(false));
                 ExecuteShellCommand(runSpace, cmd);
             }
             finally
@@ -6769,7 +6769,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 Command cmd = new Command("Clear-ActiveSyncDevice");
                 cmd.Parameters.Add("Identity", id);
                 cmd.Parameters.Add("Cancel", true);
-                cmd.Parameters.Add("Confirm", false);
+                cmd.Parameters.Add("Confirm", new SwitchParameter(false));
                 ExecuteShellCommand(runSpace, cmd);
             }
             finally
@@ -6809,7 +6809,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
                         cmd = new Command("Remove-ActiveSyncDevice");
                         cmd.Parameters.Add("Identity", device.DeviceID);
-                        cmd.Parameters.Add("Confirm", false);
+                        cmd.Parameters.Add("Confirm", new SwitchParameter(false));
                         ExecuteShellCommand(runSpace, cmd);
                     }
                 }
@@ -6831,7 +6831,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 runSpace = OpenRunspace();
                 Command cmd = new Command("Remove-ActiveSyncDevice");
                 cmd.Parameters.Add("Identity", id);
-                cmd.Parameters.Add("Confirm", false);
+                cmd.Parameters.Add("Confirm", new SwitchParameter(false));
                 ExecuteShellCommand(runSpace, cmd);
             }
             finally
@@ -7317,7 +7317,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 runSpace = OpenRunspace();
                 Command cmd = new Command("Remove-TransportRule");
                 cmd.Parameters.Add("Identity", Name);
-                cmd.Parameters.Add("Confirm", false);
+                cmd.Parameters.Add("Confirm", new SwitchParameter(false));
                 ExecuteShellCommand(runSpace, cmd);
             }
             catch (Exception exc)

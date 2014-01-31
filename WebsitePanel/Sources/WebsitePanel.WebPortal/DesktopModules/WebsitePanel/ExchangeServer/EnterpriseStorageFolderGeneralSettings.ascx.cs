@@ -45,6 +45,12 @@ namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class EnterpriseStorageFolderGeneralSettings : WebsitePanelModuleBase
     {
+        #region Constants
+
+        private const int OneGb = 1024;
+
+        #endregion
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -56,6 +62,17 @@ namespace WebsitePanel.Portal.ExchangeServer
                 }
 
                 BindSettings();
+
+                OrganizationStatistics organizationStats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
+
+                if (organizationStats.AllocatedEnterpriseStorageSpace != -1)
+                {
+                    OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+
+                    rangeFolderSize.MaximumValue = Math.Round((tenantStats.AllocatedEnterpriseStorageSpace - (decimal)tenantStats.UsedEnterpriseStorageSpace)/OneGb
+                        + Utils.ParseDecimal(txtFolderSize.Text, 0), 2).ToString();
+                    rangeFolderSize.ErrorMessage = string.Format("The quota you’ve entered exceeds the available quota for tenant ({0}Gb)", rangeFolderSize.MaximumValue);
+                }
             }
         }
 
@@ -64,7 +81,6 @@ namespace WebsitePanel.Portal.ExchangeServer
             try
             {
                 // get settings
-
                 Organization org = ES.Services.Organizations.GetOrganization(PanelRequest.ItemID);
 
                 SystemFile folder = ES.Services.EnterpriseStorage.GetEnterpriseFolder(
@@ -75,13 +91,27 @@ namespace WebsitePanel.Portal.ExchangeServer
                 // bind form
                 txtFolderName.Text = folder.Name;
                 lblFolderUrl.Text = folder.Url;
+                
+                if (folder.FRSMQuotaMB != -1)
+                {
+                    txtFolderSize.Text = (Math.Round((decimal)folder.FRSMQuotaMB / OneGb, 2)).ToString();
+                }
+
+                switch (folder.FsrmQuotaType)
+                {
+                    case QuotaType.Hard:
+                        rbtnQuotaHard.Checked = true;
+                        break;
+                    case QuotaType.Soft:
+                        rbtnQuotaSoft.Checked = true;
+                        break;
+                }
 
                 var esPermissions = ES.Services.EnterpriseStorage.GetEnterpriseFolderPermissions(PanelRequest.ItemID,folder.Name);
 
                 chkDirectoryBrowsing.Checked = ES.Services.EnterpriseStorage.GetDirectoryBrowseEnabled(PanelRequest.ItemID, folder.Url);
 
                 permissions.SetPermissions(esPermissions);
-
             }
             catch (Exception ex)
             {
@@ -96,8 +126,6 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             try
             {
-                bool redirectNeeded = false;
-
                 litFolderName.Text = txtFolderName.Text;
 
                 SystemFile folder = new SystemFile { Name = PanelRequest.FolderID, Url = lblFolderUrl.Text };
@@ -123,18 +151,25 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                     folder = ES.Services.EnterpriseStorage.RenameEnterpriseFolder(PanelRequest.ItemID, PanelRequest.FolderID, txtFolderName.Text);
 
-                    redirectNeeded = true;
+                    if (folder == null)
+                    {
+                        messageBox.ShowErrorMessage("FOLDER_ALREADY_EXIST");
+
+                        return;
+                    }
                 }
 
-                ES.Services.EnterpriseStorage.SetEnterpriseFolderSettings(PanelRequest.ItemID, folder, permissions.GetPemissions(), chkDirectoryBrowsing.Checked);
+                ES.Services.EnterpriseStorage.SetEnterpriseFolderSettings(
+                    PanelRequest.ItemID,
+                    folder,
+                    permissions.GetPemissions(),
+                    chkDirectoryBrowsing.Checked,
+                    (int)(decimal.Parse(txtFolderSize.Text) * OneGb),
+                    rbtnQuotaSoft.Checked ? QuotaType.Soft : QuotaType.Hard);
 
-                if (redirectNeeded)
-                {
-                    Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folders",
+
+                Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folders",
                         "ItemID=" + PanelRequest.ItemID));
-                }
-
-                messageBox.ShowSuccessMessage("ENTERPRISE_STORAGE_UPDATE_FOLDER_SETTINGS");
             }
             catch (Exception ex)
             {

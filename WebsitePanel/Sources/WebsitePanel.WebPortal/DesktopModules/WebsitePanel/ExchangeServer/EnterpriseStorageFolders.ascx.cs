@@ -37,6 +37,12 @@ namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class EnterpriseStorageFolders : WebsitePanelModuleBase
     {
+        #region Constants
+
+        private const int OneGb = 1024;
+
+        #endregion
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -61,21 +67,41 @@ namespace WebsitePanel.Portal.ExchangeServer
                     "ItemID=" + PanelRequest.ItemID);
         }
 
+        public decimal ConvertMBytesToGB(object size)
+        {
+            return Math.Round(Convert.ToDecimal(size) / OneGb, 2);
+        }
+
         protected void BindEnterpriseStorageStats()
         {
-            OrganizationStatistics organizationStats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-            
-            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+            btnAddFolder.Enabled = true;
+
+            OrganizationStatistics organizationStats = ES.Services.EnterpriseStorage.GetStatisticsByOrganization/*ES.Services.Organizations.GetOrganizationStatisticsByOrganization*/(PanelRequest.ItemID);
+            OrganizationStatistics tenantStats = ES.Services.EnterpriseStorage.GetStatistics/*ES.Services.Organizations.GetOrganizationStatistics*/(PanelRequest.ItemID);
 
             foldersQuota.QuotaUsedValue = organizationStats.CreatedEnterpriseStorageFolders;
-            
             foldersQuota.QuotaValue = organizationStats.AllocatedEnterpriseStorageFolders;
+
+            spaceAvailableQuota.QuotaUsedValue = organizationStats.UsedEnterpriseStorageSpace;
+            spaceAvailableQuota.QuotaValue = organizationStats.AllocatedEnterpriseStorageSpace;
+
+            spaceQuota.QuotaValue = (int)Math.Round(ConvertMBytesToGB(organizationStats.UsedEnterpriseStorageSpace), 0);
 
             if (organizationStats.AllocatedEnterpriseStorageFolders != -1)
             {
                 int folderAvailable = foldersQuota.QuotaAvailable = tenantStats.AllocatedEnterpriseStorageFolders - tenantStats.CreatedEnterpriseStorageFolders;
 
                 if (folderAvailable <= 0)
+                {
+                    btnAddFolder.Enabled = false;
+                }
+            }
+
+            if (organizationStats.AllocatedEnterpriseStorageSpace != -1)
+            {
+                int spaceAvailable = spaceAvailableQuota.QuotaAvailable = tenantStats.AllocatedEnterpriseStorageSpace - tenantStats.UsedEnterpriseStorageSpace;
+
+                if (spaceAvailable <= 0)
                 {
                     btnAddFolder.Enabled = false;
                 }
@@ -105,6 +131,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                     }
 
                     gvFolders.DataBind();
+                    
+                    BindEnterpriseStorageStats();
                 }
                 catch (Exception ex)
                 {

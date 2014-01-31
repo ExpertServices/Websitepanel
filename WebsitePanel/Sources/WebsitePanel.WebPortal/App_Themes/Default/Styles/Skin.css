@@ -141,6 +141,11 @@ SPAN.Checkbox.Bold
 	border-top: solid 1px #DFDFDF;
 }
 
+.FormRBtnL
+{
+    padding-top: 10px;
+}
+
 .FormLabel150
 {
 	font-size: 8pt;

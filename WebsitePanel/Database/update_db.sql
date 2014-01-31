@@ -3094,3 +3094,62 @@ VALUES (467, 24, 4, N'HostedCRM2013.ProfessionalUsers', N'Professional licenses 
 END
 GO
 
+INSERT INTO EnterpriseFolders
+(
+	ItemID,
+	FolderName
+)
+VALUES
+(
+	@ItemID,
+	@FolderName
+)
+
+SET @FolderID = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteEnterpriseFolder')
+DROP PROCEDURE DeleteEnterpriseFolder
+GO
+
+CREATE PROCEDURE [dbo].[DeleteEnterpriseFolder]
+(
+	@ItemID INT,
+	@FolderName NVARCHAR(255)
+)
+AS
+
+DELETE FROM EnterpriseFolders
+WHERE ItemID = @ItemID AND FolderName = @FolderName
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateEnterpriseFolder')
+DROP PROCEDURE UpdateEnterpriseFolder
+GO
+
+CREATE PROCEDURE [dbo].[UpdateEnterpriseFolder]
+(
+	@ItemID INT,
+	@FolderID NVARCHAR(255),
+	@FolderName NVARCHAR(255),
+	@FolderQuota INT
+)
+AS
+
+UPDATE EnterpriseFolders SET
+	FolderName = @FolderName,
+	FolderQuota = @FolderQuota
+WHERE ItemID = @ItemID AND FolderName = @FolderID
+GO
+
+-- Enterprise Storage Quotas
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'EnterpriseStorage.DiskStorageSpace')
+BEGIN
+INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (430, 44, 1,N'EnterpriseStorage.DiskStorageSpace',N'Disk Storage Space (Mb)',2, 0 , NULL)
+END
+GO
+
+UPDATE [dbo].[Quotas] SET [QuotaDescription] = N'Disk Storage Space (Mb)' WHERE [QuotaName] = 'EnterpriseStorage.DiskStorageSpace'
+GO

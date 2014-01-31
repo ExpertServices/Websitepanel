@@ -60,10 +60,16 @@
 								    </asp:hyperlink>
 							    </ItemTemplate>
 						    </asp:TemplateField>
+                            <asp:TemplateField HeaderText="gvFolderQuota" SortExpression="FRSMQuotaGB">
+							    <ItemStyle Width="20%"></ItemStyle>
+							    <ItemTemplate>
+                                    <asp:Literal id="litFolderQuota" runat="server" Text='<%# ConvertMBytesToGB(Eval("FRSMQuotaMB")).ToString() + " Gb" %>'></asp:Literal>
+							    </ItemTemplate>
+						    </asp:TemplateField>
                             <asp:TemplateField HeaderText="gvFolderSize" SortExpression="Size">
 							    <ItemStyle Width="20%"></ItemStyle>
 							    <ItemTemplate>
-                                    <asp:Literal id="litFolderSize" runat="server" Text='<%# Eval("Size").ToString() + " Mb" %>'></asp:Literal>
+                                    <asp:Literal id="litFolderSize" runat="server" Text='<%# (ConvertMBytesToGB(Eval("Size"))).ToString() + " Gb" %>'></asp:Literal>
 							    </ItemTemplate>
 						    </asp:TemplateField>
                             <asp:TemplateField HeaderText="gvFolderUrl">
@@ -93,9 +99,21 @@
 					</asp:ObjectDataSource>
 				    <br />
 				
-                    <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Total Folders Used:"></asp:Localize>
+                    <asp:Localize ID="locQuotaFolders" runat="server" meta:resourcekey="locQuotaFolders" Text="Total Folders Allocated:"></asp:Localize>
 				    &nbsp;&nbsp;&nbsp;
 				    <wsp:QuotaViewer ID="foldersQuota" runat="server" QuotaTypeId="2" />
+                    <br />
+                    <br />
+
+                    <asp:Localize ID="locQuotaSpace" runat="server" meta:resourcekey="locQuotaSpace" Text="Total Space Allocated (Gb):"></asp:Localize>
+				    &nbsp;&nbsp;&nbsp;
+				    <wsp:QuotaViewer ID="spaceQuota" runat="server" QuotaTypeId="3" />
+                    <br />
+                    <br />
+
+                    <asp:Localize ID="locQuotaAvailableSpace" runat="server" meta:resourcekey="locQuotaAvailableSpace" Text="Used Diskspace (Mb):"></asp:Localize>
+				    &nbsp;&nbsp;&nbsp;
+				    <wsp:QuotaViewer ID="spaceAvailableQuota" runat="server" QuotaTypeId="2" />
 				</div>
 			</div>
 		</div>

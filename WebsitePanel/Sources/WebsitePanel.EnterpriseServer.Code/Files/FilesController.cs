@@ -910,7 +910,7 @@ namespace WebsitePanel.EnterpriseServer
             return users.ToArray();
         }
 
-        public static int SetFolderQuota(int packageId, string path, string driveName,string quotas)
+        public static int SetFolderQuota(int packageId, string path, string driveName, string quotas)
         {
 
             // check account
@@ -948,7 +948,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 OS.OperatingSystem os = GetOS(packageId);
 
-                os.SetQuotaLimitOnFolder(path, driveName, diskSpaceQuota.QuotaAllocatedValue.ToString() + unit, 0, String.Empty, String.Empty);
+                os.SetQuotaLimitOnFolder(path, driveName, QuotaType.Hard, diskSpaceQuota.QuotaAllocatedValue.ToString() + unit, 0, String.Empty, String.Empty);
 
                 return 0;
             }

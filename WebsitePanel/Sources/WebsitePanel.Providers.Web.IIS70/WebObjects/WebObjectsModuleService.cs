@@ -675,52 +675,48 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
             //
             foreach (var item in iisObject.Applications)
             {
-               
-
+                Configuration cfg = item.GetWebConfiguration();
+                string location = siteId + ConfigurationUtility.GetQualifiedVirtualPath(item.Path);
+                ConfigurationSection section;
                 try
                 {
-
-                    Configuration cfg = item.GetWebConfiguration();
-                    string location = siteId + ConfigurationUtility.GetQualifiedVirtualPath(item.Path);
-                    ConfigurationSection section = cfg.GetSection("system.webServer/heliconZoo", location);
-
-                    if (section.GetCollection().Count > 0)
-                    {
-                        WebVirtualDirectory vdir = new WebVirtualDirectory
-                            {
-                                Name = ConfigurationUtility.GetNonQualifiedVirtualPath(item.Path),
-                                ContentPath = item.VirtualDirectories[0].PhysicalPath
-                            };
-
-                        ConfigurationElement zooAppElement = section.GetCollection()[0];
-                        ConfigurationElementCollection envColl = zooAppElement.GetChildElement("environmentVariables").GetCollection();
-                        
-                        foreach (ConfigurationElement env in  envColl)
-                        {
-                            if ((string) env.GetAttributeValue("name") == "CONSOLE_URL")
-                            {
-                                vdir.ConsoleUrl = ConfigurationUtility.GetQualifiedVirtualPath(item.Path);
-                                if (!vdir.ConsoleUrl.EndsWith("/"))
-                                {
-                                    vdir.ConsoleUrl += "/";
-                                }
-                                vdir.ConsoleUrl += (string)env.GetAttributeValue("value");
-                            }
-                        }
-                        
-                        vdirs.Add(vdir);
-                        
-                    }
-
-
+                    section = cfg.GetSection("system.webServer/heliconZoo", location);
                 }
-                catch (Exception)
+                catch(Exception)
                 {
-                    //there is no zoo
-                    throw;
+                    // looks like Helicon Zoo is not installed, return empty array
+                    return vdirs.ToArray();
+                }
+
+                if (section.GetCollection().Count > 0)
+                {
+                    WebVirtualDirectory vdir = new WebVirtualDirectory
+                        {
+                            Name = ConfigurationUtility.GetNonQualifiedVirtualPath(item.Path),
+                            ContentPath = item.VirtualDirectories[0].PhysicalPath
+                        };
+
+                    ConfigurationElement zooAppElement = section.GetCollection()[0];
+                    ConfigurationElementCollection envColl = zooAppElement.GetChildElement("environmentVariables").GetCollection();
+                        
+                    foreach (ConfigurationElement env in  envColl)
+                    {
+                        if ((string) env.GetAttributeValue("name") == "CONSOLE_URL")
+                        {
+                            vdir.ConsoleUrl = ConfigurationUtility.GetQualifiedVirtualPath(item.Path);
+                            if (!vdir.ConsoleUrl.EndsWith("/"))
+                            {
+                                vdir.ConsoleUrl += "/";
+                            }
+                            vdir.ConsoleUrl += (string)env.GetAttributeValue("value");
+                        }
+                    }
+                        
+                    vdirs.Add(vdir);
+                        
                 }
             }
-            //
+
             return vdirs.ToArray();
         }
 

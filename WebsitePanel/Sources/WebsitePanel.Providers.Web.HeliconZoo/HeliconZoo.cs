@@ -350,10 +350,14 @@ namespace WebsitePanel.Providers.Web.HeliconZoo
 
                 switchboardCollection.Clear();
 
-                ConfigurationElement elementDisableAll = switchboardCollection.CreateElement();
-                elementDisableAll.SetAttributeValue("name", "*");
-                SetSwitchBoardValue(elementDisableAll, false);
-                switchboardCollection.Add(elementDisableAll);
+                // first disable all engines if "*" is not present in input engineNames
+                if (!engineNames.Contains("*"))
+                {
+                    ConfigurationElement elementDisableAll = switchboardCollection.CreateElement();
+                    elementDisableAll.SetAttributeValue("name", "*");
+                    SetSwitchBoardValue(elementDisableAll, false);
+                    switchboardCollection.Add(elementDisableAll);
+                }
 
                 foreach (string engineName in engineNames)
                 {

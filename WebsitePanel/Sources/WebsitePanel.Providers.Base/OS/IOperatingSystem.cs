@@ -82,7 +82,8 @@ namespace WebsitePanel.Providers.OS
         FolderGraph GetFolderGraph(string path);
         void ExecuteSyncActions(FileSyncAction[] actions);
 
-        void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, string quotaLimit, int mode, string wmiUserName, string wmiPassword);
+        void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, QuotaType quotaType, string quotaLimit, int mode, string wmiUserName, string wmiPassword);
+        Quota GetQuotaOnFolder(string folderPath, string wmiUserName, string wmiPassword);
         void DeleteDirectoryRecursive(string rootPath);
 
         // File Services

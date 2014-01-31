@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -27,52 +27,15 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Collections.Specialized;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-namespace WebsitePanel.Portal.ProviderControls
+namespace WebsitePanel.Providers.OS
 {
-    public partial class EnterpriseStorage_Settings : WebsitePanelControlBase, IHostingServiceProviderSettings
+    public enum FSRMQuotaType
     {
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            if (!IsPostBack)
-            {
-                try
-                {
-                    txtFolder.Enabled = ES.Services.EnterpriseStorage.CheckFileServicesInstallation(PanelRequest.ServiceId);
-                }
-                catch { }
-            }
-        }
-
-        public void BindSettings(StringDictionary settings)
-        {
-            string path = string.Format("{0}:\\{1}", settings["LocationDrive"], settings["UsersHome"]);
-
-            txtFolder.Text = path;
-            txtDomain.Text = settings["UsersDomain"];
-        }
-
-        public void SaveSettings(StringDictionary settings)
-        {
-            var drive = System.IO.Path.GetPathRoot(txtFolder.Text);
-            var folder = txtFolder.Text.Replace(drive, string.Empty);
-
-            var uri = new UriBuilder(txtDomain.Text).Uri;
-            var domain = uri.Host;
-
-            settings["LocationDrive"] = drive.Split(':')[0];
-            settings["UsersHome"] = folder;
-            settings["UsersDomain"] = domain;
-        }
+        Soft = 1,
+        Hard = 2
     }
 }

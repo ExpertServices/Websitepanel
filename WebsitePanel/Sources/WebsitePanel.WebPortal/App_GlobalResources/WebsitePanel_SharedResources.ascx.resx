@@ -315,6 +315,9 @@
   <data name="Error.FILES_RENAME_FILE" xml:space="preserve">
     <value>Error renaming file</value>
   </data>
+  <data name="Error.FOLDER_ALREADY_EXIST" xml:space="preserve">
+    <value>Error: Folder already exist</value>
+  </data>
   <data name="Error.FILES_UNZIP_FILES" xml:space="preserve">
     <value>Error extracting files</value>
   </data>
@@ -5110,10 +5113,10 @@
   <data name="Quota.Exchange2007.RecoverableItemsSpace" xml:space="preserve">
     <value>Recoverable Items Storage, MB</value>
   </data>
-  <data name="EnterpriseStorage.DiskStorageSpace" xml:space="preserve">
-    <value>Disk Storage Space, MB</value>
+  <data name="Quota.EnterpriseStorage.DiskStorageSpace" xml:space="preserve">
+    <value>Disk Storage Space, Mb</value>
   </data>
-  <data name="EnterpriseStorage.Folders" xml:space="preserve">
+  <data name="Quota.EnterpriseStorage.Folders" xml:space="preserve">
     <value>Number of Root Folders</value>
   </data>
   <data name="Error.LYNC_DELETE_DOMAIN" xml:space="preserve">
@@ -5349,6 +5352,9 @@
   </data>
   <data name="Error.ORGANIZATION_GET_SECURITY_GROUP_SETTINGS" xml:space="preserve">
     <value>Error reading group settings</value>
+  </data>
+  <data name="Error.ENTERPRISE_STORAGE_CREATE_FOLDER" xml:space="preserve">
+    <value>Error creating folder</value>
   </data>
   <data name="Error.ORGANIZATION_UPDATE_SECURITY_GROUP_SETTINGS" xml:space="preserve">
     <value>Error updating group settings</value>

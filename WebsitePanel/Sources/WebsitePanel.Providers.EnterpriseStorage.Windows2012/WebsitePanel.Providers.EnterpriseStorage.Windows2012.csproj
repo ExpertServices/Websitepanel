@@ -39,6 +39,14 @@
       <Project>{684C932A-6C75-46AC-A327-F3689D89EB42}</Project>
       <Name>WebsitePanel.Providers.Base</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WebsitePanel.Providers.OS.Windows2003\WebsitePanel.Providers.OS.Windows2003.csproj">
+      <Project>{899b3048-46be-4c4d-9d41-0043c8b0d11e}</Project>
+      <Name>WebsitePanel.Providers.OS.Windows2003</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebsitePanel.Providers.OS.Windows2012\WebsitePanel.Providers.OS.Windows2012.csproj">
+      <Project>{27130bbb-76fa-411e-8b4d-51cd4dc821af}</Project>
+      <Name>WebsitePanel.Providers.OS.Windows2012</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WebsitePanel.Providers.Web.IIs60\WebsitePanel.Providers.Web.IIs60.csproj">
       <Project>{9be0317d-e42e-4ff6-9a87-8c801f046ea1}</Project>
       <Name>WebsitePanel.Providers.Web.IIs60</Name>
