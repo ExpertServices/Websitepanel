@@ -4759,7 +4759,7 @@ namespace WebsitePanel.Providers.HostedSolution
             foreach (PSObject obj in result)
             {
                 string userId = ObjToString(GetPSObjectProperty(obj, "User"));
-                if (userId == "Default" || userId == "Anonymous" || userId.StartsWith("NT User:") == true)
+                if (userId == "Default" || userId == "Anonymous" || userId.StartsWith("NT:") == true)
                     continue;
 
                 object rights = GetPSObjectProperty(obj, "AccessRights");
