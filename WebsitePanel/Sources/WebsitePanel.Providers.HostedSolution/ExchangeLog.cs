@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Text;
 using WebsitePanel.Server.Utils;
@@ -87,10 +88,9 @@ namespace WebsitePanel.Providers.HostedSolution
             foreach (CommandParameter parameter in cmd.Parameters)
             {
                 string formatString = " -{0} {1}";
-                if (parameter.Value is string)
-                    formatString = " -{0} '{1}'";
-                else if (parameter.Value is bool)
-                    formatString = " -{0} ${1}";
+                if (parameter.Value is string) formatString = " -{0} '{1}'";
+                else if (parameter.Value is SwitchParameter) formatString = " -{0}:${1}";
+                else if (parameter.Value is bool) formatString = " -{0} ${1}";
                 sb.AppendFormat(formatString, parameter.Name, parameter.Value);
             }
             Log.WriteInfo("{0} {1}", LogPrefix, sb.ToString());
