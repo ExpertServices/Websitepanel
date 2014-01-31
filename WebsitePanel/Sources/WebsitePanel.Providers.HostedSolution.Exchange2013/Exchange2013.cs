@@ -4370,7 +4370,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 ExchangeTransaction transaction = StartTransaction();
                 try
                 {
-                    string rootId = AddPublicFolderMailbox(runSpace, orgCanonicalName, GetPublicFolderMailboxName(organizationId), domain);
+                    string rootId = AddPublicFolderMailbox(runSpace, orgCanonicalName, GetPublicFolderMailboxName(organizationId), domain, GetAddressBookPolicyName(organizationId));
                     transaction.RegisterNewPublicFolderMailbox(orgCanonicalName + "/" + GetPublicFolderMailboxName(organizationId));
                 }
                 catch
@@ -4421,7 +4421,7 @@ namespace WebsitePanel.Providers.HostedSolution
             return id;
         }
 
-        private string AddPublicFolderMailbox(Runspace runSpace, string organizationDistinguishedName, string name, string domain)
+        private string AddPublicFolderMailbox(Runspace runSpace, string organizationDistinguishedName, string name, string domain, string addressBookPolicy)
         {
             ExchangeLog.LogStart("CreatePublicFolderMailbox");
             Command cmd = new Command("New-Mailbox");
@@ -4429,6 +4429,7 @@ namespace WebsitePanel.Providers.HostedSolution
             cmd.Parameters.Add("PublicFolder");
             cmd.Parameters.Add("PrimarySmtpAddress", name.Replace(" ", "")+"@"+domain);
             cmd.Parameters.Add("OrganizationalUnit", organizationDistinguishedName);
+            cmd.Parameters.Add("AddressBookPolicy", addressBookPolicy);
             string database = GetDatabase(runSpace, PrimaryDomainController, MailboxDatabase);
             ExchangeLog.DebugInfo("database: " + database);
             if (database != string.Empty)
