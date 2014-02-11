@@ -112,18 +112,20 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetFolders", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public SystemFile[] GetFolders(string organizationId)
+        public SystemFile[] GetFolders(string organizationId, WebDavSetting[] settings)
         {
             object[] results = this.Invoke("GetFolders", new object[] {
-                        organizationId});
+                        organizationId,
+                        settings});
             return ((SystemFile[])(results[0]));
         }
 
         /// <remarks/>
-        public System.IAsyncResult BeginGetFolders(string organizationId, System.AsyncCallback callback, object asyncState)
+        public System.IAsyncResult BeginGetFolders(string organizationId, WebDavSetting[] settings, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("GetFolders", new object[] {
-                        organizationId}, callback, asyncState);
+                        organizationId,
+                        settings}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -134,20 +136,21 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         }
 
         /// <remarks/>
-        public void GetFoldersAsync(string organizationId)
+        public void GetFoldersAsync(string organizationId, WebDavSetting[] settings)
         {
-            this.GetFoldersAsync(organizationId, null);
+            this.GetFoldersAsync(organizationId, settings, null);
         }
 
         /// <remarks/>
-        public void GetFoldersAsync(string organizationId, object userState)
+        public void GetFoldersAsync(string organizationId, WebDavSetting[] settings, object userState)
         {
             if ((this.GetFoldersOperationCompleted == null))
             {
                 this.GetFoldersOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetFoldersOperationCompleted);
             }
             this.InvokeAsync("GetFolders", new object[] {
-                        organizationId}, this.GetFoldersOperationCompleted, userState);
+                        organizationId,
+                        settings}, this.GetFoldersOperationCompleted, userState);
         }
 
         private void OnGetFoldersOperationCompleted(object arg)
@@ -162,20 +165,22 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetFolder", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public SystemFile GetFolder(string organizationId, string folder)
+        public SystemFile GetFolder(string organizationId, string folder, WebDavSetting setting)
         {
             object[] results = this.Invoke("GetFolder", new object[] {
                         organizationId,
-                        folder});
+                        folder,
+                        setting});
             return ((SystemFile)(results[0]));
         }
 
         /// <remarks/>
-        public System.IAsyncResult BeginGetFolder(string organizationId, string folder, System.AsyncCallback callback, object asyncState)
+        public System.IAsyncResult BeginGetFolder(string organizationId, string folder, WebDavSetting setting, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("GetFolder", new object[] {
                         organizationId,
-                        folder}, callback, asyncState);
+                        folder,
+                        setting}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -186,13 +191,13 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         }
 
         /// <remarks/>
-        public void GetFolderAsync(string organizationId, string folder)
+        public void GetFolderAsync(string organizationId, string folder, WebDavSetting setting)
         {
-            this.GetFolderAsync(organizationId, folder, null);
+            this.GetFolderAsync(organizationId, folder, setting, null);
         }
 
         /// <remarks/>
-        public void GetFolderAsync(string organizationId, string folder, object userState)
+        public void GetFolderAsync(string organizationId, string folder, WebDavSetting setting, object userState)
         {
             if ((this.GetFolderOperationCompleted == null))
             {
@@ -200,7 +205,8 @@ namespace WebsitePanel.Providers.EnterpriseStorage
             }
             this.InvokeAsync("GetFolder", new object[] {
                         organizationId,
-                        folder}, this.GetFolderOperationCompleted, userState);
+                        folder,
+                        setting}, this.GetFolderOperationCompleted, userState);
         }
 
         private void OnGetFolderOperationCompleted(object arg)
@@ -266,19 +272,21 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/DeleteFolder", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void DeleteFolder(string organizationId, string folder)
+        public void DeleteFolder(string organizationId, string folder, WebDavSetting setting)
         {
             this.Invoke("DeleteFolder", new object[] {
                         organizationId,
-                        folder});
+                        folder,
+                        setting});
         }
 
         /// <remarks/>
-        public System.IAsyncResult BeginDeleteFolder(string organizationId, string folder, System.AsyncCallback callback, object asyncState)
+        public System.IAsyncResult BeginDeleteFolder(string organizationId, string folder, WebDavSetting setting, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("DeleteFolder", new object[] {
                         organizationId,
-                        folder}, callback, asyncState);
+                        folder,
+                        setting}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -288,13 +296,13 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         }
 
         /// <remarks/>
-        public void DeleteFolderAsync(string organizationId, string folder)
+        public void DeleteFolderAsync(string organizationId, string folder, WebDavSetting setting)
         {
-            this.DeleteFolderAsync(organizationId, folder, null);
+            this.DeleteFolderAsync(organizationId, folder, setting, null);
         }
 
         /// <remarks/>
-        public void DeleteFolderAsync(string organizationId, string folder, object userState)
+        public void DeleteFolderAsync(string organizationId, string folder, WebDavSetting setting, object userState)
         {
             if ((this.DeleteFolderOperationCompleted == null))
             {
@@ -302,7 +310,8 @@ namespace WebsitePanel.Providers.EnterpriseStorage
             }
             this.InvokeAsync("DeleteFolder", new object[] {
                         organizationId,
-                        folder}, this.DeleteFolderOperationCompleted, userState);
+                        folder,
+                        setting}, this.DeleteFolderOperationCompleted, userState);
         }
 
         private void OnDeleteFolderOperationCompleted(object arg)
@@ -317,21 +326,23 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/SetFolderWebDavRules", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public bool SetFolderWebDavRules(string organizationId, string folder, WebDavFolderRule[] rules)
+        public bool SetFolderWebDavRules(string organizationId, string folder, WebDavSetting setting, WebDavFolderRule[] rules)
         {
             object[] results = this.Invoke("SetFolderWebDavRules", new object[] {
                         organizationId,
                         folder,
+                        setting,
                         rules});
             return ((bool)(results[0]));
         }
 
         /// <remarks/>
-        public System.IAsyncResult BeginSetFolderWebDavRules(string organizationId, string folder, WebDavFolderRule[] rules, System.AsyncCallback callback, object asyncState)
+        public System.IAsyncResult BeginSetFolderWebDavRules(string organizationId, string folder, WebDavSetting setting, WebDavFolderRule[] rules, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("SetFolderWebDavRules", new object[] {
                         organizationId,
                         folder,
+                        setting,
                         rules}, callback, asyncState);
         }
 
@@ -343,13 +354,13 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         }
 
         /// <remarks/>
-        public void SetFolderWebDavRulesAsync(string organizationId, string folder, WebDavFolderRule[] rules)
+        public void SetFolderWebDavRulesAsync(string organizationId, string folder, WebDavSetting setting, WebDavFolderRule[] rules)
         {
-            this.SetFolderWebDavRulesAsync(organizationId, folder, rules, null);
+            this.SetFolderWebDavRulesAsync(organizationId, folder, setting, rules, null);
         }
 
         /// <remarks/>
-        public void SetFolderWebDavRulesAsync(string organizationId, string folder, WebDavFolderRule[] rules, object userState)
+        public void SetFolderWebDavRulesAsync(string organizationId, string folder, WebDavSetting setting, WebDavFolderRule[] rules, object userState)
         {
             if ((this.SetFolderWebDavRulesOperationCompleted == null))
             {
@@ -358,6 +369,7 @@ namespace WebsitePanel.Providers.EnterpriseStorage
             this.InvokeAsync("SetFolderWebDavRules", new object[] {
                         organizationId,
                         folder,
+                        setting,
                         rules}, this.SetFolderWebDavRulesOperationCompleted, userState);
         }
 
@@ -373,20 +385,22 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetFolderWebDavRules", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public WebDavFolderRule[] GetFolderWebDavRules(string organizationId, string folder)
+        public WebDavFolderRule[] GetFolderWebDavRules(string organizationId, string folder, WebDavSetting setting)
         {
             object[] results = this.Invoke("GetFolderWebDavRules", new object[] {
                         organizationId,
-                        folder});
+                        folder,
+                        setting});
             return ((WebDavFolderRule[])(results[0]));
         }
 
         /// <remarks/>
-        public System.IAsyncResult BeginGetFolderWebDavRules(string organizationId, string folder, System.AsyncCallback callback, object asyncState)
+        public System.IAsyncResult BeginGetFolderWebDavRules(string organizationId, string folder, WebDavSetting setting, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("GetFolderWebDavRules", new object[] {
                         organizationId,
-                        folder}, callback, asyncState);
+                        folder,
+                        setting}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -397,13 +411,13 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         }
 
         /// <remarks/>
-        public void GetFolderWebDavRulesAsync(string organizationId, string folder)
+        public void GetFolderWebDavRulesAsync(string organizationId, string folder, WebDavSetting setting)
         {
-            this.GetFolderWebDavRulesAsync(organizationId, folder, null);
+            this.GetFolderWebDavRulesAsync(organizationId, folder, setting, null);
         }
 
         /// <remarks/>
-        public void GetFolderWebDavRulesAsync(string organizationId, string folder, object userState)
+        public void GetFolderWebDavRulesAsync(string organizationId, string folder, WebDavSetting setting, object userState)
         {
             if ((this.GetFolderWebDavRulesOperationCompleted == null))
             {
@@ -411,7 +425,8 @@ namespace WebsitePanel.Providers.EnterpriseStorage
             }
             this.InvokeAsync("GetFolderWebDavRules", new object[] {
                         organizationId,
-                        folder}, this.GetFolderWebDavRulesOperationCompleted, userState);
+                        folder,
+                        setting}, this.GetFolderWebDavRulesOperationCompleted, userState);
         }
 
         private void OnGetFolderWebDavRulesOperationCompleted(object arg)
@@ -473,22 +488,24 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/RenameFolder", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder)
+        public SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder, WebDavSetting setting)
         {
             object[] results = this.Invoke("RenameFolder", new object[] {
                         organizationId,
                         originalFolder,
-                        newFolder});
+                        newFolder,
+                        setting});
             return ((SystemFile)(results[0]));
         }
 
         /// <remarks/>
-        public System.IAsyncResult BeginRenameFolder(string organizationId, string originalFolder, string newFolder, System.AsyncCallback callback, object asyncState)
+        public System.IAsyncResult BeginRenameFolder(string organizationId, string originalFolder, string newFolder, WebDavSetting setting, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("RenameFolder", new object[] {
                         organizationId,
                         originalFolder,
-                        newFolder}, callback, asyncState);
+                        newFolder,
+                        setting}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -499,13 +516,13 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         }
 
         /// <remarks/>
-        public void RenameFolderAsync(string organizationId, string originalFolder, string newFolder)
+        public void RenameFolderAsync(string organizationId, string originalFolder, string newFolder, WebDavSetting setting)
         {
-            this.RenameFolderAsync(organizationId, originalFolder, newFolder, null);
+            this.RenameFolderAsync(organizationId, originalFolder, newFolder, setting, null);
         }
 
         /// <remarks/>
-        public void RenameFolderAsync(string organizationId, string originalFolder, string newFolder, object userState)
+        public void RenameFolderAsync(string organizationId, string originalFolder, string newFolder, WebDavSetting setting, object userState)
         {
             if ((this.RenameFolderOperationCompleted == null))
             {
@@ -514,7 +531,8 @@ namespace WebsitePanel.Providers.EnterpriseStorage
             this.InvokeAsync("RenameFolder", new object[] {
                         organizationId,
                         originalFolder,
-                        newFolder}, this.RenameFolderOperationCompleted, userState);
+                        newFolder,
+                        setting}, this.RenameFolderOperationCompleted, userState);
         }
 
         private void OnRenameFolderOperationCompleted(object arg)

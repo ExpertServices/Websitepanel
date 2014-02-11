@@ -38,13 +38,13 @@ namespace WebsitePanel.Providers.EnterpriseStorage
     /// </summary>
     public interface IEnterpriseStorage
     {
-        SystemFile[] GetFolders(string organizationId);
-        SystemFile GetFolder(string organizationId, string folderName);
+        SystemFile[] GetFolders(string organizationId, WebDavSetting[] settings);
+        SystemFile GetFolder(string organizationId, string folderName, WebDavSetting setting);
         void CreateFolder(string organizationId, string folder);
-        SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder);
-        void DeleteFolder(string organizationId, string folder);
-        bool SetFolderWebDavRules(string organizationId, string folder, WebDavFolderRule[] rules);
-        WebDavFolderRule[] GetFolderWebDavRules(string organizationId, string folder);
+        SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder, WebDavSetting setting);
+        void DeleteFolder(string organizationId, string folder, WebDavSetting setting);
+        bool SetFolderWebDavRules(string organizationId, string folder, WebDavSetting setting, WebDavFolderRule[] rules);
+        WebDavFolderRule[] GetFolderWebDavRules(string organizationId, string folder, WebDavSetting setting);
         bool CheckFileServicesInstallation();
         
     }

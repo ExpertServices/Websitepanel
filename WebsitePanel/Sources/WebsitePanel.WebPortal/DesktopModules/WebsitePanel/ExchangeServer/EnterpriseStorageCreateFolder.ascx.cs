@@ -69,7 +69,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     ES.Services.EnterpriseStorage.CreateEnterpriseStorage(PanelSecurity.PackageId, PanelRequest.ItemID);
                 }
 
-                ResultObject result = ES.Services.EnterpriseStorage.CreateEnterpriseFolder(PanelRequest.ItemID, txtFolderName.Text);
+                ResultObject result = ES.Services.EnterpriseStorage.CreateEnterpriseFolder(PanelRequest.ItemID, txtFolderName.Text, chkAddDefaultGroup.Checked);
 
                 if (!result.IsSuccess && result.ErrorCodes.Count > 0)
                 {

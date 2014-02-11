@@ -32,6 +32,13 @@
 									ErrorMessage="Enter Folder Name" ValidationGroup="CreateFolder" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
 							</td>
 						</tr>
+                        <tr>
+                        <tr>
+                            <td class="FormLabel150"><asp:Localize ID="locAddDefaultGroup" runat="server" meta:resourcekey="locAddDefaultGroup" Text="Add Default Group:"></asp:Localize></td>
+						    <td>
+							    <asp:CheckBox id="chkAddDefaultGroup" runat="server" Checked="true"></asp:CheckBox>
+						    </td>
+					    </tr>
 					</table>
 				    <div class="FormFooterClean">
 					    <asp:Button id="btnCreate" runat="server" Text="Create Folder" CssClass="Button1" meta:resourcekey="btnCreate" ValidationGroup="CreateFolder" OnClick="btnCreate_Click"></asp:Button>

@@ -87,12 +87,12 @@ namespace WebsitePanel.EnterpriseServer
 
         public static ResultObject CreateFolder(int itemId)
         {
-            return CreateFolder(itemId, string.Empty);
+            return CreateFolder(itemId, string.Empty, false);
         }
 
-        public static ResultObject CreateFolder(int itemId, string folderName)
+        public static ResultObject CreateFolder(int itemId, string folderName, bool addDefaultGroup)
         {
-            return CreateFolderInternal(itemId, folderName);
+            return CreateFolderInternal(itemId, folderName, addDefaultGroup);
         }
 
         public static ResultObject DeleteFolder(int itemId)
@@ -354,7 +354,10 @@ namespace WebsitePanel.EnterpriseServer
 
                 EnterpriseStorage es = GetEnterpriseStorage(serviceId);
 
-                return es.GetFolders(org.OrganizationId);
+                var webDavSettings = ObjectUtils.CreateListFromDataReader<WebDavSetting>(
+                    DataProvider.GetEnterpriseFolders(itemId)).ToArray();
+
+                return es.GetFolders(org.OrganizationId, webDavSettings);
             }
             catch (Exception ex)
             {
@@ -375,7 +378,10 @@ namespace WebsitePanel.EnterpriseServer
 
                 EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
 
-                return es.GetFolder(org.OrganizationId, folderName);
+                var webDavSetting = ObjectUtils.FillObjectFromDataReader<WebDavSetting>(
+                    DataProvider.GetEnterpriseFolder(itemId, folderName));
+
+                return es.GetFolder(org.OrganizationId, folderName, webDavSetting);
             }
             catch (Exception ex)
             {
@@ -396,9 +402,12 @@ namespace WebsitePanel.EnterpriseServer
 
                 EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
 
-                if (es.GetFolder(org.OrganizationId, newFolder) == null)
+                var webDavSetting = ObjectUtils.FillObjectFromDataReader<WebDavSetting>(
+                    DataProvider.GetEnterpriseFolder(itemId, oldFolder));
+
+                if (webDavSetting == null)
                 {
-                    SystemFile folder = es.RenameFolder(org.OrganizationId, oldFolder, newFolder);
+                    SystemFile folder = es.RenameFolder(org.OrganizationId, oldFolder, newFolder, webDavSetting);
 
                     DataProvider.UpdateEnterpriseFolder(itemId, oldFolder, newFolder, folder.FRSMQuotaGB);
 
@@ -413,7 +422,7 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        protected static ResultObject CreateFolderInternal(int itemId, string folderName)
+        protected static ResultObject CreateFolderInternal(int itemId, string folderName, bool addDefaultGroup)
         {
             ResultObject result = TaskManager.StartResultTask<ResultObject>("ENTERPRISE_STORAGE", "CREATE_FOLDER");
 
@@ -430,11 +439,46 @@ namespace WebsitePanel.EnterpriseServer
 
                 EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
 
-                if (es.GetFolder(org.OrganizationId, folderName) == null)
+                var webDavSetting = ObjectUtils.FillObjectFromDataReader<WebDavSetting>(
+                    DataProvider.GetEnterpriseFolder(itemId, folderName));
+
+                if (webDavSetting == null)
                 {
+                    int esId = PackageController.GetPackageServiceId(org.PackageId, ResourceGroups.EnterpriseStorage);
+
+                    StringDictionary esSesstings = ServerController.GetServiceSettings(esId);
+
                     es.CreateFolder(org.OrganizationId, folderName);
 
-                    DataProvider.AddEntepriseFolder(itemId, folderName);
+                    DataProvider.AddEntepriseFolder(itemId, folderName, esSesstings["LocationDrive"],
+                        esSesstings["UsersHome"], esSesstings["UsersDomain"]);
+
+                    if (addDefaultGroup)
+                    {
+                        var groupName = string.Format("{0} Folder Users", folderName);
+
+                        var accountId = ObjectUtils.CreateListFromDataReader<ExchangeAccount>(
+                            DataProvider.GetOrganizationGroupsByDisplayName(itemId, groupName)).Select(g => g.AccountId).FirstOrDefault();
+
+                        if (accountId == null)
+                        {
+                            accountId = OrganizationController.CreateSecurityGroup(itemId, groupName);
+                        }
+
+                        var securityGroup = OrganizationController.GetSecurityGroupGeneralSettings(itemId, accountId);
+
+                        var rules = new List<WebDavFolderRule>() {
+                            new WebDavFolderRule
+                            {
+                                Roles = new List<string>() { securityGroup.AccountName },
+                                Read = true,
+                                Write = true,
+                                Pathes = new List<string>() { "*" }
+                           }
+                        };
+
+                        es.SetFolderWebDavRules(org.OrganizationId, folderName, webDavSetting, rules.ToArray());
+                    }
                 }
                 else
                 {
@@ -519,7 +563,10 @@ namespace WebsitePanel.EnterpriseServer
 
                 EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
 
-                es.DeleteFolder(org.OrganizationId, folderName);
+                var webDavSetting = ObjectUtils.FillObjectFromDataReader<WebDavSetting>(
+                    DataProvider.GetEnterpriseFolder(itemId, folderName));
+
+                es.DeleteFolder(org.OrganizationId, folderName, webDavSetting);
 
                 DataProvider.DeleteEnterpriseFolder(itemId, folderName);
             }
@@ -595,7 +642,11 @@ namespace WebsitePanel.EnterpriseServer
                 if (CheckUsersDomainExistsInternal(itemId, org.PackageId))
                 {
                     EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
-                    List<SystemFile> folders = es.GetFolders(org.OrganizationId).Where(x => x.Name.Contains(filterValue)).ToList();
+
+                    var webDavSettings = ObjectUtils.CreateListFromDataReader<WebDavSetting>(
+                    DataProvider.GetEnterpriseFolders(itemId)).ToArray();
+
+                    List<SystemFile> folders = es.GetFolders(org.OrganizationId, webDavSettings).Where(x => x.Name.Contains(filterValue)).ToList();
 
                     switch (sortColumn)
                     {
@@ -720,7 +771,10 @@ namespace WebsitePanel.EnterpriseServer
 
                 EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
 
-                es.SetFolderWebDavRules(org.OrganizationId, folder, rules);
+                var webDavSetting = ObjectUtils.FillObjectFromDataReader<WebDavSetting>(
+                    DataProvider.GetEnterpriseFolder(itemId, folder));
+
+                es.SetFolderWebDavRules(org.OrganizationId, folder, webDavSetting, rules);
             }
             catch (Exception ex)
             {
@@ -754,7 +808,10 @@ namespace WebsitePanel.EnterpriseServer
 
                 EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
 
-                return es.GetFolderWebDavRules(org.OrganizationId, folder);
+                var webDavSetting = ObjectUtils.FillObjectFromDataReader<WebDavSetting>(
+                    DataProvider.GetEnterpriseFolder(itemId, folder));
+
+                return es.GetFolderWebDavRules(org.OrganizationId, folder, webDavSetting);
             }
             catch (Exception ex)
             {

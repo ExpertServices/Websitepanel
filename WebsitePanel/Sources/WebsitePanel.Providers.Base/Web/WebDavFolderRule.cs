@@ -6,7 +6,6 @@ using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Providers.Web
 {
-
     public enum WebDavAccess
     {
         Read = 1,
