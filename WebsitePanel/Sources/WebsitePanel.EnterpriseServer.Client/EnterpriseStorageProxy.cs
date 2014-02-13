@@ -304,21 +304,25 @@ namespace WebsitePanel.EnterpriseServer
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/CreateEnterpriseFolder", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public ResultObject CreateEnterpriseFolder(int itemId, string folderName, bool addDefaultGroup)
+        public ResultObject CreateEnterpriseFolder(int itemId, string folderName, int quota, QuotaType quotaType, bool addDefaultGroup)
         {
             object[] results = this.Invoke("CreateEnterpriseFolder", new object[] {
                     itemId,
                     folderName,
+                    quota,
+                    quotaType,
                     addDefaultGroup});
             return ((ResultObject)(results[0]));
         }
 
         /// <remarks/>
-        public System.IAsyncResult BeginCreateEnterpriseFolder(int itemId, string folderName, bool addDefaultGroup, System.AsyncCallback callback, object asyncState)
+        public System.IAsyncResult BeginCreateEnterpriseFolder(int itemId, string folderName, int quota, QuotaType quotaType, bool addDefaultGroup, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("CreateEnterpriseFolder", new object[] {
                     itemId,
                     folderName,
+                    quota,
+                    quotaType,
                     addDefaultGroup}, callback, asyncState);
         }
 
@@ -330,13 +334,13 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         /// <remarks/>
-        public void CreateEnterpriseFolderAsync(int itemId, string folderName, bool addDefaultGroup)
+        public void CreateEnterpriseFolderAsync(int itemId, string folderName, int quota, QuotaType quotaType, bool addDefaultGroup)
         {
-            this.CreateEnterpriseFolderAsync(itemId, folderName, addDefaultGroup, null);
+            this.CreateEnterpriseFolderAsync(itemId, folderName, quota, quotaType, addDefaultGroup, null);
         }
 
         /// <remarks/>
-        public void CreateEnterpriseFolderAsync(int itemId, string folderName, bool addDefaultGroup, object userState)
+        public void CreateEnterpriseFolderAsync(int itemId, string folderName, int quota, QuotaType quotaType, bool addDefaultGroup, object userState)
         {
             if ((this.CreateEnterpriseFolderOperationCompleted == null))
             {
@@ -345,6 +349,8 @@ namespace WebsitePanel.EnterpriseServer
             this.InvokeAsync("CreateEnterpriseFolder", new object[] {
                     itemId,
                     folderName,
+                    quota,
+                    quotaType,
                     addDefaultGroup}, this.CreateEnterpriseFolderOperationCompleted, userState);
         }
 

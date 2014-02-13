@@ -4169,7 +4169,7 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Enterprise Storage
 
-        public static int AddEntepriseFolder(int itemId, string folderName, string locationDrive, string homeFolder, string domain)
+        public static int AddEntepriseFolder(int itemId, string folderName, int folderQuota, string locationDrive, string homeFolder, string domain)
         {
             SqlParameter prmId = new SqlParameter("@FolderID", SqlDbType.Int);
             prmId.Direction = ParameterDirection.Output;
@@ -4181,6 +4181,7 @@ namespace WebsitePanel.EnterpriseServer
                 prmId,
                 new SqlParameter("@ItemID", itemId),
                 new SqlParameter("@FolderName", folderName),
+                new SqlParameter("@FolderQuota", folderQuota),
                 new SqlParameter("@LocationDrive", locationDrive),
                 new SqlParameter("@HomeFolder", homeFolder),
                 new SqlParameter("@Domain", domain)

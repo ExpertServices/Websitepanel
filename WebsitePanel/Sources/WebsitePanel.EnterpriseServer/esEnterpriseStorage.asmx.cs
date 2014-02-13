@@ -76,9 +76,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public ResultObject CreateEnterpriseFolder(int itemId, string folderName, bool addDefaultGroup)
+        public ResultObject CreateEnterpriseFolder(int itemId, string folderName, int quota, QuotaType quotaType, bool addDefaultGroup)
         {
-            return EnterpriseStorageController.CreateFolder(itemId, folderName, addDefaultGroup);
+            return EnterpriseStorageController.CreateFolder(itemId, folderName, quota, quotaType, addDefaultGroup);
         }
 
         [WebMethod]

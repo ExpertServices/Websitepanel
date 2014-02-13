@@ -94,6 +94,69 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::System.Web.UI.WebControls.RequiredFieldValidator valRequireFolderName;
         
         /// <summary>
+        /// locFolderSize control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locFolderSize;
+        
+        /// <summary>
+        /// txtFolderSize control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtFolderSize;
+        
+        /// <summary>
+        /// valRequireFolderSize control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator valRequireFolderSize;
+        
+        /// <summary>
+        /// rangeFolderSize control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RangeValidator rangeFolderSize;
+        
+        /// <summary>
+        /// locQuotaType control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locQuotaType;
+        
+        /// <summary>
+        /// rbtnQuotaSoft control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButton rbtnQuotaSoft;
+        
+        /// <summary>
+        /// rbtnQuotaHard control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButton rbtnQuotaHard;
+        
+        /// <summary>
         /// locAddDefaultGroup control.
         /// </summary>
         /// <remarks>
