@@ -87,12 +87,12 @@ namespace WebsitePanel.EnterpriseServer
 
         public static ResultObject CreateFolder(int itemId)
         {
-            return CreateFolder(itemId, string.Empty, false);
+            return CreateFolder(itemId, string.Empty, 0, QuotaType.Soft, false);
         }
 
-        public static ResultObject CreateFolder(int itemId, string folderName, bool addDefaultGroup)
+        public static ResultObject CreateFolder(int itemId, string folderName, int quota, QuotaType quotaType, bool addDefaultGroup)
         {
-            return CreateFolderInternal(itemId, folderName, addDefaultGroup);
+            return CreateFolderInternal(itemId, folderName, quota, quotaType, addDefaultGroup);
         }
 
         public static ResultObject DeleteFolder(int itemId)
@@ -422,7 +422,7 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        protected static ResultObject CreateFolderInternal(int itemId, string folderName, bool addDefaultGroup)
+        protected static ResultObject CreateFolderInternal(int itemId, string folderName, int quota, QuotaType quotaType, bool addDefaultGroup)
         {
             ResultObject result = TaskManager.StartResultTask<ResultObject>("ENTERPRISE_STORAGE", "CREATE_FOLDER");
 
@@ -450,20 +450,22 @@ namespace WebsitePanel.EnterpriseServer
 
                     es.CreateFolder(org.OrganizationId, folderName);
 
-                    DataProvider.AddEntepriseFolder(itemId, folderName, esSesstings["LocationDrive"],
+                    SetFolderQuota(org.PackageId, org.OrganizationId, folderName, quota, quotaType);
+
+                    DataProvider.AddEntepriseFolder(itemId, folderName, quota, esSesstings["LocationDrive"],
                         esSesstings["UsersHome"], esSesstings["UsersDomain"]);
 
                     if (addDefaultGroup)
                     {
                         var groupName = string.Format("{0} Folder Users", folderName);
 
-                        var accountId = ObjectUtils.CreateListFromDataReader<ExchangeAccount>(
-                            DataProvider.GetOrganizationGroupsByDisplayName(itemId, groupName)).Select(g => g.AccountId).FirstOrDefault();
+                        var account = ObjectUtils.CreateListFromDataReader<ExchangeAccount>(
+                            DataProvider.GetOrganizationGroupsByDisplayName(itemId, groupName)).FirstOrDefault();
 
-                        if (accountId == null)
-                        {
-                            accountId = OrganizationController.CreateSecurityGroup(itemId, groupName);
-                        }
+                        var accountId = account == null
+                            ? OrganizationController.CreateSecurityGroup(itemId, groupName)
+                            : account.AccountId;
+
 
                         var securityGroup = OrganizationController.GetSecurityGroupGeneralSettings(itemId, accountId);
 
@@ -473,6 +475,7 @@ namespace WebsitePanel.EnterpriseServer
                                 Roles = new List<string>() { securityGroup.AccountName },
                                 Read = true,
                                 Write = true,
+                                Source = true,
                                 Pathes = new List<string>() { "*" }
                            }
                         };
@@ -888,7 +891,6 @@ namespace WebsitePanel.EnterpriseServer
                 if (permission.Access.ToLower().Contains("read-only"))
                 {
                     rule.Read = true;
-                    rule.Source = true;
                 }
 
                 if (permission.Access.ToLower().Contains("read-write"))
@@ -897,6 +899,8 @@ namespace WebsitePanel.EnterpriseServer
                     rule.Read = true;
                     rule.Source = true;
                 }
+
+                rule.Source = true;
 
                 rule.Pathes.Add("*");
 
@@ -961,6 +965,9 @@ namespace WebsitePanel.EnterpriseServer
 
         private static void SetFolderQuota(int packageId, string orgId, string folderName, int quotaSize, QuotaType quotaType)
         {
+            if (quotaSize == 0)
+                return;
+
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
             if (accountCheck < 0)
                 return;

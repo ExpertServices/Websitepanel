@@ -3165,3 +3165,43 @@ WHERE
 	ItemID = @ItemID AND DisplayName = @DisplayName AND (AccountType IN (8, 9))
 RETURN
 GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddEnterpriseFolder')
+DROP PROCEDURE [dbo].[AddEnterpriseFolder]
+GO
+
+CREATE PROCEDURE [dbo].[AddEnterpriseFolder]
+(
+	@FolderID INT OUTPUT,
+	@ItemID INT,
+	@FolderName NVARCHAR(255),
+	@FolderQuota INT,
+	@LocationDrive NVARCHAR(255),
+	@HomeFolder NVARCHAR(255),
+	@Domain NVARCHAR(255)
+)
+AS
+
+INSERT INTO EnterpriseFolders
+(
+	ItemID,
+	FolderName,
+	FolderQuota,
+	LocationDrive,
+	HomeFolder,
+	Domain
+)
+VALUES
+(
+	@ItemID,
+	@FolderName,
+	@FolderQuota,
+	@LocationDrive,
+	@HomeFolder,
+	@Domain
+)
+
+SET @FolderID = SCOPE_IDENTITY()
+
+RETURN
+GO
