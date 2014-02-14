@@ -36,7 +36,7 @@
                         <tr>
                             <td class="FormLabel150"><asp:Localize ID="locAddDefaultGroup" runat="server" meta:resourcekey="locAddDefaultGroup" Text="Add Default Group:"></asp:Localize></td>
 						    <td>
-							    <asp:CheckBox id="chkAddDefaultGroup" runat="server" Checked="true"></asp:CheckBox>
+							    <asp:CheckBox id="chkAddDefaultGroup" runat="server" Checked="false"></asp:CheckBox>
 						    </td>
 					    </tr>
 					</table>
