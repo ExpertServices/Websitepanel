@@ -897,6 +897,7 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     rule.Write = true;
                     rule.Read = true;
+                    rule.Source = true;
                 }
 
                 rule.Source = true;
