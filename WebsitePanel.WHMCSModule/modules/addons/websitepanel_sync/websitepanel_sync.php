@@ -48,7 +48,7 @@ function websitepanel_sync_config()
 {
     return array('name' => 'WebsitePanel Sync Automation',
                  'description' => 'Syncs WHMCS client details / contact changes with WebsitePanel accounts',
-                 'version' => '3.0.1',
+                 'version' => '3.0.2',
                  'author' => 'Christopher York');
 }
 

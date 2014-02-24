@@ -50,7 +50,7 @@ function websitepanel_addons_config()
 {
     return array('name' => 'WebsitePanel Addons Automation',
                  'description' => 'Automates WHMCS product addons with WebsitePanel Addons',
-                 'version' => '3.0.1',
+                 'version' => '3.0.2',
                  'author' => 'Christopher York');
 }
 
