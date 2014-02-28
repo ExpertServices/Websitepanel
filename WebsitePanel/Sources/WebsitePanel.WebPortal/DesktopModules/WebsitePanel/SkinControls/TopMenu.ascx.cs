@@ -41,6 +41,12 @@ namespace WebsitePanel.Portal.SkinControls
 {
     public partial class TopMenu : System.Web.UI.UserControl
     {
+        public string Align
+        {
+            get { return ViewState["Align"].ToString(); }
+            set { ViewState["Align"] = value; }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
 
@@ -48,7 +54,15 @@ namespace WebsitePanel.Portal.SkinControls
 
         protected void topMenu_MenuItemDataBound(object sender, MenuEventArgs e)
         {
-            string target = ((SiteMapNode)e.Item.DataItem)["target"];
+            var node = ((SiteMapNode)e.Item.DataItem);
+
+            if (node["align"] == Align)
+            {
+                topMenu.Items.Remove(e.Item);
+                return;
+            }
+
+            string target = node["target"];
 
             if(!String.IsNullOrEmpty(target))
                 e.Item.Target = target;

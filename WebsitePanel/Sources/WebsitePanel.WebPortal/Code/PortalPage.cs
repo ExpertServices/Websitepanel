@@ -45,6 +45,7 @@ namespace WebsitePanel.WebPortal
         private Dictionary<string, ContentPane> contentPanes = new Dictionary<string, ContentPane>();
 		private string url;
         private string target;
+        private string align;
 
         public string Name
         {
@@ -107,6 +108,12 @@ namespace WebsitePanel.WebPortal
         {
             get { return this.target; }
             set { this.target = value; }
+        }
+
+        public string Align
+        {
+            get { return this.align; }
+            set { this.align = value; }
         }
     }
 }
