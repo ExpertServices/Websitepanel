@@ -152,9 +152,11 @@ namespace WebsitePanel.Providers.EnterpriseStorage
             return folder;
         }
 
-        public void CreateFolder(string organizationId, string folder)
+        public void CreateFolder(string organizationId, string folder, WebDavSetting setting)
         {
-            FileUtils.CreateDirectory(string.Format("{0}:\\{1}\\{2}\\{3}", LocationDrive, UsersHome, organizationId, folder));
+            var webDavSetting = GetWebDavSetting(setting);
+
+            FileUtils.CreateDirectory(string.Format("{0}:\\{1}\\{2}\\{3}", webDavSetting.LocationDrive, webDavSetting.HomeFolder, organizationId, folder));
         }
 
         public SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder, WebDavSetting setting)

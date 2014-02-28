@@ -221,19 +221,21 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/CreateFolder", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void CreateFolder(string organizationId, string folder)
+        public void CreateFolder(string organizationId, string folder, WebDavSetting setting)
         {
             this.Invoke("CreateFolder", new object[] {
                         organizationId,
-                        folder});
+                        folder,
+                        setting});
         }
 
         /// <remarks/>
-        public System.IAsyncResult BeginCreateFolder(string organizationId, string folder, System.AsyncCallback callback, object asyncState)
+        public System.IAsyncResult BeginCreateFolder(string organizationId, string folder, WebDavSetting setting, System.AsyncCallback callback, object asyncState)
         {
             return this.BeginInvoke("CreateFolder", new object[] {
                         organizationId,
-                        folder}, callback, asyncState);
+                        folder,
+                        setting}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -243,13 +245,13 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         }
 
         /// <remarks/>
-        public void CreateFolderAsync(string organizationId, string folder)
+        public void CreateFolderAsync(string organizationId, string folder, WebDavSetting setting)
         {
-            this.CreateFolderAsync(organizationId, folder, null);
+            this.CreateFolderAsync(organizationId, folder, setting, null);
         }
 
         /// <remarks/>
-        public void CreateFolderAsync(string organizationId, string folder, object userState)
+        public void CreateFolderAsync(string organizationId, string folder, WebDavSetting setting, object userState)
         {
             if ((this.CreateFolderOperationCompleted == null))
             {
@@ -257,7 +259,8 @@ namespace WebsitePanel.Providers.EnterpriseStorage
             }
             this.InvokeAsync("CreateFolder", new object[] {
                         organizationId,
-                        folder}, this.CreateFolderOperationCompleted, userState);
+                        folder,
+                        setting}, this.CreateFolderOperationCompleted, userState);
         }
 
         private void OnCreateFolderOperationCompleted(object arg)
