@@ -93,12 +93,12 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public void CreateFolder(string organizationId, string folder)
+        public void CreateFolder(string organizationId, string folder, WebDavSetting setting)
         {
             try
             {
                 Log.WriteStart("'{0}' CreateFolder", ProviderSettings.ProviderName);
-                EnterpriseStorageProvider.CreateFolder(organizationId, folder);
+                EnterpriseStorageProvider.CreateFolder(organizationId, folder, setting);
                 Log.WriteEnd("'{0}' CreateFolder", ProviderSettings.ProviderName);
             }
             catch (Exception ex)

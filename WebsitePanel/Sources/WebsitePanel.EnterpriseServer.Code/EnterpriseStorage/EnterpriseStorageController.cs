@@ -448,12 +448,19 @@ namespace WebsitePanel.EnterpriseServer
 
                     StringDictionary esSesstings = ServerController.GetServiceSettings(esId);
 
-                    es.CreateFolder(org.OrganizationId, folderName);
+                    var setting = ObjectUtils.CreateListFromDataReader<WebDavSetting>(
+                                      DataProvider.GetEnterpriseFolders(itemId)).LastOrDefault(x => !x.IsEmpty())
+                                  ?? new WebDavSetting(esSesstings["LocationDrive"], esSesstings["UsersHome"], esSesstings["UsersDomain"]);
 
-                    SetFolderQuota(org.PackageId, org.OrganizationId, folderName, quota, quotaType);
 
-                    DataProvider.AddEntepriseFolder(itemId, folderName, quota, esSesstings["LocationDrive"],
-                        esSesstings["UsersHome"], esSesstings["UsersDomain"]);
+                    es.CreateFolder(org.OrganizationId, folderName, setting);
+
+                    DataProvider.AddEntepriseFolder(itemId, folderName, quota,
+                        setting.LocationDrive, setting.HomeFolder, setting.Domain);
+
+                    SetFolderQuota(org.PackageId, org.OrganizationId, folderName, quota, quotaType, setting);
+
+                    DataProvider.UpdateEnterpriseFolder(itemId, folderName, folderName, quota);
 
                     if (addDefaultGroup)
                     {
@@ -522,14 +529,13 @@ namespace WebsitePanel.EnterpriseServer
                     return;
                 }
 
-                EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
-
-                es.CreateFolder(org.OrganizationId, folderName);
-
                 // check if it's not root folder
                 if (!string.IsNullOrEmpty(folderName))
                 {
-                    SetFolderQuota(org.PackageId, org.OrganizationId, folderName, quota, quotaType);
+                    var webDavSetting = ObjectUtils.FillObjectFromDataReader<WebDavSetting>(
+                        DataProvider.GetEnterpriseFolder(itemId, folderName));
+
+                    SetFolderQuota(org.PackageId, org.OrganizationId, folderName, quota, quotaType, webDavSetting);
 
                     DataProvider.UpdateEnterpriseFolder(itemId, folderName, folderName, quota);
                 }
@@ -963,7 +969,7 @@ namespace WebsitePanel.EnterpriseServer
 
         }
 
-        private static void SetFolderQuota(int packageId, string orgId, string folderName, int quotaSize, QuotaType quotaType)
+        private static void SetFolderQuota(int packageId, string orgId, string folderName, int quotaSize, QuotaType quotaType, WebDavSetting setting)
         {
             if (quotaSize == 0)
                 return;
@@ -980,13 +986,16 @@ namespace WebsitePanel.EnterpriseServer
 
             if (esServiceId != 0)
             {
-                StringDictionary esSesstings = ServerController.GetServiceSettings(esServiceId);
+                var curSetting = setting;
 
-                string usersHome = esSesstings["UsersHome"];
-                string usersDomain = esSesstings["UsersDomain"];
-                string locationDrive = esSesstings["LocationDrive"];
+                if (curSetting == null || curSetting.IsEmpty())
+                {
+                    StringDictionary esSesstings = ServerController.GetServiceSettings(esServiceId);
 
-                var orgFolder = Path.Combine(usersHome, orgId, folderName);
+                    curSetting = new WebDavSetting(esSesstings["LocationDrive"], esSesstings["UsersHome"], esSesstings["UsersDomain"]);
+                }
+
+                var orgFolder = Path.Combine(curSetting.HomeFolder, orgId, folderName);
                 
                 var os = GetOS(packageId);
 
@@ -1011,7 +1020,7 @@ namespace WebsitePanel.EnterpriseServer
 
                         #endregion
 
-                        os.SetQuotaLimitOnFolder(orgFolder, locationDrive, quotaType, quotaSize.ToString() + unit, 0, String.Empty, String.Empty);
+                        os.SetQuotaLimitOnFolder(orgFolder, curSetting.LocationDrive, quotaType, quotaSize.ToString() + unit, 0, String.Empty, String.Empty);
                     }
                     catch (Exception ex)
                     {
