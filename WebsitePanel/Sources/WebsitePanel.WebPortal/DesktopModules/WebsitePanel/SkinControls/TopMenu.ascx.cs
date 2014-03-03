@@ -43,7 +43,14 @@ namespace WebsitePanel.Portal.SkinControls
     {
         public string Align
         {
-            get { return ViewState["Align"].ToString(); }
+            get
+            {
+                if (ViewState["Align"] == null)
+                {
+                    return "top"; 
+                }
+                return ViewState["Align"].ToString(); 
+            }
             set { ViewState["Align"] = value; }
         }
 
