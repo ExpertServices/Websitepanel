@@ -175,6 +175,53 @@ namespace WebsitePanel.Providers.OS
             return quota;
         }
 
+        public override Dictionary<string, Quota> GetQuotasForOrganization(string folderPath, string wmiUserName, string wmiPassword)
+        {
+            Log.WriteStart("GetQuotasLimitsForOrganization");
+
+
+            Runspace runSpace = null;
+            Quota quota = null;
+            var quotas = new Dictionary<string, Quota>();
+
+            try
+            {
+                runSpace = OpenRunspace();
+
+                Command cmd = new Command("Get-FsrmQuota");
+                cmd.Parameters.Add("Path", folderPath + "\\*");
+                var result = ExecuteShellCommand(runSpace, cmd, false);
+
+                if (result.Count > 0)
+                {
+                    foreach (var element in result)
+                    {
+                        quota = new Quota();
+
+                        quota.Size = ConvertBytesToMB(Convert.ToInt64(GetPSObjectProperty(element, "Size")));
+                        quota.QuotaType = Convert.ToBoolean(GetPSObjectProperty(element, "SoftLimit")) ? QuotaType.Soft : QuotaType.Hard;
+                        quota.Usage = ConvertBytesToMB(Convert.ToInt64(GetPSObjectProperty(element, "usage")));
+
+                        quotas.Add(Convert.ToString(GetPSObjectProperty(element, "Path")), quota);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("GetQuotasLimitsForOrganization", ex);
+                throw;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+
+            Log.WriteEnd("GetQuotasLimitsForOrganization");
+
+            return quotas;
+        }
+
         public UInt64 CalculateQuota(string quota)
         {
             UInt64 OneKb = 1024;

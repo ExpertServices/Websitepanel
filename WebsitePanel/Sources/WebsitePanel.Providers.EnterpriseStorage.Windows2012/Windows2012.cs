@@ -81,6 +81,8 @@ namespace WebsitePanel.Providers.EnterpriseStorage
 
                     // get directories
                     DirectoryInfo[] dirs = root.GetDirectories();
+                    var quotas = windows.GetQuotasForOrganization(rootPath, string.Empty, string.Empty);
+
                     foreach (DirectoryInfo dir in dirs)
                     {
                         string fullName = System.IO.Path.Combine(rootPath, dir.Name);
@@ -91,22 +93,23 @@ namespace WebsitePanel.Providers.EnterpriseStorage
                         folder.FullName = dir.FullName;
                         folder.IsDirectory = true;
 
-                        Quota quota = windows.GetQuotaOnFolder(fullName, string.Empty, string.Empty);
-
-                        folder.Size = quota.Usage;
-
-                        if (folder.Size == -1)
+                        if (quotas.ContainsKey(fullName))
                         {
-                            folder.Size = FileUtils.BytesToMb(FileUtils.CalculateFolderSize(dir.FullName));
+                            folder.Size = quotas[fullName].Usage;
+
+                            if (folder.Size == -1)
+                            {
+                                folder.Size = FileUtils.BytesToMb(FileUtils.CalculateFolderSize(dir.FullName));
+                            }
+
+                            folder.Url = string.Format("https://{0}/{1}/{2}", setting.Domain, organizationId, dir.Name);
+                            folder.Rules = webdav.GetFolderWebDavRules(organizationId, dir.Name);
+                            folder.FRSMQuotaMB = quotas[fullName].Size;
+                            folder.FRSMQuotaGB = windows.ConvertMegaBytesToGB(folder.FRSMQuotaMB);
+                            folder.FsrmQuotaType = quotas[fullName].QuotaType;
+
+                            items.Add(folder);
                         }
-
-                        folder.Url = string.Format("https://{0}/{1}/{2}", setting.Domain, organizationId, dir.Name);
-                        folder.Rules = webdav.GetFolderWebDavRules(organizationId, dir.Name);
-                        folder.FRSMQuotaMB = quota.Size;
-                        folder.FRSMQuotaGB = windows.ConvertMegaBytesToGB(folder.FRSMQuotaMB);
-                        folder.FsrmQuotaType = quota.QuotaType;
-
-                        items.Add(folder);
                     }
                 }
             }

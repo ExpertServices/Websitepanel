@@ -220,6 +220,11 @@ namespace WebsitePanel.Providers.OS
             throw new NotImplementedException();
         }
 
+        public virtual Dictionary<string, Quota> GetQuotasForOrganization(string folderPath, string wmiUserName, string wmiPassword)
+        {
+            throw new NotImplementedException();
+        }
+
         public virtual void DeleteDirectoryRecursive(string rootPath)
         {
             FileUtils.DeleteDirectoryRecursive(rootPath);
