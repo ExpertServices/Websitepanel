@@ -618,21 +618,23 @@ namespace WebsitePanel.EnterpriseServer
                                                   DataProvider.SearchExchangeAccountsByTypes(SecurityContext.User.UserId, itemId,
                                                   accountTypes, filterColumn, filterValue, sortColumn));
 
+            return tmpAccounts;
 
-            List<ExchangeAccount> exAccounts = new List<ExchangeAccount>();
+            // on large lists is very slow
 
-            foreach (ExchangeAccount tmpAccount in tmpAccounts.ToArray())
-            {
-                if (tmpAccount.AccountType == ExchangeAccountType.SecurityGroup || tmpAccount.AccountType == ExchangeAccountType.DefaultSecurityGroup
-                        ? OrganizationController.GetSecurityGroupGeneralSettings(itemId, tmpAccount.AccountId) == null
-                        : OrganizationController.GetUserGeneralSettings(itemId, tmpAccount.AccountId) == null)
-                    continue;
+            //List<ExchangeAccount> exAccounts = new List<ExchangeAccount>();
 
-                exAccounts.Add(tmpAccount);
-            }
+            //foreach (ExchangeAccount tmpAccount in tmpAccounts.ToArray())
+            //{
+            //    if (tmpAccount.AccountType == ExchangeAccountType.SecurityGroup || tmpAccount.AccountType == ExchangeAccountType.DefaultSecurityGroup
+            //            ? OrganizationController.GetSecurityGroupGeneralSettings(itemId, tmpAccount.AccountId) == null
+            //            : OrganizationController.GetUserGeneralSettings(itemId, tmpAccount.AccountId) == null)
+            //        continue;
 
-            return exAccounts;
+            //    exAccounts.Add(tmpAccount);
+            //}
 
+            //return exAccounts;
         }
 
         protected static SystemFilesPaged GetEnterpriseFoldersPagedInternal(int itemId, string filterValue, string sortColumn, int startRow, int maximumRows)
