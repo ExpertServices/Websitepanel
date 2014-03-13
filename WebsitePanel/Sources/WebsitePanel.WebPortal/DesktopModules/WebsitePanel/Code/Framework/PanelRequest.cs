@@ -49,6 +49,19 @@ namespace WebsitePanel.Portal
             return result;
         }
 
+        public static bool GetBool(string key)
+        {
+            return GetBool(key, false);
+        }
+
+        public static bool GetBool(string key, bool defaultValue)
+        {
+            bool result = defaultValue;
+            try { result = bool.Parse(HttpContext.Current.Request[key]); }
+            catch { /* do nothing */ }
+            return result;
+        }
+
         public static int UserID
         {
             get { return GetInt("UserID"); }
@@ -194,6 +207,11 @@ namespace WebsitePanel.Portal
         public static string FolderID
         {
             get { return HttpContext.Current.Request["FolderID"] ?? ""; }
+        }
+
+        public static string Ctl
+        {
+            get { return HttpContext.Current.Request["ctl"] ?? ""; }
         }
     }
 }

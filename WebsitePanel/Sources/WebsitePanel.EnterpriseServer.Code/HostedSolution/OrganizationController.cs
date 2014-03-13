@@ -1314,7 +1314,7 @@ namespace WebsitePanel.EnterpriseServer
 
             DataSet ds =
                 DataProvider.GetExchangeAccountsPaged(SecurityContext.User.UserId, itemId, accountTypes, filterColumn,
-                                                      filterValue, sortColumn, startRow, maximumRows);
+                                                      filterValue, sortColumn, startRow, maximumRows, false);
 
             OrganizationUsersPaged result = new OrganizationUsersPaged();
             result.RecordsCount = (int)ds.Tables[0].Rows[0][0];
@@ -2078,7 +2078,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             DataProvider.UpdateExchangeAccount(account.AccountId, account.AccountName, account.AccountType, account.DisplayName,
                 account.PrimaryEmailAddress, account.MailEnabledPublicFolder,
-                account.MailboxManagerActions.ToString(), account.SamAccountName, account.AccountPassword, account.MailboxPlanId,
+                account.MailboxManagerActions.ToString(), account.SamAccountName, account.AccountPassword, account.MailboxPlanId, account.ArchivingMailboxPlanId,
                 (string.IsNullOrEmpty(account.SubscriberNumber) ? null : account.SubscriberNumber.Trim()));
         }
 
@@ -2635,7 +2635,7 @@ namespace WebsitePanel.EnterpriseServer
 
             DataSet ds =
                 DataProvider.GetExchangeAccountsPaged(SecurityContext.User.UserId, itemId, accountTypes, filterColumn,
-                                                      filterValue, sortColumn, startRow, maximumRows);
+                                                      filterValue, sortColumn, startRow, maximumRows, false);
 
             ExchangeAccountsPaged result = new ExchangeAccountsPaged();
             result.RecordsCount = (int)ds.Tables[0].Rows[0][0];

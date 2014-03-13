@@ -81,7 +81,7 @@ namespace WebsitePanel.Portal
 
             if ((orgs != null) & (orgs.GetLength(0) > 0))
             {
-                ExchangeMailboxPlan[] list = ES.Services.ExchangeServer.GetExchangeMailboxPlans(orgs[0].Id);
+                ExchangeMailboxPlan[] list = ES.Services.ExchangeServer.GetExchangeMailboxPlans(orgs[0].Id, false);
 
                 gvMailboxPlans.DataSource = list;
                 gvMailboxPlans.DataBind();
@@ -470,7 +470,7 @@ namespace WebsitePanel.Portal
                                         foreach (ExchangeAccount a in Accounts)
                                         {
                                             txtStatus.Text = "Completed";
-                                            int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(org.Id, a.AccountId, destinationMailboxPlanId);
+                                            int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(org.Id, a.AccountId, destinationMailboxPlanId, a.ArchivingMailboxPlanId);
                                             if (result < 0)
                                             {
                                                 BindMailboxPlans();

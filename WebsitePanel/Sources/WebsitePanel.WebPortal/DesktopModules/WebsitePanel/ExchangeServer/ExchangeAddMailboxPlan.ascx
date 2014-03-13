@@ -22,10 +22,12 @@
 			<div class="Center">
 				<div class="Title">
 					<asp:Image ID="Image1" SkinID="ExchangeDomainNameAdd48" runat="server" />
-					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Add Mailboxplan"></asp:Localize>
+					<asp:Localize ID="locTitle" runat="server" Text="Add Mailboxplan"></asp:Localize>
 				</div>
 				<div class="FormBody">
 				    <wsp:SimpleMessageBox id="messageBox" runat="server" />
+
+                    <asp:HiddenField runat="server" ID="hfArchivingPlan" />
 
 					<wsp:CollapsiblePanel id="secMailboxPlan" runat="server"
                         TargetControlID="MailboxPlan" meta:resourcekey="secMailboxPlan" Text="Mailboxplan">
@@ -164,7 +166,6 @@
 							</tr>
 						</table>
 					</asp:Panel>
-					
 					
 					<wsp:CollapsiblePanel id="secDeleteRetention" runat="server"
                         TargetControlID="DeleteRetention" meta:resourcekey="secDeleteRetention" Text="Delete Item Retention">

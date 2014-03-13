@@ -19,7 +19,7 @@
 			<div class="Center">
 				<div class="Title">
 					<asp:Image ID="Image1" SkinID="ExchangeMailbox48" runat="server" />
-					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Mailboxes"></asp:Localize>
+					<asp:Localize ID="locTitle" runat="server" Text="Mailboxes"></asp:Localize>
 				</div>
 				<div class="FormBody">
 				    <wsp:SimpleMessageBox id="messageBox" runat="server" />
@@ -94,12 +94,14 @@
 							SelectMethod="GetExchangeAccountsPaged"
 							SortParameterName="sortColumn"
 							TypeName="WebsitePanel.Portal.ExchangeHelper"
+                            OnSelecting="odsAccountsPaged_Selecting"
 							OnSelected="odsAccountsPaged_Selected">
 						<SelectParameters>
 							<asp:QueryStringParameter Name="itemId" QueryStringField="ItemID" DefaultValue="0" />
 							<asp:Parameter Name="accountTypes" DefaultValue="1,5,6" />
 							<asp:ControlParameter Name="filterColumn" ControlID="ddlSearchColumn" PropertyName="SelectedValue" />
 							<asp:ControlParameter Name="filterValue" ControlID="txtSearchValue" PropertyName="Text" />
+                            <asp:Parameter Name="archiving" Type="Boolean" />
 						</SelectParameters>
 					</asp:ObjectDataSource>
 				    <br />

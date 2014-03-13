@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2012-2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -120,6 +120,9 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
                 exchangeGroup.MenuItems.Add(CreateMenuItem("Mailboxes", "mailboxes"));
 
+            if (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, cntx))
+                exchangeGroup.MenuItems.Add(CreateMenuItem("ArchivingMailboxes", "archivingmailboxes"));
+
             if (Utils.CheckQouta(Quotas.EXCHANGE2007_CONTACTS, cntx))
                 exchangeGroup.MenuItems.Add(CreateMenuItem("Contacts", "contacts"));
 
@@ -136,6 +139,10 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             if (!hideItems)
                 if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
                     exchangeGroup.MenuItems.Add(CreateMenuItem("MailboxPlans", "mailboxplans"));
+
+            if (!hideItems)
+                if (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, cntx))
+                    exchangeGroup.MenuItems.Add(CreateMenuItem("ArchivingMailboxPlans", "archivingmailboxplans"));
 
             if (!hideItems)
                 if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))

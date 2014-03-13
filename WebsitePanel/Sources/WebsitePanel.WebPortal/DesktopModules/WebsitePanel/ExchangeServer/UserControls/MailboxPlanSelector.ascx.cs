@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2012-2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -70,6 +70,13 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             }
         }
 
+        private bool archiving = false;
+        public bool Archiving
+        {
+            get { return archiving; }
+            set { archiving = value; }
+        }
+
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -81,7 +88,16 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
         private void BindMailboxPlans()
         {
-            WebsitePanel.Providers.HostedSolution.ExchangeMailboxPlan[] plans = ES.Services.ExchangeServer.GetExchangeMailboxPlans(PanelRequest.ItemID);
+            WebsitePanel.Providers.HostedSolution.ExchangeMailboxPlan[] plans = ES.Services.ExchangeServer.GetExchangeMailboxPlans(PanelRequest.ItemID, Archiving);
+
+            if (AddNone)
+            {
+                ListItem li = new ListItem();
+                li.Text =  "None";
+                li.Value = "-1";
+                li.Selected = false;
+                ddlMailboxPlan.Items.Add(li);
+            }
 
             foreach (WebsitePanel.Providers.HostedSolution.ExchangeMailboxPlan plan in plans)
             {
@@ -89,15 +105,6 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 li.Text = plan.MailboxPlan;
                 li.Value = plan.MailboxPlanId.ToString();
                 li.Selected = plan.IsDefault;
-                ddlMailboxPlan.Items.Add(li);
-            }
-
-            if (AddNone)
-            {
-                ListItem li = new ListItem();
-                li.Text = "[None]";
-                li.Value = "-1";
-                li.Selected = false;
                 ddlMailboxPlan.Items.Add(li);
             }
 

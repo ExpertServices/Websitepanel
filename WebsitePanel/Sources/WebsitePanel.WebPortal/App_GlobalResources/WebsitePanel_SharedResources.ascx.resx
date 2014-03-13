@@ -5431,4 +5431,10 @@
   <data name="HostedCRM.LicenseProfessional" xml:space="preserve">
     <value>Professional</value>
   </data>
+  <data name="Quota.Exchange2013.AllowArchiving" xml:space="preserve">
+    <value>Allow Archiving</value>
+  </data>
+  <data name="Quota.Exchange2013.ArchivingStorage" xml:space="preserve">
+    <value>Archiving storage, MB</value>
+  </data>
 </root>
