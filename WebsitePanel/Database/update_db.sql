@@ -3037,6 +3037,176 @@ GO
 UPDATE [dbo].[Quotas] SET [QuotaDescription] = N'Disk Storage Space (Mb)' WHERE [QuotaName] = 'EnterpriseStorage.DiskStorageSpace'
 GO
 
+--Enterprise Storage
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='EnterpriseFolders' AND COLS.name='LocationDrive')
+BEGIN
+ALTER TABLE [dbo].[EnterpriseFolders] ADD
+	[LocationDrive] NVARCHAR(255) NULL
+END
+GO
+
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='EnterpriseFolders' AND COLS.name='HomeFolder')
+BEGIN
+ALTER TABLE [dbo].[EnterpriseFolders] ADD
+	[HomeFolder] NVARCHAR(255) NULL
+END
+GO
+
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='EnterpriseFolders' AND COLS.name='Domain')
+BEGIN
+ALTER TABLE [dbo].[EnterpriseFolders] ADD
+	[Domain] NVARCHAR(255) NULL
+END
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetEnterpriseFolders')
+DROP PROCEDURE GetEnterpriseFolders
+GO
+
+CREATE PROCEDURE [dbo].[GetEnterpriseFolders]
+(
+	@ItemID INT
+)
+AS
+
+SELECT DISTINCT LocationDrive, HomeFolder, Domain FROM EnterpriseFolders
+WHERE ItemID = @ItemID
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetEnterpriseFolder')
+DROP PROCEDURE GetEnterpriseFolder
+GO
+
+CREATE PROCEDURE [dbo].[GetEnterpriseFolder]
+(
+	@ItemID INT,
+	@FolderName NVARCHAR(255)
+)
+AS
+
+SELECT LocationDrive, HomeFolder, Domain FROM EnterpriseFolders
+WHERE ItemID = @ItemID AND FolderName = @FolderName
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddEnterpriseFolder')
+DROP PROCEDURE [dbo].[AddEnterpriseFolder]
+GO
+
+CREATE PROCEDURE [dbo].[AddEnterpriseFolder]
+(
+	@FolderID INT OUTPUT,
+	@ItemID INT,
+	@FolderName NVARCHAR(255),
+	@LocationDrive NVARCHAR(255),
+	@HomeFolder NVARCHAR(255),
+	@Domain NVARCHAR(255)
+)
+AS
+
+INSERT INTO EnterpriseFolders
+(
+	ItemID,
+	FolderName,
+	LocationDrive,
+	HomeFolder,
+	Domain
+)
+VALUES
+(
+	@ItemID,
+	@FolderName,
+	@LocationDrive,
+	@HomeFolder,
+	@Domain
+)
+
+SET @FolderID = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+DECLARE @serviceId int
+SET @serviceId = (SELECT TOP(1) ServiceId FROM Services WHERE ProviderID = 600)
+
+DECLARE @locationDrive nvarchar(255)
+SET @locationDrive = (SELECT TOP(1) PropertyValue FROM ServiceProperties WHERE PropertyName = 'locationdrive' AND ServiceID = @serviceId)
+DECLARE @homeFolder nvarchar(255)
+SET @homeFolder = (SELECT TOP(1) PropertyValue FROM ServiceProperties WHERE PropertyName = 'usershome' AND ServiceID = @serviceId)
+DECLARE @domain nvarchar(255)
+SET @domain = (SELECT TOP(1) PropertyValue FROM ServiceProperties WHERE PropertyName = 'usersdomain' AND ServiceID = @serviceId)
+
+UPDATE EnterpriseFolders SET
+	LocationDrive = @locationDrive,
+	HomeFolder = @homeFolder,
+	Domain = @domain
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetOrganizationGroupsByDisplayName')
+DROP PROCEDURE [dbo].[GetOrganizationGroupsByDisplayName]
+GO
+
+CREATE PROCEDURE [dbo].[GetOrganizationGroupsByDisplayName]
+(
+	@ItemID int,
+	@DisplayName NVARCHAR(255)
+)
+AS
+SELECT
+	AccountID,
+	ItemID,
+	AccountType,
+	AccountName,
+	DisplayName,
+	UserPrincipalName
+FROM
+	ExchangeAccounts
+WHERE
+	ItemID = @ItemID AND DisplayName = @DisplayName AND (AccountType IN (8, 9))
+RETURN
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddEnterpriseFolder')
+DROP PROCEDURE [dbo].[AddEnterpriseFolder]
+GO
+
+CREATE PROCEDURE [dbo].[AddEnterpriseFolder]
+(
+	@FolderID INT OUTPUT,
+	@ItemID INT,
+	@FolderName NVARCHAR(255),
+	@FolderQuota INT,
+	@LocationDrive NVARCHAR(255),
+	@HomeFolder NVARCHAR(255),
+	@Domain NVARCHAR(255)
+)
+AS
+
+INSERT INTO EnterpriseFolders
+(
+	ItemID,
+	FolderName,
+	FolderQuota,
+	LocationDrive,
+	HomeFolder,
+	Domain
+)
+VALUES
+(
+	@ItemID,
+	@FolderName,
+	@FolderQuota,
+	@LocationDrive,
+	@HomeFolder,
+	@Domain
+)
+
+SET @FolderID = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
 
 -- CRM2013
 
@@ -3094,62 +3264,4 @@ VALUES (467, 24, 4, N'HostedCRM2013.ProfessionalUsers', N'Professional licenses 
 END
 GO
 
-INSERT INTO EnterpriseFolders
-(
-	ItemID,
-	FolderName
-)
-VALUES
-(
-	@ItemID,
-	@FolderName
-)
 
-SET @FolderID = SCOPE_IDENTITY()
-
-RETURN
-GO
-
-IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteEnterpriseFolder')
-DROP PROCEDURE DeleteEnterpriseFolder
-GO
-
-CREATE PROCEDURE [dbo].[DeleteEnterpriseFolder]
-(
-	@ItemID INT,
-	@FolderName NVARCHAR(255)
-)
-AS
-
-DELETE FROM EnterpriseFolders
-WHERE ItemID = @ItemID AND FolderName = @FolderName
-GO
-
-IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateEnterpriseFolder')
-DROP PROCEDURE UpdateEnterpriseFolder
-GO
-
-CREATE PROCEDURE [dbo].[UpdateEnterpriseFolder]
-(
-	@ItemID INT,
-	@FolderID NVARCHAR(255),
-	@FolderName NVARCHAR(255),
-	@FolderQuota INT
-)
-AS
-
-UPDATE EnterpriseFolders SET
-	FolderName = @FolderName,
-	FolderQuota = @FolderQuota
-WHERE ItemID = @ItemID AND FolderName = @FolderID
-GO
-
--- Enterprise Storage Quotas
-IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'EnterpriseStorage.DiskStorageSpace')
-BEGIN
-INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (430, 44, 1,N'EnterpriseStorage.DiskStorageSpace',N'Disk Storage Space (Mb)',2, 0 , NULL)
-END
-GO
-
-UPDATE [dbo].[Quotas] SET [QuotaDescription] = N'Disk Storage Space (Mb)' WHERE [QuotaName] = 'EnterpriseStorage.DiskStorageSpace'
-GO
