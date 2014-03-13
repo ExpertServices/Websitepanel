@@ -53,7 +53,12 @@ namespace WebsitePanel.Portal
             cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
 
             // bind root node
-            BindMenu(menu.Items, PortalUtils.GetModuleMenuItems(this));
+            MenuItem rootItem = new MenuItem(locMenuTitle.Text);
+            rootItem.Selectable = false;
+
+            menu.Items.Add(rootItem);
+
+            BindMenu(rootItem.ChildItems, PortalUtils.GetModuleMenuItems(this));
         }
 
         private void BindMenu(MenuItemCollection items, XmlNodeList nodes)

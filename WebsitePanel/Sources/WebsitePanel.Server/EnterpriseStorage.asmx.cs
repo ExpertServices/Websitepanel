@@ -39,6 +39,7 @@ using WebsitePanel.Providers;
 using WebsitePanel.Providers.EnterpriseStorage;
 using WebsitePanel.Providers.OS;
 using WebsitePanel.Server.Utils;
+using WebsitePanel.Providers.Web;
 
 namespace WebsitePanel.Server
 {
@@ -58,12 +59,12 @@ namespace WebsitePanel.Server
 
 
         [WebMethod, SoapHeader("settings")]
-        public SystemFile[] GetFolders(string organizationId)
+        public SystemFile[] GetFolders(string organizationId, WebDavSetting[] settings)
         {
             try
             {
                 Log.WriteStart("'{0}' GetFolders", ProviderSettings.ProviderName);
-                SystemFile[] result = EnterpriseStorageProvider.GetFolders(organizationId);
+                SystemFile[] result = EnterpriseStorageProvider.GetFolders(organizationId, settings);
                 Log.WriteEnd("'{0}' GetFolders", ProviderSettings.ProviderName);
                 return result;
             }
@@ -75,12 +76,12 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public SystemFile GetFolder(string organizationId, string folder)
+        public SystemFile GetFolder(string organizationId, string folder, WebDavSetting setting)
         {
             try
             {
                 Log.WriteStart("'{0}' GetFolder", ProviderSettings.ProviderName);
-                SystemFile result = EnterpriseStorageProvider.GetFolder(organizationId, folder);
+                SystemFile result = EnterpriseStorageProvider.GetFolder(organizationId, folder, setting);
                 Log.WriteEnd("'{0}' GetFolder", ProviderSettings.ProviderName);
                 return result;
             }
@@ -92,12 +93,12 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public void CreateFolder(string organizationId, string folder)
+        public void CreateFolder(string organizationId, string folder, WebDavSetting setting)
         {
             try
             {
                 Log.WriteStart("'{0}' CreateFolder", ProviderSettings.ProviderName);
-                EnterpriseStorageProvider.CreateFolder(organizationId, folder);
+                EnterpriseStorageProvider.CreateFolder(organizationId, folder, setting);
                 Log.WriteEnd("'{0}' CreateFolder", ProviderSettings.ProviderName);
             }
             catch (Exception ex)
@@ -108,12 +109,12 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public void DeleteFolder(string organizationId, string folder)
+        public void DeleteFolder(string organizationId, string folder, WebDavSetting setting)
         {
             try
             {
                 Log.WriteStart("'{0}' DeleteFolder", ProviderSettings.ProviderName);
-                EnterpriseStorageProvider.DeleteFolder(organizationId, folder);
+                EnterpriseStorageProvider.DeleteFolder(organizationId, folder, setting);
                 Log.WriteEnd("'{0}' DeleteFolder", ProviderSettings.ProviderName);
             }
             catch (Exception ex)
@@ -124,12 +125,12 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public bool SetFolderWebDavRules(string organizationId, string folder, Providers.Web.WebDavFolderRule[] rules)
+        public bool SetFolderWebDavRules(string organizationId, string folder, WebDavSetting setting, Providers.Web.WebDavFolderRule[] rules)
         {
             try
             {
                 Log.WriteStart("'{0}' SetFolderWebDavRules", ProviderSettings.ProviderName);
-                return EnterpriseStorageProvider.SetFolderWebDavRules(organizationId, folder, rules);
+                return EnterpriseStorageProvider.SetFolderWebDavRules(organizationId, folder, setting, rules);
                 Log.WriteEnd("'{0}' SetFolderWebDavRules", ProviderSettings.ProviderName);
             }
             catch (Exception ex)
@@ -140,12 +141,12 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public Providers.Web.WebDavFolderRule[] GetFolderWebDavRules(string organizationId, string folder)
+        public Providers.Web.WebDavFolderRule[] GetFolderWebDavRules(string organizationId, string folder, WebDavSetting setting)
         {
             try
             {
                 Log.WriteStart("'{0}' GetFolderWebDavRules", ProviderSettings.ProviderName);
-                return EnterpriseStorageProvider.GetFolderWebDavRules(organizationId, folder);
+                return EnterpriseStorageProvider.GetFolderWebDavRules(organizationId, folder, setting);
                 Log.WriteEnd("'{0}' GetFolderWebDavRules", ProviderSettings.ProviderName);
             }
             catch (Exception ex)
@@ -172,12 +173,12 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder)
+        public SystemFile RenameFolder(string organizationId, string originalFolder, string newFolder, WebDavSetting setting)
         {
             try
             {
                 Log.WriteStart("'{0}' RenameFolder", ProviderSettings.ProviderName);
-                return EnterpriseStorageProvider.RenameFolder(organizationId, originalFolder, newFolder);
+                return EnterpriseStorageProvider.RenameFolder(organizationId, originalFolder, newFolder, setting);
                 Log.WriteEnd("'{0}' RenameFolder", ProviderSettings.ProviderName);
             }
             catch (Exception ex)

@@ -141,4 +141,28 @@
   <data name="locTitle" xml:space="preserve">
     <value>Create New Folder</value>
   </data>
+  <data name="locAddDefaultGroup" xml:space="preserve">
+    <value>Add Default Group</value>
+  </data>
+  <data name="locFolderSize" xml:space="preserve">
+    <value>Folder Limit Size (Gb):</value>
+  </data>
+  <data name="locQuotaType" xml:space="preserve">
+    <value>Quota Type:</value>
+  </data>
+  <data name="rangeFolderSize" xml:space="preserve">
+    <value>*</value>
+  </data>
+  <data name="rbtnQuotaHard" xml:space="preserve">
+    <value>Hard</value>
+  </data>
+  <data name="rbtnQuotaSoft" xml:space="preserve">
+    <value>Soft</value>
+  </data>
+  <data name="valRequireFolderSize" xml:space="preserve">
+    <value>valRequireFolderSize</value>
+  </data>
+  <data name="valRequireFolderSize.ErrorMessage" xml:space="preserve">
+    <value>Enter Folder Size</value>
+  </data>
 </root>

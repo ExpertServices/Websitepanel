@@ -33,18 +33,16 @@
         </div>
         
         <div id="TopMenu">
-            <wsp:TopMenu ID="menu" runat="server" />
+            <wsp:TopMenu ID="leftMenu" runat="server" Align="left" />
+            <asp:PlaceHolder ID="LeftPane" runat="server"></asp:PlaceHolder>
+            <wsp:TopMenu ID="rightMenu" runat="server" Align="right" />
         </div>
         
         <div id="Top">
             <wsp:UserSpaceBreadcrumb ID="breadcrumb" runat="server"/>
         </div>
         
-        <div id="Left">
-            <asp:PlaceHolder ID="LeftPane" runat="server"></asp:PlaceHolder>
-        </div>
-        
-        <div id="Content">
+        <div id="ContentOneColumn">
             <div id="Center">
                 <asp:PlaceHolder ID="ContentPane" runat="server"></asp:PlaceHolder>
             </div>

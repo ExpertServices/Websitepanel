@@ -19,6 +19,17 @@
 	z-index: 502;
 }
 
+.TopMenu ul.AspNet-Menu li ul li.AspNet-Menu-WithChildren span
+{
+    color: #000000 !important;
+    background: transparent url(../Images/menu_popup2.gif) right center no-repeat !important;
+    text-align: left !important;
+    border-right: none !important;
+    display: table !important;
+}
+
+.TopMenu ul.AspNet-Menu li span
+
 .TopMenu li.AspNet-Menu-Leaf a, /* leaves */
 .TopMenu li.AspNet-Menu-Leaf span
 {

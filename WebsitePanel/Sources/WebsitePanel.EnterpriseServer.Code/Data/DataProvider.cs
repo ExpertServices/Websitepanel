@@ -3098,6 +3098,17 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
+        public static IDataReader GetOrganizationGroupsByDisplayName(int itemId, string displayName)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetOrganizationGroupsByDisplayName",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@DisplayName", displayName)
+            );
+        }
+
         public static IDataReader SearchOrganizationAccounts(int actorId, int itemId,
                 string filterColumn, string filterValue, string sortColumn, bool includeMailboxes)
         {
@@ -4164,7 +4175,7 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Enterprise Storage
 
-        public static int AddEntepriseFolder(int itemId, string folderName)
+        public static int AddEntepriseFolder(int itemId, string folderName, int folderQuota, string locationDrive, string homeFolder, string domain)
         {
             SqlParameter prmId = new SqlParameter("@FolderID", SqlDbType.Int);
             prmId.Direction = ParameterDirection.Output;
@@ -4175,7 +4186,12 @@ namespace WebsitePanel.EnterpriseServer
                 "AddEnterpriseFolder",
                 prmId,
                 new SqlParameter("@ItemID", itemId),
-                new SqlParameter("@FolderName", folderName));
+                new SqlParameter("@FolderName", folderName),
+                new SqlParameter("@FolderQuota", folderQuota),
+                new SqlParameter("@LocationDrive", locationDrive),
+                new SqlParameter("@HomeFolder", homeFolder),
+                new SqlParameter("@Domain", domain)
+            );
 
             // read identity
             return Convert.ToInt32(prmId.Value);
@@ -4201,6 +4217,27 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@FolderID", folderID),
                 new SqlParameter("@FolderName", folderName),
                 new SqlParameter("@FolderQuota", folderQuota));
+        }
+
+        public static IDataReader GetEnterpriseFolders(int itemId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetEnterpriseFolders",
+                new SqlParameter("@ItemID", itemId)
+            );
+        }
+
+        public static IDataReader GetEnterpriseFolder(int itemId, string folderName)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetEnterpriseFolder",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@FolderName", folderName)
+            );
         }
 
         #endregion

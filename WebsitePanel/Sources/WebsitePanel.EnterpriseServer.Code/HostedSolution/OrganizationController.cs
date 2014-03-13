@@ -2867,33 +2867,36 @@ namespace WebsitePanel.EnterpriseServer
                                                   DataProvider.SearchExchangeAccountsByTypes(SecurityContext.User.UserId, itemId,
                                                   accountTypes, filterColumn, filterValue, sortColumn));
 
+            return tmpAccounts;
 
-            List<ExchangeAccount> accounts = new List<ExchangeAccount>();
+            // on large lists is very slow
 
-            foreach (ExchangeAccount tmpAccount in tmpAccounts.ToArray())
-            {
-                bool bSuccess = false;
+            //List<ExchangeAccount> accounts = new List<ExchangeAccount>();
 
-                switch (tmpAccount.AccountType)
-                {
-                    case ExchangeAccountType.SecurityGroup:
-                        bSuccess = GetSecurityGroupGeneralSettings(itemId, tmpAccount.AccountId) != null;
-                        break;
-                    case ExchangeAccountType.DistributionList:
-                        bSuccess = ExchangeServerController.GetDistributionListGeneralSettings(itemId, tmpAccount.AccountId) != null;
-                        break;
-                    default:
-                        bSuccess = GetUserGeneralSettings(itemId, tmpAccount.AccountId) != null;
-                        break;
-                }
+            //foreach (ExchangeAccount tmpAccount in tmpAccounts.ToArray())
+            //{
+            //    bool bSuccess = false;
 
-                if (bSuccess)
-                {
-                    accounts.Add(tmpAccount);
-                }
-            }
+            //    switch (tmpAccount.AccountType)
+            //    {
+            //        case ExchangeAccountType.SecurityGroup:
+            //            bSuccess = GetSecurityGroupGeneralSettings(itemId, tmpAccount.AccountId) != null;
+            //            break;
+            //        case ExchangeAccountType.DistributionList:
+            //            bSuccess = ExchangeServerController.GetDistributionListGeneralSettings(itemId, tmpAccount.AccountId) != null;
+            //            break;
+            //        default:
+            //            bSuccess = GetUserGeneralSettings(itemId, tmpAccount.AccountId) != null;
+            //            break;
+            //    }
 
-            return accounts;
+            //    if (bSuccess)
+            //    {
+            //        accounts.Add(tmpAccount);
+            //    }
+            //}
+
+            //return accounts;
         }
     }
 }

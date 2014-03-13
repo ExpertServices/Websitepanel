@@ -339,14 +339,14 @@ namespace WebsitePanel.Portal.ExchangeServer
             enterpriseStorageSpaceStats.QuotaUsedValue = stats.UsedEnterpriseStorageSpace;
             if (stats.AllocatedEnterpriseStorageSpace != -1) enterpriseStorageSpaceStats.QuotaAvailable = tenantStats.AllocatedEnterpriseStorageSpace - tenantStats.UsedEnterpriseStorageSpace;
 
-            lnkBESUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "enterprisestorage_folders",
+            lnkEnterpriseStorageSpace.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "enterprisestorage_folders",
             "SpaceID=" + PanelSecurity.PackageId.ToString());
 
             enterpriseStorageFoldersStats.QuotaValue = stats.AllocatedEnterpriseStorageFolders;
             enterpriseStorageFoldersStats.QuotaUsedValue = stats.CreatedEnterpriseStorageFolders;
             if (stats.AllocatedEnterpriseStorageFolders != -1) enterpriseStorageFoldersStats.QuotaAvailable = tenantStats.AllocatedEnterpriseStorageFolders - tenantStats.CreatedEnterpriseStorageFolders;
 
-            lnkBESUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "enterprisestorage_folders",
+            lnkEnterpriseStorageFolders.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "enterprisestorage_folders",
             "SpaceID=" + PanelSecurity.PackageId.ToString());
         }
 

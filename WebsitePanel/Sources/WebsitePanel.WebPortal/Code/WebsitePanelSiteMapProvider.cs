@@ -199,6 +199,7 @@ namespace WebsitePanel.WebPortal
 
             NameValueCollection attrs = new NameValueCollection();
             attrs["target"] = page.Target;
+            attrs["align"] = page.Align;
 
             SiteMapNode node = new SiteMapNode(this, page.Name,
                 url,

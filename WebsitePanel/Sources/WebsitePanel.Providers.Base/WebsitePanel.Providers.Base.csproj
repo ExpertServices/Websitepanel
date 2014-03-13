@@ -332,6 +332,7 @@
     <Compile Include="Web\SharedSSLFolder.cs" />
     <Compile Include="Web\SSLCertificate.cs" />
     <Compile Include="Web\WebDavFolderRule.cs" />
+    <Compile Include="Web\WebDavSetting.cs" />
     <Compile Include="Web\WebFolder.cs" />
     <Compile Include="Web\WebGroup.cs" />
     <Compile Include="Web\WebSite.cs" />

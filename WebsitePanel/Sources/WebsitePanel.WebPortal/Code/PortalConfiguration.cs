@@ -295,6 +295,7 @@ namespace WebsitePanel.WebPortal
 
                 page.Enabled = (xmlPage.Attributes["enabled"] != null) ? Boolean.Parse(xmlPage.Attributes["enabled"].Value) : true;
                 page.Hidden = (xmlPage.Attributes["hidden"] != null) ? Boolean.Parse(xmlPage.Attributes["hidden"].Value) : false;
+                page.Align = (xmlPage.Attributes["align"] != null) ? xmlPage.Attributes["align"].Value : null;
                 page.SkinSrc = (xmlPage.Attributes["skin"] != null) ? xmlPage.Attributes["skin"].Value : null;
 				page.AdminSkinSrc = (xmlPage.Attributes["adminskin"] != null) ? xmlPage.Attributes["adminskin"].Value : null;
 

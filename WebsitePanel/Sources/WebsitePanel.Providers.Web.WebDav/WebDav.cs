@@ -13,13 +13,13 @@ namespace WebsitePanel.Providers.Web
     {
         #region Fields
 
-        private string _usersDomain;        
+        protected WebDavSetting _Setting;
 
         #endregion
 
-        public WebDav(string domain)
+        public WebDav(WebDavSetting setting)
         {
-            _usersDomain = domain;
+            _Setting = setting;
         }
 
         public void CreateWebDavRule(string organizationId, string folder, WebDavFolderRule rule)
@@ -28,7 +28,7 @@ namespace WebsitePanel.Providers.Web
             {
                 Configuration config = serverManager.GetApplicationHostConfiguration();
 
-                ConfigurationSection authoringRulesSection = config.GetSection("system.webServer/webdav/authoringRules", string.Format("{0}/{1}/{2}", _usersDomain, organizationId, folder));
+                ConfigurationSection authoringRulesSection = config.GetSection("system.webServer/webdav/authoringRules", string.Format("{0}/{1}/{2}", _Setting.Domain, organizationId, folder));
 
                 ConfigurationElementCollection authoringRulesCollection = authoringRulesSection.GetCollection();
 
@@ -61,7 +61,7 @@ namespace WebsitePanel.Providers.Web
             {
                 Configuration config = serverManager.GetApplicationHostConfiguration();
 
-                ConfigurationSection authoringRulesSection = config.GetSection("system.webServer/webdav/authoringRules", string.Format("{0}/{1}/{2}", _usersDomain, organizationId, folder));
+                ConfigurationSection authoringRulesSection = config.GetSection("system.webServer/webdav/authoringRules", string.Format("{0}/{1}/{2}", _Setting.Domain, organizationId, folder));
 
                 ConfigurationElementCollection authoringRulesCollection = authoringRulesSection.GetCollection();
 
@@ -107,7 +107,7 @@ namespace WebsitePanel.Providers.Web
                 {
                     Configuration config = serverManager.GetApplicationHostConfiguration();
 
-                    ConfigurationSection authoringRulesSection = config.GetSection("system.webServer/webdav/authoringRules", string.Format("{0}/{1}/{2}", _usersDomain, organizationId, folder));
+                    ConfigurationSection authoringRulesSection = config.GetSection("system.webServer/webdav/authoringRules", string.Format("{0}/{1}/{2}", _Setting.Domain, organizationId, folder));
 
                     ConfigurationElementCollection authoringRulesCollection = authoringRulesSection.GetCollection();
 
@@ -133,7 +133,7 @@ namespace WebsitePanel.Providers.Web
 
                     Configuration config = serverManager.GetApplicationHostConfiguration();
 
-                    config.RemoveLocationPath(string.Format("{0}/{1}/{2}", _usersDomain, organizationId, folder));
+                    config.RemoveLocationPath(string.Format("{0}/{1}/{2}", _Setting.Domain, organizationId, folder));
                     serverManager.CommitChanges();
                     return true;
                 }

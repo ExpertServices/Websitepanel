@@ -30,11 +30,18 @@ using System;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.Providers.OS;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class EnterpriseStorageCreateFolder : WebsitePanelModuleBase
     {
+        #region Constants
+
+        private const int OneGb = 1024;
+
+        #endregion
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -43,6 +50,17 @@ namespace WebsitePanel.Portal.ExchangeServer
                 {
                     Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folders",
                         "ItemID=" + PanelRequest.ItemID));
+                }
+
+                OrganizationStatistics organizationStats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
+
+                if (organizationStats.AllocatedEnterpriseStorageSpace != -1)
+                {
+                    OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+
+                    rangeFolderSize.MaximumValue = Math.Round((tenantStats.AllocatedEnterpriseStorageSpace - (decimal)tenantStats.UsedEnterpriseStorageSpace) / OneGb
+                        + Utils.ParseDecimal(txtFolderSize.Text, 0), 2).ToString();
+                    rangeFolderSize.ErrorMessage = string.Format("The quota you’ve entered exceeds the available quota for tenant ({0}Gb)", rangeFolderSize.MaximumValue);
                 }
             }
         }
@@ -69,13 +87,18 @@ namespace WebsitePanel.Portal.ExchangeServer
                     ES.Services.EnterpriseStorage.CreateEnterpriseStorage(PanelSecurity.PackageId, PanelRequest.ItemID);
                 }
 
-                ResultObject result = ES.Services.EnterpriseStorage.CreateEnterpriseFolder(PanelRequest.ItemID, txtFolderName.Text);
+                ResultObject result = ES.Services.EnterpriseStorage.CreateEnterpriseFolder(
+                    PanelRequest.ItemID,
+                    txtFolderName.Text,
+                    (int)(decimal.Parse(txtFolderSize.Text) * OneGb),
+                    rbtnQuotaSoft.Checked ? QuotaType.Soft : QuotaType.Hard,
+                    chkAddDefaultGroup.Checked);
 
-                if (!result.IsSuccess && result.ErrorCodes.Count > 0)
+                /*if (!result.IsSuccess && result.ErrorCodes.Count > 0)
                 {
                     messageBox.ShowMessage(result, "ENTERPRISE_STORAGE_CREATE_FOLDER", "Enterprise Storage");
                     return;
-                }
+                }*/
 
                 Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "enterprisestorage_folder_settings",
                     "FolderID=" + txtFolderName.Text,
