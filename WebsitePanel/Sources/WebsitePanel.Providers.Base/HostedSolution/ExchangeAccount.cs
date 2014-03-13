@@ -155,5 +155,21 @@ namespace WebsitePanel.Providers.HostedSolution
             get { return this.notes; }
             set { this.notes = value; }
         }
+
+        int archivingMailboxPlanId;
+        public int ArchivingMailboxPlanId
+        {
+            get { return this.archivingMailboxPlanId; }
+            set { this.archivingMailboxPlanId = value; }
+        }
+
+        string archivingMailboxPlan;
+        public string ArchivingMailboxPlan
+        {
+            get { return this.archivingMailboxPlan; }
+            set { this.archivingMailboxPlan = value; }
+        }
+
+    
     }
 }

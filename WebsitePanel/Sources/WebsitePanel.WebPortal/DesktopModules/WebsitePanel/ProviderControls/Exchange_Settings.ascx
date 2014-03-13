@@ -41,6 +41,17 @@
     </tr>
 
     <tr>
+        <td class="SubHead" runat="server" id="archivingGroup" width="200" nowrap>
+            <asp:Localize ID="locArchivingDatabase" runat="server" meta:resourcekey="locArchivingDatabase"
+                Text="Archiving Database Name:"></asp:Localize>
+        </td>
+        <td>
+            <asp:TextBox ID="txtArchivingDatabase" runat="server" Width="200px"></asp:TextBox>
+        </td>
+    </tr>
+
+
+    <tr>
         <td class="SubHead">
             <asp:Localize ID="locKeepDeletedItems" runat="server" meta:resourcekey="locKeepDeletedItems"
                 Text="Keep Deleted Items (days):"></asp:Localize>

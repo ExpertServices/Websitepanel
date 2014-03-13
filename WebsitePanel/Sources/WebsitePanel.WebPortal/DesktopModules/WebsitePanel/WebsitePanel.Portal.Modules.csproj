@@ -210,6 +210,13 @@
     <Compile Include="Code\ReportingServices\IResourceStorage.cs" />
     <Compile Include="Code\ReportingServices\ReportingServicesUtils.cs" />
     <Compile Include="Code\UserControls\Tab.cs" />
+    <Compile Include="CRM\CRMStorageSettings.ascx.cs">
+      <DependentUpon>CRMStorageSettings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CRM\CRMStorageSettings.ascx.designer.cs">
+      <DependentUpon>CRMStorageSettings.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ExchangeServer\EnterpriseStorageFolderGeneralSettings.ascx.cs">
       <DependentUpon>EnterpriseStorageFolderGeneralSettings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4037,6 +4044,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplyEnableHardQuotaFeature.ascx" />
+    <Content Include="CRM\CRMStorageSettings.ascx" />
     <Content Include="ExchangeServer\EnterpriseStorageFolderGeneralSettings.ascx" />
     <Content Include="ExchangeServer\EnterpriseStorageCreateFolder.ascx" />
     <Content Include="ExchangeServer\EnterpriseStorageFolders.ascx" />

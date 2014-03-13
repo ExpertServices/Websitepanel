@@ -162,4 +162,7 @@
   <data name="Text.PageName" xml:space="preserve">
     <value>Mailbox plans</value>
   </data>
+  <data name="locTitleArchiving.Text" xml:space="preserve">
+    <value>Archiving Mailbox plans</value>
+  </data>
 </root>

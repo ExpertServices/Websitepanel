@@ -75,6 +75,28 @@
 						</asp:UpdatePanel>
 					</asp:Panel>
 
+                    <wsp:CollapsiblePanel id="secArchiving" runat="server" TargetControlID="Archiving" meta:resourcekey="secArchiving" Text="Archiving"></wsp:CollapsiblePanel>
+                    <asp:Panel ID="Archiving" runat="server" Height="0" style="overflow:hidden;">
+						<asp:UpdatePanel ID="ArchivingUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
+							<ContentTemplate>
+					            <table>
+                                    <tr>
+                                        <td class="FormLabel150"></td>
+                                        <td>
+                                            <asp:CheckBox ID="chkArchiving" runat="server" meta:resourcekey ="chkArchiving" Text ="Enable Archiving" AutoPostBack="true" OnCheckedChanged="chkArchiving_CheckedChanged"></asp:CheckBox>
+                                        </td>
+                                    </tr>
+					                <tr runat="server" id="mailboxArchivePlan">
+					                    <td class="FormLabel150"><asp:Localize ID="locArchiveMailboxplanName" runat="server" meta:resourcekey="locArchiveMailboxplanName" Text="Archive Mailbox plan: "></asp:Localize></td>
+					                    <td>                                
+                                            <wsp:MailboxPlanSelector ID="mailboxArchivePlanSelector" runat="server" Archiving="true" AddNone="true" />
+                                        </td>
+					                </tr>
+					            </table>
+							</ContentTemplate>
+						</asp:UpdatePanel>
+					</asp:Panel>
+
                     <wsp:CollapsiblePanel id="secLitigationHoldSettings" runat="server" TargetControlID="LitigationHoldSettings" meta:resourcekey="secLitigationHoldSettings" Text="Litigation Hold"></wsp:CollapsiblePanel>
                     <asp:Panel ID="LitigationHoldSettings" runat="server" Height="0" style="overflow:hidden;">
 						<asp:UpdatePanel ID="LitigationHoldUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">

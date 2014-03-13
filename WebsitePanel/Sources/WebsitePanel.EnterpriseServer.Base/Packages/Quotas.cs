@@ -118,6 +118,9 @@ order by rg.groupOrder
         public const string EXCHANGE2007_ALLOWLITIGATIONHOLD = "Exchange2007.AllowLitigationHold";
         public const string EXCHANGE2007_RECOVERABLEITEMSSPACE = "Exchange2007.RecoverableItemsSpace";
         public const string EXCHANGE2007_DISCLAIMERSALLOWED = "Exchange2007.DisclaimersAllowed";
+        public const string EXCHANGE2013_ALLOWARCHIVING = "Exchange2013.AllowArchiving"; // Archiving
+        public const string EXCHANGE2013_ARCHIVINGSTORAGE = "Exchange2013.ArchivingStorage";
+        public const string EXCHANGE2013_ARCHIVINGMAILBOXES = "Exchange2013.ArchivingMailboxes";
         public const string MSSQL2000_DATABASES = "MsSQL2000.Databases";  // Databases
 		public const string MSSQL2000_USERS = "MsSQL2000.Users";  // Users
 		public const string MSSQL2000_MAXDATABASESIZE = "MsSQL2000.MaxDatabaseSize";  // Max Database Size
@@ -162,6 +165,14 @@ order by rg.groupOrder
         public const string CRM_LIMITEDUSERS = "HostedCRM.LimitedUsers";
         public const string CRM_ESSUSERS = "HostedCRM.ESSUsers";
         public const string CRM_MAXDATABASESIZE = "HostedCRM.MaxDatabaseSize";
+
+        public const string CRM2013_ORGANIZATION = "HostedCRM2013.Organization";
+        public const string CRM2013_MAXDATABASESIZE = "HostedCRM2013.MaxDatabaseSize";
+
+        public const string CRM2013_ESSENTIALUSERS = "HostedCRM2013.EssentialUsers";
+        public const string CRM2013_BASICUSERS = "HostedCRM2013.BasicUsers";
+        public const string CRM2013_PROFESSIONALUSERS = "HostedCRM2013.ProfessionalUsers";
+
 
         public const string VPS_SERVERS_NUMBER = "VPS.ServersNumber";		// Number of VPS
         public const string VPS_MANAGING_ALLOWED = "VPS.ManagingAllowed";		// Allow user to create VPS

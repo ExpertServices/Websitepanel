@@ -53,6 +53,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                     ddDisclaimer.Visible = false;
                 }
 
+                secArchiving.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, cntx);
+
                 BindSettings();
 
                 UserInfo user = UsersHelper.GetUser(PanelSecurity.EffectiveUserId);
@@ -114,6 +116,15 @@ namespace WebsitePanel.Portal.ExchangeServer
                     mailboxPlanSelector.MailboxPlanId = account.MailboxPlanId.ToString();
                 }
 
+                if (account.ArchivingMailboxPlanId<1)
+                {
+                    mailboxArchivePlanSelector.MailboxPlanId = "-1";
+                }
+                else
+                {
+                    mailboxArchivePlanSelector.MailboxPlanId = account.ArchivingMailboxPlanId.ToString();
+                }
+
                 mailboxSize.QuotaUsedValue = Convert.ToInt32(stats.TotalSize / 1024 / 1024);
                 mailboxSize.QuotaValue = (stats.MaxSize == -1) ? -1 : (int)Math.Round((double)(stats.MaxSize / 1024 / 1024));
 
@@ -163,7 +174,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                 }
                 else
                 {
-                    result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(PanelRequest.ItemID, PanelRequest.AccountID, Convert.ToInt32(mailboxPlanSelector.MailboxPlanId));
+                    result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(PanelRequest.ItemID, PanelRequest.AccountID, Convert.ToInt32(mailboxPlanSelector.MailboxPlanId),
+                        Convert.ToInt32(mailboxArchivePlanSelector.MailboxPlanId) );
                     if (result < 0)
                     {
                         messageBox.ShowResultMessage(result);
@@ -239,6 +251,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                     }
 
             return result;
+        }
+
+        protected void chkArchiving_CheckedChanged(object sender, EventArgs e)
+        {
+            mailboxArchivePlan.Visible = chkArchiving.Checked;
         }
 
     }

@@ -950,7 +950,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static ExchangeAccountsPaged GetAccountsPaged(int itemId, string accountTypes,
             string filterColumn, string filterValue, string sortColumn,
-            int startRow, int maximumRows)
+            int startRow, int maximumRows, bool archiving)
         {
             #region Demo Mode
             if (IsDemoMode)
@@ -965,7 +965,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             DataSet ds = DataProvider.GetExchangeAccountsPaged(SecurityContext.User.UserId, itemId,
-                accountTypes, filterColumn, filterValue, sortColumn, startRow, maximumRows);
+                accountTypes, filterColumn, filterValue, sortColumn, startRow, maximumRows, archiving);
 
             ExchangeAccountsPaged result = new ExchangeAccountsPaged();
             result.RecordsCount = (int)ds.Tables[0].Rows[0][0];
@@ -1223,7 +1223,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             DataProvider.UpdateExchangeAccount(account.AccountId, account.AccountName, account.AccountType, account.DisplayName,
                 account.PrimaryEmailAddress, account.MailEnabledPublicFolder,
-                account.MailboxManagerActions.ToString(), account.SamAccountName, account.AccountPassword, account.MailboxPlanId,
+                account.MailboxManagerActions.ToString(), account.SamAccountName, account.AccountPassword, account.MailboxPlanId, account.ArchivingMailboxPlanId,
                 (string.IsNullOrEmpty(account.SubscriberNumber) ? null : account.SubscriberNumber.Trim()));
         }
 
@@ -1598,7 +1598,7 @@ namespace WebsitePanel.EnterpriseServer
 
         private static void UpdateExchangeAccount(int accountId, string accountName, ExchangeAccountType accountType,
             string displayName, string primaryEmailAddress, bool mailEnabledPublicFolder,
-            string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, string subscriberNumber)
+            string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, int archivePlanId, string subscriberNumber)
         {
             DataProvider.UpdateExchangeAccount(accountId,
                 accountName,
@@ -1609,13 +1609,13 @@ namespace WebsitePanel.EnterpriseServer
                 mailboxManagerActions,
                 samAccountName,
                 CryptoUtils.Encrypt(accountPassword),
-                mailboxPlanId,
+                mailboxPlanId, archivePlanId, 
                 (string.IsNullOrEmpty(subscriberNumber) ? null : subscriberNumber.Trim()));
         }
 
 
         public static int CreateMailbox(int itemId, int accountId, ExchangeAccountType accountType, string accountName,
-            string displayName, string name, string domain, string password, bool sendSetupInstructions, string setupInstructionMailAddress, int mailboxPlanId, string subscriberNumber)
+            string displayName, string name, string domain, string password, bool sendSetupInstructions, string setupInstructionMailAddress, int mailboxPlanId, int archivedPlanId, string subscriberNumber)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -1756,7 +1756,7 @@ namespace WebsitePanel.EnterpriseServer
                     | MailboxManagerActions.EmailAddresses;
 
 
-                UpdateExchangeAccount(accountId, accountName, accountType, displayName, email, false, pmmActions.ToString(), samAccount, password, mailboxPlanId, subscriberNumber);
+                UpdateExchangeAccount(accountId, accountName, accountType, displayName, email, false, pmmActions.ToString(), samAccount, password, mailboxPlanId, archivedPlanId, subscriberNumber);
 
 
 
@@ -2600,7 +2600,7 @@ namespace WebsitePanel.EnterpriseServer
 
 
         #region Mailbox plan
-        public static int SetExchangeMailboxPlan(int itemId, int accountId, int mailboxPlanId)
+        public static int SetExchangeMailboxPlan(int itemId, int accountId, int mailboxPlanId, int archivePlanId)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -2679,6 +2679,7 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                //TDMX
                 exchange.SetMailboxAdvancedSettings(
                     org.OrganizationId,
                     account.UserPrincipalName,
@@ -2700,7 +2701,7 @@ namespace WebsitePanel.EnterpriseServer
                     plan.LitigationHoldUrl,
                     plan.LitigationHoldMsg);
 
-                DataProvider.SetExchangeAccountMailboxPlan(accountId, mailboxPlanId);
+                DataProvider.SetExchangeAccountMailboxPlan(accountId, mailboxPlanId, archivePlanId);
 
                 return 0;
             }
@@ -2714,7 +2715,7 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        public static List<ExchangeMailboxPlan> GetExchangeMailboxPlans(int itemId)
+        public static List<ExchangeMailboxPlan> GetExchangeMailboxPlans(int itemId, bool archiving)
         {
             // place log record
             TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_MAILBOXPLANS", itemId);
@@ -2726,9 +2727,9 @@ namespace WebsitePanel.EnterpriseServer
                 UserInfo user = ObjectUtils.FillObjectFromDataReader<UserInfo>(DataProvider.GetUserByExchangeOrganizationIdInternally(itemId));
 
                 if (user.Role == UserRole.User)
-                    ExchangeServerController.GetExchangeMailboxPlansByUser(itemId, user, ref mailboxPlans);
+                    ExchangeServerController.GetExchangeMailboxPlansByUser(itemId, user, ref mailboxPlans, archiving);
                 else
-                    ExchangeServerController.GetExchangeMailboxPlansByUser(0, user, ref mailboxPlans);
+                    ExchangeServerController.GetExchangeMailboxPlansByUser(0, user, ref mailboxPlans, archiving);
 
 
                 ExchangeOrganization ExchangeOrg = ObjectUtils.FillObjectFromDataReader<ExchangeOrganization>(DataProvider.GetExchangeOrganization(itemId));
@@ -2753,7 +2754,7 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        private static void GetExchangeMailboxPlansByUser(int itemId, UserInfo user, ref List<ExchangeMailboxPlan> mailboxPlans)
+        private static void GetExchangeMailboxPlansByUser(int itemId, UserInfo user, ref List<ExchangeMailboxPlan> mailboxPlans, bool archiving)
         {
             if ((user != null))
             {
@@ -2780,7 +2781,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (OrgId != -1)
                 {
-                    List<ExchangeMailboxPlan> Plans = ObjectUtils.CreateListFromDataReader<ExchangeMailboxPlan>(DataProvider.GetExchangeMailboxPlans(OrgId));
+                    List<ExchangeMailboxPlan> Plans = ObjectUtils.CreateListFromDataReader<ExchangeMailboxPlan>(DataProvider.GetExchangeMailboxPlans(OrgId, archiving));
 
                     foreach (ExchangeMailboxPlan p in Plans)
                     {
@@ -2790,7 +2791,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 UserInfo owner = UserController.GetUserInternally(user.OwnerId);
 
-                GetExchangeMailboxPlansByUser(0, owner, ref mailboxPlans);
+                GetExchangeMailboxPlansByUser(0, owner, ref mailboxPlans, archiving);
             }
         }
 
@@ -2842,9 +2843,18 @@ namespace WebsitePanel.EnterpriseServer
                         if (mailboxPlan.KeepDeletedItemsDays > cntx.Quotas[Quotas.EXCHANGE2007_KEEPDELETEDITEMSDAYS].QuotaAllocatedValue)
                             mailboxPlan.KeepDeletedItemsDays = cntx.Quotas[Quotas.EXCHANGE2007_KEEPDELETEDITEMSDAYS].QuotaAllocatedValue;
 
-                    if (cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue != -1)
-                        if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue)
-                            mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
+                    if (mailboxPlan.Archiving)
+                    {
+                        if (cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue != -1)
+                            if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue)
+                                mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue;
+                    }
+                    else
+                    {
+                        if (cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue != -1)
+                            if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue)
+                                mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
+                    }
 
                     if (cntx.Quotas[Quotas.EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB].QuotaAllocatedValue != -1)
                         if (mailboxPlan.MaxReceiveMessageSizeKB > cntx.Quotas[Quotas.EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB].QuotaAllocatedValue)
@@ -2871,7 +2881,7 @@ namespace WebsitePanel.EnterpriseServer
                                                         mailboxPlan.IsDefault, mailboxPlan.IssueWarningPct, mailboxPlan.KeepDeletedItemsDays, mailboxPlan.MailboxSizeMB, mailboxPlan.MaxReceiveMessageSizeKB, mailboxPlan.MaxRecipients,
                                                         mailboxPlan.MaxSendMessageSizeKB, mailboxPlan.ProhibitSendPct, mailboxPlan.ProhibitSendReceivePct, mailboxPlan.HideFromAddressBook, mailboxPlan.MailboxPlanType,
                                                         mailboxPlan.AllowLitigationHold, mailboxPlan.RecoverableItemsSpace, mailboxPlan.RecoverableItemsWarningPct,
-                                                        mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg);
+                                                        mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg, mailboxPlan.Archiving);
             }
             catch (Exception ex)
             {

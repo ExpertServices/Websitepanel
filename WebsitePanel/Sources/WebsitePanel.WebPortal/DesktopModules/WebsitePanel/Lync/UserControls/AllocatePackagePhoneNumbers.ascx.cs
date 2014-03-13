@@ -97,7 +97,7 @@ namespace WebsitePanel.Portal.UserControls
             }
 
             // bind controls
-            int max = quotaAllowed == -1 ? listExternalAddresses.Items.Count : quotaAllowed;
+            int max = quotaAllowed == -1 ? listExternalAddresses.Items.Count : Math.Min(quotaAllowed, listExternalAddresses.Items.Count);
 
             txtExternalAddressesNumber.Text = max.ToString();
             litMaxAddresses.Text = String.Format(GetLocalizedString("litMaxAddresses.Text"), max);

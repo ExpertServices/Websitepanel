@@ -209,5 +209,12 @@ namespace WebsitePanel.Providers.HostedSolution
             get { return this.litigationHoldMsg; }
             set { this.litigationHoldMsg = value; }
         }
+
+        bool archiving;
+        public bool Archiving
+        {
+            get { return this.archiving; }
+            set { this.archiving = value; }
+        }
     }
 }

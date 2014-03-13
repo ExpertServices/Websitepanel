@@ -21,7 +21,7 @@
 			<div class="Center">
 				<div class="Title">
 					<asp:Image ID="Image1" SkinID="ExchangeDomainName48" runat="server" />
-					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Domain Names"></asp:Localize>
+					<asp:Localize ID="locTitle" runat="server"></asp:Localize>
 				</div>
 				<div class="FormBody">
 				    <wsp:SimpleMessageBox id="messageBox" runat="server" />

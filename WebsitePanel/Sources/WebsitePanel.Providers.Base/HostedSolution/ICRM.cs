@@ -35,6 +35,7 @@ namespace WebsitePanel.Providers.HostedSolution
     public interface ICRM
     {
         OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName,
+                    int baseLanguageCode,
                     string ou,
                     string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol,
                     string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail,                  
@@ -44,6 +45,8 @@ namespace WebsitePanel.Providers.HostedSolution
         string[] GetSupportedCollationNames();
 
         Currency[] GetCurrencyList();
+
+        int[] GetInstalledLanguagePacks();
        
         ResultObject DeleteOrganization(Guid orgId);
 

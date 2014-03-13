@@ -5386,4 +5386,55 @@
   <data name="Quota.HostedCRM.ESSUsers" xml:space="preserve">
     <value>ESS licenses per organization</value>
   </data>
+  <data name="ResourceGroup.Hosted CRM2013" xml:space="preserve">
+    <value>Hosted CRM 2013</value>
+  </data>
+  <data name="HostedCRM.USER_QUOTA_HAS_BEEN_REACHED2013_0" xml:space="preserve">
+    <value>CRM users quota (Professional license) has been reached.</value>
+  </data>
+  <data name="HostedCRM.USER_QUOTA_HAS_BEEN_REACHED2013_2" xml:space="preserve">
+    <value>CRM users quota (Basic license) has been reached.</value>
+  </data>
+  <data name="HostedCRM.USER_QUOTA_HAS_BEEN_REACHED2013_5" xml:space="preserve">
+    <value>CRM users quota (Essential license) has been reached.</value>
+  </data>
+  <data name="Quota.HostedCRM2013.BasicUsers" xml:space="preserve">
+    <value>Basic licenses per organization</value>
+  </data>
+  <data name="Quota.HostedCRM2013.EssentialUsers" xml:space="preserve">
+    <value>Essential licenses per organization</value>
+  </data>
+  <data name="Quota.HostedCRM2013.MaxDatabaseSize" xml:space="preserve">
+    <value>Max Database Size, MB</value>
+  </data>
+  <data name="Quota.HostedCRM2013.Organization" xml:space="preserve">
+    <value>CRM Organization</value>
+  </data>
+  <data name="Quota.HostedCRM2013.ProfessionalUsers" xml:space="preserve">
+    <value>Professional licenses per organization</value>
+  </data>
+  <data name="HostedCRM.LicenseBasic" xml:space="preserve">
+    <value>Basic</value>
+  </data>
+  <data name="HostedCRM.LicenseESS" xml:space="preserve">
+    <value>ESS</value>
+  </data>
+  <data name="HostedCRM.LicenseEssential" xml:space="preserve">
+    <value>Essential</value>
+  </data>
+  <data name="HostedCRM.LicenseFull" xml:space="preserve">
+    <value>Full</value>
+  </data>
+  <data name="HostedCRM.LicenseLimited" xml:space="preserve">
+    <value>Limited</value>
+  </data>
+  <data name="HostedCRM.LicenseProfessional" xml:space="preserve">
+    <value>Professional</value>
+  </data>
+  <data name="Quota.Exchange2013.AllowArchiving" xml:space="preserve">
+    <value>Allow Archiving</value>
+  </data>
+  <data name="Quota.Exchange2013.ArchivingStorage" xml:space="preserve">
+    <value>Archiving storage, MB</value>
+  </data>
 </root>

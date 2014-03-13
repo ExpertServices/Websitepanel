@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2012-2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -166,11 +166,11 @@ namespace WebsitePanel.EnterpriseServer
         [WebMethod]
         public ExchangeAccountsPaged GetAccountsPaged(int itemId, string accountTypes,
             string filterColumn, string filterValue, string sortColumn,
-            int startRow, int maximumRows)
+            int startRow, int maximumRows, bool archiving)
         {
             return ExchangeServerController.GetAccountsPaged(itemId, accountTypes,
                 filterColumn, filterValue, sortColumn,
-                startRow, maximumRows);
+                startRow, maximumRows, archiving);
         }
 
         [WebMethod]
@@ -222,9 +222,9 @@ namespace WebsitePanel.EnterpriseServer
         #region Mailboxes
         [WebMethod]
         public int CreateMailbox(int itemId, int accountId, ExchangeAccountType accountType, string accountName, string displayName,
-            string name, string domain, string password, bool sendSetupInstructions, string setupInstructionMailAddress, int mailboxPlanId, string subscriberNumber)
+            string name, string domain, string password, bool sendSetupInstructions, string setupInstructionMailAddress, int mailboxPlanId, int archivedPlanId, string subscriberNumber)
         {
-            return ExchangeServerController.CreateMailbox(itemId, accountId, accountType, accountName, displayName, name, domain, password, sendSetupInstructions, setupInstructionMailAddress, mailboxPlanId, subscriberNumber);
+            return ExchangeServerController.CreateMailbox(itemId, accountId, accountType, accountName, displayName, name, domain, password, sendSetupInstructions, setupInstructionMailAddress, mailboxPlanId, archivedPlanId, subscriberNumber);
         }
 
         [WebMethod]
@@ -303,9 +303,9 @@ namespace WebsitePanel.EnterpriseServer
 
 
         [WebMethod]
-        public int SetExchangeMailboxPlan(int itemId, int accountId, int mailboxPlanId)
+        public int SetExchangeMailboxPlan(int itemId, int accountId, int mailboxPlanId, int archivePlanId)
         {
-            return ExchangeServerController.SetExchangeMailboxPlan(itemId, accountId, mailboxPlanId);
+            return ExchangeServerController.SetExchangeMailboxPlan(itemId, accountId, mailboxPlanId, archivePlanId);
         }
 
         [WebMethod]
@@ -527,9 +527,9 @@ namespace WebsitePanel.EnterpriseServer
 
         #region MailboxPlans
         [WebMethod]
-        public List<ExchangeMailboxPlan> GetExchangeMailboxPlans(int itemId)
+        public List<ExchangeMailboxPlan> GetExchangeMailboxPlans(int itemId, bool archiving)
         {
-            return ExchangeServerController.GetExchangeMailboxPlans(itemId);
+            return ExchangeServerController.GetExchangeMailboxPlans(itemId, archiving);
         }
 
         [WebMethod]

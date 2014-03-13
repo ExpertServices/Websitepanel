@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -167,6 +167,15 @@ namespace WebsitePanel.Portal.CRM {
         protected global::System.Web.UI.WebControls.ObjectDataSource odsAccountsPaged;
         
         /// <summary>
+        /// CRM2011Panel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel CRM2011Panel;
+        
+        /// <summary>
         /// locQuota control.
         /// </summary>
         /// <remarks>
@@ -219,5 +228,68 @@ namespace WebsitePanel.Portal.CRM {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.QuotaViewer essusersQuota;
+        
+        /// <summary>
+        /// CRM2013Panel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel CRM2013Panel;
+        
+        /// <summary>
+        /// Localize1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize Localize1;
+        
+        /// <summary>
+        /// professionalusersQuota control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaViewer professionalusersQuota;
+        
+        /// <summary>
+        /// locBasicQuota control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locBasicQuota;
+        
+        /// <summary>
+        /// basicusersQuota control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaViewer basicusersQuota;
+        
+        /// <summary>
+        /// locEssentialQuota control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locEssentialQuota;
+        
+        /// <summary>
+        /// essentialusersQuota control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaViewer essentialusersQuota;
     }
 }

@@ -74,6 +74,11 @@ namespace WebsitePanel.Providers.Common
 
         public const string UsersHome = "UsersHome";
 
-        
+        public const string Collation = "Collation";
+
+        public const string Currency = "Currency";
+
+        public const string BaseLanguage = "BaseLanguage";
+   
     }
 }

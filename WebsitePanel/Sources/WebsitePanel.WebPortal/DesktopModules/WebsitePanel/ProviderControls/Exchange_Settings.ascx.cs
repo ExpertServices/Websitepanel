@@ -93,6 +93,8 @@ namespace WebsitePanel.Portal.ProviderControls
                             locMailboxDAG.Visible = false;
 
                             powershellUrl1.Visible = powershellUrl2.Visible = false;
+
+                            archivingGroup.Visible = false;
                             break;
 
                         case EXCHANGE2010SP2_PROVIDER_ID:
@@ -104,6 +106,8 @@ namespace WebsitePanel.Portal.ProviderControls
 
                             locMailboxDatabase.Visible = false;
                             powershellUrl1.Visible = powershellUrl2.Visible = false;
+
+                            archivingGroup.Visible = false;
                             break;
 
                         case EXCHANGE2013_PROVIDER_ID:
@@ -115,6 +119,8 @@ namespace WebsitePanel.Portal.ProviderControls
 
                             locMailboxDatabase.Visible = false;
                             powershellUrl1.Visible = powershellUrl2.Visible = true;
+
+                            archivingGroup.Visible = true;
                             break;
 
                         default:
@@ -123,6 +129,8 @@ namespace WebsitePanel.Portal.ProviderControls
                             clusteredMailboxServer.Visible = true;
                             txtMailboxClusterName.Text = settings["MailboxCluster"];
                             locMailboxDAG.Visible = false;
+
+                            archivingGroup.Visible = false;
                             break;
                     }
                 }
@@ -153,6 +161,8 @@ namespace WebsitePanel.Portal.ProviderControls
                 txtPublicFolderServer.Text = settings["PublicFolderServer"];
                 txtPowerShellUrl.Text = settings["PowerShellUrl"];
 
+                txtArchivingDatabase.Text = settings["ArchivingDatabase"];
+
                 UpdateHubTransportsGrid();
                 UpdateClientAccessGrid();
             
@@ -179,6 +189,9 @@ namespace WebsitePanel.Portal.ProviderControls
 
             settings["StorageGroup"] = txtStorageGroup.Text;
             settings["PowerShellUrl"] = txtPowerShellUrl.Text;
+
+            settings["ArchivingDatabase"] = txtArchivingDatabase.Text;
+
         }
 
 		public void BindExchangeServices(DropDownList ddl, bool isHubservice)

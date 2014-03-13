@@ -35,8 +35,19 @@ namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class ExchangeMailboxPlans : WebsitePanelModuleBase
     {
+        private bool ArchivingPlans
+        {
+            get
+            {
+                return PanelRequest.Ctl.ToLower().Contains("archiving");
+            }
+        }
+
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            locTitle.Text = ArchivingPlans ? GetLocalizedString("locTitleArchiving.Text") : GetLocalizedString("locTitle.Text");
+
             if (!IsPostBack)
             {
                 // bind mailboxplans
@@ -71,7 +82,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         private void BindMailboxPlans()
         {
-            ExchangeMailboxPlan[] list = ES.Services.ExchangeServer.GetExchangeMailboxPlans(PanelRequest.ItemID);
+            ExchangeMailboxPlan[] list = ES.Services.ExchangeServer.GetExchangeMailboxPlans(PanelRequest.ItemID, ArchivingPlans);
 
             gvMailboxPlans.DataSource = list;
             gvMailboxPlans.DataBind();
@@ -94,7 +105,7 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             btnSetDefaultMailboxPlan.Enabled = true;
             Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "add_mailboxplan",
-                "SpaceID=" + PanelSecurity.PackageId));
+                "SpaceID=" + PanelSecurity.PackageId, "archiving="+ArchivingPlans));
         }
 
         protected void gvMailboxPlan_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -177,7 +188,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 foreach (ExchangeAccount a in Accounts)
                 {
                     txtStatus.Text = "Completed";
-                    int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(PanelRequest.ItemID, a.AccountId, Convert.ToInt32(mailboxPlanSelectorTarget.MailboxPlanId));
+                    int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(PanelRequest.ItemID, a.AccountId, Convert.ToInt32(mailboxPlanSelectorTarget.MailboxPlanId), a.ArchivingMailboxPlanId);
                     if (result < 0)
                     {
                         BindMailboxPlans();

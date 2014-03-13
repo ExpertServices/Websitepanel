@@ -35,6 +35,20 @@ namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class ExchangeAddMailboxPlan : WebsitePanelModuleBase
     {
+        private bool ArchivingPlan
+        {
+            get
+            {
+                bool res = false;
+                bool.TryParse(hfArchivingPlan.Value, out res);
+                return res;
+            }
+            set
+            {
+                hfArchivingPlan.Value = value.ToString();
+            }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
 
@@ -66,27 +80,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     txtLitigationHoldMsg.Text = plan.LitigationHoldMsg;
                     txtLitigationHoldUrl.Text = plan.LitigationHoldUrl;
 
-
-
-                    /*
-                    txtMailboxPlan.Enabled = false;
-                    mailboxSize.Enabled = false;
-                    maxRecipients.Enabled = false;
-                    maxSendMessageSizeKB.Enabled = false;
-                    maxReceiveMessageSizeKB.Enabled = false;
-                    chkPOP3.Enabled = false;
-                    chkIMAP.Enabled = false;
-                    chkOWA.Enabled = false;
-                    chkMAPI.Enabled = false;
-                    chkActiveSync.Enabled = false;
-                    sizeIssueWarning.Enabled = false;
-                    sizeProhibitSend.Enabled = false;
-                    sizeProhibitSendReceive.Enabled = false;
-                    daysKeepDeletedItems.Enabled = false;
-                    chkHideFromAddressBook.Enabled = false;
-
-                    btnAdd.Enabled = false;
-                     */
+                    ArchivingPlan = plan.Archiving;
 
                     locTitle.Text = plan.MailboxPlan;
                     this.DisableControls = true;
@@ -156,11 +150,19 @@ namespace WebsitePanel.Portal.ExchangeServer
                             sizeProhibitSend.ValueKB = 100;
                             sizeProhibitSendReceive.ValueKB = 100;
                             recoverableItemsWarning.ValueKB = 95;
+
+                            ArchivingPlan = PanelRequest.GetBool("archiving", false);
                         }
                     }
                     else
                         this.DisableControls = true;
                 }
+
+                locTitle.Text = ArchivingPlan ? GetLocalizedString("locTitleArchiving.Text") : GetLocalizedString("locTitle.Text");
+
+                secMailboxFeatures.Visible = !ArchivingPlan;
+                secMailboxGeneral.Visible = !ArchivingPlan;
+
             }
 
         }
@@ -201,8 +203,9 @@ namespace WebsitePanel.Portal.ExchangeServer
                 plan.RecoverableItemsWarningPct = recoverableItemsWarning.ValueKB;
                 if ((plan.RecoverableItemsWarningPct == 0)) plan.RecoverableItemsWarningPct = 100;
                 plan.LitigationHoldMsg = txtLitigationHoldMsg.Text.Trim();
-                plan.LitigationHoldUrl = txtLitigationHoldUrl.Text.Trim(); 
+                plan.LitigationHoldUrl = txtLitigationHoldUrl.Text.Trim();
 
+                plan.Archiving = ArchivingPlan;
 
                 int result = ES.Services.ExchangeServer.AddExchangeMailboxPlan(PanelRequest.ItemID,
                                                                                 plan);
@@ -214,7 +217,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "mailboxplans",
+                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), ArchivingPlan ? "archivingmailboxplans" : "mailboxplans",
                     "SpaceID=" + PanelSecurity.PackageId));
             }
             catch (Exception ex)
