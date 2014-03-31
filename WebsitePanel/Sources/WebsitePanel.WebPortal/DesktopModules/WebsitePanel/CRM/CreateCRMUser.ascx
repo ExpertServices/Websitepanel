@@ -5,7 +5,6 @@
 <%@ Register Src="../UserControls/PasswordControl.ascx" TagName="PasswordControl" TagPrefix="wsp" %>
 <%@ Register Src="../ExchangeServer/UserControls/EmailAddress.ascx" TagName="EmailAddress" TagPrefix="wsp" %>
 <%@ Register Src="../ExchangeServer/UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
-<%@ Register Src="../ExchangeServer/UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 
 <%@ Register src="../ExchangeServer/UserControls/UserSelector.ascx" tagname="UserSelector" tagprefix="wsp" %>
@@ -16,9 +15,6 @@
 
 <div id="ExchangeContainer">
 	<div class="Module">
-		<div class="Header">
-			<wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName" />
-		</div>
 		<div class="Left">
 			<wsp:Menu id="menu" runat="server" SelectedItem="mailboxes" />
 		</div>

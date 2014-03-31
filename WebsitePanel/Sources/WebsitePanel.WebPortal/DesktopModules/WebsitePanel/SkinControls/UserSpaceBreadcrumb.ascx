@@ -1,4 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UserSpaceBreadcrumb.ascx.cs" Inherits="WebsitePanel.Portal.SkinControls.UserSpaceBreadcrumb" %>
+<%@ Register TagPrefix="wsp" TagName="SpaceOrgsSelector" Src="SpaceOrganizationsSelector.ascx" %>
 <div id="Breadcrumb">
 	<div class="Path">
 		<asp:Repeater ID="repUsersPath" runat="server" OnItemDataBound="repUsersPath_ItemDataBound"
@@ -15,7 +16,16 @@
 			<asp:HyperLink ID="lnkSpace" runat="server" Text="SpaceName" NavigateUrl="#"></asp:HyperLink>
 		</span>
 
-		<asp:Image ID="imgSep2" runat="server" SkinID="PathSeparatorWhite" /> <asp:HyperLink ID="lnkCurrentPage" runat="server"></asp:HyperLink>
+        <asp:Image ID="imgSep2" runat="server" SkinID="PathSeparatorWhite" /> <asp:HyperLink ID="lnkCurrentPage" runat="server"></asp:HyperLink>
+
+        <span id="spanOrgn" runat="server">
+            <asp:Image ID="imgSep3" runat="server" SkinID="PathSeparatorWhite" />
+		    <asp:HyperLink ID="lnkOrgn" runat="server">Organization</asp:HyperLink>
+            <asp:Image ID="imgSep4" runat="server" SkinID="PathSeparatorWhite" />
+            <asp:Label ID="lbOrgCurPage" runat="server" ForeColor="#000000">Home</asp:Label>
+	    </span>
+        
+        <wsp:SpaceOrgsSelector ID="SpaceOrgs" runat="server" />
 	</div>
 	<div class="CurrentNode" runat="server" id="CurrentNode">
 		<asp:Panel ID="pnlViewUser" runat="server">

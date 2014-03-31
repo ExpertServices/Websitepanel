@@ -543,6 +543,13 @@
     <Compile Include="SettingsLyncUserPlansPolicy.ascx.designer.cs">
       <DependentUpon>SettingsLyncUserPlansPolicy.ascx</DependentUpon>
     </Compile>
+    <Compile Include="SkinControls\SpaceOrganizationsSelector.ascx.cs">
+      <DependentUpon>SpaceOrganizationsSelector.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SkinControls\SpaceOrganizationsSelector.ascx.designer.cs">
+      <DependentUpon>SpaceOrganizationsSelector.ascx</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\DomainListControlBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -4085,6 +4092,7 @@
     <Content Include="ScheduleTaskControls\NotifyOverusedDatabases.ascx" />
     <Content Include="SettingsExchangeMailboxPlansPolicy.ascx" />
     <Content Include="SettingsLyncUserPlansPolicy.ascx" />
+    <Content Include="SkinControls\SpaceOrganizationsSelector.ascx" />
     <Content Include="UserControls\EditFeedsList.ascx" />
     <Content Include="UserControls\OrgIdPolicyEditor.ascx" />
     <Content Include="UserControls\OrgPolicyEditor.ascx" />

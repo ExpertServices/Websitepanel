@@ -4,7 +4,6 @@
 <%@ Register Src="UserControls/MailboxSelector.ascx" TagName="MailboxSelector" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/DistributionListTabs.ascx" TagName="DistributionListTabs" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="../UserControls/CollapsiblePanel.ascx" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 
@@ -12,9 +11,6 @@
 
 <div id="ExchangeContainer">
 	<div class="Module">
-		<div class="Header">
-			<wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName" />
-		</div>
 		<div class="Left">
 			<wsp:Menu id="menu" runat="server" SelectedItem="dlists" />
 		</div>

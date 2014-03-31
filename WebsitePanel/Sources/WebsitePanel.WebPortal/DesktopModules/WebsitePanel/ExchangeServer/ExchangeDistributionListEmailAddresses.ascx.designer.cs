@@ -13,15 +13,6 @@ namespace WebsitePanel.Portal.ExchangeServer {
     public partial class ExchangeDistributionListEmailAddresses {
         
         /// <summary>
-        /// breadcrumb control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.Breadcrumb breadcrumb;
-        
-        /// <summary>
         /// menu control.
         /// </summary>
         /// <remarks>
@@ -173,14 +164,5 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnDeleteAddresses;
-        
-        /// <summary>
-        /// FormComments control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize FormComments;
     }
 }

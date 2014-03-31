@@ -258,7 +258,7 @@
 .ExchangeBody
 {
 	float: left;
-	background: transparent url(../images/Exchange/module_header.gif) left top no-repeat;  
+    background: transparent url(../images/Exchange/module_header.gif) left -35px no-repeat;  
 	clear: both;
 }
 .ExchangeBottom
@@ -335,7 +335,8 @@
 {
 	font-family: Arial;
 	font-size: 14pt;
-	margin-bottom: 5px;
+    margin-top: 9px;
+	margin-bottom: 7px;
 }
 
 #ExchangeContainer .MenuGroup 

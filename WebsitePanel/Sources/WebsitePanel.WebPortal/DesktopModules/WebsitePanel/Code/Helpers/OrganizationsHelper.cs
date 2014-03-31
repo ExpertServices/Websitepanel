@@ -55,6 +55,19 @@ namespace WebsitePanel.Portal
             
             return orgs.Tables[1];
         }
+
+        //public Organization[] GetOrganizations(int packageId, bool recursive)
+        //{
+        //    return ES.Services.Organizations.GetOrganizations(packageId, recursive);
+        //}
+
+        public DataTable GetOrganizations(int packageId, bool recursive)
+        {
+            orgs = ES.Services.Organizations.GetRawOrganizationsPaged(packageId,
+                recursive, "ItemName", "%", "ItemName", -1, int.MaxValue);
+
+            return orgs.Tables[1];
+        }
         #endregion
 
         #region Accounts

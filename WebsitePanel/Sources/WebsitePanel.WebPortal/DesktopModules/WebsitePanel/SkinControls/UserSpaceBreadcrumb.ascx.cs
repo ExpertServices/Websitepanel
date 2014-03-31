@@ -30,6 +30,7 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Collections;
+using System.Collections.Generic;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
@@ -37,12 +38,19 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
+using WebsitePanel.WebPortal;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Portal.SkinControls
 {
     public partial class UserSpaceBreadcrumb : System.Web.UI.UserControl
     {
+        public const string ORGANIZATION_CONTROL_KEY = "organization_home";
+        public const string EXCHANGE_SERVER_MODULE_DEFINTION_ID = "exchangeserver";
+        public const string PAGE_NANE_KEY = "Text.PageName";
+        public const string DM_FOLDER_VIRTUAL_PATH = "~/DesktopModules/";
+
         public bool CurrentNodeVisible
         {
             get { return CurrentNode.Visible; }
@@ -102,6 +110,35 @@ namespace WebsitePanel.Portal.SkinControls
                         PortalUtils.GetCurrentPageId(), "UserID", PanelSecurity.SelectedUserId.ToString());
                 }
             }
+
+            // organization
+            bool orgVisible = (PanelRequest.ItemID > 0);
+
+            //spanOrgsSelector.Visible = spanOrgn.Visible = orgVisible;
+            spanOrgn.Visible = orgVisible;
+
+            if (orgVisible)
+            {
+                // load organization details
+                Organization org = ES.Services.Organizations.GetOrganization(PanelRequest.ItemID);
+
+                lnkOrgn.NavigateUrl = ExchangeHelper.BuildUrl(
+                    "ItemID", PanelRequest.ItemID.ToString(), ORGANIZATION_CONTROL_KEY,
+                    "SpaceID=" + PanelSecurity.PackageId.ToString());
+                lnkOrgn.Text = org.Name;
+
+                string ctrlKey = Request[DefaultPage.CONTROL_ID_PARAM].ToLower(System.Globalization.CultureInfo.InvariantCulture);
+
+                ModuleDefinition definition = PortalConfiguration.ModuleDefinitions[EXCHANGE_SERVER_MODULE_DEFINTION_ID];
+                ModuleControl control = null;
+                if (!String.IsNullOrEmpty(ctrlKey) && definition.Controls.ContainsKey(ctrlKey))
+                    control = definition.Controls[ctrlKey];
+                
+                if (!String.IsNullOrEmpty(control.Src))
+                {
+                    lbOrgCurPage.Text = ExchangeHelper.GetLocalizedString(DM_FOLDER_VIRTUAL_PATH + control.Src, PAGE_NANE_KEY);
+                }
+            }
         }
 
         protected void repUsersPath_ItemDataBound(object sender, RepeaterItemEventArgs e)
@@ -121,7 +158,7 @@ namespace WebsitePanel.Portal.SkinControls
             pnlEditSpace.Visible = true;
             pnlViewSpace.Visible = false;
 
-			txtName.Text = Server.HtmlDecode(cmdSpaceName.Text);
+            txtName.Text = Server.HtmlDecode(cmdSpaceName.Text);
         }
 
         protected void cmdCancel_Click(object sender, EventArgs e)
