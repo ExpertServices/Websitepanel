@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Text;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 
@@ -59,6 +60,19 @@ namespace WebsitePanel.Portal.ExchangeServer
             //else
                 //if (gvOrgs.Rows.Count > 0) btnCreate.Enabled = false;
 
+            if (!Page.IsPostBack)
+            {
+                if (Request.UrlReferrer != null && PanelSecurity.SelectedUser.Role == UserRole.User)
+                {
+                    var queryBuilder = new StringBuilder();
+                    queryBuilder.AppendFormat("?pid=Home&UserID={0}", PanelSecurity.SelectedUserId);
+                    
+                    if (Request.UrlReferrer.Query.Equals(queryBuilder.ToString(), StringComparison.InvariantCultureIgnoreCase) && gvOrgs.Rows.Count > 0)
+                    {
+                        Response.Redirect(((HyperLink)gvOrgs.Rows[0].Cells[1].Controls[1]).NavigateUrl);
+                    }
+                }
+            }
         }
 
         protected void btnCreate_Click(object sender, EventArgs e)

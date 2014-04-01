@@ -70,6 +70,9 @@ namespace WebsitePanel.Portal.SkinControls
                 ddlSpaceOrgs.DataBind();
 
                 ddlSpaceOrgs.Items.FindByValue(PanelRequest.ItemID.ToString()).Selected = true; 
+
+                lnkOrgnsList.NavigateUrl = PortalUtils.NavigatePageURL(
+                        PortalUtils.GetCurrentPageId(), "SpaceID", PanelSecurity.PackageId.ToString());
             }
         }
 
@@ -80,7 +83,7 @@ namespace WebsitePanel.Portal.SkinControls
 
         private string GetOrganizationEditUrl(string itemId)
         {
-            return ExchangeHelper.BuildUrl("SpaceID", PanelSecurity.PackageId.ToString(), "organization_home",
+            return PortalUtils.EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "organization_home",
                     "ItemID=" + itemId);
         }
     }

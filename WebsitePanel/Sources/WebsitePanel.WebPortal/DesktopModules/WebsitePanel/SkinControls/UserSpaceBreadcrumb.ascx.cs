@@ -114,7 +114,6 @@ namespace WebsitePanel.Portal.SkinControls
             // organization
             bool orgVisible = (PanelRequest.ItemID > 0);
 
-            //spanOrgsSelector.Visible = spanOrgn.Visible = orgVisible;
             spanOrgn.Visible = orgVisible;
 
             if (orgVisible)
@@ -122,7 +121,7 @@ namespace WebsitePanel.Portal.SkinControls
                 // load organization details
                 Organization org = ES.Services.Organizations.GetOrganization(PanelRequest.ItemID);
 
-                lnkOrgn.NavigateUrl = ExchangeHelper.BuildUrl(
+                lnkOrgn.NavigateUrl = PortalUtils.EditUrl(
                     "ItemID", PanelRequest.ItemID.ToString(), ORGANIZATION_CONTROL_KEY,
                     "SpaceID=" + PanelSecurity.PackageId.ToString());
                 lnkOrgn.Text = org.Name;
@@ -136,7 +135,7 @@ namespace WebsitePanel.Portal.SkinControls
                 
                 if (!String.IsNullOrEmpty(control.Src))
                 {
-                    lbOrgCurPage.Text = ExchangeHelper.GetLocalizedString(DM_FOLDER_VIRTUAL_PATH + control.Src, PAGE_NANE_KEY);
+                    lbOrgCurPage.Text = PortalUtils.GetLocalizedString(DM_FOLDER_VIRTUAL_PATH + control.Src, PAGE_NANE_KEY);
                 }
             }
         }
