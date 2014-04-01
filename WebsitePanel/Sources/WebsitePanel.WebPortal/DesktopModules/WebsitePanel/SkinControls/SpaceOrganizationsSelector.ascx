@@ -4,4 +4,6 @@
     <asp:DropDownList ID="ddlSpaceOrgs" runat="server" CssClass="NormalTextBox" Width="150px" style="vertical-align: middle;" 
         OnSelectedIndexChanged="ddlSpaceOrgs_SelectedIndexChanged" EnableViewState="true" AutoPostBack="true">
     </asp:DropDownList> 
+    |
+    <asp:HyperLink ID="lnkOrgnsList" runat="server">Edit</asp:HyperLink>
 </span>               

@@ -314,6 +314,11 @@ namespace WebsitePanel.Portal
             return (string)HttpContext.GetGlobalResourceObject(className, resourceKey);
         }
 
+        public static string GetLocalizedString(string virtualPath, string resourceKey)
+        {
+            return (string)HttpContext.GetLocalResourceObject(virtualPath, resourceKey);
+        }
+
         public static string GetCurrentPageId()
         {
             return HttpContext.Current.Request["pid"];
@@ -948,6 +953,32 @@ namespace WebsitePanel.Portal
                 navigateUrl += String.Concat("?", String.Join("&", urlBuilder.ToArray()));
 
             return navigateUrl;
+        }
+
+        public static string EditUrl(string keyName, string keyValue, string controlKey, params string[] additionalParams)
+        {
+            List<string> url = new List<string>();
+
+            string pageId = HttpContext.Current.Request[DefaultPage.PAGE_ID_PARAM];
+
+            if (!String.IsNullOrEmpty(pageId))
+                url.Add(String.Concat(DefaultPage.PAGE_ID_PARAM, "=", pageId));
+
+            url.Add(String.Concat(DefaultPage.MODULE_ID_PARAM, "=", HttpContext.Current.Request.QueryString["mid"]));
+            url.Add(String.Concat(DefaultPage.CONTROL_ID_PARAM, "=", controlKey));
+
+            if (!String.IsNullOrEmpty(keyName) && !String.IsNullOrEmpty(keyValue))
+            {
+                url.Add(String.Concat(keyName, "=", keyValue));
+            }
+
+            if (additionalParams != null)
+            {
+                foreach (string additionalParam in additionalParams)
+                    url.Add(additionalParam);
+            }
+
+            return "~/Default.aspx?" + String.Join("&", url.ToArray());
         }
         #endregion
     }
