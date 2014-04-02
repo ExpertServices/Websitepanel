@@ -56,7 +56,7 @@ namespace WebsitePanel.Portal.SkinControls
         private void BindSpaceOrgs()
         {
             // organization
-            bool orgVisible = (PanelRequest.ItemID > 0);
+            bool orgVisible = (PanelRequest.ItemID > 0 && Request[DefaultPage.PAGE_ID_PARAM].Equals(UserSpaceBreadcrumb.PID_SPACE_EXCHANGE_SERVER, StringComparison.InvariantCultureIgnoreCase));
 
             spanOrgsSelector.Visible = orgVisible;
 

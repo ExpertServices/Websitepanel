@@ -47,6 +47,7 @@ namespace WebsitePanel.Portal.SkinControls
     public partial class UserSpaceBreadcrumb : System.Web.UI.UserControl
     {
         public const string ORGANIZATION_CONTROL_KEY = "organization_home";
+	public const string PID_SPACE_EXCHANGE_SERVER = "SpaceExchangeServer";
         public const string EXCHANGE_SERVER_MODULE_DEFINTION_ID = "exchangeserver";
         public const string PAGE_NANE_KEY = "Text.PageName";
         public const string DM_FOLDER_VIRTUAL_PATH = "~/DesktopModules/";
@@ -112,7 +113,7 @@ namespace WebsitePanel.Portal.SkinControls
             }
 
             // organization
-            bool orgVisible = (PanelRequest.ItemID > 0);
+            bool orgVisible = (PanelRequest.ItemID > 0 && Request[DefaultPage.PAGE_ID_PARAM].Equals(PID_SPACE_EXCHANGE_SERVER, StringComparison.InvariantCultureIgnoreCase));
 
             spanOrgn.Visible = orgVisible;
 
