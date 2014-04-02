@@ -35,18 +35,18 @@ namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class ExchangeMailboxPlans : WebsitePanelModuleBase
     {
-        private bool ArchivingPlans
+        private bool RetentionPolicy
         {
             get
             {
-                return PanelRequest.Ctl.ToLower().Contains("archiving");
+                return PanelRequest.Ctl.ToLower().Contains("retentionpolicy");
             }
         }
 
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            locTitle.Text = ArchivingPlans ? GetLocalizedString("locTitleArchiving.Text") : GetLocalizedString("locTitle.Text");
+            locTitle.Text = RetentionPolicy ? GetLocalizedString("locTitleRetentionPolicy.Text") : GetLocalizedString("locTitle.Text");
 
             if (!IsPostBack)
             {
@@ -82,7 +82,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         private void BindMailboxPlans()
         {
-            ExchangeMailboxPlan[] list = ES.Services.ExchangeServer.GetExchangeMailboxPlans(PanelRequest.ItemID, ArchivingPlans);
+            ExchangeMailboxPlan[] list = ES.Services.ExchangeServer.GetExchangeMailboxPlans(PanelRequest.ItemID, RetentionPolicy);
 
             gvMailboxPlans.DataSource = list;
             gvMailboxPlans.DataBind();
@@ -105,7 +105,7 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             btnSetDefaultMailboxPlan.Enabled = true;
             Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "add_mailboxplan",
-                "SpaceID=" + PanelSecurity.PackageId, "archiving="+ArchivingPlans));
+                "SpaceID=" + PanelSecurity.PackageId, "archiving="+RetentionPolicy));
         }
 
         protected void gvMailboxPlan_RowCommand(object sender, GridViewCommandEventArgs e)

@@ -103,6 +103,11 @@
 						<asp:CheckBox ID="chkActiveSync" runat="server" meta:resourcekey="chkActiveSync" Text="ActiveSync"></asp:CheckBox>
 					</td>
 				</tr>
+				<tr>
+					<td>
+						<asp:CheckBox ID="chkEnableArchiving" runat="server" meta:resourcekey="chkEnableArchiving" Text="Archiving"></asp:CheckBox>
+					</td>
+				</tr>
 			</table>
 			<br />
 		</asp:Panel>
@@ -261,13 +266,13 @@
             <td>
                 <div class="FormButtonsBarClean">
                     <asp:Button ID="btnAddMailboxPlan" runat="server" meta:resourcekey="btnAddMailboxPlan"
-                        Text="Add New Mailboxplan" CssClass="Button1" OnClick="btnAddMailboxPlan_Click" />
+                        Text="Add New" CssClass="Button1" OnClick="btnAddMailboxPlan_Click" />
                 </div>
             </td>
             <td>
                 <div class="FormButtonsBarClean">
                         <asp:Button ID="btnUpdateMailboxPlan" runat="server" meta:resourcekey="btnUpdateMailboxPlan"
-                            Text="Update Mailboxplan" CssClass="Button1" OnClick="btnUpdateMailboxPlan_Click" />
+                            Text="Update" CssClass="Button1" OnClick="btnUpdateMailboxPlan_Click" />
             </td>
         </tr>
     </table>

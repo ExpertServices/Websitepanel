@@ -35,7 +35,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class ExchangeAddMailboxPlan : WebsitePanelModuleBase
     {
-        private bool ArchivingPlan
+        private bool RetentionPolicy
         {
             get
             {
@@ -80,7 +80,9 @@ namespace WebsitePanel.Portal.ExchangeServer
                     txtLitigationHoldMsg.Text = plan.LitigationHoldMsg;
                     txtLitigationHoldUrl.Text = plan.LitigationHoldUrl;
 
-                    ArchivingPlan = plan.Archiving;
+                    RetentionPolicy = plan.Archiving;
+
+                    chkEnableArchiving.Checked = plan.EnableArchiving;
 
                     locTitle.Text = plan.MailboxPlan;
                     this.DisableControls = true;
@@ -151,17 +153,17 @@ namespace WebsitePanel.Portal.ExchangeServer
                             sizeProhibitSendReceive.ValueKB = 100;
                             recoverableItemsWarning.ValueKB = 95;
 
-                            ArchivingPlan = PanelRequest.GetBool("archiving", false);
+                            RetentionPolicy = PanelRequest.GetBool("archiving", false);
                         }
                     }
                     else
                         this.DisableControls = true;
                 }
 
-                locTitle.Text = ArchivingPlan ? GetLocalizedString("locTitleArchiving.Text") : GetLocalizedString("locTitle.Text");
+                locTitle.Text = RetentionPolicy ? GetLocalizedString("locTitleArchiving.Text") : GetLocalizedString("locTitle.Text");
 
-                secMailboxFeatures.Visible = !ArchivingPlan;
-                secMailboxGeneral.Visible = !ArchivingPlan;
+                secMailboxFeatures.Visible = !RetentionPolicy;
+                secMailboxGeneral.Visible = !RetentionPolicy;
 
             }
 
@@ -205,7 +207,9 @@ namespace WebsitePanel.Portal.ExchangeServer
                 plan.LitigationHoldMsg = txtLitigationHoldMsg.Text.Trim();
                 plan.LitigationHoldUrl = txtLitigationHoldUrl.Text.Trim();
 
-                plan.Archiving = ArchivingPlan;
+                plan.Archiving = RetentionPolicy;
+
+                plan.EnableArchiving = chkEnableArchiving.Checked;
 
                 int result = ES.Services.ExchangeServer.AddExchangeMailboxPlan(PanelRequest.ItemID,
                                                                                 plan);
@@ -217,7 +221,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), ArchivingPlan ? "archivingmailboxplans" : "mailboxplans",
+                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), RetentionPolicy ? "retentionpolicy" : "mailboxplans",
                     "SpaceID=" + PanelSecurity.PackageId));
             }
             catch (Exception ex)

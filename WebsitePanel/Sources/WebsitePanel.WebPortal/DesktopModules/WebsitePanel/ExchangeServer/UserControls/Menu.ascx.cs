@@ -142,7 +142,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
             if (!hideItems)
                 if (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, cntx))
-                    exchangeGroup.MenuItems.Add(CreateMenuItem("ArchivingMailboxPlans", "archivingmailboxplans"));
+                    exchangeGroup.MenuItems.Add(CreateMenuItem("RetentionPolicy", "retentionpolicy"));
 
             if (!hideItems)
                 if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))

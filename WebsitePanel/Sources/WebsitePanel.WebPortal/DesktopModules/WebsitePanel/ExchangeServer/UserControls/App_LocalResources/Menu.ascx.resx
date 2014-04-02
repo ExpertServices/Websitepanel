@@ -219,7 +219,7 @@
   <data name="Text.ArchivingMailboxes" xml:space="preserve">
     <value>Archiving Mailboxes</value>
   </data>
-  <data name="Text.ArchivingMailboxPlans" xml:space="preserve">
-    <value>Archiving Mailbox Plans</value>
+  <data name="Text.RetentionPolicy" xml:space="preserve">
+    <value>Retention Policy</value>
   </data>
 </root>

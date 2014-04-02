@@ -216,5 +216,12 @@ namespace WebsitePanel.Providers.HostedSolution
             get { return this.archiving; }
             set { this.archiving = value; }
         }
+
+        bool enableArchiving;
+        public bool EnableArchiving
+        {
+            get { return this.enableArchiving; }
+            set { this.enableArchiving = value; }
+        }
     }
 }

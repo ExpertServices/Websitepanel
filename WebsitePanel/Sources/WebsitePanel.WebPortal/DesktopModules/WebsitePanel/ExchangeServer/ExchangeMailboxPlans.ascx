@@ -28,7 +28,7 @@
 				    
                     <div class="FormButtonsBarClean">
                         <asp:Button ID="btnAddMailboxPlan" runat="server" meta:resourcekey="btnAddMailboxPlan"
-                            Text="Add New Mailboxplan" CssClass="Button1" OnClick="btnAddMailboxPlan_Click" />
+                            Text="Add New" CssClass="Button1" OnClick="btnAddMailboxPlan_Click" />
                     </div>
 
 				    <asp:GridView ID="gvMailboxPlans" runat="server" AutoGenerateColumns="False" EnableViewState="true"

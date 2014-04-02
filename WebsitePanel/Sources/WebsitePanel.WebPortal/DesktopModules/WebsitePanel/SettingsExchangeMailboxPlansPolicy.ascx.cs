@@ -53,11 +53,27 @@ namespace WebsitePanel.Portal
     public partial class SettingsExchangeMailboxPlansPolicy : WebsitePanelControlBase, IUserSettingsEditorControl
     {
 
+        private bool RetentionPolicy
+        {
+            get
+            {
+                return Request["SettingsName"].ToLower().Contains("retentionpolicy");
+            }
+        }
+
+
         public void BindSettings(UserSettings settings)
         {
             BindMailboxPlans();
             
             txtStatus.Visible = false;
+
+            secMailboxFeatures.Visible = !RetentionPolicy;
+            secMailboxGeneral.Visible = !RetentionPolicy;
+
+            gvMailboxPlans.Columns[2].Visible = !RetentionPolicy;
+            gvMailboxPlans.Columns[3].Visible = !RetentionPolicy;
+
         }
 
 
@@ -81,7 +97,7 @@ namespace WebsitePanel.Portal
 
             if ((orgs != null) & (orgs.GetLength(0) > 0))
             {
-                ExchangeMailboxPlan[] list = ES.Services.ExchangeServer.GetExchangeMailboxPlans(orgs[0].Id, false);
+                ExchangeMailboxPlan[] list = ES.Services.ExchangeServer.GetExchangeMailboxPlans(orgs[0].Id, RetentionPolicy);
 
                 gvMailboxPlans.DataSource = list;
                 gvMailboxPlans.DataBind();
@@ -125,8 +141,11 @@ namespace WebsitePanel.Portal
             plan.RecoverableItemsWarningPct = recoverableItemsWarning.ValueKB;
             if ((plan.RecoverableItemsWarningPct == 0)) plan.RecoverableItemsWarningPct = 100;
             plan.LitigationHoldMsg = txtLitigationHoldMsg.Text.Trim();
-            plan.LitigationHoldUrl = txtLitigationHoldUrl.Text.Trim(); 
+            plan.LitigationHoldUrl = txtLitigationHoldUrl.Text.Trim();
 
+            plan.EnableArchiving = chkEnableArchiving.Checked;
+
+            plan.Archiving = RetentionPolicy;
 
             if (PanelSecurity.SelectedUser.Role == UserRole.Administrator)
                 plan.MailboxPlanType = (int)ExchangeMailboxPlanType.Administrator;
@@ -231,7 +250,7 @@ namespace WebsitePanel.Portal
                         txtLitigationHoldMsg.Text = string.Empty;
                         txtLitigationHoldUrl.Text = string.Empty;
 
-
+                        chkEnableArchiving.Checked = false;
 
                         btnUpdateMailboxPlan.Enabled = (string.IsNullOrEmpty(txtMailboxPlan.Text)) ? false : true;
 
@@ -285,6 +304,8 @@ namespace WebsitePanel.Portal
                         recoverableItemsWarning.ValueKB = plan.RecoverableItemsWarningPct;
                         txtLitigationHoldMsg.Text = plan.LitigationHoldMsg;
                         txtLitigationHoldUrl.Text = plan.LitigationHoldUrl;
+
+                        chkEnableArchiving.Checked = plan.EnableArchiving;
                         
                         btnUpdateMailboxPlan.Enabled  = (string.IsNullOrEmpty(txtMailboxPlan.Text)) ? false : true;
 
@@ -392,8 +413,11 @@ namespace WebsitePanel.Portal
             plan.RecoverableItemsWarningPct = recoverableItemsWarning.ValueKB;
             if ((plan.RecoverableItemsWarningPct == 0)) plan.RecoverableItemsWarningPct = 100;
             plan.LitigationHoldMsg = txtLitigationHoldMsg.Text.Trim();
-            plan.LitigationHoldUrl = txtLitigationHoldUrl.Text.Trim(); 
+            plan.LitigationHoldUrl = txtLitigationHoldUrl.Text.Trim();
 
+            plan.EnableArchiving = chkEnableArchiving.Checked;
+
+            plan.Archiving = RetentionPolicy;
 
             if (PanelSecurity.SelectedUser.Role == UserRole.Administrator)
                 plan.MailboxPlanType = (int)ExchangeMailboxPlanType.Administrator;

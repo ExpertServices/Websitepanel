@@ -2785,7 +2785,7 @@ namespace WebsitePanel.EnterpriseServer
                                                     bool isDefault, int issueWarningPct, int keepDeletedItemsDays, int mailboxSizeMB, int maxReceiveMessageSizeKB, int maxRecipients,
                                                     int maxSendMessageSizeKB, int prohibitSendPct, int prohibitSendReceivePct, bool hideFromAddressBook, int mailboxPlanType,
                                                     bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg,
-            bool archiving)
+            bool archiving, bool EnableArchiving)
         {
             SqlParameter outParam = new SqlParameter("@MailboxPlanId", SqlDbType.Int);
             outParam.Direction = ParameterDirection.Output;
@@ -2818,7 +2818,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@RecoverableItemsSpace", recoverabelItemsSpace),
                 new SqlParameter("@LitigationHoldUrl", litigationHoldUrl),
                 new SqlParameter("@LitigationHoldMsg", litigationHoldMsg),
-                new SqlParameter("@Archiving", archiving)
+                new SqlParameter("@Archiving", archiving),
+                new SqlParameter("@EnableArchiving", EnableArchiving)
             );
 
             return Convert.ToInt32(outParam.Value);

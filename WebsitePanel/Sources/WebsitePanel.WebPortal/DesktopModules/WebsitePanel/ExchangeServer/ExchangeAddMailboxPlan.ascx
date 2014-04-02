@@ -78,6 +78,11 @@
 								    <asp:CheckBox ID="chkActiveSync" runat="server" meta:resourcekey="chkActiveSync" Text="ActiveSync"></asp:CheckBox>
 							    </td>
 						    </tr>
+						    <tr>
+							    <td>
+								    <asp:CheckBox ID="chkEnableArchiving" runat="server" meta:resourcekey="chkEnableArchiving" Text="Archiving"></asp:CheckBox>
+							    </td>
+						    </tr>
 						</table>
 						<br />
 					</asp:Panel>
