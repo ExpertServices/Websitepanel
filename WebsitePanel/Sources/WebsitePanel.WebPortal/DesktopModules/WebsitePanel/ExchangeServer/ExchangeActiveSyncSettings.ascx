@@ -1,7 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ExchangeActiveSyncSettings.ascx.cs" Inherits="WebsitePanel.Portal.ExchangeServer.ExchangeActiveSyncSettings" %>
 <%@ Register Src="UserControls/HoursBox.ascx" TagName="HoursBox" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/SizeBox.ascx" TagName="SizeBox" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/DaysBox.ascx" TagName="DaysBox" TagPrefix="wsp" %>
 <%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="../UserControls/CollapsiblePanel.ascx" %>
@@ -13,7 +12,6 @@
 	
 	<div class="Module">
 		<div class="Left">
-			<wsp:Menu id="menu" runat="server" SelectedItem="activesync_policy" />
 		</div>
 		<div class="Content">
 			<div class="Center">

@@ -1,6 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LyncAddFederationDomain.ascx.cs" Inherits="WebsitePanel.Portal.LyncAddFederationDomain" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
-<%@ Register Src="../ExchangeServer/UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server" />
@@ -8,7 +7,6 @@
 <div id="ExchangeContainer">
     <div class="Module">
         <div class="Left">
-            <wsp:Menu id="menu" runat="server" />
         </div>
         <div class="Content">
             <div class="Center">
