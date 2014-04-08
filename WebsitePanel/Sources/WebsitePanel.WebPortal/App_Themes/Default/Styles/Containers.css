@@ -253,23 +253,27 @@
 .ExchangeHeader
 {
 	float: left;
-	background: transparent url(../images/Exchange/main_bg.gif) left top repeat-y;  
+    background: transparent url(../images/Exchange/main_bg_sh.gif) left top repeat-y;
+    background-size:991px 1px;  
 }
 .ExchangeBody
 {
 	float: left;
-    background: transparent url(../images/Exchange/module_header.gif) left -35px no-repeat;  
+    background: transparent url(../images/Exchange/module_header_sh.gif) left -35px no-repeat;
+    background-size:991px 142px;  
 	clear: both;
 }
 .ExchangeBottom
 {
 	float: left;
-	background: transparent url(../images/Exchange/module_footer.gif) left bottom no-repeat; 
+    background: transparent url(../images/Exchange/module_footer_sh.gif) left bottom no-repeat; 
+    background-size:991px 5px; 
 }
 .ExchangeFooter
 {
 	float: left;
-	background: transparent url(../images/Exchange/bottom_bg.gif) left top repeat-y; 
+    background: transparent url(../images/Exchange/bottom_bg_sh.gif) left top repeat-y; 
+    background-size:991px 1px;
 	padding-bottom: 10px;
 }
 #ExchangeContainer
@@ -301,17 +305,17 @@
 
 #ExchangeContainer .Left
 {
-	padding-left: 15px;
 	float: left;
 	background: transparent;
-	padding-top: 14px;
-	width: 185px;
+    width: 0px;
 }
 
 #ExchangeContainer .Content
 {
 	float: right;
-	width: 790px; 
+    width: 981px;
+    padding-right: 5px;
+    margin-left: 5px;
 }
 
 #ExchangeContainer .Center
