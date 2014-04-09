@@ -28,6 +28,17 @@
     display: table !important;
 }
 
+.TopMenu ul.AspNet-Menu li ul li.AspNet-Menu-WithChildren span img
+{
+    border-style:None;
+    height:16px;
+    width:16px;
+    border-width:0px;
+    padding-right: 3px;
+    float:left;
+    position:relative;
+}
+
 .TopMenu ul.AspNet-Menu li span
 
 .TopMenu li.AspNet-Menu-Leaf a, /* leaves */

@@ -2,7 +2,6 @@
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/UsersList.ascx" TagName="UsersList" TagPrefix="wsp"%>
 <%@ Register Src="UserControls/SecurityGroupTabs.ascx" TagName="SecurityGroupTabs" TagPrefix="wsp"%>
-<%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 <%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="../UserControls/CollapsiblePanel.ascx" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 
@@ -11,7 +10,6 @@
 <div id="ExchangeContainer">
 	<div class="Module">
 		<div class="Left">
-			<wsp:Menu id="menu" runat="server" SelectedItem="secur_groups" />
 		</div>
 		<div class="Content">
 			<div class="Center">

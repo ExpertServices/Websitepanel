@@ -7,7 +7,6 @@
 <%@ Register Src="UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox"
     TagPrefix="wsp" %>
 
-<%@ Register Src="ExchangeServer/UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 <%@ Register src="UserControls/QuotaEditor.ascx" tagname="QuotaEditor" tagprefix="uc1" %>
 
 
@@ -15,8 +14,7 @@
 <div id="ExchangeContainer">
 	<div class="Module">
 		<div class="Left">
-			<wsp:Menu id="menu" runat="server" SelectedItem="storage_limits" />
-            </div>
+        </div>
 		<div class="Content">
 			<div class="Center">
 				<div class="Title">

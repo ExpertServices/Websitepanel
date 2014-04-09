@@ -438,6 +438,13 @@
     <Compile Include="Lync\UserControls\LyncUserPlanSelector.ascx.designer.cs">
       <DependentUpon>LyncUserPlanSelector.ascx</DependentUpon>
     </Compile>
+    <Compile Include="OrganizationMenu.ascx.cs">
+      <DependentUpon>OrganizationMenu.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OrganizationMenu.ascx.designer.cs">
+      <DependentUpon>OrganizationMenu.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ProviderControls\CRM2011_Settings.ascx.cs">
       <DependentUpon>CRM2011_Settings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4065,6 +4072,7 @@
     <Content Include="ExchangeServer\UserControls\UsersList.ascx" />
     <Content Include="Lync\LyncPhoneNumbers.ascx" />
     <Content Include="Lync\UserControls\LyncUserSettings.ascx" />
+    <Content Include="OrganizationMenu.ascx" />
     <Content Include="ProviderControls\CRM2011_Settings.ascx" />
     <Content Include="ProviderControls\EnterpriseStorage_Settings.ascx" />
     <Content Include="ProviderControls\HeliconZoo_Settings.ascx" />
@@ -5298,6 +5306,7 @@
     <Content Include="Lync\App_LocalResources\LyncPhoneNumbers.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="App_LocalResources\OrganizationMenu.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

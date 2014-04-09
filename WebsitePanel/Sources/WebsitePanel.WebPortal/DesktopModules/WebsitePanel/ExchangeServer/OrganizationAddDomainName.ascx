@@ -1,6 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="OrganizationAddDomainName.ascx.cs" Inherits="WebsitePanel.Portal.ExchangeServer.OrganizationAddDomainName" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
@@ -8,7 +7,6 @@
 <div id="ExchangeContainer">
 	<div class="Module">
 		<div class="Left">
-			<wsp:Menu id="menu" runat="server" SelectedItem="domains" />
 		</div>
 		<div class="Content">
 			<div class="Center">
