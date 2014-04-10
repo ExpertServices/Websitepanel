@@ -49,7 +49,7 @@
                         </tr>
 <!--
                         <tr class="OrgStatsRow">
-                            <td align="right" >
+                            <td class="OrgStatsQuota" nowrap>
                                 <asp:HyperLink ID="lnkDomains" runat="server" meta:resourcekey="lnkDomains"></asp:HyperLink>
                             </td>
                             <td width="100%">
@@ -58,8 +58,10 @@
                         </tr>
 -->
                         <tr class="OrgStatsRow">
-                            <td class="OrgStatsQuota">
+                            <td class="OrgStatsQuota" nowrap>
                                 <asp:HyperLink ID="lnkUsers" runat="server" meta:resourcekey="lnkUsers"></asp:HyperLink>
+                            </td>
+                            <td>
                                 <wsp:QuotaViewer ID="userStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
@@ -72,38 +74,50 @@
                             </td>
                         </tr>
                         <tr class="OrgStatsRow"> 
-                            <td class="OrgStatsQuota">
+                            <td class="OrgStatsQuota" nowrap>
                                 <asp:HyperLink ID="lnkMailboxes" runat="server" meta:resourcekey="lnkMailboxes" />
+                            </td>
+                            <td>
                                 <wsp:QuotaViewer ID="mailboxesStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
                         <tr class="OrgStatsRow" id="rowContacts" runat="server">
-                            <td class="OrgStatsQuota">
+                            <td class="OrgStatsQuota" nowrap>
                                 <asp:HyperLink ID="lnkContacts" runat="server" meta:resourcekey="lnkContacts"></asp:HyperLink>
+                            </td>
+                            <td>
                                 <wsp:QuotaViewer ID="contactsStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
                         <tr class="OrgStatsRow" id="rowLists" runat="server">
-                            <td class="OrgStatsQuota">
+                            <td class="OrgStatsQuota" nowrap>
                                 <asp:HyperLink ID="lnkLists" runat="server" meta:resourcekey="lnkLists"></asp:HyperLink>
+                            </td>
+                            <td>
                                 <wsp:QuotaViewer ID="listsStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
                         <tr class="OrgStatsRow"  id="rowFolders" runat="server">
-                            <td class="OrgStatsQuota">
+                            <td class="OrgStatsQuota" nowrap>
                                 <asp:HyperLink ID="lnkFolders" runat="server" meta:resourcekey="lnkFolders"></asp:HyperLink>
+                            </td>
+                            <td>
                                 <wsp:QuotaViewer ID="foldersStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
                         <tr class="OrgStatsRow" id="rowExchangeStorage" runat="server">
-                            <td class="OrgStatsQuota">
+                            <td class="OrgStatsQuota" nowrap>
                                 <asp:HyperLink ID="lnkExchangeStorage" runat="server" meta:resourcekey="lnkExchangeStorage"></asp:HyperLink>
+                            </td>
+                            <td>
                                 <wsp:QuotaViewer ID="exchangeStorageStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
                         <tr class="OrgStatsRow" id="rowExchangeLitigationHold" runat="server">
-                            <td class="OrgStatsQuota">
+                            <td class="OrgStatsQuota" nowrap>
                                 <asp:HyperLink ID="lnkExchangeLitigationHold" runat="server" meta:resourcekey="lnkExchangeLitigationHold"></asp:HyperLink>
+                            </td>
+                            <td>
                                 <wsp:QuotaViewer ID="exchangeLitigationHoldStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
@@ -117,10 +131,11 @@
                             </td>
                         </tr>
                         <tr class="OrgStatsRow"> 
-                            <td class="OrgStatsQuota">
+                            <td class="OrgStatsQuota" nowrap>
                                 <asp:HyperLink ID="lnkBESUsers" runat="server" meta:resourcekey="lnkBESUsers" />
+                            </td>
+                            <td>
                                 <wsp:QuotaViewer ID="besUsersStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
-
                             </td>
                         </tr>
                         </asp:Panel>
@@ -132,12 +147,17 @@
                             </td>
                         </tr>
                         <tr class="OrgStatsRow"> 
-                            <td class="OrgStatsQuota">
+                            <td class="OrgStatsQuota" nowrap>
                                 <asp:HyperLink ID="lnkLyncUsers" runat="server" meta:resourcekey="lnkLyncUsers" />
+                            </td>
+                            <td>
                                 <wsp:QuotaViewer ID="lyncUsersStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
                         </asp:Panel>
+
+
+
                         
                         <asp:Panel runat="server" ID="sharePointStatsPanel">
                         <tr class="OrgStatsRow">
@@ -147,8 +167,10 @@
                             </td>
                         </tr>
                         <tr class="OrgStatsRow">
-                            <td class="OrgStatsQuota"> 
+                            <td class="OrgStatsQuota" nowrap> 
                                 <asp:HyperLink ID="lnkSiteCollections" runat="server" meta:resourcekey="lnkSiteCollections"></asp:HyperLink>
+                            </td>
+                            <td>
                                 <wsp:QuotaViewer ID="siteCollectionsStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
@@ -161,12 +183,15 @@
                             </td>
                         </tr>
                         <tr class="OrgStatsRow"> 
-                            <td class="OrgStatsQuota">
+                            <td class="OrgStatsQuota" nowrap>
                                 <asp:HyperLink ID="lnkOCSUsers" runat="server" meta:resourcekey="lnkOCSUsers" />
+                            </td>
+                            <td>
                                 <wsp:QuotaViewer ID="ocsUsersStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
                         </asp:Panel>
+
                         
                         <asp:Panel runat="server" ID="crmStatsPanel">
                         <tr >
@@ -176,27 +201,35 @@
                             </td>
                         </tr>
                         <tr class="OrgStatsRow">
-                            <td class="OrgStatsQuota">
+                            <td class="OrgStatsQuota" nowrap>
                                 <asp:HyperLink ID="lnkCRMUsers" runat="server" meta:resourcekey="lnkCRMUsers" Text="Full licenses :"></asp:HyperLink>
+                            </td>
+                            <td>
                                 <wsp:QuotaViewer ID="crmUsersStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
                         <tr class="OrgStatsRow">
-                            <td class="OrgStatsQuota">
+                            <td class="OrgStatsQuota" nowrap>
                                 <asp:HyperLink ID="lnkLimitedCRMUsers" runat="server" meta:resourcekey="lnkLimitedCRMUsers" Text="Limited licenses :"></asp:HyperLink>
+                            </td>
+                            <td>
                                 <wsp:QuotaViewer ID="crmLimitedUsersStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
                         <tr class="OrgStatsRow">
-                            <td class="OrgStatsQuota">
+                            <td class="OrgStatsQuota" nowrap>
                                 <asp:HyperLink ID="lnkESSCRMUsers" runat="server" meta:resourcekey="lnkESSCRMUsers" Text="ESS licenses :"></asp:HyperLink>
+                            </td>
+                            <td>
                                 <wsp:QuotaViewer ID="crmESSUsersStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
                         <tr class="OrgStatsRow">
-                            <td class="OrgStatsQuota">
+                            <td class="OrgStatsQuota" nowrap>
 				                <asp:HyperLink ID="lnkCRMDBSize" runat="server" meta:resourcekey="lnkCRMDBSize" Text="Storage size (MB):"></asp:HyperLink>
-                                <wsp:QuotaViewer ID="crmDBSize" runat="server" QuotaTypeId="2" DisplayGauge="true" />
+                            </td>
+                            <td>
+				                <wsp:QuotaViewer ID="crmDBSize" runat="server" QuotaTypeId="2" DisplayGauge="true" />
                             </td>
                         </tr>
                         </asp:Panel>
@@ -208,14 +241,18 @@
                             </td>
                         </tr>
                         <tr class="OrgStatsRow"> 
-                            <td class="OrgStatsQuota">
+                            <td class="OrgStatsQuota" nowrap>
                                 <asp:HyperLink ID="lnkEnterpriseStorageSpace" runat="server" meta:resourcekey="lnkEnterpriseStorageSpace" />
+                            </td>
+                            <td>
                                 <wsp:QuotaViewer ID="enterpriseStorageSpaceStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
                         <tr class="OrgStatsRow">
-                            <td class="OrgStatsQuota">
+                            <td class="OrgStatsQuota" nowrap>
                                 <asp:HyperLink ID="lnkEnterpriseStorageFolders" runat="server" meta:resourcekey="lnkEnterpriseStorageFolders"></asp:HyperLink>
+                            </td>
+                            <td>
                                 <wsp:QuotaViewer ID="enterpriseStorageFoldersStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
