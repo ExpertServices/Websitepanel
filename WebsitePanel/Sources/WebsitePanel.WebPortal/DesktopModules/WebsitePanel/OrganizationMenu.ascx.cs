@@ -229,7 +229,7 @@ namespace WebsitePanel.Portal
 
         private void PrepareBlackBerryMenuRoot(PackageContext cntx, MenuItemCollection items, string imagePath)
         {
-            MenuItem item = new MenuItem(GetLocalizedString("Text.CRMGroup"), "", imagePath + "crm_16.png", null);
+            MenuItem item = new MenuItem(GetLocalizedString("Text.BlackBerryGroup"), "", imagePath + "blackberry16.png", null);
 
             item.Selectable = false;
 
