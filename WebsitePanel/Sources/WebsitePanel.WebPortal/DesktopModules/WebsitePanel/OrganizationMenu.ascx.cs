@@ -63,6 +63,10 @@ namespace WebsitePanel.Portal
 
             string imagePath = String.Concat("~/", DefaultPage.THEMES_FOLDER, "/", Page.Theme, "/", "Images/Exchange", "/");
 
+            //Add "Organization Home" menu item
+            MenuItem item = new MenuItem(GetLocalizedString("Text.OrganizationHome"), "", "", null);
+            items.Add(item);
+
             //Organization menu group;
             if (cntx.Groups.ContainsKey(ResourceGroups.HostedOrganizations))
             PrepareOrganizationMenuRoot(cntx, items, imagePath);
