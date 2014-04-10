@@ -216,4 +216,7 @@
   <data name="Text.Users" xml:space="preserve">
     <value>Users</value>
   </data>
+  <data name="Text.OrganizationHome" xml:space="preserve">
+    <value>Organization Home</value>
+  </data>
 </root>

@@ -315,6 +315,10 @@ TEXTAREA
 	font-weight: bold;
 }
 
+.OrgStatsQuota
+{
+	padding-left: 7px;
+}
 
 .HostingPlanGroup
 {
