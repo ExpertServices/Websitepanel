@@ -19,7 +19,7 @@
         </li>
         <li>
             <asp:HyperLink ID="lnkExchangeRetentionPolicyTag" runat="server" meta:resourcekey="lnkExchangeRetentionPolicyTag"
-                    Text="Global Retention Policy Tag" NavigateUrl='<%# GetSettingsLink("RetentionPolicyTag", "SettingsExchangeMailboxPlansPolicy") %>'></asp:HyperLink>
+                    Text="Global Retention Policy Tag" NavigateUrl='<%# GetSettingsLink("RetentionPolicyTag", "SettingsExchangeRetentionPolicyTag") %>'></asp:HyperLink>
         </li>
 
         <li>

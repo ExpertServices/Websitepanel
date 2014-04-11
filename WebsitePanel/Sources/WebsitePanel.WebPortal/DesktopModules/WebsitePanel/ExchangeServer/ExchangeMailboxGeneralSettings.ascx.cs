@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2012-2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -34,13 +34,25 @@ namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class ExchangeMailboxGeneralSettings : WebsitePanelModuleBase
     {
+
+        private PackageContext cntx = null;
+        private PackageContext Cntx
+        {
+            get 
+            {
+                if (cntx == null)
+                    cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
+                return cntx;
+            }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
 
-                if (Utils.CheckQouta(Quotas.EXCHANGE2007_DISCLAIMERSALLOWED, cntx))
+                if (Utils.CheckQouta(Quotas.EXCHANGE2007_DISCLAIMERSALLOWED, Cntx))
                 {
                     ddDisclaimer.Items.Add(new System.Web.UI.WebControls.ListItem("None", "-1"));
                     ExchangeDisclaimer[] disclaimers = ES.Services.ExchangeServer.GetExchangeDisclaimers(PanelRequest.ItemID);
@@ -53,32 +65,25 @@ namespace WebsitePanel.Portal.ExchangeServer
                     ddDisclaimer.Visible = false;
                 }
 
-                secArchiving.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, cntx);
-
                 BindSettings();
+
+                SetArchivingVisible();
 
                 UserInfo user = UsersHelper.GetUser(PanelSecurity.EffectiveUserId);
 
                 if (user != null)
                 {
                     
-                    if ((user.Role == UserRole.User) & (Utils.CheckQouta(Quotas.EXCHANGE2007_ISCONSUMER, cntx)))
+                    if ((user.Role == UserRole.User) & (Utils.CheckQouta(Quotas.EXCHANGE2007_ISCONSUMER, Cntx)))
                     {
                         chkHideAddressBook.Visible = false;
                         chkDisable.Visible = false;
                     }
 
-                    secLitigationHoldSettings.Visible = (Utils.CheckQouta(Quotas.EXCHANGE2007_ALLOWLITIGATIONHOLD, cntx));
+                    secLitigationHoldSettings.Visible = (Utils.CheckQouta(Quotas.EXCHANGE2007_ALLOWLITIGATIONHOLD, Cntx));
                 }
             }
 
-        }
-
-        private bool CheckQouta(string key, PackageContext cntx)
-        {
-            return cntx.Quotas.ContainsKey(key) &&
-                ((cntx.Quotas[key].QuotaAllocatedValue == 1 && cntx.Quotas[key].QuotaTypeId == 1) ||
-                (cntx.Quotas[key].QuotaTypeId != 1 && (cntx.Quotas[key].QuotaAllocatedValue > 0 || cntx.Quotas[key].QuotaAllocatedValue == -1)));
         }
 
         private void BindSettings()
@@ -118,11 +123,13 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 if (account.ArchivingMailboxPlanId<1)
                 {
-                    mailboxArchivePlanSelector.MailboxPlanId = "-1";
+                    mailboxRetentionPolicySelector.MailboxPlanId = "-1";
+                    chkArchiving.Checked = false;
                 }
                 else
                 {
-                    mailboxArchivePlanSelector.MailboxPlanId = account.ArchivingMailboxPlanId.ToString();
+                    mailboxRetentionPolicySelector.MailboxPlanId = account.ArchivingMailboxPlanId.ToString();
+                    chkArchiving.Checked = true;
                 }
 
                 mailboxSize.QuotaUsedValue = Convert.ToInt32(stats.TotalSize / 1024 / 1024);
@@ -135,8 +142,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 litigationHoldSpace.QuotaUsedValue = Convert.ToInt32(stats.LitigationHoldTotalSize / 1024 / 1024);
                 litigationHoldSpace.QuotaValue = (stats.LitigationHoldMaxSize == -1) ? -1 : (int)Math.Round((double)(stats.LitigationHoldMaxSize / 1024 / 1024));
 
-                PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
-                if (Utils.CheckQouta(Quotas.EXCHANGE2007_DISCLAIMERSALLOWED, cntx))
+                if (Utils.CheckQouta(Quotas.EXCHANGE2007_DISCLAIMERSALLOWED, Cntx))
                 {
                     int disclaimerId = ES.Services.ExchangeServer.GetExchangeAccountDisclaimerId(PanelRequest.ItemID, PanelRequest.AccountID);
                     ddDisclaimer.SelectedValue = disclaimerId.ToString();
@@ -174,8 +180,14 @@ namespace WebsitePanel.Portal.ExchangeServer
                 }
                 else
                 {
-                    result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(PanelRequest.ItemID, PanelRequest.AccountID, Convert.ToInt32(mailboxPlanSelector.MailboxPlanId),
-                        Convert.ToInt32(mailboxArchivePlanSelector.MailboxPlanId) );
+                    int planId = Convert.ToInt32(mailboxPlanSelector.MailboxPlanId);
+                    int policyId = -1;
+                    if (chkArchiving.Checked)
+                        policyId = Convert.ToInt32(mailboxRetentionPolicySelector.MailboxPlanId);
+
+                    result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(PanelRequest.ItemID, PanelRequest.AccountID, planId,
+                        policyId);
+
                     if (result < 0)
                     {
                         messageBox.ShowResultMessage(result);
@@ -183,8 +195,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     }
                 }
 
-                PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
-                if (Utils.CheckQouta(Quotas.EXCHANGE2007_DISCLAIMERSALLOWED, cntx))
+                if (Utils.CheckQouta(Quotas.EXCHANGE2007_DISCLAIMERSALLOWED, Cntx))
                 {
                     int disclaimerId;
                     if (int.TryParse(ddDisclaimer.SelectedValue, out disclaimerId))
@@ -255,7 +266,32 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         protected void chkArchiving_CheckedChanged(object sender, EventArgs e)
         {
+            SetArchivingVisible();
+        }
+
+        private void SetArchivingVisible()
+        {
+            int id;
+            if (!int.TryParse(mailboxPlanSelector.MailboxPlanId, out id))
+                return;
+
+            bool archiving = false;
+
+            ExchangeMailboxPlan policy = ES.Services.ExchangeServer.GetExchangeMailboxPlan(PanelRequest.ItemID, id);
+
+            if (policy != null) 
+                archiving = policy.EnableArchiving & Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, Cntx);
+
+            if (!archiving)
+                chkArchiving.Checked = false;
+
+            secArchiving.Visible = archiving;
             mailboxArchivePlan.Visible = chkArchiving.Checked;
+        }
+
+        protected void mailboxPlanSelector_Changed(object sender, EventArgs e)
+        {
+            SetArchivingVisible();
         }
 
     }

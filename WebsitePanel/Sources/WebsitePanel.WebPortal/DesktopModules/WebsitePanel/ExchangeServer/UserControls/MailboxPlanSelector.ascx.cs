@@ -33,25 +33,33 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 {
     public partial class MailboxPlanSelector : WebsitePanelControlBase
     {
+        private void UpdateMailboxPlanSelected()
+        {
+            foreach (ListItem li in ddlMailboxPlan.Items)
+            {
+                if (li.Value == mailboxPlanToSelect)
+                {
+                    ddlMailboxPlan.ClearSelection();
+                    li.Selected = true;
+                    break;
+                }
+            }
 
-        private string mailboxPlanToSelect;
+        }
+
+        private string mailboxPlanToSelect = null;
 
         public string MailboxPlanId
         {
-
-            get { return ddlMailboxPlan.SelectedItem.Value; }
-            set
-            {
-                mailboxPlanToSelect = value;
-                foreach (ListItem li in ddlMailboxPlan.Items)
-                {
-                    if (li.Value == value)
-                    {
-                        ddlMailboxPlan.ClearSelection();
-                        li.Selected = true;
-                        break;
-                    }
-                }
+            get {
+                if (ddlMailboxPlan.SelectedItem != null)
+                    return ddlMailboxPlan.SelectedItem.Value;
+                return mailboxPlanToSelect; 
+            }
+            set 
+            { 
+                mailboxPlanToSelect = value; 
+                UpdateMailboxPlanSelected(); 
             }
         }
 
@@ -86,8 +94,14 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             }
         }
 
+        protected void Page_PreRender(object sender, EventArgs e)
+        {
+            ddlMailboxPlan.AutoPostBack = (Changed!=null);
+        }
+
         private void BindMailboxPlans()
         {
+
             WebsitePanel.Providers.HostedSolution.ExchangeMailboxPlan[] plans = ES.Services.ExchangeServer.GetExchangeMailboxPlans(PanelRequest.ItemID, Archiving);
 
             if (AddNone)
@@ -108,20 +122,17 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 ddlMailboxPlan.Items.Add(li);
             }
 
+            UpdateMailboxPlanSelected();
 
-            if (!string.IsNullOrEmpty(mailboxPlanToSelect))
+        }
+
+        public event EventHandler Changed = null;
+        protected void ddlMailboxPlan_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (Changed != null)
             {
-                foreach (ListItem li in ddlMailboxPlan.Items)
-                {
-                    if (li.Value == mailboxPlanToSelect)
-                    {
-                        ddlMailboxPlan.ClearSelection();
-                        li.Selected = true;
-                        break;
-                    }
-                }
+                Changed(this, e);
             }
-
         }
     }
 }

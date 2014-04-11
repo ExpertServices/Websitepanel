@@ -13,15 +13,6 @@ namespace WebsitePanel.Portal.ExchangeServer {
     public partial class ExchangeMailboxGeneralSettings {
         
         /// <summary>
-        /// asyncTasks control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.EnableAsyncTasksSupport asyncTasks;
-        
-        /// <summary>
         /// breadcrumb control.
         /// </summary>
         /// <remarks>
@@ -85,6 +76,15 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::WebsitePanel.Portal.UserControls.SimpleMessageBox messageBox;
         
         /// <summary>
+        /// GeneralUpdatePanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel GeneralUpdatePanel;
+        
+        /// <summary>
         /// secGeneral control.
         /// </summary>
         /// <remarks>
@@ -101,15 +101,6 @@ namespace WebsitePanel.Portal.ExchangeServer {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel General;
-        
-        /// <summary>
-        /// GeneralUpdatePanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel GeneralUpdatePanel;
         
         /// <summary>
         /// chkHideAddressBook control.
@@ -202,15 +193,6 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::System.Web.UI.WebControls.Panel Archiving;
         
         /// <summary>
-        /// ArchivingUpdatePanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdatePanel ArchivingUpdatePanel;
-        
-        /// <summary>
         /// chkArchiving control.
         /// </summary>
         /// <remarks>
@@ -229,22 +211,22 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::System.Web.UI.HtmlControls.HtmlTableRow mailboxArchivePlan;
         
         /// <summary>
-        /// locArchiveMailboxplanName control.
+        /// locRetentionPolicyName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize locArchiveMailboxplanName;
+        protected global::System.Web.UI.WebControls.Localize locRetentionPolicyName;
         
         /// <summary>
-        /// mailboxArchivePlanSelector control.
+        /// mailboxRetentionPolicySelector control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.MailboxPlanSelector mailboxArchivePlanSelector;
+        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.MailboxPlanSelector mailboxRetentionPolicySelector;
         
         /// <summary>
         /// secLitigationHoldSettings control.

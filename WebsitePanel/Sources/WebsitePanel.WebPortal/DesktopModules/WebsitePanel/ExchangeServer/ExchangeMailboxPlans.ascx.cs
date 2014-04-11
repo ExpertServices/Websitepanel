@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2012-2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -47,6 +47,8 @@ namespace WebsitePanel.Portal.ExchangeServer
         protected void Page_Load(object sender, EventArgs e)
         {
             locTitle.Text = RetentionPolicy ? GetLocalizedString("locTitleRetentionPolicy.Text") : GetLocalizedString("locTitle.Text");
+            gvMailboxPlans.Columns[2].Visible = !RetentionPolicy;
+            btnSetDefaultMailboxPlan.Visible = !RetentionPolicy;
 
             if (!IsPostBack)
             {

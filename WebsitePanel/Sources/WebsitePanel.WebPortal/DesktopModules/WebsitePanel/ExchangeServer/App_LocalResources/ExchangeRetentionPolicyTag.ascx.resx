@@ -117,106 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="chkActiveSync.Text" xml:space="preserve">
-    <value>ActiveSync</value>
+  <data name="gvPolicy.Header" xml:space="preserve">
+    <value>Retention policy</value>
   </data>
-  <data name="chkHideFromAddressBook" xml:space="preserve">
-    <value>Hide from Addressbook</value>
+  <data name="gvPolicyEdit.Header" xml:space="preserve">
+    <value>Select</value>
   </data>
-  <data name="chkIMAP.Text" xml:space="preserve">
-    <value>IMAP</value>
+  <data name="gvPolicy.Empty" xml:space="preserve">
+    <value>No Retention policy tags  have been added yet. To add a new mailbox plan click "Add New" button.</value>
   </data>
-  <data name="chkMAPI.Text" xml:space="preserve">
-    <value>MAPI</value>
+  <data name="gvPolicySelect.Header" xml:space="preserve">
+    <value>Select</value>
   </data>
-  <data name="chkOWA.Text" xml:space="preserve">
-    <value>OWA/HTTP</value>
+  <data name="valRequirePolicy.ErrorMessage" xml:space="preserve">
+    <value>Please enter correct  retention policy tags</value>
   </data>
-  <data name="chkPOP3.Text" xml:space="preserve">
-    <value>POP3</value>
-  </data>
-  <data name="FormComments.Text" xml:space="preserve">
-    <value />
-  </data>
-  <data name="locDays.Text" xml:space="preserve">
-    <value>days</value>
-  </data>
-  <data name="locIssueWarning.Text" xml:space="preserve">
-    <value>Issue warning at:</value>
-  </data>
-  <data name="locKB.Text" xml:space="preserve">
-    <value>KB</value>
-  </data>
-  <data name="locKeepDeletedItems.Text" xml:space="preserve">
-    <value>Keep deleted items for:</value>
-  </data>
-  <data name="locMailboxSize.Text" xml:space="preserve">
-    <value>Mailbox size (Mb):</value>
-  </data>
-  <data name="locMaxReceiveMessageSizeKB.Text" xml:space="preserve">
-    <value>Maximum Receive Message Size (Kb):</value>
-  </data>
-  <data name="locMaxRecipients.Text" xml:space="preserve">
-    <value>Maximum Recipients:</value>
-  </data>
-  <data name="locMaxSendMessageSizeKB.Text" xml:space="preserve">
-    <value>Maximum Send Message Size (Kb):</value>
-  </data>
-  <data name="locProhibitSend.Text" xml:space="preserve">
-    <value>Prohibit send at:</value>
-  </data>
-  <data name="locProhibitSendReceive.Text" xml:space="preserve">
-    <value>Prohibit send and receive at:</value>
-  </data>
-  <data name="locTitle.Text" xml:space="preserve">
-    <value>Add Mailbox plan</value>
-  </data>
-  <data name="locWhenSizeExceeds.Text" xml:space="preserve">
-    <value>When the mailbox size exceeds the indicated amount:</value>
-  </data>
-  <data name="secDeleteRetention.Text" xml:space="preserve">
-    <value>Delete Item Retention</value>
-  </data>
-  <data name="secMailboxFeatures.Text" xml:space="preserve">
-    <value>Mailbox Features</value>
-  </data>
-  <data name="secMailboxGeneral.Text" xml:space="preserve">
-    <value>General</value>
-  </data>
-  <data name="secMailboxPlan.Text" xml:space="preserve">
-    <value>Mailbox plan</value>
-  </data>
-  <data name="secStorageQuotas.Text" xml:space="preserve">
-    <value>Quotas</value>
-  </data>
-  <data name="Text.PageName" xml:space="preserve">
-    <value>Mailbox plan</value>
-  </data>
-  <data name="valRequireMailboxPlan.ErrorMessage" xml:space="preserve">
-    <value>Please enter correct mailboxplan</value>
-  </data>
-  <data name="valRequireMailboxPlan.Text" xml:space="preserve">
+  <data name="valRequirePolicy.Text" xml:space="preserve">
     <value>*</value>
   </data>
-  <data name="chkEnableLitigationHold.Text" xml:space="preserve">
-    <value>Enable Litigation Hold</value>
+  <data name="locTitle.Text" xml:space="preserve">
+    <value>Mailbox plans</value>
   </data>
-  <data name="locRecoverableItemsSpace.Text" xml:space="preserve">
-    <value>Recoverable Items Space (Mb):</value>
-  </data>
-  <data name="locRecoverableItemsWarning.Text" xml:space="preserve">
-    <value>Warning at:</value>
-  </data>
-  <data name="secLitigationHold.Text" xml:space="preserve">
-    <value>Litigation Hold</value>
-  </data>
-  <data name="lblLitigationHoldMsg.Text" xml:space="preserve">
-    <value>Litigation Hold Message:</value>
-  </data>
-  <data name="lblLitigationHoldUrl.Text" xml:space="preserve">
-    <value>Litigation Hold Url:</value>
-  </data>
-  <data name="locTitleArchiving.Text" xml:space="preserve">
-    <value>Add Retention policy</value>
+  <data name="Text.PageName" xml:space="preserve">
+    <value>Retention policy tags</value>
   </data>
 </root>

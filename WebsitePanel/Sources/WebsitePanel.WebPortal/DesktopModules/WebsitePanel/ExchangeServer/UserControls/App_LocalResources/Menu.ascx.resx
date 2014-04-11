@@ -222,4 +222,7 @@
   <data name="Text.RetentionPolicy" xml:space="preserve">
     <value>Retention Policy</value>
   </data>
+  <data name="Text.RetentionPolicyTag" xml:space="preserve">
+    <value>Retention Policy Tag</value>
+  </data>
 </root>

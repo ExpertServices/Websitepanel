@@ -315,6 +315,13 @@
     <Compile Include="ExchangeServer\OrganizationUserMemberOf.ascx.designer.cs">
       <DependentUpon>OrganizationUserMemberOf.ascx</DependentUpon>
     </Compile>
+    <Compile Include="ExchangeServer\ExchangeRetentionPolicyTag.ascx.cs">
+      <DependentUpon>ExchangeRetentionPolicyTag.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\ExchangeRetentionPolicyTag.ascx.designer.cs">
+      <DependentUpon>ExchangeRetentionPolicyTag.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ExchangeServer\UserControls\AccountsListWithPermissions.ascx.cs">
       <DependentUpon>AccountsListWithPermissions.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -535,6 +542,13 @@
     <Compile Include="ScheduleTaskControls\NotifyOverusedDatabases.ascx.cs">
       <DependentUpon>NotifyOverusedDatabases.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsExchangeRetentionPolicyTag.ascx.cs">
+      <DependentUpon>SettingsExchangeRetentionPolicyTag.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsExchangeRetentionPolicyTag.ascx.designer.cs">
+      <DependentUpon>SettingsExchangeRetentionPolicyTag.ascx</DependentUpon>
     </Compile>
     <Compile Include="SettingsExchangeMailboxPlansPolicy.ascx.cs">
       <DependentUpon>SettingsExchangeMailboxPlansPolicy.ascx</DependentUpon>
@@ -4060,6 +4074,7 @@
     <Content Include="ExchangeServer\OrganizationSecurityGroupGeneralSettings.ascx" />
     <Content Include="ExchangeServer\OrganizationSecurityGroups.ascx" />
     <Content Include="ExchangeServer\OrganizationUserMemberOf.ascx" />
+    <Content Include="ExchangeServer\ExchangeRetentionPolicyTag.ascx" />
     <Content Include="ExchangeServer\UserControls\EnterpriseStoragePermissions.ascx" />
     <Content Include="ExchangeServer\UserControls\GroupsList.ascx" />
     <Content Include="ExchangeServer\UserControls\SecurityGroupTabs.ascx" />
@@ -4091,6 +4106,7 @@
     <Content Include="ProviderControls\hMailServer5_Settings.ascx" />
     <Content Include="ProviderControls\Lync_Settings.ascx" />
     <Content Include="ScheduleTaskControls\NotifyOverusedDatabases.ascx" />
+    <Content Include="SettingsExchangeRetentionPolicyTag.ascx" />
     <Content Include="SettingsExchangeMailboxPlansPolicy.ascx" />
     <Content Include="SettingsLyncUserPlansPolicy.ascx" />
     <Content Include="UserControls\EditFeedsList.ascx" />
@@ -5298,6 +5314,8 @@
     <Content Include="Lync\App_LocalResources\LyncPhoneNumbers.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="App_LocalResources\SettingsExchangeRetentionPolicyTag.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\ExchangeRetentionPolicyTag.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

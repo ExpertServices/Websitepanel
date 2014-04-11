@@ -10,7 +10,7 @@
 <%@ Register Src="UserControls/MailboxPlanSelector.ascx" TagName="MailboxPlanSelector" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/QuotaViewer.ascx" TagName="QuotaViewer" TagPrefix="wsp" %>
 
-<wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
+<%-- < wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/> --%>
 
 <div id="ExchangeContainer">
 	<div class="Module">
@@ -32,10 +32,11 @@
                     <wsp:MailboxTabs id="tabs" runat="server" SelectedTab="mailbox_settings" />
                     <wsp:SimpleMessageBox id="messageBox" runat="server" />
                     
-					<wsp:CollapsiblePanel id="secGeneral" runat="server" TargetControlID="General" meta:resourcekey="secGeneral" Text="General"></wsp:CollapsiblePanel>
-                    <asp:Panel ID="General" runat="server" Height="0" style="overflow:hidden;">
-						<asp:UpdatePanel ID="GeneralUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
-							<ContentTemplate>
+					<asp:UpdatePanel ID="GeneralUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
+    				    <ContentTemplate>
+
+					        <wsp:CollapsiblePanel id="secGeneral" runat="server" TargetControlID="General" meta:resourcekey="secGeneral" Text="General"></wsp:CollapsiblePanel>
+                            <asp:Panel ID="General" runat="server" Height="0" style="overflow:hidden;">
 					            <table>
 						            <tr>
 						                <td></td>
@@ -54,7 +55,7 @@
 					                <tr>
 					                    <td class="FormLabel150"><asp:Localize ID="Localize2" runat="server" meta:resourcekey="locMailboxplanName" Text="Mailbox plan: *"></asp:Localize></td>
 					                    <td>                                
-                                            <wsp:MailboxPlanSelector ID="mailboxPlanSelector" runat="server" />
+                                            <wsp:MailboxPlanSelector ID="mailboxPlanSelector" runat="server" OnChanged="mailboxPlanSelector_Changed" />
                                         </td>
 					                </tr>
 					                <tr>
@@ -71,14 +72,10 @@
 					                </tr>
 
 					            </table>
-							</ContentTemplate>
-						</asp:UpdatePanel>
-					</asp:Panel>
+					        </asp:Panel>
 
-                    <wsp:CollapsiblePanel id="secArchiving" runat="server" TargetControlID="Archiving" meta:resourcekey="secArchiving" Text="Archiving"></wsp:CollapsiblePanel>
-                    <asp:Panel ID="Archiving" runat="server" Height="0" style="overflow:hidden;">
-						<asp:UpdatePanel ID="ArchivingUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
-							<ContentTemplate>
+                            <wsp:CollapsiblePanel id="secArchiving" runat="server" TargetControlID="Archiving" meta:resourcekey="secArchiving" Text="Archiving"></wsp:CollapsiblePanel>
+                            <asp:Panel ID="Archiving" runat="server" Height="0" style="overflow:hidden;">
 					            <table>
                                     <tr>
                                         <td class="FormLabel150"></td>
@@ -87,15 +84,16 @@
                                         </td>
                                     </tr>
 					                <tr runat="server" id="mailboxArchivePlan">
-					                    <td class="FormLabel150"><asp:Localize ID="locArchiveMailboxplanName" runat="server" meta:resourcekey="locArchiveMailboxplanName" Text="Archive Mailbox plan: "></asp:Localize></td>
+					                    <td class="FormLabel150"><asp:Localize ID="locRetentionPolicyName" runat="server" meta:resourcekey="locRetentionPolicyName" Text="Retention policy: "></asp:Localize></td>
 					                    <td>                                
-                                            <wsp:MailboxPlanSelector ID="mailboxArchivePlanSelector" runat="server" Archiving="true" AddNone="true" />
+                                            <wsp:MailboxPlanSelector ID="mailboxRetentionPolicySelector" runat="server" Archiving="true" AddNone="true"/>
                                         </td>
 					                </tr>
 					            </table>
-							</ContentTemplate>
-						</asp:UpdatePanel>
-					</asp:Panel>
+					        </asp:Panel>
+
+                        </ContentTemplate>
+					</asp:UpdatePanel>
 
                     <wsp:CollapsiblePanel id="secLitigationHoldSettings" runat="server" TargetControlID="LitigationHoldSettings" meta:resourcekey="secLitigationHoldSettings" Text="Litigation Hold"></wsp:CollapsiblePanel>
                     <asp:Panel ID="LitigationHoldSettings" runat="server" Height="0" style="overflow:hidden;">

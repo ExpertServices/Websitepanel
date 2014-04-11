@@ -145,6 +145,10 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                     exchangeGroup.MenuItems.Add(CreateMenuItem("RetentionPolicy", "retentionpolicy"));
 
             if (!hideItems)
+                if (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, cntx))
+                    exchangeGroup.MenuItems.Add(CreateMenuItem("RetentionPolicyTag", "retentionpolicytag"));
+
+            if (!hideItems)
                 if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
                     exchangeGroup.MenuItems.Add(CreateMenuItem("ExchangeDomainNames", "domains"));
 

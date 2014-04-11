@@ -549,8 +549,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             return ExchangeServerController.UpdateExchangeMailboxPlan(itemId, mailboxPlan);
         }
-
-
+        
         [WebMethod]
         public int DeleteExchangeMailboxPlan(int itemId, int mailboxPlanId)
         {
@@ -561,6 +560,59 @@ namespace WebsitePanel.EnterpriseServer
         public void SetOrganizationDefaultExchangeMailboxPlan(int itemId, int mailboxPlanId)
         {
             ExchangeServerController.SetOrganizationDefaultExchangeMailboxPlan(itemId, mailboxPlanId);
+        }
+
+        #endregion
+
+        #region Exchange Retention Policy Tags
+
+        [WebMethod]
+        public List<ExchangeRetentionPolicyTag> GetExchangeRetentionPolicyTags(int itemId)
+        {
+            return ExchangeServerController.GetExchangeRetentionPolicyTags(itemId);
+        }
+
+        [WebMethod]
+        public ExchangeRetentionPolicyTag GetExchangeRetentionPolicyTag(int itemId, int tagId)
+        {
+            return ExchangeServerController.GetExchangeRetentionPolicyTag(itemId, tagId);
+        }
+
+        [WebMethod]
+        public int AddExchangeRetentionPolicyTag(int itemId, ExchangeRetentionPolicyTag tag)
+        {
+            return ExchangeServerController.AddExchangeRetentionPolicyTag(itemId, tag);
+        }
+
+        [WebMethod]
+        public int UpdateExchangeRetentionPolicyTag(int itemId, ExchangeRetentionPolicyTag tag)
+        {
+            return ExchangeServerController.UpdateExchangeRetentionPolicyTag(itemId, tag);
+        }
+
+        [WebMethod]
+        public int DeleteExchangeRetentionPolicyTag(int itemId, int tagId)
+        {
+            return ExchangeServerController.DeleteExchangeRetentionPolicyTag(itemId, tagId);
+        }
+
+
+        [WebMethod]
+        public List<ExchangeMailboxPlanRetentionPolicyTag> GetExchangeMailboxPlanRetentionPolicyTags(int policyId)
+        {
+            return ExchangeServerController.GetExchangeMailboxPlanRetentionPolicyTags(policyId);
+        }
+
+        [WebMethod]
+        public int AddExchangeMailboxPlanRetentionPolicyTag(int itemId, ExchangeMailboxPlanRetentionPolicyTag planTag)
+        {
+            return ExchangeServerController.AddExchangeMailboxPlanRetentionPolicyTag(itemId, planTag);
+        }
+
+        [WebMethod]
+        public int DeleteExchangeMailboxPlanRetentionPolicyTag(int itemId, int planTagId)
+        {
+            return ExchangeServerController.DeleteExchangeMailboxPlanRetentionPolicyTag(itemId, planTagId);
         }
 
         #endregion

@@ -71,8 +71,8 @@ namespace WebsitePanel.Portal
             secMailboxFeatures.Visible = !RetentionPolicy;
             secMailboxGeneral.Visible = !RetentionPolicy;
 
-            gvMailboxPlans.Columns[2].Visible = !RetentionPolicy;
-            gvMailboxPlans.Columns[3].Visible = !RetentionPolicy;
+            gvMailboxPlans.Columns[4].Visible = !RetentionPolicy;
+            gvMailboxPlans.Columns[5].Visible = !RetentionPolicy;
 
         }
 

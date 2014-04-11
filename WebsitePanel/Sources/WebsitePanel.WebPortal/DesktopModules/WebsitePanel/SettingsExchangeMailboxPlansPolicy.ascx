@@ -12,7 +12,7 @@
 	<asp:GridView id="gvMailboxPlans" runat="server"  EnableViewState="true" AutoGenerateColumns="false"
 		Width="100%" EmptyDataText="gvMailboxPlans" CssSelectorClass="NormalGridView" OnRowCommand="gvMailboxPlan_RowCommand" >
 		<Columns>
-            <asp:TemplateField HeaderText="gvMailboxPlanEdit">
+            <asp:TemplateField HeaderText="Edit">
                 <ItemTemplate>
                     <asp:ImageButton ID="cmdEdit" runat="server" SkinID="EditSmall" CommandName="EditItem" AlternateText="Edit record" CommandArgument='<%# Eval("MailboxPlanId") %>' ></asp:ImageButton>
                 </ItemTemplate>
@@ -22,7 +22,7 @@
 					<asp:Image ID="img2" runat="server" Width="16px" Height="16px" ImageUrl='<%# GetPlanType((int)Eval("MailboxPlanType")) %>' ImageAlign="AbsMiddle" />
 				</ItemTemplate>
 			</asp:TemplateField>
-			<asp:TemplateField HeaderText="gvMailboxPlan">
+			<asp:TemplateField HeaderText="Policy">
 				<ItemStyle Width="70%"></ItemStyle>
 				<ItemTemplate>
 					<asp:Label id="lnkDisplayMailboxPlan" runat="server" EnableViewState="true" ><%# PortalAntiXSS.Encode((string)Eval("MailboxPlan"))%></asp:Label>

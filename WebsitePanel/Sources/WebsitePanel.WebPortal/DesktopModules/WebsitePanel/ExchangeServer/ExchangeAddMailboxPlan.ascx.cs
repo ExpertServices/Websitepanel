@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011, Outercurve Foundation.
+﻿// Copyright (c) 2011-2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -27,6 +27,13 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Generic;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
@@ -85,6 +92,14 @@ namespace WebsitePanel.Portal.ExchangeServer
                     chkEnableArchiving.Checked = plan.EnableArchiving;
 
                     locTitle.Text = plan.MailboxPlan;
+
+                    if (RetentionPolicy)
+                    {
+                        ExchangeMailboxPlanRetentionPolicyTag[] tags = ES.Services.ExchangeServer.GetExchangeMailboxPlanRetentionPolicyTags(plan.MailboxPlanId);
+                        gvPolicy.DataSource = tags;
+                        gvPolicy.DataBind();
+                    }
+
                     this.DisableControls = true;
 
                 }
@@ -162,11 +177,38 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 locTitle.Text = RetentionPolicy ? GetLocalizedString("locTitleArchiving.Text") : GetLocalizedString("locTitle.Text");
 
+                UpdateTags();
+
                 secMailboxFeatures.Visible = !RetentionPolicy;
                 secMailboxGeneral.Visible = !RetentionPolicy;
+                secRetentionPolicyTags.Visible = RetentionPolicy;
+
 
             }
 
+        }
+
+        protected void UpdateTags()
+        {
+            if (RetentionPolicy)
+            {
+                ddTags.Items.Clear();
+
+                Providers.HostedSolution.ExchangeRetentionPolicyTag[] allTags = ES.Services.ExchangeServer.GetExchangeRetentionPolicyTags(PanelRequest.ItemID);
+
+                List<ExchangeMailboxPlanRetentionPolicyTag> selectedTags = ViewState["Tags"] as List<ExchangeMailboxPlanRetentionPolicyTag>;
+
+                foreach (Providers.HostedSolution.ExchangeRetentionPolicyTag tag in allTags)
+                {
+                    if (selectedTags!=null)
+                    {
+                        if (selectedTags.Find(x => x.TagID == tag.TagID) != null)
+                            continue;
+                    }
+
+                    ddTags.Items.Add(new System.Web.UI.WebControls.ListItem(tag.TagName, tag.TagID.ToString()));
+                }
+            }
         }
 
         protected void btnAdd_Click(object sender, EventArgs e)
@@ -211,15 +253,32 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 plan.EnableArchiving = chkEnableArchiving.Checked;
 
-                int result = ES.Services.ExchangeServer.AddExchangeMailboxPlan(PanelRequest.ItemID,
+                int planId = ES.Services.ExchangeServer.AddExchangeMailboxPlan(PanelRequest.ItemID,
                                                                                 plan);
 
 
-                if (result < 0)
+                if (planId < 0)
                 {
-                    messageBox.ShowResultMessage(result);
+                    messageBox.ShowResultMessage(planId);
                     return;
                 }
+
+                List<ExchangeMailboxPlanRetentionPolicyTag> tags = ViewState["Tags"] as List<ExchangeMailboxPlanRetentionPolicyTag>;
+
+                if (tags!=null)
+                {
+                    foreach(ExchangeMailboxPlanRetentionPolicyTag tag in tags)
+                    {
+                        tag.MailboxPlanId = planId;
+                        int result = ES.Services.ExchangeServer.AddExchangeMailboxPlanRetentionPolicyTag(PanelRequest.ItemID, tag);
+                        if (result < 0)
+                        {
+                            messageBox.ShowResultMessage(result);
+                            return;
+                        }
+                    }
+                }
+
 
                 Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), RetentionPolicy ? "retentionpolicy" : "mailboxplans",
                     "SpaceID=" + PanelSecurity.PackageId));
@@ -229,5 +288,65 @@ namespace WebsitePanel.Portal.ExchangeServer
                 messageBox.ShowErrorMessage("EXCHANGE_ADD_MAILBOXPLAN", ex);
             }
         }
+
+        protected void bntAddTag_Click(object sender, EventArgs e)
+        {
+            int addTagId;
+            if (!int.TryParse(ddTags.SelectedValue, out addTagId))
+                return;
+
+            Providers.HostedSolution.ExchangeRetentionPolicyTag tag = ES.Services.ExchangeServer.GetExchangeRetentionPolicyTag(PanelRequest.ItemID, addTagId);
+            if (tag == null) return;
+
+            List<ExchangeMailboxPlanRetentionPolicyTag> res = ViewState["Tags"] as List<ExchangeMailboxPlanRetentionPolicyTag>;
+            if (res==null) res = new List<ExchangeMailboxPlanRetentionPolicyTag>();
+
+            ExchangeMailboxPlanRetentionPolicyTag add = new ExchangeMailboxPlanRetentionPolicyTag();
+            add.MailboxPlanId = PanelRequest.GetInt("MailboxPlanId");
+            add.TagID = tag.TagID;
+            add.TagName = tag.TagName;
+
+            res.Add(add);
+
+            ViewState["Tags"] = res;
+
+            gvPolicy.DataSource = res;
+            gvPolicy.DataBind();
+
+            UpdateTags();
+        }
+
+        protected void gvPolicy_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+
+            switch (e.CommandName)
+            {
+                case "DeleteItem":
+                    try
+                    {
+                        int tagId;
+                        if (!int.TryParse(e.CommandArgument.ToString(), out tagId))
+                            return;
+
+                        List<ExchangeMailboxPlanRetentionPolicyTag> tags = ViewState["Tags"] as List<ExchangeMailboxPlanRetentionPolicyTag>;
+                        if (tags == null) return;
+
+                        int i = tags.FindIndex(x => x.TagID == tagId);
+                        if (i >= 0) tags.RemoveAt(i);
+
+                        ViewState["Tags"] = tags;
+                        gvPolicy.DataSource = tags;
+                        gvPolicy.DataBind();
+                        UpdateTags();
+                    }
+                    catch (Exception)
+                    {
+                    }
+
+                    break;
+
+            }
+        }
+
     }
 }

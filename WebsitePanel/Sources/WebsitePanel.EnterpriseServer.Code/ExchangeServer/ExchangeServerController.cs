@@ -2951,7 +2951,8 @@ namespace WebsitePanel.EnterpriseServer
                                                         mailboxPlan.IsDefault, mailboxPlan.IssueWarningPct, mailboxPlan.KeepDeletedItemsDays, mailboxPlan.MailboxSizeMB, mailboxPlan.MaxReceiveMessageSizeKB, mailboxPlan.MaxRecipients,
                                                         mailboxPlan.MaxSendMessageSizeKB, mailboxPlan.ProhibitSendPct, mailboxPlan.ProhibitSendReceivePct, mailboxPlan.HideFromAddressBook, mailboxPlan.MailboxPlanType,
                                                         mailboxPlan.AllowLitigationHold, mailboxPlan.RecoverableItemsSpace, mailboxPlan.RecoverableItemsWarningPct,
-                                                        mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg);
+                                                        mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg,
+                                                        mailboxPlan.Archiving, mailboxPlan.EnableArchiving);
             }
             catch (Exception ex)
             {
@@ -3012,6 +3013,262 @@ namespace WebsitePanel.EnterpriseServer
 
         #endregion
 
+        #region Exchange Retention Policy Tags
+
+        public static List<ExchangeRetentionPolicyTag> GetExchangeRetentionPolicyTags(int itemId)
+        {
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_RETENTIONPOLICYTAGS", itemId);
+
+            try
+            {
+                List<ExchangeRetentionPolicyTag> retentionPolicyTags = new List<ExchangeRetentionPolicyTag>();
+
+                UserInfo user = ObjectUtils.FillObjectFromDataReader<UserInfo>(DataProvider.GetUserByExchangeOrganizationIdInternally(itemId));
+
+                if (user.Role == UserRole.User)
+                    ExchangeServerController.GetExchangeRetentionPolicyTagsByUser(itemId, user, ref retentionPolicyTags);
+                else
+                    ExchangeServerController.GetExchangeRetentionPolicyTagsByUser(0, user, ref retentionPolicyTags);
+
+                return retentionPolicyTags;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        private static void GetExchangeRetentionPolicyTagsByUser(int itemId, UserInfo user, ref List<ExchangeRetentionPolicyTag> retentionPolicyTags)
+        {
+            if ((user != null))
+            {
+                List<Organization> orgs = null;
+
+                if (user.UserId != 1)
+                {
+                    List<PackageInfo> Packages = PackageController.GetPackages(user.UserId);
+
+                    if ((Packages != null) & (Packages.Count > 0))
+                    {
+                        orgs = GetExchangeOrganizationsInternal(Packages[0].PackageId, false);
+                    }
+                }
+                else
+                {
+                    orgs = GetExchangeOrganizationsInternal(1, false);
+                }
+
+                int OrgId = -1;
+                if (itemId > 0) OrgId = itemId;
+                else if ((orgs != null) & (orgs.Count > 0)) OrgId = orgs[0].Id;
+
+
+                if (OrgId != -1)
+                {
+                    List<ExchangeRetentionPolicyTag> RetentionPolicy = ObjectUtils.CreateListFromDataReader<ExchangeRetentionPolicyTag>(DataProvider.GetExchangeRetentionPolicyTags(OrgId));
+
+                    foreach (ExchangeRetentionPolicyTag p in RetentionPolicy)
+                    {
+                        retentionPolicyTags.Add(p);
+                    }
+                }
+
+                UserInfo owner = UserController.GetUserInternally(user.OwnerId);
+
+                GetExchangeRetentionPolicyTagsByUser(0, owner, ref retentionPolicyTags);
+            }
+        }
+
+        public static ExchangeRetentionPolicyTag GetExchangeRetentionPolicyTag(int itemID, int tagId)
+        {
+
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_RETENTIONPOLICYTAG", tagId);
+
+            try
+            {
+                return ObjectUtils.FillObjectFromDataReader<ExchangeRetentionPolicyTag>(
+                    DataProvider.GetExchangeRetentionPolicyTag(tagId));
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static int AddExchangeRetentionPolicyTag(int itemID, ExchangeRetentionPolicyTag tag)
+        {
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "ADD_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+
+            try
+            {
+                Organization org = GetOrganization(itemID);
+                if (org == null)
+                    return -1;
+
+                // load package context
+                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
+
+                if (org.PackageId > 1)
+                {
+                    // quotas
+                }
+
+                return DataProvider.AddExchangeRetentionPolicyTag(itemID, tag.TagName, tag.TagType, tag.AgeLimitForRetention, tag.RetentionAction );
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+        }
+
+        public static int UpdateExchangeRetentionPolicyTag(int itemID, ExchangeRetentionPolicyTag tag)
+        {
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "UPDATE_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+
+            try
+            {
+                Organization org = GetOrganization(itemID);
+                if (org == null)
+                    return -1;
+
+                // load package context
+                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
+
+                if (org.PackageId > 1)
+                {
+                    // quotas
+                }
+
+                DataProvider.UpdateExchangeRetentionPolicyTag(tag.TagID, tag.ItemID, tag.TagName, tag.TagType, tag.AgeLimitForRetention, tag.RetentionAction);
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+
+            return 0;
+        }
+
+        public static int DeleteExchangeRetentionPolicyTag(int itemID, int tagId)
+        {
+            TaskManager.StartTask("EXCHANGE", "DELETE_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+
+            try
+            {
+                DataProvider.DeleteExchangeRetentionPolicyTag(tagId);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+        }
+
+
+        public static List<ExchangeMailboxPlanRetentionPolicyTag> GetExchangeMailboxPlanRetentionPolicyTags(int policyId)
+        {
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_RETENTIONPOLICYTAGS", policyId);
+
+            try
+            {
+                List<ExchangeMailboxPlanRetentionPolicyTag> tags =
+                    ObjectUtils.CreateListFromDataReader<ExchangeMailboxPlanRetentionPolicyTag>(DataProvider.GetExchangeMailboxPlanRetentionPolicyTags(policyId));
+
+                return tags;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static int AddExchangeMailboxPlanRetentionPolicyTag(int itemID, ExchangeMailboxPlanRetentionPolicyTag planTag)
+        {
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "ADD_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+
+            try
+            {
+                Organization org = GetOrganization(itemID);
+                if (org == null)
+                    return -1;
+
+                // load package context
+                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
+
+                if (org.PackageId > 1)
+                {
+                    // quotas
+                }
+
+                return DataProvider.AddExchangeMailboxPlanRetentionPolicyTag(planTag.TagID, planTag.MailboxPlanId);
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+        }
+
+        public static int DeleteExchangeMailboxPlanRetentionPolicyTag(int itemID, int planTagId)
+        {
+            TaskManager.StartTask("EXCHANGE", "DELETE_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+
+            try
+            {
+                DataProvider.DeleteExchangeMailboxPlanRetentionPolicyTag(planTagId);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+        }
+
+        #endregion
 
         #region Contacts
         public static int CreateContact(int itemId, string displayName, string email)
