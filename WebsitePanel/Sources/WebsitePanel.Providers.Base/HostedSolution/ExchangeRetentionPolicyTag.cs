@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace WebsitePanel.Providers.HostedSolution
 {
@@ -76,5 +77,13 @@ namespace WebsitePanel.Providers.HostedSolution
             set { retentionAction = value; }
         }
 
+        public string WSPUniqueName
+        {
+            get
+            {
+                Regex r = new Regex(@"[^A-Za-z0-9]");
+                return "WSPPolicyTag" + TagID.ToString() + "_" + r.Replace(TagName, "");
+            }
+        }
     }
 }

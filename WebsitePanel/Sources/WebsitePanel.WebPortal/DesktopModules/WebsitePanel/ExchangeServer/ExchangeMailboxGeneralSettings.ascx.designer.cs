@@ -175,40 +175,22 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::WebsitePanel.Portal.QuotaViewer mailboxSize;
         
         /// <summary>
-        /// secArchiving control.
+        /// secRetentionPolicy control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.CollapsiblePanel secArchiving;
+        protected global::WebsitePanel.Portal.CollapsiblePanel secRetentionPolicy;
         
         /// <summary>
-        /// Archiving control.
+        /// RetentionPolicy control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Archiving;
-        
-        /// <summary>
-        /// chkArchiving control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkArchiving;
-        
-        /// <summary>
-        /// mailboxArchivePlan control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlTableRow mailboxArchivePlan;
+        protected global::System.Web.UI.WebControls.Panel RetentionPolicy;
         
         /// <summary>
         /// locRetentionPolicyName control.

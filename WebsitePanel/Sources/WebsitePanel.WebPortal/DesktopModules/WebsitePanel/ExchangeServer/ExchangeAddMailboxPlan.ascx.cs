@@ -67,38 +67,48 @@ namespace WebsitePanel.Portal.ExchangeServer
                 {
                     Providers.HostedSolution.ExchangeMailboxPlan plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(PanelRequest.ItemID, PanelRequest.GetInt("MailboxPlanId"));
                     txtMailboxPlan.Text = plan.MailboxPlan;
-                    mailboxSize.QuotaValue = plan.MailboxSizeMB;
-                    maxRecipients.QuotaValue = plan.MaxRecipients;
-                    maxSendMessageSizeKB.QuotaValue = plan.MaxSendMessageSizeKB;
-                    maxReceiveMessageSizeKB.QuotaValue = plan.MaxReceiveMessageSizeKB;
-                    chkPOP3.Checked = plan.EnablePOP;
-                    chkIMAP.Checked = plan.EnableIMAP;
-                    chkOWA.Checked = plan.EnableOWA;
-                    chkMAPI.Checked = plan.EnableMAPI;
-                    chkActiveSync.Checked = plan.EnableActiveSync;
-                    sizeIssueWarning.ValueKB = plan.IssueWarningPct;
-                    sizeProhibitSend.ValueKB = plan.ProhibitSendPct;
-                    sizeProhibitSendReceive.ValueKB = plan.ProhibitSendReceivePct;
-                    daysKeepDeletedItems.ValueDays = plan.KeepDeletedItemsDays;
-                    chkHideFromAddressBook.Checked = plan.HideFromAddressBook;
-                    chkEnableLitigationHold.Checked = plan.AllowLitigationHold;
-                    recoverableItemsSpace.QuotaValue = plan.RecoverableItemsSpace;
-                    recoverableItemsWarning.ValueKB = plan.RecoverableItemsWarningPct;
-                    txtLitigationHoldMsg.Text = plan.LitigationHoldMsg;
-                    txtLitigationHoldUrl.Text = plan.LitigationHoldUrl;
-
                     RetentionPolicy = plan.Archiving;
-
-                    chkEnableArchiving.Checked = plan.EnableArchiving;
-
-                    locTitle.Text = plan.MailboxPlan;
 
                     if (RetentionPolicy)
                     {
-                        ExchangeMailboxPlanRetentionPolicyTag[] tags = ES.Services.ExchangeServer.GetExchangeMailboxPlanRetentionPolicyTags(plan.MailboxPlanId);
+                        chkEnableArchiving.Checked = plan.EnableArchiving;
+
+                        archiveQuota.QuotaValue = plan.MailboxSizeMB;
+                        archiveWarningQuota.ValueKB = plan.IssueWarningPct;
+
+                        List<ExchangeMailboxPlanRetentionPolicyTag> tags = new List<ExchangeMailboxPlanRetentionPolicyTag>();
+                        tags.AddRange(ES.Services.ExchangeServer.GetExchangeMailboxPlanRetentionPolicyTags(plan.MailboxPlanId));
+
+                        ViewState["Tags"] = tags;
                         gvPolicy.DataSource = tags;
                         gvPolicy.DataBind();
+                        UpdateTags();
+
                     }
+                    else
+                    {
+                        mailboxSize.QuotaValue = plan.MailboxSizeMB;
+                        maxRecipients.QuotaValue = plan.MaxRecipients;
+                        maxSendMessageSizeKB.QuotaValue = plan.MaxSendMessageSizeKB;
+                        maxReceiveMessageSizeKB.QuotaValue = plan.MaxReceiveMessageSizeKB;
+                        chkPOP3.Checked = plan.EnablePOP;
+                        chkIMAP.Checked = plan.EnableIMAP;
+                        chkOWA.Checked = plan.EnableOWA;
+                        chkMAPI.Checked = plan.EnableMAPI;
+                        chkActiveSync.Checked = plan.EnableActiveSync;
+                        sizeIssueWarning.ValueKB = plan.IssueWarningPct;
+                        sizeProhibitSend.ValueKB = plan.ProhibitSendPct;
+                        sizeProhibitSendReceive.ValueKB = plan.ProhibitSendReceivePct;
+                        daysKeepDeletedItems.ValueDays = plan.KeepDeletedItemsDays;
+                        chkHideFromAddressBook.Checked = plan.HideFromAddressBook;
+                        chkEnableLitigationHold.Checked = plan.AllowLitigationHold;
+                        recoverableItemsSpace.QuotaValue = plan.RecoverableItemsSpace;
+                        recoverableItemsWarning.ValueKB = plan.RecoverableItemsWarningPct;
+                        txtLitigationHoldMsg.Text = plan.LitigationHoldMsg;
+                        txtLitigationHoldUrl.Text = plan.LitigationHoldUrl;
+                    }
+
+                    locTitle.Text = plan.MailboxPlan;
 
                     this.DisableControls = true;
 
@@ -177,12 +187,16 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 locTitle.Text = RetentionPolicy ? GetLocalizedString("locTitleArchiving.Text") : GetLocalizedString("locTitle.Text");
 
-                UpdateTags();
-
                 secMailboxFeatures.Visible = !RetentionPolicy;
                 secMailboxGeneral.Visible = !RetentionPolicy;
+                secStorageQuotas.Visible = !RetentionPolicy;
+                secDeleteRetention.Visible = !RetentionPolicy;
+                secLitigationHold.Visible = !RetentionPolicy;
+
+                secArchiving.Visible = RetentionPolicy;
                 secRetentionPolicyTags.Visible = RetentionPolicy;
 
+                btnAdd.CausesValidation = RetentionPolicy;
 
             }
 
@@ -222,36 +236,45 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 Providers.HostedSolution.ExchangeMailboxPlan plan = new Providers.HostedSolution.ExchangeMailboxPlan();
                 plan.MailboxPlan = txtMailboxPlan.Text;
-
-                plan.MailboxSizeMB = mailboxSize.QuotaValue;
-
-                plan.IsDefault = false;
-                plan.MaxRecipients = maxRecipients.QuotaValue;
-                plan.MaxSendMessageSizeKB = maxSendMessageSizeKB.QuotaValue;
-                plan.MaxReceiveMessageSizeKB = maxReceiveMessageSizeKB.QuotaValue; 
-                plan.EnablePOP = chkPOP3.Checked;
-                plan.EnableIMAP = chkIMAP.Checked;
-                plan.EnableOWA = chkOWA.Checked;
-                plan.EnableMAPI = chkMAPI.Checked;
-                plan.EnableActiveSync = chkActiveSync.Checked;
-                plan.IssueWarningPct = sizeIssueWarning.ValueKB;
-                if ((plan.IssueWarningPct == 0)) plan.IssueWarningPct = 100;
-                plan.ProhibitSendPct = sizeProhibitSend.ValueKB;
-                if ((plan.ProhibitSendPct == 0)) plan.ProhibitSendPct = 100;
-                plan.ProhibitSendReceivePct = sizeProhibitSendReceive.ValueKB;
-                if ((plan.ProhibitSendReceivePct == 0)) plan.ProhibitSendReceivePct = 100;
-                plan.KeepDeletedItemsDays = daysKeepDeletedItems.ValueDays;
-                plan.HideFromAddressBook = chkHideFromAddressBook.Checked;
-                plan.AllowLitigationHold = chkEnableLitigationHold.Checked;
-                plan.RecoverableItemsSpace = recoverableItemsSpace.QuotaValue;
-                plan.RecoverableItemsWarningPct = recoverableItemsWarning.ValueKB;
-                if ((plan.RecoverableItemsWarningPct == 0)) plan.RecoverableItemsWarningPct = 100;
-                plan.LitigationHoldMsg = txtLitigationHoldMsg.Text.Trim();
-                plan.LitigationHoldUrl = txtLitigationHoldUrl.Text.Trim();
-
                 plan.Archiving = RetentionPolicy;
 
-                plan.EnableArchiving = chkEnableArchiving.Checked;
+                if (RetentionPolicy)
+                {
+                    plan.EnableArchiving = chkEnableArchiving.Checked;
+
+                    plan.MailboxSizeMB = archiveQuota.QuotaValue;
+                    plan.IssueWarningPct = archiveWarningQuota.ValueKB;
+                    if ((plan.IssueWarningPct == 0)) plan.IssueWarningPct = 100;
+
+                }
+                else
+                {
+                    plan.MailboxSizeMB = mailboxSize.QuotaValue;
+
+                    plan.IsDefault = false;
+                    plan.MaxRecipients = maxRecipients.QuotaValue;
+                    plan.MaxSendMessageSizeKB = maxSendMessageSizeKB.QuotaValue;
+                    plan.MaxReceiveMessageSizeKB = maxReceiveMessageSizeKB.QuotaValue;
+                    plan.EnablePOP = chkPOP3.Checked;
+                    plan.EnableIMAP = chkIMAP.Checked;
+                    plan.EnableOWA = chkOWA.Checked;
+                    plan.EnableMAPI = chkMAPI.Checked;
+                    plan.EnableActiveSync = chkActiveSync.Checked;
+                    plan.IssueWarningPct = sizeIssueWarning.ValueKB;
+                    if ((plan.IssueWarningPct == 0)) plan.IssueWarningPct = 100;
+                    plan.ProhibitSendPct = sizeProhibitSend.ValueKB;
+                    if ((plan.ProhibitSendPct == 0)) plan.ProhibitSendPct = 100;
+                    plan.ProhibitSendReceivePct = sizeProhibitSendReceive.ValueKB;
+                    if ((plan.ProhibitSendReceivePct == 0)) plan.ProhibitSendReceivePct = 100;
+                    plan.KeepDeletedItemsDays = daysKeepDeletedItems.ValueDays;
+                    plan.HideFromAddressBook = chkHideFromAddressBook.Checked;
+                    plan.AllowLitigationHold = chkEnableLitigationHold.Checked;
+                    plan.RecoverableItemsSpace = recoverableItemsSpace.QuotaValue;
+                    plan.RecoverableItemsWarningPct = recoverableItemsWarning.ValueKB;
+                    if ((plan.RecoverableItemsWarningPct == 0)) plan.RecoverableItemsWarningPct = 100;
+                    plan.LitigationHoldMsg = txtLitigationHoldMsg.Text.Trim();
+                    plan.LitigationHoldUrl = txtLitigationHoldUrl.Text.Trim();
+                }
 
                 int planId = ES.Services.ExchangeServer.AddExchangeMailboxPlan(PanelRequest.ItemID,
                                                                                 plan);

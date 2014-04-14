@@ -1216,8 +1216,98 @@ namespace WebsitePanel.Server
             }
         }
         #endregion
-		
-		protected void LogStart(string func)
+
+        #region Archiving
+        [WebMethod, SoapHeader("settings")]
+        public void SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy)
+        {
+            try
+            {
+                LogStart("SetMailBoxArchiving");
+                ES.SetMailBoxArchiving(organizationId, accountName, archive, archiveQuotaKB, archiveWarningQuotaKB, RetentionPolicy);
+                LogEnd("SetMailBoxArchiving");
+            }
+            catch (Exception ex)
+            {
+                LogError("SetMailBoxArchiving", ex);
+                throw;
+            }
+        }
+
+        #endregion
+
+        #region Retention policy
+        [WebMethod, SoapHeader("settings")]
+        public void SetRetentionPolicyTag(string Identity, ExchangeRetentionPolicyTagType Type, int AgeLimitForRetention, ExchangeRetentionPolicyTagAction RetentionAction)
+        {
+            try
+            {
+                LogStart("SetRetentionPolicyTag");
+                ES.SetRetentionPolicyTag(Identity, Type, AgeLimitForRetention, RetentionAction);
+                LogEnd("SetRetentionPolicyTag");
+            }
+            catch (Exception ex)
+            {
+                LogError("SetRetentionPolicyTag", ex);
+                throw;
+            }
+
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void RemoveRetentionPolicyTag(string Identity)
+        {
+            try
+            {
+                LogStart("RemoveRetentionPolicyTag");
+                ES.RemoveRetentionPolicyTag(Identity);
+                LogEnd("RemoveRetentionPolicyTag");
+            }
+            catch (Exception ex)
+            {
+                LogError("RemoveRetentionPolicyTag", ex);
+                throw;
+            }
+
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void SetRetentionPolicy(string Identity, string[] RetentionPolicyTagLinks)
+        {
+            try
+            {
+                LogStart("SetRetentionPolicy");
+                ES.SetRetentionPolicy(Identity, RetentionPolicyTagLinks);
+                LogEnd("SetRetentionPolicy");
+            }
+            catch (Exception ex)
+            {
+                LogError("SetRetentionPolicy", ex);
+                throw;
+            }
+
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void RemoveRetentionPolicy(string Identity)
+        {
+            try
+            {
+                LogStart("RemoveRetentionPolicy");
+                ES.RemoveRetentionPolicy(Identity);
+                LogEnd("RemoveRetentionPolicy");
+            }
+            catch (Exception ex)
+            {
+                LogError("RemoveRetentionPolicy", ex);
+                throw;
+            }
+
+        }
+
+        #endregion
+
+        protected void LogStart(string func)
 		{
 			Log.WriteStart("'{0}' {1}", ProviderSettings.ProviderName, func);
 		}

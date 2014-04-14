@@ -67,8 +67,6 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 BindSettings();
 
-                SetArchivingVisible();
-
                 UserInfo user = UsersHelper.GetUser(PanelSecurity.EffectiveUserId);
 
                 if (user != null)
@@ -124,12 +122,10 @@ namespace WebsitePanel.Portal.ExchangeServer
                 if (account.ArchivingMailboxPlanId<1)
                 {
                     mailboxRetentionPolicySelector.MailboxPlanId = "-1";
-                    chkArchiving.Checked = false;
                 }
                 else
                 {
                     mailboxRetentionPolicySelector.MailboxPlanId = account.ArchivingMailboxPlanId.ToString();
-                    chkArchiving.Checked = true;
                 }
 
                 mailboxSize.QuotaUsedValue = Convert.ToInt32(stats.TotalSize / 1024 / 1024);
@@ -182,8 +178,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 {
                     int planId = Convert.ToInt32(mailboxPlanSelector.MailboxPlanId);
                     int policyId = -1;
-                    if (chkArchiving.Checked)
-                        policyId = Convert.ToInt32(mailboxRetentionPolicySelector.MailboxPlanId);
+                    int.TryParse(mailboxRetentionPolicySelector.MailboxPlanId, out policyId);
 
                     result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(PanelRequest.ItemID, PanelRequest.AccountID, planId,
                         policyId);
@@ -262,36 +257,6 @@ namespace WebsitePanel.Portal.ExchangeServer
                     }
 
             return result;
-        }
-
-        protected void chkArchiving_CheckedChanged(object sender, EventArgs e)
-        {
-            SetArchivingVisible();
-        }
-
-        private void SetArchivingVisible()
-        {
-            int id;
-            if (!int.TryParse(mailboxPlanSelector.MailboxPlanId, out id))
-                return;
-
-            bool archiving = false;
-
-            ExchangeMailboxPlan policy = ES.Services.ExchangeServer.GetExchangeMailboxPlan(PanelRequest.ItemID, id);
-
-            if (policy != null) 
-                archiving = policy.EnableArchiving & Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, Cntx);
-
-            if (!archiving)
-                chkArchiving.Checked = false;
-
-            secArchiving.Visible = archiving;
-            mailboxArchivePlan.Visible = chkArchiving.Checked;
-        }
-
-        protected void mailboxPlanSelector_Changed(object sender, EventArgs e)
-        {
-            SetArchivingVisible();
         }
 
     }
