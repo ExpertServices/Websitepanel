@@ -130,5 +130,14 @@ namespace WebsitePanel.Providers.HostedSolution
         // Disclaimers
         int NewDisclaimerTransportRule(string Name, string From, string Text);
         int RemoveTransportRule(string Name);
+
+        // Archiving
+        void SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy);
+
+        // Retention policy
+        void SetRetentionPolicyTag(string Identity, ExchangeRetentionPolicyTagType Type, int AgeLimitForRetention, ExchangeRetentionPolicyTagAction RetentionAction);
+        void RemoveRetentionPolicyTag(string Identity);
+        void SetRetentionPolicy(string Identity, string[] RetentionPolicyTagLinks);
+        void RemoveRetentionPolicy(string Identity);
     }
 }

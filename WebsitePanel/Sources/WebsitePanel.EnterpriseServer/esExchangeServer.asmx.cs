@@ -610,9 +610,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public int DeleteExchangeMailboxPlanRetentionPolicyTag(int itemId, int planTagId)
+        public int DeleteExchangeMailboxPlanRetentionPolicyTag(int itemID, int policyId, int planTagId)
         {
-            return ExchangeServerController.DeleteExchangeMailboxPlanRetentionPolicyTag(itemId, planTagId);
+            return ExchangeServerController.DeleteExchangeMailboxPlanRetentionPolicyTag(itemID, policyId, planTagId);
         }
 
         #endregion

@@ -141,7 +141,7 @@
 					        </tr>
                             <tr>
                                 <td class="FormLabel150">
-                                    <asp:Localize ID="locArchivingMailboxplanName" runat="server" meta:resourcekey="locArchivingMailboxplanName" Text="Archiving Mailboxplan Name: "></asp:Localize>
+                                    <asp:Localize ID="locRetentionPolicyName" runat="server" meta:resourcekey="locRetentionPolicyName" Text="Retention policy Name: "></asp:Localize>
                                 </td>
                                 <td>                                
                                     <wsp:MailboxPlanSelector ID="archivingMailboxPlanSelector" runat="server" Archiving="true" AddNone="true" />

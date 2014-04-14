@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014, Outercurve Foundation.
+﻿// Copyright (c) 2012-2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -94,6 +94,11 @@ namespace WebsitePanel.Providers.HostedSolution
         internal string MailboxDatabase
         {
             get { return ProviderSettings["MailboxDatabase"]; }
+        }
+
+        internal string ArchiveMailboxDatabase
+        {
+            get { return ProviderSettings["ArchivingDatabase"]; }
         }
 
         internal bool PublicFolderDistributionEnabled
@@ -7244,6 +7249,248 @@ namespace WebsitePanel.Providers.HostedSolution
                     break;
             }
         }
+        #endregion
+
+        #region Archiving
+
+        public void SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy)
+        {
+            SetMailBoxArchivingInternal(organizationId, accountName, archive, archiveQuotaKB, archiveWarningQuotaKB, RetentionPolicy);
+        }
+
+        private void SetMailBoxArchivingInternal(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy)
+        {
+            ExchangeLog.LogStart("SetMailBoxArchivingInternal");
+            ExchangeLog.DebugInfo("Account: {0}", accountName);
+
+            Runspace runSpace = null;
+            Runspace runSpaceEx = null;
+            try
+            {
+                runSpace = OpenRunspace();
+                runSpaceEx = OpenRunspaceEx();
+
+                Command cmd;
+
+                if (archive)
+                {
+                    cmd = new Command("Enable-Mailbox");
+                    cmd.Parameters.Add("Identity", accountName);
+                    cmd.Parameters.Add("Archive");
+                    string database = GetDatabase(runSpace, PrimaryDomainController, ArchiveMailboxDatabase);
+                    ExchangeLog.DebugInfo("archivedatabase: " + database);
+                    if (database != string.Empty)
+                    {
+                        cmd.Parameters.Add("ArchiveDatabase", database);
+                    }
+                    ExecuteShellCommand(runSpace, cmd);
+
+                    cmd = new Command("Set-Mailbox");
+                    cmd.Parameters.Add("Identity", accountName);
+                    cmd.Parameters.Add("ArchiveQuota", ConvertKBToUnlimited(archiveQuotaKB));
+                    cmd.Parameters.Add("ArchiveWarningQuota", ConvertKBToUnlimited(archiveWarningQuotaKB));
+                    ExecuteShellCommand(runSpace, cmd);
+                }
+                else
+                {
+                    cmd = new Command("Disable-Mailbox");
+                    cmd.Parameters.Add("Identity", accountName);
+                    cmd.Parameters.Add("Archive");
+                    ExecuteShellCommand(runSpace, cmd);
+                }
+
+                if (!String.IsNullOrEmpty(RetentionPolicy))
+                {
+                    cmd = new Command("Set-Mailbox");
+                    cmd.Parameters.Add("Identity", accountName);
+                    cmd.Parameters.Add("RetentionPolicy", RetentionPolicy);
+                    ExecuteShellCommand(runSpace, cmd);
+                }
+
+
+            }
+            finally
+            {
+
+                CloseRunspace(runSpace);
+                CloseRunspaceEx(runSpaceEx);
+            }
+            ExchangeLog.LogEnd("SetMailBoxArchivingInternal");
+        }
+
+
+        #endregion
+
+        #region Retention policy
+
+        public void SetRetentionPolicyTag(string Identity, ExchangeRetentionPolicyTagType Type, int AgeLimitForRetention , ExchangeRetentionPolicyTagAction	RetentionAction)
+        {
+            SetRetentionPolicyTagInternal(Identity, Type, AgeLimitForRetention,	RetentionAction);
+        }
+        
+        private void SetRetentionPolicyTagInternal(string Identity, ExchangeRetentionPolicyTagType Type, int AgeLimitForRetention, ExchangeRetentionPolicyTagAction RetentionAction)
+        {
+            ExchangeLog.LogStart("SetRetentionPolicyTagInternal");
+
+            Runspace runSpace = null;
+            Runspace runSpaceEx = null;
+            try
+            {
+                runSpace = OpenRunspace();
+                runSpaceEx = OpenRunspaceEx();
+
+                Command cmd;
+
+                bool exists = false;
+                cmd = new Command("Get-RetentionPolicyTag");
+                cmd.Parameters.Add("Identity", Identity);
+                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+
+                if (result != null && result.Count > 0)
+                    exists = true;
+
+                if (exists)
+                {
+                    cmd = new Command("Set-RetentionPolicyTag");
+                    cmd.Parameters.Add("Identity", Identity);
+                }
+                else
+                {
+                    cmd = new Command("New-RetentionPolicyTag");
+                    cmd.Parameters.Add("Name", Identity);
+                    cmd.Parameters.Add("Type", Enum.GetName(typeof(ExchangeRetentionPolicyTagType), Type));
+                }
+
+                cmd.Parameters.Add("AgeLimitForRetention", AgeLimitForRetention);
+                cmd.Parameters.Add("RetentionAction", Enum.GetName(typeof(ExchangeRetentionPolicyTagAction), RetentionAction));
+                cmd.Parameters.Add("RetentionEnabled", true);
+
+                object[] errors;
+                result = ExecuteShellCommand(runSpace, cmd,out errors);
+            }
+            finally
+            {
+
+                CloseRunspace(runSpace);
+                CloseRunspaceEx(runSpaceEx);
+            }
+            ExchangeLog.LogEnd("SetRetentionPolicyTagInternal");
+        }
+
+        public void RemoveRetentionPolicyTag(string Identity)
+        {
+            RemoveRetentionPolicyTagInternal(Identity);
+        }
+        
+        private void RemoveRetentionPolicyTagInternal(string Identity)
+        {
+            ExchangeLog.LogStart("RemoveRetentionPolicyTagInternal");
+
+            Runspace runSpace = null;
+            Runspace runSpaceEx = null;
+            try
+            {
+                runSpace = OpenRunspace();
+                runSpaceEx = OpenRunspaceEx();
+
+                Command cmd;
+
+                bool exists = false;
+                cmd = new Command("Remove-RetentionPolicyTag");
+                cmd.Parameters.Add("Identity", Identity);
+                ExecuteShellCommand(runSpace, cmd);
+            }
+            finally
+            {
+
+                CloseRunspace(runSpace);
+                CloseRunspaceEx(runSpaceEx);
+            }
+            ExchangeLog.LogEnd("RemoveRetentionPolicyTagInternal");
+        }
+
+        public void SetRetentionPolicy(string Identity, string[] RetentionPolicyTagLinks)
+        {
+            SetRetentionPolicyInternal(Identity, RetentionPolicyTagLinks);
+        }
+        
+        private void SetRetentionPolicyInternal(string Identity, string[] RetentionPolicyTagLinks)
+        {
+            ExchangeLog.LogStart("SetRetentionPolicyInternal");
+
+            Runspace runSpace = null;
+            Runspace runSpaceEx = null;
+            try
+            {
+                runSpace = OpenRunspace();
+                runSpaceEx = OpenRunspaceEx();
+
+                Command cmd;
+
+                bool exists = false;
+                cmd = new Command("Get-RetentionPolicy");
+                cmd.Parameters.Add("Identity", Identity);
+                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+
+                if (result != null && result.Count > 0)
+                    exists = true;
+
+                if (exists)
+                {
+                    cmd = new Command("Set-RetentionPolicy");
+                    cmd.Parameters.Add("Identity", Identity);
+                }
+                else
+                {
+                    cmd = new Command("New-RetentionPolicy");
+                    cmd.Parameters.Add("Name", Identity);
+                }
+
+                cmd.Parameters.Add("RetentionPolicyTagLinks", RetentionPolicyTagLinks);
+
+                result = ExecuteShellCommand(runSpace, cmd);
+            }
+            finally
+            {
+
+                CloseRunspace(runSpace);
+                CloseRunspaceEx(runSpaceEx);
+            }
+            ExchangeLog.LogEnd("SetRetentionPolicyInternal");
+        }
+
+        public void RemoveRetentionPolicy(string Identity)
+        {
+            RemoveRetentionPolicyInternal(Identity);
+        }
+
+        private void RemoveRetentionPolicyInternal(string Identity)
+        {
+            ExchangeLog.LogStart("RemoveRetentionPolicyInternal");
+
+            Runspace runSpace = null;
+            Runspace runSpaceEx = null;
+            try
+            {
+                runSpace = OpenRunspace();
+                runSpaceEx = OpenRunspaceEx();
+
+                Command cmd;
+
+                cmd = new Command("Remove-RetentionPolicy");
+                cmd.Parameters.Add("Identity", Identity);
+                ExecuteShellCommand(runSpace, cmd);
+            }
+            finally
+            {
+
+                CloseRunspace(runSpace);
+                CloseRunspaceEx(runSpaceEx);
+            }
+            ExchangeLog.LogEnd("RemoveRetentionPolicyInternal");
+        }
+
+        
         #endregion
 
         public override bool IsInstalled()

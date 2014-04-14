@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace WebsitePanel.Providers.HostedSolution
 {
@@ -222,6 +223,15 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             get { return this.enableArchiving; }
             set { this.enableArchiving = value; }
+        }
+
+        public string WSPUniqueName
+        {
+            get
+            {
+                Regex r = new Regex(@"[^A-Za-z0-9]");
+                return "WSPPolicy" + MailboxPlanId.ToString() + "_" + r.Replace(MailboxPlan, "");
+            }
         }
     }
 }

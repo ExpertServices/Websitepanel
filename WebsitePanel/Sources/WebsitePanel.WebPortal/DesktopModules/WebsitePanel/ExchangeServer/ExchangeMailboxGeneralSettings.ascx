@@ -49,7 +49,7 @@
 					                <tr>
 					                    <td class="FormLabel150"><asp:Localize ID="Localize2" runat="server" meta:resourcekey="locMailboxplanName" Text="Mailbox plan: *"></asp:Localize></td>
 					                    <td>                                
-                                            <wsp:MailboxPlanSelector ID="mailboxPlanSelector" runat="server" OnChanged="mailboxPlanSelector_Changed" />
+                                            <wsp:MailboxPlanSelector ID="mailboxPlanSelector" runat="server" />
                                         </td>
 					                </tr>
 					                <tr>
@@ -68,16 +68,10 @@
 					            </table>
 					        </asp:Panel>
 
-                            <wsp:CollapsiblePanel id="secArchiving" runat="server" TargetControlID="Archiving" meta:resourcekey="secArchiving" Text="Archiving"></wsp:CollapsiblePanel>
-                            <asp:Panel ID="Archiving" runat="server" Height="0" style="overflow:hidden;">
+                            <wsp:CollapsiblePanel id="secRetentionPolicy" runat="server" TargetControlID="RetentionPolicy" meta:resourcekey="secRetentionPolicy" Text="Retention policy"></wsp:CollapsiblePanel>
+                            <asp:Panel ID="RetentionPolicy" runat="server" Height="0" style="overflow:hidden;">
 					            <table>
-                                    <tr>
-                                        <td class="FormLabel150"></td>
-                                        <td>
-                                            <asp:CheckBox ID="chkArchiving" runat="server" meta:resourcekey ="chkArchiving" Text ="Enable Archiving" AutoPostBack="true" OnCheckedChanged="chkArchiving_CheckedChanged"></asp:CheckBox>
-                                        </td>
-                                    </tr>
-					                <tr runat="server" id="mailboxArchivePlan">
+					                <tr runat="server">
 					                    <td class="FormLabel150"><asp:Localize ID="locRetentionPolicyName" runat="server" meta:resourcekey="locRetentionPolicyName" Text="Retention policy: "></asp:Localize></td>
 					                    <td>                                
                                             <wsp:MailboxPlanSelector ID="mailboxRetentionPolicySelector" runat="server" Archiving="true" AddNone="true"/>
