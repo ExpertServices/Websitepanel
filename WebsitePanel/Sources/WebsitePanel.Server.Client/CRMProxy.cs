@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -68,6 +68,8 @@ namespace WebsitePanel.Providers.CRM {
         
         private System.Threading.SendOrPostCallback GetCurrencyListOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetInstalledLanguagePacksOperationCompleted;
+        
         private System.Threading.SendOrPostCallback DeleteOrganizationOperationCompleted;
         
         private System.Threading.SendOrPostCallback CreateCRMUserOperationCompleted;
@@ -96,7 +98,7 @@ namespace WebsitePanel.Providers.CRM {
         
         /// <remarks/>
         public CRM() {
-            this.Url = "http://localhost:9004/CRM.asmx";
+            this.Url = "http://localhost:9003/CRM.asmx";
         }
         
         /// <remarks/>
@@ -107,6 +109,9 @@ namespace WebsitePanel.Providers.CRM {
         
         /// <remarks/>
         public event GetCurrencyListCompletedEventHandler GetCurrencyListCompleted;
+        
+        /// <remarks/>
+        public event GetInstalledLanguagePacksCompletedEventHandler GetInstalledLanguagePacksCompleted;
         
         /// <remarks/>
         public event DeleteOrganizationCompletedEventHandler DeleteOrganizationCompleted;
@@ -150,11 +155,12 @@ namespace WebsitePanel.Providers.CRM {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/CreateOrganization", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public OrganizationResult CreateOrganization(System.Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation, long maxSize) {
+        public OrganizationResult CreateOrganization(System.Guid organizationId, string organizationUniqueName, string organizationFriendlyName, int baseLanguageCode, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation, long maxSize) {
             object[] results = this.Invoke("CreateOrganization", new object[] {
                         organizationId,
                         organizationUniqueName,
                         organizationFriendlyName,
+                        baseLanguageCode,
                         ou,
                         baseCurrencyCode,
                         baseCurrencyName,
@@ -169,11 +175,28 @@ namespace WebsitePanel.Providers.CRM {
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginCreateOrganization(System.Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation, long maxSize, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginCreateOrganization(
+                    System.Guid organizationId, 
+                    string organizationUniqueName, 
+                    string organizationFriendlyName, 
+                    int baseLanguageCode, 
+                    string ou, 
+                    string baseCurrencyCode, 
+                    string baseCurrencyName, 
+                    string baseCurrencySymbol, 
+                    string initialUserDomainName, 
+                    string initialUserFirstName, 
+                    string initialUserLastName, 
+                    string initialUserPrimaryEmail, 
+                    string organizationCollation, 
+                    long maxSize, 
+                    System.AsyncCallback callback, 
+                    object asyncState) {
             return this.BeginInvoke("CreateOrganization", new object[] {
                         organizationId,
                         organizationUniqueName,
                         organizationFriendlyName,
+                        baseLanguageCode,
                         ou,
                         baseCurrencyCode,
                         baseCurrencyName,
@@ -193,12 +216,12 @@ namespace WebsitePanel.Providers.CRM {
         }
         
         /// <remarks/>
-        public void CreateOrganizationAsync(System.Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation, long maxSize) {
-            this.CreateOrganizationAsync(organizationId, organizationUniqueName, organizationFriendlyName, ou, baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, initialUserDomainName, initialUserFirstName, initialUserLastName, initialUserPrimaryEmail, organizationCollation, maxSize, null);
+        public void CreateOrganizationAsync(System.Guid organizationId, string organizationUniqueName, string organizationFriendlyName, int baseLanguageCode, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation, long maxSize) {
+            this.CreateOrganizationAsync(organizationId, organizationUniqueName, organizationFriendlyName, baseLanguageCode, ou, baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, initialUserDomainName, initialUserFirstName, initialUserLastName, initialUserPrimaryEmail, organizationCollation, maxSize, null);
         }
         
         /// <remarks/>
-        public void CreateOrganizationAsync(System.Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation, long maxSize, object userState) {
+        public void CreateOrganizationAsync(System.Guid organizationId, string organizationUniqueName, string organizationFriendlyName, int baseLanguageCode, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation, long maxSize, object userState) {
             if ((this.CreateOrganizationOperationCompleted == null)) {
                 this.CreateOrganizationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCreateOrganizationOperationCompleted);
             }
@@ -206,6 +229,7 @@ namespace WebsitePanel.Providers.CRM {
                         organizationId,
                         organizationUniqueName,
                         organizationFriendlyName,
+                        baseLanguageCode,
                         ou,
                         baseCurrencyCode,
                         baseCurrencyName,
@@ -300,6 +324,45 @@ namespace WebsitePanel.Providers.CRM {
             if ((this.GetCurrencyListCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.GetCurrencyListCompleted(this, new GetCurrencyListCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetInstalledLanguagePacks", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int[] GetInstalledLanguagePacks() {
+            object[] results = this.Invoke("GetInstalledLanguagePacks", new object[0]);
+            return ((int[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetInstalledLanguagePacks(System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetInstalledLanguagePacks", new object[0], callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public int[] EndGetInstalledLanguagePacks(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((int[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetInstalledLanguagePacksAsync() {
+            this.GetInstalledLanguagePacksAsync(null);
+        }
+        
+        /// <remarks/>
+        public void GetInstalledLanguagePacksAsync(object userState) {
+            if ((this.GetInstalledLanguagePacksOperationCompleted == null)) {
+                this.GetInstalledLanguagePacksOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetInstalledLanguagePacksOperationCompleted);
+            }
+            this.InvokeAsync("GetInstalledLanguagePacks", new object[0], this.GetInstalledLanguagePacksOperationCompleted, userState);
+        }
+        
+        private void OnGetInstalledLanguagePacksOperationCompleted(object arg) {
+            if ((this.GetInstalledLanguagePacksCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetInstalledLanguagePacksCompleted(this, new GetInstalledLanguagePacksCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -977,6 +1040,32 @@ namespace WebsitePanel.Providers.CRM {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((Currency[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void GetInstalledLanguagePacksCompletedEventHandler(object sender, GetInstalledLanguagePacksCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetInstalledLanguagePacksCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetInstalledLanguagePacksCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public int[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((int[])(this.results[0]));
             }
         }
     }

@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -74,6 +74,11 @@ namespace WebsitePanel.Providers.Common
 
         public const string UsersHome = "UsersHome";
 
-        
+        public const string Collation = "Collation";
+
+        public const string Currency = "Currency";
+
+        public const string BaseLanguage = "BaseLanguage";
+   
     }
 }

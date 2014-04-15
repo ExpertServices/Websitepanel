@@ -136,7 +136,15 @@
                                     <asp:Localize ID="locMailboxplanName" runat="server" meta:resourcekey="locMailboxplanName" Text="Mailboxplan Name: *"></asp:Localize>
                                 </td>
                                 <td>                                
-                                    <wsp:MailboxPlanSelector ID="mailboxPlanSelector" runat="server" />
+                                    <wsp:MailboxPlanSelector ID="mailboxPlanSelector" runat="server" Archiving="false" />
+                                </td>
+					        </tr>
+                            <tr>
+                                <td class="FormLabel150">
+                                    <asp:Localize ID="locRetentionPolicyName" runat="server" meta:resourcekey="locRetentionPolicyName" Text="Retention policy Name: "></asp:Localize>
+                                </td>
+                                <td>                                
+                                    <wsp:MailboxPlanSelector ID="archivingMailboxPlanSelector" runat="server" Archiving="true" AddNone="true" />
                                 </td>
 					        </tr>
 					    </table>

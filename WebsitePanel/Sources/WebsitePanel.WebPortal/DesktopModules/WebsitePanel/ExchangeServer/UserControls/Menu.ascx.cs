@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -120,6 +120,9 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
                 exchangeGroup.MenuItems.Add(CreateMenuItem("Mailboxes", "mailboxes"));
 
+            if (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, cntx))
+                exchangeGroup.MenuItems.Add(CreateMenuItem("ArchivingMailboxes", "archivingmailboxes"));
+
             if (Utils.CheckQouta(Quotas.EXCHANGE2007_CONTACTS, cntx))
                 exchangeGroup.MenuItems.Add(CreateMenuItem("Contacts", "contacts"));
 
@@ -136,6 +139,14 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             if (!hideItems)
                 if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
                     exchangeGroup.MenuItems.Add(CreateMenuItem("MailboxPlans", "mailboxplans"));
+
+            if (!hideItems)
+                if (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, cntx))
+                    exchangeGroup.MenuItems.Add(CreateMenuItem("RetentionPolicy", "retentionpolicy"));
+
+            if (!hideItems)
+                if (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, cntx))
+                    exchangeGroup.MenuItems.Add(CreateMenuItem("RetentionPolicyTag", "retentionpolicytag"));
 
             if (!hideItems)
                 if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
@@ -190,6 +201,19 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
         private void PrepareCRMMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath)
         {
             MenuGroup crmGroup = new MenuGroup(GetLocalizedString("Text.CRMGroup"), imagePath + "crm_16.png");
+
+            crmGroup.MenuItems.Add(CreateMenuItem("CRMOrganization", "CRMOrganizationDetails"));
+            crmGroup.MenuItems.Add(CreateMenuItem("CRMUsers", "CRMUsers"));
+            crmGroup.MenuItems.Add(CreateMenuItem("StorageLimits", "crm_storage_settings"));
+
+            if (crmGroup.MenuItems.Count > 0)
+                groups.Add(crmGroup);
+
+        }
+
+        private void PrepareCRMMenu2013(PackageContext cntx, List<MenuGroup> groups, string imagePath)
+        {
+            MenuGroup crmGroup = new MenuGroup(GetLocalizedString("Text.CRMGroup2013"), imagePath + "crm_16.png");
 
             crmGroup.MenuItems.Add(CreateMenuItem("CRMOrganization", "CRMOrganizationDetails"));
             crmGroup.MenuItems.Add(CreateMenuItem("CRMUsers", "CRMUsers"));
@@ -292,7 +316,9 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             }
 
             //CRM Menu
-            if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM))
+            if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013))
+                PrepareCRMMenu2013(cntx, groups, imagePath);
+            else if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM))
                 PrepareCRMMenu(cntx, groups, imagePath);
 
 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace WebsitePanel.Providers.HostedSolution
 {
@@ -208,6 +209,29 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             get { return this.litigationHoldMsg; }
             set { this.litigationHoldMsg = value; }
+        }
+
+        bool archiving;
+        public bool Archiving
+        {
+            get { return this.archiving; }
+            set { this.archiving = value; }
+        }
+
+        bool enableArchiving;
+        public bool EnableArchiving
+        {
+            get { return this.enableArchiving; }
+            set { this.enableArchiving = value; }
+        }
+
+        public string WSPUniqueName
+        {
+            get
+            {
+                Regex r = new Regex(@"[^A-Za-z0-9]");
+                return "WSPPolicy" + MailboxPlanId.ToString() + "_" + r.Replace(MailboxPlan, "");
+            }
         }
     }
 }

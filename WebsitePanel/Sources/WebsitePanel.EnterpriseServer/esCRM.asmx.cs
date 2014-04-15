@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -48,23 +48,33 @@ namespace WebsitePanel.EnterpriseServer
     {
 
         [WebMethod]
-        public OrganizationResult CreateOrganization(int organizationId, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string regionName, int userId, string collation)
+        public OrganizationResult CreateOrganization(int organizationId, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string regionName, int userId, string collation, int baseLanguageCode)
         {
-            return CRMController.CreateOrganization(organizationId, baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, regionName, userId, collation);
+            return CRMController.CreateOrganization(organizationId, baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, regionName, userId, collation, baseLanguageCode);
         }
-
 
         [WebMethod]
         public StringArrayResultObject GetCollation(int packageId)
         {            
-            return CRMController.GetCollationNames(packageId);            
+            return CRMController.GetCollation(packageId);            
+        }
+
+        [WebMethod]
+        public StringArrayResultObject GetCollationByServiceId(int serviceId)
+        {
+            return CRMController.GetCollationByServiceId(serviceId);            
         }
 
         [WebMethod]
         public CurrencyArrayResultObject GetCurrency(int packageId)
         {
-            
             return CRMController.GetCurrency(packageId);
+        }
+
+        [WebMethod]
+        public CurrencyArrayResultObject GetCurrencyByServiceId(int serviceId)
+        {
+            return CRMController.GetCurrencyByServiceId(serviceId);
         }
       
         [WebMethod]
@@ -149,5 +159,17 @@ namespace WebsitePanel.EnterpriseServer
             return CRMController.GetMaxDBSize(itemId, packageId);
         }
 
+        [WebMethod]
+        public int[] GetInstalledLanguagePacks(int packageId)
+        {
+            return CRMController.GetInstalledLanguagePacks(packageId);
+        }
+
+        [WebMethod]
+        public int[] GetInstalledLanguagePacksByServiceId(int serviceId)
+        {
+            return CRMController.GetInstalledLanguagePacksByServiceId(serviceId);
+        }
+        
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -939,12 +939,20 @@ namespace WebsitePanel.EnterpriseServer
 
                     if (cntxTmp.Groups.ContainsKey(ResourceGroups.HostedCRM))
                     {
-                        stats.CreatedCRMUsers = CRMController.GetCRMUsersCount(org.Id, string.Empty, string.Empty, 0).Value;
-                        stats.CreatedLimitedCRMUsers = CRMController.GetCRMUsersCount(org.Id, string.Empty, string.Empty, 2).Value;
-                        stats.CreatedESSCRMUsers = CRMController.GetCRMUsersCount(org.Id, string.Empty, string.Empty, 22).Value;
+                        stats.CreatedCRMUsers = CRMController.GetCRMUsersCount(org.Id, string.Empty, string.Empty, CRMUserLycenseTypes.FULL).Value;
+                        stats.CreatedLimitedCRMUsers = CRMController.GetCRMUsersCount(org.Id, string.Empty, string.Empty, CRMUserLycenseTypes.LIMITED).Value;
+                        stats.CreatedESSCRMUsers = CRMController.GetCRMUsersCount(org.Id, string.Empty, string.Empty, CRMUserLycenseTypes.ESS).Value;
                         stats.UsedCRMDiskSpace = CRMController.GetDBSize(org.Id, org.PackageId);
                         stats.AllocatedCRMDiskSpace = CRMController.GetMaxDBSize(org.Id, org.PackageId);
-                        
+                    }
+
+                    if (cntxTmp.Groups.ContainsKey(ResourceGroups.HostedCRM2013))
+                    {
+                        stats.CreatedProfessionalCRMUsers = CRMController.GetCRMUsersCount(org.Id, string.Empty, string.Empty, CRMUserLycenseTypes.PROFESSIONAL).Value;
+                        stats.CreatedBasicCRMUsers = CRMController.GetCRMUsersCount(org.Id, string.Empty, string.Empty, CRMUserLycenseTypes.BASIC).Value;
+                        stats.CreatedEssentialCRMUsers = CRMController.GetCRMUsersCount(org.Id, string.Empty, string.Empty, CRMUserLycenseTypes.ESSENTIAL).Value;
+                        stats.UsedCRMDiskSpace = CRMController.GetDBSize(org.Id, org.PackageId);
+                        stats.AllocatedCRMDiskSpace = CRMController.GetMaxDBSize(org.Id, org.PackageId);
                     }
 
                     if (cntxTmp.Groups.ContainsKey(ResourceGroups.BlackBerry))
@@ -1011,9 +1019,18 @@ namespace WebsitePanel.EnterpriseServer
 
                                     if (cntxTmp.Groups.ContainsKey(ResourceGroups.HostedCRM))
                                     {
-                                        stats.CreatedCRMUsers += CRMController.GetCRMUsersCount(o.Id, string.Empty, string.Empty, 0 ).Value;
-                                        stats.CreatedLimitedCRMUsers += CRMController.GetCRMUsersCount(o.Id, string.Empty, string.Empty, 2).Value;
-                                        stats.CreatedESSCRMUsers += CRMController.GetCRMUsersCount(o.Id, string.Empty, string.Empty, 22).Value;
+                                        stats.CreatedCRMUsers += CRMController.GetCRMUsersCount(o.Id, string.Empty, string.Empty, CRMUserLycenseTypes.FULL ).Value;
+                                        stats.CreatedLimitedCRMUsers += CRMController.GetCRMUsersCount(o.Id, string.Empty, string.Empty, CRMUserLycenseTypes.LIMITED).Value;
+                                        stats.CreatedESSCRMUsers += CRMController.GetCRMUsersCount(o.Id, string.Empty, string.Empty, CRMUserLycenseTypes.ESS).Value;
+                                        stats.UsedCRMDiskSpace += CRMController.GetDBSize(o.Id, o.PackageId);
+                                        stats.AllocatedCRMDiskSpace += CRMController.GetMaxDBSize(o.Id, o.PackageId);
+                                    }
+
+                                    if (cntxTmp.Groups.ContainsKey(ResourceGroups.HostedCRM2013))
+                                    {
+                                        stats.CreatedProfessionalCRMUsers += CRMController.GetCRMUsersCount(o.Id, string.Empty, string.Empty, CRMUserLycenseTypes.PROFESSIONAL).Value;
+                                        stats.CreatedBasicCRMUsers += CRMController.GetCRMUsersCount(o.Id, string.Empty, string.Empty, CRMUserLycenseTypes.BASIC).Value;
+                                        stats.CreatedEssentialCRMUsers += CRMController.GetCRMUsersCount(o.Id, string.Empty, string.Empty, CRMUserLycenseTypes.ESSENTIAL).Value;
                                         stats.UsedCRMDiskSpace += CRMController.GetDBSize(o.Id, o.PackageId);
                                         stats.AllocatedCRMDiskSpace += CRMController.GetMaxDBSize(o.Id, o.PackageId);
                                     }
@@ -1070,6 +1087,13 @@ namespace WebsitePanel.EnterpriseServer
                     stats.AllocatedCRMUsers = cntx.Quotas[Quotas.CRM_USERS].QuotaAllocatedValue;
                     stats.AllocatedLimitedCRMUsers = cntx.Quotas[Quotas.CRM_LIMITEDUSERS].QuotaAllocatedValue;
                     stats.AllocatedESSCRMUsers = cntx.Quotas[Quotas.CRM_ESSUSERS].QuotaAllocatedValue;
+                }
+
+                if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013))
+                {
+                    stats.AllocatedProfessionalCRMUsers = cntx.Quotas[Quotas.CRM2013_PROFESSIONALUSERS].QuotaAllocatedValue;
+                    stats.AllocatedBasicCRMUsers = cntx.Quotas[Quotas.CRM2013_BASICUSERS].QuotaAllocatedValue;
+                    stats.AllocatedEssentialCRMUsers = cntx.Quotas[Quotas.CRM2013_ESSENTIALUSERS].QuotaAllocatedValue;
                 }
 
                 if (cntx.Groups.ContainsKey(ResourceGroups.BlackBerry))
@@ -1311,7 +1335,7 @@ namespace WebsitePanel.EnterpriseServer
 
             DataSet ds =
                 DataProvider.GetExchangeAccountsPaged(SecurityContext.User.UserId, itemId, accountTypes, filterColumn,
-                                                      filterValue, sortColumn, startRow, maximumRows);
+                                                      filterValue, sortColumn, startRow, maximumRows, false);
 
             OrganizationUsersPaged result = new OrganizationUsersPaged();
             result.RecordsCount = (int)ds.Tables[0].Rows[0][0];
@@ -2075,7 +2099,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             DataProvider.UpdateExchangeAccount(account.AccountId, account.AccountName, account.AccountType, account.DisplayName,
                 account.PrimaryEmailAddress, account.MailEnabledPublicFolder,
-                account.MailboxManagerActions.ToString(), account.SamAccountName, account.AccountPassword, account.MailboxPlanId,
+                account.MailboxManagerActions.ToString(), account.SamAccountName, account.AccountPassword, account.MailboxPlanId, account.ArchivingMailboxPlanId,
                 (string.IsNullOrEmpty(account.SubscriberNumber) ? null : account.SubscriberNumber.Trim()));
         }
 
@@ -2632,7 +2656,7 @@ namespace WebsitePanel.EnterpriseServer
 
             DataSet ds =
                 DataProvider.GetExchangeAccountsPaged(SecurityContext.User.UserId, itemId, accountTypes, filterColumn,
-                                                      filterValue, sortColumn, startRow, maximumRows);
+                                                      filterValue, sortColumn, startRow, maximumRows, false);
 
             ExchangeAccountsPaged result = new ExchangeAccountsPaged();
             result.RecordsCount = (int)ds.Tables[0].Rows[0][0];

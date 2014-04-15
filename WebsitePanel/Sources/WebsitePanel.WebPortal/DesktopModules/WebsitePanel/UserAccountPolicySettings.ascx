@@ -13,6 +13,14 @@
             <asp:HyperLink ID="lnkExchangeMailboxPlansPolicy" runat="server" meta:resourcekey="lnkExchangeMailboxPlansPolicy"
                     Text="Global Exchange Mailbox Plans" NavigateUrl='<%# GetSettingsLink("ExchangeMailboxPlansPolicy", "SettingsExchangeMailboxPlansPolicy") %>'></asp:HyperLink>
         </li>
+        <li>
+            <asp:HyperLink ID="lnkExchangeRetentionPolicy" runat="server" meta:resourcekey="lnkExchangeRetentionPolicy"
+                    Text="Global Retention Policy" NavigateUrl='<%# GetSettingsLink("RetentionPolicy", "SettingsExchangeMailboxPlansPolicy") %>'></asp:HyperLink>
+        </li>
+        <li>
+            <asp:HyperLink ID="lnkExchangeRetentionPolicyTag" runat="server" meta:resourcekey="lnkExchangeRetentionPolicyTag"
+                    Text="Global Retention Policy Tag" NavigateUrl='<%# GetSettingsLink("RetentionPolicyTag", "SettingsExchangeRetentionPolicyTag") %>'></asp:HyperLink>
+        </li>
 
         <li>
             <asp:HyperLink ID="lnkLyncUserPlansPolicy" runat="server" meta:resourcekey="lnkLyncUserPlansPolicy"

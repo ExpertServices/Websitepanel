@@ -242,6 +242,48 @@
                         </tr>
                         </asp:Panel>
 
+                        <asp:Panel runat="server" ID="crm2013StatsPanel">
+                        <tr >
+                            <td class="OrgStatsGroup" width="100%" colspan="2">
+                                <asp:Localize ID="locCRM2013" runat="server" meta:resourcekey="locCRM2013"
+                                    Text="CRM 2013"></asp:Localize>
+                            </td>
+                        </tr>
+                        <tr class="OrgStatsRow">
+                            <td align="right" nowrap>
+                                <asp:HyperLink ID="lnkProfessionalCRMUsers" runat="server" meta:resourcekey="lnkProfessionalCRMUsers" Text="Professional licenses :"></asp:HyperLink>
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="crmProfessionalUsersStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                        <tr class="OrgStatsRow">
+                            <td align="right" nowrap>
+                                <asp:HyperLink ID="lnkBasicCRMUsers" runat="server" meta:resourcekey="lnkBasicCRMUsers" Text="Basic licenses :"></asp:HyperLink>
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="crmBasicUsersStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                        <tr class="OrgStatsRow">
+                            <td align="right" nowrap>
+                                <asp:HyperLink ID="lnkEssentialCRMUsers" runat="server" meta:resourcekey="lnkEssentialCRMUsers" Text="Essential licenses :"></asp:HyperLink>
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="crmEssentialUsersStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                        <tr class="OrgStatsRow">
+                            <td align="right" nowrap>
+				                <asp:HyperLink ID="lnkCRM2013DBSize" runat="server" meta:resourcekey="lnkCRMDBSize" Text="Storage size (MB):"></asp:HyperLink>
+                            </td>
+                            <td>
+				                <wsp:QuotaViewer ID="crm2013DBSize" runat="server" QuotaTypeId="2" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                        </asp:Panel>
+
+
                         <asp:Panel runat="server" ID="enterpriseStorageStatsPanel">
                         <tr>
                             <td class="OrgStatsGroup" width="100%" colspan="2">

@@ -216,4 +216,7 @@
   <data name="lblLitigationHoldUrl.Text" xml:space="preserve">
     <value>Litigation Hold Url:</value>
   </data>
+  <data name="locTitleArchiving.Text" xml:space="preserve">
+    <value>Add Retention policy</value>
+  </data>
 </root>

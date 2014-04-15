@@ -12,7 +12,7 @@
 	<asp:GridView id="gvMailboxPlans" runat="server"  EnableViewState="true" AutoGenerateColumns="false"
 		Width="100%" EmptyDataText="gvMailboxPlans" CssSelectorClass="NormalGridView" OnRowCommand="gvMailboxPlan_RowCommand" >
 		<Columns>
-            <asp:TemplateField HeaderText="gvMailboxPlanEdit">
+            <asp:TemplateField HeaderText="Edit">
                 <ItemTemplate>
                     <asp:ImageButton ID="cmdEdit" runat="server" SkinID="EditSmall" CommandName="EditItem" AlternateText="Edit record" CommandArgument='<%# Eval("MailboxPlanId") %>' ></asp:ImageButton>
                 </ItemTemplate>
@@ -22,7 +22,7 @@
 					<asp:Image ID="img2" runat="server" Width="16px" Height="16px" ImageUrl='<%# GetPlanType((int)Eval("MailboxPlanType")) %>' ImageAlign="AbsMiddle" />
 				</ItemTemplate>
 			</asp:TemplateField>
-			<asp:TemplateField HeaderText="gvMailboxPlan">
+			<asp:TemplateField HeaderText="Policy">
 				<ItemStyle Width="70%"></ItemStyle>
 				<ItemTemplate>
 					<asp:Label id="lnkDisplayMailboxPlan" runat="server" EnableViewState="true" ><%# PortalAntiXSS.Encode((string)Eval("MailboxPlan"))%></asp:Label>
@@ -255,19 +255,87 @@
 			</table>
 		</asp:Panel>
 
+		<wsp:CollapsiblePanel id="secArchiving" runat="server"
+            TargetControlID="Archiving" meta:resourcekey="secArchiving" Text="Archiving">
+        </wsp:CollapsiblePanel>
+        <asp:Panel ID="Archiving" runat="server" Height="0" style="overflow:hidden;">
+			<table>
+				<tr>
+					<td class="FormLabel200">
+						<asp:CheckBox ID="chkEnableArchiving" runat="server" meta:resourcekey="chkEnableArchiving" Text="Archiving"></asp:CheckBox>
+					</td>
+                    <td></td>
+				</tr>
+				<tr>
+					<td class="FormLabel200" align="right"><asp:Localize ID="locArchiveQuota" runat="server" meta:resourcekey="locArchiveQuota" Text="Archive quota:"></asp:Localize></td>
+					<td>
+                        <div class="Right">
+                            <uc1:QuotaEditor id="archiveQuota" runat="server"
+                                QuotaTypeID="2"
+                                QuotaValue="0"
+                                ParentQuotaValue="-1">
+                            </uc1:QuotaEditor>
+                        </div>
+					</td>
+				</tr>
+				<tr>
+					<td class="FormLabel200" align="right"><asp:Localize ID="locArchiveWarningQuota" runat="server" meta:resourcekey="locArchiveWarningQuota" Text="Archive warning quota:"></asp:Localize></td>
+					<td>
+						<wsp:SizeBox id="archiveWarningQuota" runat="server" DisplayUnitsKB="false" DisplayUnitsMB="false" DisplayUnitsPct="true" />
+					</td>
+				</tr>
+
+			</table>
+			<br />
+		</asp:Panel>
+
+        <wsp:CollapsiblePanel id="secRetentionPolicyTags" runat="server"
+            TargetControlID="RetentionPolicyTags" meta:resourcekey="secRetentionPolicyTags" Text="Retention policy tags">
+        </wsp:CollapsiblePanel>
+        <asp:Panel ID="RetentionPolicyTags" runat="server" Height="0" style="overflow:hidden;">
+            <asp:UpdatePanel ID="GeneralUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
+                <ContentTemplate>
+                <asp:GridView id="gvPolicy" runat="server"  EnableViewState="true" AutoGenerateColumns="false"
+		        Width="100%" EmptyDataText="" CssSelectorClass="NormalGridView" OnRowCommand="gvPolicy_RowCommand" >
+		        <Columns>
+			        <asp:TemplateField HeaderText="Tag">
+				        <ItemStyle Width="70%"></ItemStyle>
+				        <ItemTemplate>
+					        <asp:Label id="displayPolicy" runat="server" EnableViewState="true" ><%# PortalAntiXSS.Encode((string)Eval("TagName"))%></asp:Label>
+                        </ItemTemplate>
+			        </asp:TemplateField>
+                    <asp:TemplateField>
+				        <ItemTemplate>
+					        &nbsp;<asp:ImageButton id="imgDelPolicy" runat="server" Text="Delete" SkinID="ExchangeDelete"
+						        CommandName="DeleteItem" CommandArgument='<%# Eval("TagId") %>' 
+						        meta:resourcekey="cmdDelete" OnClientClick="return confirm('Are you sure you want to delete selected policy tag?')" >
+					                </asp:ImageButton>
+				        </ItemTemplate>
+			        </asp:TemplateField>
+		        </Columns>
+	            </asp:GridView>
+                <br />
+
+                <asp:DropDownList ID="ddTags" runat ="server"></asp:DropDownList>
+                <asp:Button ID="bntAddTag" runat="server" Text="Add tag" meta:resourcekey="bntAddTag" OnClick="bntAddTag_Click"/>
+                <br />
+                </ContentTemplate>
+            </asp:UpdatePanel>
+        </asp:Panel>
+
 
     <table>
         <tr>
             <td>
                 <div class="FormButtonsBarClean">
                     <asp:Button ID="btnAddMailboxPlan" runat="server" meta:resourcekey="btnAddMailboxPlan"
-                        Text="Add New Mailboxplan" CssClass="Button1" OnClick="btnAddMailboxPlan_Click" />
+                        Text="Add New" CssClass="Button1" OnClick="btnAddMailboxPlan_Click" />
                 </div>
             </td>
             <td>
                 <div class="FormButtonsBarClean">
                         <asp:Button ID="btnUpdateMailboxPlan" runat="server" meta:resourcekey="btnUpdateMailboxPlan"
-                            Text="Update Mailboxplan" CssClass="Button1" OnClick="btnUpdateMailboxPlan_Click" />
+                            Text="Update" CssClass="Button1" OnClick="btnUpdateMailboxPlan_Click" />
             </td>
         </tr>
     </table>

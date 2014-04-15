@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -45,6 +45,19 @@ namespace WebsitePanel.Portal
         {
             int result = defaultValue;
             try { result = Int32.Parse(HttpContext.Current.Request[key]); }
+            catch { /* do nothing */ }
+            return result;
+        }
+
+        public static bool GetBool(string key)
+        {
+            return GetBool(key, false);
+        }
+
+        public static bool GetBool(string key, bool defaultValue)
+        {
+            bool result = defaultValue;
+            try { result = bool.Parse(HttpContext.Current.Request[key]); }
             catch { /* do nothing */ }
             return result;
         }
@@ -194,6 +207,11 @@ namespace WebsitePanel.Portal
         public static string FolderID
         {
             get { return HttpContext.Current.Request["FolderID"] ?? ""; }
+        }
+
+        public static string Ctl
+        {
+            get { return HttpContext.Current.Request["ctl"] ?? ""; }
         }
     }
 }

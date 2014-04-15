@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -950,7 +950,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static ExchangeAccountsPaged GetAccountsPaged(int itemId, string accountTypes,
             string filterColumn, string filterValue, string sortColumn,
-            int startRow, int maximumRows)
+            int startRow, int maximumRows, bool archiving)
         {
             #region Demo Mode
             if (IsDemoMode)
@@ -965,7 +965,7 @@ namespace WebsitePanel.EnterpriseServer
             #endregion
 
             DataSet ds = DataProvider.GetExchangeAccountsPaged(SecurityContext.User.UserId, itemId,
-                accountTypes, filterColumn, filterValue, sortColumn, startRow, maximumRows);
+                accountTypes, filterColumn, filterValue, sortColumn, startRow, maximumRows, archiving);
 
             ExchangeAccountsPaged result = new ExchangeAccountsPaged();
             result.RecordsCount = (int)ds.Tables[0].Rows[0][0];
@@ -1223,7 +1223,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             DataProvider.UpdateExchangeAccount(account.AccountId, account.AccountName, account.AccountType, account.DisplayName,
                 account.PrimaryEmailAddress, account.MailEnabledPublicFolder,
-                account.MailboxManagerActions.ToString(), account.SamAccountName, account.AccountPassword, account.MailboxPlanId,
+                account.MailboxManagerActions.ToString(), account.SamAccountName, account.AccountPassword, account.MailboxPlanId, account.ArchivingMailboxPlanId,
                 (string.IsNullOrEmpty(account.SubscriberNumber) ? null : account.SubscriberNumber.Trim()));
         }
 
@@ -1598,7 +1598,7 @@ namespace WebsitePanel.EnterpriseServer
 
         private static void UpdateExchangeAccount(int accountId, string accountName, ExchangeAccountType accountType,
             string displayName, string primaryEmailAddress, bool mailEnabledPublicFolder,
-            string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, string subscriberNumber)
+            string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, int archivePlanId, string subscriberNumber)
         {
             DataProvider.UpdateExchangeAccount(accountId,
                 accountName,
@@ -1609,13 +1609,13 @@ namespace WebsitePanel.EnterpriseServer
                 mailboxManagerActions,
                 samAccountName,
                 CryptoUtils.Encrypt(accountPassword),
-                mailboxPlanId,
+                mailboxPlanId, archivePlanId, 
                 (string.IsNullOrEmpty(subscriberNumber) ? null : subscriberNumber.Trim()));
         }
 
 
         public static int CreateMailbox(int itemId, int accountId, ExchangeAccountType accountType, string accountName,
-            string displayName, string name, string domain, string password, bool sendSetupInstructions, string setupInstructionMailAddress, int mailboxPlanId, string subscriberNumber)
+            string displayName, string name, string domain, string password, bool sendSetupInstructions, string setupInstructionMailAddress, int mailboxPlanId, int archivedPlanId, string subscriberNumber)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -1756,9 +1756,9 @@ namespace WebsitePanel.EnterpriseServer
                     | MailboxManagerActions.EmailAddresses;
 
 
-                UpdateExchangeAccount(accountId, accountName, accountType, displayName, email, false, pmmActions.ToString(), samAccount, password, mailboxPlanId, subscriberNumber);
+                UpdateExchangeAccount(accountId, accountName, accountType, displayName, email, false, pmmActions.ToString(), samAccount, password, mailboxPlanId, archivedPlanId, subscriberNumber);
 
-
+                SetMailBoxRetentionPolicy(itemId, archivedPlanId, accountName, exchange, org.OrganizationId);
 
                 // send setup instructions
                 if (sendSetupInstructions)
@@ -2595,12 +2595,11 @@ namespace WebsitePanel.EnterpriseServer
 
         }
 
-
         #endregion
 
 
         #region Mailbox plan
-        public static int SetExchangeMailboxPlan(int itemId, int accountId, int mailboxPlanId)
+        public static int SetExchangeMailboxPlan(int itemId, int accountId, int mailboxPlanId, int archivePlanId)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -2679,6 +2678,7 @@ namespace WebsitePanel.EnterpriseServer
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                //TDMX
                 exchange.SetMailboxAdvancedSettings(
                     org.OrganizationId,
                     account.UserPrincipalName,
@@ -2700,7 +2700,9 @@ namespace WebsitePanel.EnterpriseServer
                     plan.LitigationHoldUrl,
                     plan.LitigationHoldMsg);
 
-                DataProvider.SetExchangeAccountMailboxPlan(accountId, mailboxPlanId);
+                SetMailBoxRetentionPolicy(itemId, archivePlanId, account.UserPrincipalName, exchange, org.OrganizationId);
+
+                DataProvider.SetExchangeAccountMailboxPlan(accountId, mailboxPlanId, archivePlanId);
 
                 return 0;
             }
@@ -2714,7 +2716,7 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        public static List<ExchangeMailboxPlan> GetExchangeMailboxPlans(int itemId)
+        public static List<ExchangeMailboxPlan> GetExchangeMailboxPlans(int itemId, bool archiving)
         {
             // place log record
             TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_MAILBOXPLANS", itemId);
@@ -2726,9 +2728,9 @@ namespace WebsitePanel.EnterpriseServer
                 UserInfo user = ObjectUtils.FillObjectFromDataReader<UserInfo>(DataProvider.GetUserByExchangeOrganizationIdInternally(itemId));
 
                 if (user.Role == UserRole.User)
-                    ExchangeServerController.GetExchangeMailboxPlansByUser(itemId, user, ref mailboxPlans);
+                    ExchangeServerController.GetExchangeMailboxPlansByUser(itemId, user, ref mailboxPlans, archiving);
                 else
-                    ExchangeServerController.GetExchangeMailboxPlansByUser(0, user, ref mailboxPlans);
+                    ExchangeServerController.GetExchangeMailboxPlansByUser(0, user, ref mailboxPlans, archiving);
 
 
                 ExchangeOrganization ExchangeOrg = ObjectUtils.FillObjectFromDataReader<ExchangeOrganization>(DataProvider.GetExchangeOrganization(itemId));
@@ -2753,7 +2755,7 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        private static void GetExchangeMailboxPlansByUser(int itemId, UserInfo user, ref List<ExchangeMailboxPlan> mailboxPlans)
+        private static void GetExchangeMailboxPlansByUser(int itemId, UserInfo user, ref List<ExchangeMailboxPlan> mailboxPlans, bool archiving)
         {
             if ((user != null))
             {
@@ -2780,7 +2782,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (OrgId != -1)
                 {
-                    List<ExchangeMailboxPlan> Plans = ObjectUtils.CreateListFromDataReader<ExchangeMailboxPlan>(DataProvider.GetExchangeMailboxPlans(OrgId));
+                    List<ExchangeMailboxPlan> Plans = ObjectUtils.CreateListFromDataReader<ExchangeMailboxPlan>(DataProvider.GetExchangeMailboxPlans(OrgId, archiving));
 
                     foreach (ExchangeMailboxPlan p in Plans)
                     {
@@ -2790,7 +2792,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 UserInfo owner = UserController.GetUserInternally(user.OwnerId);
 
-                GetExchangeMailboxPlansByUser(0, owner, ref mailboxPlans);
+                GetExchangeMailboxPlansByUser(0, owner, ref mailboxPlans, archiving);
             }
         }
 
@@ -2842,9 +2844,18 @@ namespace WebsitePanel.EnterpriseServer
                         if (mailboxPlan.KeepDeletedItemsDays > cntx.Quotas[Quotas.EXCHANGE2007_KEEPDELETEDITEMSDAYS].QuotaAllocatedValue)
                             mailboxPlan.KeepDeletedItemsDays = cntx.Quotas[Quotas.EXCHANGE2007_KEEPDELETEDITEMSDAYS].QuotaAllocatedValue;
 
-                    if (cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue != -1)
-                        if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue)
-                            mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
+                    if (mailboxPlan.Archiving)
+                    {
+                        if (cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue != -1)
+                            if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue)
+                                mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue;
+                    }
+                    else
+                    {
+                        if (cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue != -1)
+                            if (mailboxPlan.MailboxSizeMB > cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue)
+                                mailboxPlan.MailboxSizeMB = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
+                    }
 
                     if (cntx.Quotas[Quotas.EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB].QuotaAllocatedValue != -1)
                         if (mailboxPlan.MaxReceiveMessageSizeKB > cntx.Quotas[Quotas.EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB].QuotaAllocatedValue)
@@ -2871,7 +2882,7 @@ namespace WebsitePanel.EnterpriseServer
                                                         mailboxPlan.IsDefault, mailboxPlan.IssueWarningPct, mailboxPlan.KeepDeletedItemsDays, mailboxPlan.MailboxSizeMB, mailboxPlan.MaxReceiveMessageSizeKB, mailboxPlan.MaxRecipients,
                                                         mailboxPlan.MaxSendMessageSizeKB, mailboxPlan.ProhibitSendPct, mailboxPlan.ProhibitSendReceivePct, mailboxPlan.HideFromAddressBook, mailboxPlan.MailboxPlanType,
                                                         mailboxPlan.AllowLitigationHold, mailboxPlan.RecoverableItemsSpace, mailboxPlan.RecoverableItemsWarningPct,
-                                                        mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg);
+                                                        mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg, mailboxPlan.Archiving, mailboxPlan.EnableArchiving);
             }
             catch (Exception ex)
             {
@@ -2941,7 +2952,8 @@ namespace WebsitePanel.EnterpriseServer
                                                         mailboxPlan.IsDefault, mailboxPlan.IssueWarningPct, mailboxPlan.KeepDeletedItemsDays, mailboxPlan.MailboxSizeMB, mailboxPlan.MaxReceiveMessageSizeKB, mailboxPlan.MaxRecipients,
                                                         mailboxPlan.MaxSendMessageSizeKB, mailboxPlan.ProhibitSendPct, mailboxPlan.ProhibitSendReceivePct, mailboxPlan.HideFromAddressBook, mailboxPlan.MailboxPlanType,
                                                         mailboxPlan.AllowLitigationHold, mailboxPlan.RecoverableItemsSpace, mailboxPlan.RecoverableItemsWarningPct,
-                                                        mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg);
+                                                        mailboxPlan.LitigationHoldUrl, mailboxPlan.LitigationHoldMsg,
+                                                        mailboxPlan.Archiving, mailboxPlan.EnableArchiving);
             }
             catch (Exception ex)
             {
@@ -3002,6 +3014,361 @@ namespace WebsitePanel.EnterpriseServer
 
         #endregion
 
+        #region Exchange Retention Policy Tags
+
+        private static void SetMailBoxRetentionPolicy(int itemId, int retentionPolicyId, string accountName, ExchangeServer exchange, string orgId)
+        {
+            bool archive = false;
+            long archiveQuotaKB = 0;
+            long archiveWarningQuotaKB = 0;
+            string RetentionPolicy = "";
+            if (retentionPolicyId > 0)
+            {
+                ExchangeMailboxPlan retentionPolicy = GetExchangeMailboxPlan(itemId, retentionPolicyId);
+                if (retentionPolicy != null)
+                {
+                    archive = retentionPolicy.EnableArchiving;
+                    archiveQuotaKB = retentionPolicy.MailboxSizeMB != -1 ? ((long)retentionPolicy.MailboxSizeMB * 1024) : -1;
+                    archiveWarningQuotaKB = retentionPolicy.MailboxSizeMB != -1 ? (((long)retentionPolicy.IssueWarningPct * (long)retentionPolicy.MailboxSizeMB * 1024) / 100) : -1;
+
+                    // update
+                    List<ExchangeMailboxPlanRetentionPolicyTag> listtags = GetExchangeMailboxPlanRetentionPolicyTags(retentionPolicyId);
+                    foreach(ExchangeMailboxPlanRetentionPolicyTag listtag in listtags)
+                    {
+                        ExchangeRetentionPolicyTag tag = GetExchangeRetentionPolicyTag(itemId, listtag.TagID);
+                        exchange.SetRetentionPolicyTag(tag.WSPUniqueName, (ExchangeRetentionPolicyTagType)tag.TagType, tag.AgeLimitForRetention, (ExchangeRetentionPolicyTagAction)tag.RetentionAction);
+                    }
+                    UpdateExchangeMailboxPlanRetentionPolicyTags(itemId, retentionPolicyId);
+                }
+
+            }
+            exchange.SetMailBoxArchiving(orgId, accountName, archive, archiveQuotaKB, archiveWarningQuotaKB, RetentionPolicy);
+
+        }
+
+        public static List<ExchangeRetentionPolicyTag> GetExchangeRetentionPolicyTags(int itemId)
+        {
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_RETENTIONPOLICYTAGS", itemId);
+
+            try
+            {
+                List<ExchangeRetentionPolicyTag> retentionPolicyTags = new List<ExchangeRetentionPolicyTag>();
+
+                UserInfo user = ObjectUtils.FillObjectFromDataReader<UserInfo>(DataProvider.GetUserByExchangeOrganizationIdInternally(itemId));
+
+                if (user.Role == UserRole.User)
+                    ExchangeServerController.GetExchangeRetentionPolicyTagsByUser(itemId, user, ref retentionPolicyTags);
+                else
+                    ExchangeServerController.GetExchangeRetentionPolicyTagsByUser(0, user, ref retentionPolicyTags);
+
+                return retentionPolicyTags;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        private static void GetExchangeRetentionPolicyTagsByUser(int itemId, UserInfo user, ref List<ExchangeRetentionPolicyTag> retentionPolicyTags)
+        {
+            if ((user != null))
+            {
+                List<Organization> orgs = null;
+
+                if (user.UserId != 1)
+                {
+                    List<PackageInfo> Packages = PackageController.GetPackages(user.UserId);
+
+                    if ((Packages != null) & (Packages.Count > 0))
+                    {
+                        orgs = GetExchangeOrganizationsInternal(Packages[0].PackageId, false);
+                    }
+                }
+                else
+                {
+                    orgs = GetExchangeOrganizationsInternal(1, false);
+                }
+
+                int OrgId = -1;
+                if (itemId > 0) OrgId = itemId;
+                else if ((orgs != null) & (orgs.Count > 0)) OrgId = orgs[0].Id;
+
+
+                if (OrgId != -1)
+                {
+                    List<ExchangeRetentionPolicyTag> RetentionPolicy = ObjectUtils.CreateListFromDataReader<ExchangeRetentionPolicyTag>(DataProvider.GetExchangeRetentionPolicyTags(OrgId));
+
+                    foreach (ExchangeRetentionPolicyTag p in RetentionPolicy)
+                    {
+                        retentionPolicyTags.Add(p);
+                    }
+                }
+
+                UserInfo owner = UserController.GetUserInternally(user.OwnerId);
+
+                GetExchangeRetentionPolicyTagsByUser(0, owner, ref retentionPolicyTags);
+            }
+        }
+
+        public static ExchangeRetentionPolicyTag GetExchangeRetentionPolicyTag(int itemID, int tagId)
+        {
+
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_RETENTIONPOLICYTAG", tagId);
+
+            try
+            {
+                return ObjectUtils.FillObjectFromDataReader<ExchangeRetentionPolicyTag>(
+                    DataProvider.GetExchangeRetentionPolicyTag(tagId));
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static int AddExchangeRetentionPolicyTag(int itemID, ExchangeRetentionPolicyTag tag)
+        {
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "ADD_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+
+            try
+            {
+                Organization org = GetOrganization(itemID);
+                if (org == null)
+                    return -1;
+
+                // load package context
+                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
+
+                if (org.PackageId > 1)
+                {
+                    // quotas
+                }
+
+                int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+
+                if (exchangeServiceId > 0)
+                {
+                    ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+
+                    exchange.SetRetentionPolicyTag(tag.WSPUniqueName, (ExchangeRetentionPolicyTagType)tag.TagType, tag.AgeLimitForRetention, (ExchangeRetentionPolicyTagAction)tag.RetentionAction);
+                }
+
+                return DataProvider.AddExchangeRetentionPolicyTag(itemID, tag.TagName, tag.TagType, tag.AgeLimitForRetention, tag.RetentionAction );
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+        }
+
+        public static int UpdateExchangeRetentionPolicyTag(int itemID, ExchangeRetentionPolicyTag tag)
+        {
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "UPDATE_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+
+            try
+            {
+                Organization org = GetOrganization(itemID);
+                if (org == null)
+                    return -1;
+
+                // load package context
+                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
+
+                if (org.PackageId > 1)
+                {
+                    // quotas
+                }
+
+                int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+
+                if (exchangeServiceId > 0)
+                {
+                    ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+
+                    exchange.SetRetentionPolicyTag(tag.WSPUniqueName, (ExchangeRetentionPolicyTagType)tag.TagType, tag.AgeLimitForRetention, (ExchangeRetentionPolicyTagAction)tag.RetentionAction);
+                }
+
+                DataProvider.UpdateExchangeRetentionPolicyTag(tag.TagID, tag.ItemID, tag.TagName, tag.TagType, tag.AgeLimitForRetention, tag.RetentionAction);
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+
+            return 0;
+        }
+
+        public static int DeleteExchangeRetentionPolicyTag(int itemID, int tagId)
+        {
+            TaskManager.StartTask("EXCHANGE", "DELETE_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+
+            try
+            {
+                Organization org = GetOrganization(itemID);
+                if (org == null)
+                    return -1;
+
+                int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+                if (exchangeServiceId > 0)
+                {
+                    ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+
+                    ExchangeRetentionPolicyTag tag = GetExchangeRetentionPolicyTag(itemID, tagId);
+                    if (tag == null) return -1;
+
+                    exchange.RemoveRetentionPolicyTag(tag.WSPUniqueName);
+                }
+                
+                DataProvider.DeleteExchangeRetentionPolicyTag(tagId);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+        }
+
+
+        public static List<ExchangeMailboxPlanRetentionPolicyTag> GetExchangeMailboxPlanRetentionPolicyTags(int policyId)
+        {
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "GET_EXCHANGE_RETENTIONPOLICYTAGS", policyId);
+
+            try
+            {
+                List<ExchangeMailboxPlanRetentionPolicyTag> tags =
+                    ObjectUtils.CreateListFromDataReader<ExchangeMailboxPlanRetentionPolicyTag>(DataProvider.GetExchangeMailboxPlanRetentionPolicyTags(policyId));
+
+                return tags;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+
+        private static void UpdateExchangeMailboxPlanRetentionPolicyTags(int itemID, int policyId)
+        {
+            ExchangeMailboxPlan policy = GetExchangeMailboxPlan(itemID, policyId);
+
+            List<ExchangeMailboxPlanRetentionPolicyTag> policytaglist = GetExchangeMailboxPlanRetentionPolicyTags(policyId);
+
+            List<string> tagLinks = new List<string>();
+
+            foreach (ExchangeMailboxPlanRetentionPolicyTag policytag in policytaglist)
+            {
+                ExchangeRetentionPolicyTag tag = GetExchangeRetentionPolicyTag(itemID, policytag.TagID);
+                tagLinks.Add(tag.WSPUniqueName);
+            }
+
+            Organization org = GetOrganization(itemID);
+            if (org == null)
+                return;
+
+            int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+
+            if (exchangeServiceId > 0)
+            {
+                ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+
+                exchange.SetRetentionPolicy(policy.WSPUniqueName, tagLinks.ToArray());
+            }
+
+        }
+
+        public static int AddExchangeMailboxPlanRetentionPolicyTag(int itemID, ExchangeMailboxPlanRetentionPolicyTag planTag)
+        {
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "ADD_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+
+            try
+            {
+                Organization org = GetOrganization(itemID);
+                if (org == null)
+                    return -1;
+
+                // load package context
+                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
+
+                if (org.PackageId > 1)
+                {
+                    // quotas
+                }
+
+                int res = DataProvider.AddExchangeMailboxPlanRetentionPolicyTag(planTag.TagID, planTag.MailboxPlanId);
+
+                UpdateExchangeMailboxPlanRetentionPolicyTags(itemID, planTag.MailboxPlanId);
+
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+        }
+
+        public static int DeleteExchangeMailboxPlanRetentionPolicyTag(int itemID, int policyId, int planTagId)
+        {
+            TaskManager.StartTask("EXCHANGE", "DELETE_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+
+            try
+            {
+                DataProvider.DeleteExchangeMailboxPlanRetentionPolicyTag(planTagId);
+
+                UpdateExchangeMailboxPlanRetentionPolicyTags(itemID, policyId);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+        }
+
+        #endregion
 
         #region Contacts
         public static int CreateContact(int itemId, string displayName, string email)

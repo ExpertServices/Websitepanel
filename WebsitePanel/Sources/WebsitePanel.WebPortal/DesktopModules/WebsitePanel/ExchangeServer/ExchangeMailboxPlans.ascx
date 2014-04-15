@@ -15,14 +15,14 @@
 			<div class="Center">
 				<div class="Title">
 					<asp:Image ID="Image1" SkinID="ExchangeDomainName48" runat="server" />
-					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Domain Names"></asp:Localize>
+					<asp:Localize ID="locTitle" runat="server"></asp:Localize>
 				</div>
 				<div class="FormBody">
 				    <wsp:SimpleMessageBox id="messageBox" runat="server" />
 				    
                     <div class="FormButtonsBarClean">
                         <asp:Button ID="btnAddMailboxPlan" runat="server" meta:resourcekey="btnAddMailboxPlan"
-                            Text="Add New Mailboxplan" CssClass="Button1" OnClick="btnAddMailboxPlan_Click" />
+                            Text="Add New" CssClass="Button1" OnClick="btnAddMailboxPlan_Click" />
                     </div>
 
 				    <asp:GridView ID="gvMailboxPlans" runat="server" AutoGenerateColumns="False" EnableViewState="true"

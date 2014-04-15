@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -84,7 +84,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
 
 
-                WebsitePanel.Providers.HostedSolution.ExchangeMailboxPlan[] plans = ES.Services.ExchangeServer.GetExchangeMailboxPlans(PanelRequest.ItemID);
+                WebsitePanel.Providers.HostedSolution.ExchangeMailboxPlan[] plans = ES.Services.ExchangeServer.GetExchangeMailboxPlans(PanelRequest.ItemID, false);
 
                 if (plans.Length == 0)
                     btnCreate.Enabled = false;
@@ -138,6 +138,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                                     chkSendInstructions.Checked,
                                     sendInstructionEmail.Text,
                                     Convert.ToInt32(mailboxPlanSelector.MailboxPlanId),
+                                    Convert.ToInt32(archivingMailboxPlanSelector.MailboxPlanId),
                                     subscriberNumber);
 
 

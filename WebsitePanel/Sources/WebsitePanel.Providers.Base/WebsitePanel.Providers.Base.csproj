@@ -93,10 +93,14 @@
     <Compile Include="HostedSolution\BlackBerryStatsItem.cs" />
     <Compile Include="HostedSolution\BlackBerryUserDeleteState.cs" />
     <Compile Include="HostedSolution\ExchangeDisclaimer.cs" />
+    <Compile Include="HostedSolution\ExchangeMailboxPlanRetentionPolicyTag.cs" />
     <Compile Include="HostedSolution\ExchangeOrganization.cs" />
     <Compile Include="HostedSolution\ExchangeAcceptedDomainType.cs" />
     <Compile Include="HostedSolution\ExchangeMailboxPlanType.cs" />
     <Compile Include="HostedSolution\ExchangeMailboxPlan.cs" />
+    <Compile Include="HostedSolution\ExchangeRetentionPolicyTag.cs" />
+    <Compile Include="HostedSolution\ExchangeRetentionPolicyTagAction.cs" />
+    <Compile Include="HostedSolution\ExchangeRetentionPolicyTagType.cs" />
     <Compile Include="HostedSolution\ILyncServer.cs" />
     <Compile Include="HostedSolution\LyncConstants.cs" />
     <Compile Include="HostedSolution\LyncErrorCodes.cs" />

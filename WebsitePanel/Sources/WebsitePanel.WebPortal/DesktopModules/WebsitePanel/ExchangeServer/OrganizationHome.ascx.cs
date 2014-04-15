@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -235,11 +235,26 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             if (org.CrmOrganizationId != Guid.Empty)
             {
-                crmStatsPanel.Visible = true;
-                BindCRMStats(orgStats, tenantStats);
+
+                if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013))
+                {
+                    crm2013StatsPanel.Visible = true;
+                    crmStatsPanel.Visible = false;
+                    BindCRM2013Stats(orgStats, tenantStats);
+                }
+                else if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM))
+                {
+                    crmStatsPanel.Visible = true;
+                    crm2013StatsPanel.Visible = false;
+                    BindCRMStats(orgStats, tenantStats);
+                }
+
             }
             else
+            {
                 crmStatsPanel.Visible = false;
+                crm2013StatsPanel.Visible = false;
+            }
 
 
             if (cntx.Groups.ContainsKey(ResourceGroups.EnterpriseStorage))
@@ -275,6 +290,30 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             crmDBSize.QuotaUsedValue = Convert.ToInt32(stats.UsedCRMDiskSpace > 0 ? stats.UsedCRMDiskSpace / (1024 * 1024) : -1);
             crmDBSize.QuotaValue = Convert.ToInt32(stats.AllocatedCRMDiskSpace>0 ? stats.AllocatedCRMDiskSpace/(1024*1024) : -1);
+        }
+
+        private void BindCRM2013Stats(OrganizationStatistics stats, OrganizationStatistics tenantStats)
+        {
+            lnkProfessionalCRMUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "crmusers",
+                "SpaceID=" + PanelSecurity.PackageId);
+
+            lnkBasicCRMUsers.NavigateUrl = lnkCRMUsers.NavigateUrl;
+            lnkEssentialCRMUsers.NavigateUrl = lnkCRMUsers.NavigateUrl;
+
+            lnkCRM2013DBSize.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "crm_storage_settings",
+                "SpaceID=" + PanelSecurity.PackageId);
+
+            crmProfessionalUsersStats.QuotaUsedValue = stats.CreatedProfessionalCRMUsers;
+            crmProfessionalUsersStats.QuotaValue = stats.AllocatedProfessionalCRMUsers;
+
+            crmBasicUsersStats.QuotaUsedValue = stats.CreatedBasicCRMUsers;
+            crmBasicUsersStats.QuotaValue = stats.AllocatedBasicCRMUsers;
+
+            crmEssentialUsersStats.QuotaUsedValue = stats.CreatedEssentialCRMUsers;
+            crmEssentialUsersStats.QuotaValue = stats.AllocatedEssentialCRMUsers;
+
+            crm2013DBSize.QuotaUsedValue = Convert.ToInt32(stats.UsedCRMDiskSpace > 0 ? stats.UsedCRMDiskSpace / (1024 * 1024) : -1);
+            crm2013DBSize.QuotaValue = Convert.ToInt32(stats.AllocatedCRMDiskSpace > 0 ? stats.AllocatedCRMDiskSpace / (1024 * 1024) : -1);
         }
 
         private void BindOCSStats(OrganizationStatistics stats, OrganizationStatistics tenantStats)

@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -32,6 +32,7 @@ using System.Web.UI.WebControls;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.CRM
 {
@@ -41,6 +42,27 @@ namespace WebsitePanel.Portal.CRM
         {
             if (!IsPostBack)
             {
+                PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+                if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013))
+                {
+                    ddlLicenseType.Items.Add(new System.Web.UI.WebControls.ListItem(
+                        GetSharedLocalizedString("HostedCRM.LicenseProfessional"), CRMUserLycenseTypes.PROFESSIONAL.ToString()));
+                    ddlLicenseType.Items.Add(new System.Web.UI.WebControls.ListItem(
+                        GetSharedLocalizedString("HostedCRM.LicenseBasic"), CRMUserLycenseTypes.BASIC.ToString()));
+                    ddlLicenseType.Items.Add(new System.Web.UI.WebControls.ListItem(
+                        GetSharedLocalizedString("HostedCRM.LicenseEssential"), CRMUserLycenseTypes.ESSENTIAL.ToString()));
+                }
+                else
+                {
+                    ddlLicenseType.Items.Add(new System.Web.UI.WebControls.ListItem(
+                        GetSharedLocalizedString("HostedCRM.LicenseFull"), CRMUserLycenseTypes.FULL.ToString()));
+                    ddlLicenseType.Items.Add(new System.Web.UI.WebControls.ListItem(
+                        GetSharedLocalizedString("HostedCRM.LicenseLimited"), CRMUserLycenseTypes.LIMITED.ToString()));
+                    ddlLicenseType.Items.Add(new System.Web.UI.WebControls.ListItem(
+                        GetSharedLocalizedString("HostedCRM.LicenseESS"), CRMUserLycenseTypes.ESS.ToString()));
+                }
+
+
                 try
                 {
                     OrganizationUser user =
@@ -61,17 +83,7 @@ namespace WebsitePanel.Portal.CRM
 
                         int cALType = userResult.Value.CALType + ((int)userResult.Value.ClientAccessMode) * 10;
 
-                        switch (cALType)
-                        {
-                            case 0 :
-                            case 2 :
-                            case 22:
-                                ddlLicenseType.SelectedValue = cALType.ToString();
-                                break;
-                            default:
-                                ddlLicenseType.SelectedIndex = 0;
-                                break;
-                        }
+                        Utils.SelectListItem(ddlLicenseType, cALType);
                     }
                     else
                     {

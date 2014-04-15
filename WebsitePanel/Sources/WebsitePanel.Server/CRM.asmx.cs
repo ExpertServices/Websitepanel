@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -55,9 +55,9 @@ namespace WebsitePanel.Server
 
 
         [WebMethod, SoapHeader("settings")]
-        public OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation, long maxSize)
+        public OrganizationResult CreateOrganization(Guid organizationId, string organizationUniqueName, string organizationFriendlyName, int baseLanguageCode, string ou, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string initialUserDomainName, string initialUserFirstName, string initialUserLastName, string initialUserPrimaryEmail, string organizationCollation, long maxSize)
         {                                  
-           return CrmProvider.CreateOrganization(organizationId, organizationUniqueName, organizationFriendlyName, ou, baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, initialUserDomainName, initialUserFirstName, initialUserLastName, initialUserPrimaryEmail, organizationCollation, maxSize);
+           return CrmProvider.CreateOrganization(organizationId, organizationUniqueName, organizationFriendlyName, baseLanguageCode, ou, baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, initialUserDomainName, initialUserFirstName, initialUserLastName, initialUserPrimaryEmail, organizationCollation, maxSize);
         }
 
         [WebMethod, SoapHeader("settings")] 
@@ -71,6 +71,13 @@ namespace WebsitePanel.Server
         {
             return CrmProvider.GetCurrencyList();
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public int[] GetInstalledLanguagePacks()
+        {
+            return CrmProvider.GetInstalledLanguagePacks();
+        }
+
                 
         [WebMethod, SoapHeader("settings")]
         public ResultObject DeleteOrganization(Guid orgId)

@@ -3205,3 +3205,938 @@ SET @FolderID = SCOPE_IDENTITY()
 
 RETURN
 GO
+
+
+
+-- CRM2013
+
+-- CRM2013 ResourceGroup
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ResourceGroups] WHERE [GroupName] = 'Hosted CRM2013')
+BEGIN
+INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupController], [ShowGroup]) VALUES (24, N'Hosted CRM2013', 15, NULL, 1)
+END
+GO
+
+-- CRM2013 Provider
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [DisplayName] = 'Hosted MS CRM 2013')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderId], [GroupId], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) 
+VALUES(1202, 24, N'CRM', N'Hosted MS CRM 2013', N'WebsitePanel.Providers.HostedSolution.CRMProvider2013, WebsitePanel.Providers.HostedSolution.Crm2013', N'CRM2011', NULL)
+END
+GO
+
+-- CRM2013 Quotas
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedCRM2013.Organization')
+BEGIN
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) 
+VALUES (463, 24, 1, N'HostedCRM2013.Organization', N'CRM Organization', 1, 0, NULL, NULL)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedCRM2013.MaxDatabaseSize')
+BEGIN
+INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) 
+VALUES (464, 24, 5, N'HostedCRM2013.MaxDatabaseSize', N'Max Database Size, MB',3, 0 , NULL)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedCRM2013.EssentialUsers')
+BEGIN
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) 
+VALUES (465, 24, 2, N'HostedCRM2013.EssentialUsers', N'Essential licenses per organization', 3, 0, NULL, NULL)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedCRM2013.BasicUsers')
+BEGIN
+INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) 
+VALUES (466, 24, 3, N'HostedCRM2013.BasicUsers', N'Basic licenses per organization',3, 0 , NULL)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedCRM2013.ProfessionalUsers')
+BEGIN
+INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) 
+VALUES (467, 24, 4, N'HostedCRM2013.ProfessionalUsers', N'Professional licenses per organization',3, 0 , NULL)
+END
+GO
+
+
+
+-- Exchange2013 Archiving
+
+-- Exchange2013 Archiving Quotas
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Exchange2013.AllowArchiving')
+BEGIN
+INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota])
+VALUES (424, 12, 27,N'Exchange2013.AllowArchiving',N'Allow Archiving',1, 0 , NULL, NULL)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Exchange2013.ArchivingStorage')
+BEGIN
+INSERT [dbo].[Quotas] ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) 
+VALUES (425, 12, 29, N'Exchange2013.ArchivingStorage', N'Archiving storage, MB', 2, 0, NULL, NULL)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Exchange2013.ArchivingMailboxes')
+BEGIN
+INSERT [dbo].[Quotas]  ([QuotaID], [GroupID], [QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) 
+VALUES (426, 12, 28, N'Exchange2013.ArchivingMailboxes', N'Archiving Mailboxes per Organization', 2, 0, NULL, NULL)
+END
+GO
+
+-- Exchange2013 Archiving Plans
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeMailboxPlans' AND COLS.name='Archiving')
+BEGIN
+ALTER TABLE [dbo].[ExchangeMailboxPlans] ADD
+[Archiving] [bit] NULL
+END
+GO
+
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeMailboxPlans' AND COLS.name='EnableArchiving')
+BEGIN
+ALTER TABLE [dbo].[ExchangeMailboxPlans] ADD
+[EnableArchiving] [bit] NULL
+END
+GO
+
+ALTER PROCEDURE [dbo].[AddExchangeMailboxPlan] 
+(
+	@MailboxPlanId int OUTPUT,
+	@ItemID int,
+	@MailboxPlan	nvarchar(300),
+	@EnableActiveSync bit,
+	@EnableIMAP bit,
+	@EnableMAPI bit,
+	@EnableOWA bit,
+	@EnablePOP bit,
+	@IsDefault bit,
+	@IssueWarningPct int,
+	@KeepDeletedItemsDays int,
+	@MailboxSizeMB int,
+	@MaxReceiveMessageSizeKB int,
+	@MaxRecipients int,
+	@MaxSendMessageSizeKB int,
+	@ProhibitSendPct int,
+	@ProhibitSendReceivePct int	,
+	@HideFromAddressBook bit,
+	@MailboxPlanType int,
+	@AllowLitigationHold bit,
+	@RecoverableItemsWarningPct int,
+	@RecoverableItemsSpace int,
+	@LitigationHoldUrl nvarchar(256),
+	@LitigationHoldMsg nvarchar(512),
+	@Archiving bit,
+	@EnableArchiving bit
+)
+AS
+
+IF (((SELECT Count(*) FROM ExchangeMailboxPlans WHERE ItemId = @ItemID) = 0) AND (@MailboxPlanType=0))
+BEGIN
+	SET @IsDefault = 1
+END
+ELSE
+BEGIN
+	IF ((@IsDefault = 1) AND (@MailboxPlanType=0))
+	BEGIN
+		UPDATE ExchangeMailboxPlans SET IsDefault = 0 WHERE ItemID = @ItemID
+	END
+END
+
+INSERT INTO ExchangeMailboxPlans
+(
+	ItemID,
+	MailboxPlan,
+	EnableActiveSync,
+	EnableIMAP,
+	EnableMAPI,
+	EnableOWA,
+	EnablePOP,
+	IsDefault,
+	IssueWarningPct,
+	KeepDeletedItemsDays,
+	MailboxSizeMB,
+	MaxReceiveMessageSizeKB,
+	MaxRecipients,
+	MaxSendMessageSizeKB,
+	ProhibitSendPct,
+	ProhibitSendReceivePct,
+	HideFromAddressBook,
+	MailboxPlanType,
+	AllowLitigationHold,
+	RecoverableItemsWarningPct,
+	RecoverableItemsSpace,
+	LitigationHoldUrl,
+	LitigationHoldMsg,
+	Archiving,
+	EnableArchiving
+)
+VALUES
+(
+	@ItemID,
+	@MailboxPlan,
+	@EnableActiveSync,
+	@EnableIMAP,
+	@EnableMAPI,
+	@EnableOWA,
+	@EnablePOP,
+	@IsDefault,
+	@IssueWarningPct,
+	@KeepDeletedItemsDays,
+	@MailboxSizeMB,
+	@MaxReceiveMessageSizeKB,
+	@MaxRecipients,
+	@MaxSendMessageSizeKB,
+	@ProhibitSendPct,
+	@ProhibitSendReceivePct,
+	@HideFromAddressBook,
+	@MailboxPlanType,
+	@AllowLitigationHold,
+	@RecoverableItemsWarningPct,
+	@RecoverableItemsSpace,
+	@LitigationHoldUrl,
+	@LitigationHoldMsg,
+	@Archiving,
+	@EnableArchiving
+)
+
+SET @MailboxPlanId = SCOPE_IDENTITY()
+
+RETURN
+
+GO
+
+ALTER PROCEDURE [dbo].[UpdateExchangeMailboxPlan] 
+(
+	@MailboxPlanId int,
+	@MailboxPlan	nvarchar(300),
+	@EnableActiveSync bit,
+	@EnableIMAP bit,
+	@EnableMAPI bit,
+	@EnableOWA bit,
+	@EnablePOP bit,
+	@IsDefault bit,
+	@IssueWarningPct int,
+	@KeepDeletedItemsDays int,
+	@MailboxSizeMB int,
+	@MaxReceiveMessageSizeKB int,
+	@MaxRecipients int,
+	@MaxSendMessageSizeKB int,
+	@ProhibitSendPct int,
+	@ProhibitSendReceivePct int	,
+	@HideFromAddressBook bit,
+	@MailboxPlanType int,
+	@AllowLitigationHold bit,
+	@RecoverableItemsWarningPct int,
+	@RecoverableItemsSpace int,
+	@LitigationHoldUrl nvarchar(256),
+	@LitigationHoldMsg nvarchar(512),
+	@Archiving bit,
+	@EnableArchiving bit
+)
+AS
+
+UPDATE ExchangeMailboxPlans SET
+	MailboxPlan = @MailboxPlan,
+	EnableActiveSync = @EnableActiveSync,
+	EnableIMAP = @EnableIMAP,
+	EnableMAPI = @EnableMAPI,
+	EnableOWA = @EnableOWA,
+	EnablePOP = @EnablePOP,
+	IsDefault = @IsDefault,
+	IssueWarningPct= @IssueWarningPct,
+	KeepDeletedItemsDays = @KeepDeletedItemsDays,
+	MailboxSizeMB= @MailboxSizeMB,
+	MaxReceiveMessageSizeKB= @MaxReceiveMessageSizeKB,
+	MaxRecipients= @MaxRecipients,
+	MaxSendMessageSizeKB= @MaxSendMessageSizeKB,
+	ProhibitSendPct= @ProhibitSendPct,
+	ProhibitSendReceivePct = @ProhibitSendReceivePct,
+	HideFromAddressBook = @HideFromAddressBook,
+	MailboxPlanType = @MailboxPlanType,
+	AllowLitigationHold = @AllowLitigationHold,
+	RecoverableItemsWarningPct = @RecoverableItemsWarningPct,
+	RecoverableItemsSpace = @RecoverableItemsSpace, 
+	LitigationHoldUrl = @LitigationHoldUrl,
+	LitigationHoldMsg = @LitigationHoldMsg,
+	Archiving = @Archiving,
+	EnableArchiving = @EnableArchiving
+
+
+WHERE MailboxPlanId = @MailboxPlanId
+
+RETURN
+	
+GO
+
+
+
+ALTER PROCEDURE [dbo].[GetExchangeMailboxPlans]
+(
+	@ItemID int,
+	@Archiving bit
+)
+AS
+SELECT
+	MailboxPlanId,
+	ItemID,
+	MailboxPlan,
+	EnableActiveSync,
+	EnableIMAP,
+	EnableMAPI,
+	EnableOWA,
+	EnablePOP,
+	IsDefault,
+	IssueWarningPct,
+	KeepDeletedItemsDays,
+	MailboxSizeMB,
+	MaxReceiveMessageSizeKB,
+	MaxRecipients,
+	MaxSendMessageSizeKB,
+	ProhibitSendPct,
+	ProhibitSendReceivePct,
+	HideFromAddressBook,
+	MailboxPlanType,
+	Archiving,
+	EnableArchiving
+FROM
+	ExchangeMailboxPlans
+WHERE
+	ItemID = @ItemID 
+AND ((Archiving=@Archiving) OR ((@Archiving=0) AND (Archiving IS NULL)))
+ORDER BY MailboxPlan
+RETURN
+
+GO
+
+
+ALTER PROCEDURE [dbo].[GetExchangeMailboxPlan] 
+(
+	@MailboxPlanId int
+)
+AS
+SELECT
+	MailboxPlanId,
+	ItemID,
+	MailboxPlan,
+	EnableActiveSync,
+	EnableIMAP,
+	EnableMAPI,
+	EnableOWA,
+	EnablePOP,
+	IsDefault,
+	IssueWarningPct,
+	KeepDeletedItemsDays,
+	MailboxSizeMB,
+	MaxReceiveMessageSizeKB,
+	MaxRecipients,
+	MaxSendMessageSizeKB,
+	ProhibitSendPct,
+	ProhibitSendReceivePct,
+	HideFromAddressBook,
+	MailboxPlanType,
+	AllowLitigationHold,
+	RecoverableItemsWarningPct,
+	RecoverableItemsSpace,
+	LitigationHoldUrl,
+	LitigationHoldMsg,
+	Archiving,
+	EnableArchiving
+FROM
+	ExchangeMailboxPlans
+WHERE
+	MailboxPlanId = @MailboxPlanId
+RETURN
+
+GO
+
+-- Exchange2013 ExchangeAccount
+
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeAccounts' AND COLS.name='ArchivingMailboxPlanId')
+BEGIN
+ALTER TABLE [dbo].[ExchangeAccounts] ADD
+[ArchivingMailboxPlanId] [int] NULL
+END
+GO
+
+ALTER PROCEDURE [dbo].[GetExchangeAccount] 
+(
+	@ItemID int,
+	@AccountID int
+)
+AS
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber,
+	E.UserPrincipalName,
+	E.ArchivingMailboxPlanId, 
+	AP.MailboxPlan as 'ArchivingMailboxPlan'
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+LEFT OUTER JOIN ExchangeMailboxPlans AS AP ON E.ArchivingMailboxPlanId = AP.MailboxPlanId
+WHERE
+	E.ItemID = @ItemID AND
+	E.AccountID = @AccountID
+RETURN
+GO
+
+
+
+ALTER PROCEDURE [dbo].[GetExchangeAccountByAccountName] 
+(
+	@ItemID int,
+	@AccountName nvarchar(300)
+)
+AS
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber,
+	E.UserPrincipalName,
+	E.ArchivingMailboxPlanId, 
+	AP.MailboxPlan as 'ArchivingMailboxPlan'
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+LEFT OUTER JOIN ExchangeMailboxPlans AS AP ON E.ArchivingMailboxPlanId = AP.MailboxPlanId
+WHERE
+	E.ItemID = @ItemID AND
+	E.AccountName = @AccountName
+RETURN
+GO
+
+
+
+
+
+
+ALTER PROCEDURE [dbo].[GetExchangeAccountByMailboxPlanId] 
+(
+	@ItemID int,
+	@MailboxPlanId int
+)
+AS
+
+IF (@MailboxPlanId < 0)
+BEGIN
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber,
+	E.UserPrincipalName,
+	E.ArchivingMailboxPlanId, 
+	AP.MailboxPlan as 'ArchivingMailboxPlan' 
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+LEFT OUTER JOIN ExchangeMailboxPlans AS AP ON E.ArchivingMailboxPlanId = AP.MailboxPlanId
+WHERE
+	E.ItemID = @ItemID AND
+	E.MailboxPlanId IS NULL AND
+	E.AccountType IN (1,5) 
+RETURN
+
+END
+ELSE
+IF (@ItemId = 0)
+BEGIN
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber,
+	E.UserPrincipalName,
+	E.ArchivingMailboxPlanId, 
+	AP.MailboxPlan as 'ArchivingMailboxPlan' 
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+LEFT OUTER JOIN ExchangeMailboxPlans AS AP ON E.ArchivingMailboxPlanId = AP.MailboxPlanId
+WHERE
+	E.MailboxPlanId = @MailboxPlanId AND
+	E.AccountType IN (1,5) 
+END
+ELSE
+BEGIN
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber,
+	E.UserPrincipalName,
+	E.ArchivingMailboxPlanId, 
+	AP.MailboxPlan as 'ArchivingMailboxPlan' 
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+LEFT OUTER JOIN ExchangeMailboxPlans AS AP ON E.ArchivingMailboxPlanId = AP.MailboxPlanId
+WHERE
+	E.ItemID = @ItemID AND
+	E.MailboxPlanId = @MailboxPlanId AND
+	E.AccountType IN (1,5) 
+RETURN
+END
+GO
+
+
+
+
+ALTER PROCEDURE [dbo].[GetExchangeAccountsPaged]
+(
+	@ActorID int,
+	@ItemID int,
+	@AccountTypes nvarchar(30),
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int,
+	@Archiving bit
+)
+AS
+
+DECLARE @PackageID int
+SELECT @PackageID = PackageID FROM ServiceItems
+WHERE ItemID = @ItemID
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- start
+DECLARE @condition nvarchar(700)
+SET @condition = '
+EA.AccountType IN (' + @AccountTypes + ')
+AND EA.ItemID = @ItemID
+'
+
+IF @FilterColumn <> '' AND @FilterColumn IS NOT NULL
+AND @FilterValue <> '' AND @FilterValue IS NOT NULL
+BEGIN
+	IF @FilterColumn = 'PrimaryEmailAddress' AND @AccountTypes <> '2'
+	BEGIN		
+		SET @condition = @condition + ' AND EA.AccountID IN (SELECT EAEA.AccountID FROM ExchangeAccountEmailAddresses EAEA WHERE EAEA.EmailAddress LIKE ''' + @FilterValue + ''')'
+	END
+	ELSE
+	BEGIN		
+		SET @condition = @condition + ' AND ' + @FilterColumn + ' LIKE ''' + @FilterValue + ''''
+	END
+END
+
+if @Archiving = 1
+BEGIN
+	SET @condition = @condition + ' AND (EA.ArchivingMailboxPlanId > 0) ' 
+END
+
+IF @SortColumn IS NULL OR @SortColumn = ''
+SET @SortColumn = 'EA.DisplayName ASC'
+
+DECLARE @joincondition nvarchar(700)
+	SET @joincondition = ',P.MailboxPlan FROM ExchangeAccounts AS EA
+	LEFT OUTER JOIN ExchangeMailboxPlans AS P ON EA.MailboxPlanId = P.MailboxPlanId'
+
+DECLARE @sql nvarchar(3500)
+
+set @sql = '
+SELECT COUNT(EA.AccountID) FROM ExchangeAccounts AS EA
+WHERE ' + @condition + ';
+
+WITH Accounts AS (
+	SELECT ROW_NUMBER() OVER (ORDER BY ' + @SortColumn + ') as Row,
+		EA.AccountID,
+		EA.ItemID,
+		EA.AccountType,
+		EA.AccountName,
+		EA.DisplayName,
+		EA.PrimaryEmailAddress,
+		EA.MailEnabledPublicFolder,
+		EA.MailboxPlanId,
+		EA.SubscriberNumber,
+		EA.UserPrincipalName ' + @joincondition +
+	' WHERE ' + @condition + '
+)
+
+SELECT * FROM Accounts
+WHERE Row BETWEEN @StartRow + 1 and @StartRow + @MaximumRows
+'
+
+print @sql
+
+exec sp_executesql @sql, N'@ItemID int, @StartRow int, @MaximumRows int',
+@ItemID, @StartRow, @MaximumRows
+
+RETURN 
+
+GO
+
+
+ALTER PROCEDURE [dbo].[SetExchangeAccountMailboxplan] 
+(
+	@AccountID int,
+	@MailboxPlanId int,
+	@ArchivingMailboxPlanId int
+)
+AS
+
+UPDATE ExchangeAccounts SET
+	MailboxPlanId = @MailboxPlanId,
+	ArchivingMailboxPlanId = @ArchivingMailboxPlanId
+WHERE
+	AccountID = @AccountID
+
+RETURN
+
+GO
+
+
+ALTER PROCEDURE [dbo].[UpdateExchangeAccount] 
+(
+	@AccountID int,
+	@AccountName nvarchar(300),
+	@DisplayName nvarchar(300),
+	@PrimaryEmailAddress nvarchar(300),
+	@AccountType int,
+	@SamAccountName nvarchar(100),
+	@MailEnabledPublicFolder bit,
+	@MailboxManagerActions varchar(200),
+	@Password varchar(200),
+	@MailboxPlanId int,
+	@ArchivingMailboxPlanId int,
+	@SubscriberNumber varchar(32)
+)
+AS
+
+BEGIN TRAN	
+
+IF (@MailboxPlanId = -1) 
+BEGIN
+	SET @MailboxPlanId = NULL
+END
+
+UPDATE ExchangeAccounts SET
+	AccountName = @AccountName,
+	DisplayName = @DisplayName,
+	PrimaryEmailAddress = @PrimaryEmailAddress,
+	MailEnabledPublicFolder = @MailEnabledPublicFolder,
+	MailboxManagerActions = @MailboxManagerActions,	
+	AccountType =@AccountType,
+	SamAccountName = @SamAccountName,
+	MailboxPlanId = @MailboxPlanId,
+	SubscriberNumber = @SubscriberNumber,
+	ArchivingMailboxPlanId = @ArchivingMailboxPlanId
+
+WHERE
+	AccountID = @AccountID
+
+IF (@@ERROR <> 0 )
+	BEGIN
+		ROLLBACK TRANSACTION
+		RETURN -1
+	END
+
+UPDATE ExchangeAccounts SET 
+	AccountPassword = @Password WHERE AccountID = @AccountID AND @Password IS NOT NULL
+
+IF (@@ERROR <> 0 )
+	BEGIN
+		ROLLBACK TRANSACTION
+		RETURN -1
+	END
+COMMIT TRAN
+RETURN
+
+GO
+
+-- Exchange2013 Archiving ExchangeRetentionPolicyTags
+
+IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'ExchangeRetentionPolicyTags')
+CREATE TABLE ExchangeRetentionPolicyTags
+(
+[TagID] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
+[ItemID] [int] NOT NULL,
+[TagName] NVARCHAR(255),
+[TagType] [int] NOT NULL,
+[AgeLimitForRetention] [int] NOT NULL,
+[RetentionAction] [int] NOT NULL
+)
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddExchangeRetentionPolicyTag')
+DROP PROCEDURE [dbo].[AddExchangeRetentionPolicyTag]
+GO
+
+CREATE PROCEDURE [dbo].[AddExchangeRetentionPolicyTag] 
+(
+	@TagID int OUTPUT,
+	@ItemID int,
+	@TagName nvarchar(255),
+	@TagType int,
+	@AgeLimitForRetention int,
+	@RetentionAction int
+)
+AS
+BEGIN
+
+INSERT INTO ExchangeRetentionPolicyTags
+(
+	ItemID,
+	TagName,
+	TagType,
+	AgeLimitForRetention,
+	RetentionAction
+)
+VALUES
+(
+	@ItemID,
+	@TagName,
+	@TagType,
+	@AgeLimitForRetention,
+	@RetentionAction
+)
+
+SET @TagID = SCOPE_IDENTITY()
+
+RETURN
+
+END
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateExchangeRetentionPolicyTag')
+DROP PROCEDURE [dbo].[UpdateExchangeRetentionPolicyTag]
+GO
+
+CREATE PROCEDURE [dbo].[UpdateExchangeRetentionPolicyTag] 
+(
+	@TagID int,
+	@ItemID int,
+	@TagName nvarchar(255),
+	@TagType int,
+	@AgeLimitForRetention int,
+	@RetentionAction int
+)
+AS
+
+UPDATE ExchangeRetentionPolicyTags SET
+	ItemID = @ItemID,
+	TagName = @TagName,
+	TagType = @TagType,
+	AgeLimitForRetention = @AgeLimitForRetention,
+	RetentionAction = @RetentionAction
+WHERE TagID = @TagID
+
+RETURN
+	
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetExchangeRetentionPolicyTags')
+DROP PROCEDURE [dbo].[GetExchangeRetentionPolicyTags]
+GO
+
+CREATE PROCEDURE [dbo].[GetExchangeRetentionPolicyTags]
+(
+	@ItemID int
+)
+AS
+SELECT
+	TagID,
+	ItemID,
+	TagName,
+	TagType,
+	AgeLimitForRetention,
+	RetentionAction
+FROM
+	ExchangeRetentionPolicyTags
+WHERE
+	ItemID = @ItemID 
+ORDER BY TagName
+RETURN
+
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetExchangeRetentionPolicyTag')
+DROP PROCEDURE [dbo].[GetExchangeRetentionPolicyTag]
+GO
+
+CREATE PROCEDURE [dbo].[GetExchangeRetentionPolicyTag] 
+(
+	@TagID int
+)
+AS
+SELECT
+	TagID,
+	ItemID,
+	TagName,
+	TagType,
+	AgeLimitForRetention,
+	RetentionAction
+FROM
+	ExchangeRetentionPolicyTags
+WHERE
+	TagID = @TagID
+RETURN
+
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteExchangeRetentionPolicyTag')
+DROP PROCEDURE [dbo].[DeleteExchangeRetentionPolicyTag]
+GO
+
+
+CREATE PROCEDURE [dbo].[DeleteExchangeRetentionPolicyTag]
+(
+        @TagID int
+)
+AS
+DELETE FROM ExchangeRetentionPolicyTags
+WHERE
+	TagID = @TagID
+RETURN
+
+GO
+
+
+-- Exchange2013 Archiving ExchangeMailboxPlanRetentionPolicyTags
+
+IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'ExchangeMailboxPlanRetentionPolicyTags')
+CREATE TABLE ExchangeMailboxPlanRetentionPolicyTags
+(
+[PlanTagID] [int] IDENTITY(1,1) NOT NULL PRIMARY KEY,
+[TagID] [int] NOT NULL,
+[MailboxPlanId] [int] NOT NULL
+)
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetExchangeMailboxPlanRetentionPolicyTags')
+DROP PROCEDURE [dbo].[GetExchangeMailboxPlanRetentionPolicyTags]
+GO
+
+CREATE PROCEDURE [dbo].[GetExchangeMailboxPlanRetentionPolicyTags]
+(
+	@MailboxPlanId int
+)
+AS
+SELECT
+D.PlanTagID,
+D.TagID,
+D.MailboxPlanId,
+P.MailboxPlan,
+T.TagName
+FROM
+	ExchangeMailboxPlanRetentionPolicyTags AS D
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON P.MailboxPlanId = D.MailboxPlanId	
+LEFT OUTER JOIN ExchangeRetentionPolicyTags AS T ON T.TagID = D.TagID	
+WHERE
+	D.MailboxPlanId = @MailboxPlanId 
+RETURN
+
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddExchangeMailboxPlanRetentionPolicyTag')
+DROP PROCEDURE [dbo].[AddExchangeMailboxPlanRetentionPolicyTag]
+GO
+
+CREATE PROCEDURE [dbo].[AddExchangeMailboxPlanRetentionPolicyTag] 
+(
+	@PlanTagID int OUTPUT,
+	@TagID int,
+	@MailboxPlanId int
+)
+AS
+BEGIN
+
+INSERT INTO ExchangeMailboxPlanRetentionPolicyTags
+(
+	TagID,
+	MailboxPlanId
+)
+VALUES
+(
+	@TagID,
+	@MailboxPlanId
+)
+
+SET @PlanTagID = SCOPE_IDENTITY()
+
+RETURN
+
+END
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteExchangeMailboxPlanRetentionPolicyTag')
+DROP PROCEDURE [dbo].[DeleteExchangeMailboxPlanRetentionPolicyTag]
+GO
+
+CREATE PROCEDURE [dbo].[DeleteExchangeMailboxPlanRetentionPolicyTag]
+(
+        @PlanTagID int
+)
+AS
+DELETE FROM ExchangeMailboxPlanRetentionPolicyTags
+WHERE
+	PlanTagID = @PlanTagID
+RETURN
+
+GO

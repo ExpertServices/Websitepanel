@@ -53,6 +53,11 @@
 				            <td><asp:DropDownList runat="server" ID="ddlCollation" /></td>
 				          </tr>                         
 
+				          <tr height="23px">
+				            <td class="FormLabel150"><asp:Label runat="server" ID="lblBaseLanguage" meta:resourcekey="lblBaseLanguage" Text="Base Language"/></td>
+				            <td><asp:DropDownList runat="server" ID="ddlBaseLanguage" /></td>
+				          </tr>
+
 				       </table>			            
 			            <div class="FormFooterClean">
 					    <asp:Button runat="server" meta:resourcekey="btnCreate" ID="btnCreate" CssClass="Button2" OnClick="btnCreate_Click"  />		

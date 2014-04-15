@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -217,7 +217,7 @@ namespace WebsitePanel.Import.CsvBulk
 
         private void GetMailboxPlans(int orgId)
         {
-            ExchangeMailboxPlan[] plans = ES.Services.ExchangeServer.GetExchangeMailboxPlans(orgId);
+            ExchangeMailboxPlan[] plans = ES.Services.ExchangeServer.GetExchangeMailboxPlans(orgId, false);
             foreach (ExchangeMailboxPlan plan in plans)
             {
                 if (!planName2Id.ContainsKey(plan.MailboxPlan))
@@ -574,7 +574,7 @@ namespace WebsitePanel.Import.CsvBulk
 				//create mailbox
 				//ES.Services.ExchangeServer.
 				string accountName = string.Empty;
-                int accountId = ES.Services.ExchangeServer.CreateMailbox(orgId, 0, ExchangeAccountType.Mailbox, accountName, displayName, name, domain, password, false, string.Empty, planId, string.Empty);
+                int accountId = ES.Services.ExchangeServer.CreateMailbox(orgId, 0, ExchangeAccountType.Mailbox, accountName, displayName, name, domain, password, false, string.Empty, planId, -1, string.Empty);
 				if (accountId < 0)
 				{
 					string errorMessage = GetErrorMessage(accountId);

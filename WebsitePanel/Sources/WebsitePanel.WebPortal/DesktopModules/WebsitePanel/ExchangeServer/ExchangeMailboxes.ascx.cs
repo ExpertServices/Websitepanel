@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -35,8 +35,20 @@ namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class ExchangeMailboxes : WebsitePanelModuleBase
     {
+        private bool ArchivingBoxes
+        {
+            get
+            {
+                return PanelRequest.Ctl.ToLower().Contains("archiving");
+            }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            locTitle.Text = ArchivingBoxes ? GetLocalizedString("locTitleArchiving.Text") : GetLocalizedString("locTitle.Text");
+
+            btnCreateMailbox.Visible = !ArchivingBoxes;
+
             if (!IsPostBack)
             {
                 BindStats();
@@ -148,6 +160,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                     "AccountID=" + accountId,
                     "ItemID=" + PanelRequest.ItemID,
                     "Context=User");
+        }
+
+        protected void odsAccountsPaged_Selecting(object sender, ObjectDataSourceSelectingEventArgs e)
+        {
+            e.InputParameters["archiving"] = ArchivingBoxes;
         }
     }
 }

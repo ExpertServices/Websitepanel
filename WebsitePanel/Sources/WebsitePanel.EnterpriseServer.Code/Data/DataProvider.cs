@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -2570,7 +2570,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static void UpdateExchangeAccount(int accountId, string accountName, ExchangeAccountType accountType,
             string displayName, string primaryEmailAddress, bool mailEnabledPublicFolder,
-            string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, string subscriberNumber)
+            string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, int archivePlanId, string subscriberNumber)
         {
             SqlHelper.ExecuteNonQuery(
                 ConnectionString,
@@ -2586,6 +2586,7 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@Password", string.IsNullOrEmpty(accountPassword) ? (object)DBNull.Value : (object)accountPassword),
                 new SqlParameter("@SamAccountName", samAccountName),
                 new SqlParameter("@MailboxPlanId", (mailboxPlanId == 0) ? (object)DBNull.Value : (object)mailboxPlanId),
+                new SqlParameter("@ArchivingMailboxPlanId", (archivePlanId < 1) ? (object)DBNull.Value : (object)archivePlanId),
                 new SqlParameter("@SubscriberNumber", (string.IsNullOrEmpty(subscriberNumber) ? (object)DBNull.Value : (object)subscriberNumber))
             );
         }
@@ -2709,7 +2710,7 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         public static DataSet GetExchangeAccountsPaged(int actorId, int itemId, string accountTypes,
-                string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
+                string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows, bool archiving)
         {
             // check input parameters
             string[] types = accountTypes.Split(',');
@@ -2738,7 +2739,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@FilterValue", VerifyColumnValue(filterValue)),
                 new SqlParameter("@SortColumn", VerifyColumnName(sortColumn)),
                 new SqlParameter("@StartRow", startRow),
-                new SqlParameter("@MaximumRows", maximumRows)
+                new SqlParameter("@MaximumRows", maximumRows),
+                new SqlParameter("@Archiving", archiving)
             );
         }
 
@@ -2782,7 +2784,8 @@ namespace WebsitePanel.EnterpriseServer
         public static int AddExchangeMailboxPlan(int itemID, string mailboxPlan, bool enableActiveSync, bool enableIMAP, bool enableMAPI, bool enableOWA, bool enablePOP,
                                                     bool isDefault, int issueWarningPct, int keepDeletedItemsDays, int mailboxSizeMB, int maxReceiveMessageSizeKB, int maxRecipients,
                                                     int maxSendMessageSizeKB, int prohibitSendPct, int prohibitSendReceivePct, bool hideFromAddressBook, int mailboxPlanType,
-                                                    bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg)
+                                                    bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg,
+            bool archiving, bool EnableArchiving)
         {
             SqlParameter outParam = new SqlParameter("@MailboxPlanId", SqlDbType.Int);
             outParam.Direction = ParameterDirection.Output;
@@ -2814,7 +2817,9 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@RecoverableItemsWarningPct", recoverabelItemsWarning),
                 new SqlParameter("@RecoverableItemsSpace", recoverabelItemsSpace),
                 new SqlParameter("@LitigationHoldUrl", litigationHoldUrl),
-                new SqlParameter("@LitigationHoldMsg", litigationHoldMsg)
+                new SqlParameter("@LitigationHoldMsg", litigationHoldMsg),
+                new SqlParameter("@Archiving", archiving),
+                new SqlParameter("@EnableArchiving", EnableArchiving)
             );
 
             return Convert.ToInt32(outParam.Value);
@@ -2825,7 +2830,8 @@ namespace WebsitePanel.EnterpriseServer
         public static void UpdateExchangeMailboxPlan(int mailboxPlanID, string mailboxPlan, bool enableActiveSync, bool enableIMAP, bool enableMAPI, bool enableOWA, bool enablePOP,
                                             bool isDefault, int issueWarningPct, int keepDeletedItemsDays, int mailboxSizeMB, int maxReceiveMessageSizeKB, int maxRecipients,
                                             int maxSendMessageSizeKB, int prohibitSendPct, int prohibitSendReceivePct, bool hideFromAddressBook, int mailboxPlanType,
-                                        bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg)
+                                        bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg,
+                                        bool Archiving, bool EnableArchiving)
         {
             SqlHelper.ExecuteNonQuery(
                 ConnectionString,
@@ -2853,7 +2859,9 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@RecoverableItemsWarningPct", recoverabelItemsWarning),
                 new SqlParameter("@RecoverableItemsSpace", recoverabelItemsSpace),
                 new SqlParameter("@LitigationHoldUrl", litigationHoldUrl),
-                new SqlParameter("@LitigationHoldMsg", litigationHoldMsg)
+                new SqlParameter("@LitigationHoldMsg", litigationHoldMsg),
+                new SqlParameter("@Archiving", Archiving),
+	            new SqlParameter("@EnableArchiving", EnableArchiving)
 
             );
         }
@@ -2881,13 +2889,14 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
-        public static IDataReader GetExchangeMailboxPlans(int itemId)
+        public static IDataReader GetExchangeMailboxPlans(int itemId, bool archiving)
         {
             return SqlHelper.ExecuteReader(
                 ConnectionString,
                 CommandType.StoredProcedure,
                 "GetExchangeMailboxPlans",
-                new SqlParameter("@ItemID", itemId)
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@Archiving", archiving)
             );
         }
 
@@ -2914,17 +2923,124 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
-        public static void SetExchangeAccountMailboxPlan(int accountId, int mailboxPlanId)
+        public static void SetExchangeAccountMailboxPlan(int accountId, int mailboxPlanId, int archivePlanId)
         {
             SqlHelper.ExecuteNonQuery(
                 ConnectionString,
                 CommandType.StoredProcedure,
                 "SetExchangeAccountMailboxplan",
                 new SqlParameter("@AccountID", accountId),
-                new SqlParameter("@MailboxPlanId", (mailboxPlanId == 0) ? (object)DBNull.Value : (object)mailboxPlanId)
+                new SqlParameter("@MailboxPlanId", (mailboxPlanId == 0) ? (object)DBNull.Value : (object)mailboxPlanId),
+                new SqlParameter("@ArchivingMailboxPlanId", (archivePlanId < 1) ? (object)DBNull.Value : (object)archivePlanId)
             );
         }
 
+        #endregion
+
+        #region Exchange Retention Policy Tags
+        public static int AddExchangeRetentionPolicyTag(int ItemID, string TagName, int TagType, int AgeLimitForRetention, int RetentionAction)
+        {
+            SqlParameter outParam = new SqlParameter("@TagID", SqlDbType.Int);
+            outParam.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddExchangeRetentionPolicyTag",
+                outParam,
+                new SqlParameter("@ItemID", ItemID),
+                new SqlParameter("@TagName", TagName),
+                new SqlParameter("@TagType", TagType),
+                new SqlParameter("@AgeLimitForRetention", AgeLimitForRetention),
+                new SqlParameter("@RetentionAction", RetentionAction)
+            );
+
+            return Convert.ToInt32(outParam.Value);
+        }
+
+        public static void UpdateExchangeRetentionPolicyTag(int TagID, int ItemID, string TagName, int TagType, int AgeLimitForRetention, int RetentionAction)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateExchangeRetentionPolicyTag",
+                new SqlParameter("@TagID", TagID),
+                new SqlParameter("@ItemID", ItemID),
+                new SqlParameter("@TagName", TagName),
+                new SqlParameter("@TagType", TagType),
+                new SqlParameter("@AgeLimitForRetention", AgeLimitForRetention),
+                new SqlParameter("@RetentionAction", RetentionAction)
+            );
+        }
+
+        public static void DeleteExchangeRetentionPolicyTag(int TagID)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteExchangeRetentionPolicyTag",
+                new SqlParameter("@TagID", TagID)
+            );
+        }
+        
+        public static IDataReader GetExchangeRetentionPolicyTag(int TagID)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetExchangeRetentionPolicyTag",
+                new SqlParameter("@TagID", TagID)
+            );
+        }
+
+        public static IDataReader GetExchangeRetentionPolicyTags(int itemId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetExchangeRetentionPolicyTags",
+                new SqlParameter("@ItemID", itemId)
+            );
+        }
+
+        public static int AddExchangeMailboxPlanRetentionPolicyTag(int TagID, int MailboxPlanId)
+        {
+            SqlParameter outParam = new SqlParameter("@PlanTagID", SqlDbType.Int);
+            outParam.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddExchangeMailboxPlanRetentionPolicyTag",
+                outParam,
+                new SqlParameter("@TagID", TagID),
+                new SqlParameter("@MailboxPlanId", MailboxPlanId)
+            );
+
+            return Convert.ToInt32(outParam.Value);
+        }
+
+        public static void DeleteExchangeMailboxPlanRetentionPolicyTag(int PlanTagID)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteExchangeMailboxPlanRetentionPolicyTag",
+                new SqlParameter("@PlanTagID", PlanTagID)
+            );
+        }
+
+        public static IDataReader GetExchangeMailboxPlanRetentionPolicyTags(int MailboxPlanId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetExchangeMailboxPlanRetentionPolicyTags",
+                new SqlParameter("@MailboxPlanId", MailboxPlanId)
+            );
+        }
+
+                
         #endregion
 
         #region Exchange Disclaimers

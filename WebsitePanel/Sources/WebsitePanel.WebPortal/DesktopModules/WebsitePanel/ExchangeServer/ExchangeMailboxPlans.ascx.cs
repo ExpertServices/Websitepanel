@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -35,8 +35,21 @@ namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class ExchangeMailboxPlans : WebsitePanelModuleBase
     {
+        private bool RetentionPolicy
+        {
+            get
+            {
+                return PanelRequest.Ctl.ToLower().Contains("retentionpolicy");
+            }
+        }
+
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            locTitle.Text = RetentionPolicy ? GetLocalizedString("locTitleRetentionPolicy.Text") : GetLocalizedString("locTitle.Text");
+            gvMailboxPlans.Columns[2].Visible = !RetentionPolicy;
+            btnSetDefaultMailboxPlan.Visible = !RetentionPolicy;
+
             if (!IsPostBack)
             {
                 // bind mailboxplans
@@ -71,7 +84,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         private void BindMailboxPlans()
         {
-            ExchangeMailboxPlan[] list = ES.Services.ExchangeServer.GetExchangeMailboxPlans(PanelRequest.ItemID);
+            ExchangeMailboxPlan[] list = ES.Services.ExchangeServer.GetExchangeMailboxPlans(PanelRequest.ItemID, RetentionPolicy);
 
             gvMailboxPlans.DataSource = list;
             gvMailboxPlans.DataBind();
@@ -94,7 +107,7 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             btnSetDefaultMailboxPlan.Enabled = true;
             Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "add_mailboxplan",
-                "SpaceID=" + PanelSecurity.PackageId));
+                "SpaceID=" + PanelSecurity.PackageId, "archiving="+RetentionPolicy));
         }
 
         protected void gvMailboxPlan_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -177,7 +190,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 foreach (ExchangeAccount a in Accounts)
                 {
                     txtStatus.Text = "Completed";
-                    int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(PanelRequest.ItemID, a.AccountId, Convert.ToInt32(mailboxPlanSelectorTarget.MailboxPlanId));
+                    int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(PanelRequest.ItemID, a.AccountId, Convert.ToInt32(mailboxPlanSelectorTarget.MailboxPlanId), a.ArchivingMailboxPlanId);
                     if (result < 0)
                     {
                         BindMailboxPlans();

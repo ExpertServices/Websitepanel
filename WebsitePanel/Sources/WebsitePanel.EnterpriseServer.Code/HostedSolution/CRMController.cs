@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -49,8 +49,19 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         private static int GetCRMServiceId(int packageId)
-        {            
-            int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedCRM);            
+        {
+            int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedCRM2013);
+            if (serviceId == 0)
+                serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedCRM);
+            return serviceId;
+        }
+
+        private static int GetCRMServiceId(int packageId, ResultObject res)
+        {
+            int serviceId = GetCRMServiceId(packageId);
+            if (serviceId == 0)
+                CompleteTask(res, CrmErrorCodes.CRM_IS_NOT_SELECTED_IN_HOSTING_PLAN, null,
+                             "CRM is not selected in hosting plan.");
             return serviceId;
         }
 
@@ -226,7 +237,7 @@ namespace WebsitePanel.EnterpriseServer
             return value;
         }
 
-        public static OrganizationResult CreateOrganization(int organizationId, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string regionName,  int userId, string collation)
+        public static OrganizationResult CreateOrganization(int organizationId, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string regionName,  int userId, string collation, int baseLanguageCode)
         {
             OrganizationResult res = StartTask<OrganizationResult>("CRM", "CREATE_ORGANIZATION");
 
@@ -269,7 +280,12 @@ namespace WebsitePanel.EnterpriseServer
                 string rootOU = GetProviderProperty(serviceid, "rootou");
 
                 PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
-                long maxDBSize = cntx.Quotas[Quotas.CRM_MAXDATABASESIZE].QuotaAllocatedValue;
+
+                string maxDBSizeQuotaName = "";
+                if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013)) maxDBSizeQuotaName = Quotas.CRM2013_MAXDATABASESIZE;
+                else if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM)) maxDBSizeQuotaName = Quotas.CRM_MAXDATABASESIZE;
+
+                long maxDBSize = cntx.Quotas[maxDBSizeQuotaName].QuotaAllocatedValue;
                 if (maxDBSize != -1) maxDBSize = maxDBSize * 1024 * 1024;
 
                 org.CrmAdministratorId = user.AccountId;
@@ -277,10 +293,12 @@ namespace WebsitePanel.EnterpriseServer
                     string.Join("|", new[] {baseCurrencyCode, baseCurrencyName, baseCurrencySymbol, regionName});
                 org.CrmCollation = collation;
                 org.CrmOrgState = (int) CrmOrganizationState.Enabled;
+                org.CrmLanguadgeCode = baseLanguageCode.ToString();
                 org.CrmOrganizationId = orgId;
 
                 OrganizationResult serverRes =
                     crm.CreateOrganization(orgId, org.OrganizationId, org.Name,
+                                           baseLanguageCode,
                                            org.OrganizationId + "." + rootOU,
                                            baseCurrencyCode, baseCurrencyName,
                                            baseCurrencySymbol, user.SamAccountName, user.FirstName, user.LastName, user.PrimaryEmailAddress,
@@ -343,19 +361,35 @@ namespace WebsitePanel.EnterpriseServer
             return res;
         }
 
-        public static StringArrayResultObject GetCollationNames(int packageId)
+        public static StringArrayResultObject GetCollationByServiceId(int serviceId)
+        {
+            StringArrayResultObject ret = StartTask<StringArrayResultObject>("CRM", "GET_COLLATION_NAMES");
+            ret.IsSuccess = true;
+            try
+            {
+                CRM crm = new CRM();
+                ServiceProviderProxy.Init(crm, serviceId);
+                ret.Value = crm.GetSupportedCollationNames();
+            }
+            catch (Exception ex)
+            {
+                CompleteTask(ret, CrmErrorCodes.CANNOT_GET_COLLATION_NAMES, ex);
+                return ret;
+            }
+            CompleteTask();
+            return ret;
+        }
+
+        public static StringArrayResultObject GetCollation(int packageId)
         {                        
             StringArrayResultObject ret = StartTask<StringArrayResultObject>("CRM", "GET_COLLATION_NAMES");
             ret.IsSuccess = true;
 
             try
             {
-                int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedCRM);
+                int serviceId =  GetCRMServiceId(packageId, ret);
                 if (serviceId == 0)
-                {
-                    CompleteTask(ret, CrmErrorCodes.CRM_IS_NOT_SELECTED_IN_HOSTING_PLAN);
                     return ret;
-                }
             
                 CRM crm = new CRM();
                 ServiceProviderProxy.Init(crm, serviceId);
@@ -372,18 +406,35 @@ namespace WebsitePanel.EnterpriseServer
             return ret;
         }
 
+        public static CurrencyArrayResultObject GetCurrencyByServiceId(int serviceId)
+        {
+            CurrencyArrayResultObject ret = StartTask<CurrencyArrayResultObject>("CRM", "GET_CURRENCY");
+            ret.IsSuccess = true;
+            try
+            {
+                CRM crm = new CRM();
+                ServiceProviderProxy.Init(crm, serviceId);
+                ret.Value = crm.GetCurrencyList();
+            }
+            catch (Exception ex)
+            {
+                CompleteTask(ret, CrmErrorCodes.CANNOT_GET_CURRENCY_LIST, ex);
+                return ret;
+            }
+            CompleteTask();
+
+            return ret;
+        }
+
         public static CurrencyArrayResultObject GetCurrency(int packageId)
         {            
             CurrencyArrayResultObject ret = StartTask<CurrencyArrayResultObject>("CRM", "GET_CURRENCY");
             ret.IsSuccess = true;
             try
             {
-                int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedCRM);
+                int serviceId = GetCRMServiceId(packageId, ret);
                 if (serviceId == 0)
-                {
-                    CompleteTask(ret, CrmErrorCodes.CRM_IS_NOT_SELECTED_IN_HOSTING_PLAN, null, "CRM is not selected in hosting plan.");                    
                     return ret;
-                }
             
                 CRM crm = new CRM();
                 ServiceProviderProxy.Init(crm, serviceId);
@@ -550,9 +601,12 @@ namespace WebsitePanel.EnterpriseServer
 
 
                 PackageContext cntx = PackageController.GetPackageContext(packageId);
-                return (cntx.Quotas[Quotas.CRM_ORGANIZATION] != null && !cntx.Quotas[Quotas.CRM_ORGANIZATION].QuotaExhausted);
-                
-                
+
+                string quotaName = "";
+                if      (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013)) quotaName = Quotas.CRM2013_ORGANIZATION;
+                else if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM)) quotaName = Quotas.CRM_ORGANIZATION;
+
+                return (cntx.Quotas[quotaName] != null && !cntx.Quotas[quotaName].QuotaExhausted);
                 
             }
             catch(Exception ex)
@@ -676,19 +730,22 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (!quotaRes.Value)
                 {
-                    CompleteTask(ret, CrmErrorCodes.USER_QUOTA_HAS_BEEN_REACHED + CALType.ToString(), null, "CRM user quota has been reached.");
+                    string errorCode = CrmErrorCodes.USER_QUOTA_HAS_BEEN_REACHED;
+                    PackageContext cntx = PackageController.GetPackageContext(packageId);
+                    if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013))
+                        errorCode += "2013_";
+                    errorCode += CALType.ToString();
+
+                    CompleteTask(ret, errorCode , null, "CRM user quota has been reached.");
                     return ret;
                 }
                 
                 Guid crmId;
                 try
                 {
-                    int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedCRM);
+                    int serviceId = GetCRMServiceId(packageId, ret);
                     if (serviceId == 0)
-                    {
-                        CompleteTask(ret, CrmErrorCodes.CRM_IS_NOT_SELECTED_IN_HOSTING_PLAN, null, "CRM is not selected in hosting plan.");
                         return ret;
-                    }
 
                     Organization org = OrganizationController.GetOrganization(itemId);
                     
@@ -735,12 +792,9 @@ namespace WebsitePanel.EnterpriseServer
             CRMBusinessUnitsResult res = StartTask<CRMBusinessUnitsResult>("CRM", "GET_CRM_BUSINESS_UNITS");
             try
             {
-                int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedCRM);
+                int serviceId = GetCRMServiceId(packageId, res);
                 if (serviceId == 0)
-                {
-                    CompleteTask(res, CrmErrorCodes.CRM_IS_NOT_SELECTED_IN_HOSTING_PLAN, null, "CRM is not selected in hosting plan.");
                     return res;
-                }
 
                 Organization org;
                 try
@@ -784,12 +838,9 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-                int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedCRM);
+                int serviceId = GetCRMServiceId(packageId, res);
                 if (serviceId == 0)
-                {
-                    CompleteTask(res, CrmErrorCodes.CRM_IS_NOT_SELECTED_IN_HOSTING_PLAN, null, "CRM is not selected in hosting plan.");
                     return res;
-                }
 
                 CRM crm = new CRM();
                 ServiceProviderProxy.Init(crm, serviceId);
@@ -874,13 +925,9 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
 
-                int serviceId = PackageController.GetPackageServiceId(org.PackageId, ResourceGroups.HostedCRM);
+                int serviceId = GetCRMServiceId(org.PackageId, res);
                 if (serviceId == 0)
-                {
-                    CompleteTask(res, CrmErrorCodes.CRM_IS_NOT_SELECTED_IN_HOSTING_PLAN, null,
-                                 "CRM is not selected in hosting plan.");
                     return res;
-                }
 
                 try
                 {
@@ -919,13 +966,9 @@ namespace WebsitePanel.EnterpriseServer
             try
             {
 
-                int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedCRM);
+                int serviceId = GetCRMServiceId(packageId, res);
                 if (serviceId == 0)
-                {
-                    CompleteTask(res, CrmErrorCodes.CRM_IS_NOT_SELECTED_IN_HOSTING_PLAN, null,
-                                 "CRM is not selected in hosting plan.");
                     return res;
-                }
 
                 CRM crm = new CRM();
                 ServiceProviderProxy.Init(crm, serviceId);
@@ -978,13 +1021,9 @@ namespace WebsitePanel.EnterpriseServer
                     return res;
                 }
 
-                int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedCRM);
+                int serviceId = GetCRMServiceId(packageId, res);
                 if (serviceId == 0)
-                {
-                    CompleteTask(res, CrmErrorCodes.CRM_IS_NOT_SELECTED_IN_HOSTING_PLAN, null,
-                                 "CRM is not selected in hosting plan.");
                     return res;
-                }
 
                 CRM crm = new CRM();
                 ServiceProviderProxy.Init(crm, serviceId);
@@ -1012,7 +1051,13 @@ namespace WebsitePanel.EnterpriseServer
                 }
                 if (!quotaRes.Value)
                 {
-                    CompleteTask(res, CrmErrorCodes.USER_QUOTA_HAS_BEEN_REACHED + CALType.ToString(), null, "CRM user quota has been reached.");
+                    string errorCode = CrmErrorCodes.USER_QUOTA_HAS_BEEN_REACHED;
+                    PackageContext cntx = PackageController.GetPackageContext(packageId);
+                    if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013))
+                        errorCode += "2013_";
+                    errorCode += CALType.ToString();
+
+                    CompleteTask(res, errorCode, null, "CRM user quota has been reached.");
                     return res;
                 }
 
@@ -1058,13 +1103,9 @@ namespace WebsitePanel.EnterpriseServer
                     return res;
                 }
 
-                int serviceId = PackageController.GetPackageServiceId(org.PackageId, ResourceGroups.HostedCRM);
+                int serviceId = GetCRMServiceId(org.PackageId, res);
                 if (serviceId == 0)
-                {
-                    CompleteTask(res, CrmErrorCodes.CRM_IS_NOT_SELECTED_IN_HOSTING_PLAN, null,
-                                 "CRM is not selected in hosting plan.");
                     return res;
-                }
 
                 CRM crm = new CRM();
                 ServiceProviderProxy.Init(crm, serviceId);
@@ -1105,19 +1146,37 @@ namespace WebsitePanel.EnterpriseServer
                     return res;
                 }
 
-                string quotaName = Quotas.CRM_USERS;
+                string quotaName = "";
 
-                switch (CALType)
+                if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013))
                 {
-                    case 0:
-                        quotaName = Quotas.CRM_USERS;
-                        break;
-                    case 2:
-                        quotaName = Quotas.CRM_LIMITEDUSERS;
-                        break;
-                    case 22:
-                        quotaName = Quotas.CRM_ESSUSERS;
-                        break;
+                    switch (CALType)
+                    {
+                        case CRMUserLycenseTypes.PROFESSIONAL:
+                            quotaName = Quotas.CRM2013_PROFESSIONALUSERS;
+                            break;
+                        case CRMUserLycenseTypes.BASIC:
+                            quotaName = Quotas.CRM2013_BASICUSERS;
+                            break;
+                        case CRMUserLycenseTypes.ESSENTIAL:
+                            quotaName = Quotas.CRM2013_ESSENTIALUSERS;
+                            break;
+                    }
+                }
+                else if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM))
+                {
+                    switch (CALType)
+                    {
+                        case CRMUserLycenseTypes.FULL:
+                            quotaName = Quotas.CRM_USERS;
+                            break;
+                        case CRMUserLycenseTypes.LIMITED:
+                            quotaName = Quotas.CRM_LIMITEDUSERS;
+                            break;
+                        case CRMUserLycenseTypes.ESS:
+                            quotaName = Quotas.CRM_ESSUSERS;
+                            break;
+                    }
                 }
 
                 int allocatedCrmUsers = cntx.Quotas[quotaName].QuotaAllocatedValue;
@@ -1137,18 +1196,14 @@ namespace WebsitePanel.EnterpriseServer
 
         public static ResultObject SetMaxDBSize(int itemId, int packageId, long maxSize)
         {
-            ResultObject res = StartTask<CrmRolesResult>("CRM", "SET_CRM_MAXDBSIZE");
+            ResultObject res = StartTask<ResultObject>("CRM", "SET_CRM_MAXDBSIZE");
 
             try
             {
 
-                int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedCRM);
+                int serviceId = GetCRMServiceId(packageId, res);
                 if (serviceId == 0)
-                {
-                    CompleteTask(res, CrmErrorCodes.CRM_IS_NOT_SELECTED_IN_HOSTING_PLAN, null,
-                                 "CRM is not selected in hosting plan.");
                     return res;
-                }
 
                 CRM crm = new CRM();
                 ServiceProviderProxy.Init(crm, serviceId);
@@ -1169,7 +1224,11 @@ namespace WebsitePanel.EnterpriseServer
 
                 PackageContext cntx = PackageController.GetPackageContext(packageId);
 
-                long limitSize = cntx.Quotas[Quotas.CRM_MAXDATABASESIZE].QuotaAllocatedValue;
+                string quotaName = "";
+                if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013)) quotaName = Quotas.CRM2013_MAXDATABASESIZE;
+                else if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM)) quotaName = Quotas.CRM_MAXDATABASESIZE;
+
+                long limitSize = cntx.Quotas[quotaName].QuotaAllocatedValue;
 
                 if (limitSize != -1)
                 {
@@ -1199,19 +1258,15 @@ namespace WebsitePanel.EnterpriseServer
 
         public static long GetDBSize(int itemId, int packageId)
         {
-            ResultObject res = StartTask<CrmRolesResult>("CRM", "GET_CRM_DBSIZE");
+            ResultObject res = StartTask<ResultObject>("CRM", "GET_CRM_DBSIZE");
             long size = -1;
 
             try
             {
 
-                int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedCRM);
+                int serviceId = GetCRMServiceId(packageId, res);
                 if (serviceId == 0)
-                {
-                    CompleteTask(res, CrmErrorCodes.CRM_IS_NOT_SELECTED_IN_HOSTING_PLAN, null,
-                                 "CRM is not selected in hosting plan.");
                     return -1;
-                }
 
                 CRM crm = new CRM();
                 ServiceProviderProxy.Init(crm, serviceId);
@@ -1244,19 +1299,15 @@ namespace WebsitePanel.EnterpriseServer
 
         public static long GetMaxDBSize(int itemId, int packageId)
         {
-            ResultObject res = StartTask<CrmRolesResult>("CRM", "GET_CRM_MAXDBSIZE");
+            ResultObject res = StartTask<ResultObject>("CRM", "GET_CRM_MAXDBSIZE");
             long size = -1;
 
             try
             {
 
-                int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.HostedCRM);
+                int serviceId = GetCRMServiceId(packageId, res);
                 if (serviceId == 0)
-                {
-                    CompleteTask(res, CrmErrorCodes.CRM_IS_NOT_SELECTED_IN_HOSTING_PLAN, null,
-                                 "CRM is not selected in hosting plan.");
                     return -1;
-                }
 
                 CRM crm = new CRM();
                 ServiceProviderProxy.Init(crm, serviceId);
@@ -1285,6 +1336,53 @@ namespace WebsitePanel.EnterpriseServer
             }
             CompleteTask();
             return size;
+        }
+
+
+        public static int[] GetInstalledLanguagePacks(int packageId)
+        {
+            ResultObject res = StartTask<ResultObject>("CRM", "GET_CRM_MAXDBSIZE");
+            int[] ret = null;
+
+            try
+            {
+                int serviceId = GetCRMServiceId(packageId, res);
+                if (serviceId == 0)
+                    return null;
+
+                CRM crm = new CRM();
+                ServiceProviderProxy.Init(crm, serviceId);
+
+                ret = crm.GetInstalledLanguagePacks();
+            }
+            catch (Exception ex)
+            {
+                CompleteTask(res, CrmErrorCodes.CANNOT_CONFIGURE_CRM_ORGANIZATION, ex);
+                return null;
+            }
+            CompleteTask();
+            return ret;
+        }
+
+        public static int[] GetInstalledLanguagePacksByServiceId(int serviceId)
+        {
+            ResultObject res = StartTask<ResultObject>("CRM", "GET_CRM_MAXDBSIZE");
+            int[] ret = null;
+
+            try
+            {
+                CRM crm = new CRM();
+                ServiceProviderProxy.Init(crm, serviceId);
+
+                ret = crm.GetInstalledLanguagePacks();
+            }
+            catch (Exception ex)
+            {
+                CompleteTask(res, CrmErrorCodes.CANNOT_CONFIGURE_CRM_ORGANIZATION, ex);
+                return null;
+            }
+            CompleteTask();
+            return ret;
         }
 
     }

@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -6965,5 +6965,38 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         #endregion
+
+        #region Archiving
+        public virtual void SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy)
+        {
+            // not implemented
+        }
+        #endregion
+
+        #region Retention policy
+
+        public virtual void SetRetentionPolicyTag(string Identity, ExchangeRetentionPolicyTagType Type, int AgeLimitForRetention, ExchangeRetentionPolicyTagAction RetentionAction)
+        {
+            // not implemented
+        }
+
+        public virtual void RemoveRetentionPolicyTag(string Identity)
+        {
+            // not implemented
+        }
+
+        public virtual void SetRetentionPolicy(string Identity, string[] RetentionPolicyTagLinks)
+        {
+            // not implemented
+        }
+
+        public virtual void RemoveRetentionPolicy(string Identity)
+        {
+            // not implemented
+        }
+
+
+        #endregion
+
     }
 }

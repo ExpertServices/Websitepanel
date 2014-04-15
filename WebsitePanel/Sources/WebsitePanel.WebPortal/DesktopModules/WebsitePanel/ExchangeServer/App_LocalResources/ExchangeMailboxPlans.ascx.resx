@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnAddMailboxPlan.Text" xml:space="preserve">
-    <value>Add New Mailbox plan</value>
+    <value>Add New</value>
   </data>
   <data name="btnSave.Text" xml:space="preserve">
     <value>Stamp mailboxes</value>
@@ -161,5 +161,8 @@
   </data>
   <data name="Text.PageName" xml:space="preserve">
     <value>Mailbox plans</value>
+  </data>
+  <data name="locTitleRetentionPolicy.Text" xml:space="preserve">
+    <value>Retention Policy</value>
   </data>
 </root>

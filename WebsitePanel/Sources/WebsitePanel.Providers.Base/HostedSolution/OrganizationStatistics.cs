@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -78,7 +78,53 @@ namespace WebsitePanel.Providers.HostedSolution
 
         private int allocatedEnterpriseStorageSpace;
         private int usedEnterpriseStorageSpace;
-        		
+
+        private int createdProfessionalCRMUsers;
+        private int allocatedProfessionalCRMUsers;
+
+        public int CreatedProfessionalCRMUsers
+        {
+            get { return createdProfessionalCRMUsers; }
+            set { createdProfessionalCRMUsers = value; }
+        }
+
+        public int AllocatedProfessionalCRMUsers
+        {
+            get { return allocatedProfessionalCRMUsers; }
+            set { allocatedProfessionalCRMUsers = value; }
+        }
+
+
+        private int createdBasicCRMUsers;
+        private int allocatedBasicCRMUsers;
+
+        public int CreatedBasicCRMUsers
+        {
+            get { return createdBasicCRMUsers; }
+            set { createdBasicCRMUsers = value; }
+        }
+
+        public int AllocatedBasicCRMUsers
+        {
+            get { return allocatedBasicCRMUsers; }
+            set { allocatedBasicCRMUsers = value; }
+        }
+
+        private int createdEssentialCRMUsers;
+        private int allocatedEssentialCRMUsers;
+
+        public int CreatedEssentialCRMUsers
+        {
+            get { return createdEssentialCRMUsers; }
+            set { createdEssentialCRMUsers = value; }
+        }
+
+        public int AllocatedEssentialCRMUsers
+        {
+            get { return allocatedEssentialCRMUsers; }
+            set { allocatedEssentialCRMUsers = value; }
+        }
+
 		
         public int CreatedCRMUsers
         {

@@ -174,4 +174,7 @@
   <data name="gvUsersLogin.Header" xml:space="preserve">
     <value>Login</value>
   </data>
+  <data name="locTitleArchiving.Text" xml:space="preserve">
+    <value>Archiving Mailboxes</value>
+  </data>
 </root>

@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnAddMailboxPlan.Text" xml:space="preserve">
-    <value>Add New Mailbox plan</value>
+    <value>Add New</value>
   </data>
   <data name="btnSetDefaultMailboxPlan.Text" xml:space="preserve">
     <value>Set Default Mailbox plan</value>
@@ -226,7 +226,7 @@
     <value>Restamp mailboxes</value>
   </data>
   <data name="btnUpdateMailboxPlan.Text" xml:space="preserve">
-    <value>Update Mailbox Plan</value>
+    <value>Update</value>
   </data>
   <data name="chkEnableLitigationHold.Text" xml:space="preserve">
     <value>Enable Litigation Hold</value>
