@@ -65,6 +65,14 @@
                                 <wsp:QuotaViewer ID="userStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
+                        <tr class="OrgStatsRow" id="securGroupsStat" runat="server">
+                            <td class="OrgStatsQuota" nowrap >
+                                <asp:HyperLink ID="lnkGroups" runat="server" meta:resourcekey="lnkGroups" Text="Groups:"></asp:HyperLink>
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="groupStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
                         </asp:Panel>
 
                         <asp:Panel runat="server" ID="exchangeStatsPanel">

@@ -33,6 +33,9 @@ namespace WebsitePanel.Providers.HostedSolution
 		private int allocatedUsers;
 		private int createdUsers;
 
+        private int allocatedGroups;
+        private int createdGroups;
+
 		private int allocatedDomains;
 		private int createdDomains;
 
@@ -311,6 +314,18 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             get { return usedEnterpriseStorageSpace; }
             set { usedEnterpriseStorageSpace = value; }
+        }
+
+        public int AllocatedGroups
+        {
+            get { return allocatedGroups; }
+            set { allocatedGroups = value; }
+        }
+
+        public int CreatedGroups
+        {
+            get { return createdGroups; }
+            set { createdGroups = value; }
         }
 	}
 }

@@ -158,13 +158,27 @@ namespace WebsitePanel.Portal.ExchangeServer
                 userStats.QuotaValue = orgStats.AllocatedUsers;
                 if (orgStats.AllocatedUsers != -1) userStats.QuotaAvailable = tenantStats.AllocatedUsers - tenantStats.CreatedUsers;
 
-
-
                 lnkDomains.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "domains",
                     "SpaceID=" + PanelSecurity.PackageId);
 
                 lnkUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "users",
                     "SpaceID=" + PanelSecurity.PackageId);
+
+                if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPMANAGEMENT, cntx))
+                {
+                    securGroupsStat.Visible = true;
+
+                    groupStats.QuotaUsedValue = orgStats.CreatedGroups;
+                    groupStats.QuotaValue = orgStats.AllocatedGroups;
+                    if (orgStats.AllocatedUsers != -1) groupStats.QuotaAvailable = tenantStats.AllocatedGroups - tenantStats.CreatedGroups;
+
+                    lnkGroups.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "secur_groups",
+                        "SpaceID=" + PanelSecurity.PackageId);
+                }
+                else
+                {
+                    securGroupsStat.Visible = false;
+                }
             }
             else
                 organizationStatsPanel.Visible = false;
