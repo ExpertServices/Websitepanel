@@ -142,7 +142,7 @@ namespace WebsitePanel.Portal
             if (Utils.CheckQouta(Quotas.ORGANIZATION_USERS, cntx))
                 items.Add(CreateMenuItem("Users", "users"));
 
-            if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPMANAGEMENT, cntx))
+            if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPS, cntx))
                 items.Add(CreateMenuItem("SecurityGroups", "secur_groups"));
         }
 

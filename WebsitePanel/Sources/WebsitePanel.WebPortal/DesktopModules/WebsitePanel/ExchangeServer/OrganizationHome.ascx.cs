@@ -164,13 +164,13 @@ namespace WebsitePanel.Portal.ExchangeServer
                 lnkUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "users",
                     "SpaceID=" + PanelSecurity.PackageId);
 
-                if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPMANAGEMENT, cntx))
+                if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPS, cntx))
                 {
                     securGroupsStat.Visible = true;
 
                     groupStats.QuotaUsedValue = orgStats.CreatedGroups;
                     groupStats.QuotaValue = orgStats.AllocatedGroups;
-                    if (orgStats.AllocatedUsers != -1) groupStats.QuotaAvailable = tenantStats.AllocatedGroups - tenantStats.CreatedGroups;
+                    if (orgStats.AllocatedGroups != -1) groupStats.QuotaAvailable = tenantStats.AllocatedGroups - tenantStats.CreatedGroups;
 
                     lnkGroups.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "secur_groups",
                         "SpaceID=" + PanelSecurity.PackageId);

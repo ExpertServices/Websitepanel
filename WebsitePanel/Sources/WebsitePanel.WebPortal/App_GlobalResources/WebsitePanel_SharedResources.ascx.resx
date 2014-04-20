@@ -3310,8 +3310,8 @@
   <data name="Quota.HostedSolution.Domains" xml:space="preserve">
     <value>Domains per Organization</value>
   </data>
-  <data name="Quota.HostedSolution.SecurityGroupManagement" xml:space="preserve">
-    <value>Allow Security Group Management</value>
+  <data name="Quota.HostedSolution.SecurityGroups" xml:space="preserve">
+    <value>Security Groups per Organization</value>
   </data>
   <data name="ResourceGroup.Hosted SharePoint" xml:space="preserve">
     <value>Hosted SharePoint</value>

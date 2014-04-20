@@ -153,4 +153,7 @@
   <data name="gvGroupsNotes.Header" xml:space="preserve">
     <value>Notes</value>
   </data>
+  <data name="locQuota.Text" xml:space="preserve">
+    <value>Total Groups Created:</value>
+  </data>
 </root>

@@ -48,7 +48,29 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack)
+            {
+                BindStats();
+            }
+        }
 
+        private void BindStats()
+        {
+            // quota values
+            OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
+            OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
+            groupsQuota.QuotaUsedValue = stats.CreatedGroups;
+            groupsQuota.QuotaValue = stats.AllocatedGroups;
+
+            if (stats.AllocatedGroups != -1)
+            {
+                int groupsAvailable = groupsQuota.QuotaAvailable = tenantStats.AllocatedGroups - tenantStats.CreatedGroups;
+
+                if (groupsAvailable <= 0)
+                {
+                    btnCreateGroup.Enabled = false;
+                }
+            }
         }
 
         protected void btnCreateGroup_Click(object sender, EventArgs e)
@@ -96,6 +118,9 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                     // rebind grid
                     gvGroups.DataBind();
+
+                    // bind stats
+                    BindStats();
                 }
                 catch (Exception ex)
                 {
@@ -117,7 +142,10 @@ namespace WebsitePanel.Portal.ExchangeServer
             gvGroups.PageSize = Convert.ToInt16(ddlPageSize.SelectedValue);   
        
             // rebind grid   
-            gvGroups.DataBind();   
+            gvGroups.DataBind();
+
+            // bind stats   
+            BindStats();  
                 
         }  
     }

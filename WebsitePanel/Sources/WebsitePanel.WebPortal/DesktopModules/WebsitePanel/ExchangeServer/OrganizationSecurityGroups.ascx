@@ -1,6 +1,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="OrganizationSecurityGroups.ascx.cs" Inherits="WebsitePanel.Portal.ExchangeServer.OrganizationSecurityGroups" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
+<%@ Register Src="../UserControls/QuotaViewer.ascx" TagName="QuotaViewer" TagPrefix="wsp" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
@@ -78,6 +79,10 @@
 							<asp:ControlParameter Name="filterValue" ControlID="txtSearchValue" PropertyName="Text" />
 						</SelectParameters>
 					</asp:ObjectDataSource>
+                    <br/>
+                    <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Total Groups Created:"></asp:Localize>
+				    &nbsp;&nbsp;&nbsp;
+				    <wsp:QuotaViewer ID="groupsQuota" runat="server" QuotaTypeId="2" />
 				</div>
 			</div>
 		</div>
