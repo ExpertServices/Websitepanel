@@ -60,7 +60,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
 
-            bool bSuccess = Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPMANAGEMENT, cntx);
+            bool bSuccess = Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPS, cntx);
 
             if (!bSuccess)
             {
