@@ -189,7 +189,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 if (Utils.CheckQouta(Quotas.ORGANIZATION_USERS, cntx))
                     organizationGroup.MenuItems.Add(CreateMenuItem("Users", "users"));
 
-				if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPMANAGEMENT, cntx))
+				if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPS, cntx))
                     organizationGroup.MenuItems.Add(CreateMenuItem("SecurityGroups", "secur_groups"));
 				
                 if (organizationGroup.MenuItems.Count > 0)

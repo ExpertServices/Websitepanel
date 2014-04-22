@@ -54,7 +54,7 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             get
             {
-                return Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPMANAGEMENT, Cntx);
+                return Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPS, Cntx);
             }
         }
 
