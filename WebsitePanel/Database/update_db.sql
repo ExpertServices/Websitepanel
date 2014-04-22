@@ -3454,12 +3454,21 @@ GO
 
 -- Exchange2013 Archiving Quotas
 
-IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Exchange2013.AllowArchiving')
+IF EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Exchange2013.AllowArchiving')
 BEGIN
-INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota])
-VALUES (424, 12, 27,N'Exchange2013.AllowArchiving',N'Allow Archiving',1, 0 , NULL, NULL)
+UPDATE [dbo].[Quotas] SET [QuotaName]=N'Exchange2013.AllowRetentionPolicy', [QuotaDescription]=N'Allow Retention Policy'
+WHERE [QuotaName] = 'Exchange2013.AllowArchiving'
 END
 GO
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Exchange2013.AllowRetentionPolicy')
+BEGIN
+INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota])
+VALUES (424, 12, 27,N'Exchange2013.AllowRetentionPolicy',N'Allow Retention Policy',1, 0 , NULL, NULL)
+END
+GO
+
 
 IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'Exchange2013.ArchivingStorage')
 BEGIN
