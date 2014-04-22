@@ -47,7 +47,6 @@ namespace WebsitePanel.Portal.ExchangeServer
         protected void Page_Load(object sender, EventArgs e)
         {
             locTitle.Text = RetentionPolicy ? GetLocalizedString("locTitleRetentionPolicy.Text") : GetLocalizedString("locTitle.Text");
-            breadcrumb.PageName = RetentionPolicy ? "Text.PageRetentionPolicyName" : "Text.PageName";
             gvMailboxPlans.Columns[2].Visible = !RetentionPolicy;
             btnSetDefaultMailboxPlan.Visible = !RetentionPolicy;
 
