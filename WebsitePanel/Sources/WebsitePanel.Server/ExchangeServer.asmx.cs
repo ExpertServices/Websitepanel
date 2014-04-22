@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -34,6 +34,7 @@ using WebsitePanel.Providers;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Server.Utils;
 using Microsoft.Web.Services3;
+using WebsitePanel.Providers.Common;
 
 namespace WebsitePanel.Server
 {
@@ -1219,12 +1220,13 @@ namespace WebsitePanel.Server
 
         #region Archiving
         [WebMethod, SoapHeader("settings")]
-        public void SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy)
+        public ResultObject SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy)
         {
+            ResultObject res = null;
             try
             {
                 LogStart("SetMailBoxArchiving");
-                ES.SetMailBoxArchiving(organizationId, accountName, archive, archiveQuotaKB, archiveWarningQuotaKB, RetentionPolicy);
+                res = ES.SetMailBoxArchiving(organizationId, accountName, archive, archiveQuotaKB, archiveWarningQuotaKB, RetentionPolicy);
                 LogEnd("SetMailBoxArchiving");
             }
             catch (Exception ex)
@@ -1232,18 +1234,21 @@ namespace WebsitePanel.Server
                 LogError("SetMailBoxArchiving", ex);
                 throw;
             }
+
+            return res;
         }
 
         #endregion
 
         #region Retention policy
         [WebMethod, SoapHeader("settings")]
-        public void SetRetentionPolicyTag(string Identity, ExchangeRetentionPolicyTagType Type, int AgeLimitForRetention, ExchangeRetentionPolicyTagAction RetentionAction)
+        public ResultObject SetRetentionPolicyTag(string Identity, ExchangeRetentionPolicyTagType Type, int AgeLimitForRetention, ExchangeRetentionPolicyTagAction RetentionAction)
         {
+            ResultObject res = null;
             try
             {
                 LogStart("SetRetentionPolicyTag");
-                ES.SetRetentionPolicyTag(Identity, Type, AgeLimitForRetention, RetentionAction);
+                res = ES.SetRetentionPolicyTag(Identity, Type, AgeLimitForRetention, RetentionAction);
                 LogEnd("SetRetentionPolicyTag");
             }
             catch (Exception ex)
@@ -1251,16 +1256,17 @@ namespace WebsitePanel.Server
                 LogError("SetRetentionPolicyTag", ex);
                 throw;
             }
-
+            return res;
         }
 
         [WebMethod, SoapHeader("settings")]
-        public void RemoveRetentionPolicyTag(string Identity)
+        public ResultObject RemoveRetentionPolicyTag(string Identity)
         {
+            ResultObject res = null;
             try
             {
                 LogStart("RemoveRetentionPolicyTag");
-                ES.RemoveRetentionPolicyTag(Identity);
+                res = ES.RemoveRetentionPolicyTag(Identity);
                 LogEnd("RemoveRetentionPolicyTag");
             }
             catch (Exception ex)
@@ -1268,16 +1274,17 @@ namespace WebsitePanel.Server
                 LogError("RemoveRetentionPolicyTag", ex);
                 throw;
             }
-
+            return res;
         }
 
         [WebMethod, SoapHeader("settings")]
-        public void SetRetentionPolicy(string Identity, string[] RetentionPolicyTagLinks)
+        public ResultObject SetRetentionPolicy(string Identity, string[] RetentionPolicyTagLinks)
         {
+            ResultObject res = null;
             try
             {
                 LogStart("SetRetentionPolicy");
-                ES.SetRetentionPolicy(Identity, RetentionPolicyTagLinks);
+                res = ES.SetRetentionPolicy(Identity, RetentionPolicyTagLinks);
                 LogEnd("SetRetentionPolicy");
             }
             catch (Exception ex)
@@ -1285,16 +1292,17 @@ namespace WebsitePanel.Server
                 LogError("SetRetentionPolicy", ex);
                 throw;
             }
-
+            return res;
         }
 
         [WebMethod, SoapHeader("settings")]
-        public void RemoveRetentionPolicy(string Identity)
+        public ResultObject RemoveRetentionPolicy(string Identity)
         {
+            ResultObject res = null;
             try
             {
                 LogStart("RemoveRetentionPolicy");
-                ES.RemoveRetentionPolicy(Identity);
+                res = ES.RemoveRetentionPolicy(Identity);
                 LogEnd("RemoveRetentionPolicy");
             }
             catch (Exception ex)
@@ -1302,7 +1310,7 @@ namespace WebsitePanel.Server
                 LogError("RemoveRetentionPolicy", ex);
                 throw;
             }
-
+            return res;
         }
 
         #endregion

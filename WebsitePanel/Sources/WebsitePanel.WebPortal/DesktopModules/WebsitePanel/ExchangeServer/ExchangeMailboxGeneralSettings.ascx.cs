@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2012-2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -80,6 +80,9 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                     secLitigationHoldSettings.Visible = (Utils.CheckQouta(Quotas.EXCHANGE2007_ALLOWLITIGATIONHOLD, Cntx));
                 }
+
+                secRetentionPolicy.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, cntx);
+
             }
 
         }

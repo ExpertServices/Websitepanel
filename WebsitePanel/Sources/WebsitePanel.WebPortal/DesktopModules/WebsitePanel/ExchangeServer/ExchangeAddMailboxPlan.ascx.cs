@@ -37,6 +37,7 @@ using System.Web.UI.HtmlControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
+using WebsitePanel.Providers.Common;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
@@ -293,10 +294,10 @@ namespace WebsitePanel.Portal.ExchangeServer
                     foreach(ExchangeMailboxPlanRetentionPolicyTag tag in tags)
                     {
                         tag.MailboxPlanId = planId;
-                        int result = ES.Services.ExchangeServer.AddExchangeMailboxPlanRetentionPolicyTag(PanelRequest.ItemID, tag);
-                        if (result < 0)
+                        IntResult result = ES.Services.ExchangeServer.AddExchangeMailboxPlanRetentionPolicyTag(PanelRequest.ItemID, tag);
+                        if (!result.IsSuccess)
                         {
-                            messageBox.ShowResultMessage(result);
+                            messageBox.ShowMessage(result, "EXCHANGE_ADD_MAILBOXPLAN", null);
                             return;
                         }
                     }

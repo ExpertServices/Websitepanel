@@ -92,7 +92,7 @@
 					            </td>
 				            </tr>
 				            <tr>
-					            <td class="FormLabel200" align="right"><asp:Localize ID="locAgeLimitForRetention" runat="server" meta:resourcekey="locAgeLimitForRetention" Text="Age limit ror retention :"></asp:Localize></td>
+					            <td class="FormLabel200" align="right"><asp:Localize ID="locAgeLimitForRetention" runat="server" meta:resourcekey="locAgeLimitForRetention" Text="Age limit for retention :"></asp:Localize></td>
 					            <td>
                                     <div class="Right">
                                         <uc1:QuotaEditor id="ageLimitForRetention" runat="server"
@@ -125,6 +125,11 @@
                                 <div class="FormButtonsBarClean">
                                     <asp:Button ID="btnUpdatePolicy" runat="server" meta:resourcekey="btnUpdatePolicy"
                                         Text="Update" CssClass="Button1" OnClick="btnUpdatePolicy_Click" />
+                            </td>
+                            <td>
+                                <div class="FormButtonsBarClean">
+                                    <asp:Button ID="btnCancelPolicy" runat="server" meta:resourcekey="btnCancelPolicy"
+                                        Text="Cancel" CssClass="Button1" OnClick="btnCancelPolicy_Click"/>
                             </td>
                         </tr>
                     </table>

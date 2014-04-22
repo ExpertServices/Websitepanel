@@ -47,6 +47,8 @@ using System.Web.UI.HtmlControls;
 
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.Providers.Common;
+using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Portal
 {
@@ -136,12 +138,16 @@ namespace WebsitePanel.Portal
 
             if ((orgs != null) & (orgs.GetLength(0) > 0))
             {
-                int result = ES.Services.ExchangeServer.AddExchangeRetentionPolicyTag(orgs[0].Id, tag);
+                IntResult result = ES.Services.ExchangeServer.AddExchangeRetentionPolicyTag(orgs[0].Id, tag);
 
-                if (result < 0)
+                if (!result.IsSuccess)
                 {
-                    messageBox.ShowResultMessage(result);
+                    messageBox.ShowMessage(result, "EXCHANGE_UPDATEPLANS", null);
                     return;
+                }
+                else
+                {
+                    messageBox.ShowSuccessMessage("EXCHANGE_UPDATEPLANS");
                 }
             }
 
@@ -185,11 +191,15 @@ namespace WebsitePanel.Portal
                         }
 
 
-                        int result = ES.Services.ExchangeServer.DeleteExchangeRetentionPolicyTag(orgs[0].Id, mailboxPlanId);
-                        if (result < 0)
+                        ResultObject result = ES.Services.ExchangeServer.DeleteExchangeRetentionPolicyTag(orgs[0].Id, mailboxPlanId);
+                        if (!result.IsSuccess)
                         {
-                            messageBox.ShowResultMessage(result);
+                            messageBox.ShowMessage(result, "EXCHANGE_DELETE_RETENTIONPOLICY", null);
                             return;
+                        }
+                        else
+                        {
+                            messageBox.ShowSuccessMessage("EXCHANGE_DELETE_RETENTIONPOLICY");
                         }
 
                         ViewState["PolicyID"] = null;
@@ -202,7 +212,7 @@ namespace WebsitePanel.Portal
                     }
                     catch (Exception)
                     {
-                        messageBox.ShowErrorMessage("EXCHANGE_DELETE_MAILBOXPLAN");
+                        messageBox.ShowErrorMessage("EXCHANGE_DELETE_RETENTIONPOLICY");
                     }
 
                     BindRetentionPolicy();
@@ -288,11 +298,11 @@ namespace WebsitePanel.Portal
 
             if ((orgs != null) & (orgs.GetLength(0) > 0))
             {
-                int result = ES.Services.ExchangeServer.UpdateExchangeRetentionPolicyTag(orgs[0].Id, tag);
+                ResultObject result = ES.Services.ExchangeServer.UpdateExchangeRetentionPolicyTag(orgs[0].Id, tag);
 
-                if (result < 0)
+                if (!result.IsSuccess)
                 {
-                    messageBox.ShowErrorMessage("EXCHANGE_UPDATEPLANS");
+                    messageBox.ShowMessage(result, "EXCHANGE_UPDATEPLANS", null);
                 }
                 else
                 {

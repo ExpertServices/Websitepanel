@@ -165,4 +165,7 @@
   <data name="locTitleRetentionPolicy.Text" xml:space="preserve">
     <value>Retention Policy</value>
   </data>
+  <data name="Text.PageRetentionPolicyName" xml:space="preserve">
+    <value>Retention policy</value>
+  </data>
 </root>

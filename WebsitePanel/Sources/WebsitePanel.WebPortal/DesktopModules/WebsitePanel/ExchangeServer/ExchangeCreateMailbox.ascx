@@ -4,6 +4,8 @@
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/PasswordControl.ascx" TagName="PasswordControl" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/EmailAddress.ascx" TagName="EmailAddress" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
+<%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/MailboxPlanSelector.ascx" TagName="MailboxPlanSelector" TagPrefix="wsp" %>
 
@@ -28,7 +30,11 @@
 
 <div id="ExchangeContainer">
 	<div class="Module">
+		<div class="Header">
+			<wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName" />
+		</div>
 		<div class="Left">
+			<wsp:Menu id="menu" runat="server" SelectedItem="mailboxes" />
 		</div>
 		<div class="Content">
 			<div class="Center">
@@ -139,7 +145,7 @@
                                     <wsp:MailboxPlanSelector ID="mailboxPlanSelector" runat="server" Archiving="false" />
                                 </td>
 					        </tr>
-                            <tr>
+                            <tr id="rowRetentionPolicy" runat="server">
                                 <td class="FormLabel150">
                                     <asp:Localize ID="locRetentionPolicyName" runat="server" meta:resourcekey="locRetentionPolicyName" Text="Retention policy Name: "></asp:Localize>
                                 </td>

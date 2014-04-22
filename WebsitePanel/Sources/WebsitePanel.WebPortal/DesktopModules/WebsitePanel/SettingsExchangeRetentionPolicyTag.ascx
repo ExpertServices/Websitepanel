@@ -65,7 +65,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td class="FormLabel200" align="right"><asp:Localize ID="locAgeLimitForRetention" runat="server" meta:resourcekey="locAgeLimitForRetention" Text="Age limit ror retention :"></asp:Localize></td>
+					<td class="FormLabel200" align="right"><asp:Localize ID="locAgeLimitForRetention" runat="server" meta:resourcekey="locAgeLimitForRetention" Text="Age limit for retention :"></asp:Localize></td>
 					<td>
                         <div class="Right">
                             <uc1:QuotaEditor id="ageLimitForRetention" runat="server"

@@ -47,6 +47,8 @@ using System.Web.UI.HtmlControls;
 
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.Providers.Common;
+using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
@@ -70,6 +72,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                 ddRetentionAction.Items.Clear();
                 for (int i = 0; i < action.Length; i++)
                     ddRetentionAction.Items.Add(new ListItem(action[i], i.ToString()));
+
+                ClearEditValues();
             }
 
             txtStatus.Visible = false;
@@ -83,8 +87,6 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             gvPolicy.DataSource = list;
             gvPolicy.DataBind();
-
-            btnUpdatePolicy.Enabled = (string.IsNullOrEmpty(txtPolicy.Text)) ? false : true;
         }
 
 
@@ -101,15 +103,20 @@ namespace WebsitePanel.Portal.ExchangeServer
             tag.AgeLimitForRetention = ageLimitForRetention.QuotaValue;
             tag.RetentionAction = Convert.ToInt32(ddRetentionAction.SelectedValue);
 
-            int result = ES.Services.ExchangeServer.AddExchangeRetentionPolicyTag(PanelRequest.ItemID, tag);
+            IntResult result = ES.Services.ExchangeServer.AddExchangeRetentionPolicyTag(PanelRequest.ItemID, tag);
 
-            if (result < 0)
+            if (!result.IsSuccess)
             {
-                ShowResultMessage(result);
+                messageBox.ShowMessage(result, "EXCHANGE_UPDATERETENTIONPOLICY", null);
                 return;
+            }
+            else
+            {
+                messageBox.ShowSuccessMessage("EXCHANGE_UPDATERETENTIONPOLICY");
             }
 
             BindRetentionPolicy();
+            ClearEditValues();
         }
 
         protected void gvPolicy_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -132,24 +139,25 @@ namespace WebsitePanel.Portal.ExchangeServer
                         }
 
 
-                        int result = ES.Services.ExchangeServer.DeleteExchangeRetentionPolicyTag(PanelRequest.ItemID, mailboxPlanId);
-                        if (result < 0)
+                        ResultObject result = ES.Services.ExchangeServer.DeleteExchangeRetentionPolicyTag(PanelRequest.ItemID, mailboxPlanId);
+                        if (!result.IsSuccess)
                         {
-                            ShowResultMessage(result);
+                            messageBox.ShowMessage(result, "EXCHANGE_DELETE_RETENTIONPOLICY", null);
                             return;
+                        }
+                        else
+                        {
+                            messageBox.ShowSuccessMessage("EXCHANGE_DELETE_RETENTIONPOLICY");
                         }
 
                         ViewState["PolicyID"] = null;
 
-                        txtPolicy.Text = string.Empty;
-                        ageLimitForRetention.QuotaValue = 0;
-
-                        btnUpdatePolicy.Enabled = (string.IsNullOrEmpty(txtPolicy.Text)) ? false : true;
+                        ClearEditValues();
 
                     }
                     catch (Exception)
                     {
-                        ShowErrorMessage("EXCHANGE_DELETE_MAILBOXPLAN");
+                        ShowErrorMessage("EXCHANGE_DELETE_RETENTIONPOLICY");
                     }
 
                     BindRetentionPolicy();
@@ -165,7 +173,12 @@ namespace WebsitePanel.Portal.ExchangeServer
                         ageLimitForRetention.QuotaValue = tag.AgeLimitForRetention;
                         Utils.SelectListItem(ddRetentionAction, tag.RetentionAction);
 
-                        btnUpdatePolicy.Enabled = (string.IsNullOrEmpty(txtPolicy.Text)) ? false : true;
+                        btnUpdatePolicy.Enabled = true;
+                        btnCancelPolicy.Enabled = true;
+
+                        btnAddPolicy.Enabled = false;
+                        ddTagType.Enabled = false;
+                        
 
                     break;
             }
@@ -202,15 +215,15 @@ namespace WebsitePanel.Portal.ExchangeServer
             tag.AgeLimitForRetention = ageLimitForRetention.QuotaValue;
             tag.RetentionAction = Convert.ToInt32(ddRetentionAction.SelectedValue);
 
-            int result = ES.Services.ExchangeServer.UpdateExchangeRetentionPolicyTag(PanelRequest.ItemID, tag);
+            ResultObject result = ES.Services.ExchangeServer.UpdateExchangeRetentionPolicyTag(PanelRequest.ItemID, tag);
 
-            if (result < 0)
+            if (!result.IsSuccess)
             {
-                ShowErrorMessage("EXCHANGE_UPDATEPLANS");
+                messageBox.ShowMessage(result,"EXCHANGE_UPDATERETENTIONPOLICY", null);
             }
             else
             {
-               ShowSuccessMessage("EXCHANGE_UPDATEPLANS");
+               messageBox.ShowSuccessMessage("EXCHANGE_UPDATERETENTIONPOLICY");
             }
 
             BindRetentionPolicy();
@@ -232,6 +245,23 @@ namespace WebsitePanel.Portal.ExchangeServer
                 imgName = "company24.png";
 
             return GetThemedImage("Exchange/" + imgName);
+        }
+
+        protected void ClearEditValues()
+        {
+            txtPolicy.Text = string.Empty;
+            ageLimitForRetention.QuotaValue = 0;
+
+            ddTagType.Enabled = true;
+
+            btnAddPolicy.Enabled = true;
+            btnUpdatePolicy.Enabled = false;
+            btnCancelPolicy.Enabled = false;
+        }
+
+        protected void btnCancelPolicy_Click(object sender, EventArgs e)
+        {
+            ClearEditValues();
         }
 
     }
