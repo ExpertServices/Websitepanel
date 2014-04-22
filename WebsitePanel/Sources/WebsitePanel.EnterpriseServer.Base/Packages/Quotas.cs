@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -118,7 +118,7 @@ order by rg.groupOrder
         public const string EXCHANGE2007_ALLOWLITIGATIONHOLD = "Exchange2007.AllowLitigationHold";
         public const string EXCHANGE2007_RECOVERABLEITEMSSPACE = "Exchange2007.RecoverableItemsSpace";
         public const string EXCHANGE2007_DISCLAIMERSALLOWED = "Exchange2007.DisclaimersAllowed";
-        public const string EXCHANGE2013_ALLOWARCHIVING = "Exchange2013.AllowArchiving"; // Archiving
+        public const string EXCHANGE2013_ALLOWRETENTIONPOLICY = "Exchange2013.AllowRetentionPolicy"; // Archiving
         public const string EXCHANGE2013_ARCHIVINGSTORAGE = "Exchange2013.ArchivingStorage";
         public const string EXCHANGE2013_ARCHIVINGMAILBOXES = "Exchange2013.ArchivingMailboxes";
         public const string MSSQL2000_DATABASES = "MsSQL2000.Databases";  // Databases

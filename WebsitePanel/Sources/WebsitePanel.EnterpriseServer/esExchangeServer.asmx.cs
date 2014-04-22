@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2012-2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -579,19 +579,19 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public int AddExchangeRetentionPolicyTag(int itemId, ExchangeRetentionPolicyTag tag)
+        public IntResult AddExchangeRetentionPolicyTag(int itemId, ExchangeRetentionPolicyTag tag)
         {
             return ExchangeServerController.AddExchangeRetentionPolicyTag(itemId, tag);
         }
 
         [WebMethod]
-        public int UpdateExchangeRetentionPolicyTag(int itemId, ExchangeRetentionPolicyTag tag)
+        public ResultObject UpdateExchangeRetentionPolicyTag(int itemId, ExchangeRetentionPolicyTag tag)
         {
             return ExchangeServerController.UpdateExchangeRetentionPolicyTag(itemId, tag);
         }
 
         [WebMethod]
-        public int DeleteExchangeRetentionPolicyTag(int itemId, int tagId)
+        public ResultObject DeleteExchangeRetentionPolicyTag(int itemId, int tagId)
         {
             return ExchangeServerController.DeleteExchangeRetentionPolicyTag(itemId, tagId);
         }
@@ -604,13 +604,13 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public int AddExchangeMailboxPlanRetentionPolicyTag(int itemId, ExchangeMailboxPlanRetentionPolicyTag planTag)
+        public IntResult AddExchangeMailboxPlanRetentionPolicyTag(int itemId, ExchangeMailboxPlanRetentionPolicyTag planTag)
         {
             return ExchangeServerController.AddExchangeMailboxPlanRetentionPolicyTag(itemId, planTag);
         }
 
         [WebMethod]
-        public int DeleteExchangeMailboxPlanRetentionPolicyTag(int itemID, int policyId, int planTagId)
+        public ResultObject DeleteExchangeMailboxPlanRetentionPolicyTag(int itemID, int policyId, int planTagId)
         {
             return ExchangeServerController.DeleteExchangeMailboxPlanRetentionPolicyTag(itemID, policyId, planTagId);
         }

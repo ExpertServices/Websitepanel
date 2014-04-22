@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -44,6 +44,7 @@ using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 
 using WebsitePanel.Providers;
+using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.Utils;
 using WebsitePanel.Server.Utils;
@@ -6967,32 +6968,37 @@ namespace WebsitePanel.Providers.HostedSolution
         #endregion
 
         #region Archiving
-        public virtual void SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy)
+        public virtual ResultObject SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy)
         {
             // not implemented
+            return null;
         }
         #endregion
 
         #region Retention policy
 
-        public virtual void SetRetentionPolicyTag(string Identity, ExchangeRetentionPolicyTagType Type, int AgeLimitForRetention, ExchangeRetentionPolicyTagAction RetentionAction)
+        public virtual ResultObject SetRetentionPolicyTag(string Identity, ExchangeRetentionPolicyTagType Type, int AgeLimitForRetention, ExchangeRetentionPolicyTagAction RetentionAction)
         {
             // not implemented
+            return null;
         }
 
-        public virtual void RemoveRetentionPolicyTag(string Identity)
+        public virtual ResultObject RemoveRetentionPolicyTag(string Identity)
         {
             // not implemented
+            return null;
         }
 
-        public virtual void SetRetentionPolicy(string Identity, string[] RetentionPolicyTagLinks)
+        public virtual ResultObject SetRetentionPolicy(string Identity, string[] RetentionPolicyTagLinks)
         {
             // not implemented
+            return null;
         }
 
-        public virtual void RemoveRetentionPolicy(string Identity)
+        public virtual ResultObject RemoveRetentionPolicy(string Identity)
         {
             // not implemented
+            return null;
         }
 
 

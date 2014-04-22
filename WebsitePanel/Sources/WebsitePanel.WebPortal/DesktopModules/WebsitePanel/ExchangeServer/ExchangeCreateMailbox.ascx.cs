@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -99,6 +99,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                         rbMailboxType.Items.Add(new System.Web.UI.WebControls.ListItem(GetLocalizedString("EquipmentMailbox.Text"), "6"));
                     }
                 }
+
+                rowRetentionPolicy.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, cntx);
             }
 
         }

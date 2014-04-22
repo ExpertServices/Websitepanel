@@ -5437,4 +5437,16 @@
   <data name="Quota.Exchange2013.ArchivingStorage" xml:space="preserve">
     <value>Archiving storage, MB</value>
   </data>
+  <data name="Error.EXCHANGE_DELETE_RETENTIONPOLICY" xml:space="preserve">
+    <value>Unable to delete Retention policy.</value>
+  </data>
+  <data name="Error.EXCHANGE_UPDATERETENTIONPOLICY" xml:space="preserve">
+    <value>Retention policy update failed</value>
+  </data>
+  <data name="Success.EXCHANGE_DELETE_RETENTIONPOLICY" xml:space="preserve">
+    <value>Retention policy deleted.</value>
+  </data>
+  <data name="Success.EXCHANGE_UPDATERETENTIONPOLICY" xml:space="preserve">
+    <value>Retention policy updated</value>
+  </data>
 </root>

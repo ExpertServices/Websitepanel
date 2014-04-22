@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -1758,7 +1758,13 @@ namespace WebsitePanel.EnterpriseServer
 
                 UpdateExchangeAccount(accountId, accountName, accountType, displayName, email, false, pmmActions.ToString(), samAccount, password, mailboxPlanId, archivedPlanId, subscriberNumber);
 
-                SetMailBoxRetentionPolicy(itemId, archivedPlanId, accountName, exchange, org.OrganizationId);
+                ResultObject resPolicy = new ResultObject() { IsSuccess = true };
+                SetMailBoxRetentionPolicy(itemId, archivedPlanId, accountName, exchange, org.OrganizationId, resPolicy);
+                if (!resPolicy.IsSuccess)
+                {
+                    TaskManager.WriteError("Error SetMailBoxRetentionPolicy", resPolicy.ErrorCodes.ToArray());
+                }
+                
 
                 // send setup instructions
                 if (sendSetupInstructions)
@@ -2700,7 +2706,12 @@ namespace WebsitePanel.EnterpriseServer
                     plan.LitigationHoldUrl,
                     plan.LitigationHoldMsg);
 
-                SetMailBoxRetentionPolicy(itemId, archivePlanId, account.UserPrincipalName, exchange, org.OrganizationId);
+                ResultObject resPolicy = new ResultObject() { IsSuccess = true };
+                SetMailBoxRetentionPolicy(itemId, archivePlanId, account.UserPrincipalName, exchange, org.OrganizationId, resPolicy);
+                if (!resPolicy.IsSuccess)
+                {
+                    TaskManager.WriteError("Error SetMailBoxRetentionPolicy", resPolicy.ErrorCodes.ToArray());
+                }
 
                 DataProvider.SetExchangeAccountMailboxPlan(accountId, mailboxPlanId, archivePlanId);
 
@@ -3016,8 +3027,9 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Exchange Retention Policy Tags
 
-        private static void SetMailBoxRetentionPolicy(int itemId, int retentionPolicyId, string accountName, ExchangeServer exchange, string orgId)
+        private static void SetMailBoxRetentionPolicy(int itemId, int retentionPolicyId, string accountName, ExchangeServer exchange, string orgId, ResultObject result)
         {
+
             bool archive = false;
             long archiveQuotaKB = 0;
             long archiveWarningQuotaKB = 0;
@@ -3031,19 +3043,22 @@ namespace WebsitePanel.EnterpriseServer
                     archiveQuotaKB = retentionPolicy.MailboxSizeMB != -1 ? ((long)retentionPolicy.MailboxSizeMB * 1024) : -1;
                     archiveWarningQuotaKB = retentionPolicy.MailboxSizeMB != -1 ? (((long)retentionPolicy.IssueWarningPct * (long)retentionPolicy.MailboxSizeMB * 1024) / 100) : -1;
 
-                    // update
+                    // update PlanRetentionPolicy and Tags
                     List<ExchangeMailboxPlanRetentionPolicyTag> listtags = GetExchangeMailboxPlanRetentionPolicyTags(retentionPolicyId);
                     foreach(ExchangeMailboxPlanRetentionPolicyTag listtag in listtags)
                     {
                         ExchangeRetentionPolicyTag tag = GetExchangeRetentionPolicyTag(itemId, listtag.TagID);
-                        exchange.SetRetentionPolicyTag(tag.WSPUniqueName, (ExchangeRetentionPolicyTagType)tag.TagType, tag.AgeLimitForRetention, (ExchangeRetentionPolicyTagAction)tag.RetentionAction);
+                        ResultObject resItem = exchange.SetRetentionPolicyTag(tag.WSPUniqueName, (ExchangeRetentionPolicyTagType)tag.TagType, tag.AgeLimitForRetention, (ExchangeRetentionPolicyTagAction)tag.RetentionAction);
+                        result.ErrorCodes.AddRange(resItem.ErrorCodes);
+                        result.IsSuccess = result.IsSuccess && resItem.IsSuccess;
                     }
-                    UpdateExchangeMailboxPlanRetentionPolicyTags(itemId, retentionPolicyId);
+                    UpdateExchangeRetentionPolicy(itemId, retentionPolicyId, result);
                 }
 
             }
-            exchange.SetMailBoxArchiving(orgId, accountName, archive, archiveQuotaKB, archiveWarningQuotaKB, RetentionPolicy);
-
+            ResultObject res = exchange.SetMailBoxArchiving(orgId, accountName, archive, archiveQuotaKB, archiveWarningQuotaKB, RetentionPolicy);
+            result.ErrorCodes.AddRange(res.ErrorCodes);
+            result.IsSuccess = result.IsSuccess && res.IsSuccess;
         }
 
         public static List<ExchangeRetentionPolicyTag> GetExchangeRetentionPolicyTags(int itemId)
@@ -3136,17 +3151,84 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        public static int AddExchangeRetentionPolicyTag(int itemID, ExchangeRetentionPolicyTag tag)
+        public static IntResult AddExchangeRetentionPolicyTag(int itemID, ExchangeRetentionPolicyTag tag)
         {
             // place log record
-            TaskManager.StartTask("EXCHANGE", "ADD_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+            IntResult res = TaskManager.StartResultTask<IntResult>("EXCHANGE", "ADD_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+
+            Organization org;
+            try
+            {
+                org = GetOrganization(itemID);
+                if (org == null)
+                    throw new ApplicationException("Organization is null");
+            }
+            catch (Exception ex)
+            {
+                TaskManager.CompleteResultTask(res, ErrorCodes.CANNOT_GET_ORGANIZATION_BY_ITEM_ID, ex);
+                return res;
+            }
 
             try
             {
-                Organization org = GetOrganization(itemID);
-                if (org == null)
-                    return -1;
+                // load package context
+                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
 
+                if (org.PackageId > 1)
+                {
+                    // quotas
+                }
+
+                int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+
+                int tagId = DataProvider.AddExchangeRetentionPolicyTag(itemID, tag.TagName, tag.TagType, tag.AgeLimitForRetention, tag.RetentionAction );
+                tag.TagID = tagId;
+
+                if (exchangeServiceId > 0)
+                {
+                    ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+
+                    ResultObject resTag = exchange.SetRetentionPolicyTag(tag.WSPUniqueName, (ExchangeRetentionPolicyTagType)tag.TagType, tag.AgeLimitForRetention, (ExchangeRetentionPolicyTagAction)tag.RetentionAction);
+                    res.ErrorCodes.AddRange(resTag.ErrorCodes);
+                    res.IsSuccess = res.IsSuccess && resTag.IsSuccess;
+                }
+
+                if (res.IsSuccess)
+                    res.Value = tagId;
+                else
+                    DataProvider.DeleteExchangeRetentionPolicyTag(tagId);
+            }
+            catch (Exception ex)
+            {
+                TaskManager.WriteError(ex);
+                TaskManager.CompleteResultTask(res);
+                return res;
+            }
+
+            TaskManager.CompleteResultTask();
+            return res;
+        }
+
+        public static ResultObject UpdateExchangeRetentionPolicyTag(int itemID, ExchangeRetentionPolicyTag tag)
+        {
+            // place log record
+            ResultObject res = TaskManager.StartResultTask<ResultObject>("EXCHANGE", "UPDATE_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+
+            Organization org;
+            try
+            {
+                org = GetOrganization(itemID);
+                if (org == null)
+                    throw new ApplicationException("Organization is null");
+            }
+            catch (Exception ex)
+            {
+                TaskManager.CompleteResultTask(res, ErrorCodes.CANNOT_GET_ORGANIZATION_BY_ITEM_ID, ex);
+                return res;
+            }
+
+            try
+            {
                 // load package context
                 PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
 
@@ -3161,99 +3243,79 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
-                    exchange.SetRetentionPolicyTag(tag.WSPUniqueName, (ExchangeRetentionPolicyTagType)tag.TagType, tag.AgeLimitForRetention, (ExchangeRetentionPolicyTagAction)tag.RetentionAction);
+                    ResultObject resTag = exchange.SetRetentionPolicyTag(tag.WSPUniqueName, (ExchangeRetentionPolicyTagType)tag.TagType, tag.AgeLimitForRetention, (ExchangeRetentionPolicyTagAction)tag.RetentionAction);
+                    res.ErrorCodes.AddRange(resTag.ErrorCodes);
+                    res.IsSuccess = res.IsSuccess && resTag.IsSuccess;
                 }
 
-                return DataProvider.AddExchangeRetentionPolicyTag(itemID, tag.TagName, tag.TagType, tag.AgeLimitForRetention, tag.RetentionAction );
+                if (res.IsSuccess)
+                    DataProvider.UpdateExchangeRetentionPolicyTag(tag.TagID, tag.ItemID, tag.TagName, tag.TagType, tag.AgeLimitForRetention, tag.RetentionAction);
             }
             catch (Exception ex)
             {
-                throw TaskManager.WriteError(ex);
-            }
-            finally
-            {
-                TaskManager.CompleteTask();
+                TaskManager.WriteError(ex);
+                TaskManager.CompleteResultTask(res);
+                return res;
             }
 
+            TaskManager.CompleteResultTask();
+            return res;
         }
 
-        public static int UpdateExchangeRetentionPolicyTag(int itemID, ExchangeRetentionPolicyTag tag)
+        public static ResultObject DeleteExchangeRetentionPolicyTag(int itemID, int tagId)
         {
-            // place log record
-            TaskManager.StartTask("EXCHANGE", "UPDATE_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+            ResultObject res = TaskManager.StartResultTask<ResultObject>("EXCHANGE", "DELETE_EXCHANGE_RETENTIONPOLICYTAG", itemID);
 
+            Organization org;
             try
             {
-                Organization org = GetOrganization(itemID);
+                org = GetOrganization(itemID);
                 if (org == null)
-                    return -1;
-
-                // load package context
-                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
-
-                if (org.PackageId > 1)
-                {
-                    // quotas
-                }
-
-                int exchangeServiceId = GetExchangeServiceID(org.PackageId);
-
-                if (exchangeServiceId > 0)
-                {
-                    ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
-
-                    exchange.SetRetentionPolicyTag(tag.WSPUniqueName, (ExchangeRetentionPolicyTagType)tag.TagType, tag.AgeLimitForRetention, (ExchangeRetentionPolicyTagAction)tag.RetentionAction);
-                }
-
-                DataProvider.UpdateExchangeRetentionPolicyTag(tag.TagID, tag.ItemID, tag.TagName, tag.TagType, tag.AgeLimitForRetention, tag.RetentionAction);
+                    throw new ApplicationException("Organization is null");
             }
             catch (Exception ex)
             {
-                throw TaskManager.WriteError(ex);
+                TaskManager.CompleteResultTask(res, ErrorCodes.CANNOT_GET_ORGANIZATION_BY_ITEM_ID, ex);
+                return res;
             }
-            finally
-            {
-                TaskManager.CompleteTask();
-            }
-
-
-            return 0;
-        }
-
-        public static int DeleteExchangeRetentionPolicyTag(int itemID, int tagId)
-        {
-            TaskManager.StartTask("EXCHANGE", "DELETE_EXCHANGE_RETENTIONPOLICYTAG", itemID);
 
             try
             {
-                Organization org = GetOrganization(itemID);
-                if (org == null)
-                    return -1;
-
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 if (exchangeServiceId > 0)
                 {
+                    // load package context
+                    PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
+
+                    if (org.PackageId > 1)
+                    {
+                        // quotas
+                    }
+
                     ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
                     ExchangeRetentionPolicyTag tag = GetExchangeRetentionPolicyTag(itemID, tagId);
-                    if (tag == null) return -1;
+                    if (tag == null) throw new ApplicationException("Tag is null");
 
-                    exchange.RemoveRetentionPolicyTag(tag.WSPUniqueName);
+                    ResultObject resTag = exchange.RemoveRetentionPolicyTag(tag.WSPUniqueName);
+                    res.ErrorCodes.AddRange(resTag.ErrorCodes);
+                    res.IsSuccess = res.IsSuccess && resTag.IsSuccess;
+
                 }
                 
-                DataProvider.DeleteExchangeRetentionPolicyTag(tagId);
+                if (res.IsSuccess)
+                    DataProvider.DeleteExchangeRetentionPolicyTag(tagId);
 
-                return 0;
             }
             catch (Exception ex)
             {
-                throw TaskManager.WriteError(ex);
-            }
-            finally
-            {
-                TaskManager.CompleteTask();
+                TaskManager.WriteError(ex);
+                TaskManager.CompleteResultTask(res);
+                return res;
             }
 
+            TaskManager.CompleteResultTask();
+            return res;
         }
 
 
@@ -3280,7 +3342,7 @@ namespace WebsitePanel.EnterpriseServer
         }
 
 
-        private static void UpdateExchangeMailboxPlanRetentionPolicyTags(int itemID, int policyId)
+        private static void UpdateExchangeRetentionPolicy(int itemID, int policyId, ResultObject result)
         {
             ExchangeMailboxPlan policy = GetExchangeMailboxPlan(itemID, policyId);
 
@@ -3304,22 +3366,33 @@ namespace WebsitePanel.EnterpriseServer
             {
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
-                exchange.SetRetentionPolicy(policy.WSPUniqueName, tagLinks.ToArray());
+                ResultObject res = exchange.SetRetentionPolicy(policy.WSPUniqueName, tagLinks.ToArray());
+                result.ErrorCodes.AddRange(res.ErrorCodes);
+                result.IsSuccess = result.IsSuccess && res.IsSuccess;
             }
 
         }
 
-        public static int AddExchangeMailboxPlanRetentionPolicyTag(int itemID, ExchangeMailboxPlanRetentionPolicyTag planTag)
+        public static IntResult AddExchangeMailboxPlanRetentionPolicyTag(int itemID, ExchangeMailboxPlanRetentionPolicyTag planTag)
         {
             // place log record
-            TaskManager.StartTask("EXCHANGE", "ADD_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+            IntResult res = TaskManager.StartResultTask<IntResult>("EXCHANGE", "ADD_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+
+            Organization org;
+            try
+            {
+                org = GetOrganization(itemID);
+                if (org == null)
+                    throw new ApplicationException("Organization is null");
+            }
+            catch (Exception ex)
+            {
+                TaskManager.CompleteResultTask(res, ErrorCodes.CANNOT_GET_ORGANIZATION_BY_ITEM_ID, ex);
+                return res;
+            }
 
             try
             {
-                Organization org = GetOrganization(itemID);
-                if (org == null)
-                    return -1;
-
                 // load package context
                 PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
 
@@ -3328,43 +3401,63 @@ namespace WebsitePanel.EnterpriseServer
                     // quotas
                 }
 
-                int res = DataProvider.AddExchangeMailboxPlanRetentionPolicyTag(planTag.TagID, planTag.MailboxPlanId);
+                res.Value = DataProvider.AddExchangeMailboxPlanRetentionPolicyTag(planTag.TagID, planTag.MailboxPlanId);
 
-                UpdateExchangeMailboxPlanRetentionPolicyTags(itemID, planTag.MailboxPlanId);
+                UpdateExchangeRetentionPolicy(itemID, planTag.MailboxPlanId, res);
 
-                return res;
             }
             catch (Exception ex)
             {
-                throw TaskManager.WriteError(ex);
+                TaskManager.WriteError(ex);
+                TaskManager.CompleteResultTask(res);
+                return res;
             }
-            finally
-            {
-                TaskManager.CompleteTask();
-            }
+
+            TaskManager.CompleteResultTask();
+            return res;
 
         }
 
-        public static int DeleteExchangeMailboxPlanRetentionPolicyTag(int itemID, int policyId, int planTagId)
+        public static ResultObject DeleteExchangeMailboxPlanRetentionPolicyTag(int itemID, int policyId, int planTagId)
         {
-            TaskManager.StartTask("EXCHANGE", "DELETE_EXCHANGE_RETENTIONPOLICYTAG", itemID);
+            ResultObject res = TaskManager.StartResultTask<ResultObject>("EXCHANGE", "DELETE_EXCHANGE_RETENTIONPOLICYTAG", itemID);
 
+            Organization org;
             try
             {
-                DataProvider.DeleteExchangeMailboxPlanRetentionPolicyTag(planTagId);
-
-                UpdateExchangeMailboxPlanRetentionPolicyTags(itemID, policyId);
-
-                return 0;
+                org = GetOrganization(itemID);
+                if (org == null)
+                    throw new ApplicationException("Organization is null");
             }
             catch (Exception ex)
             {
-                throw TaskManager.WriteError(ex);
+                TaskManager.CompleteResultTask(res, ErrorCodes.CANNOT_GET_ORGANIZATION_BY_ITEM_ID, ex);
+                return res;
             }
-            finally
+
+            try
             {
-                TaskManager.CompleteTask();
+                // load package context
+                PackageContext cntx = PackageController.GetPackageContext(org.PackageId);
+
+                if (org.PackageId > 1)
+                {
+                    // quotas
+                }
+
+                DataProvider.DeleteExchangeMailboxPlanRetentionPolicyTag(planTagId);
+
+                UpdateExchangeRetentionPolicy(itemID, policyId,res);
             }
+            catch (Exception ex)
+            {
+                TaskManager.WriteError(ex);
+                TaskManager.CompleteResultTask(res);
+                return res;
+            }
+
+            TaskManager.CompleteResultTask();
+            return res;
 
         }
 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014, Outercurve Foundation.
+﻿// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -47,6 +47,8 @@ using System.Web.UI.HtmlControls;
 
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.Providers.ResultObjects;
+using WebsitePanel.Providers.Common;
 
 namespace WebsitePanel.Portal
 {
@@ -64,6 +66,8 @@ namespace WebsitePanel.Portal
 
         public void BindSettings(UserSettings settings)
         {
+            secMailboxPlan.Text = RetentionPolicy ? GetLocalizedString("secRetentionPolicy.Text") : GetLocalizedString("secMailboxPlan.Text");
+
             BindMailboxPlans();
             
             txtStatus.Visible = false;
@@ -497,9 +501,12 @@ namespace WebsitePanel.Portal
                 else
                 {
                     if (RetentionPolicy)
-                        SaveTags(orgs[0].Id, mailboxPlanId);
-
-                    messageBox.ShowSuccessMessage("EXCHANGE_UPDATEPLANS");
+                    {
+                        if (SaveTags(orgs[0].Id, mailboxPlanId))
+                            messageBox.ShowSuccessMessage("EXCHANGE_UPDATEPLANS");
+                    }
+                    else
+                        messageBox.ShowSuccessMessage("EXCHANGE_UPDATEPLANS");
                 }
 
             }
@@ -684,11 +691,19 @@ namespace WebsitePanel.Portal
             }
         }
 
-        protected void SaveTags(int ItemId, int planId)
+        protected bool SaveTags(int ItemId, int planId)
         {
             ExchangeMailboxPlanRetentionPolicyTag[] currenttags = ES.Services.ExchangeServer.GetExchangeMailboxPlanRetentionPolicyTags(planId);
             foreach (ExchangeMailboxPlanRetentionPolicyTag tag in currenttags)
-                ES.Services.ExchangeServer.DeleteExchangeMailboxPlanRetentionPolicyTag(ItemId, planId, tag.PlanTagID);
+            {
+                ResultObject res = ES.Services.ExchangeServer.DeleteExchangeMailboxPlanRetentionPolicyTag(ItemId, planId, tag.PlanTagID);
+                if (!res.IsSuccess)
+                {
+                    messageBox.ShowMessage(res, "EXCHANGE_UPDATEPLANS", null);
+                    return false;
+                }
+
+            }
 
             List<ExchangeMailboxPlanRetentionPolicyTag> tags = ViewState["Tags"] as List<ExchangeMailboxPlanRetentionPolicyTag>;
             if (tags != null)
@@ -696,14 +711,16 @@ namespace WebsitePanel.Portal
                 foreach (ExchangeMailboxPlanRetentionPolicyTag tag in tags)
                 {
                     tag.MailboxPlanId = planId;
-                    int result = ES.Services.ExchangeServer.AddExchangeMailboxPlanRetentionPolicyTag(ItemId, tag);
-                    if (result < 0)
+                    IntResult res = ES.Services.ExchangeServer.AddExchangeMailboxPlanRetentionPolicyTag(ItemId, tag);
+                    if (!res.IsSuccess)
                     {
-                        messageBox.ShowResultMessage(result);
-                        return;
+                        messageBox.ShowMessage(res, "EXCHANGE_UPDATEPLANS", null);
+                        return false;
                     }
                 }
             }
+
+            return true;
 
         }
 

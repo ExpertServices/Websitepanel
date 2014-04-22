@@ -48,6 +48,8 @@ using WebsitePanel.Providers;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.Utils;
 using WebsitePanel.Server.Utils;
+using WebsitePanel.Providers.Common;
+
 using Microsoft.Exchange.Data.Directory.Recipient;
 using Microsoft.Win32;
 
@@ -6043,6 +6045,25 @@ namespace WebsitePanel.Providers.HostedSolution
             return ExecuteShellCommand(runSpace, cmd, useDomainController, out errors);
         }
 
+        internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd, ResultObject res)
+        {
+            return ExecuteShellCommand(runSpace, cmd, res, true);
+        }
+
+        internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd, ResultObject res, bool setIsSuccess)
+        {
+            object[] errors;
+            Collection<PSObject> ret = ExecuteShellCommand(runSpace, cmd, out errors);
+            if (errors.Length>0)
+            {
+                foreach (object error in errors)
+                    res.ErrorCodes.Add(error.ToString());
+                if (setIsSuccess)
+                    res.IsSuccess = false;
+            }
+            return ret;
+        }
+
         internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd, out object[] errors)
         {
             return ExecuteShellCommand(runSpace, cmd, true, out errors);
@@ -7253,15 +7274,17 @@ namespace WebsitePanel.Providers.HostedSolution
 
         #region Archiving
 
-        public void SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy)
+        public ResultObject SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy)
         {
-            SetMailBoxArchivingInternal(organizationId, accountName, archive, archiveQuotaKB, archiveWarningQuotaKB, RetentionPolicy);
+            return SetMailBoxArchivingInternal(organizationId, accountName, archive, archiveQuotaKB, archiveWarningQuotaKB, RetentionPolicy);
         }
 
-        private void SetMailBoxArchivingInternal(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy)
+        private ResultObject SetMailBoxArchivingInternal(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy)
         {
             ExchangeLog.LogStart("SetMailBoxArchivingInternal");
             ExchangeLog.DebugInfo("Account: {0}", accountName);
+
+            ResultObject res = new ResultObject() { IsSuccess=true };
 
             Runspace runSpace = null;
             Runspace runSpaceEx = null;
@@ -7283,20 +7306,21 @@ namespace WebsitePanel.Providers.HostedSolution
                     {
                         cmd.Parameters.Add("ArchiveDatabase", database);
                     }
-                    ExecuteShellCommand(runSpace, cmd);
+                    ExecuteShellCommand(runSpace, cmd, res);
+
 
                     cmd = new Command("Set-Mailbox");
                     cmd.Parameters.Add("Identity", accountName);
                     cmd.Parameters.Add("ArchiveQuota", ConvertKBToUnlimited(archiveQuotaKB));
                     cmd.Parameters.Add("ArchiveWarningQuota", ConvertKBToUnlimited(archiveWarningQuotaKB));
-                    ExecuteShellCommand(runSpace, cmd);
+                    ExecuteShellCommand(runSpace, cmd, res);
                 }
                 else
                 {
                     cmd = new Command("Disable-Mailbox");
                     cmd.Parameters.Add("Identity", accountName);
                     cmd.Parameters.Add("Archive");
-                    ExecuteShellCommand(runSpace, cmd);
+                    ExecuteShellCommand(runSpace, cmd, res);
                 }
 
                 if (!String.IsNullOrEmpty(RetentionPolicy))
@@ -7304,18 +7328,20 @@ namespace WebsitePanel.Providers.HostedSolution
                     cmd = new Command("Set-Mailbox");
                     cmd.Parameters.Add("Identity", accountName);
                     cmd.Parameters.Add("RetentionPolicy", RetentionPolicy);
-                    ExecuteShellCommand(runSpace, cmd);
+                    ExecuteShellCommand(runSpace, cmd, res);
                 }
 
 
             }
             finally
             {
-
                 CloseRunspace(runSpace);
                 CloseRunspaceEx(runSpaceEx);
             }
+
             ExchangeLog.LogEnd("SetMailBoxArchivingInternal");
+
+            return res;
         }
 
 
@@ -7323,14 +7349,16 @@ namespace WebsitePanel.Providers.HostedSolution
 
         #region Retention policy
 
-        public void SetRetentionPolicyTag(string Identity, ExchangeRetentionPolicyTagType Type, int AgeLimitForRetention , ExchangeRetentionPolicyTagAction	RetentionAction)
+        public ResultObject SetRetentionPolicyTag(string Identity, ExchangeRetentionPolicyTagType Type, int AgeLimitForRetention, ExchangeRetentionPolicyTagAction RetentionAction)
         {
-            SetRetentionPolicyTagInternal(Identity, Type, AgeLimitForRetention,	RetentionAction);
+            return SetRetentionPolicyTagInternal(Identity, Type, AgeLimitForRetention,	RetentionAction);
         }
-        
-        private void SetRetentionPolicyTagInternal(string Identity, ExchangeRetentionPolicyTagType Type, int AgeLimitForRetention, ExchangeRetentionPolicyTagAction RetentionAction)
+
+        private ResultObject SetRetentionPolicyTagInternal(string Identity, ExchangeRetentionPolicyTagType Type, int AgeLimitForRetention, ExchangeRetentionPolicyTagAction RetentionAction)
         {
             ExchangeLog.LogStart("SetRetentionPolicyTagInternal");
+
+            ResultObject res = new ResultObject() { IsSuccess = true };
 
             Runspace runSpace = null;
             Runspace runSpaceEx = null;
@@ -7344,10 +7372,12 @@ namespace WebsitePanel.Providers.HostedSolution
                 bool exists = false;
                 cmd = new Command("Get-RetentionPolicyTag");
                 cmd.Parameters.Add("Identity", Identity);
-                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd, res, false);
 
                 if (result != null && result.Count > 0)
                     exists = true;
+
+                res = new ResultObject() { IsSuccess = true };
 
                 if (exists)
                 {
@@ -7365,8 +7395,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 cmd.Parameters.Add("RetentionAction", Enum.GetName(typeof(ExchangeRetentionPolicyTagAction), RetentionAction));
                 cmd.Parameters.Add("RetentionEnabled", true);
 
-                object[] errors;
-                result = ExecuteShellCommand(runSpace, cmd,out errors);
+                result = ExecuteShellCommand(runSpace, cmd, res);
             }
             finally
             {
@@ -7375,16 +7404,20 @@ namespace WebsitePanel.Providers.HostedSolution
                 CloseRunspaceEx(runSpaceEx);
             }
             ExchangeLog.LogEnd("SetRetentionPolicyTagInternal");
+
+            return res;
         }
 
-        public void RemoveRetentionPolicyTag(string Identity)
+        public ResultObject RemoveRetentionPolicyTag(string Identity)
         {
-            RemoveRetentionPolicyTagInternal(Identity);
+            return RemoveRetentionPolicyTagInternal(Identity);
         }
-        
-        private void RemoveRetentionPolicyTagInternal(string Identity)
+
+        private ResultObject RemoveRetentionPolicyTagInternal(string Identity)
         {
             ExchangeLog.LogStart("RemoveRetentionPolicyTagInternal");
+
+            ResultObject res = new ResultObject() { IsSuccess = true };
 
             Runspace runSpace = null;
             Runspace runSpaceEx = null;
@@ -7395,10 +7428,9 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 Command cmd;
 
-                bool exists = false;
                 cmd = new Command("Remove-RetentionPolicyTag");
                 cmd.Parameters.Add("Identity", Identity);
-                ExecuteShellCommand(runSpace, cmd);
+                ExecuteShellCommand(runSpace, cmd, res);
             }
             finally
             {
@@ -7407,16 +7439,20 @@ namespace WebsitePanel.Providers.HostedSolution
                 CloseRunspaceEx(runSpaceEx);
             }
             ExchangeLog.LogEnd("RemoveRetentionPolicyTagInternal");
+
+            return res;
         }
 
-        public void SetRetentionPolicy(string Identity, string[] RetentionPolicyTagLinks)
+        public ResultObject SetRetentionPolicy(string Identity, string[] RetentionPolicyTagLinks)
         {
-            SetRetentionPolicyInternal(Identity, RetentionPolicyTagLinks);
+            return SetRetentionPolicyInternal(Identity, RetentionPolicyTagLinks);
         }
-        
-        private void SetRetentionPolicyInternal(string Identity, string[] RetentionPolicyTagLinks)
+
+        private ResultObject SetRetentionPolicyInternal(string Identity, string[] RetentionPolicyTagLinks)
         {
             ExchangeLog.LogStart("SetRetentionPolicyInternal");
+
+            ResultObject res = new ResultObject() { IsSuccess = true };
 
             Runspace runSpace = null;
             Runspace runSpaceEx = null;
@@ -7430,10 +7466,12 @@ namespace WebsitePanel.Providers.HostedSolution
                 bool exists = false;
                 cmd = new Command("Get-RetentionPolicy");
                 cmd.Parameters.Add("Identity", Identity);
-                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd, res, false);
 
                 if (result != null && result.Count > 0)
                     exists = true;
+
+                res = new ResultObject() { IsSuccess = true };
 
                 if (exists)
                 {
@@ -7448,7 +7486,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 cmd.Parameters.Add("RetentionPolicyTagLinks", RetentionPolicyTagLinks);
 
-                result = ExecuteShellCommand(runSpace, cmd);
+                result = ExecuteShellCommand(runSpace, cmd, res);
             }
             finally
             {
@@ -7457,16 +7495,20 @@ namespace WebsitePanel.Providers.HostedSolution
                 CloseRunspaceEx(runSpaceEx);
             }
             ExchangeLog.LogEnd("SetRetentionPolicyInternal");
+
+            return res;
         }
 
-        public void RemoveRetentionPolicy(string Identity)
+        public ResultObject RemoveRetentionPolicy(string Identity)
         {
-            RemoveRetentionPolicyInternal(Identity);
+            return RemoveRetentionPolicyInternal(Identity);
         }
 
-        private void RemoveRetentionPolicyInternal(string Identity)
+        private ResultObject RemoveRetentionPolicyInternal(string Identity)
         {
             ExchangeLog.LogStart("RemoveRetentionPolicyInternal");
+
+            ResultObject res = new ResultObject() { IsSuccess = true };
 
             Runspace runSpace = null;
             Runspace runSpaceEx = null;
@@ -7479,15 +7521,16 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 cmd = new Command("Remove-RetentionPolicy");
                 cmd.Parameters.Add("Identity", Identity);
-                ExecuteShellCommand(runSpace, cmd);
+                ExecuteShellCommand(runSpace, cmd, res);
             }
             finally
             {
-
                 CloseRunspace(runSpace);
                 CloseRunspaceEx(runSpaceEx);
             }
             ExchangeLog.LogEnd("RemoveRetentionPolicyInternal");
+
+            return res;
         }
 
         

@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2012, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -25,6 +25,8 @@
 // ANY  THEORY  OF  LIABILITY,  WHETHER  IN  CONTRACT,  STRICT  LIABILITY,  OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+using WebsitePanel.Providers.Common;
 
 namespace WebsitePanel.Providers.HostedSolution
 {
@@ -132,12 +134,12 @@ namespace WebsitePanel.Providers.HostedSolution
         int RemoveTransportRule(string Name);
 
         // Archiving
-        void SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy);
+        ResultObject SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy);
 
         // Retention policy
-        void SetRetentionPolicyTag(string Identity, ExchangeRetentionPolicyTagType Type, int AgeLimitForRetention, ExchangeRetentionPolicyTagAction RetentionAction);
-        void RemoveRetentionPolicyTag(string Identity);
-        void SetRetentionPolicy(string Identity, string[] RetentionPolicyTagLinks);
-        void RemoveRetentionPolicy(string Identity);
+        ResultObject SetRetentionPolicyTag(string Identity, ExchangeRetentionPolicyTagType Type, int AgeLimitForRetention, ExchangeRetentionPolicyTagAction RetentionAction);
+        ResultObject RemoveRetentionPolicyTag(string Identity);
+        ResultObject SetRetentionPolicy(string Identity, string[] RetentionPolicyTagLinks);
+        ResultObject RemoveRetentionPolicy(string Identity);
     }
 }
