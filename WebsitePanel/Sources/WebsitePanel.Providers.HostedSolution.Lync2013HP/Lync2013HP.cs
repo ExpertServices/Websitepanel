@@ -509,8 +509,16 @@ namespace WebsitePanel.Providers.HostedSolution
                     }
                     user.CommitChanges();
 
-                    //set-plan
-                    SetLyncUserPlanInternal(organizationId, userUpn, plan, runSpace);
+                    int trySleep = 2000; int tryMaxCount = 10; bool PlanSet = false;
+                    for (int tryCount = 0; (tryCount < tryMaxCount) && (!PlanSet); tryCount++)
+                    {
+                        try
+                        {
+                            PlanSet = SetLyncUserPlanInternal(organizationId, userUpn, plan, runSpace);
+                        }
+                        catch { }
+                        if (!PlanSet) System.Threading.Thread.Sleep(trySleep);
+                    }
 
                     //initiate addressbook generation
                     cmd = new Command("Update-CsAddressBook");
@@ -519,6 +527,9 @@ namespace WebsitePanel.Providers.HostedSolution
                     //initiate user database replication
                     cmd = new Command("Update-CsUserDatabase");
                     ExecuteShellCommand(runSpace, cmd, false);
+
+
+
                 }
                 else
                 {

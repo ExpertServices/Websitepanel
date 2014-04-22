@@ -274,7 +274,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 command = new Command("Update-CsUserDatabase");
                 ExecuteShellCommand(runspace, command, false);
 
-                int trySleep = 5000; int tryMaxCount = 10; bool PlanSet = false;
+                int trySleep = 2000; int tryMaxCount = 10; bool PlanSet = false;
                 for (int tryCount = 0; (tryCount < tryMaxCount) && (!PlanSet); tryCount++ )
                 {
                     try
@@ -285,10 +285,6 @@ namespace WebsitePanel.Providers.HostedSolution
                     if (!PlanSet) System.Threading.Thread.Sleep(trySleep);
                 }
 
-                command = new Command("Update-CsAddressBook");
-                ExecuteShellCommand(runspace, command, false);
-                command = new Command("Update-CsUserDatabase");
-                ExecuteShellCommand(runspace, command, false);
             }
             catch (Exception ex)
             {
@@ -474,7 +470,7 @@ namespace WebsitePanel.Providers.HostedSolution
             HostedSolutionLog.DebugInfo("organizationId: {0}", organizationId);
             HostedSolutionLog.DebugInfo("userUpn: {0}", userUpn);
             bool bCloseRunSpace = false;
-            bool bResult = false;
+            bool ret = true;
 
             try
             {
@@ -533,7 +529,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 command = new Command("Update-CsUserDatabase");
                 ExecuteShellCommand(runspace, command, false);
 
-                bResult = true;
+                ret = false;
             }
             catch (Exception ex)
             {
@@ -550,7 +546,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
             HostedSolutionLog.LogEnd("SetLyncUserPlanInternal");
 
-            return bResult;
+            return ret;
         }
 
         /// <summary> Deletes user.</summary>
