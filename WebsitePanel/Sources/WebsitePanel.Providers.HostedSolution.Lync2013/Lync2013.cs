@@ -474,6 +474,7 @@ namespace WebsitePanel.Providers.HostedSolution
             HostedSolutionLog.DebugInfo("organizationId: {0}", organizationId);
             HostedSolutionLog.DebugInfo("userUpn: {0}", userUpn);
             bool bCloseRunSpace = false;
+            bool bResult = false;
 
             try
             {
@@ -531,6 +532,8 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 command = new Command("Update-CsUserDatabase");
                 ExecuteShellCommand(runspace, command, false);
+
+                bResult = true;
             }
             catch (Exception ex)
             {
@@ -547,7 +550,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
             HostedSolutionLog.LogEnd("SetLyncUserPlanInternal");
 
-            return true;
+            return bResult;
         }
 
         /// <summary> Deletes user.</summary>
