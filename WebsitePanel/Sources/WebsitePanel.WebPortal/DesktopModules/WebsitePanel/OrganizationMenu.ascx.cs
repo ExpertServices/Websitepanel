@@ -89,7 +89,9 @@ namespace WebsitePanel.Portal
                 PrepareSharePointMenuRoot(cntx, items, imagePath);
             
             //CRM Menu
-            if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM))
+            if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013))
+                PrepareCRM2013MenuRoot(cntx, items, imagePath);
+            else if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM))
                 PrepareCRMMenuRoot(cntx, items, imagePath);
 
             //OCS Menu
@@ -193,6 +195,14 @@ namespace WebsitePanel.Portal
                     exchangeItems.Add(CreateMenuItem("MailboxPlans", "mailboxplans"));
 
             if (!hideItems)
+                if (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, cntx))
+                    exchangeItems.Add(CreateMenuItem("RetentionPolicy", "retentionpolicy"));
+
+            if (!hideItems)
+                if (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, cntx))
+                    exchangeItems.Add(CreateMenuItem("RetentionPolicyTag", "retentionpolicytag"));
+
+            if (!hideItems)
                 if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
                     exchangeItems.Add(CreateMenuItem("ExchangeDomainNames", "domains"));
 
@@ -221,6 +231,27 @@ namespace WebsitePanel.Portal
         }
 
         private void PrepareCRMMenu(PackageContext cntx, MenuItemCollection crmItems)
+        {
+            crmItems.Add(CreateMenuItem("CRMOrganization", "CRMOrganizationDetails"));
+            crmItems.Add(CreateMenuItem("CRMUsers", "CRMUsers"));
+            crmItems.Add(CreateMenuItem("StorageLimits", "crm_storage_settings"));
+        }
+
+        private void PrepareCRM2013MenuRoot(PackageContext cntx, MenuItemCollection items, string imagePath)
+        {
+            MenuItem item = new MenuItem(GetLocalizedString("Text.CRM2013Group"), "", imagePath + "crm_16.png", null);
+
+            item.Selectable = false;
+
+            PrepareCRM2013Menu(cntx, item.ChildItems);
+
+            if (item.ChildItems.Count > 0)
+            {
+                items.Add(item);
+            }
+        }
+
+        private void PrepareCRM2013Menu(PackageContext cntx, MenuItemCollection crmItems)
         {
             crmItems.Add(CreateMenuItem("CRMOrganization", "CRMOrganizationDetails"));
             crmItems.Add(CreateMenuItem("CRMUsers", "CRMUsers"));
