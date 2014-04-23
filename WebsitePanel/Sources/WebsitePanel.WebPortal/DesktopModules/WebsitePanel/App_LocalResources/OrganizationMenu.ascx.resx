@@ -219,4 +219,7 @@
   <data name="Text.OrganizationHome" xml:space="preserve">
     <value>Organization Home</value>
   </data>
+  <data name="Text.CRM2013Group" xml:space="preserve">
+    <value>CRM 2013</value>
+  </data>
 </root>
