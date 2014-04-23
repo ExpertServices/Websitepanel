@@ -222,4 +222,10 @@
   <data name="Text.CRM2013Group" xml:space="preserve">
     <value>CRM 2013</value>
   </data>
+  <data name="Text.RetentionPolicy" xml:space="preserve">
+    <value>Retention Policy</value>
+  </data>
+  <data name="Text.RetentionPolicyTag" xml:space="preserve">
+    <value>Retention Policy Tag</value>
+  </data>
 </root>

@@ -195,6 +195,14 @@ namespace WebsitePanel.Portal
                     exchangeItems.Add(CreateMenuItem("MailboxPlans", "mailboxplans"));
 
             if (!hideItems)
+                if (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, cntx))
+                    exchangeItems.Add(CreateMenuItem("RetentionPolicy", "retentionpolicy"));
+
+            if (!hideItems)
+                if (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, cntx))
+                    exchangeItems.Add(CreateMenuItem("RetentionPolicyTag", "retentionpolicytag"));
+
+            if (!hideItems)
                 if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
                     exchangeItems.Add(CreateMenuItem("ExchangeDomainNames", "domains"));
 
