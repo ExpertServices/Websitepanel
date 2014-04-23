@@ -3208,24 +3208,25 @@ GO
 
 -- Security Groups Quota update
 
+IF EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedSolution.SecurityGroupManagement' AND [QuotaID] = 423)
+BEGIN
+
 UPDATE [dbo].[Quotas] 
 SET [QuotaDescription] = N'Security Groups', 
 	[QuotaName] = N'HostedSolution.SecurityGroups',
 	[QuotaTypeID] = 2
 WHERE [QuotaID] = 423
-GO
 
 UPDATE [dbo].[HostingPlanQuotas] 
 SET [QuotaValue] = -1
 WHERE [QuotaID] = 423
-GO
 
 UPDATE [dbo].[PackageQuotas] 
 SET [QuotaValue] = -1
 WHERE [QuotaID] = 423
+
+END
 GO
-
-
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetOrganizationStatistics')
 DROP PROCEDURE [dbo].[GetOrganizationStatistics]
