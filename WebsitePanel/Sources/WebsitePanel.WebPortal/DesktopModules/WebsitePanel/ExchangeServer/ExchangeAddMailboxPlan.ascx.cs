@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2011-2014, Outercurve Foundation.
+﻿// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -38,6 +38,7 @@ using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.Common;
+using WebsitePanel.Portal.SkinControls;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
@@ -57,12 +58,30 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
         }
 
+        private Control FindControlRecursive(Control rootControl, string controlID)
+        {
+            if (rootControl.ID == controlID) return rootControl;
+
+            foreach (Control controlToSearch in rootControl.Controls)
+            {
+                Control controlToReturn =
+                    FindControlRecursive(controlToSearch, controlID);
+                if (controlToReturn != null) return controlToReturn;
+            }
+            return null;
+        }
+
+        private string MainValidationGroup
+        {
+            get { return RetentionPolicy ? "CreateRetentionPolicy" : "CreateMailboxPlan"; }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
 
             if (!IsPostBack)
             {
-                PackageContext cntx = ES.Services.Packages.GetPackageContext(PanelSecurity.PackageId);
+                PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
 
                 if (PanelRequest.GetInt("MailboxPlanId") != 0)
                 {
@@ -83,8 +102,6 @@ namespace WebsitePanel.Portal.ExchangeServer
                         ViewState["Tags"] = tags;
                         gvPolicy.DataSource = tags;
                         gvPolicy.DataBind();
-                        UpdateTags();
-
                     }
                     else
                     {
@@ -180,13 +197,32 @@ namespace WebsitePanel.Portal.ExchangeServer
                             recoverableItemsWarning.ValueKB = 95;
 
                             RetentionPolicy = PanelRequest.GetBool("archiving", false);
+
+                            if (RetentionPolicy)
+                            {
+                                chkEnableArchiving.Checked = true;
+                                archiveQuota.QuotaValue = cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue;
+                                archiveWarningQuota.ValueKB = 95;
+                            }
                         }
                     }
                     else
                         this.DisableControls = true;
                 }
 
+                if (RetentionPolicy)
+                    UpdateTags();
+
                 locTitle.Text = RetentionPolicy ? GetLocalizedString("locTitleArchiving.Text") : GetLocalizedString("locTitle.Text");
+                secMailboxPlan.Text = RetentionPolicy ? GetLocalizedString("secMailboxPlanArchiving.Text") : GetLocalizedString("secMailboxPlan.Text");
+                UserSpaceBreadcrumb bc = FindControlRecursive(Page, "breadcrumb") as UserSpaceBreadcrumb;
+                if (bc != null)
+                {
+                    Label lbOrgCurPage = bc.FindControl("lbOrgCurPage") as Label;
+                    if (lbOrgCurPage != null)
+                        lbOrgCurPage.Text = locTitle.Text;
+                }
+
 
                 secMailboxFeatures.Visible = !RetentionPolicy;
                 secMailboxGeneral.Visible = !RetentionPolicy;
@@ -197,7 +233,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                 secArchiving.Visible = RetentionPolicy;
                 secRetentionPolicyTags.Visible = RetentionPolicy;
 
-                btnAdd.CausesValidation = RetentionPolicy;
+                valRequireMailboxPlan.ValidationGroup = MainValidationGroup;
+                btnAdd.ValidationGroup = MainValidationGroup;
 
             }
 
@@ -228,6 +265,11 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         protected void btnAdd_Click(object sender, EventArgs e)
         {
+            Page.Validate(MainValidationGroup);
+
+            if (!Page.IsValid)
+                return;
+
             AddMailboxPlan();
         }
 

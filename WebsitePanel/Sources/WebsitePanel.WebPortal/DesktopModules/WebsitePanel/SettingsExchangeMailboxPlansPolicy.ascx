@@ -32,7 +32,7 @@
 				<ItemTemplate>
 					&nbsp;<asp:ImageButton id="imgDelMailboxPlan" runat="server" Text="Delete" SkinID="ExchangeDelete"
 						CommandName="DeleteItem" CommandArgument='<%# Eval("MailboxPlanId") %>' 
-						meta:resourcekey="cmdDelete" OnClientClick="return confirm('Are you sure you want to delete selected mailbox plan?')"></asp:ImageButton>
+						meta:resourcekey="cmdDelete" OnClientClick="return confirm('Are you sure you want to delete selected plan?')"></asp:ImageButton>
 				</ItemTemplate>
 			</asp:TemplateField>
 			<asp:TemplateField>
@@ -66,7 +66,7 @@
 						<asp:TextBox ID="txtMailboxPlan" runat="server" CssClass="TextBox200" 
                             ontextchanged="txtMailboxPlan_TextChanged" ></asp:TextBox>
                         <asp:RequiredFieldValidator ID="valRequireMailboxPlan" runat="server" meta:resourcekey="valRequireMailboxPlan" ControlToValidate="txtMailboxPlan"
-						ErrorMessage="Enter mailbox plan name" ValidationGroup="CreateMailboxPlan" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
+						ErrorMessage="Enter name" ValidationGroup="CreateMailboxPlan" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
 					</td>
 				</tr>
 			</table>
@@ -317,7 +317,7 @@
                 <br />
 
                 <asp:DropDownList ID="ddTags" runat ="server"></asp:DropDownList>
-                <asp:Button ID="bntAddTag" runat="server" Text="Add tag" meta:resourcekey="bntAddTag" OnClick="bntAddTag_Click"/>
+                <asp:Button ID="bntAddTag" runat="server" Text="Add tag" meta:resourcekey="bntAddTag" OnClick="bntAddTag_Click" CausesValidation="false"/>
                 <br />
                 </ContentTemplate>
             </asp:UpdatePanel>

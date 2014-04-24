@@ -43,8 +43,7 @@
 									
 					</td>
 					<td>
-						<asp:TextBox ID="txtPolicy" runat="server" CssClass="TextBox200" 
-                            ontextchanged="txtPolicy_TextChanged" ></asp:TextBox>
+						<asp:TextBox ID="txtPolicy" runat="server" CssClass="TextBox200"></asp:TextBox>
                         <asp:RequiredFieldValidator ID="valRequirePolicy" runat="server" meta:resourcekey="valRequirePolicy" ControlToValidate="txtPolicy"
 						ErrorMessage="Enter policy tag name" ValidationGroup="CreatePolicy" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
 					</td>

@@ -37,7 +37,7 @@
 							    <td>
 									<asp:TextBox ID="txtMailboxPlan" runat="server" CssClass="TextBox200" ></asp:TextBox>
                                     <asp:RequiredFieldValidator ID="valRequireMailboxPlan" runat="server" meta:resourcekey="valRequireMailboxPlan" ControlToValidate="txtMailboxPlan"
-									ErrorMessage="Enter mailbox plan name" ValidationGroup="CreateMailboxPlan" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
+									ErrorMessage="Enter name" ValidationGroup="CreateMailboxPlan" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
 								</td>
 						    </tr>
 					    </table>
@@ -280,7 +280,7 @@
                             <br />
 
                             <asp:DropDownList ID="ddTags" runat ="server"></asp:DropDownList>
-                            <asp:Button ID="bntAddTag" runat="server" Text="Add tag" meta:resourcekey="bntAddTag" OnClick="bntAddTag_Click"/>
+                            <asp:Button ID="bntAddTag" runat="server" Text="Add tag" meta:resourcekey="bntAddTag" OnClick="bntAddTag_Click" CausesValidation="false"/>
                             <br />
                             </ContentTemplate>
                         </asp:UpdatePanel>
@@ -288,7 +288,7 @@
 
 					<br />
 				    <div class="FormFooterClean">
-					    <asp:Button id="btnAdd" runat="server" Text="Add Mailboxplan" CssClass="Button1" meta:resourcekey="btnAdd" ValidationGroup="CreateMailboxPlan" OnClick="btnAdd_Click" OnClientClick="ShowProgressDialog('Creating Mailboxplan...');"></asp:Button>
+					    <asp:Button id="btnAdd" runat="server" Text="Add Mailboxplan" CssClass="Button1" meta:resourcekey="btnAdd" ValidationGroup="CreateMailboxPlan" OnClick="btnAdd_Click" OnClientClick="ShowProgressDialog('Creating ...');"></asp:Button>
 					    <asp:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="CreateMailboxPlan" />
 				    </div>
 				</div>
