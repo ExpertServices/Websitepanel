@@ -28,8 +28,10 @@
 
 using System;
 using System.Web.UI.WebControls;
+using System.Web.UI;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.Portal.SkinControls;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
@@ -43,12 +45,33 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
         }
 
+        private Control FindControlRecursive(Control rootControl, string controlID)
+        {
+            if (rootControl.ID == controlID) return rootControl;
+
+            foreach (Control controlToSearch in rootControl.Controls)
+            {
+                Control controlToReturn =
+                    FindControlRecursive(controlToSearch, controlID);
+                if (controlToReturn != null) return controlToReturn;
+            }
+            return null;
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
             locTitle.Text = RetentionPolicy ? GetLocalizedString("locTitleRetentionPolicy.Text") : GetLocalizedString("locTitle.Text");
+
+            UserSpaceBreadcrumb bc = FindControlRecursive(Page, "breadcrumb") as UserSpaceBreadcrumb;
+            if (bc != null)
+            {
+                Label lbOrgCurPage = bc.FindControl("lbOrgCurPage") as Label;
+                if (lbOrgCurPage!=null)
+                    lbOrgCurPage.Text = GetLocalizedString( RetentionPolicy ? "Text.PageRetentionPolicyName" : "Text.PageName");
+            }
             gvMailboxPlans.Columns[2].Visible = !RetentionPolicy;
             btnSetDefaultMailboxPlan.Visible = !RetentionPolicy;
+            secMainTools.Visible = !RetentionPolicy;
 
             if (!IsPostBack)
             {

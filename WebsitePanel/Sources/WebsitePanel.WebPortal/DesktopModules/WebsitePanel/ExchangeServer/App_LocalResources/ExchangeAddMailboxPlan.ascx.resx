@@ -193,7 +193,7 @@
     <value>Mailbox plan</value>
   </data>
   <data name="valRequireMailboxPlan.ErrorMessage" xml:space="preserve">
-    <value>Please enter correct mailboxplan</value>
+    <value>Please enter correct name</value>
   </data>
   <data name="valRequireMailboxPlan.Text" xml:space="preserve">
     <value>*</value>
@@ -218,5 +218,8 @@
   </data>
   <data name="locTitleArchiving.Text" xml:space="preserve">
     <value>Add Retention policy</value>
+  </data>
+  <data name="secMailboxPlanArchiving.Text" xml:space="preserve">
+    <value>Retention policy</value>
   </data>
 </root>

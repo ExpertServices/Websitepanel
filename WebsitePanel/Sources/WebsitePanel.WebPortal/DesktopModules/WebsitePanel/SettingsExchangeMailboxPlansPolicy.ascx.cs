@@ -63,6 +63,11 @@ namespace WebsitePanel.Portal
             }
         }
 
+        private string MainValidationGroup
+        {
+            get { return RetentionPolicy ? "CreateRetentionPolicy" : "CreateMailboxPlan"; }
+        }
+
 
         public void BindSettings(UserSettings settings)
         {
@@ -84,8 +89,9 @@ namespace WebsitePanel.Portal
             gvMailboxPlans.Columns[4].Visible = !RetentionPolicy;
             gvMailboxPlans.Columns[5].Visible = !RetentionPolicy;
 
-            btnAddMailboxPlan.CausesValidation = RetentionPolicy;
-            btnUpdateMailboxPlan.CausesValidation = RetentionPolicy;
+            btnAddMailboxPlan.ValidationGroup = MainValidationGroup;
+            btnUpdateMailboxPlan.ValidationGroup = MainValidationGroup;
+            valRequireMailboxPlan.ValidationGroup = MainValidationGroup;
 
             UpdateTags();
 
@@ -125,7 +131,7 @@ namespace WebsitePanel.Portal
         public void btnAddMailboxPlan_Click(object sender, EventArgs e)
         {
             if (!RetentionPolicy)
-                Page.Validate("CreateMailboxPlan");
+                Page.Validate(MainValidationGroup);
 
             if (!Page.IsValid)
                 return;
@@ -404,6 +410,10 @@ namespace WebsitePanel.Portal
 
         protected void btnUpdateMailboxPlan_Click(object sender, EventArgs e)
         {
+            Page.Validate(MainValidationGroup);
+
+            if (!Page.IsValid)
+                return;
 
             if (ViewState["MailboxPlanID"] == null)
                 return;

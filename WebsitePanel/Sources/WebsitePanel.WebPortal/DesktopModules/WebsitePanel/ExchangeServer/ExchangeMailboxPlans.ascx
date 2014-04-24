@@ -54,7 +54,7 @@
 							    <ItemTemplate>
 									&nbsp;<asp:ImageButton ID="imgDelMailboxPlan" runat="server" Text="Delete" SkinID="ExchangeDelete"
 									    CommandName="DeleteItem" CommandArgument='<%# Eval("MailboxPlanId") %>' 
-									    meta:resourcekey="cmdDelete" OnClientClick="return confirm('Are you sure you want to delete selected mailbox plan?')" ></asp:ImageButton>
+									    meta:resourcekey="cmdDelete" OnClientClick="return confirm('Are you sure you want to delete selected?')" ></asp:ImageButton>
 							    </ItemTemplate>
 						    </asp:TemplateField>
 					    </Columns>
