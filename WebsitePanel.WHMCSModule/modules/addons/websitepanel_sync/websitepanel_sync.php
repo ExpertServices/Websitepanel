@@ -34,7 +34,7 @@
  * @link http://www.websitepanel.net/
  * @access public
  * @name websitepanel
- * @version 3.0.2
+ * @version 3.0.3
  * @package WHMCS
  */
 
@@ -48,7 +48,7 @@ function websitepanel_sync_config()
 {
     return array('name' => 'WebsitePanel Sync Automation',
                  'description' => 'Syncs WHMCS client details / contact changes with WebsitePanel accounts',
-                 'version' => '3.0.2',
+                 'version' => '3.0.3',
                  'author' => 'Christopher York');
 }
 

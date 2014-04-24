@@ -34,7 +34,7 @@
  * @link http://www.websitepanel.net/
  * @access public
  * @name websitepanel
- * @version 3.0.2
+ * @version 3.0.3
  * @package WHMCS
  */
 

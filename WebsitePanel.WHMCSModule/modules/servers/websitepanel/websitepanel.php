@@ -38,7 +38,7 @@ require_once(ROOTDIR. '/modules/servers/websitepanel/functions.php');
  * @link http://www.websitepanel.net/
  * @access public
  * @name websitepanel
- * @version 3.0.2
+ * @version 3.0.3
  * @package WHMCS
  */
 
@@ -143,6 +143,9 @@ function websitepanel_CreateAccount($params)
 	    	throw new Exception('Fault: ' . websitepanel_EnterpriseServer::getFriendlyError($result), $result);
 	    }
 	    
+	    // Log the module call
+	    websitepanel_logModuleCall(__FUNCTION__, $params, $result);
+	    
 	    // Get the newly created user's details from WebsitePanel so we can update the account details completely
 	    $user = $wsp->getUserByUsername($username);
 	    
@@ -195,6 +198,9 @@ function websitepanel_CreateAccount($params)
 		// Log to WHMCS
 		logactivity($errorMessage, $userId);
 		
+		// Log the module call
+		websitepanel_logModuleCall(__FUNCTION__, $params, $e->getMessage());
+		
 		// Notify failure - Houston we have a problem!
 		return $errorMessage;
 	}
@@ -240,6 +246,9 @@ function websitepanel_TerminateAccount($params)
 			throw new Exception('Fault: ' . websitepanel_EnterpriseServer::getFriendlyError($result), $result);
 		}
 		
+		// Log the module call
+		websitepanel_logModuleCall(__FUNCTION__, $params, $result);
+		
 		// Notify success
 		return 'success';
 	}
@@ -250,6 +259,9 @@ function websitepanel_TerminateAccount($params)
 		
 		// Log to WHMCS
 		logactivity($errorMessage, $userId);
+		
+		// Log the module call
+		websitepanel_logModuleCall(__FUNCTION__, $params, $e->getMessage());
 		
 		// Notify failure - Houston we have a problem!
 		return $errorMessage;
@@ -296,6 +308,9 @@ function websitepanel_SuspendAccount($params)
 			throw new Exception('Fault: ' . websitepanel_EnterpriseServer::getFriendlyError($result), $result);
 		}
 		
+		// Log the module call
+		websitepanel_logModuleCall(__FUNCTION__, $params, $result);
+		
 		// Notify success
 		return 'success';
 	}
@@ -306,6 +321,9 @@ function websitepanel_SuspendAccount($params)
 		
 		// Log to WHMCS
 		logactivity($errorMessage, $userId);
+		
+		// Log the module call
+		websitepanel_logModuleCall(__FUNCTION__, $params, $e->getMessage());
 		
 		// Notify failure - Houston we have a problem!
 		return $errorMessage;
@@ -351,6 +369,9 @@ function websitepanel_UnsuspendAccount($params)
 			// Something went wrong
 			throw new Exception('Fault: ' . websitepanel_EnterpriseServer::getFriendlyError($result), $result);
 		}
+		
+		// Log the module call
+		websitepanel_logModuleCall(__FUNCTION__, $params, $result);
 	
 		// Notify success
 		return 'success';
@@ -362,6 +383,9 @@ function websitepanel_UnsuspendAccount($params)
 	
 		// Log to WHMCS
 		logactivity($errorMessage, $userId);
+		
+		// Log the module call
+		websitepanel_logModuleCall(__FUNCTION__, $params, $e->getMessage());
 	
 		// Notify failure - Houston we have a problem!
 		return $errorMessage;
@@ -408,6 +432,9 @@ function websitepanel_ChangePassword($params)
 			// Something went wrong
 			throw new Exception('Fault: ' . websitepanel_EnterpriseServer::getFriendlyError($result), $result);
 		}
+		
+		// Log the module call
+		websitepanel_logModuleCall(__FUNCTION__, $params, $result);
 	
 		// Notify success
 		return 'success';
@@ -419,6 +446,9 @@ function websitepanel_ChangePassword($params)
 	
 		// Log to WHMCS
 		logactivity($errorMessage, $userId);
+		
+		// Log the module call
+		websitepanel_logModuleCall(__FUNCTION__, $params, $e->getMessage());
 	
 		// Notify failure - Houston we have a problem!
 		return $errorMessage;
@@ -472,6 +502,9 @@ function websitepanel_ChangePackage($params)
 			throw new Exception('Fault: ' . websitepanel_EnterpriseServer::getFriendlyError($result), $result);
 		}
 		
+		// Log the module call
+		websitepanel_logModuleCall(__FUNCTION__, $params, $result);
+		
 		// Notify success
 		return 'success';
 	}
@@ -482,6 +515,9 @@ function websitepanel_ChangePackage($params)
 	
 		// Log to WHMCS
 		logactivity($errorMessage, $userId);
+		
+		// Log the module call
+		websitepanel_logModuleCall(__FUNCTION__, $params, $e->getMessage());
 	
 		// Notify failure - Houston we have a problem!
 		return $errorMessage;
@@ -507,7 +543,7 @@ function websitepanel_UsageUpdate($params)
 	
 	// Query for WebsitePanel user accounts assigned to this server
 	// Only services that have packages that have "Tick to update diskpace / bandwidth in WHMCS" enabled
-	$result = full_query("SELECT h.id AS serviceid, h.userid AS userid, h.username AS username, h.regdate AS regdate, p.configoption2 AS configoption2, p.configoption3 AS configoption3, p.configoption6 AS configoption6 FROM `tblhosting` AS h, `tblproducts` AS p WHERE h.server = {$serverId} AND h.packageid = p.id AND p.configoption16 = 'on' AND h.domainstatus IN ('Active', 'Suspended')");
+	$result = full_query("SELECT h.id AS serviceid, h.userid AS userid, h.username AS username, h.regdate AS regdate, p.configoption2 AS configoption2, p.configoption3 AS configoption3, p.configoption6 AS configoption6 FROM `tblhosting` AS h, `tblproducts` AS p WHERE h.server = 17 AND h.packageid = p.id AND p.configoption16 = 'on' AND h.domainstatus IN ('Active', 'Suspended')");
 	while (($row = mysql_fetch_array($result)) != false)
 	{
 		// Start processing the users usage
@@ -541,11 +577,17 @@ function websitepanel_UsageUpdate($params)
 			
 			// Update WHMCS's service details
 			update_query('tblhosting', array('diskusage' => $diskUsage, 'disklimit' => $diskLimit, 'bwusage' => $bwidthUsage, 'bwlimit' => $bwidthLimit, 'lastupdate' => 'now()'), array('id' => $serviceId));
+			
+			// Log the module call
+			websitepanel_logModuleCall(__FUNCTION__, $params, $package);
 		}
 		catch (Exception $e)
 		{
 			// Error message to log / return
 			$errorMessage = "UsageUpdate Fault: (Code: {$e->getCode()}, Message: {$e->getMessage()}, Service ID: {$serviceId})";
+			
+			// Log the module call
+			websitepanel_logModuleCall(__FUNCTION__, $params, $e->getMessage());
 			
 			// Log to WHMCS
 			logactivity($errorMessage, $userId);
@@ -565,9 +607,10 @@ function websitepanel_LoginLink($params)
     // WHMCS does not return the full hosting account details, we will query for what we need
     $result = select_query('tblhosting', 'domainstatus', array('id' => $params['serviceid']));
     $results = mysql_fetch_array($result);
-    
+    $params['domainstatus'] = $results['domainstatus'];
+        
     // Display the link only if the account is Active or Suspended
-    if (in_array($results['domainstatus'], array('Active', 'Suspended')))
+    if (in_array($params['domainstatus'], array('Active', 'Suspended')))
     {
         // WHMCS server parameters & package parameters
     	$serverUsername = $params['serverusername'];
@@ -589,7 +632,7 @@ function websitepanel_LoginLink($params)
     		$user = $wsp->getUserByUsername($username);
     		if (empty($user))
     		{
-    			throw new Exception("User {$username} does not exist - Cannot display LoginLink for non-existing user");
+    			throw new Exception("User {$username} does not exist - Cannot display account link for unknown user");
     		}
     		
     		// Load the client area language file
@@ -597,6 +640,9 @@ function websitepanel_LoginLink($params)
     		
     		// Print the link
     		echo "<a href=\"{$params['configoption8']}/Default.aspx?pid=Home&UserID={$user['UserId']}\" target=\"_blank\" title=\"{$LANG['websitepanel_adminarea_gotowebsitepanelaccount']}\">{$LANG['websitepanel_adminarea_gotowebsitepanelaccount']}</a><br />";
+    		
+    		// Log the module call
+    		websitepanel_logModuleCall(__FUNCTION__, $params, $user);
     	}
     	catch (Exception $e)
     	{
@@ -605,9 +651,9 @@ function websitepanel_LoginLink($params)
     	
     		// Log to WHMCS
     		logactivity($errorMessage, $userId);
-    	
-    		// Notify failure - Houston we have a problem!
-    		return $errorMessage;
+    		
+    		// Log the module call
+    		websitepanel_logModuleCall(__FUNCTION__, $params, $e->getMessage());
     	}
     }
 }
@@ -631,4 +677,26 @@ function websitepanel_ClientArea($params)
     
     // Return template information
     return array('templatefile' => 'clientarea', 'vars' => array('websitepanel_url' => $params['configoption8'], 'username' => $username, 'password' => $password));
+}
+
+/**
+ * Logs all module calls to the WHMCS module debug logger
+ *
+ * @access public
+ * @param string $function
+ * @param mixed $params
+ * @param mixed $response
+ */
+function websitepanel_logModuleCall($function, $params, $response)
+{
+    // Get the module name
+    $callerData = explode('_', $function);
+    $module = $callerData[0];
+    $action = $callerData[1];
+
+    // Replacement variables
+    $replacementVars = array('');
+
+    // Log the call with WHMCS
+    logModuleCall($module, $action, $params, $response, '', $replacementVars);
 }
