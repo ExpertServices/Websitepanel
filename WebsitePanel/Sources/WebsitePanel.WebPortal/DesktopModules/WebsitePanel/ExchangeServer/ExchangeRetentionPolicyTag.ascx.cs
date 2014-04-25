@@ -193,6 +193,10 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         protected void btnUpdatePolicy_Click(object sender, EventArgs e)
         {
+            Page.Validate("CreatePolicy");
+
+            if (!Page.IsValid)
+                return;
 
             if (ViewState["PolicyID"] == null)
                 return;
@@ -229,11 +233,6 @@ namespace WebsitePanel.Portal.ExchangeServer
             BindRetentionPolicy();
         }
 
-
-        protected void txtPolicy_TextChanged(object sender, EventArgs e)
-        {
-            btnUpdatePolicy.Enabled = (string.IsNullOrEmpty(txtPolicy.Text)) ? false : true;
-        }
 
         public string GetTagType(int ItemID)
         {

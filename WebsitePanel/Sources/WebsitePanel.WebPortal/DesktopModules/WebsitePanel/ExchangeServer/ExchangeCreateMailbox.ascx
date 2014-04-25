@@ -30,11 +30,7 @@
 
 <div id="ExchangeContainer">
 	<div class="Module">
-		<div class="Header">
-			<wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName" />
-		</div>
 		<div class="Left">
-			<wsp:Menu id="menu" runat="server" SelectedItem="mailboxes" />
 		</div>
 		<div class="Content">
 			<div class="Center">
