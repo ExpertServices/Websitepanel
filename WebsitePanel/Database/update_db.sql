@@ -1670,11 +1670,11 @@ END
 GO
 
 --add SecurityGroupManagement Quota
-IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedSolution.SecurityGroupManagement')
-BEGIN
-INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (423, 13, 5, N'HostedSolution.SecurityGroupManagement', N'Allow Security Group Management', 1, 0, NULL, NULL)
-END
-GO  
+--IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedSolution.SecurityGroupManagement')
+--BEGIN
+--INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (423, 13, 5, N'HostedSolution.SecurityGroupManagement', N'Allow Security Group Management', 1, 0, NULL, NULL)
+--END
+--GO  
 
 -- Lync Enterprise Voice
 
@@ -3210,22 +3210,26 @@ GO
 
 IF EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedSolution.SecurityGroupManagement' AND [QuotaID] = 423)
 BEGIN
+	UPDATE [dbo].[Quotas] 
+	SET [QuotaDescription] = N'Security Groups', 
+		[QuotaName] = N'HostedSolution.SecurityGroups',
+		[QuotaTypeID] = 2
+	WHERE [QuotaID] = 423
 
-UPDATE [dbo].[Quotas] 
-SET [QuotaDescription] = N'Security Groups', 
-	[QuotaName] = N'HostedSolution.SecurityGroups',
-	[QuotaTypeID] = 2
-WHERE [QuotaID] = 423
+	UPDATE [dbo].[HostingPlanQuotas] 
+	SET [QuotaValue] = -1
+	WHERE [QuotaID] = 423
 
-UPDATE [dbo].[HostingPlanQuotas] 
-SET [QuotaValue] = -1
-WHERE [QuotaID] = 423
-
-UPDATE [dbo].[PackageQuotas] 
-SET [QuotaValue] = -1
-WHERE [QuotaID] = 423
-
+	UPDATE [dbo].[PackageQuotas] 
+	SET [QuotaValue] = -1
+	WHERE [QuotaID] = 423
 END
+ELSE
+	BEGIN
+	--add Security Groups Quota
+	IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'HostedSolution.SecurityGroups')
+		INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID], [HideQuota]) VALUES (423, 13, 5, N'HostedSolution.SecurityGroups', N'Security Groups', 2, 0, NULL, NULL) 
+	END
 GO
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetOrganizationStatistics')
