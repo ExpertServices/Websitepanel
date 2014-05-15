@@ -225,6 +225,20 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.enableArchiving = value; }
         }
 
+        int archiveSizeMB;
+        public int ArchiveSizeMB
+        {
+            get { return this.archiveSizeMB; }
+            set { this.archiveSizeMB = value; }
+        }
+
+        int archiveWarningPct;
+        public int ArchiveWarningPct
+        {
+            get { return this.archiveWarningPct; }
+            set { this.archiveWarningPct = value; }
+        }
+
         public string WSPUniqueName
         {
             get

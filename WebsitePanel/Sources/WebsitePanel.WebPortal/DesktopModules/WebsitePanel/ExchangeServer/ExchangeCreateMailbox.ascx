@@ -149,6 +149,13 @@
                                     <wsp:MailboxPlanSelector ID="archivingMailboxPlanSelector" runat="server" Archiving="true" AddNone="true" />
                                 </td>
 					        </tr>
+                            <tr id="rowArchiving" runat="server">
+                                <td class="FormLabel150">
+                                </td>
+                                <td>
+                                    <asp:CheckBox ID="chkEnableArchiving" runat="server" meta:resourcekey="chkEnableArchiving" Text="Enable archiving" />                                
+                                </td>
+					        </tr>
 					    </table>
 				
                     <table>  

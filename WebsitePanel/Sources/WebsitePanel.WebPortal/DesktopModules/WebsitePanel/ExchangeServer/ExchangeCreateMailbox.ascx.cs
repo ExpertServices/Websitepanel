@@ -101,6 +101,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 }
 
                 rowRetentionPolicy.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, cntx);
+                rowArchiving.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, cntx);
             }
 
         }
@@ -120,6 +121,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                 string name = IsNewUser ? email.AccountName : userSelector.GetPrimaryEmailAddress().Split('@')[0];
                 string displayName = IsNewUser ? txtDisplayName.Text.Trim() : userSelector.GetDisplayName();
                 string accountName = IsNewUser ? string.Empty : userSelector.GetAccount();
+
+                bool enableArchive = chkEnableArchiving.Checked;
 
                 ExchangeAccountType type = IsNewUser
                                                ? (ExchangeAccountType)Utils.ParseInt(rbMailboxType.SelectedValue, 1)
@@ -141,7 +144,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                                     sendInstructionEmail.Text,
                                     Convert.ToInt32(mailboxPlanSelector.MailboxPlanId),
                                     Convert.ToInt32(archivingMailboxPlanSelector.MailboxPlanId),
-                                    subscriberNumber);
+                                    subscriberNumber, enableArchive);
 
 
                 if (accountId < 0)

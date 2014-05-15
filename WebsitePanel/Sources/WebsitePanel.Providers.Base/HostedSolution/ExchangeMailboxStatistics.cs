@@ -55,5 +55,11 @@ namespace WebsitePanel.Providers.HostedSolution
 		public ExchangeAccountType MailboxType { get; set; }
         public bool BlackberryEnabled { get; set; }
         public string MailboxPlan { get; set; }
+
+
+        public long ArchivingTotalSize { get; set; }
+        public long ArchivingTotalItems { get; set; }
+        public long ArchivingMaxSize { get; set; }
+
 	}
 }

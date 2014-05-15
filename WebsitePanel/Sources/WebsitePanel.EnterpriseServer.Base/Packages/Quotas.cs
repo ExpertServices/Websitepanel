@@ -118,9 +118,12 @@ order by rg.groupOrder
         public const string EXCHANGE2007_ALLOWLITIGATIONHOLD = "Exchange2007.AllowLitigationHold";
         public const string EXCHANGE2007_RECOVERABLEITEMSSPACE = "Exchange2007.RecoverableItemsSpace";
         public const string EXCHANGE2007_DISCLAIMERSALLOWED = "Exchange2007.DisclaimersAllowed";
+
+        public const string EXCHANGE2013_ALLOWARCHIVING = "Exchange2013.AllowArchiving";
         public const string EXCHANGE2013_ALLOWRETENTIONPOLICY = "Exchange2013.AllowRetentionPolicy"; // Archiving
         public const string EXCHANGE2013_ARCHIVINGSTORAGE = "Exchange2013.ArchivingStorage";
         public const string EXCHANGE2013_ARCHIVINGMAILBOXES = "Exchange2013.ArchivingMailboxes";
+
         public const string MSSQL2000_DATABASES = "MsSQL2000.Databases";  // Databases
 		public const string MSSQL2000_USERS = "MsSQL2000.Users";  // Users
 		public const string MSSQL2000_MAXDATABASESIZE = "MsSQL2000.MaxDatabaseSize";  // Max Database Size

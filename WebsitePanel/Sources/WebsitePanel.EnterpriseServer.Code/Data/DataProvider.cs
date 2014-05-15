@@ -2570,7 +2570,8 @@ namespace WebsitePanel.EnterpriseServer
 
         public static void UpdateExchangeAccount(int accountId, string accountName, ExchangeAccountType accountType,
             string displayName, string primaryEmailAddress, bool mailEnabledPublicFolder,
-            string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, int archivePlanId, string subscriberNumber)
+            string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, int archivePlanId, string subscriberNumber,
+            bool EnableArchiving)
         {
             SqlHelper.ExecuteNonQuery(
                 ConnectionString,
@@ -2587,7 +2588,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@SamAccountName", samAccountName),
                 new SqlParameter("@MailboxPlanId", (mailboxPlanId == 0) ? (object)DBNull.Value : (object)mailboxPlanId),
                 new SqlParameter("@ArchivingMailboxPlanId", (archivePlanId < 1) ? (object)DBNull.Value : (object)archivePlanId),
-                new SqlParameter("@SubscriberNumber", (string.IsNullOrEmpty(subscriberNumber) ? (object)DBNull.Value : (object)subscriberNumber))
+                new SqlParameter("@SubscriberNumber", (string.IsNullOrEmpty(subscriberNumber) ? (object)DBNull.Value : (object)subscriberNumber)),
+                new SqlParameter("@EnableArchiving", EnableArchiving)
             );
         }
 
@@ -2785,7 +2787,7 @@ namespace WebsitePanel.EnterpriseServer
                                                     bool isDefault, int issueWarningPct, int keepDeletedItemsDays, int mailboxSizeMB, int maxReceiveMessageSizeKB, int maxRecipients,
                                                     int maxSendMessageSizeKB, int prohibitSendPct, int prohibitSendReceivePct, bool hideFromAddressBook, int mailboxPlanType,
                                                     bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg,
-            bool archiving, bool EnableArchiving)
+            bool archiving, bool EnableArchiving, int ArchiveSizeMB, int ArchiveWarningPct)
         {
             SqlParameter outParam = new SqlParameter("@MailboxPlanId", SqlDbType.Int);
             outParam.Direction = ParameterDirection.Output;
@@ -2819,7 +2821,9 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@LitigationHoldUrl", litigationHoldUrl),
                 new SqlParameter("@LitigationHoldMsg", litigationHoldMsg),
                 new SqlParameter("@Archiving", archiving),
-                new SqlParameter("@EnableArchiving", EnableArchiving)
+                new SqlParameter("@EnableArchiving", EnableArchiving),
+                new SqlParameter("@ArchiveSizeMB", ArchiveSizeMB),
+                new SqlParameter("@ArchiveWarningPct", ArchiveWarningPct)
             );
 
             return Convert.ToInt32(outParam.Value);
@@ -2831,7 +2835,7 @@ namespace WebsitePanel.EnterpriseServer
                                             bool isDefault, int issueWarningPct, int keepDeletedItemsDays, int mailboxSizeMB, int maxReceiveMessageSizeKB, int maxRecipients,
                                             int maxSendMessageSizeKB, int prohibitSendPct, int prohibitSendReceivePct, bool hideFromAddressBook, int mailboxPlanType,
                                         bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg,
-                                        bool Archiving, bool EnableArchiving)
+                                        bool Archiving, bool EnableArchiving, int ArchiveSizeMB, int ArchiveWarningPct)
         {
             SqlHelper.ExecuteNonQuery(
                 ConnectionString,
@@ -2861,8 +2865,9 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@LitigationHoldUrl", litigationHoldUrl),
                 new SqlParameter("@LitigationHoldMsg", litigationHoldMsg),
                 new SqlParameter("@Archiving", Archiving),
-	            new SqlParameter("@EnableArchiving", EnableArchiving)
-
+	            new SqlParameter("@EnableArchiving", EnableArchiving),
+                new SqlParameter("@ArchiveSizeMB", ArchiveSizeMB),
+                new SqlParameter("@ArchiveWarningPct", ArchiveWarningPct)
             );
         }
 
@@ -2923,7 +2928,7 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
-        public static void SetExchangeAccountMailboxPlan(int accountId, int mailboxPlanId, int archivePlanId)
+        public static void SetExchangeAccountMailboxPlan(int accountId, int mailboxPlanId, int archivePlanId, bool EnableArchiving)
         {
             SqlHelper.ExecuteNonQuery(
                 ConnectionString,
@@ -2931,7 +2936,8 @@ namespace WebsitePanel.EnterpriseServer
                 "SetExchangeAccountMailboxplan",
                 new SqlParameter("@AccountID", accountId),
                 new SqlParameter("@MailboxPlanId", (mailboxPlanId == 0) ? (object)DBNull.Value : (object)mailboxPlanId),
-                new SqlParameter("@ArchivingMailboxPlanId", (archivePlanId < 1) ? (object)DBNull.Value : (object)archivePlanId)
+                new SqlParameter("@ArchivingMailboxPlanId", (archivePlanId < 1) ? (object)DBNull.Value : (object)archivePlanId),
+                new SqlParameter("@EnableArchiving", EnableArchiving)
             );
         }
 

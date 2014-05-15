@@ -222,9 +222,9 @@ namespace WebsitePanel.EnterpriseServer
         #region Mailboxes
         [WebMethod]
         public int CreateMailbox(int itemId, int accountId, ExchangeAccountType accountType, string accountName, string displayName,
-            string name, string domain, string password, bool sendSetupInstructions, string setupInstructionMailAddress, int mailboxPlanId, int archivedPlanId, string subscriberNumber)
+            string name, string domain, string password, bool sendSetupInstructions, string setupInstructionMailAddress, int mailboxPlanId, int archivedPlanId, string subscriberNumber, bool EnableArchiving)
         {
-            return ExchangeServerController.CreateMailbox(itemId, accountId, accountType, accountName, displayName, name, domain, password, sendSetupInstructions, setupInstructionMailAddress, mailboxPlanId, archivedPlanId, subscriberNumber);
+            return ExchangeServerController.CreateMailbox(itemId, accountId, accountType, accountName, displayName, name, domain, password, sendSetupInstructions, setupInstructionMailAddress, mailboxPlanId, archivedPlanId, subscriberNumber, EnableArchiving);
         }
 
         [WebMethod]
@@ -303,9 +303,9 @@ namespace WebsitePanel.EnterpriseServer
 
 
         [WebMethod]
-        public int SetExchangeMailboxPlan(int itemId, int accountId, int mailboxPlanId, int archivePlanId)
+        public int SetExchangeMailboxPlan(int itemId, int accountId, int mailboxPlanId, int archivePlanId, bool EnableArchiving)
         {
-            return ExchangeServerController.SetExchangeMailboxPlan(itemId, accountId, mailboxPlanId, archivePlanId);
+            return ExchangeServerController.SetExchangeMailboxPlan(itemId, accountId, mailboxPlanId, archivePlanId, EnableArchiving);
         }
 
         [WebMethod]

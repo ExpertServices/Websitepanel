@@ -83,7 +83,7 @@ namespace WebsitePanel.Portal
             secDeleteRetention.Visible = !RetentionPolicy;
             secLitigationHold.Visible = !RetentionPolicy;
 
-            secArchiving.Visible = RetentionPolicy;
+            secArchiving.Visible = !RetentionPolicy;
             secRetentionPolicyTags.Visible = RetentionPolicy;
 
             gvMailboxPlans.Columns[4].Visible = !RetentionPolicy;
@@ -142,11 +142,6 @@ namespace WebsitePanel.Portal
 
             if (RetentionPolicy)
             {
-                plan.EnableArchiving = chkEnableArchiving.Checked;
-
-                plan.MailboxSizeMB = archiveQuota.QuotaValue;
-                plan.IssueWarningPct = archiveWarningQuota.ValueKB;
-                if ((plan.IssueWarningPct == 0)) plan.IssueWarningPct = 100;
 
             }
             else
@@ -176,6 +171,13 @@ namespace WebsitePanel.Portal
                 if ((plan.RecoverableItemsWarningPct == 0)) plan.RecoverableItemsWarningPct = 100;
                 plan.LitigationHoldMsg = txtLitigationHoldMsg.Text.Trim();
                 plan.LitigationHoldUrl = txtLitigationHoldUrl.Text.Trim();
+
+                plan.EnableArchiving = chkEnableArchiving.Checked;
+
+                plan.ArchiveSizeMB = archiveQuota.QuotaValue;
+                plan.ArchiveWarningPct = archiveWarningQuota.ValueKB;
+                if ((plan.ArchiveWarningPct == 0)) plan.ArchiveWarningPct = 100;
+
             }
 
             if (PanelSecurity.SelectedUser.Role == UserRole.Administrator)
@@ -327,11 +329,6 @@ namespace WebsitePanel.Portal
 
                         if (RetentionPolicy)
                         {
-                            chkEnableArchiving.Checked = plan.EnableArchiving;
-
-                            archiveQuota.QuotaValue = plan.MailboxSizeMB;
-                            archiveWarningQuota.ValueKB = plan.IssueWarningPct;
-
                             List<ExchangeMailboxPlanRetentionPolicyTag> tags = new List<ExchangeMailboxPlanRetentionPolicyTag>();
                             tags.AddRange(ES.Services.ExchangeServer.GetExchangeMailboxPlanRetentionPolicyTags(plan.MailboxPlanId));
 
@@ -363,6 +360,12 @@ namespace WebsitePanel.Portal
                             recoverableItemsWarning.ValueKB = plan.RecoverableItemsWarningPct;
                             txtLitigationHoldMsg.Text = plan.LitigationHoldMsg;
                             txtLitigationHoldUrl.Text = plan.LitigationHoldUrl;
+
+                            chkEnableArchiving.Checked = plan.EnableArchiving;
+
+                            archiveQuota.QuotaValue = plan.ArchiveSizeMB;
+                            archiveWarningQuota.ValueKB = plan.ArchiveWarningPct;
+
                         }
 
                         
@@ -455,12 +458,6 @@ namespace WebsitePanel.Portal
 
             if (RetentionPolicy)
             {
-                plan.EnableArchiving = chkEnableArchiving.Checked;
-
-                plan.MailboxSizeMB = archiveQuota.QuotaValue;
-                plan.IssueWarningPct = archiveWarningQuota.ValueKB;
-                if ((plan.IssueWarningPct == 0)) plan.IssueWarningPct = 100;
-
             }
             else
             {
@@ -489,6 +486,13 @@ namespace WebsitePanel.Portal
                 if ((plan.RecoverableItemsWarningPct == 0)) plan.RecoverableItemsWarningPct = 100;
                 plan.LitigationHoldMsg = txtLitigationHoldMsg.Text.Trim();
                 plan.LitigationHoldUrl = txtLitigationHoldUrl.Text.Trim();
+
+                plan.EnableArchiving = chkEnableArchiving.Checked;
+
+                plan.ArchiveSizeMB = archiveQuota.QuotaValue;
+                plan.ArchiveWarningPct = archiveWarningQuota.ValueKB;
+                if ((plan.ArchiveWarningPct == 0)) plan.ArchiveWarningPct = 100;
+
             }
 
 
@@ -575,7 +579,7 @@ namespace WebsitePanel.Portal
                                         foreach (ExchangeAccount a in Accounts)
                                         {
                                             txtStatus.Text = "Completed";
-                                            int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(org.Id, a.AccountId, destinationMailboxPlanId, a.ArchivingMailboxPlanId);
+                                            int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(org.Id, a.AccountId, destinationMailboxPlanId, a.ArchivingMailboxPlanId, a.EnableArchiving);
                                             if (result < 0)
                                             {
                                                 BindMailboxPlans();

@@ -170,6 +170,13 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.archivingMailboxPlan = value; }
         }
 
+        bool enableArchiving;
+        public bool EnableArchiving
+        {
+            get { return this.enableArchiving; }
+            set { this.enableArchiving = value; }
+        }
+
     
     }
 }

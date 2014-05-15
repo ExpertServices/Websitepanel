@@ -213,7 +213,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 foreach (ExchangeAccount a in Accounts)
                 {
                     txtStatus.Text = "Completed";
-                    int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(PanelRequest.ItemID, a.AccountId, Convert.ToInt32(mailboxPlanSelectorTarget.MailboxPlanId), a.ArchivingMailboxPlanId);
+                    int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(PanelRequest.ItemID, a.AccountId, Convert.ToInt32(mailboxPlanSelectorTarget.MailboxPlanId), a.ArchivingMailboxPlanId, a.EnableArchiving);
                     if (result < 0)
                     {
                         BindMailboxPlans();

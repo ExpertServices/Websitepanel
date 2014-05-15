@@ -49,7 +49,7 @@
 					                <tr>
 					                    <td class="FormLabel150"><asp:Localize ID="Localize2" runat="server" meta:resourcekey="locMailboxplanName" Text="Mailbox plan: *"></asp:Localize></td>
 					                    <td>                                
-                                            <wsp:MailboxPlanSelector ID="mailboxPlanSelector" runat="server" />
+                                            <wsp:MailboxPlanSelector ID="mailboxPlanSelector" runat="server" Changed="mailboxPlanSelector_Changed" />
                                         </td>
 					                </tr>
 					                <tr>
@@ -80,13 +80,8 @@
 					            </table>
 					        </asp:Panel>
 
-                        </ContentTemplate>
-					</asp:UpdatePanel>
-
-                    <wsp:CollapsiblePanel id="secLitigationHoldSettings" runat="server" TargetControlID="LitigationHoldSettings" meta:resourcekey="secLitigationHoldSettings" Text="Litigation Hold"></wsp:CollapsiblePanel>
-                    <asp:Panel ID="LitigationHoldSettings" runat="server" Height="0" style="overflow:hidden;">
-						<asp:UpdatePanel ID="LitigationHoldUpdatePanel" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="true">
-							<ContentTemplate>
+                            <wsp:CollapsiblePanel id="secLitigationHoldSettings" runat="server" TargetControlID="LitigationHoldSettings" meta:resourcekey="secLitigationHoldSettings" Text="Litigation Hold"></wsp:CollapsiblePanel>
+                            <asp:Panel ID="LitigationHoldSettings" runat="server" Height="0" style="overflow:hidden;">
 					            <table>
 <!--
 						            <tr>
@@ -105,9 +100,30 @@
                                         </td>
 					                </tr>
 					            </table>
-							</ContentTemplate>
-						</asp:UpdatePanel>
-					</asp:Panel>
+					        </asp:Panel>
+
+                            <wsp:CollapsiblePanel id="secArchiving" runat="server" TargetControlID="Archiving" meta:resourcekey="secArchiving" Text="Archiving"></wsp:CollapsiblePanel>
+                            <asp:Panel ID="Archiving" runat="server" Height="0" style="overflow:hidden;">
+					            <table>
+						            <tr>
+						                <td class="FormLabel150"></td>
+						                <td>
+						                    <asp:CheckBox ID="chkEnableArchiving" runat="server" meta:resourcekey="chkEnableArchiving" Text="Enable archiving" AutoPostBack="true" />
+						                    <br />
+						                </td>
+						            </tr>
+                                    <tr id="rowArchiving" runat="server">
+                                        <td class="FormLabel150"><asp:Localize ID="locArchivingQuotaViewer" runat="server" meta:resourcekey="locArchivingQuotaViewer" Text="Archive Size:"></asp:Localize></td>
+					                    <td>                                
+                                            <wsp:QuotaViewer ID="archivingQuotaViewer" runat="server" QuotaTypeId="2" DisplayGauge="true" /> MB
+                                        </td>
+					                </tr>
+					            </table>
+					        </asp:Panel>
+
+                        </ContentTemplate>
+					</asp:UpdatePanel>
+
 
 					<wsp:CollapsiblePanel id="secCalendarSettings" runat="server" TargetControlID="CalendarSettings" meta:resourcekey="secCalendarSettings" Text="General"></wsp:CollapsiblePanel>
                     <asp:Panel ID="CalendarSettings" runat="server" Height="0" style="overflow:hidden;">
