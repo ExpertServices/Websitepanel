@@ -288,7 +288,7 @@
 
 					<br />
 				    <div class="FormFooterClean">
-					    <asp:Button id="btnAdd" runat="server" Text="Add Mailboxplan" CssClass="Button1" meta:resourcekey="btnAdd" ValidationGroup="CreateMailboxPlan" OnClick="btnAdd_Click" OnClientClick="ShowProgressDialog('Creating ...');"></asp:Button>
+					    <asp:Button id="btnAdd" runat="server" Text="Add" CssClass="Button1" meta:resourcekey="btnAdd" ValidationGroup="CreateMailboxPlan" OnClick="btnAdd_Click" OnClientClick="ShowProgressDialog('Creating ...');"></asp:Button>
 					    <asp:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="CreateMailboxPlan" />
 				    </div>
 				</div>

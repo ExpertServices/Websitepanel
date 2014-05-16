@@ -81,7 +81,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     secLitigationHoldSettings.Visible = (Utils.CheckQouta(Quotas.EXCHANGE2007_ALLOWLITIGATIONHOLD, Cntx));
                 }
 
-                secRetentionPolicy.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, cntx);
+                secRetentionPolicy.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, Cntx);
 
             }
 
@@ -89,7 +89,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             int.TryParse(mailboxPlanSelector.MailboxPlanId, out planId);
             ExchangeMailboxPlan plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(PanelRequest.ItemID, planId);
 
-            secArchiving.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, cntx) && plan.EnableArchiving;
+            secArchiving.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, Cntx) && plan.EnableArchiving;
 
             rowArchiving.Visible = chkEnableArchiving.Checked;
         }

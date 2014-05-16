@@ -5452,4 +5452,85 @@
   <data name="Quota.Exchange2013.ArchivingMailboxes" xml:space="preserve">
     <value>Archiving Mailboxes per Organization</value>
   </data>
+  <data name="Quota.Exchange2013.AllowArchiving" xml:space="preserve">
+    <value>Allow Archiving</value>
+  </data>
+  <data name="Text.All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Text.Calendar" xml:space="preserve">
+    <value>Calendar</value>
+  </data>
+  <data name="Text.Contacts" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
+  <data name="Text.ConversationHistory" xml:space="preserve">
+    <value>Conversation History</value>
+  </data>
+  <data name="Text.DeleteAndAllowRecovery" xml:space="preserve">
+    <value>Delete and Allow Recovery</value>
+  </data>
+  <data name="Text.DeletedItems" xml:space="preserve">
+    <value>Deleted Items</value>
+  </data>
+  <data name="Text.Drafts" xml:space="preserve">
+    <value>Drafts</value>
+  </data>
+  <data name="Text.Inbox" xml:space="preserve">
+    <value>Inbox</value>
+  </data>
+  <data name="Text.Journal" xml:space="preserve">
+    <value>Journal</value>
+  </data>
+  <data name="Text.JunkEmail" xml:space="preserve">
+    <value>Junk Email</value>
+  </data>
+  <data name="Text.LegacyArchiveJournals" xml:space="preserve">
+    <value>Legacy Archive Journals</value>
+  </data>
+  <data name="Text.ManagedCustomFolder" xml:space="preserve">
+    <value>Managed Custom Folder</value>
+  </data>
+  <data name="Text.MarkAsPastRetentionLimit" xml:space="preserve">
+    <value>Mark as Past Retention Limit</value>
+  </data>
+  <data name="Text.MoveToArchive" xml:space="preserve">
+    <value>Move to Archive</value>
+  </data>
+  <data name="Text.MoveToDeletedItems" xml:space="preserve">
+    <value>Move to Deleted</value>
+  </data>
+  <data name="Text.MoveToFolder" xml:space="preserve">
+    <value>Move to Folder</value>
+  </data>
+  <data name="Text.NonIpmRoot" xml:space="preserve">
+    <value>Non Ipm Root</value>
+  </data>
+  <data name="Text.Notes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="Text.Outbox" xml:space="preserve">
+    <value>Outbox</value>
+  </data>
+  <data name="Text.PermanentlyDelete" xml:space="preserve">
+    <value>Permanently Delete</value>
+  </data>
+  <data name="Text.Personal" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="Text.RecoverableItems" xml:space="preserve">
+    <value>Recoverable Items</value>
+  </data>
+  <data name="Text.RssSubscriptions" xml:space="preserve">
+    <value>Rss Subscriptions</value>
+  </data>
+  <data name="Text.SentItems" xml:space="preserve">
+    <value>Sent Items</value>
+  </data>
+  <data name="Text.SyncIssues" xml:space="preserve">
+    <value>Sync Issues</value>
+  </data>
+  <data name="Text.Tasks" xml:space="preserve">
+    <value>Tasks</value>
+  </data>
 </root>

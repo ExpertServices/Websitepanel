@@ -574,7 +574,7 @@ namespace WebsitePanel.Import.CsvBulk
 				//create mailbox
 				//ES.Services.ExchangeServer.
 				string accountName = string.Empty;
-                int accountId = ES.Services.ExchangeServer.CreateMailbox(orgId, 0, ExchangeAccountType.Mailbox, accountName, displayName, name, domain, password, false, string.Empty, planId, -1, string.Empty);
+                int accountId = ES.Services.ExchangeServer.CreateMailbox(orgId, 0, ExchangeAccountType.Mailbox, accountName, displayName, name, domain, password, false, string.Empty, planId, -1, string.Empty, false);
 				if (accountId < 0)
 				{
 					string errorMessage = GetErrorMessage(accountId);

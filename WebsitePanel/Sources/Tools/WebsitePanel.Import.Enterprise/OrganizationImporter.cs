@@ -973,7 +973,7 @@ namespace WebsitePanel.Import.Enterprise
                 mailEnabledPublicFolder, 
                 mailboxManagerActions,
                 samAccountName,
-                CryptoUtils.Encrypt(accountPassword), 0, -1, string.Empty);
+                CryptoUtils.Encrypt(accountPassword), 0, -1, string.Empty, false);
         }
 	}
 }

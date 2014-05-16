@@ -45,6 +45,8 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
             if (!IsPostBack)
             {
                 password.SetPackagePolicy(PanelSecurity.PackageId, UserSettings.EXCHANGE_POLICY, "MailboxPasswordPolicy");
@@ -89,7 +91,6 @@ namespace WebsitePanel.Portal.ExchangeServer
                 if (plans.Length == 0)
                     btnCreate.Enabled = false;
 
-                PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
                 if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
                 {
                     if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
@@ -101,8 +102,15 @@ namespace WebsitePanel.Portal.ExchangeServer
                 }
 
                 rowRetentionPolicy.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, cntx);
-                rowArchiving.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, cntx);
             }
+
+            rowArchiving.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, cntx);
+
+            int planId = -1;
+            int.TryParse(mailboxPlanSelector.MailboxPlanId, out planId);
+            ExchangeMailboxPlan plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(PanelRequest.ItemID, planId);
+            if (plan!=null)
+                rowArchiving.Visible = rowArchiving.Visible && plan.EnableArchiving;
 
         }
 
@@ -221,6 +229,10 @@ namespace WebsitePanel.Portal.ExchangeServer
             NewUserTable.Visible = true;
             ExistingUserTable.Visible = false;
 
+        }
+
+        protected void mailboxPlanSelector_Change(object sender, EventArgs e)
+        {
         }
 
     }

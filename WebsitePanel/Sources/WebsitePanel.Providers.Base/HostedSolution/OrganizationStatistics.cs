@@ -327,6 +327,20 @@ namespace WebsitePanel.Providers.HostedSolution
             get { return createdGroups; }
             set { createdGroups = value; }
         }
+
+        int allocatedArchingStorage;
+        public int AllocatedArchingStorage
+        {
+            get { return allocatedArchingStorage; }
+            set { allocatedArchingStorage = value; }
+        }
+
+        int usedArchingStorage;
+        public int UsedArchingStorage
+        {
+            get { return usedArchingStorage; }
+            set { usedArchingStorage = value; }
+        }
 	}
 }
 
