@@ -65,13 +65,19 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 ddTagType.Items.Clear();
                 for (int i = 0; i < types.Length; i++)
-                    ddTagType.Items.Add(new ListItem(types[i], i.ToString()));
+                {
+                    string name = GetSharedLocalizedString("Text."+ types[i]);
+                    ddTagType.Items.Add(new ListItem(name, i.ToString()));
+                }
 
                 string[] action = Enum.GetNames(typeof(ExchangeRetentionPolicyTagAction));
 
                 ddRetentionAction.Items.Clear();
                 for (int i = 0; i < action.Length; i++)
-                    ddRetentionAction.Items.Add(new ListItem(action[i], i.ToString()));
+                {
+                    string name = GetSharedLocalizedString("Text."+action[i]);
+                    ddRetentionAction.Items.Add(new ListItem(name, i.ToString()));
+                }
 
                 ClearEditValues();
             }

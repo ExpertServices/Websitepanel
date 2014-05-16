@@ -1737,10 +1737,10 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (maxArchivingStorage != -1)
                 {
-                    if (plan.MailboxSizeMB == -1)
+                    if (plan.ArchiveSizeMB == -1)
                         return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
 
-                    if ((quotaArchivingStorageUsed + plan.MailboxSizeMB) > (maxArchivingStorage))
+                    if ((quotaArchivingStorageUsed + plan.ArchiveSizeMB) > (maxArchivingStorage))
                         return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
                 }
 
@@ -3068,15 +3068,6 @@ namespace WebsitePanel.EnterpriseServer
                 ExchangeMailboxPlan retentionPolicy = GetExchangeMailboxPlan(itemId, retentionPolicyId);
                 if (retentionPolicy != null)
                 {
-                    // update PlanRetentionPolicy and Tags
-                    List<ExchangeMailboxPlanRetentionPolicyTag> listtags = GetExchangeMailboxPlanRetentionPolicyTags(retentionPolicyId);
-                    foreach(ExchangeMailboxPlanRetentionPolicyTag listtag in listtags)
-                    {
-                        ExchangeRetentionPolicyTag tag = GetExchangeRetentionPolicyTag(itemId, listtag.TagID);
-                        ResultObject resItem = exchange.SetRetentionPolicyTag(tag.WSPUniqueName, (ExchangeRetentionPolicyTagType)tag.TagType, tag.AgeLimitForRetention, (ExchangeRetentionPolicyTagAction)tag.RetentionAction);
-                        result.ErrorCodes.AddRange(resItem.ErrorCodes);
-                        result.IsSuccess = result.IsSuccess && resItem.IsSuccess;
-                    }
                     UpdateExchangeRetentionPolicy(itemId, retentionPolicyId, result);
                 }
 
@@ -3369,18 +3360,6 @@ namespace WebsitePanel.EnterpriseServer
 
         private static void UpdateExchangeRetentionPolicy(int itemID, int policyId, ResultObject result)
         {
-            ExchangeMailboxPlan policy = GetExchangeMailboxPlan(itemID, policyId);
-
-            List<ExchangeMailboxPlanRetentionPolicyTag> policytaglist = GetExchangeMailboxPlanRetentionPolicyTags(policyId);
-
-            List<string> tagLinks = new List<string>();
-
-            foreach (ExchangeMailboxPlanRetentionPolicyTag policytag in policytaglist)
-            {
-                ExchangeRetentionPolicyTag tag = GetExchangeRetentionPolicyTag(itemID, policytag.TagID);
-                tagLinks.Add(tag.WSPUniqueName);
-            }
-
             Organization org = GetOrganization(itemID);
             if (org == null)
                 return;
@@ -3391,11 +3370,29 @@ namespace WebsitePanel.EnterpriseServer
             {
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                ExchangeMailboxPlan policy = GetExchangeMailboxPlan(itemID, policyId);
+
+                List<ExchangeMailboxPlanRetentionPolicyTag> policytaglist = GetExchangeMailboxPlanRetentionPolicyTags(policyId);
+
+                List<string> tagLinks = new List<string>();
+
+                foreach (ExchangeMailboxPlanRetentionPolicyTag policytag in policytaglist)
+                {
+                    ExchangeRetentionPolicyTag tag = GetExchangeRetentionPolicyTag(itemID, policytag.TagID);
+                    tagLinks.Add(tag.WSPUniqueName);
+
+                    // update PlanRetentionPolicyTags
+
+                    ResultObject resItem = exchange.SetRetentionPolicyTag(tag.WSPUniqueName, (ExchangeRetentionPolicyTagType)tag.TagType, tag.AgeLimitForRetention, (ExchangeRetentionPolicyTagAction)tag.RetentionAction);
+                    result.ErrorCodes.AddRange(resItem.ErrorCodes);
+                    result.IsSuccess = result.IsSuccess && resItem.IsSuccess;
+                }
+
                 ResultObject res = exchange.SetRetentionPolicy(policy.WSPUniqueName, tagLinks.ToArray());
                 result.ErrorCodes.AddRange(res.ErrorCodes);
                 result.IsSuccess = result.IsSuccess && res.IsSuccess;
-            }
 
+            }
         }
 
         public static IntResult AddExchangeMailboxPlanRetentionPolicyTag(int itemID, ExchangeMailboxPlanRetentionPolicyTag planTag)

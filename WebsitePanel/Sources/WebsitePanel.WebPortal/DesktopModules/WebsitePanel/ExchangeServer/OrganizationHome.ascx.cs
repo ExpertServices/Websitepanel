@@ -66,6 +66,9 @@ namespace WebsitePanel.Portal.ExchangeServer
             lnkExchangeLitigationHold.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "storage_usage",
             "SpaceID=" + PanelSecurity.PackageId.ToString());
 
+            lnkExchangeArchiving.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "archivingmailboxes",
+            "SpaceID=" + PanelSecurity.PackageId.ToString());
+
 
             mailboxesStats.QuotaUsedValue = exchangeOrgStats.CreatedMailboxes;
             mailboxesStats.QuotaValue = exchangeOrgStats.AllocatedMailboxes;
@@ -119,6 +122,18 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
             else
                 this.rowExchangeLitigationHold.Style.Add("display", "none");
+
+            if ((!hideItems) && (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, cntx)))
+            {
+                exchangeArchivingStatus.QuotaUsedValue = exchangeOrgStats.UsedArchingStorage;
+                exchangeArchivingStatus.QuotaValue = exchangeOrgStats.AllocatedArchingStorage;
+                if (exchangeOrgStats.AllocatedArchingStorage != -1)
+                {
+                    exchangeLitigationHoldStats.QuotaAvailable = exchangeTenantStats.AllocatedArchingStorage - exchangeTenantStats.UsedArchingStorage;
+                }
+            }
+            else
+                this.rowExchangeArchiving.Style.Add("display", "none");
 
         }
 

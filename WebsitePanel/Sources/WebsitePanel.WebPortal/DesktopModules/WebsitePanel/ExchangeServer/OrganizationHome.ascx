@@ -129,6 +129,14 @@
                                 <wsp:QuotaViewer ID="exchangeLitigationHoldStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
+                        <tr class="OrgStatsRow" id="rowExchangeArchiving" runat="server">
+                            <td class="OrgStatsQuota" nowrap>
+                                <asp:HyperLink ID="lnkExchangeArchiving" runat="server" meta:resourcekey="lnkExchangeArchiving">Archiving Storage (Mb):</asp:HyperLink>
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="exchangeArchivingStatus" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
 
                         </asp:Panel>
 

@@ -133,8 +133,7 @@
                             <uc1:QuotaEditor id="mailboxSize" runat="server"
                                 QuotaTypeID="2"
                                 QuotaValue="0"
-                                ParentQuotaValue="-1">
-                            </uc1:QuotaEditor>
+                                ParentQuotaValue="-1"></uc1:QuotaEditor>
                         </div>
 					</td>
 				</tr>
@@ -145,8 +144,7 @@
                             <uc1:QuotaEditor id="maxRecipients" runat="server"
                                 QuotaTypeID="2"
                                 QuotaValue="0"
-                                ParentQuotaValue="-1">
-                            </uc1:QuotaEditor>
+                                ParentQuotaValue="-1"></uc1:QuotaEditor>
                         </div>
 					</td>
 				</tr>
@@ -157,8 +155,7 @@
                             <uc1:QuotaEditor id="maxSendMessageSizeKB" runat="server"
                                 QuotaTypeID="2"
                                 QuotaValue="0"
-                                ParentQuotaValue="-1">
-                            </uc1:QuotaEditor>
+                                ParentQuotaValue="-1"></uc1:QuotaEditor>
                         </div>
 					</td>
 				</tr>
@@ -169,8 +166,7 @@
                             <uc1:QuotaEditor id="maxReceiveMessageSizeKB" runat="server"
                                 QuotaTypeID="2"
                                 QuotaValue="0"
-                                ParentQuotaValue="-1">
-                            </uc1:QuotaEditor>
+                                ParentQuotaValue="-1"></uc1:QuotaEditor>
                         </div>
 					</td>
 				</tr>
@@ -231,8 +227,7 @@
                             <uc1:QuotaEditor id="recoverableItemsSpace" runat="server"
                                 QuotaTypeID="2"
                                 QuotaValue="0"
-                                ParentQuotaValue="-1">
-                            </uc1:QuotaEditor>
+                                ParentQuotaValue="-1"></uc1:QuotaEditor>
 					</td>
 				</tr>
 				<tr>
@@ -266,15 +261,14 @@
 					</td>
                     <td></td>
 				</tr>
-				<tr>
+				<tr id="rowArchiving">
 					<td class="FormLabel200" align="right"><asp:Localize ID="locArchiveQuota" runat="server" meta:resourcekey="locArchiveQuota" Text="Archive quota:"></asp:Localize></td>
 					<td>
                         <div class="Right">
                             <uc1:QuotaEditor id="archiveQuota" runat="server"
                                 QuotaTypeID="2"
                                 QuotaValue="0"
-                                ParentQuotaValue="-1">
-                            </uc1:QuotaEditor>
+                                ParentQuotaValue="-1"></uc1:QuotaEditor>
                         </div>
 					</td>
 				</tr>
