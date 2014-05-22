@@ -344,7 +344,8 @@ namespace WebsitePanel.Providers.EnterpriseStorage
         public override bool IsInstalled()
         {
             Server.Utils.OS.WindowsVersion version = WebsitePanel.Server.Utils.OS.GetVersion();
-            return version == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2012;
+            return version == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2012 ||
+                   version == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2012R2;
         }
 
         protected WebDavSetting GetWebDavSetting(WebDavSetting setting)
