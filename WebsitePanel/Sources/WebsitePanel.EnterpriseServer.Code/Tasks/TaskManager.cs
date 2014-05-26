@@ -412,7 +412,7 @@ namespace WebsitePanel.EnterpriseServer
 
         static void PurgeCompletedTasks(object obj)
         {
-            List<BackgroundTask> tasks = TaskController.GetTasks();
+            List<BackgroundTask> tasks = TaskController.GetProcessTasks(BackgroundTaskStatus.Run);
 
             foreach (BackgroundTask task in tasks)
             {
