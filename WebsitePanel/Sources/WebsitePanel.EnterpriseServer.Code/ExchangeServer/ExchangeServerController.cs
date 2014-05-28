@@ -3372,25 +3372,28 @@ namespace WebsitePanel.EnterpriseServer
 
                 ExchangeMailboxPlan policy = GetExchangeMailboxPlan(itemID, policyId);
 
-                List<ExchangeMailboxPlanRetentionPolicyTag> policytaglist = GetExchangeMailboxPlanRetentionPolicyTags(policyId);
-
-                List<string> tagLinks = new List<string>();
-
-                foreach (ExchangeMailboxPlanRetentionPolicyTag policytag in policytaglist)
+                if (policy != null)
                 {
-                    ExchangeRetentionPolicyTag tag = GetExchangeRetentionPolicyTag(itemID, policytag.TagID);
-                    tagLinks.Add(tag.WSPUniqueName);
+                    List<ExchangeMailboxPlanRetentionPolicyTag> policytaglist = GetExchangeMailboxPlanRetentionPolicyTags(policyId);
 
-                    // update PlanRetentionPolicyTags
+                    List<string> tagLinks = new List<string>();
 
-                    ResultObject resItem = exchange.SetRetentionPolicyTag(tag.WSPUniqueName, (ExchangeRetentionPolicyTagType)tag.TagType, tag.AgeLimitForRetention, (ExchangeRetentionPolicyTagAction)tag.RetentionAction);
-                    result.ErrorCodes.AddRange(resItem.ErrorCodes);
-                    result.IsSuccess = result.IsSuccess && resItem.IsSuccess;
+                    foreach (ExchangeMailboxPlanRetentionPolicyTag policytag in policytaglist)
+                    {
+                        ExchangeRetentionPolicyTag tag = GetExchangeRetentionPolicyTag(itemID, policytag.TagID);
+                        tagLinks.Add(tag.WSPUniqueName);
+
+                        // update PlanRetentionPolicyTags
+
+                        ResultObject resItem = exchange.SetRetentionPolicyTag(tag.WSPUniqueName, (ExchangeRetentionPolicyTagType)tag.TagType, tag.AgeLimitForRetention, (ExchangeRetentionPolicyTagAction)tag.RetentionAction);
+                        result.ErrorCodes.AddRange(resItem.ErrorCodes);
+                        result.IsSuccess = result.IsSuccess && resItem.IsSuccess;
+                    }
+
+                    ResultObject res = exchange.SetRetentionPolicy(policy.WSPUniqueName, tagLinks.ToArray());
+                    result.ErrorCodes.AddRange(res.ErrorCodes);
+                    result.IsSuccess = result.IsSuccess && res.IsSuccess;
                 }
-
-                ResultObject res = exchange.SetRetentionPolicy(policy.WSPUniqueName, tagLinks.ToArray());
-                result.ErrorCodes.AddRange(res.ErrorCodes);
-                result.IsSuccess = result.IsSuccess && res.IsSuccess;
 
             }
         }
