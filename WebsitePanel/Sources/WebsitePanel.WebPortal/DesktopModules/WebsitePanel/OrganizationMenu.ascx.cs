@@ -67,7 +67,7 @@ namespace WebsitePanel.Portal
             MenuItem item = new MenuItem(
                 GetLocalizedString("Text.OrganizationHome"), 
                 "", 
-                "",
+                imagePath + "home24.png",
                 PortalUtils.EditUrl("ItemID", PanelRequest.ItemID.ToString(), "organization_home", "SpaceID=" + PanelSecurity.PackageId));
 
             items.Add(item);

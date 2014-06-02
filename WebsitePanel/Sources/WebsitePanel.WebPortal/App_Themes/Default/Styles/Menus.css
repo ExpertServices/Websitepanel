@@ -47,6 +47,16 @@
     background-image: none !important;
 }
 
+.TopMenu li.AspNet-Menu-Leaf a img
+{
+    border-style:None;
+    height:16px;
+    width:16px;
+    border-width:0px;
+    padding-right: 3px;
+    position:relative;
+}
+
 /*
 .TopMenu ul.AspNet-Menu li
 {
