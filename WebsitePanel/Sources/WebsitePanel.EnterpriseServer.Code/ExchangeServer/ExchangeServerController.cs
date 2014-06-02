@@ -3073,8 +3073,11 @@ namespace WebsitePanel.EnterpriseServer
 
             }
             ResultObject res = exchange.SetMailBoxArchiving(orgId, accountName, EnableArchiving, archiveQuotaKB, archiveWarningQuotaKB, RetentionPolicy);
-            result.ErrorCodes.AddRange(res.ErrorCodes);
-            result.IsSuccess = result.IsSuccess && res.IsSuccess;
+            if (res != null)
+            {
+                result.ErrorCodes.AddRange(res.ErrorCodes);
+                result.IsSuccess = result.IsSuccess && res.IsSuccess;
+            }
         }
 
         public static List<ExchangeRetentionPolicyTag> GetExchangeRetentionPolicyTags(int itemId)
