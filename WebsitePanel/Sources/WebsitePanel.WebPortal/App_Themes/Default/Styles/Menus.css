@@ -15,8 +15,13 @@
 
 .TopMenu ul.AspNet-Menu ul ul
 {
-    top: -0.3em;
+    top: -1em;
 	z-index: 502;
+}
+
+.TopMenu ul.AspNet-Menu li ul li.AspNet-Menu-WithChildren
+{
+    cursor: pointer;
 }
 
 .TopMenu ul.AspNet-Menu li ul li.AspNet-Menu-WithChildren span
@@ -76,7 +81,6 @@
 
 .TopMenu ul.AspNet-Menu li span
 {
-    cursor: pointer;
     color: #ffffff;
     padding: 8px 25px 8px 15px;
     background: transparent url(../Images/menu_popup.gif) right center no-repeat;
