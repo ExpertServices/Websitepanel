@@ -143,7 +143,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 {
 
                     throw new ApplicationException(
-                        string.Format("Exit code is not 0. {0}, ExitCode = {1}", output, exitCode));
+                        string.Format("Exit code is not 0. {0}, ExitCode = {1}", arguments2, output, exitCode));
                 }
             }
 
