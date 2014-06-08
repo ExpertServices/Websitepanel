@@ -47,6 +47,20 @@ namespace WebsitePanel.Providers.HostedSolution
                 return ProviderSettings[Constants.UserName];
             }
         }
+        public string HandheldcleanupPath
+        {
+            get
+            {
+                return ProviderSettings[Constants.HandheldcleanupPath];
+            }
+        }
+        public string MAPIProfile
+        {
+            get
+            {
+                return ProviderSettings[Constants.MAPIProfile];
+            }
+        }
 
         public override string[] Install()
         {
@@ -65,7 +79,9 @@ namespace WebsitePanel.Providers.HostedSolution
             ResultObject res = HostedSolutionLog.StartLog<ResultObject>("CreateBlackBerryUser5Internal");
 
             string file = Path.Combine(UtilityPath, "besuseradminclient.exe");
+            string file2 = Path.Combine(HandheldcleanupPath, "handheldcleanup.exe");
 
+            //Add user to Blackberry Server
             if (!File.Exists(file))
             {
                 HostedSolutionLog.EndLog("CreateBlackBerry5UserInternal", res, BlackBerryErrorsCodes.FILE_PATH_IS_INVALID);
@@ -79,10 +95,12 @@ namespace WebsitePanel.Providers.HostedSolution
                                              EnterpriseServer,
                                              EnterpriseServerFQDN);
 
-            try
+            //run besuseradminclient.exe
+
+            try             
             {
                 string output;
-                
+
                 int exitCode = Execute(file, arguments, out output);
                 if (exitCode == 0)
                 {
@@ -93,15 +111,46 @@ namespace WebsitePanel.Providers.HostedSolution
                 {
                     
                     throw new ApplicationException(
-                        string.Format("Excit code is not 0. {0}, ExitCode = {1}", output, exitCode));
+                        string.Format("Exit code is not 0. {0}, ExitCode = {1}", output, exitCode));
                 }
             }
+
             catch (Exception ex)
             {
                 HostedSolutionLog.EndLog("CreateBlackBerry5UserInternal", res, BlackBerryErrorsCodes.CANNOT_EXECUTE_COMMAND, ex);
                 return res;
             }
 
+             //run handheldcleanup.exe           
+            if (File.Exists(file2))
+            {
+            string arguments2 = string.Format("-u -p {0} {1}",
+                                 MAPIProfile,
+                                 "< servername.txt");
+            try
+            {
+                string output;
+
+                int exitCode = Execute(file, arguments, out output);
+                if (exitCode == 0)
+                {
+                    Log.WriteInfo(output);
+
+                }
+                else
+                {
+
+                    throw new ApplicationException(
+                        string.Format("Exit code is not 0. {0}, ExitCode = {1}", output, exitCode));
+                }
+            }
+
+            catch (Exception ex)
+            {
+                HostedSolutionLog.EndLog("CreateBlackBerry5UserInternal", res, BlackBerryErrorsCodes.CANNOT_EXECUTE_COMMAND, ex);
+                return res;
+            }
+            }
             HostedSolutionLog.EndLog("CreateBlackBerry5UserInternal");
             return res;
         
