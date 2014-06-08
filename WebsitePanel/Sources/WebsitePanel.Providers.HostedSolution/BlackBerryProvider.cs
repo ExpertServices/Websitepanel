@@ -191,17 +191,17 @@ namespace WebsitePanel.Providers.HostedSolution
             Directory.SetCurrentDirectory(HandheldcleanupPath);
             ProcessStartInfo startInfo = new ProcessStartInfo(file, arguments);
 
+            startInfo.UseShellExecute = false;
             startInfo.RedirectStandardError = true;
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardInput = true;
-            startInfo.UseShellExecute = false;
             startInfo.CreateNoWindow = true;
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
             Process proc = Process.Start(startInfo);
 
             StreamWriter inputWriter = proc.StandardInput;
-            inputWriter.Write(EnterpriseServer);
+            inputWriter.WriteLine(EnterpriseServer);
             inputWriter.Flush();
             inputWriter.Close();
 
