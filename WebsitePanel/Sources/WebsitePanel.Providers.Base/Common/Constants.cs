@@ -66,6 +66,8 @@ namespace WebsitePanel.Providers.Common
 
         public const string UtilityPath = "UtilityPath";
 
+        public const string HandheldcleanupPath = "HandheldcleanupPath";
+
         public const string MAPIProfile = "MAPIProfile";
 
         public const string EnterpriseServer = "EnterpriseServer";

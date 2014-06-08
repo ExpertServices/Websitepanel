@@ -123,6 +123,12 @@
   <data name="lblEnterpriseServerFQDN.Text" xml:space="preserve">
     <value>BlackBerry Enterprise Server FQDN:</value>
   </data>
+  <data name="lblHandheldcleanupPath.Text" xml:space="preserve">
+    <value>handheldcleanup.exe utility Path:</value>
+  </data>
+  <data name="lblMAPIProfile.Text" xml:space="preserve">
+    <value>BlackBerry MAPI Profile:</value>
+  </data>
   <data name="lblPassword.Text" xml:space="preserve">
     <value>Authentication password:</value>
   </data>
