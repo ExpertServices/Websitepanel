@@ -193,7 +193,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
             startInfo.RedirectStandardError = true;
             startInfo.RedirectStandardOutput = true;
-            startInfo.UseShellExecute = false;
+            startInfo.UseShellExecute = true;
             startInfo.CreateNoWindow = true;
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
