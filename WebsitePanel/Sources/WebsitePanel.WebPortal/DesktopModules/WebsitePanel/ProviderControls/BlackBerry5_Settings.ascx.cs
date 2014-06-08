@@ -42,6 +42,7 @@ namespace WebsitePanel.Portal.ProviderControls
         public void BindSettings(StringDictionary settings)
         {
             txtPath.Text = settings[Constants.UtilityPath];
+            txtHandheldcleanupPath.Text = settings[Constants.HandheldcleanupPath];
             txtPassword.Text = settings[Constants.Password];
             txtEnterpriseServer.Text = settings[Constants.EnterpriseServer];
             txtEnterpriseServerFQDN.Text = settings[Constants.EnterpriseServerFQDN];
@@ -53,6 +54,7 @@ namespace WebsitePanel.Portal.ProviderControls
         public void SaveSettings(StringDictionary settings)
         {
             settings[Constants.UtilityPath] = txtPath.Text;
+            settings[Constants.HandheldcleanupPath] = txtHandheldcleanupPath.Text;
             settings[Constants.EnterpriseServer] = txtEnterpriseServer.Text;
             settings[Constants.EnterpriseServerFQDN] = txtEnterpriseServerFQDN.Text;
             settings[Constants.Password] = (txtPassword.Text.Length > 0) ? txtPassword.Text : (string)ViewState["PWD"];
