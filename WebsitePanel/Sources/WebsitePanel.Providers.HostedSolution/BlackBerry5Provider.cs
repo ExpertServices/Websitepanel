@@ -130,7 +130,7 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 string output;
 
-                int exitCode = Execute(file, arguments2, out output);
+                int exitCode = Execute(file2, arguments2, out output);
                 if (exitCode == 0)
                 {
                     Log.WriteInfo(output);
