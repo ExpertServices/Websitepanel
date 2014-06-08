@@ -47,20 +47,6 @@ namespace WebsitePanel.Providers.HostedSolution
                 return ProviderSettings[Constants.UserName];
             }
         }
-        public string HandheldcleanupPath
-        {
-            get
-            {
-                return ProviderSettings[Constants.HandheldcleanupPath];
-            }
-        }
-        public string MAPIProfile
-        {
-            get
-            {
-                return ProviderSettings[Constants.MAPIProfile];
-            }
-        }
 
         public override string[] Install()
         {
@@ -124,7 +110,7 @@ namespace WebsitePanel.Providers.HostedSolution
              //run handheldcleanup.exe           
             if (File.Exists(file2))
             {
-            string serverfilename = Path.Combine(HandheldcleanupPath, "servername.txt");
+            string serverfilename = "servername.txt";
 
             string arguments2 = string.Format("-u -p {0} < {1}",
                                  MAPIProfile,
@@ -133,7 +119,7 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 string output;
 
-                int exitCode = Execute(file2, arguments2, out output);
+                int exitCode = Execute2(file2, arguments2, out output);
                 if (exitCode == 0)
                 {
                     Log.WriteInfo(output);
