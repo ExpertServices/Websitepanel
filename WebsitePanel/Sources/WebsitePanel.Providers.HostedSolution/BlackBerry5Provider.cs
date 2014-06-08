@@ -110,11 +110,9 @@ namespace WebsitePanel.Providers.HostedSolution
              //run handheldcleanup.exe           
             if (File.Exists(file2))
             {
-            string serverfilename = "servername.txt";
 
-            string arguments2 = string.Format("-u -p {0} < {1}",
-                                 MAPIProfile,
-                                 serverfilename);
+            string arguments2 = string.Format("-u -p {0}",
+                                 MAPIProfile);
             try
             {
                 string output;

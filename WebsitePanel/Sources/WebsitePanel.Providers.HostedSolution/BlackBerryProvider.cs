@@ -193,11 +193,17 @@ namespace WebsitePanel.Providers.HostedSolution
 
             startInfo.RedirectStandardError = true;
             startInfo.RedirectStandardOutput = true;
-            startInfo.UseShellExecute = true;
+            startInfo.RedirectStandardInput = true;
+            startInfo.UseShellExecute = false;
             startInfo.CreateNoWindow = true;
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
             Process proc = Process.Start(startInfo);
+
+            StreamWriter inputWriter = proc.StandardInput;
+            inputWriter.Write(EnterpriseServer);
+            inputWriter.Flush();
+            inputWriter.Close();
 
             if (proc == null)
                 throw new ApplicationException("Proc is null.");
