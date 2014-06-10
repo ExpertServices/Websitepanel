@@ -50,6 +50,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
     using WebsitePanel.Providers.Common;
     using WebsitePanel.Providers.ResultObjects;
+    using WebsitePanel.Providers.OS;
 
 
 
@@ -104,6 +105,18 @@ namespace WebsitePanel.Providers.HostedSolution
         private System.Threading.SendOrPostCallback GetSamAccountNameByUserPrincipalNameOperationCompleted;
 
         private System.Threading.SendOrPostCallback DoesSamAccountNameExistOperationCompleted;
+
+        private System.Threading.SendOrPostCallback GetDriveMapsOperationCompleted;
+
+        private System.Threading.SendOrPostCallback CreateMappedDriveOperationCompleted;
+
+        private System.Threading.SendOrPostCallback DeleteMappedDriveOperationCompleted;
+
+        private System.Threading.SendOrPostCallback DeleteMappedDriveByPathOperationCompleted;
+
+        private System.Threading.SendOrPostCallback DeleteMappedDrivesGPOOperationCompleted;
+
+        private System.Threading.SendOrPostCallback SetDriveMapsTargetingFilterOperationCompleted;
 
         /// <remarks/>
         public Organizations()
@@ -170,6 +183,24 @@ namespace WebsitePanel.Providers.HostedSolution
 
         /// <remarks/>
         public event DoesSamAccountNameExistCompletedEventHandler DoesSamAccountNameExistCompleted;
+
+        /// <remarks/>
+        public event GetDriveMapsCompletedEventHandler GetDriveMapsCompleted;
+
+        /// <remarks/>
+        public event CreateMappedDriveCompletedEventHandler CreateMappedDriveCompleted;
+
+        /// <remarks/>
+        public event DeleteMappedDriveCompletedEventHandler DeleteMappedDriveCompleted;
+
+        /// <remarks/>
+        public event DeleteMappedDriveByPathCompletedEventHandler DeleteMappedDriveByPathCompleted;
+
+        /// <remarks/>
+        public event DeleteMappedDrivesGPOCompletedEventHandler DeleteMappedDrivesGPOCompleted;
+
+        /// <remarks/>
+        public event SetDriveMapsTargetingFilterCompletedEventHandler SetDriveMapsTargetingFilterCompleted;
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -1415,6 +1446,319 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetDriveMaps", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public MappedDrive[] GetDriveMaps(string organizationId)
+        {
+            object[] results = this.Invoke("GetDriveMaps", new object[] {
+                    organizationId});
+            return ((MappedDrive[])(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginGetDriveMaps(string organizationId, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("GetDriveMaps", new object[] {
+                    organizationId}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public MappedDrive[] EndGetDriveMaps(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((MappedDrive[])(results[0]));
+        }
+
+        /// <remarks/>
+        public void GetDriveMapsAsync(string organizationId)
+        {
+            this.GetDriveMapsAsync(organizationId, null);
+        }
+
+        /// <remarks/>
+        public void GetDriveMapsAsync(string organizationId, object userState)
+        {
+            if ((this.GetDriveMapsOperationCompleted == null))
+            {
+                this.GetDriveMapsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetDriveMapsOperationCompleted);
+            }
+            this.InvokeAsync("GetDriveMaps", new object[] {
+                    organizationId}, this.GetDriveMapsOperationCompleted, userState);
+        }
+
+        private void OnGetDriveMapsOperationCompleted(object arg)
+        {
+            if ((this.GetDriveMapsCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetDriveMapsCompleted(this, new GetDriveMapsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/CreateMappedDrive", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int CreateMappedDrive(string organizationId, string drive, string labelAs, string path)
+        {
+            object[] results = this.Invoke("CreateMappedDrive", new object[] {
+                    organizationId,
+                    drive,
+                    labelAs,
+                    path});
+            return ((int)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginCreateMappedDrive(string organizationId, string drive, string labelAs, string path, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("CreateMappedDrive", new object[] {
+                    organizationId,
+                    drive,
+                    labelAs,
+                    path}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public int EndCreateMappedDrive(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((int)(results[0]));
+        }
+
+        /// <remarks/>
+        public void CreateMappedDriveAsync(string organizationId, string drive, string labelAs, string path)
+        {
+            this.CreateMappedDriveAsync(organizationId, drive, labelAs, path, null);
+        }
+
+        /// <remarks/>
+        public void CreateMappedDriveAsync(string organizationId, string drive, string labelAs, string path, object userState)
+        {
+            if ((this.CreateMappedDriveOperationCompleted == null))
+            {
+                this.CreateMappedDriveOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCreateMappedDriveOperationCompleted);
+            }
+            this.InvokeAsync("CreateMappedDrive", new object[] {
+                    organizationId,
+                    drive,
+                    labelAs,
+                    path}, this.CreateMappedDriveOperationCompleted, userState);
+        }
+
+        private void OnCreateMappedDriveOperationCompleted(object arg)
+        {
+            if ((this.CreateMappedDriveCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CreateMappedDriveCompleted(this, new CreateMappedDriveCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/DeleteMappedDrive", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void DeleteMappedDrive(string organizationId, string drive)
+        {
+            this.Invoke("DeleteMappedDrive", new object[] {
+                    organizationId,
+                    drive});
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginDeleteMappedDrive(string organizationId, string drive, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("DeleteMappedDrive", new object[] {
+                    organizationId,
+                    drive}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public void EndDeleteMappedDrive(System.IAsyncResult asyncResult)
+        {
+            this.EndInvoke(asyncResult);
+        }
+
+        /// <remarks/>
+        public void DeleteMappedDriveAsync(string organizationId, string drive)
+        {
+            this.DeleteMappedDriveAsync(organizationId, drive, null);
+        }
+
+        /// <remarks/>
+        public void DeleteMappedDriveAsync(string organizationId, string drive, object userState)
+        {
+            if ((this.DeleteMappedDriveOperationCompleted == null))
+            {
+                this.DeleteMappedDriveOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDeleteMappedDriveOperationCompleted);
+            }
+            this.InvokeAsync("DeleteMappedDrive", new object[] {
+                    organizationId,
+                    drive}, this.DeleteMappedDriveOperationCompleted, userState);
+        }
+
+        private void OnDeleteMappedDriveOperationCompleted(object arg)
+        {
+            if ((this.DeleteMappedDriveCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DeleteMappedDriveCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/DeleteMappedDriveByPath", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void DeleteMappedDriveByPath(string organizationId, string path)
+        {
+            this.Invoke("DeleteMappedDriveByPath", new object[] {
+                    organizationId,
+                    path});
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginDeleteMappedDriveByPath(string organizationId, string path, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("DeleteMappedDriveByPath", new object[] {
+                    organizationId,
+                    path}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public void EndDeleteMappedDriveByPath(System.IAsyncResult asyncResult)
+        {
+            this.EndInvoke(asyncResult);
+        }
+
+        /// <remarks/>
+        public void DeleteMappedDriveByPathAsync(string organizationId, string path)
+        {
+            this.DeleteMappedDriveByPathAsync(organizationId, path, null);
+        }
+
+        /// <remarks/>
+        public void DeleteMappedDriveByPathAsync(string organizationId, string path, object userState)
+        {
+            if ((this.DeleteMappedDriveByPathOperationCompleted == null))
+            {
+                this.DeleteMappedDriveByPathOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDeleteMappedDriveByPathOperationCompleted);
+            }
+            this.InvokeAsync("DeleteMappedDriveByPath", new object[] {
+                    organizationId,
+                    path}, this.DeleteMappedDriveByPathOperationCompleted, userState);
+        }
+
+        private void OnDeleteMappedDriveByPathOperationCompleted(object arg)
+        {
+            if ((this.DeleteMappedDriveByPathCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DeleteMappedDriveByPathCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/DeleteMappedDrivesGPO", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void DeleteMappedDrivesGPO(string organizationId)
+        {
+            this.Invoke("DeleteMappedDrivesGPO", new object[] {
+                    organizationId});
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginDeleteMappedDrivesGPO(string organizationId, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("DeleteMappedDrivesGPO", new object[] {
+                    organizationId}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public void EndDeleteMappedDrivesGPO(System.IAsyncResult asyncResult)
+        {
+            this.EndInvoke(asyncResult);
+        }
+
+        /// <remarks/>
+        public void DeleteMappedDrivesGPOAsync(string organizationId)
+        {
+            this.DeleteMappedDrivesGPOAsync(organizationId, null);
+        }
+
+        /// <remarks/>
+        public void DeleteMappedDrivesGPOAsync(string organizationId, object userState)
+        {
+            if ((this.DeleteMappedDrivesGPOOperationCompleted == null))
+            {
+                this.DeleteMappedDrivesGPOOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDeleteMappedDrivesGPOOperationCompleted);
+            }
+            this.InvokeAsync("DeleteMappedDrivesGPO", new object[] {
+                    organizationId}, this.DeleteMappedDrivesGPOOperationCompleted, userState);
+        }
+
+        private void OnDeleteMappedDrivesGPOOperationCompleted(object arg)
+        {
+            if ((this.DeleteMappedDrivesGPOCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DeleteMappedDrivesGPOCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SetDriveMapsTargetingFilter", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void SetDriveMapsTargetingFilter(string organizationId, ExchangeAccount[] accounts, string folderName)
+        {
+            this.Invoke("SetDriveMapsTargetingFilter", new object[] {
+                    organizationId,
+                    accounts,
+                    folderName});
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginSetDriveMapsTargetingFilter(string organizationId, ExchangeAccount[] accounts, string folderName, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("SetDriveMapsTargetingFilter", new object[] {
+                    organizationId,
+                    accounts,
+                    folderName}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public void EndSetDriveMapsTargetingFilter(System.IAsyncResult asyncResult)
+        {
+            this.EndInvoke(asyncResult);
+        }
+
+        /// <remarks/>
+        public void SetDriveMapsTargetingFilterAsync(string organizationId, ExchangeAccount[] accounts, string folderName)
+        {
+            this.SetDriveMapsTargetingFilterAsync(organizationId, accounts, folderName, null);
+        }
+
+        /// <remarks/>
+        public void SetDriveMapsTargetingFilterAsync(string organizationId, ExchangeAccount[] accounts, string folderName, object userState)
+        {
+            if ((this.SetDriveMapsTargetingFilterOperationCompleted == null))
+            {
+                this.SetDriveMapsTargetingFilterOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetDriveMapsTargetingFilterOperationCompleted);
+            }
+            this.InvokeAsync("SetDriveMapsTargetingFilter", new object[] {
+                    organizationId,
+                    accounts,
+                    folderName}, this.SetDriveMapsTargetingFilterOperationCompleted, userState);
+        }
+
+        private void OnSetDriveMapsTargetingFilterOperationCompleted(object arg)
+        {
+            if ((this.SetDriveMapsTargetingFilterCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SetDriveMapsTargetingFilterCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
         public new void CancelAsync(object userState)
         {
             base.CancelAsync(userState);
@@ -1734,4 +2078,80 @@ namespace WebsitePanel.Providers.HostedSolution
             }
         }
     }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetDriveMapsCompletedEventHandler(object sender, GetDriveMapsCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetDriveMapsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal GetDriveMapsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public MappedDrive[] Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((MappedDrive[])(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void CreateMappedDriveCompletedEventHandler(object sender, CreateMappedDriveCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CreateMappedDriveCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal CreateMappedDriveCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public int Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((int)(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void DeleteMappedDriveCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void DeleteMappedDriveByPathCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void DeleteMappedDrivesGPOCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void SetDriveMapsTargetingFilterCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 }

@@ -66,7 +66,7 @@ namespace WebsitePanel.Portal
             //Add "Organization Home" menu item
             MenuItem item = new MenuItem(
                 GetLocalizedString("Text.OrganizationHome"), 
-                "", 
+                "",
                 "",
                 PortalUtils.EditUrl("ItemID", PanelRequest.ItemID.ToString(), "organization_home", "SpaceID=" + PanelSecurity.PackageId));
 
@@ -363,6 +363,10 @@ namespace WebsitePanel.Portal
         private void PrepareEnterpriseStorageMenu(PackageContext cntx, MenuItemCollection enterpriseStorageItems)
         {
             enterpriseStorageItems.Add(CreateMenuItem("EnterpriseStorageFolders", "enterprisestorage_folders"));
+
+            if(Utils.CheckQouta(Quotas.ENTERPRICESTORAGE_DRIVEMAPS, cntx))
+                enterpriseStorageItems.Add(CreateMenuItem("EnterpriseStorageDriveMaps", "enterprisestorage_drive_maps"));
+            
         }
 
         private MenuItem CreateMenuItem(string text, string key)

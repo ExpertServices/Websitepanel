@@ -32,6 +32,7 @@ using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.OS;
+using WebsitePanel.WebPortal;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
@@ -155,6 +156,11 @@ namespace WebsitePanel.Portal.ExchangeServer
             gvFolders.PageSize = Convert.ToInt16(ddlPageSize.SelectedValue);
 
             gvFolders.DataBind();
-        }  
+        }
+
+        protected string GetDriveImage()
+        {
+            return String.Concat("~/", DefaultPage.THEMES_FOLDER, "/", Page.Theme, "/", "Images/Exchange", "/", "net_drive16.png");
+        }
     }
 }
