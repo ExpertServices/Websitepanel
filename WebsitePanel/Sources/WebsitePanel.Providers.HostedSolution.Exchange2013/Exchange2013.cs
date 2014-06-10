@@ -3079,6 +3079,22 @@ namespace WebsitePanel.Providers.HostedSolution
                     info.LastLogon = DateTime.MinValue;
                 }
 
+                cmd = new Command("Get-MailboxStatistics");
+                cmd.Parameters.Add("Identity", id);
+                cmd.Parameters.Add("Archive");
+                result = ExecuteShellCommand(runSpace, cmd);
+                if (result.Count > 0)
+                {
+                    PSObject statistics = result[0];
+                    Unlimited<ByteQuantifiedSize> totalItemSize =
+                        (Unlimited<ByteQuantifiedSize>)GetPSObjectProperty(statistics, "TotalItemSize");
+                    info.ArchivingTotalSize = ConvertUnlimitedToBytes(totalItemSize);
+                }
+                else
+                {
+                    info.ArchivingTotalSize = 0;
+                }
+
                 if (info.LitigationHoldEnabled)
                 {
                     cmd = new Command("Get-MailboxFolderStatistics");
