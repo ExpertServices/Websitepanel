@@ -104,13 +104,13 @@ namespace WebsitePanel.Portal.ExchangeServer
                 rowRetentionPolicy.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, cntx);
             }
 
-            rowArchiving.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, cntx);
+            rowArchiving.Visible = false;
 
             int planId = -1;
             int.TryParse(mailboxPlanSelector.MailboxPlanId, out planId);
             ExchangeMailboxPlan plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(PanelRequest.ItemID, planId);
             if (plan!=null)
-                rowArchiving.Visible = rowArchiving.Visible && plan.EnableArchiving;
+                rowArchiving.Visible = plan.EnableArchiving;
 
         }
 

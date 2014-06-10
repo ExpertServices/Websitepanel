@@ -89,7 +89,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             int.TryParse(mailboxPlanSelector.MailboxPlanId, out planId);
             ExchangeMailboxPlan plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(PanelRequest.ItemID, planId);
 
-            secArchiving.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, Cntx) && plan.EnableArchiving;
+            secArchiving.Visible = plan.EnableArchiving;
 
             rowArchiving.Visible = chkEnableArchiving.Checked;
         }
@@ -119,6 +119,10 @@ namespace WebsitePanel.Portal.ExchangeServer
 
                 // get account meta
                 ExchangeAccount account = ES.Services.ExchangeServer.GetAccount(PanelRequest.ItemID, PanelRequest.AccountID);
+
+                // get mailbox plan
+                ExchangeMailboxPlan plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(PanelRequest.ItemID, account.MailboxPlanId);
+
                 chkPmmAllowed.Checked = (account.MailboxManagerActions & MailboxManagerActions.GeneralSettings) > 0;
 
                 if (account.MailboxPlanId == 0)
@@ -156,12 +160,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                     ddDisclaimer.SelectedValue = disclaimerId.ToString();
                 }
 
-                if (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, Cntx))
-                {
-                    chkEnableArchiving.Checked = account.EnableArchiving;
-                    archivingQuotaViewer.QuotaUsedValue = Convert.ToInt32(stats.ArchivingTotalSize / 1024 / 1024);
-                    archivingQuotaViewer.QuotaValue = (stats.ArchivingMaxSize == -1) ? -1 : (int)Math.Round((double)(stats.ArchivingMaxSize / 1024 / 1024));
-                }
+                int ArchivingMaxSize = -1;
+                if (plan != null) ArchivingMaxSize = plan.ArchiveSizeMB;
+                chkEnableArchiving.Checked = account.EnableArchiving;
+                archivingQuotaViewer.QuotaUsedValue = Convert.ToInt32(stats.ArchivingTotalSize / 1024 / 1024);
+                archivingQuotaViewer.QuotaValue = ArchivingMaxSize;
 
             }
             catch (Exception ex)

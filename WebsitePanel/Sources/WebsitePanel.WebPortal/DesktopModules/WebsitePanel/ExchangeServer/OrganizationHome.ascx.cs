@@ -123,13 +123,13 @@ namespace WebsitePanel.Portal.ExchangeServer
             else
                 this.rowExchangeLitigationHold.Style.Add("display", "none");
 
-            if ((!hideItems) && (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWARCHIVING, cntx)))
+            if (!hideItems)
             {
                 exchangeArchivingStatus.QuotaUsedValue = exchangeOrgStats.UsedArchingStorage;
                 exchangeArchivingStatus.QuotaValue = exchangeOrgStats.AllocatedArchingStorage;
                 if (exchangeOrgStats.AllocatedArchingStorage != -1)
                 {
-                    exchangeLitigationHoldStats.QuotaAvailable = exchangeTenantStats.AllocatedArchingStorage - exchangeTenantStats.UsedArchingStorage;
+                    exchangeArchivingStatus.QuotaAvailable = exchangeTenantStats.AllocatedArchingStorage - exchangeTenantStats.UsedArchingStorage;
                 }
             }
             else
