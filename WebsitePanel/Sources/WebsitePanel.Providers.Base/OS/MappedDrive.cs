@@ -26,12 +26,55 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-namespace WebsitePanel.Providers.HostedSolution
+using System;
+
+namespace WebsitePanel.Providers.OS
 {
-    public class Errors
+    /// <summary>
+    /// Summary description for MappedDrive.
+    /// </summary>
+    [Serializable]
+    public class MappedDrive
     {
-        public const int OK = 0;
-        public const int AD_OBJECT_ALREADY_EXISTS = -1;
-        public const int MAPPED_DRIVE_ALREADY_EXISTS = -2;
+        private string path;
+        private string labelAs;
+        private string driveLetter;
+        private SystemFile folder;
+
+        public MappedDrive()
+        {
+        }
+
+        public MappedDrive(string path, string labelAs, string driveLetter)
+        {
+            this.Path = path;
+            this.LabelAs = labelAs;
+            this.DriveLetter = driveLetter;
+            SystemFile folder = null;
+        }
+
+        public string Path
+        {
+            get { return this.path; }
+            set { this.path = value; }
+        }
+
+        public string LabelAs
+        {
+            get { return this.labelAs; }
+            set { this.labelAs = value; }
+        }
+
+        public string DriveLetter
+        {
+            get { return this.driveLetter; }
+            set { this.driveLetter = value; }
+        }
+
+        public SystemFile Folder
+        {
+            get { return this.folder; }
+            set { this.folder = value; }
+        }
     }
 }

@@ -92,6 +92,16 @@ namespace WebsitePanel.EnterpriseServer
 
         private System.Threading.SendOrPostCallback GetStatisticsByOrganizationOperationCompleted;
 
+        private System.Threading.SendOrPostCallback CreateMappedDriveOperationCompleted;
+
+        private System.Threading.SendOrPostCallback DeleteMappedDriveOperationCompleted;
+
+        private System.Threading.SendOrPostCallback GetDriveMapsPagedOperationCompleted;
+
+        private System.Threading.SendOrPostCallback GetUsedDriveLettersOperationCompleted;
+
+        private System.Threading.SendOrPostCallback GetNotMappedEnterpriseFoldersOperationCompleted;
+
         /// <remarks/>
         public esEnterpriseStorage()
         {
@@ -151,6 +161,21 @@ namespace WebsitePanel.EnterpriseServer
 
         /// <remarks/>
         public event GetStatisticsByOrganizationCompletedEventHandler GetStatisticsByOrganizationCompleted;
+
+        /// <remarks/>
+        public event CreateMappedDriveCompletedEventHandler CreateMappedDriveCompleted;
+
+        /// <remarks/>
+        public event DeleteMappedDriveCompletedEventHandler DeleteMappedDriveCompleted;
+
+        /// <remarks/>
+        public event GetDriveMapsPagedCompletedEventHandler GetDriveMapsPagedCompleted;
+
+        /// <remarks/>
+        public event GetUsedDriveLettersCompletedEventHandler GetUsedDriveLettersCompleted;
+
+        /// <remarks/>
+        public event GetNotMappedEnterpriseFoldersCompletedEventHandler GetNotMappedEnterpriseFoldersCompleted;
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/CheckFileServicesInstallation", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -1116,6 +1141,278 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/CreateMappedDrive", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResultObject CreateMappedDrive(int packageId, int itemId, string driveLetter, string labelAs, string folderName)
+        {
+            object[] results = this.Invoke("CreateMappedDrive", new object[] {
+                    packageId,
+                    itemId,
+                    driveLetter,
+                    labelAs,
+                    folderName});
+            return ((ResultObject)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginCreateMappedDrive(int packageId, int itemId, string driveLetter, string labelAs, string folderName, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("CreateMappedDrive", new object[] {
+                    packageId,
+                    itemId,
+                    driveLetter,
+                    labelAs,
+                    folderName}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public ResultObject EndCreateMappedDrive(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ResultObject)(results[0]));
+        }
+
+        /// <remarks/>
+        public void CreateMappedDriveAsync(int packageId, int itemId, string driveLetter, string labelAs, string folderName)
+        {
+            this.CreateMappedDriveAsync(packageId, itemId, driveLetter, labelAs, folderName, null);
+        }
+
+        /// <remarks/>
+        public void CreateMappedDriveAsync(int packageId, int itemId, string driveLetter, string labelAs, string folderName, object userState)
+        {
+            if ((this.CreateMappedDriveOperationCompleted == null))
+            {
+                this.CreateMappedDriveOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCreateMappedDriveOperationCompleted);
+            }
+            this.InvokeAsync("CreateMappedDrive", new object[] {
+                    packageId,
+                    itemId,
+                    driveLetter,
+                    labelAs,
+                    folderName}, this.CreateMappedDriveOperationCompleted, userState);
+        }
+
+        private void OnCreateMappedDriveOperationCompleted(object arg)
+        {
+            if ((this.CreateMappedDriveCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CreateMappedDriveCompleted(this, new CreateMappedDriveCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/DeleteMappedDrive", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResultObject DeleteMappedDrive(int itemId, string driveLetter)
+        {
+            object[] results = this.Invoke("DeleteMappedDrive", new object[] {
+                    itemId,
+                    driveLetter});
+            return ((ResultObject)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginDeleteMappedDrive(int itemId, string driveLetter, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("DeleteMappedDrive", new object[] {
+                    itemId,
+                    driveLetter}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public ResultObject EndDeleteMappedDrive(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ResultObject)(results[0]));
+        }
+
+        /// <remarks/>
+        public void DeleteMappedDriveAsync(int itemId, string driveLetter)
+        {
+            this.DeleteMappedDriveAsync(itemId, driveLetter, null);
+        }
+
+        /// <remarks/>
+        public void DeleteMappedDriveAsync(int itemId, string driveLetter, object userState)
+        {
+            if ((this.DeleteMappedDriveOperationCompleted == null))
+            {
+                this.DeleteMappedDriveOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDeleteMappedDriveOperationCompleted);
+            }
+            this.InvokeAsync("DeleteMappedDrive", new object[] {
+                    itemId,
+                    driveLetter}, this.DeleteMappedDriveOperationCompleted, userState);
+        }
+
+        private void OnDeleteMappedDriveOperationCompleted(object arg)
+        {
+            if ((this.DeleteMappedDriveCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DeleteMappedDriveCompleted(this, new DeleteMappedDriveCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetDriveMapsPaged", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public MappedDrivesPaged GetDriveMapsPaged(int itemId, string filterValue, string sortColumn, int startRow, int maximumRows)
+        {
+            object[] results = this.Invoke("GetDriveMapsPaged", new object[] {
+                    itemId,
+                    filterValue,
+                    sortColumn,
+                    startRow,
+                    maximumRows});
+            return ((MappedDrivesPaged)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginGetDriveMapsPaged(int itemId, string filterValue, string sortColumn, int startRow, int maximumRows, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("GetDriveMapsPaged", new object[] {
+                    itemId,
+                    filterValue,
+                    sortColumn,
+                    startRow,
+                    maximumRows}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public MappedDrivesPaged EndGetDriveMapsPaged(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((MappedDrivesPaged)(results[0]));
+        }
+
+        /// <remarks/>
+        public void GetDriveMapsPagedAsync(int itemId, string filterValue, string sortColumn, int startRow, int maximumRows)
+        {
+            this.GetDriveMapsPagedAsync(itemId, filterValue, sortColumn, startRow, maximumRows, null);
+        }
+
+        /// <remarks/>
+        public void GetDriveMapsPagedAsync(int itemId, string filterValue, string sortColumn, int startRow, int maximumRows, object userState)
+        {
+            if ((this.GetDriveMapsPagedOperationCompleted == null))
+            {
+                this.GetDriveMapsPagedOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetDriveMapsPagedOperationCompleted);
+            }
+            this.InvokeAsync("GetDriveMapsPaged", new object[] {
+                    itemId,
+                    filterValue,
+                    sortColumn,
+                    startRow,
+                    maximumRows}, this.GetDriveMapsPagedOperationCompleted, userState);
+        }
+
+        private void OnGetDriveMapsPagedOperationCompleted(object arg)
+        {
+            if ((this.GetDriveMapsPagedCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetDriveMapsPagedCompleted(this, new GetDriveMapsPagedCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetUsedDriveLetters", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string[] GetUsedDriveLetters(int itemId)
+        {
+            object[] results = this.Invoke("GetUsedDriveLetters", new object[] {
+                    itemId});
+            return ((string[])(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginGetUsedDriveLetters(int itemId, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("GetUsedDriveLetters", new object[] {
+                    itemId}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public string[] EndGetUsedDriveLetters(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((string[])(results[0]));
+        }
+
+        /// <remarks/>
+        public void GetUsedDriveLettersAsync(int itemId)
+        {
+            this.GetUsedDriveLettersAsync(itemId, null);
+        }
+
+        /// <remarks/>
+        public void GetUsedDriveLettersAsync(int itemId, object userState)
+        {
+            if ((this.GetUsedDriveLettersOperationCompleted == null))
+            {
+                this.GetUsedDriveLettersOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetUsedDriveLettersOperationCompleted);
+            }
+            this.InvokeAsync("GetUsedDriveLetters", new object[] {
+                    itemId}, this.GetUsedDriveLettersOperationCompleted, userState);
+        }
+
+        private void OnGetUsedDriveLettersOperationCompleted(object arg)
+        {
+            if ((this.GetUsedDriveLettersCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetUsedDriveLettersCompleted(this, new GetUsedDriveLettersCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetNotMappedEnterpriseFolders", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public SystemFile[] GetNotMappedEnterpriseFolders(int itemId)
+        {
+            object[] results = this.Invoke("GetNotMappedEnterpriseFolders", new object[] {
+                    itemId});
+            return ((SystemFile[])(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginGetNotMappedEnterpriseFolders(int itemId, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("GetNotMappedEnterpriseFolders", new object[] {
+                    itemId}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public SystemFile[] EndGetNotMappedEnterpriseFolders(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((SystemFile[])(results[0]));
+        }
+
+        /// <remarks/>
+        public void GetNotMappedEnterpriseFoldersAsync(int itemId)
+        {
+            this.GetNotMappedEnterpriseFoldersAsync(itemId, null);
+        }
+
+        /// <remarks/>
+        public void GetNotMappedEnterpriseFoldersAsync(int itemId, object userState)
+        {
+            if ((this.GetNotMappedEnterpriseFoldersOperationCompleted == null))
+            {
+                this.GetNotMappedEnterpriseFoldersOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetNotMappedEnterpriseFoldersOperationCompleted);
+            }
+            this.InvokeAsync("GetNotMappedEnterpriseFolders", new object[] {
+                    itemId}, this.GetNotMappedEnterpriseFoldersOperationCompleted, userState);
+        }
+
+        private void OnGetNotMappedEnterpriseFoldersOperationCompleted(object arg)
+        {
+            if ((this.GetNotMappedEnterpriseFoldersCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetNotMappedEnterpriseFoldersCompleted(this, new GetNotMappedEnterpriseFoldersCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
         public new void CancelAsync(object userState)
         {
             base.CancelAsync(userState);
@@ -1606,6 +1903,156 @@ namespace WebsitePanel.EnterpriseServer
             {
                 this.RaiseExceptionIfNecessary();
                 return ((OrganizationStatistics)(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void CreateMappedDriveCompletedEventHandler(object sender, CreateMappedDriveCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CreateMappedDriveCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal CreateMappedDriveCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public ResultObject Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((ResultObject)(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void DeleteMappedDriveCompletedEventHandler(object sender, DeleteMappedDriveCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DeleteMappedDriveCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal DeleteMappedDriveCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public ResultObject Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((ResultObject)(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetDriveMapsPagedCompletedEventHandler(object sender, GetDriveMapsPagedCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetDriveMapsPagedCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal GetDriveMapsPagedCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public MappedDrivesPaged Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((MappedDrivesPaged)(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetUsedDriveLettersCompletedEventHandler(object sender, GetUsedDriveLettersCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetUsedDriveLettersCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal GetUsedDriveLettersCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public string[] Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((string[])(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetNotMappedEnterpriseFoldersCompletedEventHandler(object sender, GetNotMappedEnterpriseFoldersCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetNotMappedEnterpriseFoldersCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal GetNotMappedEnterpriseFoldersCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public SystemFile[] Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((SystemFile[])(this.results[0]));
             }
         }
     }

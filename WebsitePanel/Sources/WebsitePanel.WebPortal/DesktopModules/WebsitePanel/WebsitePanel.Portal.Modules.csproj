@@ -217,6 +217,20 @@
     <Compile Include="CRM\CRMStorageSettings.ascx.designer.cs">
       <DependentUpon>CRMStorageSettings.ascx</DependentUpon>
     </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageCreateDriveMap.ascx.cs">
+      <DependentUpon>EnterpriseStorageCreateDriveMap.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageCreateDriveMap.ascx.designer.cs">
+      <DependentUpon>EnterpriseStorageCreateDriveMap.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageDriveMaps.ascx.cs">
+      <DependentUpon>EnterpriseStorageDriveMaps.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\EnterpriseStorageDriveMaps.ascx.designer.cs">
+      <DependentUpon>EnterpriseStorageDriveMaps.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ExchangeServer\EnterpriseStorageFolderGeneralSettings.ascx.cs">
       <DependentUpon>EnterpriseStorageFolderGeneralSettings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4073,6 +4087,8 @@
   <ItemGroup>
     <Content Include="ApplyEnableHardQuotaFeature.ascx" />
     <Content Include="CRM\CRMStorageSettings.ascx" />
+    <Content Include="ExchangeServer\EnterpriseStorageCreateDriveMap.ascx" />
+    <Content Include="ExchangeServer\EnterpriseStorageDriveMaps.ascx" />
     <Content Include="ExchangeServer\EnterpriseStorageFolderGeneralSettings.ascx" />
     <Content Include="ExchangeServer\EnterpriseStorageCreateFolder.ascx" />
     <Content Include="ExchangeServer\EnterpriseStorageFolders.ascx" />
@@ -5334,6 +5350,10 @@
     <Content Include="App_LocalResources\OrganizationMenu.ascx.resx" />
     <Content Include="App_LocalResources\SettingsExchangeRetentionPolicyTag.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\ExchangeRetentionPolicyTag.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageDriveMaps.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ExchangeServer\App_LocalResources\EnterpriseStorageCreateDriveMap.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
