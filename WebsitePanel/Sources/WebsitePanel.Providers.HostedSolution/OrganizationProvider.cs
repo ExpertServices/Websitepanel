@@ -1753,26 +1753,19 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             HostedSolutionLog.LogStart("OpenRunspace");
 
-            bool isModulesImported = true;
-
             if (runspaceConfiguration == null)
             {
                 runspaceConfiguration = RunspaceConfiguration.Create();
-
-                isModulesImported = false;
             }
-            
+
             Runspace runSpace = RunspaceFactory.CreateRunspace(runspaceConfiguration);
             //
             runSpace.Open();
             //
             runSpace.SessionStateProxy.SetVariable("ConfirmPreference", "none");
 
-            if (!isModulesImported)
-            {
-                ImportGroupPolicyMolude(runSpace);
-                ImportActiveDirectoryMolude(runSpace);
-            }
+            ImportGroupPolicyMolude(runSpace);
+            ImportActiveDirectoryMolude(runSpace);
 
             HostedSolutionLog.LogEnd("OpenRunspace");
             return runSpace;
@@ -1785,7 +1778,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 if (runspace != null && runspace.RunspaceStateInfo.State == RunspaceState.Opened)
                 {
                     runspace.Close();
-                    //runspaceConfiguration = null;
+                    runspaceConfiguration = null;
                 }
             }
             catch (Exception ex)
