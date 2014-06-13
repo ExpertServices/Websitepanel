@@ -1317,7 +1317,7 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 runSpace = OpenRunspace();
 
-                ImportGroupPolicyMolude(runSpace);
+                //ImportGroupPolicyMolude(runSpace);
 
                 string gpoName = string.Format("{0}-mapped-drives", organizationId);
 
@@ -1363,7 +1363,7 @@ namespace WebsitePanel.Providers.HostedSolution
                  runSpace = OpenRunspace();
 
                  //import grouppolicy module
-                 ImportGroupPolicyMolude(runSpace);
+                 //ImportGroupPolicyMolude(runSpace);
 
                  Dictionary<string, ExchangeAccount> sidAccountPairs = new Dictionary<string, ExchangeAccount>();
 
@@ -1463,7 +1463,7 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 runSpace = OpenRunspace();
 
-                ImportGroupPolicyMolude(runSpace);
+                //ImportGroupPolicyMolude(runSpace);
 
                 string gpoName = string.Format("{0}-mapped-drives", organizationId);
                 string pathOU = GetOrganizationTargetPath(organizationId);
@@ -1513,7 +1513,7 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 runSpace = OpenRunspace();
 
-                ImportGroupPolicyMolude(runSpace);
+                //ImportGroupPolicyMolude(runSpace);
 
                 string gpoName = string.Format("{0}-mapped-drives", organizationId);
 
