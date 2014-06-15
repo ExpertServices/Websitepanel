@@ -63,6 +63,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 txtLabelAs.Text = ddlFolders.SelectedItem.Text;
                 lbFolderUrl.Text = ddlFolders.SelectedItem.Value;
+                txtFolderName.Value = ddlFolders.SelectedItem.Text;
             }
         }
 
@@ -102,7 +103,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     PanelRequest.ItemID,
                     ddlLetters.SelectedItem.Value,
                     txtLabelAs.Text,
-                    ddlFolders.SelectedItem.Text);
+                    txtFolderName.Value);
 
                 if (!result.IsSuccess && result.ErrorCodes.Count > 0)
                 {
