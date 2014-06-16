@@ -30,7 +30,8 @@
 							<td class="FormLabel150"><asp:Localize ID="locFolder" runat="server" meta:resourcekey="locFolder" Text="Storage Folder:"></asp:Localize></td>
 							<td> 
                                 <div class="Folders" style="display:inline;">
-                                    <asp:DropDownList ID="ddlFolders" runat="server" CssClass="NormalTextBox" Width="150px" style="vertical-align: middle;" />                    
+                                    <asp:DropDownList ID="ddlFolders" runat="server" CssClass="NormalTextBox" Width="150px" style="vertical-align: middle;" />  
+                                    <asp:HiddenField id="txtFolderName" runat="server"/>                  
                                 </div>
                                 <div class="Url" style="display:inline;">
                                     <asp:Literal ID="lbFolderUrl" runat="server"></asp:Literal>
@@ -42,6 +43,7 @@
 						    <td>
                                 <div class="LabelAs">
 							        <asp:TextBox ID="txtLabelAs" runat="server" CssClass="NormalTextBox" Width="145px"></asp:TextBox>
+                                    
                                 </div>
 						    </td>
 					    </tr>
@@ -69,6 +71,7 @@
         $('.Folders select').bind('change', function () {
             $('.LabelAs input').val($('.Folders select option:selected').text());
             $('.Url').text($('.Folders select option:selected').val());
+            $('.Folders input').val($('.Folders select option:selected').text());
         });
     });
 </script>
