@@ -305,7 +305,7 @@ namespace WebsitePanel.EnterpriseServer
 
                     EnterpriseStorageController.DeleteWebDavDirectory(packageId, usersDomain, org.OrganizationId);
                     EnterpriseStorageController.DeleteFolder(itemId);
-
+                    EnterpriseStorageController.DeleteMappedDrivesGPO(itemId);
                 }
             }
             catch (Exception ex)
@@ -577,6 +577,12 @@ namespace WebsitePanel.EnterpriseServer
 
                 es.DeleteFolder(org.OrganizationId, folderName, webDavSetting);
 
+                string path = string.Format(@"\\{0}@SSL\{1}\{2}", webDavSetting.Domain.Split('.')[0], org.OrganizationId, folderName);
+
+                Organizations orgProxy = OrganizationController.GetOrganizationProxy(org.ServiceId);
+
+                orgProxy.DeleteMappedDriveByPath(org.OrganizationId, path);
+
                 DataProvider.DeleteEnterpriseFolder(itemId, folderName);
             }
             catch (Exception ex)
@@ -658,6 +664,21 @@ namespace WebsitePanel.EnterpriseServer
                     DataProvider.GetEnterpriseFolders(itemId)).ToArray();
 
                     List<SystemFile> folders = es.GetFolders(org.OrganizationId, webDavSettings).Where(x => x.Name.Contains(filterValue)).ToList();
+
+                    Organizations orgProxy = OrganizationController.GetOrganizationProxy(org.ServiceId);
+
+                    List<MappedDrive> mappedDrives = orgProxy.GetDriveMaps(org.OrganizationId).ToList();
+
+                    foreach (MappedDrive drive in mappedDrives)
+                    {
+                        foreach (SystemFile folder in folders)
+                        {
+                            if (drive.Path.Split('\\').Last() == folder.Name)
+                            {
+                                folder.DriveLetter = drive.DriveLetter;        
+                            }
+                        }
+                    }
 
                     switch (sortColumn)
                     {
@@ -786,6 +807,8 @@ namespace WebsitePanel.EnterpriseServer
                     DataProvider.GetEnterpriseFolder(itemId, folder));
 
                 es.SetFolderWebDavRules(org.OrganizationId, folder, webDavSetting, rules);
+
+                EnterpriseStorageController.SetDriveMapsTargetingFilter(org, permission, folder);
             }
             catch (Exception ex)
             {
@@ -890,6 +913,7 @@ namespace WebsitePanel.EnterpriseServer
                     || account.AccountType == ExchangeAccountType.DefaultSecurityGroup)
                 {
                     rule.Roles.Add(permission.Account);
+                    permission.IsGroup = true;
                 }
                 else
                 {
@@ -1193,6 +1217,332 @@ namespace WebsitePanel.EnterpriseServer
             {
                 TaskManager.CompleteTask();
             }
+        }
+
+        #endregion
+
+        #region Drive Mapping
+
+        public static ResultObject CreateMappedDrive(int packageId, int itemId, string driveLetter, string labelAs, string folderName)
+        {
+            return CreateMappedDriveInternal(packageId, itemId, driveLetter, labelAs, folderName);
+        }
+
+        protected static ResultObject CreateMappedDriveInternal(int packageId, int itemId, string driveLetter, string labelAs, string folderName)
+        {
+            ResultObject result = TaskManager.StartResultTask<ResultObject>("ENTERPRISE_STORAGE", "CREATE_MAPPED_DRIVE", itemId);
+
+            try
+            {
+                // load organization
+                Organization org = OrganizationController.GetOrganization(itemId);
+                if (org == null)
+                {
+                    result.IsSuccess = false;
+                    result.AddError("", new NullReferenceException("Organization not found"));
+                    return result;
+                }
+
+                int esServiceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.EnterpriseStorage);
+
+                if (esServiceId != 0)
+                {
+                    var webDavSetting = ObjectUtils.FillObjectFromDataReader<WebDavSetting>(
+                            DataProvider.GetEnterpriseFolder(itemId, folderName));
+
+                    string path = string.Format(@"\\{0}@SSL\{1}\{2}", webDavSetting.Domain.Split('.')[0], org.OrganizationId, folderName);
+
+                    Organizations orgProxy = OrganizationController.GetOrganizationProxy(org.ServiceId);
+
+                    if (orgProxy.CreateMappedDrive(org.OrganizationId, driveLetter, labelAs, path) == 0)
+                    {
+                        var folder = GetFolder(itemId, folderName);
+
+                        EnterpriseStorageController.SetDriveMapsTargetingFilter(org, ConvertToESPermission(itemId, folder.Rules), folderName);
+                    }
+                    else
+                    {
+                        result.AddError("", new Exception("Organization already has mapped drive for this folder"));
+                        return result;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.AddError("ENTERPRISE_STORAGE_CREATE_MAPPED_DRIVE", ex);
+            }
+            finally
+            {
+                if (!result.IsSuccess)
+                {
+                    TaskManager.CompleteResultTask(result);
+                }
+                else
+                {
+                    TaskManager.CompleteResultTask();
+                }
+            }
+
+            return result;
+        }
+
+        public static ResultObject DeleteMappedDrive(int itemId, string driveLetter)
+        {
+            return DeleteMappedDriveInternal(itemId, driveLetter);
+        }
+
+        protected static ResultObject DeleteMappedDriveInternal(int itemId, string driveLetter)
+        {
+            ResultObject result = TaskManager.StartResultTask<ResultObject>("ENTERPRISE_STORAGE", "DELETE_MAPPED_DRIVE", itemId);
+
+            try
+            {
+                // load organization
+                Organization org = OrganizationController.GetOrganization(itemId);
+                if (org == null)
+                {
+                    result.IsSuccess = false;
+                    result.AddError("", new NullReferenceException("Organization not found"));
+                    return result;
+                }
+
+                Organizations orgProxy = OrganizationController.GetOrganizationProxy(org.ServiceId);
+
+                orgProxy.DeleteMappedDrive(org.OrganizationId, driveLetter);
+            }
+            catch (Exception ex)
+            {
+                result.AddError("ENTERPRISE_STORAGE_DELETE_MAPPED_DRIVE", ex);
+            }
+            finally
+            {
+                if (!result.IsSuccess)
+                {
+                    TaskManager.CompleteResultTask(result);
+                }
+                else
+                {
+                    TaskManager.CompleteResultTask();
+                }
+            }
+
+            return result;
+        }
+
+        public static MappedDrivesPaged GetDriveMapsPaged(int itemId, string filterValue, string sortColumn, int startRow, int maximumRows)
+        {
+            return GetDriveMapsPagedInternal(itemId, filterValue, sortColumn, startRow, maximumRows);
+        }
+
+        protected static MappedDrivesPaged GetDriveMapsPagedInternal(int itemId, string filterValue, string sortColumn, int startRow, int maximumRows)
+        {
+            MappedDrivesPaged result = new MappedDrivesPaged();
+
+            try
+            {
+                // load organization
+                Organization org = OrganizationController.GetOrganization(itemId);
+
+                if (org == null)
+                {
+                    return null;
+                }
+
+                EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
+
+                var webDavSettings = ObjectUtils.CreateListFromDataReader<WebDavSetting>(
+                DataProvider.GetEnterpriseFolders(itemId)).ToArray();
+
+                List<SystemFile> folders = es.GetFolders(org.OrganizationId, webDavSettings).ToList();
+
+                Organizations orgProxy = OrganizationController.GetOrganizationProxy(org.ServiceId);
+
+                List<MappedDrive> mappedDrives = orgProxy.GetDriveMaps(org.OrganizationId).Where(x => x.LabelAs.Contains(filterValue)).ToList();
+                List<MappedDrive> resultItems = new List<MappedDrive>();
+
+                foreach (MappedDrive drive in mappedDrives)
+                {
+                    foreach (SystemFile folder in folders)
+                    {
+                        if (drive.Path.Split('\\').Last() == folder.Name)
+                        {
+                            drive.Folder = folder;
+                            resultItems.Add(drive);
+                        }
+                    }
+                }
+
+                mappedDrives = resultItems;
+
+                switch (sortColumn)
+                {
+                    case "Label":
+                        mappedDrives = mappedDrives.OrderBy(x => x.LabelAs).ToList();
+                        break;
+                    default:
+                        mappedDrives = mappedDrives.OrderBy(x => x.DriveLetter).ToList();
+                        break;
+                }
+
+                result.RecordsCount = mappedDrives.Count;
+                result.PageItems = mappedDrives.Skip(startRow).Take(maximumRows).ToArray();
+
+            }
+            catch (Exception ex) { throw ex; }
+
+            return result;
+        }
+
+        public static string[] GetUsedDriveLetters(int itemId)
+        {
+            return GetUsedDriveLettersInternal(itemId);
+        }
+
+        protected static string[] GetUsedDriveLettersInternal(int itemId)
+        {
+            List<string> driveLetters = new List<string>();
+
+            try
+            {
+                // load organization
+                Organization org = OrganizationController.GetOrganization(itemId);
+
+                if (org == null)
+                {
+                    return null;
+                }
+
+                Organizations orgProxy = OrganizationController.GetOrganizationProxy(org.ServiceId);
+
+                driveLetters = orgProxy.GetDriveMaps(org.OrganizationId).Select(x => x.DriveLetter).ToList();
+            }
+            catch (Exception ex) { throw ex; }
+
+            return driveLetters.ToArray();
+            
+        }
+
+        public static SystemFile[] GetNotMappedEnterpriseFolders(int itemId)
+        {
+            return GetNotMappedEnterpriseFoldersInternal(itemId);
+        }
+
+        protected static SystemFile[] GetNotMappedEnterpriseFoldersInternal(int itemId)
+        {
+            List<SystemFile> folders = new List<SystemFile>();
+            try
+            {
+                // load organization
+                Organization org = OrganizationController.GetOrganization(itemId);
+
+                if (org == null)
+                {
+                    return null;
+                }
+
+                if (CheckUsersDomainExistsInternal(itemId, org.PackageId))
+                {
+                    EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
+
+                    var webDavSettings = ObjectUtils.CreateListFromDataReader<WebDavSetting>(
+                    DataProvider.GetEnterpriseFolders(itemId)).ToArray();
+
+                    folders = es.GetFolders(org.OrganizationId, webDavSettings).ToList();
+
+                    Organizations orgProxy = OrganizationController.GetOrganizationProxy(org.ServiceId);
+
+                    List<MappedDrive> drives = orgProxy.GetDriveMaps(org.OrganizationId).ToList();
+
+                    foreach (MappedDrive drive in drives)
+                    {
+                        foreach (SystemFile folder in folders)
+                        {
+                            if (drive.Path.Split('\\').Last() == folder.Name)
+                            {
+                                folders.Remove(folder);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) { throw ex; }
+
+            return folders.ToArray();
+        }
+
+        private static ResultObject SetDriveMapsTargetingFilter(Organization org, ESPermission[] permissions, string folderName)
+        {
+            ResultObject result = TaskManager.StartResultTask<ResultObject>("ENTERPRISE_STORAGE", "SET_MAPPED_DRIVE_TARGETING_FILTER");
+
+            try
+            {
+                Organizations orgProxy = OrganizationController.GetOrganizationProxy(org.ServiceId);
+
+                List<ExchangeAccount> accounts = new List<ExchangeAccount>();
+
+                foreach (var permission in permissions)
+                {
+                    accounts.Add(ObjectUtils.FillObjectFromDataReader<ExchangeAccount>(DataProvider.GetExchangeAccountByAccountName(org.Id, permission.Account)));
+                }
+
+                orgProxy.SetDriveMapsTargetingFilter(org.OrganizationId, accounts.ToArray(), folderName);
+            }
+            catch (Exception ex)
+            {
+                result.AddError("ENTERPRISE_STORAGE_SET_MAPPED_DRIVE_TARGETING_FILTER", ex);
+            }
+            finally
+            {
+                if (!result.IsSuccess)
+                {
+                    TaskManager.CompleteResultTask(result);
+                }
+                else
+                {
+                    TaskManager.CompleteResultTask();
+                }
+            }
+
+            return result;
+        }
+
+        private static ResultObject DeleteMappedDrivesGPO(int itemId)
+        {
+            ResultObject result = TaskManager.StartResultTask<ResultObject>("ENTERPRISE_STORAGE", "DELETE_MAPPED_DRIVES_GPO", itemId);
+
+            try
+            {
+                // load organization
+                Organization org = OrganizationController.GetOrganization(itemId);
+                if (org == null)
+                {
+                    result.IsSuccess = false;
+                    result.AddError("", new NullReferenceException("Organization not found"));
+                    return result;
+                }
+
+                Organizations orgProxy = OrganizationController.GetOrganizationProxy(org.ServiceId);
+
+                orgProxy.DeleteMappedDrivesGPO(org.OrganizationId);
+            }
+            catch (Exception ex)
+            {
+                result.AddError("ENTERPRISE_STORAGE_DELETE_MAPPED_DRIVES_GPO", ex);
+            }
+            finally
+            {
+                if (!result.IsSuccess)
+                {
+                    TaskManager.CompleteResultTask(result);
+                }
+                else
+                {
+                    TaskManager.CompleteResultTask();
+                }
+            }
+
+            return result;
         }
 
         #endregion
