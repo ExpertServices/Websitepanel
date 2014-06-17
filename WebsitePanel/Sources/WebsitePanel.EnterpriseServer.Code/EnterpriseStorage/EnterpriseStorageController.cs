@@ -403,13 +403,19 @@ namespace WebsitePanel.EnterpriseServer
                 EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
 
                 var webDavSetting = ObjectUtils.FillObjectFromDataReader<WebDavSetting>(
-                    DataProvider.GetEnterpriseFolder(itemId, oldFolder));
+                    DataProvider.GetEnterpriseFolder(itemId, newFolder));
 
-                if (webDavSetting == null)
+                bool folderExists = es.GetFolder(org.OrganizationId, newFolder, webDavSetting) != null;
+
+                if (!folderExists)
                 {
                     SystemFile folder = es.RenameFolder(org.OrganizationId, oldFolder, newFolder, webDavSetting);
 
                     DataProvider.UpdateEnterpriseFolder(itemId, oldFolder, newFolder, folder.FRSMQuotaGB);
+
+                    Organizations orgProxy = OrganizationController.GetOrganizationProxy(org.ServiceId);
+
+                    orgProxy.ChangeDriveMapFolderPath(org.OrganizationId, oldFolder, newFolder);
 
                     return folder;
                 }
@@ -1247,10 +1253,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (esServiceId != 0)
                 {
-                    var webDavSetting = ObjectUtils.FillObjectFromDataReader<WebDavSetting>(
-                            DataProvider.GetEnterpriseFolder(itemId, folderName));
+                    StringDictionary esSesstings = ServerController.GetServiceSettings(esServiceId);
 
-                    string path = string.Format(@"\\{0}@SSL\{1}\{2}", webDavSetting.Domain.Split('.')[0], org.OrganizationId, folderName);
+                    string path = string.Format(@"\\{0}@SSL\{1}\{2}", esSesstings["UsersDomain"].Split('.')[0], org.OrganizationId, folderName);
 
                     Organizations orgProxy = OrganizationController.GetOrganizationProxy(org.ServiceId);
 

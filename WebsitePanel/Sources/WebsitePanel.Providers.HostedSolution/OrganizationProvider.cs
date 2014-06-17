@@ -1317,8 +1317,6 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 runSpace = OpenRunspace();
 
-                //ImportGroupPolicyMolude(runSpace);
-
                 string gpoName = string.Format("{0}-mapped-drives", organizationId);
 
                 //create new gpo 
@@ -1330,6 +1328,8 @@ namespace WebsitePanel.Providers.HostedSolution
             catch (Exception ex)
             {
                 CloseRunspace(runSpace);
+
+                throw;
             }
             finally
             {
@@ -1361,9 +1361,6 @@ namespace WebsitePanel.Providers.HostedSolution
              try
              {
                  runSpace = OpenRunspace();
-
-                 //import grouppolicy module
-                 //ImportGroupPolicyMolude(runSpace);
 
                  Dictionary<string, ExchangeAccount> sidAccountPairs = new Dictionary<string, ExchangeAccount>();
 
@@ -1445,7 +1442,9 @@ namespace WebsitePanel.Providers.HostedSolution
              }
              catch (Exception ex)
              {
+                 CloseRunspace(runSpace);
 
+                 throw;
              }
              finally
              {
@@ -1453,7 +1452,71 @@ namespace WebsitePanel.Providers.HostedSolution
 
                  HostedSolutionLog.LogEnd("SetDriveMapsTargetingFilterInternal");
              }
-        } 
+        }
+
+        public void ChangeDriveMapFolderPath(string organizationId, string oldFolder, string newFolder)
+        {
+            ChangeDriveMapFolderPathInternal(organizationId, oldFolder, newFolder);
+        }
+
+        internal void ChangeDriveMapFolderPathInternal(string organizationId, string oldFolder, string newFolder)
+        {
+            HostedSolutionLog.LogStart("ChangeDriveMapFolderPathInternal");
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            Runspace runSpace = null;
+
+            try
+            {
+                runSpace = OpenRunspace();
+
+                string gpoId;
+
+                 if (!CheckMappedDriveGpoExists(organizationId, out gpoId))
+                 {
+                     CreateAndLinkMappedDrivesGPO(organizationId, out gpoId);
+                 }
+
+                 if (!string.IsNullOrEmpty(gpoId))
+                 {
+                     string drivesXmlPath = string.Format("{0}\\{1}",
+                                                          string.Format(GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE, RootDomain, gpoId),
+                                                          "Drives.xml");
+                     // open xml document
+                     XmlDocument xml = new XmlDocument();
+                     xml.Load(drivesXmlPath);
+
+                     XmlNodeList drives = xml.SelectNodes(string.Format("./Drives/Drive[contains(Properties/@path,'{0}')]", oldFolder));
+
+                     foreach (XmlNode driveNode in drives)
+                     {
+                         if (driveNode.ChildNodes.Count > 1)
+                         {
+                             string oldPath = driveNode.FirstChild.Attributes["path"].Value;
+
+                             driveNode.FirstChild.Attributes["path"].Value = oldPath.Replace(oldFolder, newFolder);
+                         }
+                     }
+
+                     xml.Save(drivesXmlPath);
+                 }
+            }
+            catch (Exception ex)
+            {
+                CloseRunspace(runSpace);
+
+                throw;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+
+                HostedSolutionLog.LogEnd("ChangeDriveMapFolderPathInternal");
+            }
+        }
 
         private void CreateAndLinkMappedDrivesGPO(string organizationId, out string gpoId)
         {
@@ -1462,8 +1525,6 @@ namespace WebsitePanel.Providers.HostedSolution
             try
             {
                 runSpace = OpenRunspace();
-
-                //ImportGroupPolicyMolude(runSpace);
 
                 string gpoName = string.Format("{0}-mapped-drives", organizationId);
                 string pathOU = GetOrganizationTargetPath(organizationId);
@@ -1498,6 +1559,8 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 gpoId = null;
                 CloseRunspace(runSpace);
+
+                throw;
             }
             finally
             {
@@ -1513,8 +1576,6 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 runSpace = OpenRunspace();
 
-                //ImportGroupPolicyMolude(runSpace);
-
                 string gpoName = string.Format("{0}-mapped-drives", organizationId);
 
                 Command cmd = new Command("Get-GPO");
@@ -1529,6 +1590,13 @@ namespace WebsitePanel.Providers.HostedSolution
                     PSObject gpo = result[0];
                     gpoId = ((Guid)GetPSObjectProperty(gpo, "Id")).ToString("B");
                 }
+            }
+            catch (Exception ex)
+            {
+                gpoId = null;
+                CloseRunspace(runSpace);
+
+                throw;
             }
             finally
             {
@@ -1557,22 +1625,6 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         #region Drive Mapping Helpers
-
-        private void ImportGroupPolicyMolude(Runspace runSpace)
-        {
-            Command cmd = new Command("Import-Module");
-            cmd.Parameters.Add("Name", "grouppolicy");
-
-            ExecuteShellCommand(runSpace, cmd);
-        }
-
-        private void ImportActiveDirectoryMolude(Runspace runSpace)
-        {
-            Command cmd = new Command("Import-Module");
-            cmd.Parameters.Add("Name", "ActiveDirectory");
-
-            ExecuteShellCommand(runSpace, cmd);
-        }
 
         private void CreateDrivesXmlEmpty(string path, string fileName)
         {
@@ -1746,6 +1798,22 @@ namespace WebsitePanel.Providers.HostedSolution
         #endregion
 
         #region PowerShell integration
+
+        internal void ImportGroupPolicyMolude(Runspace runSpace)
+        {
+            Command cmd = new Command("Import-Module");
+            cmd.Parameters.Add("Name", "grouppolicy");
+
+            ExecuteShellCommand(runSpace, cmd);
+        }
+
+        internal void ImportActiveDirectoryMolude(Runspace runSpace)
+        {
+            Command cmd = new Command("Import-Module");
+            cmd.Parameters.Add("Name", "ActiveDirectory");
+
+            ExecuteShellCommand(runSpace, cmd);
+        }
 
         private static RunspaceConfiguration runspaceConfiguration = null;
 
