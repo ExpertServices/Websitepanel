@@ -117,52 +117,46 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="btnAddFolder.Text" xml:space="preserve">
-    <value>Create New Folder</value>
+  <data name="btnCreate.OnClientClick" xml:space="preserve">
+    <value>ShowProgressDialog('Creating drive map ...');</value>
   </data>
-  <data name="cmdDelete.OnClientClick" xml:space="preserve">
-    <value>if(!confirm('Are you sure you want to delete selected folder?')) return false; else ShowProgressDialog('Deleting Folder...');</value>
+  <data name="btnCreate.Text" xml:space="preserve">
+    <value>Create Drive Map</value>
   </data>
-  <data name="cmdDelete.Text" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="cmdDelete.ToolTip" xml:space="preserve">
-    <value>Delete Folder</value>
-  </data>
-  <data name="gvFolders.Empty" xml:space="preserve">
-    <value>No folders have been added yet. To add a new folder click "Create New Folder" button.</value>
-  </data>
-  <data name="HSFormComments.Text" xml:space="preserve">
+  <data name="FormComments.Text" xml:space="preserve">
     <value />
   </data>
-  <data name="locQuotaFolders.Text" xml:space="preserve">
-    <value>Total Folders Allocated:</value>
+  <data name="locDisplayName.Text" xml:space="preserve">
+    <value>Folder Name: *</value>
   </data>
   <data name="Text.PageName" xml:space="preserve">
-    <value>Folders</value>
+    <value>Drive Maps</value>
   </data>
-  <data name="gvFolderName.Header" xml:space="preserve">
-    <value>Folder Name</value>
+  <data name="valRequireFolderName.ErrorMessage" xml:space="preserve">
+    <value>Enter Folder Name</value>
   </data>
-  <data name="gvFolderSize.Header" xml:space="preserve">
-    <value>Used Space</value>
+  <data name="valRequireFolderName.Text" xml:space="preserve">
+    <value>*</value>
   </data>
   <data name="locTitle" xml:space="preserve">
-    <value>Folders</value>
+    <value>Create New Drive Map</value>
   </data>
-  <data name="gvFolderUrl.Header" xml:space="preserve">
-    <value>Url</value>
+  <data name="locDriveLabel" xml:space="preserve">
+    <value>Label As:</value>
   </data>
-  <data name="locQuotaSpace.Text" xml:space="preserve">
-    <value>Total Space Allocated (Gb):</value>
+  <data name="locFolder" xml:space="preserve">
+    <value>Storage Folder:</value>
   </data>
-  <data name="gvFolderQuota.Header" xml:space="preserve">
-    <value>Allocated Space</value>
+  <data name="rangeFolderSize" xml:space="preserve">
+    <value>*</value>
   </data>
-  <data name="locQuotaAvailableSpace.Text" xml:space="preserve">
-    <value>Used Diskspace (Mb):</value>
+  <data name="valRequireFolderSize" xml:space="preserve">
+    <value>valRequireFolderSize</value>
   </data>
-  <data name="gvMappedDrive.Header" xml:space="preserve">
-    <value>Drive Map</value>
+  <data name="valRequireFolderSize.ErrorMessage" xml:space="preserve">
+    <value>Enter Folder Size</value>
+  </data>
+  <data name="locDriveLetter" xml:space="preserve">
+    <value>Select Drive Letter:</value>
   </data>
 </root>

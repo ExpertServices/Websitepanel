@@ -228,4 +228,7 @@
   <data name="Text.RetentionPolicyTag" xml:space="preserve">
     <value>Retention Policy Tag</value>
   </data>
+  <data name="Text.EnterpriseStorageDriveMaps" xml:space="preserve">
+    <value>Drive Maps</value>
+  </data>
 </root>

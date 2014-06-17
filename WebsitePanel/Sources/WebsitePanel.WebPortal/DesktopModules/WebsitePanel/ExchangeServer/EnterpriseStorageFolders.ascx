@@ -46,7 +46,7 @@
 					    DataSourceID="odsEnterpriseFoldersPaged" PageSize="20">
                         <Columns>
 						    <asp:TemplateField HeaderText="gvFolderName" SortExpression="Name">
-							    <ItemStyle Width="30%"></ItemStyle>
+                                <ItemStyle Width="20%"></ItemStyle>
 							    <ItemTemplate>
 								    <asp:hyperlink id="lnkFolderName" runat="server"
 									    NavigateUrl='<%# GetFolderEditUrl(Eval("Name").ToString()) %>'>
@@ -55,21 +55,28 @@
 							    </ItemTemplate>
 						    </asp:TemplateField>
                             <asp:TemplateField HeaderText="gvFolderQuota" SortExpression="FRSMQuotaGB">
-							    <ItemStyle Width="20%"></ItemStyle>
+							    <ItemStyle Width="15%"></ItemStyle>
 							    <ItemTemplate>
                                     <asp:Literal id="litFolderQuota" runat="server" Text='<%# ConvertMBytesToGB(Eval("FRSMQuotaMB")).ToString() + " Gb" %>'></asp:Literal>
 							    </ItemTemplate>
 						    </asp:TemplateField>
                             <asp:TemplateField HeaderText="gvFolderSize" SortExpression="Size">
-							    <ItemStyle Width="20%"></ItemStyle>
+							    <ItemStyle Width="15%"></ItemStyle>
 							    <ItemTemplate>
                                     <asp:Literal id="litFolderSize" runat="server" Text='<%# (ConvertMBytesToGB(Eval("Size"))).ToString() + " Gb" %>'></asp:Literal>
 							    </ItemTemplate>
 						    </asp:TemplateField>
                             <asp:TemplateField HeaderText="gvFolderUrl">
-							    <ItemStyle Width="50%"></ItemStyle>
+							    <ItemStyle Width="40%"></ItemStyle>
 							    <ItemTemplate>
                                     <asp:Literal id="litFolderUrl" runat="server" Text='<%# Eval("Url").ToString() %>'></asp:Literal>
+							    </ItemTemplate>
+						    </asp:TemplateField>
+                            <asp:TemplateField HeaderText="gvMappedDrive">
+							    <ItemStyle Width="10%"></ItemStyle>
+							    <ItemTemplate>
+                                     <asp:Image ID="img1" runat="server" ImageUrl='<%# GetDriveImage() %>' ImageAlign="AbsMiddle"  Visible ='<%# Eval("DriveLetter") != null %>'/>
+                                    <asp:Literal id="litMappedDrive" runat="server" Text='<%# Eval("DriveLetter") != null? string.Format("{0}:", Eval("DriveLetter")) : "not mapped" %>'></asp:Literal>
 							    </ItemTemplate>
 						    </asp:TemplateField>
 						    <asp:TemplateField>

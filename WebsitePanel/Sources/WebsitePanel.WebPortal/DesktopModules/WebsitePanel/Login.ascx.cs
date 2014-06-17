@@ -142,6 +142,12 @@ namespace WebsitePanel.Portal
             if (cookie != null)
             {
                 txtUsername.Text = cookie.Value;
+                txtPassword.Focus();
+            }
+            else
+            {
+                // set focus on username field
+                txtUsername.Focus();
             }
 
             if (PortalUtils.GetHideThemeAndLocale())
@@ -151,9 +157,6 @@ namespace WebsitePanel.Portal
                 ddlTheme.Visible = false;
                 lblTheme.Visible = false;
             }
-
-            // set focus on username field
-            txtUsername.Focus();
         }
 
         protected void cmdForgotPassword_Click(object sender, EventArgs e)

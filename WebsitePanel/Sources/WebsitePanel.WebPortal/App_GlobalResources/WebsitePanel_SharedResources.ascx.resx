@@ -5455,6 +5455,9 @@
   <data name="Quota.Exchange2013.AllowArchiving" xml:space="preserve">
     <value>Allow Archiving</value>
   </data>
+  <data name="Quota.EnterpriseStorage.DriveMaps" xml:space="preserve">
+    <value>Use Drive Maps</value>
+  </data>
   <data name="Text.All" xml:space="preserve">
     <value>All</value>
   </data>
