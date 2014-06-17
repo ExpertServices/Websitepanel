@@ -91,5 +91,7 @@ namespace WebsitePanel.Providers.HostedSolution
         void DeleteMappedDrivesGPO(string organizationId);
 
         void SetDriveMapsTargetingFilter(string organizationId, ExchangeAccount[] accounts, string folderName);
+
+        void ChangeDriveMapFolderPath(string organizationId, string oldFolder, string newFolder);
     }
 }

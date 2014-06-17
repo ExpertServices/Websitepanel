@@ -241,5 +241,11 @@ namespace WebsitePanel.Server
         {
             Organization.SetDriveMapsTargetingFilter(organizationId, accounts, folderName);
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public void ChangeDriveMapFolderPath(string organizationId, string oldFolder, string newFolder)
+        {
+            Organization.ChangeDriveMapFolderPath(organizationId, oldFolder, newFolder);
+        }
     }
 }

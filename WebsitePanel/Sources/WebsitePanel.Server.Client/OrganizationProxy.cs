@@ -118,6 +118,8 @@ namespace WebsitePanel.Providers.HostedSolution
 
         private System.Threading.SendOrPostCallback SetDriveMapsTargetingFilterOperationCompleted;
 
+        private System.Threading.SendOrPostCallback ChangeDriveMapFolderPathOperationCompleted;
+
         /// <remarks/>
         public Organizations()
         {
@@ -201,6 +203,9 @@ namespace WebsitePanel.Providers.HostedSolution
 
         /// <remarks/>
         public event SetDriveMapsTargetingFilterCompletedEventHandler SetDriveMapsTargetingFilterCompleted;
+
+        /// <remarks/>
+        public event ChangeDriveMapFolderPathCompletedEventHandler ChangeDriveMapFolderPathCompleted;
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -1759,6 +1764,60 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/ChangeDriveMapFolderPath", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void ChangeDriveMapFolderPath(string organizationId, string oldFolder, string newFolder)
+        {
+            this.Invoke("ChangeDriveMapFolderPath", new object[] {
+                    organizationId,
+                    oldFolder,
+                    newFolder});
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginChangeDriveMapFolderPath(string organizationId, string oldFolder, string newFolder, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("ChangeDriveMapFolderPath", new object[] {
+                    organizationId,
+                    oldFolder,
+                    newFolder}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public void EndChangeDriveMapFolderPath(System.IAsyncResult asyncResult)
+        {
+            this.EndInvoke(asyncResult);
+        }
+
+        /// <remarks/>
+        public void ChangeDriveMapFolderPathAsync(string organizationId, string oldFolder, string newFolder)
+        {
+            this.ChangeDriveMapFolderPathAsync(organizationId, oldFolder, newFolder, null);
+        }
+
+        /// <remarks/>
+        public void ChangeDriveMapFolderPathAsync(string organizationId, string oldFolder, string newFolder, object userState)
+        {
+            if ((this.ChangeDriveMapFolderPathOperationCompleted == null))
+            {
+                this.ChangeDriveMapFolderPathOperationCompleted = new System.Threading.SendOrPostCallback(this.OnChangeDriveMapFolderPathOperationCompleted);
+            }
+            this.InvokeAsync("ChangeDriveMapFolderPath", new object[] {
+                    organizationId,
+                    oldFolder,
+                    newFolder}, this.ChangeDriveMapFolderPathOperationCompleted, userState);
+        }
+
+        private void OnChangeDriveMapFolderPathOperationCompleted(object arg)
+        {
+            if ((this.ChangeDriveMapFolderPathCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.ChangeDriveMapFolderPathCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
         public new void CancelAsync(object userState)
         {
             base.CancelAsync(userState);
@@ -2154,4 +2213,8 @@ namespace WebsitePanel.Providers.HostedSolution
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void SetDriveMapsTargetingFilterCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void ChangeDriveMapFolderPathCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 }
