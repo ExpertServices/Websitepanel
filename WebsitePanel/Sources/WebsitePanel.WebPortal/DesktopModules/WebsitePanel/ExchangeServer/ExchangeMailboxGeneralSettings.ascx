@@ -49,7 +49,7 @@
 					                <tr>
 					                    <td class="FormLabel150"><asp:Localize ID="Localize2" runat="server" meta:resourcekey="locMailboxplanName" Text="Mailbox plan: *"></asp:Localize></td>
 					                    <td>                                
-                                            <wsp:MailboxPlanSelector ID="mailboxPlanSelector" runat="server" Changed="mailboxPlanSelector_Changed" />
+                                            <wsp:MailboxPlanSelector ID="mailboxPlanSelector" runat="server" OnChanged="mailboxPlanSelector_Changed" />
                                         </td>
 					                </tr>
 					                <tr>
@@ -108,7 +108,7 @@
 						            <tr>
 						                <td class="FormLabel150"></td>
 						                <td>
-						                    <asp:CheckBox ID="chkEnableArchiving" runat="server" meta:resourcekey="chkEnableArchiving" Text="Enable archiving" AutoPostBack="true" />
+						                    <asp:CheckBox ID="chkEnableArchiving" runat="server" meta:resourcekey="chkEnableArchiving" Text="Enable archiving" />
 						                    <br />
 						                </td>
 						            </tr>

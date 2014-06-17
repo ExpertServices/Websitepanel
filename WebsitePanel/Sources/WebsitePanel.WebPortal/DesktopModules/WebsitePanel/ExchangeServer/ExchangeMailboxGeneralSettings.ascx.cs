@@ -82,7 +82,6 @@ namespace WebsitePanel.Portal.ExchangeServer
                 }
 
                 secRetentionPolicy.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, Cntx);
-
             }
 
             int planId = -1;
@@ -90,8 +89,6 @@ namespace WebsitePanel.Portal.ExchangeServer
             ExchangeMailboxPlan plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(PanelRequest.ItemID, planId);
 
             secArchiving.Visible = plan.EnableArchiving;
-
-            rowArchiving.Visible = chkEnableArchiving.Checked;
         }
 
         private void BindSettings()
@@ -165,6 +162,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 chkEnableArchiving.Checked = account.EnableArchiving;
                 archivingQuotaViewer.QuotaUsedValue = Convert.ToInt32(stats.ArchivingTotalSize / 1024 / 1024);
                 archivingQuotaViewer.QuotaValue = ArchivingMaxSize;
+                rowArchiving.Visible = chkEnableArchiving.Checked;
 
             }
             catch (Exception ex)

@@ -85,6 +85,15 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::System.Web.UI.WebControls.DropDownList ddlFolders;
         
         /// <summary>
+        /// txtFolderName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField txtFolderName;
+        
+        /// <summary>
         /// lbFolderUrl control.
         /// </summary>
         /// <remarks>
