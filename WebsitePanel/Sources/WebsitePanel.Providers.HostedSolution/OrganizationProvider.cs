@@ -97,18 +97,6 @@ namespace WebsitePanel.Providers.HostedSolution
             return sb.ToString();
         }
 
-        private string GetObjectTargetPath(string organizationId, string objName)
-        {
-            StringBuilder sb = new StringBuilder();
-            // append provider
-            AppendCNPath(sb, objName);
-            AppendOUPath(sb, organizationId);
-            AppendOUPath(sb, RootOU);
-            AppendDomainPath(sb, RootDomain);
-
-            return sb.ToString();
-        }
-
         private string GetOrganizationPath(string organizationId)
         {
             StringBuilder sb = new StringBuilder();
@@ -1149,10 +1137,10 @@ namespace WebsitePanel.Providers.HostedSolution
 
         public MappedDrive[] GetDriveMaps(string organizationId)
         {
-            return GetDriveMapsInternal(organizationId);
+            return GetDriveMapsInternal(organizationId, false);
         }
 
-        internal MappedDrive[] GetDriveMapsInternal(string organizationId)
+        internal MappedDrive[] GetDriveMapsInternal(string organizationId, bool newDrive)
         {
             HostedSolutionLog.LogStart("GetDriveMapsInternal");
             HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
@@ -1160,16 +1148,17 @@ namespace WebsitePanel.Providers.HostedSolution
             if (string.IsNullOrEmpty(organizationId))
                 throw new ArgumentNullException("organizationId");
 
+            ArrayList items = new ArrayList();
+
             string gpoId;
 
             if (!CheckMappedDriveGpoExists(organizationId, out gpoId))
             {
-                CreateAndLinkMappedDrivesGPO(organizationId, out gpoId);
+                HostedSolutionLog.LogEnd("GetDriveMapsInternal");
+
+                return (MappedDrive[])items.ToArray(typeof(MappedDrive));
             }
-
-            ArrayList items = new ArrayList();
-
-            if (!string.IsNullOrEmpty(gpoId))
+            else if (!string.IsNullOrEmpty(gpoId))
             {
                 string path = string.Format("{0}\\{1}",
                                             string.Format(GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE, RootDomain, gpoId),
@@ -1179,9 +1168,16 @@ namespace WebsitePanel.Providers.HostedSolution
                 XmlDocument xml = new XmlDocument();
                 xml.Load(path);
 
+                MappedDrive[] drives = GetDrivesFromXML(xml, items);
+
+                if (drives.Length == 0 && !newDrive)
+                {
+                    DeleteMappedDrivesGPO(organizationId);
+                }
+
                 HostedSolutionLog.LogEnd("GetDriveMapsInternal");
 
-                return GetDrivesFromXML(xml, items);
+                return drives;
             }
 
             HostedSolutionLog.LogEnd("GetDriveMapsInternal");
@@ -1213,7 +1209,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 CreateAndLinkMappedDrivesGPO(organizationId, out gpoId);
             }
 
-            if (CheckMappedDriveExists(organizationId, path))
+            if (CheckMappedDriveExists(organizationId, path, true))
             {
                 return Errors.MAPPED_DRIVE_ALREADY_EXISTS;
             }
@@ -1356,52 +1352,21 @@ namespace WebsitePanel.Providers.HostedSolution
             if (string.IsNullOrEmpty(folderName))
                 throw new ArgumentNullException("folderName");
 
-             Runspace runSpace = null;
-
              try
              {
-                 runSpace = OpenRunspace();
-
                  Dictionary<string, ExchangeAccount> sidAccountPairs = new Dictionary<string, ExchangeAccount>();
-
-                 Command cmd; 
 
                  foreach (var account in accounts)
                  {
-                     string pathObj = GetObjectTargetPath(organizationId, account.AccountName);
+                     string path = IsGroup(account) ? GetGroupPath(organizationId, account.AccountName) : GetUserPath(organizationId, account.AccountName);
 
-                     if (IsGroup(account))
-                     {
-                         //get group sid
-                         cmd = new Command("Get-ADGroup");
-                         cmd.Parameters.Add("SearchBase", pathObj);
-                         cmd.Parameters.Add("Filter", "*");
+                     DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
 
-                         Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+                     byte[] sidByteArr = (byte[])ActiveDirectoryUtils.GetADObjectProperty(entry, ADAttributes.SID);
 
-                         if (result != null && result.Count > 0)
-                         {
-                             PSObject group = result[0];
+                     string sid = new System.Security.Principal.SecurityIdentifier(sidByteArr, 0).ToString();
 
-                             sidAccountPairs.Add(GetPSObjectProperty(group, "SID").ToString(), account);
-                         }
-                     }
-                     else
-                     {
-                         //get user sid
-                         cmd = new Command("Get-ADUser");
-                         cmd.Parameters.Add("SearchBase", pathObj);
-                         cmd.Parameters.Add("Filter", "*");
-
-                         Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
-
-                         if (result != null && result.Count > 0)
-                         {
-                             PSObject user = result[0];
-
-                             sidAccountPairs.Add(GetPSObjectProperty(user, "SID").ToString(), account);
-                         }
-                     }
+                     sidAccountPairs.Add(sid, account);
                  }
 
                  string gpoId;
@@ -1442,14 +1407,10 @@ namespace WebsitePanel.Providers.HostedSolution
              }
              catch (Exception ex)
              {
-                 CloseRunspace(runSpace);
-
                  throw;
              }
              finally
              {
-                 CloseRunspace(runSpace);
-
                  HostedSolutionLog.LogEnd("SetDriveMapsTargetingFilterInternal");
              }
         }
@@ -1606,11 +1567,11 @@ namespace WebsitePanel.Providers.HostedSolution
             return string.IsNullOrEmpty(gpoId) ? false : true;
         }
 
-        private bool CheckMappedDriveExists(string organizationId, string path)
+        private bool CheckMappedDriveExists(string organizationId, string path, bool newDrive)
         {
             bool exists = false;
 
-            MappedDrive[] drives = GetDriveMapsInternal(organizationId);
+            MappedDrive[] drives = GetDriveMapsInternal(organizationId, newDrive);
 
             foreach (var item in drives)
             {
@@ -1807,14 +1768,6 @@ namespace WebsitePanel.Providers.HostedSolution
             ExecuteShellCommand(runSpace, cmd);
         }
 
-        internal void ImportActiveDirectoryMolude(Runspace runSpace)
-        {
-            Command cmd = new Command("Import-Module");
-            cmd.Parameters.Add("Name", "ActiveDirectory");
-
-            ExecuteShellCommand(runSpace, cmd);
-        }
-
         private static RunspaceConfiguration runspaceConfiguration = null;
 
         internal virtual Runspace OpenRunspace()
@@ -1833,7 +1786,6 @@ namespace WebsitePanel.Providers.HostedSolution
             runSpace.SessionStateProxy.SetVariable("ConfirmPreference", "none");
 
             ImportGroupPolicyMolude(runSpace);
-            ImportActiveDirectoryMolude(runSpace);
 
             HostedSolutionLog.LogEnd("OpenRunspace");
             return runSpace;
