@@ -742,7 +742,7 @@ namespace WebsitePanel.EnterpriseServer
                 if (web.VirtualDirectoryExists(site, vdirName))
                     return BusinessErrorCodes.ERROR_VDIR_ALREADY_EXISTS;
 
-                web.CreateVirtualDirectory(site, dir);
+                web.CreateEnterpriseStorageVirtualDirectory(site, dir);
 
                 return 0;
 
