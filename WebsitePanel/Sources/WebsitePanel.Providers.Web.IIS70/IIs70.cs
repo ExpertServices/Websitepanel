@@ -1658,6 +1658,39 @@ namespace WebsitePanel.Providers.Web
             }
 		}
 
+        /// <summary>
+        /// Creates virtual iisDirObject under site (Enterprise Storage) with specified id.
+        /// </summary>
+        /// <param name="siteId">Site's id to create virtual iisDirObject under.</param>
+        /// <param name="iisDirObject">Virtual iisDirObject description.</param>
+        public override void CreateEnterpriseStorageVirtualDirectory(string siteId, WebVirtualDirectory directory)
+        {
+            // Create iisDirObject folder if not exists.
+            if (!FileUtils.DirectoryExists(directory.ContentPath))
+            {
+                FileUtils.CreateDirectory(directory.ContentPath);
+            }
+            //
+            WebSite webSite = GetSite(siteId);
+            // copy props from parent site
+            directory.ParentSiteName = siteId;
+            directory.AspNetInstalled = webSite.AspNetInstalled;
+            directory.ApplicationPool = webSite.ApplicationPool;
+            // Create record in IIS's configuration.
+            webObjectsSvc.CreateVirtualDirectory(siteId, directory.VirtualPath, directory.ContentPath);
+
+            using (ServerManager srvman = webObjectsSvc.GetServerManager())
+            {
+                PropertyBag bag = anonymAuthSvc.GetAuthenticationSettings(srvman, siteId);
+                directory.AnonymousUsername = (string)bag[AuthenticationGlobals.AnonymousAuthenticationUserName];
+                directory.AnonymousUserPassword = (string)bag[AuthenticationGlobals.AnonymousAuthenticationPassword];
+            }
+            // Update virtual directory (set parent site pool)
+            webObjectsSvc.UpdateVirtualDirectory(directory);
+            // Disable Anonymous Authentication
+            SetAnonymousAuthentication(directory);
+        }
+
 		/// <summary>
 		/// Updates virtual iisDirObject settings.
 		/// </summary>

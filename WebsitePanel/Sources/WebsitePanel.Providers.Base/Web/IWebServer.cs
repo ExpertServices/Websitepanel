@@ -65,6 +65,7 @@ namespace WebsitePanel.Providers.Web
 		WebVirtualDirectory[] GetVirtualDirectories(string siteId);
 		WebVirtualDirectory GetVirtualDirectory(string siteId, string directoryName);
 		void CreateVirtualDirectory(string siteId, WebVirtualDirectory directory);
+        void CreateEnterpriseStorageVirtualDirectory(string siteId, WebVirtualDirectory directory);
 		void UpdateVirtualDirectory(string siteId, WebVirtualDirectory directory);
 		void DeleteVirtualDirectory(string siteId, string directoryName);
 
