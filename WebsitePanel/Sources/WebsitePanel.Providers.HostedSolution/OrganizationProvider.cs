@@ -53,6 +53,7 @@ namespace WebsitePanel.Providers.HostedSolution
         private const string GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE = @"\\{0}\SYSVOL\{0}\Policies\{1}\User\Preferences\Drives";
         private const string DRIVES_CLSID = "{8FDDCC1A-0C3C-43cd-A6B4-71A6DF20DA8C}";
         private const string DRIVE_CLSID = "{935D1B74-9CB8-4e3c-9914-7DD559B7A417}";
+        private const string gPCUserExtensionNames = "[{00000000-0000-0000-0000-000000000000}{2EA1A81B-48E5-45E9-8BB7-A6E3AC170006}][{5794DAFD-BE60-433F-88A2-1A31939AC01F}{2EA1A81B-48E5-45E9-8BB7-A6E3AC170006}]";
 
         #endregion
 
@@ -1582,7 +1583,23 @@ namespace WebsitePanel.Providers.HostedSolution
                 }
             }
 
+            if (drives.Length == 0 && newDrive)
+            {
+                SetGPCUserExtensionNames(organizationId);
+            }
+
             return exists;
+        }
+
+        private void SetGPCUserExtensionNames(string organizationId)
+        {
+            string gpoName = string.Format("{0}-mapped-drives", organizationId);
+
+            DirectoryEntry de = ActiveDirectoryUtils.GetGroupPolicyContainer(gpoName);
+
+            ActiveDirectoryUtils.SetADObjectProperty(de, "gPCUserExtensionNames", gPCUserExtensionNames);
+
+            de.CommitChanges();
         }
 
         #region Drive Mapping Helpers
