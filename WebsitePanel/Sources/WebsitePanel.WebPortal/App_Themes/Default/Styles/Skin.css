@@ -1,39 +1,155 @@
-/* FORMS */
-.RightBlockTitle
-{
-	color: #1F4978;
-	font-size: 16pt;
-	padding-bottom: 3px;
-	margin-left: 8px;
-}
-.RightBlockTable
-{
-	margin-left: 5px;
-}
-.RightBlockTable TD
-{
-	padding: 3px;
-}
-.FormRightIcon
-{
-	text-align: right;
-}
-.FormButtonsBar
-{
-	clear: both;
-	background: #f5f5f5; /* url(../Images/buttons_bar2_bkg.gif) repeat-x;*/
-	padding: 4px;
-	border-top: solid 1px #CCCCCC;
-}
+/* CSS mini reset */
+html, body, div, form, fieldset, legend, label, ul, li {margin:0; padding:0;}
+table {border-collapse:collapse; border-spacing:0;}
+tr, td, th {padding:0;}
+img {border:0;}
+ul, ol, li {list-style:none;}
+a {text-decoration:none;}
+:focus, :active {outline:none;}
 
+/* coax custom */
+label {cursor:pointer;}
+
+/* global */
+a {color:#428bca;}
+a:hover {text-decoration:bold;}
+
+td.SubHead {min-width:70px; line-height:13px; color:#888; vertical-align:top; padding:9px 0 5px 0;}
+td.SubHead span {}
+
+td.Normal {padding:0; vertical-align:top; line-height:34px; white-space:nowrap;}
+td.Normal span {}
+
+.NormalBold {font-weight:600; color:#222; padding:0; width:auto !important;}
+/*.NormalBold span {display:block; padding:2px 0 8px 0;}*/
+td span.NormalBold {/*display:block; line-height:34px; padding:0;*/}
+td.NormalBold span {}
+
+/* hacks */
+td.Normal > br {display:none;}
+.NormalTextBox + br + span {font-size:11px; color:#888;}
+td.Normal .NormalTextBox + span {display:inline-block; padding:0;}
+
+
+
+.FormLabel150, .FormLabel200 {padding:9px 8px 14px 0; color:#888; vertical-align:top;}
+.FormLabel150 {width:150px;}
+.FormLabel200 {width:200px;}
+
+
+
+
+.Huge {font-size:36px; font-weight:300; color:#333; background:none !important; border:none !important; padding:0 !important; letter-spacing:-1px;}
+.FormBody .Huge {font-size:18px; font-weight:600; letter-spacing:0;}
+.Right .SubHead {width:80px;}
+.RightBlockTable .SubHead {width:60px;}
+.ToolLink a {font-size:13px; display:inline-block; padding:10px 0 0 0; font-weight:300; color:#ec9e59;}
+.ToolLink a:hover {text-decoration:underline;}
+ul.LinksList {margin-left:20px;}
+ul.LinksList li a {display:block; line-height:30px;}
+.IconsBlock {margin-bottom:20px;}
+.IconsTitle {padding:5px; font-size:26px; font-weight:300;}
+.IconsTitle a {color:#428bca;}
+.Icon {width:90px; padding:15px; border:solid 1px transparent; text-align:center; vertical-align:top; font-size:13px;}
+.Icon.Hover {cursor:pointer; border-color:#ffd349; background:#ffde77;}
+.Icon a {color:#333;}
+.IconMenu {position:absolute; visibility:hidden; cursor:pointer; border:1px solid #ffd349; background:#ffde77; font-size:9pt; margin:40px 0 0 -15px; min-width:150px;}
+.IconMenu ul {display:block; list-style:none; margin:1px; padding:0px;}
+.IconMenu ul li a {display:block; width:auto; padding:8px; font-size:13px; color:#333;}
+.IconMenu ul li:Hover {background:#ffe9a4; font-weight:400;}
+.Icon a:hover, .IconMenu ul li a:hover {text-decoration:none;}
+legend {font-weight:700; color:#428bca; padding:0 4px;}
+legend span.NormalBold {display:inline;}
+.Tabs {width:100%; /*border-bottom:1px solid #eee;*/}
+.Separator {display:none;}
+
+.Tabs span {display:table; width:100%; table-layout:fixed;}
+.Tabs span span {display:table-cell; text-align:center; padding:0;}
+.Tabs a {display:block; padding:10px 0; text-decoration:none; border-bottom:1px solid #ddd;}
+.Tabs a:Hover {background:#eee; text-decoration:none;}
+.Tabs a.ActiveTab {border:1px solid #ddd; border-bottom:none; color:#555; margin-bottom:-1px;}
+.Tabs a.ActiveTab:hover {background:none;}
+
+.Toolbox {background:#53cdb5; border:1px solid #1abc9c; margin-bottom:4px;}
+.Toolbox td {padding:0 9px;}
+.Toolbox a {color:#fff !important;}
+.Toolbox a:hover {text-decoration:underline;}
+a.FileManagerButton {}
+a.FileManagerButton:Hover {}
+.FileManagerTreeNode {padding:2px 8px 4px 4px;}
+.FileManagerTreeNode a {color:#333 !important;}
+.FileManagerTreeNodeSelected {}
+a.FileManagerTreeNode:link, a.FileManagerTreeNodeSelected:link {}
+a.FileManagerTreeNode:visited, a.FileManagerTreeNodeSelected:visited {}
+a.FileManagerTreeNode:active, a.FileManagerTreeNodeSelected:active {}
+a.FileManagerTreeNode:hover, a.FileManagerTreeNodeSelected:hover {background:#f5f5f5;}
+.FormButtonsBar + .NormalGridView .AspNet-GridView {margin-bottom:15px;}
+/*.FormButtonsBar + .NormalGridView .AspNet-GridView table tbody tr td {border:none; padding:0;}*/
+
+/* text input */
+input.NormalTextBox, input.LoginTextBox, input.HugeTextBox, input.Huge, input[type=text], input[type=password] {/*width:auto !important;*/ height:32px; padding:0 0 0 3px; margin:0 0 4px 0; font-family:inherit; font-size:inherit; color:inherit; background:#fff; border: 1px solid #ccc;}
+/*input[type=text]:focus, input[type=password]:focus {color:#222;}*/
+input[type=text]:hover, input[type=password]:hover {border-color:#999;}
+input.NormalTextBox {min-width:130px;}
+input.TextBox50 {width:40px;}
+input.TextBox100 {width:80px;}
+
+/* selectbox */
+select {height:34px; font-family:inherit; font-size:inherit; color:inherit; background:#fff; border:1px solid #ccc; cursor:pointer; padding:6px; margin:0 3px 4px 0; vertical-align:middle;}
+select:hover {border-color:#999;}
+select.NormalTextBox {width:110px !important;}
+select:disabled {border:1px solid #ccc; background:#f5f5f5; color:#ccc; cursor:not-allowed;}
+
+/* textarea */
+textarea {font-family:inherit; font-size:inherit; color:inherit; background:#fff; border: 1px solid #ccc; padding:3px 0 3px 3px; margin:0; resize:none;}
+
+/* checkbox */
+input[type=checkbox], input[type=radio] {margin:8px 4px 8px; vertical-align:-1px;}
+
+input[type=image] {margin-right:4px;}
+.LoginLabel {display:block; line-height:34px; width:auto !important; padding-right:8px;}
+.LoginContainer .SubHead {padding-right:8px; color:#333;}
+
+.RightBlockTitle {color:#de7f40; font-size:26px; font-weight:300; letter-spacing:-1px;}
+.RightBlockTable {color:#888;}
+.RightBlockTable td.SubHead, .RightBlockTable td.Normal {padding:5px 0; line-height:13px;}
+ {padding:0; line-height:13px;}
+.FormRightIcon {display:none;}
+.FormButtonsBar {clear:both; margin:10px 0 20px 0; text-align:center; min-height:34px;}
+
+.Small {font-size:9pt;}
+.Small span {color:#888;}
+.Small b {color:#87c442; font-weight:300;}
+.SmallBold {}
+.Big {font-size:18px; padding-right:9px;}
+.MediumBold {font-size:18px; padding:0 14px;}
+.Medium {}
+
+.BorderFillBox {padding:9px; border:1px solid #f1c40f; background:#f4d34b; margin-bottom:4px;}
+table.BorderFillBox td {padding:0 9px;}
+table.BorderFillBox td .Brick {padding:0; line-height:normal; margin-bottom:9px;}
+.BorderFillBox .Big {font-size:22px; padding-bottom:10px;}
+.BorderFillBox .Normal a {color:#fff;}
+.RedBorderFillBox {border:1px solid #f25555; background:#f28585; padding:50px; text-align:center;}
+
+.Brick {display:block; float:none; background:#f9e9a5; color:#333; font-size:11px; margin-bottom:1px;}
+.Brick a {display:block; width:100%; height:100%; color:#806808;}
+.Brick b a {font-size:13px; font-weight:700; padding:10px; display:block;}
+
+/*
 .FormButtonsBar INPUT, .FormButtonsBar SELECT
 {
 	vertical-align: middle;
 }
-
+*/
 .FormButtonsBar .Left
 {
 	float: left;
+}
+
+.FormButtonsBar .Right
+{
+	float:right;
 }
 
 .FormButtonsBar Button2.Right
@@ -58,16 +174,8 @@
 	text-align: right;
 }
 
-.GridFooter
-{
-	clear: both;
-	background: #ffffff; /*#f1f9ff;*/
-	padding: 7px;
-	font-size: 8pt;
-	border-left: solid 1px #CCCCCC;
-	border-bottom: solid 1px #CCCCCC;
-	border-right: solid 1px #CCCCCC;
-}
+.GridFooter {clear:both; font-size:8pt; color:#888; padding:8px 5px; border:1px solid #ddd; margin:10px 0 20px 0;}
+.GridFooter img {vertical-align:-2px !important;}
 
 .GridFooter .Left
 {
@@ -85,12 +193,11 @@
 	padding-bottom: 4px;
 }
 
-.FormLabel
-{
-	padding-top: 5px;
-	padding-bottom: 3px;
-	font-weight: bold;
-}
+.FormRow a {}
+.FormRow a:hover {text-decoration:underline;}
+
+
+
 
 .Label
 {
@@ -109,11 +216,7 @@
 	padding-bottom: 5px;
 }
 
-.FormBody
-{
-	padding: 10px;
-	font-size: 8pt;
-}
+.FormBody {margin:10px 0;}
 
 SPAN.Checkbox.Bold
 {
@@ -125,13 +228,7 @@ SPAN.Checkbox.Bold
 	vertical-align: middle;
 }
 
-.FormFooter
-{
-	font-size: 9pt;
-	padding: 7px;
-	border-top: solid 1px #DFDFDF;
-	background-color: #F0F0F0;
-}
+.FormFooter {padding:10px 0;}
 
 .FormFooterClean
 {
@@ -146,17 +243,7 @@ SPAN.Checkbox.Bold
     padding-top: 10px;
 }
 
-.FormLabel150
-{
-	font-size: 8pt;
-	width: 150px;
-}
 
-.FormLabel200
-{
-	font-size: 8pt;
-	width: 200px;
-}
 
 UL.VerticalButtons
 {
@@ -173,49 +260,16 @@ UL.VerticalButtons LI
 	padding-bottom: 2px;
 }
 
-.FormBody FIELDSET
-{
-	padding: 5px 10px 10px 10px;
-}
+.FormBody fieldset {padding:5px 10px 10px 10px; border:1px solid #ccc; margin-top:10px;}
 
 .CollapsibleArea
 {
 	padding: 3px;
 }
 
-LEGEND
-{
-	font-weight: bold;
-	color: #0153A4;
-	padding: 0px 2px 5px 2px;
-}
 
-INPUT.TextBox50
-{
-	border: solid 1px #909090;
-	height: 18px;
-	padding-left: 2px;
-	padding-top: 1px;
-	width: 50px;
-}
 
-INPUT.TextBox100
-{
-	border: solid 1px #909090;
-	height: 18px;
-	padding-left: 2px;
-	padding-top: 1px;
-	width: 100px;
-}
 
-INPUT.TextBox200
-{
-	border: solid 1px #909090;
-	height: 18px;
-	padding-left: 2px;
-	padding-top: 1px;
-	width: 200px;
-}
 
 TEXTAREA.TextBox200
 {
@@ -243,7 +297,7 @@ TEXTAREA.TextBox400
 
 .HugeTextBox
 {
-	font-family: Tahoma;
+	/*font-family: Tahoma;*/
 	font-size: 14pt;
 	font-weight: normal;
 	color: Black;
@@ -253,7 +307,7 @@ TEXTAREA.TextBox400
 
 INPUT.HugeTextBox100
 {
-	font-family: Tahoma;
+	/*font-family: Tahoma;*/
 	font-size: 14pt;
 	font-weight: normal;
 	color: Black;
@@ -264,7 +318,7 @@ INPUT.HugeTextBox100
 
 INPUT.HugeTextBox200
 {
-	font-family: Tahoma;
+	/*font-family: Tahoma;*/
 	font-size: 14pt;
 	font-weight: normal;
 	color: Black;
@@ -281,22 +335,9 @@ INPUT.HugeTextBox200
 	padding: 3px;
 }
 
-.PreviewArea
-{
-	border: solid 1px #e5e5e5;
-	padding: 5px;
-}
+.PreviewArea {background:#f0ad4e; padding:15px; margin:20px; color:#fff; font-size:14px;}
 
-.ToolLink
-{
-	padding: 5px 0px 5px 10px;
-}
 
-TEXTAREA
-{
-	font-family: Tahoma,Arial;
-	font-size: 8pt;
-}
 
 .OrgStatsRow
 {
@@ -327,26 +368,11 @@ TEXTAREA
 	margin-bottom: 1px;
 }
 
-.HostingPlanGroup .Header
-{
-	clear: both;
-	background: #E5F2FF;
-	border-bottom: solid 1px #E0E5F0;
-	padding: 2px;
-	height: 20px;
-}
+.HostingPlanGroup .Header {clear:both; background:#aa73c1; color:#fff; height:30px !important; line-height:30px;}
+.HostingPlanGroup .Header span {font-size:inherit; line-height:inherit;}
+.HostingPlanGroup .Header .Left {float:left; font-weight:bold;}
 
-.HostingPlanGroup .Header .Left
-{
-	float: left;
-	font-weight: bold;
-}
-
-.HostingPlanGroup .Header .GroupName
-{
-	padding: 4px;
-	font-weight: bold;
-}
+.HostingPlanGroup .Header .GroupName {text-indent:5px; font-weight:700;}
 
 .HostingPlanGroup .Header .Right
 {
@@ -359,13 +385,7 @@ TEXTAREA
 	clear: both;
 }
 
-.HostingPlanGroup .Quota .Left
-{
-	float: left;
-	width: 200px;
-	padding: 5px;
-	text-align: right;
-}
+.HostingPlanGroup .Quota .Left {float:left; width:200px; text-align:right; padding:8px 8px 8px 0; line-height:13px;}
 
 .HostingPlanGroup .Quota .Right
 {
@@ -373,10 +393,7 @@ TEXTAREA
 	white-space: nowrap;
 }
 
-.HostingPlanGroup .Quota .Viewer
-{
-	padding: 5px;
-}
+.HostingPlanGroup .Quota .Viewer { padding:8px 0 8px 8px; line-height:13px;}
 
 .SideBar
 {
@@ -420,10 +437,8 @@ TEXTAREA
 	height: 11px;
 }
 
-.ProgressPanelArea
-{
-	padding: 10px;
-}
+.ProgressPanelArea {color:#888;}
+.ProgressPanelArea img {vertical-align:middle;}
 
 .TreeNode
 {
@@ -443,159 +458,44 @@ WebsitePanel Styles
 ================================	
 */
 /* Overriden DNN styles */
-A
-{
-	text-decoration: underline;
-	color: #0153A4;
-}
-.LogArea
-{
-	font-family: Courier New;
-	font-size: 8pt;
-}
-.Normal
-{
-	font-size: 8pt;
-}
-.NormalGreen
-{
-	color: Green;
-}
-.NormalRed
-{
-	font-size: 8pt;
-	color: Red;
-}
+
+
+.LogArea {width:100% !important;}
+
+/*.Normal span {font-size:11px; color:#888;}*/
+.NormalGreen {color:#87c442;}
+.NormalRed {color:#f25555;}
 
 .Centered
 {
 	text-align: center !important;
 }
 
-/*
-SELECT.NormalDropDown
-{
-	height: 18px;
-	font-family: Tahoma;
-	font-size: 8pt;
-	border: solid 1px #909090;
-	padding-left: 2px;
-	padding-top: 1px;
-}
-*/
 
-INPUT.NormalTextBox
-{
-	height: 18px;
-	border: solid 1px #909090;
-	padding-left: 2px;
-	padding-top: 1px;
-}
 
-SELECT.NormalTextBox
-{
-	height: 22px;
-	border: solid 1px #909090;
-}
-
-INPUT.HugeTextBox
-{
-	font-family: Tahoma;
-	font-size: 14pt;
-	font-weight: normal;
-	color: Black;
-	border: solid 1px #909090;
-	padding-left: 2px;
-}
-
-INPUT.LoginTextBox
-{
-	font-family: Tahoma;
-	font-size: 14pt;
-	font-weight: normal;
-	padding: 3px;
-	border: solid 1px #909090;
-	padding-left: 2px;
-}
-.LoginLabel
-{
-	font-family: Arial, Tahoma;
-	font-size: 10pt;
-	font-weight: bold;
-}
-INPUT.LoginButton
-{
-	font-family: Tahoma;
-	font-size: 9pt;
-	background: #ffffff url(../Images/button_bkg2.png) left center repeat-x;
-	border: solid 1px #8E8F8F;
-	height: 31px;
-	padding-left: 3px;
-	padding-right: 3px;
-}
-
-INPUT.LoginButton:hover
-{
-	background: #ffffff url(../Images/button_hover_bkg2.png) left center repeat-x;
-	border: solid 1px #3C7FB1;
-}
 
 .HugeTextBoxWatermark
 {
-	font-family: Tahoma;
+	/*font-family: Tahoma;*/
 	font-size: 20pt;
 	font-weight: normal;
 	color: #d0d0d0;
 }
 
-.NormalBold
-{
-	font-size: 8pt;
-	font-weight: bold;
-}
 
-.ErrorText
-{
-	font-size: 11px;
-	font-weight: bold;
-	color: red;
-}
 
-.Medium
-{
-	font-size: 11pt;
-	font-weight: normal;
-}
+.ErrorText {color:#f25555;}
 
-.MediumBold
-{
-	font-size: 11pt;
-	font-weight: bold;
-}
 
-.Big
-{
-	font-size: 14pt;
-	font-weight: normal;
-	color: Black;
-}
+
+
+
+
 
 A.Black
 {
 	color: Black !important;
 	text-decoration: none !important;
-}
-
-UL.LinksList
-{
-	margin: 0;
-	padding: 0;
-	display: block;
-}
-UL.LinksList LI
-{
-	list-style: none;
-	padding: 7px;
 }
 
 .BigBold
@@ -605,19 +505,11 @@ UL.LinksList LI
 	color: Black;
 }
 
-.Huge
-{
-	font-family: Tahoma;
-	font-size: 14pt;
-	font-weight: normal;
-	color: Black;
-}
 
-.SubHead
-{
-	font-size: 11px;
-	color: Black;
-}
+
+
+
+
 
 /* WebsitePanel styles */
 .BlueBorder
@@ -642,19 +534,7 @@ UL.LinksList LI
 	border-bottom-color: #d0d0d0;
 	background-color: #efefef;
 }
-.Small
-{
-	font-family: Tahoma;
-	font-size: 8pt;
-	color: #000000;
-}
-.SmallBold
-{
-	font-family: Tahoma;
-	font-size: 10px;
-	font-weight: bold;
-	color: #000000;
-}
+
 .DropdownMenu
 {
 	border: solid 1px #e0e0e0;
@@ -662,131 +542,31 @@ UL.LinksList LI
 }
 .NormalError
 {
-	font-family: Verdana;
+	/*font-family: Verdana;*/
 	font-size: 12px;
 	color: Red;
 }
 
-.BorderFillBox
-{
-	background-color: #E5F2FF;
-	border: solid 1px #86B9F7;
-}
-.RedBorderFillBox
-{
-	background-color: #ffe1e1;
-	border-right: #ff5254 2px solid;
-	border-top: #ff5254 2px solid;
-	border-left: #ff5254 2px solid;
-	border-bottom: #ff5254 2px solid;
-	padding: 50px;
-	width: 200px;
-	margin-top: 30px;
-	margin-bottom: 30px;
-	margin-left: auto;
-	margin-right: auto;
-	text-align: center;
-}
+
 .QuotaName
 {
-	font-family: Verdana;
+	/*font-family: Verdana;*/
 	font-size: 11px;
 	font-weight: normal;
 	padding-left: 8px;
 }
 .QuotaValue
 {
-	font-family: Verdana;
+	/*font-family: Verdana;*/
 	font-size: 11px;
 	font-weight: normal;
 	color: #0153A4;
 }
-.Toolbox
-{
-	background-color: #E5F2FF;
-}
-.Toolbox A
-{
-	color: Black !important;
-}
 
-.IconsBlock
-{
-	padding: 5px;
-}
 
-.IconsTitle
-{
-	background-color: #efefef;
-	padding: 3px 5px 3px 5px;
-	font-size: 10pt;
-}
 
-.Icon
-{
-	width: 75px;
-	height: 72px;
-	padding: 4px;
-	border: solid 1px transparent;
-	text-align: center;
-	vertical-align: top;
-	font-size: 11px;
-}
 
-.Icon.Hover
-{
-	border-color: #99DEFD;
-	background-color: #E9F8FE;
-}
 
-.Icon A
-{
-	text-decoration: none;
-	color: #000000;
-}
-
-.IconMenu
-{
-	position: absolute;
-	visibility: hidden;
-	padding: 1px;
-	border: solid 1px #99DEFD;
-	background-color: #E9F8FE;
-	font-size: 11px;
-}
-
-.IconMenu UL
-{
-	display: block;
-	list-style: none;
-	margin: 0px;
-	padding: 0px;
-}
-
-.IconMenu UL LI A
-{
-	display: inline-block;
-	width: auto;
-	padding: 4px 8px 4px 8px;
-	text-decoration: none;
-	color: #000000;
-}
-
-.IconMenu UL LI:Hover
-{
-	background-color: #B6D9FC;
-}
-
-.Brick
-{
-	background-color: white;
-	font-family: Verdana;
-	font-size: 11px;
-}
-.Brick A
-{
-	color: #0153A4 !important;
-}
 .ChartLegendElement
 {
 	display: block;
@@ -800,38 +580,10 @@ UL.LinksList LI
 	padding: 10px;
 }
 
-.Shevron
-{
-	padding: 3px 5px 3px 5px;
-	border: solid 1px #FFFFFF;
-	margin-bottom: 1px;
-	margin-top: 1px;
-	font-family: Tahoma;
-	font-size: 8pt;
-	font-weight: bold;
-	color: #000000;
-	width: 100%;
-}
-
-.ShevronActive
-{
-	background: transparent url(../images/shevron_bkg.gif) left bottom repeat-x;
-	border: solid 1px #99DEFD;
-	padding: 3px 5px 3px 5px;
-	margin-bottom: 1px;
-	margin-top: 1px;
-	font-family: Tahoma;
-	font-size: 8pt;
-	font-weight: bold;
-	color: #000000;
-	width: 100%;
-}
-
-.ShevronLine
-{
-	background: transparent url(../images/shevron_line.gif) left center repeat-x;
-	width: 100%;
-}
+.Shevron {width:100%; line-height:30px; font-size:13px; font-weight:700 !important;}
+.ShevronActive {width:100%; line-height:30px; font-size:13px; font-weight:700;}
+.ShevronLine {width:100%; height:10px; background:url('../Images/shevron_line.gif') 0 19px repeat-x;}
+.Shevron img, .ShevronActive img {width:16px !important; height:16px !important; vertical-align:-3px;}
 
 .SectionHeader
 {
@@ -839,7 +591,7 @@ UL.LinksList LI
 	background-repeat: repeat-x;
 	margin-bottom: 3;
 	margin-top: 2;
-	font-family: Tahoma;
+	/*font-family: Tahoma;*/
 	font-size: 11px;
 	font-weight: bold;
 	border-bottom: solid 1px #C4D6BB;
@@ -847,36 +599,13 @@ UL.LinksList LI
 }
 
 /* Calendar */
-.Calendar
-{
-	border: solid 1px #909090;
-	background-color: White;
-}
-.Calendar TD
-{
-	vertical-align: middle;
-}
-.CalendarTitle
-{
-	background-image: url(green_bkg.gif);
-	background-repeat: repeat-x;
-	height: 100%;
-}
-.CalendarTitle TD
-{
-	font-weight: bold;
-	padding: 2px;
-}
-.CalendarWeekend
-{
-	background-color: #edf9e8;
-}
-.CalendarSelectedDate
-{
-	background-color: #E5F2FF;
-	font-weight: bold;
-	color: White !important;
-}
+.Calendar {width:300px !important; font-family:'Segoe UI Light','Open Sans',Arial !important; border:1px solid #ccc !important;}
+.Calendar a {display:block; padding:4px;}
+.Calendar td {vertical-align:middle; height:28px; background:#fff;}
+.CalendarTitle {font-family:'Segoe UI Light','Open Sans',Arial !important;}
+.CalendarTitle td {height:30px; background:#ccc !important;}
+.CalendarWeekend {}
+.CalendarSelectedDate {color:#fff; font-weight:700; background:#ffd349 !important;}
 .CalendarDayHeader
 {
 	background-image: url(green_bkg.gif);
@@ -896,7 +625,7 @@ UL.LinksList LI
 {
 	background-image: url(warning_bkg.gif);
 	background-repeat: repeat-x;
-	font-family: Tahoma;
+	/*font-family: Tahoma;*/
 	font-size: 8pt;
 	font-weight: bold;
 	color: white;
@@ -908,7 +637,7 @@ UL.LinksList LI
 {
 	background-image: url(error_bkg.gif);
 	background-repeat: repeat-x;
-	font-family: Tahoma;
+	/*font-family: Tahoma;*/
 	font-size: 8pt;
 	font-weight: bold;
 	color: White;
@@ -919,31 +648,14 @@ UL.LinksList LI
 /* END STATUSES */
 
 /* MESSAGE BOXES */
-.MessageBox
-{
-	font-family: Tahoma;
-	font-size: 8pt;
-	font-weight: bold;
-	color: #505050;
-	margin: 0px 3px 5px 3px;
-	padding: 15px 10px 15px 50px;
-	text-align: left;
-}
+.MessageBox {padding:15px; margin:20px; color:#fff; font-size:14px; text-align:left; font-weight:600; line-height:16px;}
 .MessageBox.Green
 {
 	background: #E2F7DC url(../images/information_big.gif) 6px center no-repeat;
 	border: 1px solid #B3DFA4;
 }
-.MessageBox.Yellow
-{
-	background: #FFFFBA url(../images/warning_big.gif) 6px center no-repeat;
-	border: 1px solid #FDDF79;
-}
-.MessageBox.Red
-{
-	background: #FFE8E8 url(../images/error_big.gif) 6px center no-repeat;
-	border: 1px solid #FFA8A8;
-}
+.MessageBox.Yellow {background:#f0ad4e;}
+.MessageBox.Red {background:#f25555;}
 .MessageBox SPAN.description
 {
 	font-weight: normal !important;
@@ -955,7 +667,7 @@ UL.LinksList LI
 }
 .MessageBoxSection
 {
-	font-family: Tahoma;
+	/*font-family: Tahoma;*/
 	font-size: 8pt;
 	font-weight: bold;
 }
@@ -966,14 +678,14 @@ UL.LinksList LI
 .popupHint
 {
 	border: 2px solid #C4D6BB;
-	font-family: Verdana;
+	/*font-family: Verdana;*/
 	padding: 3px;
 	background-color: #F1F1FF;
 }
 .popupComments
 {
 	border: 2px solid #C4D6BB;
-	font-family: Verdana;
+	/*font-family: Verdana;*/
 	font-size: 9px;
 	padding: 3px;
 	background-color: #F1F1FF;
@@ -982,7 +694,7 @@ UL.LinksList LI
 /* TOOLBAR MENU */
 .ToolbarMenuRootItem
 {
-	font-family: Tahoma, Arial;
+	/*font-family: Tahoma, Arial;*/
 	font-size: 11px;
 	font-weight: normal;
 	padding: 2 1 3 1;
@@ -994,7 +706,7 @@ UL.LinksList LI
 }
 .ToolbarMenuRootItemSelected
 {
-	font-family: Tahoma, Arial;
+	/*font-family: Tahoma, Arial;*/
 	font-size: 11px;
 	font-weight: normal;
 	padding: 2 1 3 1;
@@ -1006,141 +718,24 @@ UL.LinksList LI
 	margin-right: 2px;
 }
 /* END TOOLBAR MENU */
-INPUT.Button1, INPUT.Button2, INPUT.Button3
-{
-	font-family: Tahoma;
-	font-size: 8pt;
-	background: #ffffff url(../Images/button_bkg.png) left bottom repeat-x;
-	border: solid 1px #8E8F8F;
-	height: 23px;
-	padding-left: 7px;
-	padding-right: 7px;
-	margin: 1px 1px 1px 1px;
-}
+input.Button1, input.Button2, input.Button3, input.SmallButton, input.LoginButton, input[type=submit] {font-family:'Segoe UI Light','Open Sans',Arial; color:#fff; border:1px solid #5e86aa; background:#6598c5; font-weight:300; text-align:center; vertical-align:middle; cursor:pointer; white-space:nowrap; padding:6px 12px; font-size:14px; line-height:1.428571429;}
 
-INPUT.SmallButton
-{
-	font-family: Tahoma;
-	font-size: 8pt;
-	background: #ffffff url(../Images/button_bkg.png) left center repeat-x;
-	border: solid 1px #8E8F8F;
-	padding: 3px;
-}
+input.SmallButton {padding:3px 9px; font-size:12px;}
 
-INPUT.Button1:hover, INPUT.Button2:hover, INPUT.Button3:hover, INPUT.SmallButton:hover
-{
-	background-image: url(../Images/button_hover_bkg.png);
-	border: solid 1px #3C7FB1;
-}
-
+input.Button1:hover, input.Button2:hover, input.Button3:hover, input.SmallButton:hover, input.LoginButton:hover {background:#3276b1; border:1px solid #285e8e;}
+input.Button2 {background-color:#85ca85; border-color:#79c279;}
+input.Button2:hover {background-color:#47a447; border-color:#398439;}
+/*
+input.Button3 {background-color:#bdc3c7; border-color:#afbbbc;}
+input.Button3:hover {background-color:#ced2d5; border-color:#c3cccd;}
+*/
 /* TABS */
-.Tabs
-{
-	background: transparent url(../Images/tabs_bkg.gif) bottom left repeat-x;
-}
 
-.Separator
-{
-	vertical-align: top;
-	height: 26px;
-	border: solid 1px #8E8E8E;
-	border-left: none;
-	border-right: none;
-	border-top: none;
-	text-decoration: none;
-}
-
-A.ActiveTab
-{
-	display: inline-block;
-	vertical-align: bottom;
-	line-height: 22px;
-	padding: 0 6px 0 6px;
-	background-color: #ffffff;
-	border: solid 1px #8E8E8E;
-	border-bottom: none;
-	color: #000000;
-	text-decoration: none;
-}
-A.Tab
-{
-	display: inline-block;
-	vertical-align: bottom;
-	line-height: 21px;
-	padding: 0 6px 0 6px;
-	background-color: #ffffff;
-	background: #ffffff url(../Images/button_bkg.png) left bottom repeat-x;
-	border: solid 1px #8E8E8E;
-	color: #000000;
-	text-decoration: none;
-}
-A.Tab:Hover
-{
-	display: inline-block;
-	background: #ffffff url(../Images/button_hover_bkg.png) left bottom repeat-x;
-	border-color: #3C7FB1 #3C7FB1 #8E8E8E #3C7FB1;
-}
 
 /* END TABS */
 
 /* FileLookup styles */
-A.FileManagerButton
-{
-	display: inline-block;
-	padding: 2px;
-	font-size: 8pt;
-	color: #000000;
-	text-decoration: none;
-	border: solid 1px #f5f5f5;
-}
-A.FileManagerButton:Hover
-{
-	background: #ffffff url(../Images/button_hover_bkg2.png) left center repeat-x;
-	border: solid 1px #3C7FB1;
-}
 
-.FileManagerTreeNode
-{
-	padding: 2px 2px 2px 1px;
-	font-family: Tahoma, Arial, Helvetica;
-	font-size: 8pt;
-	font-weight: normal;
-	text-decoration: none !important;
-}
-
-.FileManagerTreeNodeSelected
-{
-	padding: 2px 2px 2px 1px;
-	font-family: Tahoma, Arial, Helvetica;
-	font-size: 8pt;
-	font-weight: normal;
-	background-color: #dcdcdc;
-}
-
-A.FileManagerTreeNode:link, A.FileManagerTreeNodeSelected:link
-{
-	text-decoration: none;
-	color: #003366;
-}
-
-A.FileManagerTreeNode:visited, A.FileManagerTreeNodeSelected:visited
-{
-	text-decoration: none;
-	color: #003366;
-}
-
-A.FileManagerTreeNode:active, A.FileManagerTreeNodeSelected:active
-{
-	text-decoration: none;
-	color: #003366;
-}
-
-A.FileManagerTreeNode:hover, A.FileManagerTreeNodeSelected:hover
-{
-	text-decoration: none;
-	color: black;
-	background-color: #e0f4ff;
-}
 
 /* LOG RECORDS */
 .LogRecord
@@ -1210,7 +805,7 @@ A.FileManagerTreeNode:hover, A.FileManagerTreeNodeSelected:hover
 	padding-left: 13px;
 	text-transform: uppercase;
 	color: #6A6A6A;
-	font-family: Tahoma;
+	/*font-family: Tahoma;*/
 	font-size: 10pt;
 	font-weight: bold;
 	vertical-align: top;
@@ -1412,3 +1007,13 @@ p.warningText {
 {
     display: none;    
 }
+
+ul.WPIKeywordList {font-size:13px !important;}
+ul.WPIKeywordList li {position:relative; padding:0 !important; margin:10px 0 0 0 !important; line-height:auto !important; float:left; display:block !important; border-bottom:1px solid #eee; height:37px;}
+ul.WPIKeywordList li:hover {background:#eee !important;}
+ul.WPIKeywordList label {text-decoration:none !important; display:block; padding:5px 10px !important; color:#428bca;}
+ul.WPIKeywordList li span.selected {background:none !important; font-weight:300 !important; display:block; padding:0 !important; border:none !important;}
+ul.WPIKeywordList li span.selected label {color:#555; border:1px solid #eee !important; background:#fff !important; border-bottom-color:#fff !important;}
+.ProductsSearchInput {width:200px !important;}
+h2.ProductTitle.Huge {margin:0;}
+.ProductsSearchButton {float:right;}

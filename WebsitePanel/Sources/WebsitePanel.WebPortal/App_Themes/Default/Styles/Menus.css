@@ -19,19 +19,14 @@
 	z-index: 502;
 }
 
-.TopMenu ul.AspNet-Menu li ul li.AspNet-Menu-WithChildren
-{
-    cursor: pointer;
-}
+.TopMenu ul.AspNet-Menu li ul li.AspNet-Menu-WithChildren {}
 
-.TopMenu ul.AspNet-Menu li ul li.AspNet-Menu-WithChildren span
-{
-    color: #000000 !important;
-    background: transparent url(../Images/menu_popup2.gif) right center no-repeat !important;
-    text-align: left !important;
-    border-right: none !important;
-    display: table !important;
-}
+.TopMenu ul.AspNet-Menu li ul li.AspNet-Menu-WithChildren span {height:auto; line-height:20px; padding:0; background:none; color:#333; font-size:13px; line-height:34px; text-transform:capitalize;}
+
+.MenuHeader {float:left; position:relative; display:block; background-image:url('/g/icons.png'); background-repeat:no-repeat; line-height:74px; text-transform:uppercase; font-size:12px; color:#fff; overflow:hidden; padding:0 22px 0 34px; filter:alpha(opacity=70); opacity:0.7; cursor:pointer;}
+.MenuHeader:hover {filter:alpha(opacity=100); opacity:1;}
+
+.TopMenu ul.AspNet-Menu li ul li.AspNet-Menu-WithChildren span:after {content:'→'; float:right; margin-right:10px;}
 
 .TopMenu ul.AspNet-Menu li ul li.AspNet-Menu-WithChildren span img
 {
@@ -44,13 +39,7 @@
     position:relative;
 }
 
-.TopMenu ul.AspNet-Menu li span
-
-.TopMenu li.AspNet-Menu-Leaf a, /* leaves */
-.TopMenu li.AspNet-Menu-Leaf span
-{
-    background-image: none !important;
-}
+.TopMenu li.AspNet-Menu-Leaf a, .TopMenu li.AspNet-Menu-Leaf span {}
 
 .TopMenu li.AspNet-Menu-Leaf a img
 {
@@ -62,47 +51,19 @@
     position:relative;
 }
 
-/*
-.TopMenu ul.AspNet-Menu li
-{
-	width: 150px;
-}
-*/
 
-.TopMenu ul.AspNet-Menu li a
-{
-    color: #ffffff;
-    padding: 8px 15px 8px 15px;
-    text-align: center;
-    font-family: Tahoma;
-    font-size: 9pt;
-    border-right: solid 1px #71A9DE;
-}
+.TopMenu ul.AspNet-Menu li {float:left; position:relative;}
+.TopMenu ul.AspNet-Menu li a, .TopMenu ul.AspNet-Menu li span {display:block; background-image:url('/g/icons.png'); background-repeat:no-repeat; line-height:74px; text-transform:uppercase; font-size:12px; color:#fff; overflow:hidden; padding:0 22px 0 34px; filter:alpha(opacity=70); opacity:0.7; cursor:pointer;}
+.TopMenu ul.AspNet-Menu li a:hover, .TopMenu ul.AspNet-Menu li.AspNet-Menu-Hover, .TopMenu ul.AspNet-Menu li span:hover {filter:alpha(opacity=100); opacity:1;}
 
-.TopMenu ul.AspNet-Menu li span
-{
-    color: #ffffff;
-    padding: 8px 25px 8px 15px;
-    background: transparent url(../Images/menu_popup.gif) right center no-repeat;
-    text-align: center;
-    font-family: Tahoma;
-    font-size: 9pt;
-    border-right: solid 1px #71A9DE;
-}
 
-.TopMenu ul.AspNet-Menu li:hover, 
-.TopMenu ul.AspNet-Menu li.AspNet-Menu-Hover
-{
-    background-image: url(../Images/top_menu_hover_bkg.gif);
-}
+.TopMenu ul.AspNet-Menu li span {}
 
 .TopMenu ul.AspNet-Menu li:hover a, 
 .TopMenu ul.AspNet-Menu li:hover span
 .TopMenu ul.AspNet-Menu li.AspNet-Menu-Hover a,
 .TopMenu ul.AspNet-Menu li.AspNet-Menu-Hover span
-{
-	color: #ffffff;
-}
+{}
 
 .TopMenu ul.AspNet-Menu li ul li
 {
@@ -110,37 +71,39 @@
 	width: 100%;
 }
 
-.TopMenu ul.AspNet-Menu li ul li:hover, 
-.TopMenu ul.AspNet-Menu li ul li.AspNet-Menu-Hover
-{
-	background-color: #D1E9FF;
-	background-image: none;
-	margin: 0px;
-}
+/*.TopMenu .AspNet-Menu-Horizontal ul.AspNet-Menu ul:before {width:0; height:0; position:absolute; content:" "; top:-8px; left:50%; margin-left:-8px; border-style:solid; border-width:0 8px 8px 8px; border-color:transparent transparent #fff transparent;}*/
+.TopMenu .AspNet-Menu-Horizontal ul.AspNet-Menu ul {
+position: absolute;
+top: 100%;
+left: 0;
+z-index: 1000;
 
-.TopMenu .AspNet-Menu-Horizontal ul.AspNet-Menu ul
-{
-	border: solid 1px #3263BD;
-	background-color: #FFFFFF;
+float: left;
+min-width: 160px;
+padding: 5px 10px 5px 0;
+margin: -20px 0 0 0;
+list-style: none;
+font-size: 14px;
+background-color: #FFF;
+border: 1px solid #CCC;
+border: 1px solid rgba(0, 0, 0, 0.15);
+border-radius: 0;
+-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+background-clip: padding-box;
 }
-
-.TopMenu .AspNet-Menu-Horizontal ul.AspNet-Menu ul li a
-{
-    padding: 6px 15px 6px 15px;
-    text-align: left;
-    border: none;
-	margin: 0px;
-	color: #000000;
-}
+.TopMenu .AspNet-Menu-Horizontal ul.AspNet-Menu ul li {text-align:left; clear:both; text-indent:10px; color:#777; margin:0 0 0 5px;}
+.TopMenu .AspNet-Menu-Horizontal ul.AspNet-Menu ul li a {height:auto; line-height:20px; padding:0; background:none; color:#333; font-size:13px; line-height:34px; text-transform:capitalize;}
+.TopMenu ul.AspNet-Menu li ul li:hover, .TopMenu ul.AspNet-Menu li ul li.AspNet-Menu-Hover {background:#f6f6f6;}
+.TopMenu ul.AspNet-Menu li ul li:hover a, .TopMenu ul.AspNet-Menu li ul li.AspNet-Menu-Hover a {color:#313131;}
 
 /* Third tier menus have to be positioned differently than second (or top) tier menu items because */
 /* they drop to the side, not below, their parent menu item. This is done by setting the last margin */
 /* value (which is equal to margin-left) to a value that is slightly smaller than the WIDTH of the */
 /* menu item. So, if you modify the rule above, then you should modify this (below) rule, too. */
-.TopMenu .AspNet-Menu-Horizontal ul.AspNet-Menu li ul li ul
-{
-    margin: 1.0em 0 0 10.35em;
-}
+
+.TopMenu .AspNet-Menu-Horizontal ul.AspNet-Menu li ul li ul:before {display:none;}
+.TopMenu .AspNet-Menu-Horizontal ul.AspNet-Menu li ul li ul {width:160px; left:134px; position:absolute; z-index:3; top:4px;}
 
 
 
@@ -150,7 +113,7 @@
 /* LEFT MENU */
 .LeftMenu
 {
-    font-family: Verdana;
+    /*font-family: Verdana;*/
     font-size: 8pt;
 }
 .LeftMenu ul
@@ -268,7 +231,7 @@
     height: 12px;
     width: 16px;
     text-align: center;
-    font-family: Tahoma;
+    /*font-family: Tahoma;*/
     font-size: 9pt;
 }
 
@@ -280,7 +243,7 @@
     width: 16px;
     background: transparent url(../Images/menu_popup2.gif) center center no-repeat;
     text-align: center;
-    font-family: Tahoma;
+    /*font-family: Tahoma;*/
     font-size: 9pt;
 }
 
