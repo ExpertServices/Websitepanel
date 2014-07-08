@@ -48,6 +48,7 @@ using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Server.Client;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -146,6 +147,11 @@ namespace WebsitePanel.EnterpriseServer
             SetFRSMQuotaOnFolderInternal(itemId, folderName, quota, quotaType);
         }
 
+        public static void StartSetEnterpriseFolderSettingsBackgroundTask(int itemId, SystemFile folder, ESPermission[] permissions, bool directoyBrowsingEnabled, int quota, QuotaType quotaType)
+        {
+            StartESBackgroundTaskInternal("SET_ENTERPRISE_FOLDER_SETTINGS", itemId, folder, permissions, directoyBrowsingEnabled, quota, quotaType);
+        }
+
         #region Directory Browsing
 
         public static bool GetDirectoryBrowseEnabled(int itemId, string siteId)
@@ -175,6 +181,41 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
         #endregion
+
+        protected static void StartESBackgroundTaskInternal(string taskName, int itemId, SystemFile folder, ESPermission[] permissions, bool directoyBrowsingEnabled, int quota, QuotaType quotaType)
+        {
+            // load organization
+            var org = OrganizationController.GetOrganization(itemId);
+
+            new Thread(() =>
+            {
+                try
+                {
+                    TaskManager.StartTask("ENTERPRISE_STORAGE", taskName, org.PackageId);
+                    
+                    EnterpriseStorageController.SetDirectoryBrowseEnabled(itemId, folder.Url, directoyBrowsingEnabled);
+                    EnterpriseStorageController.SetFolderPermission(itemId, folder.Name, permissions);
+                    EnterpriseStorageController.SetFRSMQuotaOnFolder(itemId, folder.Name, quota, quotaType);
+                }
+                catch (Exception ex)
+                {
+                    // log error
+                    TaskManager.WriteError(ex, "Error executing enterprise storage background task");
+                }
+                finally
+                {
+                    // complete task
+                    try
+                    {
+                        TaskManager.CompleteTask();
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+
+            }).Start();
+        }
 
         protected static bool CheckUsersDomainExistsInternal(int itemId)
         {
@@ -524,7 +565,7 @@ namespace WebsitePanel.EnterpriseServer
 
         protected static void SetFRSMQuotaOnFolderInternal(int itemId, string folderName, int quota, QuotaType quotaType)
         {
-            ResultObject result = TaskManager.StartResultTask<ResultObject>("ENTERPRISE_STORAGE", "CREATE_FOLDER");
+            ResultObject result = TaskManager.StartResultTask<ResultObject>("ENTERPRISE_STORAGE", "SET_FRSM_QUOTA");
 
             try
             {
@@ -548,7 +589,7 @@ namespace WebsitePanel.EnterpriseServer
             }
             catch (Exception ex)
             {
-                result.AddError("ENTERPRISE_STORAGE_CREATE_FOLDER", ex);
+                result.AddError("ENTERPRISE_STORAGE_SET_FRSM_QUOTA", ex);
             }
             finally
             {
