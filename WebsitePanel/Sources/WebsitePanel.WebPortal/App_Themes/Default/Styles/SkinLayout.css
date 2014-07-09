@@ -1,0 +1,54 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,300,400,700);
+body {font-family:'Segoe UI Light','Open Sans',Arial; color:#333; margin:0px; padding:0px; font-size:13px; background:#ddd;}
+#SkinOutline, #LoginSkinOutline {width:990px; margin:auto;}
+#SkinContent {float:left; width:100%; background:#fff;}
+#LoginSkinContent {background:#fff;}
+#LoginSkinContent > a img {padding:20px 0 0 10px;}
+#Header .Container {width:100%;}
+#Header .Logo {padding-left:10px;}
+#Header .Search {width:auto; height:70px; vertical-align:bottom; padding:0 5px 8px 0; text-align:right;}
+#Header .Search table tr td {padding:0;}
+.SearchMethod {padding:0px 10px; line-height:20px;}
+.SearchMethodSelected {padding:0px 10px !important; line-height:20px; background:#3498db; color:#fff;}
+.SearchMethodSide {display:none;}
+.SearchQuery {}
+#Header .Account {text-align:right; padding:3px 6px 0 0;}
+#TopMenu {position:relative; width:100%; min-width:880px; height:74px; background:#2e8bcc; z-index:99;}
+#Breadcrumb {margin:10px;}
+#Breadcrumb .Path {padding:20px; margin-bottom:20px; background-color:#f5f5f5;}
+#Breadcrumb .Path img {display:none;}
+#Breadcrumb .Path a:not(:last-child):after, #Breadcrumb .Path span a:after {content:'/\00a0'; padding:0 5px 0 10px; color:#999;}
+#Breadcrumb .Path a, #Breadcrumb .Path a:Active, #Breadcrumb .Path a:Visited, #Breadcrumb .Path a:Hover {color:#428bca; font-size:13px; line-height:1.428571429;}
+#Breadcrumb .Path a:last-child {color:#999;}
+#Breadcrumb .CurrentNode {border-bottom: 1px solid #eee; padding-bottom:15px;}
+#ContentOneColumn {padding:0 10px;}
+#ContentLogin {width:400px; margin:auto; padding:20px 0;}
+#Center {float:left; width:730px;}
+#Right {float:right; width:225px;}
+
+/* not modified */
+#Top {clear: both; margin: 1px 1px 0px 1px;}
+#Breadcrumb .CurrentNode A.Button, #Breadcrumb .CurrentNode A.Button:Visited, #Breadcrumb .CurrentNode A.Button:Active {font-size: 8pt; color: #1F4978!important;}
+/*
+#Breadcrumb .CurrentNode DIV.Normal, #Breadcrumb .CurrentNode DIV.Huge, #Breadcrumb .CurrentNode A.Huge, #Breadcrumb .CurrentNode span.Huge {text-decoration: none; color: #1F4978!important;}
+#Breadcrumb .CurrentNode DIV.Huge, #Breadcrumb .CurrentNode DIV.Huge A, #Breadcrumb .CurrentNode span.Huge {font-size: 16pt;}
+*/
+#Left {float: left; position: relative; top: -15px; padding: 0px; width: 200px; margin: 1px 0px 1px 1px;}
+#Left .MenuHeader {height: 38px; margin-top: 5px; padding-top: 5px; padding-left: 7px; color: #1F4978; font-size: 9pt; background: transparent url(../Images/left_menu_header.gif) no-repeat;}
+#Left .Menu {padding: 0px 3px 5px 3px; background-color: #D1E9FF; border: solid 1px #86B9F7; border-top: none; margin-bottom: 20px;}
+#Left .NewsMenuHeader {height: 20px; margin-top: 5px; padding-top: 5px; padding-left: 7px; color: #1F4978; font-size: 9pt; background: transparent url(../Images/left_news_menu_header.png) no-repeat;}
+#Left .NewsMenu {background-color: #FFFFFF; border: solid 1px #86B9F7; border-top: none;}
+#Left .NewsMenuItem {padding: 10px 10px 10px 10px;}
+#Left .NewsMenuContent {text-align: justify;}
+#Left .NewsMenuItemDate {padding: 3px 0px 5px 0px; color: #787878;}
+#Left .NewsMenuContent p {margin: 0; padding: 0;}
+#Content {float: right; width: 788px; margin-top: 1px; background: #ffffff url(../Images/content_bkg.gif) repeat-x;}
+#ContentOneColumnNoPadding {width: 991px; padding: 0px; margin-top: 1px; background-color: #ffffff;}
+#StorefrontCenter {float: left; width: 955px; padding: 10px 0px 10px 10px;}
+#CenterOneColumn {float: left; width: 780px;}
+#Footer {color: #505050; clear: both; font-size: 8pt; padding-top: 8px; padding-bottom: 8px;}
+#Footer A {color: #505050;}
+#Footer .Container {width: 100%;}
+#Footer .Copyright {text-align: left;}
+#Footer .Version {text-align: right;}
+#SimpleWhiteOutline {width: 100%; height: 100%; background-color: #FFFFFF;}
