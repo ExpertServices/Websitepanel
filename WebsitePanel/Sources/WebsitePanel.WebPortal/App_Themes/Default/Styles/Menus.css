@@ -2,7 +2,7 @@
 .TopMenu ul.AspNet-Menu li ul li.AspNet-Menu-WithChildren span {height:auto; line-height:20px; padding:0; background:none; color:#333; font-size:13px; line-height:34px; text-transform:capitalize;}
 .MenuHeader {float:left; position:relative; display:block; background-image:url('/g/icons.png'); background-repeat:no-repeat; line-height:74px; text-transform:uppercase; font-size:12px; color:#fff; overflow:hidden; padding:0 22px 0 34px; filter:alpha(opacity=70); opacity:0.7; cursor:pointer;}
 .MenuHeader:hover {filter:alpha(opacity=100); opacity:1;}
-.TopMenu ul.AspNet-Menu li ul li.AspNet-Menu-WithChildren span:after {content:'?'; float:right; margin-right:10px;}
+.TopMenu ul.AspNet-Menu li ul li.AspNet-Menu-WithChildren span:after {content:'>'; float:right; margin-right:10px;}
 .TopMenu ul.AspNet-Menu li {float:left; position:relative;}
 .TopMenu ul.AspNet-Menu li a, .TopMenu ul.AspNet-Menu li span {display:block; background-image:url('/g/icons.png'); background-repeat:no-repeat; line-height:74px; text-transform:uppercase; font-size:12px; color:#fff; overflow:hidden; padding:0 22px 0 34px; filter:alpha(opacity=70); opacity:0.7; cursor:pointer;}
 .TopMenu ul.AspNet-Menu li a:hover, .TopMenu ul.AspNet-Menu li.AspNet-Menu-Hover, .TopMenu ul.AspNet-Menu li span:hover {filter:alpha(opacity=100); opacity:1;}
