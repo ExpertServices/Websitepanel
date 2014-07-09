@@ -15,10 +15,10 @@
 .Popup-HeaderLeft, .Popup-HeaderRight {display:none;}
 
 /* not modified */
-.ExchangeHeader {float: left; background: transparent url(../images/Exchange/main_bg_sh.gif) left top repeat-y; background-size:991px 1px;}
-.ExchangeBody {float: left; background: transparent url(../images/Exchange/module_header_sh.gif) left -35px no-repeat; background-size:991px 142px; clear: both;}
-.ExchangeBottom {float: left; background: transparent url(../images/Exchange/module_footer_sh.gif) left bottom no-repeat; background-size:991px 5px;}
-.ExchangeFooter {float: left; background: transparent url(../images/Exchange/bottom_bg_sh.gif) left top repeat-y; background-size:991px 1px; padding-bottom: 10px;}
+.ExchangeHeader {float: left; background-size:991px 1px;}
+.ExchangeBody {float: left; background-size:991px 142px; clear: both;}
+.ExchangeBottom {float: left; background-size:991px 5px;}
+.ExchangeFooter {float: left; background-size:991px 1px; padding-bottom: 10px;}
 #ExchangeContainer {background-color: transparent;}
 #ExchangeContainer .Module {background-color: Transparent;}
 #ExchangeContainer .Header {margin: 0px; background: Transparent; padding: 20px 0px 10px 20px; width: auto; clear: both;}

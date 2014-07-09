@@ -15,7 +15,7 @@ body {font-family:'Segoe UI Light','Open Sans',Arial; color:#333; margin:0px; pa
 #Header .Account {text-align:right; padding:3px 6px 0 0;}
 #TopMenu {position:relative; width:100%; min-width:880px; height:74px; background:#2e8bcc; z-index:99;}
 #Breadcrumb {margin:10px;}
-#Breadcrumb .Path {padding:8px; margin-bottom:20px; background-color:#f5f5f5;}
+#Breadcrumb .Path {padding:20px; margin-bottom:20px; background-color:#f5f5f5;}
 #Breadcrumb .Path img {display:none;}
 #Breadcrumb .Path a:not(:last-child):after, #Breadcrumb .Path span a:after {content:'/\00a0'; padding:0 5px 0 10px; color:#999;}
 #Breadcrumb .Path a, #Breadcrumb .Path a:Active, #Breadcrumb .Path a:Visited, #Breadcrumb .Path a:Hover {color:#428bca; font-size:13px; line-height:1.428571429;}
