@@ -22,3 +22,11 @@ msbuild.log
 _ReSharper.*
 web.config
 web.config
+WebsitePanel/Sources/_UpgradeReport_Files/UpgradeReport.css
+WebsitePanel/Sources/_UpgradeReport_Files/UpgradeReport.xslt
+WebsitePanel/Sources/_UpgradeReport_Files/UpgradeReport_Error.png
+WebsitePanel/Sources/_UpgradeReport_Files/UpgradeReport_Warning.png
+WebsitePanel/Sources/UpgradeLog.XML
+WebsitePanel/Sources/UpgradeLog.htm
+WebsitePanel/Sources/_UpgradeReport_Files/UpgradeReport_Information.png
+WebsitePanel/Sources/_UpgradeReport_Files/UpgradeReport_Success.png

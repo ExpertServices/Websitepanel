@@ -4453,3 +4453,13 @@ DELETE FROM [dbo].[Quotas] WHERE QuotaID = 427
 END
 GO
 
+-- Set SQL 2008 and SQL 2012 Users on suspendable
+BEGIN
+UPDATE [dbo].[ServiceItemTypes] SET [Suspendable] = 1 WHERE [ItemTypeID] = 32 AND [GroupID] = 22
+END
+GO
+
+BEGIN
+UPDATE [dbo].[ServiceItemTypes] SET [Suspendable] = 1 WHERE [ItemTypeID] = 38 AND [GroupID] = 23
+END
+GO
