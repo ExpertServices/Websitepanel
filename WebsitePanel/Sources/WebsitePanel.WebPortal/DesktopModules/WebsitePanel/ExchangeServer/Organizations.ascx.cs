@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Web.UI.WebControls;
@@ -48,38 +49,73 @@ namespace WebsitePanel.Portal.ExchangeServer
             chkRecursive.Visible = (PanelSecurity.SelectedUser.Role != UserRole.User);
             gvOrgs.Columns[2].Visible = gvOrgs.Columns[3].Visible = (PanelSecurity.SelectedUser.Role != UserRole.User) && chkRecursive.Checked;
 
-            if (PanelSecurity.LoggedUser.Role == UserRole.User)
-            {
-                gvOrgs.Columns[2].Visible = gvOrgs.Columns[3].Visible = gvOrgs.Columns[4].Visible = false;
-                btnCreate.Enabled = false;
-            }
+            btnSetDefaultOrganization.Enabled = !(gvOrgs.Rows.Count < 2);
 
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
             if (cntx.Quotas.ContainsKey(Quotas.ORGANIZATIONS))
             {
-                btnCreate.Enabled = (!(cntx.Quotas[Quotas.ORGANIZATIONS].QuotaAllocatedValue <= gvOrgs.Rows.Count)||(cntx.Quotas[Quotas.ORGANIZATIONS].QuotaAllocatedValue==-1));
+                btnCreate.Enabled = (!(cntx.Quotas[Quotas.ORGANIZATIONS].QuotaAllocatedValue <= gvOrgs.Rows.Count) || (cntx.Quotas[Quotas.ORGANIZATIONS].QuotaAllocatedValue == -1));
             }
 
-            //else
-                //if (gvOrgs.Rows.Count > 0) btnCreate.Enabled = false;
-
-            btnSetDefaultOrganization.Enabled = !(gvOrgs.Rows.Count < 2);
+            if (PanelSecurity.LoggedUser.Role == UserRole.User)
+            {
+                gvOrgs.Columns[2].Visible = gvOrgs.Columns[3].Visible = gvOrgs.Columns[5].Visible = false;
+                btnCreate.Enabled = false;
+                btnSetDefaultOrganization.Enabled = false;
+            }
 
             if (!Page.IsPostBack)
             {
-                if (Request.UrlReferrer != null && PanelSecurity.SelectedUser.Role == UserRole.User)
-                {
-                    var queryBuilder = new StringBuilder();
-                    queryBuilder.AppendFormat("?pid=Home&UserID={0}", PanelSecurity.SelectedUserId);
-                    
-                    if (Request.UrlReferrer.Query.Equals(queryBuilder.ToString(), StringComparison.InvariantCultureIgnoreCase) && gvOrgs.Rows.Count > 0)
-                    {
-                        if (CurrentDefaultOrgId > 0) Response.Redirect(GetOrganizationEditUrl(CurrentDefaultOrgId.ToString()));
+                RedirectToRequiredOrg();
+            }
+        }
 
-                        Response.Redirect(((HyperLink)gvOrgs.Rows[0].Cells[1].Controls[1]).NavigateUrl);
+        private List<string> GetPossibleUrlRefferers()
+        {
+            List<string> urlReferrers = new List<string>();
+            var queryBuilder = new StringBuilder();
+
+            queryBuilder.AppendFormat("?pid=Home&UserID={0}", PanelSecurity.SelectedUserId);
+
+            urlReferrers.Add(queryBuilder.ToString());
+            urlReferrers.Add("?pid=Home");
+            urlReferrers.Add("?");
+            urlReferrers.Add(string.Empty);
+
+            queryBuilder.Clear();
+
+            return urlReferrers;
+        }
+
+        private void RedirectToRequiredOrg()
+        {
+            if (Request.UrlReferrer != null && gvOrgs.Rows.Count > 0)
+            {
+                List<string> referrers = GetPossibleUrlRefferers();
+
+                if (PanelSecurity.SelectedUser.Role == UserRole.User)
+                {
+                    if (Request.UrlReferrer.Query.Equals(referrers[0]))
+                    {
+                        RedirectToOrgHomePage();
+                    }
+                }
+
+                if (PanelSecurity.LoggedUser.Role == UserRole.User)
+                {
+                    if (referrers.Contains(Request.UrlReferrer.Query))
+                    {
+                        RedirectToOrgHomePage();
                     }
                 }
             }
+        }
+
+        private void RedirectToOrgHomePage()
+        {
+            if (CurrentDefaultOrgId > 0) Response.Redirect(GetOrganizationEditUrl(CurrentDefaultOrgId.ToString()));
+
+            Response.Redirect(((HyperLink)gvOrgs.Rows[0].Cells[1].Controls[1]).NavigateUrl);
         }
 
         protected void btnCreate_Click(object sender, EventArgs e)

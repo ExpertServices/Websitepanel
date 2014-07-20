@@ -5,9 +5,9 @@
 </div>
 
 <asp:DataList ID="dlServers" Runat="server" CellSpacing="10" RepeatColumns="3" RepeatDirection="Horizontal">
-	<ItemStyle CssClass="BorderFillBox" VerticalAlign="Top"></ItemStyle>
+	<ItemStyle CssClass="BorderFillBox" VerticalAlign="Top" width="305px"  ></ItemStyle>
 	<ItemTemplate>
-		<table cellpadding="3" width="305">
+		<table cellpadding="3" width="305" style="width:100%;">
 			<tr>
 				<td class="Big">
 					<asp:hyperlink id=lnkEdit runat="server" CssClass="Black" NavigateUrl='<%# EditUrl("ServerID", Eval("ServerID").ToString(), "edit_server") %>'
