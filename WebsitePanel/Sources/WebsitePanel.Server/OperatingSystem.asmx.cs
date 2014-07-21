@@ -590,8 +590,9 @@ namespace WebsitePanel.Server
             try
             {
                 Log.WriteStart("'{0}' CheckFileServicesInstallation", ProviderSettings.ProviderName);
-                return OsProvider.CheckFileServicesInstallation();
+                bool bResult =  OsProvider.CheckFileServicesInstallation();
                 Log.WriteEnd("'{0}' CheckFileServicesInstallation", ProviderSettings.ProviderName);
+                return bResult;
             }
             catch (Exception ex)
             {

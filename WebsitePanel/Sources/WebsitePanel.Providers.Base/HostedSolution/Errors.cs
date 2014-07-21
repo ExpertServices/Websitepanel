@@ -32,5 +32,6 @@ namespace WebsitePanel.Providers.HostedSolution
     {
         public const int OK = 0;
         public const int AD_OBJECT_ALREADY_EXISTS = -1;
+        public const int MAPPED_DRIVE_ALREADY_EXISTS = -2;
     }
 }

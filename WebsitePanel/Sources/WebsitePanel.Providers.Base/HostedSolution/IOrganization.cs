@@ -26,6 +26,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using WebsitePanel.Providers.OS;
 using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Providers.HostedSolution
@@ -78,5 +79,19 @@ namespace WebsitePanel.Providers.HostedSolution
         string GetSamAccountNameByUserPrincipalName(string organizationId, string userPrincipalName);
 
         bool DoesSamAccountNameExist(string accountName);
+
+        MappedDrive[] GetDriveMaps(string organizationId);
+
+        int CreateMappedDrive(string organizationId, string drive, string labelAs, string path);
+
+        void DeleteMappedDrive(string organizationId, string drive);
+
+        void DeleteMappedDriveByPath(string organizationId, string path);
+
+        void DeleteMappedDrivesGPO(string organizationId);
+
+        void SetDriveMapsTargetingFilter(string organizationId, ExchangeAccount[] accounts, string folderName);
+
+        void ChangeDriveMapFolderPath(string organizationId, string oldFolder, string newFolder);
     }
 }

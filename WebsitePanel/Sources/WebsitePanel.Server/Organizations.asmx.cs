@@ -32,6 +32,7 @@ using System.Web.Services;
 using System.Web.Services.Protocols;
 using WebsitePanel.Providers;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.Providers.OS;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Server.Utils;
 
@@ -205,5 +206,46 @@ namespace WebsitePanel.Server
             return Organization.DoesSamAccountNameExist(accountName);
         }
 
+        [WebMethod, SoapHeader("settings")]
+        public MappedDrive[] GetDriveMaps(string organizationId)
+        {
+            return Organization.GetDriveMaps(organizationId);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public int CreateMappedDrive(string organizationId, string drive, string labelAs, string path)
+        {
+            return Organization.CreateMappedDrive(organizationId, drive, labelAs, path);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void DeleteMappedDrive(string organizationId, string drive)
+        {
+           Organization.DeleteMappedDrive(organizationId, drive);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void DeleteMappedDriveByPath(string organizationId, string path)
+        {
+            Organization.DeleteMappedDriveByPath(organizationId, path);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void DeleteMappedDrivesGPO(string organizationId)
+        {
+            Organization.DeleteMappedDrivesGPO(organizationId);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void SetDriveMapsTargetingFilter(string organizationId, ExchangeAccount[] accounts, string folderName)
+        {
+            Organization.SetDriveMapsTargetingFilter(organizationId, accounts, folderName);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void ChangeDriveMapFolderPath(string organizationId, string oldFolder, string newFolder)
+        {
+            Organization.ChangeDriveMapFolderPath(organizationId, oldFolder, newFolder);
+        }
     }
 }

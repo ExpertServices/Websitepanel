@@ -4383,9 +4383,11 @@ RETURN
 
 GO
 
-
-
-
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'EnterpriseStorage.DriveMaps')
+BEGIN
+INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (468, 44, 2, N'EnterpriseStorage.DriveMaps', N'Use Drive Maps', 1, 0, NULL)
+END
+GO
 
 -- Exchange2013 Archiving
 
@@ -4451,3 +4453,13 @@ DELETE FROM [dbo].[Quotas] WHERE QuotaID = 427
 END
 GO
 
+-- Set SQL 2008 and SQL 2012 Users on suspendable
+BEGIN
+UPDATE [dbo].[ServiceItemTypes] SET [Suspendable] = 1 WHERE [ItemTypeID] = 32 AND [GroupID] = 22
+END
+GO
+
+BEGIN
+UPDATE [dbo].[ServiceItemTypes] SET [Suspendable] = 1 WHERE [ItemTypeID] = 38 AND [GroupID] = 23
+END
+GO

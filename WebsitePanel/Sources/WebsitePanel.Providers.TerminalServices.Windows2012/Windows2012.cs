@@ -125,8 +125,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             // TODO: Remove it.
             return true;
 
-            Server.Utils.OS.WindowsVersion version = WebsitePanel.Server.Utils.OS.GetVersion();
-            return version == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2012;
+            //Server.Utils.OS.WindowsVersion version = WebsitePanel.Server.Utils.OS.GetVersion();
+            //return version == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2012;
         }
     }
 }

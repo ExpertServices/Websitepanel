@@ -124,6 +124,8 @@ namespace WebsitePanel.Providers.Web
 
         private System.Threading.SendOrPostCallback CreateVirtualDirectoryOperationCompleted;
 
+        private System.Threading.SendOrPostCallback CreateEnterpriseStorageVirtualDirectoryOperationCompleted;
+
         private System.Threading.SendOrPostCallback UpdateVirtualDirectoryOperationCompleted;
 
         private System.Threading.SendOrPostCallback DeleteVirtualDirectoryOperationCompleted;
@@ -351,6 +353,9 @@ namespace WebsitePanel.Providers.Web
 
         /// <remarks/>
         public event CreateVirtualDirectoryCompletedEventHandler CreateVirtualDirectoryCompleted;
+
+        /// <remarks/>
+        public event CreateEnterpriseStorageVirtualDirectoryCompletedEventHandler CreateEnterpriseStorageVirtualDirectoryCompleted;
 
         /// <remarks/>
         public event UpdateVirtualDirectoryCompletedEventHandler UpdateVirtualDirectoryCompleted;
@@ -2067,6 +2072,57 @@ namespace WebsitePanel.Providers.Web
             {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.CreateVirtualDirectoryCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/CreateEnterpriseStorageVirtualDirectory", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void CreateEnterpriseStorageVirtualDirectory(string siteId, WebVirtualDirectory directory)
+        {
+            this.Invoke("CreateEnterpriseStorageVirtualDirectory", new object[] {
+                    siteId,
+                    directory});
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginCreateEnterpriseStorageVirtualDirectory(string siteId, WebVirtualDirectory directory, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("CreateEnterpriseStorageVirtualDirectory", new object[] {
+                    siteId,
+                    directory}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public void EndCreateEnterpriseStorageVirtualDirectory(System.IAsyncResult asyncResult)
+        {
+            this.EndInvoke(asyncResult);
+        }
+
+        /// <remarks/>
+        public void CreateEnterpriseStorageVirtualDirectoryAsync(string siteId, WebVirtualDirectory directory)
+        {
+            this.CreateEnterpriseStorageVirtualDirectoryAsync(siteId, directory, null);
+        }
+
+        /// <remarks/>
+        public void CreateEnterpriseStorageVirtualDirectoryAsync(string siteId, WebVirtualDirectory directory, object userState)
+        {
+            if ((this.CreateEnterpriseStorageVirtualDirectoryOperationCompleted == null))
+            {
+                this.CreateEnterpriseStorageVirtualDirectoryOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCreateEnterpriseStorageVirtualDirectoryOperationCompleted);
+            }
+            this.InvokeAsync("CreateEnterpriseStorageVirtualDirectory", new object[] {
+                    siteId,
+                    directory}, this.CreateEnterpriseStorageVirtualDirectoryOperationCompleted, userState);
+        }
+
+        private void OnCreateEnterpriseStorageVirtualDirectoryOperationCompleted(object arg)
+        {
+            if ((this.CreateEnterpriseStorageVirtualDirectoryCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CreateEnterpriseStorageVirtualDirectoryCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
 
@@ -6161,6 +6217,10 @@ namespace WebsitePanel.Providers.Web
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
     public delegate void CreateVirtualDirectoryCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void CreateEnterpriseStorageVirtualDirectoryCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]

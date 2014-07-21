@@ -1165,6 +1165,11 @@ namespace WebsitePanel.Providers.Web
 			UpdateVirtualDirectory(siteId, directory, false);
 		}
 
+        public virtual void CreateEnterpriseStorageVirtualDirectory(string siteId, WebVirtualDirectory directory)
+        {
+
+        }
+
 		public virtual void UpdateVirtualDirectory(string siteId, WebVirtualDirectory directory)
 		{
 			UpdateVirtualDirectory(siteId, directory, true);

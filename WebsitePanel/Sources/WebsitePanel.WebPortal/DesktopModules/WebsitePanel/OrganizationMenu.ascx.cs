@@ -66,8 +66,8 @@ namespace WebsitePanel.Portal
             //Add "Organization Home" menu item
             MenuItem item = new MenuItem(
                 GetLocalizedString("Text.OrganizationHome"), 
-                "", 
-                imagePath + "home24.png",
+                "",
+                "",
                 PortalUtils.EditUrl("ItemID", PanelRequest.ItemID.ToString(), "organization_home", "SpaceID=" + PanelSecurity.PackageId));
 
             items.Add(item);
@@ -121,7 +121,7 @@ namespace WebsitePanel.Portal
 
             if (!hideItems)
             {
-                MenuItem item = new MenuItem(GetLocalizedString("Text.OrganizationGroup"), "", imagePath + "company24.png", null);
+                MenuItem item = new MenuItem(GetLocalizedString("Text.OrganizationGroup"), "", "", null);
 
                 item.Selectable = false;
 
@@ -160,7 +160,7 @@ namespace WebsitePanel.Portal
                     hideItems = true;
             }
 
-            MenuItem item = new MenuItem(GetLocalizedString("Text.ExchangeGroup"), "", imagePath + "exchange24.png", null);
+            MenuItem item = new MenuItem(GetLocalizedString("Text.ExchangeGroup"), "", "", null);
 
             item.Selectable = false;
 
@@ -218,7 +218,7 @@ namespace WebsitePanel.Portal
 
         private void PrepareCRMMenuRoot(PackageContext cntx, MenuItemCollection items, string imagePath)
         {
-            MenuItem item = new MenuItem(GetLocalizedString("Text.CRMGroup"), "", imagePath + "crm_16.png", null);
+            MenuItem item = new MenuItem(GetLocalizedString("Text.CRMGroup"), "", "", null);
 
             item.Selectable = false;
 
@@ -239,7 +239,7 @@ namespace WebsitePanel.Portal
 
         private void PrepareCRM2013MenuRoot(PackageContext cntx, MenuItemCollection items, string imagePath)
         {
-            MenuItem item = new MenuItem(GetLocalizedString("Text.CRM2013Group"), "", imagePath + "crm_16.png", null);
+            MenuItem item = new MenuItem(GetLocalizedString("Text.CRM2013Group"), "", "", null);
 
             item.Selectable = false;
 
@@ -260,7 +260,7 @@ namespace WebsitePanel.Portal
 
         private void PrepareBlackBerryMenuRoot(PackageContext cntx, MenuItemCollection items, string imagePath)
         {
-            MenuItem item = new MenuItem(GetLocalizedString("Text.BlackBerryGroup"), "", imagePath + "blackberry16.png", null);
+            MenuItem item = new MenuItem(GetLocalizedString("Text.BlackBerryGroup"), "", "", null);
 
             item.Selectable = false;
 
@@ -280,7 +280,7 @@ namespace WebsitePanel.Portal
 
         private void PrepareSharePointMenuRoot(PackageContext cntx, MenuItemCollection items, string imagePath)
         {
-            MenuItem item = new MenuItem(GetLocalizedString("Text.SharePointGroup"), "", imagePath + "sharepoint24.png", null);
+            MenuItem item = new MenuItem(GetLocalizedString("Text.SharePointGroup"), "", "", null);
 
             item.Selectable = false;
 
@@ -301,7 +301,7 @@ namespace WebsitePanel.Portal
 
         private void PrepareOCSMenuRoot(PackageContext cntx, MenuItemCollection items, string imagePath)
         {
-            MenuItem item = new MenuItem(GetLocalizedString("Text.OCSGroup"), "", imagePath + "ocs16.png", null);
+            MenuItem item = new MenuItem(GetLocalizedString("Text.OCSGroup"), "", "", null);
 
             item.Selectable = false;
 
@@ -320,7 +320,7 @@ namespace WebsitePanel.Portal
 
         private void PrepareLyncMenuRoot(PackageContext cntx, MenuItemCollection items, string imagePath)
         {
-            MenuItem item = new MenuItem(GetLocalizedString("Text.LyncGroup"), "", imagePath + "lync16.png", null);
+            MenuItem item = new MenuItem(GetLocalizedString("Text.LyncGroup"), "", "", null);
 
             item.Selectable = false;
 
@@ -348,7 +348,7 @@ namespace WebsitePanel.Portal
 
         private void PrepareEnterpriseStorageMenuRoot(PackageContext cntx, MenuItemCollection items, string imagePath)
         {
-            MenuItem item = new MenuItem(GetLocalizedString("Text.EnterpriseStorageGroup"), "", imagePath + "spaces16.png", null);
+            MenuItem item = new MenuItem(GetLocalizedString("Text.EnterpriseStorageGroup"), "", "", null);
 
             item.Selectable = false;
 
@@ -363,6 +363,10 @@ namespace WebsitePanel.Portal
         private void PrepareEnterpriseStorageMenu(PackageContext cntx, MenuItemCollection enterpriseStorageItems)
         {
             enterpriseStorageItems.Add(CreateMenuItem("EnterpriseStorageFolders", "enterprisestorage_folders"));
+
+            if(Utils.CheckQouta(Quotas.ENTERPRICESTORAGE_DRIVEMAPS, cntx))
+                enterpriseStorageItems.Add(CreateMenuItem("EnterpriseStorageDriveMaps", "enterprisestorage_drive_maps"));
+            
         }
 
         private MenuItem CreateMenuItem(string text, string key)

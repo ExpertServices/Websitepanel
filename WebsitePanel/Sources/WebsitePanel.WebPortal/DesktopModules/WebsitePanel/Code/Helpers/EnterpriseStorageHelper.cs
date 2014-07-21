@@ -25,5 +25,27 @@ namespace WebsitePanel.Portal
         }
 
         #endregion
+
+        #region Drive Maps
+
+        MappedDrivesPaged mappedDrives;
+
+        public int GetEnterpriseDriveMapsPagedCount(int itemId, string filterValue)
+        {
+            return mappedDrives.RecordsCount;
+        }
+
+        public MappedDrive[] GetEnterpriseDriveMapsPaged(int itemId, string filterValue,
+            int maximumRows, int startRowIndex, string sortColumn)
+        {
+            filterValue = filterValue ?? string.Empty;
+
+            mappedDrives = ES.Services.EnterpriseStorage.GetDriveMapsPaged(itemId,
+                filterValue, sortColumn, startRowIndex, maximumRows);
+
+            return mappedDrives.PageItems;
+        }
+
+        #endregion
     }
 }

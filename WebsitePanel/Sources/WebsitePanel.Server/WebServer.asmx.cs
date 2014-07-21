@@ -367,6 +367,22 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
+        public void CreateEnterpriseStorageVirtualDirectory(string siteId, WebVirtualDirectory directory)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' CreateEnterpriseStorageVirtualDirectory", ProviderSettings.ProviderName);
+                WebProvider.CreateEnterpriseStorageVirtualDirectory(siteId, directory);
+                Log.WriteEnd("'{0}' CreateEnterpriseStorageVirtualDirectory", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' CreateEnterpriseStorageVirtualDirectory", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
         public void UpdateVirtualDirectory(string siteId, WebVirtualDirectory directory)
         {
             try
@@ -1182,9 +1198,11 @@ namespace WebsitePanel.Server
             {
                 Log.WriteStart("CheckLoadUserProfile");
 
-                return WebProvider.CheckLoadUserProfile();
+                bool bResult =  WebProvider.CheckLoadUserProfile();
 
                 Log.WriteEnd("CheckLoadUserProfile");
+
+                return bResult;
             }
             catch (Exception ex)
             {

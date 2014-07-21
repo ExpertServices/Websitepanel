@@ -152,9 +152,7 @@ namespace WebsitePanel.EnterpriseServer
         [WebMethod]
         public void SetEnterpriseFolderSettings(int itemId, SystemFile folder, ESPermission[] permissions, bool directoyBrowsingEnabled, int quota, QuotaType quotaType)
         {
-            EnterpriseStorageController.SetDirectoryBrowseEnabled(itemId, folder.Url, directoyBrowsingEnabled);
-            EnterpriseStorageController.SetFolderPermission(itemId, folder.Name, permissions);
-            EnterpriseStorageController.SetFRSMQuotaOnFolder(itemId, folder.Name, quota, quotaType);
+            EnterpriseStorageController.StartSetEnterpriseFolderSettingsBackgroundTask(itemId, folder, permissions, directoyBrowsingEnabled, quota, quotaType);
         }
 
         #endregion
@@ -171,6 +169,40 @@ namespace WebsitePanel.EnterpriseServer
         public OrganizationStatistics GetStatisticsByOrganization(int itemId)
         {
             return EnterpriseStorageController.GetStatisticsByOrganization(itemId);
+        }
+
+        #endregion
+
+        #region Drive Mapping
+
+        [WebMethod]
+        public ResultObject CreateMappedDrive(int packageId, int itemId, string driveLetter, string labelAs, string folderName)
+        {
+            return EnterpriseStorageController.CreateMappedDrive(packageId, itemId, driveLetter, labelAs, folderName);
+        }
+
+        [WebMethod]
+        public ResultObject DeleteMappedDrive(int itemId, string driveLetter)
+        {
+            return EnterpriseStorageController.DeleteMappedDrive(itemId, driveLetter);
+        }
+
+        [WebMethod]
+        public MappedDrivesPaged GetDriveMapsPaged(int itemId, string filterValue, string sortColumn, int startRow, int maximumRows)
+        {
+            return EnterpriseStorageController.GetDriveMapsPaged(itemId, filterValue, sortColumn, startRow, maximumRows);
+        }
+
+        [WebMethod]
+        public string[] GetUsedDriveLetters(int itemId)
+        {
+            return EnterpriseStorageController.GetUsedDriveLetters(itemId);
+        }
+
+        [WebMethod]
+        public SystemFile[] GetNotMappedEnterpriseFolders(int itemId)
+        {
+            return EnterpriseStorageController.GetNotMappedEnterpriseFolders(itemId);
         }
 
         #endregion

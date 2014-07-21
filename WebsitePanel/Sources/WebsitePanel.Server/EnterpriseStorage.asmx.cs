@@ -130,8 +130,9 @@ namespace WebsitePanel.Server
             try
             {
                 Log.WriteStart("'{0}' SetFolderWebDavRules", ProviderSettings.ProviderName);
-                return EnterpriseStorageProvider.SetFolderWebDavRules(organizationId, folder, setting, rules);
+                bool bResult =  EnterpriseStorageProvider.SetFolderWebDavRules(organizationId, folder, setting, rules);
                 Log.WriteEnd("'{0}' SetFolderWebDavRules", ProviderSettings.ProviderName);
+                return bResult;
             }
             catch (Exception ex)
             {
@@ -146,8 +147,9 @@ namespace WebsitePanel.Server
             try
             {
                 Log.WriteStart("'{0}' GetFolderWebDavRules", ProviderSettings.ProviderName);
-                return EnterpriseStorageProvider.GetFolderWebDavRules(organizationId, folder, setting);
+                Providers.Web.WebDavFolderRule[]  webDavFolderRule =  EnterpriseStorageProvider.GetFolderWebDavRules(organizationId, folder, setting);
                 Log.WriteEnd("'{0}' GetFolderWebDavRules", ProviderSettings.ProviderName);
+                return webDavFolderRule;
             }
             catch (Exception ex)
             {
@@ -162,8 +164,9 @@ namespace WebsitePanel.Server
             try
             {
                 Log.WriteStart("'{0}' CheckFileServicesInstallation", ProviderSettings.ProviderName);
-                return EnterpriseStorageProvider.CheckFileServicesInstallation();
+                bool bResult = EnterpriseStorageProvider.CheckFileServicesInstallation();
                 Log.WriteEnd("'{0}' CheckFileServicesInstallation", ProviderSettings.ProviderName);
+                return bResult;
             }
             catch (Exception ex)
             {
@@ -178,8 +181,9 @@ namespace WebsitePanel.Server
             try
             {
                 Log.WriteStart("'{0}' RenameFolder", ProviderSettings.ProviderName);
-                return EnterpriseStorageProvider.RenameFolder(organizationId, originalFolder, newFolder, setting);
+                SystemFile systemFile = EnterpriseStorageProvider.RenameFolder(organizationId, originalFolder, newFolder, setting);
                 Log.WriteEnd("'{0}' RenameFolder", ProviderSettings.ProviderName);
+                return systemFile;
             }
             catch (Exception ex)
             {

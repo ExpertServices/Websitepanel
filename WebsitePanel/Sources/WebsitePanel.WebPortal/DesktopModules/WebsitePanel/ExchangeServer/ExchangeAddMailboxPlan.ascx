@@ -192,7 +192,9 @@
 								<td>
                                         <uc1:QuotaEditor id="recoverableItemsSpace" runat="server"
                                             QuotaTypeID="2"
-                                            QuotaValue="0"
+                                            QuotaValue="6144"
+                                            QuotaMinValue="6144"
+                                            QuotaMaxValue="-1"
                                             ParentQuotaValue="-1">
                                         </uc1:QuotaEditor>
 								</td>

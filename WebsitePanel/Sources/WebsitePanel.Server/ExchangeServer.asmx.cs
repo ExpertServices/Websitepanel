@@ -30,6 +30,7 @@ using System;
 using System.ComponentModel;
 using System.Web.Services;
 using System.Web.Services.Protocols;
+using System.Collections.Generic;
 using WebsitePanel.Providers;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Server.Utils;
@@ -197,12 +198,12 @@ namespace WebsitePanel.Server
 
 
         [WebMethod, SoapHeader("settings")]
-        public bool DeleteOrganization(string organizationId, string distinguishedName, string globalAddressList, string addressList, string roomList, string offlineAddressBook, string securityGroup, string addressBookPolicy)
+        public bool DeleteOrganization(string organizationId, string distinguishedName, string globalAddressList, string addressList, string roomList, string offlineAddressBook, string securityGroup, string addressBookPolicy, List<ExchangeDomainName> acceptedDomains)
         {
             try
             {
                 LogStart("DeleteOrganization");
-                bool ret = ES.DeleteOrganization(organizationId, distinguishedName, globalAddressList, addressList, roomList, offlineAddressBook, securityGroup, addressBookPolicy);
+                bool ret = ES.DeleteOrganization(organizationId, distinguishedName, globalAddressList, addressList, roomList, offlineAddressBook, securityGroup, addressBookPolicy, acceptedDomains);
                 LogEnd("DeleteOrganization");
                 return ret;
             }

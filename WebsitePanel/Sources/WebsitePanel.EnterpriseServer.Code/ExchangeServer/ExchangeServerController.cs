@@ -496,7 +496,7 @@ namespace WebsitePanel.EnterpriseServer
                     // rollback organization creation
                     if (organizationExtended)
                         mailboxRole.DeleteOrganization(org.OrganizationId, org.DistinguishedName,
-                            org.GlobalAddressList, org.AddressList, org.RoomsAddressList, org.OfflineAddressBook, org.SecurityGroup, org.AddressBookPolicy);
+                            org.GlobalAddressList, org.AddressList, org.RoomsAddressList, org.OfflineAddressBook, org.SecurityGroup, org.AddressBookPolicy, null);
 
                     // rollback domain
                     if (authDomainCreated)
@@ -583,6 +583,8 @@ namespace WebsitePanel.EnterpriseServer
                 //System.Threading.Thread.Sleep(5000);
                 Organization org = (Organization)PackageController.GetPackageItem(itemId);
 
+                List<ExchangeDomainName> acceptedDomains = GetOrganizationDomains(itemId);
+
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
@@ -594,7 +596,8 @@ namespace WebsitePanel.EnterpriseServer
                     org.RoomsAddressList,
                     org.OfflineAddressBook,
                     org.SecurityGroup,
-                    org.AddressBookPolicy);
+                    org.AddressBookPolicy,
+                    acceptedDomains.ToArray());
 
 
                 return successful ? 0 : BusinessErrorCodes.ERROR_EXCHANGE_DELETE_SOME_PROBLEMS;
@@ -1725,6 +1728,9 @@ namespace WebsitePanel.EnterpriseServer
                     if (plan.RecoverableItemsSpace == -1)
                         return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
 
+                    if (plan.RecoverableItemsSpace < 6144)
+                        return BusinessErrorCodes.ERROR_EXCHANGE_INVALID_RECOVERABLEITEMS_QUOTA;
+
                     if ((quotaRecoverableItemsUsed + plan.RecoverableItemsSpace) > (maxRecoverableItemsSpace))
                         return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
                 }
@@ -2698,6 +2704,9 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     if (plan.RecoverableItemsSpace == -1)
                         return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;
+
+                    if (plan.RecoverableItemsSpace < 6144)
+                        return BusinessErrorCodes.ERROR_EXCHANGE_INVALID_RECOVERABLEITEMS_QUOTA;
 
                     if ((quotaRecoverableItemsUsed + plan.RecoverableItemsSpace) > (maxRecoverableItemsSpace))
                         return BusinessErrorCodes.ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES;

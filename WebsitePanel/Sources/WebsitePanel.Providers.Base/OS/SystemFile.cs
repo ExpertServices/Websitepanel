@@ -49,6 +49,7 @@ namespace WebsitePanel.Providers.OS
         private int fsrmQuotaMB;
         private int frsmQuotaGB;
         private QuotaType fsrmQuotaType = QuotaType.Soft;
+        private string driveLetter;
 
         public SystemFile()
         {
@@ -141,6 +142,12 @@ namespace WebsitePanel.Providers.OS
         {
             get { return this.url; }
             set { this.url = value; }
+        }
+
+        public string DriveLetter
+        {
+            get { return this.driveLetter; }
+            set { this.driveLetter = value; }
         }
     }
 }

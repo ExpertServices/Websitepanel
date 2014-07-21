@@ -162,4 +162,7 @@
   <data name="locQuotaAvailableSpace.Text" xml:space="preserve">
     <value>Used Diskspace (Mb):</value>
   </data>
+  <data name="gvMappedDrive.Header" xml:space="preserve">
+    <value>Drive Map</value>
+  </data>
 </root>

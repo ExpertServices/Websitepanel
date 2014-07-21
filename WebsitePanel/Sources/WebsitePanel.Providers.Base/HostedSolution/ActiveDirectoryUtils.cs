@@ -91,6 +91,20 @@ namespace WebsitePanel.Providers.HostedSolution
             return rets.ToArray();
         }
 
+        public static DirectoryEntry GetGroupPolicyContainer(string displayName)
+        {
+            DirectorySearcher deSearch = new DirectorySearcher
+            {
+                Filter =
+                    ("(&(objectClass=groupPolicyContainer)(displayName=" + displayName + "))")
+            };
+
+            SearchResult results = deSearch.FindOne();
+            DirectoryEntry de = results.GetDirectoryEntry();
+
+            return de;
+        }
+
         public static bool IsUserInGroup(string samAccountName, string group)
         {
             bool res = false;

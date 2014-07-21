@@ -196,7 +196,7 @@ namespace WebsitePanel.Providers.Web.WPIWebApplicationGallery
                     applications.Add(MakeGalleryApplicationFromProduct(product));
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 //
             }

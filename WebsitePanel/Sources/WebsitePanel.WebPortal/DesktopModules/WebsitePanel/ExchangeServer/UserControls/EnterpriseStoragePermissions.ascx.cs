@@ -143,8 +143,6 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 			ExchangeAccount[] accounts = ES.Services.EnterpriseStorage.SearchESAccounts(PanelRequest.ItemID,
 				ddlSearchColumn.SelectedValue, txtSearchValue.Text + "%", "");
 
-            List<ExchangeAccount> newAccounts = new List<ExchangeAccount>();
-
             accounts = accounts.Where(x => !GetPemissions().Select(p => p.Account).Contains(x.AccountName)).ToArray();
             Array.Sort(accounts, CompareAccount);
             if (Direction == SortDirection.Ascending)

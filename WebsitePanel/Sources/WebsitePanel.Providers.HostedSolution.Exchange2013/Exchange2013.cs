@@ -211,10 +211,10 @@ namespace WebsitePanel.Providers.HostedSolution
 
         public bool DeleteOrganization(string organizationId, string distinguishedName,
             string globalAddressList, string addressList, string roomList, string offlineAddressBook,
-            string securityGroup, string addressBookPolicy)
+            string securityGroup, string addressBookPolicy, List<ExchangeDomainName> acceptedDomains)
         {
             return DeleteOrganizationInternal(organizationId, distinguishedName, globalAddressList,
-                addressList, roomList, offlineAddressBook, securityGroup, addressBookPolicy);
+                addressList, roomList, offlineAddressBook, securityGroup, addressBookPolicy, acceptedDomains);
         }
 
         public void SetOrganizationStorageLimits(string organizationDistinguishedName, long issueWarningKB, long prohibitSendKB,
@@ -675,11 +675,11 @@ namespace WebsitePanel.Providers.HostedSolution
                     {
                         Organization org = item as Organization;
                         DeleteOrganization(org.OrganizationId, org.DistinguishedName, org.GlobalAddressList,
-                            org.AddressList, org.RoomsAddressList, org.OfflineAddressBook, org.SecurityGroup, org.AddressBookPolicy);
+                            org.AddressList, org.RoomsAddressList, org.OfflineAddressBook, org.SecurityGroup, org.AddressBookPolicy, null);
                     }
                     else if (item is ExchangeDomain)
                     {
-                        DeleteAcceptedDomain(item.Name);
+                        DeleteAcceptedDomain(null, item.Name);
                     }
                 }
                 catch (Exception ex)
@@ -989,7 +989,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
 
         internal virtual bool DeleteOrganizationInternal(string organizationId, string distinguishedName,
-                    string globalAddressList, string addressList, string roomList, string offlineAddressBook, string securityGroup, string addressBookPolicy)
+                    string globalAddressList, string addressList, string roomList, string offlineAddressBook, string securityGroup, string addressBookPolicy, List<ExchangeDomainName> acceptedDomains)
         {
             ExchangeLog.LogStart("DeleteOrganizationInternal");
             bool ret = true;
@@ -1001,6 +1001,8 @@ namespace WebsitePanel.Providers.HostedSolution
 
 
                 string ou = ConvertADPathToCanonicalName(distinguishedName);
+
+
 
                 if (!DeleteOrganizationMailboxes(runSpace, ou))
                     ret = false;
@@ -1093,6 +1095,9 @@ namespace WebsitePanel.Providers.HostedSolution
                     ret = false;
                     ExchangeLog.LogError("Could not disable mail security distribution group " + securityGroup, ex);
                 }
+
+                if (!DeleteOrganizationAcceptedDomains(runSpace, acceptedDomains))
+                    ret = false;
             }
             catch (Exception ex)
             {
@@ -1265,6 +1270,33 @@ namespace WebsitePanel.Providers.HostedSolution
                 ExchangeLog.LogError(string.Format("Can't delete public folder {0}", publicFolder), ex);
             }
             ExchangeLog.LogEnd("DeleteOrganizationPublicFolders");
+            return ret;
+        }
+
+        private bool DeleteOrganizationAcceptedDomains(Runspace runSpace, List<ExchangeDomainName> acceptedDomains)
+        {
+            ExchangeLog.LogStart("DeleteOrganizationAcceptedDomains");
+
+            bool ret = true;
+
+            if (acceptedDomains != null)
+            {
+
+                foreach (ExchangeDomainName domain in acceptedDomains)
+                {
+                    try
+                    {
+                        DeleteAcceptedDomain(runSpace, domain.DomainName);
+                    }
+                    catch (Exception ex)
+                    {
+                        ExchangeLog.LogError(string.Format("Failed to delete accepted domain {0}", domain), ex);
+                        ret = false;
+                    }
+                }
+            }
+
+            ExchangeLog.LogEnd("DeleteOrganizationAcceptedDomains");
             return ret;
         }
 
@@ -6428,14 +6460,19 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("ChangeAcceptedDomainType");
         }
 
-        private void DeleteAcceptedDomain(string domainName)
+        private void DeleteAcceptedDomain(Runspace runSpace, string domainName)
         {
             ExchangeLog.LogStart("DeleteAcceptedDomain");
 
-            Runspace runSpace = null;
+            bool bCloseRunSpace = false;
+
             try
             {
-                runSpace = OpenRunspace();
+                if (runSpace == null)
+                {
+                    bCloseRunSpace = true;
+                    runSpace = OpenRunspace();
+                }
 
                 RemoveAcceptedDomain(runSpace, domainName);
             }
@@ -6447,7 +6484,7 @@ namespace WebsitePanel.Providers.HostedSolution
             finally
             {
 
-                CloseRunspace(runSpace);
+                if (bCloseRunSpace) CloseRunspace(runSpace);
             }
 
             ExchangeLog.LogEnd("DeleteAcceptedDomain");
@@ -6461,7 +6498,7 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             ExchangeLog.LogStart("DeleteDomainInternal");
             //Delete accepted domain
-            DeleteAcceptedDomain(domain);
+            DeleteAcceptedDomain(null, domain);
             ExchangeLog.LogEnd("DeleteDomainInternal");
         }
 

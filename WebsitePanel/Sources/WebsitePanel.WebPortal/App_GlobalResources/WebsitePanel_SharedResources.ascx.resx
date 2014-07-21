@@ -3190,6 +3190,9 @@
   <data name="Warning.2612" xml:space="preserve">
     <value>Specified storage quotas exceed maximum values assigned at the host level</value>
   </data>
+  <data name="Warning.2613" xml:space="preserve">
+    <value>Invalid recoverable items quota specified, should be greater or equal to 6144MB</value>
+  </data>  
   <data name="AuditLogTask.EXCHANGE_CALCULATE_DISKSPACE" xml:space="preserve">
     <value>Calculate organization disk space</value>
   </data>
@@ -5454,6 +5457,9 @@
   </data>
   <data name="Quota.Exchange2013.AllowArchiving" xml:space="preserve">
     <value>Allow Archiving</value>
+  </data>
+  <data name="Quota.EnterpriseStorage.DriveMaps" xml:space="preserve">
+    <value>Use Drive Maps</value>
   </data>
   <data name="Text.All" xml:space="preserve">
     <value>All</value>

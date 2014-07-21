@@ -186,7 +186,7 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         internal override bool DeleteOrganizationInternal(string organizationId, string distinguishedName,
-                    string globalAddressList, string addressList, string roomList, string offlineAddressBook, string securityGroup, string addressBookPolicy)
+                    string globalAddressList, string addressList, string roomList, string offlineAddressBook, string securityGroup, string addressBookPolicy, List<ExchangeDomainName> acceptedDomains)
         {
             ExchangeLog.LogStart("DeleteOrganizationInternal");
             bool ret = true;
@@ -290,6 +290,9 @@ namespace WebsitePanel.Providers.HostedSolution
                     ret = false;
                     ExchangeLog.LogError("Could not disable mail security distribution group " + securityGroup, ex);
                 }
+
+                if (!DeleteOrganizationAcceptedDomains(runSpace, acceptedDomains))
+                    ret = false;
             }
             catch (Exception ex)
             {
