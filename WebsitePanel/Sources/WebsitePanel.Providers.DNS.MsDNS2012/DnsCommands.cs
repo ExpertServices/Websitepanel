@@ -228,6 +228,9 @@ namespace WebsitePanel.Providers.DNS
 				.Where( r => null != r )
 				.Where( r => r.RecordType != DnsRecordType.SOA )
 			//	.Where( r => !( r.RecordName == "@" && DnsRecordType.NS == r.RecordType ) )
+                .OrderBy( r => r.RecordName )
+                .ThenBy( r => r.RecordType )
+                .ThenBy( r => r.RecordData )
 				.ToArray();
 		}
 
@@ -303,13 +306,18 @@ namespace WebsitePanel.Providers.DNS
 			ps.RunPipeline( cmd );
 		}
 
-		public static void Remove_DnsServerResourceRecord( this PowerShellHelper ps, string zoneName, string Name, string type )
+		public static void Remove_DnsServerResourceRecord( this PowerShellHelper ps, string zoneName, string Name, string type, string recordData )
 		{
-			// Remove-DnsServerResourceRecord -ZoneName xxxx.com -Name "@" -RRType Soa -Force
+            if (String.IsNullOrEmpty(Name)) Name = "@";
+
 			var cmd = new Command( "Remove-DnsServerResourceRecord" );
 			cmd.addParam( "ZoneName", zoneName );
-			cmd.addParam( "Name", Name );
+            cmd.addParam( "Name", Name );
 			cmd.addParam( "RRType", type );
+
+            if (!String.IsNullOrEmpty(recordData))
+                cmd.addParam("RecordData", recordData);
+
 			cmd.addParam( "Force" );
 			ps.RunPipeline( cmd );
 		}
