@@ -33,3 +33,7 @@ table.filemanager td {padding:0 !important;}
 .RadioButtonsGridView .AspNet-GridView table tbody tr td{font-size: 9pt; color: #333333; background: White; padding: 5px; text-align: left; white-space: nowrap;}
 .RadioButtonsGridView .AspNet-GridView table tbody tr td.RadioButtonColumn{padding-right: 25px; padding-left: 10px!important;}
 .RadioButtonsGridView .AspNet-GridView table thead tr th{clear: both; background: #f5f5f5; padding: 4px; border-top: solid 1px #CCCCCC; font-size: 9pt; color: #333333; text-align: left; white-space: nowrap;}
+
+/* fixed */
+.FixedGrid table { table-layout: fixed; }
+.FixedGrid table tbody tr td {word-wrap:break-word;}
