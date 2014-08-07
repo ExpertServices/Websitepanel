@@ -5,7 +5,7 @@
 .LightGridView .AspNet-GridView table tbody tr td {padding:5px; text-align:left;}
 .NormalGridView .AspNet-GridView {width:100%; margin-top:10px;}
 .NormalGridView .AspNet-GridView table {width:100%;}
-.NormalGridView .AspNet-GridView div.AspNet-GridView-Empty {padding:30px 0 50px 0; font-size:10pt; text-align:center; border-radius:2px; color:#ccc;}
+.NormalGridView .AspNet-GridView div.AspNet-GridView-Empty {padding:30px 0 50px 0; font-size:10pt; text-align:center; border-radius:2px; color:#777;}
 .NormalGridView .AspNet-GridView div.AspNet-GridView-Pagination {margin:30px 0; font-size:11px; text-align:center; white-space:nowrap; cursor:default; line-height:23px; color:#313131;}
 .NormalGridView .AspNet-GridView div.AspNet-GridView-Pagination a, .NormalGridView .AspNet-GridView div.AspNet-GridView-Pagination span {display:inline-block; width:26px; height:24px;border:1px solid #e6e6e6; cursor:pointer; margin:0 2px; border-radius:1px;}
 .NormalGridView .AspNet-GridView div.AspNet-GridView-Pagination span {font-weight:600; color:#222; border:none;}
@@ -13,7 +13,7 @@
 .NormalGridView .AspNet-GridView table thead tr th span {white-space:nowrap;}
 .NormalGridView .AspNet-GridView table thead tr th a {width:100%; display:inline-block; text-transform:uppercase; padding:10px 5px; color:#333;}
 .NormalGridView .AspNet-GridView table thead tr th.AspNet-GridView-Sort {font-weight:600;}
-.NormalGridView .AspNet-GridView table tbody tr td {font-weight:300; font-size:14px; color:#888; text-align:left; padding:10px 5px; border-bottom:solid 1px #ddd; /*white-space:nowrap;*/}
+.NormalGridView .AspNet-GridView table tbody tr td {font-weight:300; font-size:14px; color:#444; text-align:left; padding:10px 5px; border-bottom:solid 1px #ddd; /*white-space:nowrap;*/}
 .NormalGridView .AspNet-GridView table tbody tr td a {display:inline-block;}
 .NormalGridView .AspNet-GridView table tbody tr td a:hover {text-decoration:underline;}
 .NormalGridView .AspNet-GridView table tbody tr.AspNet-GridView-Alternate td {background:#f9f9f9;}
