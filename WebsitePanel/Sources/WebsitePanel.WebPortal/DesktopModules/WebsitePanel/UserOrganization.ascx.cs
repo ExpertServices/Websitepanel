@@ -48,49 +48,19 @@ namespace WebsitePanel.Portal
 {
     public partial class UserOrganization : OrganizationMenuControl
     {
-        private void FindDefaultOrg()
-        {
-            DataSet rawPackages = new PackagesHelper().GetMyPackages();
-            if (rawPackages.Tables.Count<1) return;
-
-            DataTable packages = rawPackages.Tables[0];
-
-            for(int i=0;i<packages.Rows.Count;i++)
-            {
-                int pId = (int)packages.Rows[i]["PackageID"];
-                DataTable orgs = new OrganizationsHelper().GetOrganizations(pId, false);
-
-                for(int j=0;j<orgs.Rows.Count;j++)
-                {
-                    DataRow org = orgs.Rows[j];
-                    int iId = (int)org["ItemID"];
-
-                    if (packageId==0)
-                    {
-                        packageId = pId;
-                        itemID = iId;
-                    }
-
-                    object isDefault = org["IsDefault"];
-                    if (isDefault is bool)
-                    {
-                        if ((bool)isDefault)
-                        {
-                            packageId = pId;
-                            itemID = iId;
-                            return;
-                        }
-                    }
-                }
-            }
-        }
 
         int packageId = 0;
-        override public int PackageId
+        override public int PackageId 
         {
             get 
             {
+                // test
+                //return 1; 
                 return packageId; 
+            }
+            set
+            {
+                packageId = value;
             }
         }
 
@@ -99,6 +69,32 @@ namespace WebsitePanel.Portal
         {
             get 
             {
+                // test
+                //return 1;
+                if (itemID != 0) return itemID;
+                if (PackageId == 0) return 0;
+
+                DataTable orgs = new OrganizationsHelper().GetOrganizations(PackageId, false);
+
+                for (int j = 0; j < orgs.Rows.Count; j++)
+                {
+                    DataRow org = orgs.Rows[j];
+                    int iId = (int)org["ItemID"];
+
+                    if (itemID == 0)
+                        itemID = iId;
+
+                    object isDefault = org["IsDefault"];
+                    if (isDefault is bool)
+                    {
+                        if ((bool)isDefault)
+                        {
+                            itemID = iId;
+                            break;
+                        }
+                    }
+                }
+
                 return itemID; 
             }
         }
@@ -106,8 +102,6 @@ namespace WebsitePanel.Portal
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            FindDefaultOrg();
-
             ShortMenu = true;
             ShowImg = true;
 
@@ -127,6 +121,23 @@ namespace WebsitePanel.Portal
 
         }
 
+        protected override MenuItem CreateMenuItem(string text, string key, string img)
+        {
+            string PID_SPACE_EXCHANGE_SERVER = "SpaceExchangeServer";
 
+            MenuItem item = new MenuItem();
+
+            item.Text = GetLocalizedString("Text." + text);
+            item.NavigateUrl = PortalUtils.NavigatePageURL( PID_SPACE_EXCHANGE_SERVER, "ItemID", ItemID.ToString(),
+                PortalUtils.SPACE_ID_PARAM + "=" + PackageId, DefaultPage.CONTROL_ID_PARAM + "=" + key
+                /*, DefaultPage.MODULE_ID_PARAM + "=" + */ );
+
+            if (img == null)
+                item.ImageUrl = PortalUtils.GetThemedIcon("Icons/tool_48.png");
+            else
+                item.ImageUrl = PortalUtils.GetThemedIcon(img);
+
+            return item;
+        }
     }
 }

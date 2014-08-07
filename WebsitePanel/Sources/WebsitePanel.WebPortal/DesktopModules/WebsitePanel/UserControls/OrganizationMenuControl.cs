@@ -46,19 +46,16 @@ namespace WebsitePanel.Portal.UserControls
     public class OrganizationMenuControl : WebsitePanelModuleBase
     {
 
-        virtual public string ImagePath 
-        {
-            get { return String.Concat("~/", DefaultPage.THEMES_FOLDER, "/", Page.Theme, "/"); }
-        }
-
         virtual public int PackageId
         {
             get { return PanelSecurity.PackageId; }
+            set { }
         }
 
         virtual public int ItemID
         {
             get { return PanelRequest.ItemID; }
+            set { }
         }
 
 
@@ -194,7 +191,7 @@ namespace WebsitePanel.Portal.UserControls
         private void PrepareExchangeMenu(MenuItemCollection exchangeItems, bool hideItems)
         {
             if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, Cntx))
-                exchangeItems.Add(CreateMenuItem("Mailboxes", "mailboxes", @"Icons/accounting_mail_48.png"));
+                exchangeItems.Add(CreateMenuItem("Mailboxes", "mailboxes", @"Icons/mailboxes_48.png"));
 
             if (ShortMenu) return;
 
@@ -260,8 +257,8 @@ namespace WebsitePanel.Portal.UserControls
 
         private void PrepareCRMMenu(MenuItemCollection crmItems)
         {
-            crmItems.Add(CreateMenuItem("CRMOrganization", "CRMOrganizationDetails", @"Images/crm_48.png"));
-            crmItems.Add(CreateMenuItem("CRMUsers", "CRMUsers", @"Images/crm_48.png"));
+            crmItems.Add(CreateMenuItem("CRMOrganization", "CRMOrganizationDetails", @"Icons/crm_orgs_48.png"));
+            crmItems.Add(CreateMenuItem("CRMUsers", "CRMUsers", @"Icons/crm_users_48.png"));
 
             if (ShortMenu) return;
 
@@ -291,8 +288,8 @@ namespace WebsitePanel.Portal.UserControls
 
         private void PrepareCRM2013Menu(MenuItemCollection crmItems)
         {
-            crmItems.Add(CreateMenuItem("CRMOrganization", "CRMOrganizationDetails", @"Images/crm_48.png"));
-            crmItems.Add(CreateMenuItem("CRMUsers", "CRMUsers", @"Images/crm_48.png"));
+            crmItems.Add(CreateMenuItem("CRMOrganization", "CRMOrganizationDetails", @"Icons/crm_orgs_48.png"));
+            crmItems.Add(CreateMenuItem("CRMUsers", "CRMUsers", @"Icons/crm_users_48.png"));
 
             if (ShortMenu) return;
 
@@ -323,7 +320,7 @@ namespace WebsitePanel.Portal.UserControls
 
         private void PrepareBlackBerryMenu(MenuItemCollection bbItems)
         {
-            bbItems.Add(CreateMenuItem("BlackBerryUsers", "blackberry_users", @"Images/blackberry48.png"));
+            bbItems.Add(CreateMenuItem("BlackBerryUsers", "blackberry_users", @"Icons/blackberry_users_48.png"));
         }
 
         private void PrepareSharePointMenuRoot(MenuItemCollection items)
@@ -349,7 +346,7 @@ namespace WebsitePanel.Portal.UserControls
 
         private void PrepareSharePointMenu(MenuItemCollection spItems)
         {
-            spItems.Add(CreateMenuItem("SiteCollections", "sharepoint_sitecollections", @"Images/Exchange/storage_limits_48.png"));
+            spItems.Add(CreateMenuItem("SiteCollections", "sharepoint_sitecollections", @"Icons/sharepoint_sitecollections_48.png"));
 
             if (ShortMenu) return;
 
@@ -406,7 +403,7 @@ namespace WebsitePanel.Portal.UserControls
 
         private void PrepareLyncMenu(MenuItemCollection lyncItems)
         {
-            lyncItems.Add(CreateMenuItem("LyncUsers", "lync_users", @"Images/lync48.png"));
+            lyncItems.Add(CreateMenuItem("LyncUsers", "lync_users", @"Icons/lync_users_48.png"));
 
             if (ShortMenu) return;
 
@@ -443,7 +440,7 @@ namespace WebsitePanel.Portal.UserControls
 
         private void PrepareEnterpriseStorageMenu(MenuItemCollection enterpriseStorageItems)
         {
-            enterpriseStorageItems.Add(CreateMenuItem("EnterpriseStorageFolders", "enterprisestorage_folders", @"Images/folder_48.png"));
+            enterpriseStorageItems.Add(CreateMenuItem("EnterpriseStorageFolders", "enterprisestorage_folders", @"Icons/enterprisestorage_folders_48.png"));
 
             if (ShortMenu) return;
 
@@ -457,7 +454,7 @@ namespace WebsitePanel.Portal.UserControls
             return CreateMenuItem(text, key, null);
         }
 
-        private MenuItem CreateMenuItem(string text, string key, string img)
+        virtual protected MenuItem CreateMenuItem(string text, string key, string img)
         {
             MenuItem item = new MenuItem();
 
@@ -468,9 +465,9 @@ namespace WebsitePanel.Portal.UserControls
             if (ShowImg)
             {
                 if (img==null)
-                    item.ImageUrl = ImagePath + "Icons/tool_48.png";
+                    item.ImageUrl =  PortalUtils.GetThemedIcon("Icons/tool_48.png");
                 else
-                    item.ImageUrl = ImagePath + img;
+                    item.ImageUrl =  PortalUtils.GetThemedIcon(img);
             }
 
             return item;
