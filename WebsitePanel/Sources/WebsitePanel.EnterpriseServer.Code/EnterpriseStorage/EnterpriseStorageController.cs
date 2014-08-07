@@ -444,7 +444,7 @@ namespace WebsitePanel.EnterpriseServer
                 EnterpriseStorage es = GetEnterpriseStorage(GetEnterpriseStorageServiceID(org.PackageId));
 
                 var webDavSetting = ObjectUtils.FillObjectFromDataReader<WebDavSetting>(
-                    DataProvider.GetEnterpriseFolder(itemId, newFolder));
+                    DataProvider.GetEnterpriseFolder(itemId, oldFolder));
 
                 bool folderExists = es.GetFolder(org.OrganizationId, newFolder, webDavSetting) != null;
 

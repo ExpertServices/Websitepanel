@@ -51,6 +51,7 @@ namespace WebsitePanel.Providers.HostedSolution
         #region Constants
 
         private const string GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE = @"\\{0}\SYSVOL\{0}\Policies\{1}\User\Preferences\Drives";
+        private const string GROUP_POLICY_MAPPED_DRIVES_ROOT_PATH_TEMPLATE = @"\\{0}\SYSVOL\{0}\Policies\{1}";
         private const string DRIVES_CLSID = "{8FDDCC1A-0C3C-43cd-A6B4-71A6DF20DA8C}";
         private const string DRIVE_CLSID = "{935D1B74-9CB8-4e3c-9914-7DD559B7A417}";
         private const string gPCUserExtensionNames = "[{00000000-0000-0000-0000-000000000000}{2EA1A81B-48E5-45E9-8BB7-A6E3AC170006}][{5794DAFD-BE60-433F-88A2-1A31939AC01F}{2EA1A81B-48E5-45E9-8BB7-A6E3AC170006}]";
@@ -1230,6 +1231,8 @@ namespace WebsitePanel.Providers.HostedSolution
                 drivesNode.AppendChild(driveNode);
 
                 xml.Save(drivesXmlPath);
+
+                IncrementGPOVersion(organizationId, gpoId);
             }
 
             HostedSolutionLog.LogEnd("CreateMappedDriveInternal");
@@ -1293,6 +1296,8 @@ namespace WebsitePanel.Providers.HostedSolution
                 }
 
                 xml.Save(path);
+
+                IncrementGPOVersion(organizationId, gpoId);
             }
 
             HostedSolutionLog.LogEnd("DeleteMappedDriveInternal");
@@ -1404,6 +1409,8 @@ namespace WebsitePanel.Providers.HostedSolution
                      }
 
                      xml.Save(drivesXmlPath);
+
+                     IncrementGPOVersion(organizationId, gpoId);
                  }
              }
              catch (Exception)
@@ -1464,6 +1471,8 @@ namespace WebsitePanel.Providers.HostedSolution
                      }
 
                      xml.Save(drivesXmlPath);
+
+                     IncrementGPOVersion(organizationId, gpoId);
                  }
             }
             catch (Exception)
@@ -1600,6 +1609,50 @@ namespace WebsitePanel.Providers.HostedSolution
             ActiveDirectoryUtils.SetADObjectProperty(de, "gPCUserExtensionNames", gPCUserExtensionNames);
 
             de.CommitChanges();
+        }
+
+        private void SetGPCVersionNumber(string organizationId, int version)
+        {
+            string gpoName = string.Format("{0}-mapped-drives", organizationId);
+
+            DirectoryEntry de = ActiveDirectoryUtils.GetGroupPolicyContainer(gpoName);
+
+            ActiveDirectoryUtils.SetADObjectProperty(de, "versionNumber", version.ToString());
+
+            de.CommitChanges();
+        }
+
+        private void IncrementGPOVersion(string organizationId, string gpoId)
+        {
+            string path = string.Format("{0}\\{1}",
+                                           string.Format(GROUP_POLICY_MAPPED_DRIVES_ROOT_PATH_TEMPLATE, RootDomain, gpoId),
+                                           "GPT.ini");
+
+            if (File.Exists(path))
+            {
+                string[] lines = File.ReadAllLines(path);
+
+                int version = int.Parse(lines.Where(x => x.Contains("Version=")).FirstOrDefault().Replace("Version=", ""));
+
+                string hexVersionValue = version.ToString("X");
+
+                int userVersion = (version == 0) ? 0 : int.Parse(hexVersionValue.Substring(0, hexVersionValue.Length - 4), System.Globalization.NumberStyles.HexNumber);
+
+                userVersion++;
+
+                string userHexVersionValue = userVersion.ToString("X");
+                string conputerHexVersion = (version == 0) ? "0000" : hexVersionValue.Substring(hexVersionValue.Length - 4, 4);
+
+                hexVersionValue = userHexVersionValue + conputerHexVersion;
+
+                int newVersion = int.Parse(hexVersionValue, System.Globalization.NumberStyles.HexNumber);
+
+                lines[1] = string.Format("Version={0}", newVersion);
+
+                File.WriteAllLines(path, lines);
+
+                SetGPCVersionNumber(organizationId, newVersion);
+            }
         }
 
         #region Drive Mapping Helpers
