@@ -159,4 +159,7 @@
   <data name="Web.Text" xml:space="preserve">
     <value>Web &amp; Applications</value>
   </data>
+  <data name="SpaceStatistics.Text" xml:space="preserve">
+    <value>Space Statistics</value>
+  </data>
 </root>

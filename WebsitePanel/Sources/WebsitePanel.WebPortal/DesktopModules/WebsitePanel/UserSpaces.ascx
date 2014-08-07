@@ -25,9 +25,8 @@
 
                     <asp:Repeater ID="PackageGroups" runat="server" DataSource='<%# GetIconsDataSource((int)Eval("PackageID"))  %>' > 
                         <ItemTemplate>
-                            <asp:hyperlink id="lnkGroup" runat="server" NavigateUrl='<%# Eval("NavigateURL") %>'>
-		                        <%# Eval("Text") %>
-	                        </asp:hyperlink>
+
+                            <asp:Label ID="lblGroup" runat="server" CssClass="LinkText" Text='<%# Eval("Text") %>' />
 
                             <asp:DataList ID="PackageIcons" runat="server" DataSource='<%# GetIconMenuItems(Eval("ChildItems")) %>'
                                 CellSpacing="1" RepeatColumns="5" RepeatDirection="Horizontal">
@@ -57,7 +56,7 @@
                 </div>
             </div>
             <asp:Panel ID="OrgPanel" runat="server" Visible='<%# IsOrgPanelVisible((int)Eval("PackageID")) %>'>
-                <asp:hyperlink ID="linkOrg" runat="server" NavigateUrl='<%# GetOrgPageUrl((int)Eval("PackageID")) %>' meta:resourcekey="linkOrg" Text="Hosted Organization" />
+                <asp:Label ID="lblOrg" runat="server" CssClass="LinkText" meta:resourcekey="lblOrg" Text="Hosted Organization" />
                 <wsp:UserOrganization ID="UserOrganization" runat="server" PackageId='<%# (int)Eval("PackageID") %>' />
             </asp:Panel>
         </ItemTemplate>

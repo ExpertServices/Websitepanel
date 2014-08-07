@@ -74,6 +74,7 @@ namespace WebsitePanel.Portal.UserControls
 
         public void BindMenu(MenuItemCollection items)
         {
+
             //Organization menu group;
             if (Cntx.Groups.ContainsKey(ResourceGroups.HostedOrganizations))
                 PrepareOrganizationMenuRoot(items);
@@ -193,13 +194,13 @@ namespace WebsitePanel.Portal.UserControls
             if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, Cntx))
                 exchangeItems.Add(CreateMenuItem("Mailboxes", "mailboxes", @"Icons/mailboxes_48.png"));
 
-            if (ShortMenu) return;
-
             if (Utils.CheckQouta(Quotas.EXCHANGE2007_CONTACTS, Cntx))
-                exchangeItems.Add(CreateMenuItem("Contacts", "contacts"));
+                exchangeItems.Add(CreateMenuItem("Contacts", "contacts", @"Icons/exchange_contacts_48.png"));
 
             if (Utils.CheckQouta(Quotas.EXCHANGE2007_DISTRIBUTIONLISTS, Cntx))
-                exchangeItems.Add(CreateMenuItem("DistributionLists", "dlists"));
+                exchangeItems.Add(CreateMenuItem("DistributionLists", "dlists", @"Icons/exchange_dlists_48.png"));
+
+            if (ShortMenu) return;
 
             if (Utils.CheckQouta(Quotas.EXCHANGE2007_PUBLICFOLDERS, Cntx))
                 exchangeItems.Add(CreateMenuItem("PublicFolders", "public_folders"));

@@ -110,6 +110,8 @@ namespace WebsitePanel.Portal
             {
                 MenuItemCollection items = new MenuItemCollection();
 
+                items.Add(CreateMenuItem("OrganizationHome", "organization_home", @"Icons/organization_home_48.png"));
+
                 BindMenu(items);
                 UserOrgPanel.Visible = true;
 
@@ -139,5 +141,16 @@ namespace WebsitePanel.Portal
 
             return item;
         }
+
+        public MenuItemCollection GetIconMenuItems(object menuItems)
+        {
+            return (MenuItemCollection)menuItems;
+        }
+
+        public bool IsIconMenuVisible(object menuItems)
+        {
+            return ((MenuItemCollection)menuItems).Count > 0;
+        }
+
     }
 }

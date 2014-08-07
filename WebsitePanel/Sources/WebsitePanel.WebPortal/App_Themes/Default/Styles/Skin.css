@@ -285,3 +285,4 @@ UL.ActionButtons LI {margin-bottom: 12px;}
 .enabled {width:20px; height:20px; background: transparent url(../Icons/ok.png) left center no-repeat; border:medium none;}
 p.warningText {font-size:14px; color:Red; text-align:center;}
 .Hidden {display: none;}
+.LinkText {color:#428bca;}
