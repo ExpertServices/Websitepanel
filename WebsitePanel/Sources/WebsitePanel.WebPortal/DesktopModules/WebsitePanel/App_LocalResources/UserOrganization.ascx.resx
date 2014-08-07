@@ -148,7 +148,7 @@
     <value>BlackBerry Users</value>
   </data>
   <data name="Text.Contacts" xml:space="preserve">
-    <value>Exchange Contacts</value>
+    <value>Contacts</value>
   </data>
   <data name="Text.CRM2013Group" xml:space="preserve">
     <value>CRM 2013</value>
@@ -166,7 +166,7 @@
     <value>Disclaimers</value>
   </data>
   <data name="Text.DistributionLists" xml:space="preserve">
-    <value>Exchange Distribution Lists</value>
+    <value>Distribution Lists</value>
   </data>
   <data name="Text.DomainNames" xml:space="preserve">
     <value>Domains</value>
@@ -238,7 +238,7 @@
     <value>SharePoint</value>
   </data>
   <data name="Text.SiteCollections" xml:space="preserve">
-    <value>Site Collections</value>
+    <value>Sharepoint Sites</value>
   </data>
   <data name="Text.StorageLimits" xml:space="preserve">
     <value>Storage Settings</value>
