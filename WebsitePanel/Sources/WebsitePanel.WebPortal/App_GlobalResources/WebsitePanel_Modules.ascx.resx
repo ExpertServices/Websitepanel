@@ -786,4 +786,7 @@
   <data name="ModuleTitle.PhoneNumbers" xml:space="preserve">
     <value>Phone Numbers</value>
   </data>
+  <data name="ModuleTitle.UserOrganization" xml:space="preserve">
+    <value>Hosted Organization</value>
+  </data>
 </root>

@@ -104,9 +104,34 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Containers\Default\VPSForPC.ascx" />
+    <Content Include="App_Themes\Default\Icons\advancedstatistics_48.png" />
+    <Content Include="App_Themes\Default\Icons\applicationsinstaller_48.png" />
+    <Content Include="App_Themes\Default\Icons\blackberry_users_48.png" />
     <Content Include="App_Themes\Default\Icons\block.png" />
     <Content Include="App_Themes\Default\Icons\configureVLan.png" />
+    <Content Include="App_Themes\Default\Icons\crm_orgs_48.png" />
+    <Content Include="App_Themes\Default\Icons\crm_users_48.png" />
+    <Content Include="App_Themes\Default\Icons\domains_48.png" />
+    <Content Include="App_Themes\Default\Icons\enterprisestorage_folders_48.png" />
+    <Content Include="App_Themes\Default\Icons\filemanager_48.png" />
+    <Content Include="App_Themes\Default\Icons\ftp_48.png" />
+    <Content Include="App_Themes\Default\Icons\lync_users_48.png" />
+    <Content Include="App_Themes\Default\Icons\mailboxes_48.png" />
+    <Content Include="App_Themes\Default\Icons\mail_accounts_48.png" />
+    <Content Include="App_Themes\Default\Icons\mail_domains_48.png" />
+    <Content Include="App_Themes\Default\Icons\mail_forwardings_48.png" />
+    <Content Include="App_Themes\Default\Icons\mail_groups_48.png" />
+    <Content Include="App_Themes\Default\Icons\mail_lists_48.png" />
+    <Content Include="App_Themes\Default\Icons\odbc_48.png" />
     <Content Include="App_Themes\Default\Icons\OK.png" />
+    <Content Include="App_Themes\Default\Icons\scheduledtasks_48.png" />
+    <Content Include="App_Themes\Default\Icons\sharedssl_48.png" />
+    <Content Include="App_Themes\Default\Icons\sharepoint_sitecollections_48.png" />
+    <Content Include="App_Themes\Default\Icons\vpsforpc_48.png" />
+    <Content Include="App_Themes\Default\Icons\vps_48.png" />
+    <Content Include="App_Themes\Default\Icons\webapplicationsgallery_48.png" />
+    <Content Include="App_Themes\Default\Icons\webipaddresses_48.png" />
+    <Content Include="App_Themes\Default\Icons\websites_48.png" />
     <Content Include="App_Themes\Default\Images\Exchange\blank16.gif" />
     <Content Include="App_Themes\Default\Images\Exchange\disabled.png" />
     <Content Include="App_Themes\Default\Images\Exchange\disabled_16.png" />
