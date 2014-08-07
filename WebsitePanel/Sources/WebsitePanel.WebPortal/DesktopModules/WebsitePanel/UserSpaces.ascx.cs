@@ -53,7 +53,7 @@ namespace WebsitePanel.Portal
             bool isUser = PanelSecurity.SelectedUser.Role == UserRole.User;
 
             // load icons data
-            xmlIcons = this.Module.SelectNodes("Icon");
+            xmlIcons = this.Module.SelectNodes("Group");
 
             if (isUser && xmlIcons != null)
             {
@@ -84,6 +84,12 @@ namespace WebsitePanel.Portal
         {
             return PortalUtils.GetSpaceHomePageUrl(spaceId);
         }
+        public string GetOrgPageUrl(int spaceId)
+        {
+            string PID_SPACE_EXCHANGE_SERVER = "SpaceExchangeServer";
+            return NavigatePageURL(PID_SPACE_EXCHANGE_SERVER, PortalUtils.SPACE_ID_PARAM, spaceId.ToString());
+        }
+
 
         protected void odsPackages_Selected(object sender, ObjectDataSourceStatusEventArgs e)
         {
@@ -124,6 +130,8 @@ namespace WebsitePanel.Portal
             return items;
         }
 
+
+
         public MenuItemCollection GetIconMenuItems(object menuItems)
         {
             return (MenuItemCollection)menuItems;
@@ -133,6 +141,13 @@ namespace WebsitePanel.Portal
         {
             return ((MenuItemCollection)menuItems).Count > 0;
         }
+
+        public bool IsOrgPanelVisible(int packageId)
+        {
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(packageId);
+            return cntx.Groups.ContainsKey(ResourceGroups.HostedOrganizations);
+        }
+
 
         private MenuItem CreateMenuItem(PackageContext cntx, XmlNode xmlNode)
         {
@@ -181,13 +196,18 @@ namespace WebsitePanel.Portal
             }
 
             // process nested menu items
-            XmlNodeList xmlMenuNodes = xmlNode.SelectNodes("MenuItems/MenuItem");
+            XmlNodeList xmlMenuNodes = xmlNode.SelectNodes("Icon");
+            if (xmlMenuNodes.Count==0)
+                xmlMenuNodes = xmlNode.SelectNodes("MenuItems/MenuItem");
             foreach (XmlNode xmlMenuNode in xmlMenuNodes)
             {
                 MenuItem menuItem = CreateMenuItem(cntx, xmlMenuNode);
                 if (menuItem != null)
                     item.ChildItems.Add(menuItem);
             }
+
+            // test
+            //return item;
 
             if (display && !(disabled && item.ChildItems.Count == 0))
                 return item;
