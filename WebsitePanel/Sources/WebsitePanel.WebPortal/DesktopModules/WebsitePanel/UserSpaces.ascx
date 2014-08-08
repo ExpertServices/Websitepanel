@@ -6,7 +6,7 @@
 <%@ Import Namespace="WebsitePanel.Portal" %>
 
 
-<asp:Panel id="ButtonsPanel" runat="server" class="FormButtonsBar">
+<asp:Panel id="ButtonsPanel" runat="server" class="FormButtonsBar UserSpaces">
 	<asp:Button ID="btnAddItem" runat="server" meta:resourcekey="btnAddItem" Text="Create Hosting Space" CssClass="Button3" OnClick="btnAddItem_Click" />
 </asp:Panel>
 
