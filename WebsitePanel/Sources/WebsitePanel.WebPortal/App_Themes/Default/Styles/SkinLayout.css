@@ -1,5 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,300,400,700);
-body {font-family:'Segoe UI Light','Open Sans',Arial; color:#333; margin:0px; padding:0px; font-size:13px; background:#ddd;}
+body {font-family:'Segoe UI','Open Sans',Arial; color:#333; margin:0px; padding:0px; font-size:13px; background:#ddd;}
 #SkinOutline, #LoginSkinOutline {width:990px; margin:auto;}
 #SkinContent {float:left; width:100%; background:#fff;}
 #LoginSkinContent {background:#fff;}
@@ -13,9 +13,9 @@ body {font-family:'Segoe UI Light','Open Sans',Arial; color:#333; margin:0px; pa
 .SearchMethodSide {display:none;}
 .SearchQuery {}
 #Header .Account {text-align:right; padding:3px 6px 0 0;}
-#TopMenu {position:relative; width:100%; min-width:880px; height:74px; background:#2e8bcc; z-index:99;}
+#TopMenu {position:relative; width:100%; min-width:880px; height:40px; background:#2e8bcc; z-index:99;}
 #Breadcrumb {margin:10px;}
-#Breadcrumb .Path {padding:20px; margin-bottom:20px; background-color:#f5f5f5;}
+#Breadcrumb .Path {padding: 10px 5px 12px 25px; margin-bottom:20px; background-color:#f5f5f5;}
 #Breadcrumb .Path img {display:none;}
 #Breadcrumb .Path a:not(:last-child):after, #Breadcrumb .Path span a:after {content:'/\00a0'; padding:0 5px 0 10px; color:#999; display:inline-block;}
 #Breadcrumb .Path .OrgSpan a:last-child:after {content: none;}

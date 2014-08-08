@@ -11,7 +11,7 @@ label {cursor:pointer;}
 /* global */
 a {color:#428bca;}
 a:hover {text-decoration:underline;}
-td.SubHead {min-width:70px; line-height:13px; color:#888; vertical-align:top; padding:9px 0 5px 0;}
+td.SubHead {min-width:70px; line-height:13px; color:#000; vertical-align:top; padding:9px 0 5px 0;}
 td.SubHead span {}
 td.Normal {padding:0; vertical-align:top; line-height:34px; white-space:nowrap;}
 td.Normal span {}
@@ -26,11 +26,11 @@ td.Normal .NormalTextBox + span {display:inline-block; padding:0;}
 .FormLabel150, .FormLabel200 {padding:9px 8px 14px 0; color:#888; vertical-align:top;}
 .FormLabel150 {width:150px;}
 .FormLabel200 {width:200px;}
-.Huge {font-size:36px; font-weight:300; color:#333; background:none !important; border:none !important; padding:0 !important; letter-spacing:-1px;}
+.Huge {font-family:'Segoe UI Light','Open Sans',Arial!important; font-size:36px; font-weight:300; color:#333; background:none !important; border:none !important; padding:0 !important; letter-spacing:-1px;}
 .FormBody .Huge {font-size:18px; font-weight:600; letter-spacing:0;}
 .Right .SubHead {width:80px;}
 .RightBlockTable .SubHead {width:60px;}
-.ToolLink a {font-size:13px; display:inline-block; padding:10px 0 0 0; font-weight:300; color:#ec9e59;}
+.ToolLink a {font-size:13px; display:inline-block; padding:10px 0 0 0; font-weight:300; color:#db6b20;}
 .ToolLink a:hover {text-decoration:underline;}
 ul.LinksList {margin-left:20px;}
 ul.LinksList li a {display:block; line-height:30px;}
@@ -90,8 +90,8 @@ input[type=checkbox], input[type=radio] {margin:8px 4px 8px; vertical-align:-1px
 input[type=image] {margin-right:4px;}
 .LoginLabel {display:block; line-height:34px; width:auto !important; padding-right:8px;}
 .LoginContainer .SubHead {padding-right:8px; color:#333;}
-.RightBlockTitle {color:#de7f40; font-size:26px; font-weight:300; letter-spacing:-1px;}
-.RightBlockTable {color:#888;}
+.RightBlockTitle {color:#db6b20; font-size:26px; font-weight:300; letter-spacing:-1px;}
+.RightBlockTable {color:#000;}
 .RightBlockTable td.SubHead, .RightBlockTable td.Normal {padding:5px 0; line-height:13px;}
  {padding:0; line-height:13px;}
 .FormRightIcon {display:none;}
@@ -285,3 +285,4 @@ UL.ActionButtons LI {margin-bottom: 12px;}
 .enabled {width:20px; height:20px; background: transparent url(../Icons/ok.png) left center no-repeat; border:medium none;}
 p.warningText {font-size:14px; color:Red; text-align:center;}
 .Hidden {display: none;}
+.LinkText {color:#428bca;}
