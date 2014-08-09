@@ -74,6 +74,8 @@ namespace WebsitePanel.Portal.UserControls
 
         public void BindMenu(MenuItemCollection items)
         {
+            if ((PackageId <= 0) || (ItemID <= 0))
+                return;
 
             //Organization menu group;
             if (Cntx.Groups.ContainsKey(ResourceGroups.HostedOrganizations))

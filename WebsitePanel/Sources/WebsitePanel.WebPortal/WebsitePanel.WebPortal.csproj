@@ -109,6 +109,7 @@
     <Content Include="App_Themes\Default\Icons\blackberry_users_48.png" />
     <Content Include="App_Themes\Default\Icons\block.png" />
     <Content Include="App_Themes\Default\Icons\configureVLan.png" />
+    <Content Include="App_Themes\Default\Icons\create_organization_48.png" />
     <Content Include="App_Themes\Default\Icons\crm_orgs_48.png" />
     <Content Include="App_Themes\Default\Icons\crm_users_48.png" />
     <Content Include="App_Themes\Default\Icons\domains_48.png" />

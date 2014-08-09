@@ -106,13 +106,21 @@ namespace WebsitePanel.Portal
             ShowImg = true;
 
 
-            if (PackageId > 0)
+            if ((PackageId > 0) && (Cntx.Groups.ContainsKey(ResourceGroups.HostedOrganizations)))
             {
                 MenuItemCollection items = new MenuItemCollection();
 
-                items.Add(CreateMenuItem("OrganizationHome", "organization_home", @"Icons/organization_home_48.png"));
+                if (ItemID > 0)
+                {
+                    items.Add(CreateMenuItem("OrganizationHome", "organization_home", @"Icons/organization_home_48.png"));
+                    BindMenu(items);
+                }
+                else
+                {
+                    items.Add(CreateMenuItem("CreateOrganization", "create_organization", @"Icons/create_organization_48.png"));
+                }
 
-                BindMenu(items);
+
                 UserOrgPanel.Visible = true;
 
                 OrgIcons.DataSource = items;
