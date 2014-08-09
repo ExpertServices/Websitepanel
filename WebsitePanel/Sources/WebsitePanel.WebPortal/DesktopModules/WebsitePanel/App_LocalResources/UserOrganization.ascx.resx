@@ -249,4 +249,7 @@
   <data name="Text.Users" xml:space="preserve">
     <value>Users</value>
   </data>
+  <data name="Text.CreateOrganization" xml:space="preserve">
+    <value>Create Organization</value>
+  </data>
 </root>
