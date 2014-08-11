@@ -357,6 +357,22 @@ namespace WebsitePanel.Providers.Mail
             return mailAccounts.ToArray();
         }
 
+        protected void SaveProviderSettingsToService()
+        {
+            var apiObject = GetApiObject();
+            apiObject.SetProperty("C_Accounts_Global_Domains_UseDiskQuota", ProviderSettings["UseDomainDiskQuota"]);
+            apiObject.SetProperty("C_Accounts_Global_Domains_UseDomainLimits", ProviderSettings["UseDomainLimits"]);
+            apiObject.SetProperty("C_Accounts_Global_Domains_UseUserLimits", ProviderSettings["UseUserLimits"]);
+            apiObject.SetProperty("C_Accounts_Global_Domains_OverrideGlobal", ProviderSettings["OverrideGlobal"]);
+            apiObject.SetProperty("C_Accounts_Global_Domains_WarnMailboxUsage", ProviderSettings["WarnMailboxUsage"]);
+            apiObject.SetProperty("C_Accounts_Global_Domains_WarnDomainSize", ProviderSettings["WarnDomainSize"]);
+
+            apiObject.SetProperty("C_Mail_SMTP_Delivery_MaxMsgSize", Convert.ToInt32(ProviderSettings["MaxMessageSize"])*1024*1024);
+            apiObject.SetProperty("C_Mail_SMTP_Delivery_LimitMsgSize", Convert.ToInt32(ProviderSettings["MaxMessageSize"]) > 0);
+
+            SaveApiSetting(apiObject);
+        }
+
         #endregion
 
  		#region IHostingServiceProvier methods
@@ -382,22 +398,6 @@ namespace WebsitePanel.Providers.Mail
         {
             SaveProviderSettingsToService();
             return base.Install();
-        }
-
-        protected void SaveProviderSettingsToService()
-        {
-            var apiObject = GetApiObject();
-            apiObject.SetProperty("C_Accounts_Global_Domains_UseDiskQuota", ProviderSettings["UseDomainDiskQuota"]);
-            apiObject.SetProperty("C_Accounts_Global_Domains_UseDomainLimits", ProviderSettings["UseDomainLimits"]);
-            apiObject.SetProperty("C_Accounts_Global_Domains_UseUserLimits", ProviderSettings["UseUserLimits"]);
-            apiObject.SetProperty("C_Accounts_Global_Domains_OverrideGlobal", ProviderSettings["OverrideGlobal"]);
-            apiObject.SetProperty("C_Accounts_Global_Domains_WarnMailboxUsage", ProviderSettings["WarnMailboxUsage"]);
-            apiObject.SetProperty("C_Accounts_Global_Domains_WarnDomainSize", ProviderSettings["WarnDomainSize"]);
-
-            apiObject.SetProperty("C_Mail_SMTP_Delivery_MaxMsgSize", Convert.ToInt32(ProviderSettings["MaxMessageSize"])*1024*1024);
-            apiObject.SetProperty("C_Mail_SMTP_Delivery_LimitMsgSize", Convert.ToInt32(ProviderSettings["MaxMessageSize"]) > 0);
-
-            SaveApiSetting(apiObject);
         }
 
         public override void ChangeServiceItemsState(ServiceProviderItem[] items, bool enabled)
@@ -1045,7 +1045,13 @@ namespace WebsitePanel.Providers.Mail
             }
         }
 
-        private string GetRandomPassword()
+        private string GetRandowChars(string chars, int length)
+        {
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        protected string GetRandomPassword()
         {
             var apiObject = GetApiObject();
             var minLength = apiObject.GetProperty("C_Accounts_Policies_Pass_MinLength");
@@ -1053,8 +1059,9 @@ namespace WebsitePanel.Providers.Mail
             var nonAlphaNum = apiObject.GetProperty("C_Accounts_Policies_Pass_NonAlphaNum");
             var alpha = apiObject.GetProperty("C_Accounts_Policies_Pass_Alpha");
 
-            return "asdfghjk12345678";
-            // TODO: Generateapassword using password policy from icewarp installation. Is there a imple way
+            return System.Web.Security.Membership.GeneratePassword(minLength, nonAlphaNum) + 
+                GetRandowChars("0123456789", digits)+
+                GetRandowChars("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", alpha);
         }
 
         public void UpdateMailAlias(MailAlias mailAlias)
