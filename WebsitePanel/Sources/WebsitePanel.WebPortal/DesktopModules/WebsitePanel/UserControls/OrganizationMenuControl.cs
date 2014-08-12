@@ -72,6 +72,11 @@ namespace WebsitePanel.Portal.UserControls
         public bool ShortMenu = false;
         public bool ShowImg = false;
 
+        public MenuItem OrganizationMenuRoot = null;
+        public MenuItem ExchangeMenuRoot = null;
+
+        public bool PutBlackBerryInExchange = false;
+
         public void BindMenu(MenuItemCollection items)
         {
             if ((PackageId <= 0) || (ItemID <= 0))
@@ -132,16 +137,23 @@ namespace WebsitePanel.Portal.UserControls
                 }
                 else
                 {
-                    MenuItem item = new MenuItem(GetLocalizedString("Text.OrganizationGroup"), "", "", null);
+                    MenuItem item;
+
+                    if (OrganizationMenuRoot != null) 
+                        item = OrganizationMenuRoot;
+                    else
+                        item = new MenuItem(GetLocalizedString("Text.OrganizationGroup"), "", "", null);
 
                     item.Selectable = false;
 
                     PrepareOrganizationMenu(item.ChildItems);
 
-                    if (item.ChildItems.Count > 0)
+                    if ((item.ChildItems.Count > 0) && (OrganizationMenuRoot == null))
                     {
                         items.Add(item);
                     }
+
+                    OrganizationMenuRoot = item;
                 }
             }
         }
@@ -188,6 +200,8 @@ namespace WebsitePanel.Portal.UserControls
                 {
                     items.Add(item);
                 }
+
+                ExchangeMenuRoot = item;
             }
         }
 
@@ -202,38 +216,38 @@ namespace WebsitePanel.Portal.UserControls
             if (Utils.CheckQouta(Quotas.EXCHANGE2007_DISTRIBUTIONLISTS, Cntx))
                 exchangeItems.Add(CreateMenuItem("DistributionLists", "dlists", @"Icons/exchange_dlists_48.png"));
 
-            if (ShortMenu) return;
+            //if (ShortMenu) return;
 
             if (Utils.CheckQouta(Quotas.EXCHANGE2007_PUBLICFOLDERS, Cntx))
-                exchangeItems.Add(CreateMenuItem("PublicFolders", "public_folders"));
+                exchangeItems.Add(CreateMenuItem("PublicFolders", "public_folders", @"Icons/public_folders_48.png"));
 
             if (!hideItems)
                 if (Utils.CheckQouta(Quotas.EXCHANGE2007_ACTIVESYNCALLOWED, Cntx))
-                    exchangeItems.Add(CreateMenuItem("ActiveSyncPolicy", "activesync_policy"));
+                    exchangeItems.Add(CreateMenuItem("ActiveSyncPolicy", "activesync_policy", @"Icons/activesync_policy_48.png"));
 
             if (!hideItems)
                 if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, Cntx))
-                    exchangeItems.Add(CreateMenuItem("MailboxPlans", "mailboxplans"));
+                    exchangeItems.Add(CreateMenuItem("MailboxPlans", "mailboxplans", @"Icons/mailboxplans_48.png"));
 
             if (!hideItems)
                 if (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, Cntx))
-                    exchangeItems.Add(CreateMenuItem("RetentionPolicy", "retentionpolicy"));
+                    exchangeItems.Add(CreateMenuItem("RetentionPolicy", "retentionpolicy", @"Icons/retentionpolicy_48.png"));
 
             if (!hideItems)
                 if (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, Cntx))
-                    exchangeItems.Add(CreateMenuItem("RetentionPolicyTag", "retentionpolicytag"));
+                    exchangeItems.Add(CreateMenuItem("RetentionPolicyTag", "retentionpolicytag", @"Icons/retentionpolicytag_48.png"));
 
             if (!hideItems)
                 if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, Cntx))
-                    exchangeItems.Add(CreateMenuItem("ExchangeDomainNames", "domains"));
+                    exchangeItems.Add(CreateMenuItem("ExchangeDomainNames", "domains", @"Icons/domains_48.png"));
 
             if (!hideItems)
                 if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, Cntx))
-                    exchangeItems.Add(CreateMenuItem("StorageUsage", "storage_usage"));
+                    exchangeItems.Add(CreateMenuItem("StorageUsage", "storage_usage", @"Icons/storage_usages_48.png"));
 
             if (!hideItems)
                 if (Utils.CheckQouta(Quotas.EXCHANGE2007_DISCLAIMERSALLOWED, Cntx))
-                    exchangeItems.Add(CreateMenuItem("Disclaimers", "disclaimers"));
+                    exchangeItems.Add(CreateMenuItem("Disclaimers", "disclaimers", @"Icons/disclaimers_48.png"));
 
         }
 
@@ -263,9 +277,9 @@ namespace WebsitePanel.Portal.UserControls
             crmItems.Add(CreateMenuItem("CRMOrganization", "CRMOrganizationDetails", @"Icons/crm_orgs_48.png"));
             crmItems.Add(CreateMenuItem("CRMUsers", "CRMUsers", @"Icons/crm_users_48.png"));
 
-            if (ShortMenu) return;
+            //if (ShortMenu) return;
 
-            crmItems.Add(CreateMenuItem("StorageLimits", "crm_storage_settings"));
+            crmItems.Add(CreateMenuItem("StorageLimits", "crm_storage_settings", @"Icons/crm_storage_settings_48.png"));
         }
 
         private void PrepareCRM2013MenuRoot(MenuItemCollection items)
@@ -294,9 +308,9 @@ namespace WebsitePanel.Portal.UserControls
             crmItems.Add(CreateMenuItem("CRMOrganization", "CRMOrganizationDetails", @"Icons/crm_orgs_48.png"));
             crmItems.Add(CreateMenuItem("CRMUsers", "CRMUsers", @"Icons/crm_users_48.png"));
 
-            if (ShortMenu) return;
+            //if (ShortMenu) return;
 
-            crmItems.Add(CreateMenuItem("StorageLimits", "crm_storage_settings"));
+            crmItems.Add(CreateMenuItem("StorageLimits", "crm_storage_settings", @"Icons/crm_storage_settings_48.png"));
         }
 
         private void PrepareBlackBerryMenuRoot(MenuItemCollection items)
@@ -307,13 +321,24 @@ namespace WebsitePanel.Portal.UserControls
             }
             else
             {
-                MenuItem item = new MenuItem(GetLocalizedString("Text.BlackBerryGroup"), "", "", null);
+                MenuItem item;
+                bool additem = true;
+
+                if (PutBlackBerryInExchange && (ExchangeMenuRoot != null))
+                {
+                    item = ExchangeMenuRoot;
+                    additem = false;
+                }
+                else
+                    item = new MenuItem(GetLocalizedString("Text.BlackBerryGroup"), "", "", null);
 
                 item.Selectable = false;
 
                 PrepareBlackBerryMenu(item.ChildItems);
 
-                if (item.ChildItems.Count > 0)
+                additem = additem && (item.ChildItems.Count > 0);
+
+                if (additem)
                 {
                     items.Add(item);
                 }
@@ -351,10 +376,10 @@ namespace WebsitePanel.Portal.UserControls
         {
             spItems.Add(CreateMenuItem("SiteCollections", "sharepoint_sitecollections", @"Icons/sharepoint_sitecollections_48.png"));
 
-            if (ShortMenu) return;
+            //if (ShortMenu) return;
 
-            spItems.Add(CreateMenuItem("StorageUsage", "sharepoint_storage_usage"));
-            spItems.Add(CreateMenuItem("StorageLimits", "sharepoint_storage_settings"));
+            spItems.Add(CreateMenuItem("StorageUsage", "sharepoint_storage_usage", @"Icons/sharepoint_storage_usage_48.png"));
+            spItems.Add(CreateMenuItem("StorageLimits", "sharepoint_storage_settings", @"Icons/sharepoint_storage_settings_48.png"));
         }
 
         private void PrepareOCSMenuRoot(MenuItemCollection items)
@@ -408,16 +433,16 @@ namespace WebsitePanel.Portal.UserControls
         {
             lyncItems.Add(CreateMenuItem("LyncUsers", "lync_users", @"Icons/lync_users_48.png"));
 
-            if (ShortMenu) return;
+            //if (ShortMenu) return;
 
-            lyncItems.Add(CreateMenuItem("LyncUserPlans", "lync_userplans"));
+            lyncItems.Add(CreateMenuItem("LyncUserPlans", "lync_userplans", @"Icons/lync_userplans_48.png"));
 
 
             if (Utils.CheckQouta(Quotas.LYNC_FEDERATION, Cntx))
-                lyncItems.Add(CreateMenuItem("LyncFederationDomains", "lync_federationdomains"));
+                lyncItems.Add(CreateMenuItem("LyncFederationDomains", "lync_federationdomains", @"Icons/lync_federationdomains_48.png"));
 
             if (Utils.CheckQouta(Quotas.LYNC_PHONE, Cntx))
-                lyncItems.Add(CreateMenuItem("LyncPhoneNumbers", "lync_phonenumbers"));
+                lyncItems.Add(CreateMenuItem("LyncPhoneNumbers", "lync_phonenumbers", @"Icons/lync_phonenumbers_48.png"));
         }
 
         private void PrepareEnterpriseStorageMenuRoot(MenuItemCollection items)
@@ -445,10 +470,10 @@ namespace WebsitePanel.Portal.UserControls
         {
             enterpriseStorageItems.Add(CreateMenuItem("EnterpriseStorageFolders", "enterprisestorage_folders", @"Icons/enterprisestorage_folders_48.png"));
 
-            if (ShortMenu) return;
+            //if (ShortMenu) return;
 
             if (Utils.CheckQouta(Quotas.ENTERPRICESTORAGE_DRIVEMAPS, Cntx))
-                enterpriseStorageItems.Add(CreateMenuItem("EnterpriseStorageDriveMaps", "enterprisestorage_drive_maps"));
+                enterpriseStorageItems.Add(CreateMenuItem("EnterpriseStorageDriveMaps", "enterprisestorage_drive_maps", @"Icons/enterprisestorage_drive_maps_48.png"));
 
         }
 

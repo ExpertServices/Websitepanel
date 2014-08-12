@@ -56,7 +56,6 @@
                 </div>
             </div>
             <asp:Panel ID="OrgPanel" runat="server" Visible='<%# IsOrgPanelVisible((int)Eval("PackageID")) %>'>
-                <asp:Label ID="lblOrg" runat="server" CssClass="LinkText" meta:resourcekey="lblOrg" Text="Hosted Organization" />
                 <wsp:UserOrganization ID="UserOrganization" runat="server" PackageId='<%# (int)Eval("PackageID") %>' />
             </asp:Panel>
         </ItemTemplate>
