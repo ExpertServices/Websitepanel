@@ -4463,3 +4463,10 @@ BEGIN
 UPDATE [dbo].[ServiceItemTypes] SET [Suspendable] = 1 WHERE [ItemTypeID] = 38 AND [GroupID] = 23
 END
 GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [ProviderName] = 'IceWarp')
+BEGIN
+INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (160, 4, N'IceWarp', N'IceWarp Mail Server', N'WebsitePanel.Providers.Mail.IceWarp, WebsitePanel.Providers.Mail.IceWarp', N'IceWarp', NULL)
+END
+GO
+
