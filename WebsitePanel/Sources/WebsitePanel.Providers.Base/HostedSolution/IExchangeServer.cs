@@ -131,8 +131,10 @@ namespace WebsitePanel.Providers.HostedSolution
         void RemoveDevice(string id);
 
         // Disclaimers
-        int NewDisclaimerTransportRule(string Name, string From, string Text);
-        int RemoveTransportRule(string Name);
+        int SetDisclaimer(string name, string text);
+        int RemoveDisclaimer(string name);
+        int AddDisclamerMember(string name, string member);
+        int RemoveDisclamerMember(string name, string member);
 
         // Archiving
         ResultObject SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy);

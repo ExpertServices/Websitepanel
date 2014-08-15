@@ -823,15 +823,27 @@ namespace WebsitePanel.Server
         #region Disclaimers
 
         [WebMethod, SoapHeader("settings")]
-        public int NewDisclaimerTransportRule(string Name, string From, string Text)
+        public int SetDisclaimer(string name, string text)
         {
-            return ES.NewDisclaimerTransportRule(Name, From, Text);
+            return ES.SetDisclaimer(name, text);
         }
 
         [WebMethod, SoapHeader("settings")]
-        public int RemoveTransportRule(string Name)
+        public int RemoveDisclaimer(string name)
         {
-            return ES.RemoveTransportRule(Name);
+            return ES.RemoveDisclaimer(name);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public int AddDisclamerMember(string name, string member)
+        {
+            return ES.AddDisclamerMember(name, member);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public int RemoveDisclamerMember(string name, string member)
+        {
+            return ES.RemoveDisclamerMember(name, member);
         }
 
         #endregion

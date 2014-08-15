@@ -5565,17 +5565,26 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Disclaimers
 
-        public static int AddExchangeDisclaimer(int itemID, ExchangeDisclaimer disclaimer)
+        public static int AddExchangeDisclaimer(int itemId, ExchangeDisclaimer disclaimer)
         {
+            int res = -1;
+
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "ADD_EXCHANGE_EXCHANGEDISCLAIMER", itemID);
+            TaskManager.StartTask("EXCHANGE", "ADD_EXCHANGE_EXCHANGEDISCLAIMER", itemId);
 
             try
             {
-                return DataProvider.AddExchangeDisclaimer(itemID, disclaimer);
+                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                if (org == null) return -1;
+                int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+                ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+
+                res = DataProvider.AddExchangeDisclaimer(itemId, disclaimer);
+                disclaimer.ExchangeDisclaimerId = res;
+                exchange.SetDisclaimer(disclaimer.WSPUniqueName, disclaimer.DisclaimerText);
             }
             catch (Exception ex)
             {
@@ -5586,20 +5595,26 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.CompleteTask();
             }
 
-
+            return res;
         }
 
-        public static int UpdateExchangeDisclaimer(int itemID, ExchangeDisclaimer disclaimer)
+        public static int UpdateExchangeDisclaimer(int itemId, ExchangeDisclaimer disclaimer)
         {
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "UPDATE_EXCHANGE_EXCHANGEDISCLAIMER", itemID);
+            TaskManager.StartTask("EXCHANGE", "UPDATE_EXCHANGE_EXCHANGEDISCLAIMER", itemId);
 
             try
             {
-                DataProvider.UpdateExchangeDisclaimer(itemID, disclaimer);
+                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                if (org == null) return -1;
+                int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+                ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+
+                exchange.SetDisclaimer(disclaimer.WSPUniqueName, disclaimer.DisclaimerText);
+                DataProvider.UpdateExchangeDisclaimer(itemId, disclaimer);
             }
             catch (Exception ex)
             {
@@ -5622,7 +5637,17 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-                DataProvider.DeleteExchangeDisclaimer(exchangeDisclaimerId);
+                ExchangeDisclaimer disclaimer = null;
+                if (exchangeDisclaimerId != -1) disclaimer = GetExchangeDisclaimer(itemId, exchangeDisclaimerId);
+
+                Organization org = (Organization)PackageController.GetPackageItem(itemId);
+                if (org == null) return -1;
+                int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+                ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+
+                if (exchange.RemoveDisclaimer(disclaimer.WSPUniqueName)!=-1)
+                    DataProvider.DeleteExchangeDisclaimer(exchangeDisclaimerId);
+
             }
             catch (Exception ex)
             {
@@ -5677,42 +5702,54 @@ namespace WebsitePanel.EnterpriseServer
 
         }
 
-        public static int SetExchangeAccountDisclaimerId(int itemId, int AccountID, int ExchangeDisclaimerId)
+        public static int SetExchangeAccountDisclaimerId(int itemId, int accountID, int newExchangeDisclaimerId)
         {
+            int res = 0;
+
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
             if (accountCheck < 0) return accountCheck;
 
             // place log record
-            TaskManager.StartTask("EXCHANGE", "SET_EXCHANGE_ACCOUNTDISCLAIMERID", AccountID);
+            TaskManager.StartTask("EXCHANGE", "SET_EXCHANGE_ACCOUNTDISCLAIMERID", accountID);
 
             try
             {
-                ExchangeDisclaimer disclaimer = null;
+                int oldExchangeDisclaimerId = GetExchangeAccountDisclaimerId(itemId, accountID);
 
-                if (ExchangeDisclaimerId != -1)
-                    disclaimer = GetExchangeDisclaimer(itemId, ExchangeDisclaimerId);
+                ExchangeDisclaimer newDisclaimer = null;
+                ExchangeDisclaimer oldDisclaimer = null;
+
+                if (newExchangeDisclaimerId != -1) newDisclaimer = GetExchangeDisclaimer(itemId, newExchangeDisclaimerId);
+                if (oldExchangeDisclaimerId != -1) oldDisclaimer = GetExchangeDisclaimer(itemId, oldExchangeDisclaimerId);
 
                 // load account
-                ExchangeAccount account = GetAccount(itemId, AccountID);
+                ExchangeAccount account = GetAccount(itemId, accountID);
 
                 Organization org = (Organization)PackageController.GetPackageItem(itemId);
-                if (org == null)
-                    return -1;
-
+                if (org == null) return -1;
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
-                string transportRuleName = org.Name + "_" + account.PrimaryEmailAddress;
+                // remove old version
+                string oldTransportRuleName = org.Name + "_" + account.PrimaryEmailAddress;
+                exchange.RemoveDisclaimer(oldTransportRuleName);
 
-                exchange.RemoveTransportRule(transportRuleName);
+                // update disclaimer
+                if (newDisclaimer!=null)
+                    exchange.SetDisclaimer(newDisclaimer.WSPUniqueName, newDisclaimer.DisclaimerText);
 
-                if (disclaimer != null)
+                if (newExchangeDisclaimerId!=oldExchangeDisclaimerId)
                 {
-                    if (!string.IsNullOrEmpty(disclaimer.DisclaimerText))
-                        exchange.NewDisclaimerTransportRule(transportRuleName, account.PrimaryEmailAddress, disclaimer.DisclaimerText);
+                    if (oldDisclaimer != null)
+                        exchange.RemoveDisclamerMember(oldDisclaimer.WSPUniqueName, account.PrimaryEmailAddress);
+
+                    if (newDisclaimer != null)
+                        res = exchange.AddDisclamerMember(newDisclaimer.WSPUniqueName, account.PrimaryEmailAddress);
+
+                    if (res == 0)
+                        DataProvider.SetExchangeAccountDisclaimerId(accountID, newExchangeDisclaimerId);
                 }
 
-                DataProvider.SetExchangeAccountDisclaimerId(AccountID, ExchangeDisclaimerId);
             }
             catch (Exception ex)
             {
@@ -5723,7 +5760,7 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.CompleteTask();
             }
 
-            return 0;
+            return res;
 
         }
 

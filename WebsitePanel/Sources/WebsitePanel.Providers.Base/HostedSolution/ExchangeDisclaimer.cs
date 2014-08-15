@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace WebsitePanel.Providers.HostedSolution
 {
@@ -61,6 +62,15 @@ namespace WebsitePanel.Providers.HostedSolution
         {
             get { return this.disclaimerText; }
             set { this.disclaimerText = value; }
+        }
+
+        public string WSPUniqueName
+        {
+            get
+            {
+                Regex r = new Regex(@"[^A-Za-z0-9]");
+                return "WSPDisclaimer" + ExchangeDisclaimerId.ToString() + "_" + r.Replace(DisclaimerName, "");
+            }
         }
 
     }

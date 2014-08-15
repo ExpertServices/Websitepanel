@@ -7615,31 +7615,54 @@ namespace WebsitePanel.Providers.HostedSolution
 
         #region Disclaimers
 
-        public int NewDisclaimerTransportRule(string Name, string From, string Text)
-        {
-            return NewDisclaimerTransportRuleInternal(Name, From, Text);
-        }
+        private const string disclamerMemberPostfix = "_members";
 
-        public int RemoveTransportRule(string Name)
+        public int SetDisclaimer(string name, string text)
         {
-            return RemoveTransportRuleInternal(Name);
-        }
-
-        internal virtual int NewDisclaimerTransportRuleInternal(string Name, string From, string Text)
-        {
-            ExchangeLog.LogStart("NewDisclaimerTransportRuleInternal");
+            ExchangeLog.LogStart("SetDisclaimer");
             Runspace runSpace = null;
             try
             {
                 runSpace = OpenRunspace();
-                Command cmd = new Command("New-TransportRule");
-                cmd.Parameters.Add("Name", Name);
-                cmd.Parameters.Add("From", From);
+                Command cmd;
+
+                bool distributionGroupExist = false;
+                bool transportRuleExist = false;
+
+                cmd = new Command("Get-DistributionGroup");
+                cmd.Parameters.Add("Identity", name + disclamerMemberPostfix);
+                Collection<PSObject> res = ExecuteShellCommand(runSpace, cmd);
+                distributionGroupExist = (res.Count > 0);
+
+                cmd = new Command("Get-TransportRule");
+                cmd.Parameters.Add("Identity", name);
+                res = ExecuteShellCommand(runSpace, cmd);
+                transportRuleExist = (res.Count > 0);
+
+                if (!distributionGroupExist)
+                {
+                    cmd = new Command("New-DistributionGroup");
+                    cmd.Parameters.Add("Name", name + disclamerMemberPostfix);
+                    ExecuteShellCommand(runSpace, cmd);
+                }
+
+                if (transportRuleExist)
+                {
+                    cmd = new Command("Set-TransportRule");
+                    cmd.Parameters.Add("Identity", name);
+                }
+                else
+                {
+                    cmd = new Command("New-TransportRule");
+                    cmd.Parameters.Add("Name", name);
+                }
+                cmd.Parameters.Add("FromMemberOf", name + disclamerMemberPostfix);
                 cmd.Parameters.Add("Enabled", true);
                 cmd.Parameters.Add("ApplyHtmlDisclaimerLocation", "Append");
-                cmd.Parameters.Add("ApplyHtmlDisclaimerText", Text);
+                cmd.Parameters.Add("ApplyHtmlDisclaimerText", text);
                 cmd.Parameters.Add("ApplyHtmlDisclaimerFallbackAction", "Wrap");
                 ExecuteShellCommand(runSpace, cmd);
+            
             }
             catch (Exception exc)
             {
@@ -7650,22 +7673,84 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 CloseRunspace(runSpace);
             }
-            ExchangeLog.LogEnd("NewDisclaimerTransportRuleInternal");
-
+            ExchangeLog.LogEnd("SetDisclaimer");
             return 0;
-
         }
 
-        internal virtual int RemoveTransportRuleInternal(string Name)
+        public int RemoveDisclaimer(string name)
         {
-            ExchangeLog.LogStart("RemoveTransportRuleInternal");
+            ExchangeLog.LogStart("RemoveDisclaimer");
             Runspace runSpace = null;
             try
             {
                 runSpace = OpenRunspace();
-                Command cmd = new Command("Remove-TransportRule");
-                cmd.Parameters.Add("Identity", Name);
+
+                Command cmd = new Command("Get-DistributionGroupMember");
+                cmd.Parameters.Add("Identity", name + disclamerMemberPostfix);
+                Collection<PSObject> res = ExecuteShellCommand(runSpace, cmd);
+                if (res.Count > 0)
+                    return -1;
+
+                cmd = new Command("Remove-TransportRule");
+                cmd.Parameters.Add("Identity", name);
                 cmd.Parameters.Add("Confirm", new SwitchParameter(false));
+                ExecuteShellCommand(runSpace, cmd);
+
+                cmd = new Command("Remove-DistributionGroup");
+                cmd.Parameters.Add("Identity", name + disclamerMemberPostfix);
+                cmd.Parameters.Add("Confirm", new SwitchParameter(false));
+                ExecuteShellCommand(runSpace, cmd);
+
+            }
+            catch (Exception exc)
+            {
+                ExchangeLog.LogError(exc);
+                return -1;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+            ExchangeLog.LogEnd("RemoveDisclaimer");
+            return 0;
+        }
+
+        public int AddDisclamerMember(string name, string member)
+        {
+            ExchangeLog.LogStart("SetDisclamerMember");
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+                Command cmd = new Command("Add-DistributionGroupMember");
+                cmd.Parameters.Add("Identity", name + disclamerMemberPostfix);
+                cmd.Parameters.Add("Member", member);
+                ExecuteShellCommand(runSpace, cmd);
+
+            }
+            catch (Exception exc)
+            {
+                ExchangeLog.LogError(exc);
+                return -1;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+            ExchangeLog.LogEnd("SetDisclamerMember");
+            return 0;
+        }
+
+        public int RemoveDisclamerMember(string name, string member)
+        {
+            ExchangeLog.LogStart("RemoveDisclamerMember");
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+                Command cmd = new Command("Remove-DistributionGroupMember");
+                cmd.Parameters.Add("Identity", name + disclamerMemberPostfix);
+                cmd.Parameters.Add("Member", member);
                 ExecuteShellCommand(runSpace, cmd);
             }
             catch (Exception exc)
@@ -7677,8 +7762,7 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 CloseRunspace(runSpace);
             }
-            ExchangeLog.LogEnd("RemoveTransportRuleInternal");
-
+            ExchangeLog.LogEnd("RemoveDisclamerMember");
             return 0;
         }
 
