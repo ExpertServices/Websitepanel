@@ -604,7 +604,7 @@ namespace WebsitePanel.Providers.Mail
         public string[] GetDomains()
         {
             var api = GetApiObject();
-            return api.GetDomainList().Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries).ToArray();
+            return api.GetDomainList().Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
         }
 
         public MailDomain GetDomain(string domainName)
