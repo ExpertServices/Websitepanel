@@ -199,5 +199,31 @@ namespace WebsitePanel.Providers.Mail
         public string ResponderExpirationDate { get; set; }
         
 		#endregion
-	}
+
+        #region IceWarp
+
+        public int IceWarpAccountType { get; set; }
+        public int IceWarpAccountState { get; set; }
+	    public int IceWarpRespondType { get; set; }
+
+        public bool RespondOnlyBetweenDates { get; set; }   // Added this because Calendar Control used did not allow null values
+        public DateTime RespondFrom { get; set; }
+        public DateTime RespondTo { get; set; }
+        public string RespondWithReplyFrom { get; set; }
+        public int RespondPeriodInDays { get; set; }
+
+        public bool DeleteOlder { get; set; }
+        public int DeleteOlderDays { get; set; }
+        public bool ForwardOlder { get; set; }
+        public int ForwardOlderDays { get; set; }
+        public string ForwardOlderTo { get; set; }
+
+        public int MaxMessageSizeMegaByte { get; set; }
+        public int MegaByteSendLimit { get; set; }
+        public int NumberSendLimit { get; set; }
+
+        public string FullName { get; set; }
+
+        #endregion
+    }
 }

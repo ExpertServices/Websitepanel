@@ -188,36 +188,40 @@ namespace WebsitePanel.Portal
             item.Password = passwordControl.Password;
             item.MaxMailboxSize = Utils.ParseInt(txtMailBoxSizeLimit.Text);
 
-            //checking if account name is different from existing e-mail lists
-            MailList[] lists = ES.Services.MailServers.GetMailLists(PanelSecurity.PackageId, true);
-            foreach (MailList list in lists)
+            // Only check for conflicting names if creating new item
+            if (PanelRequest.ItemID == 0)
             {
-                if (item.Name == list.Name)
+                //checking if account name is different from existing e-mail lists
+                MailList[] lists = ES.Services.MailServers.GetMailLists(PanelSecurity.PackageId, true);
+                foreach (MailList list in lists)
                 {
-                    ShowWarningMessage("MAIL_ACCOUNT_NAME");
-                    return;
+                    if (item.Name == list.Name)
+                    {
+                        ShowWarningMessage("MAIL_ACCOUNT_NAME");
+                        return;
+                    }
                 }
-            }
 
-            //checking if account name is different from existing e-mail groups
-            MailGroup[] mailgroups = ES.Services.MailServers.GetMailGroups(PanelSecurity.PackageId, true);
-            foreach (MailGroup group in mailgroups)
-            {
-                if (item.Name == group.Name)
+                //checking if account name is different from existing e-mail groups
+                MailGroup[] mailgroups = ES.Services.MailServers.GetMailGroups(PanelSecurity.PackageId, true);
+                foreach (MailGroup group in mailgroups)
                 {
-                    ShowWarningMessage("MAIL_ACCOUNT_NAME");
-                    return;
+                    if (item.Name == group.Name)
+                    {
+                        ShowWarningMessage("MAIL_ACCOUNT_NAME");
+                        return;
+                    }
                 }
-            }
 
-            //checking if account name is different from existing forwardings
-            MailAlias[] forwardings = ES.Services.MailServers.GetMailForwardings(PanelSecurity.PackageId, true);
-            foreach (MailAlias forwarding in forwardings)
-            {
-                if (item.Name == forwarding.Name)
+                //checking if account name is different from existing forwardings
+                MailAlias[] forwardings = ES.Services.MailServers.GetMailForwardings(PanelSecurity.PackageId, true);
+                foreach (MailAlias forwarding in forwardings)
                 {
-                    ShowWarningMessage("MAIL_ACCOUNT_NAME");
-                    return;
+                    if (item.Name == forwarding.Name)
+                    {
+                        ShowWarningMessage("MAIL_ACCOUNT_NAME");
+                        return;
+                    }
                 }
             }
 

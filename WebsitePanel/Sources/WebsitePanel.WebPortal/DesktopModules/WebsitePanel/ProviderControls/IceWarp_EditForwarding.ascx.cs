@@ -26,83 +26,26 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-using System;
+﻿using System;
+using WebsitePanel.Providers.Mail;
 
-namespace WebsitePanel.Providers.Mail
+namespace WebsitePanel.Portal.ProviderControls
 {
-	/// <summary>
-	/// Summary description for MailboxRights.
-	/// </summary>
-	public enum ReplyTo 
-	{ 
-		RepliesToList = 0, 
-		RepliesToSender = 1, 
-		RepliesToModerator = 2
-    }
-
-    #region MailEnable
-    public enum PostingMode
-	{ 
-		MembersCanPost = 0,
-		AnyoneCanPost = 1,
-		PasswordProtectedPosting = 2,
-        ModeratorCanPost = 3
-	}
-
-    public enum PrefixOption
+    public partial class IceWarp_EditForwarding : WebsitePanelControlBase, IMailEditForwardingControl
     {
-        Default = 0,
-        Altered = 1,
-        CustomPrefix = 2
+        protected void Page_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        public void BindItem(MailAlias item)
+        {
+
+        }
+
+        public void SaveItem(MailAlias item)
+        {
+
+        }
     }
-    #endregion
-
-    #region Merak
-    public enum PasswordProtection
-    {
-        NoProtection = 0,
-        ClientModerated = 1,
-        ServerModerated = 2
-    }
-
-    #endregion
-
-    #region IceWarp
-
-    public enum IceWarpListMembersSource
-    {
-        MembersInFile = 0,
-        AllDomainUsers = 1,
-        AllDomainAdmins = 3
-    }
-
-    public enum IceWarpListFromAndReplyToHeader
-    {
-        NoChange = 0,
-        SetToSender = 1,
-        SetToValue = 2
-    }
-
-    public enum IceWarpListOriginator
-    {
-        Blank = 0,
-        Sender = 1,
-        Owner = 2
-    }
-
-    [Flags]
-    public enum IceWarpListDefaultRights
-    {
-        Receive = 1,
-        Post = 2,
-        Digest = 4
-    }
-
-    public enum IceWarpListConfirmSubscription
-    {
-        None = 0,
-        User = 1,
-        Owner = 2
-    }
-    #endregion
 }
