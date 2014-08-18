@@ -306,17 +306,61 @@ namespace WebsitePanel.Providers.DNS
 			ps.RunPipeline( cmd );
 		}
 
-		public static void Remove_DnsServerResourceRecord( this PowerShellHelper ps, string zoneName, string Name, string type, string recordData )
+		public static void Remove_DnsServerResourceRecord( this PowerShellHelper ps, string zoneName, DnsRecord record)
 		{
+            string type;
+            if (!RecordTypes.rrTypeFromRecord.TryGetValue(record.RecordType, out type))
+					throw new Exception( "Unknown record type" );
+
+            string Name = record.RecordName;
             if (String.IsNullOrEmpty(Name)) Name = "@";
 
-			var cmd = new Command( "Remove-DnsServerResourceRecord" );
-			cmd.addParam( "ZoneName", zoneName );
-            cmd.addParam( "Name", Name );
-			cmd.addParam( "RRType", type );
+            var cmd = new Command("Get-DnsServerResourceRecord");
+            cmd.addParam("ZoneName", zoneName);
+            cmd.addParam("Name", Name);
+            cmd.addParam("RRType", type);
+            Collection<PSObject> resourceRecords = ps.RunPipeline(cmd);
 
-            if (!String.IsNullOrEmpty(recordData))
-                cmd.addParam("RecordData", recordData);
+            object inputObject = null;
+            foreach (PSObject resourceRecord in resourceRecords)
+            {
+                DnsRecord dnsResourceRecord = resourceRecord.asDnsRecord(zoneName);
+
+                bool found = false;
+
+                switch(dnsResourceRecord.RecordType)
+                {
+                    case DnsRecordType.A:
+                    case DnsRecordType.AAAA:
+                    case DnsRecordType.CNAME:
+                    case DnsRecordType.NS:
+                    case DnsRecordType.TXT:
+                        found = dnsResourceRecord.RecordData == record.RecordData;
+                        break;
+                    case DnsRecordType.SOA:
+                        found = true;
+                        break;
+                    case DnsRecordType.MX:
+                        found = (dnsResourceRecord.RecordData == record.RecordData) && (dnsResourceRecord.MxPriority == record.MxPriority);
+                        break;
+                    case DnsRecordType.SRV:
+                        found = (dnsResourceRecord.RecordData == record.RecordData)
+                            &&(dnsResourceRecord.SrvPriority == record.SrvPriority)
+                            &&(dnsResourceRecord.SrvWeight == record.SrvWeight)
+                            &&(dnsResourceRecord.SrvPort == record.SrvPort);
+                        break;
+                }
+
+                if (found)
+                {
+                    inputObject = resourceRecord;
+                    break;
+                }
+            }
+
+			cmd = new Command( "Remove-DnsServerResourceRecord" );
+			cmd.addParam( "ZoneName", zoneName );
+            cmd.addParam("InputObject", inputObject);
 
 			cmd.addParam( "Force" );
 			ps.RunPipeline( cmd );

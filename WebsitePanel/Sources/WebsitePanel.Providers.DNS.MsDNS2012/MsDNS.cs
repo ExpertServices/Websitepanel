@@ -172,7 +172,7 @@ namespace WebsitePanel.Providers.DNS
 				string rrType;
 				if( !RecordTypes.rrTypeFromRecord.TryGetValue( record.RecordType, out rrType ) )
 					throw new Exception( "Unknown record type" );
-				ps.Remove_DnsServerResourceRecord( zoneName, record.RecordName, rrType, record.RecordData );
+				ps.Remove_DnsServerResourceRecord( zoneName, record);
 			}
 			catch( Exception ex )
 			{
