@@ -36,6 +36,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
+using WebsitePanel.WebPortal;
 
 namespace WebsitePanel.Portal.SkinControls
 {
@@ -67,6 +68,15 @@ namespace WebsitePanel.Portal.SkinControls
             {
                 topMenu.Items.Remove(e.Item);
                 return;
+            }
+
+            if (Align.Equals("left") && node.Title.ToLower().Equals("account home"))
+            {
+                e.Item.Text = string.Empty;
+
+                string imagePath = String.Concat("~/", DefaultPage.THEMES_FOLDER, "/", Page.Theme, "/", "Images", "/");
+
+                e.Item.ImageUrl = imagePath + "home_24.png"; 
             }
 
             string target = node["target"];

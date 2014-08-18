@@ -14,7 +14,7 @@
 		<div class="Content">
 			<div class="Center">
 				<div class="Title">
-					<asp:Image ID="Image1" SkinID="ExchangeList48" runat="server" />
+					<asp:Image ID="Image1" SkinID="OrganizationUser48" runat="server" />
 					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Edit Security Group"></asp:Localize>
 
 					<asp:Literal ID="litDisplayName" runat="server" Text="John Smith" />
