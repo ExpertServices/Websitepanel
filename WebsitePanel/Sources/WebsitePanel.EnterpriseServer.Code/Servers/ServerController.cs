@@ -1780,6 +1780,7 @@ namespace WebsitePanel.EnterpriseServer
                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MsSql2005, domain, "");
                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MsSql2008, domain, "");
                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MsSql2012, domain, "");
+                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MsSql2014, domain, "");
                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MySql4, domain, "");
                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MySql5, domain, "");
                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.Statistics, domain, "");
@@ -2338,6 +2339,7 @@ namespace WebsitePanel.EnterpriseServer
                                         ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.MsSql2005, domain, "");
                                         ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.MsSql2008, domain, "");
                                         ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.MsSql2012, domain, "");
+                                        ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.MsSql2014, domain, "");
                                         ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.MySql4, domain, "");
                                         ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.MySql5, domain, "");
                                         ServerController.AddServiceDNSRecords(domain.PackageId, ResourceGroups.Statistics, domain, "");

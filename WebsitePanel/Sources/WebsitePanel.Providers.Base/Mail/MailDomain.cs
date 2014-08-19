@@ -365,5 +365,17 @@ namespace WebsitePanel.Providers.Mail
 
 
 		#endregion
-	} 
+
+        #region IceWarp
+
+	    public int MegaByteSendLimit { get; set; }
+	    public int NumberSendLimit { get; set; }
+
+        public int DefaultUserQuotaInMB { get; set; }
+        public int DefaultUserMaxMessageSizeMegaByte { get; set; }
+        public int DefaultUserMegaByteSendLimit { get; set; }
+        public int DefaultUserNumberSendLimit { get; set; }
+
+        #endregion
+    } 
 }

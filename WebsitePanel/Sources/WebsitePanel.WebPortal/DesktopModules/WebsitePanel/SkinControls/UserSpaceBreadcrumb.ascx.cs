@@ -93,6 +93,12 @@ namespace WebsitePanel.Portal.SkinControls
                     cmdSpaceName.Text = PortalAntiXSS.EncodeOld(package.PackageName);
                     lblSpaceDescription.Text = PortalAntiXSS.EncodeOld(package.PackageComments);
 
+                    UserInfo user = UsersHelper.GetUser(PanelSecurity.SelectedUserId);
+                    if (user != null)
+                    {
+                        lblUserAccountName.Text = PortalAntiXSS.EncodeOld(string.Format("{0} -",user.Username));
+                    }
+
                     lnkCurrentPage.NavigateUrl = PortalUtils.NavigatePageURL(
                         PortalUtils.GetCurrentPageId(), "SpaceID", PanelSecurity.PackageId.ToString());
                 }
@@ -154,7 +160,16 @@ namespace WebsitePanel.Portal.SkinControls
             HyperLink lnkUser = (HyperLink)e.Item.FindControl("lnkUser");
             if (lnkUser != null)
             {
-                lnkUser.Text = user.Username;
+                if (user.UserId == PanelSecurity.SelectedUserId && PanelSecurity.SelectedUserId != PanelSecurity.LoggedUserId)
+                {
+                    string imagePath = String.Concat("~/", DefaultPage.THEMES_FOLDER, "/", Page.Theme, "/", "Images", "/");
+
+                    lnkUser.ImageUrl = imagePath + "home_16_blk.png";
+                }
+                else
+                {
+                    lnkUser.Text = user.Username;
+                }
                 lnkUser.NavigateUrl = PortalUtils.GetUserHomePageUrl(user.UserId);
             }
         }

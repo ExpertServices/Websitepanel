@@ -19,15 +19,15 @@
                         <wsp:Logo ID="logo" runat="server" />
                     </td>
                     <td>&nbsp;</td>
-                    <td class="Account">
-                        <wsp:SignedInUser ID="signedInUser" runat="server" />
-                    </td>
                 </tr>
             </table>
         </div>
         
         <div id="TopMenu">
             <wsp:TopMenu ID="menu" runat="server" />
+            <div class="Account">
+                 <wsp:SignedInUser ID="signedInUser" runat="server" />
+            </div>
         </div>
         
         <div id="ContentOneColumn">

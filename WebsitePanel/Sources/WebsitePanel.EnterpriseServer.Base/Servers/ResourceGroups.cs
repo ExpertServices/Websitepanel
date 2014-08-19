@@ -39,6 +39,7 @@ namespace WebsitePanel.EnterpriseServer
         public const string MsSql2005 = "MsSQL2005";
         public const string MsSql2008 = "MsSQL2008";
         public const string MsSql2012 = "MsSQL2012";
+        public const string MsSql2014 = "MsSQL2014";
         public const string MySql5 = "MySQL5";
         public const string Dns = "DNS";
         public const string Statistics = "Statistics";

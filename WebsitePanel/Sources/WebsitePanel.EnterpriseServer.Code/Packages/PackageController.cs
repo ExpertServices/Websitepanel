@@ -482,6 +482,7 @@ namespace WebsitePanel.EnterpriseServer
                                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MsSql2005, domain, "");
                                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MsSql2008, domain, "");
                                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MsSql2012, domain, "");
+                                    ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MsSql2014, domain, "");
                                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MySql4, domain, "");
                                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.MySql5, domain, "");
                                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.Statistics, domain, "");
@@ -1999,6 +2000,7 @@ namespace WebsitePanel.EnterpriseServer
             SetSqlServerExternalAddress(packageId, items, ResourceGroups.MsSql2005);
             SetSqlServerExternalAddress(packageId, items, ResourceGroups.MsSql2008);
             SetSqlServerExternalAddress(packageId, items, ResourceGroups.MsSql2012);
+            SetSqlServerExternalAddress(packageId, items, ResourceGroups.MsSql2014);
             SetSqlServerExternalAddress(packageId, items, ResourceGroups.MySql4);
             SetSqlServerExternalAddress(packageId, items, ResourceGroups.MySql5);
 

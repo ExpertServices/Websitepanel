@@ -170,7 +170,8 @@ namespace WebsitePanel.Portal
                                                                 (resourceGroup.GroupName == ResourceGroups.MsSql2000)|
                                                                 (resourceGroup.GroupName == ResourceGroups.MsSql2005)|
                                                                 (resourceGroup.GroupName == ResourceGroups.MsSql2008)|
-                                                                (resourceGroup.GroupName == ResourceGroups.MsSql2012)|
+                                                                (resourceGroup.GroupName == ResourceGroups.MsSql2012) |
+                                                                (resourceGroup.GroupName == ResourceGroups.MsSql2014) |
                                                                 (resourceGroup.GroupName == ResourceGroups.MySql4)|
                                                                 (resourceGroup.GroupName == ResourceGroups.MySql5)|
                                                                 (resourceGroup.GroupName == ResourceGroups.Statistics)|

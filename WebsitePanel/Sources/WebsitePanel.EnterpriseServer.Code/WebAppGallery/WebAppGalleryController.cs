@@ -262,7 +262,8 @@ namespace WebsitePanel.EnterpriseServer
                 //if (context.Groups.ContainsKey(ResourceGroups.MsSql2000) ||
                 //    context.Groups.ContainsKey(ResourceGroups.MsSql2005) ||
                 //    context.Groups.ContainsKey(ResourceGroups.MsSql2008) ||
-                //    context.Groups.ContainsKey(ResourceGroups.MsSql2012))
+                //    context.Groups.ContainsKey(ResourceGroups.MsSql2012) ||
+                //    context.Groups.ContainsKey(ResourceGroups.MsSql2014))
                 //{
                 //    appsFilter.AddRange(SupportedAppDependencies.MSSQL_DATABASE);
                 //}
@@ -496,6 +497,7 @@ namespace WebsitePanel.EnterpriseServer
                     || context.Groups.ContainsKey(ResourceGroups.MsSql2005)
                     || context.Groups.ContainsKey(ResourceGroups.MsSql2008)
                     || context.Groups.ContainsKey(ResourceGroups.MsSql2012)
+                    || context.Groups.ContainsKey(ResourceGroups.MsSql2014)
                     || context.Groups.ContainsKey(ResourceGroups.MySql4)
                     || context.Groups.ContainsKey(ResourceGroups.MySql5)))
                     result.ErrorCodes.Add(GalleryErrors.DatabaseRequired);
@@ -505,7 +507,8 @@ namespace WebsitePanel.EnterpriseServer
                     && !(context.Groups.ContainsKey(ResourceGroups.MsSql2000)
                     || context.Groups.ContainsKey(ResourceGroups.MsSql2005)
                     || context.Groups.ContainsKey(ResourceGroups.MsSql2008)
-                    || context.Groups.ContainsKey(ResourceGroups.MsSql2012)))
+                    || context.Groups.ContainsKey(ResourceGroups.MsSql2012)
+                    || context.Groups.ContainsKey(ResourceGroups.MsSql2014)))
                     result.ErrorCodes.Add(GalleryErrors.SQLRequired);
 
                 // MySQL

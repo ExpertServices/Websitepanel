@@ -1854,6 +1854,24 @@
   <data name="Quota.MsSQL2012.Users" xml:space="preserve">
     <value>Users</value>
   </data>
+  <data name="Quota.MsSQL2014.Backup" xml:space="preserve">
+    <value>Database Backups</value>
+  </data>
+  <data name="Quota.MsSQL2014.Databases" xml:space="preserve">
+    <value>Databases</value>
+  </data>
+  <data name="Quota.MsSQL2014.MaxDatabaseSize" xml:space="preserve">
+    <value>Max Database Size, MB</value>
+  </data>
+  <data name="Quota.MsSQL2014.Restore" xml:space="preserve">
+    <value>Database Restores</value>
+  </data>
+  <data name="Quota.MsSQL2014.Truncate" xml:space="preserve">
+    <value>Database Truncate</value>
+  </data>
+  <data name="Quota.MsSQL2014.Users" xml:space="preserve">
+    <value>Users</value>
+  </data>
   <data name="Quota.MySQL5.Backup" xml:space="preserve">
     <value>Database Backups</value>
   </data>
@@ -1904,6 +1922,9 @@
   </data>
   <data name="ResourceGroup.MsSQL2012" xml:space="preserve">
     <value>SQL Server 2012</value>
+  </data>
+  <data name="ResourceGroup.MsSQL2014" xml:space="preserve">
+    <value>SQL Server 2014</value>
   </data>
   <data name="Quota.OS.MinimumTaskInterval" xml:space="preserve">
     <value>Minimum Tasks Interval, minutes</value>
@@ -2099,6 +2120,12 @@
   </data>
   <data name="ServiceItemType.MsSQL2012User" xml:space="preserve">
     <value>MS SQL 2012 User</value>
+  </data>
+  <data name="ServiceItemType.MsSQL2014Database" xml:space="preserve">
+    <value>MS SQL 2014 Database</value>
+  </data>
+  <data name="ServiceItemType.MsSQL2014User" xml:space="preserve">
+    <value>MS SQL 2014 User</value>
   </data>
   <data name="ServiceItemType.MySQL4Database" xml:space="preserve">
     <value>MySQL 4 Database</value>
@@ -3272,6 +3299,9 @@
     <value>Max Log Size, MB</value>
   </data>
   <data name="Quota.MsSQL2012.MaxLogSize" xml:space="preserve">
+    <value>Max Log Size, MB</value>
+  </data>
+  <data name="Quota.MsSQL2014.MaxLogSize" xml:space="preserve">
     <value>Max Log Size, MB</value>
   </data>
   <data name="Error.EXCHANGE_UPDATE_MAILBOX_PERMISSIONS" xml:space="preserve">
@@ -4833,6 +4863,9 @@
   </data>
   <data name="ReportResourceGroup.MsSQL2012" xml:space="preserve">
     <value>SQL Server 2012</value>
+  </data>
+  <data name="ReportResourceGroup.MsSQL2014" xml:space="preserve">
+    <value>SQL Server 2014</value>
   </data>
   <data name="WebAppGallery.ApplicationInstallationError" xml:space="preserve">
     <value>Error while install application pack</value>

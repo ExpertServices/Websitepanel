@@ -12,7 +12,7 @@
 		<div class="Content">
 			<div class="Center">
 				<div class="Title">
-					<asp:Image ID="Image1" SkinID="ExchangeListAdd48" runat="server" />
+					<asp:Image ID="Image1" SkinID="OrganizationUser48" runat="server" />
 					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Create Group"></asp:Localize>
 				</div>
 				<div class="FormBody">

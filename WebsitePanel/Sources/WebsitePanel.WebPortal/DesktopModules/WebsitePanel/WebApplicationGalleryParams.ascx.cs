@@ -161,6 +161,8 @@ namespace WebsitePanel.Portal
                 PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
 
                 // add SQL Server engines
+                if (cntx.Groups.ContainsKey(ResourceGroups.MsSql2014))
+                    AddDatabaseEngine(DeploymentParameterWellKnownTag.Sql, ResourceGroups.MsSql2014, GetSharedLocalizedString("ResourceGroup." + ResourceGroups.MsSql2014));
                 if (cntx.Groups.ContainsKey(ResourceGroups.MsSql2012))
                     AddDatabaseEngine(DeploymentParameterWellKnownTag.Sql, ResourceGroups.MsSql2012, GetSharedLocalizedString("ResourceGroup." + ResourceGroups.MsSql2012));
                 if (cntx.Groups.ContainsKey(ResourceGroups.MsSql2008))
