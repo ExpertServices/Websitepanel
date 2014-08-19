@@ -124,7 +124,7 @@
     <value>Databases</value>
   </data>
   <data name="Email.Text" xml:space="preserve">
-    <value>Email</value>
+    <value>POP/IMAP Email</value>
   </data>
   <data name="gvPackages.Empty" xml:space="preserve">
     <value>This account has just been created and doesn't have Hosting Spaces. To create web sites, FTP, mail accounts, databases, etc. a new Hosting Space should be created for this customer.&lt;br&gt;&lt;br&gt;To create a new Hosting Space click "Create Hosting Space" button.</value>
