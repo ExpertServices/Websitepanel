@@ -40,15 +40,6 @@ namespace WebsitePanel.Portal.SkinControls {
         protected global::System.Web.UI.WebControls.Panel LoggedPanel;
         
         /// <summary>
-        /// imgSignOut control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton imgSignOut;
-        
-        /// <summary>
         /// lnkEditUserDetails control.
         /// </summary>
         /// <remarks>
@@ -56,5 +47,14 @@ namespace WebsitePanel.Portal.SkinControls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HyperLink lnkEditUserDetails;
+        
+        /// <summary>
+        /// imgSignOut control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton imgSignOut;
     }
 }
