@@ -102,29 +102,33 @@ namespace WebsitePanel.Portal
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            ShortMenu = true;
+            ShortMenu = false;
             ShowImg = true;
+            PutBlackBerryInExchange = true;
 
 
             if ((PackageId > 0) && (Cntx.Groups.ContainsKey(ResourceGroups.HostedOrganizations)))
             {
                 MenuItemCollection items = new MenuItemCollection();
 
+                OrganizationMenuRoot = new MenuItem(GetLocalizedString("Text.OrganizationGroup"), "", "", null);
+                items.Add(OrganizationMenuRoot);
+
                 if (ItemID > 0)
                 {
-                    items.Add(CreateMenuItem("OrganizationHome", "organization_home", @"Icons/organization_home_48.png"));
+                    OrganizationMenuRoot.ChildItems.Add(CreateMenuItem("OrganizationHome", "organization_home", @"Icons/organization_home_48.png"));
                     BindMenu(items);
                 }
                 else
                 {
-                    items.Add(CreateMenuItem("CreateOrganization", "create_organization", @"Icons/create_organization_48.png"));
+                    OrganizationMenuRoot.ChildItems.Add(CreateMenuItem("CreateOrganization", "create_organization", @"Icons/create_organization_48.png"));
                 }
 
 
                 UserOrgPanel.Visible = true;
 
-                OrgIcons.DataSource = items;
-                OrgIcons.DataBind();
+                OrgList.DataSource = items;
+                OrgList.DataBind();
             }
             else
                 UserOrgPanel.Visible = false;

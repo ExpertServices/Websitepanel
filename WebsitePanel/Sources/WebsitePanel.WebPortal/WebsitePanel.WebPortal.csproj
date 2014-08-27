@@ -104,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Containers\Default\VPSForPC.ascx" />
+    <Content Include="App_Themes\Default\Icons\activesync_policy_48.png" />
     <Content Include="App_Themes\Default\Icons\advancedstatistics_48.png" />
     <Content Include="App_Themes\Default\Icons\applicationsinstaller_48.png" />
     <Content Include="App_Themes\Default\Icons\blackberry_users_48.png" />
@@ -111,15 +112,22 @@
     <Content Include="App_Themes\Default\Icons\configureVLan.png" />
     <Content Include="App_Themes\Default\Icons\create_organization_48.png" />
     <Content Include="App_Themes\Default\Icons\crm_orgs_48.png" />
+    <Content Include="App_Themes\Default\Icons\crm_storage_settings_48.png" />
     <Content Include="App_Themes\Default\Icons\crm_users_48.png" />
+    <Content Include="App_Themes\Default\Icons\disclaimers_48.png" />
     <Content Include="App_Themes\Default\Icons\domains_48.png" />
+    <Content Include="App_Themes\Default\Icons\enterprisestorage_drive_maps_48.png" />
     <Content Include="App_Themes\Default\Icons\enterprisestorage_folders_48.png" />
     <Content Include="App_Themes\Default\Icons\exchange_contacts_48.png" />
     <Content Include="App_Themes\Default\Icons\exchange_dlists_48.png" />
     <Content Include="App_Themes\Default\Icons\filemanager_48.png" />
     <Content Include="App_Themes\Default\Icons\ftp_48.png" />
+    <Content Include="App_Themes\Default\Icons\lync_federationdomains_48.png" />
+    <Content Include="App_Themes\Default\Icons\lync_phonenumbers_48.png" />
+    <Content Include="App_Themes\Default\Icons\lync_userplans_48.png" />
     <Content Include="App_Themes\Default\Icons\lync_users_48.png" />
     <Content Include="App_Themes\Default\Icons\mailboxes_48.png" />
+    <Content Include="App_Themes\Default\Icons\mailboxplans_48.png" />
     <Content Include="App_Themes\Default\Icons\mail_accounts_48.png" />
     <Content Include="App_Themes\Default\Icons\mail_domains_48.png" />
     <Content Include="App_Themes\Default\Icons\mail_forwardings_48.png" />
@@ -128,10 +136,16 @@
     <Content Include="App_Themes\Default\Icons\odbc_48.png" />
     <Content Include="App_Themes\Default\Icons\OK.png" />
     <Content Include="App_Themes\Default\Icons\organization_home_48.png" />
+    <Content Include="App_Themes\Default\Icons\public_folders_48.png" />
+    <Content Include="App_Themes\Default\Icons\retentionpolicytag_48.png" />
+    <Content Include="App_Themes\Default\Icons\retentionpolicy_48.png" />
     <Content Include="App_Themes\Default\Icons\scheduledtasks_48.png" />
     <Content Include="App_Themes\Default\Icons\sharedssl_48.png" />
     <Content Include="App_Themes\Default\Icons\sharepoint_sitecollections_48.png" />
+    <Content Include="App_Themes\Default\Icons\sharepoint_storage_settings_48.png" />
+    <Content Include="App_Themes\Default\Icons\sharepoint_storage_usage_48.png" />
     <Content Include="App_Themes\Default\Icons\spacehome_48.png" />
+    <Content Include="App_Themes\Default\Icons\storage_usages_48.png" />
     <Content Include="App_Themes\Default\Icons\vpsforpc_48.png" />
     <Content Include="App_Themes\Default\Icons\vps_48.png" />
     <Content Include="App_Themes\Default\Icons\webapplicationsgallery_48.png" />
