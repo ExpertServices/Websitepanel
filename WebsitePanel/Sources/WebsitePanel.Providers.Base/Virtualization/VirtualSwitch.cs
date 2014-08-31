@@ -37,5 +37,6 @@ namespace WebsitePanel.Providers.Virtualization
     {
         [Persistent]
         public string SwitchId { get; set; }
+        public string SwitchType { get; set; }
     }
 }
