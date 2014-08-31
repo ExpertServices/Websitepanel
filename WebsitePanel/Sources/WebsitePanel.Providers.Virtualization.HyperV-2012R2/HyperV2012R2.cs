@@ -137,7 +137,13 @@ namespace WebsitePanel.Providers.Virtualization
         #endregion
 
         #region Virtual Machines
+        
         public VirtualMachine GetVirtualMachine(string vmId)
+        {
+            return GetVirtualMachineInternal( vmId, false);
+        }
+        
+        public VirtualMachine GetVirtualMachineInternal(string vmId, bool extended)
         {
 
             HostedSolutionLog.LogStart("GetVirtualMachine");
@@ -225,6 +231,13 @@ namespace WebsitePanel.Providers.Virtualization
 
         public VirtualMachine GetVirtualMachineEx(string vmId)
         {
+            return GetVirtualMachineInternal( vmId, true);
+        }
+
+        /*
+        public VirtualMachine GetVirtualMachineExInternal(runSpace, string vmId)
+        {
+            
             ManagementObject objVm = wmi.GetWmiObject("msvm_ComputerSystem", "Name = '{0}'", vmId);
             if (objVm == null)
                 return null;
@@ -287,16 +300,18 @@ namespace WebsitePanel.Providers.Virtualization
             vm.Adapters = nics.ToArray();
 
             return vm;
+            
         }
+         */
 
         public List<VirtualMachine> GetVirtualMachines()
         {
             List<VirtualMachine> vms = new List<VirtualMachine>();
-
+            /*
             ManagementObjectCollection objVms = wmi.ExecuteWmiQuery("select * from msvm_ComputerSystem where Name <> ElementName");
             foreach (ManagementObject objVm in objVms)
                 vms.Add(CreateVirtualMachineFromWmiObject(objVm));
-
+            */
             return vms;
         }
 
@@ -2029,10 +2044,10 @@ exit", Convert.ToInt32(objDisk["Index"])));
 
                 #region Stop
                 else if (!started &&
-                    (vps.State == VirtualMachineState.Started
+                    (vps.State == VirtualMachineState.Running
                     || vps.State == VirtualMachineState.Paused))
                 {
-                    if (vps.State == VirtualMachineState.Started)
+                    if (vps.State == VirtualMachineState.Running)
                     {
                         // try to shutdown the system
                         ReturnCode code = ShutDownVirtualMachine(vm.VirtualMachineId, true, "Virtual Machine has been suspended from WebsitePanel");
