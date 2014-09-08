@@ -143,7 +143,7 @@ namespace WebsitePanel.Providers.Virtualization
             return GetVirtualMachineInternal( vmId, false);
         }
         
-        public VirtualMachine GetVirtualMachineInternal(string vmId, bool extended)
+        public VirtualMachine GetVirtualMachineInternal(string vmId, bool extendedInfo)
         {
 
             HostedSolutionLog.LogStart("GetVirtualMachine");
@@ -171,26 +171,41 @@ namespace WebsitePanel.Providers.Virtualization
                     vm.ReplicationState = GetPSObjectProperty(result[0], "ReplicationState").ToString();
                     
                     vm.Heartbeat = GetVMHeartBeatStatus(runSpace, vm.Name);
-                    
-                    
-                    //vm.CreatedDate = null;
 
-                    // HDD
-                    /*
-                    if (vmKvp.Name == KVP_HDD_SUMMARY_KEY)
+                    vm.CreatedDate = DateTime.Now;
+
+                    if (extendedInfo)
                     {
-                        string[] disksArray = vmKvp.Data.Split(';');
-                        vm.HddLogicalDisks = new LogicalDisk[disksArray.Length];
-                        for (int i = 0; i < disksArray.Length; i++)
+                        vm.CpuCores = GetVMProcessors(runSpace, vm.Name);
+
+                        MemoryInfo memoryInfo = GetVMMemory(runSpace, vm.Name);
+                        vm.RamSize = memoryInfo.Startup;
+
+                        BiosInfo biosInfo = GetVMBios(runSpace, vm.Name);
+                        vm.NumLockEnabled = biosInfo.NumLockEnabled;
+
+                        vm.BootFromCD = false;
+                        if ((biosInfo.StartupOrder != null) && (biosInfo.StartupOrder.Length > 0))
+                            vm.BootFromCD = (biosInfo.StartupOrder[0] == "CD");
+
+                        cmd = new Command("Get-VMDvdDrive");
+                        cmd.Parameters.Add("VMName", vm.Name);
+
+                        result = ExecuteShellCommand(runSpace, cmd, false);
+                        vm.DvdDriveInstalled = (result != null && result.Count > 0);
+  
+                        vm.Disks = GetVirtualHardDisks(runSpace, vm.Name);
+
+                        if ((vm.Disks != null) & (vm.Disks.GetLength(0) > 0))
                         {
-                            string[] disk = disksArray[i].Split(':');
-                            vm.HddLogicalDisks[i] = new LogicalDisk();
-                            vm.HddLogicalDisks[i].DriveLetter = disk[0];
-                            vm.HddLogicalDisks[i].FreeSpace = Int32.Parse(disk[1]);
-                            vm.HddLogicalDisks[i].Size = Int32.Parse(disk[2]);
+                            vm.VirtualHardDrivePath = vm.Disks[0].Path;
+                            vm.HddSize = Convert.ToInt32(vm.Disks[0].FileSize);
                         }
+
+
+
                     }
-                    */
+
                 }
             }
             catch (Exception ex)
@@ -213,7 +228,6 @@ namespace WebsitePanel.Providers.Virtualization
 
             OperationalStatus status = OperationalStatus.None;
 
-            runSpace = OpenRunspace();
             Command cmd = new Command("Get-VMIntegrationService");
 
             cmd.Parameters.Add("VMName", name);
@@ -224,8 +238,6 @@ namespace WebsitePanel.Providers.Virtualization
             {
                 status = (OperationalStatus)Enum.Parse(typeof(OperationalStatus), GetPSObjectProperty(result[0], "PrimaryOperationalStatus").ToString());
             }
-
-
             return status;
         }
 
@@ -234,56 +246,123 @@ namespace WebsitePanel.Providers.Virtualization
             return GetVirtualMachineInternal( vmId, true);
         }
 
+
+        internal int GetVMProcessors(Runspace runSpace, string name)
+        {
+
+            int procs = 0;
+
+            Command cmd = new Command("Get-VMProcessor");
+
+            cmd.Parameters.Add("VMName", name);
+
+            Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd, false);
+            if (result != null && result.Count > 0)
+            {
+                procs = Convert.ToInt32(GetPSObjectProperty(result[0], "Count"));
+
+            }
+            return procs;
+        }
+
+        internal MemoryInfo GetVMMemory(Runspace runSpace, string name)
+        {
+
+            MemoryInfo info =  new MemoryInfo();
+
+            Command cmd = new Command("Get-VMMemory");
+
+            cmd.Parameters.Add("VMName", name);
+
+            Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd, false);
+            if (result != null && result.Count > 0)
+            {
+                info.DynamicMemoryEnabled = Convert.ToBoolean(GetPSObjectProperty(result[0], "DynamicMemoryEnabled"));
+                info.Startup = Convert.ToInt32(GetPSObjectProperty(result[0], "Startup"));
+                info.Minimum = Convert.ToInt32(GetPSObjectProperty(result[0], "Minimum"));
+                info.Maximum = Convert.ToInt32(GetPSObjectProperty(result[0], "Maximum"));
+                info.Buffer = Convert.ToInt16(GetPSObjectProperty(result[0], "Buffer"));
+                info.Priority = Convert.ToInt16(GetPSObjectProperty(result[0], "Prioriy"));
+            }
+            return info;
+        }
+
+        internal BiosInfo GetVMBios(Runspace runSpace, string name)
+        {
+
+            BiosInfo info = new BiosInfo();
+
+            Command cmd = new Command("Get-VMBios");
+
+            cmd.Parameters.Add("VMName", name);
+
+            Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd, false);
+            if (result != null && result.Count > 0)
+            {
+                info.NumLockEnabled = Convert.ToBoolean(GetPSObjectProperty(result[0], "NumLockEnabled"));
+                info.StartupOrder = (string[])GetPSObjectProperty(result[0], "StartupOrder");
+            }
+            return info;
+        }
+
+        internal VirtualHardDiskInfo[] GetVirtualHardDisks(Runspace runSpace, string name)
+        {
+
+            List<VirtualHardDiskInfo> disks = new List<VirtualHardDiskInfo>();
+
+            Command cmd = new Command("Get-VMHardDiskDrive");
+            cmd.Parameters.Add("VMName", name);
+
+            Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd, false);
+            if (result != null && result.Count > 0)
+            {
+                foreach(PSObject d in result)
+                {
+                    VirtualHardDiskInfo disk = new VirtualHardDiskInfo();
+
+                    disk.SupportPersistentReservations = Convert.ToBoolean(GetPSObjectProperty(d, "SupportPersistentReservations"));
+                    disk.MaximumIOPS= Convert.ToInt32(GetPSObjectProperty(d, "MaximumIOPS"));
+                    disk.MinimumIOPS= Convert.ToInt32(GetPSObjectProperty(d, "MinimumIOPS"));
+                    disk.VHDControllerType = (ControllerType)Enum.Parse(typeof(ControllerType), GetPSObjectProperty(d, "ControllerType").ToString());
+                    disk.ControllerNumber = Convert.ToInt16(GetPSObjectProperty(d, "ControllerNumber"));
+                    disk.ControllerLocation = Convert.ToInt16(GetPSObjectProperty(d, "ControllerLocation"));
+                    disk.Path = GetPSObjectProperty(d, "Path").ToString();
+                    disk.Name = GetPSObjectProperty(d, "Name").ToString();
+
+                    GetVirtualHardDiskDetail(runSpace, disk.Path, ref disk);
+
+                    disks.Add(disk);
+                }
+            }
+            return disks.ToArray();
+        }
+
+        internal void GetVirtualHardDiskDetail(Runspace runSpace, string path, ref VirtualHardDiskInfo disk)
+        {
+            if (!string.IsNullOrEmpty(path))
+            {
+                Command cmd = new Command("Get-VHD");
+                cmd.Parameters.Add("Path", path);
+                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd, false);
+                if (result != null && result.Count > 0)
+                {
+                    disk.DiskFormat = (VirtualHardDiskFormat)Enum.Parse(typeof(VirtualHardDiskFormat), GetPSObjectProperty(result[0], "VhdFormat").ToString());
+                    disk.DiskType = (VirtualHardDiskType)Enum.Parse(typeof(VirtualHardDiskType), GetPSObjectProperty(result[0], "Type").ToString());
+                    disk.ParentPath = GetPSObjectProperty(result[0], "ParentPath").ToString();
+                    disk.MaxInternalSize = Convert.ToInt32(GetPSObjectProperty(result[0], "Size")) / Size1G;
+                    disk.FileSize = Convert.ToInt32(GetPSObjectProperty(result[0], "FileSize")) / Size1G;
+                    disk.Attached = Convert.ToBoolean(GetPSObjectProperty(result[0], "Attached"));
+                }
+            }
+        }
+
+
         /*
         public VirtualMachine GetVirtualMachineExInternal(runSpace, string vmId)
         {
             
-            ManagementObject objVm = wmi.GetWmiObject("msvm_ComputerSystem", "Name = '{0}'", vmId);
-            if (objVm == null)
-                return null;
+ 
 
-            // general settings
-            VirtualMachine vm = CreateVirtualMachineFromWmiObject(objVm);
-
-            // CPU
-            ManagementObject objCpu = wmi.GetWmiObject("Msvm_ProcessorSettingData", "InstanceID Like 'Microsoft:{0}%'", vmId);
-            vm.CpuCores = Convert.ToInt32(objCpu["VirtualQuantity"]);
-
-            // RAM
-            ManagementObject objRam = wmi.GetWmiObject("Msvm_MemorySettingData", "InstanceID Like 'Microsoft:{0}%'", vmId);
-            vm.RamSize = Convert.ToInt32(objRam["VirtualQuantity"]);
-
-            // other settings
-            ManagementObject objSettings = GetVirtualMachineSettingsObject(vmId);
-
-            // BIOS (num lock)
-            vm.NumLockEnabled = Convert.ToBoolean(objSettings["BIOSNumLock"]);
-
-            // BIOS (boot order)
-            // BootOrder = 0 - Boot from floppy, 1 - Boot from CD, 2 - Boot from disk, 3 - PXE Boot 
-            UInt16[] bootOrder = (UInt16[])objSettings["BootOrder"];
-            vm.BootFromCD = (bootOrder[0] == 1);
-
-            // DVD drive
-            ManagementObject objDvd = wmi.GetWmiObject(
-                "Msvm_ResourceAllocationSettingData", "ResourceSubType = 'Microsoft Synthetic DVD Drive'"
-                + " and InstanceID Like 'Microsoft:{0}%'", vmId);
-            vm.DvdDriveInstalled = (objDvd != null);
-
-            // HDD
-            ManagementObject objVhd = wmi.GetWmiObject(
-                "Msvm_ResourceAllocationSettingData", "ResourceSubType = 'Microsoft Virtual Hard Disk'"
-                + " and InstanceID like 'Microsoft:{0}%'", vmId);
-
-            if (objVhd != null)
-            {
-                vm.VirtualHardDrivePath = ((string[])objVhd["Connection"])[0];
-
-                // get VHD size
-                VirtualHardDiskInfo vhdInfo = GetVirtualHardDiskInfo(vm.VirtualHardDrivePath);
-                if (vhdInfo != null)
-                    vm.HddSize = Convert.ToInt32(vhdInfo.MaxInternalSize / Size1G);
-            }
 
             // network adapters
             List<VirtualMachineNetworkAdapter> nics = new List<VirtualMachineNetworkAdapter>();

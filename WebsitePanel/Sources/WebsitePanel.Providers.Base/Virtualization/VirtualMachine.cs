@@ -125,6 +125,9 @@ namespace WebsitePanel.Providers.Virtualization
         public VirtualMachineNetworkAdapter[] Adapters { get; set; }
 
         [Persistent]
+        public VirtualHardDiskInfo[] Disks { get; set; }
+
+        [Persistent]
         public string Status { get; set; }
 
         [Persistent]

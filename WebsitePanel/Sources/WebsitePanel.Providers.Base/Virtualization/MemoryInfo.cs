@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+﻿// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -32,23 +32,13 @@ using System.Text;
 
 namespace WebsitePanel.Providers.Virtualization
 {
-    public class VirtualHardDiskInfo
+    public class MemoryInfo
     {
-        public long FileSize { get; set; }
-        public bool InSavedState { get; set; }
-        public bool InUse { get; set; }
-        public long MaxInternalSize { get; set; }
-        public string ParentPath { get; set; }
-        public VirtualHardDiskType DiskType { get; set; }
-        public bool SupportPersistentReservations { get; set; }
-        public long MaximumIOPS { get; set; }
-        public long MinimumIOPS { get; set; }
-        public ControllerType VHDControllerType { get; set; }
-        public int ControllerNumber { get; set; }
-        public int ControllerLocation { get; set; }
-        public string Name { get; set; }
-        public string Path { get; set; }
-        public VirtualHardDiskFormat DiskFormat { get; set; }
-        public bool Attached { get; set; }
+        public bool DynamicMemoryEnabled { get; set; }
+        public Int32 Startup { get; set; }
+        public Int32 Minimum { get; set; }
+        public Int32 Maximum { get; set; }
+        public int Buffer { get; set; }
+        public int Priority { get; set; }
     }
 }
