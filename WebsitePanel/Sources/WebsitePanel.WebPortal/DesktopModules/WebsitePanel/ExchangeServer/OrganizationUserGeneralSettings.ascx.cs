@@ -27,8 +27,11 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
 
@@ -40,6 +43,8 @@ namespace WebsitePanel.Portal.HostedSolution
         {
             if (!IsPostBack)
             {
+                BindServiceLevels();
+
                 BindSettings();
 
                 MailboxTabsId.Visible = (PanelRequest.Context == "Mailbox");
@@ -80,6 +85,18 @@ namespace WebsitePanel.Portal.HostedSolution
                 txtFirstName.Text = user.FirstName;
                 txtInitials.Text = user.Initials;
                 txtLastName.Text = user.LastName;
+
+                if (user.LevelId > 0 && secServiceLevels.Visible)
+                {
+                    ServiceLevel serviceLevel = ES.Services.Organizations.GetSupportServiceLevel(user.LevelId);
+
+                    if (ddlServiceLevels.Items.FindByValue(serviceLevel.LevelId.ToString()) == null)
+                        ddlServiceLevels.Items.Add(new ListItem(serviceLevel.LevelName, serviceLevel.LevelId.ToString()));
+
+                    ddlServiceLevels.Items.FindByValue(string.Empty).Selected = false;
+                    ddlServiceLevels.Items.FindByValue(serviceLevel.LevelId.ToString()).Selected = true; 
+                }
+                chkVIP.Checked = user.IsVIP && secServiceLevels.Visible;
 
                 txtJobTitle.Text = user.JobTitle;
                 txtCompany.Text = user.Company;
@@ -196,6 +213,51 @@ namespace WebsitePanel.Portal.HostedSolution
             }
         }
 
+        private void BindServiceLevels()
+        {
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
+            if (cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels))
+            {
+                List<ServiceLevel> enabledServiceLevels = new List<ServiceLevel>();
+
+                foreach (var quota in cntx.Quotas.Where(x => x.Key.Contains(Quotas.SERVICE_LEVELS)))
+                {
+                    foreach (var serviceLevel in ES.Services.Organizations.GetSupportServiceLevels())
+                    {
+                        if (quota.Key.Replace(Quotas.SERVICE_LEVELS, "") == serviceLevel.LevelName && CheckServiceLevelQuota(quota.Value, serviceLevel.LevelId))
+                        {
+                            enabledServiceLevels.Add(serviceLevel);
+                        }
+                    }
+                }
+
+                ddlServiceLevels.DataSource = enabledServiceLevels;
+                ddlServiceLevels.DataTextField = "LevelName";
+                ddlServiceLevels.DataValueField = "LevelId";
+                ddlServiceLevels.DataBind();
+
+                ddlServiceLevels.Items.Insert(0, new ListItem("<Select Service Level>", string.Empty));
+                ddlServiceLevels.Items.FindByValue(string.Empty).Selected = true;
+
+                secServiceLevels.Visible = true;
+            }
+            else { secServiceLevels.Visible = false; }
+
+        }
+
+        private bool CheckServiceLevelQuota(QuotaValueInfo quota, int levelID)
+        {
+            quota.QuotaUsedValue = ES.Services.Organizations.SearchAccounts(PanelRequest.ItemID, "", "", "", true).Where(x => x.LevelId == levelID).Count();
+
+            if (quota.QuotaAllocatedValue != -1)
+            {
+                return quota.QuotaAllocatedValue > quota.QuotaUsedValue;
+            }
+
+            return true;
+        }
+
         private void SaveSettings()
         {
             if (!Page.IsValid)
@@ -235,7 +297,9 @@ namespace WebsitePanel.Portal.HostedSolution
                     txtWebPage.Text,
                     txtNotes.Text,
                     txtExternalEmailAddress.Text,
-                    txtSubscriberNumber.Text);
+                    txtSubscriberNumber.Text,
+                    string.IsNullOrEmpty(ddlServiceLevels.SelectedValue) ? 0 : int.Parse(ddlServiceLevels.SelectedValue),
+                    chkVIP.Checked);
 
                 if (result < 0)
                 {

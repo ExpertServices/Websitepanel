@@ -3219,7 +3219,7 @@
   </data>
   <data name="Warning.2613" xml:space="preserve">
     <value>Invalid recoverable items quota specified, should be greater or equal to 6144MB</value>
-  </data>  
+  </data>
   <data name="AuditLogTask.EXCHANGE_CALCULATE_DISKSPACE" xml:space="preserve">
     <value>Calculate organization disk space</value>
   </data>
@@ -5571,5 +5571,17 @@
   </data>
   <data name="Text.Tasks" xml:space="preserve">
     <value>Tasks</value>
+  </data>
+  <data name="ResourceGroup.Service Levels" xml:space="preserve">
+    <value>Service Levels</value>
+  </data>
+  <data name="Error.ADD_SERVICE_LEVEL" xml:space="preserve">
+    <value>Service Level with this name is already exists</value>
+  </data>
+  <data name="Error.DELETE_SERVICE_LEVEL" xml:space="preserve">
+    <value>Delete Service Level Error</value>
+  </data>
+  <data name="Error.SERVICE_LEVEL_IN_USE" xml:space="preserve">
+    <value>Unable to remove Service Level because it is being used</value>
   </data>
 </root>

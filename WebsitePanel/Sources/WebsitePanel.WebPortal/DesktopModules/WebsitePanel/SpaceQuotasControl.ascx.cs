@@ -75,5 +75,13 @@ namespace WebsitePanel.Portal
         {
             return new DataView(dsQuotas.Tables[1], "GroupID=" + groupId.ToString(), "", DataViewRowState.CurrentRows);
         }
+
+        public string GetQuotaTitle(string quotaName, string quotaDescription)
+        {
+            return quotaName.Contains("ServiceLevel") ? 
+                                                      (string.IsNullOrEmpty(quotaDescription) ? 
+                                                                                             string.Empty : quotaDescription).ToString()
+                                                      : GetSharedLocalizedString("Quota." + quotaName);
+        }
     }
 }

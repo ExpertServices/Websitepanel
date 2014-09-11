@@ -117,12 +117,34 @@
 							    <asp:TextBox ID="txtNotes" runat="server" CssClass="TextBox200" Rows="4" TextMode="MultiLine"></asp:TextBox>
 						    </td>
 					    </tr>
-					</table>		
+					</table>
+                    
+                    <wsp:CollapsiblePanel id="secServiceLevels" runat="server" IsCollapsed="true"
+                        TargetControlID="ServiceLevels" meta:resourcekey="secServiceLevels" Text="Service Level Information">
+                    </wsp:CollapsiblePanel>
 
+                    <asp:Panel ID="ServiceLevels" runat="server" Height="0" style="overflow:hidden;">
+					    <table>
+						    <tr>
+							    <td class="FormLabel150"><asp:Localize ID="locServiceLevel" runat="server" meta:resourcekey="locServiceLevel"  Text="Service Level:"></asp:Localize></td>
+							    <td>
+								    <asp:DropDownList ID="ddlServiceLevels" DataValueField="LevelId" DataTextField="LevelName" runat="server"></asp:DropDownList>
+							    </td>
+						    </tr>
+						    <tr>
+							    <td class="FormLabel150"><asp:Localize ID="locVIPUser" runat="server" meta:resourcekey="locVIPUser" Text="VIP:"></asp:Localize></td>
+							    <td>
+								    <asp:CheckBox ID="chkVIP" runat="server"/>
+							    </td>
+						    </tr>
+					    </table>
+					</asp:Panel>
 					
+									
 					<wsp:CollapsiblePanel id="secCompanyInfo" runat="server" IsCollapsed="true"
                         TargetControlID="CompanyInfo" meta:resourcekey="secCompanyInfo" Text="Company Information">
                     </wsp:CollapsiblePanel>
+
                     <asp:Panel ID="CompanyInfo" runat="server" Height="0" style="overflow:hidden;">
 					    <table>
 						    <tr>
@@ -207,6 +229,7 @@
 					<wsp:CollapsiblePanel id="secAddressInfo" runat="server" IsCollapsed="true"
                         TargetControlID="AddressInfo" meta:resourcekey="secAddressInfo" Text="Address">
                     </wsp:CollapsiblePanel>
+
                     <asp:Panel ID="AddressInfo" runat="server" Height="0" style="overflow:hidden;">
 					    <table>
 						    <tr>

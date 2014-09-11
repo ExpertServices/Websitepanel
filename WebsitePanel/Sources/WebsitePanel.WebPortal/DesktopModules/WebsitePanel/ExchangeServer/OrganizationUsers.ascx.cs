@@ -27,32 +27,42 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 
 namespace WebsitePanel.Portal.HostedSolution
 {
     public partial class OrganizationUsers : WebsitePanelModuleBase
     {
+        private ServiceLevel[] ServiceLevels;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
-            {
+            {    
                 BindStats();
             }
 
+            BindServiceLevels();
 
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
             if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
             {
                 if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
                 {
-                    gvUsers.Columns[4].Visible = false;
+                    gvUsers.Columns[5].Visible = false;
                 }
             }
+            gvUsers.Columns[3].Visible = cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels);
+        }
 
-
+        private void BindServiceLevels()
+        {
+            ServiceLevels = ES.Services.Organizations.GetSupportServiceLevels();
         }
 
         private void BindStats()
@@ -164,7 +174,7 @@ namespace WebsitePanel.Portal.HostedSolution
         }
 
 
-        public string GetAccountImage(int accountTypeId)
+        public string GetAccountImage(int accountTypeId, bool vip)
         {
             string imgName = string.Empty;
 
@@ -181,6 +191,7 @@ namespace WebsitePanel.Portal.HostedSolution
                     imgName = "admin_16.png";
                     break;
             }
+            if (vip) imgName = "admin_16.png";
 
             return GetThemedImage("Exchange/" + imgName);
         }
@@ -298,8 +309,9 @@ namespace WebsitePanel.Portal.HostedSolution
             return accountID.ToString() + "|" + IsOCS.ToString() + "|" + IsLync.ToString();
         }
 
-
-
-
+        public ServiceLevel GetServiceLevel(int levelId)
+        {
+            return ServiceLevels.Where(x => x.LevelId == levelId).DefaultIfEmpty(new ServiceLevel { LevelName = "", LevelDescription = "" }).FirstOrDefault();
+        }
     }
 }

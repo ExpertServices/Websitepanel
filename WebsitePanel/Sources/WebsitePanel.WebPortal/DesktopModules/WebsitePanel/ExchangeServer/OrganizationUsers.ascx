@@ -59,9 +59,10 @@
 						    </asp:TemplateField>
                         						     						   						    
 						    <asp:TemplateField HeaderText="gvUsersDisplayName" SortExpression="DisplayName">
-							    <ItemStyle Width="50%"></ItemStyle>
+							    <ItemStyle Width="25%"></ItemStyle>
 							    <ItemTemplate>							        
-								    <asp:Image ID="img1" runat="server" ImageUrl='<%# GetAccountImage((int)Eval("AccountType")) %>' ImageAlign="AbsMiddle" />
+								    <asp:Image ID="img1" runat="server" ImageUrl='<%# GetAccountImage((int)Eval("AccountType"),(bool)Eval("IsVIP")) %>' ImageAlign="AbsMiddle"/>
+                                    <asp:Label runat="server" Text='<%# (bool)Eval("IsVIP") ? "*" : string.Empty %>' style="font-weight:bold;"/>
 								    <asp:hyperlink id="lnk1" runat="server"
 									    NavigateUrl='<%# GetUserEditUrl(Eval("AccountId").ToString()) %>'>
 									    <%# Eval("DisplayName") %>
@@ -69,8 +70,16 @@
 							    </ItemTemplate>
 						    </asp:TemplateField>
                             <asp:BoundField HeaderText="gvUsersLogin" DataField="UserPrincipalName" SortExpression="UserPrincipalName" ItemStyle-Width="25%" />
+                            <asp:TemplateField HeaderText="gvServiceLevel">
+                                <ItemStyle Width="25%"></ItemStyle>
+                                <ItemTemplate>
+                                    <asp:Label id="lbServLevel" runat="server" ToolTip = '<%# GetServiceLevel((int)Eval("LevelId")).LevelDescription%>'>
+                                        <%# GetServiceLevel((int)Eval("LevelId")).LevelName%>
+                                    </asp:Label>
+							    </ItemTemplate>
+                            </asp:TemplateField>
                             <asp:BoundField HeaderText="gvUsersEmail" DataField="PrimaryEmailAddress" SortExpression="PrimaryEmailAddress" ItemStyle-Width="25%" />                            
-                            <asp:BoundField HeaderText="gvSubscriberNumber" DataField="SubscriberNumber" ItemStyle-Width="25%" />						    
+                            <asp:BoundField HeaderText="gvSubscriberNumber" DataField="SubscriberNumber" ItemStyle-Width="20%" />						    
 						    <asp:TemplateField ItemStyle-Wrap="False">
                                 <ItemTemplate>
                                     <asp:ImageButton ID="Image2" runat="server" Width="16px" Height="16px" ToolTip="Mail" ImageUrl='<%# GetMailImage((int)Eval("AccountType")) %>' CommandName="OpenMailProperties" CommandArgument='<%# Eval("AccountId") %>' Enabled=<%# EnableMailImageButton((int)Eval("AccountType")) %>/>

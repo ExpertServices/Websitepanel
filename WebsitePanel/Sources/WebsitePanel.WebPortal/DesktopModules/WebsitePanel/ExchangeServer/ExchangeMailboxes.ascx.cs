@@ -27,9 +27,11 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
@@ -43,6 +45,8 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
         }
 
+        private ServiceLevel[] ServiceLevels;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             locTitle.Text = ArchivingBoxes ? GetLocalizedString("locTitleArchiving.Text") : GetLocalizedString("locTitle.Text");
@@ -54,14 +58,23 @@ namespace WebsitePanel.Portal.ExchangeServer
                 BindStats();
             }
 
+            BindServiceLevels();
+
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
             if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
             {
                 if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
                 {
-                    gvMailboxes.Columns[3].Visible = false;
+                    gvMailboxes.Columns[4].Visible = false;
                 }
             }
+
+            gvMailboxes.Columns[3].Visible = cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels);
+        }
+
+        private void BindServiceLevels()
+        {
+            ServiceLevels = ES.Services.Organizations.GetSupportServiceLevels();
         }
 
         private void BindStats()
@@ -96,7 +109,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
         }
 
-        public string GetAccountImage(int accountTypeId)
+        public string GetAccountImage(int accountTypeId, bool vip)
         {
             ExchangeAccountType accountType = (ExchangeAccountType)accountTypeId;
             string imgName = "mailbox_16.gif";
@@ -108,6 +121,21 @@ namespace WebsitePanel.Portal.ExchangeServer
                 imgName = "room_16.gif";
             else if (accountType == ExchangeAccountType.Equipment)
                 imgName = "equipment_16.gif";
+
+            if (vip) imgName = "admin_16.png";
+
+            return GetThemedImage("Exchange/" + imgName);
+        }
+
+        public string GetStateImage(bool locked, bool disabled)
+        {
+            string imgName = "enabled.png";
+
+            if (locked)
+                imgName = "locked.png";
+            else
+                if (disabled)
+                    imgName = "disabled.png";
 
             return GetThemedImage("Exchange/" + imgName);
         }
@@ -165,6 +193,11 @@ namespace WebsitePanel.Portal.ExchangeServer
         protected void odsAccountsPaged_Selecting(object sender, ObjectDataSourceSelectingEventArgs e)
         {
             e.InputParameters["archiving"] = ArchivingBoxes;
+        }
+
+        public ServiceLevel GetServiceLevel(int levelId)
+        {
+            return ServiceLevels.Where(x => x.LevelId == levelId).DefaultIfEmpty(new ServiceLevel { LevelName = "", LevelDescription = "" }).FirstOrDefault();
         }
     }
 }

@@ -1856,6 +1856,8 @@ namespace WebsitePanel.EnterpriseServer
                 retUser.IsLyncUser = DataProvider.CheckLyncUserExists(accountId);
                 retUser.IsBlackBerryUser = BlackBerryController.CheckBlackBerryUserExists(accountId);
                 retUser.SubscriberNumber = account.SubscriberNumber;
+                retUser.LevelId = account.LevelId;
+                retUser.IsVIP = account.IsVIP;
 
                 return retUser;
             }
@@ -1873,7 +1875,7 @@ namespace WebsitePanel.EnterpriseServer
             string lastName, string address, string city, string state, string zip, string country,
             string jobTitle, string company, string department, string office, string managerAccountName,
             string businessPhone, string fax, string homePhone, string mobilePhone, string pager,
-            string webPage, string notes, string externalEmail, string subscriberNumber)
+            string webPage, string notes, string externalEmail, string subscriberNumber, int levelId, bool isVIP)
         {
 
             // check account
@@ -1940,6 +1942,8 @@ namespace WebsitePanel.EnterpriseServer
                 // update account
                 account.DisplayName = displayName;
                 account.SubscriberNumber = subscriberNumber;
+                account.LevelId = levelId;
+                account.IsVIP = isVIP;
 
                 //account.
                 if (!String.IsNullOrEmpty(password))
@@ -1948,6 +1952,7 @@ namespace WebsitePanel.EnterpriseServer
                     account.AccountPassword = null;
 
                 UpdateAccount(account);
+                UpdateAccountServiceLevelSettings(account);
 
 
                 return 0;
@@ -2114,7 +2119,10 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-
+        private static void UpdateAccountServiceLevelSettings(ExchangeAccount account)
+        {
+            DataProvider.UpdateExchangeAccountServiceLevelSettings(account.AccountId, account.LevelId, account.IsVIP);
+        }
 
         private static void UpdateAccount(ExchangeAccount account)
         {
@@ -2124,7 +2132,6 @@ namespace WebsitePanel.EnterpriseServer
                 (string.IsNullOrEmpty(account.SubscriberNumber) ? null : account.SubscriberNumber.Trim()),
                 account.EnableArchiving);
         }
-
 
 
         public static List<OrganizationUser> SearchAccounts(int itemId,
@@ -2941,5 +2948,122 @@ namespace WebsitePanel.EnterpriseServer
 
             //return accounts;
         }
+
+
+        #region Service Levels
+
+        public static int AddSupportServiceLevel(string levelName, string levelDescription)
+        {
+            if (string.IsNullOrEmpty(levelName))
+                throw new ArgumentNullException("levelName");
+
+            // place log record
+            TaskManager.StartTask("ORGANIZATION", "ADD_SUPPORT_SERVICE_LEVEL");
+
+            int levelID = 0;
+
+            try
+            {
+                levelID = DataProvider.AddSupportServiceLevel(levelName, levelDescription);
+            }
+            catch (Exception ex)
+            {
+                TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+            return levelID;
+        }
+
+        public static ResultObject DeleteSupportServiceLevel(int levelId)
+        {
+            ResultObject res = TaskManager.StartResultTask<ResultObject>("ORGANIZATION", "DELETE_SUPPORT_SERVICE_LEVEL", levelId);
+
+            try
+            {
+                if (CheckServiceLevelUsage(levelId)) res.AddError("SERVICE_LEVEL_IN_USE", new ApplicationException("Service Level is being used"));
+
+                if (res.IsSuccess)
+                DataProvider.DeleteSupportServiceLevel(levelId);
+            }
+            catch (Exception ex)
+            {
+                TaskManager.WriteError(ex);
+                TaskManager.CompleteResultTask(res);
+                res.AddError("", ex);
+                return res;
+            }
+
+            TaskManager.CompleteResultTask();
+            return res;
+        }
+
+        public static void UpdateSupportServiceLevel(int levelID, string levelName, string levelDescription)
+        {
+            // place log record
+            TaskManager.StartTask("ORGANIZATION", "UPDATE_SUPPORT_SERVICE_LEVEL", levelID);
+
+            try
+            {
+                DataProvider.UpdateSupportServiceLevel(levelID, levelName, levelDescription);
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static ServiceLevel[] GetSupportServiceLevels()
+        {
+            // place log record
+            TaskManager.StartTask("ORGANIZATION", "GET_SUPPORT_SERVICE_LEVELS");
+
+            try
+            {
+                return ObjectUtils.CreateListFromDataReader<ServiceLevel>(DataProvider.GetSupportServiceLevels()).ToArray();
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static ServiceLevel GetSupportServiceLevel(int levelID)
+        {
+            // place log record
+            TaskManager.StartTask("ORGANIZATION", "GET_SUPPORT_SERVICE_LEVEL", levelID);
+
+            try
+            {
+                return ObjectUtils.FillObjectFromDataReader<ServiceLevel>(
+                    DataProvider.GetSupportServiceLevel(levelID));
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        private static bool CheckServiceLevelUsage(int levelID)
+        {
+            return DataProvider.CheckServiceLevelUsage(levelID);
+        }
+
+        #endregion
     }
 }

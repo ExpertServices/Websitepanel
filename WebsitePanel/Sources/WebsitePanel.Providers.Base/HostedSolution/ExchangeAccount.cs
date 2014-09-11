@@ -51,6 +51,8 @@ namespace WebsitePanel.Providers.HostedSolution
         string publicFolderPermission;
         string userPrincipalName;
         string notes;
+        int levelId;
+        bool isVip;
 
         public int AccountId
         {
@@ -177,6 +179,20 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.enableArchiving = value; }
         }
 
-    
+        public bool IsVIP
+        {
+            get { return this.isVip; }
+            set { this.isVip = value; }
+        }
+
+        public int LevelId
+        {
+            get { return this.levelId; }
+            set { this.levelId = value; }
+        }
+
+        public bool Disabled { get; set; }
+
+        public bool Locked { get; set; }
     }
 }

@@ -180,4 +180,7 @@
   <data name="gvUsersLogin.Header" xml:space="preserve">
     <value>Login</value>
   </data>
+  <data name="gvServiceLevel.Header" xml:space="preserve">
+    <value>Service Level</value>
+  </data>
 </root>
