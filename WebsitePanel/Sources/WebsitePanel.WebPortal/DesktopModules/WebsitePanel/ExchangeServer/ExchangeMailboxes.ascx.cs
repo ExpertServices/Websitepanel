@@ -45,6 +45,8 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
         }
 
+        private PackageContext cntx;
+
         private ServiceLevel[] ServiceLevels;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -60,7 +62,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             BindServiceLevels();
 
-            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
             if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
             {
                 if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
@@ -122,7 +124,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             else if (accountType == ExchangeAccountType.Equipment)
                 imgName = "equipment_16.gif";
 
-            if (vip) imgName = "admin_16.png";
+            if (vip && cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels)) imgName = "vip_user_16.png";
 
             return GetThemedImage("Exchange/" + imgName);
         }
@@ -197,7 +199,21 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         public ServiceLevel GetServiceLevel(int levelId)
         {
-            return ServiceLevels.Where(x => x.LevelId == levelId).DefaultIfEmpty(new ServiceLevel { LevelName = "", LevelDescription = "" }).FirstOrDefault();
+            ServiceLevel serviceLevel = ServiceLevels.Where(x => x.LevelId == levelId).DefaultIfEmpty(new ServiceLevel { LevelName = "", LevelDescription = "" }).FirstOrDefault();
+
+            bool enable = !string.IsNullOrEmpty(serviceLevel.LevelName);
+
+            enable = enable ? cntx.Quotas.ContainsKey(Quotas.SERVICE_LEVELS + serviceLevel.LevelName) : false;
+            enable = enable ? cntx.Quotas[Quotas.SERVICE_LEVELS + serviceLevel.LevelName].QuotaAllocatedValue > 0 : false;
+
+            if (!enable)
+            {
+                serviceLevel.LevelName = "";
+                serviceLevel.LevelDescription = "";
+            }
+
+            //return  ServiceLevels.Where(x => x.LevelId == levelId).DefaultIfEmpty(new ServiceLevel { LevelName = "", LevelDescription = "" }).FirstOrDefault();
+            return serviceLevel;
         }
     }
 }

@@ -86,17 +86,7 @@ namespace WebsitePanel.Portal.HostedSolution
                 txtInitials.Text = user.Initials;
                 txtLastName.Text = user.LastName;
 
-                if (user.LevelId > 0 && secServiceLevels.Visible)
-                {
-                    ServiceLevel serviceLevel = ES.Services.Organizations.GetSupportServiceLevel(user.LevelId);
 
-                    if (ddlServiceLevels.Items.FindByValue(serviceLevel.LevelId.ToString()) == null)
-                        ddlServiceLevels.Items.Add(new ListItem(serviceLevel.LevelName, serviceLevel.LevelId.ToString()));
-
-                    ddlServiceLevels.Items.FindByValue(string.Empty).Selected = false;
-                    ddlServiceLevels.Items.FindByValue(serviceLevel.LevelId.ToString()).Selected = true; 
-                }
-                chkVIP.Checked = user.IsVIP && secServiceLevels.Visible;
 
                 txtJobTitle.Text = user.JobTitle;
                 txtCompany.Text = user.Company;
@@ -135,6 +125,26 @@ namespace WebsitePanel.Portal.HostedSolution
                         txtSubscriberNumber.Visible = false;
                     }
                 }
+
+                if (user.LevelId > 0 && secServiceLevels.Visible)
+                {
+                    ServiceLevel serviceLevel = ES.Services.Organizations.GetSupportServiceLevel(user.LevelId);
+
+                    bool addLevel = ddlServiceLevels.Items.FindByValue(serviceLevel.LevelId.ToString()) == null;
+
+                    addLevel = addLevel && cntx.Quotas.ContainsKey(Quotas.SERVICE_LEVELS + serviceLevel.LevelName);
+
+                    addLevel = addLevel ? cntx.Quotas[Quotas.SERVICE_LEVELS + serviceLevel.LevelName].QuotaAllocatedValue > 0 : addLevel;
+
+                    if (addLevel)
+                    {
+                        ddlServiceLevels.Items.Add(new ListItem(serviceLevel.LevelName, serviceLevel.LevelId.ToString()));
+
+                        ddlServiceLevels.Items.FindByValue(string.Empty).Selected = false;
+                        ddlServiceLevels.Items.FindByValue(serviceLevel.LevelId.ToString()).Selected = true;
+                    }
+                }
+                chkVIP.Checked = user.IsVIP && secServiceLevels.Visible;
 
 
                 if (cntx.Quotas.ContainsKey(Quotas.ORGANIZATION_ALLOWCHANGEUPN))

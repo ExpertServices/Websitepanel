@@ -4523,6 +4523,12 @@ CREATE TABLE SupportServiceLevels
 )
 GO
 
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeAccounts' AND COLS.name='LevelID')
+ALTER TABLE [dbo].[ExchangeAccounts] ADD
+	[LevelID] [int] NULL,
+	[IsVIP] [bit] NOT NULL DEFAULT 0
+GO
+
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetSupportServiceLevels')
 DROP PROCEDURE GetSupportServiceLevels
 GO
@@ -4707,13 +4713,7 @@ END
 RETURN 
 GO
 
-IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='ExchangeAccounts' AND COLS.name='LevelID')
-BEGIN
-ALTER TABLE [dbo].[ExchangeAccounts] ADD
-	[LevelID] [int] NULL,
-	[IsVIP] [bit] NOT NULL DEFAULT 0
-END
-GO
+
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type IN ('FN', 'IF', 'TF') AND name = 'GetPackageServiceLevelResource') 
 DROP FUNCTION GetPackageServiceLevelResource

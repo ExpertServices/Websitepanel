@@ -618,7 +618,7 @@ namespace WebsitePanel.Import.CsvBulk
                     mailbox.JobTitle, mailbox.Company, mailbox.Department, mailbox.Office, null, mailbox.BusinessPhone,
                     mailbox.Fax, mailbox.HomePhone, mailbox.MobilePhone, mailbox.Pager, mailbox.WebPage, mailbox.Notes,
                     // these are new and not in csv ...
-                    mailbox.ExternalEmail, mailbox.SubscriberNumber);
+                    mailbox.ExternalEmail, mailbox.SubscriberNumber,mailbox.LevelId, mailbox.IsVIP);
                 ret = true;
 			}
 			catch (Exception ex)
@@ -762,7 +762,7 @@ namespace WebsitePanel.Import.CsvBulk
 					null, false, user.Disabled, user.Locked, user.FirstName, user.Initials,
 					user.LastName, user.Address, user.City, user.State, user.Zip, user.Country,
 					user.JobTitle, user.Company, user.Department, user.Office, null, user.BusinessPhone,
-					user.Fax, user.HomePhone, user.MobilePhone, user.Pager, user.WebPage, user.Notes, user.ExternalEmail, user.SubscriberNumber);
+					user.Fax, user.HomePhone, user.MobilePhone, user.Pager, user.WebPage, user.Notes, user.ExternalEmail, user.SubscriberNumber, user.LevelId, user.IsVIP);
 				ret = true;
 			}
 			catch (Exception ex)
