@@ -146,6 +146,16 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
 
         private System.Threading.SendOrPostCallback SetDefaultOrganizationOperationCompleted;
 
+        private System.Threading.SendOrPostCallback GetSupportServiceLevelsOperationCompleted;
+
+        private System.Threading.SendOrPostCallback UpdateSupportServiceLevelOperationCompleted;
+
+        private System.Threading.SendOrPostCallback DeleteSupportServiceLevelOperationCompleted;
+
+        private System.Threading.SendOrPostCallback AddSupportServiceLevelOperationCompleted;
+
+        private System.Threading.SendOrPostCallback GetSupportServiceLevelOperationCompleted;
+
         /// <remarks/>
         public esOrganizations()
         {
@@ -272,6 +282,20 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
         /// <remarks/>
         public event SetDefaultOrganizationCompletedEventHandler SetDefaultOrganizationCompleted;
 
+        /// <remarks/>
+        public event GetSupportServiceLevelsCompletedEventHandler GetSupportServiceLevelsCompleted;
+
+        /// <remarks/>
+        public event UpdateSupportServiceLevelCompletedEventHandler UpdateSupportServiceLevelCompleted;
+
+        /// <remarks/>
+        public event DeleteSupportServiceLevelCompletedEventHandler DeleteSupportServiceLevelCompleted;
+
+        /// <remarks/>
+        public event AddSupportServiceLevelCompletedEventHandler AddSupportServiceLevelCompleted;
+
+        /// <remarks/>
+        public event GetSupportServiceLevelCompletedEventHandler GetSupportServiceLevelCompleted;
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/CheckOrgIdExists", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -1415,7 +1439,9 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
                     string webPage,
                     string notes,
                     string externalEmail,
-                    string subscriberNumber)
+                    string subscriberNumber,
+                    int levelId,
+                    bool isVIP)
         {
             object[] results = this.Invoke("SetUserGeneralSettings", new object[] {
                         itemId,
@@ -1446,7 +1472,9 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
                         webPage,
                         notes,
                         externalEmail,
-                        subscriberNumber});
+                        subscriberNumber,
+                        levelId,
+                        isVIP});
             return ((int)(results[0]));
         }
 
@@ -1481,6 +1509,8 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
                     string notes,
                     string externalEmail,
                     string subscriberNumber,
+                    int levelId, 
+                    bool isVIP, 
                     System.AsyncCallback callback,
                     object asyncState)
         {
@@ -1513,7 +1543,9 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
                         webPage,
                         notes,
                         externalEmail,
-                        subscriberNumber}, callback, asyncState);
+                        subscriberNumber,
+                        levelId,
+                        isVIP}, callback, asyncState);
         }
 
         /// <remarks/>
@@ -1553,9 +1585,11 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
                     string webPage,
                     string notes,
                     string externalEmail,
-                    string subscriberNumber)
+                    string subscriberNumber,
+                    int levelId,
+                    bool isVIP)
         {
-            this.SetUserGeneralSettingsAsync(itemId, accountId, displayName, password, hideAddressBook, disabled, locked, firstName, initials, lastName, address, city, state, zip, country, jobTitle, company, department, office, managerAccountName, businessPhone, fax, homePhone, mobilePhone, pager, webPage, notes, externalEmail, subscriberNumber, null);
+            this.SetUserGeneralSettingsAsync(itemId, accountId, displayName, password, hideAddressBook, disabled, locked, firstName, initials, lastName, address, city, state, zip, country, jobTitle, company, department, office, managerAccountName, businessPhone, fax, homePhone, mobilePhone, pager, webPage, notes, externalEmail, subscriberNumber, levelId, isVIP, null);
         }
 
         /// <remarks/>
@@ -1589,6 +1623,8 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
                     string notes,
                     string externalEmail,
                     string subscriberNumber,
+                    int levelId, 
+                    bool isVIP, 
                     object userState)
         {
             if ((this.SetUserGeneralSettingsOperationCompleted == null))
@@ -1624,7 +1660,9 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
                         webPage,
                         notes,
                         externalEmail,
-                        subscriberNumber}, this.SetUserGeneralSettingsOperationCompleted, userState);
+                        subscriberNumber,
+                        levelId,
+                        isVIP}, this.SetUserGeneralSettingsOperationCompleted, userState);
         }
 
         private void OnSetUserGeneralSettingsOperationCompleted(object arg)
@@ -2660,6 +2698,255 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
             {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.SetDefaultOrganizationCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetSupportServiceLevels", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ServiceLevel[] GetSupportServiceLevels()
+        {
+            object[] results = this.Invoke("GetSupportServiceLevels", new object[0]);
+            return ((ServiceLevel[])(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginGetSupportServiceLevels(System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("GetSupportServiceLevels", new object[0], callback, asyncState);
+        }
+
+        /// <remarks/>
+        public ServiceLevel[] EndGetSupportServiceLevels(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ServiceLevel[])(results[0]));
+        }
+
+        /// <remarks/>
+        public void GetSupportServiceLevelsAsync()
+        {
+            this.GetSupportServiceLevelsAsync(null);
+        }
+
+        /// <remarks/>
+        public void GetSupportServiceLevelsAsync(object userState)
+        {
+            if ((this.GetSupportServiceLevelsOperationCompleted == null))
+            {
+                this.GetSupportServiceLevelsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetSupportServiceLevelsOperationCompleted);
+            }
+            this.InvokeAsync("GetSupportServiceLevels", new object[0], this.GetSupportServiceLevelsOperationCompleted, userState);
+        }
+
+        private void OnGetSupportServiceLevelsOperationCompleted(object arg)
+        {
+            if ((this.GetSupportServiceLevelsCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetSupportServiceLevelsCompleted(this, new GetSupportServiceLevelsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/UpdateSupportServiceLevel", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void UpdateSupportServiceLevel(int levelID, string levelName, string levelDescription)
+        {
+            this.Invoke("UpdateSupportServiceLevel", new object[] {
+                    levelID,
+                    levelName,
+                    levelDescription});
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginUpdateSupportServiceLevel(int levelID, string levelName, string levelDescription, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("UpdateSupportServiceLevel", new object[] {
+                    levelID,
+                    levelName,
+                    levelDescription}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public void EndUpdateSupportServiceLevel(System.IAsyncResult asyncResult)
+        {
+            this.EndInvoke(asyncResult);
+        }
+
+        /// <remarks/>
+        public void UpdateSupportServiceLevelAsync(int levelID, string levelName, string levelDescription)
+        {
+            this.UpdateSupportServiceLevelAsync(levelID, levelName, levelDescription, null);
+        }
+
+        /// <remarks/>
+        public void UpdateSupportServiceLevelAsync(int levelID, string levelName, string levelDescription, object userState)
+        {
+            if ((this.UpdateSupportServiceLevelOperationCompleted == null))
+            {
+                this.UpdateSupportServiceLevelOperationCompleted = new System.Threading.SendOrPostCallback(this.OnUpdateSupportServiceLevelOperationCompleted);
+            }
+            this.InvokeAsync("UpdateSupportServiceLevel", new object[] {
+                    levelID,
+                    levelName,
+                    levelDescription}, this.UpdateSupportServiceLevelOperationCompleted, userState);
+        }
+
+        private void OnUpdateSupportServiceLevelOperationCompleted(object arg)
+        {
+            if ((this.UpdateSupportServiceLevelCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.UpdateSupportServiceLevelCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/DeleteSupportServiceLevel", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResultObject DeleteSupportServiceLevel(int levelId)
+        {
+            object[] results = this.Invoke("DeleteSupportServiceLevel", new object[] {
+                    levelId});
+            return ((ResultObject)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginDeleteSupportServiceLevel(int levelId, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("DeleteSupportServiceLevel", new object[] {
+                    levelId}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public ResultObject EndDeleteSupportServiceLevel(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ResultObject)(results[0]));
+        }
+
+        /// <remarks/>
+        public void DeleteSupportServiceLevelAsync(int levelId)
+        {
+            this.DeleteSupportServiceLevelAsync(levelId, null);
+        }
+
+        /// <remarks/>
+        public void DeleteSupportServiceLevelAsync(int levelId, object userState)
+        {
+            if ((this.DeleteSupportServiceLevelOperationCompleted == null))
+            {
+                this.DeleteSupportServiceLevelOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDeleteSupportServiceLevelOperationCompleted);
+            }
+            this.InvokeAsync("DeleteSupportServiceLevel", new object[] {
+                    levelId}, this.DeleteSupportServiceLevelOperationCompleted, userState);
+        }
+
+        private void OnDeleteSupportServiceLevelOperationCompleted(object arg)
+        {
+            if ((this.DeleteSupportServiceLevelCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DeleteSupportServiceLevelCompleted(this, new DeleteSupportServiceLevelCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/AddSupportServiceLevel", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int AddSupportServiceLevel(string levelName, string levelDescription)
+        {
+            object[] results = this.Invoke("AddSupportServiceLevel", new object[] {
+                    levelName,
+                    levelDescription});
+            return ((int)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginAddSupportServiceLevel(string levelName, string levelDescription, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("AddSupportServiceLevel", new object[] {
+                    levelName,
+                    levelDescription}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public int EndAddSupportServiceLevel(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((int)(results[0]));
+        }
+
+        /// <remarks/>
+        public void AddSupportServiceLevelAsync(string levelName, string levelDescription)
+        {
+            this.AddSupportServiceLevelAsync(levelName, levelDescription, null);
+        }
+
+        /// <remarks/>
+        public void AddSupportServiceLevelAsync(string levelName, string levelDescription, object userState)
+        {
+            if ((this.AddSupportServiceLevelOperationCompleted == null))
+            {
+                this.AddSupportServiceLevelOperationCompleted = new System.Threading.SendOrPostCallback(this.OnAddSupportServiceLevelOperationCompleted);
+            }
+            this.InvokeAsync("AddSupportServiceLevel", new object[] {
+                    levelName,
+                    levelDescription}, this.AddSupportServiceLevelOperationCompleted, userState);
+        }
+
+        private void OnAddSupportServiceLevelOperationCompleted(object arg)
+        {
+            if ((this.AddSupportServiceLevelCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.AddSupportServiceLevelCompleted(this, new AddSupportServiceLevelCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetSupportServiceLevel", RequestNamespace = "http://tempuri.org/", ResponseNamespace = "http://tempuri.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ServiceLevel GetSupportServiceLevel(int levelID)
+        {
+            object[] results = this.Invoke("GetSupportServiceLevel", new object[] {
+                    levelID});
+            return ((ServiceLevel)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginGetSupportServiceLevel(int levelID, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("GetSupportServiceLevel", new object[] {
+                    levelID}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public ServiceLevel EndGetSupportServiceLevel(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ServiceLevel)(results[0]));
+        }
+
+        /// <remarks/>
+        public void GetSupportServiceLevelAsync(int levelID)
+        {
+            this.GetSupportServiceLevelAsync(levelID, null);
+        }
+
+        /// <remarks/>
+        public void GetSupportServiceLevelAsync(int levelID, object userState)
+        {
+            if ((this.GetSupportServiceLevelOperationCompleted == null))
+            {
+                this.GetSupportServiceLevelOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetSupportServiceLevelOperationCompleted);
+            }
+            this.InvokeAsync("GetSupportServiceLevel", new object[] {
+                    levelID}, this.GetSupportServiceLevelOperationCompleted, userState);
+        }
+
+        private void OnGetSupportServiceLevelOperationCompleted(object arg)
+        {
+            if ((this.GetSupportServiceLevelCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetSupportServiceLevelCompleted(this, new GetSupportServiceLevelCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
 
@@ -3791,4 +4078,128 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void SetDefaultOrganizationCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void UpdateSupportServiceLevelCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void DeleteSupportServiceLevelCompletedEventHandler(object sender, DeleteSupportServiceLevelCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DeleteSupportServiceLevelCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal DeleteSupportServiceLevelCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public ResultObject Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((ResultObject)(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void AddSupportServiceLevelCompletedEventHandler(object sender, AddSupportServiceLevelCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class AddSupportServiceLevelCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal AddSupportServiceLevelCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public int Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((int)(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetSupportServiceLevelsCompletedEventHandler(object sender, GetSupportServiceLevelsCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetSupportServiceLevelsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal GetSupportServiceLevelsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public ServiceLevel[] Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((ServiceLevel[])(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetSupportServiceLevelCompletedEventHandler(object sender, GetSupportServiceLevelCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetSupportServiceLevelCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal GetSupportServiceLevelCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public ServiceLevel Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((ServiceLevel)(this.results[0]));
+            }
+        }
+    }
 }

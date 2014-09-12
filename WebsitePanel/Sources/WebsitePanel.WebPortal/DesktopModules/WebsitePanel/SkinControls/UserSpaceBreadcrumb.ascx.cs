@@ -47,7 +47,7 @@ namespace WebsitePanel.Portal.SkinControls
     public partial class UserSpaceBreadcrumb : System.Web.UI.UserControl
     {
         public const string ORGANIZATION_CONTROL_KEY = "organization_home";
-	public const string PID_SPACE_EXCHANGE_SERVER = "SpaceExchangeServer";
+	    public const string PID_SPACE_EXCHANGE_SERVER = "SpaceExchangeServer";
         public const string EXCHANGE_SERVER_MODULE_DEFINTION_ID = "exchangeserver";
         public const string PAGE_NANE_KEY = "Text.PageName";
         public const string DM_FOLDER_VIRTUAL_PATH = "~/DesktopModules/";
@@ -164,7 +164,14 @@ namespace WebsitePanel.Portal.SkinControls
                 {
                     string imagePath = String.Concat("~/", DefaultPage.THEMES_FOLDER, "/", Page.Theme, "/", "Images", "/");
 
-                    lnkUser.ImageUrl = imagePath + "home_16_blk.png";
+                    Image imgUserHome = new Image();
+                    imgUserHome.ImageUrl = imagePath + "home_16_blk.png";
+
+                    Label lblUserText = new Label();
+                    lblUserText.Text = " " + user.Username;
+
+                    lnkUser.Controls.Add(imgUserHome);
+                    lnkUser.Controls.Add(lblUserText);
                 }
                 else
                 {

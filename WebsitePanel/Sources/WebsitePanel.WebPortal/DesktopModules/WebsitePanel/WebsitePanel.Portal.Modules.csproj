@@ -210,6 +210,13 @@
     <Compile Include="Code\ReportingServices\IResourceStorage.cs" />
     <Compile Include="Code\ReportingServices\ReportingServicesUtils.cs" />
     <Compile Include="Code\UserControls\Tab.cs" />
+    <Compile Include="SettingsServiceLevels.ascx.cs">
+      <DependentUpon>SettingsServiceLevels.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsServiceLevels.ascx.designer.cs">
+      <DependentUpon>SettingsServiceLevels.ascx</DependentUpon>
+    </Compile>
     <Compile Include="CRM\CRMStorageSettings.ascx.cs">
       <DependentUpon>CRMStorageSettings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4138,6 +4145,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplyEnableHardQuotaFeature.ascx" />
+    <Content Include="SettingsServiceLevels.ascx" />
     <Content Include="CRM\CRMStorageSettings.ascx" />
     <Content Include="ExchangeServer\EnterpriseStorageCreateDriveMap.ascx" />
     <Content Include="ExchangeServer\EnterpriseStorageDriveMaps.ascx" />
@@ -5421,6 +5429,7 @@
     <Content Include="ProviderControls\App_LocalResources\IceWarp_EditGroup.ascx.resx" />
     <Content Include="ProviderControls\App_LocalResources\IceWarp_EditList.ascx.resx" />
     <Content Include="ProviderControls\App_LocalResources\IceWarp_Settings.ascx.resx" />
+    <Content Include="App_LocalResources\SettingsServiceLevels.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

@@ -1140,6 +1140,8 @@ namespace WebsitePanel.EnterpriseServer
                         //StringDictionary serviceSettings = ServerController.GetServiceSettings(serviceId);
                         //foreach (string key in serviceSettings.Keys)
                         //    cnfg.ProviderSettings.Settings[key] = serviceSettings[key];
+                        cnfg.ProviderSettings.Settings["aspnet40path"] = @"%WINDIR%\Microsoft.NET\Framework\v4.0.30319\aspnet_isapi.dll";
+                        cnfg.ProviderSettings.Settings["aspnet40x64path"] = @"%WINDIR%\Microsoft.NET\Framework64\v4.0.30319\aspnet_isapi.dll";
 
                         ServiceProviderProxy.ServerInit(web, cnfg, serverId);
 

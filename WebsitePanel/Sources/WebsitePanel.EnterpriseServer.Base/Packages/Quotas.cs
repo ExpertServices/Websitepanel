@@ -255,5 +255,6 @@ order by rg.groupOrder
         public const string ENTERPRISESTORAGE_FOLDERS = "EnterpriseStorage.Folders";
         public const string ENTERPRICESTORAGE_DRIVEMAPS = "EnterpriseStorage.DriveMaps";
 
+        public const string SERVICE_LEVELS = "ServiceLevel.";
     }
 }

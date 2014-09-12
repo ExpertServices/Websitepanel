@@ -6,6 +6,10 @@
                     Text="WebsitePanel Policy" NavigateUrl='<%# GetSettingsLink("WebsitePanelPolicy", "SettingsWebsitePanelPolicy") %>'></asp:HyperLink>
         </li>
         <li>
+            <asp:HyperLink ID="lnkServiceLevels" runat="server" meta:resourcekey="lnkServiceLevels"
+                    Text="Service Levels" NavigateUrl='<%# GetSettingsLink("ServiceLevels", "SettingsServiceLevels") %>'></asp:HyperLink>
+        </li>
+        <li>
             <asp:HyperLink ID="lnkWebPolicy" runat="server" meta:resourcekey="lnkWebPolicy"
                     Text="WEB Policy" NavigateUrl='<%# GetSettingsLink("WebPolicy", "SettingsWebPolicy") %>'></asp:HyperLink>
         </li>

@@ -100,7 +100,7 @@ namespace WebsitePanel.Portal
                 // rebind settings
                 BindSettings();
             }
-            else
+            else if (!SettingsName.Equals("ServiceLevels"))
             {
                 ToggleControls();
             }

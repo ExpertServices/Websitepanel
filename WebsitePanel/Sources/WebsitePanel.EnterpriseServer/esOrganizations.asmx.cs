@@ -31,6 +31,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Web.Services;
 using WebsitePanel.EnterpriseServer.Base.HostedSolution;
+using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
 
@@ -194,14 +195,14 @@ namespace WebsitePanel.EnterpriseServer
             string lastName, string address, string city, string state, string zip, string country,
             string jobTitle, string company, string department, string office, string managerAccountName,
             string businessPhone, string fax, string homePhone, string mobilePhone, string pager,
-            string webPage, string notes, string externalEmail, string subscriberNumber)
+            string webPage, string notes, string externalEmail, string subscriberNumber, int levelId, bool isVIP)
         {
             return OrganizationController.SetUserGeneralSettings(itemId, accountId, displayName,
                 password, hideAddressBook, disabled, locked, firstName, initials,
                 lastName, address, city, state, zip, country,
                 jobTitle, company, department, office, managerAccountName,
                 businessPhone, fax, homePhone, mobilePhone, pager,
-                webPage, notes, externalEmail, subscriberNumber);
+                webPage, notes, externalEmail, subscriberNumber, levelId, isVIP);
         }
 
 
@@ -331,6 +332,40 @@ namespace WebsitePanel.EnterpriseServer
         public int AddAdditionalGroup(int userId, string groupName)
         {
             return OrganizationController.AddAdditionalGroup(userId, groupName);
+        }
+
+        #endregion
+
+        #region Service Levels
+
+        [WebMethod]
+        public ServiceLevel[] GetSupportServiceLevels()
+        {
+            return OrganizationController.GetSupportServiceLevels();
+        }
+
+        [WebMethod]
+        public void UpdateSupportServiceLevel(int levelID, string levelName, string levelDescription)
+        {
+            OrganizationController.UpdateSupportServiceLevel(levelID, levelName, levelDescription);
+        }
+
+        [WebMethod]
+        public ResultObject DeleteSupportServiceLevel(int levelId)
+        {
+            return OrganizationController.DeleteSupportServiceLevel(levelId);
+        }
+
+        [WebMethod]
+        public int AddSupportServiceLevel(string levelName, string levelDescription)
+        {
+            return OrganizationController.AddSupportServiceLevel(levelName, levelDescription);
+        }
+
+        [WebMethod]
+        public ServiceLevel GetSupportServiceLevel(int levelID)
+        {
+            return OrganizationController.GetSupportServiceLevel(levelID);
         }
 
         #endregion

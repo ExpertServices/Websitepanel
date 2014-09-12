@@ -978,6 +978,31 @@ namespace WebsitePanel.EnterpriseServer
 
             List<ExchangeAccount> accounts = new List<ExchangeAccount>();
             ObjectUtils.FillCollectionFromDataView(accounts, ds.Tables[1].DefaultView);
+
+            Organization org = null;
+            try
+            {
+                org = GetOrganization(itemId);
+
+                if (org != null)
+                {
+                    Organizations orgProxy = OrganizationController.GetOrganizationProxy(org.ServiceId);
+
+                    OrganizationUser user = null;
+                    string accountName = string.Empty;
+                    foreach (var account in accounts)
+                    {
+                        accountName = OrganizationController.GetAccountName(account.AccountName);
+
+                        user = orgProxy.GetUserGeneralSettings(accountName, org.OrganizationId);
+
+                        account.Disabled = user.Disabled;
+                        account.Locked = user.Locked;
+                    }
+                }
+            }
+            catch { }
+
             result.PageItems = accounts.ToArray();
             return result;
         }
