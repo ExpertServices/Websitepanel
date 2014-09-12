@@ -62,7 +62,6 @@
 							    <ItemStyle Width="25%"></ItemStyle>
 							    <ItemTemplate>							        
 								    <asp:Image ID="img1" runat="server" ImageUrl='<%# GetAccountImage((int)Eval("AccountType"),(bool)Eval("IsVIP")) %>' ImageAlign="AbsMiddle"/>
-                                    <asp:Label runat="server" Text='<%# (bool)Eval("IsVIP") ? "*" : string.Empty %>' style="font-weight:bold;"/>
 								    <asp:hyperlink id="lnk1" runat="server"
 									    NavigateUrl='<%# GetUserEditUrl(Eval("AccountId").ToString()) %>'>
 									    <%# Eval("DisplayName") %>
