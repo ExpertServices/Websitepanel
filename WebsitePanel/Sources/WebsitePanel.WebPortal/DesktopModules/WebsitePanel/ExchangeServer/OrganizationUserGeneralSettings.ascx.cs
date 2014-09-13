@@ -335,6 +335,15 @@ namespace WebsitePanel.Portal.HostedSolution
             SaveSettings();
         }
 
+        protected void btnSaveExit_Click(object sender, EventArgs e)
+        {
+            SaveSettings();
+
+            Response.Redirect(PortalUtils.EditUrl("ItemID", PanelRequest.ItemID.ToString(),
+                (PanelRequest.Context == "Mailbox") ? "mailboxes" : "users", 
+                "SpaceID=" + PanelSecurity.PackageId));
+        }
+
         protected void btnSetUserPrincipalName_Click(object sender, EventArgs e)
         {
 

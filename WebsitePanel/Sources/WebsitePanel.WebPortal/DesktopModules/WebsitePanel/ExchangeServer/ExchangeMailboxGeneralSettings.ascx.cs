@@ -233,6 +233,16 @@ namespace WebsitePanel.Portal.ExchangeServer
             SaveSettings();
         }
 
+        protected void btnSaveExit_Click(object sender, EventArgs e)
+        {
+            SaveSettings();
+
+            Response.Redirect(PortalUtils.EditUrl("ItemID", PanelRequest.ItemID.ToString(),
+                "mailboxes",
+                "SpaceID=" + PanelSecurity.PackageId));
+        }
+
+
         protected void chkPmmAllowed_CheckedChanged(object sender, EventArgs e)
         {
             try
