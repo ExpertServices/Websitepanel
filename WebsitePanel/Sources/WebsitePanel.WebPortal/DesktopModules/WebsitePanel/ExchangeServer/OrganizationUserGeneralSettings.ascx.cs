@@ -134,12 +134,17 @@ namespace WebsitePanel.Portal.HostedSolution
 
                     addLevel = addLevel && cntx.Quotas.ContainsKey(Quotas.SERVICE_LEVELS + serviceLevel.LevelName);
 
-                    addLevel = addLevel ? cntx.Quotas[Quotas.SERVICE_LEVELS + serviceLevel.LevelName].QuotaAllocatedValue > 0 : addLevel;
+                    addLevel = addLevel ? cntx.Quotas[Quotas.SERVICE_LEVELS + serviceLevel.LevelName].QuotaAllocatedValue != 0 : addLevel;
 
                     if (addLevel)
                     {
                         ddlServiceLevels.Items.Add(new ListItem(serviceLevel.LevelName, serviceLevel.LevelId.ToString()));
+                    }
 
+                    bool levelInDDL = ddlServiceLevels.Items.FindByValue(serviceLevel.LevelId.ToString()) != null;
+
+                    if (levelInDDL)
+                    {
                         ddlServiceLevels.Items.FindByValue(string.Empty).Selected = false;
                         ddlServiceLevels.Items.FindByValue(serviceLevel.LevelId.ToString()).Selected = true;
                     }
