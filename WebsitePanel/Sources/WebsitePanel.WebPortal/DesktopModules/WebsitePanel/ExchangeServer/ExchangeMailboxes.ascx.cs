@@ -204,7 +204,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             bool enable = !string.IsNullOrEmpty(serviceLevel.LevelName);
 
             enable = enable ? cntx.Quotas.ContainsKey(Quotas.SERVICE_LEVELS + serviceLevel.LevelName) : false;
-            enable = enable ? cntx.Quotas[Quotas.SERVICE_LEVELS + serviceLevel.LevelName].QuotaAllocatedValue > 0 : false;
+            enable = enable ? cntx.Quotas[Quotas.SERVICE_LEVELS + serviceLevel.LevelName].QuotaAllocatedValue != 0 : false;
 
             if (!enable)
             {
@@ -212,7 +212,6 @@ namespace WebsitePanel.Portal.ExchangeServer
                 serviceLevel.LevelDescription = "";
             }
 
-            //return  ServiceLevels.Where(x => x.LevelId == levelId).DefaultIfEmpty(new ServiceLevel { LevelName = "", LevelDescription = "" }).FirstOrDefault();
             return serviceLevel;
         }
     }
