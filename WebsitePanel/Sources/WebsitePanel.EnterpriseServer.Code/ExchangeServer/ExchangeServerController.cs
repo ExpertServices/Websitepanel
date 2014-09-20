@@ -1347,11 +1347,14 @@ namespace WebsitePanel.EnterpriseServer
                 if (String.Compare(account.PrimaryEmailAddress, email.EmailAddress, true) == 0)
                 {
                     email.IsPrimary = true;
+                    email.ProtectDelete = true;
                 }
 
                 if (String.Compare(account.UserPrincipalName, email.EmailAddress, true) == 0)
                 {
                     email.IsUserPrincipalName = true;
+                    email.ProtectDelete = true;
+
                 }
 
             }

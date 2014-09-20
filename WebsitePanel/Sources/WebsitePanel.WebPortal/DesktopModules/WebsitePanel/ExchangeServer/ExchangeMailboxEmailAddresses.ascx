@@ -67,7 +67,7 @@
 					                    <asp:CheckBox ID="chkSelectAll" runat="server" onclick="javascript:SelectAllCheckboxes(this);" />
 					                </HeaderTemplate>
 					                <ItemTemplate>
-					                    <asp:CheckBox ID="chkSelect" runat="server" Enabled='<%# !(bool)Eval("IsPrimary")%>' />
+					                    <asp:CheckBox ID="chkSelect" runat="server" Enabled='<%# !(bool)Eval("ProtectDelete")%>' />
 					                </ItemTemplate>
                                     <ItemStyle Width="10px" />
 					            </asp:TemplateField>
