@@ -76,8 +76,10 @@
                     </asp:Panel>
                         
 					<div class="FormFooterClean">
-					 <asp:Button runat="server" ID="btnSave" meta:resourcekey="btnSave" ValidationGroup="Validation1"
+					 <asp:Button runat="server" ID="btnSave" Text="Save Changes" meta:resourcekey="btnSave" ValidationGroup="Validation1"
                         CssClass="Button1" onclick="btnSave_Click"  />					 					                                                
+                    <asp:Button runat="server" ID="btnSaveExit" Text="Save Changes and Exit" meta:resourcekey="btnSaveExit" ValidationGroup="Validation1"
+                        CssClass="Button1" OnClick="btnSaveExit_Click"></asp:Button>
 				    </div>			
                 </div>
             </div>

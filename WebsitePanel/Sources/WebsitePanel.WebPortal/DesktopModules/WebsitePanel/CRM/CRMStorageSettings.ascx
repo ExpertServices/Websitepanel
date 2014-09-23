@@ -16,20 +16,18 @@
 
 <div id="ExchangeContainer">
 	<div class="Module">
-		<div class="Header">
-			<wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName" />
-		</div>
 		<div class="Left">
-			<wsp:Menu id="menu" runat="server" SelectedItem="storage_limits" />
-            </div>
+		</div>
 		<div class="Content">
 			<div class="Center">
 				<div class="Title">
-					<asp:Image ID="Image1" SkinID="ExchangeStorageConfig48" runat="server" />
-					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" ></asp:Localize>
+					<asp:Image ID="Image2" SkinID="CRMLogo" runat="server" />
+					<asp:Localize ID="Localize1" runat="server"  Text="CRM Organization"></asp:Localize>
 				</div>
 				<div class="FormBody">
 				    <wsp:SimpleMessageBox id="messageBox" runat="server" />
+
+
 				    
 					<wsp:CollapsiblePanel id="secStorageLimits" runat="server"
                         TargetControlID="StorageLimits" meta:resourcekey="secStorageLimits" >

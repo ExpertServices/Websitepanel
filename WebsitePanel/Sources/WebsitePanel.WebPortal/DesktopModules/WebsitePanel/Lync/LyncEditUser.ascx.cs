@@ -120,10 +120,10 @@ namespace WebsitePanel.Portal.Lync
             Utils.SelectListItem(ddlPhoneNumber, lyncUser.LineUri);
         }
 
-        protected void btnSave_Click(object sender, EventArgs e)
+        protected bool SaveSettings()
         {
             if (!Page.IsValid)
-                return;
+                return false;
             try
             {
                 PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
@@ -132,7 +132,7 @@ namespace WebsitePanel.Portal.Lync
                 string lineUri = "";
                 if ((enterpriseVoiceQuota) & (ddlPhoneNumber.Items.Count != 0)) lineUri = ddlPhoneNumber.SelectedItem.Text + ":" + tbPin.Text;
 
-                LyncUserResult res =  ES.Services.Lync.SetUserLyncPlan(PanelRequest.ItemID, PanelRequest.AccountID, Convert.ToInt32(planSelector.planId));
+                LyncUserResult res = ES.Services.Lync.SetUserLyncPlan(PanelRequest.ItemID, PanelRequest.AccountID, Convert.ToInt32(planSelector.planId));
                 if (res.IsSuccess && res.ErrorCodes.Count == 0)
                 {
                     res = ES.Services.Lync.SetLyncUserGeneralSettings(PanelRequest.ItemID, PanelRequest.AccountID, lyncUserSettings.sipAddress, lineUri);
@@ -141,15 +141,36 @@ namespace WebsitePanel.Portal.Lync
                 if (res.IsSuccess && res.ErrorCodes.Count == 0)
                 {
                     messageBox.ShowSuccessMessage("UPDATE_LYNC_USER");
-                    return;
+                    return true;
                 }
                 else
+                {
                     messageBox.ShowMessage(res, "UPDATE_LYNC_USER", "LYNC");
+                    return false;
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 messageBox.ShowErrorMessage("UPDATE_LYNC_USER", ex);
+                return false;
             }
         }
+
+        protected void btnSave_Click(object sender, EventArgs e)
+        {
+            SaveSettings();
+        }
+
+        protected void btnSaveExit_Click(object sender, EventArgs e)
+        {
+            if (SaveSettings())
+            {
+                Response.Redirect(PortalUtils.EditUrl("ItemID", PanelRequest.ItemID.ToString(),
+                    "lync_users",
+                    "SpaceID=" + PanelSecurity.PackageId));
+            }
+        }
+
+
     }
 }

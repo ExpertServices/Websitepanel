@@ -87,8 +87,16 @@ namespace WebsitePanel.Portal.ExchangeServer
             int.TryParse(mailboxPlanSelector.MailboxPlanId, out planId);
             ExchangeMailboxPlan plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(PanelRequest.ItemID, planId);
 
-            secArchiving.Visible = plan.EnableArchiving;
-            secLitigationHoldSettings.Visible = plan.AllowLitigationHold && Utils.CheckQouta(Quotas.EXCHANGE2007_ALLOWLITIGATIONHOLD, Cntx);
+            if (plan != null)
+            {
+                secArchiving.Visible = plan.EnableArchiving;
+                secLitigationHoldSettings.Visible = plan.AllowLitigationHold && Utils.CheckQouta(Quotas.EXCHANGE2007_ALLOWLITIGATIONHOLD, Cntx);
+            }
+            else
+            {
+                secArchiving.Visible = false;
+                secLitigationHoldSettings.Visible = false;
+            }
         }
 
         private void BindSettings()
