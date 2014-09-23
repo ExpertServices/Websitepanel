@@ -27,6 +27,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
 
@@ -279,6 +281,14 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
             else
                 enterpriseStorageStatsPanel.Visible = false;
+
+            if (cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels))
+            {
+                serviceLevelsStatsPanel.Visible = true;
+                BindServiceLevelsStats(cntx);
+            }
+            else
+                serviceLevelsStatsPanel.Visible = false;
         }
 
         private void BindCRMStats(OrganizationStatistics stats, OrganizationStatistics tenantStats)
@@ -377,6 +387,41 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             lnkEnterpriseStorageFolders.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "enterprisestorage_folders",
             "SpaceID=" + PanelSecurity.PackageId.ToString());
+        }
+
+        private void BindServiceLevelsStats(PackageContext cntx)
+        {
+            foreach (var quota in Array.FindAll<QuotaValueInfo>(
+                    cntx.QuotasArray, x => x.QuotaName.Contains(Quotas.SERVICE_LEVELS)))
+            {
+                HtmlTableRow tr = new HtmlTableRow();
+                    tr.Attributes["class"] = "OrgStatsRow";
+                HtmlTableCell col1 = new HtmlTableCell();
+                    col1.Attributes["class"] = "OrgStatsQuota";
+                    col1.Attributes["nowrap"] = "nowrap";
+                HyperLink link = new HyperLink();
+                link.ID = "lnk_" + quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "").Replace(" ", string.Empty).Trim();
+                    link.Text = quota.QuotaDescription;
+
+                    col1.Controls.Add(link);
+
+                HtmlTableCell col2 = new HtmlTableCell();
+                QuotaViewer quotaControl = (QuotaViewer)LoadControl("../UserControls/QuotaViewer.ascx");
+                    quotaControl.ID = quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "").Replace(" ", string.Empty).Trim() + "Stats";
+                    quotaControl.QuotaTypeId = quota.QuotaTypeId;
+                    quotaControl.DisplayGauge = true;
+                    quotaControl.QuotaValue = quota.QuotaAllocatedValue;
+                    quotaControl.QuotaUsedValue = quota.QuotaUsedValue;
+                    if (quota.QuotaAllocatedValue != -1) 
+                        quotaControl.QuotaAvailable = quota.QuotaAllocatedValue - quota.QuotaUsedValue;
+
+                    col2.Controls.Add(quotaControl);
+
+
+                tr.Controls.Add(col1);
+                tr.Controls.Add(col2);
+                serviceLevelsStatsPanel.Controls.Add(tr);
+            }
         }
 
     }

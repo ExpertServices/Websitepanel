@@ -128,6 +128,8 @@ namespace WebsitePanel.Portal.HostedSolution
 
                 if (user.LevelId > 0 && secServiceLevels.Visible)
                 {
+                    secServiceLevels.IsCollapsed = false;
+
                     ServiceLevel serviceLevel = ES.Services.Organizations.GetSupportServiceLevel(user.LevelId);
 
                     bool addLevel = ddlServiceLevels.Items.FindByValue(serviceLevel.LevelId.ToString()) == null;

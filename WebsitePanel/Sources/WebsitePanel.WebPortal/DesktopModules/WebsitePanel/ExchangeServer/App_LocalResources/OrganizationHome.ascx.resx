@@ -219,4 +219,7 @@
   <data name="locEnterpriseStorage.Text" xml:space="preserve">
     <value>Enterprise Storage</value>
   </data>
+  <data name="locServiceLevels.Text" xml:space="preserve">
+    <value>Service Levels</value>
+  </data>
 </root>
