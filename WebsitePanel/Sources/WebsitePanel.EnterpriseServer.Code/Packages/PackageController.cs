@@ -365,6 +365,7 @@ namespace WebsitePanel.EnterpriseServer
                 quota.QuotaId = (int)dr["QuotaId"];
                 quota.GroupId = (int)dr["GroupId"];
                 quota.QuotaName = (string)dr["QuotaName"];
+                quota.QuotaDescription = ((object)dr["QuotaDescription"]).GetType() == typeof(System.DBNull) ? string.Empty : (string)dr["QuotaDescription"];
                 quota.QuotaTypeId = (int)dr["QuotaTypeId"];
                 quota.QuotaAllocatedValue = (int)dr["QuotaValue"];
                 quota.QuotaUsedValue = (int)dr["QuotaUsedValue"];
