@@ -4623,7 +4623,7 @@ BEGIN
 				@QuotaOrderInGroup + 1, 
 				@CurQuotaName, 
 				@CurQuotaDescription,
-				3, 
+				2, 
 				0, 
 				NULL)
 		END
