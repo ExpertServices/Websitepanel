@@ -57,12 +57,14 @@ namespace WebsitePanel.Portal.ExchangeServer
                 btnCreate.Enabled = (!(cntx.Quotas[Quotas.ORGANIZATIONS].QuotaAllocatedValue <= gvOrgs.Rows.Count) || (cntx.Quotas[Quotas.ORGANIZATIONS].QuotaAllocatedValue == -1));
             }
 
+            /*
             if (PanelSecurity.LoggedUser.Role == UserRole.User)
             {
                 gvOrgs.Columns[2].Visible = gvOrgs.Columns[3].Visible = gvOrgs.Columns[5].Visible = false;
                 btnCreate.Enabled = false;
                 btnSetDefaultOrganization.Enabled = false;
             }
+             */
 
             if (!Page.IsPostBack)
             {
