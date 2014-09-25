@@ -112,10 +112,26 @@
 						</SelectParameters>
 					</asp:ObjectDataSource>
 				    <br />
-				    <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Total Mailboxes Created:"></asp:Localize>
-				    &nbsp;&nbsp;&nbsp;
-				    <wsp:QuotaViewer ID="mailboxesQuota" runat="server" QuotaTypeId="2" />
-				    
+                    <div>
+				        <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Total Mailboxes Created:"></asp:Localize>
+				        &nbsp;&nbsp;&nbsp;
+				        <wsp:QuotaViewer ID="mailboxesQuota" runat="server" QuotaTypeId="2" />
+                    </div>
+				    <asp:Repeater ID="dlServiceLevelQuotas" runat="server" EnableViewState="false">
+                    
+                        <ItemTemplate>
+                            <br />
+                            <div>
+                                <asp:Localize ID="locServiceLevelQuota" runat="server" Text='<%# Eval("QuotaDescription") %>'></asp:Localize>
+                                &nbsp;&nbsp;&nbsp;
+                                <wsp:QuotaViewer ID="serviceLevelQuota" runat="server"
+                                    QuotaTypeId='<%# Eval("QuotaTypeId") %>'
+                                    QuotaUsedValue='<%# Eval("QuotaUsedValue") %>'
+                                    QuotaValue='<%# Eval("QuotaValue") %>'
+                                    QuotaAvailable='<%# Eval("QuotaAvailable")%>'/>
+                            </div>
+                        </ItemTemplate>
+                    </asp:Repeater>
 				    
 				</div>
 			</div>
