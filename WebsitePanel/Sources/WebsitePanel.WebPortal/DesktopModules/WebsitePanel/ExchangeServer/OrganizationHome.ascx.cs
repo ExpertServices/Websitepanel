@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Linq;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
@@ -391,6 +392,9 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         private void BindServiceLevelsStats(PackageContext cntx)
         {
+            WebsitePanel.EnterpriseServer.Base.HostedSolution.ServiceLevel[] serviceLevels = ES.Services.Organizations.GetSupportServiceLevels();
+            OrganizationUser[] accounts = ES.Services.Organizations.SearchAccounts(PanelRequest.ItemID, "", "", "", true);
+
             foreach (var quota in Array.FindAll<QuotaValueInfo>(
                     cntx.QuotasArray, x => x.QuotaName.Contains(Quotas.SERVICE_LEVELS)))
             {
@@ -401,9 +405,12 @@ namespace WebsitePanel.Portal.ExchangeServer
                     col1.Attributes["nowrap"] = "nowrap";
                 HyperLink link = new HyperLink();
                 link.ID = "lnk_" + quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "").Replace(" ", string.Empty).Trim();
-                    link.Text = quota.QuotaDescription;
+                    link.Text = quota.QuotaDescription.Replace(", users", " (users):");
 
                     col1.Controls.Add(link);
+
+                    int levelId = serviceLevels.Where(x => x.LevelName == quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "")).FirstOrDefault().LevelId;
+                    int usedInOrgCount = accounts.Where(x => x.LevelId == levelId).Count();
 
                 HtmlTableCell col2 = new HtmlTableCell();
                 QuotaViewer quotaControl = (QuotaViewer)LoadControl("../UserControls/QuotaViewer.ascx");
@@ -411,7 +418,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                     quotaControl.QuotaTypeId = quota.QuotaTypeId;
                     quotaControl.DisplayGauge = true;
                     quotaControl.QuotaValue = quota.QuotaAllocatedValue;
-                    quotaControl.QuotaUsedValue = quota.QuotaUsedValue;
+                    quotaControl.QuotaUsedValue = usedInOrgCount;
+                    //quotaControl.QuotaUsedValue = quota.QuotaUsedValue;
                     if (quota.QuotaAllocatedValue != -1) 
                         quotaControl.QuotaAvailable = quota.QuotaAllocatedValue - quota.QuotaUsedValue;
 

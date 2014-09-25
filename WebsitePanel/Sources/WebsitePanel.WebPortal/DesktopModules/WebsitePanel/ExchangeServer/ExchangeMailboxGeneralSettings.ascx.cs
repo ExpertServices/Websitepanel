@@ -164,6 +164,17 @@ namespace WebsitePanel.Portal.ExchangeServer
                 archivingQuotaViewer.QuotaValue = ArchivingMaxSize;
                 rowArchiving.Visible = chkEnableArchiving.Checked;
 
+                if (account.LevelId > 0 && Cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels))
+                {
+                    WebsitePanel.EnterpriseServer.Base.HostedSolution.ServiceLevel serviceLevel = ES.Services.Organizations.GetSupportServiceLevel(account.LevelId);
+
+                    litServiceLevel.Visible = true;
+                    litServiceLevel.Text = serviceLevel.LevelName;
+                    litServiceLevel.ToolTip = serviceLevel.LevelDescription;
+
+                }
+                imgVipUser.Visible = account.IsVIP && Cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels);
+
             }
             catch (Exception ex)
             {

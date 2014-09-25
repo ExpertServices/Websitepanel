@@ -132,6 +132,10 @@ namespace WebsitePanel.Portal.HostedSolution
 
                     ServiceLevel serviceLevel = ES.Services.Organizations.GetSupportServiceLevel(user.LevelId);
 
+                    litServiceLevel.Visible = true;
+                    litServiceLevel.Text = serviceLevel.LevelName;
+                    litServiceLevel.ToolTip = serviceLevel.LevelDescription;
+
                     bool addLevel = ddlServiceLevels.Items.FindByValue(serviceLevel.LevelId.ToString()) == null;
 
                     addLevel = addLevel && cntx.Quotas.ContainsKey(Quotas.SERVICE_LEVELS + serviceLevel.LevelName);
@@ -152,6 +156,7 @@ namespace WebsitePanel.Portal.HostedSolution
                     }
                 }
                 chkVIP.Checked = user.IsVIP && secServiceLevels.Visible;
+                imgVipUser.Visible = user.IsVIP && secServiceLevels.Visible;
 
 
                 if (cntx.Quotas.ContainsKey(Quotas.ORGANIZATION_ALLOWCHANGEUPN))
@@ -242,7 +247,7 @@ namespace WebsitePanel.Portal.HostedSolution
                 {
                     foreach (var serviceLevel in ES.Services.Organizations.GetSupportServiceLevels())
                     {
-                        if (quota.Key.Replace(Quotas.SERVICE_LEVELS, "") == serviceLevel.LevelName && CheckServiceLevelQuota(quota.Value, serviceLevel.LevelId))
+                        if (quota.Key.Replace(Quotas.SERVICE_LEVELS, "") == serviceLevel.LevelName && CheckServiceLevelQuota(quota.Value))
                         {
                             enabledServiceLevels.Add(serviceLevel);
                         }
@@ -263,9 +268,8 @@ namespace WebsitePanel.Portal.HostedSolution
 
         }
 
-        private bool CheckServiceLevelQuota(QuotaValueInfo quota, int levelID)
+        private bool CheckServiceLevelQuota(QuotaValueInfo quota)
         {
-            quota.QuotaUsedValue = ES.Services.Organizations.SearchAccounts(PanelRequest.ItemID, "", "", "", true).Where(x => x.LevelId == levelID).Count();
 
             if (quota.QuotaAllocatedValue != -1)
             {
@@ -328,6 +332,18 @@ namespace WebsitePanel.Portal.HostedSolution
                 litDisplayName.Text = txtDisplayName.Text;
                 if (!chkLocked.Checked)
                     chkLocked.Enabled = false;
+
+                litServiceLevel.Visible = !string.IsNullOrEmpty(ddlServiceLevels.SelectedValue) && secServiceLevels.Visible;
+                if (litServiceLevel.Visible)
+                {
+                    ServiceLevel serviceLevel = ES.Services.Organizations.GetSupportServiceLevel(int.Parse(ddlServiceLevels.SelectedValue));
+
+                    litServiceLevel.Text = serviceLevel.LevelName;
+                    litServiceLevel.ToolTip = serviceLevel.LevelDescription;
+                }
+
+                imgVipUser.Visible = chkVIP.Checked && secServiceLevels.Visible;
+
 
                 messageBox.ShowSuccessMessage("ORGANIZATION_UPDATE_USER_SETTINGS");
             }

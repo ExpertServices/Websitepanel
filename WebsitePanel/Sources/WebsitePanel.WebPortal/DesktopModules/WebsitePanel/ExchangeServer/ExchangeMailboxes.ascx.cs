@@ -32,6 +32,7 @@ using System.Web.UI.WebControls;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.EnterpriseServer.Base.HostedSolution;
+using System.Collections.Generic;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
@@ -55,6 +56,8 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             btnCreateMailbox.Visible = !ArchivingBoxes;
 
+            cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
             if (!IsPostBack)
             {
                 BindStats();
@@ -62,7 +65,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             BindServiceLevels();
 
-            cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            
             if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
             {
                 if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
@@ -87,6 +90,35 @@ namespace WebsitePanel.Portal.ExchangeServer
             mailboxesQuota.QuotaUsedValue = stats.CreatedMailboxes;
             mailboxesQuota.QuotaValue = stats.AllocatedMailboxes;
             if (stats.AllocatedMailboxes != -1) mailboxesQuota.QuotaAvailable = tenantStats.AllocatedMailboxes - tenantStats.CreatedMailboxes;
+
+            if (cntx != null && cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels)) BindServiceLevelsStats();
+        }
+
+        private void BindServiceLevelsStats()
+        {
+            ServiceLevels = ES.Services.Organizations.GetSupportServiceLevels();
+            OrganizationUser[] accounts = ES.Services.Organizations.SearchAccounts(PanelRequest.ItemID, "", "", "", true);
+
+            List<ServiceLevelQuotaValueInfo> serviceLevelQuotas = new List<ServiceLevelQuotaValueInfo>();
+            foreach (var quota in Array.FindAll<QuotaValueInfo>(
+                   cntx.QuotasArray, x => x.QuotaName.Contains(Quotas.SERVICE_LEVELS)))
+            {
+                int levelId = ServiceLevels.Where(x => x.LevelName == quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "")).FirstOrDefault().LevelId;
+                int usedInOrgCount = accounts.Where(x => x.LevelId == levelId).Count();
+
+                serviceLevelQuotas.Add(new ServiceLevelQuotaValueInfo
+                {
+                    QuotaName = quota.QuotaName,
+                    QuotaDescription = quota.QuotaDescription + " in this Organization:",
+                    QuotaTypeId = quota.QuotaTypeId,
+                    QuotaValue = quota.QuotaAllocatedValue,
+                    QuotaUsedValue = usedInOrgCount,
+                    //QuotaUsedValue = quota.QuotaUsedValue,
+                    QuotaAvailable = quota.QuotaAllocatedValue - quota.QuotaUsedValue
+                });
+            }
+            dlServiceLevelQuotas.DataSource = serviceLevelQuotas;
+            dlServiceLevelQuotas.DataBind();
         }
 
         protected void btnCreateMailbox_Click(object sender, EventArgs e)

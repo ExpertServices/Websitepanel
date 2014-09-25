@@ -118,6 +118,22 @@ namespace WebsitePanel.Portal.Lync
             lyncUserSettings.sipAddress = lyncUser.SipAddress;
 
             Utils.SelectListItem(ddlPhoneNumber, lyncUser.LineUri);
+
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
+            OrganizationUser user = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID,
+                    PanelRequest.AccountID);
+
+            if (user.LevelId > 0 && cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels))
+            {
+                WebsitePanel.EnterpriseServer.Base.HostedSolution.ServiceLevel serviceLevel = ES.Services.Organizations.GetSupportServiceLevel(user.LevelId);
+
+                litServiceLevel.Visible = true;
+                litServiceLevel.Text = serviceLevel.LevelName;
+                litServiceLevel.ToolTip = serviceLevel.LevelDescription;
+
+            }
+            imgVipUser.Visible = user.IsVIP && cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels);
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
