@@ -3092,16 +3092,17 @@ namespace WebsitePanel.EnterpriseServer
             long archiveQuotaKB = 0;
             long archiveWarningQuotaKB = 0;
             string RetentionPolicy = "";
+
+            ExchangeMailboxPlan mailboxPlan = GetExchangeMailboxPlan(itemId, mailboxPlanId);
+            if ( mailboxPlan != null)
+            {
+                archiveQuotaKB = mailboxPlan.ArchiveSizeMB != -1 ? ((long)mailboxPlan.ArchiveSizeMB * 1024) : -1;
+                archiveWarningQuotaKB = mailboxPlan.ArchiveSizeMB != -1 ? (((long)mailboxPlan.ArchiveWarningPct * (long) mailboxPlan.ArchiveSizeMB * 1024) / 100) : -1;
+            }
+
+
             if (retentionPolicyId > 0)
             {
-                ExchangeMailboxPlan mailboxPlan = GetExchangeMailboxPlan(itemId, mailboxPlanId);
-                if ( mailboxPlan != null)
-                {
-                    archiveQuotaKB = mailboxPlan.ArchiveSizeMB != -1 ? ((long)mailboxPlan.ArchiveSizeMB * 1024) : -1;
-                    archiveWarningQuotaKB = mailboxPlan.ArchiveSizeMB != -1 ? (((long)mailboxPlan.ArchiveWarningPct * (long) mailboxPlan.ArchiveSizeMB * 1024) / 100) : -1;
-                }
-
-
                 ExchangeMailboxPlan retentionPolicy = GetExchangeMailboxPlan(itemId, retentionPolicyId);
                 if (retentionPolicy != null)
                 {
