@@ -81,6 +81,7 @@ namespace WebsitePanel.Providers.Web
         private bool sharePointInstalled;
         private bool iis7;
         private string consoleUrl;
+        private string php5VersionsInstalled;
 
         public string AnonymousUsername
         {
@@ -285,7 +286,13 @@ namespace WebsitePanel.Providers.Web
             set { consoleUrl = value; }
         }
 
-		#region Web Deploy Publishing Properties
+        public string Php5VersionsInstalled
+        {
+            get { return php5VersionsInstalled; }
+            set { php5VersionsInstalled = value; }
+        }
+
+        #region Web Deploy Publishing Properties
 		/// <summary>
 		/// Gets or sets Web Deploy publishing account name
 		/// </summary>

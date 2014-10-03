@@ -26,6 +26,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using System.Linq;
+
 namespace WebsitePanel.Providers.Web.Handlers
 {
     using System;
@@ -178,7 +180,7 @@ namespace WebsitePanel.Providers.Web.Handlers
 			}
 		}
 
-		internal void InheritScriptMapsFromParent(string fqPath)
+	    internal void InheritScriptMapsFromParent(string fqPath)
 		{
 			if (String.IsNullOrEmpty(fqPath))
 				return;
@@ -241,5 +243,69 @@ namespace WebsitePanel.Providers.Web.Handlers
 			// 
 			return null;
 		}
+
+
+        internal void CopyInheritedHandlers(string siteName, string vDirPath)
+	    {
+            if (string.IsNullOrEmpty(siteName))
+            {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(vDirPath))
+            {
+                vDirPath = "/";
+            }
+
+	        using (var srvman = GetServerManager())
+	        {
+				var config = srvman.GetWebConfiguration(siteName, vDirPath);
+
+                var handlersSection = (HandlersSection)config.GetSection(Constants.HandlersSection, typeof(HandlersSection));
+
+	            var handlersCollection = handlersSection.Handlers;
+
+	            var list = new HandlerAction[handlersCollection.Count];
+	            ((System.Collections.ICollection) handlersCollection).CopyTo(list, 0);
+                
+	            handlersCollection.Clear();
+
+	            foreach (var handler in list)
+	            {
+	                handlersCollection.AddCopy(handler);
+	            }
+
+                srvman.CommitChanges();
+	        }
+	    }
+
+	    internal void MoveHandlerToTop(string handlerName, string siteName, string vDirPath)
+	    {
+            if (string.IsNullOrEmpty(siteName))
+            {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(vDirPath))
+            {
+                vDirPath = "/";
+            }
+
+	        using (var srvman = GetServerManager())
+	        {
+				var config = srvman.GetWebConfiguration(siteName, vDirPath);
+
+                var handlersSection = (HandlersSection)config.GetSection(Constants.HandlersSection, typeof(HandlersSection));
+
+	            var handlersCollection = handlersSection.Handlers;
+
+	            var handlerElement = handlersCollection[handlerName];
+
+	            handlersCollection.Remove(handlerElement);
+	            handlersCollection.AddCopyAt(0, handlerElement);
+
+                srvman.CommitChanges();
+	        }
+	    }
 	}
 }
