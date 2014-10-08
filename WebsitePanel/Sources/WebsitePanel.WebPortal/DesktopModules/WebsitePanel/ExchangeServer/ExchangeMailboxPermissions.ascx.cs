@@ -47,6 +47,16 @@ namespace WebsitePanel.Portal.ExchangeServer
             SavePermissions();
         }
 
+        protected void btnSaveExit_Click(object sender, EventArgs e)
+        {
+            SavePermissions();
+
+            Response.Redirect(PortalUtils.EditUrl("ItemID", PanelRequest.ItemID.ToString(),
+                "mailboxes",
+                "SpaceID=" + PanelSecurity.PackageId));
+        }
+
+
         private void BindPermissions()
         {
             try

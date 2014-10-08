@@ -27,8 +27,11 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
 
@@ -40,6 +43,8 @@ namespace WebsitePanel.Portal.HostedSolution
         {
             if (!IsPostBack)
             {
+                BindServiceLevels();
+
                 BindSettings();
 
                 MailboxTabsId.Visible = (PanelRequest.Context == "Mailbox");
@@ -81,6 +86,8 @@ namespace WebsitePanel.Portal.HostedSolution
                 txtInitials.Text = user.Initials;
                 txtLastName.Text = user.LastName;
 
+
+
                 txtJobTitle.Text = user.JobTitle;
                 txtCompany.Text = user.Company;
                 txtDepartment.Text = user.Department;
@@ -118,6 +125,38 @@ namespace WebsitePanel.Portal.HostedSolution
                         txtSubscriberNumber.Visible = false;
                     }
                 }
+
+                if (user.LevelId > 0 && secServiceLevels.Visible)
+                {
+                    secServiceLevels.IsCollapsed = false;
+
+                    ServiceLevel serviceLevel = ES.Services.Organizations.GetSupportServiceLevel(user.LevelId);
+
+                    litServiceLevel.Visible = true;
+                    litServiceLevel.Text = serviceLevel.LevelName;
+                    litServiceLevel.ToolTip = serviceLevel.LevelDescription;
+
+                    bool addLevel = ddlServiceLevels.Items.FindByValue(serviceLevel.LevelId.ToString()) == null;
+
+                    addLevel = addLevel && cntx.Quotas.ContainsKey(Quotas.SERVICE_LEVELS + serviceLevel.LevelName);
+
+                    addLevel = addLevel ? cntx.Quotas[Quotas.SERVICE_LEVELS + serviceLevel.LevelName].QuotaAllocatedValue != 0 : addLevel;
+
+                    if (addLevel)
+                    {
+                        ddlServiceLevels.Items.Add(new ListItem(serviceLevel.LevelName, serviceLevel.LevelId.ToString()));
+                    }
+
+                    bool levelInDDL = ddlServiceLevels.Items.FindByValue(serviceLevel.LevelId.ToString()) != null;
+
+                    if (levelInDDL)
+                    {
+                        ddlServiceLevels.Items.FindByValue(string.Empty).Selected = false;
+                        ddlServiceLevels.Items.FindByValue(serviceLevel.LevelId.ToString()).Selected = true;
+                    }
+                }
+                chkVIP.Checked = user.IsVIP && secServiceLevels.Visible;
+                imgVipUser.Visible = user.IsVIP && secServiceLevels.Visible;
 
 
                 if (cntx.Quotas.ContainsKey(Quotas.ORGANIZATION_ALLOWCHANGEUPN))
@@ -196,6 +235,50 @@ namespace WebsitePanel.Portal.HostedSolution
             }
         }
 
+        private void BindServiceLevels()
+        {
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
+            if (cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels))
+            {
+                List<ServiceLevel> enabledServiceLevels = new List<ServiceLevel>();
+
+                foreach (var quota in cntx.Quotas.Where(x => x.Key.Contains(Quotas.SERVICE_LEVELS)))
+                {
+                    foreach (var serviceLevel in ES.Services.Organizations.GetSupportServiceLevels())
+                    {
+                        if (quota.Key.Replace(Quotas.SERVICE_LEVELS, "") == serviceLevel.LevelName && CheckServiceLevelQuota(quota.Value))
+                        {
+                            enabledServiceLevels.Add(serviceLevel);
+                        }
+                    }
+                }
+
+                ddlServiceLevels.DataSource = enabledServiceLevels;
+                ddlServiceLevels.DataTextField = "LevelName";
+                ddlServiceLevels.DataValueField = "LevelId";
+                ddlServiceLevels.DataBind();
+
+                ddlServiceLevels.Items.Insert(0, new ListItem("<Select Service Level>", string.Empty));
+                ddlServiceLevels.Items.FindByValue(string.Empty).Selected = true;
+
+                secServiceLevels.Visible = true;
+            }
+            else { secServiceLevels.Visible = false; }
+
+        }
+
+        private bool CheckServiceLevelQuota(QuotaValueInfo quota)
+        {
+
+            if (quota.QuotaAllocatedValue != -1)
+            {
+                return quota.QuotaAllocatedValue > quota.QuotaUsedValue;
+            }
+
+            return true;
+        }
+
         private void SaveSettings()
         {
             if (!Page.IsValid)
@@ -235,7 +318,9 @@ namespace WebsitePanel.Portal.HostedSolution
                     txtWebPage.Text,
                     txtNotes.Text,
                     txtExternalEmailAddress.Text,
-                    txtSubscriberNumber.Text);
+                    txtSubscriberNumber.Text,
+                    string.IsNullOrEmpty(ddlServiceLevels.SelectedValue) ? 0 : int.Parse(ddlServiceLevels.SelectedValue),
+                    chkVIP.Checked);
 
                 if (result < 0)
                 {
@@ -248,6 +333,18 @@ namespace WebsitePanel.Portal.HostedSolution
                 if (!chkLocked.Checked)
                     chkLocked.Enabled = false;
 
+                litServiceLevel.Visible = !string.IsNullOrEmpty(ddlServiceLevels.SelectedValue) && secServiceLevels.Visible;
+                if (litServiceLevel.Visible)
+                {
+                    ServiceLevel serviceLevel = ES.Services.Organizations.GetSupportServiceLevel(int.Parse(ddlServiceLevels.SelectedValue));
+
+                    litServiceLevel.Text = serviceLevel.LevelName;
+                    litServiceLevel.ToolTip = serviceLevel.LevelDescription;
+                }
+
+                imgVipUser.Visible = chkVIP.Checked && secServiceLevels.Visible;
+
+
                 messageBox.ShowSuccessMessage("ORGANIZATION_UPDATE_USER_SETTINGS");
             }
             catch (Exception ex)
@@ -259,6 +356,15 @@ namespace WebsitePanel.Portal.HostedSolution
         protected void btnSave_Click(object sender, EventArgs e)
         {
             SaveSettings();
+        }
+
+        protected void btnSaveExit_Click(object sender, EventArgs e)
+        {
+            SaveSettings();
+
+            Response.Redirect(PortalUtils.EditUrl("ItemID", PanelRequest.ItemID.ToString(),
+                (PanelRequest.Context == "Mailbox") ? "mailboxes" : "users", 
+                "SpaceID=" + PanelSecurity.PackageId));
         }
 
         protected void btnSetUserPrincipalName_Click(object sender, EventArgs e)

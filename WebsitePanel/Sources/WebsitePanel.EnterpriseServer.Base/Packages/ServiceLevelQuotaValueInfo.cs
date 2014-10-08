@@ -26,35 +26,19 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using System;
+using System.Collections.Generic;
+using System.Text;
+
 namespace WebsitePanel.EnterpriseServer
 {
-    public class ResourceGroups
+    public class ServiceLevelQuotaValueInfo
     {
-        public const string Os = "OS";
-        public const string Web = "Web";
-        public const string Ftp = "FTP";
-        public const string Mail = "Mail";
-        public const string MsSql2000 = "MsSQL2000";
-        public const string MySql4 = "MySQL4";
-        public const string MsSql2005 = "MsSQL2005";
-        public const string MsSql2008 = "MsSQL2008";
-        public const string MsSql2012 = "MsSQL2012";
-        public const string MsSql2014 = "MsSQL2014";
-        public const string MySql5 = "MySQL5";
-        public const string Dns = "DNS";
-        public const string Statistics = "Statistics";
-        public const string SharePoint = "SharePoint";
-		public const string HostedSharePoint = "Hosted SharePoint";
-		public const string Exchange = "Exchange";
-        public const string HostedOrganizations = "Hosted Organizations";
-        public const string HostedCRM = "Hosted CRM";
-        public const string HostedCRM2013 = "Hosted CRM2013";
-        public const string VPS = "VPS";
-        public const string BlackBerry = "BlackBerry";
-        public const string OCS = "OCS";
-        public const string VPSForPC = "VPSForPC";
-        public const string Lync = "Lync";
-        public const string EnterpriseStorage = "EnterpriseStorage";
-        public const string ServiceLevels = "Service Levels";
+        public int QuotaValue { get; set; }
+        public string QuotaDescription { get; set; }
+        public string QuotaName { get; set; }
+        public int QuotaTypeId { get; set; }
+        public int QuotaUsedValue { get; set; }
+        public int QuotaAvailable { get; set; }
     }
 }

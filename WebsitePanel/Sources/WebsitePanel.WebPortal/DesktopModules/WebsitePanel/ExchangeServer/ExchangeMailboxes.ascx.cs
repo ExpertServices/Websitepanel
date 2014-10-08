@@ -27,9 +27,12 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
+using System.Collections.Generic;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
@@ -43,25 +46,40 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
         }
 
+        private PackageContext cntx;
+
+        private ServiceLevel[] ServiceLevels;
+
         protected void Page_Load(object sender, EventArgs e)
         {
             locTitle.Text = ArchivingBoxes ? GetLocalizedString("locTitleArchiving.Text") : GetLocalizedString("locTitle.Text");
 
             btnCreateMailbox.Visible = !ArchivingBoxes;
 
+            cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
             if (!IsPostBack)
             {
                 BindStats();
             }
 
-            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            BindServiceLevels();
+
+            
             if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
             {
                 if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
                 {
-                    gvMailboxes.Columns[3].Visible = false;
+                    gvMailboxes.Columns[4].Visible = false;
                 }
             }
+
+            gvMailboxes.Columns[3].Visible = cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels);
+        }
+
+        private void BindServiceLevels()
+        {
+            ServiceLevels = ES.Services.Organizations.GetSupportServiceLevels();
         }
 
         private void BindStats()
@@ -72,6 +90,35 @@ namespace WebsitePanel.Portal.ExchangeServer
             mailboxesQuota.QuotaUsedValue = stats.CreatedMailboxes;
             mailboxesQuota.QuotaValue = stats.AllocatedMailboxes;
             if (stats.AllocatedMailboxes != -1) mailboxesQuota.QuotaAvailable = tenantStats.AllocatedMailboxes - tenantStats.CreatedMailboxes;
+
+            if (cntx != null && cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels)) BindServiceLevelsStats();
+        }
+
+        private void BindServiceLevelsStats()
+        {
+            ServiceLevels = ES.Services.Organizations.GetSupportServiceLevels();
+            OrganizationUser[] accounts = ES.Services.Organizations.SearchAccounts(PanelRequest.ItemID, "", "", "", true);
+
+            List<ServiceLevelQuotaValueInfo> serviceLevelQuotas = new List<ServiceLevelQuotaValueInfo>();
+            foreach (var quota in Array.FindAll<QuotaValueInfo>(
+                   cntx.QuotasArray, x => x.QuotaName.Contains(Quotas.SERVICE_LEVELS)))
+            {
+                int levelId = ServiceLevels.Where(x => x.LevelName == quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "")).FirstOrDefault().LevelId;
+                int usedInOrgCount = accounts.Where(x => x.LevelId == levelId).Count();
+
+                serviceLevelQuotas.Add(new ServiceLevelQuotaValueInfo
+                {
+                    QuotaName = quota.QuotaName,
+                    QuotaDescription = quota.QuotaDescription + " in this Organization:",
+                    QuotaTypeId = quota.QuotaTypeId,
+                    QuotaValue = quota.QuotaAllocatedValue,
+                    QuotaUsedValue = usedInOrgCount,
+                    //QuotaUsedValue = quota.QuotaUsedValue,
+                    QuotaAvailable = quota.QuotaAllocatedValue - quota.QuotaUsedValue
+                });
+            }
+            dlServiceLevelQuotas.DataSource = serviceLevelQuotas;
+            dlServiceLevelQuotas.DataBind();
         }
 
         protected void btnCreateMailbox_Click(object sender, EventArgs e)
@@ -96,7 +143,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
         }
 
-        public string GetAccountImage(int accountTypeId)
+        public string GetAccountImage(int accountTypeId, bool vip)
         {
             ExchangeAccountType accountType = (ExchangeAccountType)accountTypeId;
             string imgName = "mailbox_16.gif";
@@ -108,6 +155,21 @@ namespace WebsitePanel.Portal.ExchangeServer
                 imgName = "room_16.gif";
             else if (accountType == ExchangeAccountType.Equipment)
                 imgName = "equipment_16.gif";
+
+            if (vip && cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels)) imgName = "vip_user_16.png";
+
+            return GetThemedImage("Exchange/" + imgName);
+        }
+
+        public string GetStateImage(bool locked, bool disabled)
+        {
+            string imgName = "enabled.png";
+
+            if (locked)
+                imgName = "locked.png";
+            else
+                if (disabled)
+                    imgName = "disabled.png";
 
             return GetThemedImage("Exchange/" + imgName);
         }
@@ -165,6 +227,24 @@ namespace WebsitePanel.Portal.ExchangeServer
         protected void odsAccountsPaged_Selecting(object sender, ObjectDataSourceSelectingEventArgs e)
         {
             e.InputParameters["archiving"] = ArchivingBoxes;
+        }
+
+        public ServiceLevel GetServiceLevel(int levelId)
+        {
+            ServiceLevel serviceLevel = ServiceLevels.Where(x => x.LevelId == levelId).DefaultIfEmpty(new ServiceLevel { LevelName = "", LevelDescription = "" }).FirstOrDefault();
+
+            bool enable = !string.IsNullOrEmpty(serviceLevel.LevelName);
+
+            enable = enable ? cntx.Quotas.ContainsKey(Quotas.SERVICE_LEVELS + serviceLevel.LevelName) : false;
+            enable = enable ? cntx.Quotas[Quotas.SERVICE_LEVELS + serviceLevel.LevelName].QuotaAllocatedValue != 0 : false;
+
+            if (!enable)
+            {
+                serviceLevel.LevelName = "";
+                serviceLevel.LevelDescription = "";
+            }
+
+            return serviceLevel;
         }
     }
 }

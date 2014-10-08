@@ -113,5 +113,13 @@ namespace WebsitePanel.Portal.BlackBerry
                messageBox.ShowWarningMessage(CANNOT_DELETE_BLACKBERRY_DATA);
            }
         }
+
+        protected void btnSaveExit_Click(object sender, EventArgs e)
+        {
+            Response.Redirect(PortalUtils.EditUrl("ItemID", PanelRequest.ItemID.ToString(),
+                "blackberry_users",
+                "SpaceID=" + PanelSecurity.PackageId));
+        }
+
     }
 }

@@ -315,6 +315,14 @@
                             </td>
                         </tr>
                         </asp:Panel>
+
+                        <asp:Panel runat="server" ID="serviceLevelsStatsPanel">
+                        <tr>
+                            <td class="OrgStatsGroup" width="100%" colspan="2">
+                                <asp:Localize ID="locServiceLevels" runat="server" meta:resourcekey="locServiceLevels" ></asp:Localize>
+                            </td>
+                        </tr>
+                        </asp:Panel>
                     </table>
                   
                 </div>

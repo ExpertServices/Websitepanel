@@ -365,7 +365,25 @@ namespace WebsitePanel.Providers.DNS
 			cmd.addParam( "Force" );
 			ps.RunPipeline( cmd );
 		}
+        
+        public static void Remove_DnsServerResourceRecords(this PowerShellHelper ps, string zoneName, string type)
+        {
+            var cmd = new Command("Get-DnsServerResourceRecord");
+            cmd.addParam("ZoneName", zoneName);
+            cmd.addParam("RRType", type);
+            Collection<PSObject> resourceRecords = ps.RunPipeline(cmd);
 
+            foreach (PSObject resourceRecord in resourceRecords)
+            {
+                cmd = new Command("Remove-DnsServerResourceRecord");
+                cmd.addParam("ZoneName", zoneName);
+                cmd.addParam("InputObject", resourceRecord);
+
+                cmd.addParam("Force");
+                ps.RunPipeline(cmd);
+            }
+        }
+                
         public static void Update_DnsServerResourceRecordSOA(this PowerShellHelper ps, string zoneName,
             TimeSpan ExpireLimit, TimeSpan MinimumTimeToLive, string PrimaryServer,
             TimeSpan RefreshInterval, string ResponsiblePerson, TimeSpan RetryDelay, 

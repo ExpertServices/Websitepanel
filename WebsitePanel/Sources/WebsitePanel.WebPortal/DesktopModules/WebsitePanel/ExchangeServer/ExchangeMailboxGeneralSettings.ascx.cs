@@ -87,8 +87,16 @@ namespace WebsitePanel.Portal.ExchangeServer
             int.TryParse(mailboxPlanSelector.MailboxPlanId, out planId);
             ExchangeMailboxPlan plan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(PanelRequest.ItemID, planId);
 
-            secArchiving.Visible = plan.EnableArchiving;
-            secLitigationHoldSettings.Visible = plan.AllowLitigationHold && Utils.CheckQouta(Quotas.EXCHANGE2007_ALLOWLITIGATIONHOLD, Cntx);
+            if (plan != null)
+            {
+                secArchiving.Visible = plan.EnableArchiving;
+                secLitigationHoldSettings.Visible = plan.AllowLitigationHold && Utils.CheckQouta(Quotas.EXCHANGE2007_ALLOWLITIGATIONHOLD, Cntx);
+            }
+            else
+            {
+                secArchiving.Visible = false;
+                secLitigationHoldSettings.Visible = false;
+            }
         }
 
         private void BindSettings()
@@ -164,6 +172,17 @@ namespace WebsitePanel.Portal.ExchangeServer
                 archivingQuotaViewer.QuotaValue = ArchivingMaxSize;
                 rowArchiving.Visible = chkEnableArchiving.Checked;
 
+                if (account.LevelId > 0 && Cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels))
+                {
+                    WebsitePanel.EnterpriseServer.Base.HostedSolution.ServiceLevel serviceLevel = ES.Services.Organizations.GetSupportServiceLevel(account.LevelId);
+
+                    litServiceLevel.Visible = true;
+                    litServiceLevel.Text = serviceLevel.LevelName;
+                    litServiceLevel.ToolTip = serviceLevel.LevelDescription;
+
+                }
+                imgVipUser.Visible = account.IsVIP && Cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels);
+
             }
             catch (Exception ex)
             {
@@ -232,6 +251,16 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             SaveSettings();
         }
+
+        protected void btnSaveExit_Click(object sender, EventArgs e)
+        {
+            SaveSettings();
+
+            Response.Redirect(PortalUtils.EditUrl("ItemID", PanelRequest.ItemID.ToString(),
+                "mailboxes",
+                "SpaceID=" + PanelSecurity.PackageId));
+        }
+
 
         protected void chkPmmAllowed_CheckedChanged(object sender, EventArgs e)
         {

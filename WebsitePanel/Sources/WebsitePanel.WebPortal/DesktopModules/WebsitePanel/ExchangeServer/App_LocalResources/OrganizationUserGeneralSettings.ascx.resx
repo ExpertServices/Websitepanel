@@ -246,4 +246,13 @@
   <data name="chkInherit.Text" xml:space="preserve">
     <value>Update Services</value>
   </data>
+  <data name="locServiceLevel.Text" xml:space="preserve">
+    <value>Service Level:</value>
+  </data>
+  <data name="locVIPUser.Text" xml:space="preserve">
+    <value>VIP:</value>
+  </data>
+  <data name="secServiceLevels.Text" xml:space="preserve">
+    <value>Service Level Information</value>
+  </data>
 </root>

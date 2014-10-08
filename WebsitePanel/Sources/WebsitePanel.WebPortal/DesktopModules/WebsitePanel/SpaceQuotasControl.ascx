@@ -13,7 +13,7 @@
                 <ItemTemplate>
                     <div class="Quota">
                         <div class="Left">
-                            <%# GetSharedLocalizedString("Quota." + (string)Eval("QuotaName"))%>:
+                            <%# GetQuotaTitle((string)Eval("QuotaName"), (object)Eval("QuotaDescription"))%>:
                         </div>
                         <div class="Viewer">
                             <uc1:QuotaViewer ID="quota" runat="server"

@@ -177,4 +177,7 @@
   <data name="locTitleArchiving.Text" xml:space="preserve">
     <value>Archiving Mailboxes</value>
   </data>
+  <data name="gvServiceLevel.Header" xml:space="preserve">
+    <value>Service Level</value>
+  </data>
 </root>

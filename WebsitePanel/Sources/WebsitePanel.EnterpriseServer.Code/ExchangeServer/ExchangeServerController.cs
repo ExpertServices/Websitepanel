@@ -978,6 +978,31 @@ namespace WebsitePanel.EnterpriseServer
 
             List<ExchangeAccount> accounts = new List<ExchangeAccount>();
             ObjectUtils.FillCollectionFromDataView(accounts, ds.Tables[1].DefaultView);
+
+            Organization org = null;
+            try
+            {
+                org = GetOrganization(itemId);
+
+                if (org != null)
+                {
+                    Organizations orgProxy = OrganizationController.GetOrganizationProxy(org.ServiceId);
+
+                    OrganizationUser user = null;
+                    string accountName = string.Empty;
+                    foreach (var account in accounts)
+                    {
+                        accountName = OrganizationController.GetAccountName(account.AccountName);
+
+                        user = orgProxy.GetUserGeneralSettings(accountName, org.OrganizationId);
+
+                        account.Disabled = user.Disabled;
+                        account.Locked = user.Locked;
+                    }
+                }
+            }
+            catch { }
+
             result.PageItems = accounts.ToArray();
             return result;
         }
@@ -3067,16 +3092,17 @@ namespace WebsitePanel.EnterpriseServer
             long archiveQuotaKB = 0;
             long archiveWarningQuotaKB = 0;
             string RetentionPolicy = "";
+
+            ExchangeMailboxPlan mailboxPlan = GetExchangeMailboxPlan(itemId, mailboxPlanId);
+            if ( mailboxPlan != null)
+            {
+                archiveQuotaKB = mailboxPlan.ArchiveSizeMB != -1 ? ((long)mailboxPlan.ArchiveSizeMB * 1024) : -1;
+                archiveWarningQuotaKB = mailboxPlan.ArchiveSizeMB != -1 ? (((long)mailboxPlan.ArchiveWarningPct * (long) mailboxPlan.ArchiveSizeMB * 1024) / 100) : -1;
+            }
+
+
             if (retentionPolicyId > 0)
             {
-                ExchangeMailboxPlan mailboxPlan = GetExchangeMailboxPlan(itemId, mailboxPlanId);
-                if ( mailboxPlan != null)
-                {
-                    archiveQuotaKB = mailboxPlan.ArchiveSizeMB != -1 ? ((long)mailboxPlan.ArchiveSizeMB * 1024) : -1;
-                    archiveWarningQuotaKB = mailboxPlan.ArchiveSizeMB != -1 ? (((long)mailboxPlan.ArchiveWarningPct * (long) mailboxPlan.ArchiveSizeMB * 1024) / 100) : -1;
-                }
-
-
                 ExchangeMailboxPlan retentionPolicy = GetExchangeMailboxPlan(itemId, retentionPolicyId);
                 if (retentionPolicy != null)
                 {

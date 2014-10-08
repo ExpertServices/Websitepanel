@@ -2593,6 +2593,18 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
+        public static void UpdateExchangeAccountServiceLevelSettings(int accountId, int levelId, bool isVIP)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateExchangeAccountSLSettings",
+                new SqlParameter("@AccountID", accountId),
+                new SqlParameter("@LevelID", (levelId == 0) ? (object)DBNull.Value : (object)levelId),
+                new SqlParameter("@IsVIP", isVIP)
+            );
+        }
+
         public static void UpdateExchangeAccountUserPrincipalName(int accountId, string userPrincipalName)
         {
             SqlHelper.ExecuteNonQuery(
@@ -4354,6 +4366,72 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@ItemID", itemId),
                 new SqlParameter("@FolderName", folderName)
             );
+        }
+
+        #endregion
+
+        #region Support Service Levels
+
+        public static IDataReader GetSupportServiceLevels()
+        {
+            return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetSupportServiceLevels");
+        }
+
+        public static int AddSupportServiceLevel(string levelName, string levelDescription)
+        {
+            SqlParameter outParam = new SqlParameter("@LevelID", SqlDbType.Int);
+            outParam.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddSupportServiceLevel",
+                outParam,
+                new SqlParameter("@LevelName", levelName),
+                new SqlParameter("@LevelDescription", levelDescription)
+            );
+
+            return Convert.ToInt32(outParam.Value);
+        }
+
+        public static void UpdateSupportServiceLevel(int levelID, string levelName, string levelDescription)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateSupportServiceLevel",
+                new SqlParameter("@LevelID", levelID),
+                new SqlParameter("@LevelName", levelName),
+                new SqlParameter("@LevelDescription", levelDescription)
+            );
+        }
+
+        public static void DeleteSupportServiceLevel(int levelID)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteSupportServiceLevel",
+                new SqlParameter("@LevelID", levelID)
+            );
+        }
+
+        public static IDataReader GetSupportServiceLevel(int levelID)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetSupportServiceLevel",
+                new SqlParameter("@LevelID", levelID)
+            );
+        }
+
+        public static bool CheckServiceLevelUsage(int levelID)
+        {
+            int res = (int)SqlHelper.ExecuteScalar(ConnectionString, CommandType.StoredProcedure, "CheckServiceLevelUsage",
+                                    new SqlParameter("@LevelID", levelID));
+            return res > 0;
         }
 
         #endregion

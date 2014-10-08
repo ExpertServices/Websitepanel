@@ -79,7 +79,13 @@
                         
                         <asp:Button runat="server" ID="btnDeleteData" meta:resourcekey="btnDeleteData"  
                         CssClass="Button1" onclick="btnDeleteData_Click"  />
-				    </div>			
+				    </div>
+                    
+                    
+                    <br />
+                    <asp:Button runat="server" ID="btnSaveExit" Text="Save Changes and Exit" CssClass="Button1"
+		                meta:resourcekey="btnSaveExit" OnClick="btnSaveExit_Click"></asp:Button>
+                    			
                 </div>
             </div>
         </div>
