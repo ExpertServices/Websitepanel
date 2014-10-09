@@ -278,34 +278,5 @@ namespace WebsitePanel.Providers.Web.Handlers
                 srvman.CommitChanges();
 	        }
 	    }
-
-	    internal void MoveHandlerToTop(string handlerName, string siteName, string vDirPath)
-	    {
-            if (string.IsNullOrEmpty(siteName))
-            {
-                return;
-            }
-
-            if (string.IsNullOrEmpty(vDirPath))
-            {
-                vDirPath = "/";
-            }
-
-	        using (var srvman = GetServerManager())
-	        {
-				var config = srvman.GetWebConfiguration(siteName, vDirPath);
-
-                var handlersSection = (HandlersSection)config.GetSection(Constants.HandlersSection, typeof(HandlersSection));
-
-	            var handlersCollection = handlersSection.Handlers;
-
-	            var handlerElement = handlersCollection[handlerName];
-
-	            handlersCollection.Remove(handlerElement);
-	            handlersCollection.AddCopyAt(0, handlerElement);
-
-                srvman.CommitChanges();
-	        }
-	    }
 	}
 }

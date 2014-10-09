@@ -291,6 +291,11 @@
                 </asp:DropDownList>
             </td>
 		</tr>
+        <tr>
+            <td colspan="2" class="Normal">
+                <asp:Literal ID="litPHP5Info" runat="server" meta:resourcekey="litPHP5Info" Text="If any PHP5 FastCGI handlers are present on the server, the PHP 5.x Executable Path given above will be ignored and not used."></asp:Literal>
+            </td>
+        </tr>
 		<tr>
 		    <td class="Normal" valign="top">
 		        <asp:Label runat="server" meta:resourcekey="perlPathLabel" Text="Perl Executable Path:"></asp:Label>

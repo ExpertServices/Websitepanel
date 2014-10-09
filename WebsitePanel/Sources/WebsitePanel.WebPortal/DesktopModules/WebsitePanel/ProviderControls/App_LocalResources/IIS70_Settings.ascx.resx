@@ -256,7 +256,10 @@
   <data name="txtPublicSharedIP.Text" xml:space="preserve">
     <value>Web Sites Public Shared Address:</value>
   </data>
-  <data name="chkHeliconApeGlobalRegistration.Text">
-    <value xml:space="preserve">Register Helicon Ape module globally:</value>
+  <data name="chkHeliconApeGlobalRegistration.Text" xml:space="preserve">
+    <value>Register Helicon Ape module globally:</value>
+  </data>
+  <data name="litPHP5Info.Text" xml:space="preserve">
+    <value>If any PHP5 FastCGI handlers are present on the server, the PHP 5.x Executable Path given above will be ignored and not used.</value>
   </data>
 </root>

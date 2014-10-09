@@ -882,22 +882,19 @@ namespace WebsitePanel.Providers.Web
 		    {
 		        if (PhpMode == Constants.PhpMode.FastCGI && virtualDir.PhpInstalled.Contains('|'))
 		        {
-		            var path = PhpExecutablePath;
 		            var args = virtualDir.PhpInstalled.Split('|');
+
 		            if (args.Count() > 1)
 		            {
-		                // Handler name is present, let us try to find the corresponding path to executable
-		                var phpVersion = GetPhpVersions(virtualDir).SingleOrDefault(p => p.HandlerName == args[1]);
-		                if (phpVersion != null)
-		                {
-		                    path = phpVersion.ExecutionPath;
-		                }
-		            }
+    		            // Handler name is present, use it to set choosen version
+                        var handlerName = args[1];
 
-		            if (!String.IsNullOrEmpty(path) && File.Exists(path))
-		            {
-                        handlersSvc.CopyInheritedHandlers(((WebSite)virtualDir).SiteId, virtualDir.VirtualPath);
-		                handlersSvc.MoveHandlerToTop(args[1], ((WebSite) virtualDir).SiteId, virtualDir.VirtualPath);
+		                if (handlerName != GetActivePhpHandlerName(virtualDir))
+		                {
+		                    // Only change handler if it is different from the current one
+                            handlersSvc.CopyInheritedHandlers(((WebSite)virtualDir).SiteId, virtualDir.VirtualPath);
+		                    MakeHandlerActive(handlerName, virtualDir);
+		                }
 		            }
 		        }
 		        else
@@ -4511,11 +4508,20 @@ namespace WebsitePanel.Providers.Web
 
 	    protected PhpVersion[] GetPhpVersions(WebVirtualDirectory virtualDir)
 	    {
-	        using (var srvman = new ServerManager())
+	        using (var srvman = webObjectsSvc.GetServerManager())
 	        {
 	            return GetPhpVersions(srvman, virtualDir);
 	        }
 	    }
+
+	    protected string GetActivePhpHandlerName(WebVirtualDirectory virtualDir)
+	    {
+	        using (var srvman = webObjectsSvc.GetServerManager())
+	        {
+	            return GetActivePhpHandlerName(srvman, virtualDir);
+	        }
+	    }
+
 
 	    protected string GetActivePhpHandlerName(ServerManager srvman, WebVirtualDirectory virtualDir)
 	    {
@@ -4529,10 +4535,33 @@ namespace WebsitePanel.Providers.Web
                     ).FirstOrDefault();
 	    }
 
-	    private static string GetPhpExecutableVersion(string phpexePath)
+	    protected static string GetPhpExecutableVersion(string phpexePath)
         {
             return FileVersionInfo.GetVersionInfo(phpexePath).ProductVersion;
         }
+
+	    protected void MakeHandlerActive(string handlerName, WebVirtualDirectory virtualDir)
+	    {
+	        using (var srvman = webObjectsSvc.GetServerManager())
+	        {
+				var config = srvman.GetWebConfiguration(((WebSite)virtualDir).SiteId, virtualDir.VirtualPath);
+
+                var handlersSection = (HandlersSection)config.GetSection(Constants.HandlersSection, typeof(HandlersSection));
+
+	            var handlersCollection = handlersSection.Handlers;
+
+	            var handlerElement = handlersCollection[handlerName];
+                var activeHandlerElement = handlersCollection[GetActivePhpHandlerName(srvman, virtualDir)];
+                
+                var activeHandlerIndex = handlersCollection.IndexOf(activeHandlerElement);
+                
+                handlersCollection.Remove(handlerElement);
+                
+                handlersCollection.AddCopyAt(activeHandlerIndex, handlerElement);
+
+                srvman.CommitChanges();
+	        }
+	    }
 
         #endregion
     }
