@@ -49,6 +49,24 @@ namespace WebsitePanel.Portal.HostedSolution {
         protected global::System.Web.UI.WebControls.Literal litDisplayName;
         
         /// <summary>
+        /// imgVipUser control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image imgVipUser;
+        
+        /// <summary>
+        /// litServiceLevel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label litServiceLevel;
+        
+        /// <summary>
         /// UserTabsId control.
         /// </summary>
         /// <remarks>
@@ -758,6 +776,15 @@ namespace WebsitePanel.Portal.HostedSolution {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnSave;
+        
+        /// <summary>
+        /// btnSaveExit control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnSaveExit;
         
         /// <summary>
         /// ValidationSummary1 control.

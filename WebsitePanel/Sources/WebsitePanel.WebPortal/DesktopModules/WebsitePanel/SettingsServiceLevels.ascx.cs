@@ -63,6 +63,13 @@ namespace WebsitePanel.Portal
                 BindServiceLevels();
             
             txtStatus.Visible = false;
+        
+            try
+            {
+                //Change container title
+                ((Label)this.Parent.Parent.Parent.Parent.Parent.FindControl(WebsitePanel.WebPortal.DefaultPage.MODULE_TITLE_CONTROL_ID)).Text = "Service Levels";
+            }
+            catch { /*to do*/ }
         }
 
 

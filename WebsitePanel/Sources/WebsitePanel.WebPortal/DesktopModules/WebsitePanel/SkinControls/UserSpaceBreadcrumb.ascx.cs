@@ -142,13 +142,16 @@ namespace WebsitePanel.Portal.SkinControls
                 ModuleControl control = null;
                 if (!String.IsNullOrEmpty(ctrlKey) && definition.Controls.ContainsKey(ctrlKey))
                     control = definition.Controls[ctrlKey];
-                
-                if (!String.IsNullOrEmpty(control.Src))
+
+                if (control != null)
                 {
-                    lnkOrgCurPage.Text = PortalUtils.GetLocalizedString(DM_FOLDER_VIRTUAL_PATH + control.Src, PAGE_NANE_KEY);
-                    lnkOrgCurPage.NavigateUrl = PortalUtils.EditUrl(
-                        "ItemID", PanelRequest.ItemID.ToString(), ctrlKey,
-                        "SpaceID=" + PanelSecurity.PackageId.ToString());
+                    if (!String.IsNullOrEmpty(control.Src))
+                    {
+                        lnkOrgCurPage.Text = PortalUtils.GetLocalizedString(DM_FOLDER_VIRTUAL_PATH + control.Src, PAGE_NANE_KEY);
+                        lnkOrgCurPage.NavigateUrl = PortalUtils.EditUrl(
+                            "ItemID", PanelRequest.ItemID.ToString(), ctrlKey,
+                            "SpaceID=" + PanelSecurity.PackageId.ToString());
+                    }
                 }
             }
         }

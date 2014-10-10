@@ -19,6 +19,8 @@
                     <asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle"></asp:Localize>
                     -
 					<asp:Literal ID="litDisplayName" runat="server" Text="John Smith" />
+                    <asp:Image ID="imgVipUser" SkinID="VipUser16" runat="server" tooltip="VIP user" Visible="false"/>
+                    <asp:Label ID="litServiceLevel" runat="server" style="float:right;padding-right:8px;" Visible="false"></asp:Label>
                 </div>
                 <div class="FormBody">
                     
@@ -76,8 +78,10 @@
                     </asp:Panel>
                         
 					<div class="FormFooterClean">
-					 <asp:Button runat="server" ID="btnSave" meta:resourcekey="btnSave" ValidationGroup="Validation1"
+					 <asp:Button runat="server" ID="btnSave" Text="Save Changes" meta:resourcekey="btnSave" ValidationGroup="Validation1"
                         CssClass="Button1" onclick="btnSave_Click"  />					 					                                                
+                    <asp:Button runat="server" ID="btnSaveExit" Text="Save Changes and Exit" meta:resourcekey="btnSaveExit" ValidationGroup="Validation1"
+                        CssClass="Button1" OnClick="btnSaveExit_Click"></asp:Button>
 				    </div>			
                 </div>
             </div>

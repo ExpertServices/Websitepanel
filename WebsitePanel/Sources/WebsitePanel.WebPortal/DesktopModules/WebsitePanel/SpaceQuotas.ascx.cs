@@ -131,6 +131,8 @@ namespace WebsitePanel.Portal
 
 		protected override void OnPreRender(EventArgs e)
 		{
+            //
+            AddServiceLevelsQuotas();
 			//
 			SetVisibilityStatus4BriefQuotasBlock();
 			//
@@ -175,5 +177,37 @@ namespace WebsitePanel.Portal
 				}
 			}
 		}
+
+        private void AddServiceLevelsQuotas()
+        {
+            foreach (var quota in Array.FindAll<QuotaValueInfo>(
+                cntx.QuotasArray, x => x.QuotaName.Contains(Quotas.SERVICE_LEVELS)))
+            {
+                HtmlTableRow tr = new HtmlTableRow();
+                tr.ID = "pnl_" + quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "").Replace(" ", string.Empty).Trim();
+                HtmlTableCell col1 = new HtmlTableCell();
+                    col1.Attributes["class"] = "SubHead";
+                    col1.Attributes["nowrap"] = "nowrap";
+                Label lbl = new Label();
+                lbl.ID = "lbl_" + quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "").Replace(" ", string.Empty).Trim();
+                    lbl.Text = quota.QuotaDescription + ":";
+
+                    col1.Controls.Add(lbl);
+
+                HtmlTableCell col2 = new HtmlTableCell();
+                    col2.Attributes["class"] = "Normal";
+                    Quota quotaControl = (Quota)LoadControl("UserControls/Quota.ascx");
+                    quotaControl.ID = "quota_" + quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "").Replace(" ", string.Empty).Trim();
+                    quotaControl.QuotaName = quota.QuotaName;
+                    quotaControl.DisplayGauge = true;
+
+                    col2.Controls.Add(quotaControl);
+                                
+
+                tr.Controls.Add(col1);
+                tr.Controls.Add(col2);
+                tblQuotas.Controls.Add(tr);
+            }
+        }
     }
 }

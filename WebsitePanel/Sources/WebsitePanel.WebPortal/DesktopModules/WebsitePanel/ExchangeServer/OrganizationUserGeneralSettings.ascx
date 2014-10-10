@@ -28,6 +28,8 @@
 					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Edit User"></asp:Localize>
 					-
 					<asp:Literal ID="litDisplayName" runat="server" Text="John Smith" />
+                    <asp:Image ID="imgVipUser" SkinID="VipUser16" runat="server" tooltip="VIP user" Visible="false"/>
+                    <asp:Label ID="litServiceLevel" runat="server" style="float:right;padding-right:8px;" Visible="false"></asp:Label>
                 </div>
 
 				<div class="FormBody">
@@ -283,6 +285,8 @@
 				    <div class="FormFooterClean">
 					    <asp:Button id="btnSave" runat="server" Text="Save Changes" CssClass="Button1"
 							meta:resourcekey="btnSave" ValidationGroup="EditMailbox" OnClick="btnSave_Click"></asp:Button>
+					    <asp:Button id="btnSaveExit" runat="server" Text="Save Changes and Exit" CssClass="Button1"
+							meta:resourcekey="btnSaveExit" ValidationGroup="EditMailbox" OnClick="btnSaveExit_Click"></asp:Button>
 					    <asp:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="EditMailbox" />
 				    </div>
 				</div>

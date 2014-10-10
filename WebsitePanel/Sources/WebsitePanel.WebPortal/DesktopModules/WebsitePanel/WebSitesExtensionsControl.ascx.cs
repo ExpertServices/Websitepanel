@@ -30,6 +30,7 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Collections;
+using System.Linq;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
@@ -98,13 +99,23 @@ namespace WebsitePanel.Portal
 			if (!IIs7 || !PackagesHelper.CheckGroupQuotaEnabled(packageId, ResourceGroups.Web, Quotas.WEB_ASPNET40))
 				ddlAspNet.Items.Remove(ddlAspNet.Items.FindByValue("4I"));
 
-            rowAspNet.Visible = ddlAspNet.Items.Count > 1;
-
             // php
-            if (!PackagesHelper.CheckGroupQuotaEnabled(packageId, ResourceGroups.Web, Quotas.WEB_PHP4))
-                ddlPhp.Items.Remove(ddlPhp.Items.FindByValue("4"));
-            if (!PackagesHelper.CheckGroupQuotaEnabled(packageId, ResourceGroups.Web, Quotas.WEB_PHP5))
-                ddlPhp.Items.Remove(ddlPhp.Items.FindByValue("5"));
+            if (PackagesHelper.CheckGroupQuotaEnabled(packageId, ResourceGroups.Web, Quotas.WEB_PHP4))
+                ddlPhp.Items.Add("4");
+            if (PackagesHelper.CheckGroupQuotaEnabled(packageId, ResourceGroups.Web, Quotas.WEB_PHP5))
+            {
+                if (!string.IsNullOrEmpty(item.Php5VersionsInstalled))
+                {
+                    // Add items from list
+                    ddlPhp.Items.Remove(ddlPhp.Items.FindByValue(""));
+                    ddlPhp.Items.AddRange(item.Php5VersionsInstalled.Split('|').Select(v => new ListItem(v.Split(';')[1], "5|" + v.Split(';')[0])).OrderBy(i => i.Text).ToArray());
+                }
+                else
+                {
+                    ddlPhp.Items.Add("5");                    
+                }
+            }
+            Utils.SelectListItem(ddlPhp, item.PhpInstalled);
             rowPhp.Visible = ddlPhp.Items.Count > 1;
 
             rowPerl.Visible = PackagesHelper.CheckGroupQuotaEnabled(packageId, ResourceGroups.Web, Quotas.WEB_PERL);

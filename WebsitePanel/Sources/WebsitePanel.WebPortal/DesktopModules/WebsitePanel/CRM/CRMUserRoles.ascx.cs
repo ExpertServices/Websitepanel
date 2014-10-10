@@ -111,7 +111,7 @@ namespace WebsitePanel.Portal.CRM
             }
         }
 
-        protected void btnUpdate_Click(object sender, EventArgs e)
+        protected bool SaveSettings()
         {
             try
             {
@@ -143,12 +143,32 @@ namespace WebsitePanel.Portal.CRM
                     messageBox.ShowMessage(res, "UPDATE_CRM_USER_ROLES", "HostedCRM");
                 else
                     messageBox.ShowMessage(res, "UPDATE_CRM_USER_ROLES", "HostedCRM");
+
+                return res.IsSuccess && res2.IsSuccess;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 messageBox.ShowErrorMessage("UPDATE_CRM_USER_ROLES", ex);
+                return false;
+            }
+
+        }
+
+        protected void btnUpdate_Click(object sender, EventArgs e)
+        {
+            SaveSettings();
+        }
+
+        protected void btnSaveExit_Click(object sender, EventArgs e)
+        {
+            if (SaveSettings())
+            {
+                Response.Redirect(PortalUtils.EditUrl("ItemID", PanelRequest.ItemID.ToString(),
+                    "CRMUsers",
+                    "SpaceID=" + PanelSecurity.PackageId));
             }
         }
+
 
         private void ActivateUser()
         {

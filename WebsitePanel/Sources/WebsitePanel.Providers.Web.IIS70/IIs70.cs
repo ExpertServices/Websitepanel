@@ -28,6 +28,8 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
+using System.Linq;
 using System.Management;
 using System.DirectoryServices;
 using System.DirectoryServices.ActiveDirectory;
@@ -280,7 +282,7 @@ namespace WebsitePanel.Providers.Web
 					Name = settings[Constants.IntegratedAspNet40Pool].Trim()
 				});
 			}
-			#endregion
+		    #endregion
 
 			#region Populate Dedicated Application Pools
 			// ASP.NET 1.1
@@ -711,9 +713,9 @@ namespace WebsitePanel.Providers.Web
 				if (!String.IsNullOrEmpty(AspPath) && String.Equals(AspPath, processor, StringComparison.InvariantCultureIgnoreCase))
 					virtualDir.AspInstalled = true;
 
-				// Detect whether PHP 5 scripting is enabled
-				if (!String.IsNullOrEmpty(PhpExecutablePath) && String.Equals(PhpExecutablePath, processor, StringComparison.InvariantCultureIgnoreCase))
-					virtualDir.PhpInstalled = PHP_5;
+                //// Detect whether PHP 5 scripting is enabled (non fast_cgi)
+                if (PhpMode != Constants.PhpMode.FastCGI && !String.IsNullOrEmpty(PhpExecutablePath) && String.Equals(PhpExecutablePath, processor, StringComparison.InvariantCultureIgnoreCase))
+                    virtualDir.PhpInstalled = PHP_5;
 
 				// Detect whether PHP 4 scripting is enabled
 				if (!String.IsNullOrEmpty(Php4Path) && String.Equals(Php4Path, processor, StringComparison.InvariantCultureIgnoreCase))
@@ -727,7 +729,18 @@ namespace WebsitePanel.Providers.Web
 				if (!String.IsNullOrEmpty(PerlPath) && String.Equals(PerlPath, processor, StringComparison.InvariantCultureIgnoreCase))
 					virtualDir.PerlInstalled = true;
 			}
-			
+
+            // Detect PHP 5 Fast_cgi version(s)
+		    var activePhp5Handler = GetActivePhpHandlerName(srvman, virtualDir);
+		    if (!string.IsNullOrEmpty(activePhp5Handler))
+		    {
+			    virtualDir.PhpInstalled = PHP_5 + "|" + activePhp5Handler;
+		        var versions = GetPhpVersions(srvman, virtualDir);
+                // This versionstring is used in UI to view and change php5 version.
+		        var versionString = string.Join("|", versions.Select(v => v.HandlerName + ";" + v.Version).ToArray());
+                virtualDir.Php5VersionsInstalled = versionString;
+		    }
+
 			//
 			string fqPath = virtualDir.FullQualifiedPath;
 			if (!fqPath.EndsWith(@"/"))
@@ -865,32 +878,60 @@ namespace WebsitePanel.Providers.Web
 			#endregion
 
 			#region PHP 5 script mappings
-			if (!String.IsNullOrEmpty(PhpExecutablePath) && File.Exists(PhpExecutablePath))
-			{
-				if (virtualDir.PhpInstalled == PHP_5)
-				{
-					switch (PhpMode)
-					{
-						case Constants.PhpMode.FastCGI:
-							handlersSvc.AddScriptMaps(virtualDir, PHP_EXTENSIONS,
-								PhpExecutablePath, Constants.HandlerAlias.PHP_FASTCGI, Constants.FastCgiModule);
-							break;
-						case Constants.PhpMode.CGI:
-							handlersSvc.AddScriptMaps(virtualDir, PHP_EXTENSIONS,
-								PhpExecutablePath, Constants.HandlerAlias.PHP_CGI, Constants.CgiModule);
-							break;
-						case Constants.PhpMode.ISAPI:
-							handlersSvc.AddScriptMaps(virtualDir, PHP_EXTENSIONS,
-								PhpExecutablePath, Constants.HandlerAlias.PHP_ISAPI, Constants.IsapiModule);
-							break;
-					}
-				}
-				else
-				{
-					handlersSvc.RemoveScriptMaps(virtualDir, PHP_EXTENSIONS, PhpExecutablePath);
-				}
-			}
-			//
+		    if (virtualDir.PhpInstalled.StartsWith(PHP_5))
+		    {
+		        if (PhpMode == Constants.PhpMode.FastCGI && virtualDir.PhpInstalled.Contains('|'))
+		        {
+		            var args = virtualDir.PhpInstalled.Split('|');
+
+		            if (args.Count() > 1)
+		            {
+    		            // Handler name is present, use it to set choosen version
+                        var handlerName = args[1];
+
+		                if (handlerName != GetActivePhpHandlerName(virtualDir))
+		                {
+		                    // Only change handler if it is different from the current one
+                            handlersSvc.CopyInheritedHandlers(((WebSite)virtualDir).SiteId, virtualDir.VirtualPath);
+		                    MakeHandlerActive(handlerName, virtualDir);
+		                }
+		            }
+		        }
+		        else
+		        {
+		            if (!String.IsNullOrEmpty(PhpExecutablePath) && File.Exists(PhpExecutablePath))
+		            {
+		                switch (PhpMode)
+		                {
+		                    case Constants.PhpMode.FastCGI:
+		                        handlersSvc.AddScriptMaps(virtualDir, PHP_EXTENSIONS,
+		                            PhpExecutablePath, Constants.HandlerAlias.PHP_FASTCGI, Constants.FastCgiModule);
+		                        break;
+		                    case Constants.PhpMode.CGI:
+		                        handlersSvc.AddScriptMaps(virtualDir, PHP_EXTENSIONS,
+		                            PhpExecutablePath, Constants.HandlerAlias.PHP_CGI, Constants.CgiModule);
+		                        break;
+		                    case Constants.PhpMode.ISAPI:
+		                        handlersSvc.AddScriptMaps(virtualDir, PHP_EXTENSIONS,
+		                            PhpExecutablePath, Constants.HandlerAlias.PHP_ISAPI, Constants.IsapiModule);
+		                        break;
+		                }
+		            }
+		        }
+		    }
+		    else
+		    {
+		        if (PhpMode == Constants.PhpMode.FastCGI && GetPhpVersions(virtualDir).Any())
+		        {
+                    // Don't erase handler mappings, if we do, the virtualDir cannot see and choose what version of PHP to run later
+		        }
+		        else
+		        {
+		            handlersSvc.RemoveScriptMaps(virtualDir, PHP_EXTENSIONS, PhpExecutablePath);
+		        }
+		    }
+
+		    //
 			#endregion
 
 			#region PHP 4 script mappings (IsapiModule only)
@@ -4437,5 +4478,91 @@ namespace WebsitePanel.Providers.Web
 
 
         #endregion
-	}
+
+        #region Php Management
+
+	    protected PhpVersion[] GetPhpVersions(ServerManager srvman, WebVirtualDirectory virtualDir)
+	    {
+	        var config = srvman.GetWebConfiguration(((WebSite)virtualDir).SiteId, virtualDir.VirtualPath);
+	        //var config = srvman.GetApplicationHostConfiguration();
+	        var handlersSection = config.GetSection(Constants.HandlersSection);
+
+	        var result = new List<PhpVersion>();
+
+	        // Loop through available maps and fill installed processors
+	        foreach (var handler in handlersSection.GetCollection())
+	        {
+	            if (string.Equals(handler["path"].ToString(), "*.php", StringComparison.OrdinalIgnoreCase))
+	            {
+	                var executable = handler["ScriptProcessor"].ToString().Split('|')[0];
+	                if (string.Equals(handler["Modules"].ToString(), "FastCgiModule", StringComparison.OrdinalIgnoreCase) && File.Exists(executable))
+	                {
+	                    var handlerName = handler["Name"].ToString();
+	                    result.Add(new PhpVersion() {HandlerName = handlerName, Version = GetPhpExecutableVersion(executable), ExecutionPath = handler["ScriptProcessor"].ToString()});
+	                }
+	            }
+	        }
+
+	        return result.ToArray();
+	    }
+
+	    protected PhpVersion[] GetPhpVersions(WebVirtualDirectory virtualDir)
+	    {
+	        using (var srvman = webObjectsSvc.GetServerManager())
+	        {
+	            return GetPhpVersions(srvman, virtualDir);
+	        }
+	    }
+
+	    protected string GetActivePhpHandlerName(WebVirtualDirectory virtualDir)
+	    {
+	        using (var srvman = webObjectsSvc.GetServerManager())
+	        {
+	            return GetActivePhpHandlerName(srvman, virtualDir);
+	        }
+	    }
+
+
+	    protected string GetActivePhpHandlerName(ServerManager srvman, WebVirtualDirectory virtualDir)
+	    {
+	        var config = srvman.GetWebConfiguration(((WebSite)virtualDir).SiteId, virtualDir.VirtualPath);
+	        var handlersSection = config.GetSection(Constants.HandlersSection);
+
+	        // Find first handler for *.php
+	        return (from handler in handlersSection.GetCollection() 
+                    where string.Equals(handler["path"].ToString(), "*.php", StringComparison.OrdinalIgnoreCase) &&  string.Equals(handler["Modules"].ToString(), "FastCgiModule", StringComparison.OrdinalIgnoreCase)
+                    select handler["name"].ToString()
+                    ).FirstOrDefault();
+	    }
+
+	    protected static string GetPhpExecutableVersion(string phpexePath)
+        {
+            return FileVersionInfo.GetVersionInfo(phpexePath).ProductVersion;
+        }
+
+	    protected void MakeHandlerActive(string handlerName, WebVirtualDirectory virtualDir)
+	    {
+	        using (var srvman = webObjectsSvc.GetServerManager())
+	        {
+				var config = srvman.GetWebConfiguration(((WebSite)virtualDir).SiteId, virtualDir.VirtualPath);
+
+                var handlersSection = (HandlersSection)config.GetSection(Constants.HandlersSection, typeof(HandlersSection));
+
+	            var handlersCollection = handlersSection.Handlers;
+
+	            var handlerElement = handlersCollection[handlerName];
+                var activeHandlerElement = handlersCollection[GetActivePhpHandlerName(srvman, virtualDir)];
+                
+                var activeHandlerIndex = handlersCollection.IndexOf(activeHandlerElement);
+                
+                handlersCollection.Remove(handlerElement);
+                
+                handlersCollection.AddCopyAt(activeHandlerIndex, handlerElement);
+
+                srvman.CommitChanges();
+	        }
+	    }
+
+        #endregion
+    }
 }

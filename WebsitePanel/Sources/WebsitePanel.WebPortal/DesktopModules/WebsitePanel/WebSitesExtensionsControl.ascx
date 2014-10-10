@@ -30,8 +30,6 @@
         <td class="Normal">
             <asp:DropDownList ID="ddlPhp" runat="server" CssClass="NormalTextBox" resourcekey="ddlPhp">
                 <asp:ListItem Value="">None</asp:ListItem>
-                <asp:ListItem Value="4">4</asp:ListItem>
-                <asp:ListItem Value="5">5</asp:ListItem>
             </asp:DropDownList>
         </td>
     </tr>

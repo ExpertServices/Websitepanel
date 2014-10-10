@@ -74,7 +74,10 @@
                             </asp:GridView>
                         </div>
                         <br />
-                        <asp:Button runat="server" ID="btnUpdate" Text="Update" meta:resourcekey="btnUpdate"   CssClass="Button1"  onclick="btnUpdate_Click" />
+                        <asp:Button runat="server" ID="btnUpdate" Text="Save Changes" meta:resourcekey="btnUpdate"   CssClass="Button1"  onclick="btnUpdate_Click" />
+                        <asp:Button runat="server" ID="btnSaveExit" Text="Save Changes and Exit" CssClass="Button1"
+		                    meta:resourcekey="btnSaveExit" OnClick="btnSaveExit_Click"></asp:Button>
+
                     </div>
                     <br />
                 </div>
