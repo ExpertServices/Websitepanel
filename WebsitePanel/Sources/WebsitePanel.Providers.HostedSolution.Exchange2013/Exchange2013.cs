@@ -4402,10 +4402,6 @@ namespace WebsitePanel.Providers.HostedSolution
                 if (mailEnabled)
                 {
                     EnableMailPublicFolderInternal(organizationId, id, accountName, name, domain);
-
-                    // exchange transport needs access to create new items in order to deliver email 
-                    AddPublicFolderClientPermission(runSpace, parentFolder, "Anonymous", "CreateItems");
-                    AddPublicFolderClientPermission(runSpace, id, "Anonymous", "CreateItems");
                 }
 
             }
@@ -4700,6 +4696,10 @@ namespace WebsitePanel.Providers.HostedSolution
                     ExchangeLog.LogWarning("Attemp {0} to update mail public folder {1}", attempts, folder);
                     System.Threading.Thread.Sleep(5000);
                 }
+
+                // exchange transport needs access to create new items in order to deliver email 
+                AddPublicFolderClientPermission(runSpace, folder, "Anonymous", "CreateItems");
+
             }
             finally
             {
