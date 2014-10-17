@@ -1,5 +1,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Caching Application Block", "Caching Application Block", "{C8E6F2E4-A5B8-486A-A56E-92D864524682}"
 	ProjectSection(SolutionItems) = preProject
 		Bin\Microsoft.Practices.EnterpriseLibrary.Common.dll = Bin\Microsoft.Practices.EnterpriseLibrary.Common.dll
@@ -151,6 +153,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Providers.HostedSolution.Crm2013", "WebsitePanel.Providers.HostedSolution.Crm2013\WebsitePanel.Providers.HostedSolution.Crm2013.csproj", "{1EF935C9-6DB9-47A1-B261-CB56512DF980}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Providers.Mail.IceWarp", "WebsitePanel.Providers.Mail.IceWarp\WebsitePanel.Providers.Mail.IceWarp.csproj", "{95EA2D6E-278C-4A74-97DB-946362C4DEEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Providers.Virtualization.HyperV2012R2", "WebsitePanel.Providers.Virtualization.HyperV-2012R2\WebsitePanel.Providers.Virtualization.HyperV2012R2.csproj", "{EE40516B-93DF-4CAB-80C4-64DCE0B751CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -772,6 +776,16 @@ Global
 		{95EA2D6E-278C-4A74-97DB-946362C4DEEA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{95EA2D6E-278C-4A74-97DB-946362C4DEEA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{95EA2D6E-278C-4A74-97DB-946362C4DEEA}.Release|x86.ActiveCfg = Release|Any CPU
+		{EE40516B-93DF-4CAB-80C4-64DCE0B751CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE40516B-93DF-4CAB-80C4-64DCE0B751CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE40516B-93DF-4CAB-80C4-64DCE0B751CC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EE40516B-93DF-4CAB-80C4-64DCE0B751CC}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EE40516B-93DF-4CAB-80C4-64DCE0B751CC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EE40516B-93DF-4CAB-80C4-64DCE0B751CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE40516B-93DF-4CAB-80C4-64DCE0B751CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE40516B-93DF-4CAB-80C4-64DCE0B751CC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EE40516B-93DF-4CAB-80C4-64DCE0B751CC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EE40516B-93DF-4CAB-80C4-64DCE0B751CC}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

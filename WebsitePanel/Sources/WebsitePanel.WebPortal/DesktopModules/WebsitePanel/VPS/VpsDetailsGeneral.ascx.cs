@@ -155,7 +155,7 @@ namespace WebsitePanel.Portal.VPS
                     || vm.State == VirtualMachineState.Saved))
                     buttons.Add(CreateActionButton("Start", "start.png"));
 
-                if (vm.State == VirtualMachineState.Started)
+                if (vm.State == VirtualMachineState.Running)
                 {
                     if(vmi.RebootAllowed)
                         buttons.Add(CreateActionButton("Reboot", "reboot.png"));
@@ -165,12 +165,12 @@ namespace WebsitePanel.Portal.VPS
                 }
 
                 if (vmi.StartTurnOffAllowed
-                    && (vm.State == VirtualMachineState.Started
+                    && (vm.State == VirtualMachineState.Running
                     || vm.State == VirtualMachineState.Paused))
                     buttons.Add(CreateActionButton("TurnOff", "turnoff.png"));
 
                 if (vmi.PauseResumeAllowed
-                    && vm.State == VirtualMachineState.Started)
+                    && vm.State == VirtualMachineState.Running)
                     buttons.Add(CreateActionButton("Pause", "pause.png"));
 
                 if (vmi.PauseResumeAllowed
@@ -178,7 +178,7 @@ namespace WebsitePanel.Portal.VPS
                     buttons.Add(CreateActionButton("Resume", "start2.png"));
 
                 if (vmi.ResetAllowed
-                    && (vm.State == VirtualMachineState.Started
+                    && (vm.State == VirtualMachineState.Running
                     || vm.State == VirtualMachineState.Paused))
                     buttons.Add(CreateActionButton("Reset", "reset2.png"));
 
