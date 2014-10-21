@@ -514,6 +514,10 @@ namespace WebsitePanel.Setup.Actions
 						{
 							serviceInfo.ProviderId = 209;
 						}
+                        else if (sqlVersion.StartsWith("12."))
+                        {
+                            serviceInfo.ProviderId = 1203;
+                        }
 						serviceId = ES.Services.Servers.AddService(serviceInfo);
 					}
 					else
