@@ -90,6 +90,11 @@ namespace WebsitePanel.Portal.ProviderControls
 
 		private int FindAddressByText(string address)
 		{
+		    if (string.IsNullOrEmpty(address))
+		    {
+		        return 0;
+		    }
+
             foreach (IPAddressInfo addressInfo in ES.Services.Servers.GetIPAddresses(IPAddressPool.General, PanelRequest.ServerId))
 			{
 				if (addressInfo.InternalIP == address || addressInfo.ExternalIP == address)
