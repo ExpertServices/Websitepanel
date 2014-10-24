@@ -46,8 +46,8 @@
                 <td class="FormLabel200" align="right">
                     <asp:Label ID="lblServiceLevelName" runat="server" meta:resourcekey="lblServiceLevelName" Text="Name:"></asp:Label>
                 </td>
-                <td class="Normal">
-                    <asp:TextBox ID="txtServiceLevelName" runat="server" Width="100%" CssClass="NormalTextBox" MaxLength="255"></asp:TextBox>
+                <td>
+                    <asp:TextBox ID="txtServiceLevelName" runat="server" Width="720px" CssClass="NormalTextBox" MaxLength="255"></asp:TextBox>
                     <asp:RequiredFieldValidator ID="valRequireServiceLevelName" runat="server" meta:resourcekey="valRequireServiceLevelName" ControlToValidate="txtServiceLevelName"
 					ErrorMessage="Enter service level name" ValidationGroup="CreateServiceLevel" Display="Dynamic" Text="*" SetFocusOnError="True"></asp:RequiredFieldValidator>
                 </td>
@@ -56,8 +56,9 @@
                 <td class="FormLabel200" align="right">
                     <asp:Label ID="lblServiceLevelDescr" runat="server" meta:resourcekey="lblServiceLevelDescr" Text="Description:"></asp:Label>
                 </td>
-                <td class="Normal" valign=top>
-                    <asp:TextBox ID="txtServiceLevelDescr" runat="server" Rows="10" TextMode="MultiLine" Width="100%" CssClass="NormalTextBox" Wrap="False" MaxLength="511"></asp:TextBox></td>
+                <td>
+                    <asp:TextBox ID="txtServiceLevelDescr" runat="server" Rows="7" TextMode="MultiLine" Width="720px" CssClass="NormalTextBox" Wrap="False" MaxLength="511"></asp:TextBox>
+                </td>
             </tr>
 		</table>
 	</asp:Panel>

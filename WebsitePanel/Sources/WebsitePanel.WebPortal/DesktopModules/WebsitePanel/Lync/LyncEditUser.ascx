@@ -19,6 +19,8 @@
                     <asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle"></asp:Localize>
                     -
 					<asp:Literal ID="litDisplayName" runat="server" Text="John Smith" />
+                    <asp:Image ID="imgVipUser" SkinID="VipUser16" runat="server" tooltip="VIP user" Visible="false"/>
+                    <asp:Label ID="litServiceLevel" runat="server" style="float:right;padding-right:8px;" Visible="false"></asp:Label>
                 </div>
                 <div class="FormBody">
                     

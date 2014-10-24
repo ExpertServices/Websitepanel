@@ -511,6 +511,8 @@ namespace WebsitePanel.Providers.Utils
                     user.PasswordCantChange = ((userFlags & ADAccountOptions.UF_PASSWD_CANT_CHANGE) != 0);
                     user.PasswordNeverExpires = ((userFlags & ADAccountOptions.UF_DONT_EXPIRE_PASSWD) != 0);
                     user.AccountDisabled = ((userFlags & ADAccountOptions.UF_ACCOUNTDISABLE) != 0);
+                    user.MsIIS_FTPDir = GetObjectProperty(objUser, "msIIS-FTPDir").ToString();
+                    user.MsIIS_FTPRoot = GetObjectProperty(objUser, "msIIS-FTPRoot").ToString();
 
                     // get user groups
                     user.MemberOf = GetUserGroups(objUser);
@@ -726,6 +728,12 @@ namespace WebsitePanel.Providers.Utils
                     }
 					
 					objUser.Properties["description"].Value = String.IsNullOrEmpty(user.Description) ? "WebsitePanel System Account" : user.Description;
+
+                    if (user.MsIIS_FTPDir != string.Empty)
+                    {
+                        SetObjectProperty(objUser, "msIIS-FTPDir", user.MsIIS_FTPDir);
+                        SetObjectProperty(objUser, "msIIS-FTPRoot", user.MsIIS_FTPRoot);
+                    }
 
                     ADAccountOptions userFlags = ADAccountOptions.UF_NORMAL_ACCOUNT;
 

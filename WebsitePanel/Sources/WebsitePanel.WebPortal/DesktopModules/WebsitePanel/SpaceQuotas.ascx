@@ -2,7 +2,7 @@
 <%@ Register Src="UserControls/Quota.ascx" TagName="Quota" TagPrefix="wsp" %>
 
 <div class="FormBody">
-<table cellpadding="3">
+<table  id="tblQuotas" runat="server" cellpadding="3">
     <tr ID="pnlDiskspace" runat="server">
         <td class="SubHead" nowrap><asp:Label runat="server" meta:resourcekey="lblDiskspace" Text="Diskspace, MB:"/></td>
         <td class="Normal"><wsp:Quota ID="quotaDiskspace" runat="server" QuotaName="OS.Diskspace" DisplayGauge="True" />&nbsp;&nbsp;(<asp:HyperLink
@@ -22,12 +22,12 @@
         <td class="SubHead" nowrap><asp:Label ID="lblSubDomains" runat="server" meta:resourcekey="lblSubDomains" Text="Sub-Domains:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaSubDomains" runat="server" QuotaName="OS.SubDomains" DisplayGauge="True" /></td>
     </tr>
-<!--
-    <tr ID="pnlDomainPointers" runat="server">
+
+<%--    <tr ID="pnlDomainPointers" runat="server">
         <td class="SubHead" nowrap><asp:Label ID="lblDomainPointers" runat="server" meta:resourcekey="lblDomainPointers" Text="Domain Pointers:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaDomainPointers" runat="server" QuotaName="OS.DomainPointers" DisplayGauge="True" /></td>
-    </tr>
--->
+    </tr>--%>
+
     <tr ID="pnlOrganizations" runat="server">
         <td class="SubHead" nowrap><asp:Label ID="lblOrganizations" runat="server" meta:resourcekey="lblOrganizations" Text="Organizations:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaOrganizations" runat="server" QuotaName="HostedSolution.Organizations" DisplayGauge="True" /></td>
