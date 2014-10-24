@@ -5319,6 +5319,42 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.CompleteTask();
             }
         }
+
+        public static string CreateOrganizationRootPublicFolder(int itemId)
+        {
+            string res = null;
+
+            // place log record
+            TaskManager.StartTask("EXCHANGE", "CREATE_ORG_PUBLIC_FOLDER", itemId);
+
+            try
+            {
+                // load organization
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return null;
+
+                // get mailbox settings
+                int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+                ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+
+                if (exchange == null)
+                    return null;
+
+                res = exchange.CreateOrganizationRootPublicFolder(org.OrganizationId, org.DistinguishedName, org.SecurityGroup, org.DefaultDomain);
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+            return res;
+        }
+
         #endregion
 
         #region Private Helpers

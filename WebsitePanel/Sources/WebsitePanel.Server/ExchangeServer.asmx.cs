@@ -1088,6 +1088,23 @@ namespace WebsitePanel.Server
 				throw;
 			}
 		}
+
+        [WebMethod, SoapHeader("settings")]
+        public string CreateOrganizationRootPublicFolder(string organizationId, string organizationDistinguishedName, string securityGroup, string organizationDomain)
+        {
+            try
+            {
+                LogStart("CreateOrganizationRootPublicFolder");
+                string ret = ES.CreateOrganizationRootPublicFolder(organizationId, organizationDistinguishedName, securityGroup, organizationDomain);
+                LogEnd("CreateOrganizationRootPublicFolder");
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("GetPublicFolderSize", ex);
+                throw;
+            }
+        }
 		
         
         #endregion

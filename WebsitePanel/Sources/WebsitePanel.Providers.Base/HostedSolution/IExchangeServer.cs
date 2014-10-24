@@ -76,6 +76,8 @@ namespace WebsitePanel.Providers.HostedSolution
         void SetMailboxPermissions(string organizationId, string accountName, string[] sendAsAccounts, string[] fullAccessAccounts);
         ExchangeMailbox GetMailboxPermissions(string organizationId, string accountName);
         ExchangeMailboxStatistics GetMailboxStatistics(string accountName);
+        bool SetDefaultPublicFolderMailbox(string id, string organizationId, string organizationDistinguishedName, out string oldValue, out string newValue);
+
 
         // Contacts
         void CreateContact(string organizationId, string organizationDistinguishedName, string contactDisplayName, string contactAccountName, string contactEmail, string defaultOrganizationDomain);
@@ -115,6 +117,8 @@ namespace WebsitePanel.Providers.HostedSolution
         ExchangeItemStatistics[] GetPublicFoldersStatistics(string organizationId, string[] folders);
         string[] GetPublicFoldersRecursive(string organizationId, string parent);
         long GetPublicFolderSize(string organizationId, string folder);
+        string CreateOrganizationRootPublicFolder(string organizationId, string organizationDistinguishedName, string securityGroup, string organizationDomain);
+
 
         //ActiveSync
         void CreateOrganizationActiveSyncPolicy(string organizationId);

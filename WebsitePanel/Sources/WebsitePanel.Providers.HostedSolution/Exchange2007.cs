@@ -4854,6 +4854,21 @@ namespace WebsitePanel.Providers.HostedSolution
             return size;
         }
 
+        public string CreateOrganizationRootPublicFolder(string organizationId, string organizationDistinguishedName, string securityGroup, string organizationDomain)
+        {
+            // not implemented
+            return null;
+        }
+
+        public bool SetDefaultPublicFolderMailbox(string id, string organizationId, string organizationDistinguishedName, out string oldValue, out string newValue)
+        {
+            // not implemented
+            oldValue = null;
+            newValue = null;
+            return false;
+        }
+
+
         #endregion
 
         #region Address Lists (GAL, AL, RAL, OAB, ABP)

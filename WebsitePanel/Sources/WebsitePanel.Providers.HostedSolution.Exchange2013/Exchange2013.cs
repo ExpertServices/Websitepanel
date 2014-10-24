@@ -4460,8 +4460,6 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("CheckOrganizationPublicFolderMailbox");
         }
 
-
-
         private void CheckOrganizationRootFolder(Runspace runSpace, string folder, string user, string orgCanonicalName, string organizationId)
         {
             ExchangeLog.LogStart("CheckOrganizationRootFolder");
@@ -4484,6 +4482,38 @@ namespace WebsitePanel.Providers.HostedSolution
                 }
             }
             ExchangeLog.LogEnd("CheckOrganizationRootFolder");
+        }
+
+        public string CreateOrganizationRootPublicFolder(string organizationId, string organizationDistinguishedName, string securityGroup, string organizationDomain)
+        {
+            ExchangeLog.LogStart("AddOrganizationRootPublicFolder");
+
+            string res = null;
+
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+
+                // default public folder
+                string orgCanonicalName = ConvertADPathToCanonicalName(organizationDistinguishedName);
+
+                //create organization public folder mailbox if required
+                CheckOrganizationPublicFolderMailbox(runSpace, orgCanonicalName, organizationId, organizationDomain);
+
+                //create organization root folder if required
+                CheckOrganizationRootFolder(runSpace, organizationId, securityGroup, orgCanonicalName, organizationId);
+
+                res = orgCanonicalName + "/" + GetPublicFolderMailboxName(organizationId);
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+
+            ExchangeLog.LogEnd("AddOrganizationRootPublicFolder");
+
+            return res;
         }
 
         private string AddPublicFolder(Runspace runSpace, string name, string path, string mailbox)
@@ -5227,6 +5257,50 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("GetPublicFolderSizeInternal");
             return size;
         }
+
+        public bool SetDefaultPublicFolderMailbox(string id, string organizationId, string organizationDistinguishedName, out string oldValue, out string newValue)
+        {
+            ExchangeLog.LogStart("SetDefaultPublicFolderMailbox");
+
+            bool res = false;
+            oldValue = null;
+            newValue = null;
+
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+
+                Command cmd = new Command("Get-Mailbox");
+                cmd.Parameters.Add("Identity", id);
+                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+
+                if (result != null && result.Count > 0)
+                {
+                    oldValue = ObjToString(GetPSObjectProperty(result[0], "DefaultPublicFolderMailbox"));
+                }
+
+                string orgCanonicalName = ConvertADPathToCanonicalName(organizationDistinguishedName);
+
+                newValue = orgCanonicalName + "/" + GetPublicFolderMailboxName(organizationId);
+
+                if (newValue != oldValue)
+                {
+                    cmd = new Command("Set-Mailbox");
+                    cmd.Parameters.Add("Identity", id);
+                    cmd.Parameters.Add("DefaultPublicFolderMailbox", newValue);
+                }
+
+                res = true;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+            ExchangeLog.LogEnd("SetDefaultPublicFolderMailbox");
+            return res;
+        }
+
 
         #endregion
 
