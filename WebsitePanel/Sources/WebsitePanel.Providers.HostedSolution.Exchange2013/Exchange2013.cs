@@ -5258,13 +5258,11 @@ namespace WebsitePanel.Providers.HostedSolution
             return size;
         }
 
-        public bool SetDefaultPublicFolderMailbox(string id, string organizationId, string organizationDistinguishedName, out string oldValue, out string newValue)
+        public string[] SetDefaultPublicFolderMailbox(string id, string organizationId, string organizationDistinguishedName)
         {
             ExchangeLog.LogStart("SetDefaultPublicFolderMailbox");
 
-            bool res = false;
-            oldValue = null;
-            newValue = null;
+            List<string> res = new List<string>();
 
             Runspace runSpace = null;
             try
@@ -5275,30 +5273,36 @@ namespace WebsitePanel.Providers.HostedSolution
                 cmd.Parameters.Add("Identity", id);
                 Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
 
+                string oldValue = "";
+
                 if (result != null && result.Count > 0)
                 {
                     oldValue = ObjToString(GetPSObjectProperty(result[0], "DefaultPublicFolderMailbox"));
                 }
 
+                res.Add(oldValue);
+
                 string orgCanonicalName = ConvertADPathToCanonicalName(organizationDistinguishedName);
 
-                newValue = orgCanonicalName + "/" + GetPublicFolderMailboxName(organizationId);
+                string newValue = orgCanonicalName + "/" + GetPublicFolderMailboxName(organizationId);
 
                 if (newValue != oldValue)
                 {
                     cmd = new Command("Set-Mailbox");
                     cmd.Parameters.Add("Identity", id);
                     cmd.Parameters.Add("DefaultPublicFolderMailbox", newValue);
+
+                    res.Add(newValue);
                 }
 
-                res = true;
             }
             finally
             {
                 CloseRunspace(runSpace);
             }
+
             ExchangeLog.LogEnd("SetDefaultPublicFolderMailbox");
-            return res;
+            return res.ToArray();
         }
 
 

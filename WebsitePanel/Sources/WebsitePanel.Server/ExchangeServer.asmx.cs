@@ -560,6 +560,24 @@ namespace WebsitePanel.Server
             }
         }
 
+        [WebMethod, SoapHeader("settings")]
+        public string[] SetDefaultPublicFolderMailbox(string id, string organizationId, string organizationDistinguishedName)
+        {
+            try
+            {
+                LogStart("SetDefaultPublicFolderMailbox");
+                string[] ret = ES.SetDefaultPublicFolderMailbox(id, organizationId, organizationDistinguishedName);
+                LogEnd("SetDefaultPublicFolderMailbox");
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("SetDefaultPublicFolderMailbox", ex);
+                throw;
+            }
+        }
+
+
         #endregion
 
         #region Contacts
@@ -1101,7 +1119,7 @@ namespace WebsitePanel.Server
             }
             catch (Exception ex)
             {
-                Log.WriteError("GetPublicFolderSize", ex);
+                Log.WriteError("CreateOrganizationRootPublicFolder", ex);
                 throw;
             }
         }

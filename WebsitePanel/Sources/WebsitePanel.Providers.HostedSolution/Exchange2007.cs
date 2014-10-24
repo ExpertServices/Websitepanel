@@ -4860,12 +4860,10 @@ namespace WebsitePanel.Providers.HostedSolution
             return null;
         }
 
-        public bool SetDefaultPublicFolderMailbox(string id, string organizationId, string organizationDistinguishedName, out string oldValue, out string newValue)
+        public string[] SetDefaultPublicFolderMailbox(string id, string organizationId, string organizationDistinguishedName)
         {
             // not implemented
-            oldValue = null;
-            newValue = null;
-            return false;
+            return null;
         }
 
 

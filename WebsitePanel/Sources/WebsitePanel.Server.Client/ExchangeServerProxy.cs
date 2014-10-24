@@ -64,6 +64,8 @@ namespace WebsitePanel.Providers.Exchange
 
         public ServiceProviderSettingsSoapHeader ServiceProviderSettingsSoapHeaderValue;
 
+        private System.Threading.SendOrPostCallback GetPublicFolderSizeOperationCompleted;
+
         private System.Threading.SendOrPostCallback CreateOrganizationRootPublicFolderOperationCompleted;
 
         private System.Threading.SendOrPostCallback CreateOrganizationActiveSyncPolicyOperationCompleted;
@@ -148,6 +150,8 @@ namespace WebsitePanel.Providers.Exchange
 
         private System.Threading.SendOrPostCallback GetMailboxStatisticsOperationCompleted;
 
+        private System.Threading.SendOrPostCallback SetDefaultPublicFolderMailboxOperationCompleted;
+
         private System.Threading.SendOrPostCallback CreateContactOperationCompleted;
 
         private System.Threading.SendOrPostCallback DeleteContactOperationCompleted;
@@ -216,13 +220,14 @@ namespace WebsitePanel.Providers.Exchange
 
         private System.Threading.SendOrPostCallback GetPublicFoldersRecursiveOperationCompleted;
 
-        private System.Threading.SendOrPostCallback GetPublicFolderSizeOperationCompleted;
-
         /// <remarks/>
         public ExchangeServer()
         {
             this.Url = "http://localhost:9004/ExchangeServer.asmx";
         }
+
+        /// <remarks/>
+        public event GetPublicFolderSizeCompletedEventHandler GetPublicFolderSizeCompleted;
 
         /// <remarks/>
         public event CreateOrganizationRootPublicFolderCompletedEventHandler CreateOrganizationRootPublicFolderCompleted;
@@ -351,6 +356,9 @@ namespace WebsitePanel.Providers.Exchange
         public event GetMailboxStatisticsCompletedEventHandler GetMailboxStatisticsCompleted;
 
         /// <remarks/>
+        public event SetDefaultPublicFolderMailboxCompletedEventHandler SetDefaultPublicFolderMailboxCompleted;
+
+        /// <remarks/>
         public event CreateContactCompletedEventHandler CreateContactCompleted;
 
         /// <remarks/>
@@ -453,7 +461,57 @@ namespace WebsitePanel.Providers.Exchange
         public event GetPublicFoldersRecursiveCompletedEventHandler GetPublicFoldersRecursiveCompleted;
 
         /// <remarks/>
-        public event GetPublicFolderSizeCompletedEventHandler GetPublicFolderSizeCompleted;
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetPublicFolderSize", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public long GetPublicFolderSize(string organizationId, string folder)
+        {
+            object[] results = this.Invoke("GetPublicFolderSize", new object[] {
+                        organizationId,
+                        folder});
+            return ((long)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginGetPublicFolderSize(string organizationId, string folder, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("GetPublicFolderSize", new object[] {
+                        organizationId,
+                        folder}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public long EndGetPublicFolderSize(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((long)(results[0]));
+        }
+
+        /// <remarks/>
+        public void GetPublicFolderSizeAsync(string organizationId, string folder)
+        {
+            this.GetPublicFolderSizeAsync(organizationId, folder, null);
+        }
+
+        /// <remarks/>
+        public void GetPublicFolderSizeAsync(string organizationId, string folder, object userState)
+        {
+            if ((this.GetPublicFolderSizeOperationCompleted == null))
+            {
+                this.GetPublicFolderSizeOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetPublicFolderSizeOperationCompleted);
+            }
+            this.InvokeAsync("GetPublicFolderSize", new object[] {
+                        organizationId,
+                        folder}, this.GetPublicFolderSizeOperationCompleted, userState);
+        }
+
+        private void OnGetPublicFolderSizeOperationCompleted(object arg)
+        {
+            if ((this.GetPublicFolderSizeCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetPublicFolderSizeCompleted(this, new GetPublicFolderSizeCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -3103,6 +3161,62 @@ namespace WebsitePanel.Providers.Exchange
 
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/SetDefaultPublicFolderMailbox", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string[] SetDefaultPublicFolderMailbox(string id, string organizationId, string organizationDistinguishedName)
+        {
+            object[] results = this.Invoke("SetDefaultPublicFolderMailbox", new object[] {
+                        id,
+                        organizationId,
+                        organizationDistinguishedName});
+            return ((string[])(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginSetDefaultPublicFolderMailbox(string id, string organizationId, string organizationDistinguishedName, System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("SetDefaultPublicFolderMailbox", new object[] {
+                        id,
+                        organizationId,
+                        organizationDistinguishedName}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public string[] EndSetDefaultPublicFolderMailbox(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((string[])(results[0]));
+        }
+
+        /// <remarks/>
+        public void SetDefaultPublicFolderMailboxAsync(string id, string organizationId, string organizationDistinguishedName)
+        {
+            this.SetDefaultPublicFolderMailboxAsync(id, organizationId, organizationDistinguishedName, null);
+        }
+
+        /// <remarks/>
+        public void SetDefaultPublicFolderMailboxAsync(string id, string organizationId, string organizationDistinguishedName, object userState)
+        {
+            if ((this.SetDefaultPublicFolderMailboxOperationCompleted == null))
+            {
+                this.SetDefaultPublicFolderMailboxOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetDefaultPublicFolderMailboxOperationCompleted);
+            }
+            this.InvokeAsync("SetDefaultPublicFolderMailbox", new object[] {
+                        id,
+                        organizationId,
+                        organizationDistinguishedName}, this.SetDefaultPublicFolderMailboxOperationCompleted, userState);
+        }
+
+        private void OnSetDefaultPublicFolderMailboxOperationCompleted(object arg)
+        {
+            if ((this.SetDefaultPublicFolderMailboxCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SetDefaultPublicFolderMailboxCompleted(this, new SetDefaultPublicFolderMailboxCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/CreateContact", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public void CreateContact(string organizationId, string organizationDistinguishedName, string contactDisplayName, string contactAccountName, string contactEmail, string defaultOrganizationDomain)
         {
@@ -5150,62 +5264,39 @@ namespace WebsitePanel.Providers.Exchange
         }
 
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetPublicFolderSize", RequestNamespace = "http://smbsaas/websitepanel/server/", ResponseNamespace = "http://smbsaas/websitepanel/server/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public long GetPublicFolderSize(string organizationId, string folder)
-        {
-            object[] results = this.Invoke("GetPublicFolderSize", new object[] {
-                        organizationId,
-                        folder});
-            return ((long)(results[0]));
-        }
-
-        /// <remarks/>
-        public System.IAsyncResult BeginGetPublicFolderSize(string organizationId, string folder, System.AsyncCallback callback, object asyncState)
-        {
-            return this.BeginInvoke("GetPublicFolderSize", new object[] {
-                        organizationId,
-                        folder}, callback, asyncState);
-        }
-
-        /// <remarks/>
-        public long EndGetPublicFolderSize(System.IAsyncResult asyncResult)
-        {
-            object[] results = this.EndInvoke(asyncResult);
-            return ((long)(results[0]));
-        }
-
-        /// <remarks/>
-        public void GetPublicFolderSizeAsync(string organizationId, string folder)
-        {
-            this.GetPublicFolderSizeAsync(organizationId, folder, null);
-        }
-
-        /// <remarks/>
-        public void GetPublicFolderSizeAsync(string organizationId, string folder, object userState)
-        {
-            if ((this.GetPublicFolderSizeOperationCompleted == null))
-            {
-                this.GetPublicFolderSizeOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetPublicFolderSizeOperationCompleted);
-            }
-            this.InvokeAsync("GetPublicFolderSize", new object[] {
-                        organizationId,
-                        folder}, this.GetPublicFolderSizeOperationCompleted, userState);
-        }
-
-        private void OnGetPublicFolderSizeOperationCompleted(object arg)
-        {
-            if ((this.GetPublicFolderSizeCompleted != null))
-            {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.GetPublicFolderSizeCompleted(this, new GetPublicFolderSizeCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-
-        /// <remarks/>
         public new void CancelAsync(object userState)
         {
             base.CancelAsync(userState);
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void GetPublicFolderSizeCompletedEventHandler(object sender, GetPublicFolderSizeCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetPublicFolderSizeCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal GetPublicFolderSizeCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public long Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((long)(this.results[0]));
+            }
         }
     }
 
@@ -6003,6 +6094,36 @@ namespace WebsitePanel.Providers.Exchange
 
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void SetDefaultPublicFolderMailboxCompletedEventHandler(object sender, SetDefaultPublicFolderMailboxCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SetDefaultPublicFolderMailboxCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal SetDefaultPublicFolderMailboxCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public string[] Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((string[])(this.results[0]));
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
     public delegate void CreateContactCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 
     /// <remarks/>
@@ -6523,36 +6644,6 @@ namespace WebsitePanel.Providers.Exchange
             {
                 this.RaiseExceptionIfNecessary();
                 return ((string[])(this.results[0]));
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    public delegate void GetPublicFolderSizeCompletedEventHandler(object sender, GetPublicFolderSizeCompletedEventArgs e);
-
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetPublicFolderSizeCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
-    {
-
-        private object[] results;
-
-        internal GetPublicFolderSizeCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
-            base(exception, cancelled, userState)
-        {
-            this.results = results;
-        }
-
-        /// <remarks/>
-        public long Result
-        {
-            get
-            {
-                this.RaiseExceptionIfNecessary();
-                return ((long)(this.results[0]));
             }
         }
     }
