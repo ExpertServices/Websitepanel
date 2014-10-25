@@ -38,7 +38,7 @@ require_once(ROOTDIR. '/modules/servers/websitepanel/functions.php');
  * @link http://www.websitepanel.net/
  * @access public
  * @name websitepanel
- * @version 3.0.3
+ * @version 3.0.4
  * @package WHMCS
  */
 
@@ -543,7 +543,7 @@ function websitepanel_UsageUpdate($params)
 	
 	// Query for WebsitePanel user accounts assigned to this server
 	// Only services that have packages that have "Tick to update diskpace / bandwidth in WHMCS" enabled
-	$result = full_query("SELECT h.id AS serviceid, h.userid AS userid, h.username AS username, h.regdate AS regdate, p.configoption2 AS configoption2, p.configoption3 AS configoption3, p.configoption6 AS configoption6 FROM `tblhosting` AS h, `tblproducts` AS p WHERE h.server = 17 AND h.packageid = p.id AND p.configoption16 = 'on' AND h.domainstatus IN ('Active', 'Suspended')");
+	$result = full_query("SELECT h.id AS serviceid, h.userid AS userid, h.username AS username, h.regdate AS regdate, p.configoption2 AS configoption2, p.configoption3 AS configoption3, p.configoption6 AS configoption6 FROM `tblhosting` AS h, `tblproducts` AS p WHERE h.server IN (SELECT `id` FROM `tblservers` WHERE `type` = 'websitepanel') AND h.packageid = p.id AND p.configoption16 = 'on' AND h.domainstatus IN ('Active', 'Suspended')");
 	while (($row = mysql_fetch_array($result)) != false)
 	{
 		// Start processing the users usage

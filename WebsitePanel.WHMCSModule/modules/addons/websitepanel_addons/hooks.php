@@ -37,7 +37,7 @@ require_once(ROOTDIR. '/modules/servers/websitepanel/enterpriseserver.php');
  * @link http://www.websitepanel.net/
  * @access public
  * @name websitepanel_EnterpriseServer
- * @version 3.0.3
+ * @version 3.0.4
  * @package WHMCS
  * @final
  */
