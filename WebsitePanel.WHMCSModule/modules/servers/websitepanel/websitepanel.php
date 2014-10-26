@@ -83,7 +83,7 @@ function websitepanel_CreateAccount($params)
 	$serverUsername = $params['serverusername'];
 	$serverPassword = $params['serverpassword'];
 	$serverPort = $params['configoption6'];
-	$serverHost = empty($params['serverhostname']) ? $params['serverip'] : $params['serverhostname'];
+	$serverHost = (empty($params['serverhostname']) ? $params['serverip'] : $params['serverhostname']);
 	$serverSecure = $params['serversecure'];
 	$username = $params['username'];
 	$password = $params['password'];
@@ -96,16 +96,16 @@ function websitepanel_CreateAccount($params)
 	// WebsitePanel API parameters
 	$planId = $params['configoption4'];
 	$parentPackageId = $params['configoption5'];
-	$roleId = ($packageType == 'reselleraccount') ? 2 : 3;
-	$htmlMail = ($params['configoption14'] == 'on') ? TRUE : FALSE;
-	$sendAccountLetter = ($params['configoption9'] == 'on') ? TRUE : FALSE;
-	$sendPackageLetter = ($params['configoption10'] == 'on') ? TRUE : FALSE;
-	$createMailAccount = ($params['configoption11'] == 'on') ? TRUE : FALSE;
-	$createTempDomain = ($params['configoption13'] == 'on') ? TRUE : FALSE;
-	$createFtpAccount = ($params['configoption12'] == 'on') ? TRUE : FALSE;
-	$createWebsite = ($params['configoption15'] == 'on') ? TRUE : FALSE;
+	$roleId = (($packageType == 'reselleraccount') ? 2 : 3);
+	$htmlMail = ($params['configoption14'] == 'on');
+	$sendAccountLetter = ($params['configoption9'] == 'on');
+	$sendPackageLetter = ($params['configoption10'] == 'on');
+	$createMailAccount = ($params['configoption11'] == 'on');
+	$createTempDomain = ($params['configoption13'] == 'on');
+	$createFtpAccount = ($params['configoption12'] == 'on');
+	$createWebsite = ($params['configoption15'] == 'on');
 	$websitePointerName = $params['configoption17'];
-	$createZoneRecord = ($params['configoption18'] == 'on') ? TRUE : FALSE;
+	$createZoneRecord = ($params['configoption18'] == 'on');
 	
 	try
 	{
@@ -181,7 +181,7 @@ function websitepanel_CreateAccount($params)
 				    		'State' => $clientsDetails['state'],
 				    		'HtmlMail' => $htmlMail,
 				    		'CompanyName' => $clientsDetails['companyname'],
-				    		'EcommerceEnabled' => (($roleId == 2) ? TRUE : FALSE),
+				    		'EcommerceEnabled' => ($roleId == 2),
 				    		'SubscriberNumber' => '');
 	    
 	    // Execute the UpdateUserDetails method
@@ -219,7 +219,7 @@ function websitepanel_TerminateAccount($params)
 	$serverUsername = $params['serverusername'];
 	$serverPassword = $params['serverpassword'];
 	$serverPort = $params['configoption6'];
-	$serverHost = empty($params['serverhostname']) ? $params['serverip'] : $params['serverhostname'];
+	$serverHost = (empty($params['serverhostname']) ? $params['serverip'] : $params['serverhostname']);
 	$serverSecure = $params['serversecure'];
 	$username = $params['username'];
 	$clientsDetails = $params['clientsdetails'];
@@ -281,7 +281,7 @@ function websitepanel_SuspendAccount($params)
 	$serverUsername = $params['serverusername'];
 	$serverPassword = $params['serverpassword'];
 	$serverPort = $params['configoption6'];
-	$serverHost = empty($params['serverhostname']) ? $params['serverip'] : $params['serverhostname'];
+	$serverHost = (empty($params['serverhostname']) ? $params['serverip'] : $params['serverhostname']);
 	$serverSecure = $params['serversecure'];
 	$username = $params['username'];
 	$clientsDetails = $params['clientsdetails'];
@@ -343,7 +343,7 @@ function websitepanel_UnsuspendAccount($params)
 	$serverUsername = $params['serverusername'];
 	$serverPassword = $params['serverpassword'];
 	$serverPort = $params['configoption6'];
-	$serverHost = empty($params['serverhostname']) ? $params['serverip'] : $params['serverhostname'];
+	$serverHost = (empty($params['serverhostname']) ? $params['serverip'] : $params['serverhostname']);
 	$serverSecure = $params['serversecure'];
 	$username = $params['username'];
 	$clientsDetails = $params['clientsdetails'];
@@ -405,7 +405,7 @@ function websitepanel_ChangePassword($params)
 	$serverUsername = $params['serverusername'];
 	$serverPassword = $params['serverpassword'];
 	$serverPort = $params['configoption6'];
-	$serverHost = empty($params['serverhostname']) ? $params['serverip'] : $params['serverhostname'];
+	$serverHost = (empty($params['serverhostname']) ? $params['serverip'] : $params['serverhostname']);
 	$serverSecure = $params['serversecure'];
 	$username = $params['username'];
 	$password = $params['password'];
@@ -468,7 +468,7 @@ function websitepanel_ChangePackage($params)
 	$serverUsername = $params['serverusername'];
 	$serverPassword = $params['serverpassword'];
 	$serverPort = $params['configoption6'];
-	$serverHost = empty($params['serverhostname']) ? $params['serverip'] : $params['serverhostname'];
+	$serverHost = (empty($params['serverhostname']) ? $params['serverip'] : $params['serverhostname']);
 	$serverSecure = $params['serversecure'];
 	$username = $params['username'];
 	$clientsDetails = $params['clientsdetails'];
@@ -535,7 +535,7 @@ function websitepanel_UsageUpdate($params)
 	// WHMCS server parameters & package parameters
 	$serverUsername = $params['serverusername'];
 	$serverPassword = $params['serverpassword'];
-	$serverHost = empty($params['serverhostname']) ? $params['serverip'] : $params['serverhostname'];
+	$serverHost = (empty($params['serverhostname']) ? $params['serverip'] : $params['serverhostname']);
 	$serverSecure = $params['serversecure'];
 	$serverId = $params['serverid'];
 	$userId = 0;
@@ -543,7 +543,7 @@ function websitepanel_UsageUpdate($params)
 	
 	// Query for WebsitePanel user accounts assigned to this server
 	// Only services that have packages that have "Tick to update diskpace / bandwidth in WHMCS" enabled
-	$result = full_query("SELECT h.id AS serviceid, h.userid AS userid, h.username AS username, h.regdate AS regdate, p.configoption2 AS configoption2, p.configoption3 AS configoption3, p.configoption6 AS configoption6 FROM `tblhosting` AS h, `tblproducts` AS p WHERE h.server IN (SELECT `id` FROM `tblservers` WHERE `type` = 'websitepanel') AND h.packageid = p.id AND p.configoption16 = 'on' AND h.domainstatus IN ('Active', 'Suspended')");
+	$result = full_query("SELECT h.id AS serviceid, h.userid AS userid, h.username AS username, h.regdate AS regdate, p.configoption2 AS configoption2, p.configoption3 AS configoption3, p.configoption6 AS configoption6 FROM `tblhosting` AS h, `tblproducts` AS p WHERE h.server = {$serverId} AND h.packageid = p.id AND p.configoption16 = 'on' AND h.domainstatus IN ('Active', 'Suspended')");
 	while (($row = mysql_fetch_array($result)) != false)
 	{
 		// Start processing the users usage
@@ -616,7 +616,7 @@ function websitepanel_LoginLink($params)
     	$serverUsername = $params['serverusername'];
     	$serverPassword = $params['serverpassword'];
     	$serverPort = $params['configoption6'];
-    	$serverHost = empty($params['serverhostname']) ? $params['serverip'] : $params['serverhostname'];
+    	$serverHost = (empty($params['serverhostname']) ? $params['serverip'] : $params['serverhostname']);
     	$serverSecure = $params['serversecure'];
     	$username = $params['username'];
     	$serviceId = $params['serviceid'];
