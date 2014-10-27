@@ -1,8 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CRMOrganizationDetails.ascx.cs" Inherits="WebsitePanel.Portal.CRM.CRMOrganizationDetails" %>
 <%@ Register Src="../ExchangeServer/UserControls/UserSelector.ascx" TagName="UserSelector"
     TagPrefix="wsp" %>
-<%@ Register Src="../ExchangeServer/UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
-<%@ Register Src="../ExchangeServer/UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/Gauge.ascx" TagName="Gauge" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
@@ -12,11 +10,7 @@
 
 <div id="ExchangeContainer">
 	<div class="Module">
-		<div class="Header">
-			<wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName" />
-		</div>
 		<div class="Left">
-			<wsp:Menu id="menu" runat="server" SelectedItem="storage_usage" />
 		</div>
 		<div class="Content">
 			<div class="Center">
@@ -59,6 +53,11 @@
 				            <td><asp:DropDownList runat="server" ID="ddlCollation" /></td>
 				          </tr>                         
 
+				          <tr height="23px">
+				            <td class="FormLabel150"><asp:Label runat="server" ID="lblBaseLanguage" meta:resourcekey="lblBaseLanguage" Text="Base Language"/></td>
+				            <td><asp:DropDownList runat="server" ID="ddlBaseLanguage" /></td>
+				          </tr>
+
 				       </table>			            
 			            <div class="FormFooterClean">
 					    <asp:Button runat="server" meta:resourcekey="btnCreate" ID="btnCreate" CssClass="Button2" OnClick="btnCreate_Click"  />		
@@ -69,4 +68,5 @@
 				</div>
 		</div>
 	</div>
+</div>
 </div>

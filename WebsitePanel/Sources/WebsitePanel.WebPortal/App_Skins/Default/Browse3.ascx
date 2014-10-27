@@ -20,9 +20,6 @@
                     <td class="Logo" rowspan="2">
                         <wsp:Logo ID="logo" runat="server" />
                     </td>
-                    <td class="Account">
-                        <wsp:SignedInUser ID="signedInUser" runat="server" />
-                    </td>
                 </tr>
                 <tr>
                     <td class="Search">
@@ -33,18 +30,19 @@
         </div>
         
         <div id="TopMenu">
-            <wsp:TopMenu ID="menu" runat="server" />
+            <wsp:TopMenu ID="leftMenu" runat="server" Align="left" />
+            <asp:PlaceHolder ID="LeftPane" runat="server"></asp:PlaceHolder>
+            <wsp:TopMenu ID="rightMenu" runat="server" Align="right" />
+            <div class="Account">
+                 <wsp:SignedInUser ID="signedInUser" runat="server" />
+            </div>
         </div>
         
         <div id="Top">
             <wsp:UserSpaceBreadcrumb ID="breadcrumb" runat="server"/>
         </div>
         
-        <div id="Left">
-            <asp:PlaceHolder ID="LeftPane" runat="server"></asp:PlaceHolder>
-        </div>
-        
-        <div id="Content">
+        <div id="ContentOneColumn">
             <div id="Center">
                 <asp:PlaceHolder ID="ContentPane" runat="server"></asp:PlaceHolder>
             </div>

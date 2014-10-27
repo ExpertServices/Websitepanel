@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.DirectoryServices.ActiveDirectory;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using WebsitePanel.Providers.FTP.IIs70;
@@ -98,6 +99,20 @@ namespace WebsitePanel.Providers.FTP
         protected string GroupsOU
         {
             get { return ProviderSettings["ADGroupsOU"]; }
+        }
+
+        protected string AdFtpRoot
+        {
+            get { return ProviderSettings["AdFtpRoot"]; }
+        }
+
+        protected Mode UserIsolationMode
+        {
+            get
+            {
+                var site = GetSite(ProviderSettings["SiteId"]);
+                return (Mode)Enum.Parse(typeof(Mode), site["UserIsolationMode"]);
+            }
         }
         #endregion
 
@@ -291,134 +306,275 @@ namespace WebsitePanel.Providers.FTP
            this.ftpSitesService.DeleteSite(siteId);
         }
 
-		/// <summary>
-		/// Checks whether account with given name exists.
-		/// </summary>
-		/// <param name="accountName">Account name to check.</param>
-		/// <returns>true - if it exists; false - otherwise.</returns>
+        /// <summary>
+        /// Checks whether account with given name exists.
+        /// </summary>
+        /// <param name="accountName">Account name to check.</param>
+        /// <returns>true - if it exists; false - otherwise.</returns>
         public bool AccountExists(string accountName)
         {
             if (String.IsNullOrEmpty(accountName))
             {
-            	return false;
+                return false;
             }
 
-            // check acocunt on FTP server
-			bool ftpExists = this.ftpSitesService.VirtualDirectoryExists(this.SiteId, accountName);
+            switch (UserIsolationMode)
+            {
+                case Mode.ActiveDirectory:
+                    return SecurityUtils.UserExists(accountName, ServerSettings, UsersOU);
 
-            // check account in the system
-            bool systemExists = SecurityUtils.UserExists(accountName, ServerSettings, UsersOU);
-            return (ftpExists || systemExists); 
+                default:
+                    // check acocunt on FTP server
+                    bool ftpExists = this.ftpSitesService.VirtualDirectoryExists(this.SiteId, accountName);
+
+                    // check account in the system
+                    bool systemExists = SecurityUtils.UserExists(accountName, ServerSettings, UsersOU);
+                    return (ftpExists || systemExists);
+            }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Gets available ftp accounts.
 		/// </summary>
 		/// <returns>List of avaialble accounts.</returns>
         public FtpAccount[] GetAccounts()
         {
-            List<FtpAccount> accounts = new List<FtpAccount>();
+            switch (UserIsolationMode)
+            {
+                case Mode.ActiveDirectory:
+                    return SecurityUtils.GetUsers(ServerSettings, UsersOU).Select(GetAccount).ToArray();
+                default:
+                    List<FtpAccount> accounts = new List<FtpAccount>();
 
-			foreach (string directory in this.ftpSitesService.GetVirtualDirectoriesNames(this.SiteId))
-			{
-                // Skip root virtual directory
-                if (String.Equals(directory, "/"))
-                    continue;
-                //
-                accounts.Add(this.GetAccount(directory.Substring(1)));
-			}
+                    foreach (string directory in this.ftpSitesService.GetVirtualDirectoriesNames(this.SiteId))
+                    {
+                        // Skip root virtual directory
+                        if (String.Equals(directory, "/"))
+                            continue;
+                        //
+                        accounts.Add(this.GetAccount(directory.Substring(1)));
+                    }
 
-			return accounts.ToArray();
+                    return accounts.ToArray();
+            }
         }
 
-		/// <summary>
-		/// Gets account with given name.
-		/// </summary>
-		/// <param name="accountName">Account's name to get.</param>
-		/// <returns>Ftp account.</returns>
+        /// <summary>
+        /// Gets account with given name.
+        /// </summary>
+        /// <param name="accountName">Account's name to get.</param>
+        /// <returns>Ftp account.</returns>
         public FtpAccount GetAccount(string accountName)
         {
-			FtpAccount acc = new FtpAccount();
-			acc.Name = accountName;
-			this.FillFtpAccountFromIis(acc);
-			return acc;
+            switch (UserIsolationMode)
+            {
+                case Mode.ActiveDirectory:
+                    var user = SecurityUtils.GetUser(accountName, ServerSettings, UsersOU);
+
+                    var path = Path.Combine(user.MsIIS_FTPRoot, user.MsIIS_FTPDir);
+                    var permission = GetUserPermission(accountName, path);
+                    var account = new FtpAccount()
+                    {
+                        CanRead = permission.Read,
+                        CanWrite = permission.Write,
+                        CreatedDate = user.CreatedDate,
+                        Enabled = !user.AccountDisabled,
+                        Folder = path,
+                        GroupName = user.GroupName,
+                        Name = user.Name
+                    };
+
+                    return account;
+                default:
+                    FtpAccount acc = new FtpAccount();
+                    acc.Name = accountName;
+                    this.FillFtpAccountFromIis(acc);
+                    return acc;
+            }
         }
 
-		/// <summary>
+        protected UserPermission GetUserPermission(string accountName, string folder)
+        {
+            var userPermission = new UserPermission {AccountName = accountName};
+            return SecurityUtils.GetGroupNtfsPermissions(folder, new[] {userPermission}, ServerSettings, UsersOU, GroupsOU)[0];
+        }
+
+
+        /// <summary>
 		/// Creates ftp account under root ftp site.
 		/// </summary>
 		/// <param name="account">Ftp account to create.</param>
         public void CreateAccount(FtpAccount account)
         {
-			// Create user account.
-			SystemUser user = new SystemUser();
-			user.Name = account.Name;
-			user.FullName = account.Name;
-			user.Description = "WebsitePanel System Account";
-			user.MemberOf = new string[] { FtpGroupName };
-			user.Password = account.Password;
-			user.PasswordCantChange = true;
-			user.PasswordNeverExpires = true;
-			user.AccountDisabled = !account.Enabled;
-			user.System = true;
+            switch (UserIsolationMode)
+            {
+                case Mode.ActiveDirectory:
+                    SecurityUtils.EnsureOrganizationalUnitsExist(ServerSettings, UsersOU, GroupsOU);
 
-			// Create in the operating system.
-			if (SecurityUtils.UserExists(user.Name, ServerSettings, UsersOU))
-			{
-				SecurityUtils.DeleteUser(user.Name, ServerSettings, UsersOU);
-			}
-			SecurityUtils.CreateUser(user, ServerSettings, UsersOU, GroupsOU);
+                    var systemUser = SecurityUtils.GetUser(account.Name, ServerSettings, UsersOU);
 
-			// Prepare account's home folder.
-			this.EnsureUserHomeFolderExists(account.Folder, account.Name, account.CanRead, account.CanWrite);
+                    if (systemUser == null)
+                    {
+                        systemUser = new SystemUser
+                        {
+                            Name = account.Name,
+                            FullName = account.Name,
+                            Password = account.Password,
+                            PasswordCantChange = true,
+                            PasswordNeverExpires = true,
+                            System = true
+                        };
 
-			// Future account will be given virtual directory under default ftp web site.
-			this.ftpSitesService.CreateFtpAccount(this.SiteId, account);
-			//
-			this.ftpSitesService.ConfigureConnectAs(account.Folder, this.SiteId, account.VirtualPath, 
-				this.GetQualifiedAccountName(account.Name), account.Password, true);
-		}
+                        SecurityUtils.CreateUser(systemUser, ServerSettings, UsersOU, GroupsOU);
+                    }
 
-		/// <summary>
-		/// Updates ftp account.
-		/// </summary>
-		/// <param name="account">Accoun to update.</param>
+                    UpdateAccount(account);
+
+                    break;
+
+                default:
+                    // Create user account.
+                    SystemUser user = new SystemUser();
+                    user.Name = account.Name;
+                    user.FullName = account.Name;
+                    user.Description = "WebsitePanel System Account";
+                    user.MemberOf = new string[] {FtpGroupName};
+                    user.Password = account.Password;
+                    user.PasswordCantChange = true;
+                    user.PasswordNeverExpires = true;
+                    user.AccountDisabled = !account.Enabled;
+                    user.System = true;
+
+                    // Create in the operating system.
+                    if (SecurityUtils.UserExists(user.Name, ServerSettings, UsersOU))
+                    {
+                        SecurityUtils.DeleteUser(user.Name, ServerSettings, UsersOU);
+                    }
+                    SecurityUtils.CreateUser(user, ServerSettings, UsersOU, GroupsOU);
+
+                    // Prepare account's home folder.
+                    this.EnsureUserHomeFolderExists(account.Folder, account.Name, account.CanRead, account.CanWrite);
+
+                    // Future account will be given virtual directory under default ftp web site.
+                    this.ftpSitesService.CreateFtpAccount(this.SiteId, account);
+                    //
+                    this.ftpSitesService.ConfigureConnectAs(account.Folder, this.SiteId, account.VirtualPath,
+                        this.GetQualifiedAccountName(account.Name), account.Password, true);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Updates ftp account.
+        /// </summary>
+        /// <param name="account">Accoun to update.</param>
         public void UpdateAccount(FtpAccount account)
         {
-			// Change user account state and password (if required).
-			SystemUser user = SecurityUtils.GetUser(account.Name, ServerSettings, UsersOU);
-			user.Password = account.Password;
-			user.AccountDisabled = !account.Enabled;
-			SecurityUtils.UpdateUser(user, ServerSettings, UsersOU, GroupsOU);
-			// Update iis configuration.
-			this.FillIisFromFtpAccount(account);
+            var user = SecurityUtils.GetUser(account.Name, ServerSettings, UsersOU);
+
+            switch (UserIsolationMode)
+            {
+                case Mode.ActiveDirectory:
+                    var ftpRoot = AdFtpRoot.ToLower();
+                    var ftpDir = account.Folder.ToLower().Replace(ftpRoot, "");
+
+                    var oldDir = user.MsIIS_FTPDir;
+
+                    user.Password = account.Password;
+                    user.PasswordCantChange = true;
+                    user.PasswordNeverExpires = true;
+                    user.Description = "WebsitePanel FTP Account with AD User Isolation";
+                    user.MemberOf = new[] {FtpGroupName};
+                    user.AccountDisabled = !account.Enabled;
+                    user.MsIIS_FTPRoot = ftpRoot;
+                    user.MsIIS_FTPDir = ftpDir;
+                    user.System = true;
+
+                    SecurityUtils.UpdateUser(user, ServerSettings, UsersOU, GroupsOU);
+
+                    // Set NTFS permissions
+                    var userPermission = GetUserPermission(account.Name, account.Folder);
+
+                    // Do we need to change the NTFS permissions? i.e. is users home dir changed or are permissions changed?
+                    if (oldDir != ftpDir || account.CanRead != userPermission.Read || account.CanWrite != userPermission.Write)
+                    {
+                        // First get sid of user account
+                        var sid = SecurityUtils.GetAccountSid(account.Name, ServerSettings, UsersOU, GroupsOU);
+
+                        // Remove the permissions set for this account on previous folder
+                        SecurityUtils.RemoveNtfsPermissionsBySid(Path.Combine(ftpRoot, oldDir), sid);
+
+                        // If no permissions is to be set, exit
+                        if (!account.CanRead && !account.CanWrite)
+                        {
+                            return;
+                        }
+
+                        // Add the new permissions
+                        var ntfsPermissions = account.CanRead ? NTFSPermission.Read : NTFSPermission.Write;
+                        if (account.CanRead && account.CanWrite)
+                        {
+                            ntfsPermissions = NTFSPermission.Modify;
+                        }
+
+                        SecurityUtils.GrantNtfsPermissionsBySid(account.Folder, sid, ntfsPermissions, true, true);
+                    }
+                    break;
+
+                default:
+
+                    // Change user account state and password (if required).
+                    user.Password = account.Password;
+                    user.AccountDisabled = !account.Enabled;
+                    SecurityUtils.UpdateUser(user, ServerSettings, UsersOU, GroupsOU);
+                    // Update iis configuration.
+                    this.FillIisFromFtpAccount(account);
+                    break;
+            }
         }
 
-		/// <summary>
-		/// Deletes account with given name.
-		/// </summary>
-		/// <param name="accountName">Account's name to be deleted.</param>
+        /// <summary>
+        /// Deletes account with given name.
+        /// </summary>
+        /// <param name="accountName">Account's name to be deleted.</param>
         public void DeleteAccount(string accountName)
         {
-			string virtualDirectory = String.Format("/{0}", accountName);
-			string currentPhysicalPath = this.ftpSitesService.GetSitePhysicalPath(this.SiteId, virtualDirectory);
+            switch (UserIsolationMode)
+            {
+                case Mode.ActiveDirectory:
+                    var account = GetAccount(accountName);
 
-			// Delete virtual directory
-			this.ftpSitesService.DeleteFtpAccount(this.SiteId, virtualDirectory);
+                    // Remove the NTFS permissions first
+                    SecurityUtils.RemoveNtfsPermissions(account.Folder, account.Name, ServerSettings, UsersOU, GroupsOU);
 
-			this.ftpSitesService.CommitChanges();
+                    if (SecurityUtils.UserExists(accountName, ServerSettings, UsersOU))
+                    {
+                        SecurityUtils.DeleteUser(accountName, ServerSettings, UsersOU);
+                    }
+                    break;
 
-			// Remove permissions
-			RemoveFtpFolderPermissions(currentPhysicalPath, accountName);
+                default:
+                    string virtualDirectory = String.Format("/{0}", accountName);
+                    string currentPhysicalPath = this.ftpSitesService.GetSitePhysicalPath(this.SiteId, virtualDirectory);
 
-			// Delete system user account
-			if (SecurityUtils.UserExists(accountName, ServerSettings, UsersOU))
-			{
-				SecurityUtils.DeleteUser(accountName, ServerSettings, UsersOU);
-			}
+                    // Delete virtual directory
+                    this.ftpSitesService.DeleteFtpAccount(this.SiteId, virtualDirectory);
+
+                    this.ftpSitesService.CommitChanges();
+
+                    // Remove permissions
+                    RemoveFtpFolderPermissions(currentPhysicalPath, accountName);
+
+                    // Delete system user account
+                    if (SecurityUtils.UserExists(accountName, ServerSettings, UsersOU))
+                    {
+                        SecurityUtils.DeleteUser(accountName, ServerSettings, UsersOU);
+                    }
+                    break;
+            }
         }
 
-		/// <summary>
+        /// <summary>
 		/// Fills iis configuration  from ftp account.
 		/// </summary>
 		/// <param name="ftpAccount">Ftp account to fill from.</param>
@@ -519,6 +675,7 @@ namespace WebsitePanel.Providers.FTP
 				ftpSite.AllowAnonymous = iisFtpSite.Security.Authentication.AnonymousAuthentication.Enabled;
 				ftpSite.AnonymousUsername = iisFtpSite.Security.Authentication.AnonymousAuthentication.UserName;
 				ftpSite.AnonymousUserPassword = iisFtpSite.Security.Authentication.AnonymousAuthentication.Password;
+			    ftpSite["UserIsolationMode"] = iisFtpSite.UserIsolation.Mode.ToString();
 				// Logging settings.
 				ftpSite[FtpSite.MSFTP7_SITE_ID] = iisFtpSite.SiteServiceId;
 				if (iisFtpSite.LogFile.Enabled)

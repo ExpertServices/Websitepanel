@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -70,24 +70,104 @@ namespace WebsitePanel.Portal
                 {
                     if (ParentQuotaValue == -1)
                     {
-                        // numeric quota
-                        return chkQuotaUnlimited.Checked ? -1 : Utils.ParseInt(txtQuotaValue.Text, 0);
+                        if ((QuotaMinValue > 0) | (QuotaMaxValue > 0))
+                        {
+                            int quotaValue = 0;
+                            // numeric quota
+                            if (chkQuotaUnlimited.Checked)
+                                quotaValue = -1;
+                            else
+                            {
+
+                                if (QuotaMinValue > 0)
+                                    quotaValue = Math.Max(Utils.ParseInt(txtQuotaValue.Text, 0), QuotaMinValue);
+                                else
+                                    quotaValue = Utils.ParseInt(txtQuotaValue.Text, 0);
+
+                                if (QuotaMaxValue > 0)
+                                {
+                                    if (Utils.ParseInt(txtQuotaValue.Text, 0) > QuotaMaxValue)
+                                        quotaValue = QuotaMaxValue;
+                                }
+                            }
+                            return quotaValue;
+                        }
+                        else
+                            return chkQuotaUnlimited.Checked ? -1 : Utils.ParseInt(txtQuotaValue.Text, 0);
+                        
                     }
                     else
                     {
-                        return
-                            chkQuotaUnlimited.Checked
-                                ? ParentQuotaValue
-                                : Math.Min(Utils.ParseInt(txtQuotaValue.Text, 0), ParentQuotaValue);
+
+                        if ((QuotaMinValue > 0) | (QuotaMaxValue > 0))
+                        {
+
+                            int quotaValue = 0;
+                            // numeric quota
+                            if (chkQuotaUnlimited.Checked)
+                                quotaValue = ParentQuotaValue;
+                            else
+                            {
+                                quotaValue = Utils.ParseInt(txtQuotaValue.Text, 0);
+
+
+                                if (QuotaMinValue > 0)
+                                    quotaValue = Math.Max(quotaValue, QuotaMinValue);
+
+                                if (QuotaMaxValue > 0)
+                                {
+                                    if (quotaValue > QuotaMaxValue)
+                                        quotaValue = QuotaMaxValue;
+                                }
+
+                                quotaValue = Math.Min(quotaValue, ParentQuotaValue);
+                            }
+                            return quotaValue;
+                        }
+                        else
+                        {
+                            return
+                                chkQuotaUnlimited.Checked
+                                    ? ParentQuotaValue
+                                    : Math.Min(Utils.ParseInt(txtQuotaValue.Text, 0), ParentQuotaValue);
+                        }
+
+
+                        
                     }
                 }
             }
             set
             {
-                txtQuotaValue.Text = value.ToString();
+                if (QuotaMinValue > 0)
+                    txtQuotaValue.Text = Math.Max(value, QuotaMinValue).ToString();
+                else
+                    txtQuotaValue.Text = value.ToString();
+
                 chkQuotaEnabled.Checked = (value > 0);
                 chkQuotaUnlimited.Checked = (value == -1);
             }
+        }
+
+        public int QuotaMinValue
+        {
+            get { return ViewState["QuotaMinValue"] != null ? (int)ViewState["QuotaMinValue"] : 0; }
+            set
+            {
+                ViewState["QuotaMinValue"] = value;
+
+                if (QuotaMinValue > 0)
+                {
+                    if (QuotaValue < QuotaMinValue) QuotaValue = QuotaMinValue;
+                }
+            }
+
+        }
+
+        public int QuotaMaxValue
+        {
+            get { return ViewState["QuotaMaxValue"] != null ? (int)ViewState["QuotaMaxValue"] : 0; }
+            set { ViewState["QuotaMaxValue"] = value; }
         }
 
         public int ParentQuotaValue
@@ -122,11 +202,8 @@ namespace WebsitePanel.Portal
             // set textbox attributes
             txtQuotaValue.Style["display"] = (txtQuotaValue.Text == "-1") ? "none" : "inline";
 
-
-
-            chkQuotaUnlimited.Attributes["onclick"] = String.Format("ToggleQuota('{0}', '{1}');",
-                txtQuotaValue.ClientID, chkQuotaUnlimited.ClientID);
-
+            chkQuotaUnlimited.Attributes["onclick"] = String.Format("ToggleQuota('{0}', '{1}', {2});",
+                txtQuotaValue.ClientID, chkQuotaUnlimited.ClientID, QuotaMinValue);
 
             // call base handler
             base.OnPreRender(e);
@@ -138,15 +215,21 @@ namespace WebsitePanel.Portal
             if (!Page.ClientScript.IsClientScriptBlockRegistered(scriptKey))
             {
                 Page.ClientScript.RegisterClientScriptBlock(GetType(), scriptKey, @"<script language='javascript' type='text/javascript'>
-                        function ToggleQuota(txtId, chkId)
+                        function ToggleQuota(txtId, chkId, minValue)
                         {   
                             var unlimited = document.getElementById(chkId).checked;
                             document.getElementById(txtId).style.display = unlimited ? 'none' : 'inline';
                             document.getElementById(txtId).value = unlimited ? '-1' : '0';
+                            if (minValue > 0) 
+                            {
+                                if (document.getElementById(txtId).value < minValue) document.getElementById(txtId).value = minValue;
+                            }
                         }
                         </script>");
             }
 
         }
+
+
     }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace WebsitePanel.Providers.HostedSolution
 {
@@ -55,6 +56,12 @@ namespace WebsitePanel.Providers.HostedSolution
         bool isDefault;
         bool hideFromAddressBook;
         int mailboxPlanType;
+
+        bool allowLitigationHold;
+	    int recoverableItemsWarningPct;
+        int recoverableItemsSpace;
+        string litigationHoldUrl;
+        string litigationHoldMsg;
 
 
         public int ItemId
@@ -173,5 +180,72 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.hideFromAddressBook = value; }
         }
 
+
+        public bool AllowLitigationHold
+        {
+            get { return this.allowLitigationHold; }
+            set { this.allowLitigationHold = value; }
+        }
+
+        public int RecoverableItemsWarningPct
+        {
+            get { return this.recoverableItemsWarningPct; }
+            set { this.recoverableItemsWarningPct = value; }
+        }
+
+        public int RecoverableItemsSpace
+        {
+            get { return this.recoverableItemsSpace; }
+            set { this.recoverableItemsSpace = value; }
+        }
+
+        public string LitigationHoldUrl
+        {
+            get { return this.litigationHoldUrl; }
+            set { this.litigationHoldUrl = value; }
+        }
+
+        public string LitigationHoldMsg
+        {
+            get { return this.litigationHoldMsg; }
+            set { this.litigationHoldMsg = value; }
+        }
+
+        bool archiving;
+        public bool Archiving
+        {
+            get { return this.archiving; }
+            set { this.archiving = value; }
+        }
+
+        bool enableArchiving;
+        public bool EnableArchiving
+        {
+            get { return this.enableArchiving; }
+            set { this.enableArchiving = value; }
+        }
+
+        int archiveSizeMB;
+        public int ArchiveSizeMB
+        {
+            get { return this.archiveSizeMB; }
+            set { this.archiveSizeMB = value; }
+        }
+
+        int archiveWarningPct;
+        public int ArchiveWarningPct
+        {
+            get { return this.archiveWarningPct; }
+            set { this.archiveWarningPct = value; }
+        }
+
+        public string WSPUniqueName
+        {
+            get
+            {
+                Regex r = new Regex(@"[^A-Za-z0-9]");
+                return "WSPPolicy" + MailboxPlanId.ToString() + "_" + r.Replace(MailboxPlan, "");
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -34,54 +34,54 @@ namespace WebsitePanel.EnterpriseServer
 {
     public class BackgroundTaskLogRecord
     {
-        private DateTime date = DateTime.Now;
-        private string text;
-        private int severity; /* 0 - Info, 1 - Warning, 2 - Error */
-        private string[] textParameters;
-        private int textIdent = 0;
-        private bool innerTaskStart;
-        private string exceptionStackTrace;
+        #region Properties
 
-        public System.DateTime Date
+        public int LogId { get; set; }
+
+        public int TaskId { get; set; }
+
+        public DateTime Date { get; set; }
+
+        public String ExceptionStackTrace { get; set; }
+
+        public bool InnerTaskStart { get; set; }
+
+        public int Severity { get; set; }
+
+        public String Text { get; set; }
+
+        public int TextIdent { get; set; }
+
+        public string[] TextParameters { get; set; }
+
+        public string XmlParameters { get; set; }
+
+        #endregion
+
+        #region Constructors
+
+        public BackgroundTaskLogRecord()
         {
-            get { return this.date; }
-            set { this.date = value; }
+            Date = DateTime.Now;
         }
 
-        public string Text
+        public BackgroundTaskLogRecord(int taskId, int textIdent, bool innerTaskStart, String text, string[] textParameters)
+            : this()
         {
-            get { return this.text; }
-            set { this.text = value; }
+            TaskId = taskId;
+            TextIdent = textIdent;
+            Text = text;
+            InnerTaskStart = innerTaskStart;
+            TextParameters = textParameters;
         }
 
-        public int Severity
+        public BackgroundTaskLogRecord(int taskId, int textIdent, bool innerTaskStart, String text,
+                                       String exceptionStackTrace, string[] textParameters)
+            : this(taskId, textIdent, innerTaskStart, text, textParameters)
         {
-            get { return this.severity; }
-            set { this.severity = value; }
+            ExceptionStackTrace = exceptionStackTrace;
         }
 
-        public string[] TextParameters
-        {
-            get { return this.textParameters; }
-            set { this.textParameters = value; }
-        }
-
-        public int TextIdent
-        {
-            get { return this.textIdent; }
-            set { this.textIdent = value; }
-        }
-
-        public bool InnerTaskStart
-        {
-            get { return this.innerTaskStart; }
-            set { this.innerTaskStart = value; }
-        }
-
-        public string ExceptionStackTrace
-        {
-            get { return this.exceptionStackTrace; }
-            set { this.exceptionStackTrace = value; }
-        }
+        #endregion
     }
 }

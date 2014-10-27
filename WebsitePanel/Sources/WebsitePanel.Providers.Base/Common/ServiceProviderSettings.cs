@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -101,6 +101,15 @@ namespace WebsitePanel.Providers
             Boolean.TryParse(hash[settingName], out result);
             return result;
         }
+
+        public TimeSpan GetTimeSpan(string settingName)
+        {
+            double seconds;
+            if (!Double.TryParse(hash[settingName], out seconds))
+                seconds = 0;
+            return TimeSpan.FromSeconds(seconds);
+        }
+
 
         #region Public properties
         public int ProviderGroupID

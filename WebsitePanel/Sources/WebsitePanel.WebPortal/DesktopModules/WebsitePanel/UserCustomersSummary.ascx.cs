@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -44,6 +44,9 @@ namespace WebsitePanel.Portal
             this.ContainerControl.Visible = (PanelSecurity.SelectedUser.Role != UserRole.User);
             lnkAllCustomers.NavigateUrl = NavigatePageURL(PortalUtils.GetUserCustomersPageId(),
                 PortalUtils.USER_ID_PARAM, PanelSecurity.SelectedUserId.ToString());
+
+            if (!IsPostBack)
+                txtFilterValue.Focus();
         }
 
         private void BindGroupings()

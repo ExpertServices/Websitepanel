@@ -84,10 +84,13 @@
     <Compile Include="CommentsProxy.cs" />
     <Compile Include="Common\EnterpriseServerProxyConfigurator.cs" />
     <Compile Include="Common\UsernameAssertion.cs" />
+    <Compile Include="EnterpriseStorageProxy.cs" />
     <Compile Include="ExchangeServerProxy.cs">
       <SubType>code</SubType>
     </Compile>
+    <Compile Include="HeliconZooProxy.cs" />
     <Compile Include="LyncProxy.cs" />
+    <Compile Include="RemoteDesktopServicesProxy.cs" />
     <Compile Include="VirtualizationServerProxyForPrivateCloud.cs" />
     <Compile Include="CRMProxy.cs" />
     <Compile Include="DatabaseServersProxy.cs" />

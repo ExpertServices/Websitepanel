@@ -338,7 +338,7 @@
 			</thead>
 		</table>
 	</div>
-</div><div style="width:753px;height:350px;overflow:auto;">
+</div><div style="height:350px;overflow:auto;">
 	<asp:GridView ID="gvFiles" runat="server" AutoGenerateColumns="False"
 		AllowSorting="True" CssSelectorClass="NormalGridView" ShowHeader="false"
 		EmptyDataText="gvFiles" DataKeyNames="Name" OnRowCommand="gvFiles_RowCommand"

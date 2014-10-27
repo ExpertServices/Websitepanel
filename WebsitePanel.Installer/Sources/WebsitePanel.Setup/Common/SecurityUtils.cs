@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.IO;
 using System.Text;
 using System.DirectoryServices;
 using System.DirectoryServices.ActiveDirectory;
@@ -1099,7 +1100,18 @@ namespace WebsitePanel.Setup
 		}
 		
 		#endregion
-	}
+
+        #region Windows Services
+
+        public static void DeleteService(string serviceName)
+        {
+            var wmiService = wmi.GetObject(String.Format("Win32_Service.Name='{0}'", serviceName));
+
+            wmiService.Delete();
+        }
+
+	    #endregion
+    }
 
 	#region Enums
 	[Flags]

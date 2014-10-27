@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -76,7 +76,7 @@ namespace WebsitePanel.Portal
             else            
                 email = filterValue;
 
-            IntResult res = ES.Services.CRM.GetCRMUserCount(itemId, name, email);
+            IntResult res = ES.Services.CRM.GetCRMUserCount(itemId, name, email, -1);
             return res.Value;
         }
     

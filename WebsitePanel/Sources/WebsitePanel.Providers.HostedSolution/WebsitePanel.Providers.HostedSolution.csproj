@@ -65,6 +65,7 @@
     </Reference>
     <Reference Include="Microsoft.Crm.Setup.Common">
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Crm.Setup.Common.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Crm.Setup.DatabaseInstaller">
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Crm.Setup.DatabaseInstaller.dll</HintPath>
@@ -81,43 +82,53 @@
     <Reference Include="Microsoft.Exchange.Common, Version=8.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Exchange.Common.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Exchange.Data, Version=8.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Exchange.Data.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Exchange.Data.Directory, Version=8.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Exchange.Data.Directory.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Exchange.Data.Storage, Version=8.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Exchange.Data.Storage.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Exchange.Diagnostics, Version=8.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Exchange.Diagnostics.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Exchange.Extensibility.Internal, Version=8.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Exchange.Extensibility.Internal.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Exchange.Net, Version=8.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Exchange.Net.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Rtc.Management.Core">
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Rtc.Management.Core.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Rtc.Management.Hosted">
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Rtc.Management.Hosted.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Rtc.Management.WritableConfig">
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.Rtc.Management.WritableConfig.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.SharePoint">
       <HintPath>..\..\Lib\References\Microsoft\Microsoft.SharePoint.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -129,6 +140,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Lib\System.Management.Automation.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
@@ -143,7 +156,6 @@
     <Compile Include="Exchange2010SP2.cs" />
     <Compile Include="HostedSharePointServer2010.cs" />
     <Compile Include="Lync2010.cs" />
-    <Compile Include="LyncTransaction.cs" />
     <Compile Include="OCSEdge2007R2.cs" />
     <Compile Include="OCS2007R2.cs" />
     <Compile Include="CRMProvider.cs" />
@@ -181,10 +193,12 @@
     <ProjectReference Include="..\WebsitePanel.Providers.Base\WebsitePanel.Providers.Base.csproj">
       <Project>{684C932A-6C75-46AC-A327-F3689D89EB42}</Project>
       <Name>WebsitePanel.Providers.Base</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\WebsitePanel.Server.Utils\WebsitePanel.Server.Utils.csproj">
       <Project>{E91E52F3-9555-4D00-B577-2B1DBDD87CA7}</Project>
       <Name>WebsitePanel.Server.Utils</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

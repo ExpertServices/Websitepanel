@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnAddHeliconApeFolder.Text" xml:space="preserve">
-    <value>Add .htaccess folder</value>
+    <value>+ Add .htaccess</value>
   </data>
   <data name="cmdDeleteFolder.AlternateText" xml:space="preserve">
     <value>Delete Folder</value>
@@ -132,11 +132,26 @@
   <data name="EnableHeliconApe.Text" xml:space="preserve">
     <value>Enable Helicon Ape</value>
   </data>
+  <data name="gvHeliconApeUsers.Empty" xml:space="preserve">
+    <value>Click "Add .htaccess User" button to add .htaccess user</value>
+  </data>
+  <data name="gvHeliconApeUsersName.Header" xml:space="preserve">
+    <value>.htaccess Users</value>
+  </data>
+  <data name="gvHeliconApeGroups.Empty" xml:space="preserve">
+    <value>Click "Add .htaccess Group" button to add .htaccess group</value>
+  </data>
+  <data name="gvHeliconApeGroupsName.Header" xml:space="preserve">
+    <value>.htaccess Groups</value>
+  </data>
+  <data name="EnableHeliconApeTrial.Text" xml:space="preserve">
+    <value>Enable Helicon Ape (45 days trial)</value>
+  </data>
   <data name="gvHeliconApeFolders.Empty" xml:space="preserve">
-    <value>Click "Add Folder" button to add .htaccess folder</value>
+    <value>Click "Add .htaccess" button to add .htaccess</value>
   </data>
   <data name="gvHeliconApeFoldersName.Header" xml:space="preserve">
-    <value>Helicon Ape Folders</value>
+    <value>Folders containing .htaccess</value>
   </data>
   <data name="EnableFoldersIIs7Warning.Text" xml:space="preserve">
     <value>This feature will automatically change the following settings for the web site:\r\n\r\n- Enable Integration Pipeline;\r\n- Disable Secured Folders feature (if enabled);\r\n- Disable Integrated Windows Authentication;\r\n\r\nPlease click OK button to proceed or Cancel button if you would like to modify these settings manually.</value>
@@ -152,7 +167,7 @@
     mod_rewrite, mod_proxy, mod_auth, mod_gzip, mod_headers, mod_cache, mod_expires, mod_replace and others.</value>
   </data>
   <data name="btnAddHeliconApeGroup.Text" xml:space="preserve">
-    <value>Add Group</value>
+    <value>+ Add Group</value>
   </data>
   <data name="btnInstallHeliconApe.OnClientClick" xml:space="preserve">
     <value>ShowProgressDialog('Installing Helicon Ape.&lt;br /&gt;&lt;br /&gt;&lt;small&gt;It may take several minutes...&lt;/small&gt;');</value>
@@ -167,6 +182,18 @@
     <value>http://www.helicontech.com/ape/doc/wsp.htm</value>
   </data>
   <data name="ModuleHelpLink.Text" xml:space="preserve">
-    <value>Help</value>
+    <value>About .htaccess support &amp; Help</value>
+  </data>
+  <data name="labelSelectHtacesEdit.Text">
+    <value xml:space="preserve">Select .htaccess to edit:</value>
+  </data>
+  <data name="btnAddHeliconApeUser.Text">
+    <value xml:space="preserve">+ Add user</value>
+  </data>
+  <data name="HeliconApeUsersHeader.Text">
+    <value xml:space="preserve">.htpasswd users</value>
+  </data>
+  <data name="HeliconApeGroupsHeader.Text">
+    <value xml:space="preserve">.htpasswd groups</value>
   </data>
 </root>

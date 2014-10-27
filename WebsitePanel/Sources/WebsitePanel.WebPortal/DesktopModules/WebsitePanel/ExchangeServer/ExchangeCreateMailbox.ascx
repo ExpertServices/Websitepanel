@@ -30,11 +30,7 @@
 
 <div id="ExchangeContainer">
 	<div class="Module">
-		<div class="Header">
-			<wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName" />
-		</div>
 		<div class="Left">
-			<wsp:Menu id="menu" runat="server" SelectedItem="mailboxes" />
 		</div>
 		<div class="Content">
 			<div class="Center">
@@ -142,7 +138,22 @@
                                     <asp:Localize ID="locMailboxplanName" runat="server" meta:resourcekey="locMailboxplanName" Text="Mailboxplan Name: *"></asp:Localize>
                                 </td>
                                 <td>                                
-                                    <wsp:MailboxPlanSelector ID="mailboxPlanSelector" runat="server" />
+                                    <wsp:MailboxPlanSelector ID="mailboxPlanSelector" runat="server" Archiving="false" OnChanged="mailboxPlanSelector_Change" />
+                                </td>
+					        </tr>
+                            <tr id="rowRetentionPolicy" runat="server">
+                                <td class="FormLabel150">
+                                    <asp:Localize ID="locRetentionPolicyName" runat="server" meta:resourcekey="locRetentionPolicyName" Text="Retention policy Name: "></asp:Localize>
+                                </td>
+                                <td>                                
+                                    <wsp:MailboxPlanSelector ID="archivingMailboxPlanSelector" runat="server" Archiving="true" AddNone="true" />
+                                </td>
+					        </tr>
+                            <tr id="rowArchiving" runat="server">
+                                <td class="FormLabel150">
+                                </td>
+                                <td>
+                                    <asp:CheckBox ID="chkEnableArchiving" runat="server" meta:resourcekey="chkEnableArchiving" Text="Enable archiving" />                                
                                 </td>
 					        </tr>
 					    </table>

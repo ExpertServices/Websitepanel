@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -27,32 +27,44 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 
 namespace WebsitePanel.Portal.HostedSolution
 {
     public partial class OrganizationUsers : WebsitePanelModuleBase
     {
+        private ServiceLevel[] ServiceLevels;
+        private PackageContext cntx;
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+
             if (!IsPostBack)
-            {
+            {    
                 BindStats();
             }
 
+            BindServiceLevels();
 
-            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
             if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
             {
                 if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
                 {
-                    gvUsers.Columns[4].Visible = false;
+                    gvUsers.Columns[5].Visible = false;
                 }
             }
+            gvUsers.Columns[3].Visible = cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels);
+        }
 
-
+        private void BindServiceLevels()
+        {
+            ServiceLevels = ES.Services.Organizations.GetSupportServiceLevels();
         }
 
         private void BindStats()
@@ -63,6 +75,32 @@ namespace WebsitePanel.Portal.HostedSolution
             usersQuota.QuotaUsedValue = stats.CreatedUsers;
             usersQuota.QuotaValue = stats.AllocatedUsers;
             if (stats.AllocatedUsers != -1) usersQuota.QuotaAvailable = tenantStats.AllocatedUsers - tenantStats.CreatedUsers;
+
+            if(cntx != null && cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels)) BindServiceLevelsStats();
+        }
+
+        private void BindServiceLevelsStats()
+        {
+            ServiceLevels = ES.Services.Organizations.GetSupportServiceLevels();
+            OrganizationUser[] accounts = ES.Services.Organizations.SearchAccounts(PanelRequest.ItemID, "", "", "", true);
+
+            List<ServiceLevelQuotaValueInfo> serviceLevelQuotas = new List<ServiceLevelQuotaValueInfo>();
+            foreach (var quota in Array.FindAll<QuotaValueInfo>(
+                   cntx.QuotasArray, x => x.QuotaName.Contains(Quotas.SERVICE_LEVELS)))
+            {
+                int levelId = ServiceLevels.Where(x => x.LevelName == quota.QuotaName.Replace(Quotas.SERVICE_LEVELS, "")).FirstOrDefault().LevelId;
+                int usedInOrgCount = accounts.Where(x => x.LevelId == levelId).Count();
+
+                serviceLevelQuotas.Add(new ServiceLevelQuotaValueInfo { QuotaName = quota.QuotaName,
+                                                                        QuotaDescription = quota.QuotaDescription + " in this Organization:", 
+                                                                        QuotaTypeId = quota.QuotaTypeId,
+                                                                        QuotaValue = quota.QuotaAllocatedValue,
+                                                                        QuotaUsedValue = usedInOrgCount,
+                                                                        //QuotaUsedValue = quota.QuotaUsedValue,
+                                                                        QuotaAvailable = quota.QuotaAllocatedValue - quota.QuotaUsedValue });
+            }
+            dlServiceLevelQuotas.DataSource = serviceLevelQuotas;
+            dlServiceLevelQuotas.DataBind();
         }
 
         protected void btnCreateUser_Click(object sender, EventArgs e)
@@ -164,7 +202,7 @@ namespace WebsitePanel.Portal.HostedSolution
         }
 
 
-        public string GetAccountImage(int accountTypeId)
+        public string GetAccountImage(int accountTypeId, bool vip)
         {
             string imgName = string.Empty;
 
@@ -181,6 +219,7 @@ namespace WebsitePanel.Portal.HostedSolution
                     imgName = "admin_16.png";
                     break;
             }
+            if (vip && cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels)) imgName = "vip_user_16.png";
 
             return GetThemedImage("Exchange/" + imgName);
         }
@@ -298,8 +337,22 @@ namespace WebsitePanel.Portal.HostedSolution
             return accountID.ToString() + "|" + IsOCS.ToString() + "|" + IsLync.ToString();
         }
 
+        public ServiceLevel GetServiceLevel(int levelId)
+        {
+            ServiceLevel serviceLevel = ServiceLevels.Where(x => x.LevelId == levelId).DefaultIfEmpty(new ServiceLevel { LevelName = "", LevelDescription = "" }).FirstOrDefault();
 
+            bool enable = !string.IsNullOrEmpty(serviceLevel.LevelName);
 
+            enable = enable ? cntx.Quotas.ContainsKey(Quotas.SERVICE_LEVELS + serviceLevel.LevelName) : false;
+            enable = enable ? cntx.Quotas[Quotas.SERVICE_LEVELS + serviceLevel.LevelName].QuotaAllocatedValue != 0 : false;
 
+            if (!enable)
+            {
+                serviceLevel.LevelName = "";
+                serviceLevel.LevelDescription = "";
+            }
+
+            return serviceLevel;
+        }
     }
 }

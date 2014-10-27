@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -32,6 +32,8 @@ using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.WebAppGallery;
 using WebsitePanel.Providers.Common;
+using Microsoft.Web.Administration;
+using Microsoft.Web.Management.Server;
 
 namespace WebsitePanel.Providers.Web
 {
@@ -54,11 +56,16 @@ namespace WebsitePanel.Providers.Web
         void UpdateSiteBindings(string siteId, ServerBinding[] bindings, bool emptyBindingsAllowed);
 		void DeleteSite(string siteId);
 
+        // AppPool
+        void ChangeAppPoolState(string siteId, AppPoolState state);
+        AppPoolState GetAppPoolState(string siteId);
+
 		// virtual directories
 		bool VirtualDirectoryExists(string siteId, string directoryName);
 		WebVirtualDirectory[] GetVirtualDirectories(string siteId);
 		WebVirtualDirectory GetVirtualDirectory(string siteId, string directoryName);
 		void CreateVirtualDirectory(string siteId, WebVirtualDirectory directory);
+        void CreateEnterpriseStorageVirtualDirectory(string siteId, WebVirtualDirectory directory);
 		void UpdateVirtualDirectory(string siteId, WebVirtualDirectory directory);
 		void DeleteVirtualDirectory(string siteId, string directoryName);
 
@@ -117,6 +124,12 @@ namespace WebsitePanel.Providers.Web
         void UpdateHeliconApeGroup(string siteId, WebGroup group);
         void DeleteHeliconApeGroup(string siteId, string groupName);
 
+        // Helicon Zoo
+	    WebVirtualDirectory[] GetZooApplications(string siteId);
+        StringResultObject SetZooEnvironmentVariable(string siteId, string appName, string envName, string envValue);
+        StringResultObject SetZooConsoleEnabled(string siteId, string appName);
+        StringResultObject SetZooConsoleDisabled(string siteId, string appName);
+
 
 		// web app gallery
         bool CheckLoadUserProfile();
@@ -156,6 +169,8 @@ namespace WebsitePanel.Providers.Web
 		SSLCertificate ImportCertificate(WebSite website);
 		bool CheckCertificate(WebSite webSite);
 
-        
+        //Directory Browseing
+        bool GetDirectoryBrowseEnabled(string siteId);
+        void SetDirectoryBrowseEnabled(string siteId, bool enabled);
     }
 }

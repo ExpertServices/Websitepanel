@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -47,7 +47,12 @@ namespace WebsitePanel.Portal
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            BindMenu(menu.Items, PortalUtils.GetModuleMenuItems(this));
+            MenuItem rootItem = new MenuItem(locMenuTitle.Text);
+            rootItem.Selectable = false;
+
+            menu.Items.Add(rootItem);
+
+            BindMenu(rootItem.ChildItems, PortalUtils.GetModuleMenuItems(this));
         }
 
         private void BindMenu(MenuItemCollection items, XmlNodeList nodes)

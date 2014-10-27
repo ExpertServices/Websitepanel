@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -32,5 +32,6 @@ namespace WebsitePanel.Providers.HostedSolution
     {
         public const int OK = 0;
         public const int AD_OBJECT_ALREADY_EXISTS = -1;
+        public const int MAPPED_DRIVE_ALREADY_EXISTS = -2;
     }
 }

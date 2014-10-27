@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -50,6 +50,9 @@ namespace WebsitePanel.Providers.HostedSolution
         string mailboxPlan;
         string publicFolderPermission;
         string userPrincipalName;
+        string notes;
+        int levelId;
+        bool isVip;
 
         public int AccountId
         {
@@ -149,5 +152,47 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.userPrincipalName = value; }
         }
 
+        public string Notes
+        {
+            get { return this.notes; }
+            set { this.notes = value; }
+        }
+
+        int archivingMailboxPlanId;
+        public int ArchivingMailboxPlanId
+        {
+            get { return this.archivingMailboxPlanId; }
+            set { this.archivingMailboxPlanId = value; }
+        }
+
+        string archivingMailboxPlan;
+        public string ArchivingMailboxPlan
+        {
+            get { return this.archivingMailboxPlan; }
+            set { this.archivingMailboxPlan = value; }
+        }
+
+        bool enableArchiving;
+        public bool EnableArchiving
+        {
+            get { return this.enableArchiving; }
+            set { this.enableArchiving = value; }
+        }
+
+        public bool IsVIP
+        {
+            get { return this.isVip; }
+            set { this.isVip = value; }
+        }
+
+        public int LevelId
+        {
+            get { return this.levelId; }
+            set { this.levelId = value; }
+        }
+
+        public bool Disabled { get; set; }
+
+        public bool Locked { get; set; }
     }
 }

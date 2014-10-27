@@ -62,6 +62,9 @@ namespace WebsitePanel.Providers.HostedSolution
         private int warningSharePointStorage;
 
         #endregion
+ 
+        [Persistent]
+        public bool IsDefault { get; set; }
 
         [Persistent]
         public int MaxSharePointStorage

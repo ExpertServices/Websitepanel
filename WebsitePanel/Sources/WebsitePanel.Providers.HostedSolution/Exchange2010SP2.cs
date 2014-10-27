@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -186,7 +186,7 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
         internal override bool DeleteOrganizationInternal(string organizationId, string distinguishedName,
-                    string globalAddressList, string addressList, string roomList, string offlineAddressBook, string securityGroup, string addressBookPolicy)
+                    string globalAddressList, string addressList, string roomList, string offlineAddressBook, string securityGroup, string addressBookPolicy, List<ExchangeDomainName> acceptedDomains)
         {
             ExchangeLog.LogStart("DeleteOrganizationInternal");
             bool ret = true;
@@ -290,6 +290,9 @@ namespace WebsitePanel.Providers.HostedSolution
                     ret = false;
                     ExchangeLog.LogError("Could not disable mail security distribution group " + securityGroup, ex);
                 }
+
+                if (!DeleteOrganizationAcceptedDomains(runSpace, acceptedDomains))
+                    ret = false;
             }
             catch (Exception ex)
             {
@@ -327,7 +330,7 @@ namespace WebsitePanel.Providers.HostedSolution
             string accountName, bool enablePOP, bool enableIMAP,
             bool enableOWA, bool enableMAPI, bool enableActiveSync,
             long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays,
-            int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool IsConsumer)
+            int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool IsConsumer, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning)
         {
 
             ExchangeLog.LogStart("CreateMailEnableUserInternal");
@@ -414,6 +417,14 @@ namespace WebsitePanel.Providers.HostedSolution
                 else
                     cmd.Parameters.Add("HiddenFromAddressListsEnabled", hideFromAddressBook);
                 cmd.Parameters.Add("AddressBookPolicy", addressBookPolicy);
+
+                if (enabledLitigationHold)
+                {
+                    cmd.Parameters.Add("LitigationHoldEnabled", true);
+                    cmd.Parameters.Add("RecoverableItemsQuota", ConvertKBToUnlimited(recoverabelItemsSpace));
+                    cmd.Parameters.Add("RecoverableItemsWarningQuota", ConvertKBToUnlimited(recoverabelItemsWarning));
+                }
+
                 ExecuteShellCommand(runSpace, cmd);
 
                 //Client Access
@@ -429,6 +440,12 @@ namespace WebsitePanel.Providers.HostedSolution
                 cmd.Parameters.Add("PopEnabled", enablePOP);
                 cmd.Parameters.Add("ImapEnabled", enableIMAP);
                 ExecuteShellCommand(runSpace, cmd);
+
+                //calendar settings
+                if (accountType == ExchangeAccountType.Equipment || accountType == ExchangeAccountType.Room)
+                {
+                    SetCalendarSettings(runSpace, id);
+                }
 
                 //add to the security group
                 cmd = new Command("Add-DistributionGroupMember");
@@ -469,6 +486,16 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
 
+        internal override void SetCalendarSettings(Runspace runspace, string id)
+        {
+            ExchangeLog.LogStart("SetCalendarSettings");
+            Command cmd = new Command("Set-CalendarProcessing");
+            cmd.Parameters.Add("Identity", id);
+            cmd.Parameters.Add("AutomateProcessing", CalendarProcessingFlags.AutoAccept);
+            ExecuteShellCommand(runspace, cmd);
+            ExchangeLog.LogEnd("SetCalendarSettings");
+        }
+
         internal override void DisableMailboxInternal(string id)
         {
             ExchangeLog.LogStart("DisableMailboxInternal");
@@ -493,7 +520,7 @@ namespace WebsitePanel.Providers.HostedSolution
                     cmd.Parameters.Add("Identity", id);
                     cmd.Parameters.Add("Confirm", false);
                     ExecuteShellCommand(runSpace, cmd);
-                                       
+
 
                     if (addressbookPolicy == (upn + " AP"))
                     {
@@ -795,7 +822,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 if (value == 14)
                 {
                     value = (int)rk.GetValue("MsiProductMinor", null);
-                    if (value == 2) bResult = true;
+                    if ((value == 2) | (value == 3)) bResult = true;
                 }
                 rk.Close();
             }

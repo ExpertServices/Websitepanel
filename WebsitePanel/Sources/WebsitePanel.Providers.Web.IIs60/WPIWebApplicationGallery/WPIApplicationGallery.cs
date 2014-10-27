@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -30,6 +30,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Caching;
@@ -167,7 +168,7 @@ namespace WebsitePanel.Providers.Web.WPIWebApplicationGallery
             foreach (Keyword keyword in wpi.GetKeywords())
             {
 
-                if (wpi.IsKeywordApplication(keyword))
+                if (wpi.IsKeywordApplication(keyword) && !wpi.IsHiddenKeyword(keyword))
                 {
                     categories.Add(new GalleryCategory
                     {
@@ -195,7 +196,7 @@ namespace WebsitePanel.Providers.Web.WPIWebApplicationGallery
                     applications.Add(MakeGalleryApplicationFromProduct(product));
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 //
             }
@@ -395,7 +396,8 @@ namespace WebsitePanel.Providers.Web.WPIWebApplicationGallery
                            LastUpdated = product.Published,
                            Published = product.Published,
                            Link = (null==product.Link) ? "" :product.Link.ToString(),
-                           InstallerFileSize = size
+                           InstallerFileSize = size,
+                           Keywords = product.Keywords.Select(keyword => keyword.Id).ToList()
                        };
         }
 

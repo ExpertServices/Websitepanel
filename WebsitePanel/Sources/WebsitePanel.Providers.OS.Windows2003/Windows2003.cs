@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -208,6 +208,26 @@ namespace WebsitePanel.Providers.OS
         {
             SecurityUtils.GrantGroupNtfsPermissions(path, users, resetChildPermissions,
                 ServerSettings, usersOU, null);
+        }
+
+        public virtual void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, QuotaType quotaType, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
+        {
+            FileUtils.SetQuotaLimitOnFolder(folderPath, shareNameDrive, quotaLimit, mode, wmiUserName, wmiPassword);
+        }
+
+        public virtual Quota GetQuotaOnFolder(string folderPath, string wmiUserName, string wmiPassword)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual Dictionary<string, Quota> GetQuotasForOrganization(string folderPath, string wmiUserName, string wmiPassword)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void DeleteDirectoryRecursive(string rootPath)
+        {
+            FileUtils.DeleteDirectoryRecursive(rootPath);
         }
         #endregion
 
@@ -728,6 +748,12 @@ namespace WebsitePanel.Providers.OS
         public override bool IsInstalled()
         {
             return WebsitePanel.Server.Utils.OS.GetVersion() == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2003;                        
+        }
+
+        public virtual bool CheckFileServicesInstallation()
+        {
+            return WebsitePanel.Server.Utils.OS.CheckFileServicesInstallation();
+
         }
     }
 }

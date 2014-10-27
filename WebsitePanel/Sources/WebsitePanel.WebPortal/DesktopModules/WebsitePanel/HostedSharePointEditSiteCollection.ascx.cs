@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.DNS;
@@ -148,20 +149,11 @@ namespace WebsitePanel.Portal
                     }
 
                     Organization org = ES.Services.Organizations.GetOrganization(OrganizationId);
+
                     if (org != null)
                     {
-                        maxStorage.ParentQuotaValue = org.MaxSharePointStorage;
-                        maxStorage.QuotaValue = org.MaxSharePointStorage;
-
-                        editMaxStorage.ParentQuotaValue = org.MaxSharePointStorage;
-
-
-
-                        warningStorage.ParentQuotaValue = org.WarningSharePointStorage;
-                        warningStorage.QuotaValue = org.WarningSharePointStorage;
-                        editWarningStorage.ParentQuotaValue = org.WarningSharePointStorage;
+                        SetStorageQuotas(org, item);
                     }
-
                 }
                 //OrganizationDomainName[] domains = ES.Services.Organizations.GetOrganizationDomains(PanelRequest.ItemID);
 
@@ -190,6 +182,51 @@ namespace WebsitePanel.Portal
                 DisableFormControls(this, btnCancel);
                 return;
             }
+        }
+
+        /// <summary> Checks and sets disk quotas values.</summary>
+        /// <param name="organization"> The organization.</param>
+        /// <param name="collection"> The site collection.</param>
+        private void SetStorageQuotas(Organization organization, SharePointSiteCollection collection)
+        {
+            var quotaValue = organization.MaxSharePointStorage;
+
+            if (quotaValue != -1)
+            {
+                var spaceResrved = GetReservedDiskStorageSpace();
+
+                if (spaceResrved > quotaValue)
+                {
+                    quotaValue = 0;
+                }
+                else
+                {
+                    quotaValue -= spaceResrved;
+                }
+
+                if (collection != null)
+                {
+                    quotaValue += (int)collection.MaxSiteStorage;
+                }
+            }
+            
+            maxStorage.ParentQuotaValue = quotaValue;
+            maxStorage.QuotaValue = quotaValue;
+            editMaxStorage.ParentQuotaValue = quotaValue;
+            warningStorage.ParentQuotaValue = quotaValue;
+            warningStorage.QuotaValue = quotaValue;
+            editWarningStorage.ParentQuotaValue = quotaValue;
+
+            btnUpdate.Enabled = quotaValue != 0;
+        }
+
+        /// <summary> Gets disk space reserved by existing site collections.</summary>
+        /// <returns> Reserved disk space vallue.</returns>
+        private int GetReservedDiskStorageSpace()
+        {
+            var existingCollections = ES.Services.HostedSharePointServers.GetSiteCollections(PanelSecurity.PackageId, false);
+
+            return (int)existingCollections.Sum(siteCollection => siteCollection.MaxSiteStorage);
         }
 
         private void SaveItem()

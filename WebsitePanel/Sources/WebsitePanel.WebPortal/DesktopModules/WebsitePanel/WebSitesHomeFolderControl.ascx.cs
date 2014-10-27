@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -81,6 +81,8 @@ namespace WebsitePanel.Portal
             chkAuthAnonymous.Checked = item.EnableAnonymousAccess;
             chkAuthWindows.Checked = item.EnableWindowsAuthentication;
             chkAuthBasic.Checked = item.EnableBasicAuthentication;
+            chkDynamicCompression.Checked = item.EnableDynamicCompression;
+            chkStaticCompression.Checked = item.EnableStaticCompression;
 
             // default documents
             txtDefaultDocs.Text = String.Join("\n", item.DefaultDocs.Split(',', ';'));
@@ -131,6 +133,9 @@ namespace WebsitePanel.Portal
             item.EnableAnonymousAccess = chkAuthAnonymous.Checked;
             item.EnableWindowsAuthentication = chkAuthWindows.Checked;
             item.EnableBasicAuthentication = chkAuthBasic.Checked;
+            item.EnableDynamicCompression = chkDynamicCompression.Checked;
+            item.EnableStaticCompression = chkStaticCompression.Checked;
+
 
             // default documents
             item.DefaultDocs = String.Join(",", Utils.ParseDelimitedString(txtDefaultDocs.Text, '\n', '\r', ';', ','));

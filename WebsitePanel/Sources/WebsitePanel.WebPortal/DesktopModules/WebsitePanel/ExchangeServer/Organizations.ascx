@@ -1,15 +1,11 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Organizations.ascx.cs" Inherits="WebsitePanel.Portal.ExchangeServer.Organizations" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/Quota.ascx" TagName="Quota" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
 <div id="ExchangeContainer">
 	<div class="Module">
-		<div class="Header">
-			<wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName" />
-		</div>
 		<div class="Left">
             &nbsp;
         </div>
@@ -78,6 +74,13 @@
 								</ItemTemplate>
 								<HeaderStyle Wrap="False" />
 							</asp:TemplateField>
+                            <asp:TemplateField meta:resourcekey="gvOrgsDefault">
+							    <ItemTemplate>
+							        <div style="text-align:center">
+								        <input type="radio" name="DefaultOrganization" value='<%# Eval("ItemID") %>' <%# IsChecked(Convert.ToString(Eval("IsDefault")), Eval("ItemID").ToString()) %>/>
+								    </div>
+							    </ItemTemplate>
+						    </asp:TemplateField>
 						    <asp:TemplateField ItemStyle-Width="20px">
 							    <ItemTemplate>
 								    <asp:ImageButton ID="cmdDelete" runat="server" Text="Delete" SkinID="ExchangeDelete"
@@ -102,11 +105,15 @@
 					</asp:ObjectDataSource>
 				    
 				    <br />
+
 				    <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Total Organizations Created:"></asp:Localize>
 				    &nbsp;&nbsp;&nbsp;
 				    <wsp:Quota ID="orgsQuota" runat="server" QuotaName="HostedSolution.Organizations" />
-				    <br />
-				    <br />
+
+                    <div style="text-align: center">
+				        <asp:Button ID="btnSetDefaultOrganization" runat="server" meta:resourcekey="btnSetDefaultOrganization"
+                            Text="Set Default Organization" CssClass="Button1" OnClick="btnSetDefaultOrganization_Click" />
+                    </div>
 				</div>
 			</div>
 		</div>

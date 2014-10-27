@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -92,6 +92,12 @@ namespace WebsitePanel.EnterpriseServer
         public int DeleteOdbcSource(int itemId)
         {
             return OperatingSystemController.DeleteOdbcSource(itemId);
+        }
+
+        [WebMethod]
+        public bool CheckFileServicesInstallation(int serviceId)
+        {
+            return OperatingSystemController.CheckFileServicesInstallation(serviceId);
         }
     }
 }

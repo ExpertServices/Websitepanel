@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -92,7 +92,7 @@ namespace WebsitePanel.Portal
         {
             ddlIpAddresses.Items.Add(new ListItem("<Select IP>", ""));
 
-            PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(PanelSecurity.PackageId, IPAddressPool.WebSites);
+            PackageIPAddress[] ips = ES.Services.Servers.GetPackageUnassignedIPAddresses(PanelSecurity.PackageId, 0, IPAddressPool.WebSites);
             foreach (PackageIPAddress ip in ips)
             {
                 string fullIP = ip.ExternalIP;

@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -36,5 +36,15 @@ namespace WebsitePanel.Providers.HostedSolution
         public string CRMUserName { get; set; }
         public CRMUserAccessMode ClientAccessMode { get; set; }
 		public bool CRMDisabled { get; set; }
+
+        public int CRMUsersCount { get; set; }
+        public string AccountNumber { get; set; }
+        public string СRMOrganizationName { get; set; }
+        public int CRMUsersFullLicenceCount { get; set; }
+        public int CRMUsersReadOnlyLicenceCount { get; set; }
+        public int CRMUsersESSLicenceCount { get; set; }
+        public int UsedSpace { get; set; }
+        public string UsageMonth { get; set; }
+
     }
 }

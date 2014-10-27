@@ -1,4 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UserSpaceBreadcrumb.ascx.cs" Inherits="WebsitePanel.Portal.SkinControls.UserSpaceBreadcrumb" %>
+<%@ Register TagPrefix="wsp" TagName="SpaceOrgsSelector" Src="SpaceOrganizationsSelector.ascx" %>
 <div id="Breadcrumb">
 	<div class="Path">
 		<asp:Repeater ID="repUsersPath" runat="server" OnItemDataBound="repUsersPath_ItemDataBound"
@@ -15,7 +16,16 @@
 			<asp:HyperLink ID="lnkSpace" runat="server" Text="SpaceName" NavigateUrl="#"></asp:HyperLink>
 		</span>
 
-		<asp:Image ID="imgSep2" runat="server" SkinID="PathSeparatorWhite" /> <asp:HyperLink ID="lnkCurrentPage" runat="server"></asp:HyperLink>
+        <asp:Image ID="imgSep2" runat="server" SkinID="PathSeparatorWhite" /> <asp:HyperLink ID="lnkCurrentPage" runat="server"></asp:HyperLink>
+
+        <span id="spanOrgn" class="OrgSpan" runat="server">
+            <asp:Image ID="imgSep3" runat="server" SkinID="PathSeparatorWhite" />
+		    <asp:HyperLink ID="lnkOrgn" runat="server">Organization</asp:HyperLink>
+            <asp:Image ID="imgSep4" runat="server" SkinID="PathSeparatorWhite" />
+            <asp:HyperLink ID="lnkOrgCurPage" runat="server">Home</asp:HyperLink>
+	    </span>
+        
+        <wsp:SpaceOrgsSelector ID="SpaceOrgs" runat="server" />
 	</div>
 	<div class="CurrentNode" runat="server" id="CurrentNode">
 		<asp:Panel ID="pnlViewUser" runat="server">
@@ -25,6 +35,7 @@
 		<asp:UpdatePanel runat="server" ID="updatePanelUsers" UpdateMode="Conditional" ChildrenAsTriggers="true">
 			<ContentTemplate>
 	            <asp:Panel ID="pnlViewSpace" runat="server">
+                    <asp:Label ID="lblUserAccountName" runat="server" Text="Account-" CssClass="Huge" style="margin-right:2px;"/>
 			        <asp:LinkButton ID="cmdSpaceName" runat="server" Text="Change Name" OnClick="cmdChangeName_Click" CssClass="Huge" CausesValidation="false" />
 			        <asp:Label ID="lblSpaceDescription" runat="server" Visible="false"></asp:Label>
 		        </asp:Panel>

@@ -47,17 +47,32 @@ namespace WebsitePanel.AWStats.Viewer
     {
         private void Page_Load(object sender, EventArgs e)
         {
+            string username = Request["username"];
+            string password = Request["password"];
+
             if (Request.IsAuthenticated)
             {
                 string identity = Context.User.Identity.Name;
                 string domain = identity.Split('=')[0];
-
+                
                 if (String.Compare(Request["config"], domain, true) != 0)
                 {
                     FormsAuthentication.SignOut();
-                    Response.Redirect(Request.Url.AbsolutePath);
+                    domain = Request["domain"];
+                    if (!String.IsNullOrEmpty(domain)
+                        && !String.IsNullOrEmpty(username)
+                        && !String.IsNullOrEmpty(password))
+                    {
+                        // perform login
+                        txtUsername.Text = username;
+                        txtDomain.Text = domain;
+                        Login(domain, username, password);
+                    }
+                    else
+                    {
+                        Response.Redirect(Request.Url.AbsolutePath);
+                    }
                 }
-
                 Response.Clear();
 
                 string queryParams = Request.Url.Query;
@@ -74,39 +89,36 @@ namespace WebsitePanel.AWStats.Viewer
 
                 // replace links
                 awStatsPage = awStatsPage.Replace(AWStatsScript, Request.Url.AbsolutePath);
-
                 Response.Write(awStatsPage);
 
                 Response.End();
             }
             else
             {
-                lblMessage.Visible = false;
-
+                lblMessage.Visible = false;               
+            
                 if (!IsPostBack)
                 {
                     string domain = Request["domain"];
-					string username = Request["username"];
-					string password = Request["password"];
 
                     if (String.IsNullOrEmpty(domain))
                         domain = Request["config"];
 
                     txtDomain.Text = domain;
 
-					if (!String.IsNullOrEmpty(username))
-						txtUsername.Text = username;
+                    if (!String.IsNullOrEmpty(username))
+                        txtUsername.Text = username;
 
-					// check for autologin
-					if (!String.IsNullOrEmpty(domain)
-						&& !String.IsNullOrEmpty(username)
-						&& !String.IsNullOrEmpty(password))
-					{
-						// perform login
-						Login(domain, username, password);
-					}
+                    // check for autologin
+                    if (!String.IsNullOrEmpty(domain)
+                        && !String.IsNullOrEmpty(username)
+                        && !String.IsNullOrEmpty(password))
+                    {
+                        // perform login
+                        Login(domain, username, password);
+                    }
                 }
-            }
+            }  
         }
 
         protected void btnView_Click(object sender, EventArgs e)

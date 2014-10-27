@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -81,5 +81,12 @@ namespace WebsitePanel.Providers.OS
         // Synchronizing
         FolderGraph GetFolderGraph(string path);
         void ExecuteSyncActions(FileSyncAction[] actions);
+
+        void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, QuotaType quotaType, string quotaLimit, int mode, string wmiUserName, string wmiPassword);
+        Quota GetQuotaOnFolder(string folderPath, string wmiUserName, string wmiPassword);
+        void DeleteDirectoryRecursive(string rootPath);
+
+        // File Services
+        bool CheckFileServicesInstallation();
     }
 }

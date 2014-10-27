@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -35,6 +35,7 @@ namespace WebsitePanel.Portal.ProviderControls
         public const string RootOU = "RootOU";
         public const string PrimaryDomainController = "PrimaryDomainController";
         public const string TemporyDomainName = "TempDomain";
+        public const string UserNameFormat = "UserNameFormat";
         
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -46,6 +47,12 @@ namespace WebsitePanel.Portal.ProviderControls
             txtPrimaryDomainController.Text = settings[PrimaryDomainController];  
             txtRootOU.Text = settings[RootOU];
             txtTemporyDomainName.Text = settings[TemporyDomainName];
+
+            if (settings.ContainsKey(UserNameFormat))
+            {
+                UserNameFormatDropDown.SelectedValue =
+                    UserNameFormatDropDown.Items.FindByText(settings[UserNameFormat]).Value;
+            }
         }
 
         public void SaveSettings(System.Collections.Specialized.StringDictionary settings)
@@ -53,6 +60,7 @@ namespace WebsitePanel.Portal.ProviderControls
             settings[RootOU] = txtRootOU.Text.Trim();
             settings[PrimaryDomainController] = txtPrimaryDomainController.Text.Trim();
             settings[TemporyDomainName] = txtTemporyDomainName.Text.Trim();
+            settings[UserNameFormat] = UserNameFormatDropDown.SelectedItem.Text;
         }        
     }
 }

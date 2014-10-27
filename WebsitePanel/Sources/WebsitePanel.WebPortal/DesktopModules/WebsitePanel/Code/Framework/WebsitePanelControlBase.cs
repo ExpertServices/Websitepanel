@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -303,6 +303,7 @@ namespace WebsitePanel.Portal
             AddDatabaseVersion(cntx, ResourceGroups.MsSql2005, items, versions);
             AddDatabaseVersion(cntx, ResourceGroups.MsSql2008, items, versions);
             AddDatabaseVersion(cntx, ResourceGroups.MsSql2012, items, versions);
+            AddDatabaseVersion(cntx, ResourceGroups.MsSql2014, items, versions);
             AddDatabaseVersion(cntx, ResourceGroups.MySql4, items, versions);
             AddDatabaseVersion(cntx, ResourceGroups.MySql5, items, versions);
         }

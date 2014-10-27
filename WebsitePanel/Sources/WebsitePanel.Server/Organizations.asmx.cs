@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -32,6 +32,7 @@ using System.Web.Services;
 using System.Web.Services.Protocols;
 using WebsitePanel.Providers;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.Providers.OS;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Server.Utils;
 
@@ -111,6 +112,42 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
+        public int CreateSecurityGroup(string organizationId, string groupName)
+        {
+            return Organization.CreateSecurityGroup(organizationId, groupName);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public OrganizationSecurityGroup GetSecurityGroupGeneralSettings(string groupName, string organizationId)
+        {
+            return Organization.GetSecurityGroupGeneralSettings(groupName, organizationId);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void DeleteSecurityGroup(string groupName, string organizationId)
+        {
+            Organization.DeleteSecurityGroup(groupName, organizationId);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void SetSecurityGroupGeneralSettings(string organizationId, string groupName, string[] memberAccounts, string notes)
+        {
+            Organization.SetSecurityGroupGeneralSettings(organizationId, groupName, memberAccounts, notes);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void AddObjectToSecurityGroup(string organizationId, string accountName, string groupName)
+        {
+            Organization.AddObjectToSecurityGroup(organizationId, accountName, groupName);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void DeleteObjectFromSecurityGroup(string organizationId, string accountName, string groupName)
+        {
+            Organization.DeleteObjectFromSecurityGroup(organizationId, accountName, groupName);
+        }
+
+        [WebMethod, SoapHeader("settings")]
         public void SetUserGeneralSettings(string organizationId, string accountName, string displayName, string password,
             bool hideFromAddressBook, bool disabled, bool locked, string firstName, string initials, string lastName,
             string address, string city, string state, string zip, string country, string jobTitle,
@@ -161,6 +198,54 @@ namespace WebsitePanel.Server
         public string GetSamAccountNameByUserPrincipalName(string organizationId, string userPrincipalName)
         {
             return Organization.GetSamAccountNameByUserPrincipalName(organizationId, userPrincipalName);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool DoesSamAccountNameExist(string accountName)
+        {
+            return Organization.DoesSamAccountNameExist(accountName);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public MappedDrive[] GetDriveMaps(string organizationId)
+        {
+            return Organization.GetDriveMaps(organizationId);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public int CreateMappedDrive(string organizationId, string drive, string labelAs, string path)
+        {
+            return Organization.CreateMappedDrive(organizationId, drive, labelAs, path);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void DeleteMappedDrive(string organizationId, string drive)
+        {
+           Organization.DeleteMappedDrive(organizationId, drive);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void DeleteMappedDriveByPath(string organizationId, string path)
+        {
+            Organization.DeleteMappedDriveByPath(organizationId, path);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void DeleteMappedDrivesGPO(string organizationId)
+        {
+            Organization.DeleteMappedDrivesGPO(organizationId);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void SetDriveMapsTargetingFilter(string organizationId, ExchangeAccount[] accounts, string folderName)
+        {
+            Organization.SetDriveMapsTargetingFilter(organizationId, accounts, folderName);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void ChangeDriveMapFolderPath(string organizationId, string oldFolder, string newFolder)
+        {
+            Organization.ChangeDriveMapFolderPath(organizationId, oldFolder, newFolder);
         }
     }
 }

@@ -1,7 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ExchangeMailboxes.ascx.cs" Inherits="WebsitePanel.Portal.ExchangeServer.ExchangeMailboxes" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/QuotaViewer.ascx" TagName="QuotaViewer" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 
@@ -9,17 +7,13 @@
 
 <div id="ExchangeContainer">
 	<div class="Module">
-		<div class="Header">
-			<wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName" />
-		</div>
 		<div class="Left">
-			<wsp:Menu id="menu" runat="server" SelectedItem="mailboxes" />
 		</div>
 		<div class="Content">
 			<div class="Center">
 				<div class="Title">
 					<asp:Image ID="Image1" SkinID="ExchangeMailbox48" runat="server" />
-					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Mailboxes"></asp:Localize>
+					<asp:Localize ID="locTitle" runat="server" Text="Mailboxes"></asp:Localize>
 				</div>
 				<div class="FormBody">
 				    <wsp:SimpleMessageBox id="messageBox" runat="server" />
@@ -58,10 +52,15 @@
 					    OnRowCommand="gvMailboxes_RowCommand" AllowPaging="True" AllowSorting="True"
 					    DataSourceID="odsAccountsPaged" PageSize="20">
 					    <Columns>
+                            <asp:TemplateField>
+							    <ItemTemplate>							        
+								    <asp:Image ID="img2" runat="server" Width="16px" Height="16px" ImageUrl='<%# GetStateImage((bool)Eval("Locked"),(bool)Eval("Disabled")) %>' ImageAlign="AbsMiddle" />
+							    </ItemTemplate>
+						    </asp:TemplateField>
 						    <asp:TemplateField HeaderText="gvMailboxesDisplayName" SortExpression="DisplayName">
-							    <ItemStyle Width="40%"></ItemStyle>
+							    <ItemStyle Width="20%"></ItemStyle>
 							    <ItemTemplate>
-							        <asp:Image ID="img1" runat="server" ImageUrl='<%# GetAccountImage((int)Eval("AccountType")) %>' ImageAlign="AbsMiddle" />
+							        <asp:Image ID="img1" runat="server" ImageUrl='<%# GetAccountImage((int)Eval("AccountType"),(bool)Eval("IsVIP")) %>' ImageAlign="AbsMiddle" />
 								    <asp:hyperlink id="lnk1" runat="server"
 									    NavigateUrl='<%# GetMailboxEditUrl(Eval("AccountId").ToString()) %>'>
 									    <%# Eval("DisplayName") %>
@@ -69,7 +68,7 @@
 							    </ItemTemplate>
 						    </asp:TemplateField>
 						    <asp:TemplateField HeaderText="gvUsersLogin" SortExpression="UserPrincipalName">
-							    <ItemStyle></ItemStyle>
+							    <ItemStyle Width="20%"></ItemStyle>
 							    <ItemTemplate>							        
 								    <asp:hyperlink id="lnk2" runat="server"
 									    NavigateUrl='<%# GetOrganizationUserEditUrl(Eval("AccountId").ToString()) %>'>
@@ -77,6 +76,14 @@
 								    </asp:hyperlink>
 							    </ItemTemplate>
 						    </asp:TemplateField>
+                            <asp:TemplateField HeaderText="gvServiceLevel">
+                                <ItemStyle Width="20%"></ItemStyle>
+                                <ItemTemplate>
+                                    <asp:Label id="lbServLevel" runat="server" ToolTip = '<%# GetServiceLevel((int)Eval("LevelId")).LevelDescription%>'>
+                                        <%# GetServiceLevel((int)Eval("LevelId")).LevelName%>
+                                    </asp:Label>
+							    </ItemTemplate>
+                            </asp:TemplateField>
 						    <asp:BoundField HeaderText="gvMailboxesEmail" DataField="PrimaryEmailAddress" SortExpression="PrimaryEmailAddress" ItemStyle-Width="25%" />
                             <asp:BoundField HeaderText="gvSubscriberNumber" DataField="SubscriberNumber" ItemStyle-Width="10%" />
                             <asp:BoundField HeaderText="gvMailboxesMailboxPlan" DataField="MailboxPlan" SortExpression="MailboxPlan" ItemStyle-Width="50%" />
@@ -94,19 +101,36 @@
 							SelectMethod="GetExchangeAccountsPaged"
 							SortParameterName="sortColumn"
 							TypeName="WebsitePanel.Portal.ExchangeHelper"
+                            OnSelecting="odsAccountsPaged_Selecting"
 							OnSelected="odsAccountsPaged_Selected">
 						<SelectParameters>
 							<asp:QueryStringParameter Name="itemId" QueryStringField="ItemID" DefaultValue="0" />
 							<asp:Parameter Name="accountTypes" DefaultValue="1,5,6" />
 							<asp:ControlParameter Name="filterColumn" ControlID="ddlSearchColumn" PropertyName="SelectedValue" />
 							<asp:ControlParameter Name="filterValue" ControlID="txtSearchValue" PropertyName="Text" />
+                            <asp:Parameter Name="archiving" Type="Boolean" />
 						</SelectParameters>
 					</asp:ObjectDataSource>
 				    <br />
-				    <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Total Mailboxes Created:"></asp:Localize>
-				    &nbsp;&nbsp;&nbsp;
-				    <wsp:QuotaViewer ID="mailboxesQuota" runat="server" QuotaTypeId="2" />
-				    
+                    <div>
+				        <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Total Mailboxes Created:"></asp:Localize>
+				        &nbsp;&nbsp;&nbsp;
+				        <wsp:QuotaViewer ID="mailboxesQuota" runat="server" QuotaTypeId="2" />
+                    </div>
+				    <asp:Repeater ID="dlServiceLevelQuotas" runat="server" EnableViewState="false">
+                    
+                        <ItemTemplate>
+                            <div>
+                                <asp:Localize ID="locServiceLevelQuota" runat="server" Text='<%# Eval("QuotaDescription") %>'></asp:Localize>
+                                &nbsp;&nbsp;&nbsp;
+                                <wsp:QuotaViewer ID="serviceLevelQuota" runat="server"
+                                    QuotaTypeId='<%# Eval("QuotaTypeId") %>'
+                                    QuotaUsedValue='<%# Eval("QuotaUsedValue") %>'
+                                    QuotaValue='<%# Eval("QuotaValue") %>'
+                                    QuotaAvailable='<%# Eval("QuotaAvailable")%>'/>
+                            </div>
+                        </ItemTemplate>
+                    </asp:Repeater>
 				    
 				</div>
 			</div>

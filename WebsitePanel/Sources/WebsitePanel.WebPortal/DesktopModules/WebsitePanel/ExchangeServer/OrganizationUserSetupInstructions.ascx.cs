@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -39,6 +39,9 @@ namespace WebsitePanel.Portal.ExchangeServer
             if (!IsPostBack)
             {
                 BindInstructions();
+
+                MailboxTabs.Visible = (PanelRequest.Context == "Mailbox");
+                UserTabs.Visible = (PanelRequest.Context == "User");
             }
 
         }

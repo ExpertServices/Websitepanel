@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -462,6 +462,17 @@ namespace WebsitePanel.EnterpriseServer
                 this.DeleteOdbcSourceCompleted(this, new DeleteOdbcSourceCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
+
+        //CO Changes
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/CheckFileServicesInstallation", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool CheckFileServicesInstallation(int serviceId)
+        {
+            object[] results = this.Invoke("CheckFileServicesInstallation", new object[] {
+                        serviceId});
+            return ((bool)(results[0]));
+        }
+        //END
 
         /// <remarks/>
         public new void CancelAsync(object userState)

@@ -44,6 +44,67 @@ namespace WebsitePanel.Providers.HostedSolution
             return de;
         }
 
+        public static string[] GetGroupObjects(string group, string objectType)
+        {
+            return GetGroupObjects(group, objectType, null);
+        }
+
+        public static string[] GetGroupObjects(string group, string objectType, DirectoryEntry entry)
+        {
+            List<string> rets = new List<string>();  
+
+            DirectorySearcher deSearch = new DirectorySearcher
+            {
+                Filter =
+                    "(&(objectClass=" + objectType + "))"
+            };
+
+            if (entry != null)
+            {
+                deSearch.SearchRoot = entry;
+            }
+
+            SearchResultCollection srcObjects = deSearch.FindAll();
+
+            foreach (SearchResult srcObject in srcObjects)
+            {
+                DirectoryEntry de = srcObject.GetDirectoryEntry();
+                PropertyValueCollection props = de.Properties["memberOf"];
+
+                foreach (string str in props)
+                {
+                    string[] parts = str.Split(',');
+                    for (int i = 0; i < parts.Length; i++)
+                    {
+                        if (parts[i].StartsWith("CN="))
+                        {
+                            if (parts[i].Substring(3) == group)
+                            {
+                                rets.Add(de.Path);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return rets.ToArray();
+        }
+
+        public static DirectoryEntry GetGroupPolicyContainer(string displayName)
+        {
+            DirectorySearcher deSearch = new DirectorySearcher
+            {
+                Filter =
+                    ("(&(objectClass=groupPolicyContainer)(displayName=" + displayName + "))")
+            };
+
+            SearchResult results = deSearch.FindOne();
+            DirectoryEntry de = results.GetDirectoryEntry();
+
+            return de;
+        }
+
         public static bool IsUserInGroup(string samAccountName, string group)
         {
             bool res = false;
@@ -206,6 +267,18 @@ namespace WebsitePanel.Providers.HostedSolution
             return ret != null ? ret.ToString() : string.Empty;
         }
 
+        public static string GetCNFromADPath(string path)
+        {
+            string[] parts = path.Substring(path.ToUpper().IndexOf("CN=")).Split(',');
+
+            if (parts.Length > 0)
+            {
+                return parts[0].Substring(3);
+            }
+
+            return null;
+        }
+
         public static string ConvertADPathToCanonicalName(string name)
         {
 
@@ -328,15 +401,28 @@ namespace WebsitePanel.Providers.HostedSolution
             newGroupObject.Properties[ADAttributes.SAMAccountName].Add(group);
 
             newGroupObject.Properties[ADAttributes.GroupType].Add(-2147483640);
+
             newGroupObject.CommitChanges();
         }
 
-        public static void AddUserToGroup(string userPath, string groupPath)
+        public static void AddObjectToGroup(string objectPath, string groupPath)
         {
-            DirectoryEntry user = new DirectoryEntry(userPath);
+            DirectoryEntry obj = new DirectoryEntry(objectPath);
             DirectoryEntry group = new DirectoryEntry(groupPath);
 
-            group.Invoke("Add", user.Path);
+            group.Invoke("Add", obj.Path);
+
+            group.CommitChanges();
+        }
+
+        public static void RemoveObjectFromGroup(string obejctPath, string groupPath)
+        {
+            DirectoryEntry obj = new DirectoryEntry(obejctPath);
+            DirectoryEntry group = new DirectoryEntry(groupPath);
+
+            group.Invoke("Remove", obj.Path);
+
+            group.CommitChanges();
         }
 
         public static bool AdObjectExists(string path)

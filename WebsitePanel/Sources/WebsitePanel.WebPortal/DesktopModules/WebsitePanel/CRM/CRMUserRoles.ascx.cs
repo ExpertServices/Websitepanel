@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -32,6 +32,7 @@ using System.Web.UI.WebControls;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.CRM
 {
@@ -41,6 +42,27 @@ namespace WebsitePanel.Portal.CRM
         {
             if (!IsPostBack)
             {
+                PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+                if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013))
+                {
+                    ddlLicenseType.Items.Add(new System.Web.UI.WebControls.ListItem(
+                        GetSharedLocalizedString("HostedCRM.LicenseProfessional"), CRMUserLycenseTypes.PROFESSIONAL.ToString()));
+                    ddlLicenseType.Items.Add(new System.Web.UI.WebControls.ListItem(
+                        GetSharedLocalizedString("HostedCRM.LicenseBasic"), CRMUserLycenseTypes.BASIC.ToString()));
+                    ddlLicenseType.Items.Add(new System.Web.UI.WebControls.ListItem(
+                        GetSharedLocalizedString("HostedCRM.LicenseEssential"), CRMUserLycenseTypes.ESSENTIAL.ToString()));
+                }
+                else
+                {
+                    ddlLicenseType.Items.Add(new System.Web.UI.WebControls.ListItem(
+                        GetSharedLocalizedString("HostedCRM.LicenseFull"), CRMUserLycenseTypes.FULL.ToString()));
+                    ddlLicenseType.Items.Add(new System.Web.UI.WebControls.ListItem(
+                        GetSharedLocalizedString("HostedCRM.LicenseLimited"), CRMUserLycenseTypes.LIMITED.ToString()));
+                    ddlLicenseType.Items.Add(new System.Web.UI.WebControls.ListItem(
+                        GetSharedLocalizedString("HostedCRM.LicenseESS"), CRMUserLycenseTypes.ESS.ToString()));
+                }
+
+
                 try
                 {
                     OrganizationUser user =
@@ -58,6 +80,10 @@ namespace WebsitePanel.Portal.CRM
                         lblDisplayName.Text = user.DisplayName;
                         lblEmailAddress.Text = user.PrimaryEmailAddress;
                         lblDomainName.Text = user.DomainUserName;
+
+                        int cALType = userResult.Value.CALType + ((int)userResult.Value.ClientAccessMode) * 10;
+
+                        Utils.SelectListItem(ddlLicenseType, cALType);
                     }
                     else
                     {
@@ -85,7 +111,7 @@ namespace WebsitePanel.Portal.CRM
             }
         }
 
-        protected void btnUpdate_Click(object sender, EventArgs e)
+        protected bool SaveSettings()
         {
             try
             {
@@ -103,13 +129,46 @@ namespace WebsitePanel.Portal.CRM
                     ES.Services.CRM.SetUserRoles(PanelRequest.ItemID, PanelRequest.AccountID, PanelSecurity.PackageId,
                                                  roles.ToArray());
 
-                messageBox.ShowMessage(res, "UPDATE_CRM_USER_ROLES", "HostedCRM");
+
+                int CALType = 0;
+                int.TryParse(ddlLicenseType.SelectedValue, out CALType);
+
+                ResultObject res2 =
+                    ES.Services.CRM.SetUserCALType(PanelRequest.ItemID, PanelRequest.AccountID, PanelSecurity.PackageId,
+                                                CALType);
+
+                if (!res2.IsSuccess)
+                    messageBox.ShowMessage(res2, "UPDATE_CRM_USER_ROLES", "HostedCRM");
+                else if (!res.IsSuccess)
+                    messageBox.ShowMessage(res, "UPDATE_CRM_USER_ROLES", "HostedCRM");
+                else
+                    messageBox.ShowMessage(res, "UPDATE_CRM_USER_ROLES", "HostedCRM");
+
+                return res.IsSuccess && res2.IsSuccess;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 messageBox.ShowErrorMessage("UPDATE_CRM_USER_ROLES", ex);
+                return false;
+            }
+
+        }
+
+        protected void btnUpdate_Click(object sender, EventArgs e)
+        {
+            SaveSettings();
+        }
+
+        protected void btnSaveExit_Click(object sender, EventArgs e)
+        {
+            if (SaveSettings())
+            {
+                Response.Redirect(PortalUtils.EditUrl("ItemID", PanelRequest.ItemID.ToString(),
+                    "CRMUsers",
+                    "SpaceID=" + PanelSecurity.PackageId));
             }
         }
+
 
         private void ActivateUser()
         {

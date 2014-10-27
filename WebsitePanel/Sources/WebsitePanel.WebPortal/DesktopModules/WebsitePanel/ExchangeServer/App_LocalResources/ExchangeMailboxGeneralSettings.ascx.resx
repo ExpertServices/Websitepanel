@@ -159,4 +159,19 @@
   <data name="valRequireDisplayName.Text" xml:space="preserve">
     <value>*</value>
   </data>
+  <data name="chkEnableLitigationHold.Text" xml:space="preserve">
+    <value>Enable Litigation Hold</value>
+  </data>
+  <data name="locLitigationHoldSpace.Text" xml:space="preserve">
+    <value>Litigation Hold Storage:</value>
+  </data>
+  <data name="secLitigationHoldSettings.Text" xml:space="preserve">
+    <value>Litigation Hold</value>
+  </data>
+  <data name="locExchangeGuid.Text" xml:space="preserve">
+    <value>Exchange Guid:</value>
+  </data>
+  <data name="secAdvancedInfo.Text" xml:space="preserve">
+    <value>Advanced Information</value>
+  </data>
 </root>

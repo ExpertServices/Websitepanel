@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -30,6 +30,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Management;
+
 
 namespace WebsitePanel.Server.Utils
 {
@@ -286,7 +288,9 @@ namespace WebsitePanel.Server.Utils
             Windows7,
             WindowsServer2008R2,
             Windows8,
-            WindowsServer2012
+            WindowsServer2012,
+            Windows81,
+            WindowsServer2012R2
 		}
 
 		/// <summary>
@@ -386,6 +390,12 @@ namespace WebsitePanel.Server.Utils
                                     else
                                         ret = WindowsVersion.WindowsServer2012;
                                     break;
+                                case 3:
+                                    if (info.wProductType == (byte)WinPlatform.VER_NT_WORKSTATION)
+                                        ret = WindowsVersion.Windows81;
+                                    else
+                                        ret = WindowsVersion.WindowsServer2012R2;
+                                    break;
                             }
                             break;
 					}
@@ -402,6 +412,22 @@ namespace WebsitePanel.Server.Utils
 		{
 			return Environment.GetEnvironmentVariable("windir");
 		}
+        /// <summary>
+        /// Checks Whether the FSRM role services are installed
+        /// </summary>
+        /// <returns></returns>
+        public static bool CheckFileServicesInstallation()
+        {
+
+            ManagementClass objMC = new ManagementClass("Win32_ServerFeature");
+            ManagementObjectCollection objMOC = objMC.GetInstances();
+            foreach (ManagementObject objMO in objMOC)
+                if (objMO.Properties["Name"].Value.ToString().ToLower().Contains("file server resource manager"))
+                    return true;
+
+            return false;
+
+        }
 	}
 }
 

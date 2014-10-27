@@ -30,10 +30,12 @@ using System;
 using System.ComponentModel;
 using System.Web.Services;
 using System.Web.Services.Protocols;
+using System.Collections.Generic;
 using WebsitePanel.Providers;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Server.Utils;
 using Microsoft.Web.Services3;
+using WebsitePanel.Providers.Common;
 
 namespace WebsitePanel.Server
 {
@@ -93,7 +95,7 @@ namespace WebsitePanel.Server
             string accountName, bool enablePOP, bool enableIMAP,
             bool enableOWA, bool enableMAPI, bool enableActiveSync,
             long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays,
-            int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool isConsumer)
+            int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool isConsumer, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning)
         {
             try
             {
@@ -104,7 +106,7 @@ namespace WebsitePanel.Server
                                                            enableOWA, enableMAPI, enableActiveSync,
                                                            issueWarningKB, prohibitSendKB, prohibitSendReceiveKB,
                                                            keepDeletedItemsDays,
-                                                           maxRecipients, maxSendMessageSizeKB, maxReceiveMessageSizeKB, hideFromAddressBook, isConsumer);
+                                                           maxRecipients, maxSendMessageSizeKB, maxReceiveMessageSizeKB, hideFromAddressBook, isConsumer, enabledLitigationHold, recoverabelItemsSpace, recoverabelItemsWarning);
                 LogEnd("CreateMailEnableUser");
                 return ret;
             }
@@ -196,12 +198,12 @@ namespace WebsitePanel.Server
 
 
         [WebMethod, SoapHeader("settings")]
-        public bool DeleteOrganization(string organizationId, string distinguishedName, string globalAddressList, string addressList, string roomList, string offlineAddressBook, string securityGroup, string addressBookPolicy)
+        public bool DeleteOrganization(string organizationId, string distinguishedName, string globalAddressList, string addressList, string roomList, string offlineAddressBook, string securityGroup, string addressBookPolicy, List<ExchangeDomainName> acceptedDomains)
         {
             try
             {
                 LogStart("DeleteOrganization");
-                bool ret = ES.DeleteOrganization(organizationId, distinguishedName, globalAddressList, addressList, roomList, offlineAddressBook, securityGroup, addressBookPolicy);
+                bool ret = ES.DeleteOrganization(organizationId, distinguishedName, globalAddressList, addressList, roomList, offlineAddressBook, securityGroup, addressBookPolicy, acceptedDomains);
                 LogEnd("DeleteOrganization");
                 return ret;
             }
@@ -316,33 +318,6 @@ namespace WebsitePanel.Server
         #endregion
 
         #region Mailboxes
-        /*
-		[WebMethod, SoapHeader("settings")]
-		public string CreateMailbox(string organizationId, string organizationDistinguishedName, string mailboxDatabase,
-			string securityGroup, string offlineAddressBook, string addressBookPolicy, ExchangeAccountType accountType,
-			string displayName, string accountName, string name,
-			string domain, string password, bool enablePOP, bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync,
-            int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook)
-		{
-			try
-			{
-				LogStart("CreateMailbox");
-				string ret = ES.CreateMailbox(organizationId, organizationDistinguishedName, mailboxDatabase, securityGroup,
-					offlineAddressBook, addressBookPolicy, accountType,
-					displayName, accountName, name, domain, password, enablePOP, enableIMAP,
-					enableOWA, enableMAPI, enableActiveSync,
-					issueWarningKB, prohibitSendKB, prohibitSendReceiveKB, keepDeletedItemsDays,
-                    maxRecipients, maxSendMessageSizeKB, maxReceiveMessageSizeKB, hideFromAddressBook);
-				LogEnd("CreateMailbox");
-				return ret;
-			}
-			catch (Exception ex)
-			{
-				LogError("CreateMailbox", ex);
-				throw;
-			}
-		}
-*/
         [WebMethod, SoapHeader("settings")]
         public void DeleteMailbox(string accountName)
         {
@@ -461,13 +436,15 @@ namespace WebsitePanel.Server
 
         [WebMethod, SoapHeader("settings")]
         public void SetMailboxAdvancedSettings(string organizationId, string accountName, bool enablePOP, bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync,
-            long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB)
+            long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB
+            , bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg)
         {
             try
             {
                 LogStart("SetMailboxAdvancedSettings");
                 ES.SetMailboxAdvancedSettings(organizationId, accountName, enablePOP, enableIMAP, enableOWA, enableMAPI, enableActiveSync,
-                    issueWarningKB, prohibitSendKB, prohibitSendReceiveKB, keepDeletedItemsDays, maxRecipients, maxSendMessageSizeKB, maxReceiveMessageSizeKB);
+                    issueWarningKB, prohibitSendKB, prohibitSendReceiveKB, keepDeletedItemsDays, maxRecipients, maxSendMessageSizeKB, maxReceiveMessageSizeKB,
+                    enabledLitigationHold, recoverabelItemsSpace, recoverabelItemsWarning, litigationHoldUrl, litigationHoldMsg);
                 LogEnd("SetMailboxAdvancedSettings");
             }
             catch (Exception ex)
@@ -843,17 +820,43 @@ namespace WebsitePanel.Server
 
         #endregion
 
-		
-        
+        #region Disclaimers
+
+        [WebMethod, SoapHeader("settings")]
+        public int SetDisclaimer(string name, string text)
+        {
+            return ES.SetDisclaimer(name, text);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public int RemoveDisclaimer(string name)
+        {
+            return ES.RemoveDisclaimer(name);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public int AddDisclamerMember(string name, string member)
+        {
+            return ES.AddDisclamerMember(name, member);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public int RemoveDisclamerMember(string name, string member)
+        {
+            return ES.RemoveDisclamerMember(name, member);
+        }
+
+        #endregion
+
         #region Public Folders
-		[WebMethod, SoapHeader("settings")]
-		public void CreatePublicFolder(string organizationId, string securityGroup, string parentFolder,
+        [WebMethod, SoapHeader("settings")]
+		public void CreatePublicFolder(string organizationDistinguishedName, string organizationId, string securityGroup, string parentFolder,
 			string folderName, bool mailEnabled, string accountName, string name, string domain)
 		{
 			try
 			{
 				LogStart("CreatePublicFolder");
-				ES.CreatePublicFolder(organizationId, securityGroup, parentFolder, folderName,
+				ES.CreatePublicFolder(organizationDistinguishedName, organizationId, securityGroup, parentFolder, folderName,
 					mailEnabled, accountName, name, domain);
 
 				LogEnd("CreatePublicFolder");
@@ -866,12 +869,12 @@ namespace WebsitePanel.Server
 		}
 		
 		[WebMethod, SoapHeader("settings")]
-		public void DeletePublicFolder(string folder)
+        public void DeletePublicFolder(string organizationId, string folder)
 		{
 			try
 			{
 				LogStart("DeletePublicFolder");
-				ES.DeletePublicFolder(folder);
+				ES.DeletePublicFolder(organizationId, folder);
 				LogEnd("DeletePublicFolder");
 			}
 			catch (Exception ex)
@@ -899,12 +902,12 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public void DisableMailPublicFolder(string folder)
+        public void DisableMailPublicFolder(string organizationId, string folder)
 		{
 			try
 			{
 				LogStart("DisableMailPublicFolder");
-				ES.DisableMailPublicFolder(folder);
+				ES.DisableMailPublicFolder(organizationId, folder);
 				LogEnd("DisableMailPublicFolder");
 			}
 			catch (Exception ex)
@@ -915,12 +918,12 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public ExchangePublicFolder GetPublicFolderGeneralSettings(string folder)
+        public ExchangePublicFolder GetPublicFolderGeneralSettings(string organizationId, string folder)
 		{
 			try
 			{
 				LogStart("GetPublicFolderGeneralSettings");
-				ExchangePublicFolder ret = ES.GetPublicFolderGeneralSettings(folder);
+				ExchangePublicFolder ret = ES.GetPublicFolderGeneralSettings(organizationId, folder);
 				LogEnd("GetPublicFolderGeneralSettings");
 				return ret;
 			}
@@ -932,13 +935,13 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public void SetPublicFolderGeneralSettings(string folder, string newFolderName,
+        public void SetPublicFolderGeneralSettings(string organizationId, string folder, string newFolderName,
 			 bool hideFromAddressBook, ExchangeAccount[] accounts)
 		{
 			try
 			{
 				LogStart("SetPublicFolderGeneralSettings");
-				ES.SetPublicFolderGeneralSettings(folder, newFolderName, hideFromAddressBook,  accounts);
+				ES.SetPublicFolderGeneralSettings(organizationId, folder, newFolderName, hideFromAddressBook,  accounts);
 				LogEnd("SetPublicFolderGeneralSettings");
 			}
 			catch (Exception ex)
@@ -949,12 +952,12 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public ExchangePublicFolder GetPublicFolderMailFlowSettings(string folder)
+        public ExchangePublicFolder GetPublicFolderMailFlowSettings(string organizationId, string folder)
 		{
 			try
 			{
 				LogStart("GetPublicFolderMailFlowSettings");
-				ExchangePublicFolder ret = ES.GetPublicFolderMailFlowSettings(folder);
+				ExchangePublicFolder ret = ES.GetPublicFolderMailFlowSettings(organizationId, folder);
 				LogEnd("GetPublicFolderMailFlowSettings");
 				return ret;
 			}
@@ -966,13 +969,13 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public void SetPublicFolderMailFlowSettings(string folder,
+        public void SetPublicFolderMailFlowSettings(string organizationId, string folder,
 			string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication)
 		{
 			try
 			{
 				LogStart("SetPublicFolderMailFlowSettings");
-				ES.SetPublicFolderMailFlowSettings(folder, acceptAccounts, rejectAccounts, requireSenderAuthentication);
+				ES.SetPublicFolderMailFlowSettings(organizationId, folder, acceptAccounts, rejectAccounts, requireSenderAuthentication);
 				LogEnd("SetPublicFolderMailFlowSettings");
 			}
 			catch (Exception ex)
@@ -983,12 +986,12 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public ExchangeEmailAddress[] GetPublicFolderEmailAddresses(string folder)
+        public ExchangeEmailAddress[] GetPublicFolderEmailAddresses(string organizationId, string folder)
 		{
 			try
 			{
 				LogStart("GetPublicFolderEmailAddresses");
-				ExchangeEmailAddress[] ret = ES.GetPublicFolderEmailAddresses(folder);
+				ExchangeEmailAddress[] ret = ES.GetPublicFolderEmailAddresses(organizationId, folder);
 				LogEnd("GetPublicFolderEmailAddresses");
 				return ret;
 			}
@@ -1000,12 +1003,12 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public void SetPublicFolderEmailAddresses(string folder, string[] emailAddresses)
+        public void SetPublicFolderEmailAddresses(string organizationId, string folder, string[] emailAddresses)
 		{
 			try
 			{
 				LogStart("SetPublicFolderEmailAddresses");
-				ES.SetPublicFolderEmailAddresses(folder, emailAddresses);
+				ES.SetPublicFolderEmailAddresses(organizationId, folder, emailAddresses);
 				LogEnd("SetPublicFolderEmailAddresses");
 			}
 			catch (Exception ex)
@@ -1016,12 +1019,12 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public void SetPublicFolderPrimaryEmailAddress(string folder, string emailAddress)
+        public void SetPublicFolderPrimaryEmailAddress(string organizationId, string folder, string emailAddress)
 		{
 			try
 			{
 				LogStart("SetPublicFolderPrimaryEmailAddress");
-				ES.SetPublicFolderPrimaryEmailAddress(folder, emailAddress);
+				ES.SetPublicFolderPrimaryEmailAddress(organizationId, folder, emailAddress);
 				LogEnd("SetPublicFolderPrimaryEmailAddress");
 			}
 			catch (Exception ex)
@@ -1032,12 +1035,12 @@ namespace WebsitePanel.Server
 		}
 		
 		[WebMethod, SoapHeader("settings")]
-		public ExchangeItemStatistics[] GetPublicFoldersStatistics(string[] folders)
+        public ExchangeItemStatistics[] GetPublicFoldersStatistics(string organizationId, string[] folders)
 		{
 			try
 			{
 				LogStart("GetPublicFoldersStatistics");
-				ExchangeItemStatistics[] ret = ES.GetPublicFoldersStatistics(folders);
+				ExchangeItemStatistics[] ret = ES.GetPublicFoldersStatistics(organizationId, folders);
 				LogEnd("GetPublicFoldersStatistics");
 				return ret;
 			}
@@ -1049,12 +1052,12 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public string[] GetPublicFoldersRecursive(string parent)
+        public string[] GetPublicFoldersRecursive(string organizationId, string parent)
 		{
 			try
 			{
 				LogStart("GetPublicFoldersRecursive");
-				string[] ret = ES.GetPublicFoldersRecursive(parent);
+				string[] ret = ES.GetPublicFoldersRecursive(organizationId, parent);
 				LogEnd("GetPublicFoldersRecursive");
 				return ret;
 			}
@@ -1066,12 +1069,12 @@ namespace WebsitePanel.Server
 		}
 
 		[WebMethod, SoapHeader("settings")]
-		public long GetPublicFolderSize(string folder)
+        public long GetPublicFolderSize(string organizationId, string folder)
 		{
 			try
 			{
 				LogStart("GetPublicFolderSize");
-				long ret = ES.GetPublicFolderSize(folder);
+				long ret = ES.GetPublicFolderSize(organizationId, folder);
 				LogEnd("GetPublicFolderSize");
 				return ret;
 			}
@@ -1227,8 +1230,105 @@ namespace WebsitePanel.Server
             }
         }
         #endregion
-		
-		protected void LogStart(string func)
+
+        #region Archiving
+        [WebMethod, SoapHeader("settings")]
+        public ResultObject SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy)
+        {
+            ResultObject res = null;
+            try
+            {
+                LogStart("SetMailBoxArchiving");
+                res = ES.SetMailBoxArchiving(organizationId, accountName, archive, archiveQuotaKB, archiveWarningQuotaKB, RetentionPolicy);
+                LogEnd("SetMailBoxArchiving");
+            }
+            catch (Exception ex)
+            {
+                LogError("SetMailBoxArchiving", ex);
+                throw;
+            }
+
+            return res;
+        }
+
+        #endregion
+
+        #region Retention policy
+        [WebMethod, SoapHeader("settings")]
+        public ResultObject SetRetentionPolicyTag(string Identity, ExchangeRetentionPolicyTagType Type, int AgeLimitForRetention, ExchangeRetentionPolicyTagAction RetentionAction)
+        {
+            ResultObject res = null;
+            try
+            {
+                LogStart("SetRetentionPolicyTag");
+                res = ES.SetRetentionPolicyTag(Identity, Type, AgeLimitForRetention, RetentionAction);
+                LogEnd("SetRetentionPolicyTag");
+            }
+            catch (Exception ex)
+            {
+                LogError("SetRetentionPolicyTag", ex);
+                throw;
+            }
+            return res;
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public ResultObject RemoveRetentionPolicyTag(string Identity)
+        {
+            ResultObject res = null;
+            try
+            {
+                LogStart("RemoveRetentionPolicyTag");
+                res = ES.RemoveRetentionPolicyTag(Identity);
+                LogEnd("RemoveRetentionPolicyTag");
+            }
+            catch (Exception ex)
+            {
+                LogError("RemoveRetentionPolicyTag", ex);
+                throw;
+            }
+            return res;
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public ResultObject SetRetentionPolicy(string Identity, string[] RetentionPolicyTagLinks)
+        {
+            ResultObject res = null;
+            try
+            {
+                LogStart("SetRetentionPolicy");
+                res = ES.SetRetentionPolicy(Identity, RetentionPolicyTagLinks);
+                LogEnd("SetRetentionPolicy");
+            }
+            catch (Exception ex)
+            {
+                LogError("SetRetentionPolicy", ex);
+                throw;
+            }
+            return res;
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public ResultObject RemoveRetentionPolicy(string Identity)
+        {
+            ResultObject res = null;
+            try
+            {
+                LogStart("RemoveRetentionPolicy");
+                res = ES.RemoveRetentionPolicy(Identity);
+                LogEnd("RemoveRetentionPolicy");
+            }
+            catch (Exception ex)
+            {
+                LogError("RemoveRetentionPolicy", ex);
+                throw;
+            }
+            return res;
+        }
+
+        #endregion
+
+        protected void LogStart(string func)
 		{
 			Log.WriteStart("'{0}' {1}", ProviderSettings.ProviderName, func);
 		}

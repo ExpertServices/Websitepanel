@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -66,6 +66,23 @@ namespace WebsitePanel.Server
             catch (Exception ex)
             {
                 Log.WriteError(String.Format("Error: {0}.CreateOrganization", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public string GetOrganizationTenantId(string organizationId)
+        {
+            try
+            {
+                Log.WriteStart("{0}.GetOrganizationTenantId", ProviderSettings.ProviderName);
+                string ret = Lync.GetOrganizationTenantId(organizationId);
+                Log.WriteEnd("{0}.GetOrganizationTenantId", ProviderSettings.ProviderName);
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("Error: {0}.GetOrganizationTenantId", ProviderSettings.ProviderName), ex);
                 throw;
             }
         }
@@ -247,7 +264,25 @@ namespace WebsitePanel.Server
             }
         }
 
+        [WebMethod, SoapHeader("settings")]
+        public string[] GetPolicyList(LyncPolicyType type, string name)
+        {
+            string[] ret = null;
 
+            try
+            {
+                Log.WriteStart("{0}.GetPolicyList", ProviderSettings.ProviderName);
+                ret = Lync.GetPolicyList(type, name);
+                Log.WriteEnd("{0}.GetPolicyList", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("Error: {0}.GetPolicyList", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+
+            return ret;
+        }
 
 
     }

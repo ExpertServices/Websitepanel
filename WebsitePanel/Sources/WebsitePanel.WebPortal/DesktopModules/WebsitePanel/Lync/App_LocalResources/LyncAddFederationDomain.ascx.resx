@@ -135,4 +135,10 @@
   <data name="DomainRequiredValidator.Text" xml:space="preserve">
     <value>*</value>
   </data>
+  <data name="Text.PageName" xml:space="preserve">
+    <value>Lync Add Federation Domain</value>
+  </data>
+  <data name="locTitle.Text" xml:space="preserve">
+    <value>Lync Add Federation Domain</value>
+  </data>
 </root>

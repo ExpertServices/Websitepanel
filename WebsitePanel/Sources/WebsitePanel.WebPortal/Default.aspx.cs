@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -58,6 +58,7 @@ namespace WebsitePanel.WebPortal
         public const string SKINS_FOLDER = "App_Skins";
         public const string CONTAINERS_FOLDER = "App_Containers";
         public const string CONTENT_PANE_NAME = "ContentPane";
+        public const string LEFT_PANE_NAME = "LeftPane";
         public const string MODULE_TITLE_CONTROL_ID = "lblModuleTitle";
         public const string MODULE_ICON_CONTROL_ID = "imgModuleIcon";
         public const string DESKTOP_MODULES_FOLDER = "DesktopModules";
@@ -234,9 +235,23 @@ namespace WebsitePanel.WebPortal
                 if (ctrlPane != null)
                 {
                     // add "edit" module
-                    if(PortalConfiguration.Site.Modules.ContainsKey(ModuleID))
+                    if (PortalConfiguration.Site.Modules.ContainsKey(ModuleID))
                         AddModuleToContentPane(ctrlPane, PortalConfiguration.Site.Modules[ModuleID],
                             ModuleControlID, editMode);
+                }
+                // find LeftPane
+                ctrlPane = ctrlSkin.FindControl(LEFT_PANE_NAME);
+                if (ctrlPane != null && page.ContentPanes.ContainsKey(LEFT_PANE_NAME))
+                {
+                    ContentPane pane = page.ContentPanes[LEFT_PANE_NAME];
+                     foreach (PageModule module in pane.Modules)
+                        {
+                            if (IsAccessibleToUser(Context, module.ViewRoles))
+                            {
+                                // add module
+                                AddModuleToContentPane(ctrlPane, module, "", false);
+                            }
+                        }
                 }
             }
         }

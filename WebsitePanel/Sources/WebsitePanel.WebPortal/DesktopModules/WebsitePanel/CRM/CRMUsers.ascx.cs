@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -41,17 +41,43 @@ namespace WebsitePanel.Portal.CRM
             {
                 messageBox.ShowErrorMessage("NOT_CRM_ORGANIZATION");
                 btnCreateUser.Enabled = false;
+                CRM2011Panel.Visible = false;
+                CRM2013Panel.Visible = false;
             }
             else
             {
                 OrganizationStatistics stats = ES.Services.Organizations.GetOrganizationStatisticsByOrganization(PanelRequest.ItemID);
-                OrganizationStatistics tenantStats = ES.Services.Organizations.GetOrganizationStatistics(PanelRequest.ItemID);
-                int allocatedCrmUsers = stats.AllocatedCRMUsers;
-                int usedUsers = stats.CreatedCRMUsers;
-                usersQuota.QuotaUsedValue = usedUsers;
-                usersQuota.QuotaValue = allocatedCrmUsers;
 
-                if (stats.AllocatedCRMUsers != -1) usersQuota.QuotaAvailable = tenantStats.AllocatedCRMUsers - tenantStats.CreatedCRMUsers;
+                PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+                if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013))
+                {
+                    CRM2011Panel.Visible = false;
+                    CRM2013Panel.Visible = true;
+
+                    professionalusersQuota.QuotaUsedValue = stats.CreatedProfessionalCRMUsers;
+                    professionalusersQuota.QuotaValue = stats.AllocatedProfessionalCRMUsers;
+
+                    basicusersQuota.QuotaUsedValue = stats.CreatedBasicCRMUsers;
+                    basicusersQuota.QuotaValue = stats.AllocatedBasicCRMUsers;
+
+                    essentialusersQuota.QuotaUsedValue = stats.CreatedEssentialCRMUsers;
+                    essentialusersQuota.QuotaValue = stats.AllocatedEssentialCRMUsers;
+                }
+                else
+                {
+                    CRM2011Panel.Visible = true;
+                    CRM2013Panel.Visible = false;
+
+                    usersQuota.QuotaUsedValue = stats.CreatedCRMUsers;
+                    usersQuota.QuotaValue = stats.AllocatedCRMUsers;
+
+                    limitedusersQuota.QuotaUsedValue = stats.CreatedLimitedCRMUsers;
+                    limitedusersQuota.QuotaValue = stats.AllocatedLimitedCRMUsers;
+
+                    essusersQuota.QuotaUsedValue = stats.CreatedESSCRMUsers;
+                    essusersQuota.QuotaValue = stats.AllocatedESSCRMUsers;
+                }
+
             }
         }
 

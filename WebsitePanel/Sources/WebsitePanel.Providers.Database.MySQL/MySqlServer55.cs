@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -32,7 +32,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Data;
 using Microsoft.Win32;
-using MySql.Data.MySqlClient;
+//using MySql.Data.MySqlClient;
 using System.IO;
 
 using WebsitePanel.Server.Utils;

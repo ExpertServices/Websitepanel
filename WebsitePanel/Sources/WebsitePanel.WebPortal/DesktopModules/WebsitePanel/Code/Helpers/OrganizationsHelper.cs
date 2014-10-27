@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -55,6 +55,19 @@ namespace WebsitePanel.Portal
             
             return orgs.Tables[1];
         }
+
+        //public Organization[] GetOrganizations(int packageId, bool recursive)
+        //{
+        //    return ES.Services.Organizations.GetOrganizations(packageId, recursive);
+        //}
+
+        public DataTable GetOrganizations(int packageId, bool recursive)
+        {
+            orgs = ES.Services.Organizations.GetRawOrganizationsPaged(packageId,
+                recursive, "ItemName", "%", "ItemName", -1, int.MaxValue);
+
+            return orgs.Tables[1];
+        }
         #endregion
 
         #region Accounts
@@ -80,6 +93,31 @@ namespace WebsitePanel.Portal
             users = ES.Services.Organizations.GetOrganizationUsersPaged(itemId, filterColumn, filterValue, sortColumn, startRowIndex, maximumRows);
 
             return users.PageUsers;            
+        }
+
+        #endregion
+
+        #region Security Groups
+
+        ExchangeAccountsPaged accounts;
+
+        public int GetOrganizationSecurityGroupsPagedCount(int itemId, string accountTypes,
+            string filterColumn, string filterValue)
+        {
+            return accounts.RecordsCount;
+        }
+
+        public ExchangeAccount[] GetOrganizationSecurityGroupsPaged(int itemId, string accountTypes,
+            string filterColumn, string filterValue,
+            int maximumRows, int startRowIndex, string sortColumn)
+        {
+            if (!String.IsNullOrEmpty(filterValue))
+                filterValue = filterValue + "%";
+
+            accounts = ES.Services.Organizations.GetOrganizationSecurityGroupsPaged(itemId,
+                filterColumn, filterValue, sortColumn, startRowIndex, maximumRows);
+
+            return accounts.PageItems;
         }
 
         #endregion

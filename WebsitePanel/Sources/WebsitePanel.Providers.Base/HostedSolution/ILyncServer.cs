@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -35,6 +35,7 @@ namespace WebsitePanel.Providers.HostedSolution
     public interface ILyncServer
     {
         string CreateOrganization(string organizationId, string sipDomain, bool enableConferencing, bool enableConferencingVideo, int maxConferenceSize, bool enabledFederation, bool enabledEnterpriseVoice);
+        string GetOrganizationTenantId(string organizationId);
         bool DeleteOrganization(string organizationId, string sipDomain);
 
         bool CreateUser(string organizationId, string userUpn, LyncUserPlan plan);
@@ -48,5 +49,7 @@ namespace WebsitePanel.Providers.HostedSolution
         bool RemoveFederationDomain(string organizationId, string domainName);
 
         void ReloadConfiguration();
+
+        string[] GetPolicyList(LyncPolicyType type, string name);
     }
 }

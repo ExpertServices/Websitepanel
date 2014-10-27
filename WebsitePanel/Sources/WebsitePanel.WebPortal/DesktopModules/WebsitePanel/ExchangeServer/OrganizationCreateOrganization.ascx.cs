@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -27,8 +27,6 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
-using System.Data;
-using System.Text;
 using System.Collections.Generic;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
@@ -39,18 +37,19 @@ namespace WebsitePanel.Portal.ExchangeServer
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
             DomainInfo[] domains = ES.Services.Servers.GetMyDomains(PanelSecurity.PackageId);
-
             Organization[] orgs = ES.Services.Organizations.GetOrganizations(PanelSecurity.PackageId, false);
-
-            List<OrganizationDomainName> list = new List<OrganizationDomainName>();
+            var list = new List<OrganizationDomainName>();
+            SetPolicy(PanelSecurity.PackageId, UserSettings.EXCHANGE_POLICY, "OrgIdPolicy");
 
             foreach (Organization o in orgs)
             {
                 OrganizationDomainName[] tmpList = ES.Services.Organizations.GetOrganizationDomains(o.Id);
 
-                foreach (OrganizationDomainName name in tmpList) list.Add(name);
+                foreach (OrganizationDomainName name in tmpList)
+                {
+                    list.Add(name);
+                }
             }
 
             foreach (DomainInfo d in domains)
@@ -65,15 +64,61 @@ namespace WebsitePanel.Portal.ExchangeServer
                             bAdd = false;
                             break;
                         }
-
                     }
-                    if (bAdd) ddlDomains.Items.Add(d.DomainName.ToLower());
+                    if (bAdd)
+                    {
+                        ddlDomains.Items.Add(d.DomainName.ToLower());
+                    }
                 }
             }
 
             if (ddlDomains.Items.Count == 0)
             {
                 ddlDomains.Visible = btnCreate.Enabled = false;
+            }
+        }
+
+        public void SetPolicy(int packageId, string settingsName, string key)
+        {
+            PackageInfo package = PackagesHelper.GetCachedPackage(packageId);
+
+            if (package != null)
+            {
+                SetOrgIdPolicy(package.UserId, settingsName, key);
+            }
+        }
+
+        public void SetOrgIdPolicy(int userId, string settingsName, string key)
+        {
+            UserInfo user = UsersHelper.GetCachedUser(userId);
+
+            if (user != null)
+            {
+                UserSettings settings = ES.Services.Users.GetUserSettings(userId, settingsName);
+
+                if (settings != null && settings["OrgIdPolicy"] != null)
+                {
+                    SetOrgIdPolicy(settings);
+                }
+            }
+        }
+
+        private void SetOrgIdPolicy(UserSettings settings)
+        {
+            string policyValue = settings["OrgIdPolicy"];
+            string[] values = policyValue.Split(';');
+
+            if (values.Length > 1 && Convert.ToBoolean(values[0]))
+            {
+                try
+                {
+                    int maxLength = Convert.ToInt32(values[1]);
+                    txtOrganizationID.MaxLength = maxLength;
+                    valRequireCorrectOrgID.ValidationExpression = string.Format("[a-zA-Z0-9.-]{{1,{0}}}", maxLength);
+                }
+                catch (Exception)
+                {
+                }
             }
         }
 
@@ -85,14 +130,13 @@ namespace WebsitePanel.Portal.ExchangeServer
         private void CreateOrganization()
         {
             if (!Page.IsValid)
+            {
                 return;
+            }
 
             try
             {
-
-                int itemId = ES.Services.Organizations.CreateOrganization(PanelSecurity.PackageId,
-                    txtOrganizationID.Text.Trim().ToLower(), txtOrganizationName.Text.Trim().ToLower(),
-                    ddlDomains.SelectedValue.Trim().ToLower());
+                int itemId = ES.Services.Organizations.CreateOrganization(PanelSecurity.PackageId, txtOrganizationID.Text.Trim().ToLower(), txtOrganizationName.Text.Trim().ToLower(), ddlDomains.SelectedValue.Trim().ToLower());
 
                 if (itemId < 0)
                 {
@@ -100,9 +144,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                     return;
                 }
 
-                Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "organization_home",
-                    "ItemID=" + itemId));
-
+                Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "organization_home", "ItemID=" + itemId));
             }
             catch (Exception ex)
             {

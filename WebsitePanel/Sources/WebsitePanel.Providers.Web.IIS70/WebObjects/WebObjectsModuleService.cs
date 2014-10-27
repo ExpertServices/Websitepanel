@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -25,6 +25,10 @@
 // ANY  THEORY  OF  LIABILITY,  WHETHER  IN  CONTRACT,  STRICT  LIABILITY,  OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Security.Permissions;
 
 namespace WebsitePanel.Providers.Web.Iis.WebObjects
 {
@@ -348,6 +352,98 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 			return siteState;
         }
 
+        // AppPool
+        public void ChangeAppPoolState(string siteId, AppPoolState state)
+        {
+            using (var srvman = GetServerManager())
+            {
+                var site = srvman.Sites[siteId];
+                //
+                if (site == null)
+                    return;
+
+                foreach (Application app in site.Applications)
+                {
+                    string AppPoolName = app.ApplicationPoolName;
+
+                    if (string.IsNullOrEmpty(AppPoolName))
+                        continue;
+
+                    ApplicationPool pool = srvman.ApplicationPools[AppPoolName];
+                    if (pool == null) continue;
+
+                    //
+                    switch (state)
+                    {
+                        case AppPoolState.Started:
+                        case AppPoolState.Starting:
+                            if ((pool.State != ObjectState.Started) && (pool.State != ObjectState.Starting))
+                            {
+                                pool.Start();
+                                pool.AutoStart = true;
+                            }
+                            break;
+                        case AppPoolState.Stopped:
+                        case AppPoolState.Stopping:
+                            if ((pool.State != ObjectState.Stopped) && (pool.State != ObjectState.Stopping))
+                            {
+                                pool.Stop();
+                                pool.AutoStart = false;
+                            }
+                            break;
+                        case AppPoolState.Recycle:
+                            pool.Recycle();
+                            pool.AutoStart = true;
+                            break;
+                    }
+
+                    srvman.CommitChanges();
+
+                }
+            }
+        }
+
+        public AppPoolState GetAppPoolState(ServerManager srvman, string siteId)
+        {
+            Site site = srvman.Sites[siteId];
+
+            // ensure website exists
+            if (site == null)
+                return AppPoolState.Unknown;
+
+            string AppPoolName = site.ApplicationDefaults.ApplicationPoolName;
+            foreach (Application app in site.Applications)
+                AppPoolName = app.ApplicationPoolName;
+
+            if (string.IsNullOrEmpty(AppPoolName))
+                return AppPoolState.Unknown;
+
+            ApplicationPool pool = srvman.ApplicationPools[AppPoolName];
+
+            if (pool == null) return AppPoolState.Unknown;
+
+            AppPoolState state = AppPoolState.Unknown;
+
+            switch (pool.State)
+            {
+                case ObjectState.Started:
+                    state = AppPoolState.Started;
+                    break;
+                case ObjectState.Starting:
+                    state = AppPoolState.Starting;
+                    break;
+                case ObjectState.Stopped:
+                    state = AppPoolState.Stopped;
+                    break;
+                case ObjectState.Stopping:
+                    state = AppPoolState.Stopping;
+                    break;
+            }
+
+            return state;
+        }
+
+
         public bool SiteExists(ServerManager srvman, string siteId)
         {
             return (srvman.Sites[siteId] != null);
@@ -569,6 +665,133 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 			return vdirs.ToArray();
 		}
 
+        public WebVirtualDirectory[] GetZooApplications(ServerManager srvman, string siteId)
+        {
+            if (!SiteExists(srvman, siteId))
+                return new WebVirtualDirectory[] { };
+
+            var vdirs = new List<WebVirtualDirectory>();
+            var iisObject = srvman.Sites[siteId];
+            //
+            foreach (var item in iisObject.Applications)
+            {
+                Configuration cfg = item.GetWebConfiguration();
+                string location = siteId + ConfigurationUtility.GetQualifiedVirtualPath(item.Path);
+                ConfigurationSection section;
+                try
+                {
+                    section = cfg.GetSection("system.webServer/heliconZoo", location);
+                }
+                catch(Exception)
+                {
+                    // looks like Helicon Zoo is not installed, return empty array
+                    return vdirs.ToArray();
+                }
+
+                if (section.GetCollection().Count > 0)
+                {
+                    WebVirtualDirectory vdir = new WebVirtualDirectory
+                        {
+                            Name = ConfigurationUtility.GetNonQualifiedVirtualPath(item.Path),
+                            ContentPath = item.VirtualDirectories[0].PhysicalPath
+                        };
+
+                    ConfigurationElement zooAppElement = section.GetCollection()[0];
+                    ConfigurationElementCollection envColl = zooAppElement.GetChildElement("environmentVariables").GetCollection();
+                        
+                    foreach (ConfigurationElement env in  envColl)
+                    {
+                        if ((string) env.GetAttributeValue("name") == "CONSOLE_URL")
+                        {
+                            vdir.ConsoleUrl = ConfigurationUtility.GetQualifiedVirtualPath(item.Path);
+                            if (!vdir.ConsoleUrl.EndsWith("/"))
+                            {
+                                vdir.ConsoleUrl += "/";
+                            }
+                            vdir.ConsoleUrl += (string)env.GetAttributeValue("value");
+                        }
+                    }
+                        
+                    vdirs.Add(vdir);
+                        
+                }
+            }
+
+            return vdirs.ToArray();
+        }
+
+        public void SetZooConsoleEnabled(ServerManager srvman, string siteId, string appName)
+        {
+
+            Random random = new Random((int) DateTime.Now.Ticks);
+            byte[] bytes = new byte[8];
+            random.NextBytes(bytes);
+            string consoleUrl = "console_" + Convert.ToBase64String(bytes);
+            SetZooEnvironmentVariable(srvman, siteId, appName, "CONSOLE_URL", consoleUrl);
+
+        }
+        
+        public void SetZooConsoleDisabled(ServerManager srvman, string siteId, string appName)
+        {
+            SetZooEnvironmentVariable(srvman, siteId, appName, "CONSOLE_URL", null);
+        }
+
+
+        public void SetZooEnvironmentVariable(ServerManager srvman, string siteId, string appName, string envName, string envValue)
+        {
+            if (!SiteExists(srvman, siteId))
+                return;
+
+            
+            var iisObject = srvman.Sites[siteId];
+            //
+            foreach (var item in iisObject.Applications)
+            {
+                
+
+                if (appName == ConfigurationUtility.GetNonQualifiedVirtualPath(item.Path))
+                {
+                    Configuration cfg = item.GetWebConfiguration();
+                    ConfigurationSection section = cfg.GetSection("system.webServer/heliconZoo");
+                    ConfigurationElement zooAppElement = section.GetCollection()[0];
+                    ConfigurationElementCollection envColl = zooAppElement.GetChildElement("environmentVariables").GetCollection();
+
+                    //remove all CONSOLE_URLs
+                    for (int i = 0; i < envColl.Count; )
+                    {
+                        if (String.Compare(envColl[i].GetAttributeValue("name").ToString(), envName, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            envColl.RemoveAt(i);        
+                        }
+                        else
+                        {
+                            ++i;
+                        }
+                        
+                    }
+
+                    // do not set empty value
+                    if (!string.IsNullOrEmpty(envValue))
+                    {
+                        ConfigurationElement el = envColl.CreateElement();
+                        el.SetAttributeValue("name", envName);
+                        el.SetAttributeValue("value", envValue);
+                        envColl.Add(el);
+                    }
+
+                    
+                    srvman.CommitChanges();
+                }
+
+              
+
+            }
+         
+        }
+
+
+      
+
 		public WebVirtualDirectory GetVirtualDirectory(string siteId, string directoryName)
 		{
 			//
@@ -645,4 +868,6 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 			}
         }
     }
+
+    
 }

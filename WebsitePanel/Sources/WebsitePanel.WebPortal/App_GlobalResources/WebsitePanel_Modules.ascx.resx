@@ -454,10 +454,10 @@
     <value>Secure User Properties</value>
   </data>
   <data name="ModuleTitle.HeliconApeFolderProperties" xml:space="preserve">
-    <value>.htaccess Folder Properties</value>
+    <value>Edit .htaccess</value>
   </data>
   <data name="ModuleTitle.HeliconApeFolderAuthProperties" xml:space="preserve">
-    <value>.htaccess Folder Secure Properties</value>
+    <value>.htaccess Secure Properties</value>
   </data>
   <data name="ModuleTitle.HeliconApeGroupProperties" xml:space="preserve">
     <value>Helicon Ape Group Properties</value>
@@ -762,10 +762,31 @@
   <data name="ModuleTitle.SystemCenterServerAddresses" xml:space="preserve">
     <value>System Center Server Addresses</value>
   </data>
-	<data name="ModuleTitle.UserAccountVLanCreate" xml:space="preserve">
+  <data name="ModuleTitle.UserAccountVLanCreate" xml:space="preserve">
     <value>Add VLan to user</value>
   </data>
   <data name="ModuleTitle.SetupControlPanelAccounts" xml:space="preserve">
     <value>Setup WebsitePanel Accounts</value>
+  </data>
+  <data name="ModuleTitle.ApplyEnableHardQuotaFeature" xml:space="preserve">
+    <value>System Hard Quota</value>
+  </data>
+  <data name="ModuleTitle.HeliconZoo" xml:space="preserve">
+    <value>Helicon Zoo</value>
+  </data>
+  <data name="ModuleTitle.LyncPhoneNumbers" xml:space="preserve">
+    <value>Phone Numbers</value>
+  </data>
+  <data name="ModuleTitle.AddPhoneNumber" xml:space="preserve">
+    <value>Add Phone Numbers</value>
+  </data>
+  <data name="ModuleTitle.EditPhoneNumber" xml:space="preserve">
+    <value>Edit Phone numbers</value>
+  </data>
+  <data name="ModuleTitle.PhoneNumbers" xml:space="preserve">
+    <value>Phone Numbers</value>
+  </data>
+  <data name="ModuleTitle.UserOrganization" xml:space="preserve">
+    <value>Hosted Organization</value>
   </data>
 </root>

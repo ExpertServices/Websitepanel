@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -26,6 +26,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using WebsitePanel.Providers.OS;
 using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Providers.HostedSolution
@@ -41,6 +42,18 @@ namespace WebsitePanel.Providers.HostedSolution
         void DeleteUser(string loginName, string organizationId);
 
         OrganizationUser GetUserGeneralSettings(string loginName, string organizationId);
+
+        int CreateSecurityGroup(string organizationId, string groupName);
+
+        OrganizationSecurityGroup GetSecurityGroupGeneralSettings(string groupName, string organizationId);
+
+        void DeleteSecurityGroup(string groupName, string organizationId);
+
+        void SetSecurityGroupGeneralSettings(string organizationId, string groupName, string[] memberAccounts, string notes);
+
+        void AddObjectToSecurityGroup(string organizationId, string accountName, string groupName);
+
+        void DeleteObjectFromSecurityGroup(string organizationId, string accountName, string groupName);
 
         void SetUserGeneralSettings(string organizationId, string accountName, string displayName, string password,
                                     bool hideFromAddressBook, bool disabled, bool locked, string firstName, string initials,
@@ -64,5 +77,21 @@ namespace WebsitePanel.Providers.HostedSolution
         PasswordPolicyResult GetPasswordPolicy();
 
         string GetSamAccountNameByUserPrincipalName(string organizationId, string userPrincipalName);
+
+        bool DoesSamAccountNameExist(string accountName);
+
+        MappedDrive[] GetDriveMaps(string organizationId);
+
+        int CreateMappedDrive(string organizationId, string drive, string labelAs, string path);
+
+        void DeleteMappedDrive(string organizationId, string drive);
+
+        void DeleteMappedDriveByPath(string organizationId, string path);
+
+        void DeleteMappedDrivesGPO(string organizationId);
+
+        void SetDriveMapsTargetingFilter(string organizationId, ExchangeAccount[] accounts, string folderName);
+
+        void ChangeDriveMapFolderPath(string organizationId, string oldFolder, string newFolder);
     }
 }

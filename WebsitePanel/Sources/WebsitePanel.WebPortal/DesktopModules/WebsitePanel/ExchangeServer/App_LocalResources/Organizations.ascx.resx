@@ -168,4 +168,10 @@
   <data name="Text.PageName" xml:space="preserve">
     <value>Home</value>
   </data>
+  <data name="gvOrgsDefault.HeaderText" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="btnSetDefaultOrganization.Text" xml:space="preserve">
+    <value>Set Default Organization</value>
+  </data>
 </root>

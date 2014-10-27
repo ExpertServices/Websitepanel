@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -41,5 +41,7 @@ namespace WebsitePanel.Providers.HostedSolution
         public int AccountID { get; set; }
         public int LyncUserPlanId { get; set; }
         public string LyncUserPlanName { get; set; }
+
+        public string PIN { get; set; }
     }
 }

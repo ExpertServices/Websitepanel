@@ -4,9 +4,6 @@
 	TagPrefix="wsp" %>
 <%@ Register Src="UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox"
 	TagPrefix="wsp" %>
-<%@ Register Src="ExchangeServer/UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
-<%@ Register Src="ExchangeServer/UserControls/Breadcrumb.ascx" TagName="Breadcrumb"
-	TagPrefix="wsp" %>
 <%@ Register Src="UserControls/QuotaViewer.ascx" TagName="QuotaViewer" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/Quota.ascx" TagName="Quota" TagPrefix="wsp" %>
 	
@@ -25,11 +22,7 @@ function confirmation()
 	
 <div id="ExchangeContainer">
 	<div class="Module">
-		<div class="Header">
-			<wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName" />
-		</div>
 		<div class="Left">
-			<wsp:Menu id="menu" runat="server" SelectedItem="sharepoint_sitecollections" />
 		</div>
 		<div class="Content">
 			<div class="Center">

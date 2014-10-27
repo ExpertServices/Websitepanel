@@ -4,6 +4,7 @@
     <ContentTemplate>
 
 <asp:TextBox ID="txtDisplayName" runat="server" CssClass="TextBox200" ReadOnly="true"></asp:TextBox>
+
 <asp:ImageButton ID="ImageButton1" SkinID="ExchangeAddressBook16" runat="server" CausesValidation="false" OnClick="ImageButton1_Click" />
 <asp:LinkButton ID="cmdClear" runat="server" meta:resourcekey="cmdClear" OnClick="cmdClear_Click" CausesValidation="False"></asp:LinkButton>
 

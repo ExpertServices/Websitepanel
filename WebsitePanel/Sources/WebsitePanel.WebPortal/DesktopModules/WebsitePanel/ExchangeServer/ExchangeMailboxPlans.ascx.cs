@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2012-2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -28,15 +28,51 @@
 
 using System;
 using System.Web.UI.WebControls;
+using System.Web.UI;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.Portal.SkinControls;
 
 namespace WebsitePanel.Portal.ExchangeServer
 {
     public partial class ExchangeMailboxPlans : WebsitePanelModuleBase
     {
+        private bool RetentionPolicy
+        {
+            get
+            {
+                return PanelRequest.Ctl.ToLower().Contains("retentionpolicy");
+            }
+        }
+
+        private Control FindControlRecursive(Control rootControl, string controlID)
+        {
+            if (rootControl.ID == controlID) return rootControl;
+
+            foreach (Control controlToSearch in rootControl.Controls)
+            {
+                Control controlToReturn =
+                    FindControlRecursive(controlToSearch, controlID);
+                if (controlToReturn != null) return controlToReturn;
+            }
+            return null;
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            locTitle.Text = RetentionPolicy ? GetLocalizedString("locTitleRetentionPolicy.Text") : GetLocalizedString("locTitle.Text");
+
+            UserSpaceBreadcrumb bc = FindControlRecursive(Page, "breadcrumb") as UserSpaceBreadcrumb;
+            if (bc != null)
+            {
+                Label lbOrgCurPage = bc.FindControl("lbOrgCurPage") as Label;
+                if (lbOrgCurPage!=null)
+                    lbOrgCurPage.Text = GetLocalizedString( RetentionPolicy ? "Text.PageRetentionPolicyName" : "Text.PageName");
+            }
+            gvMailboxPlans.Columns[2].Visible = !RetentionPolicy;
+            btnSetDefaultMailboxPlan.Visible = !RetentionPolicy;
+            secMainTools.Visible = !RetentionPolicy;
+
             if (!IsPostBack)
             {
                 // bind mailboxplans
@@ -71,7 +107,7 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         private void BindMailboxPlans()
         {
-            ExchangeMailboxPlan[] list = ES.Services.ExchangeServer.GetExchangeMailboxPlans(PanelRequest.ItemID);
+            ExchangeMailboxPlan[] list = ES.Services.ExchangeServer.GetExchangeMailboxPlans(PanelRequest.ItemID, RetentionPolicy);
 
             gvMailboxPlans.DataSource = list;
             gvMailboxPlans.DataBind();
@@ -94,7 +130,7 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             btnSetDefaultMailboxPlan.Enabled = true;
             Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "add_mailboxplan",
-                "SpaceID=" + PanelSecurity.PackageId));
+                "SpaceID=" + PanelSecurity.PackageId, "archiving="+RetentionPolicy));
         }
 
         protected void gvMailboxPlan_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -177,7 +213,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 foreach (ExchangeAccount a in Accounts)
                 {
                     txtStatus.Text = "Completed";
-                    int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(PanelRequest.ItemID, a.AccountId, Convert.ToInt32(mailboxPlanSelectorTarget.MailboxPlanId));
+                    int result = ES.Services.ExchangeServer.SetExchangeMailboxPlan(PanelRequest.ItemID, a.AccountId, Convert.ToInt32(mailboxPlanSelectorTarget.MailboxPlanId), a.ArchivingMailboxPlanId, a.EnableArchiving);
                     if (result < 0)
                     {
                         BindMailboxPlans();

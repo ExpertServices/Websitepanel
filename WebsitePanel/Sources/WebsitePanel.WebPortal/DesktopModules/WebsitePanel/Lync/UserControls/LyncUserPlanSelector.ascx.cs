@@ -35,11 +35,14 @@ namespace WebsitePanel.Portal.Lync.UserControls
     {
 
         private string planToSelect;
-        
+
         public string planId
         {
                         
-            get { return ddlPlan.SelectedItem.Value; }
+            get {
+                if (ddlPlan.Items.Count == 0) return "";
+                return ddlPlan.SelectedItem.Value; 
+            }
             set
             {
                 planToSelect = value;
@@ -70,6 +73,19 @@ namespace WebsitePanel.Portal.Lync.UserControls
 			{
                 BindPlans();
 			}
+        }
+
+        public WebsitePanel.Providers.HostedSolution.LyncUserPlan plan
+        {
+            get
+            {
+                WebsitePanel.Providers.HostedSolution.LyncUserPlan[] plans = ES.Services.Lync.GetLyncUserPlans(PanelRequest.ItemID);
+                foreach (WebsitePanel.Providers.HostedSolution.LyncUserPlan planitem in plans)
+                {
+                    if (planitem.LyncUserPlanId.ToString() == planId) return planitem;
+                }
+                return null;
+            }
         }
 
         private void BindPlans()

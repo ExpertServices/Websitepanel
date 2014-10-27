@@ -2,20 +2,13 @@
 
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/QuotaViewer.ascx" TagName="QuotaViewer" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
 <div id="ExchangeContainer">
 	<div class="Module">
-		<div class="Header">
-			<wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName" />
-		</div>
 		<div class="Left">
-			
-			<wsp:Menu id="menu" runat="server" SelectedItem="Users" />
 		</div>
 		<div class="Content">
 			<div class="Center">
@@ -66,9 +59,9 @@
 						    </asp:TemplateField>
                         						     						   						    
 						    <asp:TemplateField HeaderText="gvUsersDisplayName" SortExpression="DisplayName">
-							    <ItemStyle Width="50%"></ItemStyle>
+							    <ItemStyle Width="25%"></ItemStyle>
 							    <ItemTemplate>							        
-								    <asp:Image ID="img1" runat="server" ImageUrl='<%# GetAccountImage((int)Eval("AccountType")) %>' ImageAlign="AbsMiddle" />
+								    <asp:Image ID="img1" runat="server" ImageUrl='<%# GetAccountImage((int)Eval("AccountType"),(bool)Eval("IsVIP")) %>' ImageAlign="AbsMiddle"/>
 								    <asp:hyperlink id="lnk1" runat="server"
 									    NavigateUrl='<%# GetUserEditUrl(Eval("AccountId").ToString()) %>'>
 									    <%# Eval("DisplayName") %>
@@ -76,8 +69,16 @@
 							    </ItemTemplate>
 						    </asp:TemplateField>
                             <asp:BoundField HeaderText="gvUsersLogin" DataField="UserPrincipalName" SortExpression="UserPrincipalName" ItemStyle-Width="25%" />
+                            <asp:TemplateField HeaderText="gvServiceLevel">
+                                <ItemStyle Width="25%"></ItemStyle>
+                                <ItemTemplate>
+                                    <asp:Label id="lbServLevel" runat="server" ToolTip = '<%# GetServiceLevel((int)Eval("LevelId")).LevelDescription%>'>
+                                        <%# GetServiceLevel((int)Eval("LevelId")).LevelName%>
+                                    </asp:Label>
+							    </ItemTemplate>
+                            </asp:TemplateField>
                             <asp:BoundField HeaderText="gvUsersEmail" DataField="PrimaryEmailAddress" SortExpression="PrimaryEmailAddress" ItemStyle-Width="25%" />                            
-                            <asp:BoundField HeaderText="gvSubscriberNumber" DataField="SubscriberNumber" ItemStyle-Width="25%" />						    
+                            <asp:BoundField HeaderText="gvSubscriberNumber" DataField="SubscriberNumber" ItemStyle-Width="20%" />						    
 						    <asp:TemplateField ItemStyle-Wrap="False">
                                 <ItemTemplate>
                                     <asp:ImageButton ID="Image2" runat="server" Width="16px" Height="16px" ToolTip="Mail" ImageUrl='<%# GetMailImage((int)Eval("AccountType")) %>' CommandName="OpenMailProperties" CommandArgument='<%# Eval("AccountId") %>' Enabled=<%# EnableMailImageButton((int)Eval("AccountType")) %>/>
@@ -108,9 +109,25 @@
 						</SelectParameters>
 					</asp:ObjectDataSource>
 				    <br />
-				    <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Total Users Created:"></asp:Localize>
-				    &nbsp;&nbsp;&nbsp;
-				    <wsp:QuotaViewer ID="usersQuota" runat="server" QuotaTypeId="2" />				    				    
+                    <div>
+				        <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Total Users Created:"></asp:Localize>
+				        &nbsp;&nbsp;&nbsp;
+				        <wsp:QuotaViewer ID="usersQuota" runat="server" QuotaTypeId="2" />
+                    </div>
+                    <asp:Repeater ID="dlServiceLevelQuotas" runat="server" EnableViewState="false">
+                        <ItemTemplate>
+                            <div>
+                                <asp:Localize ID="locServiceLevelQuota" runat="server" Text='<%# Eval("QuotaDescription") %>'></asp:Localize>
+                                &nbsp;&nbsp;&nbsp;
+                                <wsp:QuotaViewer ID="serviceLevelQuota" runat="server"
+                                    QuotaTypeId='<%# Eval("QuotaTypeId") %>'
+                                    QuotaUsedValue='<%# Eval("QuotaUsedValue") %>'
+                                    QuotaValue='<%# Eval("QuotaValue") %>'
+                                    QuotaAvailable='<%# Eval("QuotaAvailable")%>'/>
+                            </div>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                    			    				    
 				</div>
 			</div>
 		</div>

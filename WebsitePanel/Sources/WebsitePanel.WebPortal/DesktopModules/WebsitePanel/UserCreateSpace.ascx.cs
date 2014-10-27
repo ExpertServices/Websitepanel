@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -27,8 +27,11 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Portal
 {
@@ -173,11 +176,18 @@ namespace WebsitePanel.Portal
                         UserInfo user = UsersHelper.GetUser(PanelSecurity.SelectedUserId);
 
                         if (user != null)
-                        {
+                        {                            
                             if (user.Role != UserRole.Reseller)
                             {
+                                UserSettings settings = ES.Services.Users.GetUserSettings(user.UserId, UserSettings.EXCHANGE_POLICY);
+                                string orgId = domainName.ToLower();
 
-                                ES.Services.Organizations.CreateOrganization(result.Result, domainName.ToLower(), domainName.ToLower(), domainName.ToLower());
+                                if (settings != null && settings["OrgIdPolicy"] != null)
+                                {
+                                    orgId = GetOrgId(settings["OrgIdPolicy"], domainName, result.Result);
+                                }
+
+                                ES.Services.Organizations.CreateOrganization(result.Result, orgId, domainName.ToLower(), domainName.ToLower());
 
                                 if (result.Result < 0)
                                 {
@@ -197,6 +207,39 @@ namespace WebsitePanel.Portal
 
             // go to space home
             Response.Redirect(PortalUtils.GetSpaceHomePageUrl(result.Result));
+        }
+
+        private string GetOrgId(string orgIdPolicy, string domainName, int packageId)
+        {
+            string[] values = orgIdPolicy.Split(';');
+
+            if (values.Length > 1 && Convert.ToBoolean(values[0]))
+            {
+                try
+                {
+                    int maxLength = Convert.ToInt32(values[1]);
+                    
+                    if (domainName.Length > maxLength)
+                    {
+                        domainName = domainName.Substring(0, maxLength);
+                        string orgId = domainName;
+                        int counter = 0;
+
+                        while (ES.Services.Organizations.CheckOrgIdExists(orgId))
+                        {
+                            counter++;
+                            orgId = maxLength > 3 ? string.Format("{0}{1}", orgId.Substring(0, orgId.Length - 3), counter.ToString("d3")) : counter.ToString("d3");
+                        }
+
+                        return orgId;
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            return domainName;
         }
 
         protected void ddlPlans_SelectedIndexChanged(object sender, EventArgs e)

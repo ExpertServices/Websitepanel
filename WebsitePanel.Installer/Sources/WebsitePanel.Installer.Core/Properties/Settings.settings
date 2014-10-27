@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="WebsitePanel_Installer_Core_InstallerService_InstallerService" Type="(Web Service URL)" Scope="Application">
-      <Value Profile="(Default)">http://www.websitepanel.net/Services/InstallerService.asmx</Value>
+      <Value Profile="(Default)">http://www.websitepanel.net/Services/InstallerService-2.1.asmx</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -56,9 +56,13 @@ namespace WebsitePanel.Providers.Web
         private bool enableAnonymousAccess;
         private bool enableWindowsAuthentication;
         private bool enableBasicAuthentication;
+        private bool enableDynamicCompression;
+        private bool enableStaticCompression;
         private string defaultDocs;
         private string httpRedirect;
         private HttpError[] httpErrors;
+        private HttpErrorsMode errorMode;
+        private HttpErrorsExistingResponse existingResponse;
         private MimeMap[] mimeMaps; 
         private HttpHeader[] httpHeaders;
         private bool aspInstalled;
@@ -76,6 +80,8 @@ namespace WebsitePanel.Providers.Web
         private bool redirectPermanent;
         private bool sharePointInstalled;
         private bool iis7;
+        private string consoleUrl;
+        private string php5VersionsInstalled;
 
         public string AnonymousUsername
         {
@@ -117,6 +123,18 @@ namespace WebsitePanel.Providers.Web
         {
             get { return httpErrors; }
             set { httpErrors = value; }
+        }
+
+        public HttpErrorsMode ErrorMode
+        {
+            get { return errorMode; }
+            set { errorMode = value; }
+        }
+
+        public HttpErrorsExistingResponse ExistingResponse
+        {
+            get { return existingResponse; }
+            set { existingResponse = value; }
         }
 
         public string ApplicationPool
@@ -165,6 +183,17 @@ namespace WebsitePanel.Providers.Web
         {
             get { return this.enableBasicAuthentication; }
             set { this.enableBasicAuthentication = value; }
+        }
+
+        public bool EnableDynamicCompression
+        {
+            get { return this.enableDynamicCompression; }
+            set { this.enableDynamicCompression = value; }
+        }
+        public bool EnableStaticCompression
+        {
+            get { return this.enableStaticCompression; }
+            set { this.enableStaticCompression = value; }
         }
 
         public bool AspInstalled
@@ -250,8 +279,20 @@ namespace WebsitePanel.Providers.Web
             get { return this.iis7; }
             set { this.iis7 = value; }
         }
+        
+        public string ConsoleUrl
+        {
+            get { return consoleUrl; }
+            set { consoleUrl = value; }
+        }
 
-		#region Web Deploy Publishing Properties
+        public string Php5VersionsInstalled
+        {
+            get { return php5VersionsInstalled; }
+            set { php5VersionsInstalled = value; }
+        }
+
+        #region Web Deploy Publishing Properties
 		/// <summary>
 		/// Gets or sets Web Deploy publishing account name
 		/// </summary>

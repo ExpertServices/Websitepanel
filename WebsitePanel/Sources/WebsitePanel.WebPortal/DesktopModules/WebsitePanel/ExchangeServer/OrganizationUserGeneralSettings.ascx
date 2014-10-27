@@ -6,8 +6,6 @@
 <%@ Register Src="../UserControls/PasswordControl.ascx" TagName="PasswordControl" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/CollapsiblePanel.ascx" TagName="CollapsiblePanel" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
-<%@ Register Src="UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/EmailAddress.ascx" TagName="EmailAddress" TagPrefix="wsp" %>
 
 
@@ -21,11 +19,7 @@
 
 <div id="ExchangeContainer">
 	<div class="Module">
-		<div class="Header">
-			<wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName" />
-		</div>
 		<div class="Left">
-			<wsp:Menu id="menu" runat="server" SelectedItem="mailboxes" />
 		</div>
 		<div class="Content">
 			<div class="Center">
@@ -34,6 +28,8 @@
 					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Edit User"></asp:Localize>
 					-
 					<asp:Literal ID="litDisplayName" runat="server" Text="John Smith" />
+                    <asp:Image ID="imgVipUser" SkinID="VipUser16" runat="server" tooltip="VIP user" Visible="false"/>
+                    <asp:Label ID="litServiceLevel" runat="server" style="float:right;padding-right:8px;" Visible="false"></asp:Label>
                 </div>
 
 				<div class="FormBody">
@@ -123,12 +119,34 @@
 							    <asp:TextBox ID="txtNotes" runat="server" CssClass="TextBox200" Rows="4" TextMode="MultiLine"></asp:TextBox>
 						    </td>
 					    </tr>
-					</table>		
+					</table>
+                    
+                    <wsp:CollapsiblePanel id="secServiceLevels" runat="server" IsCollapsed="true"
+                        TargetControlID="ServiceLevels" meta:resourcekey="secServiceLevels" Text="Service Level Information">
+                    </wsp:CollapsiblePanel>
 
+                    <asp:Panel ID="ServiceLevels" runat="server" Height="0" style="overflow:hidden;">
+					    <table>
+						    <tr>
+							    <td class="FormLabel150"><asp:Localize ID="locServiceLevel" runat="server" meta:resourcekey="locServiceLevel"  Text="Service Level:"></asp:Localize></td>
+							    <td>
+								    <asp:DropDownList ID="ddlServiceLevels" DataValueField="LevelId" DataTextField="LevelName" runat="server"></asp:DropDownList>
+							    </td>
+						    </tr>
+						    <tr>
+							    <td class="FormLabel150"><asp:Localize ID="locVIPUser" runat="server" meta:resourcekey="locVIPUser" Text="VIP:"></asp:Localize></td>
+							    <td>
+								    <asp:CheckBox ID="chkVIP" runat="server"/>
+							    </td>
+						    </tr>
+					    </table>
+					</asp:Panel>
 					
+									
 					<wsp:CollapsiblePanel id="secCompanyInfo" runat="server" IsCollapsed="true"
                         TargetControlID="CompanyInfo" meta:resourcekey="secCompanyInfo" Text="Company Information">
                     </wsp:CollapsiblePanel>
+
                     <asp:Panel ID="CompanyInfo" runat="server" Height="0" style="overflow:hidden;">
 					    <table>
 						    <tr>
@@ -213,6 +231,7 @@
 					<wsp:CollapsiblePanel id="secAddressInfo" runat="server" IsCollapsed="true"
                         TargetControlID="AddressInfo" meta:resourcekey="secAddressInfo" Text="Address">
                     </wsp:CollapsiblePanel>
+
                     <asp:Panel ID="AddressInfo" runat="server" Height="0" style="overflow:hidden;">
 					    <table>
 						    <tr>
@@ -266,6 +285,8 @@
 				    <div class="FormFooterClean">
 					    <asp:Button id="btnSave" runat="server" Text="Save Changes" CssClass="Button1"
 							meta:resourcekey="btnSave" ValidationGroup="EditMailbox" OnClick="btnSave_Click"></asp:Button>
+					    <asp:Button id="btnSaveExit" runat="server" Text="Save Changes and Exit" CssClass="Button1"
+							meta:resourcekey="btnSaveExit" ValidationGroup="EditMailbox" OnClick="btnSaveExit_Click"></asp:Button>
 					    <asp:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="EditMailbox" />
 				    </div>
 				</div>

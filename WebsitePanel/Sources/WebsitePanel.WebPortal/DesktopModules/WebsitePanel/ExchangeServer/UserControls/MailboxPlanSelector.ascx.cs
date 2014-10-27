@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -33,25 +33,33 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 {
     public partial class MailboxPlanSelector : WebsitePanelControlBase
     {
+        private void UpdateMailboxPlanSelected()
+        {
+            foreach (ListItem li in ddlMailboxPlan.Items)
+            {
+                if (li.Value == mailboxPlanToSelect)
+                {
+                    ddlMailboxPlan.ClearSelection();
+                    li.Selected = true;
+                    break;
+                }
+            }
 
-        private string mailboxPlanToSelect;
+        }
+
+        private string mailboxPlanToSelect = null;
 
         public string MailboxPlanId
         {
-
-            get { return ddlMailboxPlan.SelectedItem.Value; }
-            set
-            {
-                mailboxPlanToSelect = value;
-                foreach (ListItem li in ddlMailboxPlan.Items)
-                {
-                    if (li.Value == value)
-                    {
-                        ddlMailboxPlan.ClearSelection();
-                        li.Selected = true;
-                        break;
-                    }
-                }
+            get {
+                if (ddlMailboxPlan.SelectedItem != null)
+                    return ddlMailboxPlan.SelectedItem.Value;
+                return mailboxPlanToSelect; 
+            }
+            set 
+            { 
+                mailboxPlanToSelect = value; 
+                UpdateMailboxPlanSelected(); 
             }
         }
 
@@ -70,6 +78,13 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             }
         }
 
+        private bool archiving = false;
+        public bool Archiving
+        {
+            get { return archiving; }
+            set { archiving = value; }
+        }
+
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -79,9 +94,24 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             }
         }
 
+        protected void Page_PreRender(object sender, EventArgs e)
+        {
+            ddlMailboxPlan.AutoPostBack = (Changed!=null);
+        }
+
         private void BindMailboxPlans()
         {
-            WebsitePanel.Providers.HostedSolution.ExchangeMailboxPlan[] plans = ES.Services.ExchangeServer.GetExchangeMailboxPlans(PanelRequest.ItemID);
+
+            WebsitePanel.Providers.HostedSolution.ExchangeMailboxPlan[] plans = ES.Services.ExchangeServer.GetExchangeMailboxPlans(PanelRequest.ItemID, Archiving);
+
+            if (AddNone)
+            {
+                ListItem li = new ListItem();
+                li.Text =  "None";
+                li.Value = "-1";
+                li.Selected = false;
+                ddlMailboxPlan.Items.Add(li);
+            }
 
             foreach (WebsitePanel.Providers.HostedSolution.ExchangeMailboxPlan plan in plans)
             {
@@ -92,29 +122,17 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 ddlMailboxPlan.Items.Add(li);
             }
 
-            if (AddNone)
+            UpdateMailboxPlanSelected();
+
+        }
+
+        public event EventHandler Changed = null;
+        protected void ddlMailboxPlan_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (Changed != null)
             {
-                ListItem li = new ListItem();
-                li.Text = "[None]";
-                li.Value = "-1";
-                li.Selected = false;
-                ddlMailboxPlan.Items.Add(li);
+                Changed(this, e);
             }
-
-
-            if (!string.IsNullOrEmpty(mailboxPlanToSelect))
-            {
-                foreach (ListItem li in ddlMailboxPlan.Items)
-                {
-                    if (li.Value == mailboxPlanToSelect)
-                    {
-                        ddlMailboxPlan.ClearSelection();
-                        li.Selected = true;
-                        break;
-                    }
-                }
-            }
-
         }
     }
 }

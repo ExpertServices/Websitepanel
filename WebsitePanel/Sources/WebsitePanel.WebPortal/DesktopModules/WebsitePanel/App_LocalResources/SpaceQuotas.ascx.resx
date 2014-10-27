@@ -198,4 +198,13 @@
   <data name="lblOrganizations.Text" xml:space="preserve">
     <value>Organizations:</value>
   </data>
+  <data name="lblLyncPhone.Text" xml:space="preserve">
+    <value>Lync Phone Numbers:</value>
+  </data>
+  <data name="lblFolders.Text" xml:space="preserve">
+    <value>Folders:</value>
+  </data>
+  <data name="lblEnterpriseStorage.Text" xml:space="preserve">
+    <value>Enterprise Storage, MB:</value>
+  </data>
 </root>

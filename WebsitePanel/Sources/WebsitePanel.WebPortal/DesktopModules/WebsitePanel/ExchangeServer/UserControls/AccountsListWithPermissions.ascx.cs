@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -184,7 +184,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 		{
 			ExchangeAccount[] accounts = ES.Services.ExchangeServer.SearchAccounts(PanelRequest.ItemID,
 				chkIncludeMailboxes.Checked, chkIncludeContacts.Checked, chkIncludeLists.Checked,
-                chkIncludeRooms.Checked, chkIncludeEquipment.Checked,
+                chkIncludeRooms.Checked, chkIncludeEquipment.Checked, false,
 				ddlSearchColumn.SelectedValue, txtSearchValue.Text + "%", "");
 
 			if (ExcludeAccountId > 0)

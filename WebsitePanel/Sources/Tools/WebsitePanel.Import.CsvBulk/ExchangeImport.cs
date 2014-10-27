@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -92,7 +92,10 @@ namespace WebsitePanel.Import.CsvBulk
 		private int PagerIndex = -1;
 		private int WebPageIndex = -1;
 		private int NotesIndex = -1;
+        private int PlanIndex = -1;
 
+        private int defaultPlanId = -1;
+        private Dictionary<string, int> planName2Id = new Dictionary<string,int>();
 
 		public ExchangeImport()
 		{
@@ -184,6 +187,8 @@ namespace WebsitePanel.Import.CsvBulk
 				}
 				index = 0;
 
+                GetMailboxPlans(orgId);
+
 				using (StreamReader sr = new StreamReader(inputFile))
 				{
 					string line;
@@ -209,6 +214,22 @@ namespace WebsitePanel.Import.CsvBulk
 				Log.WriteError("Unexpected error occured", e);
 			}
 		}
+
+        private void GetMailboxPlans(int orgId)
+        {
+            ExchangeMailboxPlan[] plans = ES.Services.ExchangeServer.GetExchangeMailboxPlans(orgId, false);
+            foreach (ExchangeMailboxPlan plan in plans)
+            {
+                if (!planName2Id.ContainsKey(plan.MailboxPlan))
+                {
+                    planName2Id.Add(plan.MailboxPlan, plan.MailboxPlanId);
+                }
+                if (plan.IsDefault)
+                {
+                    defaultPlanId = plan.MailboxPlanId;
+                }
+            }
+        }
 
 		private void ShowSummary()
 		{
@@ -286,7 +307,9 @@ namespace WebsitePanel.Import.CsvBulk
 						WebPageIndex = i;
 					else if (StringEquals(cells[i], "Notes"))
 						NotesIndex = i;
-				}
+                    else if (StringEquals(cells[i], "Mailbox Plan"))
+                        PlanIndex = i;
+                }
 				return true;
 			}
 			//check csv structure
@@ -430,6 +453,29 @@ namespace WebsitePanel.Import.CsvBulk
 			string webPage = cells[WebPageIndex];
 			string notes = cells[NotesIndex];
 
+            int planId;
+            // do we have plan-column?
+            if (PlanIndex > -1)
+            {
+                string planName = cells[PlanIndex];
+                if (!planName2Id.TryGetValue(planName, out planId))
+                {
+                    Log.WriteInfo(String.Format("Warning at line {0}: Plan named {1} does not exist!", index + 1, planName));
+                    // fall back to default plan
+                    planId = defaultPlanId;
+                }
+            }
+                // or not?
+            else
+            {
+                // fall back to default plan
+                planId = defaultPlanId;
+            }
+            if (planId < 0)
+            {
+                Log.WriteError(string.Format("Error at line {0}: No valid plan name and/or no valid default plan", index + 1));
+                return false;
+            }
 
 
 
@@ -480,7 +526,7 @@ namespace WebsitePanel.Import.CsvBulk
 				//create mailbox using web service
 				if (!CreateMailbox(index, orgId, displayName, emailAddress, password, firstName, middleName, lastName,
 					address, city, state, zip, country, jobTitle, company, department, office,
-					businessPhone, fax, homePhone, mobilePhone, pager, webPage, notes))
+					businessPhone, fax, homePhone, mobilePhone, pager, webPage, notes, planId))
 				{
 					return false;
 				}
@@ -517,7 +563,7 @@ namespace WebsitePanel.Import.CsvBulk
 		/// </summary>
 		private bool CreateMailbox(int index, int orgId, string displayName, string emailAddress, string password, string firstName, string middleName, string lastName,
 								string address, string city, string state, string zip, string country, string jobTitle, string company, string department, string office,
-								string businessPhone, string fax, string homePhone, string mobilePhone, string pager, string webPage, string notes)
+								string businessPhone, string fax, string homePhone, string mobilePhone, string pager, string webPage, string notes, int planId)
 		{
 			bool ret = false;
 			try
@@ -528,14 +574,15 @@ namespace WebsitePanel.Import.CsvBulk
 				//create mailbox
 				//ES.Services.ExchangeServer.
 				string accountName = string.Empty;
-                int accountId = ES.Services.ExchangeServer.CreateMailbox(orgId, 0, ExchangeAccountType.Mailbox, accountName, displayName, name, domain, password, false, string.Empty, 0, string.Empty);
+                int accountId = ES.Services.ExchangeServer.CreateMailbox(orgId, 0, ExchangeAccountType.Mailbox, accountName, displayName, name, domain, password, false, string.Empty, planId, -1, string.Empty, false);
 				if (accountId < 0)
 				{
 					string errorMessage = GetErrorMessage(accountId);
 					Log.WriteError(string.Format("Error at line {0}: {1}", index + 1, errorMessage));
 					return false;
 				}
-				ExchangeMailbox mailbox = ES.Services.ExchangeServer.GetMailboxGeneralSettings(orgId, accountId);
+                //ExchangeMailbox mailbox = ES.Services.ExchangeServer.GetMailboxGeneralSettings(orgId, accountId);
+                OrganizationUser mailbox = ES.Services.Organizations.GetUserGeneralSettings(orgId, accountId);
 
 				mailbox.FirstName = firstName;
 				mailbox.Initials = middleName;
@@ -557,7 +604,6 @@ namespace WebsitePanel.Import.CsvBulk
 				mailbox.WebPage = webPage;
 				mailbox.Notes = notes;
 
-
 				//update mailbox
                 /*
 				ES.Services.ExchangeServer.SetMailboxGeneralSettings(orgId, accountId, mailbox.DisplayName,
@@ -566,7 +612,14 @@ namespace WebsitePanel.Import.CsvBulk
 					mailbox.JobTitle, mailbox.Company, mailbox.Department, mailbox.Office, null, mailbox.BusinessPhone,
 					mailbox.Fax, mailbox.HomePhone, mailbox.MobilePhone, mailbox.Pager, mailbox.WebPage, mailbox.Notes);
                 */
-				ret = true;
+                ES.Services.Organizations.SetUserGeneralSettings(orgId, accountId, mailbox.DisplayName,
+                    null, /*mailbox.HideFromAddressBook*/ false, mailbox.Disabled, mailbox.Locked, mailbox.FirstName, mailbox.Initials,
+                    mailbox.LastName, mailbox.Address, mailbox.City, mailbox.State, mailbox.Zip, mailbox.Country,
+                    mailbox.JobTitle, mailbox.Company, mailbox.Department, mailbox.Office, null, mailbox.BusinessPhone,
+                    mailbox.Fax, mailbox.HomePhone, mailbox.MobilePhone, mailbox.Pager, mailbox.WebPage, mailbox.Notes,
+                    // these are new and not in csv ...
+                    mailbox.ExternalEmail, mailbox.SubscriberNumber,mailbox.LevelId, mailbox.IsVIP);
+                ret = true;
 			}
 			catch (Exception ex)
 			{
@@ -705,13 +758,11 @@ namespace WebsitePanel.Import.CsvBulk
 				user.Notes = notes;
 
 				//update 
-                /*
 				ES.Services.Organizations.SetUserGeneralSettings(orgId, accountId, user.DisplayName,
 					null, false, user.Disabled, user.Locked, user.FirstName, user.Initials,
 					user.LastName, user.Address, user.City, user.State, user.Zip, user.Country,
 					user.JobTitle, user.Company, user.Department, user.Office, null, user.BusinessPhone,
-					user.Fax, user.HomePhone, user.MobilePhone, user.Pager, user.WebPage, user.Notes, user.ExternalEmail);
-                */
+					user.Fax, user.HomePhone, user.MobilePhone, user.Pager, user.WebPage, user.Notes, user.ExternalEmail, user.SubscriberNumber, user.LevelId, user.IsVIP);
 				ret = true;
 			}
 			catch (Exception ex)

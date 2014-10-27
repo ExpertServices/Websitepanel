@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -183,7 +183,7 @@ namespace WebsitePanel.Portal.VPSForPC.UserControls
             litElapsed.Text = new TimeSpan(d.Hours, d.Minutes, d.Seconds).ToString();
 
             // bind records
-            repRecords.DataSource = task.LastLogRecords;
+            repRecords.DataSource = task.GetLogs();
             repRecords.DataBind();
         }
 
@@ -228,7 +228,7 @@ namespace WebsitePanel.Portal.VPSForPC.UserControls
 
                 // gauge
                 gauge.Visible = false;
-                if (e.Item.ItemIndex == task.LastLogRecords.Count - 1)
+                if (e.Item.ItemIndex == task.GetLogs().Count - 1)
                 {
                     gauge.Visible = true;
                     gauge.Total = task.IndicatorMaximum;

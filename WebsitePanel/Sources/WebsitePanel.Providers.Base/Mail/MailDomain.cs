@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -365,5 +365,17 @@ namespace WebsitePanel.Providers.Mail
 
 
 		#endregion
-	} 
+
+        #region IceWarp
+
+	    public int MegaByteSendLimit { get; set; }
+	    public int NumberSendLimit { get; set; }
+
+        public int DefaultUserQuotaInMB { get; set; }
+        public int DefaultUserMaxMessageSizeMegaByte { get; set; }
+        public int DefaultUserMegaByteSendLimit { get; set; }
+        public int DefaultUserNumberSendLimit { get; set; }
+
+        #endregion
+    } 
 }

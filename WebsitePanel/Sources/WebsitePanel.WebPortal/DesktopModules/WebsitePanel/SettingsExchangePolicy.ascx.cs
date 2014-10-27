@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -26,33 +26,64 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-
+using System.Linq;
+using System.Collections.Generic;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 
 namespace WebsitePanel.Portal
 {
-	public partial class SettingsExchangePolicy : WebsitePanelControlBase, IUserSettingsEditorControl
+    public partial class SettingsExchangePolicy : WebsitePanelControlBase, IUserSettingsEditorControl
     {
+        internal static AdditionalGroup[] additionalGroups;
+
+        #region IUserSettingsEditorControl Members
+
         public void BindSettings(UserSettings settings)
         {
             // mailbox
-			mailboxPasswordPolicy.Value = settings["MailboxPasswordPolicy"];
+            mailboxPasswordPolicy.Value = settings["MailboxPasswordPolicy"];
+            orgIdPolicy.Value = settings["OrgIdPolicy"];
+
+            additionalGroups = ES.Services.Organizations.GetAdditionalGroups(settings.UserId);
+            
+            orgPolicy.SetAdditionalGroups(additionalGroups);
+            orgPolicy.Value = settings["OrgPolicy"];
         }
 
         public void SaveSettings(UserSettings settings)
         {
-			// mailbox
-			settings["MailboxPasswordPolicy"] = mailboxPasswordPolicy.Value;
+            settings["MailboxPasswordPolicy"] = mailboxPasswordPolicy.Value;
+            settings["OrgIdPolicy"] = orgIdPolicy.Value;
+            settings["OrgPolicy"] = orgPolicy.Value;
+
+            if (Utils.ParseBool(orgPolicy.Value, false))
+            {
+                List<AdditionalGroup> newAdditionalGroups = orgPolicy.GetGridViewGroups();
+ 
+                foreach (AdditionalGroup oldGroup in additionalGroups)
+                {
+                    AdditionalGroup upGroup = newAdditionalGroups.Where(x => x.GroupId == oldGroup.GroupId).FirstOrDefault();
+
+                    if(upGroup != null && upGroup.GroupName != oldGroup.GroupName)
+                    {
+                        ES.Services.Organizations.UpdateAdditionalGroup(oldGroup.GroupId, upGroup.GroupName);
+
+                        newAdditionalGroups.Remove(upGroup);
+                    }
+                    else
+                    {
+                        ES.Services.Organizations.DeleteAdditionalGroup(oldGroup.GroupId);
+                    }
+                }
+
+                foreach (AdditionalGroup newGroup in newAdditionalGroups)
+                {
+                    ES.Services.Organizations.AddAdditionalGroup(settings.UserId, newGroup.GroupName);
+                }
+            }
         }
-	}
+
+        #endregion
+    }
 }

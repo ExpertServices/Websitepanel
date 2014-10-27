@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -213,6 +213,18 @@ namespace WebsitePanel.Portal
 			get { return GetCachedProxy<esExchangeServer>(); }
 		}
 
+
+        public esHeliconZoo HeliconZoo
+        {
+            get { return GetCachedProxy<esHeliconZoo>(); }
+        }
+
+
+        public esEnterpriseStorage EnterpriseStorage
+        {
+            get { return GetCachedProxy<esEnterpriseStorage>(); }
+        }
+        
         protected ES()
         {
         }

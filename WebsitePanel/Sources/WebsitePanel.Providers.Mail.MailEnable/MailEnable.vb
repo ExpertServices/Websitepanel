@@ -1,4 +1,4 @@
-' Copyright (c) 2012, Outercurve Foundation.
+' Copyright (c) 2014, Outercurve Foundation.
 ' All rights reserved.
 '
 ' Redistribution and use in source and binary forms, with or without modification,
@@ -2035,7 +2035,7 @@ Public Class MailEnable
 
         If [String].IsNullOrEmpty(version) = False Then
             Dim split As String() = version.Split(New [Char]() {"."c})
-            Return split(0).Equals("1") Or split(0).Equals("2") Or split(0).Equals("3") Or split(0).Equals("4") Or split(0).Equals("5") Or split(0).Equals("6")
+            Return split(0).Equals("1") Or split(0).Equals("2") Or split(0).Equals("3") Or split(0).Equals("4") Or split(0).Equals("5") Or split(0).Equals("6") Or split(0).Equals("7")
         Else
             Return False
         End If

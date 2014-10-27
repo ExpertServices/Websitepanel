@@ -7,15 +7,20 @@
             <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ControlToValidate="txtPath" Display="Dynamic" ErrorMessage="*" />
         </td>
     </tr>
+        <tr>
+        <td class="SubHead" width="200" nowrap><asp:Label runat="server" ID="lblHandheldcleanupPath" meta:resourcekey="lblHandheldcleanupPath" /></td>
+        <td>                        
+            <asp:TextBox runat="server" ID="txtHandheldcleanupPath" MaxLength="256" Width="200px"  />            
+            <asp:RequiredFieldValidator ID="RequiredFieldValidator7" runat="server" ControlToValidate="txtHandheldcleanupPath" Display="Dynamic" ErrorMessage="*" />
+        </td>
+    </tr>
     <tr>
-        <td class="SubHead" width="200" nowrap><asp:Label runat="server" ID="Label1" meta:resourcekey="lblUser" /></td>
+        <td class="SubHead" width="200" nowrap><asp:Label runat="server" ID="lblUser" meta:resourcekey="lblUser" /></td>
         <td>                        
             <asp:TextBox runat="server" ID="txtUser" MaxLength="256" Width="200px"    />            
             <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server" ControlToValidate="txtUser" Display="Dynamic" ErrorMessage="*" />
         </td>
     </tr>
-    
-    
     <tr>
         <td class="SubHead" width="200" nowrap><asp:Label runat="server" ID="lblPassword" meta:resourcekey="lblPassword" /></td>
         <td>                        
@@ -39,5 +44,12 @@
         </td>
     </tr>    
 
+    <tr>
+        <td class="SubHead" width="200" nowrap><asp:Label runat="server" ID="lblMAPIProfile" meta:resourcekey="lblMAPIProfile" /></td>
+        <td>                        
+            <asp:TextBox runat="server" ID="txtMAPIProfile" MaxLength="256" Width="200px"  />            
+            <asp:RequiredFieldValidator ID="RequiredFieldValidator6" runat="server" ControlToValidate="txtMAPIProfile" Display="Dynamic" ErrorMessage="*" />
+        </td>
+    </tr>
 
 </table>

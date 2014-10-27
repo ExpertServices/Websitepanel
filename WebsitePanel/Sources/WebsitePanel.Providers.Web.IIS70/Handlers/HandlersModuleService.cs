@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -25,6 +25,8 @@
 // ANY  THEORY  OF  LIABILITY,  WHETHER  IN  CONTRACT,  STRICT  LIABILITY,  OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+using System.Linq;
 
 namespace WebsitePanel.Providers.Web.Handlers
 {
@@ -178,7 +180,7 @@ namespace WebsitePanel.Providers.Web.Handlers
 			}
 		}
 
-		internal void InheritScriptMapsFromParent(string fqPath)
+	    internal void InheritScriptMapsFromParent(string fqPath)
 		{
 			if (String.IsNullOrEmpty(fqPath))
 				return;
@@ -241,5 +243,40 @@ namespace WebsitePanel.Providers.Web.Handlers
 			// 
 			return null;
 		}
+
+
+        internal void CopyInheritedHandlers(string siteName, string vDirPath)
+	    {
+            if (string.IsNullOrEmpty(siteName))
+            {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(vDirPath))
+            {
+                vDirPath = "/";
+            }
+
+	        using (var srvman = GetServerManager())
+	        {
+				var config = srvman.GetWebConfiguration(siteName, vDirPath);
+
+                var handlersSection = (HandlersSection)config.GetSection(Constants.HandlersSection, typeof(HandlersSection));
+
+	            var handlersCollection = handlersSection.Handlers;
+
+	            var list = new HandlerAction[handlersCollection.Count];
+	            ((System.Collections.ICollection) handlersCollection).CopyTo(list, 0);
+                
+	            handlersCollection.Clear();
+
+	            foreach (var handler in list)
+	            {
+	                handlersCollection.AddCopy(handler);
+	            }
+
+                srvman.CommitChanges();
+	        }
+	    }
 	}
 }

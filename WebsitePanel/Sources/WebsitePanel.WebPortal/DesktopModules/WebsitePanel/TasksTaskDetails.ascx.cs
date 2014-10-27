@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -63,7 +63,7 @@ namespace WebsitePanel.Portal
             litTitle.Text = String.Format("{0} &quot;{1}&quot;",
                 GetAuditLogTaskName(task.Source, task.TaskName),
                 task.ItemName);
-            litStep.Text = LocalizeActivityText(task.LastLogRecord.Text);
+            litStep.Text = LocalizeActivityText(task.GetLogs().Count > 0 ? task.GetLogs()[0].Text : String.Empty);
             litStartTime.Text = task.StartDate.ToString();
 
             // progress
@@ -77,18 +77,19 @@ namespace WebsitePanel.Portal
 
             // execution log
             StringBuilder log = new StringBuilder();
-            task.LastLogRecords.Reverse();
-            if (task.LastLogRecords.Count > 0)
-                ViewState["lastLogDate"] = task.LastLogRecords[0].Date.AddTicks(1);
+            if (task.GetLogs().Count > 0)
+                ViewState["lastLogDate"] = task.GetLogs()[0].Date.AddTicks(1);
 
-            foreach (BackgroundTaskLogRecord logRecord in task.LastLogRecords)
+
+
+            foreach (BackgroundTaskLogRecord logRecord in task.GetLogs())
             {
                 log.Append("[").Append(GetDurationText(task.StartDate, logRecord.Date)).Append("] ");
                 log.Append(GetLogLineIdent(logRecord.TextIdent));
                 log.Append(LocalizeActivityText(logRecord.Text));
                 log.Append("<br>");
             }
-            litLog.Text = log.ToString() + litLog.Text;
+            litLog.Text = log.ToString();//+ litLog.Text;
 
             if(task.Completed)
                 btnStop.Visible = false;

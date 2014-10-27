@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -43,6 +43,7 @@ namespace WebsitePanel.Portal.ProviderControls
 
         public const int EXCHANGE2010_PROVIDER_ID = 32;
         public const int EXCHANGE2010SP2_PROVIDER_ID = 90;
+        public const int EXCHANGE2013_PROVIDER_ID = 91;     
 
 
         public string HubTransports
@@ -90,6 +91,10 @@ namespace WebsitePanel.Portal.ProviderControls
                             txtStorageGroup.Text = "";
 
                             locMailboxDAG.Visible = false;
+
+                            powershellUrl1.Visible = powershellUrl2.Visible = false;
+
+                            archivingGroup.Visible = false;
                             break;
 
                         case EXCHANGE2010SP2_PROVIDER_ID:
@@ -100,6 +105,22 @@ namespace WebsitePanel.Portal.ProviderControls
                             txtStorageGroup.Text = "";
 
                             locMailboxDatabase.Visible = false;
+                            powershellUrl1.Visible = powershellUrl2.Visible = false;
+
+                            archivingGroup.Visible = false;
+                            break;
+
+                        case EXCHANGE2013_PROVIDER_ID:
+                            clusteredMailboxServer.Visible = false;
+                            txtMailboxClusterName.Text = "";
+
+                            storageGroup.Visible = false;
+                            txtStorageGroup.Text = "";
+
+                            locMailboxDatabase.Visible = false;
+                            powershellUrl1.Visible = powershellUrl2.Visible = true;
+
+                            archivingGroup.Visible = true;
                             break;
 
                         default:
@@ -108,6 +129,8 @@ namespace WebsitePanel.Portal.ProviderControls
                             clusteredMailboxServer.Visible = true;
                             txtMailboxClusterName.Text = settings["MailboxCluster"];
                             locMailboxDAG.Visible = false;
+
+                            archivingGroup.Visible = false;
                             break;
                     }
                 }
@@ -136,6 +159,9 @@ namespace WebsitePanel.Portal.ProviderControls
                 txtActiveSyncServer.Text = settings["ActiveSyncServer"];
                 txtOABServer.Text = settings["OABServer"];
                 txtPublicFolderServer.Text = settings["PublicFolderServer"];
+                txtPowerShellUrl.Text = settings["PowerShellUrl"];
+
+                txtArchivingDatabase.Text = settings["ArchivingDatabase"];
 
                 UpdateHubTransportsGrid();
                 UpdateClientAccessGrid();
@@ -162,6 +188,10 @@ namespace WebsitePanel.Portal.ProviderControls
             settings["PublicFolderServer"] = txtPublicFolderServer.Text;
 
             settings["StorageGroup"] = txtStorageGroup.Text;
+            settings["PowerShellUrl"] = txtPowerShellUrl.Text;
+
+            settings["ArchivingDatabase"] = txtArchivingDatabase.Text;
+
         }
 
 		public void BindExchangeServices(DropDownList ddl, bool isHubservice)

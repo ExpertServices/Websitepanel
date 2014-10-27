@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnAddMailboxPlan.Text" xml:space="preserve">
-    <value>Add New Mailbox plan</value>
+    <value>Add New</value>
   </data>
   <data name="btnSetDefaultMailboxPlan.Text" xml:space="preserve">
     <value>Set Default Mailbox plan</value>
@@ -226,6 +226,27 @@
     <value>Restamp mailboxes</value>
   </data>
   <data name="btnUpdateMailboxPlan.Text" xml:space="preserve">
-    <value>Update Mailbox Plan</value>
+    <value>Update</value>
+  </data>
+  <data name="chkEnableLitigationHold.Text" xml:space="preserve">
+    <value>Enable Litigation Hold</value>
+  </data>
+  <data name="locRecoverableItemsSpace.Text" xml:space="preserve">
+    <value>Recoverable Items Space (Mb):</value>
+  </data>
+  <data name="locRecoverableItemsWarning.Text" xml:space="preserve">
+    <value>Warning at:</value>
+  </data>
+  <data name="secLitigationHold.Text" xml:space="preserve">
+    <value>Litigation Hold</value>
+  </data>
+  <data name="lblLitigationHoldMsg.Text" xml:space="preserve">
+    <value>Litigation Hold Message:</value>
+  </data>
+  <data name="lblLitigationHoldUrl.Text" xml:space="preserve">
+    <value>Litigation Hold Url:</value>
+  </data>
+  <data name="secRetentionPolicy.Text" xml:space="preserve">
+    <value>Retention policy</value>
   </data>
 </root>

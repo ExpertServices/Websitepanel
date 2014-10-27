@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -41,6 +41,8 @@
         public const string FILE_PATH_IS_INVALID = "FILE_PATH_IS_INVALID";
 
         public const string CANNOT_EXECUTE_COMMAND = "CANNOT_EXECUTE_COMMAND";
+
+        public const string CANNOT_EXECUTE_COMMAND_HANDHELDCLEANUP = "CANNOT_EXECUTE_COMMAND_HANDHELDCLEANUP";
 
         public const string CANNOT_GET_BLACKBERRY_PROXY = "CANNOT_GET_BLACKBERRY_PROXY";
 

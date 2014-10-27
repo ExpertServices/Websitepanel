@@ -39,7 +39,7 @@
 		</tr>
 	    <tr>
 	        <td colspan="2">
-	            <asp:CheckBox ID="chkAssignIPAutomatically" runat="server" meta:resourcekey="chkAssignIPAutomatically" Text="Assign IP addresses to the space on creation" />
+	            <asp:CheckBox ID="chkAssignIPAutomatically" runat="server" meta:resourcekey="chkAssignIPAutomatically" Text="Assign IP addresses on space creation" />
 	        </td>
 	    </tr>
     </table>
@@ -291,6 +291,11 @@
                 </asp:DropDownList>
             </td>
 		</tr>
+        <tr>
+            <td colspan="2" class="Normal">
+                <asp:Literal ID="litPHP5Info" runat="server" meta:resourcekey="litPHP5Info" Text="If any PHP5 FastCGI handlers are present on the server, the PHP 5.x Executable Path given above will be ignored and not used."></asp:Literal>
+            </td>
+        </tr>
 		<tr>
 		    <td class="Normal" valign="top">
 		        <asp:Label runat="server" meta:resourcekey="perlPathLabel" Text="Perl Executable Path:"></asp:Label>
@@ -427,6 +432,8 @@
 		    </td>
             <td class="Normal" valign="top">
                 <asp:Localize ID="Localize1" runat="server" meta:resourcekey="lclHeliconApeInstallNote" />
+                <br/><br/>
+                <asp:LinkButton runat="server" ID="InstallHeliconApeLink" Text="Install Helicon Ape" />
             </td>
 		</tr>
     </table>
@@ -458,9 +465,18 @@
 		    </td>
 		    <td class="Normal" valign="top"> 
                     <asp:Button ID="EditHeliconApeConfButton" runat="server" class="Button2" 
-                        Text="Edit httpd.conf (server config)" onclick="EditHeliconApeConfButton_Click"  
-                    /></td>
+                        Text="Edit httpd.conf (server config)" onclick="EditHeliconApeConfButton_Click" />
+            </td>
 		</tr>
+        <tr>
+            <td valign="top">
+                <asp:Label runat="server" AssociatedControlID="chkHeliconApeGlobalRegistration" meta:resourcekey="chkHeliconApeGlobalRegistration">Register Helicon Ape module globally:</asp:Label>
+            </td>
+            <td>
+                <asp:CheckBox ID="chkHeliconApeGlobalRegistration" runat="server" style="margin-left: -4px;"/>
+                (<asp:Label runat="server" AssociatedControlID="chkHeliconApeGlobalRegistration">Uncheck this box to enable managing Helicon Ape using hosting plan policies.</asp:Label>)
+            </td>
+        </tr>
     </table>
     </asp:Panel>
 </fieldset>

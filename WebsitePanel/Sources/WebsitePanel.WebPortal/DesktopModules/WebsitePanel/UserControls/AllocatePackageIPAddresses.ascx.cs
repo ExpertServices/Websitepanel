@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -129,6 +129,7 @@ namespace WebsitePanel.Portal.UserControls
                 }
 
                 ResultObject res = ES.Services.Servers.AllocatePackageIPAddresses(PanelSecurity.PackageId,
+                                                     0,
                                                      ResourceGroup, Pool,
                                                      radioExternalRandom.Checked,
                                                      Utils.ParseInt(txtExternalAddressesNumber.Text),

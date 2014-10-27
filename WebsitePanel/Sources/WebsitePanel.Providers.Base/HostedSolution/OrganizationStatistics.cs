@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -33,6 +33,9 @@ namespace WebsitePanel.Providers.HostedSolution
 		private int allocatedUsers;
 		private int createdUsers;
 
+        private int allocatedGroups;
+        private int createdGroups;
+
 		private int allocatedDomains;
 		private int createdDomains;
 
@@ -51,12 +54,77 @@ namespace WebsitePanel.Providers.HostedSolution
         private int allocatedDiskSpace;
         private int usedDiskSpace;
 
+        private int allocatedLitigationHoldSpace;
+        private int usedLitigationHoldSpace;
+
+
 		private int allocatedSharePointSiteCollections;
 		private int createdSharePointSiteCollections;
 
         private int createdCRMUsers;
         private int allocatedCRMUsers;
-		
+
+        private int createdLimitedCRMUsers;
+        private int allocatedLimitedCRMUsers;
+
+        private int createdESSCRMUsers;
+        private int allocatedESSCRMUsers;
+
+        private long usedCRMDiskSpace;
+        private long allocatedCRMDiskSpace;
+
+        private int createdEnterpriseStorageFolders;
+        private int allocatedEnterpriseStorageFolders;
+
+        private int allocatedEnterpriseStorageSpace;
+        private int usedEnterpriseStorageSpace;
+
+        private int createdProfessionalCRMUsers;
+        private int allocatedProfessionalCRMUsers;
+
+        public int CreatedProfessionalCRMUsers
+        {
+            get { return createdProfessionalCRMUsers; }
+            set { createdProfessionalCRMUsers = value; }
+        }
+
+        public int AllocatedProfessionalCRMUsers
+        {
+            get { return allocatedProfessionalCRMUsers; }
+            set { allocatedProfessionalCRMUsers = value; }
+        }
+
+
+        private int createdBasicCRMUsers;
+        private int allocatedBasicCRMUsers;
+
+        public int CreatedBasicCRMUsers
+        {
+            get { return createdBasicCRMUsers; }
+            set { createdBasicCRMUsers = value; }
+        }
+
+        public int AllocatedBasicCRMUsers
+        {
+            get { return allocatedBasicCRMUsers; }
+            set { allocatedBasicCRMUsers = value; }
+        }
+
+        private int createdEssentialCRMUsers;
+        private int allocatedEssentialCRMUsers;
+
+        public int CreatedEssentialCRMUsers
+        {
+            get { return createdEssentialCRMUsers; }
+            set { createdEssentialCRMUsers = value; }
+        }
+
+        public int AllocatedEssentialCRMUsers
+        {
+            get { return allocatedEssentialCRMUsers; }
+            set { allocatedEssentialCRMUsers = value; }
+        }
+
 		
         public int CreatedCRMUsers
         {
@@ -69,12 +137,48 @@ namespace WebsitePanel.Providers.HostedSolution
             get { return allocatedCRMUsers; }
             set { allocatedCRMUsers = value; }
         }
-        
+
+        public int CreatedLimitedCRMUsers
+        {
+            get { return createdLimitedCRMUsers; }
+            set { createdLimitedCRMUsers = value; }
+        }
+
+        public int AllocatedLimitedCRMUsers
+        {
+            get { return allocatedLimitedCRMUsers; }
+            set { allocatedLimitedCRMUsers = value; }
+        }
+
+        public int CreatedESSCRMUsers
+        {
+            get { return createdESSCRMUsers; }
+            set { createdESSCRMUsers = value; }
+        }
+
+        public int AllocatedESSCRMUsers
+        {
+            get { return allocatedESSCRMUsers; }
+            set { allocatedESSCRMUsers = value; }
+        }
+
         public int AllocatedUsers
 		{
 			get { return allocatedUsers; }
 			set { allocatedUsers = value; }
 		}
+
+        public long UsedCRMDiskSpace
+        {
+            get { return usedCRMDiskSpace; }
+            set { usedCRMDiskSpace = value;}
+        }
+
+        public long AllocatedCRMDiskSpace
+        {
+            get { return allocatedCRMDiskSpace; }
+            set { allocatedCRMDiskSpace = value; }
+        }
 
 		public int CreatedUsers
 		{
@@ -154,6 +258,18 @@ namespace WebsitePanel.Providers.HostedSolution
             set { usedDiskSpace = value; }
         }
 
+        public int AllocatedLitigationHoldSpace
+        {
+            get { return allocatedLitigationHoldSpace; }
+            set { allocatedLitigationHoldSpace = value; }
+        }
+
+        public int UsedLitigationHoldSpace
+        {
+            get { return usedLitigationHoldSpace; }
+            set { usedLitigationHoldSpace = value; }
+        }
+        
 		public int AllocatedSharePointSiteCollections
 		{
 			get { return allocatedSharePointSiteCollections; }
@@ -169,12 +285,62 @@ namespace WebsitePanel.Providers.HostedSolution
         public int CreatedBlackBerryUsers { get; set; }
         public int AllocatedBlackBerryUsers { get; set; }
 
-
         public int CreatedOCSUsers { get; set; }
         public int AllocatedOCSUsers { get; set; }
 
         public int CreatedLyncUsers { get; set; }
         public int AllocatedLyncUsers { get; set; }
+
+
+        public int CreatedEnterpriseStorageFolders
+        {
+            get { return createdEnterpriseStorageFolders; }
+            set { createdEnterpriseStorageFolders = value; }
+        }
+
+        public int AllocatedEnterpriseStorageFolders
+        {
+            get { return allocatedEnterpriseStorageFolders; }
+            set { allocatedEnterpriseStorageFolders = value; }
+        }
+
+        public int AllocatedEnterpriseStorageSpace
+        {
+            get { return allocatedEnterpriseStorageSpace; }
+            set { allocatedEnterpriseStorageSpace = value; }
+        }
+
+        public int UsedEnterpriseStorageSpace
+        {
+            get { return usedEnterpriseStorageSpace; }
+            set { usedEnterpriseStorageSpace = value; }
+        }
+
+        public int AllocatedGroups
+        {
+            get { return allocatedGroups; }
+            set { allocatedGroups = value; }
+        }
+
+        public int CreatedGroups
+        {
+            get { return createdGroups; }
+            set { createdGroups = value; }
+        }
+
+        int allocatedArchingStorage;
+        public int AllocatedArchingStorage
+        {
+            get { return allocatedArchingStorage; }
+            set { allocatedArchingStorage = value; }
+        }
+
+        int usedArchingStorage;
+        public int UsedArchingStorage
+        {
+            get { return usedArchingStorage; }
+            set { usedArchingStorage = value; }
+        }
 	}
 }
 

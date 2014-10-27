@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -530,6 +530,73 @@ namespace WebsitePanel.Server
             catch (Exception ex)
             {
                 Log.WriteError(String.Format("'{0}' GrantGroupNtfsPermissions", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+
+        [WebMethod, SoapHeader("settings")]
+        public void SetQuotaLimitOnFolder(string folderPath, string shareNameDrive, QuotaType quotaType, string quotaLimit, int mode, string wmiUserName, string wmiPassword)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' SetQuotaLimitOnFolder", ProviderSettings.ProviderName);
+                OsProvider.SetQuotaLimitOnFolder(folderPath, shareNameDrive, quotaType, quotaLimit, mode, wmiUserName, wmiPassword);
+                Log.WriteEnd("'{0}' SetQuotaLimitOnFolder", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' SetQuotaLimitOnFolder", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public Quota GetQuotaOnFolder(string folderPath, string wmiUserName, string wmiPassword)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetQuotaOnFolder", ProviderSettings.ProviderName);
+                var result = OsProvider.GetQuotaOnFolder(folderPath, wmiUserName, wmiPassword);
+                Log.WriteEnd("'{0}' GetQuotaOnFolder", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetQuotaOnFolder", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void DeleteDirectoryRecursive(string rootPath)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' DeleteDirectoryRecursive", ProviderSettings.ProviderName);
+                OsProvider.DeleteDirectoryRecursive(rootPath);
+                Log.WriteEnd("'{0}' DeleteDirectoryRecursive", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' DeleteDirectoryRecursive", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool CheckFileServicesInstallation()
+        {
+            try
+            {
+                Log.WriteStart("'{0}' CheckFileServicesInstallation", ProviderSettings.ProviderName);
+                bool bResult =  OsProvider.CheckFileServicesInstallation();
+                Log.WriteEnd("'{0}' CheckFileServicesInstallation", ProviderSettings.ProviderName);
+                return bResult;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' CheckFileServicesInstallation", ProviderSettings.ProviderName), ex);
                 throw;
             }
         }

@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -63,14 +63,27 @@ namespace WebsitePanel.Portal
         {
             IIs7 = item.IIs7;
 
-            // bind data
+            // bind error mode
+            ddlErrorMode.Items.Add(HttpErrorsMode.DetailedLocalOnly.ToString());
+            ddlErrorMode.Items.Add(HttpErrorsMode.Custom.ToString());
+            ddlErrorMode.Items.Add(HttpErrorsMode.Detailed.ToString());
+
+            ddlErrorMode.SelectedValue = item.ErrorMode.ToString();
+            
+            // bind errors list
             gvErrorPages.DataSource = item.HttpErrors;
             gvErrorPages.DataBind();
         }
 
         public void SaveWebItem(WebVirtualDirectory item)
         {
+            item.ErrorMode = GetSelectedErrorMode();
             item.HttpErrors = CollectFormData(false).ToArray();
+        }
+
+        private HttpErrorsMode GetSelectedErrorMode()
+        {
+            return (HttpErrorsMode)Enum.Parse(typeof (HttpErrorsMode), ddlErrorMode.SelectedValue);
         }
 
         public List<HttpError> CollectFormData(bool includeEmpty)

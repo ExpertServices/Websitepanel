@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -56,9 +56,11 @@ namespace WebsitePanel.Portal
         public const string CONFIG_FOLDER = "~/App_Data/";
         public const string SUPPORTED_THEMES_FILE = "SupportedThemes.config";
         public const string SUPPORTED_LOCALES_FILE = "SupportedLocales.config";
+        public const string EXCHANGE_SERVER_HIERARCHY_FILE = "ESModule_ControlsHierarchy.config";
         public const string USER_ID_PARAM = "UserID";
         public const string SPACE_ID_PARAM = "SpaceID";
         public const string SEARCH_QUERY_PARAM = "Query";
+
 
         public static string CultureCookieName
         {
@@ -312,6 +314,11 @@ namespace WebsitePanel.Portal
                 className = String.Concat(moduleName, "_", className);
             
             return (string)HttpContext.GetGlobalResourceObject(className, resourceKey);
+        }
+
+        public static string GetLocalizedString(string virtualPath, string resourceKey)
+        {
+            return (string)HttpContext.GetLocalResourceObject(virtualPath, resourceKey);
         }
 
         public static string GetCurrentPageId()
@@ -949,7 +956,61 @@ namespace WebsitePanel.Portal
 
             return navigateUrl;
         }
+
+        public static string EditUrl(string keyName, string keyValue, string controlKey, params string[] additionalParams)
+        {
+            List<string> url = new List<string>();
+
+            string pageId = HttpContext.Current.Request[DefaultPage.PAGE_ID_PARAM];
+
+            if (!String.IsNullOrEmpty(pageId))
+                url.Add(String.Concat(DefaultPage.PAGE_ID_PARAM, "=", pageId));
+
+            url.Add(String.Concat(DefaultPage.MODULE_ID_PARAM, "=", HttpContext.Current.Request.QueryString["mid"]));
+            url.Add(String.Concat(DefaultPage.CONTROL_ID_PARAM, "=", controlKey));
+
+            if (!String.IsNullOrEmpty(keyName) && !String.IsNullOrEmpty(keyValue))
+            {
+                url.Add(String.Concat(keyName, "=", keyValue));
+            }
+
+            if (additionalParams != null)
+            {
+                foreach (string additionalParam in additionalParams)
+                    url.Add(additionalParam);
+            }
+
+            return "~/Default.aspx?" + String.Join("&", url.ToArray());
+        }
         #endregion
+
+        public static string GetGeneralESControlKey(string controlKey)
+        {
+            string generalControlKey = string.Empty;
+
+            string appData = HttpContext.Current.Server.MapPath(CONFIG_FOLDER);
+            string xmlFilePath = Path.Combine(appData, EXCHANGE_SERVER_HIERARCHY_FILE);
+            if (File.Exists(xmlFilePath))
+            {
+                try
+                {
+                    XmlDocument xmlDoc = new XmlDocument();
+                    xmlDoc.Load(xmlFilePath);
+
+                    XmlElement xmlNode = (XmlElement)xmlDoc.SelectSingleNode(string.Format("/Controls/Control[@key='{0}']", controlKey));
+
+                    if (xmlNode.HasAttribute("general_key"))
+                    {
+                        generalControlKey = xmlNode.GetAttribute("general_key");
+                    }
+                    else generalControlKey = xmlNode.GetAttribute("key");
+                }
+                catch
+                {
+                }
+            }
+            return generalControlKey;
+        }
     }
 }
 

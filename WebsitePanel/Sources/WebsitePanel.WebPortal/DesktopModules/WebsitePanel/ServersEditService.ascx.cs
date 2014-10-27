@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -170,7 +170,8 @@ namespace WebsitePanel.Portal
                                                                 (resourceGroup.GroupName == ResourceGroups.MsSql2000)|
                                                                 (resourceGroup.GroupName == ResourceGroups.MsSql2005)|
                                                                 (resourceGroup.GroupName == ResourceGroups.MsSql2008)|
-                                                                (resourceGroup.GroupName == ResourceGroups.MsSql2012)|
+                                                                (resourceGroup.GroupName == ResourceGroups.MsSql2012) |
+                                                                (resourceGroup.GroupName == ResourceGroups.MsSql2014) |
                                                                 (resourceGroup.GroupName == ResourceGroups.MySql4)|
                                                                 (resourceGroup.GroupName == ResourceGroups.MySql5)|
                                                                 (resourceGroup.GroupName == ResourceGroups.Statistics)|

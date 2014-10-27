@@ -168,4 +168,7 @@
   <data name="lclMSSQL2012Resources.Text" xml:space="preserve">
     <value>Microsoft SQL 2012 Quotas</value>
   </data>
+  <data name="lclMSSQL2014Resources.Text" xml:space="preserve">
+    <value>Microsoft SQL 2014 Quotas</value>
+  </data>
 </root>

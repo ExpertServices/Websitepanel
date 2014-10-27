@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -151,7 +151,9 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            // increase timeout
+            ScriptManager scriptMngr = ScriptManager.GetCurrent(this.Page);
+            scriptMngr.AsyncPostBackTimeout = 300;
         }
 
         private void BindSelectedAccount(OrganizationUser account)
@@ -288,6 +290,8 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             if (e.CommandName == "SelectAccount")
             {
                 string[] parts = e.CommandArgument.ToString().Split('|');
+
+                /*
                 OrganizationUser account = new OrganizationUser();
                 account.AccountName = parts[0];
                 account.DisplayName = parts[1];
@@ -295,6 +299,11 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 account.AccountId = Utils.ParseInt(parts[3]);
                 account.SamAccountName = parts[4];
                 account.SubscriberNumber = parts[5];
+                 */
+
+                int AccountId = Utils.ParseInt(parts[3]);
+
+                OrganizationUser account = ES.Services.Organizations.GetUserGeneralSettings(PanelRequest.ItemID, AccountId);
 
                 // set account
                 BindSelectedAccount(account);

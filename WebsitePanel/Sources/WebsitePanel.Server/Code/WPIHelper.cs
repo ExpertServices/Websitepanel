@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012, Outercurve Foundation.
+﻿// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -55,10 +55,8 @@ namespace WebsitePanel.Server.Code
 
         #region private fields
 
-        private readonly List<string> _feeds;
+        private List<string> _feeds;
         private string _webPIinstallersFolder;
-        //private const string MainWpiFeed = "https://www.microsoft.com/web/webpi/3.0/webproductlist.xml";
-        private const string MainWpiFeed = "https://www.microsoft.com/web/webpi/4.0/WebProductList.xml";
         private const string IisChoiceProduct = "StaticContent";
         private const string WebMatrixChoiceProduct = "WebMatrix";
         private ProductManager _productManager;
@@ -79,6 +77,14 @@ namespace WebsitePanel.Server.Code
 
         public WpiHelper(IEnumerable<string> feeds)
         {
+            // check feeds is not empty
+            if (null == feeds || !feeds.Any())
+            {
+                throw new Exception("WpiHelper error: empty feed list in constructor");
+            }
+
+            
+            // by default feeds must contains main MS WPI feed url and Zoo feed url
             _feeds = new List<string>();
             _feeds.AddRange(feeds);
 
@@ -135,7 +141,6 @@ namespace WebsitePanel.Server.Code
         }
        #endregion
 
-
         #region Keywords
         public ReadOnlyCollection<Keyword> GetKeywords()
         {
@@ -156,20 +161,37 @@ namespace WebsitePanel.Server.Code
             return true;
 
         }
+
+        public bool IsHiddenKeyword(Keyword keyword)
+        {
+            if (keyword.Id.StartsWith("ZooEngine", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            return false;
+        }
         #endregion
-
-
 
         #region Products
         public List<Product> GetProductsToInstall(string FeedLocation, string keywordId)
         {
             Keyword keyword = null;
+            List<Product> products = new List<Product>();
+
             if (!string.IsNullOrEmpty(keywordId))
             {
                 keyword = _productManager.GetKeyword(keywordId);
             }
 
-            List<Product> products = new List<Product>();
+            // if we do not find keyword object by keyword string
+            // then return empty list
+            if (null == keyword && !string.IsNullOrEmpty(keywordId))
+            {
+                WriteLog(string.Format("Keyword '{0}' not found, return empty product list", keywordId));
+                return products;
+            }
+
 
             foreach (Product product in _productManager.Products)
             {
@@ -219,6 +241,12 @@ namespace WebsitePanel.Server.Code
                     continue;
                 }
 
+                if (product.GetAttributeValue("searchExclude") != null)
+                {
+                    // skip it, this is internal not visible product 
+                    continue;
+                }
+
                 if (string.IsNullOrEmpty(filter))
                 {
                     products.Add(product);
@@ -237,6 +265,20 @@ namespace WebsitePanel.Server.Code
 
 
             return products;
+        }
+
+        public Product GetWPIProductById(string productId)
+        {
+            foreach (Product product in _productManager.Products)
+            {
+                if (0 == String.Compare(product.ProductId, productId, StringComparison.OrdinalIgnoreCase))
+                {
+                    return product;
+                }
+
+            }
+
+            return null; //not found
         }
         
         public List<Product> GetProductsToInstall(IEnumerable<string> productIdsToInstall)
@@ -478,10 +520,15 @@ namespace WebsitePanel.Server.Code
         {
 
             Product app = GetProduct(appId);
-            Installer appInstaller = app.GetInstaller(GetLanguage(languageId));
+            Installer appInstaller = GetInstaller(languageId, app);
             WpiAppInstallLogger logger = new WpiAppInstallLogger();
 
-          
+            /*
+            if (null == _installManager)
+            {
+                Debugger.Break();
+            }
+            */
 
             if (null != installStatusUpdatedHandler)
             {
@@ -539,7 +586,27 @@ namespace WebsitePanel.Server.Code
             return !logger.IsFailed;
         }
 
+        private Installer GetInstaller(string languageId, Product product)
+        {
+            Installer installer = product.GetInstaller(GetLanguage(languageId));
+            if (null == installer)
+            {
+                installer = product.GetInstaller(GetLanguage(DeafultLanguage));
+                if (null == installer)
+                {
+                    throw new Exception(
+                        string.Format(
+                        "Could not get installer for product '{0}', language: {1}, default language: {2}",
+                        product.Title, languageId, DeafultLanguage)
+                    );
+                }
+            }
+
+            return installer;
+        }
+
         #endregion
+
         #endregion Public interface
 
 
@@ -547,14 +614,7 @@ namespace WebsitePanel.Server.Code
 
         private void Initialize()
         {
-            // insert Main WebPI xml file
-            if (!_feeds.Contains(MainWpiFeed, StringComparer.OrdinalIgnoreCase))
-            {
-                _feeds.Insert(0, MainWpiFeed);
-            }
-
             // create cache folder if not exists
-            //_webPIinstallersFolder = Environment.ExpandEnvironmentVariables(@"%LocalAppData%\Microsoft\Web Platform Installer\installers");
             _webPIinstallersFolder = Path.Combine(
                 Environment.ExpandEnvironmentVariables("%SystemRoot%"),
                 "Temp\\zoo.wpi\\AppData\\Local\\Microsoft\\Web Platform Installer\\installers");
@@ -564,26 +624,87 @@ namespace WebsitePanel.Server.Code
                 Directory.CreateDirectory(_webPIinstallersFolder);
             }
 
-            // load feeds
-            _productManager = new ProductManager();
-
-
-            foreach (string feed in _feeds)
-            {
-                WriteLog(string.Format("Loading feed {0}", feed));
-                if (feed.StartsWith("https://www.microsoft.com", StringComparison.OrdinalIgnoreCase))
-                {
-                    _productManager.Load(new Uri(feed), true, true, true, _webPIinstallersFolder);
-                }
-                else
-                {
-                    _productManager.LoadExternalFile(new Uri(feed));
-                }
-            }
+            LoadFeeds();
 
             WriteLog(string.Format("{0} products loaded", _productManager.Products.Count));
 
             //LogDebugInfo();
+        }
+
+        private void LoadFeeds()
+        {
+            if (null == _feeds || !_feeds.Any())
+            {
+                throw new Exception("WpiHelper: no feeds provided");
+            }
+
+            _productManager = new ProductManager();
+
+            try
+            {
+                TryLoadFeeds();
+                // ok, all feeds loaded
+            }
+            catch(Exception ex1)
+            {
+                // feed loading failed
+
+                if (_feeds.Count > 1)
+                {
+                    // exclude feeds except first (default microsoft feed)
+                    _feeds = new List<string> {_feeds[0]};
+
+                    // re-create product manager
+                    _productManager = new ProductManager();
+
+                    try
+                    {
+                        // loaded first (default) feed only
+                        TryLoadFeeds();
+                    }
+                    catch(Exception ex2)
+                    {
+                        throw new Exception(string.Format("WpiHelper: download first feed failed: {0}", ex2), ex2);
+                    }
+                }
+                else
+                {
+                    throw new Exception(string.Format("WpiHelper: download all ({0}) feeds failed: {1}", _feeds.Count, ex1), ex1);
+                }
+            }
+        }
+
+        private void TryLoadFeeds()
+        {
+            string loadingFeed = null;
+
+            try
+            {
+                foreach (string feed in _feeds)
+                {
+                    loadingFeed = feed;
+                    WriteLog(string.Format("Loading feed {0}", feed));
+                    if (feed.IndexOf("microsoft.com", StringComparison.OrdinalIgnoreCase) > 0)
+                    {
+                        // it is internal Microsoft feed
+                        _productManager.Load(new Uri(feed), true, true, true, _webPIinstallersFolder);
+                    }
+                    else
+                    {
+                        _productManager.LoadExternalFile(new Uri(feed));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (!string.IsNullOrEmpty(loadingFeed))
+                {
+                    // error occured on loading this feed
+                    // log this
+                    WriteLog(string.Format("Feed {0} loading error: {1}", loadingFeed, ex));
+                }
+                throw;
+            }
         }
 
         private Language GetLanguage(string languageId)
@@ -599,10 +720,11 @@ namespace WebsitePanel.Server.Code
 
         private List<Installer> GetInstallers(List<Product> productsToInstall, Language lang)
         {
+            Language defaultLang = GetLanguage(DeafultLanguage);
             List<Installer> installersToUse = new List<Installer>();
             foreach (Product product in productsToInstall)
             {
-                Installer installer = product.GetInstaller(lang);
+                Installer installer = product.GetInstaller(lang) ?? product.GetInstaller(defaultLang);
                 if (null != installer)
                 {
                     installersToUse.Add(installer);
@@ -781,6 +903,7 @@ namespace WebsitePanel.Server.Code
                 msDeployPackage.SkipDirectives.Add(string.Format("objectName={0}", provider));
             }
         }
+
 
         #endregion private members
     }

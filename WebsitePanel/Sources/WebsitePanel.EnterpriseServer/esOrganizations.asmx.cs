@@ -30,6 +30,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Web.Services;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
+using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
 
@@ -44,6 +46,12 @@ namespace WebsitePanel.EnterpriseServer
     public class esOrganizations : WebService
     {
         #region Organizations
+
+        [WebMethod]
+        public bool CheckOrgIdExists(string orgId)
+        {
+            return OrganizationController.OrganizationIdentifierExists(orgId);
+        }
 
         [WebMethod]
         public int CreateOrganization(int packageId, string organizationID, string organizationName, string domainName)
@@ -110,9 +118,13 @@ namespace WebsitePanel.EnterpriseServer
             return OrganizationController.GetAccountIdByUserPrincipalName(itemId, userPrincipalName);
         }
 
+        [WebMethod]
+        public void SetDefaultOrganization(int newDefaultOrganizationId, int currentDefaultOrganizationId)
+        {
+            OrganizationController.SetDefaultOrganization(newDefaultOrganizationId, currentDefaultOrganizationId);
+        }
 
         #endregion
-
 
         #region Domains
 
@@ -147,7 +159,6 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         #endregion
-
 
         #region Users
 
@@ -184,14 +195,14 @@ namespace WebsitePanel.EnterpriseServer
             string lastName, string address, string city, string state, string zip, string country,
             string jobTitle, string company, string department, string office, string managerAccountName,
             string businessPhone, string fax, string homePhone, string mobilePhone, string pager,
-            string webPage, string notes, string externalEmail, string subscriberNumber)
+            string webPage, string notes, string externalEmail, string subscriberNumber, int levelId, bool isVIP)
         {
             return OrganizationController.SetUserGeneralSettings(itemId, accountId, displayName,
                 password, hideAddressBook, disabled, locked, firstName, initials,
                 lastName, address, city, state, zip, country,
                 jobTitle, company, department, office, managerAccountName,
                 businessPhone, fax, homePhone, mobilePhone, pager,
-                webPage, notes, externalEmail, subscriberNumber);
+                webPage, notes, externalEmail, subscriberNumber, levelId, isVIP);
         }
 
 
@@ -208,7 +219,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             return OrganizationController.SetUserPassword(itemId, accountId, password);
         }
-        
+
 
 
         [WebMethod]
@@ -233,6 +244,129 @@ namespace WebsitePanel.EnterpriseServer
             return OrganizationController.GetPasswordPolicy(itemId);
         }
 
+
+        #endregion
+
+        #region Security Groups
+
+        [WebMethod]
+        public int CreateSecurityGroup(int itemId, string displayName)
+        {
+            return OrganizationController.CreateSecurityGroup(itemId, displayName);
+        }
+
+        [WebMethod]
+        public OrganizationSecurityGroup GetSecurityGroupGeneralSettings(int itemId, int accountId)
+        {
+            return OrganizationController.GetSecurityGroupGeneralSettings(itemId, accountId);
+        }
+
+        [WebMethod]
+        public int DeleteSecurityGroup(int itemId, int accountId)
+        {
+            return OrganizationController.DeleteSecurityGroup(itemId, accountId);
+        }
+
+        [WebMethod]
+        public int SetSecurityGroupGeneralSettings(int itemId, int accountId, string displayName, string[] memberAccounts, string notes)
+        {
+            return OrganizationController.SetSecurityGroupGeneralSettings(itemId, accountId, displayName, memberAccounts, notes);
+        }
+
+        [WebMethod]
+        public ExchangeAccountsPaged GetOrganizationSecurityGroupsPaged(int itemId, string filterColumn, string filterValue, string sortColumn,
+            int startRow, int maximumRows)
+        {
+            return OrganizationController.GetOrganizationSecurityGroupsPaged(itemId, filterColumn, filterValue, sortColumn, startRow, maximumRows);
+        }
+
+        [WebMethod]
+        public int AddObjectToSecurityGroup(int itemId, int accountId, string groupName)
+        {
+            return OrganizationController.AddObjectToSecurityGroup(itemId, accountId, groupName);
+        }
+
+        [WebMethod]
+        public int DeleteObjectFromSecurityGroup(int itemId, int accountId, string groupName)
+        {
+            return OrganizationController.DeleteObjectFromSecurityGroup(itemId, accountId, groupName);
+        }
+
+        [WebMethod]
+        public ExchangeAccount[] GetSecurityGroupsByMember(int itemId, int accountId)
+        {
+            return OrganizationController.GetSecurityGroupsByMember(itemId, accountId);
+        }
+
+        [WebMethod]
+        public List<ExchangeAccount> SearchOrganizationAccounts(int itemId, string filterColumn, string filterValue,
+            string sortColumn, bool includeOnlySecurityGroups)
+        {
+            return OrganizationController.SearchOrganizationAccounts(itemId, filterColumn, filterValue, sortColumn,
+                includeOnlySecurityGroups);
+        }
+
+        #endregion
+
+        #region Additional Default Groups
+
+        [WebMethod]
+        public List<AdditionalGroup> GetAdditionalGroups(int userId)
+        {
+            return OrganizationController.GetAdditionalGroups(userId);
+        }
+
+        [WebMethod]
+        public void UpdateAdditionalGroup(int groupId, string groupName)
+        {
+            OrganizationController.UpdateAdditionalGroup(groupId, groupName);
+        }
+
+        [WebMethod]
+        public void DeleteAdditionalGroup(int groupId)
+        {
+            OrganizationController.DeleteAdditionalGroup(groupId);
+        }
+
+        [WebMethod]
+        public int AddAdditionalGroup(int userId, string groupName)
+        {
+            return OrganizationController.AddAdditionalGroup(userId, groupName);
+        }
+
+        #endregion
+
+        #region Service Levels
+
+        [WebMethod]
+        public ServiceLevel[] GetSupportServiceLevels()
+        {
+            return OrganizationController.GetSupportServiceLevels();
+        }
+
+        [WebMethod]
+        public void UpdateSupportServiceLevel(int levelID, string levelName, string levelDescription)
+        {
+            OrganizationController.UpdateSupportServiceLevel(levelID, levelName, levelDescription);
+        }
+
+        [WebMethod]
+        public ResultObject DeleteSupportServiceLevel(int levelId)
+        {
+            return OrganizationController.DeleteSupportServiceLevel(levelId);
+        }
+
+        [WebMethod]
+        public int AddSupportServiceLevel(string levelName, string levelDescription)
+        {
+            return OrganizationController.AddSupportServiceLevel(levelName, levelDescription);
+        }
+
+        [WebMethod]
+        public ServiceLevel GetSupportServiceLevel(int levelID)
+        {
+            return OrganizationController.GetSupportServiceLevel(levelID);
+        }
 
         #endregion
 

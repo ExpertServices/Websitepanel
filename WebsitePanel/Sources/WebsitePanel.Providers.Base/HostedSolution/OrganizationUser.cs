@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -77,6 +77,8 @@ namespace WebsitePanel.Providers.HostedSolution
         private OrganizationUser manager;
         private Guid crmUserId;
 
+        private int levelId;
+        private bool isVip;
 
         public Guid CrmUserId
         {
@@ -312,6 +314,18 @@ namespace WebsitePanel.Providers.HostedSolution
             set { userPrincipalName = value; }
         }
 
+
+        public int LevelId
+        {
+            get { return levelId; }
+            set { levelId = value; }
+        }
+
+        public bool IsVIP
+        {
+            get { return isVip; }
+            set { isVip = value; }
+        }
 
     }
 }

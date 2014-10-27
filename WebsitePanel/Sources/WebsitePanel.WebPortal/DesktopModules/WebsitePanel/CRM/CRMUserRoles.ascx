@@ -2,9 +2,6 @@
     Inherits="WebsitePanel.Portal.CRM.CRMUserRoles" %>
 <%@ Register Src="../ExchangeServer/UserControls/UserSelector.ascx" TagName="UserSelector"
     TagPrefix="wsp" %>
-<%@ Register Src="../ExchangeServer/UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
-<%@ Register Src="../ExchangeServer/UserControls/Breadcrumb.ascx" TagName="Breadcrumb"
-    TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox"
     TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport"
@@ -13,11 +10,7 @@
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server" />
 <div id="ExchangeContainer">
     <div class="Module">
-        <div class="Header">
-            <wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName" />
-        </div>
         <div class="Left">
-            <wsp:Menu id="menu" runat="server" />
         </div>
         <div class="Content">
             <div class="Center">
@@ -49,6 +42,15 @@
                                             onclick="btnActive_Click" meta:resourcekey="btnActivate" /><asp:Button  CssClass="Button1" runat="server" 
                                             Text="Deactivate" ID="btnDeactivate" onclick="btnDeactivate_Click"  meta:resourcekey="btnDeactivate"/></td>
                                 </tr>
+
+                                <tr>
+                                    <td class="FormLabel150"><asp:Localize runat="server" meta:resourcekey="locLicenseType" Text="License Type:" /></td>
+                                    <td>
+                                        <asp:DropDownList ID="ddlLicenseType" runat="server" CssClass="NormalTextBox" AutoPostBack="false">
+                                        </asp:DropDownList>
+                                    </td>
+                                </tr>
+
                             </table>
                             <br />
                         </div>
@@ -72,7 +74,10 @@
                             </asp:GridView>
                         </div>
                         <br />
-                        <asp:Button runat="server" ID="btnUpdate" Text="Update" meta:resourcekey="btnUpdate"   CssClass="Button1"  onclick="btnUpdate_Click" />
+                        <asp:Button runat="server" ID="btnUpdate" Text="Save Changes" meta:resourcekey="btnUpdate"   CssClass="Button1"  onclick="btnUpdate_Click" />
+                        <asp:Button runat="server" ID="btnSaveExit" Text="Save Changes and Exit" CssClass="Button1"
+		                    meta:resourcekey="btnSaveExit" OnClick="btnSaveExit_Click"></asp:Button>
+
                     </div>
                     <br />
                 </div>

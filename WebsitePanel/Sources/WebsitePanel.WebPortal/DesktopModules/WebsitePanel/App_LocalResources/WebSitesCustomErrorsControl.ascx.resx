@@ -156,4 +156,7 @@
   <data name="IIS7.Redirect" xml:space="preserve">
     <value>Redirect</value>
   </data>
+  <data name="lblErrorMode.Text">
+    <value xml:space="preserve">Error Mode</value>
+  </data>
 </root>

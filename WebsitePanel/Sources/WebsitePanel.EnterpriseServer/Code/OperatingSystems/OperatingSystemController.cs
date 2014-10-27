@@ -406,6 +406,15 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.CompleteTask();
             }
         }
+
+        // Check If FSRM Role services were installed
+        public static bool CheckFileServicesInstallation(int serviceId)
+        {
+            OS.OperatingSystem os = GetOS(serviceId);
+            return os.CheckFileServicesInstallation();
+
+        }
+
         #endregion
 
         #region Web Platform Installer
@@ -487,6 +496,11 @@ namespace WebsitePanel.EnterpriseServer
         public static WPIProduct[] GetWPIProductsFiltered(int serverId, string keywordId)
         {
             return GetServerService(serverId).GetWPIProductsFiltered(keywordId);
+        }
+
+        public static WPIProduct GetWPIProductById(int serverId, string productdId)
+        {
+            return GetServerService(serverId).GetWPIProductById(productdId);
         }
 
         

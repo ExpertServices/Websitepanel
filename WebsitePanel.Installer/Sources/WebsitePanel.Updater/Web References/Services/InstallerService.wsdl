@@ -145,10 +145,10 @@
   </wsdl:binding>
   <wsdl:service name="InstallerService">
     <wsdl:port name="InstallerServiceSoap" binding="tns:InstallerServiceSoap">
-      <soap:address location="http://localhost/WebsitePanelSite/Services/InstallerService.asmx" />
+      <soap:address location="http://localhost/WebsitePanelSite/Services/InstallerService-2.1.asmx" />
     </wsdl:port>
     <wsdl:port name="InstallerServiceSoap12" binding="tns:InstallerServiceSoap12">
-      <soap12:address location="http://localhost/WebsitePanelSite/Services/InstallerService.asmx" />
+      <soap12:address location="http://localhost/WebsitePanelSite/Services/InstallerService-2.1.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

@@ -288,6 +288,12 @@
   <data name="PageTitle.SpaceMsSql2012" xml:space="preserve">
     <value>{user} - {space} - SQL Server 2012</value>
   </data>
+    <data name="PageName.SpaceMsSql2014" xml:space="preserve">
+    <value>SQL Server 2014</value>
+  </data>
+    <data name="PageTitle.SpaceMsSql2014" xml:space="preserve">
+    <value>{user} - {space} - SQL Server 2014</value>
+  </data>
   <data name="PageTitle.SpaceMsSql2005" xml:space="preserve">
     <value>{user} - {space} - SQL Server 2005</value>
   </data>
@@ -458,5 +464,20 @@
   </data>
   <data name="PageTitle.SpaceVPSForPC" xml:space="preserve">
     <value>{user} - {space} - Virtual Private Servers for Private Cloud</value>
+  </data>
+  <data name="PageName.SpaceApplyEnableHardQuotaFeature" xml:space="preserve">
+    <value>System Hard Quota</value>
+  </data>
+  <data name="PageName.LyncPhoneNumbers" xml:space="preserve">
+    <value>Phone Numbers</value>
+  </data>
+  <data name="PageTitle.LyncPhoneNumbers" xml:space="preserve">
+    <value>{user} - {space} - Phone Numbers</value>
+  </data>
+  <data name="PageName.PhoneNumbers" xml:space="preserve">
+    <value>Phone Numbers</value>
+  </data>
+  <data name="PageTitle.PhoneNumbers" xml:space="preserve">
+    <value>Phone Numbers</value>
   </data>
 </root>

@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -49,6 +49,7 @@ using System.Management;
 using System.Collections.Specialized;
 using Microsoft.Web.PlatformInstaller;
 using Microsoft.Web.Services3;
+using Microsoft.Win32;
 using WebsitePanel.Providers.Utils;
 using WebsitePanel.Server.Code;
 using WebsitePanel.Server.Utils;
@@ -301,7 +302,7 @@ namespace WebsitePanel.Server
 
       
 
-        private string makeHref(string value)
+        private string Linkify(string value)
         {
             if (string.IsNullOrEmpty(value))
                 return value;
@@ -318,7 +319,7 @@ namespace WebsitePanel.Server
             WPIProduct p = new WPIProduct();
             p.ProductId = product.ProductId;
             p.Summary = product.Summary;
-            p.LongDescription = makeHref(product.LongDescription);
+            p.LongDescription = Linkify(product.LongDescription);
             p.Published = product.Published;
             p.Author = product.Author;
             p.AuthorUri = (product.AuthorUri != null) ? product.AuthorUri.ToString() : ""; 
@@ -355,6 +356,60 @@ namespace WebsitePanel.Server
             return p;
         }
 
+        private void CheckHostingPackagesUpgrades(IList<WPIProduct> products)
+        {
+            foreach (WPIProduct product in products)
+            {
+                string hostingPackageName = product.ProductId;
+                CheckProductForUpdate(hostingPackageName, product);
+            }
+        }
+
+        private void CheckProductForUpdate(string hostingPackageName, WPIProduct product)
+        {
+            string installedHostingPackageVersion = GetInstalledHostingPackageVersion(hostingPackageName);
+            if (!string.IsNullOrEmpty(installedHostingPackageVersion))
+            {
+                //6
+                //3.0.90.383
+                if (CompareVersions(product.Version, installedHostingPackageVersion) > 0)
+                {
+                    product.IsUpgrade = true;
+                    product.IsInstalled = false;
+                }
+                
+            }
+        }
+
+        private decimal CompareVersions(string newVersion, string oldVersion)
+        {
+            try
+            {
+                var version1 = new Version(newVersion);
+                var version2 = new Version(oldVersion);
+
+                return version1.CompareTo(version2);
+
+            }
+            catch (ArgumentException)
+            {
+                return String.Compare(newVersion,oldVersion, StringComparison.Ordinal);
+
+            }
+        }
+
+        private string GetInstalledHostingPackageVersion(string hostingPackageName)
+        {
+            string installedVersion = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Helicon\\Zoo", hostingPackageName + "Version", string.Empty) as string;
+            if (string.IsNullOrEmpty(installedVersion))
+            {
+                installedVersion = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Helicon\\Zoo", hostingPackageName + "Version", string.Empty) as string;
+            }
+
+            return installedVersion;
+        }
+
+
         [WebMethod]
         public WPIProduct[] GetWPIProducts(string tabId, string keywordId)
         {
@@ -390,6 +445,13 @@ namespace WebsitePanel.Server
 
                         }
                     }
+
+                    // check upgrades for Hosting Packages (ZooPackage keyword)
+                    if (WPIKeyword.HOSTING_PACKAGE_KEYWORD == keywordId)
+                    {
+                        CheckHostingPackagesUpgrades(wpiProducts);
+                    }
+
 
                 }
 
@@ -449,6 +511,33 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod]
+        public WPIProduct GetWPIProductById(string productdId)
+        {
+            try
+            {
+                Log.WriteStart("GetWPIProductById");
+                WpiHelper wpi = GetWpiFeed();
+
+                Product product = wpi.GetWPIProductById(productdId);
+                WPIProduct wpiProduct = ProductToWPIProduct(product);
+
+                if (wpiProduct.ProductId == "HeliconZooModule")
+                {
+                    /*null string = HeliconZooModule in registry*/
+                    CheckProductForUpdate("", wpiProduct);
+                }
+
+                Log.WriteEnd("GetWPIProductById");
+                return wpiProduct;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("GetWPIProductById", ex);
+                throw;
+            }
+        }
+
+        [WebMethod]
         public WPITab[] GetWPITabs()
         {
             try
@@ -477,11 +566,7 @@ namespace WebsitePanel.Server
         }
 
        
-        static string[] FEEDS = new string[]
-                {
-              //      "https://www.microsoft.com/web/webpi/3.0/WebProductList.xml",
-              //      "http://www.helicontech.com/zoo/feed/"
-                };
+        static private string[] _feeds = new string[]{};
 
         [WebMethod]
         public void InitWPIFeeds(string feedUrls)
@@ -491,18 +576,18 @@ namespace WebsitePanel.Server
                 throw new Exception("Empty feed list");
             }
 
-            string[] newFEEDS = feedUrls.Split(';');
+            string[] newFeeds = feedUrls.Split(';');
 
-            if (newFEEDS.Length == 0)
+            if (newFeeds.Length == 0)
             {
                 throw new Exception("Empty feed list");
             }
-            if (!ArraysEqual<string>(newFEEDS, FEEDS))
+            if (!ArraysEqual<string>(newFeeds, _feeds))
             {
                 Log.WriteInfo("InitWPIFeeds - new value: " + feedUrls);
 
                 //Feeds settings have been channged
-                FEEDS = newFEEDS;
+                _feeds = newFeeds;
                 wpi = null;
 
             }
@@ -604,7 +689,7 @@ namespace WebsitePanel.Server
                 
                 WPIServiceContract client = new WPIServiceContract();
 
-                client.Initialize(FEEDS);
+                client.Initialize(_feeds);
                 client.BeginInstallation(products);
 
                 
@@ -646,6 +731,7 @@ namespace WebsitePanel.Server
             wpiServiceExe.StartInfo.WorkingDirectory = workingDirectory;
             wpiServiceExe.StartInfo.UseShellExecute = false;
             wpiServiceExe.StartInfo.LoadUserProfile = true;
+            wpiServiceExe.StartInfo.EnvironmentVariables["MySqlPassword"] = "";
             //wpiServiceExe.StartInfo.EnvironmentVariables["UserProfile"] = newUserProfile;
             //wpiServiceExe.StartInfo.EnvironmentVariables["LocalAppData"] = newLocalAppData;
             //wpiServiceExe.StartInfo.EnvironmentVariables["AppData"] = newAppData;
@@ -795,14 +881,14 @@ namespace WebsitePanel.Server
         static WpiHelper wpi = null;
         WpiHelper GetWpiFeed()
         {
-            if (FEEDS.Length == 0)
+            if (_feeds.Length == 0)
             {
                 throw new Exception("Empty feed list");
             }
 
             if (null == wpi)
             {
-                wpi = new WpiHelper(FEEDS);
+                wpi = new WpiHelper(_feeds);
             }
             return wpi;
         }

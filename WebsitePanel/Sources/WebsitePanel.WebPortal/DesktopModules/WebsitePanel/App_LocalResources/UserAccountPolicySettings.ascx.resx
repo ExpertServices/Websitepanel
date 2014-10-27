@@ -150,4 +150,7 @@
   <data name="lnkWebPolicy.Text" xml:space="preserve">
     <value>WEB Policy</value>
   </data>
+  <data name="lnkServiceLevels.Text" xml:space="preserve">
+    <value>Service Levels</value>
+  </data>
 </root>

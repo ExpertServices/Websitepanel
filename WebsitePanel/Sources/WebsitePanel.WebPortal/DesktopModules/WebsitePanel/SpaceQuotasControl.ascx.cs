@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -74,6 +74,14 @@ namespace WebsitePanel.Portal
         public DataView GetGroupQuotas(int groupId)
         {
             return new DataView(dsQuotas.Tables[1], "GroupID=" + groupId.ToString(), "", DataViewRowState.CurrentRows);
+        }
+
+        public string GetQuotaTitle(string quotaName, object quotaDescription)
+        {
+            string description = (quotaDescription.GetType() == typeof(System.DBNull)) ? string.Empty : (string)quotaDescription;
+
+            return quotaName.Contains("ServiceLevel") ? description
+                                                      : GetSharedLocalizedString("Quota." + quotaName);
         }
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -34,8 +34,25 @@ using System.ComponentModel;
 
 namespace WebsitePanel.Providers.Web
 {
-	public class HttpError
+	public enum HttpErrorsMode
 	{
+        DetailedLocalOnly = 0,
+        Custom = 1,
+        Detailed = 2
+	}
+
+    public enum HttpErrorsExistingResponse
+    {
+        Auto = 0,
+        Replace = 1,
+        PassThrough = 2
+    }
+
+    public class HttpError
+	{
+        public const HttpErrorsMode DefaultHttpErrorsMode = HttpErrorsMode.DetailedLocalOnly;
+        public const HttpErrorsExistingResponse DefaultHttpErrorsExistingResponse = HttpErrorsExistingResponse.Auto;
+
 		private string errorCode;
 		private string errorSubcode;
 		private string handlerType;

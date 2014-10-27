@@ -20,6 +20,10 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile />
     <UseIISExpress>false</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,12 +47,7 @@
     <WarningsAsErrors>618</WarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ionic.Zip.Reduced, Version=1.8.4.28, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Lib\Ionic.Zip.Reduced.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Web.Services3, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Microsoft.Web.Services3">
       <HintPath>..\..\Lib\Microsoft.Web.Services3.dll</HintPath>
       <Private>True</Private>
     </Reference>
@@ -69,8 +68,13 @@
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Web.Mobile" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="WebsitePanel.Providers.Base, Version=1.2.2.0, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="WebsitePanel.EnterpriseServer.Base">
+      <HintPath>..\..\Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="WebsitePanel.EnterpriseServer.Code">
+      <HintPath>..\..\Bin\WebsitePanel.EnterpriseServer.Code.dll</HintPath>
+    </Reference>
+    <Reference Include="WebsitePanel.Providers.Base">
       <HintPath>..\..\Bin\WebsitePanel.Providers.Base.dll</HintPath>
     </Reference>
     <Reference Include="WebsitePanel.Server.Client, Version=1.2.2.0, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
@@ -79,6 +83,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="esEnterpriseStorage.asmx" />
+    <Content Include="esRemoteDesktopServices.asmx" />
+    <Content Include="esHeliconZoo.asmx" />
     <Content Include="esLync.asmx" />
     <Content Include="esVirtualizationServerForPrivateCloud.asmx" />
     <Content Include="Default.aspx" />
@@ -117,130 +124,18 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
-    <Compile Include="Code\Comments\CommentsController.cs" />
-    <Compile Include="Code\Common\ConfigSettings.cs" />
-    <Compile Include="Code\Common\CryptoUtils.cs" />
-    <Compile Include="Code\Common\EnterpriseServerIdentity.cs" />
-    <Compile Include="Code\Common\EnterpriseServerPrincipal.cs" />
-    <Compile Include="Code\Common\FileUtils.cs">
-      <SubType>Code</SubType>
+    <Compile Include="esEnterpriseStorage.asmx.cs">
+      <DependentUpon>esEnterpriseStorage.asmx</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Code\Common\Int128.cs" />
-    <Compile Include="Code\Common\IPAddress.cs" />
-    <Compile Include="Code\Common\MailHelper.cs" />
-    <Compile Include="Code\Common\ObjectUtils.cs" />
-    <Compile Include="Code\Common\SecurityContext.cs" />
-    <Compile Include="Code\Common\ServiceProviderProxy.cs" />
-    <Compile Include="Code\Common\ServiceUsernameTokenManager.cs" />
-    <Compile Include="Code\Common\UsernameAssertion.cs" />
-    <Compile Include="Code\Common\Utils.cs" />
-    <Compile Include="Code\HostedSolution\LyncController.cs" />
-    <Compile Include="Code\HostedSolution\LyncControllerAsync.cs" />
-    <Compile Include="Code\VirtualizationForPrivateCloud\CreateAsyncVMfromVM.cs" />
-    <Compile Include="Code\VirtualizationForPrivateCloud\CreateServerAsyncWorkerForPrivateCloud.cs" />
-    <Compile Include="Code\VirtualizationForPrivateCloud\VirtualizationServerControllerForPrivateCloud.cs" />
-    <Compile Include="Code\DatabaseServers\DatabaseServerController.cs" />
-    <Compile Include="Code\Data\DataProvider.cs" />
-    <Compile Include="Code\Data\EcommerceProvider.cs" />
-    <Compile Include="Code\Data\SQLHelper.cs" />
-    <Compile Include="Code\DnsServers\DnsServerController.cs">
-      <SubType>Code</SubType>
+    <Compile Include="esRemoteDesktopServices.asmx.cs">
+      <DependentUpon>esRemoteDesktopServices.asmx</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Code\Ecommerce\CategoryController.cs" />
-    <Compile Include="Code\Ecommerce\ContractSystem\ContractController.cs" />
-    <Compile Include="Code\Ecommerce\Helpers.cs" />
-    <Compile Include="Code\Ecommerce\InvoiceController.cs" />
-    <Compile Include="Code\Ecommerce\MiscController.cs" />
-    <Compile Include="Code\Ecommerce\PaymentGatewayController.cs" />
-    <Compile Include="Code\Ecommerce\Provisioning\DomainNameController.cs">
-      <SubType>Code</SubType>
+    <Compile Include="esHeliconZoo.asmx.cs">
+      <DependentUpon>esHeliconZoo.asmx</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Code\Ecommerce\Provisioning\HostingAddonController.cs" />
-    <Compile Include="Code\Ecommerce\ServiceController.cs" />
-    <Compile Include="Code\Ecommerce\ServiceHandlers\ServiceHandlerController.cs" />
-    <Compile Include="Code\Ecommerce\StorefrontController.cs" />
-    <Compile Include="Code\Ecommerce\StorehouseController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Code\Ecommerce\SystemPluginController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Code\Ecommerce\TaskEventHandlers\SendEmailNotification.cs" />
-    <Compile Include="Code\Ecommerce\TaskEventHandlers\SystemTriggersAgent.cs" />
-    <Compile Include="Code\Ecommerce\TriggerSystem\CommonTrigger.cs" />
-    <Compile Include="Code\Ecommerce\TriggerSystem\TriggerController.cs" />
-    <Compile Include="Code\ExchangeServer\ExchangeServerController.cs" />
-    <Compile Include="Code\Files\FilesController.cs" />
-    <Compile Include="Code\FtpServers\FtpServerController.cs" />
-    <Compile Include="Code\HostedSolution\BlackBerryController.cs" />
-    <Compile Include="Code\HostedSolution\CRMController.cs" />
-    <Compile Include="Code\HostedSolution\OCSController.cs" />
-    <Compile Include="Code\HostedSolution\OrganizationController.cs" />
-    <Compile Include="Code\HostedSolution\ReportController.cs" />
-    <Compile Include="Code\Log\AuditLog.cs" />
-    <Compile Include="Code\MailServers\MailServerController.cs" />
-    <Compile Include="Code\MailServers\QuotaLimit.cs" />
-    <Compile Include="Code\OperatingSystems\OperatingSystemController.cs" />
-    <Compile Include="Code\Packages\PackageAsyncWorker.cs" />
-    <Compile Include="Code\Packages\PackageController.cs" />
-    <Compile Include="Code\Packages\ServiceItemsPaged.cs" />
-    <Compile Include="Code\Provisioning\BackupAsyncWorker.cs" />
-    <Compile Include="Code\Provisioning\BackupController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Code\Ecommerce\Provisioning\HostingPackageController.cs" />
-    <Compile Include="Code\Provisioning\IBackupController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Code\Provisioning\IImportController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Code\Provisioning\ImportAsyncWorker.cs" />
-    <Compile Include="Code\Provisioning\ImportController.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Code\Ecommerce\Provisioning\IServiceProvisioning.cs" />
-    <Compile Include="Code\Ecommerce\Provisioning\ProvisioningContext.cs" />
-    <Compile Include="Code\Ecommerce\Provisioning\ServiceProvisioningBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Code\SchedulerTasks\ActivatePaidInvoicesTask.cs" />
-    <Compile Include="Code\SchedulerTasks\BackupTask.cs" />
-    <Compile Include="Code\SchedulerTasks\CancelOverdueInvoicesTask.cs" />
-    <Compile Include="Code\SchedulerTasks\CheckWebSiteTask.cs" />
-    <Compile Include="Code\SchedulerTasks\CalculateExchangeDiskspaceTask.cs" />
-    <Compile Include="Code\SchedulerTasks\FTPFilesTask.cs" />
-    <Compile Include="Code\SchedulerTasks\GenerateInvoicesTask.cs" />
-    <Compile Include="Code\SchedulerTasks\HostedSolutionReport.cs" />
-    <Compile Include="Code\SchedulerTasks\NotifyOverusedDatabasesTask.cs" />
-    <Compile Include="Code\SchedulerTasks\RunPaymentQueueTask.cs" />
-    <Compile Include="Code\SchedulerTasks\RunSystemCommandTask.cs" />
-    <Compile Include="Code\SchedulerTasks\SendMailNotificationTask.cs" />
-    <Compile Include="Code\SchedulerTasks\SuspendOverdueInvoicesTask.cs" />
-    <Compile Include="Code\SchedulerTasks\ZipFilesTask.cs" />
-    <Compile Include="Code\Scheduling\SchedulerJob.cs" />
-    <Compile Include="Code\Scheduling\Scheduler.cs" />
-    <Compile Include="Code\Scheduling\SchedulerController.cs" />
-    <Compile Include="Code\Servers\ServerController.cs" />
-    <Compile Include="Code\SharePoint\HostedSharePointServerController.cs" />
-    <Compile Include="Code\SharePoint\SharePointServerController.cs" />
-    <Compile Include="Code\StatisticsServers\StatisticsServerController.cs" />
-    <Compile Include="Code\SchedulerTasks\BackupDatabaseTask.cs" />
-    <Compile Include="Code\SchedulerTasks\CalculatePackagesBandwidthTask.cs" />
-    <Compile Include="Code\SchedulerTasks\CalculatePackagesDiskspaceTask.cs" />
-    <Compile Include="Code\SchedulerTasks\SuspendOverusedPackagesTask.cs" />
-    <Compile Include="Code\System\SystemController.cs" />
-    <Compile Include="Code\Tasks\SendEmailNotification.cs" />
-    <Compile Include="Code\Tasks\TaskEventHandler.cs" />
-    <Compile Include="Code\Tasks\TaskManager.cs" />
-    <Compile Include="Code\Users\UserAsyncWorker.cs" />
-    <Compile Include="Code\Users\UserController.cs" />
-    <Compile Include="Code\Virtualization\CreateServerAsyncWorker.cs" />
-    <Compile Include="Code\Virtualization\VirtualizationServerController.cs" />
-    <Compile Include="Code\WebAppGallery\WebAppGalleryController.cs" />
-    <Compile Include="Code\WebServers\WebServerController.cs" />
-    <Compile Include="Code\Wizards\UserCreationWizard.cs" />
-    <Compile Include="Code\Wizards\WebApplicationsInstaller.cs" />
     <Compile Include="esLync.asmx.cs">
       <DependentUpon>esLync.asmx</DependentUpon>
       <SubType>Component</SubType>
@@ -386,24 +281,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WebsitePanel.Common.Utils\WebsitePanel.Common.Utils.csproj">
-      <Project>{53D22D35-4013-415F-BA09-F67A0DBBB0C1}</Project>
-      <Name>WebsitePanel.Common.Utils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WebsitePanel.EnterpriseServer.Base\WebsitePanel.EnterpriseServer.Base.csproj">
-      <Project>{C09CE910-F16B-48A1-B2CC-C99B8C1CF775}</Project>
-      <Name>WebsitePanel.EnterpriseServer.Base</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WebsitePanel.Templates\WebsitePanel.Templates.csproj">
-      <Project>{387FA0EF-3927-45FF-8F8F-BCCD735540C6}</Project>
-      <Name>WebsitePanel.Templates</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WebsitePanel.Whois\WebsitePanel.Whois.csproj">
-      <Project>{7112B144-C5EE-43C2-9441-569D75D13CB9}</Project>
-      <Name>WebsitePanel.Whois</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="ecServiceHandler.asmx" />
     <Content Include="esBlackBerry.asmx" />
     <Content Include="esOCS.asmx" />
@@ -411,13 +288,12 @@
     <Content Include="esWebApplicationGallery.asmx" />
     <EmbeddedResource Include="Images\logo.png" />
     <Content Include="SystemEventHandlers.config" />
-    <Content Include="Web6.config">
-      <SubType>Designer</SubType>
-    </Content>
     <None Include="TaskEventHandlers.config" />
     <None Include="WsePolicyCache.Config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Code\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

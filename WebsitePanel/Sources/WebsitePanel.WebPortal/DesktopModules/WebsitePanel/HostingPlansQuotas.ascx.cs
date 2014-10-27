@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -202,6 +202,30 @@ namespace WebsitePanel.Portal
         public DataView GetGroupQuotas(int groupId)
         {
             return new DataView(dsQuotas.Tables[1], "GroupID=" + groupId.ToString(), "", DataViewRowState.CurrentRows);
+        }
+
+        public string GetSharedLocalizedStringNotEmpty(string resourceKey, object resourceDescription)
+        {
+            string result = GetSharedLocalizedString("Quota." + resourceKey);
+            if (string.IsNullOrEmpty(result))
+            {
+                result = resourceKey;
+
+                string resourceDescriptionString = resourceDescription as string;
+                if (!string.IsNullOrEmpty(resourceDescriptionString))
+                {
+                    result = resourceDescriptionString;
+                }
+                else if (result.IndexOf('.') > 0 && result.Substring(result.IndexOf('.')).Length > 1)
+                {
+                    // drop Quota name prefix
+                    // HeliconZoo.python -> python
+
+                    result = result.Substring(result.IndexOf('.')+1);
+                }
+            }
+
+            return result;
         }
     }
 }

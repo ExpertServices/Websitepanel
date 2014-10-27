@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -42,6 +42,8 @@ using WebsitePanel.Server.Utils;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.WebAppGallery;
 using WebsitePanel.Providers.Common;
+using Microsoft.Web.Administration;
+using Microsoft.Web.Management.Server;
 
 namespace WebsitePanel.Server
 {
@@ -259,6 +261,41 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
+
+        // AppPool
+        [WebMethod, SoapHeader("settings")]
+        public void ChangeAppPoolState(string siteId, AppPoolState state)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' ChangeAppPoolState", ProviderSettings.ProviderName);
+                WebProvider.ChangeAppPoolState(siteId, state);
+                Log.WriteEnd("'{0}' ChangeAppPoolState", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' ChangeAppPoolState", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public AppPoolState GetAppPoolState(string siteId)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetAppPoolState", ProviderSettings.ProviderName);
+                AppPoolState result = WebProvider.GetAppPoolState(siteId);
+                Log.WriteEnd("'{0}' GetAppPoolState", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetAppPoolState", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
         #endregion
 
         #region Virtual Directories
@@ -325,6 +362,22 @@ namespace WebsitePanel.Server
             catch (Exception ex)
             {
                 Log.WriteError(String.Format("'{0}' CreateVirtualDirectory", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void CreateEnterpriseStorageVirtualDirectory(string siteId, WebVirtualDirectory directory)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' CreateEnterpriseStorageVirtualDirectory", ProviderSettings.ProviderName);
+                WebProvider.CreateEnterpriseStorageVirtualDirectory(siteId, directory);
+                Log.WriteEnd("'{0}' CreateEnterpriseStorageVirtualDirectory", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' CreateEnterpriseStorageVirtualDirectory", ProviderSettings.ProviderName), ex);
                 throw;
             }
         }
@@ -1058,6 +1111,82 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
+
+    
+
+        #endregion
+
+        #region Helicon Zoo
+
+        [WebMethod, SoapHeader("settings")]
+        public WebVirtualDirectory[] GetZooApplications(string siteId)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetZooApplications", ProviderSettings.ProviderName);
+                WebVirtualDirectory[] result = WebProvider.GetZooApplications(siteId);
+                Log.WriteEnd("'{0}' GetZooApplications", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetZooApplications", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public StringResultObject SetZooEnvironmentVariable(string siteId, string appName, string envName, string envValue)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' SetZooEnvironmentVariable", ProviderSettings.ProviderName);
+                StringResultObject result = WebProvider.SetZooEnvironmentVariable(siteId, appName, envName, envValue);
+                Log.WriteEnd("'{0}' SetZooEnvironmentVariable", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' SetZooEnvironmentVariable", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public StringResultObject SetZooConsoleEnabled(string siteId, string appName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' SetZooConsoleEnabled", ProviderSettings.ProviderName);
+                StringResultObject result = WebProvider.SetZooConsoleEnabled(siteId, appName);
+                Log.WriteEnd("'{0}' SetZooConsoleEnabled", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' SetZooConsoleEnabled", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+            
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public StringResultObject SetZooConsoleDisabled(string siteId, string appName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' SetZooConsoleDisabled", ProviderSettings.ProviderName);
+                StringResultObject result = WebProvider.SetZooConsoleDisabled(siteId, appName);
+                Log.WriteEnd("'{0}' SetZooConsoleDisabled", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' SetZooConsoleDisabled", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
         #endregion
 
         #region Web Application Gallery
@@ -1069,9 +1198,11 @@ namespace WebsitePanel.Server
             {
                 Log.WriteStart("CheckLoadUserProfile");
 
-                return WebProvider.CheckLoadUserProfile();
+                bool bResult =  WebProvider.CheckLoadUserProfile();
 
                 Log.WriteEnd("CheckLoadUserProfile");
+
+                return bResult;
             }
             catch (Exception ex)
             {
@@ -1510,5 +1641,21 @@ namespace WebsitePanel.Server
 			return WebProvider.CheckCertificate(webSite);
 		} 
 		#endregion
+
+        #region Directory Browsing
+
+        [WebMethod, SoapHeader("settings")]
+        public bool GetDirectoryBrowseEnabled(string siteId)
+        {
+            return WebProvider.GetDirectoryBrowseEnabled(siteId);
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public  void SetDirectoryBrowseEnabled(string siteId, bool enabled)
+        {
+            WebProvider.SetDirectoryBrowseEnabled(siteId, enabled);
+        }
+
+        #endregion
     }
 }

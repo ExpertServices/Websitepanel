@@ -19,11 +19,12 @@
         <asp:Button ID="btnAdd" runat="server" meta:resourcekey="btnAdd" Text="Add record" CssClass="Button2" OnClick="btnAdd_Click" CausesValidation="False" />
     </div>
     <asp:GridView ID="gvRecords" runat="server" AutoGenerateColumns="False" EmptyDataText="gvRecords"
-        CssSelectorClass="NormalGridView"
+        CssSelectorClass="NormalGridView FixedGrid"
         OnRowEditing="gvRecords_RowEditing" OnRowDeleting="gvRecords_RowDeleting"
         AllowSorting="True" DataSourceID="odsDnsRecords">
         <Columns>
             <asp:TemplateField>
+                <ItemStyle Width="3%" />
                 <ItemTemplate>
                     <asp:ImageButton ID="cmdEdit" runat="server" SkinID="EditSmall" CommandName="edit" AlternateText="Edit record">
                     </asp:ImageButton>
@@ -37,15 +38,16 @@
                 </ItemTemplate>
                 <ItemStyle CssClass="NormalBold" Wrap="False" />
             </asp:TemplateField>
-            <asp:BoundField DataField="RecordName" SortExpression="RecordName" HeaderText="gvRecordsName" />
-            <asp:BoundField DataField="RecordType" SortExpression="RecordType" HeaderText="gvRecordsType" />
+            <asp:BoundField DataField="RecordName" SortExpression="RecordName" HeaderText="gvRecordsName" ItemStyle-Width="20%" />
+            <asp:BoundField DataField="RecordType" SortExpression="RecordType" HeaderText="gvRecordsType" ItemStyle-Width="5%" />
             <asp:TemplateField SortExpression="RecordData" HeaderText="gvRecordsData" >
-                <ItemStyle Width="100%" />
+                <ItemStyle Width="69%" />
                 <ItemTemplate>
                     <%# GetRecordFullData((string)Eval("RecordType"), (string)Eval("RecordData"), (int)Eval("MxPriority"), (int)Eval("SrvPort"))%>
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:TemplateField>
+                <ItemStyle Width="3%" />
                 <ItemTemplate>
                     <asp:ImageButton ID="cmdDelete" runat="server" SkinID="DeleteSmall" CommandName="delete"
                         AlternateText="Delete record" OnClientClick="return confirmation();">

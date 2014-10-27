@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -30,6 +30,7 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Collections;
+using System.Collections.Generic;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
@@ -37,12 +38,20 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
+using WebsitePanel.WebPortal;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Portal.SkinControls
 {
     public partial class UserSpaceBreadcrumb : System.Web.UI.UserControl
     {
+        public const string ORGANIZATION_CONTROL_KEY = "organization_home";
+	    public const string PID_SPACE_EXCHANGE_SERVER = "SpaceExchangeServer";
+        public const string EXCHANGE_SERVER_MODULE_DEFINTION_ID = "exchangeserver";
+        public const string PAGE_NANE_KEY = "Text.PageName";
+        public const string DM_FOLDER_VIRTUAL_PATH = "~/DesktopModules/";
+
         public bool CurrentNodeVisible
         {
             get { return CurrentNode.Visible; }
@@ -84,6 +93,12 @@ namespace WebsitePanel.Portal.SkinControls
                     cmdSpaceName.Text = PortalAntiXSS.EncodeOld(package.PackageName);
                     lblSpaceDescription.Text = PortalAntiXSS.EncodeOld(package.PackageComments);
 
+                    UserInfo user = UsersHelper.GetUser(PanelSecurity.SelectedUserId);
+                    if (user != null)
+                    {
+                        lblUserAccountName.Text = PortalAntiXSS.EncodeOld(string.Format("{0} -",user.Username));
+                    }
+
                     lnkCurrentPage.NavigateUrl = PortalUtils.NavigatePageURL(
                         PortalUtils.GetCurrentPageId(), "SpaceID", PanelSecurity.PackageId.ToString());
                 }
@@ -102,6 +117,43 @@ namespace WebsitePanel.Portal.SkinControls
                         PortalUtils.GetCurrentPageId(), "UserID", PanelSecurity.SelectedUserId.ToString());
                 }
             }
+
+            // organization
+            bool orgVisible = (PanelRequest.ItemID > 0 && Request[DefaultPage.PAGE_ID_PARAM].Equals(PID_SPACE_EXCHANGE_SERVER, StringComparison.InvariantCultureIgnoreCase));
+
+            spanOrgn.Visible = orgVisible;
+
+            if (orgVisible)
+            {
+                // load organization details
+                Organization org = ES.Services.Organizations.GetOrganization(PanelRequest.ItemID);
+
+                lnkOrgn.NavigateUrl = PortalUtils.EditUrl(
+                    "ItemID", PanelRequest.ItemID.ToString(), ORGANIZATION_CONTROL_KEY,
+                    "SpaceID=" + PanelSecurity.PackageId.ToString());
+                lnkOrgn.Text = org.Name;
+
+                string curCtrlKey = PanelRequest.Ctl.ToLower();
+                string ctrlKey = PortalUtils.GetGeneralESControlKey(Request[DefaultPage.CONTROL_ID_PARAM].ToLower(System.Globalization.CultureInfo.InvariantCulture));
+
+                if (curCtrlKey == "edit_user") ctrlKey = PanelRequest.Context.ToLower() == "user" ? "users" : "mailboxes";
+
+                ModuleDefinition definition = PortalConfiguration.ModuleDefinitions[EXCHANGE_SERVER_MODULE_DEFINTION_ID];
+                ModuleControl control = null;
+                if (!String.IsNullOrEmpty(ctrlKey) && definition.Controls.ContainsKey(ctrlKey))
+                    control = definition.Controls[ctrlKey];
+
+                if (control != null)
+                {
+                    if (!String.IsNullOrEmpty(control.Src))
+                    {
+                        lnkOrgCurPage.Text = PortalUtils.GetLocalizedString(DM_FOLDER_VIRTUAL_PATH + control.Src, PAGE_NANE_KEY);
+                        lnkOrgCurPage.NavigateUrl = PortalUtils.EditUrl(
+                            "ItemID", PanelRequest.ItemID.ToString(), ctrlKey,
+                            "SpaceID=" + PanelSecurity.PackageId.ToString());
+                    }
+                }
+            }
         }
 
         protected void repUsersPath_ItemDataBound(object sender, RepeaterItemEventArgs e)
@@ -111,7 +163,23 @@ namespace WebsitePanel.Portal.SkinControls
             HyperLink lnkUser = (HyperLink)e.Item.FindControl("lnkUser");
             if (lnkUser != null)
             {
-                lnkUser.Text = user.Username;
+                if (user.UserId == PanelSecurity.SelectedUserId && PanelSecurity.SelectedUserId != PanelSecurity.LoggedUserId)
+                {
+                    string imagePath = String.Concat("~/", DefaultPage.THEMES_FOLDER, "/", Page.Theme, "/", "Images", "/");
+
+                    Image imgUserHome = new Image();
+                    imgUserHome.ImageUrl = imagePath + "home_16_blk.png";
+
+                    Label lblUserText = new Label();
+                    lblUserText.Text = " " + user.Username;
+
+                    lnkUser.Controls.Add(imgUserHome);
+                    lnkUser.Controls.Add(lblUserText);
+                }
+                else
+                {
+                    lnkUser.Text = user.Username;
+                }
                 lnkUser.NavigateUrl = PortalUtils.GetUserHomePageUrl(user.UserId);
             }
         }
@@ -121,7 +189,7 @@ namespace WebsitePanel.Portal.SkinControls
             pnlEditSpace.Visible = true;
             pnlViewSpace.Visible = false;
 
-			txtName.Text = Server.HtmlDecode(cmdSpaceName.Text);
+            txtName.Text = Server.HtmlDecode(cmdSpaceName.Text);
         }
 
         protected void cmdCancel_Click(object sender, EventArgs e)

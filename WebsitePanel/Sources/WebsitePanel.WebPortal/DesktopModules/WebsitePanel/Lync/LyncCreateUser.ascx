@@ -1,7 +1,5 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="LyncCreateUser.ascx.cs" Inherits="WebsitePanel.Portal.Lync.CreateLyncUser" %>
 <%@ Register Src="../ExchangeServer/UserControls/UserSelector.ascx" TagName="UserSelector" TagPrefix="wsp" %>
-<%@ Register Src="../ExchangeServer/UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
-<%@ Register Src="../ExchangeServer/UserControls/Breadcrumb.ascx" TagName="Breadcrumb" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/QuotaViewer.ascx" TagName="QuotaViewer" TagPrefix="wsp" %>
@@ -10,11 +8,7 @@
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server" />
 <div id="ExchangeContainer">
     <div class="Module">
-        <div class="Header">
-            <wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName" meta:resourcekey="breadcrumb" />
-        </div>
         <div class="Left">
-            <wsp:Menu id="menu" runat="server" />
         </div>
         <div class="Content">
             <div class="Center">
@@ -43,11 +37,42 @@
                                     <wsp:LyncUserPlanSelector ID="planSelector" runat="server" />
                                 </td>
 					        </tr>
-					    </table>
+                        </table>
 
+                        <asp:Panel runat="server" ID="pnEnterpriseVoice">
+                        <table>
+                            <tr>
+                                <td class="FormLabel150">
+                                    <asp:Localize runat="server" ID="locPhoneNumber" meta:resourcekey="locPhoneNumber" Text="Phone Number:" />
+                                </td>
+                                <td>
+                                    <!-- <asp:TextBox runat="server" ID="tb_PhoneNumber" /> -->
+                                    <asp:dropdownlist id="ddlPhoneNumber" Runat="server" CssClass="NormalTextBox"></asp:dropdownlist>
+                                    <asp:RegularExpressionValidator ID="PhoneFormatValidator" runat="server"
+		                            ControlToValidate="ddlPhoneNumber" Display="Dynamic" ValidationGroup="Validation1" SetFocusOnError="true"
+		                            ValidationExpression="^([0-9])*$"
+                                    ErrorMessage="Must contain only numbers.">
+                                    </asp:RegularExpressionValidator>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="FormLabel150">
+                                    <asp:Localize runat="server" ID="locLyncPin" meta:resourcekey="locLyncPin" Text="Lync Pin:" />
+                                </td>
+                                <td>
+                                    <asp:TextBox runat="server" ID="tbPin" />
+                                    <asp:RegularExpressionValidator ID="PinRegularExpressionValidator" runat="server"
+		                            ControlToValidate="tbPin" Display="Dynamic" ValidationGroup="Validation1" SetFocusOnError="true"
+		                            ValidationExpression="^([0-9])*$"
+                                    ErrorMessage="Must contain only numbers.">
+                                    </asp:RegularExpressionValidator>
+                                </td>
+                            </tr>
+					    </table>
+                        </asp:Panel>
 					
 					<div class="FormFooterClean">
-					    <asp:Button id="btnCreate" runat="server" 
+					    <asp:Button id="btnCreate" runat="server" ValidationGroup="Validation1"
 					    CssClass="Button1" meta:resourcekey="btnCreate" 
 					     onclick="btnCreate_Click" ></asp:Button>					    
 				    </div>			

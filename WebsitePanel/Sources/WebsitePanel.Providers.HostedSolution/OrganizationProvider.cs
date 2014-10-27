@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -27,17 +27,37 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.IO;
+using System.Xml;
+using System.Linq;
+using System.Text;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.DirectoryServices;
 using System.Globalization;
-using System.Text;
+
+using System.Management.Automation;
+using System.Management.Automation.Runspaces;
 
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.ResultObjects;
+using WebsitePanel.Providers.OS;
 
 namespace WebsitePanel.Providers.HostedSolution
 {
     public class OrganizationProvider : HostingServiceProviderBase, IOrganization
     {
+        #region Constants
+
+        private const string GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE = @"\\{0}\SYSVOL\{0}\Policies\{1}\User\Preferences\Drives";
+        private const string GROUP_POLICY_MAPPED_DRIVES_ROOT_PATH_TEMPLATE = @"\\{0}\SYSVOL\{0}\Policies\{1}";
+        private const string DRIVES_CLSID = "{8FDDCC1A-0C3C-43cd-A6B4-71A6DF20DA8C}";
+        private const string DRIVE_CLSID = "{935D1B74-9CB8-4e3c-9914-7DD559B7A417}";
+        private const string gPCUserExtensionNames = "[{00000000-0000-0000-0000-000000000000}{2EA1A81B-48E5-45E9-8BB7-A6E3AC170006}][{5794DAFD-BE60-433F-88A2-1A31939AC01F}{2EA1A81B-48E5-45E9-8BB7-A6E3AC170006}]";
+
+        #endregion
+
         #region Properties
 
         private string RootOU
@@ -60,6 +80,24 @@ namespace WebsitePanel.Providers.HostedSolution
 
 
         #region Helpers
+
+        private string GetObjectTargetAccountName(string accountName, string domain)
+        {
+            string part = domain.Split('.')[0].ToUpperInvariant();
+
+            return string.Format("{0}\\{1}", part, accountName);
+        }
+
+        private string GetOrganizationTargetPath(string organizationId)
+        {
+            StringBuilder sb = new StringBuilder();
+            // append provider
+            AppendOUPath(sb, organizationId);
+            AppendOUPath(sb, RootOU);
+            AppendDomainPath(sb, RootDomain);
+
+            return sb.ToString();
+        }
 
         private string GetOrganizationPath(string organizationId)
         {
@@ -95,6 +133,34 @@ namespace WebsitePanel.Providers.HostedSolution
             AppendProtocol(sb);
             AppendDomainController(sb);
             AppendCNPath(sb, organizationId);
+            AppendOUPath(sb, organizationId);
+            AppendOUPath(sb, RootOU);
+            AppendDomainPath(sb, RootDomain);
+
+            return sb.ToString();
+        }
+
+        private string GetObjectPath(string organizationId, string objName)
+        {
+            StringBuilder sb = new StringBuilder();
+            // append provider
+            AppendProtocol(sb);
+            AppendDomainController(sb);
+            AppendCNPath(sb, objName);
+            AppendOUPath(sb, organizationId);
+            AppendOUPath(sb, RootOU);
+            AppendDomainPath(sb, RootDomain);
+
+            return sb.ToString();
+        }
+
+        private string GetGroupPath(string organizationId, string groupName)
+        {
+            StringBuilder sb = new StringBuilder();
+            // append provider
+            AppendProtocol(sb);
+            AppendDomainController(sb);
+            AppendCNPath(sb, groupName);
             AppendOUPath(sb, organizationId);
             AppendOUPath(sb, RootOU);
             AppendDomainPath(sb, RootDomain);
@@ -207,12 +273,13 @@ namespace WebsitePanel.Providers.HostedSolution
                 //Create security group
                 ActiveDirectoryUtils.CreateGroup(orgPath, organizationId);
                 groupCreated = true;
-
-
+            
                 org = new Organization();
                 org.OrganizationId = organizationId;
                 org.DistinguishedName = ActiveDirectoryUtils.RemoveADPrefix(orgPath);
                 org.SecurityGroup = ActiveDirectoryUtils.RemoveADPrefix(GetGroupPath(organizationId));
+
+                org.GroupName = organizationId;
             }
             catch (Exception ex)
             {
@@ -327,12 +394,14 @@ namespace WebsitePanel.Providers.HostedSolution
                 throw new ArgumentNullException("organizationId");
 
             string groupPath = GetGroupPath(organizationId);
-            ActiveDirectoryUtils.DeleteADObject(groupPath);
+            try
+            {
+                ActiveDirectoryUtils.DeleteADObject(groupPath);
+            }
+            catch { /* skip */ }
 
             string path = GetOrganizationPath(organizationId);
             ActiveDirectoryUtils.DeleteADObject(path, true);
-
-
 
             HostedSolutionLog.LogEnd("DeleteOrganizationInternal");
         }
@@ -388,8 +457,7 @@ namespace WebsitePanel.Providers.HostedSolution
                 string groupPath = GetGroupPath(organizationId);
                 HostedSolutionLog.DebugInfo("Group retrieved: {0}", groupPath);
 
-
-                ActiveDirectoryUtils.AddUserToGroup(userPath, groupPath);
+                ActiveDirectoryUtils.AddObjectToGroup(userPath, groupPath);
                 HostedSolutionLog.DebugInfo("Added to group: {0}", groupPath);
             }
             catch (Exception e)
@@ -498,9 +566,18 @@ namespace WebsitePanel.Providers.HostedSolution
                 throw new ArgumentNullException("loginName");
 
             string path = GetUserPath(organizationId, loginName);
-            DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
 
+            OrganizationUser retUser = GetUser(path);
+
+            HostedSolutionLog.LogEnd("GetUserGeneralSettingsInternal");
+            return retUser;
+        }
+
+        private OrganizationUser GetUser(string path)
+        {
             OrganizationUser retUser = new OrganizationUser();
+
+            DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
 
             retUser.FirstName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.FirstName);
             retUser.LastName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.LastName);
@@ -524,14 +601,13 @@ namespace WebsitePanel.Providers.HostedSolution
             retUser.Notes = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.Notes);
             retUser.ExternalEmail = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.ExternalEmail);
             retUser.Disabled = (bool)entry.InvokeGet(ADAttributes.AccountDisabled);
-            retUser.Manager = GetManager(entry);
+            retUser.Manager = GetManager(entry, ADAttributes.Manager);
             retUser.SamAccountName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName);
             retUser.DomainUserName = GetDomainName(ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName));
             retUser.DistinguishedName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.DistinguishedName);
             retUser.Locked = (bool)entry.InvokeGet(ADAttributes.AccountLocked);
-            retUser.UserPrincipalName= (string)entry.InvokeGet(ADAttributes.UserPrincipalName);
+            retUser.UserPrincipalName = (string)entry.InvokeGet(ADAttributes.UserPrincipalName);
 
-            HostedSolutionLog.LogEnd("GetUserGeneralSettingsInternal");
             return retUser;
         }
 
@@ -542,10 +618,10 @@ namespace WebsitePanel.Providers.HostedSolution
             return ret;
         }
 
-        private OrganizationUser GetManager(DirectoryEntry entry)
+        private OrganizationUser GetManager(DirectoryEntry entry, string adAttribute)
         {
             OrganizationUser retUser = null;
-            string path = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.Manager);
+            string path = ActiveDirectoryUtils.GetADObjectStringProperty(entry, adAttribute);
             if (!string.IsNullOrEmpty(path))
             {
                 path = ActiveDirectoryUtils.AddADPrefix(path, PrimaryDomainController);
@@ -710,6 +786,50 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
 
+        public bool DoesSamAccountNameExist(string accountName)
+        {
+            return DoesSamAccountNameExistInternal(accountName);
+        }
+
+
+        private bool DoesSamAccountNameExistInternal(string accountName)
+        {
+            HostedSolutionLog.LogStart("DoesSamAccountNameExistInternal");
+            HostedSolutionLog.DebugInfo("sAMAccountName : {0}", accountName);
+            bool bFound = false;
+
+            try
+            {
+
+                string path = GetRootOU();
+                HostedSolutionLog.DebugInfo("Search path : {0}", path);
+                DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
+
+                DirectorySearcher searcher = new DirectorySearcher(entry);
+                searcher.PropertiesToLoad.Add("sAMAccountName");
+                searcher.Filter = "(sAMAccountName=" + accountName + ")";
+                searcher.SearchScope = SearchScope.Subtree;
+
+                SearchResult resCollection = searcher.FindOne();
+                if (resCollection != null)
+                {
+                    if (resCollection.Properties["samaccountname"] != null)
+                        bFound = true;
+                }
+            }
+            catch (Exception e)
+            {
+                HostedSolutionLog.DebugInfo("Failed : {0}", e.Message);
+            }
+
+            HostedSolutionLog.DebugInfo("DoesSamAccountNameExistInternal Result: {0}", bFound);
+            HostedSolutionLog.LogEnd("DoesSamAccountNameExistInternal");
+
+            return bFound;
+        }
+
+
+
         #endregion
 
         #region Domains
@@ -756,11 +876,1078 @@ namespace WebsitePanel.Providers.HostedSolution
         }
         #endregion
 
+        #region Security Groups
+
+        public int CreateSecurityGroup(string organizationId, string groupName)
+        {
+            return CreateSecurityGroupInternal(organizationId, groupName);
+        }
+
+        internal int CreateSecurityGroupInternal(string organizationId, string groupName)
+        {
+            HostedSolutionLog.LogStart("CreateSecurityGroupInternal");
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+            HostedSolutionLog.DebugInfo("groupName : {0}", groupName);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            if (string.IsNullOrEmpty(groupName))
+                throw new ArgumentNullException("groupName");
+
+            bool groupCreated = false;
+            string groupPath = null;
+            try
+            {
+                string path = GetOrganizationPath(organizationId);
+                groupPath = GetGroupPath(organizationId, groupName);
+
+                if (!ActiveDirectoryUtils.AdObjectExists(groupPath))
+                {
+                    ActiveDirectoryUtils.CreateGroup(path, groupName);
+
+                    groupCreated = true;
+
+                    HostedSolutionLog.DebugInfo("Security Group created: {0}", groupName);
+                }
+                else
+                {
+                    HostedSolutionLog.DebugInfo("AD_OBJECT_ALREADY_EXISTS: {0}", groupPath);
+                    HostedSolutionLog.LogEnd("CreateSecurityGroupInternal");
+
+                    return Errors.AD_OBJECT_ALREADY_EXISTS;
+                }
+            }
+            catch (Exception e)
+            {
+                HostedSolutionLog.LogError(e);
+                try
+                {
+                    if (groupCreated)
+                        ActiveDirectoryUtils.DeleteADObject(groupPath);
+                }
+                catch (Exception ex)
+                {
+                    HostedSolutionLog.LogError(ex);
+                }
+
+                return Errors.AD_OBJECT_ALREADY_EXISTS;
+            }
+
+            HostedSolutionLog.LogEnd("CreateSecurityGroupInternal");
+
+            return Errors.OK;
+        }
+
+        public OrganizationSecurityGroup GetSecurityGroupGeneralSettings(string groupName, string organizationId)
+        {
+            return GetSecurityGroupGeneralSettingsInternal(groupName, organizationId);
+        }
+
+        internal OrganizationSecurityGroup GetSecurityGroupGeneralSettingsInternal(string groupName, string organizationId)
+        {
+            HostedSolutionLog.LogStart("GetSecurityGroupGeneralSettingsInternal");
+            HostedSolutionLog.DebugInfo("groupName : {0}", groupName);
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            if (string.IsNullOrEmpty(groupName))
+                throw new ArgumentNullException("groupName");
+
+            string path = GetGroupPath(organizationId, groupName);
+            string organizationPath = GetOrganizationPath(organizationId);
+
+            DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
+            DirectoryEntry organizationEntry = ActiveDirectoryUtils.GetADObject(organizationPath);
+
+
+            OrganizationSecurityGroup securityGroup = new OrganizationSecurityGroup();
+
+            securityGroup.Notes = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.Notes);
+
+            string samAccountName = ActiveDirectoryUtils.GetADObjectStringProperty(entry, ADAttributes.SAMAccountName);
+
+            securityGroup.AccountName = samAccountName;
+            securityGroup.SAMAccountName = samAccountName;
+
+            List<ExchangeAccount> members = new List<ExchangeAccount>();
+
+            foreach (string userPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "user", organizationEntry))
+            {
+                OrganizationUser tmpUser = GetUser(userPath);
+
+                members.Add(new ExchangeAccount
+                {
+                    AccountName = ActiveDirectoryUtils.GetCNFromADPath(userPath),
+                    SamAccountName = tmpUser.SamAccountName
+                });
+            }
+
+            foreach (string groupPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "group", organizationEntry))
+            {
+                DirectoryEntry groupEntry = ActiveDirectoryUtils.GetADObject(groupPath);
+
+                string tmpSamAccountName = ActiveDirectoryUtils.GetADObjectStringProperty(groupEntry, ADAttributes.SAMAccountName);
+
+                members.Add(new ExchangeAccount
+                {
+                    AccountName =  tmpSamAccountName,
+                    SamAccountName =  tmpSamAccountName
+                });
+            }
+
+            securityGroup.MembersAccounts = members.ToArray();
+
+            HostedSolutionLog.LogEnd("GetSecurityGroupGeneralSettingsInternal");
+
+            return securityGroup;
+        }
+
+        public void DeleteSecurityGroup(string groupName, string organizationId)
+        {
+            DeleteSecurityGroupInternal(groupName, organizationId);
+        }
+
+        internal void DeleteSecurityGroupInternal(string groupName, string organizationId)
+        {
+            HostedSolutionLog.LogStart("DeleteSecurityGroupInternal");
+            HostedSolutionLog.DebugInfo("groupName : {0}", groupName);
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            if (string.IsNullOrEmpty(groupName))
+                throw new ArgumentNullException("groupName");
+
+            string path = GetGroupPath(organizationId, groupName);
+
+            if (ActiveDirectoryUtils.AdObjectExists(path))
+                ActiveDirectoryUtils.DeleteADObject(path, true);
+
+            HostedSolutionLog.LogEnd("DeleteSecurityGroupInternal");
+        }
+
+        public void SetSecurityGroupGeneralSettings(string organizationId, string groupName, string[] memberAccounts, string notes)
+        {
+
+            SetSecurityGroupGeneralSettingsInternal(organizationId, groupName, memberAccounts, notes);
+        }
+
+        internal void SetSecurityGroupGeneralSettingsInternal(string organizationId, string groupName, string[] memberAccounts, string notes)
+        {
+            HostedSolutionLog.LogStart("SetSecurityGroupGeneralSettingsInternal");
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+            HostedSolutionLog.DebugInfo("groupName : {0}", groupName);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            if (string.IsNullOrEmpty(groupName))
+                throw new ArgumentNullException("groupName");
+
+            string path = GetGroupPath(organizationId, groupName);
+
+            DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
+
+            ActiveDirectoryUtils.SetADObjectProperty(entry, ADAttributes.Notes, notes);
+
+            entry.CommitChanges();
+
+            string orgPath = GetOrganizationPath(organizationId);
+
+            DirectoryEntry orgEntry = ActiveDirectoryUtils.GetADObject(orgPath);
+
+            foreach (string userPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "user", orgEntry))
+            {
+                ActiveDirectoryUtils.RemoveObjectFromGroup(userPath, path);
+            }
+
+            foreach (string groupPath in ActiveDirectoryUtils.GetGroupObjects(groupName, "group", orgEntry))
+            {
+                ActiveDirectoryUtils.RemoveObjectFromGroup(groupPath, path);
+            }
+
+            foreach (string obj in memberAccounts)
+            {
+                string objPath = GetObjectPath(organizationId, obj);
+                ActiveDirectoryUtils.AddObjectToGroup(objPath, path);
+            }   
+        }
+
+        public void AddObjectToSecurityGroup(string organizationId, string accountName, string groupName)
+        {
+            AddObjectToSecurityGroupInternal(organizationId, accountName, groupName);
+        }
+
+        internal void AddObjectToSecurityGroupInternal(string organizationId, string accountName, string groupName)
+        {
+            HostedSolutionLog.LogStart("AddUserToSecurityGroupInternal");
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+            HostedSolutionLog.DebugInfo("accountName : {0}", accountName);
+            HostedSolutionLog.DebugInfo("groupName : {0}", groupName);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            if (string.IsNullOrEmpty(accountName))
+                throw new ArgumentNullException("loginName");
+
+            if (string.IsNullOrEmpty(groupName))
+                throw new ArgumentNullException("groupName");
+
+            string objectPath = GetObjectPath(organizationId, accountName);
+
+            string groupPath = GetGroupPath(organizationId, groupName);
+
+            ActiveDirectoryUtils.AddObjectToGroup(objectPath, groupPath);
+        }
+
+        public void DeleteObjectFromSecurityGroup(string organizationId, string accountName, string groupName)
+        {
+            DeleteObjectFromSecurityGroupInternal(organizationId, accountName, groupName);
+        }
+
+        internal void DeleteObjectFromSecurityGroupInternal(string organizationId, string accountName, string groupName)
+        {
+            HostedSolutionLog.LogStart("AddUserToSecurityGroupInternal");
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+            HostedSolutionLog.DebugInfo("accountName : {0}", accountName);
+            HostedSolutionLog.DebugInfo("groupName : {0}", groupName);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            if (string.IsNullOrEmpty(accountName))
+                throw new ArgumentNullException("loginName");
+
+            if (string.IsNullOrEmpty(groupName))
+                throw new ArgumentNullException("groupName");
+
+            string objectPath = GetObjectPath(organizationId, accountName);
+
+            string groupPath = GetGroupPath(organizationId, groupName);
+
+            ActiveDirectoryUtils.RemoveObjectFromGroup(objectPath, groupPath);
+        }
+
+        #endregion
+
+        #region Drive Mapping
+
+        public MappedDrive[] GetDriveMaps(string organizationId)
+        {
+            return GetDriveMapsInternal(organizationId, false);
+        }
+
+        internal MappedDrive[] GetDriveMapsInternal(string organizationId, bool newDrive)
+        {
+            HostedSolutionLog.LogStart("GetDriveMapsInternal");
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            ArrayList items = new ArrayList();
+
+            string gpoId;
+
+            if (!CheckMappedDriveGpoExists(organizationId, out gpoId))
+            {
+                HostedSolutionLog.LogEnd("GetDriveMapsInternal");
+
+                return (MappedDrive[])items.ToArray(typeof(MappedDrive));
+            }
+            else if (!string.IsNullOrEmpty(gpoId))
+            {
+                string path = string.Format("{0}\\{1}",
+                                            string.Format(GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE, RootDomain, gpoId),
+                                            "Drives.xml");
+
+                // open xml document
+                XmlDocument xml = new XmlDocument();
+                xml.Load(path);
+
+                MappedDrive[] drives = GetDrivesFromXML(xml, items);
+
+                if (drives.Length == 0 && !newDrive)
+                {
+                    DeleteMappedDrivesGPO(organizationId);
+                }
+
+                HostedSolutionLog.LogEnd("GetDriveMapsInternal");
+
+                return drives;
+            }
+
+            HostedSolutionLog.LogEnd("GetDriveMapsInternal");
+
+            return (MappedDrive[])items.ToArray(typeof(MappedDrive));
+        }
+
+        public int CreateMappedDrive(string organizationId, string drive, string labelAs, string path)
+        {
+            return CreateMappedDriveInternal(organizationId, drive, labelAs, path);
+        }
+
+        internal int CreateMappedDriveInternal(string organizationId, string drive, string labelAs, string path)
+        {
+            HostedSolutionLog.LogStart("CreateMappedDriveInternal");
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+            HostedSolutionLog.DebugInfo("driveLetter : {0}:", drive);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            if (string.IsNullOrEmpty(drive))
+                throw new ArgumentNullException("driveLetter");
+
+            string gpoId;
+
+            if (!CheckMappedDriveGpoExists(organizationId, out gpoId))
+            {
+                CreateAndLinkMappedDrivesGPO(organizationId, out gpoId);
+            }
+
+            if (CheckMappedDriveExists(organizationId, path, true))
+            {
+                return Errors.MAPPED_DRIVE_ALREADY_EXISTS;
+            }
+
+            if (!string.IsNullOrEmpty(gpoId))
+            {
+                string drivesXmlPath = string.Format("{0}\\{1}",
+                                                     string.Format(GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE, RootDomain, gpoId), 
+                                                     "Drives.xml");
+                // open xml document
+                XmlDocument xml = new XmlDocument();
+                xml.Load(drivesXmlPath);
+
+                XmlNode drivesNode = xml.SelectSingleNode("(/*)");
+                XmlNode driveNode = CreateDriveNode(xml, drive, labelAs, path);
+
+                drivesNode.AppendChild(driveNode);
+
+                xml.Save(drivesXmlPath);
+
+                IncrementGPOVersion(organizationId, gpoId);
+            }
+
+            HostedSolutionLog.LogEnd("CreateMappedDriveInternal");
+
+            return Errors.OK;
+        }
+
+        public void DeleteMappedDriveByPath(string organizationId, string path)
+        {
+            DeleteMappedDriveByPathInternal(organizationId, path);
+        }
+
+        internal void DeleteMappedDriveByPathInternal(string organizationId, string path)
+        {
+            MappedDrive drive = GetDriveMaps(organizationId).Where(x => x.Path == path).FirstOrDefault();
+
+            if (drive != null)
+            {
+                DeleteMappedDriveInternal(organizationId, drive.DriveLetter);
+            }
+        }
+
+        public void DeleteMappedDrive(string organizationId, string drive)
+        {
+            DeleteMappedDriveInternal(organizationId, drive);
+        }
+
+        internal void DeleteMappedDriveInternal(string organizationId, string drive)
+        {
+            HostedSolutionLog.LogStart("DeleteMappedDriveInternal");
+            HostedSolutionLog.DebugInfo("driveLetter : {0}:", drive);
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            if (string.IsNullOrEmpty(drive))
+                throw new ArgumentNullException("driveLetter");
+
+            string gpoId;
+
+            if (!CheckMappedDriveGpoExists(organizationId, out gpoId))
+            {
+                CreateAndLinkMappedDrivesGPO(organizationId, out gpoId);
+            }
+
+            if (!string.IsNullOrEmpty(gpoId))
+            {
+                string path = string.Format("{0}\\{1}",
+                                            string.Format(GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE, RootDomain, gpoId),
+                                            "Drives.xml");
+
+                // open xml document
+                XmlDocument xml = new XmlDocument();
+                xml.Load(path);
+
+                XmlNode x = xml.SelectSingleNode(string.Format("/Drives/Drive[@name='{0}:']", drive));
+                if (x != null)
+                {
+                    x.ParentNode.RemoveChild(x);
+                }
+
+                xml.Save(path);
+
+                IncrementGPOVersion(organizationId, gpoId);
+            }
+
+            HostedSolutionLog.LogEnd("DeleteMappedDriveInternal");
+        }
+
+        public void DeleteMappedDrivesGPO(string organizationId)
+        {
+            DeleteMappedDrivesGPOInternal(organizationId);
+        }
+
+        internal void DeleteMappedDrivesGPOInternal(string organizationId)
+        {
+            HostedSolutionLog.LogStart("DeleteMappedDrivesGPOInternal");
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+
+            Runspace runSpace = null;
+
+            try
+            {
+                runSpace = OpenRunspace();
+
+                string gpoName = string.Format("{0}-mapped-drives", organizationId);
+
+                //create new gpo 
+                Command cmd = new Command("Remove-GPO");
+                cmd.Parameters.Add("Name", gpoName);
+
+                ExecuteShellCommand(runSpace, cmd);
+            }
+            catch (Exception)
+            {
+                CloseRunspace(runSpace);
+
+                throw;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+
+                HostedSolutionLog.LogEnd("DeleteMappedDrivesGPOInternal");
+            }
+        }
+
+        public void SetDriveMapsTargetingFilter(string organizationId, ExchangeAccount[] accounts, string folderName)
+        {
+            SetDriveMapsTargetingFilterInternal(organizationId, accounts, folderName);
+        }
+
+        internal void SetDriveMapsTargetingFilterInternal(string organizationId, ExchangeAccount[] accounts, string folderName)
+        {
+            HostedSolutionLog.LogStart("SetDriveMapsTargetingFilterInternal");
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+            HostedSolutionLog.DebugInfo("folderName : {0}", folderName);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            if (string.IsNullOrEmpty(folderName))
+                throw new ArgumentNullException("folderName");
+
+             try
+             {
+                 Dictionary<string, ExchangeAccount> sidAccountPairs = new Dictionary<string, ExchangeAccount>();
+
+                 foreach (var account in accounts)
+                 {
+                     string path = IsGroup(account) ? GetGroupPath(organizationId, account.AccountName) : GetUserPath(organizationId, account.AccountName);
+
+                     DirectoryEntry entry = ActiveDirectoryUtils.GetADObject(path);
+
+                     byte[] sidByteArr = (byte[])ActiveDirectoryUtils.GetADObjectProperty(entry, ADAttributes.SID);
+
+                     string sid = new System.Security.Principal.SecurityIdentifier(sidByteArr, 0).ToString();
+
+                     sidAccountPairs.Add(sid, account);
+                 }
+
+                 string gpoId;
+
+                 if (!CheckMappedDriveGpoExists(organizationId, out gpoId))
+                 {
+                     CreateAndLinkMappedDrivesGPO(organizationId, out gpoId);
+                 }
+
+                 if (!string.IsNullOrEmpty(gpoId))
+                 {
+                     string drivesXmlPath = string.Format("{0}\\{1}",
+                                                          string.Format(GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE, RootDomain, gpoId),
+                                                          "Drives.xml");
+                     // open xml document
+                     XmlDocument xml = new XmlDocument();
+                     xml.Load(drivesXmlPath);
+
+                     XmlNodeList drives = xml.SelectNodes(string.Format("./Drives/Drive[contains(Properties/@path,'{0}')]", folderName));
+
+                     foreach (XmlNode driveNode in drives)
+                     {
+                         XmlNodeList childNodes = driveNode.ChildNodes;
+
+                         if (childNodes.Count > 1)
+                         {
+                             //delete existing filters
+                             driveNode.LastChild.ParentNode.RemoveChild(driveNode.LastChild);
+                         }
+
+                         XmlNode newFiltersNode = CreateFiltersNode(xml, sidAccountPairs);
+
+                         driveNode.AppendChild(newFiltersNode);
+                     }
+
+                     xml.Save(drivesXmlPath);
+
+                     IncrementGPOVersion(organizationId, gpoId);
+                 }
+             }
+             catch (Exception)
+             {
+                 throw;
+             }
+             finally
+             {
+                 HostedSolutionLog.LogEnd("SetDriveMapsTargetingFilterInternal");
+             }
+        }
+
+        public void ChangeDriveMapFolderPath(string organizationId, string oldFolder, string newFolder)
+        {
+            ChangeDriveMapFolderPathInternal(organizationId, oldFolder, newFolder);
+        }
+
+        internal void ChangeDriveMapFolderPathInternal(string organizationId, string oldFolder, string newFolder)
+        {
+            HostedSolutionLog.LogStart("ChangeDriveMapFolderPathInternal");
+            HostedSolutionLog.DebugInfo("organizationId : {0}", organizationId);
+
+            if (string.IsNullOrEmpty(organizationId))
+                throw new ArgumentNullException("organizationId");
+
+            Runspace runSpace = null;
+
+            try
+            {
+                runSpace = OpenRunspace();
+
+                string gpoId;
+
+                 if (!CheckMappedDriveGpoExists(organizationId, out gpoId))
+                 {
+                     CreateAndLinkMappedDrivesGPO(organizationId, out gpoId);
+                 }
+
+                 if (!string.IsNullOrEmpty(gpoId))
+                 {
+                     string drivesXmlPath = string.Format("{0}\\{1}",
+                                                          string.Format(GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE, RootDomain, gpoId),
+                                                          "Drives.xml");
+                     // open xml document
+                     XmlDocument xml = new XmlDocument();
+                     xml.Load(drivesXmlPath);
+
+                     XmlNodeList drives = xml.SelectNodes(string.Format("./Drives/Drive[contains(Properties/@path,'{0}')]", oldFolder));
+
+                     foreach (XmlNode driveNode in drives)
+                     {
+                         if (driveNode.ChildNodes.Count > 1)
+                         {
+                             string oldPath = driveNode.FirstChild.Attributes["path"].Value;
+
+                             driveNode.FirstChild.Attributes["path"].Value = oldPath.Replace(oldFolder, newFolder);
+                         }
+                     }
+
+                     xml.Save(drivesXmlPath);
+
+                     IncrementGPOVersion(organizationId, gpoId);
+                 }
+            }
+            catch (Exception)
+            {
+                CloseRunspace(runSpace);
+
+                throw;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+
+                HostedSolutionLog.LogEnd("ChangeDriveMapFolderPathInternal");
+            }
+        }
+
+        private void CreateAndLinkMappedDrivesGPO(string organizationId, out string gpoId)
+        {
+            Runspace runSpace = null;
+
+            try
+            {
+                runSpace = OpenRunspace();
+
+                string gpoName = string.Format("{0}-mapped-drives", organizationId);
+                string pathOU = GetOrganizationTargetPath(organizationId);
+
+                //create new gpo 
+                Command cmd = new Command("New-GPO");
+                cmd.Parameters.Add("Name", gpoName);
+
+                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+
+                gpoId = null;
+
+                if (result != null && result.Count > 0)
+                {
+                    PSObject gpo = result[0];
+                    //get gpo id
+                    gpoId = ((Guid)GetPSObjectProperty(gpo, "Id")).ToString("B");
+
+                }
+
+                //create gpo link
+                cmd = new Command("New-GPLink");
+                cmd.Parameters.Add("Name", gpoName);
+                cmd.Parameters.Add("Target", pathOU);
+
+                ExecuteShellCommand(runSpace, cmd);
+
+                //create empty drives.xml file for for gpo drives mapping
+                CreateDrivesXmlEmpty(string.Format(GROUP_POLICY_MAPPED_DRIVES_FILE_PATH_TEMPLATE, RootDomain, gpoId), "Drives.xml");
+            }
+            catch (Exception)
+            {
+                gpoId = null;
+                CloseRunspace(runSpace);
+
+                throw;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+        }
+
+        private bool CheckMappedDriveGpoExists(string organizationId, out string gpoId)
+        {
+            Runspace runSpace = null;
+
+            try
+            {
+                runSpace = OpenRunspace();
+
+                string gpoName = string.Format("{0}-mapped-drives", organizationId);
+
+                Command cmd = new Command("Get-GPO");
+                cmd.Parameters.Add("Name", gpoName);
+
+                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+
+                gpoId = null;
+
+                if (result != null && result.Count > 0)
+                {
+                    PSObject gpo = result[0];
+                    gpoId = ((Guid)GetPSObjectProperty(gpo, "Id")).ToString("B");
+                }
+            }
+            catch (Exception)
+            {
+                gpoId = null;
+                CloseRunspace(runSpace);
+
+                throw;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+
+            return string.IsNullOrEmpty(gpoId) ? false : true;
+        }
+
+        private bool CheckMappedDriveExists(string organizationId, string path, bool newDrive)
+        {
+            bool exists = false;
+
+            MappedDrive[] drives = GetDriveMapsInternal(organizationId, newDrive);
+
+            foreach (var item in drives)
+            {
+                if (item.Path == path)
+                {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (drives.Length == 0 && newDrive)
+            {
+                SetGPCUserExtensionNames(organizationId);
+            }
+
+            return exists;
+        }
+
+        private void SetGPCUserExtensionNames(string organizationId)
+        {
+            string gpoName = string.Format("{0}-mapped-drives", organizationId);
+
+            DirectoryEntry de = ActiveDirectoryUtils.GetGroupPolicyContainer(gpoName);
+
+            ActiveDirectoryUtils.SetADObjectProperty(de, "gPCUserExtensionNames", gPCUserExtensionNames);
+
+            de.CommitChanges();
+        }
+
+        private void SetGPCVersionNumber(string organizationId, int version)
+        {
+            string gpoName = string.Format("{0}-mapped-drives", organizationId);
+
+            DirectoryEntry de = ActiveDirectoryUtils.GetGroupPolicyContainer(gpoName);
+
+            ActiveDirectoryUtils.SetADObjectProperty(de, "versionNumber", version.ToString());
+
+            de.CommitChanges();
+        }
+
+        private void IncrementGPOVersion(string organizationId, string gpoId)
+        {
+            string path = string.Format("{0}\\{1}",
+                                           string.Format(GROUP_POLICY_MAPPED_DRIVES_ROOT_PATH_TEMPLATE, RootDomain, gpoId),
+                                           "GPT.ini");
+
+            if (File.Exists(path))
+            {
+                string[] lines = File.ReadAllLines(path);
+
+                int version = int.Parse(lines.Where(x => x.Contains("Version=")).FirstOrDefault().Replace("Version=", ""));
+
+                string hexVersionValue = version.ToString("X");
+
+                int userVersion = (version == 0) ? 0 : int.Parse(hexVersionValue.Substring(0, hexVersionValue.Length - 4), System.Globalization.NumberStyles.HexNumber);
+
+                userVersion++;
+
+                string userHexVersionValue = userVersion.ToString("X");
+                string conputerHexVersion = (version == 0) ? "0000" : hexVersionValue.Substring(hexVersionValue.Length - 4, 4);
+
+                hexVersionValue = userHexVersionValue + conputerHexVersion;
+
+                int newVersion = int.Parse(hexVersionValue, System.Globalization.NumberStyles.HexNumber);
+
+                lines[1] = string.Format("Version={0}", newVersion);
+
+                File.WriteAllLines(path, lines);
+
+                SetGPCVersionNumber(organizationId, newVersion);
+            }
+        }
+
+        #region Drive Mapping Helpers
+
+        private void CreateDrivesXmlEmpty(string path, string fileName)
+        {
+            DirectoryInfo drivesDirectory = new DirectoryInfo(path);
+
+            if (!drivesDirectory.Exists)
+            {
+                drivesDirectory.Create();
+            }
+
+            XmlDocument doc = new XmlDocument();
+
+            XmlNode docNode = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
+            doc.AppendChild(docNode);
+
+            XmlNode drivesNode = doc.CreateElement("Drives");
+
+            XmlAttribute drivesAttribute = doc.CreateAttribute("clsid");
+            drivesAttribute.Value = DRIVES_CLSID;
+            drivesNode.Attributes.Append(drivesAttribute);
+
+            doc.AppendChild(drivesNode);
+
+            doc.Save(string.Format("{0}\\{1}", path, fileName));
+        }
+
+        private XmlNode CreateDriveNode(XmlDocument xml, string drive, string labelAs, string path)
+        {
+            XmlNode driveNode = xml.CreateElement("Drive");
+            XmlNode propertiesNode = xml.CreateElement("Properties");;
+
+            XmlAttribute clsidAttr = xml.CreateAttribute("clsid");
+            XmlAttribute nameAttr = xml.CreateAttribute("name");
+            XmlAttribute statusAttr = xml.CreateAttribute("status");
+            XmlAttribute imageAttr = xml.CreateAttribute("image");
+            XmlAttribute changedAttr = xml.CreateAttribute("changed");
+            XmlAttribute uidAttr = xml.CreateAttribute("uid");
+            XmlAttribute bypassErrorsAttr = xml.CreateAttribute("bypassErrors");
+
+            XmlAttribute actionPropAttr = xml.CreateAttribute("action");
+            XmlAttribute thisDrivePropAttr = xml.CreateAttribute("thisDrive");
+            XmlAttribute allDrivesPropAttr = xml.CreateAttribute("allDrives");
+            XmlAttribute userNamePropAttr = xml.CreateAttribute("userName");
+            XmlAttribute pathPropAttr = xml.CreateAttribute("path");
+            XmlAttribute labelPropAttr = xml.CreateAttribute("label");
+            XmlAttribute persistentPropAttr = xml.CreateAttribute("persistent");
+            XmlAttribute useLetterPropAttr = xml.CreateAttribute("useLetter");
+            XmlAttribute letterPropAttr = xml.CreateAttribute("letter");
+
+            clsidAttr.Value = DRIVE_CLSID;
+            nameAttr.Value = string.Format("{0}:", drive);
+            statusAttr.Value = string.Format("{0}:", drive);
+            imageAttr.Value = (1).ToString();
+            changedAttr.Value = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+            uidAttr.Value = Guid.NewGuid().ToString("B");
+            bypassErrorsAttr.Value = (1).ToString();
+
+            actionPropAttr.Value = "R";
+            thisDrivePropAttr.Value = "NOCHANGE";
+            allDrivesPropAttr.Value = "NOCHANGE";
+            userNamePropAttr.Value = string.Empty;
+            pathPropAttr.Value = path;
+            labelPropAttr.Value = labelAs;
+            persistentPropAttr.Value = (1).ToString();
+            useLetterPropAttr.Value = (1).ToString();
+            letterPropAttr.Value = drive;
+
+            driveNode.Attributes.Append(clsidAttr);
+            driveNode.Attributes.Append(nameAttr);
+            driveNode.Attributes.Append(statusAttr);
+            driveNode.Attributes.Append(imageAttr);
+            driveNode.Attributes.Append(changedAttr);
+            driveNode.Attributes.Append(uidAttr);
+            driveNode.Attributes.Append(bypassErrorsAttr);
+
+            propertiesNode.Attributes.Append(actionPropAttr);
+            propertiesNode.Attributes.Append(thisDrivePropAttr);
+            propertiesNode.Attributes.Append(allDrivesPropAttr);
+            propertiesNode.Attributes.Append(userNamePropAttr);
+            propertiesNode.Attributes.Append(pathPropAttr);
+            propertiesNode.Attributes.Append(labelPropAttr);
+            propertiesNode.Attributes.Append(persistentPropAttr);
+            propertiesNode.Attributes.Append(useLetterPropAttr);
+            propertiesNode.Attributes.Append(letterPropAttr);
+
+            driveNode.AppendChild(propertiesNode);
+
+            return driveNode;
+        }
+
+        private XmlNode CreateFiltersNode(XmlDocument xml, Dictionary<string, ExchangeAccount> accounts)
+        {
+            XmlNode filtersNode = xml.CreateElement("Filters");
+
+            foreach (var pair in accounts)
+            {
+                XmlAttribute boolAttr = xml.CreateAttribute("bool");
+                XmlAttribute notAttr = xml.CreateAttribute("not");
+                XmlAttribute userContextAttr = xml.CreateAttribute("userContext");
+                XmlAttribute primaryGroupAttr = xml.CreateAttribute("primaryGroup");
+                XmlAttribute localGroupAttr = xml.CreateAttribute("localGroup");
+                XmlAttribute nameAttr = xml.CreateAttribute("name");
+                XmlAttribute sidAttr = xml.CreateAttribute("sid");
+
+                boolAttr.Value = "AND";
+                notAttr.Value = (0).ToString();
+                userContextAttr.Value = (1).ToString();
+                primaryGroupAttr.Value = (0).ToString();
+                localGroupAttr.Value = (0).ToString();
+
+                if (IsGroup(pair.Value))
+                {
+                    XmlNode filterGroupNode = xml.CreateElement("FilterGroup");
+
+                    nameAttr.Value = GetObjectTargetAccountName(pair.Value.AccountName, RootDomain);
+                    sidAttr.Value = pair.Key;
+
+                    filterGroupNode.Attributes.Append(boolAttr);
+                    filterGroupNode.Attributes.Append(notAttr);
+                    filterGroupNode.Attributes.Append(nameAttr);
+                    filterGroupNode.Attributes.Append(sidAttr);
+                    filterGroupNode.Attributes.Append(userContextAttr);
+                    filterGroupNode.Attributes.Append(primaryGroupAttr);
+                    filterGroupNode.Attributes.Append(localGroupAttr);
+
+                    filtersNode.AppendChild(filterGroupNode);
+                }
+                else
+                {
+                    XmlNode filterUserNode = xml.CreateElement("FilterUser");
+
+                    nameAttr.Value = GetObjectTargetAccountName(pair.Value.AccountName, RootDomain);
+                    sidAttr.Value = pair.Key;
+
+                    filterUserNode.Attributes.Append(boolAttr);
+                    filterUserNode.Attributes.Append(notAttr);
+                    filterUserNode.Attributes.Append(nameAttr);
+                    filterUserNode.Attributes.Append(sidAttr);
+
+                    filtersNode.AppendChild(filterUserNode);
+                }
+            }
+
+            return filtersNode;
+        }
+
+        private MappedDrive[] GetDrivesFromXML(XmlDocument xml, ArrayList items)
+        {
+            XmlNodeList drives = xml.SelectNodes("./Drives/Drive");
+
+            foreach (XmlNode driveNode in drives)
+            {
+                XmlNode props = driveNode.ChildNodes[0];
+
+                MappedDrive item = new MappedDrive(props.Attributes["path"].Value,
+                                                   props.Attributes["label"].Value,
+                                                   props.Attributes["letter"].Value);
+                items.Add(item);
+            }
+
+            return (MappedDrive[])items.ToArray(typeof(MappedDrive));
+        }
+
+        private bool IsGroup(ExchangeAccount account)
+        {
+            return (account.AccountType == ExchangeAccountType.SecurityGroup || account.AccountType == ExchangeAccountType.DefaultSecurityGroup);
+        }
+
+        #endregion
+
+        #endregion
+
+        #region PowerShell integration
+
+        internal void ImportGroupPolicyMolude(Runspace runSpace)
+        {
+            Command cmd = new Command("Import-Module");
+            cmd.Parameters.Add("Name", "grouppolicy");
+
+            ExecuteShellCommand(runSpace, cmd);
+        }
+
+        private static RunspaceConfiguration runspaceConfiguration = null;
+
+        internal virtual Runspace OpenRunspace()
+        {
+            HostedSolutionLog.LogStart("OpenRunspace");
+
+            if (runspaceConfiguration == null)
+            {
+                runspaceConfiguration = RunspaceConfiguration.Create();
+            }
+
+            Runspace runSpace = RunspaceFactory.CreateRunspace(runspaceConfiguration);
+            //
+            runSpace.Open();
+            //
+            runSpace.SessionStateProxy.SetVariable("ConfirmPreference", "none");
+
+            ImportGroupPolicyMolude(runSpace);
+
+            HostedSolutionLog.LogEnd("OpenRunspace");
+            return runSpace;
+        }
+
+        internal void CloseRunspace(Runspace runspace)
+        {
+            try
+            {
+                if (runspace != null && runspace.RunspaceStateInfo.State == RunspaceState.Opened)
+                {
+                    runspace.Close();
+                    runspaceConfiguration = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                HostedSolutionLog.LogError("Runspace error", ex);
+            }
+        }
+
+        internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd)
+        {
+            return ExecuteShellCommand(runSpace, cmd, false);
+        }
+
+        internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd, bool useDomainController)
+        {
+            object[] errors;
+            return ExecuteShellCommand(runSpace, cmd, useDomainController, out errors);
+        }
+
+        internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd, out object[] errors)
+        {
+            return ExecuteShellCommand(runSpace, cmd, true, out errors);
+        }
+
+        internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd, bool useDomainController, out object[] errors)
+        {
+            HostedSolutionLog.LogStart("ExecuteShellCommand");
+            List<object> errorList = new List<object>();
+
+            if (useDomainController)
+            {
+                CommandParameter dc = new CommandParameter("DomainController", PrimaryDomainController);
+                if (!cmd.Parameters.Contains(dc))
+                {
+                    cmd.Parameters.Add(dc);
+                }
+            }
+
+            HostedSolutionLog.DebugCommand(cmd);
+            Collection<PSObject> results = null;
+            // Create a pipeline
+            Pipeline pipeLine = runSpace.CreatePipeline();
+            using (pipeLine)
+            {
+                // Add the command
+                pipeLine.Commands.Add(cmd);
+                // Execute the pipeline and save the objects returned.
+                results = pipeLine.Invoke();
+
+                // Log out any errors in the pipeline execution
+                // NOTE: These errors are NOT thrown as exceptions! 
+                // Be sure to check this to ensure that no errors 
+                // happened while executing the command.
+                if (pipeLine.Error != null && pipeLine.Error.Count > 0)
+                {
+                    foreach (object item in pipeLine.Error.ReadToEnd())
+                    {
+                        errorList.Add(item);
+                        string errorMessage = string.Format("Invoke error: {0}", item);
+                        HostedSolutionLog.LogWarning(errorMessage);
+                    }
+                }
+            }
+            pipeLine = null;
+            errors = errorList.ToArray();
+            HostedSolutionLog.LogEnd("ExecuteShellCommand");
+            return results;
+        }
+
+        internal object GetPSObjectProperty(PSObject obj, string name)
+        {
+            return obj.Members[name].Value;
+        }
+
+        #endregion
+
         public override bool IsInstalled()
         {
             return Environment.UserDomainName != Environment.MachineName;
         }
-
-
     }
 }

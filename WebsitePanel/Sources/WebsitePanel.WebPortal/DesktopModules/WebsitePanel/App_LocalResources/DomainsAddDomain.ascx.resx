@@ -163,10 +163,10 @@
     <value>Provisioning Options</value>
   </data>
   <data name="PointMailDomain.Text" xml:space="preserve">
-    <value>Point to existing Mail Domain</value>
+    <value>Assign to existing Mail Domain</value>
   </data>
   <data name="PointWebSite.Text" xml:space="preserve">
-    <value>Point to existing Web Site</value>
+    <value>Assign to existing Web Site</value>
   </data>
   <data name="SubDomainFormatValidator.ErrorMessage" xml:space="preserve">
     <value>Please, enter correct sub-domain name, for example "subdomain" or "sub.subdomain".</value>

@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -31,6 +31,7 @@ using System.Data;
 using System.Configuration;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Security;
@@ -65,21 +66,29 @@ namespace WebsitePanel.Portal
             {
                 // read httpd.conf
                 folder = ES.Services.WebServers.GetHeliconApeHttpdFolder(int.Parse(spaceId));
-                btnApeDebug.Visible = false;
+                ButtonDebuggerStart.Visible = false;
+                ButtonDebuggerStop.Visible = false;
             }
             else
             {
                 // read web site
-                WebSite site = ES.Services.WebServers.GetWebSite(PanelRequest.ItemID);
+                WebSite site = GetWebSite();
+
                 if (site == null)
                 {
                     RedirectToBrowsePage();
                     return;
                 }
 
+                LabelWebSiteName.Text = site.Name;
+
                 folderPath.RootFolder = site.ContentPath;
                 folderPath.PackageId = site.PackageId;
                 htaccessContent.Text = "# Helicon Ape\n";
+
+                ButtonDebuggerStart.Visible = true;
+                ButtonDebuggerStop.Visible = false;
+
 
                 if (String.IsNullOrEmpty(PanelRequest.Name))
                     return;
@@ -102,14 +111,16 @@ namespace WebsitePanel.Portal
             {
                 htaccessContent.Text = "# Helicon Ape\n";
             }
-            
-            ApeDebuggerUrl.Value = "";
+
+            /*
+            DebuggerUrlField.Value = "";
 
             if ( RE_APE_DEBUGGER_ENABLED.IsMatch(htaccessContent.Text) )
             {
-                btnApeDebug.Text = "Stop Debug";
-                GetApeDebuggerUrl();
+                btnApeDebug.Text = (string)GetLocalResourceObject("btnApeDebuggerStop.Text");
+                GetDebuggerUrl();
             }
+            */
 
         }
 
@@ -121,19 +132,6 @@ namespace WebsitePanel.Portal
             folder.HtaccessContent = htaccessContent.Text;
 
             string spaceId = Request.QueryString["SpaceID"];
-
-
-            if (RE_APE_DEBUGGER_ENABLED.IsMatch(htaccessContent.Text))
-            {
-                btnApeDebug.Text = "Stop Debug";
-                GetApeDebuggerUrl();
-            }
-            else
-            if (RE_APE_DEBUGGER_DISABLED.IsMatch(htaccessContent.Text))
-            {
-                btnApeDebug.Text = "Start Debug";
-                GetApeDebuggerUrl();
-            }
 
 
             try
@@ -177,70 +175,171 @@ namespace WebsitePanel.Portal
 
         protected readonly Regex RE_APE_DEBUGGER_ENABLED = new Regex(@"^[ \t]*(SetEnv\s+mod_developer\s+secure-key-([\d]+))", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
         protected readonly Regex RE_APE_DEBUGGER_DISABLED = new Regex(@"^[ \t]*#[ \t]*(SetEnv\s+mod_developer\s+secure-key-([\d]+))", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
-        protected string ApeDebuggerSecureKey = "";
-        //protected string ApeDebuggerUrl = "";
+        
+        protected string DebuggerSecureKey = "";
+        protected string DebuggerSessionId = "";
+        protected string DebuggerUrl = "";
+        protected string DebuggingPageUrl = "";
 
-        protected void btnApeDebug_Click(object sender, EventArgs e)
+        protected void DebugStartClick(object sender, EventArgs e)
         {
             var code = htaccessContent.Text;
+            bool needUpdate = false;
+
             if ( RE_APE_DEBUGGER_DISABLED.IsMatch(code) )
             {
                 // already disabled, enable it!
-                ApeDebuggerSecureKey = RE_APE_DEBUGGER_DISABLED.Match(code).Groups[2].Value;
+                DebuggerSecureKey = RE_APE_DEBUGGER_DISABLED.Match(code).Groups[2].Value;
                 code = RE_APE_DEBUGGER_DISABLED.Replace(code, "$1");
-                btnApeDebug.Text = "Stop Debug";
+                needUpdate = true;
             }
-            else if ( RE_APE_DEBUGGER_ENABLED.IsMatch(code) )
+            else if (RE_APE_DEBUGGER_ENABLED.IsMatch(code))
             {
-                // alerdy enable, disable it!
-                ApeDebuggerSecureKey = "";
-                code = RE_APE_DEBUGGER_ENABLED.Replace(code, "# $1");
-                btnApeDebug.Text = "Start Debug";
+                // already enabled
+                DebuggerSecureKey = RE_APE_DEBUGGER_ENABLED.Match(code).Groups[2].Value;
+                needUpdate = false;
             }
             else
             {
-                ApeDebuggerSecureKey = new Random().Next(100000000, 999999999).ToString();
-                code = code + "\nSetEnv mod_developer secure-key-" + ApeDebuggerSecureKey +"\n";
-                btnApeDebug.Text = "Stop Debug";
+                DebuggerSecureKey = new Random().Next(100000000, 999999999).ToString(CultureInfo.InvariantCulture);
+                code = code + "\nSetEnv mod_developer secure-key-" + DebuggerSecureKey + "\n";
+                needUpdate = true;
             }
 
-            htaccessContent.Text = code;
-            SaveFolder();
+            if (needUpdate)
+            {
+                htaccessContent.Text = code;
+                SaveFolder();
+            }
 
-            GetApeDebuggerUrl();
+            StartDebugger();
         }
 
-        private void GetApeDebuggerUrl()
+        protected void DebugStopClick(object sender, EventArgs e)
         {
-            if (RE_APE_DEBUGGER_ENABLED.IsMatch(htaccessContent.Text))
+            var code = htaccessContent.Text;
+            if (RE_APE_DEBUGGER_ENABLED.IsMatch(code))
             {
-                // already disabled, enable it!
-                ApeDebuggerSecureKey = RE_APE_DEBUGGER_ENABLED.Match(htaccessContent.Text).Groups[2].Value;
+                // alerdy enable, disable it!
+                code = RE_APE_DEBUGGER_ENABLED.Replace(code, "# $1");
+                htaccessContent.Text = code;
+                SaveFolder();
             }
 
-            ApeDebuggerUrl.Value = "";
-            if ( !string.IsNullOrEmpty(ApeDebuggerSecureKey) )
+
+            StopDebugger();
+        }
+
+        private void GetDebuggerUrl()
+        {
+            // TODO: interactive binding selection
+
+            if ( !string.IsNullOrEmpty(DebuggerSecureKey) )
             {
-                WebSite site = ES.Services.WebServers.GetWebSite(PanelRequest.ItemID);
+                WebSite site = GetWebSite();
 
                 if ( null != site)
                 {
                     if (site.Bindings.Length > 0)
                     {
                         ServerBinding serverBinding = site.Bindings[0];
-                        ApeDebuggerUrl.Value = string.Format("{0}://{1}:{2}{3}?ape_debug={4}", 
-                                                             serverBinding.Protocol,
-                                                             serverBinding.Host ?? serverBinding.IP,
-                                                             serverBinding.Port,
-                                                             folderPath.SelectedFile.Replace('\\', '/'),
-                                                             ApeDebuggerSecureKey
-                            );
+                        DebuggerUrl = string.Format(
+                            "{0}://{1}:{2}{3}/_ape_start_developer_session?ape_debug=secure-key-{4}_{5}", 
+                            serverBinding.Protocol,
+                            serverBinding.Host ?? serverBinding.IP,
+                            serverBinding.Port,
+                            folderPath.SelectedFile.Replace('\\', '/'),
+                            DebuggerSecureKey,
+                            DebuggerSessionId
+                        );
+                        DebuggerUrlField.Value = DebuggerUrl;
                     }
                 }
             }
+
+            // TODO: throw error if debugger url is empty
         }
 
-        protected void btnCancel_Click(object sender, EventArgs e)
+        private WebSite GetWebSite()
+        {
+            WebSite webSite = ViewState["HtaccessWebSite"] as WebSite;
+            if (null == webSite)
+            {
+                webSite = ES.Services.WebServers.GetWebSite(PanelRequest.ItemID);
+                // TODO: ViewState["HtaccessWebSite"] = webSite;
+            }
+
+            return webSite;
+        }
+
+        private void GetDebuggingPageUrl()
+        {
+            if (!string.IsNullOrEmpty(DebuggerSecureKey))
+            {
+                WebSite site = GetWebSite();
+
+                if (null != site)
+                {
+                    if (site.Bindings.Length > 0)
+                    {
+                        ServerBinding serverBinding = site.Bindings[0];
+
+                        DebuggingPageUrl = string.Format(
+                            "{0}://{1}:{2}{3}/?ape_debug=secure-key-{4}_{5}",
+                            serverBinding.Protocol,
+                            serverBinding.Host ?? serverBinding.IP,
+                            serverBinding.Port,
+                            folderPath.SelectedFile.Replace('\\', '/'),
+                            DebuggerSecureKey,
+                            DebuggerSessionId
+                        );
+                    }
+                }
+            }
+
+            // TODO: throw error if url is empty
+        }
+
+
+        private void StartDebugger()
+        {
+            ButtonDebuggerStart.Visible = false;
+            ButtonDebuggerStop.Visible = true;
+
+            // session id
+            DebuggerSessionId = new Random().Next(100000000, 999999999).ToString(CultureInfo.InvariantCulture);
+
+            // debugger url
+            GetDebuggerUrl();
+
+            // debugging page url
+            GetDebuggingPageUrl();
+
+            // show debugger iframe
+            DebuggerFramePanel.Visible = true;
+            DebuggerFrame.Attributes["src"] = DebuggerUrl;
+
+            // debugging page link
+            LinkDebuggingPage.NavigateUrl = DebuggingPageUrl;
+            LinkDebuggingPage.Text = DebuggingPageUrl;
+            DebuggingPageLinkModal.Show();
+
+        }
+
+        private void StopDebugger()
+        {
+            ButtonDebuggerStart.Visible = true;
+            ButtonDebuggerStop.Visible = false;
+
+            DebuggerUrl = "";
+            DebuggingPageUrl = "";
+            DebuggerSessionId = "";
+
+            // hide debugger iframe
+            DebuggerFramePanel.Visible = false;
+        }
+
+        protected void BtnCancelClick(object sender, EventArgs e)
         {
             ReturnBack();
         }

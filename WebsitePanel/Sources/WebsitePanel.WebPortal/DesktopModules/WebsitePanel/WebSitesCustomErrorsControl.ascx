@@ -1,4 +1,19 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="WebSitesCustomErrorsControl.ascx.cs" Inherits="WebsitePanel.Portal.WebSitesCustomErrorsControl" %>
+
+
+<div style="padding: 20; margin-bottom: 10px;">
+<table cellpadding="4">
+  <tr id="rowAspNet" runat="server">
+    <td class="SubHead">
+        <asp:Label ID="lblErrorMode" runat="server" meta:resourcekey="lblErrorMode"></asp:Label>:
+    </td>
+    <td class="Normal">
+        <asp:DropDownList ID="ddlErrorMode" runat="server" CssClass="NormalTextBox"></asp:DropDownList>
+    </td>
+  </tr>
+</table>
+</div>
+
 <div class="FormButtonsBar">
     <asp:Button id="btnAdd" runat="server" meta:resourcekey="btnAddError" Text="Add Custom Error" CssClass="Button3" OnClick="btnAdd_Click" CausesValidation="False"></asp:Button>
 </div>

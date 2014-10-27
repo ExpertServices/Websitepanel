@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -27,10 +27,12 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Configuration;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
@@ -51,7 +53,8 @@ namespace WebsitePanel.Portal.ProviderControls
         {
 			int selectedAddressid = this.FindAddressByText(settings["SharedIP"]);
 			ipAddress.AddressId = (selectedAddressid > 0) ? selectedAddressid : 0;
-            txtSiteId.Text = settings["SiteId"];
+            BindSiteId(settings);
+            txtAdFtpRoot.Text = settings["AdFtpRoot"];
             txtFtpGroupName.Text = settings["FtpGroupName"];
 			chkBuildUncFilesPath.Checked = Utils.ParseBool(settings["BuildUncFilesPath"], false);
             ActiveDirectoryIntegration.BindSettings(settings);
@@ -75,7 +78,11 @@ namespace WebsitePanel.Portal.ProviderControls
 			{
 				settings["SharedIP"] = String.Empty;
 			}
-        	settings["SiteId"] = txtSiteId.Text.Trim();
+        	settings["SiteId"] = ddlSite.SelectedValue;
+            if (!string.IsNullOrWhiteSpace(txtAdFtpRoot.Text))
+            {
+                settings["AdFtpRoot"] = txtAdFtpRoot.Text.Trim();
+            }
             settings["FtpGroupName"] = txtFtpGroupName.Text.Trim();
 			settings["BuildUncFilesPath"] = chkBuildUncFilesPath.Checked.ToString();
             ActiveDirectoryIntegration.SaveSettings(settings);
@@ -83,6 +90,11 @@ namespace WebsitePanel.Portal.ProviderControls
 
 		private int FindAddressByText(string address)
 		{
+		    if (string.IsNullOrEmpty(address))
+		    {
+		        return 0;
+		    }
+
             foreach (IPAddressInfo addressInfo in ES.Services.Servers.GetIPAddresses(IPAddressPool.General, PanelRequest.ServerId))
 			{
 				if (addressInfo.InternalIP == address || addressInfo.ExternalIP == address)
@@ -92,5 +104,31 @@ namespace WebsitePanel.Portal.ProviderControls
 			}
 			return 0;
 		}
+
+        private void BindSiteId(StringDictionary settings)
+        {
+            var sites = ES.Services.FtpServers.GetFtpSites(PanelRequest.ServiceId);
+
+            foreach (var site in sites)
+            {
+                var item = new ListItem(site.Name + " (User Isolation Mode: " + site["UserIsolationMode"] + ")", site.Name);
+
+                if (item.Value == settings["SiteId"])
+                {
+                    item.Selected = true;
+                }
+
+                ddlSite.Items.Add(item);
+            }
+
+            ddlSite_SelectedIndexChanged(this, null);
+        }
+
+        protected void ddlSite_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var isActiveDirectoryUserIsolated = ddlSite.SelectedItem.Text.Contains("ActiveDirectory");
+            FtpRootRow.Visible = isActiveDirectoryUserIsolated;
+            txtAdFtpRootReqValidator.Enabled= isActiveDirectoryUserIsolated;
+        }
     }
 }

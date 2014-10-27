@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2012-2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -32,9 +32,9 @@ using WebsitePanel.WebPortal;
 using WebsitePanel.EnterpriseServer;
 namespace WebsitePanel.Portal.ExchangeServer.UserControls
 {
-	public partial class Menu : WebsitePanelControlBase
-	{
-		
+    public partial class Menu : WebsitePanelControlBase
+    {
+
         public class MenuGroup
         {
             private string text;
@@ -56,7 +56,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             public string ImageUrl
             {
                 get { return imageUrl; }
-                set { imageUrl = value;}
+                set { imageUrl = value; }
             }
 
             public MenuGroup(string text, string imageUrl)
@@ -67,42 +67,42 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             }
 
         }
-        
+
         public class MenuItem
-		{			
+        {
             private string url;
-			private string text;
-			private string key;
+            private string text;
+            private string key;
 
             public string Url
-			{
-				get { return url; }
-				set { url = value; }
-			}
+            {
+                get { return url; }
+                set { url = value; }
+            }
 
-			public string Text
-			{
-				get { return text; }
-				set { text = value; }
-			}
+            public string Text
+            {
+                get { return text; }
+                set { text = value; }
+            }
 
-			public string Key
-			{
-				get { return key; }
-				set { key = value; }
-			}
+            public string Key
+            {
+                get { return key; }
+                set { key = value; }
+            }
 
 
-		}
+        }
 
-		private string selectedItem;
-		public string SelectedItem
-		{
-			get { return selectedItem; }
-			set { selectedItem = value; }
-		}
+        private string selectedItem;
+        public string SelectedItem
+        {
+            get { return selectedItem; }
+            set { selectedItem = value; }
+        }
 
-       
+
         private void PrepareExchangeMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath)
         {
             bool hideItems = false;
@@ -119,6 +119,9 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
             if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
                 exchangeGroup.MenuItems.Add(CreateMenuItem("Mailboxes", "mailboxes"));
+
+            if (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, cntx))
+                exchangeGroup.MenuItems.Add(CreateMenuItem("ArchivingMailboxes", "archivingmailboxes"));
 
             if (Utils.CheckQouta(Quotas.EXCHANGE2007_CONTACTS, cntx))
                 exchangeGroup.MenuItems.Add(CreateMenuItem("Contacts", "contacts"));
@@ -138,18 +141,30 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                     exchangeGroup.MenuItems.Add(CreateMenuItem("MailboxPlans", "mailboxplans"));
 
             if (!hideItems)
+                if (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, cntx))
+                    exchangeGroup.MenuItems.Add(CreateMenuItem("RetentionPolicy", "retentionpolicy"));
+
+            if (!hideItems)
+                if (Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, cntx))
+                    exchangeGroup.MenuItems.Add(CreateMenuItem("RetentionPolicyTag", "retentionpolicytag"));
+
+            if (!hideItems)
                 if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
                     exchangeGroup.MenuItems.Add(CreateMenuItem("ExchangeDomainNames", "domains"));
 
             if (!hideItems)
                 if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx))
-                exchangeGroup.MenuItems.Add(CreateMenuItem("StorageUsage", "storage_usage"));
+                    exchangeGroup.MenuItems.Add(CreateMenuItem("StorageUsage", "storage_usage"));
+
+            if (!hideItems)
+                if (Utils.CheckQouta(Quotas.EXCHANGE2007_DISCLAIMERSALLOWED, cntx))
+                    exchangeGroup.MenuItems.Add(CreateMenuItem("Disclaimers", "disclaimers"));
 
             if (exchangeGroup.MenuItems.Count > 0)
                 groups.Add(exchangeGroup);
 
         }
-        
+
         private void PrepareOrganizationMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath)
         {
             bool hideItems = false;
@@ -165,7 +180,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             if (!hideItems)
             {
                 MenuGroup organizationGroup = new MenuGroup(GetLocalizedString("Text.OrganizationGroup"), imagePath + "company24.png");
-                
+
                 if (Utils.CheckQouta(Quotas.EXCHANGE2007_MAILBOXES, cntx) == false)
                 {
                     if (Utils.CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))
@@ -174,10 +189,13 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 if (Utils.CheckQouta(Quotas.ORGANIZATION_USERS, cntx))
                     organizationGroup.MenuItems.Add(CreateMenuItem("Users", "users"));
 
+				if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPS, cntx))
+                    organizationGroup.MenuItems.Add(CreateMenuItem("SecurityGroups", "secur_groups"));
+				
                 if (organizationGroup.MenuItems.Count > 0)
                     groups.Add(organizationGroup);
             }
-   
+
         }
 
         private void PrepareCRMMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath)
@@ -186,10 +204,24 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
 
             crmGroup.MenuItems.Add(CreateMenuItem("CRMOrganization", "CRMOrganizationDetails"));
             crmGroup.MenuItems.Add(CreateMenuItem("CRMUsers", "CRMUsers"));
-            
+            crmGroup.MenuItems.Add(CreateMenuItem("StorageLimits", "crm_storage_settings"));
+
             if (crmGroup.MenuItems.Count > 0)
                 groups.Add(crmGroup);
-       
+
+        }
+
+        private void PrepareCRMMenu2013(PackageContext cntx, List<MenuGroup> groups, string imagePath)
+        {
+            MenuGroup crmGroup = new MenuGroup(GetLocalizedString("Text.CRMGroup2013"), imagePath + "crm_16.png");
+
+            crmGroup.MenuItems.Add(CreateMenuItem("CRMOrganization", "CRMOrganizationDetails"));
+            crmGroup.MenuItems.Add(CreateMenuItem("CRMUsers", "CRMUsers"));
+            crmGroup.MenuItems.Add(CreateMenuItem("StorageLimits", "crm_storage_settings"));
+
+            if (crmGroup.MenuItems.Count > 0)
+                groups.Add(crmGroup);
+
         }
 
         private void PrepareBlackBerryMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath)
@@ -197,7 +229,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             MenuGroup bbGroup = new MenuGroup(GetLocalizedString("Text.BlackBerryGroup"), imagePath + "blackberry16.png");
 
             bbGroup.MenuItems.Add(CreateMenuItem("BlackBerryUsers", "blackberry_users"));
-            
+
 
             if (bbGroup.MenuItems.Count > 0)
                 groups.Add(bbGroup);
@@ -211,19 +243,19 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             sharepointGroup.MenuItems.Add(CreateMenuItem("SiteCollections", "sharepoint_sitecollections"));
             sharepointGroup.MenuItems.Add(CreateMenuItem("StorageUsage", "sharepoint_storage_usage"));
             sharepointGroup.MenuItems.Add(CreateMenuItem("StorageLimits", "sharepoint_storage_settings"));
-            
+
             groups.Add(sharepointGroup);
 
 
         }
-        
+
         private void PrepareOCSMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath)
         {
             MenuGroup ocsGroup =
                    new MenuGroup(GetLocalizedString("Text.OCSGroup"), imagePath + "ocs16.png");
             ocsGroup.MenuItems.Add(CreateMenuItem("OCSUsers", "ocs_users"));
-            
-            
+
+
             groups.Add(ocsGroup);
         }
 
@@ -239,22 +271,36 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             if (Utils.CheckQouta(Quotas.LYNC_FEDERATION, cntx))
                 lyncGroup.MenuItems.Add(CreateMenuItem("LyncFederationDomains", "lync_federationdomains"));
 
+            if (Utils.CheckQouta(Quotas.LYNC_PHONE, cntx))
+                lyncGroup.MenuItems.Add(CreateMenuItem("LyncPhoneNumbers", "lync_phonenumbers"));
+
             groups.Add(lyncGroup);
         }
 
+        private void PrepareEnterpriseStorageMenu(PackageContext cntx, List<MenuGroup> groups, string imagePath)
+        {
+            MenuGroup enterpriseStorageGroup =
+                   new MenuGroup(GetLocalizedString("Text.EnterpriseStorageGroup"), imagePath + "spaces16.png");
+
+            enterpriseStorageGroup.MenuItems.Add(CreateMenuItem("EnterpriseStorageFolders", "enterprisestorage_folders"));
+
+            groups.Add(enterpriseStorageGroup);
+        }
+
+
         private List<MenuGroup> PrepareMenu()
-		{
+        {
             PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
-                        
+
             List<MenuGroup> groups = new List<MenuGroup>();
 
             string imagePath = String.Concat("~/", DefaultPage.THEMES_FOLDER, "/", Page.Theme, "/", "Images/Exchange", "/");
-            
+
             //Organization menu group;
             if (cntx.Groups.ContainsKey(ResourceGroups.HostedOrganizations))
                 PrepareOrganizationMenu(cntx, groups, imagePath);
-            
-            
+
+
             //Exchange menu group;
             if (cntx.Groups.ContainsKey(ResourceGroups.Exchange))
                 PrepareExchangeMenu(cntx, groups, imagePath);
@@ -262,15 +308,17 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             //BlackBerry Menu
             if (cntx.Groups.ContainsKey(ResourceGroups.BlackBerry))
                 PrepareBlackBerryMenu(cntx, groups, imagePath);
-            
+
             //SharePoint menu group;
             if (cntx.Groups.ContainsKey(ResourceGroups.HostedSharePoint))
-            {             
-                PrepareSharePointMenu(cntx, groups, imagePath);   
+            {
+                PrepareSharePointMenu(cntx, groups, imagePath);
             }
 
             //CRM Menu
-            if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM))
+            if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM2013))
+                PrepareCRMMenu2013(cntx, groups, imagePath);
+            else if (cntx.Groups.ContainsKey(ResourceGroups.HostedCRM))
                 PrepareCRMMenu(cntx, groups, imagePath);
 
 
@@ -281,38 +329,43 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
             //Lync Menu
             if (cntx.Groups.ContainsKey(ResourceGroups.Lync))
                 PrepareLyncMenu(cntx, groups, imagePath);
-		    
+
+            //EnterpriseStorage Menu
+            if (cntx.Groups.ContainsKey(ResourceGroups.EnterpriseStorage))
+                PrepareEnterpriseStorageMenu(cntx, groups, imagePath);
+
+
             return groups;
-		}
-        
+        }
+
         protected void Page_Load(object sender, EventArgs e)
-		{
+        {
             List<MenuGroup> groups = PrepareMenu();
-			
+
             /*repMenu.SelectedIndex = -1;
 			
-			for(int i = 0; i < items.Count; i++)
-			{
-				if (String.Compare(SelectedItem, items[i].Key, true) == 0)
-				{
-					repMenu.SelectedIndex = i;
-					break;
-				}
-			}*/
+            for(int i = 0; i < items.Count; i++)
+            {
+                if (String.Compare(SelectedItem, items[i].Key, true) == 0)
+                {
+                    repMenu.SelectedIndex = i;
+                    break;
+                }
+            }*/
 
-			// bind
+            // bind
             repMenu.DataSource = groups;
-			repMenu.DataBind();
-		}
+            repMenu.DataBind();
+        }
 
-		private MenuItem CreateMenuItem(string text, string key)
-		{
-			MenuItem item = new MenuItem();
-			item.Key = key;
-			item.Text = GetLocalizedString("Text." + text);
-			item.Url = HostModule.EditUrl("ItemID", PanelRequest.ItemID.ToString(), key,
-				"SpaceID=" + PanelSecurity.PackageId);
-			return item;
-		}
-	}
+        private MenuItem CreateMenuItem(string text, string key)
+        {
+            MenuItem item = new MenuItem();
+            item.Key = key;
+            item.Text = GetLocalizedString("Text." + text);
+            item.Url = HostModule.EditUrl("ItemID", PanelRequest.ItemID.ToString(), key,
+                "SpaceID=" + PanelSecurity.PackageId);
+            return item;
+        }
+    }
 }

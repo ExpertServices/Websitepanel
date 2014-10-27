@@ -130,7 +130,7 @@
     <value>There are no CRM users</value>
   </data>
   <data name="locQuota.Text" xml:space="preserve">
-    <value>Total users created</value>
+    <value>Full licenses :</value>
   </data>
   <data name="locTitle.Text" xml:space="preserve">
     <value>CRM Users</value>

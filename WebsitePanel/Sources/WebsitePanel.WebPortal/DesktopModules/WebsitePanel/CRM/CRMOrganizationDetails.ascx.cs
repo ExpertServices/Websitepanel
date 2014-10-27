@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -28,14 +28,59 @@
 
 using System;
 using System.Web.UI.WebControls;
+using System.Globalization;
+using System.Text;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
+using WebsitePanel.EnterpriseServer;
 
 namespace WebsitePanel.Portal.CRM
 {
     public partial class CRMOrganizationDetails : WebsitePanelModuleBase
     {
+
+        private StringDictionary ConvertArrayToDictionary(string[] settings)
+        {
+            StringDictionary r = new StringDictionary();
+            foreach (string setting in settings)
+            {
+                int idx = setting.IndexOf('=');
+                r.Add(setting.Substring(0, idx), setting.Substring(idx + 1));
+            }
+            return r;
+        }
+
+        private StringDictionary serviceSettings = null;
+
+        private StringDictionary ServiceSettings
+        {
+            get
+            {
+                if (serviceSettings != null)
+                    return serviceSettings;
+
+                PackageInfo pi = PackagesHelper.GetCachedPackage(PanelSecurity.PackageId);
+                ServiceInfo[] si = ES.Services.Servers.GetServicesByServerIdGroupName(pi.ServerId, ResourceGroups.HostedCRM2013);
+                if (si.Length == 0) si = ES.Services.Servers.GetServicesByServerIdGroupName(pi.ServerId, ResourceGroups.HostedCRM);
+
+                if (si.Length > 0)
+                {
+                    int serviceId = si[0].ServiceId;
+                    string[] settings = ES.Services.Servers.GetServiceSettings(serviceId);
+                    serviceSettings = ConvertArrayToDictionary(settings);
+                }
+                else
+                    serviceSettings = new StringDictionary();
+
+                return serviceSettings;
+            }
+        }
+
+
         private StringArrayResultObject BindCollations()
         {            
             StringArrayResultObject res = ES.Services.CRM.GetCollation(PanelSecurity.PackageId);
@@ -43,8 +88,10 @@ namespace WebsitePanel.Portal.CRM
             {
                 ddlCollation.DataSource = res.Value;
                 ddlCollation.DataBind();
-                ddlCollation.SelectedValue = "Latin1_General_CI_AI";
+                Utils.SelectListItem(ddlCollation, "Latin1_General_CI_AI"); // default
+                Utils.SelectListItem(ddlCollation, ServiceSettings[Constants.Collation]);
             }
+
             return res;
         }
 
@@ -66,13 +113,33 @@ namespace WebsitePanel.Portal.CRM
                                                                  }));
 
                     ddlCurrency.Items.Add(item);
-                    
                 }
-
-                ddlCurrency.SelectedValue = "USD|US Dollar|$|United States";
+                Utils.SelectListItem(ddlCurrency, "USD|US Dollar|$|United States"); // default
+                Utils.SelectListItem(ddlCurrency, ServiceSettings[Constants.Currency]);
             }
+
             return res;
            
+        }
+
+        private void BindBaseLanguage()
+        {
+            ddlBaseLanguage.Items.Clear();
+            int[] langPacksId = ES.Services.CRM.GetInstalledLanguagePacks(PanelSecurity.PackageId);
+            if (langPacksId != null)
+            {
+                foreach (int langId in langPacksId)
+                {
+                    CultureInfo ci = CultureInfo.GetCultureInfo(langId);
+
+                    ListItem item = new ListItem(ci.EnglishName, langId.ToString());
+                    ddlBaseLanguage.Items.Add(item);
+                }
+
+                Utils.SelectListItem(ddlBaseLanguage, "1033"); // default
+                Utils.SelectListItem(ddlBaseLanguage, ServiceSettings[Constants.BaseLanguage]);
+            }
+
         }
         
        
@@ -82,6 +149,7 @@ namespace WebsitePanel.Portal.CRM
             btnCreate.Visible = false;
             ddlCollation.Enabled = false;
             ddlCurrency.Enabled = false;
+            ddlBaseLanguage.Enabled = false;
             administrator.Visible = false;
             lblAdmin.Visible = true;
             lblAdmin.Text = admin;
@@ -89,7 +157,6 @@ namespace WebsitePanel.Portal.CRM
             hlOrganizationPage.Visible = true;
             hlOrganizationPage.NavigateUrl = org.CrmUrl;
             hlOrganizationPage.Text = org.CrmUrl;                                           
-           
         }
 
         private void ShowOrganizationDetails()
@@ -97,12 +164,12 @@ namespace WebsitePanel.Portal.CRM
             btnCreate.Visible = true;
             ddlCollation.Enabled = true;
             ddlCurrency.Enabled = true;
+            ddlBaseLanguage.Enabled = true;
             administrator.Visible = true;
             lblAdmin.Visible = false;
             
             btnDelete.Visible = false;
             hlOrganizationPage.Visible = false;
-            
         }
         
         
@@ -125,22 +192,20 @@ namespace WebsitePanel.Portal.CRM
                     return;                    
                 }
 
+                BindBaseLanguage();
 
-
-                
-                
                 Organization org = ES.Services.Organizations.GetOrganization(PanelRequest.ItemID);
                 lblCrmOrgId.Text = org.OrganizationId;
                 lblCrmOrgName.Text = org.Name;
-
                 
-                if (!string.IsNullOrEmpty(org.CrmCurrency))//CRM organization
+                if (!string.IsNullOrEmpty(org.CrmCurrency)) //CRM organization
                 {
                     OrganizationUser admin =
                         ES.Services.Organizations.GetUserGeneralSettings(org.Id, org.CrmAdministratorId);
-                    
-                    ddlCurrency.SelectedValue = org.CrmCurrency;
-                    ddlCollation.SelectedValue = org.CrmCollation;
+                
+                    Utils.SelectListItem(ddlCurrency, org.CrmCurrency);
+                    Utils.SelectListItem(ddlCollation, org.CrmCollation);
+                    Utils.SelectListItem(ddlBaseLanguage, org.CrmLanguadgeCode);
 
                     ShowCrmOrganizationDetails(admin.DisplayName, org);
                 }
@@ -172,9 +237,15 @@ namespace WebsitePanel.Portal.CRM
                     return;
                 }
 
-                
-                OrganizationResult res = ES.Services.CRM.CreateOrganization(org.Id, cuurrencyData[0], cuurrencyData[1], cuurrencyData[2], cuurrencyData[3],
-                                                   administrator.GetAccountId(), ddlCollation.SelectedValue);
+                int baseLanguage = 0;
+                int.TryParse(ddlBaseLanguage.SelectedValue, out baseLanguage);
+
+                EnterpriseServer.esCRM CRM = ES.Services.CRM;
+
+                CRM.Timeout = 7200000; //# Set longer timeout
+
+                OrganizationResult res = CRM.CreateOrganization(org.Id, cuurrencyData[0], cuurrencyData[1], cuurrencyData[2], cuurrencyData[3],
+                                                   administrator.GetAccountId(), ddlCollation.SelectedValue, baseLanguage);
 
                 messageBox.ShowMessage(res, "CreateCrmOrganization", "HostedCRM");
                 if (res.IsSuccess)

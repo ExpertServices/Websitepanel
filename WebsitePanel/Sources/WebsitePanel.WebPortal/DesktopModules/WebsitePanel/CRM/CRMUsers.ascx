@@ -1,9 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CRMUsers.ascx.cs" Inherits="WebsitePanel.Portal.CRM.CRMUsers" %>
 <%@ Register Src="../ExchangeServer/UserControls/UserSelector.ascx" TagName="UserSelector"
     TagPrefix="wsp" %>
-<%@ Register Src="../ExchangeServer/UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
-<%@ Register Src="../ExchangeServer/UserControls/Breadcrumb.ascx" TagName="Breadcrumb"
-    TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox"
     TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport"
@@ -12,11 +9,7 @@
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server" />
 <div id="ExchangeContainer">
     <div class="Module">
-        <div class="Header">
-            <wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName" />
-        </div>
         <div class="Left">
-            <wsp:Menu id="menu" runat="server" SelectedItem="storage_usage" />
         </div>
         <div class="Content">
             <div class="Center">
@@ -67,7 +60,6 @@
 					    </Columns>
 				    </asp:GridView>
 					<asp:ObjectDataSource ID="odsAccountsPaged" runat="server" EnablePaging="True"
-							
 							SelectCountMethod="GetCRMUsersPagedCount"
 							SelectMethod="GetCRMUsersPaged"
 							SortParameterName="sortColumn"
@@ -80,9 +72,66 @@
 						</SelectParameters>
 					</asp:ObjectDataSource>
 				    <br />
-				    <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Total Users Created:"></asp:Localize>
-				    &nbsp;&nbsp;&nbsp;
-				    <wsp:QuotaViewer ID="usersQuota" runat="server" QuotaTypeId="2"   />				    				    
+
+                    <asp:Panel ID="CRM2011Panel" runat="server">
+                        <table>
+                        <tr>
+                                <td align="right" nowrap>
+				                    <asp:Localize ID="locQuota" runat="server" meta:resourcekey="locQuota" Text="Full licenses :"></asp:Localize>
+                                </td>
+                                <td>
+            				        <wsp:QuotaViewer ID="usersQuota" runat="server" QuotaTypeId="2"   />
+                                </td>
+                        </tr>
+                        <tr>
+                                <td align="right" nowrap>
+            				        <asp:Localize ID="locLimitedQuota" runat="server" meta:resourcekey="locLimitedQuota" Text="Limited licenses :"></asp:Localize>
+                                </td>
+                                <td>
+				                    <wsp:QuotaViewer ID="limitedusersQuota" runat="server" QuotaTypeId="2"   />
+                                </td>
+                        </tr>
+                        <tr>
+                                <td align="right" nowrap>
+            				        <asp:Localize ID="locESSQuota" runat="server" meta:resourcekey="locESSQuota" Text="ESS licenses :"></asp:Localize>
+                                </td>
+                                <td>
+				                    <wsp:QuotaViewer ID="essusersQuota" runat="server" QuotaTypeId="2"   />
+                                </td>
+                        </tr>
+                        </table>
+                    </asp:Panel>
+
+                    <asp:Panel ID="CRM2013Panel" runat="server">
+                        <table>
+                        <tr>
+                                <td align="right" nowrap>
+				                    <asp:Localize ID="Localize1" runat="server" meta:resourcekey="locQuota" Text="Professional licenses :"></asp:Localize>
+                                </td>
+                                <td>
+            				        <wsp:QuotaViewer ID="professionalusersQuota" runat="server" QuotaTypeId="2"   />
+                                </td>
+                        </tr>
+                        <tr>
+                                <td align="right" nowrap>
+            				        <asp:Localize ID="locBasicQuota" runat="server" meta:resourcekey="locBasicQuota" Text="Basic licenses :"></asp:Localize>
+                                </td>
+                                <td>
+				                    <wsp:QuotaViewer ID="basicusersQuota" runat="server" QuotaTypeId="2"   />
+                                </td>
+                        </tr>
+                        <tr>
+                                <td align="right" nowrap>
+            				        <asp:Localize ID="locEssentialQuota" runat="server" meta:resourcekey="locEssentialQuota" Text="Essential licenses :"></asp:Localize>
+                                </td>
+                                <td>
+				                    <wsp:QuotaViewer ID="essentialusersQuota" runat="server" QuotaTypeId="2"   />
+                                </td>
+                        </tr>
+                        </table>
+                    </asp:Panel>
+
+
 				</div>                                                
             </div>
         </div>

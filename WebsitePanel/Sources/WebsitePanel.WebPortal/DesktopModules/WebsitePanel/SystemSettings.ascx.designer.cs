@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -131,15 +131,6 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.Panel BackupPanel;
         
         /// <summary>
-        /// Localize1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize Localize1;
-        
-        /// <summary>
         /// txtBackupsPath control.
         /// </summary>
         /// <remarks>
@@ -167,22 +158,13 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.Panel WpiPanel;
         
         /// <summary>
-        /// wpiMicrosoftFeed control.
+        /// txtMainFeedUrl control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox wpiMicrosoftFeed;
-        
-        /// <summary>
-        /// wpiHeliconTechFeed control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox wpiHeliconTechFeed;
+        protected global::System.Web.UI.WebControls.TextBox txtMainFeedUrl;
         
         /// <summary>
         /// wpiEditFeedsList control.
@@ -192,6 +174,51 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.UserControls.EditFeedsList wpiEditFeedsList;
+        
+        /// <summary>
+        /// HeaderFileManagerSettings control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.CollapsiblePanel HeaderFileManagerSettings;
+        
+        /// <summary>
+        /// PanelFileManagereSettings control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PanelFileManagereSettings;
+        
+        /// <summary>
+        /// lblFileManagerEditableExtensions control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize lblFileManagerEditableExtensions;
+        
+        /// <summary>
+        /// txtFileManagerEditableExtensions control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtFileManagerEditableExtensions;
+        
+        /// <summary>
+        /// litFileManagerEditableExtensions control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal litFileManagerEditableExtensions;
         
         /// <summary>
         /// btnSaveSettings control.

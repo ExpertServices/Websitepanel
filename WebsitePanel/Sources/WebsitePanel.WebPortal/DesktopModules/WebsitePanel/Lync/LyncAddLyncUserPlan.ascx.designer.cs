@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -48,24 +48,6 @@ namespace WebsitePanel.Portal.Lync {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::WebsitePanel.Portal.EnableAsyncTasksSupport asyncTasks;
-        
-        /// <summary>
-        /// breadcrumb control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.Breadcrumb breadcrumb;
-        
-        /// <summary>
-        /// menu control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.ExchangeServer.UserControls.Menu menu;
         
         /// <summary>
         /// Image1 control.
@@ -167,15 +149,6 @@ namespace WebsitePanel.Portal.Lync {
         protected global::System.Web.UI.WebControls.CheckBox chkMobility;
         
         /// <summary>
-        /// chkFederation control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkFederation;
-        
-        /// <summary>
         /// chkConferencing control.
         /// </summary>
         /// <remarks>
@@ -194,67 +167,247 @@ namespace WebsitePanel.Portal.Lync {
         protected global::System.Web.UI.WebControls.CheckBox chkEnterpriseVoice;
         
         /// <summary>
-        /// secEnterpriseVoice control.
+        /// secPlanFeaturesFederation control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::WebsitePanel.Portal.CollapsiblePanel secEnterpriseVoice;
+        protected global::WebsitePanel.Portal.CollapsiblePanel secPlanFeaturesFederation;
         
         /// <summary>
-        /// EnterpriseVoice control.
+        /// PlanFeaturesFederation control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel EnterpriseVoice;
+        protected global::System.Web.UI.WebControls.Panel PlanFeaturesFederation;
         
         /// <summary>
-        /// chkNone control.
+        /// chkFederation control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButton chkNone;
+        protected global::System.Web.UI.WebControls.CheckBox chkFederation;
         
         /// <summary>
-        /// chkEmergency control.
+        /// chkRemoteUserAccess control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButton chkEmergency;
+        protected global::System.Web.UI.WebControls.CheckBox chkRemoteUserAccess;
         
         /// <summary>
-        /// chkNational control.
+        /// secPlanFeaturesArchiving control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButton chkNational;
+        protected global::WebsitePanel.Portal.CollapsiblePanel secPlanFeaturesArchiving;
         
         /// <summary>
-        /// chkMobile control.
+        /// PlanFeaturesArchiving control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButton chkMobile;
+        protected global::System.Web.UI.WebControls.Panel PlanFeaturesArchiving;
         
         /// <summary>
-        /// chkInternational control.
+        /// locArchivingPolicy control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButton chkInternational;
+        protected global::System.Web.UI.WebControls.Localize locArchivingPolicy;
+        
+        /// <summary>
+        /// ddArchivingPolicy control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddArchivingPolicy;
+        
+        /// <summary>
+        /// secPlanFeaturesMeeting control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.CollapsiblePanel secPlanFeaturesMeeting;
+        
+        /// <summary>
+        /// PlanFeaturesMeeting control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PlanFeaturesMeeting;
+        
+        /// <summary>
+        /// chkAllowOrganizeMeetingsWithExternalAnonymous control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox chkAllowOrganizeMeetingsWithExternalAnonymous;
+        
+        /// <summary>
+        /// secPlanFeaturesTelephony control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.CollapsiblePanel secPlanFeaturesTelephony;
+        
+        /// <summary>
+        /// PlanFeaturesTelephony control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PlanFeaturesTelephony;
+        
+        /// <summary>
+        /// locTelephony control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locTelephony;
+        
+        /// <summary>
+        /// ddTelephony control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddTelephony;
+        
+        /// <summary>
+        /// pnEnterpriseVoice control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnEnterpriseVoice;
+        
+        /// <summary>
+        /// locTelephonyProvider control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locTelephonyProvider;
+        
+        /// <summary>
+        /// tbTelephoneProvider control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox tbTelephoneProvider;
+        
+        /// <summary>
+        /// btnAccept control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnAccept;
+        
+        /// <summary>
+        /// AcceptRequiredValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator AcceptRequiredValidator;
+        
+        /// <summary>
+        /// locDialPlan control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locDialPlan;
+        
+        /// <summary>
+        /// ddTelephonyDialPlanPolicy control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddTelephonyDialPlanPolicy;
+        
+        /// <summary>
+        /// locVoicePolicy control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locVoicePolicy;
+        
+        /// <summary>
+        /// ddTelephonyVoicePolicy control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddTelephonyVoicePolicy;
+        
+        /// <summary>
+        /// pnServerURI control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnServerURI;
+        
+        /// <summary>
+        /// locServerURI control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Localize locServerURI;
+        
+        /// <summary>
+        /// tbServerURI control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox tbServerURI;
         
         /// <summary>
         /// btnAdd control.
@@ -273,14 +426,5 @@ namespace WebsitePanel.Portal.Lync {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ValidationSummary ValidationSummary1;
-        
-        /// <summary>
-        /// FormComments control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Localize FormComments;
     }
 }

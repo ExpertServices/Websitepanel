@@ -27,11 +27,14 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Configuration.Install;
 using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
+using System.Linq;
+using System.ServiceProcess;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -208,17 +211,19 @@ namespace WebsitePanel.Setup
 						Log.WriteError("Windows service stop error", ex);
 				}
 
-				int exitCode = Utils.RunProcess(path, "/u");
-				if (exitCode == 0)
-				{
-					Log.WriteEnd("Removed Windows service");
-					InstallLog.AppendLine(string.Format("- Removed \"{0}\" Windows service", serviceName));
-				}
-				else
-				{
-					Log.WriteError(string.Format("Unable to remove \"{0}\" Windows service. Error code: {1}", serviceName, exitCode), null);
-					InstallLog.AppendLine(string.Format("- Failed to remove \"{0}\" Windows service", serviceName));
-				}
+                try
+                {
+                    ManagedInstallerClass.InstallHelper(new[] {"/u", path});                    
+                }
+                catch(Exception)
+                {
+                    Log.WriteError(string.Format("Unable to remove \"{0}\" Windows service.", serviceName), null);
+                    InstallLog.AppendLine(string.Format("- Failed to remove \"{0}\" Windows service", serviceName));
+                    throw;
+                }
+
+                Log.WriteEnd("Removed Windows service");
+                InstallLog.AppendLine(string.Format("- Removed \"{0}\" Windows service", serviceName));
 			}
 			catch (Exception ex)
 			{
@@ -268,7 +273,7 @@ namespace WebsitePanel.Setup
 
 		internal List<InstallAction> GetUninstallActions(string componentId)
 		{
-			List<InstallAction> list = new List<InstallAction>();
+			var list = new List<InstallAction>();
 			InstallAction action = null;
 
 			//windows service
@@ -285,6 +290,12 @@ namespace WebsitePanel.Setup
 				list.Add(action);
 			}
 
+            if (ServiceController.GetServices().Any(s => s.DisplayName.Equals(Global.Parameters.SchedulerServiceName, StringComparison.CurrentCultureIgnoreCase)))
+            {
+                action = new InstallAction(ActionTypes.UnregisterWindowsService) { Path = Path.Combine(installFolder, "bin", Global.Parameters.SchedulerServiceFileName), Name = Global.Parameters.SchedulerServiceName, Description = "Removing Windows service..." };
+                action.Log = string.Format("- Remove {0} Windows service", action.Name);
+                list.Add(action);
+            }
 
 			//database
 			bool deleteDatabase = AppConfig.GetComponentSettingBooleanValue(componentId, "NewDatabase");

@@ -65,20 +65,35 @@ namespace WebsitePanel.Portal
 		ExchangeAccountsPaged accounts;
 
 		public int GetExchangeAccountsPagedCount(int itemId, string accountTypes,
-			string filterColumn, string filterValue)
+            string filterColumn, string filterValue, bool archiving)
 		{
 			return accounts.RecordsCount;
 		}
 
+        public int GetExchangeAccountsPagedCount(int itemId, string accountTypes,
+            string filterColumn, string filterValue)
+        {
+            return accounts.RecordsCount;
+        }
+
+        public ExchangeAccount[] GetExchangeAccountsPaged(int itemId, string accountTypes,
+            string filterColumn, string filterValue,
+            int maximumRows, int startRowIndex, string sortColumn)
+        {
+            return GetExchangeAccountsPaged(itemId, accountTypes,
+            filterColumn, filterValue,
+            maximumRows, startRowIndex, sortColumn, false);
+        }
+
 		public ExchangeAccount[] GetExchangeAccountsPaged(int itemId, string accountTypes,
 			string filterColumn, string filterValue,
-			int maximumRows, int startRowIndex, string sortColumn)
+            int maximumRows, int startRowIndex, string sortColumn, bool archiving)
 		{
 			if (!String.IsNullOrEmpty(filterValue))
 				filterValue = filterValue + "%";
 
-			accounts = ES.Services.ExchangeServer.GetAccountsPaged(itemId,
-                accountTypes, filterColumn, filterValue, sortColumn, startRowIndex, maximumRows);
+            accounts = ES.Services.ExchangeServer.GetAccountsPaged(itemId,
+                accountTypes, filterColumn, filterValue, sortColumn, startRowIndex, maximumRows, archiving);
 
 			return accounts.PageItems;
 		}

@@ -1,9 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="EditOCSUser.ascx.cs" Inherits="WebsitePanel.Portal.OCS.EditOCSUser" %>
 <%@ Register Src="../ExchangeServer/UserControls/UserSelector.ascx" TagName="UserSelector"
     TagPrefix="wsp" %>
-<%@ Register Src="../ExchangeServer/UserControls/Menu.ascx" TagName="Menu" TagPrefix="wsp" %>
-<%@ Register Src="../ExchangeServer/UserControls/Breadcrumb.ascx" TagName="Breadcrumb"
-    TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox"
     TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport"
@@ -14,11 +11,7 @@
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server" />
 <div id="ExchangeContainer">
     <div class="Module">
-        <div class="Header">
-            <wsp:Breadcrumb id="breadcrumb" runat="server" PageName="Text.PageName"  meta:resourcekey="breadcrumb" />
-        </div>
         <div class="Left">
-            <wsp:Menu id="menu" runat="server" />
         </div>
         <div class="Content">
             <div class="Center">

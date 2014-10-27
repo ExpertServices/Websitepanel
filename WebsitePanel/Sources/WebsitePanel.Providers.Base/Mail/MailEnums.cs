@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -67,4 +67,42 @@ namespace WebsitePanel.Providers.Mail
 
     #endregion
 
+    #region IceWarp
+
+    public enum IceWarpListMembersSource
+    {
+        MembersInFile = 0,
+        AllDomainUsers = 1,
+        AllDomainAdmins = 3
+    }
+
+    public enum IceWarpListFromAndReplyToHeader
+    {
+        NoChange = 0,
+        SetToSender = 1,
+        SetToValue = 2
+    }
+
+    public enum IceWarpListOriginator
+    {
+        Blank = 0,
+        Sender = 1,
+        Owner = 2
+    }
+
+    [Flags]
+    public enum IceWarpListDefaultRights
+    {
+        Receive = 1,
+        Post = 2,
+        Digest = 4
+    }
+
+    public enum IceWarpListConfirmSubscription
+    {
+        None = 0,
+        User = 1,
+        Owner = 2
+    }
+    #endregion
 }

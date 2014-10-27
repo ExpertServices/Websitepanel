@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -311,6 +311,7 @@ namespace WebsitePanel.EnterpriseServer
 		public const int ERROR_EXCHANGE_PFOLDERS_QUOTA_LIMIT = -2610;
 		public const int ERROR_EXCHANGE_DOMAINS_QUOTA_LIMIT = -2611;
         public const int ERROR_EXCHANGE_STORAGE_QUOTAS_EXCEED_HOST_VALUES = -2612;
+        public const int ERROR_EXCHANGE_INVALID_RECOVERABLEITEMS_QUOTA = -2613;
 		#endregion
 
         #region Organizations

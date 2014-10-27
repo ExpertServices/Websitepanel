@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using WebsitePanel.Providers.HostedSolution;
+using System.Text.RegularExpressions;
 
 namespace WebsitePanel.Portal.ExchangeServer.UserControls
 {
@@ -104,6 +105,10 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                 chkIncludeLists.Visible = DistributionListsEnabled;
                 chkIncludeLists.Checked = DistributionListsEnabled;
             }
+
+            // increase timeout
+            ScriptManager scriptMngr = ScriptManager.GetCurrent(this.Page);
+            scriptMngr.AsyncPostBackTimeout = 300;
         }
 
         private void BindSelectedAccount(ExchangeAccount account)
@@ -157,7 +162,7 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
         {
             ExchangeAccount[] accounts = ES.Services.ExchangeServer.SearchAccounts(PanelRequest.ItemID,
                 chkIncludeMailboxes.Checked, chkIncludeContacts.Checked, chkIncludeLists.Checked,
-                chkIncludeRooms.Checked, chkIncludeEquipment.Checked,
+                chkIncludeRooms.Checked, chkIncludeEquipment.Checked, false,
                 ddlSearchColumn.SelectedValue, txtSearchValue.Text + "%", "");
 
             if (ExcludeAccountId > 0)
@@ -214,7 +219,8 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
         {
             if (e.CommandName == "SelectAccount")
             {
-                string[] parts = e.CommandArgument.ToString().Split('|');
+
+                string[] parts = e.CommandArgument.ToString().Split('^');
                 ExchangeAccount account = new ExchangeAccount();
                 account.AccountName = parts[0];
                 account.DisplayName = parts[1];

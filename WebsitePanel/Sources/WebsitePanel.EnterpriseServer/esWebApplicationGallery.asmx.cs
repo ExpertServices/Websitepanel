@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -78,6 +78,14 @@ namespace WebsitePanel.EnterpriseServer
             WebAppGalleryController.InitFeeds(SecurityContext.User.UserId, packageId);
             return WebAppGalleryController.GetGalleryApplications(packageId, categoryId);
         }
+
+        [WebMethod]
+        public GalleryApplicationsResult GetInstaledApplications(int packageId, string categoryId)
+        {
+            WebAppGalleryController.InitFeeds(SecurityContext.User.UserId, packageId);
+            return WebAppGalleryController.GetGalleryApplications(packageId, categoryId);
+        }
+
 
         [WebMethod]
         public GalleryApplicationsResult GetGalleryApplicationsFiltered(int packageId, string pattern)

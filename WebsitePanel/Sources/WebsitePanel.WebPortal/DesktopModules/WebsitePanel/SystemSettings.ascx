@@ -35,34 +35,40 @@
 	<asp:Panel ID="BackupPanel" runat="server" Height="0" style="overflow:hidden;">
 		<table>
 			<tr>
-				<td class="SubHead" style="width:200px;"><asp:Localize ID="Localize1" runat="server" meta:resourcekey="lclBackupFolderPath" /></td>
-				<td><asp:TextBox runat="server" ID="txtBackupsPath" Width="300px" /></td>
+				<td class="SubHead" style="width:200px;"><asp:Localize runat="server" meta:resourcekey="lclBackupFolderPath" /></td>
+				<td><asp:TextBox runat="server" ID="txtBackupsPath" Width="450px" /></td>
 			</tr>
 		</table>
 	</asp:Panel>
 
     <wsp:CollapsiblePanel id="lclWpiSettings" runat="server"
-		TargetControlID="WpiPanel" meta:resourcekey="lclWpiSettings" Text="WebPlatformInstaller Settings"/>
-	<asp:Panel ID="WpiPanel" runat="server" Height="0" style="overflow:hidden;">
-       <asp:CheckBox ID="wpiMicrosoftFeed" runat="server" Text="Yes" Visible="false"/>
-       <asp:CheckBox ID="wpiHeliconTechFeed" runat="server" Text="Yes" Visible="false" />
-<%--     <table> 
+		TargetControlID="WpiPanel" meta:resourcekey="lclWpiSettings" Text="Web Platform Installer Settings"/>
+	
+    <asp:Panel ID="WpiPanel" runat="server" Height="0" style="overflow:hidden;">
+		<table>
 			<tr>
-				<td class="SubHead" style="width:200px;">Enable Microsoft feed</td>
-				<td class="Normal">
-                    <asp:CheckBox ID="wpiMicrosoftFeed" runat="server" Text="Yes" Visible="false"/>
-                </td>
+				<td class="SubHead" style="width:200px;"><asp:Localize runat="server" meta:resourcekey="lclWpiMainFeedUrl" Text="Main feed URL:" /></td>
+				<td><asp:TextBox runat="server" ID="txtMainFeedUrl" Width="450px" /></td>
 			</tr>
-			
             <tr>
-		        <td class="SubHead" style="width:200px;">Enable HeliconTech feed</td>
-                <td class="Normal">
-                    <asp:CheckBox ID="wpiHeliconTechFeed" runat="server" Text="Yes" Visible="false" />
+                <td class="SubHead" style="width:200px; vertical-align: top;"><asp:Localize runat="server" meta:resourcekey="lclWpiCustomFeeds" Text="Custom feeds:" /></td>
+                <td>
+                    <uc1:EditFeedsList ID="wpiEditFeedsList" runat="server" DisplayNames="false" />
                 </td>
             </tr>
-	  </table>
---%>
-        <uc1:EditFeedsList ID="wpiEditFeedsList" runat="server" DisplayNames="false" />
+		</table>
+	</asp:Panel>
+
+    <wsp:CollapsiblePanel id="HeaderFileManagerSettings" runat="server"
+		TargetControlID="PanelFileManagereSettings" meta:resourcekey="HeaderFileManagerSettings" Text="File Manager"/>
+
+	<asp:Panel ID="PanelFileManagereSettings" runat="server" Height="0" style="overflow:hidden;">
+		<table>
+			<tr>
+				<td class="SubHead" style="width:200px;"><asp:Localize ID="lblFileManagerEditableExtensions" runat="server" meta:resourcekey="lblFileManagerEditableExtensions" /></td>
+				<td><asp:TextBox  TextMode="MultiLine" Rows="10" runat="server" ID="txtFileManagerEditableExtensions" Width="300px" /><asp:Literal ID="litFileManagerEditableExtensions" runat="Server" Text=" (One (1) extension per line)"></asp:Literal></td>
+			</tr>
+		</table>
 	</asp:Panel>
 </div>
 <div class="FormFooter">

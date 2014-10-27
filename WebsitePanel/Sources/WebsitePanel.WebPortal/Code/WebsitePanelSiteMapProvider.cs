@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -199,6 +199,7 @@ namespace WebsitePanel.WebPortal
 
             NameValueCollection attrs = new NameValueCollection();
             attrs["target"] = page.Target;
+            attrs["align"] = page.Align;
 
             SiteMapNode node = new SiteMapNode(this, page.Name,
                 url,

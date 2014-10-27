@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -58,7 +58,17 @@ namespace WebsitePanel.Providers.Common
 
         public const string AppRootDomain = "AppRootDomain";
 
+        public const string OrganizationWebService = "OrganizationWebService";
+
+        public const string DiscoveryWebService = "DiscoveryWebService";
+
+        public const string DeploymentWebService = "DeploymentWebService";
+
         public const string UtilityPath = "UtilityPath";
+
+        public const string HandheldcleanupPath = "HandheldcleanupPath";
+
+        public const string MAPIProfile = "MAPIProfile";
 
         public const string EnterpriseServer = "EnterpriseServer";
 
@@ -66,8 +76,13 @@ namespace WebsitePanel.Providers.Common
 
         public const string AdministrationToolService = "AdministrationToolService";
 
-        
+        public const string UsersHome = "UsersHome";
 
-        
+        public const string Collation = "Collation";
+
+        public const string Currency = "Currency";
+
+        public const string BaseLanguage = "BaseLanguage";
+   
     }
 }

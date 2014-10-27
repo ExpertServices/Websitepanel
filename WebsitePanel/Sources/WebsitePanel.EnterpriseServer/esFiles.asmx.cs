@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -50,6 +50,12 @@ namespace WebsitePanel.EnterpriseServer
     [ToolboxItem(false)]
     public class esFiles : System.Web.Services.WebService
     {
+        [WebMethod]
+        public SystemSettings GetFileManagerSettings()
+        {
+            return FilesController.GetFileManagerSettings();
+        }
+
         [WebMethod]
         public static string GetHomeFolder(int packageId)
         {
@@ -193,5 +199,13 @@ namespace WebsitePanel.EnterpriseServer
         {
             FilesController.ExecuteSyncActions(packageId, actions);
         }
+
+        //CO Changes
+        [WebMethod]
+        public int ApplyEnableHardQuotaFeature(int packageId)
+        {
+            return FilesController.ApplyEnableHardQuotaFeature(packageId);
+        }
+        //END
     }
 }

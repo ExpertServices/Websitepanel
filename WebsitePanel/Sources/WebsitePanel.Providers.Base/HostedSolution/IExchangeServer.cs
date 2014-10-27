@@ -26,6 +26,9 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using System.Collections.Generic;
+using WebsitePanel.Providers.Common;
+
 namespace WebsitePanel.Providers.HostedSolution
 {
 	public interface IExchangeServer
@@ -39,14 +42,14 @@ namespace WebsitePanel.Providers.HostedSolution
                                     string accountName, bool enablePOP, bool enableIMAP,
                                     bool enableOWA, bool enableMAPI, bool enableActiveSync,
                                     long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB,
-                                    int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool isConsumer);
+                                    int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool isConsumer, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning);
 
         Organization ExtendToExchangeOrganization(string organizationId, string securityGroup, bool IsConsumer);
         string GetOABVirtualDirectory();
         Organization CreateOrganizationOfflineAddressBook(string organizationId, string securityGroup, string oabVirtualDir);
         Organization CreateOrganizationAddressBookPolicy(string organizationId, string gal, string addressBook, string roomList, string oab);
         void UpdateOrganizationOfflineAddressBook(string id);
-        bool DeleteOrganization(string organizationId, string distinguishedName, string globalAddressList, string addressList, string roomList, string offlineAddressBook, string securityGroup, string addressBookPolicy);
+        bool DeleteOrganization(string organizationId, string distinguishedName, string globalAddressList, string addressList, string roomList, string offlineAddressBook, string securityGroup, string addressBookPolicy, List<ExchangeDomainName> acceptedDomains);
         void SetOrganizationStorageLimits(string organizationDistinguishedName, long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays);
         ExchangeItemStatistics[] GetMailboxesStatistics(string organizationDistinguishedName);
 
@@ -57,8 +60,6 @@ namespace WebsitePanel.Providers.HostedSolution
         string[] GetAuthoritativeDomains();
 
         // Mailboxes
-        //string CreateMailbox(string organizationId, string organizationDistinguishedName, string mailboxDatabase, string securityGroup, string offlineAddressBook, string addressBookPolicy, ExchangeAccountType accountType, string displayName, string accountName, string name, string domain, string password, bool enablePOP, bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync,
-        //    int issueWarningKB, int prohibitSendKB, int prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB,bool hideFromAddressBook); 
         void DeleteMailbox(string accountName);
         void DisableMailbox(string id);
         ExchangeMailbox GetMailboxGeneralSettings(string accountName);
@@ -66,7 +67,7 @@ namespace WebsitePanel.Providers.HostedSolution
         ExchangeMailbox GetMailboxMailFlowSettings(string accountName);
         void SetMailboxMailFlowSettings(string accountName, bool enableForwarding, string forwardingAccountName, bool forwardToBoth, string[] sendOnBehalfAccounts, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication);
         ExchangeMailbox GetMailboxAdvancedSettings(string accountName);
-        void SetMailboxAdvancedSettings(string organizationId, string accountName, bool enablePOP, bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync, long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB);
+        void SetMailboxAdvancedSettings(string organizationId, string accountName, bool enablePOP, bool enableIMAP, bool enableOWA, bool enableMAPI, bool enableActiveSync, long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays, int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg);
         ExchangeEmailAddress[] GetMailboxEmailAddresses(string accountName);
         void SetMailboxEmailAddresses(string accountName, string[] emailAddresses);
         void SetMailboxPrimaryEmailAddress(string accountName, string emailAddress);
@@ -98,20 +99,20 @@ namespace WebsitePanel.Providers.HostedSolution
         void SetDistributionListPermissions(string organizationId, string accountName, string[] sendAsAccounts, string[] sendOnBehalfAccounts, string[] addressLists);
 
 		// Public Folders
-		void CreatePublicFolder(string organizationId, string securityGroup, string parentFolder, string folderName, bool mailEnabled, string accountName, string name, string domain);
-		void DeletePublicFolder(string folder);
+		void CreatePublicFolder(string organizationDistinguishedName, string organizationId, string securityGroup, string parentFolder, string folderName, bool mailEnabled, string accountName, string name, string domain);
+        void DeletePublicFolder(string organizationId, string folder);
 		void EnableMailPublicFolder(string organizationId, string folder, string accountName, string name, string domain);
-		void DisableMailPublicFolder(string folder);
-		ExchangePublicFolder GetPublicFolderGeneralSettings(string folder);
-		void SetPublicFolderGeneralSettings(string folder, string newFolderName, bool hideFromAddressBook, ExchangeAccount[] accounts );
-		ExchangePublicFolder GetPublicFolderMailFlowSettings(string folder);
-		void SetPublicFolderMailFlowSettings(string folder, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication);
-		ExchangeEmailAddress[] GetPublicFolderEmailAddresses(string folder);
-		void SetPublicFolderEmailAddresses(string folder, string[] emailAddresses);
-		void SetPublicFolderPrimaryEmailAddress(string folder, string emailAddress);
-		ExchangeItemStatistics[] GetPublicFoldersStatistics(string[] folders);
-		string[] GetPublicFoldersRecursive(string parent);
-		long GetPublicFolderSize(string folder);
+        void DisableMailPublicFolder(string organizationId, string folder);
+        ExchangePublicFolder GetPublicFolderGeneralSettings(string organizationId, string folder);
+        void SetPublicFolderGeneralSettings(string organizationId, string folder, string newFolderName, bool hideFromAddressBook, ExchangeAccount[] accounts);
+        ExchangePublicFolder GetPublicFolderMailFlowSettings(string organizationId, string folder);
+        void SetPublicFolderMailFlowSettings(string organizationId, string folder, string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication);
+        ExchangeEmailAddress[] GetPublicFolderEmailAddresses(string organizationId, string folder);
+        void SetPublicFolderEmailAddresses(string organizationId, string folder, string[] emailAddresses);
+        void SetPublicFolderPrimaryEmailAddress(string organizationId, string folder, string emailAddress);
+        ExchangeItemStatistics[] GetPublicFoldersStatistics(string organizationId, string[] folders);
+        string[] GetPublicFoldersRecursive(string organizationId, string parent);
+        long GetPublicFolderSize(string organizationId, string folder);
 
         //ActiveSync
         void CreateOrganizationActiveSyncPolicy(string organizationId);
@@ -128,5 +129,20 @@ namespace WebsitePanel.Providers.HostedSolution
         void WipeDataFromDevice(string id);
         void CancelRemoteWipeRequest(string id);
         void RemoveDevice(string id);
+
+        // Disclaimers
+        int SetDisclaimer(string name, string text);
+        int RemoveDisclaimer(string name);
+        int AddDisclamerMember(string name, string member);
+        int RemoveDisclamerMember(string name, string member);
+
+        // Archiving
+        ResultObject SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy);
+
+        // Retention policy
+        ResultObject SetRetentionPolicyTag(string Identity, ExchangeRetentionPolicyTagType Type, int AgeLimitForRetention, ExchangeRetentionPolicyTagAction RetentionAction);
+        ResultObject RemoveRetentionPolicyTag(string Identity);
+        ResultObject SetRetentionPolicy(string Identity, string[] RetentionPolicyTagLinks);
+        ResultObject RemoveRetentionPolicy(string Identity);
     }
 }

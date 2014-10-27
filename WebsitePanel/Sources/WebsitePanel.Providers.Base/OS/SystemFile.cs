@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -27,7 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
-
+using WebsitePanel.Providers.Web;
 namespace WebsitePanel.Providers.OS
 {
     /// <summary>
@@ -41,7 +41,15 @@ namespace WebsitePanel.Providers.OS
         private DateTime changed;
         private bool isDirectory;
         private long size;
+        private long quota;
         private bool isEmpty;
+        private bool isPublished;
+        private WebDavFolderRule[] rules;
+        private string url;
+        private int fsrmQuotaMB;
+        private int frsmQuotaGB;
+        private QuotaType fsrmQuotaType = QuotaType.Soft;
+        private string driveLetter;
 
         public SystemFile()
         {
@@ -56,6 +64,24 @@ namespace WebsitePanel.Providers.OS
             this.size = size;
             this.created = created;
             this.changed = changed;
+        }
+
+        public int FRSMQuotaMB
+        {
+            get { return fsrmQuotaMB; }
+            set { fsrmQuotaMB = value; }
+        }
+
+        public int FRSMQuotaGB
+        {
+            get { return frsmQuotaGB; }
+            set { frsmQuotaGB = value; }
+        }
+
+        public QuotaType FsrmQuotaType
+        {
+            get { return fsrmQuotaType; }
+            set { fsrmQuotaType = value; }
         }
 
         public string FullName
@@ -88,10 +114,40 @@ namespace WebsitePanel.Providers.OS
             set { size = value; }
         }
 
+        public long Quota
+        {
+            get { return quota; }
+            set { quota = value; }
+        }
+
         public bool IsEmpty
         {
             get { return this.isEmpty; }
             set { this.isEmpty = value; }
+        }
+
+        public bool IsPublished
+        {
+            get { return this.isPublished; }
+            set { this.isPublished = value; }
+        }
+
+        public WebDavFolderRule[] Rules
+        {
+            get { return this.rules; }
+            set { this.rules = value; }
+        }
+
+        public string Url
+        {
+            get { return this.url; }
+            set { this.url = value; }
+        }
+
+        public string DriveLetter
+        {
+            get { return this.driveLetter; }
+            set { this.driveLetter = value; }
         }
     }
 }

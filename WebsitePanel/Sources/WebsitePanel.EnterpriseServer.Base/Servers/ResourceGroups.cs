@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -39,6 +39,7 @@ namespace WebsitePanel.EnterpriseServer
         public const string MsSql2005 = "MsSQL2005";
         public const string MsSql2008 = "MsSQL2008";
         public const string MsSql2012 = "MsSQL2012";
+        public const string MsSql2014 = "MsSQL2014";
         public const string MySql5 = "MySQL5";
         public const string Dns = "DNS";
         public const string Statistics = "Statistics";
@@ -47,10 +48,13 @@ namespace WebsitePanel.EnterpriseServer
 		public const string Exchange = "Exchange";
         public const string HostedOrganizations = "Hosted Organizations";
         public const string HostedCRM = "Hosted CRM";
+        public const string HostedCRM2013 = "Hosted CRM2013";
         public const string VPS = "VPS";
         public const string BlackBerry = "BlackBerry";
         public const string OCS = "OCS";
         public const string VPSForPC = "VPSForPC";
         public const string Lync = "Lync";
+        public const string EnterpriseStorage = "EnterpriseStorage";
+        public const string ServiceLevels = "Service Levels";
     }
 }

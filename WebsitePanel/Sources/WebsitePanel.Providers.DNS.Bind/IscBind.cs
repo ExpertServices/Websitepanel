@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -30,9 +30,11 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 using System.ServiceProcess;
 using WebsitePanel.Server.Utils;
 using WebsitePanel.Providers.Utils;
+
 
 namespace WebsitePanel.Providers.DNS
 {
@@ -149,12 +151,9 @@ namespace WebsitePanel.Providers.DNS
 			soa.PrimaryNsServer = System.Net.Dns.GetHostEntry("LocalHost").HostName;
 			soa.PrimaryPerson = "hostmaster";//"hostmaster." + zoneName;
 			records.Add(soa);
-
+            ReloadBIND("reconfig", "");
 			// add DNS zone
 			UpdateZone(zoneName, records);
-
-			// reload config
-			ReloadBIND();
 		}
 
 		public virtual void AddSecondaryZone(string zoneName, string[] masterServers)
@@ -185,7 +184,7 @@ namespace WebsitePanel.Providers.DNS
 			File.Create(GetZoneFilePath(zoneName)).Close();
 
 			// reload config
-			ReloadBIND();
+            ReloadBIND("reconfig", "");
 		}
 
 		public virtual DnsRecord[] GetZoneRecords(string zoneName)
@@ -255,9 +254,9 @@ namespace WebsitePanel.Providers.DNS
 			if (File.Exists(zonePath))
 				File.Delete(zonePath);
 
-			// reload config
-			ReloadBIND();
-		}
+			// reload named.conf
+            ReloadBIND("reconfig", "");
+        }
 		#endregion
 
 		#region Resource records
@@ -819,6 +818,7 @@ namespace WebsitePanel.Providers.DNS
 
 			// update zone file
 			UpdateZoneFile(zoneName, sb.ToString());
+            ReloadBIND("reload", zoneName);
 		}
 
 		private string CorrectRecordName(string zoneName, string host)
@@ -912,7 +912,7 @@ namespace WebsitePanel.Providers.DNS
 		{
 			string path = GetZoneFilePath(zoneName);
 			File.WriteAllText(path, zoneContent);
-		}
+        }
 
 		private string GetZoneFilePath(string zoneName)
 		{
@@ -924,10 +924,41 @@ namespace WebsitePanel.Providers.DNS
 			return StringUtils.ReplaceStringVariable(ZoneFileNameTemplate, "domain_name", zoneName);
 		}
 
-		private void ReloadBIND()
+		private void ReloadBIND(string Args, string zoneName)
 		{
-			FileUtils.ExecuteSystemCommand(BindReloadBatch, "");
+
+            // Do we have a rndc.exe? if so use it - improves handling
+            if (BindReloadBatch.IndexOf("rndc.exe") > 0)
+            {
+                Process rndc = new Process();
+                rndc.StartInfo.FileName = BindReloadBatch;
+                string rndcArguments = Args;
+                if (zoneName.Length > 0)
+                {
+                    rndcArguments += " " + zoneName;
+                }
+                rndc.StartInfo.Arguments = rndcArguments;
+                rndc.StartInfo.CreateNoWindow = true;
+                rndc.Start();
+
+                /*
+                 * Can't figure out how to log the output of the process to auditlog. If someone could be of assistans and fix this.
+                 * it's rndcOutput var that should be written to audit log.s
+                 * 
+                string rndcOutput = "";
+                while (!rndc.StandardOutput.EndOfStream)
+                {
+                    rndcOutput += rndc.StandardOutput.ReadLine();
+                } 
+                */
+
+            }
+            else
+            {
+                FileUtils.ExecuteSystemCommand(BindReloadBatch, "");
+            }
 		}
+
 		#endregion
 
         public override bool IsInstalled()

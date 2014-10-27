@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -279,6 +279,27 @@ namespace WebsitePanel.Providers.Mail
             get { return requireSmtpAuthentication; }
             set { requireSmtpAuthentication = value; }
         }
+        #endregion
+
+        #region IceWarp
+
+	    public IceWarpListMembersSource MembersSource { get; set; }
+	    public IceWarpListFromAndReplyToHeader FromHeader { get; set; }
+        public IceWarpListFromAndReplyToHeader ReplyToHeader { get; set; }
+	    public bool SetReceipientsToToHeader { get; set; }
+	    public IceWarpListOriginator Originator { get; set; }
+        public IceWarpListDefaultRights DefaultRights { get; set; }
+	    public int MaxMembers { get; set; }
+	    public bool SendToSender { get; set; }
+	    public int MaxMessagesPerMinute { get; set; }
+	    public IceWarpListConfirmSubscription ConfirmSubscription { get; set; }
+	    public bool CommandsInSubject { get; set; }
+	    public bool DisableWhichCommand { get; set; }
+        public bool DisableReviewCommand { get; set; }
+        public bool DisableVacationCommand { get; set; }
+        public string CommandPassword { get; set; }
+        public bool SuppressCommandResponses { get; set; }
+
         #endregion
     } 
 }

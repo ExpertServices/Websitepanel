@@ -2,7 +2,7 @@
 <%@ Register Src="UserControls/Quota.ascx" TagName="Quota" TagPrefix="wsp" %>
 
 <div class="FormBody">
-<table cellpadding="3">
+<table  id="tblQuotas" runat="server" cellpadding="3">
     <tr ID="pnlDiskspace" runat="server">
         <td class="SubHead" nowrap><asp:Label runat="server" meta:resourcekey="lblDiskspace" Text="Diskspace, MB:"/></td>
         <td class="Normal"><wsp:Quota ID="quotaDiskspace" runat="server" QuotaName="OS.Diskspace" DisplayGauge="True" />&nbsp;&nbsp;(<asp:HyperLink
@@ -22,12 +22,12 @@
         <td class="SubHead" nowrap><asp:Label ID="lblSubDomains" runat="server" meta:resourcekey="lblSubDomains" Text="Sub-Domains:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaSubDomains" runat="server" QuotaName="OS.SubDomains" DisplayGauge="True" /></td>
     </tr>
-<!--
-    <tr ID="pnlDomainPointers" runat="server">
+
+<%--    <tr ID="pnlDomainPointers" runat="server">
         <td class="SubHead" nowrap><asp:Label ID="lblDomainPointers" runat="server" meta:resourcekey="lblDomainPointers" Text="Domain Pointers:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaDomainPointers" runat="server" QuotaName="OS.DomainPointers" DisplayGauge="True" /></td>
-    </tr>
--->
+    </tr>--%>
+
     <tr ID="pnlOrganizations" runat="server">
         <td class="SubHead" nowrap><asp:Label ID="lblOrganizations" runat="server" meta:resourcekey="lblOrganizations" Text="Organizations:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaOrganizations" runat="server" QuotaName="HostedSolution.Organizations" DisplayGauge="True" /></td>
@@ -57,6 +57,10 @@
         <td class="SubHead" nowrap><asp:Label ID="lblLyncUsers" runat="server" meta:resourcekey="lblLyncUsers" Text="Lync Users:"></asp:Label></td>
         <td class="Normal"><wsp:Quota ID="quotaLyncUsers" runat="server" QuotaName="Lync.Users" DisplayGauge="True" /></td>
     </tr>
+    <tr ID="pnlLyncPhone" runat="server">
+        <td class="SubHead" nowrap><asp:Label ID="Label1" runat="server" meta:resourcekey="lblLyncPhone" Text="Lync Phone Numbers:"></asp:Label></td>
+        <td class="Normal"><wsp:Quota ID="quotaLyncPhone" runat="server" QuotaName="Lync.PhoneNumbers" DisplayGauge="True" /></td>
+    </tr>
 
     <tr ID="pnlBlackBerryUsers" runat="server">
         <td class="SubHead" nowrap><asp:Label ID="lblBlackBerryUsers" runat="server" meta:resourcekey="lblBlackBerryUsers" Text="BlackBerry Users:"></asp:Label></td>
@@ -81,6 +85,14 @@
 	<tr id="pnlHyperVForPC" runat="server">
 		<td class="SubHead" nowrap><asp:Label ID="lblHyperVForPC" runat="server" meta:resourcekey="lblHyperVForPC" Text="Number of VM:" /></td>
 		<td class="Normal"><wsp:Quota ID="quotaNumberOfVm" runat="server" QuotaName="VPSForPC.ServersNumber" DisplayGauge="True" /></td>
+	</tr>
+    <tr id="pnlFolders" runat="server">
+		<td class="SubHead" nowrap><asp:Label ID="lblFolders" runat="server" meta:resourcekey="lblFolders" Text="Folders:" /></td>
+		<td class="Normal"><wsp:Quota ID="quotaNumberOfFolders" runat="server" QuotaName="EnterpriseStorage.Folders" DisplayGauge="True" /></td>
+	</tr>
+    <tr id="pnlEnterpriseStorage" runat="server">
+		<td class="SubHead" nowrap><asp:Label ID="lblEnterpriseStorage" runat="server" meta:resourcekey="lblEnterpriseStorage" Text="Enterprise Storage:" /></td>
+		<td class="Normal"><wsp:Quota ID="quotaEnterpriseStorage" runat="server" QuotaName="EnterpriseStorage.DiskStorageSpace" DisplayGauge="True" /></td>
 	</tr>
 </table>
 </div>

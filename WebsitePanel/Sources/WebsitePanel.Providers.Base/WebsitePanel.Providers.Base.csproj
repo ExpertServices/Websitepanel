@@ -57,12 +57,21 @@
     <WarningsAsErrors>618</WarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Web.Administration, Version=7.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Web.Administration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Management, Version=7.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Lib\References\Microsoft\Microsoft.Web.Management.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -71,24 +80,34 @@
     <Compile Include="..\VersionInfo.cs">
       <Link>VersionInfo.cs</Link>
     </Compile>
+    <Compile Include="Common\AppPoolState.cs" />
     <Compile Include="Common\ByteOperations.cs" />
     <Compile Include="Common\ErrorCodes.cs" />
     <Compile Include="Common\PasswdHelper.cs" />
     <Compile Include="Common\WPIEntries.cs" />
+    <Compile Include="EnterpriseStorage\IEnterpriseStorage.cs" />
+    <Compile Include="HeliconZoo\IHeliconZooServer.cs" />
     <Compile Include="HostedSolution\BaseReport.cs" />
     <Compile Include="HostedSolution\BaseStatistics.cs" />
     <Compile Include="HostedSolution\BlackBerryErrorsCodes.cs" />
     <Compile Include="HostedSolution\BlackBerryStatsItem.cs" />
     <Compile Include="HostedSolution\BlackBerryUserDeleteState.cs" />
+    <Compile Include="HostedSolution\ExchangeDisclaimer.cs" />
+    <Compile Include="HostedSolution\ExchangeMailboxPlanRetentionPolicyTag.cs" />
     <Compile Include="HostedSolution\ExchangeOrganization.cs" />
     <Compile Include="HostedSolution\ExchangeAcceptedDomainType.cs" />
     <Compile Include="HostedSolution\ExchangeMailboxPlanType.cs" />
     <Compile Include="HostedSolution\ExchangeMailboxPlan.cs" />
+    <Compile Include="HostedSolution\ExchangeRetentionPolicyTag.cs" />
+    <Compile Include="HostedSolution\ExchangeRetentionPolicyTagAction.cs" />
+    <Compile Include="HostedSolution\ExchangeRetentionPolicyTagType.cs" />
     <Compile Include="HostedSolution\ILyncServer.cs" />
     <Compile Include="HostedSolution\LyncConstants.cs" />
     <Compile Include="HostedSolution\LyncErrorCodes.cs" />
     <Compile Include="HostedSolution\LyncFederationDomain.cs" />
     <Compile Include="HostedSolution\LyncOrganizationStatistics.cs" />
+    <Compile Include="HostedSolution\LyncPolicyType.cs" />
+    <Compile Include="HostedSolution\LyncTransaction.cs" />
     <Compile Include="HostedSolution\LyncUserStatistics.cs" />
     <Compile Include="HostedSolution\LyncStatisticsReport.cs" />
     <Compile Include="HostedSolution\LyncUser.cs" />
@@ -96,7 +115,14 @@
     <Compile Include="HostedSolution\LyncUserPlanType.cs" />
     <Compile Include="HostedSolution\LyncUsersPaged.cs" />
     <Compile Include="HostedSolution\LyncVoicePolicyType.cs" />
+    <Compile Include="HostedSolution\OrganizationSecurityGroup.cs" />
     <Compile Include="HostedSolution\TransactionAction.cs" />
+    <Compile Include="OS\MappedDrivesPaged.cs" />
+    <Compile Include="OS\MappedDrive.cs" />
+    <Compile Include="OS\Quota.cs" />
+    <Compile Include="OS\QuotaType.cs" />
+    <Compile Include="OS\SystemFilesPaged.cs" />
+    <Compile Include="RemoteDesktopServices\IRemoteDesktopServices.cs" />
     <Compile Include="ResultObjects\HeliconApe.cs" />
     <Compile Include="HostedSolution\ExchangeMobileDevice.cs" />
     <Compile Include="HostedSolution\IOCSEdgeServer.cs" />
@@ -303,13 +329,17 @@
     <Compile Include="WebAppGallery\GalleryApplication.cs" />
     <Compile Include="WebAppGallery\GalleryCategory.cs" />
     <Compile Include="WebAppGallery\GalleryErrors.cs" />
+    <Compile Include="Web\PhpVersion.cs" />
     <Compile Include="Web\HtaccessFolder.cs" />
     <Compile Include="Web\HttpError.cs" />
     <Compile Include="Web\HttpHeader.cs" />
+    <Compile Include="Web\IWebDav.cs" />
     <Compile Include="Web\IWebServer.cs" />
     <Compile Include="Web\MimeMap.cs" />
     <Compile Include="Web\SharedSSLFolder.cs" />
     <Compile Include="Web\SSLCertificate.cs" />
+    <Compile Include="Web\WebDavFolderRule.cs" />
+    <Compile Include="Web\WebDavSetting.cs" />
     <Compile Include="Web\WebFolder.cs" />
     <Compile Include="Web\WebGroup.cs" />
     <Compile Include="Web\WebSite.cs" />

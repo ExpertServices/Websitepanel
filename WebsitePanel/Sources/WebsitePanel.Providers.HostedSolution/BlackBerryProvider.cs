@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -50,7 +50,20 @@ namespace WebsitePanel.Providers.HostedSolution
                 return ProviderSettings[Constants.UtilityPath];
             }
         }
-
+        public string HandheldcleanupPath
+        {
+            get
+            {
+                return ProviderSettings[Constants.HandheldcleanupPath];
+            }
+        }
+        public string MAPIProfile
+        {
+            get
+            {
+                return ProviderSettings[Constants.MAPIProfile];
+            }
+        }
         public string Password
         {
             get
@@ -166,6 +179,53 @@ namespace WebsitePanel.Providers.HostedSolution
             string outputData;
             string errorData;
             int res = Execute(file, arguments, out outputData, out errorData);
+
+            output = outputData.Length > 0 ? "Output stream:" + outputData : string.Empty;
+            output += errorData.Length > 0 ? "Error stream:" + errorData : string.Empty;
+
+            return res;
+        }
+        protected int Execute2(string file, string arguments, out string output, out string error)
+        {
+            string oldDir = Directory.GetCurrentDirectory();
+            Directory.SetCurrentDirectory(HandheldcleanupPath);
+            ProcessStartInfo startInfo = new ProcessStartInfo(file, arguments);
+
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardError = true;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.RedirectStandardInput = true;
+            startInfo.CreateNoWindow = true;
+            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+            Process proc = Process.Start(startInfo);
+
+            StreamWriter inputWriter = proc.StandardInput;
+            inputWriter.WriteLine(EnterpriseServer);
+            inputWriter.Flush();
+            inputWriter.Close();
+
+            if (proc == null)
+                throw new ApplicationException("Proc is null.");
+
+            StreamReader outputReader = proc.StandardOutput;
+            output = outputReader.ReadToEnd();
+
+            StreamReader errorReader = proc.StandardError;
+            error = errorReader.ReadToEnd();
+
+            Directory.SetCurrentDirectory(oldDir);
+            return proc.ExitCode;
+        }
+
+        protected int Execute2(string file, string arguments, out string output)
+        {
+            Log.WriteInfo(file);
+            Log.WriteInfo(arguments);
+
+            string outputData;
+            string errorData;
+            int res = Execute2(file, arguments, out outputData, out errorData);
 
             output = outputData.Length > 0 ? "Output stream:" + outputData : string.Empty;
             output += errorData.Length > 0 ? "Error stream:" + errorData : string.Empty;

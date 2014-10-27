@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -36,6 +36,6 @@ namespace WebsitePanel.Providers.HostedSolution
         public Guid BusinessUnitId  { get; set; }
         public CRMUserAccessMode ClientAccessMode  { get; set; }
         public bool IsDisabled { get; set; }
-
+        public int CALType { get; set; }
     }
 }

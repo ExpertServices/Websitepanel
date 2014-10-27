@@ -130,13 +130,13 @@
     <value>Organization Name:</value>
   </data>
   <data name="litTotalUserDiskSpace.Text" xml:space="preserve">
-    <value>Total Used Disk Space, MB:</value>
+    <value>Total Used Disk Space, Mb:</value>
   </data>
   <data name="litUsedDiskSpace.Text" xml:space="preserve">
     <value>Used Disk Space, MB:</value>
   </data>
   <data name="lnkAllocatedDiskspace.Text" xml:space="preserve">
-    <value>Allocated Diskspace (MB)</value>
+    <value>Allocated Diskspace (Mb)</value>
   </data>
   <data name="lnkBESUsers.Text" xml:space="preserve">
     <value>BlackBerry Users:</value>
@@ -145,7 +145,7 @@
     <value>Contacts:</value>
   </data>
   <data name="lnkCRMUsers.Text" xml:space="preserve">
-    <value>CRM Users:</value>
+    <value>Full licenses :</value>
   </data>
   <data name="lnkDomains.Text" xml:space="preserve">
     <value>Domain Names:</value>
@@ -172,7 +172,7 @@
     <value>Site Collections:</value>
   </data>
   <data name="lnkUsedDiskspace.Text" xml:space="preserve">
-    <value>Used Diskspace (MB)</value>
+    <value>Used Diskspace (Mb)</value>
   </data>
   <data name="lnkUsers.Text" xml:space="preserve">
     <value>Users:</value>
@@ -206,5 +206,20 @@
   </data>
   <data name="Unlimited.Text" xml:space="preserve">
     <value>Unlimited</value>
+  </data>
+  <data name="lnkExchangeLitigationHold.Text" xml:space="preserve">
+    <value>Litigation Hold Storage (Mb):</value>
+  </data>
+  <data name="lnkEnterpriseStorageFolders.Text" xml:space="preserve">
+    <value>Folders:</value>
+  </data>
+  <data name="lnkEnterpriseStorageSpace.Text" xml:space="preserve">
+    <value>Used Diskspace (Mb):</value>
+  </data>
+  <data name="locEnterpriseStorage.Text" xml:space="preserve">
+    <value>Enterprise Storage</value>
+  </data>
+  <data name="locServiceLevels.Text" xml:space="preserve">
+    <value>Service Levels</value>
   </data>
 </root>

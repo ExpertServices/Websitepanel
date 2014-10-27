@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -150,17 +150,37 @@ namespace WebsitePanel.Portal.ProviderControls
 			txtSecureFoldersModuleAsm.Text = settings["SecureFoldersModuleAssembly"];
 
             //Helicon Ape   
-            WebsitePanel.Providers.ResultObjects.HeliconApeStatus sts = ES.Services.WebServers.GetHeliconApeStatus(int.Parse(Request.QueryString["ServiceID"]));
+            Providers.ResultObjects.HeliconApeStatus sts = ES.Services.WebServers.GetHeliconApeStatus(int.Parse(Request.QueryString["ServiceID"]));
 
             if (sts.IsInstalled)
             {
                 downloadApePanel.Visible = false;
                 txtHeliconApeVersion.Text = sts.Version;
                 lblHeliconRegistrationText.Text = sts.RegistrationInfo;
+
+                if (sts.IsEnabled)
+                {
+                    chkHeliconApeGlobalRegistration.Checked = true;
+                }
+                ViewState["HeliconApeInitiallyEnabled"] = chkHeliconApeGlobalRegistration.Checked;
             }
             else
             {
                 configureApePanel.Visible = false;
+
+                // Build url manually, EditUrl throws exception:  module is Null
+                // pid=Servers&mid=137&ctl=edit_platforminstaller&ServerID=1&Product=HeliconApe
+
+                List<string> qsParts = new List<string>();
+
+                qsParts.Add("pid=Servers");
+                qsParts.Add("ctl=edit_platforminstaller");
+                qsParts.Add("mid=" + Request.QueryString["mid"]);
+                qsParts.Add("ServerID=" + Request.QueryString["ServerID"]);
+                qsParts.Add("WPIProduct=HeliconApe");
+
+                InstallHeliconApeLink.Attributes["href"] = "Default.aspx?" + String.Join("&", qsParts.ToArray());
+                ViewState["HeliconApeInitiallyEnabled"] = null;
             }
 
             //
@@ -204,7 +224,7 @@ namespace WebsitePanel.Portal.ProviderControls
             wpiEditFeedsList.Value = settings["FeedUrls"];
             FilteredAppIds = settings["GalleryAppsFilter"];
             radioFilterAppsList.SelectedIndex = Utils.ParseInt(settings["GalleryAppsFilterMode"], 0);
-            chkGalleryAppsAlwaysIgnoreDependencies.Checked = Utils.ParseBool(settings["GalleryAppsAlwaysIgnoreDependencies"], true);
+            chkGalleryAppsAlwaysIgnoreDependencies.Checked = Utils.ParseBool(settings["GalleryAppsAlwaysIgnoreDependencies"], false);
 		}
 
 		public void SaveSettings(StringDictionary settings)
@@ -254,8 +274,25 @@ namespace WebsitePanel.Portal.ProviderControls
 
 			ActiveDirectoryIntegration.SaveSettings(settings);
 
-			
+            
+            // Helicon Ape
+            if (null != ViewState["HeliconApeInitiallyEnabled"])
+            {
+                bool registerHeliconApeGlobbally = chkHeliconApeGlobalRegistration.Checked;
+                if (registerHeliconApeGlobbally != (bool)ViewState["HeliconApeInitiallyEnabled"])
+                {
+                    if (registerHeliconApeGlobbally)
+                    {
+                        ES.Services.WebServers.EnableHeliconApeGlobally(int.Parse(Request.QueryString["ServiceID"]));
+                    }
+                    else
+                    {
+                        ES.Services.WebServers.DisableHeliconApeGlobally(int.Parse(Request.QueryString["ServiceID"]));
+                    }
+                }
 
+            }
+			
 
 			if (WDeployEnabledCheckBox.Checked)
 			{
@@ -279,6 +316,7 @@ namespace WebsitePanel.Portal.ProviderControls
             settings["GalleryAppsAlwaysIgnoreDependencies"] = chkGalleryAppsAlwaysIgnoreDependencies.Checked.ToString();
 		}
 
+        /*
         protected void DownladAndIstallApeLinkButton_Click(object sender, EventArgs e)
         {
             ES.Services.WebServers.InstallHeliconApe(PanelRequest.ServiceId);
@@ -286,13 +324,15 @@ namespace WebsitePanel.Portal.ProviderControls
             //Redirect to avoid 2-nd call
             Response.Redirect(this.Context.Request.Url.AbsoluteUri);
         }
+        */
         
         public string GetHttpdEditControlUrl(string ctrlKey, string name)
         {
             return HostModule.EditUrl("ItemID", PanelRequest.ItemID.ToString(), ctrlKey,
                 "Name=" + name,
                 PortalUtils.SPACE_ID_PARAM + "=" + int.Parse(Request.QueryString["ServiceID"]),
-                "ReturnUrlBase64="+ EncodeTo64(Server.UrlEncode(Request.Url.PathAndQuery))
+                "ReturnUrlBase64="+ EncodeTo64(Server.UrlEncode(Request.Url.PathAndQuery)),
+                "UserID="+PanelSecurity.LoggedUserId.ToString()
                 );
         }
 

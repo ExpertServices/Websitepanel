@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -42,9 +42,11 @@ namespace WebsitePanel.Portal.ProviderControls
         public void BindSettings(StringDictionary settings)
         {
             txtPath.Text = settings[Constants.UtilityPath];
+            txtHandheldcleanupPath.Text = settings[Constants.HandheldcleanupPath];
             txtPassword.Text = settings[Constants.Password];
             txtEnterpriseServer.Text = settings[Constants.EnterpriseServer];
             txtEnterpriseServerFQDN.Text = settings[Constants.EnterpriseServerFQDN];
+            txtMAPIProfile.Text = settings[Constants.MAPIProfile];
             ViewState["PWD"] = settings[Constants.Password];
             txtUser.Text = settings[Constants.UserName];
         }
@@ -52,10 +54,12 @@ namespace WebsitePanel.Portal.ProviderControls
         public void SaveSettings(StringDictionary settings)
         {
             settings[Constants.UtilityPath] = txtPath.Text;
+            settings[Constants.HandheldcleanupPath] = txtHandheldcleanupPath.Text;
             settings[Constants.EnterpriseServer] = txtEnterpriseServer.Text;
             settings[Constants.EnterpriseServerFQDN] = txtEnterpriseServerFQDN.Text;
             settings[Constants.Password] = (txtPassword.Text.Length > 0) ? txtPassword.Text : (string)ViewState["PWD"];
             settings[Constants.UserName] = txtUser.Text;
+            settings[Constants.MAPIProfile] = txtMAPIProfile.Text;
         }
     }
 }

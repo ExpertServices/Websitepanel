@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="btnAddMailboxPlan.Text" xml:space="preserve">
-    <value>Add New Mailbox plan</value>
+    <value>Add New</value>
   </data>
   <data name="btnSave.Text" xml:space="preserve">
     <value>Stamp mailboxes</value>
@@ -127,7 +127,7 @@
     <value>Set Default Mailbox plan</value>
   </data>
   <data name="cmdDelete.OnClientClick" xml:space="preserve">
-    <value>if(!confirm('Are you sure you want to delete selected mailbox plan?')) return false; else ShowProgressDialog('Deleting Mailbox plan...');</value>
+    <value>if(!confirm('Are you sure you want to delete selected?')) return false; else ShowProgressDialog('Deleting plan...');</value>
   </data>
   <data name="cmdDelete.Text" xml:space="preserve">
     <value>Delete</value>
@@ -136,13 +136,13 @@
     <value>Delete Mailbox plan</value>
   </data>
   <data name="gvMailboxPlan.Header" xml:space="preserve">
-    <value>Mailbox plan</value>
+    <value>Name</value>
   </data>
   <data name="gvMailboxPlanDefault.Header" xml:space="preserve">
     <value>Default</value>
   </data>
   <data name="gvMailboxPlans.Empty" xml:space="preserve">
-    <value>No mailbox plans have been added yet. To add a new mailbox plan click "Add New Mailbox plan" button.</value>
+    <value>No plans have been added yet. To add a new plan click "Add New" button.</value>
   </data>
   <data name="HSFormComments.Text" xml:space="preserve">
     <value />
@@ -161,5 +161,11 @@
   </data>
   <data name="Text.PageName" xml:space="preserve">
     <value>Mailbox plans</value>
+  </data>
+  <data name="locTitleRetentionPolicy.Text" xml:space="preserve">
+    <value>Retention Policy</value>
+  </data>
+  <data name="Text.PageRetentionPolicyName" xml:space="preserve">
+    <value>Retention policy</value>
   </data>
 </root>

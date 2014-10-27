@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -33,12 +33,14 @@ using System.Text;
 using System.Web;
 using System.Web.UI.WebControls;
 using WebsitePanel.Providers.OS;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace WebsitePanel.Portal
 {
     public partial class FileManager : WebsitePanelModuleBase
     {
-        string ALLOWED_EDIT_EXTENSIONS = ".txt.htm.html.php.pl.sql.cs.vb.ascx.aspx.inc.asp.config.xml.xsl.xslt.xsd.Master.htaccess.htpasswd.cshtml.vbhtml";
+        public static string ALLOWED_EDIT_EXTENSIONS = ".txt,.htm,.html,.php,.pl,.sql,.cs,.vb,.ascx,.aspx,.inc,.asp,.config,.xml,.xsl,.xslt,.xsd,.master,.htaccess,.htpasswd,.cshtml,.vbhtml,.ini,.config";
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -204,12 +206,16 @@ function SetCreateZipFocus()
             if (file.IsDirectory)
                 return false;
 
+            // Get the Editable Extensions from the System Settings
+            // If it has not yet been set, we will use the original WebsitePanel allowed editable extensions
+            EnterpriseServer.SystemSettings settings = ES.Services.Files.GetFileManagerSettings();
+            if (!String.IsNullOrEmpty(settings["EditableExtensions"]))
+            {
+                ALLOWED_EDIT_EXTENSIONS = settings["EditableExtensions"];
+            }
+
             string ext = Path.GetExtension(file.Name);
-            //allow to edit Master pages
-            if (ext == ".Master")
-                return true;
-            else
-                return ALLOWED_EDIT_EXTENSIONS.IndexOf(ext.ToLower()) != -1;
+            return ALLOWED_EDIT_EXTENSIONS.Split(',').ToArray().Contains(ext);
         }
 
         #region Path methods

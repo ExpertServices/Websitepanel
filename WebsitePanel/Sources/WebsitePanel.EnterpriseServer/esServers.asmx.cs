@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Web.Services;
 using System.Web.Services.Protocols;
 using System.ComponentModel;
+using WebsitePanel.EnterpriseServer.Base.Common;
 using WebsitePanel.Providers.Common;
 using Microsoft.Web.Services3;
 
@@ -54,8 +55,10 @@ namespace WebsitePanel.EnterpriseServer
     [ToolboxItem(false)]
     public class esServers : System.Web.Services.WebService
     {
-        public const string MAIN_WPI_FEED = "https://www.microsoft.com/web/webpi/4.0/WebProductList.xml";
+        /*
+        public const string MAIN_WPI_FEED = "https://www.microsoft.com/web/webpi/4.2/WebProductList.xml";
         public const string HELICON_WPI_FEED = "http://www.helicontech.com/zoo/feed/wsp4";
+        */
 
         #region Servers
         [WebMethod]
@@ -383,24 +386,30 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public PackageIPAddressesPaged GetPackageIPAddresses(int packageId, IPAddressPool pool,
+        public PackageIPAddressesPaged GetPackageIPAddresses(int packageId, int orgId, IPAddressPool pool,
             string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows, bool recursive)
         {
-            return ServerController.GetPackageIPAddresses(packageId, pool,
+            return ServerController.GetPackageIPAddresses(packageId, orgId, pool,
                 filterColumn, filterValue, sortColumn, startRow, maximumRows, recursive);
         }
 
         [WebMethod]
-        public List<PackageIPAddress> GetPackageUnassignedIPAddresses(int packageId, IPAddressPool pool)
+        public int GetPackageIPAddressesCount(int packageId, int orgId, IPAddressPool pool)
         {
-            return ServerController.GetPackageUnassignedIPAddresses(packageId, pool);
+            return ServerController.GetPackageIPAddressesCount(packageId, orgId, pool);
         }
 
         [WebMethod]
-        public ResultObject AllocatePackageIPAddresses(int packageId, string groupName, IPAddressPool pool, bool allocateRandom, int addressesNumber,
+        public List<PackageIPAddress> GetPackageUnassignedIPAddresses(int packageId, int orgId, IPAddressPool pool)
+        {
+            return ServerController.GetPackageUnassignedIPAddresses(packageId, orgId, pool);
+        }
+
+        [WebMethod]
+        public ResultObject AllocatePackageIPAddresses(int packageId,int orgId, string groupName, IPAddressPool pool, bool allocateRandom, int addressesNumber,
             int[] addressId)
         {
-            return ServerController.AllocatePackageIPAddresses(packageId, groupName, pool, allocateRandom,
+            return ServerController.AllocatePackageIPAddresses(packageId, orgId, groupName, pool, allocateRandom,
                 addressesNumber, addressId);
         }
 
@@ -696,25 +705,28 @@ namespace WebsitePanel.EnterpriseServer
             var wpiSettings = SystemController.GetSystemSettings(SystemSettings.WPI_SETTINGS);
             
 
-            List<string> arFeeds = new List<string>();
+            List<string> feeds = new List<string>();
             
-            if (Utils.ParseBool(wpiSettings["FeedEnableMicrosoft"] ,true))
+            // Microsoft feed
+            string mainFeedUrl = wpiSettings[SystemSettings.WPI_MAIN_FEED_KEY];
+            if (string.IsNullOrEmpty(mainFeedUrl))
             {
-                arFeeds.Add( MAIN_WPI_FEED );
+                mainFeedUrl = WebPlatformInstaller.MAIN_FEED_URL;
             }
+            feeds.Add(mainFeedUrl);
 
-            if (Utils.ParseBool(wpiSettings["FeedEnableHelicon"] ,true))
-            {
-                arFeeds.Add( HELICON_WPI_FEED );
-            }
-            
-            string additionalFeeds = wpiSettings["FeedUrls"];
+            // Zoo Feed
+            feeds.Add(WebPlatformInstaller.ZOO_FEED);
+
+
+            // additional feeds
+            string additionalFeeds = wpiSettings[SystemSettings.FEED_ULS_KEY];
             if (!string.IsNullOrEmpty(additionalFeeds))
             {
-                arFeeds.AddRange(additionalFeeds.Split(';'));
+                feeds.AddRange(additionalFeeds.Split(';'));
             }
 
-            OperatingSystemController.InitWPIFeeds(serverId, string.Join(";", arFeeds));
+            OperatingSystemController.InitWPIFeeds(serverId, string.Join(";", feeds));
 
         }
 
@@ -745,7 +757,13 @@ namespace WebsitePanel.EnterpriseServer
             InitWPIFeeds(serverId);
             return OperatingSystemController.GetWPIProductsFiltered(serverId, keywordId);
         }
-
+        
+        [WebMethod]
+        public WPIProduct GetWPIProductById(int serverId, string productdId)
+        {
+            InitWPIFeeds(serverId);
+            return OperatingSystemController.GetWPIProductById(serverId, productdId);
+        }
 
         [WebMethod]
         public WPIProduct[] GetWPIProductsWithDependencies(int serverId, string[] products)

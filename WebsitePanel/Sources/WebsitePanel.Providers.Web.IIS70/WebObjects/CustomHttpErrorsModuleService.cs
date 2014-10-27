@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -54,6 +54,9 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 			var config = srvman.GetWebConfiguration(virtualDir.FullQualifiedPath);
 			//
 			var httpErrorsSection = config.GetSection(Constants.HttpErrorsSection);
+
+		    virtualDir.ErrorMode = (HttpErrorsMode)httpErrorsSection.GetAttributeValue("errorMode");
+            virtualDir.ExistingResponse = (HttpErrorsExistingResponse)httpErrorsSection.GetAttributeValue("existingResponse");
 			//
 			var errorsCollection = httpErrorsSection.GetCollection();
 			//
@@ -87,10 +90,6 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 			} 
 			#endregion
 
-			// Http errors list is either empty or not set so defaults to the parent
-			if (virtualDir.HttpErrors == null || virtualDir.HttpErrors.Length == 0)
-				return;
-
 			#region Put the change in effect
 			using (var srvman = GetServerManager())
 			{
@@ -98,33 +97,45 @@ namespace WebsitePanel.Providers.Web.Iis.WebObjects
 				//
 				var section = config.GetSection(Constants.HttpErrorsSection);
 
-                // enable custom errors
-                section.SetAttributeValue("errorMode", "Custom");
+                // set error mode
+                section.SetAttributeValue("errorMode", virtualDir.ErrorMode);
+                if (virtualDir.ErrorMode == HttpErrorsMode.Detailed)
+                {
+                    section.SetAttributeValue("existingResponse", HttpErrorsExistingResponse.PassThrough);
+                }
+                else
+                {
+                    section.SetAttributeValue("existingResponse", HttpErrorsExistingResponse.Auto);
+                }
 
-				//
-				var errorsCollection = section.GetCollection();
-				//
-				foreach (var item in virtualDir.HttpErrors)
-				{
-					int indexOf = FindHttpError(errorsCollection, item);
-					// Just update the element attributes - IIS 7 API will do the rest
-					if (indexOf > -1)
-					{
-						var item2Renew = errorsCollection[indexOf];
-						//
-						FillConfigurationElementWithData(item2Renew, item, virtualDir);
-						//
-						continue;
-					}
-					//
-					var item2Add = CreateHttpError(errorsCollection, item, virtualDir);
-					//
-					if (item2Add == null)
-						continue;
-					//
-					errorsCollection.Add(item2Add);
-				}
-				//
+                // save custom errors
+                if (virtualDir.HttpErrors != null && virtualDir.HttpErrors.Length > 0)
+                {
+                    var errorsCollection = section.GetCollection();
+                    //
+                    foreach (var item in virtualDir.HttpErrors)
+                    {
+                        int indexOf = FindHttpError(errorsCollection, item);
+                        // Just update the element attributes - IIS 7 API will do the rest
+                        if (indexOf > -1)
+                        {
+                            var item2Renew = errorsCollection[indexOf];
+                            //
+                            FillConfigurationElementWithData(item2Renew, item, virtualDir);
+                            //
+                            continue;
+                        }
+                        //
+                        var item2Add = CreateHttpError(errorsCollection, item, virtualDir);
+                        //
+                        if (item2Add == null)
+                            continue;
+                        //
+                        errorsCollection.Add(item2Add);
+                    }
+                }
+			    
+                //
 				srvman.CommitChanges();
 			} 
 			#endregion

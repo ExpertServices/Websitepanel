@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -130,12 +130,25 @@ namespace WebsitePanel.Portal
         public PackageIPAddress[] GetPackageIPAddresses(int packageId, IPAddressPool pool, string filterColumn, string filterValue,
             string sortColumn, int maximumRows, int startRowIndex)
         {
-            packageAddresses = ES.Services.Servers.GetPackageIPAddresses(packageId, pool,
+            packageAddresses = ES.Services.Servers.GetPackageIPAddresses(packageId, 0, pool,
                 filterColumn, filterValue, sortColumn, startRowIndex, maximumRows, true);
             return packageAddresses.Items;
         }
 
         public int GetPackageIPAddressesCount(int packageId, IPAddressPool pool, string filterColumn, string filterValue)
+        {
+            return packageAddresses.Count;
+        }
+
+        public PackageIPAddress[] GetPackageIPAddresses(int packageId, int orgId, IPAddressPool pool, string filterColumn, string filterValue,
+            string sortColumn, int maximumRows, int startRowIndex)
+        {
+            packageAddresses = ES.Services.Servers.GetPackageIPAddresses(packageId, orgId, pool,
+                filterColumn, filterValue, sortColumn, startRowIndex, maximumRows, true);
+            return packageAddresses.Items;
+        }
+
+        public int GetPackageIPAddressesCount(int packageId, int orgId, IPAddressPool pool, string filterColumn, string filterValue)
         {
             return packageAddresses.Count;
         }

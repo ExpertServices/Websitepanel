@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2012-2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -37,15 +37,15 @@ using Microsoft.Web.Services3;
 
 namespace WebsitePanel.EnterpriseServer
 {
-	/// <summary>
-	/// Summary description for esApplicationsInstaller
-	/// </summary>
-	[WebService(Namespace = "http://smbsaas/websitepanel/enterpriseserver")]
-	[WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
-	[Policy("ServerPolicy")]
-	[ToolboxItem(false)]
-	public class esExchangeServer : WebService
-	{
+    /// <summary>
+    /// Summary description for esApplicationsInstaller
+    /// </summary>
+    [WebService(Namespace = "http://smbsaas/websitepanel/enterpriseserver")]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [Policy("ServerPolicy")]
+    [ToolboxItem(false)]
+    public class esExchangeServer : WebService
+    {
         #region Organizations
         [WebMethod]
         public DataSet GetRawExchangeOrganizationsPaged(int packageId, bool recursive,
@@ -86,7 +86,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             return ExchangeServerController.GetOrganizationStatisticsByOrganization(itemId);
         }
-        
+
         [WebMethod]
         public int DeleteOrganization(int itemId)
         {
@@ -166,11 +166,11 @@ namespace WebsitePanel.EnterpriseServer
         [WebMethod]
         public ExchangeAccountsPaged GetAccountsPaged(int itemId, string accountTypes,
             string filterColumn, string filterValue, string sortColumn,
-            int startRow, int maximumRows)
+            int startRow, int maximumRows, bool archiving)
         {
             return ExchangeServerController.GetAccountsPaged(itemId, accountTypes,
                 filterColumn, filterValue, sortColumn,
-                startRow, maximumRows);
+                startRow, maximumRows, archiving);
         }
 
         [WebMethod]
@@ -190,12 +190,12 @@ namespace WebsitePanel.EnterpriseServer
         [WebMethod]
         public List<ExchangeAccount> SearchAccounts(int itemId,
             bool includeMailboxes, bool includeContacts, bool includeDistributionLists,
-            bool includeRooms, bool includeEquipment,
+            bool includeRooms, bool includeEquipment, bool includeSecurityGroups,
             string filterColumn, string filterValue, string sortColumn)
         {
             return ExchangeServerController.SearchAccounts(itemId,
                 includeMailboxes, includeContacts, includeDistributionLists,
-                includeRooms, includeEquipment,
+                includeRooms, includeEquipment, includeSecurityGroups,
                 filterColumn, filterValue, sortColumn);
         }
 
@@ -222,9 +222,9 @@ namespace WebsitePanel.EnterpriseServer
         #region Mailboxes
         [WebMethod]
         public int CreateMailbox(int itemId, int accountId, ExchangeAccountType accountType, string accountName, string displayName,
-            string name, string domain, string password, bool sendSetupInstructions, string setupInstructionMailAddress, int mailboxPlanId, string subscriberNumber)
+            string name, string domain, string password, bool sendSetupInstructions, string setupInstructionMailAddress, int mailboxPlanId, int archivedPlanId, string subscriberNumber, bool EnableArchiving)
         {
-            return ExchangeServerController.CreateMailbox(itemId, accountId, accountType, accountName, displayName, name, domain, password, sendSetupInstructions, setupInstructionMailAddress, mailboxPlanId, subscriberNumber);
+            return ExchangeServerController.CreateMailbox(itemId, accountId, accountType, accountName, displayName, name, domain, password, sendSetupInstructions, setupInstructionMailAddress, mailboxPlanId, archivedPlanId, subscriberNumber, EnableArchiving);
         }
 
         [WebMethod]
@@ -303,9 +303,9 @@ namespace WebsitePanel.EnterpriseServer
 
 
         [WebMethod]
-        public int SetExchangeMailboxPlan(int itemId, int accountId, int mailboxPlanId)
+        public int SetExchangeMailboxPlan(int itemId, int accountId, int mailboxPlanId, int archivePlanId, bool EnableArchiving)
         {
-            return ExchangeServerController.SetExchangeMailboxPlan(itemId, accountId, mailboxPlanId);
+            return ExchangeServerController.SetExchangeMailboxPlan(itemId, accountId, mailboxPlanId, archivePlanId, EnableArchiving);
         }
 
         [WebMethod]
@@ -470,6 +470,25 @@ namespace WebsitePanel.EnterpriseServer
             return ExchangeServerController.GetDistributionListPermissions(itemId, accountId);
         }
 
+        [WebMethod]
+        public ExchangeAccount[] GetDistributionListsByMember(int itemId, int accountId)
+        {
+            return ExchangeServerController.GetDistributionListsByMember(itemId, accountId);
+        }
+
+        [WebMethod]
+        public int AddDistributionListMember(int itemId, string distributionListName, int memberId)
+        {
+            return ExchangeServerController.AddDistributionListMember(itemId, distributionListName, memberId);
+        }
+
+        [WebMethod]
+        public int DeleteDistributionListMember(int itemId, string distributionListName, int memberId)
+        {
+            return ExchangeServerController.DeleteDistributionListMember(itemId, distributionListName, memberId);
+        }
+
+
         #endregion
 
         #region MobileDevice
@@ -508,9 +527,9 @@ namespace WebsitePanel.EnterpriseServer
 
         #region MailboxPlans
         [WebMethod]
-        public List<ExchangeMailboxPlan> GetExchangeMailboxPlans(int itemId)
+        public List<ExchangeMailboxPlan> GetExchangeMailboxPlans(int itemId, bool archiving)
         {
-            return ExchangeServerController.GetExchangeMailboxPlans(itemId);
+            return ExchangeServerController.GetExchangeMailboxPlans(itemId, archiving);
         }
 
         [WebMethod]
@@ -530,8 +549,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             return ExchangeServerController.UpdateExchangeMailboxPlan(itemId, mailboxPlan);
         }
-
-
+        
         [WebMethod]
         public int DeleteExchangeMailboxPlan(int itemId, int mailboxPlanId)
         {
@@ -546,95 +564,192 @@ namespace WebsitePanel.EnterpriseServer
 
         #endregion
 
+        #region Exchange Retention Policy Tags
 
-		#region Public Folders
-		[WebMethod]
-		public int CreatePublicFolder(int itemId, string parentFolder, string folderName,
-			bool mailEnabled, string accountName, string domain)
-		{
-			return ExchangeServerController.CreatePublicFolder(itemId, parentFolder, folderName,
-				mailEnabled, accountName, domain);
-		}
+        [WebMethod]
+        public List<ExchangeRetentionPolicyTag> GetExchangeRetentionPolicyTags(int itemId)
+        {
+            return ExchangeServerController.GetExchangeRetentionPolicyTags(itemId);
+        }
 
-		[WebMethod]
-		public int DeletePublicFolders(int itemId, int[] accountIds)
-		{
-			return ExchangeServerController.DeletePublicFolders(itemId, accountIds);
-		}
+        [WebMethod]
+        public ExchangeRetentionPolicyTag GetExchangeRetentionPolicyTag(int itemId, int tagId)
+        {
+            return ExchangeServerController.GetExchangeRetentionPolicyTag(itemId, tagId);
+        }
 
-		[WebMethod]
-		public int DeletePublicFolder(int itemId, int accountId)
-		{
-			return ExchangeServerController.DeletePublicFolder(itemId, accountId);
-		}
+        [WebMethod]
+        public IntResult AddExchangeRetentionPolicyTag(int itemId, ExchangeRetentionPolicyTag tag)
+        {
+            return ExchangeServerController.AddExchangeRetentionPolicyTag(itemId, tag);
+        }
 
-		[WebMethod]
-		public int EnableMailPublicFolder(int itemId, int accountId,
-			string name, string domain)
-		{
-			return ExchangeServerController.EnableMailPublicFolder(itemId, accountId, name, domain);
-		}
+        [WebMethod]
+        public ResultObject UpdateExchangeRetentionPolicyTag(int itemId, ExchangeRetentionPolicyTag tag)
+        {
+            return ExchangeServerController.UpdateExchangeRetentionPolicyTag(itemId, tag);
+        }
 
-		[WebMethod]
-		public int DisableMailPublicFolder(int itemId, int accountId)
-		{
-			return ExchangeServerController.DisableMailPublicFolder(itemId, accountId);
-		}
-
-		[WebMethod]
-		public ExchangePublicFolder GetPublicFolderGeneralSettings(int itemId, int accountId)
-		{
-			return ExchangeServerController.GetPublicFolderGeneralSettings(itemId, accountId);
-		}
-
-		[WebMethod]
-		public int SetPublicFolderGeneralSettings(int itemId, int accountId, string newName,
-			bool hideAddressBook, ExchangeAccount[] accounts)
-		{
-			return ExchangeServerController.SetPublicFolderGeneralSettings(itemId, accountId, newName,
-				hideAddressBook, accounts);
-		}
-
-		[WebMethod]
-		public ExchangePublicFolder GetPublicFolderMailFlowSettings(int itemId, int accountId)
-		{
-			return ExchangeServerController.GetPublicFolderMailFlowSettings(itemId, accountId);
-		}
-
-		[WebMethod]
-		public int SetPublicFolderMailFlowSettings(int itemId, int accountId,
-			string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication)
-		{
-			return ExchangeServerController.SetPublicFolderMailFlowSettings(itemId, accountId,
-				acceptAccounts, rejectAccounts, requireSenderAuthentication);
-		}
-
-		[WebMethod]
-		public ExchangeEmailAddress[] GetPublicFolderEmailAddresses(int itemId, int accountId)
-		{
-			return ExchangeServerController.GetPublicFolderEmailAddresses(itemId, accountId);
-		}
-
-		[WebMethod]
-		public int AddPublicFolderEmailAddress(int itemId, int accountId, string emailAddress)
-		{
-			return ExchangeServerController.AddPublicFolderEmailAddress(itemId, accountId, emailAddress);
-		}
-
-		[WebMethod]
-		public int SetPublicFolderPrimaryEmailAddress(int itemId, int accountId, string emailAddress)
-		{
-			return ExchangeServerController.SetPublicFolderPrimaryEmailAddress(itemId, accountId, emailAddress);
-		}
-
-		[WebMethod]
-		public int DeletePublicFolderEmailAddresses(int itemId, int accountId, string[] emailAddresses)
-		{
-			return ExchangeServerController.DeletePublicFolderEmailAddresses(itemId, accountId, emailAddresses);
-		}
-		#endregion
+        [WebMethod]
+        public ResultObject DeleteExchangeRetentionPolicyTag(int itemId, int tagId)
+        {
+            return ExchangeServerController.DeleteExchangeRetentionPolicyTag(itemId, tagId);
+        }
 
 
+        [WebMethod]
+        public List<ExchangeMailboxPlanRetentionPolicyTag> GetExchangeMailboxPlanRetentionPolicyTags(int policyId)
+        {
+            return ExchangeServerController.GetExchangeMailboxPlanRetentionPolicyTags(policyId);
+        }
+
+        [WebMethod]
+        public IntResult AddExchangeMailboxPlanRetentionPolicyTag(int itemId, ExchangeMailboxPlanRetentionPolicyTag planTag)
+        {
+            return ExchangeServerController.AddExchangeMailboxPlanRetentionPolicyTag(itemId, planTag);
+        }
+
+        [WebMethod]
+        public ResultObject DeleteExchangeMailboxPlanRetentionPolicyTag(int itemID, int policyId, int planTagId)
+        {
+            return ExchangeServerController.DeleteExchangeMailboxPlanRetentionPolicyTag(itemID, policyId, planTagId);
+        }
+
+        #endregion
+
+
+        #region Public Folders
+        [WebMethod]
+        public int CreatePublicFolder(int itemId, string parentFolder, string folderName,
+            bool mailEnabled, string accountName, string domain)
+        {
+            return ExchangeServerController.CreatePublicFolder(itemId, parentFolder, folderName,
+                mailEnabled, accountName, domain);
+        }
+
+        [WebMethod]
+        public int DeletePublicFolders(int itemId, int[] accountIds)
+        {
+            return ExchangeServerController.DeletePublicFolders(itemId, accountIds);
+        }
+
+        [WebMethod]
+        public int DeletePublicFolder(int itemId, int accountId)
+        {
+            return ExchangeServerController.DeletePublicFolder(itemId, accountId);
+        }
+
+        [WebMethod]
+        public int EnableMailPublicFolder(int itemId, int accountId,
+            string name, string domain)
+        {
+            return ExchangeServerController.EnableMailPublicFolder(itemId, accountId, name, domain);
+        }
+
+        [WebMethod]
+        public int DisableMailPublicFolder(int itemId, int accountId)
+        {
+            return ExchangeServerController.DisableMailPublicFolder(itemId, accountId);
+        }
+
+        [WebMethod]
+        public ExchangePublicFolder GetPublicFolderGeneralSettings(int itemId, int accountId)
+        {
+            return ExchangeServerController.GetPublicFolderGeneralSettings(itemId, accountId);
+        }
+
+        [WebMethod]
+        public int SetPublicFolderGeneralSettings(int itemId, int accountId, string newName,
+            bool hideAddressBook, ExchangeAccount[] accounts)
+        {
+            return ExchangeServerController.SetPublicFolderGeneralSettings(itemId, accountId, newName,
+                hideAddressBook, accounts);
+        }
+
+        [WebMethod]
+        public ExchangePublicFolder GetPublicFolderMailFlowSettings(int itemId, int accountId)
+        {
+            return ExchangeServerController.GetPublicFolderMailFlowSettings(itemId, accountId);
+        }
+
+        [WebMethod]
+        public int SetPublicFolderMailFlowSettings(int itemId, int accountId,
+            string[] acceptAccounts, string[] rejectAccounts, bool requireSenderAuthentication)
+        {
+            return ExchangeServerController.SetPublicFolderMailFlowSettings(itemId, accountId,
+                acceptAccounts, rejectAccounts, requireSenderAuthentication);
+        }
+
+        [WebMethod]
+        public ExchangeEmailAddress[] GetPublicFolderEmailAddresses(int itemId, int accountId)
+        {
+            return ExchangeServerController.GetPublicFolderEmailAddresses(itemId, accountId);
+        }
+
+        [WebMethod]
+        public int AddPublicFolderEmailAddress(int itemId, int accountId, string emailAddress)
+        {
+            return ExchangeServerController.AddPublicFolderEmailAddress(itemId, accountId, emailAddress);
+        }
+
+        [WebMethod]
+        public int SetPublicFolderPrimaryEmailAddress(int itemId, int accountId, string emailAddress)
+        {
+            return ExchangeServerController.SetPublicFolderPrimaryEmailAddress(itemId, accountId, emailAddress);
+        }
+
+        [WebMethod]
+        public int DeletePublicFolderEmailAddresses(int itemId, int accountId, string[] emailAddresses)
+        {
+            return ExchangeServerController.DeletePublicFolderEmailAddresses(itemId, accountId, emailAddresses);
+        }
+        #endregion
+
+        #region Disclaimers
+
+        [WebMethod]
+        public int AddExchangeDisclaimer(int itemId, ExchangeDisclaimer disclaimer)
+        {
+            return ExchangeServerController.AddExchangeDisclaimer(itemId, disclaimer);
+        }
+
+        [WebMethod]
+        public int UpdateExchangeDisclaimer(int itemId, ExchangeDisclaimer disclaimer)
+        {
+            return ExchangeServerController.UpdateExchangeDisclaimer(itemId, disclaimer);
+        }
+
+        [WebMethod]
+        public int DeleteExchangeDisclaimer(int itemId, int exchangeDisclaimerId)
+        {
+            return ExchangeServerController.DeleteExchangeDisclaimer(itemId, exchangeDisclaimerId);
+        }
+
+        [WebMethod]
+        public ExchangeDisclaimer GetExchangeDisclaimer(int itemId, int exchangeDisclaimerId)
+        {
+            return ExchangeServerController.GetExchangeDisclaimer(itemId, exchangeDisclaimerId);
+        }
+
+        [WebMethod]
+        public List<ExchangeDisclaimer> GetExchangeDisclaimers(int itemId)
+        {
+            return ExchangeServerController.GetExchangeDisclaimers(itemId);
+        }
+
+        [WebMethod]
+        public int SetExchangeAccountDisclaimerId(int itemId, int AccountID, int ExchangeDisclaimerId)
+        {
+            return ExchangeServerController.SetExchangeAccountDisclaimerId(itemId, AccountID, ExchangeDisclaimerId);
+        }
+        [WebMethod]
+
+        public int GetExchangeAccountDisclaimerId(int itemId, int AccountID)
+        {
+            return ExchangeServerController.GetExchangeAccountDisclaimerId(itemId, AccountID);
+        }
+
+        #endregion
 
     }
 }

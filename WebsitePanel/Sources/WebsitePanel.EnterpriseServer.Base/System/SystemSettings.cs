@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -42,6 +42,11 @@ namespace WebsitePanel.EnterpriseServer
 		public const string BACKUP_SETTINGS = "BackupSettings";
 		public const string SETUP_SETTINGS = "SetupSettings";
         public const string WPI_SETTINGS = "WpiSettings";
+        public const string FILEMANAGER_SETTINGS = "FileManagerSettings";
+        
+        // key to access to wpi main & custom feed in wpi settings
+        public const string WPI_MAIN_FEED_KEY = "WpiMainFeedUrl";
+        public const string FEED_ULS_KEY = "FeedUrls";
 
 		public static readonly SystemSettings Empty = new SystemSettings { SettingsArray = new string[][] {} };
 

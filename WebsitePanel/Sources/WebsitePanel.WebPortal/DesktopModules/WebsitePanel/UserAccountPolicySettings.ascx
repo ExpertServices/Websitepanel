@@ -6,12 +6,24 @@
                     Text="WebsitePanel Policy" NavigateUrl='<%# GetSettingsLink("WebsitePanelPolicy", "SettingsWebsitePanelPolicy") %>'></asp:HyperLink>
         </li>
         <li>
+            <asp:HyperLink ID="lnkServiceLevels" runat="server" meta:resourcekey="lnkServiceLevels"
+                    Text="Service Levels" NavigateUrl='<%# GetSettingsLink("ServiceLevels", "SettingsServiceLevels") %>'></asp:HyperLink>
+        </li>
+        <li>
             <asp:HyperLink ID="lnkWebPolicy" runat="server" meta:resourcekey="lnkWebPolicy"
                     Text="WEB Policy" NavigateUrl='<%# GetSettingsLink("WebPolicy", "SettingsWebPolicy") %>'></asp:HyperLink>
         </li>
         <li>
             <asp:HyperLink ID="lnkExchangeMailboxPlansPolicy" runat="server" meta:resourcekey="lnkExchangeMailboxPlansPolicy"
                     Text="Global Exchange Mailbox Plans" NavigateUrl='<%# GetSettingsLink("ExchangeMailboxPlansPolicy", "SettingsExchangeMailboxPlansPolicy") %>'></asp:HyperLink>
+        </li>
+        <li>
+            <asp:HyperLink ID="lnkExchangeRetentionPolicy" runat="server" meta:resourcekey="lnkExchangeRetentionPolicy"
+                    Text="Global Retention Policy" NavigateUrl='<%# GetSettingsLink("RetentionPolicy", "SettingsExchangeMailboxPlansPolicy") %>'></asp:HyperLink>
+        </li>
+        <li>
+            <asp:HyperLink ID="lnkExchangeRetentionPolicyTag" runat="server" meta:resourcekey="lnkExchangeRetentionPolicyTag"
+                    Text="Global Retention Policy Tag" NavigateUrl='<%# GetSettingsLink("RetentionPolicyTag", "SettingsExchangeRetentionPolicyTag") %>'></asp:HyperLink>
         </li>
 
         <li>

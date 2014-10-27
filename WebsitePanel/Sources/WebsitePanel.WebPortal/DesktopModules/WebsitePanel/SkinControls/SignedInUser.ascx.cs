@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -38,6 +38,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.WebPortal;
 
 namespace WebsitePanel.Portal.SkinControls
 {
@@ -56,7 +57,7 @@ namespace WebsitePanel.Portal.SkinControls
 			UserInfo user = PanelSecurity.LoggedUser;
             if (user != null)
             {
-                litUsername.Text = PanelSecurity.LoggedUser.Username;
+                lnkEditUserDetails.Text = PanelSecurity.LoggedUser.Username;
                 lnkEditUserDetails.NavigateUrl = PortalUtils.GetLoggedUserAccountPageUrl();
             }
 
@@ -64,6 +65,10 @@ namespace WebsitePanel.Portal.SkinControls
 			LoggedPanel.Visible = Request.IsAuthenticated;
 
 			lnkSignIn.NavigateUrl = PortalUtils.LoginRedirectUrl;
+
+            string imagePath = String.Concat("~/", DefaultPage.THEMES_FOLDER, "/", Page.Theme, "/", "Images", "/");
+
+            imgSignOut.ImageUrl = imagePath + "signout_24.png";
         }
 
         protected void cmdSignOut_Click(object sender, EventArgs e)

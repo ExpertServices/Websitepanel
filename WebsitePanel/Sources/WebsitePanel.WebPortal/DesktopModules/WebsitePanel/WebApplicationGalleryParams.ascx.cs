@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -30,7 +30,8 @@
 using System.Collections.Generic;
 ﻿using System.Globalization;
 ﻿using System.IO;
-using System.Web.UI.WebControls;
+﻿using System.Web;
+﻿using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.WebAppGallery;
@@ -129,6 +130,24 @@ namespace WebsitePanel.Portal
             ddlWebSite.DataBind();
             ddlWebSite.Items.Insert(0, new ListItem(GetLocalizedString("Text.SelectWebSite"), ""));
 
+            // select site from query string parameter
+            string targetSite = HttpContext.Current.Request["SiteId"];
+            if (!string.IsNullOrEmpty(targetSite))
+            {
+                foreach (ListItem item in ddlWebSite.Items)
+                {
+                    if (item.Text == targetSite)
+                    {
+                        item.Selected = true;
+                        ddlWebSite.Enabled = false;
+                        locWebSiteDescription.Visible = false;
+                        break;
+                    }
+                }
+
+                ddlWebSite.SelectedValue = targetSite;
+            }
+
             // apply policy to virtual dirs
             directoryName.SetPackagePolicy(PanelSecurity.PackageId, UserSettings.WEB_POLICY, "VirtDirNamePolicy");
         }
@@ -142,6 +161,8 @@ namespace WebsitePanel.Portal
                 PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
 
                 // add SQL Server engines
+                if (cntx.Groups.ContainsKey(ResourceGroups.MsSql2014))
+                    AddDatabaseEngine(DeploymentParameterWellKnownTag.Sql, ResourceGroups.MsSql2014, GetSharedLocalizedString("ResourceGroup." + ResourceGroups.MsSql2014));
                 if (cntx.Groups.ContainsKey(ResourceGroups.MsSql2012))
                     AddDatabaseEngine(DeploymentParameterWellKnownTag.Sql, ResourceGroups.MsSql2012, GetSharedLocalizedString("ResourceGroup." + ResourceGroups.MsSql2012));
                 if (cntx.Groups.ContainsKey(ResourceGroups.MsSql2008))
@@ -334,7 +355,13 @@ namespace WebsitePanel.Portal
 
         protected void databaseMode_SelectedIndexChanged(object sender, EventArgs e)
         {
-            BindParameters();
+            // load parameters
+            List<DeploymentParameter> parameters = GetApplicationParameters();
+            if (parameters == null)
+                return;
+
+            BindDBPolicies(parameters);
+            BindParameters(parameters);
         }
 
         private void BindParameters()
@@ -606,12 +633,32 @@ namespace WebsitePanel.Portal
 
         protected void btnCancel_Click(object sender, EventArgs e)
         {
-            RedirectSpaceHomePage();
+            string returnUrl = HttpContext.Current.Request["ReturnUrl"];
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                string redirectUrl = HttpUtility.UrlDecode(returnUrl);
+                Response.Redirect(redirectUrl);
+
+            }
+            else
+            {
+                RedirectSpaceHomePage();
+            }
         }
 
         protected void btnOK_Click(object sender, EventArgs e)
         {
-            RedirectSpaceHomePage();
+            string returnUrl = HttpContext.Current.Request["ReturnUrl"];
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                string redirectUrl = HttpUtility.UrlDecode(returnUrl);
+                Response.Redirect(redirectUrl);
+
+            }
+            else
+            {
+                RedirectSpaceHomePage();
+            }
         }
     }
 }

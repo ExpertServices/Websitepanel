@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -70,6 +70,7 @@ namespace WebsitePanel.Portal
             versions.Add(ResourceGroups.MsSql2005);
             versions.Add(ResourceGroups.MsSql2008);
             versions.Add(ResourceGroups.MsSql2012);
+            versions.Add(ResourceGroups.MsSql2014);
 
             FillDatabaseVersions(PanelSecurity.PackageId, ddlDatabaseVersion.Items, versions);
         }

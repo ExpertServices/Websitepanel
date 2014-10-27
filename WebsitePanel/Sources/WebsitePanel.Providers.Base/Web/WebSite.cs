@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -30,6 +30,7 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using WebsitePanel.Providers.ResultObjects;
 
 namespace WebsitePanel.Providers.Web
 {
@@ -61,6 +62,7 @@ namespace WebsitePanel.Providers.Web
         private bool securedFoldersInstalled;
         private bool heliconApeInstalled;
 	    private bool heliconApeEnabled;
+        private HeliconApeStatus heliconApeStatus;
 
 		public WebSite()
 		{
@@ -179,6 +181,12 @@ namespace WebsitePanel.Providers.Web
             get { return this.heliconApeEnabled; }
             set { this.heliconApeEnabled = value; }
 	    }
+
+        public HeliconApeStatus HeliconApeStatus
+        {
+            get { return this.heliconApeStatus; }
+            set { this.heliconApeStatus = value; }
+        }
 	}
 
 	[Flags]

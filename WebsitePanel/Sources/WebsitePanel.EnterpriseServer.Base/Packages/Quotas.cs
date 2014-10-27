@@ -65,7 +65,8 @@ order by rg.groupOrder
 		public const string WEB_SECURITY = "Web.Security";  // Custom Security Settings
 		public const string WEB_DEFAULTDOCS = "Web.DefaultDocs";  // Custom Default Documents
 		public const string WEB_APPPOOLS = "Web.AppPools";  // Dedicated Application Pools
-		public const string WEB_HEADERS = "Web.Headers";  // Custom Headers
+        public const string WEB_APPPOOLSRESTART = "Web.AppPoolsRestart";  // Application Pools Restart
+        public const string WEB_HEADERS = "Web.Headers";  // Custom Headers
 		public const string WEB_ERRORS = "Web.Errors";  // Custom Errors
 		public const string WEB_MIME = "Web.Mime";  // Custom MIME Types
 		public const string WEB_CGIBIN = "Web.CgiBin";  // CGI-BIN Folder
@@ -114,7 +115,15 @@ order by rg.groupOrder
         public const string EXCHANGE2007_MAXRECEIVEMESSAGESIZEKB = "Exchange2007.MaxReceiveMessageSizeKB";  // Max Receive Message Size
         public const string EXCHANGE2007_ISCONSUMER = "Exchange2007.IsConsumer";  // Is Consumer Organization
         public const string EXCHANGE2007_ENABLEDPLANSEDITING = "Exchange2007.EnablePlansEditing";  // Enabled plans editing
-		public const string MSSQL2000_DATABASES = "MsSQL2000.Databases";  // Databases
+        public const string EXCHANGE2007_ALLOWLITIGATIONHOLD = "Exchange2007.AllowLitigationHold";
+        public const string EXCHANGE2007_RECOVERABLEITEMSSPACE = "Exchange2007.RecoverableItemsSpace";
+        public const string EXCHANGE2007_DISCLAIMERSALLOWED = "Exchange2007.DisclaimersAllowed";
+
+        public const string EXCHANGE2013_ALLOWRETENTIONPOLICY = "Exchange2013.AllowRetentionPolicy"; // RetentionPolicy
+        public const string EXCHANGE2013_ARCHIVINGSTORAGE = "Exchange2013.ArchivingStorage"; // Archiving
+        public const string EXCHANGE2013_ARCHIVINGMAILBOXES = "Exchange2013.ArchivingMailboxes";
+
+        public const string MSSQL2000_DATABASES = "MsSQL2000.Databases";  // Databases
 		public const string MSSQL2000_USERS = "MsSQL2000.Users";  // Users
 		public const string MSSQL2000_MAXDATABASESIZE = "MsSQL2000.MaxDatabaseSize";  // Max Database Size
 		public const string MSSQL2000_BACKUP = "MsSQL2000.Backup";  // Database Backups
@@ -151,8 +160,21 @@ order by rg.groupOrder
         public const string ORGANIZATION_USERS = "HostedSolution.Users";
         public const string ORGANIZATION_DOMAINS = "HostedSolution.Domains";
         public const string ORGANIZATION_ALLOWCHANGEUPN = "HostedSolution.AllowChangeUPN";
+        public const string ORGANIZATION_SECURITYGROUPS = "HostedSolution.SecurityGroups";
+
         public const string CRM_USERS = "HostedCRM.Users";
         public const string CRM_ORGANIZATION = "HostedCRM.Organization";
+        public const string CRM_LIMITEDUSERS = "HostedCRM.LimitedUsers";
+        public const string CRM_ESSUSERS = "HostedCRM.ESSUsers";
+        public const string CRM_MAXDATABASESIZE = "HostedCRM.MaxDatabaseSize";
+
+        public const string CRM2013_ORGANIZATION = "HostedCRM2013.Organization";
+        public const string CRM2013_MAXDATABASESIZE = "HostedCRM2013.MaxDatabaseSize";
+
+        public const string CRM2013_ESSENTIALUSERS = "HostedCRM2013.EssentialUsers";
+        public const string CRM2013_BASICUSERS = "HostedCRM2013.BasicUsers";
+        public const string CRM2013_PROFESSIONALUSERS = "HostedCRM2013.ProfessionalUsers";
+
 
         public const string VPS_SERVERS_NUMBER = "VPS.ServersNumber";		// Number of VPS
         public const string VPS_MANAGING_ALLOWED = "VPS.ManagingAllowed";		// Allow user to create VPS
@@ -224,7 +246,15 @@ order by rg.groupOrder
         public const string LYNC_EVNATIONAL = "Lync.EVNational";
         public const string LYNC_EVMOBILE = "Lync.EVMobile";
         public const string LYNC_EVINTERNATIONAL = "Lync.EVInternational";
-        public const string LYNC_ENABLEDPLANSEDITING = "Lync.EnablePlansEditing";  
-        
+        public const string LYNC_ENABLEDPLANSEDITING = "Lync.EnablePlansEditing";
+        public const string LYNC_PHONE = "Lync.PhoneNumbers";
+
+        public const string HELICON_ZOO = "HeliconZoo.*";
+
+        public const string ENTERPRISESTORAGE_DISKSTORAGESPACE = "EnterpriseStorage.DiskStorageSpace"; 
+        public const string ENTERPRISESTORAGE_FOLDERS = "EnterpriseStorage.Folders";
+        public const string ENTERPRICESTORAGE_DRIVEMAPS = "EnterpriseStorage.DriveMaps";
+
+        public const string SERVICE_LEVELS = "ServiceLevel.";
     }
 }

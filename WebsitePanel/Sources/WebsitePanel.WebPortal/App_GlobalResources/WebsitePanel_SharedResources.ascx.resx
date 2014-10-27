@@ -315,6 +315,9 @@
   <data name="Error.FILES_RENAME_FILE" xml:space="preserve">
     <value>Error renaming file</value>
   </data>
+  <data name="Error.FOLDER_ALREADY_EXIST" xml:space="preserve">
+    <value>Error: Folder already exist</value>
+  </data>
   <data name="Error.FILES_UNZIP_FILES" xml:space="preserve">
     <value>Error extracting files</value>
   </data>
@@ -1623,6 +1626,9 @@
   <data name="Quota.Web.AppPools" xml:space="preserve">
     <value>Dedicated Application Pools</value>
   </data>
+  <data name="Quota.Web.AppPoolsRestart" xml:space="preserve">
+    <value>Application Pools Restart</value>
+  </data>
   <data name="Quota.Web.ColdFusion" xml:space="preserve">
     <value>ColdFusion</value>
   </data>
@@ -1848,6 +1854,24 @@
   <data name="Quota.MsSQL2012.Users" xml:space="preserve">
     <value>Users</value>
   </data>
+  <data name="Quota.MsSQL2014.Backup" xml:space="preserve">
+    <value>Database Backups</value>
+  </data>
+  <data name="Quota.MsSQL2014.Databases" xml:space="preserve">
+    <value>Databases</value>
+  </data>
+  <data name="Quota.MsSQL2014.MaxDatabaseSize" xml:space="preserve">
+    <value>Max Database Size, MB</value>
+  </data>
+  <data name="Quota.MsSQL2014.Restore" xml:space="preserve">
+    <value>Database Restores</value>
+  </data>
+  <data name="Quota.MsSQL2014.Truncate" xml:space="preserve">
+    <value>Database Truncate</value>
+  </data>
+  <data name="Quota.MsSQL2014.Users" xml:space="preserve">
+    <value>Users</value>
+  </data>
   <data name="Quota.MySQL5.Backup" xml:space="preserve">
     <value>Database Backups</value>
   </data>
@@ -1887,11 +1911,20 @@
   <data name="ResourceGroup.MsSQL2008" xml:space="preserve">
     <value>SQL Server 2008</value>
   </data>
-  <data name="ResourceGroup.MsSQL2012" xml:space="preserve">
-    <value>SQL Server 2012</value>
+  <data name="ResourceGroup.RemoteDesktopServices" xml:space="preserve">
+    <value>Remote Desktop Services</value>
+  </data>
+  <data name="ResourceGroup.EnterpriseStorage" xml:space="preserve">
+    <value>Enterprise Storage Services</value>
   </data>
   <data name="ResourceGroup.MySQL5" xml:space="preserve">
     <value>MySQL 5</value>
+  </data>
+  <data name="ResourceGroup.MsSQL2012" xml:space="preserve">
+    <value>SQL Server 2012</value>
+  </data>
+  <data name="ResourceGroup.MsSQL2014" xml:space="preserve">
+    <value>SQL Server 2014</value>
   </data>
   <data name="Quota.OS.MinimumTaskInterval" xml:space="preserve">
     <value>Minimum Tasks Interval, minutes</value>
@@ -2088,6 +2121,12 @@
   <data name="ServiceItemType.MsSQL2012User" xml:space="preserve">
     <value>MS SQL 2012 User</value>
   </data>
+  <data name="ServiceItemType.MsSQL2014Database" xml:space="preserve">
+    <value>MS SQL 2014 Database</value>
+  </data>
+  <data name="ServiceItemType.MsSQL2014User" xml:space="preserve">
+    <value>MS SQL 2014 User</value>
+  </data>
   <data name="ServiceItemType.MySQL4Database" xml:space="preserve">
     <value>MySQL 4 Database</value>
   </data>
@@ -2124,7 +2163,6 @@
   <data name="ServiceItemType.HostHeader" xml:space="preserve">
     <value>Web Site Host Header</value>
   </data>
-
   <data name="AuditLogSource.APP_INSTALLER" xml:space="preserve">
     <value>Applications Installer</value>
   </data>
@@ -2890,6 +2928,9 @@
   <data name="Quota.Exchange2007.MaxReceiveMessageSizeKB" xml:space="preserve">
     <value>Maximum Receive Message Size (Kb)</value>
   </data>
+  <data name="Quota.Exchange2007.DisclaimersAllowed" xml:space="preserve">
+    <value>Disclaimers Allowed</value>
+  </data>
   <data name="ResourceGroup.Exchange" xml:space="preserve">
     <value>Hosted Exchange</value>
   </data>
@@ -2916,6 +2957,9 @@
   </data>
   <data name="Error.EXCHANGE_DELETE_DISTRIBUTION_LIST" xml:space="preserve">
     <value>Error deleting distribution list. See audit log for more details.</value>
+  </data>
+  <data name="Error.EXCHANGE_DELETE_DISCLAIMER" xml:space="preserve">
+    <value>Error deleting disclaimer. See audit log for more details.</value>
   </data>
   <data name="Error.EXCHANGE_DELETE_MAILBOX" xml:space="preserve">
     <value>Error deleting mailbox. See audit log for more details.</value>
@@ -2978,6 +3022,9 @@
   <data name="Error.EXCHANGE_GET_DLIST_SETTINGS" xml:space="preserve">
     <value>Error reading distribution list general settings. See audit log for more details.</value>
   </data>
+  <data name="Error.EXCHANGE_GET_DISCLAIMER_SETTINGS" xml:space="preserve">
+    <value>Error reading disclaimer. See audit log for more details.</value>
+  </data>
   <data name="Error.EXCHANGE_GET_MAILBOX_ADVANCED" xml:space="preserve">
     <value>Error reading mailbox advanced settings. See audit log for more details.</value>
   </data>
@@ -3029,6 +3076,9 @@
   <data name="Error.EXCHANGE_UPDATE_DLIST_SETTINGS" xml:space="preserve">
     <value>Error updating distribution list general settings. See audit log for more details.</value>
   </data>
+  <data name="Error.EXCHANGE_UPDATE_DISCLAIMER_SETTINGS" xml:space="preserve">
+    <value>Error updating disclaimer. See audit log for more details.</value>
+  </data>
   <data name="Error.EXCHANGE_UPDATE_MAILBOX_ADVANCED" xml:space="preserve">
     <value>Error updating mailbox advanced settings. See audit log for more details.</value>
   </data>
@@ -3061,6 +3111,9 @@
   </data>
   <data name="Error.EXCHANGE_GET_LISTS" xml:space="preserve">
     <value>Error reading organization distribution lists</value>
+  </data>
+  <data name="Error.EXCHANGE_DISCLAIMERS_LISTS" xml:space="preserve">
+    <value>Error reading organization disclaimer lists</value>
   </data>
   <data name="Error.HOSTED_SHAREPOINT_UPDATE_QUOTAS" xml:space="preserve">
     <value>Error updating storage settings. See audit log for more details.</value>
@@ -3095,7 +3148,6 @@
   <data name="Error.ORGANIZATION_SET_USER_USERPRINCIPALNAME" xml:space="preserve">
     <value>Failed to update user login name.</value>
   </data>
-
   <data name="Success.EXCHANGE_MAILBOX_SET_DEFAULT_EMAIL" xml:space="preserve">
     <value>Mailbox primary e-mail address has been changed.</value>
   </data>
@@ -3119,6 +3171,9 @@
   </data>
   <data name="Success.EXCHANGE_UPDATE_DLIST_SETTINGS" xml:space="preserve">
     <value>Distribution list general settings have been successfully updated.</value>
+  </data>
+  <data name="Success.EXCHANGE_UPDATE_DISCLAIMER_SETTINGS" xml:space="preserve">
+    <value>Disclaimer successfully updated.</value>
   </data>
   <data name="Success.EXCHANGE_UPDATE_PFOLDER_MAILFLOW" xml:space="preserve">
     <value>Public folder mail flow settings have been successfully updated.</value>
@@ -3161,6 +3216,9 @@
   </data>
   <data name="Warning.2612" xml:space="preserve">
     <value>Specified storage quotas exceed maximum values assigned at the host level</value>
+  </data>
+  <data name="Warning.2613" xml:space="preserve">
+    <value>Invalid recoverable items quota specified, should be greater or equal to 6144MB</value>
   </data>
   <data name="AuditLogTask.EXCHANGE_CALCULATE_DISKSPACE" xml:space="preserve">
     <value>Calculate organization disk space</value>
@@ -3243,6 +3301,9 @@
   <data name="Quota.MsSQL2012.MaxLogSize" xml:space="preserve">
     <value>Max Log Size, MB</value>
   </data>
+  <data name="Quota.MsSQL2014.MaxLogSize" xml:space="preserve">
+    <value>Max Log Size, MB</value>
+  </data>
   <data name="Error.EXCHANGE_UPDATE_MAILBOX_PERMISSIONS" xml:space="preserve">
     <value>Error updating mailbox permissions. See audit log for more details.</value>
   </data>
@@ -3282,11 +3343,17 @@
   <data name="Quota.HostedSolution.Domains" xml:space="preserve">
     <value>Domains per Organization</value>
   </data>
+  <data name="Quota.HostedSolution.SecurityGroups" xml:space="preserve">
+    <value>Security Groups per Organization</value>
+  </data>
   <data name="ResourceGroup.Hosted SharePoint" xml:space="preserve">
     <value>Hosted SharePoint</value>
   </data>
   <data name="ResourceGroup.OCS" xml:space="preserve">
     <value>Office Communications Server</value>
+  </data>
+  <data name="ResourceGroup.Web Engines" xml:space="preserve">
+    <value>Web Engines</value>
   </data>
   <data name="Quota.HostedSharePoint.Sites" xml:space="preserve">
     <value>SharePoint Site Collections per Organization</value>
@@ -3295,10 +3362,13 @@
     <value>Max site storage, MB</value>
   </data>
   <data name="Quota.HostedCRM.Users" xml:space="preserve">
-    <value>CRM users per organization</value>
+    <value>Full licenses per organization</value>
   </data>
   <data name="Quota.HostedCRM.Organization" xml:space="preserve">
     <value>CRM Organization</value>
+  </data>
+  <data name="ResourceGroup.HeliconZoo" xml:space="preserve">
+    <value>Web Engines</value>
   </data>
   <data name="Error.HOSTEDSHAREPOINT_DELETE_SITECOLLECTION" xml:space="preserve">
     <value>Error occurred while delete SharePoint site collection.</value>
@@ -3339,7 +3409,6 @@
   <data name="Warning.NOT_ALL_EMAIL_ADDRESSES_DELETED" xml:space="preserve">
     <value>Please note not all email address are deleted</value>
   </data>
-
   <data name="Warning.EXCHANGE_NONE_PUBLIC_FOLDER_TO_DELETE" xml:space="preserve">
     <value>There are no public folders to delete</value>
   </data>
@@ -3610,8 +3679,8 @@
   <data name="HostedCRM.CANONT_GET_CRM_USER_GENERAL_ERROR" xml:space="preserve">
     <value>General error has been occurred while getting crm user.</value>
   </data>
-  <data name="HostedCRM.USER_QUOTA_HAS_BEEN_REACHED" xml:space="preserve">
-    <value>CRM users quota has been reached.</value>
+  <data name="HostedCRM.USER_QUOTA_HAS_BEEN_REACHED0" xml:space="preserve">
+    <value>CRM users quota (full license) has been reached.</value>
   </data>
   <data name="HostedCRM.CANNOT_ADD_ORGANIZATION_OWNER_TO_ORGANIZATIO_USER" xml:space="preserve">
     <value>Unable to add organization owner to organization users.</value>
@@ -3927,9 +3996,6 @@
   </data>
   <data name="Warning.1602" xml:space="preserve">
     <value>IP Address could not be deleted</value>
-  </data>
-  <data name="WarningDescription.1602" xml:space="preserve">
-    <value>IP Address could not be deleted because it is being used by Virtual Private Server.</value>
   </data>
   <data name="Error.VPS_ERROR_ADDING_IP_ADDRESS" xml:space="preserve">
     <value>Cannot add network adapter IP addresses</value>
@@ -4798,6 +4864,9 @@
   <data name="ReportResourceGroup.MsSQL2012" xml:space="preserve">
     <value>SQL Server 2012</value>
   </data>
+  <data name="ReportResourceGroup.MsSQL2014" xml:space="preserve">
+    <value>SQL Server 2014</value>
+  </data>
   <data name="WebAppGallery.ApplicationInstallationError" xml:space="preserve">
     <value>Error while install application pack</value>
   </data>
@@ -4868,7 +4937,7 @@
     <value>Web site "{1}" was not found</value>
   </data>
   <data name="Warning.WAG_CANNOT_INSTALL_APPLICATION" xml:space="preserve">
-    <value>Selected application cannot be installed.</value>
+    <value>Following dependencies may be missing:</value>
   </data>
   <data name="WebAppGallery.AspNet20Required" xml:space="preserve">
     <value>ASP.NET 2.0</value>
@@ -5074,6 +5143,18 @@
   <data name="Quota.Exchange2007.EnablePlansEditing" xml:space="preserve">
     <value>Enable Mailbox Plans Editing</value>
   </data>
+  <data name="Quota.Exchange2007.AllowLitigationHold" xml:space="preserve">
+    <value>Allow Litigation Hold</value>
+  </data>
+  <data name="Quota.Exchange2007.RecoverableItemsSpace" xml:space="preserve">
+    <value>Recoverable Items Storage, MB</value>
+  </data>
+  <data name="Quota.EnterpriseStorage.DiskStorageSpace" xml:space="preserve">
+    <value>Disk Storage Space, Mb</value>
+  </data>
+  <data name="Quota.EnterpriseStorage.Folders" xml:space="preserve">
+    <value>Number of Root Folders</value>
+  </data>
   <data name="Error.LYNC_DELETE_DOMAIN" xml:space="preserve">
     <value>Error deleting organization domain name. See audit log for more details.</value>
   </data>
@@ -5248,6 +5329,12 @@
   <data name="Success.EXCHANGE_UPDATEPLANS" xml:space="preserve">
     <value>Mailbox plan updated</value>
   </data>
+  <data name="Error.LYNC_UPDATEPLANS" xml:space="preserve">
+    <value>Lync plan update failed</value>
+  </data>
+  <data name="Success.LYNC_UPDATEPLANS" xml:space="preserve">
+    <value>Lync plan updated</value>
+  </data>
   <data name="Error.LYNC_APPLYPLANTEMPLATE" xml:space="preserve">
     <value>Failed to apply plans template</value>
   </data>
@@ -5268,5 +5355,233 @@
   </data>
   <data name="Success.WEB_SWITCH_TO_SHARED_IP" xml:space="preserve">
     <value>Web site has been updated to shared IP</value>
+  </data>
+  <data name="Warning.ApplyEnableHardQuotaFeature" xml:space="preserve">
+    <value>Apply Enable Hard Quota Feature</value>
+  </data>
+  <data name="WarningDescription.ApplyEnableHardQuotaFeature" xml:space="preserve">
+    <value>By clicking on the button 'Apply', you will apply the respective hard quota on each provisioned home folder. Note that this may take some time.</value>
+  </data>
+  <data name="Error.IP_ADD_PHONE" xml:space="preserve">
+    <value>Error adding Phone number</value>
+  </data>
+  <data name="Error.IP_ADD_PHONE_RANGE" xml:space="preserve">
+    <value>Cannot add Phone numbers range.</value>
+  </data>
+  <data name="Error.DEALLOCATE_SPACE_PHONE_NUMBER" xml:space="preserve">
+    <value>The following errors have been occurred:</value>
+  </data>
+  <data name="Success.DEALLOCATE_SPACE_PHONE_NUMBER" xml:space="preserve">
+    <value>Phone number have been successfully deallocated.</value>
+  </data>
+  <data name="WarningDescription.PHONE_EDIT_LIST_EMPTY_ERROR" xml:space="preserve">
+    <value>At least one Phone number must be selected.</value>
+  </data>
+  <data name="Quota.Lync.PhoneNumbers" xml:space="preserve">
+    <value>Phone Numbers per Organization</value>
+  </data>
+  <data name="Error.ORGANIZATION_CREATE_USER" xml:space="preserve">
+    <value>Error creating user. See audit log for more details.</value>
+  </data>
+  <data name="Error.ORGANIZATION_CREATE_SECURITY_GROUP" xml:space="preserve">
+    <value>Error creating security group. See audit log for more details.</value>
+  </data>
+  <data name="Error.ORGANIZATION_GET_SECURITY_GROUP_SETTINGS" xml:space="preserve">
+    <value>Error reading group settings</value>
+  </data>
+  <data name="Error.ENTERPRISE_STORAGE_CREATE_FOLDER" xml:space="preserve">
+    <value>Error creating folder</value>
+  </data>
+  <data name="Error.ORGANIZATION_UPDATE_SECURITY_GROUP_SETTINGS" xml:space="preserve">
+    <value>Error updating group settings</value>
+  </data>
+  <data name="Success.ORGANIZATION_UPDATE_SECURITY_GROUP_SETTINGS" xml:space="preserve">
+    <value>Group general settings have been successfully updated.</value>
+  </data>
+  <data name="ResourceGroup.RDS" xml:space="preserve">
+    <value>Remote Desktop Services</value>
+  </data>
+  <data name="Warning.WEB_SITE_IS_NOT_CREATED" xml:space="preserve">
+    <value>Website is not created</value>
+  </data>
+  <data name="Success.ENTERPRISE_STORAGE_UPDATE_FOLDER_SETTINGS" xml:space="preserve">
+    <value>Enterprise storage folder settings have been successfully updated.</value>
+  </data>
+  <data name="Quota.HostedCRM.LimitedUsers" xml:space="preserve">
+    <value>Limited licenses per organization</value>
+  </data>
+  <data name="Quota.HostedCRM.MaxDatabaseSize" xml:space="preserve">
+    <value>Max Database Size, MB</value>
+  </data>
+  <data name="HostedCRM.USER_QUOTA_HAS_BEEN_REACHED2" xml:space="preserve">
+    <value>CRM users quota (limited license) has been reached.</value>
+  </data>
+  <data name="HostedCRM.USER_QUOTA_HAS_BEEN_REACHED22" xml:space="preserve">
+    <value>CRM users quota (ESS license) has been reached.</value>
+  </data>
+  <data name="Quota.HostedCRM.ESSUsers" xml:space="preserve">
+    <value>ESS licenses per organization</value>
+  </data>
+  <data name="ResourceGroup.Hosted CRM2013" xml:space="preserve">
+    <value>Hosted CRM 2013</value>
+  </data>
+  <data name="HostedCRM.USER_QUOTA_HAS_BEEN_REACHED2013_0" xml:space="preserve">
+    <value>CRM users quota (Professional license) has been reached.</value>
+  </data>
+  <data name="HostedCRM.USER_QUOTA_HAS_BEEN_REACHED2013_2" xml:space="preserve">
+    <value>CRM users quota (Basic license) has been reached.</value>
+  </data>
+  <data name="HostedCRM.USER_QUOTA_HAS_BEEN_REACHED2013_5" xml:space="preserve">
+    <value>CRM users quota (Essential license) has been reached.</value>
+  </data>
+  <data name="Quota.HostedCRM2013.BasicUsers" xml:space="preserve">
+    <value>Basic licenses per organization</value>
+  </data>
+  <data name="Quota.HostedCRM2013.EssentialUsers" xml:space="preserve">
+    <value>Essential licenses per organization</value>
+  </data>
+  <data name="Quota.HostedCRM2013.MaxDatabaseSize" xml:space="preserve">
+    <value>Max Database Size, MB</value>
+  </data>
+  <data name="Quota.HostedCRM2013.Organization" xml:space="preserve">
+    <value>CRM Organization</value>
+  </data>
+  <data name="Quota.HostedCRM2013.ProfessionalUsers" xml:space="preserve">
+    <value>Professional licenses per organization</value>
+  </data>
+  <data name="HostedCRM.LicenseBasic" xml:space="preserve">
+    <value>Basic</value>
+  </data>
+  <data name="HostedCRM.LicenseESS" xml:space="preserve">
+    <value>ESS</value>
+  </data>
+  <data name="HostedCRM.LicenseEssential" xml:space="preserve">
+    <value>Essential</value>
+  </data>
+  <data name="HostedCRM.LicenseFull" xml:space="preserve">
+    <value>Full</value>
+  </data>
+  <data name="HostedCRM.LicenseLimited" xml:space="preserve">
+    <value>Limited</value>
+  </data>
+  <data name="HostedCRM.LicenseProfessional" xml:space="preserve">
+    <value>Professional</value>
+  </data>
+  <data name="Quota.Exchange2013.AllowRetentionPolicy" xml:space="preserve">
+    <value>Allow Retention policy</value>
+  </data>
+  <data name="Quota.Exchange2013.ArchivingStorage" xml:space="preserve">
+    <value>Archiving storage, MB</value>
+  </data>
+  <data name="Error.EXCHANGE_DELETE_RETENTIONPOLICY" xml:space="preserve">
+    <value>Unable to delete Retention policy.</value>
+  </data>
+  <data name="Error.EXCHANGE_UPDATERETENTIONPOLICY" xml:space="preserve">
+    <value>Retention policy update failed</value>
+  </data>
+  <data name="Success.EXCHANGE_DELETE_RETENTIONPOLICY" xml:space="preserve">
+    <value>Retention policy deleted.</value>
+  </data>
+  <data name="Success.EXCHANGE_UPDATERETENTIONPOLICY" xml:space="preserve">
+    <value>Retention policy updated</value>
+  </data>
+  <data name="Quota.Exchange2013.ArchivingMailboxes" xml:space="preserve">
+    <value>Archiving Mailboxes per Organization</value>
+  </data>
+  <data name="Quota.Exchange2013.AllowArchiving" xml:space="preserve">
+    <value>Allow Archiving</value>
+  </data>
+  <data name="Quota.EnterpriseStorage.DriveMaps" xml:space="preserve">
+    <value>Use Drive Maps</value>
+  </data>
+  <data name="Text.All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Text.Calendar" xml:space="preserve">
+    <value>Calendar</value>
+  </data>
+  <data name="Text.Contacts" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
+  <data name="Text.ConversationHistory" xml:space="preserve">
+    <value>Conversation History</value>
+  </data>
+  <data name="Text.DeleteAndAllowRecovery" xml:space="preserve">
+    <value>Delete and Allow Recovery</value>
+  </data>
+  <data name="Text.DeletedItems" xml:space="preserve">
+    <value>Deleted Items</value>
+  </data>
+  <data name="Text.Drafts" xml:space="preserve">
+    <value>Drafts</value>
+  </data>
+  <data name="Text.Inbox" xml:space="preserve">
+    <value>Inbox</value>
+  </data>
+  <data name="Text.Journal" xml:space="preserve">
+    <value>Journal</value>
+  </data>
+  <data name="Text.JunkEmail" xml:space="preserve">
+    <value>Junk Email</value>
+  </data>
+  <data name="Text.LegacyArchiveJournals" xml:space="preserve">
+    <value>Legacy Archive Journals</value>
+  </data>
+  <data name="Text.ManagedCustomFolder" xml:space="preserve">
+    <value>Managed Custom Folder</value>
+  </data>
+  <data name="Text.MarkAsPastRetentionLimit" xml:space="preserve">
+    <value>Mark as Past Retention Limit</value>
+  </data>
+  <data name="Text.MoveToArchive" xml:space="preserve">
+    <value>Move to Archive</value>
+  </data>
+  <data name="Text.MoveToDeletedItems" xml:space="preserve">
+    <value>Move to Deleted</value>
+  </data>
+  <data name="Text.MoveToFolder" xml:space="preserve">
+    <value>Move to Folder</value>
+  </data>
+  <data name="Text.NonIpmRoot" xml:space="preserve">
+    <value>Non Ipm Root</value>
+  </data>
+  <data name="Text.Notes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="Text.Outbox" xml:space="preserve">
+    <value>Outbox</value>
+  </data>
+  <data name="Text.PermanentlyDelete" xml:space="preserve">
+    <value>Permanently Delete</value>
+  </data>
+  <data name="Text.Personal" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="Text.RecoverableItems" xml:space="preserve">
+    <value>Recoverable Items</value>
+  </data>
+  <data name="Text.RssSubscriptions" xml:space="preserve">
+    <value>Rss Subscriptions</value>
+  </data>
+  <data name="Text.SentItems" xml:space="preserve">
+    <value>Sent Items</value>
+  </data>
+  <data name="Text.SyncIssues" xml:space="preserve">
+    <value>Sync Issues</value>
+  </data>
+  <data name="Text.Tasks" xml:space="preserve">
+    <value>Tasks</value>
+  </data>
+  <data name="ResourceGroup.Service Levels" xml:space="preserve">
+    <value>Service Levels</value>
+  </data>
+  <data name="Error.ADD_SERVICE_LEVEL" xml:space="preserve">
+    <value>Service Level with this name is already exists</value>
+  </data>
+  <data name="Error.DELETE_SERVICE_LEVEL" xml:space="preserve">
+    <value>Delete Service Level Error</value>
+  </data>
+  <data name="Error.SERVICE_LEVEL_IN_USE" xml:space="preserve">
+    <value>Unable to remove Service Level because it is being used</value>
   </data>
 </root>

@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -128,7 +128,7 @@ namespace WebsitePanel.Portal.HostedSolution
             }
             catch (Exception ex)
             {
-                messageBox.ShowErrorMessage("EXCHANGE_CREATE_MAILBOX", ex);
+                messageBox.ShowErrorMessage("ORGANIZATION_CREATE_USER", ex);
             }
         }
 
@@ -167,7 +167,9 @@ namespace WebsitePanel.Portal.HostedSolution
                     null,
                     null,
                     user.ExternalEmail,
-                    txtSubscriberNumber.Text);
+                    txtSubscriberNumber.Text,
+                    0,
+                    false);
         }
     }
 }

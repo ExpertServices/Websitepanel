@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -37,7 +37,9 @@ namespace WebsitePanel.Providers.HostedSolution
 		PublicFolder = 4,
 		Room = 5,
 		Equipment = 6,
-        User = 7
+        User = 7,
+        SecurityGroup = 8,
+        DefaultSecurityGroup = 9
 
 	}
 }

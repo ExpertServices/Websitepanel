@@ -5,6 +5,8 @@
 <%@ Register Src="UserControls/Quota.ascx" TagName="Quota" TagPrefix="uc4" %>
 <%@ Import Namespace="WebsitePanel.Portal" %>
 
+<asp:Timer runat="server" Interval="5000" ID="tasksTimer" />
+
 <div class="FormButtonsBar">
     <div class="Left">
         <asp:Button ID="btnAddItem" runat="server" meta:resourcekey="btnAddItem" Text="Add Scheduled Task" CssClass="Button3" OnClick="btnAddItem_Click" />
@@ -15,6 +17,12 @@
         <uc1:SearchBox ID="searchBox" runat="server" />
     </div>
 </div>
+
+<asp:UpdatePanel runat="server" ID="schedulesUpdatePanel" UpdateMode="Conditional">
+  <Triggers>
+    <asp:AsyncPostBackTrigger ControlID="tasksTimer" EventName="Tick" />
+  </Triggers>
+  <ContentTemplate>
 <asp:GridView id="gvSchedules" runat="server" AutoGenerateColumns="False"
 	DataSourceID="odsSchedules" AllowPaging="True" AllowSorting="True" EmptyDataText="gvSchedules"
 	OnRowCommand="gvSchedules_RowCommand" CssSelectorClass="NormalGridView"
@@ -87,3 +95,6 @@
          <asp:ControlParameter ControlID="searchBox" Name="filterValue" PropertyName="FilterValue" />
     </SelectParameters>
 </asp:ObjectDataSource>
+      
+  </ContentTemplate>
+</asp:UpdatePanel>

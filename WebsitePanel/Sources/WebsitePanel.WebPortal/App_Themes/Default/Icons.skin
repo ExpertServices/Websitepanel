@@ -36,6 +36,7 @@ Default skin template. The following skins are provided as examples only.
 
 <asp:Image SkinID="OrganizationUser48" runat="server" ImageUrl="images/Exchange/admin_48.png" ImageAlign="AbsMiddle" Width="48" Height="48"></asp:Image>
 <asp:Image SkinID="OrganizationUserAdd48" runat="server" ImageUrl="images/Exchange/admin_add_48.png" ImageAlign="AbsMiddle" Width="48" Height="48"></asp:Image>
+<asp:Image SkinID="VipUser16" runat="server" ImageUrl="images/Exchange/vip_user_16.png" ImageAlign="AbsMiddle" Width="16" Height="16"></asp:Image>
 
 <%--  Exchange Icons --%>
 <asp:Image SkinID="ExchangeOrg48" runat="server" ImageUrl="images/Exchange/server_mail_48.png" ImageAlign="AbsMiddle" Width="48" Height="48"></asp:Image>
@@ -92,3 +93,7 @@ Default skin template. The following skins are provided as examples only.
 <asp:Image SkinID="Monitoring48" runat="server" ImageUrl="images/VPS/monitoring_icon.png" ImageAlign="AbsMiddle" Width="48" Height="48"></asp:Image>
 <asp:Image SkinID="PCServers48" runat="server" ImageUrl="images/VPS/icon-home-botbar-cloud.png" ImageAlign="AbsMiddle" Width="48" Height="48"></asp:Image>
 <asp:Image SkinID="VLanNetwork" runat="server" ImageUrl="images/VPSForPC/vlan_icon.png" ImageAlign="AbsMiddle" Width="48" Height="48"></asp:Image>
+
+<%--  Enterprise Storage Icons --%>
+<asp:Image SkinID="EnterpriseStorageSpace48" runat="server" ImageUrl="images/Exchange/spaces48.png" ImageAlign="AbsMiddle" Width="48" Height="48"></asp:Image>
+<asp:Image SkinID="EnterpriseStorageDriveMaps48" runat="server" ImageUrl="images/Exchange/net_drive48.png" ImageAlign="AbsMiddle" Width="48" Height="48"></asp:Image>

@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -46,7 +46,6 @@ namespace WebsitePanel.EnterpriseServer
 
         protected void Application_Start(object sender, EventArgs e)
         {
-            Scheduler.Start();
         }
 
         protected void Application_End(object sender, EventArgs e)

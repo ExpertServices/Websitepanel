@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{129305D5-A9E6-4DCE-BFF6-41809E13EEEE}"
 	ProjectSection(SolutionItems) = preProject
 		..\..\WebsitePanel\build.xml = ..\..\WebsitePanel\build.xml
@@ -23,6 +23,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Installer.Core", "WebsitePanel.Installer.Core\WebsitePanel.Installer.Core.csproj", "{0E4A3F5B-0BB1-4F63-863D-7B0182B378CF}"
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Setup.WIX", "Setup.WIX\Setup.WIX.wixproj", "{F963A4AF-CC72-4512-B636-829345C35318}"
+EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Setup.SchedulerService", "Setup.SchedulerService\Setup.SchedulerService.wixproj", "{EAD7C528-EA3D-40E8-9688-9F1D8DC8D758}"
+	ProjectSection(ProjectDependencies) = postProject
+		{24A4C231-73A9-4F03-ABAD-9A8FE5324495} = {24A4C231-73A9-4F03-ABAD-9A8FE5324495}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.SchedulerServiceInstaller", "WebsitePanel.SchedulerServiceInstaller\WebsitePanel.SchedulerServiceInstaller.csproj", "{24A4C231-73A9-4F03-ABAD-9A8FE5324495}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -96,6 +103,26 @@ Global
 		{F963A4AF-CC72-4512-B636-829345C35318}.Release|Mixed Platforms.Build.0 = Release|x86
 		{F963A4AF-CC72-4512-B636-829345C35318}.Release|x86.ActiveCfg = Release|x86
 		{F963A4AF-CC72-4512-B636-829345C35318}.Release|x86.Build.0 = Release|x86
+		{EAD7C528-EA3D-40E8-9688-9F1D8DC8D758}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{EAD7C528-EA3D-40E8-9688-9F1D8DC8D758}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{EAD7C528-EA3D-40E8-9688-9F1D8DC8D758}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{EAD7C528-EA3D-40E8-9688-9F1D8DC8D758}.Debug|x86.ActiveCfg = Debug|x86
+		{EAD7C528-EA3D-40E8-9688-9F1D8DC8D758}.Debug|x86.Build.0 = Debug|x86
+		{EAD7C528-EA3D-40E8-9688-9F1D8DC8D758}.Release|Any CPU.ActiveCfg = Release|x86
+		{EAD7C528-EA3D-40E8-9688-9F1D8DC8D758}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{EAD7C528-EA3D-40E8-9688-9F1D8DC8D758}.Release|Mixed Platforms.Build.0 = Release|x86
+		{EAD7C528-EA3D-40E8-9688-9F1D8DC8D758}.Release|x86.ActiveCfg = Release|x86
+		{EAD7C528-EA3D-40E8-9688-9F1D8DC8D758}.Release|x86.Build.0 = Release|x86
+		{24A4C231-73A9-4F03-ABAD-9A8FE5324495}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{24A4C231-73A9-4F03-ABAD-9A8FE5324495}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{24A4C231-73A9-4F03-ABAD-9A8FE5324495}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{24A4C231-73A9-4F03-ABAD-9A8FE5324495}.Debug|x86.ActiveCfg = Debug|x86
+		{24A4C231-73A9-4F03-ABAD-9A8FE5324495}.Debug|x86.Build.0 = Debug|x86
+		{24A4C231-73A9-4F03-ABAD-9A8FE5324495}.Release|Any CPU.ActiveCfg = Release|x86
+		{24A4C231-73A9-4F03-ABAD-9A8FE5324495}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{24A4C231-73A9-4F03-ABAD-9A8FE5324495}.Release|Mixed Platforms.Build.0 = Release|x86
+		{24A4C231-73A9-4F03-ABAD-9A8FE5324495}.Release|x86.ActiveCfg = Release|x86
+		{24A4C231-73A9-4F03-ABAD-9A8FE5324495}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

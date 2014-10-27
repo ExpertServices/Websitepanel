@@ -583,7 +583,90 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        public static int DeleteWebSite(int siteItemId)
+        // AppPool
+        public static int ChangeAppPoolState(int siteItemId, AppPoolState state)
+        {
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return accountCheck;
+
+            // load site item
+            WebSite siteItem = (WebSite)PackageController.GetPackageItem(siteItemId);
+            if (siteItem == null)
+                return BusinessErrorCodes.ERROR_WEB_SITE_PACKAGE_ITEM_NOT_FOUND;
+
+            // check package
+            int packageCheck = SecurityContext.CheckPackage(siteItem.PackageId, DemandPackage.IsActive);
+            if (packageCheck < 0) return packageCheck;
+
+            // place log record
+            TaskManager.StartTask("WEB_SITE", "CHANGE_STATE", siteItem.Name);
+            TaskManager.ItemId = siteItemId;
+            TaskManager.WriteParameter("New state", state);
+
+            try
+            {
+
+                // change state
+                WebServer web = new WebServer();
+                ServiceProviderProxy.Init(web, siteItem.ServiceId);
+                web.ChangeAppPoolState(siteItem.SiteId, state);
+
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+        }
+
+        public static AppPoolState GetAppPoolState(int siteItemId)
+        {
+            AppPoolState state = AppPoolState.Unknown;
+
+            // check account
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
+            if (accountCheck < 0) return state;
+
+            // load site item
+            WebSite siteItem = (WebSite)PackageController.GetPackageItem(siteItemId);
+            if (siteItem == null)
+                return state;
+
+            // check package
+            int packageCheck = SecurityContext.CheckPackage(siteItem.PackageId, DemandPackage.IsActive);
+            if (packageCheck < 0) return state;
+
+            // place log record
+            TaskManager.StartTask("WEB_SITE", "GET_STATE", siteItem.Name);
+            TaskManager.ItemId = siteItemId;
+
+            try
+            {
+                // get state
+                WebServer web = new WebServer();
+                ServiceProviderProxy.Init(web, siteItem.ServiceId);
+                state = web.GetAppPoolState(siteItem.SiteId);
+            }
+            catch (Exception ex)
+            {
+                throw TaskManager.WriteError(ex);
+            }
+            finally
+            {
+                TaskManager.CompleteTask();
+            }
+
+            return state;
+        }
+
+
+
+        public static int DeleteWebSite(int siteItemId, bool deleteWebsiteDirectory)
         {
             // check account
             int accountCheck = SecurityContext.CheckAccount(DemandAccount.NotDemo | DemandAccount.IsActive);
@@ -655,6 +738,16 @@ namespace WebsitePanel.EnterpriseServer
 				//
                 web.DeleteSite(siteItem.SiteId);
 
+                // Delete WebManagementAccess Account
+                WebServerController.RevokeWebManagementAccess(siteItemId);
+
+                if (deleteWebsiteDirectory)
+                {
+                    // Delete website directory from file server
+                    // This will remove the hard quota as well
+                    FilesController.DeleteDirectoryRecursive(siteItem.PackageId, new DirectoryInfo(siteItem.DataPath).Parent.FullName);
+
+                }
                 // delete service item
                 PackageController.DeletePackageItem(siteItemId);
 
@@ -2869,7 +2962,6 @@ namespace WebsitePanel.EnterpriseServer
 
 		#endregion
 
-
         #region Helicon Ape
         public static int EnableHeliconApe(int siteItemId)
         {
@@ -2939,7 +3031,48 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-		/// <summary>
+        /// <summary>
+        /// Enables Helicon Ape on the server globally. Requires Administrator role to execute.
+        /// </summary>
+        /// <param name="ServiceId"></param>
+        /// <returns></returns>
+        public static int EnableHeliconApeGlobally(int ServiceId)
+        {
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.IsAdmin | DemandAccount.IsActive | DemandAccount.NotDemo);
+            if (accountCheck < 0)
+            {
+                return accountCheck;
+            }
+
+            WebServer web = GetWebServer(ServiceId);
+            web.EnableHeliconApe("");
+
+            return 0;
+        }
+
+
+        /// <summary>
+        /// Disables Helicon Ape on the server globally. Requires Administrator role to execute.
+        /// </summary>
+        /// <param name="ServiceId"></param>
+        /// <returns></returns>
+        public static int DisableHeliconApeGlobally(int ServiceId)
+        {
+            int accountCheck = SecurityContext.CheckAccount(DemandAccount.IsAdmin | DemandAccount.IsActive | DemandAccount.NotDemo);
+            //
+            if (accountCheck < 0)
+            {
+                return accountCheck;
+            }
+
+            WebServer web = GetWebServer(ServiceId);
+            web.DisableHeliconApe("");
+
+            return 0;
+        }
+
+
+        /// <summary>
 		/// Retrieves Helicon Ape extension status from the server. Requires Administrator role to execute.
 		/// </summary>
 		/// <param name="ServiceId"></param>
@@ -3271,7 +3404,83 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
         #endregion
-        
+
+        #region Helicon Zoo
+
+        public static List<WebVirtualDirectory> GetZooApplications(int siteItemId)
+        {
+            List<WebVirtualDirectory> dirs = new List<WebVirtualDirectory>();
+
+            // load site item
+            WebSite siteItem = (WebSite)PackageController.GetPackageItem(siteItemId);
+            if (siteItem == null)
+                return dirs;
+
+            // truncate home folders
+            WebServer web = new WebServer();
+            ServiceProviderProxy.Init(web, siteItem.ServiceId);
+            WebVirtualDirectory[] vdirs = web.GetZooApplications(siteItem.SiteId);
+
+            foreach (WebVirtualDirectory vdir in vdirs)
+            {
+                vdir.ContentPath = FilesController.GetVirtualPackagePath(siteItem.PackageId, vdir.ContentPath);
+                dirs.Add(vdir);
+            }
+
+            return dirs;
+        }
+
+        public static StringResultObject SetZooEnvironmentVariable(int siteItemId, string appName, string envName, string envValue)
+        {
+            StringResultObject result = new StringResultObject {IsSuccess = false};
+
+
+            // load site item
+            WebSite siteItem = (WebSite)PackageController.GetPackageItem(siteItemId);
+            if (siteItem == null)
+                return result;
+
+
+            WebServer web = new WebServer();
+            ServiceProviderProxy.Init(web, siteItem.ServiceId);
+            return web.SetZooEnvironmentVariable(siteItem.SiteId, appName, envName, envValue);
+        }
+
+        public static StringResultObject SetZooConsoleEnabled(int siteItemId, string appName)
+        {
+            StringResultObject result = new StringResultObject { IsSuccess = false };
+
+
+            // load site item
+            WebSite siteItem = (WebSite)PackageController.GetPackageItem(siteItemId);
+            if (siteItem == null)
+                return result;
+
+
+            WebServer web = new WebServer();
+            ServiceProviderProxy.Init(web, siteItem.ServiceId);
+            return web.SetZooConsoleEnabled(siteItem.SiteId, appName);
+        }
+
+
+        public static StringResultObject SetZooConsoleDisabled(int siteItemId, string appName)
+        {
+            StringResultObject result = new StringResultObject { IsSuccess = false };
+
+
+            // load site item
+            WebSite siteItem = (WebSite)PackageController.GetPackageItem(siteItemId);
+            if (siteItem == null)
+                return result;
+
+
+            WebServer web = new WebServer();
+            ServiceProviderProxy.Init(web, siteItem.ServiceId);
+            return web.SetZooConsoleDisabled(siteItem.SiteId, appName);
+        }
+
+        #endregion
+
         #region WebManagement Access
 
 		public static ResultObject GrantWebManagementAccess(int siteItemId, string accountName, string accountPassword)

@@ -104,9 +104,53 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Containers\Default\VPSForPC.ascx" />
+    <Content Include="App_Themes\Default\Icons\activesync_policy_48.png" />
+    <Content Include="App_Themes\Default\Icons\advancedstatistics_48.png" />
+    <Content Include="App_Themes\Default\Icons\applicationsinstaller_48.png" />
+    <Content Include="App_Themes\Default\Icons\blackberry_users_48.png" />
     <Content Include="App_Themes\Default\Icons\block.png" />
     <Content Include="App_Themes\Default\Icons\configureVLan.png" />
+    <Content Include="App_Themes\Default\Icons\create_organization_48.png" />
+    <Content Include="App_Themes\Default\Icons\crm_orgs_48.png" />
+    <Content Include="App_Themes\Default\Icons\crm_storage_settings_48.png" />
+    <Content Include="App_Themes\Default\Icons\crm_users_48.png" />
+    <Content Include="App_Themes\Default\Icons\disclaimers_48.png" />
+    <Content Include="App_Themes\Default\Icons\domains_48.png" />
+    <Content Include="App_Themes\Default\Icons\enterprisestorage_drive_maps_48.png" />
+    <Content Include="App_Themes\Default\Icons\enterprisestorage_folders_48.png" />
+    <Content Include="App_Themes\Default\Icons\exchange_contacts_48.png" />
+    <Content Include="App_Themes\Default\Icons\exchange_dlists_48.png" />
+    <Content Include="App_Themes\Default\Icons\filemanager_48.png" />
+    <Content Include="App_Themes\Default\Icons\ftp_48.png" />
+    <Content Include="App_Themes\Default\Icons\lync_federationdomains_48.png" />
+    <Content Include="App_Themes\Default\Icons\lync_phonenumbers_48.png" />
+    <Content Include="App_Themes\Default\Icons\lync_userplans_48.png" />
+    <Content Include="App_Themes\Default\Icons\lync_users_48.png" />
+    <Content Include="App_Themes\Default\Icons\mailboxes_48.png" />
+    <Content Include="App_Themes\Default\Icons\mailboxplans_48.png" />
+    <Content Include="App_Themes\Default\Icons\mail_accounts_48.png" />
+    <Content Include="App_Themes\Default\Icons\mail_domains_48.png" />
+    <Content Include="App_Themes\Default\Icons\mail_forwardings_48.png" />
+    <Content Include="App_Themes\Default\Icons\mail_groups_48.png" />
+    <Content Include="App_Themes\Default\Icons\mail_lists_48.png" />
+    <Content Include="App_Themes\Default\Icons\odbc_48.png" />
     <Content Include="App_Themes\Default\Icons\OK.png" />
+    <Content Include="App_Themes\Default\Icons\organization_home_48.png" />
+    <Content Include="App_Themes\Default\Icons\public_folders_48.png" />
+    <Content Include="App_Themes\Default\Icons\retentionpolicytag_48.png" />
+    <Content Include="App_Themes\Default\Icons\retentionpolicy_48.png" />
+    <Content Include="App_Themes\Default\Icons\scheduledtasks_48.png" />
+    <Content Include="App_Themes\Default\Icons\sharedssl_48.png" />
+    <Content Include="App_Themes\Default\Icons\sharepoint_sitecollections_48.png" />
+    <Content Include="App_Themes\Default\Icons\sharepoint_storage_settings_48.png" />
+    <Content Include="App_Themes\Default\Icons\sharepoint_storage_usage_48.png" />
+    <Content Include="App_Themes\Default\Icons\spacehome_48.png" />
+    <Content Include="App_Themes\Default\Icons\storage_usages_48.png" />
+    <Content Include="App_Themes\Default\Icons\vpsforpc_48.png" />
+    <Content Include="App_Themes\Default\Icons\vps_48.png" />
+    <Content Include="App_Themes\Default\Icons\webapplicationsgallery_48.png" />
+    <Content Include="App_Themes\Default\Icons\webipaddresses_48.png" />
+    <Content Include="App_Themes\Default\Icons\websites_48.png" />
     <Content Include="App_Themes\Default\Images\Exchange\blank16.gif" />
     <Content Include="App_Themes\Default\Images\Exchange\disabled.png" />
     <Content Include="App_Themes\Default\Images\Exchange\disabled_16.png" />
@@ -120,6 +164,8 @@
     <Content Include="App_Themes\Default\Images\lyncuser.png" />
     <Content Include="App_Themes\Default\Images\lyncuserplan48.png" />
     <Content Include="App_Themes\Default\Images\lyncuserplanadd48.png" />
+    <Content Include="App_Themes\Default\Images\spaces16.png" />
+    <Content Include="App_Themes\Default\Images\spaces48.png" />
     <Content Include="App_Themes\Default\Images\VPSForPC\vlan_icon.png" />
     <Content Include="App_Themes\Default\Images\VPSForPC\private_cloud_module_header_vps.gif" />
     <Content Include="App_Themes\Default\Images\FileManager\cshtml.png" />
@@ -224,7 +270,10 @@
     <Content Include="App_Data\ModulesData.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="App_Data\SiteSettings.config" />
+    <Content Include="App_Data\SiteSettings.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_Data\ESModule_ControlsHierarchy.config" />
     <None Include="App_Data\SupportedThemes.config" />
     <None Include="App_Data\Countries.config" />
     <None Include="App_Data\CountryStates.config" />

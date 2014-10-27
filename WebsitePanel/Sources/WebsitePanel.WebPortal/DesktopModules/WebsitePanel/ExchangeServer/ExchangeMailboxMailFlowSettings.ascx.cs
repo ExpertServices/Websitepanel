@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -127,6 +127,16 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             SaveSettings();
         }
+
+        protected void btnSaveExit_Click(object sender, EventArgs e)
+        {
+            SaveSettings();
+
+            Response.Redirect(PortalUtils.EditUrl("ItemID", PanelRequest.ItemID.ToString(),
+                "mailboxes",
+                "SpaceID=" + PanelSecurity.PackageId));
+        }
+
 
         private void ToggleControls()
         {

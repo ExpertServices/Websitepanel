@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -97,6 +97,12 @@ namespace WebsitePanel.Providers.HostedSolution
 		int totalSizeMB;
 		DateTime lastLogon;
 		DateTime lastLogoff;
+
+        bool enableLitigationHold;
+        long recoverabelItemsSpace;
+        long recoverabelItemsWarning;
+
+        string exchangeGuid;
 
 
 
@@ -399,5 +405,33 @@ namespace WebsitePanel.Providers.HostedSolution
 			get { return fullAccessAccounts; }
 			set { fullAccessAccounts = value; }
 		}
+
+
+        public bool EnableLitigationHold
+        {
+            get { return enableLitigationHold; }
+            set { enableLitigationHold = value; }
+        }
+
+
+        public long RecoverabelItemsSpace
+        {
+            get { return this.recoverabelItemsSpace; }
+            set { this.recoverabelItemsSpace = value; }
+        }
+
+        public long RecoverabelItemsWarning
+        {
+            get { return this.recoverabelItemsWarning; }
+            set { this.recoverabelItemsWarning = value; }
+        }
+
+        public string ExchangeGuid
+        {
+            get { return this.exchangeGuid; }
+            set { this.exchangeGuid = value; }
+        }
+
+
 	}
 }

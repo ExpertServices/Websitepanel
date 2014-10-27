@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -152,9 +152,9 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public int DeleteWebSite(int siteItemId)
+        public int DeleteWebSite(int siteItemId, bool deleteWebsiteDirectory)
         {
-            return WebServerController.DeleteWebSite(siteItemId);
+            return WebServerController.DeleteWebSite(siteItemId, deleteWebsiteDirectory);
         }
 
         [WebMethod]
@@ -180,6 +180,20 @@ namespace WebsitePanel.EnterpriseServer
         {
             return WebServerController.ChangeSiteState(siteItemId, state);
         }
+
+        // AppPool
+        [WebMethod]
+        public int ChangeAppPoolState(int siteItemId, AppPoolState state)
+        {
+            return WebServerController.ChangeAppPoolState(siteItemId, state);
+        }
+
+        [WebMethod]
+        public AppPoolState GetAppPoolState(int siteItemId)
+        {
+            return WebServerController.GetAppPoolState(siteItemId);
+        }
+
 
         #region Shared SSL Folders
         [WebMethod]
@@ -379,6 +393,18 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public int EnableHeliconApeGlobally(int serviceId)
+        {
+            return WebServerController.EnableHeliconApeGlobally(serviceId);
+        }
+
+        [WebMethod]
+        public int DisableHeliconApeGlobally(int serviceId)
+        {
+            return WebServerController.DisableHeliconApeGlobally(serviceId);
+        }
+
+        [WebMethod]
         public HtaccessFolder[] GetHeliconApeFolders(int siteItemId)
         {
             return WebServerController.GetHeliconApeFolders(siteItemId);
@@ -416,6 +442,8 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         #endregion
+
+
 
         #region Helicon Ape Users
         [WebMethod]
@@ -468,6 +496,38 @@ namespace WebsitePanel.EnterpriseServer
             return WebServerController.DeleteHeliconApeGroup(siteItemId, groupName);
         }
         #endregion
+
+        #region Helicon Zoo
+
+        [WebMethod]
+        public List<WebVirtualDirectory> GetZooApplications(int siteItemId)
+        {
+            return WebServerController.GetZooApplications(siteItemId);
+        }
+
+        [WebMethod]
+        public StringResultObject SetZooEnvironmentVariable(int siteItemId, string appName, string envName, string envValue)
+        {
+            return WebServerController.SetZooEnvironmentVariable(siteItemId, appName, envName, envValue);
+        }
+
+
+        [WebMethod]
+        public StringResultObject SetZooConsoleEnabled(int siteItemId, string appName)
+        {
+            return WebServerController.SetZooConsoleEnabled(siteItemId, appName);
+        }
+
+        [WebMethod]
+        public StringResultObject SetZooConsoleDisabled(int siteItemId, string appName)
+        {
+            return WebServerController.SetZooConsoleDisabled(siteItemId, appName);
+        }
+
+
+
+        #endregion
+
 
 
         #region WebManagement Access

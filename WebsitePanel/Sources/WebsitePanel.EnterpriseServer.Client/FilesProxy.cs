@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -58,7 +58,9 @@ namespace WebsitePanel.EnterpriseServer {
     [System.Web.Services.WebServiceBindingAttribute(Name="esFilesSoap", Namespace="http://smbsaas/websitepanel/enterpriseserver")]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(ServiceProviderItem))]
     public partial class esFiles : Microsoft.Web.Services3.WebServicesClientProtocol {
-        
+
+        private System.Threading.SendOrPostCallback GetFileManagerSettingsOperationCompleted;
+
         private System.Threading.SendOrPostCallback GetFilesOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetFilesByMaskOperationCompleted;
@@ -110,6 +112,9 @@ namespace WebsitePanel.EnterpriseServer {
             this.Url = "http://localhost/EnterpriseServer/esFiles.asmx";
         }
         
+        /// <remarks/>
+        public event GetFileManagerSettingsCompletedEventHandler GetFileManagerSettingsCompleted;
+
         /// <remarks/>
         public event GetFilesCompletedEventHandler GetFilesCompleted;
         
@@ -178,6 +183,52 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         public event ExecuteSyncActionsCompletedEventHandler ExecuteSyncActionsCompleted;
+
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetFileManagerSettings", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public SystemSettings GetFileManagerSettings()
+        {
+            object[] results = this.Invoke("GetFileManagerSettings", new Object[] {});
+            return ((SystemSettings)(results[0]));
+        }
+
+        /// <remarks/>
+        public System.IAsyncResult BeginGetFileManagerSettings(System.AsyncCallback callback, object asyncState)
+        {
+            return this.BeginInvoke("GetFileManagerSettings", new Object[] {}, callback, asyncState);
+        }
+
+        /// <remarks/>
+        public SystemSettings EndGetFileManagerSettings(System.IAsyncResult asyncResult)
+        {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((SystemSettings)(results[0]));
+        }
+
+        /// <remarks/>
+        public void GetFileManagerSettingsAsync()
+        {
+            this.GetFileManagerSettingsAsync(null);
+        }
+
+        /// <remarks/>
+        public void GetFileManagerSettingsAsync(object userState)
+        {
+            if ((this.GetFileManagerSettingsOperationCompleted == null))
+            {
+                this.GetFileManagerSettingsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetFileManagerSettingsOperationCompleted);
+            }
+            this.InvokeAsync("GetFileManagerSettings", new Object[] {}, this.GetFileManagerSettingsOperationCompleted, userState);
+        }
+
+        private void OnGetFileManagerSettingsOperationCompleted(object arg)
+        {
+            if ((this.GetFileManagerSettingsCompleted != null))
+            {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetFileManagerSettingsCompleted(this, new GetFileManagerSettingsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetFiles", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -1238,6 +1289,17 @@ namespace WebsitePanel.EnterpriseServer {
                 this.ExecuteSyncActionsCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
+
+        //CO Changes       
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/ApplyEnableHardQuotaFeature", RequestNamespace = "http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace = "http://smbsaas/websitepanel/enterpriseserver", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int ApplyEnableHardQuotaFeature(int packageId)
+        {
+            object[] results = this.Invoke("ApplyEnableHardQuotaFeature", new object[] {
+                        packageId });
+            return ((int)(results[0]));
+        }
+        //END
         
         /// <remarks/>
         public new void CancelAsync(object userState) {
@@ -1249,7 +1311,33 @@ namespace WebsitePanel.EnterpriseServer {
     
     
     
-    
+    public delegate void GetFileManagerSettingsCompletedEventHandler(object sender, GetFileManagerSettingsCompletedEventArgs e);
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetFileManagerSettingsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
+        private object[] results;
+
+        internal GetFileManagerSettingsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
+            this.results = results;
+        }
+
+        /// <remarks/>
+        public SystemSettings Result
+        {
+            get
+            {
+                this.RaiseExceptionIfNecessary();
+                return ((SystemSettings)(this.results[0]));
+            }
+        }
+    }
     
     
     /// <remarks/>
