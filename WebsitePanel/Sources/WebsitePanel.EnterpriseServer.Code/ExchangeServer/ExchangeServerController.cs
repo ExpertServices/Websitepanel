@@ -5336,10 +5336,22 @@ namespace WebsitePanel.EnterpriseServer
 
                 // get mailbox settings
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+
+                if (exchangeServiceId <= 0)
+                    return null;
+
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
                 if (exchange == null)
                     return null;
+
+                //Create Exchange Organization
+                if (string.IsNullOrEmpty(org.GlobalAddressList))
+                {
+                    ExtendToExchangeOrganization(ref org);
+
+                    PackageController.UpdatePackageItem(org);
+                }
 
                 res = exchange.CreateOrganizationRootPublicFolder(org.OrganizationId, org.DistinguishedName, org.SecurityGroup, org.DefaultDomain);
             }
