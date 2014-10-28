@@ -419,6 +419,9 @@ namespace WebsitePanel.EnterpriseServer
                 };
 
                 PackageController.AddPackageItem(orgDomain);
+
+                ExchangeServerController.CreateOrganizationRootPublicFolder(itemId);
+
             }
             catch (Exception ex)
             {

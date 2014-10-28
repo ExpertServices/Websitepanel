@@ -325,7 +325,8 @@ namespace WebsitePanel.Providers.HostedSolution
         #endregion
 
         #region Mailbox
-        internal override string CreateMailEnableUserInternal(string upn, string organizationId, string organizationDistinguishedName, ExchangeAccountType accountType,
+        internal override string CreateMailEnableUserInternal(string upn, string organizationId, string organizationDistinguishedName,
+            ExchangeAccountType accountType,
             string mailboxDatabase, string offlineAddressBook, string addressBookPolicy,
             string accountName, bool enablePOP, bool enableIMAP,
             bool enableOWA, bool enableMAPI, bool enableActiveSync,

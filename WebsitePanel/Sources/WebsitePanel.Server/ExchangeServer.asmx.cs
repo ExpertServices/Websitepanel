@@ -90,7 +90,9 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public string CreateMailEnableUser(string upn, string organizationId, string organizationDistinguishedName, ExchangeAccountType accountType,
+        public string CreateMailEnableUser(string upn, string organizationId, string organizationDistinguishedName,
+            string securityGroup, string organizationDomain,
+            ExchangeAccountType accountType,
             string mailboxDatabase, string offlineAddressBook, string addressBookPolicy,
             string accountName, bool enablePOP, bool enableIMAP,
             bool enableOWA, bool enableMAPI, bool enableActiveSync,
@@ -100,7 +102,9 @@ namespace WebsitePanel.Server
             try
             {
                 LogStart("CreateMailEnableUser");
-                string ret = ES.CreateMailEnableUser(upn, organizationId, organizationDistinguishedName, accountType,
+                string ret = ES.CreateMailEnableUser(upn, organizationId, organizationDistinguishedName, 
+                                                           securityGroup, organizationDomain,
+                                                           accountType,
                                                            mailboxDatabase, offlineAddressBook, addressBookPolicy,
                                                            accountName, enablePOP, enableIMAP,
                                                            enableOWA, enableMAPI, enableActiveSync,
@@ -555,6 +559,24 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public string[] SetDefaultPublicFolderMailbox(string id, string organizationId, string organizationDistinguishedName)
+        {
+            try
+            {
+                LogStart("SetDefaultPublicFolderMailbox");
+                string[] ret = ES.SetDefaultPublicFolderMailbox(id, organizationId, organizationDistinguishedName);
+                LogEnd("SetDefaultPublicFolderMailbox");
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("SetDefaultPublicFolderMailbox", ex);
+                throw;
+            }
+        }
+
 
         #endregion
 
@@ -1084,6 +1106,23 @@ namespace WebsitePanel.Server
 				throw;
 			}
 		}
+
+        [WebMethod, SoapHeader("settings")]
+        public string CreateOrganizationRootPublicFolder(string organizationId, string organizationDistinguishedName, string securityGroup, string organizationDomain)
+        {
+            try
+            {
+                LogStart("CreateOrganizationRootPublicFolder");
+                string ret = ES.CreateOrganizationRootPublicFolder(organizationId, organizationDistinguishedName, securityGroup, organizationDomain);
+                LogEnd("CreateOrganizationRootPublicFolder");
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError("CreateOrganizationRootPublicFolder", ex);
+                throw;
+            }
+        }
 		
         
         #endregion

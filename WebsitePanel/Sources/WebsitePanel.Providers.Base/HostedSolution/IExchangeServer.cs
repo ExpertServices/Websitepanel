@@ -37,7 +37,9 @@ namespace WebsitePanel.Providers.HostedSolution
         bool CheckAccountCredentials(string username, string password);
         // Organizations
 
-        string CreateMailEnableUser(string upn, string organizationId, string organizationDistinguishedName, ExchangeAccountType accountType,
+        string CreateMailEnableUser(string upn, string organizationId, string organizationDistinguishedName,
+                                    string securityGroup, string organizationDomain,
+                                    ExchangeAccountType accountType,
                                     string mailboxDatabase, string offlineAddressBook, string addressBookPolicy,
                                     string accountName, bool enablePOP, bool enableIMAP,
                                     bool enableOWA, bool enableMAPI, bool enableActiveSync,
@@ -74,6 +76,8 @@ namespace WebsitePanel.Providers.HostedSolution
         void SetMailboxPermissions(string organizationId, string accountName, string[] sendAsAccounts, string[] fullAccessAccounts);
         ExchangeMailbox GetMailboxPermissions(string organizationId, string accountName);
         ExchangeMailboxStatistics GetMailboxStatistics(string accountName);
+        string[] SetDefaultPublicFolderMailbox(string id, string organizationId, string organizationDistinguishedName);
+
 
         // Contacts
         void CreateContact(string organizationId, string organizationDistinguishedName, string contactDisplayName, string contactAccountName, string contactEmail, string defaultOrganizationDomain);
@@ -113,6 +117,8 @@ namespace WebsitePanel.Providers.HostedSolution
         ExchangeItemStatistics[] GetPublicFoldersStatistics(string organizationId, string[] folders);
         string[] GetPublicFoldersRecursive(string organizationId, string parent);
         long GetPublicFolderSize(string organizationId, string folder);
+        string CreateOrganizationRootPublicFolder(string organizationId, string organizationDistinguishedName, string securityGroup, string organizationDomain);
+
 
         //ActiveSync
         void CreateOrganizationActiveSyncPolicy(string organizationId);

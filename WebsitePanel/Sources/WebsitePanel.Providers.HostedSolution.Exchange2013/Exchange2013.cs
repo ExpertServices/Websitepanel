@@ -1871,14 +1871,18 @@ namespace WebsitePanel.Providers.HostedSolution
         }
 
 
-        public string CreateMailEnableUser(string upn, string organizationId, string organizationDistinguishedName, ExchangeAccountType accountType,
+        public string CreateMailEnableUser(string upn, string organizationId, string organizationDistinguishedName,
+            string securityGroup, string organizationDomain,
+            ExchangeAccountType accountType,
             string mailboxDatabase, string offlineAddressBook, string addressBookPolicy,
             string accountName, bool enablePOP, bool enableIMAP,
             bool enableOWA, bool enableMAPI, bool enableActiveSync,
             long issueWarningKB, long prohibitSendKB, long prohibitSendReceiveKB, int keepDeletedItemsDays,
             int maxRecipients, int maxSendMessageSizeKB, int maxReceiveMessageSizeKB, bool hideFromAddressBook, bool IsConsumer, bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning)
         {
-            return CreateMailEnableUserInternal(upn, organizationId, organizationDistinguishedName, accountType,
+            return CreateMailEnableUserInternal(upn, organizationId, organizationDistinguishedName, 
+                                                securityGroup, organizationDomain,
+                                                accountType,
                                                 mailboxDatabase, offlineAddressBook, addressBookPolicy,
                                                 accountName, enablePOP, enableIMAP,
                                                 enableOWA, enableMAPI, enableActiveSync,
@@ -1886,7 +1890,9 @@ namespace WebsitePanel.Providers.HostedSolution
                                                 keepDeletedItemsDays, maxRecipients, maxSendMessageSizeKB, maxReceiveMessageSizeKB, hideFromAddressBook, IsConsumer, enabledLitigationHold, recoverabelItemsSpace, recoverabelItemsWarning);
         }
 
-        internal virtual string CreateMailEnableUserInternal(string upn, string organizationId, string organizationDistinguishedName, ExchangeAccountType accountType,
+        internal virtual string CreateMailEnableUserInternal(string upn, string organizationId, string organizationDistinguishedName,
+            string securityGroup, string organizationDomain,
+            ExchangeAccountType accountType,
             string mailboxDatabase, string offlineAddressBook, string addressBookPolicy,
             string accountName, bool enablePOP, bool enableIMAP,
             bool enableOWA, bool enableMAPI, bool enableActiveSync,
@@ -1955,7 +1961,18 @@ namespace WebsitePanel.Providers.HostedSolution
 
                 transaction.RegisterEnableMailbox(id);
 
+                // default public folder
+                string orgCanonicalName = ConvertADPathToCanonicalName(organizationDistinguishedName);
+
+                //create organization public folder mailbox if required
+                CheckOrganizationPublicFolderMailbox(runSpace, orgCanonicalName, organizationId, organizationDomain);
+
+                //create organization root folder if required
+                CheckOrganizationRootFolder(runSpace, organizationId, securityGroup, orgCanonicalName, organizationId);
+
                 string windowsEmailAddress = ObjToString(GetPSObjectProperty(result[0], "WindowsEmailAddress"));
+
+                string defaultPublicFolderMailbox = orgCanonicalName + "/" + GetPublicFolderMailboxName(organizationId);
 
                 //update mailbox
                 cmd = new Command("Set-Mailbox");
@@ -1986,6 +2003,8 @@ namespace WebsitePanel.Providers.HostedSolution
                     cmd.Parameters.Add("RecoverableItemsQuota", ConvertKBToUnlimited(recoverabelItemsSpace));
                     cmd.Parameters.Add("RecoverableItemsWarningQuota", ConvertKBToUnlimited(recoverabelItemsWarning));
                 }
+
+                cmd.Parameters.Add("DefaultPublicFolderMailbox", defaultPublicFolderMailbox);
 
                 ExecuteShellCommand(runSpace, cmd);
 
@@ -4441,8 +4460,6 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("CheckOrganizationPublicFolderMailbox");
         }
 
-
-
         private void CheckOrganizationRootFolder(Runspace runSpace, string folder, string user, string orgCanonicalName, string organizationId)
         {
             ExchangeLog.LogStart("CheckOrganizationRootFolder");
@@ -4465,6 +4482,43 @@ namespace WebsitePanel.Providers.HostedSolution
                 }
             }
             ExchangeLog.LogEnd("CheckOrganizationRootFolder");
+        }
+
+        public string CreateOrganizationRootPublicFolder(string organizationId, string organizationDistinguishedName, string securityGroup, string organizationDomain)
+        {
+            ExchangeLog.LogStart("CreateOrganizationRootPublicFolder");
+
+            string res = null;
+
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+
+                // default public folder
+                string orgCanonicalName = ConvertADPathToCanonicalName(organizationDistinguishedName);
+
+                //create organization public folder mailbox if required
+                CheckOrganizationPublicFolderMailbox(runSpace, orgCanonicalName, organizationId, organizationDomain);
+
+                //create organization root folder if required
+                CheckOrganizationRootFolder(runSpace, organizationId, securityGroup, orgCanonicalName, organizationId);
+
+                res = orgCanonicalName + "/" + GetPublicFolderMailboxName(organizationId);
+
+                string rootFolder = "\\" + organizationId;
+
+                // exchange transport needs access to create new items in order to deliver email 
+                AddPublicFolderClientPermission(runSpace, rootFolder, "Anonymous", "CreateItems");
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+
+            ExchangeLog.LogEnd("CreateOrganizationRootPublicFolder");
+
+            return res;
         }
 
         private string AddPublicFolder(Runspace runSpace, string name, string path, string mailbox)
@@ -4696,9 +4750,6 @@ namespace WebsitePanel.Providers.HostedSolution
                     ExchangeLog.LogWarning("Attemp {0} to update mail public folder {1}", attempts, folder);
                     System.Threading.Thread.Sleep(5000);
                 }
-
-                // exchange transport needs access to create new items in order to deliver email 
-                AddPublicFolderClientPermission(runSpace, folder, "Anonymous", "CreateItems");
 
             }
             finally
@@ -5208,6 +5259,54 @@ namespace WebsitePanel.Providers.HostedSolution
             ExchangeLog.LogEnd("GetPublicFolderSizeInternal");
             return size;
         }
+
+        public string[] SetDefaultPublicFolderMailbox(string id, string organizationId, string organizationDistinguishedName)
+        {
+            ExchangeLog.LogStart("SetDefaultPublicFolderMailbox");
+
+            List<string> res = new List<string>();
+
+            Runspace runSpace = null;
+            try
+            {
+                runSpace = OpenRunspace();
+
+                Command cmd = new Command("Get-Mailbox");
+                cmd.Parameters.Add("Identity", id);
+                Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+
+                string oldValue = "";
+
+                if (result != null && result.Count > 0)
+                {
+                    oldValue = ObjToString(GetPSObjectProperty(result[0], "DefaultPublicFolderMailbox"));
+                }
+
+                res.Add(oldValue);
+
+                string orgCanonicalName = ConvertADPathToCanonicalName(organizationDistinguishedName);
+
+                string newValue = orgCanonicalName + "/" + GetPublicFolderMailboxName(organizationId);
+
+                if (newValue != oldValue)
+                {
+                    cmd = new Command("Set-Mailbox");
+                    cmd.Parameters.Add("Identity", id);
+                    cmd.Parameters.Add("DefaultPublicFolderMailbox", newValue);
+
+                    res.Add(newValue);
+                }
+
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+
+            ExchangeLog.LogEnd("SetDefaultPublicFolderMailbox");
+            return res.ToArray();
+        }
+
 
         #endregion
 
