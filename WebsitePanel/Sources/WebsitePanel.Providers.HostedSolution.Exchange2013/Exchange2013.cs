@@ -4486,7 +4486,7 @@ namespace WebsitePanel.Providers.HostedSolution
 
         public string CreateOrganizationRootPublicFolder(string organizationId, string organizationDistinguishedName, string securityGroup, string organizationDomain)
         {
-            ExchangeLog.LogStart("AddOrganizationRootPublicFolder");
+            ExchangeLog.LogStart("CreateOrganizationRootPublicFolder");
 
             string res = null;
 
@@ -4505,13 +4505,18 @@ namespace WebsitePanel.Providers.HostedSolution
                 CheckOrganizationRootFolder(runSpace, organizationId, securityGroup, orgCanonicalName, organizationId);
 
                 res = orgCanonicalName + "/" + GetPublicFolderMailboxName(organizationId);
+
+                string rootFolder = "\\" + organizationId;
+
+                // exchange transport needs access to create new items in order to deliver email 
+                AddPublicFolderClientPermission(runSpace, rootFolder, "Anonymous", "CreateItems");
             }
             finally
             {
                 CloseRunspace(runSpace);
             }
 
-            ExchangeLog.LogEnd("AddOrganizationRootPublicFolder");
+            ExchangeLog.LogEnd("CreateOrganizationRootPublicFolder");
 
             return res;
         }
@@ -4745,9 +4750,6 @@ namespace WebsitePanel.Providers.HostedSolution
                     ExchangeLog.LogWarning("Attemp {0} to update mail public folder {1}", attempts, folder);
                     System.Threading.Thread.Sleep(5000);
                 }
-
-                // exchange transport needs access to create new items in order to deliver email 
-                AddPublicFolderClientPermission(runSpace, folder, "Anonymous", "CreateItems");
 
             }
             finally
