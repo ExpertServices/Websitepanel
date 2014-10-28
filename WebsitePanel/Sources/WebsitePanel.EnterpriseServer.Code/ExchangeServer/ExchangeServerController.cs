@@ -586,6 +586,7 @@ namespace WebsitePanel.EnterpriseServer
                 List<ExchangeDomainName> acceptedDomains = GetOrganizationDomains(itemId);
 
                 int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
                 bool successful = exchange.DeleteOrganization(
@@ -598,6 +599,18 @@ namespace WebsitePanel.EnterpriseServer
                     org.SecurityGroup,
                     org.AddressBookPolicy,
                     acceptedDomains.ToArray());
+
+                // delete public folders
+                if (successful)
+                {
+                    List<ExchangeAccount> folders = GetAccounts(itemId, ExchangeAccountType.PublicFolder);
+                    folders.Sort(delegate(ExchangeAccount f1, ExchangeAccount f2) { return f2.AccountId.CompareTo(f1.AccountId);});
+
+                    foreach(ExchangeAccount folder in folders)
+                        DeletePublicFolder(itemId, folder.AccountId);
+
+                    exchange.DeletePublicFolder(org.OrganizationId, "\\" + org.OrganizationId);
+                }
 
 
                 return successful ? 0 : BusinessErrorCodes.ERROR_EXCHANGE_DELETE_SOME_PROBLEMS;
