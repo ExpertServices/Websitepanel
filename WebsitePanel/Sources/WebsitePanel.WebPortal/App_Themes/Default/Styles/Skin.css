@@ -140,7 +140,7 @@ table.BorderFillBox td .Brick {padding:0; line-height:normal; margin-bottom:9px;
 .CalendarWeekend {}
 .CalendarSelectedDate {color:#fff; font-weight:700; background:#ffd349 !important;}
 .MessageBox {padding:15px; margin:20px; color:#fff; font-size:14px; text-align:left; font-weight:600; line-height:16px;}
-.MessageBox.Green {}
+.MessageBox.Green {background: #008000}
 .MessageBox.Yellow {background:#f0ad4e;}
 .MessageBox.Red {background:#f25555;}
 input.Button1, input.Button2, input.Button3, input.SmallButton, input.LoginButton, input[type=submit] {font-family:'Segoe UI Light','Open Sans',Arial; color:#fff; border:1px solid #5e86aa; background:#6598c5; font-weight:300; text-align:center; vertical-align:middle; cursor:pointer; white-space:nowrap; padding:6px 12px; font-size:14px; line-height:1.428571429;}
