@@ -5300,6 +5300,8 @@ namespace WebsitePanel.Providers.HostedSolution
                     cmd.Parameters.Add("Identity", id);
                     cmd.Parameters.Add("DefaultPublicFolderMailbox", newValue);
 
+                    ExecuteShellCommand(runSpace, cmd);
+
                     res.Add(newValue);
                 }
 
