@@ -225,6 +225,16 @@ namespace WebsitePanel.Portal.ProviderControls
             FilteredAppIds = settings["GalleryAppsFilter"];
             radioFilterAppsList.SelectedIndex = Utils.ParseInt(settings["GalleryAppsFilterMode"], 0);
             chkGalleryAppsAlwaysIgnoreDependencies.Checked = Utils.ParseBool(settings["GalleryAppsAlwaysIgnoreDependencies"], false);
+
+            // If any of these exists, we assume we are running against the IIS80 provider
+		    if (settings["SSLCCSCommonPassword"] != null || settings["SSLCCSUNCPath"] != null || settings["SSLUseCCS"] != null || settings["SSLUseSNI"] != null)
+		    {
+		        IIS80SSLSettings.Visible = true;
+		        cbUseCCS.Checked = Utils.ParseBool(settings["SSLUseCCS"], false);
+                cbUseSNI.Checked = Utils.ParseBool(settings["SSLUseSNI"], false);
+		        txtCCSUNCPath.Text = settings["SSLCCSUNCPath"];
+                txtCCSCommonPassword.Text = settings["SSLCCSCommonPassword"];
+		    }
 		}
 
 		public void SaveSettings(StringDictionary settings)
@@ -314,6 +324,15 @@ namespace WebsitePanel.Portal.ProviderControls
             settings["GalleryAppsFilter"] = GetAppsCatalogFilter();
             settings["GalleryAppsFilterMode"] = radioFilterAppsList.SelectedIndex.ToString();
             settings["GalleryAppsAlwaysIgnoreDependencies"] = chkGalleryAppsAlwaysIgnoreDependencies.Checked.ToString();
+
+
+            if (IIS80SSLSettings.Visible)
+		    {
+		        settings["SSLUseCCS"] = cbUseCCS.Checked.ToString();
+		        settings["SSLUseSNI"] = cbUseSNI.Checked.ToString();
+		        settings["SSLCCSUNCPath"] = txtCCSUNCPath.Text;
+		        settings["SSLCCSCommonPassword"] = txtCCSCommonPassword.Text;
+		    }
 		}
 
         /*

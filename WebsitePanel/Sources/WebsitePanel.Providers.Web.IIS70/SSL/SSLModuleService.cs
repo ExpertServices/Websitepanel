@@ -40,7 +40,7 @@ using WebsitePanel.Providers.Web.Iis.WebObjects;
 
 namespace WebsitePanel.Providers.Web.Iis
 {
-	internal sealed class SSLModuleService : ConfigurationModuleService
+	public class SSLModuleService : ConfigurationModuleService
 	{
 		public void GenerateCsr(SSLCertificate cert)
 		{

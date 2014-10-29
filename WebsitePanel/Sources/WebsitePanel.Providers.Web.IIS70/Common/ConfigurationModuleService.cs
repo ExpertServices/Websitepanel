@@ -43,7 +43,7 @@ namespace WebsitePanel.Providers.Web.Iis.Common
 		/// We'll use it in the future to implement management of web farm with shared configuration enabled
 		/// </summary>
 		/// <returns></returns>
-		internal ServerManager GetServerManager()
+		protected internal ServerManager GetServerManager()
 		{
 			return new ServerManager();
 		}

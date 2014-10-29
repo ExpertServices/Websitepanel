@@ -499,6 +499,40 @@
                 </uc5:EditDomainsList>
             </td>
 	    </tr>
+        <tbody runat="server" ID="IIS80SSLSettings" Visible="False">
+        <tr>
+	        <td width="200" class="Normal" valign="top">
+	            <asp:Label ID="lblUseSNI" runat="server" Text="Use SNI (Server Name Indication):"></asp:Label>
+	        </td>
+            <td class="Normal" valign="top">
+                <asp:CheckBox ID="cbUseSNI" runat="server" />
+            </td>
+        </tr>
+        <tr>
+	        <td width="200" class="Normal" valign="top">
+	            <asp:Label ID="lblUseCCS" runat="server" Text="Use Centralized Certificate Store:"></asp:Label>
+	        </td>
+            <td class="Normal" valign="top">
+                <asp:CheckBox ID="cbUseCCS" runat="server" />
+            </td>
+        </tr>
+        <tr>
+	        <td width="200" class="Normal" valign="top">
+	            <asp:Label ID="lblCCSUNCPath" runat="server" Text="Centralized Certificate Store UNC path :"></asp:Label>
+	        </td>
+            <td class="Normal" valign="top">
+                <asp:TextBox ID="txtCCSUNCPath" runat="server" CssClass="NormalTextBox" Width="400px"></asp:TextBox>
+            </td>
+        </tr>
+        <tr>
+	        <td width="200" class="Normal" valign="top">
+	            <asp:Label ID="lblCCSUNCCommonPassword" runat="server" Text="Centralized Certificate Store common password (blank for none):"></asp:Label>
+	        </td>
+            <td class="Normal" valign="top">
+                <asp:TextBox ID="txtCCSCommonPassword" runat="server" CssClass="NormalTextBox" Width="400px"></asp:TextBox>
+            </td>
+        </tr>
+        </tbody>
 	    <tr>
 	        <td class="Normal" valign="top">
 	            <asp:Label ID="lblADIntegration" runat="server" meta:resourcekey="lblADIntegration" Text="Active Directory Integration:"></asp:Label>

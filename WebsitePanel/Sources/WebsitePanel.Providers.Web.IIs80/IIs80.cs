@@ -26,18 +26,84 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+using Microsoft.Web.Administration;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using WebsitePanel.Providers.Common;
+using WebsitePanel.Providers.Web.Iis;
 
 namespace WebsitePanel.Providers.Web
 {
-    public class IIs80 : IIs70, IWebServer
+    public class IIs80 : IIs70
     {
-        public IIs80() : base()
+        private SslFlags SSLFlags {
+            get
+            {
+                return (UseSni ? SslFlags.Sni : SslFlags.None) | (UseCcs ? SslFlags.CentralCertStore : SslFlags.None);
+            }
+        }
+
+        public string CCSUncPath {
+            get { return ProviderSettings["SSLCCSUNCPath"]; }
+        }
+
+        public string CCSCommonPassword {
+            get { return ProviderSettings["SSLCCSCommonPassword"]; }
+        }
+
+        public bool UseSni {
+            get
+            {
+                try
+                {
+                    return Convert.ToBoolean(ProviderSettings["SSLUseSNI"]);
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+
+        public bool UseCcs
         {
+            get
+            {
+                try
+                {
+                    return Convert.ToBoolean(ProviderSettings["SSLUseCCS"]);
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+
+        public override SettingPair[] GetProviderDefaultSettings()
+        {
+            var allSettings = new List<SettingPair>();
+            allSettings.AddRange(base.GetProviderDefaultSettings());
+
+            // Add these to get som default values in. These are also used a marker in the IIS70_Settings.ascx.cs to know that it is the IIS80 provider that is used
+            allSettings.Add(new SettingPair("SSLUseCCS", false.ToString()));
+            allSettings.Add(new SettingPair("SSLUseSNI", false.ToString()));
+            allSettings.Add(new SettingPair("SSLCCSUNCPath", ""));
+            allSettings.Add(new SettingPair("SSLCCSCommonPassword", ""));
+
+            return allSettings.ToArray();
+        }
+
+        public override string[] Install()
+        {
+            var messages = new List<string>();
+
+            messages.AddRange(base.Install());
+
+            // TODO: Setup ccs
+
+            return messages.ToArray();
         }
 
         public override bool IsIISInstalled()
@@ -57,6 +123,64 @@ namespace WebsitePanel.Providers.Web
         public override bool IsInstalled()
         {
             return IsIISInstalled();
+        }
+
+        public override bool CheckCertificate(WebSite webSite)
+        {
+            var sslObjectService = new SSLModuleService80(SSLFlags, CCSUncPath, CCSCommonPassword);
+
+            return sslObjectService.CheckCertificate(webSite);
+        }
+
+        public override ResultObject DeleteCertificate(SSLCertificate certificate, WebSite website)
+        {
+            var sslObjectService = new SSLModuleService80(SSLFlags, CCSUncPath, CCSCommonPassword);
+
+            return sslObjectService.DeleteCertificate(certificate, website);
+        }
+
+        public override SSLCertificate installPFX(byte[] certificate, string password, WebSite website)
+        {
+            var sslObjectService = new SSLModuleService80(SSLFlags, CCSUncPath, CCSCommonPassword);
+			
+			return sslObjectService.InstallPfx(certificate, password, website);
+        }
+
+        public override SSLCertificate ImportCertificate(WebSite website)
+        {
+            var sslObjectService = new SSLModuleService80(SSLFlags, CCSUncPath, CCSCommonPassword);
+            
+            return sslObjectService.ImportCertificate(website);
+        }
+
+        public override byte[] exportCertificate(string serialNumber, string password)
+        {
+            var sslObjectService = new SSLModuleService80(SSLFlags, CCSUncPath, CCSCommonPassword);
+			
+			return sslObjectService.ExportPfx(serialNumber, password);
+        }
+
+        public override SSLCertificate generateCSR(SSLCertificate certificate)
+        {
+            var sslObjectService = new SSLModuleService80(SSLFlags, CCSUncPath, CCSCommonPassword);
+			
+			sslObjectService.GenerateCsr(certificate);
+
+			return certificate;
+        }
+
+        public override List<SSLCertificate> getServerCertificates()
+        {
+			var sslObjectService = new SSLModuleService80(SSLFlags, CCSUncPath, CCSCommonPassword);
+			
+			return sslObjectService.GetServerCertificates();
+        }
+
+        public override SSLCertificate installCertificate(SSLCertificate certificate, WebSite website)
+        {
+            var sslObjectService = new SSLModuleService80(SSLFlags, CCSUncPath, CCSCommonPassword);
+			
+			return sslObjectService.InstallCertificate(certificate, website);
         }
     }
 }
