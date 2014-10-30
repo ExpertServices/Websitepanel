@@ -192,10 +192,10 @@ namespace WebsitePanel.EnterpriseServer
                 try
                 {
                     TaskManager.StartTask("ENTERPRISE_STORAGE", taskName, org.PackageId);
-                    
+
+                    EnterpriseStorageController.SetFRSMQuotaOnFolder(itemId, folder.Name, quota, quotaType);
                     EnterpriseStorageController.SetDirectoryBrowseEnabled(itemId, folder.Url, directoyBrowsingEnabled);
                     EnterpriseStorageController.SetFolderPermission(itemId, folder.Name, permissions);
-                    EnterpriseStorageController.SetFRSMQuotaOnFolder(itemId, folder.Name, quota, quotaType);
                 }
                 catch (Exception ex)
                 {
