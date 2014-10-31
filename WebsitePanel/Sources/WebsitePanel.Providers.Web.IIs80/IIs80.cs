@@ -182,5 +182,12 @@ namespace WebsitePanel.Providers.Web
 			
 			return sslObjectService.InstallCertificate(certificate, website);
         }
+
+        public override WebSite GetSite(string siteId)
+        {
+            var site = base.GetSite(siteId);
+            site.SniEnabled = UseSni;
+            return site;
+        }
     }
 }

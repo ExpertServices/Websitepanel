@@ -1240,6 +1240,7 @@ namespace WebsitePanel.Providers.Web
                 //
                 site.SiteState = GetSiteState(srvman, siteId);
                 //
+                site.SniEnabled = false;
             }
 			return site;
 		}

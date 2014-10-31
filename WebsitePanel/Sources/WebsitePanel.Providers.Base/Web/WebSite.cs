@@ -63,6 +63,7 @@ namespace WebsitePanel.Providers.Web
         private bool heliconApeInstalled;
 	    private bool heliconApeEnabled;
         private HeliconApeStatus heliconApeStatus;
+        private bool sniEnabled;
 
 		public WebSite()
 		{
@@ -187,6 +188,12 @@ namespace WebsitePanel.Providers.Web
             get { return this.heliconApeStatus; }
             set { this.heliconApeStatus = value; }
         }
+
+	    public bool SniEnabled
+	    {
+            get { return this.sniEnabled; }
+            set { this.sniEnabled = value; }
+	    }
 	}
 
 	[Flags]

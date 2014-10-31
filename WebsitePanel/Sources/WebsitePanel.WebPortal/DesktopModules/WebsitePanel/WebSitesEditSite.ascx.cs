@@ -278,15 +278,7 @@ namespace WebsitePanel.Portal
             webSitesHeliconZooControl.BindWebItem(site);
 
             // If SNI is enabled on the server, we do allow for SSL even if site not has dedicated Ip
-            var sniEnabled = false;
-            var serverSettings = ES.Services.Servers.GetServiceSettings(site.ServiceId);
-		    var sniEnabledItem = serverSettings.FirstOrDefault(s => s.StartsWith("sslusesni"));
-		    if (sniEnabledItem != null)
-		    {
-		        sniEnabled = Utils.ParseBool(sniEnabledItem.Split('=')[1], false);
-		    }
-
-            if (site.IsDedicatedIP || sniEnabled)
+            if (site.IsDedicatedIP || site.SniEnabled)
             {
                 AllowSsl = true;
                 WebsitesSSLControl.Visible = true;
