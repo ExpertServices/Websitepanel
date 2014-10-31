@@ -102,13 +102,19 @@ namespace WebsitePanel.Portal
             // php
             if (PackagesHelper.CheckGroupQuotaEnabled(packageId, ResourceGroups.Web, Quotas.WEB_PHP4))
                 ddlPhp.Items.Add("4");
+
+            var allowSingleValueInPhpDropDown = false;
+
             if (PackagesHelper.CheckGroupQuotaEnabled(packageId, ResourceGroups.Web, Quotas.WEB_PHP5))
             {
                 if (!string.IsNullOrEmpty(item.Php5VersionsInstalled))
                 {
-                    // Add items from list
+                    // Remove empty item. Not allows for PHP5 FastCGI. There is no way to disable a handler without removing it or removing some vital info. If we do that, the user can not choose to run PHP5 FastCGI later
                     ddlPhp.Items.Remove(ddlPhp.Items.FindByValue(""));
+                    // Add items from list
                     ddlPhp.Items.AddRange(item.Php5VersionsInstalled.Split('|').Select(v => new ListItem(v.Split(';')[1], "5|" + v.Split(';')[0])).OrderBy(i => i.Text).ToArray());
+
+                    allowSingleValueInPhpDropDown = true;
                 }
                 else
                 {
@@ -116,7 +122,7 @@ namespace WebsitePanel.Portal
                 }
             }
             Utils.SelectListItem(ddlPhp, item.PhpInstalled);
-            rowPhp.Visible = ddlPhp.Items.Count > 1;
+            rowPhp.Visible = ddlPhp.Items.Count > 1 || allowSingleValueInPhpDropDown && ddlPhp.Items.Count > 0;
 
             rowPerl.Visible = PackagesHelper.CheckGroupQuotaEnabled(packageId, ResourceGroups.Web, Quotas.WEB_PERL);
             rowCgiBin.Visible = PackagesHelper.CheckGroupQuotaEnabled(packageId, ResourceGroups.Web, Quotas.WEB_CGIBIN);
