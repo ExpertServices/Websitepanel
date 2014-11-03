@@ -29,6 +29,7 @@
 using System;
 using System.Diagnostics;
 
+
 namespace WebsitePanel.Server.Utils
 {
     /// <summary>
@@ -151,5 +152,7 @@ namespace WebsitePanel.Server.Utils
             //
             return String.Concat(String.Format("[{0:G}] {1}: ", DateTime.Now, tag), message);
         }
+
+
     }
 }

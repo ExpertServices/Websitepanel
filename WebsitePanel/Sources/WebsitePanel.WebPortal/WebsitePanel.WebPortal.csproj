@@ -193,6 +193,24 @@
     <Content Include="App_Themes\Default\Styles\images\ui-icons_ffffff_256x240.png" />
     <Content Include="App_Themes\Default\Styles\jquery-ui-1.8.9.css" />
     <Content Include="App_Themes\Default\Styles\jquery.window.css" />
+    <Content Include="bin\AjaxControlToolkit.dll" />
+    <Content Include="bin\AntiXssLibrary.dll" />
+    <Content Include="bin\Microsoft.ReportViewer.Common.dll" />
+    <Content Include="bin\Microsoft.ReportViewer.ProcessingObjectModel.dll" />
+    <Content Include="bin\Microsoft.ReportViewer.WebForms.dll" />
+    <Content Include="bin\Microsoft.Web.Services3.dll" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.Base.dll" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.Base.pdb" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.Client.dll" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.Client.pdb" />
+    <Content Include="bin\WebsitePanel.Portal.Ecommerce.Modules.dll" />
+    <Content Include="bin\WebsitePanel.Portal.Ecommerce.Modules.pdb" />
+    <Content Include="bin\WebsitePanel.Portal.Modules.dll" />
+    <Content Include="bin\WebsitePanel.Portal.Modules.pdb" />
+    <Content Include="bin\WebsitePanel.Providers.Base.dll" />
+    <Content Include="bin\WebsitePanel.Providers.Base.pdb" />
+    <Content Include="bin\WebsitePanel.WebPortal.dll" />
+    <Content Include="bin\WebsitePanel.WebPortal.pdb" />
     <Content Include="Error.htm" />
     <Content Include="JavaScript\jquery-1.4.4.min.js" />
     <Content Include="JavaScript\jquery-ui-1.8.9.min.js" />
@@ -292,6 +310,10 @@
     <Content Include="App_Themes\Default\Common.skin" />
     <Content Include="App_Themes\Default\DataBoundControls.skin" />
     <Content Include="App_Themes\Default\Icons.skin" />
+    <Content Include="bin\WebsitePanel.Portal.Ecommerce.Modules.dll.config" />
+    <Content Include="bin\WebsitePanel.Portal.Modules.dll.config" />
+    <Content Include="bin\WebsitePanel.WebPortal.dll.config" />
+    <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Containers\Default\TopPane.ascx" />
