@@ -125,6 +125,8 @@ namespace WebsitePanel.EnterpriseServer {
         
         private System.Threading.SendOrPostCallback DeletePublicFolderEmailAddressesOperationCompleted;
         
+        private System.Threading.SendOrPostCallback SetDefaultPublicFolderMailboxOperationCompleted;
+        
         private System.Threading.SendOrPostCallback AddExchangeDisclaimerOperationCompleted;
         
         private System.Threading.SendOrPostCallback UpdateExchangeDisclaimerOperationCompleted;
@@ -361,6 +363,9 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         public event DeletePublicFolderEmailAddressesCompletedEventHandler DeletePublicFolderEmailAddressesCompleted;
+        
+        /// <remarks/>
+        public event SetDefaultPublicFolderMailboxCompletedEventHandler SetDefaultPublicFolderMailboxCompleted;
         
         /// <remarks/>
         public event AddExchangeDisclaimerCompletedEventHandler AddExchangeDisclaimerCompleted;
@@ -1930,6 +1935,47 @@ namespace WebsitePanel.EnterpriseServer {
             if ((this.DeletePublicFolderEmailAddressesCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.DeletePublicFolderEmailAddressesCompleted(this, new DeletePublicFolderEmailAddressesCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/SetDefaultPublicFolderMailbox", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string SetDefaultPublicFolderMailbox(int itemId) {
+            object[] results = this.Invoke("SetDefaultPublicFolderMailbox", new object[] {
+                        itemId});
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginSetDefaultPublicFolderMailbox(int itemId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("SetDefaultPublicFolderMailbox", new object[] {
+                        itemId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public string EndSetDefaultPublicFolderMailbox(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void SetDefaultPublicFolderMailboxAsync(int itemId) {
+            this.SetDefaultPublicFolderMailboxAsync(itemId, null);
+        }
+        
+        /// <remarks/>
+        public void SetDefaultPublicFolderMailboxAsync(int itemId, object userState) {
+            if ((this.SetDefaultPublicFolderMailboxOperationCompleted == null)) {
+                this.SetDefaultPublicFolderMailboxOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetDefaultPublicFolderMailboxOperationCompleted);
+            }
+            this.InvokeAsync("SetDefaultPublicFolderMailbox", new object[] {
+                        itemId}, this.SetDefaultPublicFolderMailboxOperationCompleted, userState);
+        }
+        
+        private void OnSetDefaultPublicFolderMailboxOperationCompleted(object arg) {
+            if ((this.SetDefaultPublicFolderMailboxCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SetDefaultPublicFolderMailboxCompleted(this, new SetDefaultPublicFolderMailboxCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -6305,6 +6351,32 @@ namespace WebsitePanel.EnterpriseServer {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((int)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void SetDefaultPublicFolderMailboxCompletedEventHandler(object sender, SetDefaultPublicFolderMailboxCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SetDefaultPublicFolderMailboxCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SetDefaultPublicFolderMailboxCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
             }
         }
     }
