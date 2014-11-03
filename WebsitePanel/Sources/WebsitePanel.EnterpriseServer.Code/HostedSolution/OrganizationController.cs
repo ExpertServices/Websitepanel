@@ -1657,6 +1657,11 @@ namespace WebsitePanel.EnterpriseServer
 
             int maxLen = 19 - orgId.Length;
 
+            if (!string.IsNullOrEmpty(orgId))
+            {
+                orgId = orgId.TrimEnd(' ', '.');
+            }
+
             // try to choose name
             int i = 0;
 
