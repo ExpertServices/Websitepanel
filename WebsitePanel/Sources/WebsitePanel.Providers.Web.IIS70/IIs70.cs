@@ -892,7 +892,7 @@ namespace WebsitePanel.Providers.Web
 		                if (handlerName != GetActivePhpHandlerName(virtualDir))
 		                {
 		                    // Only change handler if it is different from the current one
-                            handlersSvc.CopyInheritedHandlers(((WebSite)virtualDir).SiteId, virtualDir.VirtualPath);
+                            handlersSvc.CopyInheritedHandlers(GetSiteIdFromVirtualDir(virtualDir), virtualDir.VirtualPath);
 		                    MakeHandlerActive(handlerName, virtualDir);
 		                }
 		            }
@@ -4484,7 +4484,7 @@ namespace WebsitePanel.Providers.Web
 
 	    protected PhpVersion[] GetPhpVersions(ServerManager srvman, WebVirtualDirectory virtualDir)
 	    {
-	        var config = srvman.GetWebConfiguration(((WebSite)virtualDir).SiteId, virtualDir.VirtualPath);
+	        var config = srvman.GetWebConfiguration(GetSiteIdFromVirtualDir(virtualDir), virtualDir.VirtualPath);
 	        //var config = srvman.GetApplicationHostConfiguration();
 	        var handlersSection = config.GetSection(Constants.HandlersSection);
 
@@ -4526,7 +4526,7 @@ namespace WebsitePanel.Providers.Web
 
 	    protected string GetActivePhpHandlerName(ServerManager srvman, WebVirtualDirectory virtualDir)
 	    {
-	        var config = srvman.GetWebConfiguration(((WebSite)virtualDir).SiteId, virtualDir.VirtualPath);
+	        var config = srvman.GetWebConfiguration(GetSiteIdFromVirtualDir(virtualDir), virtualDir.VirtualPath);
 	        var handlersSection = config.GetSection(Constants.HandlersSection);
 
 	        // Find first handler for *.php
@@ -4545,7 +4545,7 @@ namespace WebsitePanel.Providers.Web
 	    {
 	        using (var srvman = webObjectsSvc.GetServerManager())
 	        {
-				var config = srvman.GetWebConfiguration(((WebSite)virtualDir).SiteId, virtualDir.VirtualPath);
+				var config = srvman.GetWebConfiguration(GetSiteIdFromVirtualDir(virtualDir), virtualDir.VirtualPath);
 
                 var handlersSection = (HandlersSection)config.GetSection(Constants.HandlersSection, typeof(HandlersSection));
 
@@ -4564,6 +4564,11 @@ namespace WebsitePanel.Providers.Web
 	        }
 	    }
 
-        #endregion
+	    protected string GetSiteIdFromVirtualDir(WebVirtualDirectory virtualDir)
+	    {
+	        return string.IsNullOrEmpty(virtualDir.ParentSiteName) ? ((WebSite) virtualDir).SiteId : virtualDir.ParentSiteName;
+	    }
+
+	    #endregion
     }
 }
