@@ -3193,6 +3193,15 @@ namespace WebsitePanel.Providers.HostedSolution
         #endregion
 
         #region Contacts
+
+        private bool CheckEmailExist(Runspace runSpace, string email)
+        {
+            Command cmd = new Command("Get-Recipient");
+            cmd.Parameters.Add("Identity", email);
+            Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+            return result.Count > 0;
+        }
+
         private void CreateContactInternal(
             string organizationId,
             string organizationDistinguishedName,
@@ -3214,9 +3223,29 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 runSpace = OpenRunspace();
 
+                // 
+                string tempEmailUser = Guid.NewGuid().ToString("N");
+                string[] parts = contactEmail.Split('@');
+                if (parts.Length==2)
+                {
+                    if (CheckEmailExist(runSpace, parts[0] + "@" + defaultOrganizationDomain))
+                    {
+                        for(int num=1;num<100;num++)
+                        {
+                            string testEmailUser = parts[0] + num.ToString();
+                            if (!CheckEmailExist(runSpace, testEmailUser + "@" + defaultOrganizationDomain))
+                            {
+                                tempEmailUser = testEmailUser;
+                                break;
+                            }
+                        }
+                    }
+                    else                        
+                        tempEmailUser = parts[0];
+                }
 
                 string ouName = ConvertADPathToCanonicalName(organizationDistinguishedName);
-                string tempEmail = string.Format("{0}@{1}", Guid.NewGuid().ToString("N"), defaultOrganizationDomain);
+                string tempEmail = string.Format("{0}@{1}", tempEmailUser, defaultOrganizationDomain);
                 //create contact
                 Command cmd = new Command("New-MailContact");
                 cmd.Parameters.Add("Name", contactAccountName);
@@ -4575,7 +4604,6 @@ namespace WebsitePanel.Providers.HostedSolution
             }
             finally
             {
-
                 CloseRunspace(runSpace);
             }
             ExchangeLog.LogEnd("DeletePublicFolderInternal");
