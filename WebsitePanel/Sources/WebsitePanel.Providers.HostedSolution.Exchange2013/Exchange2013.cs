@@ -1004,7 +1004,10 @@ namespace WebsitePanel.Providers.HostedSolution
 
 
 
-                if (!DeleteOrganizationMailboxes(runSpace, ou))
+                if (!DeleteOrganizationMailboxes(runSpace, ou, false))
+                    ret = false;
+
+                if (!DeleteOrganizationMailboxes(runSpace, ou, true))
                     ret = false;
 
                 if (!DeleteOrganizationContacts(runSpace, ou))
@@ -1159,13 +1162,15 @@ namespace WebsitePanel.Providers.HostedSolution
             return ret;
         }
 
-        internal bool DeleteOrganizationMailboxes(Runspace runSpace, string ou)
+        internal bool DeleteOrganizationMailboxes(Runspace runSpace, string ou, bool publicFolder)
         {
             ExchangeLog.LogStart("DeleteOrganizationMailboxes");
             bool ret = true;
 
             Command cmd = new Command("Get-Mailbox");
             cmd.Parameters.Add("OrganizationalUnit", ou);
+            if (publicFolder) cmd.Parameters.Add("PublicFolder");
+
             Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
             if (result != null && result.Count > 0)
             {
@@ -1177,7 +1182,7 @@ namespace WebsitePanel.Providers.HostedSolution
                         id = ObjToString(GetPSObjectProperty(obj, "Identity"));
                         RemoveDevicesInternal(runSpace, id);
 
-                        RemoveMailbox(runSpace, id, false);
+                        RemoveMailbox(runSpace, id, publicFolder);
                     }
                     catch (Exception ex)
                     {
