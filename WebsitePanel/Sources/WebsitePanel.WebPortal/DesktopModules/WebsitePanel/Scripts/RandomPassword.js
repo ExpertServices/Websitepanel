@@ -111,7 +111,13 @@ function nchar(num) {
 	    }   
 	    var pass = "";
 	    var pas_chars = [];
-		var _Lower = _maxLength - _Upper - _Number - _Special;
+	    var _Lower = _maxLength - _Upper - _Number - _Special;
+	    while (_Lower > 26) {
+	        _Upper++;
+	        _Number++;
+	        _Special++;
+	        _Lower = _maxLength - _Upper - _Number - _Special;
+	    }
 		getRandomChars([0, 22], _Special, pas_chars);
 		getRandomChars([23, 32], _Number, pas_chars);
 		getRandomChars([33, 58], _Upper, pas_chars);
@@ -120,6 +126,6 @@ function nchar(num) {
 		pass = mixCharArray(pas_chars);
 		
 		document.getElementById(txt1).value = pass;
-        document.getElementById(txt2).value = pass;
-    }	
+		document.getElementById(txt2).value = pass;
+	}	
 	
