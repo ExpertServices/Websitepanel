@@ -163,7 +163,9 @@ h2.ProductTitle.Huge {margin:0;}
 .NormalGreen {color:#87c442;}
 .NormalRed {color:#f25555;}
 .FormBody {margin:10px 0;}
-
+.FormContentRDS {border: 2px solid #eee;padding: 10px;margin: 10px;}
+.FormFooterRDSConf {border-color: #eee;border-style: none solid solid;border-width: 2px;padding: 20px 15px 15px 10px;width: 97%;}
+.FormContentRDSConf {border-color: #eee;border-style: solid;border-width: 2px;padding: 30px 15px 15px 10px;width: 97%;}
 
 /* not modified */
 /*

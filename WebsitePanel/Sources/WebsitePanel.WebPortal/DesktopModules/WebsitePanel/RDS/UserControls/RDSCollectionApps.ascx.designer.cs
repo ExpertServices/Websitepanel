@@ -7,153 +7,117 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WebsitePanel.Portal.ProviderControls {
+namespace WebsitePanel.Portal.RDS.UserControls {
     
     
-    public partial class RDS_Settings {
+    public partial class RDSCollectionApps {
         
         /// <summary>
-        /// lblConnectionBroker control.
+        /// RDAppsUpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblConnectionBroker;
+        protected global::System.Web.UI.UpdatePanel RDAppsUpdatePanel;
         
         /// <summary>
-        /// txtConnectionBroker control.
+        /// btnAdd control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtConnectionBroker;
+        protected global::System.Web.UI.WebControls.Button btnAdd;
         
         /// <summary>
-        /// RequiredFieldValidator2 control.
+        /// btnDelete control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidator2;
+        protected global::System.Web.UI.WebControls.Button btnDelete;
         
         /// <summary>
-        /// lblGateway control.
+        /// gvApps control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblGateway;
+        protected global::System.Web.UI.WebControls.GridView gvApps;
         
         /// <summary>
-        /// txtGateway control.
+        /// AddAppsPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtGateway;
+        protected global::System.Web.UI.WebControls.Panel AddAppsPanel;
         
         /// <summary>
-        /// RequiredFieldValidator3 control.
+        /// headerAddApps control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidator3;
+        protected global::System.Web.UI.WebControls.Localize headerAddApps;
         
         /// <summary>
-        /// lblRootOU control.
+        /// AddAppsUpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblRootOU;
+        protected global::System.Web.UI.UpdatePanel AddAppsUpdatePanel;
         
         /// <summary>
-        /// txtRootOU control.
+        /// gvPopupApps control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtRootOU;
+        protected global::System.Web.UI.WebControls.GridView gvPopupApps;
         
         /// <summary>
-        /// RequiredFieldValidator4 control.
+        /// btnAddSelected control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidator4;
+        protected global::System.Web.UI.WebControls.Button btnAddSelected;
         
         /// <summary>
-        /// lblPrimaryDomainController control.
+        /// btnCancelAdd control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblPrimaryDomainController;
+        protected global::System.Web.UI.WebControls.Button btnCancelAdd;
         
         /// <summary>
-        /// txtPrimaryDomainController control.
+        /// btnAddAppsFake control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtPrimaryDomainController;
+        protected global::System.Web.UI.WebControls.Button btnAddAppsFake;
         
         /// <summary>
-        /// RequiredFieldValidator5 control.
+        /// AddAppsModal control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidator5;
-        
-        /// <summary>
-        /// lblUseCentralNPS control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblUseCentralNPS;
-        
-        /// <summary>
-        /// chkUseCentralNPS control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkUseCentralNPS;
-        
-        /// <summary>
-        /// lblCentralNPS control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblCentralNPS;
-        
-        /// <summary>
-        /// txtCentralNPS control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtCentralNPS;
+        protected global::AjaxControlToolkit.ModalPopupExtender AddAppsModal;
     }
 }

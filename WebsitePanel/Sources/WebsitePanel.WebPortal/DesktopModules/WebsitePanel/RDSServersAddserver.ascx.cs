@@ -27,54 +27,57 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.Common;
+using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.Providers.OS;
 
-namespace WebsitePanel.Portal.ProviderControls
+using WebsitePanel.EnterpriseServer;
+using WebsitePanel.Providers.RemoteDesktopServices;
+
+namespace WebsitePanel.Portal
 {
-    public partial class RDS_Settings : WebsitePanelControlBase, IHostingServiceProviderSettings
+    public partial class RDSServersAddserver : WebsitePanelModuleBase
     {
+        
         protected void Page_Load(object sender, EventArgs e)
         {
-
-        }
-
-        public void BindSettings(System.Collections.Specialized.StringDictionary settings)
-        {
-            txtConnectionBroker.Text = settings["ConnectionBroker"];
-            txtGateway.Text = settings["GWServrsList"];
-            txtRootOU.Text = settings["RootOU"];
-            txtPrimaryDomainController.Text = settings["PrimaryDomainController"];
-
-            if (!string.IsNullOrEmpty(settings["UseCentralNPS"]) && bool.TrueString == settings["UseCentralNPS"])
+            if (!IsPostBack)
             {
-                chkUseCentralNPS.Checked = true;
-                txtCentralNPS.Enabled = true;
-                txtCentralNPS.Text = settings["CentralNPS"];
-            }
-            else
-            {
-                chkUseCentralNPS.Checked = false;
-                txtCentralNPS.Enabled = false;
-                txtCentralNPS.Text = string.Empty;
             }
         }
 
-        public void SaveSettings(System.Collections.Specialized.StringDictionary settings)
+        protected void btnAdd_Click(object sender, EventArgs e)
         {
-            settings["ConnectionBroker"] = txtConnectionBroker.Text;
-            settings["GWServrsList"] = txtGateway.Text;
-            settings["RootOU"] = txtRootOU.Text;
-            settings["PrimaryDomainController"] = txtPrimaryDomainController.Text;
-            settings["UseCentralNPS"] = chkUseCentralNPS.Checked.ToString();
-            settings["CentralNPS"] = chkUseCentralNPS.Checked ? txtCentralNPS.Text : string.Empty;
+            if (!Page.IsValid)
+                return;
+            try
+            {
+                RdsServer rdsServer = new RdsServer();
+
+                rdsServer.FqdName = txtServerName.Text;
+                rdsServer.Description = txtServerComments.Text;
+
+                ResultObject result = ES.Services.RDS.AddRdsServer(rdsServer);
+
+                if (!result.IsSuccess && result.ErrorCodes.Count > 0)
+                {
+                    messageBox.ShowMessage(result, "", "");
+                    return;
+                }
+
+                RedirectToBrowsePage();
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage("", ex);
+            }
         }
 
-        protected void chkUseCentralNPS_CheckedChanged(object sender, EventArgs e)
+        protected void btnCancel_Click(object sender, EventArgs e)
         {
-            txtCentralNPS.Enabled = chkUseCentralNPS.Checked;
-            txtCentralNPS.Text = chkUseCentralNPS.Checked ? txtCentralNPS.Text : string.Empty;
+            RedirectToBrowsePage();
         }
-     
     }
 }

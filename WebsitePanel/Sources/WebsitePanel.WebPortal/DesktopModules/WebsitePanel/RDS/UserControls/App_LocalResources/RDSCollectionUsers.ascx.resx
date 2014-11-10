@@ -117,127 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="locMenuTitle.Text" xml:space="preserve">
-    <value>Organization Menu</value>
+  <data name="btnAdd.Text" xml:space="preserve">
+    <value>Add...</value>
   </data>
-  <data name="Text.ActiveSyncPolicy" xml:space="preserve">
-    <value>ActiveSync Policy</value>
+  <data name="btnAddSelected.Text" xml:space="preserve">
+    <value>Add Accounts</value>
   </data>
-  <data name="Text.BlackBerryGroup" xml:space="preserve">
-    <value>BlackBerry</value>
+  <data name="btnCancel.Text" xml:space="preserve">
+    <value>Cancel</value>
   </data>
-  <data name="Text.BlackBerryUsers" xml:space="preserve">
-    <value>BlackBerry Users</value>
+  <data name="btnDelete.Text" xml:space="preserve">
+    <value>Delete</value>
   </data>
-  <data name="Text.Contacts" xml:space="preserve">
-    <value>Contacts</value>
+  <data name="ddlSearchColumnDisplayName.Text" xml:space="preserve">
+    <value>Display Name</value>
   </data>
-  <data name="Text.CRMGroup" xml:space="preserve">
-    <value>CRM</value>
+  <data name="ddlSearchColumnEmail.Text" xml:space="preserve">
+    <value>E-mail Address</value>
   </data>
-  <data name="Text.CRMOrganization" xml:space="preserve">
-    <value>CRM Organization</value>
+  <data name="gvAccountsDisplayName.HeaderText" xml:space="preserve">
+    <value>Display Name</value>
   </data>
-  <data name="Text.CRMUsers" xml:space="preserve">
-    <value>CRM Users</value>
+  <data name="gvAccountsEmail.HeaderText" xml:space="preserve">
+    <value>Email</value>
   </data>
-  <data name="Text.Disclaimers" xml:space="preserve">
-    <value>Disclaimers</value>
+  <data name="gvPopupAccounts.EmptyDataText" xml:space="preserve">
+    <value>No accounts found.</value>
   </data>
-  <data name="Text.DistributionLists" xml:space="preserve">
-    <value>Distribution Lists</value>
+  <data name="gvUsers.EmptyDataText" xml:space="preserve">
+    <value>The list of users is empty. Click "Add..." button.</value>
   </data>
-  <data name="Text.DomainNames" xml:space="preserve">
-    <value>Domains</value>
-  </data>
-  <data name="Text.EnterpriseStorageFolders" xml:space="preserve">
-    <value>Folders</value>
-  </data>
-  <data name="Text.EnterpriseStorageGroup" xml:space="preserve">
-    <value>Enterprise Storage</value>
-  </data>
-  <data name="Text.ExchangeDomainNames" xml:space="preserve">
-    <value>Accepted Domains</value>
-  </data>
-  <data name="Text.ExchangeGroup" xml:space="preserve">
-    <value>Exchange</value>
-  </data>
-  <data name="Text.LyncFederationDomains" xml:space="preserve">
-    <value>Lync Federation Domains</value>
-  </data>
-  <data name="Text.LyncGroup" xml:space="preserve">
-    <value>Lync</value>
-  </data>
-  <data name="Text.LyncPhoneNumbers" xml:space="preserve">
-    <value>Phone Numbers</value>
-  </data>
-  <data name="Text.LyncUserPlans" xml:space="preserve">
-    <value>Lync User Plans</value>
-  </data>
-  <data name="Text.LyncUsers" xml:space="preserve">
-    <value>Lync Users</value>
-  </data>
-  <data name="Text.Mailboxes" xml:space="preserve">
-    <value>Mailboxes</value>
-  </data>
-  <data name="Text.MailboxPlans" xml:space="preserve">
-    <value>Mailbox Plans</value>
-  </data>
-  <data name="Text.OCSGroup" xml:space="preserve">
-    <value>OCS</value>
-  </data>
-  <data name="Text.OCSUsers" xml:space="preserve">
-    <value>OCS Users</value>
-  </data>
-  <data name="Text.OrganizationGroup" xml:space="preserve">
-    <value>Organization</value>
-  </data>
-  <data name="Text.PublicFolders" xml:space="preserve">
-    <value>Public Folders</value>
-  </data>
-  <data name="Text.SecurityGroups" xml:space="preserve">
-    <value>Groups</value>
-  </data>
-  <data name="Text.Setup" xml:space="preserve">
-    <value>Setup</value>
-  </data>
-  <data name="Text.SharePointGroup" xml:space="preserve">
-    <value>SharePoint</value>
-  </data>
-  <data name="Text.SiteCollections" xml:space="preserve">
-    <value>Site Collections</value>
-  </data>
-  <data name="Text.StorageLimits" xml:space="preserve">
-    <value>Storage Settings</value>
-  </data>
-  <data name="Text.StorageUsage" xml:space="preserve">
-    <value>Storage Usage</value>
-  </data>
-  <data name="Text.Users" xml:space="preserve">
+  <data name="gvUsersAccount.HeaderText" xml:space="preserve">
     <value>Users</value>
   </data>
-  <data name="Text.OrganizationHome" xml:space="preserve">
-    <value>Organization Home</value>
-  </data>
-  <data name="Text.CRM2013Group" xml:space="preserve">
-    <value>CRM 2013</value>
-  </data>
-  <data name="Text.RetentionPolicy" xml:space="preserve">
-    <value>Retention Policy</value>
-  </data>
-  <data name="Text.RetentionPolicyTag" xml:space="preserve">
-    <value>Retention Policy Tag</value>
-  </data>
-  <data name="Text.EnterpriseStorageDriveMaps" xml:space="preserve">
-    <value>Drive Maps</value>
-  </data>
-  <data name="Text.RDSCollections" xml:space="preserve">
-    <value>RDS Collections</value>
-  </data>
-  <data name="Text.RDSGroup" xml:space="preserve">
-    <value>RDS</value>
-  </data>
-  <data name="Text.RDSServers" xml:space="preserve">
-    <value>RDS Servers</value>
+  <data name="headerAddAccounts.Text" xml:space="preserve">
+    <value>Enabled Users</value>
   </data>
 </root>

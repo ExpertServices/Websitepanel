@@ -252,4 +252,13 @@
   <data name="Text.CreateOrganization" xml:space="preserve">
     <value>Create Organization</value>
   </data>
+  <data name="Text.RDSCollections" xml:space="preserve">
+    <value>RDS Collections</value>
+  </data>
+  <data name="Text.RDSGroup" xml:space="preserve">
+    <value>Hosted Organization - Remote Desktop Services</value>
+  </data>
+  <data name="Text.RDSServers" xml:space="preserve">
+    <value>RDS Servers</value>
+  </data>
 </root>

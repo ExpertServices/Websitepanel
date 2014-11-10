@@ -27,54 +27,43 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.Common;
+using WebsitePanel.Providers.HostedSolution;
+using WebsitePanel.Providers.OS;
+using WebsitePanel.Providers.RemoteDesktopServices;
 
-namespace WebsitePanel.Portal.ProviderControls
+namespace WebsitePanel.Portal.RDS
 {
-    public partial class RDS_Settings : WebsitePanelControlBase, IHostingServiceProviderSettings
+    public partial class RDSEditCollectionApps : WebsitePanelModuleBase
     {
+        
         protected void Page_Load(object sender, EventArgs e)
         {
-
-        }
-
-        public void BindSettings(System.Collections.Specialized.StringDictionary settings)
-        {
-            txtConnectionBroker.Text = settings["ConnectionBroker"];
-            txtGateway.Text = settings["GWServrsList"];
-            txtRootOU.Text = settings["RootOU"];
-            txtPrimaryDomainController.Text = settings["PrimaryDomainController"];
-
-            if (!string.IsNullOrEmpty(settings["UseCentralNPS"]) && bool.TrueString == settings["UseCentralNPS"])
+            if (!IsPostBack)
             {
-                chkUseCentralNPS.Checked = true;
-                txtCentralNPS.Enabled = true;
-                txtCentralNPS.Text = settings["CentralNPS"];
-            }
-            else
-            {
-                chkUseCentralNPS.Checked = false;
-                txtCentralNPS.Enabled = false;
-                txtCentralNPS.Text = string.Empty;
+                RdsCollection collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
+                var collectionApps = ES.Services.RDS.GetCollectionRemoteApplications(PanelRequest.ItemID, collection.Name);
+
+                locCName.Text = collection.Name;
+
+                remoreApps.SetApps(collectionApps);
             }
         }
 
-        public void SaveSettings(System.Collections.Specialized.StringDictionary settings)
+        protected void btnSave_Click(object sender, EventArgs e)
         {
-            settings["ConnectionBroker"] = txtConnectionBroker.Text;
-            settings["GWServrsList"] = txtGateway.Text;
-            settings["RootOU"] = txtRootOU.Text;
-            settings["PrimaryDomainController"] = txtPrimaryDomainController.Text;
-            settings["UseCentralNPS"] = chkUseCentralNPS.Checked.ToString();
-            settings["CentralNPS"] = chkUseCentralNPS.Checked ? txtCentralNPS.Text : string.Empty;
-        }
+            if (!Page.IsValid)
+                return;
+            try
+            {
+                ES.Services.RDS.SetRemoteApplicationsToRdsCollection(PanelRequest.ItemID, PanelRequest.CollectionID, remoreApps.GetApps());
 
-        protected void chkUseCentralNPS_CheckedChanged(object sender, EventArgs e)
-        {
-            txtCentralNPS.Enabled = chkUseCentralNPS.Checked;
-            txtCentralNPS.Text = chkUseCentralNPS.Checked ? txtCentralNPS.Text : string.Empty;
+                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections",
+                    "SpaceID=" + PanelSecurity.PackageId));
+            }
+            catch (Exception ex) { }
         }
-     
     }
 }

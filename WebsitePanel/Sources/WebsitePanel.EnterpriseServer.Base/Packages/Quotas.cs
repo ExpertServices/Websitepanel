@@ -256,5 +256,8 @@ order by rg.groupOrder
         public const string ENTERPRICESTORAGE_DRIVEMAPS = "EnterpriseStorage.DriveMaps";
 
         public const string SERVICE_LEVELS = "ServiceLevel.";
+
+        public const string RDS_USERS = "RDS.Users";
+        public const string RDS_SERVERS = "RDS.Servers";
     }
 }
