@@ -6070,3 +6070,15 @@ SELECT
   WHERE [RDSCollectionId] in (SELECT [ID] FROM [RDSCollections] where [ItemId]  = @ItemId )
 RETURN
 GO
+
+
+-- wsp-10269: Changed php extension path in default properties for IIS70 and IIS80 provider
+update ServiceDefaultProperties
+set PhpPath='%PROGRAMFILES(x86)%\PHP\php-cgi.exe'
+where ProviderId in(101, 105)
+
+update ServiceDefaultProperties
+set Php4Path='%PROGRAMFILES(x86)%\PHP\ph.exe'
+where ProviderId in(101, 105)
+
+GO

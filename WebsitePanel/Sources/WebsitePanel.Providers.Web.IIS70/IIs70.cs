@@ -100,6 +100,9 @@ namespace WebsitePanel.Providers.Web
 		public const string AspNet20x64PathSetting = "AspNet20x64Path";
 		public const string AspNet40PathSetting = "AspNet40Path";
 		public const string AspNet40x64PathSetting = "AspNet40x64Path";
+	    public const string PerlPathSetting = "PerlPath";
+        public const string Php4PathSetting = "Php4Path";
+        public const string PhpPathSetting = "PhpPath";
 
 		public const string WEBSITEPANEL_IISMODULES = "WebsitePanel.IIsModules";
         public const string DOTNETPANEL_IISMODULES = "DotNetPanel.IIsModules";
@@ -3409,7 +3412,7 @@ namespace WebsitePanel.Providers.Web
 
             using (ServerManager srvman = webObjectsSvc.GetServerManager())
             {
-                allSettings.AddRange(extensionsSvc.GetISAPIExtensionsInstalled(srvman));
+                allSettings.AddRange(extensionsSvc.GetExtensionsInstalled(srvman));
 
                 // add default web management settings
                 WebManagementServiceSettings wmSettings = GetWebManagementServiceSettings();
