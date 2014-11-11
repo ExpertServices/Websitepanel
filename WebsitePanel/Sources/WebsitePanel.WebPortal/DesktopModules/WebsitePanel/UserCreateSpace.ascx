@@ -79,7 +79,7 @@
                         ControlToValidate="txtDomainName" Display="Dynamic" ValidationGroup="CreateSpace" SetFocusOnError="true"></asp:RequiredFieldValidator>
                     <asp:RegularExpressionValidator id="DomainFormatValidator" runat="server" meta:resourcekey="DomainFormatValidator"
                         ControlToValidate="txtDomainName" Display="Dynamic" ValidationGroup="CreateSpace" SetFocusOnError="true"
-                        ValidationExpression="^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.){1,10}[a-zA-Z]{2,6}$"></asp:RegularExpressionValidator>
+                        ValidationExpression="^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.){1,10}[a-zA-Z]{2,15}$"></asp:RegularExpressionValidator>
                 </td>
             </tr>
         </table>
