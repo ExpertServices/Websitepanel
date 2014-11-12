@@ -56,5 +56,6 @@ namespace WebsitePanel.EnterpriseServer
         public const string Lync = "Lync";
         public const string EnterpriseStorage = "EnterpriseStorage";
         public const string ServiceLevels = "Service Levels";
+        public const string RDS = "RDS";
     }
 }

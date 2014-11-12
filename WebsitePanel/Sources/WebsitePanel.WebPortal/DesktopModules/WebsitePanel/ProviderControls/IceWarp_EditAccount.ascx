@@ -181,7 +181,7 @@
     <table width="100%">
         <tr>
             <td colspan="2">
-                <asp:CheckBox ID="cbForwardOlder" runat="server" meta:resourcekey="cbDeleteOlder" AutoPostBack="True" OnCheckedChanged="cbForwardOlder_CheckedChanged"
+                <asp:CheckBox ID="cbForwardOlder" runat="server" meta:resourcekey="cbForwardOlder" AutoPostBack="True" OnCheckedChanged="cbForwardOlder_CheckedChanged"
                     Text="Enable forwarding of older messages"></asp:CheckBox>
             </td>
         </tr>

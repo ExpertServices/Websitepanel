@@ -38,29 +38,6 @@ namespace WebsitePanel.Portal.ProviderControls
 {
     public partial class IceWarp_EditDomain : WebsitePanelControlBase, IMailEditDomainControl
     {
-        private StringDictionary _serviceSettings;
-
-        private StringDictionary ServiceSettings
-        {
-            get
-            {
-                if (_serviceSettings != null)
-                    return _serviceSettings;
-
-                _serviceSettings = new StringDictionary();
-                var domain = ES.Services.MailServers.GetMailDomain(PanelRequest.ItemID);
-
-                var settings = ES.Services.Servers.GetServiceSettings(domain.ServiceId);
-
-                foreach (var settingPair in settings.Select(setting => setting.Split('=')))
-                {
-                    _serviceSettings.Add(settingPair[0], settingPair[1]);
-                }
-
-                return _serviceSettings;
-            }
-        }
-
         protected void Page_Load(object sender, EventArgs e)
         {
             AdvancedSettingsPanel.Visible = PanelSecurity.EffectiveUser.Role == UserRole.Administrator;
@@ -77,9 +54,9 @@ namespace WebsitePanel.Portal.ProviderControls
         public void BindItem(MailDomain item)
         {
             // Hide/show controls when not enabled on service level
-            rowMaxDomainDiskSpace.Visible = ServiceSettings.ContainsKey("UseDomainDiskQuota") && Convert.ToBoolean(ServiceSettings["UseDomainDiskQuota"]);
-            rowDomainLimits.Visible = ServiceSettings.ContainsKey("UseDomainLimits") && Convert.ToBoolean(ServiceSettings["UseDomainLimits"]);
-            rowUserLimits.Visible = ServiceSettings.ContainsKey("UseUserLimits") && Convert.ToBoolean(ServiceSettings["UseUserLimits"]);
+            rowMaxDomainDiskSpace.Visible = item.UseDomainDiskQuota;
+            rowDomainLimits.Visible = item.UseDomainLimits;
+            rowUserLimits.Visible = item.UseUserLimits;
 
             txtMaxDomainDiskSpace.Text = item.MaxDomainSizeInMB.ToString();
             txtMaxDomainUsers.Text = item.MaxDomainUsers.ToString();

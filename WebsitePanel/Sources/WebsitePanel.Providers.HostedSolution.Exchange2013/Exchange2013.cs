@@ -1004,7 +1004,10 @@ namespace WebsitePanel.Providers.HostedSolution
 
 
 
-                if (!DeleteOrganizationMailboxes(runSpace, ou))
+                if (!DeleteOrganizationMailboxes(runSpace, ou, false))
+                    ret = false;
+
+                if (!DeleteOrganizationMailboxes(runSpace, ou, true))
                     ret = false;
 
                 if (!DeleteOrganizationContacts(runSpace, ou))
@@ -1159,13 +1162,15 @@ namespace WebsitePanel.Providers.HostedSolution
             return ret;
         }
 
-        internal bool DeleteOrganizationMailboxes(Runspace runSpace, string ou)
+        internal bool DeleteOrganizationMailboxes(Runspace runSpace, string ou, bool publicFolder)
         {
             ExchangeLog.LogStart("DeleteOrganizationMailboxes");
             bool ret = true;
 
             Command cmd = new Command("Get-Mailbox");
             cmd.Parameters.Add("OrganizationalUnit", ou);
+            if (publicFolder) cmd.Parameters.Add("PublicFolder");
+
             Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
             if (result != null && result.Count > 0)
             {
@@ -1177,7 +1182,7 @@ namespace WebsitePanel.Providers.HostedSolution
                         id = ObjToString(GetPSObjectProperty(obj, "Identity"));
                         RemoveDevicesInternal(runSpace, id);
 
-                        RemoveMailbox(runSpace, id, false);
+                        RemoveMailbox(runSpace, id, publicFolder);
                     }
                     catch (Exception ex)
                     {
@@ -3193,6 +3198,15 @@ namespace WebsitePanel.Providers.HostedSolution
         #endregion
 
         #region Contacts
+
+        private bool CheckEmailExist(Runspace runSpace, string email)
+        {
+            Command cmd = new Command("Get-Recipient");
+            cmd.Parameters.Add("Identity", email);
+            Collection<PSObject> result = ExecuteShellCommand(runSpace, cmd);
+            return result.Count > 0;
+        }
+
         private void CreateContactInternal(
             string organizationId,
             string organizationDistinguishedName,
@@ -3214,9 +3228,29 @@ namespace WebsitePanel.Providers.HostedSolution
             {
                 runSpace = OpenRunspace();
 
+                // 
+                string tempEmailUser = Guid.NewGuid().ToString("N");
+                string[] parts = contactEmail.Split('@');
+                if (parts.Length==2)
+                {
+                    if (CheckEmailExist(runSpace, parts[0] + "@" + defaultOrganizationDomain))
+                    {
+                        for(int num=1;num<100;num++)
+                        {
+                            string testEmailUser = parts[0] + num.ToString();
+                            if (!CheckEmailExist(runSpace, testEmailUser + "@" + defaultOrganizationDomain))
+                            {
+                                tempEmailUser = testEmailUser;
+                                break;
+                            }
+                        }
+                    }
+                    else                        
+                        tempEmailUser = parts[0];
+                }
 
                 string ouName = ConvertADPathToCanonicalName(organizationDistinguishedName);
-                string tempEmail = string.Format("{0}@{1}", Guid.NewGuid().ToString("N"), defaultOrganizationDomain);
+                string tempEmail = string.Format("{0}@{1}", tempEmailUser, defaultOrganizationDomain);
                 //create contact
                 Command cmd = new Command("New-MailContact");
                 cmd.Parameters.Add("Name", contactAccountName);
@@ -4575,7 +4609,6 @@ namespace WebsitePanel.Providers.HostedSolution
             }
             finally
             {
-
                 CloseRunspace(runSpace);
             }
             ExchangeLog.LogEnd("DeletePublicFolderInternal");
@@ -5299,6 +5332,8 @@ namespace WebsitePanel.Providers.HostedSolution
                     cmd = new Command("Set-Mailbox");
                     cmd.Parameters.Add("Identity", id);
                     cmd.Parameters.Add("DefaultPublicFolderMailbox", newValue);
+
+                    ExecuteShellCommand(runSpace, cmd);
 
                     res.Add(newValue);
                 }

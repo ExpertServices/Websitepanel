@@ -115,6 +115,10 @@ namespace WebsitePanel.Portal.UserControls
             //EnterpriseStorage Menu
             if (Cntx.Groups.ContainsKey(ResourceGroups.EnterpriseStorage))
                 PrepareEnterpriseStorageMenuRoot(items);
+
+            //Remote Desktop Services Menu
+            if (Cntx.Groups.ContainsKey(ResourceGroups.RDS))
+                PrepareRDSMenuRoot(items);
         }
 
         private void PrepareOrganizationMenuRoot(MenuItemCollection items)
@@ -475,6 +479,35 @@ namespace WebsitePanel.Portal.UserControls
             if (Utils.CheckQouta(Quotas.ENTERPRICESTORAGE_DRIVEMAPS, Cntx))
                 enterpriseStorageItems.Add(CreateMenuItem("EnterpriseStorageDriveMaps", "enterprisestorage_drive_maps", @"Icons/enterprisestorage_drive_maps_48.png"));
 
+        }
+
+        private void PrepareRDSMenuRoot(MenuItemCollection items)
+        {
+            if (ShortMenu)
+            {
+                PrepareRDSMenu(items);
+            }
+            else
+            {
+                MenuItem item = new MenuItem(GetLocalizedString("Text.RDSGroup"), "", "", null);
+
+                item.Selectable = false;
+
+                PrepareRDSMenu(item.ChildItems);
+
+                if (item.ChildItems.Count > 0)
+                {
+                    items.Add(item);
+                }
+            }
+        }
+
+        private void PrepareRDSMenu(MenuItemCollection rdsItems)
+        {
+            rdsItems.Add(CreateMenuItem("RDSCollections", "rds_collections", null));
+
+            if (Utils.CheckQouta(Quotas.RDS_SERVERS, Cntx) && (PanelSecurity.LoggedUser.Role != UserRole.User))
+            rdsItems.Add(CreateMenuItem("RDSServers", "rds_servers", null));
         }
 
         private MenuItem CreateMenuItem(string text, string key)

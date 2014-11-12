@@ -703,6 +703,14 @@ namespace WebsitePanel.EnterpriseServer
         {
             return ExchangeServerController.DeletePublicFolderEmailAddresses(itemId, accountId, emailAddresses);
         }
+
+        [WebMethod]
+        public string SetDefaultPublicFolderMailbox(int itemId)
+        {
+            return ExchangeServerController.SetDefaultPublicFolderMailbox(itemId);
+        }
+
+
         #endregion
 
         #region Disclaimers

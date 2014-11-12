@@ -183,11 +183,18 @@ namespace WebsitePanel.Providers.HostedSolution
             return orgResponse.Details;
         }
 
+        public virtual string GetOrganizationUniqueName(string orgName)
+        {
+            return Regex.Replace(orgName, @"[^\dA-Za-z]", "-", RegexOptions.Compiled);
+        }
+
         protected virtual Uri GetCRMOrganizationUrl(string orgName)
         {
             //string url = "https://" + ProviderSettings[Constants.AppRootDomain] + ":" + ProviderSettings[Constants.Port] + "/" + orgName + "/XRMServices/2011/Organization.svc";
 
             string url;
+
+            orgName = GetOrganizationUniqueName(orgName);
 
             string organizationWebServiceUri = ProviderSettings[Constants.OrganizationWebService];
 
@@ -723,7 +730,7 @@ namespace WebsitePanel.Providers.HostedSolution
  
             OrganizationResult ret = StartLog<OrganizationResult>("CreateOrganizationInternal");
 
-            organizationUniqueName = Regex.Replace(organizationUniqueName, @"[^\dA-Za-z]", "-", RegexOptions.Compiled);
+            organizationUniqueName = GetOrganizationUniqueName(organizationUniqueName);
 
             // calculate UserRootPath
             string ldapstr = "";

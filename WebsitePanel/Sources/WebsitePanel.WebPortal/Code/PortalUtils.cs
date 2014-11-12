@@ -290,7 +290,7 @@ namespace WebsitePanel.Portal
             authCookie.HttpOnly = true;
 
             if (persistent)
-                authCookie.Expires = DateTime.Now.AddMonths(1);
+                authCookie.Expires = ticket.Expiration;
 
             HttpContext.Current.Response.Cookies.Add(authCookie);
         }
@@ -457,7 +457,7 @@ namespace WebsitePanel.Portal
                 1,
                 username,
                 DateTime.Now,
-                DateTime.Now.AddMinutes(GetAuthenticationFormsTimeout()),
+                persistent ? DateTime.Now.AddMonths(1) : DateTime.Now.AddMinutes(GetAuthenticationFormsTimeout()),
                 persistent,
                 String.Concat(password, Environment.NewLine, Enum.GetName(typeof(UserRole), role))
             );
@@ -592,9 +592,9 @@ namespace WebsitePanel.Portal
             // set theme
             SetCurrentTheme(theme);
 
-            // remember me
-            if (rememberLogin)
-                HttpContext.Current.Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddMonths(1);
+            //// remember me
+            //if (rememberLogin)
+            //    HttpContext.Current.Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddMonths(1);
         }
 
         public static void SetCurrentLanguage(string preferredLocale)

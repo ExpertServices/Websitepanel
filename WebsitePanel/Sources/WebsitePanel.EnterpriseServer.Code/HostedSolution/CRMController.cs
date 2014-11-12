@@ -35,6 +35,7 @@ using WebsitePanel.Providers.CRM;
 using WebsitePanel.Providers.DNS;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.ResultObjects;
+using System.Text.RegularExpressions;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -237,6 +238,12 @@ namespace WebsitePanel.EnterpriseServer
             return value;
         }
 
+        public static string GetOrganizationCRMUniqueName(string orgName)
+        {
+            return Regex.Replace(orgName, @"[^\dA-Za-z]", "-", RegexOptions.Compiled);
+        }
+
+
         public static OrganizationResult CreateOrganization(int organizationId, string baseCurrencyCode, string baseCurrencyName, string baseCurrencySymbol, string regionName,  int userId, string collation, int baseLanguageCode)
         {
             OrganizationResult res = StartTask<OrganizationResult>("CRM", "CREATE_ORGANIZATION");
@@ -329,7 +336,7 @@ namespace WebsitePanel.EnterpriseServer
                 if (port != string.Empty)
                     port = ":" + port;
 
-                string strDomainName = string.Format("{0}.{1}", org.OrganizationId,
+                string strDomainName = string.Format("{0}.{1}", GetOrganizationCRMUniqueName(org.OrganizationId),
                                                      serviceSettings[Constants.IFDWebApplicationRootDomain]);
                 org.CrmUrl = string.Format("{0}://{1}{2}", schema, strDomainName, port);
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -589,6 +589,15 @@ namespace WebsitePanel.EnterpriseServer
 
                 ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
 
+                // delete public folders
+                List<ExchangeAccount> folders = GetAccounts(itemId, ExchangeAccountType.PublicFolder);
+                folders.Sort(delegate(ExchangeAccount f1, ExchangeAccount f2) { return f2.AccountId.CompareTo(f1.AccountId); });
+
+                foreach (ExchangeAccount folder in folders)
+                    DeletePublicFolder(itemId, folder.AccountId);
+
+                exchange.DeletePublicFolder(org.OrganizationId, "\\" + org.OrganizationId);
+
                 bool successful = exchange.DeleteOrganization(
                     org.OrganizationId,
                     org.DistinguishedName,
@@ -599,19 +608,6 @@ namespace WebsitePanel.EnterpriseServer
                     org.SecurityGroup,
                     org.AddressBookPolicy,
                     acceptedDomains.ToArray());
-
-                // delete public folders
-                if (successful)
-                {
-                    List<ExchangeAccount> folders = GetAccounts(itemId, ExchangeAccountType.PublicFolder);
-                    folders.Sort(delegate(ExchangeAccount f1, ExchangeAccount f2) { return f2.AccountId.CompareTo(f1.AccountId);});
-
-                    foreach(ExchangeAccount folder in folders)
-                        DeletePublicFolder(itemId, folder.AccountId);
-
-                    exchange.DeletePublicFolder(org.OrganizationId, "\\" + org.OrganizationId);
-                }
-
 
                 return successful ? 0 : BusinessErrorCodes.ERROR_EXCHANGE_DELETE_SOME_PROBLEMS;
             }
@@ -5380,6 +5376,61 @@ namespace WebsitePanel.EnterpriseServer
             return res;
         }
 
+        public static string SetDefaultPublicFolderMailbox(int itemId)
+        {
+            string res = "";
+
+            try
+            {
+                Organization org = GetOrganization(itemId);
+                if (org == null)
+                    return null;
+
+                int exchangeServiceId = GetExchangeServiceID(org.PackageId);
+
+                if (exchangeServiceId <= 0)
+                    return null;
+
+                ExchangeServer exchange = GetExchangeServer(exchangeServiceId, org.ServiceId);
+
+                if (exchange == null)
+                    return null;
+
+                //Create Exchange Organization
+                if (string.IsNullOrEmpty(org.GlobalAddressList))
+                {
+                    ExtendToExchangeOrganization(ref org);
+
+                    PackageController.UpdatePackageItem(org);
+                }
+
+                res += "OrgPublicFolderMailbox = " + exchange.CreateOrganizationRootPublicFolder(org.OrganizationId, org.DistinguishedName, org.SecurityGroup, org.DefaultDomain) + Environment.NewLine;
+
+                List<ExchangeAccount> mailboxes = GetExchangeMailboxes(itemId);
+
+                foreach(ExchangeAccount mailbox in mailboxes)
+                {
+                    string id = mailbox.PrimaryEmailAddress;
+                    string[] defaultPublicFoldes = exchange.SetDefaultPublicFolderMailbox(id, org.OrganizationId, org.DistinguishedName);
+
+                    if (defaultPublicFoldes.Length==1)
+                        res += id + " has a value \"" + defaultPublicFoldes[0] + "\"" + Environment.NewLine;
+
+                    if (defaultPublicFoldes.Length == 2)
+                        res += id + " changed from \"" + defaultPublicFoldes[0] + "\" to \"" + defaultPublicFoldes[1] + "\"" + Environment.NewLine;
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                res += " Error " + ex.ToString();
+            }
+
+            return res;
+
+        }
+
         #endregion
 
         #region Private Helpers
@@ -5872,6 +5923,7 @@ namespace WebsitePanel.EnterpriseServer
 
         }
         #endregion
+
 
     }
 }

@@ -27,7 +27,10 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Net;
+using System.Net.Sockets;
 using System.Web;
 using System.Collections;
 using System.Web.Services;
@@ -36,6 +39,7 @@ using System.ComponentModel;
 using Microsoft.Web.Services3;
 
 using WebsitePanel.Providers;
+using WebsitePanel.Providers.OS;
 using WebsitePanel.Providers.RemoteDesktopServices;
 using WebsitePanel.Server.Utils;
 
@@ -55,7 +59,273 @@ namespace WebsitePanel.Server
             get { return (IRemoteDesktopServices)Provider; }
         }
 
+        [WebMethod, SoapHeader("settings")]
+        public bool CreateCollection(string organizationId, RdsCollection collection)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' CreateCollection", ProviderSettings.ProviderName);
+                var result = RDSProvider.CreateCollection(organizationId, collection);
+                Log.WriteEnd("'{0}' CreateCollection", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' CreateCollection", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
 
+        [WebMethod, SoapHeader("settings")]
+        public RdsCollection GetCollection(string collectionName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetCollection", ProviderSettings.ProviderName);
+                var result = RDSProvider.GetCollection(collectionName);
+                Log.WriteEnd("'{0}' GetCollection", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetCollection", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool RemoveCollection(string organizationId, string collectionName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' RemoveCollection", ProviderSettings.ProviderName);
+                var result = RDSProvider.RemoveCollection(organizationId,collectionName);
+                Log.WriteEnd("'{0}' RemoveCollection", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' RemoveCollection", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool SetUsersInCollection(string organizationId, string collectionName, List<string> users)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' UpdateUsersInCollection", ProviderSettings.ProviderName);
+                var result = RDSProvider.SetUsersInCollection(organizationId, collectionName, users);
+                Log.WriteEnd("'{0}' UpdateUsersInCollection", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' UpdateUsersInCollection", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void AddSessionHostServerToCollection(string organizationId, string collectionName, RdsServer server)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' AddSessionHostServersToCollection", ProviderSettings.ProviderName);
+                RDSProvider.AddSessionHostServerToCollection(organizationId, collectionName, server);
+                Log.WriteEnd("'{0}' AddSessionHostServersToCollection", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' AddSessionHostServersToCollection", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void AddSessionHostServersToCollection(string organizationId, string collectionName, List<RdsServer> servers)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' AddSessionHostServersToCollection", ProviderSettings.ProviderName);
+                RDSProvider.AddSessionHostServersToCollection(organizationId, collectionName, servers);
+                Log.WriteEnd("'{0}' AddSessionHostServersToCollection", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' AddSessionHostServersToCollection", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void RemoveSessionHostServerFromCollection(string organizationId, string collectionName, RdsServer server)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' RemoveSessionHostServerFromCollection", ProviderSettings.ProviderName);
+                RDSProvider.RemoveSessionHostServerFromCollection(organizationId, collectionName, server);
+                Log.WriteEnd("'{0}' RemoveSessionHostServerFromCollection", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' RemoveSessionHostServerFromCollection", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void RemoveSessionHostServersFromCollection(string organizationId, string collectionName, List<RdsServer> servers)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' RemoveSessionHostServersFromCollection", ProviderSettings.ProviderName);
+                RDSProvider.RemoveSessionHostServersFromCollection(organizationId, collectionName, servers);
+                Log.WriteEnd("'{0}' RemoveSessionHostServersFromCollection", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' RemoveSessionHostServersFromCollection", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public List<StartMenuApp> GetAvailableRemoteApplications(string collectionName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetAvailableRemoteApplications", ProviderSettings.ProviderName);
+                var result = RDSProvider.GetAvailableRemoteApplications(collectionName);
+                Log.WriteEnd("'{0}' GetAvailableRemoteApplications", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' UpdateUsersInCollection", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public List<RemoteApplication> GetCollectionRemoteApplications(string collectionName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetCollectionRemoteApplications", ProviderSettings.ProviderName);
+                var result = RDSProvider.GetCollectionRemoteApplications(collectionName);
+                Log.WriteEnd("'{0}' GetCollectionRemoteApplications", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetCollectionRemoteApplications", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool AddRemoteApplication(string collectionName, RemoteApplication remoteApp)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' AddRemoteApplication", ProviderSettings.ProviderName);
+                var result = RDSProvider.AddRemoteApplication(collectionName, remoteApp);
+                Log.WriteEnd("'{0}' AddRemoteApplication", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' AddRemoteApplication", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool AddRemoteApplications(string collectionName, List<RemoteApplication> remoteApps)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' AddRemoteApplications", ProviderSettings.ProviderName);
+                var result = RDSProvider.AddRemoteApplications(collectionName, remoteApps);
+                Log.WriteEnd("'{0}' AddRemoteApplications", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' AddRemoteApplications", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool RemoveRemoteApplication(string collectionName, RemoteApplication remoteApp)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' RemoveRemoteApplication", ProviderSettings.ProviderName);
+                var result = RDSProvider.RemoveRemoteApplication(collectionName, remoteApp);
+                Log.WriteEnd("'{0}' RemoveRemoteApplication", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' RemoveRemoteApplication", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool AddSessionHostFeatureToServer(string hostName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' AddSessionHostFeatureToServer", ProviderSettings.ProviderName);
+                var result = RDSProvider.AddSessionHostFeatureToServer(hostName);
+                Log.WriteEnd("'{0}' AddSessionHostFeatureToServer", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' AddSessionHostServersToCollection", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool CheckSessionHostFeatureInstallation(string hostName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' CheckSessionHostFeatureInstallation", ProviderSettings.ProviderName);
+                var result = RDSProvider.CheckSessionHostFeatureInstallation(hostName);
+                Log.WriteEnd("'{0}' CheckSessionHostFeatureInstallation", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' CheckSessionHostFeatureInstallation", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool CheckServerAvailability(string hostName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' CheckServerAvailability", ProviderSettings.ProviderName);
+                var result = RDSProvider.CheckServerAvailability(hostName);
+                Log.WriteEnd("'{0}' CheckServerAvailability", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' CheckServerAvailability", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
     }
 
 }

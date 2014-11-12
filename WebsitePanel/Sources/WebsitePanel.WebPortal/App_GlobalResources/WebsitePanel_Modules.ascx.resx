@@ -789,4 +789,10 @@
   <data name="ModuleTitle.UserOrganization" xml:space="preserve">
     <value>Hosted Organization</value>
   </data>
+  <data name="ModuleTitle.RDSServers" xml:space="preserve">
+    <value>RDS Servers</value>
+  </data>
+  <data name="ModuleTitle.RDSServersAddserver" xml:space="preserve">
+    <value>Add New RDS Server</value>
+  </data>
 </root>

@@ -726,6 +726,13 @@ namespace WebsitePanel.EnterpriseServer
                     successful = false;
                 }
 
+                //Cleanup RDS
+
+                if (RemoteDesktopServicesController.DeleteRemoteDesktopService(itemId).IsSuccess == false)
+                {
+                    successful = false;
+                }
+
                 //Cleanup Exchange
                 try
                 {
@@ -1656,6 +1663,11 @@ namespace WebsitePanel.EnterpriseServer
             orgId = (orgId.Length + name.Length) > 19 ? orgId.Substring(0, 19 - name.Length) : orgId;
 
             int maxLen = 19 - orgId.Length;
+
+            if (!string.IsNullOrEmpty(orgId))
+            {
+                orgId = orgId.TrimEnd(' ', '.');
+            }
 
             // try to choose name
             int i = 0;
