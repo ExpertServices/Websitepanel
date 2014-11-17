@@ -290,3 +290,4 @@ UL.ActionButtons LI {margin-bottom: 12px;}
 p.warningText {font-size:14px; color:Red; text-align:center;}
 .Hidden {display: none;}
 .LinkText {color:#428bca;}
+.WrapText { white-space: normal;}
