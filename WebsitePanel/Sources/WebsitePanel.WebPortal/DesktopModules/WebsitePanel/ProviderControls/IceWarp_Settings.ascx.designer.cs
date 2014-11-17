@@ -49,13 +49,22 @@ namespace WebsitePanel.Portal.ProviderControls {
         protected global::System.Web.UI.WebControls.TextBox txtMaxMessageSizeInMB;
         
         /// <summary>
-        /// Label1 control.
+        /// txtMaxMessageSizeInMBRequired control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label1;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator txtMaxMessageSizeInMBRequired;
+        
+        /// <summary>
+        /// MaxMessageSizeInMB control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label MaxMessageSizeInMB;
         
         /// <summary>
         /// cbUseDomainDiskQuota control.
@@ -130,12 +139,12 @@ namespace WebsitePanel.Portal.ProviderControls {
         protected global::System.Web.UI.WebControls.TextBox txtWarnMailboxUsage;
         
         /// <summary>
-        /// RequiredFieldValidator1 control.
+        /// txtWarnMailboxUsageRequired control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidator1;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator txtWarnMailboxUsageRequired;
     }
 }

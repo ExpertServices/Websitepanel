@@ -36,16 +36,44 @@ namespace WebsitePanel.Portal.ProviderControls
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+
         }
 
         public void BindSettings(System.Collections.Specialized.StringDictionary settings)
         {
-            txtUsersHome.Text = settings[Constants.UsersHome];
+            txtConnectionBroker.Text = settings["ConnectionBroker"];
+            txtGateway.Text = settings["GWServrsList"];
+            txtRootOU.Text = settings["RootOU"];
+            txtPrimaryDomainController.Text = settings["PrimaryDomainController"];
+
+            if (!string.IsNullOrEmpty(settings["UseCentralNPS"]) && bool.TrueString == settings["UseCentralNPS"])
+            {
+                chkUseCentralNPS.Checked = true;
+                txtCentralNPS.Enabled = true;
+                txtCentralNPS.Text = settings["CentralNPS"];
+            }
+            else
+            {
+                chkUseCentralNPS.Checked = false;
+                txtCentralNPS.Enabled = false;
+                txtCentralNPS.Text = string.Empty;
+            }
         }
 
         public void SaveSettings(System.Collections.Specialized.StringDictionary settings)
         {
-            settings[Constants.UsersHome] = txtUsersHome.Text;
+            settings["ConnectionBroker"] = txtConnectionBroker.Text;
+            settings["GWServrsList"] = txtGateway.Text;
+            settings["RootOU"] = txtRootOU.Text;
+            settings["PrimaryDomainController"] = txtPrimaryDomainController.Text;
+            settings["UseCentralNPS"] = chkUseCentralNPS.Checked.ToString();
+            settings["CentralNPS"] = chkUseCentralNPS.Checked ? txtCentralNPS.Text : string.Empty;
+        }
+
+        protected void chkUseCentralNPS_CheckedChanged(object sender, EventArgs e)
+        {
+            txtCentralNPS.Enabled = chkUseCentralNPS.Checked;
+            txtCentralNPS.Text = chkUseCentralNPS.Checked ? txtCentralNPS.Text : string.Empty;
         }
      
     }

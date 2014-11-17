@@ -42964,11 +42964,11 @@ INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [Property
 GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (101, N'PerlPath', N'%SYSTEMDRIVE%\Perl\bin\PerlEx30.dll')
 GO
-INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (101, N'Php4Path', N'%PROGRAMFILES%\PHP\php.exe')
+INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (101, N'Php4Path', N'%PROGRAMFILES(x86)%\PHP\php.exe')
 GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (101, N'PhpMode', N'FastCGI')
 GO
-INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (101, N'PhpPath', N'%PROGRAMFILES%\PHP\php-cgi.exe')
+INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (101, N'PhpPath', N'%PROGRAMFILES(x86)%\PHP\php-cgi.exe')
 GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (101, N'ProtectedGroupsFile', N'.htgroup')
 GO
@@ -43014,11 +43014,11 @@ INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [Property
 GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'PerlPath', N'%SYSTEMDRIVE%\Perl\bin\PerlEx30.dll')
 GO
-INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'Php4Path', N'%PROGRAMFILES%\PHP\php.exe')
+INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'Php4Path', N'%PROGRAMFILES(x86)%\PHP\php.exe')
 GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'PhpMode', N'FastCGI')
 GO
-INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'PhpPath', N'%PROGRAMFILES%\PHP\php-cgi.exe')
+INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'PhpPath', N'%PROGRAMFILES(x86)%\PHP\php-cgi.exe')
 GO
 INSERT [dbo].[ServiceDefaultProperties] ([ProviderID], [PropertyName], [PropertyValue]) VALUES (105, N'ProtectedGroupsFile', N'.htgroup')
 GO

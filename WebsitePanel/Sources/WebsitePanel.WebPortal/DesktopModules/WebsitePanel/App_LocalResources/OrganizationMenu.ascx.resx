@@ -231,4 +231,13 @@
   <data name="Text.EnterpriseStorageDriveMaps" xml:space="preserve">
     <value>Drive Maps</value>
   </data>
+  <data name="Text.RDSCollections" xml:space="preserve">
+    <value>RDS Collections</value>
+  </data>
+  <data name="Text.RDSGroup" xml:space="preserve">
+    <value>RDS</value>
+  </data>
+  <data name="Text.RDSServers" xml:space="preserve">
+    <value>RDS Servers</value>
+  </data>
 </root>

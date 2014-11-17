@@ -2403,11 +2403,17 @@ INSERT [dbo].[ResourceGroups] ([GroupID], [GroupName], [GroupOrder], [GroupContr
 END
 GO
 
--- RDS Quota
+-- RDS Quotas
 
 IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'RDS.Users')
 BEGIN
 INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (450, 45, 1, N'RDS.Users',N'Remote Desktop Users',2, 0 , NULL)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[Quotas] WHERE [QuotaName] = 'RDS.Servers')
+BEGIN
+INSERT [dbo].[Quotas]  ([QuotaID], [GroupID],[QuotaOrder], [QuotaName], [QuotaDescription], [QuotaTypeID], [ServiceQuota], [ItemTypeID]) VALUES (451, 45, 2, N'RDS.Servers',N'Remote Desktop Servers',2, 0 , NULL)
 END
 GO
 
@@ -5415,5 +5421,664 @@ end
 close c
 
 deallocate c
+
+GO
+
+
+
+/*Remote Desktop Services*/
+
+/*Remote Desktop Services Tables*/
+IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'RDSCollectionUsers')
+DROP TABLE RDSCollectionUsers
+GO
+CREATE TABLE RDSCollectionUsers
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	RDSCollectionId INT NOT NULL, 
+	AccountID INT NOT NULL 
+)
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'RDSServers')
+DROP TABLE RDSServers
+GO
+CREATE TABLE RDSServers
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	ItemID INT,
+	Name NVARCHAR(255),
+	FqdName NVARCHAR(255),
+	Description NVARCHAR(255),
+	RDSCollectionId INT/* FOREIGN KEY REFERENCES RDSCollection (ID)*/
+)
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'RDSCollections')
+DROP TABLE RDSCollections
+GO
+CREATE TABLE RDSCollections
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	ItemID INT NOT NULL,
+	Name NVARCHAR(255),
+	Description NVARCHAR(255)
+)
+GO
+
+ALTER TABLE [dbo].[RDSCollectionUsers]  WITH CHECK ADD  CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId] FOREIGN KEY([RDSCollectionId])
+REFERENCES [dbo].[RDSCollections] ([ID])
+ON DELETE CASCADE
+GO
+
+
+ALTER TABLE [dbo].[RDSCollectionUsers]  WITH CHECK ADD  CONSTRAINT [FK_RDSCollectionUsers_UserId] FOREIGN KEY([AccountID])
+REFERENCES [dbo].[ExchangeAccounts] ([AccountID])
+ON DELETE CASCADE
+GO
+
+ALTER TABLE [dbo].[RDSServers]  WITH CHECK ADD  CONSTRAINT [FK_RDSServers_RDSCollectionId] FOREIGN KEY([RDSCollectionId])
+REFERENCES [dbo].[RDSCollections] ([ID])
+GO
+
+/*Remote Desktop Services Procedures*/
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddRDSServer')
+DROP PROCEDURE AddRDSServer
+GO
+CREATE PROCEDURE [dbo].[AddRDSServer]
+(
+	@RDSServerID INT OUTPUT,
+	@Name NVARCHAR(255),
+	@FqdName NVARCHAR(255),
+	@Description NVARCHAR(255)
+)
+AS
+INSERT INTO RDSServers
+(
+	Name,
+	FqdName,
+	Description
+)
+VALUES
+(
+	@Name,
+	@FqdName,
+	@Description
+)
+
+SET @RDSServerID = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteRDSServer')
+DROP PROCEDURE DeleteRDSServer
+GO
+CREATE PROCEDURE [dbo].[DeleteRDSServer]
+(
+	@Id  int
+)
+AS
+DELETE FROM RDSServers
+WHERE Id = @Id
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateRDSServer')
+DROP PROCEDURE UpdateRDSServer
+GO
+CREATE PROCEDURE [dbo].[UpdateRDSServer]
+(
+	@Id  INT,
+	@ItemID INT,
+	@Name NVARCHAR(255),
+	@FqdName NVARCHAR(255),
+	@Description NVARCHAR(255),
+	@RDSCollectionId INT
+)
+AS
+
+UPDATE RDSServers
+SET
+	ItemID = @ItemID,
+	Name = @Name,
+	FqdName = @FqdName,
+	Description = @Description,
+	RDSCollectionId = @RDSCollectionId
+WHERE ID = @Id
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddRDSServerToOrganization')
+DROP PROCEDURE AddRDSServerToOrganization
+GO
+CREATE PROCEDURE [dbo].[AddRDSServerToOrganization]
+(
+	@Id  INT,
+	@ItemID INT
+)
+AS
+
+UPDATE RDSServers
+SET
+	ItemID = @ItemID
+WHERE ID = @Id
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'RemoveRDSServerFromOrganization')
+DROP PROCEDURE RemoveRDSServerFromOrganization
+GO
+CREATE PROCEDURE [dbo].[RemoveRDSServerFromOrganization]
+(
+	@Id  INT
+)
+AS
+
+UPDATE RDSServers
+SET
+	ItemID = NULL
+WHERE ID = @Id
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddRDSServerToCollection')
+DROP PROCEDURE AddRDSServerToCollection
+GO
+CREATE PROCEDURE [dbo].[AddRDSServerToCollection]
+(
+	@Id  INT,
+	@RDSCollectionId INT
+)
+AS
+
+UPDATE RDSServers
+SET
+	RDSCollectionId = @RDSCollectionId
+WHERE ID = @Id
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'RemoveRDSServerFromCollection')
+DROP PROCEDURE RemoveRDSServerFromCollection
+GO
+CREATE PROCEDURE [dbo].[RemoveRDSServerFromCollection]
+(
+	@Id  INT
+)
+AS
+
+UPDATE RDSServers
+SET
+	RDSCollectionId = NULL
+WHERE ID = @Id
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSServersByItemId')
+DROP PROCEDURE GetRDSServersByItemId
+GO
+CREATE PROCEDURE [dbo].[GetRDSServersByItemId]
+(
+	@ItemID INT
+)
+AS
+SELECT 
+	RS.Id,
+	RS.ItemID,
+	RS.Name, 
+	RS.FqdName,
+	RS.Description,
+	RS.RdsCollectionId,
+	SI.ItemName
+	FROM RDSServers AS RS
+	LEFT OUTER JOIN  ServiceItems AS SI ON SI.ItemId = RS.ItemId
+	WHERE RS.ItemID = @ItemID
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSServers')
+DROP PROCEDURE GetRDSServers
+GO
+CREATE PROCEDURE [dbo].[GetRDSServers]
+AS
+SELECT 
+	RS.Id,
+	RS.ItemID,
+	RS.Name, 
+	RS.FqdName,
+	RS.Description,
+	RS.RdsCollectionId,
+	SI.ItemName
+	FROM RDSServers AS RS
+	LEFT OUTER JOIN  ServiceItems AS SI ON SI.ItemId = RS.ItemId
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSServerById')
+DROP PROCEDURE GetRDSServerById
+GO
+CREATE PROCEDURE [dbo].[GetRDSServerById]
+(
+	@ID INT
+)
+AS
+SELECT TOP 1
+	RS.Id,
+	RS.ItemID,
+	RS.Name, 
+	RS.FqdName,
+	RS.Description,
+	RS.RdsCollectionId,
+	SI.ItemName
+	FROM RDSServers AS RS
+	LEFT OUTER JOIN  ServiceItems AS SI ON SI.ItemId = RS.ItemId
+	WHERE Id = @Id
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSServersByCollectionId')
+DROP PROCEDURE GetRDSServersByCollectionId
+GO
+CREATE PROCEDURE [dbo].[GetRDSServersByCollectionId]
+(
+	@RdsCollectionId INT
+)
+AS
+SELECT 
+	RS.Id,
+	RS.ItemID,
+	RS.Name, 
+	RS.FqdName,
+	RS.Description,
+	RS.RdsCollectionId,
+	SI.ItemName
+	FROM RDSServers AS RS
+	LEFT OUTER JOIN  ServiceItems AS SI ON SI.ItemId = RS.ItemId
+	WHERE RdsCollectionId = @RdsCollectionId
+GO
+
+
+
+
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSServersPaged')
+DROP PROCEDURE GetRDSServersPaged
+GO
+CREATE PROCEDURE [dbo].[GetRDSServersPaged]
+(
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@ItemID int,
+	@IgnoreItemId bit,
+	@RdsCollectionId int,
+	@IgnoreRdsCollectionId bit,
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+-- build query and run it to the temporary table
+DECLARE @sql nvarchar(2000)
+
+SET @sql = '
+
+DECLARE @EndRow int
+SET @EndRow = @StartRow + @MaximumRows
+
+DECLARE @RDSServer TABLE
+(
+	ItemPosition int IDENTITY(0,1),
+	RDSServerId int
+)
+INSERT INTO @RDSServer (RDSServerId)
+SELECT
+	S.ID
+FROM RDSServers AS S
+WHERE 
+	((((@ItemID is Null AND S.ItemID is null) or @IgnoreItemId = 1)
+		or (@ItemID is not Null AND S.ItemID = @ItemID))
+	and
+	(((@RdsCollectionId is Null AND S.RDSCollectionId is null) or @IgnoreRdsCollectionId = 1)
+		or (@RdsCollectionId is not Null AND S.RDSCollectionId = @RdsCollectionId)))'
+
+IF @FilterColumn <> '' AND @FilterValue <> ''
+SET @sql = @sql + ' AND ' + @FilterColumn + ' LIKE @FilterValue '
+
+IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
+
+SET @sql = @sql + ' SELECT COUNT(RDSServerId) FROM @RDSServer;
+SELECT
+	ST.ID,
+	ST.ItemID,
+	ST.Name, 
+	ST.FqdName,
+	ST.Description,
+	ST.RdsCollectionId,
+	SI.ItemName
+FROM @RDSServer AS S
+INNER JOIN RDSServers AS ST ON S.RDSServerId = ST.ID
+LEFT OUTER JOIN  ServiceItems AS SI ON SI.ItemId = ST.ItemId
+WHERE S.ItemPosition BETWEEN @StartRow AND @EndRow'
+
+exec sp_executesql @sql, N'@StartRow int, @MaximumRows int,  @FilterValue nvarchar(50),  @ItemID int, @RdsCollectionId int, @IgnoreItemId bit, @IgnoreRdsCollectionId bit',
+@StartRow, @MaximumRows,  @FilterValue,  @ItemID, @RdsCollectionId, @IgnoreItemId , @IgnoreRdsCollectionId 
+
+
+RETURN
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSCollectionsPaged')
+DROP PROCEDURE GetRDSCollectionsPaged
+GO
+CREATE PROCEDURE [dbo].[GetRDSCollectionsPaged]
+(
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@ItemID int,
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+-- build query and run it to the temporary table
+DECLARE @sql nvarchar(2000)
+
+SET @sql = '
+
+DECLARE @EndRow int
+SET @EndRow = @StartRow + @MaximumRows
+DECLARE @RDSCollections TABLE
+(
+	ItemPosition int IDENTITY(0,1),
+	RDSCollectionId int
+)
+INSERT INTO @RDSCollections (RDSCollectionId)
+SELECT
+	S.ID
+FROM RDSCollections AS S
+WHERE 
+	((@ItemID is Null AND S.ItemID is null)
+		or (@ItemID is not Null AND S.ItemID = @ItemID))'
+
+IF @FilterColumn <> '' AND @FilterValue <> ''
+SET @sql = @sql + ' AND ' + @FilterColumn + ' LIKE @FilterValue '
+
+IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
+
+SET @sql = @sql + ' SELECT COUNT(RDSCollectionId) FROM @RDSCollections;
+SELECT
+	CR.ID,
+	CR.ItemID,
+	CR.Name,
+	CR.Description
+FROM @RDSCollections AS C
+INNER JOIN RDSCollections AS CR ON C.RDSCollectionId = CR.ID
+WHERE C.ItemPosition BETWEEN @StartRow AND @EndRow'
+
+exec sp_executesql @sql, N'@StartRow int, @MaximumRows int,  @FilterValue nvarchar(50),  @ItemID int',
+@StartRow, @MaximumRows,  @FilterValue,  @ItemID
+
+
+RETURN
+
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSCollectionsByItemId')
+DROP PROCEDURE GetRDSCollectionsByItemId
+GO
+CREATE PROCEDURE [dbo].[GetRDSCollectionsByItemId]
+(
+	@ItemID INT
+)
+AS
+SELECT 
+	Id,
+	ItemId,
+	Name, 
+	Description 
+	FROM RDSCollections
+	WHERE ItemID = @ItemID
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSCollectionByName')
+DROP PROCEDURE GetRDSCollectionByName
+GO
+CREATE PROCEDURE [dbo].[GetRDSCollectionByName]
+(
+	@Name NVARCHAR(255)
+)
+AS
+
+SELECT TOP 1
+	Id,
+	Name, 
+	ItemId,
+	Description 
+	FROM RDSCollections
+	WHERE Name = @Name
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSCollectionById')
+DROP PROCEDURE GetRDSCollectionById
+GO
+CREATE PROCEDURE [dbo].[GetRDSCollectionById]
+(
+	@ID INT
+)
+AS
+
+SELECT TOP 1
+	Id,
+	ItemId,
+	Name, 
+	Description 
+	FROM RDSCollections
+	WHERE ID = @ID
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddRDSCollection')
+DROP PROCEDURE AddRDSCollection
+GO
+CREATE PROCEDURE [dbo].[AddRDSCollection]
+(
+	@RDSCollectionID INT OUTPUT,
+	@ItemID INT,
+	@Name NVARCHAR(255),
+	@Description NVARCHAR(255)
+)
+AS
+
+INSERT INTO RDSCollections
+(
+	ItemID,
+	Name,
+	Description
+)
+VALUES
+(
+	@ItemID,
+	@Name,
+	@Description
+)
+
+SET @RDSCollectionID = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateRDSCollection')
+DROP PROCEDURE UpdateRDSCollection
+GO
+CREATE PROCEDURE [dbo].[UpdateRDSCollection]
+(
+	@ID INT,
+	@ItemID INT,
+	@Name NVARCHAR(255),
+	@Description NVARCHAR(255)
+)
+AS
+
+UPDATE RDSCollections
+SET
+	ItemID = @ItemID,
+	Name = @Name,
+	Description = @Description
+WHERE ID = @Id
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteRDSCollection')
+DROP PROCEDURE DeleteRDSCollection
+GO
+CREATE PROCEDURE [dbo].[DeleteRDSCollection]
+(
+	@Id  int
+)
+AS
+
+UPDATE RDSServers
+SET
+	RDSCollectionId = Null
+WHERE RDSCollectionId = @Id
+
+DELETE FROM RDSCollections
+WHERE Id = @Id
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetRDSCollectionUsersByRDSCollectionId')
+DROP PROCEDURE GetRDSCollectionUsersByRDSCollectionId
+GO
+CREATE PROCEDURE [dbo].[GetRDSCollectionUsersByRDSCollectionId]
+(
+	@ID INT
+)
+AS
+SELECT 
+	  [AccountID],
+	  [ItemID],
+	  [AccountType],
+	  [AccountName],
+	  [DisplayName],
+	  [PrimaryEmailAddress],
+	  [MailEnabledPublicFolder],
+	  [MailboxManagerActions],
+	  [SamAccountName],
+	  [AccountPassword],
+	  [CreatedDate],
+	  [MailboxPlanId],
+	  [SubscriberNumber],
+	  [UserPrincipalName],
+	  [ExchangeDisclaimerId],
+	  [ArchivingMailboxPlanId],
+	  [EnableArchiving],
+	  [LevelID],
+	  [IsVIP]
+	FROM ExchangeAccounts
+	WHERE AccountID IN (Select AccountId from RDSCollectionUsers where RDSCollectionId = @Id)
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddUserToRDSCollection')
+DROP PROCEDURE AddUserToRDSCollection
+GO
+CREATE PROCEDURE [dbo].[AddUserToRDSCollection]
+(
+	@RDSCollectionID INT,
+	@AccountId INT
+)
+AS
+
+INSERT INTO RDSCollectionUsers
+(
+	RDSCollectionId, 
+	AccountID
+)
+VALUES
+(
+	@RDSCollectionID,
+	@AccountId
+)
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'RemoveRDSUserFromRDSCollection')
+DROP PROCEDURE RemoveRDSUserFromRDSCollection
+GO
+CREATE PROCEDURE [dbo].[RemoveRDSUserFromRDSCollection]
+(
+	@AccountId  INT,
+	@RDSCollectionId INT
+)
+AS
+
+
+DELETE FROM RDSCollectionUsers
+WHERE AccountId = @AccountId AND RDSCollectionId = @RDSCollectionId
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetOrganizationRdsUsersCount')
+DROP PROCEDURE GetOrganizationRdsUsersCount
+GO
+CREATE PROCEDURE [dbo].GetOrganizationRdsUsersCount
+(
+	@ItemID INT,
+	@TotalNumber int OUTPUT
+)
+AS
+SELECT
+  @TotalNumber = Count([RDSCollectionId])
+  FROM [dbo].[RDSCollectionUsers]
+  WHERE [RDSCollectionId] in (SELECT [ID] FROM [RDSCollections] where [ItemId]  = @ItemId )
+RETURN
+GO
+
+
+-- wsp-10269: Changed php extension path in default properties for IIS70 and IIS80 provider
+update ServiceDefaultProperties
+set PropertyValue='%PROGRAMFILES(x86)%\PHP\php-cgi.exe'
+where PropertyName='PhpPath' and ProviderId in(101, 105)
+
+update ServiceDefaultProperties
+set PropertyValue='%PROGRAMFILES(x86)%\PHP\php.exe'
+where PropertyName='Php4Path' and ProviderId in(101, 105)
 
 GO

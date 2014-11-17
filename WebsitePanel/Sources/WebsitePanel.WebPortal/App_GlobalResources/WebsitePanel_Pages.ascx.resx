@@ -288,10 +288,10 @@
   <data name="PageTitle.SpaceMsSql2012" xml:space="preserve">
     <value>{user} - {space} - SQL Server 2012</value>
   </data>
-    <data name="PageName.SpaceMsSql2014" xml:space="preserve">
+  <data name="PageName.SpaceMsSql2014" xml:space="preserve">
     <value>SQL Server 2014</value>
   </data>
-    <data name="PageTitle.SpaceMsSql2014" xml:space="preserve">
+  <data name="PageTitle.SpaceMsSql2014" xml:space="preserve">
     <value>{user} - {space} - SQL Server 2014</value>
   </data>
   <data name="PageTitle.SpaceMsSql2005" xml:space="preserve">
@@ -479,5 +479,8 @@
   </data>
   <data name="PageTitle.PhoneNumbers" xml:space="preserve">
     <value>Phone Numbers</value>
+  </data>
+  <data name="PageName.RDSServers" xml:space="preserve">
+    <value>RDS Servers</value>
   </data>
 </root>

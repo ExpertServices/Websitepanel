@@ -49,9 +49,6 @@ namespace WebsitePanel.Portal
         
         protected void Page_Load(object sender, EventArgs e)
         {
-			// enable async tasks
-			//EnableAsyncTasksSupport();
-
             if (!IsPostBack)
             {
                 tree.Attributes.Add("onClick", "TreeViewCheckBoxClicked(event)");
@@ -71,6 +68,7 @@ namespace WebsitePanel.Portal
             rootNode = new TreeNode();
             rootNode.ImageUrl = PortalUtils.GetThemedImage("folder.png");
             rootNode.Text = GetLocalizedString("Text.Resources");
+            rootNode.SelectAction = TreeNodeSelectAction.None;
             rootNode.Value = "Root";
             rootNode.Expanded = true;
             tree.Nodes.Add(rootNode);
@@ -84,6 +82,7 @@ namespace WebsitePanel.Portal
                 node.Value = "-" + type.ItemTypeId.ToString();
                 node.Text = GetSharedLocalizedString("ServiceItemType." + type.DisplayName);
                 node.PopulateOnDemand = true;
+                node.SelectAction = TreeNodeSelectAction.None;
                 node.ImageUrl = PortalUtils.GetThemedImage("folder.png");
                 rootNode.ChildNodes.Add(node);
             }
@@ -93,6 +92,7 @@ namespace WebsitePanel.Portal
             node.Value = "+100";
             node.Text = GetSharedLocalizedString("ServiceItemType.HostHeader");
             node.PopulateOnDemand = true;
+            node.SelectAction = TreeNodeSelectAction.None;
             node.ImageUrl = PortalUtils.GetThemedImage("folder.png");
             rootNode.ChildNodes.Add(node);
 
@@ -113,6 +113,7 @@ namespace WebsitePanel.Portal
                     node.Text = item;
                     node.Value = itemTypeId.ToString() + "|" + item;
                     node.ShowCheckBox = true;
+                    node.SelectAction = TreeNodeSelectAction.None;
                     e.Node.ChildNodes.Add(node);
                 }
             }
@@ -130,6 +131,7 @@ namespace WebsitePanel.Portal
                         headerNode.Text = GetSharedLocalizedString("ServiceItemType.HostHeader");
                         headerNode.Value = "+" + itemTypeId.ToString();
                         headerNode.ShowCheckBox = true;
+                        headerNode.SelectAction = TreeNodeSelectAction.None;
                         e.Node.ChildNodes.Add(headerNode);
 
                         foreach (string item in items)
@@ -152,6 +154,7 @@ namespace WebsitePanel.Portal
                                 userNode.Text = objectData[0];
                                 userNode.Value = "+" + itemTypeId.ToString() + "|" + objectData[1];
                                 userNode.ShowCheckBox = true;
+                                userNode.SelectAction = TreeNodeSelectAction.None;
                                 headerNode.ChildNodes.Add(userNode);
                             }
 
@@ -159,6 +162,7 @@ namespace WebsitePanel.Portal
                             siteNode.Text = objectData[3];
                             siteNode.Value = "+" + itemTypeId.ToString() + "|" + item;
                             siteNode.ShowCheckBox = true;
+                            userNode.SelectAction = TreeNodeSelectAction.None;
                             userNode.ChildNodes.Add(siteNode);
                         }
 
@@ -237,6 +241,10 @@ namespace WebsitePanel.Portal
                     this.checkChildNodes(childNode.ChildNodes, e.Node.Checked);
                 }
             }
+        }
+
+        protected void tree_TreeNodeExpanded(object sender, TreeNodeEventArgs e)
+        {
         }
     }
 }

@@ -5584,4 +5584,13 @@
   <data name="Error.SERVICE_LEVEL_IN_USE" xml:space="preserve">
     <value>Unable to remove Service Level because it is being used</value>
   </data>
+  <data name="Quota.RDS.Servers" xml:space="preserve">
+    <value>Remote Desktop Servers</value>
+  </data>
+  <data name="Quota.RDS.Users" xml:space="preserve">
+    <value>Remote Desktop Users</value>
+  </data>
+  <data name="Error.RDS_CREATE_COLLECTION_RDSSERVER_REQUAIRED" xml:space="preserve">
+    <value>Error creating rds collection. You need to add at least 1 rds server to collection</value>
+  </data>
 </root>
