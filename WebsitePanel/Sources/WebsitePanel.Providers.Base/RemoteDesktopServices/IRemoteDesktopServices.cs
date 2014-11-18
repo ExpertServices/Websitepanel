@@ -28,6 +28,9 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
 
 namespace WebsitePanel.Providers.RemoteDesktopServices
 {
@@ -36,6 +39,24 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
     /// </summary>
     public interface IRemoteDesktopServices
     {
-   
+        bool CreateCollection(string organizationId, RdsCollection collection);
+        RdsCollection GetCollection(string collectionName);
+        bool RemoveCollection(string organizationId, string collectionName);
+        bool SetUsersInCollection(string organizationId, string collectionName, List<string> users);
+        void AddSessionHostServerToCollection(string organizationId, string collectionName, RdsServer server);
+        void AddSessionHostServersToCollection(string organizationId, string collectionName, List<RdsServer> servers);
+        void RemoveSessionHostServerFromCollection(string organizationId, string collectionName, RdsServer server);
+        void RemoveSessionHostServersFromCollection(string organizationId, string collectionName, List<RdsServer> servers);
+
+        List<StartMenuApp> GetAvailableRemoteApplications(string collectionName);
+        List<RemoteApplication> GetCollectionRemoteApplications(string collectionName);
+        bool AddRemoteApplication(string collectionName, RemoteApplication remoteApp);
+        bool AddRemoteApplications(string collectionName, List<RemoteApplication> remoteApps);
+        bool RemoveRemoteApplication(string collectionName, RemoteApplication remoteApp);
+
+        bool AddSessionHostFeatureToServer(string hostName);
+        bool CheckSessionHostFeatureInstallation(string hostName);
+
+        bool CheckServerAvailability(string hostName);
     }
 }

@@ -35,6 +35,7 @@ using WebsitePanel.Providers.HostedSolution;
 using Microsoft.ApplicationBlocks.Data;
 using System.Collections.Generic;
 using Microsoft.Win32;
+using WebsitePanel.Providers.RemoteDesktopServices;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -4432,6 +4433,288 @@ namespace WebsitePanel.EnterpriseServer
             int res = (int)SqlHelper.ExecuteScalar(ConnectionString, CommandType.StoredProcedure, "CheckServiceLevelUsage",
                                     new SqlParameter("@LevelID", levelID));
             return res > 0;
+        }
+
+        #endregion
+
+        #region RDS
+
+        public static IDataReader GetRDSCollectionsByItemId(int itemId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetRDSCollectionsByItemId",
+                new SqlParameter("@ItemID", itemId)
+            );
+        }
+
+        public static IDataReader GetRDSCollectionByName(string name)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetRDSCollectionByName",
+                new SqlParameter("@Name", name)
+            );
+        }
+
+        public static IDataReader GetRDSCollectionById(int id)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetRDSCollectionById",
+                new SqlParameter("@ID", id)
+            );
+        }
+
+        public static DataSet GetRDSCollectionsPaged(int itemId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
+        {
+            return SqlHelper.ExecuteDataset(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetRDSCollectionsPaged",
+                new SqlParameter("@FilterColumn", VerifyColumnName(filterColumn)),
+                new SqlParameter("@FilterValue", VerifyColumnValue(filterValue)),
+                new SqlParameter("@itemId", itemId),
+                new SqlParameter("@SortColumn", VerifyColumnName(sortColumn)),
+                new SqlParameter("@startRow", startRow),
+                new SqlParameter("@maximumRows", maximumRows)
+            );
+        }
+
+        public static int AddRDSCollection(int itemId, string name, string description)
+        {
+            SqlParameter rdsCollectionId = new SqlParameter("@RDSCollectionID", SqlDbType.Int);
+            rdsCollectionId.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddRDSCollection",
+                rdsCollectionId,
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@Name", name),
+                new SqlParameter("@Description", description)
+            );
+
+            // read identity
+            return Convert.ToInt32(rdsCollectionId.Value);
+        }
+
+        public static int GetOrganizationRdsUsersCount(int itemId)
+        {
+            SqlParameter count = new SqlParameter("@TotalNumber", SqlDbType.Int);
+            count.Direction = ParameterDirection.Output;
+
+            DataSet ds = SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetOrganizationRdsUsersCount",
+                count,
+                new SqlParameter("@ItemId", itemId));
+
+            // read identity
+            return Convert.ToInt32(count.Value);
+        }
+
+        public static void UpdateRDSCollection(RdsCollection collection)
+        {
+            UpdateRDSCollection(collection.Id, collection.ItemId, collection.Name, collection.Description);
+        }
+
+        public static void UpdateRDSCollection(int id, int itemId, string name, string description)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateRDSCollection",
+                new SqlParameter("@Id", id),
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@Name", name),
+                new SqlParameter("@Description", description)
+            );
+        }
+
+        public static void DeleteRDSCollection(int id)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteRDSCollection",
+                new SqlParameter("@Id", id)
+            );
+        }
+
+        public static int AddRDSServer(string name, string fqdName, string description)
+        {
+            SqlParameter rdsServerId = new SqlParameter("@RDSServerID", SqlDbType.Int);
+            rdsServerId.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddRDSServer",
+                rdsServerId,
+                new SqlParameter("@FqdName", fqdName),
+                new SqlParameter("@Name", name),
+                new SqlParameter("@Description", description)
+            );
+
+            // read identity
+            return Convert.ToInt32(rdsServerId.Value);
+        }
+
+        public static IDataReader GetRDSServersByItemId(int itemId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetRDSServersByItemId",
+                new SqlParameter("@ItemID", itemId)
+            );
+        }
+
+        public static DataSet GetRDSServersPaged(int? itemId, int? collectionId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows, bool ignoreItemId = false, bool ignoreRdsCollectionId = false)
+        {
+            return SqlHelper.ExecuteDataset(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetRDSServersPaged",
+                new SqlParameter("@FilterColumn", VerifyColumnName(filterColumn)),
+                new SqlParameter("@FilterValue", VerifyColumnValue(filterValue)),
+                new SqlParameter("@SortColumn", VerifyColumnName(sortColumn)),
+                new SqlParameter("@startRow", startRow),
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@RdsCollectionId", collectionId),
+                new SqlParameter("@IgnoreItemId", ignoreItemId),
+                new SqlParameter("@IgnoreRdsCollectionId", ignoreRdsCollectionId),
+                new SqlParameter("@maximumRows", maximumRows)
+            );
+        }
+
+        public static IDataReader GetRDSServerById(int id)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetRDSServerById",
+                new SqlParameter("@ID", id)
+            );
+        }
+
+        public static IDataReader GetRDSServersByCollectionId(int collectionId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetRDSServersByCollectionId",
+                new SqlParameter("@RdsCollectionId", collectionId)
+            );
+        }
+
+        public static void DeleteRDSServer(int id)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteRDSServer",
+                new SqlParameter("@Id", id)
+            );
+        }
+
+        public static void UpdateRDSServer(RdsServer server)
+        {
+            UpdateRDSServer(server.Id, server.ItemId, server.Name, server.FqdName, server.Description,
+                server.RdsCollectionId);
+        }
+
+        public static void UpdateRDSServer(int id, int? itemId, string name, string fqdName, string description, int? rdsCollectionId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateRDSServer",
+                new SqlParameter("@Id", id),
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@Name", name),
+                new SqlParameter("@FqdName", fqdName),
+                new SqlParameter("@Description", description),
+                new SqlParameter("@RDSCollectionId", rdsCollectionId)
+            );
+        }
+
+        public static void AddRDSServerToCollection(int serverId, int rdsCollectionId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddRDSServerToCollection",
+                new SqlParameter("@Id", serverId),
+                new SqlParameter("@RDSCollectionId", rdsCollectionId)
+            );
+        }
+
+        public static void AddRDSServerToOrganization(int itemId, int serverId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddRDSServerToOrganization",
+                new SqlParameter("@Id", serverId),
+                new SqlParameter("@ItemID", itemId)
+            );
+        }
+
+        public static void RemoveRDSServerFromOrganization(int serverId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "RemoveRDSServerFromOrganization",
+                new SqlParameter("@Id", serverId)
+            );
+        }
+
+        public static void RemoveRDSServerFromCollection(int serverId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "RemoveRDSServerFromCollection",
+                new SqlParameter("@Id", serverId)
+            );
+        }
+
+        public static IDataReader GetRDSCollectionUsersByRDSCollectionId(int id)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetRDSCollectionUsersByRDSCollectionId",
+                new SqlParameter("@id", id)
+            );
+        }
+
+        public static void AddRDSUserToRDSCollection(int rdsCollectionId, int accountId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddUserToRDSCollection",
+                new SqlParameter("@RDSCollectionId", rdsCollectionId),
+                new SqlParameter("@AccountID", accountId)
+            );
+        }
+
+        public static void RemoveRDSUserFromRDSCollection(int rdsCollectionId, int accountId)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "RemoveRDSUserFromRDSCollection",
+                new SqlParameter("@RDSCollectionId", rdsCollectionId),
+                new SqlParameter("@AccountID", accountId)
+            );
         }
 
         #endregion

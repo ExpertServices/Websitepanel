@@ -213,5 +213,10 @@ namespace WebsitePanel.Portal
         {
             get { return HttpContext.Current.Request["ctl"] ?? ""; }
         }
+
+        public static int CollectionID
+        {
+            get { return GetInt("CollectionId"); }
+        }
     }
 }

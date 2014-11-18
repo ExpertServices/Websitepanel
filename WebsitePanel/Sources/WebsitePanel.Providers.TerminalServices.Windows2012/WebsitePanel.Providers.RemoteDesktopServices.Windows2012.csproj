@@ -33,6 +33,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <ProjectReference Include="..\WebsitePanel.Providers.Base\WebsitePanel.Providers.Base.csproj">
       <Project>{684C932A-6C75-46AC-A327-F3689D89EB42}</Project>

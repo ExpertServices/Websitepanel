@@ -130,6 +130,31 @@ namespace WebsitePanel.Providers.HostedSolution
             return res;
         }
 
+        public static bool IsComputerInGroup(string samAccountName, string group)
+        {
+            bool res = false;
+            DirectorySearcher deSearch = new DirectorySearcher
+            {
+                Filter =
+                    ("(&(objectClass=computer)(samaccountname=" + samAccountName + "))")
+            };
+
+            //get the group result
+            SearchResult results = deSearch.FindOne();
+            DirectoryEntry de = results.GetDirectoryEntry();
+            PropertyValueCollection props = de.Properties["memberOf"];
+
+            foreach (string str in props)
+            {
+                if (str.IndexOf(group) != -1)
+                {
+                    res = true;
+                    break;
+                }
+            }
+            return res;
+        }
+
         public static string CreateOrganizationalUnit(string name, string parentPath)
         {
             string ret;

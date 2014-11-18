@@ -37,8 +37,11 @@ namespace WebsitePanel.Portal.ProviderControls
         {
             // Hide some form items when creating a new account
             passwordRow.Visible = (PanelRequest.ItemID > 0);
+            AutoresponderPanel.Visible = (PanelRequest.ItemID > 0);
             secAutoresponder.Visible = (PanelRequest.ItemID > 0);
+            ForwardingPanel.Visible = (PanelRequest.ItemID > 0);
             secForwarding.Visible = (PanelRequest.ItemID > 0);
+            OlderMailsPanel.Visible = (PanelRequest.ItemID > 0);
             secOlderMails.Visible = (PanelRequest.ItemID > 0);
         }
 
@@ -109,10 +112,10 @@ namespace WebsitePanel.Portal.ProviderControls
             item.IsDomainAdmin = cbDomainAdmin.Checked;
 
             item.DeleteOlder = cbDeleteOlder.Checked;
-            item.DeleteOlderDays = Convert.ToInt32(txtDeleteOlderDays.Text);
+            item.DeleteOlderDays = string.IsNullOrWhiteSpace(txtDeleteOlderDays.Text) ? 0 : Convert.ToInt32(txtDeleteOlderDays.Text);
 
             item.ForwardOlder = cbForwardOlder.Checked;
-            item.ForwardOlderDays = Convert.ToInt32(txtForwardOlderDays.Text);
+            item.ForwardOlderDays = string.IsNullOrWhiteSpace(txtForwardOlderDays.Text) ? 0 : Convert.ToInt32(txtForwardOlderDays.Text);
             item.ForwardOlderTo = txtForwardOlderTo.Text;
         }
 

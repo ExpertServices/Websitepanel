@@ -368,6 +368,10 @@ namespace WebsitePanel.Providers.Mail
 
         #region IceWarp
 
+        public bool UseDomainDiskQuota { get; set; }
+        public bool UseDomainLimits { get; set; }
+        public bool UseUserLimits { get; set; }
+
 	    public int MegaByteSendLimit { get; set; }
 	    public int NumberSendLimit { get; set; }
 

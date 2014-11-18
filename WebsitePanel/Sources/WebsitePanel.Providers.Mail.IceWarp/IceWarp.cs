@@ -624,7 +624,10 @@ namespace WebsitePanel.Providers.Mail
                 DefaultUserQuotaInMB = Convert.ToInt32((object) domain.GetProperty("D_UserMailbox"))/1024,
                 DefaultUserMaxMessageSizeMegaByte = Convert.ToInt32((object) domain.GetProperty("D_UserMsg"))/1024,
                 DefaultUserMegaByteSendLimit = Convert.ToInt32((object) domain.GetProperty("D_UserMB")),
-                DefaultUserNumberSendLimit = Convert.ToInt32((object) domain.GetProperty("D_UserNumber"))
+                DefaultUserNumberSendLimit = Convert.ToInt32((object) domain.GetProperty("D_UserNumber")),
+                UseDomainDiskQuota = Convert.ToBoolean(ProviderSettings["UseDomainDiskQuota"]),
+                UseDomainLimits = Convert.ToBoolean(ProviderSettings["UseDomainLimits"]),
+                UseUserLimits = Convert.ToBoolean(ProviderSettings["UseUserLimits"])
             };
 
             return mailDomain;

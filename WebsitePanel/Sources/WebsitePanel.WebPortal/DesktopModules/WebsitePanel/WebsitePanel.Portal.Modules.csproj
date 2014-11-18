@@ -169,6 +169,7 @@
     <Compile Include="Code\Framework\Utils.cs" />
     <Compile Include="Code\Helpers\AuditLogHelper.cs" />
     <Compile Include="Code\Helpers\BlackBerryHelper.cs" />
+    <Compile Include="Code\Helpers\RDSHelper.cs" />
     <Compile Include="Code\Helpers\EnterpriseStorageHelper.cs" />
     <Compile Include="Code\Helpers\LyncHelper.cs" />
     <Compile Include="Code\Helpers\VirtualMachinesForPCHelper.cs" />
@@ -210,6 +211,83 @@
     <Compile Include="Code\ReportingServices\IResourceStorage.cs" />
     <Compile Include="Code\ReportingServices\ReportingServicesUtils.cs" />
     <Compile Include="Code\UserControls\Tab.cs" />
+    <Compile Include="RDSServersAddserver.ascx.cs">
+      <DependentUpon>RDSServersAddserver.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDSServersAddserver.ascx.designer.cs">
+      <DependentUpon>RDSServersAddserver.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDSServers.ascx.cs">
+      <DependentUpon>RDSServers.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDSServers.ascx.designer.cs">
+      <DependentUpon>RDSServers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDS\AssignedRDSServers.ascx.cs">
+      <DependentUpon>AssignedRDSServers.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\AssignedRDSServers.ascx.designer.cs">
+      <DependentUpon>AssignedRDSServers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDS\AddRDSServer.ascx.cs">
+      <DependentUpon>AddRDSServer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\AddRDSServer.ascx.designer.cs">
+      <DependentUpon>AddRDSServer.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDS\RDSEditCollectionApps.ascx.cs">
+      <DependentUpon>RDSEditCollectionApps.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\RDSEditCollectionApps.ascx.designer.cs">
+      <DependentUpon>RDSEditCollectionApps.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDS\RDSEditCollectionUsers.ascx.cs">
+      <DependentUpon>RDSEditCollectionUsers.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\RDSEditCollectionUsers.ascx.designer.cs">
+      <DependentUpon>RDSEditCollectionUsers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDS\RDSCreateCollection.ascx.cs">
+      <DependentUpon>RDSCreateCollection.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\RDSCreateCollection.ascx.designer.cs">
+      <DependentUpon>RDSCreateCollection.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDS\RDSCollections.ascx.cs">
+      <DependentUpon>RDSCollections.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\RDSCollections.ascx.designer.cs">
+      <DependentUpon>RDSCollections.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDS\UserControls\RDSCollectionApps.ascx.cs">
+      <DependentUpon>RDSCollectionApps.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\UserControls\RDSCollectionApps.ascx.designer.cs">
+      <DependentUpon>RDSCollectionApps.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDS\UserControls\RDSCollectionServers.ascx.cs">
+      <DependentUpon>RDSCollectionServers.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\UserControls\RDSCollectionServers.ascx.designer.cs">
+      <DependentUpon>RDSCollectionServers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDS\UserControls\RDSCollectionUsers.ascx.cs">
+      <DependentUpon>RDSCollectionUsers.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\UserControls\RDSCollectionUsers.ascx.designer.cs">
+      <DependentUpon>RDSCollectionUsers.ascx</DependentUpon>
+    </Compile>
     <Compile Include="SettingsServiceLevels.ascx.cs">
       <DependentUpon>SettingsServiceLevels.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4145,6 +4223,17 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplyEnableHardQuotaFeature.ascx" />
+    <Content Include="RDSServersAddserver.ascx" />
+    <Content Include="RDSServers.ascx" />
+    <Content Include="RDS\AssignedRDSServers.ascx" />
+    <Content Include="RDS\AddRDSServer.ascx" />
+    <Content Include="RDS\RDSEditCollectionApps.ascx" />
+    <Content Include="RDS\RDSEditCollectionUsers.ascx" />
+    <Content Include="RDS\RDSCreateCollection.ascx" />
+    <Content Include="RDS\RDSCollections.ascx" />
+    <Content Include="RDS\UserControls\RDSCollectionApps.ascx" />
+    <Content Include="RDS\UserControls\RDSCollectionServers.ascx" />
+    <Content Include="RDS\UserControls\RDSCollectionUsers.ascx" />
     <Content Include="SettingsServiceLevels.ascx" />
     <Content Include="CRM\CRMStorageSettings.ascx" />
     <Content Include="ExchangeServer\EnterpriseStorageCreateDriveMap.ascx" />
@@ -5430,6 +5519,22 @@
     <Content Include="ProviderControls\App_LocalResources\IceWarp_EditList.ascx.resx" />
     <Content Include="ProviderControls\App_LocalResources\IceWarp_Settings.ascx.resx" />
     <Content Include="App_LocalResources\SettingsServiceLevels.ascx.resx" />
+    <Content Include="App_LocalResources\RDSServers.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="RDS\App_LocalResources\AssignedRDSServers.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="RDS\App_LocalResources\RDSCollections.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="RDS\App_LocalResources\AddRDSServer.ascx.resx" />
+    <Content Include="RDS\App_LocalResources\RDSCreateCollection.ascx.resx" />
+    <Content Include="RDS\App_LocalResources\RDSEditCollectionUsers.ascx.resx" />
+    <Content Include="RDS\App_LocalResources\RDSEditCollectionApps.ascx.resx" />
+    <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionUsers.ascx.resx" />
+    <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionServers.ascx.resx" />
+    <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionApps.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

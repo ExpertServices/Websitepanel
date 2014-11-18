@@ -726,6 +726,13 @@ namespace WebsitePanel.EnterpriseServer
                     successful = false;
                 }
 
+                //Cleanup RDS
+
+                if (RemoteDesktopServicesController.DeleteRemoteDesktopService(itemId).IsSuccess == false)
+                {
+                    successful = false;
+                }
+
                 //Cleanup Exchange
                 try
                 {

@@ -224,6 +224,11 @@ namespace WebsitePanel.Portal
         {
             get { return GetCachedProxy<esEnterpriseStorage>(); }
         }
+
+        public esRemoteDesktopServices RDS
+        {
+            get { return GetCachedProxy<esRemoteDesktopServices>(); }
+        }
         
         protected ES()
         {

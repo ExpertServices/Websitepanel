@@ -28,67 +28,50 @@
 
 namespace WebsitePanel.Providers.Web.Iis.Extensions
 {
-    using Providers.Utils;
+    using Handlers;
     using Common;
     using Microsoft.Web.Administration;
-    using Microsoft.Web.Management.Server;
-    using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.Text;
-    using System.Text.RegularExpressions;
-	using Microsoft.Win32;
-using System.Collections.Specialized;
 
     internal sealed class ExtensionsModuleService : ConfigurationModuleService
     {
-		public const string PathAttribute = "path";
-
-		// Mappings collection to properly detect ISAPI modules registered in IIS.
-		static NameValueCollection ISAPI_MODULES = new NameValueCollection
-		{
-			// Misc
-			{ Constants.AspPathSetting, @"\inetsrv\asp.dll" },
-			// ASP.NET x86
-			{ Constants.AspNet11PathSetting, @"\Framework\v1.1.4322\aspnet_isapi.dll" },
-			{ Constants.AspNet20PathSetting, @"\Framework\v2.0.50727\aspnet_isapi.dll" },
-			{ Constants.AspNet40PathSetting, @"\Framework\v4.0.30128\aspnet_isapi.dll" },
-			// ASP.NET x64
-			{ Constants.AspNet20x64PathSetting, @"\Framework64\v2.0.50727\aspnet_isapi.dll" },
-			{ Constants.AspNet40x64PathSetting, @"\Framework64\v4.0.30128\aspnet_isapi.dll" }
-		};
-		
-        public SettingPair[] GetISAPIExtensionsInstalled(ServerManager srvman)
+        public SettingPair[] GetExtensionsInstalled(ServerManager srvman)
         {
-            List<SettingPair> settings = new List<SettingPair>();
-			//
+            var settings = new List<SettingPair>();
 			var config = srvman.GetApplicationHostConfiguration();
-			//
-			var section = config.GetSection(Constants.IsapiCgiRestrictionSection);
-			//
-			foreach (var item in section.GetCollection())
-			{
-				var isapiModulePath = Convert.ToString(item.GetAttributeValue(PathAttribute));
-				//
-				for (int i = 0; i < ISAPI_MODULES.Keys.Count; i++)
-				{
-					var pathExt = ISAPI_MODULES.Get(i);
-					//
-					if (isapiModulePath.EndsWith(pathExt))
-					{
-						settings.Add(new SettingPair
-						{
-							// Retrieve key name
-							Name = ISAPI_MODULES.GetKey(i),
-							// Evaluate ISAPI module path
-							Value = isapiModulePath
-						});
-						//
-						break;
-					}
-				}
-			}
-            //
+
+            var handlersSection = (HandlersSection) config.GetSection(Constants.HandlersSection, typeof (HandlersSection));
+
+            var executalbesToLookFor = new[]
+            {
+                // Perl
+                new KeyValuePair<string, string>(Constants.PerlPathSetting, "\\perl.exe"),
+                // Php
+                new KeyValuePair<string, string>(Constants.Php4PathSetting, "\\php.exe"),
+                new KeyValuePair<string, string>(Constants.PhpPathSetting, "\\php-cgi.exe"),
+                // Classic ASP
+                new KeyValuePair<string, string>(Constants.AspPathSetting, @"\inetsrv\asp.dll"),
+                // ASP.NET
+                new KeyValuePair<string, string>(Constants.AspNet11PathSetting, @"\Framework\v1.1.4322\aspnet_isapi.dll"),
+                new KeyValuePair<string, string>(Constants.AspNet20PathSetting, @"\Framework\v2.0.50727\aspnet_isapi.dll"),
+                new KeyValuePair<string, string>(Constants.AspNet40PathSetting, @"\Framework\v4.0.30319\aspnet_isapi.dll"),
+                // ASP.NET x64
+                new KeyValuePair<string, string>(Constants.AspNet20x64PathSetting, @"\Framework64\v2.0.50727\aspnet_isapi.dll"),
+                new KeyValuePair<string, string>(Constants.AspNet40x64PathSetting, @"\Framework64\v4.0.30319\aspnet_isapi.dll"),
+            };
+
+            foreach (var handler in handlersSection.Handlers)
+            {
+                foreach (var valuePair in executalbesToLookFor)
+                {
+                    var key = valuePair.Key;
+                    if (handler.ScriptProcessor.EndsWith(valuePair.Value) && !settings.Exists(s => s.Name == key))
+                    {
+						settings.Add(new SettingPair{Name = valuePair.Key, Value = handler.ScriptProcessor});
+                    }
+                }
+            }
+
             return settings.ToArray();
         }
     }
