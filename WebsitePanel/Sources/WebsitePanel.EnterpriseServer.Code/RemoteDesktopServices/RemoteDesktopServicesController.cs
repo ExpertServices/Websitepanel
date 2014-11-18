@@ -252,7 +252,11 @@ namespace WebsitePanel.EnterpriseServer
 
                 var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
 
-                rds.CreateCollection(org.OrganizationId, collection);
+                var package = PackageController.GetPackage(org.PackageId);
+
+                var tenant = UserController.GetUser(package.UserId);
+
+                rds.CreateCollection(org.OrganizationId, tenant.Username, collection);
 
                 collection.Id = DataProvider.AddRDSCollection(itemId, collection.Name, collection.Description);
 
@@ -320,7 +324,11 @@ namespace WebsitePanel.EnterpriseServer
 
                 var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
 
-                rds.RemoveCollection(org.OrganizationId, collection.Name);
+                var package = PackageController.GetPackage(org.PackageId);
+
+                var tenant = UserController.GetUser(package.UserId);
+
+                rds.RemoveCollection(org.OrganizationId, tenant.Username, collection.Name);
 
                 DataProvider.DeleteRDSCollection(collection.Id);
             }

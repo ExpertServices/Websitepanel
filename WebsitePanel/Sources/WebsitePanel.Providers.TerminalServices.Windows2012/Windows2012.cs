@@ -139,7 +139,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
         #region RDS Collections
 
-        public bool CreateCollection(string organizationId, RdsCollection collection)
+        public bool CreateCollection(string organizationId, string tenantName, RdsCollection collection)
         {
             var result = true;
 
@@ -194,19 +194,21 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                     ActiveDirectoryUtils.CreateGroup(orgPath, GetUsersGroupName(collection.Name));
                 }
 
+                var policyName = GetPolicyName(tenantName, organizationId, collection.Name);
+
                 foreach (var gateway in Gateways)
                 {
                     if (!CentralNps)
                     {
-                        CreateRdCapForce(runSpace, gateway, collection.Name, new List<string> { GetUsersGroupName(collection.Name) });
+                        CreateRdCapForce(runSpace, gateway, policyName, new List<string> { GetUsersGroupName(collection.Name) });
                     }
 
-                    CreateRdRapForce(runSpace, gateway, collection.Name, new List<string> { GetUsersGroupName(collection.Name) });
+                    CreateRdRapForce(runSpace, gateway, policyName, collection.Name, new List<string> { GetUsersGroupName(collection.Name) });
                 }
 
                 if (CentralNps)
                 {
-                    CreateCentralNpsPolicy(runSpace, CentralNpsHost, collection.Name, organizationId);
+                    CreateCentralNpsPolicy(runSpace, CentralNpsHost, policyName, collection.Name, organizationId);
                 }
 
                 //add user group to collection
@@ -261,7 +263,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             return collection;
         }
 
-        public bool RemoveCollection(string organizationId, string collectionName)
+        public bool RemoveCollection(string organizationId, string tenantName, string collectionName)
         {
             var result = true;
 
@@ -278,19 +280,21 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
                 ExecuteShellCommand(runSpace, cmd, false);
 
+                var policyName = GetPolicyName(tenantName, organizationId, collectionName);
+
                 foreach (var gateway in Gateways)
                 {
                     if (!CentralNps)
                     {
-                        RemoveRdCap(runSpace, gateway, collectionName);
+                        RemoveRdCap(runSpace, gateway, policyName);
                     }
 
-                    RemoveRdRap(runSpace, gateway, collectionName);
+                    RemoveRdRap(runSpace, gateway, policyName);
                 }
 
                 if (CentralNps)
                 {
-                    RemoveNpsPolicy(runSpace, CentralNpsHost, collectionName);
+                    RemoveNpsPolicy(runSpace, CentralNpsHost, policyName);
                 }
 
                 //Remove security group
@@ -537,7 +541,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
         #region Gateaway (RD CAP | RD RAP)
 
-        internal void CreateCentralNpsPolicy(Runspace runSpace, string centralNpshost, string collectionName, string organizationId)
+        internal void CreateCentralNpsPolicy(Runspace runSpace, string centralNpshost, string policyName, string collectionName, string organizationId)
         {
             var showCmd = new Command("netsh nps show np");
 
@@ -549,35 +553,35 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
             var sid = (byte[])ActiveDirectoryUtils.GetADObjectProperty(groupAd, "objectSid");
 
-            var addCmdString = string.Format(AddNpsString, collectionName.Replace(" ", "_"), count, ConvertByteToStringSid(sid));
+            var addCmdString = string.Format(AddNpsString, policyName.Replace(" ", "_"), count, ConvertByteToStringSid(sid));
 
             Command addCmd = new Command(addCmdString);
 
             var result = ExecuteRemoteShellCommand(runSpace, centralNpshost, addCmd);
         }
 
-        internal void RemoveNpsPolicy(Runspace runSpace, string centralNpshost, string collectionName)
+        internal void RemoveNpsPolicy(Runspace runSpace, string centralNpshost, string policyName)
         {
-            var removeCmd = new Command(string.Format("netsh nps delete np {0}", collectionName.Replace(" ", "_")));
+            var removeCmd = new Command(string.Format("netsh nps delete np {0}", policyName.Replace(" ", "_")));
 
             var removeResult = ExecuteRemoteShellCommand(runSpace, centralNpshost, removeCmd);
         }
 
-        internal void CreateRdCapForce(Runspace runSpace, string gatewayHost, string name, List<string> groups)
+        internal void CreateRdCapForce(Runspace runSpace, string gatewayHost, string policyName, List<string> groups)
         {
             //New-Item -Path "RDS:\GatewayServer\CAP" -Name "Allow Admins" -UserGroups "Administrators@." -AuthMethod 1
             //Set-Item -Path "RDS:\GatewayServer\CAP\Allow Admins\SessionTimeout" -Value 480 -SessionTimeoutAction 0
 
-            if (ItemExistsRemote(runSpace, gatewayHost, Path.Combine(CapPath, name)))
+            if (ItemExistsRemote(runSpace, gatewayHost, Path.Combine(CapPath, policyName)))
             {
-                RemoveRdCap(runSpace, gatewayHost, name);
+                RemoveRdCap(runSpace, gatewayHost, policyName);
             }
 
             var userGroupParametr = string.Format("@({0})",string.Join(",", groups.Select(x => string.Format("\"{0}@{1}\"", x, RootDomain)).ToArray()));
 
             Command rdCapCommand = new Command("New-Item");
             rdCapCommand.Parameters.Add("Path", string.Format("\"{0}\"", CapPath));
-            rdCapCommand.Parameters.Add("Name", string.Format("\"{0}\"", name));
+            rdCapCommand.Parameters.Add("Name", string.Format("\"{0}\"", policyName));
             rdCapCommand.Parameters.Add("UserGroups", userGroupParametr);
             rdCapCommand.Parameters.Add("AuthMethod", 1);
 
@@ -589,22 +593,22 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             RemoveItemRemote(runSpace, gatewayHost, string.Format(@"{0}\{1}", CapPath, name), RdsModuleName);
         }
 
-        internal void CreateRdRapForce(Runspace runSpace, string gatewayHost, string name, List<string> groups)
+        internal void CreateRdRapForce(Runspace runSpace, string gatewayHost, string policyName, string collectionName, List<string> groups)
         {
             //New-Item -Path "RDS:\GatewayServer\RAP" -Name "Allow Connections To Everywhere" -UserGroups "Administrators@." -ComputerGroupType 1
             //Set-Item -Path "RDS:\GatewayServer\RAP\Allow Connections To Everywhere\PortNumbers" -Value 3389,3390
 
-            if (ItemExistsRemote(runSpace, gatewayHost, Path.Combine(RapPath, name)))
+            if (ItemExistsRemote(runSpace, gatewayHost, Path.Combine(RapPath, policyName)))
             {
-                RemoveRdRap(runSpace, gatewayHost, name);
+                RemoveRdRap(runSpace, gatewayHost, policyName);
             }
 
             var userGroupParametr = string.Format("@({0})", string.Join(",", groups.Select(x => string.Format("\"{0}@{1}\"", x, RootDomain)).ToArray()));
-            var computerGroupParametr = string.Format("\"{0}@{1}\"", GetComputersGroupName(name), RootDomain);
+            var computerGroupParametr = string.Format("\"{0}@{1}\"", GetComputersGroupName(collectionName), RootDomain);
 
             Command rdRapCommand = new Command("New-Item");
             rdRapCommand.Parameters.Add("Path", string.Format("\"{0}\"", RapPath));
-            rdRapCommand.Parameters.Add("Name", string.Format("\"{0}\"", name));
+            rdRapCommand.Parameters.Add("Name", string.Format("\"{0}\"", policyName));
             rdRapCommand.Parameters.Add("UserGroups", userGroupParametr);
             rdRapCommand.Parameters.Add("ComputerGroupType", 1);
             rdRapCommand.Parameters.Add("ComputerGroup", computerGroupParametr);
@@ -629,6 +633,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             ExecuteShellCommand(runSpace, cmd, false);
         }
 
+
+    
         private bool ExistRdsServerInDeployment(Runspace runSpace, RdsServer server)
         {
             Command cmd = new Command("Get-RDserver");
@@ -922,6 +928,11 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             rdRapCommand.Parameters.Add("Recurse", "");
 
             ExecuteRemoteShellCommand(runSpace, hostname, rdRapCommand, imports);
+        }
+
+        private string GetPolicyName(string tenantName,string organizationId, string collectionName)
+        {
+            return string.Format("{0}-{1}-{2}", tenantName, organizationId, collectionName);
         }
 
         private string GetComputersGroupName(string collectionName)
