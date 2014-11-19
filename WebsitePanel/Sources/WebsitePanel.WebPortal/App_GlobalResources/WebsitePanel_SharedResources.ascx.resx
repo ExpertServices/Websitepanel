@@ -5593,4 +5593,7 @@
   <data name="Error.RDS_CREATE_COLLECTION_RDSSERVER_REQUAIRED" xml:space="preserve">
     <value>Error creating rds collection. You need to add at least 1 rds server to collection</value>
   </data>
+  <data name="Error.RDS_UNASSIGN_SERVER_FROM_ORG_SERVER_IS_IN_COLLECTION" xml:space="preserve">
+    <value>Error deleting rds server from organization: server is used in rds collection</value>
+  </data>
 </root>

@@ -422,7 +422,7 @@ namespace WebsitePanel.EnterpriseServer
 
         private static RdsServersPaged GetOrganizationRdsServersPagedInternal(int itemId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
         {
-            DataSet ds = DataProvider.GetRDSServersPaged(itemId, null, filterColumn, filterValue, sortColumn, startRow, maximumRows, ignoreRdsCollectionId: true);
+            DataSet ds = DataProvider.GetRDSServersPaged(itemId, null, filterColumn, filterValue, sortColumn, startRow, maximumRows);
 
             RdsServersPaged result = new RdsServersPaged();
             result.RecordsCount = (int)ds.Tables[0].Rows[0][0];
