@@ -60,12 +60,12 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public bool CreateCollection(string organizationId, string tenantName, RdsCollection collection)
+        public bool CreateCollection(string organizationId, RdsCollection collection)
         {
             try
             {
                 Log.WriteStart("'{0}' CreateCollection", ProviderSettings.ProviderName);
-                var result = RDSProvider.CreateCollection(organizationId, tenantName, collection);
+                var result = RDSProvider.CreateCollection(organizationId, collection);
                 Log.WriteEnd("'{0}' CreateCollection", ProviderSettings.ProviderName);
                 return result;
             }
@@ -94,12 +94,12 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
-        public bool RemoveCollection(string organizationId, string tenantName, string collectionName)
+        public bool RemoveCollection(string organizationId, string collectionName)
         {
             try
             {
                 Log.WriteStart("'{0}' RemoveCollection", ProviderSettings.ProviderName);
-                var result = RDSProvider.RemoveCollection(organizationId, tenantName, collectionName);
+                var result = RDSProvider.RemoveCollection(organizationId, collectionName);
                 Log.WriteEnd("'{0}' RemoveCollection", ProviderSettings.ProviderName);
                 return result;
             }

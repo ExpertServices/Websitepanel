@@ -117,19 +117,17 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/CreateCollection", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public bool CreateCollection(string organizationId, string tenantName, RdsCollection collection) {
+        public bool CreateCollection(string organizationId, RdsCollection collection) {
             object[] results = this.Invoke("CreateCollection", new object[] {
                         organizationId,
-                        tenantName,
                         collection});
             return ((bool)(results[0]));
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginCreateCollection(string organizationId, string tenantName, RdsCollection collection, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginCreateCollection(string organizationId, RdsCollection collection, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("CreateCollection", new object[] {
                         organizationId,
-                        tenantName,
                         collection}, callback, asyncState);
         }
         
@@ -140,18 +138,17 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         }
         
         /// <remarks/>
-        public void CreateCollectionAsync(string organizationId, string tenantName, RdsCollection collection) {
-            this.CreateCollectionAsync(organizationId, tenantName, collection, null);
+        public void CreateCollectionAsync(string organizationId, RdsCollection collection) {
+            this.CreateCollectionAsync(organizationId, collection, null);
         }
         
         /// <remarks/>
-        public void CreateCollectionAsync(string organizationId, string tenantName, RdsCollection collection, object userState) {
+        public void CreateCollectionAsync(string organizationId, RdsCollection collection, object userState) {
             if ((this.CreateCollectionOperationCompleted == null)) {
                 this.CreateCollectionOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCreateCollectionOperationCompleted);
             }
             this.InvokeAsync("CreateCollection", new object[] {
                         organizationId,
-                        tenantName,
                         collection}, this.CreateCollectionOperationCompleted, userState);
         }
         
@@ -207,19 +204,17 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/RemoveCollection", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public bool RemoveCollection(string organizationId, string tenantName, string collectionName) {
+        public bool RemoveCollection(string organizationId, string collectionName) {
             object[] results = this.Invoke("RemoveCollection", new object[] {
                         organizationId,
-                        tenantName,
                         collectionName});
             return ((bool)(results[0]));
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginRemoveCollection(string organizationId, string tenantName, string collectionName, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginRemoveCollection(string organizationId, string collectionName, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("RemoveCollection", new object[] {
                         organizationId,
-                        tenantName,
                         collectionName}, callback, asyncState);
         }
         
@@ -230,18 +225,17 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         }
         
         /// <remarks/>
-        public void RemoveCollectionAsync(string organizationId, string tenantName, string collectionName) {
-            this.RemoveCollectionAsync(organizationId, tenantName, collectionName, null);
+        public void RemoveCollectionAsync(string organizationId, string collectionName) {
+            this.RemoveCollectionAsync(organizationId, collectionName, null);
         }
         
         /// <remarks/>
-        public void RemoveCollectionAsync(string organizationId, string tenantName, string collectionName, object userState) {
+        public void RemoveCollectionAsync(string organizationId, string collectionName, object userState) {
             if ((this.RemoveCollectionOperationCompleted == null)) {
                 this.RemoveCollectionOperationCompleted = new System.Threading.SendOrPostCallback(this.OnRemoveCollectionOperationCompleted);
             }
             this.InvokeAsync("RemoveCollection", new object[] {
                         organizationId,
-                        tenantName,
                         collectionName}, this.RemoveCollectionOperationCompleted, userState);
         }
         

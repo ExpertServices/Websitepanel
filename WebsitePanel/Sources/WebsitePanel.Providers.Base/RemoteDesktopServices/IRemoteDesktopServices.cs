@@ -39,9 +39,9 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
     /// </summary>
     public interface IRemoteDesktopServices
     {
-        bool CreateCollection(string organizationId, string tenantName, RdsCollection collection);
+        bool CreateCollection(string organizationId, RdsCollection collection);
         RdsCollection GetCollection(string collectionName);
-        bool RemoveCollection(string organizationId, string tenantName, string collectionName);
+        bool RemoveCollection(string organizationId, string collectionName);
         bool SetUsersInCollection(string organizationId, string collectionName, List<string> users);
         void AddSessionHostServerToCollection(string organizationId, string collectionName, RdsServer server);
         void AddSessionHostServersToCollection(string organizationId, string collectionName, List<RdsServer> servers);
