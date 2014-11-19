@@ -6130,8 +6130,112 @@ REFERENCES [dbo].[Domains] ([DomainID])
 ON DELETE CASCADE
 GO
 
+IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'ScheduleTasksEmailTemplates')
+DROP TABLE ScheduleTasksEmailTemplates
+GO
+CREATE TABLE ScheduleTasksEmailTemplates
+(
+	[TaskID] [nvarchar](100) NOT NULL,
+	[ParameterID] [nvarchar](100) NOT NULL,
+	[Value] [nvarchar](Max) NULL
+)
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTasksEmailTemplates] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'MAIL_BODY' )
+BEGIN
+INSERT [dbo].[ScheduleTasksEmailTemplates] ([TaskID], [ParameterID], [Value]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'MAIL_BODY',  N'<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Account Summary Information</title>
+    <style type="text/css">
+	.Summary { background-color: #ffffff; padding: 5px; }
+	.Summary .Header { padding: 10px 0px 10px 10px; font-size: 16pt; background-color: #E5F2FF; color: #1F4978; border-bottom: solid 2px #86B9F7; }
+        .Summary A { color: #0153A4; }
+        .Summary { font-family: Tahoma; font-size: 9pt; }
+        .Summary H1 { font-size: 1.7em; color: #1F4978; border-bottom: dotted 3px #efefef; }
+        .Summary H2 { font-size: 1.3em; color: #1F4978; } 
+        .Summary TABLE { border: solid 1px #e5e5e5; }
+        .Summary TH,
+        .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: #f5f5f5; }
+        .Summary TD { padding: 8px; font-size: 9pt; }
+        .Summary UL LI { font-size: 1.1em; font-weight: bold; }
+        .Summary UL UL LI { font-size: 0.9em; font-weight: normal; }
+    </style>
+</head>
+<body>
+<div class="Summary">
+
+<a name="top"></a>
+<div class="Header">
+	MX and NS Information
+</div>
+
+<p>
+Hello!,
+</p>
+
+<p>
+Please, find below details for mx and ns changes.
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Domain</th>
+            <th>DNS</th>
+            <th>Record Type</th>
+            <th>DataBase Value</th>
+            <th>Dns Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        [RecordRow]
+    </tbody>
+</table>
+
+
+<p>
+If you have any questions regarding your hosting account, feel free to contact our support department at any time.
+</p>
+
+<p>
+Best regards
+</p>
+
+</div>
+</body>
+</html>')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTasksEmailTemplates] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'MAIL_DOMAIN_RECORD' )
+BEGIN
+INSERT [dbo].[ScheduleTasksEmailTemplates] ([TaskID], [ParameterID], [Value]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'MAIL_DOMAIN_RECORD',N'<tr>
+            <td>[domain]</td>
+            <td>[dns]</td>
+            <td>[recordType]</td>
+            <td>[dbRecord]</td>
+            <td>[dnsRecord]</td>
+        </tr>')
+END
+GO
+
 -- Procedures for Domai lookup service
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetScheduleTaskEmailTemplate')
+DROP PROCEDURE GetScheduleTaskEmailTemplate
+GO
+CREATE PROCEDURE [dbo].GetScheduleTaskEmailTemplate
+(
+	@TaskID [nvarchar](100) ,
+	@ParameterID [nvarchar](100)
+)
+AS
+SELECT
+	[TaskID] ,
+	[ParameterID],
+	[Value]
+  FROM [dbo].[ScheduleTasksEmailTemplates] where [TaskID] = @TaskID AND [ParameterID] = @ParameterID
+GO
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetAllPackageIds')
 DROP PROCEDURE GetAllPackageIds

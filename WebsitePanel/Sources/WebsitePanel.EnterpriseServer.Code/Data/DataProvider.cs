@@ -4743,9 +4743,9 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
-        public static IDataReader AddDomainDnsRecord(DnsRecordInfo domainDnsRecord)
+        public static void AddDomainDnsRecord(DnsRecordInfo domainDnsRecord)
         {
-            return SqlHelper.ExecuteReader(
+            SqlHelper.ExecuteReader(
                 ConnectionString,
                 CommandType.StoredProcedure,
                 "AddDomainDnsRecord",
@@ -4757,9 +4757,20 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
-        public static IDataReader DeleteDomainDnsRecord(int id)
+        public static IDataReader GetScheduleTaskEmailTemplate(string taskId, string parameterId)
         {
             return SqlHelper.ExecuteReader(
+                    ConnectionString,
+                    CommandType.StoredProcedure,
+                    "GetScheduleTaskEmailTemplate",
+                    new SqlParameter("@taskId", taskId),
+                    new SqlParameter("@parameterId", parameterId)
+                );
+        }
+
+        public static void DeleteDomainDnsRecord(int id)
+        {
+            SqlHelper.ExecuteReader(
                 ConnectionString,
                 CommandType.StoredProcedure,
                 "DeleteDomainDnsRecord",

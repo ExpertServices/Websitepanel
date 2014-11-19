@@ -9,13 +9,11 @@ namespace WebsitePanel.Providers.DomainLookup
     {
         public string Domain { get; set; }
 
-        public List<DomainDnsRecordsChanges> MxChanges { get; set; }
-        public List<DomainDnsRecordsChanges> NsChanges { get; set; }
+        public List<DomainDnsRecordsChanges> DnsChanges { get; set; }
 
         public DomainChanges()
         {
-            MxChanges = new List<DomainDnsRecordsChanges>();
-            NsChanges = new List<DomainDnsRecordsChanges>();
+            DnsChanges = new List<DomainDnsRecordsChanges>();
         }
     }
 }

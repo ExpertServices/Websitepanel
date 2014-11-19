@@ -90,6 +90,7 @@
     <Compile Include="DomainLookup\DomainDnsRecordCompare.cs" />
     <Compile Include="DomainLookup\DomainDnsRecordsChanges.cs" />
     <Compile Include="DomainLookup\DomainDnsRecordStatuses.cs" />
+    <Compile Include="DomainLookup\ScheduleTaskEmailTemplate.cs" />
     <Compile Include="EnterpriseStorage\IEnterpriseStorage.cs" />
     <Compile Include="HeliconZoo\IHeliconZooServer.cs" />
     <Compile Include="HostedSolution\BaseReport.cs" />

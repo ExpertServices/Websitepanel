@@ -322,19 +322,22 @@ namespace WebsitePanel.Providers.OS
                 {
                     foreach (var dnsRecordPs in dnsRecordsPs)
                     {
-                        DnsRecordInfo newRecord;
+                        DnsRecordInfo newRecord = null;
 
                         switch (recordType)
                         {
-                            case DnsRecordType.MX: { newRecord = CreateMxDnsRecordFromPsObject(dnsRecordPs); break; }
-                            case DnsRecordType.NS: { newRecord = CreateNsDnsRecordFromPsObject(dnsRecordPs); break; }
+                            case DnsRecordType.MX: { newRecord = CreateDnsRecordFromPsObject(dnsRecordPs, "NameExchange"); break; }
+                            case DnsRecordType.NS: { newRecord = CreateDnsRecordFromPsObject(dnsRecordPs, "NameHost"); break; }
                             default: continue;
                         }
 
-                        newRecord.DnsServer = dnsServer;
-                        newRecord.RecordType = recordType;
+                        if (newRecord != null)
+                        {
+                            newRecord.DnsServer = dnsServer;
+                            newRecord.RecordType = recordType;
 
-                        records.Add(newRecord);
+                            records.Add(newRecord);
+                        }
                     }
                     
                 }
@@ -347,21 +350,16 @@ namespace WebsitePanel.Providers.OS
             return records.ToArray();
         }
 
-        private DnsRecordInfo CreateMxDnsRecordFromPsObject(PSObject psObject)
+        private DnsRecordInfo CreateDnsRecordFromPsObject(PSObject psObject, string valueName)
         {
+            if (!psObject.Members.Any(x => x.Name == valueName))
+            {
+                return null;
+            }
+
             var dnsRecord = new DnsRecordInfo
             {
-                Value = Convert.ToString(GetPSObjectProperty(psObject, "NameExchange")),
-            };
-
-            return dnsRecord;
-        }
-
-        private DnsRecordInfo CreateNsDnsRecordFromPsObject(PSObject psObject)
-        {
-            var dnsRecord = new DnsRecordInfo
-            {
-                Value = Convert.ToString(GetPSObjectProperty(psObject, "NameHost")),
+                Value = Convert.ToString(GetPSObjectProperty(psObject, valueName)),
             };
 
             return dnsRecord;
