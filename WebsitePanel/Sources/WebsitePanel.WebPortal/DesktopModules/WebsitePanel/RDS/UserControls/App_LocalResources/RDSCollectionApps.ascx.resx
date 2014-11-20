@@ -117,11 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="btnAdd.OnClientClick" xml:space="preserve">
+    <value>ShowProgressDialog('Getting Remote Apps ...');</value>
+  </data>
   <data name="btnAdd.Text" xml:space="preserve">
     <value>Add...</value>
   </data>
+  <data name="btnAddSelected.OnClientClick" xml:space="preserve">
+    <value>CloseProgressDialog();</value>
+  </data>
   <data name="btnAddSelected.Text" xml:space="preserve">
     <value>Add Apps</value>
+  </data>
+  <data name="btnCancel.OnClientClick" xml:space="preserve">
+    <value>CloseProgressDialog();</value>
   </data>
   <data name="btnCancel.Text" xml:space="preserve">
     <value>Cancel</value>

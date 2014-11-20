@@ -94,7 +94,7 @@
 <asp:Button ID="btnAddServersFake" runat="server" style="display:none;" />
 <ajaxToolkit:ModalPopupExtender ID="AddServersModal" runat="server"
 	TargetControlID="btnAddServersFake" PopupControlID="AddServersPanel"
-	BackgroundCssClass="modalBackground" DropShadow="false" CancelControlID="btnCancelAdd" />
+	BackgroundCssClass="modalBackground" DropShadow="false" CancelControlID="btnCancelAdd"/>
 
 	</ContentTemplate>
 </asp:UpdatePanel>
