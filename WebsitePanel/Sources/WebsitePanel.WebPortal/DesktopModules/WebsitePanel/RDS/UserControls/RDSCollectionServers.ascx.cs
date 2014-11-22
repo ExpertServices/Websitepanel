@@ -131,6 +131,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
                 servers.AddRange(GetGridViewServers(SelectedState.All));
 
             // add new servers
+
             if (newServers != null)
 			{
                 foreach (RdsServer newServer in newServers)

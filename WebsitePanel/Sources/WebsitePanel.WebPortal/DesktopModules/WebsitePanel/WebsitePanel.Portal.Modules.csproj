@@ -5535,6 +5535,7 @@
     <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionUsers.ascx.resx" />
     <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionServers.ascx.resx" />
     <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionApps.ascx.resx" />
+    <Content Include="ProviderControls\App_LocalResources\RDS_Settings.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

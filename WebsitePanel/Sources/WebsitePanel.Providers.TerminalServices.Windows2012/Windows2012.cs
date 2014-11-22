@@ -62,7 +62,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         private const string Users = "users";
         private const string RdsGroupFormat = "rds-{0}-{1}";
         private const string RdsModuleName = "RemoteDesktopServices";
-        private const string AddNpsString = "netsh nps add np name=\"\"{0}\"\" policysource=\"1\" processingorder=\"{1}\" conditionid=\"0x3d\" conditiondata=\"^5$\" conditionid=\"0x1fb5\" conditiondata=\"{2}\" conditionid=\"0x1fb4\" conditiondata=\"{3}\" conditionid=\"0x1e\" conditiondata=\"UserAuthType:(PW|CA)\" profileid=\"0x1005\" profiledata=\"TRUE\" profileid=\"0x100f\" profiledata=\"TRUE\" profileid=\"0x1009\" profiledata=\"0x7\" profileid=\"0x1fe6\" profiledata=\"0x40000000\"";
+        private const string AddNpsString = "netsh nps add np name=\"\"{0}\"\" policysource=\"1\" processingorder=\"{1}\" conditionid=\"0x3d\" conditiondata=\"^5$\" conditionid=\"0x1fb5\" conditiondata=\"{2}\" conditionid=\"0x1e\" conditiondata=\"UserAuthType:(PW|CA)\" profileid=\"0x1005\" profiledata=\"TRUE\" profileid=\"0x100f\" profiledata=\"TRUE\" profileid=\"0x1009\" profiledata=\"0x7\" profileid=\"0x1fe6\" profiledata=\"0x40000000\"";
         #endregion
 
         #region Properties
@@ -194,21 +194,22 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                     ActiveDirectoryUtils.CreateGroup(orgPath, GetUsersGroupName(collection.Name));
                 }
 
-                var policyName = GetPolicyName(organizationId, collection.Name);
+                var capPolicyName = GetPolicyName(organizationId, collection.Name, RdsPolicyTypes.RdCap);
+                var rapPolicyName = GetPolicyName(organizationId, collection.Name, RdsPolicyTypes.RdRap);
 
                 foreach (var gateway in Gateways)
                 {
                     if (!CentralNps)
                     {
-                        CreateRdCapForce(runSpace, gateway, policyName, collection.Name, new List<string> { GetUsersGroupName(collection.Name) });
+                        CreateRdCapForce(runSpace, gateway, capPolicyName, collection.Name, new List<string> { GetUsersGroupName(collection.Name) });
                     }
 
-                    CreateRdRapForce(runSpace, gateway, policyName, collection.Name, new List<string> { GetUsersGroupName(collection.Name) });
+                    CreateRdRapForce(runSpace, gateway, rapPolicyName, collection.Name, new List<string> { GetUsersGroupName(collection.Name) });
                 }
 
                 if (CentralNps)
                 {
-                    CreateCentralNpsPolicy(runSpace, CentralNpsHost, policyName, collection.Name, organizationId);
+                    CreateCentralNpsPolicy(runSpace, CentralNpsHost, capPolicyName, collection.Name, organizationId);
                 }
 
                 //add user group to collection
@@ -280,21 +281,22 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
                 ExecuteShellCommand(runSpace, cmd, false);
 
-                var policyName = GetPolicyName(organizationId, collectionName);
+                var capPolicyName = GetPolicyName(organizationId, collectionName, RdsPolicyTypes.RdCap);
+                var rapPolicyName = GetPolicyName(organizationId, collectionName, RdsPolicyTypes.RdRap);
 
                 foreach (var gateway in Gateways)
                 {
                     if (!CentralNps)
                     {
-                        RemoveRdCap(runSpace, gateway, policyName);
+                        RemoveRdCap(runSpace, gateway, capPolicyName);
                     }
 
-                    RemoveRdRap(runSpace, gateway, policyName);
+                    RemoveRdRap(runSpace, gateway, rapPolicyName);
                 }
 
                 if (CentralNps)
                 {
-                    RemoveNpsPolicy(runSpace, CentralNpsHost, policyName);
+                    RemoveNpsPolicy(runSpace, CentralNpsHost, capPolicyName);
                 }
 
                 //Remove security group
@@ -553,11 +555,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
             var userGroupSid = (byte[])ActiveDirectoryUtils.GetADObjectProperty(userGroupAd, "objectSid");
 
-            var computerGroupAd = ActiveDirectoryUtils.GetADObject(GetComputerGroupPath(organizationId, collectionName));
-
-            var computerGroupSid = (byte[])ActiveDirectoryUtils.GetADObjectProperty(computerGroupAd, "objectSid");
-
-            var addCmdString = string.Format(AddNpsString, policyName.Replace(" ", "_"), count, ConvertByteToStringSid(userGroupSid), ConvertByteToStringSid(computerGroupSid));
+            var addCmdString = string.Format(AddNpsString, policyName.Replace(" ", "_"), count, ConvertByteToStringSid(userGroupSid));
 
             Command addCmd = new Command(addCmdString);
 
@@ -582,13 +580,11 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             }
 
             var userGroupParametr = string.Format("@({0})",string.Join(",", groups.Select(x => string.Format("\"{0}@{1}\"", x, RootDomain)).ToArray()));
-            var computerGroupParameter = string.Format("\"{0}@{1}\"", GetComputersGroupName(collectionName), RootDomain);
 
             Command rdCapCommand = new Command("New-Item");
             rdCapCommand.Parameters.Add("Path", string.Format("\"{0}\"", CapPath));
             rdCapCommand.Parameters.Add("Name", string.Format("\"{0}\"", policyName));
             rdCapCommand.Parameters.Add("UserGroups", userGroupParametr);
-            rdCapCommand.Parameters.Add("ComputerGroups", computerGroupParameter);
             rdCapCommand.Parameters.Add("AuthMethod", 1);
 
             ExecuteRemoteShellCommand(runSpace, gatewayHost, rdCapCommand, RdsModuleName);
@@ -936,9 +932,25 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             ExecuteRemoteShellCommand(runSpace, hostname, rdRapCommand, imports);
         }
 
-        private string GetPolicyName(string organizationId, string collectionName)
+        private string GetPolicyName(string organizationId, string collectionName, RdsPolicyTypes policyType)
         {
-            return string.Format("rds-{0}-{1}", organizationId, collectionName);
+            string policyName = string.Format("{0}-{1}-", organizationId, collectionName);
+
+            switch (policyType)
+            {
+                case RdsPolicyTypes.RdCap:
+                {
+                    policyName += "RDCAP";
+                    break;
+                }
+                case RdsPolicyTypes.RdRap:
+                {
+                    policyName += "RDRAP";
+                    break;
+                }
+            }
+
+            return policyName;
         }
 
         private string GetComputersGroupName(string collectionName)
