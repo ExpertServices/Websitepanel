@@ -108,7 +108,7 @@
 							OnSelected="odsAccountsPaged_Selected">
 						<SelectParameters>
 							<asp:QueryStringParameter Name="itemId" QueryStringField="ItemID" DefaultValue="0" />
-							<asp:Parameter Name="accountTypes" DefaultValue="1,5,6" />
+							<asp:Parameter Name="accountTypes" DefaultValue="1,5,6,10,11" />
 							<asp:ControlParameter Name="filterColumn" ControlID="ddlSearchColumn" PropertyName="SelectedValue" />
 							<asp:ControlParameter Name="filterValue" ControlID="txtSearchValue" PropertyName="Text" />
                             <asp:Parameter Name="archiving" Type="Boolean" />
