@@ -5593,7 +5593,16 @@
   <data name="Error.RDS_CREATE_COLLECTION_RDSSERVER_REQUAIRED" xml:space="preserve">
     <value>Error creating rds collection. You need to add at least 1 rds server to collection</value>
   </data>
-  <data name="Error.RDS_UNASSIGN_SERVER_FROM_ORG_SERVER_IS_IN_COLLECTION" xml:space="preserve">
-    <value>Error deleting rds server from organization: server is used in rds collection</value>
+  <data name="Quota.Exchange2013.ResourceMailboxes" xml:space="preserve">
+    <value>Resource Mailboxes per Organization</value>
+  </data>
+  <data name="Quota.Exchange2013.SharedMailboxes" xml:space="preserve">
+    <value>Shared Mailboxes per Organization</value>
+  </data>
+  <data name="ResourceMailbox.Text" xml:space="preserve">
+    <value> (resource mailbox)</value>
+  </data>
+  <data name="SharedMailbox.Text" xml:space="preserve">
+    <value> (shared mailbox)</value>
   </data>
 </root>

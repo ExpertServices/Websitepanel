@@ -60,6 +60,10 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             if (!IsPostBack)
             {
+                chkMailboxes.Checked = true;
+                chkResourceMailboxes.Checked = true;
+                chkSharedMailboxes.Checked = true;
+
                 BindStats();
             }
 
@@ -246,5 +250,25 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             return serviceLevel;
         }
+
+        protected void chkMailboxes_CheckedChanged(object sender, EventArgs e)
+        {
+            List<string> accountTypes = new List<string>();
+
+            if ((!chkMailboxes.Checked)&&(!chkSharedMailboxes.Checked)&&(!chkResourceMailboxes.Checked))
+                chkMailboxes.Checked = true;
+
+            if (chkMailboxes.Checked)
+                accountTypes.AddRange(new string[] {"1","5","6"});
+
+            if (chkSharedMailboxes.Checked)
+                accountTypes.Add("10");
+
+            if (chkResourceMailboxes.Checked)
+                accountTypes.Add("11");
+
+            odsAccountsPaged.SelectParameters["accountTypes"].DefaultValue = string.Join(",", accountTypes);
+        }
+
     }
 }
