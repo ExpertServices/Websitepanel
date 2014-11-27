@@ -5599,10 +5599,13 @@
   <data name="Quota.Exchange2013.SharedMailboxes" xml:space="preserve">
     <value>Shared Mailboxes per Organization</value>
   </data>
-  <data name="ResourceMailbox.Text" xml:space="preserve">
-    <value> (resource mailbox)</value>
+  <data name="RoomMailbox.Text" xml:space="preserve">
+    <value> (room mailbox)</value>
   </data>
   <data name="SharedMailbox.Text" xml:space="preserve">
     <value> (shared mailbox)</value>
+  </data>
+  <data name="EquipmentMailbox.Text" xml:space="preserve">
+    <value> (equipment mailbox)</value>
   </data>
 </root>

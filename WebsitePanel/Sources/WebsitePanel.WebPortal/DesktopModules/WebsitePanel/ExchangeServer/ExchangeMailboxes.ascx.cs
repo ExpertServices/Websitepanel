@@ -151,6 +151,7 @@ namespace WebsitePanel.Portal.ExchangeServer
         {
             ExchangeAccountType accountType = (ExchangeAccountType)accountTypeId;
             string imgName = "mailbox_16.gif";
+
             if (accountType == ExchangeAccountType.Contact)
                 imgName = "contact_16.gif";
             else if (accountType == ExchangeAccountType.DistributionList)
@@ -159,6 +160,8 @@ namespace WebsitePanel.Portal.ExchangeServer
                 imgName = "room_16.gif";
             else if (accountType == ExchangeAccountType.Equipment)
                 imgName = "equipment_16.gif";
+            else if (accountType == ExchangeAccountType.SharedMailbox)
+                imgName = "shared_16.gif";
 
             if (vip && cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels)) imgName = "vip_user_16.png";
 
@@ -259,13 +262,13 @@ namespace WebsitePanel.Portal.ExchangeServer
                 chkMailboxes.Checked = true;
 
             if (chkMailboxes.Checked)
-                accountTypes.AddRange(new string[] {"1","5","6"});
+                accountTypes.Add("1");
 
             if (chkSharedMailboxes.Checked)
                 accountTypes.Add("10");
 
             if (chkResourceMailboxes.Checked)
-                accountTypes.Add("11");
+                accountTypes.AddRange(new string[] {"5","6"});
 
             odsAccountsPaged.SelectParameters["accountTypes"].DefaultValue = string.Join(",", accountTypes);
         }

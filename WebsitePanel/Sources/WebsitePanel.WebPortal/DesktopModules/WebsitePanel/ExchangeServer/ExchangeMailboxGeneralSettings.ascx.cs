@@ -186,8 +186,11 @@ namespace WebsitePanel.Portal.ExchangeServer
                 if (account.AccountType == ExchangeAccountType.SharedMailbox)
                     litDisplayName.Text += GetSharedLocalizedString("SharedMailbox.Text");
 
-                if (account.AccountType == ExchangeAccountType.ResourceMailbox)
-                    litDisplayName.Text += GetSharedLocalizedString("ResourceMailbox.Text");
+                if (account.AccountType == ExchangeAccountType.Room)
+                    litDisplayName.Text += GetSharedLocalizedString("RoomMailbox.Text");
+
+                if (account.AccountType == ExchangeAccountType.Equipment)
+                    litDisplayName.Text += GetSharedLocalizedString("EquipmentMailbox.Text");
 
             }
             catch (Exception ex)
