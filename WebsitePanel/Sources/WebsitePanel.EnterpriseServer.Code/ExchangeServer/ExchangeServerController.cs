@@ -1679,7 +1679,7 @@ namespace WebsitePanel.EnterpriseServer
                 if ((orgStats.AllocatedSharedMailboxes > -1) && (orgStats.CreatedSharedMailboxes >= orgStats.AllocatedSharedMailboxes))
                     return BusinessErrorCodes.ERROR_EXCHANGE_MAILBOXES_QUOTA_LIMIT;
             }
-            else if (accountType == ExchangeAccountType.ResourceMailbox)
+            else if ((accountType == ExchangeAccountType.Room) || (accountType == ExchangeAccountType.Equipment))
             {
                 if ((orgStats.AllocatedResourceMailboxes > -1) && (orgStats.CreatedResourceMailboxes >= orgStats.AllocatedResourceMailboxes))
                     return BusinessErrorCodes.ERROR_EXCHANGE_MAILBOXES_QUOTA_LIMIT;

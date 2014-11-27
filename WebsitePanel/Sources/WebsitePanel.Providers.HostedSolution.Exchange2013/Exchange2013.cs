@@ -1944,8 +1944,6 @@ namespace WebsitePanel.Providers.HostedSolution
                             cmd.Parameters.Add("Room");
                         else if (accountType == ExchangeAccountType.SharedMailbox)
                             cmd.Parameters.Add("Shared");
-                        else if (accountType == ExchangeAccountType.ResourceMailbox)
-                            cmd.Parameters.Add("Equipment");
 
 
                         result = ExecuteShellCommand(runSpace, cmd);
