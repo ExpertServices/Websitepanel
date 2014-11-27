@@ -99,7 +99,7 @@ namespace WebsitePanel.Server
             try
             {
                 Log.WriteStart("'{0}' RemoveCollection", ProviderSettings.ProviderName);
-                var result = RDSProvider.RemoveCollection(organizationId,collectionName);
+                var result = RDSProvider.RemoveCollection(organizationId, collectionName);
                 Log.WriteEnd("'{0}' RemoveCollection", ProviderSettings.ProviderName);
                 return result;
             }

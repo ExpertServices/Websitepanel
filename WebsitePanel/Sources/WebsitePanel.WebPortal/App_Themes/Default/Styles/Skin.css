@@ -237,6 +237,7 @@ A.Black {color: Black !important; text-decoration: none !important;}
 .RedStatus {background-image: url(error_bkg.gif); background-repeat: repeat-x;font-size: 8pt; font-weight: bold; color: White; background-color: #ff3300; text-align: center; padding: 6px;}
 .MessageBox SPAN.description {font-weight: normal !important;}
 .MessageBox .TechnicalDetails {padding-top: 4px; font-weight: normal !important;}
+.TechnicalDetailsTable {background-color: #FFFFFF; color: #222; }
 .MessageBoxSection {font-size: 8pt; font-weight: bold;}
 .popupHint {border: 2px solid #C4D6BB;padding: 3px; background-color: #F1F1FF;}
 .popupComments {border: 2px solid #C4D6BB;font-size: 9px; padding: 3px; background-color: #F1F1FF;}
@@ -292,3 +293,4 @@ UL.ActionButtons LI {margin-bottom: 12px;}
 p.warningText {font-size:14px; color:Red; text-align:center;}
 .Hidden {display: none;}
 .LinkText {color:#428bca;}
+.WrapText { white-space: normal;}

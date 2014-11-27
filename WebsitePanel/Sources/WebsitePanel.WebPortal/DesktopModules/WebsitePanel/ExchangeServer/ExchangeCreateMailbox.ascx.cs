@@ -101,6 +101,20 @@ namespace WebsitePanel.Portal.ExchangeServer
                     }
                 }
 
+                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2013_SHAREDMAILBOXES))
+                {
+                    if (cntx.Quotas[Quotas.EXCHANGE2013_SHAREDMAILBOXES].QuotaAllocatedValue != 0)
+                        rbMailboxType.Items.Add(new System.Web.UI.WebControls.ListItem(GetLocalizedString("SharedMailbox.Text"), "10"));
+
+                }
+
+                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2013_RESOURCEMAILBOXES))
+                {
+                    if (cntx.Quotas[Quotas.EXCHANGE2013_RESOURCEMAILBOXES].QuotaAllocatedValue != 0)
+                        rbMailboxType.Items.Add(new System.Web.UI.WebControls.ListItem(GetLocalizedString("ResourceMailbox.Text"), "11"));
+
+                }
+
                 rowRetentionPolicy.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, cntx);
             }
 

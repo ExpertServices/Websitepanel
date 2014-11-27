@@ -39,7 +39,8 @@ namespace WebsitePanel.Providers.HostedSolution
 		Equipment = 6,
         User = 7,
         SecurityGroup = 8,
-        DefaultSecurityGroup = 9
-
+        DefaultSecurityGroup = 9,
+        SharedMailbox = 10,
+        ResourceMailbox = 11
 	}
 }

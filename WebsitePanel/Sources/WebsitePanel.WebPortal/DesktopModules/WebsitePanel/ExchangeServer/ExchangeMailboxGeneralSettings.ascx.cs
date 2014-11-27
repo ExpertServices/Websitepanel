@@ -183,6 +183,12 @@ namespace WebsitePanel.Portal.ExchangeServer
                 }
                 imgVipUser.Visible = account.IsVIP && Cntx.Groups.ContainsKey(ResourceGroups.ServiceLevels);
 
+                if (account.AccountType == ExchangeAccountType.SharedMailbox)
+                    litDisplayName.Text += GetSharedLocalizedString("SharedMailbox.Text");
+
+                if (account.AccountType == ExchangeAccountType.ResourceMailbox)
+                    litDisplayName.Text += GetSharedLocalizedString("ResourceMailbox.Text");
+
             }
             catch (Exception ex)
             {

@@ -28,7 +28,7 @@
 	</tr>
 	<tr>
         <td class="Normal">
-  			<div class="Small" style="padding-top: 10px;">
+  			<div class="Small WrapText" style="padding-top: 10px;">
 			    <asp:Label ID="lblIgnoreGlobalDNSRecords" runat="server" meta:resourcekey="lblIPHelp2" Text="If you need your site..."></asp:Label>
 			</div>
         </td>

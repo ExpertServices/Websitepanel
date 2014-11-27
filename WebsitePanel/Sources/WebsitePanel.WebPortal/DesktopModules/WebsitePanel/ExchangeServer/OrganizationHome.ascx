@@ -89,6 +89,24 @@
                                 <wsp:QuotaViewer ID="mailboxesStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
                             </td>
                         </tr>
+
+                        <tr class="OrgStatsRow"> 
+                            <td class="OrgStatsQuota" nowrap>
+                                <asp:HyperLink ID="lnkSharedMailboxes" runat="server" meta:resourcekey="lnkSharedMailboxes" Text="Shared mailboxes" />
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="mailboxesSharedStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                        <tr class="OrgStatsRow"> 
+                            <td class="OrgStatsQuota" nowrap>
+                                <asp:HyperLink ID="lnkResourceMailboxes" runat="server" meta:resourcekey="lnkResourceMailboxes" Text="Resource mailboxes" />
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="mailboxesResourceStats" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+
                         <tr class="OrgStatsRow" id="rowContacts" runat="server">
                             <td class="OrgStatsQuota" nowrap>
                                 <asp:HyperLink ID="lnkContacts" runat="server" meta:resourcekey="lnkContacts"></asp:HyperLink>

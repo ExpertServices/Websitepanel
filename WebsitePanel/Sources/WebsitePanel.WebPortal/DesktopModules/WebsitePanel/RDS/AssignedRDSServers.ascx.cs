@@ -32,6 +32,7 @@ using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.Common;
 using WebsitePanel.Providers.HostedSolution;
 using WebsitePanel.Providers.OS;
+using WebsitePanel.Providers.RemoteDesktopServices;
 using WebsitePanel.WebPortal;
 
 namespace WebsitePanel.Portal.RDS
@@ -67,6 +68,13 @@ namespace WebsitePanel.Portal.RDS
 
                 try
                 {
+                    RdsServer rdsServer = ES.Services.RDS.GetRdsServer(rdsServerId);
+                    if (rdsServer.RdsCollectionId != null)
+                    {
+                        messageBox.ShowErrorMessage("RDS_UNASSIGN_SERVER_FROM_ORG_SERVER_IS_IN_COLLECTION");
+                        return;
+                    }
+
                     ResultObject result = ES.Services.RDS.RemoveRdsServerFromOrganization(rdsServerId);
                     if (!result.IsSuccess)
                     {

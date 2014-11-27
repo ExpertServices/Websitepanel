@@ -121,7 +121,14 @@ namespace WebsitePanel.Portal.ProviderControls
                 ddlSite.Items.Add(item);
             }
 
-            ddlSite_SelectedIndexChanged(this, null);
+            if (ddlSite.Items.Count == 0)
+            {
+                ddlSite.Items.Add(new ListItem("Default FTP Site (not yet created)", "Default FTP Site"));
+            }
+            else
+            {
+                ddlSite_SelectedIndexChanged(this, null);
+            }
         }
 
         protected void ddlSite_SelectedIndexChanged(object sender, EventArgs e)

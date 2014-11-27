@@ -117,40 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="btnAdd.OnClientClick" xml:space="preserve">
-    <value>ShowProgressDialog('Getting Remote Apps ...');</value>
-  </data>
   <data name="btnAdd.Text" xml:space="preserve">
-    <value>Add...</value>
+    <value>Add</value>
   </data>
-  <data name="btnAddSelected.OnClientClick" xml:space="preserve">
-    <value>CloseProgressDialog();</value>
+  <data name="gvGWServers.EmptyDataText" xml:space="preserve">
+    <value>No gateway serves have been added yet.</value>
   </data>
-  <data name="btnAddSelected.Text" xml:space="preserve">
-    <value>Add Apps</value>
-  </data>
-  <data name="btnCancel.OnClientClick" xml:space="preserve">
-    <value>CloseProgressDialog();</value>
-  </data>
-  <data name="btnCancel.Text" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
-  <data name="btnDelete.Text" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="gvAppName.HeaderText" xml:space="preserve">
-    <value>Remote Application Name</value>
-  </data>
-  <data name="gvApps.EmptyDataText" xml:space="preserve">
-    <value>The list of remote apps is empty. Click "Add..." button.</value>
-  </data>
-  <data name="gvPopupAppName.HeaderText" xml:space="preserve">
-    <value>Remote App Name</value>
-  </data>
-  <data name="gvPopupApps.EmptyDataText" xml:space="preserve">
-    <value>No remote apps found.</value>
-  </data>
-  <data name="headerAddApps.Text" xml:space="preserve">
-    <value>Available Remote Applications</value>
+  <data name="ServerNameColumn.HeaderText" xml:space="preserve">
+    <value>Server Name</value>
   </data>
 </root>

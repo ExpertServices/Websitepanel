@@ -1,6 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="IceWarp_Settings.ascx.cs" Inherits="WebsitePanel.Portal.ProviderControls.IceWarp_Settings" %>
 <%@ Register Src="../UserControls/SelectIPAddress.ascx" TagName="SelectIPAddress" TagPrefix="uc1" %>
-<table cellpadding="7" cellspacing="0" width="100%">
+<table width="100%">
 	<tr>
 		<td class="SubHead" width="150">
 		    <asp:Label ID="lblPublicIP" runat="server" Text="Public IP Address:" meta:resourcekey="lblPublicIP"></asp:Label> 
@@ -14,9 +14,14 @@
             <asp:Label runat="server" ID="lblMaxMessageSizeInMB" Text="Global max message size:"></asp:Label>
         </td>
         <td class="Normal">
-            <asp:TextBox runat="server" ID="txtMaxMessageSizeInMB" Text="0"></asp:TextBox>
-            <asp:Label ID="Label1" runat="server" meta:resourcekey="MaxMessageSizeInMB" Text="Can be overridden on domain level if you check 'Override global limits'"></asp:Label>
+            <asp:TextBox runat="server" ID="txtMaxMessageSizeInMB" Text="0" CssClass="NormalTextBox"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="txtMaxMessageSizeInMBRequired" runat="server" Text="*" ControlToValidate="txtMaxMessageSizeInMB"></asp:RequiredFieldValidator>
+            <asp:Label runat="server" meta:resourcekey="lblZeroIsUnlimited" />
         </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><asp:Label ID="MaxMessageSizeInMB" runat="server" meta:resourcekey="MaxMessageSizeInMB" Text="Can be overridden on domain level if you check 'Override global limits'"></asp:Label></td>
     </tr>
 	<tr>
 		<td colspan="2">
@@ -43,9 +48,9 @@
             <asp:Label runat="server" ID="lblWarnDomainSize" Text="Warn domain administrator when domain size exceeds quota (%)"></asp:Label>
         </td>
         <td class="Normal">
-            <asp:TextBox runat="server" ID="txtWarnDomainSize" Text="0"></asp:TextBox>
+            <asp:TextBox runat="server" ID="txtWarnDomainSize" Text="0" CssClass="NormalTextBox"></asp:TextBox>
             <asp:RequiredFieldValidator runat="server" Text="*" ControlToValidate="txtWarnDomainSize"></asp:RequiredFieldValidator>
-            <asp:RangeValidator ErrorMessage="Must be a value between 0 and 99" MinimumValue="0" MaximumValue="99" Type="Integer" meta:resourcekey="txtWarnDomainSizeValidator" ControlToValidate="txtWarnDomainSize" runat="server" />
+            <asp:RangeValidator ErrorMessage="Must be a value between 0 and 99, 0 means disabled" MinimumValue="0" MaximumValue="99" Type="Integer" meta:resourcekey="txtWarnSizeValidator" ControlToValidate="txtWarnDomainSize" runat="server" />
         </td>
     </tr>
     <tr>
@@ -53,9 +58,9 @@
             <asp:Label runat="server" ID="lblWarnMailboxUsage" Text="Warn user when mailbox size exceeds quota (%)"></asp:Label>
         </td>
         <td class="Normal">
-            <asp:TextBox runat="server" ID="txtWarnMailboxUsage" Text="0"></asp:TextBox>
-            <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" Text="*" ControlToValidate="txtWarnMailboxUsage"></asp:RequiredFieldValidator>
-            <asp:RangeValidator ErrorMessage="Must be a value between 0 and 99" MinimumValue="0" MaximumValue="99" Type="Integer" meta:resourcekey="txtWarnMailboxUsageValidator" ControlToValidate="txtWarnMailboxUsage" runat="server" />
+            <asp:TextBox runat="server" ID="txtWarnMailboxUsage" Text="0" CssClass="NormalTextBox"></asp:TextBox>
+            <asp:RequiredFieldValidator ID="txtWarnMailboxUsageRequired" runat="server" Text="*" ControlToValidate="txtWarnMailboxUsage"></asp:RequiredFieldValidator>
+            <asp:RangeValidator ErrorMessage="Must be a value between 0 and 99, 0 means disabled" MinimumValue="0" MaximumValue="99" Type="Integer" meta:resourcekey="txtWarnSizeValidator" ControlToValidate="txtWarnMailboxUsage" runat="server" />
         </td>
     </tr>
 </table>

@@ -67,6 +67,16 @@ namespace WebsitePanel.Portal.ExchangeServer
                 litDisplayName.Text = mailbox.DisplayName;
                 sendAsPermission.SetAccounts(mailbox.SendAsAccounts);
                 fullAccessPermission.SetAccounts(mailbox.FullAccessAccounts);
+
+                // get account meta
+                ExchangeAccount account = ES.Services.ExchangeServer.GetAccount(PanelRequest.ItemID, PanelRequest.AccountID);
+
+                if (account.AccountType == ExchangeAccountType.SharedMailbox)
+                    litDisplayName.Text += GetSharedLocalizedString("SharedMailbox.Text");
+
+                if (account.AccountType == ExchangeAccountType.ResourceMailbox)
+                    litDisplayName.Text += GetSharedLocalizedString("ResourceMailbox.Text");
+
             }
             catch (Exception ex)
             {
