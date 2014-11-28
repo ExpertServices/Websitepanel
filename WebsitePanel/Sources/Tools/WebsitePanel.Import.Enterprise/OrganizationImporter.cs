@@ -780,25 +780,43 @@ namespace WebsitePanel.Import.Enterprise
 				return userId;
 			}
 			int mailboxType = (int)type.Value;
+
+            PropertyValueCollection typeDetails = entry.Properties["msExchRecipientTypeDetails"];
+            int mailboxTypeDetails = 0;
+            if (typeDetails!=null)
+            {
+                if (typeDetails.Value != null)
+                    mailboxTypeDetails = (int)typeDetails.Value;
+            }
+
 			ExchangeAccountType accountType = ExchangeAccountType.Undefined;
-			switch (mailboxType)
-			{
-				case 1073741824:
-					Log.WriteInfo("Account type : mailbox");
-					accountType = ExchangeAccountType.Mailbox;
-					break;
-				case 7:
-					Log.WriteInfo("Account type : room");
-					accountType = ExchangeAccountType.Room;
-					break;
-				case 8:
-					Log.WriteInfo("Account type : equipment");
-					accountType = ExchangeAccountType.Equipment;
-					break;
-				default:
-					Log.WriteInfo("Account type : unknown");
-					return userId;
-			}
+
+            if (mailboxTypeDetails == 4)
+            {
+                Log.WriteInfo("Account type : shared mailbox");
+                accountType = ExchangeAccountType.SharedMailbox;
+            }
+            else
+            {
+                switch (mailboxType)
+                {
+                    case 1073741824:
+                        Log.WriteInfo("Account type : mailbox");
+                        accountType = ExchangeAccountType.Mailbox;
+                        break;
+                    case 7:
+                        Log.WriteInfo("Account type : room");
+                        accountType = ExchangeAccountType.Room;
+                        break;
+                    case 8:
+                        Log.WriteInfo("Account type : equipment");
+                        accountType = ExchangeAccountType.Equipment;
+                        break;
+                    default:
+                        Log.WriteInfo("Account type : unknown");
+                        return userId;
+                }
+            }
 
 			UpdateExchangeAccount(userId, accountName, accountType, displayName, email, false, string.Empty, samName, string.Empty);
 
