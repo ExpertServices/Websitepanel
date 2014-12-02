@@ -282,8 +282,8 @@ namespace WebsitePanel.Providers.Web.Iis
                 if (!dedicatedIp)
                 {
                     hostNames.AddRange(certificate.Extensions.Cast<X509Extension>()
-                        .Where(e => e.Oid.FriendlyName == "Subject Alternative Name")
-                        .Select(e => e.Format(true).Replace("DNS Name=", "")));
+                        .Where(e => e.Oid.Value == "2.5.29.17") // Subject Alternative Names
+                        .SelectMany(e => e.Format(true).Split(new[] {"\r\n", "\n", "\n"}, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Split('=')[1])));
                 }
 
                 var simpleName = certificate.GetNameInfo(X509NameType.SimpleName, false);
