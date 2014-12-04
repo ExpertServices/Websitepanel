@@ -17,7 +17,16 @@
     EmptyDataText="gvPackages" CssSelectorClass="NormalGridView"
     AllowSorting="True" DataSourceID="odsItemsPaged" AllowPaging="True">
     <Columns>
-        <asp:BoundField SortExpression="ItemName" DataField="ItemName" HeaderText="gvPackagesItemName" ></asp:BoundField>
+        <asp:TemplateField SortExpression="ItemName" HeaderText="gvPackagesItemName">
+            <ItemTemplate>
+	            <asp:hyperlink ID="lnkItem" runat="server" NavigateUrl='<%# GetItemPageUrl((int)Eval("ItemID"), (int)Eval("PackageID")) %>' Visible="<%# AllowItemLink() %>">
+		            <%# Eval("ItemName") %>
+	            </asp:hyperlink>
+                <asp:Label ID="itemName" runat="server" Visible="<%# !AllowItemLink() %>">
+                    <%# Eval("ItemName") %>
+                </asp:Label>
+            </ItemTemplate>
+        </asp:TemplateField>
         <asp:TemplateField SortExpression="PackageName" HeaderText="gvPackagesName">
             <ItemTemplate>
 	            <asp:hyperlink id=lnkSpace runat="server" NavigateUrl='<%# GetSpaceHomePageUrl((int)Eval("PackageID")) %>'>
