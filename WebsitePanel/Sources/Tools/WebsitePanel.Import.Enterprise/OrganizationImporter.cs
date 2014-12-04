@@ -51,7 +51,6 @@ namespace WebsitePanel.Import.Enterprise
 		private ProgressBar progressBar;
 		private ApplicationForm appForm;
 		private Button btnImport;
-
 		private Thread thread;
 
 
@@ -826,7 +825,7 @@ namespace WebsitePanel.Import.Enterprise
                 }
             }
 
-			UpdateExchangeAccount(userId, accountName, accountType, displayName, email, false, string.Empty, samName, string.Empty);
+			UpdateExchangeAccount(userId, accountName, accountType, displayName, email, false, string.Empty, samName, string.Empty, Global.defaultMailboxPlanId);
 
 			string defaultEmail = (string)entry.Properties["extensionAttribute3"].Value;
 
@@ -987,7 +986,7 @@ namespace WebsitePanel.Import.Enterprise
 		
 		private static void UpdateExchangeAccount(int  accountId, string accountName, ExchangeAccountType accountType,
             string displayName, string primaryEmailAddress, bool mailEnabledPublicFolder,
-            string mailboxManagerActions, string samAccountName, string accountPassword)
+            string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId)
 		{
             DataProvider.UpdateExchangeAccount(accountId, 
                 accountName, 
@@ -997,7 +996,7 @@ namespace WebsitePanel.Import.Enterprise
                 mailEnabledPublicFolder, 
                 mailboxManagerActions,
                 samAccountName,
-                CryptoUtils.Encrypt(accountPassword), 0, -1, string.Empty, false);
+                CryptoUtils.Encrypt(accountPassword), mailboxPlanId , -1, string.Empty, false);
         }
 	}
 }

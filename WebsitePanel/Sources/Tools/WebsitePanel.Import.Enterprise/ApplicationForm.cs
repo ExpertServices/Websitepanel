@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -129,6 +129,30 @@ namespace WebsitePanel.Import.Enterprise
 			}
 		}
 
+        private void BindMailboxPlans(string orgId)
+        {
+            cbMailboxPlan.Items.Clear();
+            cbMailboxPlan.Items.Add("<not set>");
+            cbMailboxPlan.SelectedIndex = 0;
+
+            Organization org = OrganizationController.GetOrganizationById(orgId);
+
+            if (org == null)
+            {
+                List<Organization> orgs = ExchangeServerController.GetExchangeOrganizations(1, false);
+                if (orgs.Count > 0)
+                    org = orgs[0];
+            }
+
+            if (org != null)
+            {
+                int itemId = org.Id;
+                List<ExchangeMailboxPlan> plans = ExchangeServerController.GetExchangeMailboxPlans(itemId, false);
+                cbMailboxPlan.Items.AddRange(plans.ToArray());
+            }
+
+        }
+
 		private void LoadOrganizationData(DirectoryEntry parent)
 		{
 			string orgId = (string)parent.Properties["name"].Value;
@@ -147,6 +171,9 @@ namespace WebsitePanel.Import.Enterprise
 				rbImport.Checked = false;
 				txtOrgName.Text = orgId;
 			}
+
+            BindMailboxPlans(orgId);
+
 			LoadOrganizationAccounts(parent);
 		}
 
@@ -326,6 +353,16 @@ namespace WebsitePanel.Import.Enterprise
 			Global.OrganizationName = txtOrgName.Text;
 			Global.ImportAccountsOnly = rbImport.Checked;
 			Global.HasErrors = false;
+
+            Global.defaultMailboxPlanId = 0;
+            if (cbMailboxPlan.SelectedItem!=null)
+            {
+                ExchangeMailboxPlan plan = cbMailboxPlan.SelectedItem as ExchangeMailboxPlan;
+                if (plan != null)
+                    Global.defaultMailboxPlanId = plan.MailboxPlanId;
+
+            }
+
 			importer.Initialize(this.username, this);
 			importer.Start();
 			

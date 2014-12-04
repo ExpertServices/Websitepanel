@@ -81,6 +81,7 @@ namespace WebsitePanel.Import.Enterprise
 		public static string ErrorMessage;
 		public static bool ImportAccountsOnly;
 		public static bool HasErrors;
+        public static int defaultMailboxPlanId;
 	
 	}
 }
