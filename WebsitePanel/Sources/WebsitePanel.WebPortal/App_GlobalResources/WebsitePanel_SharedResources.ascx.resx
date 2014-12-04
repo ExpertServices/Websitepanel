@@ -5608,4 +5608,10 @@
   <data name="EquipmentMailbox.Text" xml:space="preserve">
     <value> (equipment mailbox)</value>
   </data>
+  <data name="Success.DOMAIN_UPDATE_DOMAIN" xml:space="preserve">
+    <value>Domain information has been successfully updated.</value>
+  </data>
+  <data name="Success.WEB_UPDATE_SITE" xml:space="preserve">
+    <value>Web site has been successfully updated.</value>
+  </data>
 </root>

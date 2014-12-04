@@ -40,7 +40,8 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 BindPermissions();
 
-                buttonPanel.OnSaveClientClick = GetLocalizedString("buttonPanel.OnSaveClientClick"); 
+                if (GetLocalizedString("buttonPanel.OnSaveClientClick") != null)
+                    buttonPanel.OnSaveClientClick = GetLocalizedString("buttonPanel.OnSaveClientClick");
             }
 
         }

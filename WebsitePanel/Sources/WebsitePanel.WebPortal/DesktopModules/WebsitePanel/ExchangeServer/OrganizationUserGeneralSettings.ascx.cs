@@ -50,7 +50,8 @@ namespace WebsitePanel.Portal.HostedSolution
                 MailboxTabsId.Visible = (PanelRequest.Context == "Mailbox");
                 UserTabsId.Visible = (PanelRequest.Context == "User");
 
-                buttonPanel.OnSaveClientClick = GetLocalizedString("buttonPanel.OnSaveClientClick"); 
+                if (GetLocalizedString("buttonPanel.OnSaveClientClick") != null)
+                    buttonPanel.OnSaveClientClick = GetLocalizedString("buttonPanel.OnSaveClientClick");
             }
         }
 

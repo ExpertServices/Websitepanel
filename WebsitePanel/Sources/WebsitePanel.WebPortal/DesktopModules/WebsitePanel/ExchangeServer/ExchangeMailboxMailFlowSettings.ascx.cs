@@ -50,7 +50,8 @@ namespace WebsitePanel.Portal.ExchangeServer
             {
                 BindSettings();
 
-                buttonPanel.OnSaveClientClick = GetLocalizedString("buttonPanel.OnSaveClientClick"); 
+                if (GetLocalizedString("buttonPanel.OnSaveClientClick") != null)
+                    buttonPanel.OnSaveClientClick = GetLocalizedString("buttonPanel.OnSaveClientClick");
             }
 
         }
