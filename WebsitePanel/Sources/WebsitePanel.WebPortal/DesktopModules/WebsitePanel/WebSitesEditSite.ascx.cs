@@ -109,7 +109,7 @@ namespace WebsitePanel.Portal
 		{
 			var filteredTabs = TabsList.FilterTabsByHostingPlanQuotas(PackageId).ToList();
 
-            // remove "SSL" tab for a site with dynamic IP
+            // remove "SSL" tab for a site with dynamic IP and not SNI enabled
             var sslTab = filteredTabs.SingleOrDefault(t => t.Id == "SSL");
             if (!AllowSsl && sslTab != null)
                 filteredTabs.Remove(sslTab);
@@ -1071,6 +1071,7 @@ namespace WebsitePanel.Portal
 
             sharedIP.Visible = false;
             switchToDedicatedIP.Visible = true;
+            WebsitesSSLControl.InstalledCert = null;
         }
 
         protected void cmdSwitchToSharedIP_Click(object sender, EventArgs e)
@@ -1090,6 +1091,7 @@ namespace WebsitePanel.Portal
 
                 dlTabs.SelectedIndex = 0;
 
+                WebsitesSSLControl.InstalledCert = null;
             }
             catch (Exception ex)
             {
