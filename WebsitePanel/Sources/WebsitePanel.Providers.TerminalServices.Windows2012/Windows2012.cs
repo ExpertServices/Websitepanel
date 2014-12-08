@@ -818,7 +818,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
                 if (installationResult && !IsFeatureInstalled(hostName, "NET-Framework-45-Core", runSpace))
                 {
-                    feature = AddFeature(runSpace, hostName, "NET-Framework-Core", true, false);
+                    feature = AddFeature(runSpace, hostName, "NET-Framework-45-Core", true, false);
                     installationResult = (bool)GetPSObjectProperty(feature, "Success");
                 }
             }
