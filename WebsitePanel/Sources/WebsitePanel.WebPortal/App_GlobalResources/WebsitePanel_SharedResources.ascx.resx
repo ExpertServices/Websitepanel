@@ -5596,4 +5596,7 @@
   <data name="SchedulerTask.SCHEDULE_TASK_DOMAIN_LOOKUP" xml:space="preserve">
     <value>Check MX and NS on DNS servers</value>
   </data>
+  <data name="SchedulerTask.SCHEDULE_TASK_DOMAIN_EXPIRATION" xml:space="preserve">
+    <value>Check domain expiration date</value>
+  </data>
 </root>

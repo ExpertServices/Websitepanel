@@ -36,7 +36,7 @@ namespace WebsitePanel.EnterpriseServer
 
             var dnsServers = dnsServersString.Split(';');
 
-            var packages = ObjectUtils.CreateListFromDataReader<PackageInfo>(DataProvider.GetAllPackagesIds());
+            var packages = ObjectUtils.CreateListFromDataReader<PackageInfo>(DataProvider.GetAllPackages());
 
             foreach (var package in packages)
             {

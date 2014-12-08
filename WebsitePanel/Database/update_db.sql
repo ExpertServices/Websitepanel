@@ -6109,6 +6109,40 @@ INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [D
 END
 GO
 
+-- Domain Expiration Task
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTasks] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_EXPIRATION')
+BEGIN
+INSERT [dbo].[ScheduleTasks] ([TaskID], [TaskType], [RoleID]) VALUES (N'SCHEDULE_TASK_DOMAIN_EXPIRATION', N'WebsitePanel.EnterpriseServer.DomainExpirationTask, WebsitePanel.EnterpriseServer.Code', 1)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskViewConfiguration] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_EXPIRATION')
+BEGIN
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_DOMAIN_EXPIRATION', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/DomainExpirationView.ascx')
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_EXPIRATION' AND [ParameterID]= N'DAYS_BEFORE' )
+BEGIN
+INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_EXPIRATION', N'DAYS_BEFORE', N'String', NULL, 1)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_EXPIRATION' AND [ParameterID]= N'MAIL_TO' )
+BEGIN
+INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_EXPIRATION', N'MAIL_TO', N'String', NULL, 2)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_EXPIRATION' AND [ParameterID]= N'ENABLE_NOTIFICATION' )
+BEGIN
+INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_EXPIRATION', N'ENABLE_NOTIFICATION', N'Boolean', N'false', 3)
+END
+GO
+
+
 -- Domain lookup tables
 
 IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'DomainDnsRecords')
@@ -6130,6 +6164,20 @@ REFERENCES [dbo].[Domains] ([DomainID])
 ON DELETE CASCADE
 GO
 
+IF NOT EXISTS(SELECT * FROM sys.columns 
+        WHERE [name] = N'CreationDate' AND [object_id] = OBJECT_ID(N'Domains'))
+BEGIN
+	ALTER TABLE [dbo].[Domains] ADD CreationDate DateTime null;
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns 
+        WHERE [name] = N'ExpirationDate' AND [object_id] = OBJECT_ID(N'Domains'))
+BEGIN
+	ALTER TABLE [dbo].[Domains] ADD ExpirationDate DateTime null;
+END
+GO
+
 IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'ScheduleTasksEmailTemplates')
 DROP TABLE ScheduleTasksEmailTemplates
 GO
@@ -6141,21 +6189,22 @@ CREATE TABLE ScheduleTasksEmailTemplates
 )
 GO
 
-IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTasksEmailTemplates] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'MAIL_BODY' )
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTasksEmailTemplates] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_EXPIRATION' AND [ParameterID]= N'MAIL_BODY' )
 BEGIN
-INSERT [dbo].[ScheduleTasksEmailTemplates] ([TaskID], [ParameterID], [Value]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'MAIL_BODY',  N'<html xmlns="http://www.w3.org/1999/xhtml">
+INSERT [dbo].[ScheduleTasksEmailTemplates] ([TaskID], [ParameterID], [Value]) VALUES (N'SCHEDULE_TASK_DOMAIN_EXPIRATION', N'MAIL_BODY',  N'
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Account Summary Information</title>
+    <title>Domain Expiration Information</title>
     <style type="text/css">
-	.Summary { background-color: #ffffff; padding: 5px; }
-	.Summary .Header { padding: 10px 0px 10px 10px; font-size: 16pt; background-color: #E5F2FF; color: #1F4978; border-bottom: solid 2px #86B9F7; }
-        .Summary A { color: #0153A4; }
+		.Summary { background-color: ##ffffff; padding: 5px; }
+		.Summary .Header { padding: 10px 0px 10px 10px; font-size: 16pt; background-color: ##E5F2FF; color: ##1F4978; border-bottom: solid 2px ##86B9F7; }
+        .Summary A { color: ##0153A4; }
         .Summary { font-family: Tahoma; font-size: 9pt; }
-        .Summary H1 { font-size: 1.7em; color: #1F4978; border-bottom: dotted 3px #efefef; }
-        .Summary H2 { font-size: 1.3em; color: #1F4978; } 
-        .Summary TABLE { border: solid 1px #e5e5e5; }
+        .Summary H1 { font-size: 1.7em; color: ##1F4978; border-bottom: dotted 3px ##efefef; }
+        .Summary H2 { font-size: 1.3em; color: ##1F4978; } 
+        .Summary TABLE { border: solid 1px ##e5e5e5; }
         .Summary TH,
-        .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: #f5f5f5; }
+        .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
         .Summary TD { padding: 8px; font-size: 9pt; }
         .Summary UL LI { font-size: 1.1em; font-weight: bold; }
         .Summary UL UL LI { font-size: 0.9em; font-weight: normal; }
@@ -6166,29 +6215,35 @@ INSERT [dbo].[ScheduleTasksEmailTemplates] ([TaskID], [ParameterID], [Value]) VA
 
 <a name="top"></a>
 <div class="Header">
-	MX and NS Information
+	Domain Expiration Information
 </div>
 
+<ad:if test="#user#">
 <p>
-Hello!,
+Hello #user.FirstName#,
 </p>
+</ad:if>
 
 <p>
-Please, find below details for mx and ns changes.
+Please, find below details of your domain expiration information.
 </p>
 
 <table>
     <thead>
         <tr>
             <th>Domain</th>
-            <th>DNS</th>
-            <th>Record Type</th>
-            <th>DataBase Value</th>
-            <th>Dns Value</th>
+			<th>Customer</th>
+            <th>Expiration Date</th>
         </tr>
     </thead>
     <tbody>
-        [RecordRow]
+            <ad:foreach collection="#Domains#" var="Domain" index="i">
+        <tr>
+            <td>#Domain.DomainName#</td>
+			<td>#Domain.Customer#</td>
+            <td>#Domain.ExpirationDate#</td>
+        </tr>
+    </ad:foreach>
     </tbody>
 </table>
 
@@ -6199,27 +6254,31 @@ If you have any questions regarding your hosting account, feel free to contact o
 
 <p>
 Best regards
-</p>
-
-</div>
-</body>
-</html>')
+</p>')
 END
 GO
 
-IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTasksEmailTemplates] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'MAIL_DOMAIN_RECORD' )
-BEGIN
-INSERT [dbo].[ScheduleTasksEmailTemplates] ([TaskID], [ParameterID], [Value]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'MAIL_DOMAIN_RECORD',N'<tr>
-            <td>[domain]</td>
-            <td>[dns]</td>
-            <td>[recordType]</td>
-            <td>[dbRecord]</td>
-            <td>[dnsRecord]</td>
-        </tr>')
-END
-GO
+-- Procedures for Domain lookup service
 
--- Procedures for Domai lookup service
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetAllPackages')
+DROP PROCEDURE GetAllPackages
+GO
+CREATE PROCEDURE [dbo].[GetAllPackages]
+AS
+SELECT
+	   [PackageID]
+      ,[ParentPackageID]
+      ,[UserID]
+      ,[PackageName]
+      ,[PackageComments]
+      ,[ServerID]
+      ,[StatusID]
+      ,[PlanID]
+      ,[PurchaseDate]
+      ,[OverrideQuotas]
+      ,[BandwidthUpdated]
+  FROM [dbo].[Packages]
+GO
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetScheduleTaskEmailTemplate')
 DROP PROCEDURE GetScheduleTaskEmailTemplate
@@ -6236,18 +6295,6 @@ SELECT
 	[Value]
   FROM [dbo].[ScheduleTasksEmailTemplates] where [TaskID] = @TaskID AND [ParameterID] = @ParameterID
 GO
-
-IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetAllPackageIds')
-DROP PROCEDURE GetAllPackageIds
-GO
-CREATE PROCEDURE [dbo].GetAllPackageIds
-
-AS
-SELECT
-  [PackageID]
-  FROM [dbo].[Packages]
-GO
-
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetDomainDnsRecords')
 DROP PROCEDURE GetDomainDnsRecords
@@ -6312,8 +6359,178 @@ CREATE PROCEDURE [dbo].[DeleteDomainDnsRecord]
 	@Id  INT
 )
 AS
-
-
 DELETE FROM DomainDnsRecords
 WHERE Id = @Id
 GO
+
+--Domain Expiration Stored Procedures
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateDomainCreationDate')
+DROP PROCEDURE UpdateDomainCreationDate
+GO
+CREATE PROCEDURE [dbo].UpdateDomainCreationDate
+(
+	@DomainId INT,
+	@Date DateTime
+)
+AS
+UPDATE [dbo].[Domains] SET [CreationDate] = @Date WHERE [DomainID] = @DomainId
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateDomainExpirationDate')
+DROP PROCEDURE UpdateDomainExpirationDate
+GO
+CREATE PROCEDURE [dbo].UpdateDomainExpirationDate
+(
+	@DomainId INT,
+	@Date DateTime
+)
+AS
+UPDATE [dbo].[Domains] SET [ExpirationDate] = @Date WHERE [DomainID] = @DomainId
+GO
+
+
+--Updating Domain procedures
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetDomains')
+DROP PROCEDURE GetDomains
+GO
+CREATE PROCEDURE [dbo].[GetDomains]
+(
+	@ActorID int,
+	@PackageID int,
+	@Recursive bit = 1
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(WS.ItemID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(MD.ItemID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	Z.ItemName AS ZoneName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.CreationDate,
+	D.ExpirationDate,
+	D.IsDomainPointer
+FROM Domains AS D
+INNER JOIN PackagesTree(@PackageID, @Recursive) AS PT ON D.PackageID = PT.PackageID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+RETURN
+
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetDomainsPaged')
+DROP PROCEDURE GetDomainsPaged
+GO
+CREATE PROCEDURE [dbo].[GetDomainsPaged]
+(
+	@ActorID int,
+	@PackageID int,
+	@ServerID int,
+	@Recursive bit,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+SET NOCOUNT ON
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- build query and run it to the temporary table
+DECLARE @sql nvarchar(2000)
+
+IF @SortColumn = '' OR @SortColumn IS NULL
+SET @SortColumn = 'DomainName'
+
+SET @sql = '
+DECLARE @Domains TABLE
+(
+	ItemPosition int IDENTITY(1,1),
+	DomainID int
+)
+INSERT INTO @Domains (DomainID)
+SELECT
+	D.DomainID
+FROM Domains AS D
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
+LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+WHERE (D.IsInstantAlias = 0 AND D.IsDomainPointer = 0) AND
+		((@Recursive = 0 AND D.PackageID = @PackageID)
+		OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, D.PackageID) = 1))
+AND (@ServerID = 0 OR (@ServerID > 0 AND S.ServerID = @ServerID))
+'
+
+IF @FilterColumn <> '' AND @FilterValue <> ''
+SET @sql = @sql + ' AND ' + @FilterColumn + ' LIKE @FilterValue '
+
+IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
+
+SET @sql = @sql + ' SELECT COUNT(DomainID) FROM @Domains;SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(WS.ItemID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(MD.ItemID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.IsDomainPointer,
+	D.ExpirationDate,
+	P.PackageName,
+	ISNULL(SRV.ServerID, 0) AS ServerID,
+	ISNULL(SRV.ServerName, '''') AS ServerName,
+	ISNULL(SRV.Comments, '''') AS ServerComments,
+	ISNULL(SRV.VirtualServer, 0) AS VirtualServer,
+	P.UserID,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.FullName,
+	U.RoleID,
+	U.Email
+FROM @Domains AS SD
+INNER JOIN Domains AS D ON SD.DomainID = D.DomainID
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
+LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+WHERE SD.ItemPosition BETWEEN @StartRow + 1 AND @StartRow + @MaximumRows'
+
+exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @PackageID int, @FilterValue nvarchar(50), @ServerID int, @Recursive bit', 
+@StartRow, @MaximumRows, @PackageID, @FilterValue, @ServerID, @Recursive
+
+
+RETURN

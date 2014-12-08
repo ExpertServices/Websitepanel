@@ -25,7 +25,7 @@
     CssSelectorClass="NormalGridView" AllowPaging="True" OnRowCommand="gvDomains_RowCommand">
     <Columns>
         <asp:TemplateField SortExpression="DomainName" HeaderText="gvDomainsName">
-            <ItemStyle Width="60%" Wrap="False"></ItemStyle>
+            <ItemStyle Width="45%" Wrap="False"></ItemStyle>
             <ItemTemplate>
 	            <b><asp:hyperlink id=lnkEdit1 runat="server" CssClass="Medium"
 	                NavigateUrl='<%# GetItemEditUrl(Eval("PackageID"), Eval("DomainID")) %>'>
@@ -35,6 +35,12 @@
                     <asp:Label ID="lblMailDomain" runat="server" meta:resourcekey="lblMailDomain" Text="Mail:"></asp:Label>
                     <b><%# Eval("MailDomainName")%></b>
 	            </div>
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="gvDomainsExpirationDate">
+            <ItemStyle Width="15%"></ItemStyle>
+            <ItemTemplate>
+	            <%# GetDomainExpirationDate(Eval("ExpirationDate"))%>
             </ItemTemplate>
         </asp:TemplateField>
         <asp:TemplateField HeaderText="gvDomainsType">

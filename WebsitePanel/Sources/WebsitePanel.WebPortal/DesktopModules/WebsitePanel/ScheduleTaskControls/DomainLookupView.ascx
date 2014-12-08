@@ -15,5 +15,6 @@
         </td>
         <td class="Normal" width="100%">
             <asp:TextBox ID="txtMailTo" runat="server" Width="95%" CssClass="NormalTextBox" MaxLength="1000"></asp:TextBox>
+         </td>
     </tr>
 </table>

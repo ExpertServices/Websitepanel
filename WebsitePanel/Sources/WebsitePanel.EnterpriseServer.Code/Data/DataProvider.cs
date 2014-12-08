@@ -4723,12 +4723,12 @@ namespace WebsitePanel.EnterpriseServer
 
         #region MX|NX Services
 
-        public static IDataReader GetAllPackagesIds()
+        public static IDataReader GetAllPackages()
         {
             return SqlHelper.ExecuteReader(
                 ConnectionString,
                 CommandType.StoredProcedure,
-                "GetAllPackageIds"
+                "GetAllPackages"
             );
         }
 
@@ -4776,7 +4776,28 @@ namespace WebsitePanel.EnterpriseServer
                 "DeleteDomainDnsRecord",
                 new SqlParameter("@Id", id)
             );
-        } 
+        }
+
+        public static void UpdateDomainCreationDate(int domainId, DateTime date)
+        {
+            UpdateDomainDate(domainId, "UpdateDomainCreationDate", date);
+        }
+
+        public static void UpdateDomainExpirationDate(int domainId, DateTime date)
+        {
+            UpdateDomainDate(domainId, "UpdateDomainExpirationDate", date);
+        }
+
+        private static void UpdateDomainDate(int domainId, string stroredProcedure, DateTime date)
+        {
+            SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                stroredProcedure,
+                new SqlParameter("@DomainId", domainId),
+                new SqlParameter("@Date", date)
+            );
+        }
 
         #endregion
 

@@ -293,6 +293,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DomainLookupView.ascx.resx</DependentUpon>
     </Compile>
+    <Compile Include="ScheduleTaskControls\DomainExpirationView.ascx.cs">
+      <DependentUpon>DomainExpirationView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ScheduleTaskControls\DomainExpirationView.ascx.designer.cs">
+      <DependentUpon>DomainExpirationView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ScheduleTaskControls\DomainLookupView.ascx.cs">
       <DependentUpon>DomainLookupView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4246,10 +4253,12 @@
     <Content Include="RDS\UserControls\RDSCollectionApps.ascx" />
     <Content Include="RDS\UserControls\RDSCollectionServers.ascx" />
     <Content Include="RDS\UserControls\RDSCollectionUsers.ascx" />
+    <Content Include="ScheduleTaskControls\App_LocalResources\DomainExpirationView.ascx.resx" />
     <EmbeddedResource Include="ScheduleTaskControls\App_LocalResources\DomainLookupView.ascx.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DomainLookupView.ascx.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Content Include="ScheduleTaskControls\DomainExpirationView.ascx" />
     <Content Include="ScheduleTaskControls\DomainLookupView.ascx" />
     <Content Include="SettingsServiceLevels.ascx" />
     <Content Include="CRM\CRMStorageSettings.ascx" />

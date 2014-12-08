@@ -39,6 +39,8 @@ using WebsitePanel.Server;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.Web;
 using WebsitePanel.Providers.HostedSolution;
+using Whois.NET;
+using System.Text.RegularExpressions;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -48,6 +50,24 @@ namespace WebsitePanel.EnterpriseServer
     public class ServerController
     {
         private const string LOG_SOURCE_SERVERS = "SERVERS";
+
+        private static List<string> _createdDatePatterns = new List<string> { @"Creation Date:(.+)", // base
+                                                                                @"created:(.+)",
+                                                                                @"Created On:(.+)",
+                                                                                @"Domain Registration Date:(.+)",
+                                                                                @"Domain Create Date:(.+)",
+                                                                                @"Registered on:(.+)"};
+
+        private static List<string> _expiredDatePatterns = new List<string> { @"Expiration Date:(.+)", // base
+                                                                                @"Registry Expiry Date:(.+)", //.org
+                                                                                @"paid-till:(.+)", //.ru
+                                                                                @"Expires On:(.+)", //.name
+                                                                                @"Domain Expiration Date:(.+)", //.us
+                                                                                @"renewal date:(.+)", //.pl
+                                                                                @"Expiry date:(.+)", //.uk
+                                                                                @"anniversary:(.+)", //.fr
+                                                                                @"expires:(.+)" //.fi 
+                                                                              };
 
         #region Servers
         public static List<ServerInfo> GetAllServers()
@@ -1787,6 +1807,8 @@ namespace WebsitePanel.EnterpriseServer
                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.VPS, domain, "");
                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.VPSForPC, domain, "");
                 }
+
+                UpdateDomainRegistrationData(domain);
             }
             
             // add instant alias
@@ -2637,6 +2659,47 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.CompleteTask();
             }
         }
+
+        public static DomainInfo UpdateDomainRegistrationData(DomainInfo domain)
+        {
+            var whoisResult = WhoisClient.Query(domain.DomainName);
+
+            var createdDate = GetDomainInfoDate(whoisResult.Raw, _createdDatePatterns);
+            var expiredDate = GetDomainInfoDate(whoisResult.Raw, _expiredDatePatterns);
+
+            if (createdDate != null)
+            {
+                domain.CreationDate = createdDate;
+                DataProvider.UpdateDomainCreationDate(domain.DomainId, createdDate.Value);
+            }
+
+            if (expiredDate != null)
+            {
+                domain.ExpirationDate = expiredDate;
+                DataProvider.UpdateDomainExpirationDate(domain.DomainId, expiredDate.Value);
+            }
+
+            return domain;
+        }
+
+        private static DateTime? GetDomainInfoDate(string raw, IEnumerable<string> patterns)
+        {
+            foreach (var createdRegex in patterns)
+            {
+                var regex = new Regex(createdRegex, RegexOptions.IgnoreCase);
+
+                foreach (Match match in regex.Matches(raw))
+                {
+                    if (match.Success && match.Groups.Count == 2)
+                    {
+                        return DateTime.Parse(match.Groups[1].ToString().Trim());
+                    }
+                }
+            }
+
+            return null;
+        }
+
         #endregion
 
         #region DNS Zones
