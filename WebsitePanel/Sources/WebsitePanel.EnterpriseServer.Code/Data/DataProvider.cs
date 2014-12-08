@@ -4757,14 +4757,13 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
-        public static IDataReader GetScheduleTaskEmailTemplate(string taskId, string parameterId)
+        public static IDataReader GetScheduleTaskEmailTemplate(string taskId)
         {
             return SqlHelper.ExecuteReader(
                     ConnectionString,
                     CommandType.StoredProcedure,
                     "GetScheduleTaskEmailTemplate",
-                    new SqlParameter("@taskId", taskId),
-                    new SqlParameter("@parameterId", parameterId)
+                    new SqlParameter("@taskId", taskId)
                 );
         }
 

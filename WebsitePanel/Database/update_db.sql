@@ -6154,29 +6154,29 @@ GO
 
 -- Domain lookup tasks
 
-IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTasks] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP')
-BEGIN
-INSERT [dbo].[ScheduleTasks] ([TaskID], [TaskType], [RoleID]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'WebsitePanel.EnterpriseServer.DomainLookupViewTask, WebsitePanel.EnterpriseServer.Code', 1)
-END
-GO
+--IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTasks] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP')
+--BEGIN
+--INSERT [dbo].[ScheduleTasks] ([TaskID], [TaskType], [RoleID]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'WebsitePanel.EnterpriseServer.DomainLookupViewTask, WebsitePanel.EnterpriseServer.Code', 1)
+--END
+--GO
 
-IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskViewConfiguration] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP')
-BEGIN
-INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/DomainLookupView.ascx')
-END
-GO
+--IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskViewConfiguration] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP')
+--BEGIN
+--INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/DomainLookupView.ascx')
+--END
+--GO
 
-IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'DNS_SERVERS' )
-BEGIN
-INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'DNS_SERVERS', N'String', NULL, 1)
-END
-GO
+--IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'DNS_SERVERS' )
+--BEGIN
+--INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'DNS_SERVERS', N'String', NULL, 1)
+--END
+--GO
 
-IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'MAIL_TO' )
-BEGIN
-INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'MAIL_TO', N'String', NULL, 2)
-END
-GO
+--IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'MAIL_TO' )
+--BEGIN
+--INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'MAIL_TO', N'String', NULL, 2)
+--END
+--GO
 
 -- Domain Expiration Task
 
@@ -6253,14 +6253,15 @@ GO
 CREATE TABLE ScheduleTasksEmailTemplates
 (
 	[TaskID] [nvarchar](100) NOT NULL,
-	[ParameterID] [nvarchar](100) NOT NULL,
-	[Value] [nvarchar](Max) NULL
+	[From] [nvarchar](100) NOT NULL,
+	[Subject] [nvarchar](Max) NULL,
+	[Template] [nvarchar](Max) NULL
 )
 GO
 
-IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTasksEmailTemplates] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_EXPIRATION' AND [ParameterID]= N'MAIL_BODY' )
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTasksEmailTemplates] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_EXPIRATION')
 BEGIN
-INSERT [dbo].[ScheduleTasksEmailTemplates] ([TaskID], [ParameterID], [Value]) VALUES (N'SCHEDULE_TASK_DOMAIN_EXPIRATION', N'MAIL_BODY',  N'
+INSERT [dbo].[ScheduleTasksEmailTemplates] ([TaskID], [From], [Subject],  [Template]) VALUES (N'SCHEDULE_TASK_DOMAIN_EXPIRATION', N'wsp-scheduler@noreply.net', N'Domain expiration notification',  N'
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Domain Expiration Information</title>
@@ -6354,15 +6355,15 @@ DROP PROCEDURE GetScheduleTaskEmailTemplate
 GO
 CREATE PROCEDURE [dbo].GetScheduleTaskEmailTemplate
 (
-	@TaskID [nvarchar](100) ,
-	@ParameterID [nvarchar](100)
+	@TaskID [nvarchar](100) 
 )
 AS
 SELECT
-	[TaskID] ,
-	[ParameterID],
-	[Value]
-  FROM [dbo].[ScheduleTasksEmailTemplates] where [TaskID] = @TaskID AND [ParameterID] = @ParameterID
+	[TaskID],
+	[From] ,
+	[Subject] ,
+	[Template]
+  FROM [dbo].[ScheduleTasksEmailTemplates] where [TaskID] = @TaskID 
 GO
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetDomainDnsRecords')

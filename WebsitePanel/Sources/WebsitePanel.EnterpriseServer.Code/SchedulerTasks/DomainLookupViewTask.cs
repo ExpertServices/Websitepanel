@@ -204,8 +204,8 @@ namespace WebsitePanel.EnterpriseServer
         {
             BackgroundTask topTask = TaskManager.TopTask;
 
-            var bodyTempalte = ObjectUtils.FillObjectFromDataReader<ScheduleTaskEmailTemplate>(DataProvider.GetScheduleTaskEmailTemplate(TaskId, MailBodyTemplateParameter));
-            var domainRecordTemplate = ObjectUtils.FillObjectFromDataReader<ScheduleTaskEmailTemplate>(DataProvider.GetScheduleTaskEmailTemplate(TaskId, MailBodyDomainRecordTemplateParameter));
+            var bodyTempalte = ObjectUtils.FillObjectFromDataReader<ScheduleTaskEmailTemplate>(DataProvider.GetScheduleTaskEmailTemplate(TaskId));
+            var domainRecordTemplate = ObjectUtils.FillObjectFromDataReader<ScheduleTaskEmailTemplate>(DataProvider.GetScheduleTaskEmailTemplate(TaskId));
 
             // input parameters
             string mailFrom = "wsp-scheduler@noreply.net";
@@ -228,7 +228,7 @@ namespace WebsitePanel.EnterpriseServer
                     {
                         foreach (var record in dnsChanged.DnsRecordsCompare.Where(x=>x.Status != DomainDnsRecordStatuses.NotChanged))
                         {
-                            var tableRow = Utils.ReplaceStringVariable(domainRecordTemplate.Value, "domain", domain.Domain);
+                            var tableRow = Utils.ReplaceStringVariable(domainRecordTemplate.Template, "domain", domain.Domain);
                             tableRow = Utils.ReplaceStringVariable(tableRow, "dns", dnsChanged.DnsServer);
                             tableRow = Utils.ReplaceStringVariable(tableRow, "recordType", record.Type.ToString());
                             tableRow = Utils.ReplaceStringVariable(tableRow, "dbRecord", record.DbRecord != null ? record.DbRecord.Value : "-");
@@ -240,7 +240,7 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
 
-                var mailBody = Utils.ReplaceStringVariable(bodyTempalte.Value, "RecordRow", string.Join(" ", tableRecords));
+                var mailBody = Utils.ReplaceStringVariable(bodyTempalte.Template, "RecordRow", string.Join(" ", tableRecords));
 
                 // send mail message
                 MailHelper.SendMessage(mailFrom, mailTo, mailSubject, mailBody, true);

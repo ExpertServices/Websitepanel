@@ -8,7 +8,8 @@ namespace WebsitePanel.Providers.DomainLookup
     public class ScheduleTaskEmailTemplate
     {
         public string TaskId { get; set; }
-        public string ParameterID { get; set; }
-        public string Value { get; set; }
+        public string From { get; set; }
+        public string Subject { get; set; }
+        public string Template { get; set; }
     }
 }

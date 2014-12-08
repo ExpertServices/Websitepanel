@@ -116,19 +116,21 @@ namespace WebsitePanel.EnterpriseServer
         {
             BackgroundTask topTask = TaskManager.TopTask;
 
-            var bodyTemplate = ObjectUtils.FillObjectFromDataReader<ScheduleTaskEmailTemplate>(DataProvider.GetScheduleTaskEmailTemplate(TaskId, MailBodyTemplateParameter));
+            var template = ObjectUtils.FillObjectFromDataReader<ScheduleTaskEmailTemplate>(DataProvider.GetScheduleTaskEmailTemplate(TaskId));
 
             // input parameters
-            string mailFrom = "wsp-scheduler@noreply.net";
+            string mailFrom = template.From;
             string mailTo = (string)topTask.GetParamValue("MAIL_TO");
-            string mailSubject = "Domain expiration notification";
+            string mailSubject = template.Subject;
 
             Hashtable items = new Hashtable();
 
             items["user"] = user;
-            items["Domains"] = domains.Select(x => new { DomainName = x.DomainName, ExpirationDate = x.ExpirationDate, Customer = string.Format("{0} {1}", domainUsers[x.PackageId].FirstName, domainUsers[x.PackageId].LastName) });
+            items["Domains"] = domains.Select(x => new { DomainName = x.DomainName, 
+                                                         ExpirationDate = x.ExpirationDate, 
+                                                         Customer = string.Format("{0} {1}", domainUsers[x.PackageId].FirstName, domainUsers[x.PackageId].LastName) });
 
-            var mailBody = PackageController.EvaluateTemplate(bodyTemplate.Value, items);
+            var mailBody = PackageController.EvaluateTemplate(template.Template, items);
 
             // send mail message
             MailHelper.SendMessage(mailFrom, mailTo, mailSubject, mailBody, true);
