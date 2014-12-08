@@ -91,15 +91,36 @@ namespace WebsitePanel.Portal.ExchangeServer
                 if (plans.Length == 0)
                     btnCreate.Enabled = false;
 
+                bool allowResourceMailbox = false;
+
                 if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2007_ISCONSUMER))
                 {
                     if (cntx.Quotas[Quotas.EXCHANGE2007_ISCONSUMER].QuotaAllocatedValue != 1)
                     {
                         locSubscriberNumber.Visible = txtSubscriberNumber.Visible = valRequireSubscriberNumber.Enabled = false;
-                        rbMailboxType.Items.Add(new System.Web.UI.WebControls.ListItem(GetLocalizedString("RoomMailbox.Text"), "5"));
-                        rbMailboxType.Items.Add(new System.Web.UI.WebControls.ListItem(GetLocalizedString("EquipmentMailbox.Text"), "6"));
+                        allowResourceMailbox = true;
                     }
                 }
+
+                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2013_RESOURCEMAILBOXES))
+                {
+                    if (cntx.Quotas[Quotas.EXCHANGE2013_RESOURCEMAILBOXES].QuotaAllocatedValue != 0)
+                        allowResourceMailbox = true;
+                }
+
+
+                if (allowResourceMailbox)
+                {
+                    rbMailboxType.Items.Add(new System.Web.UI.WebControls.ListItem(GetLocalizedString("RoomMailbox.Text"), "5"));
+                    rbMailboxType.Items.Add(new System.Web.UI.WebControls.ListItem(GetLocalizedString("EquipmentMailbox.Text"), "6"));
+                }
+
+                if (cntx.Quotas.ContainsKey(Quotas.EXCHANGE2013_SHAREDMAILBOXES))
+                {
+                    if (cntx.Quotas[Quotas.EXCHANGE2013_SHAREDMAILBOXES].QuotaAllocatedValue != 0)
+                        rbMailboxType.Items.Add(new System.Web.UI.WebControls.ListItem(GetLocalizedString("SharedMailbox.Text"), "10"));
+                }
+
 
                 rowRetentionPolicy.Visible = Utils.CheckQouta(Quotas.EXCHANGE2013_ALLOWRETENTIONPOLICY, cntx);
             }

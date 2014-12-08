@@ -369,6 +369,8 @@ namespace WebsitePanel.Providers.HostedSolution
                             cmd.Parameters.Add("Equipment");
                         else if (accountType == ExchangeAccountType.Room)
                             cmd.Parameters.Add("Room");
+                        else if (accountType == ExchangeAccountType.SharedMailbox)
+                            cmd.Parameters.Add("Shared");
 
                         result = ExecuteShellCommand(runSpace, cmd);
 

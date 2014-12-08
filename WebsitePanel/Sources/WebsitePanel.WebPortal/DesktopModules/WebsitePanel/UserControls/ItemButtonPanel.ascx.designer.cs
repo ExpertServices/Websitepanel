@@ -10,24 +10,24 @@
 namespace WebsitePanel.Portal {
     
     
-    public partial class DomainsSelectDomainControl {
+    public partial class ItemButtonPanel {
         
         /// <summary>
-        /// ddlDomains control.
+        /// btnSave control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlDomains;
+        protected global::System.Web.UI.WebControls.Button btnSave;
         
         /// <summary>
-        /// valRequireDomain control.
+        /// btnSaveExit control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator valRequireDomain;
+        protected global::System.Web.UI.WebControls.Button btnSaveExit;
     }
 }

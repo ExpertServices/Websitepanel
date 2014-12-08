@@ -48,6 +48,9 @@ namespace WebsitePanel.Portal
             if (!IsPostBack)
             {
                 BindDomain();
+
+                if (GetLocalizedString("buttonPanel.OnSaveClientClick") != null)
+                    buttonPanel.OnSaveClientClick = GetLocalizedString("buttonPanel.OnSaveClientClick");
             }
         }
 
@@ -194,15 +197,13 @@ namespace WebsitePanel.Portal
                     ShowResultMessage(result);
                     return;
                 }
+                ShowSuccessMessage("DOMAIN_UPDATE_DOMAIN");
             }
             catch (Exception ex)
             {
                 ShowErrorMessage("DOMAIN_UPDATE_DOMAIN", ex);
                 return;
             }
-
-            // return
-            RedirectSpaceHomePage();
         }
 
         private void DeleteDomain()
@@ -232,8 +233,10 @@ namespace WebsitePanel.Portal
             SaveDomain();
         }
 
-        protected void btnCancel_Click(object sender, EventArgs e)
+        protected void btnSaveExit_Click(object sender, EventArgs e)
         {
+            SaveDomain();
+
             // return
             RedirectSpaceHomePage();
         }

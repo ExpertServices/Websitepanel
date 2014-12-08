@@ -46,7 +46,10 @@ namespace WebsitePanel.Import.CsvBulk
 	{
 		Mailbox,
 		Contact,
-		User
+		User,
+        Room,
+        Equipment,
+        SharedMailbox
 	}
 
 	/// <summary>
@@ -487,9 +490,12 @@ namespace WebsitePanel.Import.CsvBulk
 
 			if (!StringEquals(typeName, "Mailbox") &&
 				!StringEquals(typeName, "Contact") &&
-				!StringEquals(typeName, "User"))
+				!StringEquals(typeName, "User")&&
+                !StringEquals(typeName, "Room")&&
+                !StringEquals(typeName, "Equipment")&&
+                !StringEquals(typeName, "SharedMailbox"))
 			{
-				Log.WriteError(string.Format("Error at line {0}: field 'Type' is invalid. Should be 'Mailbox' or 'Contact' or 'User'", index + 1));
+                Log.WriteError(string.Format("Error at line {0}: field 'Type' is invalid. Should be 'Mailbox' or 'Contact' or 'User' or 'Room' or 'Equipment' or 'SharedMailbox'", index + 1));
 				return false;
 			}
 
@@ -524,7 +530,7 @@ namespace WebsitePanel.Import.CsvBulk
 			if (type == AccountTypes.Mailbox)
 			{
 				//create mailbox using web service
-				if (!CreateMailbox(index, orgId, displayName, emailAddress, password, firstName, middleName, lastName,
+				if (!CreateMailbox(ExchangeAccountType.Mailbox, index, orgId, displayName, emailAddress, password, firstName, middleName, lastName,
 					address, city, state, zip, country, jobTitle, company, department, office,
 					businessPhone, fax, homePhone, mobilePhone, pager, webPage, notes, planId))
 				{
@@ -532,6 +538,42 @@ namespace WebsitePanel.Import.CsvBulk
 				}
 				totalMailboxes++;
 			}
+            if (type == AccountTypes.Room)
+            {
+                //create mailbox using web service
+                if (!CreateMailbox(ExchangeAccountType.Room, index, orgId, displayName, emailAddress, password, firstName, middleName, lastName,
+                    address, city, state, zip, country, jobTitle, company, department, office,
+                    businessPhone, fax, homePhone, mobilePhone, pager, webPage, notes, planId))
+                {
+                    return false;
+                }
+                totalMailboxes++;
+            }
+            if (type == AccountTypes.Equipment)
+            {
+                //create mailbox using web service
+                if (!CreateMailbox(ExchangeAccountType.Equipment, index, orgId, displayName, emailAddress, password, firstName, middleName, lastName,
+                    address, city, state, zip, country, jobTitle, company, department, office,
+                    businessPhone, fax, homePhone, mobilePhone, pager, webPage, notes, planId))
+                {
+                    return false;
+                }
+                totalMailboxes++;
+            }
+            if (type == AccountTypes.SharedMailbox)
+            {
+                //create mailbox using web service
+                if (!CreateMailbox(ExchangeAccountType.SharedMailbox, index, orgId, displayName, emailAddress, password, firstName, middleName, lastName,
+                    address, city, state, zip, country, jobTitle, company, department, office,
+                    businessPhone, fax, homePhone, mobilePhone, pager, webPage, notes, planId))
+                {
+                    return false;
+                }
+                totalMailboxes++;
+            }
+
+
+
 			else if (type == AccountTypes.Contact)
 			{
 				//create contact using web service
@@ -561,7 +603,7 @@ namespace WebsitePanel.Import.CsvBulk
 		/// <summary>
 		/// Creates mailbox
 		/// </summary>
-		private bool CreateMailbox(int index, int orgId, string displayName, string emailAddress, string password, string firstName, string middleName, string lastName,
+        private bool CreateMailbox(ExchangeAccountType exchangeAccountType, int index, int orgId, string displayName, string emailAddress, string password, string firstName, string middleName, string lastName,
 								string address, string city, string state, string zip, string country, string jobTitle, string company, string department, string office,
 								string businessPhone, string fax, string homePhone, string mobilePhone, string pager, string webPage, string notes, int planId)
 		{
@@ -574,7 +616,7 @@ namespace WebsitePanel.Import.CsvBulk
 				//create mailbox
 				//ES.Services.ExchangeServer.
 				string accountName = string.Empty;
-                int accountId = ES.Services.ExchangeServer.CreateMailbox(orgId, 0, ExchangeAccountType.Mailbox, accountName, displayName, name, domain, password, false, string.Empty, planId, -1, string.Empty, false);
+                int accountId = ES.Services.ExchangeServer.CreateMailbox(orgId, 0, exchangeAccountType, accountName, displayName, name, domain, password, false, string.Empty, planId, -1, string.Empty, false);
 				if (accountId < 0)
 				{
 					string errorMessage = GetErrorMessage(accountId);

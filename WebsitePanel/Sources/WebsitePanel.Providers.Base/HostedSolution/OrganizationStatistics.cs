@@ -341,6 +341,36 @@ namespace WebsitePanel.Providers.HostedSolution
             get { return usedArchingStorage; }
             set { usedArchingStorage = value; }
         }
+
+        int allocatedSharedMailboxes;
+        public int AllocatedSharedMailboxes
+        {
+            get { return allocatedSharedMailboxes; }
+            set { allocatedSharedMailboxes = value; }
+        }
+
+        int createdSharedMailboxes;
+        public int CreatedSharedMailboxes
+        {
+            get { return createdSharedMailboxes; }
+            set { createdSharedMailboxes = value; }
+        }
+
+        int allocatedResourceMailboxes;
+        public int AllocatedResourceMailboxes
+        {
+            get { return allocatedResourceMailboxes; }
+            set { allocatedResourceMailboxes = value; }
+        }
+
+        int createdResourceMailboxes;
+        public int CreatedResourceMailboxes
+        {
+            get { return createdResourceMailboxes; }
+            set { createdResourceMailboxes = value; }
+        }
+
+
 	}
 }
 

@@ -55,9 +55,10 @@
 						    </asp:TemplateField>
 						    <asp:TemplateField>
 							    <ItemTemplate>
-									<asp:LinkButton ID="imgRemove1" runat="server" Text="Remove"
+									<asp:LinkButton ID="imgRemove1" runat="server" Text="Remove" Visible='<%# Eval("RdsCollectionId") == null %>'
 									    CommandName="DeleteItem" CommandArgument='<%# Eval("Id") %>' 
                                         meta:resourcekey="cmdDelete" OnClientClick="return confirm('Are you sure you want to remove selected server?')"></asp:LinkButton>
+                                    <asp:Label ID="lbRemove" Text="Remove" runat="server" Visible='<%# Eval("RdsCollectionId") != null %>'></asp:Label>
 							    </ItemTemplate>
 						    </asp:TemplateField>
 					    </Columns>

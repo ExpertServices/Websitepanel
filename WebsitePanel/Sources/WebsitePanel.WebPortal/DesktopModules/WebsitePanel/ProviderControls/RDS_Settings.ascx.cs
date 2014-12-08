@@ -27,6 +27,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Generic;
+using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
 using WebsitePanel.Providers.Common;
 
@@ -39,10 +41,26 @@ namespace WebsitePanel.Portal.ProviderControls
 
         }
 
+        public string GWServers
+        {
+            get
+            {
+                return ViewState["GWServers"] != null ? ViewState["GWServers"].ToString() : string.Empty;
+            }
+            set
+            {
+                ViewState["GWServers"] = value;
+            }
+        }
+
         public void BindSettings(System.Collections.Specialized.StringDictionary settings)
         {
             txtConnectionBroker.Text = settings["ConnectionBroker"];
-            txtGateway.Text = settings["GWServrsList"];
+
+            GWServers = settings["GWServrsList"];
+
+            UpdateLyncServersGrid();
+
             txtRootOU.Text = settings["RootOU"];
             txtPrimaryDomainController.Text = settings["PrimaryDomainController"];
 
@@ -63,11 +81,12 @@ namespace WebsitePanel.Portal.ProviderControls
         public void SaveSettings(System.Collections.Specialized.StringDictionary settings)
         {
             settings["ConnectionBroker"] = txtConnectionBroker.Text;
-            settings["GWServrsList"] = txtGateway.Text;
             settings["RootOU"] = txtRootOU.Text;
             settings["PrimaryDomainController"] = txtPrimaryDomainController.Text;
             settings["UseCentralNPS"] = chkUseCentralNPS.Checked.ToString();
             settings["CentralNPS"] = chkUseCentralNPS.Checked ? txtCentralNPS.Text : string.Empty;
+
+            settings["GWServrsList"] = GWServers;	
         }
 
         protected void chkUseCentralNPS_CheckedChanged(object sender, EventArgs e)
@@ -75,6 +94,61 @@ namespace WebsitePanel.Portal.ProviderControls
             txtCentralNPS.Enabled = chkUseCentralNPS.Checked;
             txtCentralNPS.Text = chkUseCentralNPS.Checked ? txtCentralNPS.Text : string.Empty;
         }
-     
+
+        protected void btnAddGWServer_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(GWServers))
+                GWServers += ";";
+
+            GWServers += txtAddGWServer.Text;
+
+            txtAddGWServer.Text = string.Empty;
+
+            UpdateLyncServersGrid();
+        }
+
+        public List<GWServer> GetServices(string data)
+        {
+            if (string.IsNullOrEmpty(data))
+                return null;
+            List<GWServer> list = new List<GWServer>();
+            string[] serversNames = data.Split(';');
+            foreach (string current in serversNames)
+            {
+                list.Add(new GWServer { ServerName = current });
+            }
+
+            return list;
+        }
+
+        private void UpdateLyncServersGrid()
+        {
+            gvGWServers.DataSource = GetServices(GWServers);
+            gvGWServers.DataBind();
+        }
+
+        protected void gvGWServers_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "RemoveServer")
+            {
+                string str = string.Empty;
+                List<GWServer> servers = GetServices(GWServers);
+                foreach (GWServer current in servers)
+                {
+                    if (current.ServerName == e.CommandArgument.ToString())
+                        continue;
+
+                    str += current.ServerName + ";";
+                }
+
+                GWServers = str.TrimEnd(';');
+                UpdateLyncServersGrid();
+            }
+        }
+    }
+
+    public class GWServer
+    {
+        public string ServerName { get; set; }
     }
 }

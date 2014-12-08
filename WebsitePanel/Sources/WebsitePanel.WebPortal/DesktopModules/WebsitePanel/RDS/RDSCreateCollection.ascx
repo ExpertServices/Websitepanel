@@ -24,7 +24,7 @@
 						    <td class="FormLabel150" style="width: 100px;"><asp:Localize ID="locCollectionName" runat="server" meta:resourcekey="locCollectionName" Text="Collection Name"></asp:Localize></td>
 						    <td>
                                 <asp:TextBox ID="txtCollectionName" runat="server" CssClass="NormalTextBox" />
-                                <asp:RequiredFieldValidator ID="valCollectionName" runat="server" ErrorMessage="*" ControlToValidate="txtCollectionName"></asp:RequiredFieldValidator>
+                                <asp:RequiredFieldValidator ID="valCollectionName" runat="server" ErrorMessage="*" ControlToValidate="txtCollectionName" ValidationGroup="SaveRDSCollection"></asp:RequiredFieldValidator>
 						    </td>
 					    </tr>
 					</table> 
@@ -37,7 +37,7 @@
                     </fieldset>
                       
 				    <div class="FormFooter">
-					    <asp:Button id="btnSave" runat="server" Text="Save" CssClass="Button1" meta:resourcekey="btnSave" OnClick="btnSave_Click"></asp:Button>
+					    <asp:Button id="btnSave" runat="server" Text="Save" CssClass="Button1" meta:resourcekey="btnSave" OnClick="btnSave_Click" ValidationGroup="SaveRDSCollection"></asp:Button>
 				    </div>
 				</div>
 			</div>

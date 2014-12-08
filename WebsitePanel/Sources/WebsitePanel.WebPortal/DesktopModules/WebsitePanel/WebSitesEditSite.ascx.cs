@@ -102,6 +102,9 @@ namespace WebsitePanel.Portal
 			if (!IsPostBack)
 			{
 				BindWebSite();
+
+                if (GetLocalizedString("buttonPanel.OnSaveClientClick")!=null)
+                    buttonPanel.OnSaveClientClick = GetLocalizedString("buttonPanel.OnSaveClientClick"); 
 			}
 		}
 
@@ -109,7 +112,7 @@ namespace WebsitePanel.Portal
 		{
 			var filteredTabs = TabsList.FilterTabsByHostingPlanQuotas(PackageId).ToList();
 
-            // remove "SSL" tab for a site with dynamic IP
+            // remove "SSL" tab for a site with dynamic IP and not SNI enabled
             var sslTab = filteredTabs.SingleOrDefault(t => t.Id == "SSL");
             if (!AllowSsl && sslTab != null)
                 filteredTabs.Remove(sslTab);
@@ -908,14 +911,14 @@ namespace WebsitePanel.Portal
 					ShowResultMessage(result);
 					return;
 				}
+
+                ShowSuccessMessage("WEB_UPDATE_SITE");
 			}
 			catch (Exception ex)
 			{
 				ShowErrorMessage("WEB_UPDATE_SITE", ex);
 				return;
 			}
-
-			RedirectSpaceHomePage();
 		}
 
 		private void DeleteWebSite()
@@ -938,14 +941,15 @@ namespace WebsitePanel.Portal
 			RedirectSpaceHomePage();
 		}
 
-		protected void btnUpdate_Click(object sender, EventArgs e)
+        protected void btnSave_Click(object sender, EventArgs e)
 		{
 			SaveWebSite();
 		}
 
-		protected void btnCancel_Click(object sender, EventArgs e)
+        protected void btnSaveExit_Click(object sender, EventArgs e)
 		{
-			RedirectSpaceHomePage();
+            SaveWebSite();
+            RedirectSpaceHomePage();
 		}
 
 		protected void btnDelete_Click(object sender, EventArgs e)
@@ -1071,6 +1075,7 @@ namespace WebsitePanel.Portal
 
             sharedIP.Visible = false;
             switchToDedicatedIP.Visible = true;
+            WebsitesSSLControl.InstalledCert = null;
         }
 
         protected void cmdSwitchToSharedIP_Click(object sender, EventArgs e)
@@ -1090,6 +1095,7 @@ namespace WebsitePanel.Portal
 
                 dlTabs.SelectedIndex = 0;
 
+                WebsitesSSLControl.InstalledCert = null;
             }
             catch (Exception ex)
             {

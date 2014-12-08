@@ -123,6 +123,9 @@ order by rg.groupOrder
         public const string EXCHANGE2013_ARCHIVINGSTORAGE = "Exchange2013.ArchivingStorage"; // Archiving
         public const string EXCHANGE2013_ARCHIVINGMAILBOXES = "Exchange2013.ArchivingMailboxes";
 
+        public const string EXCHANGE2013_SHAREDMAILBOXES = "Exchange2013.SharedMailboxes"; // Shared and resource mailboxes
+        public const string EXCHANGE2013_RESOURCEMAILBOXES = "Exchange2013.ResourceMailboxes";
+
         public const string MSSQL2000_DATABASES = "MsSQL2000.Databases";  // Databases
 		public const string MSSQL2000_USERS = "MsSQL2000.Users";  // Users
 		public const string MSSQL2000_MAXDATABASESIZE = "MsSQL2000.MaxDatabaseSize";  // Max Database Size

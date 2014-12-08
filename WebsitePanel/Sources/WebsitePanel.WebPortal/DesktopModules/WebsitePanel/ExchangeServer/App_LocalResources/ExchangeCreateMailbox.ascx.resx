@@ -186,4 +186,7 @@
   <data name="valRequireSubscriberNumber.Text" xml:space="preserve">
     <value>*</value>
   </data>
+  <data name="SharedMailbox.Text" xml:space="preserve">
+    <value>Shared Mailbox</value>
+  </data>
 </root>

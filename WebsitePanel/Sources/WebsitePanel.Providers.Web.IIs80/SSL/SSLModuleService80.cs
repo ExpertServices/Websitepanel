@@ -49,14 +49,6 @@ namespace WebsitePanel.Providers.Web.Iis
                 // We need to move it into "WebHosting" store
                 // Get certificate
                 var servercert = GetServerCertificates(StoreName.My.ToString()).Single(c => c.FriendlyName == cert.FriendlyName);
-                if (UseCCS)
-                {
-                    // Delete existing certificate, if any. This is needed to install a new binding
-                    if (CheckCertificate(website))
-                    {
-                        DeleteCertificate(GetCurrentSiteCertificate(website), website);
-                    }
-                }
                 
                 // Get certificate data - the one we just added to "Personal" store
                 var storeMy = new X509Store(StoreName.My, StoreLocation.LocalMachine);
@@ -64,6 +56,7 @@ namespace WebsitePanel.Providers.Web.Iis
                 X509CertificateCollection existCerts2 = storeMy.Certificates.Find(X509FindType.FindBySerialNumber, servercert.SerialNumber, false);
                 var certData = existCerts2[0].Export(X509ContentType.Pfx);
                 storeMy.Close();
+                var x509Cert = new X509Certificate2(certData);
 
                 if (UseCCS)
                 {
@@ -74,7 +67,6 @@ namespace WebsitePanel.Providers.Web.Iis
                 {
                     // Add new certificate to "WebHosting" store
                     var store = new X509Store(CertificateStoreName, StoreLocation.LocalMachine);
-                    var x509Cert = new X509Certificate2(certData);
                     store.Open(OpenFlags.ReadWrite);
                     store.Add(x509Cert);
                     store.Close();
@@ -85,6 +77,7 @@ namespace WebsitePanel.Providers.Web.Iis
                 X509CertificateCollection existCerts = storeMy.Certificates.Find(X509FindType.FindBySerialNumber, servercert.SerialNumber, false);
                 storeMy.Remove((X509Certificate2)existCerts[0]);
                 storeMy.Close();
+
                 // Fill object with certificate data
                 cert.SerialNumber = servercert.SerialNumber;
                 cert.ValidFrom = servercert.ValidFrom;
@@ -99,7 +92,7 @@ namespace WebsitePanel.Providers.Web.Iis
                         DeleteCertificate(GetCurrentSiteCertificate(website), website);
                     }
 
-                    AddBinding(cert, website);
+                    AddBinding(x509Cert, website);
                 }
             }
             catch (Exception ex)
@@ -113,8 +106,10 @@ namespace WebsitePanel.Providers.Web.Iis
 
         public new List<SSLCertificate> GetServerCertificates()
 		{
-            // Use Web Hosting store - new for IIS 8.0
-            return GetServerCertificates(CertificateStoreName);
+            // Get certificates from both WebHosting and My (Personal) store
+            var certificates = GetServerCertificates(CertificateStoreName);
+            certificates.AddRange(GetServerCertificates(StoreName.My.ToString()));
+            return certificates;
 		}
         
         public new SSLCertificate ImportCertificate(WebSite website)
@@ -134,12 +129,12 @@ namespace WebsitePanel.Providers.Web.Iis
                 };
 			}
 
-			return certificate;
+            return certificate ?? (new SSLCertificate {Success = false, Certificate = "No certificate in binding on server, please remove or edit binding"});
 		}
         
         public new SSLCertificate InstallPfx(byte[] certificate, string password, WebSite website)
 		{
-            SSLCertificate newcert, oldcert = null;
+            SSLCertificate newcert = null, oldcert = null;
 
             // Ensure we perform operations safely and preserve the original state during all manipulations, save the oldcert if one is used
 		    if (CheckCertificate(website))
@@ -170,7 +165,7 @@ namespace WebsitePanel.Providers.Web.Iis
 		            writer.Write(certData);
 		            writer.Flush();
 		            writer.Close();
-		            // Certificated saved
+		            // Certificate saved
 		        }
 		        catch (Exception ex)
 		        {
@@ -189,7 +184,6 @@ namespace WebsitePanel.Providers.Web.Iis
 		        try
 		        {
 		            store.Open(OpenFlags.ReadWrite);
-
                     store.Add(x509Cert);
 		        }
 		        catch (Exception ex)
@@ -205,82 +199,38 @@ namespace WebsitePanel.Providers.Web.Iis
 		    }
 
 		    // Step 2: Instantiate a copy of new X.509 certificate
-			try
-			{
-				store.Open(OpenFlags.ReadWrite);
-			    newcert = GetSSLCertificateFromX509Certificate2(x509Cert);
-			}
-			catch (Exception ex)
-			{
-			    if (!UseCCS)
-			    {
-			        // Rollback X.509 store changes
-			        store.Remove(x509Cert);
-			    }
-			    // Log error
-				Log.WriteError("SSLModuleService could not instantiate a copy of new X.509 certificate. All previous changes have been rolled back.", ex);
-				// Re-throw
-				throw;
-			}
-			finally
-			{
-				store.Close();
-			}
+            try
+            {
+                newcert = GetSSLCertificateFromX509Certificate2(x509Cert);
+            }
+            catch (Exception ex)
+            {
+                HandleExceptionAndRollbackCertificate(store, x509Cert, null, website, "SSLModuleService could not instantiate a copy of new X.509 certificate.", ex);
+            }
 
-		    if (!UseCCS)
-		    {
-		        // Step 3: Remove old certificate from the web site if any
-		        try
-		        {
-		            store.Open(OpenFlags.ReadWrite);
-		            // Check if certificate already exists, remove it.
-		            if (oldcert != null)
-		                DeleteCertificate(oldcert, website);
-		        }
-		        catch (Exception ex)
-		        {
-		            // Rollback X.509 store changes
-		            store.Remove(x509Cert);
-		            // Log the error
-		            Log.WriteError(
-		                String.Format("SSLModuleService could not remove existing certificate from '{0}' web site. All changes have been rolled back.", website.Name), ex);
-		            // Re-throw
-		            throw;
-		        }
-		        finally
-		        {
-		            store.Close();
-		        }
-		    }
+            // Step 3: Remove old certificate from the web site if any
+            try
+            {
+                // Check if certificate already exists, remove it.
+                if (oldcert != null)
+                {
+                    DeleteCertificate(oldcert, website);
+                }
+            }
+            catch (Exception ex)
+            {
+                HandleExceptionAndRollbackCertificate(store, x509Cert, null, website, string.Format("SSLModuleService could not remove existing certificate from '{0}' web site.", website.Name), ex);
+            }
 
-		    // Step 4: Register new certificate with HTTPS binding on the web site
-			try
-			{
-                //if (!UseCCS)
-                //{
-                //    store.Open(OpenFlags.ReadWrite);
-                //}
-
-                AddBinding(newcert, website);
-			}
-			catch (Exception ex)
-			{
-			    if (!UseCCS)
-			    {
-			        // Install old certificate back if any
-                    store.Open(OpenFlags.ReadWrite);
-			        if (oldcert != null)
-			            InstallCertificate(oldcert, website);
-			        // Rollback X.509 store changes
-			        store.Remove(x509Cert);
-    				store.Close();
-			    }
-			    // Log the error
-				Log.WriteError(
-					String.Format("SSLModuleService could not add new X.509 certificate to '{0}' web site. All changes have been rolled back.", website.Name), ex);
-				// Re-throw
-				throw;
-			}
+            // Step 4: Register new certificate with HTTPS binding on the web site
+            try
+            {
+                AddBinding(x509Cert, website);
+            }
+            catch (Exception ex)
+            {
+                HandleExceptionAndRollbackCertificate(store, x509Cert, oldcert, website, String.Format("SSLModuleService could not add new X.509 certificate to '{0}' web site.", website.Name), ex);
+            }
 			
 			return newcert;
 		}
@@ -319,32 +269,47 @@ namespace WebsitePanel.Providers.Web.Iis
         }
 
 
-        public new void AddBinding(SSLCertificate certificate, WebSite website)
+        public void AddBinding(X509Certificate2 certificate, WebSite website)
         {
             using (var srvman = GetServerManager())
             {
-                var store = new X509Store(CertificateStoreName, StoreLocation.LocalMachine);
-                store.Open(OpenFlags.ReadOnly);
-                
                 // Look for dedicated ip
                 var dedicatedIp = SiteHasBindingWithDedicatedIp(srvman, website);
 
-                var bindingInformation = string.Format("{0}:443:{1}", website.SiteIPAddress, dedicatedIp ? "" : certificate.Hostname);
+                // Look for all the hostnames this certificate is valid for if we are using SNI
+                var hostNames = new List<string>();
 
-                Binding siteBinding = UseCCS ? 
-                    srvman.Sites[website.SiteId].Bindings.Add(bindingInformation, "https") : 
-                    srvman.Sites[website.SiteId].Bindings.Add(bindingInformation, certificate.Hash, store.Name);
+                if (!dedicatedIp)
+                {
+                    hostNames.AddRange(certificate.Extensions.Cast<X509Extension>()
+                        .Where(e => e.Oid.Value == "2.5.29.17") // Subject Alternative Names
+                        .SelectMany(e => e.Format(true).Split(new[] {"\r\n", "\n", "\n"}, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Split('=')[1])));
+                }
+
+                var simpleName = certificate.GetNameInfo(X509NameType.SimpleName, false);
+                if (hostNames.All(h => h != simpleName))
+                {
+                    hostNames.Add(simpleName);
+                }
+
+                // For every hostname (only one if using old school dedicated IP binding)
+                foreach (var hostName in hostNames)
+                {
+                    var bindingInformation = string.Format("{0}:443:{1}", website.SiteIPAddress ?? "*", dedicatedIp ? "" : hostName);
+
+                    Binding siteBinding = UseCCS ? 
+                        srvman.Sites[website.SiteId].Bindings.Add(bindingInformation, "https") : 
+                        srvman.Sites[website.SiteId].Bindings.Add(bindingInformation, certificate.GetCertHash(), CertificateStoreName);
                 
-                if (UseSNI)
-                {
-                    siteBinding.SslFlags |= SslFlags.Sni;
+                    if (UseSNI && !dedicatedIp)
+                    {
+                        siteBinding.SslFlags |= SslFlags.Sni;
+                    }
+                    if (UseCCS)
+                    {
+                        siteBinding.SslFlags |= SslFlags.CentralCertStore;
+                    }
                 }
-                if (UseCCS)
-                {
-                    siteBinding.SslFlags |= SslFlags.CentralCertStore;
-                }
-
-                store.Close();
 
                 srvman.CommitChanges();
             }
@@ -352,7 +317,9 @@ namespace WebsitePanel.Providers.Web.Iis
 
 		public new ResultObject DeleteCertificate(SSLCertificate certificate, WebSite website)
 		{
-			var result = new ResultObject() { IsSuccess = true };
+            // This method removes all https bindings and all certificates associated with them. 
+            // Old implementation (IIS70) removed a single binding (there could not be more than one) and the first certificate that matched via serial number
+			var result = new ResultObject { IsSuccess = true };
 
 		    if (certificate == null)
 		    {
@@ -361,35 +328,70 @@ namespace WebsitePanel.Providers.Web.Iis
 
 			try
 			{
-                // Regardless of the CCS setting on the server, we try to find and remove the certificate from both CCS and WebHosting Store. 
-                // This is because we don't know how this was set when the certificate was added
+			    var certificatesAndStoreNames = new List<Tuple<string, byte[]>>();
 
-			    if (!string.IsNullOrWhiteSpace(CCSUncPath) && Directory.Exists(CCSUncPath))
+                // User servermanager to get aLL SSL-bindings on this website and try to remove the certificates used
+			    using (var srvman = GetServerManager())
 			    {
-                    // This is where it will be if CCS is used
-			        var path = GetCCSPath(certificate.Hostname);
-			        if (File.Exists(path))
+
+			        var site = srvman.Sites[website.Name];
+			        var bindings = site.Bindings.Where(b => b.Protocol == "https");
+
+			        foreach (Binding binding in bindings.ToList())
 			        {
-			            File.Delete(path);
+			            if (binding.SslFlags.HasFlag(SslFlags.CentralCertStore))
+			            {
+			                if (!string.IsNullOrWhiteSpace(CCSUncPath) && Directory.Exists(CCSUncPath))
+			                {
+			                    // This is where it will be if CCS is used
+			                    var path = GetCCSPath(certificate.Hostname);
+			                    if (File.Exists(path))
+			                    {
+			                        File.Delete(path);
+			                    }
+
+                                // If binding with hostname, also try to delete with the hostname in the binding
+                                // This is because if SNI is used, several bindings are created for every valid name in the cerificate, but only one name exists in the SSLCertificate
+			                    if (!string.IsNullOrEmpty(binding.Host))
+			                    {
+			                        path = GetCCSPath(binding.Host);
+			                        if (File.Exists(path))
+			                        {
+			                            File.Delete(path);
+			                        }
+			                    }
+			                }
+			            }
+			            else
+			            {
+			                var certificateAndStoreName = new Tuple<string, byte[]>(binding.CertificateStoreName, binding.CertificateHash);
+
+			                if (!string.IsNullOrEmpty(binding.CertificateStoreName) && !certificatesAndStoreNames.Contains(certificateAndStoreName))
+			                {
+			                    certificatesAndStoreNames.Add(certificateAndStoreName);
+			                }
+			            }
+
+			            // Remove binding from site
+			            site.Bindings.Remove(binding);
 			        }
-			    }
 
-                // Now delete all certs with the same serialnumber in WebHosting Store
-                var store = new X509Store(CertificateStoreName, StoreLocation.LocalMachine);
-			    store.Open(OpenFlags.MaxAllowed);
+			        srvman.CommitChanges();
 
-			    var certs = store.Certificates.Find(X509FindType.FindBySerialNumber, certificate.SerialNumber, false);
-			    foreach (var cert in certs)
-			    {
-			        store.Remove(cert);    
-			    }
+			        foreach (var certificateAndStoreName in certificatesAndStoreNames)
+			        {
+			            // Delete all certs with the same serialnumber in Store
+			            var store = new X509Store(certificateAndStoreName.Item1, StoreLocation.LocalMachine);
+			            store.Open(OpenFlags.MaxAllowed);
 
-			    store.Close();
+			            var certs = store.Certificates.Find(X509FindType.FindByThumbprint, BitConverter.ToString(certificateAndStoreName.Item2).Replace("-", ""), false);
+			            foreach (var cert in certs)
+			            {
+			                store.Remove(cert);
+			            }
 
-                // Remove binding from site
-			    if (CheckCertificate(website))
-			    {
-			        RemoveBinding(certificate, website);
+			            store.Close();
+			        }
 			    }
 			}
 			catch (Exception ex)
@@ -409,9 +411,7 @@ namespace WebsitePanel.Providers.Web.Iis
 		        var site = srvman.Sites[website.SiteId];
 		        var sslBinding = site.Bindings.First(b => b.Protocol == "https");
 
-		        X509Certificate2 cert = null;
-
-                // If the certificate is in the central store
+		        // If the certificate is in the central store
 		        if (((SslFlags)Enum.Parse(typeof(SslFlags), sslBinding["sslFlags"].ToString())).HasFlag(SslFlags.CentralCertStore))
 		        {
 		            // Let's try to match binding host and certificate filename
@@ -423,23 +423,19 @@ namespace WebsitePanel.Providers.Web.Iis
 		                // Read certificate data from file
 		                var certData = new byte[fileStream.Length];
 		                fileStream.Read(certData, 0, (int) fileStream.Length);
-		                cert = new X509Certificate2(certData, CCSCommonPassword);
+		                var cert = new X509Certificate2(certData, CCSCommonPassword);
 		                fileStream.Close();
+                        return GetSSLCertificateFromX509Certificate2(cert);
 		            }
 		        }
 		        else
 		        {
-		            var currentHash = sslBinding.CertificateHash;
-		            var store = new X509Store(CertificateStoreName, StoreLocation.LocalMachine);
-		            store.Open(OpenFlags.ReadOnly);
-
-		            cert = store.Certificates.Cast<X509Certificate2>().Single(c => Convert.ToBase64String(c.GetCertHash()) == Convert.ToBase64String(currentHash));
-
-		            store.Close();
+		            var currentHash = Convert.ToBase64String(sslBinding.CertificateHash);
+		            return GetServerCertificates().FirstOrDefault(c => Convert.ToBase64String(c.Hash) == currentHash);
 		        }
-
-		        return GetSSLCertificateFromX509Certificate2(cert);
 		    }
+
+		    return null;
 		}
 
         private static List<SSLCertificate> GetServerCertificates(string certificateStoreName)
@@ -503,6 +499,34 @@ namespace WebsitePanel.Providers.Web.Iis
             {
                 return false;
             }
+        }
+
+        private void HandleExceptionAndRollbackCertificate(X509Store store, X509Certificate2 x509Cert, SSLCertificate oldCert, WebSite webSite, string errorMessage, Exception ex)
+        {
+            if (!UseCCS)
+            {
+                try
+                {
+                    // Rollback X.509 store changes
+                    store.Open(OpenFlags.ReadWrite);
+                    store.Remove(x509Cert);
+                    store.Close();
+                }
+                catch (Exception)
+                {
+                    Log.WriteError("SSLModuleService could not rollback and remove certificate from store", ex);
+                }
+
+                // Install old certificate back if any
+                if (oldCert != null)
+                    InstallCertificate(oldCert, webSite);
+            }
+
+            // Log the error
+            Log.WriteError(errorMessage + " All changes have been rolled back.", ex);
+
+            // Re-throw
+            throw ex;
         }
     }
 }

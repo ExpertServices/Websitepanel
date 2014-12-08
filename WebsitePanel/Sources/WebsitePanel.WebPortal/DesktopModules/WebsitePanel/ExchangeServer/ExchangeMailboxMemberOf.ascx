@@ -7,6 +7,7 @@
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/MailboxPlanSelector.ascx" TagName="MailboxPlanSelector" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/QuotaViewer.ascx" TagName="QuotaViewer" TagPrefix="wsp" %>
+<%@ Register Src="../UserControls/ItemButtonPanel.ascx" TagName="ItemButtonPanel" TagPrefix="wsp" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
@@ -43,10 +44,8 @@
 					</asp:Panel>
 					
 				    <div class="FormFooterClean">
-					    <asp:Button id="btnSave" runat="server" Text="Save Changes" CssClass="Button1"
-							meta:resourcekey="btnSave" ValidationGroup="EditMailbox" OnClick="btnSave_Click"></asp:Button>
-                        <asp:Button id="btnSaveExit" runat="server" Text="Save Changes and Exit" CssClass="Button1"
-                            meta:resourcekey="btnSaveExit" ValidationGroup="EditMailbox" OnClick="btnSaveExit_Click"></asp:Button>
+                        <wsp:ItemButtonPanel id="buttonPanel" runat="server" ValidationGroup="EditMailbox" 
+                            OnSaveClick="btnSave_Click" OnSaveExitClick="btnSaveExit_Click" />
 					    <asp:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="EditMailbox" />
 				    </div>
 

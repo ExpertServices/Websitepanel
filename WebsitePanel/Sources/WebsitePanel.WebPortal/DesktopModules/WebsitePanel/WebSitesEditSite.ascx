@@ -16,6 +16,8 @@
 <%@ Register Src="UserControls/PopupHeader.ascx" TagName="PopupHeader" TagPrefix="wsp" %>
 <%@ Register TagPrefix="wsp" Namespace="WebsitePanel.Portal" %>
 <%@ Register Src="WebsitesSSL.ascx" TagName="WebsitesSSL" TagPrefix="uc2" %>
+<%@ Register Src="UserControls/ItemButtonPanel.ascx" TagName="ItemButtonPanel" TagPrefix="wsp" %>
+
 <style type="text/css">
     .style1
     {
@@ -523,10 +525,8 @@
     </table>
 </div>
 <div class="FormFooter">
-    <asp:Button ID="btnUpdate" runat="server" meta:resourcekey="btnUpdate" Text="Update"
-        CssClass="Button1" OnClick="btnUpdate_Click" OnClientClick="ShowProgressDialog('Updating web site...');" />
-    <asp:Button ID="btnCancel" runat="server" meta:resourcekey="btnCancel" Text="Cancel"
-        CssClass="Button1" CausesValidation="false" OnClick="btnCancel_Click" />
+    <wsp:ItemButtonPanel id="buttonPanel" runat="server" ValidationGroup="EditMailbox" 
+        OnSaveClick="btnSave_Click" OnSaveExitClick="btnSaveExit_Click" />
 </div>
 <div class="FormFooter">
     <asp:Button ID="btnDelete" runat="server" meta:resourcekey="btnDelete" Text="Delete"

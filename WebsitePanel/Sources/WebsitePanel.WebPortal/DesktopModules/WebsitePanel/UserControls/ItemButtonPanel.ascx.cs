@@ -27,61 +27,59 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using WebsitePanel.EnterpriseServer;
-using System.DirectoryServices;
 
-namespace WebsitePanel.Import.Enterprise
+namespace WebsitePanel.Portal
 {
-	class Global
-	{
-		private static string rootOU;
-		public static string RootOU
-		{
-			get { return rootOU; }
-			set { rootOU = value; }
-		}
-	
-		private static string primaryDomainController;
-		public static string PrimaryDomainController
-		{
-			get { return primaryDomainController; }
-			set { primaryDomainController = value; }
-		}
-	
-		private static string aDRootDomain;
-
-		public static string ADRootDomain
-		{
-			get { return aDRootDomain; }
-			set { aDRootDomain = value; }
-		}
-
-        private static string netBiosDomain;
-        public static string NetBiosDomain
+    public partial class ItemButtonPanel : WebsitePanelControlBase
+    {
+        public bool ButtonSaveVisible
         {
-            get { return netBiosDomain; }
-            set { netBiosDomain = value; }
+            set { btnSave.Visible = value; }
+            get { return btnSave.Visible; }
         }
 
-		public static PackageInfo Space;
-		public static string TempDomain;
+        public bool ButtonSaveExitVisible
+        {
+            set { btnSaveExit.Visible = value; }
+            get { return btnSaveExit.Visible; }
+        }
 
-		public static string MailboxCluster;
-		public static string StorageGroup;
-		public static string MailboxDatabase;
-		public static string KeepDeletedMailboxesDays;
-		public static string KeepDeletedItemsDays;
-		public static DirectoryEntry OrgDirectoryEntry;
-		public static List<DirectoryEntry> SelectedAccounts;
-		public static string OrganizationId;
-		public static string OrganizationName;
-		public static int ItemId;
-		public static string ErrorMessage;
-		public static bool ImportAccountsOnly;
-		public static bool HasErrors;
-        public static int defaultMailboxPlanId;
-	
-	}
+        public string ValidationGroup
+        {
+            set { 
+                btnSave.ValidationGroup = value;
+                btnSaveExit.ValidationGroup = value;
+            }
+            get { return btnSave.ValidationGroup; }
+        }
+
+        public string OnSaveClientClick
+        {
+            set
+            {
+                btnSave.OnClientClick = value;
+                btnSaveExit.OnClientClick = value;
+            }
+        }
+
+
+        public event EventHandler SaveClick = null;
+        protected void btnSave_Click(object sender, EventArgs e)
+        {
+            if (SaveClick!=null)
+            {
+                SaveClick(this, e);
+            }
+        }
+
+        public event EventHandler SaveExitClick = null;
+        protected void btnSaveExit_Click(object sender, EventArgs e)
+        {
+            if (SaveExitClick!=null)
+            {
+                SaveExitClick(this, e);
+            }
+        }
+
+    }
 }

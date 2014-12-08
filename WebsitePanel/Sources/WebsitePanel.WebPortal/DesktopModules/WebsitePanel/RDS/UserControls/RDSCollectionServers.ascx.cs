@@ -85,8 +85,8 @@ namespace WebsitePanel.Portal.RDS.UserControls
 		protected void btnAdd_Click(object sender, EventArgs e)
 		{
 			// bind all servers
-			BindPopupServers();
-
+			BindPopupServers(); 
+     
 			// show modal
 			AddServersModal.Show();
 		}
@@ -103,7 +103,6 @@ namespace WebsitePanel.Portal.RDS.UserControls
             List<RdsServer> selectedServers = GetPopUpGridViewServers();
 
             BindServers(selectedServers.ToArray(), true);
-
 		}
 
         protected void BindPopupServers()
@@ -132,6 +131,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
                 servers.AddRange(GetGridViewServers(SelectedState.All));
 
             // add new servers
+
             if (newServers != null)
 			{
                 foreach (RdsServer newServer in newServers)

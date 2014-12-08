@@ -11,7 +11,7 @@
             TargetControlID="TechnicalDetailsPanel" resourcekey="secTechnicalDetails" Text="Technical Details">
         </wsp:CollapsiblePanel>
         <asp:Panel ID="TechnicalDetailsPanel" runat="server" Height="0" style="overflow:hidden;">
-            <table id="tblTechnicalDetails" runat="server" style="background-color: #FFFFFF;" cellpadding="0" cellspacing="0">
+            <table id="tblTechnicalDetails" runat="server" class="TechnicalDetailsTable" cellpadding="0" cellspacing="0">
                 <tr>
                     <td>
                         <table cellspacing="0" cellpadding="3">
@@ -51,7 +51,7 @@
                                 <td class="NormalBold" valign="top">
                                     <asp:Label ID="lblStackTrace" runat="server" meta:resourcekey="lblStackTrace" Text="Stack Trace:"></asp:Label>
                                 </td>
-                                <td class="Normal" valign="top">
+                                <td class="WrapText" valign="top">
                                     <asp:Literal ID="litStackTrace" runat="server"></asp:Literal>
                                 </td>
                             </tr>
@@ -103,7 +103,7 @@
                         <asp:Label ID="lblComments" runat="server" meta:resourcekey="lblComments" Text="Personal Comments:"></asp:Label>
                     </td>
                     <td class="Normal" valign="top">
-                        <asp:TextBox ID="txtSendComments" runat="server" CssClass="LogArea" Rows="5" TextMode="MultiLine"
+                        <asp:TextBox ID="txtSendComments" runat="server" CssClass="LogArea TechnicalDetailsTable" Rows="5" TextMode="MultiLine"
                             Width="400px"></asp:TextBox></td>
                 </tr>
                 <tr>
