@@ -121,7 +121,7 @@
     <value>Enable Client Notification</value>
   </data>
   <data name="lblDayBeforeNotify" xml:space="preserve">
-    <value>Notify before</value>
+    <value>Notify before (days)</value>
   </data>
   <data name="lblDayBeforeNotifyHint" xml:space="preserve">
     <value>Number of days before expiration date</value>

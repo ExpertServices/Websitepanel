@@ -21,11 +21,10 @@
 
     <tr>
         <td class="SubHead" nowrap>
-            <asp:Label ID="lblDayBeforeNotify" runat="server" meta:resourcekey="lblDayBeforeNotify" Text="Notify before:"></asp:Label>
+            <asp:Label ID="lblDayBeforeNotify" runat="server" meta:resourcekey="lblDayBeforeNotify" Text="Notify before (days):"></asp:Label>
         </td>
         <td class="Normal" width="100%">
             <asp:TextBox ID="txtDaysBeforeNotify" runat="server" Width="95%" CssClass="NormalTextBox" MaxLength="1000"></asp:TextBox>
-            <asp:Label ID="lblDayBeforeNotifyHint" runat="server" meta:resourcekey="lblDayBeforeNotifyHint" Text="Number of days before expiration date"></asp:Label>
         </td>
     </tr>
 </table>
