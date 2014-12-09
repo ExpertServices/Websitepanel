@@ -122,6 +122,8 @@
               <File Id="WebsitePanel.Common.Utils.dll" Source="$(var.BUILDPATH)\WebsitePanel.Common.Utils.dll"/>
               <File Id="WebsitePanel.EnterpriseServer.Base.dll" Source="$(var.BUILDPATH)\WebsitePanel.EnterpriseServer.Base.dll"/>
               <File Id="WebsitePanel.EnterpriseServer.Code.dll" Source="$(var.BUILDPATH)\WebsitePanel.EnterpriseServer.Code.dll"/>
+              <File Id="IPAddressRange.dll" Source="$(var.BUILDPATH)\IPAddressRange.dll"/>
+              <File Id="WhoisClient.dll" Source="$(var.BUILDPATH)\WhoisClient.dll"/>
               <File Id="WebsitePanel.Providers.Base.dll" Source="$(var.BUILDPATH)\WebsitePanel.Providers.Base.dll"/>
               <File Id="WebsitePanel.Server.Client.dll" Source="$(var.BUILDPATH)\WebsitePanel.Server.Client.dll"/>
               <File Id="WebsitePanel.Templates.dll" Source="$(var.BUILDPATH)\WebsitePanel.Templates.dll"/>
