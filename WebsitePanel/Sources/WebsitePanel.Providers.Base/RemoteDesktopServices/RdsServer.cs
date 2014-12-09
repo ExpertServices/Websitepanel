@@ -18,5 +18,6 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         public string Address { get; set; }
         public string ItemName { get; set; }
         public int? RdsCollectionId { get; set; }
+        public bool ConnectionEnabled { get; set; }
     }
 }

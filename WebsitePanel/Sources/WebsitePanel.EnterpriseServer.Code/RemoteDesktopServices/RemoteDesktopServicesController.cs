@@ -478,7 +478,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
 
-                var rdsServer = GetRdsServer(rdsSeverId);
+                var rdsServer = GetRdsServer(rdsSeverId);                
 
                 if (rdsServer == null)
                 {
@@ -488,6 +488,8 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 rds.SetRDServerNewConnectionAllowed(newConnectionAllowed, rdsServer);
+                rdsServer.ConnectionEnabled = newConnectionAllowed;
+                DataProvider.UpdateRDSServer(rdsServer);
             }
             catch (Exception ex)
             {
