@@ -86,11 +86,9 @@
     <Compile Include="Common\PasswdHelper.cs" />
     <Compile Include="Common\WPIEntries.cs" />
     <Compile Include="DomainLookup\DnsRecordInfo.cs" />
-    <Compile Include="DomainLookup\DomainChanges.cs" />
-    <Compile Include="DomainLookup\DomainDnsRecordCompare.cs" />
-    <Compile Include="DomainLookup\DomainDnsRecordsChanges.cs" />
+    <Compile Include="DomainLookup\DnsRecordInfoChange.cs" />
+    <Compile Include="DomainLookup\DomainDnsChanges.cs" />
     <Compile Include="DomainLookup\DomainDnsRecordStatuses.cs" />
-    <Compile Include="DomainLookup\ScheduleTaskEmailTemplate.cs" />
     <Compile Include="EnterpriseStorage\IEnterpriseStorage.cs" />
     <Compile Include="HeliconZoo\IHeliconZooServer.cs" />
     <Compile Include="HostedSolution\BaseReport.cs" />

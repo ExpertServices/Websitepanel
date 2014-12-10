@@ -27,6 +27,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             BackgroundTask topTask = TaskManager.TopTask;
             var domainUsers = new Dictionary<int, UserInfo>();
+            var checkedDomains = new List<int>();
 
             // get input parameters
             int daysBeforeNotify;
@@ -65,6 +66,13 @@ namespace WebsitePanel.EnterpriseServer
 
                 foreach (var domain in domains)
                 {
+                    if (checkedDomains.Contains(domain.DomainId))
+                    {
+                        continue;
+                    }
+
+                    checkedDomains.Add(domain.DomainId);
+
                     ServerController.UpdateDomainRegistrationData(domain);
 
                     if (CheckDomainExpiration(domain.ExpirationDate, daysBeforeNotify))

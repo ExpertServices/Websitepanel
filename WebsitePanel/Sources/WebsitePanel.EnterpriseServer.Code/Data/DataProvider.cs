@@ -4732,7 +4732,7 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
-        public static IDataReader GetDomainMXRecords(int domainId, DnsRecordType recordType)
+        public static IDataReader GetDomainDnsRecords(int domainId, DnsRecordType recordType)
         {
             return SqlHelper.ExecuteReader(
                 ConnectionString,
