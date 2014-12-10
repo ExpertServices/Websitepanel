@@ -14,6 +14,7 @@ namespace WebsitePanel.Portal.ScheduleTaskControls
         private static readonly string DaysBeforeParameter = "DAYS_BEFORE";
         private static readonly string MailToParameter = "MAIL_TO";
         private static readonly string EnableNotificationParameter = "ENABLE_NOTIFICATION";
+        private static readonly string IncludeNonExistenDomainsParameter = "INCLUDE_NONEXISTEN_DOMAINS";
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -31,6 +32,7 @@ namespace WebsitePanel.Portal.ScheduleTaskControls
             this.SetParameter(this.txtDaysBeforeNotify, DaysBeforeParameter);
             this.SetParameter(this.txtMailTo, MailToParameter);
             this.SetParameter(this.cbEnableNotify, EnableNotificationParameter);
+            this.SetParameter(this.cbIncludeNonExistenDomains, IncludeNonExistenDomainsParameter);
         }
 
         /// <summary>
@@ -42,8 +44,9 @@ namespace WebsitePanel.Portal.ScheduleTaskControls
             ScheduleTaskParameterInfo daysBefore = this.GetParameter(this.txtDaysBeforeNotify, DaysBeforeParameter);
             ScheduleTaskParameterInfo mailTo = this.GetParameter(this.txtMailTo, MailToParameter);
             ScheduleTaskParameterInfo enableNotification = this.GetParameter(this.cbEnableNotify, EnableNotificationParameter);
+            ScheduleTaskParameterInfo includeNonExistenDomains = this.GetParameter(this.cbIncludeNonExistenDomains, IncludeNonExistenDomainsParameter);
 
-            return new ScheduleTaskParameterInfo[3] { daysBefore, mailTo, enableNotification };
+            return new ScheduleTaskParameterInfo[4] { daysBefore, mailTo, enableNotification, includeNonExistenDomains };
         }
     }
 }

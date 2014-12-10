@@ -6218,6 +6218,12 @@ INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [D
 END
 GO
 
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_EXPIRATION' AND [ParameterID]= N'INCLUDE_NONEXISTEN_DOMAINS' )
+BEGIN
+INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_EXPIRATION', N'INCLUDE_NONEXISTEN_DOMAINS', N'Boolean', N'false', 4)
+END
+GO
+
 
 -- Domain lookup tables
 
@@ -6332,6 +6338,29 @@ Please, find below details of your domain expiration information.
     </tbody>
 </table>
 
+<ad:if test="#IncludeNonExistenDomains#">
+	<p>
+	Please, find below details of your non-existen domains.
+	</p>
+
+	<table>
+		<thead>
+			<tr>
+				<th>Domain</th>
+				<th>Customer</th>
+			</tr>
+		</thead>
+		<tbody>
+				<ad:foreach collection="#NonExistenDomains#" var="Domain" index="i">
+			<tr>
+				<td>#Domain.DomainName#</td>
+				<td>#Domain.Customer#</td>
+			</tr>
+		</ad:foreach>
+		</tbody>
+	</table>
+</ad:if>
+
 
 <p>
 If you have any questions regarding your hosting account, feel free to contact our support department at any time.
@@ -6358,9 +6387,7 @@ INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [Property
    Domain Expiration Information
 =================================
 <ad:if test="#user#">
-<p>
 Hello #user.FirstName#,
-</p>
 </ad:if>
 
 Please, find below details of your domain expiration information.
@@ -6372,6 +6399,16 @@ Please, find below details of your domain expiration information.
 	Expiration Date: #Domain.ExpirationDate#
 
 </ad:foreach>
+
+<ad:if test="#IncludeNonExistenDomains#">
+Please, find below details of your non-existen domains.
+
+<ad:foreach collection="#NonExistenDomains#" var="Domain" index="i">
+	Domain: #Domain.DomainName#
+	Customer: #Domain.Customer#
+
+</ad:foreach>
+</ad:if>
 
 If you have any questions regarding your hosting account, feel free to contact our support department at any time.
 

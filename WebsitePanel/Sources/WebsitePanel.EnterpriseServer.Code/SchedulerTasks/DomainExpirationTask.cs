@@ -18,6 +18,7 @@ namespace WebsitePanel.EnterpriseServer
         private static readonly string DaysBeforeNotify = "DAYS_BEFORE";
         private static readonly string MailToParameter = "MAIL_TO";
         private static readonly string EnableNotification = "ENABLE_NOTIFICATION";
+        private static readonly string IncludeNonExistenDomains = "INCLUDE_NONEXISTEN_DOMAINS";
 
 
         private static readonly string MailBodyTemplateParameter = "MAIL_BODY";
@@ -28,16 +29,18 @@ namespace WebsitePanel.EnterpriseServer
             BackgroundTask topTask = TaskManager.TopTask;
             var domainUsers = new Dictionary<int, UserInfo>();
             var checkedDomains = new List<int>();
+            var expiredDomains = new List<DomainInfo>();
+            var nonExistenDomains = new List<DomainInfo>();
 
             // get input parameters
             int daysBeforeNotify;
             bool sendEmailNotifcation = Convert.ToBoolean( topTask.GetParamValue(EnableNotification));
+            bool includeNonExistenDomains = Convert.ToBoolean(topTask.GetParamValue(IncludeNonExistenDomains));
 
             // check input parameters
             if (String.IsNullOrEmpty((string)topTask.GetParamValue("MAIL_TO")))
             {
                 TaskManager.WriteWarning("The e-mail message has not been sent because 'Mail To' is empty.");
-
                 return;
             }
 
@@ -47,7 +50,6 @@ namespace WebsitePanel.EnterpriseServer
 
             var packages = GetUserPackages(user.UserId, user.Role);
 
-            var expiredDomains = new List<DomainInfo>();
 
             foreach (var package in packages)
             {
@@ -81,6 +83,11 @@ namespace WebsitePanel.EnterpriseServer
                     {
                         expiredDomains.Add(domain);
                     }
+
+                    if (domain.ExpirationDate == null && domain.CreationDate == null)
+                    {
+                        nonExistenDomains.Add(domain);
+                    }
                 }
 
                 foreach (var subDomain in subDomains)
@@ -98,7 +105,7 @@ namespace WebsitePanel.EnterpriseServer
 
             if (expiredDomains.Count > 0 && sendEmailNotifcation)
             {
-                SendMailMessage(user, expiredDomains, domainUsers);
+                SendMailMessage(user, expiredDomains, domainUsers, nonExistenDomains, includeNonExistenDomains);
             }
         }
 
@@ -133,7 +140,7 @@ namespace WebsitePanel.EnterpriseServer
             return (date.Value - DateTime.Now).Days < daysBeforeNotify;
         }
 
-        private void SendMailMessage(UserInfo user, IEnumerable<DomainInfo> domains, Dictionary<int, UserInfo> domainUsers)
+        private void SendMailMessage(UserInfo user, IEnumerable<DomainInfo> domains, Dictionary<int, UserInfo> domainUsers, IEnumerable<DomainInfo> nonExistenDomains, bool includeNonExistenDomains)
         {
             BackgroundTask topTask = TaskManager.TopTask;
 
@@ -160,6 +167,15 @@ namespace WebsitePanel.EnterpriseServer
             items["Domains"] = domains.Select(x => new { DomainName = x.DomainName, 
                                                          ExpirationDate = x.ExpirationDate, 
                                                          Customer = string.Format("{0} {1}", domainUsers[x.PackageId].FirstName, domainUsers[x.PackageId].LastName) });
+            
+            items["IncludeNonExistenDomains"] = includeNonExistenDomains;
+
+            items["NonExistenDomains"] = nonExistenDomains.Select(x => new
+            {
+                DomainName = x.DomainName,
+                Customer = string.Format("{0} {1}", domainUsers[x.PackageId].FirstName, domainUsers[x.PackageId].LastName)
+            });
+
 
             body = PackageController.EvaluateTemplate(body, items);
 
