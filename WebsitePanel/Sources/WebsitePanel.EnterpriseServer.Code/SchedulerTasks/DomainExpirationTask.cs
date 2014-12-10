@@ -53,9 +53,11 @@ namespace WebsitePanel.EnterpriseServer
             {
                 var domains = ServerController.GetDomains(package.PackageId);
 
-                domains = domains.Where(x => !x.IsSubDomain && !x.IsDomainPointer).ToList(); //Selecting top-level domains
+                var subDomains = domains.Where(x => x.IsSubDomain).ToList();
 
-                domains = domains.Where(x => x.CreationDate == null || x.ExpirationDate == null ? true : CheckDomainExpiration(x.ExpirationDate, daysBeforeNotify)).ToList(); // selecting expired or with empty expire date domains
+                var topLevelDomains = domains = domains.Where(x => !x.IsSubDomain && !x.IsDomainPointer).ToList(); //Selecting top-level domains
+
+                domains = topLevelDomains.Where(x => x.CreationDate == null || x.ExpirationDate == null ? true : CheckDomainExpiration(x.ExpirationDate, daysBeforeNotify)).ToList(); // selecting expired or with empty expire date domains
 
                 var domainUser = UserController.GetUser(package.UserId);
 
@@ -78,6 +80,16 @@ namespace WebsitePanel.EnterpriseServer
                     if (CheckDomainExpiration(domain.ExpirationDate, daysBeforeNotify))
                     {
                         expiredDomains.Add(domain);
+                    }
+                }
+
+                foreach (var subDomain in subDomains)
+                {
+                    var mainDomain = topLevelDomains.Where(x => subDomain.DomainName.Contains(x.DomainName)).OrderByDescending(s => s.DomainName.Length).FirstOrDefault(); ;
+
+                    if (mainDomain != null)
+                    {
+                        ServerController.UpdateDomainRegistrationData(subDomain, mainDomain.CreationDate, mainDomain.ExpirationDate);
                     }
                 }
             }

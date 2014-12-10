@@ -207,4 +207,10 @@
   <data name="gvDomainsExpirationDate.Header" xml:space="preserve">
     <value>Expiration Date</value>
   </data>
+  <data name="DomainExpirationDate.NotChecked" xml:space="preserve">
+    <value>Not Checked</value>
+  </data>
+  <data name="DomainExpirationDate.NotExist" xml:space="preserve">
+    <value>Non-Existent</value>
+  </data>
 </root>

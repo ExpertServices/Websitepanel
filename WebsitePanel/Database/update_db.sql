@@ -6254,6 +6254,13 @@ BEGIN
 END
 GO
 
+IF NOT EXISTS(SELECT * FROM sys.columns 
+        WHERE [name] = N'LastUpdateDate' AND [object_id] = OBJECT_ID(N'Domains'))
+BEGIN
+	ALTER TABLE [dbo].[Domains] ADD LastUpdateDate DateTime null;
+END
+GO
+
 IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'ScheduleTasksEmailTemplates')
 DROP TABLE ScheduleTasksEmailTemplates
 GO
@@ -6639,6 +6646,18 @@ AS
 UPDATE [dbo].[Domains] SET [ExpirationDate] = @Date WHERE [DomainID] = @DomainId
 GO
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateDomainLastUpdateDate')
+DROP PROCEDURE UpdateDomainLastUpdateDate
+GO
+CREATE PROCEDURE [dbo].UpdateDomainLastUpdateDate
+(
+	@DomainId INT,
+	@Date DateTime
+)
+AS
+UPDATE [dbo].[Domains] SET [LastUpdateDate] = @Date WHERE [DomainID] = @DomainId
+GO
+
 
 --Updating Domain procedures
 
@@ -6673,6 +6692,7 @@ SELECT
 	D.IsInstantAlias,
 	D.CreationDate,
 	D.ExpirationDate,
+	D.LastUpdateDate,
 	D.IsDomainPointer
 FROM Domains AS D
 INNER JOIN PackagesTree(@PackageID, @Recursive) AS PT ON D.PackageID = PT.PackageID
@@ -6754,6 +6774,7 @@ SET @sql = @sql + ' SELECT COUNT(DomainID) FROM @Domains;SELECT
 	D.IsInstantAlias,
 	D.IsDomainPointer,
 	D.ExpirationDate,
+	D.LastUpdateDate,
 	P.PackageName,
 	ISNULL(SRV.ServerID, 0) AS ServerID,
 	ISNULL(SRV.ServerName, '''') AS ServerName,

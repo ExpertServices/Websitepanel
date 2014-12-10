@@ -4787,6 +4787,11 @@ namespace WebsitePanel.EnterpriseServer
             UpdateDomainDate(domainId, "UpdateDomainExpirationDate", date);
         }
 
+        public static void UpdateDomainLastUpdateDate(int domainId, DateTime date)
+        {
+            UpdateDomainDate(domainId, "UpdateDomainLastUpdateDate", date);
+        }
+
         private static void UpdateDomainDate(int domainId, string stroredProcedure, DateTime date)
         {
             SqlHelper.ExecuteReader(
