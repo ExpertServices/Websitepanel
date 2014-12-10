@@ -100,16 +100,27 @@ namespace WebsitePanel.Portal
                 return GetLocalizedString("DomainType.Domain");
         }
 
-        public string GetDomainExpirationDate(object expirationDateObject)
+        public string GetDomainExpirationDate(object expirationDateObject, object LastUpdateDateObject)
         {
             var expirationDate = expirationDateObject as DateTime?;
+            var lastUpdateDate = LastUpdateDateObject as DateTime?;
 
-            if (expirationDate == null)
-                return GetLocalizedString("DomainExpirationDate.Unknown");
-            else if (expirationDate < DateTime.Now)
+            if (expirationDate != null && expirationDate < DateTime.Now)
+            {
                 return GetLocalizedString("DomainExpirationDate.Expired");
-            else
+            }
+            else if(expirationDate != null)
+            {
                 return expirationDate.Value.ToShortDateString();
+            }
+            else if (lastUpdateDate == null)
+            {
+                return GetLocalizedString("DomainExpirationDate.NotChecked");
+            }
+            else
+            {
+                return GetLocalizedString("DomainExpirationDate.NotExist");
+            }
         }
 
         protected void odsDomainsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)

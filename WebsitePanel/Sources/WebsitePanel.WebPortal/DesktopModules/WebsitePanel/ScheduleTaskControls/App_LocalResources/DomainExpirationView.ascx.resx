@@ -120,6 +120,9 @@
   <data name="cbEnableNotify" xml:space="preserve">
     <value>Enable Client Notification</value>
   </data>
+  <data name="cbIncludeNonExistenDomains" xml:space="preserve">
+    <value>Include Non-Existen Domains</value>
+  </data>
   <data name="lblDayBeforeNotify" xml:space="preserve">
     <value>Notify before (days)</value>
   </data>

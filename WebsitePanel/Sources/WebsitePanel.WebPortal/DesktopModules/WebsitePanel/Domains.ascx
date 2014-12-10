@@ -40,7 +40,7 @@
         <asp:TemplateField HeaderText="gvDomainsExpirationDate">
             <ItemStyle Width="15%"></ItemStyle>
             <ItemTemplate>
-	            <%# GetDomainExpirationDate(Eval("ExpirationDate"))%>
+	            <%# GetDomainExpirationDate(Eval("ExpirationDate"), Eval("LastUpdateDate"))%>
             </ItemTemplate>
         </asp:TemplateField>
         <asp:TemplateField HeaderText="gvDomainsType">

@@ -6154,38 +6154,45 @@ GO
 
 -- Domain lookup tasks
 
---IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTasks] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP')
---BEGIN
---INSERT [dbo].[ScheduleTasks] ([TaskID], [TaskType], [RoleID]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'WebsitePanel.EnterpriseServer.DomainLookupViewTask, WebsitePanel.EnterpriseServer.Code', 1)
---END
---GO
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTasks] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP')
+BEGIN
+INSERT [dbo].[ScheduleTasks] ([TaskID], [TaskType], [RoleID]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'WebsitePanel.EnterpriseServer.DomainLookupViewTask, WebsitePanel.EnterpriseServer.Code', 1)
+END
+GO
 
---IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskViewConfiguration] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP')
---BEGIN
---INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/DomainLookupView.ascx')
---END
---GO
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskViewConfiguration] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP')
+BEGIN
+INSERT [dbo].[ScheduleTaskViewConfiguration] ([TaskID], [ConfigurationID], [Environment], [Description]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'ASP_NET', N'ASP.NET', N'~/DesktopModules/WebsitePanel/ScheduleTaskControls/DomainLookupView.ascx')
+END
+GO
 
---IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'DNS_SERVERS' )
---BEGIN
---INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'DNS_SERVERS', N'String', NULL, 1)
---END
---GO
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'DNS_SERVERS' )
+BEGIN
+INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'DNS_SERVERS', N'String', NULL, 1)
+END
+GO
 
---IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'MAIL_TO' )
---BEGIN
---INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'MAIL_TO', N'String', NULL, 2)
---END
---GO
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'MAIL_TO' )
+BEGIN
+INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'MAIL_TO', N'String', NULL, 2)
+END
+GO
 
 -- Domain Expiration Task
 
 
 IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTasks] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_EXPIRATION')
 BEGIN
-INSERT [dbo].[ScheduleTasks] ([TaskID], [TaskType], [RoleID]) VALUES (N'SCHEDULE_TASK_DOMAIN_EXPIRATION', N'WebsitePanel.EnterpriseServer.DomainExpirationTask, WebsitePanel.EnterpriseServer.Code', 1)
+INSERT [dbo].[ScheduleTasks] ([TaskID], [TaskType], [RoleID]) VALUES (N'SCHEDULE_TASK_DOMAIN_EXPIRATION', N'WebsitePanel.EnterpriseServer.DomainExpirationTask, WebsitePanel.EnterpriseServer.Code', 3)
 END
 GO
+
+IF EXISTS (SELECT * FROM [dbo].[ScheduleTasks] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_EXPIRATION' AND [RoleID] = 1)
+BEGIN
+UPDATE [dbo].[ScheduleTasks] SET [RoleID] = 3 WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_EXPIRATION'
+END
+GO
+
 
 IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskViewConfiguration] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_EXPIRATION')
 BEGIN
@@ -6208,6 +6215,12 @@ GO
 IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_EXPIRATION' AND [ParameterID]= N'ENABLE_NOTIFICATION' )
 BEGIN
 INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_EXPIRATION', N'ENABLE_NOTIFICATION', N'Boolean', N'false', 3)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_EXPIRATION' AND [ParameterID]= N'INCLUDE_NONEXISTEN_DOMAINS' )
+BEGIN
+INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_EXPIRATION', N'INCLUDE_NONEXISTEN_DOMAINS', N'Boolean', N'false', 4)
 END
 GO
 
@@ -6244,6 +6257,13 @@ IF NOT EXISTS(SELECT * FROM sys.columns
         WHERE [name] = N'ExpirationDate' AND [object_id] = OBJECT_ID(N'Domains'))
 BEGIN
 	ALTER TABLE [dbo].[Domains] ADD ExpirationDate DateTime null;
+END
+GO
+
+IF NOT EXISTS(SELECT * FROM sys.columns 
+        WHERE [name] = N'LastUpdateDate' AND [object_id] = OBJECT_ID(N'Domains'))
+BEGIN
+	ALTER TABLE [dbo].[Domains] ADD LastUpdateDate DateTime null;
 END
 GO
 
@@ -6318,6 +6338,29 @@ Please, find below details of your domain expiration information.
     </tbody>
 </table>
 
+<ad:if test="#IncludeNonExistenDomains#">
+	<p>
+	Please, find below details of your non-existen domains.
+	</p>
+
+	<table>
+		<thead>
+			<tr>
+				<th>Domain</th>
+				<th>Customer</th>
+			</tr>
+		</thead>
+		<tbody>
+				<ad:foreach collection="#NonExistenDomains#" var="Domain" index="i">
+			<tr>
+				<td>#Domain.DomainName#</td>
+				<td>#Domain.Customer#</td>
+			</tr>
+		</ad:foreach>
+		</tbody>
+	</table>
+</ad:if>
+
 
 <p>
 If you have any questions regarding your hosting account, feel free to contact our support department at any time.
@@ -6344,9 +6387,7 @@ INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [Property
    Domain Expiration Information
 =================================
 <ad:if test="#user#">
-<p>
 Hello #user.FirstName#,
-</p>
 </ad:if>
 
 Please, find below details of your domain expiration information.
@@ -6359,9 +6400,152 @@ Please, find below details of your domain expiration information.
 
 </ad:foreach>
 
+<ad:if test="#IncludeNonExistenDomains#">
+Please, find below details of your non-existen domains.
+
+<ad:foreach collection="#NonExistenDomains#" var="Domain" index="i">
+	Domain: #Domain.DomainName#
+	Customer: #Domain.Customer#
+
+</ad:foreach>
+</ad:if>
+
 If you have any questions regarding your hosting account, feel free to contact our support department at any time.
 
 Best regards')
+END
+GO
+
+
+
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainLookupLetter' AND [PropertyName]= N'CC' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainLookupLetter', N'CC', N'support@HostingCompany.com')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainLookupLetter' AND [PropertyName]= N'From' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainLookupLetter', N'From', N'support@HostingCompany.com')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainLookupLetter' AND [PropertyName]= N'HtmlBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainLookupLetter', N'HtmlBody', N'<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>MX and NS Changes Information</title>
+    <style type="text/css">
+		.Summary { background-color: ##ffffff; padding: 5px; }
+		.Summary .Header { padding: 10px 0px 10px 10px; font-size: 16pt; background-color: ##E5F2FF; color: ##1F4978; border-bottom: solid 2px ##86B9F7; }
+        .Summary A { color: ##0153A4; }
+        .Summary { font-family: Tahoma; font-size: 9pt; }
+        .Summary H1 { font-size: 1.7em; color: ##1F4978; border-bottom: dotted 3px ##efefef; }
+        .Summary H2 { font-size: 1.3em; color: ##1F4978; } 
+        .Summary TABLE { border: solid 1px ##e5e5e5; }
+        .Summary TH,
+        .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
+        .Summary TD { padding: 8px; font-size: 9pt; }
+        .Summary UL LI { font-size: 1.1em; font-weight: bold; }
+        .Summary UL UL LI { font-size: 0.9em; font-weight: normal; }
+    </style>
+</head>
+<body>
+<div class="Summary">
+
+<a name="top"></a>
+<div class="Header">
+	MX and NS Changes Information
+</div>
+
+<ad:if test="#user#">
+<p>
+Hello #user.FirstName#,
+</p>
+</ad:if>
+
+<p>
+Please, find below details of MX and NS changes.
+</p>
+
+    <ad:foreach collection="#Domains#" var="Domain" index="i">
+	<h2>#Domain.DomainName#</h2>
+
+	<table>
+	    <thead>
+	        <tr>
+	            <th>DNS</th>
+				<th>Type</th>
+				<th>Status</th>
+	            <th>Value</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <ad:foreach collection="#Domain.DnsChanges#" var="DnsChange" index="j">
+	        <tr>
+	            <td>#DnsChange.DnsServer#</td>
+	            <td>#DnsChange.Type#</td>
+				<td>#DnsChange.Status#</td>
+	            <td>#DnsChange.Record.Value#</td>
+	        </tr>
+	    	</ad:foreach>
+	    </tbody>
+	</table>
+	
+    </ad:foreach>
+
+<p>
+If you have any questions regarding your hosting account, feel free to contact our support department at any time.
+</p>
+
+<p>
+Best regards
+</p>')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainLookupLetter' AND [PropertyName]= N'Priority' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainLookupLetter', N'Priority', N'Normal')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainLookupLetter' AND [PropertyName]= N'Subject' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainLookupLetter', N'Subject', N'MX and NS changes notification')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainLookupLetter' AND [PropertyName]= N'TextBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainLookupLetter', N'TextBody', N'=================================
+   MX and NS Changes Information
+=================================
+<ad:if test="#user#">
+<p>
+Hello #user.FirstName#,
+</p>
+</ad:if>
+
+Please, find below details of your domain expiration information.
+
+
+
+<ad:foreach collection="#Domains#" var="Domain" index="i">
+
+ #Domain.DomainName#
+
+        <ad:foreach collection="#Domain.DnsChanges#" var="DnsChange" index="j">
+            DNS:    #DnsChange.DnsServer#
+            Type:   #DnsChange.Type#
+	    Status: #DnsChange.Status#
+            Value:  #DnsChange.Record.Value#
+
+    	</ad:foreach>
+</ad:foreach>
+
+
+
+If you have any questions regarding your hosting account, feel free to contact our support department at any time.
+
+Best regards
+')
 END
 GO
 
@@ -6499,6 +6683,18 @@ AS
 UPDATE [dbo].[Domains] SET [ExpirationDate] = @Date WHERE [DomainID] = @DomainId
 GO
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateDomainLastUpdateDate')
+DROP PROCEDURE UpdateDomainLastUpdateDate
+GO
+CREATE PROCEDURE [dbo].UpdateDomainLastUpdateDate
+(
+	@DomainId INT,
+	@Date DateTime
+)
+AS
+UPDATE [dbo].[Domains] SET [LastUpdateDate] = @Date WHERE [DomainID] = @DomainId
+GO
+
 
 --Updating Domain procedures
 
@@ -6533,6 +6729,7 @@ SELECT
 	D.IsInstantAlias,
 	D.CreationDate,
 	D.ExpirationDate,
+	D.LastUpdateDate,
 	D.IsDomainPointer
 FROM Domains AS D
 INNER JOIN PackagesTree(@PackageID, @Recursive) AS PT ON D.PackageID = PT.PackageID
@@ -6614,6 +6811,7 @@ SET @sql = @sql + ' SELECT COUNT(DomainID) FROM @Domains;SELECT
 	D.IsInstantAlias,
 	D.IsDomainPointer,
 	D.ExpirationDate,
+	D.LastUpdateDate,
 	P.PackageName,
 	ISNULL(SRV.ServerID, 0) AS ServerID,
 	ISNULL(SRV.ServerName, '''') AS ServerName,

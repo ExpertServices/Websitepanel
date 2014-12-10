@@ -144,4 +144,7 @@
   <data name="lnkDomainExpirationLetter.Text" xml:space="preserve">
     <value>Domain Expiration Letter</value>
   </data>
+  <data name="lnkDomainLookupLetter.Text" xml:space="preserve">
+    <value>Domain MX and NS Letter</value>
+  </data>
 </root>

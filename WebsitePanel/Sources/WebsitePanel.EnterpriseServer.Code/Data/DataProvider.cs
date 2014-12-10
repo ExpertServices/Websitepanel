@@ -4732,7 +4732,7 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
-        public static IDataReader GetDomainMXRecords(int domainId, DnsRecordType recordType)
+        public static IDataReader GetDomainDnsRecords(int domainId, DnsRecordType recordType)
         {
             return SqlHelper.ExecuteReader(
                 ConnectionString,
@@ -4785,6 +4785,11 @@ namespace WebsitePanel.EnterpriseServer
         public static void UpdateDomainExpirationDate(int domainId, DateTime date)
         {
             UpdateDomainDate(domainId, "UpdateDomainExpirationDate", date);
+        }
+
+        public static void UpdateDomainLastUpdateDate(int domainId, DateTime date)
+        {
+            UpdateDomainDate(domainId, "UpdateDomainLastUpdateDate", date);
         }
 
         private static void UpdateDomainDate(int domainId, string stroredProcedure, DateTime date)

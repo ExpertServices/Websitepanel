@@ -2664,6 +2664,8 @@ namespace WebsitePanel.EnterpriseServer
         {
             try
             {
+                DataProvider.UpdateDomainLastUpdateDate(domain.DomainId, DateTime.Now);
+
                 var whoisResult = WhoisClient.Query(domain.DomainName);
 
                 var createdDate = GetDomainInfoDate(whoisResult.Raw, _createdDatePatterns);
@@ -2685,6 +2687,17 @@ namespace WebsitePanel.EnterpriseServer
             { 
                 //wrong domain 
             }
+
+            return domain;
+        }
+
+        public static DomainInfo UpdateDomainRegistrationData(DomainInfo domain, DateTime? creationDate, DateTime? expirationDate)
+        {
+            domain.CreationDate = creationDate;
+            DataProvider.UpdateDomainCreationDate(domain.DomainId, creationDate.Value);
+            domain.ExpirationDate = expirationDate;
+            DataProvider.UpdateDomainExpirationDate(domain.DomainId, expirationDate.Value);
+            DataProvider.UpdateDomainLastUpdateDate(domain.DomainId, DateTime.Now);
 
             return domain;
         }

@@ -34,6 +34,10 @@
             <asp:HyperLink ID="lnkDomainExpirationLetter" runat="server" meta:resourcekey="lnkDomainExpirationLetter"
                 Text="Domain Expiration Letter" NavigateUrl='<%# GetSettingsLink("DomainExpirationLetter", "SettingsDomainExpirationLetter") %>'></asp:HyperLink>
         </li>  
+        <li>
+            <asp:HyperLink ID="lnkDomainLookupLetter" runat="server" meta:resourcekey="lnkDomainLookupLetter"
+                Text="Domain MX and NS Letter" NavigateUrl='<%# GetSettingsLink("DomainLookupLetter", "SettingsDomainLookupLetter") %>'></asp:HyperLink>
+        </li>  
     </ul>
 </div>
 <div class="FormFooter">
