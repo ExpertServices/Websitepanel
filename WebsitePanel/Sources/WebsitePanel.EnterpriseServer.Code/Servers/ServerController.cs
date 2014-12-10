@@ -2662,21 +2662,28 @@ namespace WebsitePanel.EnterpriseServer
 
         public static DomainInfo UpdateDomainRegistrationData(DomainInfo domain)
         {
-            var whoisResult = WhoisClient.Query(domain.DomainName);
-
-            var createdDate = GetDomainInfoDate(whoisResult.Raw, _createdDatePatterns);
-            var expiredDate = GetDomainInfoDate(whoisResult.Raw, _expiredDatePatterns);
-
-            if (createdDate != null)
+            try
             {
-                domain.CreationDate = createdDate;
-                DataProvider.UpdateDomainCreationDate(domain.DomainId, createdDate.Value);
+                var whoisResult = WhoisClient.Query(domain.DomainName);
+
+                var createdDate = GetDomainInfoDate(whoisResult.Raw, _createdDatePatterns);
+                var expiredDate = GetDomainInfoDate(whoisResult.Raw, _expiredDatePatterns);
+
+                if (createdDate != null)
+                {
+                    domain.CreationDate = createdDate;
+                    DataProvider.UpdateDomainCreationDate(domain.DomainId, createdDate.Value);
+                }
+
+                if (expiredDate != null)
+                {
+                    domain.ExpirationDate = expiredDate;
+                    DataProvider.UpdateDomainExpirationDate(domain.DomainId, expiredDate.Value);
+                }
             }
-
-            if (expiredDate != null)
-            {
-                domain.ExpirationDate = expiredDate;
-                DataProvider.UpdateDomainExpirationDate(domain.DomainId, expiredDate.Value);
+            catch (Exception e)
+            { 
+                //wrong domain 
             }
 
             return domain;

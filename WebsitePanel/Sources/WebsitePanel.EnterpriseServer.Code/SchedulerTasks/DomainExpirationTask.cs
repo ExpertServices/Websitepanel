@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
 using WebsitePanel.Providers.DomainLookup;
@@ -116,12 +117,22 @@ namespace WebsitePanel.EnterpriseServer
         {
             BackgroundTask topTask = TaskManager.TopTask;
 
-            var template = ObjectUtils.FillObjectFromDataReader<ScheduleTaskEmailTemplate>(DataProvider.GetScheduleTaskEmailTemplate(TaskId));
+            UserSettings settings = UserController.GetUserSettings(user.UserId, UserSettings.DOMAIN_EXPIRATION_LETTER);
+
+            string from = settings["From"];
+
+            var bcc = settings["CC"];
+
+            string subject = settings["Subject"];
+            string body = user.HtmlMail ? settings["HtmlBody"] : settings["TextBody"];
+            bool isHtml = user.HtmlMail;
+
+            MailPriority priority = MailPriority.Normal;
+            if (!String.IsNullOrEmpty(settings["Priority"]))
+                priority = (MailPriority)Enum.Parse(typeof(MailPriority), settings["Priority"], true);
 
             // input parameters
-            string mailFrom = template.From;
             string mailTo = (string)topTask.GetParamValue("MAIL_TO");
-            string mailSubject = template.Subject;
 
             Hashtable items = new Hashtable();
 
@@ -130,10 +141,10 @@ namespace WebsitePanel.EnterpriseServer
                                                          ExpirationDate = x.ExpirationDate, 
                                                          Customer = string.Format("{0} {1}", domainUsers[x.PackageId].FirstName, domainUsers[x.PackageId].LastName) });
 
-            var mailBody = PackageController.EvaluateTemplate(template.Template, items);
+            body = PackageController.EvaluateTemplate(body, items);
 
             // send mail message
-            MailHelper.SendMessage(mailFrom, mailTo, mailSubject, mailBody, true);
+            MailHelper.SendMessage(from, mailTo, bcc, subject, body, priority, isHtml);
         }
     }
 }

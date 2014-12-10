@@ -307,6 +307,13 @@
     <Compile Include="ScheduleTaskControls\DomainLookupView.ascx.designer.cs">
       <DependentUpon>DomainLookupView.ascx</DependentUpon>
     </Compile>
+    <Compile Include="SettingsDomainExpirationLetter.ascx.cs">
+      <DependentUpon>SettingsDomainExpirationLetter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsDomainExpirationLetter.ascx.designer.cs">
+      <DependentUpon>SettingsDomainExpirationLetter.ascx</DependentUpon>
+    </Compile>
     <Compile Include="SettingsServiceLevels.ascx.cs">
       <DependentUpon>SettingsServiceLevels.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4261,12 +4268,14 @@
     <Content Include="RDS\UserControls\RDSCollectionServers.ascx" />
     <Content Include="RDS\UserControls\RDSCollectionUsers.ascx" />
     <Content Include="ScheduleTaskControls\App_LocalResources\DomainExpirationView.ascx.resx" />
+    <Content Include="App_LocalResources\SettingsDomainExpirationLetter.ascx.resx" />
     <EmbeddedResource Include="ScheduleTaskControls\App_LocalResources\DomainLookupView.ascx.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DomainLookupView.ascx.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Content Include="ScheduleTaskControls\DomainExpirationView.ascx" />
     <Content Include="ScheduleTaskControls\DomainLookupView.ascx" />
+    <Content Include="SettingsDomainExpirationLetter.ascx" />
     <Content Include="SettingsServiceLevels.ascx" />
     <Content Include="CRM\CRMStorageSettings.ascx" />
     <Content Include="ExchangeServer\EnterpriseStorageCreateDriveMap.ascx" />

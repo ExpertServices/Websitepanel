@@ -6250,19 +6250,20 @@ GO
 IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'ScheduleTasksEmailTemplates')
 DROP TABLE ScheduleTasksEmailTemplates
 GO
-CREATE TABLE ScheduleTasksEmailTemplates
-(
-	[TaskID] [nvarchar](100) NOT NULL,
-	[From] [nvarchar](100) NOT NULL,
-	[Subject] [nvarchar](Max) NULL,
-	[Template] [nvarchar](Max) NULL
-)
-GO
 
-IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTasksEmailTemplates] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_EXPIRATION')
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainExpirationLetter' AND [PropertyName]= N'CC' )
 BEGIN
-INSERT [dbo].[ScheduleTasksEmailTemplates] ([TaskID], [From], [Subject],  [Template]) VALUES (N'SCHEDULE_TASK_DOMAIN_EXPIRATION', N'wsp-scheduler@noreply.net', N'Domain expiration notification',  N'
-<html xmlns="http://www.w3.org/1999/xhtml">
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainExpirationLetter', N'CC', N'support@HostingCompany.com')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainExpirationLetter' AND [PropertyName]= N'From' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainExpirationLetter', N'From', N'support@HostingCompany.com')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainExpirationLetter' AND [PropertyName]= N'HtmlBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainExpirationLetter', N'HtmlBody', N'<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Domain Expiration Information</title>
     <style type="text/css">
@@ -6327,6 +6328,43 @@ Best regards
 </p>')
 END
 GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainExpirationLetter' AND [PropertyName]= N'Priority' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainExpirationLetter', N'Priority', N'Normal')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainExpirationLetter' AND [PropertyName]= N'Subject' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainExpirationLetter', N'Subject', N'Domain expiration notification')
+END
+GO
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainExpirationLetter' AND [PropertyName]= N'TextBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainExpirationLetter', N'TextBody', N'=================================
+   Domain Expiration Information
+=================================
+<ad:if test="#user#">
+<p>
+Hello #user.FirstName#,
+</p>
+</ad:if>
+
+Please, find below details of your domain expiration information.
+
+
+<ad:foreach collection="#Domains#" var="Domain" index="i">
+	Domain: #Domain.DomainName#
+	Customer: #Domain.Customer#
+	Expiration Date: #Domain.ExpirationDate#
+
+</ad:foreach>
+
+If you have any questions regarding your hosting account, feel free to contact our support department at any time.
+
+Best regards')
+END
+GO
+
 
 -- Procedures for Domain lookup service
 

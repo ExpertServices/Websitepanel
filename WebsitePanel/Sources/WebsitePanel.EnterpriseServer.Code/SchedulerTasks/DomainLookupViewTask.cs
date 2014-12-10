@@ -40,24 +40,11 @@ namespace WebsitePanel.EnterpriseServer
 
             foreach (var package in packages)
             {
-
-                PackageContext cntx = PackageController.GetPackageContext(package.PackageId);
-
-                if (cntx == null)
-                {
-                    continue;
-                }
-
-                bool dnsEnabled = cntx.GroupsArray.Any(x => x.GroupName == ResourceGroups.Dns);
-
-                if (!dnsEnabled)
-                {
-                    continue;
-                }
-
                 var domains = ServerController.GetDomains(package.PackageId);
 
                 domains = domains.Where(x => !x.IsSubDomain && !x.IsDomainPointer).ToList(); //Selecting top-level domains
+
+                domains = domains.Where(x => x.ZoneItemId > 0).ToList(); //Selecting only dns enabled domains
 
                 foreach (var domain in domains)
                 {
