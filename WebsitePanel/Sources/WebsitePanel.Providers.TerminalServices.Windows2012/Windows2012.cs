@@ -128,11 +128,41 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         #region HostingServiceProvider methods
 
         public override bool IsInstalled()
-        {
-            // TODO: Remove it.
-            //return true;
+        {            
             Server.Utils.OS.WindowsVersion version = WebsitePanel.Server.Utils.OS.GetVersion();
-            return version == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2012;
+            return version == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2012 || version == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2012R2;
+        }
+
+        public override string[] Install()
+        {            
+            Runspace runSpace = null;
+            PSObject feature = null;
+
+            try
+            {
+                runSpace = OpenRunspace();
+
+                if (!IsFeatureInstalled("Desktop-Experience", runSpace))
+                {
+                    feature = AddFeature(runSpace, "Desktop-Experience", true, false);                    
+                }
+
+                if (!IsFeatureInstalled("NET-Framework-Core", runSpace))
+                {
+                    feature = AddFeature(runSpace, "NET-Framework-Core", true, false);
+                }
+
+                if (!IsFeatureInstalled("NET-Framework-45-Core", runSpace))
+                {
+                    feature = AddFeature(runSpace, "NET-Framework-45-Core", true, false);                    
+                }
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+
+            return new string[]{};
         }
 
         #endregion
@@ -390,7 +420,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 cmd.Parameters.Add("ConnectionBroker", ConnectionBroker);
                 cmd.Parameters.Add("SessionHost", server.FqdName);
                 cmd.Parameters.Add("Force", true);
-
+                
                 ExecuteShellCommand(runSpace, cmd, false);
 
                 RemoveComputerFromCollectionAdComputerGroup(organizationId, collectionName, server);
@@ -790,37 +820,13 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         public bool AddSessionHostFeatureToServer(string hostName)
         {
             bool installationResult = false;
-
             Runspace runSpace = null;
-            PSObject feature = null;
 
             try
-            {                
-                if (!CheckSessionHostFeatureInstallation(hostName))
-                {
-                    runSpace = OpenRunspace();
-                    
-                    feature = AddFeature(runSpace, hostName, "RDS-RD-Server", true, true);
-                    installationResult = (bool)GetPSObjectProperty(feature, "Success");
-                }
-                else
-                {
-                    runSpace = OpenRunspace();   
-                    installationResult = true;
-                }
-                
-
-                if (installationResult && !IsFeatureInstalled(hostName, "Desktop-Experience", runSpace))
-                {
-                    feature = AddFeature(runSpace, hostName, "Desktop-Experience", true, false);
-                    installationResult = (bool) GetPSObjectProperty(feature, "Success");
-                }
-
-                if (installationResult && !IsFeatureInstalled(hostName, "NET-Framework-45-Core", runSpace))
-                {
-                    feature = AddFeature(runSpace, hostName, "NET-Framework-45-Core", true, false);
-                    installationResult = (bool)GetPSObjectProperty(feature, "Success");
-                }
+            {
+                runSpace = OpenRunspace();
+                var feature = AddFeature(runSpace, hostName, "RDS-RD-Server", true, true);
+                installationResult = (bool)GetPSObjectProperty(feature, "Success");               
             }
             finally
             {
@@ -1134,6 +1140,21 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
         #region Windows Feature PowerShell
 
+        internal bool IsFeatureInstalled(string featureName, Runspace runSpace)
+        {
+            bool isInstalled = false;
+            Command cmd = new Command("Get-WindowsFeature");
+            cmd.Parameters.Add("Name", featureName);
+            var feature = ExecuteShellCommand(runSpace, cmd, false).FirstOrDefault();
+
+            if (feature != null)
+            {
+                isInstalled = (bool)GetPSObjectProperty(feature, "Installed");
+            }
+
+            return isInstalled;
+        }
+
         internal bool IsFeatureInstalled(string hostName, string featureName, Runspace runSpace)
         {
             bool isInstalled = false;            
@@ -1147,6 +1168,24 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             }            
 
             return isInstalled;
+        }
+
+        internal PSObject AddFeature(Runspace runSpace, string featureName, bool includeAllSubFeature = true, bool restart = false)
+        {
+            Command cmd = new Command("Add-WindowsFeature");
+            cmd.Parameters.Add("Name", featureName);
+
+            if (includeAllSubFeature)
+            {
+                cmd.Parameters.Add("IncludeAllSubFeature", true);
+            }
+
+            if (restart)
+            {
+                cmd.Parameters.Add("Restart", true);
+            }
+
+            return ExecuteShellCommand(runSpace, cmd, false).FirstOrDefault();
         }
 
         internal PSObject AddFeature(Runspace runSpace, string hostName, string featureName, bool includeAllSubFeature = true, bool restart = false)
