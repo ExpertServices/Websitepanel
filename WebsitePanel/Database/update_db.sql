@@ -1,4 +1,5 @@
-﻿
+﻿USE [${install.database}]
+GO
 -- update database version
 DECLARE @build_version nvarchar(10), @build_date datetime
 SET @build_version = N'${release.version}'
