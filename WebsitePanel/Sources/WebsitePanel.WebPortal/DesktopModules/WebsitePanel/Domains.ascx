@@ -41,6 +41,10 @@
             <ItemStyle Width="15%"></ItemStyle>
             <ItemTemplate>
 	            <%# GetDomainExpirationDate(Eval("ExpirationDate"), Eval("LastUpdateDate"))%>
+
+                <div style="display:inline-block" runat="server" Visible='<%# !(bool)Eval("IsSubDomain") && !(bool)Eval("IsInstantAlias") && !(bool)Eval("IsDomainPointer") %>'>
+                  <img style="border-width: 0px;" src="App_Themes/Default/Images/information_icon_small.gif" title="<%# GetDomainDnsRecords((int)Eval("DomainId")) %>">
+                </div>
             </ItemTemplate>
         </asp:TemplateField>
         <asp:TemplateField HeaderText="gvDomainsType">

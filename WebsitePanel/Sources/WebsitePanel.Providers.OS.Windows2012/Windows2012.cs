@@ -301,54 +301,54 @@ namespace WebsitePanel.Providers.OS
         
         #region Domain LookUp
 
-        public override DnsRecordInfo[] GetDomainDnsRecords(string domain, string dnsServer, DnsRecordType recordType)
-        {
-            List<DnsRecordInfo> records = new List<DnsRecordInfo>();
+        //public override DnsRecordInfo[] GetDomainDnsRecords(string domain, string dnsServer, DnsRecordType recordType)
+        //{
+        //    List<DnsRecordInfo> records = new List<DnsRecordInfo>();
 
-            Runspace runSpace = null;
+        //    Runspace runSpace = null;
 
-            try
-            {
-                runSpace = OpenRunspace();
+        //    try
+        //    {
+        //        runSpace = OpenRunspace();
 
-                Command cmd = new Command("Resolve-DnsName");
-                cmd.Parameters.Add("Name", domain);
-                cmd.Parameters.Add("Server", dnsServer);
-                cmd.Parameters.Add("Type", recordType.ToString());
+        //        Command cmd = new Command("Resolve-DnsName");
+        //        cmd.Parameters.Add("Name", domain);
+        //        cmd.Parameters.Add("Server", dnsServer);
+        //        cmd.Parameters.Add("Type", recordType.ToString());
 
-                var dnsRecordsPs = ExecuteShellCommand(runSpace, cmd, false);
+        //        var dnsRecordsPs = ExecuteShellCommand(runSpace, cmd, false);
 
-                if (dnsRecordsPs != null)
-                {
-                    foreach (var dnsRecordPs in dnsRecordsPs)
-                    {
-                        DnsRecordInfo newRecord = null;
+        //        if (dnsRecordsPs != null)
+        //        {
+        //            foreach (var dnsRecordPs in dnsRecordsPs)
+        //            {
+        //                DnsRecordInfo newRecord = null;
 
-                        switch (recordType)
-                        {
-                            case DnsRecordType.MX: { newRecord = CreateDnsRecordFromPsObject(dnsRecordPs, "NameExchange"); break; }
-                            case DnsRecordType.NS: { newRecord = CreateDnsRecordFromPsObject(dnsRecordPs, "NameHost"); break; }
-                            default: continue;
-                        }
+        //                switch (recordType)
+        //                {
+        //                    case DnsRecordType.MX: { newRecord = CreateDnsRecordFromPsObject(dnsRecordPs, "NameExchange"); break; }
+        //                    case DnsRecordType.NS: { newRecord = CreateDnsRecordFromPsObject(dnsRecordPs, "NameHost"); break; }
+        //                    default: continue;
+        //                }
 
-                        if (newRecord != null)
-                        {
-                            newRecord.DnsServer = dnsServer;
-                            newRecord.RecordType = recordType;
+        //                if (newRecord != null)
+        //                {
+        //                    newRecord.DnsServer = dnsServer;
+        //                    newRecord.RecordType = recordType;
 
-                            records.Add(newRecord);
-                        }
-                    }
+        //                    records.Add(newRecord);
+        //                }
+        //            }
                     
-                }
-            }
-            finally
-            {
-                CloseRunspace(runSpace);
-            }
+        //        }
+        //    }
+        //    finally
+        //    {
+        //        CloseRunspace(runSpace);
+        //    }
 
-            return records.ToArray();
-        }
+        //    return records.ToArray();
+        //}
 
         private DnsRecordInfo CreateDnsRecordFromPsObject(PSObject psObject, string valueName)
         {

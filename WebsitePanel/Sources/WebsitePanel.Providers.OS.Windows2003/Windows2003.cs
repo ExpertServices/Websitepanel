@@ -36,6 +36,8 @@ using WebsitePanel.Server.Utils;
 using WebsitePanel.Providers.Utils;
 using WebsitePanel.Providers.DomainLookup;
 using WebsitePanel.Providers.DNS;
+using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace WebsitePanel.Providers.OS
 {
@@ -55,6 +57,9 @@ namespace WebsitePanel.Providers.OS
         private const string MSACCESS_DRIVER = "Microsoft Access Driver (*.mdb)";
         private const string MSEXCEL_DRIVER = "Microsoft Excel Driver (*.xls)";
         private const string TEXT_DRIVER = "Microsoft Text Driver (*.txt; *.csv)";
+
+        private const string MXRECORDPATTERN = @"mail exchanger = (.+)";
+        private const string NSRECORDPATTERN = @"nameserver = (.+)";
         #endregion
 
         #region Properties
@@ -746,9 +751,61 @@ namespace WebsitePanel.Providers.OS
         }
         #endregion
 
+
+
         public virtual DnsRecordInfo[] GetDomainDnsRecords(string domain, string dnsServer, DnsRecordType recordType)
         {
-            return new DnsRecordInfo[0];
+            //nslookup -type=mx google.com 195.46.39.39
+            var command = "nslookup";
+            var args = string.Format("-type={0} {1} {2}", recordType, domain, dnsServer);
+
+            var raw = FileUtils.ExecuteSystemCommand(command, args);
+
+            var records = ParseNsLookupResult(raw, dnsServer, recordType);
+
+            return records.ToArray();
+        }
+
+        private IEnumerable<DnsRecordInfo> ParseNsLookupResult(string raw, string dnsServer, DnsRecordType recordType)
+        { 
+            var records = new List<DnsRecordInfo>();
+
+            var recordTypePattern = string.Empty;
+
+            switch (recordType)
+            {
+                case DnsRecordType.NS:
+                    {
+                        recordTypePattern = NSRECORDPATTERN;
+                        break;
+                    }
+                case DnsRecordType.MX:
+                    {
+                        recordTypePattern = MXRECORDPATTERN;
+                        break;
+                    }
+            }
+
+            var regex = new Regex(recordTypePattern, RegexOptions.IgnoreCase);
+
+            foreach (Match match in regex.Matches(raw))
+            {
+                if (match.Groups.Count != 2)
+                {
+                    continue;
+                }
+
+                var dnsRecord = new DnsRecordInfo
+                {
+                    Value = match.Groups[1].Value != null ? match.Groups[1].Value.Replace("\r\n", "").Replace("\r", "").Replace("\n", "").Trim() : null,
+                    RecordType = recordType,
+                    DnsServer = dnsServer
+                };
+
+                records.Add(dnsRecord);
+            }
+
+            return records;
         }
 
         public override bool IsInstalled()

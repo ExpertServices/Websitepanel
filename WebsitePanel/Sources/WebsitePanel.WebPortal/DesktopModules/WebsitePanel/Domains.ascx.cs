@@ -36,6 +36,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
+using System.Linq;
 
 using WebsitePanel.EnterpriseServer;
 
@@ -121,6 +122,18 @@ namespace WebsitePanel.Portal
             {
                 return GetLocalizedString("DomainExpirationDate.NotExist");
             }
+        }
+
+        public string GetDomainDnsRecords(int domainId)
+        {
+            var records = ES.Services.Servers.GetDomainDnsRecords(domainId);
+
+            if (!records.Any())
+            {
+                return "No Dns Records";
+            }
+
+            return string.Join("\r\n", records.Select(x=>string.Format("{0}: {1}", x.RecordType, x.Value)));
         }
 
         protected void odsDomainsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)

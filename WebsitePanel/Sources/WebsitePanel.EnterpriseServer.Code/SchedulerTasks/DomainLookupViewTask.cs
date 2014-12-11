@@ -6,6 +6,7 @@ using System.Net.Mail;
 using System.Text;
 using WebsitePanel.Providers.DNS;
 using WebsitePanel.Providers.DomainLookup;
+using WebsitePanel.Server;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -48,13 +49,14 @@ namespace WebsitePanel.EnterpriseServer
 
             var packages = ObjectUtils.CreateListFromDataReader<PackageInfo>(DataProvider.GetAllPackages());
 
+
             foreach (var package in packages)
             {
                 var domains = ServerController.GetDomains(package.PackageId);
 
                 domains = domains.Where(x => !x.IsSubDomain && !x.IsDomainPointer).ToList(); //Selecting top-level domains
 
-                domains = domains.Where(x => x.ZoneItemId > 0).ToList(); //Selecting only dns enabled domains
+                //domains = domains.Where(x => x.ZoneItemId > 0).ToList(); //Selecting only dns enabled domains
 
                 foreach (var domain in domains)
                 {
@@ -86,12 +88,11 @@ namespace WebsitePanel.EnterpriseServer
                 }
             }
 
+            TaskManager.Write(string.Format("Domains checked: {0}", domainsChanges.Count));
+
             var changedDomains = FindDomainsWithChangedRecords(domainsChanges);
 
-            if (changedDomains.Any())
-            {
-                SendMailMessage(user,changedDomains);
-            }
+            SendMailMessage(user, changedDomains);
         }
 
         
@@ -208,8 +209,6 @@ namespace WebsitePanel.EnterpriseServer
             var bcc = settings["CC"];
 
             string subject = settings["Subject"];
-            string body = user.HtmlMail ? settings["HtmlBody"] : settings["TextBody"];
-            bool isHtml = user.HtmlMail;
 
             MailPriority priority = MailPriority.Normal;
             if (!String.IsNullOrEmpty(settings["Priority"]))
@@ -217,6 +216,18 @@ namespace WebsitePanel.EnterpriseServer
 
             // input parameters
             string mailTo = (string)topTask.GetParamValue("MAIL_TO");
+
+            string body = string.Empty;
+            bool isHtml = user.HtmlMail;
+
+            if (domainsChanges.Any())
+            {
+                body = user.HtmlMail ? settings["HtmlBody"] : settings["TextBody"];
+            }
+            else 
+            {
+                body = user.HtmlMail ? settings["NoChangesHtmlBody"] : settings["NoChangesTextBody"];
+            }
 
             Hashtable items = new Hashtable();
 

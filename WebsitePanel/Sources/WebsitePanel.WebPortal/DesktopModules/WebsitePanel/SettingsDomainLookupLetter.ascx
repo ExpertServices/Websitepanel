@@ -39,4 +39,20 @@
 		<td class="Normal" colspan="2">
 			<asp:TextBox ID="txtTextBody" runat="server" Rows="15" TextMode="MultiLine" Width="680px" CssClass="NormalTextBox" Wrap="false"></asp:TextBox></td>
 	</tr>
+
+
+    <tr>
+		<td class="SubHead" colspan="2"><br /><br /><asp:Label ID="Label1" runat="server" meta:resourcekey="lblNoChangesHtmlBody" Text="No Changes HTML Body:"></asp:Label></td>
+	</tr>
+	<tr>
+		<td class="Normal" colspan="2">
+			<asp:TextBox ID="txtNoChangesHtmlBody" runat="server" Rows="15" TextMode="MultiLine" Width="680px" CssClass="NormalTextBox" Wrap="false"></asp:TextBox></td>
+	</tr>
+	<tr>
+		<td class="SubHead" colspan="2"><br /><br /><asp:Label ID="Label2" runat="server" meta:resourcekey="lblNoChangesTextBody" Text="No Changes Text Body:"></asp:Label></td>
+	</tr>
+	<tr>
+		<td class="Normal" colspan="2">
+			<asp:TextBox ID="txtNoChangesTextBody" runat="server" Rows="15" TextMode="MultiLine" Width="680px" CssClass="NormalTextBox" Wrap="false"></asp:TextBox></td>
+	</tr>
 </table>

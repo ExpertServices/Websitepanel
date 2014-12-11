@@ -135,6 +135,12 @@
   <data name="lblHtmlBody.Text" xml:space="preserve">
     <value>HTML Body:</value>
   </data>
+  <data name="lblNoChangesHtmlBody" xml:space="preserve">
+    <value>No Changes HTML Body:</value>
+  </data>
+  <data name="lblNoChangesTextBody.Text" xml:space="preserve">
+    <value>No Changes Text Body:</value>
+  </data>
   <data name="lblPriority.Text" xml:space="preserve">
     <value>Priority:</value>
   </data>

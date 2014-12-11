@@ -41,6 +41,7 @@ using WebsitePanel.Providers.Web;
 using WebsitePanel.Providers.HostedSolution;
 using Whois.NET;
 using System.Text.RegularExpressions;
+using WebsitePanel.Providers.DomainLookup;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -1633,6 +1634,21 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
         #region Domains
+
+        public static List<DnsRecordInfo> GetDomainDnsRecords(int domainId)
+        {
+            var result = new List<DnsRecordInfo>();
+
+            var mxRecords = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainDnsRecords(domainId, DnsRecordType.MX));
+            var nsRecords = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainDnsRecords(domainId, DnsRecordType.NS));
+
+            result.AddRange(mxRecords);
+            result.AddRange(nsRecords);
+
+            return result;
+        }
+
+
         public static int CheckDomain(string domainName)
         {
             int checkDomainResult = DataProvider.CheckDomain(-10, domainName, false);
@@ -2693,10 +2709,18 @@ namespace WebsitePanel.EnterpriseServer
 
         public static DomainInfo UpdateDomainRegistrationData(DomainInfo domain, DateTime? creationDate, DateTime? expirationDate)
         {
-            domain.CreationDate = creationDate;
-            DataProvider.UpdateDomainCreationDate(domain.DomainId, creationDate.Value);
-            domain.ExpirationDate = expirationDate;
-            DataProvider.UpdateDomainExpirationDate(domain.DomainId, expirationDate.Value);
+            if (creationDate != null)
+            {
+                domain.CreationDate = creationDate;
+                DataProvider.UpdateDomainCreationDate(domain.DomainId, creationDate.Value);
+            }
+
+            if (expirationDate != null)
+            {
+                domain.ExpirationDate = expirationDate;
+                DataProvider.UpdateDomainExpirationDate(domain.DomainId, expirationDate.Value);
+            }
+
             DataProvider.UpdateDomainLastUpdateDate(domain.DomainId, DateTime.Now);
 
             return domain;
