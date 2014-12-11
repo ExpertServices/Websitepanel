@@ -4627,10 +4627,10 @@ namespace WebsitePanel.EnterpriseServer
         public static void UpdateRDSServer(RdsServer server)
         {
             UpdateRDSServer(server.Id, server.ItemId, server.Name, server.FqdName, server.Description,
-                server.RdsCollectionId);
+                server.RdsCollectionId, server.ConnectionEnabled);
         }
 
-        public static void UpdateRDSServer(int id, int? itemId, string name, string fqdName, string description, int? rdsCollectionId)
+        public static void UpdateRDSServer(int id, int? itemId, string name, string fqdName, string description, int? rdsCollectionId, bool connectionEnabled)
         {
             SqlHelper.ExecuteNonQuery(
                 ConnectionString,
@@ -4641,7 +4641,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@Name", name),
                 new SqlParameter("@FqdName", fqdName),
                 new SqlParameter("@Description", description),
-                new SqlParameter("@RDSCollectionId", rdsCollectionId)
+                new SqlParameter("@RDSCollectionId", rdsCollectionId),
+                new SqlParameter("@ConnectionEnabled", connectionEnabled)
             );
         }
 

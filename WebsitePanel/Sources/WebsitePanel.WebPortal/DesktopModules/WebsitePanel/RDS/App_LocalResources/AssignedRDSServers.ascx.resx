@@ -147,4 +147,16 @@
   <data name="locQuota.Text" xml:space="preserve">
     <value>Total RDS Servers Allocated:</value>
   </data>
+  <data name="cmdDisable.Text" xml:space="preserve">
+    <value>Disable</value>
+  </data>
+  <data name="cmdEnable.Text" xml:space="preserve">
+    <value>Enable</value>
+  </data>
+  <data name="cmdDisable.ToolTip" xml:space="preserve">
+    <value>Disable</value>
+  </data>
+  <data name="cmdEnable.ToolTip" xml:space="preserve">
+    <value>Enable</value>
+  </data>
 </root>

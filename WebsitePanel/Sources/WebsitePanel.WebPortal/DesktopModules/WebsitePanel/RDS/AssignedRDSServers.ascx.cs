@@ -61,35 +61,31 @@ namespace WebsitePanel.Portal.RDS
 
         protected void gvRDSAssignedServers_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            if (e.CommandName == "DeleteItem")
-            {
-                // delete RDS Server
-                int rdsServerId = int.Parse(e.CommandArgument.ToString());
+            int rdsServerId = int.Parse(e.CommandArgument.ToString());
 
-                try
-                {
-                    RdsServer rdsServer = ES.Services.RDS.GetRdsServer(rdsServerId);
+
+            RdsServer rdsServer = ES.Services.RDS.GetRdsServer(rdsServerId);            
+
+            switch (e.CommandName)
+            {
+                case "DeleteItem":
                     if (rdsServer.RdsCollectionId != null)
                     {
                         messageBox.ShowErrorMessage("RDS_UNASSIGN_SERVER_FROM_ORG_SERVER_IS_IN_COLLECTION");
                         return;
                     }
 
-                    ResultObject result = ES.Services.RDS.RemoveRdsServerFromOrganization(rdsServerId);
-                    if (!result.IsSuccess)
-                    {
-                        messageBox.ShowMessage(result, "REMOTE_DESKTOP_SERVICES_UNASSIGN_SERVER_FROM_ORG", "RDS");
-                        return;
-                    }
-
-                    gvRDSAssignedServers.DataBind();
-                    
-                }
-                catch (Exception ex)
-                {
-                    ShowErrorMessage("REMOTE_DESKTOP_SERVICES_UNASSIGN_SERVER_FROM_ORG", ex);
-                }
+                    DeleteItem(rdsServerId);
+                    break;
+                case "EnableItem":
+                    ChangeConnectionState(true, rdsServer);
+                    break;
+                case "DisableItem":
+                    ChangeConnectionState(false, rdsServer);
+                    break;
             }
+
+            gvRDSAssignedServers.DataBind();
         }
 
         protected void ddlPageSize_SelectedIndexChanged(object sender, EventArgs e)
@@ -97,6 +93,26 @@ namespace WebsitePanel.Portal.RDS
             gvRDSAssignedServers.PageSize = Convert.ToInt16(ddlPageSize.SelectedValue);
 
             gvRDSAssignedServers.DataBind();
+        }        
+
+        #region Methods
+
+        private void DeleteItem(int rdsServerId)
+        {
+            ResultObject result = ES.Services.RDS.RemoveRdsServerFromOrganization(rdsServerId);
+
+            if (!result.IsSuccess)
+            {
+                messageBox.ShowMessage(result, "REMOTE_DESKTOP_SERVICES_UNASSIGN_SERVER_FROM_ORG", "RDS");
+                return;
+            }
         }
+
+        private void ChangeConnectionState(bool enabled, RdsServer rdsServer)
+        {
+            ES.Services.RDS.SetRDServerNewConnectionAllowed(rdsServer.ItemId.Value, enabled, rdsServer.Id);
+        }
+
+        #endregion
     }
 }
