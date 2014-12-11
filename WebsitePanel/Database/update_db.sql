@@ -1,6 +1,4 @@
-﻿USE [${install.database}]
-GO
-
+﻿
 -- update database version
 DECLARE @build_version nvarchar(10), @build_date datetime
 SET @build_version = N'${release.version}'
@@ -5451,7 +5449,8 @@ CREATE TABLE RDSServers
 	Name NVARCHAR(255),
 	FqdName NVARCHAR(255),
 	Description NVARCHAR(255),
-	RDSCollectionId INT/* FOREIGN KEY REFERENCES RDSCollection (ID)*/
+	RDSCollectionId INT,
+	ConnectionEnabled BIT NOT NULL DEFAULT(1)
 )
 GO
 
@@ -6745,13 +6744,6 @@ exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @PackageID int, @Fil
 
 
 RETURN
-
-IF NOT EXISTS(SELECT * FROM sys.columns 
-        WHERE [name] = N'ConnectionEnabled' AND [object_id] = OBJECT_ID(N'RDSServers'))
-BEGIN
-    ALTER TABLE [RDSServers]
-		ADD ConnectionEnabled BIT NOT NULL DEFAULT(1)
-END
 
 GO
 
