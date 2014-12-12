@@ -302,7 +302,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 var dnsRecord = new DnsRecordInfo
                 {
-                    Value = match.Groups[1].Value != null ? match.Groups[1].Value.Replace("\r\n", "").Replace("\r", "").Replace("\n", "").Trim() : null,
+                    Value = match.Groups[1].Value != null ? match.Groups[1].Value.Replace("\r\n", "").Replace("\r", "").Replace("\n", "").ToLowerInvariant().Trim() : null,
                     RecordType = recordType,
                     DnsServer = dnsServer
                 };
