@@ -54,12 +54,14 @@ namespace WebsitePanel.EnterpriseServer
 
         private static List<string> _createdDatePatterns = new List<string> { @"Creation Date:(.+)", // base
                                                                                 @"created:(.+)",
+                                                                                @"Created On:(.+) UTC",
                                                                                 @"Created On:(.+)",
                                                                                 @"Domain Registration Date:(.+)",
                                                                                 @"Domain Create Date:(.+)",
                                                                                 @"Registered on:(.+)"};
 
-        private static List<string> _expiredDatePatterns = new List<string> { @"Expiration Date:(.+)", // base
+        private static List<string> _expiredDatePatterns = new List<string> {   @"Expiration Date:(.+) UTC", //base UTC
+                                                                                @"Expiration Date:(.+)", // base
                                                                                 @"Registry Expiry Date:(.+)", //.org
                                                                                 @"paid-till:(.+)", //.ru
                                                                                 @"Expires On:(.+)", //.name
@@ -2682,7 +2684,7 @@ namespace WebsitePanel.EnterpriseServer
             {
                 DataProvider.UpdateDomainLastUpdateDate(domain.DomainId, DateTime.Now);
 
-                var whoisResult = WhoisClient.Query(domain.DomainName);
+                var whoisResult = WhoisClient.Query(domain.DomainName.ToLowerInvariant());
 
                 var createdDate = GetDomainInfoDate(whoisResult.Raw, _createdDatePatterns);
                 var expiredDate = GetDomainInfoDate(whoisResult.Raw, _expiredDatePatterns);

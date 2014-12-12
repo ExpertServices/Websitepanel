@@ -124,6 +124,33 @@ namespace WebsitePanel.Portal
             }
         }
 
+        public bool ShowDomainDnsInfo(object expirationDateObject, object LastUpdateDateObject, bool isTopLevelDomain)
+        {
+            var expirationDate = expirationDateObject as DateTime?;
+            var lastUpdateDate = LastUpdateDateObject as DateTime?;
+
+            if (!isTopLevelDomain)
+            {
+                return false;
+            }
+            else if (expirationDate != null && expirationDate < DateTime.Now)
+            {
+                return false;
+            }
+            else if(expirationDate != null)
+            {
+                return true;
+            }
+            else if (lastUpdateDate == null)
+            {
+                return false;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public string GetDomainDnsRecords(int domainId)
         {
             var records = ES.Services.Servers.GetDomainDnsRecords(domainId);

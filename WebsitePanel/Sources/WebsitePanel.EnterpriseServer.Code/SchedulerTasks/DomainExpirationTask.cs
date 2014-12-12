@@ -92,7 +92,7 @@ namespace WebsitePanel.EnterpriseServer
 
                 foreach (var subDomain in subDomains)
                 {
-                    var mainDomain = topLevelDomains.Where(x => subDomain.DomainName.Contains(x.DomainName)).OrderByDescending(s => s.DomainName.Length).FirstOrDefault(); ;
+                    var mainDomain = topLevelDomains.Where(x => subDomain.DomainName.ToLowerInvariant().Contains(x.DomainName.ToLowerInvariant())).OrderByDescending(s => s.DomainName.Length).FirstOrDefault(); ;
 
                     if (mainDomain != null)
                     {
@@ -182,5 +182,8 @@ namespace WebsitePanel.EnterpriseServer
             // send mail message
             MailHelper.SendMessage(from, mailTo, bcc, subject, body, priority, isHtml);
         }
+
+
+
     }
 }

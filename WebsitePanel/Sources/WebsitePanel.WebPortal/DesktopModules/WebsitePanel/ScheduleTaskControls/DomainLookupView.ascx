@@ -2,6 +2,13 @@
 
 <table cellspacing="0" cellpadding="4" width="100%">
     <tr>
+        <td class="SubHead" nowrap valign="top">
+			<asp:Label ID="lblServerName" runat="server" meta:resourcekey="lblServerName">Server Name: </asp:Label>
+		</td>
+        <td class="Normal" width="100%">
+   			<asp:TextBox ID="txtServerName" runat="server" Width="95%" CssClass="NormalTextBox" MaxLength="1000"></asp:TextBox>
+    </tr>
+    <tr>
         <td class="SubHead" nowrap>
             <asp:Label ID="lblDnsServers" runat="server" meta:resourcekey="lblDnsServers" Text="DNS Servers:"></asp:Label>
         </td>
