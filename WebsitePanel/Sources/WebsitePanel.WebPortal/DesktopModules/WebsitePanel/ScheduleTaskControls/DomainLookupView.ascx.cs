@@ -13,6 +13,7 @@ namespace WebsitePanel.Portal.ScheduleTaskControls
     {
         private static readonly string DnsServersParameter = "DNS_SERVERS";
         private static readonly string MailToParameter = "MAIL_TO";
+        private static readonly string ServerNameParameter = "SERVER_NAME";
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -29,6 +30,7 @@ namespace WebsitePanel.Portal.ScheduleTaskControls
 
             this.SetParameter(this.txtDnsServers, DnsServersParameter);
             this.SetParameter(this.txtMailTo, MailToParameter);
+            this.SetParameter(this.txtServerName, ServerNameParameter);
         }
 
         /// <summary>
@@ -39,8 +41,9 @@ namespace WebsitePanel.Portal.ScheduleTaskControls
         {
             ScheduleTaskParameterInfo dnsServers = this.GetParameter(this.txtDnsServers, DnsServersParameter);
             ScheduleTaskParameterInfo mailTo = this.GetParameter(this.txtMailTo, MailToParameter);
+            ScheduleTaskParameterInfo serverName = this.GetParameter(this.txtServerName, ServerNameParameter);
 
-            return new ScheduleTaskParameterInfo[2] { dnsServers, mailTo };
+            return new ScheduleTaskParameterInfo[3] { dnsServers, mailTo, serverName };
         }
     }
 }

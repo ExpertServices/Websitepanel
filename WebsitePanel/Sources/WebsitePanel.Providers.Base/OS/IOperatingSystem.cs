@@ -91,8 +91,5 @@ namespace WebsitePanel.Providers.OS
 
         // File Services
         bool CheckFileServicesInstallation();
-
-        //DNS
-        DnsRecordInfo[] GetDomainDnsRecords(string domain, string dnsServer, DnsRecordType recordType);
     }
 }

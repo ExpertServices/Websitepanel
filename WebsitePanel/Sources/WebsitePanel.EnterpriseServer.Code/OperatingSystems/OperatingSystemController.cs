@@ -815,23 +815,5 @@ namespace WebsitePanel.EnterpriseServer
        
         #endregion
 
-        #region Domain DNS Records lookup
-
-        public static List<DnsRecordInfo> GetDomainRecords(int packageId, string domain, string dnsServer, DnsRecordType recordType)
-        {
-            List<DnsRecordInfo> records = new List<DnsRecordInfo>();
-
-            // load OS service
-            int serviceId = PackageController.GetPackageServiceId(packageId, ResourceGroups.Os);
-
-            var os = GetOS(serviceId);
-
-            records = os.GetDomainDnsRecords(domain, dnsServer, recordType).ToList();
-
-            return records;
-        }
-
-        #endregion
-
     }
 }

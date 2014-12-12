@@ -78,5 +78,14 @@ namespace WebsitePanel.Portal.ScheduleTaskControls.App_LocalResources {
                 return ResourceManager.GetString("lblDnsServersHint", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server Name:.
+        /// </summary>
+        internal static string lblServerName {
+            get {
+                return ResourceManager.GetString("lblServerName", resourceCulture);
+            }
+        }
     }
 }

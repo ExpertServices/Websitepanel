@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
+using System.Text.RegularExpressions;
 using WebsitePanel.Providers.DNS;
 using WebsitePanel.Providers.DomainLookup;
 using WebsitePanel.Server;
@@ -20,6 +21,10 @@ namespace WebsitePanel.EnterpriseServer
 
         private static readonly string MailBodyTemplateParameter = "MAIL_BODY";
         private static readonly string MailBodyDomainRecordTemplateParameter = "MAIL_DOMAIN_RECORD";
+        private static readonly string ServerNameParameter = "SERVER_NAME";
+
+        private const string MxRecordPattern = @"mail exchanger = (.+)";
+        private const string NsRecordPattern = @"nameserver = (.+)";
 
         public override void DoWork()
         {
@@ -29,6 +34,7 @@ namespace WebsitePanel.EnterpriseServer
 
             // get input parameters
             string dnsServersString = (string)topTask.GetParamValue(DnsServersParameter);
+            string serverName = (string)topTask.GetParamValue(ServerNameParameter);
 
             // check input parameters
             if (String.IsNullOrEmpty(dnsServersString))
@@ -42,6 +48,17 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.WriteWarning("The e-mail message has not been sent because 'Mail To' is empty.");
                 return;
             }
+
+            // find server by name
+            ServerInfo server = ServerController.GetServerByName(serverName);
+            if (server == null)
+            {
+                TaskManager.WriteWarning(String.Format("Server with the name '{0}' was not found", serverName));
+                return;
+            }
+
+            WindowsServer winServer = new WindowsServer();
+            ServiceProviderProxy.ServerInit(winServer, server.ServerId);
 
             var user = UserController.GetUser(topTask.UserId);
 
@@ -74,8 +91,8 @@ namespace WebsitePanel.EnterpriseServer
                     //execute server
                     foreach (var dnsServer in dnsServers)
                     {
-                        var dnsMxRecords = OperatingSystemController.GetDomainRecords(domain.PackageId, domain.DomainName, dnsServer, DnsRecordType.MX);
-                        var dnsNsRecords = OperatingSystemController.GetDomainRecords(domain.PackageId, domain.DomainName, dnsServer, DnsRecordType.NS);
+                        var dnsMxRecords = GetDomainDnsRecords(winServer, domain.DomainName, dnsServer, DnsRecordType.MX);
+                        var dnsNsRecords = GetDomainDnsRecords(winServer, domain.DomainName, dnsServer, DnsRecordType.NS);
 
                         FillRecordData(dnsMxRecords, domain, dnsServer);
                         FillRecordData(dnsNsRecords, domain, dnsServer);
@@ -123,7 +140,7 @@ namespace WebsitePanel.EnterpriseServer
             return changedDomains;
         }
 
-        private IEnumerable<DnsRecordInfoChange> ApplyDomainRecordsChanges(List<DnsRecordInfo> dbRecords, List<DnsRecordInfo> dnsRecords, string dnsServer)
+        private IEnumerable<DnsRecordInfoChange> ApplyDomainRecordsChanges(IEnumerable<DnsRecordInfo> dbRecords, List<DnsRecordInfo> dnsRecords, string dnsServer)
         {
             var dnsRecordChanges = new List<DnsRecordInfoChange>();
 
@@ -238,6 +255,62 @@ namespace WebsitePanel.EnterpriseServer
 
             // send mail message
             MailHelper.SendMessage(from, mailTo, bcc, subject, body, priority, isHtml);
+        }
+
+        public List<DnsRecordInfo> GetDomainDnsRecords(WindowsServer winServer, string domain, string dnsServer, DnsRecordType recordType)
+        {
+            //nslookup -type=mx google.com 195.46.39.39
+            var command = "nslookup";
+            var args = string.Format("-type={0} {1} {2}", recordType, domain, dnsServer);
+
+            // execute system command
+            var raw = winServer.ExecuteSystemCommand(command, args);
+
+            var records = ParseNsLookupResult(raw, dnsServer, recordType);
+
+            return records.ToList();
+        }
+
+        private IEnumerable<DnsRecordInfo> ParseNsLookupResult(string raw, string dnsServer, DnsRecordType recordType)
+        {
+            var records = new List<DnsRecordInfo>();
+
+            var recordTypePattern = string.Empty;
+
+            switch (recordType)
+            {
+                case DnsRecordType.NS:
+                    {
+                        recordTypePattern = NsRecordPattern;
+                        break;
+                    }
+                case DnsRecordType.MX:
+                    {
+                        recordTypePattern = MxRecordPattern;
+                        break;
+                    }
+            }
+
+            var regex = new Regex(recordTypePattern, RegexOptions.IgnoreCase);
+
+            foreach (Match match in regex.Matches(raw))
+            {
+                if (match.Groups.Count != 2)
+                {
+                    continue;
+                }
+
+                var dnsRecord = new DnsRecordInfo
+                {
+                    Value = match.Groups[1].Value != null ? match.Groups[1].Value.Replace("\r\n", "").Replace("\r", "").Replace("\n", "").Trim() : null,
+                    RecordType = recordType,
+                    DnsServer = dnsServer
+                };
+
+                records.Add(dnsRecord);
+            }
+
+            return records;
         }
 
         #endregion

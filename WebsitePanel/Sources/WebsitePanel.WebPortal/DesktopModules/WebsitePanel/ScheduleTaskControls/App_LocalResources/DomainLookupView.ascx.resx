@@ -123,4 +123,7 @@
   <data name="lblDnsServersHint" xml:space="preserve">
     <value>Please enter dns servers to check.</value>
   </data>
+  <data name="lblServerName" xml:space="preserve">
+    <value>Server Name:</value>
+  </data>
 </root>

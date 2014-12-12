@@ -13,6 +13,24 @@ namespace WebsitePanel.Portal.ScheduleTaskControls {
     public partial class DomainLookupView {
         
         /// <summary>
+        /// lblServerName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblServerName;
+        
+        /// <summary>
+        /// txtServerName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtServerName;
+        
+        /// <summary>
         /// lblDnsServers control.
         /// </summary>
         /// <remarks>

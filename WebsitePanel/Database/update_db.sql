@@ -6178,6 +6178,12 @@ INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [D
 END
 GO
 
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'SERVER_NAME' )
+BEGIN
+INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'SERVER_NAME', N'String', NULL, 3)
+END
+GO
+
 -- Domain Expiration Task
 
 

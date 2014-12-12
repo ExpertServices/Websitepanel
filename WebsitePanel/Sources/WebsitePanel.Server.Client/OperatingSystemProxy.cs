@@ -18,8 +18,6 @@ namespace WebsitePanel.Providers.OS {
     using System.Web.Services.Protocols;
     using System;
     using System.Diagnostics;
-    using WebsitePanel.Providers.DNS;
-    using WebsitePanel.Providers.DomainLookup;
     
     
     /// <remarks/>
@@ -113,8 +111,6 @@ namespace WebsitePanel.Providers.OS {
         private System.Threading.SendOrPostCallback UpdateDSNOperationCompleted;
         
         private System.Threading.SendOrPostCallback DeleteDSNOperationCompleted;
-        
-        private System.Threading.SendOrPostCallback GetDomainDnsRecordsOperationCompleted;
         
         /// <remarks/>
         public OperatingSystem() {
@@ -243,9 +239,6 @@ namespace WebsitePanel.Providers.OS {
         
         /// <remarks/>
         public event DeleteDSNCompletedEventHandler DeleteDSNCompleted;
-        
-        /// <remarks/>
-        public event GetDomainDnsRecordsCompletedEventHandler GetDomainDnsRecordsCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -2018,54 +2011,6 @@ namespace WebsitePanel.Providers.OS {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetDomainDnsRecords", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public DnsRecordInfo[] GetDomainDnsRecords(string domain, string dnsServer, DnsRecordType recordType) {
-            object[] results = this.Invoke("GetDomainDnsRecords", new object[] {
-                        domain,
-                        dnsServer,
-                        recordType});
-            return ((DnsRecordInfo[])(results[0]));
-        }
-        
-        /// <remarks/>
-        public System.IAsyncResult BeginGetDomainDnsRecords(string domain, string dnsServer, DnsRecordType recordType, System.AsyncCallback callback, object asyncState) {
-            return this.BeginInvoke("GetDomainDnsRecords", new object[] {
-                        domain,
-                        dnsServer,
-                        recordType}, callback, asyncState);
-        }
-        
-        /// <remarks/>
-        public DnsRecordInfo[] EndGetDomainDnsRecords(System.IAsyncResult asyncResult) {
-            object[] results = this.EndInvoke(asyncResult);
-            return ((DnsRecordInfo[])(results[0]));
-        }
-        
-        /// <remarks/>
-        public void GetDomainDnsRecordsAsync(string domain, string dnsServer, DnsRecordType recordType) {
-            this.GetDomainDnsRecordsAsync(domain, dnsServer, recordType, null);
-        }
-        
-        /// <remarks/>
-        public void GetDomainDnsRecordsAsync(string domain, string dnsServer, DnsRecordType recordType, object userState) {
-            if ((this.GetDomainDnsRecordsOperationCompleted == null)) {
-                this.GetDomainDnsRecordsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetDomainDnsRecordsOperationCompleted);
-            }
-            this.InvokeAsync("GetDomainDnsRecords", new object[] {
-                        domain,
-                        dnsServer,
-                        recordType}, this.GetDomainDnsRecordsOperationCompleted, userState);
-        }
-        
-        private void OnGetDomainDnsRecordsOperationCompleted(object arg) {
-            if ((this.GetDomainDnsRecordsCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.GetDomainDnsRecordsCompleted(this, new GetDomainDnsRecordsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -2674,30 +2619,4 @@ namespace WebsitePanel.Providers.OS {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void DeleteDSNCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
-    public delegate void GetDomainDnsRecordsCompletedEventHandler(object sender, GetDomainDnsRecordsCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetDomainDnsRecordsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetDomainDnsRecordsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public DnsRecordInfo[] Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((DnsRecordInfo[])(this.results[0]));
-            }
-        }
-    }
 }

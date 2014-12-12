@@ -741,25 +741,5 @@ namespace WebsitePanel.Server
         }
         #endregion
 
-        #region Dns 
-
-        [WebMethod, SoapHeader("settings")]
-        public DnsRecordInfo[] GetDomainDnsRecords(string domain, string dnsServer, DnsRecordType recordType)
-        {
-            try
-            {
-                Log.WriteStart("'{0}' GetDomainDnsRecords", ProviderSettings.ProviderName);
-                var result = OsProvider.GetDomainDnsRecords(domain, dnsServer, recordType);
-                Log.WriteEnd("'{0}' GetDomainDnsRecords", ProviderSettings.ProviderName);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                Log.WriteError(String.Format("'{0}' GetDomainDnsRecords", ProviderSettings.ProviderName), ex);
-                throw;
-            }
-        } 
-
-        #endregion
     }
 }
