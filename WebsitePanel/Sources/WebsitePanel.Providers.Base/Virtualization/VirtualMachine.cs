@@ -123,5 +123,18 @@ namespace WebsitePanel.Providers.Virtualization
 
         // for GetVirtualMachineEx used in import method
         public VirtualMachineNetworkAdapter[] Adapters { get; set; }
+
+        [Persistent]
+        public VirtualHardDiskInfo[] Disks { get; set; }
+
+        [Persistent]
+        public string Status { get; set; }
+
+        [Persistent]
+        public string ReplicationState { get; set; }
+
+        [Persistent]
+        public int Generation { get; set; }
+
     }
 }

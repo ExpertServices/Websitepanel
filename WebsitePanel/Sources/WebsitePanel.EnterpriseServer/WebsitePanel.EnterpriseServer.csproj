@@ -83,6 +83,40 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\Ionic.Zip.Reduced.dll" />
+    <Content Include="bin\Microsoft.Web.Services3.dll" />
+    <Content Include="bin\WebsitePanel.Common.Utils.dll" />
+    <Content Include="bin\WebsitePanel.Common.Utils.pdb" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.Base.dll" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.Base.pdb" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.Code.dll" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.Code.pdb" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.dll" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.pdb" />
+    <Content Include="bin\WebsitePanel.Plugins.2Checkout.dll" />
+    <Content Include="bin\WebsitePanel.Plugins.2Checkout.pdb" />
+    <Content Include="bin\WebsitePanel.Plugins.AuthorizeNet.dll" />
+    <Content Include="bin\WebsitePanel.Plugins.AuthorizeNet.pdb" />
+    <Content Include="bin\WebsitePanel.Plugins.Enom.dll" />
+    <Content Include="bin\WebsitePanel.Plugins.Enom.pdb" />
+    <Content Include="bin\WebsitePanel.Plugins.OfflinePayment.dll" />
+    <Content Include="bin\WebsitePanel.Plugins.OfflinePayment.pdb" />
+    <Content Include="bin\WebsitePanel.Plugins.OfflineRegistrar.dll" />
+    <Content Include="bin\WebsitePanel.Plugins.OfflineRegistrar.pdb" />
+    <Content Include="bin\WebsitePanel.Plugins.PayPalPro.dll" />
+    <Content Include="bin\WebsitePanel.Plugins.PayPalPro.pdb" />
+    <Content Include="bin\WebsitePanel.Plugins.PayPalStandard.dll" />
+    <Content Include="bin\WebsitePanel.Plugins.PayPalStandard.pdb" />
+    <Content Include="bin\WebsitePanel.Providers.Base.dll" />
+    <Content Include="bin\WebsitePanel.Providers.Base.pdb" />
+    <Content Include="bin\WebsitePanel.SchedulerService.exe" />
+    <Content Include="bin\WebsitePanel.SchedulerService.pdb" />
+    <Content Include="bin\WebsitePanel.Server.Client.dll" />
+    <Content Include="bin\WebsitePanel.Server.Client.pdb" />
+    <Content Include="bin\WebsitePanel.Templates.dll" />
+    <Content Include="bin\WebsitePanel.Templates.pdb" />
+    <Content Include="bin\WebsitePanel.Whois.dll" />
+    <Content Include="bin\WebsitePanel.Whois.pdb" />
     <Content Include="esEnterpriseStorage.asmx" />
     <Content Include="esRemoteDesktopServices.asmx" />
     <Content Include="esHeliconZoo.asmx" />
@@ -116,9 +150,9 @@
     <Content Include="esUsers.asmx" />
     <Content Include="esWebServers.asmx" />
     <Content Include="Global.asax" />
-    <Content Include="Web.config">
+    <None Include="Web.config">
       <SubType>Designer</SubType>
-    </Content>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\VersionInfo.cs">
@@ -288,6 +322,12 @@
     <Content Include="esWebApplicationGallery.asmx" />
     <EmbeddedResource Include="Images\logo.png" />
     <Content Include="SystemEventHandlers.config" />
+    <Content Include="bin\WebsitePanel.EnterpriseServer.dll.config" />
+    <Content Include="bin\WebsitePanel.SchedulerService.exe.config" />
+    <None Include="Properties\PublishProfiles\Default Settings %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\Default Settings %283%29.pubxml" />
+    <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
+    <None Include="Properties\PublishProfiles\Enterprise Server.pubxml" />
     <None Include="TaskEventHandlers.config" />
     <None Include="WsePolicyCache.Config" />
   </ItemGroup>
