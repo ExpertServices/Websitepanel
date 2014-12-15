@@ -77,6 +77,23 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
+        public bool AddRdsServersToDeployment(RdsServer[] servers)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' AddRdsServersToDeployment", ProviderSettings.ProviderName);
+                var result = RDSProvider.AddRdsServersToDeployment(servers);
+                Log.WriteEnd("'{0}' AddRdsServersToDeployment", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' AddRdsServersToDeployment", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
         public RdsCollection GetCollection(string collectionName)
         {
             try

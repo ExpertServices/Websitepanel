@@ -111,5 +111,10 @@ namespace WebsitePanel.Portal.RDS
                     "CollectionId=" + collectionId,
                     "ItemID=" + PanelRequest.ItemID);
         }
+
+        public string GetCollectionEditUrl(string collectionId)
+        {
+            return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_edit_collection", "CollectionId=" + collectionId, "ItemID=" + PanelRequest.ItemID);
+        }
     }
 }
