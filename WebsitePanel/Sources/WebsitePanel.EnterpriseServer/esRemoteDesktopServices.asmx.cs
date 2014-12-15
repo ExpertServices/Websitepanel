@@ -71,6 +71,12 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public ResultObject EditRdsCollection(int itemId, RdsCollection collection)
+        {
+            return RemoteDesktopServicesController.EditRdsCollection(itemId, collection);
+        }
+
+        [WebMethod]
         public RdsCollectionPaged GetRdsCollectionsPaged(int itemId, string filterColumn, string filterValue,
             string sortColumn, int startRow, int maximumRows)
         {
@@ -101,10 +107,10 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public RdsServersPaged GetOrganizationRdsServersPaged(int itemId, string filterColumn, string filterValue,
+        public RdsServersPaged GetOrganizationRdsServersPaged(int itemId, int? collectionId, string filterColumn, string filterValue,
             string sortColumn, int startRow, int maximumRows)
         {
-            return RemoteDesktopServicesController.GetOrganizationRdsServersPaged(itemId, filterColumn, filterValue,
+            return RemoteDesktopServicesController.GetOrganizationRdsServersPaged(itemId, collectionId, filterColumn, filterValue,
                 sortColumn, startRow, maximumRows);
         }
 

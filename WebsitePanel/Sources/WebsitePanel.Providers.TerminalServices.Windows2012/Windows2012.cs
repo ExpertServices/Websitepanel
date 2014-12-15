@@ -169,6 +169,35 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
         #region RDS Collections
 
+        public bool AddRdsServersToDeployment(RdsServer[] servers)
+        {
+            var result = true;
+            Runspace runSpace = null;
+
+            try
+            {
+                runSpace = OpenRunspace();
+
+                foreach (var server in servers)
+                {                    
+                    if (!ExistRdsServerInDeployment(runSpace, server))
+                    {
+                        AddRdsServerToDeployment(runSpace, server);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                result = false;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+
+            return result;
+        }
+
         public bool CreateCollection(string organizationId, RdsCollection collection)
         {
             var result = true;

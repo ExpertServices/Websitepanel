@@ -66,7 +66,7 @@ namespace WebsitePanel.Portal
 
         public RdsServer[] GetOrganizationRdsServersPaged(int itemId, int maximumRows, int startRowIndex, string sortColumn, string filterValue)
         {
-            rdsServers = ES.Services.RDS.GetOrganizationRdsServersPaged(itemId, "", filterValue, sortColumn, startRowIndex, maximumRows);
+            rdsServers = ES.Services.RDS.GetOrganizationRdsServersPaged(itemId, null, "", filterValue, sortColumn, startRowIndex, maximumRows);
 
             return rdsServers.Servers;
         }

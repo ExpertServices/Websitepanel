@@ -31,6 +31,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         private System.Threading.SendOrPostCallback CreateCollectionOperationCompleted;
         
+        private System.Threading.SendOrPostCallback AddRdsServersToDeploymentOperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetCollectionOperationCompleted;
         
         private System.Threading.SendOrPostCallback RemoveCollectionOperationCompleted;
@@ -70,6 +72,9 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         /// <remarks/>
         public event CreateCollectionCompletedEventHandler CreateCollectionCompleted;
+        
+        /// <remarks/>
+        public event AddRdsServersToDeploymentCompletedEventHandler AddRdsServersToDeploymentCompleted;
         
         /// <remarks/>
         public event GetCollectionCompletedEventHandler GetCollectionCompleted;
@@ -161,6 +166,48 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
             if ((this.CreateCollectionCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.CreateCollectionCompleted(this, new CreateCollectionCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/AddRdsServersToDeployment", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool AddRdsServersToDeployment(RdsServer[] servers) {
+            object[] results = this.Invoke("AddRdsServersToDeployment", new object[] {
+                        servers});
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginAddRdsServersToDeployment(RdsServer[] servers, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("AddRdsServersToDeployment", new object[] {
+                        servers}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public bool EndAddRdsServersToDeployment(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void AddRdsServersToDeploymentAsync(RdsServer[] servers) {
+            this.AddRdsServersToDeploymentAsync(servers, null);
+        }
+        
+        /// <remarks/>
+        public void AddRdsServersToDeploymentAsync(RdsServer[] servers, object userState) {
+            if ((this.AddRdsServersToDeploymentOperationCompleted == null)) {
+                this.AddRdsServersToDeploymentOperationCompleted = new System.Threading.SendOrPostCallback(this.OnAddRdsServersToDeploymentOperationCompleted);
+            }
+            this.InvokeAsync("AddRdsServersToDeployment", new object[] {
+                        servers}, this.AddRdsServersToDeploymentOperationCompleted, userState);
+        }
+        
+        private void OnAddRdsServersToDeploymentOperationCompleted(object arg) {
+            if ((this.AddRdsServersToDeploymentCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.AddRdsServersToDeploymentCompleted(this, new AddRdsServersToDeploymentCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -890,6 +937,32 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         private object[] results;
         
         internal CreateCollectionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void AddRdsServersToDeploymentCompletedEventHandler(object sender, AddRdsServersToDeploymentCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class AddRdsServersToDeploymentCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal AddRdsServersToDeploymentCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }

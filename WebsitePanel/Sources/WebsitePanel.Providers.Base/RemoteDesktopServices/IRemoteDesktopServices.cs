@@ -40,6 +40,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
     public interface IRemoteDesktopServices
     {
         bool CreateCollection(string organizationId, RdsCollection collection);
+        bool AddRdsServersToDeployment(RdsServer[] servers);
         RdsCollection GetCollection(string collectionName);
         bool RemoveCollection(string organizationId, string collectionName);
         bool SetUsersInCollection(string organizationId, string collectionName, List<string> users);
