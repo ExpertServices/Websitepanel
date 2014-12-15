@@ -3,13 +3,23 @@
     <?include Config.wxi?>
     <?define VERSION="2.1"?>
     <Product Id="*" Name="WebsitePanel Scheduler Service Installer" Language="1033" Version="$(var.VERSION)" Manufacturer="Outercurve Foundation" UpgradeCode="629ccd5c-1f6d-4168-bbe6-01c69e232f44">
-        <Package InstallerVersion="200" Compressed="yes" />
+
+      <Package InstallerVersion="200" Compressed="yes" />
         <Media Id="1" EmbedCab="yes" Cabinet="schedulerservice.cab" />
         <Feature Id="ProductFeature" Title="WebsitePanel Scheduler Service Installer" Level="1">
             <ComponentRef Id="ProductFiles" />
         </Feature>
         <Property Id="BannerBitmap">bannrbmp</Property>
-        <WixVariable Id="WixUIBannerBmp" Value="bannrbmp.bmp" />
+
+      <Property Id="PREVIOUSVERSIONSINSTALLED" Secure="yes" />
+      <Upgrade Id="629ccd5c-1f6d-4168-bbe6-01c69e232f44">
+        <UpgradeVersion
+           Minimum="1.0.0.0" Maximum="99.0.0.0"
+           Property="PREVIOUSVERSIONSINSTALLED"
+           IncludeMinimum="yes" IncludeMaximum="no" />
+      </Upgrade>
+
+      <WixVariable Id="WixUIBannerBmp" Value="bannrbmp.bmp" />
         <WixVariable Id="WixUIDialogBmp" Value="dlgbmp.bmp" />
         <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
         <Icon Id="WebSitePanel.ico" SourceFile="WebSitePanel.ico" />
@@ -95,7 +105,9 @@
             <TextStyle Id="DlgTitleFont" FaceName="Tahoma" Size="8" Bold="yes" />
         </UI>
         <InstallExecuteSequence>
-            <Custom Action="FinalizeInstall" After="InstallFinalize" />
+          <Custom Action="FinalizeUnInstall" After="InstallValidate">(NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")</Custom>
+          <RemoveExistingProducts After="InstallValidate" />
+          <Custom Action='FinalizeInstall' After='InstallFinalize'>NOT Installed or REINSTALL</Custom>
         </InstallExecuteSequence>
     </Product>
     <Fragment>
@@ -103,8 +115,13 @@
         <Binary Id="CheckConnection.CA" SourceFile="bin\WebsitePanel.SchedulerServiceInstaller.CA.dll" />
     </Fragment>
     <Fragment>
-        <CustomAction Id="FinalizeInstall" BinaryKey="CheckConnection.CA" DllEntry="FinalizeInstall" />        
+        <CustomAction Id="FinalizeInstall" BinaryKey="CheckConnection.CA" DllEntry="FinalizeInstall"  />        
     </Fragment>
+  <Fragment>
+    <CustomAction Id="FinalizeUnInstall" BinaryKey="CheckConnection.CA" DllEntry="FinalizeUnInstall" />
+    <CustomAction Id='AlreadyUpdated' Error='Product has already been updated to $(var.VERSION) or newer.' />
+    <CustomAction Id='NoDowngrade' Error='A later version of [ProductName] is already installed.' />
+  </Fragment>
     <Fragment>
         <Directory Id="TARGETDIR" Name="SourceDir">
             <Directory Id="WEBSITEPANELFOLDER" Name="WebsitePanel">
@@ -115,8 +132,8 @@
     <Fragment>
         <DirectoryRef Id="INSTALLFOLDER">
             <Component Id="ProductFiles" Guid="A89FA6CF-53E2-4390-9E9D-11CD4297D739">
-                <File Id="WebsitePanel.SchedulerService.exe" Source="$(var.BUILDPATH)\WebsitePanel.SchedulerService.exe" />
-                <File Id="WebsitePanel.SchedulerService.exe.config" Source="$(var.BUILDPATH)\WebsitePanel.SchedulerService.exe.config" />
+              <File Id="WebsitePanel.SchedulerService.exe" Source="$(var.BUILDPATH)\WebsitePanel.SchedulerService.exe" />
+              <File Id="WebsitePanel.SchedulerService.exe.config" Source="$(var.BUILDPATH)\WebsitePanel.SchedulerService.exe.config" />
               <File Id="Ionic.Zip.Reduced.dll" Source="$(var.SERVERBUILDPATH)\Ionic.Zip.Reduced.dll"/>
               <File Id="Microsoft.Web.Services3.dll" Source="$(var.SERVERBUILDPATH)\Microsoft.Web.Services3.dll"/>
               <File Id="WebsitePanel.Common.Utils.dll" Source="$(var.BUILDPATH)\WebsitePanel.Common.Utils.dll"/>
