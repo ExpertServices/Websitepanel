@@ -80,10 +80,12 @@ namespace WebsitePanel.Providers.OS
         {
             Log.WriteStart("SetQuotaLimitOnFolder");
             Log.WriteInfo("FolderPath : {0}", folderPath);
-            Log.WriteInfo("ShareNameDrive : {0}", shareNameDrive);
             Log.WriteInfo("QuotaLimit : {0}", quotaLimit);
 
-            string path = Path.Combine(shareNameDrive + @":\", folderPath);
+            string path = folderPath;
+
+            if (shareNameDrive != null)
+                path = Path.Combine(shareNameDrive + @":\", folderPath);
 
             Runspace runSpace = null;
             try

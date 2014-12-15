@@ -6911,3 +6911,10 @@ SET
 	ConnectionEnabled = @ConnectionEnabled
 WHERE ID = @Id
 GO
+
+
+-- fix Windows 2012 Provider
+BEGIN
+UPDATE [dbo].[Providers] SET [EditorControl] = 'Windows2012' WHERE [ProviderName] = 'Windows2012'
+END
+GO
