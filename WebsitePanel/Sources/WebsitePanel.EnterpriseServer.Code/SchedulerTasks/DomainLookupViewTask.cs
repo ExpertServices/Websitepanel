@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using WebsitePanel.Providers.DNS;
 using WebsitePanel.Providers.DomainLookup;
 using WebsitePanel.Server;
@@ -85,8 +86,7 @@ namespace WebsitePanel.EnterpriseServer
                     DomainDnsChanges domainChanges = new DomainDnsChanges();
                     domainChanges.DomainName = domain.DomainName;
 
-                    var mxRecords = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainDnsRecords(domain.DomainId, DnsRecordType.MX));
-                    var nsRecords = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainDnsRecords(domain.DomainId, DnsRecordType.NS));
+                    var dbDnsRecords = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainAllDnsRecords(domain.DomainId));
 
                     //execute server
                     foreach (var dnsServer in dnsServers)
@@ -97,8 +97,8 @@ namespace WebsitePanel.EnterpriseServer
                         FillRecordData(dnsMxRecords, domain, dnsServer);
                         FillRecordData(dnsNsRecords, domain, dnsServer);
 
-                        domainChanges.DnsChanges.AddRange(ApplyDomainRecordsChanges(mxRecords, dnsMxRecords, dnsServer));
-                        domainChanges.DnsChanges.AddRange(ApplyDomainRecordsChanges(nsRecords, dnsNsRecords, dnsServer));
+                        domainChanges.DnsChanges.AddRange(ApplyDomainRecordsChanges(dbDnsRecords.Where(x => x.RecordType == DnsRecordType.MX), dnsMxRecords, dnsServer));
+                        domainChanges.DnsChanges.AddRange(ApplyDomainRecordsChanges(dbDnsRecords.Where(x => x.RecordType == DnsRecordType.NS), dnsNsRecords, dnsServer));
                     }
 
                     domainsChanges.Add(domainChanges);
@@ -200,6 +200,8 @@ namespace WebsitePanel.EnterpriseServer
         private void RemoveRecord(DnsRecordInfo dnsRecord)
         {
             DataProvider.DeleteDomainDnsRecord(dnsRecord.Id);
+
+            Thread.Sleep(100);
         }
 
         private void AddRecords(IEnumerable<DnsRecordInfo> dnsRecords)
@@ -213,6 +215,8 @@ namespace WebsitePanel.EnterpriseServer
         private void AddRecord(DnsRecordInfo dnsRecord)
         {
             DataProvider.AddDomainDnsRecord(dnsRecord);
+
+            Thread.Sleep(100);
         }
 
         private void SendMailMessage(UserInfo user, IEnumerable<DomainDnsChanges> domainsChanges)

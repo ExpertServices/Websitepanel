@@ -6587,6 +6587,24 @@ SELECT
   WHERE [DomainId]  = @DomainId AND [RecordType] = @RecordType
 GO
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetDomainAllDnsRecords')
+DROP PROCEDURE GetDomainAllDnsRecords
+GO
+CREATE PROCEDURE [dbo].GetDomainAllDnsRecords
+(
+	@DomainId INT
+)
+AS
+SELECT
+	ID,
+	DomainId,
+	DnsServer,
+	RecordType,
+	Value,
+	Date
+  FROM [dbo].[DomainDnsRecords]
+  WHERE [DomainId]  = @DomainId 
+GO
 
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddDomainDnsRecord')
@@ -6672,6 +6690,20 @@ CREATE PROCEDURE [dbo].UpdateDomainLastUpdateDate
 )
 AS
 UPDATE [dbo].[Domains] SET [LastUpdateDate] = @Date WHERE [DomainID] = @DomainId
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateDomainDates')
+DROP PROCEDURE UpdateDomainDates
+GO
+CREATE PROCEDURE [dbo].UpdateDomainDates
+(
+	@DomainId INT,
+	@DomainCreationDate DateTime,
+	@DomainExpirationDate DateTime,
+	@DomainLastUpdateDate DateTime 
+)
+AS
+UPDATE [dbo].[Domains] SET [CreationDate] = @DomainCreationDate, [ExpirationDate] = @DomainExpirationDate, [LastUpdateDate] = @DomainLastUpdateDate WHERE [DomainID] = @DomainId
 GO
 
 

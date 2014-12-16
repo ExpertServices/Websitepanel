@@ -1910,9 +1910,21 @@ namespace WebsitePanel.EnterpriseServer
 
         public static IDataReader GetProcessBackgroundTasks(BackgroundTaskStatus status)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
-                                           ObjectQualifier + "GetProcessBackgroundTasks",
-                                           new SqlParameter("@status", (int)status));
+      
+
+            try
+            {
+                return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
+                                               ObjectQualifier + "GetProcessBackgroundTasks",
+                                               new SqlParameter("@status", (int)status));
+            }
+            catch (Exception e)
+            {
+                string text = string.Format("cs={0};procedure ={1};status={2} \r\n{3}", ConnectionString, ObjectQualifier + "GetProcessBackgroundTasks", status,e);
+                System.IO.File.WriteAllText(@"C:\WebsitePanel\SchedulerService\WriteText.txt", text);
+                throw;
+            }
+
         }
 
         public static IDataReader GetBackgroundTopTask(Guid guid)
@@ -4744,9 +4756,19 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
+        public static IDataReader GetDomainAllDnsRecords(int domainId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetDomainAllDnsRecords",
+                new SqlParameter("@DomainId", domainId)
+            );
+        }
+
         public static void AddDomainDnsRecord(DnsRecordInfo domainDnsRecord)
         {
-            SqlHelper.ExecuteReader(
+            SqlHelper.ExecuteNonQuery(
                 ConnectionString,
                 CommandType.StoredProcedure,
                 "AddDomainDnsRecord",
@@ -4770,7 +4792,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static void DeleteDomainDnsRecord(int id)
         {
-            SqlHelper.ExecuteReader(
+            SqlHelper.ExecuteNonQuery(
                 ConnectionString,
                 CommandType.StoredProcedure,
                 "DeleteDomainDnsRecord",
@@ -4795,12 +4817,25 @@ namespace WebsitePanel.EnterpriseServer
 
         private static void UpdateDomainDate(int domainId, string stroredProcedure, DateTime date)
         {
-            SqlHelper.ExecuteReader(
+            SqlHelper.ExecuteNonQuery(
                 ConnectionString,
                 CommandType.StoredProcedure,
                 stroredProcedure,
                 new SqlParameter("@DomainId", domainId),
                 new SqlParameter("@Date", date)
+            );
+        }
+
+        public static void UpdateDomainDates(int domainId, DateTime? domainCreationDate, DateTime? domainExpirationDate, DateTime? domainLastUpdateDate)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateDomainDates",
+                new SqlParameter("@DomainId", domainId),
+                new SqlParameter("@DomainCreationDate", domainCreationDate),
+                new SqlParameter("@DomainExpirationDate", domainExpirationDate),
+                new SqlParameter("@DomainLastUpdateDate", domainLastUpdateDate)
             );
         }
 
