@@ -1910,21 +1910,9 @@ namespace WebsitePanel.EnterpriseServer
 
         public static IDataReader GetProcessBackgroundTasks(BackgroundTaskStatus status)
         {
-      
-
-            try
-            {
                 return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
                                                ObjectQualifier + "GetProcessBackgroundTasks",
                                                new SqlParameter("@status", (int)status));
-            }
-            catch (Exception e)
-            {
-                string text = string.Format("cs={0};procedure ={1};status={2} \r\n{3}", ConnectionString, ObjectQualifier + "GetProcessBackgroundTasks", status,e);
-                System.IO.File.WriteAllText(@"C:\WebsitePanel\SchedulerService\WriteText.txt", text);
-                throw;
-            }
-
         }
 
         public static IDataReader GetBackgroundTopTask(Guid guid)

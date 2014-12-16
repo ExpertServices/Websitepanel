@@ -105,8 +105,6 @@ namespace WebsitePanel.EnterpriseServer
                 }
             }
 
-            TaskManager.Write(string.Format("Domains checked: {0}", domainsChanges.Count));
-
             var changedDomains = FindDomainsWithChangedRecords(domainsChanges);
 
             SendMailMessage(user, changedDomains);

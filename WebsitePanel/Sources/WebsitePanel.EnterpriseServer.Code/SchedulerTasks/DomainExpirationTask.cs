@@ -27,8 +27,6 @@ namespace WebsitePanel.EnterpriseServer
 
         public override void DoWork()
         {
-            TaskManager.WriteWarning("Domain Expiration Task started");
-
             BackgroundTask topTask = TaskManager.TopTask;
             var domainUsers = new Dictionary<int, UserInfo>();
             var checkedDomains = new List<int>();
