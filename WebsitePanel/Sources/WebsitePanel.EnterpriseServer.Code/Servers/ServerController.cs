@@ -43,6 +43,7 @@ using Whois.NET;
 using System.Text.RegularExpressions;
 using WebsitePanel.Providers.DomainLookup;
 using System.Globalization;
+using System.Linq;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -1645,11 +1646,16 @@ namespace WebsitePanel.EnterpriseServer
         {
             var result = new List<DnsRecordInfo>();
 
-            var mxRecords = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainDnsRecords(domainId, DnsRecordType.MX));
-            var nsRecords = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainDnsRecords(domainId, DnsRecordType.NS));
+            var records = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainAllDnsRecords(domainId));
 
-            result.AddRange(mxRecords);
-            result.AddRange(nsRecords);
+            var activeDomain = records.OrderByDescending(x => x.Date).FirstOrDefault();
+
+            if (activeDomain != null)
+            {
+                records = records.Where(x => x.DnsServer == activeDomain.DnsServer).ToList();
+            }
+
+            result.AddRange(records);
 
             return result;
         }
