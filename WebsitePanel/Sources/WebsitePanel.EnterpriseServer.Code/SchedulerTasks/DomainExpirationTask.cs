@@ -60,11 +60,9 @@ namespace WebsitePanel.EnterpriseServer
 
                 subDomains.AddRange(domains.Where(x => x.IsSubDomain));
 
-                var topLevelDomains = domains = domains.Where(x => !x.IsSubDomain && !x.IsDomainPointer).ToList(); //Selecting top-level domains
+                domains = domains.Where(x => !x.IsSubDomain && !x.IsDomainPointer).ToList(); //Selecting top-level domains
 
-                allTopLevelDomains.AddRange(topLevelDomains);
-
-                domains = topLevelDomains.Where(x => x.CreationDate == null || x.ExpirationDate == null ? true : CheckDomainExpiration(x.ExpirationDate, daysBeforeNotify)).ToList(); // selecting expired or with empty expire date domains
+                allTopLevelDomains.AddRange(domains);
 
                 var domainUser = UserController.GetUser(package.UserId);
 

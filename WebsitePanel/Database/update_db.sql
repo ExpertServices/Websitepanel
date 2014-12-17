@@ -6249,7 +6249,7 @@ Please, find below details of your domain expiration information.
         <tr>
             <td>#Domain.DomainName#</td>
 			<td>#Domain.Customer#</td>
-            <td>#Domain.ExpirationDate#</td>
+            <td>Expired</td>
         </tr>
     </ad:foreach>
     </tbody>
@@ -6313,7 +6313,7 @@ Please, find below details of your domain expiration information.
 <ad:foreach collection="#Domains#" var="Domain" index="i">
 	Domain: #Domain.DomainName#
 	Customer: #Domain.Customer#
-	Expiration Date: #Domain.ExpirationDate#
+	Expiration Date: Expired
 
 </ad:foreach>
 
