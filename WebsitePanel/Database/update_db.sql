@@ -6085,7 +6085,13 @@ GO
 
 IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'SERVER_NAME' )
 BEGIN
-INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'SERVER_NAME', N'String', NULL, 3)
+INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'SERVER_NAME', N'String', N'', 3)
+END
+GO
+
+IF EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'SERVER_NAME' )
+BEGIN
+UPDATE [dbo].[ScheduleTaskParameters] SET [DefaultValue] = N'' WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'SERVER_NAME'
 END
 GO
 
@@ -6581,6 +6587,24 @@ SELECT
   WHERE [DomainId]  = @DomainId AND [RecordType] = @RecordType
 GO
 
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetDomainAllDnsRecords')
+DROP PROCEDURE GetDomainAllDnsRecords
+GO
+CREATE PROCEDURE [dbo].GetDomainAllDnsRecords
+(
+	@DomainId INT
+)
+AS
+SELECT
+	ID,
+	DomainId,
+	DnsServer,
+	RecordType,
+	Value,
+	Date
+  FROM [dbo].[DomainDnsRecords]
+  WHERE [DomainId]  = @DomainId 
+GO
 
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddDomainDnsRecord')
@@ -6666,6 +6690,20 @@ CREATE PROCEDURE [dbo].UpdateDomainLastUpdateDate
 )
 AS
 UPDATE [dbo].[Domains] SET [LastUpdateDate] = @Date WHERE [DomainID] = @DomainId
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateDomainDates')
+DROP PROCEDURE UpdateDomainDates
+GO
+CREATE PROCEDURE [dbo].UpdateDomainDates
+(
+	@DomainId INT,
+	@DomainCreationDate DateTime,
+	@DomainExpirationDate DateTime,
+	@DomainLastUpdateDate DateTime 
+)
+AS
+UPDATE [dbo].[Domains] SET [CreationDate] = @DomainCreationDate, [ExpirationDate] = @DomainExpirationDate, [LastUpdateDate] = @DomainLastUpdateDate WHERE [DomainID] = @DomainId
 GO
 
 

@@ -2680,26 +2680,20 @@ namespace WebsitePanel.EnterpriseServer
 
         public static DomainInfo UpdateDomainRegistrationData(DomainInfo domain)
         {
+            DateTime? createdDate = null;
+            DateTime? expiredDate = null;
+
             try
             {
-                DataProvider.UpdateDomainLastUpdateDate(domain.DomainId, DateTime.Now);
-
                 var whoisResult = WhoisClient.Query(domain.DomainName.ToLowerInvariant());
 
-                var createdDate = GetDomainInfoDate(whoisResult.Raw, _createdDatePatterns);
-                var expiredDate = GetDomainInfoDate(whoisResult.Raw, _expiredDatePatterns);
+                createdDate = GetDomainInfoDate(whoisResult.Raw, _createdDatePatterns);
+                expiredDate = GetDomainInfoDate(whoisResult.Raw, _expiredDatePatterns);
 
-                if (createdDate != null)
-                {
-                    domain.CreationDate = createdDate;
-                    DataProvider.UpdateDomainCreationDate(domain.DomainId, createdDate.Value);
-                }
+                domain.CreationDate = createdDate;
+                domain.ExpirationDate = expiredDate;
 
-                if (expiredDate != null)
-                {
-                    domain.ExpirationDate = expiredDate;
-                    DataProvider.UpdateDomainExpirationDate(domain.DomainId, expiredDate.Value);
-                }
+                DataProvider.UpdateDomainDates(domain.DomainId, createdDate, expiredDate, DateTime.Now);
             }
             catch (Exception e)
             { 
@@ -2711,19 +2705,10 @@ namespace WebsitePanel.EnterpriseServer
 
         public static DomainInfo UpdateDomainRegistrationData(DomainInfo domain, DateTime? creationDate, DateTime? expirationDate)
         {
-            if (creationDate != null)
-            {
-                domain.CreationDate = creationDate;
-                DataProvider.UpdateDomainCreationDate(domain.DomainId, creationDate.Value);
-            }
+            DataProvider.UpdateDomainDates(domain.DomainId, creationDate, expirationDate, DateTime.Now);
 
-            if (expirationDate != null)
-            {
-                domain.ExpirationDate = expirationDate;
-                DataProvider.UpdateDomainExpirationDate(domain.DomainId, expirationDate.Value);
-            }
-
-            DataProvider.UpdateDomainLastUpdateDate(domain.DomainId, DateTime.Now);
+            domain.CreationDate = creationDate;
+            domain.ExpirationDate = expirationDate;
 
             return domain;
         }

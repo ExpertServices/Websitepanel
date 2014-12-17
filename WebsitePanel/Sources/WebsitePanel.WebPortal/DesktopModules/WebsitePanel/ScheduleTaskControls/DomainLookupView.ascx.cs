@@ -30,7 +30,33 @@ namespace WebsitePanel.Portal.ScheduleTaskControls
 
             this.SetParameter(this.txtDnsServers, DnsServersParameter);
             this.SetParameter(this.txtMailTo, MailToParameter);
-            this.SetParameter(this.txtServerName, ServerNameParameter);
+            this.SetParameter(this.ddlServers, ServerNameParameter);
+
+            var servers = ES.Services.Servers.GetAllServers();
+
+            var osGroup = ES.Services.Servers.GetResourceGroups().First(x => x.GroupName == ResourceGroups.Os);
+            var osProviders = ES.Services.Servers.GetProvidersByGroupId(osGroup.GroupId);
+
+            var osServers = new List<ServerInfo>();
+
+            foreach (var server in servers)
+            {
+                var services = ES.Services.Servers.GetServicesByServerId(server.ServerId);
+
+                if (services.Any(x => osProviders.Any(p=>p.ProviderId  == x.ProviderId)))
+                {
+                    osServers.Add(server);
+                }
+            }
+
+            ddlServers.DataSource = osServers.Select(x => new { Id = x.ServerName, Name = x.ServerName });
+            ddlServers.DataTextField = "Name";
+            ddlServers.DataValueField = "Id";
+            ddlServers.DataBind();
+
+            ScheduleTaskParameterInfo parameter = this.FindParameterById(ServerNameParameter);
+
+            ddlServers.SelectedValue = parameter.ParameterValue;
         }
 
         /// <summary>
@@ -41,7 +67,7 @@ namespace WebsitePanel.Portal.ScheduleTaskControls
         {
             ScheduleTaskParameterInfo dnsServers = this.GetParameter(this.txtDnsServers, DnsServersParameter);
             ScheduleTaskParameterInfo mailTo = this.GetParameter(this.txtMailTo, MailToParameter);
-            ScheduleTaskParameterInfo serverName = this.GetParameter(this.txtServerName, ServerNameParameter);
+            ScheduleTaskParameterInfo serverName = this.GetParameter(this.ddlServers, ServerNameParameter);
 
             return new ScheduleTaskParameterInfo[3] { dnsServers, mailTo, serverName };
         }
