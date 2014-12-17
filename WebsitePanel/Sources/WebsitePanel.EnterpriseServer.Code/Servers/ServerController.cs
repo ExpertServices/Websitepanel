@@ -42,6 +42,8 @@ using WebsitePanel.Providers.HostedSolution;
 using Whois.NET;
 using System.Text.RegularExpressions;
 using WebsitePanel.Providers.DomainLookup;
+using System.Globalization;
+using System.Linq;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -70,6 +72,9 @@ namespace WebsitePanel.EnterpriseServer
                                                                                 @"Expiry date:(.+)", //.uk
                                                                                 @"anniversary:(.+)", //.fr
                                                                                 @"expires:(.+)" //.fi 
+                                                                              };
+
+        private static List<string> _datePatterns = new List<string> {   @"ddd MMM dd HH:mm:ss G\MT yyyy"
                                                                               };
 
         #region Servers
@@ -1641,11 +1646,16 @@ namespace WebsitePanel.EnterpriseServer
         {
             var result = new List<DnsRecordInfo>();
 
-            var mxRecords = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainDnsRecords(domainId, DnsRecordType.MX));
-            var nsRecords = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainDnsRecords(domainId, DnsRecordType.NS));
+            var records = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainAllDnsRecords(domainId));
 
-            result.AddRange(mxRecords);
-            result.AddRange(nsRecords);
+            var activeDomain = records.OrderByDescending(x => x.Date).FirstOrDefault();
+
+            if (activeDomain != null)
+            {
+                records = records.Where(x => x.DnsServer == activeDomain.DnsServer).ToList();
+            }
+
+            result.AddRange(records);
 
             return result;
         }
@@ -2723,12 +2733,27 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     if (match.Success && match.Groups.Count == 2)
                     {
-                        return DateTime.Parse(match.Groups[1].ToString().Trim());
+                        return ParseDate(match.Groups[1].ToString().Trim());
                     }
                 }
             }
 
             return null;
+        }
+
+        private static DateTime? ParseDate(string dateString)
+        {
+            var result = DateTime.MinValue;
+
+            foreach (var datePattern in _datePatterns)
+            {
+                if (DateTime.TryParseExact(dateString, datePattern, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+                {
+                    return result;
+                }
+            }
+
+            return DateTime.Parse(dateString);
         }
 
         #endregion

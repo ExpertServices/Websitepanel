@@ -99,6 +99,8 @@ namespace WebsitePanel.EnterpriseServer
 
                         domainChanges.DnsChanges.AddRange(ApplyDomainRecordsChanges(dbDnsRecords.Where(x => x.RecordType == DnsRecordType.MX), dnsMxRecords, dnsServer));
                         domainChanges.DnsChanges.AddRange(ApplyDomainRecordsChanges(dbDnsRecords.Where(x => x.RecordType == DnsRecordType.NS), dnsNsRecords, dnsServer));
+
+                        domainChanges.DnsChanges = CombineDnsRecordChanges(domainChanges.DnsChanges, dnsServer).ToList();
                     }
 
                     domainsChanges.Add(domainChanges);
@@ -150,13 +152,13 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (dnsRecord != null)
                 {
-                    dnsRecordChanges.Add(new DnsRecordInfoChange { Record = record, Type = record.RecordType, Status = DomainDnsRecordStatuses.NotChanged, DnsServer = dnsServer });
+                    dnsRecordChanges.Add(new DnsRecordInfoChange { OldRecord = record, NewRecord = dnsRecord, Type = record.RecordType, Status = DomainDnsRecordStatuses.NotChanged, DnsServer = dnsServer });
 
                     dnsRecords.Remove(dnsRecord);
                 }
                 else
                 {
-                    dnsRecordChanges.Add(new DnsRecordInfoChange { Record = record, Type = record.RecordType, Status = DomainDnsRecordStatuses.Removed, DnsServer = dnsServer });
+                    dnsRecordChanges.Add(new DnsRecordInfoChange { OldRecord = record, NewRecord = new DnsRecordInfo { Value = string.Empty}, Type = record.RecordType, Status = DomainDnsRecordStatuses.Removed, DnsServer = dnsServer });
 
                     RemoveRecord(record);
                 }
@@ -164,12 +166,45 @@ namespace WebsitePanel.EnterpriseServer
 
             foreach (var record in dnsRecords)
             {
-                dnsRecordChanges.Add(new DnsRecordInfoChange { Record = record, Type = record.RecordType, Status = DomainDnsRecordStatuses.Added, DnsServer= dnsServer});
+                dnsRecordChanges.Add(new DnsRecordInfoChange { OldRecord = new DnsRecordInfo { Value = string.Empty }, NewRecord = record, Type = record.RecordType, Status = DomainDnsRecordStatuses.Added, DnsServer = dnsServer });
 
                 AddRecord(record);
             }
 
             return dnsRecordChanges;
+        }
+
+        private IEnumerable<DnsRecordInfoChange> CombineDnsRecordChanges(IEnumerable<DnsRecordInfoChange> records, string dnsServer)
+        {
+            var resultRecords = records.Where(x => x.DnsServer == dnsServer).ToList();
+
+            var recordsToRemove = new List<DnsRecordInfoChange>();
+
+            var removedRecords = records.Where(x => x.Status == DomainDnsRecordStatuses.Removed);
+            var addedRecords = records.Where(x => x.Status == DomainDnsRecordStatuses.Added);
+
+            foreach (DnsRecordType type in (DnsRecordType[])Enum.GetValues(typeof(DnsRecordType)))
+            {
+                foreach (var removedRecord in removedRecords.Where(x => x.Type == type))
+                {
+                    var addedRecord = addedRecords.FirstOrDefault(x => x.Type == type && !recordsToRemove.Contains(x));
+
+                    if (addedRecord != null)
+                    {
+                        recordsToRemove.Add(addedRecord);
+
+                        removedRecord.NewRecord = addedRecord.NewRecord;
+                        removedRecord.Status = DomainDnsRecordStatuses.Updated;
+                    }
+                }
+            }
+
+            foreach (var record in recordsToRemove)
+            {
+                resultRecords.Remove(record);
+            }
+
+            return resultRecords;
         }
 
         private void FillRecordData(IEnumerable<DnsRecordInfo> records, DomainInfo domain, string dnsServer)

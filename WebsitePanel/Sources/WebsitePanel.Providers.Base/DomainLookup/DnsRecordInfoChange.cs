@@ -9,7 +9,8 @@ namespace WebsitePanel.Providers.DomainLookup
     public class DnsRecordInfoChange
     {
         public string DnsServer { get; set; }
-        public DnsRecordInfo Record { get; set; }
+        public DnsRecordInfo OldRecord { get; set; }
+        public DnsRecordInfo NewRecord { get; set; }
         public DomainDnsRecordStatuses Status { get; set; }
         public DnsRecordType Type { get; set; }
     }
