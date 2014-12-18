@@ -39,6 +39,7 @@ using System.Web.UI.HtmlControls;
 using System.Linq;
 
 using WebsitePanel.EnterpriseServer;
+using System.Collections.Generic;
 
 namespace WebsitePanel.Portal
 {
@@ -160,7 +161,15 @@ namespace WebsitePanel.Portal
                 return "No Dns Records";
             }
 
-            return string.Join("\r\n", records.Select(x=>string.Format("{0}: {1}", x.RecordType, x.Value)));
+            var header = GetLocalizedString("DomainLookup.TooltipHeader");
+
+            var tooltipLines = new List<string>();
+
+            tooltipLines.Add(header);
+            tooltipLines.Add(" ");
+            tooltipLines.AddRange( records.Select(x=>string.Format("{0}: {1}", x.RecordType, x.Value)));
+
+            return string.Join("\r\n", tooltipLines);
         }
 
         protected void odsDomainsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)
