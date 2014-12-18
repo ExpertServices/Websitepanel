@@ -32,7 +32,7 @@ namespace WebsitePanel.EnterpriseServer
             var checkedDomains = new List<int>();
             var expiredDomains = new List<DomainInfo>();
             var nonExistenDomains = new List<DomainInfo>();
-            var subDomains = new List<DomainInfo>();
+            var allDomains = new List<DomainInfo>();
             var allTopLevelDomains = new List<DomainInfo>();
 
             // get input parameters
@@ -58,7 +58,7 @@ namespace WebsitePanel.EnterpriseServer
             {
                 var domains = ServerController.GetDomains(package.PackageId);
 
-                subDomains.AddRange(domains.Where(x => x.IsSubDomain));
+                allDomains.AddRange(domains);
 
                 domains = domains.Where(x => !x.IsSubDomain && !x.IsDomainPointer).ToList(); //Selecting top-level domains
 
@@ -96,16 +96,23 @@ namespace WebsitePanel.EnterpriseServer
                 }
             }
 
-            subDomains = subDomains.GroupBy(p => p.DomainId).Select(g => g.First()).ToList();
+            var subDomains = allDomains.Where(x => x.ExpirationDate == null || CheckDomainExpiration(x.ExpirationDate, daysBeforeNotify)).GroupBy(p => p.DomainId).Select(g => g.First()).ToList();
             allTopLevelDomains = allTopLevelDomains.GroupBy(p => p.DomainId).Select(g => g.First()).ToList();
 
             foreach (var subDomain in subDomains)
             {
-                var mainDomain = allTopLevelDomains.Where(x => subDomain.DomainName.ToLowerInvariant().Contains(x.DomainName.ToLowerInvariant())).OrderByDescending(s => s.DomainName.Length).FirstOrDefault(); ;
+                var mainDomain = allTopLevelDomains.Where(x => subDomain.DomainId != x.DomainId && subDomain.DomainName.ToLowerInvariant().Contains(x.DomainName.ToLowerInvariant())).OrderByDescending(s => s.DomainName.Length).FirstOrDefault(); ;
 
                 if (mainDomain != null)
                 {
                     ServerController.UpdateDomainRegistrationData(subDomain, mainDomain.CreationDate, mainDomain.ExpirationDate);
+
+                    var nonExistenDomain = nonExistenDomains.FirstOrDefault(x => subDomain.DomainId == x.DomainId);
+
+                    if (nonExistenDomain != null)
+                    {
+                        nonExistenDomains.Remove(nonExistenDomain);
+                    }
 
                     Thread.Sleep(100);
                 }
