@@ -213,4 +213,7 @@
   <data name="DomainExpirationDate.NotExist" xml:space="preserve">
     <value>Non-Existent</value>
   </data>
+  <data name="DomainLookup.TooltipHeader" xml:space="preserve">
+    <value>Current Real DNS Values</value>
+  </data>
 </root>

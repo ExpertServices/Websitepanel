@@ -6249,7 +6249,7 @@ Please, find below details of your domain expiration information.
         <tr>
             <td>#Domain.DomainName#</td>
 			<td>#Domain.Customer#</td>
-            <td>Expired</td>
+            <td>#Domain.ExpirationDate#</td>
         </tr>
     </ad:foreach>
     </tbody>
@@ -6313,7 +6313,7 @@ Please, find below details of your domain expiration information.
 <ad:foreach collection="#Domains#" var="Domain" index="i">
 	Domain: #Domain.DomainName#
 	Customer: #Domain.Customer#
-	Expiration Date: Expired
+	Expiration Date: #Domain.ExpirationDate#
 
 </ad:foreach>
 
@@ -6385,7 +6385,7 @@ Please, find below details of MX and NS changes.
 </p>
 
     <ad:foreach collection="#Domains#" var="Domain" index="i">
-	<h2>#Domain.DomainName#</h2>
+	<h2>#Domain.DomainName# - #DomainUsers[Domain.PackageId].FirstName# #DomainUsers[Domain.PackageId].LastName#</h2>
 
 	<table>
 	    <thead>
@@ -6394,7 +6394,7 @@ Please, find below details of MX and NS changes.
 				<th>Type</th>
 				<th>Status</th>
 	            <th>Old Value</th>
-				<th>New Value</th>
+                <th>New Value</th>
 	        </tr>
 	    </thead>
 	    <tbody>
@@ -6403,8 +6403,8 @@ Please, find below details of MX and NS changes.
 	            <td>#DnsChange.DnsServer#</td>
 	            <td>#DnsChange.Type#</td>
 				<td>#DnsChange.Status#</td>
-	            <td>#DnsChange.OldRecord.Value#</td>
-				<td>#DnsChange.NewRecord.Value#</td>
+                <td>#DnsChange.OldRecord.Value#</td>
+	            <td>#DnsChange.NewRecord.Value#</td>
 	        </tr>
 	    	</ad:foreach>
 	    </tbody>
@@ -6440,20 +6440,19 @@ INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [Property
 Hello #user.FirstName#,
 </ad:if>
 
-Please, find below MX and NS Changes Information.
-
+Please, find below details of MX and NS changes.
 
 
 <ad:foreach collection="#Domains#" var="Domain" index="i">
 
- #Domain.DomainName#
+ #Domain.DomainName# - #DomainUsers[Domain.PackageId].FirstName# #DomainUsers[Domain.PackageId].LastName#
 
         <ad:foreach collection="#Domain.DnsChanges#" var="DnsChange" index="j">
-            DNS:    #DnsChange.DnsServer#
-            Type:   #DnsChange.Type#
-			Status: #DnsChange.Status#
-            Old Value:  #DnsChange.OldRecord.Value#
-			New Value:  #DnsChange.NewRecord.Value#
+            DNS:       #DnsChange.DnsServer#
+            Type:      #DnsChange.Type#
+	    Status:    #DnsChange.Status#
+            Old Value: #DnsChange.OldRecord.Value#
+            New Value: #DnsChange.NewRecord.Value#
 
     	</ad:foreach>
 </ad:foreach>
@@ -6501,7 +6500,7 @@ Hello #user.FirstName#,
 </ad:if>
 
 <p>
-No MX and NS changes have been founded.
+No MX and NS changes have been found.
 </p>
 
 <p>

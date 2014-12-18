@@ -32,6 +32,7 @@ namespace WebsitePanel.EnterpriseServer
             BackgroundTask topTask = TaskManager.TopTask;
 
             List<DomainDnsChanges> domainsChanges = new List<DomainDnsChanges>();
+            var domainUsers = new Dictionary<int, UserInfo>();
 
             // get input parameters
             string dnsServersString = (string)topTask.GetParamValue(DnsServersParameter);
@@ -83,8 +84,16 @@ namespace WebsitePanel.EnterpriseServer
                         continue;
                     }
 
+                    if (!domainUsers.ContainsKey(domain.PackageId))
+                    {
+                        var domainUser = UserController.GetUser(packages.First(x=>x.PackageId == domain.PackageId).UserId);
+
+                        domainUsers.Add(domain.PackageId, domainUser);
+                    }
+
                     DomainDnsChanges domainChanges = new DomainDnsChanges();
                     domainChanges.DomainName = domain.DomainName;
+                    domainChanges.PackageId = domain.PackageId;
 
                     var dbDnsRecords = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainAllDnsRecords(domain.DomainId));
 
@@ -109,7 +118,7 @@ namespace WebsitePanel.EnterpriseServer
 
             var changedDomains = FindDomainsWithChangedRecords(domainsChanges);
 
-            SendMailMessage(user, changedDomains);
+            SendMailMessage(user, changedDomains, domainUsers);
         }
 
         
@@ -252,7 +261,7 @@ namespace WebsitePanel.EnterpriseServer
             Thread.Sleep(100);
         }
 
-        private void SendMailMessage(UserInfo user, IEnumerable<DomainDnsChanges> domainsChanges)
+        private void SendMailMessage(UserInfo user, IEnumerable<DomainDnsChanges> domainsChanges, Dictionary<int, UserInfo> domainUsers)
         {
             BackgroundTask topTask = TaskManager.TopTask;
 
@@ -286,6 +295,7 @@ namespace WebsitePanel.EnterpriseServer
             Hashtable items = new Hashtable();
 
             items["user"] = user;
+            items["DomainUsers"] = domainUsers;
             items["Domains"] = domainsChanges;
 
             body = PackageController.EvaluateTemplate(body, items);

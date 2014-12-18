@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
+using System.Linq;
 using System.Net;
 using System.Xml;
 using WebsitePanel.Providers;
@@ -2188,11 +2189,13 @@ namespace WebsitePanel.EnterpriseServer
                     }
                 }
 
+                // Find and delete all zone items for this domain
+                var zoneItems = PackageController.GetPackageItemsByType(domain.PackageId, ResourceGroups.Dns, typeof (DnsZone));
+                zoneItems.AddRange(PackageController.GetPackageItemsByType(domain.PackageId, ResourceGroups.Dns, typeof(SecondaryDnsZone)));
 
-                // remove DNS zone meta-item if required
-                if (domain.ZoneItemId > 0)
+                foreach (var zoneItem in zoneItems.Where(z => z.Name == domain.ZoneName))
                 {
-                    PackageController.DeletePackageItem(domain.ZoneItemId);
+                    PackageController.DeletePackageItem(zoneItem.Id);
                 }
 
                 // delete domain
