@@ -2776,7 +2776,7 @@ namespace WebsitePanel.EnterpriseServer
                 DNSServer dns = new DNSServer();
                 ServiceProviderProxy.Init(dns, zoneItem.ServiceId);
 
-                return dns.GetZoneRecords(domain.DomainName);
+                return dns.GetZoneRecords(zoneItem.Name);
             }
 
             return new DnsRecord[] { };

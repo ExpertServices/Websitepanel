@@ -773,6 +773,13 @@
     <Compile Include="SkinControls\SpaceOrganizationsSelector.ascx.designer.cs">
       <DependentUpon>SpaceOrganizationsSelector.ascx</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\DomainControl.ascx.cs">
+      <DependentUpon>DomainControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\DomainControl.ascx.designer.cs">
+      <DependentUpon>DomainControl.ascx</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\DomainListControlBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -4379,6 +4386,7 @@
     <Content Include="SettingsLyncUserPlansPolicy.ascx" />
     <Content Include="SkinControls\SpaceOrganizationsSelector.ascx" />
     <Content Include="SettingsExchangeRetentionPolicyTag.ascx" />
+    <Content Include="UserControls\DomainControl.ascx" />
     <Content Include="UserControls\EditFeedsList.ascx" />
     <Content Include="UserControls\OrgIdPolicyEditor.ascx" />
     <Content Include="UserControls\OrgPolicyEditor.ascx" />
@@ -5626,6 +5634,7 @@
     <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionServers.ascx.resx" />
     <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionApps.ascx.resx" />
     <Content Include="ProviderControls\App_LocalResources\RDS_Settings.ascx.resx" />
+    <Content Include="UserControls\App_LocalResources\DomainControl.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

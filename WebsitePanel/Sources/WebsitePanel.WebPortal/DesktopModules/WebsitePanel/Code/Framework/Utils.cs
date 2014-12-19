@@ -159,7 +159,7 @@ namespace WebsitePanel.Portal
             foreach (string part in parts)
                 if (part.Trim() != "" && !list.Contains(part.Trim()))
                     list.Add(part);
-            return (string[])list.ToArray(typeof(string));
+            return (string[]) list.ToArray(typeof (string));
         }
 
         public static string ReplaceStringVariable(string str, string variable, string value)
@@ -172,7 +172,7 @@ namespace WebsitePanel.Portal
         {
             long length = stream.Length;
             byte[] content = new byte[length];
-            stream.Read(content, 0, (int)length);
+            stream.Read(content, 0, (int) length);
             stream.Close();
             return content;
         }
@@ -231,7 +231,7 @@ namespace WebsitePanel.Portal
                     selValues.Add(item.Value);
             }
 
-            string cookieVal = String.Join(",", (string[])selValues.ToArray(typeof(string)));
+            string cookieVal = String.Join(",", (string[]) selValues.ToArray(typeof (string)));
 
             // create cookie
             HttpCookie cookie = new HttpCookie(ctrl.UniqueID, cookieVal);
@@ -251,7 +251,7 @@ namespace WebsitePanel.Portal
             foreach (ListItem item in ctrl.Items)
                 item.Selected = false;
 
-            string[] vals = cookie.Value.Split(new char[] { ',' });
+            string[] vals = cookie.Value.Split(new char[] {','});
             foreach (string val in vals)
             {
                 ListItem item = ctrl.Items.FindByValue(val);
@@ -278,9 +278,9 @@ namespace WebsitePanel.Portal
 
             // Convert 4 bytes into a 32-bit integer value.
             int seed = (randomBytes[0] & 0x7f) << 24 |
-                        randomBytes[1] << 16 |
-                        randomBytes[2] << 8 |
-                        randomBytes[3];
+                       randomBytes[1] << 16 |
+                       randomBytes[2] << 8 |
+                       randomBytes[3];
 
 
             Random rnd = new Random(seed);
@@ -294,17 +294,38 @@ namespace WebsitePanel.Portal
         public static bool CheckQouta(string key, PackageContext cntx)
         {
             return cntx.Quotas.ContainsKey(key) &&
-                ((cntx.Quotas[key].QuotaAllocatedValue == 1 && cntx.Quotas[key].QuotaTypeId == 1) ||
-                (cntx.Quotas[key].QuotaTypeId != 1 && (cntx.Quotas[key].QuotaAllocatedValue > 0 || cntx.Quotas[key].QuotaAllocatedValue == -1)));
+                   ((cntx.Quotas[key].QuotaAllocatedValue == 1 && cntx.Quotas[key].QuotaTypeId == 1) ||
+                    (cntx.Quotas[key].QuotaTypeId != 1 && (cntx.Quotas[key].QuotaAllocatedValue > 0 || cntx.Quotas[key].QuotaAllocatedValue == -1)));
         }
 
 
         public static bool CheckQouta(string key, HostingPlanContext cntx)
         {
             return cntx.Quotas.ContainsKey(key) &&
-                ((cntx.Quotas[key].QuotaAllocatedValue == 1 && cntx.Quotas[key].QuotaTypeId == 1) ||
-                (cntx.Quotas[key].QuotaTypeId != 1 && (cntx.Quotas[key].QuotaAllocatedValue > 0 || cntx.Quotas[key].QuotaAllocatedValue == -1)));
+                   ((cntx.Quotas[key].QuotaAllocatedValue == 1 && cntx.Quotas[key].QuotaTypeId == 1) ||
+                    (cntx.Quotas[key].QuotaTypeId != 1 && (cntx.Quotas[key].QuotaAllocatedValue > 0 || cntx.Quotas[key].QuotaAllocatedValue == -1)));
         }
 
+        public static bool IsIdnDomain(string domainName)
+        {
+            if (string.IsNullOrEmpty(domainName))
+            {
+                return false;
+            }
+
+            var idn = new IdnMapping();
+            return idn.GetAscii(domainName) != domainName;
+        }
+
+        public static string UnicodeToAscii(string domainName)
+        {
+            if (string.IsNullOrEmpty(domainName))
+            {
+                return string.Empty;
+            }
+
+            var idn = new IdnMapping();
+            return idn.GetAscii(domainName);
+        }
     }
 }

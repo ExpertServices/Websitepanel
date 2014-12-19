@@ -28,6 +28,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Web.Services;
 using System.Web.Services.Protocols;
 using WebsitePanel.Providers;
@@ -51,6 +52,12 @@ namespace WebsitePanel.Server
             get { return (IDnsServer)Provider; }
         }
 
+        private string GetAsciiZoneName(string zoneName)
+        {
+            var idn = new IdnMapping();
+            return idn.GetAscii(zoneName);
+        }
+
         #region Zones
         [WebMethod, SoapHeader("settings")]
         public bool ZoneExists(string zoneName)
@@ -58,7 +65,7 @@ namespace WebsitePanel.Server
             try
             {
                 Log.WriteStart("'{0}' ZoneExists", ProviderSettings.ProviderName);
-                bool result = DnsProvider.ZoneExists(zoneName);
+                bool result = DnsProvider.ZoneExists(GetAsciiZoneName(zoneName));
                 Log.WriteEnd("'{0}' ZoneExists", ProviderSettings.ProviderName);
                 return result;
             }
@@ -92,7 +99,7 @@ namespace WebsitePanel.Server
             try
             {
                 Log.WriteStart("'{0}' AddPrimaryZone", ProviderSettings.ProviderName);
-                DnsProvider.AddPrimaryZone(zoneName, secondaryServers);
+                DnsProvider.AddPrimaryZone(GetAsciiZoneName(zoneName), secondaryServers);
                 Log.WriteEnd("'{0}' AddPrimaryZone", ProviderSettings.ProviderName);
             }
             catch (Exception ex)
@@ -108,7 +115,7 @@ namespace WebsitePanel.Server
             try
             {
                 Log.WriteStart("'{0}' AddSecondaryZone", ProviderSettings.ProviderName);
-                DnsProvider.AddSecondaryZone(zoneName, masterServers);
+                DnsProvider.AddSecondaryZone(GetAsciiZoneName(zoneName), masterServers);
                 Log.WriteEnd("'{0}' AddSecondaryZone", ProviderSettings.ProviderName);
             }
             catch (Exception ex)
@@ -124,7 +131,7 @@ namespace WebsitePanel.Server
             try
             {
                 Log.WriteStart("'{0}' DeleteZone", ProviderSettings.ProviderName);
-                DnsProvider.DeleteZone(zoneName);
+                DnsProvider.DeleteZone(GetAsciiZoneName(zoneName));
                 Log.WriteEnd("'{0}' DeleteZone", ProviderSettings.ProviderName);
             }
             catch (Exception ex)
@@ -140,7 +147,7 @@ namespace WebsitePanel.Server
             try
             {
                 Log.WriteStart("'{0}' UpdateSoaRecord", ProviderSettings.ProviderName);
-                DnsProvider.UpdateSoaRecord(zoneName, host, primaryNsServer, primaryPerson);
+                DnsProvider.UpdateSoaRecord(GetAsciiZoneName(zoneName), host, primaryNsServer, primaryPerson);
                 Log.WriteEnd("'{0}' UpdateSoaRecord", ProviderSettings.ProviderName);
             }
             catch (Exception ex)
@@ -158,7 +165,7 @@ namespace WebsitePanel.Server
             try
             {
                 Log.WriteStart("'{0}' GetZoneRecords", ProviderSettings.ProviderName);
-                DnsRecord[] result = DnsProvider.GetZoneRecords(zoneName);
+                DnsRecord[] result = DnsProvider.GetZoneRecords(GetAsciiZoneName(zoneName));
                 Log.WriteEnd("'{0}' GetZoneRecords", ProviderSettings.ProviderName);
                 return result;
             }
@@ -175,7 +182,7 @@ namespace WebsitePanel.Server
             try
             {
                 Log.WriteStart("'{0}' AddZoneRecord", ProviderSettings.ProviderName);
-                DnsProvider.AddZoneRecord(zoneName, record);
+                DnsProvider.AddZoneRecord(GetAsciiZoneName(zoneName), record);
                 Log.WriteEnd("'{0}' AddZoneRecord", ProviderSettings.ProviderName);
             }
             catch (Exception ex)
@@ -191,7 +198,7 @@ namespace WebsitePanel.Server
             try
             {
                 Log.WriteStart("'{0}' DeleteZoneRecord", ProviderSettings.ProviderName);
-                DnsProvider.DeleteZoneRecord(zoneName, record);
+                DnsProvider.DeleteZoneRecord(GetAsciiZoneName(zoneName), record);
                 Log.WriteEnd("'{0}' DeleteZoneRecord", ProviderSettings.ProviderName);
             }
             catch (Exception ex)
@@ -207,7 +214,7 @@ namespace WebsitePanel.Server
             try
             {
                 Log.WriteStart("'{0}' AddZoneRecords", ProviderSettings.ProviderName);
-                DnsProvider.AddZoneRecords(zoneName, records);
+                DnsProvider.AddZoneRecords(GetAsciiZoneName(zoneName), records);
                 Log.WriteEnd("'{0}' AddZoneRecords", ProviderSettings.ProviderName);
             }
             catch (Exception ex)
@@ -223,7 +230,7 @@ namespace WebsitePanel.Server
             try
             {
                 Log.WriteStart("'{0}' DeleteZoneRecords", ProviderSettings.ProviderName);
-                DnsProvider.DeleteZoneRecords(zoneName, records);
+                DnsProvider.DeleteZoneRecords(GetAsciiZoneName(zoneName), records);
                 Log.WriteEnd("'{0}' DeleteZoneRecords", ProviderSettings.ProviderName);
             }
             catch (Exception ex)
