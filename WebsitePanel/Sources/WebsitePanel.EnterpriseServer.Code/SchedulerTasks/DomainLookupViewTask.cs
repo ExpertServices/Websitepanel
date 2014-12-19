@@ -26,7 +26,9 @@ namespace WebsitePanel.EnterpriseServer
 
         private const string MxRecordPattern = @"mail exchanger = (.+)";
         private const string NsRecordPattern = @"nameserver = (.+)";
-
+        private const string DnsTimeOutMessage = @"dns request timed out";
+        private const int DnsTimeOutRetryCount = 3;
+        
         public override void DoWork()
         {
             BackgroundTask topTask = TaskManager.TopTask;
@@ -100,8 +102,8 @@ namespace WebsitePanel.EnterpriseServer
                     //execute server
                     foreach (var dnsServer in dnsServers)
                     {
-                        var dnsMxRecords = GetDomainDnsRecords(winServer, domain.DomainName, dnsServer, DnsRecordType.MX);
-                        var dnsNsRecords = GetDomainDnsRecords(winServer, domain.DomainName, dnsServer, DnsRecordType.NS);
+                        var dnsMxRecords = GetDomainDnsRecords(winServer, domain.DomainName, dnsServer, DnsRecordType.MX) ?? dbDnsRecords.Where(x => x.RecordType == DnsRecordType.MX).ToList();
+                        var dnsNsRecords = GetDomainDnsRecords(winServer, domain.DomainName, dnsServer, DnsRecordType.NS) ?? dbDnsRecords.Where(x => x.RecordType == DnsRecordType.NS).ToList();
 
                         FillRecordData(dnsMxRecords, domain, dnsServer);
                         FillRecordData(dnsNsRecords, domain, dnsServer);
@@ -311,7 +313,20 @@ namespace WebsitePanel.EnterpriseServer
             var args = string.Format("-type={0} {1} {2}", recordType, domain, dnsServer);
 
             // execute system command
-            var raw = winServer.ExecuteSystemCommand(command, args);
+            var raw  = string.Empty;
+            int triesCount = 0;
+
+            do
+            {
+                raw = winServer.ExecuteSystemCommand(command, args);
+            } 
+            while (raw.ToLowerInvariant().Contains(DnsTimeOutMessage) && ++triesCount < DnsTimeOutRetryCount);
+
+            //timeout check 
+            if (raw.ToLowerInvariant().Contains(DnsTimeOutMessage))
+            {
+                return null;
+            }
 
             var records = ParseNsLookupResult(raw, dnsServer, recordType);
 
