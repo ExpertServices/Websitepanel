@@ -28,6 +28,7 @@
 
 using System;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 
@@ -40,7 +41,7 @@ namespace WebsitePanel.Portal.ExchangeServer
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            DomainInfo[] domains = ES.Services.Servers.GetMyDomains(PanelSecurity.PackageId);
+            DomainInfo[] domains = ES.Services.Servers.GetMyDomains(PanelSecurity.PackageId).Where(d => !Utils.IsIdnDomain(d.DomainName)).ToArray();
 
             Organization[] orgs = ES.Services.Organizations.GetOrganizations(PanelSecurity.PackageId, false);
 

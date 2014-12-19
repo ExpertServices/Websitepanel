@@ -117,46 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AllowSubDomains.Text" xml:space="preserve">
-    <value>Allow customer sub-domains</value>
+  <data name="DomainFormatValidator.ErrorMessage" xml:space="preserve">
+    <value>Please, enter correct domain name, for example "mydomain.com" or "sub.mydomain.com".</value>
   </data>
-  <data name="btnAdd.Text" xml:space="preserve">
-    <value>Add Domain</value>
+  <data name="DomainFormatValidator.Text" xml:space="preserve">
+    <value>*</value>
   </data>
-  <data name="btnCancel.Text" xml:space="preserve">
-    <value>Cancel</value>
+  <data name="DomainRequiredValidator.ErrorMessage" xml:space="preserve">
+    <value>Please enter domain name</value>
   </data>
-  <data name="CreateInstantAlias.Text" xml:space="preserve">
-    <value>Create Instant Alias</value>
+  <data name="DomainRequiredValidator.Text" xml:space="preserve">
+    <value>*</value>
   </data>
-  <data name="CreateWebSite.Text" xml:space="preserve">
-    <value>Create Web Site</value>
+  <data name="SubDomainRequiredValidator.ErrorMessage" xml:space="preserve">
+    <value>Please enter sub-domain name</value>
   </data>
-  <data name="DescribeAllowSubDomains.Text" xml:space="preserve">
-    <value>Tick this option if you like to offer this domain to your customers to create their own free sub-domains.</value>
-  </data>
-  <data name="DescribeCreateInstantAlias.Text" xml:space="preserve">
-    <value>Tick this checkbox if you need to access your web site or mailboxes before DNS propagation takes places. DNS propagation is the time required to spread the information about DNS zone all over the Internet. It could take up to 72 hours.</value>
-  </data>
-  <data name="DescribeCreateWebSite.Text" xml:space="preserve">
-    <value>Create a new web site.</value>
-  </data>
-  <data name="DescribeEnableDns.Text" xml:space="preserve">
-    <value>Tick this checkbox if DNS zone for this domain will be located on name servers of your hosting provider. Make sure you changed name servers in the domain registrar control panel.</value>
-  </data>
-  <data name="EnableDns.Text" xml:space="preserve">
-    <value>Enable DNS</value>
-  </data>
-  <data name="OptionsPanelHeader.Text" xml:space="preserve">
-    <value>Provisioning Options</value>
-  </data>
-  <data name="PointMailDomain.Text" xml:space="preserve">
-    <value>Assign to existing Mail Domain</value>
-  </data>
-  <data name="PointWebSite.Text" xml:space="preserve">
-    <value>Assign to existing Web Site</value>
-  </data>
-  <data name="lblHostName.Text" xml:space="preserve">
-    <value>Hostname:</value>
+  <data name="SubDomainRequiredValidator.Text" xml:space="preserve">
+    <value>*</value>
   </data>
 </root>
