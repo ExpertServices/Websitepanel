@@ -25,4 +25,12 @@
             <asp:TextBox ID="txtMailTo" runat="server" Width="95%" CssClass="NormalTextBox" MaxLength="1000"></asp:TextBox>
          </td>
     </tr>
+    <tr>
+        <td class="SubHead" nowrap>
+            <asp:Label ID="lblPause" runat="server" meta:resourcekey="lblPause" Text="Pause between queries (ms):"></asp:Label>
+        </td>
+        <td class="Normal" width="100%">
+            <asp:TextBox ID="txtPause" runat="server" Width="95%" CssClass="NormalTextBox" MaxLength="1000"></asp:TextBox>
+         </td>
+    </tr>
 </table>
