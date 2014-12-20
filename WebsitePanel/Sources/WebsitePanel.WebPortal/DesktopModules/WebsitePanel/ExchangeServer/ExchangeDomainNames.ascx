@@ -59,7 +59,7 @@
 						    <asp:TemplateField>
 							    <ItemTemplate>
 									&nbsp;<asp:ImageButton ID="imgDelDomain" runat="server" Text="Delete" SkinID="ExchangeDelete"
-									    CommandName="DeleteItem" CommandArgument='<%# Eval("DomainId") %>' Visible='<%# !((bool)Eval("IsHost") || (bool)Eval("IsDefault")) %>'
+									    CommandName="DeleteItem" CommandArgument='<%# Eval("DomainId") %>' Visible='<%# !((bool)Eval("IsDefault")) %>'
 									    meta:resourcekey="cmdDelete" OnClientClick="return confirm('Are you sure you want to delete selected domain?')"></asp:ImageButton>
 							    </ItemTemplate>
 						    </asp:TemplateField>
