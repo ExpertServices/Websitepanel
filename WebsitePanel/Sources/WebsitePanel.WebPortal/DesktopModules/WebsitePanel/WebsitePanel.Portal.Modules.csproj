@@ -5551,6 +5551,7 @@
     <Content Include="UserControls\App_LocalResources\ItemButtonPanel.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
+    <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
     <None Include="Resources\Windows2008_Settings.ascx.resx" />
     <Content Include="App_LocalResources\WebSitesHeliconZooControl.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\ExchangeDisclaimers.ascx.resx">

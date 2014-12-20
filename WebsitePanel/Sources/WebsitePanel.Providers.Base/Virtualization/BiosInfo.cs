@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+﻿// Copyright (c) 2014, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -32,49 +32,9 @@ using System.Text;
 
 namespace WebsitePanel.Providers.Virtualization
 {
-    public enum VirtualMachineState
+    public class BiosInfo
     {
-        /*
-        Unknown = 0,
-        Running = 2, // start
-        Off = 3, // turn off
-        Reset = 10, // reset
-        Paused = 32768, // pause
-        Saved = 32769, // save
-        Starting = 32770,
-        Snapshotting = 32771,
-        Migrating = 32772,
-        Saving = 32773,
-        Stopping = 32774,
-        Deleted = 32775,
-        Pausing = 32776
-        */
-
-        Unknown = 0,
-        Other = 1,
-        Running = 2,
-        Off = 3,
-        Stopping = 4,
-        Saved = 6,
-        Paused = 9,
-        Starting = 10,
-        Reset = 11,
-        Saving = 32773,
-        Pausing = 32776,
-        Resuming = 32777,
-        FastSaved = 32779,
-        FastSaving = 32780,
-        RunningCritical = 32781,
-        OffCritical = 32782,
-        StoppingCritical = 32783,
-        SavedCritical = 32784,
-        PausedCritical = 32785,
-        StartingCritical = 32786,
-        ResetCritical = 32787,
-        SavingCritical = 32788,
-        PausingCritical = 32789,
-        ResumingCritical = 32790,
-        FastSavedCritical = 32791,
-        FastSavingCritical = 32792
+        public bool NumLockEnabled { get; set; }
+        public string[] StartupOrder { get; set; }
     }
 }
