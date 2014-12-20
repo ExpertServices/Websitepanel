@@ -54,6 +54,7 @@ namespace WebsitePanel.Server
 
         private string GetAsciiZoneName(string zoneName)
         {
+            if (string.IsNullOrEmpty(zoneName)) return zoneName;
             var idn = new IdnMapping();
             return idn.GetAscii(zoneName);
         }
