@@ -181,9 +181,11 @@ namespace WebsitePanel.EnterpriseServer
             Hashtable items = new Hashtable();
 
             items["user"] = user;
+
             items["Domains"] = domains.Select(x => new { DomainName = x.DomainName, 
                                                          ExpirationDate = x.ExpirationDate, 
-                                                         Customer = string.Format("{0} {1}", domainUsers[x.PackageId].FirstName, domainUsers[x.PackageId].LastName) });
+                                                         Customer = string.Format("{0} {1}", domainUsers[x.PackageId].FirstName, domainUsers[x.PackageId].LastName) })
+                                      .OrderBy(x => x.ExpirationDate).ThenBy(x => x.Customer).ThenBy(x => x.DomainName);
             
             items["IncludeNonExistenDomains"] = includeNonExistenDomains;
 
@@ -191,7 +193,7 @@ namespace WebsitePanel.EnterpriseServer
             {
                 DomainName = x.DomainName,
                 Customer = string.Format("{0} {1}", domainUsers[x.PackageId].FirstName, domainUsers[x.PackageId].LastName)
-            });
+            }).OrderBy(x => x.Customer).ThenBy(x => x.DomainName);
 
 
             body = PackageController.EvaluateTemplate(body, items);

@@ -80,6 +80,15 @@ namespace WebsitePanel.Portal.ScheduleTaskControls.App_LocalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pause between queries (ms):.
+        /// </summary>
+        internal static string lblPause {
+            get {
+                return ResourceManager.GetString("lblPause", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Server Name:.
         /// </summary>
         internal static string lblServerName {
