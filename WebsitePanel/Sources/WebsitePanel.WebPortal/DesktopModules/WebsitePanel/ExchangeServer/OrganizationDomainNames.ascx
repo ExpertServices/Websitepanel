@@ -30,7 +30,7 @@
 							    <ItemStyle Width="50%"></ItemStyle>
 							    <ItemTemplate>
 								    <asp:hyperlink id="lnkEditZone" runat="server" EnableViewState="false"
-									    NavigateUrl='<%# GetDomainRecordsEditUrl(Eval("DomainID").ToString()) %>' Enabled='<%# !(bool)Eval("IsHost") %>'>
+									    NavigateUrl='<%# GetDomainRecordsEditUrl(Eval("DomainID").ToString()) %>' Enabled="true">
 									    <%# Eval("DomainName") %>
 								    </asp:hyperlink>
 							    </ItemTemplate>
