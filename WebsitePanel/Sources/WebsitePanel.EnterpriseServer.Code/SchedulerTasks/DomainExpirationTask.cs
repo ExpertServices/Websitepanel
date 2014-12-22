@@ -32,7 +32,7 @@ namespace WebsitePanel.EnterpriseServer
             var checkedDomains = new List<int>();
             var expiredDomains = new List<DomainInfo>();
             var nonExistenDomains = new List<DomainInfo>();
-            var subDomains = new List<DomainInfo>();
+            var allDomains = new List<DomainInfo>();
             var allTopLevelDomains = new List<DomainInfo>();
 
             // get input parameters
@@ -58,13 +58,11 @@ namespace WebsitePanel.EnterpriseServer
             {
                 var domains = ServerController.GetDomains(package.PackageId);
 
-                subDomains.AddRange(domains.Where(x => x.IsSubDomain));
+                allDomains.AddRange(domains);
 
-                var topLevelDomains = domains = domains.Where(x => !x.IsSubDomain && !x.IsDomainPointer).ToList(); //Selecting top-level domains
+                domains = domains.Where(x => !x.IsSubDomain && !x.IsDomainPointer).ToList(); //Selecting top-level domains
 
-                allTopLevelDomains.AddRange(topLevelDomains);
-
-                domains = topLevelDomains.Where(x => x.CreationDate == null || x.ExpirationDate == null ? true : CheckDomainExpiration(x.ExpirationDate, daysBeforeNotify)).ToList(); // selecting expired or with empty expire date domains
+                allTopLevelDomains.AddRange(domains);
 
                 var domainUser = UserController.GetUser(package.UserId);
 
@@ -98,16 +96,23 @@ namespace WebsitePanel.EnterpriseServer
                 }
             }
 
-            subDomains = subDomains.GroupBy(p => p.DomainId).Select(g => g.First()).ToList();
+            var subDomains = allDomains.Where(x => x.ExpirationDate == null || CheckDomainExpiration(x.ExpirationDate, daysBeforeNotify)).GroupBy(p => p.DomainId).Select(g => g.First()).ToList();
             allTopLevelDomains = allTopLevelDomains.GroupBy(p => p.DomainId).Select(g => g.First()).ToList();
 
             foreach (var subDomain in subDomains)
             {
-                var mainDomain = allTopLevelDomains.Where(x => subDomain.DomainName.ToLowerInvariant().Contains(x.DomainName.ToLowerInvariant())).OrderByDescending(s => s.DomainName.Length).FirstOrDefault(); ;
+                var mainDomain = allTopLevelDomains.Where(x => subDomain.DomainId != x.DomainId && subDomain.DomainName.ToLowerInvariant().Contains(x.DomainName.ToLowerInvariant())).OrderByDescending(s => s.DomainName.Length).FirstOrDefault(); ;
 
                 if (mainDomain != null)
                 {
                     ServerController.UpdateDomainRegistrationData(subDomain, mainDomain.CreationDate, mainDomain.ExpirationDate);
+
+                    var nonExistenDomain = nonExistenDomains.FirstOrDefault(x => subDomain.DomainId == x.DomainId);
+
+                    if (nonExistenDomain != null)
+                    {
+                        nonExistenDomains.Remove(nonExistenDomain);
+                    }
 
                     Thread.Sleep(100);
                 }
@@ -176,9 +181,11 @@ namespace WebsitePanel.EnterpriseServer
             Hashtable items = new Hashtable();
 
             items["user"] = user;
+
             items["Domains"] = domains.Select(x => new { DomainName = x.DomainName, 
                                                          ExpirationDate = x.ExpirationDate, 
-                                                         Customer = string.Format("{0} {1}", domainUsers[x.PackageId].FirstName, domainUsers[x.PackageId].LastName) });
+                                                         Customer = string.Format("{0} {1}", domainUsers[x.PackageId].FirstName, domainUsers[x.PackageId].LastName) })
+                                      .OrderBy(x => x.ExpirationDate).ThenBy(x => x.Customer).ThenBy(x => x.DomainName);
             
             items["IncludeNonExistenDomains"] = includeNonExistenDomains;
 
@@ -186,7 +193,7 @@ namespace WebsitePanel.EnterpriseServer
             {
                 DomainName = x.DomainName,
                 Customer = string.Format("{0} {1}", domainUsers[x.PackageId].FirstName, domainUsers[x.PackageId].LastName)
-            });
+            }).OrderBy(x => x.Customer).ThenBy(x => x.DomainName);
 
 
             body = PackageController.EvaluateTemplate(body, items);

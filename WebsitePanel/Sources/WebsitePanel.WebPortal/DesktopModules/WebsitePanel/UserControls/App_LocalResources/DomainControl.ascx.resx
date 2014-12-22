@@ -117,16 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="lblDnsServers" xml:space="preserve">
-    <value>DNS Servers</value>
+  <data name="DomainFormatValidator.ErrorMessage" xml:space="preserve">
+    <value>Please, enter correct domain name, for example "mydomain.com" or "sub.mydomain.com".</value>
   </data>
-  <data name="lblDnsServersHint" xml:space="preserve">
-    <value>Please enter dns servers to check.</value>
+  <data name="DomainFormatValidator.Text" xml:space="preserve">
+    <value>*</value>
   </data>
-  <data name="lblPause" xml:space="preserve">
-    <value>Pause between queries (ms):</value>
+  <data name="DomainRequiredValidator.ErrorMessage" xml:space="preserve">
+    <value>Please enter domain name</value>
   </data>
-  <data name="lblServerName" xml:space="preserve">
-    <value>Server Name:</value>
+  <data name="DomainRequiredValidator.Text" xml:space="preserve">
+    <value>*</value>
+  </data>
+  <data name="SubDomainRequiredValidator.ErrorMessage" xml:space="preserve">
+    <value>Please enter sub-domain name</value>
+  </data>
+  <data name="SubDomainRequiredValidator.Text" xml:space="preserve">
+    <value>*</value>
   </data>
 </root>

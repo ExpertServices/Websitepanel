@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
+using System.Linq;
 using System.Net;
 using System.Xml;
 using WebsitePanel.Providers;
@@ -42,6 +43,8 @@ using WebsitePanel.Providers.HostedSolution;
 using Whois.NET;
 using System.Text.RegularExpressions;
 using WebsitePanel.Providers.DomainLookup;
+using System.Globalization;
+using System.Linq;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -70,6 +73,9 @@ namespace WebsitePanel.EnterpriseServer
                                                                                 @"Expiry date:(.+)", //.uk
                                                                                 @"anniversary:(.+)", //.fr
                                                                                 @"expires:(.+)" //.fi 
+                                                                              };
+
+        private static List<string> _datePatterns = new List<string> {   @"ddd MMM dd HH:mm:ss G\MT yyyy"
                                                                               };
 
         #region Servers
@@ -1641,11 +1647,16 @@ namespace WebsitePanel.EnterpriseServer
         {
             var result = new List<DnsRecordInfo>();
 
-            var mxRecords = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainDnsRecords(domainId, DnsRecordType.MX));
-            var nsRecords = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainDnsRecords(domainId, DnsRecordType.NS));
+            var records = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainAllDnsRecords(domainId));
 
-            result.AddRange(mxRecords);
-            result.AddRange(nsRecords);
+            var activeDomain = records.OrderByDescending(x => x.Date).FirstOrDefault();
+
+            if (activeDomain != null)
+            {
+                records = records.Where(x => x.DnsServer == activeDomain.DnsServer).ToList();
+            }
+
+            result.AddRange(records);
 
             return result;
         }
@@ -2178,11 +2189,13 @@ namespace WebsitePanel.EnterpriseServer
                     }
                 }
 
+                // Find and delete all zone items for this domain
+                var zoneItems = PackageController.GetPackageItemsByType(domain.PackageId, ResourceGroups.Dns, typeof (DnsZone));
+                zoneItems.AddRange(PackageController.GetPackageItemsByType(domain.PackageId, ResourceGroups.Dns, typeof(SecondaryDnsZone)));
 
-                // remove DNS zone meta-item if required
-                if (domain.ZoneItemId > 0)
+                foreach (var zoneItem in zoneItems.Where(z => z.Name == domain.ZoneName))
                 {
-                    PackageController.DeletePackageItem(domain.ZoneItemId);
+                    PackageController.DeletePackageItem(zoneItem.Id);
                 }
 
                 // delete domain
@@ -2723,12 +2736,27 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     if (match.Success && match.Groups.Count == 2)
                     {
-                        return DateTime.Parse(match.Groups[1].ToString().Trim());
+                        return ParseDate(match.Groups[1].ToString().Trim());
                     }
                 }
             }
 
             return null;
+        }
+
+        private static DateTime? ParseDate(string dateString)
+        {
+            var result = DateTime.MinValue;
+
+            foreach (var datePattern in _datePatterns)
+            {
+                if (DateTime.TryParseExact(dateString, datePattern, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+                {
+                    return result;
+                }
+            }
+
+            return DateTime.Parse(dateString);
         }
 
         #endregion
@@ -2748,7 +2776,7 @@ namespace WebsitePanel.EnterpriseServer
                 DNSServer dns = new DNSServer();
                 ServiceProviderProxy.Init(dns, zoneItem.ServiceId);
 
-                return dns.GetZoneRecords(domain.DomainName);
+                return dns.GetZoneRecords(zoneItem.Name);
             }
 
             return new DnsRecord[] { };

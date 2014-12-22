@@ -21064,6 +21064,7 @@ SET @sql = @sql + ' SELECT COUNT(DomainID) FROM @Domains;SELECT
 	WS.ItemName AS WebSiteName,
 	ISNULL(MD.ItemID, 0) AS MailDomainID,
 	MD.ItemName AS MailDomainName,
+	Z.ItemName AS ZoneName,
 	D.IsSubDomain,
 	D.IsInstantAlias,
 	D.IsDomainPointer,

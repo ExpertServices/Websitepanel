@@ -23,21 +23,27 @@ namespace WebsitePanel.EnterpriseServer
         private static readonly string MailBodyTemplateParameter = "MAIL_BODY";
         private static readonly string MailBodyDomainRecordTemplateParameter = "MAIL_DOMAIN_RECORD";
         private static readonly string ServerNameParameter = "SERVER_NAME";
+        private static readonly string PauseBetweenQueriesParameter = "PAUSE_BETWEEN_QUERIES";
 
         private const string MxRecordPattern = @"mail exchanger = (.+)";
         private const string NsRecordPattern = @"nameserver = (.+)";
-
+        private const string DnsTimeOutMessage = @"dns request timed out";
+        private const int DnsTimeOutRetryCount = 3;
+        
         public override void DoWork()
         {
             BackgroundTask topTask = TaskManager.TopTask;
 
             List<DomainDnsChanges> domainsChanges = new List<DomainDnsChanges>();
+            var domainUsers = new Dictionary<int, UserInfo>();
 
             // get input parameters
             string dnsServersString = (string)topTask.GetParamValue(DnsServersParameter);
             string serverName = (string)topTask.GetParamValue(ServerNameParameter);
 
-            // check input parameters
+            int pause;
+
+                        // check input parameters
             if (String.IsNullOrEmpty(dnsServersString))
             {
                 TaskManager.WriteWarning("Specify 'DNS' task parameter.");
@@ -47,6 +53,13 @@ namespace WebsitePanel.EnterpriseServer
             if (String.IsNullOrEmpty((string)topTask.GetParamValue("MAIL_TO")))
             {
                 TaskManager.WriteWarning("The e-mail message has not been sent because 'Mail To' is empty.");
+                return;
+            }
+
+
+            if (!int.TryParse((string)topTask.GetParamValue(PauseBetweenQueriesParameter), out pause))
+            {
+                TaskManager.WriteWarning("The 'pause between queries' parameter is not valid.");
                 return;
             }
 
@@ -83,22 +96,32 @@ namespace WebsitePanel.EnterpriseServer
                         continue;
                     }
 
+                    if (!domainUsers.ContainsKey(domain.PackageId))
+                    {
+                        var domainUser = UserController.GetUser(packages.First(x=>x.PackageId == domain.PackageId).UserId);
+
+                        domainUsers.Add(domain.PackageId, domainUser);
+                    }
+
                     DomainDnsChanges domainChanges = new DomainDnsChanges();
                     domainChanges.DomainName = domain.DomainName;
+                    domainChanges.PackageId = domain.PackageId;
 
                     var dbDnsRecords = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainAllDnsRecords(domain.DomainId));
 
                     //execute server
                     foreach (var dnsServer in dnsServers)
                     {
-                        var dnsMxRecords = GetDomainDnsRecords(winServer, domain.DomainName, dnsServer, DnsRecordType.MX);
-                        var dnsNsRecords = GetDomainDnsRecords(winServer, domain.DomainName, dnsServer, DnsRecordType.NS);
+                        var dnsMxRecords = GetDomainDnsRecords(winServer, domain.DomainName, dnsServer, DnsRecordType.MX, pause) ?? dbDnsRecords.Where(x => x.RecordType == DnsRecordType.MX).ToList();
+                        var dnsNsRecords = GetDomainDnsRecords(winServer, domain.DomainName, dnsServer, DnsRecordType.NS, pause) ?? dbDnsRecords.Where(x => x.RecordType == DnsRecordType.NS).ToList();
 
                         FillRecordData(dnsMxRecords, domain, dnsServer);
                         FillRecordData(dnsNsRecords, domain, dnsServer);
 
                         domainChanges.DnsChanges.AddRange(ApplyDomainRecordsChanges(dbDnsRecords.Where(x => x.RecordType == DnsRecordType.MX), dnsMxRecords, dnsServer));
                         domainChanges.DnsChanges.AddRange(ApplyDomainRecordsChanges(dbDnsRecords.Where(x => x.RecordType == DnsRecordType.NS), dnsNsRecords, dnsServer));
+
+                        domainChanges.DnsChanges = CombineDnsRecordChanges(domainChanges.DnsChanges, dnsServer).ToList();
                     }
 
                     domainsChanges.Add(domainChanges);
@@ -107,7 +130,7 @@ namespace WebsitePanel.EnterpriseServer
 
             var changedDomains = FindDomainsWithChangedRecords(domainsChanges);
 
-            SendMailMessage(user, changedDomains);
+            SendMailMessage(user, changedDomains, domainUsers);
         }
 
         
@@ -150,13 +173,13 @@ namespace WebsitePanel.EnterpriseServer
 
                 if (dnsRecord != null)
                 {
-                    dnsRecordChanges.Add(new DnsRecordInfoChange { Record = record, Type = record.RecordType, Status = DomainDnsRecordStatuses.NotChanged, DnsServer = dnsServer });
+                    dnsRecordChanges.Add(new DnsRecordInfoChange { OldRecord = record, NewRecord = dnsRecord, Type = record.RecordType, Status = DomainDnsRecordStatuses.NotChanged, DnsServer = dnsServer });
 
                     dnsRecords.Remove(dnsRecord);
                 }
                 else
                 {
-                    dnsRecordChanges.Add(new DnsRecordInfoChange { Record = record, Type = record.RecordType, Status = DomainDnsRecordStatuses.Removed, DnsServer = dnsServer });
+                    dnsRecordChanges.Add(new DnsRecordInfoChange { OldRecord = record, NewRecord = new DnsRecordInfo { Value = string.Empty}, Type = record.RecordType, Status = DomainDnsRecordStatuses.Removed, DnsServer = dnsServer });
 
                     RemoveRecord(record);
                 }
@@ -164,12 +187,45 @@ namespace WebsitePanel.EnterpriseServer
 
             foreach (var record in dnsRecords)
             {
-                dnsRecordChanges.Add(new DnsRecordInfoChange { Record = record, Type = record.RecordType, Status = DomainDnsRecordStatuses.Added, DnsServer= dnsServer});
+                dnsRecordChanges.Add(new DnsRecordInfoChange { OldRecord = new DnsRecordInfo { Value = string.Empty }, NewRecord = record, Type = record.RecordType, Status = DomainDnsRecordStatuses.Added, DnsServer = dnsServer });
 
                 AddRecord(record);
             }
 
             return dnsRecordChanges;
+        }
+
+        private IEnumerable<DnsRecordInfoChange> CombineDnsRecordChanges(IEnumerable<DnsRecordInfoChange> records, string dnsServer)
+        {
+            var resultRecords = records.Where(x => x.DnsServer == dnsServer).ToList();
+
+            var recordsToRemove = new List<DnsRecordInfoChange>();
+
+            var removedRecords = records.Where(x => x.Status == DomainDnsRecordStatuses.Removed);
+            var addedRecords = records.Where(x => x.Status == DomainDnsRecordStatuses.Added);
+
+            foreach (DnsRecordType type in (DnsRecordType[])Enum.GetValues(typeof(DnsRecordType)))
+            {
+                foreach (var removedRecord in removedRecords.Where(x => x.Type == type))
+                {
+                    var addedRecord = addedRecords.FirstOrDefault(x => x.Type == type && !recordsToRemove.Contains(x));
+
+                    if (addedRecord != null)
+                    {
+                        recordsToRemove.Add(addedRecord);
+
+                        removedRecord.NewRecord = addedRecord.NewRecord;
+                        removedRecord.Status = DomainDnsRecordStatuses.Updated;
+                    }
+                }
+            }
+
+            foreach (var record in recordsToRemove)
+            {
+                resultRecords.Remove(record);
+            }
+
+            return resultRecords;
         }
 
         private void FillRecordData(IEnumerable<DnsRecordInfo> records, DomainInfo domain, string dnsServer)
@@ -217,7 +273,7 @@ namespace WebsitePanel.EnterpriseServer
             Thread.Sleep(100);
         }
 
-        private void SendMailMessage(UserInfo user, IEnumerable<DomainDnsChanges> domainsChanges)
+        private void SendMailMessage(UserInfo user, IEnumerable<DomainDnsChanges> domainsChanges, Dictionary<int, UserInfo> domainUsers)
         {
             BackgroundTask topTask = TaskManager.TopTask;
 
@@ -251,6 +307,7 @@ namespace WebsitePanel.EnterpriseServer
             Hashtable items = new Hashtable();
 
             items["user"] = user;
+            items["DomainUsers"] = domainUsers;
             items["Domains"] = domainsChanges;
 
             body = PackageController.EvaluateTemplate(body, items);
@@ -259,14 +316,29 @@ namespace WebsitePanel.EnterpriseServer
             MailHelper.SendMessage(from, mailTo, bcc, subject, body, priority, isHtml);
         }
 
-        public List<DnsRecordInfo> GetDomainDnsRecords(WindowsServer winServer, string domain, string dnsServer, DnsRecordType recordType)
+        public List<DnsRecordInfo> GetDomainDnsRecords(WindowsServer winServer, string domain, string dnsServer, DnsRecordType recordType, int pause)
         {
+            Thread.Sleep(pause);
+
             //nslookup -type=mx google.com 195.46.39.39
             var command = "nslookup";
             var args = string.Format("-type={0} {1} {2}", recordType, domain, dnsServer);
 
             // execute system command
-            var raw = winServer.ExecuteSystemCommand(command, args);
+            var raw  = string.Empty;
+            int triesCount = 0;
+
+            do
+            {
+                raw = winServer.ExecuteSystemCommand(command, args);
+            } 
+            while (raw.ToLowerInvariant().Contains(DnsTimeOutMessage) && ++triesCount < DnsTimeOutRetryCount);
+
+            //timeout check 
+            if (raw.ToLowerInvariant().Contains(DnsTimeOutMessage))
+            {
+                return null;
+            }
 
             var records = ParseNsLookupResult(raw, dnsServer, recordType);
 

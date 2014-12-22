@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.Portal.UserControls;
 using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Portal
@@ -265,6 +266,21 @@ namespace WebsitePanel.Portal
         protected void chkCreateResources_CheckedChanged(object sender, EventArgs e)
         {
             BindHostingPlan();
+        }
+
+        protected void txtDomainName_OnTextChanged(object sender, DomainControl.DomainNameEventArgs e)
+        {
+            if (Utils.IsIdnDomain(txtDomainName.Text))
+            {
+                fsMail.Disabled = true;
+                chkIntegratedOUProvisioning.Checked = false;
+                chkIntegratedOUProvisioning.Enabled = false;
+            }
+            else
+            {
+                fsMail.Disabled = false;
+                BindHostingPlan();
+            }
         }
     }
 }

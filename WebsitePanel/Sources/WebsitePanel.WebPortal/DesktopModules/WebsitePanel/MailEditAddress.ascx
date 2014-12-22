@@ -9,7 +9,7 @@
 		<td id="EditEmailPanel" runat="server">
 		    <uc2:UsernameControl ID="txtName" runat="server" width="120px" />
 		    &nbsp;@&nbsp;
-		    <dnc:SelectDomain id="domainsSelectDomainControl" runat="server" HideDomainPointers="true" HideInstantAlias="false" HideMailDomainPointers="true"></dnc:SelectDomain>
+		    <dnc:SelectDomain id="domainsSelectDomainControl" runat="server" HideDomainPointers="true" HideInstantAlias="false" HideMailDomainPointers="true" HideIdnDomains="True"></dnc:SelectDomain>
 		</td>
 		<td id="DisplayEmailPanel" runat="server">
 		    <asp:Label ID="litName" Runat="server" Visible="False" CssClass="Huge"></asp:Label>

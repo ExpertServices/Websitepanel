@@ -30,6 +30,7 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Collections;
+using System.Globalization;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
@@ -57,6 +58,10 @@ namespace WebsitePanel.Portal
                 // domain name
                 DomainInfo domain = ES.Services.Servers.GetDomain(PanelRequest.DomainID);
                 litDomainName.Text = domain.DomainName;
+                if (Utils.IsIdnDomain(domain.DomainName))
+                {
+                    litDomainName.Text = string.Format("{0} ({1})", Utils.UnicodeToAscii(domain.DomainName), domain.DomainName);
+                }
             }
         }
 

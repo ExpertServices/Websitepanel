@@ -27,6 +27,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
+using System.Collections.Generic;
 using System.Configuration.Install;
 using System.Data;
 using System.Data.SqlClient;
@@ -35,6 +36,9 @@ using System.Linq;
 using System.ServiceProcess;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
+using System.Xml;
 using Microsoft.Deployment.WindowsInstaller;
 using WebsitePanel.Setup;
 
@@ -42,6 +46,8 @@ namespace WebsitePanel.SchedulerServiceInstaller
 {
     public class CustomActions
     {
+        public const string CustomDataDelimiter = "-=del=-";
+
         [CustomAction]
         public static ActionResult CheckConnection(Session session)
         {
@@ -63,9 +69,23 @@ namespace WebsitePanel.SchedulerServiceInstaller
         [CustomAction]
         public static ActionResult FinalizeInstall(Session session)
         {
-            ChangeConfigString("installer.connectionstring", session["CONNECTIONSTRING"], session["INSTALLFOLDER"]);
-            ChangeCryptoKey(session["INSTALLFOLDER"]);
-            InstallService(session["INSTALLFOLDER"]);
+            var connectionString = GetCustomActionProperty(session, "ConnectionString").Replace(CustomDataDelimiter, ";");
+            var serviceFolder = GetCustomActionProperty(session, "ServiceFolder");
+            var previousConnectionString = GetCustomActionProperty(session, "PreviousConnectionString").Replace(CustomDataDelimiter, ";");
+            var previousCryptoKey = GetCustomActionProperty(session, "PreviousCryptoKey");
+
+            if (string.IsNullOrEmpty(serviceFolder))
+            {
+                return ActionResult.Success;
+            }
+
+            connectionString = string.IsNullOrEmpty(previousConnectionString)
+                ? connectionString
+                : previousConnectionString;
+
+            ChangeConfigString("/configuration/connectionStrings/add[@name='EnterpriseServer']", "connectionString", connectionString, serviceFolder);
+            ChangeConfigString("/configuration/appSettings/add[@key='WebsitePanel.CryptoKey']", "value", previousCryptoKey, serviceFolder);
+            InstallService(serviceFolder);
 
             return ActionResult.Success;
         }
@@ -74,6 +94,46 @@ namespace WebsitePanel.SchedulerServiceInstaller
         public static ActionResult FinalizeUnInstall(Session session)
         {
             UnInstallService();
+
+            return ActionResult.Success;
+        }
+
+        [CustomAction]
+        public static ActionResult PreInstallationAction(Session session)
+        {
+            session["SKIPCONNECTIONSTRINGSTEP"] = "0";
+
+            session["SERVICEFOLDER"] = session["INSTALLFOLDER"];
+
+            var servicePath = SecurityUtils.GetServicePath("WebsitePanel Scheduler");
+
+            if (!string.IsNullOrEmpty(servicePath))
+            {
+                string path = Path.Combine(servicePath, "WebsitePanel.SchedulerService.exe.config");
+
+                if (File.Exists(path))
+                {
+                    using (var reader = new StreamReader(path))
+                    {
+                        string content = reader.ReadToEnd();
+                        var pattern = new Regex(@"(?<=<add key=""WebsitePanel.CryptoKey"" .*?value\s*=\s*"")[^""]+(?="".*?>)");
+                        Match match = pattern.Match(content);
+                        session["PREVIOUSCRYPTOKEY"] = match.Value;
+
+                        var connectionStringPattern = new Regex(@"(?<=<add name=""EnterpriseServer"" .*?connectionString\s*=\s*"")[^""]+(?="".*?>)");
+                        match = connectionStringPattern.Match(content);
+                        session["PREVIOUSCONNECTIONSTRING"] = match.Value.Replace(";", CustomDataDelimiter);
+                    }
+
+                    session["SKIPCONNECTIONSTRINGSTEP"] = "1";
+
+                    if (string.IsNullOrEmpty(session["SERVICEFOLDER"]))
+                    {
+                        session["SERVICEFOLDER"] = servicePath;
+                    }
+                } 
+
+            }
 
             return ActionResult.Success;
         }
@@ -122,43 +182,28 @@ namespace WebsitePanel.SchedulerServiceInstaller
             }
         }
 
-        private static void ChangeCryptoKey(string installFolder)
+        private static void ChangeConfigString(string nodePath, string attrToChange, string value, string installFolder)
         {
-            string path = Path.Combine(installFolder.Replace("SchedulerService", "Enterprise Server"), "web.config");            
-            string cryptoKey = "0123456789";
-
-            if (File.Exists(path))
-            {
-                using (var reader = new StreamReader(path))
-                {
-                    string content = reader.ReadToEnd();
-                    var pattern = new Regex(@"(?<=<add key=""WebsitePanel.CryptoKey"" .*?value\s*=\s*"")[^""]+(?="".*?>)");                    
-                    Match match = pattern.Match(content);                    
-                    cryptoKey = match.Value;
-                }
-            }            
-
-            ChangeConfigString("installer.cryptokey", cryptoKey, installFolder);
-        }
-
-        private static void ChangeConfigString(string searchString, string replaceValue, string installFolder)
-        {
-            string content;
             string path = Path.Combine(installFolder, "WebsitePanel.SchedulerService.exe.config");
 
-            using (var reader = new StreamReader(path))
+            if (!File.Exists(path))
             {
-                content = reader.ReadToEnd();
+                return;
             }
 
-            var re = new Regex("\\$\\{" + searchString + "\\}+", RegexOptions.IgnoreCase);
-            content = re.Replace(content, replaceValue);
+            XmlDocument xmldoc = new XmlDocument();
+            xmldoc.Load(path);
 
-            using (var writer = new StreamWriter(path))
+            XmlElement node = xmldoc.SelectSingleNode(nodePath) as XmlElement;
+
+            if (node != null)
             {
-                writer.Write(content);
+                node.SetAttribute(attrToChange, value);
+
+                xmldoc.Save(path);
             }
         }
+
 
         private static void StopService(string serviceName)
         {
@@ -184,12 +229,12 @@ namespace WebsitePanel.SchedulerServiceInstaller
 
         private static string GetConnectionString(string serverName, string databaseName)
         {
-            return string.Format("Server={0};database={1};Trusted_Connection=true;", serverName, databaseName);
+            return string.Format("Server={0};database={1};Trusted_Connection=true;", serverName, databaseName).Replace(";", CustomDataDelimiter);
         }
 
         private static string GetConnectionString(string serverName, string databaseName, string login, string password)
         {
-            return string.Format("Server={0};database={1};uid={2};password={3};", serverName, databaseName, login, password);
+            return string.Format("Server={0};database={1};uid={2};password={3};", serverName, databaseName, login, password).Replace(";", CustomDataDelimiter);
         }
 
         private static bool CheckConnection(string connectionString)
@@ -214,6 +259,16 @@ namespace WebsitePanel.SchedulerServiceInstaller
             }
 
             return result;
+        }
+
+        private static string GetCustomActionProperty(Session session, string key)
+        {
+            if (session.CustomActionData.ContainsKey(key))
+            {
+                return session.CustomActionData[key].Replace("-=-", ";");
+            }
+
+            return string.Empty;
         }
     }
 }

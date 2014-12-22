@@ -1,12 +1,11 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="UserCreateSpace.ascx.cs" Inherits="WebsitePanel.Portal.UserCreateSpace" %>
-<%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="UserControls/CollapsiblePanel.ascx" %>
 <%@ Register Src="UserControls/UsernameControl.ascx" TagName="UsernameControl" TagPrefix="uc4" %>
-<%@ Register Src="DomainsSelectDomainControl.ascx" TagName="DomainsSelectDomainControl" TagPrefix="uc1" %>
+<%@ Register Src="UserControls/DomainControl.ascx" TagName="DomainControl" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
-<asp:ValidationSummary ID="summary" runat="server" ShowMessageBox="true" ShowSummary="false" ValidationGroup="CreateSpace" />
+<asp:ValidationSummary ID="summary" runat="server" ShowMessageBox="true" ShowSummary="true" ValidationGroup="CreateSpace" />
 
 <asp:UpdatePanel runat="server" ID="updatePanelSpace" UpdateMode="Conditional" ChildrenAsTriggers="true">
     <ContentTemplate>
@@ -74,12 +73,7 @@
                     <asp:Localize ID="locDomainName" runat="server" meta:resourcekey="locDomainName" Text="Domain name:"></asp:Localize>
                 </td>
                 <td class="Normal" width="100%">
-                    <asp:TextBox ID="txtDomainName" runat="server" CssClass="NormalTextBox" Width="250px"></asp:TextBox>
-                    <asp:RequiredFieldValidator id="DomainRequiredValidator" runat="server" meta:resourcekey="DomainRequiredValidator"
-                        ControlToValidate="txtDomainName" Display="Dynamic" ValidationGroup="CreateSpace" SetFocusOnError="true"></asp:RequiredFieldValidator>
-                    <asp:RegularExpressionValidator id="DomainFormatValidator" runat="server" meta:resourcekey="DomainFormatValidator"
-                        ControlToValidate="txtDomainName" Display="Dynamic" ValidationGroup="CreateSpace" SetFocusOnError="true"
-                        ValidationExpression="^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.){1,10}[a-zA-Z]{2,15}$"></asp:RegularExpressionValidator>
+                    <wsp:DomainControl ID="txtDomainName" runat="server" RequiredEnabled="True" ValidationGroup="CreateSpace" AutoPostBack="True" OnTextChanged="txtDomainName_OnTextChanged"></wsp:DomainControl>
                 </td>
             </tr>
         </table>

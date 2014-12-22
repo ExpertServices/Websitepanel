@@ -9,6 +9,7 @@ namespace WebsitePanel.Providers.DomainLookup
     {
         NotChanged,
         Removed,
-        Added
+        Added,
+        Updated
     }
 }

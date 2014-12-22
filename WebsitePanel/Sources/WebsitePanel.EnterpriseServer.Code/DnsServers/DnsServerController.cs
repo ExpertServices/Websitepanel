@@ -29,6 +29,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
+using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 using WebsitePanel.Providers;
@@ -38,6 +40,13 @@ namespace WebsitePanel.EnterpriseServer
 {
     public class DnsServerController : IImportController, IBackupController
     {
+        private static string GetAsciiZoneName(string zoneName)
+        {
+            if (string.IsNullOrEmpty(zoneName)) return zoneName;
+            var idn = new IdnMapping();
+            return idn.GetAscii(zoneName);
+        }
+
         private static DNSServer GetDNSServer(int serviceId)
         {
             DNSServer dns = new DNSServer();
@@ -54,6 +63,9 @@ namespace WebsitePanel.EnterpriseServer
         {
             // get DNS provider
             DNSServer dns = GetDNSServer(serviceId);
+
+            // Ensure zoneName is in ascii before saving to database
+            zoneName = GetAsciiZoneName(zoneName);
 
             // check if zone already exists
             if (dns.ZoneExists(zoneName))
@@ -199,7 +211,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             // zone item
             DnsZone zone = primaryZone ? new DnsZone() : new SecondaryDnsZone();
-            zone.Name = zoneName;
+            zone.Name = GetAsciiZoneName(zoneName);
             zone.PackageId = spaceId;
             zone.ServiceId = serviceId;
             int zoneItemId = PackageController.AddPackageItem(zone);
@@ -280,6 +292,8 @@ namespace WebsitePanel.EnterpriseServer
 
             foreach (GlobalDnsRecord record in records)
             {
+                domainName = GetAsciiZoneName(domainName);
+
                 DnsRecord rr = new DnsRecord();
                 rr.RecordType = (DnsRecordType)Enum.Parse(typeof(DnsRecordType), record.RecordType, true);
                 rr.RecordName = Utils.ReplaceStringVariable(record.RecordName, "host_name", hostName, true);
@@ -359,8 +373,11 @@ namespace WebsitePanel.EnterpriseServer
             DNSServer dns = new DNSServer();
             ServiceProviderProxy.Init(dns, serviceId);
 
+            // IDN: The list of importable names is populated with unicode names, to make it easier for the user
+            var idn = new IdnMapping();
+
             if (itemType == typeof(DnsZone))
-                items.AddRange(dns.GetZones());
+                items.AddRange(dns.GetZones().Select(z => idn.GetUnicode(z)));
 
             return items;
         }
@@ -377,7 +394,7 @@ namespace WebsitePanel.EnterpriseServer
             {
                 // add DNS zone
                 DnsZone zone = new DnsZone();
-                zone.Name = itemName;
+                zone.Name = GetAsciiZoneName(itemName);
                 zone.ServiceId = serviceId;
                 zone.PackageId = packageId;
                 int zoneId = PackageController.AddPackageItem(zone);

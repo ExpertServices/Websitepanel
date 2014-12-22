@@ -35,15 +35,16 @@ namespace WebsitePanel.SchedulerService
     public partial class SchedulerService : ServiceBase
     {
         private Timer _Timer;
-        private static bool _isRuninng;
+        private static object _isRuninng;
         #region Construcor
 
         public SchedulerService()
         {
+            _isRuninng = new object();
+
             InitializeComponent();
 
             _Timer = new Timer(Process, null, 5000, 5000);
-            _isRuninng = false;
         }
 
         #endregion
@@ -57,12 +58,18 @@ namespace WebsitePanel.SchedulerService
         protected static void Process(object callback)
         {
             //check running service
-            if (_isRuninng)
+            if (!Monitor.TryEnter(_isRuninng))
                 return;
 
-            _isRuninng = true;
-             Scheduler.Start();
-            _isRuninng = false;
+            try
+            {
+                Scheduler.Start();
+            }
+            finally
+            {
+                Monitor.Exit(_isRuninng);
+            }
+
         }
 
         #endregion

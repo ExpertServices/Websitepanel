@@ -14,6 +14,7 @@ namespace WebsitePanel.Portal.ScheduleTaskControls
         private static readonly string DnsServersParameter = "DNS_SERVERS";
         private static readonly string MailToParameter = "MAIL_TO";
         private static readonly string ServerNameParameter = "SERVER_NAME";
+        private static readonly string PauseBetweenQueriesParameter = "PAUSE_BETWEEN_QUERIES";
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -30,6 +31,7 @@ namespace WebsitePanel.Portal.ScheduleTaskControls
 
             this.SetParameter(this.txtDnsServers, DnsServersParameter);
             this.SetParameter(this.txtMailTo, MailToParameter);
+            this.SetParameter(this.txtPause, PauseBetweenQueriesParameter);
             this.SetParameter(this.ddlServers, ServerNameParameter);
 
             var servers = ES.Services.Servers.GetAllServers();
@@ -68,8 +70,9 @@ namespace WebsitePanel.Portal.ScheduleTaskControls
             ScheduleTaskParameterInfo dnsServers = this.GetParameter(this.txtDnsServers, DnsServersParameter);
             ScheduleTaskParameterInfo mailTo = this.GetParameter(this.txtMailTo, MailToParameter);
             ScheduleTaskParameterInfo serverName = this.GetParameter(this.ddlServers, ServerNameParameter);
+            ScheduleTaskParameterInfo pause = this.GetParameter(this.txtPause, PauseBetweenQueriesParameter);
 
-            return new ScheduleTaskParameterInfo[3] { dnsServers, mailTo, serverName };
+            return new ScheduleTaskParameterInfo[4] { dnsServers, mailTo, serverName, pause };
         }
     }
 }

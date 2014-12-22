@@ -6057,6 +6057,112 @@ END
 RETURN
 GO
 
+-- wsp-10053: IDN, return ZoneName also from GetDomainsPaged (already exists in other GetDomain-sps)
+ALTER PROCEDURE [dbo].[GetDomainsPaged]
+(
+	@ActorID int,
+	@PackageID int,
+	@ServerID int,
+	@Recursive bit,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+SET NOCOUNT ON
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- build query and run it to the temporary table
+DECLARE @sql nvarchar(4000)
+
+IF @SortColumn = '' OR @SortColumn IS NULL
+SET @SortColumn = 'DomainName'
+
+SET @sql = '
+DECLARE @Domains TABLE
+(
+	ItemPosition int IDENTITY(1,1),
+	DomainID int
+)
+INSERT INTO @Domains (DomainID)
+SELECT
+	D.DomainID
+FROM Domains AS D
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
+LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+WHERE (D.IsInstantAlias = 0 AND D.IsDomainPointer = 0) AND
+		((@Recursive = 0 AND D.PackageID = @PackageID)
+		OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, D.PackageID) = 1))
+AND (@ServerID = 0 OR (@ServerID > 0 AND S.ServerID = @ServerID))
+'
+
+IF @FilterColumn <> '' AND @FilterValue <> ''
+SET @sql = @sql + ' AND ' + @FilterColumn + ' LIKE @FilterValue '
+
+IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
+
+SET @sql = @sql + ' SELECT COUNT(DomainID) FROM @Domains;SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(WS.ItemID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(MD.ItemID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	Z.ItemName AS ZoneName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.IsDomainPointer,
+	
+	-- packages
+	P.PackageName,
+	
+	-- server
+	ISNULL(SRV.ServerID, 0) AS ServerID,
+	ISNULL(SRV.ServerName, '''') AS ServerName,
+	ISNULL(SRV.Comments, '''') AS ServerComments,
+	ISNULL(SRV.VirtualServer, 0) AS VirtualServer,
+	
+	-- user
+	P.UserID,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.FullName,
+	U.RoleID,
+	U.Email
+FROM @Domains AS SD
+INNER JOIN Domains AS D ON SD.DomainID = D.DomainID
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
+LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+WHERE SD.ItemPosition BETWEEN @StartRow + 1 AND @StartRow + @MaximumRows'
+
+exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @PackageID int, @FilterValue nvarchar(50), @ServerID int, @Recursive bit',
+@StartRow, @MaximumRows, @PackageID, @FilterValue, @ServerID, @Recursive
+
+
+RETURN
+
+GO
+
+
 -- Domain lookup tasks
 
 IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTasks] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP')
@@ -6086,6 +6192,12 @@ GO
 IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'SERVER_NAME' )
 BEGIN
 INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'SERVER_NAME', N'String', N'', 3)
+END
+GO
+
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'PAUSE_BETWEEN_QUERIES' )
+BEGIN
+INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'PAUSE_BETWEEN_QUERIES', N'String', N'100', 4)
 END
 GO
 
@@ -6385,7 +6497,7 @@ Please, find below details of MX and NS changes.
 </p>
 
     <ad:foreach collection="#Domains#" var="Domain" index="i">
-	<h2>#Domain.DomainName#</h2>
+	<h2>#Domain.DomainName# - #DomainUsers[Domain.PackageId].FirstName# #DomainUsers[Domain.PackageId].LastName#</h2>
 
 	<table>
 	    <thead>
@@ -6393,7 +6505,8 @@ Please, find below details of MX and NS changes.
 	            <th>DNS</th>
 				<th>Type</th>
 				<th>Status</th>
-	            <th>Value</th>
+	            <th>Old Value</th>
+                <th>New Value</th>
 	        </tr>
 	    </thead>
 	    <tbody>
@@ -6402,7 +6515,8 @@ Please, find below details of MX and NS changes.
 	            <td>#DnsChange.DnsServer#</td>
 	            <td>#DnsChange.Type#</td>
 				<td>#DnsChange.Status#</td>
-	            <td>#DnsChange.Record.Value#</td>
+                <td>#DnsChange.OldRecord.Value#</td>
+	            <td>#DnsChange.NewRecord.Value#</td>
 	        </tr>
 	    	</ad:foreach>
 	    </tbody>
@@ -6438,19 +6552,19 @@ INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [Property
 Hello #user.FirstName#,
 </ad:if>
 
-Please, find below MX and NS Changes Information.
-
+Please, find below details of MX and NS changes.
 
 
 <ad:foreach collection="#Domains#" var="Domain" index="i">
 
- #Domain.DomainName#
+ #Domain.DomainName# - #DomainUsers[Domain.PackageId].FirstName# #DomainUsers[Domain.PackageId].LastName#
 
         <ad:foreach collection="#Domain.DnsChanges#" var="DnsChange" index="j">
-            DNS:    #DnsChange.DnsServer#
-            Type:   #DnsChange.Type#
-	    Status: #DnsChange.Status#
-            Value:  #DnsChange.Record.Value#
+            DNS:       #DnsChange.DnsServer#
+            Type:      #DnsChange.Type#
+	    Status:    #DnsChange.Status#
+            Old Value: #DnsChange.OldRecord.Value#
+            New Value: #DnsChange.NewRecord.Value#
 
     	</ad:foreach>
 </ad:foreach>
@@ -6498,7 +6612,7 @@ Hello #user.FirstName#,
 </ad:if>
 
 <p>
-No MX and NS changes have been founded.
+No MX and NS changes have been found.
 </p>
 
 <p>
