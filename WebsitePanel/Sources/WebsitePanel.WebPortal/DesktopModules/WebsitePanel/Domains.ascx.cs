@@ -45,8 +45,12 @@ namespace WebsitePanel.Portal
 {
     public partial class Domains : WebsitePanelModuleBase
     {
+        public Dictionary<int, string> dnsRecords;
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            dnsRecords = new Dictionary<int, string>();
+
             gvDomains.PageSize = UsersHelper.GetDisplayItemsPerPage();
 
             // visibility
@@ -154,11 +158,18 @@ namespace WebsitePanel.Portal
 
         public string GetDomainDnsRecords(int domainId)
         {
+            if(dnsRecords.ContainsKey(domainId))
+            {
+                return dnsRecords[domainId];
+            }
+
             var records = ES.Services.Servers.GetDomainDnsRecords(domainId);
 
             if (!records.Any())
             {
-                return "No Dns Records";
+                dnsRecords.Add(domainId, string.Empty);
+
+                return string.Empty;
             }
 
             var header = GetLocalizedString("DomainLookup.TooltipHeader");
@@ -169,7 +180,9 @@ namespace WebsitePanel.Portal
             tooltipLines.Add(" ");
             tooltipLines.AddRange( records.Select(x=>string.Format("{0}: {1}", x.RecordType, x.Value)));
 
-            return string.Join("\r\n", tooltipLines);
+            dnsRecords.Add(domainId, string.Join("\r\n", tooltipLines));
+
+            return dnsRecords[domainId];
         }
 
         protected void odsDomainsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)
