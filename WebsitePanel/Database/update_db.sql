@@ -7121,13 +7121,19 @@ WHERE
 UNION
 SELECT
 	'ExchangeAccountEmailAddresses' as ObjectName,
-	AddressID as ObjectID,
-	AccountID as ObjectType,
-	EmailAddress as DisplayName
+	eam.AddressID as ObjectID,
+	eam.AccountID as ObjectType,
+	eam.EmailAddress as DisplayName
 FROM
-	ExchangeAccountEmailAddresses
+	ExchangeAccountEmailAddresses as eam
+INNER JOIN 
+	ExchangeAccounts ea
+ON 
+	ea.AccountID = eam.AccountID
 WHERE
-	EmailAddress LIKE '%@'+ @DomainName
+	(ea.PrimaryEmailAddress != eam.EmailAddress)
+	AND (ea.UserPrincipalName != eam.EmailAddress)
+	AND (eam.EmailAddress LIKE '%@'+ @DomainName)
 UNION
 SELECT 
 	'LyncUsers' as ObjectName,
