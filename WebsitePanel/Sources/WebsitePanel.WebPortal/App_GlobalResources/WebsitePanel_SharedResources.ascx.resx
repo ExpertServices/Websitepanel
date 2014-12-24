@@ -5620,5 +5620,8 @@
   <data name="SchedulerTask.SCHEDULE_TASK_DOMAIN_EXPIRATION" xml:space="preserve">
     <value>Check domain expiration date</value>
   </data>
+  <data name="Error.REMOTE_DESKTOP_SERVICES_ADD_RDS_SERVER" xml:space="preserve">
+    <value>Unable to add RDS Server</value>
+  </data>
 
 </root>

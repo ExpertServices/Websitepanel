@@ -3080,5 +3080,10 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         #endregion
+
+        public static DataSet GetOrganizationObjectsByDomain(int itemId, string domainName)
+        {
+            return DataProvider.GetOrganizationObjectsByDomain(itemId, domainName);
+        }
     }
 }

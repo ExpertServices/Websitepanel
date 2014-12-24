@@ -103,7 +103,9 @@ namespace WebsitePanel.Portal.ExchangeServer
                     int result = ES.Services.Organizations.DeleteOrganizationDomain(PanelRequest.ItemID, domainId);
                     if (result < 0)
                     {
-                        messageBox.ShowErrorMessage("EXCHANGE_UNABLE_TO_DELETE_DOMAIN");
+                        Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "check_domain",
+                            "SpaceID=" + PanelSecurity.PackageId, "DomainID=" + domainId));
+                        return;
                     }
 
                     // rebind domains

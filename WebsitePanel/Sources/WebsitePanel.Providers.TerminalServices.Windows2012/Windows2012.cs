@@ -165,6 +165,20 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             return new string[]{};
         }
 
+        public bool CheckRDSServerAvaliable(string hostname)
+        {
+            bool result = false;
+            var ping = new Ping();
+            var reply = ping.Send(hostname, 1000);
+
+            if (reply.Status == IPStatus.Success)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
         #endregion
 
         #region RDS Collections

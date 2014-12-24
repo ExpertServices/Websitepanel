@@ -63,5 +63,6 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         bool CheckServerAvailability(string hostName);
         string[] GetApplicationUsers(string collectionName, string applicationName);
         bool SetApplicationUsers(string collectionName, RemoteApplication remoteApp, string[] users);
+        bool CheckRDSServerAvaliable(string hostname);
     }
 }

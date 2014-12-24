@@ -69,6 +69,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         private System.Threading.SendOrPostCallback SetApplicationUsersOperationCompleted;
         
+        private System.Threading.SendOrPostCallback CheckRDSServerAvaliableOperationCompleted;
+        
         /// <remarks/>
         public RemoteDesktopServices() {
             this.Url = "http://localhost:9003/RemoteDesktopServices.asmx";
@@ -133,6 +135,9 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         /// <remarks/>
         public event SetApplicationUsersCompletedEventHandler SetApplicationUsersCompleted;
+        
+        /// <remarks/>
+        public event CheckRDSServerAvaliableCompletedEventHandler CheckRDSServerAvaliableCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -1022,6 +1027,48 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/CheckRDSServerAvaliable", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool CheckRDSServerAvaliable(string hostname) {
+            object[] results = this.Invoke("CheckRDSServerAvaliable", new object[] {
+                        hostname});
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginCheckRDSServerAvaliable(string hostname, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("CheckRDSServerAvaliable", new object[] {
+                        hostname}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public bool EndCheckRDSServerAvaliable(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void CheckRDSServerAvaliableAsync(string hostname) {
+            this.CheckRDSServerAvaliableAsync(hostname, null);
+        }
+        
+        /// <remarks/>
+        public void CheckRDSServerAvaliableAsync(string hostname, object userState) {
+            if ((this.CheckRDSServerAvaliableOperationCompleted == null)) {
+                this.CheckRDSServerAvaliableOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckRDSServerAvaliableOperationCompleted);
+            }
+            this.InvokeAsync("CheckRDSServerAvaliable", new object[] {
+                        hostname}, this.CheckRDSServerAvaliableOperationCompleted, userState);
+        }
+        
+        private void OnCheckRDSServerAvaliableOperationCompleted(object arg) {
+            if ((this.CheckRDSServerAvaliableCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CheckRDSServerAvaliableCompleted(this, new CheckRDSServerAvaliableCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -1424,6 +1471,32 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         private object[] results;
         
         internal SetApplicationUsersCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void CheckRDSServerAvaliableCompletedEventHandler(object sender, CheckRDSServerAvaliableCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CheckRDSServerAvaliableCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CheckRDSServerAvaliableCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }
