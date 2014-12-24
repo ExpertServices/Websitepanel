@@ -6352,6 +6352,7 @@ Please, find below details of your domain expiration information.
     <thead>
         <tr>
             <th>Domain</th>
+			<th>Registrar</th>
 			<th>Customer</th>
             <th>Expiration Date</th>
         </tr>
@@ -6360,8 +6361,9 @@ Please, find below details of your domain expiration information.
             <ad:foreach collection="#Domains#" var="Domain" index="i">
         <tr>
             <td>#Domain.DomainName#</td>
+			<td>#iif(isnull(Domain.Registrar), "", Domain.Registrar)#</td>
 			<td>#Domain.Customer#</td>
-            <td>#Domain.ExpirationDate#</td>
+            <td>#iif(isnull(Domain.ExpirationDate), "", Domain.ExpirationDate)#</td>
         </tr>
     </ad:foreach>
     </tbody>
@@ -6424,8 +6426,9 @@ Please, find below details of your domain expiration information.
 
 <ad:foreach collection="#Domains#" var="Domain" index="i">
 	Domain: #Domain.DomainName#
+	Registrar: #iif(isnull(Domain.Registrar), "", Domain.Registrar)#
 	Customer: #Domain.Customer#
-	Expiration Date: #Domain.ExpirationDate#
+	Expiration Date: #iif(isnull(Domain.ExpirationDate), "", Domain.ExpirationDate)#
 
 </ad:foreach>
 
@@ -6470,6 +6473,7 @@ INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [Property
         .Summary { font-family: Tahoma; font-size: 9pt; }
         .Summary H1 { font-size: 1.7em; color: ##1F4978; border-bottom: dotted 3px ##efefef; }
         .Summary H2 { font-size: 1.3em; color: ##1F4978; } 
+		.Summary H3 { font-size: 1em; color: ##1F4978; } 
         .Summary TABLE { border: solid 1px ##e5e5e5; }
         .Summary TH,
         .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
@@ -6498,6 +6502,7 @@ Please, find below details of MX and NS changes.
 
     <ad:foreach collection="#Domains#" var="Domain" index="i">
 	<h2>#Domain.DomainName# - #DomainUsers[Domain.PackageId].FirstName# #DomainUsers[Domain.PackageId].LastName#</h2>
+	<h3>#iif(isnull(Domain.Registrar), "", Domain.Registrar)# #iif(isnull(Domain.ExpirationDate), "", Domain.ExpirationDate)#</h3>
 
 	<table>
 	    <thead>
@@ -6558,6 +6563,8 @@ Please, find below details of MX and NS changes.
 <ad:foreach collection="#Domains#" var="Domain" index="i">
 
  #Domain.DomainName# - #DomainUsers[Domain.PackageId].FirstName# #DomainUsers[Domain.PackageId].LastName#
+ Registrar:      #iif(isnull(Domain.Registrar), "", Domain.Registrar)#
+ ExpirationDate: #iif(isnull(Domain.ExpirationDate), "", Domain.ExpirationDate)#
 
         <ad:foreach collection="#Domain.DnsChanges#" var="DnsChange" index="j">
             DNS:       #DnsChange.DnsServer#
@@ -6965,7 +6972,6 @@ exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @PackageID int, @Fil
 
 
 RETURN
-
 GO
 
 
@@ -7145,4 +7151,175 @@ WHERE
 ORDER BY 
 	DisplayName
 RETURN
+GO
+IF NOT EXISTS(SELECT * FROM sys.columns 
+        WHERE [name] = N'RegistrarName' AND [object_id] = OBJECT_ID(N'Domains'))
+BEGIN
+	ALTER TABLE [dbo].[Domains] ADD RegistrarName nvarchar(max);
+END
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateWhoisDomainInfo')
+DROP PROCEDURE UpdateWhoisDomainInfo
+GO
+CREATE PROCEDURE [dbo].UpdateWhoisDomainInfo
+(
+	@DomainId INT,
+	@DomainCreationDate DateTime,
+	@DomainExpirationDate DateTime,
+	@DomainLastUpdateDate DateTime,
+	@DomainRegistrarName nvarchar(max)
+)
+AS
+UPDATE [dbo].[Domains] SET [CreationDate] = @DomainCreationDate, [ExpirationDate] = @DomainExpirationDate, [LastUpdateDate] = @DomainLastUpdateDate, [RegistrarName] = @DomainRegistrarName WHERE [DomainID] = @DomainId
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetDomainsPaged')
+DROP PROCEDURE GetDomainsPaged
+GO
+CREATE PROCEDURE [dbo].[GetDomainsPaged]
+(
+	@ActorID int,
+	@PackageID int,
+	@ServerID int,
+	@Recursive bit,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+SET NOCOUNT ON
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- build query and run it to the temporary table
+DECLARE @sql nvarchar(2500)
+
+IF @SortColumn = '' OR @SortColumn IS NULL
+SET @SortColumn = 'DomainName'
+
+SET @sql = '
+DECLARE @Domains TABLE
+(
+	ItemPosition int IDENTITY(1,1),
+	DomainID int
+)
+INSERT INTO @Domains (DomainID)
+SELECT
+	D.DomainID
+FROM Domains AS D
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
+LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+WHERE (D.IsInstantAlias = 0 AND D.IsDomainPointer = 0) AND
+		((@Recursive = 0 AND D.PackageID = @PackageID)
+		OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, D.PackageID) = 1))
+AND (@ServerID = 0 OR (@ServerID > 0 AND S.ServerID = @ServerID))
+'
+
+IF @FilterColumn <> '' AND @FilterValue <> ''
+SET @sql = @sql + ' AND ' + @FilterColumn + ' LIKE @FilterValue '
+
+IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
+
+SET @sql = @sql + ' SELECT COUNT(DomainID) FROM @Domains;SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(WS.ItemID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(MD.ItemID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.IsDomainPointer,
+	D.ExpirationDate,
+	D.LastUpdateDate,
+	D.RegistrarName,
+	P.PackageName,
+	ISNULL(SRV.ServerID, 0) AS ServerID,
+	ISNULL(SRV.ServerName, '''') AS ServerName,
+	ISNULL(SRV.Comments, '''') AS ServerComments,
+	ISNULL(SRV.VirtualServer, 0) AS VirtualServer,
+	P.UserID,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.FullName,
+	U.RoleID,
+	U.Email
+FROM @Domains AS SD
+INNER JOIN Domains AS D ON SD.DomainID = D.DomainID
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
+LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+WHERE SD.ItemPosition BETWEEN @StartRow + 1 AND @StartRow + @MaximumRows'
+
+exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @PackageID int, @FilterValue nvarchar(50), @ServerID int, @Recursive bit', 
+@StartRow, @MaximumRows, @PackageID, @FilterValue, @ServerID, @Recursive
+
+
+RETURN
+GO
+
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetDomains')
+DROP PROCEDURE GetDomains
+GO
+CREATE PROCEDURE [dbo].[GetDomains]
+(
+	@ActorID int,
+	@PackageID int,
+	@Recursive bit = 1
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(WS.ItemID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(MD.ItemID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	Z.ItemName AS ZoneName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.CreationDate,
+	D.ExpirationDate,
+	D.LastUpdateDate,
+	D.IsDomainPointer,
+	D.RegistrarName
+FROM Domains AS D
+INNER JOIN PackagesTree(@PackageID, @Recursive) AS PT ON D.PackageID = PT.PackageID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+RETURN
+
 GO
