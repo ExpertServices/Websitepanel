@@ -65,6 +65,14 @@ namespace WebsitePanel.Portal.ExchangeServer
                     "ItemID=" + PanelRequest.ItemID);
         }
 
+        public bool CheckDomainUsedByHostedOrganization(string domainId)
+        {
+            int id;
+            if (!int.TryParse(domainId, out id)) return false;
+
+            return ES.Services.Organizations.CheckDomainUsedByHostedOrganization(PanelRequest.ItemID, id);
+        }
+
         private void BindDomainNames()
         {
             OrganizationDomainName[] list = ES.Services.Organizations.GetOrganizationDomains(PanelRequest.ItemID);
@@ -149,6 +157,14 @@ namespace WebsitePanel.Portal.ExchangeServer
                     ShowErrorMessage("EXCHANGE_CHANGE_DOMAIN", ex);
                 }
             }
+            if (e.CommandName == "ViewUsage")
+            {
+                int domainId = Utils.ParseInt(e.CommandArgument.ToString(), 0);
+                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "check_domain",
+                    "SpaceID=" + PanelSecurity.PackageId, "DomainID=" + domainId));
+                return;
+            }
+
         }
 
         protected void btnSetDefaultDomain_Click(object sender, EventArgs e)

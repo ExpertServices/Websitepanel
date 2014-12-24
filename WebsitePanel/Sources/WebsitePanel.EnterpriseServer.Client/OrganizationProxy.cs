@@ -99,6 +99,8 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         
         private System.Threading.SendOrPostCallback GetOrganizationObjectsByDomainOperationCompleted;
         
+        private System.Threading.SendOrPostCallback CheckDomainUsedByHostedOrganizationOperationCompleted;
+        
         private System.Threading.SendOrPostCallback CreateUserOperationCompleted;
         
         private System.Threading.SendOrPostCallback ImportUserOperationCompleted;
@@ -213,6 +215,9 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         
         /// <remarks/>
         public event GetOrganizationObjectsByDomainCompletedEventHandler GetOrganizationObjectsByDomainCompleted;
+        
+        /// <remarks/>
+        public event CheckDomainUsedByHostedOrganizationCompletedEventHandler CheckDomainUsedByHostedOrganizationCompleted;
         
         /// <remarks/>
         public event CreateUserCompletedEventHandler CreateUserCompleted;
@@ -1109,6 +1114,50 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
             if ((this.GetOrganizationObjectsByDomainCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.GetOrganizationObjectsByDomainCompleted(this, new GetOrganizationObjectsByDomainCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/CheckDomainUsedByHostedOrganization", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool CheckDomainUsedByHostedOrganization(int itemId, int domainId) {
+            object[] results = this.Invoke("CheckDomainUsedByHostedOrganization", new object[] {
+                        itemId,
+                        domainId});
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginCheckDomainUsedByHostedOrganization(int itemId, int domainId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("CheckDomainUsedByHostedOrganization", new object[] {
+                        itemId,
+                        domainId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public bool EndCheckDomainUsedByHostedOrganization(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void CheckDomainUsedByHostedOrganizationAsync(int itemId, int domainId) {
+            this.CheckDomainUsedByHostedOrganizationAsync(itemId, domainId, null);
+        }
+        
+        /// <remarks/>
+        public void CheckDomainUsedByHostedOrganizationAsync(int itemId, int domainId, object userState) {
+            if ((this.CheckDomainUsedByHostedOrganizationOperationCompleted == null)) {
+                this.CheckDomainUsedByHostedOrganizationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckDomainUsedByHostedOrganizationOperationCompleted);
+            }
+            this.InvokeAsync("CheckDomainUsedByHostedOrganization", new object[] {
+                        itemId,
+                        domainId}, this.CheckDomainUsedByHostedOrganizationOperationCompleted, userState);
+        }
+        
+        private void OnCheckDomainUsedByHostedOrganizationOperationCompleted(object arg) {
+            if ((this.CheckDomainUsedByHostedOrganizationCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CheckDomainUsedByHostedOrganizationCompleted(this, new CheckDomainUsedByHostedOrganizationCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -3081,6 +3130,32 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((System.Data.DataSet)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    public delegate void CheckDomainUsedByHostedOrganizationCompletedEventHandler(object sender, CheckDomainUsedByHostedOrganizationCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.42")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CheckDomainUsedByHostedOrganizationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CheckDomainUsedByHostedOrganizationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
             }
         }
     }
