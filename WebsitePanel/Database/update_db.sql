@@ -7095,3 +7095,54 @@ AS
 		
 	RETURN @Result
 GO
+
+
+-- check domain used by hosted organization
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetOrganizationObjectsByDomain')
+DROP PROCEDURE GetOrganizationObjectsByDomain
+GO
+
+CREATE PROCEDURE [dbo].[GetOrganizationObjectsByDomain]
+(
+        @ItemID int,
+        @DomainName nvarchar(100)
+)
+AS
+SELECT
+	'ExchangeAccounts' as ObjectName,
+        AccountID as ObjectID,
+	AccountType as ObjectType,
+        DisplayName as DisplayName
+FROM
+        ExchangeAccounts
+WHERE
+	UserPrincipalName LIKE '%@'+ @DomainName AND AccountType!=2
+UNION
+SELECT
+	'ExchangeAccountEmailAddresses' as ObjectName,
+	AddressID as ObjectID,
+	AccountID as ObjectType,
+	EmailAddress as DisplayName
+FROM
+	ExchangeAccountEmailAddresses
+WHERE
+	EmailAddress LIKE '%@'+ @DomainName
+UNION
+SELECT 
+	'LyncUsers' as ObjectName,
+	ea.AccountID as ObjectID,
+	ea.AccountType as ObjectType,
+	ea.DisplayName as DisplayName
+FROM 
+	ExchangeAccounts ea 
+INNER JOIN 
+	LyncUsers ou
+ON 
+	ea.AccountID = ou.AccountID
+WHERE 
+	ou.SipAddress LIKE '%@'+ @DomainName
+ORDER BY 
+	DisplayName
+RETURN
+GO

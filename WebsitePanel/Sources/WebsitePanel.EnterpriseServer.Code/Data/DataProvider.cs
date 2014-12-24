@@ -3256,6 +3256,18 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
+        public static DataSet GetOrganizationObjectsByDomain(int itemId, string domainName)
+        {
+            return SqlHelper.ExecuteDataset(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetOrganizationObjectsByDomain",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@DomainName", domainName)
+            );
+        }
+
+
         #endregion
 
         #region CRM
