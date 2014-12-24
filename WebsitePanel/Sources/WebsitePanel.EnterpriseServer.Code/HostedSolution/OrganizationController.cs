@@ -507,6 +507,15 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
+        public static bool CheckDomainUsedByHostedOrganization(int itemId, int domainId)
+        {
+            DomainInfo domain = ServerController.GetDomain(domainId);
+            if (domain == null)
+                return false;
+
+            return (DataProvider.CheckDomainUsedByHostedOrganization(domain.DomainName) == 1);
+        }
+
         private static void DeleteOCSUsers(int itemId, ref bool successful)
         {
             try

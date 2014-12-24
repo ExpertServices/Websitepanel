@@ -164,6 +164,11 @@ namespace WebsitePanel.EnterpriseServer
             return OrganizationController.GetOrganizationObjectsByDomain(itemId, domainName);
         }
 
+        [WebMethod]
+        public bool CheckDomainUsedByHostedOrganization(int itemId, int domainId)
+        {
+            return OrganizationController.CheckDomainUsedByHostedOrganization(itemId, domainId);
+        }
 
         #endregion
 
