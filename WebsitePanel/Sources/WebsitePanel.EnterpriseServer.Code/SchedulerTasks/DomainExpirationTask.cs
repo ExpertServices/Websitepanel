@@ -183,9 +183,10 @@ namespace WebsitePanel.EnterpriseServer
             items["user"] = user;
 
             items["Domains"] = domains.Select(x => new { DomainName = x.DomainName, 
-                                                         ExpirationDate = x.ExpirationDate, 
+                                                         ExpirationDate = x.ExpirationDate  < DateTime.Now ? "Expired" : x.ExpirationDate.ToString(),
+                                                         ExpirationDateOrdering = x.ExpirationDate, 
                                                          Customer = string.Format("{0} {1}", domainUsers[x.PackageId].FirstName, domainUsers[x.PackageId].LastName) })
-                                      .OrderBy(x => x.ExpirationDate).ThenBy(x => x.Customer).ThenBy(x => x.DomainName);
+                                      .OrderBy(x => x.ExpirationDateOrdering).ThenBy(x => x.Customer).ThenBy(x => x.DomainName);
             
             items["IncludeNonExistenDomains"] = includeNonExistenDomains;
 
