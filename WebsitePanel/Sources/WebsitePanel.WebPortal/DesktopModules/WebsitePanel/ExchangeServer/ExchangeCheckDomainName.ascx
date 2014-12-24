@@ -58,7 +58,7 @@
 							    <ItemStyle Width="10%"></ItemStyle>
 							    <ItemTemplate>							        
                                     <asp:LinkButton id="lnkDelete" runat="server" Text="Delete" meta:resourcekey="lnkDelete" 
-                                        OnClientClick="return confirm('Are you sure you want to delete ?')"
+                                        OnClientClick="if(!confirm('Are you sure you want to delete ?')) return false; else ShowProgressDialog('Deleting ...');"
                                         CommandName="DeleteItem" CommandArgument='<%# Eval("ObjectType").ToString() + "," + Eval("DisplayName") %>'
                                         Visible='<%# AllowDelete(Eval("ObjectName").ToString(), (int)Eval("ObjectType")) %>' />
 							    </ItemTemplate>
