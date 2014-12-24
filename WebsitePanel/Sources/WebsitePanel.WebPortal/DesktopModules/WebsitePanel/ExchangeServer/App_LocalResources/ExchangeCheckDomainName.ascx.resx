@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="locTitle.Text" xml:space="preserve">
-    <value>Delete domain</value>
+    <value>Domain Dependencies</value>
   </data>
   <data name="Text.PageName" xml:space="preserve">
-    <value>Delete domain</value>
+    <value>Domain Dependencies</value>
   </data>
   <data name="gvObjectsDisplayName.Header" xml:space="preserve">
     <value>Display Name</value>
@@ -176,5 +176,8 @@
   </data>
   <data name="User.Text" xml:space="preserve">
     <value>Organization user</value>
+  </data>
+  <data name="LyncUsers.Text" xml:space="preserve">
+    <value>Lync User</value>
   </data>
 </root>

@@ -44,7 +44,8 @@ namespace WebsitePanel.Portal.ExchangeServer
             if (!IsPostBack)
             {
                 // save return URL
-                ViewState["ReturnUrl"] = Request.UrlReferrer.ToString();
+                if (Request.UrlReferrer!=null)
+                    ViewState["ReturnUrl"] = Request.UrlReferrer.ToString();
 
                 // domain name
                 DomainInfo domain = ES.Services.Servers.GetDomain(PanelRequest.DomainID);
