@@ -260,15 +260,27 @@ namespace WebsitePanel.Portal
 		}
 		protected void btnAdd_Click(object sender, EventArgs e)
 		{
-			AddDomain();
+		    if (CheckForCorrectIdnDomainUsage(DomainName.Text))
+		    {
+		        AddDomain();
+		    }
 		}
+
+	    private bool CheckForCorrectIdnDomainUsage(string domainName)
+	    {
+	        // If the choosen domain is a idn domain, don't allow to create mail
+	        if (Utils.IsIdnDomain(domainName) && PointMailDomain.Checked)
+	        {
+	            ShowErrorMessage("IDNDOMAIN_NO_MAIL");
+	            return false;
+	        }
+
+	        return true;
+	    }
 
 	    protected void DomainName_TextChanged(object sender, DomainControl.DomainNameEventArgs e)
 	    {
-	        // If the choosen domain is a idn domain, don't allow to create mail
-	        var isIdn = Utils.IsIdnDomain(e.DomainName);
-	        PointMailDomainPanel.Enabled = !isIdn;
-	        PointMailDomain.Checked = !isIdn;
+            CheckForCorrectIdnDomainUsage(e.DomainName);
 	    }
 	}
 }
