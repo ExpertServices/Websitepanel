@@ -73,7 +73,22 @@ namespace WebsitePanel.Portal.ExchangeServer
 
         public bool AllowDelete(string objectName, int objectType)
         {
-            return objectName == EXCHANGEACCOUNTEMAILADDRESSES;
+            if (objectName == EXCHANGEACCOUNTEMAILADDRESSES)
+            {
+                ExchangeAccountType accountType = (ExchangeAccountType)objectType;
+                switch (accountType)
+                {
+                    case ExchangeAccountType.Room:
+                    case ExchangeAccountType.Equipment:
+                    case ExchangeAccountType.SharedMailbox:
+                    case ExchangeAccountType.Mailbox:
+                    case ExchangeAccountType.DistributionList:
+                    case ExchangeAccountType.PublicFolder:
+                        return true;
+                }
+
+            }
+            return false;
         }
 
 
@@ -114,7 +129,7 @@ namespace WebsitePanel.Portal.ExchangeServer
             return GetThemedImage("Exchange/" + imgName);
         }
 
-        public string GetEditUrl(string objectName, int objectType, string objectId)
+        public string GetEditUrl(string objectName, int objectType, string objectId, string ownerId)
         {
             if (objectName == EXCHANGEACCOUNTS)
             {
@@ -158,10 +173,32 @@ namespace WebsitePanel.Portal.ExchangeServer
 
             if (objectName == EXCHANGEACCOUNTEMAILADDRESSES)
             {
-                if (objectType>0)
-                    return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "mailbox_addresses",
-                                "AccountID=" + objectType,
+                string key = "";
+
+                ExchangeAccountType accountType = (ExchangeAccountType)objectType;
+
+                switch (accountType)
+                {
+                    case ExchangeAccountType.Mailbox:
+                    case ExchangeAccountType.Room:
+                    case ExchangeAccountType.Equipment:
+                    case ExchangeAccountType.SharedMailbox:
+                        key = "mailbox_addresses";
+                        break;
+                    case ExchangeAccountType.DistributionList:
+                        key = "dlist_addresses";
+                        break;
+                    case ExchangeAccountType.PublicFolder:
+                        key = "public_folder_addresses";
+                        break;
+                }
+
+                if (!string.IsNullOrEmpty(key))
+                {
+                    return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), key,
+                                "AccountID=" + ownerId,
                                 "ItemID=" + PanelRequest.ItemID);
+                }
             }
 
             if (objectName == LYNCUSERS)
@@ -196,16 +233,40 @@ namespace WebsitePanel.Portal.ExchangeServer
                 try
                 {
                     string[] arg = e.CommandArgument.ToString().Split(',');
-                    if (arg.Length != 2) return;
+                    if (arg.Length != 3) return;
 
-                    string[] emails = { arg[1] };
+                    string[] emails = { arg[2] };
 
                     int accountID = 0;
                     if (!int.TryParse(arg[0], out accountID))
                         return;
 
-                    int result = ES.Services.ExchangeServer.DeleteMailboxEmailAddresses(
-                        PanelRequest.ItemID, accountID, emails);
+                    int accountTypeID = 0;
+                    if (!int.TryParse(arg[1], out accountTypeID))
+                        return;
+
+                    ExchangeAccountType accountType = (ExchangeAccountType)accountTypeID;
+
+                    int result;
+
+                    switch(accountType)
+                    {
+                        case ExchangeAccountType.Room:
+                        case ExchangeAccountType.Equipment:
+                        case ExchangeAccountType.SharedMailbox:
+                        case ExchangeAccountType.Mailbox:
+                            result = ES.Services.ExchangeServer.DeleteMailboxEmailAddresses(
+                                PanelRequest.ItemID, accountID, emails);
+                            break;
+                        case ExchangeAccountType.DistributionList:
+                            result = ES.Services.ExchangeServer.DeleteDistributionListEmailAddresses(
+                                PanelRequest.ItemID, accountID, emails);
+                            break;
+                        case ExchangeAccountType.PublicFolder:
+                            result = ES.Services.ExchangeServer.DeletePublicFolderEmailAddresses(
+                                PanelRequest.ItemID, accountID, emails);
+                            break;
+                    }
 
                     Bind();
                 }

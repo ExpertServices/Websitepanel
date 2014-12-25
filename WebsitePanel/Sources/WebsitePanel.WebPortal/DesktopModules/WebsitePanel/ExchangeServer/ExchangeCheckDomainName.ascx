@@ -32,7 +32,7 @@
 							    <ItemTemplate>
 							        <asp:Image ID="img1" runat="server" ImageUrl='<%# GetObjectImage(Eval("ObjectName").ToString(),(int)Eval("ObjectType")) %>' ImageAlign="AbsMiddle" />
 								    <asp:hyperlink id="lnk1" runat="server"
-									    NavigateUrl='<%# GetEditUrl(Eval("ObjectName").ToString(),(int)Eval("ObjectType"),Eval("ObjectID").ToString()) %>'>
+									    NavigateUrl='<%# GetEditUrl(Eval("ObjectName").ToString(),(int)Eval("ObjectType"),Eval("ObjectID").ToString(),Eval("OwnerID").ToString()) %>'>
 									    <%# Eval("DisplayName") %>
 								    </asp:hyperlink>
 							    </ItemTemplate>
@@ -48,7 +48,7 @@
 							    <ItemStyle Width="10%"></ItemStyle>
 							    <ItemTemplate>	
 								    <asp:hyperlink id="lnk2" runat="server"
-									    NavigateUrl='<%# GetEditUrl(Eval("ObjectName").ToString(),(int)Eval("ObjectType"),Eval("ObjectID").ToString()) %>'>
+									    NavigateUrl='<%# GetEditUrl(Eval("ObjectName").ToString(),(int)Eval("ObjectType"),Eval("ObjectID").ToString(),Eval("OwnerID").ToString()) %>'>
 									    <asp:Literal id="lnkView" runat="server" Text="View" meta:resourcekey="lnkView" />
 								    </asp:hyperlink>
 							    </ItemTemplate>
@@ -59,7 +59,7 @@
 							    <ItemTemplate>							        
                                     <asp:LinkButton id="lnkDelete" runat="server" Text="Delete" meta:resourcekey="lnkDelete" 
                                         OnClientClick="if(!confirm('Are you sure you want to delete ?')) return false; else ShowProgressDialog('Deleting ...');"
-                                        CommandName="DeleteItem" CommandArgument='<%# Eval("ObjectType").ToString() + "," + Eval("DisplayName") %>'
+                                        CommandName="DeleteItem" CommandArgument='<%# Eval("OwnerID").ToString() + "," + Eval("ObjectType").ToString() + "," + Eval("DisplayName") %>'
                                         Visible='<%# AllowDelete(Eval("ObjectName").ToString(), (int)Eval("ObjectType")) %>' />
 							    </ItemTemplate>
 						    </asp:TemplateField>

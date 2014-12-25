@@ -7113,7 +7113,8 @@ SELECT
 	'ExchangeAccounts' as ObjectName,
         AccountID as ObjectID,
 	AccountType as ObjectType,
-        DisplayName as DisplayName
+        DisplayName as DisplayName,
+	0 as OwnerID
 FROM
         ExchangeAccounts
 WHERE
@@ -7122,8 +7123,9 @@ UNION
 SELECT
 	'ExchangeAccountEmailAddresses' as ObjectName,
 	eam.AddressID as ObjectID,
-	eam.AccountID as ObjectType,
-	eam.EmailAddress as DisplayName
+	ea.AccountType as ObjectType,
+	eam.EmailAddress as DisplayName,
+	eam.AccountID as OwnerID
 FROM
 	ExchangeAccountEmailAddresses as eam
 INNER JOIN 
@@ -7139,7 +7141,8 @@ SELECT
 	'LyncUsers' as ObjectName,
 	ea.AccountID as ObjectID,
 	ea.AccountType as ObjectType,
-	ea.DisplayName as DisplayName
+	ea.DisplayName as DisplayName,
+	0 as OwnerID
 FROM 
 	ExchangeAccounts ea 
 INNER JOIN 
