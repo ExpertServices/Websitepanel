@@ -106,9 +106,6 @@ namespace WebsitePanel.Providers.DNS
 		public virtual void AddSecondaryZone( string zoneName, string[] masterServers )
 		{
 			ps.Add_DnsServerSecondaryZone( zoneName, masterServers );
-
-            // remove ns records
-            ps.Remove_DnsServerResourceRecords(zoneName, "NS");
         }
 
 		public virtual void DeleteZone( string zoneName )
