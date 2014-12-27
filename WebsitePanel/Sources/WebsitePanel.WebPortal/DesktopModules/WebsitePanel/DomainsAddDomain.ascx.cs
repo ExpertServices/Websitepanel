@@ -157,6 +157,8 @@ namespace WebsitePanel.Portal
 
 			// allow sub-domains
 			AllowSubDomainsPanel.Visible = (type == DomainType.Domain) && PanelSecurity.EffectiveUser.Role != UserRole.User;
+
+		    CheckForCorrectIdnDomainUsage(DomainName.Text);
 		}
 
 		private DomainType GetDomainType(string typeName)
