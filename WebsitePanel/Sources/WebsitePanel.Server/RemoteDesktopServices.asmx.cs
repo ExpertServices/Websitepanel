@@ -393,5 +393,22 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool CheckRDSServerAvaliable(string hostname)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' CheckRDSServerAvaliable", ProviderSettings.ProviderName);
+                var result = RDSProvider.CheckRDSServerAvaliable(hostname);
+                Log.WriteEnd("'{0}' CheckRDSServerAvaliable", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' CheckRDSServerAvaliable", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
     }
 }

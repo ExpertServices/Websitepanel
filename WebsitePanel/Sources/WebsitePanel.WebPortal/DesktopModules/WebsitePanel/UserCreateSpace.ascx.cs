@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI.WebControls;
 using WebsitePanel.EnterpriseServer;
+using WebsitePanel.Portal.UserControls;
 using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.Portal
@@ -249,7 +250,10 @@ namespace WebsitePanel.Portal
 
         protected void btnCreate_Click(object sender, EventArgs e)
         {
-            CreateHostingSpace();
+            if (CheckForCorrectIdnDomainUsage())
+            {
+                CreateHostingSpace();
+            }
         }
 
         protected void rbFtpAccountName_SelectedIndexChanged(object sender, EventArgs e)
@@ -265,6 +269,31 @@ namespace WebsitePanel.Portal
         protected void chkCreateResources_CheckedChanged(object sender, EventArgs e)
         {
             BindHostingPlan();
+        }
+
+        private bool CheckForCorrectIdnDomainUsage()
+        {
+            if (Utils.IsIdnDomain(txtDomainName.Text))
+            {
+                if (chkIntegratedOUProvisioning.Checked)
+                {
+                    ShowErrorMessage("IDNDOMAIN_NO_ORGANIZATION");
+                    return false;
+                }
+
+                if (chkCreateMailAccount.Checked)
+                {
+                    ShowErrorMessage("IDNDOMAIN_NO_MAIL");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        protected void txtDomainName_OnTextChanged(object sender, DomainControl.DomainNameEventArgs e)
+        {
+            CheckForCorrectIdnDomainUsage();
         }
     }
 }

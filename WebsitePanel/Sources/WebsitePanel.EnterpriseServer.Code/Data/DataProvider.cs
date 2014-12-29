@@ -4839,6 +4839,20 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
+        public static void UpdateWhoisDomainInfo(int domainId, DateTime? domainCreationDate, DateTime? domainExpirationDate, DateTime? domainLastUpdateDate, string registrarName)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateWhoisDomainInfo",
+                new SqlParameter("@DomainId", domainId),
+                new SqlParameter("@DomainCreationDate", domainCreationDate),
+                new SqlParameter("@DomainExpirationDate", domainExpirationDate),
+                new SqlParameter("@DomainLastUpdateDate", domainLastUpdateDate),
+                new SqlParameter("@DomainRegistrarName", registrarName)
+            );
+        }
+
         #endregion
 
     }

@@ -45,16 +45,20 @@ namespace WebsitePanel.Portal
 {
     public partial class Domains : WebsitePanelModuleBase
     {
+        public Dictionary<int, string> dnsRecords;
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            dnsRecords = new Dictionary<int, string>();
+
             gvDomains.PageSize = UsersHelper.GetDisplayItemsPerPage();
 
             // visibility
             chkRecursive.Visible = (PanelSecurity.SelectedUser.Role != UserRole.User);
-            gvDomains.Columns[3].Visible = gvDomains.Columns[3].Visible =
+            gvDomains.Columns[4].Visible = gvDomains.Columns[5].Visible =
                 (PanelSecurity.SelectedUser.Role != UserRole.User) && chkRecursive.Checked;
-			gvDomains.Columns[5].Visible = (PanelSecurity.SelectedUser.Role == UserRole.Administrator);
-			gvDomains.Columns[6].Visible = (PanelSecurity.EffectiveUser.Role == UserRole.Administrator);
+			gvDomains.Columns[6].Visible = (PanelSecurity.SelectedUser.Role == UserRole.Administrator);
+			gvDomains.Columns[7].Visible = (PanelSecurity.EffectiveUser.Role == UserRole.Administrator);
 
             if (!IsPostBack)
             {
@@ -154,11 +158,18 @@ namespace WebsitePanel.Portal
 
         public string GetDomainDnsRecords(int domainId)
         {
+            if(dnsRecords.ContainsKey(domainId))
+            {
+                return dnsRecords[domainId];
+            }
+
             var records = ES.Services.Servers.GetDomainDnsRecords(domainId);
 
             if (!records.Any())
             {
-                return "No Dns Records";
+                dnsRecords.Add(domainId, string.Empty);
+
+                return string.Empty;
             }
 
             var header = GetLocalizedString("DomainLookup.TooltipHeader");
@@ -169,7 +180,25 @@ namespace WebsitePanel.Portal
             tooltipLines.Add(" ");
             tooltipLines.AddRange( records.Select(x=>string.Format("{0}: {1}", x.RecordType, x.Value)));
 
-            return string.Join("\r\n", tooltipLines);
+            dnsRecords.Add(domainId, string.Join("\r\n", tooltipLines));
+
+            return dnsRecords[domainId];
+        }
+
+        public string GetDomainTooltip(int domainId, string registrar)
+        {
+            var dnsString = GetDomainDnsRecords(domainId);
+
+            var tooltipLines = new List<string>();
+
+            if (!string.IsNullOrEmpty(registrar))
+            {
+                var header = GetLocalizedString("DomainLookup.TooltipHeader.Registrar");
+                tooltipLines.Add(header + " " + registrar);
+                tooltipLines.Add("\r\n");
+            }
+
+            return string.Join("\r\n", tooltipLines) + dnsString;
         }
 
         protected void odsDomainsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)

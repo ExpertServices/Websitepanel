@@ -599,19 +599,26 @@ namespace WebsitePanel.EnterpriseServer
 
             try
             {
-                if (1 == 1)//(CheckRDSServerAvaliable(rdsServer.FqdName))
+                if (CheckRDSServerAvaliable(rdsServer.FqdName))
                 {
                     rdsServer.Id = DataProvider.AddRDSServer(rdsServer.Name, rdsServer.FqdName, rdsServer.Description);
                 }
                 else
                 {
-                    result.AddError("", new Exception("The server that you are adding, is not available"));
+                    result.AddError("REMOTE_DESKTOP_SERVICES_ADD_RDS_SERVER", new Exception("The server that you are adding, is not available"));
                     return result;
                 }
             }
             catch (Exception ex)
             {
-                result.AddError("REMOTE_DESKTOP_SERVICES_ADD_RDS_SERVER", ex);
+                if (ex.InnerException != null)
+                {
+                    result.AddError("Unable to add RDS Server", ex.InnerException);
+                }
+                else
+                {
+                    result.AddError("Unable to add RDS Server", ex);
+                }
             }
             finally
             {
@@ -1167,18 +1174,12 @@ namespace WebsitePanel.EnterpriseServer
         private static bool CheckRDSServerAvaliable(string hostname)
         {
             bool result = false;
+            var ping = new Ping();
+            var reply = ping.Send(hostname, 1000);
 
-            try
+            if (reply.Status == IPStatus.Success)
             {
-                var ping = new Ping();
-                var reply = ping.Send(hostname, 1000); // 1 second time out (in ms)
-
-                if (reply.Status == IPStatus.Success)
-                    result = true;
-            }
-            catch (Exception)
-            {
-                result = false;
+                result = true;
             }
 
             return result;
