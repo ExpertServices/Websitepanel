@@ -14,7 +14,6 @@ namespace WebsitePanel.WebDavPortal.Config
             _configSection = ((WebDavExplorerConfigurationSettingsSection) ConfigurationManager.GetSection(WebDavExplorerConfigurationSettingsSection.SectionName));
             WebsitePanelConstantUserParameters = new WebsitePanelConstantUserParameters();
             ElementsRendering = new ElementsRendering();
-            ConnectionStrings = new ConnectionStringsCollection();
             SessionKeys = new SessionKeysCollection();
             FileIcons = new FileIconsDictionary();
             HttpErrors = new HttpErrorsCollection();
@@ -38,7 +37,6 @@ namespace WebsitePanel.WebDavPortal.Config
 
         public ElementsRendering ElementsRendering { get; private set; }
         public WebsitePanelConstantUserParameters WebsitePanelConstantUserParameters { get; private set; }
-        public ConnectionStringsCollection ConnectionStrings { get; private set; }
         public SessionKeysCollection SessionKeys { get; private set; }
         public FileIconsDictionary FileIcons { get; private set; }
         public HttpErrorsCollection HttpErrors { get; private set; }

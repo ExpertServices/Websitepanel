@@ -143,7 +143,6 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Config\Entities\AbstractConfigCollection.cs" />
-    <Compile Include="Config\Entities\ConnectionStringsCollection.cs" />
     <Compile Include="Config\Entities\ElementsRendering.cs" />
     <Compile Include="Config\Entities\FileIconsDictionary.cs" />
     <Compile Include="Config\Entities\HttpErrorsCollection.cs" />
@@ -180,8 +179,6 @@
     <Compile Include="Models\OfficeOnlineModel.cs" />
     <Compile Include="Models\WebDavManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WebConfigSections\AppConnectionStringsElement.cs" />
-    <Compile Include="WebConfigSections\AppConnectionStringsElementCollection.cs" />
     <Compile Include="WebConfigSections\ApplicationNameElement.cs" />
     <Compile Include="WebConfigSections\ElementsRenderingElement.cs" />
     <Compile Include="WebConfigSections\FileIconsElement.cs" />

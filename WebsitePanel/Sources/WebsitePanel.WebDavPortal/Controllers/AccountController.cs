@@ -68,7 +68,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
         private void AutheticationToServicesUsingWebsitePanelUser()
         {
             var crypto = _kernel.Get<ICryptography>();
-            var websitePanelLogin = crypto.Decrypt(WebDavAppConfigManager.Instance.WebsitePanelConstantUserParameters.Login);
+            var websitePanelLogin = WebDavAppConfigManager.Instance.WebsitePanelConstantUserParameters.Login;
             var websitePanelPassword = crypto.Decrypt(WebDavAppConfigManager.Instance.WebsitePanelConstantUserParameters.Password);
             var authTicket = new FormsAuthenticationTicket(1, websitePanelLogin, DateTime.Now, DateTime.Now.Add(FormsAuthentication.Timeout),
                 FormsAuthentication.SlidingExpiration, websitePanelPassword + Environment.NewLine);

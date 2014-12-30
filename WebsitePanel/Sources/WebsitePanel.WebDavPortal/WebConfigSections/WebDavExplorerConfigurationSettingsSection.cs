@@ -44,13 +44,6 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
             set { this[ElementsRenderingKey] = value; }
         }
 
-        [ConfigurationProperty(ConnectionStringsKey, IsDefaultCollection = false)]
-        public AppConnectionStringsElementCollection ConnectionStrings
-        {
-            get { return (AppConnectionStringsElementCollection) this[ConnectionStringsKey]; }
-            set { this[ConnectionStringsKey] = value; }
-        }
-
         [ConfigurationProperty(SessionKeysKey, IsDefaultCollection = false)]
         public SessionKeysElementCollection SessionKeys
         {
