@@ -5593,4 +5593,37 @@
   <data name="Error.RDS_CREATE_COLLECTION_RDSSERVER_REQUAIRED" xml:space="preserve">
     <value>Error creating rds collection. You need to add at least 1 rds server to collection</value>
   </data>
+  <data name="Quota.Exchange2013.ResourceMailboxes" xml:space="preserve">
+    <value>Resource Mailboxes per Organization</value>
+  </data>
+  <data name="Quota.Exchange2013.SharedMailboxes" xml:space="preserve">
+    <value>Shared Mailboxes per Organization</value>
+  </data>
+  <data name="RoomMailbox.Text" xml:space="preserve">
+    <value> (room mailbox)</value>
+  </data>
+  <data name="SharedMailbox.Text" xml:space="preserve">
+    <value> (shared mailbox)</value>
+  </data>
+  <data name="EquipmentMailbox.Text" xml:space="preserve">
+    <value> (equipment mailbox)</value>
+  </data>
+  <data name="Success.DOMAIN_UPDATE_DOMAIN" xml:space="preserve">
+    <value>Domain information has been successfully updated.</value>
+  </data>
+  <data name="Success.WEB_UPDATE_SITE" xml:space="preserve">
+    <value>Web site has been successfully updated.</value>
+  </data>
+  <data name="SchedulerTask.SCHEDULE_TASK_DOMAIN_LOOKUP" xml:space="preserve">
+    <value>Check MX and NS on DNS servers</value>
+  </data>
+  <data name="SchedulerTask.SCHEDULE_TASK_DOMAIN_EXPIRATION" xml:space="preserve">
+    <value>Check domain expiration date</value>
+  </data>
+  <data name="ERROR.IDNDOMAIN_NO_MAIL" xml:space="preserve">
+    <value>You cannot use a IDN domain name for mail</value>
+  </data>
+  <data name="ERROR.IDNDOMAIN_NO_ORGANIZATION" xml:space="preserve">
+    <value>You cannot use a IDN domain name for organizations</value>
+  </data>
 </root>

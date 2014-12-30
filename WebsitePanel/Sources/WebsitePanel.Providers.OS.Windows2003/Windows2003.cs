@@ -34,6 +34,10 @@ using Microsoft.Win32;
 
 using WebsitePanel.Server.Utils;
 using WebsitePanel.Providers.Utils;
+using WebsitePanel.Providers.DomainLookup;
+using WebsitePanel.Providers.DNS;
+using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace WebsitePanel.Providers.OS
 {
@@ -53,6 +57,7 @@ namespace WebsitePanel.Providers.OS
         private const string MSACCESS_DRIVER = "Microsoft Access Driver (*.mdb)";
         private const string MSEXCEL_DRIVER = "Microsoft Excel Driver (*.xls)";
         private const string TEXT_DRIVER = "Microsoft Text Driver (*.txt; *.csv)";
+
         #endregion
 
         #region Properties
@@ -743,7 +748,6 @@ namespace WebsitePanel.Providers.OS
             return (keyDriver != null);
         }
         #endregion
-
 
         public override bool IsInstalled()
         {

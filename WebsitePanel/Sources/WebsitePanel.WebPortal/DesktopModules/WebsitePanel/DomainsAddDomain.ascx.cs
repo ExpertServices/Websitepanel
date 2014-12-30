@@ -30,6 +30,7 @@ using System;
 using System.Web;
 using WebsitePanel.EnterpriseServer;
 using System.Collections.Generic;
+using WebsitePanel.Portal.UserControls;
 
 namespace WebsitePanel.Portal
 {
@@ -82,12 +83,12 @@ namespace WebsitePanel.Portal
 			if (type == DomainType.Domain || type == DomainType.DomainPointer)
 			{
 				// domains
-				DomainPanel.Visible = true;
+			    DomainName.IsSubDomain = false;
 			}
 			else
 			{
 				// sub-domains
-				SubDomainPanel.Visible = true;
+                DomainName.IsSubDomain = true;
 
 				// fill sub-domains
 				if (!IsPostBack)
@@ -156,6 +157,8 @@ namespace WebsitePanel.Portal
 
 			// allow sub-domains
 			AllowSubDomainsPanel.Visible = (type == DomainType.Domain) && PanelSecurity.EffectiveUser.Role != UserRole.User;
+
+		    CheckForCorrectIdnDomainUsage(DomainName.Text);
 		}
 
 		private DomainType GetDomainType(string typeName)
@@ -178,14 +181,14 @@ namespace WebsitePanel.Portal
 				if (!domain.IsDomainPointer && !domain.IsSubDomain && !domain.IsInstantAlias)
 					domains.Add(domain);
 
-			DomainsList.DataSource = domains;
-			DomainsList.DataBind();
+            DomainName.DataSource = domains;
+			DomainName.DataBind();
 		}
 
 		private void BindResellerDomains()
 		{
-			DomainsList.DataSource = ES.Services.Servers.GetResellerDomains(PanelSecurity.PackageId);
-			DomainsList.DataBind();
+			DomainName.DataSource = ES.Services.Servers.GetResellerDomains(PanelSecurity.PackageId);
+			DomainName.DataBind();
 		}
 
 		private void AddDomain()
@@ -197,9 +200,7 @@ namespace WebsitePanel.Portal
 			DomainType type = GetDomainType(Request["DomainType"]);
 
 			// get domain name
-			string domainName = DomainName.Text.Trim();
-			if (type == DomainType.SubDomain || type == DomainType.ProviderSubDomain)
-				domainName = SubDomainName.Text.Trim() + "." + DomainsList.SelectedValue;
+		    var domainName = DomainName.Text;
 
 			int pointWebSiteId = 0;
 			int pointMailDomainId = 0;
@@ -261,7 +262,27 @@ namespace WebsitePanel.Portal
 		}
 		protected void btnAdd_Click(object sender, EventArgs e)
 		{
-			AddDomain();
+		    if (CheckForCorrectIdnDomainUsage(DomainName.Text))
+		    {
+		        AddDomain();
+		    }
 		}
+
+	    private bool CheckForCorrectIdnDomainUsage(string domainName)
+	    {
+	        // If the choosen domain is a idn domain, don't allow to create mail
+	        if (Utils.IsIdnDomain(domainName) && PointMailDomain.Checked)
+	        {
+	            ShowErrorMessage("IDNDOMAIN_NO_MAIL");
+	            return false;
+	        }
+
+	        return true;
+	    }
+
+	    protected void DomainName_TextChanged(object sender, DomainControl.DomainNameEventArgs e)
+	    {
+            CheckForCorrectIdnDomainUsage(e.DomainName);
+	    }
 	}
 }

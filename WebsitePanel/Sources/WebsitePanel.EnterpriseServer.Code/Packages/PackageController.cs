@@ -980,11 +980,13 @@ namespace WebsitePanel.EnterpriseServer
             homeFolder.PackageId = packageId;
             homeFolder.Name = path;
 
+            int res = AddPackageItem(homeFolder);
+
             // Added By Haya
             UpdatePackageHardQuota(packageId);
 
             // save package item
-            return AddPackageItem(homeFolder);
+            return res;
         }
 
         public static DateTime GetPackageBandwidthUpdate(int packageId)

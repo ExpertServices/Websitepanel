@@ -37,7 +37,12 @@ namespace WebsitePanel.Portal.ExchangeServer
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
+            {
                 BindPermissions();
+
+                if (GetLocalizedString("buttonPanel.OnSaveClientClick") != null)
+                    buttonPanel.OnSaveClientClick = GetLocalizedString("buttonPanel.OnSaveClientClick");
+            }
 
         }
 
@@ -67,6 +72,19 @@ namespace WebsitePanel.Portal.ExchangeServer
                 litDisplayName.Text = mailbox.DisplayName;
                 sendAsPermission.SetAccounts(mailbox.SendAsAccounts);
                 fullAccessPermission.SetAccounts(mailbox.FullAccessAccounts);
+
+                // get account meta
+                ExchangeAccount account = ES.Services.ExchangeServer.GetAccount(PanelRequest.ItemID, PanelRequest.AccountID);
+
+                if (account.AccountType == ExchangeAccountType.SharedMailbox)
+                    litDisplayName.Text += GetSharedLocalizedString("SharedMailbox.Text");
+
+                if (account.AccountType == ExchangeAccountType.Room)
+                    litDisplayName.Text += GetSharedLocalizedString("RoomMailbox.Text");
+
+                if (account.AccountType == ExchangeAccountType.Equipment)
+                    litDisplayName.Text += GetSharedLocalizedString("EquipmentMailbox.Text");
+
             }
             catch (Exception ex)
             {

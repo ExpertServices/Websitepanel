@@ -6,6 +6,7 @@
 <%@ Register Src="UserControls/MailboxTabs.ascx" TagName="MailboxTabs" TagPrefix="wsp" %>
 <%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="../UserControls/CollapsiblePanel.ascx" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
+<%@ Register Src="../UserControls/ItemButtonPanel.ascx" TagName="ItemButtonPanel" TagPrefix="wsp" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
 
@@ -44,9 +45,8 @@
                         </uc2:AccountsList>                                            
                     </asp:Panel>
                     <div class="FormFooterClean">
-					    <asp:Button id="btnSave" runat="server" Text="Save Changes" CssClass="Button1" meta:resourcekey="btnSave" ValidationGroup="EditMailbox" OnClick="btnSave_Click" ></asp:Button>					    
-                        <asp:Button id="btnSaveExit" runat="server" Text="Save Changes and Exit" CssClass="Button1"
-		                    meta:resourcekey="btnSaveExit" ValidationGroup="EditMailbox" OnClick="btnSaveExit_Click"></asp:Button>
+                        <wsp:ItemButtonPanel id="buttonPanel" runat="server" ValidationGroup="EditMailbox" 
+                            OnSaveClick="btnSave_Click" OnSaveExitClick="btnSaveExit_Click" />
 			        </div>
 				</div>										
 			</div>							

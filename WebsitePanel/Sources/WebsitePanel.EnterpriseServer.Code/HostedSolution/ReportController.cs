@@ -278,11 +278,16 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
         }
 
         private static void PopulateOrganizationData(Organization org, EnterpriseSolutionStatisticsReport report, string topReseller)
-        {            
+        {
+            TaskManager.Write("Stat populate organization data "+org.Name);
+
             if (report.ExchangeReport != null)
             {
+
                 try
                 {
+                    TaskManager.Write("Populate exchange report items");
+
                     PopulateExchangeReportItems(org, report, topReseller);
                 }
                 catch(Exception ex)
@@ -295,6 +300,8 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             {
                 try
                 {
+                    TaskManager.Write("Populate populate CRM report items");
+
                     PopulateCRMReportItems(org, report, topReseller);
                 }
                 catch(Exception ex)
@@ -307,6 +314,8 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             {
                 try
                 {
+                    TaskManager.Write("Populate SharePoint item ");
+
                     PopulateSharePointItem(org, report, topReseller);
                 }
                 catch(Exception ex)
@@ -319,6 +328,8 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             {
                 try
                 {
+                    TaskManager.Write("Populate Lync report items");
+
                     PopulateLyncReportItems(org, report, topReseller);
                 }
                 catch (Exception ex)
@@ -331,6 +342,8 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             {
                 try
                 {
+                    TaskManager.Write("Populate Organization statistics report");
+
                     PopulateOrganizationStatisticsReport(org, report, topReseller);
                 }
                 catch(Exception ex)
@@ -339,7 +352,7 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                 }
             }
 
-
+            TaskManager.Write("End populate organization data " + org.Name);
         }
 
         private static int GetExchangeServiceID(int packageId)
@@ -408,6 +421,8 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
 
         private static void PopulateExchangeReportItems(Organization org, EnterpriseSolutionStatisticsReport report, string topReseller)
         {
+            TaskManager.Write("Exchange Report Items " + org.Name);
+
             //Check if exchange organization
             if (string.IsNullOrEmpty(org.GlobalAddressList))
                 return;
@@ -420,9 +435,13 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             }
             catch (Exception ex)
             {
+                TaskManager.WriteError(ex);
+
                 throw new ApplicationException(
                     string.Format("Could not get mailboxes for current organization {0}", org.Id), ex);
             }
+
+            TaskManager.WriteParameter("mailboxes.Count", mailboxes.Count);
 
             try
             {
@@ -431,6 +450,8 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             }
             catch(Exception ex)
             {
+                TaskManager.WriteError(ex);
+
                 throw new ApplicationException(
                     string.Format("Could not get exchange server. PackageId: {0}", org.PackageId), ex);
             }
@@ -440,6 +461,8 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             {
                 try
                 {
+                    TaskManager.WriteParameter("mailbox", mailbox.UserPrincipalName);
+
                     stats = null;
                     try
                     {
@@ -448,6 +471,8 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                     }
                     catch (Exception ex)
                     {
+                        TaskManager.WriteError(ex);
+
                         TaskManager.WriteError(ex, "Could not get mailbox statistics. AccountName: {0}",
                                                mailbox.UserPrincipalName);
                     }
@@ -466,6 +491,8 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                         
                         stats.BlackberryEnabled = BlackBerryController.CheckBlackBerryUserExists(mailbox.AccountId);
                         report.ExchangeReport.Items.Add(stats);
+
+                        TaskManager.Write("Items.Add");
                     }
                 }
                 catch(Exception ex)
@@ -473,7 +500,8 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                     TaskManager.WriteError(ex);
                 }
             }
-            
+
+            TaskManager.Write("End Populate Exchange Report Items " + org.Name);
         }
 
 
@@ -547,6 +575,8 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
 
         private static void PopulateSpaceData(int packageId, EnterpriseSolutionStatisticsReport report, string topReseller)
         {
+            TaskManager.Write("Populate SpaceData " + packageId);
+
             List<Organization> organizations;
             
             try
@@ -570,10 +600,14 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                     TaskManager.WriteError(ex);
                 }
             }
+
+            TaskManager.Write("End Populate SpaceData " + packageId);
         }
         
         private static void PopulateUserData(UserInfo user, EnterpriseSolutionStatisticsReport report, string topReseller)
         {
+            TaskManager.Write("Populate UserData " + user.Username);
+
             DataSet ds;
             try
             {
@@ -596,11 +630,14 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                     TaskManager.WriteError(ex);
                 }
             }
-            
+
+            TaskManager.Write("End Populate UserData " + user.Username);
         }
 
         private static void GetUsersData(EnterpriseSolutionStatisticsReport report, int userId, bool generateExchangeReport, bool generateSharePointReport, bool generateCRMReport, bool generateOrganizationReport, bool generateLyncReport, string topReseller)
         {
+            TaskManager.Write("Get UsersData " + userId);
+
             List<UserInfo> users;
             try
             {
@@ -611,9 +648,12 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                 throw new ApplicationException("Cannot get users for report", ex);
             }
 
+            TaskManager.WriteParameter("users.Count", users.Count);
             
             foreach (UserInfo user in users)
             {
+                TaskManager.WriteParameter("User", user.Username);
+
                 try
                 {
                     PopulateUserData(user, report, topReseller);
@@ -631,11 +671,16 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
                 {
                     TaskManager.WriteError(ex);
                 }
-            }            
+            }
+
+            TaskManager.Write("End get UsersData " + userId);
+
         }
 
         public static EnterpriseSolutionStatisticsReport GetEnterpriseSolutionStatisticsReport(int userId, bool generateExchangeReport, bool generateSharePointReport, bool generateCRMReport, bool generateOrganizationReport, bool generateLyncReport)
         {
+            TaskManager.Write("Get enterprise solution statistics report " + userId);
+
             EnterpriseSolutionStatisticsReport report = new EnterpriseSolutionStatisticsReport();
             
             if (generateExchangeReport || generateOrganizationReport)
@@ -646,7 +691,6 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
 
             if (generateLyncReport || generateOrganizationReport)
                 report.LyncReport = new LyncStatisticsReport();
-
 
             if (generateCRMReport || generateOrganizationReport)
                 report.CRMReport = new CRMStatisticsReport();
@@ -663,6 +707,8 @@ namespace WebsitePanel.EnterpriseServer.Code.HostedSolution
             {
                 TaskManager.WriteError(ex, "Cannot get enterprise solution statistics report");
             }
+
+            TaskManager.Write("End get enterprise solution statistics report " + userId);
 
             return report;
         }

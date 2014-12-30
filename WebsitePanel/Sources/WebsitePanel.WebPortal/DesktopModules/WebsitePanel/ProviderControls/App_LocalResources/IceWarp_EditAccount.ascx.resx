@@ -270,4 +270,7 @@
   <data name="OlderMails.Text" xml:space="preserve">
     <value>Handle older mails</value>
   </data>
+  <data name="cbForwardOlder.Text" xml:space="preserve">
+    <value>Enable forwarding of older messages</value>
+  </data>
 </root>

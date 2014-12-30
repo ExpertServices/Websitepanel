@@ -35,6 +35,9 @@
     <Reference Include="Ionic.Zip.Reduced">
       <HintPath>..\..\Lib\Ionic.Zip.Reduced.dll</HintPath>
     </Reference>
+    <Reference Include="IPAddressRange">
+      <HintPath>..\..\Lib\References\Whois.NET\IPAddressRange.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Web.Services3">
       <HintPath>..\..\Lib\Microsoft.Web.Services3.dll</HintPath>
       <Private>True</Private>
@@ -61,6 +64,9 @@
     </Reference>
     <Reference Include="WebsitePanel.Server.Client">
       <HintPath>..\..\Bin\WebsitePanel.Server.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="WhoisClient">
+      <HintPath>..\..\Lib\References\Whois.NET\WhoisClient.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -140,9 +146,11 @@
     <Compile Include="SchedulerTasks\CalculatePackagesDiskspaceTask.cs" />
     <Compile Include="SchedulerTasks\CancelOverdueInvoicesTask.cs" />
     <Compile Include="SchedulerTasks\CheckWebSiteTask.cs" />
+    <Compile Include="SchedulerTasks\DomainExpirationTask.cs" />
     <Compile Include="SchedulerTasks\FTPFilesTask.cs" />
     <Compile Include="SchedulerTasks\GenerateInvoicesTask.cs" />
     <Compile Include="SchedulerTasks\HostedSolutionReport.cs" />
+    <Compile Include="SchedulerTasks\DomainLookupViewTask.cs" />
     <Compile Include="SchedulerTasks\NotifyOverusedDatabasesTask.cs" />
     <Compile Include="SchedulerTasks\RunPaymentQueueTask.cs" />
     <Compile Include="SchedulerTasks\RunSystemCommandTask.cs" />

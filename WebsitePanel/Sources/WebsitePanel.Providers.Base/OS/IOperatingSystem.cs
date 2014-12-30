@@ -28,6 +28,9 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using WebsitePanel.Providers.DNS;
+using WebsitePanel.Providers.DomainLookup;
 
 namespace WebsitePanel.Providers.OS
 {

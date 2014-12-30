@@ -117,11 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="btnSave.OnClientClick" xml:space="preserve">
+  <data name="buttonPanel.OnSaveClientClick" xml:space="preserve">
     <value>ShowProgressDialog('Updating mailbox settings...');</value>
-  </data>
-  <data name="btnSave.Text" xml:space="preserve">
-    <value>Save Changes</value>
   </data>
   <data name="chkDisable.Text" xml:space="preserve">
     <value>Disable Mailbox</value>

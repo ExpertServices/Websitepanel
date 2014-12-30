@@ -147,5 +147,10 @@ namespace WebsitePanel.EnterpriseServer
             get { return this.instantAliasName; }
             set { this.instantAliasName = value; }
         }
+
+        public DateTime? CreationDate { get; set; }
+        public DateTime? ExpirationDate { get; set; }
+        public DateTime? LastUpdateDate { get; set; }
+        public string RegistrarName { get; set; }
     }
 }

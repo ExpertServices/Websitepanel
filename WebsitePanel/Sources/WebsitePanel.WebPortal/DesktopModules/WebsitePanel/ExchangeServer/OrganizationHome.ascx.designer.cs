@@ -202,6 +202,42 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::WebsitePanel.Portal.QuotaViewer mailboxesStats;
         
         /// <summary>
+        /// lnkSharedMailboxes control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkSharedMailboxes;
+        
+        /// <summary>
+        /// mailboxesSharedStats control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaViewer mailboxesSharedStats;
+        
+        /// <summary>
+        /// lnkResourceMailboxes control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkResourceMailboxes;
+        
+        /// <summary>
+        /// mailboxesResourceStats control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaViewer mailboxesResourceStats;
+        
+        /// <summary>
         /// rowContacts control.
         /// </summary>
         /// <remarks>

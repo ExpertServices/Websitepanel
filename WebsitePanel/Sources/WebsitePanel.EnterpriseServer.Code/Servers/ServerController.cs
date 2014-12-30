@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
+using System.Linq;
 using System.Net;
 using System.Xml;
 using WebsitePanel.Providers;
@@ -39,6 +40,11 @@ using WebsitePanel.Server;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers.Web;
 using WebsitePanel.Providers.HostedSolution;
+using Whois.NET;
+using System.Text.RegularExpressions;
+using WebsitePanel.Providers.DomainLookup;
+using System.Globalization;
+using System.Linq;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -48,6 +54,35 @@ namespace WebsitePanel.EnterpriseServer
     public class ServerController
     {
         private const string LOG_SOURCE_SERVERS = "SERVERS";
+
+        private static List<string> _createdDatePatterns = new List<string> { @"Creation Date:(.+)", // base
+                                                                                @"created:(.+)",
+                                                                                @"Created On:(.+) UTC",
+                                                                                @"Created On:(.+)",
+                                                                                @"Domain Registration Date:(.+)",
+                                                                                @"Domain Create Date:(.+)",
+                                                                                @"Registered on:(.+)"};
+
+        private static List<string> _expiredDatePatterns = new List<string> {   @"Expiration Date:(.+) UTC", //base UTC
+                                                                                @"Expiration Date:(.+)", // base
+                                                                                @"Registry Expiry Date:(.+)", //.org
+                                                                                @"paid-till:(.+)", //.ru
+                                                                                @"Expires On:(.+)", //.name
+                                                                                @"Domain Expiration Date:(.+)", //.us
+                                                                                @"renewal date:(.+)", //.pl
+                                                                                @"Expiry date:(.+)", //.uk
+                                                                                @"anniversary:(.+)", //.fr
+                                                                                @"expires:(.+)" //.fi 
+                                                                              };
+
+        private static List<string> _registrarNamePatterns = new List<string>   {
+                                                                                @"Created by Registrar:(.+)",
+                                                                                @"Registrar:(.+)",
+                                                                                @"Registrant Name:(.+)"
+                                                                            };
+
+        private static List<string> _datePatterns = new List<string> {   @"ddd MMM dd HH:mm:ss G\MT yyyy"
+                                                                              };
 
         #region Servers
         public static List<ServerInfo> GetAllServers()
@@ -1613,6 +1648,26 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
         #region Domains
+
+        public static List<DnsRecordInfo> GetDomainDnsRecords(int domainId)
+        {
+            var result = new List<DnsRecordInfo>();
+
+            var records = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainAllDnsRecords(domainId));
+
+            var activeDomain = records.OrderByDescending(x => x.Date).FirstOrDefault();
+
+            if (activeDomain != null)
+            {
+                records = records.Where(x => x.DnsServer == activeDomain.DnsServer).ToList();
+            }
+
+            result.AddRange(records);
+
+            return result;
+        }
+
+
         public static int CheckDomain(string domainName)
         {
             int checkDomainResult = DataProvider.CheckDomain(-10, domainName, false);
@@ -1787,6 +1842,8 @@ namespace WebsitePanel.EnterpriseServer
                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.VPS, domain, "");
                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.VPSForPC, domain, "");
                 }
+
+                UpdateDomainWhoisData(domain);
             }
             
             // add instant alias
@@ -2138,11 +2195,13 @@ namespace WebsitePanel.EnterpriseServer
                     }
                 }
 
+                // Find and delete all zone items for this domain
+                var zoneItems = PackageController.GetPackageItemsByType(domain.PackageId, ResourceGroups.Dns, typeof (DnsZone));
+                zoneItems.AddRange(PackageController.GetPackageItemsByType(domain.PackageId, ResourceGroups.Dns, typeof(SecondaryDnsZone)));
 
-                // remove DNS zone meta-item if required
-                if (domain.ZoneItemId > 0)
+                foreach (var zoneItem in zoneItems.Where(z => z.Name == domain.ZoneName))
                 {
-                    PackageController.DeletePackageItem(domain.ZoneItemId);
+                    PackageController.DeletePackageItem(zoneItem.Id);
                 }
 
                 // delete domain
@@ -2637,6 +2696,79 @@ namespace WebsitePanel.EnterpriseServer
                 TaskManager.CompleteTask();
             }
         }
+
+        public static DomainInfo UpdateDomainWhoisData(DomainInfo domain)
+        {
+            try
+            {
+                var whoisResult = WhoisClient.Query(domain.DomainName.ToLowerInvariant());
+
+                string creationDateString = ParseWhoisDomainInfo(whoisResult.Raw, _createdDatePatterns);
+                string expirationDateString = ParseWhoisDomainInfo(whoisResult.Raw, _expiredDatePatterns);
+
+                domain.CreationDate = ParseDate(creationDateString);
+                domain.ExpirationDate = ParseDate(expirationDateString);
+                domain.RegistrarName = ParseWhoisDomainInfo(whoisResult.Raw, _registrarNamePatterns);
+
+                DataProvider.UpdateWhoisDomainInfo(domain.DomainId, domain.CreationDate, domain.ExpirationDate, DateTime.Now, domain.RegistrarName);
+            }
+            catch (Exception e)
+            { 
+                //wrong domain 
+            }
+
+            return domain;
+        }
+
+        public static DomainInfo UpdateDomainWhoisData(DomainInfo domain, DateTime? creationDate, DateTime? expirationDate, string registrarName)
+        {
+            DataProvider.UpdateWhoisDomainInfo(domain.DomainId, creationDate, expirationDate, DateTime.Now, registrarName);
+
+            domain.CreationDate = creationDate;
+            domain.ExpirationDate = expirationDate;
+            domain.RegistrarName = registrarName;
+
+            return domain;
+        }
+
+        private static string ParseWhoisDomainInfo(string raw, IEnumerable<string> patterns)
+        {
+            foreach (var createdRegex in patterns)
+            {
+                var regex = new Regex(createdRegex, RegexOptions.IgnoreCase);
+
+                foreach (Match match in regex.Matches(raw))
+                {
+                    if (match.Success && match.Groups.Count == 2)
+                    {
+                        return match.Groups[1].ToString().Trim();
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private static DateTime? ParseDate(string dateString)
+        {
+            if (string.IsNullOrEmpty(dateString))
+            {
+               return null;
+            }
+
+            var result = DateTime.MinValue;
+
+            foreach (var datePattern in _datePatterns)
+            {
+                if (DateTime.TryParseExact(dateString, datePattern, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+                {
+                    return result;
+                }
+            }
+
+            return DateTime.Parse(dateString);
+        }
+
         #endregion
 
         #region DNS Zones
@@ -2654,7 +2786,7 @@ namespace WebsitePanel.EnterpriseServer
                 DNSServer dns = new DNSServer();
                 ServiceProviderProxy.Init(dns, zoneItem.ServiceId);
 
-                return dns.GetZoneRecords(domain.DomainName);
+                return dns.GetZoneRecords(zoneItem.Name);
             }
 
             return new DnsRecord[] { };

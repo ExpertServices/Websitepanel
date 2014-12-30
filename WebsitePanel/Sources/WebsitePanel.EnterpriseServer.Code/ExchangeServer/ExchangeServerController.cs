@@ -193,6 +193,9 @@ namespace WebsitePanel.EnterpriseServer
                     stats.UsedDiskSpace = tempStats.UsedDiskSpace;
                     stats.UsedLitigationHoldSpace = tempStats.UsedLitigationHoldSpace;
                     stats.UsedArchingStorage = tempStats.UsedArchingStorage;
+
+                    stats.CreatedSharedMailboxes = tempStats.CreatedSharedMailboxes;
+                    stats.CreatedResourceMailboxes = tempStats.CreatedResourceMailboxes;
                 }
                 else
                 {
@@ -221,6 +224,9 @@ namespace WebsitePanel.EnterpriseServer
                                     stats.UsedDiskSpace += tempStats.UsedDiskSpace;
                                     stats.UsedLitigationHoldSpace += tempStats.UsedLitigationHoldSpace;
                                     stats.UsedArchingStorage += tempStats.UsedArchingStorage;
+
+                                    stats.CreatedSharedMailboxes += tempStats.CreatedSharedMailboxes;
+                                    stats.CreatedResourceMailboxes += tempStats.CreatedResourceMailboxes;
                                 }
                             }
                         }
@@ -240,6 +246,9 @@ namespace WebsitePanel.EnterpriseServer
                 stats.AllocatedDiskSpace = cntx.Quotas[Quotas.EXCHANGE2007_DISKSPACE].QuotaAllocatedValue;
                 stats.AllocatedLitigationHoldSpace = cntx.Quotas[Quotas.EXCHANGE2007_RECOVERABLEITEMSSPACE].QuotaAllocatedValue;
                 stats.AllocatedArchingStorage = cntx.Quotas[Quotas.EXCHANGE2013_ARCHIVINGSTORAGE].QuotaAllocatedValue;
+
+                stats.AllocatedSharedMailboxes = cntx.Quotas[Quotas.EXCHANGE2013_SHAREDMAILBOXES].QuotaAllocatedValue;
+                stats.AllocatedResourceMailboxes = cntx.Quotas[Quotas.EXCHANGE2013_RESOURCEMAILBOXES].QuotaAllocatedValue;
 
                 return stats;
             }
@@ -1679,8 +1688,21 @@ namespace WebsitePanel.EnterpriseServer
 
             // check mailbox quota
             OrganizationStatistics orgStats = GetOrganizationStatistics(itemId);
-            if ((orgStats.AllocatedMailboxes > -1) && (orgStats.CreatedMailboxes >= orgStats.AllocatedMailboxes))
-                return BusinessErrorCodes.ERROR_EXCHANGE_MAILBOXES_QUOTA_LIMIT;
+            if (accountType == ExchangeAccountType.SharedMailbox)
+            {
+                if ((orgStats.AllocatedSharedMailboxes > -1) && (orgStats.CreatedSharedMailboxes >= orgStats.AllocatedSharedMailboxes))
+                    return BusinessErrorCodes.ERROR_EXCHANGE_MAILBOXES_QUOTA_LIMIT;
+            }
+            else if ((accountType == ExchangeAccountType.Room) || (accountType == ExchangeAccountType.Equipment))
+            {
+                if ((orgStats.AllocatedResourceMailboxes > -1) && (orgStats.CreatedResourceMailboxes >= orgStats.AllocatedResourceMailboxes))
+                    return BusinessErrorCodes.ERROR_EXCHANGE_MAILBOXES_QUOTA_LIMIT;
+            }
+            else
+            {
+                if ((orgStats.AllocatedMailboxes > -1) && (orgStats.CreatedMailboxes >= orgStats.AllocatedMailboxes))
+                    return BusinessErrorCodes.ERROR_EXCHANGE_MAILBOXES_QUOTA_LIMIT;
+            }
 
 
             // place log record

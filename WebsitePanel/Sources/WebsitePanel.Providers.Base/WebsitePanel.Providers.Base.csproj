@@ -85,6 +85,10 @@
     <Compile Include="Common\ErrorCodes.cs" />
     <Compile Include="Common\PasswdHelper.cs" />
     <Compile Include="Common\WPIEntries.cs" />
+    <Compile Include="DomainLookup\DnsRecordInfo.cs" />
+    <Compile Include="DomainLookup\DnsRecordInfoChange.cs" />
+    <Compile Include="DomainLookup\DomainDnsChanges.cs" />
+    <Compile Include="DomainLookup\DomainDnsRecordStatuses.cs" />
     <Compile Include="EnterpriseStorage\IEnterpriseStorage.cs" />
     <Compile Include="HeliconZoo\IHeliconZooServer.cs" />
     <Compile Include="HostedSolution\BaseReport.cs" />
@@ -125,6 +129,7 @@
     <Compile Include="RemoteDesktopServices\IRemoteDesktopServices.cs" />
     <Compile Include="RemoteDesktopServices\RdsCollection.cs" />
     <Compile Include="RemoteDesktopServices\RdsCollectionPaged.cs" />
+    <Compile Include="RemoteDesktopServices\RdsPolicyTypes.cs" />
     <Compile Include="RemoteDesktopServices\RdsServer.cs" />
     <Compile Include="RemoteDesktopServices\RdsServersPaged.cs" />
     <Compile Include="RemoteDesktopServices\RemoteApplication.cs" />

@@ -43,6 +43,7 @@ using WebsitePanel.Providers.DNS;
 using WebsitePanel.Server;
 using WebsitePanel.Providers.ResultObjects;
 using WebsitePanel.Providers;
+using WebsitePanel.Providers.DomainLookup;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -521,6 +522,13 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
         #region Domains
+
+        [WebMethod]
+        public List<DnsRecordInfo> GetDomainDnsRecords(int domainId)
+        {
+            return ServerController.GetDomainDnsRecords(domainId);
+        }
+
         [WebMethod]
         public List<DomainInfo> GetDomains(int packageId)
         {

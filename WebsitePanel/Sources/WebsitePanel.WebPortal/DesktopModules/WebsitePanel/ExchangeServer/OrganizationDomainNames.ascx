@@ -30,7 +30,7 @@
 							    <ItemStyle Width="50%"></ItemStyle>
 							    <ItemTemplate>
 								    <asp:hyperlink id="lnkEditZone" runat="server" EnableViewState="false"
-									    NavigateUrl='<%# GetDomainRecordsEditUrl(Eval("DomainID").ToString()) %>' Enabled='<%# !(bool)Eval("IsHost") %>'>
+									    NavigateUrl='<%# GetDomainRecordsEditUrl(Eval("DomainID").ToString()) %>' Enabled="true">
 									    <%# Eval("DomainName") %>
 								    </asp:hyperlink>
 							    </ItemTemplate>
@@ -45,7 +45,7 @@
 						    <asp:TemplateField>
 							    <ItemTemplate>
 									&nbsp;<asp:ImageButton ID="imgDelDomain" runat="server" Text="Delete" SkinID="ExchangeDelete"
-									    CommandName="DeleteItem" CommandArgument='<%# Eval("DomainId") %>' Visible='<%# !((bool)Eval("IsHost") || (bool)Eval("IsDefault")) %>'
+									    CommandName="DeleteItem" CommandArgument='<%# Eval("DomainId") %>' Visible='<%# !((bool)Eval("IsDefault")) %>'
 									    meta:resourcekey="cmdDelete" OnClientClick="return confirm('Are you sure you want to delete selected domain?')"></asp:ImageButton>
 							    </ItemTemplate>
 						    </asp:TemplateField>

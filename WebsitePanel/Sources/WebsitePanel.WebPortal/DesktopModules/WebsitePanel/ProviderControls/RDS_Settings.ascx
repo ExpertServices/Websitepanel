@@ -11,15 +11,6 @@
     </tr>
     <tr>
         <td class="SubHead" width="200" nowrap>
-            <asp:Label runat="server" ID="lblGateway" meta:resourcekey="lblGateway" Text="Gateway Servers:"/>
-        </td>
-        <td>                        
-            <asp:TextBox runat="server" ID="txtGateway" MaxLength="1000" Width="200px"  />            
-            <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ControlToValidate="txtGateway" Display="Dynamic" ErrorMessage="*" />
-        </td>
-    </tr>
-    <tr>
-        <td class="SubHead" width="200" nowrap>
             <asp:Label runat="server" ID="lblRootOU" meta:resourcekey="lblRootOU" Text="Root OU:"/>
         </td>
         <td class="Normal">
@@ -50,6 +41,35 @@
         </td>
         <td class="Normal">
             <asp:TextBox runat="server" ID="txtCentralNPS" Width="200px"/>
+        </td>
+    </tr>
+    <tr>
+        <td class="SubHead" width="200" nowrap valign="top">
+            <asp:Localize ID="locGWServers" runat="server" meta:resourcekey="locGWServers"
+                Text="Gateway Servers:"></asp:Localize>
+        </td>
+        <td>
+            <asp:TextBox runat="server" ID="txtAddGWServer" MaxLength="1000" Width="200px"  />  
+            <asp:Button runat="server" ID="btnAddGWServer" OnClick="btnAddGWServer_Click" meta:resourcekey="btnAdd"
+                CssClass="Button1" /><br />
+            <asp:GridView ID="gvGWServers" runat="server" AutoGenerateColumns="False" EmptyDataText="gvRecords"
+                CssSelectorClass="NormalGridView" OnRowCommand="gvGWServers_RowCommand" meta:resourcekey="gvGWServers">
+                <Columns>
+                    <asp:TemplateField meta:resourcekey="ServerNameColumn" ItemStyle-Width="100%" >
+                        <ItemTemplate>
+                            <asp:Label runat="server" ID="lblServerName" Text='<%#Eval("ServerName")%>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                    
+                    <asp:TemplateField>
+                        <ItemTemplate>
+                            <asp:ImageButton ID="cmdDelete" runat="server" SkinID="DeleteSmall" CommandName="RemoveServer"
+                                CommandArgument='<%#Eval("ServerName") %>' meta:resourcekey="cmdDelete" AlternateText="Delete"
+                                OnClientClick="return confirm('Delete?');"></asp:ImageButton>
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                </Columns>
+            </asp:GridView>
         </td>
     </tr>
 </table>

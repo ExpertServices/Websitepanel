@@ -139,21 +139,12 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::WebsitePanel.Portal.ExchangeServer.UserControls.AccountsList fullAccessPermission;
         
         /// <summary>
-        /// btnSave control.
+        /// buttonPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSave;
-        
-        /// <summary>
-        /// btnSaveExit control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnSaveExit;
+        protected global::WebsitePanel.Portal.ItemButtonPanel buttonPanel;
     }
 }

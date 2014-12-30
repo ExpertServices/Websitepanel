@@ -47,8 +47,8 @@
                         <Columns>
                             <asp:TemplateField HeaderText="gvCollectionName" SortExpression="Name">
 							    <ItemStyle Width="40%"></ItemStyle>
-							    <ItemTemplate>
-                                    <asp:Literal id="litCollectionName" runat="server" Text='<%# Eval("Name").ToString() %>'></asp:Literal>
+							    <ItemTemplate>                                    
+                                    <asp:hyperlink id="lnkCollectionName" meta:resourcekey="lnkApps" runat="server" NavigateUrl='<%# GetCollectionEditUrl(Eval("Id").ToString()) %>'><%# Eval("Name").ToString() %></asp:hyperlink>
 							    </ItemTemplate>
 						    </asp:TemplateField>
                             <asp:TemplateField HeaderText="gvServer">

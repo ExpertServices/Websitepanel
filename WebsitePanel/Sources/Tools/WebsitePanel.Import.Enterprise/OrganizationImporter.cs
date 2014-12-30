@@ -51,7 +51,6 @@ namespace WebsitePanel.Import.Enterprise
 		private ProgressBar progressBar;
 		private ApplicationForm appForm;
 		private Button btnImport;
-
 		private Thread thread;
 
 
@@ -780,27 +779,53 @@ namespace WebsitePanel.Import.Enterprise
 				return userId;
 			}
 			int mailboxType = (int)type.Value;
-			ExchangeAccountType accountType = ExchangeAccountType.Undefined;
-			switch (mailboxType)
-			{
-				case 1073741824:
-					Log.WriteInfo("Account type : mailbox");
-					accountType = ExchangeAccountType.Mailbox;
-					break;
-				case 7:
-					Log.WriteInfo("Account type : room");
-					accountType = ExchangeAccountType.Room;
-					break;
-				case 8:
-					Log.WriteInfo("Account type : equipment");
-					accountType = ExchangeAccountType.Equipment;
-					break;
-				default:
-					Log.WriteInfo("Account type : unknown");
-					return userId;
-			}
 
-			UpdateExchangeAccount(userId, accountName, accountType, displayName, email, false, string.Empty, samName, string.Empty);
+            int mailboxTypeDetails = 0;
+            PropertyValueCollection typeDetails = entry.Properties["msExchRecipientTypeDetails"];
+            if (typeDetails!=null)
+            {
+                if (typeDetails.Value != null)
+                {
+                    try
+                    {
+                        object adsLargeInteger = typeDetails.Value;
+                        mailboxTypeDetails = (Int32)adsLargeInteger.GetType().InvokeMember("LowPart", System.Reflection.BindingFlags.GetProperty, null, adsLargeInteger, null);
+                    }
+                    catch { } // just skip
+
+                }
+            }
+
+			ExchangeAccountType accountType = ExchangeAccountType.Undefined;
+
+            if (mailboxTypeDetails == 4)
+            {
+                Log.WriteInfo("Account type : shared mailbox");
+                accountType = ExchangeAccountType.SharedMailbox;
+            }
+            else
+            {
+                switch (mailboxType)
+                {
+                    case 1073741824:
+                        Log.WriteInfo("Account type : mailbox");
+                        accountType = ExchangeAccountType.Mailbox;
+                        break;
+                    case 7:
+                        Log.WriteInfo("Account type : room");
+                        accountType = ExchangeAccountType.Room;
+                        break;
+                    case 8:
+                        Log.WriteInfo("Account type : equipment");
+                        accountType = ExchangeAccountType.Equipment;
+                        break;
+                    default:
+                        Log.WriteInfo("Account type : unknown");
+                        return userId;
+                }
+            }
+
+			UpdateExchangeAccount(userId, accountName, accountType, displayName, email, false, string.Empty, samName, string.Empty, Global.defaultMailboxPlanId);
 
 			string defaultEmail = (string)entry.Properties["extensionAttribute3"].Value;
 
@@ -813,18 +838,16 @@ namespace WebsitePanel.Import.Enterprise
 					if (emailAddress.ToLower().StartsWith("smtp:"))
 						emailAddress = emailAddress.Substring(5);
 
-	
-					if (!emailAddress.Equals(defaultEmail, StringComparison.InvariantCultureIgnoreCase))
+					if (EmailAddressExists(emailAddress))
 					{
-						if (EmailAddressExists(emailAddress))
-						{
-							Log.WriteInfo(string.Format("Email address {0} already exists. Skipped", emailAddress));
-							continue;
-						}
-						// register email address
-						Log.WriteInfo(string.Format("Importing email {0}", emailAddress));
-						AddAccountEmailAddress(userId, emailAddress);
+                        if ((!emailAddress.Equals(defaultEmail, StringComparison.InvariantCultureIgnoreCase)) && (!emailAddress.Equals(email, StringComparison.InvariantCultureIgnoreCase)))
+                            Log.WriteInfo(string.Format("Email address {0} already exists. Skipped", emailAddress));
+
+                        continue;
 					}
+					// register email address
+					Log.WriteInfo(string.Format("Importing email {0}", emailAddress));
+					AddAccountEmailAddress(userId, emailAddress);
 				}
 			}
 			Log.WriteEnd("User imported");
@@ -963,7 +986,7 @@ namespace WebsitePanel.Import.Enterprise
 		
 		private static void UpdateExchangeAccount(int  accountId, string accountName, ExchangeAccountType accountType,
             string displayName, string primaryEmailAddress, bool mailEnabledPublicFolder,
-            string mailboxManagerActions, string samAccountName, string accountPassword)
+            string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId)
 		{
             DataProvider.UpdateExchangeAccount(accountId, 
                 accountName, 
@@ -973,7 +996,7 @@ namespace WebsitePanel.Import.Enterprise
                 mailEnabledPublicFolder, 
                 mailboxManagerActions,
                 samAccountName,
-                CryptoUtils.Encrypt(accountPassword), 0, -1, string.Empty, false);
+                CryptoUtils.Encrypt(accountPassword), mailboxPlanId , -1, string.Empty, false);
         }
 	}
 }

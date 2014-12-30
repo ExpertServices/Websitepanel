@@ -30,6 +30,7 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Collections;
+using System.Linq;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
@@ -44,6 +45,12 @@ namespace WebsitePanel.Portal
 {
     public partial class DomainsSelectDomainControl : WebsitePanelControlBase
     {
+        public bool HideIdnDomains
+        {
+            get { return (ViewState["HideIdnDomains"] != null) && (bool)ViewState["HideIdnDomains"]; }
+            set { ViewState["HideIdnDomains"] = value; }
+        }
+
         public bool HideWebSites
         {
             get { return (ViewState["HideWebSites"] != null) ? (bool)ViewState["HideWebSites"] : false; }
@@ -115,6 +122,11 @@ namespace WebsitePanel.Portal
         private void BindDomains()
         {
             DomainInfo[] domains = ES.Services.Servers.GetMyDomains(PackageId);
+
+            if (HideIdnDomains)
+            {
+                domains = domains.Where(d => !Utils.IsIdnDomain(d.DomainName)).ToArray();
+            }
 
             WebSite[] sites = null;
             Hashtable htSites = new Hashtable();

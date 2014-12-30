@@ -132,9 +132,6 @@
   <data name="btnAddVirtualDirectory.Text" xml:space="preserve">
     <value>Create Directory</value>
   </data>
-  <data name="btnCancel.Text" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
   <data name="btnChangeFrontPagePassword.Text" xml:space="preserve">
     <value>Change Password</value>
   </data>
@@ -150,11 +147,8 @@
   <data name="btnUninstallFrontPage.Text" xml:space="preserve">
     <value>Uninstall</value>
   </data>
-  <data name="btnUpdate.OnClientClick" xml:space="preserve">
+  <data name="buttonPanel.OnSaveClientClick" xml:space="preserve">
     <value>ShowProgressDialog('Updating web site...');</value>
-  </data>
-  <data name="btnUpdate.Text" xml:space="preserve">
-    <value>Update</value>
   </data>
   <data name="cmdContinue.AlternateText" xml:space="preserve">
     <value>Continue Web Site</value>

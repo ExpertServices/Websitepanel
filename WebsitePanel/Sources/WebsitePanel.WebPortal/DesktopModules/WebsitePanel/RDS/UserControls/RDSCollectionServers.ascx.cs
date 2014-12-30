@@ -53,19 +53,14 @@ namespace WebsitePanel.Portal.RDS.UserControls
 		{
             BindServers(servers, false);
 		}
-
-        //public RdsServer[] GetServers()
-        //{
-        //    return GetGridViewServers(SelectedState.All).ToArray();
-        //}
-
+        
         public List<RdsServer> GetServers()
         {
             return GetGridViewServers(SelectedState.All);
         }
 
 		protected void Page_Load(object sender, EventArgs e)
-		{
+		{            
 			// register javascript
 			if (!Page.ClientScript.IsClientScriptBlockRegistered("SelectAllCheckboxes"))
 			{
@@ -80,13 +75,19 @@ namespace WebsitePanel.Portal.RDS.UserControls
                 Page.ClientScript.RegisterClientScriptBlock(typeof(RDSCollectionUsers), "SelectAllCheckboxes",
 					script, true);
 			}
+
+            if (!IsPostBack && PanelRequest.CollectionID > 0)
+            {
+                BindOrganizationServers();
+            }
 		}
 
+        
 		protected void btnAdd_Click(object sender, EventArgs e)
 		{
 			// bind all servers
-			BindPopupServers();
-
+			BindPopupServers(); 
+     
 			// show modal
 			AddServersModal.Show();
 		}
@@ -103,7 +104,6 @@ namespace WebsitePanel.Portal.RDS.UserControls
             List<RdsServer> selectedServers = GetPopUpGridViewServers();
 
             BindServers(selectedServers.ToArray(), true);
-
 		}
 
         protected void BindPopupServers()
@@ -132,6 +132,7 @@ namespace WebsitePanel.Portal.RDS.UserControls
                 servers.AddRange(GetGridViewServers(SelectedState.All));
 
             // add new servers
+
             if (newServers != null)
 			{
                 foreach (RdsServer newServer in newServers)
@@ -203,6 +204,25 @@ namespace WebsitePanel.Portal.RDS.UserControls
 
             return servers;
 
+        }
+
+        protected void BindOrganizationServers()
+        {
+            RdsServer[] servers = ES.Services.RDS.GetOrganizationRdsServersPaged(PanelRequest.ItemID, PanelRequest.CollectionID, "FqdName", txtSearchValue.Text, null, 0, 1000).Servers;
+            Array.Sort(servers, CompareAccount);
+
+            if (Direction == SortDirection.Ascending)
+            {
+                Array.Reverse(servers);
+                Direction = SortDirection.Descending;
+            }
+            else
+            {
+                Direction = SortDirection.Ascending;
+            }
+
+            gvServers.DataSource = servers;
+            gvServers.DataBind();
         }
 
 		protected void cmdSearch_Click(object sender, ImageClickEventArgs e)

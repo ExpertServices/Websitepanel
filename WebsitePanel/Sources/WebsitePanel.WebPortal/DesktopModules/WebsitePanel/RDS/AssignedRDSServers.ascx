@@ -1,4 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="AssignedRDSServers.ascx.cs" Inherits="WebsitePanel.Portal.RDS.AssignedRDSServers" %>
+<%@ Import Namespace="WebsitePanel.Portal" %>
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/QuotaViewer.ascx" TagName="QuotaViewer" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
@@ -46,18 +47,27 @@
 					    DataSourceID="odsRDSAssignedServersPaged" PageSize="20">
                         <Columns>
 						    <asp:TemplateField HeaderText="gvRDSServerName" SortExpression="Name">
-                                <ItemStyle Width="90%"></ItemStyle>
+                                <ItemStyle Width="80%"></ItemStyle>
 							    <ItemTemplate>
 								    <asp:Label id="litRDSServerName" runat="server">
                                         <%# Eval("Name") %>
 								    </asp:Label>
 							    </ItemTemplate>
 						    </asp:TemplateField>
-						    <asp:TemplateField>
+                            <asp:TemplateField>
+                                <ItemStyle Width="10%"></ItemStyle>
 							    <ItemTemplate>
-									<asp:LinkButton ID="imgRemove1" runat="server" Text="Remove"
+								    <asp:ImageButton ID="EnableLinkButton" ImageUrl='<%# PortalUtils.GetThemedImage("Exchange/bullet.gif")%>' runat="server" Visible='<%# Eval("RdsCollectionId") != null && !Convert.ToBoolean(Eval("ConnectionEnabled")) %>'
+									    CommandName="EnableItem" CommandArgument='<%# Eval("Id") %>' meta:resourcekey="cmdEnable"></asp:ImageButton>
+                                    <asp:ImageButton ID="DisableLinkButton" ImageUrl='<%# PortalUtils.GetThemedImage("Exchange/bullet_hover.gif")%>' runat="server" Visible='<%# Eval("RdsCollectionId") != null && Convert.ToBoolean(Eval("ConnectionEnabled")) %>'
+									    CommandName="DisableItem" CommandArgument='<%# Eval("Id") %>' meta:resourcekey="cmdDisable"></asp:ImageButton>                                    
+							    </ItemTemplate>
+						    </asp:TemplateField>
+						    <asp:TemplateField>
+							    <ItemTemplate>                                                                        
+									<asp:LinkButton ID="imgRemove1" runat="server" Text="Remove" Visible='<%# Eval("RdsCollectionId") == null %>'
 									    CommandName="DeleteItem" CommandArgument='<%# Eval("Id") %>' 
-                                        meta:resourcekey="cmdDelete" OnClientClick="return confirm('Are you sure you want to remove selected server?')"></asp:LinkButton>
+                                        meta:resourcekey="cmdDelete" OnClientClick="return confirm('Are you sure you want to remove selected server?')"></asp:LinkButton>                                    
 							    </ItemTemplate>
 						    </asp:TemplateField>
 					    </Columns>

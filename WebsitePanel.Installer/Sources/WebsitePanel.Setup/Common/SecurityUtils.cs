@@ -1110,6 +1110,25 @@ namespace WebsitePanel.Setup
             wmiService.Delete();
         }
 
+	    public static string GetServicePath(string serviceName)
+	    {
+            var mc = new ManagementClass("Win32_Service");
+
+            foreach (var mo in mc.GetInstances())
+            {
+                if (mo.GetPropertyValue("Name").ToString() == serviceName)
+                {
+                    var path = mo.GetPropertyValue("PathName").ToString().Trim('"');
+
+                    var directory = Path.GetDirectoryName(path);
+
+                    return directory;
+                }
+            }
+
+	        return string.Empty;
+	    }
+
 	    #endregion
     }
 

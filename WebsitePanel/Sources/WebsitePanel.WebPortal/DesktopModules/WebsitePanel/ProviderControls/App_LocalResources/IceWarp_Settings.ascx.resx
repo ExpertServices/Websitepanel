@@ -123,16 +123,31 @@
   <data name="lblDomainTemplateNameResource1.ToolTip" xml:space="preserve">
     <value />
   </data>
+  <data name="lblMaxMessageSizeInMB.Text" xml:space="preserve">
+    <value>Global max message size:</value>
+  </data>
+  <data name="lblPublicIP.Text" xml:space="preserve">
+    <value>Public IP Address:</value>
+  </data>
   <data name="lblPublicIPResource1.Text" xml:space="preserve">
     <value>Public IP Address:</value>
   </data>
   <data name="lblPublicIPResource1.ToolTip" xml:space="preserve">
     <value />
   </data>
+  <data name="lblZeroIsUnlimited.Text" xml:space="preserve">
+    <value>0 means unlimited</value>
+  </data>
+  <data name="MaxMessageSizeInMB.Text" xml:space="preserve">
+    <value>Can be overridden on domain level if you check 'Override global limits'</value>
+  </data>
   <data name="txtDomainTemplateNameResource1.Text" xml:space="preserve">
     <value />
   </data>
   <data name="txtDomainTemplateNameResource1.ToolTip" xml:space="preserve">
     <value />
+  </data>
+  <data name="txtWarnSizeValidator.ErrorMessage" xml:space="preserve">
+    <value>Must be a value between 0 and 99, 0 means disabled</value>
   </data>
 </root>

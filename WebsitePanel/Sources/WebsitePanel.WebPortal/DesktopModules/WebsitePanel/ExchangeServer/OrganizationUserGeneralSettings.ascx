@@ -13,6 +13,7 @@
 <%@ Register src="UserControls/UserTabs.ascx" tagname="UserTabs" tagprefix="uc1" %>
 <%@ Register src="UserControls/MailboxTabs.ascx" tagname="MailboxTabs" tagprefix="uc1" %>
 
+<%@ Register Src="../UserControls/ItemButtonPanel.ascx" TagName="ItemButtonPanel" TagPrefix="wsp" %>
 
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
@@ -283,10 +284,8 @@
 													
 					
 				    <div class="FormFooterClean">
-					    <asp:Button id="btnSave" runat="server" Text="Save Changes" CssClass="Button1"
-							meta:resourcekey="btnSave" ValidationGroup="EditMailbox" OnClick="btnSave_Click"></asp:Button>
-					    <asp:Button id="btnSaveExit" runat="server" Text="Save Changes and Exit" CssClass="Button1"
-							meta:resourcekey="btnSaveExit" ValidationGroup="EditMailbox" OnClick="btnSaveExit_Click"></asp:Button>
+                        <wsp:ItemButtonPanel id="buttonPanel" runat="server" ValidationGroup="EditMailbox" 
+                            OnSaveClick="btnSave_Click" OnSaveExitClick="btnSaveExit_Click" />
 					    <asp:ValidationSummary ID="ValidationSummary1" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="EditMailbox" />
 				    </div>
 				</div>

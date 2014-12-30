@@ -38,6 +38,15 @@ namespace WebsitePanel.Providers.HostedSolution
         int itemId;
         int mailboxPlanId;
         string mailboxPlan;
+
+        public override string ToString()
+        {
+            if (mailboxPlan != null)
+                return mailboxPlan;
+
+            return base.ToString();
+        }
+
         int mailboxSizeMB;
         int maxRecipients;
         int maxSendMessageSizeKB;
@@ -62,7 +71,6 @@ namespace WebsitePanel.Providers.HostedSolution
         int recoverableItemsSpace;
         string litigationHoldUrl;
         string litigationHoldMsg;
-
 
         public int ItemId
         {

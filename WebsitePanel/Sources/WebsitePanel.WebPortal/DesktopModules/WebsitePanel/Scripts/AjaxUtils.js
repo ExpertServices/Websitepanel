@@ -43,7 +43,7 @@ function PadNumber(num)
 
 function EnableProgressDialog() {
     _showProgressDialog = true;
-    window.setInterval(DisableProgressDialog, 10); // disable dialog with some delay
+    //window.setInterval(DisableProgressDialog, 10); // disable dialog with some delay
 }
 
 function DisableProgressDialog() {
@@ -55,6 +55,12 @@ function ShowProgressDialog(title, popupBehavior)
     _dialogTitle = title;
     _popupBehavior = popupBehavior;
     EnableProgressDialog();
+}
+
+function CloseProgressDialog()
+{
+    DisableProgressDialog();
+    $find('ModalPopupProperties').hide();
 }
 
 function ShowProgressDialogWithCallback(title)

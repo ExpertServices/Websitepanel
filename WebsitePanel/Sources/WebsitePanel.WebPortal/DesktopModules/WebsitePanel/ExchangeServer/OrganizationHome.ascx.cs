@@ -54,6 +54,14 @@ namespace WebsitePanel.Portal.ExchangeServer
             lnkMailboxes.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "mailboxes",
             "SpaceID=" + PanelSecurity.PackageId.ToString());
 
+
+            lnkSharedMailboxes.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "mailboxes",
+            "SpaceID=" + PanelSecurity.PackageId.ToString());
+
+            lnkResourceMailboxes.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "mailboxes",
+            "SpaceID=" + PanelSecurity.PackageId.ToString());
+
+
             lnkContacts.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "contacts",
             "SpaceID=" + PanelSecurity.PackageId.ToString());
 
@@ -77,6 +85,13 @@ namespace WebsitePanel.Portal.ExchangeServer
             mailboxesStats.QuotaValue = exchangeOrgStats.AllocatedMailboxes;
             if (exchangeOrgStats.AllocatedMailboxes != -1) mailboxesStats.QuotaAvailable = exchangeTenantStats.AllocatedMailboxes - exchangeTenantStats.CreatedMailboxes;
 
+            mailboxesSharedStats.QuotaUsedValue = exchangeOrgStats.CreatedSharedMailboxes;
+            mailboxesSharedStats.QuotaValue = exchangeOrgStats.AllocatedSharedMailboxes;
+            if (exchangeOrgStats.AllocatedSharedMailboxes != -1) mailboxesSharedStats.QuotaAvailable = exchangeTenantStats.AllocatedSharedMailboxes - exchangeTenantStats.CreatedSharedMailboxes;
+
+            mailboxesResourceStats.QuotaUsedValue = exchangeOrgStats.CreatedResourceMailboxes;
+            mailboxesResourceStats.QuotaValue = exchangeOrgStats.AllocatedResourceMailboxes;
+            if (exchangeOrgStats.AllocatedResourceMailboxes != -1) mailboxesResourceStats.QuotaAvailable = exchangeTenantStats.AllocatedResourceMailboxes - exchangeTenantStats.CreatedResourceMailboxes;
 
             if (exchangeTenantStats.AllocatedContacts == 0) this.rowContacts.Style.Add("display", "none");
             else

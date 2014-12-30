@@ -25,7 +25,7 @@
     CssSelectorClass="NormalGridView" AllowPaging="True" OnRowCommand="gvDomains_RowCommand">
     <Columns>
         <asp:TemplateField SortExpression="DomainName" HeaderText="gvDomainsName">
-            <ItemStyle Width="60%" Wrap="False"></ItemStyle>
+            <ItemStyle Width="45%" Wrap="False"></ItemStyle>
             <ItemTemplate>
 	            <b><asp:hyperlink id=lnkEdit1 runat="server" CssClass="Medium"
 	                NavigateUrl='<%# GetItemEditUrl(Eval("PackageID"), Eval("DomainID")) %>'>
@@ -35,6 +35,20 @@
                     <asp:Label ID="lblMailDomain" runat="server" meta:resourcekey="lblMailDomain" Text="Mail:"></asp:Label>
                     <b><%# Eval("MailDomainName")%></b>
 	            </div>
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="gvDomainsExpirationDate">
+            <ItemStyle Width="11%"></ItemStyle>
+            <ItemTemplate>
+	            <%# GetDomainExpirationDate(Eval("ExpirationDate"), Eval("LastUpdateDate"))%>
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="">
+            <ItemStyle Width="5%"></ItemStyle>
+            <ItemTemplate>
+	            <div style="display:inline-block" runat="server" Visible='<%# ShowDomainDnsInfo(Eval("ExpirationDate"), Eval("LastUpdateDate"), !(bool)Eval("IsSubDomain") && !(bool)Eval("IsInstantAlias") && !(bool)Eval("IsDomainPointer")) && !string.IsNullOrEmpty(GetDomainDnsRecords((int)Eval("DomainId"))) %>'>
+                  <img style="border-width: 0px;" src="App_Themes/Default/Images/information_icon_small.gif" title="<%# GetDomainTooltip((int)Eval("DomainId"), Eval("RegistrarName") != DBNull.Value ? (string)Eval("RegistrarName"):string.Empty)  %>">
+                </div>
             </ItemTemplate>
         </asp:TemplateField>
         <asp:TemplateField HeaderText="gvDomainsType">

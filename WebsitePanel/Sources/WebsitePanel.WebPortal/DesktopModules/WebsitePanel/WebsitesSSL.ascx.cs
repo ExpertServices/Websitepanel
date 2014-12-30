@@ -135,10 +135,18 @@ namespace WebsitePanel.Portal
 			}
 		}
 
-        private void BindListOfAvailableSslDomains(string websiteName, string domainName)
-		{
-            rbSiteCertificate.Text = websiteName;
-            rbDomainCertificate.Text = "*." + domainName;
+        private void BindListOfAvailableSslDomains(string defaultBindingName)
+        {
+            var domains = ES.Services.WebServers.GetWebSitePointers(SiteId).ToList();
+
+            // If no pointers at all, add website default domain
+			if (domains.All(d => d.DomainName != defaultBindingName))
+			{
+			    domains.Add(new DomainInfo() { DomainName = defaultBindingName, IsDomainPointer = false});
+			}
+
+            ddlbSiteCertificate.Items.AddRange(domains.Select(d => new ListItem(d.DomainName)).ToArray());
+            ddlbSiteCertificate.Items.AddRange(domains.Where(d => !d.IsDomainPointer).Select(d => new ListItem("*." + d.DomainName)).ToArray());
 		}
 
 		public void BindWebItem(WebVirtualDirectory item)
@@ -148,106 +156,10 @@ namespace WebsitePanel.Portal
 			// Skip processing virtual directories, otherwise we will likely run into a trouble
 			if (webSite == null)
 				return;
-			//
-			bool hasactive = false;
-			bool haspending = false;
 
-			SiteId = item.Id;
-			//
-			try
-			{
-				SSLCertificate[] certificates = ES.Services.WebServers.GetCertificatesForSite(item.Id);
+		    SiteId = item.Id;
 
-				SSLNotInstalled.Visible = true;
-
-                DomainInfo[] domains = ES.Services.Servers.GetDomains(PanelSecurity.PackageId);
-                string zoneName = string.Empty;
-                foreach (DomainInfo d in domains)
-                {
-                    if (d.WebSiteId == SiteId)
-                    {
-                        zoneName = d.ZoneName;
-                        break;
-                    }
-                }
-
-				//
-                BindListOfAvailableSslDomains(webSite.Name, zoneName);
-
-				if (certificates.Length > 0)
-				{
-					foreach (SSLCertificate cert in certificates)
-					{
-						if (cert.Installed)
-						{
-							hasactive = true;
-						}
-						else
-						{
-							haspending = true;
-						}
-					}
-				}
-
-				// Web site has active certificate
-				if (hasactive)
-				{
-					tabInstalled.Visible = true;
-					tabInstalled.Enabled = true;
-					tabInstalled.HeaderText = GetLocalizedString("tabInstalled.Text");
-
-					InstalledCert = (from c in certificates
-									 where c.Installed == true
-									 select c).SingleOrDefault();
-					//
-					BindCertificateFields();
-					// Attention please, the certificate is about to expire!
-					TimeSpan daystoexp = DateTime.Now - InstalledCert.ExpiryDate;
-					if (daystoexp.Days < 30)
-					{
-						lblInstalledExpiration.ForeColor = System.Drawing.Color.Red;
-					}
-					// Put some data to the ViewState
-					ViewState["SSLID"] = InstalledCert.id;
-					ViewState["SSLSerial"] = InstalledCert.SerialNumber;
-					//
-					if (!haspending)
-					{
-						btnShowpnlCSR.Attributes.Add("OnClientClick", "return confirm('" + GetLocalizedString("btnInstallConfirm.Text") + "');");
-						btnShowUpload.Attributes.Add("OnClientClick", "return confirm('" + GetLocalizedString("btnInstallConfirm.Text") + "');");
-						SSLNotInstalledHeading.Text = GetLocalizedString("SSLInstalledNewHeading.Text");
-						SSLNotInstalledDescription.Text = GetLocalizedString("SSLInstalledNewDescription.Text");
-					}
-				}
-
-				// Web site has pending certificate
-				if (haspending)
-				{
-					tabCSR.HeaderText = GetLocalizedString("tabPendingCertificate.HeaderText");//"Pending Certificate";
-					SSLNotInstalled.Visible = false;
-					pnlInstallCertificate.Visible = true;
-					SSLCertificate pending = (from c in certificates
-											  where c.Installed == false
-											  select c).Single();
-					ViewState["CSRID"] = pending.id;
-					txtCSR.Text = pending.CSR;
-					txtCSR.Attributes.Add("onfocus", "this.select();");
-					if (InstalledCert != null)
-					{
-						btnInstallCertificate.Attributes.Add("OnClientClick", "return confirm('" + GetLocalizedString("btnInstallConfirm.Text") + "');");
-					}
-				}
-
-				if (!hasactive && ES.Services.WebServers.CheckCertificate(item.Id).IsSuccess)
-				{
-					SSLNotInstalled.Visible = false;
-					SSLImport.Visible = true;
-				}
-			}
-			catch (Exception ex)
-			{
-				messageBox.ShowErrorMessage("WEB_GET_SSL", ex);
-			}
+            RefreshControlLayout();
 		}
 
 		protected void btnShowpnlCSR_click(object sender, EventArgs e)
@@ -271,7 +183,8 @@ namespace WebsitePanel.Portal
                                                      L={3},
                                                      S={4},                                                
                                                      C={5}",
-                                                    rbSiteCertificate.Checked ? rbSiteCertificate.Text : rbDomainCertificate.Text,
+                                                    //rbSiteCertificate.Checked ? rbSiteCertificate.Text : rbDomainCertificate.Text,
+                                                    ddlbSiteCertificate.SelectedValue,
 														txtCompany.Text,
 														txtOU.Text,
 														txtCity.Text,
@@ -279,7 +192,7 @@ namespace WebsitePanel.Portal
 														lstCountries.SelectedValue);
 
 			SSLCertificate certificate = new SSLCertificate();
-            certificate.Hostname = rbSiteCertificate.Checked ? rbSiteCertificate.Text : rbDomainCertificate.Text;
+            certificate.Hostname = ddlbSiteCertificate.SelectedValue;   //rbSiteCertificate.Checked ? rbSiteCertificate.Text : rbDomainCertificate.Text;
 			certificate.DistinguishedName = distinguishedName;
 			certificate.CSRLength = Convert.ToInt32(lstBits.SelectedValue);
 			certificate.Organisation = txtCompany.Text;
@@ -336,7 +249,7 @@ namespace WebsitePanel.Portal
                                                      OU={2},                                                                                                  
                                                      L={3},
                                                      S={4},                                                
-                                                     C={5}", rbSiteCertificate.Checked ? rbSiteCertificate.Text : rbDomainCertificate.Text,
+                                                     C={5}", ddlbSiteCertificate.SelectedValue, //rbSiteCertificate.Checked ? rbSiteCertificate.Text : rbDomainCertificate.Text,
 															 txtCompany.Text,
 															 txtOU.Text,
 															 txtCity.Text,
@@ -344,7 +257,7 @@ namespace WebsitePanel.Portal
 															 lstCountries.SelectedValue);
 
 			SSLCertificate certificate = new SSLCertificate();
-            certificate.Hostname = rbSiteCertificate.Checked ? rbSiteCertificate.Text : rbDomainCertificate.Text;
+		    certificate.Hostname = ddlbSiteCertificate.SelectedValue;   //rbSiteCertificate.Checked ? rbSiteCertificate.Text : rbDomainCertificate.Text;
 			certificate.DistinguishedName = distinguishedName;
 			certificate.CSRLength = Convert.ToInt32(lstBits.SelectedValue);
 			certificate.Organisation = txtCompany.Text;
@@ -369,7 +282,7 @@ namespace WebsitePanel.Portal
 			pnlCSR.Visible = false;
 			ViewState["CSRID"] = certificate.id;
 			txtCSR.Attributes.Add("onfocus", "this.select();");
-			RefreshControlLayout(PanelRequest.ItemID);
+			RefreshControlLayout();
 			TabContainer1.ActiveTab = TabContainer1.Tabs[0];
 			messageBox.ShowSuccessMessage(WEB_GEN_CSR);
 		}
@@ -402,7 +315,7 @@ namespace WebsitePanel.Portal
 			//
             TabContainer1.ActiveTab = tabInstalled;
 
-			RefreshControlLayout(webSiteId);
+			RefreshControlLayout();
 		}
 
 		protected void btnInstallPFX_Click(object sender, EventArgs e)
@@ -428,13 +341,14 @@ namespace WebsitePanel.Portal
 			if (result.IsSuccess.Equals(false))
 			{
 				messageBox.ShowErrorMessage("WEB_INSTALL_CSR");
-				return;
+			    RefreshControlLayout();
+                return;
 			}
 			//
 			messageBox.ShowSuccessMessage("WEB_INSTALL_CSR");
 			SSLNotInstalled.Visible = false;
 			tabInstalled.Visible = true;
-			RefreshControlLayout(SiteId);
+			RefreshControlLayout();
 		}
 
 		protected void BindCertificateFields()
@@ -560,43 +474,43 @@ namespace WebsitePanel.Portal
 			if (!result.IsSuccess)
 			{
 				messageBox.ShowErrorMessage("WEB_INSTALL_CSR");
+                RefreshControlLayout();
 				return;
 			}
 			// Show success message and display appropriate controls
 			messageBox.ShowSuccessMessage("WEB_INSTALL_CSR");
-			SSLNotInstalled.Visible = false;
-			tabInstalled.Visible = true;
-			//
-			RefreshControlLayout(webSiteId);
+
+            RefreshControlLayout();
 		}
 
-		protected void RefreshControlLayout(int webSiteId)
+		public void RefreshControlLayout()
 		{
-			bool hasActiveCert = false;
-			bool hasPendingCert = false;
-			//
+            //
+			bool hasactive = false;
+			bool haspending = false;
+
 			try
 			{
-				SSLCertificate[] certificates = ES.Services.WebServers.GetCertificatesForSite(webSiteId);
+			    var webSite = ES.Services.WebServers.GetWebSite(SiteId);
 
-				WebSite item = ES.Services.WebServers.GetWebSite(webSiteId);
+                // Get all certificate infos stored in database
+				SSLCertificate[] certificates = ES.Services.WebServers.GetCertificatesForSite(SiteId);
 
-				SSLNotInstalled.Visible = true;
-				//
+                // Set some default visible values, states and texts
+				tabInstalled.Visible = false;
+				tabInstalled.Enabled = false;
+                SSLNotInstalled.Visible = true;
+        		SSLImport.Visible = false;
+			    pnlCSR.Visible = false;
+			    pnlShowUpload.Visible = false;
+                pnlInstallCertificate.Visible = false;
 
-                DomainInfo[] domains = ES.Services.Servers.GetDomains(PanelSecurity.PackageId);
-                string zoneName = string.Empty;
-                foreach (DomainInfo d in domains)
-                {
-                    if (d.WebSiteId == item.Id)
-                    {
-                        zoneName = d.ZoneName;
-                        break;
-                    }
-                }
+                btnShowpnlCSR.Attributes.Remove("OnClientClick");
+				btnShowUpload.Attributes.Remove("OnClientClick");
+				SSLNotInstalledHeading.Text = GetLocalizedString("SSLNotInstalledHeading.Text");
+				SSLNotInstalledDescription.Text = GetLocalizedString("SSLNotInstalledDescription.Text");
 
-                //
-                BindListOfAvailableSslDomains(item.Name, zoneName);
+                BindListOfAvailableSslDomains(webSite.Name);
 
 				if (certificates.Length > 0)
 				{
@@ -604,16 +518,17 @@ namespace WebsitePanel.Portal
 					{
 						if (cert.Installed)
 						{
-							hasActiveCert = true;
+							hasactive = true;
 						}
 						else
 						{
-							hasPendingCert = true;
+							haspending = true;
 						}
 					}
 				}
 
-				if (hasActiveCert)
+				// Web site has active certificate
+				if (hasactive)
 				{
 					tabInstalled.Visible = true;
 					tabInstalled.Enabled = true;
@@ -622,18 +537,19 @@ namespace WebsitePanel.Portal
 					InstalledCert = (from c in certificates
 									 where c.Installed == true
 									 select c).SingleOrDefault();
-
-					TimeSpan daystoexp = DateTime.Now - InstalledCert.ExpiryDate;
-
-					BindCertificateFields();
 					//
-					bool certAbout2Exp = daystoexp.Days < 30
-								 ? lblInstalledExpiration.ForeColor == System.Drawing.Color.Red
-								 : lblInstalledExpiration.ForeColor == System.Drawing.Color.Black;
+					BindCertificateFields();
+					// Attention please, the certificate is about to expire!
+					TimeSpan daystoexp = InstalledCert.ExpiryDate - DateTime.Now;
+					if (daystoexp.Days < 30)
+					{
+						lblInstalledExpiration.ForeColor = System.Drawing.Color.Red;
+					}
+					// Put some data to the ViewState
 					ViewState["SSLID"] = InstalledCert.id;
 					ViewState["SSLSerial"] = InstalledCert.SerialNumber;
-
-					if (!hasPendingCert)
+					//
+					if (!haspending)
 					{
 						btnShowpnlCSR.Attributes.Add("OnClientClick", "return confirm('" + GetLocalizedString("btnInstallConfirm.Text") + "');");
 						btnShowUpload.Attributes.Add("OnClientClick", "return confirm('" + GetLocalizedString("btnInstallConfirm.Text") + "');");
@@ -642,9 +558,10 @@ namespace WebsitePanel.Portal
 					}
 				}
 
-				if (hasPendingCert)
+				// Web site has pending certificate
+				if (haspending)
 				{
-					tabCSR.HeaderText = GetLocalizedString("tabPendingCertificate.HeaderText");
+					tabCSR.HeaderText = GetLocalizedString("tabPendingCertificate.HeaderText");//"Pending Certificate";
 					SSLNotInstalled.Visible = false;
 					pnlInstallCertificate.Visible = true;
 					SSLCertificate pending = (from c in certificates
@@ -653,11 +570,16 @@ namespace WebsitePanel.Portal
 					ViewState["CSRID"] = pending.id;
 					txtCSR.Text = pending.CSR;
 					txtCSR.Attributes.Add("onfocus", "this.select();");
-
 					if (InstalledCert != null)
 					{
 						btnInstallCertificate.Attributes.Add("OnClientClick", "return confirm('" + GetLocalizedString("btnInstallConfirm.Text") + "');");
 					}
+				}
+
+				if (!hasactive && ES.Services.WebServers.CheckCertificate(SiteId).IsSuccess)
+				{
+					SSLNotInstalled.Visible = false;
+					SSLImport.Visible = true;
 				}
 			}
 			catch (Exception ex)
@@ -668,7 +590,10 @@ namespace WebsitePanel.Portal
 
 		protected void SetCertHostnameSelection(string hostname)
 		{
-            rbSiteCertificate.Checked = (rbSiteCertificate.Text == hostname);
+		    if (ddlbSiteCertificate.Items.Contains(new ListItem(hostname)))
+		    {
+		        ddlbSiteCertificate.SelectedValue = hostname;
+		    }
 		}
 
 		protected void SetCertCountrySelection(string country)
@@ -701,5 +626,33 @@ namespace WebsitePanel.Portal
 			listCtl.ClearSelection();
 			li.Selected = true;
 		}
-	}
+
+        protected void btnCancelRequest_Click(object sender, EventArgs e)
+        {
+            ResultObject result = null;
+            try
+            {
+                result = ES.Services.WebServers.DeleteCertificateRequest(SiteId, (int)ViewState["CSRID"]);
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage(WEB_SSL_DELETE, ex);
+            }
+            //
+            if (!result.IsSuccess)
+            {
+                messageBox.ShowErrorMessage(WEB_SSL_DELETE);
+                return;
+            }
+            //
+            SSLNotInstalled.Visible = true;
+            pnlCSR.Visible = false;
+            pnlInstallCertificate.Visible = false;
+        }
+
+        protected void btnDeleteAll_Click(object sender, EventArgs e)
+        {
+            DeleteCertificate(SiteId, new SSLCertificate());
+        }
+ 	}
 }

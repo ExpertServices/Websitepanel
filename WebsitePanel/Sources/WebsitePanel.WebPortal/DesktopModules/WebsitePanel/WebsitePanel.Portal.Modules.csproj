@@ -211,6 +211,20 @@
     <Compile Include="Code\ReportingServices\IResourceStorage.cs" />
     <Compile Include="Code\ReportingServices\ReportingServicesUtils.cs" />
     <Compile Include="Code\UserControls\Tab.cs" />
+    <Compile Include="ExchangeServer\ExchangeCheckDomainName.ascx.cs">
+      <DependentUpon>ExchangeCheckDomainName.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\ExchangeCheckDomainName.ascx.designer.cs">
+      <DependentUpon>ExchangeCheckDomainName.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ProviderControls\Windows2012_Settings.ascx.cs">
+      <DependentUpon>Windows2012_Settings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProviderControls\Windows2012_Settings.ascx.designer.cs">
+      <DependentUpon>Windows2012_Settings.ascx</DependentUpon>
+    </Compile>
     <Compile Include="RDSServersAddserver.ascx.cs">
       <DependentUpon>RDSServersAddserver.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -238,6 +252,20 @@
     </Compile>
     <Compile Include="RDS\AddRDSServer.ascx.designer.cs">
       <DependentUpon>AddRDSServer.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDS\RDSEditApplicationUsers.ascx.cs">
+      <DependentUpon>RDSEditApplicationUsers.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\RDSEditApplicationUsers.ascx.designer.cs">
+      <DependentUpon>RDSEditApplicationUsers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="RDS\RDSEditCollection.ascx.cs">
+      <DependentUpon>RDSEditCollection.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\RDSEditCollection.ascx.designer.cs">
+      <DependentUpon>RDSEditCollection.ascx</DependentUpon>
     </Compile>
     <Compile Include="RDS\RDSEditCollectionApps.ascx.cs">
       <DependentUpon>RDSEditCollectionApps.ascx</DependentUpon>
@@ -287,6 +315,39 @@
     </Compile>
     <Compile Include="RDS\UserControls\RDSCollectionUsers.ascx.designer.cs">
       <DependentUpon>RDSCollectionUsers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ScheduleTaskControls\App_LocalResources\DomainLookupView.ascx.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DomainLookupView.ascx.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ScheduleTaskControls\DomainExpirationView.ascx.cs">
+      <DependentUpon>DomainExpirationView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ScheduleTaskControls\DomainExpirationView.ascx.designer.cs">
+      <DependentUpon>DomainExpirationView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ScheduleTaskControls\DomainLookupView.ascx.cs">
+      <DependentUpon>DomainLookupView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ScheduleTaskControls\DomainLookupView.ascx.designer.cs">
+      <DependentUpon>DomainLookupView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsDomainExpirationLetter.ascx.cs">
+      <DependentUpon>SettingsDomainExpirationLetter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsDomainExpirationLetter.ascx.designer.cs">
+      <DependentUpon>SettingsDomainExpirationLetter.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsDomainLookupLetter.ascx.cs">
+      <DependentUpon>SettingsDomainLookupLetter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SettingsDomainLookupLetter.ascx.designer.cs">
+      <DependentUpon>SettingsDomainLookupLetter.ascx</DependentUpon>
     </Compile>
     <Compile Include="SettingsServiceLevels.ascx.cs">
       <DependentUpon>SettingsServiceLevels.ascx</DependentUpon>
@@ -719,6 +780,13 @@
     <Compile Include="SkinControls\SpaceOrganizationsSelector.ascx.designer.cs">
       <DependentUpon>SpaceOrganizationsSelector.ascx</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\DomainControl.ascx.cs">
+      <DependentUpon>DomainControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\DomainControl.ascx.designer.cs">
+      <DependentUpon>DomainControl.ascx</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\DomainListControlBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -759,6 +827,13 @@
     </Compile>
     <Compile Include="Lync\UserControls\AllocatePackagePhoneNumbers.ascx.designer.cs">
       <DependentUpon>AllocatePackagePhoneNumbers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ItemButtonPanel.ascx.cs">
+      <DependentUpon>ItemButtonPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserControls\ItemButtonPanel.ascx.designer.cs">
+      <DependentUpon>ItemButtonPanel.ascx</DependentUpon>
     </Compile>
     <Compile Include="UserOrganization.ascx.cs">
       <DependentUpon>UserOrganization.ascx</DependentUpon>
@@ -4223,10 +4298,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplyEnableHardQuotaFeature.ascx" />
+    <Content Include="ExchangeServer\ExchangeCheckDomainName.ascx" />
+    <Content Include="ProviderControls\Windows2012_Settings.ascx" />
     <Content Include="RDSServersAddserver.ascx" />
     <Content Include="RDSServers.ascx" />
     <Content Include="RDS\AssignedRDSServers.ascx" />
     <Content Include="RDS\AddRDSServer.ascx" />
+    <Content Include="RDS\RDSEditApplicationUsers.ascx" />
+    <Content Include="RDS\RDSEditCollection.ascx" />
     <Content Include="RDS\RDSEditCollectionApps.ascx" />
     <Content Include="RDS\RDSEditCollectionUsers.ascx" />
     <Content Include="RDS\RDSCreateCollection.ascx" />
@@ -4234,6 +4313,27 @@
     <Content Include="RDS\UserControls\RDSCollectionApps.ascx" />
     <Content Include="RDS\UserControls\RDSCollectionServers.ascx" />
     <Content Include="RDS\UserControls\RDSCollectionUsers.ascx" />
+    <Content Include="ScheduleTaskControls\App_LocalResources\DomainExpirationView.ascx.resx" />
+    <Content Include="App_LocalResources\SettingsDomainExpirationLetter.ascx.resx" />
+    <Content Include="App_LocalResources\SettingsDomainLookupLetter.ascx.resx" />
+    <Content Include="ProviderControls\App_LocalResources\Windows2012_Settings.ascx.resx" />
+    <Content Include="RDS\App_LocalResources\RDSEditCollection.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="RDS\App_LocalResources\RDSEditApplicationUsers.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ExchangeServer\App_LocalResources\ExchangeCheckDomainName.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <EmbeddedResource Include="ScheduleTaskControls\App_LocalResources\DomainLookupView.ascx.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DomainLookupView.ascx.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Content Include="ScheduleTaskControls\DomainExpirationView.ascx" />
+    <Content Include="ScheduleTaskControls\DomainLookupView.ascx" />
+    <Content Include="SettingsDomainExpirationLetter.ascx" />
+    <Content Include="SettingsDomainLookupLetter.ascx" />
     <Content Include="SettingsServiceLevels.ascx" />
     <Content Include="CRM\CRMStorageSettings.ascx" />
     <Content Include="ExchangeServer\EnterpriseStorageCreateDriveMap.ascx" />
@@ -4297,11 +4397,13 @@
     <Content Include="SettingsLyncUserPlansPolicy.ascx" />
     <Content Include="SkinControls\SpaceOrganizationsSelector.ascx" />
     <Content Include="SettingsExchangeRetentionPolicyTag.ascx" />
+    <Content Include="UserControls\DomainControl.ascx" />
     <Content Include="UserControls\EditFeedsList.ascx" />
     <Content Include="UserControls\OrgIdPolicyEditor.ascx" />
     <Content Include="UserControls\OrgPolicyEditor.ascx" />
     <Content Include="UserControls\PackagePhoneNumbers.ascx" />
     <Content Include="Lync\UserControls\AllocatePackagePhoneNumbers.ascx" />
+    <Content Include="UserControls\ItemButtonPanel.ascx" />
     <Content Include="UserOrganization.ascx" />
     <Content Include="VPSForPC\MonitoringPage.aspx" />
     <Content Include="VPSForPC\VdcAccountVLanAdd.ascx" />
@@ -5457,6 +5559,9 @@
     <Content Include="Lync\UserControls\App_LocalResources\AllocatePackagePhoneNumbers.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="UserControls\App_LocalResources\ItemButtonPanel.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Resources\Windows2008_Settings.ascx.resx" />
     <Content Include="App_LocalResources\WebSitesHeliconZooControl.ascx.resx" />
     <Content Include="ExchangeServer\App_LocalResources\ExchangeDisclaimers.ascx.resx">
@@ -5529,12 +5634,18 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="RDS\App_LocalResources\AddRDSServer.ascx.resx" />
-    <Content Include="RDS\App_LocalResources\RDSCreateCollection.ascx.resx" />
-    <Content Include="RDS\App_LocalResources\RDSEditCollectionUsers.ascx.resx" />
+    <Content Include="RDS\App_LocalResources\RDSCreateCollection.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="RDS\App_LocalResources\RDSEditCollectionUsers.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="RDS\App_LocalResources\RDSEditCollectionApps.ascx.resx" />
     <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionUsers.ascx.resx" />
     <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionServers.ascx.resx" />
     <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionApps.ascx.resx" />
+    <Content Include="ProviderControls\App_LocalResources\RDS_Settings.ascx.resx" />
+    <Content Include="UserControls\App_LocalResources\DomainControl.ascx.resx" />
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

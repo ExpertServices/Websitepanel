@@ -141,6 +141,8 @@
 					<p class="Normal">
 						<asp:Localize ID="SSLImportDescription" runat="server" meta:resourcekey="SSLImportDescription" /></p>
 					<asp:Button ID="btnImport" meta:resourcekey="btnImport" CssClass="Button1" runat="server" OnClick="btnImport_click" />
+			        <asp:Button ID="btnDeleteAll" runat="server" Text="Delete" meta:resourcekey="btnDelete"
+				        CssClass="Button1" OnClick="btnDeleteAll_Click" />
 				</div>
 			</asp:Panel>
 
@@ -151,13 +153,7 @@
 	                <tr>
 						<td class="SubHead">
 							<asp:Localize ID="SelectCertType" runat="server" meta:resourcekey="SelectCertType" /></td>
-		                <td class="NormalBold" ><asp:radiobutton id="rbSiteCertificate" GroupName="Content" Runat="server" Checked="True"></asp:radiobutton></td>
-	                </tr>
-	                <tr>
-                        <td></td>
-                        <td class="NormalBold" ><asp:radiobutton id="rbDomainCertificate" GroupName="Content" Runat="server" ></asp:radiobutton></td>
-	                </tr>
-
+		                <td class="NormalBold" ><asp:DropDownList id="ddlbSiteCertificate" GroupName="Content" Runat="server" Checked="True"></asp:DropDownList></td>
 					<tr>
 						<td class="SubHead">
 							<asp:Localize ID="sslBitLength" runat="server" meta:resourcekey="sslBitLength" /></td>
@@ -173,7 +169,7 @@
 							<asp:Localize ID="sslOrganization" runat="server" meta:resourcekey="sslOrganization" /></td>
 						<td class="Normal">
 							<asp:TextBox ID="txtCompany" runat="server" /><asp:RequiredFieldValidator ID="SSLCompanyReq" Display="Dynamic" ValidationGroup="SSL" runat="server"
-								ControlToValidate="txtCompany" ErrorMessage="RequiredFieldValidator" /></td>
+								ControlToValidate="txtCompany" ErrorMessage="*" /></td>
 					</tr>
 					<tr>
 						<td class="SubHead">
@@ -196,7 +192,7 @@
 							<asp:DropDownList ID="ddlStates" Runat="server" DataTextField="Text" DataValueField="Value" CssClass="NormalTextBox"
 								Width="200px" Visible="false" />
 							<asp:RequiredFieldValidator ID="SSLSSLStateReq" ValidationGroup="SSL" runat="server"
-								ControlToValidate="txtState" Display="Dynamic" /></td>
+								ControlToValidate="txtState" Display="Dynamic" ErrorMessage="*" /></td>
 					</tr>
 					<tr>
 						<td class="SubHead">
@@ -204,7 +200,7 @@
 						<td class="Normal">
 							<asp:TextBox ID="txtCity" runat="server" />
 							<asp:RequiredFieldValidator ID="SSLCityReq" ValidationGroup="SSL" runat="server"
-								ControlToValidate="txtCity" ErrorMessage="RequiredFieldValidator" /></td>
+								ControlToValidate="txtCity" ErrorMessage="*" /></td>
 					</tr>
 				</table>
 				<br />
@@ -254,6 +250,8 @@
 					<br />
 					<asp:Button ID="btnInstallCertificate" meta:resourcekey="btnInstallCertificate" runat="server"
 						CssClass="Button1" Text="Install" OnClick="btnInstallCertificate_Click" />
+					<asp:Button ID="btnCancelRequest" runat="server" OnClientClick="return confirm('Are you Sure? This will delete the current request.');"
+						CssClass="Button1" Text="Cancel request" OnClick="btnCancelRequest_Click" />
 				</div>
 			</asp:Panel>
 		</ContentTemplate>

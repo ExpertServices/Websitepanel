@@ -54,6 +54,12 @@ namespace WebsitePanel.Portal.RDS.UserControls
             BindApps(apps, false);
 		}
 
+        public void SetApps(RemoteApplication[] apps, WebPortal.PageModule module)
+        {
+            Module = module;
+            BindApps(apps, false);            
+        }
+
         public RemoteApplication[] GetApps()
         {
             return GetGridViewApps(SelectedState.All).ToArray();
@@ -217,6 +223,12 @@ namespace WebsitePanel.Portal.RDS.UserControls
         protected static int CompareAccount(StartMenuApp app1, StartMenuApp app2)
         {
             return string.Compare(app1.DisplayName, app2.DisplayName);
+        }
+
+        public string GetCollectionUsersEditUrl(string appId)
+        {
+            return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_application_edit_users",
+                    "CollectionId=" + PanelRequest.CollectionID, "ItemID=" + PanelRequest.ItemID, "ApplicationID=" + appId);
         }
 	}
 }

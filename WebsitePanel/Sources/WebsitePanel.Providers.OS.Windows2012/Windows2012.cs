@@ -49,6 +49,9 @@ using System.Management.Automation.Runspaces;
 using WebsitePanel.Providers.Common;
 
 using System.Runtime.InteropServices;
+using System.Linq;
+using WebsitePanel.Providers.DomainLookup;
+using WebsitePanel.Providers.DNS;
 
 
 namespace WebsitePanel.Providers.OS
@@ -77,10 +80,12 @@ namespace WebsitePanel.Providers.OS
         {
             Log.WriteStart("SetQuotaLimitOnFolder");
             Log.WriteInfo("FolderPath : {0}", folderPath);
-            Log.WriteInfo("ShareNameDrive : {0}", shareNameDrive);
             Log.WriteInfo("QuotaLimit : {0}", quotaLimit);
 
-            string path = Path.Combine(shareNameDrive + @":\", folderPath);
+            string path = folderPath;
+
+            if (shareNameDrive != null)
+                path = Path.Combine(shareNameDrive + @":\", folderPath);
 
             Runspace runSpace = null;
             try
@@ -295,7 +300,7 @@ namespace WebsitePanel.Providers.OS
 
             ExecuteShellCommand(runSpace, cmd, false);
         }
-
+        
         #region PowerShell integration
         private static InitialSessionState session = null;
 
