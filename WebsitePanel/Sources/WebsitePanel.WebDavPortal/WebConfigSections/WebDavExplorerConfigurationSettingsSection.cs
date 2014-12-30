@@ -44,13 +44,6 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
             set { this[ElementsRenderingKey] = value; }
         }
 
-        [ConfigurationProperty(Rfc2898CryptographyKey, IsRequired = true)]
-        public Rfc2898CryptographyElement Rfc2898Cryptography
-        {
-            get { return (Rfc2898CryptographyElement)this[Rfc2898CryptographyKey]; }
-            set { this[Rfc2898CryptographyKey] = value; }
-        }
-
         [ConfigurationProperty(ConnectionStringsKey, IsDefaultCollection = false)]
         public AppConnectionStringsElementCollection ConnectionStrings
         {

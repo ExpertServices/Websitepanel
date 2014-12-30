@@ -8,7 +8,6 @@ namespace WebsitePanel.WebDavPortal.Config
         string ApplicationName { get; }
         ElementsRendering ElementsRendering { get; }
         WebsitePanelConstantUserParameters WebsitePanelConstantUserParameters { get; }
-        Rfc2898CryptographyParameters Rfc2898CryptographyParameters { get; }
         ConnectionStringsCollection ConnectionStrings { get; }
         SessionKeysCollection SessionKeys { get; }
         FileIconsDictionary FileIcons { get; }

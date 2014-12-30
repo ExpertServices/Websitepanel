@@ -12,7 +12,6 @@ namespace WebsitePanel.WebDavPortal.Config
         private WebDavAppConfigManager()
         {
             _configSection = ((WebDavExplorerConfigurationSettingsSection) ConfigurationManager.GetSection(WebDavExplorerConfigurationSettingsSection.SectionName));
-            Rfc2898CryptographyParameters = new Rfc2898CryptographyParameters();
             WebsitePanelConstantUserParameters = new WebsitePanelConstantUserParameters();
             ElementsRendering = new ElementsRendering();
             ConnectionStrings = new ConnectionStringsCollection();
@@ -39,7 +38,6 @@ namespace WebsitePanel.WebDavPortal.Config
 
         public ElementsRendering ElementsRendering { get; private set; }
         public WebsitePanelConstantUserParameters WebsitePanelConstantUserParameters { get; private set; }
-        public Rfc2898CryptographyParameters Rfc2898CryptographyParameters { get; private set; }
         public ConnectionStringsCollection ConnectionStrings { get; private set; }
         public SessionKeysCollection SessionKeys { get; private set; }
         public FileIconsDictionary FileIcons { get; private set; }

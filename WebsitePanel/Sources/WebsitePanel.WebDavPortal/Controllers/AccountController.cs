@@ -41,14 +41,6 @@ namespace WebsitePanel.WebDavPortal.Controllers
         [HttpPost]
         public ActionResult Login(AccountModel model)
         {
-            //var ldapConnectionString = WebDavAppConfigManager.Instance.ConnectionStrings.LdapServer;
-            //if (ldapConnectionString == null || !Regex.IsMatch(ldapConnectionString, @"^LDAP://([\w-]+.)+[\w-]+(/[\w- ./?%&=])?$"))
-            //    return View(new AccountModel { LdapError = "LDAP server address is invalid" });
-
-            //var principal = new WebDavPortalIdentity(model.Login, model.Password);
-            //bool isAuthenticated = principal.Identity.IsAuthenticated;
-            //var organizationId = principal.GetOrganizationId();
-
             AutheticationToServicesUsingWebsitePanelUser();
             var exchangeAccount = ES.Services.ExchangeServer.GetAccountByAccountNameWithoutItemId(model.Login);
             var isAuthenticated = exchangeAccount != null && exchangeAccount.AccountPassword == model.Password;
@@ -63,7 +55,6 @@ namespace WebsitePanel.WebDavPortal.Controllers
                 {
                     Session[WebDavAppConfigManager.Instance.SessionKeys.AccountInfo] = model;
                     Session[WebDavAppConfigManager.Instance.SessionKeys.WebDavManager] = new WebDavManager(new NetworkCredential(model.Login, model.Password, WebDavAppConfigManager.Instance.UserDomain), exchangeAccount.ItemId);
-                    //Session[WebDavAppConfigManager.Instance.SessionKeys.WebDavManager] = new WebDavManager(new NetworkCredential("Administrator", "WSP99cc$$1", WebDavAppConfigManager.Instance.UserDomain), exchangeAccount.ItemId);
                 }
                 catch (ConnectToWebDavServerException exception)
                 {

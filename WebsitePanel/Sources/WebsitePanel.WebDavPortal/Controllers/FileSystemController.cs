@@ -31,11 +31,6 @@ namespace WebsitePanel.WebDavPortal.Controllers
             if (org != webDavManager.OrganizationName)
                 return new HttpStatusCodeResult(HttpStatusCode.NoContent);
             
-            
-            var test = Url.Action("ShowContent", "FileSystem");
-            var tetet = Url.Action("ShowContent", "FileSystem", new { org = "pgrorg" });
-
-
             string fileName = pathPart.Split('/').Last();
             if (webDavManager.IsFile(fileName))
             {
@@ -52,7 +47,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
                 return View(model);
             }
-            catch (UnauthorizedException exc)
+            catch (UnauthorizedException)
             {
                 throw new HttpException(404, "Not Found");
             }
@@ -81,7 +76,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
                 return PartialView("_ResourseCollectionPartial", result);
             }
 
-            return null;
+            return new HttpStatusCodeResult(HttpStatusCode.NoContent); ;
         }
     }
 }

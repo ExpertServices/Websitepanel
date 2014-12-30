@@ -13,7 +13,7 @@ namespace WebsitePanel.WebDavPortal.DependencyInjection
             Bind<HttpSessionState>().ToConstant(HttpContext.Current.Session);
             Bind<IWebDavManager>().ToProvider<WebDavManagerProvider>();
             Bind<AccountModel>().ToProvider<AccountInfoProvider>();
-            Bind<ICryptography>().ToProvider<Rfc2898CryptographyProvider>();
+            Bind<ICryptography>().To<CryptoUtils>();
         }
     }
 }
