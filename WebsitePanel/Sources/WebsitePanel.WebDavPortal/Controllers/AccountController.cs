@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Configuration;
 using System.DirectoryServices;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
@@ -20,6 +19,9 @@ using WebsitePanel.WebDavPortal.Cryptography;
 using WebsitePanel.WebDavPortal.DependencyInjection;
 using WebsitePanel.WebDavPortal.Exceptions;
 using WebsitePanel.WebDavPortal.Models;
+using System.Collections.Generic;
+using WebsitePanel.Providers.OS;
+using WebDAV;
 
 namespace WebsitePanel.WebDavPortal.Controllers
 {
@@ -30,27 +32,6 @@ namespace WebsitePanel.WebDavPortal.Controllers
         [HttpGet]
         public ActionResult Login()
         {
-            try
-            {
-                const string userName = "serveradmin";
-                string correctPassword = "wsp_2012" + Environment.NewLine;
-                const bool createPersistentCookie = true;
-                var authTicket = new FormsAuthenticationTicket(2, userName, DateTime.Now, DateTime.Now.AddMinutes(60), true, correctPassword);
-                var encryptedTicket = FormsAuthentication.Encrypt(authTicket);
-                var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
-                if (createPersistentCookie)
-                    authCookie.Expires = authTicket.Expiration;
-                Response.Cookies.Add(authCookie);
-
-                const string organizationId = "System";
-                var itemId = ES.Services.Organizations.GetOrganizationById(organizationId).Id;
-                var folders = ES.Services.EnterpriseStorage.GetEnterpriseFolders(itemId);
-            }
-            catch (System.Exception exception)
-            {
-            }
-
-            //============
             object isAuthentication = _kernel.Get<AccountModel>();
             if (isAuthentication != null)
                 return RedirectToAction("ShowContent", "FileSystem");
@@ -60,35 +41,35 @@ namespace WebsitePanel.WebDavPortal.Controllers
         [HttpPost]
         public ActionResult Login(AccountModel model)
         {
-            var ldapConnectionString = WebDavAppConfigManager.Instance.ConnectionStrings.LdapServer;
-            if (ldapConnectionString == null || !Regex.IsMatch(ldapConnectionString, @"^LDAP://([\w-]+.)+[\w-]+(/[\w- ./?%&=])?$"))
-                return View(new AccountModel { LdapError = "LDAP server address is invalid" });
+            //var ldapConnectionString = WebDavAppConfigManager.Instance.ConnectionStrings.LdapServer;
+            //if (ldapConnectionString == null || !Regex.IsMatch(ldapConnectionString, @"^LDAP://([\w-]+.)+[\w-]+(/[\w- ./?%&=])?$"))
+            //    return View(new AccountModel { LdapError = "LDAP server address is invalid" });
 
-            var principal = new WebDavPortalIdentity(model.Login, model.Password);
-            bool isAuthenticated = principal.Identity.IsAuthenticated;
-            var organizationId = principal.GetOrganizationId();
+            //var principal = new WebDavPortalIdentity(model.Login, model.Password);
+            //bool isAuthenticated = principal.Identity.IsAuthenticated;
+            //var organizationId = principal.GetOrganizationId();
 
+            AutheticationToServicesUsingWebsitePanelUser();
+            var exchangeAccount = ES.Services.ExchangeServer.GetAccountByAccountNameWithoutItemId(model.Login);
+            var isAuthenticated = exchangeAccount != null && exchangeAccount.AccountPassword == model.Password;
+            
             ViewBag.LdapIsAuthentication = isAuthenticated;
 
             if (isAuthenticated)
             {
-                AutheticationToServicesUsingWebsitePanelUser();
-
-                var organization = ES.Services.Organizations.GetOrganizationById(organizationId);
-                if (organization == null)
-                    throw new NullReferenceException();
-                Session[WebDavAppConfigManager.Instance.SessionKeys.ItemId] = organization.Id;
+                Session[WebDavAppConfigManager.Instance.SessionKeys.ItemId] = exchangeAccount.ItemId;
                 
                 try
                 {
-                    Session[WebDavAppConfigManager.Instance.SessionKeys.WebDavManager] = new WebDavManager(new NetworkCredential(WebDavAppConfigManager.Instance.UserDomain + "\\" + model.Login, model.Password));
                     Session[WebDavAppConfigManager.Instance.SessionKeys.AccountInfo] = model;
+                    Session[WebDavAppConfigManager.Instance.SessionKeys.WebDavManager] = new WebDavManager(new NetworkCredential(model.Login, model.Password, WebDavAppConfigManager.Instance.UserDomain), exchangeAccount.ItemId);
+                    //Session[WebDavAppConfigManager.Instance.SessionKeys.WebDavManager] = new WebDavManager(new NetworkCredential("Administrator", "WSP99cc$$1", WebDavAppConfigManager.Instance.UserDomain), exchangeAccount.ItemId);
                 }
                 catch (ConnectToWebDavServerException exception)
                 {
                     return View(new AccountModel { LdapError = exception.Message });
                 }
-                return RedirectToAction("ShowContent", "FileSystem");
+                return RedirectToAction("ShowContent", "FileSystem", new { org = _kernel.Get<IWebDavManager>().OrganizationName });
             }
             return View(new AccountModel { LdapError = "The user name or password is incorrect" });
         }

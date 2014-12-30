@@ -7,36 +7,75 @@ using System.Text.RegularExpressions;
 using WebsitePanel.WebDav.Core.Client;
 using WebsitePanel.WebDavPortal.Config;
 using WebsitePanel.WebDavPortal.Exceptions;
+using WebsitePanel.Portal;
+using WebsitePanel.Providers.OS;
+using Ninject;
+using WebsitePanel.WebDavPortal.DependencyInjection;
 
 namespace WebsitePanel.WebDavPortal.Models
 {
     public class WebDavManager : IWebDavManager
     {
         private readonly WebDavSession _webDavSession = new WebDavSession();
+        private IList<SystemFile> _rootFolders;
+        private int _itemId;
         private IFolder _currentFolder;
+        private string _organizationName;
         private string _webDavRootPath;
+        private bool _isRoot = true;
 
-        public WebDavManager(ICredentials credentials)
+        public string RootPath 
         {
-            _webDavSession.Credentials = credentials;
-            ConnectToWebDavServer();
+            get { return _webDavRootPath; }
         }
 
-        public WebDavManager()
+        public string OrganizationName
         {
-            ConnectToWebDavServer();
+            get { return _organizationName; }
+        }
+
+        public WebDavManager(NetworkCredential credential, int itemId)
+        {
+            _webDavSession.Credentials = credential;
+            _itemId = itemId;
+            IKernel _kernel = new StandardKernel(new NinjectSettings { AllowNullInjection = true }, new WebDavExplorerAppModule());
+            var accountModel = _kernel.Get<AccountModel>();
+            _rootFolders = ConnectToWebDavServer(accountModel.UserName);
+
+            if (_rootFolders.Any())
+            {
+                var folder = _rootFolders.First();
+                var uri = new Uri(folder.Url);
+                _webDavRootPath = uri.Scheme + "://" + uri.Host + uri.Segments[0] + uri.Segments[1];
+                _organizationName = uri.Segments[1].Trim('/');
+            }
         }
 
         public void OpenFolder(string pathPart)
         {
+            if (string.IsNullOrWhiteSpace(pathPart))
+            {
+                _isRoot = true;
+                return;
+            }
+            _isRoot = false;
             _currentFolder = _webDavSession.OpenFolder(_webDavRootPath + pathPart);
         }
 
         public IEnumerable<IHierarchyItem> GetChildren()
         {
-            IHierarchyItem[] children = _currentFolder.GetChildren();
-            List<IHierarchyItem> sortedChildren =
-                children.Where(x => x.ItemType == ItemType.Folder).OrderBy(x => x.DisplayName).ToList();
+            IHierarchyItem[] children;
+
+            if (_isRoot)
+            {
+                children = _rootFolders.Select(x => new WebDavHierarchyItem {Href = new Uri(x.Url), ItemType = ItemType.Folder}).ToArray();
+            }
+            else
+	        {
+                children = _currentFolder.GetChildren();
+	        }
+
+            List<IHierarchyItem> sortedChildren = children.Where(x => x.ItemType == ItemType.Folder).OrderBy(x => x.DisplayName).ToList();
             sortedChildren.AddRange(children.Where(x => x.ItemType != ItemType.Folder).OrderBy(x => x.DisplayName));
 
             return sortedChildren;
@@ -44,10 +83,13 @@ namespace WebsitePanel.WebDavPortal.Models
 
         public bool IsFile(string fileName)
         {
+            if (string.IsNullOrWhiteSpace(fileName) | _currentFolder == null)
+                return false;
+
             try
             {
                 IResource resource = _currentFolder.GetResource(fileName);
-                Stream stream = resource.GetReadStream();
+                //Stream stream = resource.GetReadStream();
                 return true;
             }
             catch (InvalidOperationException)
@@ -84,25 +126,16 @@ namespace WebsitePanel.WebDavPortal.Models
             }
         }
 
-        private void ConnectToWebDavServer()
+        private IList<SystemFile> ConnectToWebDavServer(string userName)
         {
-            string webDavServerPath = WebDavAppConfigManager.Instance.ConnectionStrings.WebDavServer;
-
-            if (webDavServerPath == null ||
-                !Regex.IsMatch(webDavServerPath, @"^http(s)?://([\w-]+.)+[\w-]+(/[\w- ./?%&=])?$"))
-                throw new ConnectToWebDavServerException();
-            if (webDavServerPath.Last() != '/') webDavServerPath += "/";
-            _webDavRootPath = webDavServerPath;
-
-            try
+            var rootFolders = new List<SystemFile>();
+            foreach (var folder in ES.Services.EnterpriseStorage.GetEnterpriseFolders(_itemId))
             {
-                _currentFolder = _webDavSession.OpenFolder(_webDavRootPath);
+                var permissions = ES.Services.EnterpriseStorage.GetEnterpriseFolderPermissions(_itemId, folder.Name);
+                if (permissions.Any(x => x.DisplayName == userName))
+                    rootFolders.Add(folder);
             }
-            catch (WebException exception)
-            {
-                throw new ConnectToWebDavServerException(
-                    string.Format("Unable to connect to a remote WebDav server \"{0}\"", webDavServerPath), exception);
-            }
+            return rootFolders;
         }
 
         private byte[] ReadFully(Stream input)

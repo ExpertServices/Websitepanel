@@ -11,7 +11,7 @@ namespace WebsitePanel.WebDav.Core
     {
         public class WebDavSession
         {
-            public ICredentials Credentials { get; set; }
+            public NetworkCredential Credentials { get; set; }
 
             /// <summary>
             ///     Returns IFolder corresponding to path.

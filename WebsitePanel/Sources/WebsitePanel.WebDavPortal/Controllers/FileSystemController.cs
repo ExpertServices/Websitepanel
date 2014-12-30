@@ -12,17 +12,29 @@ using WebsitePanel.WebDavPortal.CustomAttributes;
 using WebsitePanel.WebDavPortal.DependencyInjection;
 using WebsitePanel.WebDavPortal.Extensions;
 using WebsitePanel.WebDavPortal.Models;
+using WebsitePanel.Portal;
+using WebsitePanel.Providers.OS;
+using System.Net;
 
 namespace WebsitePanel.WebDavPortal.Controllers
+
 {
     [LdapAuthorization]
     public class FileSystemController : Controller
     {
         private readonly IKernel _kernel = new StandardKernel(new WebDavExplorerAppModule());
 
-        public ActionResult ShowContent(string pathPart = "")
+        [HttpGet]
+        public ActionResult ShowContent(string org, string pathPart = "")
         {
-            var webDavManager = _kernel.Get<IWebDavManager>();
+            var webDavManager = new StandardKernel(new WebDavExplorerAppModule()).Get<IWebDavManager>();
+            if (org != webDavManager.OrganizationName)
+                return new HttpStatusCodeResult(HttpStatusCode.NoContent);
+            
+            
+            var test = Url.Action("ShowContent", "FileSystem");
+            var tetet = Url.Action("ShowContent", "FileSystem", new { org = "pgrorg" });
+
 
             string fileName = pathPart.Split('/').Last();
             if (webDavManager.IsFile(fileName))
@@ -40,15 +52,16 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
                 return View(model);
             }
-            catch (UnauthorizedException)
+            catch (UnauthorizedException exc)
             {
                 throw new HttpException(404, "Not Found");
             }
         }
 
-        public ActionResult ShowOfficeDocument(string pathPart = "")
+        public ActionResult ShowOfficeDocument(string org, string pathPart = "")
         {
-            const string fileUrl = "http://my-files.ru/DownloadSave/xluyk3/test1.docx";
+            var webDavManager = _kernel.Get<IWebDavManager>();
+            string fileUrl = webDavManager.RootPath.TrimEnd('/') + "/" + pathPart.TrimStart('/');
             var uri = new Uri(WebDavAppConfigManager.Instance.OfficeOnline.Url).AddParameter("src", fileUrl).ToString();
 
             return View(new OfficeOnlineModel(uri, new Uri(fileUrl).Segments.Last()));

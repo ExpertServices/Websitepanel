@@ -73,11 +73,13 @@ namespace WebsitePanel.WebDav.Core
             public Uri Href
             {
                 get { return _href; }
+                set { SetHref(value.ToString(), new Uri(value.Scheme + "://" + value.Host + value.Segments[0] + value.Segments[1])); }
             }
 
             public ItemType ItemType
             {
                 get { return _itemType; }
+                set { SetItemType(value); }
             }
 
             public DateTime LastModified

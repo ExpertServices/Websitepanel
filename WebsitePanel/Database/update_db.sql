@@ -6072,6 +6072,44 @@ RETURN
 GO
 
 
+
+IF OBJECTPROPERTY(object_id('dbo.GetExchangeAccountByAccountNameWithoutItemId'), N'IsProcedure') = 1
+DROP PROCEDURE [dbo].[GetExchangeAccountByAccountNameWithoutItemId]
+GO
+CREATE PROCEDURE [dbo].[GetExchangeAccountByAccountNameWithoutItemId] 
+(
+	@PrimaryEmailAddress nvarchar(300)
+)
+AS
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber,
+	E.UserPrincipalName,
+	E.ArchivingMailboxPlanId, 
+	AP.MailboxPlan as 'ArchivingMailboxPlan',
+	E.EnableArchiving
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+LEFT OUTER JOIN ExchangeMailboxPlans AS AP ON E.ArchivingMailboxPlanId = AP.MailboxPlanId
+WHERE
+	E.PrimaryEmailAddress = @PrimaryEmailAddress
+RETURN
+GO
+
+
+
 -- wsp-10269: Changed php extension path in default properties for IIS70 and IIS80 provider
 update ServiceDefaultProperties
 set PhpPath='%PROGRAMFILES(x86)%\PHP\php-cgi.exe'

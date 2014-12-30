@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Security;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -159,6 +160,8 @@ namespace WebsitePanel.WebDav.Core
                 request.Method = "PROPFIND";
                 request.ContentType = "application/xml";
                 request.Headers["Depth"] = "1";
+                //TODO Disable SSL
+                ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });
 
                 var credentials = (NetworkCredential) _credentials;
                 if (credentials != null && credentials.UserName != null)

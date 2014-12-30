@@ -1,7 +1,9 @@
 ﻿@using WebsitePanel.WebDav.Core.Client
+@using Ninject
 @model WebsitePanel.WebDavPortal.Models.ModelForWebDav
 @{
-    ViewBag.Title = (string.IsNullOrEmpty(Model.UrlSuffix) ? "root" : Model.UrlSuffix);
+    var webDavManager = (new StandardKernel(new WebsitePanel.WebDavPortal.DependencyInjection.WebDavExplorerAppModule())).Get<WebsitePanel.WebDavPortal.Models.IWebDavManager>();
+    ViewBag.Title = (string.IsNullOrEmpty(Model.UrlSuffix) ? webDavManager.OrganizationName : Model.UrlSuffix);
 }
 @Scripts.Render("~/bundles/jquery")
 @Scripts.Render("~/bundles/appScripts")
@@ -20,13 +22,13 @@ else
     <div class="container">
         @if (Model != null)
         {
-            const string header = "root";
-            <a href="/root/" class="btn btn-primary btn-sm active" role="button">@header</a>
+            string header = webDavManager.OrganizationName;
+            <a href="/@header/" class="btn btn-primary btn-sm active" role="button">@header</a>
             string[] elements = Model.UrlSuffix.Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < elements.Length; i++)
             {
                 <span class="glyphicon glyphicon-chevron-right" style="top: 2px;"></span>
-                <a href="@string.Concat("/root/", string.Join("/", elements.Take(i + 1)))" class="btn btn-primary btn-sm active" role="button">@elements[i]</a>
+                <a href="@string.Concat("/" + header + "/", string.Join("/", elements.Take(i + 1)))" class="btn btn-primary btn-sm active" role="button">@elements[i]</a>
             }
         }
     </div>

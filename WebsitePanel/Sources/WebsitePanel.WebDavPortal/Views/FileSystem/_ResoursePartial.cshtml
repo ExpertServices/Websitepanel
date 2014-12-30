@@ -1,6 +1,7 @@
 ﻿@using WebsitePanel.WebDav.Core.Client
 @using WebsitePanel.WebDavPortal.Config
 @using WebsitePanel.WebDavPortal.FileOperations
+@using Ninject;
 @model IHierarchyItem
   
 @{
@@ -17,7 +18,9 @@
             break;
         default:
             isTargetBlank = false;
-            href = string.Concat(Url.Action("ShowContent", "FileSystem"), Model.DisplayName); 
+            IKernel _kernel = new StandardKernel(new WebsitePanel.WebDavPortal.DependencyInjection.WebDavExplorerAppModule());
+            var webDavManager = _kernel.Get<WebsitePanel.WebDavPortal.Models.IWebDavManager>();
+            href = Model.Href.AbsolutePath; 
             break;
     }
 }

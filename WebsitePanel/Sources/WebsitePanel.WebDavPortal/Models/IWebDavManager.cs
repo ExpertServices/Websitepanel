@@ -5,6 +5,8 @@ namespace WebsitePanel.WebDavPortal.Models
 {
     public interface IWebDavManager
     {
+        string RootPath { get; }
+        string OrganizationName { get; }
         void OpenFolder(string pathPart);
         IEnumerable<IHierarchyItem> GetChildren();
         bool IsFile(string fileName);
