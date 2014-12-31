@@ -200,11 +200,14 @@ namespace WebsitePanel.EnterpriseServer
                     //TaskManager.Write(String.Format("{0} - Invoke GetServiceItemsDiskSpace method ('{1}' items) - {2} attempt",
                     //    DateTime.Now, objItems.Count, attempt));
 
-                    ServiceProvider prov = new ServiceProvider();
-                    ServiceProviderProxy.Init(prov, serviceId);
-                    ServiceProviderItemDiskSpace[] itemsDiskSpace = prov.GetServiceItemsDiskSpace(objItems.ToArray());
-                    if (itemsDiskSpace != null && itemsDiskSpace.Length > 0)
-                        organizationDiskSpaces.AddRange(itemsDiskSpace);
+                    if (objItems.Count > 0)
+                    {
+                        ServiceProvider prov = new ServiceProvider();
+                        ServiceProviderProxy.Init(prov, serviceId);
+                        ServiceProviderItemDiskSpace[] itemsDiskSpace = prov.GetServiceItemsDiskSpace(objItems.ToArray());
+                        if (itemsDiskSpace != null && itemsDiskSpace.Length > 0)
+                            organizationDiskSpaces.AddRange(itemsDiskSpace);
+                    }
                     
                     return organizationDiskSpaces.ToArray();
                 }

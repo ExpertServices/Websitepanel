@@ -160,6 +160,8 @@ namespace WebsitePanel.Server
             try
             {
                 Log.WriteStart("'{0}' GetServiceItemsDiskSpace", ProviderSettings.ProviderName);
+
+                if (items.Length == 0) return new ServiceProviderItemDiskSpace[] {};
                 return Provider.GetServiceItemsDiskSpace(UnwrapServiceProviderItems(items));
             }
             catch (Exception ex)

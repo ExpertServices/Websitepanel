@@ -211,6 +211,13 @@
     <Compile Include="Code\ReportingServices\IResourceStorage.cs" />
     <Compile Include="Code\ReportingServices\ReportingServicesUtils.cs" />
     <Compile Include="Code\UserControls\Tab.cs" />
+    <Compile Include="ExchangeServer\ExchangeCheckDomainName.ascx.cs">
+      <DependentUpon>ExchangeCheckDomainName.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\ExchangeCheckDomainName.ascx.designer.cs">
+      <DependentUpon>ExchangeCheckDomainName.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ProviderControls\Windows2012_Settings.ascx.cs">
       <DependentUpon>Windows2012_Settings.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4291,6 +4298,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplyEnableHardQuotaFeature.ascx" />
+    <Content Include="ExchangeServer\ExchangeCheckDomainName.ascx" />
     <Content Include="ProviderControls\Windows2012_Settings.ascx" />
     <Content Include="RDSServersAddserver.ascx" />
     <Content Include="RDSServers.ascx" />
@@ -4313,6 +4321,9 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="RDS\App_LocalResources\RDSEditApplicationUsers.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ExchangeServer\App_LocalResources\ExchangeCheckDomainName.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
     <EmbeddedResource Include="ScheduleTaskControls\App_LocalResources\DomainLookupView.ascx.resx">
