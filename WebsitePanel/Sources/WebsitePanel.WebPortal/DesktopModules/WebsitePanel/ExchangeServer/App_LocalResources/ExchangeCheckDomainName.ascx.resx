@@ -117,106 +117,67 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ModuleAction.AddDomain" xml:space="preserve">
-    <value>Add New Domain</value>
+  <data name="locTitle.Text" xml:space="preserve">
+    <value>Domain Dependencies</value>
   </data>
-  <data name="btnAddDomain.Text" xml:space="preserve">
-    <value>Add Domain</value>
+  <data name="Text.PageName" xml:space="preserve">
+    <value>Domain Dependencies</value>
   </data>
-  <data name="lblDomains.Text" xml:space="preserve">
-    <value>Domains:</value>
+  <data name="gvObjectsDisplayName.Header" xml:space="preserve">
+    <value>Display Name</value>
   </data>
-  <data name="gvDomainsName.Header" xml:space="preserve">
-    <value>Name</value>
+  <data name="TopComments.Text" xml:space="preserve">
+    <value>Objects listed Below are dependent on this domain and must be removed prior to domain</value>
   </data>
-  <data name="gvDomainsWebSite.Header" xml:space="preserve">
-    <value>Web Site</value>
+  <data name="Contact.Text" xml:space="preserve">
+    <value>Contact</value>
   </data>
-  <data name="gvDomainsMailDomain.Header" xml:space="preserve">
-    <value>Mail Domain</value>
+  <data name="DefaultSecurityGroup.Text" xml:space="preserve">
+    <value>Security group</value>
   </data>
-  <data name="gvDomainsUser.Header" xml:space="preserve">
-    <value>User</value>
+  <data name="DistributionList.Text" xml:space="preserve">
+    <value>Distribution list</value>
   </data>
-  <data name="gvDomainsSpace.Header" xml:space="preserve">
-    <value>Space</value>
+  <data name="Equipment.Text" xml:space="preserve">
+    <value>Equipment</value>
   </data>
-  <data name="gvDomainsServer.Header" xml:space="preserve">
-    <value>Server</value>
+  <data name="ExchangeAccountEmailAddresses.Text" xml:space="preserve">
+    <value>Email address</value>
   </data>
-  <data name="gvDomains.Empty" xml:space="preserve">
-    <value>No domains found.</value>
+  <data name="gvObjectsDelete.Header" xml:space="preserve">
+    <value>Delete</value>
   </data>
-  <data name="SearchField.DomainName" xml:space="preserve">
-    <value>Domain Name</value>
+  <data name="gvObjectsObjectType.Header" xml:space="preserve">
+    <value>Object Type</value>
   </data>
-  <data name="SearchField.Email" xml:space="preserve">
-    <value>E-Mail</value>
+  <data name="gvObjectsView.Header" xml:space="preserve">
+    <value>View</value>
   </data>
-  <data name="SearchField.FullName" xml:space="preserve">
-    <value>Full Name</value>
+  <data name="lnkDelete.Text" xml:space="preserve">
+    <value>Delete</value>
   </data>
-  <data name="SearchField.Username" xml:space="preserve">
-    <value>Username</value>
+  <data name="lnkView.Text" xml:space="preserve">
+    <value>View</value>
   </data>
-  <data name="lblSubDomains.Text" xml:space="preserve">
-    <value>Sub-Domains:</value>
+  <data name="Mailbox.Text" xml:space="preserve">
+    <value>Mailbox</value>
   </data>
-  <data name="selPackage.AlternateText" xml:space="preserve">
-    <value>Switch to this Space</value>
+  <data name="PublicFolder.Text" xml:space="preserve">
+    <value>Public folder</value>
   </data>
-  <data name="selUser.AlternateText" xml:space="preserve">
-    <value>Work for this User</value>
+  <data name="Room.Text" xml:space="preserve">
+    <value>Room</value>
   </data>
-  <data name="lblMailDomain.Text" xml:space="preserve">
-    <value>Mail domain:</value>
+  <data name="SecurityGroup.Text" xml:space="preserve">
+    <value>Security group</value>
   </data>
-  <data name="lblWebSite.Text" xml:space="preserve">
-    <value>Web site:</value>
+  <data name="SharedMailbox.Text" xml:space="preserve">
+    <value>Shared mailbox</value>
   </data>
-  <data name="cmdDetach.OnClientClick" xml:space="preserve">
-    <value>return confirm('Remove this domain from meta base?');</value>
+  <data name="User.Text" xml:space="preserve">
+    <value>Organization user</value>
   </data>
-  <data name="cmdDetach.Text" xml:space="preserve">
-    <value>Detach</value>
-  </data>
-  <data name="cmdDetach.ToolTip" xml:space="preserve">
-    <value>Remove domain from meta base</value>
-  </data>
-  <data name="lblDomainPointers.Text" xml:space="preserve">
-    <value>Domain Aliases:</value>
-  </data>
-  <data name="DomainType.Domain" xml:space="preserve">
-    <value>Top-Level Domain</value>
-  </data>
-  <data name="DomainType.DomainPointer" xml:space="preserve">
-    <value>Domain Alias</value>
-  </data>
-  <data name="DomainType.SubDomain" xml:space="preserve">
-    <value>Sub-domain</value>
-  </data>
-  <data name="gvDomainsType.Header" xml:space="preserve">
-    <value>Type</value>
-  </data>
-  <data name="DomainExpirationDate.Expired" xml:space="preserve">
-    <value>Expired</value>
-  </data>
-  <data name="DomainExpirationDate.Unknown" xml:space="preserve">
-    <value>Unknown</value>
-  </data>
-  <data name="gvDomainsExpirationDate.Header" xml:space="preserve">
-    <value>Expiration Date</value>
-  </data>
-  <data name="DomainExpirationDate.NotChecked" xml:space="preserve">
-    <value>Not Checked</value>
-  </data>
-  <data name="DomainExpirationDate.NotExist" xml:space="preserve">
-    <value>Non-Existent</value>
-  </data>
-  <data name="DomainLookup.TooltipHeader" xml:space="preserve">
-    <value>Current Real DNS Values</value>
-  </data>
-  <data name="DomainLookup.TooltipHeader.Registrar" xml:space="preserve">
-    <value>Registrar:</value>
+  <data name="LyncUsers.Text" xml:space="preserve">
+    <value>Lync User</value>
   </data>
 </root>

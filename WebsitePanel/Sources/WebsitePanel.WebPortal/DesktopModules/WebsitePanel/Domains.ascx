@@ -38,12 +38,16 @@
             </ItemTemplate>
         </asp:TemplateField>
         <asp:TemplateField HeaderText="gvDomainsExpirationDate">
-            <ItemStyle Width="15%"></ItemStyle>
+            <ItemStyle Width="11%"></ItemStyle>
             <ItemTemplate>
 	            <%# GetDomainExpirationDate(Eval("ExpirationDate"), Eval("LastUpdateDate"))%>
-
-                <div style="display:inline-block" runat="server" Visible='<%# ShowDomainDnsInfo(Eval("ExpirationDate"), Eval("LastUpdateDate"), !(bool)Eval("IsSubDomain") && !(bool)Eval("IsInstantAlias") && !(bool)Eval("IsDomainPointer")) && !string.IsNullOrEmpty(GetDomainDnsRecords((int)Eval("DomainId"))) %>'>
-                  <img style="border-width: 0px;" src="App_Themes/Default/Images/information_icon_small.gif" title="<%# GetDomainDnsRecords((int)Eval("DomainId")) %>">
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="">
+            <ItemStyle Width="5%"></ItemStyle>
+            <ItemTemplate>
+	            <div style="display:inline-block" runat="server" Visible='<%# ShowDomainDnsInfo(Eval("ExpirationDate"), Eval("LastUpdateDate"), !(bool)Eval("IsSubDomain") && !(bool)Eval("IsInstantAlias") && !(bool)Eval("IsDomainPointer")) && !string.IsNullOrEmpty(GetDomainDnsRecords((int)Eval("DomainId"))) %>'>
+                  <img style="border-width: 0px;" src="App_Themes/Default/Images/information_icon_small.gif" title="<%# GetDomainTooltip((int)Eval("DomainId"), Eval("RegistrarName") != DBNull.Value ? (string)Eval("RegistrarName"):string.Empty)  %>">
                 </div>
             </ItemTemplate>
         </asp:TemplateField>

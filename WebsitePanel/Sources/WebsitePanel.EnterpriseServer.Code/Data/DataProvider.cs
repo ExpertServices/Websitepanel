@@ -3256,6 +3256,18 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
+        public static DataSet GetOrganizationObjectsByDomain(int itemId, string domainName)
+        {
+            return SqlHelper.ExecuteDataset(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetOrganizationObjectsByDomain",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@DomainName", domainName)
+            );
+        }
+
+
         #endregion
 
         #region CRM
@@ -4824,6 +4836,20 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@DomainCreationDate", domainCreationDate),
                 new SqlParameter("@DomainExpirationDate", domainExpirationDate),
                 new SqlParameter("@DomainLastUpdateDate", domainLastUpdateDate)
+            );
+        }
+
+        public static void UpdateWhoisDomainInfo(int domainId, DateTime? domainCreationDate, DateTime? domainExpirationDate, DateTime? domainLastUpdateDate, string registrarName)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateWhoisDomainInfo",
+                new SqlParameter("@DomainId", domainId),
+                new SqlParameter("@DomainCreationDate", domainCreationDate),
+                new SqlParameter("@DomainExpirationDate", domainExpirationDate),
+                new SqlParameter("@DomainLastUpdateDate", domainLastUpdateDate),
+                new SqlParameter("@DomainRegistrarName", registrarName)
             );
         }
 

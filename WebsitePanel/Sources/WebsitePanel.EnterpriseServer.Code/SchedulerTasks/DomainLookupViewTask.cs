@@ -106,6 +106,8 @@ namespace WebsitePanel.EnterpriseServer
                     DomainDnsChanges domainChanges = new DomainDnsChanges();
                     domainChanges.DomainName = domain.DomainName;
                     domainChanges.PackageId = domain.PackageId;
+                    domainChanges.Registrar = domain.RegistrarName;
+                    domainChanges.ExpirationDate = domain.ExpirationDate;
 
                     var dbDnsRecords = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainAllDnsRecords(domain.DomainId));
 

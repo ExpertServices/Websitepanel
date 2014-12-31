@@ -5620,8 +5620,10 @@
   <data name="SchedulerTask.SCHEDULE_TASK_DOMAIN_EXPIRATION" xml:space="preserve">
     <value>Check domain expiration date</value>
   </data>
-  <data name="Error.REMOTE_DESKTOP_SERVICES_ADD_RDS_SERVER" xml:space="preserve">
-    <value>Unable to add RDS Server</value>
+  <data name="ERROR.IDNDOMAIN_NO_MAIL" xml:space="preserve">
+    <value>You cannot use a IDN domain name for mail</value>
   </data>
-
+  <data name="ERROR.IDNDOMAIN_NO_ORGANIZATION" xml:space="preserve">
+    <value>You cannot use a IDN domain name for organizations</value>
+  </data>
 </root>

@@ -75,6 +75,12 @@ namespace WebsitePanel.EnterpriseServer
                                                                                 @"expires:(.+)" //.fi 
                                                                               };
 
+        private static List<string> _registrarNamePatterns = new List<string>   {
+                                                                                @"Created by Registrar:(.+)",
+                                                                                @"Registrar:(.+)",
+                                                                                @"Registrant Name:(.+)"
+                                                                            };
+
         private static List<string> _datePatterns = new List<string> {   @"ddd MMM dd HH:mm:ss G\MT yyyy"
                                                                               };
 
@@ -1837,7 +1843,7 @@ namespace WebsitePanel.EnterpriseServer
                     ServerController.AddServiceDNSRecords(packageId, ResourceGroups.VPSForPC, domain, "");
                 }
 
-                UpdateDomainRegistrationData(domain);
+                UpdateDomainWhoisData(domain);
             }
             
             // add instant alias
@@ -2691,22 +2697,20 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
-        public static DomainInfo UpdateDomainRegistrationData(DomainInfo domain)
+        public static DomainInfo UpdateDomainWhoisData(DomainInfo domain)
         {
-            DateTime? createdDate = null;
-            DateTime? expiredDate = null;
-
             try
             {
                 var whoisResult = WhoisClient.Query(domain.DomainName.ToLowerInvariant());
 
-                createdDate = GetDomainInfoDate(whoisResult.Raw, _createdDatePatterns);
-                expiredDate = GetDomainInfoDate(whoisResult.Raw, _expiredDatePatterns);
+                string creationDateString = ParseWhoisDomainInfo(whoisResult.Raw, _createdDatePatterns);
+                string expirationDateString = ParseWhoisDomainInfo(whoisResult.Raw, _expiredDatePatterns);
 
-                domain.CreationDate = createdDate;
-                domain.ExpirationDate = expiredDate;
+                domain.CreationDate = ParseDate(creationDateString);
+                domain.ExpirationDate = ParseDate(expirationDateString);
+                domain.RegistrarName = ParseWhoisDomainInfo(whoisResult.Raw, _registrarNamePatterns);
 
-                DataProvider.UpdateDomainDates(domain.DomainId, createdDate, expiredDate, DateTime.Now);
+                DataProvider.UpdateWhoisDomainInfo(domain.DomainId, domain.CreationDate, domain.ExpirationDate, DateTime.Now, domain.RegistrarName);
             }
             catch (Exception e)
             { 
@@ -2716,17 +2720,18 @@ namespace WebsitePanel.EnterpriseServer
             return domain;
         }
 
-        public static DomainInfo UpdateDomainRegistrationData(DomainInfo domain, DateTime? creationDate, DateTime? expirationDate)
+        public static DomainInfo UpdateDomainWhoisData(DomainInfo domain, DateTime? creationDate, DateTime? expirationDate, string registrarName)
         {
-            DataProvider.UpdateDomainDates(domain.DomainId, creationDate, expirationDate, DateTime.Now);
+            DataProvider.UpdateWhoisDomainInfo(domain.DomainId, creationDate, expirationDate, DateTime.Now, registrarName);
 
             domain.CreationDate = creationDate;
             domain.ExpirationDate = expirationDate;
+            domain.RegistrarName = registrarName;
 
             return domain;
         }
 
-        private static DateTime? GetDomainInfoDate(string raw, IEnumerable<string> patterns)
+        private static string ParseWhoisDomainInfo(string raw, IEnumerable<string> patterns)
         {
             foreach (var createdRegex in patterns)
             {
@@ -2736,7 +2741,7 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     if (match.Success && match.Groups.Count == 2)
                     {
-                        return ParseDate(match.Groups[1].ToString().Trim());
+                        return match.Groups[1].ToString().Trim();
                     }
                 }
             }
@@ -2746,6 +2751,11 @@ namespace WebsitePanel.EnterpriseServer
 
         private static DateTime? ParseDate(string dateString)
         {
+            if (string.IsNullOrEmpty(dateString))
+            {
+               return null;
+            }
+
             var result = DateTime.MinValue;
 
             foreach (var datePattern in _datePatterns)

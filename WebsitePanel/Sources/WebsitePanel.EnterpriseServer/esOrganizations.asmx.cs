@@ -158,6 +158,18 @@ namespace WebsitePanel.EnterpriseServer
             return OrganizationController.SetOrganizationDefaultDomain(itemId, domainId);
         }
 
+        [WebMethod]
+        public DataSet GetOrganizationObjectsByDomain(int itemId, string domainName)
+        {
+            return OrganizationController.GetOrganizationObjectsByDomain(itemId, domainName);
+        }
+
+        [WebMethod]
+        public bool CheckDomainUsedByHostedOrganization(int itemId, int domainId)
+        {
+            return OrganizationController.CheckDomainUsedByHostedOrganization(itemId, domainId);
+        }
+
         #endregion
 
         #region Users

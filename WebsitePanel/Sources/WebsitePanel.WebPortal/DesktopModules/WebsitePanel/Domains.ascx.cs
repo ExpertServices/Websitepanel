@@ -55,10 +55,10 @@ namespace WebsitePanel.Portal
 
             // visibility
             chkRecursive.Visible = (PanelSecurity.SelectedUser.Role != UserRole.User);
-            gvDomains.Columns[3].Visible = gvDomains.Columns[3].Visible =
+            gvDomains.Columns[4].Visible = gvDomains.Columns[5].Visible =
                 (PanelSecurity.SelectedUser.Role != UserRole.User) && chkRecursive.Checked;
-			gvDomains.Columns[5].Visible = (PanelSecurity.SelectedUser.Role == UserRole.Administrator);
-			gvDomains.Columns[6].Visible = (PanelSecurity.EffectiveUser.Role == UserRole.Administrator);
+			gvDomains.Columns[6].Visible = (PanelSecurity.SelectedUser.Role == UserRole.Administrator);
+			gvDomains.Columns[7].Visible = (PanelSecurity.EffectiveUser.Role == UserRole.Administrator);
 
             if (!IsPostBack)
             {
@@ -183,6 +183,22 @@ namespace WebsitePanel.Portal
             dnsRecords.Add(domainId, string.Join("\r\n", tooltipLines));
 
             return dnsRecords[domainId];
+        }
+
+        public string GetDomainTooltip(int domainId, string registrar)
+        {
+            var dnsString = GetDomainDnsRecords(domainId);
+
+            var tooltipLines = new List<string>();
+
+            if (!string.IsNullOrEmpty(registrar))
+            {
+                var header = GetLocalizedString("DomainLookup.TooltipHeader.Registrar");
+                tooltipLines.Add(header + " " + registrar);
+                tooltipLines.Add("\r\n");
+            }
+
+            return string.Join("\r\n", tooltipLines) + dnsString;
         }
 
         protected void odsDomainsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)
