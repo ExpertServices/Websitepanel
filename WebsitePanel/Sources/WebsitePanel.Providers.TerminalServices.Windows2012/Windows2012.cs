@@ -213,26 +213,26 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         }
 
         public bool CreateCollection(string organizationId, RdsCollection collection)
-        {
+        {            
             var result = true;
 
             Runspace runSpace = null;
 
             try
-            {
-                runSpace = OpenRunspace();
+            {                
+                runSpace = OpenRunspace();                
 
                 foreach (var server in collection.Servers)
                 {
                     //If server will restart it will not be added to collection
-                    //Do not install feature here
+                    //Do not install feature here                    
 
                     if (!ExistRdsServerInDeployment(runSpace, server))
-                    {
-                        AddRdsServerToDeployment(runSpace, server);
+                    {                        
+                        AddRdsServerToDeployment(runSpace, server);                        
                     }
                 }
-
+                
                 Command cmd = new Command("New-RDSessionCollection");
                 cmd.Parameters.Add("CollectionName", collection.Name);
                 cmd.Parameters.Add("SessionHost", collection.Servers.Select(x => x.FqdName).ToArray());
@@ -243,7 +243,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                     cmd.Parameters.Add("CollectionDescription", collection.Description);
                 }
 
-                var collectionPs = ExecuteShellCommand(runSpace, cmd, false).FirstOrDefault();
+                var collectionPs = ExecuteShellCommand(runSpace, cmd, false).FirstOrDefault();                
 
                 if (collectionPs == null)
                 {
@@ -293,11 +293,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 {
                     AddComputerToCollectionAdComputerGroup(organizationId, collection.Name, rdsServer);
                 }
-            }
-            catch (Exception e)
-            {
-                result = false;
-            }
+            }                   
             finally
             {
                 CloseRunspace(runSpace);
@@ -934,7 +930,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 runSpace = OpenRunspace();
                 var feature = AddFeature(runSpace, hostName, "RDS-RD-Server", true, true);
                 installationResult = (bool)GetPSObjectProperty(feature, "Success");               
-            }
+            }            
             finally
             {
                 CloseRunspace(runSpace);
@@ -1425,10 +1421,10 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 if (pipeLine.Error != null && pipeLine.Error.Count > 0)
                 {
                     foreach (object item in pipeLine.Error.ReadToEnd())
-                    {
+                    {                        
                         errorList.Add(item);
                         string errorMessage = string.Format("Invoke error: {0}", item);
-                        Log.WriteWarning(errorMessage);
+                        Log.WriteWarning(errorMessage);                        
                     }
                 }
             }

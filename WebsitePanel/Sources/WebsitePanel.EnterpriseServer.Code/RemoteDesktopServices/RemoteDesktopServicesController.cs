@@ -284,6 +284,7 @@ namespace WebsitePanel.EnterpriseServer
             catch (Exception ex)
             {
                 result.AddError("REMOTE_DESKTOP_SERVICES_ADD_RDS_COLLECTION", ex);
+                throw TaskManager.WriteError(ex);
             }
             finally
             {
