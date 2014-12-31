@@ -1,0 +1,2 @@
+<br />
+<form action="{$websitepanel_url}/default.aspx?pid=Login" method="POST" target="_blank"><input type="hidden" value="{$username}" name="user"><input type="hidden" value="{$password}" name="password"><input type="submit" value="{$LANG.websitepanel_clientarea_oneclicklogin}"></form>
