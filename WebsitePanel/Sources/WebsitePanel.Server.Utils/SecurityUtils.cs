@@ -503,8 +503,8 @@ namespace WebsitePanel.Providers.Utils
                     // fill user
                     SystemUser user = new SystemUser();
                     user.Name = GetObjectProperty(objUser, "cn").ToString();
-                    user.FullName = GetObjectProperty(objUser, "givenName").ToString() + " " +
-                        GetObjectProperty(objUser, "sn").ToString();
+                    user.FullName = (GetObjectProperty(objUser, "givenName").ToString() + " " +
+                        GetObjectProperty(objUser, "sn").ToString()).Trim();
                     user.Description = GetObjectProperty(objUser, "description").ToString();
 
                     ADAccountOptions userFlags = (ADAccountOptions)objUser.Properties["userAccountControl"].Value;
