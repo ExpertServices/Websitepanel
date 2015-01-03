@@ -377,11 +377,9 @@ namespace WebsitePanel.Providers.FTP
                     {
                         CanRead = permission.Read,
                         CanWrite = permission.Write,
-                        CreatedDate = user.CreatedDate,
                         Enabled = !user.AccountDisabled,
                         Folder = path,
-                        GroupName = user.GroupName,
-                        Name = user.Name
+                        Name = accountName
                     };
 
                     return account;
