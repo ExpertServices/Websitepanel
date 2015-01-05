@@ -50,6 +50,8 @@ namespace WebsitePanel.Portal
 		public const string SMTP_PASSWORD = "SmtpPassword";
 		public const string SMTP_ENABLE_SSL = "SmtpEnableSsl";
 		public const string BACKUPS_PATH = "BackupsPath";
+        public const string PACKAGE_USE_PAGING = "PackageUsePaging";
+        public const string PACKAGES_PER_PAGE = "PackagesPerPage";
         public const string FILE_MANAGER_EDITABLE_EXTENSIONS = "EditableExtensions";
 
         /*
@@ -95,6 +97,15 @@ namespace WebsitePanel.Portal
 				txtBackupsPath.Text = settings["BackupsPath"];
 			}
 
+            // PACKAGE DISPLAY
+            settings = ES.Services.System.GetSystemSettings(
+                WSP.SystemSettings.PACKAGE_DISPLAY_SETTINGS);
+
+            if(settings != null) 
+            {
+                chkPackageUsePaging.Checked = Utils.ParseBool(settings[PACKAGE_USE_PAGING], false);
+                txtPackagePackagesPerPage.Text = settings[PACKAGES_PER_PAGE];
+            }
 
             // WPI
             settings = ES.Services.System.GetSystemSettings(WSP.SystemSettings.WPI_SETTINGS);
@@ -173,6 +184,18 @@ namespace WebsitePanel.Portal
 					ShowResultMessage(result);
 					return;
 				}
+
+                settings = new WSP.SystemSettings();
+                settings[PACKAGE_USE_PAGING] = chkPackageUsePaging.Checked.ToString();
+                settings[PACKAGES_PER_PAGE] = txtPackagePackagesPerPage.Text;
+
+                result = ES.Services.System.SetSystemSettings(
+                    WSP.SystemSettings.PACKAGE_DISPLAY_SETTINGS, settings);
+
+                if(result < 0) {
+                    ShowResultMessage(result);
+                    return;
+                }
 
 
                 // WPI

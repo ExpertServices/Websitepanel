@@ -60,6 +60,14 @@
             </asp:Panel>
         </ItemTemplate>
     </asp:Repeater>
+    <asp:Repeater ID="packagePaging" runat="server" Visible="false">
+        <ItemTemplate>
+            <asp:LinkButton ID="lnkPage" runat="server" Text='<%#Eval("Text") %>' CommandArgument='<%# Eval("Value") %>' 
+                CssClass='<%# (Convert.ToBoolean(Eval("Enabled"))) ? "pageBlock" : "activePageBlock" %>'
+                OnClick="Page_Changed" OnClientClick='<%# !Convert.ToBoolean(Eval("Enabled")) ? "return false;" : "" %>'>
+            </asp:LinkButton>
+        </ItemTemplate>
+    </asp:Repeater>
     <asp:Panel ID="EmptyPackagesList" runat="server" Visible="false" CssClass="FormBody">
         <asp:Literal ID="litEmptyList" runat="server" EnableViewState="false"></asp:Literal>
     </asp:Panel>

@@ -162,4 +162,13 @@
   <data name="litFileManagerEditableExtensions.Text" xml:space="preserve">
     <value>(One (1) extension per line)</value>
   </data>
+  <data name="lclPackageDisplaySettings.Text" xml:space="preserve">
+    <value>Package Display Settings</value>
+  </data>
+  <data name="lclPackagePackagesPerPage.Text" xml:space="preserve">
+    <value>Display packages per page</value>
+  </data>
+  <data name="lclPackageUsePaging" xml:space="preserve">
+    <value>Use paging on package overview</value>
+  </data>
 </root>

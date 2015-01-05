@@ -36,6 +36,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
+using WSP = WebsitePanel.EnterpriseServer;
 
 using WebsitePanel.EnterpriseServer;
 using System.Xml;
@@ -47,8 +48,21 @@ namespace WebsitePanel.Portal
     {
         XmlNodeList xmlIcons = null;
 
+        bool UsePaging = false;
+        int PackagesPerPage;
+        int currentPage = 1;
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            // PACKAGE DISPLAY SETTINGS
+            WSP.SystemSettings settings = ES.Services.System.GetSystemSettings(
+                WSP.SystemSettings.PACKAGE_DISPLAY_SETTINGS);
+            if(Utils.ParseBool(settings[SystemSettings.PACKAGE_USE_PAGING], false)) 
+            {
+                UsePaging = true;
+                PackagesPerPage = Utils.ParseInt(settings[SystemSettings.PACKAGES_PER_PAGE]);
+            }
+
             // check for user
             bool isUser = PanelSecurity.SelectedUser.Role == UserRole.User;
 
@@ -56,16 +70,26 @@ namespace WebsitePanel.Portal
             xmlIcons = this.Module.SelectNodes("Group");
 
             if (isUser && xmlIcons != null)
-            {
+            {   
                 // USER
                 UserPackagesPanel.Visible = true;
-                PackagesList.DataSource = new PackagesHelper().GetMyPackages();
-                PackagesList.DataBind();
-
-                if (PackagesList.Items.Count == 0)
+                if(!UsePaging) 
+                { 
+                    PackagesList.DataSource = new PackagesHelper().GetMyPackages();
+                    PackagesList.DataBind();
+                    if (PackagesList.Items.Count == 0) 
+                    {
+                        litEmptyList.Text = GetLocalizedString("gvPackages.Empty");
+                        EmptyPackagesList.Visible = true;
+                    }
+                } 
+                else 
                 {
-                    litEmptyList.Text = GetLocalizedString("gvPackages.Empty");
-                    EmptyPackagesList.Visible = true;
+                    if(!IsPostBack) 
+                    {
+                        ListPackagesWithPaging();
+                        packagePaging.Visible = true;
+                    }
                 }
             }
             else
@@ -222,6 +246,37 @@ namespace WebsitePanel.Portal
         private string GetXmlAttribute(XmlNode node, string name)
         {
             return node.Attributes[name] != null ? node.Attributes[name].Value : null;
+        }
+
+        private void ListPackagesWithPaging() 
+        {
+            Hashtable ht = new PackagesHelper().GetMyPackages(currentPage, PackagesPerPage);
+            PackagesList.DataSource = ht["DataSet"];
+            PackagesList.DataBind();
+            if(PackagesList.Items.Count == 0) {
+                litEmptyList.Text = GetLocalizedString("gvPackages.Emtpy");
+                EmptyPackagesList.Visible = true;
+            }
+            else 
+            {
+                int pageCount = (int)Math.Ceiling(Convert.ToDecimal(ht["RowCount"]) / Convert.ToDecimal(PackagesPerPage));
+                List<ListItem> pages = new List<ListItem>();
+                if(pageCount > 0) 
+                {
+                    for(int i = 1; i <= pageCount; i++) 
+                    {
+                        pages.Add(new ListItem(i.ToString(), i.ToString(), i != currentPage));
+                    }
+                }
+                packagePaging.DataSource = pages;
+                packagePaging.DataBind();
+            }
+        }
+
+        public void Page_Changed(Object sender, EventArgs e) 
+        {
+            currentPage = Utils.ParseInt(((LinkButton)sender).CommandArgument);
+            ListPackagesWithPaging();
         }
     }
 }
