@@ -140,15 +140,18 @@ namespace WebsitePanel.EnterpriseServer
                     if (!string.IsNullOrEmpty(org.GlobalAddressList))
                     {
                         int exchangeServiceId = GetExchangeServiceID(org.PackageId);
-                        ServiceProvider exchangeProvider = ExchangeServerController.GetExchangeServiceProvider(exchangeServiceId, item.ServiceId);                                                
-
-                        SoapServiceProviderItem soapOrg = SoapServiceProviderItem.Wrap(org);
-                        ServiceProviderItemDiskSpace[] itemsDiskspace =
-                            exchangeProvider.GetServiceItemsDiskSpace(new SoapServiceProviderItem[] {soapOrg});
-
-                        if (itemsDiskspace != null && itemsDiskspace.Length > 0)
+                        if (exchangeServiceId > 0)
                         {
-                            size += itemsDiskspace[0].DiskSpace;
+                            ServiceProvider exchangeProvider = ExchangeServerController.GetExchangeServiceProvider(exchangeServiceId, item.ServiceId);
+
+                            SoapServiceProviderItem soapOrg = SoapServiceProviderItem.Wrap(org);
+                            ServiceProviderItemDiskSpace[] itemsDiskspace =
+                                exchangeProvider.GetServiceItemsDiskSpace(new SoapServiceProviderItem[] { soapOrg });
+
+                            if (itemsDiskspace != null && itemsDiskspace.Length > 0)
+                            {
+                                size += itemsDiskspace[0].DiskSpace;
+                            }
                         }
                     }
 
