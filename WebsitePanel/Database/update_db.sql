@@ -5462,6 +5462,20 @@ CREATE TABLE RDSCollections
 )
 GO
 
+ALTER TABLE [dbo].[RDSCollectionUsers]
+DROP CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId]
+GO
+
+
+ALTER TABLE [dbo].[RDSCollectionUsers]
+DROP CONSTRAINT [FK_RDSCollectionUsers_UserId]
+GO
+
+ALTER TABLE [dbo].[RDSServers]
+DROP CONSTRAINT [FK_RDSServers_RDSCollectionId]
+GO
+
+
 ALTER TABLE [dbo].[RDSCollectionUsers]  WITH CHECK ADD  CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId] FOREIGN KEY([RDSCollectionId])
 REFERENCES [dbo].[RDSCollections] ([ID])
 ON DELETE CASCADE
