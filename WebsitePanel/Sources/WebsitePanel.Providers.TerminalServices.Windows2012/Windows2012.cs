@@ -705,15 +705,22 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             var showCmd = new Command("netsh nps show np");
 
             var showResult = ExecuteRemoteShellCommand(runSpace, centralNpshost, showCmd);
+            var processingOrders = showResult.Where(x => Convert.ToString(x).ToLower().Contains("processing order")).Select(x => Convert.ToString(x));
+            var count = 0;
 
-            var count = showResult.Count(x => Convert.ToString(x).Contains("policy conf")) + 1001;
+            foreach(var processingOrder in processingOrders)
+            {
+                var order = Convert.ToInt32(processingOrder.Remove(0, processingOrder.LastIndexOf("=") + 1).Replace(" ", ""));
+
+                if (order > count)
+                {
+                    count = order;
+                }
+            }
 
             var userGroupAd = ActiveDirectoryUtils.GetADObject(GetUsersGroupPath(organizationId, collectionName));
-
             var userGroupSid = (byte[])ActiveDirectoryUtils.GetADObjectProperty(userGroupAd, "objectSid");
-
-            var addCmdString = string.Format(AddNpsString, policyName.Replace(" ", "_"), count, ConvertByteToStringSid(userGroupSid));
-
+            var addCmdString = string.Format(AddNpsString, policyName.Replace(" ", "_"), count + 1, ConvertByteToStringSid(userGroupSid));
             Command addCmd = new Command(addCmdString);
 
             var result = ExecuteRemoteShellCommand(runSpace, centralNpshost, addCmd);
