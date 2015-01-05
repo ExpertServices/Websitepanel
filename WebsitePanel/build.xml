@@ -27,6 +27,7 @@
 		<MSDeployConnectionString>server=(local)\SQLEXPRESS;database=$(DataBaseName);Integrated Security=true;</MSDeployConnectionString>
 
 		<PortalSrc>$(TrunkFolder)\Sources\WebsitePanel.WebPortal</PortalSrc>
+		<WebDavPortalSrc>$(TrunkFolder)\Sources\WebsitePanel.WebDavPortal</WebDavPortalSrc>
 		<ServerSrc>$(TrunkFolder)\Sources\WebsitePanel.Server</ServerSrc>
 		<EnterpriseServerSrc>$(TrunkFolder)\Sources\WebsitePanel.EnterpriseServer</EnterpriseServerSrc>
 		<SchedulerServiceSrc>$(TrunkFolder)\Sources\WebsitePanel.SchedulerService</SchedulerServiceSrc>
@@ -41,6 +42,7 @@
 		<EnterpriseServerBuild>$(BuildFolder)\EnterpriseServer</EnterpriseServerBuild>
 		<SchedulerServiceBuild>$(BuildFolder)\SchedulerService</SchedulerServiceBuild>
 		<PortalBuild>$(BuildFolder)\Portal</PortalBuild>
+		<WebDavPortalBuild>$(BuildFolder)\WebDavPortal</WebDavPortalBuild>
 		<ImportCsvBuild>$(BuildFolder)\Import.CsvBulk</ImportCsvBuild>
 		<HyperVUtilsBuild>$(BuildFolder)\HyperVUtils</HyperVUtilsBuild>
 		<VMConfigBuild>$(BuildFolder)\VMConfig</VMConfigBuild>
@@ -66,7 +68,11 @@
 		<InstallerRemoteUri>http://www.websitepanel.net/files/$(Version)/WebsitePanelInstaller-$(Version)-webpi.msi</InstallerRemoteUri>
 	</PropertyGroup>
 
-	<Target Name="GenerateBuildVersionFilesInstaller">
+	<Target Name="RestorePackages">
+	    <Exec Command="$(TrunkFolder)\Sources\.nuget\NuGet.exe restore $(TrunkFolder)\Sources\WebsitePanel.WebPortal.sln" />
+	</Target>
+
+	<Target Name="GenerateBuildVersionFilesInstaller" DependsOnTargets="RestorePackages">
 		<AssemblyInfo CodeLanguage="CS" OutputFile="$(RootFolder)\WebsitePanel.Installer\Sources\VersionInfo.cs" AssemblyCompany="Outercurve Foundation" AssemblyCopyright="Copyright © 2014 Outercurve Foundation." AssemblyVersion="$(VersionLabel)" AssemblyFileVersion="$(FileVersion)" AssemblyInformationalVersion="$(Version)" />
 	</Target>
 
@@ -94,6 +100,7 @@
 		<RemoveDir Directories="$(EnterpriseServerBuild)"/>
 		<RemoveDir Directories="$(SchedulerServiceBuild)"/>
 		<RemoveDir Directories="$(PortalBuild)"/>
+		<RemoveDir Directories="$(WebDavPortalBuild)"/>
 		<RemoveDir Directories="$(ImportCsvBuild)"/>
 		<RemoveDir Directories="$(ImportEnterpriseBuild)"/>
 		<RemoveDir Directories="$(VMConfigBuild)"/>
@@ -109,6 +116,7 @@
 		<MakeDir Directories="$(EnterpriseServerBuild)"/>
 		<MakeDir Directories="$(SchedulerServiceBuild)"/>
 		<MakeDir Directories="$(PortalBuild)"/>
+		<MakeDir Directories="$(WebDavPortalBuild)"/>
 		<MakeDir Directories="$(HyperVUtilsBuild)"/>
 		<MakeDir Directories="$(VmConfigBuild)"/>
 		<MakeDir Directories="$(ImportCsvBuild)"/>
@@ -183,9 +191,26 @@
 			<PortalBuildFiles Include="$(PortalSrc)\**\*.*" Exclude="@(PortalBuildExclude)" />
 		</ItemGroup>
 		<Copy SourceFiles="@(PortalBuildFiles)" DestinationFolder="$(PortalBuild)\%(RecursiveDir)" />
+	</Target>
+
+	<Target Name="CreateWebDavPortalBuild" DependsOnTargets="CreatePortalBuild">
+		<ItemGroup>
+			<WebDavPortalBuildExclude Include="$(WebDavPortalSrc)\**\.svn\**" />
+			<WebDavPortalBuildExclude Include="$(WebDavPortalSrc)\**\obj\**" />
+			<WebDavPortalBuildExclude Include="$(WebDavPortalSrc)\bin\*.xml" />
+			<WebDavPortalBuildExclude Include="$(WebDavPortalSrc)\**\Release\**" />
+			<WebDavPortalBuildExclude Include="$(WebDavPortalSrc)\**\Debug\**" />
+			<WebDavPortalBuildExclude Include="$(WebDavPortalSrc)\**\*.pdb" Condition="'$(BuildConfiguration)' == 'Release'" />
+			<WebDavPortalBuildExclude Include="$(WebDavPortalSrc)\**\*.user" />
+			<WebDavPortalBuildExclude Include="$(WebDavPortalSrc)\**\*.suo" />
+			<WebDavPortalBuildExclude Include="$(WebDavPortalSrc)\**\*.cs" />
+			<WebDavPortalBuildExclude Include="$(WebDavPortalSrc)\**\*.csproj" />
+			<WebDavPortalBuildFiles Include="$(WebDavPortalSrc)\**\*.*" Exclude="@(WebDavPortalBuildExclude)" />
+		</ItemGroup>
+		<Copy SourceFiles="@(WebDavPortalBuildFiles)" DestinationFolder="$(WebDavPortalBuild)\%(RecursiveDir)" />
 	</Target>	
 
-	<Target Name="CreateImportCsvBuild" DependsOnTargets="CreatePortalBuild">
+	<Target Name="CreateImportCsvBuild" DependsOnTargets="CreateWebDavPortalBuild">
 		<ItemGroup>
 			<ImportCsvExclude Include="$(ImportCsvSrc)\**\*.pdb" Condition="'$(BuildConfiguration)' == 'Release'" />
 			<ImportCsvExclude Include="$(ImportCsvSrc)\**\*.vshost.*" />

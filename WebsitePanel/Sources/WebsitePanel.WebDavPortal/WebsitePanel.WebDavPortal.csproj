@@ -122,9 +122,8 @@
     <Reference Include="WebGrease">
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
     </Reference>
-    <Reference Include="WebsitePanel.EnterpriseServer.Base, Version=2.1.0.1, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
+    <Reference Include="WebsitePanel.EnterpriseServer.Base">
+      <HintPath>..\..\Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
     </Reference>
     <Reference Include="WebsitePanel.EnterpriseServer.Client">
       <HintPath>..\..\Bin\WebsitePanel.EnterpriseServer.Client.dll</HintPath>
