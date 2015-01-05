@@ -357,6 +357,7 @@
 		<EnterpriseServerInstall>$(InstallFolder)\EnterpriseServer</EnterpriseServerInstall>
 		<SchedulerServiceInstall>$(InstallFolder)\SchedulerServive</SchedulerServiceInstall>
 		<PortalInstall>$(InstallFolder)\Portal</PortalInstall>
+		<WebDavPortalInstall>$(InstallFolder)\WebDavPortal</WebDavPortalInstall>
 		<StandaloneInstall>$(InstallFolder)\StandaloneServerSetup</StandaloneInstall>
 
 		<!-- Tools -->
@@ -417,7 +418,16 @@
 		<XmlUpdate XmlFileName="$(PortalInstall)\App_Data\SiteSettings.config" Xpath="//SiteSettings/EnterpriseServer" Value="http://localhost:9002"  />
 	</Target>
 
-	<Target Name="CreateImportCsvInstall" DependsOnTargets="CreatePortalInstall">
+	<Target Name="CreateWebDavPortalInstall" DependsOnTargets="CreatePortalInstall">
+		<ItemGroup>
+			<WebDavPortalDeployFiles Include="$(WebDavPortalBuild)\**\*.*" />
+		</ItemGroup>
+		<RemoveDir Directories="$(WebDavPortalInstall)"/>
+		<MakeDir Directories="$(WebDavPortalInstall)"/>
+		<Copy SourceFiles="@(WebDavPortalDeployFiles)" DestinationFolder="$(WebDavPortalInstall)\%(RecursiveDir)" />
+	</Target>
+
+	<Target Name="CreateImportCsvInstall" DependsOnTargets="CreateWebDavPortalInstall">
 		<ItemGroup>
 			<ImportCsvDeployFiles Include="$(ImportCsvBuild)\**\*.*" />
 		</ItemGroup>
@@ -592,6 +602,10 @@
 		<Copy SourceFiles="$(SetupBuildFolder)\setup.dll" DestinationFolder="$(PortalUpdate)\Setup" />
 		<Copy SourceFiles="$(SetupBuildFolder)\setup.pdb" DestinationFolder="$(PortalUpdate)\Setup" Condition="'$(BuildConfiguration)' == 'Debug'" />
 
+		<MakeDir Directories="$(WebDavPortalInstall)\Setup"/>
+		<Copy SourceFiles="$(SetupBuildFolder)\setup.dll" DestinationFolder="$(WebDavPortalInstall)\Setup" />
+		<Copy SourceFiles="$(SetupBuildFolder)\setup.pdb" DestinationFolder="$(WebDavPortalInstall)\Setup" Condition="'$(BuildConfiguration)' == 'Debug'" />
+
 		<RemoveDir Directories="$(StandaloneInstall)"/>
 		<MakeDir Directories="$(StandaloneInstall)"/>
 		<MakeDir Directories="$(StandaloneInstall)\Setup"/>
@@ -603,6 +617,7 @@
 	<Target Name="Deploy" DependsOnTargets="CreateSetupDLL" >
 		<ItemGroup>
 			<PortalInstallFiles Include="$(PortalInstall)\**\*.*" />
+			<WebDavPortalInstallFiles Include="$(WebDavPortalInstall)\**\*.*" />
 			<EnterpriseServerInstallFiles Include="$(EnterpriseServerInstall)\**\*.*" />
 			<ServerInstallFiles Include="$(ServerInstall)\**\*.*" />
 
@@ -618,6 +633,7 @@
 
 		<!-- Assemble "Standalone" package -->
 		<Copy SourceFiles="@(PortalInstallFiles)" DestinationFolder="$(StandaloneInstall)\Portal\%(RecursiveDir)" />
+		<Copy SourceFiles="@(WebDavPortalInstallFiles)" DestinationFolder="$(StandaloneInstall)\WebDavPortal\%(RecursiveDir)" />
 		<Copy SourceFiles="@(EnterpriseServerInstallFiles)" DestinationFolder="$(StandaloneInstall)\Enterprise Server\%(RecursiveDir)" />
 		<Copy SourceFiles="@(ServerInstallFiles)" DestinationFolder="$(StandaloneInstall)\Server\%(RecursiveDir)" />
 
@@ -630,12 +646,14 @@
 
 		<!--
 		<Zip Files="@(PortalInstallFiles)" ZipFileName="$(DeployFolder)\WebsitePanel-Portal-$(Version).zip" WorkingDirectory="$(PortalInstall)" />
+		<Zip Files="@(WebDavPortalInstallFiles)" ZipFileName="$(DeployFolder)\WebsitePanel-Web-Dav-Portal-$(Version).zip" WorkingDirectory="$(WebDavPortalInstall)" />
 		<Zip Files="@(EnterpriseServerInstallFiles)" ZipFileName="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version).zip" WorkingDirectory="$(EnterpriseServerInstall)" />
 		<Zip Files="@(ServerInstallFiles)" ZipFileName="$(DeployFolder)\WebsitePanel-Server-$(Version).zip" WorkingDirectory="$(ServerInstall)" />
 		<Zip Files="@(StandaloneInstallFiles)" ZipFileName="$(DeployFolder)\WebsitePanel-StandaloneServerSetup-$(Version).zip" WorkingDirectory="$(StandaloneInstall)" />
 		-->
 		
 		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-Portal-$(Version).zip&quot; &quot;$(PortalInstall)\*&quot;" />
+		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-Web-Dav-Portal-$(Version).zip&quot; &quot;$(WebDavPortalInstall)\*&quot;" />
 		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version).zip&quot; &quot;$(EnterpriseServerInstall)\*&quot;" />
 		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-Server-$(Version).zip&quot; &quot;$(ServerInstall)\*&quot;" />
 		<Exec Command="$(ZipCmd) a &quot;$(DeployFolder)\WebsitePanel-StandaloneServerSetup-$(Version).zip&quot; &quot;$(StandaloneInstall)\*&quot;" />
@@ -754,6 +772,7 @@
   <Target Name="uploadtoftp">
 
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-Portal-$(Version).zip" LocalFile="$(DeployFolder)\WebsitePanel-Portal-$(Version).zip" />
+		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-Web-Dav-Portal-$(Version).zip" LocalFile="$(DeployFolder)\WebsitePanel-Web-Dav-Portal-$(Version).zip" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-EnterpriseServer-$(Version).zip" LocalFile="$(DeployFolder)\WebsitePanel-EnterpriseServer-$(Version).zip" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-Server-$(Version).zip" LocalFile="$(DeployFolder)\WebsitePanel-Server-$(Version).zip" />
 		  <FtpUpload Username="$(ftpUsername)" password="$(ftpPassword)" RemoteUri="ftp://$(ftphost)/WebsitePanel-StandaloneServerSetup-$(Version).zip" LocalFile="$(DeployFolder)\WebsitePanel-StandaloneServerSetup-$(Version).zip" />
