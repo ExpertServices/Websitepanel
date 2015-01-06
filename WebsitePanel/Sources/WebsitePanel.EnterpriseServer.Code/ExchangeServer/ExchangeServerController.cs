@@ -1216,6 +1216,20 @@ namespace WebsitePanel.EnterpriseServer
             return account;
         }
 
+        public static ExchangeAccount GetAccountByAccountName(string primaryEmailAddress)
+        {
+            ExchangeAccount account = ObjectUtils.FillObjectFromDataReader<ExchangeAccount>(
+                DataProvider.GetExchangeAccountByAccountNameWithoutItemId(primaryEmailAddress));
+
+            if (account == null)
+                return null;
+
+            // decrypt password
+            account.AccountPassword = CryptoUtils.Decrypt(account.AccountPassword);
+
+            return account;
+        }
+
         public static bool CheckAccountCredentials(int itemId, string email, string password)
         {
             // place log record

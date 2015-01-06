@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BB38798E-1528-493C-868E-005102316536}"
 	ProjectSection(SolutionItems) = preProject
@@ -15,6 +15,17 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.WebPortal", "WebsitePanel.WebPortal\WebsitePanel.WebPortal.csproj", "{C99EFB18-FFE7-45BB-8CA8-29336F3E8C68}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.Portal.Ecommerce.Modules", "WebsitePanel.WebPortal\DesktopModules\Ecommerce\WebsitePanel.Portal.Ecommerce.Modules.csproj", "{F01989EA-A888-41E1-9185-872E1455A07E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.WebDavPortal", "WebsitePanel.WebDavPortal\WebsitePanel.WebDavPortal.csproj", "{73A51A0A-9CF3-4516-BF25-28E5E4129FC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsitePanel.WebDav.Core", "WebsitePanel.WebDav.Core\WebsitePanel.WebDav.Core.csproj", "{BA147805-9EF1-45F2-BF32-A5825D4E950D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{B2049447-AC4D-49CB-8A34-FB92B9D89988}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +45,14 @@ Global
 		{F01989EA-A888-41E1-9185-872E1455A07E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F01989EA-A888-41E1-9185-872E1455A07E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F01989EA-A888-41E1-9185-872E1455A07E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73A51A0A-9CF3-4516-BF25-28E5E4129FC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73A51A0A-9CF3-4516-BF25-28E5E4129FC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73A51A0A-9CF3-4516-BF25-28E5E4129FC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73A51A0A-9CF3-4516-BF25-28E5E4129FC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA147805-9EF1-45F2-BF32-A5825D4E950D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA147805-9EF1-45F2-BF32-A5825D4E950D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA147805-9EF1-45F2-BF32-A5825D4E950D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA147805-9EF1-45F2-BF32-A5825D4E950D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

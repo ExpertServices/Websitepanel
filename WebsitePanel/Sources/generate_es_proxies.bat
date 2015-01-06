@@ -101,8 +101,8 @@ REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\HeliconZooProxy.cs
 REM %WSDL% %SERVER_URL%/esRemoteDesktopServices.asmx /out:.\WebsitePanel.EnterpriseServer.Client\RemoteDesktopServicesProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\RemoteDesktopServicesProxy.cs
 
-%WSDL% %SERVER_URL%/esEnterpriseStorage.asmx /out:.\WebsitePanel.EnterpriseServer.Client\EnterpriseStorageProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
-%WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\EnterpriseStorageProxy.cs
+REM %WSDL% %SERVER_URL%/esEnterpriseStorage.asmx /out:.\WebsitePanel.EnterpriseServer.Client\EnterpriseStorageProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
+REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\EnterpriseStorageProxy.cs
 
 
 
