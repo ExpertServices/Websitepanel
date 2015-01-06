@@ -1,0 +1,8 @@
+﻿@model WebsitePanel.WebDavPortal.Models.ErrorModel
+@{
+    ViewBag.Title = Model.HttpStatusCode;
+}
+<br/>
+<h4 id="errorMessage">
+    @Html.Raw(Model.Message)
+</h4>

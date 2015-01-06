@@ -206,6 +206,12 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public ExchangeAccount GetAccountByAccountNameWithoutItemId(string accountName)
+        {
+            return ExchangeServerController.GetAccountByAccountName(accountName);
+        }
+
+        [WebMethod]
         public ExchangeAccount SearchAccount(ExchangeAccountType accountType, string primaryEmailAddress)
         {
             return ExchangeServerController.SearchAccount(accountType, primaryEmailAddress);
