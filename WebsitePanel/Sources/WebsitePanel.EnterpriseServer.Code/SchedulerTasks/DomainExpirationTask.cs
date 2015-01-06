@@ -124,7 +124,7 @@ namespace WebsitePanel.EnterpriseServer
                 }
             }
 
-            var subDomains = allDomains.Where(x => !checkedDomains.Any(z => z.DomainId == x.DomainId)).GroupBy(p => p.DomainId).Select(g => g.First()).ToList();
+            var subDomains = allDomains.Where(x => !checkedDomains.Any(z => z.DomainId == x.DomainId && z.ExpirationDate != null)).GroupBy(p => p.DomainId).Select(g => g.First()).ToList();
 
             foreach (var subDomain in subDomains)
             {
