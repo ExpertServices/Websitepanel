@@ -7413,3 +7413,42 @@ LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
 RETURN
 
 GO
+
+-- fix Disk Space Report
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetPackageDiskspace')
+DROP PROCEDURE GetPackageDiskspace
+GO
+
+CREATE PROCEDURE [dbo].[GetPackageDiskspace]
+(
+	@ActorID int,
+	@PackageID int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+SELECT
+	RG.GroupID,
+	RG.GroupName,
+	ROUND(CONVERT(float, ISNULL(GD.Diskspace, 0)) / 1024 / 1024, 0) AS Diskspace,
+	ISNULL(GD.Diskspace, 0) AS DiskspaceBytes
+FROM ResourceGroups AS RG
+LEFT OUTER JOIN
+(
+	SELECT
+		PD.GroupID,
+		SUM(ISNULL(PD.DiskSpace, 0)) AS Diskspace -- in megabytes
+	FROM PackagesTreeCache AS PT
+	INNER JOIN PackagesDiskspace AS PD ON PT.PackageID = PD.PackageID
+	INNER JOIN Packages AS P ON PT.PackageID = P.PackageID
+	WHERE PT.ParentPackageID = @PackageID
+	GROUP BY PD.GroupID
+) AS GD ON RG.GroupID = GD.GroupID
+WHERE GD.Diskspace <> 0
+ORDER BY RG.GroupOrder
+
+RETURN 
