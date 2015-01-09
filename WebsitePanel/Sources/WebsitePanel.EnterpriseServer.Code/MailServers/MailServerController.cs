@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -1505,6 +1505,13 @@ namespace WebsitePanel.EnterpriseServer
 		/// <returns>True if quota will exceed. Otherwise, false.</returns>
 		protected bool VerifyIfQuotaWillBeExceeded(int packageId, string quotaName, int numberOfItemsToAdd)
 		{
+            // Don't bother to check quota if the number of items to add is zero or less otherwise IsQuotasWillExceed 
+            // will fail when quota is set to 0 on lists or groups and still thera are no items to import
+		    if (numberOfItemsToAdd <= 0)
+		    {
+		        return false;
+		    }
+
 			bool result = false;
 
 			QuotaValueInfo quotaInfo = PackageController.GetPackageQuota(packageId, quotaName);

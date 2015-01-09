@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -1206,6 +1206,20 @@ namespace WebsitePanel.EnterpriseServer
 
             ExchangeAccount account = ObjectUtils.FillObjectFromDataReader<ExchangeAccount>(
                 DataProvider.GetExchangeAccount(itemId, accountId));
+
+            if (account == null)
+                return null;
+
+            // decrypt password
+            account.AccountPassword = CryptoUtils.Decrypt(account.AccountPassword);
+
+            return account;
+        }
+
+        public static ExchangeAccount GetAccountByAccountName(string primaryEmailAddress)
+        {
+            ExchangeAccount account = ObjectUtils.FillObjectFromDataReader<ExchangeAccount>(
+                DataProvider.GetExchangeAccountByAccountNameWithoutItemId(primaryEmailAddress));
 
             if (account == null)
                 return null;

@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -54,6 +54,7 @@ namespace WebsitePanel.Server
 
         private string GetAsciiZoneName(string zoneName)
         {
+            if (string.IsNullOrEmpty(zoneName)) return zoneName;
             var idn = new IdnMapping();
             return idn.GetAscii(zoneName);
         }

@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -73,6 +73,12 @@ namespace WebsitePanel.EnterpriseServer
         public List<Organization> GetOrganizations(int packageId, bool recursive)
         {
             return OrganizationController.GetOrganizations(packageId, recursive);
+        }
+
+        [WebMethod]
+        public Organization GetOrganizationById(string organizationId)
+        {
+            return OrganizationController.GetOrganizationById(organizationId);
         }
 
         [WebMethod]
@@ -156,6 +162,18 @@ namespace WebsitePanel.EnterpriseServer
         public int SetOrganizationDefaultDomain(int itemId, int domainId)
         {
             return OrganizationController.SetOrganizationDefaultDomain(itemId, domainId);
+        }
+
+        [WebMethod]
+        public DataSet GetOrganizationObjectsByDomain(int itemId, string domainName)
+        {
+            return OrganizationController.GetOrganizationObjectsByDomain(itemId, domainName);
+        }
+
+        [WebMethod]
+        public bool CheckDomainUsedByHostedOrganization(int itemId, int domainId)
+        {
+            return OrganizationController.CheckDomainUsedByHostedOrganization(itemId, domainId);
         }
 
         #endregion

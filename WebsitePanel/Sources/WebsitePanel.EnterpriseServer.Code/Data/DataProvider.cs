@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -2684,6 +2684,17 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
+        public static IDataReader GetExchangeAccountByAccountNameWithoutItemId(string primaryEmailAddress)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetExchangeAccountByAccountNameWithoutItemId",
+                new SqlParameter("@PrimaryEmailAddress", primaryEmailAddress)
+            );
+        }
+
+
         public static IDataReader GetExchangeMailboxes(int itemId)
         {
             return SqlHelper.ExecuteReader(
@@ -3255,6 +3266,18 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@IncludeMailboxes", includeMailboxes)
             );
         }
+
+        public static DataSet GetOrganizationObjectsByDomain(int itemId, string domainName)
+        {
+            return SqlHelper.ExecuteDataset(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetOrganizationObjectsByDomain",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@DomainName", domainName)
+            );
+        }
+
 
         #endregion
 
@@ -4824,6 +4847,20 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@DomainCreationDate", domainCreationDate),
                 new SqlParameter("@DomainExpirationDate", domainExpirationDate),
                 new SqlParameter("@DomainLastUpdateDate", domainLastUpdateDate)
+            );
+        }
+
+        public static void UpdateWhoisDomainInfo(int domainId, DateTime? domainCreationDate, DateTime? domainExpirationDate, DateTime? domainLastUpdateDate, string registrarName)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateWhoisDomainInfo",
+                new SqlParameter("@DomainId", domainId),
+                new SqlParameter("@DomainCreationDate", domainCreationDate),
+                new SqlParameter("@DomainExpirationDate", domainExpirationDate),
+                new SqlParameter("@DomainLastUpdateDate", domainLastUpdateDate),
+                new SqlParameter("@DomainRegistrarName", registrarName)
             );
         }
 

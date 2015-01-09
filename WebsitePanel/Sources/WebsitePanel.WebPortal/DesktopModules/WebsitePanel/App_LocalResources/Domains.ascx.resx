@@ -216,4 +216,7 @@
   <data name="DomainLookup.TooltipHeader" xml:space="preserve">
     <value>Current Real DNS Values</value>
   </data>
+  <data name="DomainLookup.TooltipHeader.Registrar" xml:space="preserve">
+    <value>Registrar:</value>
+  </data>
 </root>

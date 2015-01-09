@@ -1,0 +1,19 @@
+﻿@model WebsitePanel.WebDavPortal.Models.OfficeOnlineModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <title>@Model.FileName</title>
+    </head>
+    <body>
+        <iframe src='@Model.Url' width="100%" height="100%" frameborder='0' style="bottom: 0px; left: 0px; position: fixed; right: 0px; top: 0px;">
+            This is an embedded
+            <a target='_blank' href='http://office.com'>Microsoft Office</a> document, powered by
+            <a target='_blank' href='http://office.com/webapps'>Office Web Apps</a>.
+        </iframe>
+    </body>
+</html>

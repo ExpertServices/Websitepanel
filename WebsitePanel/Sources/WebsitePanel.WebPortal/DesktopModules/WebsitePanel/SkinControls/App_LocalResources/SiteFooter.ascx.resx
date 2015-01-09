@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="locPoweredBy.Text" xml:space="preserve">
-    <value>Powered by &lt;a href="http://www.websitepanel.net" target="_blank"&gt;WebsitePanel&lt;/a&gt;. Copyright &amp;copy; 2014 Outercurve Foundation.</value>
+    <value>Powered by &lt;a href="http://www.websitepanel.net" target="_blank"&gt;WebsitePanel&lt;/a&gt;. Copyright &amp;copy; 2015 Outercurve Foundation.</value>
   </data>
   <data name="locVersion.Text" xml:space="preserve">
     <value>Version</value>

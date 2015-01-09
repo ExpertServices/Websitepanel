@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -160,6 +160,8 @@ namespace WebsitePanel.Server
             try
             {
                 Log.WriteStart("'{0}' GetServiceItemsDiskSpace", ProviderSettings.ProviderName);
+
+                if (items.Length == 0) return new ServiceProviderItemDiskSpace[] {};
                 return Provider.GetServiceItemsDiskSpace(UnwrapServiceProviderItems(items));
             }
             catch (Exception ex)

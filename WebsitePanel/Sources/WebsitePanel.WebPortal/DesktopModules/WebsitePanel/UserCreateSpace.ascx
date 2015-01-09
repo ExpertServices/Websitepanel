@@ -73,7 +73,7 @@
                     <asp:Localize ID="locDomainName" runat="server" meta:resourcekey="locDomainName" Text="Domain name:"></asp:Localize>
                 </td>
                 <td class="Normal" width="100%">
-                    <wsp:DomainControl ID="txtDomainName" runat="server" RequiredEnabled="True" ValidationGroup="CreateSpace"></wsp:DomainControl>
+                    <wsp:DomainControl ID="txtDomainName" runat="server" RequiredEnabled="True" ValidationGroup="CreateSpace" OnTextChanged="txtDomainName_OnTextChanged"></wsp:DomainControl>
                 </td>
             </tr>
         </table>

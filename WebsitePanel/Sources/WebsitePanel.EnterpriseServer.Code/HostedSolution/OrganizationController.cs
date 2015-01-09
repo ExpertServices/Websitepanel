@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -505,6 +505,15 @@ namespace WebsitePanel.EnterpriseServer
             {
                 TaskManager.CompleteTask();
             }
+        }
+
+        public static bool CheckDomainUsedByHostedOrganization(int itemId, int domainId)
+        {
+            DomainInfo domain = ServerController.GetDomain(domainId);
+            if (domain == null)
+                return false;
+
+            return (DataProvider.CheckDomainUsedByHostedOrganization(domain.DomainName) == 1);
         }
 
         private static void DeleteOCSUsers(int itemId, ref bool successful)
@@ -3080,5 +3089,10 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         #endregion
+
+        public static DataSet GetOrganizationObjectsByDomain(int itemId, string domainName)
+        {
+            return DataProvider.GetOrganizationObjectsByDomain(itemId, domainName);
+        }
     }
 }

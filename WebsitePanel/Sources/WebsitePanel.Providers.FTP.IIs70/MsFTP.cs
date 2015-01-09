@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -377,11 +377,9 @@ namespace WebsitePanel.Providers.FTP
                     {
                         CanRead = permission.Read,
                         CanWrite = permission.Write,
-                        CreatedDate = user.CreatedDate,
                         Enabled = !user.AccountDisabled,
                         Folder = path,
-                        GroupName = user.GroupName,
-                        Name = user.Name
+                        Name = accountName
                     };
 
                     return account;

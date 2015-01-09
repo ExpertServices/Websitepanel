@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -165,6 +165,20 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             return new string[]{};
         }
 
+        public bool CheckRDSServerAvaliable(string hostname)
+        {
+            bool result = false;
+            var ping = new Ping();
+            var reply = ping.Send(hostname, 1000);
+
+            if (reply.Status == IPStatus.Success)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
         #endregion
 
         #region RDS Collections
@@ -199,26 +213,26 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         }
 
         public bool CreateCollection(string organizationId, RdsCollection collection)
-        {
+        {            
             var result = true;
 
             Runspace runSpace = null;
 
             try
-            {
-                runSpace = OpenRunspace();
+            {                
+                runSpace = OpenRunspace();                
 
                 foreach (var server in collection.Servers)
                 {
                     //If server will restart it will not be added to collection
-                    //Do not install feature here
+                    //Do not install feature here                    
 
                     if (!ExistRdsServerInDeployment(runSpace, server))
-                    {
-                        AddRdsServerToDeployment(runSpace, server);
+                    {                        
+                        AddRdsServerToDeployment(runSpace, server);                        
                     }
                 }
-
+                
                 Command cmd = new Command("New-RDSessionCollection");
                 cmd.Parameters.Add("CollectionName", collection.Name);
                 cmd.Parameters.Add("SessionHost", collection.Servers.Select(x => x.FqdName).ToArray());
@@ -229,7 +243,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                     cmd.Parameters.Add("CollectionDescription", collection.Description);
                 }
 
-                var collectionPs = ExecuteShellCommand(runSpace, cmd, false).FirstOrDefault();
+                var collectionPs = ExecuteShellCommand(runSpace, cmd, false).FirstOrDefault();                
 
                 if (collectionPs == null)
                 {
@@ -279,11 +293,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 {
                     AddComputerToCollectionAdComputerGroup(organizationId, collection.Name, rdsServer);
                 }
-            }
-            catch (Exception e)
-            {
-                result = false;
-            }
+            }                   
             finally
             {
                 CloseRunspace(runSpace);
@@ -695,15 +705,22 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             var showCmd = new Command("netsh nps show np");
 
             var showResult = ExecuteRemoteShellCommand(runSpace, centralNpshost, showCmd);
+            var processingOrders = showResult.Where(x => Convert.ToString(x).ToLower().Contains("processing order")).Select(x => Convert.ToString(x));
+            var count = 0;
 
-            var count = showResult.Count(x => Convert.ToString(x).Contains("policy conf")) + 1001;
+            foreach(var processingOrder in processingOrders)
+            {
+                var order = Convert.ToInt32(processingOrder.Remove(0, processingOrder.LastIndexOf("=") + 1).Replace(" ", ""));
+
+                if (order > count)
+                {
+                    count = order;
+                }
+            }
 
             var userGroupAd = ActiveDirectoryUtils.GetADObject(GetUsersGroupPath(organizationId, collectionName));
-
             var userGroupSid = (byte[])ActiveDirectoryUtils.GetADObjectProperty(userGroupAd, "objectSid");
-
-            var addCmdString = string.Format(AddNpsString, policyName.Replace(" ", "_"), count, ConvertByteToStringSid(userGroupSid));
-
+            var addCmdString = string.Format(AddNpsString, policyName.Replace(" ", "_"), count + 1, ConvertByteToStringSid(userGroupSid));
             Command addCmd = new Command(addCmdString);
 
             var result = ExecuteRemoteShellCommand(runSpace, centralNpshost, addCmd);
@@ -920,7 +937,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 runSpace = OpenRunspace();
                 var feature = AddFeature(runSpace, hostName, "RDS-RD-Server", true, true);
                 installationResult = (bool)GetPSObjectProperty(feature, "Success");               
-            }
+            }            
             finally
             {
                 CloseRunspace(runSpace);
@@ -1411,10 +1428,10 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 if (pipeLine.Error != null && pipeLine.Error.Count > 0)
                 {
                     foreach (object item in pipeLine.Error.ReadToEnd())
-                    {
+                    {                        
                         errorList.Add(item);
                         string errorMessage = string.Format("Invoke error: {0}", item);
-                        Log.WriteWarning(errorMessage);
+                        Log.WriteWarning(errorMessage);                        
                     }
                 }
             }

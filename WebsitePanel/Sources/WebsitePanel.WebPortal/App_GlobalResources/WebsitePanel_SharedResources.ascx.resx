@@ -5620,5 +5620,10 @@
   <data name="SchedulerTask.SCHEDULE_TASK_DOMAIN_EXPIRATION" xml:space="preserve">
     <value>Check domain expiration date</value>
   </data>
-
+  <data name="ERROR.IDNDOMAIN_NO_MAIL" xml:space="preserve">
+    <value>You cannot use a IDN domain name for mail</value>
+  </data>
+  <data name="ERROR.IDNDOMAIN_NO_ORGANIZATION" xml:space="preserve">
+    <value>You cannot use a IDN domain name for organizations</value>
+  </data>
 </root>

@@ -37,7 +37,7 @@
                     </fieldset>
                       
 				    <div class="FormFooter">
-					    <asp:Button id="btnSave" runat="server" Text="Save" CssClass="Button1" meta:resourcekey="btnSave" OnClick="btnSave_Click" ValidationGroup="SaveRDSCollection"></asp:Button>
+					    <asp:Button id="btnSave" runat="server" Text="Save" CssClass="Button1" meta:resourcekey="btnSave" OnClick="btnSave_Click" OnClientClick="ShowProgressDialog('Adding collection...');" ValidationGroup="SaveRDSCollection"></asp:Button>
 				    </div>
 				</div>
 			</div>

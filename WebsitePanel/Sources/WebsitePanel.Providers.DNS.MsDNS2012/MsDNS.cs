@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -106,9 +106,6 @@ namespace WebsitePanel.Providers.DNS
 		public virtual void AddSecondaryZone( string zoneName, string[] masterServers )
 		{
 			ps.Add_DnsServerSecondaryZone( zoneName, masterServers );
-
-            // remove ns records
-            ps.Remove_DnsServerResourceRecords(zoneName, "NS");
         }
 
 		public virtual void DeleteZone( string zoneName )

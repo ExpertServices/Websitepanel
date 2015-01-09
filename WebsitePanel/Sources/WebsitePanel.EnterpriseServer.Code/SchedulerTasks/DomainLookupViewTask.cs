@@ -1,4 +1,32 @@
-﻿using System;
+// Copyright (c) 2015, Outercurve Foundation.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification,
+// are permitted provided that the following conditions are met:
+//
+// - Redistributions of source code must  retain  the  above copyright notice, this
+//   list of conditions and the following disclaimer.
+//
+// - Redistributions in binary form  must  reproduce the  above  copyright  notice,
+//   this list of conditions  and  the  following  disclaimer in  the documentation
+//   and/or other materials provided with the distribution.
+//
+// - Neither  the  name  of  the  Outercurve Foundation  nor   the   names  of  its
+//   contributors may be used to endorse or  promote  products  derived  from  this
+//   software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,  BUT  NOT  LIMITED TO, THE IMPLIED
+// WARRANTIES  OF  MERCHANTABILITY   AND  FITNESS  FOR  A  PARTICULAR  PURPOSE  ARE
+// DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+// ANY DIRECT, INDIRECT, INCIDENTAL,  SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO,  PROCUREMENT  OF  SUBSTITUTE  GOODS OR SERVICES;
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER  CAUSED AND ON
+// ANY  THEORY  OF  LIABILITY,  WHETHER  IN  CONTRACT,  STRICT  LIABILITY,  OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
+// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +51,7 @@ namespace WebsitePanel.EnterpriseServer
         private static readonly string MailBodyTemplateParameter = "MAIL_BODY";
         private static readonly string MailBodyDomainRecordTemplateParameter = "MAIL_DOMAIN_RECORD";
         private static readonly string ServerNameParameter = "SERVER_NAME";
+        private static readonly string PauseBetweenQueriesParameter = "PAUSE_BETWEEN_QUERIES";
 
         private const string MxRecordPattern = @"mail exchanger = (.+)";
         private const string NsRecordPattern = @"nameserver = (.+)";
@@ -40,7 +69,9 @@ namespace WebsitePanel.EnterpriseServer
             string dnsServersString = (string)topTask.GetParamValue(DnsServersParameter);
             string serverName = (string)topTask.GetParamValue(ServerNameParameter);
 
-            // check input parameters
+            int pause;
+
+                        // check input parameters
             if (String.IsNullOrEmpty(dnsServersString))
             {
                 TaskManager.WriteWarning("Specify 'DNS' task parameter.");
@@ -50,6 +81,13 @@ namespace WebsitePanel.EnterpriseServer
             if (String.IsNullOrEmpty((string)topTask.GetParamValue("MAIL_TO")))
             {
                 TaskManager.WriteWarning("The e-mail message has not been sent because 'Mail To' is empty.");
+                return;
+            }
+
+
+            if (!int.TryParse((string)topTask.GetParamValue(PauseBetweenQueriesParameter), out pause))
+            {
+                TaskManager.WriteWarning("The 'pause between queries' parameter is not valid.");
                 return;
             }
 
@@ -96,14 +134,16 @@ namespace WebsitePanel.EnterpriseServer
                     DomainDnsChanges domainChanges = new DomainDnsChanges();
                     domainChanges.DomainName = domain.DomainName;
                     domainChanges.PackageId = domain.PackageId;
+                    domainChanges.Registrar = domain.RegistrarName;
+                    domainChanges.ExpirationDate = domain.ExpirationDate;
 
                     var dbDnsRecords = ObjectUtils.CreateListFromDataReader<DnsRecordInfo>(DataProvider.GetDomainAllDnsRecords(domain.DomainId));
 
                     //execute server
                     foreach (var dnsServer in dnsServers)
                     {
-                        var dnsMxRecords = GetDomainDnsRecords(winServer, domain.DomainName, dnsServer, DnsRecordType.MX) ?? dbDnsRecords.Where(x => x.RecordType == DnsRecordType.MX).ToList();
-                        var dnsNsRecords = GetDomainDnsRecords(winServer, domain.DomainName, dnsServer, DnsRecordType.NS) ?? dbDnsRecords.Where(x => x.RecordType == DnsRecordType.NS).ToList();
+                        var dnsMxRecords = GetDomainDnsRecords(winServer, domain.DomainName, dnsServer, DnsRecordType.MX, pause) ?? dbDnsRecords.Where(x => x.RecordType == DnsRecordType.MX).ToList();
+                        var dnsNsRecords = GetDomainDnsRecords(winServer, domain.DomainName, dnsServer, DnsRecordType.NS, pause) ?? dbDnsRecords.Where(x => x.RecordType == DnsRecordType.NS).ToList();
 
                         FillRecordData(dnsMxRecords, domain, dnsServer);
                         FillRecordData(dnsNsRecords, domain, dnsServer);
@@ -306,8 +346,10 @@ namespace WebsitePanel.EnterpriseServer
             MailHelper.SendMessage(from, mailTo, bcc, subject, body, priority, isHtml);
         }
 
-        public List<DnsRecordInfo> GetDomainDnsRecords(WindowsServer winServer, string domain, string dnsServer, DnsRecordType recordType)
+        public List<DnsRecordInfo> GetDomainDnsRecords(WindowsServer winServer, string domain, string dnsServer, DnsRecordType recordType, int pause)
         {
+            Thread.Sleep(pause);
+
             //nslookup -type=mx google.com 195.46.39.39
             var command = "nslookup";
             var args = string.Format("-type={0} {1} {2}", recordType, domain, dnsServer);

@@ -5428,9 +5428,7 @@ GO
 /*Remote Desktop Services*/
 
 /*Remote Desktop Services Tables*/
-IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'RDSCollectionUsers')
-DROP TABLE RDSCollectionUsers
-GO
+IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'RDSCollectionUsers')
 CREATE TABLE RDSCollectionUsers
 (
 	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -5440,9 +5438,7 @@ CREATE TABLE RDSCollectionUsers
 GO
 
 
-IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'RDSServers')
-DROP TABLE RDSServers
-GO
+IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'RDSServers')
 CREATE TABLE RDSServers
 (
 	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -5456,9 +5452,7 @@ CREATE TABLE RDSServers
 GO
 
 
-IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'RDSCollections')
-DROP TABLE RDSCollections
-GO
+IF NOT EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'RDSCollections')
 CREATE TABLE RDSCollections
 (
 	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
@@ -5467,6 +5461,20 @@ CREATE TABLE RDSCollections
 	Description NVARCHAR(255)
 )
 GO
+
+ALTER TABLE [dbo].[RDSCollectionUsers]
+DROP CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId]
+GO
+
+
+ALTER TABLE [dbo].[RDSCollectionUsers]
+DROP CONSTRAINT [FK_RDSCollectionUsers_UserId]
+GO
+
+ALTER TABLE [dbo].[RDSServers]
+DROP CONSTRAINT [FK_RDSServers_RDSCollectionId]
+GO
+
 
 ALTER TABLE [dbo].[RDSCollectionUsers]  WITH CHECK ADD  CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId] FOREIGN KEY([RDSCollectionId])
 REFERENCES [dbo].[RDSCollections] ([ID])
@@ -5977,6 +5985,44 @@ RETURN
 GO
 
 
+
+IF OBJECTPROPERTY(object_id('dbo.GetExchangeAccountByAccountNameWithoutItemId'), N'IsProcedure') = 1
+DROP PROCEDURE [dbo].[GetExchangeAccountByAccountNameWithoutItemId]
+GO
+CREATE PROCEDURE [dbo].[GetExchangeAccountByAccountNameWithoutItemId] 
+(
+	@PrimaryEmailAddress nvarchar(300)
+)
+AS
+SELECT
+	E.AccountID,
+	E.ItemID,
+	E.AccountType,
+	E.AccountName,
+	E.DisplayName,
+	E.PrimaryEmailAddress,
+	E.MailEnabledPublicFolder,
+	E.MailboxManagerActions,
+	E.SamAccountName,
+	E.AccountPassword,
+	E.MailboxPlanId,
+	P.MailboxPlan,
+	E.SubscriberNumber,
+	E.UserPrincipalName,
+	E.ArchivingMailboxPlanId, 
+	AP.MailboxPlan as 'ArchivingMailboxPlan',
+	E.EnableArchiving
+FROM
+	ExchangeAccounts AS E
+LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
+LEFT OUTER JOIN ExchangeMailboxPlans AS AP ON E.ArchivingMailboxPlanId = AP.MailboxPlanId
+WHERE
+	E.PrimaryEmailAddress = @PrimaryEmailAddress
+RETURN
+GO
+
+
+
 -- wsp-10269: Changed php extension path in default properties for IIS70 and IIS80 provider
 update ServiceDefaultProperties
 set PropertyValue='%PROGRAMFILES(x86)%\PHP\php-cgi.exe'
@@ -6195,6 +6241,12 @@ INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [D
 END
 GO
 
+IF NOT EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'PAUSE_BETWEEN_QUERIES' )
+BEGIN
+INSERT [dbo].[ScheduleTaskParameters] ([TaskID], [ParameterID], [DataTypeID], [DefaultValue], [ParameterOrder]) VALUES (N'SCHEDULE_TASK_DOMAIN_LOOKUP', N'PAUSE_BETWEEN_QUERIES', N'String', N'100', 4)
+END
+GO
+
 IF EXISTS (SELECT * FROM [dbo].[ScheduleTaskParameters] WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'SERVER_NAME' )
 BEGIN
 UPDATE [dbo].[ScheduleTaskParameters] SET [DefaultValue] = N'' WHERE [TaskID] = N'SCHEDULE_TASK_DOMAIN_LOOKUP' AND [ParameterID]= N'SERVER_NAME'
@@ -6304,9 +6356,10 @@ BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainExpirationLetter', N'From', N'support@HostingCompany.com')
 END
 GO
-IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainExpirationLetter' AND [PropertyName]= N'HtmlBody' )
-BEGIN
-INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainExpirationLetter', N'HtmlBody', N'<html xmlns="http://www.w3.org/1999/xhtml">
+
+DECLARE @DomainExpirationLetterHtmlBody nvarchar(2500)
+
+Set @DomainExpirationLetterHtmlBody = N'<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Domain Expiration Information</title>
     <style type="text/css">
@@ -6346,6 +6399,7 @@ Please, find below details of your domain expiration information.
     <thead>
         <tr>
             <th>Domain</th>
+			<th>Registrar</th>
 			<th>Customer</th>
             <th>Expiration Date</th>
         </tr>
@@ -6354,8 +6408,9 @@ Please, find below details of your domain expiration information.
             <ad:foreach collection="#Domains#" var="Domain" index="i">
         <tr>
             <td>#Domain.DomainName#</td>
+			<td>#iif(isnull(Domain.Registrar), "", Domain.Registrar)#</td>
 			<td>#Domain.Customer#</td>
-            <td>#Domain.ExpirationDate#</td>
+            <td>#iif(isnull(Domain.ExpirationDate), "", Domain.ExpirationDate)#</td>
         </tr>
     </ad:foreach>
     </tbody>
@@ -6391,9 +6446,17 @@ If you have any questions regarding your hosting account, feel free to contact o
 
 <p>
 Best regards
-</p>')
+</p>';
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainExpirationLetter' AND [PropertyName]= N'HtmlBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainExpirationLetter', N'HtmlBody', @DomainExpirationLetterHtmlBody)
 END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @DomainExpirationLetterHtmlBody WHERE [UserID] = 1 AND [SettingsName]= N'DomainExpirationLetter' AND [PropertyName]= N'HtmlBody'
 GO
+
+
 IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainExpirationLetter' AND [PropertyName]= N'Priority' )
 BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainExpirationLetter', N'Priority', N'Normal')
@@ -6404,9 +6467,10 @@ BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainExpirationLetter', N'Subject', N'Domain expiration notification')
 END
 GO
-IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainExpirationLetter' AND [PropertyName]= N'TextBody' )
-BEGIN
-INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainExpirationLetter', N'TextBody', N'=================================
+
+DECLARE @DomainExpirationLetterTextBody nvarchar(2500)
+
+Set @DomainExpirationLetterTextBody = N'=================================
    Domain Expiration Information
 =================================
 <ad:if test="#user#">
@@ -6418,8 +6482,9 @@ Please, find below details of your domain expiration information.
 
 <ad:foreach collection="#Domains#" var="Domain" index="i">
 	Domain: #Domain.DomainName#
+	Registrar: #iif(isnull(Domain.Registrar), "", Domain.Registrar)#
 	Customer: #Domain.Customer#
-	Expiration Date: #Domain.ExpirationDate#
+	Expiration Date: #iif(isnull(Domain.ExpirationDate), "", Domain.ExpirationDate)#
 
 </ad:foreach>
 
@@ -6435,8 +6500,14 @@ Please, find below details of your non-existen domains.
 
 If you have any questions regarding your hosting account, feel free to contact our support department at any time.
 
-Best regards')
+Best regards'
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainExpirationLetter' AND [PropertyName]= N'TextBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainExpirationLetter', N'TextBody', @DomainExpirationLetterTextBody)
 END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @DomainExpirationLetterTextBody WHERE [UserID] = 1 AND [SettingsName]= N'DomainExpirationLetter' AND [PropertyName]= N'TextBody'
 GO
 
 
@@ -6452,9 +6523,10 @@ BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainLookupLetter', N'From', N'support@HostingCompany.com')
 END
 GO
-IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainLookupLetter' AND [PropertyName]= N'HtmlBody' )
-BEGIN
-INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainLookupLetter', N'HtmlBody', N'<html xmlns="http://www.w3.org/1999/xhtml">
+
+DECLARE @DomainLookupLetterHtmlBody nvarchar(2500)
+
+Set @DomainLookupLetterHtmlBody = N'<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>MX and NS Changes Information</title>
     <style type="text/css">
@@ -6464,6 +6536,7 @@ INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [Property
         .Summary { font-family: Tahoma; font-size: 9pt; }
         .Summary H1 { font-size: 1.7em; color: ##1F4978; border-bottom: dotted 3px ##efefef; }
         .Summary H2 { font-size: 1.3em; color: ##1F4978; } 
+		.Summary H3 { font-size: 1em; color: ##1F4978; } 
         .Summary TABLE { border: solid 1px ##e5e5e5; }
         .Summary TH,
         .Summary TD.Label { padding: 5px; font-size: 8pt; font-weight: bold; background-color: ##f5f5f5; }
@@ -6492,6 +6565,7 @@ Please, find below details of MX and NS changes.
 
     <ad:foreach collection="#Domains#" var="Domain" index="i">
 	<h2>#Domain.DomainName# - #DomainUsers[Domain.PackageId].FirstName# #DomainUsers[Domain.PackageId].LastName#</h2>
+	<h3>#iif(isnull(Domain.Registrar), "", Domain.Registrar)# #iif(isnull(Domain.ExpirationDate), "", Domain.ExpirationDate)#</h3>
 
 	<table>
 	    <thead>
@@ -6524,9 +6598,17 @@ If you have any questions regarding your hosting account, feel free to contact o
 
 <p>
 Best regards
-</p>')
+</p>'
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainLookupLetter' AND [PropertyName]= N'HtmlBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainLookupLetter', N'HtmlBody', @DomainLookupLetterHtmlBody)
 END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @DomainLookupLetterHtmlBody WHERE [UserID] = 1 AND [SettingsName]= N'DomainLookupLetter' AND [PropertyName]= N'HtmlBody'
 GO
+
+
 IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainLookupLetter' AND [PropertyName]= N'Priority' )
 BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainLookupLetter', N'Priority', N'Normal')
@@ -6537,9 +6619,10 @@ BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainLookupLetter', N'Subject', N'MX and NS changes notification')
 END
 GO
-IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainLookupLetter' AND [PropertyName]= N'TextBody' )
-BEGIN
-INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainLookupLetter', N'TextBody', N'=================================
+
+DECLARE @DomainLookupLetterTextBody nvarchar(2500)
+
+Set @DomainLookupLetterTextBody = N'=================================
    MX and NS Changes Information
 =================================
 <ad:if test="#user#">
@@ -6552,6 +6635,8 @@ Please, find below details of MX and NS changes.
 <ad:foreach collection="#Domains#" var="Domain" index="i">
 
  #Domain.DomainName# - #DomainUsers[Domain.PackageId].FirstName# #DomainUsers[Domain.PackageId].LastName#
+ Registrar:      #iif(isnull(Domain.Registrar), "", Domain.Registrar)#
+ ExpirationDate: #iif(isnull(Domain.ExpirationDate), "", Domain.ExpirationDate)#
 
         <ad:foreach collection="#Domain.DnsChanges#" var="DnsChange" index="j">
             DNS:       #DnsChange.DnsServer#
@@ -6568,9 +6653,18 @@ Please, find below details of MX and NS changes.
 If you have any questions regarding your hosting account, feel free to contact our support department at any time.
 
 Best regards
-')
+'
+
+IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainLookupLetter' AND [PropertyName]= N'TextBody' )
+BEGIN
+INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainLookupLetter', N'TextBody',@DomainLookupLetterTextBody )
 END
+ELSE
+UPDATE [dbo].[UserSettings] SET [PropertyValue] = @DomainLookupLetterTextBody WHERE [UserID] = 1 AND [SettingsName]= N'DomainLookupLetter' AND [PropertyName]= N'TextBody'
 GO
+
+
+
 IF NOT EXISTS (SELECT * FROM [dbo].[UserSettings] WHERE [UserID] = 1 AND [SettingsName]= N'DomainLookupLetter' AND [PropertyName]= N'NoChangesHtmlBody' )
 BEGIN
 INSERT [dbo].[UserSettings] ([UserID], [SettingsName], [PropertyName], [PropertyValue]) VALUES (1, N'DomainLookupLetter', N'NoChangesHtmlBody', N'<html xmlns="http://www.w3.org/1999/xhtml">
@@ -6959,7 +7053,6 @@ exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @PackageID int, @Fil
 
 
 RETURN
-
 GO
 
 
@@ -7065,10 +7158,305 @@ UPDATE [dbo].[Providers] SET [EditorControl] = 'Windows2012' WHERE [ProviderName
 END
 GO
 
+-- fix check domain used by HostedOrganization
+
+ALTER PROCEDURE [dbo].[CheckDomainUsedByHostedOrganization] 
+	@DomainName nvarchar(100),
+	@Result int OUTPUT
+AS
+	SET @Result = 0
+	IF EXISTS(SELECT 1 FROM ExchangeAccounts WHERE UserPrincipalName LIKE '%@'+ @DomainName AND AccountType!=2)
+	BEGIN
+		SET @Result = 1
+	END
+	ELSE
+	IF EXISTS(SELECT 1 FROM ExchangeAccountEmailAddresses WHERE EmailAddress LIKE '%@'+ @DomainName)
+	BEGIN
+		SET @Result = 1
+	END
+	ELSE
+	IF EXISTS(SELECT 1 FROM LyncUsers WHERE SipAddress LIKE '%@'+ @DomainName)
+	BEGIN
+		SET @Result = 1
+	END
+		
+	RETURN @Result
+GO
+
+
+-- check domain used by hosted organization
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetOrganizationObjectsByDomain')
+DROP PROCEDURE GetOrganizationObjectsByDomain
+GO
+
+CREATE PROCEDURE [dbo].[GetOrganizationObjectsByDomain]
+(
+        @ItemID int,
+        @DomainName nvarchar(100)
+)
+AS
+SELECT
+	'ExchangeAccounts' as ObjectName,
+        AccountID as ObjectID,
+	AccountType as ObjectType,
+        DisplayName as DisplayName,
+	0 as OwnerID
+FROM
+        ExchangeAccounts
+WHERE
+	UserPrincipalName LIKE '%@'+ @DomainName AND AccountType!=2
+UNION
+SELECT
+	'ExchangeAccountEmailAddresses' as ObjectName,
+	eam.AddressID as ObjectID,
+	ea.AccountType as ObjectType,
+	eam.EmailAddress as DisplayName,
+	eam.AccountID as OwnerID
+FROM
+	ExchangeAccountEmailAddresses as eam
+INNER JOIN 
+	ExchangeAccounts ea
+ON 
+	ea.AccountID = eam.AccountID
+WHERE
+	(ea.PrimaryEmailAddress != eam.EmailAddress)
+	AND (ea.UserPrincipalName != eam.EmailAddress)
+	AND (eam.EmailAddress LIKE '%@'+ @DomainName)
+UNION
+SELECT 
+	'LyncUsers' as ObjectName,
+	ea.AccountID as ObjectID,
+	ea.AccountType as ObjectType,
+	ea.DisplayName as DisplayName,
+	0 as OwnerID
+FROM 
+	ExchangeAccounts ea 
+INNER JOIN 
+	LyncUsers ou
+ON 
+	ea.AccountID = ou.AccountID
+WHERE 
+	ou.SipAddress LIKE '%@'+ @DomainName
+ORDER BY 
+	DisplayName
+RETURN
+GO
+IF NOT EXISTS(SELECT * FROM sys.columns 
+        WHERE [name] = N'RegistrarName' AND [object_id] = OBJECT_ID(N'Domains'))
+BEGIN
+	ALTER TABLE [dbo].[Domains] ADD RegistrarName nvarchar(max);
+END
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdateWhoisDomainInfo')
+DROP PROCEDURE UpdateWhoisDomainInfo
+GO
+CREATE PROCEDURE [dbo].UpdateWhoisDomainInfo
+(
+	@DomainId INT,
+	@DomainCreationDate DateTime,
+	@DomainExpirationDate DateTime,
+	@DomainLastUpdateDate DateTime,
+	@DomainRegistrarName nvarchar(max)
+)
+AS
+UPDATE [dbo].[Domains] SET [CreationDate] = @DomainCreationDate, [ExpirationDate] = @DomainExpirationDate, [LastUpdateDate] = @DomainLastUpdateDate, [RegistrarName] = @DomainRegistrarName WHERE [DomainID] = @DomainId
+GO
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetDomainsPaged')
+DROP PROCEDURE GetDomainsPaged
+GO
+CREATE PROCEDURE [dbo].[GetDomainsPaged]
+(
+	@ActorID int,
+	@PackageID int,
+	@ServerID int,
+	@Recursive bit,
+	@FilterColumn nvarchar(50) = '',
+	@FilterValue nvarchar(50) = '',
+	@SortColumn nvarchar(50),
+	@StartRow int,
+	@MaximumRows int
+)
+AS
+SET NOCOUNT ON
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+-- build query and run it to the temporary table
+DECLARE @sql nvarchar(2500)
+
+IF @SortColumn = '' OR @SortColumn IS NULL
+SET @SortColumn = 'DomainName'
+
+SET @sql = '
+DECLARE @Domains TABLE
+(
+	ItemPosition int IDENTITY(1,1),
+	DomainID int
+)
+INSERT INTO @Domains (DomainID)
+SELECT
+	D.DomainID
+FROM Domains AS D
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
+LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+WHERE (D.IsInstantAlias = 0 AND D.IsDomainPointer = 0) AND
+		((@Recursive = 0 AND D.PackageID = @PackageID)
+		OR (@Recursive = 1 AND dbo.CheckPackageParent(@PackageID, D.PackageID) = 1))
+AND (@ServerID = 0 OR (@ServerID > 0 AND S.ServerID = @ServerID))
+'
+
+IF @FilterColumn <> '' AND @FilterValue <> ''
+SET @sql = @sql + ' AND ' + @FilterColumn + ' LIKE @FilterValue '
+
+IF @SortColumn <> '' AND @SortColumn IS NOT NULL
+SET @sql = @sql + ' ORDER BY ' + @SortColumn + ' '
+
+SET @sql = @sql + ' SELECT COUNT(DomainID) FROM @Domains;SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(WS.ItemID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(MD.ItemID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.IsDomainPointer,
+	D.ExpirationDate,
+	D.LastUpdateDate,
+	D.RegistrarName,
+	P.PackageName,
+	ISNULL(SRV.ServerID, 0) AS ServerID,
+	ISNULL(SRV.ServerName, '''') AS ServerName,
+	ISNULL(SRV.Comments, '''') AS ServerComments,
+	ISNULL(SRV.VirtualServer, 0) AS VirtualServer,
+	P.UserID,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.FullName,
+	U.RoleID,
+	U.Email
+FROM @Domains AS SD
+INNER JOIN Domains AS D ON SD.DomainID = D.DomainID
+INNER JOIN Packages AS P ON D.PackageID = P.PackageID
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+LEFT OUTER JOIN Services AS S ON Z.ServiceID = S.ServiceID
+LEFT OUTER JOIN Servers AS SRV ON S.ServerID = SRV.ServerID
+WHERE SD.ItemPosition BETWEEN @StartRow + 1 AND @StartRow + @MaximumRows'
+
+exec sp_executesql @sql, N'@StartRow int, @MaximumRows int, @PackageID int, @FilterValue nvarchar(50), @ServerID int, @Recursive bit', 
+@StartRow, @MaximumRows, @PackageID, @FilterValue, @ServerID, @Recursive
+
+
+RETURN
+GO
+
+
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetDomains')
+DROP PROCEDURE GetDomains
+GO
+CREATE PROCEDURE [dbo].[GetDomains]
+(
+	@ActorID int,
+	@PackageID int,
+	@Recursive bit = 1
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+SELECT
+	D.DomainID,
+	D.PackageID,
+	D.ZoneItemID,
+	D.DomainItemID,
+	D.DomainName,
+	D.HostingAllowed,
+	ISNULL(WS.ItemID, 0) AS WebSiteID,
+	WS.ItemName AS WebSiteName,
+	ISNULL(MD.ItemID, 0) AS MailDomainID,
+	MD.ItemName AS MailDomainName,
+	Z.ItemName AS ZoneName,
+	D.IsSubDomain,
+	D.IsInstantAlias,
+	D.CreationDate,
+	D.ExpirationDate,
+	D.LastUpdateDate,
+	D.IsDomainPointer,
+	D.RegistrarName
+FROM Domains AS D
+INNER JOIN PackagesTree(@PackageID, @Recursive) AS PT ON D.PackageID = PT.PackageID
+LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
+LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
+LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+RETURN
+
+GO
+
+-- fix Disk Space Report
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetPackageDiskspace')
+DROP PROCEDURE GetPackageDiskspace
+GO
+
+CREATE PROCEDURE [dbo].[GetPackageDiskspace]
+(
+	@ActorID int,
+	@PackageID int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+SELECT
+	RG.GroupID,
+	RG.GroupName,
+	ROUND(CONVERT(float, ISNULL(GD.Diskspace, 0)) / 1024 / 1024, 0) AS Diskspace,
+	ISNULL(GD.Diskspace, 0) AS DiskspaceBytes
+FROM ResourceGroups AS RG
+LEFT OUTER JOIN
+(
+	SELECT
+		PD.GroupID,
+		SUM(ISNULL(PD.DiskSpace, 0)) AS Diskspace -- in megabytes
+	FROM PackagesTreeCache AS PT
+	INNER JOIN PackagesDiskspace AS PD ON PT.PackageID = PD.PackageID
+	INNER JOIN Packages AS P ON PT.PackageID = P.PackageID
+	WHERE PT.ParentPackageID = @PackageID
+	GROUP BY PD.GroupID
+) AS GD ON RG.GroupID = GD.GroupID
+WHERE GD.Diskspace <> 0
+ORDER BY RG.GroupOrder
+
+RETURN
+GO
+
 -- Hyper-V 2012 R2
 IF NOT EXISTS (SELECT * FROM [dbo].[Providers] WHERE [ProviderName] = 'Microsoft Hyper-V 2012 R2')
 BEGIN
 INSERT [dbo].[Providers] ([ProviderID], [GroupID], [ProviderName], [DisplayName], [ProviderType], [EditorControl], [DisableAutoDiscovery]) VALUES (350, 30, N'HyperV2012R2', N'Microsoft Hyper-V 2012 R2', N'WebsitePanel.Providers.Virtualization.HyperV2012R2, WebsitePanel.Providers.Virtualization.HyperV2012R2', N'HyperV', 1)
 END
-GO
-
+GO 

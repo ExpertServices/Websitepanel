@@ -10,12 +10,8 @@
 <div class="FormBody">
     
     <p id="DomainPanel" runat="server" style="padding: 15px 0 15px 5px;">
-        <wsp:DomainControl ID="DomainName" runat="server" RequiredEnabled="True" ValidationGroup="Domain" AutoPostBack="True" OnTextChanged="DomainName_TextChanged"></wsp:DomainControl>
+        <wsp:DomainControl ID="DomainName" runat="server" RequiredEnabled="True" ValidationGroup="Domain" OnTextChanged="DomainName_TextChanged"></wsp:DomainControl>
     </p>
-<%--    
-    <p id="SubDomainPanel" runat="server" style="padding: 15px 0 15px 5px;" visible="false">
-        <wsp:DomainControl ID="SubDomainName" runat="server" RequiredEnabled="True" IsSubDomain="True" ValidationGroup="Domain"></wsp:DomainControl>
-    </p>--%>
     
     <wsp:CollapsiblePanel id="OptionsPanelHeader" runat="server"
         TargetControlID="OptionsPanel" resourcekey="OptionsPanelHeader" Text="Provisioning options">
