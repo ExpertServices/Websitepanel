@@ -41,7 +41,8 @@ namespace WebsitePanel.WebDavPortal.Controllers
             try
             {
                 webDavManager.OpenFolder(pathPart);
-                IEnumerable<IHierarchyItem> children = webDavManager.GetChildren();
+                IEnumerable<IHierarchyItem> children = webDavManager.GetChildren().Where(x => !WebDavAppConfigManager.Instance.ElementsRendering.ElementsToIgnore.Contains(x.DisplayName.Trim('/')));
+
                 var model = new ModelForWebDav { Items = children.Take(WebDavAppConfigManager.Instance.ElementsRendering.DefaultCount), UrlSuffix = pathPart };
                 Session[WebDavAppConfigManager.Instance.SessionKeys.ResourseRenderCount] = WebDavAppConfigManager.Instance.ElementsRendering.DefaultCount;
 
