@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+	<appSettings>
+		<add key="WebPortal.ThemeProvider" value="WebsitePanel.Portal.WebPortalThemeProvider, WebsitePanel.Portal.Modules" />
+		<add key="WebPortal.PageTitleProvider" value="WebsitePanel.Portal.WebPortalPageTitleProvider, WebsitePanel.Portal.Modules" />
+		<add key="ChartImageHandler" value="storage=file;timeout=20;" />
+		<add key="SessionValidationKey" value="DAD46D476F85E0198BCA134D7AA5CC1D7" />
+	</appSettings>
+	<system.web>    
+		<!-- SiteMap settings -->
+		<siteMap defaultProvider="WebsitePanelSiteMapProvider" enabled="true">
+			<providers>
+				<add name="WebsitePanelSiteMapProvider" type="WebsitePanel.WebPortal.WebsitePanelSiteMapProvider, WebsitePanel.WebPortal" securityTrimmingEnabled="true" />
+			</providers>
+		</siteMap>
+		<!-- Set default scheme -->
+		<pages theme="Default" validateRequest="false" controlRenderingCompatibilityVersion="3.5" clientIDMode="AutoID">
+			<controls>
+				<add tagPrefix="ajaxToolkit" namespace="AjaxControlToolkit" assembly="AjaxControlToolkit" />
+			</controls>
+		</pages>
+		<!-- Maximum size of uploaded file, in MB -->
+		<httpRuntime executionTimeout="1800" requestValidationMode="2.0" maxRequestLength="512000000" enableVersionHeader="false" />
+		<!--
+          ASMX is mapped to a new handler so that proxy javascripts can also be served.
+    -->
+		<httpHandlers>
+			<add verb="*" path="Reserved.ReportViewerWebControl.axd" type="Microsoft.Reporting.WebForms.HttpHandler, Microsoft.ReportViewer.WebForms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" validate="false" />
+		</httpHandlers>
+		<!-- Authentication -->
+		<authentication mode="Forms">
+			<forms name=".WEBSITEPANELPORTALAUTHASPX" protection="All" timeout="30" path="/" requireSSL="false" slidingExpiration="true" cookieless="UseDeviceProfile" domain="" enableCrossAppRedirects="false">
+			</forms>
+		</authentication>
+		<!-- Custom errors -->
+		<customErrors mode="RemoteOnly" defaultRedirect="~/error.htm" />
+		<!-- Default authorization settings -->
+		<authorization>
+			<allow users="*" />
+		</authorization>
+		<!-- Globalization settings -->
+		<globalization culture="auto:en-US" uiCulture="auto:en" requestEncoding="UTF-8" responseEncoding="UTF-8"></globalization>
+		<compilation debug="true" targetFramework="4.0">
+		</compilation>
+	</system.web>
+	<system.webServer>
+		<validation validateIntegratedModeConfiguration="false" />
+		<handlers>
+			<add name="ChartImg" path="ChartImg.axd" verb="GET,HEAD,POST" type="System.Web.UI.DataVisualization.Charting.ChartHttpHandler, System.Web.DataVisualization, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" resourceType="Unspecified" preCondition="integratedMode" />
+		</handlers>
+		<modules>
+			<add name="SecureSession" type="WebsitePanel.WebPortal.SecureSessionModule" />
+		</modules>
+  </system.webServer>
+</configuration>
