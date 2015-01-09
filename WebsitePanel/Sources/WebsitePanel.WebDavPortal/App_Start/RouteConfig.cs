@@ -1,5 +1,6 @@
 ﻿using System.Web.Mvc;
 using System.Web.Routing;
+using WebsitePanel.WebDavPortal.UI.Routes;
 
 namespace WebsitePanel.WebDavPortal
 {
@@ -8,6 +9,18 @@ namespace WebsitePanel.WebDavPortal
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+
+            routes.MapRoute(
+                name: AccountRouteNames.Logout,
+                url: "account/logout",
+                defaults: new { controller = "Account", action = "Logout" }
+                );
+
+            routes.MapRoute(
+                name: AccountRouteNames.Login,
+                url: "account/login",
+                defaults: new { controller = "Account", action = "Login" }
+                );
 
             routes.MapRoute(
                 name: "Office365DocumentRoute",

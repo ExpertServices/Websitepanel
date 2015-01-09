@@ -2,6 +2,7 @@
 @using WebsitePanel.WebDavPortal.Config
 @using WebsitePanel.WebDavPortal.DependencyInjection
 @using WebsitePanel.WebDavPortal.Models
+@using WebsitePanel.WebDavPortal.UI.Routes;
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,9 +29,10 @@
                     var account = kernel.Get<AccountModel>();
                     if (account != null)
                     {
-                        <h4 class="nav navbar-text navbar-right">@account.UserName</h4>
+                        <a id="logout" class="nav navbar-text navbar-right" href="@Url.RouteUrl(AccountRouteNames.Logout)" title="Log out"><i class="glyphicon glyphicon-log-out"></i></a>
+                        <h4 id="username" class="nav navbar-text navbar-right">@account.UserName</h4>
                     }
-                }
+}
             </div>
         </div>
     </div>

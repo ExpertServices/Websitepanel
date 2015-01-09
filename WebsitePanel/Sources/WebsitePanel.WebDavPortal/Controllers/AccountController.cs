@@ -22,6 +22,7 @@ using WebsitePanel.WebDavPortal.Models;
 using System.Collections.Generic;
 using WebsitePanel.Providers.OS;
 using WebDAV;
+using WebsitePanel.WebDavPortal.UI.Routes;
 
 namespace WebsitePanel.WebDavPortal.Controllers
 {
@@ -50,7 +51,9 @@ namespace WebsitePanel.WebDavPortal.Controllers
             if (isAuthenticated)
             {
                 Session[WebDavAppConfigManager.Instance.SessionKeys.ItemId] = exchangeAccount.ItemId;
-                
+
+                model.Groups = ES.Services.Organizations.GetSecurityGroupsByMember(exchangeAccount.ItemId, exchangeAccount.AccountId);
+
                 try
                 {
                     Session[WebDavAppConfigManager.Instance.SessionKeys.AccountInfo] = model;
@@ -63,6 +66,14 @@ namespace WebsitePanel.WebDavPortal.Controllers
                 return RedirectToAction("ShowContent", "FileSystem", new { org = _kernel.Get<IWebDavManager>().OrganizationName });
             }
             return View(new AccountModel { LdapError = "The user name or password is incorrect" });
+        }
+
+        [HttpGet]
+        public ActionResult Logout()
+        {
+            Session[WebDavAppConfigManager.Instance.SessionKeys.AccountInfo] = null;
+
+            return RedirectToRoute(AccountRouteNames.Login);
         }
 
         private void AutheticationToServicesUsingWebsitePanelUser()

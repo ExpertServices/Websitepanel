@@ -40,7 +40,7 @@ namespace WebsitePanel.WebDavPortal.Models
             _itemId = itemId;
             IKernel _kernel = new StandardKernel(new NinjectSettings { AllowNullInjection = true }, new WebDavExplorerAppModule());
             var accountModel = _kernel.Get<AccountModel>();
-            _rootFolders = ConnectToWebDavServer(accountModel.UserName);
+            _rootFolders = ConnectToWebDavServer(accountModel);
 
             if (_rootFolders.Any())
             {
@@ -126,14 +126,22 @@ namespace WebsitePanel.WebDavPortal.Models
             }
         }
 
-        private IList<SystemFile> ConnectToWebDavServer(string userName)
+        private IList<SystemFile> ConnectToWebDavServer(AccountModel user)
         {
             var rootFolders = new List<SystemFile>();
             foreach (var folder in ES.Services.EnterpriseStorage.GetEnterpriseFolders(_itemId))
             {
                 var permissions = ES.Services.EnterpriseStorage.GetEnterpriseFolderPermissions(_itemId, folder.Name);
-                if (permissions.Any(x => x.DisplayName == userName))
-                    rootFolders.Add(folder);
+
+                foreach (var permission in permissions)
+                {
+                    if ((!permission.IsGroup && permission.DisplayName == user.UserName)
+                        || (permission.IsGroup && user.Groups.Any(x=> x.DisplayName == permission.DisplayName)))
+                    {
+                        rootFolders.Add(folder);
+                        break;
+                    }
+                }
             }
             return rootFolders;
         }
