@@ -10,6 +10,8 @@ namespace WebsitePanel.WebDavPortal
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            #region Account
+
             routes.MapRoute(
                 name: AccountRouteNames.Logout,
                 url: "account/logout",
@@ -20,7 +22,9 @@ namespace WebsitePanel.WebDavPortal
                 name: AccountRouteNames.Login,
                 url: "account/login",
                 defaults: new { controller = "Account", action = "Login" }
-                );
+                ); 
+
+            #endregion
 
             routes.MapRoute(
                 name: "Office365DocumentRoute",
@@ -29,7 +33,7 @@ namespace WebsitePanel.WebDavPortal
                 );
         
             routes.MapRoute(
-                name: "FilePathRoute",
+                name: FileSystemRouteNames.FilePath,
                 url: "{org}/{*pathPart}",
                 defaults: new { controller = "FileSystem", action = "ShowContent", pathPart = UrlParameter.Optional },
                 constraints: new { org = new WebsitePanel.WebDavPortal.Constraints.OrganizationRouteConstraint() }

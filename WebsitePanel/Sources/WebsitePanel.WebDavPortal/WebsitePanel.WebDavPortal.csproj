@@ -180,6 +180,7 @@
     <Compile Include="Models\WebDavManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\Routes\AccountRouteNames.cs" />
+    <Compile Include="UI\Routes\FileSystemRouteNames.cs" />
     <Compile Include="WebConfigSections\ApplicationNameElement.cs" />
     <Compile Include="WebConfigSections\ElementsRenderingElement.cs" />
     <Compile Include="WebConfigSections\FileIconsElement.cs" />

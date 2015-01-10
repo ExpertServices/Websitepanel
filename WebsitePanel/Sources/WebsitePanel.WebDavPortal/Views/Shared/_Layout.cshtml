@@ -21,7 +21,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink(WebDavAppConfigManager.Instance.ApplicationName, "Login", "Account", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.RouteLink(WebDavAppConfigManager.Instance.ApplicationName, FileSystemRouteNames.FilePath, new { pathPart = string.Empty }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 @{
