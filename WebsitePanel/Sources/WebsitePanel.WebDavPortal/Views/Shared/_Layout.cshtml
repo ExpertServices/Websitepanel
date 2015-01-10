@@ -3,6 +3,11 @@
 @using WebsitePanel.WebDavPortal.DependencyInjection
 @using WebsitePanel.WebDavPortal.Models
 @using WebsitePanel.WebDavPortal.UI.Routes;
+
+@{
+    var account = DependencyResolver.Current.GetService<AccountModel>();
+}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,8 +30,6 @@
             </div>
             <div class="navbar-collapse collapse">
                 @{
-                    IKernel kernel = new StandardKernel(new NinjectSettings { AllowNullInjection = true }, new WebDavExplorerAppModule());
-                    var account = kernel.Get<AccountModel>();
                     if (account != null)
                     {
                         <a id="logout" class="nav navbar-text navbar-right" href="@Url.RouteUrl(AccountRouteNames.Logout)" title="Log out"><i class="glyphicon glyphicon-log-out"></i></a>

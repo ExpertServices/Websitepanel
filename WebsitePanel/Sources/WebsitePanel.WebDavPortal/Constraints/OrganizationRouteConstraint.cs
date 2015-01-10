@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 using System.Web.Routing;
 using WebsitePanel.WebDavPortal.Config;
 using WebsitePanel.WebDavPortal.DependencyInjection;
@@ -16,6 +17,8 @@ namespace WebsitePanel.WebDavPortal.Constraints
 
         public bool Match(HttpContextBase httpContext, Route route, string parameterName, RouteValueDictionary values, RouteDirection routeDirection)
         {
+            var webdavManager = DependencyResolver.Current.GetService<IWebDavManager>();
+
             object value;
             if (!values.TryGetValue(parameterName, out value)) 
                 return false;
@@ -30,9 +33,7 @@ namespace WebsitePanel.WebDavPortal.Constraints
             if (httpContext.Session == null)
                 return false;
 
-            IKernel kernel = new StandardKernel(new WebDavExplorerAppModule());
-            var webDavManager = kernel.Get<IWebDavManager>();
-            if (webDavManager != null && str == webDavManager.OrganizationName)
+            if (webdavManager != null && str == webdavManager.OrganizationName)
             {
                 actualOrgName = str;
                 return true;

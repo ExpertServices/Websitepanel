@@ -158,9 +158,11 @@
     <Compile Include="Cryptography\CryptoUtils.cs" />
     <Compile Include="Cryptography\ICryptography.cs" />
     <Compile Include="CustomAttributes\LdapAuthorizationAttribute.cs" />
-    <Compile Include="DependencyInjection\AccountInfoProvider.cs" />
-    <Compile Include="DependencyInjection\WebDavExplorerAppModule.cs" />
-    <Compile Include="DependencyInjection\WebDavManagerProvider.cs" />
+    <Compile Include="DependencyInjection\Providers\AccountInfoProvider.cs" />
+    <Compile Include="DependencyInjection\NinjectDependecyResolver.cs" />
+    <Compile Include="DependencyInjection\PortalDependencies.cs" />
+    <Compile Include="DependencyInjection\Providers\HttpSessionStateProvider.cs" />
+    <Compile Include="DependencyInjection\Providers\WebDavManagerProvider.cs" />
     <Compile Include="Exceptions\ConnectToWebDavServerException.cs" />
     <Compile Include="Exceptions\ResourceNotFoundException.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />

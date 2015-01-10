@@ -18,8 +18,7 @@
             break;
         default:
             isTargetBlank = false;
-            IKernel _kernel = new StandardKernel(new WebsitePanel.WebDavPortal.DependencyInjection.WebDavExplorerAppModule());
-            var webDavManager = _kernel.Get<WebsitePanel.WebDavPortal.Models.IWebDavManager>();
+            var webDavManager = DependencyResolver.Current.GetService<WebsitePanel.WebDavPortal.Models.IWebDavManager>();
             href = Model.Href.AbsolutePath; 
             break;
     }

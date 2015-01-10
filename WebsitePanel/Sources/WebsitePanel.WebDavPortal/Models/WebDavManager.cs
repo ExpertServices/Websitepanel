@@ -11,12 +11,15 @@ using WebsitePanel.Portal;
 using WebsitePanel.Providers.OS;
 using Ninject;
 using WebsitePanel.WebDavPortal.DependencyInjection;
+using System.Web.Mvc;
 
 namespace WebsitePanel.WebDavPortal.Models
 {
     public class WebDavManager : IWebDavManager
     {
         private readonly WebDavSession _webDavSession = new WebDavSession();
+        private readonly AccountModel _accountModel;
+
         private IList<SystemFile> _rootFolders;
         private int _itemId;
         private IFolder _currentFolder;
@@ -36,11 +39,11 @@ namespace WebsitePanel.WebDavPortal.Models
 
         public WebDavManager(NetworkCredential credential, int itemId)
         {
+            _accountModel = DependencyResolver.Current.GetService<AccountModel>();
+
             _webDavSession.Credentials = credential;
             _itemId = itemId;
-            IKernel _kernel = new StandardKernel(new NinjectSettings { AllowNullInjection = true }, new WebDavExplorerAppModule());
-            var accountModel = _kernel.Get<AccountModel>();
-            _rootFolders = ConnectToWebDavServer(accountModel);
+            _rootFolders = ConnectToWebDavServer(_accountModel);
 
             if (_rootFolders.Any())
             {
