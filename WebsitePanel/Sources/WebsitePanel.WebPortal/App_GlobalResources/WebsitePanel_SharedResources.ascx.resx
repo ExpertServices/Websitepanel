@@ -5626,4 +5626,7 @@
   <data name="ERROR.IDNDOMAIN_NO_ORGANIZATION" xml:space="preserve">
     <value>You cannot use a IDN domain name for organizations</value>
   </data>
+  <data name="ERROR.RDSCOLLECTION_NOT_CREATED" xml:space="preserve">
+    <value>Collection not created</value>
+  </data>
 </root>

@@ -76,6 +76,12 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public Organization GetOrganizationById(string organizationId)
+        {
+            return OrganizationController.GetOrganizationById(organizationId);
+        }
+
+        [WebMethod]
         public string GetOrganizationUserSummuryLetter(int itemId, int accountId, bool pmm, bool emailMode, bool signup)
         {
             return OrganizationController.GetOrganizationUserSummuryLetter(itemId, accountId, pmm, emailMode, signup);

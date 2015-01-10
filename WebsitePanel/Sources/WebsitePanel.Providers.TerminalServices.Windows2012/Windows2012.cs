@@ -220,7 +220,15 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
             try
             {                
-                runSpace = OpenRunspace();                
+                runSpace = OpenRunspace();
+
+                var existingServers = GetServersExistingInCollections(runSpace);
+                existingServers = existingServers.Select(x => x.ToUpper()).Intersect(collection.Servers.Select(x => x.FqdName.ToUpper())).ToList();
+
+                if (existingServers.Any())
+                {                                        
+                    throw new Exception(string.Format("Server{0} {1} already added to another collection", existingServers.Count == 1 ? "" : "s", string.Join(" ,", existingServers.ToArray())));
+                }
 
                 foreach (var server in collection.Servers)
                 {
@@ -300,6 +308,24 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             }
 
             return result;
+        }
+
+        public List<string> GetServersExistingInCollections()
+        {
+            Runspace runSpace = null;
+            List<string> existingServers = new List<string>();
+
+            try
+            {                
+                runSpace = OpenRunspace();
+                existingServers = GetServersExistingInCollections(runSpace);
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+
+            return existingServers;
         }
 
         public RdsCollection GetCollection(string collectionName)
@@ -1380,6 +1406,23 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             return ExecuteShellCommand(runSpace, invokeCommand, false);
         }
 
+        internal Collection<PSObject> ExecuteRemoteShellCommand(Runspace runSpace, string hostName, List<string> scripts, params string[] moduleImports)
+        {
+            Command invokeCommand = new Command("Invoke-Command");
+            invokeCommand.Parameters.Add("ComputerName", hostName);
+
+            RunspaceInvoke invoke = new RunspaceInvoke();
+            string commandString = moduleImports.Any() ? string.Format("import-module {0};", string.Join(",", moduleImports)) : string.Empty;
+
+            commandString = string.Format("{0};{1}", commandString, string.Join(";", scripts.ToArray()));            
+
+            ScriptBlock sb = invoke.Invoke(string.Format("{{{0}}}", commandString))[0].BaseObject as ScriptBlock;
+
+            invokeCommand.Parameters.Add("ScriptBlock", sb);
+
+            return ExecuteShellCommand(runSpace, invokeCommand, false);
+        }
+
         internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd)
         {
             return ExecuteShellCommand(runSpace, cmd, true);
@@ -1394,6 +1437,38 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd, out object[] errors)
         {
             return ExecuteShellCommand(runSpace, cmd, true, out errors);
+        }
+
+        internal Collection<PSObject> ExecuteShellCommand(Runspace runspace, List<string> scripts, out object[] errors)
+        {
+            Log.WriteStart("ExecuteShellCommand");
+            var errorList = new List<object>();
+            Collection<PSObject> results;
+
+            using (Pipeline pipeLine = runspace.CreatePipeline())
+            {
+                foreach (string script in scripts)
+                {
+                    pipeLine.Commands.AddScript(script);
+                }
+
+                results = pipeLine.Invoke();
+
+                if (pipeLine.Error != null && pipeLine.Error.Count > 0)
+                {
+                    foreach (object item in pipeLine.Error.ReadToEnd())
+                    {
+                        errorList.Add(item);
+                        string errorMessage = string.Format("Invoke error: {0}", item);
+                        Log.WriteWarning(errorMessage);
+                    }
+                }
+            }
+
+            errors = errorList.ToArray();
+            Log.WriteEnd("ExecuteShellCommand");
+
+            return results;
         }
 
         internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd, bool useDomainController,
@@ -1515,6 +1590,29 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             var result = Convert.ToBoolean(testPathResult.ToString());
 
             return result;
+        }
+
+        internal List<string> GetServersExistingInCollections(Runspace runSpace)
+        {
+            var existingHosts = new List<string>();
+            var scripts = new List<string>();
+            scripts.Add(string.Format("$sessions = Get-RDSessionCollection -ConnectionBroker {0}", ConnectionBroker));
+            scripts.Add(string.Format("foreach($session in $sessions){{Get-RDSessionHost $session.CollectionName -ConnectionBroker {0}|Select SessionHost}}", ConnectionBroker));
+            object[] errors;
+
+            var sessionHosts = ExecuteShellCommand(runSpace, scripts, out errors);
+
+            foreach(var host in sessionHosts)
+            {
+                var sessionHost = GetPSObjectProperty(host, "SessionHost");
+
+                if (sessionHost != null)
+                {
+                    existingHosts.Add(sessionHost.ToString());
+                }
+            }
+
+            return existingHosts;
         }
 
         #endregion
