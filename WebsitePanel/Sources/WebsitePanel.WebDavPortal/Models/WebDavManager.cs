@@ -12,13 +12,16 @@ using WebsitePanel.Providers.OS;
 using Ninject;
 using WebsitePanel.WebDavPortal.DependencyInjection;
 using System.Web.Mvc;
+using log4net;
 
 namespace WebsitePanel.WebDavPortal.Models
 {
     public class WebDavManager : IWebDavManager
     {
         private readonly WebDavSession _webDavSession = new WebDavSession();
+
         private readonly AccountModel _accountModel;
+        private readonly ILog Log;
 
         private IList<SystemFile> _rootFolders;
         private int _itemId;
@@ -40,6 +43,7 @@ namespace WebsitePanel.WebDavPortal.Models
         public WebDavManager(NetworkCredential credential, int itemId)
         {
             _accountModel = DependencyResolver.Current.GetService<AccountModel>();
+            Log = LogManager.GetLogger(this.GetType());
 
             _webDavSession.Credentials = credential;
             _itemId = itemId;
@@ -132,13 +136,15 @@ namespace WebsitePanel.WebDavPortal.Models
         private IList<SystemFile> ConnectToWebDavServer(AccountModel user)
         {
             var rootFolders = new List<SystemFile>();
+
             foreach (var folder in ES.Services.EnterpriseStorage.GetEnterpriseFolders(_itemId))
             {
                 var permissions = ES.Services.EnterpriseStorage.GetEnterpriseFolderPermissions(_itemId, folder.Name);
 
                 foreach (var permission in permissions)
                 {
-                    if ((!permission.IsGroup && permission.DisplayName == user.UserName)
+                    if ((!permission.IsGroup 
+                            && (permission.DisplayName == user.UserName || permission.DisplayName == user.DisplayName))
                         || (permission.IsGroup && user.Groups.Any(x=> x.DisplayName == permission.DisplayName)))
                     {
                         rootFolders.Add(folder);

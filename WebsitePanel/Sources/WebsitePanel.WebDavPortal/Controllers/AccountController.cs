@@ -61,6 +61,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
                 Session[WebDavAppConfigManager.Instance.SessionKeys.ItemId] = exchangeAccount.ItemId;
 
                 model.Groups = ES.Services.Organizations.GetSecurityGroupsByMember(exchangeAccount.ItemId, exchangeAccount.AccountId);
+                model.DisplayName = exchangeAccount.DisplayName;
 
                 WebDavManager manager = null;
 

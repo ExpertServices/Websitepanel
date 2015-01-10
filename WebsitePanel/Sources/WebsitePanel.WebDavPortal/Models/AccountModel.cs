@@ -23,6 +23,8 @@ namespace WebsitePanel.WebDavPortal.Models
             }
         }
 
+        public string DisplayName { get; set; }
+
         public IEnumerable<ExchangeAccount> Groups { get; set; }
 
         public string LdapError { get; set; }
