@@ -410,5 +410,22 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
+
+        [WebMethod, SoapHeader("settings")]
+        public List<string> GetServersExistingInCollections()
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetServersExistingInCollections", ProviderSettings.ProviderName);
+                var result = RDSProvider.GetServersExistingInCollections();
+                Log.WriteEnd("'{0}' GetServersExistingInCollections", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetServersExistingInCollections", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
     }
 }
