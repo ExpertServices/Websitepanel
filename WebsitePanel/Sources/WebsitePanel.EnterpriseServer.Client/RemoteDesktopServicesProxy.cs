@@ -515,8 +515,9 @@ namespace WebsitePanel.EnterpriseServer {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetFreeRdsServersPaged", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public RdsServersPaged GetFreeRdsServersPaged(string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows) {
+        public RdsServersPaged GetFreeRdsServersPaged(int packageId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows) {
             object[] results = this.Invoke("GetFreeRdsServersPaged", new object[] {
+                        packageId,
                         filterColumn,
                         filterValue,
                         sortColumn,
@@ -526,8 +527,9 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
-        public System.IAsyncResult BeginGetFreeRdsServersPaged(string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginGetFreeRdsServersPaged(int packageId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows, System.AsyncCallback callback, object asyncState) {
             return this.BeginInvoke("GetFreeRdsServersPaged", new object[] {
+                        packageId,
                         filterColumn,
                         filterValue,
                         sortColumn,
@@ -542,16 +544,17 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
-        public void GetFreeRdsServersPagedAsync(string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows) {
-            this.GetFreeRdsServersPagedAsync(filterColumn, filterValue, sortColumn, startRow, maximumRows, null);
+        public void GetFreeRdsServersPagedAsync(int packageId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows) {
+            this.GetFreeRdsServersPagedAsync(packageId, filterColumn, filterValue, sortColumn, startRow, maximumRows, null);
         }
         
         /// <remarks/>
-        public void GetFreeRdsServersPagedAsync(string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows, object userState) {
+        public void GetFreeRdsServersPagedAsync(int packageId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows, object userState) {
             if ((this.GetFreeRdsServersPagedOperationCompleted == null)) {
                 this.GetFreeRdsServersPagedOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetFreeRdsServersPagedOperationCompleted);
             }
             this.InvokeAsync("GetFreeRdsServersPaged", new object[] {
+                        packageId,
                         filterColumn,
                         filterValue,
                         sortColumn,

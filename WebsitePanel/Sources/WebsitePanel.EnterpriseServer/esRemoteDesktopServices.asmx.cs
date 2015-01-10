@@ -99,10 +99,10 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public RdsServersPaged GetFreeRdsServersPaged(string filterColumn, string filterValue,
+        public RdsServersPaged GetFreeRdsServersPaged(int packageId, string filterColumn, string filterValue,
             string sortColumn, int startRow, int maximumRows)
         {
-            return RemoteDesktopServicesController.GetFreeRdsServersPaged(filterColumn, filterValue,
+            return RemoteDesktopServicesController.GetFreeRdsServersPaged(packageId, filterColumn, filterValue,
                 sortColumn, startRow, maximumRows);
         }
 
