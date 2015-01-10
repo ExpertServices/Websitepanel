@@ -24,6 +24,8 @@ function GetResources() {
                 GetResources();
                 oldResourcesDivHeight = $('#resourcesDiv').height();
             };
+
+            recalculateResourseHeight();
         }
     });
 };

@@ -59,7 +59,10 @@ namespace WebsitePanel.WebDav.Core
             {
                 get
                 {
-                    string displayName = _href.AbsoluteUri.Replace(_baseUri.AbsoluteUri, "");
+                    var href = HttpUtility.UrlDecode(_href.AbsoluteUri);
+                    var baseUri = HttpUtility.UrlDecode(_baseUri.AbsoluteUri);
+
+                    string displayName = href.Replace(baseUri, "");
                     displayName = Regex.Replace(displayName, "\\/$", "");
                     Match displayNameMatch = Regex.Match(displayName, "([\\/]+)$");
                     if (displayNameMatch.Success)
