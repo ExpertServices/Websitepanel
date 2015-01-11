@@ -564,8 +564,8 @@ namespace WebsitePanel.Providers.Mail
                                     Year = date.Year, 
                                     Month = date.Month, 
                                     Day = date.Day, 
-                                    BytesSent = Convert.ToInt64(line[mailSentField])*1024, 
-                                    BytesReceived = Convert.ToInt64(line[mailReceivedField])*1024
+                                    BytesSent = Convert.ToInt64(fields[mailSentField])*1024, 
+                                    BytesReceived = Convert.ToInt64(fields[mailReceivedField])*1024
                                 };
                                 days.Add(dailyStats);
                                 continue;
