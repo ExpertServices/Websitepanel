@@ -169,13 +169,15 @@ namespace WebsitePanel.Portal
             Hashtable ret = new Hashtable();
 
             DataTable table = ES.Services.Packages.GetRawMyPackages(PanelSecurity.SelectedUserId).Tables[0];
-            System.Collections.Generic.IEnumerable<DataRow> dr = table.AsEnumerable().Skip(PackagesPerPage * index - PackagesPerPage).Take(PackagesPerPage);
+            if(table.Rows.Count > 0) {
+                System.Collections.Generic.IEnumerable<DataRow> dr = table.AsEnumerable().Skip(PackagesPerPage * index - PackagesPerPage).Take(PackagesPerPage);
+            
+                DataSet set = new DataSet();
+                set.Tables.Add(dr.CopyToDataTable());
 
-            DataSet set = new DataSet();
-            set.Tables.Add(dr.CopyToDataTable());
-
-            ret.Add("DataSet", set);
-            ret.Add("RowCount", table.Rows.Count);
+                ret.Add("DataSet", set);
+                ret.Add("RowCount", table.Rows.Count);
+            }
             return ret;
         }
 
