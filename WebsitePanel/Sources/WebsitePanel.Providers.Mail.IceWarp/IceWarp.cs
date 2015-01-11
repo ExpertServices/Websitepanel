@@ -477,7 +477,7 @@ namespace WebsitePanel.Providers.Mail
 			        Log.WriteStart(String.Format("Calculating mail account '{0}' size", item.Name));
 			        // calculate disk space
 			        var accountObject = GetAccountObject(item.Name);
-			        var size = Convert.ToInt64((object)accountObject.GetProperty("U_MailboxSize"));
+			        var size = Convert.ToInt64((object)accountObject.GetProperty("U_MailboxSize")) * 1024;
 
                     var diskspace = new ServiceProviderItemDiskSpace {ItemId = item.Id, DiskSpace = size};
 			        itemsDiskspace.Add(diskspace);
@@ -564,8 +564,8 @@ namespace WebsitePanel.Providers.Mail
                                     Year = date.Year, 
                                     Month = date.Month, 
                                     Day = date.Day, 
-                                    BytesSent = line[mailSentField], 
-                                    BytesReceived = line[mailReceivedField]
+                                    BytesSent = Convert.ToInt64(line[mailSentField])*1024, 
+                                    BytesReceived = Convert.ToInt64(line[mailReceivedField])*1024
                                 };
                                 days.Add(dailyStats);
                                 continue;
