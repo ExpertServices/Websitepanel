@@ -4,7 +4,7 @@ using Ninject.Activation;
 using WebsitePanel.WebDavPortal.Config;
 using WebsitePanel.WebDavPortal.Models;
 
-namespace WebsitePanel.WebDavPortal.DependencyInjection
+namespace WebsitePanel.WebDavPortal.DependencyInjection.Providers
 {
     public class AccountInfoProvider : Provider<AccountModel>
     {
@@ -12,7 +12,13 @@ namespace WebsitePanel.WebDavPortal.DependencyInjection
         {
             var session = context.Kernel.Get<HttpSessionState>();
 
-            var accountInfo = session[WebDavAppConfigManager.Instance.SessionKeys.AccountInfo] as AccountModel;
+            AccountModel accountInfo = null;
+
+            if (session != null)
+            {
+                accountInfo = session[WebDavAppConfigManager.Instance.SessionKeys.AccountInfo] as AccountModel;
+            }
+
             return accountInfo;
         }
     }

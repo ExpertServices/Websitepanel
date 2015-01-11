@@ -22,18 +22,27 @@ using WebsitePanel.WebDavPortal.Models;
 using System.Collections.Generic;
 using WebsitePanel.Providers.OS;
 using WebDAV;
+using WebsitePanel.WebDavPortal.UI.Routes;
 
 namespace WebsitePanel.WebDavPortal.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IKernel _kernel = new StandardKernel(new NinjectSettings {AllowNullInjection = true}, new WebDavExplorerAppModule());
+        private readonly AccountModel _accountModel;
+        private readonly IWebDavManager _webdavManager;
+        private readonly ICryptography _cryptography;
+
+        public AccountController(AccountModel accountModel, IWebDavManager webdavManager, ICryptography cryptography)
+        {
+            _accountModel = accountModel;
+            _webdavManager = webdavManager;
+            _cryptography = cryptography;
+        }
         
         [HttpGet]
         public ActionResult Login()
         {
-            object isAuthentication = _kernel.Get<AccountModel>();
-            if (isAuthentication != null)
+            if (_accountModel != null)
                 return RedirectToAction("ShowContent", "FileSystem");
             return View();
         }
@@ -50,32 +59,53 @@ namespace WebsitePanel.WebDavPortal.Controllers
             if (isAuthenticated)
             {
                 Session[WebDavAppConfigManager.Instance.SessionKeys.ItemId] = exchangeAccount.ItemId;
-                
+
+                model.Groups = ES.Services.Organizations.GetSecurityGroupsByMember(exchangeAccount.ItemId, exchangeAccount.AccountId);
+                model.DisplayName = exchangeAccount.DisplayName;
+
+                WebDavManager manager = null;
+
                 try
                 {
                     Session[WebDavAppConfigManager.Instance.SessionKeys.AccountInfo] = model;
-                    Session[WebDavAppConfigManager.Instance.SessionKeys.WebDavManager] = new WebDavManager(new NetworkCredential(model.Login, model.Password, WebDavAppConfigManager.Instance.UserDomain), exchangeAccount.ItemId);
+
+                    manager = new WebDavManager(new NetworkCredential(model.Login, model.Password, WebDavAppConfigManager.Instance.UserDomain), exchangeAccount.ItemId);
+
+                    Session[WebDavAppConfigManager.Instance.SessionKeys.WebDavManager] = manager;
                 }
                 catch (ConnectToWebDavServerException exception)
                 {
                     return View(new AccountModel { LdapError = exception.Message });
                 }
-                return RedirectToAction("ShowContent", "FileSystem", new { org = _kernel.Get<IWebDavManager>().OrganizationName });
+
+                return RedirectToAction("ShowContent", "FileSystem", new { org = manager.OrganizationName });
             }
             return View(new AccountModel { LdapError = "The user name or password is incorrect" });
         }
 
+        [HttpGet]
+        public ActionResult Logout()
+        {
+            Session[WebDavAppConfigManager.Instance.SessionKeys.AccountInfo] = null;
+
+            return RedirectToRoute(AccountRouteNames.Login);
+        }
+
         private void AutheticationToServicesUsingWebsitePanelUser()
         {
-            var crypto = _kernel.Get<ICryptography>();
             var websitePanelLogin = WebDavAppConfigManager.Instance.WebsitePanelConstantUserParameters.Login;
-            var websitePanelPassword = crypto.Decrypt(WebDavAppConfigManager.Instance.WebsitePanelConstantUserParameters.Password);
+            var websitePanelPassword = _cryptography.Decrypt(WebDavAppConfigManager.Instance.WebsitePanelConstantUserParameters.Password);
+
             var authTicket = new FormsAuthenticationTicket(1, websitePanelLogin, DateTime.Now, DateTime.Now.Add(FormsAuthentication.Timeout),
                 FormsAuthentication.SlidingExpiration, websitePanelPassword + Environment.NewLine);
             var encryptedTicket = FormsAuthentication.Encrypt(authTicket);
             var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+
             if (FormsAuthentication.SlidingExpiration)
+            {
                 authCookie.Expires = authTicket.Expiration;
+            }
+
             Response.Cookies.Add(authCookie);
         } 
     }

@@ -4,7 +4,7 @@ using Ninject.Activation;
 using WebsitePanel.WebDavPortal.Config;
 using WebsitePanel.WebDavPortal.Models;
 
-namespace WebsitePanel.WebDavPortal.DependencyInjection
+namespace WebsitePanel.WebDavPortal.DependencyInjection.Providers
 {
     public class WebDavManagerProvider : Provider<WebDavManager>
     {
@@ -12,7 +12,13 @@ namespace WebsitePanel.WebDavPortal.DependencyInjection
         {
             var session = context.Kernel.Get<HttpSessionState>();
 
-            var webDavManager = session[WebDavAppConfigManager.Instance.SessionKeys.WebDavManager] as WebDavManager;
+            WebDavManager webDavManager = null;
+
+            if (session != null)
+            {
+                webDavManager = session[WebDavAppConfigManager.Instance.SessionKeys.WebDavManager] as WebDavManager;
+            }
+
             return webDavManager;
         }
     }

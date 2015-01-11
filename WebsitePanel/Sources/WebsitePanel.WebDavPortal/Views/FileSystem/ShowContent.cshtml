@@ -2,7 +2,7 @@
 @using Ninject
 @model WebsitePanel.WebDavPortal.Models.ModelForWebDav
 @{
-    var webDavManager = (new StandardKernel(new WebsitePanel.WebDavPortal.DependencyInjection.WebDavExplorerAppModule())).Get<WebsitePanel.WebDavPortal.Models.IWebDavManager>();
+    var webDavManager = DependencyResolver.Current.GetService<WebsitePanel.WebDavPortal.Models.IWebDavManager>();
     ViewBag.Title = (string.IsNullOrEmpty(Model.UrlSuffix) ? webDavManager.OrganizationName : Model.UrlSuffix);
 }
 @Scripts.Render("~/bundles/jquery")

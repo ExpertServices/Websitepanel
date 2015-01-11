@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using WebsitePanel.Providers.HostedSolution;
 
 namespace WebsitePanel.WebDavPortal.Models
 {
@@ -20,6 +22,10 @@ namespace WebsitePanel.WebDavPortal.Models
                 return !string.IsNullOrEmpty(Login) ? Login.Split('@')[0] : string.Empty; 
             }
         }
+
+        public string DisplayName { get; set; }
+
+        public IEnumerable<ExchangeAccount> Groups { get; set; }
 
         public string LdapError { get; set; }
     }
