@@ -1035,7 +1035,7 @@ namespace WebsitePanel.Providers.Mail
                 {
                     var forwardTo = GetForwardToAddressFromAccountObject(accountObject);
                     var aliases = GetAliasListFromAccountObject(accountObject) as IEnumerable<string>;
-                    aliasList.AddRange(aliases.Where(a => a != forwardTo).Select(alias => new MailAlias {Name = alias + "@" + domainName, ForwardTo = forwardTo + "@" + domainName}));
+                    aliasList.AddRange(aliases.Where(a => a + "@" + domainName != forwardTo).Select(alias => new MailAlias {Name = alias + "@" + domainName, ForwardTo = forwardTo}));
                 }
 
                 accountObject.FindDone();
