@@ -6,7 +6,7 @@
   
 @{
     string actualPath = Model.ItemType == ItemType.Folder ? "~/Content/Images/folder_100x100.png" : WebDavAppConfigManager.Instance.FileIcons[Path.GetExtension(Model.DisplayName.Trim('/'))];
-    string name = Model.ItemType == ItemType.Folder ? Model.DisplayName.Trim('/') : Path.GetFileNameWithoutExtension(Model.DisplayName);
+    string name = Model.ItemType == ItemType.Folder ? Model.DisplayName.Trim('/') : Model.DisplayName;
     var opener = new FileOpenerManager()[Path.GetExtension(Model.DisplayName)];
     bool isTargetBlank;
     string href = "/";
@@ -18,7 +18,6 @@
             break;
         default:
             isTargetBlank = false;
-            var webDavManager = DependencyResolver.Current.GetService<WebsitePanel.WebDavPortal.Models.IWebDavManager>();
             href = Model.Href.AbsolutePath; 
             break;
     }

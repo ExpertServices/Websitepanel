@@ -19,6 +19,7 @@ using System.Net;
 namespace WebsitePanel.WebDavPortal.Controllers
 
 {
+    [ValidateInput(false)]
     [LdapAuthorization]
     public class FileSystemController : Controller
     {
