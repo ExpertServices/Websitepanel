@@ -112,42 +112,6 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.TextBox txtBackupsPath;
         
         /// <summary>
-        /// lclPackageDisplaySettings control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::WebsitePanel.Portal.CollapsiblePanel lclPackageDisplaySettings;
-        
-        /// <summary>
-        /// PackageDisplaySettings control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PackageDisplaySettings;
-        
-        /// <summary>
-        /// chkPackageUsePaging control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.CheckBox chkPackageUsePaging;
-        
-        /// <summary>
-        /// txtPackagePackagesPerPage control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtPackagePackagesPerPage;
-        
-        /// <summary>
         /// lclWpiSettings control.
         /// </summary>
         /// <remarks>

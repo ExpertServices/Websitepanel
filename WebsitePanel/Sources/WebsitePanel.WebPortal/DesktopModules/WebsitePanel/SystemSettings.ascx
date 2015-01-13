@@ -41,22 +41,6 @@
 		</table>
 	</asp:Panel>
 
-    
-	<wsp:CollapsiblePanel id="lclPackageDisplaySettings" runat="server"
-		TargetControlID="PackageDisplaySettings" meta:resourcekey="lclPackageDisplaySettings" Text="Package Display Settings"/>
-	<asp:Panel ID="PackageDisplaySettings" runat="server" Height="0" style="overflow:hidden;">
-		<table>
-			<tr>
-				<td class="SubHead" style="width:200px;"><asp:Localize runat="server" meta:resourcekey="lclPackageUsePaging" /></td>
-				<td><asp:CheckBox runat="server" ID="chkPackageUsePaging" /></td>
-			</tr>
-            <tr>
-				<td class="SubHead" style="width:200px;"><asp:Localize runat="server" meta:resourcekey="lclPackagePackagesPerPage" /></td>
-				<td><asp:TextBox runat="server" ID="txtPackagePackagesPerPage" Width="80px" /></td>
-			</tr>
-		</table>
-	</asp:Panel>
-
     <wsp:CollapsiblePanel id="lclWpiSettings" runat="server"
 		TargetControlID="WpiPanel" meta:resourcekey="lclWpiSettings" Text="Web Platform Installer Settings"/>
 	

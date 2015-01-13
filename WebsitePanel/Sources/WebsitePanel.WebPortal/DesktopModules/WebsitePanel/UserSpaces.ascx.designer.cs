@@ -40,6 +40,15 @@ namespace WebsitePanel.Portal {
         protected global::System.Web.UI.WebControls.Panel UserPackagesPanel;
         
         /// <summary>
+        /// ddlPackageSelect control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlPackageSelect;
+        
+        /// <summary>
         /// PackagesList control.
         /// </summary>
         /// <remarks>
@@ -47,15 +56,6 @@ namespace WebsitePanel.Portal {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Repeater PackagesList;
-        
-        /// <summary>
-        /// packagePaging control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater packagePaging;
         
         /// <summary>
         /// EmptyPackagesList control.

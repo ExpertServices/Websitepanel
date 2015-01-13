@@ -181,6 +181,16 @@ namespace WebsitePanel.Portal
             return ret;
         }
 
+        public DataSet GetMyPackage(int packageid) {
+            DataSet ret = new DataSet();
+            DataTable table = ES.Services.Packages.GetRawMyPackages(PanelSecurity.SelectedUserId).Tables[0];
+            if(table.Rows.Count > 0) {
+                DataTable t = table.Select("PackageID = " + packageid).CopyToDataTable();
+                ret.Tables.Add(t);
+            }
+            return ret;
+        }
+
         #region Packages Paged ODS Methods
         DataSet dsPackagesPaged;
 
