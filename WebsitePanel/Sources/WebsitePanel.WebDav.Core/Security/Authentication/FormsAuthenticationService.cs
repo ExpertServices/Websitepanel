@@ -3,6 +3,7 @@ using System.DirectoryServices.AccountManagement;
 using System.Web;
 using System.Web.Script.Serialization;
 using System.Web.Security;
+using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDav.Core.Interfaces.Security;
 using WebsitePanel.WebDav.Core.Security.Authentication.Principals;
 using WebsitePanel.WebDav.Core.Security.Cryptography;
@@ -18,7 +19,7 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication
         public FormsAuthenticationService(ICryptography cryptography)
         {
             _cryptography = cryptography;
-            _principalContext = new PrincipalContext(ContextType.Domain);
+            _principalContext = new PrincipalContext(ContextType.Domain, WebDavAppConfigManager.Instance.UserDomain);
         }
 
         public WspPrincipal LogIn(string login, string password)
