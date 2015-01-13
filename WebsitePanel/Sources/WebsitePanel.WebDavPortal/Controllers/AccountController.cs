@@ -12,6 +12,7 @@ using WebsitePanel.WebDav.Core;
 
 namespace WebsitePanel.WebDavPortal.Controllers
 {
+    [AllowAnonymous]
     public class AccountController : Controller
     {
         private readonly ICryptography _cryptography;
