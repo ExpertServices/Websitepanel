@@ -4,10 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using WebsitePanel.WebDav.Core;
 using WebsitePanel.WebDav.Core.Client;
-using WebsitePanel.WebDavPortal.Config;
+using WebsitePanel.WebDav.Core.Config;
+using WebsitePanel.WebDav.Core.Security.Cryptography;
+using WebsitePanel.WebDav.Core.Wsp.Framework;
 using WebsitePanel.WebDavPortal.Exceptions;
-using WebsitePanel.Portal;
 using WebsitePanel.Providers.OS;
 using Ninject;
 using WebsitePanel.WebDavPortal.DependencyInjection;
@@ -18,15 +20,14 @@ namespace WebsitePanel.WebDavPortal.Models
 {
     public class WebDavManager : IWebDavManager
     {
-        private readonly WebDavSession _webDavSession = new WebDavSession();
+        private readonly ICryptography _cryptography;
+        private readonly WebDavSession _webDavSession;
 
-        private readonly AccountModel _accountModel;
         private readonly ILog Log;
 
         private IList<SystemFile> _rootFolders;
         private int _itemId;
         private IFolder _currentFolder;
-        private string _organizationName;
         private string _webDavRootPath;
         private bool _isRoot = true;
 
@@ -35,26 +36,24 @@ namespace WebsitePanel.WebDavPortal.Models
             get { return _webDavRootPath; }
         }
 
-        public string OrganizationName
+        public WebDavManager(ICryptography cryptography)
         {
-            get { return _organizationName; }
-        }
-
-        public WebDavManager(NetworkCredential credential, int itemId)
-        {
-            _accountModel = DependencyResolver.Current.GetService<AccountModel>();
+            _cryptography = cryptography;
             Log = LogManager.GetLogger(this.GetType());
 
+            var credential = new NetworkCredential(WspContext.User.Login, _cryptography.Decrypt(WspContext.User.EncryptedPassword), WebDavAppConfigManager.Instance.UserDomain);
+
+            _webDavSession = new WebDavSession();
+
             _webDavSession.Credentials = credential;
-            _itemId = itemId;
-            _rootFolders = ConnectToWebDavServer(_accountModel);
+            _itemId = WspContext.User.ItemId;
+            _rootFolders = ConnectToWebDavServer();
 
             if (_rootFolders.Any())
             {
                 var folder = _rootFolders.First();
                 var uri = new Uri(folder.Url);
                 _webDavRootPath = uri.Scheme + "://" + uri.Host + uri.Segments[0] + uri.Segments[1];
-                _organizationName = uri.Segments[1].Trim('/');
             }
         }
 
@@ -133,19 +132,22 @@ namespace WebsitePanel.WebDavPortal.Models
             }
         }
 
-        private IList<SystemFile> ConnectToWebDavServer(AccountModel user)
+        private IList<SystemFile> ConnectToWebDavServer()
         {
             var rootFolders = new List<SystemFile>();
+            var user = WspContext.User;
 
-            foreach (var folder in ES.Services.EnterpriseStorage.GetEnterpriseFolders(_itemId))
+            var userGroups = WSP.Services.Organizations.GetSecurityGroupsByMember(user.ItemId, user.AccountId);
+
+            foreach (var folder in WSP.Services.EnterpriseStorage.GetEnterpriseFolders(_itemId))
             {
-                var permissions = ES.Services.EnterpriseStorage.GetEnterpriseFolderPermissions(_itemId, folder.Name);
+                var permissions = WSP.Services.EnterpriseStorage.GetEnterpriseFolderPermissions(_itemId, folder.Name);
 
                 foreach (var permission in permissions)
                 {
                     if ((!permission.IsGroup 
                             && (permission.DisplayName == user.UserName || permission.DisplayName == user.DisplayName))
-                        || (permission.IsGroup && user.Groups.Any(x=> x.DisplayName == permission.DisplayName)))
+                        || (permission.IsGroup && userGroups.Any(x => x.DisplayName == permission.DisplayName)))
                     {
                         rootFolders.Add(folder);
                         break;

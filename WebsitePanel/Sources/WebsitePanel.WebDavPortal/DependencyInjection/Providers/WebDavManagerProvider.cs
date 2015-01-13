@@ -1,7 +1,11 @@
-﻿using System.Web.SessionState;
+﻿using System.Net;
+using System.Web.SessionState;
 using Ninject;
 using Ninject.Activation;
-using WebsitePanel.WebDavPortal.Config;
+using WebsitePanel.WebDav.Core;
+using WebsitePanel.WebDav.Core.Config;
+using WebsitePanel.WebDav.Core.Security.Cryptography;
+using WebsitePanel.WebDavPortal.Exceptions;
 using WebsitePanel.WebDavPortal.Models;
 
 namespace WebsitePanel.WebDavPortal.DependencyInjection.Providers
@@ -17,6 +21,15 @@ namespace WebsitePanel.WebDavPortal.DependencyInjection.Providers
             if (session != null)
             {
                 webDavManager = session[WebDavAppConfigManager.Instance.SessionKeys.WebDavManager] as WebDavManager;
+
+                if (webDavManager == null)
+                {
+                    var cryptography = context.Kernel.Get<ICryptography>();
+
+                    webDavManager = new WebDavManager(cryptography);
+
+                    session[WebDavAppConfigManager.Instance.SessionKeys.WebDavManager] = webDavManager;
+                }
             }
 
             return webDavManager;

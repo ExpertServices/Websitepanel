@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using WebsitePanel.WebDavPortal.Config;
+using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDavPortal.Extensions;
 
 namespace WebsitePanel.WebDavPortal.FileOperations

@@ -35,8 +35,7 @@ namespace WebsitePanel.WebDavPortal
             routes.MapRoute(
                 name: FileSystemRouteNames.FilePath,
                 url: "{org}/{*pathPart}",
-                defaults: new { controller = "FileSystem", action = "ShowContent", pathPart = UrlParameter.Optional },
-                constraints: new { org = new WebsitePanel.WebDavPortal.Constraints.OrganizationRouteConstraint() }
+                defaults: new { controller = "FileSystem", action = "ShowContent", pathPart = UrlParameter.Optional }
                 );
 
             routes.MapRoute(
