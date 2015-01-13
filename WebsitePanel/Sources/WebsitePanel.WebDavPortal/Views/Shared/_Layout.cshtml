@@ -1,12 +1,9 @@
 ﻿@using Ninject
-@using WebsitePanel.WebDavPortal.Config
+@using WebsitePanel.WebDav.Core
+@using WebsitePanel.WebDav.Core.Config
 @using WebsitePanel.WebDavPortal.DependencyInjection
 @using WebsitePanel.WebDavPortal.Models
 @using WebsitePanel.WebDavPortal.UI.Routes;
-
-@{
-    var account = DependencyResolver.Current.GetService<AccountModel>();
-}
 
 <!DOCTYPE html>
 <html>
@@ -30,10 +27,10 @@
             </div>
             <div class="navbar-collapse collapse">
                 @{
-                    if (account != null)
+                    if (WspContext.User != null)
                     {
                         <a id="logout" class="nav navbar-text navbar-right" href="@Url.RouteUrl(AccountRouteNames.Logout)" title="Log out"><i class="glyphicon glyphicon-log-out"></i></a>
-                        <h4 id="username" class="nav navbar-text navbar-right">@account.Login</h4>
+                        <h4 id="username" class="nav navbar-text navbar-right">@WspContext.User.Login</h4>
                     }
 }
             </div>
@@ -45,6 +42,18 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    
+    @if (WspContext.User != null)
+    {
+        @Scripts.Render("~/bundles/authScripts")
+
+        <script>
+            StartAuthExpirationCheckTimer("@WebDavAppConfigManager.Instance.AuthTimeoutCookieName", "@Url.RouteUrl(AccountRouteNames.Logout)");
+        </script>
+    }
+
     @RenderSection("scripts", required: false)
+    
+
 </body>
 </html>

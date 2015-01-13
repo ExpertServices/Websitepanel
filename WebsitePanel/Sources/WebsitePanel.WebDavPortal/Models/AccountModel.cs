@@ -15,18 +15,6 @@ namespace WebsitePanel.WebDavPortal.Models
         [Display(Name = @"Password")]
         public string Password { get; set; }
 
-        public string UserName
-        {
-            get
-            {
-                return !string.IsNullOrEmpty(Login) ? Login.Split('@')[0] : string.Empty; 
-            }
-        }
-
-        public string DisplayName { get; set; }
-
-        public IEnumerable<ExchangeAccount> Groups { get; set; }
-
         public string LdapError { get; set; }
     }
 }

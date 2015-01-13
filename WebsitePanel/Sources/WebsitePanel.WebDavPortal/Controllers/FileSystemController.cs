@@ -4,16 +4,13 @@ using System.Linq;
 using System.Net.Mime;
 using System.Web;
 using System.Web.Mvc;
-using Ninject;
+using WebsitePanel.WebDav.Core;
 using WebsitePanel.WebDav.Core.Client;
+using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDav.Core.Exceptions;
-using WebsitePanel.WebDavPortal.Config;
 using WebsitePanel.WebDavPortal.CustomAttributes;
-using WebsitePanel.WebDavPortal.DependencyInjection;
 using WebsitePanel.WebDavPortal.Extensions;
 using WebsitePanel.WebDavPortal.Models;
-using WebsitePanel.Portal;
-using WebsitePanel.Providers.OS;
 using System.Net;
 
 namespace WebsitePanel.WebDavPortal.Controllers
@@ -33,7 +30,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
         [HttpGet]
         public ActionResult ShowContent(string org, string pathPart = "")
         {
-            if (org != _webdavManager.OrganizationName)
+            if (org != WspContext.User.OrganizationId)
                 return new HttpStatusCodeResult(HttpStatusCode.NoContent);
             
             string fileName = pathPart.Split('/').Last();

@@ -137,31 +137,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_GlobalResources\Resource.errors.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resource.errors.resx</DependentUpon>
-    </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Config\Entities\AbstractConfigCollection.cs" />
-    <Compile Include="Config\Entities\ElementsRendering.cs" />
-    <Compile Include="Config\Entities\FileIconsDictionary.cs" />
-    <Compile Include="Config\Entities\HttpErrorsCollection.cs" />
-    <Compile Include="Config\Entities\OfficeOnlineCollection.cs" />
-    <Compile Include="Config\Entities\SessionKeysCollection.cs" />
-    <Compile Include="Config\Entities\WebsitePanelConstantUserParameters.cs" />
-    <Compile Include="Config\IWebDavAppConfig.cs" />
-    <Compile Include="Config\WebDavAppConfigManager.cs" />
     <Compile Include="Constraints\OrganizationRouteConstraint.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FileSystemController.cs" />
-    <Compile Include="Cryptography\CryptoUtils.cs" />
-    <Compile Include="Cryptography\ICryptography.cs" />
     <Compile Include="CustomAttributes\LdapAuthorizationAttribute.cs" />
-    <Compile Include="DependencyInjection\Providers\AccountInfoProvider.cs" />
     <Compile Include="DependencyInjection\NinjectDependecyResolver.cs" />
     <Compile Include="DependencyInjection\PortalDependencies.cs" />
     <Compile Include="DependencyInjection\Providers\HttpSessionStateProvider.cs" />
@@ -186,17 +169,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\Routes\AccountRouteNames.cs" />
     <Compile Include="UI\Routes\FileSystemRouteNames.cs" />
-    <Compile Include="WebConfigSections\ApplicationNameElement.cs" />
-    <Compile Include="WebConfigSections\ElementsRenderingElement.cs" />
-    <Compile Include="WebConfigSections\FileIconsElement.cs" />
-    <Compile Include="WebConfigSections\FileIconsElementCollection.cs" />
-    <Compile Include="WebConfigSections\OfficeOnlineElement.cs" />
-    <Compile Include="WebConfigSections\OfficeOnlineElementCollection.cs" />
-    <Compile Include="WebConfigSections\SessionKeysElement.cs" />
-    <Compile Include="WebConfigSections\SessionKeysElementCollection.cs" />
-    <Compile Include="WebConfigSections\UserDomainElement.cs" />
-    <Compile Include="WebConfigSections\WebDavExplorerConfigurationSettingsSection.cs" />
-    <Compile Include="WebConfigSections\WebsitePanelConstantUserElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -248,6 +220,7 @@
       <SubType>Designer</SubType>
     </Content>
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
+    <Content Include="Scripts\appScripts\authentication.js" />
     <Content Include="Scripts\appScripts\recalculateResourseHeight.js" />
     <Content Include="Scripts\appScripts\uploadingData2.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -256,6 +229,7 @@
     <Content Include="Scripts\jquery-2.1.1.min.js" />
     <Content Include="Scripts\jquery-2.1.1.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.cookie.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -293,20 +267,9 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_GlobalResources\Resource.errors.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>Resource.errors.designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\WebsitePanel.WebDav.Core\WebsitePanel.WebDav.Core.csproj">
       <Project>{BA147805-9EF1-45F2-BF32-A5825D4E950D}</Project>
       <Name>WebsitePanel.WebDav.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WebsitePanel.WebPortal\DesktopModules\WebsitePanel\WebsitePanel.Portal.Modules.csproj">
-      <Project>{12232731-5C45-4ED6-98F8-D47ABE728280}</Project>
-      <Name>WebsitePanel.Portal.Modules</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
