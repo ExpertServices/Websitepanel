@@ -7,371 +7,371 @@
     </Fragment>
     <Fragment>
         <ComponentGroup Id="ServerFiles">
-            <Component Id="cmp36FFB7B20ABF4AB546A283B9717223C7" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{55F51DE8-CC5A-49E2-A511-771F0B0C09E2}">
-                <File Id="fil02D4C0AAFD65AEA18703C9BA42D2903D" KeyPath="yes" Source="$(var.BUILDPATH)\AutoDiscovery.asmx" />
+            <Component Id="cmp36FFB7B20ABF4AB546A283B9717223C7" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{0B7A042A-CA53-4224-A564-8E7E0DE88406}">
+                <File Id="fil02D4C0AAFD65AEA18703C9BA42D2903D" KeyPath="yes" Source="!(wix.BUILDSPATH)\AutoDiscovery.asmx" />
             </Component>
-            <Component Id="cmpF5892B7D81E81B739338A40013B4AE02" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{83E5EB31-ECD4-457B-B96B-35C0A7D26ADD}">
-                <File Id="filF452F6971AA2CDBC756390FE0B44E481" KeyPath="yes" Source="$(var.BUILDPATH)\BlackBerry.asmx" />
+            <Component Id="cmpF5892B7D81E81B739338A40013B4AE02" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{0D68234D-F2CF-4111-9577-6ABFD3994FAC}">
+                <File Id="filF452F6971AA2CDBC756390FE0B44E481" KeyPath="yes" Source="!(wix.BUILDSPATH)\BlackBerry.asmx" />
             </Component>
-            <Component Id="cmpE897A61C4C53289AAB402C57984452F5" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{245ED9FF-DB03-49DD-A30F-D8319ACF884E}">
-                <File Id="fil84F4B2B959C0FD7A407C995980FFA5FD" KeyPath="yes" Source="$(var.BUILDPATH)\CRM.asmx" />
+            <Component Id="cmpE897A61C4C53289AAB402C57984452F5" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{BA6CBB04-3866-4612-A0C4-9D28776557E7}">
+                <File Id="fil84F4B2B959C0FD7A407C995980FFA5FD" KeyPath="yes" Source="!(wix.BUILDSPATH)\CRM.asmx" />
             </Component>
-            <Component Id="cmp6D3029E012660BBB1867FDCA45A5A02E" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{329E7197-F619-4063-8EF5-9E42D69D7DD0}">
-                <File Id="filF5A687AB13B7D7D868D7925A2BCFB3DC" KeyPath="yes" Source="$(var.BUILDPATH)\DatabaseServer.asmx" />
+            <Component Id="cmp6D3029E012660BBB1867FDCA45A5A02E" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{45397345-BEDC-49B9-A381-E929583A4F04}">
+                <File Id="filF5A687AB13B7D7D868D7925A2BCFB3DC" KeyPath="yes" Source="!(wix.BUILDSPATH)\DatabaseServer.asmx" />
             </Component>
-            <Component Id="cmp8BB8DCFA947EF12968477CC1337BD7D2" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{84D5E3CB-5A3A-4D84-AE47-1E19703272A4}">
-                <File Id="fil8E6A993A109CF948C42156103A81662D" KeyPath="yes" Source="$(var.BUILDPATH)\Default.aspx" />
+            <Component Id="cmp8BB8DCFA947EF12968477CC1337BD7D2" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{644E092F-2A6A-4EB3-834A-F1CAEB660936}">
+                <File Id="fil8E6A993A109CF948C42156103A81662D" KeyPath="yes" Source="!(wix.BUILDSPATH)\Default.aspx" />
             </Component>
-            <Component Id="cmp2898AF3F5EB6FF8B58E9635A4F3A4E79" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{5ED5CCB8-5B7F-4E3B-A28B-E518BAAF7D40}">
-                <File Id="filBE7A83AD206FB4D0BCE519125D9EC0AE" KeyPath="yes" Source="$(var.BUILDPATH)\DNSServer.asmx" />
+            <Component Id="cmp2898AF3F5EB6FF8B58E9635A4F3A4E79" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{8C502483-3B77-4477-96F6-EA59588A6B5E}">
+                <File Id="filBE7A83AD206FB4D0BCE519125D9EC0AE" KeyPath="yes" Source="!(wix.BUILDSPATH)\DNSServer.asmx" />
             </Component>
-            <Component Id="cmp05B117A6B4A7FA1C8F30CEFB712B9D01" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{B9CF85B6-BCA5-4743-8CC9-284EF62BA9E5}">
-                <File Id="fil8B0D700A66E600A17D1A2BC420010148" KeyPath="yes" Source="$(var.BUILDPATH)\EnterpriseStorage.asmx" />
+            <Component Id="cmp05B117A6B4A7FA1C8F30CEFB712B9D01" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{881BF46A-A76C-4938-8D4F-7F5181D966A2}">
+                <File Id="fil8B0D700A66E600A17D1A2BC420010148" KeyPath="yes" Source="!(wix.BUILDSPATH)\EnterpriseStorage.asmx" />
             </Component>
-            <Component Id="cmp9A31384A734BC7A7C5F5C2609FF7BD67" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{BED4255C-6A8C-4A57-A504-E57737CBC98C}">
-                <File Id="fil459A7EE173DC23A72D214713753EF06A" KeyPath="yes" Source="$(var.BUILDPATH)\ExchangeServer.asmx" />
+            <Component Id="cmp9A31384A734BC7A7C5F5C2609FF7BD67" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{336A3E86-EA64-4734-821E-555DC303BEDE}">
+                <File Id="fil459A7EE173DC23A72D214713753EF06A" KeyPath="yes" Source="!(wix.BUILDSPATH)\ExchangeServer.asmx" />
             </Component>
-            <Component Id="cmp3485B3A2C7F7C5B90EF868F316B28E67" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{C9650F51-1155-47A6-8767-ADDD2F539EB9}">
-                <File Id="filDE18EBA71B66D1D3AE19A253296A1A0F" KeyPath="yes" Source="$(var.BUILDPATH)\FTPServer.asmx" />
+            <Component Id="cmp3485B3A2C7F7C5B90EF868F316B28E67" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{F8CFB5F2-5264-47C3-B441-A4F6E3D7D49A}">
+                <File Id="filDE18EBA71B66D1D3AE19A253296A1A0F" KeyPath="yes" Source="!(wix.BUILDSPATH)\FTPServer.asmx" />
             </Component>
-            <Component Id="cmpFDFADF3A509239B57845240354C10833" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{C040D113-898B-49A9-8E56-6D0E2F702376}">
-                <File Id="fil51D516266527220910F2CCF07605D2AA" KeyPath="yes" Source="$(var.BUILDPATH)\Global.asax" />
+            <Component Id="cmpFDFADF3A509239B57845240354C10833" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{9254AFEC-81F2-44DE-A997-D3B8D367CBCB}">
+                <File Id="fil51D516266527220910F2CCF07605D2AA" KeyPath="yes" Source="!(wix.BUILDSPATH)\Global.asax" />
             </Component>
-            <Component Id="cmp63A8899EB6CD33D4163C4F8DC5479F8F" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{C1220341-0182-40A5-9900-230A305B4535}">
-                <File Id="filC323139D94FC94A6302D70C56F5351C6" KeyPath="yes" Source="$(var.BUILDPATH)\HeliconZoo.asmx" />
+            <Component Id="cmp63A8899EB6CD33D4163C4F8DC5479F8F" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{F438EEE8-F295-4806-9915-83E7E42A909F}">
+                <File Id="filC323139D94FC94A6302D70C56F5351C6" KeyPath="yes" Source="!(wix.BUILDSPATH)\HeliconZoo.asmx" />
             </Component>
-            <Component Id="cmp9965BBEBC65B2DB1E0C0DE4004065505" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{93838E0E-A230-420F-B975-9C780B732AEB}">
-                <File Id="filA707141E27DDF75B7C3D252159B420F4" KeyPath="yes" Source="$(var.BUILDPATH)\HostedSharePointServer.asmx" />
+            <Component Id="cmp9965BBEBC65B2DB1E0C0DE4004065505" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{8629FB98-4E0B-4390-97A8-AB669A82AB3F}">
+                <File Id="filA707141E27DDF75B7C3D252159B420F4" KeyPath="yes" Source="!(wix.BUILDSPATH)\HostedSharePointServer.asmx" />
             </Component>
-            <Component Id="cmp631A6CF2B4281DACC1E243924A303FF4" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{DDC33353-4716-40FA-AE6D-DA4F1A7D33AE}">
-                <File Id="fil6F652FF220C22F1EEA1C8981340AA3F9" KeyPath="yes" Source="$(var.BUILDPATH)\LyncServer.asmx" />
+            <Component Id="cmp631A6CF2B4281DACC1E243924A303FF4" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{C3A224F3-6A60-4BC8-86FE-FD598489C412}">
+                <File Id="fil6F652FF220C22F1EEA1C8981340AA3F9" KeyPath="yes" Source="!(wix.BUILDSPATH)\LyncServer.asmx" />
             </Component>
-            <Component Id="cmp2905BC9112E9C182AEC4CF70ACB929F3" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{AE0ED6FF-1D41-44AF-8AF8-898CEF5FE3A5}">
-                <File Id="fil863AAB82C008A0375B1B27E8C55F5BFD" KeyPath="yes" Source="$(var.BUILDPATH)\MailServer.asmx" />
+            <Component Id="cmp2905BC9112E9C182AEC4CF70ACB929F3" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{E0D5B7AB-E3D7-4D84-A61E-A41588CA2325}">
+                <File Id="fil863AAB82C008A0375B1B27E8C55F5BFD" KeyPath="yes" Source="!(wix.BUILDSPATH)\MailServer.asmx" />
             </Component>
-            <Component Id="cmpD465308C95EBBDEB7684A2E6C926EFB5" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{1C43E647-1208-447F-8092-7A3464F3B85F}">
-                <File Id="fil4520D4DC3545371BFDE76A1998BD7B23" KeyPath="yes" Source="$(var.BUILDPATH)\OCSEdgeServer.asmx" />
+            <Component Id="cmpD465308C95EBBDEB7684A2E6C926EFB5" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{B1553A92-A579-41B9-AD80-95285F213084}">
+                <File Id="fil4520D4DC3545371BFDE76A1998BD7B23" KeyPath="yes" Source="!(wix.BUILDSPATH)\OCSEdgeServer.asmx" />
             </Component>
-            <Component Id="cmp27753C50C1B0E04A6316E5EAC25BFD63" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{C7317EBD-E326-40E6-A1F9-AB7E9DFB44AE}">
-                <File Id="fil2B9E4D8BFE87C75C4EF981439C774878" KeyPath="yes" Source="$(var.BUILDPATH)\OCSServer.asmx" />
+            <Component Id="cmp27753C50C1B0E04A6316E5EAC25BFD63" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{F4D97C6A-79C6-4051-861C-593FF8745E93}">
+                <File Id="fil2B9E4D8BFE87C75C4EF981439C774878" KeyPath="yes" Source="!(wix.BUILDSPATH)\OCSServer.asmx" />
             </Component>
-            <Component Id="cmp0FBB98C0A9580EEB03FDF9AFB456A974" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{9ACE83F2-EDD1-4229-B84B-6096E54D6E0C}">
-                <File Id="fil2BB5F485405F9DF71BC4DBAB19C73C09" KeyPath="yes" Source="$(var.BUILDPATH)\OperatingSystem.asmx" />
+            <Component Id="cmp0FBB98C0A9580EEB03FDF9AFB456A974" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{96E13EA2-7A7B-4CB3-809E-6FCFB261CDCD}">
+                <File Id="fil2BB5F485405F9DF71BC4DBAB19C73C09" KeyPath="yes" Source="!(wix.BUILDSPATH)\OperatingSystem.asmx" />
             </Component>
-            <Component Id="cmp8CE3FB80C45B1D5B739F095BE6296F93" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{EFD44FD1-092A-4C3A-8DD4-1E755CBD71A7}">
-                <File Id="fil400886719BD355EB6693B6ED7DFFA77D" KeyPath="yes" Source="$(var.BUILDPATH)\Organizations.asmx" />
+            <Component Id="cmp8CE3FB80C45B1D5B739F095BE6296F93" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{EA8D0A52-0E02-4EFF-9B22-5AD2BF0050CF}">
+                <File Id="fil400886719BD355EB6693B6ED7DFFA77D" KeyPath="yes" Source="!(wix.BUILDSPATH)\Organizations.asmx" />
             </Component>
-            <Component Id="cmp9614E6B72911EBFD89E893F76ED57A59" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{1227B490-1230-448C-8A9B-F7BFCED239B9}">
-                <File Id="filBA37C09C92AFBC859BF3DE83322F21D4" KeyPath="yes" Source="$(var.BUILDPATH)\RemoteDesktopServices.asmx" />
+            <Component Id="cmp9614E6B72911EBFD89E893F76ED57A59" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{90AE88E6-3A64-408D-B931-C47483A3092C}">
+                <File Id="filBA37C09C92AFBC859BF3DE83322F21D4" KeyPath="yes" Source="!(wix.BUILDSPATH)\RemoteDesktopServices.asmx" />
             </Component>
-            <Component Id="cmp8C5709C415CDEF90A4D0272E6D087CF1" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{5AF44E80-3374-4B9F-AEBA-BEE905DAA688}">
-                <File Id="filF8847E0B5AA88B1A02065DFDEFAF5ABA" KeyPath="yes" Source="$(var.BUILDPATH)\ServiceProvider.asmx" />
+            <Component Id="cmp8C5709C415CDEF90A4D0272E6D087CF1" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{90EA6F1C-AC89-469D-AE9D-46038E6A1819}">
+                <File Id="filF8847E0B5AA88B1A02065DFDEFAF5ABA" KeyPath="yes" Source="!(wix.BUILDSPATH)\ServiceProvider.asmx" />
             </Component>
-            <Component Id="cmpB28DBEC7A0ADB723983E8A823B116AA6" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{BC4339C6-D3F7-41FE-9C56-BEB1DABE1ED5}">
-                <File Id="filB013435CF8E50F9F4064C988476E26B8" KeyPath="yes" Source="$(var.BUILDPATH)\SharePointServer.asmx" />
+            <Component Id="cmpB28DBEC7A0ADB723983E8A823B116AA6" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{42EACA29-2D49-4482-9C2C-3C36497E3BD6}">
+                <File Id="filB013435CF8E50F9F4064C988476E26B8" KeyPath="yes" Source="!(wix.BUILDSPATH)\SharePointServer.asmx" />
             </Component>
-            <Component Id="cmp2C7E2B2ACAC497475B882DE6B9B7AA7F" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{6184351A-CB26-4EDC-9BCA-330CC9AF8983}">
-                <File Id="fil65AAACF2B73EC94F8F2A79E985E0FDA4" KeyPath="yes" Source="$(var.BUILDPATH)\StatisticsServer.asmx" />
+            <Component Id="cmp2C7E2B2ACAC497475B882DE6B9B7AA7F" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{F92F3106-03BF-4644-8748-BF05146FA07C}">
+                <File Id="fil65AAACF2B73EC94F8F2A79E985E0FDA4" KeyPath="yes" Source="!(wix.BUILDSPATH)\StatisticsServer.asmx" />
             </Component>
-            <Component Id="cmp503D1294E5C9C6BDD79C751970DEF74A" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{3B6D3DFF-CDDE-471B-A7AC-843F6459C8D0}">
-                <File Id="filF90281A8CD867B24822CA5ECAA8A7A06" KeyPath="yes" Source="$(var.BUILDPATH)\VirtualizationServer.asmx" />
+            <Component Id="cmp503D1294E5C9C6BDD79C751970DEF74A" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{E56E1189-9D6A-4168-8A20-126F6DC1D86E}">
+                <File Id="filF90281A8CD867B24822CA5ECAA8A7A06" KeyPath="yes" Source="!(wix.BUILDSPATH)\VirtualizationServer.asmx" />
             </Component>
-            <Component Id="cmpAB0E644312FEB9FAC2A103E715763ACB" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{AE188F99-3668-4453-9486-1BA6C01DD1C4}">
-                <File Id="filBA70CCE126E46B03312BD477D2861142" KeyPath="yes" Source="$(var.BUILDPATH)\VirtualizationServerForPrivateCloud.asmx" />
+            <Component Id="cmpAB0E644312FEB9FAC2A103E715763ACB" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{1B8070BE-3D48-4148-91EC-4B9C27ECA4FD}">
+                <File Id="filBA70CCE126E46B03312BD477D2861142" KeyPath="yes" Source="!(wix.BUILDSPATH)\VirtualizationServerForPrivateCloud.asmx" />
             </Component>
-            <Component Id="cmp489FF8E9F0331FA6435016F55B476542" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{458C363D-FC97-4544-A1B6-F65455EFE8DA}">
-                <File Id="fil3D22DA6AA1F905BD3D05B52FCF76D479" KeyPath="yes" Source="$(var.BUILDPATH)\Web.config" />
+            <Component Id="cmp489FF8E9F0331FA6435016F55B476542" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{1CFC63CF-E87C-4724-BB99-F180EDE88B0D}">
+                <File Id="fil3D22DA6AA1F905BD3D05B52FCF76D479" KeyPath="yes" Source="!(wix.BUILDSPATH)\Web.config" />
             </Component>
-            <Component Id="cmpD9FECD801ECBDF1976C27C7BF5BB32A2" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{91DD851E-1E58-4FEF-8F30-381987FB5FE9}">
-                <File Id="fil96CECAA501B2960FA60EE60B90478FE5" KeyPath="yes" Source="$(var.BUILDPATH)\WebServer.asmx" />
+            <Component Id="cmpD9FECD801ECBDF1976C27C7BF5BB32A2" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{0093F09D-7803-40D6-B96B-9950222102F4}">
+                <File Id="fil96CECAA501B2960FA60EE60B90478FE5" KeyPath="yes" Source="!(wix.BUILDSPATH)\WebServer.asmx" />
             </Component>
-            <Component Id="cmpBBE86216CAFCCAFC5838791E3AEBF331" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{C44B7359-14B7-4807-8E80-93BA2D327A48}">
-                <File Id="fil69E168EBB65EB0301E2A94047093C509" KeyPath="yes" Source="$(var.BUILDPATH)\WindowsServer.asmx" />
+            <Component Id="cmpBBE86216CAFCCAFC5838791E3AEBF331" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{FB78453D-2CC8-409C-BC45-A28B657B238A}">
+                <File Id="fil69E168EBB65EB0301E2A94047093C509" KeyPath="yes" Source="!(wix.BUILDSPATH)\WindowsServer.asmx" />
             </Component>
-            <Component Id="cmp5A4EEAE907ADB85A32EA306601647211" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{B36E9926-F543-4E96-93B0-62FD7A6976ED}">
-                <File Id="fil3477A12BC91CE97D65047206086206F4" KeyPath="yes" Source="$(var.BUILDPATH)\WsePolicyCache.Config" />
+            <Component Id="cmp5A4EEAE907ADB85A32EA306601647211" Directory="dirDDEC962B6579F4EC5A6C3A69CE0FC2BE" Guid="{0F93D704-4EB3-473A-B7FD-AB9CAC30AD71}">
+                <File Id="fil3477A12BC91CE97D65047206086206F4" KeyPath="yes" Source="!(wix.BUILDSPATH)\WsePolicyCache.Config" />
             </Component>
-            <Component Id="cmpEEE761F34862702D85CDA58738EF25D9" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{CF3B74B4-A141-4CE4-A677-D316F966E6B6}">
-                <File Id="fil2FBE980B5A39EC3404785E7649BCBD38" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Ionic.Zip.Reduced.dll" />
+            <Component Id="cmpEEE761F34862702D85CDA58738EF25D9" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{145F7523-8C77-424B-8BDD-5E777DFC9C24}">
+                <File Id="fil2FBE980B5A39EC3404785E7649BCBD38" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Ionic.Zip.Reduced.dll" />
             </Component>
-            <Component Id="cmpB49C19272EE7FA705DF84B0ECEAC7996" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{C5C48888-F1D5-4960-80CA-55D3B27ECD35}">
-                <File Id="fil1792B3F5E2C6AD4AF783FF995FEE3976" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Microsoft.Practices.EnterpriseLibrary.Caching.dll" />
+            <Component Id="cmpB49C19272EE7FA705DF84B0ECEAC7996" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{FCCB0F06-3B4E-4B46-BA9E-A310AFDDA9B9}">
+                <File Id="fil1792B3F5E2C6AD4AF783FF995FEE3976" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Microsoft.Practices.EnterpriseLibrary.Caching.dll" />
             </Component>
-            <Component Id="cmpEEC59DFB9624132554DDF3D524786074" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{BE0F3061-4322-4C75-99BA-45BF808359BB}">
-                <File Id="fil6DBBA4A97C57A473CD7D05B0FF3227F3" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Microsoft.Practices.EnterpriseLibrary.Common.dll" />
+            <Component Id="cmpEEC59DFB9624132554DDF3D524786074" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{DC651AA5-3389-44F4-9A6B-A3E63573D668}">
+                <File Id="fil6DBBA4A97C57A473CD7D05B0FF3227F3" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Microsoft.Practices.EnterpriseLibrary.Common.dll" />
             </Component>
-            <Component Id="cmp5995257FBAC035F5C615EBFDF7BFD5AF" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{59622A72-84C5-4328-ABE3-03ED9EAB737D}">
-                <File Id="filECB6B772BAAB420C168A82DF54BCE2B4" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Microsoft.Practices.ObjectBuilder.dll" />
+            <Component Id="cmp5995257FBAC035F5C615EBFDF7BFD5AF" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{A2E803AB-C7C6-4768-A538-54812B231BCF}">
+                <File Id="filECB6B772BAAB420C168A82DF54BCE2B4" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Microsoft.Practices.ObjectBuilder.dll" />
             </Component>
-            <Component Id="cmp706E4243BDBFCBA39F5683ACBE8BC6CD" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{8846EEC3-AD24-4574-A0D4-E8F7DA9327BE}">
-                <File Id="fil0DE836AF6A47A51CF32641B6C8274BB4" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Microsoft.SharePoint.dll" />
+            <Component Id="cmp706E4243BDBFCBA39F5683ACBE8BC6CD" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{34A04356-594B-43E4-9F85-884E6D21157D}">
+                <File Id="fil0DE836AF6A47A51CF32641B6C8274BB4" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Microsoft.SharePoint.dll" />
             </Component>
-            <Component Id="cmp24E88DDEDC3AB30640982783D1355C83" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{812BEC1F-2F5A-445A-BB17-ACDAB769E63F}">
-                <File Id="filAE0DBD52420C62AE8FCDD40BE17AA5D0" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Microsoft.Web.Deployment.dll" />
+            <Component Id="cmp24E88DDEDC3AB30640982783D1355C83" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{FD4594B1-E0FE-4A2D-AF8C-78B629D3F724}">
+                <File Id="filAE0DBD52420C62AE8FCDD40BE17AA5D0" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Microsoft.Web.Deployment.dll" />
             </Component>
-            <Component Id="cmpD0E21D023B068FFB5BD3C03B881CE8CB" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{8C979EC2-9DB4-41CA-98EF-3148F7CD6678}">
-                <File Id="filFAA6E45A99464EF466C0AE7D4C27501D" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Microsoft.Web.PlatformInstaller.dll" />
+            <Component Id="cmpD0E21D023B068FFB5BD3C03B881CE8CB" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{7EDE2FF5-2046-45D9-9B69-574A83DF5F99}">
+                <File Id="filFAA6E45A99464EF466C0AE7D4C27501D" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Microsoft.Web.PlatformInstaller.dll" />
             </Component>
-            <Component Id="cmpB44D915F4F214C26EEEB49E40AF8B490" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{833AC4AB-252C-47C5-B428-A091E6A80772}">
-                <File Id="fil4D323399CCAE39B858D135AC6D4897FE" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Microsoft.Web.Services3.dll" />
+            <Component Id="cmpB44D915F4F214C26EEEB49E40AF8B490" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{169D63DE-5B6E-4BEF-814B-13EB65D0B9B5}">
+                <File Id="fil4D323399CCAE39B858D135AC6D4897FE" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Microsoft.Web.Services3.dll" />
             </Component>
-            <Component Id="cmp127593956EA4B1B6CFC58AC1A39645E9" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{794E587B-86C9-4E54-8877-E2AF9C3A95F3}">
-                <File Id="fil52BFA5EF82A33C7A527678DDBC3B3266" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Base.dll" />
+            <Component Id="cmp127593956EA4B1B6CFC58AC1A39645E9" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{E0724B89-BB17-455F-8D5F-77854E6BA66E}">
+                <File Id="fil52BFA5EF82A33C7A527678DDBC3B3266" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Base.dll" />
             </Component>
-            <Component Id="cmp5F5A0AD42623F3E82BB48AC76A557FCF" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{863A0469-417D-4A2C-BAC0-C29AE0796022}">
-                <File Id="filC83636E590E48949B51F61A5AD0A1F9E" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Database.MySQL.dll" />
+            <Component Id="cmp5F5A0AD42623F3E82BB48AC76A557FCF" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{0C759369-EFAB-46B4-B6CE-9ADB958949C6}">
+                <File Id="filC83636E590E48949B51F61A5AD0A1F9E" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Database.MySQL.dll" />
             </Component>
-            <Component Id="cmp9D4C62F1E4FACD3853131F58D706C317" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{C061D0D5-557D-4440-8415-D8EA7F1590D2}">
-                <File Id="filBE218C3F86CFBF106CB0541FDAAF1698" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Database.SqlServer.dll" />
+            <Component Id="cmp9D4C62F1E4FACD3853131F58D706C317" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{47BC5ABD-F733-4D4A-8947-20E236021502}">
+                <File Id="filBE218C3F86CFBF106CB0541FDAAF1698" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Database.SqlServer.dll" />
             </Component>
-            <Component Id="cmp44954BD656E058B13BB97E2FA384E4C0" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{5DE83C5E-9926-4E53-BE4E-FABD5D1A60BD}">
-                <File Id="fil90B17E9DDBCF0DC7EAAC09532A93BC27" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.DNS.Bind.dll" />
+            <Component Id="cmp44954BD656E058B13BB97E2FA384E4C0" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{C575DB08-7712-49EA-B4FC-80C29D1012FA}">
+                <File Id="fil90B17E9DDBCF0DC7EAAC09532A93BC27" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.DNS.Bind.dll" />
             </Component>
-            <Component Id="cmp94F5FFF69BE893AA41F83EEF845983E6" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{DE772D73-867E-41AE-9326-68DB83BE944E}">
-                <File Id="fil7141B8FE83B251CA94A841BD2D7367B9" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.DNS.MsDNS.dll" />
+            <Component Id="cmp94F5FFF69BE893AA41F83EEF845983E6" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{BD8AF87B-B7EF-4FDF-9E7E-E302D0449063}">
+                <File Id="fil7141B8FE83B251CA94A841BD2D7367B9" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.DNS.MsDNS.dll" />
             </Component>
-            <Component Id="cmpAFAA6F7051A6E96BED76442C300A232F" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{BFEA4313-8AB7-48EC-919C-E96F3B66117B}">
-                <File Id="filDFD7BBB5D509A835B525D8D9DD5A6F3E" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.DNS.Nettica.dll" />
+            <Component Id="cmpAFAA6F7051A6E96BED76442C300A232F" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{A888FCFF-309C-463B-B814-1E493BD73CCC}">
+                <File Id="filDFD7BBB5D509A835B525D8D9DD5A6F3E" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.DNS.Nettica.dll" />
             </Component>
-            <Component Id="cmp2960504BB0ACFA9551AEDBD21B82F386" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{E60519BB-4355-4C6D-A155-29FDF277CCD0}">
-                <File Id="fil8E68D7727A284E2973698EF25834FF10" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.DNS.PowerDNS.dll" />
+            <Component Id="cmp2960504BB0ACFA9551AEDBD21B82F386" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{C2A65EE3-F2D7-4947-8778-EA6EAE817B03}">
+                <File Id="fil8E68D7727A284E2973698EF25834FF10" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.DNS.PowerDNS.dll" />
             </Component>
-            <Component Id="cmpC8AE2A27AC260D1CA89E99B7EC38F85E" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{91D2C412-1CE4-4532-957F-99F3E74D432F}">
-                <File Id="filE569D94C32E04E33DA3840D8481BC796" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.DNS.SimpleDNS.dll" />
+            <Component Id="cmpC8AE2A27AC260D1CA89E99B7EC38F85E" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{3F4DDEE7-9CA5-4289-8EDA-84DC3F198EAB}">
+                <File Id="filE569D94C32E04E33DA3840D8481BC796" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.DNS.SimpleDNS.dll" />
             </Component>
-            <Component Id="cmp861C0D6FD10AF8852557EC2F9CB2C38A" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{C310C19A-F5F9-4078-9458-DE438728CDED}">
-                <File Id="filB8B01A8AC4F7F218796DC87CB059A2B6" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.DNS.SimpleDNS50.dll" />
+            <Component Id="cmp861C0D6FD10AF8852557EC2F9CB2C38A" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{2456F84C-95D9-43DC-9A97-D3267E53700B}">
+                <File Id="filB8B01A8AC4F7F218796DC87CB059A2B6" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.DNS.SimpleDNS50.dll" />
             </Component>
-            <Component Id="cmpF5E351A5D79508DFFC4EC934CD54809E" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{F6722CBB-936B-4C75-A93E-0D4C3671E339}">
-                <File Id="fil63069305890F37E3798AB6AA3EACB53B" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.EnterpriseStorage.Windows2012.dll" />
+            <Component Id="cmpF5E351A5D79508DFFC4EC934CD54809E" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{E9154F0E-CF6E-4D91-82E4-9DF56871B9E1}">
+                <File Id="fil63069305890F37E3798AB6AA3EACB53B" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.EnterpriseStorage.Windows2012.dll" />
             </Component>
-            <Component Id="cmp91D411D5F6B37E5D0445D50EBB4E080D" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{0B507FF3-B97F-463C-B804-DD904DF733D3}">
-                <File Id="fil1A1322852349FC5F2205B525AE1F38F4" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.FTP.FileZilla.dll" />
+            <Component Id="cmp91D411D5F6B37E5D0445D50EBB4E080D" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{BA0A0CB9-2393-46AF-A00A-EA75EEA6628F}">
+                <File Id="fil1A1322852349FC5F2205B525AE1F38F4" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.FTP.FileZilla.dll" />
             </Component>
-            <Component Id="cmpE063DF63B99BB28CE6179F44A888327A" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{ACB3FAED-CB7D-49F4-9128-B68137F0B9AD}">
-                <File Id="filA6943EF4036D23D5AEB86DC9A4B8DA10" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.FTP.Gene6.dll" />
+            <Component Id="cmpE063DF63B99BB28CE6179F44A888327A" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{7AA926E0-7FCE-4C15-AE11-618CB5EFAA5B}">
+                <File Id="filA6943EF4036D23D5AEB86DC9A4B8DA10" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.FTP.Gene6.dll" />
             </Component>
-            <Component Id="cmp14E1FC1567D54A5B5895433AEF4AE36F" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{17CF0C74-6C65-4529-8B45-CC30AAA6B733}">
-                <File Id="filBC12860C902A919766A3973D18D3AA5A" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.FTP.IIs60.dll" />
+            <Component Id="cmp14E1FC1567D54A5B5895433AEF4AE36F" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{17F2268F-4F52-4AB9-B3B4-661DDA4D0DE1}">
+                <File Id="filBC12860C902A919766A3973D18D3AA5A" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.FTP.IIs60.dll" />
             </Component>
-            <Component Id="cmp9C95244FF0408238F7C2A1F804685B38" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{B0BCCA42-AF1A-450D-9B41-F462A7D2EC36}">
-                <File Id="filA8856B24779DCD514C338EA82117077B" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.FTP.IIs70.dll" />
+            <Component Id="cmp9C95244FF0408238F7C2A1F804685B38" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{6162A7A0-08AD-4865-AFA5-8042C08E2122}">
+                <File Id="filA8856B24779DCD514C338EA82117077B" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.FTP.IIs70.dll" />
             </Component>
-            <Component Id="cmp5E1A1E33271915B3EF5955E56C4D3A38" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{5BC960CB-6124-4701-9183-EE1E37EE567C}">
-                <File Id="fil2ACE7585311C0CE90DA977E06418DD5E" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.FTP.IIs80.dll" />
+            <Component Id="cmp5E1A1E33271915B3EF5955E56C4D3A38" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{59DF7690-362A-4E20-9B92-DF350AFDA9BB}">
+                <File Id="fil2ACE7585311C0CE90DA977E06418DD5E" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.FTP.IIs80.dll" />
             </Component>
-            <Component Id="cmpA6E10E36AFFDE83877E4E74B0291DA11" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{345C8927-68F3-48E9-924D-20DC21102575}">
-                <File Id="filD97603DAD8CC880442AE1B3A53154E8A" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.FTP.ServU.dll" />
+            <Component Id="cmpA6E10E36AFFDE83877E4E74B0291DA11" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{5E838F68-7523-43AB-B5CC-42FAAAD991E9}">
+                <File Id="filD97603DAD8CC880442AE1B3A53154E8A" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.FTP.ServU.dll" />
             </Component>
-            <Component Id="cmp7AC3422D0A4779CF76B3E51FF6FF66B6" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{A257CDB2-7BD2-49D3-AF84-454FBA2D0FBC}">
-                <File Id="fil1E0A6CCAA6245DBBDAA94D2F6239E6D2" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.HostedSolution.dll" />
+            <Component Id="cmp7AC3422D0A4779CF76B3E51FF6FF66B6" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{E4357614-C9ED-4051-A526-C13847F4D587}">
+                <File Id="fil1E0A6CCAA6245DBBDAA94D2F6239E6D2" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.HostedSolution.dll" />
             </Component>
-            <Component Id="cmp9C572E12F8D308E246A5E97E8A98AB82" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{E78050AF-1505-45F1-B1B8-2EF0FD3AD07B}">
-                <File Id="fil50BC43BB6373960C85C7BBBA01F91B26" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Mail.AbilityMailServer.dll" />
+            <Component Id="cmp9C572E12F8D308E246A5E97E8A98AB82" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{07245974-5282-49B8-B62F-737813DB5451}">
+                <File Id="fil50BC43BB6373960C85C7BBBA01F91B26" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Mail.AbilityMailServer.dll" />
             </Component>
-            <Component Id="cmp89337828D294FE6856FA01BF8A1389EB" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{5F836AEB-168A-444F-9053-F2B5B15D95A2}">
-                <File Id="filD73205FC741022ECD3B797593CCD5F17" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Mail.ArgoMail.dll" />
+            <Component Id="cmp89337828D294FE6856FA01BF8A1389EB" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{90D0E9FB-BC7D-40C7-9479-5155BAB3BC17}">
+                <File Id="filD73205FC741022ECD3B797593CCD5F17" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Mail.ArgoMail.dll" />
             </Component>
-            <Component Id="cmp58AECFC2879038D0CF24AE07D7BE8786" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{08AC0A5F-1FE6-4C36-AA5D-31767CC10208}">
-                <File Id="fil20353836513FD46E9EA191B8CE62D09A" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Mail.hMailServer.dll" />
+            <Component Id="cmp58AECFC2879038D0CF24AE07D7BE8786" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{769AB8AC-1B1F-446F-AFEE-0D454B4934C1}">
+                <File Id="fil20353836513FD46E9EA191B8CE62D09A" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Mail.hMailServer.dll" />
             </Component>
-            <Component Id="cmp2FCC2B659DEBEA650757E6146B92CDE2" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{23C5DAAF-20E3-4FAD-912D-07479E1108A4}">
-                <File Id="fil45DC55084B50109D2DE7E53CD66EAA9E" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Mail.hMailServer43.dll" />
+            <Component Id="cmp2FCC2B659DEBEA650757E6146B92CDE2" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{3CD4359E-AB5A-4EB9-8417-22DA562016E4}">
+                <File Id="fil45DC55084B50109D2DE7E53CD66EAA9E" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Mail.hMailServer43.dll" />
             </Component>
-            <Component Id="cmpDF5A746C7CB05BA33B969BCB671917A1" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{A91DBEF4-662F-41EE-940B-53BEC9D4EF1B}">
-                <File Id="filD41BF6518360604F1D695A71EE0648A9" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Mail.hMailServer5.dll" />
+            <Component Id="cmpDF5A746C7CB05BA33B969BCB671917A1" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{188E07B4-AE41-4B20-9B6B-67995B9144D3}">
+                <File Id="filD41BF6518360604F1D695A71EE0648A9" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Mail.hMailServer5.dll" />
             </Component>
-            <Component Id="cmpA27202625E7BFDBC32BD8A368C075942" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{0759022B-5786-4020-A270-8E82C905333A}">
-                <File Id="fil923E3774799AEEB70DFD85BCBCAA5D39" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Mail.MailEnable.dll" />
+            <Component Id="cmpA27202625E7BFDBC32BD8A368C075942" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{1E8373F6-4149-4844-9FBE-F3AC3CF2DC8E}">
+                <File Id="fil923E3774799AEEB70DFD85BCBCAA5D39" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Mail.MailEnable.dll" />
             </Component>
-            <Component Id="cmp46CCE8744E91AD1521A71B0B4F6F7BDE" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{D5CAF8F4-EA8D-4BDA-9B91-60FA2599EEA2}">
-                <File Id="fil3F9158146084F0F61B8870D89DA8FBD7" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Mail.MDaemon.dll" />
+            <Component Id="cmp46CCE8744E91AD1521A71B0B4F6F7BDE" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{0309FA87-6E5A-4D11-B1DA-812EAC1FF960}">
+                <File Id="fil3F9158146084F0F61B8870D89DA8FBD7" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Mail.MDaemon.dll" />
             </Component>
-            <Component Id="cmpFE2BB923BE2E5118D8242BE2E76B36E8" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{93036636-7E89-4FCD-835E-91A12AB8B3E3}">
-                <File Id="fil908D972024C6E2CDF1B1C86EB1131B9B" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Mail.Merak.dll" />
+            <Component Id="cmpFE2BB923BE2E5118D8242BE2E76B36E8" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{42DC2D7B-3FEA-40C0-8458-6F58F30085B2}">
+                <File Id="fil908D972024C6E2CDF1B1C86EB1131B9B" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Mail.Merak.dll" />
             </Component>
-            <Component Id="cmpEC171D5FC0A0B8CC9F0DFC3095919C21" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{0E523CF1-96CE-4F4E-B084-C9BED345D0D2}">
-                <File Id="fil0D5520681A1261D8B9007ADB896F494A" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Mail.Merak10.dll" />
+            <Component Id="cmpEC171D5FC0A0B8CC9F0DFC3095919C21" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{7A5A6FA4-99E5-4D33-83AD-32E63362897D}">
+                <File Id="fil0D5520681A1261D8B9007ADB896F494A" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Mail.Merak10.dll" />
             </Component>
-            <Component Id="cmpD76C1874BF472E36FD1D9FD2398D620E" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{157B4120-0BC8-4FCE-99EA-8B5C28C8791E}">
-                <File Id="fil68C59F8BB23009676DCB83B695F7F332" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Mail.SmarterMail10.dll" />
+            <Component Id="cmpD76C1874BF472E36FD1D9FD2398D620E" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{DAEC09AD-DED5-479E-8F4E-597DE75F1344}">
+                <File Id="fil68C59F8BB23009676DCB83B695F7F332" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Mail.SmarterMail10.dll" />
             </Component>
-            <Component Id="cmp1FE9B4E332CB63070C8BCA454AD4A27B" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{14EDD239-778E-43F1-BF90-EF5F3507C9E4}">
-                <File Id="filCF5BA7583A7DDA58176A92F529B0F969" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Mail.SmarterMail2.dll" />
+            <Component Id="cmp1FE9B4E332CB63070C8BCA454AD4A27B" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{51EE3192-7906-40AC-96B0-529C682CF5EC}">
+                <File Id="filCF5BA7583A7DDA58176A92F529B0F969" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Mail.SmarterMail2.dll" />
             </Component>
-            <Component Id="cmp96F9D9F61073D655E55D95467CB9F6A1" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{54C481B1-6060-4A52-9930-EAD58831FB04}">
-                <File Id="fil4BD5D1F10E3B646759B0EE753EC89307" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Mail.SmarterMail3.dll" />
+            <Component Id="cmp96F9D9F61073D655E55D95467CB9F6A1" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{85E6D426-A9AB-4675-81E3-1DA2AF96B24B}">
+                <File Id="fil4BD5D1F10E3B646759B0EE753EC89307" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Mail.SmarterMail3.dll" />
             </Component>
-            <Component Id="cmp6F37ED5BEC0F144A4839EC9DA9CD467B" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{5337EE8C-55A0-4161-8710-3B16B451F412}">
-                <File Id="fil1A8D06700ECD9F59D9E88AF8A6008B5A" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Mail.SmarterMail5.dll" />
+            <Component Id="cmp6F37ED5BEC0F144A4839EC9DA9CD467B" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{2EDBF8A1-6876-4E8F-ABCB-B26CB232EF27}">
+                <File Id="fil1A8D06700ECD9F59D9E88AF8A6008B5A" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Mail.SmarterMail5.dll" />
             </Component>
-            <Component Id="cmp4450B05055714B0EFAF3D131FEF69157" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{CFDCBA29-76CF-4A40-BAFB-C93E8700945B}">
-                <File Id="fil7577132DF34A43DB41C8C0F0C7DD84C3" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Mail.SmarterMail6.dll" />
+            <Component Id="cmp4450B05055714B0EFAF3D131FEF69157" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{F728FE64-064B-4200-8C1B-6BF375A99104}">
+                <File Id="fil7577132DF34A43DB41C8C0F0C7DD84C3" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Mail.SmarterMail6.dll" />
             </Component>
-            <Component Id="cmpF54E717EB67717453210C2496D85F19A" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{003D2782-EB85-4DA0-9732-8C78F936F221}">
-                <File Id="filB439BA882DF50E05F4C0F83FF61591F2" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Mail.SmarterMail7.dll" />
+            <Component Id="cmpF54E717EB67717453210C2496D85F19A" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{3632A9AE-0CA7-4EC4-88FB-4740D90A812B}">
+                <File Id="filB439BA882DF50E05F4C0F83FF61591F2" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Mail.SmarterMail7.dll" />
             </Component>
-            <Component Id="cmpDD196FD562D5B00F85EABEF0D26EE2A5" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{7410638C-4F90-4D15-8012-557AE17042E8}">
-                <File Id="filFE5DA02323CB6A6C6F4F208C8772685B" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Mail.SmarterMail9.dll" />
+            <Component Id="cmpDD196FD562D5B00F85EABEF0D26EE2A5" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{EAEF552A-8CB3-406B-BC0C-5C450659F21D}">
+                <File Id="filFE5DA02323CB6A6C6F4F208C8772685B" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Mail.SmarterMail9.dll" />
             </Component>
-            <Component Id="cmp3F805FE75FD18F780A75B06716F9D42A" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{01B2CD2E-5450-4F02-834F-79F05B665311}">
-                <File Id="fil115F8956B74AAE580A1F8F00075D417F" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.OS.Windows2003.dll" />
+            <Component Id="cmp3F805FE75FD18F780A75B06716F9D42A" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{856E3BBF-D924-4C1E-9576-7C3BF9ECE9BE}">
+                <File Id="fil115F8956B74AAE580A1F8F00075D417F" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.OS.Windows2003.dll" />
             </Component>
-            <Component Id="cmp8A529A61A8EF77CC5BD480CF086DFD7C" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{94135E07-9DF8-4C07-8E5D-DFCE69FC11E6}">
-                <File Id="filB41280D7DDDAEB918DA6A89A884626F7" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.OS.Windows2008.dll" />
+            <Component Id="cmp8A529A61A8EF77CC5BD480CF086DFD7C" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{F7767F91-1CF9-4A55-9D08-8260B7473358}">
+                <File Id="filB41280D7DDDAEB918DA6A89A884626F7" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.OS.Windows2008.dll" />
             </Component>
-            <Component Id="cmp79ACCE63BE54E18A336506691AC6BF0F" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{A28F44EB-C7A9-4876-A8D3-73431B3C1171}">
-                <File Id="fil0094F1E0D2CD6F0582010CD2EBE1494A" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.OS.Windows2012.dll" />
+            <Component Id="cmp79ACCE63BE54E18A336506691AC6BF0F" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{D5616CE2-8E25-4227-8F38-7BB98D6296FD}">
+                <File Id="fil0094F1E0D2CD6F0582010CD2EBE1494A" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.OS.Windows2012.dll" />
             </Component>
-            <Component Id="cmp443425FC27491A82BDC3F9CADCB4751C" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{AA08E376-5877-44C5-82CA-0CE000A1E59A}">
-                <File Id="filF1AA89622FB0950BBE555BBDDC7442C5" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.RemoteDesktopServices.Windows2012.dll" />
+            <Component Id="cmp443425FC27491A82BDC3F9CADCB4751C" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{C44F116B-B595-4F6B-AC15-DF5A9C2488BE}">
+                <File Id="filF1AA89622FB0950BBE555BBDDC7442C5" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.RemoteDesktopServices.Windows2012.dll" />
             </Component>
-            <Component Id="cmpB33317840C9BB6693E403940E6CB127D" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{DFC95158-D5BD-4947-A248-177055207A9B}">
-                <File Id="filD02D7A352513D863A321C2A367DDC31A" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.SharePoint.Sps20.dll" />
+            <Component Id="cmpB33317840C9BB6693E403940E6CB127D" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{9F267209-14E4-46AD-992B-8288E789FC4B}">
+                <File Id="filD02D7A352513D863A321C2A367DDC31A" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.SharePoint.Sps20.dll" />
             </Component>
-            <Component Id="cmpDF6DE20477EF4C4F31E5FC367D803476" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{388EA398-DFCB-4CC1-B963-3705F33FD11B}">
-                <File Id="fil9AA5A96354E3B5A3BC5F852B19FB960D" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.SharePoint.Sps30.dll" />
+            <Component Id="cmpDF6DE20477EF4C4F31E5FC367D803476" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{7BC8E99C-07A7-475F-9A30-D0E88D631DC1}">
+                <File Id="fil9AA5A96354E3B5A3BC5F852B19FB960D" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.SharePoint.Sps30.dll" />
             </Component>
-            <Component Id="cmp139A097B24DF88A4CF0B4BDC22F806F2" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{FCF8B118-189D-4C0F-8295-A14188DDD3F6}">
-                <File Id="filAFDE63F0BF3CEB8AC21248AF666B6BDD" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Statistics.AWStats.dll" />
+            <Component Id="cmp139A097B24DF88A4CF0B4BDC22F806F2" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{081A1D9D-A763-45D7-9B21-AFE1A546A962}">
+                <File Id="filAFDE63F0BF3CEB8AC21248AF666B6BDD" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Statistics.AWStats.dll" />
             </Component>
-            <Component Id="cmpDB6EDD05980270D51D3D3392C8A51BEA" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{590FD484-3BF7-4A59-B8E8-9710001BC617}">
-                <File Id="fil8746A4D8C6B5E3E9CF417117787594A0" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Statistics.SmarterStats.dll" />
+            <Component Id="cmpDB6EDD05980270D51D3D3392C8A51BEA" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{B8C69A7C-4809-4C08-BEF6-DC6ED6795B33}">
+                <File Id="fil8746A4D8C6B5E3E9CF417117787594A0" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Statistics.SmarterStats.dll" />
             </Component>
-            <Component Id="cmp52A87BB266D2FEFE509274B83FBDB28A" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{DE303CF6-3333-4362-97D6-5CA0D9771E81}">
-                <File Id="fil9D6251DE61FC47D7C44307FC095ECDF7" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Virtualization.HyperV.dll" />
+            <Component Id="cmp52A87BB266D2FEFE509274B83FBDB28A" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{D1383A3B-2ECD-4C0D-93EB-ED11284E908A}">
+                <File Id="fil9D6251DE61FC47D7C44307FC095ECDF7" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Virtualization.HyperV.dll" />
             </Component>
-            <Component Id="cmp449F508AF2CBD535E4D4ED07A70C529F" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{ADAD6746-FAF5-44E6-8397-1A4489B3B465}">
-                <File Id="fil8443C57E0D43334FD87D4A15AC99C6FD" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.VirtualizationForPC.HyperVForPC.dll" />
+            <Component Id="cmp449F508AF2CBD535E4D4ED07A70C529F" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{E396C356-56DD-4D4F-A0CF-87C31CF56211}">
+                <File Id="fil8443C57E0D43334FD87D4A15AC99C6FD" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.VirtualizationForPC.HyperVForPC.dll" />
             </Component>
-            <Component Id="cmp159AD2B3F04D9907B0978D98D803C52A" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{DA800709-8EDD-45CC-9BBE-43690EE0DEEC}">
-                <File Id="fil3C2C0EC56C22F6A60DA1F539E89FFC11" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Web.HeliconZoo.dll" />
+            <Component Id="cmp159AD2B3F04D9907B0978D98D803C52A" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{9924A708-272F-439F-800F-02C8DFA9E368}">
+                <File Id="fil3C2C0EC56C22F6A60DA1F539E89FFC11" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Web.HeliconZoo.dll" />
             </Component>
-            <Component Id="cmpA6A9DF986B85E915E26A422250EBA8CF" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{B3CE49CC-F9C8-4B0F-B183-CBDCCB7BCC8E}">
-                <File Id="filA4970A8D2BD6F0FD76E458241421B84A" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Web.IIs60.dll" />
+            <Component Id="cmpA6A9DF986B85E915E26A422250EBA8CF" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{61D2497F-8060-43AF-B3EA-801437EDB198}">
+                <File Id="filA4970A8D2BD6F0FD76E458241421B84A" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Web.IIs60.dll" />
             </Component>
-            <Component Id="cmp36A707DC2E10BE61896B54347D5160AD" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{E540A065-EA6A-451B-8588-BFA487156C89}">
-                <File Id="fil56DF9C2C97069A850883A910E15F2F90" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Web.IIs70.dll" />
+            <Component Id="cmp36A707DC2E10BE61896B54347D5160AD" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{1B3D20F8-BDE0-4852-95A4-F360C55CF6C3}">
+                <File Id="fil56DF9C2C97069A850883A910E15F2F90" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Web.IIs70.dll" />
             </Component>
-            <Component Id="cmp784FD6CE79E4D346F1E955A480D34412" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{136BCF6E-FFB0-40D5-AA41-5BBA3A70FA73}">
-                <File Id="filB0EFF0F7F642E03A90D611915BF84DE0" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Providers.Web.WebDav.dll" />
+            <Component Id="cmp784FD6CE79E4D346F1E955A480D34412" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{623223E3-20D0-40E1-8480-3156EAFF82DA}">
+                <File Id="filB0EFF0F7F642E03A90D611915BF84DE0" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Providers.Web.WebDav.dll" />
             </Component>
-            <Component Id="cmpEA5F4997EC56C090FD01CC1BAA2D995D" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{636F4BB9-DD7D-44F8-BF94-D33A4409D673}">
-                <File Id="filAD4293E572FBD359F5A7E46DA7FEFD3A" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Server.dll" />
+            <Component Id="cmpEA5F4997EC56C090FD01CC1BAA2D995D" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{CA0D1C4B-B250-40A8-A6FE-D01ADA746FE2}">
+                <File Id="filAD4293E572FBD359F5A7E46DA7FEFD3A" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Server.dll" />
             </Component>
-            <Component Id="cmpD807D1416F2F323A727AD1DCB38105DF" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{A92BB7D9-A78A-4F8F-83C5-F9B2D4751C8B}">
-                <File Id="fil86DBDD480053BCDAB247045E7B6B764F" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Server.dll.config" />
+            <Component Id="cmpD807D1416F2F323A727AD1DCB38105DF" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{DA333854-C006-4A49-B2DC-0607963C931E}">
+                <File Id="fil86DBDD480053BCDAB247045E7B6B764F" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Server.dll.config" />
             </Component>
-            <Component Id="cmp8E5B8AA4129387E41FC4F8B59B83FBC1" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{92304791-8404-40B7-B57C-444CE8A4F3F8}">
-                <File Id="fil52A58A2058DFE0704C37DD75B89C308F" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Server.Utils.dll" />
+            <Component Id="cmp8E5B8AA4129387E41FC4F8B59B83FBC1" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{82DCB7BE-759B-4430-811C-B53F6B9833FB}">
+                <File Id="fil52A58A2058DFE0704C37DD75B89C308F" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Server.Utils.dll" />
             </Component>
-            <Component Id="cmp8C6BEB5F17EFDC717CCE16911E39FBCC" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{53AC28EF-F777-4A18-A93A-796ECF64D76E}">
-                <File Id="fil88D69A6BA3C14B341CBA683E07710312" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Server.WPIService.exe" />
+            <Component Id="cmp8C6BEB5F17EFDC717CCE16911E39FBCC" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{130F75CC-0C35-4888-81F3-426895B9F843}">
+                <File Id="fil88D69A6BA3C14B341CBA683E07710312" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Server.WPIService.exe" />
             </Component>
-            <Component Id="cmp8D88A8DED8A58E29BE5745101F2B282C" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{F4C66D89-1135-495F-926F-807E36F6BE81}">
-                <File Id="fil9DDD36164B540B4823A0CCD0B3A1F94A" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WebsitePanel.Server.WPIService.exe.config" />
+            <Component Id="cmp8D88A8DED8A58E29BE5745101F2B282C" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{623F5537-924D-4B07-AD27-A57A1B4F4153}">
+                <File Id="fil9DDD36164B540B4823A0CCD0B3A1F94A" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WebsitePanel.Server.WPIService.exe.config" />
             </Component>
-            <Component Id="cmpED5E906F9364DC5FCAD8882660D6D12E" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{B6765A3F-95B7-459E-A05B-B777D692A067}">
-                <File Id="filE544B8A271FB2848D3C88D20F11A27AC" KeyPath="yes" Source="$(var.BUILDPATH)\bin\WpiServiceContract.dll" />
+            <Component Id="cmpED5E906F9364DC5FCAD8882660D6D12E" Directory="dirFB4CC26BDC803823807F2D50094641A1" Guid="{5F734AA9-66E9-4904-8B94-82F818371B62}">
+                <File Id="filE544B8A271FB2848D3C88D20F11A27AC" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\WpiServiceContract.dll" />
             </Component>
-            <Component Id="cmp6ED83031BA03F23A70B125A4C6ACF733" Directory="dirE8FE1BF53BA67D34526BA92AF8894816" Guid="{935D54A2-0967-4FD2-8EA3-35E469C34ED4}">
-                <File Id="fil36BF523A79AE42E2D59463C509FC83EB" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2011\microsoft.crm.sdk.proxy.dll" />
+            <Component Id="cmp6ED83031BA03F23A70B125A4C6ACF733" Directory="dirE8FE1BF53BA67D34526BA92AF8894816" Guid="{2852A40E-FB71-446F-851E-471CB90DA37F}">
+                <File Id="fil36BF523A79AE42E2D59463C509FC83EB" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2011\microsoft.crm.sdk.proxy.dll" />
             </Component>
-            <Component Id="cmp4294AD9F410428469F48CD994FAE94D1" Directory="dirE8FE1BF53BA67D34526BA92AF8894816" Guid="{59361E7F-FBE4-4340-840B-3C41C0E4F281}">
-                <File Id="filF06842E0417A8537646F724740538AB2" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2011\microsoft.xrm.client.codegeneration.dll" />
+            <Component Id="cmp4294AD9F410428469F48CD994FAE94D1" Directory="dirE8FE1BF53BA67D34526BA92AF8894816" Guid="{46D9F0E9-148E-4EC1-B46C-ED86EE85EFC8}">
+                <File Id="filF06842E0417A8537646F724740538AB2" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2011\microsoft.xrm.client.codegeneration.dll" />
             </Component>
-            <Component Id="cmpF9349F29B0C00A13B0DD4D0DAFABE9FD" Directory="dirE8FE1BF53BA67D34526BA92AF8894816" Guid="{09B2B470-345D-4F56-BF5B-B7CCDDA93EDF}">
-                <File Id="fil67B4C678C1E7D8B98B90D8FAD8E6BE3C" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2011\microsoft.xrm.client.dll" />
+            <Component Id="cmpF9349F29B0C00A13B0DD4D0DAFABE9FD" Directory="dirE8FE1BF53BA67D34526BA92AF8894816" Guid="{D043337D-43B4-4AA9-BF32-F8B1AD82B827}">
+                <File Id="fil67B4C678C1E7D8B98B90D8FAD8E6BE3C" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2011\microsoft.xrm.client.dll" />
             </Component>
-            <Component Id="cmpD832E746832C230E1D27F5EB2A4F2426" Directory="dirE8FE1BF53BA67D34526BA92AF8894816" Guid="{EDE9927D-EF47-4C65-9351-47781863D916}">
-                <File Id="fil4C163915FEF6B4E581B4247F868B6CAB" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2011\microsoft.xrm.portal.dll" />
+            <Component Id="cmpD832E746832C230E1D27F5EB2A4F2426" Directory="dirE8FE1BF53BA67D34526BA92AF8894816" Guid="{EACCA813-FD07-4A92-A5B5-DABCCF4AF021}">
+                <File Id="fil4C163915FEF6B4E581B4247F868B6CAB" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2011\microsoft.xrm.portal.dll" />
             </Component>
-            <Component Id="cmpAE396A958D562BF88FD0A0EB3DCC23FC" Directory="dirE8FE1BF53BA67D34526BA92AF8894816" Guid="{D724DB29-2AAB-495E-A91F-4FCADDA8B9F7}">
-                <File Id="fil9C191D1A96CA0E8BAF1F25BC0F93C2AF" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2011\microsoft.xrm.portal.files.dll" />
+            <Component Id="cmpAE396A958D562BF88FD0A0EB3DCC23FC" Directory="dirE8FE1BF53BA67D34526BA92AF8894816" Guid="{1EBFBED4-C6D5-4456-9410-BB54A832A048}">
+                <File Id="fil9C191D1A96CA0E8BAF1F25BC0F93C2AF" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2011\microsoft.xrm.portal.files.dll" />
             </Component>
-            <Component Id="cmp17AA550F7FC0EBAF4DA07BDF8A3C8087" Directory="dirE8FE1BF53BA67D34526BA92AF8894816" Guid="{14A8AE78-793C-46DA-B7D4-EC1B1377B6F8}">
-                <File Id="filA7FFEEAAC11FD142D30C156D4FB27679" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2011\microsoft.xrm.sdk.deployment.dll" />
+            <Component Id="cmp17AA550F7FC0EBAF4DA07BDF8A3C8087" Directory="dirE8FE1BF53BA67D34526BA92AF8894816" Guid="{378EB6AB-1D2D-479D-A6A1-A56B2DD3797A}">
+                <File Id="filA7FFEEAAC11FD142D30C156D4FB27679" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2011\microsoft.xrm.sdk.deployment.dll" />
             </Component>
-            <Component Id="cmpFBD9BD578B20A9B3643A3C8C1BD81B4F" Directory="dirE8FE1BF53BA67D34526BA92AF8894816" Guid="{82C78780-55B6-4881-9194-98C69D4BA0F8}">
-                <File Id="filD71336162C249D485C7FA6C0138BACA9" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2011\microsoft.xrm.sdk.dll" />
+            <Component Id="cmpFBD9BD578B20A9B3643A3C8C1BD81B4F" Directory="dirE8FE1BF53BA67D34526BA92AF8894816" Guid="{6535138D-2A69-4979-9027-16A54D65F1DC}">
+                <File Id="filD71336162C249D485C7FA6C0138BACA9" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2011\microsoft.xrm.sdk.dll" />
             </Component>
-            <Component Id="cmp9EA5A96A96AA7170B623629796EA8898" Directory="dirE8FE1BF53BA67D34526BA92AF8894816" Guid="{3C595F5B-32FF-48DF-8BF2-3CDF24270302}">
-                <File Id="filB446C87C0E6C8E9D1A5DC7222105D597" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2011\microsoft.xrm.sdk.workflow.dll" />
+            <Component Id="cmp9EA5A96A96AA7170B623629796EA8898" Directory="dirE8FE1BF53BA67D34526BA92AF8894816" Guid="{9BF54518-FA76-4FBA-BE0D-4DC3F00E2D31}">
+                <File Id="filB446C87C0E6C8E9D1A5DC7222105D597" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2011\microsoft.xrm.sdk.workflow.dll" />
             </Component>
-            <Component Id="cmpEFAFD255D71B411EDBAF48ACADDFBB33" Directory="dirE8FE1BF53BA67D34526BA92AF8894816" Guid="{8539A82E-4793-4B0D-BD0B-B1967618AA9E}">
-                <File Id="fil6227CA49DF64489FCEB1ECD716FB0F83" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2011\WebsitePanel.Providers.HostedSolution.Crm2011.dll" />
+            <Component Id="cmpEFAFD255D71B411EDBAF48ACADDFBB33" Directory="dirE8FE1BF53BA67D34526BA92AF8894816" Guid="{4B8E2555-F8D2-43FE-ADDF-FBE22AF5275B}">
+                <File Id="fil6227CA49DF64489FCEB1ECD716FB0F83" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2011\WebsitePanel.Providers.HostedSolution.Crm2011.dll" />
             </Component>
-            <Component Id="cmp27224E7AAAF0327F2FA8E1077D75F9F6" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{D83F6289-A732-46C4-9D24-6FEAC00C0686}">
-                <File Id="filEC32B22346126340766F5D4DA4133140" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2013\Microsoft.Crm.Sdk.Proxy.dll" />
+            <Component Id="cmp27224E7AAAF0327F2FA8E1077D75F9F6" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{DC215C7B-623C-43C9-A88B-A5D35DEE5AC9}">
+                <File Id="filEC32B22346126340766F5D4DA4133140" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2013\Microsoft.Crm.Sdk.Proxy.dll" />
             </Component>
-            <Component Id="cmp8C43FD600B771861B678585137C314DC" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{17692D03-799E-4C7B-9A8A-8813783F3FD1}">
-                <File Id="fil6ADB47B080FDFEF379B54F136D26AAA4" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2013\Microsoft.Xrm.Client.CodeGeneration.dll" />
+            <Component Id="cmp8C43FD600B771861B678585137C314DC" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{78044FFE-0D8A-4BA4-8204-EC97EA0F0608}">
+                <File Id="fil6ADB47B080FDFEF379B54F136D26AAA4" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2013\Microsoft.Xrm.Client.CodeGeneration.dll" />
             </Component>
-            <Component Id="cmp48541CE4ACDECA3FD52C2C239F28C946" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{E79AC9FA-22DE-46B4-B598-04B04504A307}">
-                <File Id="filFCE5DBF8898F727BF9B25B3F646AC6C5" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2013\Microsoft.Xrm.Client.dll" />
+            <Component Id="cmp48541CE4ACDECA3FD52C2C239F28C946" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{26B3E84C-8D48-4C99-BFA4-4EC0ABF4C042}">
+                <File Id="filFCE5DBF8898F727BF9B25B3F646AC6C5" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2013\Microsoft.Xrm.Client.dll" />
             </Component>
-            <Component Id="cmp2555D6FF7C54EFA62EA48C9F1573CA76" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{A0B02AA5-86DA-4E24-9424-58454277E3C0}">
-                <File Id="fil38C7DB618C2314DAD4D86124731FADE5" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2013\Microsoft.Xrm.Portal.dll" />
+            <Component Id="cmp2555D6FF7C54EFA62EA48C9F1573CA76" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{1EF7E8C0-B30F-411F-AF2B-71C2ED23B8C1}">
+                <File Id="fil38C7DB618C2314DAD4D86124731FADE5" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2013\Microsoft.Xrm.Portal.dll" />
             </Component>
-            <Component Id="cmpC7ECE9B5ADE3E392A2C88AA2CB8271ED" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{87785FCE-B665-45CB-862B-4A9B3B25D9AB}">
-                <File Id="fil3DD2422329837538BCAB3E3275CF3AEA" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2013\Microsoft.Xrm.Portal.Files.dll" />
+            <Component Id="cmpC7ECE9B5ADE3E392A2C88AA2CB8271ED" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{9A737DF0-1224-4784-AB62-BBDAC92B55F6}">
+                <File Id="fil3DD2422329837538BCAB3E3275CF3AEA" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2013\Microsoft.Xrm.Portal.Files.dll" />
             </Component>
-            <Component Id="cmp9E03B74F8DC4942232CD8C567C7ADABF" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{110FDCBB-D825-4FB2-BBB8-3D8D7E7F2853}">
-                <File Id="fil15E075FF71882D5BF0A8F67C5EF605BB" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2013\Microsoft.Xrm.Sdk.Deployment.dll" />
+            <Component Id="cmp9E03B74F8DC4942232CD8C567C7ADABF" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{D547E6FF-41AE-4652-94EE-74020AF91FD0}">
+                <File Id="fil15E075FF71882D5BF0A8F67C5EF605BB" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2013\Microsoft.Xrm.Sdk.Deployment.dll" />
             </Component>
-            <Component Id="cmp6806775A79192268B73B8C5E07BFF3CB" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{BA4B1515-1A8F-4645-8BD5-3D2AF5DB5D2E}">
-                <File Id="filAD59C841EAC412D159D321A3E8A86413" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2013\Microsoft.Xrm.Sdk.dll" />
+            <Component Id="cmp6806775A79192268B73B8C5E07BFF3CB" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{3E1C90DA-6AC4-4A55-A112-88E5B8776DA5}">
+                <File Id="filAD59C841EAC412D159D321A3E8A86413" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2013\Microsoft.Xrm.Sdk.dll" />
             </Component>
-            <Component Id="cmpD4F2EF8F2B7C41CB94A315B379E9AB53" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{D6E52475-0778-4E2B-953F-0A77EA2A349C}">
-                <File Id="filFD5D6A486934DF87D0D51F7B8084F79D" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2013\Microsoft.Xrm.Sdk.Workflow.dll" />
+            <Component Id="cmpD4F2EF8F2B7C41CB94A315B379E9AB53" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{B1B3314A-C97E-4769-8026-0C99B5AE4A69}">
+                <File Id="filFD5D6A486934DF87D0D51F7B8084F79D" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2013\Microsoft.Xrm.Sdk.Workflow.dll" />
             </Component>
-            <Component Id="cmp7C30ADE77DBB8288017FA397F0BF53C3" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{6D0BD294-54C2-478F-AF50-C80D4D36F4A9}">
-                <File Id="fil2B45100888F3B3454E67FA12FEA1A75E" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2013\System.Management.Automation.dll" />
+            <Component Id="cmp7C30ADE77DBB8288017FA397F0BF53C3" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{C1627A67-9C59-4BDD-9732-E4B072B1F5D3}">
+                <File Id="fil2B45100888F3B3454E67FA12FEA1A75E" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2013\System.Management.Automation.dll" />
             </Component>
-            <Component Id="cmp8A96E4EF64DCE1405FDB46DF56C51726" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{3A714192-70E2-4362-BCD4-5A861AC88851}">
-                <File Id="fil410749C300618B7C51DB548BEB3F6F7C" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Crm2013\WebsitePanel.Providers.HostedSolution.Crm2013.dll" />
+            <Component Id="cmp8A96E4EF64DCE1405FDB46DF56C51726" Directory="dirA2460EE4EB0758773EDC84A6CDCDC112" Guid="{A67978C7-47A7-4E6D-8271-007D2C6B48D3}">
+                <File Id="fil410749C300618B7C51DB548BEB3F6F7C" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Crm2013\WebsitePanel.Providers.HostedSolution.Crm2013.dll" />
             </Component>
-            <Component Id="cmp6A37B898E326654430E9A3D3197DEAF6" Directory="dir9305AB7AFC895D66DC379AFAD218F240" Guid="{95C50CB6-866F-49DE-A6D0-0912E1CCE155}">
-                <File Id="filB49C7FC2CBA0239F1BC879EED74C15F3" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Dns2012\Ionic.Zip.Reduced.dll" />
+            <Component Id="cmp6A37B898E326654430E9A3D3197DEAF6" Directory="dir9305AB7AFC895D66DC379AFAD218F240" Guid="{8CE9F259-8EA3-48C4-828C-EDBCAC64ED60}">
+                <File Id="filB49C7FC2CBA0239F1BC879EED74C15F3" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Dns2012\Ionic.Zip.Reduced.dll" />
             </Component>
-            <Component Id="cmpB4FDF697B84DD32DADB8CF7C1A8085F0" Directory="dir9305AB7AFC895D66DC379AFAD218F240" Guid="{33EF07BD-CC99-44D6-A098-DC0E3836C837}">
-                <File Id="fil45F17B77DAC4F7D8C6D5347648A36285" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Dns2012\Microsoft.Management.Infrastructure.dll" />
+            <Component Id="cmpB4FDF697B84DD32DADB8CF7C1A8085F0" Directory="dir9305AB7AFC895D66DC379AFAD218F240" Guid="{191D1B08-9D3B-4A69-A09F-91BA7A36414F}">
+                <File Id="fil45F17B77DAC4F7D8C6D5347648A36285" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Dns2012\Microsoft.Management.Infrastructure.dll" />
             </Component>
-            <Component Id="cmpDEEBBCCB733EC324AB3B26A9D9D6B7D2" Directory="dir9305AB7AFC895D66DC379AFAD218F240" Guid="{20FCE57B-31A3-4D71-BBA8-0E8D92734B78}">
-                <File Id="fil87EFDDCF1C6B1484266892A5450C3847" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Dns2012\System.Management.Automation.dll" />
+            <Component Id="cmpDEEBBCCB733EC324AB3B26A9D9D6B7D2" Directory="dir9305AB7AFC895D66DC379AFAD218F240" Guid="{C9C1A9D8-D249-415E-81D7-AFE470FA34E6}">
+                <File Id="fil87EFDDCF1C6B1484266892A5450C3847" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Dns2012\System.Management.Automation.dll" />
             </Component>
-            <Component Id="cmpB62993564564879E9BBB27C62DC49E8C" Directory="dir9305AB7AFC895D66DC379AFAD218F240" Guid="{8F5187E0-6C5C-4B7F-B7EE-B9956B375385}">
-                <File Id="fil5C445A091F9B4C45C2CDED4E9054FA4C" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Dns2012\WebsitePanel.Providers.Base.dll" />
+            <Component Id="cmpB62993564564879E9BBB27C62DC49E8C" Directory="dir9305AB7AFC895D66DC379AFAD218F240" Guid="{93015F2D-E399-45FB-9630-AB9F92531497}">
+                <File Id="fil5C445A091F9B4C45C2CDED4E9054FA4C" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Dns2012\WebsitePanel.Providers.Base.dll" />
             </Component>
-            <Component Id="cmpAFF53FE49C65E6F5A1985ED080F71C9A" Directory="dir9305AB7AFC895D66DC379AFAD218F240" Guid="{E75EDC31-0491-423C-B9CF-04A4C4573627}">
-                <File Id="fil21F3727B0D097AFD394F8EB4E8B7F23A" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Dns2012\WebsitePanel.Providers.DNS.MsDNS2012.dll" />
+            <Component Id="cmpAFF53FE49C65E6F5A1985ED080F71C9A" Directory="dir9305AB7AFC895D66DC379AFAD218F240" Guid="{ABC6F19A-818C-49CD-917F-FBE016463B2A}">
+                <File Id="fil21F3727B0D097AFD394F8EB4E8B7F23A" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Dns2012\WebsitePanel.Providers.DNS.MsDNS2012.dll" />
             </Component>
-            <Component Id="cmp035D0AD68A048B01E542BAFEA55F45F0" Directory="dir9305AB7AFC895D66DC379AFAD218F240" Guid="{B70CB3AD-C26D-4D44-A6ED-E86B19D91BCD}">
-                <File Id="fil5B58ABA9F86F145D5828920B3F45593D" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Dns2012\WebsitePanel.Server.Utils.dll" />
+            <Component Id="cmp035D0AD68A048B01E542BAFEA55F45F0" Directory="dir9305AB7AFC895D66DC379AFAD218F240" Guid="{966F4679-201C-49EC-B3B7-199778AD5F03}">
+                <File Id="fil5B58ABA9F86F145D5828920B3F45593D" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Dns2012\WebsitePanel.Server.Utils.dll" />
             </Component>
-            <Component Id="cmp966AC9563958EF05B040BB78743E3078" Directory="dir036B1FF157A3296D99E7DBC916D31E5A" Guid="{0271B104-DB7B-4D0F-85CC-91761F1379B0}">
-                <File Id="filD78FE8D00B9803C735E6DC29BB79A3BA" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Exchange2013\WebsitePanel.Providers.HostedSolution.Exchange2013.dll" />
+            <Component Id="cmp966AC9563958EF05B040BB78743E3078" Directory="dir036B1FF157A3296D99E7DBC916D31E5A" Guid="{1B13ACFD-6AC9-4077-9A9C-E74319E9D8C1}">
+                <File Id="filD78FE8D00B9803C735E6DC29BB79A3BA" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Exchange2013\WebsitePanel.Providers.HostedSolution.Exchange2013.dll" />
             </Component>
-            <Component Id="cmpB605AA7B10D1D10C4CCA5B25FD9C1111" Directory="dir29B89CA1FA0FBB0A3A90EB8DB382B52F" Guid="{9C98D9C2-48B3-4E94-85A2-742C296479F4}">
-                <File Id="filA57C91B776FB76C0C3B13ABD2EE5B401" KeyPath="yes" Source="$(var.BUILDPATH)\bin\IceWarp\WebsitePanel.Providers.Mail.IceWarp.dll" />
+            <Component Id="cmpB605AA7B10D1D10C4CCA5B25FD9C1111" Directory="dir29B89CA1FA0FBB0A3A90EB8DB382B52F" Guid="{F8284F96-0A65-491A-AE9D-8F12F856601E}">
+                <File Id="filA57C91B776FB76C0C3B13ABD2EE5B401" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\IceWarp\WebsitePanel.Providers.Mail.IceWarp.dll" />
             </Component>
-            <Component Id="cmp199A0C24E2AFD35E07E19B8BEC317B4A" Directory="dirC586FDBD387B886092B8F072A10FF323" Guid="{4DBA4275-5CDE-41C2-9A02-AA1B0B6952FB}">
-                <File Id="filCF4CBDDB84AAF7B9F615244B4B69ABF4" KeyPath="yes" Source="$(var.BUILDPATH)\bin\IIs80\WebsitePanel.Providers.Web.IIs80.dll" />
+            <Component Id="cmp199A0C24E2AFD35E07E19B8BEC317B4A" Directory="dirC586FDBD387B886092B8F072A10FF323" Guid="{8C4DF276-5522-425E-85BB-65C1CF816555}">
+                <File Id="filCF4CBDDB84AAF7B9F615244B4B69ABF4" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\IIs80\WebsitePanel.Providers.Web.IIs80.dll" />
             </Component>
-            <Component Id="cmp27573BD347680E783D985E219580CC99" Directory="dir09961D07A523BAE00771505849EF6870" Guid="{B6B67FFD-1917-46FA-B084-3461476C78B0}">
-                <File Id="fil6F8D728501340F11E2FA483CFEEAAA02" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Lync2013\WebsitePanel.Providers.Base.dll" />
+            <Component Id="cmp27573BD347680E783D985E219580CC99" Directory="dir09961D07A523BAE00771505849EF6870" Guid="{4B08F240-6A5E-4F72-8840-FA023BE6FBFC}">
+                <File Id="fil6F8D728501340F11E2FA483CFEEAAA02" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Lync2013\WebsitePanel.Providers.Base.dll" />
             </Component>
-            <Component Id="cmpC41B02EB8EF7EAB39CA64740536E8A28" Directory="dir09961D07A523BAE00771505849EF6870" Guid="{F93D7C70-6B5D-407C-8E49-4786419DE425}">
-                <File Id="fil0FB07252472EEC0CF2B003C5C122F1C7" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Lync2013\WebsitePanel.Providers.HostedSolution.Lync2013.dll" />
+            <Component Id="cmpC41B02EB8EF7EAB39CA64740536E8A28" Directory="dir09961D07A523BAE00771505849EF6870" Guid="{C37C2A3E-A4A8-4056-BF54-FE18570F7BBE}">
+                <File Id="fil0FB07252472EEC0CF2B003C5C122F1C7" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Lync2013\WebsitePanel.Providers.HostedSolution.Lync2013.dll" />
             </Component>
-            <Component Id="cmp2F18F75815FBCE982D53092B49BDA927" Directory="dir09961D07A523BAE00771505849EF6870" Guid="{416A5EF8-8E2A-4668-B9DB-69B0FA6BC1E2}">
-                <File Id="fil834365ACD670FFBF1B9CC77C02128D06" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Lync2013\WebsitePanel.Providers.HostedSolution.Lync2013HP.dll" />
+            <Component Id="cmp2F18F75815FBCE982D53092B49BDA927" Directory="dir09961D07A523BAE00771505849EF6870" Guid="{3C799B21-7AB4-47FE-A893-0016A61E79A5}">
+                <File Id="fil834365ACD670FFBF1B9CC77C02128D06" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Lync2013\WebsitePanel.Providers.HostedSolution.Lync2013HP.dll" />
             </Component>
-            <Component Id="cmp8A7A788B44BEB24660DA621E065F81BA" Directory="dir09961D07A523BAE00771505849EF6870" Guid="{B00F6C4F-3C81-4EEB-8DED-9D1305EC658E}">
-                <File Id="fil67F2A0D44731A55D853277C2944ADB02" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Lync2013\WebsitePanel.Server.Utils.dll" />
+            <Component Id="cmp8A7A788B44BEB24660DA621E065F81BA" Directory="dir09961D07A523BAE00771505849EF6870" Guid="{7EBB19CC-3FAE-4141-8BBE-D7210F6C1E34}">
+                <File Id="fil67F2A0D44731A55D853277C2944ADB02" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Lync2013\WebsitePanel.Server.Utils.dll" />
             </Component>
-            <Component Id="cmp16E573D0D4845D209774F437A2C39E7A" Directory="dir0ED1434DBC8557C3DF9016BBDA792AC7" Guid="{5F7063ED-5FD6-4293-B1FE-A34D7226FF96}">
-                <File Id="filCCB670BCA002A04E72BF505E4D397BB5" KeyPath="yes" Source="$(var.BUILDPATH)\bin\Sharepoint2013\WebsitePanel.Providers.HostedSolution.SharePoint2013.dll" />
+            <Component Id="cmp16E573D0D4845D209774F437A2C39E7A" Directory="dir0ED1434DBC8557C3DF9016BBDA792AC7" Guid="{A3AF1FB0-0B73-4F8A-8921-E295B4EDFE19}">
+                <File Id="filCCB670BCA002A04E72BF505E4D397BB5" KeyPath="yes" Source="!(wix.BUILDSPATH)\bin\Sharepoint2013\WebsitePanel.Providers.HostedSolution.SharePoint2013.dll" />
             </Component>
         </ComponentGroup>
     </Fragment>

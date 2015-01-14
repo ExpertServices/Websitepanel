@@ -2,22 +2,22 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <?include Config.wxi?>
   <?define VERSION="2.1"?>
-  <Product Id="*" Name="WebsitePanel Installer" Language="1033" Version="$(var.VERSION)" Manufacturer="Outercurve Foundation" 
+  <Product Id="*" Name="WebsitePanel" Language="1033" Version="$(var.VERSION)" Manufacturer="Outercurve Foundation" 
            UpgradeCode="F59D3AED-C1B8-46B4-AFE2-A97F3B7DFB5E">
 
     <Package InstallerVersion="200" Compressed="yes" />
-    <Media Id="1" EmbedCab="yes" Cabinet="schedulerservice.cab" />
+    <Media Id="1" EmbedCab="yes" Cabinet="websitepanel.cab" />
     
-    <Feature Id="SchedulerServiceFeature" Title="WebsitePanel Scheduler Service" Level="1">
-      <ComponentRef Id="SchedulerServiceFiles" />
+    <Feature Id="SchedulerServiceFeature" Title="Scheduler Service" Level="1">
+      <ComponentGroupRef Id="SchedulerServiceFiles" />
     </Feature>
-    <Feature Id="ServerFeature" Title="WebsitePanel Server" Level="1">
+    <Feature Id="ServerFeature" Title="Server" Level="1">
       <ComponentGroupRef Id="ServerFiles" />
     </Feature>
-    <Feature Id="EnterpriseServerFeature" Title="WebsitePanel Enterprise Server" Level="1">
+    <Feature Id="EnterpriseServerFeature" Title="Enterprise Server" Level="1">
       <ComponentGroupRef Id="EnterpriseServerFiles" />
     </Feature>
-    <Feature Id="PortalFeature" Title="WebsitePanel Portal" Level="1">
+    <Feature Id="PortalFeature" Title="Portal" Level="1">
       <ComponentGroupRef Id="PortalFiles" />
     </Feature>
 
@@ -35,14 +35,26 @@
     <WixVariable Id="WixUIBannerBmp" Value="bannrbmp.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="dlgbmp.bmp" />
     <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+
+    <WixVariable Id ="BUILDESPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\EnterpriseServer" />
+    <WixVariable Id ="BUILDSPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\Server" />
+    <WixVariable Id ="BUILDPPATH" Value = "$(var.PROJECTPATH)\Build\$(var.BUILD)\Portal" />
+
     <Icon Id="WebSitePanel.ico" SourceFile="WebSitePanel.ico" />
+    
     <Property Id="ARPPRODUCTICON" Value="WebSitePanel.ico" />
     <Property Id="SERVERNAME" Value="localhost\SQLExpress" />
-    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
-    <Property Id="INSTALLFOLDER" Value="c:\WebsitePanel\SchedulerService" />
+    
+    <Property Id="WIXUI_INSTALLDIR" Value="WEBSITEPANELFOLDER" />
+    <Property Id="INSTALLSERVICEFOLDER" Value="c:\WebsitePanel\SchedulerService" />
+    <Property Id="INSTALLSERVERFOLDER" Value="c:\WebsitePanel\Server" />
+    <Property Id="INSTALLENTERPRISESERVERFOLDER" Value="c:\WebsitePanel\Enterprise Server" />
+    <Property Id="INSTALLPORTALFOLDER" Value="c:\WebsitePanel\Portal" />
+
     <Property Id="CONNECTIONSTRING" Value="1" />
     <Property Id="DATABASENAME" Value="WebsitePanel" />
     <Property Id="AUTHENTICATIONTYPE" Value="Windows Authentication" />
+    
     <Binary Id="bannrbmp" SourceFile="bannrbmp.bmp" />
     
     <UI Id="CustomInstaller">
@@ -114,7 +126,7 @@
             <Control Id="FolderLabel" Type="Text" X="20" Y="60" Width="290" Height="30" NoPrefix="yes" Text="Folder Name:" />
             <Control Id="Folder" Type="PathEdit" X="22" Y="90" Width="320" Height="15" Property="WIXUI_INSTALLDIR" Indirect="yes" />
         </Dialog>
-        <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="InstallLocationDlg" Order="3">
+        <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="CustomizeDlg" Order="3">
           LicenseAccepted = "1"
         </Publish>
         <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg">SKIPCONNECTIONSTRINGSTEP = "0"</Publish>
@@ -156,15 +168,12 @@
   <Fragment>
       <Directory Id="TARGETDIR" Name="SourceDir">
           <Directory Id="WEBSITEPANELFOLDER" Name="WebsitePanel">
-              <Directory Id="INSTALLFOLDER" Name="SchedulerService" />
+            <Directory Id="INSTALLSERVICEFOLDER" Name="SchedulerService" />
+            <Directory Id="INSTALLSERVERFOLDER" Name="Server" />
+            <Directory Id="INSTALLENTERPRISESERVERFOLDER" Name="Enterprise Server" />
+            <Directory Id="INSTALLPORTALFOLDER" Name="Portal" />
           </Directory>
       </Directory>
   </Fragment>
   
-  <?include SchedulerServiceFiles.wxi?>
-  
-  <?include ServerFiles.wxs?>
-  <?include EnterpriseServerFiles.wxs?>
-  <?include PortalFiles.wxs?>
-
 </Wix>

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?include Config.wxi?>
+  <?define BUILDPATH = "$(var.PROJECTPATH)\Build\$(var.BUILD)\EnterpriseServer\bin"?>
+  <?define SERVERBUILDPATH = "$(var.PROJECTPATH)\Build\$(var.BUILD)\Server\bin"?>
+  <Fragment>
+        <DirectoryRef Id="TARGETDIR">
+            <Directory Id="dirSchedulerServiceFiles" Name="SchedulerService" />
+        </DirectoryRef>
+    </Fragment>
+    <Fragment>
+        <ComponentGroup Id="SchedulerServiceFiles">
+            <Component Id="cmpSchedulerServiceFiles" Directory="dirSchedulerServiceFiles" Guid="{5E9F9A14-DB8E-4555-8D40-67110698F046}">
+              <File Id="WebsitePanel.SchedulerService.exe" Source="$(var.BUILDPATH)\WebsitePanel.SchedulerService.exe" />
+              <File Id="WebsitePanel.SchedulerService.exe.config" Source="$(var.BUILDPATH)\WebsitePanel.SchedulerService.exe.config" />
+              <File Id="Ionic.Zip.Reduced.dll" Source="$(var.SERVERBUILDPATH)\Ionic.Zip.Reduced.dll"/>
+              <File Id="Microsoft.Web.Services3.dll" Source="$(var.SERVERBUILDPATH)\Microsoft.Web.Services3.dll"/>
+              <File Id="WebsitePanel.Common.Utils.dll" Source="$(var.BUILDPATH)\WebsitePanel.Common.Utils.dll"/>
+              <File Id="WebsitePanel.EnterpriseServer.Base.dll" Source="$(var.BUILDPATH)\WebsitePanel.EnterpriseServer.Base.dll"/>
+              <File Id="WebsitePanel.EnterpriseServer.Code.dll" Source="$(var.BUILDPATH)\WebsitePanel.EnterpriseServer.Code.dll"/>
+              <File Id="IPAddressRange.dll" Source="$(var.BUILDPATH)\IPAddressRange.dll"/>
+              <File Id="WhoisClient.dll" Source="$(var.BUILDPATH)\WhoisClient.dll"/>
+              <File Id="WebsitePanel.Providers.Base.dll" Source="$(var.BUILDPATH)\WebsitePanel.Providers.Base.dll"/>
+              <File Id="WebsitePanel.Server.Client.dll" Source="$(var.BUILDPATH)\WebsitePanel.Server.Client.dll"/>
+              <File Id="WebsitePanel.Templates.dll" Source="$(var.BUILDPATH)\WebsitePanel.Templates.dll"/>
+              <File Id="WebsitePanel.Whois.dll" Source="$(var.BUILDPATH)\WebsitePanel.Whois.dll"/>
+            </Component>
+        </ComponentGroup>
+    </Fragment>
+</Wix>

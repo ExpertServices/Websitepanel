@@ -6,7 +6,7 @@
     <ProductVersion>3.7</ProductVersion>
     <ProjectGuid>{978f0a18-7c81-4561-8f6d-5a165484ad0a}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>Websitepanel-SchedulerService</OutputName>
+    <OutputName>Websitepanel</OutputName>
     <OutputType>Package</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
@@ -32,11 +32,11 @@
     <Compile Include="EnterpriseServerFiles.wxs" />
     <Compile Include="PortalFiles.wxs" />
     <Compile Include="Product.wxs" />
+    <Compile Include="SchedulerServiceFiles.wxs" />
     <Compile Include="ServerFiles.wxs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Config.wxi" />
-    <Content Include="SchedulerServiceFiles.wxi" />
   </ItemGroup>
   <ItemGroup>
     <WixExtension Include="WixUIExtension">
