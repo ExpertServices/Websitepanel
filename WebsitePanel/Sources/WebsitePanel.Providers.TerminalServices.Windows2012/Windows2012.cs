@@ -1123,7 +1123,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
         private string GetPolicyName(string organizationId, string collectionName, RdsPolicyTypes policyType)
         {
-            string policyName = string.Format("{0}-{1}-", organizationId, collectionName);
+            string policyName = string.Format("{0}-", collectionName);
 
             switch (policyType)
             {
