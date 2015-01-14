@@ -1,12 +1,12 @@
 ﻿@using WebsitePanel.WebDav.Core.Client
-@using WebsitePanel.WebDavPortal.Config
+@using WebsitePanel.WebDav.Core.Config
 @using WebsitePanel.WebDavPortal.FileOperations
 @using Ninject;
 @model IHierarchyItem
   
 @{
     string actualPath = Model.ItemType == ItemType.Folder ? "~/Content/Images/folder_100x100.png" : WebDavAppConfigManager.Instance.FileIcons[Path.GetExtension(Model.DisplayName.Trim('/'))];
-    string name = Model.ItemType == ItemType.Folder ? Model.DisplayName.Trim('/') : Path.GetFileNameWithoutExtension(Model.DisplayName);
+    string name = Model.DisplayName.Trim('/');
     var opener = new FileOpenerManager()[Path.GetExtension(Model.DisplayName)];
     bool isTargetBlank;
     string href = "/";
@@ -18,14 +18,12 @@
             break;
         default:
             isTargetBlank = false;
-            IKernel _kernel = new StandardKernel(new WebsitePanel.WebDavPortal.DependencyInjection.WebDavExplorerAppModule());
-            var webDavManager = _kernel.Get<WebsitePanel.WebDavPortal.Models.IWebDavManager>();
             href = Model.Href.AbsolutePath; 
             break;
     }
 }
 <div class="col-sm-2 element-container">
-    <a href="@href" @Html.Raw(isTargetBlank ? "target=\"_blank\"" : string.Empty) title="@Model.DisplayName.Trim('/')">
+    <a href="@href" @Html.Raw(isTargetBlank ? "target=\"_blank\"" : string.Empty) title="@name">
         <img class="icon-size" src="@Url.Content(actualPath)" />
         <p style="word-wrap: break-word;">@name</p>
     </a>

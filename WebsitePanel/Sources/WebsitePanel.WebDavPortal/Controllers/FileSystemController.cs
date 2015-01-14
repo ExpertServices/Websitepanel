@@ -4,44 +4,47 @@ using System.Linq;
 using System.Net.Mime;
 using System.Web;
 using System.Web.Mvc;
-using Ninject;
+using WebsitePanel.WebDav.Core;
 using WebsitePanel.WebDav.Core.Client;
+using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDav.Core.Exceptions;
-using WebsitePanel.WebDavPortal.Config;
 using WebsitePanel.WebDavPortal.CustomAttributes;
-using WebsitePanel.WebDavPortal.DependencyInjection;
 using WebsitePanel.WebDavPortal.Extensions;
 using WebsitePanel.WebDavPortal.Models;
-using WebsitePanel.Portal;
-using WebsitePanel.Providers.OS;
 using System.Net;
 
 namespace WebsitePanel.WebDavPortal.Controllers
 
 {
+    [ValidateInput(false)]
     [LdapAuthorization]
     public class FileSystemController : Controller
     {
-        private readonly IKernel _kernel = new StandardKernel(new WebDavExplorerAppModule());
+        private readonly IWebDavManager _webdavManager;
+
+        public FileSystemController(IWebDavManager webdavManager)
+        {
+            _webdavManager = webdavManager;
+        }
 
         [HttpGet]
         public ActionResult ShowContent(string org, string pathPart = "")
         {
-            var webDavManager = new StandardKernel(new WebDavExplorerAppModule()).Get<IWebDavManager>();
-            if (org != webDavManager.OrganizationName)
+            if (org != WspContext.User.OrganizationId)
                 return new HttpStatusCodeResult(HttpStatusCode.NoContent);
             
             string fileName = pathPart.Split('/').Last();
-            if (webDavManager.IsFile(fileName))
+            if (_webdavManager.IsFile(fileName))
             {
-                var fileBytes = webDavManager.GetFileBytes(fileName);
+                var fileBytes = _webdavManager.GetFileBytes(fileName);
                 return File(fileBytes, MediaTypeNames.Application.Octet, fileName);
             }
 
             try
             {
-                webDavManager.OpenFolder(pathPart);
-                IEnumerable<IHierarchyItem> children = webDavManager.GetChildren();
+                _webdavManager.OpenFolder(pathPart);
+                IEnumerable<IHierarchyItem> children = _webdavManager.GetChildren().Where(x => !WebDavAppConfigManager.Instance.ElementsRendering.ElementsToIgnore.Contains(x.DisplayName.Trim('/')));
+
                 var model = new ModelForWebDav { Items = children.Take(WebDavAppConfigManager.Instance.ElementsRendering.DefaultCount), UrlSuffix = pathPart };
                 Session[WebDavAppConfigManager.Instance.SessionKeys.ResourseRenderCount] = WebDavAppConfigManager.Instance.ElementsRendering.DefaultCount;
 
@@ -55,8 +58,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
         public ActionResult ShowOfficeDocument(string org, string pathPart = "")
         {
-            var webDavManager = _kernel.Get<IWebDavManager>();
-            string fileUrl = webDavManager.RootPath.TrimEnd('/') + "/" + pathPart.TrimStart('/');
+            string fileUrl = _webdavManager.RootPath.TrimEnd('/') + "/" + pathPart.TrimStart('/');
             var uri = new Uri(WebDavAppConfigManager.Instance.OfficeOnline.Url).AddParameter("src", fileUrl).ToString();
 
             return View(new OfficeOnlineModel(uri, new Uri(fileUrl).Segments.Last()));
@@ -68,9 +70,11 @@ namespace WebsitePanel.WebDavPortal.Controllers
             if (Session[WebDavAppConfigManager.Instance.SessionKeys.ResourseRenderCount] != null)
             {
                 var renderedElementsCount = (int)Session[WebDavAppConfigManager.Instance.SessionKeys.ResourseRenderCount];
-                var webDavManager = _kernel.Get<IWebDavManager>();
-                IEnumerable<IHierarchyItem> children = webDavManager.GetChildren();
+
+                IEnumerable<IHierarchyItem> children = _webdavManager.GetChildren();
+
                 var result = children.Skip(renderedElementsCount).Take(WebDavAppConfigManager.Instance.ElementsRendering.AddElementsCount);
+
                 Session[WebDavAppConfigManager.Instance.SessionKeys.ResourseRenderCount] = renderedElementsCount + WebDavAppConfigManager.Instance.ElementsRendering.AddElementsCount;
 
                 return PartialView("_ResourseCollectionPartial", result);

@@ -99,6 +99,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         private System.Threading.SendOrPostCallback CheckRDSServerAvaliableOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetServersExistingInCollectionsOperationCompleted;
+        
         /// <remarks/>
         public RemoteDesktopServices() {
             this.Url = "http://localhost:9003/RemoteDesktopServices.asmx";
@@ -166,6 +168,9 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         
         /// <remarks/>
         public event CheckRDSServerAvaliableCompletedEventHandler CheckRDSServerAvaliableCompleted;
+        
+        /// <remarks/>
+        public event GetServersExistingInCollectionsCompletedEventHandler GetServersExistingInCollectionsCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
@@ -1097,6 +1102,45 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapHeaderAttribute("ServiceProviderSettingsSoapHeaderValue")]
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/server/GetServersExistingInCollections", RequestNamespace="http://smbsaas/websitepanel/server/", ResponseNamespace="http://smbsaas/websitepanel/server/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string[] GetServersExistingInCollections() {
+            object[] results = this.Invoke("GetServersExistingInCollections", new object[0]);
+            return ((string[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetServersExistingInCollections(System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetServersExistingInCollections", new object[0], callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public string[] EndGetServersExistingInCollections(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((string[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetServersExistingInCollectionsAsync() {
+            this.GetServersExistingInCollectionsAsync(null);
+        }
+        
+        /// <remarks/>
+        public void GetServersExistingInCollectionsAsync(object userState) {
+            if ((this.GetServersExistingInCollectionsOperationCompleted == null)) {
+                this.GetServersExistingInCollectionsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetServersExistingInCollectionsOperationCompleted);
+            }
+            this.InvokeAsync("GetServersExistingInCollections", new object[0], this.GetServersExistingInCollectionsOperationCompleted, userState);
+        }
+        
+        private void OnGetServersExistingInCollectionsOperationCompleted(object arg) {
+            if ((this.GetServersExistingInCollectionsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetServersExistingInCollectionsCompleted(this, new GetServersExistingInCollectionsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -1534,6 +1578,32 @@ namespace WebsitePanel.Providers.RemoteDesktopServices {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((bool)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetServersExistingInCollectionsCompletedEventHandler(object sender, GetServersExistingInCollectionsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetServersExistingInCollectionsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetServersExistingInCollectionsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string[])(this.results[0]));
             }
         }
     }

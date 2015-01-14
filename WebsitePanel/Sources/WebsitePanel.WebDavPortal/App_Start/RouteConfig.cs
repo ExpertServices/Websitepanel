@@ -1,5 +1,6 @@
 ﻿using System.Web.Mvc;
 using System.Web.Routing;
+using WebsitePanel.WebDavPortal.UI.Routes;
 
 namespace WebsitePanel.WebDavPortal
 {
@@ -9,6 +10,22 @@ namespace WebsitePanel.WebDavPortal
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            #region Account
+
+            routes.MapRoute(
+                name: AccountRouteNames.Logout,
+                url: "account/logout",
+                defaults: new { controller = "Account", action = "Logout" }
+                );
+
+            routes.MapRoute(
+                name: AccountRouteNames.Login,
+                url: "account/login",
+                defaults: new { controller = "Account", action = "Login" }
+                ); 
+
+            #endregion
+
             routes.MapRoute(
                 name: "Office365DocumentRoute",
                 url: "office365/{org}/{*pathPart}",
@@ -16,10 +33,9 @@ namespace WebsitePanel.WebDavPortal
                 );
         
             routes.MapRoute(
-                name: "FilePathRoute",
+                name: FileSystemRouteNames.FilePath,
                 url: "{org}/{*pathPart}",
-                defaults: new { controller = "FileSystem", action = "ShowContent", pathPart = UrlParameter.Optional },
-                constraints: new { org = new WebsitePanel.WebDavPortal.Constraints.OrganizationRouteConstraint() }
+                defaults: new { controller = "FileSystem", action = "ShowContent", pathPart = UrlParameter.Optional }
                 );
 
             routes.MapRoute(
