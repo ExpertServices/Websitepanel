@@ -271,10 +271,9 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
-
-                rds.CreateCollection(org.OrganizationId, collection);
-
-                collection.Id = DataProvider.AddRDSCollection(itemId, collection.Name, collection.Description);
+                collection.Name = GetFormattedCollectionName(collection.DisplayName, org.OrganizationId);
+                rds.CreateCollection(org.OrganizationId, collection);                
+                collection.Id = DataProvider.AddRDSCollection(itemId, collection.Name, collection.Description, collection.DisplayName);
 
                 foreach (var server in collection.Servers)
                 {
@@ -1246,6 +1245,11 @@ namespace WebsitePanel.EnterpriseServer
             ServiceProviderProxy.Init(rds, serviceId);
 
             return rds;
+        }
+
+        private static string GetFormattedCollectionName(string displayName, string organizationId)
+        {
+            return string.Format("{0}-{1}", organizationId, displayName.Replace(" ", "_"));
         }
     }
 }

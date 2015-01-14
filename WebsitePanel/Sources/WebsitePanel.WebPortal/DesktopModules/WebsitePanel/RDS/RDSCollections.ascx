@@ -45,10 +45,10 @@
 					    OnRowCommand="gvRDSCollections_RowCommand" AllowPaging="True" AllowSorting="True"
 					    DataSourceID="odsRDSCollectionsPaged" PageSize="20">
                         <Columns>
-                            <asp:TemplateField HeaderText="gvCollectionName" SortExpression="Name">
+                            <asp:TemplateField HeaderText="gvCollectionName" SortExpression="DisplayName">
 							    <ItemStyle Width="40%"></ItemStyle>
 							    <ItemTemplate>                                    
-                                    <asp:hyperlink id="lnkCollectionName" meta:resourcekey="lnkApps" runat="server" NavigateUrl='<%# GetCollectionEditUrl(Eval("Id").ToString()) %>'><%# Eval("Name").ToString() %></asp:hyperlink>
+                                    <asp:hyperlink id="lnkCollectionName" meta:resourcekey="lnkApps" runat="server" NavigateUrl='<%# GetCollectionEditUrl(Eval("Id").ToString()) %>'><%# Eval("DisplayName").ToString() %></asp:hyperlink>
 							    </ItemTemplate>
 						    </asp:TemplateField>
                             <asp:TemplateField HeaderText="gvServer">
