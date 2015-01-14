@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <Fragment>
+    <DirectoryRef Id="INSTALLFOLDER">
+      <Component Id="SchedulerServiceFiles" Guid="AE55A059-3413-4105-9774-D9D5E3F756C1">
+        <File Id="WebsitePanel.SchedulerService.exe" Source="$(var.BUILDPATH)\WebsitePanel.SchedulerService.exe" />
+        <File Id="WebsitePanel.SchedulerService.exe.config" Source="$(var.BUILDPATH)\WebsitePanel.SchedulerService.exe.config" />
+        <File Id="Ionic.Zip.Reduced.dll" Source="$(var.SERVERBUILDPATH)\Ionic.Zip.Reduced.dll"/>
+        <File Id="Microsoft.Web.Services3.dll" Source="$(var.SERVERBUILDPATH)\Microsoft.Web.Services3.dll"/>
+        <File Id="WebsitePanel.Common.Utils.dll" Source="$(var.BUILDPATH)\WebsitePanel.Common.Utils.dll"/>
+        <File Id="WebsitePanel.EnterpriseServer.Base.dll" Source="$(var.BUILDPATH)\WebsitePanel.EnterpriseServer.Base.dll"/>
+        <File Id="WebsitePanel.EnterpriseServer.Code.dll" Source="$(var.BUILDPATH)\WebsitePanel.EnterpriseServer.Code.dll"/>
+        <File Id="IPAddressRange.dll" Source="$(var.BUILDPATH)\IPAddressRange.dll"/>
+        <File Id="WhoisClient.dll" Source="$(var.BUILDPATH)\WhoisClient.dll"/>
+        <File Id="WebsitePanel.Providers.Base.dll" Source="$(var.BUILDPATH)\WebsitePanel.Providers.Base.dll"/>
+        <File Id="WebsitePanel.Server.Client.dll" Source="$(var.BUILDPATH)\WebsitePanel.Server.Client.dll"/>
+        <File Id="WebsitePanel.Templates.dll" Source="$(var.BUILDPATH)\WebsitePanel.Templates.dll"/>
+        <File Id="WebsitePanel.Whois.dll" Source="$(var.BUILDPATH)\WebsitePanel.Whois.dll"/>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+</Include>

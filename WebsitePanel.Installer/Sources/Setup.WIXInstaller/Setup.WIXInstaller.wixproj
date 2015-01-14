@@ -29,10 +29,14 @@
     <DefineConstants>BUILD=release</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="EnterpriseServerFiles.wxs" />
+    <Compile Include="PortalFiles.wxs" />
     <Compile Include="Product.wxs" />
+    <Compile Include="ServerFiles.wxs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Config.wxi" />
+    <Content Include="SchedulerServiceFiles.wxi" />
   </ItemGroup>
   <ItemGroup>
     <WixExtension Include="WixUIExtension">
