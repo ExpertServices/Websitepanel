@@ -1,4 +1,5 @@
 using System;
+using System.DirectoryServices.AccountManagement;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -6,6 +7,7 @@ using System.Net.Security;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDav.Core.Exceptions;
 
 namespace WebsitePanel.WebDav.Core
@@ -18,12 +20,15 @@ namespace WebsitePanel.WebDav.Core
             IFolder CreateFolder(string name);
             IHierarchyItem[] GetChildren();
             IResource GetResource(string name);
+            Uri Path { get; }
         }
 
         public class WebDavFolder : WebDavHierarchyItem, IFolder
         {
             private IHierarchyItem[] _children = new IHierarchyItem[0];
             private Uri _path;
+
+            public Uri Path { get { return _path; } }
 
             /// <summary>
             ///     The constructor
@@ -155,7 +160,7 @@ namespace WebsitePanel.WebDav.Core
             /// </summary>
             public void Open()
             {
-                var request = (HttpWebRequest) WebRequest.Create(_path);
+                var request = (HttpWebRequest)WebRequest.Create(_path);
                 request.PreAuthenticate = true;
                 request.Method = "PROPFIND";
                 request.ContentType = "application/xml";
@@ -163,10 +168,10 @@ namespace WebsitePanel.WebDav.Core
                 //TODO Disable SSL
                 ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });
 
-                var credentials = (NetworkCredential) _credentials;
+                var credentials = (NetworkCredential)_credentials;
                 if (credentials != null && credentials.UserName != null)
                 {
-                    request.Credentials = credentials;
+                    //request.Credentials = credentials;
                     string auth = "Basic " +
                                   Convert.ToBase64String(
                                       Encoding.Default.GetBytes(credentials.UserName + ":" + credentials.Password));

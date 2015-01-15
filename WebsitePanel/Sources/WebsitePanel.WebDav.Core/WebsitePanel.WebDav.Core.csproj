@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
@@ -45,6 +48,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web">
       <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Web.dll</HintPath>
     </Reference>
@@ -79,6 +83,10 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WebsitePanel.EnterpriseServer.Base, Version=2.1.0.1, Culture=neutral, PublicKeyToken=da8782a6fc4d0081, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Scheduler Domains\WebsitePanel\Bin\WebsitePanel.EnterpriseServer.Base.dll</HintPath>
+    </Reference>
     <Reference Include="WebsitePanel.EnterpriseServer.Client">
       <HintPath>..\WebsitePanel.WebPortal\Bin\WebsitePanel.EnterpriseServer.Client.dll</HintPath>
     </Reference>
@@ -108,6 +116,9 @@
     <Compile Include="Config\WebConfigSections\WebDavExplorerConfigurationSettingsSection.cs" />
     <Compile Include="Config\WebConfigSections\WebsitePanelConstantUserElement.cs" />
     <Compile Include="Config\WebDavAppConfigManager.cs" />
+    <Compile Include="Entities\Owa\CheckFileInfo.cs" />
+    <Compile Include="Exceptions\ConnectToWebDavServerException.cs" />
+    <Compile Include="Exceptions\ResourceNotFoundException.cs" />
     <Compile Include="Exceptions\UnauthorizedException.cs" />
     <Compile Include="Exceptions\WebDavException.cs" />
     <Compile Include="Exceptions\WebDavHttpException.cs" />
@@ -115,11 +126,14 @@
     <Compile Include="IFolder.cs" />
     <Compile Include="IHierarchyItem.cs" />
     <Compile Include="IItemContent.cs" />
+    <Compile Include="Interfaces\Managers\IWebDavManager.cs" />
+    <Compile Include="Interfaces\Owa\IWopiServer.cs" />
     <Compile Include="Interfaces\Security\IAuthenticationService.cs" />
     <Compile Include="IResource.cs" />
     <Compile Include="IResumableUpload.cs" />
     <Compile Include="ItemType.cs" />
     <Compile Include="LockUriTokenPair.cs" />
+    <Compile Include="Managers\WebDavManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Property.cs" />
     <Compile Include="PropertyName.cs" />
@@ -132,6 +146,7 @@
     <Compile Include="Security\Cryptography\ICryptography.cs" />
     <Compile Include="Security\Authentication\FormsAuthenticationService.cs" />
     <Compile Include="Security\Authentication\Principals\WspPrincipal.cs" />
+    <Compile Include="Owa\WopiServer.cs" />
     <Compile Include="WebDavSession.cs" />
     <Compile Include="WspContext.cs" />
     <Compile Include="Wsp\Framework\WSP.cs" />

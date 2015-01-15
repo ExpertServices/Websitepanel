@@ -28,8 +28,8 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication.Principals
         public IIdentity Identity { get; private set; }
 
         public WspPrincipal(string username)
-	    {
-		    Identity = new GenericIdentity(username);
+        {
+            Identity = new GenericIdentity(username);//new WindowsIdentity(username, "WindowsAuthentication");
             Login = username;
 	    }
 

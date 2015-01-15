@@ -2,10 +2,11 @@
 @using WebsitePanel.WebDav.Core.Client
 @using Ninject
 @using WebsitePanel.WebDav.Core.Config
+@using WebsitePanel.WebDav.Core.Interfaces.Managers
 
 @model WebsitePanel.WebDavPortal.Models.ModelForWebDav
 @{
-    var webDavManager = DependencyResolver.Current.GetService<WebsitePanel.WebDavPortal.Models.IWebDavManager>();
+    var webDavManager = DependencyResolver.Current.GetService<IWebDavManager>();
     ViewBag.Title = WebDavAppConfigManager.Instance.ApplicationName;
 }
 @Scripts.Render("~/bundles/jquery")
