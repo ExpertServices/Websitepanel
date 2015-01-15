@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -50,7 +50,9 @@ namespace WebsitePanel.Portal.RDS
         protected void btnSave_Click(object sender, EventArgs e)
         {
             if (!Page.IsValid)
+            {
                 return;
+            }
 
             try
             {
@@ -59,14 +61,15 @@ namespace WebsitePanel.Portal.RDS
                     messageBox.ShowErrorMessage("RDS_CREATE_COLLECTION_RDSSERVER_REQUAIRED");
                     return;
                 }
-                RdsCollection collection = new RdsCollection{ Name = txtCollectionName.Text, Servers = servers.GetServers(), Description = "" };
 
+                RdsCollection collection = new RdsCollection{ Name = txtCollectionName.Text, DisplayName = txtCollectionName.Text, Servers = servers.GetServers(), Description = "" };
                 ES.Services.RDS.AddRdsCollection(PanelRequest.ItemID, collection);
-
-                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections",
-                    "SpaceID=" + PanelSecurity.PackageId));
+                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections", "SpaceID=" + PanelSecurity.PackageId));
             }
-            catch { }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage("RDSCOLLECTION_NOT_CREATED", ex);
+            }
         }
     }
 }

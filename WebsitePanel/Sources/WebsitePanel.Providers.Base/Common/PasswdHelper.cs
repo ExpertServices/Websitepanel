@@ -1,3 +1,31 @@
+// Copyright (c) 2015, Outercurve Foundation.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification,
+// are permitted provided that the following conditions are met:
+//
+// - Redistributions of source code must  retain  the  above copyright notice, this
+//   list of conditions and the following disclaimer.
+//
+// - Redistributions in binary form  must  reproduce the  above  copyright  notice,
+//   this list of conditions  and  the  following  disclaimer in  the documentation
+//   and/or other materials provided with the distribution.
+//
+// - Neither  the  name  of  the  Outercurve Foundation  nor   the   names  of  its
+//   contributors may be used to endorse or  promote  products  derived  from  this
+//   software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,  BUT  NOT  LIMITED TO, THE IMPLIED
+// WARRANTIES  OF  MERCHANTABILITY   AND  FITNESS  FOR  A  PARTICULAR  PURPOSE  ARE
+// DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+// ANY DIRECT, INDIRECT, INCIDENTAL,  SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO,  PROCUREMENT  OF  SUBSTITUTE  GOODS OR SERVICES;
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER  CAUSED AND ON
+// ANY  THEORY  OF  LIABILITY,  WHETHER  IN  CONTRACT,  STRICT  LIABILITY,  OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  IN  ANY WAY OUT OF THE USE OF THIS
+// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 using System;
 using System.Security.Cryptography;
 using System.Text;
@@ -55,22 +83,22 @@ namespace WebsitePanel.Providers.Common
 
         public static string MD5Encode(string pw, string salt)
         {
-            // для проверки приходит такое:
+            // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ:
             // $apr1$Vs5.....$iSQlpTkND9RjL7iAMTjDt.
 
-            // для генерирования пароля приходит случайная строка - соль
+            // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅ
 
             string password;
             byte[] final;
 
-            // найдём соль, если в качестве соли пришёл уже хэш
-            //  1. Уберём магический $apr1$
+            // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ
+            //  1. пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ $apr1$
             if (salt.StartsWith(MD5_MAGIC_PREFIX))
             {
                 salt = salt.Substring(MD5_MAGIC_PREFIX.Length);
             }
 
-            //  2. Найдём соль до первого '$' Или 8 символов
+            //  2. пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ '$' пїЅпїЅпїЅ 8 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             int sp = salt.IndexOf('$');
             if (sp < 0 || sp > 8) sp = 8;
 
@@ -100,7 +128,7 @@ namespace WebsitePanel.Providers.Common
 
             for (int i = pw.Length; i != 0; i >>= 1)
             {
-                // (i & 1)  в апаче
+                // (i & 1)  пїЅ пїЅпїЅпїЅпїЅпїЅ
                 if ((i & 0x01) == 1)
                 {
                     s.Add(final, 0, 1);

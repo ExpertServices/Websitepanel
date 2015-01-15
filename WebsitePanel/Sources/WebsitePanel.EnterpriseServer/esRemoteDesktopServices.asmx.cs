@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -99,10 +99,10 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public RdsServersPaged GetFreeRdsServersPaged(string filterColumn, string filterValue,
+        public RdsServersPaged GetFreeRdsServersPaged(int packageId, string filterColumn, string filterValue,
             string sortColumn, int startRow, int maximumRows)
         {
-            return RemoteDesktopServicesController.GetFreeRdsServersPaged(filterColumn, filterValue,
+            return RemoteDesktopServicesController.GetFreeRdsServersPaged(packageId, filterColumn, filterValue,
                 sortColumn, startRow, maximumRows);
         }
 

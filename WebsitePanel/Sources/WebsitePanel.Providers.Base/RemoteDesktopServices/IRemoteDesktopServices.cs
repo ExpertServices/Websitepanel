@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -64,5 +64,6 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         string[] GetApplicationUsers(string collectionName, string applicationName);
         bool SetApplicationUsers(string collectionName, RemoteApplication remoteApp, string[] users);
         bool CheckRDSServerAvaliable(string hostname);
+        List<string> GetServersExistingInCollections();
     }
 }

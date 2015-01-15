@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -2709,6 +2709,7 @@ namespace WebsitePanel.EnterpriseServer
                 domain.CreationDate = ParseDate(creationDateString);
                 domain.ExpirationDate = ParseDate(expirationDateString);
                 domain.RegistrarName = ParseWhoisDomainInfo(whoisResult.Raw, _registrarNamePatterns);
+                domain.LastUpdateDate = DateTime.Now;
 
                 DataProvider.UpdateWhoisDomainInfo(domain.DomainId, domain.CreationDate, domain.ExpirationDate, DateTime.Now, domain.RegistrarName);
             }
@@ -2727,6 +2728,7 @@ namespace WebsitePanel.EnterpriseServer
             domain.CreationDate = creationDate;
             domain.ExpirationDate = expirationDate;
             domain.RegistrarName = registrarName;
+            domain.LastUpdateDate = DateTime.Now;
 
             return domain;
         }

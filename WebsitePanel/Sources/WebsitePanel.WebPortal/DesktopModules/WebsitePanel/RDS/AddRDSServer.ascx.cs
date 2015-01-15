@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -50,7 +50,7 @@ namespace WebsitePanel.Portal.RDS
 
         private void BindRDSServers()
         {
-            ddlServers.DataSource = new RDSHelper().GetFreeRDSServers();
+            ddlServers.DataSource = new RDSHelper().GetFreeRDSServers(PanelRequest.ItemID);
             ddlServers.DataTextField = "Name";
             ddlServers.DataValueField = "Id";
             ddlServers.DataBind();

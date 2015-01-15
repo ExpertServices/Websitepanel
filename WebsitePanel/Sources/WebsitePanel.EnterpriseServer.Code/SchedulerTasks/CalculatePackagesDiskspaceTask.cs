@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -140,15 +140,18 @@ namespace WebsitePanel.EnterpriseServer
                     if (!string.IsNullOrEmpty(org.GlobalAddressList))
                     {
                         int exchangeServiceId = GetExchangeServiceID(org.PackageId);
-                        ServiceProvider exchangeProvider = ExchangeServerController.GetExchangeServiceProvider(exchangeServiceId, item.ServiceId);                                                
-
-                        SoapServiceProviderItem soapOrg = SoapServiceProviderItem.Wrap(org);
-                        ServiceProviderItemDiskSpace[] itemsDiskspace =
-                            exchangeProvider.GetServiceItemsDiskSpace(new SoapServiceProviderItem[] {soapOrg});
-
-                        if (itemsDiskspace != null && itemsDiskspace.Length > 0)
+                        if (exchangeServiceId > 0)
                         {
-                            size += itemsDiskspace[0].DiskSpace;
+                            ServiceProvider exchangeProvider = ExchangeServerController.GetExchangeServiceProvider(exchangeServiceId, item.ServiceId);
+
+                            SoapServiceProviderItem soapOrg = SoapServiceProviderItem.Wrap(org);
+                            ServiceProviderItemDiskSpace[] itemsDiskspace =
+                                exchangeProvider.GetServiceItemsDiskSpace(new SoapServiceProviderItem[] { soapOrg });
+
+                            if (itemsDiskspace != null && itemsDiskspace.Length > 0)
+                            {
+                                size += itemsDiskspace[0].DiskSpace;
+                            }
                         }
                     }
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -360,7 +360,7 @@ namespace WebsitePanel.Ecommerce.EnterpriseServer
 
 			Dictionary<string, Currency> currencies = new Dictionary<string, Currency>();
 			// add euro first
-			currencies.Add("EUR", new Currency("EUR", "ˆ", 1));
+			currencies.Add("EUR", new Currency("EUR", "ï¿½", 1));
 
 			if (ecbXml != null)
 			{

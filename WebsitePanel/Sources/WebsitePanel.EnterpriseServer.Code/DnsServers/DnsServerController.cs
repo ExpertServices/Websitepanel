@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -392,12 +392,61 @@ namespace WebsitePanel.EnterpriseServer
 
             if (itemType == typeof(DnsZone))
             {
+                // Get ascii form in punycode
+                var zoneName = GetAsciiZoneName(itemName);
+
                 // add DNS zone
                 DnsZone zone = new DnsZone();
-                zone.Name = GetAsciiZoneName(itemName);
+                zone.Name = zoneName;
                 zone.ServiceId = serviceId;
                 zone.PackageId = packageId;
                 int zoneId = PackageController.AddPackageItem(zone);
+
+                // Add secondary zone(s)
+                try
+                {
+                    // get secondary DNS services
+                    var primSettings = ServerController.GetServiceSettings(serviceId);
+                    var secondaryServiceIds = new List<int>();
+                    var strSecondaryServices = primSettings["SecondaryDNSServices"];
+                    if (!String.IsNullOrEmpty(strSecondaryServices))
+                    {
+                        var secondaryServices = strSecondaryServices.Split(',');
+                        secondaryServiceIds.AddRange(secondaryServices.Select(strSecondaryId => Utils.ParseInt(strSecondaryId, 0)).Where(secondaryId => secondaryId != 0));
+                    }
+
+                    // add secondary zones
+                    var secondaryZoneFound = false;
+
+                    foreach (var secondaryId in secondaryServiceIds)
+                    {
+                        var secDns = GetDNSServer(secondaryId);
+                        if (secDns.ZoneExists(zoneName))
+                        {
+                            secondaryZoneFound = true;
+
+                            var secondaryZone = new SecondaryDnsZone
+                            {
+                                Name = zoneName,
+                                ServiceId = secondaryId,
+                                PackageId = packageId
+                            };
+
+                            PackageController.AddPackageItem(secondaryZone);
+                        }
+                    }
+
+                    if (!secondaryZoneFound)
+                    {
+                        TaskManager.WriteWarning("No secondary zone(s) found when importing zone " + itemName);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    TaskManager.WriteError(ex, "Error importing secondary zone(s)");
+                }
+
 
                 // add/update domains/pointers
                 RestoreDomainByZone(itemName, packageId, zoneId);

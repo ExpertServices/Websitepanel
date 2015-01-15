@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -407,6 +407,23 @@ namespace WebsitePanel.Server
             catch (Exception ex)
             {
                 Log.WriteError(String.Format("'{0}' CheckRDSServerAvaliable", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public List<string> GetServersExistingInCollections()
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetServersExistingInCollections", ProviderSettings.ProviderName);
+                var result = RDSProvider.GetServersExistingInCollections();
+                Log.WriteEnd("'{0}' GetServersExistingInCollections", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetServersExistingInCollections", ProviderSettings.ProviderName), ex);
                 throw;
             }
         }

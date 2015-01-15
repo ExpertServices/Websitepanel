@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -2685,6 +2685,17 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
+        public static IDataReader GetExchangeAccountByAccountNameWithoutItemId(string primaryEmailAddress)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetExchangeAccountByAccountNameWithoutItemId",
+                new SqlParameter("@PrimaryEmailAddress", primaryEmailAddress)
+            );
+        }
+
+
         public static IDataReader GetExchangeMailboxes(int itemId)
         {
             return SqlHelper.ExecuteReader(
@@ -4499,7 +4510,7 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
-        public static int AddRDSCollection(int itemId, string name, string description)
+        public static int AddRDSCollection(int itemId, string name, string description, string displayName)
         {
             SqlParameter rdsCollectionId = new SqlParameter("@RDSCollectionID", SqlDbType.Int);
             rdsCollectionId.Direction = ParameterDirection.Output;
@@ -4511,7 +4522,8 @@ namespace WebsitePanel.EnterpriseServer
                 rdsCollectionId,
                 new SqlParameter("@ItemID", itemId),
                 new SqlParameter("@Name", name),
-                new SqlParameter("@Description", description)
+                new SqlParameter("@Description", description),
+                new SqlParameter("DisplayName", displayName)
             );
 
             // read identity
@@ -4534,10 +4546,10 @@ namespace WebsitePanel.EnterpriseServer
 
         public static void UpdateRDSCollection(RdsCollection collection)
         {
-            UpdateRDSCollection(collection.Id, collection.ItemId, collection.Name, collection.Description);
+            UpdateRDSCollection(collection.Id, collection.ItemId, collection.Name, collection.Description, collection.DisplayName);
         }
 
-        public static void UpdateRDSCollection(int id, int itemId, string name, string description)
+        public static void UpdateRDSCollection(int id, int itemId, string name, string description, string displayName)
         {
             SqlHelper.ExecuteNonQuery(
                 ConnectionString,
@@ -4546,7 +4558,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@Id", id),
                 new SqlParameter("@ItemID", itemId),
                 new SqlParameter("@Name", name),
-                new SqlParameter("@Description", description)
+                new SqlParameter("@Description", description),
+                new SqlParameter("@DisplayName", displayName)
             );
         }
 
