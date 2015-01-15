@@ -52,6 +52,7 @@ namespace WebsitePanel.EnterpriseServer
         int diskSpaceQuota;
         int bandWidthQuota;
         bool overrideQuotas;
+        bool defaultTopPackage;
         HostingPlanGroupInfo[] groups;
         HostingPlanQuotaInfo[] quotas;
 
@@ -153,6 +154,12 @@ namespace WebsitePanel.EnterpriseServer
         {
             get { return this.overrideQuotas; }
             set { this.overrideQuotas = value; }
+        }
+
+        public bool DefaultTopPackage 
+        {
+            get { return this.defaultTopPackage;  }
+            set { this.defaultTopPackage = value; }
         }
 
         public HostingPlanGroupInfo[] Groups

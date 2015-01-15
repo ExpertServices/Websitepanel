@@ -294,6 +294,4 @@ p.warningText {font-size:14px; color:Red; text-align:center;}
 .Hidden {display: none;}
 .LinkText {color:#428bca;}
 .WrapText { white-space: normal;}
-.activePageBlock, .pageBlock { display: inline-block; height: 24px; margin: 0 2px; width: 26px; font-size: 11px; line-height: 23px; text-align: center; white-space:nowrap; }
-.activePageBlock { border: none; color: #222; font-weight: 600; }
-.pageBlock { border: 1px solid #e6e6e6; border-radius: 1px; cursor: pointer; }
+.chosen-container { margin-top: -30px; }

@@ -63,6 +63,7 @@ namespace WebsitePanel.Portal
                 if(!IsPostBack) 
                 {
                     myPackages = new PackagesHelper().GetMyPackages();
+                    myPackages.Tables[0].DefaultView.Sort = "DefaultTopPackage DESC, PackageId ASC";
                     ddlPackageSelect.DataSource = myPackages.Tables[0].DefaultView;
                     ddlPackageSelect.DataTextField = myPackages.Tables[0].Columns[2].ColumnName;
                     ddlPackageSelect.DataValueField = myPackages.Tables[0].Columns[0].ColumnName;
