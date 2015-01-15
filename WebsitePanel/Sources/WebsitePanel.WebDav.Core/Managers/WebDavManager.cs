@@ -3,20 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
-using WebsitePanel.WebDav.Core;
+using log4net;
+using WebsitePanel.Providers.OS;
 using WebsitePanel.WebDav.Core.Client;
 using WebsitePanel.WebDav.Core.Config;
+using WebsitePanel.WebDav.Core.Exceptions;
+using WebsitePanel.WebDav.Core.Interfaces.Managers;
 using WebsitePanel.WebDav.Core.Security.Cryptography;
 using WebsitePanel.WebDav.Core.Wsp.Framework;
-using WebsitePanel.WebDavPortal.Exceptions;
-using WebsitePanel.Providers.OS;
-using Ninject;
-using WebsitePanel.WebDavPortal.DependencyInjection;
-using System.Web.Mvc;
-using log4net;
 
-namespace WebsitePanel.WebDavPortal.Models
+namespace WebsitePanel.WebDav.Core.Managers
 {
     public class WebDavManager : IWebDavManager
     {
@@ -25,15 +21,15 @@ namespace WebsitePanel.WebDavPortal.Models
 
         private readonly ILog Log;
 
-        private IList<SystemFile> _rootFolders;
-        private int _itemId;
         private IFolder _currentFolder;
-        private string _webDavRootPath;
         private bool _isRoot = true;
+
+        private Lazy<IList<SystemFile>> _rootFolders;
+        private Lazy<string> _webDavRootPath;
 
         public string RootPath 
         {
-            get { return _webDavRootPath; }
+            get { return _webDavRootPath.Value; }
         }
 
         public WebDavManager(ICryptography cryptography)
@@ -41,20 +37,21 @@ namespace WebsitePanel.WebDavPortal.Models
             _cryptography = cryptography;
             Log = LogManager.GetLogger(this.GetType());
 
-            var credential = new NetworkCredential(WspContext.User.Login, _cryptography.Decrypt(WspContext.User.EncryptedPassword), WebDavAppConfigManager.Instance.UserDomain);
-
             _webDavSession = new WebDavSession();
 
-            _webDavSession.Credentials = credential;
-            _itemId = WspContext.User.ItemId;
-            _rootFolders = ConnectToWebDavServer();
-
-            if (_rootFolders.Any())
+            _rootFolders = new Lazy<IList<SystemFile>>(ConnectToWebDavServer);
+            _webDavRootPath = new Lazy<string>(() =>
             {
-                var folder = _rootFolders.First();
-                var uri = new Uri(folder.Url);
-                _webDavRootPath = uri.Scheme + "://" + uri.Host + uri.Segments[0] + uri.Segments[1];
-            }
+                if (_rootFolders.Value.Any())
+                {
+                    var folder = _rootFolders.Value.First();
+                    var uri = new Uri(folder.Url);
+                    return uri.Scheme + "://" + uri.Host + uri.Segments[0] + uri.Segments[1];
+                }
+
+                return string.Empty;
+            });
+            
         }
 
         public void OpenFolder(string pathPart)
@@ -64,8 +61,12 @@ namespace WebsitePanel.WebDavPortal.Models
                 _isRoot = true;
                 return;
             }
+
             _isRoot = false;
-            _currentFolder = _webDavSession.OpenFolder(_webDavRootPath + pathPart);
+
+            _webDavSession.Credentials = new NetworkCredential(WspContext.User.Login, _cryptography.Decrypt(WspContext.User.EncryptedPassword), WebDavAppConfigManager.Instance.UserDomain);
+
+            _currentFolder = _webDavSession.OpenFolder(_webDavRootPath.Value + pathPart);
         }
 
         public IEnumerable<IHierarchyItem> GetChildren()
@@ -74,7 +75,7 @@ namespace WebsitePanel.WebDavPortal.Models
 
             if (_isRoot)
             {
-                children = _rootFolders.Select(x => new WebDavHierarchyItem {Href = new Uri(x.Url), ItemType = ItemType.Folder}).ToArray();
+                children = _rootFolders.Value.Select(x => new WebDavHierarchyItem {Href = new Uri(x.Url), ItemType = ItemType.Folder}).ToArray();
             }
             else
 	        {
@@ -119,6 +120,19 @@ namespace WebsitePanel.WebDavPortal.Models
             }
         }
 
+        public IResource GetResource(string fileName)
+        {
+            try
+            {
+                IResource resource = _currentFolder.GetResource(fileName);
+                return resource;
+            }
+            catch (InvalidOperationException exception)
+            {
+                throw new ResourceNotFoundException("Resource not found", exception);
+            }
+        }
+
         public string GetFileUrl(string fileName)
         {
             try
@@ -139,9 +153,9 @@ namespace WebsitePanel.WebDavPortal.Models
 
             var userGroups = WSP.Services.Organizations.GetSecurityGroupsByMember(user.ItemId, user.AccountId);
 
-            foreach (var folder in WSP.Services.EnterpriseStorage.GetEnterpriseFolders(_itemId))
+            foreach (var folder in WSP.Services.EnterpriseStorage.GetEnterpriseFolders(WspContext.User.ItemId))
             {
-                var permissions = WSP.Services.EnterpriseStorage.GetEnterpriseFolderPermissions(_itemId, folder.Name);
+                var permissions = WSP.Services.EnterpriseStorage.GetEnterpriseFolderPermissions(WspContext.User.ItemId, folder.Name);
 
                 foreach (var permission in permissions)
                 {
@@ -167,6 +181,17 @@ namespace WebsitePanel.WebDavPortal.Models
                     ms.Write(buffer, 0, read);
                 return ms.ToArray();
             }
+        }
+
+
+        public string CreateFileId(string path)
+        {
+            return _cryptography.Encrypt(path).Replace("/", "AAAAA");
+        }
+
+        public string FilePathFromId(string id)
+        {
+            return _cryptography.Decrypt(id.Replace("AAAAA", "/"));
         }
     }
 }

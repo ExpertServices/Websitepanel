@@ -12,7 +12,7 @@ namespace WebsitePanel.WebDavPortal.FileOperations
         public FileOpenerManager()
         {
             if (WebDavAppConfigManager.Instance.OfficeOnline.IsEnabled)
-                _operationTypes.AddRange(WebDavAppConfigManager.Instance.OfficeOnline.ToDictionary(x => x, y => FileOpenerType.OfficeOnline));
+                _operationTypes.AddRange(WebDavAppConfigManager.Instance.OfficeOnline.ToDictionary(x => x.Extension, y => FileOpenerType.OfficeOnline));
         }
 
         public FileOpenerType this[string fileExtension]
