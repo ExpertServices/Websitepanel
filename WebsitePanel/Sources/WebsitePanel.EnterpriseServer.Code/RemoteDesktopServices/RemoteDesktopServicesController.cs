@@ -203,6 +203,16 @@ namespace WebsitePanel.EnterpriseServer
             return GetOrganizationRdsUsersCountInternal(itemId);
         }
 
+        public static int GetOrganizationRdsServersCount(int itemId)
+        {
+            return GetOrganizationRdsServersCountInternal(itemId);
+        }
+
+        public static int GetOrganizationRdsCollectionsCount(int itemId)
+        {
+            return GetOrganizationRdsCollectionsCountInternal(itemId);
+        }
+
         public static List<string> GetApplicationUsers(int itemId, int collectionId, RemoteApplication remoteApp)
         {
             return GetApplicationUsersInternal(itemId, collectionId, remoteApp);
@@ -591,6 +601,15 @@ namespace WebsitePanel.EnterpriseServer
             return DataProvider.GetOrganizationRdsUsersCount(itemId);
         }
 
+        private static int GetOrganizationRdsServersCountInternal(int itemId)
+        {
+            return DataProvider.GetOrganizationRdsServersCount(itemId);
+        }
+
+        private static int GetOrganizationRdsCollectionsCountInternal(int itemId)
+        {
+            return DataProvider.GetOrganizationRdsCollectionsCount(itemId);
+        }
 
         private static List<RdsServer> GetCollectionRdsServersInternal(int collectionId)
         {

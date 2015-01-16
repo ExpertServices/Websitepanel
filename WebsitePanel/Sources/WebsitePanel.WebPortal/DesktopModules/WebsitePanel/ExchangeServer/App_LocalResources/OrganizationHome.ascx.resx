@@ -222,4 +222,16 @@
   <data name="locServiceLevels.Text" xml:space="preserve">
     <value>Service Levels</value>
   </data>
+  <data name="locRemoteDesktop.Text" xml:space="preserve">
+    <value>Remote Desktop</value>
+  </data>
+  <data name="lnkRdsServers.Text" xml:space="preserve">
+    <value>RDS Servers</value>
+  </data>
+  <data name="lnkRdsCollections.Text" xml:space="preserve">
+    <value>RDS Collections</value>
+  </data>
+  <data name="lnkRdsUsers.Text" xml:space="preserve">
+    <value>RDS Users</value>
+  </data>
 </root>

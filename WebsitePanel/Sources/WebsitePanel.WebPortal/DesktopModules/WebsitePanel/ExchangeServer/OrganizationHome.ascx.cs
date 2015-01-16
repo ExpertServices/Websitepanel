@@ -305,6 +305,16 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
             else
                 serviceLevelsStatsPanel.Visible = false;
+
+            if (cntx.Groups.ContainsKey(ResourceGroups.RDS))
+            {
+                remoteDesktopStatsPanel.Visible = true;
+                BindRemoteDesktopStats(orgStats, tenantStats);
+            }
+            else
+            {
+                remoteDesktopStatsPanel.Visible = false;
+            }
         }
 
         private void BindCRMStats(OrganizationStatistics stats, OrganizationStatistics tenantStats)
@@ -447,5 +457,34 @@ namespace WebsitePanel.Portal.ExchangeServer
             }
         }
 
+        private void BindRemoteDesktopStats(OrganizationStatistics stats, OrganizationStatistics tenantStats)
+        {
+            rdsServers.QuotaValue = stats.AllocatedRdsServers;
+            rdsServers.QuotaUsedValue = stats.CreatedRdsServers;
+            if (stats.AllocatedRdsServers != -1)
+            {
+                rdsServers.QuotaAvailable = tenantStats.AllocatedRdsServers - tenantStats.CreatedRdsServers;
+            }
+
+            rdsCollections.QuotaValue = stats.AllocatedRdsCollections;
+            rdsCollections.QuotaUsedValue = stats.CreatedRdsCollections;
+
+            if (stats.AllocatedRdsCollections != -1)
+            {
+                rdsCollections.QuotaAvailable = tenantStats.AllocatedRdsCollections - tenantStats.CreatedRdsCollections;
+            }                       
+
+            rdsUsers.QuotaValue = stats.AllocatedRdsUsers;
+            rdsUsers.QuotaUsedValue = stats.CreatedRdsUsers;
+
+            if (stats.AllocatedRdsCollections != -1)
+            {
+                rdsUsers.QuotaAvailable = tenantStats.AllocatedRdsUsers - tenantStats.CreatedRdsUsers;
+            }
+
+            lnkRdsServers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections", "SpaceID=" + PanelSecurity.PackageId);
+            lnkRdsCollections.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections", "SpaceID=" + PanelSecurity.PackageId);
+            lnkRdsUsers.NavigateUrl = EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections", "SpaceID=" + PanelSecurity.PackageId);
+        }
     }
 }

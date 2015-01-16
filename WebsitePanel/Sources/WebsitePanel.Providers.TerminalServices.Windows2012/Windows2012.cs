@@ -1,4 +1,4 @@
-// Copyright (c) 2015, Outercurve Foundation.
+﻿// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -220,20 +220,20 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
             try
             {                
-                runSpace = OpenRunspace();
+                runSpace = OpenRunspace();                
 
                 var existingServers = GetServersExistingInCollections(runSpace);
-                existingServers = existingServers.Select(x => x.ToUpper()).Intersect(collection.Servers.Select(x => x.FqdName.ToUpper())).ToList();
+                existingServers = existingServers.Select(x => x.ToUpper()).Intersect(collection.Servers.Select(x => x.FqdName.ToUpper())).ToList();                
 
                 if (existingServers.Any())
                 {                                        
                     throw new Exception(string.Format("Server{0} {1} already added to another collection", existingServers.Count == 1 ? "" : "s", string.Join(" ,", existingServers.ToArray())));
-                }
+                }                
 
                 foreach (var server in collection.Servers)
                 {
                     //If server will restart it will not be added to collection
-                    //Do not install feature here                    
+                    //Do not install feature here                        
 
                     if (!ExistRdsServerInDeployment(runSpace, server))
                     {                        
@@ -786,7 +786,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         }
 
         internal void CreateRdRapForce(Runspace runSpace, string gatewayHost, string policyName, string collectionName, List<string> groups)
-        {
+        {            
             //New-Item -Path "RDS:\GatewayServer\RAP" -Name "Allow Connections To Everywhere" -UserGroups "Administrators@." -ComputerGroupType 1
             //Set-Item -Path "RDS:\GatewayServer\RAP\Allow Connections To Everywhere\PortNumbers" -Value 3389,3390
 
@@ -795,6 +795,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 RemoveRdRap(runSpace, gatewayHost, policyName);
             }
 
+            Log.WriteWarning(gatewayHost);
             var userGroupParametr = string.Format("@({0})", string.Join(",", groups.Select(x => string.Format("\"{0}@{1}\"", x, RootDomain)).ToArray()));
             var computerGroupParametr = string.Format("\"{0}@{1}\"", GetComputersGroupName(collectionName), RootDomain);
 
@@ -804,8 +805,10 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             rdRapCommand.Parameters.Add("UserGroups", userGroupParametr);
             rdRapCommand.Parameters.Add("ComputerGroupType", 1);
             rdRapCommand.Parameters.Add("ComputerGroup", computerGroupParametr);
-
+            Log.WriteWarning("User Group:" + userGroupParametr);
+            Log.WriteWarning("Computer Group:" + computerGroupParametr);
             ExecuteRemoteShellCommand(runSpace, gatewayHost, rdRapCommand, RdsModuleName);
+            Log.WriteWarning("RD RAP Added");
         }
 
         internal void RemoveRdRap(Runspace runSpace, string gatewayHost, string name)
@@ -1595,22 +1598,22 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         internal List<string> GetServersExistingInCollections(Runspace runSpace)
         {
             var existingHosts = new List<string>();
-            var scripts = new List<string>();
-            scripts.Add(string.Format("$sessions = Get-RDSessionCollection -ConnectionBroker {0}", ConnectionBroker));
-            scripts.Add(string.Format("foreach($session in $sessions){{Get-RDSessionHost $session.CollectionName -ConnectionBroker {0}|Select SessionHost}}", ConnectionBroker));
-            object[] errors;
+            //var scripts = new List<string>();
+            //scripts.Add(string.Format("$sessions = Get-RDSessionCollection -ConnectionBroker {0}", ConnectionBroker));
+            //scripts.Add(string.Format("foreach($session in $sessions){{Get-RDSessionHost $session.CollectionName -ConnectionBroker {0}|Select SessionHost}}", ConnectionBroker));
+            //object[] errors;
 
-            var sessionHosts = ExecuteShellCommand(runSpace, scripts, out errors);
+            //var sessionHosts = ExecuteShellCommand(runSpace, scripts, out errors);
 
-            foreach(var host in sessionHosts)
-            {
-                var sessionHost = GetPSObjectProperty(host, "SessionHost");
+            //foreach(var host in sessionHosts)
+            //{
+            //    var sessionHost = GetPSObjectProperty(host, "SessionHost");
 
-                if (sessionHost != null)
-                {
-                    existingHosts.Add(sessionHost.ToString());
-                }
-            }
+            //    if (sessionHost != null)
+            //    {
+            //        existingHosts.Add(sessionHost.ToString());
+            //    }
+            //}
 
             return existingHosts;
         }

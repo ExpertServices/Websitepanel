@@ -4595,6 +4595,34 @@ namespace WebsitePanel.EnterpriseServer
             return Convert.ToInt32(count.Value);
         }
 
+        public static int GetOrganizationRdsCollectionsCount(int itemId)
+        {
+            SqlParameter count = new SqlParameter("@TotalNumber", SqlDbType.Int);
+            count.Direction = ParameterDirection.Output;
+
+            DataSet ds = SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetOrganizationRdsCollectionsCount",
+                count,
+                new SqlParameter("@ItemId", itemId));
+
+            // read identity
+            return Convert.ToInt32(count.Value);
+        }
+
+        public static int GetOrganizationRdsServersCount(int itemId)
+        {
+            SqlParameter count = new SqlParameter("@TotalNumber", SqlDbType.Int);
+            count.Direction = ParameterDirection.Output;
+
+            DataSet ds = SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetOrganizationRdsServersCount",
+                count,
+                new SqlParameter("@ItemId", itemId));
+
+            // read identity
+            return Convert.ToInt32(count.Value);
+        }
+
         public static void UpdateRDSCollection(RdsCollection collection)
         {
             UpdateRDSCollection(collection.Id, collection.ItemId, collection.Name, collection.Description, collection.DisplayName);

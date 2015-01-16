@@ -45,6 +45,12 @@ namespace WebsitePanel.Portal.RDS
             if (!IsPostBack)
             {
             }
+
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            if (cntx.Quotas.ContainsKey(Quotas.RDS_COLLECTIONS))
+            {
+                btnAddCollection.Enabled = (!(cntx.Quotas[Quotas.RDS_COLLECTIONS].QuotaAllocatedValue <= gvRDSCollections.Rows.Count) || (cntx.Quotas[Quotas.RDS_COLLECTIONS].QuotaAllocatedValue == -1));
+            }
         }
 
         public string GetServerName(string collectionId)

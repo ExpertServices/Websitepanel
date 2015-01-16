@@ -370,7 +370,12 @@ namespace WebsitePanel.Providers.HostedSolution
             set { createdResourceMailboxes = value; }
         }
 
-
+        public int CreatedRdsServers { get; set; }
+        public int CreatedRdsCollections { get; set; }
+        public int CreatedRdsUsers { get; set; }
+        public int AllocatedRdsServers { get; set; }
+        public int AllocatedRdsCollections { get; set; }
+        public int AllocatedRdsUsers { get; set; }
 	}
 }
 

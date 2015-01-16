@@ -262,5 +262,6 @@ order by rg.groupOrder
 
         public const string RDS_USERS = "RDS.Users";
         public const string RDS_SERVERS = "RDS.Servers";
+        public const string RDS_COLLECTIONS = "RDS.Collections";
     }
 }

@@ -5590,6 +5590,9 @@
   <data name="Quota.RDS.Users" xml:space="preserve">
     <value>Remote Desktop Users</value>
   </data>
+  <data name="Quota.RDS.Collections" xml:space="preserve">
+    <value>Remote Desktop Collections</value>
+  </data>
   <data name="Error.RDS_CREATE_COLLECTION_RDSSERVER_REQUAIRED" xml:space="preserve">
     <value>Error creating rds collection. You need to add at least 1 rds server to collection</value>
   </data>
