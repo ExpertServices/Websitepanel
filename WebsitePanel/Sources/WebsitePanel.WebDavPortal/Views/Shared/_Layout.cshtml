@@ -1,0 +1,59 @@
+﻿@using Ninject
+@using WebsitePanel.WebDav.Core
+@using WebsitePanel.WebDav.Core.Config
+@using WebsitePanel.WebDavPortal.DependencyInjection
+@using WebsitePanel.WebDavPortal.Models
+@using WebsitePanel.WebDavPortal.UI.Routes;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.RouteLink(WebDavAppConfigManager.Instance.ApplicationName, FileSystemRouteNames.FilePath, new { pathPart = string.Empty }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                @{
+                    if (WspContext.User != null)
+                    {
+                        <a id="logout" class="nav navbar-text navbar-right" href="@Url.RouteUrl(AccountRouteNames.Logout)" title="Log out"><i class="glyphicon glyphicon-log-out"></i></a>
+                        <h4 id="username" class="nav navbar-text navbar-right">@WspContext.User.Login</h4>
+                    }
+}
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    
+    @if (WspContext.User != null)
+    {
+        @Scripts.Render("~/bundles/authScripts")
+
+        <script>
+            StartAuthExpirationCheckTimer("@WebDavAppConfigManager.Instance.AuthTimeoutCookieName", "@Url.RouteUrl(AccountRouteNames.Logout)");
+        </script>
+    }
+
+    @RenderSection("scripts", required: false)
+    
+
+</body>
+</html>
