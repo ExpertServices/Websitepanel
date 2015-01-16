@@ -1,5 +1,6 @@
 ﻿using System;
 using System.DirectoryServices.AccountManagement;
+using System.Threading;
 using System.Web;
 using System.Web.Script.Serialization;
 using System.Web.Security;
@@ -29,8 +30,10 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication
                 return null;
             }
 
-            var principal = new WspPrincipal(login);
+            //var user = UserPrincipal.FindByIdentity(_principalContext, IdentityType.UserPrincipalName, login);
 
+            var principal = new WspPrincipal(login);
+            
             var exchangeAccount = WSP.Services.ExchangeServer.GetAccountByAccountNameWithoutItemId(login);
             var organization = WSP.Services.Organizations.GetOrganization(exchangeAccount.ItemId);
 
@@ -40,11 +43,32 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication
             principal.DisplayName = exchangeAccount.DisplayName;
             principal.EncryptedPassword = _cryptography.Encrypt(password);
 
-            CreateAuthenticationTicket(principal);
+            if (HttpContext.Current != null)
+            {
+                HttpContext.Current.User = principal;
+            }
 
-            HttpContext.Current.User = principal;
+            Thread.CurrentPrincipal = principal;
 
             return principal;
+        }
+
+        public WspPrincipal LogIn(string accessToken)
+        {
+            var token = _cryptography.Decrypt(accessToken.Replace("AAAAA", "/"));
+
+            var splitResult = token.Split(':');
+
+            var login = splitResult[0];
+            var password = _cryptography.Decrypt(splitResult[1]);
+            var expiration = DateTime.Parse(splitResult[2]);
+
+            if (expiration < DateTime.Today)
+            {
+                return null;
+            }
+
+            return LogIn(login, password);
         }
 
         public void CreateAuthenticationTicket(WspPrincipal principal)
@@ -65,6 +89,13 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication
             }
 
             HttpContext.Current.Response.Cookies.Add(cookie);
+        }
+
+        public string CreateAccessToken(WspPrincipal principal)
+        {
+            var token = string.Format("{0}:{1}:{2}", principal.Login, principal.EncryptedPassword, DateTime.Now.ToShortDateString());
+
+            return _cryptography.Encrypt(token).Replace("/", "AAAAA");
         }
 
         public void LogOut()

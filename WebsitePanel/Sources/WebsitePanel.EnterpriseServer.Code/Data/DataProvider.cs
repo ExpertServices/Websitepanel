@@ -1580,7 +1580,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static DataSet UpdatePackage(int actorId, int packageId, int planId, string packageName,
             string packageComments, int statusId, DateTime purchaseDate,
-            bool overrideQuotas, string quotasXml)
+            bool overrideQuotas, string quotasXml, bool defaultTopPackage)
         {
             return SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
                 ObjectQualifier + "UpdatePackage",
@@ -1592,7 +1592,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@planId", planId),
                 new SqlParameter("@purchaseDate", purchaseDate),
                 new SqlParameter("@overrideQuotas", overrideQuotas),
-                new SqlParameter("@quotasXml", quotasXml));
+                new SqlParameter("@quotasXml", quotasXml),
+                new SqlParameter("@defaultTopPackage", defaultTopPackage));
         }
 
         public static void UpdatePackageName(int actorId, int packageId, string packageName,

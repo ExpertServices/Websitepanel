@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -6,9 +7,12 @@ using System.Web.Routing;
 using System.Web.Script.Serialization;
 using System.Web.Security;
 using WebsitePanel.WebDav.Core.Config;
+using WebsitePanel.WebDav.Core.Interfaces.Security;
 using WebsitePanel.WebDav.Core.Security.Authentication.Principals;
+using WebsitePanel.WebDav.Core.Security.Cryptography;
 using WebsitePanel.WebDavPortal.Controllers;
 using WebsitePanel.WebDavPortal.DependencyInjection;
+using WebsitePanel.WebDavPortal.HttpHandlers;
 
 namespace WebsitePanel.WebDavPortal
 {
@@ -55,8 +59,11 @@ namespace WebsitePanel.WebDavPortal
 
         protected void Application_PostAuthenticateRequest(Object sender, EventArgs e)
         {
-            HttpCookie authCookie = Request.Cookies[FormsAuthentication.FormsCookieName];
             var contextWrapper = new HttpContextWrapper(Context);
+            HttpCookie authCookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+
+            var authService = DependencyResolver.Current.GetService<IAuthenticationService>();
+            var cryptography = DependencyResolver.Current.GetService<ICryptography>();
 
             if (authCookie != null)
             {
@@ -66,15 +73,7 @@ namespace WebsitePanel.WebDavPortal
 
                 var principalSerialized = serializer.Deserialize<WspPrincipal>(authTicket.UserData);
 
-                var principal = new WspPrincipal(principalSerialized.Login);
-
-                principal.AccountId = principalSerialized.AccountId;
-                principal.ItemId = principalSerialized.ItemId;
-                principal.OrganizationId = principalSerialized.OrganizationId;
-                principal.DisplayName = principalSerialized.DisplayName;
-                principal.EncryptedPassword = principalSerialized.EncryptedPassword;
-
-                HttpContext.Current.User = principal;
+                authService.LogIn(principalSerialized.Login, cryptography.Decrypt(principalSerialized.EncryptedPassword));
 
                 if (!contextWrapper.Request.IsAjaxRequest())
                 {

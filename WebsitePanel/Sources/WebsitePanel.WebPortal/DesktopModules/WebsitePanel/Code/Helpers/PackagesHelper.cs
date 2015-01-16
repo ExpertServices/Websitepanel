@@ -28,12 +28,14 @@
 
 using System;
 using System.Data;
+using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.Caching;
 
 using WebsitePanel.EnterpriseServer;
+using System.Collections;
 
 namespace WebsitePanel.Portal
 {
@@ -160,6 +162,33 @@ namespace WebsitePanel.Portal
         public DataSet GetMyPackages()
         {
             return ES.Services.Packages.GetRawMyPackages(PanelSecurity.SelectedUserId);
+        }
+
+        public Hashtable GetMyPackages(int index, int PackagesPerPage) 
+        {
+            Hashtable ret = new Hashtable();
+
+            DataTable table = ES.Services.Packages.GetRawMyPackages(PanelSecurity.SelectedUserId).Tables[0];
+            if(table.Rows.Count > 0) {
+                System.Collections.Generic.IEnumerable<DataRow> dr = table.AsEnumerable().Skip(PackagesPerPage * index - PackagesPerPage).Take(PackagesPerPage);
+            
+                DataSet set = new DataSet();
+                set.Tables.Add(dr.CopyToDataTable());
+
+                ret.Add("DataSet", set);
+                ret.Add("RowCount", table.Rows.Count);
+            }
+            return ret;
+        }
+
+        public DataSet GetMyPackage(int packageid) {
+            DataSet ret = new DataSet();
+            DataTable table = ES.Services.Packages.GetRawMyPackages(PanelSecurity.SelectedUserId).Tables[0];
+            if(table.Rows.Count > 0) {
+                DataTable t = table.Select("PackageID = " + packageid).CopyToDataTable();
+                ret.Tables.Add(t);
+            }
+            return ret;
         }
 
         #region Packages Paged ODS Methods
