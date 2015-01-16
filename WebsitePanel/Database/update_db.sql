@@ -5468,6 +5468,29 @@ CREATE TABLE RDSCollections
 )
 GO
 
+IF NOT EXISTS(SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE  TABLE_NAME = 'RDSCollections' AND COLUMN_NAME = 'DisplayName')
+BEGIN
+	ALTER TABLE [dbo].[RDSCollections]
+		ADD DisplayName NVARCHAR(255)
+END
+GO
+
+UPDATE [dbo].[RDSCollections] SET DisplayName = [Name]	 WHERE DisplayName IS NULL
+
+
+ALTER TABLE [dbo].[RDSCollectionUsers]
+DROP CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId]
+GO
+
+
+ALTER TABLE [dbo].[RDSCollectionUsers]
+DROP CONSTRAINT [FK_RDSCollectionUsers_UserId]
+GO
+
+ALTER TABLE [dbo].[RDSServers]
+DROP CONSTRAINT [FK_RDSServers_RDSCollectionId]
+GO
+
 ALTER TABLE [dbo].[RDSCollectionUsers]  WITH CHECK ADD  CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId] FOREIGN KEY([RDSCollectionId])
 REFERENCES [dbo].[RDSCollections] ([ID])
 ON DELETE CASCADE
@@ -5736,7 +5759,8 @@ SELECT
 	CR.ID,
 	CR.ItemID,
 	CR.Name,
-	CR.Description
+	CR.Description,
+	CR.DisplayName
 FROM @RDSCollections AS C
 INNER JOIN RDSCollections AS CR ON C.RDSCollectionId = CR.ID
 WHERE C.ItemPosition BETWEEN @StartRow AND @EndRow'
@@ -5769,7 +5793,8 @@ SELECT
 	Id,
 	ItemId,
 	Name, 
-	Description 
+	Description,
+	DisplayName
 	FROM RDSCollections
 	WHERE ItemID = @ItemID
 GO
@@ -5788,9 +5813,10 @@ SELECT TOP 1
 	Id,
 	Name, 
 	ItemId,
-	Description 
+	Description,
+	DisplayName
 	FROM RDSCollections
-	WHERE Name = @Name
+	WHERE DisplayName = @Name
 GO
 
 
@@ -5807,7 +5833,8 @@ SELECT TOP 1
 	Id,
 	ItemId,
 	Name, 
-	Description 
+	Description,
+	DisplayName 
 	FROM RDSCollections
 	WHERE ID = @ID
 GO
@@ -5821,7 +5848,8 @@ CREATE PROCEDURE [dbo].[AddRDSCollection]
 	@RDSCollectionID INT OUTPUT,
 	@ItemID INT,
 	@Name NVARCHAR(255),
-	@Description NVARCHAR(255)
+	@Description NVARCHAR(255),
+	@DisplayName NVARCHAR(255)
 )
 AS
 
@@ -5829,13 +5857,15 @@ INSERT INTO RDSCollections
 (
 	ItemID,
 	Name,
-	Description
+	Description,
+	DisplayName
 )
 VALUES
 (
 	@ItemID,
 	@Name,
-	@Description
+	@Description,
+	@DisplayName
 )
 
 SET @RDSCollectionID = SCOPE_IDENTITY()
@@ -5852,7 +5882,8 @@ CREATE PROCEDURE [dbo].[UpdateRDSCollection]
 	@ID INT,
 	@ItemID INT,
 	@Name NVARCHAR(255),
-	@Description NVARCHAR(255)
+	@Description NVARCHAR(255),
+	@DisplayName NVARCHAR(255)
 )
 AS
 
@@ -5860,7 +5891,8 @@ UPDATE RDSCollections
 SET
 	ItemID = @ItemID,
 	Name = @Name,
-	Description = @Description
+	Description = @Description,
+	DisplayName = @DisplayName
 WHERE ID = @Id
 GO
 
