@@ -49,6 +49,12 @@ namespace WebsitePanel.WebDavPortal
                 );
 
             routes.MapRoute(
+                name: FileSystemRouteNames.ShowAdditionalContent,
+                url: "show-additional-content/{*path}",
+                defaults: new { controller = "FileSystem", action = "ShowAdditionalContent", path = UrlParameter.Optional }
+                );
+
+            routes.MapRoute(
                 name: FileSystemRouteNames.FilePath,
                 url: "{org}/{*pathPart}",
                 defaults: new { controller = "FileSystem", action = "ShowContent", pathPart = UrlParameter.Optional }

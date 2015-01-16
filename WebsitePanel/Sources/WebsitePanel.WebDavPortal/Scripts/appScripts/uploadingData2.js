@@ -14,8 +14,8 @@ var oldResourcesDivHeight = $('#resourcesDiv').height();
 function GetResources() {
     $.ajax({
         type: 'POST',
-        url: '/FileSystem/ShowAdditionalContent',
-        data: { path: window.location.pathname },
+        url: '/show-additional-content',
+        data: { path: window.location.pathname, resourseRenderCount: $(".element-container").length },
         dataType: "html",
         success: function (result) {
             var domElement = $(result);

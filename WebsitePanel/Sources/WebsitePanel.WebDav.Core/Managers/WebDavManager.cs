@@ -48,7 +48,7 @@ namespace WebsitePanel.WebDav.Core.Managers
                         _cryptography.Decrypt(WspContext.User.EncryptedPassword),
                         WebDavAppConfigManager.Instance.UserDomain);
 
-                    _currentFolder = _webDavSession.OpenFolder(string.Format("{0}{1}/{2}",WebDavAppConfigManager.Instance.WebdavRoot, WspContext.User.OrganizationId , pathPart));
+                    _currentFolder = _webDavSession.OpenFolder(string.Format("{0}{1}/{2}", WebDavAppConfigManager.Instance.WebdavRoot, WspContext.User.OrganizationId, pathPart));
                 }
 
                 children = _currentFolder.GetChildren();
@@ -73,9 +73,15 @@ namespace WebsitePanel.WebDav.Core.Managers
 
             OpenFolder(folder);
 
-            IResource resource = _currentFolder.GetResource(resourceName);
+            try
+            {
+                IResource resource = _currentFolder.GetResource(resourceName);
 
-            return resource.ItemType == ItemType.Resource;
+                return true;
+            }
+            catch (Exception e){}
+
+            return false;
         }
 
 
@@ -180,6 +186,8 @@ namespace WebsitePanel.WebDav.Core.Managers
 
         private string GetFileFolder(string path)
         {
+            path = path.TrimEnd('/');
+
             if (string.IsNullOrEmpty(path) || !path.Contains('/'))
             {
                 return string.Empty;
@@ -187,13 +195,15 @@ namespace WebsitePanel.WebDav.Core.Managers
 
             string fileName = path.Split('/').Last();
             int index = path.LastIndexOf(fileName, StringComparison.InvariantCultureIgnoreCase);
-            string folder = path.Remove(index - 1, fileName.Length + 1);
+            string folder = string.IsNullOrEmpty(fileName)? path : path.Remove(index - 1, fileName.Length + 1);
 
             return folder;
         }
 
         private string GetResourceName(string path)
         {
+            path = path.TrimEnd('/');
+
             if (string.IsNullOrEmpty(path) || !path.Contains('/'))
             {
                 return string.Empty;

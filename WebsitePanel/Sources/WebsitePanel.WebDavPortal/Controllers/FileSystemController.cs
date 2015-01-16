@@ -85,22 +85,15 @@ namespace WebsitePanel.WebDavPortal.Controllers
         }
 
         [HttpPost]
-        public ActionResult ShowAdditionalContent(string path)
+        public ActionResult ShowAdditionalContent(string path = "", int resourseRenderCount = 0)
         {
-            if (Session[WebDavAppConfigManager.Instance.SessionKeys.ResourseRenderCount] != null)
-            {
-                var renderedElementsCount = (int)Session[WebDavAppConfigManager.Instance.SessionKeys.ResourseRenderCount];
+            path = path.Replace(WspContext.User.OrganizationId, "").Trim('/');
 
-                IEnumerable<IHierarchyItem> children = _webdavManager.OpenFolder(path);
+            IEnumerable<IHierarchyItem> children = _webdavManager.OpenFolder(path);
 
-                var result = children.Skip(renderedElementsCount).Take(WebDavAppConfigManager.Instance.ElementsRendering.AddElementsCount);
+            var result = children.Skip(resourseRenderCount).Take(WebDavAppConfigManager.Instance.ElementsRendering.AddElementsCount);
 
-                Session[WebDavAppConfigManager.Instance.SessionKeys.ResourseRenderCount] = renderedElementsCount + WebDavAppConfigManager.Instance.ElementsRendering.AddElementsCount;
-
-                return PartialView("_ResourseCollectionPartial", result);
-            }
-
-            return new HttpStatusCodeResult(HttpStatusCode.NoContent);
+            return PartialView("_ResourseCollectionPartial", result);
         }
     }
 }
