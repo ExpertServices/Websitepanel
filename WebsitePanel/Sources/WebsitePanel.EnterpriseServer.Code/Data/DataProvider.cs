@@ -4330,6 +4330,57 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Enterprise Storage
 
+        public static int AddWebDavAccessToken(Base.HostedSolution.WebDavAccessToken accessToken)
+        {
+            SqlParameter prmId = new SqlParameter("@TokenID", SqlDbType.Int);
+            prmId.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddWebDavAccessToken",
+                prmId,
+                new SqlParameter("@AccessToken", accessToken.AccessToken),
+                new SqlParameter("@FilePath", accessToken.FilePath),
+                new SqlParameter("@AuthData", accessToken.AuthData),
+                new SqlParameter("@ExpirationDate", accessToken.ExpirationDate),
+                new SqlParameter("@AccountID", accessToken.AccountId),
+                new SqlParameter("@ItemId", accessToken.ItemId)
+            );
+
+            // read identity
+            return Convert.ToInt32(prmId.Value);
+        }
+
+        public static void DeleteExpiredWebDavAccessTokens()
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteExpiredWebDavAccessTokens"
+            );
+        }
+
+        public static IDataReader GetWebDavAccessTokenById(int id)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetWebDavAccessTokenById",
+                new SqlParameter("@Id", id)
+            );
+        }
+
+        public static IDataReader GetWebDavAccessTokenByAccessToken(Guid accessToken)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetWebDavAccessTokenByAccessToken",
+                new SqlParameter("@AccessToken", accessToken)
+            );
+        }
+
         public static int AddEntepriseFolder(int itemId, string folderName, int folderQuota, string locationDrive, string homeFolder, string domain)
         {
             SqlParameter prmId = new SqlParameter("@FolderID", SqlDbType.Int);

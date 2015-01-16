@@ -30,13 +30,13 @@ namespace WebsitePanel.WebDavPortal
 
             routes.MapRoute(
                 name: OwaRouteNames.GetFile,
-                url: "owa/wopi*/files/{encodedPath}/contents",
+                url: "owa/wopi*/files/{accessTokenId}/contents",
                 defaults: new { controller = "Owa", action = "GetFile" }
                 );
 
             routes.MapRoute(
                 name: OwaRouteNames.CheckFileInfo,
-                url: "owa/wopi*/files/{encodedPath}",
+                url: "owa/wopi*/files/{accessTokenId}",
                 defaults: new { controller = "Owa", action = "CheckFileInfo" }
                 );
 

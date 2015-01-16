@@ -127,6 +127,8 @@
     <Compile Include="IFolder.cs" />
     <Compile Include="IHierarchyItem.cs" />
     <Compile Include="IItemContent.cs" />
+    <Compile Include="Managers\AccessTokenManager.cs" />
+    <Compile Include="Interfaces\Managers\IAccessTokenManager.cs" />
     <Compile Include="Interfaces\Managers\IWebDavManager.cs" />
     <Compile Include="Interfaces\Owa\IWopiServer.cs" />
     <Compile Include="Interfaces\Security\IAuthenticationService.cs" />

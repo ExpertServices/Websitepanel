@@ -152,6 +152,26 @@ namespace WebsitePanel.EnterpriseServer
             StartESBackgroundTaskInternal("SET_ENTERPRISE_FOLDER_SETTINGS", itemId, folder, permissions, directoyBrowsingEnabled, quota, quotaType);
         }
 
+        public static int AddWebDavAccessToken(WebDavAccessToken accessToken)
+        {
+           return DataProvider.AddWebDavAccessToken(accessToken);
+        }
+
+        public static void DeleteExpiredWebDavAccessTokens()
+        {
+            DataProvider.DeleteExpiredWebDavAccessTokens();
+        }
+
+        public static WebDavAccessToken GetWebDavAccessTokenById(int id)
+        {
+            return ObjectUtils.FillObjectFromDataReader<WebDavAccessToken>(DataProvider.GetWebDavAccessTokenById(id));
+        }
+
+        public static WebDavAccessToken GetWebDavAccessTokenByAccessToken(Guid accessToken)
+        {
+            return ObjectUtils.FillObjectFromDataReader<WebDavAccessToken>(DataProvider.GetWebDavAccessTokenByAccessToken(accessToken));
+        }
+
         #region Directory Browsing
 
         public static bool GetDirectoryBrowseEnabled(int itemId, string siteId)

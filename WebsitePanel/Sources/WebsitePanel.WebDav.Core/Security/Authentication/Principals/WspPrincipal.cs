@@ -12,7 +12,6 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication.Principals
         public int ItemId { get; set; }
 
         public string Login { get; set; }
-        public string EncryptedPassword { get; set; }
 
         public string DisplayName { get; set; }
 
@@ -26,6 +25,8 @@ namespace WebsitePanel.WebDav.Core.Security.Authentication.Principals
 
         [XmlIgnore, ScriptIgnore]
         public IIdentity Identity { get; private set; }
+
+        public string EncryptedPassword { get; set; }
 
         public WspPrincipal(string username)
         {

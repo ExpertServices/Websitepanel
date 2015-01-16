@@ -164,16 +164,6 @@ namespace WebsitePanel.WebDav.Core.Managers
             return rootFolders;
         }
 
-        public string CreateFileId(string path)
-        {
-            return _cryptography.Encrypt(path).Replace("/", "AAAAA");
-        }
-
-        public string FilePathFromId(string id)
-        {
-            return _cryptography.Decrypt(id.Replace("AAAAA", "/"));
-        }
-
         #region Helpers
 
         private byte[] ReadFully(Stream input)

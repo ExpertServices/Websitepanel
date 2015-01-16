@@ -25,6 +25,7 @@ namespace WebsitePanel.WebDavPortal.DependencyInjection
             kernel.Bind<ICryptography>().To<CryptoUtils>();
             kernel.Bind<IAuthenticationService>().To<FormsAuthenticationService>();
             kernel.Bind<IWebDavManager>().To<WebDavManager>();
+            kernel.Bind<IAccessTokenManager>().To<AccessTokenManager>();
             kernel.Bind<IWopiServer>().To<WopiServer>();
         }
     }

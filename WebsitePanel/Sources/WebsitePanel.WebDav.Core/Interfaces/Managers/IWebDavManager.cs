@@ -10,8 +10,5 @@ namespace WebsitePanel.WebDav.Core.Interfaces.Managers
         byte[] GetFileBytes(string path);
         IResource GetResource(string path);
         string GetFileUrl(string path);
-
-        string CreateFileId(string path);
-        string FilePathFromId(string id);
     }
 }

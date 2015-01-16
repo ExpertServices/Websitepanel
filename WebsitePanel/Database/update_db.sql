@@ -7566,3 +7566,116 @@ COMMIT TRAN
 RETURN
 
 GO
+
+
+-- WebDAv portal
+
+IF EXISTS (SELECT * FROM SYS.TABLES WHERE name = 'WebDavAccessTokens')
+DROP TABLE WebDavAccessTokens
+GO
+CREATE TABLE WebDavAccessTokens
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+	FilePath NVARCHAR(MAX) NOT NULL,
+	AuthData NVARCHAR(MAX) NOT NULL,
+	AccessToken UNIQUEIDENTIFIER NOT NULL,
+	ExpirationDate DATETIME NOT NULL,
+	AccountID INT NOT NULL ,
+	ItemId INT NOT NULL
+)
+GO
+
+ALTER TABLE [dbo].[WebDavAccessTokens]  WITH CHECK ADD  CONSTRAINT [FK_WebDavAccessTokens_UserId] FOREIGN KEY([AccountID])
+REFERENCES [dbo].[ExchangeAccounts] ([AccountID])
+ON DELETE CASCADE
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'AddWebDavAccessToken')
+DROP PROCEDURE AddWebDavAccessToken
+GO
+CREATE PROCEDURE [dbo].[AddWebDavAccessToken]
+(
+	@TokenID INT OUTPUT,
+	@FilePath NVARCHAR(MAX),
+	@AccessToken UNIQUEIDENTIFIER,
+	@AuthData NVARCHAR(MAX),
+	@ExpirationDate DATETIME,
+	@AccountID INT,
+	@ItemId INT
+)
+AS
+INSERT INTO WebDavAccessTokens
+(
+	FilePath,
+	AccessToken,
+	AuthData,
+	ExpirationDate,
+	AccountID  ,
+	ItemId
+)
+VALUES
+(
+	@FilePath ,
+	@AccessToken  ,
+	@AuthData,
+	@ExpirationDate ,
+	@AccountID,
+	@ItemId
+)
+
+SET @TokenID = SCOPE_IDENTITY()
+
+RETURN
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteExpiredWebDavAccessTokens')
+DROP PROCEDURE DeleteExpiredWebDavAccessTokens
+GO
+CREATE PROCEDURE [dbo].[DeleteExpiredWebDavAccessTokens]
+AS
+DELETE FROM WebDavAccessTokens
+WHERE ExpirationDate < getdate()
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetWebDavAccessTokenById')
+DROP PROCEDURE GetWebDavAccessTokenById
+GO
+CREATE PROCEDURE [dbo].[GetWebDavAccessTokenById]
+(
+	@Id int
+)
+AS
+SELECT 
+	ID ,
+	FilePath ,
+	AuthData ,
+	AccessToken,
+	ExpirationDate,
+	AccountID,
+	ItemId
+	FROM WebDavAccessTokens 
+	Where ID = @Id AND ExpirationDate > getdate()
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetWebDavAccessTokenByAccessToken')
+DROP PROCEDURE GetWebDavAccessTokenByAccessToken
+GO
+CREATE PROCEDURE [dbo].[GetWebDavAccessTokenByAccessToken]
+(
+	@AccessToken UNIQUEIDENTIFIER
+)
+AS
+SELECT 
+	ID ,
+	FilePath ,
+	AuthData ,
+	AccessToken,
+	ExpirationDate,
+	AccountID,
+	ItemId
+	FROM WebDavAccessTokens 
+	Where AccessToken = @AccessToken AND ExpirationDate > getdate()
+GO

@@ -29,12 +29,14 @@ namespace WebsitePanel.WebDavPortal.Controllers
         private readonly ICryptography _cryptography;
         private readonly IWebDavManager _webdavManager;
         private readonly IAuthenticationService _authenticationService;
+        private readonly IAccessTokenManager _tokenManager;
 
-        public FileSystemController(ICryptography cryptography, IWebDavManager webdavManager, IAuthenticationService authenticationService)
+        public FileSystemController(ICryptography cryptography, IWebDavManager webdavManager, IAuthenticationService authenticationService, IAccessTokenManager tokenManager)
         {
             _cryptography = cryptography;
             _webdavManager = webdavManager;
             _authenticationService = authenticationService;
+            _tokenManager = tokenManager;
         }
 
         [HttpGet]
@@ -73,11 +75,11 @@ namespace WebsitePanel.WebDavPortal.Controllers
             var owaOpener = WebDavAppConfigManager.Instance.OfficeOnline.Single(x => x.Extension == Path.GetExtension(pathPart));
 
             string fileUrl = WebDavAppConfigManager.Instance.WebdavRoot+ org + "/" + pathPart.TrimStart('/');
-            string accessToken = _authenticationService.CreateAccessToken(WspContext.User);
+            var accessToken = _tokenManager.CreateToken(WspContext.User, pathPart);
 
-            string wopiSrc = Server.UrlDecode(Url.RouteUrl(OwaRouteNames.CheckFileInfo, new { encodedPath = _webdavManager.CreateFileId(pathPart) }, Request.Url.Scheme));
+            string wopiSrc = Server.UrlDecode(Url.RouteUrl(OwaRouteNames.CheckFileInfo, new { accessTokenId = accessToken.Id }, Request.Url.Scheme));
 
-            var uri = string.Format("{0}/{1}?WOPISrc={2}&access_token={3}", WebDavAppConfigManager.Instance.OfficeOnline.Url, owaOpener.OwaOpener, Server.UrlEncode(wopiSrc), Server.UrlEncode(accessToken));
+            var uri = string.Format("{0}/{1}?WOPISrc={2}&access_token={3}", WebDavAppConfigManager.Instance.OfficeOnline.Url, owaOpener.OwaOpener, Server.UrlEncode(wopiSrc), Server.UrlEncode(accessToken.AccessToken.ToString("N")));
 
             return View(new OfficeOnlineModel(uri, new Uri(fileUrl).Segments.Last()));
         }
