@@ -778,7 +778,7 @@ namespace WebsitePanel.EnterpriseServer
                 // update package
                 result.ExceedingQuotas = DataProvider.UpdatePackage(SecurityContext.User.UserId,
                     package.PackageId, package.PlanId, package.PackageName, package.PackageComments, package.StatusId,
-                    package.PurchaseDate, package.OverrideQuotas, quotasXml);
+                    package.PurchaseDate, package.OverrideQuotas, quotasXml, package.DefaultTopPackage);
 
                 if (result.ExceedingQuotas.Tables[0].Rows.Count > 0)
                     result.Result = BusinessErrorCodes.ERROR_PACKAGE_QUOTA_EXCEED;
@@ -1740,6 +1740,21 @@ namespace WebsitePanel.EnterpriseServer
             //{
             //    AuditLog.AddRecord(record);
             //}
+        }
+
+        public static bool SetDefaultTopPackage(int userId, int packageId) {
+            List<PackageInfo> lpi = GetPackages(userId);
+            foreach(PackageInfo pi in lpi) {
+                if(pi.DefaultTopPackage) {
+                    pi.DefaultTopPackage = false;
+                    UpdatePackage(pi);
+                }
+                if(pi.PackageId == packageId) {
+                    pi.DefaultTopPackage = true;
+                    UpdatePackage(pi);
+                }
+            }
+            return true;
         }
 
         #endregion

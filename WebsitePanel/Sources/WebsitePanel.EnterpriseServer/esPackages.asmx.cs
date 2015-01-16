@@ -262,6 +262,11 @@ namespace WebsitePanel.EnterpriseServer
             return PackageController.UpdatePackageSettings(settings);
         }
 
+        [WebMethod]
+        public bool SetDefaultTopPackage(int userId, int packageId) {
+            return PackageController.SetDefaultTopPackage(userId, packageId);
+        }
+
         #endregion
 
         #region Package Add-ons

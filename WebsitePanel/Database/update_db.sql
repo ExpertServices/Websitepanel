@@ -5462,20 +5462,6 @@ CREATE TABLE RDSCollections
 )
 GO
 
-ALTER TABLE [dbo].[RDSCollectionUsers]
-DROP CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId]
-GO
-
-
-ALTER TABLE [dbo].[RDSCollectionUsers]
-DROP CONSTRAINT [FK_RDSCollectionUsers_UserId]
-GO
-
-ALTER TABLE [dbo].[RDSServers]
-DROP CONSTRAINT [FK_RDSServers_RDSCollectionId]
-GO
-
-
 ALTER TABLE [dbo].[RDSCollectionUsers]  WITH CHECK ADD  CONSTRAINT [FK_RDSCollectionUsers_RDSCollectionId] FOREIGN KEY([RDSCollectionId])
 REFERENCES [dbo].[RDSCollections] ([ID])
 ON DELETE CASCADE
@@ -5983,44 +5969,6 @@ SELECT
   WHERE [RDSCollectionId] in (SELECT [ID] FROM [RDSCollections] where [ItemId]  = @ItemId )
 RETURN
 GO
-
-
-
-IF OBJECTPROPERTY(object_id('dbo.GetExchangeAccountByAccountNameWithoutItemId'), N'IsProcedure') = 1
-DROP PROCEDURE [dbo].[GetExchangeAccountByAccountNameWithoutItemId]
-GO
-CREATE PROCEDURE [dbo].[GetExchangeAccountByAccountNameWithoutItemId] 
-(
-	@PrimaryEmailAddress nvarchar(300)
-)
-AS
-SELECT
-	E.AccountID,
-	E.ItemID,
-	E.AccountType,
-	E.AccountName,
-	E.DisplayName,
-	E.PrimaryEmailAddress,
-	E.MailEnabledPublicFolder,
-	E.MailboxManagerActions,
-	E.SamAccountName,
-	E.AccountPassword,
-	E.MailboxPlanId,
-	P.MailboxPlan,
-	E.SubscriberNumber,
-	E.UserPrincipalName,
-	E.ArchivingMailboxPlanId, 
-	AP.MailboxPlan as 'ArchivingMailboxPlan',
-	E.EnableArchiving
-FROM
-	ExchangeAccounts AS E
-LEFT OUTER JOIN ExchangeMailboxPlans AS P ON E.MailboxPlanId = P.MailboxPlanId	
-LEFT OUTER JOIN ExchangeMailboxPlans AS AP ON E.ArchivingMailboxPlanId = AP.MailboxPlanId
-WHERE
-	E.PrimaryEmailAddress = @PrimaryEmailAddress
-RETURN
-GO
-
 
 
 -- wsp-10269: Changed php extension path in default properties for IIS70 and IIS80 provider
@@ -7410,6 +7358,211 @@ INNER JOIN PackagesTree(@PackageID, @Recursive) AS PT ON D.PackageID = PT.Packag
 LEFT OUTER JOIN ServiceItems AS WS ON D.WebSiteID = WS.ItemID
 LEFT OUTER JOIN ServiceItems AS MD ON D.MailDomainID = MD.ItemID
 LEFT OUTER JOIN ServiceItems AS Z ON D.ZoneItemID = Z.ItemID
+RETURN
+
+GO
+
+IF NOT EXISTS(select 1 from sys.columns COLS INNER JOIN sys.objects OBJS ON OBJS.object_id=COLS.object_id and OBJS.type='U' AND OBJS.name='Packages' AND COLS.name='DefaultTopPackage')
+BEGIN
+ALTER TABLE [dbo].[Packages] ADD
+	[DefaultTopPackage] [bit] DEFAULT 0 NOT NULL
+END
+GO
+
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetMyPackages')
+DROP PROCEDURE GetMyPackages
+GO
+CREATE PROCEDURE [dbo].[GetMyPackages]
+(
+	@ActorID int,
+	@UserID int
+)
+AS
+
+-- check rights
+IF dbo.CheckActorUserRights(@ActorID, @UserID) = 0
+RAISERROR('You are not allowed to access this account', 16, 1)
+
+SELECT
+	P.PackageID,
+	P.ParentPackageID,
+	P.PackageName,
+	P.StatusID,
+	P.PlanID,
+	P.PurchaseDate,
+	
+	dbo.GetItemComments(P.PackageID, 'PACKAGE', @ActorID) AS Comments,
+	
+	-- server
+	ISNULL(P.ServerID, 0) AS ServerID,
+	ISNULL(S.ServerName, 'None') AS ServerName,
+	ISNULL(S.Comments, '') AS ServerComments,
+	ISNULL(S.VirtualServer, 1) AS VirtualServer,
+	
+	-- hosting plan
+	HP.PlanName,
+	
+	-- user
+	P.UserID,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.FullName,
+	U.RoleID,
+	U.Email,
+
+	P.DefaultTopPackage
+FROM Packages AS P
+INNER JOIN UsersDetailed AS U ON P.UserID = U.UserID
+LEFT OUTER JOIN Servers AS S ON P.ServerID = S.ServerID
+LEFT OUTER JOIN HostingPlans AS HP ON P.PlanID = HP.PlanID
+WHERE P.UserID = @UserID
+RETURN
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetPackages')
+DROP PROCEDURE GetPackages
+GO
+CREATE PROCEDURE [dbo].[GetPackages]
+(
+	@ActorID int,
+	@UserID int
+)
+AS
+
+SELECT
+	P.PackageID,
+	P.ParentPackageID,
+	P.PackageName,
+	P.StatusID,
+	P.PurchaseDate,
+	
+	-- server
+	ISNULL(P.ServerID, 0) AS ServerID,
+	ISNULL(S.ServerName, 'None') AS ServerName,
+	ISNULL(S.Comments, '') AS ServerComments,
+	ISNULL(S.VirtualServer, 1) AS VirtualServer,
+	
+	-- hosting plan
+	P.PlanID,
+	HP.PlanName,
+	
+	-- user
+	P.UserID,
+	U.Username,
+	U.FirstName,
+	U.LastName,
+	U.RoleID,
+	U.Email,
+
+	P.DefaultTopPackage
+FROM Packages AS P
+INNER JOIN Users AS U ON P.UserID = U.UserID
+INNER JOIN Servers AS S ON P.ServerID = S.ServerID
+INNER JOIN HostingPlans AS HP ON P.PlanID = HP.PlanID
+WHERE
+	P.UserID = @UserID	
+RETURN
+
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'GetPackage')
+DROP PROCEDURE GetPackage
+GO
+CREATE PROCEDURE [dbo].[GetPackage]
+(
+	@PackageID int,
+	@ActorID int
+)
+AS
+
+-- Note: ActorID is not verified
+-- check both requested and parent package
+
+SELECT
+	P.PackageID,
+	P.ParentPackageID,
+	P.UserID,
+	P.PackageName,
+	P.PackageComments,
+	P.ServerID,
+	P.StatusID,
+	P.PlanID,
+	P.PurchaseDate,
+	P.OverrideQuotas,
+	P.DefaultTopPackage
+FROM Packages AS P
+WHERE P.PackageID = @PackageID
+RETURN
+
+GO
+
+IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'UpdatePackage')
+DROP PROCEDURE UpdatePackage
+GO
+CREATE PROCEDURE [dbo].[UpdatePackage]
+(
+	@ActorID int,
+	@PackageID int,
+	@PackageName nvarchar(300),
+	@PackageComments ntext,
+	@StatusID int,
+	@PlanID int,
+	@PurchaseDate datetime,
+	@OverrideQuotas bit,
+	@QuotasXml ntext,
+	@DefaultTopPackage bit
+)
+AS
+
+-- check rights
+IF dbo.CheckActorPackageRights(@ActorID, @PackageID) = 0
+RAISERROR('You are not allowed to access this package', 16, 1)
+
+BEGIN TRAN
+
+DECLARE @ParentPackageID int
+DECLARE @OldPlanID int
+
+SELECT @ParentPackageID = ParentPackageID, @OldPlanID = PlanID FROM Packages
+WHERE PackageID = @PackageID
+
+-- update package
+UPDATE Packages SET
+	PackageName = @PackageName,
+	PackageComments = @PackageComments,
+	StatusID = @StatusID,
+	PlanID = @PlanID,
+	PurchaseDate = @PurchaseDate,
+	OverrideQuotas = @OverrideQuotas,
+	DefaultTopPackage = @DefaultTopPackage
+WHERE
+	PackageID = @PackageID
+
+-- update quotas (if required)
+EXEC UpdatePackageQuotas @ActorID, @PackageID, @QuotasXml
+
+-- check resulting quotas
+DECLARE @ExceedingQuotas AS TABLE (QuotaID int, QuotaName nvarchar(50), QuotaValue int)
+
+-- check exceeding quotas if plan has been changed
+IF (@OldPlanID <> @PlanID) OR (@OverrideQuotas = 1)
+BEGIN
+	INSERT INTO @ExceedingQuotas
+	SELECT * FROM dbo.GetPackageExceedingQuotas(@ParentPackageID) WHERE QuotaValue > 0
+END
+
+SELECT * FROM @ExceedingQuotas
+
+IF EXISTS(SELECT * FROM @ExceedingQuotas)
+BEGIN
+	ROLLBACK TRAN
+	RETURN
+END
+
+
+COMMIT TRAN
 RETURN
 
 GO

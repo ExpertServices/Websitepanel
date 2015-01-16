@@ -34,6 +34,9 @@
     <div class="ToolLink">
         <asp:HyperLink ID="lnkDelete" runat="server" meta:resourcekey="lnkDelete" Text="Delete"></asp:HyperLink>
     </div>
+    <div class="ToolLink">
+        <asp:CheckBox ID="chkDefault" runat="server" meta:resourcekey="chkDefaultSpace" AutoPostBack="true" OnCheckedChanged="chkDefault_CheckedChanged" Text="Default space" />
+    </div>
 </div>
 <br />
 <wsp:CollapsiblePanel id="StatusHeader" runat="server"

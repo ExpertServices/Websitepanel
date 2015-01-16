@@ -93,9 +93,9 @@ namespace WebsitePanel.EnterpriseServer
             return GetRdsServersPagedInternal(filterColumn, filterValue, sortColumn, startRow, maximumRows);
         }
 
-        public static RdsServersPaged GetFreeRdsServersPaged(string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
+        public static RdsServersPaged GetFreeRdsServersPaged(int packageId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
         {
-            return GetFreeRdsServersPagedInternal(filterColumn, filterValue, sortColumn, startRow, maximumRows);
+            return GetFreeRdsServersPagedInternal(packageId, filterColumn, filterValue, sortColumn, startRow, maximumRows);
         }
 
         public static RdsServersPaged GetOrganizationRdsServersPaged(int itemId, int? collectionId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
@@ -271,10 +271,9 @@ namespace WebsitePanel.EnterpriseServer
                 }
 
                 var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
-
-                rds.CreateCollection(org.OrganizationId, collection);
-
-                collection.Id = DataProvider.AddRDSCollection(itemId, collection.Name, collection.Description);
+                collection.Name = GetFormattedCollectionName(collection.DisplayName, org.OrganizationId);
+                rds.CreateCollection(org.OrganizationId, collection);                
+                collection.Id = DataProvider.AddRDSCollection(itemId, collection.Name, collection.Description, collection.DisplayName);
 
                 foreach (var server in collection.Servers)
                 {
@@ -477,17 +476,26 @@ namespace WebsitePanel.EnterpriseServer
             return result;
         }
 
-        private static RdsServersPaged GetFreeRdsServersPagedInternal(string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
+        private static RdsServersPaged GetFreeRdsServersPagedInternal(int itemId, string filterColumn, string filterValue, string sortColumn, int startRow, int maximumRows)
         {
-            DataSet ds = DataProvider.GetRDSServersPaged(null, null, filterColumn, filterValue, sortColumn, startRow, maximumRows);
-
             RdsServersPaged result = new RdsServersPaged();
+            Organization org = OrganizationController.GetOrganization(itemId);
+
+            if (org == null)
+            {
+                return result;
+            }
+
+            var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
+            var existingServers = rds.GetServersExistingInCollections();
+
+            DataSet ds = DataProvider.GetRDSServersPaged(null, null, filterColumn, filterValue, sortColumn, startRow, maximumRows);            
             result.RecordsCount = (int)ds.Tables[0].Rows[0][0];
 
             List<RdsServer> tmpServers = new List<RdsServer>();
 
             ObjectUtils.FillCollectionFromDataView(tmpServers, ds.Tables[1].DefaultView);
-
+            tmpServers = tmpServers.Where(x => !existingServers.Select(y => y.ToUpper()).Contains(x.FqdName.ToUpper())).ToList();
             result.Servers = tmpServers.ToArray();
 
             return result;
@@ -1237,6 +1245,11 @@ namespace WebsitePanel.EnterpriseServer
             ServiceProviderProxy.Init(rds, serviceId);
 
             return rds;
+        }
+
+        private static string GetFormattedCollectionName(string displayName, string organizationId)
+        {
+            return string.Format("{0}-{1}", organizationId, displayName.Replace(" ", "_"));
         }
     }
 }

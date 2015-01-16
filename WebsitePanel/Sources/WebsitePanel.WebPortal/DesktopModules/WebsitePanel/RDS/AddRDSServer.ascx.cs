@@ -50,7 +50,7 @@ namespace WebsitePanel.Portal.RDS
 
         private void BindRDSServers()
         {
-            ddlServers.DataSource = new RDSHelper().GetFreeRDSServers();
+            ddlServers.DataSource = new RDSHelper().GetFreeRDSServers(PanelRequest.ItemID);
             ddlServers.DataTextField = "Name";
             ddlServers.DataValueField = "Id";
             ddlServers.DataBind();
