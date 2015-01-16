@@ -7103,6 +7103,13 @@ namespace WebsitePanel.Providers.HostedSolution
         #endregion
 
         #region Archiving
+
+        public virtual ResultObject ExportMailBox(string organizationId, string accountName, string storagePath)
+        {
+            // not implemented
+            return null;
+        }
+
         public virtual ResultObject SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy)
         {
             // not implemented

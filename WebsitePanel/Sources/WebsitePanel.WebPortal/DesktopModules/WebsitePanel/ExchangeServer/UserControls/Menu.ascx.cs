@@ -186,8 +186,12 @@ namespace WebsitePanel.Portal.ExchangeServer.UserControls
                     if (Utils.CheckQouta(Quotas.ORGANIZATION_DOMAINS, cntx))
                         organizationGroup.MenuItems.Add(CreateMenuItem("DomainNames", "org_domains"));
                 }
+                
                 if (Utils.CheckQouta(Quotas.ORGANIZATION_USERS, cntx))
                     organizationGroup.MenuItems.Add(CreateMenuItem("Users", "users"));
+
+                if (Utils.CheckQouta(Quotas.ORGANIZATION_DELETED_USERS, cntx))
+                    organizationGroup.MenuItems.Add(CreateMenuItem("DeletedUsers", "deleted_users"));
 
 				if (Utils.CheckQouta(Quotas.ORGANIZATION_SECURITYGROUPS, cntx))
                     organizationGroup.MenuItems.Add(CreateMenuItem("SecurityGroups", "secur_groups"));

@@ -139,6 +139,24 @@ namespace WebsitePanel.Portal.ExchangeServer {
         protected global::WebsitePanel.Portal.QuotaViewer userStats;
         
         /// <summary>
+        /// lnkDeletedUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkDeletedUsers;
+        
+        /// <summary>
+        /// deletedUserStats control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::WebsitePanel.Portal.QuotaViewer deletedUserStats;
+        
+        /// <summary>
         /// securGroupsStat control.
         /// </summary>
         /// <remarks>

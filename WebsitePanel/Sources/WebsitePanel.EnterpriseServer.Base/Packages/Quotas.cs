@@ -161,6 +161,8 @@ order by rg.groupOrder
 		public const string STATS_SITES = "Stats.Sites";  // Statistics Sites
         public const string ORGANIZATIONS = "HostedSolution.Organizations";
         public const string ORGANIZATION_USERS = "HostedSolution.Users";
+        public const string ORGANIZATION_DELETED_USERS = "HostedSolution.DeletedUsers";
+        public const string ORGANIZATION_DELETED_USERS_BACKUP_STORAGE_SPACE = "HostedSolution.DeletedUsersBackupStorageSpace";
         public const string ORGANIZATION_DOMAINS = "HostedSolution.Domains";
         public const string ORGANIZATION_ALLOWCHANGEUPN = "HostedSolution.AllowChangeUPN";
         public const string ORGANIZATION_SECURITYGROUPS = "HostedSolution.SecurityGroups";

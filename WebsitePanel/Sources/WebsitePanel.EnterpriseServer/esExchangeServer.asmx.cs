@@ -338,6 +338,18 @@ namespace WebsitePanel.EnterpriseServer
             return ExchangeServerController.SetMailboxPermissions(itemId, accountId, sendAsaccounts, fullAccessAcounts);
         }
 
+        [WebMethod]
+        public int ExportMailBox(int itemId, int accountId, string path)
+        {
+            return ExchangeServerController.ExportMailBox(itemId, accountId, path);
+        }
+
+        [WebMethod]
+        public int SetDeletedMailbox(int itemId, int accountId)
+        {
+            return ExchangeServerController.SetDeletedMailbox(itemId, accountId);
+        }
+
 
         #endregion
 

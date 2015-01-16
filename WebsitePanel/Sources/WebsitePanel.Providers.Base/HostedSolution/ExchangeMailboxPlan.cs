@@ -247,6 +247,13 @@ namespace WebsitePanel.Providers.HostedSolution
             set { this.archiveWarningPct = value; }
         }
 
+        bool enableForceArchiveDeletion;
+        public bool EnableForceArchiveDeletion
+        {
+            get { return this.enableForceArchiveDeletion; }
+            set { this.enableForceArchiveDeletion = value; }
+        }
+
         public string WSPUniqueName
         {
             get

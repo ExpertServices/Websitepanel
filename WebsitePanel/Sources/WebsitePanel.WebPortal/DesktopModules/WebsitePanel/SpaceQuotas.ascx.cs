@@ -60,6 +60,7 @@ namespace WebsitePanel.Portal
 			//{ "quotaDomainPointers", "pnlDomainPointers" },
             { "quotaOrganizations", "pnlOrganizations" },
             { "quotaUserAccounts", "pnlUserAccounts" },
+            { "quotaDeletedUsers", "pnlDeletedUsers" },
 			{ "quotaMailAccounts", "pnlMailAccounts" },
             { "quotaExchangeAccounts", "pnlExchangeAccounts" },
             { "quotaOCSUsers", "pnlOCSUsers" },

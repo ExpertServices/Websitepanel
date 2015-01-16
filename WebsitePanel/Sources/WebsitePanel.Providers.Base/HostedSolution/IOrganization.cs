@@ -39,6 +39,8 @@ namespace WebsitePanel.Providers.HostedSolution
 
         int CreateUser(string organizationId, string loginName, string displayName, string upn, string password, bool enabled);
 
+        void DisableUser(string loginName, string organizationId);
+
         void DeleteUser(string loginName, string organizationId);
 
         OrganizationUser GetUserGeneralSettings(string loginName, string organizationId);

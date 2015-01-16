@@ -40,6 +40,7 @@ namespace WebsitePanel.Providers.HostedSolution
         User = 7,
         SecurityGroup = 8,
         DefaultSecurityGroup = 9,
-        SharedMailbox = 10
+        SharedMailbox = 10,
+        DeletedUser = 11
 	}
 }

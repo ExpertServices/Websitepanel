@@ -130,28 +130,30 @@ namespace WebsitePanel.Portal.HostedSolution
         {
             if (e.CommandName == "DeleteItem")
             {
-                // delete user
-                int accountId = Utils.ParseInt(e.CommandArgument.ToString(), 0);
+                int rowIndex = Utils.ParseInt(e.CommandArgument.ToString(), 0);
 
-                try
+                var accountId = Utils.ParseInt(gvUsers.DataKeys[rowIndex][0], 0);
+
+                var accountType = (ExchangeAccountType)gvUsers.DataKeys[rowIndex][1];
+
+                if (cntx.Quotas.ContainsKey(Quotas.ORGANIZATION_DELETED_USERS) && accountType != ExchangeAccountType.User)
                 {
-                    int result = ES.Services.Organizations.DeleteUser(PanelRequest.ItemID, accountId);
-                    if (result < 0)
-                    {
-                        messageBox.ShowResultMessage(result);
-                        return;
-                    }
+                    chkEnableForceArchiveMailbox.Visible = true;
 
-                    // rebind grid
-                    gvUsers.DataBind();
+                    var account = ES.Services.ExchangeServer.GetAccount(PanelRequest.ItemID, accountId);
+                    var mailboxPlan = ES.Services.ExchangeServer.GetExchangeMailboxPlan(PanelRequest.ItemID, account.MailboxPlanId);
 
-                    // bind stats
-                    BindStats();
+                    chkEnableForceArchiveMailbox.Checked = mailboxPlan.EnableForceArchiveDeletion;
+                    chkEnableForceArchiveMailbox.Enabled = !mailboxPlan.EnableForceArchiveDeletion;
                 }
-                catch (Exception ex)
+                else
                 {
-                    messageBox.ShowErrorMessage("ORGANIZATIONS_DELETE_USERS", ex);
+                    chkEnableForceArchiveMailbox.Visible = false;
                 }
+
+                hdAccountId.Value = accountId.ToString();
+
+                DeleteUserModal.Show();
             }
 
             if (e.CommandName == "OpenMailProperties")
@@ -195,12 +197,8 @@ namespace WebsitePanel.Portal.HostedSolution
                         Response.Redirect(EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "edit_lync_user",
                             "AccountID=" + accountId,
                             "ItemID=" + PanelRequest.ItemID));
-
-
-
             }
         }
-
 
         public string GetAccountImage(int accountTypeId, bool vip)
         {
@@ -353,6 +351,42 @@ namespace WebsitePanel.Portal.HostedSolution
             }
 
             return serviceLevel;
+        }
+
+        protected void btnDelete_Click(object sender, EventArgs e)
+        {
+            DeleteUserModal.Hide();
+
+            // delete user
+            try
+            {
+                int result = 0;
+
+                if (cntx.Quotas.ContainsKey(Quotas.ORGANIZATION_DELETED_USERS))
+                {
+                    result = ES.Services.Organizations.SetDeletedUser(PanelRequest.ItemID, int.Parse(hdAccountId.Value), chkEnableForceArchiveMailbox.Checked);
+                }
+                else
+                {
+                    result = ES.Services.Organizations.DeleteUser(PanelRequest.ItemID, int.Parse(hdAccountId.Value));
+                }
+
+                if (result < 0)
+                {
+                    messageBox.ShowResultMessage(result);
+                    return;
+                }
+
+                // rebind grid
+                gvUsers.DataBind();
+
+                // bind stats
+                BindStats();
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage("ORGANIZATIONS_DELETE_USERS", ex);
+            }
         }
     }
 }

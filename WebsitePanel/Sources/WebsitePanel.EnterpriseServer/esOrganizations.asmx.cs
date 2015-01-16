@@ -175,6 +175,12 @@ namespace WebsitePanel.EnterpriseServer
             return OrganizationController.ImportUser(itemId, accountName, displayName, name, domain, password, subscriberNumber);
         }
 
+        [WebMethod]
+        public OrganizationDeletedUsersPaged GetOrganizationDeletedUsersPaged(int itemId, string filterColumn, string filterValue, string sortColumn,
+            int startRow, int maximumRows)
+        {
+            return OrganizationController.GetOrganizationDeletedUsersPaged(itemId, filterColumn, filterValue, sortColumn, startRow, maximumRows);
+        }
 
         [WebMethod]
         public OrganizationUsersPaged GetOrganizationUsersPaged(int itemId, string filterColumn, string filterValue, string sortColumn,
@@ -230,6 +236,17 @@ namespace WebsitePanel.EnterpriseServer
                 filterColumn, filterValue, sortColumn, includeMailboxes);
         }
 
+        [WebMethod]
+        public int SetDeletedUser(int itemId, int accountId, bool enableForceArchive)
+        {
+            return OrganizationController.SetDeletedUser(itemId, accountId, enableForceArchive);
+        }
+        
+        [WebMethod]
+        public byte[] GetArchiveFileBinaryChunk(int packageId, string path, int offset, int length)
+        {
+            return OrganizationController.GetArchiveFileBinaryChunk(packageId, path, offset, length);
+        }
 
         [WebMethod]
         public int DeleteUser(int itemId, int accountId)

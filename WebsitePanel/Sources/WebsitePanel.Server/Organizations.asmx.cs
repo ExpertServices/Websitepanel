@@ -100,6 +100,12 @@ namespace WebsitePanel.Server
         }
 
         [WebMethod, SoapHeader("settings")]
+        public void DisableUser(string loginName, string organizationId)
+        {
+            Organization.DisableUser(loginName, organizationId);
+        }
+
+        [WebMethod, SoapHeader("settings")]
         public void DeleteUser(string loginName, string organizationId)
         {
             Organization.DeleteUser(loginName, organizationId);

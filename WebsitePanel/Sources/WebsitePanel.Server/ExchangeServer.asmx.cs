@@ -1271,6 +1271,28 @@ namespace WebsitePanel.Server
         #endregion
 
         #region Archiving
+
+        [WebMethod, SoapHeader("settings")]
+        public ResultObject ExportMailBox(string organizationId, string accountName, string storagePath)
+        {
+            ResultObject res = null;
+            try
+            {
+                LogStart("ExportMailBox");
+
+                res = ES.ExportMailBox(organizationId, accountName, storagePath);
+                
+                LogEnd("ExportMailBox");
+            }
+            catch (Exception ex)
+            {
+                LogError("ExportMailBox", ex);
+                throw;
+            }
+
+            return res;
+        }
+
         [WebMethod, SoapHeader("settings")]
         public ResultObject SetMailBoxArchiving(string organizationId, string accountName, bool archive, long archiveQuotaKB, long archiveWarningQuotaKB, string RetentionPolicy)
         {

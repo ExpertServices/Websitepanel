@@ -211,6 +211,34 @@
     <Compile Include="Code\ReportingServices\IResourceStorage.cs" />
     <Compile Include="Code\ReportingServices\ReportingServicesUtils.cs" />
     <Compile Include="Code\UserControls\Tab.cs" />
+    <Compile Include="ExchangeServer\OrganizationDeletedUsers.ascx.cs">
+      <DependentUpon>OrganizationDeletedUsers.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationDeletedUsers.ascx.designer.cs">
+      <DependentUpon>OrganizationDeletedUsers.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationDeletedUserGeneralSettings.ascx.cs">
+      <DependentUpon>OrganizationDeletedUserGeneralSettings.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationDeletedUserGeneralSettings.ascx.designer.cs">
+      <DependentUpon>OrganizationDeletedUserGeneralSettings.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationDeletedUserMemberOf.ascx.cs">
+      <DependentUpon>OrganizationDeletedUserMemberOf.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\OrganizationDeletedUserMemberOf.ascx.designer.cs">
+      <DependentUpon>OrganizationDeletedUserMemberOf.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\DeletedUserTabs.ascx.cs">
+      <DependentUpon>DeletedUserTabs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExchangeServer\UserControls\DeletedUserTabs.ascx.designer.cs">
+      <DependentUpon>DeletedUserTabs.ascx</DependentUpon>
+    </Compile>
     <Compile Include="RDSServersAddserver.ascx.cs">
       <DependentUpon>RDSServersAddserver.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -4230,6 +4258,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplyEnableHardQuotaFeature.ascx" />
+    <Content Include="ExchangeServer\OrganizationDeletedUsers.ascx" />
+    <Content Include="ExchangeServer\OrganizationDeletedUserGeneralSettings.ascx" />
+    <Content Include="ExchangeServer\OrganizationDeletedUserMemberOf.ascx" />
+    <Content Include="ExchangeServer\UserControls\DeletedUserTabs.ascx" />
     <Content Include="RDSServersAddserver.ascx" />
     <Content Include="RDSServers.ascx" />
     <Content Include="RDS\AssignedRDSServers.ascx" />
@@ -5547,6 +5579,20 @@
     <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionServers.ascx.resx" />
     <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionApps.ascx.resx" />
     <Content Include="ProviderControls\App_LocalResources\RDS_Settings.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationDeletedUsers.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ExchangeServer\OrganizationUserGeneralSettings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ExchangeServer\OrganizationUserMemberOf.ascx.resx" />
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationDeletedUserGeneralSettings.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ExchangeServer\App_LocalResources\OrganizationDeletedUserMemberOf.ascx.resx" />
+    <Content Include="ExchangeServer\UserControls\App_LocalResources\DeletedUserTabs.ascx.resx">
+      <SubType>Designer</SubType>
+    </Content>
     <EmbeddedResource Include="UserControls\App_LocalResources\EditDomainsList.ascx.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

@@ -95,6 +95,30 @@ namespace WebsitePanel.Portal
             return users.PageUsers;            
         }
 
+        OrganizationDeletedUsersPaged deletedUsers;
+
+        public int GetOrganizationDeletedUsersPagedCount(int itemId,
+            string filterColumn, string filterValue)
+        {
+            return deletedUsers.RecordsCount;
+        }
+
+        public OrganizationDeletedUser[] GetOrganizationDeletedUsersPaged(int itemId,
+            string filterColumn, string filterValue,
+            int maximumRows, int startRowIndex, string sortColumn)
+        {
+            if (!String.IsNullOrEmpty(filterValue))
+                filterValue = filterValue + "%";
+            if (maximumRows == 0)
+            {
+                maximumRows = Int32.MaxValue;
+            }
+
+            deletedUsers = ES.Services.Organizations.GetOrganizationDeletedUsersPaged(itemId, filterColumn, filterValue, sortColumn, startRowIndex, maximumRows);
+
+            return deletedUsers.PageDeletedUsers;
+        }
+
         #endregion
 
         #region Security Groups

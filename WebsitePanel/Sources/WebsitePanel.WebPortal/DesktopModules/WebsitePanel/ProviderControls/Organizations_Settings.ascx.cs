@@ -36,6 +36,7 @@ namespace WebsitePanel.Portal.ProviderControls
         public const string PrimaryDomainController = "PrimaryDomainController";
         public const string TemporyDomainName = "TempDomain";
         public const string UserNameFormat = "UserNameFormat";
+        public const string ArchiveStoragePath = "ArchiveStoragePath";
         
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -53,6 +54,8 @@ namespace WebsitePanel.Portal.ProviderControls
                 UserNameFormatDropDown.SelectedValue =
                     UserNameFormatDropDown.Items.FindByText(settings[UserNameFormat]).Value;
             }
+
+            txtArchiveStorageSpace.Text = settings[ArchiveStoragePath];
         }
 
         public void SaveSettings(System.Collections.Specialized.StringDictionary settings)
@@ -61,6 +64,7 @@ namespace WebsitePanel.Portal.ProviderControls
             settings[PrimaryDomainController] = txtPrimaryDomainController.Text.Trim();
             settings[TemporyDomainName] = txtTemporyDomainName.Text.Trim();
             settings[UserNameFormat] = UserNameFormatDropDown.SelectedItem.Text;
+            settings[ArchiveStoragePath] = txtArchiveStorageSpace.Text.Trim();
         }        
     }
 }

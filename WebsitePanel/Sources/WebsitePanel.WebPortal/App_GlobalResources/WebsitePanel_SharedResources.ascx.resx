@@ -3346,6 +3346,12 @@
   <data name="Quota.HostedSolution.SecurityGroups" xml:space="preserve">
     <value>Security Groups per Organization</value>
   </data>
+  <data name="Quota.HostedSolution.DeletedUsers" xml:space="preserve">
+    <value>Deleted Users per Organization</value>
+  </data>
+  <data name="Quota.HostedSolution.DeletedUsersBackupStorageSpace" xml:space="preserve">
+    <value>Deleted Users Backup Storage Space per Organization, Mb</value>
+  </data>
   <data name="ResourceGroup.Hosted SharePoint" xml:space="preserve">
     <value>Hosted SharePoint</value>
   </data>

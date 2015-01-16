@@ -2070,7 +2070,8 @@ namespace WebsitePanel.EnterpriseServer
             return SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
                 ObjectQualifier + "GetSchedules",
                 new SqlParameter("@actorId", actorId),
-                new SqlParameter("@packageId", packageId));
+                new SqlParameter("@packageId", packageId),
+                new SqlParameter("@recursive", true));
         }
 
         public static DataSet GetSchedulesPaged(int actorId, int packageId, bool recursive,
@@ -2364,7 +2365,6 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Exchange Server
 
-
         public static int AddExchangeAccount(int itemId, int accountType, string accountName,
             string displayName, string primaryEmailAddress, bool mailEnabledPublicFolder,
             string mailboxManagerActions, string samAccountName, string accountPassword, int mailboxPlanId, string subscriberNumber)
@@ -2392,7 +2392,6 @@ namespace WebsitePanel.EnterpriseServer
 
             return Convert.ToInt32(outParam.Value);
         }
-
 
         public static void AddExchangeAccountEmailAddress(int accountId, string emailAddress)
         {
@@ -2800,7 +2799,7 @@ namespace WebsitePanel.EnterpriseServer
                                                     bool isDefault, int issueWarningPct, int keepDeletedItemsDays, int mailboxSizeMB, int maxReceiveMessageSizeKB, int maxRecipients,
                                                     int maxSendMessageSizeKB, int prohibitSendPct, int prohibitSendReceivePct, bool hideFromAddressBook, int mailboxPlanType,
                                                     bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg,
-            bool archiving, bool EnableArchiving, int ArchiveSizeMB, int ArchiveWarningPct)
+                                                    bool archiving, bool EnableArchiving, int ArchiveSizeMB, int ArchiveWarningPct, bool enableForceArchiveDeletion)
         {
             SqlParameter outParam = new SqlParameter("@MailboxPlanId", SqlDbType.Int);
             outParam.Direction = ParameterDirection.Output;
@@ -2836,7 +2835,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@Archiving", archiving),
                 new SqlParameter("@EnableArchiving", EnableArchiving),
                 new SqlParameter("@ArchiveSizeMB", ArchiveSizeMB),
-                new SqlParameter("@ArchiveWarningPct", ArchiveWarningPct)
+                new SqlParameter("@ArchiveWarningPct", ArchiveWarningPct),
+                new SqlParameter("@EnableForceArchiveDeletion", enableForceArchiveDeletion)
             );
 
             return Convert.ToInt32(outParam.Value);
@@ -2847,8 +2847,8 @@ namespace WebsitePanel.EnterpriseServer
         public static void UpdateExchangeMailboxPlan(int mailboxPlanID, string mailboxPlan, bool enableActiveSync, bool enableIMAP, bool enableMAPI, bool enableOWA, bool enablePOP,
                                             bool isDefault, int issueWarningPct, int keepDeletedItemsDays, int mailboxSizeMB, int maxReceiveMessageSizeKB, int maxRecipients,
                                             int maxSendMessageSizeKB, int prohibitSendPct, int prohibitSendReceivePct, bool hideFromAddressBook, int mailboxPlanType,
-                                        bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg,
-                                        bool Archiving, bool EnableArchiving, int ArchiveSizeMB, int ArchiveWarningPct)
+                                            bool enabledLitigationHold, long recoverabelItemsSpace, long recoverabelItemsWarning, string litigationHoldUrl, string litigationHoldMsg,
+                                            bool Archiving, bool EnableArchiving, int ArchiveSizeMB, int ArchiveWarningPct, bool enableForceArchiveDeletion)
         {
             SqlHelper.ExecuteNonQuery(
                 ConnectionString,
@@ -2880,7 +2880,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@Archiving", Archiving),
 	            new SqlParameter("@EnableArchiving", EnableArchiving),
                 new SqlParameter("@ArchiveSizeMB", ArchiveSizeMB),
-                new SqlParameter("@ArchiveWarningPct", ArchiveWarningPct)
+                new SqlParameter("@ArchiveWarningPct", ArchiveWarningPct),
+                new SqlParameter("@EnableForceArchiveDeletion", enableForceArchiveDeletion)
             );
         }
 
@@ -3155,6 +3156,45 @@ namespace WebsitePanel.EnterpriseServer
         #endregion
 
         #region Organizations
+
+        public static int AddOrganizationDeletedUser(int accountId, int originAT, string storagePath, string folderName, string fileName, DateTime expirationDate)
+        {
+            SqlParameter outParam = new SqlParameter("@ID", SqlDbType.Int);
+            outParam.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddOrganizationDeletedUser",
+                outParam,
+                new SqlParameter("@AccountID", accountId),
+                new SqlParameter("@OriginAT", originAT),
+                new SqlParameter("@StoragePath", storagePath),
+                new SqlParameter("@FolderName", folderName),
+                new SqlParameter("@FileName", fileName),
+                new SqlParameter("@ExpirationDate", expirationDate)
+            );
+
+            return Convert.ToInt32(outParam.Value);
+        }
+
+        public static void DeleteOrganizationDeletedUser(int id)
+        {
+            SqlHelper.ExecuteNonQuery(ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteOrganizationDeletedUser",
+                new SqlParameter("@ID", id));
+        }
+
+        public static IDataReader GetOrganizationDeletedUser(int accountId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetOrganizationDeletedUser",
+                new SqlParameter("@AccountID", accountId)
+            );
+        }
 
         public static IDataReader GetAdditionalGroups(int userId)
         {

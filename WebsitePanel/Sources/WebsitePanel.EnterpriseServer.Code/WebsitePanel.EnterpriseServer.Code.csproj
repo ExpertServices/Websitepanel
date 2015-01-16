@@ -135,6 +135,7 @@
     <Compile Include="SchedulerTasks\ActivatePaidInvoicesTask.cs" />
     <Compile Include="SchedulerTasks\BackupDatabaseTask.cs" />
     <Compile Include="SchedulerTasks\BackupTask.cs" />
+    <Compile Include="SchedulerTasks\DeleteExchangeAccountsTask.cs" />
     <Compile Include="SchedulerTasks\CalculateExchangeDiskspaceTask.cs" />
     <Compile Include="SchedulerTasks\CalculatePackagesBandwidthTask.cs" />
     <Compile Include="SchedulerTasks\CalculatePackagesDiskspaceTask.cs" />
