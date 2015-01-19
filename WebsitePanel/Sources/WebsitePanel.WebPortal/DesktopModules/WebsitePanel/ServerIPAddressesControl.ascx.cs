@@ -55,9 +55,15 @@ namespace WebsitePanel.Portal
             return HostModule.EditUrl(key, keyVal, ctrlKey, key2 + "=" + keyVal2);
         }
 
+        public string GetReturnUrl()
+        {
+            var returnUrl = Utils.AddParameterToUrl(Request.Url, "IpAddressesCollapsed", "False");
+            return Uri.EscapeDataString("~" + returnUrl.PathAndQuery);
+        }
+
         protected void btnAdd_Click(object sender, EventArgs e)
         {
-            Response.Redirect(HostModule.EditUrl("ServerID", PanelRequest.ServerId.ToString(), "add_ip"), true);
+            Response.Redirect(EditModuleUrl("ServerID", PanelRequest.ServerId.ToString(), "add_ip", "ReturnUrl", GetReturnUrl()), true);
         }
     }
 }
