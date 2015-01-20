@@ -1,0 +1,48 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+/* User styles */
+
+.icon-size {
+	width: 100px;
+	height: 100px;
+}
+
+.element-container {
+	margin-bottom: 15px;
+	text-align:center;
+}
+
+#errorMessage {
+        color: red;
+        font-weight: bold;
+        padding-top: 5px;
+    }
+
+#username {
+    display:inline-block;
+}
+
+#logout {
+    font-size: 1.2em;
+    color: #9d9d9d;
+}
+
+#logout :hover {
+    color: white;
+}

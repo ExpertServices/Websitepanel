@@ -144,18 +144,6 @@
   <data name="DescribeEnableDns.Text" xml:space="preserve">
     <value>Tick this checkbox if DNS zone for this domain will be located on name servers of your hosting provider. Make sure you changed name servers in the domain registrar control panel.</value>
   </data>
-  <data name="DomainFormatValidator.ErrorMessage" xml:space="preserve">
-    <value>Please, enter correct domain name, for example "mydomain.com" or "sub.mydomain.com".</value>
-  </data>
-  <data name="DomainFormatValidator.Text" xml:space="preserve">
-    <value>*</value>
-  </data>
-  <data name="DomainRequiredValidator.ErrorMessage" xml:space="preserve">
-    <value>Please enter domain name</value>
-  </data>
-  <data name="DomainRequiredValidator.Text" xml:space="preserve">
-    <value>*</value>
-  </data>
   <data name="EnableDns.Text" xml:space="preserve">
     <value>Enable DNS</value>
   </data>
@@ -167,18 +155,6 @@
   </data>
   <data name="PointWebSite.Text" xml:space="preserve">
     <value>Assign to existing Web Site</value>
-  </data>
-  <data name="SubDomainFormatValidator.ErrorMessage" xml:space="preserve">
-    <value>Please, enter correct sub-domain name, for example "subdomain" or "sub.subdomain".</value>
-  </data>
-  <data name="SubDomainFormatValidator.Text" xml:space="preserve">
-    <value>*</value>
-  </data>
-  <data name="SubDomainRequiredValidator.ErrorMessage" xml:space="preserve">
-    <value>Please enter sub-domain name</value>
-  </data>
-  <data name="SubDomainRequiredValidator.Text" xml:space="preserve">
-    <value>*</value>
   </data>
   <data name="lblHostName.Text" xml:space="preserve">
     <value>Hostname:</value>

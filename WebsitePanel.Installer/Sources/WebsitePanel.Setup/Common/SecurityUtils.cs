@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -1109,6 +1109,25 @@ namespace WebsitePanel.Setup
 
             wmiService.Delete();
         }
+
+	    public static string GetServicePath(string serviceName)
+	    {
+            var mc = new ManagementClass("Win32_Service");
+
+            foreach (var mo in mc.GetInstances())
+            {
+                if (mo.GetPropertyValue("Name").ToString() == serviceName)
+                {
+                    var path = mo.GetPropertyValue("PathName").ToString().Trim('"');
+
+                    var directory = Path.GetDirectoryName(path);
+
+                    return directory;
+                }
+            }
+
+	        return string.Empty;
+	    }
 
 	    #endregion
     }

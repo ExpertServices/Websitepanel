@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -59,6 +59,8 @@ namespace WebsitePanel.Portal
                     return;
                 }
             }
+
+            IPAddressesHeader.IsCollapsed = IsIpAddressesCollapsed;
         }
 
         private void BindTools()
@@ -230,6 +232,14 @@ namespace WebsitePanel.Portal
             {
                 ShowErrorMessage("SERVER_UPDATE_AD_PSW", ex);
                 return;
+            }
+        }
+
+        protected bool IsIpAddressesCollapsed
+        {
+            get
+            {
+                return PanelRequest.GetBool("IpAddressesCollapsed", true);
             }
         }
     }

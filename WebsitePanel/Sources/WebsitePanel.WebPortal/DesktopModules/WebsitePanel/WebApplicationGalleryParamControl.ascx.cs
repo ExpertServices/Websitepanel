@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -185,104 +185,111 @@ namespace WebsitePanel.Portal
 
         private void BindControls()
         {
-            // hide database server parameters
-            DeploymentParameterWellKnownTag hiddenTags =
-                DeploymentParameterWellKnownTag.IisApp |
-                DeploymentParameterWellKnownTag.Hidden |
-                DeploymentParameterWellKnownTag.DBServer |
-                DeploymentParameterWellKnownTag.DBAdminUserName |
-                DeploymentParameterWellKnownTag.DBAdminPassword;
-
-            if ((WellKnownTags & hiddenTags) > 0)
+            try
             {
-                this.Visible = false;
-                return;
-            }
 
-            // disable all editor controls
-            BooleanControl.Visible = false;
-            EnumControl.Visible = false;
-            PasswordControl.Visible = false;
-            TextControl.Visible = false;
+                // hide database server parameters
+                DeploymentParameterWellKnownTag hiddenTags =
+                    DeploymentParameterWellKnownTag.IisApp |
+                    DeploymentParameterWellKnownTag.Hidden |
+                    DeploymentParameterWellKnownTag.DBServer |
+                    DeploymentParameterWellKnownTag.DBAdminUserName |
+                    DeploymentParameterWellKnownTag.DBAdminPassword;
 
-            // enable specific control
-            if ((ValidationKind & DeploymentParameterValidationKind.Boolean) == DeploymentParameterValidationKind.Boolean)
-            {
-                // Boolean value
-                BooleanControl.Visible = true;
-                bool val = false;
-                Boolean.TryParse(DefaultValue, out val);
-                boolValue.Checked = val;
-            }
-            else if ((ValidationKind & DeploymentParameterValidationKind.Enumeration) == DeploymentParameterValidationKind.Enumeration)
-            {
-                // Enumeration value
-                EnumControl.Visible = true;
-
-                // fill dropdown
-                enumValue.Items.Clear();
-                string[] items = (ValidationString ?? "").Trim().Split(',');
-                foreach (string item in items)
-                    enumValue.Items.Add(item.Trim());
-
-                // select default value
-                enumValue.SelectedValue = DefaultValue;
-            }
-            else if ((WellKnownTags & DeploymentParameterWellKnownTag.Password) == DeploymentParameterWellKnownTag.Password)
-            {
-                // Password value
-                PasswordControl.Visible = true;
-                confirmPasswordControls.Visible = ((WellKnownTags & DeploymentParameterWellKnownTag.New) == DeploymentParameterWellKnownTag.New);
-            }
-            else
-            {
-                // Text value
-                TextControl.Visible = true;
-                textValue.Text = DefaultValue;
-                valPrefix.Text = ValuePrefix;
-                valSuffix.Text = ValueSuffix;
-
-                if (
-                    (WellKnownTags & DeploymentParameterWellKnownTag.MySql) == DeploymentParameterWellKnownTag.MySql 
-                    && 
-                    (WellKnownTags & DeploymentParameterWellKnownTag.DBUserName) == DeploymentParameterWellKnownTag.DBUserName 
-                    )
+                if ((WellKnownTags & hiddenTags) > 0)
                 {
-                    MysqlUsernameLengthValidator.Enabled = true;
+                    this.Visible = false;
+                    return;
                 }
+
+                // disable all editor controls
+                BooleanControl.Visible = false;
+                EnumControl.Visible = false;
+                PasswordControl.Visible = false;
+                TextControl.Visible = false;
+
+                // enable specific control
+                if ((ValidationKind & DeploymentParameterValidationKind.Boolean) == DeploymentParameterValidationKind.Boolean)
+                {
+                    // Boolean value
+                    BooleanControl.Visible = true;
+                    bool val = false;
+                    Boolean.TryParse(DefaultValue, out val);
+                    boolValue.Checked = val;
+                }
+                else if ((ValidationKind & DeploymentParameterValidationKind.Enumeration) == DeploymentParameterValidationKind.Enumeration)
+                {
+                    // Enumeration value
+                    EnumControl.Visible = true;
+
+                    // fill dropdown
+                    enumValue.Items.Clear();
+                    string[] items = (ValidationString ?? "").Trim().Split(',');
+                    foreach (string item in items)
+                        enumValue.Items.Add(item.Trim());
+
+                    // select default value
+                    enumValue.SelectedValue = DefaultValue;
+                }
+                else if ((WellKnownTags & DeploymentParameterWellKnownTag.Password) == DeploymentParameterWellKnownTag.Password)
+                {
+                    // Password value
+                    PasswordControl.Visible = true;
+                    confirmPasswordControls.Visible = ((WellKnownTags & DeploymentParameterWellKnownTag.New) == DeploymentParameterWellKnownTag.New);
+                }
+                else
+                {
+                    // Text value
+                    TextControl.Visible = true;
+                    textValue.Text = DefaultValue == null ? "" : DefaultValue;
+                    valPrefix.Text = ValuePrefix == null ? "" : ValuePrefix;
+                    valSuffix.Text = ValueSuffix == null ? "" : ValueSuffix;
+
+                    if (
+                        (ValuePrefix != null) && (ValueSuffix != null)
+                        &&
+                        ((WellKnownTags & DeploymentParameterWellKnownTag.MySql) == DeploymentParameterWellKnownTag.MySql)
+                        &&
+                        ((WellKnownTags & DeploymentParameterWellKnownTag.DBUserName) == DeploymentParameterWellKnownTag.DBUserName)
+                        )
+                    {
+                        MysqlUsernameLengthValidator.Enabled = true;
+                    }
+                }
+
+                // enforce validation for database parameters if they are allowed empty by app pack developers
+                bool isDatabaseParameter = (WellKnownTags & (
+                    DeploymentParameterWellKnownTag.DBName |
+                    DeploymentParameterWellKnownTag.DBUserName |
+                    DeploymentParameterWellKnownTag.DBUserPassword)) > 0;
+
+                // enforce validation for database name and username
+                if ((WellKnownTags & (DeploymentParameterWellKnownTag.DBName | DeploymentParameterWellKnownTag.DBUserName)) > 0
+                        && String.IsNullOrEmpty(ValidationString))
+                {
+                    validationKind |= DeploymentParameterValidationKind.RegularExpression;
+                    validationString = DatabaseIdentifierRegexp;
+                }
+
+                // validation common for all editors
+                requireTextValue.Enabled = requirePassword.Enabled = requireConfirmPassword.Enabled = requireEnumValue.Enabled =
+                    ((ValidationKind & DeploymentParameterValidationKind.AllowEmpty) != DeploymentParameterValidationKind.AllowEmpty) || isDatabaseParameter;
+
+                requireTextValue.Text = requirePassword.Text = requireEnumValue.Text =
+                    String.Format(GetLocalizedString("RequiredValidator.Text"), FriendlyName);
+
+                regexpTextValue.Enabled = regexpPassword.Enabled = regexpEnumValue.Enabled =
+                    (ValidationKind & DeploymentParameterValidationKind.RegularExpression) == DeploymentParameterValidationKind.RegularExpression;
+
+                regexpTextValue.ValidationExpression = regexpPassword.ValidationExpression = regexpEnumValue.ValidationExpression =
+                    ValidationString ?? "";
+
+                regexpTextValue.Text = regexpPassword.Text = regexpEnumValue.Text =
+                    String.Format(GetLocalizedString("RegexpValidator.Text"), FriendlyName, ValidationString);
+
+
             }
-
-            
-            // enforce validation for database parameters if they are allowed empty by app pack developers
-            bool isDatabaseParameter = (WellKnownTags & (
-                DeploymentParameterWellKnownTag.DBName |
-                DeploymentParameterWellKnownTag.DBUserName |
-                DeploymentParameterWellKnownTag.DBUserPassword)) > 0;
-
-            // enforce validation for database name and username
-            if ((WellKnownTags & (DeploymentParameterWellKnownTag.DBName | DeploymentParameterWellKnownTag.DBUserName)) > 0
-                    && String.IsNullOrEmpty(ValidationString))
-            {
-                validationKind |= DeploymentParameterValidationKind.RegularExpression;
-                validationString = DatabaseIdentifierRegexp;
-            }
-
-            // validation common for all editors
-            requireTextValue.Enabled = requirePassword.Enabled = requireConfirmPassword.Enabled = requireEnumValue.Enabled =
-                ((ValidationKind & DeploymentParameterValidationKind.AllowEmpty) != DeploymentParameterValidationKind.AllowEmpty) || isDatabaseParameter;
-
-            requireTextValue.Text = requirePassword.Text = requireEnumValue.Text =
-                String.Format(GetLocalizedString("RequiredValidator.Text"), FriendlyName);
-
-            regexpTextValue.Enabled = regexpPassword.Enabled = regexpEnumValue.Enabled =
-                (ValidationKind & DeploymentParameterValidationKind.RegularExpression) == DeploymentParameterValidationKind.RegularExpression;
-
-            regexpTextValue.ValidationExpression = regexpPassword.ValidationExpression = regexpEnumValue.ValidationExpression =
-                ValidationString ?? "";
-
-            regexpTextValue.Text = regexpPassword.Text = regexpEnumValue.Text =
-                String.Format(GetLocalizedString("RegexpValidator.Text"), FriendlyName, ValidationString);
-
+            catch { } // just skip
 
         }
 

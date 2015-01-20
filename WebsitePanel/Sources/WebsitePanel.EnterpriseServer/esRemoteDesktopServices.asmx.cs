@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -71,6 +71,12 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
+        public ResultObject EditRdsCollection(int itemId, RdsCollection collection)
+        {
+            return RemoteDesktopServicesController.EditRdsCollection(itemId, collection);
+        }
+
+        [WebMethod]
         public RdsCollectionPaged GetRdsCollectionsPaged(int itemId, string filterColumn, string filterValue,
             string sortColumn, int startRow, int maximumRows)
         {
@@ -93,18 +99,18 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public RdsServersPaged GetFreeRdsServersPaged(string filterColumn, string filterValue,
+        public RdsServersPaged GetFreeRdsServersPaged(int packageId, string filterColumn, string filterValue,
             string sortColumn, int startRow, int maximumRows)
         {
-            return RemoteDesktopServicesController.GetFreeRdsServersPaged(filterColumn, filterValue,
+            return RemoteDesktopServicesController.GetFreeRdsServersPaged(packageId, filterColumn, filterValue,
                 sortColumn, startRow, maximumRows);
         }
 
         [WebMethod]
-        public RdsServersPaged GetOrganizationRdsServersPaged(int itemId, string filterColumn, string filterValue,
+        public RdsServersPaged GetOrganizationRdsServersPaged(int itemId, int? collectionId, string filterColumn, string filterValue,
             string sortColumn, int startRow, int maximumRows)
         {
-            return RemoteDesktopServicesController.GetOrganizationRdsServersPaged(itemId, filterColumn, filterValue,
+            return RemoteDesktopServicesController.GetOrganizationRdsServersPaged(itemId, collectionId, filterColumn, filterValue,
                 sortColumn, startRow, maximumRows);
         }
 
@@ -120,6 +126,12 @@ namespace WebsitePanel.EnterpriseServer
         public RdsServer GetRdsServer(int rdsSeverId)
         {
             return RemoteDesktopServicesController.GetRdsServer(rdsSeverId);
+        }
+
+        [WebMethod]
+        public ResultObject SetRDServerNewConnectionAllowed(int itemId, bool newConnectionAllowed, int rdsSeverId)
+        {
+            return RemoteDesktopServicesController.SetRDServerNewConnectionAllowed(itemId, newConnectionAllowed, rdsSeverId);
         }
 
         [WebMethod]
@@ -224,5 +236,28 @@ namespace WebsitePanel.EnterpriseServer
             return RemoteDesktopServicesController.GetOrganizationRdsUsersCount(itemId);
         }
 
+        [WebMethod]
+        public int GetOrganizationRdsServersCount(int itemId)
+        {
+            return RemoteDesktopServicesController.GetOrganizationRdsServersCount(itemId);
+        }
+
+        [WebMethod]
+        public int GetOrganizationRdsCollectionsCount(int itemId)
+        {
+            return RemoteDesktopServicesController.GetOrganizationRdsCollectionsCount(itemId);
+        }        
+
+        [WebMethod]
+        public List<string> GetApplicationUsers(int itemId, int collectionId, RemoteApplication remoteApp)
+        {
+            return RemoteDesktopServicesController.GetApplicationUsers(itemId, collectionId, remoteApp);
+        }
+
+        [WebMethod]
+        public ResultObject SetApplicationUsers(int itemId, int collectionId, RemoteApplication remoteApp, List<string> users)
+        {
+            return RemoteDesktopServicesController.SetApplicationUsers(itemId, collectionId, remoteApp, users);
+        }
     }
 }

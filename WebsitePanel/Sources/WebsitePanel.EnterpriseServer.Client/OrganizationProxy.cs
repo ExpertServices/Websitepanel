@@ -19,11 +19,11 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
     using System;
     using System.Diagnostics;
     using System.Data;
-    using WebsitePanel.Providers;
     using WebsitePanel.Providers.HostedSolution;
-    using WebsitePanel.Providers.ResultObjects;
-    using WebsitePanel.Providers.Common;
     using WebsitePanel.EnterpriseServer.Base.HostedSolution;
+    using WebsitePanel.Providers.ResultObjects;
+    using WebsitePanel.Providers;
+    using WebsitePanel.Providers.Common;
     
     
     /// <remarks/>
@@ -41,6 +41,8 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         private System.Threading.SendOrPostCallback GetRawOrganizationsPagedOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetOrganizationsOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetOrganizationByIdOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetOrganizationUserSummuryLetterOperationCompleted;
         
@@ -67,6 +69,10 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         private System.Threading.SendOrPostCallback DeleteOrganizationDomainOperationCompleted;
         
         private System.Threading.SendOrPostCallback SetOrganizationDefaultDomainOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetOrganizationObjectsByDomainOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback CheckDomainUsedByHostedOrganizationOperationCompleted;
         
         private System.Threading.SendOrPostCallback CreateUserOperationCompleted;
         
@@ -148,6 +154,9 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         public event GetOrganizationsCompletedEventHandler GetOrganizationsCompleted;
         
         /// <remarks/>
+        public event GetOrganizationByIdCompletedEventHandler GetOrganizationByIdCompleted;
+        
+        /// <remarks/>
         public event GetOrganizationUserSummuryLetterCompletedEventHandler GetOrganizationUserSummuryLetterCompleted;
         
         /// <remarks/>
@@ -185,6 +194,12 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
         
         /// <remarks/>
         public event SetOrganizationDefaultDomainCompletedEventHandler SetOrganizationDefaultDomainCompleted;
+        
+        /// <remarks/>
+        public event GetOrganizationObjectsByDomainCompletedEventHandler GetOrganizationObjectsByDomainCompleted;
+        
+        /// <remarks/>
+        public event CheckDomainUsedByHostedOrganizationCompletedEventHandler CheckDomainUsedByHostedOrganizationCompleted;
         
         /// <remarks/>
         public event CreateUserCompletedEventHandler CreateUserCompleted;
@@ -470,6 +485,47 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
             if ((this.GetOrganizationsCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.GetOrganizationsCompleted(this, new GetOrganizationsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetOrganizationById", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public Organization GetOrganizationById(string organizationId) {
+            object[] results = this.Invoke("GetOrganizationById", new object[] {
+                        organizationId});
+            return ((Organization)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetOrganizationById(string organizationId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetOrganizationById", new object[] {
+                        organizationId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public Organization EndGetOrganizationById(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((Organization)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetOrganizationByIdAsync(string organizationId) {
+            this.GetOrganizationByIdAsync(organizationId, null);
+        }
+        
+        /// <remarks/>
+        public void GetOrganizationByIdAsync(string organizationId, object userState) {
+            if ((this.GetOrganizationByIdOperationCompleted == null)) {
+                this.GetOrganizationByIdOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetOrganizationByIdOperationCompleted);
+            }
+            this.InvokeAsync("GetOrganizationById", new object[] {
+                        organizationId}, this.GetOrganizationByIdOperationCompleted, userState);
+        }
+        
+        private void OnGetOrganizationByIdOperationCompleted(object arg) {
+            if ((this.GetOrganizationByIdCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetOrganizationByIdCompleted(this, new GetOrganizationByIdCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -1046,6 +1102,94 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
             if ((this.SetOrganizationDefaultDomainCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.SetOrganizationDefaultDomainCompleted(this, new SetOrganizationDefaultDomainCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetOrganizationObjectsByDomain", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public System.Data.DataSet GetOrganizationObjectsByDomain(int itemId, string domainName) {
+            object[] results = this.Invoke("GetOrganizationObjectsByDomain", new object[] {
+                        itemId,
+                        domainName});
+            return ((System.Data.DataSet)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetOrganizationObjectsByDomain(int itemId, string domainName, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetOrganizationObjectsByDomain", new object[] {
+                        itemId,
+                        domainName}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public System.Data.DataSet EndGetOrganizationObjectsByDomain(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((System.Data.DataSet)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetOrganizationObjectsByDomainAsync(int itemId, string domainName) {
+            this.GetOrganizationObjectsByDomainAsync(itemId, domainName, null);
+        }
+        
+        /// <remarks/>
+        public void GetOrganizationObjectsByDomainAsync(int itemId, string domainName, object userState) {
+            if ((this.GetOrganizationObjectsByDomainOperationCompleted == null)) {
+                this.GetOrganizationObjectsByDomainOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetOrganizationObjectsByDomainOperationCompleted);
+            }
+            this.InvokeAsync("GetOrganizationObjectsByDomain", new object[] {
+                        itemId,
+                        domainName}, this.GetOrganizationObjectsByDomainOperationCompleted, userState);
+        }
+        
+        private void OnGetOrganizationObjectsByDomainOperationCompleted(object arg) {
+            if ((this.GetOrganizationObjectsByDomainCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetOrganizationObjectsByDomainCompleted(this, new GetOrganizationObjectsByDomainCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/CheckDomainUsedByHostedOrganization", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool CheckDomainUsedByHostedOrganization(int itemId, int domainId) {
+            object[] results = this.Invoke("CheckDomainUsedByHostedOrganization", new object[] {
+                        itemId,
+                        domainId});
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginCheckDomainUsedByHostedOrganization(int itemId, int domainId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("CheckDomainUsedByHostedOrganization", new object[] {
+                        itemId,
+                        domainId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public bool EndCheckDomainUsedByHostedOrganization(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void CheckDomainUsedByHostedOrganizationAsync(int itemId, int domainId) {
+            this.CheckDomainUsedByHostedOrganizationAsync(itemId, domainId, null);
+        }
+        
+        /// <remarks/>
+        public void CheckDomainUsedByHostedOrganizationAsync(int itemId, int domainId, object userState) {
+            if ((this.CheckDomainUsedByHostedOrganizationOperationCompleted == null)) {
+                this.CheckDomainUsedByHostedOrganizationOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckDomainUsedByHostedOrganizationOperationCompleted);
+            }
+            this.InvokeAsync("CheckDomainUsedByHostedOrganization", new object[] {
+                        itemId,
+                        domainId}, this.CheckDomainUsedByHostedOrganizationOperationCompleted, userState);
+        }
+        
+        private void OnCheckDomainUsedByHostedOrganizationOperationCompleted(object arg) {
+            if ((this.CheckDomainUsedByHostedOrganizationCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CheckDomainUsedByHostedOrganizationCompleted(this, new CheckDomainUsedByHostedOrganizationCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -2836,6 +2980,32 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetOrganizationByIdCompletedEventHandler(object sender, GetOrganizationByIdCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetOrganizationByIdCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetOrganizationByIdCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public Organization Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((Organization)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void GetOrganizationUserSummuryLetterCompletedEventHandler(object sender, GetOrganizationUserSummuryLetterCompletedEventArgs e);
     
     /// <remarks/>
@@ -3146,6 +3316,58 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((int)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetOrganizationObjectsByDomainCompletedEventHandler(object sender, GetOrganizationObjectsByDomainCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetOrganizationObjectsByDomainCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetOrganizationObjectsByDomainCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public System.Data.DataSet Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((System.Data.DataSet)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void CheckDomainUsedByHostedOrganizationCompletedEventHandler(object sender, CheckDomainUsedByHostedOrganizationCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CheckDomainUsedByHostedOrganizationCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CheckDomainUsedByHostedOrganizationCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014, Outercurve Foundation.
+﻿// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -128,38 +128,119 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         #region HostingServiceProvider methods
 
         public override bool IsInstalled()
-        {
-            // TODO: Remove it.
-            //return true;
+        {            
             Server.Utils.OS.WindowsVersion version = WebsitePanel.Server.Utils.OS.GetVersion();
-            return version == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2012;
+            return version == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2012 || version == WebsitePanel.Server.Utils.OS.WindowsVersion.WindowsServer2012R2;
+        }
+
+        public override string[] Install()
+        {            
+            Runspace runSpace = null;
+            PSObject feature = null;
+
+            try
+            {
+                runSpace = OpenRunspace();
+
+                if (!IsFeatureInstalled("Desktop-Experience", runSpace))
+                {
+                    feature = AddFeature(runSpace, "Desktop-Experience", true, false);                    
+                }
+
+                if (!IsFeatureInstalled("NET-Framework-Core", runSpace))
+                {
+                    feature = AddFeature(runSpace, "NET-Framework-Core", true, false);
+                }
+
+                if (!IsFeatureInstalled("NET-Framework-45-Core", runSpace))
+                {
+                    feature = AddFeature(runSpace, "NET-Framework-45-Core", true, false);                    
+                }
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+
+            return new string[]{};
+        }
+
+        public bool CheckRDSServerAvaliable(string hostname)
+        {
+            bool result = false;
+            var ping = new Ping();
+            var reply = ping.Send(hostname, 1000);
+
+            if (reply.Status == IPStatus.Success)
+            {
+                result = true;
+            }
+
+            return result;
         }
 
         #endregion
 
         #region RDS Collections
 
-        public bool CreateCollection(string organizationId, RdsCollection collection)
+        public bool AddRdsServersToDeployment(RdsServer[] servers)
         {
             var result = true;
-
             Runspace runSpace = null;
 
             try
             {
                 runSpace = OpenRunspace();
 
-                foreach (var server in collection.Servers)
-                {
-                    //If server will restart it will not be added to collection
-                    //Do not install feature here
-
+                foreach (var server in servers)
+                {                    
                     if (!ExistRdsServerInDeployment(runSpace, server))
                     {
                         AddRdsServerToDeployment(runSpace, server);
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                result = false;
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
 
+            return result;
+        }
+
+        public bool CreateCollection(string organizationId, RdsCollection collection)
+        {            
+            var result = true;
+
+            Runspace runSpace = null;
+
+            try
+            {                
+                runSpace = OpenRunspace();                
+
+                var existingServers = GetServersExistingInCollections(runSpace);
+                existingServers = existingServers.Select(x => x.ToUpper()).Intersect(collection.Servers.Select(x => x.FqdName.ToUpper())).ToList();                
+
+                if (existingServers.Any())
+                {                                        
+                    throw new Exception(string.Format("Server{0} {1} already added to another collection", existingServers.Count == 1 ? "" : "s", string.Join(" ,", existingServers.ToArray())));
+                }                
+
+                foreach (var server in collection.Servers)
+                {
+                    //If server will restart it will not be added to collection
+                    //Do not install feature here                        
+
+                    if (!ExistRdsServerInDeployment(runSpace, server))
+                    {                        
+                        AddRdsServerToDeployment(runSpace, server);                        
+                    }
+                }
+                
                 Command cmd = new Command("New-RDSessionCollection");
                 cmd.Parameters.Add("CollectionName", collection.Name);
                 cmd.Parameters.Add("SessionHost", collection.Servers.Select(x => x.FqdName).ToArray());
@@ -170,7 +251,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                     cmd.Parameters.Add("CollectionDescription", collection.Description);
                 }
 
-                var collectionPs = ExecuteShellCommand(runSpace, cmd, false).FirstOrDefault();
+                var collectionPs = ExecuteShellCommand(runSpace, cmd, false).FirstOrDefault();                
 
                 if (collectionPs == null)
                 {
@@ -220,17 +301,31 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 {
                     AddComputerToCollectionAdComputerGroup(organizationId, collection.Name, rdsServer);
                 }
-            }
-            catch (Exception e)
-            {
-                result = false;
-            }
+            }                   
             finally
             {
                 CloseRunspace(runSpace);
             }
 
             return result;
+        }
+
+        public List<string> GetServersExistingInCollections()
+        {
+            Runspace runSpace = null;
+            List<string> existingServers = new List<string>();
+
+            try
+            {                
+                runSpace = OpenRunspace();
+                existingServers = GetServersExistingInCollections(runSpace);
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+
+            return existingServers;
         }
 
         public RdsCollection GetCollection(string collectionName)
@@ -370,7 +465,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             }
         }
 
-       public void AddSessionHostServersToCollection(string organizationId, string collectionName, List<RdsServer> servers)
+        public void AddSessionHostServersToCollection(string organizationId, string collectionName, List<RdsServer> servers)
         {
             foreach (var server in servers)
             {
@@ -390,7 +485,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 cmd.Parameters.Add("ConnectionBroker", ConnectionBroker);
                 cmd.Parameters.Add("SessionHost", server.FqdName);
                 cmd.Parameters.Add("Force", true);
-
+                
                 ExecuteShellCommand(runSpace, cmd, false);
 
                 RemoveComputerFromCollectionAdComputerGroup(organizationId, collectionName, server);
@@ -411,7 +506,95 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
         #endregion
 
+        public void SetRDServerNewConnectionAllowed(bool newConnectionAllowed, RdsServer server)
+        {
+            Runspace runSpace = null;
+
+            try
+            {
+                runSpace = OpenRunspace();
+
+                Command cmd = new Command("Set-RDSessionHost");
+                cmd.Parameters.Add("SessionHost", server.FqdName);
+                cmd.Parameters.Add("NewConnectionAllowed", string.Format("${0}", newConnectionAllowed.ToString()));
+
+                ExecuteShellCommand(runSpace, cmd, false);
+            }
+            catch (Exception e)
+            {
+
+            }
+            finally
+            {
+                CloseRunspace(runSpace);
+            }
+        }
+
         #region Remote Applications
+
+        public string[] GetApplicationUsers(string collectionName, string applicationName)
+        {
+            Runspace runspace = null;
+            List<string> result = new List<string>();
+
+            try
+            {
+                runspace = OpenRunspace();
+
+                Command cmd = new Command("Get-RDRemoteApp");
+                cmd.Parameters.Add("CollectionName", collectionName);
+                cmd.Parameters.Add("ConnectionBroker", ConnectionBroker);
+                cmd.Parameters.Add("DisplayName", applicationName);
+
+                var application = ExecuteShellCommand(runspace, cmd, false).FirstOrDefault();
+
+                if (application != null)
+                {
+                    var users = (string[])(GetPSObjectProperty(application, "UserGroups"));
+
+                    if (users != null)
+                    {
+                        result.AddRange(users);
+                    }
+                }
+            }
+            finally
+            {
+                CloseRunspace(runspace);
+            }
+
+            return result.ToArray();
+        }
+
+        public bool SetApplicationUsers(string collectionName, RemoteApplication remoteApp, string[] users)
+        {
+            Runspace runspace = null;
+            bool result = true;
+
+            try
+            {
+                runspace = OpenRunspace();
+
+                Command cmd = new Command("Set-RDRemoteApp");
+                cmd.Parameters.Add("CollectionName", collectionName);
+                cmd.Parameters.Add("ConnectionBroker", ConnectionBroker);
+                cmd.Parameters.Add("DisplayName", remoteApp.DisplayName);
+                cmd.Parameters.Add("UserGroups", users);
+                cmd.Parameters.Add("Alias", remoteApp.Alias);
+
+                ExecuteShellCommand(runspace, cmd, false).FirstOrDefault();
+            }
+            catch(Exception)
+            {
+                result = false;
+            }
+            finally
+            {
+                CloseRunspace(runspace);
+            }
+
+            return result;
+        }
 
         public List<StartMenuApp> GetAvailableRemoteApplications(string collectionName)
         {
@@ -548,15 +731,22 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             var showCmd = new Command("netsh nps show np");
 
             var showResult = ExecuteRemoteShellCommand(runSpace, centralNpshost, showCmd);
+            var processingOrders = showResult.Where(x => Convert.ToString(x).ToLower().Contains("processing order")).Select(x => Convert.ToString(x));
+            var count = 0;
 
-            var count = showResult.Count(x => Convert.ToString(x).Contains("policy conf")) + 1001;
+            foreach(var processingOrder in processingOrders)
+            {
+                var order = Convert.ToInt32(processingOrder.Remove(0, processingOrder.LastIndexOf("=") + 1).Replace(" ", ""));
+
+                if (order > count)
+                {
+                    count = order;
+                }
+            }
 
             var userGroupAd = ActiveDirectoryUtils.GetADObject(GetUsersGroupPath(organizationId, collectionName));
-
             var userGroupSid = (byte[])ActiveDirectoryUtils.GetADObjectProperty(userGroupAd, "objectSid");
-
-            var addCmdString = string.Format(AddNpsString, policyName.Replace(" ", "_"), count, ConvertByteToStringSid(userGroupSid));
-
+            var addCmdString = string.Format(AddNpsString, policyName.Replace(" ", "_"), count + 1, ConvertByteToStringSid(userGroupSid));
             Command addCmd = new Command(addCmdString);
 
             var result = ExecuteRemoteShellCommand(runSpace, centralNpshost, addCmd);
@@ -596,7 +786,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         }
 
         internal void CreateRdRapForce(Runspace runSpace, string gatewayHost, string policyName, string collectionName, List<string> groups)
-        {
+        {            
             //New-Item -Path "RDS:\GatewayServer\RAP" -Name "Allow Connections To Everywhere" -UserGroups "Administrators@." -ComputerGroupType 1
             //Set-Item -Path "RDS:\GatewayServer\RAP\Allow Connections To Everywhere\PortNumbers" -Value 3389,3390
 
@@ -605,6 +795,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 RemoveRdRap(runSpace, gatewayHost, policyName);
             }
 
+            Log.WriteWarning(gatewayHost);
             var userGroupParametr = string.Format("@({0})", string.Join(",", groups.Select(x => string.Format("\"{0}@{1}\"", x, RootDomain)).ToArray()));
             var computerGroupParametr = string.Format("\"{0}@{1}\"", GetComputersGroupName(collectionName), RootDomain);
 
@@ -614,8 +805,10 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             rdRapCommand.Parameters.Add("UserGroups", userGroupParametr);
             rdRapCommand.Parameters.Add("ComputerGroupType", 1);
             rdRapCommand.Parameters.Add("ComputerGroup", computerGroupParametr);
-
+            Log.WriteWarning("User Group:" + userGroupParametr);
+            Log.WriteWarning("Computer Group:" + computerGroupParametr);
             ExecuteRemoteShellCommand(runSpace, gatewayHost, rdRapCommand, RdsModuleName);
+            Log.WriteWarning("RD RAP Added");
         }
 
         internal void RemoveRdRap(Runspace runSpace, string gatewayHost, string name)
@@ -635,8 +828,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             ExecuteShellCommand(runSpace, cmd, false);
         }
 
+   
 
-    
         private bool ExistRdsServerInDeployment(Runspace runSpace, RdsServer server)
         {
             Command cmd = new Command("Get-RDserver");
@@ -737,6 +930,8 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                     ActiveDirectoryUtils.AddObjectToGroup(computerPath, GetComputerGroupPath(organizationId, collectionName));
                 }
             }
+
+            SetRDServerNewConnectionAllowed(false, server);
         }
 
         private void RemoveComputerFromCollectionAdComputerGroup(string organizationId, string collectionName, RdsServer server)
@@ -764,17 +959,14 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         public bool AddSessionHostFeatureToServer(string hostName)
         {
             bool installationResult = false;
-
             Runspace runSpace = null;
 
             try
             {
                 runSpace = OpenRunspace();
-
                 var feature = AddFeature(runSpace, hostName, "RDS-RD-Server", true, true);
-
-                installationResult = (bool) GetPSObjectProperty(feature, "Success");
-            }
+                installationResult = (bool)GetPSObjectProperty(feature, "Success");               
+            }            
             finally
             {
                 CloseRunspace(runSpace);
@@ -934,7 +1126,7 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
         private string GetPolicyName(string organizationId, string collectionName, RdsPolicyTypes policyType)
         {
-            string policyName = string.Format("{0}-{1}-", organizationId, collectionName);
+            string policyName = string.Format("{0}-", collectionName);
 
             switch (policyType)
             {
@@ -1087,60 +1279,70 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
 
         #region Windows Feature PowerShell
 
-        internal bool IsFeatureInstalled(string hostName, string featureName)
+        internal bool IsFeatureInstalled(string featureName, Runspace runSpace)
         {
             bool isInstalled = false;
+            Command cmd = new Command("Get-WindowsFeature");
+            cmd.Parameters.Add("Name", featureName);
+            var feature = ExecuteShellCommand(runSpace, cmd, false).FirstOrDefault();
 
-            Runspace runSpace = null;
-            try
+            if (feature != null)
             {
-                runSpace = OpenRunspace();
-
-                Command cmd = new Command("Get-WindowsFeature");
-                cmd.Parameters.Add("Name", featureName);
-
-                var feature = ExecuteRemoteShellCommand(runSpace, hostName, cmd).FirstOrDefault();
-
-                if (feature != null)
-                {
-                    isInstalled = (bool) GetPSObjectProperty(feature, "Installed");
-                }
-            }
-            finally
-            {
-                CloseRunspace(runSpace);
+                isInstalled = (bool)GetPSObjectProperty(feature, "Installed");
             }
 
             return isInstalled;
         }
 
-        internal PSObject AddFeature(Runspace runSpace, string hostName, string featureName, bool includeAllSubFeature = true, bool restart = false)
+        internal bool IsFeatureInstalled(string hostName, string featureName, Runspace runSpace)
         {
-            PSObject feature;
-
-            try
+            bool isInstalled = false;            
+            Command cmd = new Command("Get-WindowsFeature");
+            cmd.Parameters.Add("Name", featureName);
+            var feature = ExecuteRemoteShellCommand(runSpace, hostName, cmd).FirstOrDefault();
+            
+            if (feature != null)
             {
-                Command cmd = new Command("Add-WindowsFeature");
-                cmd.Parameters.Add("Name", featureName);
+                isInstalled = (bool) GetPSObjectProperty(feature, "Installed");
+            }            
 
-                if (includeAllSubFeature)
-                {
-                    cmd.Parameters.Add("IncludeAllSubFeature", "");
-                }
+            return isInstalled;
+        }
 
-                if (restart)
-                {
-                    cmd.Parameters.Add("Restart", "");
-                }
+        internal PSObject AddFeature(Runspace runSpace, string featureName, bool includeAllSubFeature = true, bool restart = false)
+        {
+            Command cmd = new Command("Add-WindowsFeature");
+            cmd.Parameters.Add("Name", featureName);
 
-                feature = ExecuteRemoteShellCommand(runSpace, hostName, cmd).FirstOrDefault();
-            }
-            finally
+            if (includeAllSubFeature)
             {
-                CloseRunspace(runSpace);
+                cmd.Parameters.Add("IncludeAllSubFeature", true);
             }
 
-            return feature;
+            if (restart)
+            {
+                cmd.Parameters.Add("Restart", true);
+            }
+
+            return ExecuteShellCommand(runSpace, cmd, false).FirstOrDefault();
+        }
+
+        internal PSObject AddFeature(Runspace runSpace, string hostName, string featureName, bool includeAllSubFeature = true, bool restart = false)
+        {                       
+            Command cmd = new Command("Add-WindowsFeature");
+            cmd.Parameters.Add("Name", featureName);
+
+            if (includeAllSubFeature)
+            {
+                cmd.Parameters.Add("IncludeAllSubFeature", "");
+            }
+            
+            if (restart)
+            {
+                cmd.Parameters.Add("Restart", "");
+            }
+
+            return ExecuteRemoteShellCommand(runSpace, hostName, cmd).FirstOrDefault();            
         }
 
         #endregion
@@ -1207,6 +1409,23 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             return ExecuteShellCommand(runSpace, invokeCommand, false);
         }
 
+        internal Collection<PSObject> ExecuteRemoteShellCommand(Runspace runSpace, string hostName, List<string> scripts, params string[] moduleImports)
+        {
+            Command invokeCommand = new Command("Invoke-Command");
+            invokeCommand.Parameters.Add("ComputerName", hostName);
+
+            RunspaceInvoke invoke = new RunspaceInvoke();
+            string commandString = moduleImports.Any() ? string.Format("import-module {0};", string.Join(",", moduleImports)) : string.Empty;
+
+            commandString = string.Format("{0};{1}", commandString, string.Join(";", scripts.ToArray()));            
+
+            ScriptBlock sb = invoke.Invoke(string.Format("{{{0}}}", commandString))[0].BaseObject as ScriptBlock;
+
+            invokeCommand.Parameters.Add("ScriptBlock", sb);
+
+            return ExecuteShellCommand(runSpace, invokeCommand, false);
+        }
+
         internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd)
         {
             return ExecuteShellCommand(runSpace, cmd, true);
@@ -1221,6 +1440,38 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
         internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd, out object[] errors)
         {
             return ExecuteShellCommand(runSpace, cmd, true, out errors);
+        }
+
+        internal Collection<PSObject> ExecuteShellCommand(Runspace runspace, List<string> scripts, out object[] errors)
+        {
+            Log.WriteStart("ExecuteShellCommand");
+            var errorList = new List<object>();
+            Collection<PSObject> results;
+
+            using (Pipeline pipeLine = runspace.CreatePipeline())
+            {
+                foreach (string script in scripts)
+                {
+                    pipeLine.Commands.AddScript(script);
+                }
+
+                results = pipeLine.Invoke();
+
+                if (pipeLine.Error != null && pipeLine.Error.Count > 0)
+                {
+                    foreach (object item in pipeLine.Error.ReadToEnd())
+                    {
+                        errorList.Add(item);
+                        string errorMessage = string.Format("Invoke error: {0}", item);
+                        Log.WriteWarning(errorMessage);
+                    }
+                }
+            }
+
+            errors = errorList.ToArray();
+            Log.WriteEnd("ExecuteShellCommand");
+
+            return results;
         }
 
         internal Collection<PSObject> ExecuteShellCommand(Runspace runSpace, Command cmd, bool useDomainController,
@@ -1255,10 +1506,10 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
                 if (pipeLine.Error != null && pipeLine.Error.Count > 0)
                 {
                     foreach (object item in pipeLine.Error.ReadToEnd())
-                    {
+                    {                        
                         errorList.Add(item);
                         string errorMessage = string.Format("Invoke error: {0}", item);
-                        Log.WriteWarning(errorMessage);
+                        Log.WriteWarning(errorMessage);                        
                     }
                 }
             }
@@ -1342,6 +1593,29 @@ namespace WebsitePanel.Providers.RemoteDesktopServices
             var result = Convert.ToBoolean(testPathResult.ToString());
 
             return result;
+        }
+
+        internal List<string> GetServersExistingInCollections(Runspace runSpace)
+        {
+            var existingHosts = new List<string>();
+            //var scripts = new List<string>();
+            //scripts.Add(string.Format("$sessions = Get-RDSessionCollection -ConnectionBroker {0}", ConnectionBroker));
+            //scripts.Add(string.Format("foreach($session in $sessions){{Get-RDSessionHost $session.CollectionName -ConnectionBroker {0}|Select SessionHost}}", ConnectionBroker));
+            //object[] errors;
+
+            //var sessionHosts = ExecuteShellCommand(runSpace, scripts, out errors);
+
+            //foreach(var host in sessionHosts)
+            //{
+            //    var sessionHost = GetPSObjectProperty(host, "SessionHost");
+
+            //    if (sessionHost != null)
+            //    {
+            //        existingHosts.Add(sessionHost.ToString());
+            //    }
+            //}
+
+            return existingHosts;
         }
 
         #endregion

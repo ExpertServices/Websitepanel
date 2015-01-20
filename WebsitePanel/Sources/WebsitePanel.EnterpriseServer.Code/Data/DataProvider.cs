@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -36,6 +36,8 @@ using Microsoft.ApplicationBlocks.Data;
 using System.Collections.Generic;
 using Microsoft.Win32;
 using WebsitePanel.Providers.RemoteDesktopServices;
+using WebsitePanel.Providers.DNS;
+using WebsitePanel.Providers.DomainLookup;
 
 namespace WebsitePanel.EnterpriseServer
 {
@@ -1578,7 +1580,7 @@ namespace WebsitePanel.EnterpriseServer
 
         public static DataSet UpdatePackage(int actorId, int packageId, int planId, string packageName,
             string packageComments, int statusId, DateTime purchaseDate,
-            bool overrideQuotas, string quotasXml)
+            bool overrideQuotas, string quotasXml, bool defaultTopPackage)
         {
             return SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
                 ObjectQualifier + "UpdatePackage",
@@ -1590,7 +1592,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@planId", planId),
                 new SqlParameter("@purchaseDate", purchaseDate),
                 new SqlParameter("@overrideQuotas", overrideQuotas),
-                new SqlParameter("@quotasXml", quotasXml));
+                new SqlParameter("@quotasXml", quotasXml),
+                new SqlParameter("@defaultTopPackage", defaultTopPackage));
         }
 
         public static void UpdatePackageName(int actorId, int packageId, string packageName,
@@ -1908,9 +1911,9 @@ namespace WebsitePanel.EnterpriseServer
 
         public static IDataReader GetProcessBackgroundTasks(BackgroundTaskStatus status)
         {
-            return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
-                                           ObjectQualifier + "GetProcessBackgroundTasks",
-                                           new SqlParameter("@status", (int)status));
+                return SqlHelper.ExecuteReader(ConnectionString, CommandType.StoredProcedure,
+                                               ObjectQualifier + "GetProcessBackgroundTasks",
+                                               new SqlParameter("@status", (int)status));
         }
 
         public static IDataReader GetBackgroundTopTask(Guid guid)
@@ -2681,6 +2684,17 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
+        public static IDataReader GetExchangeAccountByAccountNameWithoutItemId(string primaryEmailAddress)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetExchangeAccountByAccountNameWithoutItemId",
+                new SqlParameter("@PrimaryEmailAddress", primaryEmailAddress)
+            );
+        }
+
+
         public static IDataReader GetExchangeMailboxes(int itemId)
         {
             return SqlHelper.ExecuteReader(
@@ -3293,6 +3307,18 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@IncludeMailboxes", includeMailboxes)
             );
         }
+
+        public static DataSet GetOrganizationObjectsByDomain(int itemId, string domainName)
+        {
+            return SqlHelper.ExecuteDataset(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetOrganizationObjectsByDomain",
+                new SqlParameter("@ItemID", itemId),
+                new SqlParameter("@DomainName", domainName)
+            );
+        }
+
 
         #endregion
 
@@ -4344,6 +4370,57 @@ namespace WebsitePanel.EnterpriseServer
 
         #region Enterprise Storage
 
+        public static int AddWebDavAccessToken(Base.HostedSolution.WebDavAccessToken accessToken)
+        {
+            SqlParameter prmId = new SqlParameter("@TokenID", SqlDbType.Int);
+            prmId.Direction = ParameterDirection.Output;
+
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddWebDavAccessToken",
+                prmId,
+                new SqlParameter("@AccessToken", accessToken.AccessToken),
+                new SqlParameter("@FilePath", accessToken.FilePath),
+                new SqlParameter("@AuthData", accessToken.AuthData),
+                new SqlParameter("@ExpirationDate", accessToken.ExpirationDate),
+                new SqlParameter("@AccountID", accessToken.AccountId),
+                new SqlParameter("@ItemId", accessToken.ItemId)
+            );
+
+            // read identity
+            return Convert.ToInt32(prmId.Value);
+        }
+
+        public static void DeleteExpiredWebDavAccessTokens()
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteExpiredWebDavAccessTokens"
+            );
+        }
+
+        public static IDataReader GetWebDavAccessTokenById(int id)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetWebDavAccessTokenById",
+                new SqlParameter("@Id", id)
+            );
+        }
+
+        public static IDataReader GetWebDavAccessTokenByAccessToken(Guid accessToken)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetWebDavAccessTokenByAccessToken",
+                new SqlParameter("@AccessToken", accessToken)
+            );
+        }
+
         public static int AddEntepriseFolder(int itemId, string folderName, int folderQuota, string locationDrive, string homeFolder, string domain)
         {
             SqlParameter prmId = new SqlParameter("@FolderID", SqlDbType.Int);
@@ -4524,7 +4601,7 @@ namespace WebsitePanel.EnterpriseServer
             );
         }
 
-        public static int AddRDSCollection(int itemId, string name, string description)
+        public static int AddRDSCollection(int itemId, string name, string description, string displayName)
         {
             SqlParameter rdsCollectionId = new SqlParameter("@RDSCollectionID", SqlDbType.Int);
             rdsCollectionId.Direction = ParameterDirection.Output;
@@ -4536,7 +4613,8 @@ namespace WebsitePanel.EnterpriseServer
                 rdsCollectionId,
                 new SqlParameter("@ItemID", itemId),
                 new SqlParameter("@Name", name),
-                new SqlParameter("@Description", description)
+                new SqlParameter("@Description", description),
+                new SqlParameter("DisplayName", displayName)
             );
 
             // read identity
@@ -4557,12 +4635,40 @@ namespace WebsitePanel.EnterpriseServer
             return Convert.ToInt32(count.Value);
         }
 
-        public static void UpdateRDSCollection(RdsCollection collection)
+        public static int GetOrganizationRdsCollectionsCount(int itemId)
         {
-            UpdateRDSCollection(collection.Id, collection.ItemId, collection.Name, collection.Description);
+            SqlParameter count = new SqlParameter("@TotalNumber", SqlDbType.Int);
+            count.Direction = ParameterDirection.Output;
+
+            DataSet ds = SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetOrganizationRdsCollectionsCount",
+                count,
+                new SqlParameter("@ItemId", itemId));
+
+            // read identity
+            return Convert.ToInt32(count.Value);
         }
 
-        public static void UpdateRDSCollection(int id, int itemId, string name, string description)
+        public static int GetOrganizationRdsServersCount(int itemId)
+        {
+            SqlParameter count = new SqlParameter("@TotalNumber", SqlDbType.Int);
+            count.Direction = ParameterDirection.Output;
+
+            DataSet ds = SqlHelper.ExecuteDataset(ConnectionString, CommandType.StoredProcedure,
+                ObjectQualifier + "GetOrganizationRdsServersCount",
+                count,
+                new SqlParameter("@ItemId", itemId));
+
+            // read identity
+            return Convert.ToInt32(count.Value);
+        }
+
+        public static void UpdateRDSCollection(RdsCollection collection)
+        {
+            UpdateRDSCollection(collection.Id, collection.ItemId, collection.Name, collection.Description, collection.DisplayName);
+        }
+
+        public static void UpdateRDSCollection(int id, int itemId, string name, string description, string displayName)
         {
             SqlHelper.ExecuteNonQuery(
                 ConnectionString,
@@ -4571,7 +4677,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@Id", id),
                 new SqlParameter("@ItemID", itemId),
                 new SqlParameter("@Name", name),
-                new SqlParameter("@Description", description)
+                new SqlParameter("@Description", description),
+                new SqlParameter("@DisplayName", displayName)
             );
         }
 
@@ -4665,10 +4772,10 @@ namespace WebsitePanel.EnterpriseServer
         public static void UpdateRDSServer(RdsServer server)
         {
             UpdateRDSServer(server.Id, server.ItemId, server.Name, server.FqdName, server.Description,
-                server.RdsCollectionId);
+                server.RdsCollectionId, server.ConnectionEnabled);
         }
 
-        public static void UpdateRDSServer(int id, int? itemId, string name, string fqdName, string description, int? rdsCollectionId)
+        public static void UpdateRDSServer(int id, int? itemId, string name, string fqdName, string description, int? rdsCollectionId, bool connectionEnabled)
         {
             SqlHelper.ExecuteNonQuery(
                 ConnectionString,
@@ -4679,7 +4786,8 @@ namespace WebsitePanel.EnterpriseServer
                 new SqlParameter("@Name", name),
                 new SqlParameter("@FqdName", fqdName),
                 new SqlParameter("@Description", description),
-                new SqlParameter("@RDSCollectionId", rdsCollectionId)
+                new SqlParameter("@RDSCollectionId", rdsCollectionId),
+                new SqlParameter("@ConnectionEnabled", connectionEnabled)
             );
         }
 
@@ -4758,5 +4866,127 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         #endregion
+
+        #region MX|NX Services
+
+        public static IDataReader GetAllPackages()
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetAllPackages"
+            );
+        }
+
+        public static IDataReader GetDomainDnsRecords(int domainId, DnsRecordType recordType)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetDomainDnsRecords",
+                new SqlParameter("@DomainId", domainId),
+                new SqlParameter("@RecordType", recordType)
+            );
+        }
+
+        public static IDataReader GetDomainAllDnsRecords(int domainId)
+        {
+            return SqlHelper.ExecuteReader(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "GetDomainAllDnsRecords",
+                new SqlParameter("@DomainId", domainId)
+            );
+        }
+
+        public static void AddDomainDnsRecord(DnsRecordInfo domainDnsRecord)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "AddDomainDnsRecord",
+                new SqlParameter("@DomainId", domainDnsRecord.DomainId),
+                new SqlParameter("@RecordType", domainDnsRecord.RecordType),
+                new SqlParameter("@DnsServer", domainDnsRecord.DnsServer),
+                new SqlParameter("@Value", domainDnsRecord.Value),
+                new SqlParameter("@Date", domainDnsRecord.Date)
+            );
+        }
+
+        public static IDataReader GetScheduleTaskEmailTemplate(string taskId)
+        {
+            return SqlHelper.ExecuteReader(
+                    ConnectionString,
+                    CommandType.StoredProcedure,
+                    "GetScheduleTaskEmailTemplate",
+                    new SqlParameter("@taskId", taskId)
+                );
+        }
+
+        public static void DeleteDomainDnsRecord(int id)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "DeleteDomainDnsRecord",
+                new SqlParameter("@Id", id)
+            );
+        }
+
+        public static void UpdateDomainCreationDate(int domainId, DateTime date)
+        {
+            UpdateDomainDate(domainId, "UpdateDomainCreationDate", date);
+        }
+
+        public static void UpdateDomainExpirationDate(int domainId, DateTime date)
+        {
+            UpdateDomainDate(domainId, "UpdateDomainExpirationDate", date);
+        }
+
+        public static void UpdateDomainLastUpdateDate(int domainId, DateTime date)
+        {
+            UpdateDomainDate(domainId, "UpdateDomainLastUpdateDate", date);
+        }
+
+        private static void UpdateDomainDate(int domainId, string stroredProcedure, DateTime date)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                stroredProcedure,
+                new SqlParameter("@DomainId", domainId),
+                new SqlParameter("@Date", date)
+            );
+        }
+
+        public static void UpdateDomainDates(int domainId, DateTime? domainCreationDate, DateTime? domainExpirationDate, DateTime? domainLastUpdateDate)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateDomainDates",
+                new SqlParameter("@DomainId", domainId),
+                new SqlParameter("@DomainCreationDate", domainCreationDate),
+                new SqlParameter("@DomainExpirationDate", domainExpirationDate),
+                new SqlParameter("@DomainLastUpdateDate", domainLastUpdateDate)
+            );
+        }
+
+        public static void UpdateWhoisDomainInfo(int domainId, DateTime? domainCreationDate, DateTime? domainExpirationDate, DateTime? domainLastUpdateDate, string registrarName)
+        {
+            SqlHelper.ExecuteNonQuery(
+                ConnectionString,
+                CommandType.StoredProcedure,
+                "UpdateWhoisDomainInfo",
+                new SqlParameter("@DomainId", domainId),
+                new SqlParameter("@DomainCreationDate", domainCreationDate),
+                new SqlParameter("@DomainExpirationDate", domainExpirationDate),
+                new SqlParameter("@DomainLastUpdateDate", domainLastUpdateDate),
+                new SqlParameter("@DomainRegistrarName", registrarName)
+            );
+        }
+
+        #endregion
+
     }
 }

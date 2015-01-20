@@ -28,7 +28,7 @@
 					</table> 
                       
 				    <div class="FormFooterClean">
-					    <asp:Button id="btnAdd" runat="server" Text="Add" CssClass="Button1" meta:resourcekey="btnAdd" ValidationGroup="AddRDSServer" OnClick="btnAdd_Click"></asp:Button>
+					    <asp:Button id="btnAdd" runat="server" Text="Add" CssClass="Button1" meta:resourcekey="btnAdd" ValidationGroup="AddRDSServer" OnClick="btnAdd_Click" OnClientClick="ShowProgressDialog('Adding server...');"></asp:Button>
 					    <asp:ValidationSummary ID="valSummary" runat="server" ShowMessageBox="True" ShowSummary="False" ValidationGroup="AddRDSServer" />
 				    </div>
 				</div>

@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -72,6 +72,23 @@ namespace WebsitePanel.Server
             catch (Exception ex)
             {
                 Log.WriteError(String.Format("'{0}' CreateCollection", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool AddRdsServersToDeployment(RdsServer[] servers)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' AddRdsServersToDeployment", ProviderSettings.ProviderName);
+                var result = RDSProvider.AddRdsServersToDeployment(servers);
+                Log.WriteEnd("'{0}' AddRdsServersToDeployment", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' AddRdsServersToDeployment", ProviderSettings.ProviderName), ex);
                 throw;
             }
         }
@@ -187,6 +204,22 @@ namespace WebsitePanel.Server
             catch (Exception ex)
             {
                 Log.WriteError(String.Format("'{0}' RemoveSessionHostServersFromCollection", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public void SetRDServerNewConnectionAllowed(bool newConnectionAllowed, RdsServer server)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' SetRDServerNewConnectionAllowed", ProviderSettings.ProviderName);
+                RDSProvider.SetRDServerNewConnectionAllowed(newConnectionAllowed, server);
+                Log.WriteEnd("'{0}' SetRDServerNewConnectionAllowed", ProviderSettings.ProviderName);
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' SetRDServerNewConnectionAllowed", ProviderSettings.ProviderName), ex);
                 throw;
             }
         }
@@ -326,6 +359,73 @@ namespace WebsitePanel.Server
                 throw;
             }
         }
-    }
 
+        [WebMethod, SoapHeader("settings")]
+        public string[] GetApplicationUsers(string collectionName, string applicationName)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetApplicationUsers", ProviderSettings.ProviderName);
+                var result = RDSProvider.GetApplicationUsers(collectionName, applicationName);
+                Log.WriteEnd("'{0}' GetApplicationUsers", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetApplicationUsers", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool SetApplicationUsers(string collectionName, RemoteApplication remoteApp, string[] users)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' SetApplicationUsers", ProviderSettings.ProviderName);
+                var result = RDSProvider.SetApplicationUsers(collectionName, remoteApp, users);
+                Log.WriteEnd("'{0}' SetApplicationUsers", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' SetApplicationUsers", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public bool CheckRDSServerAvaliable(string hostname)
+        {
+            try
+            {
+                Log.WriteStart("'{0}' CheckRDSServerAvaliable", ProviderSettings.ProviderName);
+                var result = RDSProvider.CheckRDSServerAvaliable(hostname);
+                Log.WriteEnd("'{0}' CheckRDSServerAvaliable", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' CheckRDSServerAvaliable", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+
+        [WebMethod, SoapHeader("settings")]
+        public List<string> GetServersExistingInCollections()
+        {
+            try
+            {
+                Log.WriteStart("'{0}' GetServersExistingInCollections", ProviderSettings.ProviderName);
+                var result = RDSProvider.GetServersExistingInCollections();
+                Log.WriteEnd("'{0}' GetServersExistingInCollections", ProviderSettings.ProviderName);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteError(String.Format("'{0}' GetServersExistingInCollections", ProviderSettings.ProviderName), ex);
+                throw;
+            }
+        }
+    }
 }

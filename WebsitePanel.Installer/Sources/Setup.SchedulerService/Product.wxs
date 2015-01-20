@@ -3,13 +3,23 @@
     <?include Config.wxi?>
     <?define VERSION="2.1"?>
     <Product Id="*" Name="WebsitePanel Scheduler Service Installer" Language="1033" Version="$(var.VERSION)" Manufacturer="Outercurve Foundation" UpgradeCode="629ccd5c-1f6d-4168-bbe6-01c69e232f44">
-        <Package InstallerVersion="200" Compressed="yes" />
+
+      <Package InstallerVersion="200" Compressed="yes" />
         <Media Id="1" EmbedCab="yes" Cabinet="schedulerservice.cab" />
         <Feature Id="ProductFeature" Title="WebsitePanel Scheduler Service Installer" Level="1">
             <ComponentRef Id="ProductFiles" />
         </Feature>
         <Property Id="BannerBitmap">bannrbmp</Property>
-        <WixVariable Id="WixUIBannerBmp" Value="bannrbmp.bmp" />
+
+      <Property Id="PREVIOUSVERSIONSINSTALLED" Secure="yes" />
+      <Upgrade Id="629ccd5c-1f6d-4168-bbe6-01c69e232f44">
+        <UpgradeVersion
+           Minimum="1.0.0.0" Maximum="99.0.0.0"
+           Property="PREVIOUSVERSIONSINSTALLED"
+           IncludeMinimum="yes" IncludeMaximum="no" />
+      </Upgrade>
+
+      <WixVariable Id="WixUIBannerBmp" Value="bannrbmp.bmp" />
         <WixVariable Id="WixUIDialogBmp" Value="dlgbmp.bmp" />
         <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
         <Icon Id="WebSitePanel.ico" SourceFile="WebSitePanel.ico" />
@@ -72,7 +82,9 @@
             </Dialog>
             <Dialog Id="InstallLocationDlg" Width="370" Height="270" Title="[ProductName] Setup">
                 <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next">
-                    <Publish Event="NewDialog" Value="DatabaseConnectionDlg" Order="3">1</Publish>
+                   <Publish Event="DoAction" Value="PreInstallationAction">1</Publish>
+                    <Publish Event="NewDialog" Value="DatabaseConnectionDlg" Order="3">SKIPCONNECTIONSTRINGSTEP = "0"</Publish>
+                    <Publish Event="NewDialog" Value="VerifyReadyDlg" Order="3">SKIPCONNECTIONSTRINGSTEP = "1"</Publish>
                 </Control>
                 <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back">
                     <Publish Event="NewDialog" Value="LicenseAgreementDlg" Order="3">1</Publish>
@@ -91,11 +103,15 @@
             <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="InstallLocationDlg" Order="3">
               LicenseAccepted = "1"
             </Publish>
-            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg">1</Publish>
+            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="DatabaseConnectionDlg">SKIPCONNECTIONSTRINGSTEP = "0"</Publish>
+          <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="InstallLocationDlg">SKIPCONNECTIONSTRINGSTEP = "1"</Publish>
             <TextStyle Id="DlgTitleFont" FaceName="Tahoma" Size="8" Bold="yes" />
         </UI>
         <InstallExecuteSequence>
-            <Custom Action="FinalizeInstall" After="InstallFinalize" />
+          <Custom Action="PropertyFinalizeInstall" After='InstallValidate'/>
+          <Custom Action="FinalizeUnInstall" After="InstallValidate">(NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")</Custom>
+          <RemoveExistingProducts After="InstallValidate" />
+          <Custom Action='FinalizeInstall' After='InstallFiles' >NOT Installed or REINSTALL</Custom>
         </InstallExecuteSequence>
     </Product>
     <Fragment>
@@ -103,8 +119,20 @@
         <Binary Id="CheckConnection.CA" SourceFile="bin\WebsitePanel.SchedulerServiceInstaller.CA.dll" />
     </Fragment>
     <Fragment>
-        <CustomAction Id="FinalizeInstall" BinaryKey="CheckConnection.CA" DllEntry="FinalizeInstall" />        
+        <!-- immediate CA -->
+        <CustomAction Id='PropertyFinalizeInstall' Property='FinalizeInstall' Value='ConnectionString=[CONNECTIONSTRING];PreviousConnectionString=[PREVIOUSCONNECTIONSTRING];ServiceFolder=[SERVICEFOLDER];PreviousCryptoKey=[PREVIOUSCRYPTOKEY]' Return="check"/>
+
+        <!-- deferred CA -->
+        <CustomAction Id='FinalizeInstall' BinaryKey ='CheckConnection.CA' DllEntry='FinalizeInstall' Impersonate='no' Execute='deferred'  Return='check' HideTarget='yes'/>  
+    
+        <!--<CustomAction Id="FinalizeInstall" BinaryKey="CheckConnection.CA" DllEntry="FinalizeInstall"  />-->        
     </Fragment>
+  <Fragment>
+    <CustomAction Id="PreInstallationAction" BinaryKey="CheckConnection.CA" DllEntry="PreInstallationAction" />
+    <CustomAction Id="FinalizeUnInstall" BinaryKey="CheckConnection.CA" DllEntry="FinalizeUnInstall" />
+    <CustomAction Id='AlreadyUpdated' Error='Product has already been updated to $(var.VERSION) or newer.' />
+    <CustomAction Id='NoDowngrade' Error='A later version of [ProductName] is already installed.' />
+  </Fragment>
     <Fragment>
         <Directory Id="TARGETDIR" Name="SourceDir">
             <Directory Id="WEBSITEPANELFOLDER" Name="WebsitePanel">
@@ -115,13 +143,15 @@
     <Fragment>
         <DirectoryRef Id="INSTALLFOLDER">
             <Component Id="ProductFiles" Guid="A89FA6CF-53E2-4390-9E9D-11CD4297D739">
-                <File Id="WebsitePanel.SchedulerService.exe" Source="$(var.BUILDPATH)\WebsitePanel.SchedulerService.exe" />
-                <File Id="WebsitePanel.SchedulerService.exe.config" Source="$(var.BUILDPATH)\WebsitePanel.SchedulerService.exe.config" />
+              <File Id="WebsitePanel.SchedulerService.exe" Source="$(var.BUILDPATH)\WebsitePanel.SchedulerService.exe" />
+              <File Id="WebsitePanel.SchedulerService.exe.config" Source="$(var.BUILDPATH)\WebsitePanel.SchedulerService.exe.config" />
               <File Id="Ionic.Zip.Reduced.dll" Source="$(var.SERVERBUILDPATH)\Ionic.Zip.Reduced.dll"/>
               <File Id="Microsoft.Web.Services3.dll" Source="$(var.SERVERBUILDPATH)\Microsoft.Web.Services3.dll"/>
               <File Id="WebsitePanel.Common.Utils.dll" Source="$(var.BUILDPATH)\WebsitePanel.Common.Utils.dll"/>
               <File Id="WebsitePanel.EnterpriseServer.Base.dll" Source="$(var.BUILDPATH)\WebsitePanel.EnterpriseServer.Base.dll"/>
               <File Id="WebsitePanel.EnterpriseServer.Code.dll" Source="$(var.BUILDPATH)\WebsitePanel.EnterpriseServer.Code.dll"/>
+              <File Id="IPAddressRange.dll" Source="$(var.BUILDPATH)\IPAddressRange.dll"/>
+              <File Id="WhoisClient.dll" Source="$(var.BUILDPATH)\WhoisClient.dll"/>
               <File Id="WebsitePanel.Providers.Base.dll" Source="$(var.BUILDPATH)\WebsitePanel.Providers.Base.dll"/>
               <File Id="WebsitePanel.Server.Client.dll" Source="$(var.BUILDPATH)\WebsitePanel.Server.Client.dll"/>
               <File Id="WebsitePanel.Templates.dll" Source="$(var.BUILDPATH)\WebsitePanel.Templates.dll"/>

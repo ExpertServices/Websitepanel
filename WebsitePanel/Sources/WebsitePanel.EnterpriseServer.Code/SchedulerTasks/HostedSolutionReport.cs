@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -32,6 +32,7 @@ using System.IO;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
+using WebsitePanel.EnterpriseServer;
 using WebsitePanel.EnterpriseServer.Code.HostedSolution;
 using WebsitePanel.Providers.HostedSolution;
 
@@ -51,6 +52,8 @@ namespace WebsitePanel.EnterpriseServer
         {
             try
             {
+                TaskManager.Write("Start HostedSolutionReportTask");
+
                 BackgroundTask topTask = TaskManager.TopTask;
 
                 bool isExchange = Utils.ParseBool(topTask.GetParamValue(EXCHANGE_REPORT), false);
@@ -61,23 +64,41 @@ namespace WebsitePanel.EnterpriseServer
 
                 string email = topTask.GetParamValue(EMAIL).ToString();
 
+                TaskManager.WriteParameter("isExchange",isExchange);
+                TaskManager.WriteParameter("isSharePoint",isSharePoint);
+                TaskManager.WriteParameter("isLync", isLync);
+                TaskManager.WriteParameter("isCRM", isCRM);
+                TaskManager.WriteParameter("isOrganization", isOrganization);
+                TaskManager.WriteParameter("email", email);
 
                 UserInfo user = PackageController.GetPackageOwner(topTask.PackageId);
+
+                TaskManager.WriteParameter("user", user.Username);
+
                 EnterpriseSolutionStatisticsReport report =
                     ReportController.GetEnterpriseSolutionStatisticsReport(user.UserId, isExchange, isSharePoint, isCRM,
                                                              isOrganization, isLync);
 
+                TaskManager.WriteParameter("report.ExchangeReport.Items.Count", report.ExchangeReport.Items.Count);
+                TaskManager.WriteParameter("report.SharePointReport.Items.Count", report.SharePointReport.Items.Count);
+                TaskManager.WriteParameter("report.CRMReport.Items.Count", report.CRMReport.Items.Count);
+                TaskManager.WriteParameter("report.OrganizationReport.Items.Count", report.OrganizationReport.Items.Count);
+                TaskManager.WriteParameter("report.LyncReport.Items.Count", report.LyncReport.Items.Count);
 
                 SendMessage(user, email, isExchange && report.ExchangeReport != null ? report.ExchangeReport.ToCSV() : string.Empty,
                             isSharePoint && report.SharePointReport != null ? report.SharePointReport.ToCSV() : string.Empty,
                             isCRM && report.CRMReport != null ? report.CRMReport.ToCSV() : string.Empty,
                             isOrganization && report.OrganizationReport != null ? report.OrganizationReport.ToCSV() : string.Empty,
                             isLync && report.LyncReport != null ? report.LyncReport.ToCSV() : string.Empty);
+
             }
             catch(Exception ex)
             {
                 TaskManager.WriteError(ex);
             }
+
+            TaskManager.Write("End HostedSolutionReportTask");
+
         }
 
         
@@ -97,6 +118,8 @@ namespace WebsitePanel.EnterpriseServer
         
         private void SendMessage(UserInfo user,string email, string exchange_csv, string sharepoint_csv, string crm_csv, string organization_csv, string lync_csv)
         {
+            TaskManager.Write("SendMessage");
+
             List<Attachment> attacments = new List<Attachment>();
             PrepareAttament("exchange.csv", exchange_csv, attacments);
             PrepareAttament("sharepoint.csv", sharepoint_csv, attacments);
@@ -104,9 +127,6 @@ namespace WebsitePanel.EnterpriseServer
             PrepareAttament("crm.csv", crm_csv, attacments);
             PrepareAttament("organization.csv", organization_csv, attacments);
             
-
-            
-
             // get letter settings
             UserSettings settings = UserController.GetUserSettings(user.UserId, UserSettings.HOSTED_SOLUTION_REPORT);
 
@@ -116,9 +136,29 @@ namespace WebsitePanel.EnterpriseServer
             string body = user.HtmlMail ? settings["HtmlBody"] : settings["TextBody"];
             bool isHtml = user.HtmlMail;
 
-            MailPriority priority = MailPriority.Normal;                        
+            MailPriority priority = MailPriority.Normal;
+
+            TaskManager.WriteParameter("from", from);
+            TaskManager.WriteParameter("email", email);
+            TaskManager.WriteParameter("subject", subject);
+            TaskManager.WriteParameter("body", body);
+          
             
-            MailHelper.SendMessage(from, email, cc,  subject, body, priority, isHtml, attacments.ToArray());
+            int res = MailHelper.SendMessage(from, email, cc,  subject, body, priority, isHtml, attacments.ToArray());
+
+            if (res==0)
+            {
+                TaskManager.Write("SendMessage OK");
+            }
+            else
+            {
+                TaskManager.WriteError("SendMessage error ", "error code", res.ToString());
+            }
+
+            TaskManager.WriteParameter("", res);
+
+            TaskManager.Write("End SendMessage");
+
             
         }
     }

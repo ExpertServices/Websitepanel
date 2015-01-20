@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -837,8 +837,8 @@ namespace Microsoft.ApplicationBlocks.Data
 				// Detach the SqlParameters from the command object, so they can be used again.
 				// HACK: There is a problem here, the output parameter values are fletched 
 				// when the reader is closed, so if the parameters are detached from the command
-				// then the SqlReader can´t set its values. 
-				// When this happen, the parameters can´t be used again in other command.
+				// then the SqlReader canï¿½t set its values. 
+				// When this happen, the parameters canï¿½t be used again in other command.
 				bool canClear = true;
 				foreach(SqlParameter commandParameter in cmd.Parameters)
 				{

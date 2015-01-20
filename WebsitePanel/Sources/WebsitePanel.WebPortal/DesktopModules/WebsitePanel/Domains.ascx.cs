@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -36,23 +36,29 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
+using System.Linq;
 
 using WebsitePanel.EnterpriseServer;
+using System.Collections.Generic;
 
 namespace WebsitePanel.Portal
 {
     public partial class Domains : WebsitePanelModuleBase
     {
+        public Dictionary<int, string> dnsRecords;
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            dnsRecords = new Dictionary<int, string>();
+
             gvDomains.PageSize = UsersHelper.GetDisplayItemsPerPage();
 
             // visibility
             chkRecursive.Visible = (PanelSecurity.SelectedUser.Role != UserRole.User);
-            gvDomains.Columns[2].Visible = gvDomains.Columns[3].Visible =
+            gvDomains.Columns[4].Visible = gvDomains.Columns[5].Visible =
                 (PanelSecurity.SelectedUser.Role != UserRole.User) && chkRecursive.Checked;
-			gvDomains.Columns[4].Visible = (PanelSecurity.SelectedUser.Role == UserRole.Administrator);
-			gvDomains.Columns[5].Visible = (PanelSecurity.EffectiveUser.Role == UserRole.Administrator);
+			gvDomains.Columns[6].Visible = (PanelSecurity.SelectedUser.Role == UserRole.Administrator);
+			gvDomains.Columns[7].Visible = (PanelSecurity.EffectiveUser.Role == UserRole.Administrator);
 
             if (!IsPostBack)
             {
@@ -98,6 +104,101 @@ namespace WebsitePanel.Portal
                 return GetLocalizedString("DomainType.SubDomain");
             else
                 return GetLocalizedString("DomainType.Domain");
+        }
+
+        public string GetDomainExpirationDate(object expirationDateObject, object LastUpdateDateObject)
+        {
+            var expirationDate = expirationDateObject as DateTime?;
+            var lastUpdateDate = LastUpdateDateObject as DateTime?;
+
+            if (expirationDate != null && expirationDate < DateTime.Now)
+            {
+                return GetLocalizedString("DomainExpirationDate.Expired");
+            }
+            else if(expirationDate != null)
+            {
+                return expirationDate.Value.ToShortDateString();
+            }
+            else if (lastUpdateDate == null)
+            {
+                return GetLocalizedString("DomainExpirationDate.NotChecked");
+            }
+            else
+            {
+                return GetLocalizedString("DomainExpirationDate.NotExist");
+            }
+        }
+
+        public bool ShowDomainDnsInfo(object expirationDateObject, object LastUpdateDateObject, bool isTopLevelDomain)
+        {
+            var expirationDate = expirationDateObject as DateTime?;
+            var lastUpdateDate = LastUpdateDateObject as DateTime?;
+
+            if (!isTopLevelDomain)
+            {
+                return false;
+            }
+            else if (expirationDate != null && expirationDate < DateTime.Now)
+            {
+                return false;
+            }
+            else if(expirationDate != null)
+            {
+                return true;
+            }
+            else if (lastUpdateDate == null)
+            {
+                return false;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public string GetDomainDnsRecords(int domainId)
+        {
+            if(dnsRecords.ContainsKey(domainId))
+            {
+                return dnsRecords[domainId];
+            }
+
+            var records = ES.Services.Servers.GetDomainDnsRecords(domainId);
+
+            if (!records.Any())
+            {
+                dnsRecords.Add(domainId, string.Empty);
+
+                return string.Empty;
+            }
+
+            var header = GetLocalizedString("DomainLookup.TooltipHeader");
+
+            var tooltipLines = new List<string>();
+
+            tooltipLines.Add(header);
+            tooltipLines.Add(" ");
+            tooltipLines.AddRange( records.Select(x=>string.Format("{0}: {1}", x.RecordType, x.Value)));
+
+            dnsRecords.Add(domainId, string.Join("\r\n", tooltipLines));
+
+            return dnsRecords[domainId];
+        }
+
+        public string GetDomainTooltip(int domainId, string registrar)
+        {
+            var dnsString = GetDomainDnsRecords(domainId);
+
+            var tooltipLines = new List<string>();
+
+            if (!string.IsNullOrEmpty(registrar))
+            {
+                var header = GetLocalizedString("DomainLookup.TooltipHeader.Registrar");
+                tooltipLines.Add(header + " " + registrar);
+                tooltipLines.Add("\r\n");
+            }
+
+            return string.Join("\r\n", tooltipLines) + dnsString;
         }
 
         protected void odsDomainsPaged_Selected(object sender, ObjectDataSourceStatusEventArgs e)

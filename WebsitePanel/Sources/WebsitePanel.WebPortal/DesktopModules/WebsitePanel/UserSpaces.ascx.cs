@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -36,6 +36,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
+using WSP = WebsitePanel.EnterpriseServer;
 
 using WebsitePanel.EnterpriseServer;
 using System.Xml;
@@ -46,9 +47,10 @@ namespace WebsitePanel.Portal
     public partial class UserSpaces : WebsitePanelModuleBase
     {
         XmlNodeList xmlIcons = null;
-
+        DataSet myPackages;
         protected void Page_Load(object sender, EventArgs e)
         {
+            
             // check for user
             bool isUser = PanelSecurity.SelectedUser.Role == UserRole.User;
 
@@ -57,15 +59,29 @@ namespace WebsitePanel.Portal
 
             if (isUser && xmlIcons != null)
             {
+                
+                if(!IsPostBack) 
+                {
+                    myPackages = new PackagesHelper().GetMyPackages();
+                    myPackages.Tables[0].DefaultView.Sort = "DefaultTopPackage DESC, PackageId ASC";
+                    ddlPackageSelect.DataSource = myPackages.Tables[0].DefaultView;
+                    ddlPackageSelect.DataTextField = myPackages.Tables[0].Columns[2].ColumnName;
+                    ddlPackageSelect.DataValueField = myPackages.Tables[0].Columns[0].ColumnName;
+                    ddlPackageSelect.DataBind();
+                }
                 // USER
                 UserPackagesPanel.Visible = true;
-                PackagesList.DataSource = new PackagesHelper().GetMyPackages();
-                PackagesList.DataBind();
-
-                if (PackagesList.Items.Count == 0)
+                if(!IsPostBack) 
                 {
-                    litEmptyList.Text = GetLocalizedString("gvPackages.Empty");
-                    EmptyPackagesList.Visible = true;
+                    if(ddlPackageSelect.Items.Count == 0) {
+                        litEmptyList.Text = GetLocalizedString("gvPackages.Empty");
+                        EmptyPackagesList.Visible = true;
+                    } else {
+                        ddlPackageSelect.Visible = true;
+                        myPackages = new PackagesHelper().GetMyPackage(int.Parse(ddlPackageSelect.SelectedValue));
+                        PackagesList.DataSource = myPackages;
+                        PackagesList.DataBind();
+                    }
                 }
             }
             else
@@ -222,6 +238,11 @@ namespace WebsitePanel.Portal
         private string GetXmlAttribute(XmlNode node, string name)
         {
             return node.Attributes[name] != null ? node.Attributes[name].Value : null;
+        }
+
+        public void openSelectedPackage(Object sender, EventArgs e) {
+            PackagesList.DataSource = new PackagesHelper().GetMyPackage(int.Parse(ddlPackageSelect.SelectedValue));
+            PackagesList.DataBind();
         }
     }
 }

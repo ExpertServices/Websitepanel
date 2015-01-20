@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -149,7 +149,14 @@ namespace WebsitePanel.Portal
 
         private void RedirectBack()
         {
-            Response.Redirect(NavigateURL("PoolID", ddlPools.SelectedValue));
+            var returnUrl = Request["ReturnUrl"];
+
+            if (string.IsNullOrEmpty(returnUrl))
+            {
+                returnUrl = NavigateURL("PoolID", ddlPools.SelectedValue);
+            }
+
+            Response.Redirect(returnUrl);
         }
 
         protected void ddlPools_SelectedIndexChanged(object sender, EventArgs e)

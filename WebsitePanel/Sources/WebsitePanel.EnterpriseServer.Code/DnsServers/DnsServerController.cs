@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -29,6 +29,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
+using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 using WebsitePanel.Providers;
@@ -38,6 +40,13 @@ namespace WebsitePanel.EnterpriseServer
 {
     public class DnsServerController : IImportController, IBackupController
     {
+        private static string GetAsciiZoneName(string zoneName)
+        {
+            if (string.IsNullOrEmpty(zoneName)) return zoneName;
+            var idn = new IdnMapping();
+            return idn.GetAscii(zoneName);
+        }
+
         private static DNSServer GetDNSServer(int serviceId)
         {
             DNSServer dns = new DNSServer();
@@ -54,6 +63,9 @@ namespace WebsitePanel.EnterpriseServer
         {
             // get DNS provider
             DNSServer dns = GetDNSServer(serviceId);
+
+            // Ensure zoneName is in ascii before saving to database
+            zoneName = GetAsciiZoneName(zoneName);
 
             // check if zone already exists
             if (dns.ZoneExists(zoneName))
@@ -199,7 +211,7 @@ namespace WebsitePanel.EnterpriseServer
         {
             // zone item
             DnsZone zone = primaryZone ? new DnsZone() : new SecondaryDnsZone();
-            zone.Name = zoneName;
+            zone.Name = GetAsciiZoneName(zoneName);
             zone.PackageId = spaceId;
             zone.ServiceId = serviceId;
             int zoneItemId = PackageController.AddPackageItem(zone);
@@ -280,6 +292,8 @@ namespace WebsitePanel.EnterpriseServer
 
             foreach (GlobalDnsRecord record in records)
             {
+                domainName = GetAsciiZoneName(domainName);
+
                 DnsRecord rr = new DnsRecord();
                 rr.RecordType = (DnsRecordType)Enum.Parse(typeof(DnsRecordType), record.RecordType, true);
                 rr.RecordName = Utils.ReplaceStringVariable(record.RecordName, "host_name", hostName, true);
@@ -359,8 +373,11 @@ namespace WebsitePanel.EnterpriseServer
             DNSServer dns = new DNSServer();
             ServiceProviderProxy.Init(dns, serviceId);
 
+            // IDN: The list of importable names is populated with unicode names, to make it easier for the user
+            var idn = new IdnMapping();
+
             if (itemType == typeof(DnsZone))
-                items.AddRange(dns.GetZones());
+                items.AddRange(dns.GetZones().Select(z => idn.GetUnicode(z)));
 
             return items;
         }
@@ -375,12 +392,61 @@ namespace WebsitePanel.EnterpriseServer
 
             if (itemType == typeof(DnsZone))
             {
+                // Get ascii form in punycode
+                var zoneName = GetAsciiZoneName(itemName);
+
                 // add DNS zone
                 DnsZone zone = new DnsZone();
-                zone.Name = itemName;
+                zone.Name = zoneName;
                 zone.ServiceId = serviceId;
                 zone.PackageId = packageId;
                 int zoneId = PackageController.AddPackageItem(zone);
+
+                // Add secondary zone(s)
+                try
+                {
+                    // get secondary DNS services
+                    var primSettings = ServerController.GetServiceSettings(serviceId);
+                    var secondaryServiceIds = new List<int>();
+                    var strSecondaryServices = primSettings["SecondaryDNSServices"];
+                    if (!String.IsNullOrEmpty(strSecondaryServices))
+                    {
+                        var secondaryServices = strSecondaryServices.Split(',');
+                        secondaryServiceIds.AddRange(secondaryServices.Select(strSecondaryId => Utils.ParseInt(strSecondaryId, 0)).Where(secondaryId => secondaryId != 0));
+                    }
+
+                    // add secondary zones
+                    var secondaryZoneFound = false;
+
+                    foreach (var secondaryId in secondaryServiceIds)
+                    {
+                        var secDns = GetDNSServer(secondaryId);
+                        if (secDns.ZoneExists(zoneName))
+                        {
+                            secondaryZoneFound = true;
+
+                            var secondaryZone = new SecondaryDnsZone
+                            {
+                                Name = zoneName,
+                                ServiceId = secondaryId,
+                                PackageId = packageId
+                            };
+
+                            PackageController.AddPackageItem(secondaryZone);
+                        }
+                    }
+
+                    if (!secondaryZoneFound)
+                    {
+                        TaskManager.WriteWarning("No secondary zone(s) found when importing zone " + itemName);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    TaskManager.WriteError(ex, "Error importing secondary zone(s)");
+                }
+
 
                 // add/update domains/pointers
                 RestoreDomainByZone(itemName, packageId, zoneId);

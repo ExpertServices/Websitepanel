@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -147,5 +147,10 @@ namespace WebsitePanel.EnterpriseServer
             get { return this.instantAliasName; }
             set { this.instantAliasName = value; }
         }
+
+        public DateTime? CreationDate { get; set; }
+        public DateTime? ExpirationDate { get; set; }
+        public DateTime? LastUpdateDate { get; set; }
+        public string RegistrarName { get; set; }
     }
 }

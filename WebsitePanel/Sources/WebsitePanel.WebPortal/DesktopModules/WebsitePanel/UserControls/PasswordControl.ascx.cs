@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -220,7 +220,7 @@ namespace WebsitePanel.Portal
                 function wspValidatePasswordSymbols(source, args)
                 {
                     if(args.Value == source.getAttribute('dpsw')) return true;
-                    args.IsValid = wspValidatePattern(/(\W)/g, args.Value,
+                    args.IsValid = wspValidatePattern(/([\W_])/g, args.Value,
                         parseInt(source.getAttribute('minimumNumber')));
                 }
 
@@ -357,7 +357,7 @@ namespace WebsitePanel.Portal
 
         protected void valRequireSymbols_ServerValidate(object source, ServerValidateEventArgs args)
         {
-            args.IsValid = ((args.Value == EMPTY_PASSWORD) || ValidatePattern("(\\W)", args.Value, MinimumSymbols));
+            args.IsValid = ((args.Value == EMPTY_PASSWORD) || ValidatePattern("([\\W_])", args.Value, MinimumSymbols));
         }
 
         private bool ValidatePattern(string regexp, string val, int minimumNumber)

@@ -20,8 +20,7 @@
             <tr>
                 <td class="FormLabel150"><asp:Localize ID="locServerComments" runat="server" meta:resourcekey="locServerComments" Text="Server Comments:"></asp:Localize></td>
 			    <td>
-				    <asp:TextBox ID="txtServerComments" runat="server" CssClass="NormalTextBox" Width="145px"></asp:TextBox> 
-                    <asp:RequiredFieldValidator ID="valServerComments" runat="server" ErrorMessage="*" ControlToValidate="txtServerComments"></asp:RequiredFieldValidator>                               
+				    <asp:TextBox ID="txtServerComments" runat="server" CssClass="NormalTextBox" Width="145px"></asp:TextBox>                     
 			    </td>
 		    </tr>
 	    </table>

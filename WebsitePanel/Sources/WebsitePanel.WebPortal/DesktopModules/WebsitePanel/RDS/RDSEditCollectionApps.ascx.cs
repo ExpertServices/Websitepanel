@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -41,6 +41,8 @@ namespace WebsitePanel.Portal.RDS
         
         protected void Page_Load(object sender, EventArgs e)
         {
+            remoreApps.Module = Module;
+
             if (!IsPostBack)
             {
                 RdsCollection collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
@@ -49,7 +51,7 @@ namespace WebsitePanel.Portal.RDS
                 locCName.Text = collection.Name;
 
                 remoreApps.SetApps(collectionApps);
-            }
+            }            
         }
 
         protected void btnSave_Click(object sender, EventArgs e)

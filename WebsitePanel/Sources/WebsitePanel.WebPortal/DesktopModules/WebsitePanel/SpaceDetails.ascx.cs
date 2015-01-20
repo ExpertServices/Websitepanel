@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -45,20 +45,22 @@ namespace WebsitePanel.Portal
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            BindSpace();
+            if(!IsPostBack) { 
+                BindSpace();
 
-            UserInfo user = UsersHelper.GetUser(PanelSecurity.EffectiveUserId);
+                UserInfo user = UsersHelper.GetUser(PanelSecurity.EffectiveUserId);
 
-            if (user != null)
-            {
-                PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
-                if ((user.Role == UserRole.User) & (Utils.CheckQouta(Quotas.EXCHANGE2007_ISCONSUMER, cntx)))
+                if (user != null)
                 {
-                    lnkSummaryLetter.Visible = false;
+                    PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+                    if ((user.Role == UserRole.User) & (Utils.CheckQouta(Quotas.EXCHANGE2007_ISCONSUMER, cntx)))
+                    {
+                        lnkSummaryLetter.Visible = false;
+                    }
+
                 }
 
             }
-
         }
 
         private void BindSpace()
@@ -68,6 +70,7 @@ namespace WebsitePanel.Portal
             if (package != null)
             {
                 litSpaceName.Text = PortalAntiXSS.EncodeOld(package.PackageName);
+                chkDefault.Checked = package.DefaultTopPackage;
 
                 // bind space status
                 PackageStatus status = (PackageStatus)package.StatusId;
@@ -130,6 +133,11 @@ namespace WebsitePanel.Portal
                 ShowErrorMessage("PACKAGE_CHANGE_STATUS", ex);
                 return;
             }
+        }
+
+        protected void chkDefault_CheckedChanged(object sender, EventArgs e) {
+            ES.Services.Packages.SetDefaultTopPackage(PanelSecurity.SelectedUserId, PanelSecurity.PackageId);
+            return;
         }
     }
 }

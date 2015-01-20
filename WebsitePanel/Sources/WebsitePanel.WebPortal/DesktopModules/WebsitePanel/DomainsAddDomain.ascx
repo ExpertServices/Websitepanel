@@ -1,32 +1,16 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DomainsAddDomain.ascx.cs" Inherits="WebsitePanel.Portal.DomainsAddDomain" %>
 <%@ Register Src="UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
-<%@ Register Src="DomainsSelectDomainControl.ascx" TagName="DomainsSelectDomainControl" TagPrefix="uc1" %>
+<%@ Register Src="UserControls/DomainControl.ascx" TagName="DomainControl" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/CollapsiblePanel.ascx" TagPrefix="wsp" TagName="CollapsiblePanel" %>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server" />
 
-<asp:ValidationSummary ID="summary" runat="server" ShowMessageBox="true" ShowSummary="false" ValidationGroup="Domain" />
+<asp:ValidationSummary ID="summary" runat="server" ShowMessageBox="true" ShowSummary="true" ValidationGroup="Domain" />
 
 <div class="FormBody">
-
-    <p id="DomainPanel" runat="server" style="padding: 15px 0 15px 5px;" visible="false">
-        <asp:TextBox ID="DomainName" runat="server" Width="300" CssClass="HugeTextBox"></asp:TextBox>
-        <asp:RequiredFieldValidator id="DomainRequiredValidator" runat="server" meta:resourcekey="DomainRequiredValidator"
-            ControlToValidate="DomainName" Display="Dynamic" ValidationGroup="Domain" SetFocusOnError="true"></asp:RequiredFieldValidator>
-		<asp:RegularExpressionValidator id="DomainFormatValidator" runat="server" meta:resourcekey="DomainFormatValidator"
-		    ControlToValidate="DomainName" Display="Dynamic" ValidationGroup="Domain" SetFocusOnError="true"
-		    ValidationExpression="^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.){1,10}[a-zA-Z]{2,15}$"></asp:RegularExpressionValidator>
-    </p>
     
-    <p id="SubDomainPanel" runat="server" style="padding: 15px 0 15px 5px;" visible="false">
-        <asp:TextBox ID="SubDomainName" runat="server" Width="150" CssClass="TextBox100"></asp:TextBox>
-        .
-        <asp:DropDownList ID="DomainsList" Runat="server" CssClass="NormalTextBox" DataTextField="DomainName" DataValueField="DomainName"></asp:DropDownList>
-        <asp:RequiredFieldValidator id="SubDomainRequiredValidator" runat="server" meta:resourcekey="SubDomainRequiredValidator"
-            ControlToValidate="SubDomainName" Display="Dynamic" ValidationGroup="Domain" SetFocusOnError="true"></asp:RequiredFieldValidator>
-		<asp:RegularExpressionValidator id="SubDomainFormatValidator" runat="server" meta:resourcekey="SubDomainFormatValidator"
-		    ControlToValidate="SubDomainName" Display="Dynamic" ValidationGroup="Domain" SetFocusOnError="true"
-		    ValidationExpression="^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?){0,9}$"></asp:RegularExpressionValidator>
+    <p id="DomainPanel" runat="server" style="padding: 15px 0 15px 5px;">
+        <wsp:DomainControl ID="DomainName" runat="server" RequiredEnabled="True" ValidationGroup="Domain"></wsp:DomainControl>
     </p>
     
     <wsp:CollapsiblePanel id="OptionsPanelHeader" runat="server"

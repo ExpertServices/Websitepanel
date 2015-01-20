@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -203,6 +203,12 @@ namespace WebsitePanel.EnterpriseServer
         public ExchangeAccount GetAccount(int itemId, int accountId)
         {
             return ExchangeServerController.GetAccount(itemId, accountId);
+        }
+
+        [WebMethod]
+        public ExchangeAccount GetAccountByAccountNameWithoutItemId(string accountName)
+        {
+            return ExchangeServerController.GetAccountByAccountName(accountName);
         }
 
         [WebMethod]

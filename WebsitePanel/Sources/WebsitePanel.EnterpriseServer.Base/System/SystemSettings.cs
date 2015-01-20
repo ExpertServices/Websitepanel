@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -43,7 +43,8 @@ namespace WebsitePanel.EnterpriseServer
 		public const string SETUP_SETTINGS = "SetupSettings";
         public const string WPI_SETTINGS = "WpiSettings";
         public const string FILEMANAGER_SETTINGS = "FileManagerSettings";
-        
+        public const string PACKAGE_DISPLAY_SETTINGS = "PackageDisplaySettings";
+
         // key to access to wpi main & custom feed in wpi settings
         public const string WPI_MAIN_FEED_KEY = "WpiMainFeedUrl";
         public const string FEED_ULS_KEY = "FeedUrls";

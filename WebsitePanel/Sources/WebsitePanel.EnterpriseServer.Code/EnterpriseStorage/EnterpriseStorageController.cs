@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -150,6 +150,26 @@ namespace WebsitePanel.EnterpriseServer
         public static void StartSetEnterpriseFolderSettingsBackgroundTask(int itemId, SystemFile folder, ESPermission[] permissions, bool directoyBrowsingEnabled, int quota, QuotaType quotaType)
         {
             StartESBackgroundTaskInternal("SET_ENTERPRISE_FOLDER_SETTINGS", itemId, folder, permissions, directoyBrowsingEnabled, quota, quotaType);
+        }
+
+        public static int AddWebDavAccessToken(WebDavAccessToken accessToken)
+        {
+           return DataProvider.AddWebDavAccessToken(accessToken);
+        }
+
+        public static void DeleteExpiredWebDavAccessTokens()
+        {
+            DataProvider.DeleteExpiredWebDavAccessTokens();
+        }
+
+        public static WebDavAccessToken GetWebDavAccessTokenById(int id)
+        {
+            return ObjectUtils.FillObjectFromDataReader<WebDavAccessToken>(DataProvider.GetWebDavAccessTokenById(id));
+        }
+
+        public static WebDavAccessToken GetWebDavAccessTokenByAccessToken(Guid accessToken)
+        {
+            return ObjectUtils.FillObjectFromDataReader<WebDavAccessToken>(DataProvider.GetWebDavAccessTokenByAccessToken(accessToken));
         }
 
         #region Directory Browsing

@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -45,7 +45,7 @@ namespace WebsitePanel.EnterpriseServer
         public static SchedulerJob nextSchedule = null;
 
         public static void Start()
-        {   
+        {
             ScheduleTasks();
         }
 
@@ -73,7 +73,7 @@ namespace WebsitePanel.EnterpriseServer
 
         private static void RunManualTasks()
         {
-            var tasks = TaskController.GetProcessTasks(BackgroundTaskStatus.Stopping);            
+            var tasks = TaskController.GetProcessTasks(BackgroundTaskStatus.Stopping);
 
             foreach (var task in tasks)
             {

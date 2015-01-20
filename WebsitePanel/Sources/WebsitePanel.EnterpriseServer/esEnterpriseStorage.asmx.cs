@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -56,6 +56,29 @@ namespace WebsitePanel.EnterpriseServer
     [ToolboxItem(false)]
     public class esEnterpriseStorage : WebService
     {
+        [WebMethod]
+        public int AddWebDavAccessToken(WebDavAccessToken accessToken)
+        {
+           return EnterpriseStorageController.AddWebDavAccessToken(accessToken);
+        }
+
+        [WebMethod]
+        public void DeleteExpiredWebDavAccessTokens()
+        {
+            EnterpriseStorageController.DeleteExpiredWebDavAccessTokens();
+        }
+
+        [WebMethod]
+        public WebDavAccessToken GetWebDavAccessTokenById(int id)
+        {
+            return EnterpriseStorageController.GetWebDavAccessTokenById(id);
+        }
+
+        [WebMethod]
+        public WebDavAccessToken GetWebDavAccessTokenByAccessToken(Guid accessToken)
+        {
+            return EnterpriseStorageController.GetWebDavAccessTokenByAccessToken(accessToken);
+        }
 
         [WebMethod]
         public bool CheckFileServicesInstallation(int serviceId)

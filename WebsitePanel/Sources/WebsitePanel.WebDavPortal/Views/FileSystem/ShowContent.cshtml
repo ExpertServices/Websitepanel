@@ -1,0 +1,51 @@
+﻿@using WebsitePanel.WebDav.Core
+@using WebsitePanel.WebDav.Core.Client
+@using Ninject
+@using WebsitePanel.WebDav.Core.Config
+@using WebsitePanel.WebDav.Core.Interfaces.Managers
+
+@model WebsitePanel.WebDavPortal.Models.ModelForWebDav
+@{
+    var webDavManager = DependencyResolver.Current.GetService<IWebDavManager>();
+    ViewBag.Title = WebDavAppConfigManager.Instance.ApplicationName;
+}
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/appScripts")
+
+<script>
+    recalculateResourseHeight();
+</script>
+
+<br />
+@if (Model != null && !string.IsNullOrEmpty(Model.Error))
+{
+    <span class="col-sm-offset-1" style="color: #A94442; font-weight: bold;">@Model.Error</span>
+}
+else
+{
+    <div class="container">
+        @if (Model != null)
+        {
+            string header = WspContext.User.OrganizationId;
+            <a href="/@header/" class="btn btn-primary btn-sm active" role="button">@header</a>
+            string[] elements = Model.UrlSuffix.Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < elements.Length; i++)
+            {
+                <span class="glyphicon glyphicon-chevron-right" style="top: 2px;"></span>
+                <a href="@string.Concat("/" + header + "/", string.Join("/", elements.Take(i + 1)))" class="btn btn-primary btn-sm active" role="button">@elements[i]</a>
+            }
+        }
+    </div>
+    <br />
+    <div class="container">
+        <div class="row" id="resourcesDiv">
+            @if (Model != null)
+            {
+                foreach (IHierarchyItem element in Model.Items)
+                {
+                    @Html.Partial("_ResoursePartial", element)
+                }
+            }
+        </div>
+    </div>
+}

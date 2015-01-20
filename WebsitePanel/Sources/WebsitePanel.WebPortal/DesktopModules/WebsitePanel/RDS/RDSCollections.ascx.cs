@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -44,6 +44,12 @@ namespace WebsitePanel.Portal.RDS
         {
             if (!IsPostBack)
             {
+            }
+
+            PackageContext cntx = PackagesHelper.GetCachedPackageContext(PanelSecurity.PackageId);
+            if (cntx.Quotas.ContainsKey(Quotas.RDS_COLLECTIONS))
+            {
+                btnAddCollection.Enabled = (!(cntx.Quotas[Quotas.RDS_COLLECTIONS].QuotaAllocatedValue <= gvRDSCollections.Rows.Count) || (cntx.Quotas[Quotas.RDS_COLLECTIONS].QuotaAllocatedValue == -1));
             }
         }
 
@@ -110,6 +116,11 @@ namespace WebsitePanel.Portal.RDS
             return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_collection_edit_users",
                     "CollectionId=" + collectionId,
                     "ItemID=" + PanelRequest.ItemID);
+        }
+
+        public string GetCollectionEditUrl(string collectionId)
+        {
+            return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_edit_collection", "CollectionId=" + collectionId, "ItemID=" + PanelRequest.ItemID);
         }
     }
 }

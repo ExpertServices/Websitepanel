@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -28,6 +28,9 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using WebsitePanel.Providers.DNS;
+using WebsitePanel.Providers.DomainLookup;
 
 namespace WebsitePanel.Providers.OS
 {

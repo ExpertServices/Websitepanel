@@ -294,3 +294,4 @@ p.warningText {font-size:14px; color:Red; text-align:center;}
 .Hidden {display: none;}
 .LinkText {color:#428bca;}
 .WrapText { white-space: normal;}
+.chosen-container { margin-top: -30px; }

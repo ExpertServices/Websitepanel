@@ -1,4 +1,4 @@
-// Copyright (c) 2012, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -264,5 +264,6 @@ order by rg.groupOrder
 
         public const string RDS_USERS = "RDS.Users";
         public const string RDS_SERVERS = "RDS.Servers";
+        public const string RDS_COLLECTIONS = "RDS.Collections";
     }
 }

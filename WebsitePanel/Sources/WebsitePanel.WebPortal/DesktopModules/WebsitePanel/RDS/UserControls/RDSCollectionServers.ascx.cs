@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -53,19 +53,14 @@ namespace WebsitePanel.Portal.RDS.UserControls
 		{
             BindServers(servers, false);
 		}
-
-        //public RdsServer[] GetServers()
-        //{
-        //    return GetGridViewServers(SelectedState.All).ToArray();
-        //}
-
+        
         public List<RdsServer> GetServers()
         {
             return GetGridViewServers(SelectedState.All);
         }
 
 		protected void Page_Load(object sender, EventArgs e)
-		{
+		{            
 			// register javascript
 			if (!Page.ClientScript.IsClientScriptBlockRegistered("SelectAllCheckboxes"))
 			{
@@ -80,8 +75,14 @@ namespace WebsitePanel.Portal.RDS.UserControls
                 Page.ClientScript.RegisterClientScriptBlock(typeof(RDSCollectionUsers), "SelectAllCheckboxes",
 					script, true);
 			}
+
+            if (!IsPostBack && PanelRequest.CollectionID > 0)
+            {
+                BindOrganizationServers();
+            }
 		}
 
+        
 		protected void btnAdd_Click(object sender, EventArgs e)
 		{
 			// bind all servers
@@ -203,6 +204,25 @@ namespace WebsitePanel.Portal.RDS.UserControls
 
             return servers;
 
+        }
+
+        protected void BindOrganizationServers()
+        {
+            RdsServer[] servers = ES.Services.RDS.GetOrganizationRdsServersPaged(PanelRequest.ItemID, PanelRequest.CollectionID, "FqdName", txtSearchValue.Text, null, 0, 1000).Servers;
+            Array.Sort(servers, CompareAccount);
+
+            if (Direction == SortDirection.Ascending)
+            {
+                Array.Reverse(servers);
+                Direction = SortDirection.Descending;
+            }
+            else
+            {
+                Direction = SortDirection.Ascending;
+            }
+
+            gvServers.DataSource = servers;
+            gvServers.DataBind();
         }
 
 		protected void cmdSearch_Click(object sender, ImageClickEventArgs e)

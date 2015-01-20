@@ -20,9 +20,9 @@ namespace WebsitePanel.EnterpriseServer {
     using System.Diagnostics;
     using System.Data;
     using WebsitePanel.Providers.HostedSolution;
+    using WebsitePanel.Providers.Common;
     using WebsitePanel.Providers.ResultObjects;
     using WebsitePanel.Providers;
-    using WebsitePanel.Providers.Common;
     
     
     /// <remarks/>
@@ -33,6 +33,8 @@ namespace WebsitePanel.EnterpriseServer {
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(BaseStatistics))]
     [System.Xml.Serialization.XmlIncludeAttribute(typeof(ServiceProviderItem))]
     public partial class esExchangeServer : Microsoft.Web.Services3.WebServicesClientProtocol {
+        
+        private System.Threading.SendOrPostCallback DeleteDistributionListMemberOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetMobileDevicesOperationCompleted;
         
@@ -156,6 +158,8 @@ namespace WebsitePanel.EnterpriseServer {
         
         private System.Threading.SendOrPostCallback GetAccountOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetAccountByAccountNameWithoutItemIdOperationCompleted;
+        
         private System.Threading.SendOrPostCallback SearchAccountOperationCompleted;
         
         private System.Threading.SendOrPostCallback CheckAccountCredentialsOperationCompleted;
@@ -240,12 +244,13 @@ namespace WebsitePanel.EnterpriseServer {
         
         private System.Threading.SendOrPostCallback AddDistributionListMemberOperationCompleted;
         
-        private System.Threading.SendOrPostCallback DeleteDistributionListMemberOperationCompleted;
-        
         /// <remarks/>
         public esExchangeServer() {
             this.Url = "http://localhost:9002/esExchangeServer.asmx";
         }
+        
+        /// <remarks/>
+        public event DeleteDistributionListMemberCompletedEventHandler DeleteDistributionListMemberCompleted;
         
         /// <remarks/>
         public event GetMobileDevicesCompletedEventHandler GetMobileDevicesCompleted;
@@ -431,6 +436,9 @@ namespace WebsitePanel.EnterpriseServer {
         public event GetAccountCompletedEventHandler GetAccountCompleted;
         
         /// <remarks/>
+        public event GetAccountByAccountNameWithoutItemIdCompletedEventHandler GetAccountByAccountNameWithoutItemIdCompleted;
+        
+        /// <remarks/>
         public event SearchAccountCompletedEventHandler SearchAccountCompleted;
         
         /// <remarks/>
@@ -557,7 +565,51 @@ namespace WebsitePanel.EnterpriseServer {
         public event AddDistributionListMemberCompletedEventHandler AddDistributionListMemberCompleted;
         
         /// <remarks/>
-        public event DeleteDistributionListMemberCompletedEventHandler DeleteDistributionListMemberCompleted;
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/DeleteDistributionListMember", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public int DeleteDistributionListMember(int itemId, string distributionListName, int memberId) {
+            object[] results = this.Invoke("DeleteDistributionListMember", new object[] {
+                        itemId,
+                        distributionListName,
+                        memberId});
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginDeleteDistributionListMember(int itemId, string distributionListName, int memberId, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("DeleteDistributionListMember", new object[] {
+                        itemId,
+                        distributionListName,
+                        memberId}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public int EndDeleteDistributionListMember(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((int)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void DeleteDistributionListMemberAsync(int itemId, string distributionListName, int memberId) {
+            this.DeleteDistributionListMemberAsync(itemId, distributionListName, memberId, null);
+        }
+        
+        /// <remarks/>
+        public void DeleteDistributionListMemberAsync(int itemId, string distributionListName, int memberId, object userState) {
+            if ((this.DeleteDistributionListMemberOperationCompleted == null)) {
+                this.DeleteDistributionListMemberOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDeleteDistributionListMemberOperationCompleted);
+            }
+            this.InvokeAsync("DeleteDistributionListMember", new object[] {
+                        itemId,
+                        distributionListName,
+                        memberId}, this.DeleteDistributionListMemberOperationCompleted, userState);
+        }
+        
+        private void OnDeleteDistributionListMemberOperationCompleted(object arg) {
+            if ((this.DeleteDistributionListMemberCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DeleteDistributionListMemberCompleted(this, new DeleteDistributionListMemberCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetMobileDevices", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -3456,6 +3508,48 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/GetAccountByAccountNameWithoutItemId" +
+            "", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ExchangeAccount GetAccountByAccountNameWithoutItemId(string accountName) {
+            object[] results = this.Invoke("GetAccountByAccountNameWithoutItemId", new object[] {
+                        accountName});
+            return ((ExchangeAccount)(results[0]));
+        }
+        
+        /// <remarks/>
+        public System.IAsyncResult BeginGetAccountByAccountNameWithoutItemId(string accountName, System.AsyncCallback callback, object asyncState) {
+            return this.BeginInvoke("GetAccountByAccountNameWithoutItemId", new object[] {
+                        accountName}, callback, asyncState);
+        }
+        
+        /// <remarks/>
+        public ExchangeAccount EndGetAccountByAccountNameWithoutItemId(System.IAsyncResult asyncResult) {
+            object[] results = this.EndInvoke(asyncResult);
+            return ((ExchangeAccount)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetAccountByAccountNameWithoutItemIdAsync(string accountName) {
+            this.GetAccountByAccountNameWithoutItemIdAsync(accountName, null);
+        }
+        
+        /// <remarks/>
+        public void GetAccountByAccountNameWithoutItemIdAsync(string accountName, object userState) {
+            if ((this.GetAccountByAccountNameWithoutItemIdOperationCompleted == null)) {
+                this.GetAccountByAccountNameWithoutItemIdOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetAccountByAccountNameWithoutItemIdOperationCompleted);
+            }
+            this.InvokeAsync("GetAccountByAccountNameWithoutItemId", new object[] {
+                        accountName}, this.GetAccountByAccountNameWithoutItemIdOperationCompleted, userState);
+        }
+        
+        private void OnGetAccountByAccountNameWithoutItemIdOperationCompleted(object arg) {
+            if ((this.GetAccountByAccountNameWithoutItemIdCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetAccountByAccountNameWithoutItemIdCompleted(this, new GetAccountByAccountNameWithoutItemIdCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/SearchAccount", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public ExchangeAccount SearchAccount(ExchangeAccountType accountType, string primaryEmailAddress) {
             object[] results = this.Invoke("SearchAccount", new object[] {
@@ -5681,55 +5775,34 @@ namespace WebsitePanel.EnterpriseServer {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://smbsaas/websitepanel/enterpriseserver/DeleteDistributionListMember", RequestNamespace="http://smbsaas/websitepanel/enterpriseserver", ResponseNamespace="http://smbsaas/websitepanel/enterpriseserver", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public int DeleteDistributionListMember(int itemId, string distributionListName, int memberId) {
-            object[] results = this.Invoke("DeleteDistributionListMember", new object[] {
-                        itemId,
-                        distributionListName,
-                        memberId});
-            return ((int)(results[0]));
-        }
-        
-        /// <remarks/>
-        public System.IAsyncResult BeginDeleteDistributionListMember(int itemId, string distributionListName, int memberId, System.AsyncCallback callback, object asyncState) {
-            return this.BeginInvoke("DeleteDistributionListMember", new object[] {
-                        itemId,
-                        distributionListName,
-                        memberId}, callback, asyncState);
-        }
-        
-        /// <remarks/>
-        public int EndDeleteDistributionListMember(System.IAsyncResult asyncResult) {
-            object[] results = this.EndInvoke(asyncResult);
-            return ((int)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void DeleteDistributionListMemberAsync(int itemId, string distributionListName, int memberId) {
-            this.DeleteDistributionListMemberAsync(itemId, distributionListName, memberId, null);
-        }
-        
-        /// <remarks/>
-        public void DeleteDistributionListMemberAsync(int itemId, string distributionListName, int memberId, object userState) {
-            if ((this.DeleteDistributionListMemberOperationCompleted == null)) {
-                this.DeleteDistributionListMemberOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDeleteDistributionListMemberOperationCompleted);
-            }
-            this.InvokeAsync("DeleteDistributionListMember", new object[] {
-                        itemId,
-                        distributionListName,
-                        memberId}, this.DeleteDistributionListMemberOperationCompleted, userState);
-        }
-        
-        private void OnDeleteDistributionListMemberOperationCompleted(object arg) {
-            if ((this.DeleteDistributionListMemberCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.DeleteDistributionListMemberCompleted(this, new DeleteDistributionListMemberCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void DeleteDistributionListMemberCompletedEventHandler(object sender, DeleteDistributionListMemberCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DeleteDistributionListMemberCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal DeleteDistributionListMemberCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public int Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((int)(this.results[0]));
+            }
         }
     }
     
@@ -7233,6 +7306,32 @@ namespace WebsitePanel.EnterpriseServer {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    public delegate void GetAccountByAccountNameWithoutItemIdCompletedEventHandler(object sender, GetAccountByAccountNameWithoutItemIdCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetAccountByAccountNameWithoutItemIdCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetAccountByAccountNameWithoutItemIdCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ExchangeAccount Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ExchangeAccount)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
     public delegate void SearchAccountCompletedEventHandler(object sender, SearchAccountCompletedEventArgs e);
     
     /// <remarks/>
@@ -8310,32 +8409,6 @@ namespace WebsitePanel.EnterpriseServer {
         private object[] results;
         
         internal AddDistributionListMemberCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public int Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((int)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
-    public delegate void DeleteDistributionListMemberCompletedEventHandler(object sender, DeleteDistributionListMemberCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("wsdl", "2.0.50727.3038")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class DeleteDistributionListMemberCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal DeleteDistributionListMemberCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }

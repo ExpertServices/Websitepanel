@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -95,7 +95,7 @@ namespace WebsitePanel.Portal
 				txtBackupsPath.Text = settings["BackupsPath"];
 			}
 
-
+            
             // WPI
             settings = ES.Services.System.GetSystemSettings(WSP.SystemSettings.WPI_SETTINGS);
 
@@ -173,6 +173,7 @@ namespace WebsitePanel.Portal
 					ShowResultMessage(result);
 					return;
 				}
+
 
 
                 // WPI

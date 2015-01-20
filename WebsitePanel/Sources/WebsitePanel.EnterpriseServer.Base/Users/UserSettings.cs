@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -45,6 +45,8 @@ namespace WebsitePanel.EnterpriseServer
         public const string HOSTED_SOLUTION_REPORT = "HostedSoluitonReportSummaryLetter";
         public const string ORGANIZATION_USER_SUMMARY_LETTER = "OrganizationUserSummaryLetter";
         public const string VPS_SUMMARY_LETTER = "VpsSummaryLetter";
+        public const string DOMAIN_EXPIRATION_LETTER = "DomainExpirationLetter";
+        public const string DOMAIN_LOOKUP_LETTER = "DomainLookupLetter";
         public const string WEB_POLICY = "WebPolicy";
         public const string FTP_POLICY = "FtpPolicy";
         public const string MAIL_POLICY = "MailPolicy";

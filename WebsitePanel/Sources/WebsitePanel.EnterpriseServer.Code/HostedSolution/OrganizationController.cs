@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -524,6 +524,15 @@ namespace WebsitePanel.EnterpriseServer
             }
         }
 
+        public static bool CheckDomainUsedByHostedOrganization(int itemId, int domainId)
+        {
+            DomainInfo domain = ServerController.GetDomain(domainId);
+            if (domain == null)
+                return false;
+
+            return (DataProvider.CheckDomainUsedByHostedOrganization(domain.DomainName) == 1);
+        }
+
         private static void DeleteOCSUsers(int itemId, ref bool successful)
         {
             try
@@ -1001,6 +1010,13 @@ namespace WebsitePanel.EnterpriseServer
 
                         stats.UsedEnterpriseStorageSpace = folders.Where(x => x.FRSMQuotaMB != -1).Sum(x => x.FRSMQuotaMB);
                     }
+
+                    if (cntxTmp.Groups.ContainsKey(ResourceGroups.RDS))
+                    {
+                        stats.CreatedRdsUsers = RemoteDesktopServicesController.GetOrganizationRdsUsersCount(org.Id);
+                        stats.CreatedRdsCollections = RemoteDesktopServicesController.GetOrganizationRdsCollectionsCount(org.Id);
+                        stats.CreatedRdsServers = RemoteDesktopServicesController.GetOrganizationRdsServersCount(org.Id);
+                    }
                 }
                 else
                 {
@@ -1075,6 +1091,13 @@ namespace WebsitePanel.EnterpriseServer
 
                                         stats.UsedEnterpriseStorageSpace += folders.Where(x => x.FRSMQuotaMB != -1).Sum(x => x.FRSMQuotaMB);
                                     }
+
+                                    if (cntxTmp.Groups.ContainsKey(ResourceGroups.RDS))
+                                    {
+                                        stats.CreatedRdsUsers += RemoteDesktopServicesController.GetOrganizationRdsUsersCount(o.Id);
+                                        stats.CreatedRdsCollections += RemoteDesktopServicesController.GetOrganizationRdsCollectionsCount(o.Id);
+                                        stats.CreatedRdsServers += RemoteDesktopServicesController.GetOrganizationRdsServersCount(o.Id);
+                                    }
                                 }
                             }
                         }
@@ -1127,6 +1150,13 @@ namespace WebsitePanel.EnterpriseServer
                 {
                     stats.AllocatedEnterpriseStorageFolders = cntx.Quotas[Quotas.ENTERPRISESTORAGE_FOLDERS].QuotaAllocatedValue;
                     stats.AllocatedEnterpriseStorageSpace = cntx.Quotas[Quotas.ENTERPRISESTORAGE_DISKSTORAGESPACE].QuotaAllocatedValue;
+                }
+
+                if (cntx.Groups.ContainsKey(ResourceGroups.RDS))
+                {
+                    stats.AllocatedRdsServers = cntx.Quotas[Quotas.RDS_SERVERS].QuotaAllocatedValue;
+                    stats.AllocatedRdsCollections = cntx.Quotas[Quotas.RDS_COLLECTIONS].QuotaAllocatedValue;
+                    stats.AllocatedRdsUsers = cntx.Quotas[Quotas.RDS_USERS].QuotaAllocatedValue;
                 }
 
                 return stats;
@@ -3460,5 +3490,10 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         #endregion
+
+        public static DataSet GetOrganizationObjectsByDomain(int itemId, string domainName)
+        {
+            return DataProvider.GetOrganizationObjectsByDomain(itemId, domainName);
+        }
     }
 }

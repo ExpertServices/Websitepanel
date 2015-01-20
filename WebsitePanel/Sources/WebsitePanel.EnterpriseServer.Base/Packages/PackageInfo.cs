@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -52,6 +52,7 @@ namespace WebsitePanel.EnterpriseServer
         int diskSpaceQuota;
         int bandWidthQuota;
         bool overrideQuotas;
+        bool defaultTopPackage;
         HostingPlanGroupInfo[] groups;
         HostingPlanQuotaInfo[] quotas;
 
@@ -153,6 +154,12 @@ namespace WebsitePanel.EnterpriseServer
         {
             get { return this.overrideQuotas; }
             set { this.overrideQuotas = value; }
+        }
+
+        public bool DefaultTopPackage 
+        {
+            get { return this.defaultTopPackage;  }
+            set { this.defaultTopPackage = value; }
         }
 
         public HostingPlanGroupInfo[] Groups

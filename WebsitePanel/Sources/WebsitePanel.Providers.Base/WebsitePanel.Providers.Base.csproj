@@ -85,6 +85,10 @@
     <Compile Include="Common\ErrorCodes.cs" />
     <Compile Include="Common\PasswdHelper.cs" />
     <Compile Include="Common\WPIEntries.cs" />
+    <Compile Include="DomainLookup\DnsRecordInfo.cs" />
+    <Compile Include="DomainLookup\DnsRecordInfoChange.cs" />
+    <Compile Include="DomainLookup\DomainDnsChanges.cs" />
+    <Compile Include="DomainLookup\DomainDnsRecordStatuses.cs" />
     <Compile Include="EnterpriseStorage\IEnterpriseStorage.cs" />
     <Compile Include="HeliconZoo\IHeliconZooServer.cs" />
     <Compile Include="HostedSolution\BaseReport.cs" />

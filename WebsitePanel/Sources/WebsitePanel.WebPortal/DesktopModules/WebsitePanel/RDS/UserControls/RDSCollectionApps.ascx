@@ -21,13 +21,18 @@
 				<ItemStyle Width="10px" />
 			</asp:TemplateField>
 			<asp:TemplateField meta:resourcekey="gvAppName" HeaderText="gvAppName">
-				<ItemStyle Width="60%" Wrap="false">
+				<ItemStyle Width="90%" Wrap="false">
 				</ItemStyle>
 				<ItemTemplate>
                     <asp:Literal ID="litDisplayName" runat="server" Text='<%# Eval("DisplayName") %>'></asp:Literal>
                     <asp:HiddenField ID="hfFilePath" runat="server"  Value='<%# Eval("FilePath") %>'/>
 				</ItemTemplate>
 			</asp:TemplateField>
+            <asp:TemplateField>
+                <ItemTemplate>
+                    <asp:hyperlink id="lnkUsers" meta:resourcekey="lnkUsers" runat="server" NavigateUrl='<%# GetCollectionUsersEditUrl(Eval("DisplayName").ToString()) %>'>Users</asp:hyperlink>
+                </ItemTemplate>
+            </asp:TemplateField>
 		</Columns>
 	</asp:GridView>
     <br />

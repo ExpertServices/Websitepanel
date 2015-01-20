@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -778,7 +778,7 @@ namespace WebsitePanel.EnterpriseServer
                 // update package
                 result.ExceedingQuotas = DataProvider.UpdatePackage(SecurityContext.User.UserId,
                     package.PackageId, package.PlanId, package.PackageName, package.PackageComments, package.StatusId,
-                    package.PurchaseDate, package.OverrideQuotas, quotasXml);
+                    package.PurchaseDate, package.OverrideQuotas, quotasXml, package.DefaultTopPackage);
 
                 if (result.ExceedingQuotas.Tables[0].Rows.Count > 0)
                     result.Result = BusinessErrorCodes.ERROR_PACKAGE_QUOTA_EXCEED;
@@ -980,11 +980,13 @@ namespace WebsitePanel.EnterpriseServer
             homeFolder.PackageId = packageId;
             homeFolder.Name = path;
 
+            int res = AddPackageItem(homeFolder);
+
             // Added By Haya
             UpdatePackageHardQuota(packageId);
 
             // save package item
-            return AddPackageItem(homeFolder);
+            return res;
         }
 
         public static DateTime GetPackageBandwidthUpdate(int packageId)
@@ -1738,6 +1740,21 @@ namespace WebsitePanel.EnterpriseServer
             //{
             //    AuditLog.AddRecord(record);
             //}
+        }
+
+        public static bool SetDefaultTopPackage(int userId, int packageId) {
+            List<PackageInfo> lpi = GetPackages(userId);
+            foreach(PackageInfo pi in lpi) {
+                if(pi.DefaultTopPackage) {
+                    pi.DefaultTopPackage = false;
+                    UpdatePackage(pi);
+                }
+                if(pi.PackageId == packageId) {
+                    pi.DefaultTopPackage = true;
+                    UpdatePackage(pi);
+                }
+            }
+            return true;
         }
 
         #endregion

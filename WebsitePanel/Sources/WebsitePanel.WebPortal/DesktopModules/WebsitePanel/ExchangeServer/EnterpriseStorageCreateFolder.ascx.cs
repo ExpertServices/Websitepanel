@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Outercurve Foundation.
+// Copyright (c) 2015, Outercurve Foundation.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -59,7 +59,7 @@ namespace WebsitePanel.Portal.ExchangeServer
                 {
                     rangeFolderSize.MaximumValue = Math.Round((tenantStats.AllocatedEnterpriseStorageSpace - (decimal)tenantStats.UsedEnterpriseStorageSpace) / OneGb
                         + Utils.ParseDecimal(txtFolderSize.Text, 0), 2).ToString();
-                    rangeFolderSize.ErrorMessage = string.Format("The quota you’ve entered exceeds the available quota for tenant ({0}Gb)", rangeFolderSize.MaximumValue);
+                    rangeFolderSize.ErrorMessage = string.Format("The quota youï¿½ve entered exceeds the available quota for tenant ({0}Gb)", rangeFolderSize.MaximumValue);
                 }
 
                 if (organizationStats.AllocatedGroups != -1)

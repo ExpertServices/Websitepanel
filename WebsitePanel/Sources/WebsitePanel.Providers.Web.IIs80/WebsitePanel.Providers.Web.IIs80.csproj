@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\WebsitePanel.Server\bin\</OutputPath>
+    <OutputPath>..\WebsitePanel.Server\bin\IIs80\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\WebsitePanel.Server\bin\</OutputPath>
+    <OutputPath>..\WebsitePanel.Server\bin\IIs80\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -56,18 +56,22 @@
     <ProjectReference Include="..\WebsitePanel.Providers.Base\WebsitePanel.Providers.Base.csproj">
       <Project>{684c932a-6c75-46ac-a327-f3689d89eb42}</Project>
       <Name>WebsitePanel.Providers.Base</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\WebsitePanel.Providers.Web.IIs60\WebsitePanel.Providers.Web.IIs60.csproj">
       <Project>{9be0317d-e42e-4ff6-9a87-8c801f046ea1}</Project>
       <Name>WebsitePanel.Providers.Web.IIs60</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\WebsitePanel.Providers.Web.IIS70\WebsitePanel.Providers.Web.IIs70.csproj">
       <Project>{1b9dce85-c664-49fc-b6e1-86c63cab88d1}</Project>
       <Name>WebsitePanel.Providers.Web.IIs70</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\WebsitePanel.Server.Utils\WebsitePanel.Server.Utils.csproj">
       <Project>{e91e52f3-9555-4d00-b577-2b1dbdd87ca7}</Project>
       <Name>WebsitePanel.Server.Utils</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

@@ -349,6 +349,38 @@
                             </td>
                         </tr>
                         </asp:Panel>
+
+                        <asp:Panel runat="server" ID="remoteDesktopStatsPanel">
+                        <tr>
+                            <td class="OrgStatsGroup" width="100%" colspan="2">
+                                <asp:Localize ID="locRemoteDesktop" runat="server" meta:resourcekey="locRemoteDesktop" ></asp:Localize>
+                            </td>
+                        </tr>
+                        <tr class="OrgStatsRow"> 
+                            <td class="OrgStatsQuota" nowrap>
+                                <asp:HyperLink ID="lnkRdsServers" runat="server" meta:resourcekey="lnkRdsServers" />
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="rdsServers" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                        <tr class="OrgStatsRow"> 
+                            <td class="OrgStatsQuota" nowrap>
+                                <asp:HyperLink ID="lnkRdsCollections" runat="server" meta:resourcekey="lnkRdsCollections" />
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="rdsCollections" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                            <tr class="OrgStatsRow"> 
+                            <td class="OrgStatsQuota" nowrap>
+                                <asp:HyperLink ID="lnkRdsUsers" runat="server" meta:resourcekey="lnkRdsUsers" />
+                            </td>
+                            <td>
+                                <wsp:QuotaViewer ID="rdsUsers" QuotaTypeId="2" runat="server" DisplayGauge="true" />
+                            </td>
+                        </tr>
+                        </asp:Panel>
                     </table>
                   
                 </div>
