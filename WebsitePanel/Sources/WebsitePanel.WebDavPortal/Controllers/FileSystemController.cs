@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using log4net;
 using WebsitePanel.WebDav.Core;
 using WebsitePanel.WebDav.Core.Client;
 using WebsitePanel.WebDav.Core.Config;
@@ -30,13 +32,18 @@ namespace WebsitePanel.WebDavPortal.Controllers
         private readonly IWebDavManager _webdavManager;
         private readonly IAuthenticationService _authenticationService;
         private readonly IAccessTokenManager _tokenManager;
+        private readonly IWebDavAuthorizationService _webDavAuthorizationService;
+        private readonly ILog Log;
 
-        public FileSystemController(ICryptography cryptography, IWebDavManager webdavManager, IAuthenticationService authenticationService, IAccessTokenManager tokenManager)
+        public FileSystemController(ICryptography cryptography, IWebDavManager webdavManager, IAuthenticationService authenticationService, IAccessTokenManager tokenManager, IWebDavAuthorizationService webDavAuthorizationService)
         {
             _cryptography = cryptography;
             _webdavManager = webdavManager;
             _authenticationService = authenticationService;
             _tokenManager = tokenManager;
+            _webDavAuthorizationService = webDavAuthorizationService;
+
+            Log = LogManager.GetLogger(this.GetType());
         }
 
         [HttpGet]
@@ -57,10 +64,11 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             try
             {
-                IEnumerable<IHierarchyItem> children = _webdavManager.OpenFolder(pathPart).Where(x => !WebDavAppConfigManager.Instance.ElementsRendering.ElementsToIgnore.Contains(x.DisplayName.Trim('/')));
+                IEnumerable<IHierarchyItem> children = _webdavManager.OpenFolder(pathPart);
 
-                var model = new ModelForWebDav { Items = children.Take(WebDavAppConfigManager.Instance.ElementsRendering.DefaultCount), UrlSuffix = pathPart };
-                Session[WebDavAppConfigManager.Instance.SessionKeys.ResourseRenderCount] = WebDavAppConfigManager.Instance.ElementsRendering.DefaultCount;
+                var permissions = _webDavAuthorizationService.GetPermissions(WspContext.User, pathPart);
+
+                var model = new ModelForWebDav { Items = children.Take(WebDavAppConfigManager.Instance.ElementsRendering.DefaultCount), UrlSuffix = pathPart, Permissions = permissions};
 
                 return View(model);
             }
@@ -94,6 +102,24 @@ namespace WebsitePanel.WebDavPortal.Controllers
             var result = children.Skip(resourseRenderCount).Take(WebDavAppConfigManager.Instance.ElementsRendering.AddElementsCount);
 
             return PartialView("_ResourseCollectionPartial", result);
+        }
+
+        [HttpPost]
+        public ActionResult UploadFile(string org, string pathPart)
+        {
+            foreach (string fileName in Request.Files)
+            {
+                var file = Request.Files[fileName];
+
+                if (file == null || file.ContentLength == 0)
+                {
+                    continue;
+                }
+
+                _webdavManager.UploadFile(pathPart, file);
+            }
+
+            return RedirectToRoute(FileSystemRouteNames.ShowContentPath);
         }
     }
 }

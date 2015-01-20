@@ -29,7 +29,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
         {
             if (WspContext.User != null && WspContext.User.Identity.IsAuthenticated)
             {
-                return RedirectToRoute(FileSystemRouteNames.FilePath, new { org = WspContext.User.OrganizationId });
+                return RedirectToRoute(FileSystemRouteNames.ShowContentPath, new { org = WspContext.User.OrganizationId });
             }
 
             return View();
@@ -46,9 +46,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
             {
                 _authenticationService.CreateAuthenticationTicket(user);
 
-                Session[WebDavAppConfigManager.Instance.SessionKeys.WebDavManager] = null;
-
-                return RedirectToRoute(FileSystemRouteNames.FilePath, new { org = WspContext.User.OrganizationId });
+                return RedirectToRoute(FileSystemRouteNames.ShowContentPath, new { org = WspContext.User.OrganizationId });
             }
 
             return View(new AccountModel { LdapError = "The user name or password is incorrect" });
@@ -58,8 +56,6 @@ namespace WebsitePanel.WebDavPortal.Controllers
         public ActionResult Logout()
         {
             _authenticationService.LogOut();
-
-            Session[WebDavAppConfigManager.Instance.SessionKeys.WebDavManager] = null;
 
             return RedirectToRoute(AccountRouteNames.Login);
         }
