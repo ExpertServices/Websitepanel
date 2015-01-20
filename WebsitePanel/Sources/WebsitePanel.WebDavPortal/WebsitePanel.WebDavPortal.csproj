@@ -264,7 +264,7 @@
     <Content Include="Views\FileSystem\ShowOfficeDocument.cshtml" />
     <Content Include="Views\FileSystem\_ResourseCollectionPartial.cshtml" />
     <Content Include="Views\FileSystem\_ResoursePartial.cshtml" />
-    <Content Include="Views\Shared\ProcessDialog.cshtml" />
+    <Content Include="Views\Shared\_ProcessDialog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Owa\" />

@@ -88,6 +88,15 @@ namespace WebsitePanel.WebDavPortal.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Gb.
+        /// </summary>
+        public static string GigabyteShort {
+            get {
+                return ResourceManager.GetString("GigabyteShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Processing.
         /// </summary>
         public static string Processing {

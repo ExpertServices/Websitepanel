@@ -42,7 +42,25 @@ namespace WebsitePanel.WebDav.Core.Managers
 
             if (string.IsNullOrWhiteSpace(pathPart))
             {
-                children = ConnectToWebDavServer().Select(x => new WebDavHierarchyItem { Href = new Uri(x.Url), ItemType = ItemType.Folder }).ToArray();
+                var resources = ConnectToWebDavServer().Select(x => new WebDavResource { Href = new Uri(x.Url), ItemType = ItemType.Folder }).ToArray();
+
+                var items = WSP.Services.EnterpriseStorage.GetEnterpriseFolders(WspContext.User.ItemId);
+
+                foreach (var resource in resources)
+                {
+                    var folder = items.FirstOrDefault(x => x.Name == resource.DisplayName);
+
+                    if (folder == null)
+                    {
+                        continue;
+                    }
+
+                    resource.ContentLength = folder.Size;
+                    resource.AllocatedSpace = folder.FRSMQuotaMB;
+                    resource.IsRootItem = true;
+                }
+
+                children = resources;
             }
             else
             {

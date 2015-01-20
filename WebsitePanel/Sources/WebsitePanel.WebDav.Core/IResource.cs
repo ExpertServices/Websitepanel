@@ -64,6 +64,7 @@ namespace WebsitePanel.WebDav.Core
             public long ContentLength
             {
                 get { return _contentLength; }
+                set { _contentLength = value; }
             }
 
             public string ContentType
@@ -250,14 +251,19 @@ namespace WebsitePanel.WebDav.Core
                 }
             }
 
+            public long AllocatedSpace { get; set; }
+            public bool IsRootItem { get; set; }
+
             public Uri Href
             {
                 get { return _href; }
+                set { SetHref(value.ToString(), new Uri(value.Scheme + "://" + value.Host + value.Segments[0] + value.Segments[1])); }
             }
 
             public ItemType ItemType
             {
                 get { return _itemType; }
+                set { _itemType = value; }
             }
 
             public DateTime LastModified

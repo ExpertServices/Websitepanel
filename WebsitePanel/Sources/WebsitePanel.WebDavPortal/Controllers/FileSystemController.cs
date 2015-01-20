@@ -7,6 +7,7 @@ using System.Net.Mime;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using log4net;
 using WebsitePanel.WebDav.Core;
 using WebsitePanel.WebDav.Core.Client;
 using WebsitePanel.WebDav.Core.Config;
@@ -32,6 +33,7 @@ namespace WebsitePanel.WebDavPortal.Controllers
         private readonly IAuthenticationService _authenticationService;
         private readonly IAccessTokenManager _tokenManager;
         private readonly IWebDavAuthorizationService _webDavAuthorizationService;
+        private readonly ILog Log;
 
         public FileSystemController(ICryptography cryptography, IWebDavManager webdavManager, IAuthenticationService authenticationService, IAccessTokenManager tokenManager, IWebDavAuthorizationService webDavAuthorizationService)
         {
@@ -40,6 +42,8 @@ namespace WebsitePanel.WebDavPortal.Controllers
             _authenticationService = authenticationService;
             _tokenManager = tokenManager;
             _webDavAuthorizationService = webDavAuthorizationService;
+
+            Log = LogManager.GetLogger(this.GetType());
         }
 
         [HttpGet]

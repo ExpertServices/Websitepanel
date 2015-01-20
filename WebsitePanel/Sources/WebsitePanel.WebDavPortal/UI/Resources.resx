@@ -126,6 +126,9 @@
   <data name="FileUpload" xml:space="preserve">
     <value>File Upload</value>
   </data>
+  <data name="GigabyteShort" xml:space="preserve">
+    <value>Gb</value>
+  </data>
   <data name="Processing" xml:space="preserve">
     <value>Processing</value>
   </data>
