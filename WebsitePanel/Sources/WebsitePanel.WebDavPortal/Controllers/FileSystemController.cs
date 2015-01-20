@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
@@ -30,13 +31,15 @@ namespace WebsitePanel.WebDavPortal.Controllers
         private readonly IWebDavManager _webdavManager;
         private readonly IAuthenticationService _authenticationService;
         private readonly IAccessTokenManager _tokenManager;
+        private readonly IWebDavAuthorizationService _webDavAuthorizationService;
 
-        public FileSystemController(ICryptography cryptography, IWebDavManager webdavManager, IAuthenticationService authenticationService, IAccessTokenManager tokenManager)
+        public FileSystemController(ICryptography cryptography, IWebDavManager webdavManager, IAuthenticationService authenticationService, IAccessTokenManager tokenManager, IWebDavAuthorizationService webDavAuthorizationService)
         {
             _cryptography = cryptography;
             _webdavManager = webdavManager;
             _authenticationService = authenticationService;
             _tokenManager = tokenManager;
+            _webDavAuthorizationService = webDavAuthorizationService;
         }
 
         [HttpGet]
@@ -59,7 +62,9 @@ namespace WebsitePanel.WebDavPortal.Controllers
             {
                 IEnumerable<IHierarchyItem> children = _webdavManager.OpenFolder(pathPart);
 
-                var model = new ModelForWebDav { Items = children.Take(WebDavAppConfigManager.Instance.ElementsRendering.DefaultCount), UrlSuffix = pathPart };
+                var permissions = _webDavAuthorizationService.GetPermissions(WspContext.User, pathPart);
+
+                var model = new ModelForWebDav { Items = children.Take(WebDavAppConfigManager.Instance.ElementsRendering.DefaultCount), UrlSuffix = pathPart, Permissions = permissions};
 
                 return View(model);
             }
@@ -93,6 +98,24 @@ namespace WebsitePanel.WebDavPortal.Controllers
             var result = children.Skip(resourseRenderCount).Take(WebDavAppConfigManager.Instance.ElementsRendering.AddElementsCount);
 
             return PartialView("_ResourseCollectionPartial", result);
+        }
+
+        [HttpPost]
+        public ActionResult UploadFile(string org, string pathPart)
+        {
+            foreach (string fileName in Request.Files)
+            {
+                var file = Request.Files[fileName];
+
+                if (file == null || file.ContentLength == 0)
+                {
+                    continue;
+                }
+
+                _webdavManager.UploadFile(pathPart, file);
+            }
+
+            return RedirectToRoute(FileSystemRouteNames.ShowContentPath);
         }
     }
 }

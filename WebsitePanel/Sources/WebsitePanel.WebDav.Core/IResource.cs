@@ -111,6 +111,23 @@ namespace WebsitePanel.WebDav.Core
             }
 
             /// <summary>
+            ///     Uploads content of a file specified by filename to the server
+            /// </summary>
+            /// <param name="data">Posted file data to be uploaded</param>
+            public void Upload(byte[] data)
+            {
+                var credentials = (NetworkCredential)_credentials;
+                string auth = "Basic " +
+                              Convert.ToBase64String(
+                                  Encoding.Default.GetBytes(credentials.UserName + ":" + credentials.Password));
+                var webClient = new WebClient();
+                webClient.Credentials = credentials;
+                webClient.Headers.Add("Authorization", auth);
+
+                webClient.UploadData(Href, "PUT", data);
+            }
+
+            /// <summary>
             ///     Loads content of the resource from WebDAV server.
             /// </summary>
             /// <returns>Stream to read resource content.</returns>
