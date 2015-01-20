@@ -40,7 +40,36 @@ namespace WebsitePanel.Portal.RDS
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!Page.IsPostBack)
+            {
+                var collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
+                litCollectionName.Text = collection.DisplayName;
+            }
+        }
 
+        private bool SaveRdsServers()
+        {
+            try
+            {
+                if (servers.GetServers().Count < 1)
+                {
+                    messageBox.ShowErrorMessage("RDS_CREATE_COLLECTION_RDSSERVER_REQUAIRED");
+                    return false;
+                }
+
+                RdsCollection collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
+                collection.Servers = servers.GetServers();
+
+                ES.Services.RDS.EditRdsCollection(PanelRequest.ItemID, collection);
+
+            }
+            catch(Exception ex)
+            {
+                messageBox.ShowErrorMessage(ex.Message);
+                return false;
+            }
+
+            return true;
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
@@ -48,23 +77,18 @@ namespace WebsitePanel.Portal.RDS
             if (!Page.IsValid)
                 return;
 
-            try
+            SaveRdsServers();
+        }
+
+        protected void btnSaveExit_Click(object sender, EventArgs e)
+        {
+            if (!Page.IsValid)
+                return;
+
+            if (SaveRdsServers())
             {
-                if (servers.GetServers().Count < 1)
-                {
-                    messageBox.ShowErrorMessage("RDS_CREATE_COLLECTION_RDSSERVER_REQUAIRED");
-                    return;
-                }
-                
-                RdsCollection collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
-                collection.Servers = servers.GetServers();
-
-                ES.Services.RDS.EditRdsCollection(PanelRequest.ItemID, collection);
-
-                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections",
-                    "SpaceID=" + PanelSecurity.PackageId));
+                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections", "SpaceID=" + PanelSecurity.PackageId));
             }
-            catch { }
         }
     }
 }

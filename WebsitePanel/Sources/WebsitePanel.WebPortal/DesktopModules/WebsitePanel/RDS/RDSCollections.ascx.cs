@@ -104,20 +104,6 @@ namespace WebsitePanel.Portal.RDS
             gvRDSCollections.DataBind();
         }
 
-        public string GetCollectionAppsEditUrl(string collectionId)
-        {
-            return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_collection_edit_apps",
-                    "CollectionId=" + collectionId,
-                    "ItemID=" + PanelRequest.ItemID);
-        }
-
-        public string GetCollectionUsersEditUrl(string collectionId)
-        {
-            return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_collection_edit_users",
-                    "CollectionId=" + collectionId,
-                    "ItemID=" + PanelRequest.ItemID);
-        }
-
         public string GetCollectionEditUrl(string collectionId)
         {
             return EditUrl("SpaceID", PanelSecurity.PackageId.ToString(), "rds_edit_collection", "CollectionId=" + collectionId, "ItemID=" + PanelRequest.ItemID);
