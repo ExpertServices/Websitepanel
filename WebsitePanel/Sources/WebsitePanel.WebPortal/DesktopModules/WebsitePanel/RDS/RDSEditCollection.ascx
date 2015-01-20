@@ -2,6 +2,9 @@
 <%@ Register Src="../UserControls/SimpleMessageBox.ascx" TagName="SimpleMessageBox" TagPrefix="wsp" %>
 <%@ Register Src="../UserControls/EnableAsyncTasksSupport.ascx" TagName="EnableAsyncTasksSupport" TagPrefix="wsp" %>
 <%@ Register Src="UserControls/RDSCollectionServers.ascx" TagName="CollectionServers" TagPrefix="wsp"%>
+<%@ Register Src="UserControls/RDSCollectionTabs.ascx" TagName="CollectionTabs" TagPrefix="wsp" %>
+<%@ Register TagPrefix="wsp" TagName="CollapsiblePanel" Src="../UserControls/CollapsiblePanel.ascx" %>
+<%@ Register Src="../UserControls/ItemButtonPanel.ascx" TagName="ItemButtonPanel" TagPrefix="wsp" %>
 <script type="text/javascript" src="/JavaScript/jquery.min.js?v=1.4.4"></script>
 
 <wsp:EnableAsyncTasksSupport id="asyncTasks" runat="server"/>
@@ -15,20 +18,26 @@
 				<div class="Title">
 					<asp:Image ID="imgAddRDSServer" SkinID="AddRDSServer48" runat="server" />
 					<asp:Localize ID="locTitle" runat="server" meta:resourcekey="locTitle" Text="Add Server To Organization"></asp:Localize>
+                    -
+					<asp:Literal ID="litCollectionName" runat="server" Text="" />
 				</div>
-				<div class="FormContentRDS">
-				    <wsp:SimpleMessageBox id="messageBox" runat="server" />					
-
-                    <fieldset id="RDSServersPanel" runat="server">
-                        <legend><asp:Localize ID="locRDSServersSection" runat="server" meta:resourcekey="locRDSServersSection" Text="RDS Servers"></asp:Localize></legend>
+				<div class="FormBody">				    
+                    <wsp:CollectionTabs id="tabs" runat="server" SelectedTab="rds_edit_collection" />
+                    <wsp:SimpleMessageBox id="messageBox" runat="server" />
+                    
+                    <wsp:CollapsiblePanel id="secRdsServers" runat="server"
+                        TargetControlID="panelRdsServers" meta:resourcekey="secRdsServers" Text="">
+                    </wsp:CollapsiblePanel>		
+                    
+                    <asp:Panel runat="server" ID="panelRdsServers">                                                
                         <div style="padding: 10px;">
                             <wsp:CollectionServers id="servers" runat="server" />
-                        </div>  
-                    </fieldset>
-                      
-				    <div class="FormFooter">
-					    <asp:Button id="btnSave" runat="server" Text="Save" CssClass="Button1" meta:resourcekey="btnSave" OnClick="btnSave_Click" ValidationGroup="SaveRDSCollection"></asp:Button>
-				    </div>
+                        </div>                             
+                    </asp:Panel>
+                    <div class="FormFooterClean">
+                        <wsp:ItemButtonPanel id="buttonPanel" runat="server" ValidationGroup="SaveRDSCollection" 
+                            OnSaveClick="btnSave_Click" OnSaveExitClick="btnSaveExit_Click" />
+			        </div>                    
 				</div>
 			</div>
 		</div>

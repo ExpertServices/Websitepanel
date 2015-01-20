@@ -47,25 +47,48 @@ namespace WebsitePanel.Portal.RDS
             {
                 RdsCollection collection = ES.Services.RDS.GetRdsCollection(PanelRequest.CollectionID);
                 var collectionApps = ES.Services.RDS.GetCollectionRemoteApplications(PanelRequest.ItemID, collection.Name);
-
-                locCName.Text = collection.Name;
-
+                
+                litCollectionName.Text = collection.DisplayName;
                 remoreApps.SetApps(collectionApps);
             }            
+        }
+
+        private bool SaveRemoteApplications()
+        {
+            try
+            {
+                ES.Services.RDS.SetRemoteApplicationsToRdsCollection(PanelRequest.ItemID, PanelRequest.CollectionID, remoreApps.GetApps());
+            }
+            catch (Exception ex)
+            {
+                messageBox.ShowErrorMessage(ex.Message);
+                return false;
+            }
+
+            return true;
         }
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
             if (!Page.IsValid)
-                return;
-            try
             {
-                ES.Services.RDS.SetRemoteApplicationsToRdsCollection(PanelRequest.ItemID, PanelRequest.CollectionID, remoreApps.GetApps());
-
-                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections",
-                    "SpaceID=" + PanelSecurity.PackageId));
+                return;
             }
-            catch (Exception ex) { }
+
+            SaveRemoteApplications();
+        }
+
+        protected void btnSaveExit_Click(object sender, EventArgs e)
+        {
+            if (!Page.IsValid)
+            {
+                return;
+            }
+
+            if (SaveRemoteApplications())
+            {
+                Response.Redirect(EditUrl("ItemID", PanelRequest.ItemID.ToString(), "rds_collections", "SpaceID=" + PanelSecurity.PackageId));
+            }
         }
     }
 }
