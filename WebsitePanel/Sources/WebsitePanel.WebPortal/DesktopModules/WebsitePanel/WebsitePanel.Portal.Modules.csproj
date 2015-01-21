@@ -344,6 +344,13 @@
     <Compile Include="RDS\UserControls\RDSCollectionUsers.ascx.designer.cs">
       <DependentUpon>RDSCollectionUsers.ascx</DependentUpon>
     </Compile>
+    <Compile Include="RDS\UserControls\RDSCollectionTabs.ascx.cs">
+      <DependentUpon>RDSCollectionTabs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RDS\UserControls\RDSCollectionTabs.ascx.designer.cs">
+      <DependentUpon>RDSCollectionTabs.ascx</DependentUpon>
+    </Compile>
     <Compile Include="ScheduleTaskControls\App_LocalResources\DomainLookupView.ascx.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -4345,6 +4352,7 @@
     <Content Include="RDS\UserControls\RDSCollectionApps.ascx" />
     <Content Include="RDS\UserControls\RDSCollectionServers.ascx" />
     <Content Include="RDS\UserControls\RDSCollectionUsers.ascx" />
+    <Content Include="RDS\UserControls\RDSCollectionTabs.ascx" />
     <Content Include="ScheduleTaskControls\App_LocalResources\DomainExpirationView.ascx.resx" />
     <Content Include="App_LocalResources\SettingsDomainExpirationLetter.ascx.resx" />
     <Content Include="App_LocalResources\SettingsDomainLookupLetter.ascx.resx" />
@@ -4358,6 +4366,7 @@
     <Content Include="ExchangeServer\App_LocalResources\ExchangeCheckDomainName.ascx.resx">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="RDS\UserControls\App_LocalResources\RDSCollectionTabs.ascx.resx" />
     <EmbeddedResource Include="ScheduleTaskControls\App_LocalResources\DomainLookupView.ascx.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DomainLookupView.ascx.Designer.cs</LastGenOutput>

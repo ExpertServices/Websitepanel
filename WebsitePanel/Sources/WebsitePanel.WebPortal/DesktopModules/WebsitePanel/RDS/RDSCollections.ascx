@@ -58,11 +58,7 @@
 							    </ItemTemplate>
 						    </asp:TemplateField>
                             <asp:TemplateField>
-			                    <ItemTemplate>
-				                    <asp:hyperlink id="lnkApps" meta:resourcekey="lnkApps" runat="server" NavigateUrl='<%# GetCollectionAppsEditUrl(Eval("Id").ToString()) %>'>Applications</asp:hyperlink>
-                                    |
-				                    <asp:hyperlink id="lnkUsers" meta:resourcekey="lnkUsers" runat="server" NavigateUrl='<%# GetCollectionUsersEditUrl(Eval("Id").ToString()) %>'>Users</asp:hyperlink>
-                                    |
+			                    <ItemTemplate>				                    
                                     <asp:LinkButton ID="lnkRemove" runat="server" Text="Remove"
 									    CommandName="DeleteItem" CommandArgument='<%# Eval("Id") %>' 
                                         meta:resourcekey="cmdDelete" OnClientClick="return confirm('Are you sure you want to remove selected rds collection?')"></asp:LinkButton>
