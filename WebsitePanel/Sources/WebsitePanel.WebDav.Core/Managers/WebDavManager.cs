@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
+using System.Web;
+using System.Xml.Serialization;
 using log4net;
 using WebsitePanel.Providers.OS;
 using WebsitePanel.WebDav.Core.Client;
 using WebsitePanel.WebDav.Core.Config;
 using WebsitePanel.WebDav.Core.Exceptions;
+using WebsitePanel.WebDav.Core.Extensions;
 using WebsitePanel.WebDav.Core.Interfaces.Managers;
 using WebsitePanel.WebDav.Core.Security.Cryptography;
 using WebsitePanel.WebDav.Core.Wsp.Framework;
@@ -38,7 +42,25 @@ namespace WebsitePanel.WebDav.Core.Managers
 
             if (string.IsNullOrWhiteSpace(pathPart))
             {
-                children = ConnectToWebDavServer().Select(x => new WebDavHierarchyItem { Href = new Uri(x.Url), ItemType = ItemType.Folder }).ToArray();
+                var resources = ConnectToWebDavServer().Select(x => new WebDavResource { Href = new Uri(x.Url), ItemType = ItemType.Folder }).ToArray();
+
+                var items = WSP.Services.EnterpriseStorage.GetEnterpriseFolders(WspContext.User.ItemId);
+
+                foreach (var resource in resources)
+                {
+                    var folder = items.FirstOrDefault(x => x.Name == resource.DisplayName);
+
+                    if (folder == null)
+                    {
+                        continue;
+                    }
+
+                    resource.ContentLength = folder.Size;
+                    resource.AllocatedSpace = folder.FRSMQuotaMB;
+                    resource.IsRootItem = true;
+                }
+
+                children = resources;
             }
             else
             {
@@ -51,7 +73,7 @@ namespace WebsitePanel.WebDav.Core.Managers
                     _currentFolder = _webDavSession.OpenFolder(string.Format("{0}{1}/{2}", WebDavAppConfigManager.Instance.WebdavRoot, WspContext.User.OrganizationId, pathPart));
                 }
 
-                children = _currentFolder.GetChildren();
+                children = _currentFolder.GetChildren().Where(x => !WebDavAppConfigManager.Instance.ElementsRendering.ElementsToIgnore.Contains(x.DisplayName.Trim('/'))).ToArray();
             }
 
             List<IHierarchyItem> sortedChildren = children.Where(x => x.ItemType == ItemType.Folder).OrderBy(x => x.DisplayName).ToList();
@@ -106,6 +128,24 @@ namespace WebsitePanel.WebDav.Core.Managers
             {
                 throw new ResourceNotFoundException("Resource not found", exception);
             }
+        }
+
+        public void UploadFile(string path, HttpPostedFileBase file)
+        {
+            var resource = new WebDavResource();
+
+            var fileUrl = new Uri(WebDavAppConfigManager.Instance.WebdavRoot)
+                .Append(WspContext.User.OrganizationId)
+                .Append(path)
+                .Append(Path.GetFileName(file.FileName));
+
+            resource.SetHref(fileUrl);
+            resource.SetCredentials(new NetworkCredential(WspContext.User.Login,  _cryptography.Decrypt(WspContext.User.EncryptedPassword)));
+
+            file.InputStream.Seek(0, SeekOrigin.Begin);
+            var bytes = ReadFully(file.InputStream);
+
+            resource.Upload(bytes);
         }
 
         public IResource GetResource(string path)
@@ -182,6 +222,14 @@ namespace WebsitePanel.WebDav.Core.Managers
                     ms.Write(buffer, 0, read);
                 return ms.ToArray();
             }
+        }
+
+        public void WriteTo(Stream sourceStream, Stream targetStream)
+        {
+            byte[] buffer = new byte[16 * 1024];
+            int n;
+            while ((n = sourceStream.Read(buffer, 0, buffer.Length)) != 0)
+                targetStream.Write(buffer, 0, n);
         }
 
         private string GetFileFolder(string path)

@@ -41,7 +41,7 @@
     </Reference>
     <Reference Include="Microsoft.Web.Services3, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.Web.Services3.3.0.0.0\lib\net20\Microsoft.Web.Services3.dll</HintPath>
+      <HintPath>..\..\..\..\Scheduler Domains\WebsitePanel\Bin\Microsoft.Web.Services3.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -123,10 +123,12 @@
     <Compile Include="Exceptions\UnauthorizedException.cs" />
     <Compile Include="Exceptions\WebDavException.cs" />
     <Compile Include="Exceptions\WebDavHttpException.cs" />
+    <Compile Include="Extensions\UriExtensions.cs" />
     <Compile Include="IConnectionSettings.cs" />
     <Compile Include="IFolder.cs" />
     <Compile Include="IHierarchyItem.cs" />
     <Compile Include="IItemContent.cs" />
+    <Compile Include="Interfaces\Security\IWebDavAuthorizationService.cs" />
     <Compile Include="Managers\AccessTokenManager.cs" />
     <Compile Include="Interfaces\Managers\IAccessTokenManager.cs" />
     <Compile Include="Interfaces\Managers\IWebDavManager.cs" />
@@ -145,6 +147,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>HttpErrors.resx</DependentUpon>
     </Compile>
+    <Compile Include="Security\Authorization\Enums\WebDavPermissions.cs" />
+    <Compile Include="Security\Authorization\WebDavAuthorizationService.cs" />
     <Compile Include="Security\Cryptography\CryptoUtils.cs" />
     <Compile Include="Security\Cryptography\ICryptography.cs" />
     <Compile Include="Security\Authentication\FormsAuthenticationService.cs" />

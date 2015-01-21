@@ -17,8 +17,9 @@ namespace WebsitePanel.WebDav.Core
             DateTime CreationDate { get; }
             string CreatorDisplayName { get; }
             string DisplayName { get; }
+            bool IsRootItem { get; set; }
             Uri Href { get; }
-            ItemType ItemType { get; }
+            ItemType ItemType { get;}
             DateTime LastModified { get; }
             Property[] Properties { get; }
 
@@ -72,6 +73,8 @@ namespace WebsitePanel.WebDav.Core
                     return HttpUtility.UrlDecode(displayName);
                 }
             }
+
+            public bool IsRootItem { get; set; }
 
             public Uri Href
             {
