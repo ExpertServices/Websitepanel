@@ -107,7 +107,14 @@ namespace WebsitePanel.Portal
 
         private void RedirectBack()
         {
-            Response.Redirect(NavigateURL("PoolID", ddlPools.SelectedValue));
+            var returnUrl = Request["ReturnUrl"];
+
+            if (string.IsNullOrEmpty(returnUrl))
+            {
+                returnUrl = NavigateURL("PoolID", ddlPools.SelectedValue);
+            }
+
+            Response.Redirect(returnUrl);
         }
 
         protected void btnUpdate_Click(object sender, EventArgs e)

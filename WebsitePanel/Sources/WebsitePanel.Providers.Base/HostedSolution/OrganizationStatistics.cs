@@ -404,7 +404,7 @@ namespace WebsitePanel.Providers.HostedSolution
         public int CreatedRdsUsers { get; set; }
         public int AllocatedRdsServers { get; set; }
         public int AllocatedRdsCollections { get; set; }
-        public int AllocatedRdsUsers { get; set; }
+        public int AllocatedRdsUsers { get; set; }               
 	}
 }
 

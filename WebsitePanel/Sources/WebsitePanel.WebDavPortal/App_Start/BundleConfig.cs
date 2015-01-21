@@ -26,7 +26,8 @@ namespace WebsitePanel.WebDavPortal
             bundles.Add(new ScriptBundle("~/bundles/appScripts").Include(
                 "~/Scripts/appScripts/recalculateResourseHeight.js",
                 "~/Scripts/appScripts/uploadingData2.js",
-                "~/Scripts/appScripts/authentication.js"));
+                "~/Scripts/appScripts/authentication.js",
+                "~/Scripts/appScripts/dialogs.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/authScripts").Include(
                "~/Scripts/appScripts/authentication.js"));

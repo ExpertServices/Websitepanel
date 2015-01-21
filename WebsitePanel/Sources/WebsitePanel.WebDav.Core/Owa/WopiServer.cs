@@ -23,13 +23,7 @@ namespace WebsitePanel.WebDav.Core.Owa
 
         public CheckFileInfo GetCheckFileInfo(string path)
         {
-            string fileName = path.Split('/').Last();
-            int index = path.LastIndexOf(fileName, StringComparison.InvariantCultureIgnoreCase);
-            string folder = path.Remove(index - 1, fileName.Length + 1);
-
-            _webDavManager.OpenFolder(folder);
-
-           var resource = _webDavManager.GetResource(fileName);
+            var resource = _webDavManager.GetResource(path);
 
             var cFileInfo = new CheckFileInfo
             {
@@ -44,13 +38,7 @@ namespace WebsitePanel.WebDav.Core.Owa
 
         public FileResult GetFile(string path)
         {
-            string fileName = path.Split('/').Last();
-            int index = path.LastIndexOf(fileName, StringComparison.InvariantCultureIgnoreCase);
-            string folder = path.Remove(index - 1, fileName.Length + 1);
-
-            _webDavManager.OpenFolder(folder);
-
-            var fileBytes = _webDavManager.GetFileBytes(fileName);
+            var fileBytes = _webDavManager.GetFileBytes(path);
 
             return new FileContentResult(fileBytes, MediaTypeNames.Application.Octet);
         }

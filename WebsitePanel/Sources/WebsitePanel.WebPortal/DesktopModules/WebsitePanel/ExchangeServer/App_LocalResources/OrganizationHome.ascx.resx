@@ -227,8 +227,7 @@
   </data>
   <data name="locRemoteDesktop.Text" xml:space="preserve">
     <value>Remote Desktop</value>
-  </data>
-  </data>
+  </data>  
   <data name="lnkRdsServers.Text" xml:space="preserve">
     <value>RDS Servers</value>
   </data>

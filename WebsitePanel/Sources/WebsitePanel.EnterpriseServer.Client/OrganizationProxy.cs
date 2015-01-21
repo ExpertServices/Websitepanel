@@ -23,8 +23,8 @@ namespace WebsitePanel.EnterpriseServer.HostedSolution {
     using WebsitePanel.Providers.Common;
     using WebsitePanel.EnterpriseServer.Base.HostedSolution;
     using WebsitePanel.Providers.ResultObjects;
-    using WebsitePanel.Providers.Common;
     using WebsitePanel.Providers;
+    using WebsitePanel.Providers.Common;
     
     
     /// <remarks/>

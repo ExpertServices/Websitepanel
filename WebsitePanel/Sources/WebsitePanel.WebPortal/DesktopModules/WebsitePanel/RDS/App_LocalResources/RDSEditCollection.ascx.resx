@@ -121,7 +121,7 @@
     <value>ShowProgressDialog('Adding RDS Server ...');</value>
   </data>
   <data name="btnSave.Text" xml:space="preserve">
-    <value>Save</value>
+    <value>Save Changes</value>
   </data>
   <data name="FormComments.Text" xml:space="preserve">
     <value />
@@ -140,5 +140,11 @@
   </data>
   <data name="gvRDSServers.Empty" xml:space="preserve">
     <value>No RDS Servers have been added yet. To add a new RDS Servers click "Add RDS Server" button.</value>
+  </data>
+  <data name="btnSaveExit.Text" xml:space="preserve">
+    <value>Save Changes and Exit</value>
+  </data>
+  <data name="secRdsServers.Text" xml:space="preserve">
+    <value>RDS Servers</value>
   </data>
 </root>

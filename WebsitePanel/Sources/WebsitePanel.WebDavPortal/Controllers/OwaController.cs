@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using WebsitePanel.EnterpriseServer.Base.HostedSolution;
 using WebsitePanel.WebDav.Core.Interfaces.Managers;
 using WebsitePanel.WebDav.Core.Interfaces.Owa;
 using WebsitePanel.WebDav.Core.Interfaces.Security;
 using WebsitePanel.WebDav.Core.Security.Cryptography;
+using WebsitePanel.WebDav.Core.Wsp.Framework;
 
 namespace WebsitePanel.WebDavPortal.Controllers
 {
@@ -16,28 +19,40 @@ namespace WebsitePanel.WebDavPortal.Controllers
         private readonly IWopiServer _wopiServer;
         private readonly IWebDavManager _webDavManager;
         private readonly IAuthenticationService _authenticationService;
+        private readonly IAccessTokenManager _tokenManager;
+        private readonly ICryptography _cryptography;
+        private WebDavAccessToken _token;
 
-        public OwaController(IWopiServer wopiServer, IWebDavManager webDavManager, IAuthenticationService authenticationService)
+
+        public OwaController(IWopiServer wopiServer, IWebDavManager webDavManager, IAuthenticationService authenticationService, IAccessTokenManager tokenManager, ICryptography cryptography)
         {
             _wopiServer = wopiServer;
             _webDavManager = webDavManager;
             _authenticationService = authenticationService;
+            _tokenManager = tokenManager;
+            _cryptography = cryptography;
         }
 
-        public JsonResult CheckFileInfo( string encodedPath)
+        public ActionResult CheckFileInfo(int accessTokenId)
         {
-            var path = _webDavManager.FilePathFromId(encodedPath);
+            if (!CheckAccess(accessTokenId))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.NoContent);
+            }
 
-            var fileInfo = _wopiServer.GetCheckFileInfo(path);
+            var fileInfo = _wopiServer.GetCheckFileInfo(_token.FilePath);
 
             return Json(fileInfo, JsonRequestBehavior.AllowGet);
         }
 
-        public FileResult GetFile(string encodedPath)
+        public ActionResult GetFile(int accessTokenId)
         {
-            var path = _webDavManager.FilePathFromId(encodedPath);
+            if (!CheckAccess(accessTokenId))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.NoContent);
+            }
 
-            return _wopiServer.GetFile(path);
+            return _wopiServer.GetFile((_token.FilePath));
         }
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
@@ -46,8 +61,26 @@ namespace WebsitePanel.WebDavPortal.Controllers
 
             if (!string.IsNullOrEmpty(Request["access_token"]))
             {
-                _authenticationService.LogIn(Request["access_token"]);
+                var guid = Guid.Parse((Request["access_token"]));
+
+                _tokenManager.ClearExpiredTokens();
+
+                _token = _tokenManager.GetToken(guid);
+
+                var user = WSP.Services.ExchangeServer.GetAccount(_token.ItemId, _token.AccountId);
+
+                _authenticationService.LogIn(user.UserPrincipalName, _cryptography.Decrypt(_token.AuthData));
             }
+        }
+
+        private bool CheckAccess(int accessTokenId)
+        {
+            if (_token == null || accessTokenId != _token.Id)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

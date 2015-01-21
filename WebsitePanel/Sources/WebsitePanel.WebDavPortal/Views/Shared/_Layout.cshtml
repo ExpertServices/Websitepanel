@@ -23,7 +23,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.RouteLink(WebDavAppConfigManager.Instance.ApplicationName, FileSystemRouteNames.FilePath, new { pathPart = string.Empty }, new { @class = "navbar-brand" })
+                @Html.RouteLink(WebDavAppConfigManager.Instance.ApplicationName, FileSystemRouteNames.ShowContentPath, new { pathPart = string.Empty }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 @{
@@ -39,6 +39,8 @@
     <div class="container body-content">
         @RenderBody()
     </div>
+    
+    @RenderSection("popups", required: false)
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")

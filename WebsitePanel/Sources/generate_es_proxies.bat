@@ -35,8 +35,8 @@ REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\ecStorefrontProxy.cs
 REM %WSDL% %SERVER_URL%/ecStorehouse.asmx /out:.\WebsitePanel.EnterpriseServer.Client\ecStorehouseProxy.cs /namespace:WebsitePanel.Ecommerce.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\ecStorehouseProxy.cs
 
-REM %WSDL% %SERVER_URL%/esExchangeServer.asmx /out:.\WebsitePanel.EnterpriseServer.Client\ExchangeServerProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
-REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\ExchangeServerProxy.cs
+%WSDL% %SERVER_URL%/esExchangeServer.asmx /out:.\WebsitePanel.EnterpriseServer.Client\ExchangeServerProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
+%WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\ExchangeServerProxy.cs
 
 REM %WSDL% %SERVER_URL%/esExchangeHostedEdition.asmx /out:.\WebsitePanel.EnterpriseServer.Client\ExchangeHostedEditionProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\ExchangeHostedEditionProxy.cs
@@ -56,8 +56,8 @@ REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\OCSProxy.cs
 REM %WSDL% %SERVER_URL%/esOperatingSystems.asmx /out:.\WebsitePanel.EnterpriseServer.Client\OperatingSystemsProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\OperatingSystemsProxy.cs
 
-REM %WSDL% %SERVER_URL%/esOrganizations.asmx /out:.\WebsitePanel.EnterpriseServer.Client\OrganizationProxy.cs /namespace:WebsitePanel.EnterpriseServer.HostedSolution /type:webClient
-REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\OrganizationProxy.cs
+%WSDL% %SERVER_URL%/esOrganizations.asmx /out:.\WebsitePanel.EnterpriseServer.Client\OrganizationProxy.cs /namespace:WebsitePanel.EnterpriseServer.HostedSolution /type:webClient
+%WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\OrganizationProxy.cs
 
 REM %WSDL% %SERVER_URL%/esPackages.asmx /out:.\WebsitePanel.EnterpriseServer.Client\PackagesProxy.cs /namespace:WebsitePanel.EnterpriseServer /type:webClient
 REM %WSE_CLEAN% .\WebsitePanel.EnterpriseServer.Client\PackagesProxy.cs

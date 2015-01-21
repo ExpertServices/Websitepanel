@@ -158,7 +158,10 @@ namespace WebsitePanel.Portal
 			// allow sub-domains
 			AllowSubDomainsPanel.Visible = (type == DomainType.Domain) && PanelSecurity.EffectiveUser.Role != UserRole.User;
 
-		    CheckForCorrectIdnDomainUsage(DomainName.Text);
+		    if (IsPostBack)
+		    {
+		        CheckForCorrectIdnDomainUsage(DomainName.Text);
+		    }
 		}
 
 		private DomainType GetDomainType(string typeName)
@@ -278,11 +281,6 @@ namespace WebsitePanel.Portal
 	        }
 
 	        return true;
-	    }
-
-	    protected void DomainName_TextChanged(object sender, DomainControl.DomainNameEventArgs e)
-	    {
-            CheckForCorrectIdnDomainUsage(e.DomainName);
 	    }
 	}
 }

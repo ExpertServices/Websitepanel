@@ -6,6 +6,7 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
     public class WebDavExplorerConfigurationSettingsSection : ConfigurationSection
     {
         private const string UserDomainKey = "userDomain";
+        private const string WebdavRootKey = "webdavRoot";
         private const string AuthTimeoutCookieNameKey = "authTimeoutCookieName";
         private const string AppName = "applicationName";
         private const string WebsitePanelConstantUserKey = "websitePanelConstantUser";
@@ -23,6 +24,13 @@ namespace WebsitePanel.WebDavPortal.WebConfigSections
         {
             get { return (AuthTimeoutCookieNameElement)this[AuthTimeoutCookieNameKey]; }
             set { this[AuthTimeoutCookieNameKey] = value; }
+        }
+
+        [ConfigurationProperty(WebdavRootKey, IsRequired = true)]
+        public WebdavRootElement WebdavRoot
+        {
+            get { return (WebdavRootElement)this[WebdavRootKey]; }
+            set { this[WebdavRootKey] = value; }
         }
 
         [ConfigurationProperty(UserDomainKey, IsRequired = true)]

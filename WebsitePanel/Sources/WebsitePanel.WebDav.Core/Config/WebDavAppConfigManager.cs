@@ -30,6 +30,11 @@ namespace WebsitePanel.WebDav.Core.Config
             get { return _configSection.UserDomain.Value; }
         }
 
+        public string WebdavRoot
+        {
+            get { return _configSection.WebdavRoot.Value; }
+        }
+
         public string ApplicationName
         {
             get { return _configSection.ApplicationName.Value; }
