@@ -21,12 +21,18 @@
 
 					<table>
 					        <tr>
-						        <td class="FormLabel150" style="width: 100px;"><asp:Localize ID="locApplicationName" runat="server" meta:resourcekey="locApplicationName" Text="Collection Name:"></asp:Localize></td>
-						        <td class="FormLabel150">
+						        <td class="FormSimpleLabel" style="width: 120px;"><asp:Localize ID="locCollectionName" runat="server" meta:resourcekey="locCollectionName" Text="Collection Name:"></asp:Localize></td>
+						        <td class="FormSimpleLabel">
                                     <asp:Localize ID="locCName" runat="server" Text="" />
 						        </td>
 					        </tr>
-					    </table> 
+                        <tr>
+                            <td class="FormSimpleLabel" style="width: 120px;"><asp:Localize ID="locApplicationName" runat="server" meta:resourcekey="locApplicationName" Text="Collection Name:"></asp:Localize></td>
+                            <td class="FormSimpleLabel">
+                                <asp:Localize ID="locAppName" runat="server" Text="" />
+                            </td>
+                        </tr>
+					</table> 
 
                     <fieldset id="UsersPanel" runat="server">
                         <legend><asp:Localize ID="locUsersSection" runat="server" meta:resourcekey="locUsersSection" Text="Users"></asp:Localize></legend>

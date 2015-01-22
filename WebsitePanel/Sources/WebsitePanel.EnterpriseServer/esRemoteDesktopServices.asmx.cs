@@ -65,7 +65,7 @@ namespace WebsitePanel.EnterpriseServer
         }
 
         [WebMethod]
-        public ResultObject AddRdsCollection(int itemId, RdsCollection collection)
+        public int AddRdsCollection(int itemId, RdsCollection collection)
         {
             return RemoteDesktopServicesController.AddRdsCollection(itemId, collection);
         }

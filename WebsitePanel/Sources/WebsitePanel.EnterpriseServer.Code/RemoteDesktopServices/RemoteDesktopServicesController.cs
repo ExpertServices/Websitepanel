@@ -63,7 +63,7 @@ namespace WebsitePanel.EnterpriseServer
             return GetOrganizationRdsCollectionsInternal(itemId);
         }
 
-        public static ResultObject AddRdsCollection(int itemId, RdsCollection collection)
+        public static int AddRdsCollection(int itemId, RdsCollection collection)
         {
             return AddRdsCollectionInternal(itemId, collection);
         }
@@ -265,7 +265,7 @@ namespace WebsitePanel.EnterpriseServer
             return collections;
         }
 
-        private static ResultObject AddRdsCollectionInternal(int itemId, RdsCollection collection)
+        private static int AddRdsCollectionInternal(int itemId, RdsCollection collection)
         {
             var result = TaskManager.StartResultTask<ResultObject>("REMOTE_DESKTOP_SERVICES", "ADD_RDS_COLLECTION");
 
@@ -274,10 +274,8 @@ namespace WebsitePanel.EnterpriseServer
                 // load organization
                 Organization org = OrganizationController.GetOrganization(itemId);
                 if (org == null)
-                {
-                    result.IsSuccess = false;
-                    result.AddError("", new NullReferenceException("Organization not found"));
-                    return result;
+                {                    
+                    return -1;
                 }
 
                 var rds = GetRemoteDesktopServices(GetRemoteDesktopServiceID(org.PackageId));
@@ -291,8 +289,7 @@ namespace WebsitePanel.EnterpriseServer
                 }
             }
             catch (Exception ex)
-            {
-                result.AddError("REMOTE_DESKTOP_SERVICES_ADD_RDS_COLLECTION", ex);
+            {                
                 throw TaskManager.WriteError(ex);
             }
             finally
@@ -307,7 +304,7 @@ namespace WebsitePanel.EnterpriseServer
                 }
             }
 
-            return result;
+            return collection.Id;
         }
 
         private static ResultObject EditRdsCollectionInternal(int itemId, RdsCollection collection)

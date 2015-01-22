@@ -7791,7 +7791,7 @@ RETURN
 GO
 
 IF EXISTS (SELECT * FROM SYS.OBJECTS WHERE type = 'P' AND name = 'DeleteOrganizationDeletedUser')
-DROP PROCEDURE [dbo].[GetOrganizationDeletedUser]
+DROP PROCEDURE [dbo].[DeleteOrganizationDeletedUser]
 GO
 
 CREATE PROCEDURE [dbo].[DeleteOrganizationDeletedUser]
