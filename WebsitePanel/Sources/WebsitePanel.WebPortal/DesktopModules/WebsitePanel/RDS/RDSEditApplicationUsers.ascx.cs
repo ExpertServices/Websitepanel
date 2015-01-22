@@ -49,6 +49,7 @@ namespace WebsitePanel.Portal.RDS
                 var applicationUsers = ES.Services.RDS.GetApplicationUsers(PanelRequest.ItemID, PanelRequest.CollectionID, remoteApp);
 
                 locCName.Text = collection.Name;
+                locAppName.Text = remoteApp.DisplayName;
 
                 users.SetUsers(collectionUsers.Where(x => applicationUsers.Contains(x.SamAccountName)).ToArray());
             }
